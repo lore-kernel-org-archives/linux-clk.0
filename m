@@ -2,188 +2,119 @@ Return-Path: <SRS0=VuHU=VV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DB0C76191
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 11:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55BC4C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 13:09:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ADDC229FA
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 11:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1563968408;
-	bh=Waz30FvbM2bDuciG00WYPrNVQxeN8XFol+6MLZngaDU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=RULNwyJiFU/ggcoQSSwCvUm4MmL1KjHRslThc2+3J+jM58CRaFNBxNWWBQuBmFpfI
-	 93EMLjxlEuK6atOUXL7M6or6bjcIy6YBaUnekts37Nm1fxZ5DYR4JtdS8dBqgc0YnK
-	 IJFcdYCBJdppyjHWjEiSQfMrZ4vIF8uH3fnwRv6w=
+	by mail.kernel.org (Postfix) with ESMTP id 37BF121738
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 13:09:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727455AbfGXLkD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 07:40:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54228 "EHLO mail.kernel.org"
+        id S1728473AbfGXNJD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 09:09:03 -0400
+Received: from hermes.aosc.io ([199.195.250.187]:51846 "EHLO hermes.aosc.io"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727409AbfGXLkD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 24 Jul 2019 07:40:03 -0400
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A257022BEA;
-        Wed, 24 Jul 2019 11:40:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1563968402;
-        bh=Waz30FvbM2bDuciG00WYPrNVQxeN8XFol+6MLZngaDU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=UbDgSp5MCNlE5sgwQ9+EIE7o8SHwMpf+XN4VT6PiWNo6t5C+chmfrADPAC81mnyzB
-         lLmezBMZBzexYyBBLromTjhqtQTKq0OCsnLq13HYRjL1N0PQazge1y0S3uzvb70j/g
-         CY2l7sN0Vh3XA6XhCjKmPSJf9D1Fd+bQNC9WtNO4=
-Received: by mail-lf1-f41.google.com with SMTP id b29so24483102lfq.1;
-        Wed, 24 Jul 2019 04:40:01 -0700 (PDT)
-X-Gm-Message-State: APjAAAW5d3OgsVcSacdRv7N3+Olybz6wP/sAvCRKKHpbCnTNLhnIKX2Q
-        8ES034jbw5iDUVMz9nu1/rz0DlS01SOhbCK7S7o=
-X-Google-Smtp-Source: APXvYqx3+A563bA8Nc3lxEu2U+a/qw7GJbEPteETDwnhna9Ox1cYxk6dVWTYQpIDqElHtzAZl4iPfU/mdKjG6U8RDME=
-X-Received: by 2002:ac2:4891:: with SMTP id x17mr39260124lfc.60.1563968399768;
- Wed, 24 Jul 2019 04:39:59 -0700 (PDT)
+        id S1726535AbfGXNJD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jul 2019 09:09:03 -0400
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 9615D6DF8F;
+        Wed, 24 Jul 2019 13:09:01 +0000 (UTC)
 MIME-Version: 1.0
-References: <CGME20190722094727eucas1p10041ba25819e6e62d639423a97435f2d@eucas1p1.samsung.com>
- <20190722094646.13342-1-l.luba@partner.samsung.com> <20190722094646.13342-4-l.luba@partner.samsung.com>
-In-Reply-To: <20190722094646.13342-4-l.luba@partner.samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Wed, 24 Jul 2019 13:39:48 +0200
-X-Gmail-Original-Message-ID: <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
-Message-ID: <CAJKOXPdue75yF=v5vsawOdfvcCMBDP6HGVXdwngBWE264kGJwg@mail.gmail.com>
-Subject: Re: [PATCH v12 3/9] drivers: memory: extend of_memory by LPDDR3 support
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>, kgene@kernel.org, mark.rutland@arm.com,
-        robh+dt@kernel.org, Chanwoo Choi <cw00.choi@samsung.com>,
-        kyungmin.park@samsung.com,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Wed, 24 Jul 2019 21:09:01 +0800
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     devicetree@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 7/8] dt-bindings: arm: sunxi: add binding for Lichee
+ Zero Plus core board
+In-Reply-To: <20190722192934.3jaf3r4rnyeslqyw@flea>
+References: <20190713034634.44585-1-icenowy@aosc.io>
+ <20190713034634.44585-8-icenowy@aosc.io>
+ <20190720101318.cwrvv5r42wxx5k4r@flea>
+ <BDF0C9F6-DD0D-4343-8E24-06A07055004C@aosc.io>
+ <20190722192934.3jaf3r4rnyeslqyw@flea>
+Message-ID: <7d24576697521f4985617113dbc4cc41@aosc.io>
+X-Sender: icenowy@aosc.io
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 22 Jul 2019 at 11:47, Lukasz Luba <l.luba@partner.samsung.com> wrote:
->
-> The patch adds AC timings information needed to support LPDDR3 and memory
-> controllers. The structure is used in of_memory and currently in Exynos
-> 5422 DMC. Add parsing data needed for LPDDR3 support.
-> It is currently used in Exynos5422 Dynamic Memory Controller.
->
-> Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  drivers/memory/jedec_ddr.h |  61 +++++++++++++++
->  drivers/memory/of_memory.c | 154 +++++++++++++++++++++++++++++++++++++
->  drivers/memory/of_memory.h |  18 +++++
->  3 files changed, 233 insertions(+)
->
-> diff --git a/drivers/memory/jedec_ddr.h b/drivers/memory/jedec_ddr.h
-> index 4a21b5044ff8..38e26d461bdb 100644
-> --- a/drivers/memory/jedec_ddr.h
-> +++ b/drivers/memory/jedec_ddr.h
-> @@ -29,6 +29,7 @@
->  #define DDR_TYPE_LPDDR2_S4     3
->  #define DDR_TYPE_LPDDR2_S2     4
->  #define DDR_TYPE_LPDDR2_NVM    5
-> +#define DDR_TYPE_LPDDR3                6
->
->  /* DDR IO width */
->  #define DDR_IO_WIDTH_4         1
-> @@ -169,4 +170,64 @@ extern const struct lpddr2_timings
->         lpddr2_jedec_timings[NUM_DDR_TIMING_TABLE_ENTRIES];
->  extern const struct lpddr2_min_tck lpddr2_jedec_min_tck;
->
-> +/*
-> + * Structure for timings for LPDDR3 based on LPDDR2 plus additional fields.
-> + * All parameters are in pico seconds(ps) unless explicitly indicated
-> + * with a suffix like tRAS_max_ns below
-> + */
-> +struct lpddr3_timings {
-> +       u32 max_freq;
-> +       u32 min_freq;
-> +       u32 tRFC;
-> +       u32 tRRD;
-> +       u32 tRPab;
-> +       u32 tRPpb;
-> +       u32 tRCD;
-> +       u32 tRC;
-> +       u32 tRAS;
-> +       u32 tWTR;
-> +       u32 tWR;
-> +       u32 tRTP;
-> +       u32 tW2W_C2C;
-> +       u32 tR2R_C2C;
-> +       u32 tWL;
-> +       u32 tDQSCK;
-> +       u32 tRL;
-> +       u32 tFAW;
-> +       u32 tXSR;
-> +       u32 tXP;
-> +       u32 tCKE;
-> +       u32 tCKESR;
-> +       u32 tMRD;
-> +};
-> +
-> +/*
-> + * Min value for some parameters in terms of number of tCK cycles(nCK)
-> + * Please set to zero parameters that are not valid for a given memory
-> + * type
-> + */
-> +struct lpddr3_min_tck {
-> +       u32 tRFC;
-> +       u32 tRRD;
-> +       u32 tRPab;
-> +       u32 tRPpb;
-> +       u32 tRCD;
-> +       u32 tRC;
-> +       u32 tRAS;
-> +       u32 tWTR;
-> +       u32 tWR;
-> +       u32 tRTP;
-> +       u32 tW2W_C2C;
-> +       u32 tR2R_C2C;
-> +       u32 tWL;
-> +       u32 tDQSCK;
-> +       u32 tRL;
-> +       u32 tFAW;
-> +       u32 tXSR;
-> +       u32 tXP;
-> +       u32 tCKE;
-> +       u32 tCKESR;
-> +       u32 tMRD;
-> +};
-> +
->  #endif /* __JEDEC_DDR_H */
-> diff --git a/drivers/memory/of_memory.c b/drivers/memory/of_memory.c
-> index 46539b27a3fb..4f5b8c81669f 100644
-> --- a/drivers/memory/of_memory.c
-> +++ b/drivers/memory/of_memory.c
-> @@ -3,6 +3,12 @@
->   * OpenFirmware helpers for memory drivers
->   *
->   * Copyright (C) 2012 Texas Instruments, Inc.
-> + * Copyright (C) 2019 Samsung Electronics Co., Ltd.
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License as published by
-> + * the Free Software Foundation; either version 2 of the License, or
-> + * (at your option) any later version.
+在 2019-07-23 03:29，Maxime Ripard 写道：
+> On Sat, Jul 20, 2019 at 07:39:08PM +0800, Icenowy Zheng wrote:
+>> 
+>> 
+>> 于 2019年7月20日 GMT+08:00 下午6:13:18, Maxime Ripard 
+>> <maxime.ripard@bootlin.com> 写到:
+>> >On Sat, Jul 13, 2019 at 11:46:33AM +0800, Icenowy Zheng wrote:
+>> >> The Lichee Zero Plus is a core board made by Sipeed, with a microUSB
+>> >> connector on it, TF slot or WSON8 SD chip, optional eMMC or SPI
+>> >Flash.
+>> >> It has a gold finger connector for expansion, and UART is available
+>> >from
+>> >> reserved pins w/ 2.54mm pitch. The board can use either SoChip S3 or
+>> >> Allwinner V3L SoCs.
+>> >>
+>> >> Add the device tree binding of the basic version of the core board --
+>> >> w/o eMMC or SPI Flash, w/ TF slot or WSON8 SD, and use S3 SoC.
+>> >>
+>> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+>> >> ---
+>> >> No changes since v3.
+>> >>
+>> >> Patch introduced in v2.
+>> >>
+>> >>  Documentation/devicetree/bindings/arm/sunxi.yaml | 5 +++++
+>> >>  1 file changed, 5 insertions(+)
+>> >>
+>> >> diff --git a/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >b/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> index 000a00d12d6a..48c126a7a848 100644
+>> >> --- a/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> +++ b/Documentation/devicetree/bindings/arm/sunxi.yaml
+>> >> @@ -353,6 +353,11 @@ properties:
+>> >>            - const: licheepi,licheepi-zero
+>> >>            - const: allwinner,sun8i-v3s
+>> >>
+>> >> +      - description: Lichee Zero Plus (with S3, without eMMC/SPI
+>> >Flash)
+>> >> +        items:
+>> >> +          - const: sipeed,lichee-zero-plus
+>> >> +          - const: allwinner,sun8i-s3
+>> >
+>> >If the S3 is just a rebranded V3, then we should have the v3 compatile
+>> >in that list too.
+>> 
+>> S3 is V3 with copackaged DDR3 DRAM.
+>> 
+>> It's pin incompatible w/ V3.
+> 
+> Does it matter though?
+> 
+> If the only thing that changes is the package, we're not manipulating
+> that, and any software that deals with the v3 can deal with the
+> s3. Which is what the compatible is about.
 
-What's this?
+Okay. Should the S3 compatible be kept befoer the V3 one?
 
-Please, get a independent review or ack for this patch.
-
-Best regards,
-Krzysztof
+> 
+> Maxime
+> 
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
