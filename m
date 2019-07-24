@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCA90C76186
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 03:15:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82515C7618B
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 06:34:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7C692253D
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 03:15:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D0B6229F3
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 06:34:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725827AbfGXDPg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 23 Jul 2019 23:15:36 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:53972 "EHLO inva021.nxp.com"
+        id S1725944AbfGXGeI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 02:34:08 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:46164 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725848AbfGXDPg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 23 Jul 2019 23:15:36 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id B31402000E2;
-        Wed, 24 Jul 2019 05:15:31 +0200 (CEST)
+        id S1725900AbfGXGeI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 24 Jul 2019 02:34:08 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8121D1A0030;
+        Wed, 24 Jul 2019 08:34:06 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 88AE7200034;
-        Wed, 24 Jul 2019 05:15:25 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 6FEDB1A00B0;
+        Wed, 24 Jul 2019 08:33:59 +0200 (CEST)
 Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id CA888402F6;
-        Wed, 24 Jul 2019 11:15:17 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 99CF7402D3;
+        Wed, 24 Jul 2019 14:33:50 +0800 (SGT)
 From:   Anson.Huang@nxp.com
 To:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        aisheng.dong@nxp.com, gustavo@embeddedor.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
+        abel.vesa@nxp.com, aisheng.dong@nxp.com, l.stach@pengutronix.de,
+        ping.bai@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH] clk: imx7ulp: Make sure earlycon's clock is enabled
-Date:   Wed, 24 Jul 2019 11:06:00 +0800
-Message-Id: <20190724030600.17839-1-Anson.Huang@nxp.com>
+Subject: [PATCH] clk: imx: Remove unused function statement
+Date:   Wed, 24 Jul 2019 14:24:35 +0800
+Message-Id: <20190724062435.28074-1-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.9.5
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
@@ -46,85 +46,25 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Anson Huang <Anson.Huang@nxp.com>
 
-Earlycon's clock could be disabled during kernel boot up,
-if earlycon is enabled and its clock is gated, then kernel
-boot up will fail. Make sure earlycon's clock is enabled
-during kernel boot up.
+imx_register_uart_clocks_hws() function is NOT implemented
+at all, remove it.
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
- drivers/clk/imx/clk-imx7ulp.c | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ drivers/clk/imx/clk.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-index 42e4667..2022d9b 100644
---- a/drivers/clk/imx/clk-imx7ulp.c
-+++ b/drivers/clk/imx/clk-imx7ulp.c
-@@ -42,6 +42,19 @@ static const struct clk_div_table ulp_div_table[] = {
- 	{ .val = 7, .div = 64, },
- };
- 
-+static const int pcc2_uart_clk_ids[] __initconst = {
-+	IMX7ULP_CLK_LPUART4,
-+	IMX7ULP_CLK_LPUART5,
-+};
-+
-+static const int pcc3_uart_clk_ids[] __initconst = {
-+	IMX7ULP_CLK_LPUART6,
-+	IMX7ULP_CLK_LPUART7,
-+};
-+
-+static struct clk **pcc2_uart_clks[ARRAY_SIZE(pcc2_uart_clk_ids) + 1] __initdata;
-+static struct clk **pcc3_uart_clks[ARRAY_SIZE(pcc3_uart_clk_ids) + 1] __initdata;
-+
- static void __init imx7ulp_clk_scg1_init(struct device_node *np)
- {
- 	struct clk_hw_onecell_data *clk_data;
-@@ -135,6 +148,7 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
- 	struct clk_hw_onecell_data *clk_data;
- 	struct clk_hw **clks;
- 	void __iomem *base;
-+	int i;
- 
- 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC2_END),
- 			   GFP_KERNEL);
-@@ -173,6 +187,14 @@ static void __init imx7ulp_clk_pcc2_init(struct device_node *np)
- 	imx_check_clk_hws(clks, clk_data->num);
- 
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+
-+	for (i = 0; i < ARRAY_SIZE(pcc2_uart_clk_ids); i++) {
-+		int index = pcc2_uart_clk_ids[i];
-+
-+		pcc2_uart_clks[i] = &clks[index]->clk;
-+	}
-+
-+	imx_register_uart_clocks(pcc2_uart_clks);
- }
- CLK_OF_DECLARE(imx7ulp_clk_pcc2, "fsl,imx7ulp-pcc2", imx7ulp_clk_pcc2_init);
- 
-@@ -181,6 +203,7 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
- 	struct clk_hw_onecell_data *clk_data;
- 	struct clk_hw **clks;
- 	void __iomem *base;
-+	int i;
- 
- 	clk_data = kzalloc(struct_size(clk_data, hws, IMX7ULP_CLK_PCC3_END),
- 			   GFP_KERNEL);
-@@ -218,6 +241,14 @@ static void __init imx7ulp_clk_pcc3_init(struct device_node *np)
- 	imx_check_clk_hws(clks, clk_data->num);
- 
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_data);
-+
-+	for (i = 0; i < ARRAY_SIZE(pcc3_uart_clk_ids); i++) {
-+		int index = pcc3_uart_clk_ids[i];
-+
-+		pcc3_uart_clks[i] = &clks[index]->clk;
-+	}
-+
-+	imx_register_uart_clocks(pcc3_uart_clks);
- }
- CLK_OF_DECLARE(imx7ulp_clk_pcc3, "fsl,imx7ulp-pcc3", imx7ulp_clk_pcc3_init);
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 9995f2a..f7a389a 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -10,7 +10,6 @@ extern spinlock_t imx_ccm_lock;
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
+ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+ void imx_register_uart_clocks(struct clk ** const clks[]);
+-void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
+ void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
+ void imx_unregister_clocks(struct clk *clks[], unsigned int count);
  
 -- 
 2.7.4
