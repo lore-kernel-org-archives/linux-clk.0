@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B73BC7618F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40930C41514
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:28:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFFFC20840
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:28:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11DA420840
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 17:28:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="hbQH6Sp0"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="pWCEaUXj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387707AbfGXR1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 13:27:54 -0400
-Received: from outils.crapouillou.net ([89.234.176.41]:51996 "EHLO
+        id S2387755AbfGXR2K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 13:28:10 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:52026 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfGXR1x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 13:27:53 -0400
+        with ESMTP id S1728310AbfGXR2J (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 13:28:09 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1563988658; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1563988651; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=BjCs03RgyL58fApfd5l7g+XTdviV2rlk+1oKzHn4OQY=;
-        b=hbQH6Sp0nenqEgvgUEZNod3LWjqpLxBEKr2asH/MDxWfDn87Sqp79548njrUFhcGleL1Me
-        VngAn19XYduheQ55FcxHwrx5TQtcwZjAXoORKz2RRf0JaepkbpTg6mQXlNUScoP71av3zq
-        zER53S/Q0ZaEftgbISx8GGtbs4kk9vI=
+        bh=cq/6GvwGL7/hPF8mufyJ7EZk4QaPV3bSCBnWavgiG1c=;
+        b=pWCEaUXj9OBuIU51+UoC+ElFQqM6KQxo1Oj5axpLC+qO+X9ZGUoMWQ6Xh4GwXSvRru4JaG
+        wvemkIiwYQ+LYYWjLu+VedWBZWpjHDR+DtHBshlrnY+yRDeiFCQCYjST877kOJ4L4NAmvP
+        4GOnVcw3zC5erA5HeV0YqYWE65i2x1g=
 From:   Paul Cercueil <paul@crapouillou.net>
 To:     Ralf Baechle <ralf@linux-mips.org>,
         Paul Burton <paul.burton@mips.com>,
@@ -51,9 +51,9 @@ Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Mathieu Malaterre <malat@debian.org>,
         Paul Cercueil <paul@crapouillou.net>,
         Artur Rojek <contact@artur-rojek.eu>
-Subject: [PATCH v15 10/13] MIPS: qi_lb60: Reduce system timer and clocksource to 750 kHz
-Date:   Wed, 24 Jul 2019 13:16:12 -0400
-Message-Id: <20190724171615.20774-11-paul@crapouillou.net>
+Subject: [PATCH v15 09/13] MIPS: jz4740: Add DTS nodes for the TCU drivers
+Date:   Wed, 24 Jul 2019 13:16:11 -0400
+Message-Id: <20190724171615.20774-10-paul@crapouillou.net>
 In-Reply-To: <20190724171615.20774-1-paul@crapouillou.net>
 References: <20190724171615.20774-1-paul@crapouillou.net>
 MIME-Version: 1.0
@@ -63,8 +63,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The default clock (12 MHz) is too fast for the system timer, which fails
-to report time accurately.
+Add DTS nodes for the JZ4780, JZ4770 and JZ4740 devicetree files.
 
 Signed-off-by: Paul Cercueil <paul@crapouillou.net>
 Tested-by: Mathieu Malaterre <malat@debian.org>
@@ -74,35 +73,127 @@ Tested-by: Artur Rojek <contact@artur-rojek.eu>
 Notes:
     v5: New patch
     
-    v6: Remove ingenic,clocksource-channel property
+    v6: Fix register lengths in watchdog/pwm nodes
     
-    v7-v15: No change
+    v7: No change
+    
+    v8: - Fix wrong start address for PWM node
+    	- Add system timer and clocksource sub-nodes
+    
+    v9: Drop timer and clocksource sub-nodes
+    
+    v10-v11: No change
+    
+    v12: Drop PWM/watchdog/OST sub-nodes, for now.
+    
+    v13-v14: No change
+    
+    v15: Add "simple-mfd" compatible string
 
- arch/mips/boot/dts/ingenic/qi_lb60.dts | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/mips/boot/dts/ingenic/jz4740.dtsi | 22 ++++++++++++++++++++++
+ arch/mips/boot/dts/ingenic/jz4770.dtsi | 21 +++++++++++++++++++++
+ arch/mips/boot/dts/ingenic/jz4780.dtsi | 23 +++++++++++++++++++++++
+ 3 files changed, 66 insertions(+)
 
-diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-index cc26650562c2..933d98ca8d93 100644
---- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
-+++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-@@ -2,6 +2,7 @@
- /dts-v1/;
+diff --git a/arch/mips/boot/dts/ingenic/jz4740.dtsi b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+index 3ffaf63f22dd..058800bfc875 100644
+--- a/arch/mips/boot/dts/ingenic/jz4740.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4740.dtsi
+@@ -53,6 +53,28 @@
+ 		clock-names = "rtc";
+ 	};
  
- #include "jz4740.dtsi"
-+#include <dt-bindings/clock/ingenic,tcu.h>
- #include <dt-bindings/gpio/gpio.h>
- 
- / {
-@@ -64,3 +65,9 @@
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pins_mmc>;
- };
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4740-tcu", "simple-mfd";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
 +
-+&tcu {
-+	/* 750 kHz for the system timer and clocksource */
-+	assigned-clocks = <&tcu TCU_CLK_TIMER0>, <&tcu TCU_CLK_TIMER1>;
-+	assigned-clock-rates = <750000>, <750000>;
-+};
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4740_CLK_RTC
++			  &cgu JZ4740_CLK_EXT
++			  &cgu JZ4740_CLK_PCLK
++			  &cgu JZ4740_CLK_TCU>;
++		clock-names = "rtc", "ext", "pclk", "tcu";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <23 22 21>;
++	};
++
+ 	rtc_dev: rtc@10003000 {
+ 		compatible = "ingenic,jz4740-rtc";
+ 		reg = <0x10003000 0x40>;
+diff --git a/arch/mips/boot/dts/ingenic/jz4770.dtsi b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+index 49ede6c14ff3..0bfb9edff3d0 100644
+--- a/arch/mips/boot/dts/ingenic/jz4770.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4770.dtsi
+@@ -46,6 +46,27 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4770-tcu", "simple-mfd";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4770_CLK_RTC
++			  &cgu JZ4770_CLK_EXT
++			  &cgu JZ4770_CLK_PCLK>;
++		clock-names = "rtc", "ext", "pclk";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++	};
++
+ 	pinctrl: pin-controller@10010000 {
+ 		compatible = "ingenic,jz4770-pinctrl";
+ 		reg = <0x10010000 0x600>;
+diff --git a/arch/mips/boot/dts/ingenic/jz4780.dtsi b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+index b03cdec56de9..c54bd7cfec55 100644
+--- a/arch/mips/boot/dts/ingenic/jz4780.dtsi
++++ b/arch/mips/boot/dts/ingenic/jz4780.dtsi
+@@ -46,6 +46,29 @@
+ 		#clock-cells = <1>;
+ 	};
+ 
++	tcu: timer@10002000 {
++		compatible = "ingenic,jz4780-tcu",
++			     "ingenic,jz4770-tcu",
++			     "simple-mfd";
++		reg = <0x10002000 0x1000>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0x0 0x10002000 0x1000>;
++
++		#clock-cells = <1>;
++
++		clocks = <&cgu JZ4780_CLK_RTCLK
++			  &cgu JZ4780_CLK_EXCLK
++			  &cgu JZ4780_CLK_PCLK>;
++		clock-names = "rtc", "ext", "pclk";
++
++		interrupt-controller;
++		#interrupt-cells = <1>;
++
++		interrupt-parent = <&intc>;
++		interrupts = <27 26 25>;
++	};
++
+ 	rtc_dev: rtc@10003000 {
+ 		compatible = "ingenic,jz4780-rtc";
+ 		reg = <0x10003000 0x4c>;
 -- 
 2.21.0.593.g511ec345e18
 
