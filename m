@@ -4,88 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD14C76186
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 20:33:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03DB1C76186
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 20:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D1402054F
-	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 20:33:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDCEB217F4
+	for <linux-clk@archiver.kernel.org>; Wed, 24 Jul 2019 20:37:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564000425;
-	bh=oFnN17iv8U4rG2AZdLOCDkpUBj1bEEnYUPwoCvW33QA=;
+	s=default; t=1564000664;
+	bh=1jFADVUDdc/r8+77jiHpMMfXTsy6SnNDtLTtfL/1D5E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fRX2B/KREnOFCsjTkDgRKe3V3qbO8ntKRf4Ailu02/YMUeS2SZwMm570/vDzKr6xM
-	 j7BmQ9Rv8vjrpv7jtcEVCDviO1GHp0at697u0ycE5IDM/EnTBK/KCfLQzuV05dmsmP
-	 yLoZETNRAE/ntDGp6L0da1WMnaAFHPM+vXLYGXe0=
+	b=1KmVxtxD3CXF2suXFXDr3eWbVW9DF4XBDKKGBfvk7+MNkjng3I46vtv+AIRVOemMg
+	 5FVa49AiRxL9LpbX2lvF9IZimHTtCWUGMy6rzWPpMkLTlWWzdaCVhd5Rq0BweWAn00
+	 PAiptWZL4OVAbmaxWMGIkPPCVD4wWXD24of9COqU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728165AbfGXUdk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 24 Jul 2019 16:33:40 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37551 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727408AbfGXUdj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 16:33:39 -0400
-Received: by mail-io1-f67.google.com with SMTP id q22so92410444iog.4;
-        Wed, 24 Jul 2019 13:33:39 -0700 (PDT)
+        id S1727658AbfGXUhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 24 Jul 2019 16:37:40 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:42051 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727624AbfGXUhj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 24 Jul 2019 16:37:39 -0400
+Received: by mail-io1-f65.google.com with SMTP id e20so62067789iob.9;
+        Wed, 24 Jul 2019 13:37:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hWxG43uUzUPGcDAeTJWX9/ElhRTOT4ivffhul3s+rgA=;
-        b=e26qGOhbJnebGG2ZkYbqPJapzxvogyzmT7VqydGVJcp0E1CdHv1wcg8AZUzz7aw7df
-         MfXB6UVYiqx4roQfnJmVejtHGNum2rN/aKrVzrYmzgsRODGt/qrwH0AK0Zyb3SV2URRl
-         jCvpJZ6Gd6pZAOtadj52i0PWEualwukHXVbZ6Xx9YANu+FCZbpnuMh4DO/CfAlZAQdu1
-         CNtyvuhgxqqQUfnoPEbmGrP6FDvgYyg3QBhzMNbi3cDB1XIeGjuZ8qhYUFeo3wGtk4c7
-         ex8QhZW1lzLGQQ1l1kU0Sxf+aajXMFF2/Ts/QcIY11JEqm1OHzqHHXMReETuhbfRhOiE
-         H90Q==
-X-Gm-Message-State: APjAAAVa+OqlDVZsbztkF2Pd0A4Exlbt6g+AoXT2sY2lVdl5M5YeuShN
-        4s/pDNvz1eSMOg3sbZo6zQ==
-X-Google-Smtp-Source: APXvYqy956/3Br9VEhD6l1nrDo5N42Sw/FVSNlfk7v1cZXU6Bmsg2phvVL23Wpj7HoceLR69D9he5A==
-X-Received: by 2002:a02:c7c7:: with SMTP id s7mr27166379jao.37.1564000418767;
-        Wed, 24 Jul 2019 13:33:38 -0700 (PDT)
+        bh=d4NY+Zoiq+xj4BLlyojFL41fph5cwqpn3LM6JI8x6A0=;
+        b=kIAI2nru5rHtIBKOoUwz36Wk+tEKSwSVe9DMlLSMXwwZaGhOnYr0VWPI4U0HV8iLn9
+         aFPzJ1lo4oFrDoxX3V9uN8D2eKQMXhrO1oTxeSgp7Y7ozYUDZd8NEOntZHu7tZaFuaNu
+         aquZZuMTpytT86gGyfBqYwoP01/afCRYynpDkklt1odwbQEEvKFAe01ti1WTyjk6rDdM
+         T9eombebpG3S1kifWIHRI9hMkH9J02bBIb0QMsF0HYIb5XkXuVsVFvp4rjePn7lYJIle
+         K2gpG0xqW+I4I5KFfPp2dAu3IpJnKnsmFzhdgI2MZA7WQEftIn7rXvZLZ3sCaKjGiekt
+         s/lQ==
+X-Gm-Message-State: APjAAAWKbM0tX2vkswHdVA90VTrtX5XiZFa95Ko56RVnB5Llc6dFYijx
+        LvZE2XvO/lkqIC8pCRtK1Q==
+X-Google-Smtp-Source: APXvYqyhpV3f2IHu4wbrNhH0RD6PhImD4v+i3f6JW3doG56hhB/77vFnVZDx/SMcwhFIB1N+Acceew==
+X-Received: by 2002:a02:ad15:: with SMTP id s21mr89937576jan.47.1564000658461;
+        Wed, 24 Jul 2019 13:37:38 -0700 (PDT)
 Received: from localhost ([64.188.179.254])
-        by smtp.gmail.com with ESMTPSA id c17sm35498762ioo.82.2019.07.24.13.33.37
+        by smtp.gmail.com with ESMTPSA id b8sm38662840ioj.16.2019.07.24.13.37.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Wed, 24 Jul 2019 13:33:38 -0700 (PDT)
-Date:   Wed, 24 Jul 2019 14:33:37 -0600
+        Wed, 24 Jul 2019 13:37:37 -0700 (PDT)
+Date:   Wed, 24 Jul 2019 14:37:37 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Gregory CLEMENT <gregory.clement@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?iso-8859-1?Q?Miqu=E8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH v7 1/6] dt-bindings: ap806: add the cluster clock node in
- the syscon file
-Message-ID: <20190724203337.GA20268@bogus>
-References: <20190710134346.30239-1-gregory.clement@bootlin.com>
- <20190710134346.30239-2-gregory.clement@bootlin.com>
+To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+Cc:     agross@kernel.org, david.brown@linaro.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        jassisinghbrar@gmail.com, ohad@wizery.com,
+        bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        sricharan@codeaurora.org
+Subject: Re: [PATCH 06/12] dt-bindings: clock: qcom: Add reset for WCSSAON
+Message-ID: <20190724203737.GA27783@bogus>
+References: <1562859668-14209-1-git-send-email-gokulsri@codeaurora.org>
+ <1562859668-14209-7-git-send-email-gokulsri@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190710134346.30239-2-gregory.clement@bootlin.com>
+In-Reply-To: <1562859668-14209-7-git-send-email-gokulsri@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 10 Jul 2019 15:43:41 +0200, Gregory CLEMENT wrote:
-> Document the device tree binding for the cluster clock controllers found
-> in the Armada 7K/8K SoCs.
+On Thu, Jul 11, 2019 at 09:11:02PM +0530, Gokul Sriram Palanisamy wrote:
+> Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
 > 
-> Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
 > ---
->  .../arm/marvell/ap806-system-controller.txt   | 31 +++++++++++++++++--
->  1 file changed, 29 insertions(+), 2 deletions(-)
-> 
+>  include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+>  1 file changed, 1 insertion(+)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
