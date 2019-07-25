@@ -2,58 +2,57 @@ Return-Path: <SRS0=7G01=VW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3811C7618B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 14:38:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 208FFC7618B
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 14:41:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D0322BF5
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 14:38:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAA7E21901
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 14:41:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="V1ADhv36"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ury/kvRj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727625AbfGYOi2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 10:38:28 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50482 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728750AbfGYOi2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 10:38:28 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v15so45258121wml.0
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jul 2019 07:38:26 -0700 (PDT)
+        id S1727924AbfGYOlT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 10:41:19 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42038 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726736AbfGYOlT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 10:41:19 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x1so1160652wrr.9
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jul 2019 07:41:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=xKhjaESpwvk6sR4/SITRYpcTnlFG6jIulb5Z7EfG/G8=;
-        b=V1ADhv36o2+cFrscOoSHKnRjQaO9dDNPwd3Ahh6Kl9afPgC4H7hsakbzpEII9ZBu3/
-         LtKUTgwGP2hJW4bT58gqaxPReeLUWvqMGCpXPUyrP2WYF1zGLO+3neKuDwwo+Y3FHCkE
-         Wvtcz3x2U+4xnulIqZltKgwoIt38DxPDPPyDf0XK3AqxmKDqo2E7Y49/iUffPrC/TJsv
-         NYdXwTKkWfoIiM8q8r1eJXEbaHZSwVM7s1gB2mHAPGnEbGDnwE8T9PNUTUikrXHii2T9
-         wA0jAXz+9MA1wlhWFtP21oNGb7/Ahj3vr3lwVYFCVAXVtbenOm+Zdo596KtqjgZ91d61
-         lprg==
+        bh=afaFQV2+gmSxhIryTqlJume5dpsRUmNQp36xGyN5C8c=;
+        b=Ury/kvRj+NiTLXBSM04pVrmFHM/wLxt6u/rgc/s5fuHi96rbi2u3sokiMds9/2p9vy
+         kKNRDRgjlu9jCbJsEO1aD3mvta0FkTmy0YPyqb9rnbwzDSACsGZoWZDIAbwJFo1YBn8P
+         YQ9MQXCXdW87VxyXUUk4wWZtXe6nMrXFSjsH+C73aDNT2pEft53bo1xCeON8XAazNq4V
+         P58r7dQwNCCrs2/F6/1zD7ggMNcElPZT0wmDS4w19b/Z8H8eO9tEI6y17cwcjl7rf9nI
+         COcPtjo0VIxFgwKJyYoHDmEZOMMnWSYcYfXnZAnhiLIpxVEzxBulGfurwIC1vTS2nNJ0
+         jjDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=xKhjaESpwvk6sR4/SITRYpcTnlFG6jIulb5Z7EfG/G8=;
-        b=goHJnaMBvTScYt9jaMLKNn39cAv3lOp4nCPfJTB4roMaIKG4cs/nHpWkMrKNx5sKqo
-         7x0KKJuQtjM1KRUvDi7turnXwqBRTEfjC1reNNnsFFvKLoK862NYe5Jb7KRqOynFYIBK
-         DPE812uutXwLDeE1dfqB3ZVQSNTRpcqhv1FUciNpA96N160bmwVPv2mmL3XG5CmoIjf6
-         3W662Cgd7eS94ithcFDMiYQCps4MdIavwkH9aZONSsl0aDumwDWLPEaIVWsPuugVSJCM
-         Bfucvqb9JJ2zbx9ODkjfy2inD+uIKOta+SMTszeqkUxzg3O8if+dyJjxNZ6LL5u6mlwo
-         FKZg==
-X-Gm-Message-State: APjAAAX3jtk8ZuQSs9HmHVV//1PBCdJpjt9dnr+4QbkAmZ7p+gO8+BIi
-        cq+beF5RzOnAVdkWHOb2c3Gx0g==
-X-Google-Smtp-Source: APXvYqxUa4coqzdXQVeu4+Cob/EMTrXyHltG48aeyxm8e5yNgpQ4cUf2+pfTE9+Acv3S/pIJ6kzOxA==
-X-Received: by 2002:a1c:9e4d:: with SMTP id h74mr84250838wme.9.1564065506038;
-        Thu, 25 Jul 2019 07:38:26 -0700 (PDT)
+        bh=afaFQV2+gmSxhIryTqlJume5dpsRUmNQp36xGyN5C8c=;
+        b=qhNkUzJu7CIEe1JUW1g3+LqcPASen5rd3C8WlvSSFGSp+qQrw3/QEwcc2IDIvoeXoz
+         rR2gQ9vs5wvYnRFPtxmjITxCINyl3Y1w+9CaDdNo8YJm38vbS6xWRiDbeKZPX2+UKJ8e
+         3uWpxLNzG3aZTijj1rTYXX+tl8MnZxE2iatr0vypaAs9RYZwvz3vkFc+RZC5XTnMSuu8
+         d4He0rRQ5tWqEMLLoUX0QeLNIb3+6g6K/x2ZRqRTNjV8HhDpMRGaEHWQRcEJOq1JfMqV
+         5Ltt1XiPQxbh89H60Ejxo8VzGZXfaqt9KD3IHH6bzG/LSXjvdoZym757UBD6aYB75PQI
+         RrFg==
+X-Gm-Message-State: APjAAAV5nvaJdv+xsXy2SEKj1nnMiN/9qzq/9s6qVexD/BaMviyBzme+
+        wb39hliBgoA1xE2lWh5ddypDWw==
+X-Google-Smtp-Source: APXvYqy2GHFBySWKMfAzGAvRpQ7QBGKW3FV/iX32ZBFt+sohr5Tc9Rcu6r1RKs+nXquFhZPtzZjVWg==
+X-Received: by 2002:adf:afe7:: with SMTP id y39mr92710271wrd.350.1564065677169;
+        Thu, 25 Jul 2019 07:41:17 -0700 (PDT)
 Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id z1sm51923870wrv.90.2019.07.25.07.38.25
+        by smtp.gmail.com with ESMTPSA id a2sm50055474wmj.9.2019.07.25.07.41.16
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 07:38:25 -0700 (PDT)
+        Thu, 25 Jul 2019 07:41:16 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Alexandre Mergnat <amergnat@baylibre.com>
 Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
@@ -62,11 +61,11 @@ Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
         baylibre-upstreaming@groups.io,
         Alexandre Mergnat <amergnat@baylibre.com>
-Subject: Re: [PATCH] clk: meson: axg-audio: migrate to the new parent description method
-In-Reply-To: <20190722094954.14040-1-amergnat@baylibre.com>
-References: <20190722094954.14040-1-amergnat@baylibre.com>
-Date:   Thu, 25 Jul 2019 16:38:24 +0200
-Message-ID: <1jd0hyxjq7.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 2/4] clk: meson: gxbb-aoclk: migrate to the new parent description method
+In-Reply-To: <20190722095053.14104-3-amergnat@baylibre.com>
+References: <20190722095053.14104-1-amergnat@baylibre.com> <20190722095053.14104-3-amergnat@baylibre.com>
+Date:   Thu, 25 Jul 2019 16:41:15 +0200
+Message-ID: <1ja7d2xjlg.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -74,37 +73,22 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 22 Jul 2019 at 11:49, Alexandre Mergnat <amergnat@baylibre.com> wrote:
+On Mon 22 Jul 2019 at 11:50, Alexandre Mergnat <amergnat@baylibre.com> wrote:
 
-> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-> index 8028ff6f6610..4253a466eae8 100644
-> --- a/drivers/clk/meson/axg-audio.c
-> +++ b/drivers/clk/meson/axg-audio.c
-> @@ -15,7 +15,6 @@
->  #include <linux/slab.h>
->  
->  #include "axg-audio.h"
-> -#include "clk-input.h"
->  #include "clk-regmap.h"
->  #include "clk-phase.h"
->  #include "sclk-div.h"
-> @@ -24,7 +23,7 @@
->  #define AUD_SLV_SCLK_COUNT	10
->  #define AUD_SLV_LRCLK_COUNT	10
->  
-> -#define AUD_GATE(_name, _reg, _bit, _pname, _iflags)			\
-> +#define AUD_GATE(_name, _reg, _bit, _phws, _iflags)			\
->  struct clk_regmap aud_##_name = {					\
->  	.data = &(struct clk_regmap_gate_data){				\
->  		.offset = (_reg),					\
-> @@ -33,13 +32,13 @@ struct clk_regmap aud_##_name = {					\
->  	.hw.init = &(struct clk_init_data) {				\
->  		.name = "aud_"#_name,					\
->  		.ops = &clk_regmap_gate_ops,				\
-> -		.parent_names = (const char *[]){ _pname },		\
-> +		.parent_hws = (const struct clk_hw *[]) { &_phws.hw }, \
+> @@ -208,8 +216,10 @@ static struct clk_regmap ao_cts_cec = {
+>  		 * Until CCF gets fixed, adding this fake parent that won't
+>  		 * ever be registered should work around the problem
+>  		 */
+> -		.parent_names = (const char *[]){ "fixme",
+> -						  "ao_cts_rtc_oscin" },
+> +		.parent_data = (const struct clk_parent_data []) {
+> +			{ .fw_name = "fixme", },
 
-Those '\' are aligned with tabs. please check, you have aligned a few
-with spaces instead
+Hum, that would work I suppose but I'd prefer if used .name for this
+work around. Remember to throw an '.index = -1' as well
 
->  		.num_parents = 1,					\
+> +			{ .hw = &ao_cts_rtc_oscin.hw },
+> +		},
+>  		.num_parents = 2,
+>  		.flags = CLK_SET_RATE_PARENT,
+>  	},
