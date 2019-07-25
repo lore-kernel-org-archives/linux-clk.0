@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5748EC76194
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 16:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEC1C76194
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 16:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D11921951
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 16:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 734C62238C
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 16:43:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nvW5oTHj"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Is62LuGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390789AbfGYQm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 12:42:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33897 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390741AbfGYQm4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 12:42:56 -0400
-Received: by mail-wr1-f67.google.com with SMTP id 31so51541231wrm.1
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jul 2019 09:42:54 -0700 (PDT)
+        id S2390878AbfGYQnI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 12:43:08 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:39197 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390744AbfGYQnH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 12:43:07 -0400
+Received: by mail-wm1-f68.google.com with SMTP id u25so34975754wmc.4
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jul 2019 09:43:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cIceYeZmXLnDB8KmyjeQxrFIl+tdDqzy/AgzjLz1uyc=;
-        b=nvW5oTHj4gQvGHo7lcJTswmWZ60wi/xYBHu7DlVCK3SgRT9tDHv3cwNDKYa1vMRMJ2
-         wjRTerLSX8BtgER/mmzHTwkN99x+hXleNLtcmj5lahZqo+eJPKQ/JUXizGP8keAVr55f
-         IkhsJjfKA85qwvXy8beI/7YsfkpurbaHSJBglWN3ykH4v4khuYs897QILrSOJVkugP3x
-         oObQA3uwYz+KXwjghszb9SuyMOJJGoIDqiXjPOdv4KLMS55aA0LiZfughhBuEdRzB1lc
-         1V9TfEMwzVsamOPwSovxsw3dfs2wS6If5Nwj0IdhlDe2O/u9+FJZsMHAjVSWdv1kR+hk
-         waiA==
+        bh=mMLWTpRyQOIhO2zBKiwG8296jQFE+BtYZV6zzvxEPl0=;
+        b=Is62LuGc0BmnvvmbpBU+xVb6noxFfGphUlBMiZveEOXCmAKXoPdXIPTSEssvRQ34s1
+         QzU5bh9h8J55jfMBytlBPFy6Iqc6MwejQtZ+qDEsWEVgrhjwyruTWyYleHwZ4anoiAPq
+         KzhnbK4frlZITLBbh5jK7NjEi8keSvszPpxuSh6l82rNgg3nDQqDFaJGWdADwEOIGM4Y
+         rV4zRxC6aokyakx2qnP2Cii0goc72HfCbc8CDJRLwFRIplm0FypPvRidpk/HZw/w32wP
+         HECv44Cs94gzVylVj3/0vTt7HgUnAyh4mkYHAdIdiVoerE3cCj+JP7jFNp52DVD0oyWU
+         6t4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=cIceYeZmXLnDB8KmyjeQxrFIl+tdDqzy/AgzjLz1uyc=;
-        b=Ikp0X/aIF+1ZXtGBm++w+VmKltGGE6LG+zxNLnS2aWC38xhnCyUheLjkGe6c9rckhd
-         N7ghB8Dvi/mXfpyIihmQdnJ7rmmhGLGWUuJzAxu0Fq7pfLJ5BsAAIcfeu0oQUQ9Ujv32
-         c2VdB64fHI3KALV3lzkthtlp2wIb9rKtjFmBby3reG7ZVt2BI6/WUu4+DkwXW39yJ6yU
-         woMSD9IapCdZOi2vuxuLBEaDuFzxppSdltVlgpQgxyUZp9lMAk2sovf4SmDSzZB6R6qZ
-         9VBEYinh2+MHNMAu9viRQ/X8EfIjiC/uVlHKdFbzUMGYpVGI+P2USg/B3HNbdZiKdgvk
-         m2IQ==
-X-Gm-Message-State: APjAAAUCYDQ0QvEMdjYX0Wey1azxU/zTfo7JaApF0N1CJdMfw9u1aVjd
-        6ysCNzTzE/FJvNVtNBjSP5Vukg==
-X-Google-Smtp-Source: APXvYqyQZGlsKFWD/sDLe1hv4n9haHqDBHhVsDzbHoc0AZ36ZoPvsaEYl81aAQ8BA1KiwCsC3cR0RQ==
-X-Received: by 2002:a5d:6a90:: with SMTP id s16mr41077814wru.288.1564072973815;
-        Thu, 25 Jul 2019 09:42:53 -0700 (PDT)
+        bh=mMLWTpRyQOIhO2zBKiwG8296jQFE+BtYZV6zzvxEPl0=;
+        b=rZJ98h/utCceuM/ug2rPvf/oZeOUJI6D3WQtH+rUun97A6v0Bd8oxG9ADfbg7wX/lK
+         99DB1zDObeTSl3cLqxLwYsrDTQSfWhy4Aqc0LIBN5PDYK89Gv5smEaGUmMMvIiq5ExJm
+         a9tU4uS3G/QMntwSsYKNwm0CKfCEthYc3utfJ/15wZayaN/3fHMfMnRYLUAanU0C/2XM
+         oFuByX/WKWCHpZOiXbOyX8rnCTUr4jMKRf52B94ld5jI5C/PXd0nDEkt1JNiJUzTAYIW
+         PKtUA6iLUVYewNg7e7R1D+oX5g3KW2Avi+sAEKL+yQ+Gg6JxNxgcEG/YTj3VtjzeX/B4
+         lhZw==
+X-Gm-Message-State: APjAAAXtVdRp7shenAGJt+2hQ/CMWddVEdx/QIbVjXVcFbfODyoRXdhh
+        ctcqLDtAhEV9YLv2tiTrW1uhLw==
+X-Google-Smtp-Source: APXvYqy/hW7JIa1298EywLJf5h0MYenaQL09q4MVqbon6wyDqqejH9zoPdH9EExeziayAgzU00wSDw==
+X-Received: by 2002:a1c:b604:: with SMTP id g4mr82333298wmf.111.1564072985966;
+        Thu, 25 Jul 2019 09:43:05 -0700 (PDT)
 Received: from pop-os.baylibre.local ([2a01:e35:8ad2:2cb0:2dbb:fac9:5ec0:e3ef])
-        by smtp.googlemail.com with ESMTPSA id 91sm103031727wrp.3.2019.07.25.09.42.52
+        by smtp.googlemail.com with ESMTPSA id 91sm103031727wrp.3.2019.07.25.09.43.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 25 Jul 2019 09:42:53 -0700 (PDT)
+        Thu, 25 Jul 2019 09:43:05 -0700 (PDT)
 From:   Alexandre Mergnat <amergnat@baylibre.com>
 To:     jbrunet@baylibre.com
 Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
@@ -61,9 +61,9 @@ Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
         linux-arm-kernel@lists.infradead.org,
         baylibre-upstreaming@groups.io,
         Alexandre Mergnat <amergnat@baylibre.com>
-Subject: [PATCH v2 1/8] clk: meson: g12a: move clock declaration to dependency order
-Date:   Thu, 25 Jul 2019 18:42:31 +0200
-Message-Id: <20190725164238.27991-2-amergnat@baylibre.com>
+Subject: [PATCH v2 7/8] clk: meson: remove ee input bypass clocks
+Date:   Thu, 25 Jul 2019 18:42:37 +0200
+Message-Id: <20190725164238.27991-8-amergnat@baylibre.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190725164238.27991-1-amergnat@baylibre.com>
 References: <20190725164238.27991-1-amergnat@baylibre.com>
@@ -72,334 +72,82 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This clock controller use the string comparison method to describe parent
-relation between the clocks.
+During probe, bypass clocks (i.e. ee-in-xtal) are made from device-tree
+inputs to provide input clocks which can be access through global name.
+The cons of this method are the duplicated clocks, means more string
+comparison.
 
-In order to migrate to clk_hw pointers, it is easier if the parent is
-declared before being used. This patch just move the declaration to
-facilitate the review of migration to the parent description method.
+Specify parent directly with device-tree clock name.
+
+Remove the bypass clock registration from the ee probe function.
 
 Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
 ---
- drivers/clk/meson/g12a.c | 270 +++++++++++++++++++--------------------
- 1 file changed, 135 insertions(+), 135 deletions(-)
+ drivers/clk/meson/Kconfig       |  1 -
+ drivers/clk/meson/meson-eeclk.c | 10 ----------
+ drivers/clk/meson/meson-eeclk.h |  2 --
+ 3 files changed, 13 deletions(-)
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 7bc5566b66f7..cbd56b2e05d0 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -257,6 +257,64 @@ static struct clk_fixed_factor g12b_sys1_pll_div16 = {
- 	},
- };
+diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+index 178ee72ba4bc..72a37572501f 100644
+--- a/drivers/clk/meson/Kconfig
++++ b/drivers/clk/meson/Kconfig
+@@ -38,7 +38,6 @@ config COMMON_CLK_MESON_AO_CLKC
+ config COMMON_CLK_MESON_EE_CLKC
+ 	tristate
+ 	select COMMON_CLK_MESON_REGMAP
+-	select COMMON_CLK_MESON_INPUT
  
-+static struct clk_fixed_factor g12a_fclk_div2_div = {
-+	.mult = 1,
-+	.div = 2,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div2_div",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "fixed_pll" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_fclk_div2 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_FIX_PLL_CNTL1,
-+		.bit_idx = 24,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div2",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "fclk_div2_div" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_fixed_factor g12a_fclk_div3_div = {
-+	.mult = 1,
-+	.div = 3,
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div3_div",
-+		.ops = &clk_fixed_factor_ops,
-+		.parent_names = (const char *[]){ "fixed_pll" },
-+		.num_parents = 1,
-+	},
-+};
-+
-+static struct clk_regmap g12a_fclk_div3 = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_FIX_PLL_CNTL1,
-+		.bit_idx = 20,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "fclk_div3",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "fclk_div3_div" },
-+		.num_parents = 1,
-+		/*
-+		 * This clock is used by the resident firmware and is required
-+		 * by the platform to operate correctly.
-+		 * Until the following condition are met, we need this clock to
-+		 * be marked as critical:
-+		 * a) Mark the clock used by a firmware resource, if possible
-+		 * b) CCF has a clock hand-off mechanism to make the sure the
-+		 *    clock stays on until the proper driver comes along
-+		 */
-+		.flags = CLK_IS_CRITICAL,
-+	},
-+};
-+
- /* Datasheet names this field as "premux0" */
- static struct clk_regmap g12a_cpu_clk_premux0 = {
- 	.data = &(struct clk_regmap_mux_data){
-@@ -274,6 +332,23 @@ static struct clk_regmap g12a_cpu_clk_premux0 = {
- 	},
- };
+ config COMMON_CLK_MESON8B
+ 	bool
+diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+index 6ba2094be257..a7cb1e7aedc4 100644
+--- a/drivers/clk/meson/meson-eeclk.c
++++ b/drivers/clk/meson/meson-eeclk.c
+@@ -10,7 +10,6 @@
+ #include <linux/mfd/syscon.h>
+ #include <linux/regmap.h>
  
-+/* Datasheet names this field as "premux1" */
-+static struct clk_regmap g12a_cpu_clk_premux1 = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_SYS_CPU_CLK_CNTL0,
-+		.mask = 0x3,
-+		.shift = 16,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "cpu_clk_dyn1_sel",
-+		.ops = &clk_regmap_mux_ro_ops,
-+		.parent_names = (const char *[]){ IN_PREFIX "xtal",
-+						  "fclk_div2",
-+						  "fclk_div3" },
-+		.num_parents = 3,
-+	},
-+};
-+
- /* Datasheet names this field as "mux0_divn_tcnt" */
- static struct clk_regmap g12a_cpu_clk_mux0_div = {
- 	.data = &(struct clk_regmap_div_data){
-@@ -305,23 +380,6 @@ static struct clk_regmap g12a_cpu_clk_postmux0 = {
- 	},
- };
+-#include "clk-input.h"
+ #include "clk-regmap.h"
+ #include "meson-eeclk.h"
  
--/* Datasheet names this field as "premux1" */
--static struct clk_regmap g12a_cpu_clk_premux1 = {
--	.data = &(struct clk_regmap_mux_data){
--		.offset = HHI_SYS_CPU_CLK_CNTL0,
--		.mask = 0x3,
--		.shift = 16,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "cpu_clk_dyn1_sel",
--		.ops = &clk_regmap_mux_ro_ops,
--		.parent_names = (const char *[]){ IN_PREFIX "xtal",
--						  "fclk_div2",
--						  "fclk_div3" },
--		.num_parents = 3,
--	},
--};
--
- /* Datasheet names this field as "Mux1_divn_tcnt" */
- static struct clk_regmap g12a_cpu_clk_mux1_div = {
- 	.data = &(struct clk_regmap_div_data){
-@@ -1305,64 +1363,6 @@ static struct clk_regmap g12a_hdmi_pll = {
- 	},
- };
+@@ -18,7 +17,6 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ {
+ 	const struct meson_eeclkc_data *data;
+ 	struct device *dev = &pdev->dev;
+-	struct clk_hw *input;
+ 	struct regmap *map;
+ 	int ret, i;
  
--static struct clk_fixed_factor g12a_fclk_div2_div = {
--	.mult = 1,
--	.div = 2,
--	.hw.init = &(struct clk_init_data){
--		.name = "fclk_div2_div",
--		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
--		.num_parents = 1,
--	},
--};
--
--static struct clk_regmap g12a_fclk_div2 = {
--	.data = &(struct clk_regmap_gate_data){
--		.offset = HHI_FIX_PLL_CNTL1,
--		.bit_idx = 24,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "fclk_div2",
--		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div2_div" },
--		.num_parents = 1,
--	},
--};
--
--static struct clk_fixed_factor g12a_fclk_div3_div = {
--	.mult = 1,
--	.div = 3,
--	.hw.init = &(struct clk_init_data){
--		.name = "fclk_div3_div",
--		.ops = &clk_fixed_factor_ops,
--		.parent_names = (const char *[]){ "fixed_pll" },
--		.num_parents = 1,
--	},
--};
--
--static struct clk_regmap g12a_fclk_div3 = {
--	.data = &(struct clk_regmap_gate_data){
--		.offset = HHI_FIX_PLL_CNTL1,
--		.bit_idx = 20,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "fclk_div3",
--		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "fclk_div3_div" },
--		.num_parents = 1,
--		/*
--		 * This clock is used by the resident firmware and is required
--		 * by the platform to operate correctly.
--		 * Until the following condition are met, we need this clock to
--		 * be marked as critical:
--		 * a) Mark the clock used by a firmware resource, if possible
--		 * b) CCF has a clock hand-off mechanism to make the sure the
--		 *    clock stays on until the proper driver comes along
--		 */
--		.flags = CLK_IS_CRITICAL,
--	},
--};
--
- static struct clk_fixed_factor g12a_fclk_div4_div = {
- 	.mult = 1,
- 	.div = 4,
-@@ -1900,6 +1900,66 @@ static struct clk_regmap g12a_sd_emmc_c_clk0 = {
- 	},
- };
+@@ -37,14 +35,6 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+ 	if (data->init_count)
+ 		regmap_multi_reg_write(map, data->init_regs, data->init_count);
  
-+/* Video Clocks */
-+
-+static struct clk_regmap g12a_vid_pll_div = {
-+	.data = &(struct meson_vid_pll_div_data){
-+		.val = {
-+			.reg_off = HHI_VID_PLL_CLK_DIV,
-+			.shift   = 0,
-+			.width   = 15,
-+		},
-+		.sel = {
-+			.reg_off = HHI_VID_PLL_CLK_DIV,
-+			.shift   = 16,
-+			.width   = 2,
-+		},
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vid_pll_div",
-+		.ops = &meson_vid_pll_div_ro_ops,
-+		.parent_names = (const char *[]){ "hdmi_pll" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-+	},
-+};
-+
-+static const char * const g12a_vid_pll_parent_names[] = { "vid_pll_div",
-+							  "hdmi_pll" };
-+
-+static struct clk_regmap g12a_vid_pll_sel = {
-+	.data = &(struct clk_regmap_mux_data){
-+		.offset = HHI_VID_PLL_CLK_DIV,
-+		.mask = 0x1,
-+		.shift = 18,
-+	},
-+	.hw.init = &(struct clk_init_data){
-+		.name = "vid_pll_sel",
-+		.ops = &clk_regmap_mux_ops,
-+		/*
-+		 * bit 18 selects from 2 possible parents:
-+		 * vid_pll_div or hdmi_pll
-+		 */
-+		.parent_names = g12a_vid_pll_parent_names,
-+		.num_parents = ARRAY_SIZE(g12a_vid_pll_parent_names),
-+		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
-+	},
-+};
-+
-+static struct clk_regmap g12a_vid_pll = {
-+	.data = &(struct clk_regmap_gate_data){
-+		.offset = HHI_VID_PLL_CLK_DIV,
-+		.bit_idx = 19,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "vid_pll",
-+		.ops = &clk_regmap_gate_ops,
-+		.parent_names = (const char *[]){ "vid_pll_sel" },
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
-+	},
-+};
-+
- /* VPU Clock */
+-	input = meson_clk_hw_register_input(dev, "xtal", IN_PREFIX "xtal", 0);
+-	if (IS_ERR(input)) {
+-		ret = PTR_ERR(input);
+-		if (ret != -EPROBE_DEFER)
+-			dev_err(dev, "failed to get input clock");
+-		return ret;
+-	}
+-
+ 	/* Populate regmap for the regmap backed clocks */
+ 	for (i = 0; i < data->regmap_clk_num; i++)
+ 		data->regmap_clks[i]->map = map;
+diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+index 9ab5d6fa7ccb..77316207bde1 100644
+--- a/drivers/clk/meson/meson-eeclk.h
++++ b/drivers/clk/meson/meson-eeclk.h
+@@ -10,8 +10,6 @@
+ #include <linux/clk-provider.h>
+ #include "clk-regmap.h"
  
- static const char * const g12a_vpu_parent_names[] = {
-@@ -2287,66 +2347,6 @@ static struct clk_regmap g12a_vapb = {
- 	},
- };
+-#define IN_PREFIX "ee-in-"
+-
+ struct platform_device;
  
--/* Video Clocks */
--
--static struct clk_regmap g12a_vid_pll_div = {
--	.data = &(struct meson_vid_pll_div_data){
--		.val = {
--			.reg_off = HHI_VID_PLL_CLK_DIV,
--			.shift   = 0,
--			.width   = 15,
--		},
--		.sel = {
--			.reg_off = HHI_VID_PLL_CLK_DIV,
--			.shift   = 16,
--			.width   = 2,
--		},
--	},
--	.hw.init = &(struct clk_init_data) {
--		.name = "vid_pll_div",
--		.ops = &meson_vid_pll_div_ro_ops,
--		.parent_names = (const char *[]){ "hdmi_pll" },
--		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
--	},
--};
--
--static const char * const g12a_vid_pll_parent_names[] = { "vid_pll_div",
--							  "hdmi_pll" };
--
--static struct clk_regmap g12a_vid_pll_sel = {
--	.data = &(struct clk_regmap_mux_data){
--		.offset = HHI_VID_PLL_CLK_DIV,
--		.mask = 0x1,
--		.shift = 18,
--	},
--	.hw.init = &(struct clk_init_data){
--		.name = "vid_pll_sel",
--		.ops = &clk_regmap_mux_ops,
--		/*
--		 * bit 18 selects from 2 possible parents:
--		 * vid_pll_div or hdmi_pll
--		 */
--		.parent_names = g12a_vid_pll_parent_names,
--		.num_parents = ARRAY_SIZE(g12a_vid_pll_parent_names),
--		.flags = CLK_SET_RATE_NO_REPARENT | CLK_GET_RATE_NOCACHE,
--	},
--};
--
--static struct clk_regmap g12a_vid_pll = {
--	.data = &(struct clk_regmap_gate_data){
--		.offset = HHI_VID_PLL_CLK_DIV,
--		.bit_idx = 19,
--	},
--	.hw.init = &(struct clk_init_data) {
--		.name = "vid_pll",
--		.ops = &clk_regmap_gate_ops,
--		.parent_names = (const char *[]){ "vid_pll_sel" },
--		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
--	},
--};
--
- static const char * const g12a_vclk_parent_names[] = {
- 	"vid_pll", "gp0_pll", "hifi_pll", "mpll1", "fclk_div3", "fclk_div4",
- 	"fclk_div5", "fclk_div7"
+ struct meson_eeclkc_data {
 -- 
 2.17.1
 
