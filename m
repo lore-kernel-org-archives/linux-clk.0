@@ -2,90 +2,89 @@ Return-Path: <SRS0=7G01=VW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D33C7618B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 08:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B78FC7618B
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 09:50:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 881A522BEF
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 08:21:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564042908;
-	bh=+kIc8WrpgZ5JjOndGs0FKKn9vlsF9xtpjf3kfBTYGTk=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=RN/+CVzCR/OLS7tclLlk2O38R+FpbEvN66Pr6fxg2nmlfWi6JBaY0s5+8UO9LJMqv
-	 P2ic4/fP6P++4RkfkzCQSpl5SJTX7e6bNEy/5p2ZMqhvQ0+XNJXKZx2We7bmakn5NN
-	 YxcbK8egJah8ZL5TU8Y3uSHfQjtlMwyuljRxpnUI=
+	by mail.kernel.org (Postfix) with ESMTP id 4C47422C7C
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 09:50:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389422AbfGYIVo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 04:21:44 -0400
-Received: from foss.arm.com ([217.140.110.172]:53574 "EHLO foss.arm.com"
+        id S2387744AbfGYJu6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 05:50:58 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:57110 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389405AbfGYIVo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Jul 2019 04:21:44 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B8A8344;
-        Thu, 25 Jul 2019 01:21:43 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D2FEB3F694;
-        Thu, 25 Jul 2019 01:21:40 -0700 (PDT)
-Subject: Re: [PATCH v15 06/13] irqchip: Add irq-ingenic-tcu driver
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Lee Jones <lee.jones@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1725808AbfGYJu5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Jul 2019 05:50:57 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B2FF20066C;
+        Thu, 25 Jul 2019 11:50:56 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3CBE9200667;
+        Thu, 25 Jul 2019 11:50:56 +0200 (CEST)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 6BD3E205E8;
+        Thu, 25 Jul 2019 11:50:55 +0200 (CEST)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+Cc:     Li Jun <jun.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org, od@zcrc.me,
-        Mathieu Malaterre <malat@debian.org>,
-        Artur Rojek <contact@artur-rojek.eu>
-References: <20190724171615.20774-1-paul@crapouillou.net>
- <20190724171615.20774-7-paul@crapouillou.net>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <2872522f-c172-849d-81d4-0e573ff52ea8@kernel.org>
-Date:   Thu, 25 Jul 2019 09:21:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <20190724171615.20774-7-paul@crapouillou.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Michael Turquette <mturquette@baylibre.com>,
+        Jacky Bai <ping.bai@nxp.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] arm64: dts: imx8mm: Fix boot hang at clk init
+Date:   Thu, 25 Jul 2019 12:50:53 +0300
+Message-Id: <718c781b77081d6974fd91d5dff7b0f8737757b0.1564048197.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/07/2019 18:16, Paul Cercueil wrote:
-> This driver handles the interrupt controller built in the Timer/Counter
-> Unit (TCU) of the JZ47xx SoCs from Ingenic.
-> 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> Tested-by: Mathieu Malaterre <malat@debian.org>
-> Tested-by: Artur Rojek <contact@artur-rojek.eu>
-> Reviewed-by: Thomas Gleixner <tglx@linutronix.de>
+The assigned-clock-rates property is incorrect (4 elements while
+assigned-clocks has length 5) and boot hangs while assigning some
+unexpected rates.
 
-Acked-by: Marc Zyngier <maz@kernel.org>
+Fix by inserting another <400000000>, the intention is to assign both
+IMX8MM_CLK_AUDIO_AHB and IMX8MM_CLK_IPG_AUDIO_ROOT 400mhz.
 
-Given the various dependencies, I assume the series will get routed via
-the MIPS tree.
+Fixes: df1703896a17 ("arm64: dts: imx8mm: Init rates and parents configs for clocks")
 
-Thanks,
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-	M.
+---
+Changes since v1:
+* Insert and 400mhz instead of <0>
+Link to v1: https://patchwork.kernel.org/patch/11057515/
+
+Should probably be squashed into df1703896a17
+
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+index c9a7c0054c5c..7bbdcebc6b57 100644
+--- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
++++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+@@ -461,10 +461,11 @@
+ 						<&clk IMX8MM_SYS_PLL3>,
+ 						<&clk IMX8MM_VIDEO_PLL1>;
+ 				assigned-clock-parents = <&clk IMX8MM_SYS_PLL3_OUT>,
+ 							 <&clk IMX8MM_SYS_PLL1_800M>;
+ 				assigned-clock-rates = <0>,
++							<400000000>,
+ 							<400000000>,
+ 							<750000000>,
+ 							<594000000>;
+ 			};
+ 
 -- 
-Jazz is not dead, it just smells funny...
+2.17.1
+
