@@ -2,67 +2,71 @@ Return-Path: <SRS0=7G01=VW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B68E7C7618B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 13:53:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3811C7618B
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 14:38:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89CDF22C7B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 13:53:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3D0322BF5
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 14:38:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IuAAVnx3"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="V1ADhv36"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403971AbfGYNxp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 09:53:45 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52541 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2403967AbfGYNxo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 09:53:44 -0400
-Received: by mail-wm1-f65.google.com with SMTP id s3so45079450wms.2
-        for <linux-clk@vger.kernel.org>; Thu, 25 Jul 2019 06:53:43 -0700 (PDT)
+        id S1727625AbfGYOi2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 10:38:28 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50482 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728750AbfGYOi2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 25 Jul 2019 10:38:28 -0400
+Received: by mail-wm1-f67.google.com with SMTP id v15so45258121wml.0
+        for <linux-clk@vger.kernel.org>; Thu, 25 Jul 2019 07:38:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=/Kj7OdNc4vKrUG2qrwcQ6Gqjaaduh2n9Gif9XQMH8UI=;
-        b=IuAAVnx3OcBDhT6g4leu/5sG9eZM1cBIoX6wt1TOSKISjyQl+einalGKU9vDYedC+H
-         NHramEzlVMlvtdBrsFujHMulCkCxYkO4D6CeRj/thr/86rTSd9wthMwWDDzKs1oo02lD
-         6e1DzNHM5Sx0EbBmczfe4kELw1Nq1At1gaMYNaTNJAqi6TQYi2wUdBgRvPnIaWzVd7bs
-         tWHgSDDAxjtcpAWOvcJi1E7UncGTEt+3/WKiQLcedKCJ16B73XkkxyZiYPyGiTHbVxn1
-         kxU5hIOdKyY9AdJXjfQR++0ebLNEqJyjFf/Qbm6E6+RlqPSZNpSkL7rzHX2JncW5dOBq
-         5iVQ==
+        bh=xKhjaESpwvk6sR4/SITRYpcTnlFG6jIulb5Z7EfG/G8=;
+        b=V1ADhv36o2+cFrscOoSHKnRjQaO9dDNPwd3Ahh6Kl9afPgC4H7hsakbzpEII9ZBu3/
+         LtKUTgwGP2hJW4bT58gqaxPReeLUWvqMGCpXPUyrP2WYF1zGLO+3neKuDwwo+Y3FHCkE
+         Wvtcz3x2U+4xnulIqZltKgwoIt38DxPDPPyDf0XK3AqxmKDqo2E7Y49/iUffPrC/TJsv
+         NYdXwTKkWfoIiM8q8r1eJXEbaHZSwVM7s1gB2mHAPGnEbGDnwE8T9PNUTUikrXHii2T9
+         wA0jAXz+9MA1wlhWFtP21oNGb7/Ahj3vr3lwVYFCVAXVtbenOm+Zdo596KtqjgZ91d61
+         lprg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=/Kj7OdNc4vKrUG2qrwcQ6Gqjaaduh2n9Gif9XQMH8UI=;
-        b=JoSy7X+5Ga15Q1fIHMYv4aps2/BRedxD1/nYVHrsOnJ7pfYq/xlSs30FJg7gHZK1bH
-         dx3Qfsjqc8i1HLy37QezYQDY0qV18zXnk2EsYMyIOLqCevCo+uHSTzv5JGcEEoMBdd6M
-         vkM8UsMhu/ok0qjPWemvGKmvCSR2A0rZuMOLCS+tKvfKdefrmtrpKeEGSQkyH9yx8kKQ
-         W/H1AzXIv2PZ8mfnni43jZidSncZUMILCMOv4d3YH1FKW0dKwWXsai4m41YbxjGq8CzO
-         68stmIRP8iG8y1oYeDtrUqLZT1g7oH+e3N4kqk7LpHFqaGMnaMR+36+NFByLmZdhnjTt
-         WJCQ==
-X-Gm-Message-State: APjAAAVcbP2B9PumoQoN5Z71on9pDVgEh6noZ9Ozw7C+sZlpwH5W222X
-        WBQ9mA7DcqIKiG5n3O1BbHsl3w==
-X-Google-Smtp-Source: APXvYqwct1CkXuw5g8BXaKHLcZz60COi0xZJyXahWLQI83KPuF5bOK5xMjTM5XOreuA3w1Q6MFP43g==
-X-Received: by 2002:a1c:f918:: with SMTP id x24mr76950829wmh.132.1564062822618;
-        Thu, 25 Jul 2019 06:53:42 -0700 (PDT)
+        bh=xKhjaESpwvk6sR4/SITRYpcTnlFG6jIulb5Z7EfG/G8=;
+        b=goHJnaMBvTScYt9jaMLKNn39cAv3lOp4nCPfJTB4roMaIKG4cs/nHpWkMrKNx5sKqo
+         7x0KKJuQtjM1KRUvDi7turnXwqBRTEfjC1reNNnsFFvKLoK862NYe5Jb7KRqOynFYIBK
+         DPE812uutXwLDeE1dfqB3ZVQSNTRpcqhv1FUciNpA96N160bmwVPv2mmL3XG5CmoIjf6
+         3W662Cgd7eS94ithcFDMiYQCps4MdIavwkH9aZONSsl0aDumwDWLPEaIVWsPuugVSJCM
+         Bfucvqb9JJ2zbx9ODkjfy2inD+uIKOta+SMTszeqkUxzg3O8if+dyJjxNZ6LL5u6mlwo
+         FKZg==
+X-Gm-Message-State: APjAAAX3jtk8ZuQSs9HmHVV//1PBCdJpjt9dnr+4QbkAmZ7p+gO8+BIi
+        cq+beF5RzOnAVdkWHOb2c3Gx0g==
+X-Google-Smtp-Source: APXvYqxUa4coqzdXQVeu4+Cob/EMTrXyHltG48aeyxm8e5yNgpQ4cUf2+pfTE9+Acv3S/pIJ6kzOxA==
+X-Received: by 2002:a1c:9e4d:: with SMTP id h74mr84250838wme.9.1564065506038;
+        Thu, 25 Jul 2019 07:38:26 -0700 (PDT)
 Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id c4sm39496984wrt.86.2019.07.25.06.53.41
+        by smtp.gmail.com with ESMTPSA id z1sm51923870wrv.90.2019.07.25.07.38.25
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 06:53:41 -0700 (PDT)
+        Thu, 25 Jul 2019 07:38:25 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Alexandre Mergnat <amergnat@baylibre.com>, narmstrong@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org, baylibre-upstreaming@groups.io,
+To:     Alexandre Mergnat <amergnat@baylibre.com>
+Cc:     khilman@baylibre.com, sboyd@kernel.org, narmstrong@baylibre.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org,
+        baylibre-upstreaming@groups.io,
         Alexandre Mergnat <amergnat@baylibre.com>
-Subject: Re: [PATCH] clk: meson: g12a: fix hifi typo in mali parent_names
-In-Reply-To: <20190524091532.28973-1-amergnat@baylibre.com>
-References: <20190524091532.28973-1-amergnat@baylibre.com>
-Date:   Thu, 25 Jul 2019 15:53:41 +0200
-Message-ID: <1jftmuxlsq.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH] clk: meson: axg-audio: migrate to the new parent description method
+In-Reply-To: <20190722094954.14040-1-amergnat@baylibre.com>
+References: <20190722094954.14040-1-amergnat@baylibre.com>
+Date:   Thu, 25 Jul 2019 16:38:24 +0200
+Message-ID: <1jd0hyxjq7.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -70,33 +74,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri 24 May 2019 at 11:15, Alexandre Mergnat <amergnat@baylibre.com> wrote:
+On Mon 22 Jul 2019 at 11:49, Alexandre Mergnat <amergnat@baylibre.com> wrote:
 
-> Replace hihi by hifi in the mali parent_names of the g12a SoC family.
->
-> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Signed-off-by: Alexandre Mergnat <amergnat@baylibre.com>
-
-Missed that one in the last cycle, sorry
-Applied for next
-
-> ---
->  drivers/clk/meson/g12a.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-> index 739f64fdf1e3..e16fe882789e 100644
-> --- a/drivers/clk/meson/g12a.c
-> +++ b/drivers/clk/meson/g12a.c
-> @@ -2369,7 +2369,7 @@ static struct clk_regmap g12a_hdmi = {
->   */
+> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+> index 8028ff6f6610..4253a466eae8 100644
+> --- a/drivers/clk/meson/axg-audio.c
+> +++ b/drivers/clk/meson/axg-audio.c
+> @@ -15,7 +15,6 @@
+>  #include <linux/slab.h>
 >  
->  static const char * const g12a_mali_0_1_parent_names[] = {
-> -	IN_PREFIX "xtal", "gp0_pll", "hihi_pll", "fclk_div2p5",
-> +	IN_PREFIX "xtal", "gp0_pll", "hifi_pll", "fclk_div2p5",
->  	"fclk_div3", "fclk_div4", "fclk_div5", "fclk_div7"
->  };
+>  #include "axg-audio.h"
+> -#include "clk-input.h"
+>  #include "clk-regmap.h"
+>  #include "clk-phase.h"
+>  #include "sclk-div.h"
+> @@ -24,7 +23,7 @@
+>  #define AUD_SLV_SCLK_COUNT	10
+>  #define AUD_SLV_LRCLK_COUNT	10
 >  
-> -- 
-> 2.17.1
+> -#define AUD_GATE(_name, _reg, _bit, _pname, _iflags)			\
+> +#define AUD_GATE(_name, _reg, _bit, _phws, _iflags)			\
+>  struct clk_regmap aud_##_name = {					\
+>  	.data = &(struct clk_regmap_gate_data){				\
+>  		.offset = (_reg),					\
+> @@ -33,13 +32,13 @@ struct clk_regmap aud_##_name = {					\
+>  	.hw.init = &(struct clk_init_data) {				\
+>  		.name = "aud_"#_name,					\
+>  		.ops = &clk_regmap_gate_ops,				\
+> -		.parent_names = (const char *[]){ _pname },		\
+> +		.parent_hws = (const struct clk_hw *[]) { &_phws.hw }, \
+
+Those '\' are aligned with tabs. please check, you have aligned a few
+with spaces instead
+
+>  		.num_parents = 1,					\
