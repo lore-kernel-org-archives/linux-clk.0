@@ -2,72 +2,74 @@ Return-Path: <SRS0=7G01=VW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AA4FC76190
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 19:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEFBFC76190
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 21:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10BE4218EA
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 19:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8DC521951
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 21:06:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564088784;
+	bh=p9mkR+Gdya905GgF0OyxisK0iTc8hQ7GlRutorMJ5pE=;
+	h=In-Reply-To:References:Subject:To:Cc:From:Date:List-ID:From;
+	b=bwN0031DuUx1ppwGmR8/MOvCP/GV5h2VNCiUxndu8c/NnHTDubWU3DvOPWIuN6hCt
+	 jdSy94BAynRsefYry/3JMCPMvgPRM/arJ7QpR2tf77o/ldllvrQNkTHf/Vr39caHa9
+	 Hj1J1jMVr2hnM/X1uPqEk5LPu9p6ZNpY7UX6qvTc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfGYTt5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 15:49:57 -0400
-Received: from gloria.sntech.de ([185.11.138.130]:39252 "EHLO gloria.sntech.de"
+        id S1726585AbfGYVGU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 17:06:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfGYTt5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Jul 2019 15:49:57 -0400
-Received: from d57e23da.static.ziggozakelijk.nl ([213.126.35.218] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1hqjkO-0001oe-Bz; Thu, 25 Jul 2019 21:49:52 +0200
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Nathan Huckleberry <nhuck@google.com>, mturquette@baylibre.com,
-        sboyd@kernel.org, andy.yan@rock-chips.com,
-        zhangqing@rock-chips.com, linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-rockchip@lists.infradead.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        clang-built-linux <clang-built-linux@googlegroups.com>
-Subject: Re: [PATCH] clk: rockchip: Fix -Wunused-const-variable
-Date:   Thu, 25 Jul 2019 21:49:51 +0200
-Message-ID: <1978058.CBpQlN27Fr@phil>
-In-Reply-To: <CAKwvOd=RhoKvXzuGVe0PaQik8NEFhDkxuwv-T_s6KAtXCDVVvg@mail.gmail.com>
-References: <20190627222220.89175-1-nhuck@google.com> <CAKwvOd=RhoKvXzuGVe0PaQik8NEFhDkxuwv-T_s6KAtXCDVVvg@mail.gmail.com>
+        id S1726529AbfGYVGU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Jul 2019 17:06:20 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EB94218D4;
+        Thu, 25 Jul 2019 21:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564088779;
+        bh=p9mkR+Gdya905GgF0OyxisK0iTc8hQ7GlRutorMJ5pE=;
+        h=In-Reply-To:References:Subject:To:Cc:From:Date:From;
+        b=pKTUTK6hmPaKykMz9Qjb8U43546SkjbmPc8Q6/eBQjtMDjax1X3BgKkVh1OGf2uBB
+         bLwg+IEEm2nsJbEBbIH1w4cuy9y6AFZnNfggnKbgp8lBEp6NiVnlVoV2kSfu8bzt0i
+         QWs9zgZrowICLTcVp8pEaREIz4IFTntCfQqjBS1Q=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190725020551.27034-1-Anson.Huang@nxp.com>
+References: <20190725020551.27034-1-Anson.Huang@nxp.com>
+Subject: Re: [PATCH] dt-bindings: clock: imx8mn: Fix tab indentation for yaml file
+To:     Anson.Huang@nxp.com, devicetree@vger.kernel.org,
+        festevam@gmail.com, kernel@pengutronix.de,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org,
+        s.hauer@pengutronix.de, shawnguo@kernel.org
+Cc:     Linux-imx@nxp.com
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 25 Jul 2019 14:06:18 -0700
+Message-Id: <20190725210619.5EB94218D4@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am Freitag, 28. Juni 2019, 00:32:38 CEST schrieb Nick Desaulniers:
-> On Thu, Jun 27, 2019 at 3:22 PM 'Nathan Huckleberry' via Clang Built
-> Linux <clang-built-linux@googlegroups.com> wrote:
-> >
-> > Clang produces the following warning
-> >
-> > drivers/clk/rockchip/clk-rv1108.c:125:7: warning: unused variable
-> > 'mux_pll_src_3plls_p' [-Wunused-const-variable]
-> > PNAME(mux_pll_src_3plls_p)      = { "apll", "gpll", "dpll" };
-> >
-> > Looks like this variable was never used. Deleting it to remove the
-> > warning.
-> 
-> Indeed, looks like it was dead when introduced in:
-> commit e44dde279492 ("clk: rockchip: add clock controller for rk1108")
-> 
-> I don't see a pattern between when mux_pll_src_4plls_p vs
-> mux_pll_src_2plls_p is used, so it's not clear where or even if
-> mux_pll_src_3plls_p should be used.
+Quoting Anson.Huang@nxp.com (2019-07-24 19:05:51)
+> From: Anson Huang <Anson.Huang@nxp.com>
+>=20
+> YAML file can NOT contain tab as indentation, fix it.
+>=20
 
-The possible sources for a clock really differ often, so there is no general
-rule on when to use which sources ... except looking it up in the soc
-manual. And I guess any possible conflict will turn up when someone
-wants to use a clock that currently may reference the wrong sources.
+Would be nice if checkpatch could check for this.
 
+> Fixes: 6d6062553e3d ("dt-bindings: imx: Add clock binding doc for i.MX8MN=
+")
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
