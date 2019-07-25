@@ -2,122 +2,64 @@ Return-Path: <SRS0=7G01=VW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 986D2C7618B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 17:09:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2DE5C76190
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 19:47:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717F222C7B
-	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 17:09:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564074575;
-	bh=rkdM8CWr1A1LMWe/EH04Dnfcj0n7tqCfgrgm7BTi5jQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Ldwf0TS1mxqcR8Ula+mcxsBUsbEJuU67y/zx/MNKeugt3xWja0O8iFBIDu39XT6yv
-	 DTEt3x1IIlM+l53lv2aMoAbdfP22LGIyQJb8zphEErgh3gyRNQZthkypkpri5MXs3q
-	 ycjcRLjHvrpogheDS6qcm2tduxojaebtRtFBYV1A=
+	by mail.kernel.org (Postfix) with ESMTP id B17E6218EA
+	for <linux-clk@archiver.kernel.org>; Thu, 25 Jul 2019 19:47:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388591AbfGYRJf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 25 Jul 2019 13:09:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36796 "EHLO mail.kernel.org"
+        id S1726364AbfGYTrz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 25 Jul 2019 15:47:55 -0400
+Received: from gloria.sntech.de ([185.11.138.130]:39198 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388559AbfGYRJf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 25 Jul 2019 13:09:35 -0400
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64C3822C7B;
-        Thu, 25 Jul 2019 17:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564074573;
-        bh=rkdM8CWr1A1LMWe/EH04Dnfcj0n7tqCfgrgm7BTi5jQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=V2kS5kGzF++a03Gk5zIP6RZHen6WFgWlfieoKDlrHqhEHPec5TNp/uyFIM1M9uehw
-         LnN/eGuu4aLZCbQHXlzK4cEM25XKPTnaNYChzXcEWdoNw9zQyjL+vFPdlyy6PV4aH5
-         wyN/g5oynAZo0AxPt7Dvwsws0Sm+M9vkaj0veq4o=
-Received: by mail-wr1-f50.google.com with SMTP id n9so51672752wru.0;
-        Thu, 25 Jul 2019 10:09:33 -0700 (PDT)
-X-Gm-Message-State: APjAAAVchACu9+4DfrJwnByOAiWXS7fa4zbLsTb942psMJLSrWTENUrN
-        ls4uYm87r0BqtAcxe5ZdkT9zv+sbF1z9ypuV6dE=
-X-Google-Smtp-Source: APXvYqyhMUD0VRm57goMo+umKK9xrgzMe/ILEaoUR4e6spWK6lgrnxam7yAoo2qceAKGdHiCpgWiUDRXhXO1xXYbZ1k=
-X-Received: by 2002:adf:c613:: with SMTP id n19mr39171710wrg.109.1564074571943;
- Thu, 25 Jul 2019 10:09:31 -0700 (PDT)
+        id S1726320AbfGYTrz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 25 Jul 2019 15:47:55 -0400
+Received: from d57e23da.static.ziggozakelijk.nl ([213.126.35.218] helo=phil.localnet)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1hqjiK-0001nu-FG; Thu, 25 Jul 2019 21:47:44 +0200
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     Nathan Huckleberry <nhuck@google.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, andy.yan@rock-chips.com,
+        zhangqing@rock-chips.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH] clk: rockchip: Fix -Wunused-const-variable
+Date:   Thu, 25 Jul 2019 21:47:42 +0200
+Message-ID: <1785547.ocfUNUBeK4@phil>
+In-Reply-To: <20190627222220.89175-1-nhuck@google.com>
+References: <20190627222220.89175-1-nhuck@google.com>
 MIME-Version: 1.0
-References: <20190722095425.14193-1-amergnat@baylibre.com> <20190722095425.14193-4-amergnat@baylibre.com>
- <1j5znqxj74.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1j5znqxj74.fsf@starbuckisacylon.baylibre.com>
-From:   Chen-Yu Tsai <wens@kernel.org>
-Date:   Fri, 26 Jul 2019 01:09:20 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64AJFMkZQaytYMN+EsLT0sS-3VwzWUfb3g7SdL7kCfu+g@mail.gmail.com>
-Message-ID: <CAGb2v64AJFMkZQaytYMN+EsLT0sS-3VwzWUfb3g7SdL7kCfu+g@mail.gmail.com>
-Subject: Re: [PATCH 3/8] clk: meson: gxbb: migrate to the new parent
- description method
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Alexandre Mergnat <amergnat@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        baylibre-upstreaming@groups.io,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 10:50 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
->
-> On Mon 22 Jul 2019 at 11:54, Alexandre Mergnat <amergnat@baylibre.com> wrote:
->
->
-> > @@ -1592,13 +1737,29 @@ static struct clk_regmap gxbb_vid_pll_div = {
-> >       .hw.init = &(struct clk_init_data) {
-> >               .name = "vid_pll_div",
-> >               .ops = &meson_vid_pll_div_ro_ops,
-> > -             .parent_names = (const char *[]){ "hdmi_pll" },
-> > +             .parent_data = &(const struct clk_parent_data) {
-> > +                     /*
-> > +                      * This clock is declared here for GXL and GXBB SoC, so
-> > +                      * we must use string name to set this parent to avoid
-> > +                      * pointer issue.
-> > +                      */
->
-> I don't really get the issue with this comment.
->
-> How about:
->
-> /*
->  * Note:
->  * gxl and gxbb have different hdmi_plls (with different struct clk_hw).
->  * We fallback to the global naming string mechanism so vid_pll_div picks
->  * up the appropriate one.
->  */
+Am Freitag, 28. Juni 2019, 00:22:20 CEST schrieb Nathan Huckleberry:
+> Clang produces the following warning
+> 
+> drivers/clk/rockchip/clk-rv1108.c:125:7: warning: unused variable
+> 'mux_pll_src_3plls_p' [-Wunused-const-variable]
+> PNAME(mux_pll_src_3plls_p)      = { "apll", "gpll", "dpll" };
+> 
+> Looks like this variable was never used. Deleting it to remove the
+> warning.
+> 
+> Cc: clang-built-linux@googlegroups.com
+> Link: https://github.com/ClangBuiltLinux/linux/issues/524
+> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
 
-If you're sticking to global names for now, you could just skip converting
-this clock altogether. I suspect .parent_names will be around for some time.
+applied for 5.4
 
-On the other hand, if you really want to get rid of global clock name based
-parenting, you could use clk_hw pointers, and have the probe function fix
-up this one based on the compatible string. That's what I did.
+Thanks
+Heiko
 
-Just my two cents.
 
-ChenYu
-
-> > +                     .name = "hdmi_pll",
-> > +                     .index = -1,
-> > +             },
-> >               .num_parents = 1,
-> >               .flags = CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-> >       },
-> >  };
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
