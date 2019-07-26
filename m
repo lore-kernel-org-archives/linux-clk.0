@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6546C76191
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:00:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 659EFC7618B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:01:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B891C22CEC
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:00:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F9922173E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:01:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564149603;
-	bh=IWPjRJPgu9wPEVwBoAVPhkgA4Xv50ieDzkNLxVqxltA=;
+	s=default; t=1564149694;
+	bh=gnAI7TMKcTyegOT0vgw/DwcaWyOPR9eTp+ndZdPTykA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TdatcPVGzYl/dU9z+NW98EvsZvCTmU5fM8IUWRQtGnofqz5BsRdEWygd3klzDwTql
-	 +pBltP+R7UDpWi3+nAEzwngHGbwrLqSqHODNTOOkKZTneUHC1KwZMFeLqVCGb+IgmO
-	 MswYAKp2hU6HzVVitRRNlub0/djj6eRsNfR6oPKE=
+	b=XL6BhZQ0ZjxUoczUdRi/S0EsWXSlAn0hPpnD1rHHD2zAvyT+i21bM9bKXznFM3SOw
+	 5PZhpD9uGzlLw6ClgqXCNEXJGeNk+NfMrJryFh35qHwOL0bCFnK5nCzcIs16OeubwA
+	 ACLDY970QhT4566L+GaFTe3bg0I+mNaM6JuYJcT4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387411AbfGZNkS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jul 2019 09:40:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46254 "EHLO mail.kernel.org"
+        id S1727368AbfGZNjn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jul 2019 09:39:43 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387395AbfGZNkQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 26 Jul 2019 09:40:16 -0400
+        id S1727336AbfGZNjm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:39:42 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A657522C7E;
-        Fri, 26 Jul 2019 13:40:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56E9322BF5;
+        Fri, 26 Jul 2019 13:39:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564148415;
-        bh=IWPjRJPgu9wPEVwBoAVPhkgA4Xv50ieDzkNLxVqxltA=;
+        s=default; t=1564148381;
+        bh=gnAI7TMKcTyegOT0vgw/DwcaWyOPR9eTp+ndZdPTykA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BHrUZQvZLuSZ++uhz3iLeuuq9Mzk1oiLe1sq3XdACcFtIWa2DqhpUqU8SFhaim89X
-         XB0C7WWbeyknQkLzJqn54ejkuN/YQb4pCABInAHITYxFo3mEkUhsJNL+UFdXMyrbqm
-         uss5TM1XzdoWwDFIpXgt+r9PYGrgi0BSGhayS0ak=
+        b=RTywxIJfRzEKNevD5GBt33NkJzuRFMulWV1Gqit5nvuSUT1RXws7vWLAo5FlxzIgU
+         cdWvDgCfg4noFAfyTWVSx2MqL4gdGB+QZyrxj5vEwPQ5wxFbz69Fvb8hz7hSIa7IY9
+         aBFJy8zN9a6ANGKkevX2VC/I/PObnyK9n/ayv8J0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     JC Kuo <jckuo@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 22/85] clk: tegra210: fix PLLU and PLLU_OUT1
-Date:   Fri, 26 Jul 2019 09:38:32 -0400
-Message-Id: <20190726133936.11177-22-sashal@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.2 04/85] clk: meson: mpll: properly handle spread spectrum
+Date:   Fri, 26 Jul 2019 09:38:14 -0400
+Message-Id: <20190726133936.11177-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190726133936.11177-1-sashal@kernel.org>
 References: <20190726133936.11177-1-sashal@kernel.org>
@@ -60,75 +59,64 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 0d34dfbf3023cf119b83f6470692c0b10c832495 ]
+[ Upstream commit f9b3eeebef6aabaa37a351715374de53b6da860c ]
 
-Full-speed and low-speed USB devices do not work with Tegra210
-platforms because of incorrect PLLU/PLLU_OUT1 clock settings.
+The bit 'SSEN' available on some MPLL DSS outputs is not related to the
+fractional part of the divider but to the function called
+'Spread Spectrum'.
 
-When full-speed device is connected:
-[   14.059886] usb 1-3: new full-speed USB device number 2 using tegra-xusb
-[   14.196295] usb 1-3: device descriptor read/64, error -71
-[   14.436311] usb 1-3: device descriptor read/64, error -71
-[   14.675749] usb 1-3: new full-speed USB device number 3 using tegra-xusb
-[   14.812335] usb 1-3: device descriptor read/64, error -71
-[   15.052316] usb 1-3: device descriptor read/64, error -71
-[   15.164799] usb usb1-port3: attempt power cycle
+This function might be used to solve EM issues by adding a jitter on
+clock signal. This widens the signal spectrum and weakens the peaks in it.
 
-When low-speed device is connected:
-[   37.610949] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
-[   38.557376] usb usb1-port3: Cannot enable. Maybe the USB cable is bad?
-[   38.564977] usb usb1-port3: attempt power cycle
+While spread spectrum might be useful for some application, it is
+problematic for others, such as audio.
 
-This commit fixes the issue by:
- 1. initializing PLLU_OUT1 before initializing XUSB_FS_SRC clock
-    because PLLU_OUT1 is parent of XUSB_FS_SRC.
- 2. changing PLLU post-divider to /2 (DIVP=1) according to Technical
-    Reference Manual.
+This patch introduce a new flag to the MPLL driver to enable (or not) the
+spread spectrum function.
 
-Fixes: e745f992cf4b ("clk: tegra: Rework pll_u")
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
-Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 1f737ffa13ef ("clk: meson: mpll: fix mpll0 fractional part ignored")
+Tested-by: Martin Blumenstingl<martin.blumenstingl@googlemail.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/tegra/clk-tegra210.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/clk/meson/clk-mpll.c | 9 ++++++---
+ drivers/clk/meson/clk-mpll.h | 1 +
+ 2 files changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index ac1d27a8c650..e5470a6bbf55 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2204,9 +2204,9 @@ static struct div_nmp pllu_nmp = {
+diff --git a/drivers/clk/meson/clk-mpll.c b/drivers/clk/meson/clk-mpll.c
+index f76850d99e59..d3f42e086431 100644
+--- a/drivers/clk/meson/clk-mpll.c
++++ b/drivers/clk/meson/clk-mpll.c
+@@ -119,9 +119,12 @@ static int mpll_set_rate(struct clk_hw *hw,
+ 	meson_parm_write(clk->map, &mpll->sdm, sdm);
+ 	meson_parm_write(clk->map, &mpll->sdm_en, 1);
+ 
+-	/* Set additional fractional part enable if required */
+-	if (MESON_PARM_APPLICABLE(&mpll->ssen))
+-		meson_parm_write(clk->map, &mpll->ssen, 1);
++	/* Set spread spectrum if possible */
++	if (MESON_PARM_APPLICABLE(&mpll->ssen)) {
++		unsigned int ss =
++			mpll->flags & CLK_MESON_MPLL_SPREAD_SPECTRUM ? 1 : 0;
++		meson_parm_write(clk->map, &mpll->ssen, ss);
++	}
+ 
+ 	/* Set the integer divider part */
+ 	meson_parm_write(clk->map, &mpll->n2, n2);
+diff --git a/drivers/clk/meson/clk-mpll.h b/drivers/clk/meson/clk-mpll.h
+index cf79340006dd..0f948430fed4 100644
+--- a/drivers/clk/meson/clk-mpll.h
++++ b/drivers/clk/meson/clk-mpll.h
+@@ -23,6 +23,7 @@ struct meson_clk_mpll_data {
  };
  
- static struct tegra_clk_pll_freq_table pll_u_freq_table[] = {
--	{ 12000000, 480000000, 40, 1, 0, 0 },
--	{ 13000000, 480000000, 36, 1, 0, 0 }, /* actual: 468.0 MHz */
--	{ 38400000, 480000000, 25, 2, 0, 0 },
-+	{ 12000000, 480000000, 40, 1, 1, 0 },
-+	{ 13000000, 480000000, 36, 1, 1, 0 }, /* actual: 468.0 MHz */
-+	{ 38400000, 480000000, 25, 2, 1, 0 },
- 	{        0,         0,  0, 0, 0, 0 },
- };
+ #define CLK_MESON_MPLL_ROUND_CLOSEST	BIT(0)
++#define CLK_MESON_MPLL_SPREAD_SPECTRUM	BIT(1)
  
-@@ -3333,6 +3333,7 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_DFLL_REF, TEGRA210_CLK_PLL_P, 51000000, 1 },
- 	{ TEGRA210_CLK_SBC4, TEGRA210_CLK_PLL_P, 12000000, 1 },
- 	{ TEGRA210_CLK_PLL_RE_VCO, TEGRA210_CLK_CLK_MAX, 672000000, 1 },
-+	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
- 	{ TEGRA210_CLK_XUSB_GATE, TEGRA210_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA210_CLK_XUSB_SS_SRC, TEGRA210_CLK_PLL_U_480M, 120000000, 0 },
- 	{ TEGRA210_CLK_XUSB_FS_SRC, TEGRA210_CLK_PLL_U_48M, 48000000, 0 },
-@@ -3357,7 +3358,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_PLL_DP, TEGRA210_CLK_CLK_MAX, 270000000, 0 },
- 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
- 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
--	{ TEGRA210_CLK_PLL_U_OUT1, TEGRA210_CLK_CLK_MAX, 48000000, 1 },
- 	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
- 	{ TEGRA210_CLK_SPDIF_IN_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
- 	{ TEGRA210_CLK_I2S0_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ extern const struct clk_ops meson_clk_mpll_ro_ops;
+ extern const struct clk_ops meson_clk_mpll_ops;
 -- 
 2.20.1
 
