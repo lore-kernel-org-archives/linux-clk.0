@@ -2,94 +2,79 @@ Return-Path: <SRS0=bWzc=VX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F035C7618B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 06:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CCC8C7618B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 08:37:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0486D217D4
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 06:26:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY77d0th"
+	by mail.kernel.org (Postfix) with ESMTP id 27D652166E
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 08:37:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfGZG0x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jul 2019 02:26:53 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35409 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725864AbfGZG0x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jul 2019 02:26:53 -0400
-Received: by mail-lf1-f66.google.com with SMTP id p197so36241838lfa.2;
-        Thu, 25 Jul 2019 23:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=nnLng03yKzoOCov75qSA3MqCcOmyhGOuTFn/YZRC6bw=;
-        b=QY77d0thwiUD4ElvhVAy5MKyD6fafSxKbtUv9VmsptPFHHlvme/Z5bDd9kco83+dOz
-         CJ1t8DkfHzgcMv66CGkufSFrQ6n5xX1QBja5olBDwVAevTLMlXef1BbefBr3tHHrLpFK
-         XK01aB7P2BDn2Bn8YP/I4KGqK7/vKpw7Qf7Q6C7hz31pREPZpTvVdpMWcJGUILzoTv+T
-         QM6N/YfrpJzm0vXuptrAaE2BUOax/gA9Y3ArgX4Lhrqb9QsDVllkWQd5TBNvmVWvVc/a
-         dMXl4XuC6Dq3uFjwMkRbaAVeIAnCwIOoXUe76JsyaUS7+cqO1ASTJmQDItIWMIvv+66A
-         tbVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nnLng03yKzoOCov75qSA3MqCcOmyhGOuTFn/YZRC6bw=;
-        b=oArE1I4lE9NBJ91fqswpzYjAt80Zj4u+z34Oj5Bzg0fZbuXtOSWgjc4tU047gvnuHu
-         i9MIqMLyXd2NLkBotlWhYo96Cf//9ZiAoqffohWAVa0FZ9R2bnhPLrnKg00nKD5LN3se
-         zprugjYnNh494kywRxdt5Zvnfbxg55aI/+DlFOLy/6Pw6Gr8k38UAMSAVOvmXw5s6U7g
-         9+3VLZXce2xI3JZEji5IYPzY4TB8ozIQz1aZ74vRaYBg5koxvOiZQvKXPbOrChaURFc0
-         aOo5hhME2CxEVOM7t5oO/67/fnG6tBjdHBldZlSNvXI7kNXyJZjGTV8g1lbWRTdFaDl8
-         CUhg==
-X-Gm-Message-State: APjAAAWdo0I/zJ3VjjhZZi6cQuFw1HZj/Wdb7F4odKzGCi/k25xNTmnw
-        U4LRZYU5lVSSK8s+k+Eys2Q=
-X-Google-Smtp-Source: APXvYqxQGcfDkp5SBeDAZqV+MRX5iBECRKA/CnzStUstMtYBdbgt64kzQ037siw3JTVdCCysd7N8QQ==
-X-Received: by 2002:ac2:59c6:: with SMTP id x6mr8532542lfn.169.1564122411084;
-        Thu, 25 Jul 2019 23:26:51 -0700 (PDT)
-Received: from dimatab (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.gmail.com with ESMTPSA id z12sm8129347lfe.2.2019.07.25.23.26.49
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 25 Jul 2019 23:26:50 -0700 (PDT)
-Date:   Fri, 26 Jul 2019 09:30:55 +0300
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>,
-        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V6 17/21] arm64: tegra: Enable wake from deep sleep on
- RTC alarm.
-Message-ID: <20190726093055.4d8fe3ff@dimatab>
-In-Reply-To: <1563738060-30213-18-git-send-email-skomatineni@nvidia.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
-        <1563738060-30213-18-git-send-email-skomatineni@nvidia.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; arm-unknown-linux-gnueabihf)
+        id S1726504AbfGZIhz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jul 2019 04:37:55 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:37776 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726463AbfGZIhz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Jul 2019 04:37:55 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ADF472009B1;
+        Fri, 26 Jul 2019 10:37:53 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A04642002AD;
+        Fri, 26 Jul 2019 10:37:53 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 822B1205E8;
+        Fri, 26 Jul 2019 10:37:53 +0200 (CEST)
+Date:   Fri, 26 Jul 2019 11:37:52 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+        aisheng.dong@nxp.com, l.stach@pengutronix.de, ping.bai@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH] clk: imx: Remove unused function statement
+Message-ID: <20190726083752.qjhzbqvsuyzcqtcg@fsr-ub1664-175>
+References: <20190724062435.28074-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724062435.28074-1-Anson.Huang@nxp.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-=D0=92 Sun, 21 Jul 2019 12:40:56 -0700
-Sowjanya Komatineni <skomatineni@nvidia.com> =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+On 19-07-24 14:24:35, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
+> 
+> imx_register_uart_clocks_hws() function is NOT implemented
+> at all, remove it.
+> 
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-> This patch updates device tree for RTC and PMC to allow system wake
-> from deep sleep on RTC alarm.
->=20
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-The dot in the end of the commit's title is unnecessary.
+> ---
+>  drivers/clk/imx/clk.h | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index 9995f2a..f7a389a 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -10,7 +10,6 @@ extern spinlock_t imx_ccm_lock;
+>  void imx_check_clocks(struct clk *clks[], unsigned int count);
+>  void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+>  void imx_register_uart_clocks(struct clk ** const clks[]);
+> -void imx_register_uart_clocks_hws(struct clk_hw ** const hws[]);
+>  void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
+>  void imx_unregister_clocks(struct clk *clks[], unsigned int count);
+>  
+> -- 
+> 2.7.4
+> 
