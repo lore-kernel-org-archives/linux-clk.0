@@ -2,155 +2,123 @@ Return-Path: <SRS0=bWzc=VX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F34C7618B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 10:28:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45BFDC7618B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 13:52:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC6A22BE8
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 10:28:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p+nKFgaF"
+	by mail.kernel.org (Postfix) with ESMTP id 2532A22CEB
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 13:52:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726470AbfGZK2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jul 2019 06:28:01 -0400
-Received: from mail-io1-f67.google.com ([209.85.166.67]:37213 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726074AbfGZK2B (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jul 2019 06:28:01 -0400
-Received: by mail-io1-f67.google.com with SMTP id q22so103700398iog.4
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2019 03:28:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=PzjlKYE1qIEe+zKWFnMwDGXGnYev6skKpACtw6FQfYA=;
-        b=p+nKFgaFf1tHT5RNgpYZWcBsVVbiRzd9FTC6bAefOmIFtOJykeCT870R0C3ufGn4vc
-         PWNSHa9kupTBucYBi70mlGlMiWsQwW88AcJuMNi5mjP54uMz6VZTDvOW5gQB50uT826R
-         /3jc+gCyD43CXmaYBm+H1J6xVxPIKxZljbTPKqfSqimsMLP1H/7mnErn8M/dO8XfkwBs
-         Y8w+IWSRvxAAfKb+sUeug4rr67gfH28OOcUOArjUBaDPMDvrVhBHZHe4UYjco91heF+s
-         t/WQTFMrSsSh695Tzti0YJ2GBXe7DRanAgzk+m0sBiPGcJrsR60z20QSPaumVw4KZ0cp
-         y5Ag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=PzjlKYE1qIEe+zKWFnMwDGXGnYev6skKpACtw6FQfYA=;
-        b=U5wJazNTBPaUwkdNnhCBKnJmcFH9oI0q+VudpYaqLLuzMMp6zN5BgWnfmEEJ/Vrjfy
-         cqmV7uyw4kAIPwdRm05+j1UWc3VeZ6wOURVYG1qLKMDs+eQ5N8+FaOzdS5byOe1/a85b
-         6YEAKTXoHlvdhMVKyKnhKTUImQCOxxMJ6jikrtdtEreAyvja8n6Zr/ypV6H/CKelFwLX
-         iM1LvnOU8i3ERbyeO5tRhZFJnwwlItfX4OTLxrddXyUekNj4jLK/zl6q0rG1CgYuP6id
-         rlvYcr5tqcbSKLVrBYfT+D0iFl2DLUkJB2VWgxdaaU8O4XcgtYk2J0MS6zUZAAjzXrwL
-         YksA==
-X-Gm-Message-State: APjAAAXS/4OR5gFIp3mkLRDedcZxsGTVvxLhvo4QDxq0AQDcrqkaXBpY
-        rr02VPmDpNEmeCmi70hk0X32a1hISYGQaZH9/ounBg==
-X-Google-Smtp-Source: APXvYqxoHOdlu6x2hPEYf3RYGZ50mSWqUgxy2lpy/ibkVJblKXu8OocARgg+QmSbMwzq0EcY+IGZEkPKkyfBWG3maHg=
-X-Received: by 2002:a5d:8e08:: with SMTP id e8mr7172969iod.139.1564136880220;
- Fri, 26 Jul 2019 03:28:00 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190722095425.14193-1-amergnat@baylibre.com> <20190722095425.14193-4-amergnat@baylibre.com>
- <1j5znqxj74.fsf@starbuckisacylon.baylibre.com> <CAGb2v64AJFMkZQaytYMN+EsLT0sS-3VwzWUfb3g7SdL7kCfu+g@mail.gmail.com>
-In-Reply-To: <CAGb2v64AJFMkZQaytYMN+EsLT0sS-3VwzWUfb3g7SdL7kCfu+g@mail.gmail.com>
-From:   Alexandre Mergnat <amergnat@baylibre.com>
-Date:   Fri, 26 Jul 2019 12:27:48 +0200
-Message-ID: <CAFGrd9pWdhktEjQzGTTk1zdVVXuXaZL--CFjA-BPwia6AzmRQA@mail.gmail.com>
-Subject: Re: [PATCH 3/8] clk: meson: gxbb: migrate to the new parent
- description method
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        baylibre-upstreaming@groups.io,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S2388691AbfGZNwC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jul 2019 09:52:02 -0400
+Received: from foss.arm.com ([217.140.110.172]:44550 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388680AbfGZNwC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Jul 2019 09:52:02 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 06B9F152D;
+        Fri, 26 Jul 2019 06:52:02 -0700 (PDT)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8C9303F694;
+        Fri, 26 Jul 2019 06:52:00 -0700 (PDT)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>, Peng Fan <peng.fan@nxp.com>,
+        linux-kernel@vger.kernel.org,
+        Bo Zhang <bozhang.zhang@broadcom.com>,
+        Jim Quinlan <james.quinlan@broadcom.com>,
+        Volodymyr Babchuk <volodymyr_babchuk@epam.com>,
+        Gaku Inami <gaku.inami.xh@renesas.com>,
+        Etienne Carriere <etienne.carriere@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 10/10] firmware: arm_scmi: Use asynchronous CLOCK_RATE_SET when possible
+Date:   Fri, 26 Jul 2019 14:51:38 +0100
+Message-Id: <20190726135138.9858-11-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190726135138.9858-1-sudeep.holla@arm.com>
+References: <20190726135138.9858-1-sudeep.holla@arm.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le jeu. 25 juil. 2019 =C3=A0 19:09, Chen-Yu Tsai <wens@kernel.org> a =C3=A9=
-crit :
->
-> On Thu, Jul 25, 2019 at 10:50 PM Jerome Brunet <jbrunet@baylibre.com> wro=
-te:
-> >
-> > On Mon 22 Jul 2019 at 11:54, Alexandre Mergnat <amergnat@baylibre.com> =
-wrote:
-> >
-> >
-> > > @@ -1592,13 +1737,29 @@ static struct clk_regmap gxbb_vid_pll_div =3D=
+CLOCK_PROTOCOL_ATTRIBUTES provides attributes to indicate the maximum
+number of pending asynchronous clock rate changes supported by the
+platform. If it's non-zero, then we should be able to use asynchronous
+clock rate set for any clocks until the maximum limit is reached.
+
+Tracking the current count of pending asynchronous clock set rate
+requests, we can decide if the incoming/new request for clock set rate
+can be handled asynchronously or not until the maximum limit is
+reached.
+
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/firmware/arm_scmi/clock.c | 19 ++++++++++++++++---
+ 1 file changed, 16 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
+index dd215bd11a58..4a32ae1822a3 100644
+--- a/drivers/firmware/arm_scmi/clock.c
++++ b/drivers/firmware/arm_scmi/clock.c
+@@ -56,7 +56,7 @@ struct scmi_msg_resp_clock_describe_rates {
+ struct scmi_clock_set_rate {
+ 	__le32 flags;
+ #define CLOCK_SET_ASYNC		BIT(0)
+-#define CLOCK_SET_DELAYED	BIT(1)
++#define CLOCK_SET_IGNORE_RESP	BIT(1)
+ #define CLOCK_SET_ROUND_UP	BIT(2)
+ #define CLOCK_SET_ROUND_AUTO	BIT(3)
+ 	__le32 id;
+@@ -67,6 +67,7 @@ struct scmi_clock_set_rate {
+ struct clock_info {
+ 	int num_clocks;
+ 	int max_async_req;
++	atomic_t cur_async_req;
+ 	struct scmi_clock_info *clk;
+ };
+ 
+@@ -221,21 +222,33 @@ static int scmi_clock_rate_set(const struct scmi_handle *handle, u32 clk_id,
+ 			       u64 rate)
  {
-> > >       .hw.init =3D &(struct clk_init_data) {
-> > >               .name =3D "vid_pll_div",
-> > >               .ops =3D &meson_vid_pll_div_ro_ops,
-> > > -             .parent_names =3D (const char *[]){ "hdmi_pll" },
-> > > +             .parent_data =3D &(const struct clk_parent_data) {
-> > > +                     /*
-> > > +                      * This clock is declared here for GXL and GXBB=
- SoC, so
-> > > +                      * we must use string name to set this parent t=
-o avoid
-> > > +                      * pointer issue.
-> > > +                      */
-> >
-> > I don't really get the issue with this comment.
-> >
-> > How about:
-> >
-> > /*
-> >  * Note:
-> >  * gxl and gxbb have different hdmi_plls (with different struct clk_hw)=
-.
-> >  * We fallback to the global naming string mechanism so vid_pll_div pic=
-ks
-> >  * up the appropriate one.
-> >  */
->
-> If you're sticking to global names for now, you could just skip convertin=
-g
-> this clock altogether. I suspect .parent_names will be around for some ti=
-me.
+ 	int ret;
++	u32 flags = 0;
+ 	struct scmi_xfer *t;
+ 	struct scmi_clock_set_rate *cfg;
++	struct clock_info *ci = handle->clk_priv;
+ 
+ 	ret = scmi_xfer_get_init(handle, CLOCK_RATE_SET, SCMI_PROTOCOL_CLOCK,
+ 				 sizeof(*cfg), 0, &t);
+ 	if (ret)
+ 		return ret;
+ 
++	if (ci->max_async_req &&
++	    atomic_inc_return(&ci->cur_async_req) < ci->max_async_req)
++		flags |= CLOCK_SET_ASYNC;
++
+ 	cfg = t->tx.buf;
+-	cfg->flags = cpu_to_le32(0);
++	cfg->flags = cpu_to_le32(flags);
+ 	cfg->id = cpu_to_le32(clk_id);
+ 	cfg->value_low = cpu_to_le32(rate & 0xffffffff);
+ 	cfg->value_high = cpu_to_le32(rate >> 32);
+ 
+-	ret = scmi_do_xfer(handle, t);
++	if (flags & CLOCK_SET_ASYNC)
++		ret = scmi_do_xfer_with_response(handle, t);
++	else
++		ret = scmi_do_xfer(handle, t);
++
++	if (ci->max_async_req)
++		atomic_dec(&ci->cur_async_req);
+ 
+ 	scmi_xfer_put(handle, t);
+ 	return ret;
+-- 
+2.17.1
 
-I prefer to perform a complete migration because it is possible that
-.parent_names
-becomes deprecated one day. I think it's cleaner to do it one shot and
-avoid keeping
-redundant structure with the new one.
-
->
-> On the other hand, if you really want to get rid of global clock name bas=
-ed
-> parenting, you could use clk_hw pointers, and have the probe function fix
-> up this one based on the compatible string. That's what I did.
-
-Sounds good, may I have the commit or file which is implement this please?
-I wonder if it worth to add complexity in probe instead of using a dedicate=
-d
-field in .parent_data for string name. I guess that depend on the complexit=
-y
-done in probe.
-
->
-> Just my two cents.
->
-> ChenYu
->
-> > > +                     .name =3D "hdmi_pll",
-> > > +                     .index =3D -1,
-> > > +             },
-> > >               .num_parents =3D 1,
-> > >               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
-> > >       },
-> > >  };
-> >
-> > _______________________________________________
-> > linux-arm-kernel mailing list
-> > linux-arm-kernel@lists.infradead.org
-> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
