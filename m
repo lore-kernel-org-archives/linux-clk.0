@@ -2,107 +2,155 @@ Return-Path: <SRS0=bWzc=VX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4724C7618B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 09:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F34C7618B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 10:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0A122CB9
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 09:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BC6A22BE8
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 10:28:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ZCDUTutg";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LFOAS/iy"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p+nKFgaF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfGZJYI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jul 2019 05:24:08 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59446 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726527AbfGZJYH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jul 2019 05:24:07 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id AADD96192C; Fri, 26 Jul 2019 09:24:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564133046;
-        bh=xP6UNwG/IosfwSrscp1xWFAuEJXHy9xTR/aAp7folSs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZCDUTutg8M1tredKqRkdIzbOt929mA1Q1fKDTC17vfcaiMYKRB7TWeMilSYeoNwQ0
-         wH6Mju//HjkfopQV66WQRLYqmlgqIWNa7Dm0KGFdzyWQAiyDEtcUJwPzREgVrx6mdq
-         N8JwTqFFw11KhJmsqDtlKZl0E3Tdp+SCZoxa58t4=
-Received: from govinds-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: govinds@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8643B61893;
-        Fri, 26 Jul 2019 09:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1564133042;
-        bh=xP6UNwG/IosfwSrscp1xWFAuEJXHy9xTR/aAp7folSs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LFOAS/iyOTiRYrrMTsUqZ3Zg+Lpy8fFiWUuGM2uICoKb6HNcSnMuXofb1b60urBbs
-         KoIGlS/k7Wj+cAdY8aoui2PJGl0bp9OrrqjBKcVD7GSZA8jT/WnfED5KkrPBpau88G
-         1N5uhWAhiSSalDNgpnGv+XclN5evm8xEXwJspZY8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8643B61893
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
-From:   Govind Singh <govinds@codeaurora.org>
-To:     bjorn.andersson@linaro.org, linux-remoteproc@vger.kernel.org,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-Cc:     andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
-Subject: [PATCH v5 7/7] remoteproc: qcom: wcss: explicitly request exclusive reset control
-Date:   Fri, 26 Jul 2019 14:53:32 +0530
-Message-Id: <20190726092332.25202-8-govinds@codeaurora.org>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190726092332.25202-1-govinds@codeaurora.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org>
+        id S1726470AbfGZK2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jul 2019 06:28:01 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37213 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726074AbfGZK2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jul 2019 06:28:01 -0400
+Received: by mail-io1-f67.google.com with SMTP id q22so103700398iog.4
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2019 03:28:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=PzjlKYE1qIEe+zKWFnMwDGXGnYev6skKpACtw6FQfYA=;
+        b=p+nKFgaFf1tHT5RNgpYZWcBsVVbiRzd9FTC6bAefOmIFtOJykeCT870R0C3ufGn4vc
+         PWNSHa9kupTBucYBi70mlGlMiWsQwW88AcJuMNi5mjP54uMz6VZTDvOW5gQB50uT826R
+         /3jc+gCyD43CXmaYBm+H1J6xVxPIKxZljbTPKqfSqimsMLP1H/7mnErn8M/dO8XfkwBs
+         Y8w+IWSRvxAAfKb+sUeug4rr67gfH28OOcUOArjUBaDPMDvrVhBHZHe4UYjco91heF+s
+         t/WQTFMrSsSh695Tzti0YJ2GBXe7DRanAgzk+m0sBiPGcJrsR60z20QSPaumVw4KZ0cp
+         y5Ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=PzjlKYE1qIEe+zKWFnMwDGXGnYev6skKpACtw6FQfYA=;
+        b=U5wJazNTBPaUwkdNnhCBKnJmcFH9oI0q+VudpYaqLLuzMMp6zN5BgWnfmEEJ/Vrjfy
+         cqmV7uyw4kAIPwdRm05+j1UWc3VeZ6wOURVYG1qLKMDs+eQ5N8+FaOzdS5byOe1/a85b
+         6YEAKTXoHlvdhMVKyKnhKTUImQCOxxMJ6jikrtdtEreAyvja8n6Zr/ypV6H/CKelFwLX
+         iM1LvnOU8i3ERbyeO5tRhZFJnwwlItfX4OTLxrddXyUekNj4jLK/zl6q0rG1CgYuP6id
+         rlvYcr5tqcbSKLVrBYfT+D0iFl2DLUkJB2VWgxdaaU8O4XcgtYk2J0MS6zUZAAjzXrwL
+         YksA==
+X-Gm-Message-State: APjAAAXS/4OR5gFIp3mkLRDedcZxsGTVvxLhvo4QDxq0AQDcrqkaXBpY
+        rr02VPmDpNEmeCmi70hk0X32a1hISYGQaZH9/ounBg==
+X-Google-Smtp-Source: APXvYqxoHOdlu6x2hPEYf3RYGZ50mSWqUgxy2lpy/ibkVJblKXu8OocARgg+QmSbMwzq0EcY+IGZEkPKkyfBWG3maHg=
+X-Received: by 2002:a5d:8e08:: with SMTP id e8mr7172969iod.139.1564136880220;
+ Fri, 26 Jul 2019 03:28:00 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20190722095425.14193-1-amergnat@baylibre.com> <20190722095425.14193-4-amergnat@baylibre.com>
+ <1j5znqxj74.fsf@starbuckisacylon.baylibre.com> <CAGb2v64AJFMkZQaytYMN+EsLT0sS-3VwzWUfb3g7SdL7kCfu+g@mail.gmail.com>
+In-Reply-To: <CAGb2v64AJFMkZQaytYMN+EsLT0sS-3VwzWUfb3g7SdL7kCfu+g@mail.gmail.com>
+From:   Alexandre Mergnat <amergnat@baylibre.com>
+Date:   Fri, 26 Jul 2019 12:27:48 +0200
+Message-ID: <CAFGrd9pWdhktEjQzGTTk1zdVVXuXaZL--CFjA-BPwia6AzmRQA@mail.gmail.com>
+Subject: Re: [PATCH 3/8] clk: meson: gxbb: migrate to the new parent
+ description method
+To:     Chen-Yu Tsai <wens@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        baylibre-upstreaming@groups.io,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use request exclusive reset control for wcss reset controls.
+Le jeu. 25 juil. 2019 =C3=A0 19:09, Chen-Yu Tsai <wens@kernel.org> a =C3=A9=
+crit :
+>
+> On Thu, Jul 25, 2019 at 10:50 PM Jerome Brunet <jbrunet@baylibre.com> wro=
+te:
+> >
+> > On Mon 22 Jul 2019 at 11:54, Alexandre Mergnat <amergnat@baylibre.com> =
+wrote:
+> >
+> >
+> > > @@ -1592,13 +1737,29 @@ static struct clk_regmap gxbb_vid_pll_div =3D=
+ {
+> > >       .hw.init =3D &(struct clk_init_data) {
+> > >               .name =3D "vid_pll_div",
+> > >               .ops =3D &meson_vid_pll_div_ro_ops,
+> > > -             .parent_names =3D (const char *[]){ "hdmi_pll" },
+> > > +             .parent_data =3D &(const struct clk_parent_data) {
+> > > +                     /*
+> > > +                      * This clock is declared here for GXL and GXBB=
+ SoC, so
+> > > +                      * we must use string name to set this parent t=
+o avoid
+> > > +                      * pointer issue.
+> > > +                      */
+> >
+> > I don't really get the issue with this comment.
+> >
+> > How about:
+> >
+> > /*
+> >  * Note:
+> >  * gxl and gxbb have different hdmi_plls (with different struct clk_hw)=
+.
+> >  * We fallback to the global naming string mechanism so vid_pll_div pic=
+ks
+> >  * up the appropriate one.
+> >  */
+>
+> If you're sticking to global names for now, you could just skip convertin=
+g
+> this clock altogether. I suspect .parent_names will be around for some ti=
+me.
 
-Signed-off-by: Govind Singh <govinds@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I prefer to perform a complete migration because it is possible that
+.parent_names
+becomes deprecated one day. I think it's cleaner to do it one shot and
+avoid keeping
+redundant structure with the new one.
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index c2e75f5b5737..a2671a19f2d0 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -781,21 +781,21 @@ static int q6v5_wcss_init_reset(struct q6v5_wcss *wcss,
- 	struct device *dev = wcss->dev;
- 
- 	if (desc->aon_reset_required) {
--		wcss->wcss_aon_reset = devm_reset_control_get(dev, "wcss_aon_reset");;
-+		wcss->wcss_aon_reset = devm_reset_control_get_exclusive(dev, "wcss_aon_reset");;
- 		if (IS_ERR(wcss->wcss_aon_reset)) {
- 			dev_err(wcss->dev, "fail to acquire wcss_aon_reset\n");
- 			return PTR_ERR(wcss->wcss_aon_reset);
- 		}
- 	}
- 
--	wcss->wcss_reset = devm_reset_control_get(dev, "wcss_reset");
-+	wcss->wcss_reset = devm_reset_control_get_exclusive(dev, "wcss_reset");
- 	if (IS_ERR(wcss->wcss_reset)) {
- 		dev_err(wcss->dev, "unable to acquire wcss_reset\n");
- 		return PTR_ERR(wcss->wcss_reset);
- 	}
- 
- 	if (desc->wcss_q6_reset_required) {
--		wcss->wcss_q6_reset = devm_reset_control_get(dev, "wcss_q6_reset");
-+		wcss->wcss_q6_reset = devm_reset_control_get_exclusive(dev, "wcss_q6_reset");
- 		if (IS_ERR(wcss->wcss_q6_reset)) {
- 			dev_err(wcss->dev, "unable to acquire wcss_q6_reset\n");
- 			return PTR_ERR(wcss->wcss_q6_reset);
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+>
+> On the other hand, if you really want to get rid of global clock name bas=
+ed
+> parenting, you could use clk_hw pointers, and have the probe function fix
+> up this one based on the compatible string. That's what I did.
 
+Sounds good, may I have the commit or file which is implement this please?
+I wonder if it worth to add complexity in probe instead of using a dedicate=
+d
+field in .parent_data for string name. I guess that depend on the complexit=
+y
+done in probe.
+
+>
+> Just my two cents.
+>
+> ChenYu
+>
+> > > +                     .name =3D "hdmi_pll",
+> > > +                     .index =3D -1,
+> > > +             },
+> > >               .num_parents =3D 1,
+> > >               .flags =3D CLK_SET_RATE_PARENT | CLK_GET_RATE_NOCACHE,
+> > >       },
+> > >  };
+> >
+> > _______________________________________________
+> > linux-arm-kernel mailing list
+> > linux-arm-kernel@lists.infradead.org
+> > http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
