@@ -2,200 +2,217 @@ Return-Path: <SRS0=bWzc=VX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DFA4C7618B
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF183C7618B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BB020651
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BFF32070B
+	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 14:54:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="PC/gHFJA"
+	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="Y/Mg5M+8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbfGZOuq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jul 2019 10:50:46 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33579 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727290AbfGZOuq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jul 2019 10:50:46 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n9so54836975wru.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2019 07:50:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=a0n4mnKNRrQNy/2VfzrWjzbEghGsJIBqYj/z50ouAs0=;
-        b=PC/gHFJAq9Kh/M6H8rEmeo7deeJghlqO+THzvxibXYzERapPIKj1x7CB37/V0/+lsZ
-         2l3RalJ7QVaMd9LJyhi6b6Fxw8FYFS0jEDldEc+nwb+6vAe0riBreHYO/GqsqR9LEe+i
-         t4cJsS9ZHCnk1msNjd49huCpmlgqyk+QuE3oUp8Aa4zOZhA29Z1hKiBjpwd2vChD0R1x
-         LyK0GukDeaFlg/8xaRhuNMHRdY9wdPhKRXkFKYx+0o9ROBgrkGXERQj9Uh36A/x8pLR0
-         ygoEQ3xJj+wNp/iY45Cve3dfMSa5txdkCUBdP1zfK9my9DEVay7EyZeQsQN1eJ1MbOiM
-         Io7w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=a0n4mnKNRrQNy/2VfzrWjzbEghGsJIBqYj/z50ouAs0=;
-        b=hw665xZ3RVgy6TR5VFLIdokUfRXBg2A8op4wiDP4bUSZwsOLz91A8CcRbr8UkpHQwo
-         c3dIIFItHjxcCLysUbBNsg5RSJDCQAYfnOTXaSTENOEIcIjrr9g/mTGeuJeHotf/oLCu
-         lIS5Zz+iw5W8z+INISykwkJS4vUNOYBDcw9Ix7zTerLucMDF+EpOHBcco6bg/yxxWonG
-         j873SQttzUAPoj04Wzaq7CoU56aU3/1X0yN7y6YiCmQ6d5wWQbrsgTTilkFooh7hAcZG
-         NG1U/H61ugqzF4FfN5pKRvKEVaXCEjvfajY/OrnsREd+qQjBE9zp7QnhIPYt2JOeeE9I
-         blkA==
-X-Gm-Message-State: APjAAAXXDl+ZTiwGj7vDMynf1pa7RJjpL8hTgd3JAaKvYaFaKQhqRPte
-        PMGru9MbVG+G2cpTkd2jxPQW6A==
-X-Google-Smtp-Source: APXvYqzVF7UaszaZThpcwP/mBiYzhQJibP9lwwp0ljTIA2no0X9LulYS0zbIt5k4uc5K0OHJwDRP8Q==
-X-Received: by 2002:a5d:54c7:: with SMTP id x7mr72996717wrv.39.1564152643033;
-        Fri, 26 Jul 2019 07:50:43 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id x20sm116948047wrg.10.2019.07.26.07.50.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 26 Jul 2019 07:50:42 -0700 (PDT)
-Subject: Re: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
-To:     Jerome Brunet <jbrunet@baylibre.com>, khilman@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
-        linux-gpio@vger.kernel.org
-References: <20190701091258.3870-1-narmstrong@baylibre.com>
- <20190701091258.3870-5-narmstrong@baylibre.com>
- <1jh8836w49.fsf@starbuckisacylon.baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <55ce9b5e-de2f-9da3-8eec-13b5ead23e6c@baylibre.com>
-Date:   Fri, 26 Jul 2019 16:50:41 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2387407AbfGZOyN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 26 Jul 2019 10:54:13 -0400
+Received: from rere.qmqm.pl ([91.227.64.183]:25025 "EHLO rere.qmqm.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727172AbfGZOyM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 26 Jul 2019 10:54:12 -0400
+Received: from remote.user (localhost [127.0.0.1])
+        by rere.qmqm.pl (Postfix) with ESMTPSA id 45wBrt6PVbzB2;
+        Fri, 26 Jul 2019 16:52:46 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
+        t=1564152767; bh=g4cOfgjR/WfJw6HerlFwPtrCtA2W6IRWK76Io5TBVAw=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Y/Mg5M+88KL9olixgLp7Np2MYAsWtdr7VJfI++YVkCirlgQ8duxODk2aohCWhzvUF
+         yQaSEKxmhnZhchWJN3QUBcFKTpkdDn070ZiWOQxG1SKpZwjtUgD3f3R0rTicYt3pQ4
+         6SGoelwotZXrBkS/Rwy9CdaTUfFWhX7jfppzz7q0wKYUnws69cKwFQCRRTD3fXZ74e
+         MaYby1Jt8SHx53KxJAWWS5i2TNLLvUsk9Z7tPGfSiheZ1iLZX6F4s3WTgKmZqD8inx
+         r0ARgKCqeG77BPb4Cbhep1WTc3A3FtEZh66Lzs4ckfNVGPCw3E7JkmQdOix3Ocfd9c
+         cBOZTZvoRwUHQ==
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.3 at mail
+Date:   Fri, 26 Jul 2019 16:54:06 +0200
+From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Matthias Wieloch <matthias.wieloch@few-bauer.de>
+Subject: AT91: sama5d2: lockdep splat in sama5d2_pmc_of_clk_init_driver()
+Message-ID: <20190726145406.GA16744@qmqm.qmqm.pl>
 MIME-Version: 1.0
-In-Reply-To: <1jh8836w49.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-2
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 03/07/2019 16:17, Jerome Brunet wrote:
-> On Mon 01 Jul 2019 at 11:12, Neil Armstrong <narmstrong@baylibre.com> wrote:
-> 
->> Add a setup() callback in the eeclk structure, to call an optional
->> call() function at end of eeclk probe to setup clocks.
->>
->> It's used for the G12A clock controller to setup the CPU clock
->> notifiers.
-> 
-> I'd prefer if you implement the probe function in the related controller
-> have this probe function call meson_eeclkc_probe() for the common part
-> 
-> In your case, I suppose it means implementing the g12a controller probe
-> to deal with the notifiers
+Dear Developers
 
-Sure, but with this eeclk setup callback I can provide a different setup() callback
-for g12a and g12b (and later sm1), without this means adding a top data struct
-containing a setup() callback pointer and the soc meson_eeclkc_data struct to be able
-to call a setup() for each family like done actually, but this will broke eeclk since
-the match_data data won't be a meson_eeclkc_data() struct anymore.
+Since upgrading to v5.2.2 from v5.1.x I keep getting lockdep complaints
+(below) from clk initialization on SAMA5D2 board. Have you seen this?
+Can you help me in finding a fix?
 
-If you still prefer this, I can rework it like that.
+Best Regards,
+Micha³ Miros³aw
 
-I'm rebasing all the stuff on v5.3-rc1 and plan to repost an updated version
-shortly, solving this would be easier.
+------- dmesg START ------
 
-Neil
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Linux version 5.2.3+ (mirq@qmqm) (gcc version 8.3.0 (Debian 8.3.0-2)) #312 Fri Jul 26 15:32:06 CEST 2019
+[    0.000000] CPU: ARMv7 Processor [410fc051] revision 1 (ARMv7), cr=10c53c7d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000] OF: fdt: Machine model: SAMA5D2 proto3
+[    0.000000] printk: bootconsole [earlycon0] enabled
+[    0.000000] Memory policy: Data cache writeback
+[    0.000000] On node 0 totalpages: 65536
+[    0.000000]   Normal zone: 512 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 65536 pages, LIFO batch:15
+[    0.000000] CPU: All CPU(s) started in SVC mode.
+[    0.000000] pcpu-alloc: s0 r0 d32768 u32768 alloc=1*32768
+[    0.000000] pcpu-alloc: [0] 0 
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 65024
+[    0.000000] Kernel command line: console=ttyS0,115200 root=/dev/mmcblk0p1 rootfstype=squashfs debug loglevel=9 earlyprintk
+[    0.000000] Dentry cache hash table entries: 32768 (order: 5, 131072 bytes)
+[    0.000000] Inode-cache hash table entries: 16384 (order: 4, 65536 bytes)
+[    0.000000] Memory: 239752K/262144K available (8192K kernel code, 578K rwdata, 2312K rodata, 1024K init, 7103K bss, 22392K reserved, 0K cma-reserved)
+[    0.000000] ftrace: allocating 25429 entries in 50 pages
+[    0.000000] Running RCU self tests
+[    0.000000] NR_IRQS: 16, nr_irqs: 16, preallocated irqs: 16
+[    0.000000] L2C-310 ID prefetch enabled, offset 2 lines
+[    0.000000] L2C-310 dynamic clock gating enabled, standby mode enabled
+[    0.000000] L2C-310 cache controller enabled, 8 ways, 128 kB
+[    0.000000] L2C-310: CACHE_ID 0x410000c9, AUX_CTRL 0x36020000
+[    0.000000] random: get_random_bytes called from start_kernel+0x2b8/0x450 with crng_init=0
 
-> 
->>
->> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->> ---
->>  drivers/clk/meson/meson-eeclk.c | 6 ++++++
->>  drivers/clk/meson/meson-eeclk.h | 1 +
->>  2 files changed, 7 insertions(+)
->>
->> diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
->> index 6ba2094be257..81fd2abcd173 100644
->> --- a/drivers/clk/meson/meson-eeclk.c
->> +++ b/drivers/clk/meson/meson-eeclk.c
->> @@ -61,6 +61,12 @@ int meson_eeclkc_probe(struct platform_device *pdev)
->>  		}
->>  	}
->>  
->> +	if (data->setup) {
->> +		ret = data->setup(pdev);
->> +		if (ret)
->> +			return ret;
->> +	}
->> +
->>  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->>  					   data->hw_onecell_data);
->>  }
->> diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
->> index 9ab5d6fa7ccb..7fdf424f71a6 100644
->> --- a/drivers/clk/meson/meson-eeclk.h
->> +++ b/drivers/clk/meson/meson-eeclk.h
->> @@ -20,6 +20,7 @@ struct meson_eeclkc_data {
->>  	const struct reg_sequence	*init_regs;
->>  	unsigned int			init_count;
->>  	struct clk_hw_onecell_data	*hw_onecell_data;
->> +	int				(*setup)(struct platform_device *pdev);
->>  };
->>  
->>  int meson_eeclkc_probe(struct platform_device *pdev);
->> -- 
->> 2.21.0
+[    0.000000] ======================================================
+[    0.000000] WARNING: possible circular locking dependency detected
+[    0.000000] 5.2.3+ #312 Not tainted
+[    0.000000] ------------------------------------------------------
+[    0.000000] swapper/0 is trying to acquire lock:
+[    0.000000] (ptrval) (pmc_pcr_lock){....}, at: clk_sam9x5_peripheral_enable+0x28/0xac
+[    0.000000] 
+               but task is already holding lock:
+[    0.000000] (ptrval) (enable_lock){....}, at: clk_enable_lock+0x38/0xf4
+[    0.000000] 
+               which lock already depends on the new lock.
 
+[    0.000000] 
+               the existing dependency chain (in reverse order) is:
+[    0.000000] 
+               -> #2 (enable_lock){....}:
+[    0.000000]        clk_enable_lock+0x38/0xf4
+[    0.000000]        clk_core_enable_lock+0x14/0x34
+[    0.000000]        regmap_mmio_read+0x54/0x6c
+[    0.000000]        _regmap_read+0x68/0x160
+[    0.000000]        regmap_read+0x44/0x64
+[    0.000000]        at91_clk_register_sam9x5_main+0xb0/0x108
+[    0.000000]        sama5d2_pmc_of_clk_init_driver+0x15c/0x654
+[    0.000000]        of_clk_init+0x154/0x21c
+[    0.000000]        time_init+0x30/0x38
+[    0.000000]        start_kernel+0x2ec/0x450
+[    0.000000]        0x0
+[    0.000000] 
+               -> #1 (syscon:113:(&syscon_config)->lock){....}:
+[    0.000000]        regmap_lock_spinlock+0x14/0x1c
+[    0.000000]        regmap_write+0x34/0x64
+[    0.000000]        clk_sam9x5_peripheral_recalc_rate+0x60/0xf4
+[    0.000000]        __clk_register+0x28c/0x7f4
+[    0.000000]        clk_hw_register+0x20/0x2c
+[    0.000000]        at91_clk_register_sam9x5_peripheral+0xec/0x14c
+[    0.000000]        sama5d2_pmc_of_clk_init_driver+0x42c/0x654
+[    0.000000]        of_clk_init+0x154/0x21c
+[    0.000000]        time_init+0x30/0x38
+[    0.000000]        start_kernel+0x2ec/0x450
+[    0.000000]        0x0
+[    0.000000] 
+               -> #0 (pmc_pcr_lock){....}:
+[    0.000000]        _raw_spin_lock_irqsave+0x44/0x58
+[    0.000000]        clk_sam9x5_peripheral_enable+0x28/0xac
+[    0.000000]        clk_core_enable+0x88/0x258
+[    0.000000]        clk_core_enable_lock+0x20/0x34
+[    0.000000]        clk_prepare_enable+0x1c/0x34
+[    0.000000]        tcb_clksrc_init+0x13c/0x4b8
+[    0.000000]        timer_probe+0x78/0xe0
+[    0.000000]        start_kernel+0x2ec/0x450
+[    0.000000]        0x0
+[    0.000000] 
+               other info that might help us debug this:
+
+[    0.000000] Chain exists of:
+                 pmc_pcr_lock --> syscon:113:(&syscon_config)->lock --> enable_lock
+
+[    0.000000]  Possible unsafe locking scenario:
+
+[    0.000000]        CPU0                    CPU1
+[    0.000000]        ----                    ----
+[    0.000000]   lock(enable_lock);
+[    0.000000]                                lock(syscon:113:(&syscon_config)->lock);
+[    0.000000]                                lock(enable_lock);
+[    0.000000]   lock(pmc_pcr_lock);
+[    0.000000] 
+                *** DEADLOCK ***
+
+[    0.000000] 1 lock held by swapper/0:
+[    0.000000]  #0: (ptrval) (enable_lock){....}, at: clk_enable_lock+0x38/0xf4
+[    0.000000] 
+               stack backtrace:
+[    0.000000] CPU: 0 PID: 0 Comm: swapper Not tainted 5.2.3+ #312
+[    0.000000] Hardware name: Atmel SAMA5
+[    0.000000] [<c010edc0>] (unwind_backtrace) from [<c010c1a8>] (show_stack+0x18/0x1c)
+[    0.000000] [<c010c1a8>] (show_stack) from [<c01515c4>] (print_circular_bug+0x220/0x25c)
+[    0.000000] [<c01515c4>] (print_circular_bug) from [<c0154264>] (__lock_acquire+0x1600/0x1a80)
+[    0.000000] [<c0154264>] (__lock_acquire) from [<c0154f08>] (lock_acquire+0xc4/0x168)
+[    0.000000] [<c0154f08>] (lock_acquire) from [<c08330a8>] (_raw_spin_lock_irqsave+0x44/0x58)
+[    0.000000] [<c08330a8>] (_raw_spin_lock_irqsave) from [<c042fabc>] (clk_sam9x5_peripheral_enable+0x28/0xac)
+[    0.000000] [<c042fabc>] (clk_sam9x5_peripheral_enable) from [<c0424990>] (clk_core_enable+0x88/0x258)
+[    0.000000] [<c0424990>] (clk_core_enable) from [<c0425c4c>] (clk_core_enable_lock+0x20/0x34)
+[    0.000000] [<c0425c4c>] (clk_core_enable_lock) from [<c058d788>] (clk_prepare_enable+0x1c/0x34)
+[    0.000000] [<c058d788>] (clk_prepare_enable) from [<c0c358bc>] (tcb_clksrc_init+0x13c/0x4b8)
+[    0.000000] [<c0c358bc>] (tcb_clksrc_init) from [<c0c35718>] (timer_probe+0x78/0xe0)
+[    0.000000] [<c0c35718>] (timer_probe) from [<c0c00dc4>] (start_kernel+0x2ec/0x450)
+[    0.000000] [<c0c00dc4>] (start_kernel) from [<00000000>] (0x0)
+[    0.000000] clocksource: timer@f800c000: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 184217874325 ns
+[    0.000021] sched_clock: 32 bits at 10MHz, resolution 96ns, wraps every 206986376143ns
+[    0.009762] Lock dependency validator: Copyright (c) 2006 Red Hat, Inc., Ingo Molnar
+[    0.018365] ... MAX_LOCKDEP_SUBCLASSES:  8
+[    0.022911] ... MAX_LOCK_DEPTH:          48
+[    0.027546] ... MAX_LOCKDEP_KEYS:        8191
+[    0.032367] ... CLASSHASH_SIZE:          4096
+[    0.037190] ... MAX_LOCKDEP_ENTRIES:     32768
+[    0.042109] ... MAX_LOCKDEP_CHAINS:      65536
+[    0.047028] ... CHAINHASH_SIZE:          32768
+[    0.051944]  memory used by lock dependency info: 4411 kB
+[    0.057913]  per task-struct memory footprint: 1536 bytes
+[    0.063965] Calibrating delay loop... 358.40 BogoMIPS (lpj=179200)
+[    0.081133] pid_max: default: 32768 minimum: 301
+[    0.086831] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes)
+[    0.094201] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes)
+[    0.104331] CPU: Testing write buffer coherency: ok
+[    0.112611] Setting up static identity map for 0x20100000 - 0x20100060
+[    0.122704] devtmpfs: initialized
+[    0.151047] VFP support v0.3: implementor 41 architecture 2 part 30 variant 5 rev 1
+[    0.160466] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 1911260446275000 ns
+[    0.171341] futex hash table entries: 256 (order: 1, 11264 bytes)
+[    0.178738] pinctrl core: initialized pinctrl subsystem
+[    0.186405] regulator-dummy: no parameters, enabled
+[    0.194206] NET: Registered protocol family 16
+[    0.207208] DMA: preallocated 256 KiB pool for atomic coherent allocations
+[    0.292223] AT91: PM: standby: standby, suspend: ulp0
+[    0.300092] atmel_tcb: probe of f800c000.timer failed with error -16
+[    0.422319] random: fast init done
+[    0.496218] at_xdmac f0010000.dma-controller: 16 channels, mapped at 0x(ptrval)
+[    0.511573] at_xdmac f0004000.dma-controller: 16 channels, mapped at 0x(ptrval)
+[    0.521731] AT91: Detected SoC family: sama5d2
+[    0.526738] AT91: Detected SoC: sama5d27, revision 2
+[...]
