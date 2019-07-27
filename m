@@ -1,66 +1,55 @@
-Return-Path: <SRS0=bWzc=VX=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=L16c=VY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B02A0C7618F
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 22:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82747C7618B
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Jul 2019 06:19:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8108D21880
-	for <linux-clk@archiver.kernel.org>; Fri, 26 Jul 2019 22:27:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45A1720840
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Jul 2019 06:19:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ePOopMHV"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ZoSlHlFe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727296AbfGZW1F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 26 Jul 2019 18:27:05 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36254 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728471AbfGZW1E (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 26 Jul 2019 18:27:04 -0400
-Received: by mail-wm1-f67.google.com with SMTP id g67so44717795wme.1;
-        Fri, 26 Jul 2019 15:27:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pLIvL1ELNjaZefRkSo34EEeqZ5ctkKw3Nhc4gJBc33s=;
-        b=ePOopMHVtBJWVbqlKtDxoGAEJq2W+MrKFCPb2aExEk+4Js7x0XFa33YynjU0aYy+Zd
-         cy8SOMYIf8ILafKjZKdQNPmN5l+a6/AtmSX16476xaqtwIhafaF+Tkr3Hhy8mEupfqD1
-         l1Fxv4/EWdfc3Znt515XrTWt1Gpj/K2hQoYPL5Cr9SGL6Y1I8TqxbhGeL1OoCedTXnsz
-         WDJ33syVp6qDMLPxtq5zlNFdpUAgGk8NfG0/NIPKuHicwUUS0OIkT0oli/9bAznmh+rR
-         IPghhpH766v1ZEoaeXrdL+5+dmvIE7ZsoovhwgJdcWh2/YKaxv8k+WD3GA7eCwtwaCLI
-         a9nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pLIvL1ELNjaZefRkSo34EEeqZ5ctkKw3Nhc4gJBc33s=;
-        b=bO22VTu4vtev8BcMp6FGcxh3SQKf2HTS2EtEc+bue1CQod3DiJrMBUXtvGuaOZDxkE
-         FJYI4mrpmFS0KBSGQa/E56xs2l8i0LRDmz9GT8vqvfKjL02UahMDahHGMx4f3vAmOfeT
-         V8I7SDakzRf14PWdd+chgnLZJ2JKgQcW8C3WLb8/FH70hdQT2U1Yu9/t8UmPoZg+vO8E
-         PxQr6+7kIP9RNb0ELCPpeDci+9xyr7ptq7D9YZsRzype4Gt6yIwkuzFO9ia8j+Wug4Cj
-         X2JFUxFo1vrO/Evp3Lsm3JmP1aACjTLDdJpCKhNaw7Onlf20O2E2kBuCifYIT6tyvi4s
-         4qCA==
-X-Gm-Message-State: APjAAAX76wy+lEoicfZTNLjCuMA4dUfT1LHq6T5qyZGeQ+TSihw17BSw
-        2ZMS23+Uy9NajE6F/PeLNZ9OC+LXSxHm8nxxcBs=
-X-Google-Smtp-Source: APXvYqxg4Ing4cAKxRNOyIS5IE4D6JXVjbgrCbkFHO/3jK45VR23Z9xnWOALa5i4VOTyOCbFR45W/I9i3pdpSHZMPSA=
-X-Received: by 2002:a1c:96c7:: with SMTP id y190mr80069646wmd.87.1564180022241;
- Fri, 26 Jul 2019 15:27:02 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190705045612.27665-1-Anson.Huang@nxp.com> <20190705045612.27665-5-Anson.Huang@nxp.com>
-In-Reply-To: <20190705045612.27665-5-Anson.Huang@nxp.com>
-From:   Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Sat, 27 Jul 2019 01:26:50 +0300
-Message-ID: <CAEnQRZAZNMBx3ApVmRP8hYPw0XY_QgR-saE6WLcT8oZmHPCxSA@mail.gmail.com>
-Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     rui.zhang@intel.com, edubezval@gmail.com,
-        daniel.lezcano@linaro.org, Rob Herring <robh+dt@kernel.org>,
+        id S1728337AbfG0GTQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Jul 2019 02:19:16 -0400
+Received: from mail-eopbgr70053.outbound.protection.outlook.com ([40.107.7.53]:35298
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725905AbfG0GTQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 27 Jul 2019 02:19:16 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=EASu/aFQ/yhpiH8W8C2W5y63U3BK0TN5WDbsdO0rZpblyyKOeeuyToM3IhdwleIsexhNMVCVGUFPTLzGwyfJUGGfydmg0+Fy55BaBi6XYX2+HdildE8Brn+HPf/S/y8HQvh75qs7PezNpFTyvSZguMo/SlNK4Co9S5zVOnoE1zWs4EreVODB/7IjdbyM/SEaZoyNJJ0DiW6h4i5bsVoIXxNMKaDpD1auuFoBjDjKw5YDX9Jvt8OvRt4Mk0OS5ULgCcbbfd1DazcLpqPbT7pZM8OXm8HG4i5Sx5FpdqLyTvWwSL1H8e6JWTC/W9tdx388cibnmQiWSuKk8Po9pZznEQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZenlU5Mgg3iJLhndZGd7G00H4J/8pKUEeuI/1r0xT5E=;
+ b=dDIxS42Xuco4YlPYh+cerUvDx5SeJgz4dGM2wTwzzuiw/mvV3CzhTUTDKem87ag5n6JudX1Dk/iXECg/F04rrpePbB5zUCtzmBcIIm3bGg0GoHrjAMt179J2fjhMQcK8dKvHNE5Qju3GSlFgCf5jLE3UmfB3JzcPx2cc1bkjzHHFVO/Ca44T5dlXqR+W2RWxVeuwELyq2gdhF/8Z1kMytvgAhbK2YT+0SRelB7PwlnTZWUbFVC6UxSADzxFCKuphFD/U3iYrgSOk0oZTyohPyDqe2R2ElZPH7b6lksLmw3D7zuZhLs7laFpmocpj950z3de3u9LFUachREdl+Y2EaA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZenlU5Mgg3iJLhndZGd7G00H4J/8pKUEeuI/1r0xT5E=;
+ b=ZoSlHlFeMjkVWkfXZHK3Y+xf+ABDFMDm+mkpIAttSXyh23ZwM+PhghdOSOwFOitoh3kY7U4kCkXAKyDcrMWEyjZ7oKyx9TUxL59lXsdKBNDopEhudnGpi6m+D3dO37ctqijEgayZse673mkO5LXjqWixlUWUtRqTkUAPVbm9pjs=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3899.eurprd04.prod.outlook.com (52.134.71.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2115.10; Sat, 27 Jul 2019 06:19:07 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::7cdf:bddc:212c:f77e]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::7cdf:bddc:212c:f77e%4]) with mapi id 15.20.2094.017; Sat, 27 Jul 2019
+ 06:19:07 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+CC:     "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
@@ -73,77 +62,80 @@ Cc:     rui.zhang@intel.com, edubezval@gmail.com,
         Andrey Smirnov <andrew.smirnov@gmail.com>,
         "Angus Ainslie (Purism)" <angus@akkea.ca>,
         Carlo Caione <ccaione@baylibre.com>,
-        =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>,
+        =?utf-8?B?R3VpZG8gR8O8bnRoZXI=?= <agx@sigxcpu.org>,
         Leonard Crestez <leonard.crestez@nxp.com>,
-        linux-pm@vger.kernel.org,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
         Devicetree List <devicetree@vger.kernel.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
         linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk@vger.kernel.org, dl-linux-imx <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
+ IMX8MQ_CLK_TMU_ROOT
+Thread-Topic: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
+ IMX8MQ_CLK_TMU_ROOT
+Thread-Index: AQHVMu9Qagn4ZAj9sUKncGzfKuws0abdnJEAgAB74HA=
+Date:   Sat, 27 Jul 2019 06:19:07 +0000
+Message-ID: <DB3PR0402MB3916233A56CF5DF778115716F5C30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com>
+ <20190705045612.27665-5-Anson.Huang@nxp.com>
+ <CAEnQRZAZNMBx3ApVmRP8hYPw0XY_QgR-saE6WLcT8oZmHPCxSA@mail.gmail.com>
+In-Reply-To: <CAEnQRZAZNMBx3ApVmRP8hYPw0XY_QgR-saE6WLcT8oZmHPCxSA@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c0947a3a-e0ae-4909-b22b-08d7125a54f7
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3899;
+x-ms-traffictypediagnostic: DB3PR0402MB3899:
+x-microsoft-antispam-prvs: <DB3PR0402MB3899FC94EFEE7FE9B3695BD6F5C30@DB3PR0402MB3899.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:195;
+x-forefront-prvs: 01110342A5
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(136003)(396003)(376002)(39860400002)(366004)(53754006)(189003)(199004)(76116006)(33656002)(478600001)(64756008)(66556008)(66946007)(53936002)(8676002)(81156014)(81166006)(9686003)(55016002)(66476007)(66446008)(3846002)(25786009)(4326008)(6246003)(316002)(186003)(26005)(229853002)(102836004)(11346002)(486006)(476003)(8936002)(44832011)(6916009)(86362001)(446003)(54906003)(6116002)(14454004)(6506007)(2906002)(6436002)(7416002)(5660300002)(74316002)(71200400001)(76176011)(68736007)(7736002)(66066001)(256004)(305945005)(99286004)(52536014)(71190400001)(7696005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3899;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: p+9LiqLAK1OSsmN8pPuQRmWorlVr1ZnBEli46a9MViy98Q5nPDirqQgDKRSA3teryeEuQG2sktGVPMuUYEfLEXapAyBq9ffOu0N21fYs9uczVxc8xDogoo3XpQcCP9bl/s1rdd3IdKW25AeB4YrAAkLwHcnHFQwiAjdIicCPwnfXd4nqfD4pTxC2YUv4XLnfmaXnMREsZqF5ohAO8xME3lm+46XnXWQzmVQ7qkFlcciESEhMwmFkQXUg2hZtGEY8WOQFOjWwOCkDFSgi/UeQCeeCekP9Qjejxl2ORYabAWz6ZAAZesOc0htzLchQI9Xr99vNR22+TweGt1I8WPa+X4KZQVM1b5YUZic+KcqoKZCeUrHyAnaBnVLWI/v2zn2weuKQcLWkuP1WmYIWIhsQM0yBokZGrkx+Idb7XHoIqa8=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c0947a3a-e0ae-4909-b22b-08d7125a54f7
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jul 2019 06:19:07.6381
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3899
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi all,
-
-latest linux-next hangs at boot.
-
-commit fde50b96be821ac9673a7e00847cc4605bd88f34 (HEAD -> master, tag:
-next-20190726, origin/master, origin/HEAD)
-Author: Stephen Rothwell <sfr@canb.auug.org.au>
-Date:   Fri Jul 26 15:18:02 2019 +1000
-
-    Add linux-next specific files for 20190726
-
-    Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-
-
-I know this is crazy but reverting commit:
-
-commit 431bdd1df48ee2896ea9980d9153e3aeaf0c81ef (refs/bisect/bad)
-Author: Anson Huang <Anson.Huang@nxp.com>
-Date:   Fri Jul 5 12:56:11 2019 +0800
-
-    clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
-
-    IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
-    should manage this clock, so no need to have CLK_IS_CRITICAL flag
-    set.
-
-
-
-makes the boot work again.
-
-Any idea?
-
-On Fri, Jul 5, 2019 at 8:07 AM <Anson.Huang@nxp.com> wrote:
->
-> From: Anson Huang <Anson.Huang@nxp.com>
->
-> IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
-> should manage this clock, so no need to have CLK_IS_CRITICAL flag
-> set.
->
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mq.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-> index d407a07..91de69a 100644
-> --- a/drivers/clk/imx/clk-imx8mq.c
-> +++ b/drivers/clk/imx/clk-imx8mq.c
-> @@ -539,7 +539,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
->         clks[IMX8MQ_CLK_DISP_AXI_ROOT]  = imx_clk_gate2_shared2("disp_axi_root_clk", "disp_axi", base + 0x45d0, 0, &share_count_dcss);
->         clks[IMX8MQ_CLK_DISP_APB_ROOT]  = imx_clk_gate2_shared2("disp_apb_root_clk", "disp_apb", base + 0x45d0, 0, &share_count_dcss);
->         clks[IMX8MQ_CLK_DISP_RTRM_ROOT] = imx_clk_gate2_shared2("disp_rtrm_root_clk", "disp_rtrm", base + 0x45d0, 0, &share_count_dcss);
-> -       clks[IMX8MQ_CLK_TMU_ROOT] = imx_clk_gate4_flags("tmu_root_clk", "ipg_root", base + 0x4620, 0, CLK_IS_CRITICAL);
-> +       clks[IMX8MQ_CLK_TMU_ROOT] = imx_clk_gate4("tmu_root_clk", "ipg_root", base + 0x4620, 0);
->         clks[IMX8MQ_CLK_VPU_DEC_ROOT] = imx_clk_gate2_flags("vpu_dec_root_clk", "vpu_bus", base + 0x4630, 0, CLK_SET_RATE_PARENT | CLK_OPS_PARENT_ENABLE);
->         clks[IMX8MQ_CLK_CSI1_ROOT] = imx_clk_gate4("csi1_root_clk", "csi1_core", base + 0x4650, 0);
->         clks[IMX8MQ_CLK_CSI2_ROOT] = imx_clk_gate4("csi2_root_clk", "csi2_core", base + 0x4660, 0);
-> --
-> 2.7.4
->
+SGksIERhbmllbA0KDQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggNS82XSBjbGs6IGlteDhtcTogUmVt
+b3ZlIENMS19JU19DUklUSUNBTCBmbGFnIGZvcg0KPiBJTVg4TVFfQ0xLX1RNVV9ST09UDQo+IA0K
+PiBIaSBhbGwsDQo+IA0KPiBsYXRlc3QgbGludXgtbmV4dCBoYW5ncyBhdCBib290Lg0KPiANCj4g
+Y29tbWl0IGZkZTUwYjk2YmU4MjFhYzk2NzNhN2UwMDg0N2NjNDYwNWJkODhmMzQgKEhFQUQgLT4g
+bWFzdGVyLCB0YWc6DQo+IG5leHQtMjAxOTA3MjYsIG9yaWdpbi9tYXN0ZXIsIG9yaWdpbi9IRUFE
+KQ0KPiBBdXRob3I6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pg0KPiBE
+YXRlOiAgIEZyaSBKdWwgMjYgMTU6MTg6MDIgMjAxOSArMTAwMA0KPiANCj4gICAgIEFkZCBsaW51
+eC1uZXh0IHNwZWNpZmljIGZpbGVzIGZvciAyMDE5MDcyNg0KPiANCj4gICAgIFNpZ25lZC1vZmYt
+Ynk6IFN0ZXBoZW4gUm90aHdlbGwgPHNmckBjYW5iLmF1dWcub3JnLmF1Pg0KPiANCj4gDQo+IEkg
+a25vdyB0aGlzIGlzIGNyYXp5IGJ1dCByZXZlcnRpbmcgY29tbWl0Og0KPiANCj4gY29tbWl0IDQz
+MWJkZDFkZjQ4ZWUyODk2ZWE5OTgwZDkxNTNlM2FlYWYwYzgxZWYgKHJlZnMvYmlzZWN0L2JhZCkN
+Cj4gQXV0aG9yOiBBbnNvbiBIdWFuZyA8QW5zb24uSHVhbmdAbnhwLmNvbT4NCj4gRGF0ZTogICBG
+cmkgSnVsIDUgMTI6NTY6MTEgMjAxOSArMDgwMA0KPiANCj4gICAgIGNsazogaW14OG1xOiBSZW1v
+dmUgQ0xLX0lTX0NSSVRJQ0FMIGZsYWcgZm9yIElNWDhNUV9DTEtfVE1VX1JPT1QNCj4gDQo+ICAg
+ICBJTVg4TVFfQ0xLX1RNVV9ST09UIGlzIE9OTFkgdXNlZCBmb3IgdGhlcm1hbCBtb2R1bGUsIHRo
+ZSBkcml2ZXINCj4gICAgIHNob3VsZCBtYW5hZ2UgdGhpcyBjbG9jaywgc28gbm8gbmVlZCB0byBo
+YXZlIENMS19JU19DUklUSUNBTCBmbGFnDQo+ICAgICBzZXQuDQo+IA0KPiANCj4gDQo+IG1ha2Vz
+IHRoZSBib290IHdvcmsgYWdhaW4uDQo+IA0KPiBBbnkgaWRlYT8NCg0KSSBqdXN0IGZvdW5kIGlm
+IGRpc2FibGluZyBTRE1BMSwgdGhlbiBrZXJuZWwgY2FuIGJvb3QgdXAsIGl0IGRvZXMgTk9UIG1h
+a2Ugc2Vuc2UNClRNVSBjbG9jayBpcyByZWxhdGVkIHRvIFNETUExLCBJIHdpbGwgY2hlY2sgd2l0
+aCBkZXNpZ24gYW5kIGdldCBiYWNrIHRvIHlvdSBzb29uLg0KDQpBbnNvbg0KDQo=
