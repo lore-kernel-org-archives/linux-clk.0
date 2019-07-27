@@ -2,77 +2,151 @@ Return-Path: <SRS0=L16c=VY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89161C7618B
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Jul 2019 11:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8219C7618B
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Jul 2019 16:17:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6688920578
-	for <linux-clk@archiver.kernel.org>; Sat, 27 Jul 2019 11:29:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A40202086D
+	for <linux-clk@archiver.kernel.org>; Sat, 27 Jul 2019 16:17:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbfG0L3e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 Jul 2019 07:29:34 -0400
-Received: from honk.sigxcpu.org ([24.134.29.49]:59832 "EHLO honk.sigxcpu.org"
+        id S2387419AbfG0QRk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 27 Jul 2019 12:17:40 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:59426 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfG0L3e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 27 Jul 2019 07:29:34 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 08761FB03;
-        Sat, 27 Jul 2019 13:29:32 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 3Mjeha8KiY-P; Sat, 27 Jul 2019 13:29:31 +0200 (CEST)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id D550146B09; Sat, 27 Jul 2019 13:29:30 +0200 (CEST)
-From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1728856AbfG0QRk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 27 Jul 2019 12:17:40 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 67F36200E48;
+        Sat, 27 Jul 2019 18:17:37 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 57CF2200E46;
+        Sat, 27 Jul 2019 18:17:37 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2D76220612;
+        Sat, 27 Jul 2019 18:17:37 +0200 (CEST)
+Date:   Sat, 27 Jul 2019 19:17:36 +0300
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Daniel Baluta <daniel.baluta@gmail.com>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        "rui.zhang@intel.com" <rui.zhang@intel.com>,
+        "edubezval@gmail.com" <edubezval@gmail.com>,
+        "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Shawn Guo <shawnguo@kernel.org>,
         Sascha Hauer <s.hauer@pengutronix.de>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: imx: i.MX8MN: Use space instead of tab
-Date:   Sat, 27 Jul 2019 13:29:30 +0200
-Message-Id: <35f999387bca037731dd963a5901909d6e6d0a17.1564226824.git.agx@sigxcpu.org>
-X-Mailer: git-send-email 2.20.1
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Carlo Caione <ccaione@baylibre.com>,
+        Guido =?utf-8?Q?G=C3=BCnther?= <agx@sigxcpu.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
+ IMX8MQ_CLK_TMU_ROOT
+Message-ID: <20190727161736.4dkfqgwftre67v56@fsr-ub1664-175>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com>
+ <20190705045612.27665-5-Anson.Huang@nxp.com>
+ <CAEnQRZAZNMBx3ApVmRP8hYPw0XY_QgR-saE6WLcT8oZmHPCxSA@mail.gmail.com>
+ <DB3PR0402MB3916233A56CF5DF778115716F5C30@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+ <CAEnQRZCrZybzcy__u4p_Eq4zSVc2ESyfKLk5sPf1JYba1JSOiA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEnQRZCrZybzcy__u4p_Eq4zSVc2ESyfKLk5sPf1JYba1JSOiA@mail.gmail.com>
+User-Agent: NeoMutt/20180622
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This fixes 'make dt_binding_check'
+On 19-07-27 09:33:10, Daniel Baluta wrote:
+> On Sat, Jul 27, 2019 at 9:19 AM Anson Huang <anson.huang@nxp.com> wrote:
+> >
+> > Hi, Daniel
+> >
+> > > Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
+> > > IMX8MQ_CLK_TMU_ROOT
+> > >
+> > > Hi all,
+> > >
+> > > latest linux-next hangs at boot.
+> > >
+> > > commit fde50b96be821ac9673a7e00847cc4605bd88f34 (HEAD -> master, tag:
+> > > next-20190726, origin/master, origin/HEAD)
+> > > Author: Stephen Rothwell <sfr@canb.auug.org.au>
+> > > Date:   Fri Jul 26 15:18:02 2019 +1000
+> > >
+> > >     Add linux-next specific files for 20190726
+> > >
+> > >     Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> > >
+> > >
+> > > I know this is crazy but reverting commit:
+> > >
+> > > commit 431bdd1df48ee2896ea9980d9153e3aeaf0c81ef (refs/bisect/bad)
+> > > Author: Anson Huang <Anson.Huang@nxp.com>
+> > > Date:   Fri Jul 5 12:56:11 2019 +0800
+> > >
+> > >     clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT
+> > >
+> > >     IMX8MQ_CLK_TMU_ROOT is ONLY used for thermal module, the driver
+> > >     should manage this clock, so no need to have CLK_IS_CRITICAL flag
+> > >     set.
+> > >
+> > >
+> > >
+> > > makes the boot work again.
+> > >
+> > > Any idea?
+> >
+> > I just found if disabling SDMA1, then kernel can boot up, it does NOT make sense
+> > TMU clock is related to SDMA1, I will check with design and get back to you soon.
+> >
+> 
+> Hi Anson,
+> 
+> Applying Abel's patch:
+> 
+> commit 8816c47db6a82f55bb4d64f62fd9dd3af680f0e4 (HEAD -> master)
+> Author: Abel Vesa <abel.vesa@nxp.com>
+> Date:   Tue Jun 25 12:01:56 2019 +0300
+> 
+>     clk: imx8mq: Mark AHB clock as critical
+> 
+>     Keep the AHB clock always on since there is no driver to control it and
+>     all the other clocks that use it as parent rely on it being always enabled.
+> 
+> 
+> 
+> The kernel boots up again.
+> 
+> It make some sense. I don't understand though why having
+> IMX8MQ_CLK_TMU_ROOT as critical also "unhangs" the kernel.
+> 
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
----
-Seen on next-20190726
+OK, so this is how it works.
 
- Documentation/devicetree/bindings/clock/imx8mn-clock.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+By removing the critical flag from TMU, the AHB doesn't stay always on.
+With my patch the AHB is marked as critical and therefore stays on.
 
-diff --git a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-index 454c5b44b2ee..622f3658bd9f 100644
---- a/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-+++ b/Documentation/devicetree/bindings/clock/imx8mn-clock.yaml
-@@ -71,7 +71,7 @@ examples:
-         compatible = "fixed-clock";
-         #clock-cells = <0>;
-         clock-frequency = <32768>;
--	clock-output-names = "osc_32k";
-+        clock-output-names = "osc_32k";
-     };
- 
-     osc_24m: clock-osc-24m {
--- 
-2.20.1
+The sdma1_clk has as parent the ipg_root which in turn has as parent the
+ahb clock. And I think what happens is some read from the sdma registers hangs
+because, for whatever reason, enabling the sdma1_clk doesn't propagate to enable
+the ahb clock. I might be wrong though.
 
+> thanks,
+> Daniel.
