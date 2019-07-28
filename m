@@ -2,143 +2,94 @@ Return-Path: <SRS0=SmgD=VZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450CAC433FF
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Jul 2019 03:14:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86ACDC7618B
+	for <linux-clk@archiver.kernel.org>; Sun, 28 Jul 2019 07:59:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2745B2081B
-	for <linux-clk@archiver.kernel.org>; Sun, 28 Jul 2019 03:14:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54D7821655
+	for <linux-clk@archiver.kernel.org>; Sun, 28 Jul 2019 07:59:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726115AbfG1DOb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 27 Jul 2019 23:14:31 -0400
-Received: from hermes.aosc.io ([199.195.250.187]:52471 "EHLO hermes.aosc.io"
+        id S1725938AbfG1H7D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 28 Jul 2019 03:59:03 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:51808 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725440AbfG1DOb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 27 Jul 2019 23:14:31 -0400
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id C23D86F928;
-        Sun, 28 Jul 2019 03:14:27 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com, Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH v5 6/6] ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
-Date:   Sun, 28 Jul 2019 11:12:27 +0800
-Message-Id: <20190728031227.49140-7-icenowy@aosc.io>
-In-Reply-To: <20190728031227.49140-1-icenowy@aosc.io>
-References: <20190728031227.49140-1-icenowy@aosc.io>
+        id S1725880AbfG1H7D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 28 Jul 2019 03:59:03 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 41444FB03;
+        Sun, 28 Jul 2019 09:59:00 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id Wyg7IDtmtuoB; Sun, 28 Jul 2019 09:58:59 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id BF96646B51; Sun, 28 Jul 2019 09:58:58 +0200 (CEST)
+Date:   Sun, 28 Jul 2019 09:58:58 +0200
+From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
+To:     Fabio Estevam <festevam@gmail.com>
+Cc:     Daniel Baluta <daniel.baluta@gmail.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Carlo Caione <ccaione@baylibre.com>,
+        "Angus Ainslie (Purism)" <angus@akkea.ca>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        dl-linux-imx <Linux-imx@nxp.com>,
+        "rui.zhang" <rui.zhang@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Devicetree List <devicetree@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Sascha Hauer <s.hauer@pengutronix.de>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>
+Subject: Re: [PATCH 5/6] clk: imx8mq: Remove CLK_IS_CRITICAL flag for
+ IMX8MQ_CLK_TMU_ROOT
+Message-ID: <20190728075858.GA15144@bogon.m.sigxcpu.org>
+References: <20190705045612.27665-1-Anson.Huang@nxp.com>
+ <20190705045612.27665-5-Anson.Huang@nxp.com>
+ <CAEnQRZAZNMBx3ApVmRP8hYPw0XY_QgR-saE6WLcT8oZmHPCxSA@mail.gmail.com>
+ <20190727182636.GA7170@bogon.m.sigxcpu.org>
+ <CAOMZO5C_g5bO-yqhoLbb6geUcmzi4necjdQ_P2tROq2vzEPOqQ@mail.gmail.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOMZO5C_g5bO-yqhoLbb6geUcmzi4necjdQ_P2tROq2vzEPOqQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Lichee zero plus is a core board made by Sipeed, which includes on-board
-TF slot or SMT SD NAND, and optional SPI NOR or eMMC, a UART debug
-header, a microUSB slot and a gold finger connector for expansion. It
-can use either Sochip S3 or Allwinner S3L SoC.
+Hi Fabio,
+On Sat, Jul 27, 2019 at 05:17:50PM -0300, Fabio Estevam wrote:
+> Hi Guido,
+> 
+> On Sat, Jul 27, 2019 at 3:26 PM Guido Günther <agx@sigxcpu.org> wrote:
+> 
+> > I noticed a boot hang yesterday on next-20190726 when loading the
+> > qoriq_thermal which I worked around by blacklisting it. The
+> > fsl,imx8mq-tmu node specifies a clock (IMX8MQ_CLK_TMU_ROOT) but does not
+> > seem to enable, shouldn't it do so?
+> 
+> Yes, I think you are right.
+> 
+> I don't have access to a imx8mq board at the moment, but something
+> like below would probably help:
+> http://code.bulix.org/pd88jp-812381
+> 
+> If it helps, I can send it as a formal patch.
 
-Add the basic device tree for the core board, w/o optional onboard
-storage, and with S3 SoC.
-
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
-Changes in v5:
-- Added missing compatible string.
-- Set default USB role to "peripheral".
-- Switch to use V3 DTSI.
-
-No changes in v4.
-
-Changes in v3:
-- Drop common regulator DTSI usage and added vcc3v3 regulator.
-
-Patch introduced in v2.
-
- arch/arm/boot/dts/Makefile                    |  1 +
- .../boot/dts/sun8i-s3-lichee-zero-plus.dts    | 53 +++++++++++++++++++
- 2 files changed, 54 insertions(+)
- create mode 100644 arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-
-diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index bef2b6e2392d..ef937988b30e 100644
---- a/arch/arm/boot/dts/Makefile
-+++ b/arch/arm/boot/dts/Makefile
-@@ -1120,6 +1120,7 @@ dtb-$(CONFIG_MACH_SUN8I) += \
- 	sun8i-r16-nintendo-super-nes-classic.dtb \
- 	sun8i-r16-parrot.dtb \
- 	sun8i-r40-bananapi-m2-ultra.dtb \
-+	sun8i-s3-lichee-zero-plus.dtb \
- 	sun8i-t3-cqa3t-bv3.dtb \
- 	sun8i-v3s-licheepi-zero.dtb \
- 	sun8i-v3s-licheepi-zero-dock.dtb \
-diff --git a/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-new file mode 100644
-index 000000000000..d18192d51d1b
---- /dev/null
-+++ b/arch/arm/boot/dts/sun8i-s3-lichee-zero-plus.dts
-@@ -0,0 +1,53 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (C) 2019 Icenowy Zheng <icenowy@aosc.io>
-+ */
-+
-+/dts-v1/;
-+#include "sun8i-v3.dtsi"
-+
-+#include <dt-bindings/gpio/gpio.h>
-+
-+/ {
-+	model = "Sipeed Lichee Zero Plus";
-+	compatible = "sipeed,lichee-zero-plus", "sochip,s3",
-+		     "allwinner,sun8i-v3";
-+
-+	aliases {
-+		serial0 = &uart0;
-+	};
-+
-+	chosen {
-+		stdout-path = "serial0:115200n8";
-+	};
-+
-+	reg_vcc3v3: vcc3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vcc3v3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
-+};
-+
-+&mmc0 {
-+	broken-cd;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_vcc3v3>;
-+	status = "okay";
-+};
-+
-+&uart0 {
-+	pinctrl-0 = <&uart0_pb_pins>;
-+	pinctrl-names = "default";
-+	status = "okay";
-+};
-+
-+&usb_otg {
-+	dr_mode = "peripheral";
-+	status = "okay";
-+};
-+
-+&usbphy {
-+	usb0_id_det-gpios = <&pio 5 6 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
--- 
-2.21.0
-
+Yes, this fixes it for me, thanks!
+ -- Guido
