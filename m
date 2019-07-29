@@ -4,274 +4,169 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D14CC433FF
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 16:55:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7212C433FF
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 17:33:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EDE8206E0
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 16:55:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A11F0217D4
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 17:33:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavecomp.com header.i=@wavecomp.com header.b="NRnkCzGJ"
+	dkim=pass (1024-bit key) header.d=wavecomp.com header.i=@wavecomp.com header.b="C3J51/ko"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfG2Qzp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jul 2019 12:55:45 -0400
-Received: from mail-eopbgr760121.outbound.protection.outlook.com ([40.107.76.121]:27014
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
+        id S1728992AbfG2RdY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jul 2019 13:33:24 -0400
+Received: from mail-eopbgr810130.outbound.protection.outlook.com ([40.107.81.130]:30795
+        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727165AbfG2Qzp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Jul 2019 12:55:45 -0400
+        id S1726709AbfG2RdY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 29 Jul 2019 13:33:24 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=lOUxBqGB/W1B33Ly1dXke6d75rIsHeFfAKNzSXv1a+WU6ApedAamDgVjXCvTTCFp6Vh4tC4dpl+mvkZHpZXJhFag4BBs7C22gUw4cJY08Ds6bkTaIRgb/pDQ342yolLNrWOFU7hqeaS2/Y7B9ZTCgMjaYk9HCl8ZI60PIoV050CVtdHtky/ZoVJUQky7qjgyrSdDQWSxdLoYCePl70dNZCWyoyUePB663UFYC6iPzBAijMlDpLl1c8G8sMcjtQB8TvE0h72ajhp9Y7JGW0++1YQX68ylTbDEM5ZhX2uNpR56CRxxp4yd7XjOxKWf/E3aNN151uw0EXRsYaBZKGZavg==
+ b=YHswST6a360En6gjh1ZsbN/1jq7s73zqk/NGoWd2PH1lSR9cXxHuzPCgOX5+W+kbdTGmNdTa3WICH7syrdhtjrKe3mkuMIkG1yMgBL7J2i4Li+bop4Mbz+w0YxiBuW8kJkZRGBYyGS/lzt2cNMOKGmxDTJkVPwQ0xcCgWqcP4otMh/Ho/EeujGumO30bpoLD31ForcaY5zTPdCR9fclJ23sg//2HEDTuhhWDJlGZugLkKVE+c/xL3mL65o9oDaqeAvI9nyRY0CLcszEmcihxTBkn3BFUSelUZRx+48596VAYri9cNq4oNMcIU2nG/uzTzMx6mlWuHYOmQSqlXfjhXg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rklX2Dc2cLJUXF9CYrQvcVKY/ewkRO7kaZqqUfrxL5s=;
- b=Wq8eq1sVH1m7V2k1dfuekTuXgVQU5gyBC2rAPRpGq07pjSuN/Omypjrv+J3EfamRs2pxwXgKo8k5k59sHGCARsMtyXTiyGOH4pk8H6aUnHLLSAqcxT7RR8lM5I7hsBk3KHGpVbrrvDUjmv9HQiZlK+i6XMHBNIz9ALf5chKnmsKzACqGGciRYp2Rh0Fj3nm2cJqRgVnkknMkl86ur6Xqqgd+mtWYR+9Piwpy6bQ0EPygZfv6bXKnDryWbGeG/doqL1sTHcokuo2e0v1VaGunnZRoUB1Y1NVRp22crOTyzXwG7+ABwZJwMky7W3qKD5dBlZH6ijWwtPOr5tBR/+dd4g==
+ bh=cFu0qygaFKWH4Ao14C/g0B+eJfnQFCMH4W8ZiqEBU0Q=;
+ b=Vm7oC90diOSqxI9YpQi6PIrERYvQKYuyYpSyP9Br1iZafx9DKc5p7bC9OEOL4Zw4R841Sx0gb8l6ude6nY271dlxO6xxGO8qcJVLzNL6ukVEPqACcglmN7H102crR+F30u/wKZEKEOBVklnPA16dyLgKd728sjZt4Mh/ICPs1b6ouFDQ6/PJiE39xJ8xTXeUzXHRjC5Dtpq7rHLM3aZRPg2hzxzJwPwDmLADsclKlzkpj5bK+wvHON6Oz10DHtQMwUR3ZQzUvbfw+AQw18U33bR9VrtLCPR3Ps02L5VLH2RlLjeRzKwVu7DhU0zyrSkDgjt1+oBCn5qiW+kh2srcxg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
  smtp.mailfrom=wavecomp.com;dmarc=pass action=none
  header.from=mips.com;dkim=pass header.d=mips.com;arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wavecomp.com;
  s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rklX2Dc2cLJUXF9CYrQvcVKY/ewkRO7kaZqqUfrxL5s=;
- b=NRnkCzGJZJZCyScA2R8PyAVSZJUR8ovG97kd/r9pvrCBFZcQOY9zKqWazBboT4Roqd9kvucWJ2KTIR1oXAbRj/CCPqg7IMbT5bo65hIm1y/fRUe5XEwG0TiyWnJeFBM8rgTQ+U0hTTj4EVkfTiFQfV/4DmtoQJjbaHdxzoNvSzI=
+ bh=cFu0qygaFKWH4Ao14C/g0B+eJfnQFCMH4W8ZiqEBU0Q=;
+ b=C3J51/koLeztasxwNgB3BFWJW90NB8C8fYPERjUPvLdLjYtd0xC/SMZFLcay3k0leNpoBIOv1RADgDzYDm0H93pkFyRLLJ2Pv1tS/GkCa0y4/YhCyZb8I5un5FzucJV/PnteYTosXE4irE7rx3yOXVDWk9Moum5/MU6h3UxG5Yk=
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com (10.172.60.12) by
- MWHPR2201MB1710.namprd22.prod.outlook.com (10.164.206.152) with Microsoft
+ MWHPR2201MB1437.namprd22.prod.outlook.com (10.174.169.164) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2115.15; Mon, 29 Jul 2019 16:55:37 +0000
+ 15.20.2115.14; Mon, 29 Jul 2019 17:33:09 +0000
 Received: from MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::105a:1595:b6ef:cbdf]) by MWHPR2201MB1277.namprd22.prod.outlook.com
  ([fe80::105a:1595:b6ef:cbdf%4]) with mapi id 15.20.2115.005; Mon, 29 Jul 2019
- 16:55:37 +0000
+ 17:33:09 +0000
 From:   Paul Burton <paul.burton@mips.com>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Lee Jones <lee.jones@linaro.org>, Arnd Bergmann <arnd@arndb.de>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
+To:     Chuanhong Guo <gch981213@gmail.com>
+CC:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "od@zcrc.me" <od@zcrc.me>, Mathieu Malaterre <malat@debian.org>
-Subject: Re: [EXTERNAL][PATCH v15 04/13] mfd/syscon: Add
- device_node_to_regmap()
-Thread-Topic: [EXTERNAL][PATCH v15 04/13] mfd/syscon: Add
- device_node_to_regmap()
-Thread-Index: AQHVQkOeBz0GEUktg0S7o0z63oJyZKbh2FsA
-Date:   Mon, 29 Jul 2019 16:55:37 +0000
-Message-ID: <20190729165536.dd67ws6nr2msx4pk@pburton-laptop>
-References: <20190724171615.20774-1-paul@crapouillou.net>
- <20190724171615.20774-5-paul@crapouillou.net>
-In-Reply-To: <20190724171615.20774-5-paul@crapouillou.net>
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>
+Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding
+ documentation
+Thread-Topic: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding
+ documentation
+Thread-Index: AQHVRjOw3AW/i5aXnkGo9okZQ3kHgA==
+Date:   Mon, 29 Jul 2019 17:33:09 +0000
+Message-ID: <20190729173307.ex2mf5hikzxl534v@pburton-laptop>
+References: <20190724022310.28010-1-gch981213@gmail.com>
+ <20190724022310.28010-5-gch981213@gmail.com>
+In-Reply-To: <20190724022310.28010-5-gch981213@gmail.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: BYAPR01CA0016.prod.exchangelabs.com (2603:10b6:a02:80::29)
- To MWHPR2201MB1277.namprd22.prod.outlook.com (2603:10b6:301:18::12)
+x-clientproxiedby: BYAPR05CA0035.namprd05.prod.outlook.com
+ (2603:10b6:a03:c0::48) To MWHPR2201MB1277.namprd22.prod.outlook.com
+ (2603:10b6:301:18::12)
 user-agent: NeoMutt/20180716
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=pburton@wavecomp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [12.94.197.246]
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 56255b03-ae58-498a-33a5-08d714459465
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1710;
-x-ms-traffictypediagnostic: MWHPR2201MB1710:
-x-microsoft-antispam-prvs: <MWHPR2201MB1710CB6AC7969373AB8FE733C1DD0@MWHPR2201MB1710.namprd22.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2733;
+x-ms-office365-filtering-correlation-id: b7b67f9f-7868-4a47-9969-08d7144ad2a2
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(2017052603328)(7193020);SRVR:MWHPR2201MB1437;
+x-ms-traffictypediagnostic: MWHPR2201MB1437:
+x-microsoft-antispam-prvs: <MWHPR2201MB143757B72ADE3B76B7D0DFB4C1DD0@MWHPR2201MB1437.namprd22.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1284;
 x-forefront-prvs: 01136D2D90
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39840400004)(136003)(396003)(376002)(346002)(366004)(199004)(189003)(25786009)(66446008)(305945005)(66066001)(6116002)(52116002)(3846002)(68736007)(6486002)(33716001)(99286004)(229853002)(1076003)(7416002)(256004)(5024004)(66556008)(66476007)(58126008)(66946007)(5660300002)(110136005)(64756008)(316002)(14454004)(54906003)(53936002)(6436002)(6512007)(9686003)(486006)(11346002)(44832011)(478600001)(2906002)(446003)(42882007)(8676002)(81156014)(81166006)(7736002)(8936002)(186003)(6246003)(102836004)(386003)(6506007)(71190400001)(76176011)(4326008)(476003)(26005)(71200400001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1710;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(7916004)(39840400004)(366004)(396003)(136003)(346002)(376002)(189003)(199004)(33716001)(6436002)(52116002)(76176011)(7416002)(25786009)(229853002)(6916009)(26005)(53936002)(3846002)(71190400001)(71200400001)(446003)(476003)(6486002)(58126008)(68736007)(8676002)(486006)(256004)(11346002)(186003)(6116002)(316002)(44832011)(1411001)(6246003)(4326008)(478600001)(14454004)(81156014)(66556008)(64756008)(66066001)(54906003)(81166006)(5660300002)(386003)(42882007)(1076003)(6512007)(2906002)(9686003)(6506007)(305945005)(7736002)(99286004)(66476007)(8936002)(66446008)(66946007)(102836004);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR2201MB1437;H:MWHPR2201MB1277.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: wavecomp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: qWDD0MtifxIWI0Q4xzGSQJIwFT1L17OdWkhoY2x56WabbiF7bwVUdChoPQnvTuFhD9PrSXCSdwnV5mxebnG5INpv87X1ICiE/Uorkt6tCyjDfG62b4DFx3KfF7p68sVvqndre0gckyf/qPTFJXDXgwtAd4XBSRs8sWqzU+aA1kHJfrXa6oncqrcn/2pUSFvMq72JvngOD4/g7X/yh/4zcUBlEK6XI+9kwUlGzK4bGpLnm3WU48mVpbbNF0Pso5IflE7/SYSR8ce7OK2019Z20CYg4uJEsy2zBFJKcNMVeNBa5z9XqO+TDW7XlaElExAxQiQVCATySJWyNGxJ1ux8Mtx3Ffzf3kyIQ/PrsQd9tv/OxyHroLNAIQo0SjN2Rhga6aWXsabxN9h1xJtsKYChvMXzk3w2mXM0z7LczsHsmWs=
+x-microsoft-antispam-message-info: qQDvbC9kCq/C6uU7fZ7/hjODgg4uf5t6DyDcQT7D5pZhd0MWXc/LJNYVnrXVdWRQ1gHrD91ILe3QQy+pjhLEQmHTe/q1rvwgK1/eW+rzrbVI2QO4K4qUZ6DfnClAcBIffd35Jwx5DiIegx9ks3lDYaonBAQzgDpUvuzFaxIcSgqRzwz5GNlXv6SE8wSw++b9nr6/ijZU/GNrCuXJGP2ps28Zg1Q2lYZSyGnQzrtLnmtLdDszs6Nexmaf1MAu54Oquhke3hQDgBjjyonf03fFjND+f1dJYfQGQSkE+L9br6pYx3K+3T3WxBrkUPRdnnTJT7T0zyfgzN527CGaYfSVpZoQBlDikSqZEOwKa/PBekPe0nU6k+0Adjzm5Bh1HsAmzKpwSJjWndAZjvEI59PQJmokcSZodcujZBZv998VsPs=
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <32FB9FC5C16F79419150751ABA1AF071@namprd22.prod.outlook.com>
+Content-ID: <C26CC762CCD7CF42A8FC0CCA4047FDE4@namprd22.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 56255b03-ae58-498a-33a5-08d714459465
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 16:55:37.5887
+X-MS-Exchange-CrossTenant-Network-Message-Id: b7b67f9f-7868-4a47-9969-08d7144ad2a2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Jul 2019 17:33:09.2423
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
 X-MS-Exchange-CrossTenant-userprincipalname: pburton@wavecomp.com
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1710
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR2201MB1437
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Lee, Arnd,
+Hi Chuanhong,
 
-On Wed, Jul 24, 2019 at 01:16:06PM -0400, Paul Cercueil wrote:
-> device_node_to_regmap() is exactly like syscon_node_to_regmap(), but it
-> does not check that the node is compatible with "syscon", and won't
-> attach the first clock it finds to the regmap.
+On Wed, Jul 24, 2019 at 10:23:08AM +0800, Chuanhong Guo wrote:
+> This commit adds device tree binding documentation for MT7621
+> PLL controller.
 >=20
-> The rationale behind this, is that one device node with a standard
-> compatible string "foo,bar" can be covered by multiple drivers sharing a
-> regmap, or by a single driver doing all the job without a regmap, but
-> these are implementation details which shouldn't reflect on the
-> devicetree.
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
+> ---
+>=20
+> Change since v1:
+> drop useless syscon in compatible string
+>=20
+>  .../bindings/clock/mediatek,mt7621-pll.txt     | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt76=
+21-pll.txt
 
-Does this looks like a good path forwards to you? Its use in this case
-is described by Documentation/devicetree/bindings/timer/ingenic,tcu.txt
-in patch 3 of the series.
+This binding needs review from DT maintainers before I apply it, but as
+a general note it's typical to add the binding *before* its use in the
+series. That is, this patch should come before patch 3.
 
-If you're OK with it an ack would be appreciated so I can take the
-series through mips-next, otherwise I guess we'd need to go back to the
-v14 approach.
+Personally I'd squash it with patch 1 so the binding & the header file
+needed to use the binding are added in one patch, then a later patch
+actually makes use of them.
 
 Thanks,
     Paul
 
-> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> ---
->=20
-> Notes:
->     v15: New patch
->=20
->  drivers/mfd/syscon.c       | 46 +++++++++++++++++++++++++-------------
->  include/linux/mfd/syscon.h |  6 +++++
->  2 files changed, 36 insertions(+), 16 deletions(-)
->=20
-> diff --git a/drivers/mfd/syscon.c b/drivers/mfd/syscon.c
-> index b65e585fc8c6..660723276481 100644
-> --- a/drivers/mfd/syscon.c
-> +++ b/drivers/mfd/syscon.c
-> @@ -40,7 +40,7 @@ static const struct regmap_config syscon_regmap_config =
-=3D {
->  	.reg_stride =3D 4,
->  };
-> =20
-> -static struct syscon *of_syscon_register(struct device_node *np)
-> +static struct syscon *of_syscon_register(struct device_node *np, bool ch=
-eck_clk)
->  {
->  	struct clk *clk;
->  	struct syscon *syscon;
-> @@ -51,9 +51,6 @@ static struct syscon *of_syscon_register(struct device_=
-node *np)
->  	struct regmap_config syscon_config =3D syscon_regmap_config;
->  	struct resource res;
-> =20
-> -	if (!of_device_is_compatible(np, "syscon"))
-> -		return ERR_PTR(-EINVAL);
-> -
->  	syscon =3D kzalloc(sizeof(*syscon), GFP_KERNEL);
->  	if (!syscon)
->  		return ERR_PTR(-ENOMEM);
-> @@ -117,16 +114,18 @@ static struct syscon *of_syscon_register(struct dev=
-ice_node *np)
->  		goto err_regmap;
->  	}
-> =20
-> -	clk =3D of_clk_get(np, 0);
-> -	if (IS_ERR(clk)) {
-> -		ret =3D PTR_ERR(clk);
-> -		/* clock is optional */
-> -		if (ret !=3D -ENOENT)
-> -			goto err_clk;
-> -	} else {
-> -		ret =3D regmap_mmio_attach_clk(regmap, clk);
-> -		if (ret)
-> -			goto err_attach;
-> +	if (check_clk) {
-> +		clk =3D of_clk_get(np, 0);
-> +		if (IS_ERR(clk)) {
-> +			ret =3D PTR_ERR(clk);
-> +			/* clock is optional */
-> +			if (ret !=3D -ENOENT)
-> +				goto err_clk;
-> +		} else {
-> +			ret =3D regmap_mmio_attach_clk(regmap, clk);
-> +			if (ret)
-> +				goto err_attach;
-> +		}
->  	}
-> =20
->  	syscon->regmap =3D regmap;
-> @@ -150,7 +149,8 @@ static struct syscon *of_syscon_register(struct devic=
-e_node *np)
->  	return ERR_PTR(ret);
->  }
-> =20
-> -struct regmap *syscon_node_to_regmap(struct device_node *np)
-> +static struct regmap *device_node_get_regmap(struct device_node *np,
-> +					     bool check_clk)
->  {
->  	struct syscon *entry, *syscon =3D NULL;
-> =20
-> @@ -165,13 +165,27 @@ struct regmap *syscon_node_to_regmap(struct device_=
-node *np)
->  	spin_unlock(&syscon_list_slock);
-> =20
->  	if (!syscon)
-> -		syscon =3D of_syscon_register(np);
-> +		syscon =3D of_syscon_register(np, check_clk);
-> =20
->  	if (IS_ERR(syscon))
->  		return ERR_CAST(syscon);
-> =20
->  	return syscon->regmap;
->  }
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.=
+txt b/Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
+> new file mode 100644
+> index 000000000000..7dcfbd5283e3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
+> @@ -0,0 +1,18 @@
+> +Binding for Mediatek MT7621 PLL controller
 > +
-> +struct regmap *device_node_to_regmap(struct device_node *np)
-> +{
-> +	return device_node_get_regmap(np, false);
-> +}
-> +EXPORT_SYMBOL_GPL(device_node_to_regmap);
+> +The PLL controller provides the 2 main clocks of the SoC: CPU and BUS.
 > +
-> +struct regmap *syscon_node_to_regmap(struct device_node *np)
-> +{
-> +	if (!of_device_is_compatible(np, "syscon"))
-> +		return ERR_PTR(-EINVAL);
+> +Required Properties:
+> +- compatible: has to be "mediatek,mt7621-pll"
+> +- #clock-cells: has to be one
 > +
-> +	return device_node_get_regmap(np, true);
-> +}
->  EXPORT_SYMBOL_GPL(syscon_node_to_regmap);
-> =20
->  struct regmap *syscon_regmap_lookup_by_compatible(const char *s)
-> diff --git a/include/linux/mfd/syscon.h b/include/linux/mfd/syscon.h
-> index 8cfda0554381..112dc66262cc 100644
-> --- a/include/linux/mfd/syscon.h
-> +++ b/include/linux/mfd/syscon.h
-> @@ -17,12 +17,18 @@
->  struct device_node;
-> =20
->  #ifdef CONFIG_MFD_SYSCON
-> +extern struct regmap *device_node_to_regmap(struct device_node *np);
->  extern struct regmap *syscon_node_to_regmap(struct device_node *np);
->  extern struct regmap *syscon_regmap_lookup_by_compatible(const char *s);
->  extern struct regmap *syscon_regmap_lookup_by_phandle(
->  					struct device_node *np,
->  					const char *property);
->  #else
-> +static inline struct regmap *device_node_to_regmap(struct device_node *n=
-p)
-> +{
-> +	return ERR_PTR(-ENOTSUPP);
-> +}
+> +Optional properties:
+> +- clock-output-names: should be "cpu", "bus"
 > +
->  static inline struct regmap *syscon_node_to_regmap(struct device_node *n=
-p)
->  {
->  	return ERR_PTR(-ENOTSUPP);
+> +Example:
+> +	pll {
+> +		compatible =3D "mediatek,mt7621-pll";
+> +
+> +		#clock-cells =3D <1>;
+> +		clock-output-names =3D "cpu", "bus";
+> +	};
 > --=20
-> 2.21.0.593.g511ec345e18
+> 2.21.0
 >=20
