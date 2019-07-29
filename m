@@ -7,96 +7,85 @@ X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E29C433FF
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 12:19:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69435C433FF
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 12:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B7F2206B8
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 12:19:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C908206E0
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 12:44:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jbAZxACt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sYWUT19w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727758AbfG2MTA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jul 2019 08:19:00 -0400
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:36438 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726818AbfG2MS7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jul 2019 08:18:59 -0400
-Received: by mail-lj1-f193.google.com with SMTP id i21so58397601ljj.3;
-        Mon, 29 Jul 2019 05:18:58 -0700 (PDT)
+        id S1727732AbfG2Mod (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jul 2019 08:44:33 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43778 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726717AbfG2Moc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jul 2019 08:44:32 -0400
+Received: by mail-lj1-f196.google.com with SMTP id y17so33879738ljk.10;
+        Mon, 29 Jul 2019 05:44:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OHoxMyQA6kSrFJxXpyiV+IieJpLzNWL4IkZqs98PDx8=;
-        b=jbAZxACt64pCVZRPdYTO6bc2vXa4ld10XHt0YApN2vDvR47mq6DamPBCdKAnS3lRmt
-         MenvKMYTWsX0THdu7OkNfQ8/WJaWWfthdJZzfGa2eIDlPy6r2cH/Zml1LAD5lC77hgyR
-         wCQQmecaSB7huytlu7WMGDOgw/Uy7J6NykyxOZWuj1jJxaE+I3Ko+42QI/HAuH8wF5CC
-         z4iip9y/ZoaOMn9LAwW8lMtz99gU9Ng4yTbf5l7vwFrQEo8vjHicLhsUMLnZwRVJW0bG
-         /YFeLLaobZrs2dTg3ks6KLTDdou/P2GXzPSJYAOtpx5gaIXg6MUTr+aoWBtiozTQmdY2
-         dn8g==
+         :cc:content-transfer-encoding;
+        bh=34NpLTsZ4fkze92bTwE7oYizxOiII+3mNHvu5YPrwQg=;
+        b=sYWUT19w6mWSpEmhGoBMOWboPYVB9J0MDKyqrioJdXqtxpf7sB7qUMxlAIkIiiLBbb
+         dYN2IpfMFp+OmfzibZz3tF+nIjnsU84VMRwecVQcTfXxYMd40fz9NqGcrL5TqvCs5Glg
+         iElbOsHTgv+Rljh9Oaf2231snOJGThWreDmS2J0c8bvh1xDCqVAYTLAEmsNAFYEatg2g
+         iN4zeq/1f9OyOsNOTZ237pzi26aGDlXADfPpEtHaBfye5deRxxTuyl1SOO+uwMc7TIFx
+         zjWx18xaessRQ7usazf/aUfK9cIePQ3/4vbaypmKsYNicaqqo9/zGYvN/2fwH39Aj5qJ
+         orWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OHoxMyQA6kSrFJxXpyiV+IieJpLzNWL4IkZqs98PDx8=;
-        b=EVqkbGAGFbcFsPXTF79HIG4bUcDGV3rCR7LUH0nVYimH/0VPyySuC9MyxqQZZh2QpJ
-         EKiWx4W44PCyuamO/Q3JmPQ3/7b5s1oOpaFIL2ECETlZPMaS3RYGhGOwLQrmB66pAXfP
-         7bsjlt5iBGWdePlfOX0Xk+tSUPKjpu34I4+d58kFaNMgIfLJqhtD+ULH24WpAP+JMxPe
-         ZLxMU2ITvz6IIviiuHNre9I1xe6Ixa9X11OQW+1tnkGTvGrQs6L5KpiCSzBfbNqVSKUg
-         c61JQuBUYZ5xKIGrkS/CpZyyEW3gsQvvlrddyJXB9UGeWYaiscCQvjXXZUeyAtECg+hK
-         nU8Q==
-X-Gm-Message-State: APjAAAXK/Fi9IDoqliPt7yuxl2u4u8BRYFPYrmLQi9XPs9nuDSHcw2uA
-        6j9tjuKedV+XLalsbMrbGI1e7hT32ch3ZY14ZWQ=
-X-Google-Smtp-Source: APXvYqysQdZFO4P/tp354iNeuFQYqW32qWFHcnvkV9JqmCqp9aTaQNiKQTyV59gsaic8TYmRtI9rWh0QxXKZhEGC8gY=
-X-Received: by 2002:a2e:8650:: with SMTP id i16mr58240101ljj.178.1564402737462;
- Mon, 29 Jul 2019 05:18:57 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=34NpLTsZ4fkze92bTwE7oYizxOiII+3mNHvu5YPrwQg=;
+        b=p6usJm4mIzWERZiYzTEyR3QyrKbP6y7SJ9vg1Il910gR95s1C1VMh4+Tpjp2WwZN8x
+         QGtaY/3ew26++xcd+Dm6G9BYNKSEQ5Ogg8AenaSOOLWoneokqG9ZI6Zl6BMCyuiu4ZbL
+         4rXUeLO4Ucf04Do/8RH+hjw6FpL7v1pQM3Vnzp/Zrl34RpYVKsuIoUGFAfC/RuAg3oty
+         1CbSb8YLqCaYlFMwj047X16dO0BreuRl9NeuCQB+IoaEHsW+I/roBX7MV/bsHdFiDQeh
+         RIU2PqkMlBn98YTfNcg3K2NSZ8N4IS8W2oPQ7lVaNb+X17LzcjDqtAFDgGn4mwGIBar0
+         7amQ==
+X-Gm-Message-State: APjAAAWVcABMU5HWqutgXogOJTte9r4kBPxdDxqzgaN6qdnKveJMOWw0
+        Iy6V3jL6EbFK8/6DElQo1sWgmO5hv0/gsPVBXJlFrB/75Tk=
+X-Google-Smtp-Source: APXvYqyO+TyjwyPaTfWOn5ewv+w97iOZ0+hIanfcE3fCvIC4X4IqnxP2a/MdyOwFlyZDuUKM2tWcYs1d8BOOrkB9t9c=
+X-Received: by 2002:a2e:5d1:: with SMTP id 200mr58267429ljf.10.1564404270408;
+ Mon, 29 Jul 2019 05:44:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <1564384997-16775-1-git-send-email-abel.vesa@nxp.com>
-In-Reply-To: <1564384997-16775-1-git-send-email-abel.vesa@nxp.com>
+References: <35f999387bca037731dd963a5901909d6e6d0a17.1564226824.git.agx@sigxcpu.org>
+In-Reply-To: <35f999387bca037731dd963a5901909d6e6d0a17.1564226824.git.agx@sigxcpu.org>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 29 Jul 2019 09:19:01 -0300
-Message-ID: <CAOMZO5C0WbaDzFcjeXeS1PivWUme=bzPur6Hj_xNz1oVzvpW2Q@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx8mq: Mark AHB clock as critical
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
+Date:   Mon, 29 Jul 2019 09:44:34 -0300
+Message-ID: <CAOMZO5DDgPJvWtqO9fboSWeHcaqYFTeVd5zzDDdnMxG8uPUqEQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: imx: i.MX8MN: Use space instead of tab
+To:     =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Guido Gunther <agx@sigxcpu.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
         linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
         "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
         <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+        linux-kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Abel,
+Hi Guido,
 
-On Mon, Jul 29, 2019 at 4:23 AM Abel Vesa <abel.vesa@nxp.com> wrote:
+On Sat, Jul 27, 2019 at 8:29 AM Guido G=C3=BCnther <agx@sigxcpu.org> wrote:
 >
-> Keep the AHB clock always on since there is no driver to control it and
-> all the other clocks that use it as parent rely on it being always enabled.
+> This fixes 'make dt_binding_check'
 >
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
-> ---
->
-> Changes since v1:
->  * added comment in code why this clock is critical
->  * added T-b by Daniel
->
-> This needs to go in ASAP to fix the boot hang.
+> Signed-off-by: Guido G=C3=BCnther <agx@sigxcpu.org>
 
-Which boot hang exactly? Are you referring to the TMU clock hang?
-
-On the TMU clock hang, the issue was that the qoriq_thermal needs to
-enable the TMU clock.
-
-Please always provide a detailed description in the commit log.
-
-Also, if this fixes a hang it should contain a Fixes tag.
+Thanks for the patch, but Anson has already submitted a fix for this issue:
+https://patchwork.kernel.org/patch/11057815/
