@@ -2,82 +2,154 @@ Return-Path: <SRS0=VAfA=V2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E97EC7618B
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 07:23:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B27DDC76192
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 07:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 135CC2073F
-	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 07:23:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8726520657
+	for <linux-clk@archiver.kernel.org>; Mon, 29 Jul 2019 07:42:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="02iwdyH2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725988AbfG2HXg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 29 Jul 2019 03:23:36 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:41460 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725917AbfG2HXg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 29 Jul 2019 03:23:36 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id D7C5F1A0300;
-        Mon, 29 Jul 2019 09:23:32 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id CA9421A1417;
-        Mon, 29 Jul 2019 09:23:32 +0200 (CEST)
-Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 34F7F205F3;
-        Mon, 29 Jul 2019 09:23:32 +0200 (CEST)
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Guido Gunther <agx@sigxcpu.org>,
-        Anson Huang <anson.huang@nxp.com>
-Cc:     Fabio Estevam <fabio.estevam@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: [PATCH v2] clk: imx8mq: Mark AHB clock as critical
-Date:   Mon, 29 Jul 2019 10:23:17 +0300
-Message-Id: <1564384997-16775-1-git-send-email-abel.vesa@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726956AbfG2Hmm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 29 Jul 2019 03:42:42 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:39769 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726923AbfG2Hmm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 29 Jul 2019 03:42:42 -0400
+Received: by mail-wr1-f65.google.com with SMTP id x4so7480778wrt.6
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2019 00:42:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=qcDHQ1YIyua0Lz0XKlvtzGchQOF/q8YhLFhQTQqfSnA=;
+        b=02iwdyH22+odFMvWr/fUSOWV/YsZSHqKDJDdL3e/jHLksFamrMNdydoLixPsostjig
+         yYzQEFDjoaLkJAPyPt/dX5djgi4pTpVW7k5O+EuK9vRV4b+kvVD3KdHyP+fHdAXOLJZw
+         fs4K6etimfyGJgHmMkzEWYXpz0YXtnA5d3Ujv3pcGXoUovVU2fuxrFw2Zx9N+4HQJ2Xh
+         6ZfZtL98PhcYOUCA0uf9O/gU8Ho3Ar5Xd5LTTZyfiGybMwcM7ykT0tlFaILBVDsfNIyn
+         qOJAT7FJydgp4as6OIcwX3bPsXYJAYc4F7EkgbuacqIjLhJho48k5LzbAupoJo3tSI69
+         B2mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=qcDHQ1YIyua0Lz0XKlvtzGchQOF/q8YhLFhQTQqfSnA=;
+        b=TUWmeo1EbWynZmuc02FKvPuVvLnGhiYr+uXApWQXRk6SJKUrmrLvVdJB/LcXRj0DnP
+         3/YqGdNp+7dQsGEiIDRgCSbtmVu7JzWlkUa3sOs4ZUJhVRAUZ+7PgWQOMNuqCnOjaEJN
+         Q0cYXyyxPUxq2uhj6mWJQugE1BTGdBjd2/8Xi0Cz3TITZ1frjVTVsrqi9S7kHd5//aCt
+         QNJx/VFSvuwX+lQizbzYv40dUv4FphghuHTMAM7VAnboeISW0hyTFLVxw9wF5/pKK1A1
+         Ff0uUgfwnlN3JUGZE859JLSKdRH7mWiRxqdjrytlOOiDbQiOmeVYPwRHR6tdZ1bureZu
+         RbFg==
+X-Gm-Message-State: APjAAAWBstKv20xMkPLa13nH20HYAMZ8rQM2/wOJG9wOua5Rvq09IJub
+        2NQf7ZOVhplbJAJTO9RdcbuviQ==
+X-Google-Smtp-Source: APXvYqyu0KuT71WZYrYu+y1RASylJuxEoqAUq39HAC9JSxF3uZuROG3LU/D595xuazk7xstMkJnTUA==
+X-Received: by 2002:adf:cd04:: with SMTP id w4mr69069194wrm.230.1564386159762;
+        Mon, 29 Jul 2019 00:42:39 -0700 (PDT)
+Received: from localhost ([2a01:e34:eeb6:4690:ecfa:1144:aa53:4a82])
+        by smtp.gmail.com with ESMTPSA id m24sm37058830wmi.39.2019.07.29.00.42.38
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 29 Jul 2019 00:42:39 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, khilman@baylibre.com
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, martin.blumenstingl@googlemail.com,
+        linux-gpio@vger.kernel.org
+Subject: Re: [RFC/RFT v3 04/14] clk: meson: eeclk: add setup callback
+In-Reply-To: <55ce9b5e-de2f-9da3-8eec-13b5ead23e6c@baylibre.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-5-narmstrong@baylibre.com> <1jh8836w49.fsf@starbuckisacylon.baylibre.com> <55ce9b5e-de2f-9da3-8eec-13b5ead23e6c@baylibre.com>
+Date:   Mon, 29 Jul 2019 09:42:37 +0200
+Message-ID: <1j1ry9s2vm.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Keep the AHB clock always on since there is no driver to control it and
-all the other clocks that use it as parent rely on it being always enabled.
+On Fri 26 Jul 2019 at 16:50, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
----
+> On 03/07/2019 16:17, Jerome Brunet wrote:
+>> On Mon 01 Jul 2019 at 11:12, Neil Armstrong <narmstrong@baylibre.com> wrote:
+>> 
+>>> Add a setup() callback in the eeclk structure, to call an optional
+>>> call() function at end of eeclk probe to setup clocks.
+>>>
+>>> It's used for the G12A clock controller to setup the CPU clock
+>>> notifiers.
+>> 
+>> I'd prefer if you implement the probe function in the related controller
+>> have this probe function call meson_eeclkc_probe() for the common part
+>> 
+>> In your case, I suppose it means implementing the g12a controller probe
+>> to deal with the notifiers
+>
+> Sure, but with this eeclk setup callback I can provide a different setup() callback
+> for g12a and g12b (and later sm1), without this means adding a top data struct
+> containing a setup() callback pointer and the soc meson_eeclkc_data struct to be able
+> to call a setup() for each family like done actually, but this will broke eeclk since
+> the match_data data won't be a meson_eeclkc_data() struct anymore.
 
-Changes since v1:
- * added comment in code why this clock is critical
- * added T-b by Daniel
+meson_eeclkc_probe is an helper we added to factorize common code out of the
+clock controllers we had. I don't like the idea to now add callback in it
+deal with the specifics of each SoCs. It feels like we are going in circles.
 
-This needs to go in ASAP to fix the boot hang.
+I think SoC/controller specific stuff should be dealt with in
+related probe function of each clock controller which would then call
+the 'common helper' if necessary.
 
- drivers/clk/imx/clk-imx8mq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+If the common part interface needs to be reworked, maybe changing
+the parameters, I'm ok with it.
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 4328c22..04302f2 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -406,7 +406,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
- 
- 	/* AHB */
--	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
-+	/* AHB clock is used by the AHB bus therefore marked as critical */
-+	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
- 	clks[IMX8MQ_CLK_AUDIO_AHB] = imx8m_clk_composite("audio_ahb", imx8mq_audio_ahb_sels, base + 0x9100);
- 
- 	/* IPG */
--- 
-2.7.4
-
+>
+> If you still prefer this, I can rework it like that.
+>
+> I'm rebasing all the stuff on v5.3-rc1 and plan to repost an updated version
+> shortly, solving this would be easier.
+>
+> Neil
+>
+>> 
+>>>
+>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>>> ---
+>>>  drivers/clk/meson/meson-eeclk.c | 6 ++++++
+>>>  drivers/clk/meson/meson-eeclk.h | 1 +
+>>>  2 files changed, 7 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+>>> index 6ba2094be257..81fd2abcd173 100644
+>>> --- a/drivers/clk/meson/meson-eeclk.c
+>>> +++ b/drivers/clk/meson/meson-eeclk.c
+>>> @@ -61,6 +61,12 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+>>>  		}
+>>>  	}
+>>>  
+>>> +	if (data->setup) {
+>>> +		ret = data->setup(pdev);
+>>> +		if (ret)
+>>> +			return ret;
+>>> +	}
+>>> +
+>>>  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>>>  					   data->hw_onecell_data);
+>>>  }
+>>> diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+>>> index 9ab5d6fa7ccb..7fdf424f71a6 100644
+>>> --- a/drivers/clk/meson/meson-eeclk.h
+>>> +++ b/drivers/clk/meson/meson-eeclk.h
+>>> @@ -20,6 +20,7 @@ struct meson_eeclkc_data {
+>>>  	const struct reg_sequence	*init_regs;
+>>>  	unsigned int			init_count;
+>>>  	struct clk_hw_onecell_data	*hw_onecell_data;
+>>> +	int				(*setup)(struct platform_device *pdev);
+>>>  };
+>>>  
+>>>  int meson_eeclkc_probe(struct platform_device *pdev);
+>>> -- 
+>>> 2.21.0
