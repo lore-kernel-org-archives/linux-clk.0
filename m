@@ -2,66 +2,68 @@ Return-Path: <SRS0=6EmA=V3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DA4FC433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 15:15:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E62EC433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 15:15:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC23A20693
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 15:15:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6992D20693
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 15:15:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="DXlIl4nT"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SECrK8tX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727460AbfG3PPO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jul 2019 11:15:14 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52926 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727481AbfG3PPO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jul 2019 11:15:14 -0400
-Received: by mail-wm1-f67.google.com with SMTP id s3so57523056wms.2
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2019 08:15:11 -0700 (PDT)
+        id S1732238AbfG3PPl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jul 2019 11:15:41 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:43294 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726805AbfG3PPl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jul 2019 11:15:41 -0400
+Received: by mail-wr1-f65.google.com with SMTP id p13so66181485wru.10
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2019 08:15:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=EhbeQO/sbzX1wCFvm0GZWm7qJ3FO4A/C4w34t6g3cpo=;
-        b=DXlIl4nTqmEe7C7/5F7DyN6jaUMILc8SxV+MZ+XIY/GdFJ3v2rNd+hN2huyzCHuN9R
-         OOzmiVARYtsgGUFuXK8i7D9xBWc9v5RxEQTU+yVz+xijDJyx5mi9D6nnjdTDABNye0gB
-         uPCAvcIgnr4KGa2W/PZooIjYfMJki0pmaog+X4TVw39JIXLl93sTJMUiT2LBqR4qP1Nx
-         90FNFkr2q+3xm/Fka55psfudHJX0DoECcCYTC6wldMoBm0JswliVR5ntSmmLyFXFIqzG
-         MBJgwIVib1u6Jnb4WylEoIhpHKhbgUyFyW6zGwwjJSEiOHjWcrHON17EovmXePOsiP5C
-         uobw==
+        bh=y+IzvoSaFIRpI4rsRTFbuZVVmUMRCgGOxxVLGYBBi80=;
+        b=SECrK8tXbD5xdSNhVRNPmcqqYhr3PmTs3GZJRhEP97NrLzxVe3wCtmkmTlbb2vvIJ/
+         3lK+HdKZ8XniZMxtvEhd++GzifyPlPrOi4sL57SVd4Xb/+AYEgBSAv+RREcjDVaxoaOp
+         9+8JYSMSeH/pVa/moPtLppwL+AnBnT8ilZHh3qtznclnZly2NCLyka8lIGj0uPvM326k
+         RUqgSdWudIxrLsV5UE4ggXs7PbQKa3j/Pb3iSpPsnKcme95Os/5ro6NLkG/3LoKgjGMN
+         HpwXRLZGrLByI+itQLpmGIYMjx2B15rve+Ca8+z8OlQv3312yqUGLa/OluqpISK+Ns6k
+         83zA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=EhbeQO/sbzX1wCFvm0GZWm7qJ3FO4A/C4w34t6g3cpo=;
-        b=ck58+29bQR1QtjsZ/QnDTWEOMqo0QVQX4ID7IKejO45CTZKMUGpofZAhzsK1Tm+ntn
-         hpKE0TslsoBhCVOeFezwLlhpCjfTgMlaa9SzYnPnVUWMR5uf4F/T4lmpxzxtgZ7w/2xE
-         J8fyft9uGgab0hc9hJORkhpy6pWVZyIWx8IwnNO+193GguaeimQZify3OM3mTizko1qZ
-         NpviOlX4zD0CS9+XvetxR7N74f1NnzPxeOszaC+iKfSETrLRSstpzP6z50HImyl5suZS
-         xarIiLJ9ZsJGyg0LECl6WmVvDWTaJgaEu/SMApUIXXgnLsOLKdM/UE+vTxeFSX8Strj0
-         8ZHQ==
-X-Gm-Message-State: APjAAAX3PLOdwObHi2A/Okfky9qIVjfFEw+rNm/O/rgD1WgXDX4/s/8h
-        uzlYtmak8KMqYk6pbtt9Gdf1Xg==
-X-Google-Smtp-Source: APXvYqyGJA1QmlIk0WavFwyd3FuLAcipXt35xDK8prAqwNkvc0mdR71OIZgBEefsIdB20yaaOHp7UA==
-X-Received: by 2002:a1c:7f93:: with SMTP id a141mr106145494wmd.131.1564499711059;
-        Tue, 30 Jul 2019 08:15:11 -0700 (PDT)
+        bh=y+IzvoSaFIRpI4rsRTFbuZVVmUMRCgGOxxVLGYBBi80=;
+        b=I92AJBtx8Bj4lWg0qZlHb1aYTnWDsK9Pil3YKAdATxqUl5NjNwQqtryV5aVJFus12q
+         kxk+EsuKngTMqdsd+UjGQefV5rlQlU1SALxMXzaC8UcY6OdUvtMjumD0nkn50RQ7AsKq
+         jviXPbvv3gdKLgVvioW7bhds+zfpGP36fkxsii3vgqAdD8/mlxftFJ/DWi89nS0nf924
+         EqY2PUr05eRaxA0WCgBy1CHAlIkq8DjmUqjo6IJ2vFcxOpphzN8V/l7n8uR2gILAPPEL
+         C3CKfwNzBhvB/vmEeljjccr0FrAsTcXQ8onZO+3LaF8bABlvoPwFeCcdANVlRh0LhLpc
+         gPXw==
+X-Gm-Message-State: APjAAAWvKm1buL/MPIaNBuSMP+ifDpOWfX7+itGYHWVDcWp9QDqDN8gS
+        MGU4JrhHy1qbmBI4KyW1gDU0dL4GE8Y=
+X-Google-Smtp-Source: APXvYqxZEoFOXENyJ22NqJexHCab8SlnysC6FyB6ZvNGURr4nax+pCGNy8wBrQsRHUzAw8zNZYtqDg==
+X-Received: by 2002:adf:de8e:: with SMTP id w14mr8808898wrl.79.1564499738095;
+        Tue, 30 Jul 2019 08:15:38 -0700 (PDT)
 Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y7sm48075361wmm.19.2019.07.30.08.15.10
+        by smtp.gmail.com with ESMTPSA id 5sm53200636wmg.42.2019.07.30.08.15.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 30 Jul 2019 08:15:10 -0700 (PDT)
-Subject: Re: [PATCH 2/4] clk: meson: regmap: export regmap_div ops functions
+        Tue, 30 Jul 2019 08:15:37 -0700 (PDT)
+Subject: Re: [PATCH 4/4] clk: meson: g12a: expose CPUB clock ID for G12B
 To:     jbrunet@baylibre.com
 Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
+        linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 References: <20190729131656.7308-1-narmstrong@baylibre.com>
- <20190729131656.7308-3-narmstrong@baylibre.com>
+ <20190729131656.7308-5-narmstrong@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -114,12 +116,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <cd1d5041-3f48-93ba-ad66-8737a2e3cde9@baylibre.com>
-Date:   Tue, 30 Jul 2019 17:15:09 +0200
+Message-ID: <44bbb544-7dfd-79d3-22a8-d8876887bf02@baylibre.com>
+Date:   Tue, 30 Jul 2019 17:15:37 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190729131656.7308-3-narmstrong@baylibre.com>
+In-Reply-To: <20190729131656.7308-5-narmstrong@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -129,69 +131,28 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 29/07/2019 15:16, Neil Armstrong wrote:
-> The G12A CPU Clock Postmux divider needs a custom div_set_rate() call.
+> Expose the CPUB clock id to add DVFS to the second CPU cluster of
+> the Amlogic G12B SoC.
 > 
-> Export the clk_regmap_div_round_rate() and clk_regmap_div_recalc_rate()
-> to be able to override the default clk_regmap_div_set_rate() callback.
-
-Signoff missing.... will fix in v2
-
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 > ---
->  drivers/clk/meson/clk-regmap.c | 10 ++++++----
->  drivers/clk/meson/clk-regmap.h |  5 +++++
->  2 files changed, 11 insertions(+), 4 deletions(-)
+>  include/dt-bindings/clock/g12a-clkc.h | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/clk/meson/clk-regmap.c b/drivers/clk/meson/clk-regmap.c
-> index dcd1757cc5df..26c8c74a8cf0 100644
-> --- a/drivers/clk/meson/clk-regmap.c
-> +++ b/drivers/clk/meson/clk-regmap.c
-> @@ -56,8 +56,8 @@ const struct clk_ops clk_regmap_gate_ro_ops = {
->  };
->  EXPORT_SYMBOL_GPL(clk_regmap_gate_ro_ops);
+> diff --git a/include/dt-bindings/clock/g12a-clkc.h b/include/dt-bindings/clock/g12a-clkc.h
+> index b6b127e45634..8ccc29ac7a72 100644
+> --- a/include/dt-bindings/clock/g12a-clkc.h
+> +++ b/include/dt-bindings/clock/g12a-clkc.h
+> @@ -137,5 +137,6 @@
+>  #define CLKID_VDEC_HEVC				207
+>  #define CLKID_VDEC_HEVCF			210
+>  #define CLKID_TS				212
+> +#define CLKID_CPUB_CLK				224
+
+Missing removal from private g12.h :-/ will fix in v2
+
 >  
-> -static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-> -						unsigned long prate)
-> +unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-> +					 unsigned long prate)
->  {
->  	struct clk_regmap *clk = to_clk_regmap(hw);
->  	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> @@ -74,9 +74,10 @@ static unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
->  	return divider_recalc_rate(hw, prate, val, div->table, div->flags,
->  				   div->width);
->  }
-> +EXPORT_SYMBOL_GPL(clk_regmap_div_recalc_rate);
->  
-> -static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> -				      unsigned long *prate)
-> +long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long *prate)
->  {
->  	struct clk_regmap *clk = to_clk_regmap(hw);
->  	struct clk_regmap_div_data *div = clk_get_regmap_div_data(clk);
-> @@ -100,6 +101,7 @@ static long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
->  	return divider_round_rate(hw, rate, prate, div->table, div->width,
->  				  div->flags);
->  }
-> +EXPORT_SYMBOL_GPL(clk_regmap_div_round_rate);
->  
->  static int clk_regmap_div_set_rate(struct clk_hw *hw, unsigned long rate,
->  				   unsigned long parent_rate)
-> diff --git a/drivers/clk/meson/clk-regmap.h b/drivers/clk/meson/clk-regmap.h
-> index c4a39604cffd..ebf776a32ce3 100644
-> --- a/drivers/clk/meson/clk-regmap.h
-> +++ b/drivers/clk/meson/clk-regmap.h
-> @@ -78,6 +78,11 @@ clk_get_regmap_div_data(struct clk_regmap *clk)
->  	return (struct clk_regmap_div_data *)clk->data;
->  }
->  
-> +unsigned long clk_regmap_div_recalc_rate(struct clk_hw *hw,
-> +					 unsigned long prate);
-> +long clk_regmap_div_round_rate(struct clk_hw *hw, unsigned long rate,
-> +			       unsigned long *prate);
-> +
->  extern const struct clk_ops clk_regmap_divider_ops;
->  extern const struct clk_ops clk_regmap_divider_ro_ops;
->  
+>  #endif /* __G12A_CLKC_H */
 > 
 
