@@ -2,111 +2,92 @@ Return-Path: <SRS0=6EmA=V3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB4EC433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 07:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2838C433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 07:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 642A7208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 07:16:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="CMclCEjk"
+	by mail.kernel.org (Postfix) with ESMTP id 913312087F
+	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 07:23:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfG3HQm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jul 2019 03:16:42 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:33177 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729286AbfG3HQl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jul 2019 03:16:41 -0400
-Received: by mail-wm1-f68.google.com with SMTP id h19so44619730wme.0
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2019 00:16:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=CJsSNfY0mqrUC/YwU9xthUF4qULj3egsKAW0izWqbew=;
-        b=CMclCEjk0ZwGT0UKhUhteWTHe+Ssve3/diYK0hb0jopkULcSn6hYPcrFB3JAA1RGFu
-         759vTHQhFDBVGXHh7bSEoU1TxNSzrKuYqY6SZRN65IlQ5SHj9DWv1cvcTZL/ksKksoSr
-         WhRZpBkGY1m7Of8SsJeLq4YNzrTpSSnLvY9QOwWGoSXwwg0ZL0k5ghdCWTnJZaz1BsFC
-         2+AYQHH61QBZwT72zlCMlC54F5asO1+hBFVNw9M3m0JpXL4Wj5mfJiHmcL6zEntvu+hM
-         dQ/Rvd13FdzX1IXFVu/IPHC6hyyIMOMUZDzzCCmVVTZUZngoznNsOXSVbAbnSmucvs/T
-         4WKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=CJsSNfY0mqrUC/YwU9xthUF4qULj3egsKAW0izWqbew=;
-        b=leoBVxijJJQazOmhWPxaRuB3JN8L1FYxpwUto0vUp626Cj2yoB9hLUk8W6plQAWmK1
-         TbKQV6y7LJ8vqK+WEuhknTbNN6O9CpdxiC3A38W/nJe3Rx/37cBiaLbfQkKmUwAQgzS0
-         a6dFVDPNr+5qPbTNz5OIMxVnJ+hWd4j8NAMsHA0fH5FKo3LoeN6PouzIrvbbDn3m7Gk+
-         DMwnW3Ta5dyMitgEMB7eB6OUT7VBNgUL76iHUcVjMKPasYyItrCLZMLO3GupvYIt3X9U
-         ipjXLf+MsimaI19b++RFkQTdmG68lu97UfqBmRyFm3rVPyi7azOHclaK+mjZjK9rskbP
-         BETg==
-X-Gm-Message-State: APjAAAW/jpqKx49jSx7E+iIjI06z24lzUev+F0X+RK4AZDeeP47+sdSD
-        h0OKI8pc0lH2JT6ZzoAqg9GN+w==
-X-Google-Smtp-Source: APXvYqzNdHpUKuNShIQ7fuZIz7FKvr2+m6gWQ/l+o20rxgU0SEoN5hvd9TKY8jVLr6hYGYOcQotSgA==
-X-Received: by 2002:a1c:f914:: with SMTP id x20mr25700078wmh.142.1564470999447;
-        Tue, 30 Jul 2019 00:16:39 -0700 (PDT)
-Received: from localhost ([2a01:e34:eeb6:4690:ecfa:1144:aa53:4a82])
-        by smtp.gmail.com with ESMTPSA id w7sm73283967wrn.11.2019.07.30.00.16.38
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 30 Jul 2019 00:16:38 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: meson: axg-audio: add g12a reset support
-In-Reply-To: <20190729222944.116DF2070D@mail.kernel.org>
-References: <20190703122614.3579-1-jbrunet@baylibre.com> <20190703122614.3579-3-jbrunet@baylibre.com> <20190729222944.116DF2070D@mail.kernel.org>
-Date:   Tue, 30 Jul 2019 09:16:37 +0200
-Message-ID: <1jk1c0uh4a.fsf@starbuckisacylon.baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1728534AbfG3HXF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jul 2019 03:23:05 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:37796 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727527AbfG3HXE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 30 Jul 2019 03:23:04 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id AF3621A05CF;
+        Tue, 30 Jul 2019 09:23:02 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A30DF1A05C0;
+        Tue, 30 Jul 2019 09:23:02 +0200 (CEST)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 2C2EF204D6;
+        Tue, 30 Jul 2019 09:23:02 +0200 (CEST)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Guido Gunther <agx@sigxcpu.org>,
+        Anson Huang <anson.huang@nxp.com>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: [PATCH v3] clk: imx8mq: Mark AHB clock as critical
+Date:   Tue, 30 Jul 2019 10:22:55 +0300
+Message-Id: <1564471375-6736-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 29 Jul 2019 at 15:29, Stephen Boyd <sboyd@kernel.org> wrote:
+Initially, the TMU_ROOT clock was marked as critical, which automatically
+made the AHB clock to stay always on. Since the TMU_ROOT clock is not
+marked as critical anymore, following commit:
 
-> Quoting Jerome Brunet (2019-07-03 05:26:14)
->> @@ -1005,8 +1087,27 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
->>                 }
->>         }
->>  
->> -       return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> -                                          data->hw_onecell_data);
->> +       ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
->> +                                       data->hw_onecell_data);
->> +       if (ret)
->> +               return ret;
->> +
->> +       /* Stop here if there is no reset */
->> +       if (!data->reset_num)
->> +               return 0;
->> +
->> +       rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
->> +       if (!rst)
->> +               return -ENOMEM;
->> +
->> +       rst->map = map;
->> +       rst->offset = data->reset_offset;
->> +       rst->rstc.nr_resets = data->reset_num;
->> +       rst->rstc.ops = &axg_audio_rstc_ops;
->> +       rst->rstc.of_node = dev->of_node;
->> +       rst->rstc.owner = THIS_MODULE;
->> +
->> +       return ret = devm_reset_controller_register(dev, &rst->rstc);
->
-> IS this a typo? Just return devm instead?
+431bdd1df48e ("clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT")
 
-Typo it is. Thanks for pointing it out.
+all the clocks that derive from ipg_root clock (and implicitly ahb clock)
+would also have to enable, along with their own gate, the AHB clock.
 
->
->>  }
->>  
->>  static const struct audioclk_data axg_audioclk_data = {
+But considering that AHB is actually a bus that has to be always on, we mark
+it as critical in the clock provider driver and then all the clocks that
+derive from it can be controlled through the dedicated per IP gate which
+follows after the ipg_root clock.
+
+Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
+Fixes: 431bdd1df48e ("clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT")
+---
+
+Changes since v2:
+ * added a more detailed commit message and mentioned the commit
+   that this change is fixing
+
+ drivers/clk/imx/clk-imx8mq.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 4328c22..04302f2 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -406,7 +406,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+ 	clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
+ 
+ 	/* AHB */
+-	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
++	/* AHB clock is used by the AHB bus therefore marked as critical */
++	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
+ 	clks[IMX8MQ_CLK_AUDIO_AHB] = imx8m_clk_composite("audio_ahb", imx8mq_audio_ahb_sels, base + 0x9100);
+ 
+ 	/* IPG */
+-- 
+2.7.4
+
