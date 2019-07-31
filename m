@@ -2,82 +2,69 @@ Return-Path: <SRS0=2CVv=V4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CA1C32751
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A41D0C433FF
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 18:15:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93F87208E3
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DFA9206A2
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 18:15:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LObSE0fF"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iZN0sGcC";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iZN0sGcC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfGaOa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Jul 2019 10:30:58 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51148 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725793AbfGaOa6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 10:30:58 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v15so61083521wml.0
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2019 07:30:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=MDnPbJodK/a6eTFi3yfzZVR2rm3ZSgLhYLWa+WneOcQ=;
-        b=LObSE0fFJUw55SB99a92enfrZZUq30eu9bG2F/nsfWNxuzV9x2HmIAvxj0KJ9w0KTU
-         qrIclXt78r1QBfee5k0HYdjVZ0gbj9fNSGTnKWLZ6ndr3dOMOX7Y3VDxa3DQq8RHuZm5
-         /48OTXttWhRqrIZkeXdW6N77lLaaOtC6y8buit2VDJx/IGQ2OpeOYR2S+G8mfirEjQ7g
-         NG0SSL/kykYLqhLsE7AUDUa3AqwG9sCxx+/LNHCTnGNh63e8AYQFw+tzeNt3Qzt+XsbL
-         JU1G4bO3AWErvXFZ4ADhul3FeEJLOAWayBNWrKY7rYuU1Uxboou2Yj/gCmQ/Ty+MX81g
-         igkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=MDnPbJodK/a6eTFi3yfzZVR2rm3ZSgLhYLWa+WneOcQ=;
-        b=Ya/j9el8NfQ9IrvpzuUrLr4KYEAIGyI5qFnSehOa5bjDGG+ByoTbk/k7VxhUBicAk4
-         +no7gbRKObxSpCqd+2RmEw3CknSwnjzpevBfVdslBCwg5JbXX7B5GWgXVg3YOi76hwpp
-         weGZHh0HVVoqBXSAgR7e67tyVGi5ozZ0Md256vdkAxSgcIaz9PWPveeTvYGtYC+FqqWF
-         91+wyRZ+J5hcTYodBle2gdgg/YI44+82/eFsxB7RSYkv/p8LFLktVVr8DJtqY2KV7lhT
-         PJf2YuOCGwtJSbgM0rB9z1XurlxX3KVXJz2eHIY20bx/lRpjLzOs0EGmTyzZY7WzBLsA
-         69eA==
-X-Gm-Message-State: APjAAAVWnjdizqiIboWWWecdu+a8L6amqWwtmn+NrEd+J2VlGb6GYCSF
-        k+N4oF5DOyRCvEqCTZvNNEy9aQ==
-X-Google-Smtp-Source: APXvYqx/TyzoXLdTkhlTg/t7F+eHNs+DVxViJq91/dI341xTx6DKJZgNxhl4ivgKkc2HMYfOY6jBEw==
-X-Received: by 2002:a1c:e90d:: with SMTP id q13mr110692820wmc.89.1564583455255;
-        Wed, 31 Jul 2019 07:30:55 -0700 (PDT)
-Received: from [192.168.1.6] (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
-        by smtp.gmail.com with ESMTPSA id z6sm61429920wrw.2.2019.07.31.07.30.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 07:30:54 -0700 (PDT)
-Subject: Re: [PATCH v3 08/14] clk: qcom: hfpll: CLK_IGNORE_UNUSED
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
-        heiko@sntech.de, sibis@codeaurora.org,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
-        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
- <20190625164733.11091-9-jorge.ramirez-ortiz@linaro.org>
- <20190711151631.GI7234@tuxbook-pro>
-From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <cd91801a-1be3-86fd-6e15-da7e82fddb53@linaro.org>
-Date:   Wed, 31 Jul 2019 16:30:52 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        id S1729068AbfGaSPI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Jul 2019 14:15:08 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41864 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729056AbfGaSPH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 14:15:07 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E34DE6021C; Wed, 31 Jul 2019 18:15:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564596905;
+        bh=wPD8Jvb3E0+Q5f60Lu+t9iCbpuIdPyPu6BDAgfitmnE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iZN0sGcCib+Tib7h4Lv8pbN3m/8JYnsyl/SV1ggFmoKCYGNXZJdWfkF/xfWwAQou0
+         eW99NM/oU1419H5jEfpWzN93LTNHJ0PROg/cGGgwcV0VCG9KUuJYyFaRU/2LEzHqEV
+         U0vobtw0qo3ezO2uSrzxIHXu+scNSLYdvLToEEY8=
+Received: from [10.79.162.111] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B0E8F6021C;
+        Wed, 31 Jul 2019 18:15:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564596905;
+        bh=wPD8Jvb3E0+Q5f60Lu+t9iCbpuIdPyPu6BDAgfitmnE=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iZN0sGcCib+Tib7h4Lv8pbN3m/8JYnsyl/SV1ggFmoKCYGNXZJdWfkF/xfWwAQou0
+         eW99NM/oU1419H5jEfpWzN93LTNHJ0PROg/cGGgwcV0VCG9KUuJYyFaRU/2LEzHqEV
+         U0vobtw0qo3ezO2uSrzxIHXu+scNSLYdvLToEEY8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B0E8F6021C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v2 1/2] clk: qcom: rcg2: Add support for display port
+ clock ops
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1557894039-31835-1-git-send-email-tdas@codeaurora.org>
+ <1557894039-31835-2-git-send-email-tdas@codeaurora.org>
+ <20190715224345.938B02080A@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <57d35673-10cd-0bc2-1c65-c777de3a000a@codeaurora.org>
+Date:   Wed, 31 Jul 2019 23:45:00 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190711151631.GI7234@tuxbook-pro>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190715224345.938B02080A@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -85,89 +72,144 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/11/19 17:16, Bjorn Andersson wrote:
-> On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
-> 
->> When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
->> to keep the software model of the clock in line with reality, the
->> framework transverses the clock tree and disables those clocks that
->> were enabled by the firmware but have not been enabled by any device
->> driver.
->>
->> If CPUFREQ is enabled, early during the system boot, it might attempt
->> to change the CPU frequency ("set_rate"). If the HFPLL is selected as
->> a provider, it will then change the rate for this clock.
->>
->> As boot continues, clk_disable_unused_subtree will run. Since it wont
->> find a valid counter (enable_count) for a clock that is actually
->> enabled it will attempt to disable it which will cause the CPU to
->> stop.
-> 
-> But if CPUfreq has acquired the CPU clock and the hfpll is the currently
-> selected input, why does the clock framework not know about this clock
-> being used?
+Hello Stephen,
 
-right, see the comment right below - maybe I should have been more
-explicit at the time. sorry about it.
+Thanks for your review.
 
+On 7/16/2019 4:13 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-05-14 21:20:38)
+>> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+>> index 18bdf34..0de080f 100644
+>> --- a/drivers/clk/qcom/Kconfig
+>> +++ b/drivers/clk/qcom/Kconfig
+>> @@ -15,6 +15,7 @@ menuconfig COMMON_CLK_QCOM
+>>          depends on ARCH_QCOM || COMPILE_TEST
+>>          select REGMAP_MMIO
+>>          select RESET_CONTROLLER
+>> +       select RATIONAL
 > 
->> Notice that in this driver, calls to check whether the clock is
->> enabled are routed via the is_enabled callback which queries the
->> hardware.
+> Make this an alphabetical list of selects please.
+> 
 
-calls to check whether the clock is enabled dont use the usage counter
-but a hardware read. IIRC the clock framework will check some counter to
-know if the clock is being used.
+Sure, would take care in the next patch.
 
 >>
->> The following commit, rather than marking the clock critical and
->> forcing the clock to be always enabled, addresses the above scenario
->> making sure the clock is not disabled but it continues to rely on the
->> firmware to enable the clock.
+>>   if COMMON_CLK_QCOM
 >>
->> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
->> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+>> index 8c02bff..98071c0 100644
+>> --- a/drivers/clk/qcom/clk-rcg2.c
+>> +++ b/drivers/clk/qcom/clk-rcg2.c
+>> @@ -1128,3 +1129,81 @@ int qcom_cc_register_rcg_dfs(struct regmap *regmap,
+>>          return 0;
+>>   }
+>>   EXPORT_SYMBOL_GPL(qcom_cc_register_rcg_dfs);
+>> +
+>> +static int clk_rcg2_dp_set_rate(struct clk_hw *hw, unsigned long rate,
+>> +                       unsigned long parent_rate)
+>> +{
+>> +       struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+>> +       struct freq_tbl f = { 0 };
+>> +       u32 mask = BIT(rcg->hid_width) - 1;
+>> +       u32 hid_div, cfg;
+>> +       int i, num_parents = clk_hw_get_num_parents(hw);
+>> +       unsigned long num, den;
+>> +
+>> +       rational_best_approximation(parent_rate, rate,
+>> +                       GENMASK(rcg->mnd_width - 1, 0),
+>> +                       GENMASK(rcg->mnd_width - 1, 0), &den, &num);
+>> +
+>> +       if (!num || !den) {
+>> +               pr_err("Invalid MN values derived for requested rate %lu\n",
 > 
-> 
-> I can see that we have a real issue in the case where CPUfreq is not
-> enabled and hence there are no clients, according to Linux. And that I
-> don't know another way to guard against.
-
-the issue is there when CPUfreq is enabled that is for sure (if we just
-remove this commit the system will not boot due to the situation I tried
-to describe above).
-
-> 
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> 
-> Regards,
-> Bjorn
-> 
->> ---
->>  drivers/clk/qcom/hfpll.c | 7 +++++++
->>  1 file changed, 7 insertions(+)
->>
->> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
->> index 0ffed0d41c50..d5fd27938e7b 100644
->> --- a/drivers/clk/qcom/hfpll.c
->> +++ b/drivers/clk/qcom/hfpll.c
->> @@ -58,6 +58,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
->>  		.parent_names = (const char *[]){ "xo" },
->>  		.num_parents = 1,
->>  		.ops = &clk_ops_hfpll,
->> +		/*
->> +		 * rather than marking the clock critical and forcing the clock
->> +		 * to be always enabled, we make sure that the clock is not
->> +		 * disabled: the firmware remains responsible of enabling this
->> +		 * clock (for more info check the commit log)
->> +		 */
->> +		.flags = CLK_IGNORE_UNUSED,
->>  	};
->>  
->>  	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
->> -- 
->> 2.21.0
->>
+> Does this ever happen? I worry that this printk could happen many times
+> if a driver gets into a bad state and starts selecting invalid
+> frequencies over and over again for each frame (every 16ms). Maybe just
+> return -EINVAL instead of printing anything.
 > 
 
+Would remove the pr_err.
+
+>> +                                                       rate);
+>> +               return -EINVAL;
+>> +       }
+>> +
+>> +       regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &cfg);
+>> +       hid_div = cfg;
+>> +       cfg &= CFG_SRC_SEL_MASK;
+>> +       cfg >>= CFG_SRC_SEL_SHIFT;
+>> +
+>> +       for (i = 0; i < num_parents; i++)
+>> +               if (cfg == rcg->parent_map[i].cfg) {
+>> +                       f.src = rcg->parent_map[i].src;
+>> +                       break;
+>> +       }
+> 
+> Weird indent for this brace. Please fix and put a brace on the for
+> statement too.
+> 
+
+My bad would fix in the next patch.
+
+>> +
+>> +       f.pre_div = hid_div;
+>> +       f.pre_div >>= CFG_SRC_DIV_SHIFT;
+>> +       f.pre_div &= mask;
+>> +
+>> +       if (num == den) {
+>> +               f.m = 0;
+>> +               f.n = 0;
+> 
+> Isn't this the default? So just have if (num != den) here.
+> 
+
+I would check for (num != den).
+
+>> +       } else {
+>> +               f.m = num;
+>> +               f.n = den;
+>> +       }
+>> +
+>> +       return clk_rcg2_configure(rcg, &f);
+>> +}
+>> +
+>> +static int clk_rcg2_dp_set_rate_and_parent(struct clk_hw *hw,
+>> +               unsigned long rate, unsigned long parent_rate, u8 index)
+>> +{
+>> +       return clk_rcg2_dp_set_rate(hw, rate, parent_rate);
+>> +}
+> 
+> Does this need to be implemented? The parent index isn't passed to
+> clk_rcg2_dp_set_rate() so I suspect the parent index doesn't matter?
+> Does the parent change?
+> 
+
+I guess it is required as the RCG SRC would be 0x0 by default.
+
+>> +
+>> +static int clk_rcg2_dp_determine_rate(struct clk_hw *hw,
+>> +                               struct clk_rate_request *req)
+>> +{
+>> +       struct clk_rate_request parent_req = *req;
+>> +       int ret;
+>> +
+>> +       ret = __clk_determine_rate(clk_hw_get_parent(hw), &parent_req);
+>> +       if (ret)
+>> +               return ret;
+>> +
+>> +       req->best_parent_rate = parent_req.rate;
+>> +
+>> +       return 0;
+>> +}
+> 
+> Do you need this op? It's just calling determine rate on the parent, so
+> we already do that if the proper flag is set. I'm confused about this
+> function.
+> 
+Would it be good to leave this function :).
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
