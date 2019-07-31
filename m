@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52812C32753
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBDF0C32754
 	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 19:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 305F2214DA
+	by mail.kernel.org (Postfix) with ESMTP id 98F51208E4
 	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 19:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1564601747;
-	bh=kc72/E5XexhPlpGwGLpvTOqPNTR45fQ6H/K9mIVhkQg=;
+	bh=qzMII9C4EWOSO7lbnevf4fOV8Y+qXeGKUcDdf3nXVQo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LR8GFlIwIa9DigofG+ttlbjiXgJ1kXGkeB2+hrBJWHPc/QSlPdhCpCQYT4AeFEpDo
-	 CLludiFdRe2k+uymbe+POpL8Bg9c1oYLBIIbahM4RrjO6HTnKwrZBlzi3rreQ33kC+
-	 K6hh2iK353AnKKxjLRcLhSATveV+YRPeijzw2uDM=
+	b=nUkvA2mPFCeszQRTuJfQlPC2mXnYs2r+g5916w80OeSCODEHmv8DbITX0EApp8v1B
+	 9WrtdIuld59KlbSV4GGRbJ6MRqHImYFxPGXBCkTlFwFT8Ud9GGukvDDrFNeWse+oTO
+	 RFTvw5EAPZplwCekmKRY/qreRONMDlxJMcYilep4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726096AbfGaTfd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Jul 2019 15:35:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34950 "EHLO mail.kernel.org"
+        id S1730996AbfGaTfV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Jul 2019 15:35:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731000AbfGaTfW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 31 Jul 2019 15:35:22 -0400
+        id S1726096AbfGaTfU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 31 Jul 2019 15:35:20 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 63449214DA;
-        Wed, 31 Jul 2019 19:35:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0F461214DA;
+        Wed, 31 Jul 2019 19:35:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564601721;
-        bh=kc72/E5XexhPlpGwGLpvTOqPNTR45fQ6H/K9mIVhkQg=;
+        s=default; t=1564601720;
+        bh=qzMII9C4EWOSO7lbnevf4fOV8Y+qXeGKUcDdf3nXVQo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bP64uCk5TDuTLBTED+NkynhYxzswLg9oxvXZflCv11C5ZUHVS8iq+4FiuzMbVwHYV
-         q9xUEFKKVrjrVqG2xI0pdMketUubPQFbNkcbKQfRkPAlVYdtIv3CqW5YX7YkcQmarf
-         VKKN5wlnPICZNA57Vs7NRgcwW1kj9UTMLTA+TCBQ=
+        b=0tv9xfchJ0rXsxthJuJYEAz1/My4p/z5i1kIZcz5nOvWm6j1Xy8A3cEGA6bfKK6zH
+         XX6nztHNBJsISD67r0Np9FUO3fqLYYMTu5nNhE2Vt9i2anbK68/erNylNmXk1wTKC5
+         1Z8Hj3LCfatUkklXsng1UUkW5c7dPvKcZ6MxU4n4=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Doug Anderson <dianders@chromium.org>
-Subject: [PATCH 9/9] clk: Overwrite clk_hw::init with NULL during clk_register()
-Date:   Wed, 31 Jul 2019 12:35:17 -0700
-Message-Id: <20190731193517.237136-10-sboyd@kernel.org>
+        Guo Zeng <Guo.Zeng@csr.com>, Barry Song <Baohua.Song@csr.com>
+Subject: [PATCH 5/9] clk: sirf: Don't reference clk_init_data after registration
+Date:   Wed, 31 Jul 2019 12:35:13 -0700
+Message-Id: <20190731193517.237136-6-sboyd@kernel.org>
 X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 In-Reply-To: <20190731193517.237136-1-sboyd@kernel.org>
 References: <20190731193517.237136-1-sboyd@kernel.org>
@@ -57,105 +56,69 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-We don't want clk provider drivers to use the init structure after clk
-registration time, but we leave a dangling reference to it by means of
-clk_hw::init. Let's overwrite the member with NULL during clk_register()
-so that this can't be used anymore after registration time.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc: Doug Anderson <dianders@chromium.org>
+Cc: Guo Zeng <Guo.Zeng@csr.com>
+Cc: Barry Song <Baohua.Song@csr.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
 
 Please ack so I can take this through clk tree
 
- drivers/clk/clk.c            | 24 ++++++++++++++++--------
- include/linux/clk-provider.h |  3 ++-
- 2 files changed, 18 insertions(+), 9 deletions(-)
+ drivers/clk/sirf/clk-common.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..efac620264a2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3484,9 +3484,9 @@ static int clk_cpy_name(const char **dst_p, const char *src, bool must_exist)
- 	return 0;
- }
- 
--static int clk_core_populate_parent_map(struct clk_core *core)
-+static int clk_core_populate_parent_map(struct clk_core *core,
-+					const struct clk_init_data *init)
+diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
+index ad7951b6b285..dcf4e25a0216 100644
+--- a/drivers/clk/sirf/clk-common.c
++++ b/drivers/clk/sirf/clk-common.c
+@@ -297,9 +297,10 @@ static u8 dmn_clk_get_parent(struct clk_hw *hw)
  {
--	const struct clk_init_data *init = core->hw->init;
- 	u8 num_parents = init->num_parents;
- 	const char * const *parent_names = init->parent_names;
- 	const struct clk_hw **parent_hws = init->parent_hws;
-@@ -3566,6 +3566,14 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 	struct clk_dmn *clk = to_dmnclk(hw);
+ 	u32 cfg = clkc_readl(clk->regofs);
++	const char *name = clk_hw_get_name(hw);
+ 
+ 	/* parent of io domain can only be pll3 */
+-	if (strcmp(hw->init->name, "io") == 0)
++	if (strcmp(name, "io") == 0)
+ 		return 4;
+ 
+ 	WARN_ON((cfg & (BIT(3) - 1)) > 4);
+@@ -311,9 +312,10 @@ static int dmn_clk_set_parent(struct clk_hw *hw, u8 parent)
  {
- 	int ret;
- 	struct clk_core *core;
-+	const struct clk_init_data *init = hw->init;
-+
-+	/*
-+	 * The init data is not supposed to be used outside of registration path.
-+	 * Set it to NULL so that provider drivers can't use it either and so that
-+	 * we catch use of hw->init early on in the core.
-+	 */
-+	hw->init = NULL;
+ 	struct clk_dmn *clk = to_dmnclk(hw);
+ 	u32 cfg = clkc_readl(clk->regofs);
++	const char *name = clk_hw_get_name(hw);
  
- 	core = kzalloc(sizeof(*core), GFP_KERNEL);
- 	if (!core) {
-@@ -3573,17 +3581,17 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 		goto fail_out;
- 	}
+ 	/* parent of io domain can only be pll3 */
+-	if (strcmp(hw->init->name, "io") == 0)
++	if (strcmp(name, "io") == 0)
+ 		return -EINVAL;
  
--	core->name = kstrdup_const(hw->init->name, GFP_KERNEL);
-+	core->name = kstrdup_const(init->name, GFP_KERNEL);
- 	if (!core->name) {
- 		ret = -ENOMEM;
- 		goto fail_name;
- 	}
+ 	cfg &= ~(BIT(3) - 1);
+@@ -353,7 +355,8 @@ static long dmn_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	unsigned long fin;
+ 	unsigned ratio, wait, hold;
+-	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
++	const char *name = clk_hw_get_name(hw);
++	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
  
--	if (WARN_ON(!hw->init->ops)) {
-+	if (WARN_ON(!init->ops)) {
- 		ret = -EINVAL;
- 		goto fail_ops;
- 	}
--	core->ops = hw->init->ops;
-+	core->ops = init->ops;
+ 	fin = *parent_rate;
+ 	ratio = fin / rate;
+@@ -375,7 +378,8 @@ static int dmn_clk_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	struct clk_dmn *clk = to_dmnclk(hw);
+ 	unsigned long fin;
+ 	unsigned ratio, wait, hold, reg;
+-	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
++	const char *name = clk_hw_get_name(hw);
++	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
  
- 	if (dev && pm_runtime_enabled(dev))
- 		core->rpm_enabled = true;
-@@ -3592,13 +3600,13 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
- 	if (dev && dev->driver)
- 		core->owner = dev->driver->owner;
- 	core->hw = hw;
--	core->flags = hw->init->flags;
--	core->num_parents = hw->init->num_parents;
-+	core->flags = init->flags;
-+	core->num_parents = init->num_parents;
- 	core->min_rate = 0;
- 	core->max_rate = ULONG_MAX;
- 	hw->core = core;
- 
--	ret = clk_core_populate_parent_map(core);
-+	ret = clk_core_populate_parent_map(core, init);
- 	if (ret)
- 		goto fail_parents;
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2ae7604783dd..214c75ed62ae 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -299,7 +299,8 @@ struct clk_init_data {
-  * into the clk API
-  *
-  * @init: pointer to struct clk_init_data that contains the init data shared
-- * with the common clock framework.
-+ * with the common clock framework. This pointer will be set to NULL once
-+ * a clk_register() variant is called on this clk_hw pointer.
-  */
- struct clk_hw {
- 	struct clk_core *core;
+ 	fin = parent_rate;
+ 	ratio = fin / rate;
 -- 
 Sent by a computer through tubes
 
