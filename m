@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EEEFC32751
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A76AEC32753
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28D832182B
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F253206A3
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 21:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="RNGePe54"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Njl7EV4K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730977AbfGaVMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Jul 2019 17:12:12 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9207 "EHLO
+        id S1730358AbfGaVLJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Jul 2019 17:11:09 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9184 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730420AbfGaVLK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 17:11:10 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4203f60001>; Wed, 31 Jul 2019 14:11:18 -0700
+        with ESMTP id S1729296AbfGaVLI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 17:11:08 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4203f40001>; Wed, 31 Jul 2019 14:11:16 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 31 Jul 2019 14:11:09 -0700
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Wed, 31 Jul 2019 14:11:07 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 31 Jul 2019 14:11:09 -0700
-Received: from HQMAIL105.nvidia.com (172.20.187.12) by HQMAIL108.nvidia.com
+        by hqpgpgate102.nvidia.com on Wed, 31 Jul 2019 14:11:07 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL108.nvidia.com
  (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
- 2019 21:11:09 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 31 Jul 2019 21:11:09 +0000
+ 2019 21:11:07 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 31 Jul 2019 21:11:07 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.102.167]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4203ec0002>; Wed, 31 Jul 2019 14:11:08 -0700
+        id <B5d4203ea0003>; Wed, 31 Jul 2019 14:11:06 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -50,9 +50,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v7 14/20] soc/tegra: pmc: Allow to support more tegras wake
-Date:   Wed, 31 Jul 2019 14:10:57 -0700
-Message-ID: <1564607463-28802-15-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v7 06/20] clk: tegra: Support for OSC context save and restore
+Date:   Wed, 31 Jul 2019 14:10:49 -0700
+Message-ID: <1564607463-28802-7-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
 References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
@@ -60,88 +60,84 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564607478; bh=2GvhhOatfsM2bYQzuVGHbcx4hR8oEy2cTWpoIl1r38Y=;
+        t=1564607476; bh=xkj1s2KNWS1ox6olDiffSIxLRDDA825BMM0uyEpGVbk=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=RNGePe54y2sJxZ1xaNz5tp+eGFUdsmYMDa1Ahei0TwSdVV2IoK++E7mQLgBnFy1e5
-         K83ljepFsGGplOhnft2uGn+Lm6L0AXNg1Qj39GIk6g6XhW2iiEMk1bA0mKpr7fCcWP
-         JhC7KFlXUj9laWYeLdnK+6R1lEbS3hwE10pMgJicXdm7e5hQCb1PJ4uvh9+PBJ/66z
-         /+TVI5zBUMPv1a+Nxb+xLCxdYWIbRxBV/zASp9582hZcxvaUwdB/BAT70bbUt3/xjO
-         VSxMy+AN+PJARUAn1gsNty/RJAFjLcS+wpXtavElLARZDma+e0bju7YDGuii+7AUhL
-         Rv4lCDtSjjYqA==
+        b=Njl7EV4KX2DkO4ib86vzdx37CzsFdZToTi2Is30z05PegDpQdXKlxaeQ7hhs+DO4W
+         GN+SM7sywh08elCC4wnw6t6OFHzrjKOL5u6YQjF3MC/rX+KMjtgpomcffdiykDyU33
+         DxpuBpneliQOKAsLeF+E0PfmE3Y3Q7GLW20nvgGHvjOjwT2KOBlik6P1QXiOb3p2da
+         8QF27TU9UE+lctME5JOuWDPqtBgarzd7QtFryznNddc7xvICxvOEl8CG5QMLYNJDpk
+         4QnW9exB7ScLbDGwgR2C7YKL7Pz0ec9nEu9rEebSIi8O+ayFBL0KAF7+9AscOHbERY
+         PyZaIxcJPqC3w==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch allows to create separate irq_set_wake and irq_set_type
-implementations for different tegra designs PMC that has different
-wake models which require difference wake registers and different
-programming sequence.
+This patch adds support for saving OSC clock frequency and the
+drive-strength during OSC clock init and creates an API to restore
+OSC control register value from the saved context.
 
-AOWAKE model support is available for Tegra186 and Tegra194 only
-and it resides within PMC and supports tiered wake architecture.
+This API is invoked by Tegra210 clock driver during system resume
+to restore the  OSC clock settings.
 
-Tegra210 and prior tegra designs uses PMC directly to receive wake
-events and coordinate the wake sequence.
-
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/soc/tegra/pmc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
+ drivers/clk/tegra/clk.h             |  1 +
+ 2 files changed, 16 insertions(+)
 
-diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
-index 9f9c1c677cf4..91c84d0e66ae 100644
---- a/drivers/soc/tegra/pmc.c
-+++ b/drivers/soc/tegra/pmc.c
-@@ -226,6 +226,8 @@ struct tegra_pmc_soc {
- 	void (*setup_irq_polarity)(struct tegra_pmc *pmc,
- 				   struct device_node *np,
- 				   bool invert);
-+	int (*irq_set_wake)(struct irq_data *data, unsigned int on);
-+	int (*irq_set_type)(struct irq_data *data, unsigned int type);
+diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk-tegra-fixed.c
+index 8d91b2b191cf..7c6c8abfcde6 100644
+--- a/drivers/clk/tegra/clk-tegra-fixed.c
++++ b/drivers/clk/tegra/clk-tegra-fixed.c
+@@ -17,6 +17,10 @@
+ #define OSC_CTRL			0x50
+ #define OSC_CTRL_OSC_FREQ_SHIFT		28
+ #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
++#define OSC_CTRL_MASK			(0x3f2 |	\
++					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
++
++static u32 osc_ctrl_ctx;
  
- 	const char * const *reset_sources;
- 	unsigned int num_reset_sources;
-@@ -1920,7 +1922,7 @@ static const struct irq_domain_ops tegra_pmc_irq_domain_ops = {
- 	.alloc = tegra_pmc_irq_alloc,
- };
+ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 			      unsigned long *input_freqs, unsigned int num,
+@@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk *clks,
+ 	unsigned osc_idx;
  
--static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
-+static int tegra186_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	unsigned int offset, bit;
-@@ -1952,7 +1954,7 @@ static int tegra_pmc_irq_set_wake(struct irq_data *data, unsigned int on)
- 	return 0;
+ 	val = readl_relaxed(clk_base + OSC_CTRL);
++	osc_ctrl_ctx = val & OSC_CTRL_MASK;
+ 	osc_idx = val >> OSC_CTRL_OSC_FREQ_SHIFT;
+ 
+ 	if (osc_idx < num)
+@@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *tegra_clks)
+ 		*dt_clk = clk;
+ 	}
  }
++
++void tegra_clk_osc_resume(void __iomem *clk_base)
++{
++	u32 val;
++
++	val = readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
++	val |= osc_ctrl_ctx;
++	writel_relaxed(val, clk_base + OSC_CTRL);
++	fence_udelay(2, clk_base);
++}
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index f1ef6ae8c979..abba6d8a04cd 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsigned long input_rate);
+ int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+ int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+ 		 u8 frac_width, u8 flags);
++void tegra_clk_osc_resume(void __iomem *clk_base);
  
--static int tegra_pmc_irq_set_type(struct irq_data *data, unsigned int type)
-+static int tegra186_pmc_irq_set_type(struct irq_data *data, unsigned int type)
- {
- 	struct tegra_pmc *pmc = irq_data_get_irq_chip_data(data);
- 	u32 value;
-@@ -2006,8 +2008,8 @@ static int tegra_pmc_irq_init(struct tegra_pmc *pmc)
- 	pmc->irq.irq_unmask = irq_chip_unmask_parent;
- 	pmc->irq.irq_eoi = irq_chip_eoi_parent;
- 	pmc->irq.irq_set_affinity = irq_chip_set_affinity_parent;
--	pmc->irq.irq_set_type = tegra_pmc_irq_set_type;
--	pmc->irq.irq_set_wake = tegra_pmc_irq_set_wake;
-+	pmc->irq.irq_set_type = pmc->soc->irq_set_type;
-+	pmc->irq.irq_set_wake = pmc->soc->irq_set_wake;
  
- 	pmc->domain = irq_domain_add_hierarchy(parent, 0, 96, pmc->dev->of_node,
- 					       &tegra_pmc_irq_domain_ops, pmc);
-@@ -2680,6 +2682,8 @@ static const struct tegra_pmc_soc tegra186_pmc_soc = {
- 	.regs = &tegra186_pmc_regs,
- 	.init = NULL,
- 	.setup_irq_polarity = tegra186_pmc_setup_irq_polarity,
-+	.irq_set_wake = tegra186_pmc_irq_set_wake,
-+	.irq_set_type = tegra186_pmc_irq_set_type,
- 	.reset_sources = tegra186_reset_sources,
- 	.num_reset_sources = ARRAY_SIZE(tegra186_reset_sources),
- 	.reset_levels = tegra186_reset_levels,
+ /* Combined read fence with delay */
 -- 
 2.7.4
 
