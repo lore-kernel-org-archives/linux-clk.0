@@ -2,195 +2,147 @@ Return-Path: <SRS0=2CVv=V4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BDEC32751
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 11:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAB8C433FF
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:11:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5748B206B8
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 11:15:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8185B206A3
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:11:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m7LSUnp2"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pn45YGzO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387463AbfGaLPh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Jul 2019 07:15:37 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:37201 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728739AbfGaLPh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 07:15:37 -0400
-Received: by mail-lj1-f194.google.com with SMTP id z28so10956383ljn.4;
-        Wed, 31 Jul 2019 04:15:35 -0700 (PDT)
+        id S2387569AbfGaOLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Jul 2019 10:11:05 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54321 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729131AbfGaOLF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 10:11:05 -0400
+Received: by mail-wm1-f67.google.com with SMTP id p74so60947689wme.4
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2019 07:11:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=6z0jtE10XtL+WjLPVGjCGsdJe3oZV5LH8j0ivYKyCt4=;
-        b=m7LSUnp2AKhEQPzsHUvNhCfeivbslGOTTAPSQoRg7tdq7CIrz5928vLy3BEFklBZKb
-         RYXkVnRMp23ntLIEhvMtMZrcd/Ce4fPXS+ynw8gQenwGm1bTumBxKI/MaJRzgyPLMDxX
-         u/0yC8NkQzIM6IV3dmzlwhP9GZsu84ErcUZxqyWcMd8CzgAspDM5apcrk5bzLXUI9leu
-         cqC0VYHrqkQiV3hO4/Dw39WZxwWK6kbUnkO47TgCjcOmMaU7eAdCeNd7Fi9GnaRZVU0H
-         SRjohnKlGTx2VRYURDVWQZlhXaigAHCcPhkwf6bCvE4hOiWyKDVYNMPHGL+xXjfSjj9g
-         tjcg==
+        bh=DaSfQVSBloP6ituQwd3gN2sNQYfvnC2s71RqutisBq0=;
+        b=Pn45YGzOCoqVPj5ruMllJckodlhVBmgzWrH3x/e0USvGBmmg4/Ju4GVTO3/dRSpBTY
+         576PmDDVUKYSxfaA1m94qhQ8UbmUNa4NfL1mXsG4Cq5I/yz4KkQozkzA+tTJ5oyrS9a5
+         wahvQMETUJkBFk2+TS9+O3vcsd4sB1rUI5rgIBWJvS6kGoYyzNBRtoOh/brUuKjLVgqb
+         lJkOws6k7U0nPUeGV0XD+Cc9eDsiWdIXbue+NdiSajyLETAOv5J2/b38B0MNu0VMg1ss
+         pRO70fcoPMvX0eHH4aQKvcl9z9u4yPd3QOFBhz23Zxc8o6UX+WAxo7JKNb4ZvLBDrnWr
+         m9Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=6z0jtE10XtL+WjLPVGjCGsdJe3oZV5LH8j0ivYKyCt4=;
-        b=GWCIqVk3pL8IRuqKBpLcDQ2SATFIzRIlP/lOjE32iIGcjNsGyI43X3eEFE0rWUvaEa
-         H6uqkIDHlPnwYReJ6/Aq0YW0jRzzzY56gL09aH0VpyFXS/OTnruwfcCnbSIzzgBtwCik
-         /9BKHl5477kxculrCWOiS4vUmaYC9N9hz098I5oU32WAGhhiWqetel85g0p9xdZdc2GX
-         TQ7iCObrj30Uy5tpWK2b0DjTTmvjC8OmuJAG93cZX9d6RRZq70q7+y+OayUEEOkX+tnJ
-         qLqmOdgV2+GJYBpEQ08JdGq7jnPBCMotrpYGtL+Vc4wlT6LavWNo4SRFjnP9m4C6mlYP
-         oCvw==
-X-Gm-Message-State: APjAAAWZh4slE8mObPkZGxL8B1xR5zz2U862jFhOsbpnKQVZBQhAs8H6
-        5geiKXDp0GlAd6d4wMzUO/SXciu7
-X-Google-Smtp-Source: APXvYqw91V/d9X1aLzic6f0zRJ0w1EuOIfqVFc+gfTo/wK4IYGv/9BDAISF90iCiwdueJAcscGgXWQ==
-X-Received: by 2002:a2e:9643:: with SMTP id z3mr65172467ljh.43.1564571734209;
-        Wed, 31 Jul 2019 04:15:34 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id s20sm11611282lfb.95.2019.07.31.04.15.32
+        bh=DaSfQVSBloP6ituQwd3gN2sNQYfvnC2s71RqutisBq0=;
+        b=cxCd6xOKwurj7EsYO/r+kcZu8Qyy9TpTYNNLNmovSdmTOQ5YfOicuGfU9KHOKeF4Xp
+         LRsXwL1DmRh8F6tOJ9qH/I/Gfh3y9s3NdLzvFtJR0A+3lmjMDlbxOmrFc3XiGdj3Gtgn
+         d4+O04oFGClFy/+Kc0CedMUKUq/J1KaEY6L4BctJDXrFnlLxHxp+hwIlikCSjrEH/x6c
+         Tvr0z49fIS0Xk0BKJnIQReBEjP8bJ+5vo1jAw7mEV9Rr6JZ7yGaGI9QZyalGBz6CbIb+
+         iHx84VZLfrb8tOnrC1BH3SHKRI+5jvETSrnOKMQ/59mSCQCqQ0fGgVApfUt+7Q4E4r2G
+         TPEg==
+X-Gm-Message-State: APjAAAWeNyaXgGAG6Ng8A+m4emHGYwxS/ORfMszK9umiRfPPblzcY64Y
+        XEU/8xqf9fwe8GYyhQAR1VkjSg==
+X-Google-Smtp-Source: APXvYqw/pUX7GShISMzCbUQtESxSOCGVNvngtydQFUT3NN7ACbQtiRIRf1AbgIrVwpXKDn1FZaNSkQ==
+X-Received: by 2002:a05:600c:34d:: with SMTP id u13mr85321496wmd.48.1564582262533;
+        Wed, 31 Jul 2019 07:11:02 -0700 (PDT)
+Received: from [192.168.1.6] (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
+        by smtp.gmail.com with ESMTPSA id a81sm71773684wmh.3.2019.07.31.07.11.00
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 04:15:33 -0700 (PDT)
-Subject: Re: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume
- support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org
-References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
- <1564532424-10449-12-git-send-email-skomatineni@nvidia.com>
- <98aae4b7-d95a-90ba-0d55-7512b3712f54@gmail.com>
-Message-ID: <505bbdc0-c48a-8583-3838-ec5c128f375f@gmail.com>
-Date:   Wed, 31 Jul 2019 14:14:37 +0300
+        Wed, 31 Jul 2019 07:11:01 -0700 (PDT)
+Subject: Re: [PATCH v3 02/14] mbox: qcom: add APCS child device for QCS404
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net, vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
+ <20190625164733.11091-3-jorge.ramirez-ortiz@linaro.org>
+ <20190711144424.GD7234@tuxbook-pro>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <5111bc6e-4155-e99e-71b2-1aac3610b71e@linaro.org>
+Date:   Wed, 31 Jul 2019 16:10:59 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <98aae4b7-d95a-90ba-0d55-7512b3712f54@gmail.com>
+In-Reply-To: <20190711144424.GD7234@tuxbook-pro>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-31.07.2019 13:23, Dmitry Osipenko пишет:
-> 31.07.2019 3:20, Sowjanya Komatineni пишет:
->> This patch adds suspend and resume pm ops for cpufreq driver.
+On 7/11/19 16:44, Bjorn Andersson wrote:
+> On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
+> 
+>> There is clock controller functionality in the APCS hardware block of
+>> qcs404 devices similar to msm8916.
 >>
->> PLLP is the safe clock source for CPU during system suspend and
->> resume as PLLP rate is below the CPU Fmax at Vmin.
->>
->> CPUFreq driver suspend switches the CPU clock source to PLLP and
->> disables the DFLL clock.
->>
->> During system resume, warmboot code powers up the CPU with PLLP
->> clock source. So CPUFreq driver resume enabled DFLL clock and
->> switches CPU back to DFLL clock source.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 >> ---
->>  drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
->>  1 file changed, 60 insertions(+)
+>>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 18 ++++++++++--------
+>>  1 file changed, 10 insertions(+), 8 deletions(-)
 >>
->> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra124-cpufreq.c
->> index 4f0c637b3b49..e979a3370988 100644
->> --- a/drivers/cpufreq/tegra124-cpufreq.c
->> +++ b/drivers/cpufreq/tegra124-cpufreq.c
->> @@ -6,6 +6,7 @@
->>  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
+>> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> index 705e17a5479c..a05dc3aabac7 100644
+>> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
+>> @@ -89,16 +89,18 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
+>>  		return ret;
+>>  	}
 >>  
->>  #include <linux/clk.h>
->> +#include <linux/cpufreq.h>
->>  #include <linux/err.h>
->>  #include <linux/init.h>
->>  #include <linux/kernel.h>
->> @@ -128,8 +129,67 @@ static int tegra124_cpufreq_probe(struct platform_device *pdev)
->>  	return ret;
+>> -	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
+>> -		apcs->clk = platform_device_register_data(&pdev->dev,
+>> -							  "qcom-apcs-msm8916-clk",
+>> -							  -1, NULL, 0);
+>> -		if (IS_ERR(apcs->clk))
+>> -			dev_err(&pdev->dev, "failed to register APCS clk\n");
+>> -	}
+>> -
+>>  	platform_set_drvdata(pdev, apcs);
+>>  
+>> +	if (!of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") &&
+>> +	    !of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
+> 
+> If the remainder of the function was a long snippet I think this would
+> motivate the somewhat unusual early return. But I think it would be
+> cleaner to just add to the existing conditional.
+
+sure can do that. I dont agree (I wouldnt have bothered otherwise :))
+but will do
+
+> 
+> Regards,
+> Bjorn
+> 
+>> +		return 0;
+>> +
+>> +	apcs->clk = platform_device_register_data(&pdev->dev,
+>> +						  "qcom-apcs-msm8916-clk",
+>> +						  -1, NULL, 0);
+>> +	if (IS_ERR(apcs->clk))
+>> +		dev_err(&pdev->dev, "failed to register APCS clk\n");
+>> +
+>>  	return 0;
 >>  }
 >>  
->> +static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
->> +{
->> +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
->> +	int err;
->> +
->> +	/*
->> +	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
->> +	 * use during suspend and resume. So, switch the CPU clock source
->> +	 * to PLLP and disable DFLL.
->> +	 */
->> +	err = clk_set_parent(priv->cpu_clk, priv->pllp_clk);
->> +	if (err < 0) {
->> +		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
->> +		return err;
->> +	}
->> +
->> +	/* disable DFLL clock */
->> +	clk_disable_unprepare(priv->dfll_clk);
->> +
->> +	return 0;
->> +}
->> +
->> +static int __maybe_unused tegra124_cpufreq_resume(struct device *dev)
->> +{
->> +	struct tegra124_cpufreq_priv *priv = dev_get_drvdata(dev);
->> +	int err;
->> +
->> +	/*
->> +	 * Warmboot code powers up the CPU with PLLP clock source.
->> +	 * Enable DFLL clock and switch CPU clock source back to DFLL.
->> +	 */
->> +	err = clk_prepare_enable(priv->dfll_clk);
->> +	if (err < 0) {
->> +		dev_err(dev, "failed to enable DFLL clock for CPU: %d\n", err);
->> +		goto disable_cpufreq;
->> +	}
->> +
->> +	err = clk_set_parent(priv->cpu_clk, priv->dfll_clk);
->> +	if (err < 0) {
->> +		dev_err(dev, "failed to reparent to DFLL clock: %d\n", err);
->> +		goto disable_dfll;
->> +	}
->> +
->> +	return 0;
->> +
->> +disable_dfll:
->> +	clk_disable_unprepare(priv->dfll_clk);
->> +disable_cpufreq:
->> +	disable_cpufreq();
->> +
->> +	return err;
->> +}
->> +
->> +static const struct dev_pm_ops tegra124_cpufreq_pm_ops = {
->> +	SET_SYSTEM_SLEEP_PM_OPS(tegra124_cpufreq_suspend,
->> +				tegra124_cpufreq_resume)
->> +};
->> +
->>  static struct platform_driver tegra124_cpufreq_platdrv = {
->>  	.driver.name	= "cpufreq-tegra124",
->> +	.driver.pm	= &tegra124_cpufreq_pm_ops,
->>  	.probe		= tegra124_cpufreq_probe,
->>  };
->>  
+>> -- 
+>> 2.21.0
 >>
 > 
-> Looks good,
-> 
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> 
 
-BTW, you should also CC the CPUFreq maintainers because this patch can't
-be applied without theirs ACK.
