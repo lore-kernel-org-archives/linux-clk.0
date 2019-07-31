@@ -1,102 +1,97 @@
-Return-Path: <SRS0=6EmA=V3=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=2CVv=V4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0069FC433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 21:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0D7C433FF
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 00:20:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C37DD208E3
-	for <linux-clk@archiver.kernel.org>; Tue, 30 Jul 2019 21:40:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564522809;
-	bh=SZSfxS8OeqC//cyK+U9fS3g64U6+kM4axmL/pZ6RfQw=;
-	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=JaHJBVmPfLAcCoxemNduLd2skg18AcC6jdxXbrKNsQYNaWEh52KZnBsdJr6hCnKDk
-	 r11UfpBJvIi/4wnCJ55zNoJsNG91DiXKpxT4IyWt2ApnDkluX4VsjAingsCJDYh1jW
-	 acmbEBHiV1mq/4lb/PaSNkBibwDrjqhELMwyO5GQ=
+	by mail.kernel.org (Postfix) with ESMTP id 5E3AD208C3
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 00:20:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="cK9oN/lc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728838AbfG3VkJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 30 Jul 2019 17:40:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48106 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728834AbfG3VkJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 30 Jul 2019 17:40:09 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22F8E206E0;
-        Tue, 30 Jul 2019 21:40:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564522808;
-        bh=SZSfxS8OeqC//cyK+U9fS3g64U6+kM4axmL/pZ6RfQw=;
-        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=g2dt8aQ+Yd3kdmtz5hTDZ9LA/BBYXzSQFMux+T09KThIbnXDTvVW1qbY54VZtsGnx
-         Pl9jrFUCO9Kyh6vZl6eCa78fNWgAZZj+vux1D5urvuW2yiKaoFV5mqgoDAcpfjxhPm
-         6F8yhHn3zqnRCPiNGI2XjzYk+yksCuNJY+p5CvmY=
-Content-Type: text/plain; charset="utf-8"
+        id S1728516AbfGaAUa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 30 Jul 2019 20:20:30 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:7229 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728318AbfGaAU3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 30 Jul 2019 20:20:29 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d40ded40002>; Tue, 30 Jul 2019 17:20:37 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 30 Jul 2019 17:20:28 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 30 Jul 2019 17:20:28 -0700
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
+ 2019 00:20:27 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 31 Jul 2019 00:20:28 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.107]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5d40decb0006>; Tue, 30 Jul 2019 17:20:27 -0700
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>, <skomatineni@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>
+Subject: [PATCH v7 02/20] pinctrl: tegra210: Add Tegra210 pinctrl pm ops
+Date:   Tue, 30 Jul 2019 17:20:06 -0700
+Message-ID: <1564532424-10449-3-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190730183818.mvoo5q3s4xylrqao@fsr-ub1664-175>
-References: <1564471375-6736-1-git-send-email-abel.vesa@nxp.com> <20190730175231.B05ED206A2@mail.kernel.org> <20190730183818.mvoo5q3s4xylrqao@fsr-ub1664-175>
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Guido Gunther <agx@sigxcpu.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Subject: Re: [PATCH v3] clk: imx8mq: Mark AHB clock as critical
-User-Agent: alot/0.8.1
-Date:   Tue, 30 Jul 2019 14:40:07 -0700
-Message-Id: <20190730214008.22F8E206E0@mail.kernel.org>
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564532437; bh=BHwK3WCEUlQoYgNYri15m7IvYYDcUcYtnB4LBFhxM5w=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=cK9oN/lcJY4/C07fx3T1DhItt/mTTnRN8ds0SFkTOGONhYt5tjMDDvMdorAHFsS1I
+         6GThk8Zr/Na5YhEvf+XvfaApehpPbJcOVon6wkp/siCrQ8SsakWGX9wjgyqvedosFC
+         g20yQMveOjYmiRraMfR15TTGdpPerX5j0K0GcDqintgUyt4K8OaUiPDZ3u33G1pweX
+         KAGOxqj7n7hU8MtdpMDM/XRtLYqHyczeSgLpfK+4cPOasCPHCzIbGJemJcGdR8JEg8
+         ebvpNaxvr/zcofrpa8o/4TJ7JDBRCZJaMzIWdika8RGd3PmPGEnZqrpYLEXbReeHwT
+         wOK3bim/5Y1CQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Abel Vesa (2019-07-30 11:38:18)
-> On 19-07-30 10:52:30, Stephen Boyd wrote:
-> > Quoting Abel Vesa (2019-07-30 00:22:55)
-> > > Initially, the TMU_ROOT clock was marked as critical, which automatic=
-ally
-> > > made the AHB clock to stay always on. Since the TMU_ROOT clock is not
-> > > marked as critical anymore, following commit:
-> > >=20
-> > > 431bdd1df48e ("clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CL=
-K_TMU_ROOT")
-> > >=20
-> > > all the clocks that derive from ipg_root clock (and implicitly ahb cl=
-ock)
-> > > would also have to enable, along with their own gate, the AHB clock.
-> > >=20
-> > > But considering that AHB is actually a bus that has to be always on, =
-we mark
-> > > it as critical in the clock provider driver and then all the clocks t=
-hat
-> > > derive from it can be controlled through the dedicated per IP gate wh=
-ich
-> > > follows after the ipg_root clock.
-> > >=20
-> > > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-> > > Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
-> > > Fixes: 431bdd1df48e ("clk: imx8mq: Remove CLK_IS_CRITICAL flag for IM=
-X8MQ_CLK_TMU_ROOT")
-> > > ---
-> > >=20
-> >=20
-> > Should I just apply this to clk-fixes branch?
-> >=20
->=20
-> Nope. The commit 431bdd1df48e is just in -next for now.
-> So this has to be taken by Shawn, I think.
+This patch adds suspend and resume functionality to Tegra210 pinctrl.
 
-Ah ok. I thought it was related to some other problem someone was seeing
-in the rc series but you're right, it was just linux-next for them.
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ drivers/pinctrl/tegra/pinctrl-tegra210.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pinctrl/tegra/pinctrl-tegra210.c b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+index 39ab6480a941..fc072a36deb3 100644
+--- a/drivers/pinctrl/tegra/pinctrl-tegra210.c
++++ b/drivers/pinctrl/tegra/pinctrl-tegra210.c
+@@ -1571,6 +1571,7 @@ static struct platform_driver tegra210_pinctrl_driver = {
+ 	.driver = {
+ 		.name = "tegra210-pinctrl",
+ 		.of_match_table = tegra210_pinctrl_of_match,
++		.pm = &tegra_pinctrl_pm,
+ 	},
+ 	.probe = tegra210_pinctrl_probe,
+ };
+-- 
+2.7.4
 
