@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADAB8C433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:11:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3CA1C32751
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:30:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8185B206A3
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:11:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93F87208E3
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 14:30:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pn45YGzO"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LObSE0fF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387569AbfGaOLF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Jul 2019 10:11:05 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:54321 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729131AbfGaOLF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 10:11:05 -0400
-Received: by mail-wm1-f67.google.com with SMTP id p74so60947689wme.4
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2019 07:11:03 -0700 (PDT)
+        id S1729307AbfGaOa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Jul 2019 10:30:58 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:51148 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725793AbfGaOa6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 10:30:58 -0400
+Received: by mail-wm1-f66.google.com with SMTP id v15so61083521wml.0
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2019 07:30:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=DaSfQVSBloP6ituQwd3gN2sNQYfvnC2s71RqutisBq0=;
-        b=Pn45YGzOCoqVPj5ruMllJckodlhVBmgzWrH3x/e0USvGBmmg4/Ju4GVTO3/dRSpBTY
-         576PmDDVUKYSxfaA1m94qhQ8UbmUNa4NfL1mXsG4Cq5I/yz4KkQozkzA+tTJ5oyrS9a5
-         wahvQMETUJkBFk2+TS9+O3vcsd4sB1rUI5rgIBWJvS6kGoYyzNBRtoOh/brUuKjLVgqb
-         lJkOws6k7U0nPUeGV0XD+Cc9eDsiWdIXbue+NdiSajyLETAOv5J2/b38B0MNu0VMg1ss
-         pRO70fcoPMvX0eHH4aQKvcl9z9u4yPd3QOFBhz23Zxc8o6UX+WAxo7JKNb4ZvLBDrnWr
-         m9Nw==
+        bh=MDnPbJodK/a6eTFi3yfzZVR2rm3ZSgLhYLWa+WneOcQ=;
+        b=LObSE0fFJUw55SB99a92enfrZZUq30eu9bG2F/nsfWNxuzV9x2HmIAvxj0KJ9w0KTU
+         qrIclXt78r1QBfee5k0HYdjVZ0gbj9fNSGTnKWLZ6ndr3dOMOX7Y3VDxa3DQq8RHuZm5
+         /48OTXttWhRqrIZkeXdW6N77lLaaOtC6y8buit2VDJx/IGQ2OpeOYR2S+G8mfirEjQ7g
+         NG0SSL/kykYLqhLsE7AUDUa3AqwG9sCxx+/LNHCTnGNh63e8AYQFw+tzeNt3Qzt+XsbL
+         JU1G4bO3AWErvXFZ4ADhul3FeEJLOAWayBNWrKY7rYuU1Uxboou2Yj/gCmQ/Ty+MX81g
+         igkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=DaSfQVSBloP6ituQwd3gN2sNQYfvnC2s71RqutisBq0=;
-        b=cxCd6xOKwurj7EsYO/r+kcZu8Qyy9TpTYNNLNmovSdmTOQ5YfOicuGfU9KHOKeF4Xp
-         LRsXwL1DmRh8F6tOJ9qH/I/Gfh3y9s3NdLzvFtJR0A+3lmjMDlbxOmrFc3XiGdj3Gtgn
-         d4+O04oFGClFy/+Kc0CedMUKUq/J1KaEY6L4BctJDXrFnlLxHxp+hwIlikCSjrEH/x6c
-         Tvr0z49fIS0Xk0BKJnIQReBEjP8bJ+5vo1jAw7mEV9Rr6JZ7yGaGI9QZyalGBz6CbIb+
-         iHx84VZLfrb8tOnrC1BH3SHKRI+5jvETSrnOKMQ/59mSCQCqQ0fGgVApfUt+7Q4E4r2G
-         TPEg==
-X-Gm-Message-State: APjAAAWeNyaXgGAG6Ng8A+m4emHGYwxS/ORfMszK9umiRfPPblzcY64Y
-        XEU/8xqf9fwe8GYyhQAR1VkjSg==
-X-Google-Smtp-Source: APXvYqw/pUX7GShISMzCbUQtESxSOCGVNvngtydQFUT3NN7ACbQtiRIRf1AbgIrVwpXKDn1FZaNSkQ==
-X-Received: by 2002:a05:600c:34d:: with SMTP id u13mr85321496wmd.48.1564582262533;
-        Wed, 31 Jul 2019 07:11:02 -0700 (PDT)
+        bh=MDnPbJodK/a6eTFi3yfzZVR2rm3ZSgLhYLWa+WneOcQ=;
+        b=Ya/j9el8NfQ9IrvpzuUrLr4KYEAIGyI5qFnSehOa5bjDGG+ByoTbk/k7VxhUBicAk4
+         +no7gbRKObxSpCqd+2RmEw3CknSwnjzpevBfVdslBCwg5JbXX7B5GWgXVg3YOi76hwpp
+         weGZHh0HVVoqBXSAgR7e67tyVGi5ozZ0Md256vdkAxSgcIaz9PWPveeTvYGtYC+FqqWF
+         91+wyRZ+J5hcTYodBle2gdgg/YI44+82/eFsxB7RSYkv/p8LFLktVVr8DJtqY2KV7lhT
+         PJf2YuOCGwtJSbgM0rB9z1XurlxX3KVXJz2eHIY20bx/lRpjLzOs0EGmTyzZY7WzBLsA
+         69eA==
+X-Gm-Message-State: APjAAAVWnjdizqiIboWWWecdu+a8L6amqWwtmn+NrEd+J2VlGb6GYCSF
+        k+N4oF5DOyRCvEqCTZvNNEy9aQ==
+X-Google-Smtp-Source: APXvYqx/TyzoXLdTkhlTg/t7F+eHNs+DVxViJq91/dI341xTx6DKJZgNxhl4ivgKkc2HMYfOY6jBEw==
+X-Received: by 2002:a1c:e90d:: with SMTP id q13mr110692820wmc.89.1564583455255;
+        Wed, 31 Jul 2019 07:30:55 -0700 (PDT)
 Received: from [192.168.1.6] (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
-        by smtp.gmail.com with ESMTPSA id a81sm71773684wmh.3.2019.07.31.07.11.00
+        by smtp.gmail.com with ESMTPSA id z6sm61429920wrw.2.2019.07.31.07.30.52
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 07:11:01 -0700 (PDT)
-Subject: Re: [PATCH v3 02/14] mbox: qcom: add APCS child device for QCS404
+        Wed, 31 Jul 2019 07:30:54 -0700 (PDT)
+Subject: Re: [PATCH v3 08/14] clk: qcom: hfpll: CLK_IGNORE_UNUSED
 To:     Bjorn Andersson <bjorn.andersson@linaro.org>
 Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
         mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
@@ -68,15 +68,15 @@ Cc:     sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
 References: <20190625164733.11091-1-jorge.ramirez-ortiz@linaro.org>
- <20190625164733.11091-3-jorge.ramirez-ortiz@linaro.org>
- <20190711144424.GD7234@tuxbook-pro>
+ <20190625164733.11091-9-jorge.ramirez-ortiz@linaro.org>
+ <20190711151631.GI7234@tuxbook-pro>
 From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
-Message-ID: <5111bc6e-4155-e99e-71b2-1aac3610b71e@linaro.org>
-Date:   Wed, 31 Jul 2019 16:10:59 +0200
+Message-ID: <cd91801a-1be3-86fd-6e15-da7e82fddb53@linaro.org>
+Date:   Wed, 31 Jul 2019 16:30:52 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190711144424.GD7234@tuxbook-pro>
+In-Reply-To: <20190711151631.GI7234@tuxbook-pro>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -85,62 +85,87 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 7/11/19 16:44, Bjorn Andersson wrote:
+On 7/11/19 17:16, Bjorn Andersson wrote:
 > On Tue 25 Jun 09:47 PDT 2019, Jorge Ramirez-Ortiz wrote:
 > 
->> There is clock controller functionality in the APCS hardware block of
->> qcs404 devices similar to msm8916.
+>> When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
+>> to keep the software model of the clock in line with reality, the
+>> framework transverses the clock tree and disables those clocks that
+>> were enabled by the firmware but have not been enabled by any device
+>> driver.
+>>
+>> If CPUFREQ is enabled, early during the system boot, it might attempt
+>> to change the CPU frequency ("set_rate"). If the HFPLL is selected as
+>> a provider, it will then change the rate for this clock.
+>>
+>> As boot continues, clk_disable_unused_subtree will run. Since it wont
+>> find a valid counter (enable_count) for a clock that is actually
+>> enabled it will attempt to disable it which will cause the CPU to
+>> stop.
+> 
+> But if CPUfreq has acquired the CPU clock and the hfpll is the currently
+> selected input, why does the clock framework not know about this clock
+> being used?
+
+right, see the comment right below - maybe I should have been more
+explicit at the time. sorry about it.
+
+> 
+>> Notice that in this driver, calls to check whether the clock is
+>> enabled are routed via the is_enabled callback which queries the
+>> hardware.
+
+calls to check whether the clock is enabled dont use the usage counter
+but a hardware read. IIRC the clock framework will check some counter to
+know if the clock is being used.
+
+>>
+>> The following commit, rather than marking the clock critical and
+>> forcing the clock to be always enabled, addresses the above scenario
+>> making sure the clock is not disabled but it continues to rely on the
+>> firmware to enable the clock.
 >>
 >> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 >> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 >> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
->> ---
->>  drivers/mailbox/qcom-apcs-ipc-mailbox.c | 18 ++++++++++--------
->>  1 file changed, 10 insertions(+), 8 deletions(-)
->>
->> diff --git a/drivers/mailbox/qcom-apcs-ipc-mailbox.c b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
->> index 705e17a5479c..a05dc3aabac7 100644
->> --- a/drivers/mailbox/qcom-apcs-ipc-mailbox.c
->> +++ b/drivers/mailbox/qcom-apcs-ipc-mailbox.c
->> @@ -89,16 +89,18 @@ static int qcom_apcs_ipc_probe(struct platform_device *pdev)
->>  		return ret;
->>  	}
->>  
->> -	if (of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global")) {
->> -		apcs->clk = platform_device_register_data(&pdev->dev,
->> -							  "qcom-apcs-msm8916-clk",
->> -							  -1, NULL, 0);
->> -		if (IS_ERR(apcs->clk))
->> -			dev_err(&pdev->dev, "failed to register APCS clk\n");
->> -	}
->> -
->>  	platform_set_drvdata(pdev, apcs);
->>  
->> +	if (!of_device_is_compatible(np, "qcom,msm8916-apcs-kpss-global") &&
->> +	    !of_device_is_compatible(np, "qcom,qcs404-apcs-apps-global"))
 > 
-> If the remainder of the function was a long snippet I think this would
-> motivate the somewhat unusual early return. But I think it would be
-> cleaner to just add to the existing conditional.
+> 
+> I can see that we have a real issue in the case where CPUfreq is not
+> enabled and hence there are no clients, according to Linux. And that I
+> don't know another way to guard against.
 
-sure can do that. I dont agree (I wouldnt have bothered otherwise :))
-but will do
+the issue is there when CPUfreq is enabled that is for sure (if we just
+remove this commit the system will not boot due to the situation I tried
+to describe above).
 
+> 
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > 
 > Regards,
 > Bjorn
 > 
->> +		return 0;
->> +
->> +	apcs->clk = platform_device_register_data(&pdev->dev,
->> +						  "qcom-apcs-msm8916-clk",
->> +						  -1, NULL, 0);
->> +	if (IS_ERR(apcs->clk))
->> +		dev_err(&pdev->dev, "failed to register APCS clk\n");
->> +
->>  	return 0;
->>  }
+>> ---
+>>  drivers/clk/qcom/hfpll.c | 7 +++++++
+>>  1 file changed, 7 insertions(+)
+>>
+>> diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+>> index 0ffed0d41c50..d5fd27938e7b 100644
+>> --- a/drivers/clk/qcom/hfpll.c
+>> +++ b/drivers/clk/qcom/hfpll.c
+>> @@ -58,6 +58,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+>>  		.parent_names = (const char *[]){ "xo" },
+>>  		.num_parents = 1,
+>>  		.ops = &clk_ops_hfpll,
+>> +		/*
+>> +		 * rather than marking the clock critical and forcing the clock
+>> +		 * to be always enabled, we make sure that the clock is not
+>> +		 * disabled: the firmware remains responsible of enabling this
+>> +		 * clock (for more info check the commit log)
+>> +		 */
+>> +		.flags = CLK_IGNORE_UNUSED,
+>>  	};
 >>  
+>>  	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
 >> -- 
 >> 2.21.0
 >>
