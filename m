@@ -2,170 +2,160 @@ Return-Path: <SRS0=2CVv=V4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926A7C433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 20:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CC48C32751
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 21:04:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DF1E2171F
-	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 20:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 420292064A
+	for <linux-clk@archiver.kernel.org>; Wed, 31 Jul 2019 21:04:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A66eZ8wt"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WS8MF5eK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729805AbfGaU3h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 31 Jul 2019 16:29:37 -0400
-Received: from mail-wm1-f47.google.com ([209.85.128.47]:33029 "EHLO
-        mail-wm1-f47.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729186AbfGaU3h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 16:29:37 -0400
-Received: by mail-wm1-f47.google.com with SMTP id h19so2071029wme.0
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2019 13:29:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J6ze2YAQiFMQcX08HvMMVBLcUCeG0njel810asmfh74=;
-        b=A66eZ8wtZbNn3nsqtM7suQXkzBLl5zZ2enyjLbB1erWuNMARvWzGxmTkO0XuWMebS1
-         1rrgocfWUtim/FHLitbJqyMTvJ0vH53EyYZGOq5A9uOfBGnIdK+ns5iFkpdrIvzFE/QC
-         vxJa3zNO0ZGn3o+A4bMXPwxWZm0R+N6tX36UuDsxL8p3SP4d/HtT6X9glTrNCzjVG8ON
-         zvo5NCiPTKZckQcenmPz/xqmj0F14Oj4f9++YheC9PPG3vjIjfIgPCwNIYvSXbU4+ICV
-         iqtt2KtDC2yUoZpoaQ88sMaI5wbBYlCVgSG808PZBRXr8ba0mXzMpJg2PYtvjUbU1TbT
-         eyfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=J6ze2YAQiFMQcX08HvMMVBLcUCeG0njel810asmfh74=;
-        b=W4Go4HrFP52G81mWuVgEVEL8lZyu2ZDG9A86ciTbQk9gZMH3rsY6pKvhA5LhvgnY/l
-         GIOHRpfuJfp5TApBKua/fvKtqtP65bIgdnPuoQV18NbX7F1ZyXQ2UBftuUxWZAEiZYV5
-         O2vAs0ajrclJfx54IUmcOhEo/IHsDj4D30p3rZDfyd2lxfhEox4AzLJ9Ib2aDtX1oEeX
-         ub4SGHy1+imZ5QAm+5oM6cK14WEyEU9wLC1kjJAkR1KQwRlI0Nmbvv//0rHyTJGtQK2I
-         SA+sNxDQJ6oR5Xa6s12FzkTg2jBT8DhePcH48BWrVktg09+MujLTXYNaCqefJl5Oud7f
-         VbHA==
-X-Gm-Message-State: APjAAAUQlRe4N71YvJR1CJYjqQj+0LaEQ8oXxYXaygRhDPqlMBtQxOWR
-        xcK5pH4GC5wLsSlc97GFiD5jTw==
-X-Google-Smtp-Source: APXvYqwlUrEDjH//rXtg1eVUY1CgRd0ZuDM1zafwJtzOhlHIQBzrAFHo/nx6y2h1NSrLpNDjGpkieQ==
-X-Received: by 2002:a05:600c:204c:: with SMTP id p12mr111863989wmg.121.1564604974820;
-        Wed, 31 Jul 2019 13:29:34 -0700 (PDT)
-Received: from localhost.localdomain (19.red-176-86-136.dynamicip.rima-tde.net. [176.86.136.19])
-        by smtp.gmail.com with ESMTPSA id i18sm91905591wrp.91.2019.07.31.13.29.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 31 Jul 2019 13:29:34 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, bjorn.andersson@linaro.org,
-        sboyd@kernel.org, david.brown@linaro.org, jassisinghbrar@gmail.com,
-        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
-        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
-        heiko@sntech.de, sibis@codeaurora.org,
-        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
-        olof@lixom.net
-Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
-        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: [PATCH v4 00/13] Support CPU frequency scaling on QCS404
-Date:   Wed, 31 Jul 2019 22:29:16 +0200
-Message-Id: <20190731202929.16443-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.22.0
+        id S1726800AbfGaVEx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 31 Jul 2019 17:04:53 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:8803 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726755AbfGaVEx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 31 Jul 2019 17:04:53 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d42027c0002>; Wed, 31 Jul 2019 14:05:00 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 31 Jul 2019 14:04:51 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 31 Jul 2019 14:04:51 -0700
+Received: from [10.110.102.167] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 31 Jul
+ 2019 21:04:50 +0000
+Subject: Re: [PATCH v7 06/20] clk: tegra: Support for OSC context save and
+ restore
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <1564532424-10449-1-git-send-email-skomatineni@nvidia.com>
+ <1564532424-10449-7-git-send-email-skomatineni@nvidia.com>
+ <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <b5a58bfc-c777-886f-d902-f499ec38e2ae@nvidia.com>
+Date:   Wed, 31 Jul 2019 14:04:51 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <16cca6aa-1034-f38a-49d1-d87b37fb6bbb@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564607100; bh=5rrpy+cn1KnA3JbJVL1tKlVMXhmWssvFAJuR/U8+9e8=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=WS8MF5eKhGbOte36YkWSpNh9xhWM82n79UA8DnM36gXW+YMUOEMtWt3nIIDMwtTlq
+         pqTIPXMSv/oGMxkFOKXfu5UXpqKQKQ5y0UJkpkOyDekFCFXA+RHOPpx4ywwy32DzHs
+         LLa3YA1LOVNr3nX+24At6RJPfB74LzYkFNg5cYklVkH+8wwMnzg37irjhpZc82QI0M
+         f4lQ9e5HZGOt5TuF2o2akyotU+XiUsMOWd/3NJVftyTKg75H/eETNinmL/4HvAbVPn
+         tC+X9D2fmOML2s57yKFpEqIG8vcFCazukwV8Qczd0/pEAWa8lW+Ui46Ws+RaO7siJs
+         aJeDjsKzwyiyw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following patchset enables CPU frequency scaling support on the
-QCS404 (with dynamic voltage scaling).
 
-It is important to notice that this functionality will be superseded
-by Core Power Reduction (CPR), a more accurate form of AVS found on
-certain Qualcomm SoCs.
+On 7/31/19 4:11 AM, Dmitry Osipenko wrote:
+> 31.07.2019 3:20, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> This patch adds support for saving OSC clock frequency and the
+>> drive-strength during OSC clock init and creates an API to restore
+>> OSC control register value from the saved context.
+>>
+>> This API is invoked by Tegra210 clock driver during system resume
+>> to restore the  OSC clock settings.
+>>
+>> Acked-by: Thierry Reding <treding@nvidia.com>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/clk/tegra/clk-tegra-fixed.c | 15 +++++++++++++++
+>>   drivers/clk/tegra/clk.h             |  1 +
+>>   2 files changed, 16 insertions(+)
+>>
+>> diff --git a/drivers/clk/tegra/clk-tegra-fixed.c b/drivers/clk/tegra/clk=
+-tegra-fixed.c
+>> index 8d91b2b191cf..7c6c8abfcde6 100644
+>> --- a/drivers/clk/tegra/clk-tegra-fixed.c
+>> +++ b/drivers/clk/tegra/clk-tegra-fixed.c
+>> @@ -17,6 +17,10 @@
+>>   #define OSC_CTRL			0x50
+>>   #define OSC_CTRL_OSC_FREQ_SHIFT		28
+>>   #define OSC_CTRL_PLL_REF_DIV_SHIFT	26
+>> +#define OSC_CTRL_MASK			(0x3f2 |	\
+>> +					(0xf << OSC_CTRL_OSC_FREQ_SHIFT))
+>> +
+>> +static u32 osc_ctrl_ctx;
+>>  =20
+>>   int __init tegra_osc_clk_init(void __iomem *clk_base, struct tegra_clk=
+ *clks,
+>>   			      unsigned long *input_freqs, unsigned int num,
+>> @@ -29,6 +33,7 @@ int __init tegra_osc_clk_init(void __iomem *clk_base, =
+struct tegra_clk *clks,
+>>   	unsigned osc_idx;
+>>  =20
+>>   	val =3D readl_relaxed(clk_base + OSC_CTRL);
+>> +	osc_ctrl_ctx =3D val & OSC_CTRL_MASK;
+>>   	osc_idx =3D val >> OSC_CTRL_OSC_FREQ_SHIFT;
+>>  =20
+>>   	if (osc_idx < num)
+>> @@ -96,3 +101,13 @@ void __init tegra_fixed_clk_init(struct tegra_clk *t=
+egra_clks)
+>>   		*dt_clk =3D clk;
+>>   	}
+>>   }
+>> +
+>> +void tegra_clk_osc_resume(void __iomem *clk_base)
+>> +{
+>> +	u32 val;
+>> +
+>> +	val =3D readl_relaxed(clk_base + OSC_CTRL) & ~OSC_CTRL_MASK;
+>> +	val |=3D osc_ctrl_ctx;
+>> +	writel_relaxed(val, clk_base + OSC_CTRL);
+> Why a full raw u32 OSC_CTRL value couldn't be simply saved and restored?
 
-Some of the changes required to support CPR do conflict with the
-configuration required for CPUFreq.
+Storing and restoring only required fields to avoid accidental=20
+misconfiguration.
 
-In particular, the following commit for CPR - already merged - will
-need to be reverted in order to enable CPUFreq.
+OSC_CTRL register has other bits (PLL_REF_DIV) which are configured by=20
+BR depending on OSC_FREQ and also setting PLL_REF_DIV while PLLS are in=20
+use is not safe.
 
-   Author: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-   Date:   Thu Jul 25 12:41:36 2019 +0200
-       cpufreq: Add qcs404 to cpufreq-dt-platdev blacklist
-    
-Patch 8 "clk: qcom: hfpll: CLK_IGNORE_UNUSED" is a bit controversial;
-in this platform, this PLL provides the clock signal to a CPU
-core. But in others it might not.
-
-We opted for the minimal ammount of changes without affecting the
-default functionality: simply bypassing the COMMON_CLK_DISABLE_UNUSED
-framework and letting the firwmare chose whether to enable or disable
-the clock at boot. However maybe a DT property and marking the clock
-as critical would be more appropriate for this PLL. we'd appreciate the
-maintainer's input on this topic.
-
-v2:
-   - dts: ms8916: apcs mux/divider: new bindings
-     (the driver can still support the old bindings)
-
-   - qcs404.dtsi
-     fix apcs-hfpll definition
-     fix cpu_opp_table definition
-
-   - GPLL0_AO_OUT operating frequency
-     define new alpha_pll_fixed_ops to limit the operating frequency
-
-v3:
-  - qcom-apcs-ipc-mailbox
-    replace goto to ease readability
-
-  - apcs-msm8916.c
-    rework patch to use of_clk_parent_fill
-
-  - hfpll.c
-    add relevant comments to the code
-
-  - qcs404.dtsi
-    add voltage scaling support
-
-v4:
- - squash OPP definition and DVFS enablement in dts
-   (patches 10 and 13 in previous version)
-   
- - qcom-apcs-ipc-mailbox
-   replace return condition for readability
-   
- - answer one question on CLK_IGNORE_UNUSED in mailing list
-
-Jorge Ramirez-Ortiz, Niklas Cassel (13):
-  clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
-  mbox: qcom: add APCS child device for QCS404
-  mbox: qcom: replace integer with valid macro
-  dt-bindings: mailbox: qcom: Add clock-name optional property
-  clk: qcom: apcs-msm8916: get parent clock names from DT
-  clk: qcom: hfpll: get parent clock names from DT
-  clk: qcom: hfpll: register as clock provider
-  clk: qcom: hfpll: CLK_IGNORE_UNUSED
-  arm64: dts: qcom: msm8916: Add the clocks for the APCS mux/divider
-  arm64: dts: qcom: qcs404: Add HFPLL node
-  arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
-  arm64: dts: qcom: qcs404: Add DVFS support
-  arm64: defconfig: Enable HFPLL
-
- .../mailbox/qcom,apcs-kpss-global.txt         | 24 +++++++++--
- arch/arm64/boot/dts/qcom/msm8916.dtsi         |  3 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi          | 43 +++++++++++++++++++
- arch/arm64/configs/defconfig                  |  1 +
- drivers/clk/qcom/apcs-msm8916.c               | 23 ++++++++--
- drivers/clk/qcom/clk-alpha-pll.c              |  8 ++++
- drivers/clk/qcom/clk-alpha-pll.h              |  1 +
- drivers/clk/qcom/gcc-qcs404.c                 |  2 +-
- drivers/clk/qcom/hfpll.c                      | 25 ++++++++++-
- drivers/mailbox/qcom-apcs-ipc-mailbox.c       | 11 +++--
- 10 files changed, 128 insertions(+), 13 deletions(-)
-
--- 
-2.22.0
-
+>> +	fence_udelay(2, clk_base);
+>> +}
+>> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+>> index f1ef6ae8c979..abba6d8a04cd 100644
+>> --- a/drivers/clk/tegra/clk.h
+>> +++ b/drivers/clk/tegra/clk.h
+>> @@ -842,6 +842,7 @@ u16 tegra_pll_get_fixed_mdiv(struct clk_hw *hw, unsi=
+gned long input_rate);
+>>   int tegra_pll_p_div_to_hw(struct tegra_clk_pll *pll, u8 p_div);
+>>   int div_frac_get(unsigned long rate, unsigned parent_rate, u8 width,
+>>   		 u8 frac_width, u8 flags);
+>> +void tegra_clk_osc_resume(void __iomem *clk_base);
+>>  =20
+>>  =20
+>>   /* Combined read fence with delay */
+>>
