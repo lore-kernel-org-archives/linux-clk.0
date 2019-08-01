@@ -2,103 +2,104 @@ Return-Path: <SRS0=zVdd=V5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE5B1C19759
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E68BC19759
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86917205F4
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564680980;
-	bh=IC9xio7VdV0hRMdTF8SOBbacb/r4U2sEiKW4rGKr+0s=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=MVEloKTr6lhrtvvYI1x3enUC+j4D5XByXm92rMk9UCkwoS5KEGlew4G1mJGmSCarK
-	 DhbDIy1yuPQhq+PBl/4W4L8hRAcpnP8W7DI0OWMQA8q6nTaQkx54VneWaJuGEvgiU3
-	 xEX9gMzYXq0JVoI2wNMVVwjhzV7Sap+vH6E8FgRU=
+	by mail.kernel.org (Postfix) with ESMTP id EB6A821726
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:51:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="fxq7t7oc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729195AbfHARgU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Aug 2019 13:36:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55576 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728964AbfHARgU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 1 Aug 2019 13:36:20 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E241E205F4;
-        Thu,  1 Aug 2019 17:36:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564680979;
-        bh=IC9xio7VdV0hRMdTF8SOBbacb/r4U2sEiKW4rGKr+0s=;
-        h=From:To:Cc:Subject:Date:From;
-        b=1c7r2jPY5MRd1SQAcR92n6XYXf4vAY6Ogn9AgizZnsfs+cnQV0HvZq7hNJ2NY1+/X
-         liwf9CTwoZGtjKegVKjZO21XFPUKiMKB/YlIYjU/b6/FJrMwTayZgZ/moEBSBKUNzf
-         8lH8Hrs2SOUUqpZXXH57OKG4z0ACWDW5/gs2uIeI=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v5.3-rc2
-Date:   Thu,  1 Aug 2019 10:36:18 -0700
-Message-Id: <20190801173618.245393-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.22.0.770.g0f2c4a37fd-goog
+        id S2387843AbfHARvk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Aug 2019 13:51:40 -0400
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:17409 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727899AbfHARvk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 13:51:40 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4326ac0001>; Thu, 01 Aug 2019 10:51:40 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 01 Aug 2019 10:51:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 01 Aug 2019 10:51:39 -0700
+Received: from [10.110.103.107] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 1 Aug
+ 2019 17:51:39 +0000
+Subject: Re: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume
+ support
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>,
+        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <digetx@gmail.com>, <devicetree@vger.kernel.org>,
+        <rjw@rjwysocki.net>, <linux-pm@vger.kernel.org>
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+ <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
+ <20190801054055.trmabmcaj3cpe4pc@vireshk-i7>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <69aba3b2-d021-4851-d058-fcaa70446f58@nvidia.com>
+Date:   Thu, 1 Aug 2019 10:51:40 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190801054055.trmabmcaj3cpe4pc@vireshk-i7>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564681900; bh=Ct87ksEmIdR3vDJq7VNh9iecFDiJ29H6vpg1zZvn58s=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=fxq7t7ocZFKQsJVsPDQ0pJMHSy1LAHJ68xmtpIvWxBZHqHTbBX+UuyEjtMDea8a0b
+         3Ohyx64QDEiL9xywlp0T3+YtcEfKuGv9sh/R3nawxcFs7c441RxFi99975MHCTjsRU
+         2mm5kBwiEmcLVbAsQy1QfWjsp/6s8seRAXi2UEZ2XdqwdozI996r3ynfSo+CWvuaDY
+         59NYz1Aod4kbjTRxIxBPTk1xoSk13GMEHGuHZecuHuUVWr6fxeji4oe2V6DFTIbcrA
+         P812jXGhUH/0mDTSCtivsa2vXQI6rShJ73nHkcuD33gyr11p8yI3ahyGUD/giz4878
+         mF3Pgx7fpchvQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to e1f1ae8002e4b06addc52443fcd975bbf554ae92:
-
-  clk: renesas: cpg-mssr: Fix reset control race condition (2019-07-22 15:04:54 -0700)
-
-----------------------------------------------------------------
-A few fixes for code that came in during the merge window or
-that started getting exercised differently this time around:
-
- - Select regmap MMIO kconfig in spreadtrum driver to avoid compile
-   errors
- - Complete kerneldoc on devm_clk_bulk_get_optional()
- - Register an essential clk earlier on mediatek mt8183 SoCs so
-   the clocksource driver can use it
- - Fix divisor math in the at91 driver
- - Plug a race in Renesas reset control logic
-
-----------------------------------------------------------------
-Chunyan Zhang (1):
-      clk: sprd: Select REGMAP_MMIO to avoid compile errors
-
-Codrin Ciubotariu (1):
-      clk: at91: generated: Truncate divisor to GENERATED_MAX_DIV + 1
-
-Geert Uytterhoeven (1):
-      clk: renesas: cpg-mssr: Fix reset control race condition
-
-Sylwester Nawrocki (1):
-      clk: Add missing documentation of devm_clk_bulk_get_optional() argument
-
-Weiyi Lu (1):
-      clk: mediatek: mt8183: Register 13MHz clock earlier for clocksource
-
- drivers/clk/at91/clk-generated.c       |  2 ++
- drivers/clk/mediatek/clk-mt8183.c      | 46 +++++++++++++++++++++++++---------
- drivers/clk/renesas/renesas-cpg-mssr.c | 16 ++----------
- drivers/clk/sprd/Kconfig               |  1 +
- include/linux/clk.h                    |  1 +
- 5 files changed, 40 insertions(+), 26 deletions(-)
-
--- 
-Sent by a computer through tubes
+On 7/31/19 10:40 PM, Viresh Kumar wrote:
+> On 31-07-19, 14:10, Sowjanya Komatineni wrote:
+>> This patch adds suspend and resume pm ops for cpufreq driver.
+>>
+>> PLLP is the safe clock source for CPU during system suspend and
+>> resume as PLLP rate is below the CPU Fmax at Vmin.
+>>
+>> CPUFreq driver suspend switches the CPU clock source to PLLP and
+>> disables the DFLL clock.
+>>
+>> During system resume, warmboot code powers up the CPU with PLLP
+>> clock source. So CPUFreq driver resume enabled DFLL clock and
+>> switches CPU back to DFLL clock source.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
+>>   1 file changed, 60 insertions(+)
+> Is there any hard dependency of this patch on the rest of the patches?
+> Can I apply it alone to cpufreq tree ?
+>
+This patch cannot be applied alone as it has dependency on dfll clock 
+suspend and resume sequence.
