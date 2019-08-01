@@ -2,106 +2,90 @@ Return-Path: <SRS0=zVdd=V5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F135C19759
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 05:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A3FC19759
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 07:41:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BD1D2089E
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 05:40:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 19E442087E
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 07:41:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TzLFx9yj"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LjWmtN+s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728544AbfHAFk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Aug 2019 01:40:59 -0400
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42672 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbfHAFk6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 01:40:58 -0400
-Received: by mail-pf1-f194.google.com with SMTP id q10so33322887pff.9
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2019 22:40:58 -0700 (PDT)
+        id S1729704AbfHAHlu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Aug 2019 03:41:50 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44441 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729140AbfHAHlu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 03:41:50 -0400
+Received: by mail-oi1-f194.google.com with SMTP id e189so53007525oib.11
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2019 00:41:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=y/o8YTbNsjxw2k6UgbsxYXXjTg0fvc1tjD9GHYk14MU=;
-        b=TzLFx9yjS2cOaxig8Qru/VS6YDnRG6KdulTld7+Nu2jkuGuJIvdKq4dubYNb2h/bIT
-         7CpZj8guUFYuqdB/x/nRLtbMOxHEU6ZiEk8yW4y+Mt5xL0FIkt6jiBjmS0g0qTdNlnSu
-         lofI0X8paFqgVW1G1+a67lLfDVpkg+dGbKxbWEFC9WwM9r0hZS/0PooASt5Wezo7nuO+
-         puyyuTBh2jKZM7SK3smdmRzK6AZWm5odBoIv0OAkV/ATL2lhoqvMS0U5If1MEGm9XfEc
-         8CNmE4IbbnlG01j76SCXuyUs+aKf9LaRFX82Bp6zgHnVKnmgo/MN68OeHZuTMIqOOO2N
-         MSHw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=eG9qaJAEsycpncNibnJ3D0KadM9MdWRWBUtPu4Q5FyA=;
+        b=LjWmtN+snTGS8CH1IFDRQfyvcd0ADhKoPUoXTO0RbUWgOjySZB2X06Hmq18rQ1mZpR
+         w5I5kEVF3Fj3WWWJMav0sD2j2ludB620UGItuJ4Q1gl0iygdmkByXrRJk1Ina8yENOhC
+         TdvLSuOo4Zbf6MrM2KEdflthha9I4EdH5PMa45uksSlRrXF5gWDzc0XOHlbIXjHDevxq
+         5ccGS2o9TrpucUiG39/BDObzn820j8MqD46Dr5KHdCdUowWbI1H5DekN7sYrMCjoVi87
+         Zt/muaTctKHsRDYKRqmlYjSrx60K6wtVzJ6jmOpE6qLkvAp5Kd2tEtA7UAQLJYO8Y69d
+         fS0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=y/o8YTbNsjxw2k6UgbsxYXXjTg0fvc1tjD9GHYk14MU=;
-        b=uDPQ5X6/H0z+y9SiyUpf2gm96R/RAe/74AFok2GuVdKcSBjCX7RO4hoTAJmcEOzyoM
-         nc3CMc8R41GXpJF0KaHaxtY//BIolk3yPGW6m0itBug4PrVeALV7Hs+yLdsH/aZjvwYk
-         tyP8pfoNr//+OiviKGBJaK6mu/pYMroUulZM1zEKuwwOBSBPHrosXzMKMYw9pBic9/kg
-         XgWbMH4p+CdL+jqpyb4/txxo1PA1HWyzCT7CPwSRM735mF0JDo0EXZDnLTav8v6ETAj7
-         VGe8bdegSn20LgJ0nv89J81Vw64veTgN3q1arheFJVbVJXwE50OsiRx3xrnbPWXI/fX6
-         ku8A==
-X-Gm-Message-State: APjAAAXhi7Fp3gzPD/y9tQis+Yy1Qa2LPP5AK5HG21DHQS4pZ43a7qee
-        6kVUmZdNSuna7ILDFW2h5Jc+Fg==
-X-Google-Smtp-Source: APXvYqzmiX/7OLzhXxCrID/iE/IWvU1lPO7qvH9ysJv1dJuRrPCk+zMaNF2FdZswGzAuBvGwID2I3w==
-X-Received: by 2002:a63:124a:: with SMTP id 10mr116595500pgs.254.1564638057851;
-        Wed, 31 Jul 2019 22:40:57 -0700 (PDT)
-Received: from localhost ([122.172.28.117])
-        by smtp.gmail.com with ESMTPSA id d15sm10245980pjc.8.2019.07.31.22.40.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 31 Jul 2019 22:40:57 -0700 (PDT)
-Date:   Thu, 1 Aug 2019 11:10:55 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        digetx@gmail.com, devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        linux-pm@vger.kernel.org
-Subject: Re: [PATCH v7 11/20] cpufreq: tegra124: Add suspend and resume
- support
-Message-ID: <20190801054055.trmabmcaj3cpe4pc@vireshk-i7>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=eG9qaJAEsycpncNibnJ3D0KadM9MdWRWBUtPu4Q5FyA=;
+        b=Tj6dnB9hcThrQ+c7BHY2kOy83hVeKdu2BfiMeIZSpYXyN7wDmUQ0tIfTfZ/S6YeL1Q
+         nUL+w5Pxa9jZMNCgUSQHE5NUdF7ugW/zISpbj2TtpR+gWflY0nMkuozuUNjEYvNxEb6e
+         5PO4XJHWfxvGOAFoE49fR9j3kF9QOvro6/JbkFpwSB7Hh4OCCnoRsnPGHuAyRpmZoh0E
+         E9NVDI42mob+jQSPlO/mfWB1uyOUvmKR6xiUqCjuKud//SVuDMU5ZFPnpLFfpbeljqCm
+         qukctmznDpj4+xUwN/x2LHyhpkELWbcgSvzihN3zq/KML1cA2HzTC6PhDCNHJc7MRmis
+         87bw==
+X-Gm-Message-State: APjAAAVRBIOqM4vCNmnSs5edy9PtU9Hp54dAk/3k/ieTRg79VydB29J6
+        j0w4bPwl9VVOAzE9vjSVzKMS2W1eYRg80Ytq7fpRSw==
+X-Google-Smtp-Source: APXvYqwohWcMdXZRgU9dGpeF/Azz4D9KB7FWI+mVQAR0hKsQ9Or4UsT0rZDaVo5hBXyEQy2uVA8KJSCZaCJafpSXAQ8=
+X-Received: by 2002:aca:6183:: with SMTP id v125mr57331267oib.6.1564645309937;
+ Thu, 01 Aug 2019 00:41:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1564607463-28802-12-git-send-email-skomatineni@nvidia.com>
-User-Agent: NeoMutt/20180716-391-311a52
+References: <20190731193517.237136-1-sboyd@kernel.org> <20190731193517.237136-8-sboyd@kernel.org>
+In-Reply-To: <20190731193517.237136-8-sboyd@kernel.org>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Thu, 1 Aug 2019 15:41:38 +0800
+Message-ID: <CAMz4kuJNzkevHi-Anf3=hyFmYnRVWe5p69K2cRbBtZU2+536cQ@mail.gmail.com>
+Subject: Re: [PATCH 7/9] clk: sprd: Don't reference clk_init_data after registration
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
+        Chunyan Zhang <zhang.chunyan@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 31-07-19, 14:10, Sowjanya Komatineni wrote:
-> This patch adds suspend and resume pm ops for cpufreq driver.
-> 
-> PLLP is the safe clock source for CPU during system suspend and
-> resume as PLLP rate is below the CPU Fmax at Vmin.
-> 
-> CPUFreq driver suspend switches the CPU clock source to PLLP and
-> disables the DFLL clock.
-> 
-> During system resume, warmboot code powers up the CPU with PLLP
-> clock source. So CPUFreq driver resume enabled DFLL clock and
-> switches CPU back to DFLL clock source.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++++++++
->  1 file changed, 60 insertions(+)
+Hi,
 
-Is there any hard dependency of this patch on the rest of the patches?
-Can I apply it alone to cpufreq tree ?
+On Thu, 1 Aug 2019 at 03:35, Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
+>
+> Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>
+> Please ack so I can take this through clk tree
+
+Thanks.
+Acked-by: Baolin Wang <baolin.wang@linaro.org>
 
 -- 
-viresh
+Baolin Wang
+Best Regards
