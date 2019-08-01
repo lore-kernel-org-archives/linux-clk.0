@@ -2,90 +2,95 @@ Return-Path: <SRS0=zVdd=V5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53A3FC19759
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 07:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5329C433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 08:07:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19E442087E
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 07:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81124205F4
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 08:07:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LjWmtN+s"
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="izX7Mt4G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729704AbfHAHlu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Aug 2019 03:41:50 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:44441 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbfHAHlu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 03:41:50 -0400
-Received: by mail-oi1-f194.google.com with SMTP id e189so53007525oib.11
-        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2019 00:41:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=eG9qaJAEsycpncNibnJ3D0KadM9MdWRWBUtPu4Q5FyA=;
-        b=LjWmtN+snTGS8CH1IFDRQfyvcd0ADhKoPUoXTO0RbUWgOjySZB2X06Hmq18rQ1mZpR
-         w5I5kEVF3Fj3WWWJMav0sD2j2ludB620UGItuJ4Q1gl0iygdmkByXrRJk1Ina8yENOhC
-         TdvLSuOo4Zbf6MrM2KEdflthha9I4EdH5PMa45uksSlRrXF5gWDzc0XOHlbIXjHDevxq
-         5ccGS2o9TrpucUiG39/BDObzn820j8MqD46Dr5KHdCdUowWbI1H5DekN7sYrMCjoVi87
-         Zt/muaTctKHsRDYKRqmlYjSrx60K6wtVzJ6jmOpE6qLkvAp5Kd2tEtA7UAQLJYO8Y69d
-         fS0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=eG9qaJAEsycpncNibnJ3D0KadM9MdWRWBUtPu4Q5FyA=;
-        b=Tj6dnB9hcThrQ+c7BHY2kOy83hVeKdu2BfiMeIZSpYXyN7wDmUQ0tIfTfZ/S6YeL1Q
-         nUL+w5Pxa9jZMNCgUSQHE5NUdF7ugW/zISpbj2TtpR+gWflY0nMkuozuUNjEYvNxEb6e
-         5PO4XJHWfxvGOAFoE49fR9j3kF9QOvro6/JbkFpwSB7Hh4OCCnoRsnPGHuAyRpmZoh0E
-         E9NVDI42mob+jQSPlO/mfWB1uyOUvmKR6xiUqCjuKud//SVuDMU5ZFPnpLFfpbeljqCm
-         qukctmznDpj4+xUwN/x2LHyhpkELWbcgSvzihN3zq/KML1cA2HzTC6PhDCNHJc7MRmis
-         87bw==
-X-Gm-Message-State: APjAAAVRBIOqM4vCNmnSs5edy9PtU9Hp54dAk/3k/ieTRg79VydB29J6
-        j0w4bPwl9VVOAzE9vjSVzKMS2W1eYRg80Ytq7fpRSw==
-X-Google-Smtp-Source: APXvYqwohWcMdXZRgU9dGpeF/Azz4D9KB7FWI+mVQAR0hKsQ9Or4UsT0rZDaVo5hBXyEQy2uVA8KJSCZaCJafpSXAQ8=
-X-Received: by 2002:aca:6183:: with SMTP id v125mr57331267oib.6.1564645309937;
- Thu, 01 Aug 2019 00:41:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190731193517.237136-1-sboyd@kernel.org> <20190731193517.237136-8-sboyd@kernel.org>
-In-Reply-To: <20190731193517.237136-8-sboyd@kernel.org>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Thu, 1 Aug 2019 15:41:38 +0800
-Message-ID: <CAMz4kuJNzkevHi-Anf3=hyFmYnRVWe5p69K2cRbBtZU2+536cQ@mail.gmail.com>
-Subject: Re: [PATCH 7/9] clk: sprd: Don't reference clk_init_data after registration
+        id S1730739AbfHAIHJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Aug 2019 04:07:09 -0400
+Received: from mx0b-001ae601.pphosted.com ([67.231.152.168]:39876 "EHLO
+        mx0b-001ae601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729578AbfHAIHI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 04:07:08 -0400
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+        by mx0b-001ae601.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id x7184GcN019463;
+        Thu, 1 Aug 2019 03:07:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=PODMain02222019;
+ bh=Qe3BSURddtW0xIR5vVf0i7K36vS4J8Vn6YUqcPqkVr0=;
+ b=izX7Mt4G0AtObSGFQm8SYBHcWz2vEpYHq8MJSAoQXqlhwRwwrggNEDccPrMAYtthcBS+
+ oBAsnsSuGOPpF+mWatgTybnwsvs+MdCmNnd34QVe1wqj+yNZ9DsucQVkcK4L8GKsrEK1
+ ldz2wmqw92RjijfakyFLW7q6/1c9TiaBX5vYHghWmzsnXcp8O2XF8Jz8kH2pW7KvnkXi
+ 7b0xqAi5Y813BUEtRa3QC35c3C8DKPPAazkXsKtCkf+rW2F4XirHpdU5HCFlolUqAkSg
+ TldH+ZKFZF9uMV0LCEKN5C7O2/oXM+7/MmYukMLBVKfpQsOK0UgmUPj6mdAcl9rcAlOa 6A== 
+Authentication-Results: ppops.net;
+        spf=fail smtp.mailfrom=ckeepax@opensource.cirrus.com
+Received: from ediex01.ad.cirrus.com ([87.246.76.36])
+        by mx0b-001ae601.pphosted.com with ESMTP id 2u3gpvrsrp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+        Thu, 01 Aug 2019 03:07:05 -0500
+Received: from EDIEX01.ad.cirrus.com (198.61.84.80) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 1 Aug
+ 2019 09:07:04 +0100
+Received: from ediswmail.ad.cirrus.com (198.61.86.93) by EDIEX01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server id 15.1.1591.10 via Frontend
+ Transport; Thu, 1 Aug 2019 09:07:04 +0100
+Received: from ediswmail.ad.cirrus.com (ediswmail.ad.cirrus.com [198.61.86.93])
+        by ediswmail.ad.cirrus.com (Postfix) with ESMTP id 1D9352C5;
+        Thu,  1 Aug 2019 09:07:04 +0100 (BST)
+Date:   Thu, 1 Aug 2019 09:07:04 +0100
+From:   Charles Keepax <ckeepax@opensource.cirrus.com>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        LKML <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org,
-        Chunyan Zhang <zhang.chunyan@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Richard Fitzgerald <rf@opensource.cirrus.com>
+Subject: Re: [PATCH 2/9] clk: lochnagar: Don't reference clk_init_data after
+ registration
+Message-ID: <20190801080704.GK54126@ediswmail.ad.cirrus.com>
+References: <20190731193517.237136-1-sboyd@kernel.org>
+ <20190731193517.237136-3-sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190731193517.237136-3-sboyd@kernel.org>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Proofpoint-SPF-Result: fail
+X-Proofpoint-SPF-Record: v=spf1 include:spf-001ae601.pphosted.com include:spf.protection.outlook.com
+ -all
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 lowpriorityscore=0 clxscore=1015
+ phishscore=0 adultscore=0 impostorscore=0 mlxscore=0 mlxlogscore=781
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-1906280000
+ definitions=main-1908010082
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
-
-On Thu, 1 Aug 2019 at 03:35, Stephen Boyd <sboyd@kernel.org> wrote:
->
+On Wed, Jul 31, 2019 at 12:35:10PM -0700, Stephen Boyd wrote:
 > A future patch is going to change semantics of clk_register() so that
 > clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
 > referencing this member here so that we don't run into NULL pointer
 > exceptions.
->
-> Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
-> Cc: Baolin Wang <baolin.wang@linaro.org>
+> 
+> Cc: Charles Keepax <ckeepax@opensource.cirrus.com>
+> Cc: Richard Fitzgerald <rf@opensource.cirrus.com>
 > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->
-> Please ack so I can take this through clk tree
+> 
 
-Thanks.
-Acked-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
--- 
-Baolin Wang
-Best Regards
+Thanks,
+Charles
