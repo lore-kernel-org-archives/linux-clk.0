@@ -2,113 +2,143 @@ Return-Path: <SRS0=zVdd=V5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27FB4C433FF
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EABBC433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECF7F21783
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:10:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FDD12064A
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 17:12:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IXREDAqV"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kHyJz+m7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733236AbfHARKr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Aug 2019 13:10:47 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:40591 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732281AbfHARKr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 13:10:47 -0400
-Received: by mail-wm1-f67.google.com with SMTP id v19so63904736wmj.5;
-        Thu, 01 Aug 2019 10:10:44 -0700 (PDT)
+        id S1732377AbfHARML (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Aug 2019 13:12:11 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40880 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732295AbfHARML (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 13:12:11 -0400
+Received: by mail-pg1-f195.google.com with SMTP id w10so34560080pgj.7
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2019 10:12:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FghonA4IabkJaTgLr8fM3E6htRJ5CzRRLsDA7y0O0VY=;
-        b=IXREDAqVq4+TQykJaNC3vMKRY1s8sfyb4cqoqV1qIJHds766TvFSenvnluadnn3JGN
-         49vKKJKm4LipWYwD5He7qF0AHhwSe10Hu6DLske6AsXxiaporx3njUEjBmcYekgdTvnq
-         5rnH632NNorGfygsGzzUazJX3QP618R5+SyZTlK0ExbbWUDfmVF3Jk4RMtOx1pdVAtBR
-         FAgM8kIL74JD/bfgmJe8IA2dfAay3nmkLdGTZX6V3YX+tmUEMojSASxMsyyif6AqBJCm
-         gpQEsHfz/KJkXN18bals8U3lmH6qEhVmI0Eftbhtdy0yHkLKIm05QttGenqwbLX2x+CC
-         n5+g==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=wcjmT1jOSVdsV93kLH8gtUAFCZgmRAp5z5U28nSu3es=;
+        b=kHyJz+m7BmumSB/lXMmIWdSeNfe0tZwSsJVXm23HuBNojk088JpKyAFkU3Zv01EKO4
+         ieGUBag0hyqYjHxfBVqXUkpXPZfwkmAqjlgcwQCp2KRu6T8v+Y5MURo7X+LJVfw8IQEc
+         TleAaC303hHw5NzUk7alhSbmDoS8QCe4uUWqM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=FghonA4IabkJaTgLr8fM3E6htRJ5CzRRLsDA7y0O0VY=;
-        b=VpWkZr5nMewFWFhg3z7jh7UVwyfYThXdTu6I4Y0xhWtGfkP0kKgpcKb57HUDXulSOk
-         0tZ9ckDMCsLvqHt8ef0QzbnOzBMU8ZVr7+el5zRa88uUvh8H6lSPwc2XXKmL3e4H/B4v
-         iWaw8h7n6mM14k/6/2PuJV//u+iJf32iH2PZL0q+G2HVCzED61RUhMvy6jVkLQpEeDey
-         Rh4uIhhmJybU4Zm31dyWVI0wbYpwNuevv5Zw+tYRRJv2LaBSnvmg/eOOWraggysuiW2y
-         uT+mNWMVIhoS5l4HFR6Zxp2IhVHVQ0BeIhDL1s8qcoCxkAt+p81dpaEfOd+G/GmlSoNP
-         MOaQ==
-X-Gm-Message-State: APjAAAUzntiNPvwmjqM2zAbcW2YQ8vgKYYOniYMuLAodcvRYuNlmT851
-        C6Rn//DDIypXrEXR4RSD8GPWZeqe
-X-Google-Smtp-Source: APXvYqxByZB/gh88C6wRDNij3X4Fh7cbfowCUmSN5SWstCnDpG/3spte6L9Wyr3/77AaFAU2sLB6xg==
-X-Received: by 2002:a7b:c455:: with SMTP id l21mr119115981wmi.114.1564679444023;
-        Thu, 01 Aug 2019 10:10:44 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id u2sm5377105wmc.3.2019.08.01.10.10.41
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 10:10:43 -0700 (PDT)
-Subject: Re: [PATCH v7 10/20] clk: tegra: clk-dfll: Add suspend and resume
- support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "jason@lakedaemon.net" <jason@lakedaemon.net>,
-        "marc.zyngier@arm.com" <marc.zyngier@arm.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "stefan@agner.ch" <stefan@agner.ch>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        Jui Chang Kuo <jckuo@nvidia.com>,
-        Joseph Lo <josephl@nvidia.com>, Timo Alho <talho@nvidia.com>,
-        "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Sandipan Patra <spatra@nvidia.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
-        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-11-git-send-email-skomatineni@nvidia.com>
- <4400ffef-685f-b9e6-3b07-4790f851282c@gmail.com>
- <501a9d0e-ce78-9b35-642d-dff7f9223926@gmail.com>
- <BYAPR12MB3398C388471BC5811614C8FEC2DE0@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <31990250-e237-ddb9-ce71-29b7c2302fc3@gmail.com>
-Date:   Thu, 1 Aug 2019 20:10:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        bh=wcjmT1jOSVdsV93kLH8gtUAFCZgmRAp5z5U28nSu3es=;
+        b=ePXpU36txAvLqNs8mgug9wFOiJG8qKIM9PepI2r8KvkhPw+8foAF5oK2jDGI8lp9h1
+         MJjbyzEgkMtyybtUShTVvPejSwclKgR3wDoSpoCijQZrF+SwnvDqNkJT1fSJflbvpzW8
+         mDiMTLz8sKHdg4XmYqVYviN5Blnc7chLY+9ddeovnYub8RKnqGvPzCeh1LqgoQjdLQ6S
+         Yebl9N8H6V5fuj2UzxKXNTldqucSysZmYZipMRQHYNRQSCetWao8lw/fOtqlxg2pozru
+         jP96u8qlmomrVjLRq4aBQtGgYroviBysx8kAxgEjVzPUSTIDt7XirMoCiF9Ja/KLrQBL
+         4Izw==
+X-Gm-Message-State: APjAAAUa0ZeAarOU28tQzp6OmOJKElpmqsOxAGGl9RVeOUOpuEWJ5Qyq
+        9J/ybGrKVLWACHcfCi69BBUNaQ==
+X-Google-Smtp-Source: APXvYqx1cQXEOiX/lyozSzHWzCxjT6GUENupJHLuvSbCfxgZdgdhtJmIjnRlQ01pJzKN5yfw7hOLuw==
+X-Received: by 2002:a17:90b:f0f:: with SMTP id br15mr9940132pjb.101.1564679530629;
+        Thu, 01 Aug 2019 10:12:10 -0700 (PDT)
+Received: from smtp.gmail.com ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id y22sm83985492pfo.39.2019.08.01.10.12.09
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 01 Aug 2019 10:12:10 -0700 (PDT)
+From:   Stephen Boyd <swboyd@chromium.org>
+X-Google-Original-From: Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH] clk: Fix falling back to legacy parent string matching
+Date:   Thu,  1 Aug 2019 10:12:09 -0700
+Message-Id: <20190801171209.234546-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.22.0.709.g102302147b-goog
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB3398C388471BC5811614C8FEC2DE0@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-01.08.2019 19:10, Sowjanya Komatineni пишет:
-> I didn’t updated any patches. This is still same v7 just resent with
-> CPUFreq maintainers in CC as I missed to add them earlier.
+Calls to clk_core_get() will return ERR_PTR(-EINVAL) if we've started
+migrating a clk driver to use the DT based style of specifying parents
+but we haven't made any DT updates yet. This happens when we pass a
+non-NULL value as the 'name' argument of of_parse_clkspec(). That
+function returns -EINVAL in such a situation, instead of -ENOENT like we
+expected. The return value comes back up to clk_core_fill_parent_index()
+which proceeds to skip calling clk_core_lookup() because the error
+pointer isn't equal to -ENOENT, it's -EINVAL.
 
-There are now two different threads for the same patches, which is not
-very good. When I said that CPUFreq maintainers should be CC'ed, I
-didn't mean to resend it all, sorry for not being clear about it. You
-should've wait for more comments to the original patches and then make a
-v8. I suggest to do the same in the current situation as well, please
-address all the current comments and wait for 1-2 days, then make a v8.
+Furthermore, we'll blindly overwrite the error pointer returned by
+clk_core_get() with NULL when there isn't a legacy .name member
+specified in the parent map. This isn't too bad right now because we
+don't really care to differentiate NULL from an error, but in the future
+we should only try to do a legacy lookup if we know we might find
+something so that DT lookups that fail don't try to lookup based on
+strings when there isn't any string to match, hiding the error.
+
+Fix both these problems so that clk provider drivers can use the new
+style of parent mapping without having to also update their DT at the
+same time. This patch is based on an earlier patch from Taniya Das which
+checked for -EINVAL in addition to -ENOENT return values.
+
+Fixes: 601b6e93304a ("clk: Allow parents to be specified via clkspec index")
+Cc: Taniya Das <tdas@codeaurora.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
+Reported-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..6587a70c271c 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -355,8 +355,9 @@ static struct clk_core *clk_core_lookup(const char *name)
+  *      };
+  *
+  * Returns: -ENOENT when the provider can't be found or the clk doesn't
+- * exist in the provider. -EINVAL when the name can't be found. NULL when the
+- * provider knows about the clk but it isn't provided on this system.
++ * exist in the provider or the name can't be found in the DT node or
++ * in a clkdev lookup. NULL when the provider knows about the clk but it
++ * isn't provided on this system.
+  * A valid clk_core pointer when the clk can be found in the provider.
+  */
+ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
+@@ -374,9 +375,9 @@ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
+ 	/*
+ 	 * If the DT search above couldn't find the provider or the provider
+ 	 * didn't know about this clk, fallback to looking up via clkdev based
+-	 * clk_lookups
++	 * clk_lookups.
+ 	 */
+-	if (PTR_ERR(hw) == -ENOENT && name)
++	if (IS_ERR(hw) && name)
+ 		hw = clk_find_hw(dev_id, name);
+ 
+ 	if (IS_ERR(hw))
+@@ -401,7 +402,7 @@ static void clk_core_fill_parent_index(struct clk_core *core, u8 index)
+ 			parent = ERR_PTR(-EPROBE_DEFER);
+ 	} else {
+ 		parent = clk_core_get(core, index);
+-		if (IS_ERR(parent) && PTR_ERR(parent) == -ENOENT)
++		if (IS_ERR(parent) && entry->name)
+ 			parent = clk_core_lookup(entry->name);
+ 	}
+ 
+-- 
+Sent by a computer through tubes
+
