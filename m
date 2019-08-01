@@ -2,110 +2,140 @@ Return-Path: <SRS0=zVdd=V5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B360C19759
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 11:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7467FC433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 15:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3B3F214DA
-	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 11:11:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJuAtUUy"
+	by mail.kernel.org (Postfix) with ESMTP id 475022087E
+	for <linux-clk@archiver.kernel.org>; Thu,  1 Aug 2019 15:13:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564672382;
+	bh=+qInryiGgOwwdDXts3LUUZm4JxUBrVSu3pm5wef0/xo=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=SiFJxLXtP3wNu70pdS+L1Kq8Tj8GGoSHkGfyr1Rvdxs6XDyX+/pugxK3Yntez9y+V
+	 uxfIEL1kGdduuuqlhcRgRflkvTQyDpAoZnmGGKYitjY0hCbz39tN+gdgRQSQT+MEtH
+	 ORTL1gKElzx/rjyoYVz6kq338tjD65gp7CipgbHo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729802AbfHALLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 1 Aug 2019 07:11:38 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41340 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfHALLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 1 Aug 2019 07:11:38 -0400
-Received: by mail-lj1-f195.google.com with SMTP id d24so68939362ljg.8;
-        Thu, 01 Aug 2019 04:11:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=K8e4hrDcsp4be0Ory1S+uKZbjey4PHhTQwgmYUnn3bQ=;
-        b=CJuAtUUyxHmGNcvqWCtDUZe66p46usUOJRNj1NMEyZzaJy1o5StfVJazYYI13FVMtW
-         MSt4uHOFmXbl7mp1p2I5BjFTdKoKAst0nCrWqXuUXCyk1olBcKyUIZTaBUTeNK6HIr+g
-         htwigO9x8s4cB5o79esjbE/MCuRp8svV2xX919qCjEa4hnde6M9ODfs1rdA2A8oLooqk
-         netQ/Olv9nCI+N/3oBpVBk+yCn+6YLiSyTfsEZIYbHj5I+W+xz9v9cDz00GXqpcZHOA0
-         U876fVhjeWW/PIixTRqfVjifAL7a4njO/d0n8IxeUsJNI1p11g8E/dO4UHUEpcDdyOuu
-         vMUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=K8e4hrDcsp4be0Ory1S+uKZbjey4PHhTQwgmYUnn3bQ=;
-        b=CmBsf8ov2NnTyN+8GwEpShUK/jwyZRICQjJBZ1kiXUwKiZZZHOW35UnnLdNr4HNhv/
-         KKceSgzVBUNlqeGvdRfLe8Gj8sX2IyKQUEeFhiVfEn2SACDg+8/Zudyj4VYCE0uX/BPV
-         HoNgjXJVpJS/xfNhl3KdRJ9EYMAn1j560eh8g83R1eycU+vEVQrb21K4oyxXzHLvhHx0
-         61eq9unhVvK2I2+TL3AVU7IkflpLEUq6mCbH2QPAsLDCvlNcOux/5kNGjVQ3tSpVfjGA
-         8DYwjsjaacUbMd5VcuN9HSLR3AiZlgTjlAC3MZROwWgP6BLRx42EBDvXmFFp3CqLG3nm
-         eRNg==
-X-Gm-Message-State: APjAAAVIkndf/ItsAzkkf2QMd40bDMGp7kd9t1BYqGPa3dqUnQVk9ggE
-        7ESWTW6zTpNQlJRhCKAMQynZ/4UO
-X-Google-Smtp-Source: APXvYqzkr+8EzGVav0VJvfDyIm0X2edu9GsTb/z7LUFnd/R5ZKRDADrd3k6/jDvjQlLNnNd9lQ8y1g==
-X-Received: by 2002:a2e:8802:: with SMTP id x2mr47065479ljh.200.1564657895466;
-        Thu, 01 Aug 2019 04:11:35 -0700 (PDT)
-Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
-        by smtp.googlemail.com with ESMTPSA id d21sm12194718lfc.73.2019.08.01.04.11.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 01 Aug 2019 04:11:34 -0700 (PDT)
-Subject: Re: [PATCH v9 01/15] clk: tegra20/30: Add custom EMC clock
- implementation
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190730165618.10122-1-digetx@gmail.com>
- <20190730165618.10122-2-digetx@gmail.com>
-Message-ID: <ac9a29b2-d65e-9b20-ff47-c9e5eacae31b@gmail.com>
-Date:   Thu, 1 Aug 2019 14:10:38 +0300
+        id S1731589AbfHAPNC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 1 Aug 2019 11:13:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727853AbfHAPNB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 1 Aug 2019 11:13:01 -0400
+Received: from [192.168.1.17] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D9392087E;
+        Thu,  1 Aug 2019 15:12:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564672380;
+        bh=+qInryiGgOwwdDXts3LUUZm4JxUBrVSu3pm5wef0/xo=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=OH7jBzyfh9LN7klBEzscc8TP4HA5bSW2g1cRFXYStDGnEHF9GF6k2fbmlItnOf+v3
+         NQa9VGurTeq9CsMAl+th/GXfNRLe2lLy8vEzwrt8zvVGcg9BRI1uJz1aAuoyWNrxqI
+         udME+yq7NO51MIzUop1OzUckleWiQFxvQZR/a0fo=
+Subject: Re: [PATCH 6/9] clk: socfpga: Don't reference clk_init_data after
+ registration
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20190731193517.237136-1-sboyd@kernel.org>
+ <20190731193517.237136-7-sboyd@kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <74912a84-fb5a-a539-5ab4-c3f00727c413@kernel.org>
+Date:   Thu, 1 Aug 2019 10:12:58 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190730165618.10122-2-digetx@gmail.com>
+In-Reply-To: <20190731193517.237136-7-sboyd@kernel.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-30.07.2019 19:56, Dmitry Osipenko пишет:
-> A proper External Memory Controller clock rounding and parent selection
-> functionality is required by the EMC drivers, it is not available using
-> the generic clock implementation because only the Memory Controller driver
-> is aware of what clock rates are actually available for a particular
-> device. EMC drivers will have to register a Tegra-specific CLK-API
-> callback which will perform rounding of a requested rate. EMC clock users
-> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
-> driver is probed and the callback is set up.
+Hi Stephen,
+
+On 7/31/19 2:35 PM, Stephen Boyd wrote:
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
 > 
-> The functionality is somewhat similar to the clk-emc.c which serves
-> Tegra124+ SoCs. The later HW generations support more parent clock sources
-> and the HW configuration / integration with the EMC drivers differs a tad
-> from the older gens, hence it's not really worth to try to squash
-> everything into a single source file.
-> 
-> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Cc: Dinh Nguyen <dinguyen@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
+> 
+> Please ack so I can take this through clk tree
+> 
+>  drivers/clk/socfpga/clk-gate.c       | 21 +++++++++++----------
+>  drivers/clk/socfpga/clk-periph-a10.c |  7 ++++---
+>  2 files changed, 15 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+> index 3966cd43b552..b3c8143909dc 100644
+> --- a/drivers/clk/socfpga/clk-gate.c
+> +++ b/drivers/clk/socfpga/clk-gate.c
+> @@ -31,20 +31,20 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+>  	u32 l4_src;
+>  	u32 perpll_src;
 
-Hello Stephen and Michael,
+You need this line here:
 
-The clk-driver changes are quite solid now, could you please take a look
-at the relevant patches once again and give an ACK if everything is good
-to you?
+	const char *name = clk_hw_get_name(hwclk);
+
+Otherwise, it fails to build. With the above change:
+
+Acked-by: Dinh Nguyen <dinguyen@kernel.org>
+
+Thanks,
+Dinh
