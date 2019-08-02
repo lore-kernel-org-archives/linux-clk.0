@@ -2,137 +2,68 @@ Return-Path: <SRS0=a4+1=V6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E52DC32750
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 13:05:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08422C433FF
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 16:05:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B9520657
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 13:05:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="AdtNFlSp"
+	by mail.kernel.org (Postfix) with ESMTP id D30FF216C8
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 16:05:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1564761929;
+	bh=nNfxQ3LeaZy1JyT2KzGA6o7ez4MUlxUNvob7XFdzf7E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=2Hla69n7EhUbx5O6FJl3IDwpxvM2rI0lyqXB2qU/pE8Ff+qLKbxY3lP9qSCrEm0Jf
+	 42vnxJDFQ9dQ2Pkm/V8XFM47g555ocTghW0brq+9/eFKvV0u7mxXIwZ+glNQHryXN6
+	 AXBhlBjjKWWxEsKiiisZ6nURgItrTbr+QNSaBef0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388458AbfHBNFl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Aug 2019 09:05:41 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:4503 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388240AbfHBNFk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Aug 2019 09:05:40 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d44352d0001>; Fri, 02 Aug 2019 06:05:49 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 02 Aug 2019 06:05:39 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 06:05:39 -0700
-Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Fri, 2 Aug 2019 13:05:39 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 3241140DF8; Fri,  2 Aug 2019 16:05:37 +0300 (EEST)
-Date:   Fri, 2 Aug 2019 16:05:37 +0300
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
-        <stefan@agner.ch>, <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>
-Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
- suspend
-Message-ID: <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
-References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
- <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
- <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
- <20190725095502.GM12715@pdeschrijver-desktop.Nvidia.com>
- <dd01be5d-bab9-1329-c7ac-c3c893d49dd1@gmail.com>
- <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
- <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
- <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1564751149; bh=iWRDIXuKhFHou0kB3cN1+ZlnEuWKXRrrc3TGXxnLF+o=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:
-         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
-         User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=AdtNFlSpz81uTllfhqGBNz872kPPOqcfTn2+V15vEhHh4FkLvnh20CjgOa7iI79Q3
-         c9KO/+NdJdsfrL1qlvKJPecqls3hOFaDMW/UhJP3MOyxh86lnQk/DCS1cCEEPVlmKU
-         m/U2aPW0Zh3EPMU4aehJQ9iMQya/5+pAbeGoCqY7ak7If7Jhqv0qn2hfpRbOfiJ+7Y
-         kVNE7IbZ0e/xBb8cUp+wbR2mCipkGS8mRsAaPYTnyfKOJ7RdxSDYMQ6VmJkMeExDUp
-         0h0WKpYxpEVnT7kSHWG2NdkzIU8wFVh351o/3Bp2PfjBMXSmurDidsUldCosbjaHMB
-         95SC0HDs2MYGQ==
+        id S2389208AbfHBQFZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Aug 2019 12:05:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44892 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388975AbfHBQFN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 2 Aug 2019 12:05:13 -0400
+Subject: Re: [GIT PULL] clk fixes for v5.3-rc2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1564761912;
+        bh=nNfxQ3LeaZy1JyT2KzGA6o7ez4MUlxUNvob7XFdzf7E=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=q67NSI0khVOSe85n18va1xodNGlUYqFOD+wsCF1LqOlro145FKDnlslb4WTA70gMZ
+         BfN+VN2aeRlZmD3sG3KmlMKxbjq62RPsp5scjzvp3FxeWR+rj4p0AfMWyLeYNpUgrV
+         mJopXWG/zqHP10jpC986/14oLJkqLs0Ez7FCWiuA=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190801173618.245393-1-sboyd@kernel.org>
+References: <20190801173618.245393-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190801173618.245393-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: e1f1ae8002e4b06addc52443fcd975bbf554ae92
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 42d21900b39ceebf7be1512d02d915280ba2bba5
+Message-Id: <156476191206.27663.12542038119266553921.pr-tracker-bot@kernel.org>
+Date:   Fri, 02 Aug 2019 16:05:12 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Jul 25, 2019 at 01:59:09PM +0300, Dmitry Osipenko wrote:
-> 25.07.2019 13:38, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
-> >> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
-> >>> 25.07.2019 12:55, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> >>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
-> >>>>>
-> >>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the commen=
-t
-> >>>>> doesn't sound correct to me. Something like 'firmware_sc7' should s=
-uit
-> >>>>> better here.
-> >>>>>
-> >>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
-> >>>>>
-> >>>>> Secondly, I'm also not sure why COP interrupts need to be disabled =
-for
-> >>>>> pre-T210 at all, since COP is unused. This looks to me like it was
-> >>>>> cut-n-pasted from downstream kernel without a good reason and could=
- be
-> >>>>> simply removed.
-> >>>>
-> >>>> I don't think we can rely on the fact that COP is unused. People can
-> >>>> write their own code to run on COP.
-> >>>
-> >>> 1. Not upstream - doesn't matter.
-> >>>
-> >>
-> >> The code is not part of the kernel, so obviously it's not upstream?
-> >>
-> >>> 2. That's not very good if something unknown is running on COP and th=
-en
-> >>> kernel suddenly intervenes, don't you think so?
-> >>
-> >> Unless the code was written with this in mind.
-> >>
->=20
-> In that case, please see 1. ;)
->=20
+The pull request you sent on Thu,  1 Aug 2019 10:36:18 -0700:
 
-In general the kernel should not touch the COP interrupts I think.
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-> >=20
-> > Looking at this again, I don't think we need to enable the IRQ at all.
->=20
-> Could you please clarify? The code only saves/restores COP's interrupts
-> context across suspend-resume.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/42d21900b39ceebf7be1512d02d915280ba2bba5
 
-The sc7 entry firmware doesn't use interrupts.
+Thank you!
 
-Peter.
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
