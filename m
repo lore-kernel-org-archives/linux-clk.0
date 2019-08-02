@@ -2,68 +2,140 @@ Return-Path: <SRS0=a4+1=V6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08422C433FF
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 16:05:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8814EC433FF
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 17:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D30FF216C8
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 16:05:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564761929;
-	bh=nNfxQ3LeaZy1JyT2KzGA6o7ez4MUlxUNvob7XFdzf7E=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=2Hla69n7EhUbx5O6FJl3IDwpxvM2rI0lyqXB2qU/pE8Ff+qLKbxY3lP9qSCrEm0Jf
-	 42vnxJDFQ9dQ2Pkm/V8XFM47g555ocTghW0brq+9/eFKvV0u7mxXIwZ+glNQHryXN6
-	 AXBhlBjjKWWxEsKiiisZ6nURgItrTbr+QNSaBef0=
+	by mail.kernel.org (Postfix) with ESMTP id 5FEAD217D7
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 17:35:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LAdAuboH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389208AbfHBQFZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Aug 2019 12:05:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:44892 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388975AbfHBQFN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 2 Aug 2019 12:05:13 -0400
-Subject: Re: [GIT PULL] clk fixes for v5.3-rc2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564761912;
-        bh=nNfxQ3LeaZy1JyT2KzGA6o7ez4MUlxUNvob7XFdzf7E=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=q67NSI0khVOSe85n18va1xodNGlUYqFOD+wsCF1LqOlro145FKDnlslb4WTA70gMZ
-         BfN+VN2aeRlZmD3sG3KmlMKxbjq62RPsp5scjzvp3FxeWR+rj4p0AfMWyLeYNpUgrV
-         mJopXWG/zqHP10jpC986/14oLJkqLs0Ez7FCWiuA=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190801173618.245393-1-sboyd@kernel.org>
-References: <20190801173618.245393-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190801173618.245393-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
- tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: e1f1ae8002e4b06addc52443fcd975bbf554ae92
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 42d21900b39ceebf7be1512d02d915280ba2bba5
-Message-Id: <156476191206.27663.12542038119266553921.pr-tracker-bot@kernel.org>
-Date:   Fri, 02 Aug 2019 16:05:12 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S2405421AbfHBRfb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Aug 2019 13:35:31 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37246 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2405108AbfHBRfa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Aug 2019 13:35:30 -0400
+Received: by mail-lf1-f65.google.com with SMTP id c9so53435169lfh.4;
+        Fri, 02 Aug 2019 10:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=m01E/00kIIUrZ+us6qTkntaWmvfO8MGjTN9DZjqTTM4=;
+        b=LAdAuboHztw2JZLafdgtT4UzeS6mncq1WKhvo7JyiSvSF0vyS3isLkwFQqzG0jKKpk
+         ZghWSAlT/5CZGGwhFgXqGtPeZ/LfjQlgTx3E5AghaB5qUdQ2WllUyvxX/dowJBtNzVUF
+         LFPJAZox16R/ZWpDSEC7NHXsBN6PZ/GKBTdLJho0tEIWT25IPgejuqKDLabN5Oduz5W9
+         J+NyLp1voKwSQg7PL832WiDwrty7Ea7e/JIL8zXVZi8+0azrxZ/SaJl3NnRYEOqC0Q2T
+         kitin+A76BSUfE/SmIkMmNN7vsk/R+p/oEvwqRn0PS1Bmn7/FfSWmtkm6jj996+GQ/vO
+         Znpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=m01E/00kIIUrZ+us6qTkntaWmvfO8MGjTN9DZjqTTM4=;
+        b=MdsEwqFyq51tlP5dAb9bd6aO14lQA7WrbHVNkEdb9KpM3Kqvk8Ji1wmnE0sX/0Wc5V
+         ubWvNluJinZ2R/wtgfps+nH0t/pCU0OZwjVQjcnSiuIDKR+FEDgwyOXymcNy1A+bIckQ
+         +iXhkue4Eg5JsqOyViuLyeh5sjKlDtL141tWwQbQKCuJszwtPS5+idZm88jgvsEbA1XK
+         Lbd7J1HJrDzzIzm0VPM6HmcVpjCwR+ZswuVCBh0PV4A/21LoGFz022ElmxyuwiSc+IqH
+         h4HbknOCSyMzhMUHYd0kFmKNKypiEHX/Aw23Qtzdk5yIJ95YhYfiJSkMyqy2XzyI7RC2
+         +OGA==
+X-Gm-Message-State: APjAAAVV3jzPiImSAD0Em0NK8btqk/mNmHp2+sPUuvlDbPo31w5NNdb4
+        0AZFczMrLA5E2OAUmZpIvtvSPwN2
+X-Google-Smtp-Source: APXvYqzEH57oEFNxugmY7hPZFcpHs6jb6KCEOBcB2f3QbbxjctMfhdkQqcRF4ctLUWfk5cCLSA/tLg==
+X-Received: by 2002:ac2:50c4:: with SMTP id h4mr62216920lfm.104.1564767327937;
+        Fri, 02 Aug 2019 10:35:27 -0700 (PDT)
+Received: from [192.168.2.145] (ppp91-78-220-99.pppoe.mtu-net.ru. [91.78.220.99])
+        by smtp.googlemail.com with ESMTPSA id k12sm12901127lfc.8.2019.08.02.10.35.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 02 Aug 2019 10:35:26 -0700 (PDT)
+Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
+ suspend
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com,
+        pgaikwad@nvidia.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, devicetree@vger.kernel.org
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+ <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
+ <20190725095502.GM12715@pdeschrijver-desktop.Nvidia.com>
+ <dd01be5d-bab9-1329-c7ac-c3c893d49dd1@gmail.com>
+ <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
+ <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
+ <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
+ <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ba3924fe-d632-7bcb-5353-bc7668957661@gmail.com>
+Date:   Fri, 2 Aug 2019 20:35:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Thu,  1 Aug 2019 10:36:18 -0700:
+02.08.2019 16:05, Peter De Schrijver пишет:
+> On Thu, Jul 25, 2019 at 01:59:09PM +0300, Dmitry Osipenko wrote:
+>> 25.07.2019 13:38, Peter De Schrijver пишет:
+>>> On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
+>>>> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
+>>>>> 25.07.2019 12:55, Peter De Schrijver пишет:
+>>>>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
+>>>>>>>
+>>>>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the comment
+>>>>>>> doesn't sound correct to me. Something like 'firmware_sc7' should suit
+>>>>>>> better here.
+>>>>>>>
+>>>>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+>>>>>>>
+>>>>>>> Secondly, I'm also not sure why COP interrupts need to be disabled for
+>>>>>>> pre-T210 at all, since COP is unused. This looks to me like it was
+>>>>>>> cut-n-pasted from downstream kernel without a good reason and could be
+>>>>>>> simply removed.
+>>>>>>
+>>>>>> I don't think we can rely on the fact that COP is unused. People can
+>>>>>> write their own code to run on COP.
+>>>>>
+>>>>> 1. Not upstream - doesn't matter.
+>>>>>
+>>>>
+>>>> The code is not part of the kernel, so obviously it's not upstream?
+>>>>
+>>>>> 2. That's not very good if something unknown is running on COP and then
+>>>>> kernel suddenly intervenes, don't you think so?
+>>>>
+>>>> Unless the code was written with this in mind.
+>>>>
+>>
+>> In that case, please see 1. ;)
+>>
+> 
+> In general the kernel should not touch the COP interrupts I think.
+> 
+>>>
+>>> Looking at this again, I don't think we need to enable the IRQ at all.
+>>
+>> Could you please clarify? The code only saves/restores COP's interrupts
+>> context across suspend-resume.
+> 
+> The sc7 entry firmware doesn't use interrupts.
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/42d21900b39ceebf7be1512d02d915280ba2bba5
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+Okay, it shouldn't hurt to clean up the LIC's code a tad by removing the
+COP's bits, will make a patch.
