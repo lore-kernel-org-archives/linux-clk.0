@@ -2,114 +2,137 @@ Return-Path: <SRS0=a4+1=V6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A868BC433FF
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 12:47:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E52DC32750
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 13:05:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C0D22087C
-	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 12:47:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42B9520657
+	for <linux-clk@archiver.kernel.org>; Fri,  2 Aug 2019 13:05:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Y60GKzjN"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="AdtNFlSp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389745AbfHBMrq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 2 Aug 2019 08:47:46 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48186 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730003AbfHBMrp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Aug 2019 08:47:45 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x72Clhkb013670;
-        Fri, 2 Aug 2019 07:47:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1564750063;
-        bh=SuUzlKhtHBayh83JtSydpVMlTi0S6ttWT130+rq4NmU=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=Y60GKzjN1O2YhyQ2s/FO6azlAmsjHt8oxXRMeo4WZZE3kLFbUNyqMCaC0E9Jjup6T
-         UOYO89Kb/pGzR9iKUTRqTAeg1GXj5FkYuQYQ7uGyd4xUtp/VZ8b9nmvtOh5wQuGh8a
-         EPF9vofOSyyaCwMoo9Ra1O888tKOfwGPTgYb3FdU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x72ClhGr036771
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 2 Aug 2019 07:47:43 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 2 Aug
- 2019 07:47:42 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 2 Aug 2019 07:47:42 -0500
-Received: from [172.24.145.64] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x72CleaQ096146;
-        Fri, 2 Aug 2019 07:47:41 -0500
-Subject: Re: [PATCH 8/9] phy: ti: am654-serdes: Don't reference clk_init_data
- after registration
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Roger Quadros <rogerq@ti.com>
-References: <20190731193517.237136-1-sboyd@kernel.org>
- <20190731193517.237136-9-sboyd@kernel.org>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <85f4dd66-0e99-7ecf-5b18-ad1715520ceb@ti.com>
-Date:   Fri, 2 Aug 2019 18:15:55 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388458AbfHBNFl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 2 Aug 2019 09:05:41 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:4503 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388240AbfHBNFk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 2 Aug 2019 09:05:40 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d44352d0001>; Fri, 02 Aug 2019 06:05:49 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 02 Aug 2019 06:05:39 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 02 Aug 2019 06:05:39 -0700
+Received: from tbergstrom-lnx.Nvidia.com (172.20.13.39) by
+ HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Fri, 2 Aug 2019 13:05:39 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 3241140DF8; Fri,  2 Aug 2019 16:05:37 +0300 (EEST)
+Date:   Fri, 2 Aug 2019 16:05:37 +0300
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <tglx@linutronix.de>, <jason@lakedaemon.net>,
+        <marc.zyngier@arm.com>, <linus.walleij@linaro.org>,
+        <stefan@agner.ch>, <mark.rutland@arm.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>
+Subject: Re: [PATCH V6 01/21] irqchip: tegra: Do not disable COP IRQ during
+ suspend
+Message-ID: <20190802130537.GB3883@pdeschrijver-desktop.Nvidia.com>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com>
+ <1563738060-30213-2-git-send-email-skomatineni@nvidia.com>
+ <f6582e43-168e-1b7e-9db8-3d263bc3ba0d@gmail.com>
+ <20190725095502.GM12715@pdeschrijver-desktop.Nvidia.com>
+ <dd01be5d-bab9-1329-c7ac-c3c893d49dd1@gmail.com>
+ <20190725103348.GN12715@pdeschrijver-desktop.Nvidia.com>
+ <20190725103813.GO12715@pdeschrijver-desktop.Nvidia.com>
+ <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190731193517.237136-9-sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <de1723df-8580-32fb-eb9d-e4c02f2b4306@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1564751149; bh=iWRDIXuKhFHou0kB3cN1+ZlnEuWKXRrrc3TGXxnLF+o=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:
+         Content-Transfer-Encoding:In-Reply-To:X-NVConfidentiality:
+         User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=AdtNFlSpz81uTllfhqGBNz872kPPOqcfTn2+V15vEhHh4FkLvnh20CjgOa7iI79Q3
+         c9KO/+NdJdsfrL1qlvKJPecqls3hOFaDMW/UhJP3MOyxh86lnQk/DCS1cCEEPVlmKU
+         m/U2aPW0Zh3EPMU4aehJQ9iMQya/5+pAbeGoCqY7ak7If7Jhqv0qn2hfpRbOfiJ+7Y
+         kVNE7IbZ0e/xBb8cUp+wbR2mCipkGS8mRsAaPYTnyfKOJ7RdxSDYMQ6VmJkMeExDUp
+         0h0WKpYxpEVnT7kSHWG2NdkzIU8wFVh351o/3Bp2PfjBMXSmurDidsUldCosbjaHMB
+         95SC0HDs2MYGQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, Jul 25, 2019 at 01:59:09PM +0300, Dmitry Osipenko wrote:
+> 25.07.2019 13:38, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On Thu, Jul 25, 2019 at 01:33:48PM +0300, Peter De Schrijver wrote:
+> >> On Thu, Jul 25, 2019 at 01:05:13PM +0300, Dmitry Osipenko wrote:
+> >>> 25.07.2019 12:55, Peter De Schrijver =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> >>>> On Mon, Jul 22, 2019 at 12:54:51PM +0300, Dmitry Osipenko wrote:
+> >>>>>
+> >>>>> All Tegra SoCs support SC7, hence the 'supports_sc7' and the commen=
+t
+> >>>>> doesn't sound correct to me. Something like 'firmware_sc7' should s=
+uit
+> >>>>> better here.
+> >>>>>
+> >>>>>> +			writel_relaxed(~0ul, ictlr + ICTLR_COP_IER_CLR);
+> >>>>>
+> >>>>> Secondly, I'm also not sure why COP interrupts need to be disabled =
+for
+> >>>>> pre-T210 at all, since COP is unused. This looks to me like it was
+> >>>>> cut-n-pasted from downstream kernel without a good reason and could=
+ be
+> >>>>> simply removed.
+> >>>>
+> >>>> I don't think we can rely on the fact that COP is unused. People can
+> >>>> write their own code to run on COP.
+> >>>
+> >>> 1. Not upstream - doesn't matter.
+> >>>
+> >>
+> >> The code is not part of the kernel, so obviously it's not upstream?
+> >>
+> >>> 2. That's not very good if something unknown is running on COP and th=
+en
+> >>> kernel suddenly intervenes, don't you think so?
+> >>
+> >> Unless the code was written with this in mind.
+> >>
+>=20
+> In that case, please see 1. ;)
+>=20
 
+In general the kernel should not touch the COP interrupts I think.
 
-On 01/08/19 1:05 AM, Stephen Boyd wrote:
-> A future patch is going to change semantics of clk_register() so that
-> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-> referencing this member here so that we don't run into NULL pointer
-> exceptions.
-> 
-> Cc: Roger Quadros <rogerq@ti.com>
-> Cc: Kishon Vijay Abraham I <kishon@ti.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> Please ack so I can take this through clk tree
+> >=20
+> > Looking at this again, I don't think we need to enable the IRQ at all.
+>=20
+> Could you please clarify? The code only saves/restores COP's interrupts
+> context across suspend-resume.
 
-Acked-by: Kishon Vijay Abraham I <kishon@ti.com>
-> 
->  drivers/phy/ti/phy-am654-serdes.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/phy/ti/phy-am654-serdes.c b/drivers/phy/ti/phy-am654-serdes.c
-> index f8edd0840fa2..398a8c9b675a 100644
-> --- a/drivers/phy/ti/phy-am654-serdes.c
-> +++ b/drivers/phy/ti/phy-am654-serdes.c
-> @@ -335,6 +335,7 @@ static int serdes_am654_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  {
->  	struct serdes_am654_clk_mux *mux = to_serdes_am654_clk_mux(hw);
->  	struct regmap *regmap = mux->regmap;
-> +	const char *name = clk_hw_get_name(hw);
->  	unsigned int reg = mux->reg;
->  	int clk_id = mux->clk_id;
->  	int parents[SERDES_NUM_CLOCKS];
-> @@ -374,8 +375,7 @@ static int serdes_am654_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->  		 * This can never happen, unless we missed
->  		 * a valid combination in serdes_am654_mux_table.
->  		 */
-> -		WARN(1, "Failed to find the parent of %s clock\n",
-> -		     hw->init->name);
-> +		WARN(1, "Failed to find the parent of %s clock\n", name);
->  		return -EINVAL;
->  	}
->  
-> 
+The sc7 entry firmware doesn't use interrupts.
+
+Peter.
