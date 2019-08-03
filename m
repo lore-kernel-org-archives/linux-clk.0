@@ -7,70 +7,66 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB1FAC31E40
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Aug 2019 08:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB27C31E40
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Aug 2019 08:57:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE51E21783
-	for <linux-clk@archiver.kernel.org>; Sat,  3 Aug 2019 08:13:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B93D21773
+	for <linux-clk@archiver.kernel.org>; Sat,  3 Aug 2019 08:57:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1564820032;
-	bh=xRf3PhzKfClVfWXbj3OVmFX6p7PLIiziHpTBekdtiCA=;
+	s=default; t=1564822640;
+	bh=l3mc7sIAGnYKZ5dbrLxRC+O8nRnUq21i3R4wry0I2AE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=LJDT8z03h/mRYmU0SYOy8GXvTRKgn+ZS2UJ+PVY/i6DFrnxtkHv/zv+ZOCsiaUhOm
-	 BnqblVnQlA8ofc1rVZMB5Oeg6H0buD0X1cjmiWJ7s9QjU4REkP2ByMUfac1CzCoOHS
-	 7OkS4vnFSxEEmJZBgtmANMWZUyQlPqlSbPnbAfLY=
+	b=tDxFzvFVIDKyw/fjT9bAzo0tp9Hcukkh5SLYUyKl1OCt7+9hf8eLzLtwbY0B4QYjO
+	 ummu1AV9WemOrEbdwK7fHnzrzLl1HX3TX8DT4hAsB8OBtChd6KaIRhKUpzJ/1BSHjL
+	 ccBR4h3IgLi9aXEUXXXapJaj9z6AnF/kARijSa/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387604AbfHCINw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 3 Aug 2019 04:13:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58060 "EHLO mail.kernel.org"
+        id S2387834AbfHCI5T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 3 Aug 2019 04:57:19 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387532AbfHCINw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 3 Aug 2019 04:13:52 -0400
+        id S2387730AbfHCI5T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 3 Aug 2019 04:57:19 -0400
 Received: from X250.getinternet.no (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CBC321726;
-        Sat,  3 Aug 2019 08:13:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28B4F21726;
+        Sat,  3 Aug 2019 08:57:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1564820031;
-        bh=xRf3PhzKfClVfWXbj3OVmFX6p7PLIiziHpTBekdtiCA=;
+        s=default; t=1564822638;
+        bh=l3mc7sIAGnYKZ5dbrLxRC+O8nRnUq21i3R4wry0I2AE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ss9AepiccoCuwp3jI5V+AvCYwJ22kCiRaDT5KOS6xQIatNXunmHVenhgXnMD80Qc7
-         TqOSBRs+EXOFgBBij2U6aNxOn0caKeWWE6vXq6w/NSBgOCx27W/Ng3JVTPvTg/Eryz
-         5i7jnRf79SbA0CzZKOO5R8mlymy/qdjEkCD2L+vU=
-Date:   Sat, 3 Aug 2019 10:13:44 +0200
+        b=x45xeD4Z7e/Wn6MpDqvNmYZHAeBDgQ39s0X53S8yYKsAQYkxG1XpFoqakkI6sixQy
+         v3CBCkLWo3P7beQeaaAPwKVR9cpeXwXq2EpF5eOCQp7f/2CeHgCn86NKcOhEY/zFGK
+         KF6Fq1RH1iLeB6BqHjSqDrIPrnHWoy83HK4xgRCk=
+Date:   Sat, 3 Aug 2019 10:57:11 +0200
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: imx8mm: Switch to platform driver
-Message-ID: <20190803081344.GD8870@X250.getinternet.no>
-References: <1562682003-20951-1-git-send-email-abel.vesa@nxp.com>
+To:     Anson.Huang@nxp.com
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, aisheng.dong@nxp.com,
+        gustavo@embeddedor.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH] clk: imx7ulp: Make sure earlycon's clock is enabled
+Message-ID: <20190803085708.GG8870@X250.getinternet.no>
+References: <20190724030600.17839-1-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1562682003-20951-1-git-send-email-abel.vesa@nxp.com>
+In-Reply-To: <20190724030600.17839-1-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 09, 2019 at 05:20:03PM +0300, Abel Vesa wrote:
-> There is no strong reason for this to use CLK_OF_DECLARE instead
-> of being a platform driver. Plus, this will now be aligned with the
-> other i.MX8M clock drivers which are platform drivers.
+On Wed, Jul 24, 2019 at 11:06:00AM +0800, Anson.Huang@nxp.com wrote:
+> From: Anson Huang <Anson.Huang@nxp.com>
 > 
-> In order to make the clock provider a platform driver
-> all the data and code needs to be outside of .init section.
+> Earlycon's clock could be disabled during kernel boot up,
+> if earlycon is enabled and its clock is gated, then kernel
+> boot up will fail. Make sure earlycon's clock is enabled
+> during kernel boot up.
 > 
-> Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
 Applied, thanks.
