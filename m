@@ -8,60 +8,61 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7CCC433FF
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 16:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 409EEC433FF
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 16:33:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E46752067D
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 16:32:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12AD52067D
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 16:33:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c1+9x8LO"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R/ctcO/O"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbfHDQcD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Aug 2019 12:32:03 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46619 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfHDQcD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Aug 2019 12:32:03 -0400
-Received: by mail-pl1-f193.google.com with SMTP id c2so35468952plz.13
-        for <linux-clk@vger.kernel.org>; Sun, 04 Aug 2019 09:32:03 -0700 (PDT)
+        id S1726318AbfHDQdl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Aug 2019 12:33:41 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33333 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726181AbfHDQdl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Aug 2019 12:33:41 -0400
+Received: by mail-pf1-f195.google.com with SMTP id g2so38375203pfq.0;
+        Sun, 04 Aug 2019 09:33:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=qddEZCRmHcDEiwxlw41CD2dYNW6aCbxQhT34PmGX8+4=;
-        b=c1+9x8LOPuYZWnMY/HMVqXzR0NWJiOyx+ZX8zoNkAw01NWjHdTmYmyfRTLZhl+8KeL
-         WY2r4UhAONhgPxlExp6TeRi3iUQ0A8/AmVUfnxmk1yEWl1iIlctuVIGL3C9SKwleG6BC
-         fBFSUeaPJTEcaBRhN5qlxRhmDCU4LWV+8/c/v8TPzZbcyfePEKbxUuc1DnndeKsbXgLq
-         gHXDpkbrBUWkkoOgx4FJvcT8c6EUiGji+imBlJUwosmB5zFjbejCt/bc8ZM1yJ8Fu+xy
-         Hu2oWZXgoQbPnK5ivoyGtDQ8tPznoIUkGVh/JfN0t+6mhGPtl0/grw+Ssn4XrCj3R4Yz
-         Vsxw==
+        bh=RBmoH+gM970xlSbiTXIHKJDYeSa4KiDTJot95o30ow8=;
+        b=R/ctcO/OWCZ07yL9Gh/aOB0/jgK0/Kx2ofb2OR4WYVwe+3A1qgYmsWlavE7us1kltG
+         X+5EAGUrUWhaeaKQSQCLfX/voWv+NDcrcyKdvPsBimw9VGhVuD2XONZ8e+Vw6U1EhPys
+         QeVXn0tg/K/Sf3vKzp7IoU0k0fqnzbSVPgoz6khmAlnoqL/OxM/Ynl6KuL7QJCy8eZFk
+         Z4l+vf/q0IiFe37TqLgv6RQDSFlVDU34qU25hYWJ9XLqL79q6Z32MeNlQudPJjIPPJpM
+         8jjiIcCBDhGS4BODDL+QCF2OXseuKCwnVYVcGn2nD98KqU7AAhWBxq8QmE/r/Vxz2sbV
+         grcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=qddEZCRmHcDEiwxlw41CD2dYNW6aCbxQhT34PmGX8+4=;
-        b=GvtkgfzUCT954rmq1w68G9C+7bfN9Gnzx5jKCS9X5eRh5qoZCE2Ggjv/szEdK0jX2o
-         TktPm3FqOgmdc7t6lUo0woJlITRIu9eE7kcI/iq0uhhOxkI3auyEoSTY00aifrHw5AR1
-         wYgk0DRLNw9tUP/2B2fxoNXnuR88+gr3b0YtqSMPVKwR+idYbGQ9iy1RQonQAjAvAO/q
-         xbtyUhSbss3PI04ie2gg2vZFXNNtRzdQniPO6F8Z/d05S7ofTXjTuzfEyObT4JhkTEW+
-         4H2nBa1yRHSbAoM2HV+nI2BKOs2wRcK1jL83P8AW2bkSsbZt/ZobiZjZG2Wrs6y7YM+s
-         BbMw==
-X-Gm-Message-State: APjAAAXVXClW6P5nfGgw7RUtgDkZj1xxBL8caftPXdfLzqIDrxbZQ+aZ
-        8AGTEU4cyzb3lTsZZb4X7xM=
-X-Google-Smtp-Source: APXvYqyAenqD98HNbZWc8qom5QvVHOb2x7JS75maPyB+uZbU0FAoJ10CBBJpAdAPRVUIsxIhFsy0Cw==
-X-Received: by 2002:a17:902:758d:: with SMTP id j13mr139332579pll.197.1564936322851;
-        Sun, 04 Aug 2019 09:32:02 -0700 (PDT)
+        bh=RBmoH+gM970xlSbiTXIHKJDYeSa4KiDTJot95o30ow8=;
+        b=ZNijuKWwDMaJV/eni26Guei3ivyTVvRvbihbbnFPOJDWn33gs4AxQVM3NrKunPF6OT
+         1y/frc8O0+KUxEyLN8okO+dRveBRC/pJSqe/+7M/ILQhSPJAiWLfNw9TYQl1Yn9g4nwy
+         fQRMzGGWTWb5ja086BVIEhIwfyF2mNQNfh0IDEI9YEXF894UELHRWt4XLwEWZLvL1ced
+         9Tn+3/tCQl4A9d5ejf8r0Ga2UnPO1JyPrYigIjCr6HiJ9Ew8tr+AuEvvt+HXD/tfaM2q
+         NP3mXnUjR//3gQ8n5C+85czdr/6wH8ju5ltqbckBEOTsBjzb4m/OLyvDPKjdWKzsCCD0
+         D0bg==
+X-Gm-Message-State: APjAAAU7a0N0NQ/OK/6M1Y3YO5nAjPXOwyIr+OEU9sceEZFjE4bzy5Mz
+        uxeryh9S0z2up+ibp3q+goA=
+X-Google-Smtp-Source: APXvYqx/2ykpTtxuJAAy+UyPpHP9QAub0yFjD3M7gDzMewXK8hMg7tELkkyTaLhZhWmhpFIzxfTMgQ==
+X-Received: by 2002:aa7:90d8:: with SMTP id k24mr68774819pfk.115.1564936420769;
+        Sun, 04 Aug 2019 09:33:40 -0700 (PDT)
 Received: from localhost.localdomain ([122.163.105.8])
-        by smtp.gmail.com with ESMTPSA id r1sm75194350pgv.70.2019.08.04.09.32.00
+        by smtp.gmail.com with ESMTPSA id b126sm118897837pfa.126.2019.08.04.09.33.37
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 09:32:02 -0700 (PDT)
+        Sun, 04 Aug 2019 09:33:40 -0700 (PDT)
 From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org
+        linux-clk@vger.kernel.org, t-kristo@ti.com,
+        linux-omap@vger.kernel.org
 Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH] clk: st: clk-flexgen: Add of_node_put() in st_of_flexgen_setup()
-Date:   Sun,  4 Aug 2019 22:01:51 +0530
-Message-Id: <20190804163151.6511-1-nishkadg.linux@gmail.com>
+Subject: [PATCH] clk: ti: dm814x: Add of_node_put() to prevent memory leak
+Date:   Sun,  4 Aug 2019 22:03:28 +0530
+Message-Id: <20190804163328.6693-1-nishkadg.linux@gmail.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -70,29 +71,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In function st_of_flexgen_setup, variable pnode takes the return value
-of of_get_parent, which gets a node but does not put it. If pnode is not
-put before the function returns, it may cause a memory leak. Hence put
-pnode after its last occurrence.
+In function dm814x_adpll_early_init, variable np takes the value
+returned by of_find_node_by_name, which gets a node but does not put it.
+If np is not put before return, it may cause a memory leak. Hence put np
+before return.
 Issue found with Coccinelle.
 
 Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
 ---
- drivers/clk/st/clk-flexgen.c | 1 +
+ drivers/clk/ti/clk-814x.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/st/clk-flexgen.c b/drivers/clk/st/clk-flexgen.c
-index d18e49b4976f..4413b6e04a8e 100644
---- a/drivers/clk/st/clk-flexgen.c
-+++ b/drivers/clk/st/clk-flexgen.c
-@@ -326,6 +326,7 @@ static void __init st_of_flexgen_setup(struct device_node *np)
- 		return;
+diff --git a/drivers/clk/ti/clk-814x.c b/drivers/clk/ti/clk-814x.c
+index e8cee6f3b4a0..087cfa75ac24 100644
+--- a/drivers/clk/ti/clk-814x.c
++++ b/drivers/clk/ti/clk-814x.c
+@@ -66,6 +66,7 @@ static int __init dm814x_adpll_early_init(void)
+ 	}
  
- 	reg = of_iomap(pnode, 0);
-+	of_node_put(pnode);
- 	if (!reg)
- 		return;
+ 	of_platform_populate(np, NULL, NULL, NULL);
++	of_node_put(np);
  
+ 	return 0;
+ }
 -- 
 2.19.1
 
