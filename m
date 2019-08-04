@@ -2,98 +2,122 @@ Return-Path: <SRS0=tmg9=WA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97743C19759
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 16:34:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D83CC433FF
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 17:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6943D2067D
-	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 16:34:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E74C2086D
+	for <linux-clk@archiver.kernel.org>; Sun,  4 Aug 2019 17:49:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lyTErawf"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B9RzNCRh";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="B9RzNCRh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfHDQe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Aug 2019 12:34:58 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:42079 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726181AbfHDQe5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Aug 2019 12:34:57 -0400
-Received: by mail-pg1-f195.google.com with SMTP id t132so38425213pgb.9
-        for <linux-clk@vger.kernel.org>; Sun, 04 Aug 2019 09:34:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RMNZF6KtAhN+Gy6BEZNu5CSdVLgGJb/v0I5vpK538AU=;
-        b=lyTErawfTJoMJqfE8HkSCDA8rN+sB6eXWpSvvbRnPRj4XddswSwG4eKflR5VgJg9wE
-         X5oYDehddYJjdMzDimNru2HH6v/2H/LJfFJEAihVoshqwClSNoCUT9u7XaFdhoEicsAK
-         +iRyzP7KXmcHgNymdH23UH4fczWS0DnImq5SntepN4LL9SF5NP1jooO/GYoHNFyvltTN
-         Elg76GRtO0ej16csnkWcqnW+ss68TE2JXz3k+yf+jF9wYhkpX5AP214GMb+tGAYvQ2Zz
-         6osUFy5sgJKLp0jw218rjeyxq8Xq+j6xgf/AefiYfq/ISNGh3+pmR5GoN8+MlUgvAYtJ
-         bLKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=RMNZF6KtAhN+Gy6BEZNu5CSdVLgGJb/v0I5vpK538AU=;
-        b=VNdIZ/GGxBxRapt3MD1KRQIF+rpSw9YJGLymv2eU3QxALHxgfwT1+cgbWUMr5PLS8H
-         RqRaRIVE97kmF3WE/pDrShVgJQivVGGDljs9nILTMli8V1MBGvAjFIVxTDYkYYnNhv/p
-         gv3so5IlLwwSrOi51IlrlRULIKwElShSktcccLF6pLB7nTN4zxoRBJiw/CPygueOjz49
-         cU02TyWNzdqs3NW3vqxT40+SwT22uHjW319LL3yMxtNpPNlgjzvDr+yQ4la0cUK+xfyQ
-         1NrxwV1mkEWh4jurytKc7B0PCHpeYRO1ICePcbJdwZYVAb3eiY64MkSEaJ9+2z/8nvyE
-         EkRA==
-X-Gm-Message-State: APjAAAW4Coh8Hu/GLyGdb8qSvNz3eO1xDuWcLZC3g3ZUDCb9hE5EUjzV
-        e4it9j1LuREgJ01kTpIuvhs=
-X-Google-Smtp-Source: APXvYqwPoWuNw9I9Cs1c3kM0bkcz2Tck+syFhD3GywXmw+F40iMATsaw5FfLo6ot9vLlER45vbQhhw==
-X-Received: by 2002:a63:c118:: with SMTP id w24mr131695706pgf.347.1564936497094;
-        Sun, 04 Aug 2019 09:34:57 -0700 (PDT)
-Received: from localhost.localdomain ([122.163.105.8])
-        by smtp.gmail.com with ESMTPSA id i124sm148519507pfe.61.2019.08.04.09.34.54
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Sun, 04 Aug 2019 09:34:56 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH] clk: versatile: Add of_node_put() in cm_osc_setup()
-Date:   Sun,  4 Aug 2019 22:04:44 +0530
-Message-Id: <20190804163445.6862-1-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        id S1726387AbfHDRtc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Aug 2019 13:49:32 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:44472 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726332AbfHDRtc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Aug 2019 13:49:32 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id AB4B2608BA; Sun,  4 Aug 2019 17:49:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564940971;
+        bh=VN99tiC0U1lR8I+tyALfoR5NMSDvlEA+5ImXh/njDCY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=B9RzNCRhdvUUaci8lKhSdvF7hSO02Mzl2NwqU/GCQkpv+LnEUgnDFHQXQHagvxy+Y
+         atK7mLnpQlzrY/2mg6tYfo99srPV0wAQ78BE2nkwSzSL7em2YqGtvhrsksUOHZEbtY
+         tNS/khOrgZ5m+2tugY9jE8t+55BTvLLrqtfl3bFs=
+Received: from [192.168.225.112] (unknown [49.32.218.198])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3E81760328;
+        Sun,  4 Aug 2019 17:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1564940971;
+        bh=VN99tiC0U1lR8I+tyALfoR5NMSDvlEA+5ImXh/njDCY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=B9RzNCRhdvUUaci8lKhSdvF7hSO02Mzl2NwqU/GCQkpv+LnEUgnDFHQXQHagvxy+Y
+         atK7mLnpQlzrY/2mg6tYfo99srPV0wAQ78BE2nkwSzSL7em2YqGtvhrsksUOHZEbtY
+         tNS/khOrgZ5m+2tugY9jE8t+55BTvLLrqtfl3bFs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E81760328
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 4/9] clk: qcom: Don't reference clk_init_data after
+ registration
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Andy Gross <agross@kernel.org>
+References: <20190731193517.237136-1-sboyd@kernel.org>
+ <20190731193517.237136-5-sboyd@kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <aab96094-a08c-cb13-77f0-51ecd5073512@codeaurora.org>
+Date:   Sun, 4 Aug 2019 23:19:21 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190731193517.237136-5-sboyd@kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In function cm_osc_setup, variable parent takes the value returned by
-of_get_parent, which gets a node but does not put it. If parent is not
-put before it goes out of scope, it may cause a memory leak.
-Hence put parent before the function terminates.
-Issue found with Coccinelle.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
----
- drivers/clk/versatile/clk-versatile.c | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/versatile/clk-versatile.c b/drivers/clk/versatile/clk-versatile.c
-index 90bb0b041b7a..fd54d5c0251c 100644
---- a/drivers/clk/versatile/clk-versatile.c
-+++ b/drivers/clk/versatile/clk-versatile.c
-@@ -70,6 +70,7 @@ static void __init cm_osc_setup(struct device_node *np,
- 			return;
- 		}
- 		cm_base = of_iomap(parent, 0);
-+		of_node_put(parent);
- 		if (!cm_base) {
- 			pr_err("could not remap core module base\n");
- 			return;
+On 8/1/2019 1:05 AM, Stephen Boyd wrote:
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
+> 
+> Cc: Taniya Das <tdas@codeaurora.org>
+> Cc: Andy Gross <agross@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+
+
+Acked-by: Taniya Das <tdas@codeaurora.org>
+
+> ---
+> 
+> Please ack so I can take this through clk tree
+> 
+>   drivers/clk/qcom/clk-rpmh.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index c3fd632af119..7a8a84dcb70d 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -396,6 +396,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+>   	hw_clks = desc->clks;
+>   
+>   	for (i = 0; i < desc->num_clks; i++) {
+> +		const char *name = hw_clks[i]->init->name;
+>   		u32 res_addr;
+>   		size_t aux_data_len;
+>   		const struct bcm_db *data;
+> @@ -426,8 +427,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+>   
+>   		ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
+>   		if (ret) {
+> -			dev_err(&pdev->dev, "failed to register %s\n",
+> -				hw_clks[i]->init->name);
+> +			dev_err(&pdev->dev, "failed to register %s\n", name);
+>   			return ret;
+>   		}
+>   	}
+> 
+
 -- 
-2.19.1
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
