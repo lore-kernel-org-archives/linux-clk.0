@@ -8,57 +8,57 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762B8C433FF
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 03:36:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 697A4C0650F
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 03:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 418392054F
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 03:36:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E34520818
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 03:57:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z3CkK3oh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eoOV7bRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727060AbfHEDgo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 4 Aug 2019 23:36:44 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:46691 "EHLO
+        id S1726765AbfHED5y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 4 Aug 2019 23:57:54 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:38787 "EHLO
         mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727053AbfHEDgo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Aug 2019 23:36:44 -0400
-Received: by mail-io1-f65.google.com with SMTP id i10so51040698iol.13;
-        Sun, 04 Aug 2019 20:36:43 -0700 (PDT)
+        with ESMTP id S1726757AbfHED5y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 4 Aug 2019 23:57:54 -0400
+Received: by mail-io1-f65.google.com with SMTP id j6so44603683ioa.5;
+        Sun, 04 Aug 2019 20:57:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=pcbyKLsQIg4Rsr0vub4ExOMjS5ylHDKCL4fjaV6rcWo=;
-        b=Z3CkK3ohO9GZHGb2IDpKpfzz5eyy/HdDj6jYd2DG2zGaUAwqmlF5gIyy+1TKrzzUKX
-         s363bzYfTyZ2tchkpGkAu/KIWAf4bfG5ByapUquNksQl3/t1O3MZKodwy/IvEEiQfotu
-         zn3H4dkHBu8gXpHu/0lz6hn2i5MTtPVj/0YJiMTrRbfM9gOgLjn4pfvlRmbI9BkDALeb
-         /4a7oFVNrolFDcE9k/lIhjLALTwKnQvhRR7aUvi+Q057/HcyAjpOzvk0pYC1jWBXQBWF
-         7Xr/gwDuuAU/EScWjdFo1uLja2V9255AciRt+Va1Y0mOzcYg1rH1AEGX+zHhC1ggqAX7
-         tomA==
+        bh=Qz/MoLLlSkJY20V2cyugR1tHjtS6GkFWnF+GIM8vIoQ=;
+        b=eoOV7bRDx1Xa45V4Rk0VtDZ3ojxBFIYnD8EChRIuDnwItBqJexTK8HzjTQA46modBJ
+         LT1YLFR4COFqZhBD7kyA1GNDpas9w6xhyE1FojDA6YLTBVDxH1b/NVn96+NYAyG4eEDT
+         mvDyJUgMlcvsPI44AdAEwybXJENG+gQ7JqziEet3+uB97Lof1DQsWIlWwP0vQ9bAsnso
+         R/ac5cCDrmM7xKgV8sXatt/YCXx4885ZORtkBLUw52Sivei+3FLWy4MEcltQBf/Yw7uX
+         NIAXO1mq/yJ5Q0nJVBIpSb73q7XM/ADtv92OTXA/J7NqXS/i1APu0R/lm7eCIldBS+Ox
+         666Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=pcbyKLsQIg4Rsr0vub4ExOMjS5ylHDKCL4fjaV6rcWo=;
-        b=G5o/+Hs13zL7HS4aGOUDny/1kzDOHVRiocSgdIkGlRwIr/RcdqhoiMyAl/EtgAbS+Z
-         idIACcBj6MOhpL+jg/6BJpijmNVLVseEmQD0+rRCGz+gYJEJ9G4qQrSQNs7UmxTSko/B
-         24XiYSM1BmLqeHm2bGh6bcxzQdl8tQgzf6ES52esDffNl8YjE4GgdxPjb1hkIKGvKlxV
-         Ge86nX99xz8swFvi8PovfMULsBWSPHOV0u3kL1AfUe6h1Jo9WSHcmI8NZfDU+Yympfcf
-         wGcEJCFWKNAN5ja8LksoWgUdDglsROjWYjCWlRtztpeSfFiwtOokU/Z40quHI0P7Srch
-         tnmQ==
-X-Gm-Message-State: APjAAAVxBQkWQzYJE10W2jiPAkSAqSZktfbMC0znaqxiTfvHn9GmkA8i
-        hqkmC403B8QJCPN2DQm4ClxHwkn1A+eGx02jUu0=
-X-Google-Smtp-Source: APXvYqxsU46Tq3pWH6yjG3uXM16AduF6Od2sRPr6n+HenkfrYtujNbUFRcLs7i9fjwtd/UyrreGmcLJDcc35trv4NFo=
-X-Received: by 2002:a5d:9711:: with SMTP id h17mr64257105iol.280.1564976203442;
- Sun, 04 Aug 2019 20:36:43 -0700 (PDT)
+        bh=Qz/MoLLlSkJY20V2cyugR1tHjtS6GkFWnF+GIM8vIoQ=;
+        b=ky9fSFPq7rPN6RlLlEpJ8TCxEwpUyyu57rKRRqVLVao24BmYHWzQCh3sNxjrYJ3HFR
+         Rde0FunhCD3ItfSrHGCjXDgSzQN93UJnoAsSBsGl+sxcQVdbfDM5UUeToTQTlfYODqo1
+         20ESJa//vVeURHExlKeV4Xt45lRxrGJWeal7+uwBqXwz/toVcG34ctsuZ/nEM3VaUxJf
+         Wjy8Dtm3USdJltHiy5s/AYxgTGVYwz7k8XpO2Jzsj6uFTncbB9d1EK+8MEMfaM4tQ5u2
+         IyhdgwxmujTUruYmiQnlmUDoQQ7d8tlMYgFUXajaSmWvXNCBau7i2EewGydtkSvq62Qc
+         fDLg==
+X-Gm-Message-State: APjAAAVi1TkDVE7WbwrumjQyo+D5YyIuN0tsY/p0+mjpfrBz2FclrXoG
+        Sla8A/r6ykmI7OHvqNE9AxBZEFgS+irH1u78ihQ=
+X-Google-Smtp-Source: APXvYqzlM/sygSpqZQGNaTUEGA8/jEOI8rTtvIJVlIDP3rywY3YdmWrdQiAPauDVhJkcDbizxVMfAuyU7h5BF9UXLpM=
+X-Received: by 2002:a6b:bf01:: with SMTP id p1mr9943054iof.181.1564977473126;
+ Sun, 04 Aug 2019 20:57:53 -0700 (PDT)
 MIME-Version: 1.0
 References: <1563289265-10977-1-git-send-email-aisheng.dong@nxp.com>
- <1563289265-10977-3-git-send-email-aisheng.dong@nxp.com> <20190803135048.GL8870@X250.getinternet.no>
-In-Reply-To: <20190803135048.GL8870@X250.getinternet.no>
+ <1563289265-10977-2-git-send-email-aisheng.dong@nxp.com> <20190803144246.GM8870@X250.getinternet.no>
+In-Reply-To: <20190803144246.GM8870@X250.getinternet.no>
 From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 5 Aug 2019 11:27:20 +0800
-Message-ID: <CAA+hA=TVv8m2GZr0W-u+S6XzJUCYrFDF95iyUGyAsbYMwatyZg@mail.gmail.com>
-Subject: Re: [PATCH v3 02/11] dt-bindings: clock: imx-lpcg: add support to
+Date:   Mon, 5 Aug 2019 11:48:29 +0800
+Message-ID: <CAA+hA=Sm0MAHNwH1sZQfK8cO+3jLkue97u=ceFiUv34+qGos1Q@mail.gmail.com>
+Subject: Re: [PATCH v3 01/11] dt-bindings: firmware: imx-scu: new binding to
  parse clocks from device tree
 To:     Shawn Guo <shawnguo@kernel.org>
 Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
@@ -77,18 +77,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Aug 4, 2019 at 11:45 AM Shawn Guo <shawnguo@kernel.org> wrote:
+On Sun, Aug 4, 2019 at 11:49 AM Shawn Guo <shawnguo@kernel.org> wrote:
 >
-> On Tue, Jul 16, 2019 at 11:00:56PM +0800, Dong Aisheng wrote:
-> > MX8QM and MX8QXP LPCG Clocks are mostly the same except they may reside
-> > in different subsystems across CPUs and also vary a bit on the availability.
+> On Tue, Jul 16, 2019 at 11:00:55PM +0800, Dong Aisheng wrote:
+> > There's a few limitations on the original one cell clock binding
+> > (#clock-cells = <1>) that we have to define some SW clock IDs for device
+> > tree to reference. This may cause troubles if we want to use common
+> > clock IDs for multi platforms support when the clock of those platforms
+> > are mostly the same.
+> > e.g. Current clock IDs name are defined with SS prefix.
 > >
-> > Same as SCU clock, we want to move the clock definition into device tree
-> > which can fully decouple the dependency of Clock ID definition from device
-> > tree and make us be able to write a fully generic lpcg clock driver.
+> > However the device may reside in different SS across CPUs, that means the
+> > SS prefix may not valid anymore for a new SoC. Furthermore, the device
+> > availability of those clocks may also vary a bit.
 > >
-> > And we can also use the existence of clock nodes in device tree to address
-> > the device and clock availability differences across different SoCs.
+> > For such situation, we want to eliminate the using of SW Clock IDs and
+> > change to use a more close to HW one instead.
+> > For SCU clocks usage, only two params required: Resource id + Clock Type.
+>
+> If this is how SCU firmware addresses the clock, I agree that it's worth
+> witching to this new bindings, which describes the hardware (SCU
+> firmware in this case) better, IMO.
+>
+> > Both parameters are platform independent. So we could use two cells binding
+> > to pass those parameters,
 > >
 > > Cc: Rob Herring <robh+dt@kernel.org>
 > > Cc: Stephen Boyd <sboyd@kernel.org>
@@ -100,155 +112,110 @@ On Sun, Aug 4, 2019 at 11:45 AM Shawn Guo <shawnguo@kernel.org> wrote:
 > > ---
 > > ChangeLog:
 > > v2->v3:
-> >  * no changes
+> >  * Changed to two cells binding and register all clocks in driver
+> >    instead of parse from device tree.
 > > v1->v2:
-> >  * Update example
-> >  * Add power domain property
+> >  * changed to one cell binding inspired by arm,scpi.txt
+> >    Documentation/devicetree/bindings/arm/arm,scpi.txt
+> >    Resource ID is encoded in 'reg' property.
+> >    Clock type is encoded in generic clock-indices property.
+> >    Then we don't have to search all the DT nodes to fetch
+> >    those two value to construct clocks which is relatively
+> >    low efficiency.
+> >  * Add required power-domain property as well.
 > > ---
-> >  .../devicetree/bindings/clock/imx8qxp-lpcg.txt     | 34 ++++++++++++++++++----
-> >  1 file changed, 28 insertions(+), 6 deletions(-)
+> >  .../devicetree/bindings/arm/freescale/fsl,scu.txt       | 12 +++++++-----
+> >  include/dt-bindings/firmware/imx/rsrc.h                 | 17 +++++++++++++++++
+> >  2 files changed, 24 insertions(+), 5 deletions(-)
 > >
-> > diff --git a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt b/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
-> > index 965cfa4..6fc2fd8 100644
-> > --- a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
-> > +++ b/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
-> > @@ -11,6 +11,21 @@ enabled by these control bits, it might still not be running based
-> >  on the base resource.
+> > diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > index 5d7dbab..351d335 100644
+> > --- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > +++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+> > @@ -89,7 +89,10 @@ Required properties:
+> >                         "fsl,imx8qm-clock"
+> >                         "fsl,imx8qxp-clock"
+> >                       followed by "fsl,scu-clk"
+> > -- #clock-cells:              Should be 1. Contains the Clock ID value.
+> > +- #clock-cells:              Should be either
+> > +                     2: Contains the Resource and Clock ID value.
+> > +                     or
+> > +                     1: Contains the Clock ID value. (DEPRECATED)
+> >  - clocks:            List of clock specifiers, must contain an entry for
+> >                       each required entry in clock-names
+> >  - clock-names:               Should include entries "xtal_32KHz", "xtal_24MHz"
+> > @@ -162,7 +165,7 @@ firmware {
 > >
-> >  Required properties:
-> > +- compatible:                Should be one of:
-> > +                       "fsl,imx8qxp-lpcg"
-> > +                       "fsl,imx8qm-lpcg" followed by "fsl,imx8qxp-lpcg".
-> > +- reg:                       Address and length of the register set.
-> > +- #clock-cells:              Should be 1. One LPCG supports multiple clocks.
-> > +- clocks:            Input parent clocks phandle array for each clock.
-> > +- bit-offset:                An integer array indicating the bit offset for each clock.
->
-> I guess that the driver should be able to figure bit offset from
-> 'clock-indices' property.
->
+> >               clk: clk {
+> >                       compatible = "fsl,imx8qxp-clk", "fsl,scu-clk";
+> > -                     #clock-cells = <1>;
+> > +                     #clock-cells = <2>;
+> >               };
+> >
+> >               iomuxc {
+> > @@ -192,8 +195,7 @@ serial@5a060000 {
+> >       ...
+> >       pinctrl-names = "default";
+> >       pinctrl-0 = <&pinctrl_lpuart0>;
+> > -     clocks = <&clk IMX8QXP_UART0_CLK>,
+> > -              <&clk IMX8QXP_UART0_IPG_CLK>;
+> > -     clock-names = "per", "ipg";
+> > +     clocks = <&uart0_clk IMX_SC_R_UART_0 IMX_SC_PM_CLK_PER>;
+> > +     clock-names = "ipg";
+> >       power-domains = <&pd IMX_SC_R_UART_0>;
+> >  };
+> > diff --git a/include/dt-bindings/firmware/imx/rsrc.h b/include/dt-bindings/firmware/imx/rsrc.h
+> > index 4e61f64..fbeaca7 100644
+> > --- a/include/dt-bindings/firmware/imx/rsrc.h
+> > +++ b/include/dt-bindings/firmware/imx/rsrc.h
+> > @@ -547,4 +547,21 @@
+> >  #define IMX_SC_R_ATTESTATION         545
+> >  #define IMX_SC_R_LAST                        546
+> >
+> > +/*
+> > + * Defines for SC PM CLK
+> > + */
+> > +#define IMX_SC_PM_CLK_SLV_BUS                0       /* Slave bus clock */
+> > +#define IMX_SC_PM_CLK_MST_BUS                1       /* Master bus clock */
+> > +#define IMX_SC_PM_CLK_PER            2       /* Peripheral clock */
+> > +#define IMX_SC_PM_CLK_PHY            3       /* Phy clock */
+> > +#define IMX_SC_PM_CLK_MISC           4       /* Misc clock */
 
-Yes, it can be done in theory.
-Then the binding may look like:
-sdhc0_lpcg: clock-controller@5b200000 {
-        ...
-        #clock-cells = <1>;
-        clocks = <&sdhc0_clk IMX_SC_PM_CLK_PER>,
-                 <&conn_ipg_clk>, <&conn_axi_clk>;
-        clock-indices = <0>, <16>, <20>;
-        clock-output-names = "sdhc0_lpcg_per_clk",
-                             "sdhc0_lpcg_ipg_clk",
-                             "sdhc0_lpcg_ahb_clk";
-        power-domains = <&pd IMX_SC_R_SDHC_0>;
-};
+This is for typical device resource.
 
-usdhc1: mmc@5b010000 {
-        ...
-        clocks = <&sdhc0_lpcg 16>,
-                 <&sdhc0_lpcg 0>,
-                 <&sdhc0_lpcg 20>;
-        clock-names = "ipg", "per", "ahb";
-};
+> > +#define IMX_SC_PM_CLK_MISC0          0       /* Misc 0 clock */
+> > +#define IMX_SC_PM_CLK_MISC1          1       /* Misc 1 clock */
+> > +#define IMX_SC_PM_CLK_MISC2          2       /* Misc 2 clock */
+> > +#define IMX_SC_PM_CLK_MISC3          3       /* Misc 3 clock */
+> > +#define IMX_SC_PM_CLK_MISC4          4       /* Misc 4 clock */
 
-However, after trying, i found  one limitation if using clock-indices
-that users have to do a secondary search for the indices value from clock names
-which is not very friendly.
-
-Formerly from the clock output names, user can easily get the clock
-index as they're
-in fixed orders as output names, so very easily to use.
+This is for some special clock types which do not belong to above
+normal clock types.
+Used very rare in SCU firmware.
 e.g.
-clocks = <&sdhc0_lpcg 1>,
-         <&sdhc0_lpcg 0>,
-         <&sdhc0_lpcg 2>;
+enet0_mac0_rxclk SC_R_ENE T_0 / SC_PM_CL K_MISC0
 
-If using clock-indices, users have no way to know it's clock index
-from clock output names order
-unless they do a secondary search from the clock-indice array accordingly.
-For example, for "sdhc0_lpcg_ahb_clk", user can easily know its
-reference is <&sdhc0_lpcg 2>.
-But if using clock-indice, we need search clock-indices array to find
-its reference
-becomes <&sdhc0_lpcg 20>. So this seems like a drawback if using clock-indices.
+> > +#define IMX_SC_PM_CLK_CPU            2       /* CPU clock */
+> > +#define IMX_SC_PM_CLK_PLL            4       /* PLL */
+> > +#define IMX_SC_PM_CLK_BYPASS         4       /* Bypass clock */
 
-Therefore, personally i'm still a bit intend to the original way which
-is more simple and
-straightforward from user point of view, unless there's a strong
-objections on define another
-vendor private property.
+They're for specific clock types for CPU/PLL/BYPASS only.
 
-Shawn,
-How do you think?
-Should we enforce the complexity to users?
-
-> > +- hw-autogate:               Boolean array indicating whether supports HW autogate for
-> > +                     each clock.
 >
-> Not sure why it needs to be a property in DT.  Or asking it different
-> way, when it should be true and when false?
+> It seems that there are several sets of clock type which apply to
+> different resources/devices?  If so, can you separate them a bit with
+> some comments to make the list easier for readers?
 >
 
-It is one LPCG feature.
-For some specific device LPCGs, it may support clock auto gating. (depends on
-IP's capability. e.g. uSDHC).
-So we define this feature in DT as well in case if user may want to
-use it in the future.
+Yes, i could add comments as above.
+Thanks for the suggestions.
 
-But AFAIK, there's still no one using it. Most drivers reply on runtime PM to do
-clock management. Did not use LPCG auto gate off feature.
-But the current LPCG driver API does support this parameter.
-
-If you think it's unnecessary to define it in DT as there're still no
-users, i can remove it
-and disabling autogate in driver by default.
-
-Regards
 Aisheng
 
 > Shawn
 >
-> > +- clock-output-names:        Shall be the corresponding names of the outputs.
-> > +                     NOTE this property must be specified in the same order
-> > +                     as the clock bit-offset and hw-autogate property.
-> > +- power-domains:     Should contain the power domain used by this clock.
 > > +
-> > +Legacy binding (DEPRECATED):
-> >  - compatible:        Should be one of:
-> >                 "fsl,imx8qxp-lpcg-adma",
-> >                 "fsl,imx8qxp-lpcg-conn",
-> > @@ -33,10 +48,17 @@ Examples:
-> >
-> >  #include <dt-bindings/clock/imx8qxp-clock.h>
-> >
-> > -conn_lpcg: clock-controller@5b200000 {
-> > -     compatible = "fsl,imx8qxp-lpcg-conn";
-> > -     reg = <0x5b200000 0xb0000>;
-> > +sdhc0_lpcg: clock-controller@5b200000 {
-> > +     compatible = "fsl,imx8qxp-lpcg";
-> > +     reg = <0x5b200000 0x10000>;
-> >       #clock-cells = <1>;
-> > +     clocks = <&sdhc0_clk IMX_SC_PM_CLK_PER>,
-> > +              <&conn_ipg_clk>, <&conn_axi_clk>;
-> > +     bit-offset = <0 16 20>;
-> > +     clock-output-names = "sdhc0_lpcg_per_clk",
-> > +                          "sdhc0_lpcg_ipg_clk",
-> > +                          "sdhc0_lpcg_ahb_clk";
-> > +     power-domains = <&pd IMX_SC_R_SDHC_0>;
-> >  };
-> >
-> >  usdhc1: mmc@5b010000 {
-> > @@ -44,8 +66,8 @@ usdhc1: mmc@5b010000 {
-> >       interrupt-parent = <&gic>;
-> >       interrupts = <GIC_SPI 232 IRQ_TYPE_LEVEL_HIGH>;
-> >       reg = <0x5b010000 0x10000>;
-> > -     clocks = <&conn_lpcg IMX8QXP_CONN_LPCG_SDHC0_IPG_CLK>,
-> > -              <&conn_lpcg IMX8QXP_CONN_LPCG_SDHC0_PER_CLK>,
-> > -              <&conn_lpcg IMX8QXP_CONN_LPCG_SDHC0_HCLK>;
-> > +     clocks = <&sdhc0_lpcg 1>,
-> > +              <&sdhc0_lpcg 0>,
-> > +              <&sdhc0_lpcg 2>;
-> >       clock-names = "ipg", "per", "ahb";
-> >  };
+> >  #endif /* __DT_BINDINGS_RSCRC_IMX_H */
 > > --
 > > 2.7.4
 > >
