@@ -4,58 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B89CC41514
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 09:21:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA72C0650F
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 09:22:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6273A2182B
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 09:21:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43F262182B
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 09:22:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d38K7iRF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gnj63riK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfHEJVK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Aug 2019 05:21:10 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:41399 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727161AbfHEJVJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Aug 2019 05:21:09 -0400
-Received: by mail-lf1-f66.google.com with SMTP id 62so52482772lfa.8
-        for <linux-clk@vger.kernel.org>; Mon, 05 Aug 2019 02:21:08 -0700 (PDT)
+        id S1727950AbfHEJWI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Aug 2019 05:22:08 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:43693 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727994AbfHEJWH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Aug 2019 05:22:07 -0400
+Received: by mail-lf1-f67.google.com with SMTP id c19so57347561lfm.10
+        for <linux-clk@vger.kernel.org>; Mon, 05 Aug 2019 02:22:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XeZuwJ8iOEhz5F2Wyo98q50Ei+RrYxquDk/4W/V9cn0=;
-        b=d38K7iRFWg8Rc6C4PuO9fKbqOufJuG0gaI0lCMNB0BnZbyW9wnVbGzVpM2JFvzyqsy
-         8YSH2Q/DdHFeEZeJxbiuBKA50NXM1R3iWzf4oEON9JzpZQ/jPku4nDplix1QVwlmePpA
-         KKt/EzMcVOckc7Xa8QNN7OueaXG9Oe+8vgR+xQvwZ0AMKPmXa0Qh1XseZuuh/AekaC/S
-         oTslBzcMnORlG314vI6mNUY/s5WyOv2ACIzwOOuy6PDwaA6FT9yek3oNCya4yDFtsx7o
-         OazivBDUDaq0/x1S+WDHAzfBHXRo4sUv+CX+Dl1SIjB56bi3lXg+eaVIRjlkOsM9q8/b
-         s4Mg==
+        bh=i+z4lSjOxQUNDZN2mh51y0IZWLo2k0BanjlxnQYRJuA=;
+        b=Gnj63riKfzJsrzh8xPg3aqiNZgDp/vGc88L93J5Pa2q0LD/65jeCf2QdkuyKph90B9
+         YhiRUsFlshUfddljpw9qXc//8xZ4c0vcNXw96pjPia27pyKC81Bzgz//TgPLoEFh/36I
+         RmwXOIFzF2nE4ltwyH7Ho7G8NnhCszXfpXAzNQLm6NG6Q1jGFeOjqYQtLwVI6lo6jXwP
+         vZF5herXZs+vTfhzk5n7Kp8CPf1MzdYVZ3W/ZBhSsMwiuV4JgooA6du2iD8NYKKE57im
+         RIlS1yKpCXNOGc2rqW7ndzlW9dJAzrWN4aGfiVhMphXElTC24RjXL8ZcY+93gnhAxt1B
+         Rzsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XeZuwJ8iOEhz5F2Wyo98q50Ei+RrYxquDk/4W/V9cn0=;
-        b=IYAjIgB8hS+4qyUGFRrapyypUrLz0eJ+4b7tDTTgfjluAX/lPRqXSBX6BKDc3D47Gj
-         qLe19u8wtPJpMSBu69+RBcCB72at8jbe0tslNAHJtagdTqdBLptDVj1mNcf0RDdInr6k
-         ZMpjo7Jf1mNqUIdRjVX5h/xx5gQ+YjTbPRaGUnrd2MtImX98vwv1GyhLD204beCeJAyF
-         Iw3vANvaE9fl0RCyLt5gJZwsn7wb+u0ej31BJodyIw2Dx0B1LBJ1RnkNu+V+StruwuOS
-         epmp5lqnrHm9LC5UcP8mUG364QJRXtdM7S9eyfp2fC/t4lDhbixS0IMYnbl2QOKv/gz1
-         BPKQ==
-X-Gm-Message-State: APjAAAUGiRRmwWMBmQ9CVOt6qtau3JVZV4YeOElTdhAUwqzyJNK7JR2W
-        p2uzRvJangurtdHNxmrU2kbp55AGF0VA1yH7ayS40whP
-X-Google-Smtp-Source: APXvYqxF1O5EyxUA2mWKTQH1RGnvxfpX5mkjdne+NiMtuk+mLdGY91xYa+kkP3albntIoVAT5SSzBtSmKVC7v/w3ioQ=
-X-Received: by 2002:ac2:5939:: with SMTP id v25mr1226892lfi.115.1564996867652;
- Mon, 05 Aug 2019 02:21:07 -0700 (PDT)
+        bh=i+z4lSjOxQUNDZN2mh51y0IZWLo2k0BanjlxnQYRJuA=;
+        b=BhdSeMaG2hZIVFnxRSEVlV+Qw4pBN8SjkoBL54XSZjmSmqxcaeKr+8+mnxbO+36bmQ
+         O14MVccmIDewQSMsGXciNQmi1ep+VA+gQGMGB5cPYRxfcg2y0h8FtonwVI/l7Y/U3DKh
+         tsOoVn4jNdsjOvAQpX6E7AKuUHHAZ3PRHw58cXY6AvDPkqHwCB6DLBr3jwazoKZLey04
+         oxUfbbanDefTyNsBEa479cBY1QlXa3Ri6xOa+iv7Y/1wrK7awzY+UoHiU0Y2G+jNXcJ3
+         97jjsnak68gDmbphX7jUX0l8QPLeToB8NQagBknjM2B+nYiOmrvj4flsZyuPT3IfQUvX
+         UN7g==
+X-Gm-Message-State: APjAAAXDgJzGivI+FhGDfTAANVhrEc0f4XqiTz7JCOhivluz62UlzGWD
+        xeaIS2M9y8XhBUelL7BhX+TnJl25+8YzOQJ208DhSA==
+X-Google-Smtp-Source: APXvYqz2gBmde6Dsxx99OmimcqgsMkcb001POQdrR+SnSHDBMNEIgv6BbXV64CZhlMwRFUz56G6ingA+UAUFVlhMbw0=
+X-Received: by 2002:a19:ed11:: with SMTP id y17mr1689568lfy.141.1564996925905;
+ Mon, 05 Aug 2019 02:22:05 -0700 (PDT)
 MIME-Version: 1.0
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com> <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com> <1564607463-28802-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1564607463-28802-3-git-send-email-skomatineni@nvidia.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 5 Aug 2019 11:20:56 +0200
-Message-ID: <CACRpkdZVR-i1c5eATL2hSPbLXcX1sR8NgXwa4j259XXUi57xug@mail.gmail.com>
-Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
+Date:   Mon, 5 Aug 2019 11:21:53 +0200
+Message-ID: <CACRpkdZ3FnF75DLH0+0sfKf3JKY=1=OOZVDpmYjTHNqN5yNP_w@mail.gmail.com>
+Subject: Re: [PATCH v7 02/20] pinctrl: tegra210: Add Tegra210 pinctrl pm ops
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
@@ -89,25 +90,11 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Wed, Jul 31, 2019 at 11:11 PM Sowjanya Komatineni
 <skomatineni@nvidia.com> wrote:
 
-> This patch adds support for Tegra pinctrl driver suspend and resume.
+> This patch adds suspend and resume functionality to Tegra210 pinctrl.
 >
-> During suspend, context of all pinctrl registers are stored and
-> on resume they are all restored to have all the pinmux and pad
-> configuration for normal operation.
->
-> Acked-by: Thierry Reding <treding@nvidia.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
 Patch applied to the pinctrl tree.
-
-This patch seems finished.
-
-Also if the rest don't get merged for v5.4 then at least this is so
-your patch stack gets more shallow.
-
-I hope it's fine to merge this separately, else tell me and I'll
-pull it out.
 
 Yours,
 Linus Walleij
