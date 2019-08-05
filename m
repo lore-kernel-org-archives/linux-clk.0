@@ -2,178 +2,202 @@ Return-Path: <SRS0=R3Mk=WB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB10C433FF
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 18:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF109C433FF
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 20:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F0BC206A2
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 18:06:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B136D2075B
+	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 20:33:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="LmZso5Md"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YQLqCyav";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fesrASc4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbfHESGH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Aug 2019 14:06:07 -0400
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:8967 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726779AbfHESGH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Aug 2019 14:06:07 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d48700d0002>; Mon, 05 Aug 2019 11:06:05 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 05 Aug 2019 11:06:04 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 05 Aug 2019 11:06:04 -0700
-Received: from [10.110.103.110] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 5 Aug
- 2019 18:06:03 +0000
-Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
-References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
- <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
- <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <b45ca99a-188a-c695-3f3d-48d273808f9c@nvidia.com>
-Date:   Mon, 5 Aug 2019 11:06:02 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
-MIME-Version: 1.0
-In-Reply-To: <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565028366; bh=u9t5KV0bHB75n4lpd6FYtATWM0z27WV2yxpqjZZtxoc=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=LmZso5Mdq6S+I0KfwQU77iIz1ylo93ZTYRz6BtZiUOsI9mJQ3tzZf/e7MP6RvTp7P
-         Te+W1C6VZfAOyTG5eRVi14ZeGH6Q429HWebwZAhNqFrZEdD3ueab1hx2gCyVKtLFyf
-         /K5nyn0FZyzlVdXVEku3aMJwN3meAjE2jHaVDpDp0Dl/SCARviwCIQZ6DrZvojFM7w
-         3KImXiHDVDHjovUyAgDzsJ262Q2+NKa6zUv7zLUmvrAVCpMxrtJqG7RgFPLOhEQ+z2
-         fnrpbFSr8vBHAhSzd3P3/kOrOHbbxokOAb2n+53lPQ6P+1ig9trEk5PK4XTN04lWqi
-         g6z/VwJjUAZdA==
+        id S1730454AbfHEUdw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Aug 2019 16:33:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40344 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727802AbfHEUdw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Aug 2019 16:33:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4652E608BA; Mon,  5 Aug 2019 20:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565037231;
+        bh=EQpwyTaZLqo/0FlVjz7BjVXvv2QX6kRf2rU72r3sSKo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=YQLqCyavrSjZaLIy9k/4zyq0wafVpMa/YcHH0w5NKJ44Ytg8bDOY58kWvRrOl8fqp
+         76TcWcbF0zcOP7k8YXppQ3x78Rfmse0uOMIXRQVgrs5b8s49CEZotZriRtJAfl3Ckn
+         IEeCghUFOPMhOuG0cUDRlmVClqRw4+u8PrOGwQpQ=
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 856C76076C;
+        Mon,  5 Aug 2019 20:33:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565037230;
+        bh=EQpwyTaZLqo/0FlVjz7BjVXvv2QX6kRf2rU72r3sSKo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fesrASc4hlP33n5ROrTySwgZhfsOqs1BLFm2PzqvpylY3nuXOIM4/cVG/D6UnQN4Q
+         5+HdPtaul0xWvoIuDcQcXG0Ma6VxWlLqosZAhW/w9rM7CpS/TGltdX2bMOdDefx3HU
+         Lkai0x8Fbcr+21VATj1hmVGppBmM1sxgFKIdmS+s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 856C76076C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     freedreno@lists.freedesktop.org
+Cc:     linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v2] drivers: qcom: Add BCM vote macro to header
+Date:   Mon,  5 Aug 2019 14:33:46 -0600
+Message-Id: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The macro to generate a Bus Controller Manager (BCM) TCS command is used
+by the interconnect driver but might also be interesting to other
+drivers that need to construct TCS commands for sub processors so move
+it out of the sdm845 specific file and into the header.
 
-On 8/5/19 3:50 AM, Dmitry Osipenko wrote:
-> 01.08.2019 0:10, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> This patch adds support for Tegra pinctrl driver suspend and resume.
->>
->> During suspend, context of all pinctrl registers are stored and
->> on resume they are all restored to have all the pinmux and pad
->> configuration for normal operation.
->>
->> Acked-by: Thierry Reding <treding@nvidia.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/pinctrl/tegra/pinctrl-tegra.c | 59 +++++++++++++++++++++++++++=
-++++++++
->>   drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
->>   2 files changed, 62 insertions(+)
->>
->> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/teg=
-ra/pinctrl-tegra.c
->> index 186ef98e7b2b..e3a237534281 100644
->> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
->> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
->> @@ -631,6 +631,58 @@ static void tegra_pinctrl_clear_parked_bits(struct =
-tegra_pmx *pmx)
->>   	}
->>   }
->>  =20
->> +static size_t tegra_pinctrl_get_bank_size(struct device *dev,
->> +					  unsigned int bank_id)
->> +{
->> +	struct platform_device *pdev =3D to_platform_device(dev);
->> +	struct resource *res;
->> +
->> +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
->> +
->> +	return resource_size(res) / 4;
->> +}
->> +
->> +static int tegra_pinctrl_suspend(struct device *dev)
->> +{
->> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
->> +	u32 *backup_regs =3D pmx->backup_regs;
->> +	u32 *regs;
->> +	size_t bank_size;
->> +	unsigned int i, k;
->> +
->> +	for (i =3D 0; i < pmx->nbanks; i++) {
->> +		bank_size =3D tegra_pinctrl_get_bank_size(dev, i);
->> +		regs =3D pmx->regs[i];
->> +		for (k =3D 0; k < bank_size; k++)
->> +			*backup_regs++ =3D readl_relaxed(regs++);
->> +	}
->> +
->> +	return pinctrl_force_sleep(pmx->pctl);
->> +}
->> +
->> +static int tegra_pinctrl_resume(struct device *dev)
->> +{
->> +	struct tegra_pmx *pmx =3D dev_get_drvdata(dev);
->> +	u32 *backup_regs =3D pmx->backup_regs;
->> +	u32 *regs;
->> +	size_t bank_size;
->> +	unsigned int i, k;
->> +
->> +	for (i =3D 0; i < pmx->nbanks; i++) {
->> +		bank_size =3D tegra_pinctrl_get_bank_size(dev, i);
->> +		regs =3D pmx->regs[i];
->> +		for (k =3D 0; k < bank_size; k++)
->> +			writel_relaxed(*backup_regs++, regs++);
->> +	}
-> I'm now curious whether any kind of barrier is needed after the
-> writings. The pmx_writel() doesn't insert a barrier after the write and
-> seems it just misuses writel, which actually should be writel_relaxed()
-> + barrier, IIUC.
+Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+---
 
-pmx_writel uses writel and it has wmb before raw_write which complete=20
-all writes initiated prior to this.
+Changes in v2:
+- Replace a similar BCS_TCS_CMD macro in clk-rpmh.c with the generic one
 
-By misusing writel, you mean to have barrier after register write?
+ drivers/clk/qcom/clk-rpmh.c        | 16 +++-------------
+ drivers/interconnect/qcom/sdm845.c | 19 +------------------
+ include/soc/qcom/tcs.h             | 21 ++++++++++++++++++++-
+ 3 files changed, 24 insertions(+), 32 deletions(-)
 
-> It's also not obvious whether PINCTRL HW has any kind of write-FIFO and
-> thus maybe read-back + rmb() is needed in order ensure that writes are
-> actually completed.
-I believe adding write barrier wmb after writel_relaxed should be good=20
-rather than doing readback + rmb
->
-> The last thing which is not obvious is when the new configuration
-> actually takes into effect, does it happen immediately or maybe some
-> delay is needed?
->
-> [snip]
-
-Based on internal design there is no internal delay and it all depends=20
-on APB rate that it takes to write to register.
-
-Pinmux value change to reflect internally might take couple of clock=20
-cycles which is much faster than SW can read.
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index c3fd632..a32bfae 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+  */
+ 
+ #include <linux/clk-provider.h>
+@@ -12,23 +12,13 @@
+ #include <linux/platform_device.h>
+ #include <soc/qcom/cmd-db.h>
+ #include <soc/qcom/rpmh.h>
++#include <soc/qcom/tcs.h>
+ 
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ 
+ #define CLK_RPMH_ARC_EN_OFFSET		0
+ #define CLK_RPMH_VRM_EN_OFFSET		4
+ 
+-#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
+-#define BCM_TCS_CMD_VALID_SHIFT		29
+-#define BCM_TCS_CMD_VOTE_MASK		0x3fff
+-#define BCM_TCS_CMD_VOTE_SHIFT		0
+-
+-#define BCM_TCS_CMD(valid, vote)				\
+-	(BCM_TCS_CMD_COMMIT_MASK |				\
+-	((valid) << BCM_TCS_CMD_VALID_SHIFT) |			\
+-	((vote & BCM_TCS_CMD_VOTE_MASK)				\
+-	<< BCM_TCS_CMD_VOTE_SHIFT))
+-
+ /**
+  * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
+  * @unit: divisor used to convert Hz value to an RPMh msg
+@@ -269,7 +259,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 	}
+ 
+ 	cmd.addr = c->res_addr;
+-	cmd.data = BCM_TCS_CMD(enable, cmd_state);
++	cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
+ 
+ 	ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
+ 	if (ret) {
+diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
+index 4915b78..2181170 100644
+--- a/drivers/interconnect/qcom/sdm845.c
++++ b/drivers/interconnect/qcom/sdm845.c
+@@ -1,6 +1,6 @@
+ // SPDX-License-Identifier: GPL-2.0
+ /*
+- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
+  *
+  */
+ 
+@@ -20,23 +20,6 @@
+ #include <soc/qcom/rpmh.h>
+ #include <soc/qcom/tcs.h>
+ 
+-#define BCM_TCS_CMD_COMMIT_SHFT		30
+-#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
+-#define BCM_TCS_CMD_VALID_SHFT		29
+-#define BCM_TCS_CMD_VALID_MASK		0x20000000
+-#define BCM_TCS_CMD_VOTE_X_SHFT		14
+-#define BCM_TCS_CMD_VOTE_MASK		0x3fff
+-#define BCM_TCS_CMD_VOTE_Y_SHFT		0
+-#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
+-
+-#define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
+-	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
+-	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
+-	((cpu_to_le32(vote_x) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
+-	((cpu_to_le32(vote_y) &					\
+-	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
+-
+ #define to_qcom_provider(_provider) \
+ 	container_of(_provider, struct qcom_icc_provider, provider)
+ 
+diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
+index 262876a..dbf3c88 100644
+--- a/include/soc/qcom/tcs.h
++++ b/include/soc/qcom/tcs.h
+@@ -1,6 +1,6 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+ /*
+- * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
++ * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
+  */
+ 
+ #ifndef __SOC_QCOM_TCS_H__
+@@ -53,4 +53,23 @@ struct tcs_request {
+ 	struct tcs_cmd *cmds;
+ };
+ 
++#define BCM_TCS_CMD_COMMIT_SHFT		30
++#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
++#define BCM_TCS_CMD_VALID_SHFT		29
++#define BCM_TCS_CMD_VALID_MASK		0x20000000
++#define BCM_TCS_CMD_VOTE_X_SHFT		14
++#define BCM_TCS_CMD_VOTE_MASK		0x3fff
++#define BCM_TCS_CMD_VOTE_Y_SHFT		0
++#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
++
++/* Construct a Bus Clock Manager (BCM) specific TCS command */
++#define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
++	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
++	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
++	((cpu_to_le32(vote_x) &					\
++	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
++	((cpu_to_le32(vote_y) &					\
++	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
++
++
+ #endif /* __SOC_QCOM_TCS_H__ */
+-- 
+2.7.4
 
