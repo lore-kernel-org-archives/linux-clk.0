@@ -2,68 +2,69 @@ Return-Path: <SRS0=W3Yt=WC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB49FC433FF
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 08:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1233AC433FF
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 08:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC0C206A2
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 08:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B687220880
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 08:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="k7i/S0Ul"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="I8CviA6x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732068AbfHFIio (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Aug 2019 04:38:44 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51951 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728056AbfHFIin (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Aug 2019 04:38:43 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 207so77316465wma.1
-        for <linux-clk@vger.kernel.org>; Tue, 06 Aug 2019 01:38:42 -0700 (PDT)
+        id S1732330AbfHFItv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Aug 2019 04:49:51 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:38009 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732206AbfHFItv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Aug 2019 04:49:51 -0400
+Received: by mail-wm1-f67.google.com with SMTP id s15so54254581wmj.3
+        for <linux-clk@vger.kernel.org>; Tue, 06 Aug 2019 01:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=qSnv/+vT/SIYwYJQCT7nUDhLGYyBse0g569xwPymLuI=;
-        b=k7i/S0Uly+lYudrLsi5NMZAiSdRC1hWmKyOsqGQviJPbYlaGo7X+7lvdEsQr4w6K18
-         hqgrCW0P4CeRROJFb0KFnU3qONfUt/8Qksx76/dk933FkCBCUcUelsT/NGFwGpXciyvh
-         dkkuIx2/3DK+T53BTbgxN1AXD3nKAlbBF2IGNCVu2K/Z/7dNVKpHX9rWytsDH1uIrMIV
-         KNsraa3hrNqV7VoS7QuDjNWF2AC5tyCQlXQ2ESyY2LibCPZw0H7V6YV0WN2qO339IjJr
-         QR8S+lfICoUcroG1XEt2uXKVULW0Q3TMBOFEd/Z6fxbp5BOzFU9YvP4RaL1ZT+1AhwOf
-         lhsQ==
+        bh=e/5FlaB9m3gEnKe48majyR+7xFOfFfXfyiygau9Wh2Q=;
+        b=I8CviA6xn+lteqKb2DklgcnuqBxGyR27LIonjjd1h6SlJ7vCnVT73BukBTDQpMD/QN
+         U2y4909fk17Tj5+3DdR7UNyfYIEf0X01AupJp7sjyy+38+tOjJs0Uf+JrTykxS5yDnwl
+         wpOTes3fxdYyL63v1gnEB0C5Yv8qgoEypMDTFHQyFrFNwkr3OnK1em/jY5s6AmTUf0bq
+         Ru/EEqxoGZ1zYjLzFWFmPK8ebIGnhYIBm77pE5A4FxWigCCjJ7LHtKmhzsCkqNbHyIPQ
+         vHE+9pliBkDd0CMU9qbuKNEbEw1dETq0tYpY6S4ziSkyt3NVkefhqW5/l6FiivltiBZ4
+         qeOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=qSnv/+vT/SIYwYJQCT7nUDhLGYyBse0g569xwPymLuI=;
-        b=Sq6EzVw1gneN0m9rmLLMKL1OfhdpG/RRcOtZIc1tMsDRZVDvDyHqCGajGu93aM60L9
-         DHD+8m6npmHU4eIAF7wWebZgUwGEFm3s1qFYEmdNurkvtkverIBgVYpXNruqjHmsQZ1d
-         k1IkC4cd5ck7yRTmgL4x8GROZm/+rH6fT+i2226ILX+v8hb4WDYLcwkiN5ynyLG9cWyk
-         1D2B4jA6s4M52C+gMLoCU8n7c2CYW7hHbxvjbjTCsTkjlZJtdC4kmzTJA/aMOW3DayXS
-         h03O9EyQWKpg8gKPTvFL8SnDjwp+EK4rz2t0bKQiPLhP4uTr0wiK3cwpaVvSPiIHhMu8
-         7Wbg==
-X-Gm-Message-State: APjAAAVDRr6MWjxswTdeverJoJskfKzGyTYMJ43AFElomJ4N9nIXgJzE
-        NCShwVZG+4RAXf27dslroYzGMg==
-X-Google-Smtp-Source: APXvYqyNFcCjMT1EIr9SnBdj/3eb0N8J9r+MuFXedPFys0HGgjwjrbMnJn/62KpXxR8OMt0blyPHyg==
-X-Received: by 2002:a1c:968c:: with SMTP id y134mr3179146wmd.122.1565080721469;
-        Tue, 06 Aug 2019 01:38:41 -0700 (PDT)
+        bh=e/5FlaB9m3gEnKe48majyR+7xFOfFfXfyiygau9Wh2Q=;
+        b=ItPU73JgRcGmT8kJ1xcOXtmCwDXHf11I7qYoUSuJlaVckFCFQp1k1fHpK6Y9Y8DpAQ
+         j22T9ZasOx8BswdA71rllpGQCU+kJDhrObdovuEDrrgYsgbJQ7RxmAGSlXYLzpA3mMOi
+         JZ2SidsCa0NoyPI1nfzW6mBYMPIlAQcl6ydTepN4l6KkWSMwOPP6ou1CCXilGffNxmwy
+         /u7pnvvEjltWRjJq0sWOthMuLXzG50/50lvd9Yftf3NrF7fG//AXQq4y8iY+3NLU963+
+         cDoE/y5mlyFq/hqiAISgcTncmE3IjFQUIpj4Zghuwdu0mjZs1Ee7PV7WruOsMnwK/MVs
+         CAYg==
+X-Gm-Message-State: APjAAAWlcaXKHotvsOZlEWqHXOOpvHk7RpyuBMUEJ83gCwl+vxKkQv6O
+        nU1KADTH37yzSiAGORIPJ9pUSQ==
+X-Google-Smtp-Source: APXvYqydrWSyKv/Z8aE0wnm5mBDuLQIs85p2Q4UZiFE76n+eAsC040k+pd2/Q6j5qysjYrVv9GE9ZA==
+X-Received: by 2002:a1c:720e:: with SMTP id n14mr3443503wmc.53.1565081389300;
+        Tue, 06 Aug 2019 01:49:49 -0700 (PDT)
 Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id k9sm61670274wmi.33.2019.08.06.01.38.40
+        by smtp.gmail.com with ESMTPSA id x8sm74356883wmc.5.2019.08.06.01.49.48
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 06 Aug 2019 01:38:40 -0700 (PDT)
+        Tue, 06 Aug 2019 01:49:48 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/4] clk: meson: g12a: add support for DVFS
-In-Reply-To: <20190731084019.8451-1-narmstrong@baylibre.com>
-References: <20190731084019.8451-1-narmstrong@baylibre.com>
-Date:   Tue, 06 Aug 2019 10:38:40 +0200
-Message-ID: <1jzhkmvgbz.fsf@starbuckisacylon.baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH 3/9] clk: meson: axg-audio: Don't reference clk_init_data after registration
+In-Reply-To: <20190731193517.237136-4-sboyd@kernel.org>
+References: <20190731193517.237136-1-sboyd@kernel.org> <20190731193517.237136-4-sboyd@kernel.org>
+Date:   Tue, 06 Aug 2019 10:49:47 +0200
+Message-ID: <1jwofqvftg.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -71,30 +72,65 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 31 Jul 2019 at 10:40, Neil Armstrong <narmstrong@baylibre.com> wrote:
->
-> Neil Armstrong (4):
->   clk: core: introduce clk_hw_set_parent()
->   clk: meson: add g12a cpu dynamic divider driver
->   clk: meson: g12a: add notifiers to handle cpu clock change
->   clk: meson: g12a: expose CPUB clock ID for G12B
->
->  drivers/clk/clk.c                     |   6 +
->  drivers/clk/meson/Kconfig             |   5 +
->  drivers/clk/meson/Makefile            |   1 +
->  drivers/clk/meson/clk-cpu-dyndiv.c    |  73 ++++
->  drivers/clk/meson/clk-cpu-dyndiv.h    |  20 +
->  drivers/clk/meson/g12a.c              | 535 +++++++++++++++++++++++---
->  drivers/clk/meson/g12a.h              |   1 -
->  include/dt-bindings/clock/g12a-clkc.h |   1 +
->  include/linux/clk-provider.h          |   1 +
->  9 files changed, 588 insertions(+), 55 deletions(-)
->  create mode 100644 drivers/clk/meson/clk-cpu-dyndiv.c
->  create mode 100644 drivers/clk/meson/clk-cpu-dyndiv.h
+On Wed 31 Jul 2019 at 12:35, Stephen Boyd <sboyd@kernel.org> wrote:
 
-Patchset looks good to me.
-Waiting for Stephen's ack on patch #1 to apply it.
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
+
+Hi Stephen,
+
+What to do you indend to do with this one ? Will you apply directly or
+should we take it ?
+
+We have several changes for the controller which may conflict with this
+one. It is nothing major but the sooner I know how this changes goes in,
+the sooner I can rebase the rest.
+
+Also, We were (re)using the init_data only on register failures.
+I understand that you want to guarantee .init is NULL when the clock is
+registered, but it this particular case, the registeration failed so the
+clock is not registered.
+
+IMO, it would be better if devm_clk_hw_register() left the init_data
+untouched if the registration fails.
 
 >
+> Cc: Neil Armstrong <narmstrong@baylibre.com>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>
+> Please ack so I can take this through clk tree
+>
+>  drivers/clk/meson/axg-audio.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+> index 8028ff6f6610..db0b73d53551 100644
+> --- a/drivers/clk/meson/axg-audio.c
+> +++ b/drivers/clk/meson/axg-audio.c
+> @@ -992,15 +992,18 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+>  
+>  	/* Take care to skip the registered input clocks */
+>  	for (i = AUD_CLKID_DDR_ARB; i < data->hw_onecell_data->num; i++) {
+> +		const char *name;
+> +
+>  		hw = data->hw_onecell_data->hws[i];
+>  		/* array might be sparse */
+>  		if (!hw)
+>  			continue;
+>  
+> +		name = hw->init->name;
+> +
+>  		ret = devm_clk_hw_register(dev, hw);
+>  		if (ret) {
+> -			dev_err(dev, "failed to register clock %s\n",
+> -				hw->init->name);
+> +			dev_err(dev, "failed to register clock %s\n", name);
+>  			return ret;
+>  		}
+>  	}
 > -- 
-> 2.22.0
+> Sent by a computer through tubes
