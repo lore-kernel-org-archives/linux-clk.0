@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A7BCC31E40
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:42:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A45B1C433FF
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:46:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E79B21874
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74E102189D
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:46:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565127750;
-	bh=TBavu8KcGlvZPLcjFMqqwVbOt4Ys1Ym3XS3M5RlQgII=;
+	s=default; t=1565127986;
+	bh=8zooDDLk4SMfizKNkmpLcqjt64Lv2VSIABX6QBeAj3M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gErgIzE0F7wHpuVN5n/ZXIgDKQ/DKhkR5GcpyZO40WYCT3IyMGwyX2sFWuQXxTkCp
-	 e4bkSOu7bXgeDDdZ5DarVDOFLcp0aIrEetH3Sw3tKanpGE9OgF3lNP1KDvocHC+kgJ
-	 zxSHca0R7lbzALA7w9UGF2d9BAgoa+HzYYz26qME=
+	b=xYKXCy1LH3a/inP3ebpR/p5jHXKfOlMPwzUJLTFivJazslhuVXokMjhmlJtFXu6uw
+	 p7mCL8fkkncf0RjJ53iPIheoCiQeWGTGLdwyZp+bYDFP8FT1qi1wnlvehJlxop/4rG
+	 B//W/vhB+bS+3w1zYx0aK2PBYQ/1BvDUC+U6gFPg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727441AbfHFVmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Aug 2019 17:42:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53230 "EHLO mail.kernel.org"
+        id S1726934AbfHFVd2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Aug 2019 17:33:28 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728513AbfHFVf3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:35:29 -0400
+        id S1726902AbfHFVd1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:33:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA6CD2187F;
-        Tue,  6 Aug 2019 21:35:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A7562089E;
+        Tue,  6 Aug 2019 21:33:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565127328;
-        bh=TBavu8KcGlvZPLcjFMqqwVbOt4Ys1Ym3XS3M5RlQgII=;
+        s=default; t=1565127206;
+        bh=8zooDDLk4SMfizKNkmpLcqjt64Lv2VSIABX6QBeAj3M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Uy07BCmDfnltCNGcnXUDJ75tr1IKXjk45Wv5kiaUAIsy7QCowFUBhKBYZkNKl3pqX
-         xI6dk+QPKmXEUhidw4YqwSCwkoMK+ZujhDySITwbsUecU1zf9Wk4X01FOIToRV+v+d
-         GXl8XLryYt0s0FamYhrfSxG+ju764X1udysON9zM=
+        b=NeoyDLdAR+/Ef96Sz438sod+W/rrGAg/Alvq5LaqeUGE+gPxR2oel1X/eSTsu72Nj
+         qbdDhajebdAx1lGHOJHkQuD+7Y1tXqUHRioZOvKf2um0gxncOpwt336YOG3KFbzrEA
+         R52/kQglXlPk2I1pNdSiqqPP53YOAjRBvukOENHg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -46,12 +46,12 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 03/32] clk: renesas: cpg-mssr: Fix reset control race condition
-Date:   Tue,  6 Aug 2019 17:34:51 -0400
-Message-Id: <20190806213522.19859-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 05/59] clk: renesas: cpg-mssr: Fix reset control race condition
+Date:   Tue,  6 Aug 2019 17:32:25 -0400
+Message-Id: <20190806213319.19203-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806213522.19859-1-sashal@kernel.org>
-References: <20190806213522.19859-1-sashal@kernel.org>
+In-Reply-To: <20190806213319.19203-1-sashal@kernel.org>
+References: <20190806213319.19203-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -124,10 +124,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 14 deletions(-)
 
 diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index f4b013e9352d9..24485bee9b49e 100644
+index 0201809bbd377..9dfa28d6fd9f9 100644
 --- a/drivers/clk/renesas/renesas-cpg-mssr.c
 +++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -535,17 +535,11 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
+@@ -576,17 +576,11 @@ static int cpg_mssr_reset(struct reset_controller_dev *rcdev,
  	unsigned int reg = id / 32;
  	unsigned int bit = id % 32;
  	u32 bitmask = BIT(bit);
@@ -146,7 +146,7 @@ index f4b013e9352d9..24485bee9b49e 100644
  
  	/* Wait for at least one cycle of the RCLK clock (@ ca. 32 kHz) */
  	udelay(35);
-@@ -562,16 +556,10 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
+@@ -603,16 +597,10 @@ static int cpg_mssr_assert(struct reset_controller_dev *rcdev, unsigned long id)
  	unsigned int reg = id / 32;
  	unsigned int bit = id % 32;
  	u32 bitmask = BIT(bit);
