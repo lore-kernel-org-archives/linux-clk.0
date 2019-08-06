@@ -1,203 +1,217 @@
-Return-Path: <SRS0=R3Mk=WB=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=W3Yt=WC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF109C433FF
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 20:33:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240F2C0650F
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 02:25:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B136D2075B
-	for <linux-clk@archiver.kernel.org>; Mon,  5 Aug 2019 20:33:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7BD0208C3
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 02:25:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YQLqCyav";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="fesrASc4"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="aKUOjTvU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfHEUdw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 5 Aug 2019 16:33:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:40344 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727802AbfHEUdw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 5 Aug 2019 16:33:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 4652E608BA; Mon,  5 Aug 2019 20:33:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565037231;
-        bh=EQpwyTaZLqo/0FlVjz7BjVXvv2QX6kRf2rU72r3sSKo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=YQLqCyavrSjZaLIy9k/4zyq0wafVpMa/YcHH0w5NKJ44Ytg8bDOY58kWvRrOl8fqp
-         76TcWcbF0zcOP7k8YXppQ3x78Rfmse0uOMIXRQVgrs5b8s49CEZotZriRtJAfl3Ckn
-         IEeCghUFOPMhOuG0cUDRlmVClqRw4+u8PrOGwQpQ=
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 856C76076C;
-        Mon,  5 Aug 2019 20:33:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565037230;
-        bh=EQpwyTaZLqo/0FlVjz7BjVXvv2QX6kRf2rU72r3sSKo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=fesrASc4hlP33n5ROrTySwgZhfsOqs1BLFm2PzqvpylY3nuXOIM4/cVG/D6UnQN4Q
-         5+HdPtaul0xWvoIuDcQcXG0Ma6VxWlLqosZAhW/w9rM7CpS/TGltdX2bMOdDefx3HU
-         Lkai0x8Fbcr+21VATj1hmVGppBmM1sxgFKIdmS+s=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 856C76076C
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     freedreno@lists.freedesktop.org
-Cc:     linux-arm-msm@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-pm@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
-        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2] drivers: qcom: Add BCM vote macro to header
-Date:   Mon,  5 Aug 2019 14:33:46 -0600
-Message-Id: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
+        id S1731306AbfHFCZi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 5 Aug 2019 22:25:38 -0400
+Received: from mail-eopbgr140074.outbound.protection.outlook.com ([40.107.14.74]:37188
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731359AbfHFCZi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 5 Aug 2019 22:25:38 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=XNQ8gw6cFe5tYQkj1kqSAKXBg0vAG3A3k5CUstm6YQbRWnIfR8iTWkawlqCZ6bzAMioP6ONz7jH743pDVqSWnN4guvSRJopjWxIUdD+mfvFcrKIzsDWDD2yrhRbsB88KPdCQ0RvCxaahNH875vAiM6jXkoXd84dwokjI56KYqRd5FAsg+EU0Dn5Qx3YnzHTRfvWAcL3AXSN2aAnduBYyk8SReExjy0CF2LxT6xnFJRMHU8s46EA+18Jb3NujQjgkyBeLSlVACXFR0clPWX5+kd7obuz0ncAWc2RQ3kWzZ1C4/GSLWLVE+nDd9EC98zU2TVpwuGSqhc6urDgvyrj2bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ovoz7QUI1zlTeJ/pJJEIZ1FjPcxhUF9Ra7yBoH/3D0=;
+ b=ca2ywNs6Z3DzNwWgDIcHS55FLPGw7voHgg7iXvk/+YlR5UCrLeTra0HKkLxAA3jyDFGKunr0B3eiwO8uUnxvyAgWMKOjxUvxKbELe6mjy9KZpfmtjcu+HfkqaloYD/SmGvGGTmouhD1KBF4drrYcOuEPoFRW2/OxG/ivB9ccGzNlOI5znltAKlhN+M4ak0LJ8fi9odNqz7dxQolxeDgup+m+3Wdlq3/oCp6sKkcQSorgFtX5s1enPfQ80q9MSlgqQ47kQFAQOp2dXOP19e32V+5fnXuCt4k0HT9DHc7PiZWpru9JM1UPO7TE8F0MKgree1Gp1524UK1CY/hKTy+hjQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=nxp.com;dmarc=pass action=none header.from=nxp.com;dkim=pass
+ header.d=nxp.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4ovoz7QUI1zlTeJ/pJJEIZ1FjPcxhUF9Ra7yBoH/3D0=;
+ b=aKUOjTvUWThLqll4s1NJ/ewN54jwD36QMG9FMNNAcG7IH4R1LmIqyOntJF3hCE6KocJzfAe5zmSldXJfrC8SuJwRxQnqRVgXxzyJjnwmN5tB+plXXKcVi2vNhmoruV8M8kJGNSAyvTpx57H9768dmPQvszF7RUu1DowT4KQWppY=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3881.eurprd04.prod.outlook.com (52.134.73.28) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.16; Tue, 6 Aug 2019 02:25:31 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::7cdf:bddc:212c:f77e]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::7cdf:bddc:212c:f77e%4]) with mapi id 15.20.2136.018; Tue, 6 Aug 2019
+ 02:25:31 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "gustavo@embeddedor.com" <gustavo@embeddedor.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/2] clk: imx: disable i.mx7ulp composite clock during
+ initialization
+Thread-Topic: [PATCH 2/2] clk: imx: disable i.mx7ulp composite clock during
+ initialization
+Thread-Index: AQHU+yZqSSaC+SqMKEqyvy0FwIJdyKZNkJKAgIxln0CAFA6VYA==
+Date:   Tue, 6 Aug 2019 02:25:31 +0000
+Message-ID: <DB3PR0402MB3916F96CD6F3E874204E6972F5D50@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1556169264-31683-1-git-send-email-Anson.Huang@nxp.com>
+ <1556169264-31683-2-git-send-email-Anson.Huang@nxp.com>
+ <155623699177.15276.12577395377027956830@swboyd.mtv.corp.google.com>
+ <DB3PR0402MB39165F69F8B684D323C683B1F5C60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB39165F69F8B684D323C683B1F5C60@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 7a9c91f0-807a-4b42-41a9-08d71a155ae1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:DB3PR0402MB3881;
+x-ms-traffictypediagnostic: DB3PR0402MB3881:
+x-microsoft-antispam-prvs: <DB3PR0402MB38818E7C6F5880FC7706AE62F5D50@DB3PR0402MB3881.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:10000;
+x-forefront-prvs: 0121F24F22
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(4636009)(396003)(366004)(39860400002)(136003)(346002)(376002)(199004)(189003)(66446008)(71200400001)(71190400001)(186003)(52536014)(76116006)(74316002)(76176011)(6506007)(6436002)(55016002)(2501003)(7696005)(86362001)(66066001)(7416002)(26005)(6636002)(9686003)(53936002)(14454004)(81156014)(33656002)(110136005)(4326008)(8676002)(316002)(68736007)(102836004)(81166006)(5660300002)(44832011)(476003)(11346002)(446003)(486006)(2201001)(14444005)(6246003)(66556008)(64756008)(99286004)(256004)(6116002)(478600001)(229853002)(66476007)(7736002)(305945005)(3846002)(8936002)(66946007)(2906002)(25786009)(921003)(1121003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3881;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Gt9oyl9Fza2dkQw6RCsTth94RSCYbsBHFiAJ3clKvlS87Pgg6muRJbtLKR7exWMgjlBLD1A9rtgHa/c0gMbGcTQ4BJoZxNY7AVxx7lQ8LJRqqXBF5wyUbaT/KC37uXZOmH07CZk1rxM/FIIt3e4dz5n9za5qR4a66eSuVV69NArM7Iv9QpmP47Hhbuu8c6CQ5/IP4nS/4H2pBuGIAtZtmBQNXjIFRMvXQDDRdjzn+I4QEx+SwiZ1lGgrKD1GzvQCD9x6KZb+L9Nw0Bnf4gkpZgIKpj1O/kwn3aFtvgZvKvvjvcT1C5TIR2i0Qeuc84wpILmyMjPSaBthDqG9TcDnW/Dd0rZytDMn9DPNWACZ5hJIVEyreWVbkaGXEWsUK+up8dzy4ugYRCL6vmWlGk5rcjLBrm9JnXA8G0lu40FUhfc=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7a9c91f0-807a-4b42-41a9-08d71a155ae1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Aug 2019 02:25:31.6182
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: anson.huang@nxp.com
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3881
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The macro to generate a Bus Controller Manager (BCM) TCS command is used
-by the interconnect driver but might also be interesting to other
-drivers that need to construct TCS commands for sub processors so move
-it out of the sdm845 specific file and into the header.
-
-Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
----
-
-Changes in v2:
-- Replace a similar BCS_TCS_CMD macro in clk-rpmh.c with the generic one
-
- drivers/clk/qcom/clk-rpmh.c        | 16 +++-------------
- drivers/interconnect/qcom/sdm845.c | 19 +------------------
- include/soc/qcom/tcs.h             | 21 ++++++++++++++++++++-
- 3 files changed, 24 insertions(+), 32 deletions(-)
-
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index c3fd632..a32bfae 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
-  */
- 
- #include <linux/clk-provider.h>
-@@ -12,23 +12,13 @@
- #include <linux/platform_device.h>
- #include <soc/qcom/cmd-db.h>
- #include <soc/qcom/rpmh.h>
-+#include <soc/qcom/tcs.h>
- 
- #include <dt-bindings/clock/qcom,rpmh.h>
- 
- #define CLK_RPMH_ARC_EN_OFFSET		0
- #define CLK_RPMH_VRM_EN_OFFSET		4
- 
--#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
--#define BCM_TCS_CMD_VALID_SHIFT		29
--#define BCM_TCS_CMD_VOTE_MASK		0x3fff
--#define BCM_TCS_CMD_VOTE_SHIFT		0
--
--#define BCM_TCS_CMD(valid, vote)				\
--	(BCM_TCS_CMD_COMMIT_MASK |				\
--	((valid) << BCM_TCS_CMD_VALID_SHIFT) |			\
--	((vote & BCM_TCS_CMD_VOTE_MASK)				\
--	<< BCM_TCS_CMD_VOTE_SHIFT))
--
- /**
-  * struct bcm_db - Auxiliary data pertaining to each Bus Clock Manager(BCM)
-  * @unit: divisor used to convert Hz value to an RPMh msg
-@@ -269,7 +259,7 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
- 	}
- 
- 	cmd.addr = c->res_addr;
--	cmd.data = BCM_TCS_CMD(enable, cmd_state);
-+	cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
- 
- 	ret = rpmh_write_async(c->dev, RPMH_ACTIVE_ONLY_STATE, &cmd, 1);
- 	if (ret) {
-diff --git a/drivers/interconnect/qcom/sdm845.c b/drivers/interconnect/qcom/sdm845.c
-index 4915b78..2181170 100644
---- a/drivers/interconnect/qcom/sdm845.c
-+++ b/drivers/interconnect/qcom/sdm845.c
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * Copyright (c) 2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2018-2019, The Linux Foundation. All rights reserved.
-  *
-  */
- 
-@@ -20,23 +20,6 @@
- #include <soc/qcom/rpmh.h>
- #include <soc/qcom/tcs.h>
- 
--#define BCM_TCS_CMD_COMMIT_SHFT		30
--#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
--#define BCM_TCS_CMD_VALID_SHFT		29
--#define BCM_TCS_CMD_VALID_MASK		0x20000000
--#define BCM_TCS_CMD_VOTE_X_SHFT		14
--#define BCM_TCS_CMD_VOTE_MASK		0x3fff
--#define BCM_TCS_CMD_VOTE_Y_SHFT		0
--#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
--
--#define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
--	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
--	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
--	((cpu_to_le32(vote_x) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
--	((cpu_to_le32(vote_y) &					\
--	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
--
- #define to_qcom_provider(_provider) \
- 	container_of(_provider, struct qcom_icc_provider, provider)
- 
-diff --git a/include/soc/qcom/tcs.h b/include/soc/qcom/tcs.h
-index 262876a..dbf3c88 100644
---- a/include/soc/qcom/tcs.h
-+++ b/include/soc/qcom/tcs.h
-@@ -1,6 +1,6 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /*
-- * Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
-+ * Copyright (c) 2016-2019, The Linux Foundation. All rights reserved.
-  */
- 
- #ifndef __SOC_QCOM_TCS_H__
-@@ -53,4 +53,23 @@ struct tcs_request {
- 	struct tcs_cmd *cmds;
- };
- 
-+#define BCM_TCS_CMD_COMMIT_SHFT		30
-+#define BCM_TCS_CMD_COMMIT_MASK		0x40000000
-+#define BCM_TCS_CMD_VALID_SHFT		29
-+#define BCM_TCS_CMD_VALID_MASK		0x20000000
-+#define BCM_TCS_CMD_VOTE_X_SHFT		14
-+#define BCM_TCS_CMD_VOTE_MASK		0x3fff
-+#define BCM_TCS_CMD_VOTE_Y_SHFT		0
-+#define BCM_TCS_CMD_VOTE_Y_MASK		0xfffc000
-+
-+/* Construct a Bus Clock Manager (BCM) specific TCS command */
-+#define BCM_TCS_CMD(commit, valid, vote_x, vote_y)		\
-+	(((commit) << BCM_TCS_CMD_COMMIT_SHFT) |		\
-+	((valid) << BCM_TCS_CMD_VALID_SHFT) |			\
-+	((cpu_to_le32(vote_x) &					\
-+	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_X_SHFT) |	\
-+	((cpu_to_le32(vote_y) &					\
-+	BCM_TCS_CMD_VOTE_MASK) << BCM_TCS_CMD_VOTE_Y_SHFT))
-+
-+
- #endif /* __SOC_QCOM_TCS_H__ */
--- 
-2.7.4
-
+SGksIFN0ZXBoZW4NCglJIHRoaW5rIHdlIHNob3VsZCByZXN1bWUgdGhpcyB0aHJlYWQsIHdpdGhv
+dXQgdGhpcyBwYXRjaCwgbWFpbmxpbmUga2VybmVsIGJvb3QgdXAgd2lsbCBjYXVzZSBtbWMgdGlt
+ZW91dCBhbGwgdGhlIHRpbWUuIElmIGl0IGlzIE5PVCBnb29kIHRvIGRpc2FibGluZyB0aG9zZSBw
+ZXJpcGhlcmFsIGRldmljZXMnIGNsb2NrIGluIGkuTVg3VUxQJ3MgY2xvY2sgZHJpdmVyLCB0aGVu
+IHdlIGhhdmUgdG8gY2hhbmdlIHRoZSBjb3JlIGZyYW1ld29yayB0byBkaXNhYmxlIGNsb2NrIGV4
+cGxpY2l0bHkgaWYgdGhlIENMS19TRVRfUkFURV9HQVRFL0NMS19TRVRfUEFSRU5UX0dBVEUgaXMg
+cHJlc2VudCwgbW9zdCBsaWtlbHkgaXQgd2lsbCBpbXBhY3Qgb3RoZXIgcGxhdGZvcm1zIEkgdGhp
+bmssIHNvIHRoZSBtb3N0IHNhZmUgd2F5IGlzIGp1c3QgdG8gZG8gaXQgaW5zaWRlIG91ciBpLk1Y
+N1VMUCBjb21wb3NpdGUgY2xvY2sgZHJpdmVyLiBXaGF0IGRvIHlvdSB0aGluaz8NCg0KVGhhbmtz
+LA0KQW5zb24NCg0KPiBIaSwgU3RlcGhlbg0KPiANCj4gPiBRdW90aW5nIEFuc29uIEh1YW5nICgy
+MDE5LTA0LTI0IDIyOjE5OjEyKQ0KPiA+ID4gaS5NWDdVTFAgcGVyaXBoZXJhbCBjbG9jayBPTkxZ
+IGFsbG93IHBhcmVudC9yYXRlIHRvIGJlIGNoYW5nZWQgd2l0aA0KPiA+ID4gY2xvY2sgZ2F0ZWQs
+IGhvd2V2ZXIsIGR1cmluZyBjbG9jayB0cmVlIGluaXRpYWxpemF0aW9uLCB0aGUNCj4gPiA+IHBl
+cmlwaGVyYWwgY2xvY2sgY291bGQgYmUgZW5hYmxlZCBieSBib290bG9hZGVyLCBidXQgdGhlIHBy
+ZXBhcmUNCj4gPiA+IGNvdW50IGluIGNsb2NrIHRyZWUgaXMgc3RpbGwgemVybywgc28gY2xvY2sg
+Y29yZSBkcml2ZXIgd2lsbCBhbGxvdw0KPiA+ID4gcGFyZW50L3JhdGUgY2hhbmdlZCBldmVuIHdp
+dGgNCj4gQ0xLX1NFVF9SQVRFX0dBVEUvQ0xLX1NFVF9QQVJFTlRfR0FURQ0KPiA+DQo+ID4gVGhh
+dCdzIGEgYnVnLiBDYW4geW91IHNlbmQgYSBwYXRjaCB0byBmaXggdGhlIGNvcmUgZnJhbWV3b3Jr
+IGNvZGUgdG8NCj4gPiBmYWlsIGFuIGFzc2lnbmVkIHJhdGUgb3IgcGFyZW50IGNoYW5nZSBpZiB0
+aG9zZSBmbGFncyBhcmUgc2V0PyBPciBpcw0KPiA+IHRoYXQgYmVjYXVzZSB0aGUgY29yZSBkb2Vz
+bid0IHJlc3BlY3QgdGhlc2UgZmxhZ3Mgd2hlbiB0aGV5J3JlIGJ1cmllZA0KPiA+IGluIHRoZSBt
+aWRkbGUgb2YgdGhlIGNsayB0cmVlIGFuZCBzb21lIHJhdGUgb3IgcGFyZW50IGNoYW5nZSBjb21l
+cyBpbg0KPiA+IGFuZCBhZmZlY3RzIHRoZSBtaWRkbGUgb2YgdGhlIHRyZWUgdGhhdCBoYXMgdGhl
+IGZsYWcgc2V0IG9uIGl0Pw0KPiANCj4gSWYgY2hhbmdpbmcgdGhlIGNvcmUgZnJhbWV3b3JrIGNv
+ZGUgdG8gcmV0dXJuIGZhaWwgZm9yIGNsayBwYXJlbnQvcmF0ZQ0KPiBhc3NpZ25tZW50LCB0aGF0
+IG1lYW5zIGNsayBhc3NpZ25tZW50IGluIERUIHdpbGwgTk9UIHdvcmsgZm9yIGkuTVg3VUxQLA0K
+PiB0aGVuIGFsbCB0aGUgY2xrIHJhdGUvcGFyZW50IHNldHRpbmdzIHdpbGwgYmUgZG9uZSBpbiBk
+cml2ZXI/IFRoYXQgd2lsbCBsZWFkIHRvDQo+IG1vcmUgaXNzdWVzL2NoYW5nZXMuDQo+IA0KPiBJ
+dCBpcyBqdXN0IGJlY2F1c2UgY29yZSBmcmFtZXdvcmsgT05MWSBjaGVja3MgdGhlIHByZXBhcmVf
+Y291bnQgYW5kDQo+IENMS19TRVRfUEFSRU5UX0dBVEUgZmxhZyB0byBkZXRlcm1pbmUgaWYgdGhl
+IHBhcmVudCBzd2l0Y2ggaXMgYWxsb3dlZCwNCj4gaG93ZXZlciwgZHVyaW5nIGNsb2NrIHRyZWUg
+aW5pdGlhbGl6YXRpb24sIHRoZSBwcmVwYXJlX2NvdW50IGlzIGFsd2F5cyAwIGJ1dA0KPiB0aGUg
+SFcgc3RhdHVzIGNvdWxkIGJlIGVuYWJsZWQgYWN0dWFsbHksIHNvIHRoZSBjb3JlIGZyYW1ld29y
+ayB3aWxsIGFsbG93DQo+IHRoZSBwYXJlbnQgc3dpdGNoIHdoaWxlIEhXIHN0YXR1cyBkb2VzIE5P
+VCBhbGxvdyB0aGUgcGFyZW50IHN3aXRjaCwgc28gY29yZQ0KPiBmcmFtZXdvcmsgd2lsbCB0cmVh
+dCB0aGUgcGFyZW50IHN3aXRjaCBzdWNjZXNzZnVsbHkgYnV0IEhXIGlzIGFjdHVhbGx5IE5PVC4N
+Cj4gDQo+IEkgdGhpbmsgd2UgY2FuIHRyZWF0IGl0IGFzIHBsYXRmb3JtIHNwZWNpZmljIGlzc3Vl
+LCBpZiBib290bG9hZGVyIGNhbiBndWFyYW50ZWUNCj4gYWxsIHBlcmlwaGVyYWwgY2xvY2tzIGFy
+ZSBkaXNhYmxlZCBiZWZvcmUganVtcGluZyB0byBrZXJuZWwsIHRoZW4gdGhlcmUgd2lsbCBiZQ0K
+PiBubyBpc3N1ZSwgYnV0IHdlIGNhbiBOT1QgYXNzdW1lIHRoYXQsIHNvIEkgaGF2ZSB0byBmaW5k
+IHNvbWUgcGxhY2UgaW4gZWFybHkNCj4ga2VybmVsIHBoYXNlIHRvIGRpc2FibGUgdGhvc2UgcGVy
+aXBoZXJhbCBjbG9ja3MuDQo+IA0KPiA+DQo+ID4gPiBzZXQsIGJ1dCB0aGUgY2hhbmdlIHdpbGwg
+ZmFpbCBkdWUgdG8gSFcgTk9UIGFsbG93IHBhcmVudC9yYXRlIGNoYW5nZQ0KPiA+ID4gd2l0aCBj
+bG9jayBlbmFibGVkLiBJdCB3aWxsIGNhdXNlIGNsb2NrIEhXIHN0YXR1cyBtaXNtYXRjaCB3aXRo
+DQo+ID4gPiBjbG9jayB0cmVlIGluZm8gYW5kIGxlYWQgdG8gZnVuY3Rpb24gaXNzdWUuIEJlbG93
+IGlzIGFuIGV4YW1wbGU6DQo+ID4gPg0KPiA+ID4gdXNkaGMwJ3MgcGNjIGNsb2NrIHZhbHVlIGlz
+IDB4QzUwMDAwMDAgZHVyaW5nIGtlcm5lbCBib290IHVwLCBpdA0KPiA+ID4gbWVhbnMNCj4gPiA+
+IHVzZGhjMCBjbG9jayBpcyBlbmFibGVkLCBpdHMgcGFyZW50IGlzIEFQTExfUEZEMS4gSW4gRFQg
+ZmlsZSwgdGhlDQo+ID4gPiB1c2RoYzAgY2xvY2sgc2V0dGluZ3MgYXJlIGFzIGJlbG93Og0KPiA+
+ID4NCj4gPiA+IGFzc2lnbmVkLWNsb2NrcyA9IDwmcGNjMiBJTVg3VUxQX0NMS19VU0RIQzA+OyBh
+c3NpZ25lZC1jbG9jay1wYXJlbnRzDQo+ID4gPiA9DQo+ID4gPiA8JnNjZzEgSU1YN1VMUF9DTEtf
+TklDMV9ESVY+Ow0KPiA+ID4NCj4gPiA+IHdoZW4ga2VybmVsIGJvb3QgdXAsIHRoZSBjbG9jayB0
+cmVlIGluZm8gaXMgYXMgYmVsb3csIGJ1dCB0aGUgdXNkaGMwDQo+ID4gPiBQQ0MgcmVnaXN0ZXIg
+aXMgc3RpbGwgMHhDNTAwMDAwMCwgd2hpY2ggbWVhbnMgaXRzIHBhcmVudCBpcyBzdGlsbA0KPiA+
+ID4gZnJvbSBBUExMX1BGRDEsIHdoaWNoIGlzIGluY29ycmVjdCBhbmQgY2F1c2UgdXNkaGMwIE5P
+VCB3b3JrLg0KPiA+ID4NCj4gPiA+IG5pYzFfY2xrICAgICAgIDIgICAgICAgIDIgICAgICAgIDAg
+ICAxNzYwMDAwMDAgICAgICAgICAgMCAgICAgMCAgNTAwMDANCj4gPiA+ICAgICB1c2RoYzAgICAg
+ICAgMCAgICAgICAgMCAgICAgICAgMCAgIDE3NjAwMDAwMCAgICAgICAgICAwICAgICAwICA1MDAw
+MA0KPiA+ID4NCj4gPiA+IEFmdGVyIG1ha2luZyBzdXJlIHRoZSBwZXJpcGhlcmFsIGNsb2NrIGlz
+IGRpc2FibGVkIGR1cmluZyBjbG9jayB0cmVlDQo+ID4gPiBpbml0aWFsaXphdGlvbiwgdGhlIHVz
+ZGhjMCBpcyB3b3JraW5nLCBhbmQgdGhpcyBjaGFuZ2UgaXMgbmVjZXNzYXJ5DQo+ID4gPiBmb3Ig
+YWxsIGkuTVg3VUxQIHBlcmlwaGVyYWwgY2xvY2tzLg0KPiA+ID4NCj4gPiA+IFNpZ25lZC1vZmYt
+Ynk6IEFuc29uIEh1YW5nIDxBbnNvbi5IdWFuZ0BueHAuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAg
+ZHJpdmVycy9jbGsvaW14L2Nsay1jb21wb3NpdGUtN3VscC5jIHwgMTMgKysrKysrKysrKysrKw0K
+PiA+ID4gIDEgZmlsZSBjaGFuZ2VkLCAxMyBpbnNlcnRpb25zKCspDQo+ID4gPg0KPiA+ID4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2lteC9jbGstY29tcG9zaXRlLTd1bHAuYw0KPiA+ID4gYi9k
+cml2ZXJzL2Nsay9pbXgvY2xrLWNvbXBvc2l0ZS03dWxwLmMNCj4gPiA+IGluZGV4IDA2MGY4NjAu
+LjFhMDU0MTEgMTAwNjQ0DQo+ID4gPiAtLS0gYS9kcml2ZXJzL2Nsay9pbXgvY2xrLWNvbXBvc2l0
+ZS03dWxwLmMNCj4gPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstY29tcG9zaXRlLTd1bHAu
+Yw0KPiA+ID4gQEAgLTMyLDYgKzMyLDcgQEAgc3RydWN0IGNsa19odyAqaW14N3VscF9jbGtfY29t
+cG9zaXRlKGNvbnN0IGNoYXINCj4gPiAqbmFtZSwNCj4gPiA+ICAgICAgICAgc3RydWN0IGNsa19n
+YXRlICpnYXRlID0gTlVMTDsNCj4gPiA+ICAgICAgICAgc3RydWN0IGNsa19tdXggKm11eCA9IE5V
+TEw7DQo+ID4gPiAgICAgICAgIHN0cnVjdCBjbGtfaHcgKmh3Ow0KPiA+ID4gKyAgICAgICB1MzIg
+dmFsOw0KPiA+ID4NCj4gPiA+ICAgICAgICAgaWYgKG11eF9wcmVzZW50KSB7DQo+ID4gPiAgICAg
+ICAgICAgICAgICAgbXV4ID0ga3phbGxvYyhzaXplb2YoKm11eCksIEdGUF9LRVJORUwpOyBAQCAt
+NzAsNg0KPiA+ID4gKzcxLDE4IEBAIHN0cnVjdCBjbGtfaHcgKmlteDd1bHBfY2xrX2NvbXBvc2l0
+ZShjb25zdCBjaGFyICpuYW1lLA0KPiA+ID4gICAgICAgICAgICAgICAgIGdhdGVfaHcgPSAmZ2F0
+ZS0+aHc7DQo+ID4gPiAgICAgICAgICAgICAgICAgZ2F0ZS0+cmVnID0gcmVnOw0KPiA+ID4gICAg
+ICAgICAgICAgICAgIGdhdGUtPmJpdF9pZHggPSBQQ0dfQ0dDX1NISUZUOw0KPiA+ID4gKyAgICAg
+ICAgICAgICAgIC8qDQo+ID4gPiArICAgICAgICAgICAgICAgICogbWFrZSBzdXJlIGNsb2NrIGlz
+IGdhdGVkIGR1cmluZyBjbG9jayB0cmVlIGluaXRpYWxpemF0aW9uLA0KPiA+ID4gKyAgICAgICAg
+ICAgICAgICAqIHRoZSBIVyBPTkxZIGFsbG93IGNsb2NrIHBhcmVudC9yYXRlIGNoYW5nZWQgd2l0
+aCBjbG9jaw0KPiBnYXRlZCwNCj4gPiA+ICsgICAgICAgICAgICAgICAgKiBkdXJpbmcgY2xvY2sg
+dHJlZSBpbml0aWFsaXphdGlvbiwgY2xvY2tzIGNvdWxkIGJlIGVuYWJsZWQNCj4gPiA+ICsgICAg
+ICAgICAgICAgICAgKiBieSBib290bG9hZGVyLCBzbyB0aGUgSFcgc3RhdHVzIHdpbGwgbWlzbWF0
+Y2ggd2l0aCBjbG9jayB0cmVlDQo+ID4gPiArICAgICAgICAgICAgICAgICogcHJlcGFyZSBjb3Vu
+dCwgdGhlbiBjbG9jayBjb3JlIGRyaXZlciB3aWxsIGFsbG93IHBhcmVudC9yYXRlDQo+ID4gPiAr
+ICAgICAgICAgICAgICAgICogY2hhbmdlIHNpbmNlIHRoZSBwcmVwYXJlIGNvdW50IGlzIHplcm8s
+IGJ1dCBIVyBhY3R1YWxseQ0KPiA+ID4gKyAgICAgICAgICAgICAgICAqIHByZXZlbnQgdGhlIHBh
+cmVudC9yYXRlIGNoYW5nZSBkdWUgdG8gdGhlIGNsb2NrIGlzIGVuYWJsZWQuDQo+ID4gPiArICAg
+ICAgICAgICAgICAgICovDQo+ID4NCj4gPiBJcyBpdCBPSyB0byBmb3JjaWJseSBnYXRlIHRoZSBj
+bGsgbGlrZSB0aGlzIGF0IGluaXQgdGltZT8gSWYgc28sIHdoeQ0KPiA+IGNhbid0IHdlIGZvcmNl
+IHRoZSBjbGsgb2ZmIHdoZW4gd2UgY2hhbmdlIHRoZSByYXRlIGFuZCB0aGVuIHJlc3RvcmUNCj4g
+PiB0aGUgb24gc3RhdGUgYWZ0ZXIgY2hhbmdpbmcgdGhlIHJhdGU/IFRoYXQgd291bGQgYmUgbW9y
+ZSAicm9idXN0IiB0aGFuDQo+ID4gZG9pbmcgaXQgb25jZSBoZXJlLiBQbHVzIHRoZW4gd2UgY291
+bGQgcmVtb3ZlIHRoZSBDTEtfU0VUX1JBVEVfR0FURQ0KPiBmbGFnLg0KPiANCj4gWWVzLCBpdCBp
+cyBPTkxZIGZvciBjb21wb3NpdGUgY2xvY2tzIHdoaWNoIGFyZSBmb3IgcGVyaXBoZXJhbCBjbG9j
+a3MsIE9OTFkNCj4gZWFybHljb24gY291bGQgYmUgaW1wYWN0ZWQgYnV0IHdlIGNhbiBhZGQgaW14
+X3JlZ2lzdGVyX3VhcnRfY2xvY2tzKCkgY2FsbCB0bw0KPiBtYWtlIGVhcmx5Y29uIGFsc28gd29y
+ay4NCj4gDQo+IEZvcmNpbmcgdGhlIGNsayBvZmYgYW5kIHJlc3RvcmUgdGhlbSBPTiBmb3IgcmF0
+ZS9wYXJlbnQgY2hhbmdlIHdpbGwgbmVlZCB0bw0KPiBjaGFuZ2UgY29tbW9uIGNvbXBvc2l0ZSBj
+bG9jayBvcHMsIGN1cnJlbnRseSBpLk1YN1VMUCBhbGwgdXNlIGNvbW1vbg0KPiBvcHMsIHNvIHVu
+bGVzcyBpLk1YN1VMUCBpbXBsZW1lbnRzIGNvbXBvc2l0ZSBjbG9jayBvcHMsIGFuZCB0aGUgY2hh
+bmdlDQo+IHdpbGwgYmUgdmVyeSBzaWduaWZpY2FudC4NCj4gDQo+IFRoYW5rcywNCj4gQW5zb24N
+Cj4gDQo+ID4NCj4gPiA+ICsgICAgICAgICAgICAgICB2YWwgPSByZWFkbF9yZWxheGVkKHJlZyk7
+DQo+ID4gPiArICAgICAgICAgICAgICAgdmFsICY9IH4oMSA8PCBQQ0dfQ0dDX1NISUZUKTsNCj4g
+PiA+ICsgICAgICAgICAgICAgICB3cml0ZWxfcmVsYXhlZCh2YWwsIHJlZyk7DQo+ID4gPiAgICAg
+ICAgIH0NCj4gPiA+DQo=
