@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A28C31E40
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6700C433FF
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8832189E
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:33:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BBF621872
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 21:35:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565127206;
-	bh=4GU5q7MsdvdvSTWnNddo6ZLGYrzNXvh0owCnGABhq1o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0Q9dPjdMKem85i1MaFg6xEVkSpnVk2ie/zeQYtAohvYChD1QsH+iH7rlKKXgX+B5x
-	 Sf6PPXeMHo1PERcVGsXQixdsKUQDwfh+IWdDWMCl5hBhrCi/6zAhY5qegx4iestdYQ
-	 dxHsZMxoFJBIz1jnAmONlLEQU3CoQT3gCr/rbtwM=
+	s=default; t=1565127327;
+	bh=DQdXSQ4X7DbgcH47Q4hpV8D3kwoEFSWaAT50oKzYm0g=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=ezwbsZpe3/u2G/SBBbCZnhzry6rDZKkktTvT2uhMjcFj5MXJHmxmxpwHtN/tbRpXY
+	 /fEqQr66IaCWANIR4emOlo/L20UPVxkyX0xMlUm+buynw1VzoaC3rqkVbx8hWf/ZpL
+	 VR3ReyRrdtirUucHDnytRhqnarO9DloRc6KV0I6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfHFVd0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Aug 2019 17:33:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51158 "EHLO mail.kernel.org"
+        id S1728456AbfHFVf0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Aug 2019 17:35:26 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726822AbfHFVdZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 6 Aug 2019 17:33:25 -0400
+        id S1727321AbfHFVfZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 6 Aug 2019 17:35:25 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 32A87216F4;
-        Tue,  6 Aug 2019 21:33:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7E002089E;
+        Tue,  6 Aug 2019 21:35:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565127204;
-        bh=4GU5q7MsdvdvSTWnNddo6ZLGYrzNXvh0owCnGABhq1o=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DPcsjfFf7Sqs7A/7jzo+jz8h4bfLoIMDBsfVVtlRiLPP89RcILcavdBB8K4BaKlvd
-         6Eo5SdSthsrmBF0RGyJdGcuFCMHMk56TEYKm9zFb1tkgkzTnQwxIedIwFWNliniY1X
-         Brx1ohFdOOkaaahGLccnL7moWCXIPvz7QIWcdDi4=
+        s=default; t=1565127324;
+        bh=DQdXSQ4X7DbgcH47Q4hpV8D3kwoEFSWaAT50oKzYm0g=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ROeYcGBEApysa4cK44kwK/wrda/Hg2GjSHI7CYrMChFerlmbYcHWEtfs6Lztq4t0o
+         9iEcfe6n0Cx7+/iQZCkEBLQZl5vrMtrjMmYP4c19mtpyU02jqkKMOT04SKyHFQrSlJ
+         0658CgBXsB/nFOwfySs9CeEZ3JbTB49F5Jm6zvYA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
@@ -45,12 +45,10 @@ Cc:     Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
         Ludovic Desroches <ludovic.desroches@microchip.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 03/59] clk: at91: generated: Truncate divisor to GENERATED_MAX_DIV + 1
-Date:   Tue,  6 Aug 2019 17:32:23 -0400
-Message-Id: <20190806213319.19203-3-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 01/32] clk: at91: generated: Truncate divisor to GENERATED_MAX_DIV + 1
+Date:   Tue,  6 Aug 2019 17:34:49 -0400
+Message-Id: <20190806213522.19859-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190806213319.19203-1-sashal@kernel.org>
-References: <20190806213319.19203-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -81,10 +79,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+)
 
 diff --git a/drivers/clk/at91/clk-generated.c b/drivers/clk/at91/clk-generated.c
-index 44db83a6d01c2..44a46dcc0518b 100644
+index 33481368740e7..113152425a95d 100644
 --- a/drivers/clk/at91/clk-generated.c
 +++ b/drivers/clk/at91/clk-generated.c
-@@ -141,6 +141,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
+@@ -153,6 +153,8 @@ static int clk_generated_determine_rate(struct clk_hw *hw,
  			continue;
  
  		div = DIV_ROUND_CLOSEST(parent_rate, req->rate);
