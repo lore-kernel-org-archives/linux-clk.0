@@ -2,83 +2,195 @@ Return-Path: <SRS0=W3Yt=WC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D46AC31E40
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 12:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77FBAC31E40
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 18:00:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C98632075B
-	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 12:53:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45681216B7
+	for <linux-clk@archiver.kernel.org>; Tue,  6 Aug 2019 18:00:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UdhpRIRR"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IzSuLQwk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728560AbfHFMxc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 6 Aug 2019 08:53:32 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:32951 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730222AbfHFMxc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Aug 2019 08:53:32 -0400
-Received: by mail-lj1-f195.google.com with SMTP id h10so10691277ljg.0
-        for <linux-clk@vger.kernel.org>; Tue, 06 Aug 2019 05:53:30 -0700 (PDT)
+        id S1731516AbfHFSAG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 6 Aug 2019 14:00:06 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:45198 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726713AbfHFSAG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 6 Aug 2019 14:00:06 -0400
+Received: by mail-wr1-f66.google.com with SMTP id n1so2481367wrw.12;
+        Tue, 06 Aug 2019 11:00:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HV09zpybfsy+I3fJbUAkGtQHbBc426YvIl5qaG1i4W8=;
-        b=UdhpRIRR6fzwMx5vTEcn6+DpO3eK9AAXv6NwTfA6CFtU3xyvOCvIF4CXm8tI2TXq6E
-         WKjFc2iD924G2t4KLDnsoxrM+jIpeTWzQ2cVE8806JarIISiphInjI1X7l6q7bzAqVR0
-         pJgeyJGBXtIpRzVkRR6F3HcR6MWu1gxNr6KQjt/xOz0vuz4bv+jRS3IMFEZXfeLIStnF
-         +HBhqcC9lNQZ9iluPad7URnLDNVqhUGyr3/2vT7QWrCBQOrDUMJcKc9w2hEk0obE8N3E
-         1WaZ30vDiQ6jmpBcRei9cVbMaGfgmuy/GgORwI3MsvAt5Iip7iGHzJfY5+AHhPJBWZBz
-         xy6A==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H5oxnh6AO2iA8nJMA3gm0i0KrEK2AnvYtvfzFwUa/VE=;
+        b=IzSuLQwki0yPJVH+d2Lbq4S+g4ZX2atTnbAvcpq0wE42xwkMJXiMqPeaS+r8xL/eJR
+         yYnjYN4vJkH3QaoGEegtr4CskAhmGEEJlNnan2gZeaJ/3x8JtuBMJNuNfrSBD+PS0WVE
+         1DbHnAkhJcKPjfpoprfD9f9K469CSmuGORfCOxkyIbCXql6IgsdNXiwySWIQSfdJser5
+         VjDTtVoAhWsxRu4uYcGxs9xZolHRtAkdOq2IXCzk2//Zv+7Oy8EzDl2EUB/iwXGh5PWK
+         /7jCtQ56iS/RLwsu/+GtzMSMZ8vkSSukriVez8SsXpLnO+CZ4zq5Gr82na4GPtZGD89d
+         5oXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HV09zpybfsy+I3fJbUAkGtQHbBc426YvIl5qaG1i4W8=;
-        b=HdgsdLsgOGNAPxwRyn+C0LbIEAYQWhPz+PhZOSNu7r6q1rzFJXt4NZFJqjViqaHctc
-         F8sSLNI+puEac0OtvwQ7hK67egRalPf/3yZNRR1xbrprRPs63qVlIQBAPA8tdFHObTqA
-         K5HCaWcDpKX0UerMVGcJoAl/kOnrNoMiqTQHnTpxFKBrvJZ18HDB7SkhSZ73+/tS8r8M
-         9otUpBj1HAHAYSX3SlECyk5dTA3RG+wSi2h7JsNIILrECmUXzL6i3H5ZVbI1LOsFiWHu
-         lPoWR9QKq9AK+xennk7q/eDbEX8+Aqqaj6KNYDUQX01qfHIxqrCGmQAVkFfUvwAImDB9
-         v68A==
-X-Gm-Message-State: APjAAAWhJgQ/cqE+1EP4/NTTYdTVDFsv1rOK5H7KMy///OktTiz5w3RW
-        dikTJbJmf+IBYSxpxWShgjYo6JS87suzU86W9A2S6A==
-X-Google-Smtp-Source: APXvYqwzjP8TFgqBE05qT9MDh1E1Lu5UcaY925WA0Nnx9/LH4CPLcq4VNPSmnGg+FJerwiR/lYW3/QuHn0NqhSYf/tU=
-X-Received: by 2002:a2e:8195:: with SMTP id e21mr1636402ljg.62.1565096010210;
- Tue, 06 Aug 2019 05:53:30 -0700 (PDT)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H5oxnh6AO2iA8nJMA3gm0i0KrEK2AnvYtvfzFwUa/VE=;
+        b=p+85ICzLfBQzknBS85lr/c50S5gA98FUcJyYeji6zmVSOhbyHKuQSiPcdoG4+hGt+L
+         Jvlj6VQT/fj8BCHCgpFa/1lyqx6AiNbT3R2oS2e9tIdFNWu5yRMrUqHbvVihh00oQovB
+         7yPFQDAiqqeRegiiu3eUD8pdNPSl6rN3KTQiVC5On2l8bf7UtnD6Z4p9sWzQHesiuhFd
+         Bq8JyZVbUyuVrcu1M9VGFqEgQLU665hdXqX66SBvhkJ8MRzKCusL7MNK1DahUswDXD0g
+         dzz63/GaX64fTjzbktQnQ6aZAIaCLAmI86nBYrhvI5Xojmf0vcbIdwSoc0lPo1DqPHC1
+         9DDw==
+X-Gm-Message-State: APjAAAVvhjB0LMgS4wUSYsebp96HT5DTJ9usjaAdd4yQb6DdmaeRYM8h
+        l1Ik/950SbLzLJm5Qjf3yoJOSMUy
+X-Google-Smtp-Source: APXvYqwjSklAKmvrxBm7vAtY5yV+LjCxCE5435J3gWbWBlaR4/GMOjfR3ZIimhrfsVDAPcavz8+urg==
+X-Received: by 2002:adf:dd01:: with SMTP id a1mr5755415wrm.12.1565114403275;
+        Tue, 06 Aug 2019 11:00:03 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.218])
+        by smtp.googlemail.com with ESMTPSA id k9sm22855190wrd.46.2019.08.06.11.00.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 06 Aug 2019 11:00:02 -0700 (PDT)
+Subject: Re: [PATCH v7 01/20] pinctrl: tegra: Add suspend and resume support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+References: <1564607463-28802-1-git-send-email-skomatineni@nvidia.com>
+ <1564607463-28802-2-git-send-email-skomatineni@nvidia.com>
+ <6b1482f6-0578-f602-d8d1-541d86303ce2@gmail.com>
+ <b45ca99a-188a-c695-3f3d-48d273808f9c@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <36351140-afd4-38c4-3722-4ee0894287fa@gmail.com>
+Date:   Tue, 6 Aug 2019 20:59:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190804163445.6862-1-nishkadg.linux@gmail.com>
-In-Reply-To: <20190804163445.6862-1-nishkadg.linux@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 6 Aug 2019 14:53:19 +0200
-Message-ID: <CACRpkdZCE3nXaF9MK_VTpvyrADqhF1oVta649rUzMb9O57XVYw@mail.gmail.com>
-Subject: Re: [PATCH] clk: versatile: Add of_node_put() in cm_osc_setup()
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b45ca99a-188a-c695-3f3d-48d273808f9c@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Aug 4, 2019 at 6:34 PM Nishka Dasgupta <nishkadg.linux@gmail.com> wrote:
+05.08.2019 21:06, Sowjanya Komatineni пишет:
+> 
+> On 8/5/19 3:50 AM, Dmitry Osipenko wrote:
+>> 01.08.2019 0:10, Sowjanya Komatineni пишет:
+>>> This patch adds support for Tegra pinctrl driver suspend and resume.
+>>>
+>>> During suspend, context of all pinctrl registers are stored and
+>>> on resume they are all restored to have all the pinmux and pad
+>>> configuration for normal operation.
+>>>
+>>> Acked-by: Thierry Reding <treding@nvidia.com>
+>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.c | 59
+>>> +++++++++++++++++++++++++++++++++++
+>>>   drivers/pinctrl/tegra/pinctrl-tegra.h |  3 ++
+>>>   2 files changed, 62 insertions(+)
+>>>
+>>> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> index 186ef98e7b2b..e3a237534281 100644
+>>> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
+>>> @@ -631,6 +631,58 @@ static void
+>>> tegra_pinctrl_clear_parked_bits(struct tegra_pmx *pmx)
+>>>       }
+>>>   }
+>>>   +static size_t tegra_pinctrl_get_bank_size(struct device *dev,
+>>> +                      unsigned int bank_id)
+>>> +{
+>>> +    struct platform_device *pdev = to_platform_device(dev);
+>>> +    struct resource *res;
+>>> +
+>>> +    res = platform_get_resource(pdev, IORESOURCE_MEM, bank_id);
+>>> +
+>>> +    return resource_size(res) / 4;
+>>> +}
+>>> +
+>>> +static int tegra_pinctrl_suspend(struct device *dev)
+>>> +{
+>>> +    struct tegra_pmx *pmx = dev_get_drvdata(dev);
+>>> +    u32 *backup_regs = pmx->backup_regs;
+>>> +    u32 *regs;
+>>> +    size_t bank_size;
+>>> +    unsigned int i, k;
+>>> +
+>>> +    for (i = 0; i < pmx->nbanks; i++) {
+>>> +        bank_size = tegra_pinctrl_get_bank_size(dev, i);
+>>> +        regs = pmx->regs[i];
+>>> +        for (k = 0; k < bank_size; k++)
+>>> +            *backup_regs++ = readl_relaxed(regs++);
+>>> +    }
+>>> +
+>>> +    return pinctrl_force_sleep(pmx->pctl);
+>>> +}
+>>> +
+>>> +static int tegra_pinctrl_resume(struct device *dev)
+>>> +{
+>>> +    struct tegra_pmx *pmx = dev_get_drvdata(dev);
+>>> +    u32 *backup_regs = pmx->backup_regs;
+>>> +    u32 *regs;
+>>> +    size_t bank_size;
+>>> +    unsigned int i, k;
+>>> +
+>>> +    for (i = 0; i < pmx->nbanks; i++) {
+>>> +        bank_size = tegra_pinctrl_get_bank_size(dev, i);
+>>> +        regs = pmx->regs[i];
+>>> +        for (k = 0; k < bank_size; k++)
+>>> +            writel_relaxed(*backup_regs++, regs++);
+>>> +    }
+>> I'm now curious whether any kind of barrier is needed after the
+>> writings. The pmx_writel() doesn't insert a barrier after the write and
+>> seems it just misuses writel, which actually should be writel_relaxed()
+>> + barrier, IIUC.
+> 
+> pmx_writel uses writel and it has wmb before raw_write which complete
+> all writes initiated prior to this.
+> 
+> By misusing writel, you mean to have barrier after register write?
 
-> In function cm_osc_setup, variable parent takes the value returned by
-> of_get_parent, which gets a node but does not put it. If parent is not
-> put before it goes out of scope, it may cause a memory leak.
-> Hence put parent before the function terminates.
-> Issue found with Coccinelle.
->
-> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+Yes, at least to me it doesn't make much sense for this driver to stall
+before the write. It's the pinctrl user which should be taking care
+about everything to be ready before making a change to the pinctrl's
+configuration.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+>> It's also not obvious whether PINCTRL HW has any kind of write-FIFO and
+>> thus maybe read-back + rmb() is needed in order ensure that writes are
+>> actually completed.
+> I believe adding write barrier wmb after writel_relaxed should be good
+> rather than doing readback + rmb
+>>
+>> The last thing which is not obvious is when the new configuration
+>> actually takes into effect, does it happen immediately or maybe some
+>> delay is needed?
+>>
+>> [snip]
+> 
+> Based on internal design there is no internal delay and it all depends
+> on APB rate that it takes to write to register.
+> 
+> Pinmux value change to reflect internally might take couple of clock
+> cycles which is much faster than SW can read.
 
-Yours,
-Linus Walleij
+Still not quite obvious if it's possible to have a case where some
+hardware is touched before necessary pinctrl change is fully completed
+and then to get into trouble because of it.
