@@ -2,114 +2,81 @@ Return-Path: <SRS0=sie6=WD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C60C433FF
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 22:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD96C433FF
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F272171F
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 22:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8ABC2173C
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:28:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="QPdOL3TH"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="fD55OoxL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729960AbfHGW5D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Aug 2019 18:57:03 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:36146 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729934AbfHGW5D (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Aug 2019 18:57:03 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x77MuxQT071522;
-        Wed, 7 Aug 2019 17:56:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565218619;
-        bh=vBqecGmGLXrk1xJPdBNtDgOsDujQPp1amdCZD9wkXp0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=QPdOL3THUYlGpN/WjkjqRyKy2pNUESv3GUgWevWxV5u87FMIHnVbGD5CMOyyA/scY
-         +NL5gqBY4lW8kYpBdwYKZknE9iF8JVNlFGPY19gjDo8Bv+i1mgy+3jBUVNYRXsdKBn
-         noWnHdRVcFyBAFi01vaVhrCZe/ooFowYalqiN5+M=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x77MuxZv112414
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 7 Aug 2019 17:56:59 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 7 Aug
- 2019 17:56:59 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 7 Aug 2019 17:56:59 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x77Muxfp119836;
-        Wed, 7 Aug 2019 17:56:59 -0500
-Subject: Re: [PATCH 3/3] clk: ti: dra7xx: add timer_sys_ck clock alias
-To:     Tero Kristo <t-kristo@ti.com>, <linux-clk@vger.kernel.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>
-References: <1565183079-27798-1-git-send-email-t-kristo@ti.com>
- <1565183079-27798-4-git-send-email-t-kristo@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <9d0edab4-cae2-50d5-2df9-42c879f2623f@ti.com>
-Date:   Wed, 7 Aug 2019 17:56:59 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S2388461AbfHGX2Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Aug 2019 19:28:16 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:53100 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729960AbfHGX2Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 7 Aug 2019 19:28:16 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1565220494; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=wfQ9BqFAq8e3E9UBKWqWbxCELoLpoolgTNWK+UTm9tA=;
+        b=fD55OoxLQDoAKvLrIU1X1slVdUZsoj2zhtbRRO4OqU+EF5hVsmnJQ0BYZfdZVn73M/UjLa
+        wl8p/jOHVCICUEDD7dbx6WtmOkhrImAxARiTH3z6TqfDryNLUitwG0aQyoaep7uhGIHOq8
+        3ACVINufhw+oNhs+ZJTT8joq8GT+MLQ=
+Date:   Thu, 08 Aug 2019 01:28:10 +0200
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] clk: ingenic/jz4740: Fix "pll half" divider not
+ read/written properly
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <1565220490.15188.0@crapouillou.net>
+In-Reply-To: <20190807213358.A62002186A@mail.kernel.org>
+References: <20190701113606.4130-1-paul@crapouillou.net>
+        <20190807213358.A62002186A@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <1565183079-27798-4-git-send-email-t-kristo@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Tero,
 
-On 8/7/19 8:04 AM, Tero Kristo wrote:
-> This is needed by the TI DM timer driver.
 
-Again can do with some better patch descriptions. Similar to the
-previous patch, missing the equivalent patches for OMAP4 and OMAP5.
-You can use my downstream patches for these - [1][2][3] that has all the
-needed Fixes by details. Only difference is that you used a single line
-change on DRA7, and this should suffice since all the sources are same,
-but OMAP4 and OMAP5 needed different ones.
+Le mer. 7 ao=FBt 2019 =E0 23:33, Stephen Boyd <sboyd@kernel.org> a =E9crit=20
+:
+> Quoting Paul Cercueil (2019-07-01 04:36:06)
+>>  The code was setting the bit 21 of the CPCCR register to use a=20
+>> divider
+>>  of 2 for the "pll half" clock, and clearing the bit to use a divider
+>>  of 1.
+>>=20
+>>  This is the opposite of how this register field works: a cleared bit
+>>  means that the /2 divider is used, and a set bit means that the=20
+>> divider
+>>  is 1.
+>>=20
+>>  Restore the correct behaviour using the newly introduced .div_table
+>>  field.
+>>=20
+>>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+>>  ---
+>=20
+> Applied to clk-next. Does this need a fixes tag?
 
-[1] OMAP4:
-http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=9d45dc42fbed8395d733366dbf6c0fd5ec171e2f
-[2] OMAP5:
-http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=34f4682a91173386307b310d7f4955d46dcaaea2
-[3] DRA7:
-http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=2a662694437ae7192b5ef759ec40abe796d2a058
+It depends on commit a9fa2893fcc6 ("clk: ingenic: Add support for
+divider tables") which was sent without a fixes tag, so it'd be
+a bit difficult. Probably not worth the trouble.
 
-Technically, this data need to be added back for all OMAP2+ SoCs which
-support dmtimer with any other drivers wanting to use the timers.
+-Paul
 
-regards
-Suman
-
-> 
-> Signed-off-by: Tero Kristo <t-kristo@ti.com>
-> ---
->  drivers/clk/ti/clk-7xx.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-> index 5208eb8..64507b8 100644
-> --- a/drivers/clk/ti/clk-7xx.c
-> +++ b/drivers/clk/ti/clk-7xx.c
-> @@ -792,6 +792,7 @@
->  static struct ti_dt_clk dra7xx_clks[] = {
->  	DT_CLK(NULL, "timer_32k_ck", "sys_32k_ck"),
->  	DT_CLK(NULL, "sys_clkin_ck", "timer_sys_clk_div"),
-> +	DT_CLK(NULL, "timer_sys_ck", "timer_sys_clk_div"),
->  	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
->  	DT_CLK(NULL, "atl_dpll_clk_mux", "atl-clkctrl:0000:24"),
->  	DT_CLK(NULL, "atl_gfclk_mux", "atl-clkctrl:0000:26"),
-> 
+=
 
