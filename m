@@ -2,79 +2,82 @@ Return-Path: <SRS0=sie6=WD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD9DC32751
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 21:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1975DC433FF
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 21:22:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 062CC21872
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 21:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E352B21871
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 21:22:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565212831;
-	bh=H6IRZcxzKndx5zx8Pkv7nOJGJAfsgtBu+QGrgi9asLw=;
+	s=default; t=1565212953;
+	bh=Ez8LaKwI1SJs6govk+MMRlWWhM/4pEOdFZMRWLlQ2mI=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=RfinkmF49D23Ht59nnMb6TzcEB97BHSYtg1VOA6pzDORpDvAx4FY0pQUkcQn6JzJb
-	 dSgXPcz+Gp+WSECRWZJf+/xfVkF7wVts6bTwuGQpO2NNHl4JidTt1RVotKAKcdJsqp
-	 tVPNB8qxr9ExS/bIvk/+0HL7P81Csu/F4a0NjBdo=
+	b=PV1f3fmEOJb1+9GnQ+YvBeRHer8Tum0ybvYCaSNEa7ATc0+MIEdm/lMr9kAiOBq7S
+	 1VQl/S5+rHee2NoZ/U9hSdx8PUwMh0ft6QsqC9dzXHrc/qyXSQ9Xtgy/v7LmHqEZOC
+	 6FT1fmMlHfbmmHF6HPhBNbLAhRGQSmn/w/C2AwbU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389372AbfHGVUa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Aug 2019 17:20:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36068 "EHLO mail.kernel.org"
+        id S1730433AbfHGVWc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Aug 2019 17:22:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389207AbfHGVUa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Aug 2019 17:20:30 -0400
+        id S1727751AbfHGVWb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Aug 2019 17:22:31 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5E902184E;
-        Wed,  7 Aug 2019 21:20:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA9D821743;
+        Wed,  7 Aug 2019 21:22:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565212829;
-        bh=H6IRZcxzKndx5zx8Pkv7nOJGJAfsgtBu+QGrgi9asLw=;
+        s=default; t=1565212950;
+        bh=Ez8LaKwI1SJs6govk+MMRlWWhM/4pEOdFZMRWLlQ2mI=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=2F2JZEh7amLOi00ZrGHzAGDa1Xgnd+Y8dNSOOg7G+qeIbhpl9ly23IS/Ctb8Faooy
-         Z8PF75foc4+NqT5l/t5AGzY4M1FUIEYmmoCvtmZ7DAurL1JszCdBt5ovPL/DPhkhCr
-         XwIGH/i/t2ttuHcvHceMPI+CFchPCtba57rgdnuw=
+        b=cY4O2u58IhUIdMTd2VykvzwyKqa36wyMzcXktOUUXt1/u6PLDCxNF0IZGbiu7aH3z
+         Xau3Ylg34uY3DDcvU4GpqaH4VbrPnaOgNPzPJH8bl4FUnjaTwcdVwm2GnFnmxZIefS
+         9MeJwaeSkFbatmYDiI2zH9BcanjGPtL+JM3TREtg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190627220642.78575-1-nhuck@google.com>
-References: <20190627220642.78575-1-nhuck@google.com>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com
+In-Reply-To: <641727e6-4796-f982-3b58-4c8d666de1a2@nvidia.com>
+References: <1563738060-30213-1-git-send-email-skomatineni@nvidia.com> <1563738060-30213-15-git-send-email-skomatineni@nvidia.com> <e683b417-66fb-38dc-c16b-dab616583a88@gmail.com> <88da46d2-b90d-f57e-7611-b8653b56bdf6@nvidia.com> <ceedb802-7561-488f-3a89-67bee19f2fea@gmail.com> <e2d0e8cc-b4ea-1148-4af1-fee6bb266cca@nvidia.com> <5054f178-db27-9286-d123-3e2b2a885717@gmail.com> <8c259511-d8ea-51b2-0b1d-c85b964bc44c@gmail.com> <20190802175119.1E401217F5@mail.kernel.org> <641727e6-4796-f982-3b58-4c8d666de1a2@nvidia.com>
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: qoriq: Fix -Wunused-const-variable
-To:     Nathan Huckleberry <nhuck@google.com>, mturquette@baylibre.com,
-        oss@buserror.net, yogeshnarayan.gaur@nxp.com
+Subject: Re: [PATCH V6 14/21] clk: tegra210: Add suspend and resume support
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        jason@lakedaemon.net, jonathanh@nvidia.com,
+        linus.walleij@linaro.org, marc.zyngier@arm.com,
+        mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de,
+        thierry.reding@gmail.com
 User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 14:20:28 -0700
-Message-Id: <20190807212029.A5E902184E@mail.kernel.org>
+Date:   Wed, 07 Aug 2019 14:22:29 -0700
+Message-Id: <20190807212229.EA9D821743@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nathan Huckleberry (2019-06-27 15:06:42)
-> drivers/clk/clk-qoriq.c:138:38: warning: unused variable
-> 'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
-> clockgen_muxinfo p5020_cmux_grp1
+Quoting Sowjanya Komatineni (2019-08-02 13:39:57)
 >=20
-> drivers/clk/clk-qoriq.c:146:38: warning: unused variable
-> 'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
-> clockgen_muxinfo p5020_cmux_grp2
+> On 8/2/19 10:51 AM, Stephen Boyd wrote:
+> > And also add a comment to this location in the code because it's
+> > non-obvious that we can't use iopoll here.
+> >
+> Actually added comment during function usage instead of during include=20
+> as iopoll.h is removed.
 >=20
-> In the definition of the p5020 chip, the p2041 chip's info was used
-> instead.  The p5020 and p2041 chips have different info. This is most
-> likely a typo.
+> Will add additional comment in include section as well highlighting=20
+> reason for removal of iopoll.h
 >=20
-> Link: https://github.com/ClangBuiltLinux/linux/issues/525
-> Cc: clang-built-linux@googlegroups.com
-> Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-> ---
 
-Applied to clk-next
+No I wasn't saying to add a comment to the include section, just add a
+comment in the place where you would have called iopoll but don't. Sorry
+that it wasn't clear.
 
