@@ -3,81 +3,120 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFD4C32751
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:42:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFD2C32751
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:59:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08B9821883
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:42:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6787B2186A
+	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:59:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565221357;
-	bh=AB0/GU2h6UDA8h5FXu3N6Lb3ksMEGrIp/OcfbfuwI5w=;
+	s=default; t=1565222365;
+	bh=xlQGs4Ss1PEAXXFBoCe2f1wiOxkqtY6afXuf8TMA9Xw=;
 	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=yUHsabfeC3UAhejD8dMeGVxeym2YDJ4PEcDKnymppooO/CI3qnGaDF31vN8//+bzI
-	 jERPvjfKe75A4miC2angx4ADihe0EIXn1fbVlyQwxhtvTz4Lt1S78jU4ZKyCLgeT4W
-	 ytDqQQ4quMUV/GVYqlGNpsSncgbWPqMSMBgj/O7Q=
+	b=PsZWKQaSCPvh1wZv9yfVgsp70+lH4PF0wVYc7GXE0K6lTDuN9gT/X5d1Y7moQG4Ej
+	 corCuYVPKUhMXIdjiZO9VPmm4Ex2LTyTwJN1sij5GCd2OTUB2Oms35/OD07gw6Kb9w
+	 LswDUTa4eGEWiaO343Xtata+lCiMem8vK+ei/Uzk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388986AbfHGXmd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Aug 2019 19:42:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48998 "EHLO mail.kernel.org"
+        id S1730117AbfHGX7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Aug 2019 19:59:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387981AbfHGXmd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Aug 2019 19:42:33 -0400
+        id S1730045AbfHGX7Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Aug 2019 19:59:24 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27AA720880;
-        Wed,  7 Aug 2019 23:42:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D714217D9;
+        Wed,  7 Aug 2019 23:59:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565221352;
-        bh=AB0/GU2h6UDA8h5FXu3N6Lb3ksMEGrIp/OcfbfuwI5w=;
+        s=default; t=1565222363;
+        bh=xlQGs4Ss1PEAXXFBoCe2f1wiOxkqtY6afXuf8TMA9Xw=;
         h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=g4jKpvg5O2bjHaVoG/3b91MBzydKjYsPJ2V0u9zxzG6GvKDjfXVeFp1uM+ImQHCyW
-         9SekbeHZnKbmLeUs0RGRBDVh1e0A5D8PCKq2ZbGyzc0O3hIPbBec02LHfya3GJcxIQ
-         wACvdtfptz19RL9raollDDdGq9xtTPTII5QVkuWw=
+        b=Rc4GwQf5rpwauL1csS5qRpDY92wjK/Dpk0A1DPPcgh/V0YCa3P+3ZIsWZ5ZhjOmf+
+         JAq4VaPmsevg5gVvmNGKIQwcxSWHA5UuY8suZLnlz2HFwreM07sWviu+W3xPx2TzJY
+         P4xr+s0CUvYCi/0zj+BnoWFtJ7JU1oJGqMrDMHAw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org>
-References: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org>
+In-Reply-To: <CAL_JsqKZHG-y_cKitU0=EksgyVU-YLOi1gAcFXx4ve21CMki1g@mail.gmail.com>
+References: <20190725020551.27034-1-Anson.Huang@nxp.com> <20190725210619.5EB94218D4@mail.kernel.org> <CAL_JsqKZHG-y_cKitU0=EksgyVU-YLOi1gAcFXx4ve21CMki1g@mail.gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
+Cc:     Anson Huang <Anson.Huang@nxp.com>, devicetree@vger.kernel.org,
+        Fabio Estevam <festevam@gmail.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-To:     Jordan Crouse <jcrouse@codeaurora.org>,
-        freedreno@lists.freedesktop.org
-Subject: Re: [PATCH v2] drivers: qcom: Add BCM vote macro to header
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+To:     Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH] dt-bindings: clock: imx8mn: Fix tab indentation for yaml file
 User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 16:42:31 -0700
-Message-Id: <20190807234232.27AA720880@mail.kernel.org>
+Date:   Wed, 07 Aug 2019 16:59:22 -0700
+Message-Id: <20190807235923.9D714217D9@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jordan Crouse (2019-08-05 13:33:46)
-> The macro to generate a Bus Controller Manager (BCM) TCS command is used
-> by the interconnect driver but might also be interesting to other
-> drivers that need to construct TCS commands for sub processors so move
-> it out of the sdm845 specific file and into the header.
+Quoting Rob Herring (2019-07-25 14:37:24)
+> On Thu, Jul 25, 2019 at 3:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Anson.Huang@nxp.com (2019-07-24 19:05:51)
+> > > From: Anson Huang <Anson.Huang@nxp.com>
+> > >
+> > > YAML file can NOT contain tab as indentation, fix it.
+> > >
+> >
+> > Would be nice if checkpatch could check for this.
 >=20
-> Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> ---
+> Would be nice if folks just ran 'make dt_binding_check'. :) It
+> wouldn't be hard to add a tab check to checkpatch, but that's just one
+> potential problem.
+>=20
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Cool, thanks for the pointer. Seems I forgot :)
 
-Unless this is supposed to be applied by me?
+Here's a patch to improve the documentation and make help to answer
+questions I had about how to work this into my workflow.
 
-BTW, I wonder why we need an rpm clk driver much at all nowadays, except
-maybe for the XO clk state. The big user, from what I can tell, is the
-interconnect driver and we don't use any of the features of the clk
-framework besides the API to set a frequency. Maybe it would be better
-to just push push the bus frequency logic into interconnect code, then
-XO clk is the only thing we need to keep, and it can be a simple on/off
-thing.
+diff --git a/Documentation/devicetree/writing-schema.md b/Documentation/dev=
+icetree/writing-schema.md
+index dc032db36262..17ad67887fde 100644
+--- a/Documentation/devicetree/writing-schema.md
++++ b/Documentation/devicetree/writing-schema.md
+@@ -120,6 +120,7 @@ This will first run the `dt_binding_check` which genera=
+tes the processed schema.
+ It is also possible to run checks with a single schema file by setting the
+ 'DT_SCHEMA_FILES' variable to a specific schema file.
+=20
++`make dt_binding_check DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings=
+/trivial-devices.yaml`
+ `make dtbs_check DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/trivi=
+al-devices.yaml`
+=20
+=20
+diff --git a/Makefile b/Makefile
+index 9be5834073f8..96bb28aa1c46 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1503,8 +1503,10 @@ help:
+ 	@echo  ''
+ 	@$(if $(dtstree), \
+ 		echo 'Devicetree:'; \
+-		echo '* dtbs            - Build device tree blobs for enabled boards'; \
+-		echo '  dtbs_install    - Install dtbs to $(INSTALL_DTBS_PATH)'; \
++		echo '* dtbs             - Build device tree blobs for enabled boards'; \
++		echo '  dtbs_install     - Install dtbs to $(INSTALL_DTBS_PATH)'; \
++		echo '  dt_binding_check - Validate device tree binding documents'; \
++		echo '  dtbs_check       - Validate device tree source files'; \
+ 		echo '')
+=20
+ 	@echo 'Userspace tools targets:'
 
