@@ -2,67 +2,89 @@ Return-Path: <SRS0=DelH=WE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F9A6C0650F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 15:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFBF9C0650F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 16:10:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 670D1218BA
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 15:20:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565277619;
-	bh=EQnjkpppgKILHmLr+fRsUzCN0MnNhBmjmtEPnIrTHHQ=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=xhfMJ/bXL3Mc2fbUDNjXV1EaYdRtCQO/BV+jCwP8XOBEw/gfdch4LvMZofxurrKES
-	 6dTtVaT6dCyRGUKW4jDIz5GjNlpC0CVjTle+iFUZWO7XKK2Kf8oFJtjqRTj/644ypj
-	 zwyQPYvlrpBDFHGNwmDmxmnP3KmtD74IM3u3uZPg=
+	by mail.kernel.org (Postfix) with ESMTP id C112421874
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 16:10:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390037AbfHHPUT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 11:20:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47822 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390021AbfHHPUS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Aug 2019 11:20:18 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D044B218BA;
-        Thu,  8 Aug 2019 15:20:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565277617;
-        bh=EQnjkpppgKILHmLr+fRsUzCN0MnNhBmjmtEPnIrTHHQ=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YC41VXeynHPI34GsfNdlru4v+ea7SdLqBy1nCLuFo56CP1clEc11gvqLyL7igelUf
-         q5MyRvPvAEWVDtFvijMohjEASW39dL37ypF4EWVHqo/tP9VV8pzhxzG7Vfi2GTlook
-         02QCrSisJDq3g8AmygsiVLoWYz5SSHF2IWs7dsbk=
-Content-Type: text/plain; charset="utf-8"
+        id S1732662AbfHHQKz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 12:10:55 -0400
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:33963
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725535AbfHHQKz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Aug 2019 12:10:55 -0400
+X-IronPort-AV: E=Sophos;i="5.64,362,1559512800"; 
+   d="scan'208";a="315952490"
+Received: from portablejulia.rsr.lip6.fr ([132.227.76.63])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 08 Aug 2019 18:10:53 +0200
+Date:   Thu, 8 Aug 2019 18:10:53 +0200 (CEST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: julia@hadrien
+To:     Jonas Gorski <jonas.gorski@gmail.com>
+cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philippe Mathieu-Daud?? <f4bug@amsat.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kbuild-all@01.org
+Subject: [PATCH] clk: fix devm_platform_ioremap_resource.cocci warnings
+Message-ID: <alpine.DEB.2.21.1908081809160.2995@hadrien>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190726092332.25202-4-govinds@codeaurora.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org> <20190726092332.25202-4-govinds@codeaurora.org>
-Subject: Re: [PATCH v5 3/7] clk: qcom: define probe by index API as common API
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, Govind Singh <govinds@codeaurora.org>
-To:     Govind Singh <govinds@codeaurora.org>, bjorn.andersson@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org
-User-Agent: alot/0.8.1
-Date:   Thu, 08 Aug 2019 08:20:17 -0700
-Message-Id: <20190808152017.D044B218BA@mail.kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Govind Singh (2019-07-26 02:23:28)
-> Extend the probe by index API in common code to be used
-> by other qcom clock controller.
->=20
-> Signed-off-by: Govind Singh <govinds@codeaurora.org>
-> ---
+From: kbuild test robot <lkp@intel.com>
 
-Applied to clk-next
+drivers/clk/bcm/clk-bcm63xx-gate.c:174:1-9: WARNING: Use devm_platform_ioremap_resource for hw -> regs
+
+ Use devm_platform_ioremap_resource helper which wraps
+ platform_get_resource() and devm_ioremap_resource() together.
+
+Generated by: scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+
+Fixes: 1c099779c1e2 ("clk: add BCM63XX gated clock controller driver")
+CC: Jonas Gorski <jonas.gorski@gmail.com>
+Signed-off-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
+---
+
+tree:   https://kernel.googlesource.com/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   ecb095bff5d4b8711a81968625b3b4a235d3e477
+commit: 1c099779c1e2e8e0e10cdb2aecd4b35f428e9f00 clk: add BCM63XX gated clock controller driver
+:::::: branch date: 15 hours ago
+:::::: commit date: 6 weeks ago
+
+ clk-bcm63xx-gate.c |    4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
+
+--- a/drivers/clk/bcm/clk-bcm63xx-gate.c
++++ b/drivers/clk/bcm/clk-bcm63xx-gate.c
+@@ -146,7 +146,6 @@ static int clk_bcm63xx_probe(struct plat
+ {
+ 	const struct clk_bcm63xx_table_entry *entry, *table;
+ 	struct clk_bcm63xx_hw *hw;
+-	struct resource *r;
+ 	u8 maxbit = 0;
+ 	int i, ret;
+
+@@ -170,8 +169,7 @@ static int clk_bcm63xx_probe(struct plat
+ 	for (i = 0; i < maxbit; i++)
+ 		hw->data.hws[i] = ERR_PTR(-ENODEV);
+
+-	r = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+-	hw->regs = devm_ioremap_resource(&pdev->dev, r);
++	hw->regs = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(hw->regs))
+ 		return PTR_ERR(hw->regs);
 
