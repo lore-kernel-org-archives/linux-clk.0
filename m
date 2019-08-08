@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0745AC0650F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E00C433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:30:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE48021882
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:30:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 610FA21882
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:30:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565238645;
-	bh=QyHfbYEnhKJ3NqYEHAW9BZnKWlTwMK7JB7cmCrL4ofI=;
+	s=default; t=1565238651;
+	bh=8YU0k/hTrTVzLlsKNpV+HWQXdm9XwL7LZY7JY8WkWS0=;
 	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=Rqb5UmF01FuFXNChpUfWFawDlexNgveDqLfNGZT7lJintr3tq9yicO5gbk8m+UFUH
-	 mjQekcwTn582Yig06CBFkM3QLZXwy2aZWAGDEgmS+dmNQBQ8x3xZs4JC66DHqgZ7vk
-	 F0FF9lYV8wYkL9fjMg8ulYA+72mlPDb6vwRvcGig=
+	b=K2lCjZeVTF+/EI6LkUgoW5jX1VTge0hdsbrpnDborHBEAQletW+dXeQ/BEYE4Cf4p
+	 yXtVGOJhitl/ntgObjcg6eUn2wkYhyORrtX7CXnKTTMgANHlUbYBcKP0bW4EQpNk2J
+	 ZIYdS2N0PZJkeNmPO0DFikTXDWbCdZ2Vf8QJgTEo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726160AbfHHEao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 00:30:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42672 "EHLO mail.kernel.org"
+        id S1726749AbfHHEam (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 00:30:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725868AbfHHEao (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Aug 2019 00:30:44 -0400
+        id S1726160AbfHHEal (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Aug 2019 00:30:41 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEBD321743;
-        Thu,  8 Aug 2019 04:30:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8346021743;
+        Thu,  8 Aug 2019 04:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565238644;
-        bh=QyHfbYEnhKJ3NqYEHAW9BZnKWlTwMK7JB7cmCrL4ofI=;
+        s=default; t=1565238640;
+        bh=8YU0k/hTrTVzLlsKNpV+HWQXdm9XwL7LZY7JY8WkWS0=;
         h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=QD+mR4yddqw7TASLyP9NF3ocHUQUE4/RUa49X0AwFtM5QPVN/mHMXT6ys5LZJz5Jp
-         IJei0OZFrK2fXLfdoGZuqN2mjOo1FoZnu9srWYNctnvt2YZ/1QIblc+5vq5f2EjT+e
-         LXtQWQcj3F5FH3sXZnjF7G06Nxypnl/l/7M7/gRo=
+        b=NOxhGQaZB8EPPfYca/OjJgRj9r0ZNNWos03Ss2WODbXPfED1BPKqnrd4u+wB35lfp
+         dl8ZUpYjrrlH8oCZZl6OkI9ZX6v0dm9vqA/rsZ3EuJ+ba7l2yu+Htl/xXr/BjSVcDj
+         fituFKiTwsN8JY0Xc0EOJf/kqtNiBZ/fJ4tBEmE8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190722074348.29582-6-vkoul@kernel.org>
-References: <20190722074348.29582-1-vkoul@kernel.org> <20190722074348.29582-6-vkoul@kernel.org>
+In-Reply-To: <20190722074348.29582-5-vkoul@kernel.org>
+References: <20190722074348.29582-1-vkoul@kernel.org> <20190722074348.29582-5-vkoul@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -53,27 +53,24 @@ Cc:     linux-arm-msm@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
 To:     Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 5/5] clk: qcom: gcc: Add global clock controller driver for SM8150
+Subject: Re: [PATCH v4 4/5] dt-bindings: clock: Document gcc bindings for SM8150
 User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 21:30:43 -0700
-Message-Id: <20190808043043.EEBD321743@mail.kernel.org>
+Date:   Wed, 07 Aug 2019 21:30:39 -0700
+Message-Id: <20190808043040.8346021743@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-07-22 00:43:48)
+Quoting Vinod Koul (2019-07-22 00:43:47)
 > From: Deepak Katragadda <dkatraga@codeaurora.org>
 >=20
-> Add the clocks supported in global clock controller which clock the
-> peripherals like BLSPs, SDCC, USB, MDSS etc. Register all the clocks
-> to the clock framework for the clients to be able to request for them.
+> Document the global clock controller found on SM8150.
 >=20
 > Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> [vkoul: port to upstream and tidy-up
->         port to new parent scheme
->         Add comments for critical clocks]]
+> [vkoul: port to upstream and add external clocks
+>         split binding to this patch]]
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 > ---
 
