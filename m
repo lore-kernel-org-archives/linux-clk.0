@@ -1,122 +1,115 @@
-Return-Path: <SRS0=sie6=WD=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=DelH=WE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFD2C32751
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:59:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772EAC433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 01:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6787B2186A
-	for <linux-clk@archiver.kernel.org>; Wed,  7 Aug 2019 23:59:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565222365;
-	bh=xlQGs4Ss1PEAXXFBoCe2f1wiOxkqtY6afXuf8TMA9Xw=;
-	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=PsZWKQaSCPvh1wZv9yfVgsp70+lH4PF0wVYc7GXE0K6lTDuN9gT/X5d1Y7moQG4Ej
-	 corCuYVPKUhMXIdjiZO9VPmm4Ex2LTyTwJN1sij5GCd2OTUB2Oms35/OD07gw6Kb9w
-	 LswDUTa4eGEWiaO343Xtata+lCiMem8vK+ei/Uzk=
+	by mail.kernel.org (Postfix) with ESMTP id 4CD9E21874
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 01:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="i3xUeJYT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730117AbfHGX7Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 7 Aug 2019 19:59:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51464 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730045AbfHGX7Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 7 Aug 2019 19:59:24 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D714217D9;
-        Wed,  7 Aug 2019 23:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565222363;
-        bh=xlQGs4Ss1PEAXXFBoCe2f1wiOxkqtY6afXuf8TMA9Xw=;
-        h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=Rc4GwQf5rpwauL1csS5qRpDY92wjK/Dpk0A1DPPcgh/V0YCa3P+3ZIsWZ5ZhjOmf+
-         JAq4VaPmsevg5gVvmNGKIQwcxSWHA5UuY8suZLnlz2HFwreM07sWviu+W3xPx2TzJY
-         P4xr+s0CUvYCi/0zj+BnoWFtJ7JU1oJGqMrDMHAw=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAL_JsqKZHG-y_cKitU0=EksgyVU-YLOi1gAcFXx4ve21CMki1g@mail.gmail.com>
-References: <20190725020551.27034-1-Anson.Huang@nxp.com> <20190725210619.5EB94218D4@mail.kernel.org> <CAL_JsqKZHG-y_cKitU0=EksgyVU-YLOi1gAcFXx4ve21CMki1g@mail.gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Anson Huang <Anson.Huang@nxp.com>, devicetree@vger.kernel.org,
-        Fabio Estevam <festevam@gmail.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1730433AbfHHB6d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 7 Aug 2019 21:58:33 -0400
+Received: from mail-eopbgr1400123.outbound.protection.outlook.com ([40.107.140.123]:29051
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730038AbfHHB6d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 7 Aug 2019 21:58:33 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=gwaQyWYFLdz9KT5jyV7lnnW2gGBENEc7vvmsuYNqtHSTETvSQWB8UxAHACu6uC901sXZthhGdUeiRKYxmK5LyjN9uALJ8AnmWj6zy5FOU+3DEEQXsdXWs3OlZSFCxCOppiOnJeqaZvn2G/XtwgA+piCW5Yy11q6Ffh2yymO6bogp/QaawCdXBylOasyn6dVPCYseeD81cjzTS1AMfJZLjkZ6gsgIkmtwwWA/8P1rEnSHufPzZwBlVLYMZmVjzyqilzNJb5NTcxHDhPn2r3mcw88HKu/ofTPlmOhXU68/sNJqze1fBd7KgsGdchhhEsSU1hlfRMp25boIHHddQuA+9A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XVyfQ61dnTQ5PkjK+i3FhOYXTliLEXsudkPXg5sCcfc=;
+ b=hlZ/nNNZEQHYrCGO4uZKYFFSGzkJESwjj8s/psLy06li+QR3MQJyQVwzcaLRSNBtIJfnv30zguGVB8gKshUrRRUvTHoZt0xpkauJrkSfAkmA98x/cFvdc+xjC710U9XaTsUBI6VduabJodf3+SBvNiO/P6VRvjdAAAjjSQ79TD0pOBkfTitrJTm2LJUHII716z1w3F3ZBZno4sadfN1ar6s/7i9TVu7vCVzEdxUizeSm8VlmH62lfMGAVh+9s6cKTXh+QrnlTHsi5p9KlA/DnZcd1UyM9A/iW2D5nqwp8S+gR6ZaDoLwqITUDwtDqtZbRtNncs3EBPlcmnOP2bw8Vg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1;spf=pass
+ smtp.mailfrom=renesas.com;dmarc=pass action=none
+ header.from=renesas.com;dkim=pass header.d=renesas.com;arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XVyfQ61dnTQ5PkjK+i3FhOYXTliLEXsudkPXg5sCcfc=;
+ b=i3xUeJYTSy+OBTz/SvxLsHgIn/GQG1M1ryYoUAf9ClDdts6yaFgmUaTjucN011wEogV7Jif7wY0aOldt0DOOQ43M0abnNN79v+cGuYPrMkT0Bc2ri/tFzpgbSe5wzueACOL+vLLPCIvQOwr7OK72Itp0Wo50Wydz7BFKk15VhKc=
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com (20.179.175.203) by
+ TYAPR01MB3200.jpnprd01.prod.outlook.com (20.177.104.81) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2136.13; Thu, 8 Aug 2019 01:58:30 +0000
+Received: from TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::6564:f61f:f179:facf]) by TYAPR01MB4544.jpnprd01.prod.outlook.com
+ ([fe80::6564:f61f:f179:facf%5]) with mapi id 15.20.2157.015; Thu, 8 Aug 2019
+ 01:58:30 +0000
+From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Shawn Guo <shawnguo@kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-To:     Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] dt-bindings: clock: imx8mn: Fix tab indentation for yaml file
-User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 16:59:22 -0700
-Message-Id: <20190807235923.9D714217D9@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: RE: [PATCH] clk: renesas: rcar-usb2-clock-sel: Use
+ devm_platform_ioremap_resource() helper
+Thread-Topic: [PATCH] clk: renesas: rcar-usb2-clock-sel: Use
+ devm_platform_ioremap_resource() helper
+Thread-Index: AQHVTPz5JtCvJ1kzDk2HW5OWVA77Eqbwf2kg
+Date:   Thu, 8 Aug 2019 01:58:30 +0000
+Message-ID: <TYAPR01MB45442308CBF677A992C52F96D8D70@TYAPR01MB4544.jpnprd01.prod.outlook.com>
+References: <20190807084901.24359-1-geert+renesas@glider.be>
+In-Reply-To: <20190807084901.24359-1-geert+renesas@glider.be>
+Accept-Language: ja-JP, en-US
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yoshihiro.shimoda.uh@renesas.com; 
+x-originating-ip: [118.238.235.108]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: cffb17cb-c196-467f-ecde-08d71ba3e99e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TYAPR01MB3200;
+x-ms-traffictypediagnostic: TYAPR01MB3200:
+x-microsoft-antispam-prvs: <TYAPR01MB32006166AAE2241B1BA04E88D8D70@TYAPR01MB3200.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 012349AD1C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(396003)(39860400002)(346002)(376002)(136003)(189003)(199004)(9686003)(81166006)(256004)(53936002)(486006)(476003)(446003)(4326008)(11346002)(33656002)(25786009)(55016002)(6506007)(186003)(81156014)(14454004)(110136005)(478600001)(74316002)(54906003)(102836004)(8676002)(26005)(8936002)(316002)(229853002)(6436002)(99286004)(7696005)(66066001)(6116002)(76176011)(305945005)(2906002)(71190400001)(52536014)(6246003)(66446008)(7736002)(5660300002)(3846002)(66476007)(86362001)(71200400001)(76116006)(4744005)(66946007)(64756008)(66556008);DIR:OUT;SFP:1102;SCL:1;SRVR:TYAPR01MB3200;H:TYAPR01MB4544.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: FNWG3VUfPrMbKhWoeyJ7kakqCBkXb5ZAQ1euYh6qKwDpeWY5L5A2QxdV3cZ86g0RWmOzzCEZaX1L5iZqP43qRTYNe1kzAaGIbMBI7bxV6va8HwNgRyJIhL+PFt6DirKvp1d9il9vzCeVye4fJL4yxT4eVa6IoLdsi2jAcfMY/Bb1mFCIW7hVYZTSb6DXGw/Hylnz3PGI5CPZHFW87Nqg/803CVsH85MH75WR3dqdyOFTio/3cE00CoHm84nzbGMmCbn5J+0glak/RP0mLs5PzU+Gxa5n7LaCKbGKuFiyKjgx/lMPl0ICpAKsP0t6+hCCvUWDLQMU6FqrlCJ0c7D5ThPQ3fKcucht6sEZpxfqZcJzB/QjZIP/irG4xNUjTVDnuVvtz9xkCX8eA5zKlSbc0u6hsoaICbYQu7Kt2OB2LYU=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cffb17cb-c196-467f-ecde-08d71ba3e99e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Aug 2019 01:58:30.6991
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: StDdbZ7fMIYW20i/qFExe2z2duSwpXMMt5ZlLyfgYOIRkqfRvxk97eVotGjesZ5tOw9Lian7N/h/6B07YJpJLKdc5IH3DPdtnAgt9RpQUpIsIy+wk7LWpckrfP38aLYi
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYAPR01MB3200
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2019-07-25 14:37:24)
-> On Thu, Jul 25, 2019 at 3:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Anson.Huang@nxp.com (2019-07-24 19:05:51)
-> > > From: Anson Huang <Anson.Huang@nxp.com>
-> > >
-> > > YAML file can NOT contain tab as indentation, fix it.
-> > >
-> >
-> > Would be nice if checkpatch could check for this.
+Hi Geert-san,
+
+> From: Geert Uytterhoeven, Sent: Wednesday, August 7, 2019 5:49 PM
 >=20
-> Would be nice if folks just ran 'make dt_binding_check'. :) It
-> wouldn't be hard to add a tab check to checkpatch, but that's just one
-> potential problem.
+> Use the devm_platform_ioremap_resource() helper instead of open-coding
+> the same operation.
 >=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Cool, thanks for the pointer. Seems I forgot :)
+Thank you for the patch!
 
-Here's a patch to improve the documentation and make help to answer
-questions I had about how to work this into my workflow.
+Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 
-diff --git a/Documentation/devicetree/writing-schema.md b/Documentation/dev=
-icetree/writing-schema.md
-index dc032db36262..17ad67887fde 100644
---- a/Documentation/devicetree/writing-schema.md
-+++ b/Documentation/devicetree/writing-schema.md
-@@ -120,6 +120,7 @@ This will first run the `dt_binding_check` which genera=
-tes the processed schema.
- It is also possible to run checks with a single schema file by setting the
- 'DT_SCHEMA_FILES' variable to a specific schema file.
-=20
-+`make dt_binding_check DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings=
-/trivial-devices.yaml`
- `make dtbs_check DT_SCHEMA_FILES=3DDocumentation/devicetree/bindings/trivi=
-al-devices.yaml`
-=20
-=20
-diff --git a/Makefile b/Makefile
-index 9be5834073f8..96bb28aa1c46 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1503,8 +1503,10 @@ help:
- 	@echo  ''
- 	@$(if $(dtstree), \
- 		echo 'Devicetree:'; \
--		echo '* dtbs            - Build device tree blobs for enabled boards'; \
--		echo '  dtbs_install    - Install dtbs to $(INSTALL_DTBS_PATH)'; \
-+		echo '* dtbs             - Build device tree blobs for enabled boards'; \
-+		echo '  dtbs_install     - Install dtbs to $(INSTALL_DTBS_PATH)'; \
-+		echo '  dt_binding_check - Validate device tree binding documents'; \
-+		echo '  dtbs_check       - Validate device tree source files'; \
- 		echo '')
-=20
- 	@echo 'Userspace tools targets:'
+Best regards,
+Yoshihiro Shimoda
 
