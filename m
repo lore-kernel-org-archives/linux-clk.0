@@ -6,86 +6,66 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7047AC0650F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C72A8C0650F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32E3221873
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A74121873
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565237303;
-	bh=SfXPd4T/iPy4yFm0+4ZpSrVXDIPE9kIwjlBq5hF2ehY=;
+	s=default; t=1565238236;
+	bh=eHQ5zzgEL3lSfdpuLPfgScchZvq19sR+WR+ht/F3oS4=;
 	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=1gxjZuSf7nWlEXk3FWXC7vbB3EIhrQvC7SN7E2+MbLL94hs3EEF5EYP7L7oF4z09q
-	 Sco50R0yZAb4eZTWJgL90aIzwu6KmYSBdi0qtXojtXr95C/0GQqwuWZoR7FUo4zqbG
-	 wKZFLdN4KxNye8OlPLUKefnOsm56EX1WDYgbsCaA=
+	b=qZ44vRu2+fE3VPdxBLxOTu4uinyCcYUhHsoTcfbiWJtMZLlWm9Ln1PD/s32qbevIk
+	 jnilEwUt4laSXZxQmmX40TnV0y4ZkMlC2JSSe8v8fBX24v48ucK7pz1QF0jCrSI7GE
+	 ubNke9WjFY4L2HirDRUpYvcr2DwjhVfePeYUvQ2A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725820AbfHHEIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 00:08:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39376 "EHLO mail.kernel.org"
+        id S1725446AbfHHEXz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 00:23:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41526 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725270AbfHHEIW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Aug 2019 00:08:22 -0400
+        id S1725270AbfHHEXz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Aug 2019 00:23:55 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 430582186A;
-        Thu,  8 Aug 2019 04:08:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5168A21743;
+        Thu,  8 Aug 2019 04:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565237302;
-        bh=SfXPd4T/iPy4yFm0+4ZpSrVXDIPE9kIwjlBq5hF2ehY=;
+        s=default; t=1565238234;
+        bh=eHQ5zzgEL3lSfdpuLPfgScchZvq19sR+WR+ht/F3oS4=;
         h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=CfdXw7P8r0bazXOgVEoU4sj5id7e63Ixa7qQkRBbWZmUmyjLhQ4AIbq9puLL7q1wQ
-         2Hca7iKaiSGh4SQBFdqoEyAO7bFlR0MXdDQ+Ll4rVR2SGGsIiZMTwvXv+kGZErZEMj
-         pduBIcnT6XrIpAzYYiAeJNXS3kqucc6k3M5dAxi8=
+        b=Ced5Bz5MI6TJr3ZVXRxx43NoWaS+nj1STKasLcg32Js7/MAcAsVu4jqJFN917//Hf
+         lzqIqUaQNNMi7av7dYHkBkkMaEeeRfkWexr+Hijn7sBt5tsWm4I+2ove42SxBgl00N
+         +dlLPfGTVOOf1UP+UTxsA0Y4YcdpEStGOoJFjwNc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1565220490.15188.0@crapouillou.net>
-References: <20190701113606.4130-1-paul@crapouillou.net> <20190807213358.A62002186A@mail.kernel.org> <1565220490.15188.0@crapouillou.net>
+In-Reply-To: <20190716170800.23668-1-paul@crapouillou.net>
+References: <20190716170800.23668-1-paul@crapouillou.net>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH] clk: ingenic/jz4740: Fix "pll half" divider not read/written properly
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] clk: ingenic: Use CLK_OF_DECLARE_DRIVER macro
 User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 21:08:21 -0700
-Message-Id: <20190808040822.430582186A@mail.kernel.org>
+Date:   Wed, 07 Aug 2019 21:23:53 -0700
+Message-Id: <20190808042354.5168A21743@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Paul Cercueil (2019-08-07 16:28:10)
+Quoting Paul Cercueil (2019-07-16 10:08:00)
+> By using CLK_OF_DECLARE_DRIVER instead of the CLK_OF_DECLARE macro, we
+> allow the driver to probe also as a platform driver.
 >=20
+> While this driver does not have code to probe as a platform driver, this
+> is still useful for probing children devices in the case where the
+> device node is compatible with "simple-mfd".
 >=20
-> Le mer. 7 ao=C3=BBt 2019 =C3=A0 23:33, Stephen Boyd <sboyd@kernel.org> a =
-=C3=A9crit=20
-> :
-> > Quoting Paul Cercueil (2019-07-01 04:36:06)
-> >>  The code was setting the bit 21 of the CPCCR register to use a=20
-> >> divider
-> >>  of 2 for the "pll half" clock, and clearing the bit to use a divider
-> >>  of 1.
-> >>=20
-> >>  This is the opposite of how this register field works: a cleared bit
-> >>  means that the /2 divider is used, and a set bit means that the=20
-> >> divider
-> >>  is 1.
-> >>=20
-> >>  Restore the correct behaviour using the newly introduced .div_table
-> >>  field.
-> >>=20
-> >>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
-> >>  ---
-> >=20
-> > Applied to clk-next. Does this need a fixes tag?
->=20
-> It depends on commit a9fa2893fcc6 ("clk: ingenic: Add support for
-> divider tables") which was sent without a fixes tag, so it'd be
-> a bit difficult. Probably not worth the trouble.
->=20
+> Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+> ---
 
-Does it need to go in as a fix for this -rc series then? Or is it not
-causing issues for you so it's ok to wait until next merge window?
-
+What's the baseline for this? It doesn't apply cleanly to v5.3-rc1
 
