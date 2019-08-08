@@ -5,40 +5,37 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CED64C0650F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6381C32754
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6C6121773
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A39C421773
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EeoR6jYW"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="HmDzTLAS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404898AbfHHXrF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 19:47:05 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12761 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404800AbfHHXrF (ORCPT
+        id S2404960AbfHHXsh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 19:48:37 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:12825 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404787AbfHHXrF (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Aug 2019 19:47:05 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4cb4810003>; Thu, 08 Aug 2019 16:47:13 -0700
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d4cb4790001>; Thu, 08 Aug 2019 16:47:05 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 08 Aug 2019 16:47:03 -0700
+  Thu, 08 Aug 2019 16:47:04 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:03 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:04 -0700
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
  2019 23:47:03 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
- 2019 23:47:02 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 8 Aug 2019 23:47:02 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 8 Aug 2019 23:47:03 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.110]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4cb4760003>; Thu, 08 Aug 2019 16:47:02 -0700
+        id <B5d4cb4770004>; Thu, 08 Aug 2019 16:47:03 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -53,9 +50,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v8 04/21] clk: tegra: pllout: Save and restore pllout context
-Date:   Thu, 8 Aug 2019 16:46:43 -0700
-Message-ID: <1565308020-31952-5-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 08/21] clk: tegra: periph: Add restore_context support
+Date:   Thu, 8 Aug 2019 16:46:47 -0700
+Message-ID: <1565308020-31952-9-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
@@ -63,102 +60,124 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565308033; bh=+5FeCObfcVSQl3mF2aV30xkJmmoYeL3wjkbqW2cfHZk=;
+        t=1565308025; bh=MaBbjtBMzuugkNzaFeu4r//HvNEiuUr9jhuS1/yiVIA=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=EeoR6jYWsspXOyU9dHp10EHf0gBk5kO3AggUIzbiBGUZ4vlGAOq2sySyLAYov7Fnq
-         Uo/CCn+Ou2n6woZBw8zXmjWfyu9Yh+BIf1UeYrnYzrI/5doLlUsNYIilq4ThMgphGR
-         k58bA//vI1wX938Lio6HsiZASQfNHOkmV35gzLsAk4X0ZI2AT956ZK2uw0uTJCHQay
-         9xg2+zcxQ8v52KDyen74rVg1fyQAgXCMkFePQuUeRR3HTr9HWNI0N3/3doUpSWR23s
-         Y+V/kyXeltvnEEeoSE0TRzQnTWL5ZH2xRkXKQm6/+HOX1q2u9IyOybVVldyvOrYrPv
-         vnOM4ZP326bwQ==
+        b=HmDzTLASre08uJVoG+GDqLGUppRw+6b7cwK1/jWDBcEc5n45F9WNTWIAQd/ghRMgf
+         5VHAdLqYYM2RdlcyWo8PsXfg+8EJgBZqPIJ+3VjQ4kO4S9Qo5SJNMU7+k/XK4Mw1Xq
+         8bh7oEpjsITaT8dr+M785yB1ToOnbt5maXJDZWbbkaueH3NdTF2t4lSMd0wXeYoBOt
+         H3Tve3uNUlj60+UQRvYzzwuingpVPnlLaImkZz6cOggh7cRfNjm2bklF2NW+gYI+N9
+         tDTyPryOs8D+c/1Sp6C6fEmz0+SmRRmJZgd4nQw0MQEr6t5Fd2kwMnxIBr32X47gRJ
+         b1g0EtDZOOFZA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch implements save and restore of pllout context.
+This patch implements restore_context support for clk-periph and
+clk-sdmmc-mux clock operations to restore clock parent and rates
+on system resume.
 
-During system suspend, core power goes off and looses the settings
-of the Tegra CAR controller registers.
+During system suspend, core power goes off and looses the context
+of the Tegra clock controller registers.
 
-So during suspend entry the state of pllout is saved and on resume
-it is restored back to have pllout in same state as before suspend.
+So on system resume, clocks parent and rate are restored back to
+the context before suspend based on cached data.
 
-pllout rate is saved and restore in clock divider so it will be at
-same rate as before suspend when pllout state is restored.
-
-Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-pll-out.c  | 9 +++++++++
- drivers/clk/tegra/clk-tegra210.c | 3 ++-
- drivers/clk/tegra/clk.h          | 6 ++++++
- 3 files changed, 17 insertions(+), 1 deletion(-)
+ drivers/clk/tegra/clk-periph.c    | 18 ++++++++++++++++++
+ drivers/clk/tegra/clk-sdmmc-mux.c | 12 ++++++++++++
+ 2 files changed, 30 insertions(+)
 
-diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
-index 35f2bf00e1e6..d8bf89a81e6d 100644
---- a/drivers/clk/tegra/clk-pll-out.c
-+++ b/drivers/clk/tegra/clk-pll-out.c
-@@ -69,10 +69,19 @@ static void clk_pll_out_disable(struct clk_hw *hw)
- 		spin_unlock_irqrestore(pll_out->lock, flags);
+diff --git a/drivers/clk/tegra/clk-periph.c b/drivers/clk/tegra/clk-periph.c
+index 58437da25156..c9d28cbadccc 100644
+--- a/drivers/clk/tegra/clk-periph.c
++++ b/drivers/clk/tegra/clk-periph.c
+@@ -3,6 +3,7 @@
+  * Copyright (c) 2012, NVIDIA CORPORATION.  All rights reserved.
+  */
+ 
++#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/export.h>
+ #include <linux/slab.h>
+@@ -99,6 +100,20 @@ static void clk_periph_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
  }
  
-+static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
++static void clk_periph_restore_context(struct clk_hw *hw)
 +{
-+	if (!__clk_get_enable_count(hw->clk))
-+		clk_pll_out_disable(hw);
-+	else
-+		clk_pll_out_enable(hw);
++	struct tegra_clk_periph *periph = to_clk_periph(hw);
++	const struct clk_ops *div_ops = periph->div_ops;
++	struct clk_hw *div_hw = &periph->divider.hw;
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	int parent_id = clk_hw_get_parent_index(hw, parent);
++
++	if (!(periph->gate.flags & TEGRA_PERIPH_NO_DIV))
++		div_ops->restore_context(div_hw);
++
++	clk_periph_set_parent(hw, parent_id);
 +}
 +
- const struct clk_ops tegra_clk_pll_out_ops = {
- 	.is_enabled = clk_pll_out_is_enabled,
- 	.enable = clk_pll_out_enable,
- 	.disable = clk_pll_out_disable,
-+	.restore_context = tegra_clk_pll_out_restore_context,
+ const struct clk_ops tegra_clk_periph_ops = {
+ 	.get_parent = clk_periph_get_parent,
+ 	.set_parent = clk_periph_set_parent,
+@@ -108,6 +123,7 @@ const struct clk_ops tegra_clk_periph_ops = {
+ 	.is_enabled = clk_periph_is_enabled,
+ 	.enable = clk_periph_enable,
+ 	.disable = clk_periph_disable,
++	.restore_context = clk_periph_restore_context,
  };
  
- struct clk *tegra_clk_register_pll_out(const char *name,
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index df172d5772d7..4721ee030d1c 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3200,7 +3200,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
- 					 8, 8, 1, NULL);
- 	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
- 					 clk_base + PLLRE_OUT1, 1, 0,
--					 CLK_SET_RATE_PARENT, 0, NULL);
-+					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
-+					 NULL);
- 	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
- 
- 	/* PLLE */
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index 905bf1096558..a464524fbc90 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -437,6 +437,10 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
-  * @rst_bit_idx:	bit to reset PLL divider
-  * @lock:		register lock
-  * @flags:		hardware-specific flags
-+ *
-+ * Flags:
-+ * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
-+ *		     identify PLLRE_OUT during clk_pll_out save and restore.
-  */
- struct tegra_clk_pll_out {
- 	struct clk_hw	hw;
-@@ -447,6 +451,8 @@ struct tegra_clk_pll_out {
- 	u8		flags;
+ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
+@@ -116,6 +132,7 @@ static const struct clk_ops tegra_clk_periph_nodiv_ops = {
+ 	.is_enabled = clk_periph_is_enabled,
+ 	.enable = clk_periph_enable,
+ 	.disable = clk_periph_disable,
++	.restore_context = clk_periph_restore_context,
  };
  
-+#define TEGRA_PLLRE_OUT BIT(0)
+ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
+@@ -124,6 +141,7 @@ static const struct clk_ops tegra_clk_periph_no_gate_ops = {
+ 	.recalc_rate = clk_periph_recalc_rate,
+ 	.round_rate = clk_periph_round_rate,
+ 	.set_rate = clk_periph_set_rate,
++	.restore_context = clk_periph_restore_context,
+ };
+ 
+ static struct clk *_tegra_clk_register_periph(const char *name,
+diff --git a/drivers/clk/tegra/clk-sdmmc-mux.c b/drivers/clk/tegra/clk-sdmmc-mux.c
+index a5cd3e31dbae..8db48966b100 100644
+--- a/drivers/clk/tegra/clk-sdmmc-mux.c
++++ b/drivers/clk/tegra/clk-sdmmc-mux.c
+@@ -194,6 +194,17 @@ static void clk_sdmmc_mux_disable(struct clk_hw *hw)
+ 	gate_ops->disable(gate_hw);
+ }
+ 
++static void clk_sdmmc_mux_restore_context(struct clk_hw *hw)
++{
++	struct clk_hw *parent = clk_hw_get_parent(hw);
++	unsigned long parent_rate = clk_hw_get_rate(parent);
++	unsigned long rate = clk_hw_get_rate(hw);
++	int parent_id = clk_hw_get_parent_index(hw, parent);
 +
- #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
++	clk_sdmmc_mux_set_parent(hw, parent_id);
++	clk_sdmmc_mux_set_rate(hw, rate, parent_rate);
++}
++
+ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+ 	.get_parent = clk_sdmmc_mux_get_parent,
+ 	.set_parent = clk_sdmmc_mux_set_parent,
+@@ -203,6 +214,7 @@ static const struct clk_ops tegra_clk_sdmmc_mux_ops = {
+ 	.is_enabled = clk_sdmmc_mux_is_enabled,
+ 	.enable = clk_sdmmc_mux_enable,
+ 	.disable = clk_sdmmc_mux_disable,
++	.restore_context = clk_sdmmc_mux_restore_context,
+ };
  
- extern const struct clk_ops tegra_clk_pll_out_ops;
+ struct clk *tegra_clk_register_sdmmc_mux_div(const char *name,
 -- 
 2.7.4
 
