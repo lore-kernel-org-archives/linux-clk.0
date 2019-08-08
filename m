@@ -2,77 +2,99 @@ Return-Path: <SRS0=DelH=WE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98E00C433FF
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:30:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BACC433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:43:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610FA21882
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:30:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E2A6221873
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:43:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565238651;
-	bh=8YU0k/hTrTVzLlsKNpV+HWQXdm9XwL7LZY7JY8WkWS0=;
+	s=default; t=1565239404;
+	bh=epeHa/FiHLUJX+Won1KcmqufCoWzRRNhnCbnjs+xtOE=;
 	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=K2lCjZeVTF+/EI6LkUgoW5jX1VTge0hdsbrpnDborHBEAQletW+dXeQ/BEYE4Cf4p
-	 yXtVGOJhitl/ntgObjcg6eUn2wkYhyORrtX7CXnKTTMgANHlUbYBcKP0bW4EQpNk2J
-	 ZIYdS2N0PZJkeNmPO0DFikTXDWbCdZ2Vf8QJgTEo=
+	b=EZNuU1cACVp1s9BU8bJ8eC0l+AeOTfb9rDn+ryl5CZAe9Ha9S+wJpBoKGMLEYp+1I
+	 yRbTHXcsif0GILlPQnetf//fRw3EWOC1GInrrtn8pQRqmqmZBXVqKi+m+PW6yhiAHr
+	 7Wv7td0lXw37YzPDYmIpa8lgoOmxtGltOXhi6JXE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfHHEam (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 00:30:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42606 "EHLO mail.kernel.org"
+        id S1725830AbfHHEnX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 00:43:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726160AbfHHEal (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Aug 2019 00:30:41 -0400
+        id S1725446AbfHHEnX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Aug 2019 00:43:23 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8346021743;
-        Thu,  8 Aug 2019 04:30:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 30FC0217D7;
+        Thu,  8 Aug 2019 04:43:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565238640;
-        bh=8YU0k/hTrTVzLlsKNpV+HWQXdm9XwL7LZY7JY8WkWS0=;
+        s=default; t=1565239402;
+        bh=epeHa/FiHLUJX+Won1KcmqufCoWzRRNhnCbnjs+xtOE=;
         h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=NOxhGQaZB8EPPfYca/OjJgRj9r0ZNNWos03Ss2WODbXPfED1BPKqnrd4u+wB35lfp
-         dl8ZUpYjrrlH8oCZZl6OkI9ZX6v0dm9vqA/rsZ3EuJ+ba7l2yu+Htl/xXr/BjSVcDj
-         fituFKiTwsN8JY0Xc0EOJf/kqtNiBZ/fJ4tBEmE8=
+        b=Kc4ZDf1JK1gy2Li/0XaN/PMxsQBAC2yqwdZULhUg9zLN0rTqC7NgtlhrIJMBkquFc
+         iK9xz36G2sSfMlUOCD935ehbb+Qn7/5j+eZGn5LG9vtuPOa1/KhSmBlDP+HFZae1BC
+         orQ+lrzDQ69ksPmQpDlQAzkk325NAKjV5BniViIU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190722074348.29582-5-vkoul@kernel.org>
-References: <20190722074348.29582-1-vkoul@kernel.org> <20190722074348.29582-5-vkoul@kernel.org>
+In-Reply-To: <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
+References: <20190701091258.3870-1-narmstrong@baylibre.com> <20190701091258.3870-8-narmstrong@baylibre.com> <CAFBinCAnKeGYkyCmEMugWuQaSxgBp4DqtHN3b0rLJY6jwOF0QA@mail.gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Deepak Katragadda <dkatraga@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v4 4/5] dt-bindings: clock: Document gcc bindings for SM8150
+Cc:     jbrunet@baylibre.com, khilman@baylibre.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        dbasehore@chromium.org
+Subject: Re: [RFC/RFT v3 07/14] clk: meson: g12a: add notifiers to handle cpu clock change
 User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 21:30:39 -0700
-Message-Id: <20190808043040.8346021743@mail.kernel.org>
+Date:   Wed, 07 Aug 2019 21:43:21 -0700
+Message-Id: <20190808044322.30FC0217D7@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-07-22 00:43:47)
-> From: Deepak Katragadda <dkatraga@codeaurora.org>
+Quoting Martin Blumenstingl (2019-07-02 16:28:55)
+> Hi Stephen, Hi Neil,
 >=20
-> Document the global clock controller found on SM8150.
+> On Mon, Jul 1, 2019 at 11:13 AM Neil Armstrong <narmstrong@baylibre.com> =
+wrote:
+> >
+> > In order to implement clock switching for the CLKID_CPU_CLK and
+> > CLKID_CPUB_CLK, notifiers are added on specific points of the
+> > clock tree :
+> >
+> > cpu_clk / cpub_clk
+> > |   \- cpu_clk_dyn
+> > |      |  \- cpu_clk_premux0
+> > |      |        |- cpu_clk_postmux0
+> > |      |        |    |- cpu_clk_dyn0_div
+> > |      |        |    \- xtal/fclk_div2/fclk_div3
+> > |      |        \- xtal/fclk_div2/fclk_div3
+> > |      \- cpu_clk_premux1
+> > |            |- cpu_clk_postmux1
+> > |            |    |- cpu_clk_dyn1_div
+> > |            |    \- xtal/fclk_div2/fclk_div3
+> > |            \- xtal/fclk_div2/fclk_div3
+> > \ sys_pll / sys1_pll
+> >
+> > This for each cluster, a single one for G12A, two for G12B.
+> >
+> > Each cpu_clk_premux1 tree is marked as read-only and CLK_SET_RATE_NO_RE=
+PARENT,
+> > to be used as "parking" clock in a safe clock frequency.
+> it seems that this is one case where the "coordinated clocks" feature
+> would come handy: [0]
+> Stephen, do you know if those patches stopped in March or if there's
+> still some ongoing effort to get them ready?
 >=20
-> Signed-off-by: Deepak Katragadda <dkatraga@codeaurora.org>
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> [vkoul: port to upstream and add external clocks
->         split binding to this patch]]
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
 
-Applied to clk-next
+Derek told me yesterday he wants to work on it again, but I don't know
+his timeline. If Derek doesn't reply here then maybe it can be picked up
+by someone else.
 
