@@ -2,111 +2,83 @@ Return-Path: <SRS0=DelH=WE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68FC2C433FF
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1353FC0650F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:56:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39C8121873
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFC8D2173C
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 04:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565239658;
-	bh=y0710HmReVsBMWZ/XfSor0U2soY0toxlrShfhv6D9iA=;
+	s=default; t=1565240214;
+	bh=fg5khFk3YuZBohTROE3ejwk+PldPzP9n0DbgnXjxBUo=;
 	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=XgvRMHI2K4GGjZuATfjs9MXah9DbncSq9uaMlX7777Ni3czlgeDgp9uaBaQEhtOkb
-	 6w/ELVditJ8m+k5ev+Uc8LF2Nq58DVnp7S8SFcvVd2qIfR6zvnCmoAjQT4n2+BCceh
-	 KDoQCtiJ7/FNz468vhU1HPHp+mQol74n1Jq+Paiw=
+	b=bmh1BOT65Vuz0leCz3EZY3KK5HzjtuvJic425TqostEJuaVijvc4s+Y0NYFYroH9Z
+	 Gpx+40FOzGKvzhCjWyjRaMZ8X2pYEyVGX4qWwSqSpJERo79GaA5EhxIUXcgynORgL8
+	 klSiC8JgyxILSCUuItkHiKukPGD7wIQXS/iGJmEg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbfHHEri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 00:47:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45908 "EHLO mail.kernel.org"
+        id S1725933AbfHHE4y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 00:56:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725446AbfHHErh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Aug 2019 00:47:37 -0400
+        id S1725868AbfHHE4y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Aug 2019 00:56:54 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4E83217D7;
-        Thu,  8 Aug 2019 04:47:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3188220880;
+        Thu,  8 Aug 2019 04:56:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565239656;
-        bh=y0710HmReVsBMWZ/XfSor0U2soY0toxlrShfhv6D9iA=;
+        s=default; t=1565240213;
+        bh=fg5khFk3YuZBohTROE3ejwk+PldPzP9n0DbgnXjxBUo=;
         h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=heRTJYGb+MKnfdifsw1aaCQ5Te73E3T+adwWyB2Qh8LsxkzkNb2+gHXK1Y9y7VVdO
-         ttEq4DZqadJi6JBJlRK984Me6oF7tc8yhfyHyjYw7UuSPc0c970anKM8dtH2P9Tfdl
-         W/A0NQDTkGsu91OWcxft8zXa33tPBgskXOJ37lzY=
+        b=ZVvRL/+btScoFuQMMQikaqYRKNgzP3Kn/Fqby0QVXNbN+QrXEwOjOLZ+cjiGljQft
+         Y7Q5pGfru4aTqCrHwTRE85JXbb4sEpChHXMnNpwp1r+91yfqNRJyu39dpXW4J8aizZ
+         FGSE5fynKRNU2eNNM0Se8feioHbK2RYqPqankRTA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j36iewvdo.fsf@starbuckisacylon.baylibre.com>
-References: <20190731084019.8451-1-narmstrong@baylibre.com> <20190731084019.8451-2-narmstrong@baylibre.com> <1j36iewvdo.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <20190717145651.17250-1-andrew.smirnov@gmail.com>
+References: <20190717145651.17250-1-andrew.smirnov@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Subject: Re: [PATCH v2 1/4] clk: core: introduce clk_hw_set_parent()
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Chris Healy <cphealy@gmail.com>, linux-kernel@vger.kernel.org
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: Constify struct clk_bulk_data * where possible
 User-Agent: alot/0.8.1
-Date:   Wed, 07 Aug 2019 21:47:35 -0700
-Message-Id: <20190808044736.A4E83217D7@mail.kernel.org>
+Date:   Wed, 07 Aug 2019 21:56:52 -0700
+Message-Id: <20190808045653.3188220880@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-08-06 01:28:19)
-> On Wed 31 Jul 2019 at 10:40, Neil Armstrong <narmstrong@baylibre.com> wro=
-te:
+Quoting Andrey Smirnov (2019-07-17 07:56:51)
+> The following functions:
 >=20
-> > Introduce the clk_hw_set_parent() provider call to change parent of
-> > a clock by using the clk_hw pointers.
-> >
-> > This eases the clock reparenting from clock rate notifiers and
-> > implementing DVFS with simpler code avoiding the boilerplates
-> > functions as __clk_lookup(clk_hw_get_name()) then clk_set_parent().
-> >
-> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> > Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>     - clk_bulk_enable()
+>     - clk_bulk_prepare()
+>     - clk_bulk_disable()
+>     - clk_bulk_unprepare()
 >=20
-> Looks ok to me but we will obviously need Stephen's ack to apply it
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-
+> already expect const clk_bulk_data * as a second parameter, however
+> their no-op version have mismatching prototypes that don't. Fix that.
 >=20
-> > ---
-> >  drivers/clk/clk.c            | 6 ++++++
-> >  include/linux/clk-provider.h | 1 +
-> >  2 files changed, 7 insertions(+)
-> >
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index c0990703ce54..c11b1781d24a 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -2487,6 +2487,12 @@ static int clk_core_set_parent_nolock(struct clk=
-_core *core,
-> >       return ret;
-> >  }
-> > =20
-> > +int clk_hw_set_parent(struct clk_hw *hw, struct clk_hw *parent)
-> > +{
-> > +     return clk_core_set_parent_nolock(hw->core, parent->core);
+> While at it, constify the second argument of clk_bulk_prepare_enable()
+> and clk_bulk_disable_unprepare(), since the functions they are
+> comprised of already accept const clk_bulk_data *.
+>=20
+> Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+> Cc: Russell King <linux@armlinux.org.uk>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Chris Healy <cphealy@gmail.com>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> ---
 
-I wonder if you really want to call all those things in
-clk_core_set_parent_nolock(). For example, do you want notifiers to run
-again and for rates to be speculated? Maybe all you want to do is
-overwrite some value for the clk's parent by calling into the ops for
-the clk and generically parse the value that's passed as the "parent"
-here.
-
-I ask because it may be good to avoid doing all that work and updating
-bookkeeping when we're deep in a notifier. If we can clearly understand
-what the driver wants to do from the notifier then it's simpler to
-change in the future to use things such as the coordinated clk rate
-vaporware.
+Applied to clk-next
 
