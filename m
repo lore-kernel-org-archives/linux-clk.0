@@ -7,35 +7,38 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2B8C32756
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CED64C0650F
 	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED4DE21880
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6C6121773
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 23:48:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="mdEa4xvJ"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="EeoR6jYW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405086AbfHHXsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 19:48:18 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12775 "EHLO
+        id S2404898AbfHHXrF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 19:47:05 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12761 "EHLO
         hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404866AbfHHXrG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Aug 2019 19:47:06 -0400
+        with ESMTP id S2404800AbfHHXrF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Aug 2019 19:47:05 -0400
 Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d4cb4820002>; Thu, 08 Aug 2019 16:47:14 -0700
+        id <B5d4cb4810003>; Thu, 08 Aug 2019 16:47:13 -0700
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 08 Aug 2019 16:47:04 -0700
+  Thu, 08 Aug 2019 16:47:03 -0700
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:04 -0700
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
- 2019 23:47:04 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Thu, 8 Aug 2019 23:47:03 +0000
+        by hqpgpgate101.nvidia.com on Thu, 08 Aug 2019 16:47:03 -0700
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
+ 2019 23:47:03 +0000
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 8 Aug
+ 2019 23:47:02 +0000
+Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Thu, 8 Aug 2019 23:47:02 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.110.103.110]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5d4cb4770006>; Thu, 08 Aug 2019 16:47:03 -0700
+        id <B5d4cb4760003>; Thu, 08 Aug 2019 16:47:02 -0700
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <tglx@linutronix.de>, <jason@lakedaemon.net>,
@@ -50,9 +53,9 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <digetx@gmail.com>, <devicetree@vger.kernel.org>,
         <rjw@rjwysocki.net>, <viresh.kumar@linaro.org>,
         <linux-pm@vger.kernel.org>
-Subject: [PATCH v8 10/21] clk: tegra: clk-super: Add restore-context support
-Date:   Thu, 8 Aug 2019 16:46:49 -0700
-Message-ID: <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v8 04/21] clk: tegra: pllout: Save and restore pllout context
+Date:   Thu, 8 Aug 2019 16:46:43 -0700
+Message-ID: <1565308020-31952-5-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
 References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
@@ -60,82 +63,102 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1565308034; bh=w//Hbn4E07WwrvoLDUOaPoY8xfvJCMT98F/MANtJWFA=;
+        t=1565308033; bh=+5FeCObfcVSQl3mF2aV30xkJmmoYeL3wjkbqW2cfHZk=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=mdEa4xvJEy+wUt5Vg5TPqicLdUDeEm4jPNE1vHHoDh7xan1gt5dBse0oxVWlrNAhE
-         67zQheJ9gzK6QaaW5JmwjE8MZI/ufdKSVvLRAyBjEMWr2YdMjgMyJtfx/YmUvi8Lqt
-         yfmOEJ0pdRQNhMJRo8NOj2okEtvSEzXGIKKGCf8PqVPcudwvFKal0OfHVbEF1ipw8B
-         yUqYIJftjmiTL14+W3IH7yYJi5gZP1ztMFTtYhTsz6YmGeR2ingrrViz5MBycGpGup
-         HXnN2WQDo3YMjjZLnkWfDNFnKIRjhPUyW4if5Feg5aPC+Hvxe0VYIeWGELs0JV50A8
-         nvTF3nAksmi5w==
+        b=EeoR6jYWsspXOyU9dHp10EHf0gBk5kO3AggUIzbiBGUZ4vlGAOq2sySyLAYov7Fnq
+         Uo/CCn+Ou2n6woZBw8zXmjWfyu9Yh+BIf1UeYrnYzrI/5doLlUsNYIilq4ThMgphGR
+         k58bA//vI1wX938Lio6HsiZASQfNHOkmV35gzLsAk4X0ZI2AT956ZK2uw0uTJCHQay
+         9xg2+zcxQ8v52KDyen74rVg1fyQAgXCMkFePQuUeRR3HTr9HWNI0N3/3doUpSWR23s
+         Y+V/kyXeltvnEEeoSE0TRzQnTWL5ZH2xRkXKQm6/+HOX1q2u9IyOybVVldyvOrYrPv
+         vnOM4ZP326bwQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch implements restore_context for clk_super_mux and clk_super.
+This patch implements save and restore of pllout context.
 
-During system supend, core power goes off the and context of Tegra
-CAR registers is lost.
+During system suspend, core power goes off and looses the settings
+of the Tegra CAR controller registers.
 
-So on system resume, context of super clock registers are restored
-to have them in same state as before suspend.
+So during suspend entry the state of pllout is saved and on resume
+it is restored back to have pllout in same state as before suspend.
 
+pllout rate is saved and restore in clock divider so it will be at
+same rate as before suspend when pllout state is restored.
+
+Acked-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- drivers/clk/tegra/clk-super.c | 21 +++++++++++++++++++++
- 1 file changed, 21 insertions(+)
+ drivers/clk/tegra/clk-pll-out.c  | 9 +++++++++
+ drivers/clk/tegra/clk-tegra210.c | 3 ++-
+ drivers/clk/tegra/clk.h          | 6 ++++++
+ 3 files changed, 17 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-index e2a1e95a8db7..74c9e913e41c 100644
---- a/drivers/clk/tegra/clk-super.c
-+++ b/drivers/clk/tegra/clk-super.c
-@@ -124,9 +124,18 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
- 	return err;
+diff --git a/drivers/clk/tegra/clk-pll-out.c b/drivers/clk/tegra/clk-pll-out.c
+index 35f2bf00e1e6..d8bf89a81e6d 100644
+--- a/drivers/clk/tegra/clk-pll-out.c
++++ b/drivers/clk/tegra/clk-pll-out.c
+@@ -69,10 +69,19 @@ static void clk_pll_out_disable(struct clk_hw *hw)
+ 		spin_unlock_irqrestore(pll_out->lock, flags);
  }
  
-+static void clk_super_mux_restore_context(struct clk_hw *hw)
++static void tegra_clk_pll_out_restore_context(struct clk_hw *hw)
 +{
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	int parent_id = clk_hw_get_parent_index(hw, parent);
-+
-+	clk_super_set_parent(hw, parent_id);
++	if (!__clk_get_enable_count(hw->clk))
++		clk_pll_out_disable(hw);
++	else
++		clk_pll_out_enable(hw);
 +}
 +
- static const struct clk_ops tegra_clk_super_mux_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
-+	.restore_context = clk_super_mux_restore_context,
+ const struct clk_ops tegra_clk_pll_out_ops = {
+ 	.is_enabled = clk_pll_out_is_enabled,
+ 	.enable = clk_pll_out_enable,
+ 	.disable = clk_pll_out_disable,
++	.restore_context = tegra_clk_pll_out_restore_context,
  };
  
- static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
-@@ -162,12 +171,24 @@ static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
- 	return super->div_ops->set_rate(div_hw, rate, parent_rate);
- }
+ struct clk *tegra_clk_register_pll_out(const char *name,
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index df172d5772d7..4721ee030d1c 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3200,7 +3200,8 @@ static void __init tegra210_pll_init(void __iomem *clk_base,
+ 					 8, 8, 1, NULL);
+ 	clk = tegra_clk_register_pll_out("pll_re_out1", "pll_re_out1_div",
+ 					 clk_base + PLLRE_OUT1, 1, 0,
+-					 CLK_SET_RATE_PARENT, 0, NULL);
++					 CLK_SET_RATE_PARENT, TEGRA_PLLRE_OUT,
++					 NULL);
+ 	clks[TEGRA210_CLK_PLL_RE_OUT1] = clk;
  
-+static void clk_super_restore_context(struct clk_hw *hw)
-+{
-+	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
-+	struct clk_hw *div_hw = &super->frac_div.hw;
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	int parent_id = clk_hw_get_parent_index(hw, parent);
-+
-+	super->div_ops->restore_context(div_hw);
-+	clk_super_set_parent(hw, parent_id);
-+}
-+
- const struct clk_ops tegra_clk_super_ops = {
- 	.get_parent = clk_super_get_parent,
- 	.set_parent = clk_super_set_parent,
- 	.set_rate = clk_super_set_rate,
- 	.round_rate = clk_super_round_rate,
- 	.recalc_rate = clk_super_recalc_rate,
-+	.restore_context = clk_super_restore_context,
+ 	/* PLLE */
+diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+index 905bf1096558..a464524fbc90 100644
+--- a/drivers/clk/tegra/clk.h
++++ b/drivers/clk/tegra/clk.h
+@@ -437,6 +437,10 @@ struct clk *tegra_clk_register_pllu_tegra210(const char *name,
+  * @rst_bit_idx:	bit to reset PLL divider
+  * @lock:		register lock
+  * @flags:		hardware-specific flags
++ *
++ * Flags:
++ * TEGRA_PLLRE_OUT - This flag indicates that it is PLLRE_OUT and is used to
++ *		     identify PLLRE_OUT during clk_pll_out save and restore.
+  */
+ struct tegra_clk_pll_out {
+ 	struct clk_hw	hw;
+@@ -447,6 +451,8 @@ struct tegra_clk_pll_out {
+ 	u8		flags;
  };
  
- struct clk *tegra_clk_register_super_mux(const char *name,
++#define TEGRA_PLLRE_OUT BIT(0)
++
+ #define to_clk_pll_out(_hw) container_of(_hw, struct tegra_clk_pll_out, hw)
+ 
+ extern const struct clk_ops tegra_clk_pll_out_ops;
 -- 
 2.7.4
 
