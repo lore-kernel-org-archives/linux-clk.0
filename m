@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DCA9C0650F
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 20:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB95DC0650F
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 20:54:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E1EA217F4
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 20:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 951992173E
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 20:54:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565295802;
-	bh=/yMO/gaxak8tQYEak/Foyv+IzSbgCRbycYQcUCMnGds=;
+	s=default; t=1565297672;
+	bh=RbcGBY8Rckrm2fQnqb86Wd8ep+YZxpahEYQClJ1cns4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=eqeGK6OucdR5jXQIznv/lQKAIlbd+GtC4zsd63AB3cERABSlfg687K3iiCts03Vfv
-	 7oebh2MQy2kW2fgfIx1k99/FFrStkNqSpCWF1a4O0Pkzhj6xaG86v1CfnmjXqLsi+v
-	 j34JU5Ac4APfJyZvxnSBRYX/EKJnHRbYLTtOPu20=
+	b=Eh1N2dgnONCoX/hKpeyrOMw0dPVDxTM2ujZL2VHqmnQCkZ9wowmC9ZjrO1gqSsK2y
+	 QP3oTpSz8eZ4ArIBdhyH399vlgPWJpoDxpyWU1z2S5xXFc9oTVDCVC6jcJczIMCRrC
+	 uNg/KckdCztpX2mVSSS66VHuXB3Kalh8gAy6oe7I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404910AbfHHUXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 16:23:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36102 "EHLO mail.kernel.org"
+        id S1733140AbfHHUyc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 16:54:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47430 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404588AbfHHUXV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 8 Aug 2019 16:23:21 -0400
+        id S1732601AbfHHUyc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 8 Aug 2019 16:54:32 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E469D2173C;
-        Thu,  8 Aug 2019 20:23:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A5762173C;
+        Thu,  8 Aug 2019 20:54:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565295801;
-        bh=/yMO/gaxak8tQYEak/Foyv+IzSbgCRbycYQcUCMnGds=;
+        s=default; t=1565297671;
+        bh=RbcGBY8Rckrm2fQnqb86Wd8ep+YZxpahEYQClJ1cns4=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=gOx1FbxFsQhWWWhAuzof8IsPeqjaXYUi698rgD9EhqpoWsxsE81oYbt6vvBpax3zJ
-         sS0dNVo+EoCuXK4KJdoy+7czUjZAJNMHBiWhzsybI5hmiR4ZQ8f+6INIpzKad6iz17
-         tXYmY+GDTPl320gWNPvqUB5nky/19YjAKAvgBzys=
+        b=iS+N5K6W+k2NAMCOroQiYTmg7HnFH3sCVZuj5w1hI3CHnBV4EnwOm0xGL6qdQGC+t
+         aBwN3TCs+AG/Yazs2vNyS02nPNI0shECCVG7R/HtRcGsDOsnUCfGuF75HWKz+K/Teo
+         oPGSTmpwPrO0dziJ9ZUB3zN3gwmPb5d8PvanM27Q=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190808144929.18685-1-s.nawrocki@samsung.com>
-References: <CGME20190808144936eucas1p2e65eddc3d970de35590cb84fe200b438@eucas1p2.samsung.com> <20190808144929.18685-1-s.nawrocki@samsung.com>
-Subject: Re: [PATCH v2 1/2] clk: samsung: Change signature of exynos5_subcmus_init() function
+In-Reply-To: <20190808144929.18685-2-s.nawrocki@samsung.com>
+References: <20190808144929.18685-1-s.nawrocki@samsung.com> <CGME20190808144941eucas1p1b6ba7aadd0c31aedf765a0f90ed6213f@eucas1p1.samsung.com> <20190808144929.18685-2-s.nawrocki@samsung.com>
+Subject: Re: [PATCH v2 2/2] clk: samsung: exynos5800: Move MAU subsystem clocks to MAU sub-CMU
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux@armlinux.org.uk, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
@@ -52,19 +52,33 @@ Cc:     linux@armlinux.org.uk, linux-clk@vger.kernel.org,
 To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
         mturquette@baylibre.com
 User-Agent: alot/0.8.1
-Date:   Thu, 08 Aug 2019 13:23:20 -0700
-Message-Id: <20190808202320.E469D2173C@mail.kernel.org>
+Date:   Thu, 08 Aug 2019 13:54:30 -0700
+Message-Id: <20190808205431.0A5762173C@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2019-08-08 07:49:28)
-> In order to make it easier in subsequent patch to create different subcmu
-> lists for exynos5420 and exynos5800 SoCs the code is rewritten so we pass
-> an array of pointers to the subcmus initialization function.
+Quoting Sylwester Nawrocki (2019-08-08 07:49:29)
+> This patch fixes broken sound on Exynos5422/5800 platforms after
+> system/suspend resume cycle in cases where the audio root clock
+> is derived from MAU_EPLL_CLK.
+>=20
+> In order to preserve state of the USER_MUX_MAU_EPLL_CLK clock mux
+> during system suspend/resume cycle for Exynos5800 we group the MAU
+> block input clocks in "MAU" sub-CMU and add the clock mux control
+> bit to .suspend_regs.  This ensures that user configuration of the mux
+> is not lost after the PMU block changes the mux setting to OSC_DIV
+> when switching off the MAU power domain.
+>=20
+> Adding the SRC_TOP9 register to exynos5800_clk_regs[] array is not
+> sufficient as at the time of the syscore_ops suspend call MAU power
+> domain is already turned off and we already save and subsequently
+> restore an incorrect register's value.
 >=20
 > Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+> Reported-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+> Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
 > Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 > ---
