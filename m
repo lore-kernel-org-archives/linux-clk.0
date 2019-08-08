@@ -2,130 +2,217 @@ Return-Path: <SRS0=DelH=WE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B553C433FF
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 12:14:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38278C433FF
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 12:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5955321881
-	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 12:14:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 020BD21881
+	for <linux-clk@archiver.kernel.org>; Thu,  8 Aug 2019 12:18:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lqejq1Qn"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="pJEYtsIC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727841AbfHHMOl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 8 Aug 2019 08:14:41 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:50697 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbfHHMOk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Aug 2019 08:14:40 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190808121439euoutp02c9e4428f96f14aee266ffb1167775b3d~48ZHh864p3085230852euoutp02J
-        for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2019 12:14:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190808121439euoutp02c9e4428f96f14aee266ffb1167775b3d~48ZHh864p3085230852euoutp02J
+        id S1732279AbfHHMSu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 8 Aug 2019 08:18:50 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44306 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729410AbfHHMSu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 8 Aug 2019 08:18:50 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190808121848euoutp019bc0cce36b8383d160bfec66d4d4b5bb~48cvQwxm10371903719euoutp01D
+        for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2019 12:18:48 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190808121848euoutp019bc0cce36b8383d160bfec66d4d4b5bb~48cvQwxm10371903719euoutp01D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1565266479;
-        bh=Kfg3TIFWVX/aMRLF2Z40ddqnbp+FhuwEieRXHM+KmiI=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=lqejq1QnJoGDwgGvFSV9Nd8L4GWqQFnkrPHjQPsuiSLJyvBPLbP9RTUaBAODnwc90
-         tG/cPx240QkaV1cjHhDVrsIT2EO8tmrhUzhx10kFpPiGLhh2ozFRsCqVIz9jXoYeJA
-         kEssBF0ywYZGI6OfGHnNaRFrwxr76YaDzIv9vHuU=
+        s=mail20170921; t=1565266728;
+        bh=y8i37Y/H5dBf9+Gnj7ZmjwUKzcNbsEEyTTJGi/7kLTg=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=pJEYtsIC6mjwvkveT88WWAoXS5GXATakAKkEw7SyD7BqLvVfNfK7YzfJmEXnv8LtY
+         PolWpc/kaPAxsn5/R02BdJH86VdCkSUz1lLIc3DpRLfKuqC10IL/63zOW+iZKtgz/Y
+         mB1hfbduBh7hhvqeChi3jo6ektGAXWGjKn6b6jPc=
 Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20190808121438eucas1p12f5deb7d85acd79173b30a83858fea93~48ZHKZllV0058700587eucas1p1s;
-        Thu,  8 Aug 2019 12:14:38 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 05.97.04374.E221C4D5; Thu,  8
-        Aug 2019 13:14:38 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        20190808121847eucas1p1edb3ab6608fb7af0866e958609708762~48cuzOv7B0161901619eucas1p1D;
+        Thu,  8 Aug 2019 12:18:47 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id B9.08.04374.7231C4D5; Thu,  8
+        Aug 2019 13:18:47 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
         eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20190808121438eucas1p12c089f64953e2d9f8c7c2dcceae69942~48ZGRckvF1125411254eucas1p19;
-        Thu,  8 Aug 2019 12:14:38 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20190808121437eusmtrp1bca8d024f9c7602bef217c9a2ccd2495~48ZGDG5Bu2440524405eusmtrp1V;
-        Thu,  8 Aug 2019 12:14:37 +0000 (GMT)
-X-AuditID: cbfec7f5-4f7ff70000001116-da-5d4c122e958c
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id B3.39.04117.D221C4D5; Thu,  8
-        Aug 2019 13:14:37 +0100 (BST)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20190808121437eusmtip2ef64e3e8618fe528509c92148a2e8bbd~48ZFlNImP0045500455eusmtip2q;
-        Thu,  8 Aug 2019 12:14:37 +0000 (GMT)
-Subject: Re: [PATCH 2/2] clk: samsung: exynos5800: Move MAU subsystem clocks
- to MAU sub-CMU
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     sboyd@kernel.org, mturquette@baylibre.com, linux@armlinux.org.uk,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, krzk@kernel.org,
-        cw00.choi@samsung.com, b.zolnierkie@samsung.com
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <fb033201-b798-e3f9-fbdc-0332b422e987@samsung.com>
-Date:   Thu, 8 Aug 2019 14:14:36 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <eeba8348-4c41-32c5-39f2-c693aafe6c4f@samsung.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJKsWRmVeSWpSXmKPExsWy7djPc7p6Qj6xBmeeqVtsnLGe1eL6l+es
-        FufPb2C3+Nhzj9Xi8q45bBYzzu9jsjg0dS+jxdojd9ktLp5ytfh3bSOLA5fH5WsXmT3e32hl
-        99i0qpPNo2/LKkaPz5vkAlijuGxSUnMyy1KL9O0SuDKWXl7CVDCPuWLCpvfsDYxHmboYOTgk
-        BEwkFj6Q7GLk4hASWMEo8XjvLDYI5wujxKx7n9khnM+MEvt/3WfuYuQE67j06xwrRGI5o0TL
-        xGtQzltGidN/l7OBzBUWiJVY+7gCpEFEQF+iu+0KI0gNs8ALRomee6/YQRJsAoYSvUf7GEFs
-        XgE7icfbToPFWQRUJG6+PAoWFxWIkPj04DArRI2gxMmZT1hAbE4Be4lLHd/B6pkFxCWavqxk
-        hbDlJba/ncMMskxC4BS7xLMrfewQZ7tI3N7fxQJhC0u8Or4FKi4jcXpyDwtEQzPQdbtvs0M4
-        Exgl7h9fwAhRZS1x+PhFVpDXmAU0Jdbv0ocIO0o87wIpAYUkn8SNt4IQR/BJTNo2nRkizCvR
-        0SYEUa0i8XvVdCYIW0qi+8l/lgmMSrOQvDYLyTuzkLwzC2HvAkaWVYziqaXFuempxcZ5qeV6
-        xYm5xaV56XrJ+bmbGIEJ6vS/4193MO77k3SIUYCDUYmH98Qp71gh1sSy4srcQ4wSHMxKIrz3
-        yjxjhXhTEiurUovy44tKc1KLDzFKc7AoifNWMzyIFhJITyxJzU5NLUgtgskycXBKNTCK6J3R
-        yDQskSmJuht+6quaSN2nxHImaUtv7YWClxtfZp5qeZ5q+EfC4svN9Qd3LQpOPf5oXt1m3Y+a
-        Acmu34z1VXRF1ZQc5qzcGVm0ZsdfdbNXbp9a/Be/Krx5ezon0zSDstAlalseeAldKFS60u17
-        Q1a7XOz+SpWzRo8t7BaKhSbUnlqacUqJpTgj0VCLuag4EQCsAgc7TAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xe7q6Qj6xBh93a1tsnLGe1eL6l+es
-        FufPb2C3+Nhzj9Xi8q45bBYzzu9jsjg0dS+jxdojd9ktLp5ytfh3bSOLA5fH5WsXmT3e32hl
-        99i0qpPNo2/LKkaPz5vkAlij9GyK8ktLUhUy8otLbJWiDS2M9AwtLfSMTCz1DI3NY62MTJX0
-        7WxSUnMyy1KL9O0S9DKWXl7CVDCPuWLCpvfsDYxHmboYOTkkBEwkLv06x9rFyMUhJLCUUeLd
-        u9VADgdQQkpifosSRI2wxJ9rXWwQNa8ZJWZevQhWIywQK7H2cQVIjYiAvkR32xVGkBpmgReM
-        Ejc+bmOCaPjGKLHh52xWkCo2AUOJ3qN9jCA2r4CdxONtp9lBbBYBFYmbL4+CxUUFIiQO75gF
-        VSMocXLmExYQm1PAXuJSx3ewemYBdYk/8y4xQ9jiEk1fVrJC2PIS29/OYZ7AKDQLSfssJC2z
-        kLTMQtKygJFlFaNIamlxbnpusZFecWJucWleul5yfu4mRmBEbjv2c8sOxq53wYcYBTgYlXh4
-        C054xwqxJpYVV+YeYpTgYFYS4b1X5hkrxJuSWFmVWpQfX1Sak1p8iNEU6LmJzFKiyfnAZJFX
-        Em9oamhuYWlobmxubGahJM7bIXAwRkggPbEkNTs1tSC1CKaPiYNTChhJwQZftf473/eYa1zf
-        wnRvzzTfG7b2xke8MzrTuiLq09LlasP6rpYba/2x++7psjL0TnP2hWv/pO8LfmM4cu1PtOC1
-        mYo6myZbfFa9eHWHxEYvb749ptMtG6IDn/yszyiUk7RmWGG5L/ZVsmXObQOJpzvW/9V6MH/J
-        GSML6R0tp5hEHbVO+ymxFGckGmoxFxUnAgCW3FMF3gIAAA==
-X-CMS-MailID: 20190808121438eucas1p12c089f64953e2d9f8c7c2dcceae69942
+        20190808121846eucas1p12022cc4a5c23af44e46c459a0c3c5746~48ctzClXn0162301623eucas1p1B;
+        Thu,  8 Aug 2019 12:18:46 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190808121846eusmtrp2034067aa5781c2d1d013e0b2dcf499f5~48ctkbFdF1089510895eusmtrp2C;
+        Thu,  8 Aug 2019 12:18:46 +0000 (GMT)
+X-AuditID: cbfec7f5-4f7ff70000001116-6b-5d4c132703a3
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D9.78.04166.6231C4D5; Thu,  8
+        Aug 2019 13:18:46 +0100 (BST)
+Received: from AMDC2765.DIGITAL.local (unknown [106.120.51.73]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190808121845eusmtip1ba406be6dd0bee1060a585872f18d28e~48ctLBZKE0828108281eusmtip1I;
+        Thu,  8 Aug 2019 12:18:45 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos542x: Move MSCL subsystem clocks to its
+ sub-CMU
+Date:   Thu,  8 Aug 2019 14:18:39 +0200
+Message-Id: <20190808121839.23892-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrCIsWRmVeSWpSXmKPExsWy7djP87rqwj6xBlNXS1hsnLGe1eL6l+es
+        FufPb2C3+Nhzj9Vixvl9TBZrj9xlt2h/+pLZgd1j06pONo++LasYPT5vkgtgjuKySUnNySxL
+        LdK3S+DKeLuIt6BBpaJp+XW2BsZdcl2MnBwSAiYSHTvWsXUxcnEICaxglDj+cyMThPOFUeLx
+        lXUsIFVCAp8ZJbbe9IfpuLi4ix2iaDmjxOzpN1nhOg7NnswMUsUmYCjR9baLDcQWEXCQ+Pzp
+        NSNIEbPAY6BJJ7+CFQkLhEls7n7JCmKzCKhKdCztYQKxeQVsJZ5f+cQKsU5eYvWGA8wgzRIC
+        B9gklj89ArSbA8hxkbj62RqiRlji1fEt7BC2jMT/nfOZIOqbGSUenlvLDuH0MEpcbprBCFFl
+        LXH4+EVWkEHMApoS63fpQ4QdJS5/X8UGMZ9P4sZbQZAwM5A5adt0Zogwr0RHmxBEtZrErOPr
+        4NYevHCJGcL2kDiycyIbJORiJW58vsQ6gVFuFsKuBYyMqxjFU0uLc9NTi43zUsv1ihNzi0vz
+        0vWS83M3MQLj/vS/4193MO77k3SIUYCDUYmH98Qp71gh1sSy4srcQ4wSHMxKIrz3yjxjhXhT
+        EiurUovy44tKc1KLDzFKc7AoifNWMzyIFhJITyxJzU5NLUgtgskycXBKNTBOneL6PoJHbqfD
+        Vz2z4KWzq7nmaBXe61WPrdkQY8Xr+Ljv+dvfpumftku1T/LlutbjXdDlJa+8/uuhUkMPm/Vl
+        P7lnv7uy1rvdS0CpSDRmU5T2Ppn2XJUlm64elg5/7ap47NDliBm1bmISGmvWTri136rxGLd1
+        YryYTexvodPd88UMV91+Z6vEUpyRaKjFXFScCABkdk4H9wIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xu7pqwj6xBj+ahC02zljPanH9y3NW
+        i/PnN7BbfOy5x2ox4/w+Jou1R+6yW7Q/fcnswO6xaVUnm0ffllWMHp83yQUwR+nZFOWXlqQq
+        ZOQXl9gqRRtaGOkZWlroGZlY6hkam8daGZkq6dvZpKTmZJalFunbJehlvF3EW9CgUtG0/Dpb
+        A+MuuS5GTg4JAROJi4u72LsYuTiEBJYySrw7N4cRIiEjcXJaAyuELSzx51oXG0TRJ0aJjy13
+        2UASbAKGEl1vu8BsEQEniQfr3oBNYhZ4yihxfUMjWLewQIjE8dc/mEBsFgFViY6lPWA2r4Ct
+        xPMrn6A2yEus3nCAeQIjzwJGhlWMIqmlxbnpucWGesWJucWleel6yfm5mxiBAbft2M/NOxgv
+        bQw+xCjAwajEw1twwjtWiDWxrLgy9xCjBAezkgjvvTLPWCHelMTKqtSi/Pii0pzU4kOMpkDL
+        JzJLiSbnA6MhryTe0NTQ3MLS0NzY3NjMQkmct0PgYIyQQHpiSWp2ampBahFMHxMHp1QDI+ff
+        fWsenuZNOaikVa92bN9uJ5G1HQd9dDczfpDbM8/9zokFfta7fdkMT/SknC8zLLV8+G5Z40nZ
+        y72G4dce2/MqpidXv2/V9nz4qtvorGFJDHvJYrncZN6bL7Yv9P778ob279CV94XNlsxsub7A
+        +fdSGUWLM/X9fVNeGYss51oi11F7I1HJR4mlOCPRUIu5qDgRADJX/RFOAgAA
+X-CMS-MailID: 20190808121846eucas1p12022cc4a5c23af44e46c459a0c3c5746
 X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20190807162519eucas1p2b9dd9f31cc6e60e0bc935e9a6ceef908
+X-RootMTR: 20190808121846eucas1p12022cc4a5c23af44e46c459a0c3c5746
 X-EPHeader: CA
 CMS-TYPE: 201P
-X-CMS-RootMailID: 20190807162519eucas1p2b9dd9f31cc6e60e0bc935e9a6ceef908
-References: <20190807162456.28694-1-s.nawrocki@samsung.com>
-        <CGME20190807162519eucas1p2b9dd9f31cc6e60e0bc935e9a6ceef908@eucas1p2.samsung.com>
-        <20190807162456.28694-2-s.nawrocki@samsung.com>
-        <eeba8348-4c41-32c5-39f2-c693aafe6c4f@samsung.com>
+X-CMS-RootMailID: 20190808121846eucas1p12022cc4a5c23af44e46c459a0c3c5746
+References: <CGME20190808121846eucas1p12022cc4a5c23af44e46c459a0c3c5746@eucas1p1.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/8/19 13:48, Marek Szyprowski wrote:
->> +static struct exynos5_subcmu_reg_dump exynos5800_mau_suspend_regs[] = {
->> +	{ SRC_TOP9, 0, BIT(8) },
-> I would like to add a following comment:
-> 
-> /* MUX mout_user_mau_epll */
-> 
-> to the above line to indicate which clock it refers (like it is done for 
-> other sub-cmus).
- 
-Good point, I will resend with that comment added.
+M2M scaler clocks require special handling of their parent bus clock during
+power domain on/off sequences. MSCL clocks were not initially added to the
+sub-CMU handler, because that time there was no driver for the M2M scaler
+device and it was not possible to test it.
 
+This patch fixes this issue. Parent clock for M2M scaler devices is now
+properly preserved during MSC power domain on/off sequence. This gives M2M
+scaler devices proper performance: fullHD XRGB32 image 1000 rotations test
+takes 3.17s instead of 45.08s.
+
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/clk/samsung/clk-exynos5420.c | 48 ++++++++++++++++++++--------
+ 1 file changed, 34 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index b52daf5aa755..ec0515d7f627 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -893,9 +893,6 @@ static const struct samsung_div_clock exynos5x_div_clks[] __initconst = {
+ 	/* GSCL Block */
+ 	DIV(0, "dout_gscl_blk_333", "aclk333_432_gscl", DIV2_RATIO0, 6, 2),
+ 
+-	/* MSCL Block */
+-	DIV(0, "dout_mscl_blk", "aclk400_mscl", DIV2_RATIO0, 28, 2),
+-
+ 	/* PSGEN */
+ 	DIV(0, "dout_gen_blk", "mout_user_aclk266", DIV2_RATIO0, 8, 1),
+ 	DIV(0, "dout_jpg_blk", "aclk166", DIV2_RATIO0, 20, 1),
+@@ -1159,17 +1156,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_FIMC_LITE3, "fimc_lite3", "aclk333_432_gscl",
+ 			GATE_IP_GSCL1, 17, 0, 0),
+ 
+-	/* MSCL Block */
+-	GATE(CLK_MSCL0, "mscl0", "aclk400_mscl", GATE_IP_MSCL, 0, 0, 0),
+-	GATE(CLK_MSCL1, "mscl1", "aclk400_mscl", GATE_IP_MSCL, 1, 0, 0),
+-	GATE(CLK_MSCL2, "mscl2", "aclk400_mscl", GATE_IP_MSCL, 2, 0, 0),
+-	GATE(CLK_SMMU_MSCL0, "smmu_mscl0", "dout_mscl_blk",
+-			GATE_IP_MSCL, 8, 0, 0),
+-	GATE(CLK_SMMU_MSCL1, "smmu_mscl1", "dout_mscl_blk",
+-			GATE_IP_MSCL, 9, 0, 0),
+-	GATE(CLK_SMMU_MSCL2, "smmu_mscl2", "dout_mscl_blk",
+-			GATE_IP_MSCL, 10, 0, 0),
+-
+ 	/* ISP */
+ 	GATE(CLK_SCLK_UART_ISP, "sclk_uart_isp", "dout_uart_isp",
+ 			GATE_TOP_SCLK_ISP, 0, CLK_SET_RATE_PARENT, 0),
+@@ -1278,6 +1264,28 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+ 	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
+ };
+ 
++static const struct samsung_gate_clock exynos5x_mscl_gate_clks[] __initconst = {
++	/* MSCL Block */
++	GATE(CLK_MSCL0, "mscl0", "aclk400_mscl", GATE_IP_MSCL, 0, 0, 0),
++	GATE(CLK_MSCL1, "mscl1", "aclk400_mscl", GATE_IP_MSCL, 1, 0, 0),
++	GATE(CLK_MSCL2, "mscl2", "aclk400_mscl", GATE_IP_MSCL, 2, 0, 0),
++	GATE(CLK_SMMU_MSCL0, "smmu_mscl0", "dout_mscl_blk",
++			GATE_IP_MSCL, 8, 0, 0),
++	GATE(CLK_SMMU_MSCL1, "smmu_mscl1", "dout_mscl_blk",
++			GATE_IP_MSCL, 9, 0, 0),
++	GATE(CLK_SMMU_MSCL2, "smmu_mscl2", "dout_mscl_blk",
++			GATE_IP_MSCL, 10, 0, 0),
++};
++
++static const struct samsung_div_clock exynos5x_mscl_div_clks[] __initconst = {
++	DIV(0, "dout_mscl_blk", "aclk400_mscl", DIV2_RATIO0, 28, 2),
++};
++
++static struct exynos5_subcmu_reg_dump exynos5x_mscl_suspend_regs[] = {
++	{ GATE_IP_MSCL, 0xffffffff, 0xffffffff }, /* MSCL gates */
++	{ SRC_TOP3, 0, BIT(4) },		/* MUX mout_user_aclk400_mscl */
++	{ DIV2_RATIO0, 0, 0x30000000 },		/* DIV dout_mscl_blk */
++};
+ 
+ static const struct samsung_gate_clock exynos5800_mau_gate_clks[] __initconst = {
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+@@ -1322,6 +1330,16 @@ static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
+ 	.pd_name	= "MFC",
+ };
+ 
++static const struct exynos5_subcmu_info exynos5x_mscl_subcmu = {
++	.div_clks	= exynos5x_mscl_div_clks,
++	.nr_div_clks	= ARRAY_SIZE(exynos5x_mscl_div_clks),
++	.gate_clks	= exynos5x_mscl_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_mscl_gate_clks),
++	.suspend_regs	= exynos5x_mscl_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_mscl_suspend_regs),
++	.pd_name	= "MSC",
++};
++
+ static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
+ 	.gate_clks	= exynos5800_mau_gate_clks,
+ 	.nr_gate_clks	= ARRAY_SIZE(exynos5800_mau_gate_clks),
+@@ -1334,12 +1352,14 @@ static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
+ 	&exynos5x_mfc_subcmu,
++	&exynos5x_mscl_subcmu,
+ };
+ 
+ static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
+ 	&exynos5x_mfc_subcmu,
++	&exynos5x_mscl_subcmu,
+ 	&exynos5800_mau_subcmu,
+ };
+ 
 -- 
-Regards,
-Sylwester
+2.17.1
+
