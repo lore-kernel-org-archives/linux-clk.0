@@ -2,118 +2,176 @@ Return-Path: <SRS0=Pyod=WF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE299C31E40
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 17:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 627F0C31E40
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 18:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 857E621773
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 17:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E18E2166E
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 18:00:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="OA/UGs56"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LDOeQ3uT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2436913AbfHIRze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Aug 2019 13:55:34 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37615 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2436783AbfHIRze (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Aug 2019 13:55:34 -0400
-Received: by mail-pl1-f195.google.com with SMTP id b3so45294690plr.4
-        for <linux-clk@vger.kernel.org>; Fri, 09 Aug 2019 10:55:33 -0700 (PDT)
+        id S2437060AbfHISAW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Aug 2019 14:00:22 -0400
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35887 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436792AbfHISAW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Aug 2019 14:00:22 -0400
+Received: by mail-lj1-f193.google.com with SMTP id i21so13605888ljj.3;
+        Fri, 09 Aug 2019 11:00:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=k0JW1MLLNsJwJlBlpJuuU0x2nZPPO+9mm49FYZVazao=;
-        b=OA/UGs56YQC+yyIr42CyZFxmzgMazL51eytKigu93E+h3M3jx1SUQiWiF2xWk/IvJc
-         Q2jev5fwjGsrjHCQYryT6wDWbu5un0fcb5sdT8qg/CF0brDZK8w3+cZX9toQy9nepy2n
-         syvs8gglTWIuvi3BOXS8JqMrhG9URrL7AtZtNZH9xaxgTvcGU4ewWmf/aBrNKiC3sB0R
-         1hyJCFehJSlr9sDErNnlBchuHyiv3Znqbg/Vjpmuq3XjjantHGUcH1i5za2dSzi7pl6K
-         WJh1lWbPp+pxypCQx/oWGviqfHxV5K2wqQT3iP9DbAc3Zi+c1FVe/YKm/Y4l0+as8B6Y
-         Ii1w==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ekRN3CGGUe5ud4FkS+DC9oR98vctAS4hFeDdvCDGxd0=;
+        b=LDOeQ3uTAutRp/CUklZB2LMAlAPdvj04OW60N7eXJT+Yc/2GiT624yXZUWCJ2yrqy5
+         3ACwQnk3gpvuDvcZspC0m4RBqQ+6wIGkflemf1mtUrWZ2scW9wRghkI6siR8FR0wl6R9
+         0OXQu+g6z+BMQv+62d0/aNrA/YZ8xuPgRfLJShR3qAQwPN+ew/8bUYNyk6UgNF1sfCIr
+         EucyyM7JyjQHlAEOM9h7zQCuI2IiZsrvxPRny1Zj1waKeN07GrN+QfmSWWrEZaMUlQ+G
+         Fn7GHDAEqRRbQI0qZPUqH7OZu2vnc3Gtcx2/MdOIhwYDXFGlDCLf9PwXt3/F8n+Pg3fY
+         bgKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=k0JW1MLLNsJwJlBlpJuuU0x2nZPPO+9mm49FYZVazao=;
-        b=MHkPq6l2gu8CktV/lDJxo1qhojvdaZuku5ahMnBQ3pZ0JbbbY4v1c08TyfYoqxUrKR
-         AvYwsSHZAV3wVPS5ySMsEjYyB+CDtPuXNxFPelMldY241wM2qh5hBbWb7QScchDQQCM2
-         OkkRXNpfXSPKv2LOkKvK0Ok9efecnYkw/Uw2a5y7dZqwx961VdCWqHaItVhezORVcSbg
-         lUC8fxKmtmlbGVEP/pM/1IOj2XUDAJDUeNW0Kc6ECW8b95Y+jrSSFCWXRi7yJesKQxfF
-         Ox8jvubq8Axm05lkcQ5SFO+dkshF1okBn7rxpamleYDtYp81Oeb7j3rXvTE3VmffpMjW
-         Q/qA==
-X-Gm-Message-State: APjAAAW3pTYmUeaNLY5EMwAzTGZmHATpKI0OJuq1HNyieyixAz71ZFps
-        bQ/vPPPdWwIhDpAHili3Of92YQ==
-X-Google-Smtp-Source: APXvYqysFBcmJohUVIoX2xKUnTFNTQhCkCVi2y06fMeHjJJpEKticMBmoCDL0iUgxQ747LXHcXRg/g==
-X-Received: by 2002:a17:902:6b81:: with SMTP id p1mr20019532plk.91.1565373333064;
-        Fri, 09 Aug 2019 10:55:33 -0700 (PDT)
-Received: from localhost ([2601:602:9200:a1a5:b873:707a:e893:cdb3])
-        by smtp.gmail.com with ESMTPSA id i15sm103848714pfd.160.2019.08.09.10.55.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 09 Aug 2019 10:55:32 -0700 (PDT)
-From:   Kevin Hilman <khilman@baylibre.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/4] clk: meson: g12a: add support for DVFS
-In-Reply-To: <1jy302o5j7.fsf@starbuckisacylon.baylibre.com>
-References: <20190731084019.8451-1-narmstrong@baylibre.com> <7hzhkje4ov.fsf@baylibre.com> <1jy302o5j7.fsf@starbuckisacylon.baylibre.com>
-Date:   Fri, 09 Aug 2019 10:55:30 -0700
-Message-ID: <7h8ss24419.fsf@baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ekRN3CGGUe5ud4FkS+DC9oR98vctAS4hFeDdvCDGxd0=;
+        b=O2ZSZO3EDsP42KJF+5M7+gVHScfRDi/OgNOT558FoVV+qXXyT6BbbpcU/j6dVjhJ5W
+         TOBJXii10rA5Wcw19UKdSjbYAKPQaQVCeU9WmkgxuLgBOAKs4nLKXeIe515ANvcohKUh
+         jTjAd8sX7eS1bjtjMhNr4oca9X0Lq5XHcZIZrK1/Ytw/N0+3cdBJP84x0cX/8ugGhksZ
+         ampnYXk/9IW1pHE0odDfGvNoWBIey9DAfBlnnl5hijUx+j+992HqVfa+hwa2OyA4uvFx
+         A3pYYAv4+XS2BIE9zFdOFFTrVDLIEOKShtTHI+znr2XUi95iPUOritpWJYP3cJ5B10rB
+         Yzmg==
+X-Gm-Message-State: APjAAAVaxONdzMcsfMexHrcIATxjPeAlmo4onzcIQvpZ1cihChOiGOl7
+        7f5inh9+bwzbfxVGMnAxcjFLvV6P
+X-Google-Smtp-Source: APXvYqz55M9yJXed3vo3XTFQDOgFfrHAf5VkzyiI1jbGDfiic+laU7rE59F83OcynQsQYvFs3zs4Ng==
+X-Received: by 2002:a2e:89c8:: with SMTP id c8mr2185159ljk.138.1565373618514;
+        Fri, 09 Aug 2019 11:00:18 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.218])
+        by smtp.googlemail.com with ESMTPSA id d16sm4599882lfl.29.2019.08.09.11.00.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Aug 2019 11:00:17 -0700 (PDT)
+Subject: Re: [PATCH v8 11/21] clk: tegra: clk-dfll: Add suspend and resume
+ support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-12-git-send-email-skomatineni@nvidia.com>
+ <eb4fdab8-aba3-7f0c-a391-d751674fd03e@gmail.com>
+ <29a85a35-10ff-2d43-d148-9dba1ee25869@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <84a0d46a-bca2-1000-a2a6-8890ee702dd3@gmail.com>
+Date:   Fri, 9 Aug 2019 21:00:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <29a85a35-10ff-2d43-d148-9dba1ee25869@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Jerome Brunet <jbrunet@baylibre.com> writes:
-
-> On Thu 08 Aug 2019 at 14:18, Kevin Hilman <khilman@baylibre.com> wrote:
->
->> Neil Armstrong <narmstrong@baylibre.com> writes:
+09.08.2019 19:39, Sowjanya Komatineni пишет:
+> 
+> On 8/9/19 5:23 AM, Dmitry Osipenko wrote:
+>> 09.08.2019 2:46, Sowjanya Komatineni пишет:
+>>> This patch implements DFLL suspend and resume operation.
+>>>
+>>> During system suspend entry, CPU clock will switch CPU to safe
+>>> clock source of PLLP and disables DFLL clock output.
+>>>
+>>> DFLL driver suspend confirms DFLL disable state and errors out on
+>>> being active.
+>>>
+>>> DFLL is re-initialized during the DFLL driver resume as it goes
+>>> through complete reset during suspend entry.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   drivers/clk/tegra/clk-dfll.c               | 56 ++++++++++++++++++++++++++++++
+>>>   drivers/clk/tegra/clk-dfll.h               |  2 ++
+>>>   drivers/clk/tegra/clk-tegra124-dfll-fcpu.c |  1 +
+>>>   3 files changed, 59 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
+>>> index f8688c2ddf1a..eb298a5d7be9 100644
+>>> --- a/drivers/clk/tegra/clk-dfll.c
+>>> +++ b/drivers/clk/tegra/clk-dfll.c
+>>> @@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
+>>>       td->last_unrounded_rate = 0;
+>>>         pm_runtime_enable(td->dev);
+>>> +    pm_runtime_irq_safe(td->dev);
+>>>       pm_runtime_get_sync(td->dev);
+>>>         dfll_set_mode(td, DFLL_DISABLED);
+>>> @@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
+>>>       return ret;
+>>>   }
+>>>   +/**
+>>> + * tegra_dfll_suspend - check DFLL is disabled
+>>> + * @dev: DFLL device *
+>>> + *
+>>> + * DFLL clock should be disabled by the CPUFreq driver. So, make
+>>> + * sure it is disabled and disable all clocks needed by the DFLL.
+>>> + */
+>>> +int tegra_dfll_suspend(struct device *dev)
+>>> +{
+>>> +    struct tegra_dfll *td = dev_get_drvdata(dev);
+>>> +
+>>> +    if (dfll_is_running(td)) {
+>>> +        dev_err(td->dev, "dfll is enabled while shouldn't be\n");
+>>> +        return -EBUSY;
+>>> +    }
+>>> +
+>>> +    reset_control_assert(td->dvco_rst);
+>>> +
+>>> +    return 0;
+>>> +}
+>>> +EXPORT_SYMBOL(tegra_dfll_suspend);
+>>> +
+>>> +/**
+>>> + * tegra_dfll_resume - reinitialize DFLL on resume
+>>> + * @dev: DFLL instance
+>>> + *
+>>> + * DFLL is disabled and reset during suspend and resume.
+>>> + * So, reinitialize the DFLL IP block back for use.
+>>> + * DFLL clock is enabled later in closed loop mode by CPUFreq
+>>> + * driver before switching its clock source to DFLL output.
+>>> + */
+>>> +int tegra_dfll_resume(struct device *dev)
+>>> +{
+>>> +    struct tegra_dfll *td = dev_get_drvdata(dev);
+>>> +
+>>> +    reset_control_deassert(td->dvco_rst);
+>> This doesn't look right because I assume that DFLL resetting is
+>> synchronous and thus clk should be enabled in order for reset to
+>> propagate inside hardware.
 >>
->>> The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
->>> cpu_clk / cpub_clk
->>> |   \- cpu_clk_dyn
->>> |      |  \- cpu_clk_premux0
->>> |      |        |- cpu_clk_postmux0
->>> |      |        |    |- cpu_clk_dyn0_div
->>> |      |        |    \- xtal/fclk_div2/fclk_div3
->>> |      |        \- xtal/fclk_div2/fclk_div3
->>> |      \- cpu_clk_premux1
->>> |            |- cpu_clk_postmux1
->>> |            |    |- cpu_clk_dyn1_div
->>> |            |    \- xtal/fclk_div2/fclk_div3
->>> |            \- xtal/fclk_div2/fclk_div3
->>> \ sys_pll / sys1_pll
->>>
->>> This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
->>> cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
->>> the CPU clock in a safe way as recommended by the vendor Documentation
->>> and reference code.
->>>
->>> This patchset :
->>> - introduces needed core and meson clk changes
->>> - adds the clock notifiers
->>>
->>> Dependencies:
->>> - None
+>>> +    pm_runtime_get_sync(td->dev);
+>> Hence it will be better to remove the above reset_control_deassert() and
+>> add here:
 >>
->> nit: this doesn't apply to v5.3-rc, but appears to apply on
->> clk-meson/v5.4/drivers, so it appears to be dependent on the cleanups
->> from Alex.
->
-> Indeed, Applied on top of this.
->
+>>     reset_control_reset(td->dvco_rst);
+> 
+> By the time dfll resume happens, dfll controller clock will already be enabled.
+> 
+> so doing reset de-assert before pm_runtime seems ok.
 
-Please let me know when you have a stable tag for this.  I wont' be able
-to apply the odroid-n2 DVFS patch until I have this.
-
-Kevin
-
+I don't see what enables the DFLL clock because it should be enabled by the CPUFreq driver
+on resume from suspend and resume happens after resuming of the DFLL driver.
