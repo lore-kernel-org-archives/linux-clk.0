@@ -2,112 +2,126 @@ Return-Path: <SRS0=Pyod=WF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA213C433FF
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 13:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB904C433FF
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 13:13:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A895120B7C
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 13:02:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9CDA208C4
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 13:13:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Xjg2ACyH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GlblEZrk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406742AbfHINC4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Aug 2019 09:02:56 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:37339 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbfHINC4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Aug 2019 09:02:56 -0400
-Received: by mail-wr1-f65.google.com with SMTP id b3so5789300wro.4
-        for <linux-clk@vger.kernel.org>; Fri, 09 Aug 2019 06:02:54 -0700 (PDT)
+        id S2406910AbfHINN0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Aug 2019 09:13:26 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45574 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbfHINNZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Aug 2019 09:13:25 -0400
+Received: by mail-lf1-f67.google.com with SMTP id a30so6430752lfk.12;
+        Fri, 09 Aug 2019 06:13:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=guKBWWb3eeZ7l9sjmmrFhL2DHqTLBp7eL7U+EUACDM8=;
-        b=Xjg2ACyHEuYzp7VVPyYXDDOpLZ7hCP/FwuXUsYIVKWH7tM0BC7WOlwO7zKUjhYotVP
-         rHGLALHOhALV6DiB2heE8wKNPFy6F/JLb1mOJg8mfJV4pN3jzj2GIc5OOISpmByP0f9l
-         wysMSu1etTSz9InGf+eX9NjVFvEiji/0GfFMni4Wp1A7v+duNuFbkHfqvADKqI589VDr
-         R2iezcgxY2AGfVSmA2YqjtQKLCdYh3EU2LFVgr+pz9+KM0dNG/94LYvjCp62k0ny+gmJ
-         5BallfcItdto7cNXHWjDaU/XR7ykQadkqJPsMKJsw9lyk73fUcJ4CtvCc+IJQjVnot3M
-         Lz8A==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=R/qbfybNTawBfvTZEySh0cjltm2Kq0tph5R6n428udM=;
+        b=GlblEZrkT23FfH3YxwgAttCw6xMNP7KmjYM4WXbspvsjFKfa2jnMBD9iz9n/359YcB
+         mh1ba0d5xf1zHxpLYacNsJ3P90ZN+296q6JzVff86xucaYj/+8z6O4lg6Lk8RQX1Ftfi
+         ISE1PqIr2YzS82esJXELAiYZhczT1wMe71LlZOhk/PnPHjZ2R5k3+3XQCEEg4zOWHdHr
+         md4eFoFMjx17VGzybjmylCG7pkgn06aca+wnsBRr6jiVDdjPDUmN+4APIHiT9poKviyF
+         oMEBxX3477w1dW3K+x6B52wSS/8CkF3eQtIrPf+jvad1ZuOdshSYXAMuhyVGzBm78tth
+         3qsA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=guKBWWb3eeZ7l9sjmmrFhL2DHqTLBp7eL7U+EUACDM8=;
-        b=LLkSR1ugmm5WeUsIvyWxI1zrmPp7x1++bzeipOFkwZe7zlYLDfnp2LO1jxTFD4RlPG
-         1TFS9TnsQon61O6qItjMwQRxx4HvG4msN0J5fukTJ+r44G1YbBYn0QcdA3gJgJEqbZT/
-         8dbDQQFFRaEQiTcWZEFmB7HD2N+vzYmlEnJ8TZ+3ZWFA9959lB7szU8beYSbwLobxyi2
-         1svy1qD9Ip5uqD8hOVJW6ZED2Fq7RBUutWXQx7lnu8ql+8i7SYLteLipN2EQVhPZ5oVK
-         IA3lftiBDGhdErrLezU1BGD56Re4/TCU/o7XNcpTI1jVbwpKXkvKIWv4n5K+Wqr4nsrS
-         wVYw==
-X-Gm-Message-State: APjAAAUc1hi+I68B6AcRjqlZoMGR2D/K+6lLVA2tWUzf+YsOmolEcrfL
-        Ui0aHjNSag6oBlDaj23/OSiz6w==
-X-Google-Smtp-Source: APXvYqxUWEqrAbLvbnYlAsqu5B1nR64GqnOYDQyeEk0f7fVfQpAONB4B8gK0T4HcpGUquzK6j54zXg==
-X-Received: by 2002:adf:e790:: with SMTP id n16mr23176826wrm.120.1565355773854;
-        Fri, 09 Aug 2019 06:02:53 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t24sm7932983wmj.14.2019.08.09.06.02.52
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 09 Aug 2019 06:02:53 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 0/4] clk: meson: g12a: add support for DVFS
-In-Reply-To: <7hzhkje4ov.fsf@baylibre.com>
-References: <20190731084019.8451-1-narmstrong@baylibre.com> <7hzhkje4ov.fsf@baylibre.com>
-Date:   Fri, 09 Aug 2019 15:02:52 +0200
-Message-ID: <1jy302o5j7.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=R/qbfybNTawBfvTZEySh0cjltm2Kq0tph5R6n428udM=;
+        b=j1YtCmyfZ48Dgraz2bmpoKEtL8ufcAevdF5JTPvFIHTIsWQb9AbJJKXb8Ubr9jvBdT
+         aOmBfvE+yNH/iiuwkxoDvR09+MdssA7ZCVUf021iZMI9sjcP9jwRbz4ezqKDthz5pfU+
+         T7PF9T9c/8WIFPaQiTQCygYlLL5JPytZEh0GMd4yfRjLiRTMgRF0uLc1UdbPHitH8Wqu
+         B964jWD7e/OX3C6P9tavqmGTEx5x5l0Q34ihhX7kPpHcIqgu7s8ZsJhX90uOFoBWELKB
+         EFi8hKDg5X91ctI0nlZ7d7xwj9jQT+WCz5fhnpfWE+JG2Y1Srny2fOMvU7Ipw4OqK+CH
+         EthQ==
+X-Gm-Message-State: APjAAAVaqDVFElqP5I4yHme1FMNQlqfG6NqGKEQhFVO/gzyEihhdodzT
+        sd7s+OVI4j7Ig1SsDTH6PV4KB+2K
+X-Google-Smtp-Source: APXvYqyf29S37MuD+Ii1VOieSMvQRwalWsMCTSNp4taVg2fWHXkXUtz+sOa2dH9UTLHVaWFwFCfeCQ==
+X-Received: by 2002:ac2:568e:: with SMTP id 14mr12994101lfr.189.1565356402685;
+        Fri, 09 Aug 2019 06:13:22 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.218])
+        by smtp.googlemail.com with ESMTPSA id k124sm17587000lfd.60.2019.08.09.06.13.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Aug 2019 06:13:21 -0700 (PDT)
+Subject: Re: [PATCH v8 18/21] soc/tegra: pmc: Configure core power request
+ polarity
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-19-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <29842147-a5f8-d51d-c594-b93b20b2e20f@gmail.com>
+Date:   Fri, 9 Aug 2019 16:13:20 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1565308020-31952-19-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 08 Aug 2019 at 14:18, Kevin Hilman <khilman@baylibre.com> wrote:
+09.08.2019 2:46, Sowjanya Komatineni пишет:
+> This patch configures polarity of the core power request signal
+> in PMC control register based on the device tree property.
+> 
+> PMC asserts and de-asserts power request signal based on it polarity
+> when it need to power-up and power-down the core rail during SC7.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/soc/tegra/pmc.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+> index 3aa71c28a10a..e013ada7e4e9 100644
+> --- a/drivers/soc/tegra/pmc.c
+> +++ b/drivers/soc/tegra/pmc.c
+> @@ -56,6 +56,7 @@
+>  #define  PMC_CNTRL_SIDE_EFFECT_LP0	BIT(14) /* LP0 when CPU pwr gated */
+>  #define  PMC_CNTRL_SYSCLK_OE		BIT(11) /* system clock enable */
+>  #define  PMC_CNTRL_SYSCLK_POLARITY	BIT(10) /* sys clk polarity */
+> +#define  PMC_CNTRL_PWRREQ_POLARITY	BIT(8)
+>  #define  PMC_CNTRL_MAIN_RST		BIT(4)
+>  
+>  #define PMC_WAKE_MASK			0x0c
+> @@ -2290,6 +2291,11 @@ static void tegra20_pmc_init(struct tegra_pmc *pmc)
+>  	else
+>  		value |= PMC_CNTRL_SYSCLK_POLARITY;
+>  
+> +	if (pmc->corereq_high)
+> +		value &= ~PMC_CNTRL_PWRREQ_POLARITY;
+> +	else
+> +		value |= PMC_CNTRL_PWRREQ_POLARITY;
+> +
+>  	/* configure the output polarity while the request is tristated */
+>  	tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>  
+> 
 
-> Neil Armstrong <narmstrong@baylibre.com> writes:
->
->> The G12A/G12B Socs embeds a specific clock tree for each CPU cluster :
->> cpu_clk / cpub_clk
->> |   \- cpu_clk_dyn
->> |      |  \- cpu_clk_premux0
->> |      |        |- cpu_clk_postmux0
->> |      |        |    |- cpu_clk_dyn0_div
->> |      |        |    \- xtal/fclk_div2/fclk_div3
->> |      |        \- xtal/fclk_div2/fclk_div3
->> |      \- cpu_clk_premux1
->> |            |- cpu_clk_postmux1
->> |            |    |- cpu_clk_dyn1_div
->> |            |    \- xtal/fclk_div2/fclk_div3
->> |            \- xtal/fclk_div2/fclk_div3
->> \ sys_pll / sys1_pll
->>
->> This patchset adds notifiers on cpu_clk / cpub_clk, cpu_clk_dyn,
->> cpu_clk_premux0 and sys_pll / sys1_pll to permit change frequency of
->> the CPU clock in a safe way as recommended by the vendor Documentation
->> and reference code.
->>
->> This patchset :
->> - introduces needed core and meson clk changes
->> - adds the clock notifiers
->>
->> Dependencies:
->> - None
->
-> nit: this doesn't apply to v5.3-rc, but appears to apply on
-> clk-meson/v5.4/drivers, so it appears to be dependent on the cleanups
-> from Alex.
-
-Indeed, Applied on top of this.
-
->
-> Kevin
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
