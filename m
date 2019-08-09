@@ -2,39 +2,39 @@ Return-Path: <SRS0=Pyod=WF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A34EDC31E40
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 09:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CF10C31E40
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 09:33:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81A75218A2
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 09:33:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D86120C01
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 09:33:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406323AbfHIJdX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Aug 2019 05:33:23 -0400
-Received: from shell.v3.sk ([90.176.6.54]:51955 "EHLO shell.v3.sk"
+        id S2406347AbfHIJdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Aug 2019 05:33:31 -0400
+Received: from shell.v3.sk ([90.176.6.54]:52003 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2406108AbfHIJdU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Aug 2019 05:33:20 -0400
+        id S2406334AbfHIJda (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 9 Aug 2019 05:33:30 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 9BE68D63BA;
-        Fri,  9 Aug 2019 11:33:15 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 0461CD63CE;
+        Fri,  9 Aug 2019 11:33:28 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Wpc5XvMN1xAD; Fri,  9 Aug 2019 11:32:43 +0200 (CEST)
+        with ESMTP id v27WjyBWDM32; Fri,  9 Aug 2019 11:33:04 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id A99CED63D7;
-        Fri,  9 Aug 2019 11:32:27 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 4EAF4D63D8;
+        Fri,  9 Aug 2019 11:32:34 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id jUS-Pko0ZC9i; Fri,  9 Aug 2019 11:32:23 +0200 (CEST)
+        with ESMTP id X3W2dcg5nWQn; Fri,  9 Aug 2019 11:32:30 +0200 (CEST)
 Received: from furthur.local (ip-37-188-137-236.eurotel.cz [37.188.137.236])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D0F6ED63CD;
-        Fri,  9 Aug 2019 11:32:18 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2D4FAD63CC;
+        Fri,  9 Aug 2019 11:32:24 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 12/19] ARM: mmp: DT: convert timer driver to use TIMER_OF_DECLARE
-Date:   Fri,  9 Aug 2019 11:31:51 +0200
-Message-Id: <20190809093158.7969-13-lkundrak@v3.sk>
+Subject: [PATCH 17/19] ARM: mmp: remove MMP3 USB PHY registers from regs-usb.h
+Date:   Fri,  9 Aug 2019 11:31:56 +0200
+Message-Id: <20190809093158.7969-18-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190809093158.7969-1-lkundrak@v3.sk>
 References: <20190809093158.7969-1-lkundrak@v3.sk>
@@ -61,139 +61,118 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This makes things just a tiny bit simpler.
+Nothing in mach-mmp/ uses them and they belong to the PHY driver.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- arch/arm/mach-mmp/mmp-dt.c  |  5 ++---
- arch/arm/mach-mmp/mmp2-dt.c |  5 ++---
- arch/arm/mach-mmp/time.c    | 38 +++++++++++--------------------------
- 3 files changed, 15 insertions(+), 33 deletions(-)
+ arch/arm/mach-mmp/regs-usb.h | 94 ------------------------------------
+ 1 file changed, 94 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/mmp-dt.c b/arch/arm/mach-mmp/mmp-dt.c
-index 35559792d5cca..91214996acecc 100644
---- a/arch/arm/mach-mmp/mmp-dt.c
-+++ b/arch/arm/mach-mmp/mmp-dt.c
-@@ -9,14 +9,13 @@
- #include <linux/irqchip.h>
- #include <linux/of_platform.h>
- #include <linux/clk-provider.h>
-+#include <linux/clocksource.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/time.h>
- #include <asm/hardware/cache-tauros2.h>
+diff --git a/arch/arm/mach-mmp/regs-usb.h b/arch/arm/mach-mmp/regs-usb.h
+index d9f08c1601542..ed0d1aa0ad6c9 100644
+--- a/arch/arm/mach-mmp/regs-usb.h
++++ b/arch/arm/mach-mmp/regs-usb.h
+@@ -121,100 +121,6 @@
 =20
- #include "common.h"
+ #define UTMI_OTG_ADDON_OTG_ON			(1 << 0)
 =20
--extern void __init mmp_dt_init_timer(void);
+-/* For MMP3 USB Phy */
+-#define USB2_PLL_REG0		0x4
+-#define USB2_PLL_REG1		0x8
+-#define USB2_TX_REG0		0x10
+-#define USB2_TX_REG1		0x14
+-#define USB2_TX_REG2		0x18
+-#define USB2_RX_REG0		0x20
+-#define USB2_RX_REG1		0x24
+-#define USB2_RX_REG2		0x28
+-#define USB2_ANA_REG0		0x30
+-#define USB2_ANA_REG1		0x34
+-#define USB2_ANA_REG2		0x38
+-#define USB2_DIG_REG0		0x3C
+-#define USB2_DIG_REG1		0x40
+-#define USB2_DIG_REG2		0x44
+-#define USB2_DIG_REG3		0x48
+-#define USB2_TEST_REG0		0x4C
+-#define USB2_TEST_REG1		0x50
+-#define USB2_TEST_REG2		0x54
+-#define USB2_CHARGER_REG0	0x58
+-#define USB2_OTG_REG0		0x5C
+-#define USB2_PHY_MON0		0x60
+-#define USB2_RESETVE_REG0	0x64
+-#define USB2_ICID_REG0		0x78
+-#define USB2_ICID_REG1		0x7C
 -
- static const char *const pxa168_dt_board_compat[] __initconst =3D {
- 	"mrvl,pxa168-aspenite",
- 	NULL,
-@@ -32,8 +31,8 @@ static void __init mmp_init_time(void)
- #ifdef CONFIG_CACHE_TAUROS2
- 	tauros2_init(0);
- #endif
--	mmp_dt_init_timer();
- 	of_clk_init(NULL);
-+	timer_probe();
- }
-=20
- DT_MACHINE_START(PXA168_DT, "Marvell PXA168 (Device Tree Support)")
-diff --git a/arch/arm/mach-mmp/mmp2-dt.c b/arch/arm/mach-mmp/mmp2-dt.c
-index 8eec881191f4b..510c762ddc484 100644
---- a/arch/arm/mach-mmp/mmp2-dt.c
-+++ b/arch/arm/mach-mmp/mmp2-dt.c
-@@ -10,21 +10,20 @@
- #include <linux/irqchip.h>
- #include <linux/of_platform.h>
- #include <linux/clk-provider.h>
-+#include <linux/clocksource.h>
- #include <asm/mach/arch.h>
- #include <asm/mach/time.h>
- #include <asm/hardware/cache-tauros2.h>
-=20
- #include "common.h"
-=20
--extern void __init mmp_dt_init_timer(void);
+-/* USB2_PLL_REG0 */
+-/* This is for Ax stepping */
+-#define USB2_PLL_FBDIV_SHIFT_MMP3		0
+-#define USB2_PLL_FBDIV_MASK_MMP3		(0xFF << 0)
 -
- static void __init mmp_init_time(void)
- {
- #ifdef CONFIG_CACHE_TAUROS2
- 	tauros2_init(0);
- #endif
- 	of_clk_init(NULL);
--	mmp_dt_init_timer();
-+	timer_probe();
- }
-=20
- static const char *const mmp2_dt_board_compat[] __initconst =3D {
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index 483df32583be6..3f6fd0be00512 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -195,30 +195,17 @@ void __init mmp_timer_init(int irq, unsigned long r=
-ate)
- 	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
- }
-=20
--#ifdef CONFIG_OF
--static const struct of_device_id mmp_timer_dt_ids[] =3D {
--	{ .compatible =3D "mrvl,mmp-timer", },
--	{}
--};
+-#define USB2_PLL_REFDIV_SHIFT_MMP3		8
+-#define USB2_PLL_REFDIV_MASK_MMP3		(0xF << 8)
 -
--void __init mmp_dt_init_timer(void)
-+static int __init mmp_dt_init_timer(struct device_node *np)
- {
--	struct device_node *np;
- 	struct clk *clk;
- 	int irq, ret;
- 	unsigned long rate;
-=20
--	np =3D of_find_matching_node(NULL, mmp_timer_dt_ids);
--	if (!np) {
--		ret =3D -ENODEV;
--		goto out;
--	}
+-#define USB2_PLL_VDD12_SHIFT_MMP3		12
+-#define USB2_PLL_VDD18_SHIFT_MMP3		14
 -
- 	clk =3D of_clk_get(np, 0);
- 	if (!IS_ERR(clk)) {
- 		ret =3D clk_prepare_enable(clk);
- 		if (ret)
--			goto out;
-+			return ret;
- 		rate =3D clk_get_rate(clk) / 2;
- 	} else if (cpu_is_pj4()) {
- 		rate =3D 6500000;
-@@ -227,18 +214,15 @@ void __init mmp_dt_init_timer(void)
- 	}
-=20
- 	irq =3D irq_of_parse_and_map(np, 0);
--	if (!irq) {
--		ret =3D -EINVAL;
--		goto out;
--	}
-+	if (!irq)
-+		return -EINVAL;
-+
- 	mmp_timer_base =3D of_iomap(np, 0);
--	if (!mmp_timer_base) {
--		ret =3D -ENOMEM;
--		goto out;
--	}
-+	if (!mmp_timer_base)
-+		return -ENOMEM;
-+
- 	mmp_timer_init(irq, rate);
--	return;
--out:
--	pr_err("Failed to get timer from device tree with error:%d\n", ret);
-+	return 0;
- }
--#endif
-+
-+TIMER_OF_DECLARE(mmp_timer, "mrvl,mmp-timer", mmp_dt_init_timer);
+-/* This is for B0 stepping */
+-#define USB2_PLL_FBDIV_SHIFT_MMP3_B0		0
+-#define USB2_PLL_REFDIV_SHIFT_MMP3_B0		9
+-#define USB2_PLL_VDD18_SHIFT_MMP3_B0		14
+-#define USB2_PLL_FBDIV_MASK_MMP3_B0		0x01FF
+-#define USB2_PLL_REFDIV_MASK_MMP3_B0		0x3E00
+-
+-#define USB2_PLL_CAL12_SHIFT_MMP3		0
+-#define USB2_PLL_CALI12_MASK_MMP3		(0x3 << 0)
+-
+-#define USB2_PLL_VCOCAL_START_SHIFT_MMP3	2
+-
+-#define USB2_PLL_KVCO_SHIFT_MMP3		4
+-#define USB2_PLL_KVCO_MASK_MMP3			(0x7<<4)
+-
+-#define USB2_PLL_ICP_SHIFT_MMP3			8
+-#define USB2_PLL_ICP_MASK_MMP3			(0x7<<8)
+-
+-#define USB2_PLL_LOCK_BYPASS_SHIFT_MMP3		12
+-
+-#define USB2_PLL_PU_PLL_SHIFT_MMP3		13
+-#define USB2_PLL_PU_PLL_MASK			(0x1 << 13)
+-
+-#define USB2_PLL_READY_MASK_MMP3		(0x1 << 15)
+-
+-/* USB2_TX_REG0 */
+-#define USB2_TX_IMPCAL_VTH_SHIFT_MMP3		8
+-#define USB2_TX_IMPCAL_VTH_MASK_MMP3		(0x7 << 8)
+-
+-#define USB2_TX_RCAL_START_SHIFT_MMP3		13
+-
+-/* USB2_TX_REG1 */
+-#define USB2_TX_CK60_PHSEL_SHIFT_MMP3		0
+-#define USB2_TX_CK60_PHSEL_MASK_MMP3		(0xf << 0)
+-
+-#define USB2_TX_AMP_SHIFT_MMP3			4
+-#define USB2_TX_AMP_MASK_MMP3			(0x7 << 4)
+-
+-#define USB2_TX_VDD12_SHIFT_MMP3		8
+-#define USB2_TX_VDD12_MASK_MMP3			(0x3 << 8)
+-
+-/* USB2_TX_REG2 */
+-#define USB2_TX_DRV_SLEWRATE_SHIFT		10
+-
+-/* USB2_RX_REG0 */
+-#define USB2_RX_SQ_THRESH_SHIFT_MMP3		4
+-#define USB2_RX_SQ_THRESH_MASK_MMP3		(0xf << 4)
+-
+-#define USB2_RX_SQ_LENGTH_SHIFT_MMP3		10
+-#define USB2_RX_SQ_LENGTH_MASK_MMP3		(0x3 << 10)
+-
+-/* USB2_ANA_REG1*/
+-#define USB2_ANA_PU_ANA_SHIFT_MMP3		14
+-
+-/* USB2_OTG_REG0 */
+-#define USB2_OTG_PU_OTG_SHIFT_MMP3		3
+-
+ /* fsic registers */
+ #define FSIC_MISC			0x4
+ #define FSIC_INT			0x28
 --=20
 2.21.0
 
