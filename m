@@ -2,135 +2,156 @@ Return-Path: <SRS0=Pyod=WF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B953C433FF
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 12:12:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E08AC433FF
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 12:17:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27E9B208C3
-	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 12:12:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565352774;
-	bh=xR5/+eCLl3ujKXGcG3RYBBRhh/uHuFlKJUB6btWgSKE=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=Q7EgXA9+s331ikXPWmV9wkKCofOh+0ACOreW8p3krLdyFPM5Dy276IvieonMMo3si
-	 pa5PxKzHXNcN0qeCO+PG5Ya+a00U+O0h3frmZPOqTO9hfuxifE4KO4vkuheg8ZR5Sl
-	 8yTJSG0T9YiS8puEdWBGfcm6tc1pjjAJMyq0iAsQ=
+	by mail.kernel.org (Postfix) with ESMTP id 21648208C3
+	for <linux-clk@archiver.kernel.org>; Fri,  9 Aug 2019 12:17:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Es6Xtux7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406674AbfHIMMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 9 Aug 2019 08:12:53 -0400
-Received: from foss.arm.com ([217.140.110.172]:46532 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726152AbfHIMMx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 9 Aug 2019 08:12:53 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9D4A1596;
-        Fri,  9 Aug 2019 05:12:52 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EB6683F706;
-        Fri,  9 Aug 2019 05:12:50 -0700 (PDT)
-Subject: Re: [PATCH 05/19] irqchip/mmp: do not use of_address_to_resource() to
- get mux regs
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
-References: <20190809093158.7969-1-lkundrak@v3.sk>
- <20190809093158.7969-6-lkundrak@v3.sk>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
-Date:   Fri, 9 Aug 2019 13:12:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2406741AbfHIMRb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 9 Aug 2019 08:17:31 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34327 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726152AbfHIMRa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 9 Aug 2019 08:17:30 -0400
+Received: by mail-lj1-f194.google.com with SMTP id p17so91933287ljg.1;
+        Fri, 09 Aug 2019 05:17:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2Y6cibe++jUg1MqhLsa4ocC0OGOAItgbasTPZNkc7eI=;
+        b=Es6Xtux7P3VZubYU24Nu2MzcD53Hn5+4l+jctyBOlss37Ut6Fr35RRHB7rum14F/YO
+         im/2vEWM/Mbwk86IrmWCV3j2JqQfZ18hNsJZtpnwc6KVv37RoYQuXP2le7U5Z90Pp7Tm
+         UOrCh9NsBbBwrn1YVlm9icOVMh5XrQ0dbVE4/ZOcOrL866nFG/cDYJKlV59WH+SHYNSG
+         h1SY+AmpqR6S1ouoiDNZ/6TbGvvZzCkAv6/ctDWfYBQvHxEbOFqvUsu7970eJZDtw+Oo
+         yANlaSFTAl1ZaM5Nta13wmxvh1Z7/P6Py7s5kfj/2IKExjMyvVSdB6O4TNR+WSYavIun
+         VitQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2Y6cibe++jUg1MqhLsa4ocC0OGOAItgbasTPZNkc7eI=;
+        b=ttJsX8OESu7QANCrHv3lItf+z85Jh+j1qBRJxoCaZI8zLinz1ufMl+mV65Loi/JxaU
+         MI0W+Nv7y2RlfwUbQC2JuR13Km4NxF8b3Vamt6T5pgQkdW23XhbOUQls+WWVntOn5cJO
+         WRDCao7fLEO1pwL7CvJrEY6IT0lOcp1C7UdlGyMWL+/cx8Vl7LVXidafkxnq1izf7MBL
+         AsHA63XsG2I52MvHm4HjkxfkaWnvlA20JYt3WpszBPzRNHUnkzbfBtLSy2+YNfReRrWi
+         OkNb3+jm+Uu+YBxKHA5g7c9EtGl8bOC5VdLqdAM9JdNnlKdE8AGo93OxDdFqIQU2hwYs
+         8S3A==
+X-Gm-Message-State: APjAAAXfuR9FSRrPbHOQS4XOE7mXfEqeS6PTpHMKqafWY6ErY9DN51jg
+        yNSgD6W+JBHoHJlHhum7M7QKuZr/
+X-Google-Smtp-Source: APXvYqzCXqbF8YtE4fLH2dz9U0bvhopDeKHat7TwKL2v5Op5k+Prytgbyv6O6tgSJkzGbUcN7TNCCg==
+X-Received: by 2002:a2e:93cc:: with SMTP id p12mr5978706ljh.11.1565353047460;
+        Fri, 09 Aug 2019 05:17:27 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.218])
+        by smtp.googlemail.com with ESMTPSA id g5sm19606366ljj.69.2019.08.09.05.17.25
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 09 Aug 2019 05:17:26 -0700 (PDT)
+Subject: Re: [PATCH v8 10/21] clk: tegra: clk-super: Add restore-context
+ support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <4e33bad9-8d5a-dcd7-c75e-db5843c9be4a@gmail.com>
+Date:   Fri, 9 Aug 2019 15:17:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-In-Reply-To: <20190809093158.7969-6-lkundrak@v3.sk>
+In-Reply-To: <1565308020-31952-11-git-send-email-skomatineni@nvidia.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 09/08/2019 10:31, Lubomir Rintel wrote:
-> The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
-> are offsets from intc's base, not addresses on the parent bus. At this
-> point it probably can't be fixed.
+09.08.2019 2:46, Sowjanya Komatineni пишет:
+> This patch implements restore_context for clk_super_mux and clk_super.
 > 
-> On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
-> axi bus, and thus of_address_to_resource() won't work. We should treat
-> the values as mere integers as opposed to bus addresses.
+> During system supend, core power goes off the and context of Tegra
+> CAR registers is lost.
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> So on system resume, context of super clock registers are restored
+> to have them in same state as before suspend.
 > 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
->  drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
->  1 file changed, 11 insertions(+), 9 deletions(-)
+>  drivers/clk/tegra/clk-super.c | 21 +++++++++++++++++++++
+>  1 file changed, 21 insertions(+)
 > 
-> diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> index 14618dc0bd396..af9cba4a51c2e 100644
-> --- a/drivers/irqchip/irq-mmp.c
-> +++ b/drivers/irqchip/irq-mmp.c
-> @@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
->  static int __init mmp2_mux_of_init(struct device_node *node,
->  				   struct device_node *parent)
->  {
-> -	struct resource res;
->  	int i, ret, irq, j = 0;
->  	u32 nr_irqs, mfp_irq;
-> +	u32 reg[4];
+> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
+> index e2a1e95a8db7..74c9e913e41c 100644
+> --- a/drivers/clk/tegra/clk-super.c
+> +++ b/drivers/clk/tegra/clk-super.c
+> @@ -124,9 +124,18 @@ static int clk_super_set_parent(struct clk_hw *hw, u8 index)
+>  	return err;
+>  }
 >  
->  	if (!parent)
->  		return -ENODEV;
-> @@ -438,18 +438,20 @@ static int __init mmp2_mux_of_init(struct device_node *node,
->  		pr_err("Not found mrvl,intc-nr-irqs property\n");
->  		return -EINVAL;
->  	}
-> -	ret = of_address_to_resource(node, 0, &res);
+> +static void clk_super_mux_restore_context(struct clk_hw *hw)
+> +{
+> +	struct clk_hw *parent = clk_hw_get_parent(hw);
+> +	int parent_id = clk_hw_get_parent_index(hw, parent);
 > +
-> +	/*
-> +	 * For historical reasonsm, the "regs" property of the
-> +	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
-> +	 * addresses on the parent bus, but offsets from the intc's base.
-> +	 * That is why we can't use of_address_to_resource() here.
-> +	 */
-> +	ret = of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
+> +	clk_super_set_parent(hw, parent_id);
 
-This will return 0 even if you've read less than your expected 4 u32s.
-You may want to try of_property_read_variable_u32_array instead.
+All Super clocks have a divider, including the "MUX". Thus I'm wondering
+if there is a chance that divider's configuration may differ on resume
+from what it was on suspend.
 
->  	if (ret < 0) {
->  		pr_err("Not found reg property\n");
->  		return -EINVAL;
->  	}
-> -	icu_data[i].reg_status = mmp_icu_base + res.start;
-> -	ret = of_address_to_resource(node, 1, &res);
-> -	if (ret < 0) {
-> -		pr_err("Not found reg property\n");
-> -		return -EINVAL;
-> -	}
-> -	icu_data[i].reg_mask = mmp_icu_base + res.start;
-> +	icu_data[i].reg_status = mmp_icu_base + reg[0];
-> +	icu_data[i].reg_mask = mmp_icu_base + reg[2];
->  	icu_data[i].cascade_irq = irq_of_parse_and_map(node, 0);
->  	if (!icu_data[i].cascade_irq)
->  		return -EINVAL;
+> +}
+> +
+>  static const struct clk_ops tegra_clk_super_mux_ops = {
+>  	.get_parent = clk_super_get_parent,
+>  	.set_parent = clk_super_set_parent,
+> +	.restore_context = clk_super_mux_restore_context,
+>  };
+>  
+>  static long clk_super_round_rate(struct clk_hw *hw, unsigned long rate,
+> @@ -162,12 +171,24 @@ static int clk_super_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	return super->div_ops->set_rate(div_hw, rate, parent_rate);
+>  }
+>  
+> +static void clk_super_restore_context(struct clk_hw *hw)
+> +{
+> +	struct tegra_clk_super_mux *super = to_clk_super_mux(hw);
+> +	struct clk_hw *div_hw = &super->frac_div.hw;
+> +	struct clk_hw *parent = clk_hw_get_parent(hw);
+> +	int parent_id = clk_hw_get_parent_index(hw, parent);
+> +
+> +	super->div_ops->restore_context(div_hw);
+> +	clk_super_set_parent(hw, parent_id);
+> +}
+> +
+>  const struct clk_ops tegra_clk_super_ops = {
+>  	.get_parent = clk_super_get_parent,
+>  	.set_parent = clk_super_set_parent,
+>  	.set_rate = clk_super_set_rate,
+>  	.round_rate = clk_super_round_rate,
+>  	.recalc_rate = clk_super_recalc_rate,
+> +	.restore_context = clk_super_restore_context,
+>  };
+>  
+>  struct clk *tegra_clk_register_super_mux(const char *name,
 > 
 
-Thanks,
-
-	M.
--- 
-Jazz is not dead, it just smells funny...
