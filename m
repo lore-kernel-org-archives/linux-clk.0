@@ -2,154 +2,151 @@ Return-Path: <SRS0=0MvX=WI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ECF4C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 09:27:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 343AAC31E40
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 09:47:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E8E20820
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 09:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05CD220842
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 09:47:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="RrLAVjZF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I1sE1d7E"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727259AbfHLJ1b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Aug 2019 05:27:31 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:44122 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727140AbfHLJ1b (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Aug 2019 05:27:31 -0400
-Received: by mail-wr1-f67.google.com with SMTP id p17so103929377wrf.11
-        for <linux-clk@vger.kernel.org>; Mon, 12 Aug 2019 02:27:29 -0700 (PDT)
+        id S1727440AbfHLJri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Aug 2019 05:47:38 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53480 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfHLJri (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Aug 2019 05:47:38 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 10so11544383wmp.3;
+        Mon, 12 Aug 2019 02:47:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version;
-        bh=GR8qazzT8f+x8TL8FuamVXWkhCPQ1djbAEb+Khg42sE=;
-        b=RrLAVjZF5SLIr6VfF2oWZrWLYXA8e5cWwLgTx36VNXuqgTLeQQ/SQfWRcHiJYyfUrA
-         IGv/Lxu16lKhAm6B0AgwWIDyTct+pV0UiTJu5MeFxriXbDUie6XScNXpKOV35k7R1+F0
-         OusIDfq8L3juao3bjzzwYcFGWmwlwOHH+z70XkFLFWUN/v4olG6VbkCdvFJDli5OcZo4
-         ov+yk7AOiAW5DCcVFdUiiwxmWRUQc8pu/gMnFBL7Zx1Pzjn/n5iwaOH2fPOaN3kIoStf
-         UnywNeArFDSMizKAfArpadSUz2WNoqg8NVbkL7Sbtt4lv8qvoBSGvu7TpJ2Y9fB2XXkB
-         T+PA==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=P3Tt0hVFMeQO9WKnMLt0unZfnULQUSGm6Y8+KX1wABY=;
+        b=I1sE1d7EaGl/q7KxoFPph8dUQJL5MYq+TkA/7MKHlrpe5pTnqrRQ1Qyq/dyi6nqToG
+         6MDKfag1hIXu0R51glp/qPsKBJEqSfBlsp6qYqASxY8rNzk/+ZdFKEF6fIzXTW6yGAqz
+         RTmBMzpNT6SCMpxR5GEcTJA2At8Mw+mrnZGrrJYlNEplTz060HdwlOyc7CizuAOH0y+p
+         ucsMdOD2Vb0EwMMKYfYaILJqutj7CNfWqG0z7MYxQG93MwGH500Phhh+qr7wsUPRekMC
+         wmdZY8gOb8UWP0A6/r90TYJvbiVT2V2e8UXX4xG3lwyaFw1MfmPXG/RxzT1oO5AZRrdt
+         XDjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version;
-        bh=GR8qazzT8f+x8TL8FuamVXWkhCPQ1djbAEb+Khg42sE=;
-        b=iWTWnt8V8rSjP/MGaCh/WBZv6A+ICHBgGRLG39Tl01mrj/1rvqs435pO06fG//7Vx3
-         2vXT+c9W9IVD+qsUbfYvqvZUZQR6Q33vvAx4DV3kdqz/abH0GGuNHnLvuV0cbT1AiB0k
-         Zg3RyiBNbGRNhnNdh2esyMkJ7mcpB4H4t6z83bdBAJW6foNQ8Pnd7QeGsPPuRh5xkyHl
-         wmEHiTSWvB24Mf8Yoh210gzKJvHBVRxtVsUvlzYHMgd6cJfXTdfdfTQIuUVw3sVLgf0G
-         6FRDZ+rsokRW6FROTcgaunP5kQHIRnMMmQ5Mu5kcTdz32cnF8T+1OA8UmlskUGLe659X
-         8glw==
-X-Gm-Message-State: APjAAAUesg5tygI7GYr5pY5DTX94f8RelGEp5IIG6o0rvPdwQXm+N1Wt
-        0BXhpwm/MvD2589+T9O9AdReUA==
-X-Google-Smtp-Source: APXvYqwNXwv21TNgxSZ+0VY405tXAlYYxJaz7T+p7H+h/IRdCcNfuHJdCdbF82S7YVCmO7WqJh4xzg==
-X-Received: by 2002:adf:eb4e:: with SMTP id u14mr39668555wrn.168.1565602048674;
-        Mon, 12 Aug 2019 02:27:28 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id p9sm4940942wru.61.2019.08.12.02.27.27
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=P3Tt0hVFMeQO9WKnMLt0unZfnULQUSGm6Y8+KX1wABY=;
+        b=EDXm55vQ8+SkobmTfqinOzoLVfBl32dhX5/uMLOHTNkuD/LZRaGUYrBo8nUN8ynf6D
+         hWqUiXuDHFKd88IczPNABYa3MCYX+QxEKMvWF9bU9mrQovF/HgYHSSHZ8j0u5yp5AN88
+         0DuHdjKHHAEnsUvsoFcwJQawwJU16uh+bCnGuGBgGe7QVZFEFU9DUfpdXAAknlhSFup9
+         6D12bxEa2gch9gA1q3//oCyNKNU9Om1gRrfcULGMVB1DSmGoRO/FCl8429xgg1EI0G9P
+         V/JhrEIcyEsmVvozpnXvZ6HiK6St68LazfCrpn0Au2xTOYnKvfXvB/0pYmz6XYZ3qROg
+         XnTQ==
+X-Gm-Message-State: APjAAAWSmFtZrYAp5S8jQMIYkH76aU1DNn1RuGFmWOzlMntLoH+6FOY/
+        alC5JL05TNGB6R9npRnpJY+VtNw3
+X-Google-Smtp-Source: APXvYqx6wQo6Pmfnamku65GgkuW6kOZqIbz2Qumz2X/qbaAzrxHyWQQ1tTSaVAp8yp6St60D20w5+w==
+X-Received: by 2002:a7b:c758:: with SMTP id w24mr2100045wmk.143.1565603255334;
+        Mon, 12 Aug 2019 02:47:35 -0700 (PDT)
+Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
+        by smtp.gmail.com with ESMTPSA id u186sm24647842wmu.26.2019.08.12.02.47.33
         (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 02:27:28 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [GIT PULL] clk: meson: updates for 5.4
-Date:   Mon, 12 Aug 2019 11:27:27 +0200
-Message-ID: <1jr25qivi8.fsf@starbuckisacylon.baylibre.com>
+        Mon, 12 Aug 2019 02:47:33 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 11:47:32 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
+        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
+        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v8 07/21] clk: Add API to get index of the clock parent
+Message-ID: <20190812094732.GF8903@ulmo>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-8-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="0hHDr/TIsw4o3iPK"
+Content-Disposition: inline
+In-Reply-To: <1565308020-31952-8-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-Dear clock maintainers,
+--0hHDr/TIsw4o3iPK
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Below is a request to pull Amlogic clock updates for v5.4.
+On Thu, Aug 08, 2019 at 04:46:46PM -0700, Sowjanya Komatineni wrote:
+> This patch adds an API clk_hw_get_parent_index to get index of the
+> clock parent to use during the clock restore operations on system
+> resume.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/clk/clk.c            | 17 +++++++++++++++++
+>  include/linux/clk-provider.h |  1 +
+>  2 files changed, 18 insertions(+)
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c0990703ce54..f26252e48f73 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1643,6 +1643,23 @@ static int clk_fetch_parent_index(struct clk_core =
+*core,
+>  	return i;
+>  }
+> =20
+> +/**
+> + * clk_hw_get_parent_index - return the index of parent clock
+> + * @hw: clk_hw associated with the clk being consumed
+> + * @parent_hw: clk_hw associated with the parent of clk
+> + *
+> + * Fetches and returns the index of parent clock.
+> + * if hw or parent_hw is NULL, returns -EINVAL.
 
-The main changes in this PR are the migration to the new parent
-description method and DVFS support on g12, based on notifiers.
+"If" because it's at the beginning of a sentence. You may also want to
+turn this into a "Return:" section as described in:
 
-Kevin requested a tag to test DVFS so sending the PR now so he can use
-it well. We may send additional changes later on.
+	Documentation/doc-guide/kernel-doc.rst
 
-Cheers
-Jerome
+That said, other functions in this file don't use that construct either,
+so I suppose this is fine as-is, for consistency.
 
-The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
+So with the capitalization of "If" fixed, this is:
 
-  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+Reviewed-by: Thierry Reding <treding@nvidia.com>
 
-are available in the Git repository at:
+--0hHDr/TIsw4o3iPK
+Content-Type: application/pgp-signature; name="signature.asc"
 
-  git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.4-1
+-----BEGIN PGP SIGNATURE-----
 
-for you to fetch changes up to 1d97657a4794ab23b47bd9921978ddd82569fcf4:
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RNbIACgkQ3SOs138+
+s6FV1A//VN8FoQqHYUZDRFeTFLp0ScDoXoSuHZPsgTeHnWdfLuI6hjX0BwnBpuou
+xp0VC0KcQdVBw0mL+B/0aKRlYcTsXGB0Pk0qi786ZQ5HicqrF7ixVfWNns9TIbAC
+WQbjyPR0SoG0kBTfIXn36aSRfJh9ulnaPQjJ/SpoaT+pAsc4IUjCaGFVw+Eu2LNX
+Av3p5BKIcCIynHfmMFNgM4wh44PInWZ7KHqW8yVNk+yJV41rSYqzV0TO2ANg/a6b
+LaWziwn3XN+aPyuo5dB++g8xIATX2dQSfG6uYjZC4HDt08f3pCBkSEAfyup2xEIF
+epEcFzFYBuSqyrMZ587honAJ0a5AqzFDSGCxxZw2qd1MSiW5EaIIdQE1PEiY2zeC
+ldZGCn0iMPizacDQqkRrd96KwDsZ1s8oTGHyNya7z+6PHLRF36nb4EEg0OF1AJ95
+aj9EI5IfJlfKSN1RSuR1K7DaZzIunI9Ji7Ip3WlkNc4LIBL9duQ0WQ0D6ttFLpZ4
+cTcrkgo/uJ2DOaK84DCEt9w21jIkOoiSFstUKBCC/0+IPURVcHC+ByhHOJbjJMge
+oYq5uhB2pVscLpnzfjjy5XLBuVjYiapsuWy74tUm1YAyyRvJSLr9+6McvwLjQAHk
+hpiiENkRMsXAPGywAKTdlrIUK5JYRyXTR7rVHW2xI5M47aMJOdo=
+=fkP5
+-----END PGP SIGNATURE-----
 
-  Merge branch 'v5.4/dt' into v5.4/drivers (2019-08-09 12:12:58 +0200)
-
-----------------------------------------------------------------
-Amlogic clock changes for v5.4
-
-* Migrate to new clock description method
-* Add DVFS support to g12
-
-----------------------------------------------------------------
-Alexandre Mergnat (13):
-      clk: meson: g12a: fix hifi typo in mali parent_names
-      clk: meson: axg-audio: migrate to the new parent description method
-      clk: meson: g12a-aoclk: migrate to the new parent description method
-      clk: meson: gxbb-aoclk: migrate to the new parent description method
-      clk: meson: axg-aoclk: migrate to the new parent description method
-      clk: meson: remove ao input bypass clocks
-      clk: meson: g12a: migrate to the new parent description method
-      clk: meson: gxbb: migrate to the new parent description method
-      clk: meson: axg: migrate to the new parent description method
-      clk: meson: meson8b: migrate to the new parent description method
-      clk: meson: clk-regmap: migrate to new parent description method
-      clk: meson: remove ee input bypass clocks
-      clk: meson: remove clk input helper
-
-Jerome Brunet (1):
-      Merge branch 'v5.4/dt' into v5.4/drivers
-
-Neil Armstrong (4):
-      clk: core: introduce clk_hw_set_parent()
-      clk: meson: add g12a cpu dynamic divider driver
-      clk: meson: g12a: add notifiers to handle cpu clock change
-      clk: meson: g12a: expose CPUB clock ID for G12B
-
- drivers/clk/clk.c                     |    6 +
- drivers/clk/meson/Kconfig             |   11 +-
- drivers/clk/meson/Makefile            |    2 +-
- drivers/clk/meson/axg-aoclk.c         |   63 +-
- drivers/clk/meson/axg-audio.c         |  261 +++---
- drivers/clk/meson/axg.c               |  207 +++--
- drivers/clk/meson/clk-cpu-dyndiv.c    |   73 ++
- drivers/clk/meson/clk-cpu-dyndiv.h    |   20 +
- drivers/clk/meson/clk-input.c         |   49 -
- drivers/clk/meson/clk-input.h         |   19 -
- drivers/clk/meson/clk-regmap.h        |   12 +-
- drivers/clk/meson/g12a-aoclk.c        |   81 +-
- drivers/clk/meson/g12a.c              | 1626 ++++++++++++++++++++++++---------
- drivers/clk/meson/g12a.h              |    1 -
- drivers/clk/meson/gxbb-aoclk.c        |   55 +-
- drivers/clk/meson/gxbb.c              |  657 +++++++++----
- drivers/clk/meson/meson-aoclk.c       |   37 -
- drivers/clk/meson/meson-aoclk.h       |    8 -
- drivers/clk/meson/meson-eeclk.c       |   10 -
- drivers/clk/meson/meson-eeclk.h       |    2 -
- drivers/clk/meson/meson8b.c           |  710 +++++++++-----
- include/dt-bindings/clock/g12a-clkc.h |    1 +
- include/linux/clk-provider.h          |    1 +
- 23 files changed, 2626 insertions(+), 1286 deletions(-)
- create mode 100644 drivers/clk/meson/clk-cpu-dyndiv.c
- create mode 100644 drivers/clk/meson/clk-cpu-dyndiv.h
- delete mode 100644 drivers/clk/meson/clk-input.c
- delete mode 100644 drivers/clk/meson/clk-input.h
+--0hHDr/TIsw4o3iPK--
