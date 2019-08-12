@@ -2,109 +2,127 @@ Return-Path: <SRS0=0MvX=WI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1F00C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 08:08:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C06DC31E40
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 09:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57B6208C2
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 08:08:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565597281;
-	bh=rfwD66AedIpA/3YE2dWFn8YCpnEehefOryrXd0y6bio=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vy4ASESQxNGpR5NFmkycUD+jIhVdXBk/N31PZ87X/CFMBcuVixLuUOXx7iOX+20ew
-	 sbSawpHKkQpUa6hYtN2U+Eh8/PzOPL6qjt+Qa3Ma7yWaTRTIQDHU6R387Sz7gZJMRM
-	 EdKtm0AjSXLM0kQNLqW4jA0XnbhzCpJ6Ks1rsKQA=
+	by mail.kernel.org (Postfix) with ESMTP id 40812208C2
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 09:20:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRdxqniA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726937AbfHLIH6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Aug 2019 04:07:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47554 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726405AbfHLIH5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Aug 2019 04:07:57 -0400
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 62E70206C2;
-        Mon, 12 Aug 2019 08:07:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565597276;
-        bh=rfwD66AedIpA/3YE2dWFn8YCpnEehefOryrXd0y6bio=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TH581SWmFX5Vu6WBmaibZ4b8HqpSesdZ9B8gRjIiM+ftqFvUWyIG4J9oD/o8xDBaZ
-         4EOPkWYiJUWIBlolpVAenfFXazLeuyXQ4Owqj3+RBAyWEqHZvQyniCnt3m88lmuzbd
-         tnmIHtFxQyKlmk+kt7gW0A7xtcnNrGAQZcF73pBo=
-Date:   Mon, 12 Aug 2019 10:07:54 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 0/6] Support for Allwinner V3/S3L and Sochip S3
-Message-ID: <20190812080754.n7dgogopm3ytd6h5@flea>
-References: <20190728031227.49140-1-icenowy@aosc.io>
+        id S1727267AbfHLJU1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Aug 2019 05:20:27 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55053 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727023AbfHLJU1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Aug 2019 05:20:27 -0400
+Received: by mail-wm1-f67.google.com with SMTP id p74so11473724wme.4;
+        Mon, 12 Aug 2019 02:20:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MgLPMTtg6Jyzs9wt4ekHIpThJOy3S51fX4Pbs5028Qw=;
+        b=MRdxqniAXGFwWGp6ovZBRFM5kKVCzLuypXpwid6B4G8z7Twcw1CyFlX5XZduWh6krN
+         BvoiV1sQSftc9cDjUaJAIOA/xdD5x5IaNN4fT2PbmzflVMWDP+lnn4Uj0gJ9mrnTDb//
+         QN9BugW6+JENQzNq/HeN8qdi9AxVJ5WyVlu/z74wAoImfMnLfr1BdDzzhR0VUaX/NK7B
+         DjFAfJuOmwwnepWyG9icGE30RhNahktJMk1z8ZBV9B2HcjMfnrEw9PueE3xjbd5ao0ls
+         4dceqzuANg44kgeClcK0gxjc/+68HYucfwePMGct+S/xb/Woo+wd1CzjNrg24nC5bztP
+         11Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MgLPMTtg6Jyzs9wt4ekHIpThJOy3S51fX4Pbs5028Qw=;
+        b=uLH+2WOkrWNz0tTDoB+NX4b++ENxLOgWMFLL/GNehwRSLJTcXd9LFKmRMZLDj+I2pT
+         bL8TaTDDzYPX72wOhPYP5T/FByuR50JiC7ZgCzDADzyhK0auxjtGpjEvjgf2Rh2yqprR
+         4NVmHzHI4EY2gETMozMiGpLxS+PZSryMEdmpIG5Mv1DUJxHvBskVTQfdBYFic6n+j8G+
+         uYeFWJpJdPPftYwmuYPMX2KxrruqdZEMZZGY3sw+PzJrlaRtH20FceU6vqA3vSX5SxmW
+         OTQO/2OEfq2Y+/vwsAmF/SmuE6n2HXZEMMirQ4j6L1T9o7vRhehZEE7oR0yQUTkmz/EX
+         VH8g==
+X-Gm-Message-State: APjAAAU4BcbzardcI25fwQQmnMQGN2cp8WC7/KrMqWvz7Gm7C/R0ga3a
+        Slhtt+P6WaIDbLccF8Acq74=
+X-Google-Smtp-Source: APXvYqxHLPKNrpdLLMqp0G4bXC5Z91yn/gIGCzLXSVN9445Z3ZyS5vnf0Dqr+tLu8Cusm5o3P0Nl2Q==
+X-Received: by 2002:a05:600c:10ce:: with SMTP id l14mr25953651wmd.118.1565601624096;
+        Mon, 12 Aug 2019 02:20:24 -0700 (PDT)
+Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
+        by smtp.gmail.com with ESMTPSA id w13sm44443446wre.44.2019.08.12.02.20.22
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Mon, 12 Aug 2019 02:20:22 -0700 (PDT)
+Date:   Mon, 12 Aug 2019 11:20:21 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
+        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
+        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        sboyd@kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
+        talho@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v8 01/21] pinctrl: tegra: Fix write barrier placement in
+ pmx_writel
+Message-ID: <20190812092021.GC8903@ulmo>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
+ <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="he4xln2tfu7hadbz"
+        protocol="application/pgp-signature"; boundary="i7F3eY7HS/tUJxUd"
 Content-Disposition: inline
-In-Reply-To: <20190728031227.49140-1-icenowy@aosc.io>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---he4xln2tfu7hadbz
+--i7F3eY7HS/tUJxUd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Jul 28, 2019 at 11:12:21AM +0800, Icenowy Zheng wrote:
-> This patchset tries to add support for Allwinner V3/S3L and Sochip S3.
->
-> Allwinner V3/V3s/S3L and Sochip S3 share the same die, but with
-> different package. V3 is BGA w/o co-packaged DDR, V3s is QFP w/ DDR2,
-> S3L is BGA w/ DDR2 and S3 is BGA w/ DDR3. (S3 and S3L is compatible
-> for pinout, but because of different DDR, DDR voltage is different
-> between the two variants). Because of the pin count of V3s is
-> restricted due to the package, some pins are not bound on V3s, but
-> they're bound on V3/S3/S3L.
->
-> Currently the kernel is only prepared for the features available on V3s.
-> This patchset adds the features missing on V3s for using them on
-> V3/S3/S3L, and add bindings for V3/S3/S3L. It also adds a S3 SoM by
-> Sipeed, called Lichee Zero Plus.
->
-> Icenowy Zheng (6):
->   pinctrl: sunxi: v3s: introduce support for V3
->   clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
->   clk: sunxi-ng: v3s: add Allwinner V3 support
->   ARM: sunxi: dts: s3/s3l/v3: add DTSI files for S3/S3L/V3 SoCs
->   dt-bindings: arm: sunxi: add binding for Lichee Zero Plus core board
->   ARM: dts: sun8i: s3: add devicetree for Lichee zero plus w/ S3
+On Thu, Aug 08, 2019 at 04:46:40PM -0700, Sowjanya Komatineni wrote:
+> pmx_writel uses writel which inserts write barrier before the
+> register write rather.
+>=20
+> This patch has fix to replace writel with writel_relaxed followed
+> by a write barrier to ensure write operation before the barrier
+> is completed for successful pinctrl change.
+>=20
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  drivers/pinctrl/tegra/pinctrl-tegra.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-Applied the patches 2 to 6, thanks!
-Maxime
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---he4xln2tfu7hadbz
+--i7F3eY7HS/tUJxUd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVEeWgAKCRDj7w1vZxhR
-xc1HAQC4pz8qSqTprqKaHx4vMzq28Cpy8SSZNQyYzojW9ba9VQEAuyb7C8zQZ1Qn
-xIEmEbly3ZpRq6N6RP/EFwfX+rg2HgM=
-=3RxS
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1RL1EACgkQ3SOs138+
+s6GgOQ/+KHEjD8Jzg9BS66GmKuNoOclOxDM03l3CoYiOGhyyUsPjifCTvtnDFGwa
+lqaq7sH3V7fOCC/qun2i5BE8pumI+NgLEkm9tYKvmLCn2vKCzIpv2LGX37+e91M8
+GiMD27bmKkEDW4nLgIza9y3v/t6kJ4XhwKnFA2+eMjqZB9SNleworpYAZp832AIj
+nl0HbqRiGpkLjcIaWAibNY5+0OEpRB6AhZlhsCWz5h7c00Jad8qK1rBnoLxDiq7a
+s5jPfDc8fYWQ6OnIutLEjm+GdSx17odH7R+mprW9OiKqWPmdZUp/aZEHDyS434Al
++c8I0wEpxWWCEk924kF6oPytP6KKjOHy29SdhPg0RV7uuK/qPm6ylaSxem3NyCMi
+sibGMlfXuMKdFaDbCEIv0XbVsu7nmu1I0h7PV1Gy+oCSnPI8EJ+tFiGozbYoy9hQ
+INdJWkMQLWXsCRsECrP1zWyDdiA5zhI0nRNVSflZi5Lz9GkcGa8fmi+r0o4vOL+x
+Lsy85RpW8ukLteRRUf51hpXNcvsXTGXZEempESfd+uLu7eHTpq8WciMDDT0//ekQ
+L4xaq/9TB7s0sDH3D2O8VOd5s1tR0nHl0DojzeY/YS25hOi3nW/8/fHaz+1c6z/C
+cZ7LUpJxyGhfs9Sj00Ftyj2fWVZGuIxFDQXh5ny339ST1DhgPRQ=
+=NUo9
 -----END PGP SIGNATURE-----
 
---he4xln2tfu7hadbz--
+--i7F3eY7HS/tUJxUd--
