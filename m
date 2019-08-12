@@ -2,253 +2,162 @@ Return-Path: <SRS0=0MvX=WI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7D85C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 12:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A260C31E40
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 13:00:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F97E216F4
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 12:33:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kv92oP2M"
+	by mail.kernel.org (Postfix) with ESMTP id 38B9820842
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 13:00:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565614855;
+	bh=l/NqOpnPspQILd59aflIt0y7cwwaNcRzRIKE008vYdE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=euptyz47TFsnwTTS/BeF6E6EVmaWDNcPqdwd3m3UjlFzOvpqHmsvq/xraOlmTQo71
+	 CHL1NAqUaeycE5EeBSG+BkNMZSxW3BtPsUcz9irZIUEYVF7HHRQ0m2TBqIkCJxgs61
+	 N3+IVt4ZYugPpWJrHSl32AB4fvUiGXX8o2j/q5ZU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728598AbfHLMdC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Aug 2019 08:33:02 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44166 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726690AbfHLMdB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Aug 2019 08:33:01 -0400
-Received: by mail-wr1-f68.google.com with SMTP id p17so104392628wrf.11
-        for <linux-clk@vger.kernel.org>; Mon, 12 Aug 2019 05:33:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=dqJ4n54yjkwbFCEJq5QMHITUyQhmVlnjTeiFqDxqTrc=;
-        b=kv92oP2M64Bi/XRGqe2z+1du/iOO7SPa2FaSuz5My6Bls2OISMLzxzQOJmnLEo3BeL
-         M7HkQQp07U6ofG0MbpZzf9duWokZdkwK8qM/Ah+qrubLjk+v7LGFBUxOwZIXoWA8/ZAH
-         eSbfFpcn99oNw61Co8/UMA12yaMZesLT5o//4C42HM8DIr3zIJH3l3spikX5rTVVBqJ5
-         u1IqLYaXOF9pCyXsw6yJRjhhG40K4kcTru3eCyNTaY3AK1s0InOYefn9KaYJRylZm3wA
-         tb7636NjIyS5ke7GYIp566pFb8Dx3iJu/fIz+BXeCd6eMUVcEzWIKG1mKhMItakVRjhj
-         V8gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=dqJ4n54yjkwbFCEJq5QMHITUyQhmVlnjTeiFqDxqTrc=;
-        b=eAdrVj7mxv1Ij8h4F+32Vh6dIVJXFoyU+YqRFa5YkjbPQ3TXWHSacr+jsktu1jtN5i
-         NsC9Os3JHeaOrFmHdbBpp3VZM0pfXcwq+lrXxIZCDJUQ6bSB0S9wz/3GYjVmnFM42HzF
-         dS09x7DRPpHuto5wjkn1W4RMpOIOtijghNYnWv+eD9StKiNslotEgSlgX9+wmhGWveuM
-         yYg9ZfX1A3eeEWKwub3P4pH6bqeIqQbzvXZnW8nB3UP297qx+a/diRRJL7M6O9V0zVy3
-         +u57mPdCtmeurtzcZZhCSYB9PDklooBDez/NO05TOTgJKeVf1cCD0k3Hot3FD5MLwNLP
-         qq9Q==
-X-Gm-Message-State: APjAAAVnV/9igMjrqVVM1kVU0iKMxfMP7NYt/J+Qibst1wP+eCNmuKn8
-        y/7rWIJHE1Wj3f3kOQWowM88Gg==
-X-Google-Smtp-Source: APXvYqwqWFswOPiG61j95oJ0yTvUBxuNRukh5FHJcPalgQyz4/Z/hw+oqpV+YPw2EUIa3geP+g0NKQ==
-X-Received: by 2002:adf:a348:: with SMTP id d8mr29164772wrb.235.1565613179498;
-        Mon, 12 Aug 2019 05:32:59 -0700 (PDT)
-Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id z6sm15886432wre.76.2019.08.12.05.32.58
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 05:32:58 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: meson: axg-audio: add g12a reset support
-Date:   Mon, 12 Aug 2019 14:32:53 +0200
-Message-Id: <20190812123253.4734-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190812123253.4734-1-jbrunet@baylibre.com>
-References: <20190812123253.4734-1-jbrunet@baylibre.com>
+        id S1726715AbfHLNAz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Aug 2019 09:00:55 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48904 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726502AbfHLNAy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Aug 2019 09:00:54 -0400
+Received: from X250 (37.80-203-192.nextgentel.com [80.203.192.37])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A1FD820679;
+        Mon, 12 Aug 2019 13:00:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565614853;
+        bh=l/NqOpnPspQILd59aflIt0y7cwwaNcRzRIKE008vYdE=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=KqmyQ80VsIog146wi5cUzn2HG5COlNTsugile1trKaBUTE2JqEsWoT8fhHtTd8rD/
+         wSgba7byZOeiNK/R1FW/vZhMx3UpTUNaALg6UPMTQEhk0V4X8rQZ8DBs33LAdFCzTK
+         YJahHd8dX/xdrh0KKFcGJgG20kN5ixX6YkBdLVas=
+Date:   Mon, 12 Aug 2019 15:00:43 +0200
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Dong Aisheng <dongas86@gmail.com>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>, sboyd@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v3 02/11] dt-bindings: clock: imx-lpcg: add support to
+ parse clocks from device tree
+Message-ID: <20190812130041.GD27041@X250>
+References: <1563289265-10977-1-git-send-email-aisheng.dong@nxp.com>
+ <1563289265-10977-3-git-send-email-aisheng.dong@nxp.com>
+ <20190803135048.GL8870@X250.getinternet.no>
+ <CAA+hA=TVv8m2GZr0W-u+S6XzJUCYrFDF95iyUGyAsbYMwatyZg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAA+hA=TVv8m2GZr0W-u+S6XzJUCYrFDF95iyUGyAsbYMwatyZg@mail.gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On the g12a, the register space dedicated to the audio clock also
-provides some resets. Let the clock controller register a reset
-provider as well for this SoC family.
+On Mon, Aug 05, 2019 at 11:27:20AM +0800, Dong Aisheng wrote:
+> > > +- compatible:                Should be one of:
+> > > +                       "fsl,imx8qxp-lpcg"
+> > > +                       "fsl,imx8qm-lpcg" followed by "fsl,imx8qxp-lpcg".
+> > > +- reg:                       Address and length of the register set.
+> > > +- #clock-cells:              Should be 1. One LPCG supports multiple clocks.
+> > > +- clocks:            Input parent clocks phandle array for each clock.
+> > > +- bit-offset:                An integer array indicating the bit offset for each clock.
+> >
+> > I guess that the driver should be able to figure bit offset from
+> > 'clock-indices' property.
+> >
+> 
+> Yes, it can be done in theory.
+> Then the binding may look like:
+> sdhc0_lpcg: clock-controller@5b200000 {
+>         ...
+>         #clock-cells = <1>;
+>         clocks = <&sdhc0_clk IMX_SC_PM_CLK_PER>,
+>                  <&conn_ipg_clk>, <&conn_axi_clk>;
+>         clock-indices = <0>, <16>, <20>;
+>         clock-output-names = "sdhc0_lpcg_per_clk",
+>                              "sdhc0_lpcg_ipg_clk",
+>                              "sdhc0_lpcg_ahb_clk";
+>         power-domains = <&pd IMX_SC_R_SDHC_0>;
+> };
+> 
+> usdhc1: mmc@5b010000 {
+>         ...
+>         clocks = <&sdhc0_lpcg 16>,
+>                  <&sdhc0_lpcg 0>,
+>                  <&sdhc0_lpcg 20>;
+>         clock-names = "ipg", "per", "ahb";
+> };
+> 
+> However, after trying, i found  one limitation if using clock-indices
+> that users have to do a secondary search for the indices value from clock names
+> which is not very friendly.
+> 
+> Formerly from the clock output names, user can easily get the clock
+> index as they're
+> in fixed orders as output names, so very easily to use.
+> e.g.
+> clocks = <&sdhc0_lpcg 1>,
+>          <&sdhc0_lpcg 0>,
+>          <&sdhc0_lpcg 2>;
+> 
+> If using clock-indices, users have no way to know it's clock index
+> from clock output names order
+> unless they do a secondary search from the clock-indice array accordingly.
+> For example, for "sdhc0_lpcg_ahb_clk", user can easily know its
+> reference is <&sdhc0_lpcg 2>.
+> But if using clock-indice, we need search clock-indices array to find
+> its reference
+> becomes <&sdhc0_lpcg 20>. So this seems like a drawback if using clock-indices.
 
-the axg SoC family does not appear to provide this feature.
+Shouldn't we have constant macro defined for those numbers, so that both
+'clock-indices' and 'clocks' of client device can use?
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/axg-audio.c | 107 +++++++++++++++++++++++++++++++++-
- drivers/clk/meson/axg-audio.h |   1 +
- 2 files changed, 106 insertions(+), 2 deletions(-)
+> 
+> Therefore, personally i'm still a bit intend to the original way which
+> is more simple and
+> straightforward from user point of view, unless there's a strong
+> objections on define another
+> vendor private property.
+> 
+> Shawn,
+> How do you think?
+> Should we enforce the complexity to users?
+> 
+> > > +- hw-autogate:               Boolean array indicating whether supports HW autogate for
+> > > +                     each clock.
+> >
+> > Not sure why it needs to be a property in DT.  Or asking it different
+> > way, when it should be true and when false?
+> >
+> 
+> It is one LPCG feature.
+> For some specific device LPCGs, it may support clock auto gating. (depends on
+> IP's capability. e.g. uSDHC).
+> So we define this feature in DT as well in case if user may want to
+> use it in the future.
+> 
+> But AFAIK, there's still no one using it. Most drivers reply on runtime PM to do
+> clock management. Did not use LPCG auto gate off feature.
+> But the current LPCG driver API does support this parameter.
+> 
+> If you think it's unnecessary to define it in DT as there're still no
+> users, i can remove it
+> and disabling autogate in driver by default.
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 741df7e955ca..6be9df1efce5 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -12,6 +12,7 @@
- #include <linux/platform_device.h>
- #include <linux/regmap.h>
- #include <linux/reset.h>
-+#include <linux/reset-controller.h>
- #include <linux/slab.h>
- 
- #include "axg-audio.h"
-@@ -918,6 +919,84 @@ static int devm_clk_get_enable(struct device *dev, char *id)
- 	return 0;
- }
- 
-+struct axg_audio_reset_data {
-+	struct reset_controller_dev rstc;
-+	struct regmap *map;
-+	unsigned int offset;
-+};
-+
-+static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
-+					unsigned long id,
-+					unsigned int *reg,
-+					unsigned int *bit)
-+{
-+	unsigned int stride = regmap_get_reg_stride(rst->map);
-+
-+	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
-+	*reg += rst->offset;
-+	*bit = id % (stride * BITS_PER_BYTE);
-+}
-+
-+static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
-+				unsigned long id, bool assert)
-+{
-+	struct axg_audio_reset_data *rst =
-+		container_of(rcdev, struct axg_audio_reset_data, rstc);
-+	unsigned int offset, bit;
-+
-+	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-+
-+	regmap_update_bits(rst->map, offset, BIT(bit),
-+			assert ? BIT(bit) : 0);
-+
-+	return 0;
-+}
-+
-+static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct axg_audio_reset_data *rst =
-+		container_of(rcdev, struct axg_audio_reset_data, rstc);
-+	unsigned int val, offset, bit;
-+
-+	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-+
-+	regmap_read(rst->map, offset, &val);
-+
-+	return !!(val & BIT(bit));
-+}
-+
-+static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return axg_audio_reset_update(rcdev, id, true);
-+}
-+
-+static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	return axg_audio_reset_update(rcdev, id, false);
-+}
-+
-+static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	int ret;
-+
-+	ret = axg_audio_reset_assert(rcdev, id);
-+	if (ret)
-+		return ret;
-+
-+	return axg_audio_reset_deassert(rcdev, id);
-+}
-+
-+static const struct reset_control_ops axg_audio_rstc_ops = {
-+	.assert = axg_audio_reset_assert,
-+	.deassert = axg_audio_reset_deassert,
-+	.reset = axg_audio_reset_toggle,
-+	.status = axg_audio_reset_status,
-+};
-+
- static const struct regmap_config axg_audio_regmap_cfg = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
-@@ -927,12 +1006,15 @@ static const struct regmap_config axg_audio_regmap_cfg = {
- 
- struct audioclk_data {
- 	struct clk_hw_onecell_data *hw_onecell_data;
-+	unsigned int reset_offset;
-+	unsigned int reset_num;
- };
- 
- static int axg_audio_clkc_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
- 	const struct audioclk_data *data;
-+	struct axg_audio_reset_data *rst;
- 	struct regmap *map;
- 	struct resource *res;
- 	void __iomem *regs;
-@@ -984,8 +1066,27 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
- 		}
- 	}
- 
--	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
--					   data->hw_onecell_data);
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-+					data->hw_onecell_data);
-+	if (ret)
-+		return ret;
-+
-+	/* Stop here if there is no reset */
-+	if (!data->reset_num)
-+		return 0;
-+
-+	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-+	if (!rst)
-+		return -ENOMEM;
-+
-+	rst->map = map;
-+	rst->offset = data->reset_offset;
-+	rst->rstc.nr_resets = data->reset_num;
-+	rst->rstc.ops = &axg_audio_rstc_ops;
-+	rst->rstc.of_node = dev->of_node;
-+	rst->rstc.owner = THIS_MODULE;
-+
-+	return devm_reset_controller_register(dev, &rst->rstc);
- }
- 
- static const struct audioclk_data axg_audioclk_data = {
-@@ -994,6 +1095,8 @@ static const struct audioclk_data axg_audioclk_data = {
- 
- static const struct audioclk_data g12a_audioclk_data = {
- 	.hw_onecell_data = &g12a_audio_hw_onecell_data,
-+	.reset_offset = AUDIO_SW_RESET,
-+	.reset_num = 26,
- };
- 
- static const struct of_device_id clkc_match_table[] = {
-diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-index 5d972d55d6c7..c00e28b2e1a9 100644
---- a/drivers/clk/meson/axg-audio.h
-+++ b/drivers/clk/meson/axg-audio.h
-@@ -22,6 +22,7 @@
- #define AUDIO_MCLK_F_CTRL	0x018
- #define AUDIO_MST_PAD_CTRL0	0x01c
- #define AUDIO_MST_PAD_CTRL1	0x020
-+#define AUDIO_SW_RESET		0x024
- #define AUDIO_MST_A_SCLK_CTRL0	0x040
- #define AUDIO_MST_A_SCLK_CTRL1	0x044
- #define AUDIO_MST_B_SCLK_CTRL0	0x048
--- 
-2.21.0
+I would suggest to drop it then.
 
+Shawn
