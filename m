@@ -2,177 +2,375 @@ Return-Path: <SRS0=0MvX=WI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB26C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 10:07:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3064C433FF
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 10:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DA7820820
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 10:07:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koRkDpUJ"
+	by mail.kernel.org (Postfix) with ESMTP id AA92820820
+	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 10:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727768AbfHLKHM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Aug 2019 06:07:12 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33215 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfHLKHM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 12 Aug 2019 06:07:12 -0400
-Received: by mail-wr1-f65.google.com with SMTP id n9so104158710wru.0;
-        Mon, 12 Aug 2019 03:07:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=62GUIJaxsBr0ns4SlEavg70SWuAMSrdfYiBgGd57XwE=;
-        b=koRkDpUJs8FTTEu+44bl2ey1mrNgtTjT+bTugu+eIyQg7hsNVOy5j7iOjWTJqAP8MQ
-         2LqlsSn95ssNqyFoIfESU563xqDB+zB0Oh3K8FXIGJyd+4JfZ4mQWYtfIh90UaoOME1f
-         o/4ZxOnvGrCE+I7z9oRMQaEyZs3Lx8iNk3yVd4QAp0f6AXu+lnPQeT2Oiom2zYDu2GR6
-         o/y1zD13X49NUWXxbMAzMyTfc5eshBlMerUT1Lf7Z86/RjC++8QYBFRoINc1RyqVWj+o
-         Q0uz7KoiRHoMeFBlEPVPGI46wBVUBoujXXN0UKElYyJ3vUiAt/Z6DpzVvAJ/O73dQGPi
-         ofxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=62GUIJaxsBr0ns4SlEavg70SWuAMSrdfYiBgGd57XwE=;
-        b=Kvf3WIjBFnnMBdakTG+YPkFcQCHkqEXxk4iPkK7Yb1I1C7A/EYA5SJMGGt/PY0Hq9e
-         GK1WsqHDI2Dn+3FIMqXD2sQn/KBVUbbIDbFbwtSMeTMQiVWeWoVfXIowRKojhj+BvYbr
-         5p70oLGWb0XEb5L6oQ2ZlzafDfdR7kf5zbjd1bfeiILXsXfmwt9VLqlpsbBZBuhkIrIN
-         S9IAotlT9ESorTEsz/6O/oGgGjlkF8loPwkaKDznpxGX8hMjh7g2sVA90RVr8O+jW+6I
-         OJ5a8seRVjJlW0P4tGl51SLtTn0/KCkuwMX7M1Z1HyjdDo9uxRgxrjJwBBfDFYnqWnX/
-         x3Eg==
-X-Gm-Message-State: APjAAAWYE3FqP6dzIcCiL5m7c/oySiy758LX9QIakBAaiycd9oe7szKR
-        1nwrBXdP7KBdJZMxieAMen0=
-X-Google-Smtp-Source: APXvYqyGe3Uwpwg7TpcsDIQdq3Bc6K7fyTqjMAwH5wH1xbomsRFtWiYH1mhqegRSYkgIiRW1ibmNkg==
-X-Received: by 2002:adf:f710:: with SMTP id r16mr5314208wrp.81.1565604428659;
-        Mon, 12 Aug 2019 03:07:08 -0700 (PDT)
-Received: from localhost (pD9E51890.dip0.t-ipconnect.de. [217.229.24.144])
-        by smtp.gmail.com with ESMTPSA id e4sm29119075wrh.39.2019.08.12.03.07.07
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Mon, 12 Aug 2019 03:07:07 -0700 (PDT)
-Date:   Mon, 12 Aug 2019 12:07:06 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     jonathanh@nvidia.com, tglx@linutronix.de, jason@lakedaemon.net,
-        marc.zyngier@arm.com, linus.walleij@linaro.org, stefan@agner.ch,
-        mark.rutland@arm.com, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        sboyd@kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, jckuo@nvidia.com, josephl@nvidia.com,
-        talho@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v8 12/21] cpufreq: tegra124: Add suspend and resume
- support
-Message-ID: <20190812100706.GK8903@ulmo>
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com>
- <1565308020-31952-13-git-send-email-skomatineni@nvidia.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="rwbb4r/vLufKlfJs"
-Content-Disposition: inline
-In-Reply-To: <1565308020-31952-13-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        id S1727409AbfHLKKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Aug 2019 06:10:53 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:60682 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727323AbfHLKKx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Aug 2019 06:10:53 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0B00E200130;
+        Mon, 12 Aug 2019 12:10:50 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7D862002DF;
+        Mon, 12 Aug 2019 12:10:45 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7B4CA40305;
+        Mon, 12 Aug 2019 18:10:40 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, leoyang.li@nxp.com,
+        liviu.dudau@arm.com
+Cc:     Wen He <wen.he_1@nxp.com>
+Subject: [v1 1/3] clk: ls1028a: Add clock driver for Display output interface
+Date:   Mon, 12 Aug 2019 18:01:03 +0800
+Message-Id: <20190812100103.34393-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add clock driver for QorIQ LS1028A Display output interfaces(LCD, DPHY),
+as implemented in TSMC CLN28HPM PLL, this PLL supports the programmable
+integer division and range of the display output pixel clock's 27-594MHz.
 
---rwbb4r/vLufKlfJs
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+---
+ drivers/clk/Kconfig      |   9 ++
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-plldig.c | 277 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 287 insertions(+)
+ create mode 100644 drivers/clk/clk-plldig.c
 
-On Thu, Aug 08, 2019 at 04:46:51PM -0700, Sowjanya Komatineni wrote:
-> This patch adds suspend and resume pm ops for cpufreq driver.
->=20
-> PLLP is the safe clock source for CPU during system suspend and
-> resume as PLLP rate is below the CPU Fmax at Vmin.
->=20
-> CPUFreq driver suspend switches the CPU clock source to PLLP and
-> disables the DFLL clock.
->=20
-> During system resume, warmboot code powers up the CPU with PLLP
-> clock source. So CPUFreq driver resume enabled DFLL clock and
-> switches CPU back to DFLL clock source.
->=20
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/cpufreq/tegra124-cpufreq.c | 60 ++++++++++++++++++++++++++++++++=
-++++++
->  1 file changed, 60 insertions(+)
->=20
-> diff --git a/drivers/cpufreq/tegra124-cpufreq.c b/drivers/cpufreq/tegra12=
-4-cpufreq.c
-> index 4f0c637b3b49..e979a3370988 100644
-> --- a/drivers/cpufreq/tegra124-cpufreq.c
-> +++ b/drivers/cpufreq/tegra124-cpufreq.c
-> @@ -6,6 +6,7 @@
->  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
-> =20
->  #include <linux/clk.h>
-> +#include <linux/cpufreq.h>
->  #include <linux/err.h>
->  #include <linux/init.h>
->  #include <linux/kernel.h>
-> @@ -128,8 +129,67 @@ static int tegra124_cpufreq_probe(struct platform_de=
-vice *pdev)
->  	return ret;
->  }
-> =20
-> +static int __maybe_unused tegra124_cpufreq_suspend(struct device *dev)
-> +{
-> +	struct tegra124_cpufreq_priv *priv =3D dev_get_drvdata(dev);
-> +	int err;
-> +
-> +	/*
-> +	 * PLLP rate 408Mhz is below the CPU Fmax at Vmin and is safe to
-> +	 * use during suspend and resume. So, switch the CPU clock source
-> +	 * to PLLP and disable DFLL.
-> +	 */
-> +	err =3D clk_set_parent(priv->cpu_clk, priv->pllp_clk);
-> +	if (err < 0) {
-> +		dev_err(dev, "failed to reparent to PLLP: %d\n", err);
-> +		return err;
-> +	}
-> +
-> +	/* disable DFLL clock */
-> +	clk_disable_unprepare(priv->dfll_clk);
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 801fa1cd0321..0e6c7027d637 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -223,6 +223,15 @@ config CLK_QORIQ
+ 	  This adds the clock driver support for Freescale QorIQ platforms
+ 	  using common clock framework.
+ 
++config CLK_PLLDIG
++        bool "Clock driver for LS1028A Display output"
++        depends on ARCH_LAYERSCAPE && OF
++        help
++          This driver support the Display output interfaces(LCD, DPHY) pixel clocks
++          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM PLL. Not all
++          features of the PLL are currently supported by the driver. By default,
++          configured bypass mode with this PLL.
++
+ config COMMON_CLK_XGENE
+ 	bool "Clock driver for APM XGene SoC"
+ 	default ARCH_XGENE
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 0cad76021297..35277759ec03 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -44,6 +44,7 @@ obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
+ obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
+ obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
+ obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
++obj-$(CONFIG_CLK_PLLDIG)		+= clk-plldig.o
+ obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
+ obj-$(CONFIG_COMMON_CLK_HI655X)		+= clk-hi655x.o
+ obj-$(CONFIG_COMMON_CLK_S2MPS11)	+= clk-s2mps11.o
+diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
+new file mode 100644
+index 000000000000..15c9bb623a70
+--- /dev/null
++++ b/drivers/clk/clk-plldig.c
+@@ -0,0 +1,277 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright 2019 NXP
++
++/*
++ * Clock driver for LS1028A Display output interfaces(LCD, DPHY).
++ *
++ * Author: Wen He <wen.he_1@nxp.com>
++ *
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/clkdev.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/of_device.h>
++#include <linux/platform_device.h>
++#include <linux/slab.h>
++
++/* PLLDIG register offsets and bit masks */
++#define PLLDIG_REG_PLLSR            0x24
++#define PLLDIG_REG_PLLDV            0x28
++#define PLLDIG_REG_PLLFM            0x2c
++#define PLLDIG_REG_PLLFD            0x30
++#define PLLDIG_REG_PLLCAL1          0x38
++#define PLLDIG_REG_PLLCAL2          0x3c
++#define PLLDIG_DEFAULE_MULT         0x2c
++#define PLLDIG_LOCK_STATUS          BIT(3)
++#define PLLDIG_SSCGBYP_ENABLE       BIT(30)
++#define PLLDIG_FDEN                 BIT(30)
++#define PLLDIG_DTHRCTL              (0x3 << 16)
++
++/* macro to get/set values into register */
++#define PLLDIG_GET_MULT(x)          (((x) & ~(0xffffff00)) << 0)
++#define PLLDIG_GET_RFDPHI1(x)       ((u32)(x) >> 25)
++#define PLLDIG_SET_RFDPHI1(x)       ((u32)(x) << 25)
++
++struct clk_plldig {
++	struct clk_hw hw;
++	void __iomem *regs;
++};
++#define to_clk_plldig(_hw)	container_of(_hw, struct clk_plldig, hw)
++#define LOCK_TIMEOUT_US		USEC_PER_MSEC
++
++static inline int plldig_wait_lock(struct clk_plldig *plldig)
++{
++	u32 csr;
++       /*
++	* Indicates whether PLL has acquired lock, if operating in bypass
++	* mode, the LOCK bit will still assert when the PLL acquires lock
++	* or negate when it loses lock.
++	*/
++	return readl_poll_timeout(plldig->regs + PLLDIG_REG_PLLSR, csr,
++				csr & PLLDIG_LOCK_STATUS, 0, LOCK_TIMEOUT_US);
++}
++
++static int plldig_enable(struct clk_hw *hw)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++	u32 val;
++
++	val = readl(data->regs + PLLDIG_REG_PLLFM);
++	/*
++	 * Use Bypass mode with PLL off by default,the frequency overshoot
++	 * detector output was disable. SSCG Bypass mode should be enable.
++	 */
++	val |= PLLDIG_SSCGBYP_ENABLE;
++	writel(val, data->regs + PLLDIG_REG_PLLFM);
++
++	val = readl(data->regs + PLLDIG_REG_PLLFD);
++	/* Disable dither and Sigma delta modulation in bypass mode */
++	val |= (PLLDIG_FDEN | PLLDIG_DTHRCTL);
++	writel(val, data->regs + PLLDIG_REG_PLLFD);
++
++	return plldig_wait_lock(data);
++}
++
++static void plldig_disable(struct clk_hw *hw)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++	u32 val;
++
++	val = readl(data->regs + PLLDIG_REG_PLLFM);
++
++	val &= ~PLLDIG_SSCGBYP_ENABLE;
++	writel(val, data->regs + PLLDIG_REG_PLLFM);
++}
++
++static int plldig_is_enabled(struct clk_hw *hw)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++
++	return (readl(data->regs + PLLDIG_REG_PLLFM) & PLLDIG_SSCGBYP_ENABLE);
++}
++
++/*
++ * Clock configuration relationship between the PHI1 frequency(fpll_phi) and
++ * the output frequency of the PLL is determined by the PLLDV, according to
++ * the following equation:
++ * pxclk = fpll_phi / RFDPHI1 = (pll_ref x PLLDV[MFD]) / PLLDV[RFDPHI1].
++ */
++static bool plldig_is_valid_range(unsigned long rate, unsigned long parent_rate,
++		unsigned int *mult, unsigned int *rfdphi1,
++		unsigned long *round_rate_base)
++{
++	u32 div, div_temp, mfd = PLLDIG_DEFAULE_MULT;
++	unsigned long round_rate;
++
++	round_rate = parent_rate * mfd;
++
++	/* Range of the diliver for driving the PHI1 output clock */
++	for (div = 1; div <= 63; div++) {
++		/* Checking match with default mult number at first */
++		if (round_rate / div == rate) {
++			*rfdphi1 = div;
++			*round_rate_base = round_rate;
++			*mult = mfd;
++			return true;
++		}
++	}
++
++	for (div = 1; div <= 63; div++) {
++		mfd = (div * rate) / parent_rate;
++		/* Range of the muliplicationthe factor applied to the
++		 * output reference frequency
++		 */
++		if ((mfd >= 10) && (mfd <= 150)) {
++			div_temp = (parent_rate * mfd) / rate;
++			if ((div_temp * rate) == (mfd * parent_rate)) {
++				*rfdphi1 = div_temp;
++				*mult = mfd;
++				*round_rate_base = mfd * parent_rate;
++				return true;
++			}
++		}
++	}
++
++	return false;
++}
++
++static unsigned long plldig_recalc_rate(struct clk_hw *hw,
++		unsigned long parent_rate)
++{
++	struct clk_plldig *plldig = to_clk_plldig(hw);
++	u32 mult, div, val;
++
++	val = readl(plldig->regs + PLLDIG_REG_PLLDV);
++	pr_info("%s: current configuration: 0x%x\n", clk_hw_get_name(hw), val);
++
++	/* Check if PLL is bypassed */
++	if (val & PLLDIG_SSCGBYP_ENABLE)
++		return parent_rate;
++
++	/* Checkout multiplication factor divider value */
++	mult = val;
++	mult = PLLDIG_GET_MULT(mult);
++
++	/* Checkout divider value of the output frequency */
++	div = val;
++	div = PLLDIG_GET_RFDPHI1(div);
++
++	return (parent_rate * mult) / div;
++}
++
++static long plldig_round_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long *parent)
++{
++	unsigned long parent_rate = *parent;
++	unsigned long round_rate;
++	u32 mult = 0, rfdphi1 = 0;
++	bool found = false;
++
++	found = plldig_is_valid_range(rate, parent_rate, &mult,
++					&rfdphi1, &round_rate);
++	if (!found) {
++		pr_warn("%s: unable to round rate %lu, parent rate :%lu\n",
++				clk_hw_get_name(hw), rate, parent_rate);
++		return 0;
++	}
++
++	return round_rate / rfdphi1;
++}
++
++static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
++		unsigned long parent_rate)
++{
++	struct clk_plldig *data = to_clk_plldig(hw);
++	bool valid = false;
++	unsigned long round_rate = 0;
++	u32 rfdphi1 = 0, val, mult = 0;
++
++	valid = plldig_is_valid_range(rate, parent_rate, &mult,
++					&rfdphi1, &round_rate);
++	if (!valid) {
++		pr_warn("%s: unable to support rate %lu, parent_rate: %lu\n",
++				clk_hw_get_name(hw), rate, parent_rate);
++		return -EINVAL;
++	}
++
++	val = readl(data->regs + PLLDIG_REG_PLLDV);
++	val = mult;
++	rfdphi1 = PLLDIG_SET_RFDPHI1(rfdphi1);
++	val |= rfdphi1;
++
++	writel(val, data->regs + PLLDIG_REG_PLLDV);
++
++	return plldig_wait_lock(data);
++}
++
++static const struct clk_ops plldig_clk_ops = {
++	.enable = plldig_enable,
++	.disable = plldig_disable,
++	.is_enabled = plldig_is_enabled,
++	.recalc_rate = plldig_recalc_rate,
++	.round_rate = plldig_round_rate,
++	.set_rate = plldig_set_rate,
++};
++
++struct clk_hw *_plldig_clk_init(const char *name, const char *parent_name,
++				void __iomem *regs)
++{
++	struct clk_plldig *plldig;
++	struct clk_hw *hw;
++	struct clk_init_data init;
++	int ret;
++
++	plldig = kzalloc(sizeof(*plldig), GFP_KERNEL);
++	if (!plldig)
++		return ERR_PTR(-ENOMEM);
++
++	plldig->regs = regs;
++
++	init.name = name;
++	init.ops = &plldig_clk_ops;
++	init.parent_names = &parent_name;
++	init.num_parents = 1;
++	init.flags = CLK_SET_RATE_GATE;
++
++	plldig->hw.init = &init;
++
++	hw = &plldig->hw;
++	ret = clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(plldig);
++		hw = ERR_PTR(ret);
++	}
++
++	return hw;
++}
++
++static void __init plldig_clk_init(struct device_node *node)
++{
++	struct clk_hw_onecell_data *clk_data;
++	struct clk_hw **clks;
++	void __iomem *base;
++
++	clk_data = kzalloc(struct_size(clk_data, hws, 1),
++			GFP_KERNEL);
++	if (!clk_data)
++		return;
++
++	clk_data->num = 1;
++	clks = clk_data->hws;
++
++	base = of_iomap(node, 0);
++	WARN_ON(!base);
++
++	clks[0] = _plldig_clk_init("pixel-clk",
++			of_clk_get_parent_name(node, 0), base);
++
++	of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
++}
++
++CLK_OF_DECLARE(plldig_clockgen, "fsl,ls1028a-plldig", plldig_clk_init);
+-- 
+2.17.1
 
-This comment is superfluous since it doesn't explain anything that the
-code below doesn't explain already.
-
-Not sure who will end up merging this. If not me, then this is:
-
-Acked-by: Thierry Reding <treding@nvidia.com>
-
---rwbb4r/vLufKlfJs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl1ROkoACgkQ3SOs138+
-s6EJKQ/+I3cbYEQ/nCqI+FT9m+vu0hLSkyzx0lJlJVnxlgxIi4AJGx6Pb3bXgNy4
-LEOQC2nlCzm1Lr9JeKBVpZ/AtP8axsHNXtAffRCITM3nfaXZhLCq1dhCXbf4uobC
-RCS8mOavaYc3hiqjb3Kg0V7CsGJ7TbNmAiCv32yIRKt21/vFz4nR+cyEEFZqYmkc
-BoCTX1+soYNwseydeRYxzCh619PxkfhENk41LrFlERSmQ7Ao4NVi1kq0FKLANmoi
-eY0Z++jK0OBTn74N2txmRuzguQe5UwqC6AAgMAzB7dvBHyFLc8iOJUmrNNL8bqj7
-vorJ7UK5f61JX9rEDC8Wq4i3RApb9aEyG+PiCpRTXlMbQOscpIZUnTU7P86DSfBt
-OxB1ZF2VZs9m/zoGOOKBPkO6ZpPNGKjjC+W1vhNNcHbB7uKolgABRgqvIK74wUrK
-ldM4+ba2hQxur5YU3Nrffaml2KORg2zBXm4YAm0DElONwx4Xtx0eQ1ymX2k9k/Dj
-KMiWTNSrN+jXruhyECkO90ogxk/DIzaBkVfieIDTzKYOggXKEo/PNUAepL0Osq7q
-IpQ576FFctxafQLakYMk0O89nTJnNtVkAUmdVi1BK2m0vKQclpzlE4w43UcJl3zb
-MYbIcsCnKZwWz9QsUmRI76d8JLPKsPiTtFjUopToIkOhSMcVO10=
-=xDLq
------END PGP SIGNATURE-----
-
---rwbb4r/vLufKlfJs--
