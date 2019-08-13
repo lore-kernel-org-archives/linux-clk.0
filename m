@@ -2,347 +2,151 @@ Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C338CC32753
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 17:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8A33C32750
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 17:23:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92F7820842
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 17:05:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C0A420663
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 17:23:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565716991;
+	bh=oEIyygQpeyc5lZgtguO481uQtwKNligWTCld8t/UPMM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=l0bg3ERV2UoKqNZztFN1ffDv/yghbk9ActihRivLXqvEqIVp+EiH1ySdEDJxF2GYW
+	 +N+sZ+BJqDILpPg3Nsr50oRX5kTsOmh74qdgq8/3GHzyfJFBFILWACnHGXNnYuIfYC
+	 ZR9Zm0y96/E+s+tdUoE2QmzwigASV6ixYuHsyxro=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726354AbfHMRFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 13:05:39 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:57708 "EHLO inva021.nxp.com"
+        id S1726466AbfHMRXK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 13:23:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44454 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726062AbfHMRFj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 13:05:39 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AF0E620022F;
-        Tue, 13 Aug 2019 19:05:35 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id A0292200161;
-        Tue, 13 Aug 2019 19:05:35 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 08BB92060E;
-        Tue, 13 Aug 2019 19:05:34 +0200 (CEST)
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-Cc:     Anson Huang <Anson.Huang@nxp.com>,
+        id S1726094AbfHMRXK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 13:23:10 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 970252085A;
+        Tue, 13 Aug 2019 17:23:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565716989;
+        bh=oEIyygQpeyc5lZgtguO481uQtwKNligWTCld8t/UPMM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=pMsDao8Lhb4JfOY1tLFQq5Ki+A5JURQhuKVcQ63i/PvYhoxIo18eDqbP5YKmZLM9J
+         1878SYWfxEDBVeouUdV2EjM3gBEHanSuEO3CJqzrDA0fDqloDKxr0EJEpxZlJA/K1R
+         COr8q9noK7pTdlLQRxqEnBeFF+PzwdKaesbCuGWw=
+Received: by mail-qt1-f179.google.com with SMTP id b11so7342585qtp.10;
+        Tue, 13 Aug 2019 10:23:09 -0700 (PDT)
+X-Gm-Message-State: APjAAAVZoCMa6hwDadyvSfrmdFY9ZvuAIRP8ALP5cYySUP4Lu/QsGa/t
+        U+vFunGAr/ok+b0fwPBqjMQZCNyAmS5VHrPXLA==
+X-Google-Smtp-Source: APXvYqy2+6R8b2VmAb1mm1zXL0U2rDdmV0wVqEBWCEyUZTZp0W4z8AS8GmE6aw8CLPCiSVKucGkFVT4q+0lMBjKid1Y=
+X-Received: by 2002:ac8:44c4:: with SMTP id b4mr23403904qto.224.1565716988767;
+ Tue, 13 Aug 2019 10:23:08 -0700 (PDT)
+MIME-Version: 1.0
+References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net> <1565713248-4906-10-git-send-email-wahrenst@gmx.net>
+In-Reply-To: <1565713248-4906-10-git-send-email-wahrenst@gmx.net>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 13 Aug 2019 11:22:56 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+01vXQpf_ZuAvetWvcGLhK4EiiB1qFqhRkM3PQWAzdsA@mail.gmail.com>
+Message-ID: <CAL_Jsq+01vXQpf_ZuAvetWvcGLhK4EiiB1qFqhRkM3PQWAzdsA@mail.gmail.com>
+Subject: Re: [PATCH V2 09/13] dt-bindings: arm: Convert BCM2835 board/soc
+ bindings to json-schema
+To:     Stefan Wahren <wahrenst@gmx.net>
+Cc:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 1/4] clk: imx8mq: Fix sys3 pll references
-Date:   Tue, 13 Aug 2019 20:05:28 +0300
-Message-Id: <8d9e3333e6c8b95067e60469cb3419c60e6c7205.1565715590.git.leonard.crestez@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1565715590.git.leonard.crestez@nxp.com>
-References: <cover.1565715590.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1565715590.git.leonard.crestez@nxp.com>
-References: <cover.1565715590.git.leonard.crestez@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Stephen Boyd <sboyd@kernel.org>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The "sys3_pll2_out" CLK was removed in refactoring so all references
-need to be updated to "sys3_pll_out"
+On Tue, Aug 13, 2019 at 10:21 AM Stefan Wahren <wahrenst@gmx.net> wrote:
+>
+> Convert the BCM2835/6/7 SoC bindings to DT schema format using json-schema.
+> All the other Broadcom boards are maintained by Florian Fainelli.
+>
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+> Acked-by: Eric Anholt <eric@anholt.net>
+> ---
+>  .../devicetree/bindings/arm/bcm/bcm2835.yaml       | 46 +++++++++++++++
+>  .../devicetree/bindings/arm/bcm/brcm,bcm2835.txt   | 67 ----------------------
+>  2 files changed, 46 insertions(+), 67 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+>  delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835.txt
+>
+> diff --git a/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml b/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+> new file mode 100644
+> index 0000000..1a4be26
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+> @@ -0,0 +1,46 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/bcm/bcm2835.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM2711/BCM2835 Platforms Device Tree Bindings
+> +
+> +maintainers:
+> +  - Eric Anholt <eric@anholt.net>
+> +  - Stefan Wahren <wahrenst@gmx.net>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - description: BCM2835 based Boards
+> +        items:
+> +          - enum:
+> +              - raspberrypi,model-a
+> +              - raspberrypi,model-a-plus
+> +              - raspberrypi,model-b
+> +              - raspberrypi,model-b-i2c0  # Raspberry Pi Model B (no P5)
+> +              - raspberrypi,model-b-rev2
+> +              - raspberrypi,model-b-plus
+> +              - raspberrypi,compute-module
+> +              - raspberrypi,model-zero
+> +              - raspberrypi,model-zero-w
+> +          - const: brcm,bcm2835
+> +
+> +      - description: BCM2836 based Boards
+> +        items:
+> +          - enum:
+> +              - raspberrypi,2-model-b
 
-Fixes: e9dda4af685f ("clk: imx: Refactor entire sccg pll clk")
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- drivers/clk/imx/clk-imx8mq.c | 112 +++++++++++++++++------------------
- 1 file changed, 56 insertions(+), 56 deletions(-)
+Don't you need brcm,bcm2836 here?
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 81a024928408..41fc9c63356e 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -39,93 +39,93 @@ static const char * const sys2_pll_out_sels[] = {"sys1_pll1_ref_sel", "sys2_pll1
- static const char * const sys3_pll_out_sels[] = {"sys3_pll1_ref_sel", "sys2_pll1_ref_sel", };
- static const char * const dram_pll_out_sels[] = {"dram_pll1_ref_sel", };
- 
- /* CCM ROOT */
- static const char * const imx8mq_a53_sels[] = {"osc_25m", "arm_pll_out", "sys2_pll_500m", "sys2_pll_1000m",
--					"sys1_pll_800m", "sys1_pll_400m", "audio_pll1_out", "sys3_pll2_out", };
-+					"sys1_pll_800m", "sys1_pll_400m", "audio_pll1_out", "sys3_pll_out", };
- 
- static const char * const imx8mq_arm_m4_sels[] = {"osc_25m", "sys2_pll_200m", "sys2_pll_250m", "sys1_pll_266m",
--					"sys1_pll_800m", "audio_pll1_out", "video_pll1_out", "sys3_pll2_out", };
-+					"sys1_pll_800m", "audio_pll1_out", "video_pll1_out", "sys3_pll_out", };
- 
- static const char * const imx8mq_vpu_sels[] = {"osc_25m", "arm_pll_out", "sys2_pll_500m", "sys2_pll_1000m",
- 					"sys1_pll_800m", "sys1_pll_400m", "audio_pll1_out", "vpu_pll_out", };
- 
--static const char * const imx8mq_gpu_core_sels[] = {"osc_25m", "gpu_pll_out", "sys1_pll_800m", "sys3_pll2_out",
-+static const char * const imx8mq_gpu_core_sels[] = {"osc_25m", "gpu_pll_out", "sys1_pll_800m", "sys3_pll_out",
- 					     "sys2_pll_1000m", "audio_pll1_out", "video_pll1_out", "audio_pll2_out", };
- 
--static const char * const imx8mq_gpu_shader_sels[] = {"osc_25m", "gpu_pll_out", "sys1_pll_800m", "sys3_pll2_out",
-+static const char * const imx8mq_gpu_shader_sels[] = {"osc_25m", "gpu_pll_out", "sys1_pll_800m", "sys3_pll_out",
- 					       "sys2_pll_1000m", "audio_pll1_out", "video_pll1_out", "audio_pll2_out", };
- 
- static const char * const imx8mq_main_axi_sels[] = {"osc_25m", "sys2_pll_333m", "sys1_pll_800m", "sys2_pll_250m",
- 					     "sys2_pll_1000m", "audio_pll1_out", "video_pll1_out", "sys1_pll_100m",};
- 
- static const char * const imx8mq_enet_axi_sels[] = {"osc_25m", "sys1_pll_266m", "sys1_pll_800m", "sys2_pll_250m",
--					     "sys2_pll_200m", "audio_pll1_out", "video_pll1_out", "sys3_pll2_out", };
-+					     "sys2_pll_200m", "audio_pll1_out", "video_pll1_out", "sys3_pll_out", };
- 
- static const char * const imx8mq_nand_usdhc_sels[] = {"osc_25m", "sys1_pll_266m", "sys1_pll_800m", "sys2_pll_200m",
--					       "sys1_pll_133m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll1_out", };
-+					       "sys1_pll_133m", "sys3_pll_out", "sys2_pll_250m", "audio_pll1_out", };
- 
--static const char * const imx8mq_vpu_bus_sels[] = {"osc_25m", "sys1_pll_800m", "vpu_pll_out", "audio_pll2_out", "sys3_pll2_out", "sys2_pll_1000m", "sys2_pll_200m", "sys1_pll_100m", };
-+static const char * const imx8mq_vpu_bus_sels[] = {"osc_25m", "sys1_pll_800m", "vpu_pll_out", "audio_pll2_out", "sys3_pll_out", "sys2_pll_1000m", "sys2_pll_200m", "sys1_pll_100m", };
- 
--static const char * const imx8mq_disp_axi_sels[] = {"osc_25m", "sys2_pll_125m", "sys1_pll_800m", "sys3_pll2_out", "sys1_pll_400m", "audio_pll2_out", "clk_ext1", "clk_ext4", };
-+static const char * const imx8mq_disp_axi_sels[] = {"osc_25m", "sys2_pll_125m", "sys1_pll_800m", "sys3_pll_out", "sys1_pll_400m", "audio_pll2_out", "clk_ext1", "clk_ext4", };
- 
--static const char * const imx8mq_disp_apb_sels[] = {"osc_25m", "sys2_pll_125m", "sys1_pll_800m", "sys3_pll2_out",
-+static const char * const imx8mq_disp_apb_sels[] = {"osc_25m", "sys2_pll_125m", "sys1_pll_800m", "sys3_pll_out",
- 					     "sys1_pll_40m", "audio_pll2_out", "clk_ext1", "clk_ext3", };
- 
- static const char * const imx8mq_disp_rtrm_sels[] = {"osc_25m", "sys1_pll_800m", "sys2_pll_200m", "sys1_pll_400m",
- 					      "audio_pll1_out", "video_pll1_out", "clk_ext2", "clk_ext3", };
- 
- static const char * const imx8mq_usb_bus_sels[] = {"osc_25m", "sys2_pll_500m", "sys1_pll_800m", "sys2_pll_100m",
- 					    "sys2_pll_200m", "clk_ext2", "clk_ext4", "audio_pll2_out", };
- 
--static const char * const imx8mq_gpu_axi_sels[] = {"osc_25m", "sys1_pll_800m", "gpu_pll_out", "sys3_pll2_out", "sys2_pll_1000m",
-+static const char * const imx8mq_gpu_axi_sels[] = {"osc_25m", "sys1_pll_800m", "gpu_pll_out", "sys3_pll_out", "sys2_pll_1000m",
- 					    "audio_pll1_out", "video_pll1_out", "audio_pll2_out", };
- 
--static const char * const imx8mq_gpu_ahb_sels[] = {"osc_25m", "sys1_pll_800m", "gpu_pll_out", "sys3_pll2_out", "sys2_pll_1000m",
-+static const char * const imx8mq_gpu_ahb_sels[] = {"osc_25m", "sys1_pll_800m", "gpu_pll_out", "sys3_pll_out", "sys2_pll_1000m",
- 					    "audio_pll1_out", "video_pll1_out", "audio_pll2_out", };
- 
--static const char * const imx8mq_noc_sels[] = {"osc_25m", "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_1000m", "sys2_pll_500m",
-+static const char * const imx8mq_noc_sels[] = {"osc_25m", "sys1_pll_800m", "sys3_pll_out", "sys2_pll_1000m", "sys2_pll_500m",
- 					"audio_pll1_out", "video_pll1_out", "audio_pll2_out", };
- 
--static const char * const imx8mq_noc_apb_sels[] = {"osc_25m", "sys1_pll_400m", "sys3_pll2_out", "sys2_pll_333m", "sys2_pll_200m",
-+static const char * const imx8mq_noc_apb_sels[] = {"osc_25m", "sys1_pll_400m", "sys3_pll_out", "sys2_pll_333m", "sys2_pll_200m",
- 					    "sys1_pll_800m", "audio_pll1_out", "video_pll1_out", };
- 
- static const char * const imx8mq_ahb_sels[] = {"osc_25m", "sys1_pll_133m", "sys1_pll_800m", "sys1_pll_400m",
--					"sys2_pll_125m", "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", };
-+					"sys2_pll_125m", "sys3_pll_out", "audio_pll1_out", "video_pll1_out", };
- 
- static const char * const imx8mq_audio_ahb_sels[] = {"osc_25m", "sys2_pll_500m", "sys1_pll_800m", "sys2_pll_1000m",
--						  "sys2_pll_166m", "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", };
-+						  "sys2_pll_166m", "sys3_pll_out", "audio_pll1_out", "video_pll1_out", };
- 
- static const char * const imx8mq_dsi_ahb_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_80m", "sys1_pll_800m",
--						"sys2_pll_1000m", "sys3_pll2_out", "clk_ext3", "audio_pll2_out"};
-+						"sys2_pll_1000m", "sys3_pll_out", "clk_ext3", "audio_pll2_out"};
- 
- static const char * const imx8mq_dram_alt_sels[] = {"osc_25m", "sys1_pll_800m", "sys1_pll_100m", "sys2_pll_500m",
- 						"sys2_pll_250m", "sys1_pll_400m", "audio_pll1_out", "sys1_pll_266m", };
- 
- static const char * const imx8mq_dram_apb_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_40m", "sys1_pll_160m",
--						"sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
-+						"sys1_pll_800m", "sys3_pll_out", "sys2_pll_250m", "audio_pll2_out", };
- 
--static const char * const imx8mq_vpu_g1_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_100m", "sys2_pll_125m", "sys3_pll2_out", "audio_pll1_out", };
-+static const char * const imx8mq_vpu_g1_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_100m", "sys2_pll_125m", "sys3_pll_out", "audio_pll1_out", };
- 
--static const char * const imx8mq_vpu_g2_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_100m", "sys2_pll_125m", "sys3_pll2_out", "audio_pll1_out", };
-+static const char * const imx8mq_vpu_g2_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_100m", "sys2_pll_125m", "sys3_pll_out", "audio_pll1_out", };
- 
--static const char * const imx8mq_disp_dtrc_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_160m", "sys2_pll_100m", "sys3_pll2_out", "audio_pll2_out", };
-+static const char * const imx8mq_disp_dtrc_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_160m", "sys2_pll_100m", "sys3_pll_out", "audio_pll2_out", };
- 
--static const char * const imx8mq_disp_dc8000_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_160m", "sys2_pll_100m", "sys3_pll2_out", "audio_pll2_out", };
-+static const char * const imx8mq_disp_dc8000_sels[] = {"osc_25m", "vpu_pll_out", "sys1_pll_800m", "sys2_pll_1000m", "sys1_pll_160m", "sys2_pll_100m", "sys3_pll_out", "audio_pll2_out", };
- 
- static const char * const imx8mq_pcie1_ctrl_sels[] = {"osc_25m", "sys2_pll_250m", "sys2_pll_200m", "sys1_pll_266m",
--					       "sys1_pll_800m", "sys2_pll_500m", "sys2_pll_250m", "sys3_pll2_out", };
-+					       "sys1_pll_800m", "sys2_pll_500m", "sys2_pll_250m", "sys3_pll_out", };
- 
- static const char * const imx8mq_pcie1_phy_sels[] = {"osc_25m", "sys2_pll_100m", "sys2_pll_500m", "clk_ext1", "clk_ext2",
- 					      "clk_ext3", "clk_ext4", };
- 
--static const char * const imx8mq_pcie1_aux_sels[] = {"osc_25m", "sys2_pll_200m", "sys2_pll_500m", "sys3_pll2_out",
-+static const char * const imx8mq_pcie1_aux_sels[] = {"osc_25m", "sys2_pll_200m", "sys2_pll_500m", "sys3_pll_out",
- 					      "sys2_pll_100m", "sys1_pll_80m", "sys1_pll_160m", "sys1_pll_200m", };
- 
--static const char * const imx8mq_dc_pixel_sels[] = {"osc_25m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out", "sys1_pll_800m", "sys2_pll_1000m", "sys3_pll2_out", "clk_ext4", };
-+static const char * const imx8mq_dc_pixel_sels[] = {"osc_25m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out", "sys1_pll_800m", "sys2_pll_1000m", "sys3_pll_out", "clk_ext4", };
- 
--static const char * const imx8mq_lcdif_pixel_sels[] = {"osc_25m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out", "sys1_pll_800m", "sys2_pll_1000m", "sys3_pll2_out", "clk_ext4", };
-+static const char * const imx8mq_lcdif_pixel_sels[] = {"osc_25m", "video_pll1_out", "audio_pll2_out", "audio_pll1_out", "sys1_pll_800m", "sys2_pll_1000m", "sys3_pll_out", "clk_ext4", };
- 
- static const char * const imx8mq_sai1_sels[] = {"osc_25m", "audio_pll1_out", "audio_pll2_out", "video_pll1_out", "sys1_pll_133m", "osc_27m", "clk_ext1", "clk_ext2", };
- 
- static const char * const imx8mq_sai2_sels[] = {"osc_25m", "audio_pll1_out", "audio_pll2_out", "video_pll1_out", "sys1_pll_133m", "osc_27m", "clk_ext2", "clk_ext3", };
- 
-@@ -149,44 +149,44 @@ static const char * const imx8mq_enet_timer_sels[] = {"osc_25m", "sys2_pll_100m"
- 
- static const char * const imx8mq_enet_phy_sels[] = {"osc_25m", "sys2_pll_50m", "sys2_pll_125m", "sys2_pll_500m",
- 					     "audio_pll1_out", "video_pll1_out", "audio_pll2_out", };
- 
- static const char * const imx8mq_nand_sels[] = {"osc_25m", "sys2_pll_500m", "audio_pll1_out", "sys1_pll_400m",
--					 "audio_pll2_out", "sys3_pll2_out", "sys2_pll_250m", "video_pll1_out", };
-+					 "audio_pll2_out", "sys3_pll_out", "sys2_pll_250m", "video_pll1_out", };
- 
- static const char * const imx8mq_qspi_sels[] = {"osc_25m", "sys1_pll_400m", "sys1_pll_800m", "sys2_pll_500m",
--					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll2_out", "sys1_pll_100m", };
-+					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll_out", "sys1_pll_100m", };
- 
- static const char * const imx8mq_usdhc1_sels[] = {"osc_25m", "sys1_pll_400m", "sys1_pll_800m", "sys2_pll_500m",
--					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll2_out", "sys1_pll_100m", };
-+					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll_out", "sys1_pll_100m", };
- 
- static const char * const imx8mq_usdhc2_sels[] = {"osc_25m", "sys1_pll_400m", "sys1_pll_800m", "sys2_pll_500m",
--					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll2_out", "sys1_pll_100m", };
-+					 "audio_pll2_out", "sys1_pll_266m", "sys3_pll_out", "sys1_pll_100m", };
- 
--static const char * const imx8mq_i2c1_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll2_out", "audio_pll1_out",
-+static const char * const imx8mq_i2c1_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll_out", "audio_pll1_out",
- 					 "video_pll1_out", "audio_pll2_out", "sys1_pll_133m", };
- 
--static const char * const imx8mq_i2c2_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll2_out", "audio_pll1_out",
-+static const char * const imx8mq_i2c2_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll_out", "audio_pll1_out",
- 					 "video_pll1_out", "audio_pll2_out", "sys1_pll_133m", };
- 
--static const char * const imx8mq_i2c3_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll2_out", "audio_pll1_out",
-+static const char * const imx8mq_i2c3_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll_out", "audio_pll1_out",
- 					 "video_pll1_out", "audio_pll2_out", "sys1_pll_133m", };
- 
--static const char * const imx8mq_i2c4_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll2_out", "audio_pll1_out",
-+static const char * const imx8mq_i2c4_sels[] = {"osc_25m", "sys1_pll_160m", "sys2_pll_50m", "sys3_pll_out", "audio_pll1_out",
- 					 "video_pll1_out", "audio_pll2_out", "sys1_pll_133m", };
- 
- static const char * const imx8mq_uart1_sels[] = {"osc_25m", "sys1_pll_80m", "sys2_pll_200m", "sys2_pll_100m",
--					  "sys3_pll2_out", "clk_ext2", "clk_ext4", "audio_pll2_out", };
-+					  "sys3_pll_out", "clk_ext2", "clk_ext4", "audio_pll2_out", };
- 
- static const char * const imx8mq_uart2_sels[] = {"osc_25m", "sys1_pll_80m", "sys2_pll_200m", "sys2_pll_100m",
--					  "sys3_pll2_out", "clk_ext2", "clk_ext3", "audio_pll2_out", };
-+					  "sys3_pll_out", "clk_ext2", "clk_ext3", "audio_pll2_out", };
- 
- static const char * const imx8mq_uart3_sels[] = {"osc_25m", "sys1_pll_80m", "sys2_pll_200m", "sys2_pll_100m",
--					  "sys3_pll2_out", "clk_ext2", "clk_ext4", "audio_pll2_out", };
-+					  "sys3_pll_out", "clk_ext2", "clk_ext4", "audio_pll2_out", };
- 
- static const char * const imx8mq_uart4_sels[] = {"osc_25m", "sys1_pll_80m", "sys2_pll_200m", "sys2_pll_100m",
--					  "sys3_pll2_out", "clk_ext2", "clk_ext3", "audio_pll2_out", };
-+					  "sys3_pll_out", "clk_ext2", "clk_ext3", "audio_pll2_out", };
- 
- static const char * const imx8mq_usb_core_sels[] = {"osc_25m", "sys1_pll_100m", "sys1_pll_40m", "sys2_pll_100m",
- 					     "sys2_pll_200m", "clk_ext2", "clk_ext3", "audio_pll2_out", };
- 
- static const char * const imx8mq_usb_phy_sels[] = {"osc_25m", "sys1_pll_100m", "sys1_pll_40m", "sys2_pll_100m",
-@@ -194,83 +194,83 @@ static const char * const imx8mq_usb_phy_sels[] = {"osc_25m", "sys1_pll_100m", "
- 
- static const char * const imx8mq_gic_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_40m", "sys2_pll_100m",
- 					       "sys2_pll_200m", "clk_ext2", "clk_ext3", "audio_pll2_out" };
- 
- static const char * const imx8mq_ecspi1_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_40m", "sys1_pll_160m",
--					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
-+					   "sys1_pll_800m", "sys3_pll_out", "sys2_pll_250m", "audio_pll2_out", };
- 
- static const char * const imx8mq_ecspi2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_40m", "sys1_pll_160m",
--					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
-+					   "sys1_pll_800m", "sys3_pll_out", "sys2_pll_250m", "audio_pll2_out", };
- 
- static const char * const imx8mq_pwm1_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_160m", "sys1_pll_40m",
--					 "sys3_pll2_out", "clk_ext1", "sys1_pll_80m", "video_pll1_out", };
-+					 "sys3_pll_out", "clk_ext1", "sys1_pll_80m", "video_pll1_out", };
- 
- static const char * const imx8mq_pwm2_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_160m", "sys1_pll_40m",
--					 "sys3_pll2_out", "clk_ext1", "sys1_pll_80m", "video_pll1_out", };
-+					 "sys3_pll_out", "clk_ext1", "sys1_pll_80m", "video_pll1_out", };
- 
- static const char * const imx8mq_pwm3_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_160m", "sys1_pll_40m",
--					 "sys3_pll2_out", "clk_ext2", "sys1_pll_80m", "video_pll1_out", };
-+					 "sys3_pll_out", "clk_ext2", "sys1_pll_80m", "video_pll1_out", };
- 
- static const char * const imx8mq_pwm4_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_160m", "sys1_pll_40m",
--					 "sys3_pll2_out", "clk_ext2", "sys1_pll_80m", "video_pll1_out", };
-+					 "sys3_pll_out", "clk_ext2", "sys1_pll_80m", "video_pll1_out", };
- 
- static const char * const imx8mq_gpt1_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_400m", "sys1_pll_40m",
- 					 "sys1_pll_80m", "audio_pll1_out", "clk_ext1", };
- 
- static const char * const imx8mq_wdog_sels[] = {"osc_25m", "sys1_pll_133m", "sys1_pll_160m", "vpu_pll_out",
--					 "sys2_pll_125m", "sys3_pll2_out", "sys1_pll_80m", "sys2_pll_166m", };
-+					 "sys2_pll_125m", "sys3_pll_out", "sys1_pll_80m", "sys2_pll_166m", };
- 
--static const char * const imx8mq_wrclk_sels[] = {"osc_25m", "sys1_pll_40m", "vpu_pll_out", "sys3_pll2_out", "sys2_pll_200m",
-+static const char * const imx8mq_wrclk_sels[] = {"osc_25m", "sys1_pll_40m", "vpu_pll_out", "sys3_pll_out", "sys2_pll_200m",
- 					  "sys1_pll_266m", "sys2_pll_500m", "sys1_pll_100m", };
- 
- static const char * const imx8mq_dsi_core_sels[] = {"osc_25m", "sys1_pll_266m", "sys2_pll_250m", "sys1_pll_800m",
--					     "sys2_pll_1000m", "sys3_pll2_out", "audio_pll2_out", "video_pll1_out", };
-+					     "sys2_pll_1000m", "sys3_pll_out", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_dsi_phy_sels[] = {"osc_25m", "sys2_pll_125m", "sys2_pll_100m", "sys1_pll_800m",
- 					    "sys2_pll_1000m", "clk_ext2", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_dsi_dbi_sels[] = {"osc_25m", "sys1_pll_266m", "sys2_pll_100m", "sys1_pll_800m",
--					    "sys2_pll_1000m", "sys3_pll2_out", "audio_pll2_out", "video_pll1_out", };
-+					    "sys2_pll_1000m", "sys3_pll_out", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_dsi_esc_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_80m", "sys1_pll_800m",
--					    "sys2_pll_1000m", "sys3_pll2_out", "clk_ext3", "audio_pll2_out", };
-+					    "sys2_pll_1000m", "sys3_pll_out", "clk_ext3", "audio_pll2_out", };
- 
- static const char * const imx8mq_csi1_core_sels[] = {"osc_25m", "sys1_pll_266m", "sys2_pll_250m", "sys1_pll_800m",
--					      "sys2_pll_1000m", "sys3_pll2_out", "audio_pll2_out", "video_pll1_out", };
-+					      "sys2_pll_1000m", "sys3_pll_out", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_csi1_phy_sels[] = {"osc_25m", "sys2_pll_125m", "sys2_pll_100m", "sys1_pll_800m",
- 					     "sys2_pll_1000m", "clk_ext2", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_csi1_esc_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_80m", "sys1_pll_800m",
--					     "sys2_pll_1000m", "sys3_pll2_out", "clk_ext3", "audio_pll2_out", };
-+					     "sys2_pll_1000m", "sys3_pll_out", "clk_ext3", "audio_pll2_out", };
- 
- static const char * const imx8mq_csi2_core_sels[] = {"osc_25m", "sys1_pll_266m", "sys2_pll_250m", "sys1_pll_800m",
--					      "sys2_pll_1000m", "sys3_pll2_out", "audio_pll2_out", "video_pll1_out", };
-+					      "sys2_pll_1000m", "sys3_pll_out", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_csi2_phy_sels[] = {"osc_25m", "sys2_pll_125m", "sys2_pll_100m", "sys1_pll_800m",
- 					     "sys2_pll_1000m", "clk_ext2", "audio_pll2_out", "video_pll1_out", };
- 
- static const char * const imx8mq_csi2_esc_sels[] = {"osc_25m", "sys2_pll_100m", "sys1_pll_80m", "sys1_pll_800m",
--					     "sys2_pll_1000m", "sys3_pll2_out", "clk_ext3", "audio_pll2_out", };
-+					     "sys2_pll_1000m", "sys3_pll_out", "clk_ext3", "audio_pll2_out", };
- 
- static const char * const imx8mq_pcie2_ctrl_sels[] = {"osc_25m", "sys2_pll_250m", "sys2_pll_200m", "sys1_pll_266m",
--					       "sys1_pll_800m", "sys2_pll_500m", "sys2_pll_333m", "sys3_pll2_out", };
-+					       "sys1_pll_800m", "sys2_pll_500m", "sys2_pll_333m", "sys3_pll_out", };
- 
- static const char * const imx8mq_pcie2_phy_sels[] = {"osc_25m", "sys2_pll_100m", "sys2_pll_500m", "clk_ext1",
- 					      "clk_ext2", "clk_ext3", "clk_ext4", "sys1_pll_400m", };
- 
--static const char * const imx8mq_pcie2_aux_sels[] = {"osc_25m", "sys2_pll_200m", "sys2_pll_50m", "sys3_pll2_out",
-+static const char * const imx8mq_pcie2_aux_sels[] = {"osc_25m", "sys2_pll_200m", "sys2_pll_50m", "sys3_pll_out",
- 					      "sys2_pll_100m", "sys1_pll_80m", "sys1_pll_160m", "sys1_pll_200m", };
- 
- static const char * const imx8mq_ecspi3_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_40m", "sys1_pll_160m",
--					   "sys1_pll_800m", "sys3_pll2_out", "sys2_pll_250m", "audio_pll2_out", };
-+					   "sys1_pll_800m", "sys3_pll_out", "sys2_pll_250m", "audio_pll2_out", };
- static const char * const imx8mq_dram_core_sels[] = {"dram_pll_out", "dram_alt_root", };
- 
- static const char * const imx8mq_clko1_sels[] = {"osc_25m", "sys1_pll_800m", "osc_27m", "sys1_pll_200m",
- 					  "audio_pll2_out", "sys2_pll_500m", "vpu_pll_out", "sys1_pll_80m", };
- static const char * const imx8mq_clko2_sels[] = {"osc_25m", "sys2_pll_200m", "sys1_pll_400m", "sys2_pll_166m",
--					  "sys3_pll2_out", "audio_pll1_out", "video_pll1_out", "ckil", };
-+					  "sys3_pll_out", "audio_pll1_out", "video_pll1_out", "ckil", };
- 
- static struct clk_onecell_data clk_data;
- 
- static struct clk ** const uart_clks[] = {
- 	&clks[IMX8MQ_CLK_UART1_ROOT],
--- 
-2.17.1
+> +
+> +      - description: BCM2837 based Boards
+> +        items:
+> +          - enum:
+> +              - raspberrypi,3-model-a-plus
+> +              - raspberrypi,3-model-b
+> +              - raspberrypi,3-model-b-plus
+> +              - raspberrypi,3-compute-module
+> +              - raspberrypi,3-compute-module-lite
 
+Don't you need brcm,bcm2837 here?
+
+Please run 'dtbs_check' and make sure there aren't warnings (in the root node).
+
+Rob
