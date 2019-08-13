@@ -8,31 +8,31 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6946DC433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2983AC32750
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A2EA2084D
+	by mail.kernel.org (Postfix) with ESMTP id ED03C20840
 	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="TrU66qmE"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="HGAaxH8n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728305AbfHMQVT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 12:21:19 -0400
-Received: from mout.gmx.net ([212.227.15.18]:48967 "EHLO mout.gmx.net"
+        id S1728019AbfHMQVU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 12:21:20 -0400
+Received: from mout.gmx.net ([212.227.15.15]:33717 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728304AbfHMQVS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 12:21:18 -0400
+        id S1728308AbfHMQVU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 12:21:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1565713258;
-        bh=ljCWWxQsddXKHwCHwwLRNEuJ6GYiE6WQq8ZhiJ9nBow=;
+        s=badeba3b8450; t=1565713262;
+        bh=p/SSnJeKxjXEaPbgC1CRpaN/K2ZQCUsvDyxx2Jvj4LU=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=TrU66qmEYyQhbj0nXpv2a/K8Xn5CO0p9ae2fmLRuve9MxnFqzFG/VG3QIgC35wEbO
-         rgB+z2vfDTVAHEv8pkJWtckqy9hmDwEP/YeSBD6UILbIsU0lzGNoVextYk48M09q9a
-         JDFSFcSfkwmnZe6B5/sdflRZhheldsTw58Zr48b4=
+        b=HGAaxH8n+e7hjJX8rYPnrfAYFN9v1a8uXAQdpTqSX+B3oIe92oIT0lQNtZOC0bbZ6
+         osB9q80c9C4UrMmMvsK4pD7+QJyBeh0g8e9laFstPo9i568112uFV6V2mOodK/YiiR
+         9/+aSEvO792a9jPSobxidWgTLHD8bKamJJYvbcHs=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from localhost.localdomain ([37.4.249.106]) by mail.gmx.com
  (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MGz1V-1i1g0Q3rUp-00E6Tv; Tue, 13 Aug 2019 18:20:58 +0200
+ 1MWRVh-1hmDWI3vqN-00XpC3; Tue, 13 Aug 2019 18:21:02 +0200
 From:   Stefan Wahren <wahrenst@gmx.net>
 To:     Eric Anholt <eric@anholt.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -47,79 +47,115 @@ Cc:     bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH V2 03/13] dt-bindings: bcm2835-cprman: Add bcm2711 support
-Date:   Tue, 13 Aug 2019 18:20:38 +0200
-Message-Id: <1565713248-4906-4-git-send-email-wahrenst@gmx.net>
+Subject: [PATCH V2 11/13] ARM: bcm: Add support for BCM2711 SoC
+Date:   Tue, 13 Aug 2019 18:20:46 +0200
+Message-Id: <1565713248-4906-12-git-send-email-wahrenst@gmx.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
 References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
-X-Provags-ID: V03:K1:KSfyLs+GVp5WjPQyPhum21eug5l34GiwTaN7iVomfgen/gamzy8
- tgmzYNTBwC1hym+UOSCs2how3XbtQJHBzPXJIVj5AJf7j0XgV/psrhkuM/pTtDn+vrkV9+X
- CAJygQ7hgSc5tJAj5KKML0sbnFGvdy4jM96CD+taNfVhEp8WqW8rm6vSu9pnSg/7asi8Srs
- aHTnO75cC3wfduwf+heww==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:Gato0k7oJfA=:NZkdiiHlw7JN+KllaTE9Xa
- hafwVRfb7CVFJoWYI3plj5UsY99g/7MMOyJV8HBAAbStNodEbr04JY2mBBeyO5lpncyL4J9SU
- XHMjJciLMM6zWO4vETdaLhfFyoA2XtFnInL8n18n4PuEKzjSF1ajpKWFNWAkaamTwzEz7s2vB
- TXI3cisMj8fFgdVmaUdp6FGnJrQwm0fj2cPgISh7pNgR21Uv1cXzeqdxfhPeBn3QLtNsMuqU2
- dJyDbYYaHH1LkA5vY3vTdYBb5rVSZYyKzYl0CbhPQ0OJjC3D44Y+MCzRHvmmyupuVNKQeyp7m
- xamx7OHoTg93KTsCan4xcSMJgTW3Yx985VI4s96TpR+KGdRHB4zghuFbopd0uAnNsMtlzg+tY
- KQiFJQwaZ5ScbvZWK/n6VAugwdpC7KmjY/yEfgm1xxUzzjQsdt0ZyDNWWGI5n4J+FRUbxbnTS
- IRV1hhHeOZVcr3n7WCmgIVRX6MC8nxno8mYdkeWSdZwazND4689UmgwvlyCeqeu8kTIZwnMl7
- D3ddJOQ9jl3867Lr8/ICfu50oMqilSGCl7Wdpv6qLq2zIsgo0zAloV/X3zO7CNW758MyIhNC2
- cfAu8UpzQv7dQgU3g9N4cqpWcYvL+HRlQBNJbQ901UlSHa12FmllrKwwyWL0KuR2tNLJ44QQT
- y60+Tbybt3TocMLwGrqpzBbU3fWAwqmP2O6WJVPNrnW+3G7hAL5Y7QMYsevTAHgbtYAIj+Uqb
- ek2YbBYr54I5bmYMN/80ABQei62MjaNMd8y/8VAYwvYxakLH6j1Z8xvKPg25JRqBN/RrnvtMF
- 55CHoV0Xdyeje3xtMWCRiufOb5rMPOEgILNYZm5r/NHxI1aJFGn9YNIG2VhK0VPuruUivLkhU
- HRXIKH5H/ncfinmotIFVhkC4B3CfH/idmxBtSVDLf0wUpYWZDQYbPj53nxnlZBgx2p3KiQaWb
- xu4Qu/de203a5jzWyILAkh78HoLw62WLUi1aayq92ypUbHO5TRrUXNnCpvjqow8BZpbn6DUW6
- flnLwr0xb9sA+EZxBb1PpNXT7pky2vqY1tQ51dQ/Iwo3B1BXnsdBhugAq5wFfd2tk2zWbiBeT
- lsD8H8Ou99FadQuPHhDz2jS6OqPMydtYV2SeUoRNEF/7D8eUpkRB0iMW18oS6x4qv/jhLxDL6
- FOQIa8tdIB+xEnJMcoaClb8K0CzDxgJreyy1LhC4C+MBUKJg==
+X-Provags-ID: V03:K1:dFIO1Y73cHhYByVqZYoc8TOkFxlgLtwZRXUHniPN7XlD/XNDCa9
+ m9n9eNR6vODXNafG+h/DHp03ptu6IxHcGydxEQy/wryeqZsi4u6jdkz1cQTivz330HgDDJI
+ TBmr7tX87emKd7Y3zMfLh51QJDwfHg4zrQe62z6+LJrEnP0MFjm36rnyRYFaZYXaDnE2SVL
+ 8HWa/+fzafFnulyKmpoig==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:5bicyWtCMlw=:K09yliheb9ZgWexnnYrLqO
+ w14DFkCZl3Jl6qEhRe1SXZ9kvnvJBXA7a3pnuuyb8vRd15wQY0/ZElmPf92kW+TYjDb4EH1uK
+ rpGtSDqZrJtKK70+JjEtipknm8/walVHJcIhe/ubR6JIRWsRKMEcPKIhBHPgZTpt0ppU9Exg8
+ 8lwJbX5bH/RpdhA1iy/Yf1w9fVDtQYbrxMlQqPlaBAUfd7YjbT4BJN7lkz8ulbcA+LJdzZw2w
+ WRaMomdoAYnapFyochF/DyjkBn8H0KUPnARk3ljtM11uUJFwqL2hSOjEIsCQKQLycznuJkFaZ
+ Q9pjqf6Xg9SdbHcwpKLGeUZ9sJSe6+0Pd3J1KxcJZKvrE+CwoG9sNUoS6RLzG8uaeMqnsmQgj
+ 5Aoe4K5U0QX0M+k4ntqPKztN/q0yg4gQ7qrT4IJ6IZCSNmmhebU7YK6MlJNASWRdPrzzQzTLY
+ aCsuxh3Jj6SIaTC/XP2ezo1GNj4HepZs6C+VmvN/weoe2j2aDZM4i2GPI9AcBz3gebnNSLzvf
+ eSzBkwBTXdPeU46WM5jpjaWCe9iMy0FpX+IfxybNc1PdstUIJZamnc8DEoz474RvXI95GFMZl
+ kz/yPu2qEVPav1iEaLFdjCLAH+px7NELlQ3CvTR0+Hf5ee8uWOTwXdZwp1uQ2uMDToyO6mhll
+ xZn4IVObC2lQP0C9cRU3yJu9KtFcFe6bnkmitGLCIUmE+NqSggCrxYQE40uQKwr61Wyk5VmfY
+ r5PE+3C5ePOo6CreeC6+flGDbek4SVOUYxUs82XuVO4v3vIpB2F/RkA+MFqrOVMZNcJUwS54x
+ cDEKUxHpq1bEIex1e3P2uzrglvuarDvgGkoKB8o/8CfX9wMZQEviJVV4P3R9sPM6HSwtdSLBv
+ U4ypMvw5HrTgyWNVu3fYFJ8iZcBbJhFR0a5ysabz7WnzraZL7OcRK3keL5szS6TRF62Yx2X6T
+ z/qBaKCfQZEyYIRJTY7ou8E6NRksSk5B1G32WZeXP2MYX5TDIRTIzXuvqJzSsi6D3KXAZHPud
+ nIIsdhKai+uDWdNv5eEwrHxs8StxVNv3WaQodOHV3dU3bB+6RIcbCh1KZMEmqSElG90wo0432
+ omFL21MjsjTGj/X95forwjUjhxAkP0zWgnQoaDEwTWZ/NFF8Qg3C5aMQg==
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The new BCM2711 supports an additional clock for the emmc2 block.
-So we need an additional compatible.
+Add the BCM2711 to ARCH_BCM2835, but use new machine board code
+because of the differences.
 
 Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Acked-by: Eric Anholt <eric@anholt.net>
 =2D--
- Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt | 4 +++-
- include/dt-bindings/clock/bcm2835.h                             | 2 ++
- 2 files changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/mach-bcm/Kconfig   |  3 ++-
+ arch/arm/mach-bcm/Makefile  |  3 ++-
+ arch/arm/mach-bcm/bcm2711.c | 22 ++++++++++++++++++++++
+ 3 files changed, 26 insertions(+), 2 deletions(-)
+ create mode 100644 arch/arm/mach-bcm/bcm2711.c
 
-diff --git a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.t=
-xt b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-index dd906db..9e0b03a 100644
-=2D-- a/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-+++ b/Documentation/devicetree/bindings/clock/brcm,bcm2835-cprman.txt
-@@ -12,7 +12,9 @@ clock generators, but a few (like the ARM or HDMI) will =
-source from
- the PLL dividers directly.
+diff --git a/arch/arm/mach-bcm/Kconfig b/arch/arm/mach-bcm/Kconfig
+index 5e5f1fa..39bcbea 100644
+=2D-- a/arch/arm/mach-bcm/Kconfig
++++ b/arch/arm/mach-bcm/Kconfig
+@@ -161,6 +161,7 @@ config ARCH_BCM2835
+ 	select GPIOLIB
+ 	select ARM_AMBA
+ 	select ARM_ERRATA_411920 if ARCH_MULTI_V6
++	select ARM_GIC if ARCH_MULTI_V7
+ 	select ARM_TIMER_SP804
+ 	select HAVE_ARM_ARCH_TIMER if ARCH_MULTI_V7
+ 	select TIMER_OF
+@@ -169,7 +170,7 @@ config ARCH_BCM2835
+ 	select PINCTRL_BCM2835
+ 	select MFD_CORE
+ 	help
+-	  This enables support for the Broadcom BCM2835 and BCM2836 SoCs.
++	  This enables support for the Broadcom BCM2711 and BCM283x SoCs.
+ 	  This SoC is used in the Raspberry Pi and Roku 2 devices.
 
- Required properties:
-=2D- compatible:	Should be "brcm,bcm2835-cprman"
-+- compatible:	should be one of the following,
-+	"brcm,bcm2711-cprman"
-+	"brcm,bcm2835-cprman"
- - #clock-cells:	Should be <1>. The permitted clock-specifier values can b=
-e
- 		  found in include/dt-bindings/clock/bcm2835.h
- - reg:		Specifies base physical address and size of the registers
-diff --git a/include/dt-bindings/clock/bcm2835.h b/include/dt-bindings/clo=
-ck/bcm2835.h
-index 2cec01f..b60c0343 100644
-=2D-- a/include/dt-bindings/clock/bcm2835.h
-+++ b/include/dt-bindings/clock/bcm2835.h
-@@ -58,3 +58,5 @@
- #define BCM2835_CLOCK_DSI1E		48
- #define BCM2835_CLOCK_DSI0P		49
- #define BCM2835_CLOCK_DSI1P		50
+ config ARCH_BCM_53573
+diff --git a/arch/arm/mach-bcm/Makefile b/arch/arm/mach-bcm/Makefile
+index b59c813..7baa8c9 100644
+=2D-- a/arch/arm/mach-bcm/Makefile
++++ b/arch/arm/mach-bcm/Makefile
+@@ -42,8 +42,9 @@ obj-$(CONFIG_ARCH_BCM_MOBILE_L2_CACHE) +=3D kona_l2_cach=
+e.o
+ obj-$(CONFIG_ARCH_BCM_MOBILE_SMC) +=3D bcm_kona_smc.o
+
+ # BCM2835
+-obj-$(CONFIG_ARCH_BCM2835)	+=3D board_bcm2835.o
+ ifeq ($(CONFIG_ARCH_BCM2835),y)
++obj-y				+=3D board_bcm2835.o
++obj-y				+=3D bcm2711.o
+ ifeq ($(CONFIG_ARM),y)
+ obj-$(CONFIG_SMP)		+=3D platsmp.o
+ endif
+diff --git a/arch/arm/mach-bcm/bcm2711.c b/arch/arm/mach-bcm/bcm2711.c
+new file mode 100644
+index 0000000..1fa15b4
+=2D-- /dev/null
++++ b/arch/arm/mach-bcm/bcm2711.c
+@@ -0,0 +1,22 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright (C) 2019 Stefan Wahren
++ */
 +
-+#define BCM2711_CLOCK_EMMC2		51
++#include <linux/of_address.h>
++
++#include <asm/mach/arch.h>
++
++#include "platsmp.h"
++
++static const char * const bcm2711_compat[] =3D {
++#ifdef CONFIG_ARCH_MULTI_V7
++	"brcm,bcm2711",
++#endif
++};
++
++DT_MACHINE_START(BCM2711, "BCM2711")
++	.dma_zone_size	=3D SZ_1G,
++	.dt_compat =3D bcm2711_compat,
++	.smp =3D smp_ops(bcm2836_smp_ops),
++MACHINE_END
 =2D-
 2.7.4
 
