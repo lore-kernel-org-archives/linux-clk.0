@@ -2,67 +2,61 @@ Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1DBDC32750
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 08:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A95C5C433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7575C2084D
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 08:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BFFD20840
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:10:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6j+im0d"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WdmUK8Uk";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TMFE3owe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726298AbfHMI50 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 04:57:26 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:35833 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfHMI50 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Aug 2019 04:57:26 -0400
-Received: by mail-pg1-f194.google.com with SMTP id n4so9180530pgv.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Aug 2019 01:57:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=37bM+YYdRD9+p+K2GooCn2CzimziKBDE+/UWMv3v7Ko=;
-        b=l6j+im0dcEApOcvPFl1n4C62I2MghWmNHeHxCVYjDCH+5yi9zYcBrbgD0XD1FPXQWK
-         HFMhFgI/H4hmZwAAX9IzBefRSPSu+ABzJ6g/RzTm6PqyDZ6AzSlS/ItJ63FkCgOVEyRy
-         LE9mvo7CSZp+JmIV07ApzzxJOV9WQUtkSzqt36bteyD2k0c/FuTb5JeNbhWj7PKbOm33
-         HDo3CfU7GULEnn7N3q0G6VJ5pwKj3e4PbjMOifp+M/mPDfPo2D0yFc5CbdD7J5wRqfit
-         moAQBShx1G8j1wNeOqeHe+5Kat9wvlnnRwaZp2bpd9haFS6q2LTxoZZp2OFmrVNv8p8Y
-         6kOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=37bM+YYdRD9+p+K2GooCn2CzimziKBDE+/UWMv3v7Ko=;
-        b=gopHiefO4lcZrLlCWouQUAvFKiQlz+Ls/GzzKpTvu8+mfT1Dq3i5pPO9J1kpGDHTCP
-         u0ztNS9sBwN9VQOPWCyALqU6kIwC9uXy3/DnKi8yph+5MiZPHH9cV2wMWN9CSv/zPrJp
-         9USJIZEz/yeRg//pjqJ0Cl73NsTcKHxVgGuwgCCcitwMDwkUO0/0vTdNuuUe3inmnnCp
-         OkriZAPz5+5cl6Ru1ODPPYdpMRWGHFOzOgqztVlsR9v5Kdfgt7FcpmS5aJdElk0HiZqb
-         K064m7wrg6dASFPQ4p8V7J23uYR3rqGqLWh/tW2qn62usaPoOv80beVkMLPbjiDs1gns
-         7vwg==
-X-Gm-Message-State: APjAAAWkpA8NNVrYSJxhGGW6riuNHhmyN0kvCchnBnmh/pHnpbJFWWyC
-        CKOkhf/QQRh13oD15qNmRaM=
-X-Google-Smtp-Source: APXvYqxCIxZZh9rt4cY6na/kBDK/+AQh4OlcNDY29NibndjPkrSR3E1QtKxCxaAPJ1VDwVNVyJyaSA==
-X-Received: by 2002:a17:90a:30e6:: with SMTP id h93mr1185304pjb.37.1565686645478;
-        Tue, 13 Aug 2019 01:57:25 -0700 (PDT)
-Received: from localhost.localdomain ([122.163.110.75])
-        by smtp.gmail.com with ESMTPSA id s67sm1014503pjb.8.2019.08.13.01.57.22
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Tue, 13 Aug 2019 01:57:25 -0700 (PDT)
-From:   Nishka Dasgupta <nishkadg.linux@gmail.com>
-To:     vireshk@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: [PATCH] clk: spear: Make structure i2s_sclk_masks constant
-Date:   Tue, 13 Aug 2019 14:27:14 +0530
-Message-Id: <20190813085714.8079-1-nishkadg.linux@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        id S1728964AbfHMNKA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 09:10:00 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:43780 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728656AbfHMNKA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Aug 2019 09:10:00 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 763F260735; Tue, 13 Aug 2019 13:09:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565701798;
+        bh=mPbUj3mPtBw6yrfnFjd57S426CyxYQNJUAv5tkVT2Vg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=WdmUK8Uk/0egRI62210qTAA9lSSfmhxsq8srHgzf3Pj7/80GyapvFZCYEA5KS0Ycz
+         PLBGWWkxPLJG6H2m3C9wOCVIfrGgxKBnZSw459aBndGcNUxdIpAPVkQOrt8gpW/FWT
+         eeAIlYjLUlaB5L2wy7TXcxMq4bIClyJT0ZsuEjpo=
+Received: from govinds-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: govinds@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 342D760ACA;
+        Tue, 13 Aug 2019 13:09:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1565701797;
+        bh=mPbUj3mPtBw6yrfnFjd57S426CyxYQNJUAv5tkVT2Vg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=TMFE3oweB6V9Y9H4JdyT543YeyYQMTf2EH0ghIWZuf1a+Nj6rCZLA2b9D+Mc+oM+Y
+         a1KnNblB3JimVui+0uJbw/+Ri5uhO6S8H8y2KZ7mBvpbwPrW7nJJLPwJd095Dzm7Cn
+         j3uxKOBAWTln3k5yhl+1oWOydbkFDQCrZJXC/MfI=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 342D760ACA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
+From:   Govind Singh <govinds@codeaurora.org>
+To:     sboyd@kernel.org
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-soc@vger.kernel.org, andy.gross@linaro.org,
+        linux-remoteproc@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>
+Subject: [v2 0/2] Add Q6SSTOP clock controller for QCS404
+Date:   Tue, 13 Aug 2019 18:39:44 +0530
+Message-Id: <20190813130946.16448-1-govinds@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -70,32 +64,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Static structure i2s_sclk_masks, having type aux_clk_masks, is only used
-when it is passed as the sixth argument to function clk_register_aux().
-However, clk_register_aux() is defined with its sixth argument as const.
-Hence i2s_sclk_masks is not modified by clk_register_aux, which is also
-the only usage of the former. Therefore make i2s_sclk_masks constant as
-it is never modified.
-Issue found with Coccinelle.
+Add support for the Q6SSTOP clock control used on qcs404
+based devices. This would allow wcss remoteproc driver to
+control the required WCSS Q6SSTOP clock/reset controls to
+bring the subsystem out of reset and shutdown the WCSS Q6DSP.
 
-Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
----
- drivers/clk/spear/spear1340_clock.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Govind Singh (2):
+  dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock controller bindings
+  clk: qcom: Add Q6SSTOP clock controller for QCS404
 
-diff --git a/drivers/clk/spear/spear1340_clock.c b/drivers/clk/spear/spear1340_clock.c
-index e5bc8c828cf0..9163bbb46411 100644
---- a/drivers/clk/spear/spear1340_clock.c
-+++ b/drivers/clk/spear/spear1340_clock.c
-@@ -335,7 +335,7 @@ static const struct aux_clk_masks i2s_prs1_masks = {
- };
- 
- /* i2s sclk (bit clock) syynthesizers masks */
--static struct aux_clk_masks i2s_sclk_masks = {
-+static const struct aux_clk_masks i2s_sclk_masks = {
- 	.eq_sel_mask = AUX_EQ_SEL_MASK,
- 	.eq_sel_shift = SPEAR1340_I2S_SCLK_EQ_SEL_SHIFT,
- 	.eq1_mask = AUX_EQ1_SEL,
+ .../bindings/clock/qcom,q6sstopcc.yaml        |  45 ++++
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/q6sstop-qcs404.c             | 223 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,q6sstopcc-qcs404.h |  18 ++
+ 5 files changed, 295 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+ create mode 100644 drivers/clk/qcom/q6sstop-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+
 -- 
-2.19.1
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
