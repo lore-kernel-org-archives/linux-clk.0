@@ -2,153 +2,129 @@ Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8F2C433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:43:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A897AC433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 15:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B01B20679
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:43:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7CEC3205F4
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 15:51:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565703795;
-	bh=tGhuTi6i8q70RtL03QHsvQiJD0U0K5cLD/inwbsXYcc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=vg++Gkd5bIUas7VoOO28My7w/G5KOqDZOnXKHcsVS7rZ7G3Nus3Vbqqb/omKmWe0H
-	 MChp/W0wXkQI+LW8tRil+SZtYl15ccuXcFA5mjmRCaknhs5TtmVMGXYcgxaBeckQ6n
-	 lW+TAmhOFbAHLNAnwLQD5RlkT1HQRPz5PmeT0iD0=
+	s=default; t=1565711510;
+	bh=Wzp/4xYbmDqbmpgVG0xprq2NjfU/7yfYmyfpL6wAN8A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Elz6Ue9h6MgH7/tfeJjTBsrMBz/bnWZqFOIgixoUISGwRfHf1nLma4ulgXep8jJYv
+	 vLInQ+yxXmGYogfRIWz9rvnLmow4zrNaygN/aDzaXk3ddt1veJYdr6X45ilX0hHRp1
+	 RQ3o/Y+mn9212ZxkOeFWuR+BcfuxScOMUQS3wmOk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729234AbfHMNnO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 09:43:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59676 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728095AbfHMNnN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 09:43:13 -0400
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A97772084D;
-        Tue, 13 Aug 2019 13:43:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565703792;
-        bh=tGhuTi6i8q70RtL03QHsvQiJD0U0K5cLD/inwbsXYcc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Uo4UavNgFwTPrkrDxoQzIeexZ8KSCrVWgqozcIOdUTQaQijufQfVB2ixWpk9DEuUn
-         5e+wszlhwGOhVXV0p24BfuRUhhiNDlVRvQSFGwV/lc5gcy+idDp3GcQyqgmUm/gpDl
-         I+N5Xl39XMXX1aqi9llnNWdLstFASs7Sp7tR3oY4=
-Received: by mail-qk1-f174.google.com with SMTP id 201so79581358qkm.9;
-        Tue, 13 Aug 2019 06:43:12 -0700 (PDT)
-X-Gm-Message-State: APjAAAVCS/PKneNXjBJi7w6Mep/wDhudVlIcFnPmBwsZlJ6rtMDzYl8Z
-        y3ofMYECfigLgBTkZmoan1hL2ixA742nKAEqaw==
-X-Google-Smtp-Source: APXvYqyoMvVBG6NtFWAydUGiqe0lkRWftJ5OUD3LW861TSIDeNewDqAnlP+AxGAUPwMd7qokDO1L8NO/lTHTDeP0EKY=
-X-Received: by 2002:a37:d8f:: with SMTP id 137mr27142458qkn.254.1565703791883;
- Tue, 13 Aug 2019 06:43:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190813130946.16448-1-govinds@codeaurora.org> <20190813130946.16448-2-govinds@codeaurora.org>
-In-Reply-To: <20190813130946.16448-2-govinds@codeaurora.org>
+        id S1727913AbfHMPvp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 11:51:45 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34951 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726705AbfHMPvp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Aug 2019 11:51:45 -0400
+Received: by mail-ot1-f67.google.com with SMTP id g17so23350596otl.2;
+        Tue, 13 Aug 2019 08:51:44 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=ohFLMScLjVByBJFrR6C+4j/VSebLPBigBTSwqkkayik=;
+        b=deu6LpXfX4eGd6ugD1/SvGVXVGEHISZcIQxoB/YHxAK1aXz0dokD7ipgkI2fLT2TFD
+         jECnCIgwDuqwR+VnRjY3pbWXuOOpBpYtg+3bUmEGQVKNfvHwxrZO/U55nPngZq6O1giE
+         uv+HtzlFPEoPFLut+RWdmwKC2xaW9aJ7lq2LkFxoCz/fbzcR3+Y0GMaNPhkvUK0kD9b5
+         ApFKiVXncNxQQKi/ca7o3IRPOZZdsZ3UiMssVJNn6CNoFMQ4d1LP+9NmLBOkSClA2q3f
+         J5cuC8NpzxhteIpMHMLtX06LrYagV08I5IchV+BCpBzEVR6U0Mo3SpEFa5HploqFa804
+         gF5w==
+X-Gm-Message-State: APjAAAWyQEmQ1bTWsYi/+uJsLgCRhFzPWQkKf5jVUBr1KO7NPYSVo4JG
+        J8Q6ZC2Uc4T9AQrWkj30Yg==
+X-Google-Smtp-Source: APXvYqxSeFwa1U2REzU2wk4Pb7uZS4OB2XVfpDeXm4KgsqA5BenxqxMVspOAXVlQLR7PyOR052yYjA==
+X-Received: by 2002:a6b:b549:: with SMTP id e70mr32598873iof.95.1565711504396;
+        Tue, 13 Aug 2019 08:51:44 -0700 (PDT)
+Received: from localhost ([64.188.179.254])
+        by smtp.gmail.com with ESMTPSA id l26sm23511094ioj.24.2019.08.13.08.51.43
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Tue, 13 Aug 2019 08:51:43 -0700 (PDT)
+Date:   Tue, 13 Aug 2019 09:51:43 -0600
 From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 13 Aug 2019 07:43:00 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK-GK8arfRu6sqP9UjNrwc0=aUWXymMRF5fQhg+M2TNng@mail.gmail.com>
-Message-ID: <CAL_JsqK-GK8arfRu6sqP9UjNrwc0=aUWXymMRF5fQhg+M2TNng@mail.gmail.com>
-Subject: Re: [v2 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock
- controller bindings
-To:     Govind Singh <govinds@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To:     Chuanhong Guo <gch981213@gmail.com>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>
+Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding
+ documentation
+Message-ID: <20190813155143.GA19830@bogus>
+References: <20190724022310.28010-1-gch981213@gmail.com>
+ <20190724022310.28010-5-gch981213@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190724022310.28010-5-gch981213@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 7:10 AM Govind Singh <govinds@codeaurora.org> wrote:
->
-> Add devicetree binding for the Q6SSTOP clock controller found in QCS404.
-
-You need to test this with 'make dt_binding_check' and fix the errors.
-
->
-> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+On Wed, Jul 24, 2019 at 10:23:08AM +0800, Chuanhong Guo wrote:
+> This commit adds device tree binding documentation for MT7621
+> PLL controller.
+> 
+> Signed-off-by: Chuanhong Guo <gch981213@gmail.com>
 > ---
->  .../bindings/clock/qcom,q6sstopcc.yaml        | 45 +++++++++++++++++++
->  1 file changed, 45 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+> 
+> Change since v1:
+> drop useless syscon in compatible string
+> 
+>  .../bindings/clock/mediatek,mt7621-pll.txt     | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt b/Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
 > new file mode 100644
-> index 000000000000..861e9ba97ca3
+> index 000000000000..7dcfbd5283e3
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
-> @@ -0,0 +1,45 @@
-> +# SPDX-License-Identifier: BSD-2-Clause
-
-GPL-2.0-only OR BSD-2-Clause
-
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/interconnect/qcom,osm-l3.yaml#
-
-needs updating
-
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +++ b/Documentation/devicetree/bindings/clock/mediatek,mt7621-pll.txt
+> @@ -0,0 +1,18 @@
+> +Binding for Mediatek MT7621 PLL controller
 > +
-> +title: Q6SSTOP clock Controller
+> +The PLL controller provides the 2 main clocks of the SoC: CPU and BUS.
 > +
-> +maintainers:
-> +  - Govind Singh <govinds@codeaurora.org>
+> +Required Properties:
+> +- compatible: has to be "mediatek,mt7621-pll"
+> +- #clock-cells: has to be one
 > +
-> +description:
-> +   Q6SSTOP clock controller is used by WCSS remoteproc driver
-> +   to bring WDSP out of reset.
+> +Optional properties:
+> +- clock-output-names: should be "cpu", "bus"
 > +
-> +properties:
-> +  compatible:
-> +    const: "qcom,qcs404-q6sstopcc"
-> +
-> +  reg:
-> +    maxItems: 2
-> +    description: Q6SSTOP clocks register region
-> +    description: Q6SSTOP_TCSR register region
+> +Example:
+> +	pll {
+> +		compatible = "mediatek,mt7621-pll";
 
-Not valid json-schema
+You didn't answer Stephen's question on v1.
+
+Based on this binding, there is no way to control/program the PLL. Is 
+this part of some IP block?
 
 > +
-> +  clocks:
-> +    items:
-> +      - description: ahb clock for the q6sstopCC
-
-Single item just needs 'maxItems: 1'
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-
-Should have an 'additionalProperties: false' here.
-
-> +
-> +examples:
-> +  - |
-> +    q6sstopcc: clock-controller@7500000 {
-> +      compatible = "qcom,qcs404-q6sstopcc";
-> +      reg = <0x07500000 0x4e000>, <0x07550000 0x10000>;
-> +      clocks = <&gcc GCC_WCSS_Q6_AHB_CLK>;
-> +      #clock-cells = <1>;
-> +    };
-> --
-> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-> a Linux Foundation Collaborative Project
->
+> +		#clock-cells = <1>;
+> +		clock-output-names = "cpu", "bus";
+> +	};
+> -- 
+> 2.21.0
+> 
