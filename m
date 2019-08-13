@@ -8,31 +8,31 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D00C32750
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DABC32753
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B99DB2084D
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 259B7216F4
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 16:21:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="Dc3iLjqj"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="FD4Yg2lq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728254AbfHMQVR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 12:21:17 -0400
-Received: from mout.gmx.net ([212.227.15.15]:34905 "EHLO mout.gmx.net"
+        id S1728298AbfHMQVS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 12:21:18 -0400
+Received: from mout.gmx.net ([212.227.15.18]:45875 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728021AbfHMQVQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 12:21:16 -0400
+        id S1728019AbfHMQVR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 12:21:17 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
-        s=badeba3b8450; t=1565713261;
-        bh=N/1fGHykkkj2ii3MMCPsqwFDNryE+MvPA8vb391G4JQ=;
+        s=badeba3b8450; t=1565713260;
+        bh=uRHDvL3TndR8wGBn8RWaBtvuYQCKr4j/BBz8Ga9FesQ=;
         h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Dc3iLjqjSS3CAc0DlTYVkmT1L1YWy30ZT0KPg2B9wvYsxbp4zbJOEEHIqFHm693LL
-         /y+aaqOiU25z6vhQwSVRnwILCyLBYdmpuKPpj6M5BOpj98rxr8sWIxX7FJF5WtMlCZ
-         y83SLpjoZOVTNTyMJ+bdhNPsXSqX44VgAQ6B5OOI=
+        b=FD4Yg2lq/EwvFJdKqcle/04/mM9YxkFkhJBujTJPAx7L4Tg7folHXQuavb+A0FUeL
+         1p4LTYdw5W9/Wngcwog1CjPRTZ375rJdL75CG6B03kqa5CgihYalh1HP/seJi2P6M2
+         AGbtQTjjKOCXRjNB2LSOc9yv+fV1dMpESbOfKFWw=
 X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
 Received: from localhost.localdomain ([37.4.249.106]) by mail.gmx.com
  (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
- 1MNbp3-1hdS5v49t5-00P3kd; Tue, 13 Aug 2019 18:21:01 +0200
+ 1MUGi9-1hoOJE43pT-00RFcV; Tue, 13 Aug 2019 18:21:00 +0200
 From:   Stefan Wahren <wahrenst@gmx.net>
 To:     Eric Anholt <eric@anholt.net>,
         Florian Fainelli <f.fainelli@gmail.com>,
@@ -47,181 +47,63 @@ Cc:     bcm-kernel-feedback-list@broadcom.com,
         linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
         devicetree@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
-Subject: [PATCH V2 09/13] dt-bindings: arm: Convert BCM2835 board/soc bindings to json-schema
-Date:   Tue, 13 Aug 2019 18:20:44 +0200
-Message-Id: <1565713248-4906-10-git-send-email-wahrenst@gmx.net>
+Subject: [PATCH V2 07/13] dt-bindings: i2c: bcm2835: Add brcm,bcm2711 compatible
+Date:   Tue, 13 Aug 2019 18:20:42 +0200
+Message-Id: <1565713248-4906-8-git-send-email-wahrenst@gmx.net>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
 References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
-X-Provags-ID: V03:K1:9aQt5XHwmKTiYEkM5aG3tX0//bI6EK19R0s2CZt4Bu5hD+lDVVk
- tc6FzSARMk3ksT9HnAARreZXAug/jQiJYjAFWosz//m8bXOnNWsleuK8SguaQjXZMoHRGCy
- FnW2OG7tgcVpl4fsgksgtmbn7sgj28pdq0Ce2qg57xV6yX2hP+W8bjjhSAIYZlx51L1Zx0G
- g+JTqxieg1rIQNXLwPEPw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:FfTa5NEbgws=:y1zZ1PjuuewmfhVXv2TM3G
- Wymd2v5fnE2HCtVf09W+oBicBR1WmYk2qEoxMhtsc9IOx6EIYBhpFGXjHXdD34ZY0/kDmEmXz
- oOR5kfhT2ZLGRzMVOYKnbJDp8qVJGhyIICbA5+Tnh3sup4me1JC0C8ifLJJ5fkyqRWP93jfrA
- IP7ida6CNjEE+j1/5xr00WuH2fH27FNtVGixDpEbfKvd+1lal6Q4B6suB175BCbxq4Jj5fQC8
- QDPVwIMxlDZ1vcuatlTYlZ80Oa64PM593sCYXYONbBy3DH4dFYDZfC6Fm8lSn5VWjJDBpB2m+
- MaRZDECOod67MBcPiMhsOEl2DWGLM7vgm4DPX6gBXAs558XF6TgS/hgnRrXZNyYKnd/w6fr4x
- cXsHpHAy1qQXcHf52YNYRIlYT8N11+WB5Wr5w+HBQiguYTmn3qsYlE+h0uJqpjY9iDuOlcDDj
- mibyasOHTULMPGlpneLAOxYteVuHCNdn2ivfk/c7J//2FCBkUFl68a+D1fZ3iROk4fLi54UiQ
- yi0u+BL49gB2j4hdO2tVG73HbIXfZVy24UiJjYl/SVya/EOA0UeVOzuoD3Eo2LKCKkdpgw9iP
- UyaTu6sCAOf9+HZB6g6rRgdi3xsubkMB1TReo/ql2R+CwlxYy7S1/T2JfCSSi3+AD+lddvy8b
- 3gLSh7JkRB/rspLS1/uSUL3oyY43KKPTuyrbidxlLq2Viqd1uBwYv+WhCzPNhFJ/Bu7PQQvLw
- ke/j7C+jv4hN4OQZv6wEJF5fc+CiXzvtef6Rk8aP3Fw8gNqiY0xYAvUluKgiP/SWx6++HIhwC
- Er2ULdWN397USAdMvjrtQJh9By1y/Avpc4E6kjLxvPmQDYgGCjYH5jSJj+dqsVMWtnF8D4Ea5
- SEQxtQFipIn+cy17doo7tYJfbJLR8HAZkqYzoHxGwCoidPQccaiAVpxdcKp17o2v0CrQReq7K
- RiqJIQnplWCa95dVWgfa08agkGOFxGR/mZ3cdXVW6Uf56Xuiy1vZAcDp5pnP1aGgnVJd7w/Np
- SJS2oJbTYqmCIyPH+U1zHE6xgYCXW0LyP6cQt14HJM4VylS5CjrzHT3dunKkXZtzDYxX64EZ1
- fLs97R/qzOIrwRXjhW39Z//+rhjBi1W2hdc/0McxqDA386dNcsuCagX6w==
+X-Provags-ID: V03:K1:0cRHZfQHKeaAt4ouWJuDoL7IzMS/0ykCsxm1ArsSFkmJwmbdWdv
+ SoPXQAAsZXksgG77tAe3/UJGlqPk1jl0LKXDwsgQQoY0xvsHgzUlNWnErDNfwZtWG5n3Q6a
+ NFZzMIZctTNntz7XfsE22RrJYddL45W6QLlFIeMeGJOlmNDx1WOCRPmvk0on4sPrtGDhybQ
+ IaYaLlCG6JWIw83K6kEvA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:/rvAzAeYiA0=:FN5M4wjfBAy5hu8tlP0v3T
+ FDXwcxrxr5zUVQI1XKkrTKoFJDyzFHJE2XLGPoynZYwgpmok/hiG9urc2+ZmfO8oPUmqF9t3R
+ jhfJqvhL1oXDDMeJHraVwQ4IP0YvBNIgluqw1j9Orb9gG1vHYFySZFu/y2DhDw54sVO101twT
+ 7k5XaACYS2Rmkfp7kdV+at/RaA4pMiYuuDm6Z5tRaYlzlCnNoP4XtIYatwsBSedjl1YVfIs6M
+ PnCjrSVG1U4aP3BAfHEhVWkeQS6z/ElBY96JSOtMFRqWdanSnKZWTZWEZw0LnR4mm4GPWfQsJ
+ ZRfbCAmJFpVZiii8BNl8Vt3fPhd7q68knKrzKeeEb3UVYZvqjkG1KIODDW0ijaJjhu1VuLW57
+ CmC7tEA7tEyOI6Tc1NOb/5KoltbZBh0lyaM8kjdssXev+bF/ydu9qiEjQCQExQtMwBfe5IfbD
+ ryZVglojt6AFGhzEajt2v2FdNg/OJt9+h1SOHhpg4Qt6Q2O19yKfgQ8ywfq061c27nSaPxxDx
+ Mu9pjb5/n8Qhsg+ngZPkKX583i3z56fDyjgN+DyKAU/SECDEzxYsLZJzYRzZPdLSMuN9Nubhx
+ UP6tN2J5RMCsQf6B/QtXNJoU41dDF35RJ8Nt0pAGKYqME13v2gKttZeKfmQ2SEoOvd2HHkjSZ
+ WqFl8OIpdlmr6sPb8KTTjUZ2RfCQUa6RmOkrImsDWwwznSUxxkTf4TnfsRz2Ytc4ww+TE97L7
+ 5MP045jdalgfg383oDhnpX2NrDr3/BSoGqnksQR9SwsmvN+4xCraLL9BDJiD3p8/ystQvZzlP
+ sU0zsVvkyzp3ouKy3cpuW8bfOKd0Mk3qT+5Iz585hXEUJ/yD07jbpAwnRA8eNcPC68Gd5FP78
+ tBABbJcRmIvZb6Uj3GyRh6RWzlxgorRUFPfqpLm0S72X8nLVCC68mnoKu3v39MNlSqR4ZgtCM
+ BGEWqEAtFCD/5zJnFYng56lRFT6ogZ9yLw3qagJ744nTNiPATpbRKzGIoVcS2bfFKa9gU+2qx
+ Vn89/SYLzVRbrNQotYZ001sXafDKZKJOI7/BMnH+JD6cv3gz4bM0XdJ9j8yia4w0FdOxNSz8t
+ 24s1j29sZd81dTWe/fR9Ih4qMQHNr5xM6StHJcMG7qfkoROPEFMaz2oIqN/FqBcyZva9Gtu48
+ SZSYvQV6mKYjiLq0IaTDwvIKJ7bfuOsSl297QSEoTUe+9WTA==
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert the BCM2835/6/7 SoC bindings to DT schema format using json-schema=
-.
-All the other Broadcom boards are maintained by Florian Fainelli.
+Add a new compatible for the BCM2711, which hasn't the clock stretch bug.
 
 Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
-Acked-by: Eric Anholt <eric@anholt.net>
 =2D--
- .../devicetree/bindings/arm/bcm/bcm2835.yaml       | 46 +++++++++++++++
- .../devicetree/bindings/arm/bcm/brcm,bcm2835.txt   | 67 -----------------=
------
- 2 files changed, 46 insertions(+), 67 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
- delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835=
-.txt
+ Documentation/devicetree/bindings/i2c/brcm,bcm2835-i2c.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml b/Docu=
-mentation/devicetree/bindings/arm/bcm/bcm2835.yaml
-new file mode 100644
-index 0000000..1a4be26
-=2D-- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
-@@ -0,0 +1,46 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/bcm/bcm2835.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM2711/BCM2835 Platforms Device Tree Bindings
-+
-+maintainers:
-+  - Eric Anholt <eric@anholt.net>
-+  - Stefan Wahren <wahrenst@gmx.net>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: BCM2835 based Boards
-+        items:
-+          - enum:
-+              - raspberrypi,model-a
-+              - raspberrypi,model-a-plus
-+              - raspberrypi,model-b
-+              - raspberrypi,model-b-i2c0  # Raspberry Pi Model B (no P5)
-+              - raspberrypi,model-b-rev2
-+              - raspberrypi,model-b-plus
-+              - raspberrypi,compute-module
-+              - raspberrypi,model-zero
-+              - raspberrypi,model-zero-w
-+          - const: brcm,bcm2835
-+
-+      - description: BCM2836 based Boards
-+        items:
-+          - enum:
-+              - raspberrypi,2-model-b
-+
-+      - description: BCM2837 based Boards
-+        items:
-+          - enum:
-+              - raspberrypi,3-model-a-plus
-+              - raspberrypi,3-model-b
-+              - raspberrypi,3-model-b-plus
-+              - raspberrypi,3-compute-module
-+              - raspberrypi,3-compute-module-lite
-+
-+...
-diff --git a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835.txt b/=
-Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835.txt
-deleted file mode 100644
-index 245328f..0000000
-=2D-- a/Documentation/devicetree/bindings/arm/bcm/brcm,bcm2835.txt
-+++ /dev/null
-@@ -1,67 +0,0 @@
--Broadcom BCM2835 device tree bindings
-=2D-------------------------------------------
--
--Raspberry Pi Model A
--Required root node properties:
--compatible =3D "raspberrypi,model-a", "brcm,bcm2835";
--
--Raspberry Pi Model A+
--Required root node properties:
--compatible =3D "raspberrypi,model-a-plus", "brcm,bcm2835";
--
--Raspberry Pi Model B
--Required root node properties:
--compatible =3D "raspberrypi,model-b", "brcm,bcm2835";
--
--Raspberry Pi Model B (no P5)
--early model B with I2C0 rather than I2C1 routed to the expansion header
--Required root node properties:
--compatible =3D "raspberrypi,model-b-i2c0", "brcm,bcm2835";
--
--Raspberry Pi Model B rev2
--Required root node properties:
--compatible =3D "raspberrypi,model-b-rev2", "brcm,bcm2835";
--
--Raspberry Pi Model B+
--Required root node properties:
--compatible =3D "raspberrypi,model-b-plus", "brcm,bcm2835";
--
--Raspberry Pi 2 Model B
--Required root node properties:
--compatible =3D "raspberrypi,2-model-b", "brcm,bcm2836";
--
--Raspberry Pi 3 Model A+
--Required root node properties:
--compatible =3D "raspberrypi,3-model-a-plus", "brcm,bcm2837";
--
--Raspberry Pi 3 Model B
--Required root node properties:
--compatible =3D "raspberrypi,3-model-b", "brcm,bcm2837";
--
--Raspberry Pi 3 Model B+
--Required root node properties:
--compatible =3D "raspberrypi,3-model-b-plus", "brcm,bcm2837";
--
--Raspberry Pi Compute Module
--Required root node properties:
--compatible =3D "raspberrypi,compute-module", "brcm,bcm2835";
--
--Raspberry Pi Compute Module 3
--Required root node properties:
--compatible =3D "raspberrypi,3-compute-module", "brcm,bcm2837";
--
--Raspberry Pi Compute Module 3 Lite
--Required root node properties:
--compatible =3D "raspberrypi,3-compute-module-lite", "brcm,bcm2837";
--
--Raspberry Pi Zero
--Required root node properties:
--compatible =3D "raspberrypi,model-zero", "brcm,bcm2835";
--
--Raspberry Pi Zero W
--Required root node properties:
--compatible =3D "raspberrypi,model-zero-w", "brcm,bcm2835";
--
--Generic BCM2835 board
--Required root node properties:
--compatible =3D "brcm,bcm2835";
+diff --git a/Documentation/devicetree/bindings/i2c/brcm,bcm2835-i2c.txt b/=
+Documentation/devicetree/bindings/i2c/brcm,bcm2835-i2c.txt
+index e9de375..c9a6587 100644
+=2D-- a/Documentation/devicetree/bindings/i2c/brcm,bcm2835-i2c.txt
++++ b/Documentation/devicetree/bindings/i2c/brcm,bcm2835-i2c.txt
+@@ -1,7 +1,9 @@
+ Broadcom BCM2835 I2C controller
+
+ Required properties:
+=2D- compatible : Should be "brcm,bcm2835-i2c".
++- compatible : Should be one of:
++	"brcm,bcm2711-i2c"
++	"brcm,bcm2835-i2c"
+ - reg: Should contain register location and length.
+ - interrupts: Should contain interrupt.
+ - clocks : The clock feeding the I2C controller.
 =2D-
 2.7.4
 
