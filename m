@@ -2,83 +2,97 @@ Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D4F2C433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 20:10:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35828C433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 20:42:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D34422067D
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 20:10:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565727001;
-	bh=IiCD7IsT67JhzKzMH/tdAui5BDrSXtu3NUCLmNQc6n0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=dYx6I9ban1h/soUUpEYpmwkceim2d0ZvKlMA3qLpNDq3NAl/Mk+ijUAzxIhKF42IX
-	 OLfXzQV7bwav9F7cbcLoN4lUMT2IGH+VsOcxk6wa+kOzvHWiVclA1CXByeMqNXIpxk
-	 h2vFJ/o36sTKLpro9+I3sakHiQ4y3UFtWGuY+Vcc=
+	by mail.kernel.org (Postfix) with ESMTP id 0FAEF20665
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 20:42:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726594AbfHMUKB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 16:10:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38246 "EHLO mail.kernel.org"
+        id S1726066AbfHMUmj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 16:42:39 -0400
+Received: from anholt.net ([50.246.234.109]:51562 "EHLO anholt.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726007AbfHMUKB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 16:10:01 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D5692067D;
-        Tue, 13 Aug 2019 20:10:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565727000;
-        bh=IiCD7IsT67JhzKzMH/tdAui5BDrSXtu3NUCLmNQc6n0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=XXoWIRKlGSg9iDPpwqt+n7qPov9+Y81AxhP2IGS5o4ds4+Pf25nRy0LFC8t3z1klw
-         Xk+fVp92/JUXpkJShUwE+FrauPx8Ah4KPjQujcJPjhTERhCnnj5oePyrsVsgBbIi/O
-         OY6wc0S+N7ESGb6XRuu1kcS5gQF7Jl3V8D8lsqeY=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190813184717.GA28465@jcrouse1-lnx.qualcomm.com>
-References: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org> <20190807234232.27AA720880@mail.kernel.org> <20190813184717.GA28465@jcrouse1-lnx.qualcomm.com>
-Subject: Re: [PATCH v2] drivers: qcom: Add BCM vote macro to header
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        id S1725944AbfHMUmj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 16:42:39 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 38EDA10A335B;
+        Tue, 13 Aug 2019 13:42:38 -0700 (PDT)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id gls5KwEquMNN; Tue, 13 Aug 2019 13:42:37 -0700 (PDT)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id DFF6E10A13E4;
+        Tue, 13 Aug 2019 13:42:36 -0700 (PDT)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 49DD42FE2547; Tue, 13 Aug 2019 13:42:37 -0700 (PDT)
+From:   Eric Anholt <eric@anholt.net>
+To:     Stefan Wahren <wahrenst@gmx.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
-To:     Jordan Crouse <jcrouse@codeaurora.org>
-User-Agent: alot/0.8.1
-Date:   Tue, 13 Aug 2019 13:09:59 -0700
-Message-Id: <20190813201000.6D5692067D@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH V2 00/13] ARM: Add minimal Raspberry Pi 4 support
+In-Reply-To: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
+References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/26.1 (x86_64-pc-linux-gnu)
+Date:   Tue, 13 Aug 2019 13:42:35 -0700
+Message-ID: <87mugc7q6c.fsf@anholt.net>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jordan Crouse (2019-08-13 11:47:17)
-> On Wed, Aug 07, 2019 at 04:42:31PM -0700, Stephen Boyd wrote:
-> > Quoting Jordan Crouse (2019-08-05 13:33:46)
-> > > The macro to generate a Bus Controller Manager (BCM) TCS command is u=
-sed
-> > > by the interconnect driver but might also be interesting to other
-> > > drivers that need to construct TCS commands for sub processors so move
-> > > it out of the sdm845 specific file and into the header.
-> > >=20
-> > > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
-> > > ---
-> >=20
-> > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> >=20
-> > Unless this is supposed to be applied by me?
->=20
-> I figured this landed in Bjorn's domain, but you guys can fight it out if=
- you
-> want.
->=20
+--=-=-=
+Content-Type: text/plain
 
-Ok. I'm happy to avoid the fight!
+Stefan Wahren <wahrenst@gmx.net> writes:
 
+> This series adds minimal support for the new Raspberry Pi 4, so we are able
+> to login via debug UART.
+>
+> Patch 1-2:   Prepare platform and DTS for the new SoC BMC2711
+> Patch 3-6:   Enable clock support for BCM2711
+> Patch 7-8:   Add I2C support for BCM2711
+> Patch 9-12:  Add Raspberry Pi 4 DTS support
+> Patch 13:    Update MAINTAINERS
+
+Series is:
+
+Reviewed-by: Eric Anholt <eric@anholt.net>
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAl1TILsACgkQtdYpNtH8
+nuh8EQ/8CIWIRxuKEDNPwD+swJlhNQsyfP+MqfY6OENxoLeBv7u23S7jc6OEm9Si
+9vszx+5zyVzb33gGJv/Tg0XUwiIEWu8R2cEbLAi366056yJ8SrMH9ibaSKU+OsMT
+3uN+Px/ahVT1s6WFnmdsRCEwBdRoMjRztBpr4ssRKbXUxZGjjXFVYscOqXqCmu/+
+6Z+D9EMe2yL08QqyEK1151HDNgzAqh3kECGJorPBq2V3aL0dJ/sv5Mg62fFO8kKA
+kpqQfcEFwIhD3vbSlA6MNU6mC1tpLhhJTjMAcbwCXsE3A+TwUNioJva0L1OovsVH
+3HN/4S5O4bXKf6O14tU+FLWDzh61SmAui8hpOOM6yLusJ/NuULnEYx8PeAp7Nh8K
+4p0cXay44zdq47Jlt8fXc7MIhAeV5ofjqJvxj0par/mncrpOk6AonN13Ng8XjqGJ
++8LLs+xOrT0wk5RYAMRIzxn5XALtaquHJDL5sb/Vi3Z4sb7QDA+z6+jeHKqPVLO3
+kbRmCAx0uE+yZrRXKlcmXTkP4z0pq0ZPC45zRwFR5iHQXdKQ5nvU1liJD1kE0UgL
+5viA8cds+hQNsYhKGQbQMdqztBv/dBE3ZHPZCZRkgsSysrPPX77MJSvJPNMs9v0A
+d8v2BZQXBmQqRtwaOc2yvjJ2K/w4uZhS1XOrWMyvir7kKDBgvZc=
+=TJWO
+-----END PGP SIGNATURE-----
+--=-=-=--
