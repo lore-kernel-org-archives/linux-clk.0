@@ -2,90 +2,68 @@ Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 819D8C433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 18:30:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9D5C433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 18:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44F8620679
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 18:30:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3977320679
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 18:32:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565721007;
-	bh=AAcWpHX1c7OqZ19H2TdUwNCGoFLrr2xzn4NIMWe0y44=;
+	s=default; t=1565721143;
+	bh=W4OBBaZc9LcvHS9HatCqQdN4d7XWyG+yszN82yTksxY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=IltFLNOR2ut4flHvNsw9mNkXoPYM52PkGoq/MT4ou/Dbn15qCeue6V0NKjr2zlvqr
-	 soJnrsvPg0FDIn0spiRBu5cHIwA74I0vHRN6vqQPkkbtpKjza9AbQycdeANZs6EJpt
-	 KQHhcJThWu/O6O0hU79Mkn8mEK0IpsTKkUpx9gt0=
+	b=vRjZOYQU0SBw9TLheNNyu438VSegnjpy3iJjIQgdbJzAp6C4fSuzvXnloio4MnKxW
+	 TVle0rrRoLfuEUnN/qrQQW1xRYYrflYkWUAFXZGY1uCbVMQCspEn3ASl5Pnuf9aLq8
+	 czbU/+SbM2z122jeD6aiqB1YhMYoWFK38IPZFMfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728287AbfHMSaH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 14:30:07 -0400
-Received: from mail.kernel.org ([198.145.29.99]:34044 "EHLO mail.kernel.org"
+        id S1726126AbfHMScW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 14:32:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34704 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727665AbfHMSaG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 14:30:06 -0400
+        id S1726066AbfHMScW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 14:32:22 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC13020665;
-        Tue, 13 Aug 2019 18:30:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFF1A20665;
+        Tue, 13 Aug 2019 18:32:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565721006;
-        bh=AAcWpHX1c7OqZ19H2TdUwNCGoFLrr2xzn4NIMWe0y44=;
+        s=default; t=1565721141;
+        bh=W4OBBaZc9LcvHS9HatCqQdN4d7XWyG+yszN82yTksxY=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=ZD4kJjWF9zQida/HMKAddKmuo9zEQdOPO37S8s5/sUd1LWthRKkIajhZ66u8bpanS
-         RTZrj8U5otptn0n9ai1fr0Hd/2lw8MGUsKmeZE5ThRjJxWxvRvNlbiNnrfw55zMPKO
-         SK5TtOJgU/kjcV+OlTJRCpEGozqo1BaX4DZt6nWI=
+        b=FQD5LQN17V27tvKt9Kd2arov/3UM0ptRAl2A2Z34C4HEHRpE22jmS9ClrwNULFS7W
+         UAiGNZMu/7r9e2T2n9uMB2Yy7wl+niqvujxoLu/IF2+fmti0jpAFInSYZ6Y/y/PWNn
+         QLLVW/+6ig3Qs2M8e2GY6aFik9Vb6CBtgQlrxwl8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190812100216.34459-1-wen.he_1@nxp.com>
-References: <20190812100216.34459-1-wen.he_1@nxp.com>
-Subject: Re: [v1 2/3] dt/bindings: clk: Add DT bindings for LS1028A Display output interface
+In-Reply-To: <20190813130946.16448-1-govinds@codeaurora.org>
+References: <20190813130946.16448-1-govinds@codeaurora.org>
+Subject: Re: [v2 0/2] Add Q6SSTOP clock controller for QCS404
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Wen He <wen.he_1@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-soc@vger.kernel.org, andy.gross@linaro.org,
+        linux-remoteproc@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>
+To:     Govind Singh <govinds@codeaurora.org>
 User-Agent: alot/0.8.1
-Date:   Tue, 13 Aug 2019 11:30:05 -0700
-Message-Id: <20190813183005.EC13020665@mail.kernel.org>
+Date:   Tue, 13 Aug 2019 11:32:20 -0700
+Message-Id: <20190813183220.DFF1A20665@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wen He (2019-08-12 03:02:16)
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.txt b/Doc=
-umentation/devicetree/bindings/clock/fsl,plldig.txt
-> new file mode 100644
-> index 000000000000..29c5a6117809
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,plldig.txt
-> @@ -0,0 +1,26 @@
-> +NXP QorIQ Layerscape LS1028A Display output interface Clock
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+Quoting Govind Singh (2019-08-13 06:09:44)
+> Add support for the Q6SSTOP clock control used on qcs404
+> based devices. This would allow wcss remoteproc driver to
+> control the required WCSS Q6SSTOP clock/reset controls to
+> bring the subsystem out of reset and shutdown the WCSS Q6DSP.
 
-Can you convert this to YAML?
+What changed from v1? Please include a changelog so we know what
+happened.
 
-> +
-> +Required properties:
-> +    - compatible: shall contain "fsl,ls1028a-plldig"
-> +    - reg: Physical base address and size of the block registers
-> +    - #clock-cells: shall contain 1.
-
-As I said in the previous patch, this should probably be 0. Also, please
-order this before the driver in the patch series and thread your
-messages please. If you use git-send-email this is done for you pretty
-easily.
-
-> +    - clocks: a phandle + clock-specifier pairs, here should be
-> +    specify the reference clock of the system
-> +
-> +
