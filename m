@@ -1,96 +1,80 @@
-Return-Path: <SRS0=0MvX=WI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FROM_EXCESS_BASE64,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 339D3C31E40
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 23:13:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 194CCC433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 02:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9E252070C
-	for <linux-clk@archiver.kernel.org>; Mon, 12 Aug 2019 23:13:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="DqhZUmKB"
+	by mail.kernel.org (Postfix) with ESMTP id EB0BA206C1
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 02:13:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726479AbfHLXNE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 12 Aug 2019 19:13:04 -0400
-Received: from rere.qmqm.pl ([91.227.64.183]:52994 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726316AbfHLXNE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 12 Aug 2019 19:13:04 -0400
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 466s6V0vSBz6q;
-        Tue, 13 Aug 2019 01:11:30 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1565651491; bh=UJV35mr5bEdziwEqgqSYt8j0RPmmg7Xw/RLjApRfovk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DqhZUmKBvLnAQCY7e/nagfK7xMzuptxoAw0XcqLBycihMGzPIKCCYeaY3JTw9OS7H
-         g0FwBoCtfpw1jGMyEAsRa8sqekn8ajpIlWvD+CrtvW3g1VVVUETUqBOfCe+YdRWdU/
-         nRRuYTIITgTrVLWOieIjk6K5BUcWyKm3zx7igAjiEK+sG2IvScK5TS0y9byRTeRP+J
-         CSssGLNk/cKz5UpuwozLmr+OGspuLiWZ0jCxUTFPsHEVQDe0y+oh/U6RhNe0Dea3AN
-         7BG27fs7+Zy7obNQCLRU8/gqZsMKm0xQwMrNCKcHcKCWStvhvS+ROIjp5SOJxsyuQf
-         Dkfka+AHqLr1g==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.100.3 at mail
-Date:   Tue, 13 Aug 2019 01:12:58 +0200
-From:   =?iso-8859-2?B?TWljaGGzoE1pcm9zs2F3?= <mirq-linux@rere.qmqm.pl>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Rob Herring <robh-dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Joseph Lo <josephl@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 01/15] clk: tegra20/30: Add custom EMC clock
- implementation
-Message-ID: <20190812231258.GA31836@qmqm.qmqm.pl>
-References: <20190811210043.20122-1-digetx@gmail.com>
- <20190811210043.20122-2-digetx@gmail.com>
+        id S1726551AbfHMCNc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 12 Aug 2019 22:13:32 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42234 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726488AbfHMCNc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 12 Aug 2019 22:13:32 -0400
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id A4171CD0CBA6D6613AF4;
+        Tue, 13 Aug 2019 09:57:01 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 13 Aug 2019
+ 09:56:50 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     <tglx@linutronix.de>, <jason@lakedaemon.net>, <maz@kernel.org>,
+        <paul@crapouillou.net>, <malat@debian.org>, <paul.burton@mips.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-mips@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH] irqchip/irq-ingenic-tcu: Fix COMPILE_TEST building
+Date:   Tue, 13 Aug 2019 09:56:02 +0800
+Message-ID: <20190813015602.30576-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190811210043.20122-2-digetx@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.133.213.239]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 12, 2019 at 12:00:29AM +0300, Dmitry Osipenko wrote:
-> A proper External Memory Controller clock rounding and parent selection
-> functionality is required by the EMC drivers, it is not available using
-> the generic clock implementation because only the Memory Controller driver
-> is aware of what clock rates are actually available for a particular
-> device. EMC drivers will have to register a Tegra-specific CLK-API
-> callback which will perform rounding of a requested rate. EMC clock users
-> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
-> driver is probed and the callback is set up.
-[...]
-> diff --git a/drivers/clk/tegra/Makefile b/drivers/clk/tegra/Makefile
-> index 4812e45c2214..df966ca06788 100644
-> --- a/drivers/clk/tegra/Makefile
-> +++ b/drivers/clk/tegra/Makefile
-> @@ -17,7 +17,9 @@ obj-y					+= clk-tegra-fixed.o
->  obj-y					+= clk-tegra-super-gen4.o
->  obj-$(CONFIG_TEGRA_CLK_EMC)		+= clk-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_2x_SOC)         += clk-tegra20.o
-> +obj-$(CONFIG_ARCH_TEGRA_2x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_3x_SOC)         += clk-tegra30.o
-> +obj-$(CONFIG_ARCH_TEGRA_3x_SOC)		+= clk-tegra20-emc.o
->  obj-$(CONFIG_ARCH_TEGRA_114_SOC)	+= clk-tegra114.o
->  obj-$(CONFIG_ARCH_TEGRA_124_SOC)	+= clk-tegra124.o
->  obj-$(CONFIG_TEGRA_CLK_DFLL)		+= clk-tegra124-dfll-fcpu.o
+While do COMPILE_TEST building, if GENERIC_IRQ_CHIP is
+not selected, it fails:
 
-Doesn't it complain when both CONFIG_ARCH_TEGRA_2x_SOC and
-CONFIG_ARCH_TEGRA_3x_SOC are enabled at the same time?
+drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_intc_cascade':
+irq-ingenic-tcu.c:(.text+0x13f): undefined reference to `irq_get_domain_generic_chip'
+drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_irq_init':
+irq-ingenic-tcu.c:(.init.text+0x97): undefined reference to `irq_generic_chip_ops'
+irq-ingenic-tcu.c:(.init.text+0xdd): undefined reference to `__irq_alloc_domain_generic_chips'
+irq-ingenic-tcu.c:(.init.text+0x10b): undefined reference to `irq_get_domain_generic_chip'
 
-Best Regards,
-Micha³ Miros³aw
+select GENERIC_IRQ_CHIP to fix this.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Fixes: 9536eba03ec7 ("irqchip: Add irq-ingenic-tcu driver")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/irqchip/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 3c8308e..ccbb897 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -320,6 +320,7 @@ config INGENIC_TCU_IRQ
+ 	default MACH_INGENIC
+ 	depends on MIPS || COMPILE_TEST
+ 	select MFD_SYSCON
++	select GENERIC_IRQ_CHIP
+ 	help
+ 	  Support for interrupts in the Timer/Counter Unit (TCU) of the Ingenic
+ 	  JZ47xx SoCs.
+-- 
+2.7.4
+
+
