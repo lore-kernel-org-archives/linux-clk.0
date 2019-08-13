@@ -2,104 +2,153 @@ Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD08BC433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A8F2C433FF
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:43:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF3120840
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:14:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VjJESbkI";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VjJESbkI"
+	by mail.kernel.org (Postfix) with ESMTP id 0B01B20679
+	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 13:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565703795;
+	bh=tGhuTi6i8q70RtL03QHsvQiJD0U0K5cLD/inwbsXYcc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=vg++Gkd5bIUas7VoOO28My7w/G5KOqDZOnXKHcsVS7rZ7G3Nus3Vbqqb/omKmWe0H
+	 MChp/W0wXkQI+LW8tRil+SZtYl15ccuXcFA5mjmRCaknhs5TtmVMGXYcgxaBeckQ6n
+	 lW+TAmhOFbAHLNAnwLQD5RlkT1HQRPz5PmeT0iD0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728584AbfHMNOs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 09:14:48 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:46962 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728536AbfHMNOs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 13 Aug 2019 09:14:48 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DF5E060A00; Tue, 13 Aug 2019 13:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565702086;
-        bh=qAquBtWjxQLm8+6Uv/fnJnteZa6BSH1H1LI/eZ2BbZg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VjJESbkIMwNE8z3TU+GJqHYA1D+EGl8K2bsMplHXCEwtm2gRy96FxCzpj/UMf9YhX
-         4P6c23q+Nq7n6XLh6QLrwWJ5kYlJr2rs+zUUOmyW08rnrAVp0NFYhppLh9rm3Uvup6
-         gPPwh9dL78s56RDDQyGsupHQfeqmIRc0h3o7f4co=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 69FDD609CD;
-        Tue, 13 Aug 2019 13:14:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1565702086;
-        bh=qAquBtWjxQLm8+6Uv/fnJnteZa6BSH1H1LI/eZ2BbZg=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=VjJESbkIMwNE8z3TU+GJqHYA1D+EGl8K2bsMplHXCEwtm2gRy96FxCzpj/UMf9YhX
-         4P6c23q+Nq7n6XLh6QLrwWJ5kYlJr2rs+zUUOmyW08rnrAVp0NFYhppLh9rm3Uvup6
-         gPPwh9dL78s56RDDQyGsupHQfeqmIRc0h3o7f4co=
+        id S1729234AbfHMNnO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 09:43:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59676 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728095AbfHMNnN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 09:43:13 -0400
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A97772084D;
+        Tue, 13 Aug 2019 13:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565703792;
+        bh=tGhuTi6i8q70RtL03QHsvQiJD0U0K5cLD/inwbsXYcc=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Uo4UavNgFwTPrkrDxoQzIeexZ8KSCrVWgqozcIOdUTQaQijufQfVB2ixWpk9DEuUn
+         5e+wszlhwGOhVXV0p24BfuRUhhiNDlVRvQSFGwV/lc5gcy+idDp3GcQyqgmUm/gpDl
+         I+N5Xl39XMXX1aqi9llnNWdLstFASs7Sp7tR3oY4=
+Received: by mail-qk1-f174.google.com with SMTP id 201so79581358qkm.9;
+        Tue, 13 Aug 2019 06:43:12 -0700 (PDT)
+X-Gm-Message-State: APjAAAVCS/PKneNXjBJi7w6Mep/wDhudVlIcFnPmBwsZlJ6rtMDzYl8Z
+        y3ofMYECfigLgBTkZmoan1hL2ixA742nKAEqaw==
+X-Google-Smtp-Source: APXvYqyoMvVBG6NtFWAydUGiqe0lkRWftJ5OUD3LW861TSIDeNewDqAnlP+AxGAUPwMd7qokDO1L8NO/lTHTDeP0EKY=
+X-Received: by 2002:a37:d8f:: with SMTP id 137mr27142458qkn.254.1565703791883;
+ Tue, 13 Aug 2019 06:43:11 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Tue, 13 Aug 2019 18:44:46 +0530
-From:   Govind Singh <govinds@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        andy.gross@linaro.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v5 4/7] clk: qcom: Add Q6SSTOP clock controller for QCS404
-In-Reply-To: <20190808150901.D6C932184E@mail.kernel.org>
-References: <20190726092332.25202-1-govinds@codeaurora.org>
- <20190726092332.25202-5-govinds@codeaurora.org>
- <20190808150901.D6C932184E@mail.kernel.org>
-Message-ID: <7e86199d468df84cc2125785fc823b85@codeaurora.org>
-X-Sender: govinds@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20190813130946.16448-1-govinds@codeaurora.org> <20190813130946.16448-2-govinds@codeaurora.org>
+In-Reply-To: <20190813130946.16448-2-govinds@codeaurora.org>
+From:   Rob Herring <robh@kernel.org>
+Date:   Tue, 13 Aug 2019 07:43:00 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK-GK8arfRu6sqP9UjNrwc0=aUWXymMRF5fQhg+M2TNng@mail.gmail.com>
+Message-ID: <CAL_JsqK-GK8arfRu6sqP9UjNrwc0=aUWXymMRF5fQhg+M2TNng@mail.gmail.com>
+Subject: Re: [v2 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock
+ controller bindings
+To:     Govind Singh <govinds@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
+        <linux-remoteproc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Tue, Aug 13, 2019 at 7:10 AM Govind Singh <govinds@codeaurora.org> wrote:
+>
+> Add devicetree binding for the Q6SSTOP clock controller found in QCS404.
 
-On 2019-08-08 20:39, Stephen Boyd wrote:
-> Quoting Govind Singh (2019-07-26 02:23:29)
->> diff --git a/drivers/clk/qcom/q6sstop-qcs404.c 
->> b/drivers/clk/qcom/q6sstop-qcs404.c
->> new file mode 100644
->> index 000000000000..b6281986b077
->> --- /dev/null
->> +++ b/drivers/clk/qcom/q6sstop-qcs404.c
->> @@ -0,0 +1,223 @@
-> [...]
->> +};
->> +
->> +static struct platform_driver q6sstopcc_qcs404_driver = {
->> +       .probe          = q6sstopcc_qcs404_probe,
->> +       .remove         = q6sstopcc_qcs404_remove,
->> +       .driver         = {
->> +               .name   = "qcs404-q6sstopcc",
->> +               .of_match_table = q6sstopcc_qcs404_match_table,
->> +       .pm = &q6sstopcc_pm_ops,
-> 
-> This got some weird indent.
-> 
-Fixed in next rev.
-https://patchwork.kernel.org/project/linux-arm-msm/list/?series=159221
-I have removed this change from the previous series.
-DT binding change is converted to YAML.
+You need to test this with 'make dt_binding_check' and fix the errors.
 
->> +       },
->> +};
->> +
->> +module_platform_driver(q6sstopcc_qcs404_driver);
->> +
->> +MODULE_DESCRIPTION("QTI QCS404 Q6SSTOP Clock Controller Driver");
->> +MODULE_LICENSE("GPL v2");
+>
+> Signed-off-by: Govind Singh <govinds@codeaurora.org>
+> ---
+>  .../bindings/clock/qcom,q6sstopcc.yaml        | 45 +++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+> new file mode 100644
+> index 000000000000..861e9ba97ca3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
+> @@ -0,0 +1,45 @@
+> +# SPDX-License-Identifier: BSD-2-Clause
 
-BR,
-Govind
+GPL-2.0-only OR BSD-2-Clause
+
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/interconnect/qcom,osm-l3.yaml#
+
+needs updating
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Q6SSTOP clock Controller
+> +
+> +maintainers:
+> +  - Govind Singh <govinds@codeaurora.org>
+> +
+> +description:
+> +   Q6SSTOP clock controller is used by WCSS remoteproc driver
+> +   to bring WDSP out of reset.
+> +
+> +properties:
+> +  compatible:
+> +    const: "qcom,qcs404-q6sstopcc"
+> +
+> +  reg:
+> +    maxItems: 2
+> +    description: Q6SSTOP clocks register region
+> +    description: Q6SSTOP_TCSR register region
+
+Not valid json-schema
+
+> +
+> +  clocks:
+> +    items:
+> +      - description: ahb clock for the q6sstopCC
+
+Single item just needs 'maxItems: 1'
+
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+
+Should have an 'additionalProperties: false' here.
+
+> +
+> +examples:
+> +  - |
+> +    q6sstopcc: clock-controller@7500000 {
+> +      compatible = "qcom,qcs404-q6sstopcc";
+> +      reg = <0x07500000 0x4e000>, <0x07550000 0x10000>;
+> +      clocks = <&gcc GCC_WCSS_Q6_AHB_CLK>;
+> +      #clock-cells = <1>;
+> +    };
+> --
+> The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+> a Linux Foundation Collaborative Project
+>
