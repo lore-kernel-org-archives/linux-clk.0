@@ -2,168 +2,269 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB302C32753
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 19:13:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB32C32753
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 19:21:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A67672173B
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 19:13:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9ACB2084D
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 19:21:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDN7Xfje"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="YIYzHdQ9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726047AbfHNTNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 15:13:33 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:33300 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725828AbfHNTNc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 15:13:32 -0400
-Received: by mail-ot1-f65.google.com with SMTP id q20so636871otl.0;
-        Wed, 14 Aug 2019 12:13:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TIMapTPG9TsKNv8gxrvskWdnMtxRZS5RDBC2qelM/IA=;
-        b=HDN7Xfjey0zPgdvSwUfQwg/F2tS+QJSnem6AhqG2iCoclIIlDmEiHo/sqGIXDW/+EY
-         WQ8R47te4xIFIJpvxdGDxXEgmx3ugMKEJ31gMq9sHOOXBrjEzOX5HdtWjXg8OcGsyGlZ
-         GA0j8Gx0prQEe8zkTaP3hxEzo4OnVDga8I9HlNm8E/hklEUp2iNjTcocgDn28SJiKRSJ
-         5EzbE95RFvVwQkUUOh1xM/hDNZ9Vm0o5rmsvUEx046kCPR9rMAWhvdgqev8TO7JfEFEt
-         Rfze5xvVcCzLfKYbXPvMmpDdHPtEI/2P4Esg0Ft3A3nGL07MMIg4On1HYHRtimiiVQSa
-         XXXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TIMapTPG9TsKNv8gxrvskWdnMtxRZS5RDBC2qelM/IA=;
-        b=GAVMubE7r73d5WAntE7YayaN8u0PH7x6jdkHnoodnKJkAn8a2T4nCxmVvjKv/G/ueM
-         E+xDeozKyjEa6tE26y8HbHxcN133rUnE157cTXgYMv7QRqroZnKOYtF/y4JjXRN3rJdF
-         Qre0BcryACp1R72xxa26zs+8x7RpKN8m/cIaErnpEHuA480m/OvwVrBIi7AmmFjzPugG
-         oH/Sla/fW6olXIEuHf7JaT6E5I0a8xUJvjHDlweeHIsS85lPOewHdS1kArxjHDB8Nkoz
-         lmBnid5Hk4U3p93WPIpyqXKbTcV2sOJqNRmU72UQlhKUd4iCIVpH7vC1/NMOjyWUPJQM
-         z+dw==
-X-Gm-Message-State: APjAAAUVHEon2kTUYa5P8wV4kBQe74Nv6k5DhHVBy9QLLx44jI8KRE2U
-        eqPKLYOqBLeMlWiHPYOZFglPa68bs6QC5k9+FE9e8LMpW2mD7g==
-X-Google-Smtp-Source: APXvYqyHWOWBENOuAaX/jmzLmM06wjbi0uiNrAMmhJcOZVwvxhfuSce5NmWmhfJKC09gvUSKQJacLSGUTCtQ1AzhBSQ=
-X-Received: by 2002:a6b:e511:: with SMTP id y17mr1581062ioc.228.1565810011197;
- Wed, 14 Aug 2019 12:13:31 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190814131408.57162-1-tony@atomide.com>
-In-Reply-To: <20190814131408.57162-1-tony@atomide.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 14 Aug 2019 14:13:19 -0500
-Message-ID: <CAHCN7x+p5+XoRHJP--mZ0QcP0FzpYK+pRj7d8Y-js6a8z=p_7A@mail.gmail.com>
-Subject: Re: [PATCH 0/6] Configure sgx interconnect data for some omap variants
-To:     Tony Lindgren <tony@atomide.com>
-Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
-        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
+        id S1728188AbfHNTVb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 15:21:31 -0400
+Received: from mout.gmx.net ([212.227.17.21]:60081 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728128AbfHNTVb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Aug 2019 15:21:31 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1565810462;
+        bh=d++ldL5SUC49z8++j07OgZlhrKCwugADIKUc2KAPYKQ=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=YIYzHdQ9HOuEI2ceKDjtlQRa1UDtDc5tcUqULOz+souydaPKIqWUyAyhv/G2PuQm4
+         mQziR78L30hz4qHh3OEEsUJYSKSmPcSBNIq02+pAp/+Ir55o+BHCme7iNx6Eo4HvIU
+         7ogKNTFyxae1UfNAjZEnk9VYWGeL8gMAsk5MNaNA=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.162] ([37.4.249.106]) by mail.gmx.com (mrgmx103
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LZzY9-1ihVj92KA1-00lkpt; Wed, 14
+ Aug 2019 21:21:02 +0200
+Subject: Re: [PATCH V2 09/13] dt-bindings: arm: Convert BCM2835 board/soc
+ bindings to json-schema
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Stephen Boyd <sboyd@kernel.org>, Ray Jui <rjui@broadcom.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Eric Anholt <eric@anholt.net>,
+        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
+        <bcm-kernel-feedback-list@broadcom.com>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        moaz korena <moaz@korena.xyz>
-Content-Type: text/plain; charset="UTF-8"
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
+        <linux-rpi-kernel@lists.infradead.org>
+References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
+ <1565713248-4906-10-git-send-email-wahrenst@gmx.net>
+ <CAL_Jsq+01vXQpf_ZuAvetWvcGLhK4EiiB1qFqhRkM3PQWAzdsA@mail.gmail.com>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <f9acf678-854d-720d-3c84-d9a05766c02e@gmx.net>
+Date:   Wed, 14 Aug 2019 21:21:00 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <CAL_Jsq+01vXQpf_ZuAvetWvcGLhK4EiiB1qFqhRkM3PQWAzdsA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+X-Provags-ID: V03:K1:/I3kDilaSmvTywo6Y0PtWIRiL9BDzfqMeNJs/p2nee9NhkwKYgv
+ QZsM5sLRt9l1mpgZGVxcxqx3LWRTzaDl3VEuf6QV6JpXliVZ4f/KjDf9P619DiStmVrcRr3
+ TfIfSyj8u3kfEHbGF208jVV1t6lCDlhaK1SRbysS0X3ehzZ3oqcAZ0tNQnjc0oaypnziYd+
+ XQCvmJ97G25h65hMxPRgg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:fs0wjMQYF5o=:r85/xzGI12wsXXkjV16o5A
+ pYzfFmyt3dmifUkAu1ewZ7TN+rmaL/oyaj7gHS/n+sjs2dFbG2uMmYWQUUZT3CvbhDPk5BKqT
+ /sQV4Ykf52+APUfU1QfX0kOSA4taJwzfZUpG6XZMaaFJW5nFb7BppDQVaBUmSdY4MLodCQAgk
+ jKemp1YPE/xfzC1fpPiGuBCSkJUfXPT5GXPdh2rSNzWl2i4IuLUe3bef8h0x+Z7/+89S04kq/
+ m90BDkUu1cS7DO34RzaaKUGXLQkX3u99ERj1fO4FOYTl6ghKNFPJBiSjFOKJuCPJEs+2qJwJo
+ VCJ0jndWjlcQDPJyEOAHNnv6HWRJLYJQKyTvkGATzfsrYjCtVllAZzjTNwDTizJObEyKSty75
+ yhLK5udhv7Jhbk6aLn8QJzXa3I5omF5sZUjGVS9Je+Bxrza+j1IMeKZwssWgWznyCF+/JdAmd
+ dLdrT3Ub4BtbAN19lKF82OcF75IGgRxHv61mch3R0NQyPakYyKHsIN3eUtrAsS4S28sFBD9Fh
+ 6PmzVpvJSrVA5B79ar5phl6igfrhReuoDysmxCpOpvkpctn7KFP3TlhH0cfeigoYzMqDuaNOV
+ nmTyS3D3L1Xsi5BSyAClZv1M9l+KUx4J39Mn4dnVJlSChnIFzvG31UA6E8Xok8sbKtim9L53Z
+ w+WR+NJkECeoKfoFGvkpTkbIwl4vBpHk8YU5+t/1bSezI8E4TmgxglmTajLDCf5CSscaG+HG8
+ hqFDPGbGZYwo6IWxSrh8m2AdXOjWDo+SNg5LoeUjHPZ+mbO5Ev0SpsBd4kMf/C5P8zls2vIt2
+ tDox7zWANFY8YOeSptyVAqJa+8QDO3upTFYOxzHbiyLAPlMYlIv9oxgVTYRG3b+AytV7ovGTT
+ DIseyEBuL6DStPa9UGuzBE+ka7HfZdk0aYr1+bU39ZYixyYAoO5VQwfp0NZt+5tcJn1FZNHNE
+ Ryma0tRnQ1wesqvB6qLxAdTRye6S1hs9kPPRxc5vpXfffSHr1m0foafLqduzCrvnw5D8GeRDm
+ KoswhjH1uo87fvYBnAgZ1siqkwOLlOpUaXUXoFybkiScEWZk6/Xv2I7HAmLSV/HfFYPj4Z08h
+ GkzzhxfdKLvFy8dQMq2gD9dsu4UzYpmKgmonKAOzsOb5VZs2Wfqo9aSAY3SlawAt9YsUUg+O+
+ WPOt6mGLZ2iknTTT8BYbXGRKD3a0wvZNHRZqe71rg2Zk9cIUuIxe1TY/MuRyI9L+Xa5uYSbC2
+ k2KcbTYrvdHjVMUlLIKGAWPk0KDNbExVJUTjDDaX0I+gnEWbapkiRzaMnkOM=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 14, 2019 at 8:14 AM Tony Lindgren <tony@atomide.com> wrote:
->
-> Hi all,
->
-> For a while we've been idling sgx module on omap4 by probing it with
-> ti-sysc interconnect target module driver. This allows leaving out any
-> platform data in favor of device tree data, and idles the module for
-> PM even if we don't have any sgx driver.
->
-> I've added similar configuration for omap34xx, omap36xx, omap5 and
-> am335x. Adding dra7 should work too, but my beagle x15 is suffering
-> from a power supply problem right now and I'll need to work more on
-> that later on.
->
-> For am335x, the recently posted prm rstctrl driver is needed. The
-> other SoCs here don't have a dependency to the prm rstctrl driver.
-> And probably am335x child driver(s) also need to map the rstctrl
-> register to increase the deassert use count.
->
-> Please review and test, this should allow sgx child driver(s) to
-> just use PM runtime to enable the module with no platform data.
->
-> I've only tested these SoCs via sysfs to ensure the sgx module gets
-> enabled and disabled properly. If you know something about sgx,
-> please describe more why the sgx registers seem to be at different
-> place for each SoC like between omap34xx and omap36xx.
->
-> These patches may have some dependencies to what I've queued into
-> my for-next branch for fixes so it's best to test with that merged
-> in. Linux next should be usable for testing with these the next
-> time it gets integrated.
->
-> Regards,
->
-> Tony
->
->
-> Tony Lindgren (6):
->   ARM: OMAP2+: Drop legacy platform data for omap4 gpu
->   bus: ti-sysc: Add module enable quirk for SGX on omap36xx
->   clk: ti: add clkctrl data omap5 sgx
->   ARM: dts: Configure sgx for omap5
->   ARM: dts: Configure interconnect target module for omap3 sgx
->   ARM: dts: Configure rstctrl reset for SGX
->
+Hi Rob,
 
-Assuming the following is correct:
-
-echo on > /sys/bus/platform/devices/5000fe00.target-module/power/control
-# devmem 0x5000fe00 32
-0x40000000
-
-and
-
-echo auto > /sys/bus/platform/devices/5000fe00.target-module/power/control
-# devmem 0x5000fe00 32
-[  776.373504] 8<--- cut here ---
-[  776.376617] Unhandled fault: external abort on non-linefetch (0x1018) at 0xb6
-f76e00
-[  776.384338] pgd = bde98bb0
-[  776.387054] [b6f76e00] *pgd=8cb61831, *pte=5000f383, *ppte=5000fa33
-[  776.393402] In-band Error seen by MPU  at address 0
-
-Then
-
-Tested-by: Adam Ford <aford173@gmail.com> #logicpd-torpedo-37xx-devkit
-
-I do wonder if an omap34xx or omap36xx should use
-compatible = "ti,sysc-omap4", "ti,sysc";
-
-should it use an omap3 equivalent?
-
-adam
-
->  arch/arm/boot/dts/am33xx.dtsi              | 25 ++++++++++
->  arch/arm/boot/dts/omap34xx.dtsi            | 26 +++++++++++
->  arch/arm/boot/dts/omap36xx.dtsi            | 27 +++++++++++
->  arch/arm/boot/dts/omap4.dtsi               |  1 -
->  arch/arm/boot/dts/omap5.dtsi               | 23 ++++++++++
->  arch/arm/boot/dts/omap54xx-clocks.dtsi     | 14 ++++++
->  arch/arm/mach-omap2/omap_hwmod_44xx_data.c | 53 ----------------------
->  drivers/bus/ti-sysc.c                      | 21 +++++++++
->  drivers/clk/ti/clk-54xx.c                  | 34 ++++++++++++++
->  include/dt-bindings/clock/omap5.h          |  3 ++
->  include/linux/platform_data/ti-sysc.h      |  1 +
->  11 files changed, 174 insertions(+), 54 deletions(-)
+Am 13.08.19 um 19:22 schrieb Rob Herring:
+> On Tue, Aug 13, 2019 at 10:21 AM Stefan Wahren <wahrenst@gmx.net> wrote:
+>> Convert the BCM2835/6/7 SoC bindings to DT schema format using json-sch=
+ema.
+>> All the other Broadcom boards are maintained by Florian Fainelli.
+>>
+>> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+>> Acked-by: Eric Anholt <eric@anholt.net>
+>> ---
+>>  .../devicetree/bindings/arm/bcm/bcm2835.yaml       | 46 ++++++++++++++=
++
+>>  .../devicetree/bindings/arm/bcm/brcm,bcm2835.txt   | 67 --------------=
+--------
+>>  2 files changed, 46 insertions(+), 67 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/arm/bcm/bcm2835.y=
+aml
+>>  delete mode 100644 Documentation/devicetree/bindings/arm/bcm/brcm,bcm2=
+835.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml b/D=
+ocumentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+>> new file mode 100644
+>> index 0000000..1a4be26
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/arm/bcm/bcm2835.yaml
+>> @@ -0,0 +1,46 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/arm/bcm/bcm2835.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Broadcom BCM2711/BCM2835 Platforms Device Tree Bindings
+>> +
+>> +maintainers:
+>> +  - Eric Anholt <eric@anholt.net>
+>> +  - Stefan Wahren <wahrenst@gmx.net>
+>> +
+>> +properties:
+>> +  $nodename:
+>> +    const: '/'
+>> +  compatible:
+>> +    oneOf:
+>> +      - description: BCM2835 based Boards
+>> +        items:
+>> +          - enum:
+>> +              - raspberrypi,model-a
+>> +              - raspberrypi,model-a-plus
+>> +              - raspberrypi,model-b
+>> +              - raspberrypi,model-b-i2c0  # Raspberry Pi Model B (no P=
+5)
+>> +              - raspberrypi,model-b-rev2
+>> +              - raspberrypi,model-b-plus
+>> +              - raspberrypi,compute-module
+>> +              - raspberrypi,model-zero
+>> +              - raspberrypi,model-zero-w
+>> +          - const: brcm,bcm2835
+>> +
+>> +      - description: BCM2836 based Boards
+>> +        items:
+>> +          - enum:
+>> +              - raspberrypi,2-model-b
+> Don't you need brcm,bcm2836 here?
 >
-> --
-> 2.21.0
+>> +
+>> +      - description: BCM2837 based Boards
+>> +        items:
+>> +          - enum:
+>> +              - raspberrypi,3-model-a-plus
+>> +              - raspberrypi,3-model-b
+>> +              - raspberrypi,3-model-b-plus
+>> +              - raspberrypi,3-compute-module
+>> +              - raspberrypi,3-compute-module-lite
+> Don't you need brcm,bcm2837 here?
+>
+> Please run 'dtbs_check' and make sure there aren't warnings (in the root=
+ node).
+
+thanks, after addressing your comments the root node doesn't have
+warnings anymore.
+
+Beside that there a lot of other warnings:
+
+=C2=A0 DTC=C2=A0=C2=A0=C2=A0=C2=A0 arch/arm/boot/dts/bcm2711-rpi-4-b.dt.ya=
+ml
+=C2=A0 CHECK=C2=A0=C2=A0 arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+arm-pmu: compatible: ['arm,cortex-a72-pmu', 'arm,armv8-pmuv3'] is too long
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+arm-pmu: compatible: Additional items are not allowed ('arm,armv8-pmuv3'
+was unexpected)
+
+I think the schema is a little bit too strict by prohibit a fallback
+compatible.
+
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+serial@7e201800: Additional properties are not allowed
+('arm,primecell-periphid' was unexpected)
+
+In the old txt version this was an allowed property.
+
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+firmware: $nodename:0: 'firmware' does not match
+'^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$'
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+firmware: '#address-cells' is a required property
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+firmware: '#size-cells' is a required property
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+firmware: 'ranges' is a required property
+
+I suggest to fix this by removing the "simple-bus".
+
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+serial@7e201a00: Additional properties are not allowed
+('arm,primecell-periphid' was unexpected)
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+gpio@7e200000: 'pinctrl-0' is a dependency of 'pinctrl-names'
+
+This could be fixed by removing pinctrl-names.
+
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+serial@7e201600: Additional properties are not allowed
+('arm,primecell-periphid' was unexpected)
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+gic400@40041000: $nodename:0: 'gic400@40041000' does not match
+'^interrupt-controller(@[0-9a-f,]+)*$'
+
+I will rename gic400 to interrupt-controller.
+
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+serial@7e201400: Additional properties are not allowed
+('arm,primecell-periphid' was unexpected)
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+serial@7e201000: compatible: ['brcm,bcm2835-pl011', 'arm,pl011',
+'arm,primecell'] is not valid under any of the given schemas
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+serial@7e201000: Additional properties are not allowed ('bluetooth',
+'arm,primecell-periphid' were unexpected)
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+sd_io_1v8_reg: states:0: [1800000, 1, 3300000, 0] is too long
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+sd_io_1v8_reg: states:0: Additional items are not allowed (3300000, 0
+were unexpected)
+
+No idea what is wrong here
+
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml: clocks:
+#size-cells:0:0: 0 is not one of [1, 2]
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml: clocks:
+$nodename:0: 'clocks' does not match '^(bus|soc|axi|ahb|apb)(@[0-9a-f]+)?$=
+'
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml: clocks:
+clock@3:reg:0: [3] is too short
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml: clocks:
+clock@4:reg:0: [4] is too short
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml: clocks:
+'ranges' is a required property
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+clock@3: 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
+/home/stefan/torvalds/arch/arm/boot/dts/bcm2711-rpi-4-b.dt.yaml:
+clock@4: 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
+
+This could be fixed by avoiding a simple-bus for the fixed clocks.
+
+Stefan
+
+>
+> Rob
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
