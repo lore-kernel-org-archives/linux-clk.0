@@ -2,116 +2,107 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBFD2C433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 12:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB76C32753
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:14:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A357B2133F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 12:31:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565785899;
-	bh=HuxukNahTWeA+LLtZCC/D3RZ3m6XjTpkYJTv3BTqbPU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qWDCJ9akgobjaIifiKon7DlOPO0JzRk9+/Lzh6+dlu9mpUbFqfzhobnIRNFOZltnt
-	 376gi9ivQz6QOkjFgUY7/B1iyrPcEe0In/7zbN+xPx2iWUTdfDcpXWnrAdd72TmNfE
-	 CvrFbmVaf8Y498Q0WpVp9Pi9dR2fZ+7Z88K5PUmw=
+	by mail.kernel.org (Postfix) with ESMTP id 98DF82083B
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:14:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfHNMbf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 08:31:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53990 "EHLO mail.kernel.org"
+        id S1727650AbfHNNOR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 09:14:17 -0400
+Received: from muru.com ([72.249.23.125]:57598 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725800AbfHNMbe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 08:31:34 -0400
-Received: from localhost.localdomain (unknown [171.76.115.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 670B7208C2;
-        Wed, 14 Aug 2019 12:31:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565785894;
-        bh=HuxukNahTWeA+LLtZCC/D3RZ3m6XjTpkYJTv3BTqbPU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ylmaSMbCmQUnrTWaVcPTJIqnL8Yiz6MX11hgeTRepB1ig5urgetDP9vBPBzYvMcQE
-         55upndk+ryGTQ0A/O198eX/V+quBsfcgFkIQAMD3ru3qcN6AWICS+viK8DUHbObsEu
-         kpen/3YA3gI5lzZcsIFlTAwE0TetoXCoMQ7YXpYE=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        id S1726551AbfHNNOR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Aug 2019 09:14:17 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 9E91180C8;
+        Wed, 14 Aug 2019 13:14:43 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     =?UTF-8?q?Beno=C3=AEt=20Cousson?= <bcousson@baylibre.com>,
+        devicetree@vger.kernel.org,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Adam Ford <aford173@gmail.com>,
+        =?UTF-8?q?Filip=20Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] clk: qcom: clk-rpmh: Add support for SM8150
-Date:   Wed, 14 Aug 2019 17:59:58 +0530
-Message-Id: <20190814122958.4981-2-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190814122958.4981-1-vkoul@kernel.org>
-References: <20190814122958.4981-1-vkoul@kernel.org>
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-clk@vger.kernel.org, moaz korena <moaz@korena.xyz>
+Subject: [PATCH 0/6] Configure sgx interconnect data for some omap variants
+Date:   Wed, 14 Aug 2019 06:14:02 -0700
+Message-Id: <20190814131408.57162-1-tony@atomide.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for rpmh clocks found in SM8150
+Hi all,
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/clk-rpmh.c | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+For a while we've been idling sgx module on omap4 by probing it with
+ti-sysc interconnect target module driver. This allows leaving out any
+platform data in favor of device tree data, and idles the module for
+PM even if we don't have any sgx driver.
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index c3fd632af119..7fea263447c5 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -368,6 +368,32 @@ static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
- 	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
- };
- 
-+DEFINE_CLK_RPMH_ARC(sm8150, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
-+DEFINE_CLK_RPMH_VRM(sm8150, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
-+DEFINE_CLK_RPMH_VRM(sm8150, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
-+DEFINE_CLK_RPMH_VRM(sm8150, rf_clk1, rf_clk1_ao, "rfclka1", 1);
-+DEFINE_CLK_RPMH_VRM(sm8150, rf_clk2, rf_clk2_ao, "rfclka2", 1);
-+DEFINE_CLK_RPMH_VRM(sm8150, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-+
-+static struct clk_hw *sm8150_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sm8150_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sm8150_bi_tcxo_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &sm8150_ln_bb_clk2.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &sm8150_ln_bb_clk2_ao.hw,
-+	[RPMH_LN_BB_CLK3]	= &sm8150_ln_bb_clk3.hw,
-+	[RPMH_LN_BB_CLK3_A]	= &sm8150_ln_bb_clk3_ao.hw,
-+	[RPMH_RF_CLK1]		= &sm8150_rf_clk1.hw,
-+	[RPMH_RF_CLK1_A]	= &sm8150_rf_clk1_ao.hw,
-+	[RPMH_RF_CLK2]		= &sm8150_rf_clk2.hw,
-+	[RPMH_RF_CLK2_A]	= &sm8150_rf_clk2_ao.hw,
-+	[RPMH_RF_CLK3]		= &sm8150_rf_clk3.hw,
-+	[RPMH_RF_CLK3_A]	= &sm8150_rf_clk3_ao.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
-+	.clks = sm8150_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
-+};
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -447,6 +473,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- 
- static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
-+	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+I've added similar configuration for omap34xx, omap36xx, omap5 and
+am335x. Adding dra7 should work too, but my beagle x15 is suffering
+from a power supply problem right now and I'll need to work more on
+that later on.
+
+For am335x, the recently posted prm rstctrl driver is needed. The
+other SoCs here don't have a dependency to the prm rstctrl driver.
+And probably am335x child driver(s) also need to map the rstctrl
+register to increase the deassert use count.
+
+Please review and test, this should allow sgx child driver(s) to
+just use PM runtime to enable the module with no platform data.
+
+I've only tested these SoCs via sysfs to ensure the sgx module gets
+enabled and disabled properly. If you know something about sgx,
+please describe more why the sgx registers seem to be at different
+place for each SoC like between omap34xx and omap36xx.
+
+These patches may have some dependencies to what I've queued into
+my for-next branch for fixes so it's best to test with that merged
+in. Linux next should be usable for testing with these the next
+time it gets integrated.
+
+Regards,
+
+Tony
+
+
+Tony Lindgren (6):
+  ARM: OMAP2+: Drop legacy platform data for omap4 gpu
+  bus: ti-sysc: Add module enable quirk for SGX on omap36xx
+  clk: ti: add clkctrl data omap5 sgx
+  ARM: dts: Configure sgx for omap5
+  ARM: dts: Configure interconnect target module for omap3 sgx
+  ARM: dts: Configure rstctrl reset for SGX
+
+ arch/arm/boot/dts/am33xx.dtsi              | 25 ++++++++++
+ arch/arm/boot/dts/omap34xx.dtsi            | 26 +++++++++++
+ arch/arm/boot/dts/omap36xx.dtsi            | 27 +++++++++++
+ arch/arm/boot/dts/omap4.dtsi               |  1 -
+ arch/arm/boot/dts/omap5.dtsi               | 23 ++++++++++
+ arch/arm/boot/dts/omap54xx-clocks.dtsi     | 14 ++++++
+ arch/arm/mach-omap2/omap_hwmod_44xx_data.c | 53 ----------------------
+ drivers/bus/ti-sysc.c                      | 21 +++++++++
+ drivers/clk/ti/clk-54xx.c                  | 34 ++++++++++++++
+ include/dt-bindings/clock/omap5.h          |  3 ++
+ include/linux/platform_data/ti-sysc.h      |  1 +
+ 11 files changed, 174 insertions(+), 54 deletions(-)
+
 -- 
-2.20.1
-
+2.21.0
