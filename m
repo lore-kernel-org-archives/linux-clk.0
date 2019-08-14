@@ -2,84 +2,168 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 707D6C32753
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 18:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB302C32753
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 19:13:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E99B2133F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 18:41:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565808068;
-	bh=rhwHtgh2/fDbYktm6AuNEWakyqGXppoxtIRS7xf4wlM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=kFbamynjfM+SKyeWi4gLJgvx8S72tGsTVv0Y+QFP6nonO+lQV0HuDeP80MdzMf+1J
-	 Np6+D9CzMEfTIqFO7KH0S+tI4NW9tceM2fL7U6Cua4hCPt/boWblygq48TX4XlNlAd
-	 8AOeJBeRn1GL57v3zzj8+3wOL+M3EXs/rdq4zh/A=
+	by mail.kernel.org (Postfix) with ESMTP id A67672173B
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 19:13:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HDN7Xfje"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbfHNSlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 14:41:08 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52868 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728262AbfHNSlH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 14:41:07 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BE372084F;
-        Wed, 14 Aug 2019 18:41:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565808066;
-        bh=rhwHtgh2/fDbYktm6AuNEWakyqGXppoxtIRS7xf4wlM=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=DbTh5ns5su7SAOgV6S1k6SuCGatax5uiRRfnXs0DQX+RUFVqVGBiG3STZG8Cv20CT
-         Rnh+ijJhh+kpujLqWowUCnZF8msKVM0ofvSSU4FN3Y3n05Zav38fpHOsVhC7I1/7fy
-         5e+XsoDb0nOAv+nfCvw2zPPjlcN6KvlJLJ4B/3LY=
-Content-Type: text/plain; charset="utf-8"
+        id S1726047AbfHNTNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 15:13:33 -0400
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33300 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbfHNTNc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 15:13:32 -0400
+Received: by mail-ot1-f65.google.com with SMTP id q20so636871otl.0;
+        Wed, 14 Aug 2019 12:13:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TIMapTPG9TsKNv8gxrvskWdnMtxRZS5RDBC2qelM/IA=;
+        b=HDN7Xfjey0zPgdvSwUfQwg/F2tS+QJSnem6AhqG2iCoclIIlDmEiHo/sqGIXDW/+EY
+         WQ8R47te4xIFIJpvxdGDxXEgmx3ugMKEJ31gMq9sHOOXBrjEzOX5HdtWjXg8OcGsyGlZ
+         GA0j8Gx0prQEe8zkTaP3hxEzo4OnVDga8I9HlNm8E/hklEUp2iNjTcocgDn28SJiKRSJ
+         5EzbE95RFvVwQkUUOh1xM/hDNZ9Vm0o5rmsvUEx046kCPR9rMAWhvdgqev8TO7JfEFEt
+         Rfze5xvVcCzLfKYbXPvMmpDdHPtEI/2P4Esg0Ft3A3nGL07MMIg4On1HYHRtimiiVQSa
+         XXXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TIMapTPG9TsKNv8gxrvskWdnMtxRZS5RDBC2qelM/IA=;
+        b=GAVMubE7r73d5WAntE7YayaN8u0PH7x6jdkHnoodnKJkAn8a2T4nCxmVvjKv/G/ueM
+         E+xDeozKyjEa6tE26y8HbHxcN133rUnE157cTXgYMv7QRqroZnKOYtF/y4JjXRN3rJdF
+         Qre0BcryACp1R72xxa26zs+8x7RpKN8m/cIaErnpEHuA480m/OvwVrBIi7AmmFjzPugG
+         oH/Sla/fW6olXIEuHf7JaT6E5I0a8xUJvjHDlweeHIsS85lPOewHdS1kArxjHDB8Nkoz
+         lmBnid5Hk4U3p93WPIpyqXKbTcV2sOJqNRmU72UQlhKUd4iCIVpH7vC1/NMOjyWUPJQM
+         z+dw==
+X-Gm-Message-State: APjAAAUVHEon2kTUYa5P8wV4kBQe74Nv6k5DhHVBy9QLLx44jI8KRE2U
+        eqPKLYOqBLeMlWiHPYOZFglPa68bs6QC5k9+FE9e8LMpW2mD7g==
+X-Google-Smtp-Source: APXvYqyHWOWBENOuAaX/jmzLmM06wjbi0uiNrAMmhJcOZVwvxhfuSce5NmWmhfJKC09gvUSKQJacLSGUTCtQ1AzhBSQ=
+X-Received: by 2002:a6b:e511:: with SMTP id y17mr1581062ioc.228.1565810011197;
+ Wed, 14 Aug 2019 12:13:31 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190727105330.44cc7f2f@xps13>
-References: <20190108161940.4814-1-miquel.raynal@bootlin.com> <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com> <20190521114644.7000a751@xps13> <20190617115703.642d9967@xps13> <20190727105330.44cc7f2f@xps13>
-Subject: Re: [PATCH v4 0/4] Add device links to clocks
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 11:41:05 -0700
-Message-Id: <20190814184106.9BE372084F@mail.kernel.org>
+References: <20190814131408.57162-1-tony@atomide.com>
+In-Reply-To: <20190814131408.57162-1-tony@atomide.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 14 Aug 2019 14:13:19 -0500
+Message-ID: <CAHCN7x+p5+XoRHJP--mZ0QcP0FzpYK+pRj7d8Y-js6a8z=p_7A@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Configure sgx interconnect data for some omap variants
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        moaz korena <moaz@korena.xyz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2019-07-27 01:53:30)
->=20
-> I know this series might have side effects despite the consequent
-> amount of time spent to write and test it, but I also think the
-> clk subsystem would really benefit from such change and handling
-> suspend to RAM support would be greatly enhanced. You seemed
-> interested at first and now not anymore, could I know why? I got
-> inspired by the regulators subsystem. It is not an idea of mine
-> that device links should be bring to clocks. Regulators are almost
-> as used as clocks so I really understand your fears but why not
-> applying this to -next very early during the -rc cycles and see
-> what happens? You'll have plenty of time to ask me to fix things
-> or even drop it off.
->=20
+On Wed, Aug 14, 2019 at 8:14 AM Tony Lindgren <tony@atomide.com> wrote:
+>
+> Hi all,
+>
+> For a while we've been idling sgx module on omap4 by probing it with
+> ti-sysc interconnect target module driver. This allows leaving out any
+> platform data in favor of device tree data, and idles the module for
+> PM even if we don't have any sgx driver.
+>
+> I've added similar configuration for omap34xx, omap36xx, omap5 and
+> am335x. Adding dra7 should work too, but my beagle x15 is suffering
+> from a power supply problem right now and I'll need to work more on
+> that later on.
+>
+> For am335x, the recently posted prm rstctrl driver is needed. The
+> other SoCs here don't have a dependency to the prm rstctrl driver.
+> And probably am335x child driver(s) also need to map the rstctrl
+> register to increase the deassert use count.
+>
+> Please review and test, this should allow sgx child driver(s) to
+> just use PM runtime to enable the module with no platform data.
+>
+> I've only tested these SoCs via sysfs to ensure the sgx module gets
+> enabled and disabled properly. If you know something about sgx,
+> please describe more why the sgx registers seem to be at different
+> place for each SoC like between omap34xx and omap36xx.
+>
+> These patches may have some dependencies to what I've queued into
+> my for-next branch for fixes so it's best to test with that merged
+> in. Linux next should be usable for testing with these the next
+> time it gets integrated.
+>
+> Regards,
+>
+> Tony
+>
+>
+> Tony Lindgren (6):
+>   ARM: OMAP2+: Drop legacy platform data for omap4 gpu
+>   bus: ti-sysc: Add module enable quirk for SGX on omap36xx
+>   clk: ti: add clkctrl data omap5 sgx
+>   ARM: dts: Configure sgx for omap5
+>   ARM: dts: Configure interconnect target module for omap3 sgx
+>   ARM: dts: Configure rstctrl reset for SGX
+>
 
-Ok, I'm back on this topic. Let me look at the latest code and see how
-it works on a qcom platform I have in hand. If the device links look OK
-then it should be good. I also want to make sure we're not holding a
-nested pile of locks when we're adding the device links so that we don't
-get some weird lockdep problems.
+Assuming the following is correct:
 
+echo on > /sys/bus/platform/devices/5000fe00.target-module/power/control
+# devmem 0x5000fe00 32
+0x40000000
+
+and
+
+echo auto > /sys/bus/platform/devices/5000fe00.target-module/power/control
+# devmem 0x5000fe00 32
+[  776.373504] 8<--- cut here ---
+[  776.376617] Unhandled fault: external abort on non-linefetch (0x1018) at 0xb6
+f76e00
+[  776.384338] pgd = bde98bb0
+[  776.387054] [b6f76e00] *pgd=8cb61831, *pte=5000f383, *ppte=5000fa33
+[  776.393402] In-band Error seen by MPU  at address 0
+
+Then
+
+Tested-by: Adam Ford <aford173@gmail.com> #logicpd-torpedo-37xx-devkit
+
+I do wonder if an omap34xx or omap36xx should use
+compatible = "ti,sysc-omap4", "ti,sysc";
+
+should it use an omap3 equivalent?
+
+adam
+
+>  arch/arm/boot/dts/am33xx.dtsi              | 25 ++++++++++
+>  arch/arm/boot/dts/omap34xx.dtsi            | 26 +++++++++++
+>  arch/arm/boot/dts/omap36xx.dtsi            | 27 +++++++++++
+>  arch/arm/boot/dts/omap4.dtsi               |  1 -
+>  arch/arm/boot/dts/omap5.dtsi               | 23 ++++++++++
+>  arch/arm/boot/dts/omap54xx-clocks.dtsi     | 14 ++++++
+>  arch/arm/mach-omap2/omap_hwmod_44xx_data.c | 53 ----------------------
+>  drivers/bus/ti-sysc.c                      | 21 +++++++++
+>  drivers/clk/ti/clk-54xx.c                  | 34 ++++++++++++++
+>  include/dt-bindings/clock/omap5.h          |  3 ++
+>  include/linux/platform_data/ti-sysc.h      |  1 +
+>  11 files changed, 174 insertions(+), 54 deletions(-)
+>
+> --
+> 2.21.0
