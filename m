@@ -2,80 +2,67 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B52C433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 15:30:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5931AC433FF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 16:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A1CF2133F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 15:30:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C91120665
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 16:23:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565796626;
-	bh=CX48mP1/qs/V0WIfEuGbZqpNO4Jo433GaILdRZ/JeEM=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=e9K3/VNqqcHrFR9VQCZB0x11qHFqdPkB1Bp9d9Je/so1bwUhkF1qg1f8pb3SlCLlt
-	 vpBF9Yl6hArSKzRiDGDTcvrEcyFk2uWfq096oLGeMRsRckLh+s+r7YZ9SX3JjlpJq4
-	 TLdWgv2BDTVzDWmxEAhEA0TsP/ovuxU8aQlesTsI=
+	s=default; t=1565799794;
+	bh=tN017jx7D3mqg2uTVkRp7Eusfnr22JSYqNHhZgC5KJY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=yCLQJkmRu1Q75hPO1zNOALNRjJ7YDOZ1A231S3l6ghnQmLhHb436Zv9nu4AF3JVxQ
+	 wWFlcNujtYU+gzdDNkBg6WiVfU2rG46l6wlwHfLD4gOVUgSa/zYQbgpahGWrEWEUbL
+	 Rcr27VBwbdkRXGBQdKs6GsJ5kEyfflncNE27cePY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727909AbfHNPaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 11:30:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50204 "EHLO mail.kernel.org"
+        id S1727975AbfHNQXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 12:23:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfHNPaZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 11:30:25 -0400
-Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728262AbfHNQXN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Aug 2019 12:23:13 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01F702084F;
-        Wed, 14 Aug 2019 15:30:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 85E81208C2;
+        Wed, 14 Aug 2019 16:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565796624;
-        bh=CX48mP1/qs/V0WIfEuGbZqpNO4Jo433GaILdRZ/JeEM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=PGQUpwQFn9e0omqFaTUYm7VbpW+lXW0bU9M+B2FR7aU67oDqxmiEmiBjnW9MulJx/
-         T/qx3MWZHfn9hU+trpxwu/BTwz32PdAXz9bgi9ZQTHzoU/zlJ6Sohx0ZZfOhnK/Leq
-         wdI/Ln1KlneQc+SVrWr0dvUwdu0+FV6Oi5R8bxfA=
-From:   Dinh Nguyen <dinguyen@kernel.org>
-To:     linux-clk@vger.kernel.org
-Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
-        sboyd@kernel.org, mturquette@baylibre.com, stable@vger.kernel.org
-Subject: [PATCH] clk: socfpga: stratix10: fix rate caclulationg for cnt_clks
-Date:   Wed, 14 Aug 2019 10:30:14 -0500
-Message-Id: <20190814153014.12962-1-dinguyen@kernel.org>
-X-Mailer: git-send-email 2.20.0
+        s=default; t=1565799792;
+        bh=tN017jx7D3mqg2uTVkRp7Eusfnr22JSYqNHhZgC5KJY=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=oFCxzkNDOTeh1H6184ZWtl/56xl35DazBAlo6hqrFwDwf1P2hDOmpbVbwjbydjksB
+         m+nToyVCXv3TJ4yMoq7C/JFpW46MeYdgczjPNUpLb5wLL5+rqwy3SD58FcycXeCxQU
+         /4Ghn8g7Hbp3mYhUkPbDmxh41idiKRP4Pmeo0WFk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190814002402.18154-1-sboyd@kernel.org>
+References: <20190814002402.18154-1-sboyd@kernel.org>
+Subject: Re: [PATCH] clk: socfpga: deindent code to proper indentation
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Dinh Nguyen <dinguyen@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 09:23:11 -0700
+Message-Id: <20190814162312.85E81208C2@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Checking bypass_reg is incorrect for calculating the cnt_clk rates.
-Instead we should be checking that there is a proper hardware register
-that holds the clock divider.
+Quoting Stephen Boyd (2019-08-13 17:24:02)
+> This code is indented oddly, causing checkpatch to complain. Indent it
+> properly.
+>=20
+> Cc: Dinh Nguyen <dinguyen@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
----
- drivers/clk/socfpga/clk-periph-s10.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
-index 5c50e723ecae..1a191eeeebba 100644
---- a/drivers/clk/socfpga/clk-periph-s10.c
-+++ b/drivers/clk/socfpga/clk-periph-s10.c
-@@ -38,7 +38,7 @@ static unsigned long clk_peri_cnt_clk_recalc_rate(struct clk_hw *hwclk,
- 	if (socfpgaclk->fixed_div) {
- 		div = socfpgaclk->fixed_div;
- 	} else {
--		if (!socfpgaclk->bypass_reg)
-+		if (socfpgaclk->hw.reg)
- 			div = ((readl(socfpgaclk->hw.reg) & 0x7ff) + 1);
- 	}
- 
--- 
-2.20.0
+Applied to clk-next
 
