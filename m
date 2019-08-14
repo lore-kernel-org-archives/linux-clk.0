@@ -7,56 +7,57 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D953FC433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 08:32:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05B70C0650F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 08:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACA5620843
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 08:32:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D065F20843
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 08:33:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qMdw+xMV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M7fDqA2e"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726610AbfHNIcl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 04:32:41 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40000 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726365AbfHNIcl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 04:32:41 -0400
-Received: by mail-lj1-f196.google.com with SMTP id e27so8875872ljb.7
-        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2019 01:32:40 -0700 (PDT)
+        id S1726714AbfHNIdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 04:33:54 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:47099 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbfHNIdx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 04:33:53 -0400
+Received: by mail-lf1-f65.google.com with SMTP id n19so10336177lfe.13
+        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2019 01:33:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Qprk97I1dFe+WA8kDtJTqkPzn2PSILy5kREIC5Uixm4=;
-        b=qMdw+xMV024LAbvccUI3jC70aaEEO5YWomLZhuABCdzO2cL+7TrxzWBaQItupTGIe5
-         V5iI287R6yEzuK4400Xf11LNmZT5SP6D3BpwXIiP0REHYCp8lEccJQsiTnSQK7+qJw5c
-         Adf6kT0NahAxCaB61a4PDzWh0bZsvpdye0vrJeeZ3SE9yW+n4tXTOd0BO1uq9rjGvYuB
-         5Nnv5m31Aj9HkD49sGMjQwz//29/ywzsTipoA+S2vbv/e5ERHrl6TQtuGZhTkqDX2q/6
-         Bt86uvuXeQ6/przYNgkxiJfzspWLBBF/cOGwWI6Nx23yadkF0Xae3G66sAVLnvA6hs3F
-         KrJA==
+        bh=E5fo4g4+jTzEPPS8NQRIYLI3z/B0HGMqXSSYS0pphEc=;
+        b=M7fDqA2ev3AaD0nQWyOj2IILz7JS+CusJowE3rw2HWWxQWP5bTn4JIVf4EXeU+h2VV
+         dNtGZicyTPIW+AroFdMrISmo0K7Wa/Ry0A/A0Hov7yo6P3Kvm/XUFQKbuFgPiI4BeFed
+         xyE4+85JhfoCDyLi69SCvuKDP9eMzv6vGULq3NopmDYKw0PL7FWkIJEr+vHFTQHOEGwm
+         jsCPQlZIEWncomumM9JEmluiIhGX9EI1ZmzgqrHNkU6nqj+AkNv7VSxgtcgo9dzyXToM
+         K7hfIA0czHnYUSSKNV+yrrwZCUvtTzXRKjgfW2gj2OmBE+1fxZxrjFX/iIzWKEAU8eT3
+         pUgg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Qprk97I1dFe+WA8kDtJTqkPzn2PSILy5kREIC5Uixm4=;
-        b=SWrB1hMhvqgxIv5cEBE+JUJn2RMJu7VtpcvFtV0YkdNWQQapdSbJaemN2F7yDXylql
-         6VNnXsO25OpvPtnOWjnxneGDQtMUCK/n3vUuGTnB6IhrQeCVnuzRBucaMlT1Rbe3Mhmx
-         N1I+RSI266N9BpfBdNkNkxcTg0B6W+ksvMhMYQ4H53QbfhWtKDT5rQx+HCCw7e1Rc1xB
-         ryYFkDAv2a3Byr/WtJX/IdJ2lVxtp8uP0COkdaoCprMp9ybrQFynF1zZIIGvH4A+eGru
-         Xd4vjXBZ1NQ2oHH9Zh4gAo5rBPv30GhDN0H5hgosv8zf0FCEDp/FPFsdvfD709kbJIvx
-         S6OQ==
-X-Gm-Message-State: APjAAAVQC7KPGZdIUaAcjyxrE7FcYcyju6iFLa1H3yMpVimkc2K/p7fB
-        AL1wtPkvfhUBnGseUqT8au6yagnpzU9RBsZeZcDaJw==
-X-Google-Smtp-Source: APXvYqx+fft1SOz2IQDyCGJ15XAqb3Zjb5OEqzoV7vIlggjkoFNfsMZU8eWQaIcFkhj1gV1hUfaGOfz43NWpoIBxdXE=
-X-Received: by 2002:a2e:9f0f:: with SMTP id u15mr14722764ljk.54.1565771559322;
- Wed, 14 Aug 2019 01:32:39 -0700 (PDT)
+        bh=E5fo4g4+jTzEPPS8NQRIYLI3z/B0HGMqXSSYS0pphEc=;
+        b=ObZDIpccMVBlJxhff1VtJjfN5zqsKrcRy6zZRpdPH2slh3BUlZu4w7em0mxNAFDq9g
+         DF6YTZ8bHCqVUsP9l3L2dcaWe4nMFO5S/3nRsFTiR9DH8Q8JQoBItQLquLKut0HhtUNu
+         +S3l7dPrMVluXVatTm+ZiK8F0xbepr19QESfx6+/ePB3mR1dqn9Tsf/3QsRVQF0unOY5
+         Qk6HISkag3ryxB1frhgzpTl4PobiSVnMbxZFbOTLCNERlVZfdNG3rdwKqH3VkhySRqQo
+         xyOFtxnfT7Mm87Qs+UROQMnm2IYf9My7EPhSSMq7sVPrutO6v+euWxprTWrNc7bzskCa
+         k4Og==
+X-Gm-Message-State: APjAAAVr27doe9Uc4YiCrI0KPE7qmN3AO0LbTgjDD1T3mgaEywNN3NFf
+        CobDBymn8TNoX6JB6Hnlr7+0Giw41ukyFoqN+DegZA==
+X-Google-Smtp-Source: APXvYqzvtd7+XwTL/eQMqN1AuBlMWDwk28758OmtF4qoQrqmv1Bq47tZFUSl03jCW/t21U3acG+NN+hoacaPwYJsMyw=
+X-Received: by 2002:ac2:4c07:: with SMTP id t7mr22869417lfq.152.1565771631899;
+ Wed, 14 Aug 2019 01:33:51 -0700 (PDT)
 MIME-Version: 1.0
-References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com> <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1565308020-31952-2-git-send-email-skomatineni@nvidia.com>
+References: <1565308020-31952-1-git-send-email-skomatineni@nvidia.com> <1565308020-31952-3-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565308020-31952-3-git-send-email-skomatineni@nvidia.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 14 Aug 2019 10:32:28 +0200
-Message-ID: <CACRpkdasx8AooB_bhUpVhU9ig_ztri3hbryiO_FEGEO+eUXwkg@mail.gmail.com>
-Subject: Re: [PATCH v8 01/21] pinctrl: tegra: Fix write barrier placement in pmx_writel
+Date:   Wed, 14 Aug 2019 10:33:39 +0200
+Message-ID: <CACRpkdZ6--v6bdmn7=fjPDxiza0cbuHQN93_fyu+fTCkJpq_Gg@mail.gmail.com>
+Subject: Re: [PATCH v8 02/21] pinctrl: tegra: Add write barrier after all
+ pinctrl register writes
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>
 Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
         Jon Hunter <jonathanh@nvidia.com>,
@@ -90,12 +91,8 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On Fri, Aug 9, 2019 at 1:47 AM Sowjanya Komatineni
 <skomatineni@nvidia.com> wrote:
 
-> pmx_writel uses writel which inserts write barrier before the
-> register write rather.
->
-> This patch has fix to replace writel with writel_relaxed followed
-> by a write barrier to ensure write operation before the barrier
-> is completed for successful pinctrl change.
+> This patch adds write barrier after all pinctrl register writes
+> during resume to make sure all pinctrl changes are complete.
 >
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
