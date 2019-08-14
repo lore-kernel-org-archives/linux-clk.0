@@ -2,310 +2,192 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A40EBC433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:47:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF3CC433FF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 14:46:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 623C22083B
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:47:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58862084F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 14:46:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ASoxP7rO"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YdZnKmhJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfHNNrB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 09:47:01 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40162 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726951AbfHNNrA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 09:47:00 -0400
-Received: by mail-wm1-f66.google.com with SMTP id v19so4524921wmj.5
-        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2019 06:46:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=nTVgW66htPmFXYFJDpkKh6h9k52+8k0c73ltmbLRxWg=;
-        b=ASoxP7rOnKEL/HaRBNfKDMr5/vaFzSs3WvwSRHpHg9ZDcllVOBiPbmyA+sAJ8jVoD/
-         cVvhrnX6eZKjQHl9d9NPg6DMDWFGO/czo+zQVn5hx2+x9wtnluZFkTvxyu6oJobAT/JK
-         RlApuE88RCP9ceG66Axu4KD39PM0y57pstIxZVxx6oX0lfDuKQ3HYQGFh15fI+P8UESX
-         W8xPfCkGKsp9l00NfgOFFXaLhO8F+XQJmwahQKCEk1FA/PEJXPidjtKC1jTfqzhM17Ef
-         RsjSTPO7QcPvOFMnK4l4f0lHc47qndvz/CUJwnlS9aAhL+gXDoH7wBY6gp9egTBSLEME
-         WNtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=nTVgW66htPmFXYFJDpkKh6h9k52+8k0c73ltmbLRxWg=;
-        b=CIWyi/jDlPmWDgF+NHMKmg9pjv5fYFMQZcN5LIMO9TK+q8WA5YFuJxc7l4MX+FsDsJ
-         mKVUEiygzq0AVncdCeiCvsktZe7VH9TiKv3sTmaDIbrXOBK5Z0m+Zlm0d5V8LxEQ11Z1
-         r2BeHm5dweNdw903LFbrmySxTt+9IsL2k6cG4Rvgzqn12rQnm7ADrXUQETU97Y8Ug965
-         I1EMHs0v6QQNS3g2RenmeYDtvy/KfXlONgSHnpUGEqEy6QB4wNI6TPCUL3mizCK35ovo
-         xcyYNiOlUWiaCNPxpX4T0OtU4S3WAiPT/J/PaOENKBMYL66DypfbOvi8eOGZLkt0olQj
-         gKGw==
-X-Gm-Message-State: APjAAAWwEhkfYm/BPTw3aY2vKBfcXH5bukxKtZhbA/wuTYDVFtF6zZdA
-        EC+0eOaCtxKO9lCCMRxIn1UK4A==
-X-Google-Smtp-Source: APXvYqwuglte2f576lPiHbb4D4NDNhit8iVQj9m/KmXK3GYznu3BlfNMv4KC1rNGkvgLECIa/Mud6A==
-X-Received: by 2002:a1c:18a:: with SMTP id 132mr8712502wmb.15.1565790416660;
-        Wed, 14 Aug 2019 06:46:56 -0700 (PDT)
-Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id n8sm96813763wro.89.2019.08.14.06.46.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 06:46:56 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] clk: meson: axg-audio: add g12a reset support
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190812123253.4734-1-jbrunet@baylibre.com>
- <20190812123253.4734-3-jbrunet@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <5cd719ec-07e4-bdd9-1d2d-aecad0b9f1e8@baylibre.com>
-Date:   Wed, 14 Aug 2019 15:46:55 +0200
+        id S1727867AbfHNOq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 10:46:58 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:56206 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726166AbfHNOq6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 10:46:58 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7EEkeV9049697;
+        Wed, 14 Aug 2019 09:46:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1565794000;
+        bh=sx/PiXPM2W8xNYwCRx+JshtepQZXygk0GH0l0unfoS8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=YdZnKmhJpEx2XJjYeZQZ9iyRJatv+eXLcZCOC94fWP4q5nLVjSA63CUiqvr/n7CtZ
+         SA4GPfxXcgJGk0pi0K0xaX7q/I0QlopwFsYUG/YNZiZS4IrxtMJH8yPRnsNwf6RfG4
+         PbeEGo7BJp6Cd+ed1ofsDC3zPMa/KrRGgkTEPmBk=
+Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7EEke56115790
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 14 Aug 2019 09:46:40 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 14
+ Aug 2019 09:46:39 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 14 Aug 2019 09:46:39 -0500
+Received: from [10.250.88.190] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7EEkcGt093444;
+        Wed, 14 Aug 2019 09:46:38 -0500
+Subject: Re: [PATCH 5/6] ARM: dts: Configure interconnect target module for
+ omap3 sgx
+To:     Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>
+CC:     =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
+        <devicetree@vger.kernel.org>, Adam Ford <aford173@gmail.com>,
+        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        <linux-clk@vger.kernel.org>
+References: <20190814131408.57162-1-tony@atomide.com>
+ <20190814131408.57162-6-tony@atomide.com>
+From:   "Andrew F. Davis" <afd@ti.com>
+Message-ID: <4b38a1cd-29e6-60c6-bae1-9c6dddd0a05e@ti.com>
+Date:   Wed, 14 Aug 2019 10:46:38 -0400
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190812123253.4734-3-jbrunet@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190814131408.57162-6-tony@atomide.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/08/2019 14:32, Jerome Brunet wrote:
-> On the g12a, the register space dedicated to the audio clock also
-> provides some resets. Let the clock controller register a reset
-> provider as well for this SoC family.
+On 8/14/19 9:14 AM, Tony Lindgren wrote:
+> Looks like omap34xx OCP registers are not readable unlike on omap36xx.
+> We use SGX revision register instead of the OCP revision register for
+> 34xx and do not configure any SYSCONFIG register unlike for 36xx.
 > 
-> the axg SoC family does not appear to provide this feature.
+> I've tested that the interconnect target module enables and idles
+> just fine with PM runtime control via sys:
 > 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> # echo on > $(find /sys -name control | grep \/5000); rwmem 0x5000fe10
+> # rwmem 0x50000014	# SGX revision register on 36xx
+> 0x50000014 = 0x00010205
+> # echo auto > $(find /sys -name control | grep \/5000)
+> # rwmem 0x5000fe00
+> And when idled, it will produce "Bus error" as expected.
+> 
+> Cc: Adam Ford <aford173@gmail.com>
+> Cc: Filip Matijević <filip.matijevic.pz@gmail.com>
+> Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> Cc: moaz korena <moaz@korena.xyz>
+> Cc: Merlijn Wajer <merlijn@wizzup.org>
+> Cc: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Cc: Philipp Rossak <embed3d@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 > ---
->  drivers/clk/meson/axg-audio.c | 107 +++++++++++++++++++++++++++++++++-
->  drivers/clk/meson/axg-audio.h |   1 +
->  2 files changed, 106 insertions(+), 2 deletions(-)
+>  arch/arm/boot/dts/omap34xx.dtsi | 26 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/omap36xx.dtsi | 27 +++++++++++++++++++++++++++
+>  2 files changed, 53 insertions(+)
 > 
-> diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-> index 741df7e955ca..6be9df1efce5 100644
-> --- a/drivers/clk/meson/axg-audio.c
-> +++ b/drivers/clk/meson/axg-audio.c
-> @@ -12,6 +12,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  #include <linux/reset.h>
-> +#include <linux/reset-controller.h>
->  #include <linux/slab.h>
->  
->  #include "axg-audio.h"
-> @@ -918,6 +919,84 @@ static int devm_clk_get_enable(struct device *dev, char *id)
->  	return 0;
->  }
->  
-> +struct axg_audio_reset_data {
-> +	struct reset_controller_dev rstc;
-> +	struct regmap *map;
-> +	unsigned int offset;
-> +};
+> diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx.dtsi
+> --- a/arch/arm/boot/dts/omap34xx.dtsi
+> +++ b/arch/arm/boot/dts/omap34xx.dtsi
+> @@ -100,6 +100,32 @@
+>  				interrupts = <18>;
+>  			};
+>  		};
 > +
-> +static void axg_audio_reset_reg_and_bit(struct axg_audio_reset_data *rst,
-> +					unsigned long id,
-> +					unsigned int *reg,
-> +					unsigned int *bit)
-> +{
-> +	unsigned int stride = regmap_get_reg_stride(rst->map);
+> +		/*
+> +		 * On omap34xx the OCP registers do not seem to be accessible
+> +		 * at all unlike on 36xx. Maybe SGX is permanently set to
+> +		 * "OCP bypass mode", or maybe there is OCP_SYSCONFIG that is
+> +		 * write-only at 0x50000e10. We detect SGX based on the SGX
+> +		 * revision register instead of the unreadable OCP revision
+> +		 * register. Also note that on early 34xx es1 revision there
+> +		 * are also different clocks, but we do not have any dts users
+> +		 * for it.
+> +		 */
+> +		sgx_module: target-module@50000000 {
+> +			compatible = "ti,sysc-omap2", "ti,sysc";
+> +			reg = <0x50000014 0x4>;
+> +			reg-names = "rev";
+> +			clocks = <&sgx_fck>, <&sgx_ick>;
+> +			clock-names = "fck", "ick";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges = <0 0x50000000 0x4000>;
 > +
-> +	*reg = (id / (stride * BITS_PER_BYTE)) * stride;
-> +	*reg += rst->offset;
-> +	*bit = id % (stride * BITS_PER_BYTE);
-> +}
-> +
-> +static int axg_audio_reset_update(struct reset_controller_dev *rcdev,
-> +				unsigned long id, bool assert)
-> +{
-> +	struct axg_audio_reset_data *rst =
-> +		container_of(rcdev, struct axg_audio_reset_data, rstc);
-> +	unsigned int offset, bit;
-> +
-> +	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-> +
-> +	regmap_update_bits(rst->map, offset, BIT(bit),
-> +			assert ? BIT(bit) : 0);
-> +
-> +	return 0;
-> +}
-> +
-> +static int axg_audio_reset_status(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	struct axg_audio_reset_data *rst =
-> +		container_of(rcdev, struct axg_audio_reset_data, rstc);
-> +	unsigned int val, offset, bit;
-> +
-> +	axg_audio_reset_reg_and_bit(rst, id, &offset, &bit);
-> +
-> +	regmap_read(rst->map, offset, &val);
-> +
-> +	return !!(val & BIT(bit));
-> +}
-> +
-> +static int axg_audio_reset_assert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	return axg_audio_reset_update(rcdev, id, true);
-> +}
-> +
-> +static int axg_audio_reset_deassert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	return axg_audio_reset_update(rcdev, id, false);
-> +}
-> +
-> +static int axg_audio_reset_toggle(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
-> +{
-> +	int ret;
-> +
-> +	ret = axg_audio_reset_assert(rcdev, id);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return axg_audio_reset_deassert(rcdev, id);
-> +}
-> +
-> +static const struct reset_control_ops axg_audio_rstc_ops = {
-> +	.assert = axg_audio_reset_assert,
-> +	.deassert = axg_audio_reset_deassert,
-> +	.reset = axg_audio_reset_toggle,
-> +	.status = axg_audio_reset_status,
-> +};
-> +
->  static const struct regmap_config axg_audio_regmap_cfg = {
->  	.reg_bits	= 32,
->  	.val_bits	= 32,
-> @@ -927,12 +1006,15 @@ static const struct regmap_config axg_audio_regmap_cfg = {
->  
->  struct audioclk_data {
->  	struct clk_hw_onecell_data *hw_onecell_data;
-> +	unsigned int reset_offset;
-> +	unsigned int reset_num;
->  };
->  
->  static int axg_audio_clkc_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
->  	const struct audioclk_data *data;
-> +	struct axg_audio_reset_data *rst;
->  	struct regmap *map;
->  	struct resource *res;
->  	void __iomem *regs;
-> @@ -984,8 +1066,27 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
->  		}
->  	}
->  
-> -	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> -					   data->hw_onecell_data);
-> +	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
-> +					data->hw_onecell_data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Stop here if there is no reset */
-> +	if (!data->reset_num)
-> +		return 0;
-> +
-> +	rst = devm_kzalloc(dev, sizeof(*rst), GFP_KERNEL);
-> +	if (!rst)
-> +		return -ENOMEM;
-> +
-> +	rst->map = map;
-> +	rst->offset = data->reset_offset;
-> +	rst->rstc.nr_resets = data->reset_num;
-> +	rst->rstc.ops = &axg_audio_rstc_ops;
-> +	rst->rstc.of_node = dev->of_node;
-> +	rst->rstc.owner = THIS_MODULE;
-> +
-> +	return devm_reset_controller_register(dev, &rst->rstc);
->  }
->  
->  static const struct audioclk_data axg_audioclk_data = {
-> @@ -994,6 +1095,8 @@ static const struct audioclk_data axg_audioclk_data = {
->  
->  static const struct audioclk_data g12a_audioclk_data = {
->  	.hw_onecell_data = &g12a_audio_hw_onecell_data,
-> +	.reset_offset = AUDIO_SW_RESET,
-> +	.reset_num = 26,
->  };
->  
->  static const struct of_device_id clkc_match_table[] = {
-> diff --git a/drivers/clk/meson/axg-audio.h b/drivers/clk/meson/axg-audio.h
-> index 5d972d55d6c7..c00e28b2e1a9 100644
-> --- a/drivers/clk/meson/axg-audio.h
-> +++ b/drivers/clk/meson/axg-audio.h
-> @@ -22,6 +22,7 @@
->  #define AUDIO_MCLK_F_CTRL	0x018
->  #define AUDIO_MST_PAD_CTRL0	0x01c
->  #define AUDIO_MST_PAD_CTRL1	0x020
-> +#define AUDIO_SW_RESET		0x024
->  #define AUDIO_MST_A_SCLK_CTRL0	0x040
->  #define AUDIO_MST_A_SCLK_CTRL1	0x044
->  #define AUDIO_MST_B_SCLK_CTRL0	0x048
-> 
+> +			/*
+> +			 * Closed source PowerVR driver, no cnhild device
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+
+s/cnhild/child same below
+
+Andrew
+
+
+> +			 * binding or driver in mainline
+> +			 */
+> +		};
+>  	};
+>  
+>  	thermal_zones: thermal-zones {
+> diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.dtsi
+> --- a/arch/arm/boot/dts/omap36xx.dtsi
+> +++ b/arch/arm/boot/dts/omap36xx.dtsi
+> @@ -139,6 +139,33 @@
+>  				interrupts = <18>;
+>  			};
+>  		};
+> +
+> +		/*
+> +		 * The OCP register layout seems to be a subset of the
+> +		 * "ti,sysc-omap4" with just sidle and midle bits.
+> +		 */
+> +		sgx_module: target-module@50000000 {
+> +			compatible = "ti,sysc-omap4", "ti,sysc";
+> +			reg = <0x5000fe00 0x4>,
+> +			      <0x5000fe10 0x4>;
+> +			reg-names = "rev", "sysc";
+> +			ti,sysc-midle = <SYSC_IDLE_FORCE>,
+> +					<SYSC_IDLE_NO>,
+> +					<SYSC_IDLE_SMART>;
+> +			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
+> +					<SYSC_IDLE_NO>,
+> +					<SYSC_IDLE_SMART>;
+> +			clocks = <&sgx_fck>, <&sgx_ick>;
+> +			clock-names = "fck", "ick";
+> +			#address-cells = <1>;
+> +			#size-cells = <1>;
+> +			ranges = <0 0x50000000 0x2000000>;
+> +
+> +			/*
+> +			 * Closed source PowerVR driver, no cnhild device
+> +			 * binding or driver in mainline
+> +			 */
+> +		};
+>  	};
+>  
+>  	thermal_zones: thermal-zones {
+> 
