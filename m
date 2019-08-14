@@ -2,119 +2,84 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D021C32753
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 17:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 707D6C32753
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 18:41:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5C0E206C1
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 17:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E99B2133F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 18:41:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565803635;
-	bh=+41o6/e8C3rXOa97d7ojKaetkEKiEfIBz+3a72/HK8w=;
-	h=In-Reply-To:References:Subject:From:To:Date:List-ID:From;
-	b=ZbuzQFQCQY0f7zQSs1wmLI9Caymg0Dnl/uYVzKEk9fl7jBaKvXNYvL1QUqFpkSYei
-	 bWWdRHZ37tvNiK+Nc8dpWchsXFjm0Tkqh/U7oi7Fz/re7Le5svlQG3c30Kf04l/gB2
-	 dIlOXC6pGRLrhc7obPXp3MmYzDdsPLJaMSv1BuYk=
+	s=default; t=1565808068;
+	bh=rhwHtgh2/fDbYktm6AuNEWakyqGXppoxtIRS7xf4wlM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=kFbamynjfM+SKyeWi4gLJgvx8S72tGsTVv0Y+QFP6nonO+lQV0HuDeP80MdzMf+1J
+	 Np6+D9CzMEfTIqFO7KH0S+tI4NW9tceM2fL7U6Cua4hCPt/boWblygq48TX4XlNlAd
+	 8AOeJBeRn1GL57v3zzj8+3wOL+M3EXs/rdq4zh/A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729610AbfHNR1O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 13:27:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48544 "EHLO mail.kernel.org"
+        id S1728265AbfHNSlI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 14:41:08 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729593AbfHNR1N (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 13:27:13 -0400
+        id S1728262AbfHNSlH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Aug 2019 14:41:07 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7F8F6206C1;
-        Wed, 14 Aug 2019 17:27:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9BE372084F;
+        Wed, 14 Aug 2019 18:41:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565803632;
-        bh=+41o6/e8C3rXOa97d7ojKaetkEKiEfIBz+3a72/HK8w=;
-        h=In-Reply-To:References:Subject:From:To:Date:From;
-        b=bz9MVcdnLCunPed+11bKUFqXoUxHJm8DV9Ku/iZIOTbgaS1Sjej5zap8bdJfM6HIU
-         NRy/p5pGykiILOq6ab5LAu+cxIIUhfzftTQbRX1APx5bOywzIjEPOezyH5OB2nv9I0
-         6O1GDRYSpW3DI/cwtbNyOsLvNyLCr7wunrBD+aJY=
+        s=default; t=1565808066;
+        bh=rhwHtgh2/fDbYktm6AuNEWakyqGXppoxtIRS7xf4wlM=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=DbTh5ns5su7SAOgV6S1k6SuCGatax5uiRRfnXs0DQX+RUFVqVGBiG3STZG8Cv20CT
+         Rnh+ijJhh+kpujLqWowUCnZF8msKVM0ofvSSU4FN3Y3n05Zav38fpHOsVhC7I1/7fy
+         5e+XsoDb0nOAv+nfCvw2zPPjlcN6KvlJLJ4B/3LY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB7PR04MB51955595AB182A80162E313AE2AD0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190812100103.34393-1-wen.he_1@nxp.com> <20190813182520.2914520665@mail.kernel.org> <DB7PR04MB51955595AB182A80162E313AE2AD0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-Subject: RE: [EXT] Re: [v1 1/3] clk: ls1028a: Add clock driver for Display output interface
+In-Reply-To: <20190727105330.44cc7f2f@xps13>
+References: <20190108161940.4814-1-miquel.raynal@bootlin.com> <155502565678.20095.10517989462650657961@swboyd.mtv.corp.google.com> <20190521114644.7000a751@xps13> <20190617115703.642d9967@xps13> <20190727105330.44cc7f2f@xps13>
+Subject: Re: [PATCH v4 0/4] Add device links to clocks
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-devel@linux.nxdi.nxp.com" <linux-devel@linux.nxdi.nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>,
-        Leo Li <leoyang.li@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Wen He <wen.he_1@nxp.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
 User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 10:27:11 -0700
-Message-Id: <20190814172712.7F8F6206C1@mail.kernel.org>
+Date:   Wed, 14 Aug 2019 11:41:05 -0700
+Message-Id: <20190814184106.9BE372084F@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wen He (2019-08-14 02:38:21)
+Quoting Miquel Raynal (2019-07-27 01:53:30)
 >=20
+> I know this series might have side effects despite the consequent
+> amount of time spent to write and test it, but I also think the
+> clk subsystem would really benefit from such change and handling
+> suspend to RAM support would be greatly enhanced. You seemed
+> interested at first and now not anymore, could I know why? I got
+> inspired by the regulators subsystem. It is not an idea of mine
+> that device links should be bring to clocks. Regulators are almost
+> as used as clocks so I really understand your fears but why not
+> applying this to -next very early during the -rc cycles and see
+> what happens? You'll have plenty of time to ask me to fix things
+> or even drop it off.
 >=20
-> > -----Original Message-----
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > Sent: 2019=E5=B9=B48=E6=9C=8814=E6=97=A5 2:25
-> > To: Michael Turquette <mturquette@baylibre.com>; Wen He
-> > <wen.he_1@nxp.com>; Leo Li <leoyang.li@nxp.com>;
-> > linux-clk@vger.kernel.org; linux-devel@linux.nxdi.nxp.com;
-> > linux-kernel@vger.kernel.org; liviu.dudau@arm.com
-> > Cc: Wen He <wen.he_1@nxp.com>
-> > Subject: [EXT] Re: [v1 1/3] clk: ls1028a: Add clock driver for Display =
-output
-> > interface
-> >=20
-> >=20
-> > Quoting Wen He (2019-08-12 03:01:03)
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig index
-> > > 801fa1cd0321..0e6c7027d637 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -223,6 +223,15 @@ config CLK_QORIQ
-> > >           This adds the clock driver support for Freescale QorIQ plat=
-forms
-> > >           using common clock framework.
-> > >
-> > > +config CLK_PLLDIG
-> > > +        bool "Clock driver for LS1028A Display output"
-> > > +        depends on ARCH_LAYERSCAPE && OF
-> >=20
-> > Does it actually depend on either of these to build? Probabl not, so ma=
-ybe just
-> > default ARCH_LAYERSCAPE && OF? Also, can your Kconfig variable be named
-> > something more specific like CLK_LS1028A_PLLDIG?
->=20
-> Actually it also depends Display modules, but we allow building display d=
-rivers as modules,=20
-> so is here whether need add Display modules depend and also allow clock d=
-river building
-> to a module?=20
-> Would it be better to reduce the number of the modules insert, I think th=
-e clock driver
-> should be long available for the system.
 
-I'm asking if it actually requires ARCH_LAYERSCAPE or OF to successfully
-compile the file. Is that true? I don't see any asm/ includes or
-anything that's going to fail if either of these configs aren't enabled.
-So it seems safe to change this to=20
+Ok, I'm back on this topic. Let me look at the latest code and see how
+it works on a qcom platform I have in hand. If the device links look OK
+then it should be good. I also want to make sure we're not holding a
+nested pile of locks when we're adding the device links so that we don't
+get some weird lockdep problems.
 
-	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-	default ARCH_LAYERSCAPE
-
-so that it's compiled by default on this architecture and is available
-to be compile tested by various test builders.
-
->=20
-> looks like great if named Kconfig variable to 'CLK_LS1028A_PLLDIG'.
->=20
-> >=20
