@@ -2,192 +2,80 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF3CC433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 14:46:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65B52C433FF
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 15:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58862084F
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 14:46:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="YdZnKmhJ"
+	by mail.kernel.org (Postfix) with ESMTP id 3A1CF2133F
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 15:30:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565796626;
+	bh=CX48mP1/qs/V0WIfEuGbZqpNO4Jo433GaILdRZ/JeEM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=e9K3/VNqqcHrFR9VQCZB0x11qHFqdPkB1Bp9d9Je/so1bwUhkF1qg1f8pb3SlCLlt
+	 vpBF9Yl6hArSKzRiDGDTcvrEcyFk2uWfq096oLGeMRsRckLh+s+r7YZ9SX3JjlpJq4
+	 TLdWgv2BDTVzDWmxEAhEA0TsP/ovuxU8aQlesTsI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727867AbfHNOq6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 10:46:58 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56206 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfHNOq6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 10:46:58 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7EEkeV9049697;
-        Wed, 14 Aug 2019 09:46:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1565794000;
-        bh=sx/PiXPM2W8xNYwCRx+JshtepQZXygk0GH0l0unfoS8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=YdZnKmhJpEx2XJjYeZQZ9iyRJatv+eXLcZCOC94fWP4q5nLVjSA63CUiqvr/n7CtZ
-         SA4GPfxXcgJGk0pi0K0xaX7q/I0QlopwFsYUG/YNZiZS4IrxtMJH8yPRnsNwf6RfG4
-         PbeEGo7BJp6Cd+ed1ofsDC3zPMa/KrRGgkTEPmBk=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7EEke56115790
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 14 Aug 2019 09:46:40 -0500
-Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 14
- Aug 2019 09:46:39 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 14 Aug 2019 09:46:39 -0500
-Received: from [10.250.88.190] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7EEkcGt093444;
-        Wed, 14 Aug 2019 09:46:38 -0500
-Subject: Re: [PATCH 5/6] ARM: dts: Configure interconnect target module for
- omap3 sgx
-To:     Tony Lindgren <tony@atomide.com>, <linux-omap@vger.kernel.org>
-CC:     =?UTF-8?Q?Beno=c3=aet_Cousson?= <bcousson@baylibre.com>,
-        <devicetree@vger.kernel.org>, Adam Ford <aford173@gmail.com>,
-        =?UTF-8?Q?Filip_Matijevi=c4=87?= <filip.matijevic.pz@gmail.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        moaz korena <moaz@korena.xyz>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        =?UTF-8?Q?Pawe=c5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        <linux-clk@vger.kernel.org>
-References: <20190814131408.57162-1-tony@atomide.com>
- <20190814131408.57162-6-tony@atomide.com>
-From:   "Andrew F. Davis" <afd@ti.com>
-Message-ID: <4b38a1cd-29e6-60c6-bae1-9c6dddd0a05e@ti.com>
-Date:   Wed, 14 Aug 2019 10:46:38 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1727909AbfHNPaZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 11:30:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50204 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726551AbfHNPaZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Aug 2019 11:30:25 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 01F702084F;
+        Wed, 14 Aug 2019 15:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565796624;
+        bh=CX48mP1/qs/V0WIfEuGbZqpNO4Jo433GaILdRZ/JeEM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=PGQUpwQFn9e0omqFaTUYm7VbpW+lXW0bU9M+B2FR7aU67oDqxmiEmiBjnW9MulJx/
+         T/qx3MWZHfn9hU+trpxwu/BTwz32PdAXz9bgi9ZQTHzoU/zlJ6Sohx0ZZfOhnK/Leq
+         wdI/Ln1KlneQc+SVrWr0dvUwdu0+FV6Oi5R8bxfA=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org,
+        sboyd@kernel.org, mturquette@baylibre.com, stable@vger.kernel.org
+Subject: [PATCH] clk: socfpga: stratix10: fix rate caclulationg for cnt_clks
+Date:   Wed, 14 Aug 2019 10:30:14 -0500
+Message-Id: <20190814153014.12962-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-In-Reply-To: <20190814131408.57162-6-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/14/19 9:14 AM, Tony Lindgren wrote:
-> Looks like omap34xx OCP registers are not readable unlike on omap36xx.
-> We use SGX revision register instead of the OCP revision register for
-> 34xx and do not configure any SYSCONFIG register unlike for 36xx.
-> 
-> I've tested that the interconnect target module enables and idles
-> just fine with PM runtime control via sys:
-> 
-> # echo on > $(find /sys -name control | grep \/5000); rwmem 0x5000fe10
-> # rwmem 0x50000014	# SGX revision register on 36xx
-> 0x50000014 = 0x00010205
-> # echo auto > $(find /sys -name control | grep \/5000)
-> # rwmem 0x5000fe00
-> And when idled, it will produce "Bus error" as expected.
-> 
-> Cc: Adam Ford <aford173@gmail.com>
-> Cc: Filip Matijević <filip.matijevic.pz@gmail.com>
-> Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
-> Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-> Cc: moaz korena <moaz@korena.xyz>
-> Cc: Merlijn Wajer <merlijn@wizzup.org>
-> Cc: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> Cc: Philipp Rossak <embed3d@gmail.com>
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  arch/arm/boot/dts/omap34xx.dtsi | 26 ++++++++++++++++++++++++++
->  arch/arm/boot/dts/omap36xx.dtsi | 27 +++++++++++++++++++++++++++
->  2 files changed, 53 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx.dtsi
-> --- a/arch/arm/boot/dts/omap34xx.dtsi
-> +++ b/arch/arm/boot/dts/omap34xx.dtsi
-> @@ -100,6 +100,32 @@
->  				interrupts = <18>;
->  			};
->  		};
-> +
-> +		/*
-> +		 * On omap34xx the OCP registers do not seem to be accessible
-> +		 * at all unlike on 36xx. Maybe SGX is permanently set to
-> +		 * "OCP bypass mode", or maybe there is OCP_SYSCONFIG that is
-> +		 * write-only at 0x50000e10. We detect SGX based on the SGX
-> +		 * revision register instead of the unreadable OCP revision
-> +		 * register. Also note that on early 34xx es1 revision there
-> +		 * are also different clocks, but we do not have any dts users
-> +		 * for it.
-> +		 */
-> +		sgx_module: target-module@50000000 {
-> +			compatible = "ti,sysc-omap2", "ti,sysc";
-> +			reg = <0x50000014 0x4>;
-> +			reg-names = "rev";
-> +			clocks = <&sgx_fck>, <&sgx_ick>;
-> +			clock-names = "fck", "ick";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges = <0 0x50000000 0x4000>;
-> +
-> +			/*
-> +			 * Closed source PowerVR driver, no cnhild device
+Checking bypass_reg is incorrect for calculating the cnt_clk rates.
+Instead we should be checking that there is a proper hardware register
+that holds the clock divider.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ drivers/clk/socfpga/clk-periph-s10.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-s/cnhild/child same below
+diff --git a/drivers/clk/socfpga/clk-periph-s10.c b/drivers/clk/socfpga/clk-periph-s10.c
+index 5c50e723ecae..1a191eeeebba 100644
+--- a/drivers/clk/socfpga/clk-periph-s10.c
++++ b/drivers/clk/socfpga/clk-periph-s10.c
+@@ -38,7 +38,7 @@ static unsigned long clk_peri_cnt_clk_recalc_rate(struct clk_hw *hwclk,
+ 	if (socfpgaclk->fixed_div) {
+ 		div = socfpgaclk->fixed_div;
+ 	} else {
+-		if (!socfpgaclk->bypass_reg)
++		if (socfpgaclk->hw.reg)
+ 			div = ((readl(socfpgaclk->hw.reg) & 0x7ff) + 1);
+ 	}
+ 
+-- 
+2.20.0
 
-Andrew
-
-
-> +			 * binding or driver in mainline
-> +			 */
-> +		};
->  	};
->  
->  	thermal_zones: thermal-zones {
-> diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.dtsi
-> --- a/arch/arm/boot/dts/omap36xx.dtsi
-> +++ b/arch/arm/boot/dts/omap36xx.dtsi
-> @@ -139,6 +139,33 @@
->  				interrupts = <18>;
->  			};
->  		};
-> +
-> +		/*
-> +		 * The OCP register layout seems to be a subset of the
-> +		 * "ti,sysc-omap4" with just sidle and midle bits.
-> +		 */
-> +		sgx_module: target-module@50000000 {
-> +			compatible = "ti,sysc-omap4", "ti,sysc";
-> +			reg = <0x5000fe00 0x4>,
-> +			      <0x5000fe10 0x4>;
-> +			reg-names = "rev", "sysc";
-> +			ti,sysc-midle = <SYSC_IDLE_FORCE>,
-> +					<SYSC_IDLE_NO>,
-> +					<SYSC_IDLE_SMART>;
-> +			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-> +					<SYSC_IDLE_NO>,
-> +					<SYSC_IDLE_SMART>;
-> +			clocks = <&sgx_fck>, <&sgx_ick>;
-> +			clock-names = "fck", "ick";
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges = <0 0x50000000 0x2000000>;
-> +
-> +			/*
-> +			 * Closed source PowerVR driver, no cnhild device
-> +			 * binding or driver in mainline
-> +			 */
-> +		};
->  	};
->  
->  	thermal_zones: thermal-zones {
-> 
