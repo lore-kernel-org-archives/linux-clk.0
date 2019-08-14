@@ -1,53 +1,51 @@
-Return-Path: <SRS0=gnDx=WJ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23351C433FF
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 21:41:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C02C32750
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 00:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF94120663
-	for <linux-clk@archiver.kernel.org>; Tue, 13 Aug 2019 21:41:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C3720665
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 00:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565732509;
-	bh=y45ppmo8H+UmFsR8Vr5BLhr0iRlrjbJItfa6nYWO1EE=;
+	s=default; t=1565742244;
+	bh=b9sTOzVRZO2UFsFBvHh59r6YtcTgFSYnb0uAfs4xYSg=;
 	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Ep1rj+k2IxYv7XPRbDgMvmR6y/68Qi0ljaEVXLfaAEua20G4d93VsozXsjIvEAFSA
-	 RB2sz8EI/H/6HhQmTMGIOXygfSdRzRNTi9nu2HzQU4mb8niEOAz+8B5nHF9UIvJmpU
-	 1QNVC/qvoV7FfpZBXLEJBTvRCu4+raeRGd8dhUUE=
+	b=IOfeTWG7AZvL1scvVj5UD+qyDVQ2Y8rTSBPYwYzDgQ4dfBVV80A8nujYEWbYXJRTK
+	 16DfKjQekjF4Hy0OaZ5nt4judXfCpmIz4cDQkvwdOQ//SLo9I6VLpS+AzH6cnmETG0
+	 2PqnKGQVoiC3FIVR4ylSJw7ivKBb2P0ouUmw11xg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726188AbfHMVlt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 13 Aug 2019 17:41:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59980 "EHLO mail.kernel.org"
+        id S1726102AbfHNAYE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 13 Aug 2019 20:24:04 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39772 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726124AbfHMVlt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 13 Aug 2019 17:41:49 -0400
+        id S1726007AbfHNAYD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 13 Aug 2019 20:24:03 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E737F205F4;
-        Tue, 13 Aug 2019 21:41:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EF3120665;
+        Wed, 14 Aug 2019 00:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565732508;
-        bh=y45ppmo8H+UmFsR8Vr5BLhr0iRlrjbJItfa6nYWO1EE=;
+        s=default; t=1565742243;
+        bh=b9sTOzVRZO2UFsFBvHh59r6YtcTgFSYnb0uAfs4xYSg=;
         h=From:To:Cc:Subject:Date:From;
-        b=dH+wk20EowqzGbtKF3+eSJz7f7ntqtM9l/SYajpf4JehQIfZ5+1Kx6NNn9aH0ePh7
-         9gQoBmo8DAdrNZke6J9DaiEvEDbVjrLLJXC/wYlMAfHol+AnBOLOWWXVnlw5X0+lAm
-         J7DXfszZEA/rx9sCDwUQmFs4hplpA7eq0bnObK/c=
+        b=awRYqL6qd97cGg07d9AY7B2KkWjvnuH1hQxRbS6/Xq4lPQJs7/jYcbqB7X9gAUhe1
+         0NP51JH8xA3Ul9lYhipBS1mxELGiBOEtBVJZ/3pOMUwrynyHCFfRkkQdYbzQT3YHj8
+         c6ymwmg2ctGskEOehlubifwIEAYler+U9+rJEGL0=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [PATCH v2] clk: Fix falling back to legacy parent string matching
-Date:   Tue, 13 Aug 2019 14:41:47 -0700
-Message-Id: <20190813214147.34394-1-sboyd@kernel.org>
+        Dinh Nguyen <dinguyen@kernel.org>
+Subject: [PATCH] clk: socfpga: deindent code to proper indentation
+Date:   Tue, 13 Aug 2019 17:24:02 -0700
+Message-Id: <20190814002402.18154-1-sboyd@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -56,129 +54,41 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Calls to clk_core_get() will return ERR_PTR(-EINVAL) if we've started
-migrating a clk driver to use the DT based style of specifying parents
-but we haven't made any DT updates yet. This happens when we pass a
-non-NULL value as the 'name' argument of of_parse_clkspec(). That
-function returns -EINVAL in such a situation, instead of -ENOENT like we
-expected. The return value comes back up to clk_core_fill_parent_index()
-which proceeds to skip calling clk_core_lookup() because the error
-pointer isn't equal to -ENOENT, it's -EINVAL.
+This code is indented oddly, causing checkpatch to complain. Indent it
+properly.
 
-Furthermore, we blindly overwrite the error pointer returned by
-clk_core_get() with NULL when there isn't a legacy .name member
-specified in the parent map. This isn't too bad right now because we
-don't really care to differentiate NULL from an error, but in the future
-we should only try to do a legacy lookup if we know we might find
-something. This way DT lookups that fail don't try to lookup based on
-strings when there isn't any string to match, hiding the error from DT
-parsing.
-
-Fix both these problems so that clk provider drivers can use the new
-style of parent mapping without having to also update their DT at the
-same time. This patch is based on an earlier patch from Taniya Das which
-checked for -EINVAL in addition to -ENOENT return values from
-clk_core_get().
-
-Fixes: 601b6e93304a ("clk: Allow parents to be specified via clkspec index")
-Cc: Taniya Das <tdas@codeaurora.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Chen-Yu Tsai <wens@csie.org>
-Reported-by: Taniya Das <tdas@codeaurora.org>
+Cc: Dinh Nguyen <dinguyen@kernel.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
+ drivers/clk/socfpga/clk-gate.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Changes from v1:
- * Don't trust error values from of_clk_get_hw() anymore, instead 
-   look for parsing errors and only proceed if the parsing doesn't
-   fail.
- * Leave the -ENOENT check in place so that EPROBE_DEFER returned
-   from clk_core_lookup() doesn't try to do a global string search
-   if parsing succeeded.
+diff --git a/drivers/clk/socfpga/clk-gate.c b/drivers/clk/socfpga/clk-gate.c
+index 2a5876dfa0cf..43ecd507bf83 100644
+--- a/drivers/clk/socfpga/clk-gate.c
++++ b/drivers/clk/socfpga/clk-gate.c
+@@ -45,8 +45,8 @@ static u8 socfpga_clk_get_parent(struct clk_hw *hwclk)
+ 	if (streq(name, SOCFPGA_MMC_CLK))
+ 		return perpll_src &= 0x3;
+ 	if (streq(name, SOCFPGA_NAND_CLK) ||
+-			streq(name, SOCFPGA_NAND_X_CLK))
+-			return (perpll_src >> 2) & 3;
++	    streq(name, SOCFPGA_NAND_X_CLK))
++		return (perpll_src >> 2) & 3;
+ 
+ 	/* QSPI clock */
+ 	return (perpll_src >> 4) & 3;
 
- drivers/clk/clk.c | 46 ++++++++++++++++++++++++++++++++++------------
- 1 file changed, 34 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..8bce6bb4a965 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -324,6 +324,25 @@ static struct clk_core *clk_core_lookup(const char *name)
- 	return NULL;
- }
- 
-+#ifdef CONFIG_OF
-+static int of_parse_clkspec(const struct device_node *np, int index,
-+			    const char *name, struct of_phandle_args *out_args);
-+static struct clk_hw *
-+of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec);
-+#else
-+static inline int of_parse_clkspec(const struct device_node *np, int index,
-+				   const char *name,
-+				   struct of_phandle_args *out_args)
-+{
-+	return -ENOENT;
-+}
-+static inline struct clk_hw *
-+of_clk_get_hw_from_clkspec(struct of_phandle_args *clkspec)
-+{
-+	return ERR_PTR(-ENOENT);
-+}
-+#endif
-+
- /**
-  * clk_core_get - Find the clk_core parent of a clk
-  * @core: clk to find parent of
-@@ -355,8 +374,9 @@ static struct clk_core *clk_core_lookup(const char *name)
-  *      };
-  *
-  * Returns: -ENOENT when the provider can't be found or the clk doesn't
-- * exist in the provider. -EINVAL when the name can't be found. NULL when the
-- * provider knows about the clk but it isn't provided on this system.
-+ * exist in the provider or the name can't be found in the DT node or
-+ * in a clkdev lookup. NULL when the provider knows about the clk but it
-+ * isn't provided on this system.
-  * A valid clk_core pointer when the clk can be found in the provider.
-  */
- static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
-@@ -367,17 +387,19 @@ static struct clk_core *clk_core_get(struct clk_core *core, u8 p_index)
- 	struct device *dev = core->dev;
- 	const char *dev_id = dev ? dev_name(dev) : NULL;
- 	struct device_node *np = core->of_node;
-+	struct of_phandle_args clkspec;
- 
--	if (np && (name || index >= 0))
--		hw = of_clk_get_hw(np, index, name);
--
--	/*
--	 * If the DT search above couldn't find the provider or the provider
--	 * didn't know about this clk, fallback to looking up via clkdev based
--	 * clk_lookups
--	 */
--	if (PTR_ERR(hw) == -ENOENT && name)
-+	if (np && (name || index >= 0) &&
-+	    !of_parse_clkspec(np, index, name, &clkspec)) {
-+		hw = of_clk_get_hw_from_clkspec(&clkspec);
-+		of_node_put(clkspec.np);
-+	} else if (name) {
-+		/*
-+		 * If the DT search above couldn't find the provider fallback to
-+		 * looking up via clkdev based clk_lookups.
-+		 */
- 		hw = clk_find_hw(dev_id, name);
-+	}
- 
- 	if (IS_ERR(hw))
- 		return ERR_CAST(hw);
-@@ -401,7 +423,7 @@ static void clk_core_fill_parent_index(struct clk_core *core, u8 index)
- 			parent = ERR_PTR(-EPROBE_DEFER);
- 	} else {
- 		parent = clk_core_get(core, index);
--		if (IS_ERR(parent) && PTR_ERR(parent) == -ENOENT)
-+		if (IS_ERR(parent) && PTR_ERR(parent) == -ENOENT && entry->name)
- 			parent = clk_core_lookup(entry->name);
- 	}
- 
+base-commit: 5f9e832c137075045d15cd6899ab0505cfb2ca4b
+prerequisite-patch-id: aeb7774ad0e487e9156f9065b4ba813eb74fb9b0
+prerequisite-patch-id: 71bf5a81905764a6f5639fd13eae3ce644baed20
+prerequisite-patch-id: 75904dba6c6767f4d9bcfa1f32002d2992e647b7
+prerequisite-patch-id: 478335b7427317b0e86f3b5433ffcec7f7c3b83e
+prerequisite-patch-id: c532536a7433c0041f7ad1c7ee0b08a8d4c99a9d
+prerequisite-patch-id: 7d179ce42cc421f3d110bade4783780955f8df42
+prerequisite-patch-id: 390fa8a15fccc52e454e27552cdb835cb0e35b7f
+prerequisite-patch-id: c9092a57b488d94d1ba249ef726c29fafb5abcbb
+prerequisite-patch-id: d39cde5e03e04c09a66bffb3851a23dc5e5128d6
 -- 
 Sent by a computer through tubes
 
