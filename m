@@ -2,96 +2,126 @@ Return-Path: <SRS0=2ArH=WK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AF63C433FF
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:27:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39A48C32753
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:46:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D48CF206C2
-	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:27:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565789268;
-	bh=x7mdKvWLxMd/R2+emM7IDljJoGkEVQ8qgJIieKj8u60=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=kK1SEtkUQFJqP9zeYLLsn/Qcfce6RRIEPJxjLsbpfUV6Z+Eq20FOvSss8WcquBRZD
-	 I5Ws+XaHE5wi4W/YN2ZHJseNKefdG172XYyI3N/1uiV0UY7V8EZL/XMvUvOaCgRQ0c
-	 H1zCj9u6O795oyt3Ur2Gq6XylWKyzt83bAzZXM6M=
+	by mail.kernel.org (Postfix) with ESMTP id 089792083B
+	for <linux-clk@archiver.kernel.org>; Wed, 14 Aug 2019 13:46:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ACMidKuh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbfHNN1s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 09:27:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55310 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726551AbfHNN1s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 09:27:48 -0400
-Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F96D206C1;
-        Wed, 14 Aug 2019 13:27:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565789266;
-        bh=x7mdKvWLxMd/R2+emM7IDljJoGkEVQ8qgJIieKj8u60=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WDuyKCFGBd7tB36ZQm59oQ03cURtX1lPeOYheXDnNn1m0aJeQdHM7sCm0FVHIZ2xh
-         fQfLGoEhDvmllBIO/0zBS5PvKKs86gJVyRs2n5kERwI6gYfPFtsJJDJay2KtSX9+AZ
-         bB2FVFF+V+XhW7YqezaGbS0dYWbxx8rYnkdbOog8=
-Subject: Re: [PATCH] clk: socfpga: deindent code to proper indentation
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20190814002402.18154-1-sboyd@kernel.org>
-From:   Dinh Nguyen <dinguyen@kernel.org>
+        id S1725800AbfHNNqF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 09:46:05 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46076 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727982AbfHNNqF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 09:46:05 -0400
+Received: by mail-wr1-f67.google.com with SMTP id q12so20876851wrj.12
+        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2019 06:46:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=TlGjjt3pKm7Y+Xi9AmXuCsOh2BkyPJ+SBu9c0vd073M=;
+        b=ACMidKuhbM+uzagCaYuihV5VXI4v6CNfJHtQtkRadD8JQtGNKNN/Rgpi5j/75w8oL6
+         yYhcE1bJTODm1Fo5ZwOqt7J2DDiSjEpcr4cSw68z3Mol5FF1tVZKLr49vccp5E3IpAyU
+         JaLcp6ei6WP245DEXtoZNHD+sI4m1/TGBH4JeCbhR46TgYm6hAyMosSZ1WS/gWxqtEzy
+         OvntyLZPBzSR++KPBCCKrsH6rVS9BBWnsleGiipgNlx8Gw1h3FyZsvfs4kX+7PATj6n5
+         6CsMUK3RtCHLe6fd5YPLn1yeV9bKogsen0xjq5WtjbpiIksTPnyD6bUxGm8ttzI/a8a3
+         Ektw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=TlGjjt3pKm7Y+Xi9AmXuCsOh2BkyPJ+SBu9c0vd073M=;
+        b=okyqS/tputo2Vjr6Nf0U5e0G2dxsD8JIrR4fEQXvXjj1T2xwtPbO8j4HPGmUWDtlfc
+         hKCjFiMTNPnE7zCF5lPjnOstZtFiYjrJ803s8dj4tUA8UlUP42zJblC3kJ3d5a9ROt14
+         U83jcKD6x3sAjb6su3UuHbHDAlqEKRmLqaY7I/o1wZiRUJ/rfRdw54VnuK//dfR0ZlZ7
+         /bLYLAMo4Jlz9MGnEQVQUkr28ce9+mMPxSrShkR9W3/bMEhGgUr6lbzPGU5hNPstq52t
+         Z54Ccm7LsQU7DWg5VAXUREqn7vrOZ7jRuBmLeyur8s630CxmlPbh2JhwbXmO98zBMbQF
+         Pvuw==
+X-Gm-Message-State: APjAAAXaXKQe6mMEGzPJVnZdXoz2XMhRcBC8k8lk9SMOK2+OTLkRxSoK
+        WurR/FU/R+u26BbnEK07Ono+Fg==
+X-Google-Smtp-Source: APXvYqxqqfAonffyvhUiK7vcNDMyy5IZUeu9Swk/dpe9Q1XaRim9vb+17qnXxQVHTrOP2aDseyUUYA==
+X-Received: by 2002:a5d:4111:: with SMTP id l17mr53446238wrp.59.1565790362528;
+        Wed, 14 Aug 2019 06:46:02 -0700 (PDT)
+Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
+        by smtp.gmail.com with ESMTPSA id e6sm20116180wrw.35.2019.08.14.06.46.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 06:46:01 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: meson: add resets to the audio
+ clock controller
+To:     Jerome Brunet <jbrunet@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190812123253.4734-1-jbrunet@baylibre.com>
+ <20190812123253.4734-2-jbrunet@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- mQINBFEnvWwBEAC44OQqJjuetSRuOpBMIk3HojL8dY1krl8T8GJjfgc/Gh97CfVbrqhV5yQ3
- Sk/MW9mxO9KNvQCbZtthfn62YHmroNwipjZ6wKOMfKdtJR4+8JW/ShIJYnrMfwN8Wki6O+5a
- yPNNCeENHleV0FLVXw3aACxOcjEzGJHYmg4UC+56rfoxPEhKF6aGBTV5aGKMtQy77ywuqt12
- c+hlRXHODmXdIeT2V4/u/AsFNAq6UFUEvHrVj+dMIyv2VhjRvkcESIGnG12ifPdU7v/+wom/
- smtfOAGojgTCqpwd0Ay2xFzgGnSCIFRHp0I/OJqhUcwAYEAdgHSBVwiyTQx2jP+eDu3Q0jI3
- K/x5qrhZ7lj8MmJPJWQOSYC4fYSse2oVO+2msoMTvMi3+Jy8k+QNH8LhB6agq7wTgF2jodwO
- yij5BRRIKttp4U62yUgfwbQtEUvatkaBQlG3qSerOzcdjSb4nhRPxasRqNbgkBfs7kqH02qU
- LOAXJf+y9Y1o6Nk9YCqb5EprDcKCqg2c8hUya8BYqo7y+0NkBU30mpzhaJXncbCMz3CQZYgV
- 1TR0qEzMv/QtoVuuPtWH9RCC83J5IYw1uFUG4RaoL7Z03fJhxGiXx3/r5Kr/hC9eMl2he6vH
- 8rrEpGGDm/mwZOEoG5D758WQHLGH4dTAATg0+ZzFHWBbSnNaSQARAQABtCFEaW5oIE5ndXll
- biA8ZGluZ3V5ZW5Aa2VybmVsLm9yZz6JAjgEEwECACIFAlbG5oQCGwMGCwkIBwMCBhUIAgkK
- CwQWAgMBAh4BAheAAAoJEBmUBAuBoyj0fIgQAICrZ2ceRWpkZv1UPM/6hBkWwOo3YkzSQwL+
- AH15hf9xx0D5mvzEtZ97ZoD0sAuB+aVIFwolet+nw49Q8HA3E/3j0DT7sIAqJpcPx3za+kKT
- twuQ4NkQTTi4q5WCpA5b6e2qzIynB50b3FA6bCjJinN06PxhdOixJGv1qDDmJ01fq2lA7/PL
- cny/1PIo6PVMWo9nf77L6iXVy8sK/d30pa1pjhMivfenIleIPYhWN1ZdRAkH39ReDxdqjQXN
- NHanNtsnoCPFsqeCLmuUwcG+XSTo/gEM6l2sdoMF4qSkD4DdrVf5rsOyN4KJAY9Uqytn4781
- n6l1NAQSRr0LPT5r6xdQ3YXIbwUfrBWh2nDPm0tihuHoH0CfyJMrFupSmjrKXF84F3cq0DzC
- yasTWUKyW/YURbWeGMpQH3ioDLvBn0H3AlVoSloaRzPudQ6mP4O8mY0DZQASGf6leM82V3t0
- Gw8MxY9tIiowY7Yl2bHqXCorPlcEYXjzBP32UOxIK7y7AQ1JQkcv6pZ0/6lX6hMshzi9Ydw0
- m8USfFRZb48gsp039gODbSMCQ2NfxBEyUPw1O9nertCMbIO/0bHKkP9aiHwg3BPwm3YL1UvM
- ngbze/8cyjg9pW3Eu1QAzMQHYkT1iiEjJ8fTssqDLjgJyp/I3YHYUuAf3i8SlcZTusIwSqnD
- uQINBFEnvWwBEADZqma4LI+vMqJYe15fxnX8ANw+ZuDeYHy17VXqQ7dA7n8E827ndnoXoBKB
- 0n7smz1C0I9StarHQPYTUciMLsaUpedEfpYgqLa7eRLFPvk/cVXxmY8Pk+aO8zHafr8yrFB1
- cYHO3Ld8d/DvF2DuC3iqzmgXzaRQhvQZvJ513nveCa2zTPPCj5w4f/Qkq8OgCz9fOrf/CseM
- xcP3Jssyf8qTZ4CTt1L6McRZPA/oFNTTgS/KA22PMMP9i8E6dF0Nsj0MN0R7261161PqfA9h
- 5c+BBzKZ6IHvmfwY+Fb0AgbqegOV8H/wQYCltPJHeA5y1kc/rqplw5I5d8Q6B29p0xxXSfaP
- UQ/qmXUkNQPNhsMnlL3wRoCol60IADiEyDJHVZRIl6U2K54LyYE1vkf14JM670FsUH608Hmk
- 30FG8bxax9i+8Muda9ok/KR4Z/QPQukmHIN9jVP1r1C/aAEvjQ2PK9aqrlXCKKenQzZ8qbeC
- rOTXSuJgWmWnPWzDrMxyEyy+e84bm+3/uPhZjjrNiaTzHHSRnF2ffJigu9fDKAwSof6SwbeH
- eZcIM4a9Dy+Ue0REaAqFacktlfELeu1LVzMRvpIfPua8izTUmACTgz2kltTaeSxAXZwIziwY
- prPU3cfnAjqxFHO2TwEpaQOMf8SH9BSAaCXArjfurOF+Pi3lKwARAQABiQIfBBgBAgAJBQJR
- J71sAhsMAAoJEBmUBAuBoyj0MnIQAI+bcNsfTNltf5AbMJptDgzISZJrYCXuzOgv4+d1CubD
- 83s0k6VJgsiCIEpvELQJsr58xB6l+o3yTBZRo/LViNLk0jF4CmCdXWjTyaQAIceEdlaeeTGH
- d5GqAud9rv9q1ERHTcvmoEX6pwv3m66ANK/dHdBV97vXacl+BjQ71aRiAiAFySbJXnqj+hZQ
- K8TCI/6TOtWJ9aicgiKpmh/sGmdeJCwZ90nxISvkxDXLEmJ1prvbGc74FGNVNTW4mmuNqj/p
- oNr0iHan8hjPNXwoyLNCtj3I5tBmiHZcOiHDUufHDyKQcsKsKI8kqW3pJlDSACeNpKkrjrib
- 3KLQHSEhTQCt3ZUDf5xNPnFHOnBjQuGkumlmhkgD5RVguki39AP2BQYp/mdk1NCRQxz5PR1B
- 2w0QaTgPY24chY9PICcMw+VeEgHZJAhuARKglxiYj9szirPd2kv4CFu2w6a5HNMdVT+i5Hov
- cJEJNezizexE0dVclt9OS2U9Xwb3VOjs1ITMEYUf8T1j83iiCCFuXqH4U3Eji0nDEiEN5Ac0
- Jn/EGOBG2qGyKZ4uOec9j5ABF7J6hyO7H6LJaX5bLtp0Z7wUbyVaR4UIGdIOchNgNQk4stfm
- JiyuXyoFl/1ihREfvUG/e7+VAAoOBnMjitE5/qUERDoEkkuQkMcAHyEyd+XZMyXY
-Message-ID: <8e2a3d84-9b6c-be16-e404-3df367aaf344@kernel.org>
-Date:   Wed, 14 Aug 2019 08:27:45 -0500
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ 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
+ ZaTUOEkgIor5losDrePdPgE=
+Organization: Baylibre
+Message-ID: <cf6fffe3-4b73-be98-ee7c-40940fa7a985@baylibre.com>
+Date:   Wed, 14 Aug 2019 15:46:01 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190814002402.18154-1-sboyd@kernel.org>
+In-Reply-To: <20190812123253.4734-2-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -100,19 +130,73 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
-
-On 8/13/19 7:24 PM, Stephen Boyd wrote:
-> This code is indented oddly, causing checkpatch to complain. Indent it
-> properly.
+On 12/08/2019 14:32, Jerome Brunet wrote:
+> Add the documentation and bindings for the resets provided by the g12a
+> audio clock controller
 > 
-> Cc: Dinh Nguyen <dinguyen@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  drivers/clk/socfpga/clk-gate.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  .../bindings/clock/amlogic,axg-audio-clkc.txt |  1 +
+>  .../reset/amlogic,meson-g12a-audio-reset.h    | 38 +++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+> index 0f777749f4f1..b3957d10d241 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
+> @@ -22,6 +22,7 @@ Required Properties:
+>  				       components.
+>  - resets	: phandle of the internal reset line
+>  - #clock-cells	: should be 1.
+> +- #reset-cells  : should be 1 on the g12a (and following) soc family
+>  
+>  Each clock is assigned an identifier and client nodes can use this identifier
+>  to specify the clock which they consume. All available clocks are defined as
+> diff --git a/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h b/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+> new file mode 100644
+> index 000000000000..14b78dabed0e
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
+> @@ -0,0 +1,38 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2019 BayLibre, SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_AMLOGIC_MESON_G12A_AUDIO_RESET_H
+> +#define _DT_BINDINGS_AMLOGIC_MESON_G12A_AUDIO_RESET_H
+> +
+> +#define AUD_RESET_PDM		0
+> +#define AUD_RESET_TDMIN_A	1
+> +#define AUD_RESET_TDMIN_B	2
+> +#define AUD_RESET_TDMIN_C	3
+> +#define AUD_RESET_TDMIN_LB	4
+> +#define AUD_RESET_LOOPBACK	5
+> +#define AUD_RESET_TODDR_A	6
+> +#define AUD_RESET_TODDR_B	7
+> +#define AUD_RESET_TODDR_C	8
+> +#define AUD_RESET_FRDDR_A	9
+> +#define AUD_RESET_FRDDR_B	10
+> +#define AUD_RESET_FRDDR_C	11
+> +#define AUD_RESET_TDMOUT_A	12
+> +#define AUD_RESET_TDMOUT_B	13
+> +#define AUD_RESET_TDMOUT_C	14
+> +#define AUD_RESET_SPDIFOUT	15
+> +#define AUD_RESET_SPDIFOUT_B	16
+> +#define AUD_RESET_SPDIFIN	17
+> +#define AUD_RESET_EQDRC		18
+> +#define AUD_RESET_RESAMPLE	19
+> +#define AUD_RESET_DDRARB	20
+> +#define AUD_RESET_POWDET	21
+> +#define AUD_RESET_TORAM		22
+> +#define AUD_RESET_TOACODEC	23
+> +#define AUD_RESET_TOHDMITX	24
+> +#define AUD_RESET_CLKTREE	25
+> +
+> +#endif
 > 
 
-Acked-by: Dinh Nguyen <dinguyen@kernel.org>
-
-
+Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
