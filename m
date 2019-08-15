@@ -2,79 +2,76 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4D0C3A589
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 15:16:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB9EC3A589
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 15:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 768BB208C2
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 15:16:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B8552084D
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 15:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565882177;
-	bh=YIfI/ppz1LWSDkP2R1sEFsQgzfbXfwcerSHGBbeZVcQ=;
+	s=default; t=1565882328;
+	bh=emtmpN8koXyGRnpKRd+goYJhZ3VVizKGLhWaG2eElpw=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=Gqq8n0LsjgVkBeF/h59olg5Rd/k0cPCWVh2zRu+E7d1seuLmfs/nQ08z2Qb7gy6yA
-	 WTT/G+g8+Vx7kmqMAM1AHqu3ycge0AjlrFbVucMDSONt0BcYuzV6XAYl4cqMx2ajDD
-	 wO5v4xpxcOkcIHbYO6QGH3HjnTJdr6nMjVvLGJl0=
+	b=hGQm7DnkSAFNK4jgYCMbzy0MXyAAqeW8VP6GssQOaT7J7l3QvmcNID0VHP1YnN/K1
+	 6lEGhnwuwnFgMUdw1PJEkb1AQ217gOZqiGc80brUADMtBzTJZarGfBb0s6A8x96wel
+	 3lOAcCJXuWUYBthfwyPkUwQtpVljk96ob5bPGiLs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732631AbfHOPQR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 11:16:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55518 "EHLO mail.kernel.org"
+        id S1726616AbfHOPSr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 11:18:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732623AbfHOPQR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 11:16:17 -0400
+        id S1726080AbfHOPSr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Aug 2019 11:18:47 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A298206C1;
-        Thu, 15 Aug 2019 15:16:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA999206C1;
+        Thu, 15 Aug 2019 15:18:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565882176;
-        bh=YIfI/ppz1LWSDkP2R1sEFsQgzfbXfwcerSHGBbeZVcQ=;
+        s=default; t=1565882327;
+        bh=emtmpN8koXyGRnpKRd+goYJhZ3VVizKGLhWaG2eElpw=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=f7BBgtpIhpR9pWeAYZpkjQLqjogcL13PZg3qdB77K49aXzmH7+UAGHJYl2BzFqmTg
-         ftpiCR+aKQnJcT6J8GzHhy0l2POdjDxE8ea++K/LX4Nk8Cp1lx9+09y0tlRtg3ZBPe
-         2ETdoIwk46b6D8EWrqHmNqHzJebqw8y5JXYS84Ng=
+        b=CgTdZg7C4TKnbBcwJyBIKQohYSn3rP7ceSj4iWdoGWybsqCHWcLT6u2zkbpHNS+mY
+         ni5KaAhohoeBCsJtfd6ldxVNfg9im9mNK9+B88A95VgPPp4NupMoQ4oVVL5gef2+Kl
+         eV/3sQ1uQdH+8uoIYqY05sSrG8Hn7BAY9r5DYpqo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190815112614.GA4841@sirena.co.uk>
-References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com> <20190815040221.DE28F2067D@mail.kernel.org> <20190815112614.GA4841@sirena.co.uk>
-Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
+In-Reply-To: <20190815080146.4tkudfzus7uryoe6@flea>
+References: <20190815041037.3470-1-sboyd@kernel.org> <20190815080146.4tkudfzus7uryoe6@flea>
+Subject: Re: [PATCH] clk: sunxi: Don't call clk_hw_get_name() on a hw that isn't registered
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     "kernelci.org bot" <bot@kernelci.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
-        khilman@baylibre.com, matthew.hart@linaro.org,
-        mgalka@collabora.com, tomeu.vizoso@collabora.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Mark Brown <broonie@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
 User-Agent: alot/0.8.1
-Date:   Thu, 15 Aug 2019 08:16:15 -0700
-Message-Id: <20190815151616.2A298206C1@mail.kernel.org>
+Date:   Thu, 15 Aug 2019 08:18:46 -0700
+Message-Id: <20190815151846.DA999206C1@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mark Brown (2019-08-15 04:26:14)
-> On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
-> > Quoting kernelci.org bot (2019-08-14 20:35:25)
+Quoting Maxime Ripard (2019-08-15 01:01:46)
+> On Wed, Aug 14, 2019 at 09:10:37PM -0700, Stephen Boyd wrote:
+> > The implementation of clk_hw_get_name() relies on the clk_core
+> > associated with the clk_hw pointer existing. If of_clk_hw_register()
+> > fails, there isn't a clk_core created yet, so calling clk_hw_get_name()
+> > here fails. Extract the name first so we can print it later.
+> >
+> > Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+> > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> > Cc: Chen-Yu Tsai <wens@csie.org>
+> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 >=20
-> > > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-li=
-bretech-all-h3-cc
+> Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 >=20
-> > If this is the only board that failed, great! Must be something in a
-> > sun8i driver that uses the init structure after registration.
+> Do you want to apply it yourself, or should I merge this and send you
+> a PR later?
 >=20
-> The infrastructure suppresses duplicate-seeming bisections so I'd not
-> count on it, check the reports on the web site.
 
-Hmm ok. I can remove the change from -next, but I'd still like to figure
-out what is using the init pointer after registration. Is there a way to
-get earlycon logs?
+I can apply it myself. Thanks! Now to figure out the real problem...
