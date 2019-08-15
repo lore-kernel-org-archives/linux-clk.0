@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E47F1C3A589
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 791D5C3A59B
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:00:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB6952086C
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45414208C2
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:00:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565884838;
-	bh=A4wQl6vcC8iZEo+vLLbng0Wix6dTYFgjLABnwe1gTpY=;
+	s=default; t=1565884843;
+	bh=gocEmGOTZWJfwU63JkLjs2GgZL/h/Eci4v4XP4SbSVU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GuwKPu7yHUz0kr5CObB8TgC/srYOAeKIzMjOle6xUypU4kweeWpNhcyAwByw8NlcW
-	 iLlh2dMu/F1NS/AhGHq9WMe18XZtkK8nTRzH/HGJpCuL0xEnIgLSkSDsZRthBdjqSI
-	 tsgyitlMhT6ZoNt7ln59RE2lOqTemZ9WWuAMUHQ0=
+	b=RHcV0965IOUKmkDbwBAlO9bx5PJrOTbqSWsLwF61UxRNSoZvU4QXhP4chnwSzht9t
+	 3sKuEWFd/Mj43WhG5nQHFd4Myk+615IDZQZp1gusQAvX+YOY7aU+uRKbTj5+5WhH8+
+	 hh9CeddLMpW+KM6N4NdvmkW4ZPeo6kbMjgMtQn2Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729562AbfHOQAb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 12:00:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46556 "EHLO mail.kernel.org"
+        id S1729779AbfHOQAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 12:00:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729539AbfHOQAX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1729560AbfHOQAX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Thu, 15 Aug 2019 12:00:23 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EFBA2171F;
-        Thu, 15 Aug 2019 16:00:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44A252133F;
+        Thu, 15 Aug 2019 16:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565884823;
-        bh=A4wQl6vcC8iZEo+vLLbng0Wix6dTYFgjLABnwe1gTpY=;
+        s=default; t=1565884822;
+        bh=gocEmGOTZWJfwU63JkLjs2GgZL/h/Eci4v4XP4SbSVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YC9e654T/YbzSJ2/aIR2ryASLUL2B5Uu0n1AxyMJhG/B3tjT6DSd0JQYAvHdw3ose
-         1SvsZKH1vaij+mxpOTcfr9+N5HrM8bcw4G+DoqXmYvqAsxXneDziMTe9+IaRrJMzit
-         xMAeOPSyULkiHT+QQrS2pk8v9ap8ygmcYPC6V80o=
+        b=Apy6m9Syl5bjhUbw6eI9DRferjvCLnyi2XhRcBYxLS0PIg8LpMQa/cCkFQHrlXaEa
+         cVYueYZa/D+7v8yhcGtXYuZOnNsrsH9z0KafKViDTcGB9jGRzvVM9eVOiyBHvAXzGE
+         KRPBOuFUA8K68t49izdlhbTRW7kK03YpdHZpQiSU=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH 4/4] clk: qcom: Remove error prints from DFS registration
-Date:   Thu, 15 Aug 2019 09:00:20 -0700
-Message-Id: <20190815160020.183334-5-sboyd@kernel.org>
+        Sugaya Taichi <sugaya.taichi@socionext.com>
+Subject: [PATCH 1/4] clk: milbeaut:  Don't reference clk_init_data after registration
+Date:   Thu, 15 Aug 2019 09:00:17 -0700
+Message-Id: <20190815160020.183334-2-sboyd@kernel.org>
 X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 In-Reply-To: <20190815160020.183334-1-sboyd@kernel.org>
 References: <20190815160020.183334-1-sboyd@kernel.org>
@@ -56,42 +56,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These aren't useful and they reference the init structure name. Let's
-just drop them.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-Cc: Taniya Das <tdas@codeaurora.org>
+Cc: Sugaya Taichi <sugaya.taichi@socionext.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ drivers/clk/clk-milbeaut.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 8c02bffe50df..161a6498ed5a 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1105,8 +1105,6 @@ static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
- 
- 	rcg->freq_tbl = NULL;
- 
--	pr_debug("DFS registered for clk %s\n", init->name);
--
- 	return 0;
- }
- 
-@@ -1117,12 +1115,8 @@ int qcom_cc_register_rcg_dfs(struct regmap *regmap,
- 
- 	for (i = 0; i < len; i++) {
- 		ret = clk_rcg2_enable_dfs(&rcgs[i], regmap);
--		if (ret) {
--			const char *name = rcgs[i].init->name;
--
--			pr_err("DFS register failed for clk %s\n", name);
-+		if (ret)
- 			return ret;
--		}
+diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
+index 5fc78faf820c..80b9d78493bc 100644
+--- a/drivers/clk/clk-milbeaut.c
++++ b/drivers/clk/clk-milbeaut.c
+@@ -437,7 +437,7 @@ static int m10v_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 		if (readl_poll_timeout(divider->write_valid_reg, val,
+ 			!val, M10V_UPOLL_RATE, M10V_UTIMEOUT))
+ 			pr_err("%s:%s couldn't stabilize\n",
+-				__func__, divider->hw.init->name);
++				__func__, clk_hw_get_name(hw));
  	}
  
- 	return 0;
+ 	if (divider->lock)
 -- 
 Sent by a computer through tubes
 
