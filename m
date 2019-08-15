@@ -2,275 +2,258 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E144AC31E40
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 03:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52541C433FF
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 04:02:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FDDC208C2
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 03:35:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="vgyMxZyh"
+	by mail.kernel.org (Postfix) with ESMTP id 114342171F
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 04:02:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565841744;
+	bh=P+AYYRu1UVFmoNeSvYyImLFAmUghU+0Zz4UPzpG2Yy0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=GgbNLvKSOp0D/wuomYdIuP37eHkAnTpI4nXMyYtnWquE/9ujwBSs7VZaIVsT/OWX7
+	 YUrS6SADReGRbaE+nPeRO3FJtXXfWcd86uHEw0SzVWQnfV/cvMZyhfS9gJ4IdDEScf
+	 SHrhYxy+DYbIdoAnxPzXcz8uBM56ciB/jJ80CMic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726865AbfHODf3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 23:35:29 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35885 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727742AbfHODf3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 23:35:29 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r3so1023326wrt.3
-        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2019 20:35:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=tzH18a4Yz+szTgI8M3pVorYGS+ZN6NxiMdBI+qyWdjE=;
-        b=vgyMxZyhj9sPu8N86M18yhpSAVOvtqbA0BjeL/5BXcEVXa55Xf1sJl1jJvC62tFJ1y
-         O3BPjp/yvabiopeEcfCej+O1+AYdLgbFTCVSI2yBR7fIb7wlEsfgl4DMbW6WgB6W5QKu
-         X8goyCOJzQ1RVEqCBZ0ifTlASgMbO39+mDKcUiBzRJoQc8027TJjND32ygg/SGhgk1t9
-         HSDB6It0V51XwRIZ/bYBqleGpJiqiFtU/OWiebsVVb5ZVmHWvz30Ewoe16dgUm7PJIDp
-         EidoTgCYliZPJvD3dK6ivJOAczBtGkl2dyxVU+lSBgSmVZuB2/qp5koqK6/Q1heCxIhN
-         ki6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=tzH18a4Yz+szTgI8M3pVorYGS+ZN6NxiMdBI+qyWdjE=;
-        b=iCiX1wb00PVyIE+407EZUgfpJx+iJy9KPMdawIdj1+5jPWSMZoZnPu3FV60Ff/IJl1
-         KIQZj9mF+bL3VB7UDnp/cHLsipFpSYe+D3vw1eW9pWd0Ff3ZM4mALSeEO4HmWX+jaByu
-         IDPNoEtLSmjjIit+CY2pTErsZ7MCHaHwzVZlsaTzZ5AQXUOBrbbYQbohkbuCjm6Letkb
-         C6fO8aArZkXJEwHfApXZwqVn2L/FJ9W8U/FnIRfP1duZoNe2vscTCPkmlh4dFeTLlAzZ
-         bBZgzx/uInfIHBXefDyLruUiJ7GGspICqSGgcDPlOetWQFUVueCsrUoNaQU+38iboq2h
-         8FjQ==
-X-Gm-Message-State: APjAAAUZq5+dQL8gt/5uaYD7AQojDHt8RYbaHmLkjvbb/5OQ+GpmKBs1
-        Racda0HJqakzMMX8HBZwGZAzJA==
-X-Google-Smtp-Source: APXvYqy4DftgVp2X8IKxQg4KxvqEbBb17jHrydLbirOURnLc4p4A3fJ9KdvCzP296F82C4xOgjKc5A==
-X-Received: by 2002:a05:6000:1041:: with SMTP id c1mr2584396wrx.99.1565840125867;
-        Wed, 14 Aug 2019 20:35:25 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id p9sm1430761wru.61.2019.08.14.20.35.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Aug 2019 20:35:25 -0700 (PDT)
-Message-ID: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com>
-Date:   Wed, 14 Aug 2019 20:35:25 -0700 (PDT)
+        id S1725832AbfHOECX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 00:02:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60670 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725681AbfHOECX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:02:23 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DE28F2067D;
+        Thu, 15 Aug 2019 04:02:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565841742;
+        bh=P+AYYRu1UVFmoNeSvYyImLFAmUghU+0Zz4UPzpG2Yy0=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=e1esrKmYIiJzxrpLActgaq5kTqqHosEEE5O3zWfF5A/SK9lUYoFAkmC+usBwQi6zk
+         YcxWMX39kb5NmTyMZldXm+fDEBjJ9m7oHhOZe58BVf7uyEXTTSRRKNMtTuC3rS/iGf
+         As0VOLToNZBxig9tGM/OY204iEYEY8KWBDlnZa9w=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Lab-Name: lab-baylibre
-X-Kernelci-Kernel: v5.3-rc1-79-g31f58d2f58cb
-X-Kernelci-Tree: clk
-X-Kernelci-Report-Type: bisect
-X-Kernelci-Branch: clk-next
-Subject: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on
- sun8i-h3-libretech-all-h3-cc
-To:     tomeu.vizoso@collabora.com, Stephen Boyd <sboyd@kernel.org>,
-        guillaume.tucker@collabora.com, mgalka@collabora.com,
-        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-From:   "kernelci.org bot" <bot@kernelci.org>
+In-Reply-To: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com>
+References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com>
+Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
+From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     "kernelci.org bot" <bot@kernelci.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        broonie@kernel.org, enric.balletbo@collabora.com,
+        guillaume.tucker@collabora.com, khilman@baylibre.com,
+        matthew.hart@linaro.org, mgalka@collabora.com,
+        tomeu.vizoso@collabora.com, Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+User-Agent: alot/0.8.1
+Date:   Wed, 14 Aug 2019 21:02:20 -0700
+Message-Id: <20190815040221.DE28F2067D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-*                                                               *
-* If you do send a fix, please include this trailer:            *
-*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-*                                                               *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+Quoting kernelci.org bot (2019-08-14 20:35:25)
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+> * This automated bisection report was sent to you on the basis  *
+> * that you may be involved with the breaking commit it has      *
+> * found.  No manual investigation has been done to verify it,   *
+> * and the root cause of the problem may be somewhere else.      *
+> *                                                               *
+> * If you do send a fix, please include this trailer:            *
+> *   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+> *                                                               *
+> * Hope this helps!                                              *
+> * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+>=20
+> clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libret=
+ech-all-h3-cc
 
-clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretec=
-h-all-h3-cc
+If this is the only board that failed, great! Must be something in a
+sun8i driver that uses the init structure after registration.
 
-Summary:
-  Start:      31f58d2f58cb Merge branch 'clk-meson' into clk-next
-  Details:    https://kernelci.org/boot/id/5d54b9d159b514324cf1226e
-  Plain log:  https://storage.kernelci.org//clk/clk-next/v5.3-rc1-79-g31f58=
-d2f58cb/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-sun8i=
--h3-libretech-all-h3-cc.txt
-  HTML log:   https://storage.kernelci.org//clk/clk-next/v5.3-rc1-79-g31f58=
-d2f58cb/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-sun8i=
--h3-libretech-all-h3-cc.html
-  Result:     c82987e740d1 clk: Overwrite clk_hw::init with NULL during clk=
-_register()
-
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       clk
-  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-  Branch:     clk-next
-  Target:     sun8i-h3-libretech-all-h3-cc
-  CPU arch:   arm
-  Lab:        lab-baylibre
-  Compiler:   gcc-8
-  Config:     multi_v7_defconfig+CONFIG_SMP=3Dn
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit c82987e740d12be98b8ae8aa9221b8b9e2541271
-Author: Stephen Boyd <sboyd@kernel.org>
-Date:   Wed Jul 31 12:35:17 2019 -0700
-
-    clk: Overwrite clk_hw::init with NULL during clk_register()
-    =
-
-    We don't want clk provider drivers to use the init structure after clk
-    registration time, but we leave a dangling reference to it by means of
-    clk_hw::init. Let's overwrite the member with NULL during clk_register()
-    so that this can't be used anymore after registration time.
-    =
-
-    Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-    Cc: Doug Anderson <dianders@chromium.org>
-    Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-    Link: https://lkml.kernel.org/r/20190731193517.237136-10-sboyd@kernel.o=
-rg
-    Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..efac620264a2 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3484,9 +3484,9 @@ static int clk_cpy_name(const char **dst_p, const cha=
-r *src, bool must_exist)
- 	return 0;
- }
- =
-
--static int clk_core_populate_parent_map(struct clk_core *core)
-+static int clk_core_populate_parent_map(struct clk_core *core,
-+					const struct clk_init_data *init)
- {
--	const struct clk_init_data *init =3D core->hw->init;
- 	u8 num_parents =3D init->num_parents;
- 	const char * const *parent_names =3D init->parent_names;
- 	const struct clk_hw **parent_hws =3D init->parent_hws;
-@@ -3566,6 +3566,14 @@ __clk_register(struct device *dev, struct device_nod=
-e *np, struct clk_hw *hw)
- {
- 	int ret;
- 	struct clk_core *core;
-+	const struct clk_init_data *init =3D hw->init;
-+
-+	/*
-+	 * The init data is not supposed to be used outside of registration path.
-+	 * Set it to NULL so that provider drivers can't use it either and so that
-+	 * we catch use of hw->init early on in the core.
-+	 */
-+	hw->init =3D NULL;
- =
-
- 	core =3D kzalloc(sizeof(*core), GFP_KERNEL);
- 	if (!core) {
-@@ -3573,17 +3581,17 @@ __clk_register(struct device *dev, struct device_no=
-de *np, struct clk_hw *hw)
- 		goto fail_out;
- 	}
- =
-
--	core->name =3D kstrdup_const(hw->init->name, GFP_KERNEL);
-+	core->name =3D kstrdup_const(init->name, GFP_KERNEL);
- 	if (!core->name) {
- 		ret =3D -ENOMEM;
- 		goto fail_name;
- 	}
- =
-
--	if (WARN_ON(!hw->init->ops)) {
-+	if (WARN_ON(!init->ops)) {
- 		ret =3D -EINVAL;
- 		goto fail_ops;
- 	}
--	core->ops =3D hw->init->ops;
-+	core->ops =3D init->ops;
- =
-
- 	if (dev && pm_runtime_enabled(dev))
- 		core->rpm_enabled =3D true;
-@@ -3592,13 +3600,13 @@ __clk_register(struct device *dev, struct device_no=
-de *np, struct clk_hw *hw)
- 	if (dev && dev->driver)
- 		core->owner =3D dev->driver->owner;
- 	core->hw =3D hw;
--	core->flags =3D hw->init->flags;
--	core->num_parents =3D hw->init->num_parents;
-+	core->flags =3D init->flags;
-+	core->num_parents =3D init->num_parents;
- 	core->min_rate =3D 0;
- 	core->max_rate =3D ULONG_MAX;
- 	hw->core =3D core;
- =
-
--	ret =3D clk_core_populate_parent_map(core);
-+	ret =3D clk_core_populate_parent_map(core, init);
- 	if (ret)
- 		goto fail_parents;
- =
-
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2ae7604783dd..214c75ed62ae 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -299,7 +299,8 @@ struct clk_init_data {
-  * into the clk API
-  *
-  * @init: pointer to struct clk_init_data that contains the init data shar=
-ed
-- * with the common clock framework.
-+ * with the common clock framework. This pointer will be set to NULL once
-+ * a clk_register() variant is called on this clk_hw pointer.
-  */
- struct clk_hw {
- 	struct clk_core *core;
----------------------------------------------------------------------------=
-----
-
-
-Git bisection log:
-
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [21a2f76849f16d5a48d205b68e923694bc93aaf3] Merge branch 'clk-fixes'=
- into clk-next
-git bisect good 21a2f76849f16d5a48d205b68e923694bc93aaf3
-# bad: [31f58d2f58cb0a8fbf58af88b6a5133bed23bf9b] Merge branch 'clk-meson' =
-into clk-next
-git bisect bad 31f58d2f58cb0a8fbf58af88b6a5133bed23bf9b
-# good: [1d97657a4794ab23b47bd9921978ddd82569fcf4] Merge branch 'v5.4/dt' i=
-nto v5.4/drivers
-git bisect good 1d97657a4794ab23b47bd9921978ddd82569fcf4
-# bad: [c82987e740d12be98b8ae8aa9221b8b9e2541271] clk: Overwrite clk_hw::in=
-it with NULL during clk_register()
-git bisect bad c82987e740d12be98b8ae8aa9221b8b9e2541271
-# good: [e22cce5f419f3c5aa07c8b0d2f8860d49980dbae] clk: qcom: Don't referen=
-ce clk_init_data after registration
-git bisect good e22cce5f419f3c5aa07c8b0d2f8860d49980dbae
-# good: [3445b1287ac6cf410ecd4536b880172b98e6133d] clk: socfpga: Don't refe=
-rence clk_init_data after registration
-git bisect good 3445b1287ac6cf410ecd4536b880172b98e6133d
-# good: [735822a8b114f73289679178ff075b73facd4571] phy: ti: am654-serdes: D=
-on't reference clk_init_data after registration
-git bisect good 735822a8b114f73289679178ff075b73facd4571
-# first bad commit: [c82987e740d12be98b8ae8aa9221b8b9e2541271] clk: Overwri=
-te clk_hw::init with NULL during clk_register()
----------------------------------------------------------------------------=
-----
+>=20
+> Summary:
+>   Start:      31f58d2f58cb Merge branch 'clk-meson' into clk-next
+>   Details:    https://kernelci.org/boot/id/5d54b9d159b514324cf1226e
+>   Plain log:  https://storage.kernelci.org//clk/clk-next/v5.3-rc1-79-g31f=
+58d2f58cb/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-sun=
+8i-h3-libretech-all-h3-cc.txt
+>   HTML log:   https://storage.kernelci.org//clk/clk-next/v5.3-rc1-79-g31f=
+58d2f58cb/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-sun=
+8i-h3-libretech-all-h3-cc.html
+>   Result:     c82987e740d1 clk: Overwrite clk_hw::init with NULL during c=
+lk_register()
+>=20
+> Checks:
+>   revert:     PASS
+>   verify:     PASS
+>=20
+> Parameters:
+>   Tree:       clk
+>   URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.g=
+it
+>   Branch:     clk-next
+>   Target:     sun8i-h3-libretech-all-h3-cc
+>   CPU arch:   arm
+>   Lab:        lab-baylibre
+>   Compiler:   gcc-8
+>   Config:     multi_v7_defconfig+CONFIG_SMP=3Dn
+>   Test suite: boot
+>=20
+> Breaking commit found:
+>=20
+> -------------------------------------------------------------------------=
+------
+> commit c82987e740d12be98b8ae8aa9221b8b9e2541271
+> Author: Stephen Boyd <sboyd@kernel.org>
+> Date:   Wed Jul 31 12:35:17 2019 -0700
+>=20
+>     clk: Overwrite clk_hw::init with NULL during clk_register()
+>    =20
+>     We don't want clk provider drivers to use the init structure after clk
+>     registration time, but we leave a dangling reference to it by means of
+>     clk_hw::init. Let's overwrite the member with NULL during clk_registe=
+r()
+>     so that this can't be used anymore after registration time.
+>    =20
+>     Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+>     Cc: Doug Anderson <dianders@chromium.org>
+>     Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+>     Link: https://lkml.kernel.org/r/20190731193517.237136-10-sboyd@kernel=
+.org
+>     Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+>=20
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c0990703ce54..efac620264a2 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3484,9 +3484,9 @@ static int clk_cpy_name(const char **dst_p, const c=
+har *src, bool must_exist)
+>         return 0;
+>  }
+> =20
+> -static int clk_core_populate_parent_map(struct clk_core *core)
+> +static int clk_core_populate_parent_map(struct clk_core *core,
+> +                                       const struct clk_init_data *init)
+>  {
+> -       const struct clk_init_data *init =3D core->hw->init;
+>         u8 num_parents =3D init->num_parents;
+>         const char * const *parent_names =3D init->parent_names;
+>         const struct clk_hw **parent_hws =3D init->parent_hws;
+> @@ -3566,6 +3566,14 @@ __clk_register(struct device *dev, struct device_n=
+ode *np, struct clk_hw *hw)
+>  {
+>         int ret;
+>         struct clk_core *core;
+> +       const struct clk_init_data *init =3D hw->init;
+> +
+> +       /*
+> +        * The init data is not supposed to be used outside of registrati=
+on path.
+> +        * Set it to NULL so that provider drivers can't use it either an=
+d so that
+> +        * we catch use of hw->init early on in the core.
+> +        */
+> +       hw->init =3D NULL;
+> =20
+>         core =3D kzalloc(sizeof(*core), GFP_KERNEL);
+>         if (!core) {
+> @@ -3573,17 +3581,17 @@ __clk_register(struct device *dev, struct device_=
+node *np, struct clk_hw *hw)
+>                 goto fail_out;
+>         }
+> =20
+> -       core->name =3D kstrdup_const(hw->init->name, GFP_KERNEL);
+> +       core->name =3D kstrdup_const(init->name, GFP_KERNEL);
+>         if (!core->name) {
+>                 ret =3D -ENOMEM;
+>                 goto fail_name;
+>         }
+> =20
+> -       if (WARN_ON(!hw->init->ops)) {
+> +       if (WARN_ON(!init->ops)) {
+>                 ret =3D -EINVAL;
+>                 goto fail_ops;
+>         }
+> -       core->ops =3D hw->init->ops;
+> +       core->ops =3D init->ops;
+> =20
+>         if (dev && pm_runtime_enabled(dev))
+>                 core->rpm_enabled =3D true;
+> @@ -3592,13 +3600,13 @@ __clk_register(struct device *dev, struct device_=
+node *np, struct clk_hw *hw)
+>         if (dev && dev->driver)
+>                 core->owner =3D dev->driver->owner;
+>         core->hw =3D hw;
+> -       core->flags =3D hw->init->flags;
+> -       core->num_parents =3D hw->init->num_parents;
+> +       core->flags =3D init->flags;
+> +       core->num_parents =3D init->num_parents;
+>         core->min_rate =3D 0;
+>         core->max_rate =3D ULONG_MAX;
+>         hw->core =3D core;
+> =20
+> -       ret =3D clk_core_populate_parent_map(core);
+> +       ret =3D clk_core_populate_parent_map(core, init);
+>         if (ret)
+>                 goto fail_parents;
+> =20
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 2ae7604783dd..214c75ed62ae 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -299,7 +299,8 @@ struct clk_init_data {
+>   * into the clk API
+>   *
+>   * @init: pointer to struct clk_init_data that contains the init data sh=
+ared
+> - * with the common clock framework.
+> + * with the common clock framework. This pointer will be set to NULL once
+> + * a clk_register() variant is called on this clk_hw pointer.
+>   */
+>  struct clk_hw {
+>         struct clk_core *core;
+> -------------------------------------------------------------------------=
+------
+>=20
+>=20
+> Git bisection log:
+>=20
+> -------------------------------------------------------------------------=
+------
+> git bisect start
+> # good: [21a2f76849f16d5a48d205b68e923694bc93aaf3] Merge branch 'clk-fixe=
+s' into clk-next
+> git bisect good 21a2f76849f16d5a48d205b68e923694bc93aaf3
+> # bad: [31f58d2f58cb0a8fbf58af88b6a5133bed23bf9b] Merge branch 'clk-meson=
+' into clk-next
+> git bisect bad 31f58d2f58cb0a8fbf58af88b6a5133bed23bf9b
+> # good: [1d97657a4794ab23b47bd9921978ddd82569fcf4] Merge branch 'v5.4/dt'=
+ into v5.4/drivers
+> git bisect good 1d97657a4794ab23b47bd9921978ddd82569fcf4
+> # bad: [c82987e740d12be98b8ae8aa9221b8b9e2541271] clk: Overwrite clk_hw::=
+init with NULL during clk_register()
+> git bisect bad c82987e740d12be98b8ae8aa9221b8b9e2541271
+> # good: [e22cce5f419f3c5aa07c8b0d2f8860d49980dbae] clk: qcom: Don't refer=
+ence clk_init_data after registration
+> git bisect good e22cce5f419f3c5aa07c8b0d2f8860d49980dbae
+> # good: [3445b1287ac6cf410ecd4536b880172b98e6133d] clk: socfpga: Don't re=
+ference clk_init_data after registration
+> git bisect good 3445b1287ac6cf410ecd4536b880172b98e6133d
+> # good: [735822a8b114f73289679178ff075b73facd4571] phy: ti: am654-serdes:=
+ Don't reference clk_init_data after registration
+> git bisect good 735822a8b114f73289679178ff075b73facd4571
+> # first bad commit: [c82987e740d12be98b8ae8aa9221b8b9e2541271] clk: Overw=
+rite clk_hw::init with NULL during clk_register()
+> -------------------------------------------------------------------------=
+------
