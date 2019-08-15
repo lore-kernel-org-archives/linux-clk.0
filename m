@@ -2,84 +2,83 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791D5C3A59B
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:00:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF47C3A589
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:01:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45414208C2
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:00:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F378A2089E
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:01:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565884843;
-	bh=gocEmGOTZWJfwU63JkLjs2GgZL/h/Eci4v4XP4SbSVU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RHcV0965IOUKmkDbwBAlO9bx5PJrOTbqSWsLwF61UxRNSoZvU4QXhP4chnwSzht9t
-	 3sKuEWFd/Mj43WhG5nQHFd4Myk+615IDZQZp1gusQAvX+YOY7aU+uRKbTj5+5WhH8+
-	 hh9CeddLMpW+KM6N4NdvmkW4ZPeo6kbMjgMtQn2Q=
+	s=default; t=1565884863;
+	bh=cYMyekZWfGeKYfCELWTIU6Cir2T/oO1xG9xOUMlirTc=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=lsWcssrkpnLh2QZDxIuVAonw8vwk+KPrso/zipgxu9cPDngUwuSTAH9wR8NhEL9Si
+	 BJyM7rmY/40dktCybRLZ+9nhx82dffp/NhJkIIH2W0g2aoPNUq1SZioT972R4Q5fV7
+	 M1jI+o62YDzKt2saHnwxq69y8JuUR02H4UrBVGnM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729779AbfHOQAX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 12:00:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46520 "EHLO mail.kernel.org"
+        id S1730612AbfHOQBC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 12:01:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729560AbfHOQAX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:00:23 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1730560AbfHOQBC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Aug 2019 12:01:02 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44A252133F;
-        Thu, 15 Aug 2019 16:00:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC5C2206C1;
+        Thu, 15 Aug 2019 16:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565884822;
-        bh=gocEmGOTZWJfwU63JkLjs2GgZL/h/Eci4v4XP4SbSVU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Apy6m9Syl5bjhUbw6eI9DRferjvCLnyi2XhRcBYxLS0PIg8LpMQa/cCkFQHrlXaEa
-         cVYueYZa/D+7v8yhcGtXYuZOnNsrsH9z0KafKViDTcGB9jGRzvVM9eVOiyBHvAXzGE
-         KRPBOuFUA8K68t49izdlhbTRW7kK03YpdHZpQiSU=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Sugaya Taichi <sugaya.taichi@socionext.com>
-Subject: [PATCH 1/4] clk: milbeaut:  Don't reference clk_init_data after registration
-Date:   Thu, 15 Aug 2019 09:00:17 -0700
-Message-Id: <20190815160020.183334-2-sboyd@kernel.org>
-X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
-In-Reply-To: <20190815160020.183334-1-sboyd@kernel.org>
-References: <20190815160020.183334-1-sboyd@kernel.org>
+        s=default; t=1565884861;
+        bh=cYMyekZWfGeKYfCELWTIU6Cir2T/oO1xG9xOUMlirTc=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=t6XYsGcy+Xk8gD+pazia6bEL8H5BdgcTIqFqdfEjWMBm16nEPzpafO0MgA7MpVU95
+         5nbHHR/1No2sgtFWPW1Ep4iZQyeWHRa32aDEAI4jAHB2g3od4PCUf0ZBosKqLe304a
+         elsivyskSllgbZ1bK52z/Z2rw9ru85l2kpWr4rww=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190815151616.2A298206C1@mail.kernel.org>
+References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com> <20190815040221.DE28F2067D@mail.kernel.org> <20190815112614.GA4841@sirena.co.uk> <20190815151616.2A298206C1@mail.kernel.org>
+Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     "kernelci.org bot" <bot@kernelci.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
+        khilman@baylibre.com, matthew.hart@linaro.org,
+        mgalka@collabora.com, tomeu.vizoso@collabora.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Mark Brown <broonie@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 15 Aug 2019 09:01:01 -0700
+Message-Id: <20190815160101.CC5C2206C1@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+Quoting Stephen Boyd (2019-08-15 08:16:15)
+> Quoting Mark Brown (2019-08-15 04:26:14)
+> > On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
+> > > Quoting kernelci.org bot (2019-08-14 20:35:25)
+> >=20
+> > > > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-=
+libretech-all-h3-cc
+> >=20
+> > > If this is the only board that failed, great! Must be something in a
+> > > sun8i driver that uses the init structure after registration.
+> >=20
+> > The infrastructure suppresses duplicate-seeming bisections so I'd not
+> > count on it, check the reports on the web site.
+>=20
+> Hmm ok. I can remove the change from -next, but I'd still like to figure
+> out what is using the init pointer after registration. Is there a way to
+> get earlycon logs?
 
-Cc: Sugaya Taichi <sugaya.taichi@socionext.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk-milbeaut.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-milbeaut.c b/drivers/clk/clk-milbeaut.c
-index 5fc78faf820c..80b9d78493bc 100644
---- a/drivers/clk/clk-milbeaut.c
-+++ b/drivers/clk/clk-milbeaut.c
-@@ -437,7 +437,7 @@ static int m10v_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
- 		if (readl_poll_timeout(divider->write_valid_reg, val,
- 			!val, M10V_UPOLL_RATE, M10V_UTIMEOUT))
- 			pr_err("%s:%s couldn't stabilize\n",
--				__func__, divider->hw.init->name);
-+				__func__, clk_hw_get_name(hw));
- 	}
- 
- 	if (divider->lock)
--- 
-Sent by a computer through tubes
+Ok I sent a patch series which may solve the problem for Allwinner.
 
