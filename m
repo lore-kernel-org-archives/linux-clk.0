@@ -2,245 +2,431 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DDBAC32753
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 00:03:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C382DC32753
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 00:27:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA5F2171F
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 00:03:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841B62083B
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 00:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565827382;
-	bh=RtMAYfIjXbyIwNtKxUn/T57yGlOX78wkZ0yS6geZUQY=;
+	s=default; t=1565828847;
+	bh=4QD7Yk9ya09l1BYXkFzaH6f/MQAdtDiTlU/hy2yf93s=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=OXNunEnr8E1AHXJpFE0X/dy+D+wG89QuHd8gJXETzIUBl7y5ARZhI7SqlUXndCcJM
-	 sDziTidEIdCYMx7zn/XG6e1Qk905/Wl9oIQEchsWrzr3t8uMT47K1/4fdxU3tyOVjd
-	 hzsNWm6LFleffGew+ozpUciz6khm25Tx3G9LRVuI=
+	b=upfyhsXP9WF6yHpvoS3/0IDYtE8oNofCLzqBEXBCHHhCMJp14R8Q+7rNfhOOlpDUr
+	 0jSSMlZOUJo3CYcYhJsCO6EflcDAI0cyLf+rfHttzLt/BlDRHlNYvbYeCh3wHw9Gar
+	 A6FhcjK/crZ+uKIw6w2vGlhyA3voTTEjsez3xbSI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727875AbfHOADC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 20:03:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52346 "EHLO mail.kernel.org"
+        id S1728370AbfHOA1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 20:27:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35206 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727844AbfHOADC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:03:02 -0400
+        id S1726490AbfHOA1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 14 Aug 2019 20:27:23 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3ABAF2086C;
-        Thu, 15 Aug 2019 00:03:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A71C72083B;
+        Thu, 15 Aug 2019 00:27:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565827381;
-        bh=RtMAYfIjXbyIwNtKxUn/T57yGlOX78wkZ0yS6geZUQY=;
+        s=default; t=1565828841;
+        bh=4QD7Yk9ya09l1BYXkFzaH6f/MQAdtDiTlU/hy2yf93s=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Gi6hs8MhufhyIXn3oDRGHnWb4PKIOTGT7g3cIUF1p9gUr606juKvhsmvzk1QWdeR3
-         TULen+AC/P/9ssDC/6SEiWa676VANHnK6SdDuG0Vxc+8RYqcziRvC5Nv9dDc5x4YL3
-         +Sc9H+pDanpJHuW+FrqmQwYKAPUlNAyB2gVaG5Ks=
+        b=GWEev4ti/zpH5NkWvdRHWHVC5rtGnCFwG9y0sBVYQBJp6ooktPmxhpe9Lvyd9C5dj
+         ORtsiqRQ/hl+Q//gM3NuYjiRF/V6lDE7d8o0a4hGuTY3mGZCGhxENp0572tM7+mePH
+         kcvE2LJVBvyBLaLD6Hhj0BSxxvxQOQwo08dN1r2c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190521125114.20357-2-miquel.raynal@bootlin.com>
-References: <20190521125114.20357-1-miquel.raynal@bootlin.com> <20190521125114.20357-2-miquel.raynal@bootlin.com>
-Subject: Re: [PATCH v5 1/4] clk: core: link consumer with clock driver
+In-Reply-To: <1562924653-10056-6-git-send-email-macpaul.lin@mediatek.com>
+References: <1562924653-10056-1-git-send-email-macpaul.lin@mediatek.com> <1562924653-10056-6-git-send-email-macpaul.lin@mediatek.com>
+Subject: Re: [PATCH v6 5/8] clk: mediatek: Add MT6765 clock support
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>
+Cc:     wsd_upstream@mediatek.com, CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>, devicetree@vger.kernel.org,
+        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
+        Macpaul Lin <macpaul.lin@mediatek.com>
+To:     Macpaul Lin <macpaul.lin@mediatek.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Mars Cheng <mars.cheng@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Owen Chen <owen.chen@mediatek.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-mediatek@lists.infradead.org
 User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 17:03:00 -0700
-Message-Id: <20190815000301.3ABAF2086C@mail.kernel.org>
+Date:   Wed, 14 Aug 2019 17:27:20 -0700
+Message-Id: <20190815002721.A71C72083B@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2019-05-21 05:51:10)
-> One major concern when, for instance, suspending/resuming a platform
-> is to never access registers before the underlying clock has been
-> resumed, otherwise most of the time the kernel will just crash. One
-> solution is to use syscore operations when registering clock drivers
-> suspend/resume callbacks. One problem of using syscore_ops is that the
-> suspend/resume scheduling will depend on the order of the
-> registrations, which brings (unacceptable) randomness in the process.
->=20
-> A feature called device links has been introduced to handle such
-> situation. It creates dependencies between consumers and providers,
-> enforcing e.g. the suspend/resume order when needed. Such feature is
-> already in use for regulators.
->=20
-> Add device links support in the clock subsystem by creating/deleting
-> the links at get/put time.
->=20
-> Example of a boot (ESPRESSObin, A3700 SoC) with devices linked to clocks:
->=20
-> marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013=
-800.pinctrl:xtal-clk
-> marvell-armada-3700-tbg-clock d0013200.tbg: Dropping the link to d0013800=
-.pinctrl:xtal-clk
-> marvell-armada-3700-tbg-clock d0013200.tbg: Linked as a consumer to d0013=
-800.pinctrl:xtal-clk
-> marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a cons=
-umer to d0013200.tbg
-> marvell-armada-3700-periph-clock d0013000.nb-periph-clk: Linked as a cons=
-umer to d0013800.pinctrl:xtal-clk
-> marvell-armada-3700-periph-clock d0018000.sb-periph-clk: Linked as a cons=
-umer to d0013200.tbg
-> mvneta d0030000.ethernet: Linked as a consumer to d0018000.sb-periph-clk
-> xhci-hcd d0058000.usb: Linked as a consumer to d0018000.sb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Dropping the link to d0013000.nb-periph-clk
-> mvebu-uart d0012000.serial: Linked as a consumer to d0013800.pinctrl:xtal=
--clk
-> advk-pcie d0070000.pcie: Linked as a consumer to d0018000.sb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to d0013000.nb-periph-clk
-> xenon-sdhci d00d0000.sdhci: Linked as a consumer to regulator.1
-> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
-> cpu cpu0: Dropping the link to d0013000.nb-periph-clk
-> cpu cpu0: Linked as a consumer to d0013000.nb-periph-clk
->=20
-> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
+Quoting Macpaul Lin (2019-07-12 02:43:41)
+> diff --git a/drivers/clk/mediatek/clk-mt6765-audio.c b/drivers/clk/mediat=
+ek/clk-mt6765-audio.c
+> new file mode 100644
+> index 000000000000..41f19343dfb9
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6765-audio.c
+> @@ -0,0 +1,109 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Owen Chen <owen.chen@mediatek.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
-This patch doesn't apply. Things have changed upstream.
+Please use SPDX tags.
 
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index ec6f04dcf5e6..e6b84ab43f9f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1676,6 +1710,8 @@ static void clk_reparent(struct clk_core *core, str=
-uct clk_core *new_parent)
-> =20
->                 if (was_orphan !=3D becomes_orphan)
->                         clk_core_update_orphan_status(core, becomes_orpha=
-n);
+> + */
 > +
-> +               clk_link_hierarchy(core, new_parent);
+> +#include <linux/clk-provider.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include "clk-mtk.h"
+> +#include "clk-gate.h"
+> +
+> diff --git a/drivers/clk/mediatek/clk-mt6765-vcodec.c b/drivers/clk/media=
+tek/clk-mt6765-vcodec.c
+> new file mode 100644
+> index 000000000000..eb9ae1c2c99c
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6765-vcodec.c
+> @@ -0,0 +1,79 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Owen Chen <owen.chen@mediatek.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + */
 
-This isn't going to work.
+SPDX tags.
 
- BUG: sleeping function called from invalid context at kernel/locking/mutex=
-.c:909
- in_atomic(): 1, irqs_disabled(): 128, pid: 1, name: swapper/0
- 3 locks held by swapper/0/1:
-  #0: (____ptrval____) (&dev->mutex){....}, at: __device_driver_lock+0x40/0=
-x4c
-  #1: (____ptrval____) (prepare_lock){+.+.}, at: clk_prepare_lock+0x18/0x94
-  #2: (____ptrval____) (enable_lock){....}, at: clk_enable_lock+0x34/0xdc
- irq event stamp: 311516
- hardirqs last  enabled at (311515): [<ffffff901fce5c90>] _raw_spin_unlock_=
-irqrestore+0x54/0x90
- hardirqs last disabled at (311516): [<ffffff901f73d468>] clk_enable_lock+0=
-x28/0xdc
- softirqs last  enabled at (311348): [<ffffff901f28188c>] __do_softirq+0x4c=
-c/0x514
- softirqs last disabled at (311341): [<ffffff901f2f89ac>] irq_exit+0xd8/0xf8
- CPU: 4 PID: 1 Comm: swapper/0 Tainted: G        W         5.3.0-rc4-00005-=
-g6be06bbec80ef #10
- Hardware name: Google Cheza (rev3+) (DT)
- Call trace:
-  dump_backtrace+0x0/0x13c
-  show_stack+0x20/0x2c
-  dump_stack+0xc4/0x12c
-  ___might_sleep+0x1b4/0x1c4
-  __might_sleep+0x50/0x88
-  __mutex_lock_common+0x5c/0xbfc
-  mutex_lock_nested+0x40/0x50
-  device_link_add+0x88/0x3ac
-  clk_reparent+0xc4/0x114
-  __clk_set_parent_before+0x74/0x90
-  clk_change_rate+0x98/0x854
-  clk_core_set_rate_nolock+0x1b0/0x21c
-  clk_set_rate+0x3c/0x6c
-  of_clk_set_defaults+0x29c/0x364
-  platform_drv_probe+0x28/0xb0
-  really_probe+0x130/0x2b4
-  driver_probe_device+0x64/0xfc
-  device_driver_attach+0x4c/0x6c
-  __driver_attach+0xb0/0xc4
-  bus_for_each_dev+0x84/0xcc
-  driver_attach+0x2c/0x38
-  bus_add_driver+0xfc/0x1d0
-  driver_register+0x64/0xf0
-  __platform_driver_register+0x4c/0x58
-  msm_drm_register+0x5c/0x60
-  do_one_initcall+0x1e0/0x478
-  do_initcall_level+0x21c/0x25c
-  do_basic_setup+0x60/0x78
-  kernel_init_freeable+0x128/0x1b0
-  kernel_init+0x14/0x100
-  ret_from_fork+0x10/0x18
+> diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk=
+-mt6765.c
+> new file mode 100644
+> index 000000000000..f716a48a926d
+> --- /dev/null
+> +++ b/drivers/clk/mediatek/clk-mt6765.c
+> @@ -0,0 +1,961 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018 MediaTek Inc.
+> + * Author: Owen Chen <owen.chen@mediatek.com>
+> + *
+> + * This program is free software; you can redistribute it and/or modify
+> + * it under the terms of the GNU General Public License version 2 as
+> + * published by the Free Software Foundation.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
 
->         } else {
->                 hlist_add_head(&core->child_node, &clk_orphan_list);
->                 if (!was_orphan)
-> @@ -2402,6 +2438,8 @@ __clk_init_parent(struct clk_core *core, bool updat=
-e_orphan)
->         if (!parent_hw)
->                 return NULL;
-> =20
-> +       clk_link_hierarchy(core, parent_hw->core);
+SPDX tags.
+
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_address.h>
+> +#include <linux/slab.h>
+> +#include <linux/mfd/syscon.h>
+
+Is this used? Maybe I deleted it.
+
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+[...]
+> +
+> +static const char * const axi_parents[] =3D {
+> +       "clk26m",
+> +       "syspll_d7",
+> +       "syspll1_d4",
+> +       "syspll3_d2"
+> +};
+> +
+> +static const char * const mem_parents[] =3D {
+> +       "clk26m",
+> +       "dmpll_ck",
+> +       "apll1_ck"
+> +};
+> +
+> +static const char * const mm_parents[] =3D {
+> +       "clk26m",
+> +       "mmpll_ck",
+> +       "syspll1_d2",
+> +       "syspll_d5",
+> +       "syspll1_d4",
+> +       "univpll_d5",
+> +       "univpll1_d2",
+> +       "mmpll_d2"
+> +};
+> +
+> +static const char * const scp_parents[] =3D {
+> +       "clk26m",
+> +       "syspll4_d2",
+> +       "univpll2_d2",
+> +       "syspll1_d2",
+> +       "univpll1_d2",
+> +       "syspll_d3",
+> +       "univpll_d3"
+> +};
+> +
+> +static const char * const mfg_parents[] =3D {
+> +       "clk26m",
+> +       "mfgpll_ck",
+> +       "syspll_d3",
+> +       "univpll_d3"
+> +};
+> +
+> +static const char * const atb_parents[] =3D {
+> +       "clk26m",
+> +       "syspll1_d4",
+> +       "syspll1_d2"
+> +};
+> +
+> +static const char * const camtg_parents[] =3D {
+> +       "clk26m",
+> +       "usb20_192m_d8",
+> +       "univpll2_d8",
+> +       "usb20_192m_d4",
+> +       "univpll2_d32",
+> +       "usb20_192m_d16",
+> +       "usb20_192m_d32"
+> +};
+> +
+> +static const char * const uart_parents[] =3D {
+> +       "clk26m",
+> +       "univpll2_d8"
+> +};
+> +
+> +static const char * const spi_parents[] =3D {
+> +       "clk26m",
+> +       "syspll3_d2",
+> +       "syspll4_d2",
+> +       "syspll2_d4"
+> +};
+> +
+> +static const char * const msdc5hclk_parents[] =3D {
+> +       "clk26m",
+> +       "syspll1_d2",
+> +       "univpll1_d4",
+> +       "syspll2_d2"
+> +};
+> +
+> +static const char * const msdc50_0_parents[] =3D {
+> +       "clk26m",
+> +       "msdcpll_ck",
+> +       "syspll2_d2",
+> +       "syspll4_d2",
+> +       "univpll1_d2",
+> +       "syspll1_d2",
+> +       "univpll_d5",
+> +       "univpll1_d4"
+> +};
+> +
+> +static const char * const msdc30_1_parents[] =3D {
+> +       "clk26m",
+> +       "msdcpll_d2",
+> +       "univpll2_d2",
+> +       "syspll2_d2",
+> +       "syspll1_d4",
+> +       "univpll1_d4",
+> +       "usb20_192m_d4",
+> +       "syspll2_d4"
+> +};
+> +
+> +static const char * const audio_parents[] =3D {
+> +       "clk26m",
+> +       "syspll3_d4",
+> +       "syspll4_d4",
+> +       "syspll1_d16"
+> +};
+> +
+> +static const char * const aud_intbus_parents[] =3D {
+> +       "clk26m",
+> +       "syspll1_d4",
+> +       "syspll4_d2"
+> +};
+> +
+> +static const char * const aud_1_parents[] =3D {
+> +       "clk26m",
+> +       "apll1_ck"
+> +};
+> +
+> +static const char * const aud_engen1_parents[] =3D {
+> +       "clk26m",
+> +       "apll1_d2",
+> +       "apll1_d4",
+> +       "apll1_d8"
+> +};
+> +
+> +static const char * const disp_pwm_parents[] =3D {
+> +       "clk26m",
+> +       "univpll2_d4",
+> +       "ulposc1_d2",
+> +       "ulposc1_d8"
+> +};
+> +
+> +static const char * const sspm_parents[] =3D {
+> +       "clk26m",
+> +       "syspll1_d2",
+> +       "syspll_d3"
+> +};
+> +
+> +static const char * const dxcc_parents[] =3D {
+> +       "clk26m",
+> +       "syspll1_d2",
+> +       "syspll1_d4",
+> +       "syspll1_d8"
+> +};
+> +
+> +static const char * const usb_top_parents[] =3D {
+> +       "clk26m",
+> +       "univpll3_d4"
+> +};
+> +
+> +static const char * const spm_parents[] =3D {
+> +       "clk26m",
+> +       "syspll1_d8"
+> +};
+> +
+> +static const char * const i2c_parents[] =3D {
+> +       "clk26m",
+> +       "univpll3_d4",
+> +       "univpll3_d2",
+> +       "syspll1_d8",
+> +       "syspll2_d8"
+> +};
+> +
+> +static const char * const pwm_parents[] =3D {
+> +       "clk26m",
+> +       "univpll3_d4",
+> +       "syspll1_d8"
+> +};
+> +
+> +static const char * const seninf_parents[] =3D {
+> +       "clk26m",
+> +       "univpll1_d4",
+> +       "univpll1_d2",
+> +       "univpll2_d2"
+> +};
+> +
+> +static const char * const aes_fde_parents[] =3D {
+> +       "clk26m",
+> +       "msdcpll_ck",
+> +       "univpll_d3",
+> +       "univpll2_d2",
+> +       "univpll1_d2",
+> +       "syspll1_d2"
+> +};
+> +
+> +static const char * const ulposc_parents[] =3D {
+> +       "clk26m",
+> +       "ulposc1_d4",
+> +       "ulposc1_d8",
+> +       "ulposc1_d16",
+> +       "ulposc1_d32"
+> +};
+> +
+> +static const char * const camtm_parents[] =3D {
+> +       "clk26m",
+> +       "univpll1_d4",
+> +       "univpll1_d2",
+> +       "univpll2_d2"
+> +};
 > +
 
-This is the hunk that doesn't apply anymore.
+Can you migrate this driver to the new way of specifying clk parents?
+That way we don't just have lists of strings.
 
->         return parent_hw->core;
->  }
-> =20
+> +#define INVALID_UPDATE_REG 0xFFFFFFFF
+> +#define INVALID_UPDATE_SHIFT -1
+> +#define INVALID_MUX_GATE -1
+> +
+> +static const struct mtk_mux top_muxes[] =3D {
+> +       /* CLK_CFG_0 */
+> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parent=
+s,
+> +                             CLK_CFG_0, CLK_CFG_0_SET, CLK_CFG_0_CLR,
+> +                             0, 2, 7, CLK_CFG_UPDATE, 0, CLK_IS_CRITICAL=
+),
 
-The general thought is that it would be good to _not_ call the device
-link APIs from deep within the clk parent changing code or even parent
-initialization code. It would be better to make device links based on
-the possible parents of a clk controller when the clk is registered and
-after the clk prepare lock (i.e. the registration lock) is dropped. Is
-this possible? The problem is that we're deeply nested in locks that are
-already hard to reason about and get out from underneath. I don't want
-to get into some sort of ABBA deadlock scenario with the PM core. The
-usage of runtime PM in the clk framework is probably busted right now
-because it is used under the prepare lock. Ugh.
+Please add a comment why CLK_IS_CRITICAL flag is used in each place.
 
-Is it necessary to add the device links between different clk
-controllers either? I mean, is it necessary to create links between clks
-and their parents right now?  Maybe we can take the easy way out and
-just make links between devices that call clk_get() and the devices that
-provide those clks (the consumer side). I suppose you may want to order
-suspend/resume of a device with the parent clks of some clk that is
-acquired from clk_get(). I hope it isn't required though, because this
-is a problem to do with ordering suspend/resume of the clk tree itself,
-which isn't really solved at all.
+> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parent=
+s,
+> +                             CLK_CFG_0, CLK_CFG_0_SET, CLK_CFG_0_CLR,
+> +                             8, 2, 15, CLK_CFG_UPDATE, 1, CLK_IS_CRITICA=
+L),
+> +       MUX_GATE_CLR_SET_UPD(CLK_TOP_MM_SEL, "mm_sel", mm_parents, CLK_CF=
+G_0,
+> +                       CLK_CFG_0_SET, CLK_CFG_0_CLR, 16, 3, 23,
+> +                       CLK_CFG_UPDATE, 2),
+> +       MUX_GATE_CLR_SET_UPD(CLK_TOP_SCP_SEL, "scp_sel", scp_parents, CLK=
+_CFG_0,
+> +                       CLK_CFG_0_SET, CLK_CFG_0_CLR, 24, 3, 31,
+> +                       CLK_CFG_UPDATE, 3),
+[...]
+> +       }, {
+> +               .compatible =3D "mediatek,mt6765-topckgen",
+> +               .data =3D clk_mt6765_top_probe,
+> +       }, {
+> +               .compatible =3D "mediatek,mt6765-infracfg",
+> +               .data =3D clk_mt6765_ifr_probe,
+> +       }, {
+> +               /* sentinel */
+> +       }
+> +};
+> +
+> +static int clk_mt6765_probe(struct platform_device *pdev)
+> +{
+> +       int (*clk_probe)(struct platform_device *d);
+> +       int r;
+> +
+> +       clk_probe =3D of_device_get_match_data(&pdev->dev);
+> +       if (!clk_probe)
+> +               return -EINVAL;
+> +
+> +       r =3D clk_probe(pdev);
+> +       if (r)
+> +               dev_err(&pdev->dev,
+> +                       "could not register clock provider: %s: %d\n",
+> +                       pdev->name, r);
+> +
+> +       return r;
+> +}
+> +
+> +static struct platform_driver clk_mt6765_drv =3D {
+> +       .probe =3D clk_mt6765_probe,
+> +       .driver =3D {
+> +               .name =3D "clk-mt6765",
+> +               .owner =3D THIS_MODULE,
 
-We probably need to solve that by doing something clk provider specific
-in the clk framework to figure out a way for device drivers that provide
-clks to get callbacks to suspend/resume clks in the clk tree in some
-sort of topo-sorted order. That way we can traverse the clk tree and
-call down into provider drivers for each clk it registered to do things
-like restore the clk frequency or clk enable/prepare state, etc. It
-needs to be done in a certain order and it's not possible to flatten
-that order into a sequential list of providers (that correspond 1:1 with
-devices) given that there are loops between providers.
+Remove this line, platform_driver_register() should take care of it.
 
-But from the perspective of a consumer driver like PCI, I don't see why
-it needs to care about the clk tree suspend/resume ordering details. It
-really only cares that the clk it's consuming, at the edge of the tree,
-is resumed before the consumer itself, PCI, is resumed. However the
-dependencies of that clk it's consuming is managed, be it with device
-links or something clk framework specific, doesn't matter to the PCI
-driver. And other clks that are parents or grandparents of the clk
-consumed by PCI could have device link dependencies themselves, on
-something like an i2c controller or such. Even then, we don't need to
-use device links in the clk tree to describe ordering between clks. We
-can do it without device links and break the device link chain when it
-crosses the clk tree.
-
-  PCI -[device link]-> PCI leaf clk provider -[clk framework ordering black=
- box]-> parent of leaf clk -[device link]-> i2c controller=20
-
+> +               .of_match_table =3D of_match_clk_mt6765,
+> +       },
+> +};
+> +
