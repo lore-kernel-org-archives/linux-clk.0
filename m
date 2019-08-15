@@ -2,198 +2,76 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2826C433FF
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 04:15:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FAD3C433FF
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 04:25:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A56FB208C2
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 04:15:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6EAB206C1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 04:25:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565843103;
+	bh=QCJFL84q5yDVzQW5SRwQhsQeYtiKywAt5IGPJyVK3dY=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=uOmqKuWxYSi6vnz1vb5pfB9K13HeOvsxeI3Vb1fB21fmhvgnRcsOmkvAOXrQ2cS8d
+	 7TqS7AHThBQKRVaPG48Q1o3U3oKCR/uUSaDnzVjRGlz5kZtRTsFbYKJ1EGjeog4dbn
+	 kFIG7J8F/psW8HKyKF3y0qpDg+pRYVnLTHvxEAME=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfHOEPI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 00:15:08 -0400
-Received: from muru.com ([72.249.23.125]:57882 "EHLO muru.com"
+        id S1725994AbfHOEZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 00:25:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35884 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725875AbfHOEPI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 00:15:08 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 118A680C8;
-        Thu, 15 Aug 2019 04:15:32 +0000 (UTC)
-Date:   Wed, 14 Aug 2019 21:15:02 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Adam Ford <aford173@gmail.com>
-Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        moaz korena <moaz@korena.xyz>, "Andrew F. Davis" <afd@ti.com>
-Subject: Re: [PATCH 0/6] Configure sgx interconnect data for some omap
- variants
-Message-ID: <20190815041502.GG52127@atomide.com>
-References: <20190814131408.57162-1-tony@atomide.com>
- <CAHCN7x+p5+XoRHJP--mZ0QcP0FzpYK+pRj7d8Y-js6a8z=p_7A@mail.gmail.com>
- <20190815040248.GF52127@atomide.com>
+        id S1725911AbfHOEZC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Aug 2019 00:25:02 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61DF1206C1;
+        Thu, 15 Aug 2019 04:25:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1565843101;
+        bh=QCJFL84q5yDVzQW5SRwQhsQeYtiKywAt5IGPJyVK3dY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=m5MKGdrQvPCS6uFk112joCYiDDbAmBWAyUQ1qW0c4EERo1bqWgOAFQCKmGYPwjccG
+         xY3AG4oWdgd5W21WKejrqHWhleuYT+RTPmvTXUNbmARUz30EucPfIa8o/nYp5qLXsi
+         9qTwM6lGy9uDp1ZZiq84mQTAnC1PG009pXGq8OKA=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: [PATCH] clk: composite: Drop unused clk.h include
+Date:   Wed, 14 Aug 2019 21:25:00 -0700
+Message-Id: <20190815042500.9519-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.23.0.rc1.153.gdeed80330f-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190815040248.GF52127@atomide.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [190815 04:03]:
-> * Adam Ford <aford173@gmail.com> [190814 19:14]:
-> > I do wonder if an omap34xx or omap36xx should use
-> > compatible = "ti,sysc-omap4", "ti,sysc";
-> > 
-> > should it use an omap3 equivalent?
-> 
-> We named the old hwmod type1 as ti,sysc-omap2, type2 as ti,sysc-omap4,
-> and type3 as ti,sysc-omap4-simple based on where we thought they
-> appeared. Based on the sysconfig register bit layout, sgx on omap36xx
-> seems to have a subset of ti,sysc-omap4 and we can recycle it. If we
-> used a wrong type, the module would not get enabled or disabled as
-> the register bits would not match.
-> 
-> How about let's add a comment like:
-> 
-> Yes sg has a subset of ti,sysc-omap4 type sysconfig register
+This include isn't used. Drop it.
 
-Well actually we already have some comments there, I clarified
-it a bit more and fixed the typos noted by Andrew. Updated patch
-below.
-
-Regards,
-
-Tony
-
-8< ------------------
-From tony Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 14 Aug 2019 05:18:16 -0700
-Subject: [PATCH] ARM: dts: Configure interconnect target module for omap3
- sgx
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Looks like omap34xx OCP registers are not readable unlike on omap36xx.
-We use SGX revision register instead of the OCP revision register for
-34xx and do not configure any SYSCONFIG register unlike for 36xx.
-
-I've tested that the interconnect target module enables and idles
-just fine with PM runtime control via sys:
-
-# echo on > $(find /sys -name control | grep \/5000); rwmem 0x5000fe10
-# rwmem 0x50000014	# SGX revision register on 36xx
-0x50000014 = 0x00010205
-# echo auto > $(find /sys -name control | grep \/5000)
-# rwmem 0x5000fe00
-And when idled, it will produce "Bus error" as expected.
-
-Cc: Adam Ford <aford173@gmail.com>
-Cc: Filip Matijević <filip.matijevic.pz@gmail.com>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-Cc: moaz korena <moaz@korena.xyz>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: Philipp Rossak <embed3d@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Tested-by: Adam Ford <aford173@gmail.com> #logicpd-torpedo-37xx-devkit
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- arch/arm/boot/dts/omap34xx.dtsi | 26 ++++++++++++++++++++++++++
- arch/arm/boot/dts/omap36xx.dtsi | 28 ++++++++++++++++++++++++++++
- 2 files changed, 54 insertions(+)
+ drivers/clk/clk-composite.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx.dtsi
---- a/arch/arm/boot/dts/omap34xx.dtsi
-+++ b/arch/arm/boot/dts/omap34xx.dtsi
-@@ -100,6 +100,32 @@
- 				interrupts = <18>;
- 			};
- 		};
-+
-+		/*
-+		 * On omap34xx the OCP registers do not seem to be accessible
-+		 * at all unlike on 36xx. Maybe SGX is permanently set to
-+		 * "OCP bypass mode", or maybe there is OCP_SYSCONFIG that is
-+		 * write-only at 0x50000e10. We detect SGX based on the SGX
-+		 * revision register instead of the unreadable OCP revision
-+		 * register. Also note that on early 34xx es1 revision there
-+		 * are also different clocks, but we do not have any dts users
-+		 * for it.
-+		 */
-+		sgx_module: target-module@50000000 {
-+			compatible = "ti,sysc-omap2", "ti,sysc";
-+			reg = <0x50000014 0x4>;
-+			reg-names = "rev";
-+			clocks = <&sgx_fck>, <&sgx_ick>;
-+			clock-names = "fck", "ick";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x50000000 0x4000>;
-+
-+			/*
-+			 * Closed source PowerVR driver, no child device
-+			 * binding or driver in mainline
-+			 */
-+		};
- 	};
+diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
+index b06038b8f658..4f13a681ddfc 100644
+--- a/drivers/clk/clk-composite.c
++++ b/drivers/clk/clk-composite.c
+@@ -3,7 +3,6 @@
+  * Copyright (c) 2013 NVIDIA CORPORATION.  All rights reserved.
+  */
  
- 	thermal_zones: thermal-zones {
-diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx.dtsi
---- a/arch/arm/boot/dts/omap36xx.dtsi
-+++ b/arch/arm/boot/dts/omap36xx.dtsi
-@@ -139,6 +139,34 @@
- 				interrupts = <18>;
- 			};
- 		};
-+
-+		/*
-+		 * Note that the sysconfig register layout is a subset of the
-+		 * "ti,sysc-omap4" type register with just sidle and midle bits
-+		 * available while omap34xx has "ti,sysc-omap2" type sysconfig.
-+		 */
-+		sgx_module: target-module@50000000 {
-+			compatible = "ti,sysc-omap4", "ti,sysc";
-+			reg = <0x5000fe00 0x4>,
-+			      <0x5000fe10 0x4>;
-+			reg-names = "rev", "sysc";
-+			ti,sysc-midle = <SYSC_IDLE_FORCE>,
-+					<SYSC_IDLE_NO>,
-+					<SYSC_IDLE_SMART>;
-+			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-+					<SYSC_IDLE_NO>,
-+					<SYSC_IDLE_SMART>;
-+			clocks = <&sgx_fck>, <&sgx_ick>;
-+			clock-names = "fck", "ick";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x50000000 0x2000000>;
-+
-+			/*
-+			 * Closed source PowerVR driver, no child device
-+			 * binding or driver in mainline
-+			 */
-+		};
- 	};
- 
- 	thermal_zones: thermal-zones {
+-#include <linux/clk.h>
+ #include <linux/clk-provider.h>
+ #include <linux/err.h>
+ #include <linux/slab.h>
 -- 
-2.21.0
+Sent by a computer through tubes
+
