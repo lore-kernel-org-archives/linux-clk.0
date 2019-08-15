@@ -2,80 +2,74 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65C04C3A589
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 18:02:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A8DC3A589
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 19:36:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34AB52089E
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 18:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B43DC2083B
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 19:36:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565892138;
-	bh=BbtRPnMkM9TNtxVrVxsMohoElU+idLbQFe4saSIy6Ik=;
+	s=default; t=1565897790;
+	bh=EW0TSpgRvmluEEbkBDw/BeuuXW6cPt71WV5w74ebqrg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=1uTE0/Lu2ZxMPzxSkFTWfxFmBDnm7W4QM9wVaztyCCKnkpJPwhhXcgQ1uoSEYXyaa
-	 nnuiJ6tceASnr7SfGNrfyTid6KAfsldwz0QwiarUOL1iDswnupeSvKKcnnuE+jS6jR
-	 CZz6ivqsnFb0j5SMCg+pgJ4tFhY/eaCmLqW82mzI=
+	b=kirJseCXz9QZ0BSE18xaZ8pQ8rUwNyyB2IVwXoOCS3NbBEtrw6Bh8bXbKZZAGuKvk
+	 HkPMNczGFdKk7r4Q8SL+f02aB6/TFEGMenC/UC53mvJM4X+YzIZEok4N08+vb2j7x1
+	 GMiqzfKk+rmSnQiw/2SebCFckD+vql5Fke1J5Xak=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731524AbfHOSCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 14:02:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:54224 "EHLO mail.kernel.org"
+        id S1728927AbfHOTga (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 15:36:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33452 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731370AbfHOSCR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 14:02:17 -0400
+        id S1728547AbfHOTga (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Aug 2019 15:36:30 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6C962083B;
-        Thu, 15 Aug 2019 18:02:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1EB20656;
+        Thu, 15 Aug 2019 19:36:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565892137;
-        bh=BbtRPnMkM9TNtxVrVxsMohoElU+idLbQFe4saSIy6Ik=;
+        s=default; t=1565897789;
+        bh=EW0TSpgRvmluEEbkBDw/BeuuXW6cPt71WV5w74ebqrg=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Ax4rW/7WCUnTx5GNowUJ0KaB+J6qyHReQ7Jn1AOE8qCzD74+Pq30930f343q4K7IA
-         7hAVkHU/2jaM+U+sD3FJZCz5FvmWGKs24jnXnjZiK0NuBSvAksZjVJbdntsxW1bWDR
-         X7/DjE55PUjqaLukWb+mfqaeEDSMBdyAENIBq+Y8=
+        b=dNlzOMvcy/GqjHHKA+gBnz7GlvSplNcldf6dGBVNeqVLShEGKF5uN9e27kiTUr2R5
+         pClxyDelehLdhTpVScj3Q2l1kVV6e09YEG2TbPlivD7nkWZjZH1w4VTI28rIsss71Q
+         6f4gRhHyznQQ4YDf6zHR2urAhGi2qMrq1Wu6DC+A=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190815112614.GA4841@sirena.co.uk>
-References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com> <20190815040221.DE28F2067D@mail.kernel.org> <20190815112614.GA4841@sirena.co.uk>
-Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
+In-Reply-To: <cover.1565715590.git.leonard.crestez@nxp.com>
+References: <cover.1565715590.git.leonard.crestez@nxp.com>
+Subject: Re: [PATCH 0/4] clk: imx8m: Fix incorrect parents
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     "kernelci.org bot" <bot@kernelci.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
-        khilman@baylibre.com, matthew.hart@linaro.org,
-        mgalka@collabora.com, tomeu.vizoso@collabora.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Tony Lindgren <tony@atomide.com>
-To:     Mark Brown <broonie@kernel.org>
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk@vger.kernel.org, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
+To:     Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Thu, 15 Aug 2019 11:02:16 -0700
-Message-Id: <20190815180216.D6C962083B@mail.kernel.org>
+Date:   Thu, 15 Aug 2019 12:36:28 -0700
+Message-Id: <20190815193629.2C1EB20656@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mark Brown (2019-08-15 04:26:14)
-> On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
-> > Quoting kernelci.org bot (2019-08-14 20:35:25)
+Quoting Leonard Crestez (2019-08-13 10:05:27)
+> No checks are made to ensure the parents in the _sels arrays actually
+> exist and it turns out that several are incorrect.
 >=20
-> > > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-li=
-bretech-all-h3-cc
->=20
-> > If this is the only board that failed, great! Must be something in a
-> > sun8i driver that uses the init structure after registration.
->=20
-> The infrastructure suppresses duplicate-seeming bisections so I'd not
-> count on it, check the reports on the web site.
+> I found the errors using a hack to clk core, is there a better way?
+> Link: https://github.com/cdleonard/linux/commit/da32c2e76eb373e8a03aec905=
+af2eef28a7997a7
 
-And there's something wrong with the OMAP4 panda board and tegra nyan.
-Maybe Tony has seen it.
+Maybe you can make it into some sort of Kconfig option that's behind a
+debug flag. Or you can use the possible parent debugfs files and check
+for parents from userspace with some script.
 
