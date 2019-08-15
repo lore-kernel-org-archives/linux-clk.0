@@ -2,92 +2,117 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DAB3C433FF
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 11:18:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC58C433FF
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 11:26:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64061206C2
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 11:18:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 01F852064A
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 11:26:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1565868379;
+	bh=nXAyjVHn0p+4CAgtCNYorSwp/PP+/ZyXWDDK+y7KYL4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=k3+7SQ9ZVIdgd4KW1uJci3Ll0gIoIpiSgQEO+CqsZC8uAWpEx6lX/GB8FLs5n0yT4
+	 Km3ydBM5mI24LoSpBm3QuSHT4nBPsqX3yf/ipqOegxZGZ2GfFGKz8vkDl/xUUpdtnf
+	 YMn29nPHhqGisGeULAlUllqwnGOfmtRLprHezbec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730703AbfHOLSO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 07:18:14 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:42562 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730511AbfHOLSO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 07:18:14 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 2CCC4200299;
-        Thu, 15 Aug 2019 13:18:13 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4535F2000B7;
-        Thu, 15 Aug 2019 13:18:05 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6DFB3402D7;
-        Thu, 15 Aug 2019 19:17:55 +0800 (SGT)
-From:   Anson.Huang@nxp.com
-To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-        mturquette@baylibre.com, sboyd@kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, leonard.crestez@nxp.com,
-        abel.vesa@nxp.com, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Cc:     Linux-imx@nxp.com
-Subject: [PATCH 1/6] arm64: dts: imx8mn-ddr4-evk: Add i2c1 support
-Date:   Thu, 15 Aug 2019 06:59:38 -0400
-Message-Id: <1565866783-19672-1-git-send-email-Anson.Huang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730808AbfHOL0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 07:26:18 -0400
+Received: from mail-wr1-f99.google.com ([209.85.221.99]:42844 "EHLO
+        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726865AbfHOL0S (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Aug 2019 07:26:18 -0400
+Received: by mail-wr1-f99.google.com with SMTP id b16so1902785wrq.9
+        for <linux-clk@vger.kernel.org>; Thu, 15 Aug 2019 04:26:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nXAyjVHn0p+4CAgtCNYorSwp/PP+/ZyXWDDK+y7KYL4=;
+        b=hRJXfy0LQRjMjQTg11paX04IYYBsK9sNeptx/TkzekKjf0KRo4FdKLQlCwULu9bwsx
+         y7ZnENcD1O3sdjb9S1ncfTkbTmzdhSabs+UKnzfhffim4XKFa/qmhVEHR7NqzE+1Eoau
+         KUd/Ln/v9pjSlf680p2UhnjJLxouaxucdvHnYLZ+JLuRGShngYj+N3N6MTdMkFkVbjci
+         KsEtIAbhZDbAvQlSP16wqSerwj9dkZREKYqTR9w7iMK4bFocF+4s7fM/B0+dUJ0fcMKS
+         m0dS0L5IRYvgoKVDhK2VX5GlzO8WiXXLJODmsl8Ls/Vxu27SvW4H4xIAcyvMgFMrzXgO
+         vOzg==
+X-Gm-Message-State: APjAAAWfYRVrN1XWpvzC81efwIgPvEvASJLWNw788Vv5+pud1fLBaLdM
+        V0uiRcA8WTTYGApChHkRK1cxuqjiJxK9CzWcf+3PxUdh8/G/VsKcNIxlGXZMXWAw4w==
+X-Google-Smtp-Source: APXvYqwE8AmkN+3MXDrwKQaFOiSfludhujVv2awbLexD+71rwuqfo/tkaDpNPzNDAfUOBE6TTmh7ETRU8D4R
+X-Received: by 2002:a5d:5543:: with SMTP id g3mr5069751wrw.166.1565868376359;
+        Thu, 15 Aug 2019 04:26:16 -0700 (PDT)
+Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
+        by smtp-relay.gmail.com with ESMTPS id n3sm41979wru.48.2019.08.15.04.26.16
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 15 Aug 2019 04:26:16 -0700 (PDT)
+X-Relaying-Domain: sirena.org.uk
+Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.co.uk>)
+        id 1hyDtX-0003HY-Th; Thu, 15 Aug 2019 11:26:15 +0000
+Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
+        id 033DD2742A76; Thu, 15 Aug 2019 12:26:14 +0100 (BST)
+Date:   Thu, 15 Aug 2019 12:26:14 +0100
+From:   Mark Brown <broonie@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "kernelci.org bot" <bot@kernelci.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
+        khilman@baylibre.com, matthew.hart@linaro.org,
+        mgalka@collabora.com, tomeu.vizoso@collabora.com,
+        Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on
+ sun8i-h3-libretech-all-h3-cc
+Message-ID: <20190815112614.GA4841@sirena.co.uk>
+References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com>
+ <20190815040221.DE28F2067D@mail.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Disposition: inline
+In-Reply-To: <20190815040221.DE28F2067D@mail.kernel.org>
+X-Cookie: MIT:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Anson Huang <Anson.Huang@nxp.com>
 
-Enable i2c1 on i.MX8MN DDR4 EVK board.
+--vtzGhvizbBRQ85DL
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
+> Quoting kernelci.org bot (2019-08-14 20:35:25)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
-index 9b2c172..5fce5b1 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
-@@ -50,6 +50,13 @@
- 		>;
- 	};
- 
-+	pinctrl_i2c1: i2c1grp {
-+		fsl,pins = <
-+			MX8MN_IOMUXC_I2C1_SCL_I2C1_SCL		0x400001c3
-+			MX8MN_IOMUXC_I2C1_SDA_I2C1_SDA		0x400001c3
-+		>;
-+	};
-+
- 	pinctrl_reg_usdhc2_vmmc: regusdhc2vmmc {
- 		fsl,pins = <
- 			MX8MN_IOMUXC_SD2_RESET_B_GPIO2_IO19	0x41
-@@ -182,6 +189,13 @@
- 	};
- };
- 
-+&i2c1 {
-+	clock-frequency = <400000>;
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_i2c1>;
-+	status = "okay";
-+};
-+
- &snvs_pwrkey {
- 	status = "okay";
- };
--- 
-2.7.4
+> > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
 
+> If this is the only board that failed, great! Must be something in a
+> sun8i driver that uses the init structure after registration.
+
+The infrastructure suppresses duplicate-seeming bisections so I'd not
+count on it, check the reports on the web site.
+
+--vtzGhvizbBRQ85DL
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1VQVQACgkQJNaLcl1U
+h9CXxggAhQAYqpIA036IQyAKgnQ2F/AJYfCXVuQIqvyJUzJcymafEwN1LN7ZCTGO
+OYXotEHUAo0yWqEZHGYRT80yqKRDeaVSUYJ33xCHJEZXIuMULFRie3d5Qa62BejZ
+kc1DtLpAWExTsK5KJA/vUAIFqiISlVFSU/XXQGx+nc1kEYMeobT6IkkZLxZhyEZ5
+ft2eUwlXieQEtNHFQo2B8OmJMfjGeBTUkeSb/A8XYrAPmyvDxxBf01kyLSclZmvs
+Q9ddNUKGQdhwsMlr216GOhBxtPDl6fXaKxvNaX37lzYKbTVZjYjcVfvhR1AeCJ7a
+59WliRvBt6vgidBtATvY/5bgJaQY1Q==
+=4B/b
+-----END PGP SIGNATURE-----
+
+--vtzGhvizbBRQ85DL--
