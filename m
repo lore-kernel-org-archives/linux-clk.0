@@ -2,431 +2,275 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C382DC32753
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 00:27:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E144AC31E40
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 03:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 841B62083B
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 00:27:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565828847;
-	bh=4QD7Yk9ya09l1BYXkFzaH6f/MQAdtDiTlU/hy2yf93s=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=upfyhsXP9WF6yHpvoS3/0IDYtE8oNofCLzqBEXBCHHhCMJp14R8Q+7rNfhOOlpDUr
-	 0jSSMlZOUJo3CYcYhJsCO6EflcDAI0cyLf+rfHttzLt/BlDRHlNYvbYeCh3wHw9Gar
-	 A6FhcjK/crZ+uKIw6w2vGlhyA3voTTEjsez3xbSI=
+	by mail.kernel.org (Postfix) with ESMTP id 9FDDC208C2
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 03:35:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="vgyMxZyh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfHOA1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 14 Aug 2019 20:27:23 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35206 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726490AbfHOA1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 14 Aug 2019 20:27:23 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A71C72083B;
-        Thu, 15 Aug 2019 00:27:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565828841;
-        bh=4QD7Yk9ya09l1BYXkFzaH6f/MQAdtDiTlU/hy2yf93s=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=GWEev4ti/zpH5NkWvdRHWHVC5rtGnCFwG9y0sBVYQBJp6ooktPmxhpe9Lvyd9C5dj
-         ORtsiqRQ/hl+Q//gM3NuYjiRF/V6lDE7d8o0a4hGuTY3mGZCGhxENp0572tM7+mePH
-         kcvE2LJVBvyBLaLD6Hhj0BSxxvxQOQwo08dN1r2c=
+        id S1726865AbfHODf3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 14 Aug 2019 23:35:29 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35885 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727742AbfHODf3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 14 Aug 2019 23:35:29 -0400
+Received: by mail-wr1-f67.google.com with SMTP id r3so1023326wrt.3
+        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2019 20:35:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=tzH18a4Yz+szTgI8M3pVorYGS+ZN6NxiMdBI+qyWdjE=;
+        b=vgyMxZyhj9sPu8N86M18yhpSAVOvtqbA0BjeL/5BXcEVXa55Xf1sJl1jJvC62tFJ1y
+         O3BPjp/yvabiopeEcfCej+O1+AYdLgbFTCVSI2yBR7fIb7wlEsfgl4DMbW6WgB6W5QKu
+         X8goyCOJzQ1RVEqCBZ0ifTlASgMbO39+mDKcUiBzRJoQc8027TJjND32ygg/SGhgk1t9
+         HSDB6It0V51XwRIZ/bYBqleGpJiqiFtU/OWiebsVVb5ZVmHWvz30Ewoe16dgUm7PJIDp
+         EidoTgCYliZPJvD3dK6ivJOAczBtGkl2dyxVU+lSBgSmVZuB2/qp5koqK6/Q1heCxIhN
+         ki6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=tzH18a4Yz+szTgI8M3pVorYGS+ZN6NxiMdBI+qyWdjE=;
+        b=iCiX1wb00PVyIE+407EZUgfpJx+iJy9KPMdawIdj1+5jPWSMZoZnPu3FV60Ff/IJl1
+         KIQZj9mF+bL3VB7UDnp/cHLsipFpSYe+D3vw1eW9pWd0Ff3ZM4mALSeEO4HmWX+jaByu
+         IDPNoEtLSmjjIit+CY2pTErsZ7MCHaHwzVZlsaTzZ5AQXUOBrbbYQbohkbuCjm6Letkb
+         C6fO8aArZkXJEwHfApXZwqVn2L/FJ9W8U/FnIRfP1duZoNe2vscTCPkmlh4dFeTLlAzZ
+         bBZgzx/uInfIHBXefDyLruUiJ7GGspICqSGgcDPlOetWQFUVueCsrUoNaQU+38iboq2h
+         8FjQ==
+X-Gm-Message-State: APjAAAUZq5+dQL8gt/5uaYD7AQojDHt8RYbaHmLkjvbb/5OQ+GpmKBs1
+        Racda0HJqakzMMX8HBZwGZAzJA==
+X-Google-Smtp-Source: APXvYqy4DftgVp2X8IKxQg4KxvqEbBb17jHrydLbirOURnLc4p4A3fJ9KdvCzP296F82C4xOgjKc5A==
+X-Received: by 2002:a05:6000:1041:: with SMTP id c1mr2584396wrx.99.1565840125867;
+        Wed, 14 Aug 2019 20:35:25 -0700 (PDT)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id p9sm1430761wru.61.2019.08.14.20.35.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Aug 2019 20:35:25 -0700 (PDT)
+Message-ID: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com>
+Date:   Wed, 14 Aug 2019 20:35:25 -0700 (PDT)
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1562924653-10056-6-git-send-email-macpaul.lin@mediatek.com>
-References: <1562924653-10056-1-git-send-email-macpaul.lin@mediatek.com> <1562924653-10056-6-git-send-email-macpaul.lin@mediatek.com>
-Subject: Re: [PATCH v6 5/8] clk: mediatek: Add MT6765 clock support
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     wsd_upstream@mediatek.com, CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>, devicetree@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-clk@vger.kernel.org,
-        Macpaul Lin <macpaul.lin@mediatek.com>
-To:     Macpaul Lin <macpaul.lin@mediatek.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Mars Cheng <mars.cheng@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Owen Chen <owen.chen@mediatek.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Sean Wang <sean.wang@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-User-Agent: alot/0.8.1
-Date:   Wed, 14 Aug 2019 17:27:20 -0700
-Message-Id: <20190815002721.A71C72083B@mail.kernel.org>
+X-Kernelci-Lab-Name: lab-baylibre
+X-Kernelci-Kernel: v5.3-rc1-79-g31f58d2f58cb
+X-Kernelci-Tree: clk
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Branch: clk-next
+Subject: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on
+ sun8i-h3-libretech-all-h3-cc
+To:     tomeu.vizoso@collabora.com, Stephen Boyd <sboyd@kernel.org>,
+        guillaume.tucker@collabora.com, mgalka@collabora.com,
+        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Macpaul Lin (2019-07-12 02:43:41)
-> diff --git a/drivers/clk/mediatek/clk-mt6765-audio.c b/drivers/clk/mediat=
-ek/clk-mt6765-audio.c
-> new file mode 100644
-> index 000000000000..41f19343dfb9
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6765-audio.c
-> @@ -0,0 +1,109 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Owen Chen <owen.chen@mediatek.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-Please use SPDX tags.
+clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretec=
+h-all-h3-cc
 
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/platform_device.h>
-> +
-> +#include "clk-mtk.h"
-> +#include "clk-gate.h"
-> +
-> diff --git a/drivers/clk/mediatek/clk-mt6765-vcodec.c b/drivers/clk/media=
-tek/clk-mt6765-vcodec.c
-> new file mode 100644
-> index 000000000000..eb9ae1c2c99c
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6765-vcodec.c
-> @@ -0,0 +1,79 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Owen Chen <owen.chen@mediatek.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
-> + */
+Summary:
+  Start:      31f58d2f58cb Merge branch 'clk-meson' into clk-next
+  Details:    https://kernelci.org/boot/id/5d54b9d159b514324cf1226e
+  Plain log:  https://storage.kernelci.org//clk/clk-next/v5.3-rc1-79-g31f58=
+d2f58cb/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-sun8i=
+-h3-libretech-all-h3-cc.txt
+  HTML log:   https://storage.kernelci.org//clk/clk-next/v5.3-rc1-79-g31f58=
+d2f58cb/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-baylibre/boot-sun8i=
+-h3-libretech-all-h3-cc.html
+  Result:     c82987e740d1 clk: Overwrite clk_hw::init with NULL during clk=
+_register()
 
-SPDX tags.
+Checks:
+  revert:     PASS
+  verify:     PASS
 
-> diff --git a/drivers/clk/mediatek/clk-mt6765.c b/drivers/clk/mediatek/clk=
--mt6765.c
-> new file mode 100644
-> index 000000000000..f716a48a926d
-> --- /dev/null
-> +++ b/drivers/clk/mediatek/clk-mt6765.c
-> @@ -0,0 +1,961 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (c) 2018 MediaTek Inc.
-> + * Author: Owen Chen <owen.chen@mediatek.com>
-> + *
-> + * This program is free software; you can redistribute it and/or modify
-> + * it under the terms of the GNU General Public License version 2 as
-> + * published by the Free Software Foundation.
-> + *
-> + * This program is distributed in the hope that it will be useful,
-> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> + * GNU General Public License for more details.
+Parameters:
+  Tree:       clk
+  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+  Branch:     clk-next
+  Target:     sun8i-h3-libretech-all-h3-cc
+  CPU arch:   arm
+  Lab:        lab-baylibre
+  Compiler:   gcc-8
+  Config:     multi_v7_defconfig+CONFIG_SMP=3Dn
+  Test suite: boot
 
-SPDX tags.
+Breaking commit found:
 
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/slab.h>
-> +#include <linux/mfd/syscon.h>
+---------------------------------------------------------------------------=
+----
+commit c82987e740d12be98b8ae8aa9221b8b9e2541271
+Author: Stephen Boyd <sboyd@kernel.org>
+Date:   Wed Jul 31 12:35:17 2019 -0700
 
-Is this used? Maybe I deleted it.
+    clk: Overwrite clk_hw::init with NULL during clk_register()
+    =
 
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-[...]
-> +
-> +static const char * const axi_parents[] =3D {
-> +       "clk26m",
-> +       "syspll_d7",
-> +       "syspll1_d4",
-> +       "syspll3_d2"
-> +};
-> +
-> +static const char * const mem_parents[] =3D {
-> +       "clk26m",
-> +       "dmpll_ck",
-> +       "apll1_ck"
-> +};
-> +
-> +static const char * const mm_parents[] =3D {
-> +       "clk26m",
-> +       "mmpll_ck",
-> +       "syspll1_d2",
-> +       "syspll_d5",
-> +       "syspll1_d4",
-> +       "univpll_d5",
-> +       "univpll1_d2",
-> +       "mmpll_d2"
-> +};
-> +
-> +static const char * const scp_parents[] =3D {
-> +       "clk26m",
-> +       "syspll4_d2",
-> +       "univpll2_d2",
-> +       "syspll1_d2",
-> +       "univpll1_d2",
-> +       "syspll_d3",
-> +       "univpll_d3"
-> +};
-> +
-> +static const char * const mfg_parents[] =3D {
-> +       "clk26m",
-> +       "mfgpll_ck",
-> +       "syspll_d3",
-> +       "univpll_d3"
-> +};
-> +
-> +static const char * const atb_parents[] =3D {
-> +       "clk26m",
-> +       "syspll1_d4",
-> +       "syspll1_d2"
-> +};
-> +
-> +static const char * const camtg_parents[] =3D {
-> +       "clk26m",
-> +       "usb20_192m_d8",
-> +       "univpll2_d8",
-> +       "usb20_192m_d4",
-> +       "univpll2_d32",
-> +       "usb20_192m_d16",
-> +       "usb20_192m_d32"
-> +};
-> +
-> +static const char * const uart_parents[] =3D {
-> +       "clk26m",
-> +       "univpll2_d8"
-> +};
-> +
-> +static const char * const spi_parents[] =3D {
-> +       "clk26m",
-> +       "syspll3_d2",
-> +       "syspll4_d2",
-> +       "syspll2_d4"
-> +};
-> +
-> +static const char * const msdc5hclk_parents[] =3D {
-> +       "clk26m",
-> +       "syspll1_d2",
-> +       "univpll1_d4",
-> +       "syspll2_d2"
-> +};
-> +
-> +static const char * const msdc50_0_parents[] =3D {
-> +       "clk26m",
-> +       "msdcpll_ck",
-> +       "syspll2_d2",
-> +       "syspll4_d2",
-> +       "univpll1_d2",
-> +       "syspll1_d2",
-> +       "univpll_d5",
-> +       "univpll1_d4"
-> +};
-> +
-> +static const char * const msdc30_1_parents[] =3D {
-> +       "clk26m",
-> +       "msdcpll_d2",
-> +       "univpll2_d2",
-> +       "syspll2_d2",
-> +       "syspll1_d4",
-> +       "univpll1_d4",
-> +       "usb20_192m_d4",
-> +       "syspll2_d4"
-> +};
-> +
-> +static const char * const audio_parents[] =3D {
-> +       "clk26m",
-> +       "syspll3_d4",
-> +       "syspll4_d4",
-> +       "syspll1_d16"
-> +};
-> +
-> +static const char * const aud_intbus_parents[] =3D {
-> +       "clk26m",
-> +       "syspll1_d4",
-> +       "syspll4_d2"
-> +};
-> +
-> +static const char * const aud_1_parents[] =3D {
-> +       "clk26m",
-> +       "apll1_ck"
-> +};
-> +
-> +static const char * const aud_engen1_parents[] =3D {
-> +       "clk26m",
-> +       "apll1_d2",
-> +       "apll1_d4",
-> +       "apll1_d8"
-> +};
-> +
-> +static const char * const disp_pwm_parents[] =3D {
-> +       "clk26m",
-> +       "univpll2_d4",
-> +       "ulposc1_d2",
-> +       "ulposc1_d8"
-> +};
-> +
-> +static const char * const sspm_parents[] =3D {
-> +       "clk26m",
-> +       "syspll1_d2",
-> +       "syspll_d3"
-> +};
-> +
-> +static const char * const dxcc_parents[] =3D {
-> +       "clk26m",
-> +       "syspll1_d2",
-> +       "syspll1_d4",
-> +       "syspll1_d8"
-> +};
-> +
-> +static const char * const usb_top_parents[] =3D {
-> +       "clk26m",
-> +       "univpll3_d4"
-> +};
-> +
-> +static const char * const spm_parents[] =3D {
-> +       "clk26m",
-> +       "syspll1_d8"
-> +};
-> +
-> +static const char * const i2c_parents[] =3D {
-> +       "clk26m",
-> +       "univpll3_d4",
-> +       "univpll3_d2",
-> +       "syspll1_d8",
-> +       "syspll2_d8"
-> +};
-> +
-> +static const char * const pwm_parents[] =3D {
-> +       "clk26m",
-> +       "univpll3_d4",
-> +       "syspll1_d8"
-> +};
-> +
-> +static const char * const seninf_parents[] =3D {
-> +       "clk26m",
-> +       "univpll1_d4",
-> +       "univpll1_d2",
-> +       "univpll2_d2"
-> +};
-> +
-> +static const char * const aes_fde_parents[] =3D {
-> +       "clk26m",
-> +       "msdcpll_ck",
-> +       "univpll_d3",
-> +       "univpll2_d2",
-> +       "univpll1_d2",
-> +       "syspll1_d2"
-> +};
-> +
-> +static const char * const ulposc_parents[] =3D {
-> +       "clk26m",
-> +       "ulposc1_d4",
-> +       "ulposc1_d8",
-> +       "ulposc1_d16",
-> +       "ulposc1_d32"
-> +};
-> +
-> +static const char * const camtm_parents[] =3D {
-> +       "clk26m",
-> +       "univpll1_d4",
-> +       "univpll1_d2",
-> +       "univpll2_d2"
-> +};
-> +
+    We don't want clk provider drivers to use the init structure after clk
+    registration time, but we leave a dangling reference to it by means of
+    clk_hw::init. Let's overwrite the member with NULL during clk_register()
+    so that this can't be used anymore after registration time.
+    =
 
-Can you migrate this driver to the new way of specifying clk parents?
-That way we don't just have lists of strings.
+    Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+    Cc: Doug Anderson <dianders@chromium.org>
+    Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+    Link: https://lkml.kernel.org/r/20190731193517.237136-10-sboyd@kernel.o=
+rg
+    Reviewed-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-> +#define INVALID_UPDATE_REG 0xFFFFFFFF
-> +#define INVALID_UPDATE_SHIFT -1
-> +#define INVALID_MUX_GATE -1
-> +
-> +static const struct mtk_mux top_muxes[] =3D {
-> +       /* CLK_CFG_0 */
-> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_AXI_SEL, "axi_sel", axi_parent=
-s,
-> +                             CLK_CFG_0, CLK_CFG_0_SET, CLK_CFG_0_CLR,
-> +                             0, 2, 7, CLK_CFG_UPDATE, 0, CLK_IS_CRITICAL=
-),
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..efac620264a2 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3484,9 +3484,9 @@ static int clk_cpy_name(const char **dst_p, const cha=
+r *src, bool must_exist)
+ 	return 0;
+ }
+ =
 
-Please add a comment why CLK_IS_CRITICAL flag is used in each place.
+-static int clk_core_populate_parent_map(struct clk_core *core)
++static int clk_core_populate_parent_map(struct clk_core *core,
++					const struct clk_init_data *init)
+ {
+-	const struct clk_init_data *init =3D core->hw->init;
+ 	u8 num_parents =3D init->num_parents;
+ 	const char * const *parent_names =3D init->parent_names;
+ 	const struct clk_hw **parent_hws =3D init->parent_hws;
+@@ -3566,6 +3566,14 @@ __clk_register(struct device *dev, struct device_nod=
+e *np, struct clk_hw *hw)
+ {
+ 	int ret;
+ 	struct clk_core *core;
++	const struct clk_init_data *init =3D hw->init;
++
++	/*
++	 * The init data is not supposed to be used outside of registration path.
++	 * Set it to NULL so that provider drivers can't use it either and so that
++	 * we catch use of hw->init early on in the core.
++	 */
++	hw->init =3D NULL;
+ =
 
-> +       MUX_GATE_CLR_SET_UPD_FLAGS(CLK_TOP_MEM_SEL, "mem_sel", mem_parent=
-s,
-> +                             CLK_CFG_0, CLK_CFG_0_SET, CLK_CFG_0_CLR,
-> +                             8, 2, 15, CLK_CFG_UPDATE, 1, CLK_IS_CRITICA=
-L),
-> +       MUX_GATE_CLR_SET_UPD(CLK_TOP_MM_SEL, "mm_sel", mm_parents, CLK_CF=
-G_0,
-> +                       CLK_CFG_0_SET, CLK_CFG_0_CLR, 16, 3, 23,
-> +                       CLK_CFG_UPDATE, 2),
-> +       MUX_GATE_CLR_SET_UPD(CLK_TOP_SCP_SEL, "scp_sel", scp_parents, CLK=
-_CFG_0,
-> +                       CLK_CFG_0_SET, CLK_CFG_0_CLR, 24, 3, 31,
-> +                       CLK_CFG_UPDATE, 3),
-[...]
-> +       }, {
-> +               .compatible =3D "mediatek,mt6765-topckgen",
-> +               .data =3D clk_mt6765_top_probe,
-> +       }, {
-> +               .compatible =3D "mediatek,mt6765-infracfg",
-> +               .data =3D clk_mt6765_ifr_probe,
-> +       }, {
-> +               /* sentinel */
-> +       }
-> +};
-> +
-> +static int clk_mt6765_probe(struct platform_device *pdev)
-> +{
-> +       int (*clk_probe)(struct platform_device *d);
-> +       int r;
-> +
-> +       clk_probe =3D of_device_get_match_data(&pdev->dev);
-> +       if (!clk_probe)
-> +               return -EINVAL;
-> +
-> +       r =3D clk_probe(pdev);
-> +       if (r)
-> +               dev_err(&pdev->dev,
-> +                       "could not register clock provider: %s: %d\n",
-> +                       pdev->name, r);
-> +
-> +       return r;
-> +}
-> +
-> +static struct platform_driver clk_mt6765_drv =3D {
-> +       .probe =3D clk_mt6765_probe,
-> +       .driver =3D {
-> +               .name =3D "clk-mt6765",
-> +               .owner =3D THIS_MODULE,
+ 	core =3D kzalloc(sizeof(*core), GFP_KERNEL);
+ 	if (!core) {
+@@ -3573,17 +3581,17 @@ __clk_register(struct device *dev, struct device_no=
+de *np, struct clk_hw *hw)
+ 		goto fail_out;
+ 	}
+ =
 
-Remove this line, platform_driver_register() should take care of it.
+-	core->name =3D kstrdup_const(hw->init->name, GFP_KERNEL);
++	core->name =3D kstrdup_const(init->name, GFP_KERNEL);
+ 	if (!core->name) {
+ 		ret =3D -ENOMEM;
+ 		goto fail_name;
+ 	}
+ =
 
-> +               .of_match_table =3D of_match_clk_mt6765,
-> +       },
-> +};
-> +
+-	if (WARN_ON(!hw->init->ops)) {
++	if (WARN_ON(!init->ops)) {
+ 		ret =3D -EINVAL;
+ 		goto fail_ops;
+ 	}
+-	core->ops =3D hw->init->ops;
++	core->ops =3D init->ops;
+ =
+
+ 	if (dev && pm_runtime_enabled(dev))
+ 		core->rpm_enabled =3D true;
+@@ -3592,13 +3600,13 @@ __clk_register(struct device *dev, struct device_no=
+de *np, struct clk_hw *hw)
+ 	if (dev && dev->driver)
+ 		core->owner =3D dev->driver->owner;
+ 	core->hw =3D hw;
+-	core->flags =3D hw->init->flags;
+-	core->num_parents =3D hw->init->num_parents;
++	core->flags =3D init->flags;
++	core->num_parents =3D init->num_parents;
+ 	core->min_rate =3D 0;
+ 	core->max_rate =3D ULONG_MAX;
+ 	hw->core =3D core;
+ =
+
+-	ret =3D clk_core_populate_parent_map(core);
++	ret =3D clk_core_populate_parent_map(core, init);
+ 	if (ret)
+ 		goto fail_parents;
+ =
+
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2ae7604783dd..214c75ed62ae 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -299,7 +299,8 @@ struct clk_init_data {
+  * into the clk API
+  *
+  * @init: pointer to struct clk_init_data that contains the init data shar=
+ed
+- * with the common clock framework.
++ * with the common clock framework. This pointer will be set to NULL once
++ * a clk_register() variant is called on this clk_hw pointer.
+  */
+ struct clk_hw {
+ 	struct clk_core *core;
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [21a2f76849f16d5a48d205b68e923694bc93aaf3] Merge branch 'clk-fixes'=
+ into clk-next
+git bisect good 21a2f76849f16d5a48d205b68e923694bc93aaf3
+# bad: [31f58d2f58cb0a8fbf58af88b6a5133bed23bf9b] Merge branch 'clk-meson' =
+into clk-next
+git bisect bad 31f58d2f58cb0a8fbf58af88b6a5133bed23bf9b
+# good: [1d97657a4794ab23b47bd9921978ddd82569fcf4] Merge branch 'v5.4/dt' i=
+nto v5.4/drivers
+git bisect good 1d97657a4794ab23b47bd9921978ddd82569fcf4
+# bad: [c82987e740d12be98b8ae8aa9221b8b9e2541271] clk: Overwrite clk_hw::in=
+it with NULL during clk_register()
+git bisect bad c82987e740d12be98b8ae8aa9221b8b9e2541271
+# good: [e22cce5f419f3c5aa07c8b0d2f8860d49980dbae] clk: qcom: Don't referen=
+ce clk_init_data after registration
+git bisect good e22cce5f419f3c5aa07c8b0d2f8860d49980dbae
+# good: [3445b1287ac6cf410ecd4536b880172b98e6133d] clk: socfpga: Don't refe=
+rence clk_init_data after registration
+git bisect good 3445b1287ac6cf410ecd4536b880172b98e6133d
+# good: [735822a8b114f73289679178ff075b73facd4571] phy: ti: am654-serdes: D=
+on't reference clk_init_data after registration
+git bisect good 735822a8b114f73289679178ff075b73facd4571
+# first bad commit: [c82987e740d12be98b8ae8aa9221b8b9e2541271] clk: Overwri=
+te clk_hw::init with NULL during clk_register()
+---------------------------------------------------------------------------=
+----
