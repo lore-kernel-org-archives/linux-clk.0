@@ -2,83 +2,80 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF47C3A589
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:01:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2902C3A589
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:12:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F378A2089E
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:01:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565884863;
-	bh=cYMyekZWfGeKYfCELWTIU6Cir2T/oO1xG9xOUMlirTc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=lsWcssrkpnLh2QZDxIuVAonw8vwk+KPrso/zipgxu9cPDngUwuSTAH9wR8NhEL9Si
-	 BJyM7rmY/40dktCybRLZ+9nhx82dffp/NhJkIIH2W0g2aoPNUq1SZioT972R4Q5fV7
-	 M1jI+o62YDzKt2saHnwxq69y8JuUR02H4UrBVGnM=
+	by mail.kernel.org (Postfix) with ESMTP id 76EB4206C1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 16:12:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730612AbfHOQBC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 12:01:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47080 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730560AbfHOQBC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 12:01:02 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC5C2206C1;
-        Thu, 15 Aug 2019 16:01:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565884861;
-        bh=cYMyekZWfGeKYfCELWTIU6Cir2T/oO1xG9xOUMlirTc=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=t6XYsGcy+Xk8gD+pazia6bEL8H5BdgcTIqFqdfEjWMBm16nEPzpafO0MgA7MpVU95
-         5nbHHR/1No2sgtFWPW1Ep4iZQyeWHRa32aDEAI4jAHB2g3od4PCUf0ZBosKqLe304a
-         elsivyskSllgbZ1bK52z/Z2rw9ru85l2kpWr4rww=
-Content-Type: text/plain; charset="utf-8"
+        id S1726393AbfHOQMG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 12:12:06 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46752 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729151AbfHOQMG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Aug 2019 12:12:06 -0400
+Received: by mail-ed1-f66.google.com with SMTP id z51so2516774edz.13;
+        Thu, 15 Aug 2019 09:12:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Vqg8jCVCDmAfYzzLTMscq/wtLhxGOuHTYA6VgxmCpW8=;
+        b=n02VPGA4JxD51TRTSuHpsB+2sXO4+U7wYJw0XMTyM7w+GBXwIlUqCezdArqMVjR1pA
+         C8F0vl4ITzVUdWNFYyQCjQRrq2u3BErN/syjcZOYtiZ2W46ORMdQ0YK7HRIOx1SylGEh
+         cHJa43bNFA+U7ss72FDRajK2TN9cjtNF1LzqFx+qVVO0z0NnHdzDbTmTkUnxlTAL9WT0
+         TnGkcYjpdLFWLCDcyex6XssKHMwtlgnjBmts2Mnl2eZ9Xy3WYVVBZIxQz5XXPSS1tcTx
+         /vw4xWXyzAOdE+qem0GTFXy8SXiAEuAI484o2ySKAMRnykufNAmww6c1qoTWN3D7Ar6R
+         UuLg==
+X-Gm-Message-State: APjAAAXAGqS4yiE7/geY0ELN4NcqpgkqVr7aNdxWdjE1XqUvskvTblrI
+        xUuAcOJrCqBcIFJ0ZWyvjXDZLiPbzNI=
+X-Google-Smtp-Source: APXvYqwJQnizYCCP6PkE+pfyvtZTH7thCeiZKWITryhSlw+h474hxGV1gvnWHY3yqpzaBY1upfYkSg==
+X-Received: by 2002:a17:906:3396:: with SMTP id v22mr5224309eja.152.1565885523759;
+        Thu, 15 Aug 2019 09:12:03 -0700 (PDT)
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
+        by smtp.gmail.com with ESMTPSA id v6sm432342ejx.28.2019.08.15.09.12.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 15 Aug 2019 09:12:03 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id b16so2679260wrq.9;
+        Thu, 15 Aug 2019 09:12:03 -0700 (PDT)
+X-Received: by 2002:a5d:568e:: with SMTP id f14mr6068714wrv.167.1565885523165;
+ Thu, 15 Aug 2019 09:12:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190815151616.2A298206C1@mail.kernel.org>
-References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com> <20190815040221.DE28F2067D@mail.kernel.org> <20190815112614.GA4841@sirena.co.uk> <20190815151616.2A298206C1@mail.kernel.org>
-Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     "kernelci.org bot" <bot@kernelci.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
-        khilman@baylibre.com, matthew.hart@linaro.org,
-        mgalka@collabora.com, tomeu.vizoso@collabora.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Mark Brown <broonie@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 15 Aug 2019 09:01:01 -0700
-Message-Id: <20190815160101.CC5C2206C1@mail.kernel.org>
+References: <20190815160020.183334-1-sboyd@kernel.org> <20190815160020.183334-4-sboyd@kernel.org>
+In-Reply-To: <20190815160020.183334-4-sboyd@kernel.org>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 16 Aug 2019 00:11:50 +0800
+X-Gmail-Original-Message-ID: <CAGb2v6689RaJwiQ=XgY7uCGhqZCzSAeZ9MRVxzj0Vc6sf-dsPQ@mail.gmail.com>
+Message-ID: <CAGb2v6689RaJwiQ=XgY7uCGhqZCzSAeZ9MRVxzj0Vc6sf-dsPQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] rtc: sun6i: Don't reference clk_init_data after registration
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-rtc@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2019-08-15 08:16:15)
-> Quoting Mark Brown (2019-08-15 04:26:14)
-> > On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
-> > > Quoting kernelci.org bot (2019-08-14 20:35:25)
-> >=20
-> > > > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-=
-libretech-all-h3-cc
-> >=20
-> > > If this is the only board that failed, great! Must be something in a
-> > > sun8i driver that uses the init structure after registration.
-> >=20
-> > The infrastructure suppresses duplicate-seeming bisections so I'd not
-> > count on it, check the reports on the web site.
->=20
-> Hmm ok. I can remove the change from -next, but I'd still like to figure
-> out what is using the init pointer after registration. Is there a way to
-> get earlycon logs?
+On Fri, Aug 16, 2019 at 12:00 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
+>
+> Cc: Alessandro Zummo <a.zummo@towertech.it>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> Cc: Chen-Yu Tsai <wens@csie.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-Ok I sent a patch series which may solve the problem for Allwinner.
-
+Acked-by: Chen-Yu Tsai <wens@csie.org>
