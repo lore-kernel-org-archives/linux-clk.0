@@ -2,117 +2,382 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC58C433FF
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 11:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E46AC3A589
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 12:26:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01F852064A
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 11:26:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565868379;
-	bh=nXAyjVHn0p+4CAgtCNYorSwp/PP+/ZyXWDDK+y7KYL4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=k3+7SQ9ZVIdgd4KW1uJci3Ll0gIoIpiSgQEO+CqsZC8uAWpEx6lX/GB8FLs5n0yT4
-	 Km3ydBM5mI24LoSpBm3QuSHT4nBPsqX3yf/ipqOegxZGZ2GfFGKz8vkDl/xUUpdtnf
-	 YMn29nPHhqGisGeULAlUllqwnGOfmtRLprHezbec=
+	by mail.kernel.org (Postfix) with ESMTP id 122562083B
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 12:26:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fZDuTjWb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730808AbfHOL0S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 07:26:18 -0400
-Received: from mail-wr1-f99.google.com ([209.85.221.99]:42844 "EHLO
-        mail-wr1-f99.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfHOL0S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Aug 2019 07:26:18 -0400
-Received: by mail-wr1-f99.google.com with SMTP id b16so1902785wrq.9
-        for <linux-clk@vger.kernel.org>; Thu, 15 Aug 2019 04:26:17 -0700 (PDT)
+        id S1730451AbfHOM0Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 08:26:16 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51114 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731636AbfHOM0M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Aug 2019 08:26:12 -0400
+Received: by mail-wm1-f68.google.com with SMTP id v15so1134152wml.0
+        for <linux-clk@vger.kernel.org>; Thu, 15 Aug 2019 05:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=YGuK4VEzOn7RVy70U3QPgT0o0DMkyzyLKKCZ6dGONLI=;
+        b=fZDuTjWb0T3Sir4+qsYfiw71zeXwsyACH0x2YKnePm2iexxpKfkCWfUzGVrx+H1VL/
+         NQHCTrd89H5B3bottPt9kbYB7To/xZyXZXo/RUBNkg9RtG6UQfzJdJbR98NSD0A8raDJ
+         NikisaEpg9c2uW3pJsDDXPG8AqEfzxolEOA8E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nXAyjVHn0p+4CAgtCNYorSwp/PP+/ZyXWDDK+y7KYL4=;
-        b=hRJXfy0LQRjMjQTg11paX04IYYBsK9sNeptx/TkzekKjf0KRo4FdKLQlCwULu9bwsx
-         y7ZnENcD1O3sdjb9S1ncfTkbTmzdhSabs+UKnzfhffim4XKFa/qmhVEHR7NqzE+1Eoau
-         KUd/Ln/v9pjSlf680p2UhnjJLxouaxucdvHnYLZ+JLuRGShngYj+N3N6MTdMkFkVbjci
-         KsEtIAbhZDbAvQlSP16wqSerwj9dkZREKYqTR9w7iMK4bFocF+4s7fM/B0+dUJ0fcMKS
-         m0dS0L5IRYvgoKVDhK2VX5GlzO8WiXXLJODmsl8Ls/Vxu27SvW4H4xIAcyvMgFMrzXgO
-         vOzg==
-X-Gm-Message-State: APjAAAWfYRVrN1XWpvzC81efwIgPvEvASJLWNw788Vv5+pud1fLBaLdM
-        V0uiRcA8WTTYGApChHkRK1cxuqjiJxK9CzWcf+3PxUdh8/G/VsKcNIxlGXZMXWAw4w==
-X-Google-Smtp-Source: APXvYqwE8AmkN+3MXDrwKQaFOiSfludhujVv2awbLexD+71rwuqfo/tkaDpNPzNDAfUOBE6TTmh7ETRU8D4R
-X-Received: by 2002:a5d:5543:: with SMTP id g3mr5069751wrw.166.1565868376359;
-        Thu, 15 Aug 2019 04:26:16 -0700 (PDT)
-Received: from heliosphere.sirena.org.uk (heliosphere.sirena.org.uk. [2a01:7e01::f03c:91ff:fed4:a3b6])
-        by smtp-relay.gmail.com with ESMTPS id n3sm41979wru.48.2019.08.15.04.26.16
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Thu, 15 Aug 2019 04:26:16 -0700 (PDT)
-X-Relaying-Domain: sirena.org.uk
-Received: from ypsilon.sirena.org.uk ([2001:470:1f1d:6b5::7])
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.co.uk>)
-        id 1hyDtX-0003HY-Th; Thu, 15 Aug 2019 11:26:15 +0000
-Received: by ypsilon.sirena.org.uk (Postfix, from userid 1000)
-        id 033DD2742A76; Thu, 15 Aug 2019 12:26:14 +0100 (BST)
-Date:   Thu, 15 Aug 2019 12:26:14 +0100
-From:   Mark Brown <broonie@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "kernelci.org bot" <bot@kernelci.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        enric.balletbo@collabora.com, guillaume.tucker@collabora.com,
-        khilman@baylibre.com, matthew.hart@linaro.org,
-        mgalka@collabora.com, tomeu.vizoso@collabora.com,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on
- sun8i-h3-libretech-all-h3-cc
-Message-ID: <20190815112614.GA4841@sirena.co.uk>
-References: <5d54d2fd.1c69fb81.e13e5.7422@mx.google.com>
- <20190815040221.DE28F2067D@mail.kernel.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=YGuK4VEzOn7RVy70U3QPgT0o0DMkyzyLKKCZ6dGONLI=;
+        b=RKbWt3KSTebH9ZXtCavMyTLbDz+ngl2DsCjrzmFZcpWzHXTbUuxvKl3F8fsJhQPpIB
+         oXhNPSjwirfr83O7iwEhdrIqGcjcHMKQSQEwf8edbUqBBSBqRh9V+3rHOMsPQS3pLnOx
+         0Q8YdLHqYt+myYMqRso/oEY+ea9LOICtW3Li8uhcIKIFYW358yx0L8Qj0JcqSSO2c17s
+         itM1n0bowD9W4QinJ8aEaoiy9UoNs7v48hhgUoZ5ldjh+/3lXDaKZ9Du2zK9XbdDeoGC
+         pivKuc28OkjsstbbXLDm7zwBuSO2NseAvkdUKfBmBCjKirt9cCBHLYT1YgbMuNi9TI/m
+         XP+w==
+X-Gm-Message-State: APjAAAVC16dXGx/RqbYDORarU7ZczetLObkHY6rl4xbBxB7RL+dtHiFj
+        09RPZG5Yr9aQV2LqPd2vkDcHl1SUrUFaiLYI1xBVCoXH
+X-Google-Smtp-Source: APXvYqw+NO9h3GLLVM5FCgA8092Iiix0AL1JgyjvL7yup9kh6IvbtN89iOP5WNUppRmu3zsJXlJAePWOyperb3qX848=
+X-Received: by 2002:a1c:f90f:: with SMTP id x15mr2463636wmh.69.1565871968857;
+ Thu, 15 Aug 2019 05:26:08 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
-Content-Disposition: inline
-In-Reply-To: <20190815040221.DE28F2067D@mail.kernel.org>
-X-Cookie: MIT:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190703114933.u3x4ej3v7ocewvif@flea> <CAOf5uw=ZEvMV1hFQE986rNG_ctpReGbjbZzv0m=OzKPdBh57uQ@mail.gmail.com>
+ <20190711100100.cty3s6rs3w27low6@flea> <CAOf5uw=3fiMuhcj3kDtCaGNTsxHKRrYb79MXZ+yUZtmf0jU10A@mail.gmail.com>
+ <20190720065830.zn3txpyduakywcva@flea> <CAMty3ZDE1xiNgHVLihH378dY5szzkr14V-fwLZdvPs12tY+G1A@mail.gmail.com>
+ <20190720093202.6fn6xmhvsgawscnu@flea> <CAMty3ZDpOA1mD77t3RB6hEG7o3+ws8y64m1DU8=3HdZ4zy4AUw@mail.gmail.com>
+ <20190724090513.vqnlmya3nqkl6pmu@flea> <CAOf5uwkvCs62zHcUoFuJwau_ZZFdnVf8ua6JY_wzUb9m8rLTTw@mail.gmail.com>
+ <20190813060502.teeevudz6cjn35tl@flea>
+In-Reply-To: <20190813060502.teeevudz6cjn35tl@flea>
+From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date:   Thu, 15 Aug 2019 14:25:57 +0200
+Message-ID: <CAOf5uw=RcBHibiq735NiX452Jde4ZL7PpfwH+Pkc=hARJBudUw@mail.gmail.com>
+Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Jagan Teki <jagan@amarulasolutions.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-amarula <linux-amarula@amarulasolutions.com>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Maxime
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+On Tue, Aug 13, 2019 at 8:05 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+>
+> On Mon, Jul 29, 2019 at 08:59:04AM +0200, Michael Nazzareno Trimarchi wrote:
+> > Hi
+> >
+> > On Wed, Jul 24, 2019 at 11:05 AM Maxime Ripard
+> > <maxime.ripard@bootlin.com> wrote:
+> > >
+> > > On Mon, Jul 22, 2019 at 03:51:04PM +0530, Jagan Teki wrote:
+> > > > Hi Maxime,
+> > > >
+> > > > On Sat, Jul 20, 2019 at 3:02 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > > > >
+> > > > > On Sat, Jul 20, 2019 at 12:46:27PM +0530, Jagan Teki wrote:
+> > > > > > On Sat, Jul 20, 2019 at 12:28 PM Maxime Ripard
+> > > > > > <maxime.ripard@bootlin.com> wrote:
+> > > > > > >
+> > > > > > > On Thu, Jul 11, 2019 at 07:43:16PM +0200, Michael Nazzareno Trimarchi wrote:
+> > > > > > > > > > tcon-pixel clock is the rate that you want to achive on display side
+> > > > > > > > > > and if you have 4 lanes 32bit or lanes and different bit number that
+> > > > > > > > > > you need to have a clock that is able to put outside bits and speed
+> > > > > > > > > > equal to pixel-clock * bits / lanes. so If you want a pixel-clock of
+> > > > > > > > > > 40 mhz and you have 32bits and 4 lanes you need to have a clock of
+> > > > > > > > > > 40 * 32 / 4 in no-burst mode. I think that this is done but most of
+> > > > > > > > > > the display.
+> > > > > > > > >
+> > > > > > > > > So this is what the issue is then?
+> > > > > > > > >
+> > > > > > > > > This one does make sense, and you should just change the rate in the
+> > > > > > > > > call to clk_set_rate in sun4i_tcon0_mode_set_cpu.
+> > > > > > > > >
+> > > > > > > > > I'm still wondering why that hasn't been brought up in either the
+> > > > > > > > > discussion or the commit log before though.
+> > > > > > > > >
+> > > > > > > > Something like this?
+> > > > > > > >
+> > > > > > > > drivers/gpu/drm/sun4i/sun4i_tcon.c     | 20 +++++++++++---------
+> > > > > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  2 --
+> > > > > > > >  2 files changed, 11 insertions(+), 11 deletions(-)
+> > > > > > > >
+> > > > > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > > > index 64c43ee6bd92..42560d5c327c 100644
+> > > > > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
+> > > > > > > > @@ -263,10 +263,11 @@ static int sun4i_tcon_get_clk_delay(const struct
+> > > > > > > > drm_display_mode *mode,
+> > > > > > > >  }
+> > > > > > > >
+> > > > > > > >  static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
+> > > > > > > > -                                       const struct drm_display_mode *mode)
+> > > > > > > > +                                       const struct drm_display_mode *mode,
+> > > > > > > > +                                       u32 tcon_mul)
+> > > > > > > >  {
+> > > > > > > >         /* Configure the dot clock */
+> > > > > > > > -       clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
+> > > > > > > > +       clk_set_rate(tcon->dclk, mode->crtc_clock * tcon_mul * 1000);
+> > > > > > > >
+> > > > > > > >         /* Set the resolution */
+> > > > > > > >         regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
+> > > > > > > > @@ -335,12 +336,13 @@ static void sun4i_tcon0_mode_set_cpu(struct
+> > > > > > > > sun4i_tcon *tcon,
+> > > > > > > >         u8 bpp = mipi_dsi_pixel_format_to_bpp(device->format);
+> > > > > > > >         u8 lanes = device->lanes;
+> > > > > > > >         u32 block_space, start_delay;
+> > > > > > > > -       u32 tcon_div;
+> > > > > > > > +       u32 tcon_div, tcon_mul;
+> > > > > > > >
+> > > > > > > > -       tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
+> > > > > > > > -       tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
+> > > > > > > > +       tcon->dclk_min_div = 4;
+> > > > > > > > +       tcon->dclk_max_div = 127;
+> > > > > > > >
+> > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
+> > > > > > > > +       tcon_mul = bpp / lanes;
+> > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, tcon_mul);
+> > > > > > > >
+> > > > > > > >         /* Set dithering if needed */
+> > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
+> > > > > > > > @@ -366,7 +368,7 @@ static void sun4i_tcon0_mode_set_cpu(struct
+> > > > > > > > sun4i_tcon *tcon,
+> > > > > > > >          */
+> > > > > > > >         regmap_read(tcon->regs, SUN4I_TCON0_DCLK_REG, &tcon_div);
+> > > > > > > >         tcon_div &= GENMASK(6, 0);
+> > > > > > > > -       block_space = mode->htotal * bpp / (tcon_div * lanes);
+> > > > > > > > +       block_space = mode->htotal * tcon_div * tcon_mul;
+> > > > > > > >         block_space -= mode->hdisplay + 40;
+> > > > > > > >
+> > > > > > > >         regmap_write(tcon->regs, SUN4I_TCON0_CPU_TRI0_REG,
+> > > > > > > > @@ -408,7 +410,7 @@ static void sun4i_tcon0_mode_set_lvds(struct
+> > > > > > > > sun4i_tcon *tcon,
+> > > > > > > >
+> > > > > > > >         tcon->dclk_min_div = 7;
+> > > > > > > >         tcon->dclk_max_div = 7;
+> > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
+> > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
+> > > > > > > >
+> > > > > > > >         /* Set dithering if needed */
+> > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
+> > > > > > > > @@ -487,7 +489,7 @@ static void sun4i_tcon0_mode_set_rgb(struct
+> > > > > > > > sun4i_tcon *tcon,
+> > > > > > > >
+> > > > > > > >         tcon->dclk_min_div = 6;
+> > > > > > > >         tcon->dclk_max_div = 127;
+> > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
+> > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
+> > > > > > > >
+> > > > > > > >         /* Set dithering if needed */
+> > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, connector);
+> > > > > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > > > > > b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > > > > > index 5c3ad5be0690..a07090579f84 100644
+> > > > > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
+> > > > > > > > @@ -13,8 +13,6 @@
+> > > > > > > >  #include <drm/drm_encoder.h>
+> > > > > > > >  #include <drm/drm_mipi_dsi.h>
+> > > > > > > >
+> > > > > > > > -#define SUN6I_DSI_TCON_DIV     4
+> > > > > > > > -
+> > > > > > > >  struct sun6i_dsi {
+> > > > > > > >         struct drm_connector    connector;
+> > > > > > > >         struct drm_encoder      encoder;
+> > > > > > >
+> > > > > > > I had more something like this in mind:
+> > > > > > > http://code.bulix.org/nlp5a4-803511
+> > > > > >
+> > > > > > Worth to look at it. was it working on your panel? meanwhile I will check it.
+> > > > >
+> > > > > I haven't tested it.
+> > > > >
+> > > > > > We have updated with below change [1], seems working on but is
+> > > > > > actually checking the each divider as before start with 4... till 127.
+> > > > > >
+> > > > > > This new approach, is start looking the best divider from 4.. based on
+> > > > > > the idea vs rounded it will ended up best divider like [2]
+> > > > >
+> > > > > But why?
+> > > > >
+> > > > > I mean, it's not like it's the first time I'm asking this...
+> > > > >
+> > > > > If the issue is what Micheal described, then the divider has nothing
+> > > > > to do with it. We've had that discussion over and over again.
+> > > >
+> > > > This is what Michael is mentioned in above mail "tcon-pixel clock is
+> > > > the rate that you want to achive on display side and if you have 4
+> > > > lanes 32bit or lanes and different bit number that you need to have
+> > > > a clock that is able to put outside bits and speed equal to
+> > > > pixel-clock * bits / lanes. so If you want a pixel-clock of 40 mhz
+> > > > and you have 32bits and 4 lanes you need to have a clock of 40 * 32
+> > > > / 4 in no-burst mode. "
+> > >
+> > > Yeah, so we need to change the clock rate.
+> > >
+> > > > He is trying to manage the bpp/lanes into dclk_mul (in last mail)
+> > > > and it can multiply with pixel clock which is rate argument in
+> > > > sun4i_dclk_round_rate.
+> > > >
+> > > > The solution I have mentioned in dclk_min, max is bpp/lanes also
+> > > > multiple rate in dotclock sun4i_dclk_round_rate.
+> > > >
+> > > > In both cases the overall pll_rate depends on dividers, the one that I
+> > > > have on this patch is based on BSP and the Michael one is more generic
+> > > > way so-that it can not to touch other functionalities and looping
+> > > > dividers to find the best one.
+> > > >
+> > > > If dclk_min/max is bpp/lanes then dotclock directly using divider 6
+> > > > (assuming 24-bit and 4 lanes) and return the pll_rate and divider 6
+> > > > associated.
+> > > >
+> > > > if dclk_mul is bpp/lanes, on Michael new change, the dividers start
+> > > > with 4 and end with 127 but the constant ideal rate which rate *
+> > > > bpp/lanes but the loop from sun4i_dclk_round_rate computed the divider
+> > > > as 6 only, ie what I'm mentioned on the above mail.
+> > >
+> > > We've been over this a couple of times already.
+> > >
+> > > The clock is generated like this:
+> > >
+> > > PLL -> TCON Module Clock -> TCON DCLK
+> > >
+> > > You want the TCON DCLK to be at the pixel clock rate * bpp /
+> > > lanes. Fine, that makes sense.
+> > >
+> > > Except that the patch you've sent, instead of changing the rate
+> > > itself, changes the ratio between the module clock and DCLK.
+> > >
+> > > And this is where the issue lies. First, from a logical viewpoint, it
+> > > doesn't make sense. If you want to change the clock rate, then just do
+> > > it. Don't hack around the multipliers trying to fall back to something
+> > > that works for you.
+> > >
+> > > Then, the ratio itself needs to be set to 4. This is the part that
+> > > we've discussed way too many times already, but in the Allwinner BSP,
+> > > that ratio is hardcoded to 4, and we've had panels that need it at
+> > > that value.
+> > >
+> > > So, what you want to do is to have:
+> > >
+> > > TCON DCLK = pixel clock * bpp / lanes
+> > > TCON Module Clock = DCLK * 4
+> > > PLL = Module Clock * Module Clock Divider (which I believe is 1 in most cases)
+> >
+> >   pll-mipi                       1        1        1   178200000
+> >    0     0  50000
+> >           tcon0                       2        2        1   178200000
+> >         0     0  50000
+> >              tcon-pixel-clock         1        1        1    29700000
+> >         0     0  50000
+>
+> Is this before or after your patches?
+>
 
-On Wed, Aug 14, 2019 at 09:02:20PM -0700, Stephen Boyd wrote:
-> Quoting kernelci.org bot (2019-08-14 20:35:25)
+This is just an example of clock tree to be clear to everyone how they
+are connected
 
-> > clk/clk-next boot bisection: v5.3-rc1-79-g31f58d2f58cb on sun8i-h3-libretech-all-h3-cc
+> > This is an english problem from my side:
+> > tcon-pixel-clock is DCLK
+> > tcon0 must be tcon-pixel-clock * bpp / lanes, because the logic need to
+> > put a bit every cycle.
+>
+> Again, I'm not saying this is wrong, but each time I've looked at it
+> the BSP was using a 4 divider between the tcon module clock and the
+> dotclock.
+>
 
-> If this is the only board that failed, great! Must be something in a
-> sun8i driver that uses the init structure after registration.
+We have tested on 4-5 displays. Well I don't care on bsp but I care
+about if it works
+and if other SoC has similar approach on clock calculation.
 
-The infrastructure suppresses duplicate-seeming bisections so I'd not
-count on it, check the reports on the web site.
+> So, please prove me wrong here.
+>
 
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
+Having only 10 pages of documentation is a bit difficult.
 
------BEGIN PGP SIGNATURE-----
+> > One solution can be:
+> > - set_rate_exclusive to tcon0 and calculate as display pixel clock *
+> > bpp  / lanes
+>
+> I'm not sure what set_rate_exclusive has to do with it. I mean, it's a
+> good idea to use it, but it shouldn't really change anything to the
+> discussion.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl1VQVQACgkQJNaLcl1U
-h9CXxggAhQAYqpIA036IQyAKgnQ2F/AJYfCXVuQIqvyJUzJcymafEwN1LN7ZCTGO
-OYXotEHUAo0yWqEZHGYRT80yqKRDeaVSUYJ33xCHJEZXIuMULFRie3d5Qa62BejZ
-kc1DtLpAWExTsK5KJA/vUAIFqiISlVFSU/XXQGx+nc1kEYMeobT6IkkZLxZhyEZ5
-ft2eUwlXieQEtNHFQo2B8OmJMfjGeBTUkeSb/A8XYrAPmyvDxxBf01kyLSclZmvs
-Q9ddNUKGQdhwsMlr216GOhBxtPDl6fXaKxvNaX37lzYKbTVZjYjcVfvhR1AeCJ7a
-59WliRvBt6vgidBtATvY/5bgJaQY1Q==
-=4B/b
------END PGP SIGNATURE-----
+Well, this will just do a minimal change on source code and put the constrains
+to the tcon0
 
---vtzGhvizbBRQ85DL--
+>
+> > - calculate the tcon-pixel-clock using all divider
+>
+> I'm not sure what you mean by that.
+>
+> > Problem is that the function that calculate tcon-pixel-clock does not
+> > have any constrain on the ideal value.
+>
+> It does have constraints, but you're right that it will not try to
+> find an exact match and bail out if it can't do it, but will find the
+> closest match.
+>
+
+We need to find the closest divider that match the pixel clock and be close
+to the ideal tcon0 rate.
+
+
+> > What you are suggesting is not correct in my opinion or I'm not
+> > following your suggesstion.
+>
+> Then prove me wrong.
+>
+> > What I know is that if we have a pixel-clock of dvi display of 50Mhz
+> > and we have 4 lanes 32bit we need a clock in the logic of 400Mhz
+> > (this is the ideal throughtput).
+> > So tcon-pixel-clock is 50mhz and tcon0 is 400Mhz.
+>
+> There's one thing to keep in mind though. The TCON dotclock in the
+> MIPI-DSI case isn't directly tied to the Bit Clock, it's simply an
+> internal clock in the pipeline to feed the FIFO of the MIPI-DSI
+> controller. The MIPI-DSI controller itself will generate that clock,
+> and only that one will have those constraints.
+>
+
+I have done the same thinking but because it works for us seems that
+somehow is used
+to internal logic too
+
+Michael
+
+> Maxime
+>
+> --
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+
+
+
+-- 
+| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
+| COO  -  Founder                                      Cruquiuskade 47 |
+| +31(0)851119172                                 Amsterdam 1018 AM NL |
+|                  [`as] http://www.amarulasolutions.com               |
