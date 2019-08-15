@@ -2,382 +2,242 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E46AC3A589
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 12:26:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D307C3A589
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 13:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 122562083B
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 12:26:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A80D206C1
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 13:05:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="fZDuTjWb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lQOho5vu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730451AbfHOM0Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 08:26:16 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51114 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731636AbfHOM0M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Aug 2019 08:26:12 -0400
-Received: by mail-wm1-f68.google.com with SMTP id v15so1134152wml.0
-        for <linux-clk@vger.kernel.org>; Thu, 15 Aug 2019 05:26:09 -0700 (PDT)
+        id S1731822AbfHONFe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 09:05:34 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41701 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730304AbfHONFd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 15 Aug 2019 09:05:33 -0400
+Received: by mail-ot1-f68.google.com with SMTP id o101so5623760ota.8;
+        Thu, 15 Aug 2019 06:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YGuK4VEzOn7RVy70U3QPgT0o0DMkyzyLKKCZ6dGONLI=;
-        b=fZDuTjWb0T3Sir4+qsYfiw71zeXwsyACH0x2YKnePm2iexxpKfkCWfUzGVrx+H1VL/
-         NQHCTrd89H5B3bottPt9kbYB7To/xZyXZXo/RUBNkg9RtG6UQfzJdJbR98NSD0A8raDJ
-         NikisaEpg9c2uW3pJsDDXPG8AqEfzxolEOA8E=
+         :cc:content-transfer-encoding;
+        bh=Ll+cy8BwpEMSCL28Hd9i8ZjYyPna3WaqlsO/PRdFugQ=;
+        b=lQOho5vux+i0DC/OAwuXfvHhWR66MFKZW0Ed9CSEMcNrgWH3TukVHA4c3TtvYZojJO
+         I5nuHhnA5t4pwj4bZpr7GPmMm7XR62JrXMcY49AxX0YHzsCQ5QYMrr0ZYjsJ1GNJYiDH
+         0+irZwua2UaY4HB6n9ZhLcDHE6nOal5ZOy7vsEA4LbsRdaSQclj6mZJ1bQwHqbr2ueb9
+         rt8dbxnzPQORqac2+GE7h6VxtCXbq9hZQNrEbO7pDdJV8V45F5ZXYPltWqIpxbh9E65w
+         QlM8jnY588mITOSXt/RJA8xEtx+sZiQ8g8sBHWQH0eBtm0wBpOM4y5TRTYkUtaMxUyP8
+         8ybQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YGuK4VEzOn7RVy70U3QPgT0o0DMkyzyLKKCZ6dGONLI=;
-        b=RKbWt3KSTebH9ZXtCavMyTLbDz+ngl2DsCjrzmFZcpWzHXTbUuxvKl3F8fsJhQPpIB
-         oXhNPSjwirfr83O7iwEhdrIqGcjcHMKQSQEwf8edbUqBBSBqRh9V+3rHOMsPQS3pLnOx
-         0Q8YdLHqYt+myYMqRso/oEY+ea9LOICtW3Li8uhcIKIFYW358yx0L8Qj0JcqSSO2c17s
-         itM1n0bowD9W4QinJ8aEaoiy9UoNs7v48hhgUoZ5ldjh+/3lXDaKZ9Du2zK9XbdDeoGC
-         pivKuc28OkjsstbbXLDm7zwBuSO2NseAvkdUKfBmBCjKirt9cCBHLYT1YgbMuNi9TI/m
-         XP+w==
-X-Gm-Message-State: APjAAAVC16dXGx/RqbYDORarU7ZczetLObkHY6rl4xbBxB7RL+dtHiFj
-        09RPZG5Yr9aQV2LqPd2vkDcHl1SUrUFaiLYI1xBVCoXH
-X-Google-Smtp-Source: APXvYqw+NO9h3GLLVM5FCgA8092Iiix0AL1JgyjvL7yup9kh6IvbtN89iOP5WNUppRmu3zsJXlJAePWOyperb3qX848=
-X-Received: by 2002:a1c:f90f:: with SMTP id x15mr2463636wmh.69.1565871968857;
- Thu, 15 Aug 2019 05:26:08 -0700 (PDT)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ll+cy8BwpEMSCL28Hd9i8ZjYyPna3WaqlsO/PRdFugQ=;
+        b=A+MxzlLAhG6dUo9WAdGKkQUxyAHZxfnbRpQAgggIouuUg/RXUuEuXsqW0Wwd567Zym
+         2kQ4YUyJwfy7009FgThYgf9NA2W7y+lzGTlNDpTM8dZ/5agR/wGl21IHe5g+9zL0+ho4
+         Mrqh1Pe9gKKQVVLxFVLWmBA+z4Ary2Cw0PFMxz0mALdBUjIz/vGNMJ0KT6uqdNva2WVT
+         hUm6Wk+8xI6McUjwoPD9S/9uMqYa+KBM+a640aw84tD4OYYcm6Zndyh1beB4n8TGB99p
+         6IDPv7nQrcJUSkuHKbGz3Dnkdz/ApgtU04yFzEwu4eo2hwd7mjXUoUktXhCKzOe5BMd0
+         xIsw==
+X-Gm-Message-State: APjAAAXliWXY2XwtP/ynhttxtlySyrIKyz6hn8u0Gb9G+SKW58RnPpUV
+        EOFz11YxyEWpmZWFE735wKThX1HKfkcTdrGIwYs=
+X-Google-Smtp-Source: APXvYqwirOBDdXtI3wgWpG/SfHUCWmk0KPhu+M4XOZNa/fTtSPjZhGTY44y5ZFWAc53+k4Z6rsiuYIWc30XQyLLMchk=
+X-Received: by 2002:a5e:db0a:: with SMTP id q10mr1026212iop.58.1565874332032;
+ Thu, 15 Aug 2019 06:05:32 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190703114933.u3x4ej3v7ocewvif@flea> <CAOf5uw=ZEvMV1hFQE986rNG_ctpReGbjbZzv0m=OzKPdBh57uQ@mail.gmail.com>
- <20190711100100.cty3s6rs3w27low6@flea> <CAOf5uw=3fiMuhcj3kDtCaGNTsxHKRrYb79MXZ+yUZtmf0jU10A@mail.gmail.com>
- <20190720065830.zn3txpyduakywcva@flea> <CAMty3ZDE1xiNgHVLihH378dY5szzkr14V-fwLZdvPs12tY+G1A@mail.gmail.com>
- <20190720093202.6fn6xmhvsgawscnu@flea> <CAMty3ZDpOA1mD77t3RB6hEG7o3+ws8y64m1DU8=3HdZ4zy4AUw@mail.gmail.com>
- <20190724090513.vqnlmya3nqkl6pmu@flea> <CAOf5uwkvCs62zHcUoFuJwau_ZZFdnVf8ua6JY_wzUb9m8rLTTw@mail.gmail.com>
- <20190813060502.teeevudz6cjn35tl@flea>
-In-Reply-To: <20190813060502.teeevudz6cjn35tl@flea>
-From:   Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date:   Thu, 15 Aug 2019 14:25:57 +0200
-Message-ID: <CAOf5uw=RcBHibiq735NiX452Jde4ZL7PpfwH+Pkc=hARJBudUw@mail.gmail.com>
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for PLL_MIPI
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Jagan Teki <jagan@amarulasolutions.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>, Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
+References: <20190814131408.57162-1-tony@atomide.com> <CAHCN7x+p5+XoRHJP--mZ0QcP0FzpYK+pRj7d8Y-js6a8z=p_7A@mail.gmail.com>
+ <20190815040248.GF52127@atomide.com> <20190815041502.GG52127@atomide.com>
+In-Reply-To: <20190815041502.GG52127@atomide.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Thu, 15 Aug 2019 08:05:20 -0500
+Message-ID: <CAHCN7xLNmTkvX9cKdRTu6xLvX+G-kkN6CbwXU0z+mdqscB3fvQ@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Configure sgx interconnect data for some omap variants
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
         devicetree <devicetree@vger.kernel.org>,
-        linux-amarula <linux-amarula@amarulasolutions.com>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        moaz korena <moaz@korena.xyz>, "Andrew F. Davis" <afd@ti.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Maxime
-
-On Tue, Aug 13, 2019 at 8:05 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+On Wed, Aug 14, 2019 at 11:15 PM Tony Lindgren <tony@atomide.com> wrote:
 >
-> On Mon, Jul 29, 2019 at 08:59:04AM +0200, Michael Nazzareno Trimarchi wrote:
-> > Hi
+> * Tony Lindgren <tony@atomide.com> [190815 04:03]:
+> > * Adam Ford <aford173@gmail.com> [190814 19:14]:
+> > > I do wonder if an omap34xx or omap36xx should use
+> > > compatible =3D "ti,sysc-omap4", "ti,sysc";
+> > >
+> > > should it use an omap3 equivalent?
 > >
-> > On Wed, Jul 24, 2019 at 11:05 AM Maxime Ripard
-> > <maxime.ripard@bootlin.com> wrote:
-> > >
-> > > On Mon, Jul 22, 2019 at 03:51:04PM +0530, Jagan Teki wrote:
-> > > > Hi Maxime,
-> > > >
-> > > > On Sat, Jul 20, 2019 at 3:02 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> > > > >
-> > > > > On Sat, Jul 20, 2019 at 12:46:27PM +0530, Jagan Teki wrote:
-> > > > > > On Sat, Jul 20, 2019 at 12:28 PM Maxime Ripard
-> > > > > > <maxime.ripard@bootlin.com> wrote:
-> > > > > > >
-> > > > > > > On Thu, Jul 11, 2019 at 07:43:16PM +0200, Michael Nazzareno Trimarchi wrote:
-> > > > > > > > > > tcon-pixel clock is the rate that you want to achive on display side
-> > > > > > > > > > and if you have 4 lanes 32bit or lanes and different bit number that
-> > > > > > > > > > you need to have a clock that is able to put outside bits and speed
-> > > > > > > > > > equal to pixel-clock * bits / lanes. so If you want a pixel-clock of
-> > > > > > > > > > 40 mhz and you have 32bits and 4 lanes you need to have a clock of
-> > > > > > > > > > 40 * 32 / 4 in no-burst mode. I think that this is done but most of
-> > > > > > > > > > the display.
-> > > > > > > > >
-> > > > > > > > > So this is what the issue is then?
-> > > > > > > > >
-> > > > > > > > > This one does make sense, and you should just change the rate in the
-> > > > > > > > > call to clk_set_rate in sun4i_tcon0_mode_set_cpu.
-> > > > > > > > >
-> > > > > > > > > I'm still wondering why that hasn't been brought up in either the
-> > > > > > > > > discussion or the commit log before though.
-> > > > > > > > >
-> > > > > > > > Something like this?
-> > > > > > > >
-> > > > > > > > drivers/gpu/drm/sun4i/sun4i_tcon.c     | 20 +++++++++++---------
-> > > > > > > >  drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h |  2 --
-> > > > > > > >  2 files changed, 11 insertions(+), 11 deletions(-)
-> > > > > > > >
-> > > > > > > > diff --git a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > index 64c43ee6bd92..42560d5c327c 100644
-> > > > > > > > --- a/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > +++ b/drivers/gpu/drm/sun4i/sun4i_tcon.c
-> > > > > > > > @@ -263,10 +263,11 @@ static int sun4i_tcon_get_clk_delay(const struct
-> > > > > > > > drm_display_mode *mode,
-> > > > > > > >  }
-> > > > > > > >
-> > > > > > > >  static void sun4i_tcon0_mode_set_common(struct sun4i_tcon *tcon,
-> > > > > > > > -                                       const struct drm_display_mode *mode)
-> > > > > > > > +                                       const struct drm_display_mode *mode,
-> > > > > > > > +                                       u32 tcon_mul)
-> > > > > > > >  {
-> > > > > > > >         /* Configure the dot clock */
-> > > > > > > > -       clk_set_rate(tcon->dclk, mode->crtc_clock * 1000);
-> > > > > > > > +       clk_set_rate(tcon->dclk, mode->crtc_clock * tcon_mul * 1000);
-> > > > > > > >
-> > > > > > > >         /* Set the resolution */
-> > > > > > > >         regmap_write(tcon->regs, SUN4I_TCON0_BASIC0_REG,
-> > > > > > > > @@ -335,12 +336,13 @@ static void sun4i_tcon0_mode_set_cpu(struct
-> > > > > > > > sun4i_tcon *tcon,
-> > > > > > > >         u8 bpp = mipi_dsi_pixel_format_to_bpp(device->format);
-> > > > > > > >         u8 lanes = device->lanes;
-> > > > > > > >         u32 block_space, start_delay;
-> > > > > > > > -       u32 tcon_div;
-> > > > > > > > +       u32 tcon_div, tcon_mul;
-> > > > > > > >
-> > > > > > > > -       tcon->dclk_min_div = SUN6I_DSI_TCON_DIV;
-> > > > > > > > -       tcon->dclk_max_div = SUN6I_DSI_TCON_DIV;
-> > > > > > > > +       tcon->dclk_min_div = 4;
-> > > > > > > > +       tcon->dclk_max_div = 127;
-> > > > > > > >
-> > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
-> > > > > > > > +       tcon_mul = bpp / lanes;
-> > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, tcon_mul);
-> > > > > > > >
-> > > > > > > >         /* Set dithering if needed */
-> > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
-> > > > > > > > @@ -366,7 +368,7 @@ static void sun4i_tcon0_mode_set_cpu(struct
-> > > > > > > > sun4i_tcon *tcon,
-> > > > > > > >          */
-> > > > > > > >         regmap_read(tcon->regs, SUN4I_TCON0_DCLK_REG, &tcon_div);
-> > > > > > > >         tcon_div &= GENMASK(6, 0);
-> > > > > > > > -       block_space = mode->htotal * bpp / (tcon_div * lanes);
-> > > > > > > > +       block_space = mode->htotal * tcon_div * tcon_mul;
-> > > > > > > >         block_space -= mode->hdisplay + 40;
-> > > > > > > >
-> > > > > > > >         regmap_write(tcon->regs, SUN4I_TCON0_CPU_TRI0_REG,
-> > > > > > > > @@ -408,7 +410,7 @@ static void sun4i_tcon0_mode_set_lvds(struct
-> > > > > > > > sun4i_tcon *tcon,
-> > > > > > > >
-> > > > > > > >         tcon->dclk_min_div = 7;
-> > > > > > > >         tcon->dclk_max_div = 7;
-> > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
-> > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
-> > > > > > > >
-> > > > > > > >         /* Set dithering if needed */
-> > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, sun4i_tcon_get_connector(encoder));
-> > > > > > > > @@ -487,7 +489,7 @@ static void sun4i_tcon0_mode_set_rgb(struct
-> > > > > > > > sun4i_tcon *tcon,
-> > > > > > > >
-> > > > > > > >         tcon->dclk_min_div = 6;
-> > > > > > > >         tcon->dclk_max_div = 127;
-> > > > > > > > -       sun4i_tcon0_mode_set_common(tcon, mode);
-> > > > > > > > +       sun4i_tcon0_mode_set_common(tcon, mode, 1);
-> > > > > > > >
-> > > > > > > >         /* Set dithering if needed */
-> > > > > > > >         sun4i_tcon0_mode_set_dithering(tcon, connector);
-> > > > > > > > diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > index 5c3ad5be0690..a07090579f84 100644
-> > > > > > > > --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h
-> > > > > > > > @@ -13,8 +13,6 @@
-> > > > > > > >  #include <drm/drm_encoder.h>
-> > > > > > > >  #include <drm/drm_mipi_dsi.h>
-> > > > > > > >
-> > > > > > > > -#define SUN6I_DSI_TCON_DIV     4
-> > > > > > > > -
-> > > > > > > >  struct sun6i_dsi {
-> > > > > > > >         struct drm_connector    connector;
-> > > > > > > >         struct drm_encoder      encoder;
-> > > > > > >
-> > > > > > > I had more something like this in mind:
-> > > > > > > http://code.bulix.org/nlp5a4-803511
-> > > > > >
-> > > > > > Worth to look at it. was it working on your panel? meanwhile I will check it.
-> > > > >
-> > > > > I haven't tested it.
-> > > > >
-> > > > > > We have updated with below change [1], seems working on but is
-> > > > > > actually checking the each divider as before start with 4... till 127.
-> > > > > >
-> > > > > > This new approach, is start looking the best divider from 4.. based on
-> > > > > > the idea vs rounded it will ended up best divider like [2]
-> > > > >
-> > > > > But why?
-> > > > >
-> > > > > I mean, it's not like it's the first time I'm asking this...
-> > > > >
-> > > > > If the issue is what Micheal described, then the divider has nothing
-> > > > > to do with it. We've had that discussion over and over again.
-> > > >
-> > > > This is what Michael is mentioned in above mail "tcon-pixel clock is
-> > > > the rate that you want to achive on display side and if you have 4
-> > > > lanes 32bit or lanes and different bit number that you need to have
-> > > > a clock that is able to put outside bits and speed equal to
-> > > > pixel-clock * bits / lanes. so If you want a pixel-clock of 40 mhz
-> > > > and you have 32bits and 4 lanes you need to have a clock of 40 * 32
-> > > > / 4 in no-burst mode. "
-> > >
-> > > Yeah, so we need to change the clock rate.
-> > >
-> > > > He is trying to manage the bpp/lanes into dclk_mul (in last mail)
-> > > > and it can multiply with pixel clock which is rate argument in
-> > > > sun4i_dclk_round_rate.
-> > > >
-> > > > The solution I have mentioned in dclk_min, max is bpp/lanes also
-> > > > multiple rate in dotclock sun4i_dclk_round_rate.
-> > > >
-> > > > In both cases the overall pll_rate depends on dividers, the one that I
-> > > > have on this patch is based on BSP and the Michael one is more generic
-> > > > way so-that it can not to touch other functionalities and looping
-> > > > dividers to find the best one.
-> > > >
-> > > > If dclk_min/max is bpp/lanes then dotclock directly using divider 6
-> > > > (assuming 24-bit and 4 lanes) and return the pll_rate and divider 6
-> > > > associated.
-> > > >
-> > > > if dclk_mul is bpp/lanes, on Michael new change, the dividers start
-> > > > with 4 and end with 127 but the constant ideal rate which rate *
-> > > > bpp/lanes but the loop from sun4i_dclk_round_rate computed the divider
-> > > > as 6 only, ie what I'm mentioned on the above mail.
-> > >
-> > > We've been over this a couple of times already.
-> > >
-> > > The clock is generated like this:
-> > >
-> > > PLL -> TCON Module Clock -> TCON DCLK
-> > >
-> > > You want the TCON DCLK to be at the pixel clock rate * bpp /
-> > > lanes. Fine, that makes sense.
-> > >
-> > > Except that the patch you've sent, instead of changing the rate
-> > > itself, changes the ratio between the module clock and DCLK.
-> > >
-> > > And this is where the issue lies. First, from a logical viewpoint, it
-> > > doesn't make sense. If you want to change the clock rate, then just do
-> > > it. Don't hack around the multipliers trying to fall back to something
-> > > that works for you.
-> > >
-> > > Then, the ratio itself needs to be set to 4. This is the part that
-> > > we've discussed way too many times already, but in the Allwinner BSP,
-> > > that ratio is hardcoded to 4, and we've had panels that need it at
-> > > that value.
-> > >
-> > > So, what you want to do is to have:
-> > >
-> > > TCON DCLK = pixel clock * bpp / lanes
-> > > TCON Module Clock = DCLK * 4
-> > > PLL = Module Clock * Module Clock Divider (which I believe is 1 in most cases)
+> > We named the old hwmod type1 as ti,sysc-omap2, type2 as ti,sysc-omap4,
+> > and type3 as ti,sysc-omap4-simple based on where we thought they
+> > appeared. Based on the sysconfig register bit layout, sgx on omap36xx
+> > seems to have a subset of ti,sysc-omap4 and we can recycle it. If we
+> > used a wrong type, the module would not get enabled or disabled as
+> > the register bits would not match.
 > >
-> >   pll-mipi                       1        1        1   178200000
-> >    0     0  50000
-> >           tcon0                       2        2        1   178200000
-> >         0     0  50000
-> >              tcon-pixel-clock         1        1        1    29700000
-> >         0     0  50000
+> > How about let's add a comment like:
+> >
+> > Yes sg has a subset of ti,sysc-omap4 type sysconfig register
 >
-> Is this before or after your patches?
+> Well actually we already have some comments there, I clarified
+> it a bit more and fixed the typos noted by Andrew. Updated patch
+> below.
 >
+> Regards,
+>
+> Tony
+>
+> 8< ------------------
+> From tony Mon Sep 17 00:00:00 2001
+> From: Tony Lindgren <tony@atomide.com>
+> Date: Wed, 14 Aug 2019 05:18:16 -0700
+> Subject: [PATCH] ARM: dts: Configure interconnect target module for omap3
+>  sgx
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>
+> Looks like omap34xx OCP registers are not readable unlike on omap36xx.
+> We use SGX revision register instead of the OCP revision register for
+> 34xx and do not configure any SYSCONFIG register unlike for 36xx.
 
-This is just an example of clock tree to be clear to everyone how they
-are connected
+Do you want/need me to test the OMAP3530?  I can run the same tests I
+did for the DM3730.
 
-> > This is an english problem from my side:
-> > tcon-pixel-clock is DCLK
-> > tcon0 must be tcon-pixel-clock * bpp / lanes, because the logic need to
-> > put a bit every cycle.
+adam
 >
-> Again, I'm not saying this is wrong, but each time I've looked at it
-> the BSP was using a 4 divider between the tcon module clock and the
-> dotclock.
+> I've tested that the interconnect target module enables and idles
+> just fine with PM runtime control via sys:
 >
-
-We have tested on 4-5 displays. Well I don't care on bsp but I care
-about if it works
-and if other SoC has similar approach on clock calculation.
-
-> So, please prove me wrong here.
+> # echo on > $(find /sys -name control | grep \/5000); rwmem 0x5000fe10
+> # rwmem 0x50000014      # SGX revision register on 36xx
+> 0x50000014 =3D 0x00010205
+> # echo auto > $(find /sys -name control | grep \/5000)
+> # rwmem 0x5000fe00
+> And when idled, it will produce "Bus error" as expected.
 >
-
-Having only 10 pages of documentation is a bit difficult.
-
-> > One solution can be:
-> > - set_rate_exclusive to tcon0 and calculate as display pixel clock *
-> > bpp  / lanes
+> Cc: Adam Ford <aford173@gmail.com>
+> Cc: Filip Matijevi=C4=87 <filip.matijevic.pz@gmail.com>
+> Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> Cc: moaz korena <moaz@korena.xyz>
+> Cc: Merlijn Wajer <merlijn@wizzup.org>
+> Cc: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Cc: Philipp Rossak <embed3d@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Tested-by: Adam Ford <aford173@gmail.com> #logicpd-torpedo-37xx-devkit
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  arch/arm/boot/dts/omap34xx.dtsi | 26 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/omap36xx.dtsi | 28 ++++++++++++++++++++++++++++
+>  2 files changed, 54 insertions(+)
 >
-> I'm not sure what set_rate_exclusive has to do with it. I mean, it's a
-> good idea to use it, but it shouldn't really change anything to the
-> discussion.
-
-Well, this will just do a minimal change on source code and put the constrains
-to the tcon0
-
+> diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx=
+.dtsi
+> --- a/arch/arm/boot/dts/omap34xx.dtsi
+> +++ b/arch/arm/boot/dts/omap34xx.dtsi
+> @@ -100,6 +100,32 @@
+>                                 interrupts =3D <18>;
+>                         };
+>                 };
+> +
+> +               /*
+> +                * On omap34xx the OCP registers do not seem to be access=
+ible
+> +                * at all unlike on 36xx. Maybe SGX is permanently set to
+> +                * "OCP bypass mode", or maybe there is OCP_SYSCONFIG tha=
+t is
+> +                * write-only at 0x50000e10. We detect SGX based on the S=
+GX
+> +                * revision register instead of the unreadable OCP revisi=
+on
+> +                * register. Also note that on early 34xx es1 revision th=
+ere
+> +                * are also different clocks, but we do not have any dts =
+users
+> +                * for it.
+> +                */
+> +               sgx_module: target-module@50000000 {
+> +                       compatible =3D "ti,sysc-omap2", "ti,sysc";
+> +                       reg =3D <0x50000014 0x4>;
+> +                       reg-names =3D "rev";
+> +                       clocks =3D <&sgx_fck>, <&sgx_ick>;
+> +                       clock-names =3D "fck", "ick";
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <1>;
+> +                       ranges =3D <0 0x50000000 0x4000>;
+> +
+> +                       /*
+> +                        * Closed source PowerVR driver, no child device
+> +                        * binding or driver in mainline
+> +                        */
+> +               };
+>         };
 >
-> > - calculate the tcon-pixel-clock using all divider
+>         thermal_zones: thermal-zones {
+> diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx=
+.dtsi
+> --- a/arch/arm/boot/dts/omap36xx.dtsi
+> +++ b/arch/arm/boot/dts/omap36xx.dtsi
+> @@ -139,6 +139,34 @@
+>                                 interrupts =3D <18>;
+>                         };
+>                 };
+> +
+> +               /*
+> +                * Note that the sysconfig register layout is a subset of=
+ the
+> +                * "ti,sysc-omap4" type register with just sidle and midl=
+e bits
+> +                * available while omap34xx has "ti,sysc-omap2" type sysc=
+onfig.
+> +                */
+> +               sgx_module: target-module@50000000 {
+> +                       compatible =3D "ti,sysc-omap4", "ti,sysc";
+> +                       reg =3D <0x5000fe00 0x4>,
+> +                             <0x5000fe10 0x4>;
+> +                       reg-names =3D "rev", "sysc";
+> +                       ti,sysc-midle =3D <SYSC_IDLE_FORCE>,
+> +                                       <SYSC_IDLE_NO>,
+> +                                       <SYSC_IDLE_SMART>;
+> +                       ti,sysc-sidle =3D <SYSC_IDLE_FORCE>,
+> +                                       <SYSC_IDLE_NO>,
+> +                                       <SYSC_IDLE_SMART>;
+> +                       clocks =3D <&sgx_fck>, <&sgx_ick>;
+> +                       clock-names =3D "fck", "ick";
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <1>;
+> +                       ranges =3D <0 0x50000000 0x2000000>;
+> +
+> +                       /*
+> +                        * Closed source PowerVR driver, no child device
+> +                        * binding or driver in mainline
+> +                        */
+> +               };
+>         };
 >
-> I'm not sure what you mean by that.
->
-> > Problem is that the function that calculate tcon-pixel-clock does not
-> > have any constrain on the ideal value.
->
-> It does have constraints, but you're right that it will not try to
-> find an exact match and bail out if it can't do it, but will find the
-> closest match.
->
-
-We need to find the closest divider that match the pixel clock and be close
-to the ideal tcon0 rate.
-
-
-> > What you are suggesting is not correct in my opinion or I'm not
-> > following your suggesstion.
->
-> Then prove me wrong.
->
-> > What I know is that if we have a pixel-clock of dvi display of 50Mhz
-> > and we have 4 lanes 32bit we need a clock in the logic of 400Mhz
-> > (this is the ideal throughtput).
-> > So tcon-pixel-clock is 50mhz and tcon0 is 400Mhz.
->
-> There's one thing to keep in mind though. The TCON dotclock in the
-> MIPI-DSI case isn't directly tied to the Bit Clock, it's simply an
-> internal clock in the pipeline to feed the FIFO of the MIPI-DSI
-> controller. The MIPI-DSI controller itself will generate that clock,
-> and only that one will have those constraints.
->
-
-I have done the same thinking but because it works for us seems that
-somehow is used
-to internal logic too
-
-Michael
-
-> Maxime
->
+>         thermal_zones: thermal-zones {
 > --
-> Maxime Ripard, Bootlin
-> Embedded Linux and Kernel engineering
-> https://bootlin.com
-
-
-
--- 
-| Michael Nazzareno Trimarchi                     Amarula Solutions BV |
-| COO  -  Founder                                      Cruquiuskade 47 |
-| +31(0)851119172                                 Amsterdam 1018 AM NL |
-|                  [`as] http://www.amarulasolutions.com               |
+> 2.21.0
