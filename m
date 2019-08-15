@@ -2,85 +2,118 @@ Return-Path: <SRS0=fX0Q=WL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F6E7C3A589
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 13:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2B7FC3A59C
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 14:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2787B2133F
-	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 13:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565876976;
-	bh=XILyYvenM8mueUzNTt0fyDFTra78z6GvF3WvF2wiNso=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=CnJfzNSZvcUwjB7wi9oVNcouDVK9yOTXrtFlbJrlZQFlcxrNxzX3IBi2JcnkuRdzf
-	 G4B3xW/LWQgXVo/O2TOFwy6iEZ9fDceckblhJoJ4ZtEuT5vOX1kF2wzJw/qudwhLeZ
-	 dfeTqoeJSsxDbSWx7XHhxuvLZBXtsQZbyaZxgwmc=
+	by mail.kernel.org (Postfix) with ESMTP id B842C2086C
+	for <linux-clk@archiver.kernel.org>; Thu, 15 Aug 2019 14:12:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DLZFnnwu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbfHONtf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 15 Aug 2019 09:49:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40406 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732504AbfHONtf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 15 Aug 2019 09:49:35 -0400
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 27F41206C1;
-        Thu, 15 Aug 2019 13:49:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565876975;
-        bh=XILyYvenM8mueUzNTt0fyDFTra78z6GvF3WvF2wiNso=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=xunLVaA83Fbaa6Fdti3e4WAjMNv4cWDwWALoTHbKoJOHxmuauGkPVQJlmV+RDwQlG
-         H8fjrcVizEavv92/eMqItyQQinbOvS+TnLvnKeEGQHFX4xCd8+6eAt0AKDM8z60vSM
-         iLPyBVsIhxv6ifTeBNGEur8tiClV+4wpqBhIAjuQ=
-Received: by mail-qt1-f172.google.com with SMTP id b11so2344805qtp.10;
-        Thu, 15 Aug 2019 06:49:35 -0700 (PDT)
-X-Gm-Message-State: APjAAAUa//32Hjekuim1sKAQL3tafU86s6dgQchZvFaqA6OED2ol8mjM
-        DbOdaCGh8OStA+xgRCSSviYlOESAzGB5/TvRTA==
-X-Google-Smtp-Source: APXvYqzFcbqOCFWw/Uma4l3oy2DjH+0PUBG+XVA7ZEMtPj5MPqhwFmHx+kGVwQMVzpYeB6DyLNHy3kVz0QEYq2nh2R4=
-X-Received: by 2002:ac8:386f:: with SMTP id r44mr4130599qtb.300.1565876974383;
- Thu, 15 Aug 2019 06:49:34 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190815101613.22872-1-wen.he_1@nxp.com>
-In-Reply-To: <20190815101613.22872-1-wen.he_1@nxp.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 15 Aug 2019 07:49:23 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLp4BB+=kdGkMuH+-QQWHt8vRB_DSxjDYBFHLcHUg5V=A@mail.gmail.com>
-Message-ID: <CAL_JsqLp4BB+=kdGkMuH+-QQWHt8vRB_DSxjDYBFHLcHUg5V=A@mail.gmail.com>
-Subject: Re: [v2 1/3] dt/bindings: clk: Add YAML schemas for LS1028A Display
- Clock bindings
-To:     Wen He <wen.he_1@nxp.com>
-Cc:     linux-devel@linux.nxdi.nxp.com,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Shawn Guo <shawnguo@kernel.org>, devicetree@vger.kernel.org,
-        linux-clk <linux-clk@vger.kernel.org>,
+        id S1729918AbfHOOMh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 15 Aug 2019 10:12:37 -0400
+Received: from mail-eopbgr70087.outbound.protection.outlook.com ([40.107.7.87]:44441
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730032AbfHOOMh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 15 Aug 2019 10:12:37 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ZhwmsFkSN0vxkCkGyqI607hih1Jyt8qkHv6Lx3p3TDBJouPNtHE5LV8yXPNz0GpbNf2LdNkmT8LG5P0qHH93hwo9RQa+DpCiDBfkEU1hyLPBRMDiRK6WLc4xxxYymQWUuYMVoUQjHL/jDpV069isQSAghCVZQ+d9hLZ8EseCfGHHzyUgCz21f0oYa2OsRSSuzdQiUzXvQqxEMPcettQ8zrpz3eNuTwtpHahjCKcOaVb4GBlTnPZywPdPUGYDkErxLtoo7vnQI1pmP3NR8IELMOOiKP3AMJG9FPXKiA2/Y1IyMk89l8AaHfEMp+E0gOHUntPY4yt0zUfXR6urezhT2Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SP/CUayqcLST3C/mXm3bCN0femHBOR7Q7RcvxuyHWQA=;
+ b=dNSFv7qoQcDOtHW2XRizcbPz6HAI7PVajKTSr7ejumvfcrzl2O/LGh+EBT9XjT2ehVzQAZywErTfWwVlz7BGOAvzLZ0ClFujRIPaT+drRfVrpfp8qhBT+OxP6mJA5wnXnWTciA3xYM1gd1vNeqrRcZPn+2zalNiMSHYwQYvvfBQiv4fuSXmY0E1TABWYwX9Rm9u0SYZx2ctIwul4lL9M+LVMvMbNFAr61bpTIs4Cibc8PHMq5MnD27i3NNFyLUFkzsNkBl6zITDR46qJ7n5CW06AVa79PXo88tM3FBIN7cWA2ApOlHORvIbPDEPih6ZnFp3IGPr9076PP3lqU+KHCQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SP/CUayqcLST3C/mXm3bCN0femHBOR7Q7RcvxuyHWQA=;
+ b=DLZFnnwuODjxoiNL/HdadTqonmhgqQDfXJOGVAO7N++12Bi1KuntpC9dm1SRGfnNjHBDXZOTR6+eFvh4NKnKN163LOu+Ac2MbNL6ILaWsXMafRk2Vq5nQkD7Ydu4esDP58FvQZTBGnl+guO8qD2aGAhrTL4hNQ+GFB0e8OwBYZw=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB4526.eurprd04.prod.outlook.com (20.177.54.218) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2157.13; Thu, 15 Aug 2019 14:12:32 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2178.016; Thu, 15 Aug 2019
+ 14:12:32 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Anson Huang <anson.huang@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "rjw@rjwysocki.net" <rjw@rjwysocki.net>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Yang-Leo Li <leoyang.li@nxp.com>,
-        Liviu Dudau <liviu.dudau@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH 1/6] arm64: dts: imx8mn-ddr4-evk: Add i2c1 support
+Thread-Topic: [PATCH 1/6] arm64: dts: imx8mn-ddr4-evk: Add i2c1 support
+Thread-Index: AQHVU1si38e0meSW8UGiSZzBVGty8A==
+Date:   Thu, 15 Aug 2019 14:12:32 +0000
+Message-ID: <VI1PR04MB702358167ACAFDEA83F64D17EEAC0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <1565866783-19672-1-git-send-email-Anson.Huang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: c7916f76-f8aa-44eb-b21d-08d7218a9d6e
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600148)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4526;
+x-ms-traffictypediagnostic: VI1PR04MB4526:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB452603589CE2C1FC641E96E8EEAC0@VI1PR04MB4526.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:403;
+x-forefront-prvs: 01304918F3
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(39860400002)(346002)(396003)(189003)(199004)(2906002)(76176011)(9686003)(476003)(8676002)(6116002)(8936002)(81166006)(14454004)(478600001)(44832011)(6246003)(55016002)(86362001)(102836004)(3846002)(7416002)(81156014)(2201001)(25786009)(6436002)(229853002)(74316002)(5660300002)(558084003)(446003)(99286004)(91956017)(4326008)(186003)(66066001)(33656002)(66556008)(52536014)(316002)(256004)(64756008)(66476007)(76116006)(7736002)(66446008)(53936002)(305945005)(2501003)(54906003)(486006)(26005)(53546011)(66946007)(71200400001)(71190400001)(110136005)(7696005)(6506007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4526;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Uuv5oxjN2qJ2F8TSDPy3dSBhczsEfBrfrz7O4MXAXDL75sz8BDEUp1d/RSuZuUxf/5QrWiCiZPKKYA0H+l+CcZZVGng+XeKQBewcsg6xwMVeTnEOalGPHZ+0F+3EFPUFQ3IzyBbHhsCqRl2avRYkDoM885WZXtVbmPq9MQSk6Q9KTmD8YGlBJ4hvWPalk5mHfAp/GNwzWrFsfZGhZR944GX1oWJF5Df54j71kvztpuwlMr6UTDEul+bHVkdUF+j3Pi+jbsm+833uOGATBuvwip2vellzCR4gmnsqFn70uT6ODH+gEP67QSbcC5Vy4f4A7PEFUdguZKfm6+KLj6pb7gxwSwEu2gZg6DEdR6GZt7/Q3YIKb6lGtOns0LtanMKSK0XBaAz7l9xUqSmwKn8EvjV3nc8UN2W8zkxPncIwPZQ=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c7916f76-f8aa-44eb-b21d-08d7218a9d6e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Aug 2019 14:12:32.5474
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: NSJOnmTR+DV04tLdy//BWGaUXctWLvkfDCHBx84mOd2JFCGR8h1QWc9x3LEm/XqsgCbpo1EfXnlb2Umde2SjfQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4526
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 15, 2019 at 4:26 AM Wen He <wen.he_1@nxp.com> wrote:
->
-> LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
-> output interface. Add a YAML schema for this.
->
-> Signed-off-by: Wen He <wen.he_1@nxp.com>
-> ---
-> change in v2:
->         - Convert bindings to YAML format
->
->  .../devicetree/bindings/clock/fsl,plldig.yaml | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 15.08.2019 14:18, Anson.Huang@nxp.com wrote:=0A=
+> From: Anson Huang <Anson.Huang@nxp.com>=0A=
+> =0A=
+> Enable i2c1 on i.MX8MN DDR4 EVK board.=0A=
+> =0A=
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>=0A=
+=0A=
+Didn't see a cover letter but all 6 patches look good:=0A=
+=0A=
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
