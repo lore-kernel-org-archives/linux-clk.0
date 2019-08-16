@@ -4,38 +4,39 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68315C3A59D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:16:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 139FCC3A59D
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:41:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F56F206C1
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:16:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E834E2086C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:41:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbfHPSQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 14:16:15 -0400
-Received: from shell.v3.sk ([90.176.6.54]:58637 "EHLO shell.v3.sk"
+        id S1727545AbfHPSld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 14:41:33 -0400
+Received: from shell.v3.sk ([90.176.6.54]:59047 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727437AbfHPSQO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 14:16:14 -0400
+        id S1727067AbfHPSld (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 14:41:33 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 019F2D6DCD;
-        Fri, 16 Aug 2019 20:15:57 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 985F7D6E09;
+        Fri, 16 Aug 2019 20:41:28 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id lcjr_n3cdX7b; Fri, 16 Aug 2019 20:15:50 +0200 (CEST)
+        with ESMTP id O5hE6RKEUtMU; Fri, 16 Aug 2019 20:41:24 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 1AF27D6DCE;
-        Fri, 16 Aug 2019 20:15:50 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3AB24D6E29;
+        Fri, 16 Aug 2019 20:41:24 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id xJOvBvIactQL; Fri, 16 Aug 2019 20:15:49 +0200 (CEST)
+        with ESMTP id ZWVEJzeSC459; Fri, 16 Aug 2019 20:41:23 +0200 (CEST)
 Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id A8F80D6DCD;
-        Fri, 16 Aug 2019 20:15:48 +0200 (CEST)
-Message-ID: <4aa480578d4711645f6a1617d9218812f0af4cac.camel@v3.sk>
-Subject: Re: [PATCH 07/19] irqchip/mmp: mask off interrupts from other cores
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 2D1ABD6E09;
+        Fri, 16 Aug 2019 20:41:23 +0200 (CEST)
+Message-ID: <e0c0cf62a1f087fd6c1d7307e5e2a65603148341.camel@v3.sk>
+Subject: Re: [PATCH 05/19] irqchip/mmp: do not use of_address_to_resource()
+ to get mux regs
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -47,12 +48,12 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Andres Salomon <dilinger@queued.net>
-Date:   Fri, 16 Aug 2019 20:15:47 +0200
-In-Reply-To: <19a21c54-93ac-19dc-d679-8d376d44e68c@kernel.org>
+        linux-clk@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Date:   Fri, 16 Aug 2019 20:41:22 +0200
+In-Reply-To: <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
 References: <20190809093158.7969-1-lkundrak@v3.sk>
-         <20190809093158.7969-8-lkundrak@v3.sk>
-         <19a21c54-93ac-19dc-d679-8d376d44e68c@kernel.org>
+         <20190809093158.7969-6-lkundrak@v3.sk>
+         <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
@@ -62,162 +63,79 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-08-09 at 13:18 +0100, Marc Zyngier wrote:
+On Fri, 2019-08-09 at 13:12 +0100, Marc Zyngier wrote:
 > On 09/08/2019 10:31, Lubomir Rintel wrote:
-> > From: Andres Salomon <dilinger@queued.net>
+> > The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
+> > are offsets from intc's base, not addresses on the parent bus. At this
+> > point it probably can't be fixed.
 > > 
-> > On mmp3, there's an extra set of ICU registers (ICU2) that handle
-> > interrupts on the extra cores.  When masking off interrupts on MP1,
-> > these should be masked as well.
+> > On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
+> > axi bus, and thus of_address_to_resource() won't work. We should treat
+> > the values as mere integers as opposed to bus addresses.
 > > 
-> > We add a new interrupt controller via device tree to identify when we're
-> > looking at an mmp3 machine via compatible field of "marvell,mmp3-intc".
-> > 
-> > [lkundrak@v3.sk: Changed "mrvl,mmp3-intc" compatible strings to
-> > "marvell,mmp3-intc". Tidied up the subject line a bit.]
-> > 
-> > Signed-off-by: Andres Salomon <dilinger@queued.net>
 > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > Acked-by: Pavel Machek <pavel@ucw.cz>
 > > 
 > > ---
-> >  arch/arm/mach-mmp/regs-icu.h |  3 +++
-> >  drivers/irqchip/irq-mmp.c    | 51 ++++++++++++++++++++++++++++++++++++
-> >  2 files changed, 54 insertions(+)
+> >  drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
+> >  1 file changed, 11 insertions(+), 9 deletions(-)
 > > 
-> > diff --git a/arch/arm/mach-mmp/regs-icu.h b/arch/arm/mach-mmp/regs-icu.h
-> > index 0375d5a7fcb2b..410743d2b4020 100644
-> > --- a/arch/arm/mach-mmp/regs-icu.h
-> > +++ b/arch/arm/mach-mmp/regs-icu.h
-> > @@ -11,6 +11,9 @@
-> >  #define ICU_VIRT_BASE	(AXI_VIRT_BASE + 0x82000)
-> >  #define ICU_REG(x)	(ICU_VIRT_BASE + (x))
-> >  
-> > +#define ICU2_VIRT_BASE	(AXI_VIRT_BASE + 0x84000)
-> > +#define ICU2_REG(x)	(ICU2_VIRT_BASE + (x))
-> > +
-> >  #define ICU_INT_CONF(n)		ICU_REG((n) << 2)
-> >  #define ICU_INT_CONF_MASK	(0xf)
-> >  
 > > diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> > index cd8d2253f56d1..25497c75cc861 100644
+> > index 14618dc0bd396..af9cba4a51c2e 100644
 > > --- a/drivers/irqchip/irq-mmp.c
 > > +++ b/drivers/irqchip/irq-mmp.c
-> > @@ -44,6 +44,7 @@ struct icu_chip_data {
-> >  	unsigned int		conf_enable;
-> >  	unsigned int		conf_disable;
-> >  	unsigned int		conf_mask;
-> > +	unsigned int		conf2_mask;
-> >  	unsigned int		clr_mfp_irq_base;
-> >  	unsigned int		clr_mfp_hwirq;
-> >  	struct irq_domain	*domain;
-> > @@ -53,9 +54,11 @@ struct mmp_intc_conf {
-> >  	unsigned int	conf_enable;
-> >  	unsigned int	conf_disable;
-> >  	unsigned int	conf_mask;
-> > +	unsigned int	conf2_mask;
-> >  };
-> >  
-> >  static void __iomem *mmp_icu_base;
-> > +static void __iomem *mmp_icu2_base;
-> >  static struct icu_chip_data icu_data[MAX_ICU_NR];
-> >  static int max_icu_nr;
-> >  
-> > @@ -98,6 +101,16 @@ static void icu_mask_irq(struct irq_data *d)
-> >  		r &= ~data->conf_mask;
-> >  		r |= data->conf_disable;
-> >  		writel_relaxed(r, mmp_icu_base + (hwirq << 2));
-> > +
-> > +		if (data->conf2_mask) {
-> > +			/*
-> > +			 * ICU1 (above) only controls PJ4 MP1; if using SMP,
-> > +			 * we need to also mask the MP2 and MM cores via ICU2.
-> > +			 */
-> > +			r = readl_relaxed(mmp_icu2_base + (hwirq << 2));
-> > +			r &= ~data->conf2_mask;
-> > +			writel_relaxed(r, mmp_icu2_base + (hwirq << 2));
-> > +		}
-> >  	} else {
-> >  		r = readl_relaxed(data->reg_mask) | (1 << hwirq);
-> >  		writel_relaxed(r, data->reg_mask);
-> > @@ -201,6 +214,14 @@ static const struct mmp_intc_conf mmp2_conf = {
-> >  			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
-> >  };
-> >  
-> > +static struct mmp_intc_conf mmp3_conf = {
-> > +	.conf_enable	= 0x20,
-> > +	.conf_disable	= 0x0,
-> > +	.conf_mask	= MMP2_ICU_INT_ROUTE_PJ4_IRQ |
-> > +			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
-> > +	.conf2_mask	= 0xf0,
-> > +};
-> > +
-> >  static void __exception_irq_entry mmp_handle_irq(struct pt_regs *regs)
-> >  {
-> >  	int hwirq;
-> > @@ -364,6 +385,14 @@ static int __init mmp_init_bases(struct device_node *node)
-> >  		pr_err("Failed to get interrupt controller register\n");
-> >  		return -ENOMEM;
-> >  	}
-> > +	if (of_device_is_compatible(node, "marvell,mmp3-intc")) {
-> 
-> Instead of harcoding the compatible property once more, why don't you
-> simply pass a flag from mmpx_of_init()?
-
-Will do so in next version.
-
-> > +		mmp_icu2_base = of_iomap(node, 1);
-> > +		if (!mmp_icu2_base) {
-> > +			pr_err("Failed to get interrupt controller register #2\n");
-> > +			iounmap(mmp_icu_base);
-> > +			return -ENOMEM;
-> > +		}
-> > +	}
-> >  
-> >  	icu_data[0].virq_base = 0;
-> >  	icu_data[0].domain = irq_domain_add_linear(node, nr_irqs,
-> > @@ -386,6 +415,8 @@ static int __init mmp_init_bases(struct device_node *node)
-> >  			irq_dispose_mapping(icu_data[0].virq_base + i);
-> >  	}
-> >  	irq_domain_remove(icu_data[0].domain);
-> > +	if (of_device_is_compatible(node, "marvell,mmp3-intc"))
-> > +		iounmap(mmp_icu2_base);
-> >  	iounmap(mmp_icu_base);
-> >  	return -EINVAL;
-> >  }
-> > @@ -428,6 +459,26 @@ static int __init mmp2_of_init(struct device_node *node,
-> >  }
-> >  IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
-> >  
-> > +static int __init mmp3_of_init(struct device_node *node,
-> > +			       struct device_node *parent)
-> > +{
-> > +	int ret;
-> > +
-> > +	ret = mmp_init_bases(node);
-> > +	if (ret < 0)
-> > +		return ret;
-> > +
-> > +	icu_data[0].conf_enable = mmp3_conf.conf_enable;
-> > +	icu_data[0].conf_disable = mmp3_conf.conf_disable;
-> > +	icu_data[0].conf_mask = mmp3_conf.conf_mask;
-> > +	icu_data[0].conf2_mask = mmp3_conf.conf2_mask;
-> > +	irq_set_default_host(icu_data[0].domain);
-> 
-> Why do you need this? On a fully DT-ified platform, there should be no
-> notion of a default domain.
-
-I didn't know. Pretty sure this was cargo-culted, because it's done
-elsewhere too and also unnecessary. Will remove those cases too.
-
-> > +	set_handle_irq(mmp2_handle_irq);
-> > +	max_icu_nr = 1;
-> > +	return 0;
-> > +}
-> > +IRQCHIP_DECLARE(mmp3_intc, "marvell,mmp3-intc", mmp3_of_init);
-> > +
+> > @@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
 > >  static int __init mmp2_mux_of_init(struct device_node *node,
 > >  				   struct device_node *parent)
 > >  {
+> > -	struct resource res;
+> >  	int i, ret, irq, j = 0;
+> >  	u32 nr_irqs, mfp_irq;
+> > +	u32 reg[4];
+> >  
+> >  	if (!parent)
+> >  		return -ENODEV;
+> > @@ -438,18 +438,20 @@ static int __init mmp2_mux_of_init(struct device_node *node,
+> >  		pr_err("Not found mrvl,intc-nr-irqs property\n");
+> >  		return -EINVAL;
+> >  	}
+> > -	ret = of_address_to_resource(node, 0, &res);
+> > +
+> > +	/*
+> > +	 * For historical reasonsm, the "regs" property of the
+> > +	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
+> > +	 * addresses on the parent bus, but offsets from the intc's base.
+> > +	 * That is why we can't use of_address_to_resource() here.
+> > +	 */
+> > +	ret = of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
+> 
+> This will return 0 even if you've read less than your expected 4 u32s.
+> You may want to try of_property_read_variable_u32_array instead.
+
+Will it? Unless I'm reading the of_property_read_u32_array()
+documentation wrong, it suggests that would return -EOVERFLOW in that
+case.
+
+It ignores the extra values it the property is larger. I guess that is
+not a good thing and we still want to use
+of_property_read_variable_u32_array() though.
+
+> >  	if (ret < 0) {
+> >  		pr_err("Not found reg property\n");
+> >  		return -EINVAL;
+> >  	}
+> > -	icu_data[i].reg_status = mmp_icu_base + res.start;
+> > -	ret = of_address_to_resource(node, 1, &res);
+> > -	if (ret < 0) {
+> > -		pr_err("Not found reg property\n");
+> > -		return -EINVAL;
+> > -	}
+> > -	icu_data[i].reg_mask = mmp_icu_base + res.start;
+> > +	icu_data[i].reg_status = mmp_icu_base + reg[0];
+> > +	icu_data[i].reg_mask = mmp_icu_base + reg[2];
+> >  	icu_data[i].cascade_irq = irq_of_parse_and_map(node, 0);
+> >  	if (!icu_data[i].cascade_irq)
+> >  		return -EINVAL;
 > > 
 > 
 > Thanks,
