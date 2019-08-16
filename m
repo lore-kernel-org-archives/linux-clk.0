@@ -2,85 +2,120 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 522BEC3A59C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 04:26:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A17AFC3A59C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 06:48:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28B2A2077C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 04:26:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565929560;
-	bh=/MYMccNm5AOcDF4fcw2T3SZ4z2RQifqv523alxazfQg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=z4+rFl1BRvy3r/rsFjtz05wM1RyhO0mfSDLC8cJ6I6etMAm1dXBXsOHy8X3Lx3ZdA
-	 Ek21rk8KVRC/dCerq2dOaUP6/30zCa1PypFmURBtw49xDcJdy3EYFCATjr5lX+mlJM
-	 Y7JwGmsltShTCdn4QW+wMAblYklmZYJwqaYCCRrA=
+	by mail.kernel.org (Postfix) with ESMTP id 75F3120644
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 06:48:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iRWDMDDS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725957AbfHPEZz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 00:25:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60462 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725878AbfHPEZz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 00:25:55 -0400
-Received: from localhost (unknown [106.51.111.160])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C88682064A;
-        Fri, 16 Aug 2019 04:25:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565929554;
-        bh=/MYMccNm5AOcDF4fcw2T3SZ4z2RQifqv523alxazfQg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=bgdHzz5cVViScm6CVd/sGvDJDZN9V9Yxrp4xBeM/K4D2NXS+avIzggzH7E/R2OSRt
-         gLFeIkk0mD+fQDIs9iiXMW6/tKYTEwedspAQT4r1nPbIjgX2Q+0wLDB39jelaf2fXu
-         EWoWlWA3zFtLGpKDIbYCz7pLctSLJtU0C+duU8Hs=
-Date:   Fri, 16 Aug 2019 09:54:40 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add support for SM8150
-Message-ID: <20190816042440.GY12733@vkoul-mobl.Dlink>
-References: <20190814122958.4981-1-vkoul@kernel.org>
- <20190814122958.4981-2-vkoul@kernel.org>
- <20190814171946.E9E8D20665@mail.kernel.org>
+        id S1726696AbfHPGsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 02:48:21 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:34275 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725945AbfHPGsV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 02:48:21 -0400
+Received: by mail-ot1-f67.google.com with SMTP id c7so8816699otp.1;
+        Thu, 15 Aug 2019 23:48:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=69UIcMbarjhdrqblJ4LWv1FLIeOiPNtNFw7aGmbQg8E=;
+        b=iRWDMDDS+1mIRq4pdzsc1IXCplD9aAgt5nH0d0+crjiD+5WwkaPqOQwcmNKlkagwra
+         2bbBFfT3TWETYTjOnmcpGiPwO4/nkxg82WPeubDIo8mzrc+ygLebn/UgnUdBLInhN7x6
+         eccwLkDZ9B9O9kzHV1EiXK4txN0nS2Wd0ERoSP5wyMKicgp+q6LnKF3XaZIL0xcytyeQ
+         hM+PJgJAMtf2hkKHycruU1nkcGuh+Qp4wLZcLi1WTGXrgcSbYixnaicsfqg4CIDW54SD
+         OwE9QOE3d2ZSc9mJ/oPMWqn8k7IOqym09uKk+fUCujCbZFoldjha46XqPBsctqUMJ9S2
+         X+lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=69UIcMbarjhdrqblJ4LWv1FLIeOiPNtNFw7aGmbQg8E=;
+        b=GtsL17dBnD1wSjwOxJcQt9NrBB5n57AnyIvLWfMk2KkMXZd9VLoqZRT3S3VyTqd9nn
+         mJcbeUHt4NI5i2lJlgSXzmbQIGCnNXeKbRRW6gvfAqa/1c+paAHcuZ2UaHwTEQzQq1PI
+         ewB+Do0xMZwjwSwVjKYSO93t0VmOY9cZRZFu/J+ea6TSrDT0+lgK7xazNiTz5Nif8rjF
+         3r1f9jLSuYvuKy8LeFJOLf3R33HEHxTG1bXmBpkzwegjluw0W1J/EeiUv3t54+wT9M39
+         X+TObWfo63lNsHjfG+GWvXVgE0jV/6BUxBulsFTswMFv/C5MvQFyrXLU6odcVdbRx0on
+         Xnaw==
+X-Gm-Message-State: APjAAAWh/PjKQCJ7hTbo+kjFCFBkmMQ5vMCxnGFrWE/SuTs/fKwG8HYe
+        2XPIPe6Q1CTnKzzW4bjvbdTqf7ho/fFhsC/7i0w=
+X-Google-Smtp-Source: APXvYqzzqoSsKkhZ6FXvZvrWoEaQPuEcN4bSVATxJqc0lETNEYC6iL2J1GCjH/YD4B6bm8cg064kg3mKquDGxaILqaU=
+X-Received: by 2002:a9d:1d5:: with SMTP id e79mr6440340ote.98.1565938099783;
+ Thu, 15 Aug 2019 23:48:19 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190814171946.E9E8D20665@mail.kernel.org>
-User-Agent: Mutt/1.11.3 (2019-02-01)
+References: <20190815223155.21384-1-martin.blumenstingl@googlemail.com> <20190815232951.AA402206C2@mail.kernel.org>
+In-Reply-To: <20190815232951.AA402206C2@mail.kernel.org>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Fri, 16 Aug 2019 08:48:08 +0200
+Message-ID: <CAFBinCA1i=4Lu1xMVyASoFEDhCEn6phDb4h1s15h0ZfGRQX1kw@mail.gmail.com>
+Subject: Re: [PATCH RFC v1] clk: Fix potential NULL dereference in clk_fetch_parent_index()
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 14-08-19, 10:19, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-08-14 05:29:58)
-> > Add support for rpmh clocks found in SM8150
-> > 
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+Hi Stephen,
+
+On Fri, Aug 16, 2019 at 1:29 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Martin Blumenstingl (2019-08-15 15:31:55)
+> > Don't compare the parent clock name with a NULL name in the
+> > clk_parent_map. This prevents a kernel crash when passing NULL
+> > core->parents[i].name to strcmp().
+> >
+> > An example which triggered this is a mux clock with four parents when
+> > each of them is referenced in the clock driver using
+> > clk_parent_data.fw_name and then calling clk_set_parent(clk, 3rd_parent)
+> > on this mux.
+> > In this case the first parent is also the HW default so
+> > core->parents[i].hw is populated when the clock is registered. Calling
+> > clk_set_parent(clk, 3rd_parent) will then go through all parents and
+> > skip the first parent because it's hw pointer doesn't match. For the
+> > second parent no hw pointer is cached yet and clk_core_get(core, 1)
+> > returns a non-matching pointer (which is correct because we are comparing
+> > the second with the third parent). Comparing the result of
+> > clk_core_get(core, 2) with the requested parent gives a match. However
+> > we don't reach this point because right after the clk_core_get(core, 1)
+> > mismatch the old code tried to !strcmp(parent->name, NULL) (where the
+> > second argument is actually core->parents[i].name, but that was never
+> > populated by the clock driver).
+> >
+> > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > > ---
-> 
-> Patch looks OK, but can you convert this driver to use the new parent
-> style and then update the binding to handle it? We can fix the other
-> platforms and dts files that use this driver in parallel, but sm8150
-> will be forward looking.
+> > I have seen the original crash when I was testing an MMC driver which
+> > is not upstream yet on v5.3-rc4. I'm not sure whether this fix is
+> > "correct" (it fixes the crash for me) or where to point the Fixes tag
+> > to, it may be one of:
+> > - fc0c209c147f ("clk: Allow parents to be specified without string names")
+> > - 1a079560b145 ("clk: Cache core in clk_fetch_parent_index() without names")
+> >
+> > This is meant to be applied on top of v5.3-rc4.
+> >
+>
+> Ah ok. I thought that strcmp() would ignore NULL arguments, but
+> apparently not. I can apply this to clk-fixes.
+at least ARM [0] and the generic [1] implementations don't
 
-Yes but that would also impact sdm845 as it uses this driver, so I
-wanted to get this one done so that we have support for rpm clock and
-then do the conversion.
+I did not bisect this so do you have any suggestion for a Fixes tag? I
+mentioned two candidates above, but I'm not sure which one to use
+just let me know, then I'll resend with the fixes tag so you can take
+it through clk-fixes
 
-Would that be okay with you to get this in and then I convert this?
 
-Thanks
--- 
-~Vinod
+Martin
+
+
+[0] https://elixir.bootlin.com/linux/v5.2/source/arch/arm/boot/compressed/string.c#L91
+[1] https://elixir.bootlin.com/linux/v5.2/source/lib/string.c#L356
