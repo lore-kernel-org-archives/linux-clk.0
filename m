@@ -2,84 +2,82 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C050C3A59D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 17:30:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE4D9C3A59D
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 17:31:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CE432171F
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 17:30:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 814A02086C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 17:31:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565976652;
-	bh=w4zayQbudQGRG3Pn2pTvc40NebkNZTkjsZKFGSESKl8=;
+	s=default; t=1565976709;
+	bh=TkuDPGpcaz9V3TCFafNZva2EkKV3wli6koFG9q5cghE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=MX3uuqF264r/Vtvv59JOvSzR8Hs4ZI8W6HAEg0ArIOhM0ymMcTmOVntLo+mt8YTQy
-	 OuCvP9SpeJjS546ojmCh7DgKTE7LPi6tW+aVeXYF1unGW/Ap+LFFLYACD1EBDCYOS4
-	 UTkMCVCgSTWQLezB+IhYFBeccngFSm2dtaalymbc=
+	b=pwSRLt2ewjs69Z64YW2O30dVVGi5zUnN2cFsK083ZMwx3dcjs9wkZPuZjZzmRxRV5
+	 fDm8gWCFOQm/TLgxVTfHP4QDVjwsnifK+LzhKnrxkaDAKITiuTp7S7ucG6AYsmQmrt
+	 K18j7gR/ual7TxoqboGYAPQc01kDkPD5PQYgCwfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727357AbfHPRav (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 13:30:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53110 "EHLO mail.kernel.org"
+        id S1727586AbfHPRbt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 13:31:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727347AbfHPRav (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 13:30:51 -0400
+        id S1726824AbfHPRbt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 13:31:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D03C2086C;
-        Fri, 16 Aug 2019 17:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED6022086C;
+        Fri, 16 Aug 2019 17:31:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565976650;
-        bh=w4zayQbudQGRG3Pn2pTvc40NebkNZTkjsZKFGSESKl8=;
+        s=default; t=1565976708;
+        bh=TkuDPGpcaz9V3TCFafNZva2EkKV3wli6koFG9q5cghE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=PuZbq6mNZlFjsKq9UdZ34gRKiZzR+vq1+CEGdZFnkIqYPv8qjqTL3WJ8vcE8Ldg7v
-         wTRDveUPyUkObUtoO8i5rgLxw7yH3a8kPnCRiC1ys7xfesprL9mvx13K9LzMMWMwNv
-         vjR8yKqEbgqqoaNN+KLdK1j3sea3dC5P/e83vfrI=
+        b=IbJQDF+M60CpxSWWfFxbJldVOU254xLnYDUJYNlSZnGUjjsP5jU8N4k8bJdJVtEMm
+         r0zuiph/HEhroZv2olfyQPYZfr7PTyd7AZqpFJPtbZtHNLlMyLwTQUiOQWLqI/5bdZ
+         iRY9zd6DWAqebbBCbfzmU8RvYADgN5P7dxEdQn5s=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190815223155.21384-1-martin.blumenstingl@googlemail.com>
-References: <20190815223155.21384-1-martin.blumenstingl@googlemail.com>
+In-Reply-To: <CAFBinCA1i=4Lu1xMVyASoFEDhCEn6phDb4h1s15h0ZfGRQX1kw@mail.gmail.com>
+References: <20190815223155.21384-1-martin.blumenstingl@googlemail.com> <20190815232951.AA402206C2@mail.kernel.org> <CAFBinCA1i=4Lu1xMVyASoFEDhCEn6phDb4h1s15h0ZfGRQX1kw@mail.gmail.com>
 Subject: Re: [PATCH RFC v1] clk: Fix potential NULL dereference in clk_fetch_parent_index()
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-clk@vger.kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 User-Agent: alot/0.8.1
-Date:   Fri, 16 Aug 2019 10:30:49 -0700
-Message-Id: <20190816173050.9D03C2086C@mail.kernel.org>
+Date:   Fri, 16 Aug 2019 10:31:47 -0700
+Message-Id: <20190816173147.ED6022086C@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2019-08-15 15:31:55)
-> Don't compare the parent clock name with a NULL name in the
-> clk_parent_map. This prevents a kernel crash when passing NULL
-> core->parents[i].name to strcmp().
+Quoting Martin Blumenstingl (2019-08-15 23:48:08)
+> > > I have seen the original crash when I was testing an MMC driver which
+> > > is not upstream yet on v5.3-rc4. I'm not sure whether this fix is
+> > > "correct" (it fixes the crash for me) or where to point the Fixes tag
+> > > to, it may be one of:
+> > > - fc0c209c147f ("clk: Allow parents to be specified without string na=
+mes")
+> > > - 1a079560b145 ("clk: Cache core in clk_fetch_parent_index() without =
+names")
+> > >
+> > > This is meant to be applied on top of v5.3-rc4.
+> > >
+> >
+> > Ah ok. I thought that strcmp() would ignore NULL arguments, but
+> > apparently not. I can apply this to clk-fixes.
+> at least ARM [0] and the generic [1] implementations don't
 >=20
-> An example which triggered this is a mux clock with four parents when
-> each of them is referenced in the clock driver using
-> clk_parent_data.fw_name and then calling clk_set_parent(clk, 3rd_parent)
-> on this mux.
-> In this case the first parent is also the HW default so
-> core->parents[i].hw is populated when the clock is registered. Calling
-> clk_set_parent(clk, 3rd_parent) will then go through all parents and
-> skip the first parent because it's hw pointer doesn't match. For the
-> second parent no hw pointer is cached yet and clk_core_get(core, 1)
-> returns a non-matching pointer (which is correct because we are comparing
-> the second with the third parent). Comparing the result of
-> clk_core_get(core, 2) with the requested parent gives a match. However
-> we don't reach this point because right after the clk_core_get(core, 1)
-> mismatch the old code tried to !strcmp(parent->name, NULL) (where the
-> second argument is actually core->parents[i].name, but that was never
-> populated by the clock driver).
+> I did not bisect this so do you have any suggestion for a Fixes tag? I
+> mentioned two candidates above, but I'm not sure which one to use
+> just let me know, then I'll resend with the fixes tag so you can take
+> it through clk-fixes
 >=20
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
+>=20
 
-Applied to clk-fixes
-
+I added the fixes tag for the first one, where it was broken, i.e.
+fc0c209c147f. Thanks.
