@@ -2,75 +2,64 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 153FFC3A59C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 14:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D797C41514
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 15:39:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA20C2171F
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 14:51:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565967096;
-	bh=zOrA4mX823PTQ9324s7EdYM6BIvZpPyOoitLCrgVvk0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=YpYRz9NtFPIAGqethKiS7lf6cgtXdOk9EeNObb16pX4RF823ilUrx2qQaVdjPugmO
-	 lFDLQviRr5QIi5cWIZfOAS0jW1lq8OHLaQkNuO6z+KNdTdpdR7afBwTAPEA1KRuSs5
-	 s+hrqOzdMXQzx9txyAu1eMZPLv0RKJ6vNB6iOyaI=
+	by mail.kernel.org (Postfix) with ESMTP id ED23D21726
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 15:38:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727405AbfHPOvg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 10:51:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55532 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726032AbfHPOvg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 10:51:36 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82244206C1;
-        Fri, 16 Aug 2019 14:51:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565967095;
-        bh=zOrA4mX823PTQ9324s7EdYM6BIvZpPyOoitLCrgVvk0=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=LL8usYxiwzoUv0BUg4MLQ5VUHksimEhTqqviAtiNur5nqY93dKkViHkIW5eonkdhv
-         KtYz1pqkyQsMz9iTlHAv2DEeeylH/u/ehEoiLFo501CeNJ9vlJ6f69fJM3nx0Zx5Il
-         ynPAYPU7hD24E6J7c9yUJYaniY6OyUwdizYs5unY=
-Content-Type: text/plain; charset="utf-8"
+        id S1727374AbfHPPi7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 11:38:59 -0400
+Received: from kirsty.vergenet.net ([202.4.237.240]:57840 "EHLO
+        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727345AbfHPPi7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 11:38:59 -0400
+Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
+        by kirsty.vergenet.net (Postfix) with ESMTPA id F246D25BDF3;
+        Sat, 17 Aug 2019 01:38:56 +1000 (AEST)
+Received: by reginn.horms.nl (Postfix, from userid 7100)
+        id DF79694057D; Fri, 16 Aug 2019 17:38:54 +0200 (CEST)
+Date:   Fri, 16 Aug 2019 17:38:54 +0200
+From:   Simon Horman <horms@verge.net.au>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for
+ clock domain
+Message-ID: <20190816153854.w5oqlxrfndgp6l3b@verge.net.au>
+References: <20190816125225.16061-1-geert+renesas@glider.be>
+ <20190816125225.16061-2-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190815221249.53235-1-sboyd@kernel.org>
-References: <20190815221249.53235-1-sboyd@kernel.org>
-Subject: Re: [PATCH] clk: ti: Don't reference clk_init_data after registration
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Fri, 16 Aug 2019 07:51:34 -0700
-Message-Id: <20190816145135.82244206C1@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816125225.16061-2-geert+renesas@glider.be>
+Organisation: Horms Solutions BV
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2019-08-15 15:12:49)
-> A future patch is going to change semantics of clk_register() so that
-> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-> referencing this member here so that we don't run into NULL pointer
-> exceptions.
->=20
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Cc: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->=20
-> This might be causing boot regressions in linux-next. Not sure.
->=20
+On Fri, Aug 16, 2019 at 02:52:23PM +0200, Geert Uytterhoeven wrote:
+> The CPG/MSTP Clock Domain driver does not implement the
+> generic_pm_domain.power_{on,off}() callbacks, as the domain itself
+> cannot be powered down.  Hence the domain should be marked as always-on
+> by setting the GENPD_FLAG_ALWAYS_ON flag.
+> 
+> This gets rid of the following boot warning on RZ/A1:
+> 
+>     sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-I don't see linux-next boot regressions in kernel-ci so it must be
-working.
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 
