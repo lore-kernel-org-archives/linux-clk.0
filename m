@@ -6,72 +6,69 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B95FC3A59F
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:01:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C6DC3A59D
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC72206C1
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:01:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BC91206C1
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565978485;
-	bh=XqtifSXX9OUPb9A8BckG9vL0E6DJew+nlH5Ft32w1cs=;
+	s=default; t=1565978568;
+	bh=I+9AYbqHJGWDLUYrQuzL4EoZcCetSaXNK4owyhlQZyI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=vL6KoyGh194+HV+RhcfYgxvIrYmIzitdnwkT8mRwJIU8rHIscyvN0MdrR9QAso00c
-	 ftq0Ithbmq5yPqWP/+vqwUvrw0yfXw8PjCqjL+QHFx0j7JXzN7UVA+fh07SZUWV9xC
-	 dSt3pZp7PrJPv6SmtULTaUsYWoAHgpcFNHJjS5T0=
+	b=QTem0M9gasyRKZaiAhW1ubxCMAD+FcfO5sZPh1RMlNNZATPI+s/E6TmwiQTX1JpqI
+	 7jPaUOYeXMz5bPk4kALjooZIGQ4pfb2lPAvfOlDW7pCHsxBUzbK0goDUAJI+zh3cNC
+	 17Ipw5tx+HQvTL1Cw5nB1BMtfIii5+2rMif0EX7U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727471AbfHPSBY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 14:01:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60732 "EHLO mail.kernel.org"
+        id S1727490AbfHPSCr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 14:02:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:32770 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726900AbfHPSBY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 14:01:24 -0400
+        id S1727466AbfHPSCr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 14:02:47 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6299720665;
-        Fri, 16 Aug 2019 18:01:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D37BD20665;
+        Fri, 16 Aug 2019 18:02:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565978483;
-        bh=XqtifSXX9OUPb9A8BckG9vL0E6DJew+nlH5Ft32w1cs=;
+        s=default; t=1565978566;
+        bh=I+9AYbqHJGWDLUYrQuzL4EoZcCetSaXNK4owyhlQZyI=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=fAFHbbvuaUYlD6QgldrNCvmvteqOc8Zz+0OypyoMrHeq1UNSsOXiikQgFnOTksa+w
-         kWlkSZtLAdvw1irRddjKq5DelKgzIr4XgubaKfrg7DQlLXXiKKtQZA+Fb//mC6ev+M
-         0iaykEptG0hMrRDYxWF9Ktulc35tp8Sjp8tC8y4A=
+        b=al7+pTCRa1ysK9PYtoeNNO/kgnxQq76VFbXGIcGL7rJbTbm+rtwoWg4jMBmmr59E7
+         6BTdiXQk7yhZjY554CMS2cLiigd+VfAc1Rc8VeNgv32zG1XNJbovvwACH6gMzNB/VJ
+         yBRATionK4lB9NVFtZ3qqhAN8KmPXf1T2TaXWTTI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190816125225.16061-2-geert+renesas@glider.be>
-References: <20190816125225.16061-1-geert+renesas@glider.be> <20190816125225.16061-2-geert+renesas@glider.be>
-Subject: Re: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+In-Reply-To: <20190814015312.11711-1-peng.fan@nxp.com>
+References: <20190814015312.11711-1-peng.fan@nxp.com>
+Subject: Re: [PATCH] clk: imx8mn: fix int pll clk gate
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
+Cc:     kernel@pengutronix.de, festevam@gmail.com, linux-imx@nxp.com,
+        Anson.Huang@nxp.com, abel.vesa@nxp.com, ping.bai@nxp.com,
+        peng.fan@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     mturquette@baylibre.com, peng.fan@nxp.com, s.hauer@pengutronix.de,
+        shawnguo@kernel.org
 User-Agent: alot/0.8.1
-Date:   Fri, 16 Aug 2019 11:01:22 -0700
-Message-Id: <20190816180123.6299720665@mail.kernel.org>
+Date:   Fri, 16 Aug 2019 11:02:46 -0700
+Message-Id: <20190816180246.D37BD20665@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-08-16 05:52:23)
-> The CPG/MSTP Clock Domain driver does not implement the
-> generic_pm_domain.power_{on,off}() callbacks, as the domain itself
-> cannot be powered down.  Hence the domain should be marked as always-on
-> by setting the GENPD_FLAG_ALWAYS_ON flag.
+Quoting peng.fan@nxp.com (2019-08-13 18:53:12)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> This gets rid of the following boot warning on RZ/A1:
+> To Frac pll, the gate shift is 13, however to Int PLL the gate shift
+> is 11.
 >=20
->     sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
->=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Cc: <stable@vger.kernel.org>
+> Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
 > ---
 
-Are you going to add a Fixes tag?
+This is a fix for a change in -next. Why is stable Cced?
 
