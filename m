@@ -2,146 +2,323 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 139FCC3A59D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:41:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EBEFC3A59D
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:57:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E834E2086C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:41:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48AD92173B
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:57:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727545AbfHPSld (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 14:41:33 -0400
-Received: from shell.v3.sk ([90.176.6.54]:59047 "EHLO shell.v3.sk"
+        id S1727597AbfHPS5b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 14:57:31 -0400
+Received: from shell.v3.sk ([90.176.6.54]:59117 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727067AbfHPSld (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 14:41:33 -0400
+        id S1727466AbfHPS53 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 14:57:29 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 985F7D6E09;
-        Fri, 16 Aug 2019 20:41:28 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 6F9E5D6DAC;
+        Fri, 16 Aug 2019 20:57:25 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id O5hE6RKEUtMU; Fri, 16 Aug 2019 20:41:24 +0200 (CEST)
+        with ESMTP id cuYSKFdpmuN3; Fri, 16 Aug 2019 20:57:19 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3AB24D6E29;
-        Fri, 16 Aug 2019 20:41:24 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 029CAD6D83;
+        Fri, 16 Aug 2019 20:57:19 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ZWVEJzeSC459; Fri, 16 Aug 2019 20:41:23 +0200 (CEST)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 2D1ABD6E09;
-        Fri, 16 Aug 2019 20:41:23 +0200 (CEST)
-Message-ID: <e0c0cf62a1f087fd6c1d7307e5e2a65603148341.camel@v3.sk>
-Subject: Re: [PATCH 05/19] irqchip/mmp: do not use of_address_to_resource()
- to get mux regs
+        with ESMTP id FfoLDIe9pu7U; Fri, 16 Aug 2019 20:57:18 +0200 (CEST)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3AB74D6D5B;
+        Fri, 16 Aug 2019 20:57:18 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
-Date:   Fri, 16 Aug 2019 20:41:22 +0200
-In-Reply-To: <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
-References: <20190809093158.7969-1-lkundrak@v3.sk>
-         <20190809093158.7969-6-lkundrak@v3.sk>
-         <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] clk: tidy up the help tags in Kconfig
+Date:   Fri, 16 Aug 2019 20:57:16 +0200
+Message-Id: <20190816185716.530013-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 2019-08-09 at 13:12 +0100, Marc Zyngier wrote:
-> On 09/08/2019 10:31, Lubomir Rintel wrote:
-> > The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
-> > are offsets from intc's base, not addresses on the parent bus. At this
-> > point it probably can't be fixed.
-> > 
-> > On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
-> > axi bus, and thus of_address_to_resource() won't work. We should treat
-> > the values as mere integers as opposed to bus addresses.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > Acked-by: Pavel Machek <pavel@ucw.cz>
-> > 
-> > ---
-> >  drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
-> >  1 file changed, 11 insertions(+), 9 deletions(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
-> > index 14618dc0bd396..af9cba4a51c2e 100644
-> > --- a/drivers/irqchip/irq-mmp.c
-> > +++ b/drivers/irqchip/irq-mmp.c
-> > @@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
-> >  static int __init mmp2_mux_of_init(struct device_node *node,
-> >  				   struct device_node *parent)
-> >  {
-> > -	struct resource res;
-> >  	int i, ret, irq, j = 0;
-> >  	u32 nr_irqs, mfp_irq;
-> > +	u32 reg[4];
-> >  
-> >  	if (!parent)
-> >  		return -ENODEV;
-> > @@ -438,18 +438,20 @@ static int __init mmp2_mux_of_init(struct device_node *node,
-> >  		pr_err("Not found mrvl,intc-nr-irqs property\n");
-> >  		return -EINVAL;
-> >  	}
-> > -	ret = of_address_to_resource(node, 0, &res);
-> > +
-> > +	/*
-> > +	 * For historical reasonsm, the "regs" property of the
-> > +	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
-> > +	 * addresses on the parent bus, but offsets from the intc's base.
-> > +	 * That is why we can't use of_address_to_resource() here.
-> > +	 */
-> > +	ret = of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));
-> 
-> This will return 0 even if you've read less than your expected 4 u32s.
-> You may want to try of_property_read_variable_u32_array instead.
+Sometimes an extraneous "---help---" follows "help". That is probably a
+copy&paste error stemming from their inconsistent use. Let's just replace
+them all with "help", removing the extra ones along the way.
 
-Will it? Unless I'm reading the of_property_read_u32_array()
-documentation wrong, it suggests that would return -EOVERFLOW in that
-case.
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/clk/Kconfig | 51 +++++++++++++++++++--------------------------
+ 1 file changed, 21 insertions(+), 30 deletions(-)
 
-It ignores the extra values it the property is larger. I guess that is
-not a good thing and we still want to use
-of_property_read_variable_u32_array() though.
-
-> >  	if (ret < 0) {
-> >  		pr_err("Not found reg property\n");
-> >  		return -EINVAL;
-> >  	}
-> > -	icu_data[i].reg_status = mmp_icu_base + res.start;
-> > -	ret = of_address_to_resource(node, 1, &res);
-> > -	if (ret < 0) {
-> > -		pr_err("Not found reg property\n");
-> > -		return -EINVAL;
-> > -	}
-> > -	icu_data[i].reg_mask = mmp_icu_base + res.start;
-> > +	icu_data[i].reg_status = mmp_icu_base + reg[0];
-> > +	icu_data[i].reg_mask = mmp_icu_base + reg[2];
-> >  	icu_data[i].cascade_irq = irq_of_parse_and_map(node, 0);
-> >  	if (!icu_data[i].cascade_irq)
-> >  		return -EINVAL;
-> > 
-> 
-> Thanks,
-> 
-> 	M.
-
-Thanks
-Lubo
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 801fa1cd03217..0acc1a8590897 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -13,7 +13,7 @@ config COMMON_CLK
+ 	select CLKDEV_LOOKUP
+ 	select SRCU
+ 	select RATIONAL
+-	---help---
++	help
+ 	  The common clock framework is a single definition of struct
+ 	  clk, useful across many platforms, as well as an
+ 	  implementation of the clock API in include/linux/clk.h.
+@@ -26,7 +26,7 @@ menu "Common Clock Framework"
+ config COMMON_CLK_WM831X
+ 	tristate "Clock driver for WM831x/2x PMICs"
+ 	depends on MFD_WM831X
+-	---help---
++	help
+           Supports the clocking subsystem of the WM831x/2x series of
+ 	  PMICs from Wolfson Microelectronics.
+=20
+@@ -35,14 +35,14 @@ source "drivers/clk/versatile/Kconfig"
+ config CLK_HSDK
+ 	bool "PLL Driver for HSDK platform"
+ 	depends on OF || COMPILE_TEST
+-	---help---
++	help
+ 	  This driver supports the HSDK core, system, ddr, tunnel and hdmi PLLs
+ 	  control.
+=20
+ config COMMON_CLK_MAX77686
+ 	tristate "Clock driver for Maxim 77620/77686/77802 MFD"
+ 	depends on MFD_MAX77686 || MFD_MAX77620 || COMPILE_TEST
+-	---help---
++	help
+ 	  This driver supports Maxim 77620/77686/77802 crystal oscillator
+ 	  clock.
+=20
+@@ -55,7 +55,7 @@ config COMMON_CLK_MAX9485
+ config COMMON_CLK_RK808
+ 	tristate "Clock driver for RK805/RK808/RK809/RK817/RK818"
+ 	depends on MFD_RK808
+-	---help---
++	help
+ 	  This driver supports RK805, RK809 and RK817, RK808 and RK818 crystal =
+oscillator clock.
+ 	  These multi-function devices have two fixed-rate oscillators, clocked=
+ at 32KHz each.
+ 	  Clkout1 is always on, Clkout2 can off by control register.
+@@ -65,7 +65,7 @@ config COMMON_CLK_HI655X
+ 	depends on (MFD_HI655X_PMIC || COMPILE_TEST)
+ 	depends on REGMAP
+ 	default MFD_HI655X_PMIC
+-	---help---
++	help
+ 	  This driver supports the hi655x PMIC clock. This
+ 	  multi-function device has one fixed-rate oscillator, clocked
+ 	  at 32KHz.
+@@ -73,7 +73,7 @@ config COMMON_CLK_HI655X
+ config COMMON_CLK_SCMI
+ 	tristate "Clock driver controlled via SCMI interface"
+ 	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
+-	  ---help---
++	  help
+ 	  This driver provides support for clocks that are controlled
+ 	  by firmware that implements the SCMI interface.
+=20
+@@ -83,7 +83,7 @@ config COMMON_CLK_SCMI
+ config COMMON_CLK_SCPI
+ 	tristate "Clock driver controlled via SCPI interface"
+ 	depends on ARM_SCPI_PROTOCOL || COMPILE_TEST
+-	  ---help---
++	  help
+ 	  This driver provides support for clocks that are controlled
+ 	  by firmware that implements the SCPI interface.
+=20
+@@ -106,7 +106,7 @@ config COMMON_CLK_SI5351
+ 	depends on I2C
+ 	select REGMAP_I2C
+ 	select RATIONAL
+-	---help---
++	help
+ 	  This driver supports Silicon Labs 5351A/B/C programmable clock
+ 	  generators.
+=20
+@@ -116,7 +116,6 @@ config COMMON_CLK_SI514
+ 	depends on OF
+ 	select REGMAP_I2C
+ 	help
+-	---help---
+ 	  This driver supports the Silicon Labs 514 programmable clock
+ 	  generator.
+=20
+@@ -125,7 +124,6 @@ config COMMON_CLK_SI544
+ 	depends on I2C
+ 	select REGMAP_I2C
+ 	help
+-	---help---
+ 	  This driver supports the Silicon Labs 544 programmable clock
+ 	  generator.
+=20
+@@ -135,7 +133,6 @@ config COMMON_CLK_SI570
+ 	depends on OF
+ 	select REGMAP_I2C
+ 	help
+-	---help---
+ 	  This driver supports Silicon Labs 570/571/598/599 programmable
+ 	  clock generators.
+=20
+@@ -144,7 +141,7 @@ config COMMON_CLK_CDCE706
+ 	depends on I2C
+ 	select REGMAP_I2C
+ 	select RATIONAL
+-	---help---
++	help
+ 	  This driver supports TI CDCE706 programmable 3-PLL clock synthesizer.
+=20
+ config COMMON_CLK_CDCE925
+@@ -153,7 +150,6 @@ config COMMON_CLK_CDCE925
+ 	depends on OF
+ 	select REGMAP_I2C
+ 	help
+-	---help---
+ 	  This driver supports the TI CDCE913/925/937/949 programmable clock
+ 	  synthesizer. Each chip has different number of PLLs and outputs.
+ 	  For example, the CDCE925 contains two PLLs with spread-spectrum
+@@ -176,7 +172,7 @@ config COMMON_CLK_GEMINI
+ 	depends on ARCH_GEMINI || COMPILE_TEST
+ 	select MFD_SYSCON
+ 	select RESET_CONTROLLER
+-	---help---
++	help
+ 	  This driver supports the SoC clocks on the Cortina Systems Gemini
+ 	  platform, also known as SL3516 or CS3516.
+=20
+@@ -186,7 +182,7 @@ config COMMON_CLK_ASPEED
+ 	default ARCH_ASPEED
+ 	select MFD_SYSCON
+ 	select RESET_CONTROLLER
+-	---help---
++	help
+ 	  This driver supports the SoC clocks on the Aspeed BMC platforms.
+=20
+ 	  The G4 and G5 series, including the ast2400 and ast2500, are supporte=
+d
+@@ -195,7 +191,7 @@ config COMMON_CLK_ASPEED
+ config COMMON_CLK_S2MPS11
+ 	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
+ 	depends on MFD_SEC_CORE || COMPILE_TEST
+-	---help---
++	help
+ 	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
+ 	  clock. These multi-function devices have two (S2MPS14) or three
+ 	  (S2MPS11, S5M8767) fixed-rate oscillators, clocked at 32KHz each.
+@@ -203,7 +199,7 @@ config COMMON_CLK_S2MPS11
+ config CLK_TWL6040
+ 	tristate "External McPDM functional clock from twl6040"
+ 	depends on TWL6040_CORE
+-	---help---
++	help
+ 	  Enable the external functional clock support on OMAP4+ platforms for
+ 	  McPDM. McPDM module is using the external bit clock on the McPDM bus
+ 	  as functional clock.
+@@ -212,14 +208,13 @@ config COMMON_CLK_AXI_CLKGEN
+ 	tristate "AXI clkgen driver"
+ 	depends on ARCH_ZYNQ || MICROBLAZE || COMPILE_TEST
+ 	help
+-	---help---
+ 	  Support for the Analog Devices axi-clkgen pcore clock generator for X=
+ilinx
+ 	  FPGAs. It is commonly used in Analog Devices' reference designs.
+=20
+ config CLK_QORIQ
+ 	bool "Clock driver for Freescale QorIQ platforms"
+ 	depends on (PPC_E500MC || ARM || ARM64 || COMPILE_TEST) && OF
+-	---help---
++	help
+ 	  This adds the clock driver support for Freescale QorIQ platforms
+ 	  using common clock framework.
+=20
+@@ -227,7 +222,7 @@ config COMMON_CLK_XGENE
+ 	bool "Clock driver for APM XGene SoC"
+ 	default ARCH_XGENE
+ 	depends on ARM64 || COMPILE_TEST
+-	---help---
++	help
+ 	  Sypport for the APM X-Gene SoC reference, PLL, and device clocks.
+=20
+ config COMMON_CLK_LOCHNAGAR
+@@ -241,26 +236,26 @@ config COMMON_CLK_NXP
+ 	def_bool COMMON_CLK && (ARCH_LPC18XX || ARCH_LPC32XX)
+ 	select REGMAP_MMIO if ARCH_LPC32XX
+ 	select MFD_SYSCON if ARCH_LPC18XX
+-	---help---
++	help
+ 	  Support for clock providers on NXP platforms.
+=20
+ config COMMON_CLK_PALMAS
+ 	tristate "Clock driver for TI Palmas devices"
+ 	depends on MFD_PALMAS
+-	---help---
++	help
+ 	  This driver supports TI Palmas devices 32KHz output KG and KG_AUDIO
+ 	  using common clock framework.
+=20
+ config COMMON_CLK_PWM
+ 	tristate "Clock driver for PWMs used as clock outputs"
+ 	depends on PWM
+-	---help---
++	help
+ 	  Adapter driver so that any PWM output can be (mis)used as clock signa=
+l
+ 	  at 50% duty cycle.
+=20
+ config COMMON_CLK_PXA
+ 	def_bool COMMON_CLK && ARCH_PXA
+-	---help---
++	help
+ 	  Support for the Marvell PXA SoC.
+=20
+ config COMMON_CLK_PIC32
+@@ -270,7 +265,7 @@ config COMMON_CLK_OXNAS
+ 	bool "Clock driver for the OXNAS SoC Family"
+ 	depends on ARCH_OXNAS || COMPILE_TEST
+ 	select MFD_SYSCON
+-	---help---
++	help
+ 	  Support for the OXNAS SoC Family clocks.
+=20
+ config COMMON_CLK_VC5
+@@ -279,26 +274,22 @@ config COMMON_CLK_VC5
+ 	depends on OF
+ 	select REGMAP_I2C
+ 	help
+-	---help---
+ 	  This driver supports the IDT VersaClock 5 and VersaClock 6
+ 	  programmable clock generators.
+=20
+ config COMMON_CLK_STM32MP157
+ 	def_bool COMMON_CLK && MACH_STM32MP157
+ 	help
+-	---help---
+ 	  Support for stm32mp157 SoC family clocks
+=20
+ config COMMON_CLK_STM32F
+ 	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F=
+746)
+ 	help
+-	---help---
+ 	  Support for stm32f4 and stm32f7 SoC families clocks
+=20
+ config COMMON_CLK_STM32H7
+ 	def_bool COMMON_CLK && MACH_STM32H743
+ 	help
+-	---help---
+ 	  Support for stm32h7 SoC family clocks
+=20
+ config COMMON_CLK_BD718XX
+--=20
+2.21.0
 
