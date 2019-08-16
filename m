@@ -2,68 +2,90 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88010C3A59C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:28:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E464C3A59C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C3F2064A
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:28:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F01362064A
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727104AbfHPM2x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 08:28:53 -0400
-Received: from Galois.linutronix.de ([193.142.43.55]:42139 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727087AbfHPM2w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 08:28:52 -0400
-Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1hybLX-0000mB-9V; Fri, 16 Aug 2019 14:28:43 +0200
-Date:   Fri, 16 Aug 2019 14:28:42 +0200 (CEST)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     YueHaibing <yuehaibing@huawei.com>
-cc:     jason@lakedaemon.net, maz@kernel.org, paul@crapouillou.net,
-        malat@debian.org, paul.burton@mips.com,
-        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH] irqchip/irq-ingenic-tcu: Fix COMPILE_TEST building
-In-Reply-To: <20190813015602.30576-1-yuehaibing@huawei.com>
-Message-ID: <alpine.DEB.2.21.1908161428001.8238@nanos.tec.linutronix.de>
-References: <20190813015602.30576-1-yuehaibing@huawei.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+        id S1727235AbfHPMw2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 08:52:28 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:40004 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727104AbfHPMw2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 08:52:28 -0400
+Received: from ramsan ([84.194.98.4])
+        by albert.telenet-ops.be with bizsmtp
+        id posT2000405gfCL06osTCy; Fri, 16 Aug 2019 14:52:27 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hybiU-0005JA-Ug; Fri, 16 Aug 2019 14:52:26 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1hybiU-0004Bs-ST; Fri, 16 Aug 2019 14:52:26 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 0/3] clk: renesas: Set GENPD_FLAG_ALWAYS_ON for clock domain
+Date:   Fri, 16 Aug 2019 14:52:22 +0200
+Message-Id: <20190816125225.16061-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 13 Aug 2019, YueHaibing wrote:
+	Hi Mike, Stephen,
 
-> While do COMPILE_TEST building, if GENERIC_IRQ_CHIP is
-> not selected, it fails:
-> 
-> drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_intc_cascade':
-> irq-ingenic-tcu.c:(.text+0x13f): undefined reference to `irq_get_domain_generic_chip'
-> drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_irq_init':
-> irq-ingenic-tcu.c:(.init.text+0x97): undefined reference to `irq_generic_chip_ops'
-> irq-ingenic-tcu.c:(.init.text+0xdd): undefined reference to `__irq_alloc_domain_generic_chips'
-> irq-ingenic-tcu.c:(.init.text+0x10b): undefined reference to `irq_get_domain_generic_chip'
-> 
-> select GENERIC_IRQ_CHIP to fix this.
-> 
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 9536eba03ec7 ("irqchip: Add irq-ingenic-tcu driver")
+The Renesas Clock Domain drivers do not implement the
+generic_pm_domain.power_{on,off}() callbacks, as the domains themselves
+cannot be powered down.  Hence the domains should be marked as always-on
+by setting the GENPD_FLAG_ALWAYS_ON flag.
 
-git show 9536eba03ec7
+This patch series that issue for R-Car M1A, RZ/A1, RZ/A2, and
+RZ/N1 SoCs.
+SH/R-Mobile SoCs are fixed in "[PATCH] soc: renesas: rmobile-sysc: Set
+GENPD_FLAG_ALWAYS_ON for always-on domain"
+(https://lore.kernel.org/linux-renesas-soc/20190816124106.15383-1-geert+renesas@glider.be/T/#u).
+R-Car H1, Gen2, and Gen3 SoCs do not need a fix, as these SoCS use the
+R-Car SYSC driver for Clock Domain creation, which already sets the
+flag.
 
-fatal: ambiguous argument '9536eba03ec7': unknown revision or path not in
-       the working tree.
+To be queued in clk-renesas for v5.4.
 
-Thanks,
+Thanks!
 
-	tglx
+Geert Uytterhoeven (3):
+  clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+  clk: renesas: r9a06g032: Set GENPD_FLAG_ALWAYS_ON for clock domain
+  clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain
+
+ drivers/clk/renesas/clk-mstp.c         | 3 ++-
+ drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
+ drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+-- 
+2.17.1
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
