@@ -3,83 +3,80 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3110AC41514
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 16:58:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF6EEC3A59C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 17:01:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDAF52173B
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 16:58:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D6212086C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 17:01:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1565974699;
-	bh=xk9mbri+sSP2Ako0+cU4IDTi1rBEvLPjA67uzQhKM9o=;
+	s=default; t=1565974911;
+	bh=kRQdySEFfbNhYV8BmidHDQ/rtgeMqFr1JW9v/ifI7XE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=WJ2JzpX+TC/CiYOO/6Yz7beTsalRVtrURkxMckj1RKRFgs0+NqAINvZ0X5eg+lZpx
-	 2UdxkvDChuRpypgUMEwxdg7pV/pt00NySt8YTkzxxADYDWNSN6LsR4MQNPFAZP2kR5
-	 AwU6g9SAyXDjlfsuoKTZcH7wcicfk24pS6Is9Ldg=
+	b=mJfhNfqcsxPv8UwQmruy1PP1T0SVJ3hKp0puzFeiJskrkS7BseHZzvdoolDk8atMe
+	 AujCQgmLKK3asGZ1/6DqvDtBF5EGRcuwJT7EOJX7P2uO02fwUvomD13vpHq8l24lS4
+	 Lu3WKuzfNTCf1QpGNxiyK38fOrAL7u/02NKphY7k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727181AbfHPQ6O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 12:58:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41570 "EHLO mail.kernel.org"
+        id S1726875AbfHPRBv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 13:01:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43778 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726497AbfHPQ6O (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 12:58:14 -0400
+        id S1726097AbfHPRBv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 13:01:51 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC64B2077C;
-        Fri, 16 Aug 2019 16:58:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E6772077C;
+        Fri, 16 Aug 2019 17:01:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1565974692;
-        bh=xk9mbri+sSP2Ako0+cU4IDTi1rBEvLPjA67uzQhKM9o=;
+        s=default; t=1565974910;
+        bh=kRQdySEFfbNhYV8BmidHDQ/rtgeMqFr1JW9v/ifI7XE=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=hxKsVunl58y8c5edThB0D+ZiNMYsKJ/yM6d+OQj43gRG9jpFVjSAk50PLSCpmeBnh
-         GUU/F7/+xO9Z2ifpfXGprqDDH56sFu6IoUZw+0WG/W9aH5dR1XTuFGHDHj/A+4GLv1
-         aayoMBs6PhUWbGj5MptlxV5K9UG9dJAEJk1+xQlw=
+        b=uuNsX+znuy1DGYakmALpmy1BjPJyfebQMKl5cBSg1KfNGFTK4JURmOCy6NOGLk/Pa
+         6skHQhX+mLXaBjvLbzf7UA+lXmkjY0gzheppmOmslj5fbi0UwBo1UPOW7B3EnXL9ak
+         0AQLcfUjw1WUbRc4bq6cyYukdgAcQj91AePbHmAE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190816042440.GY12733@vkoul-mobl.Dlink>
-References: <20190814122958.4981-1-vkoul@kernel.org> <20190814122958.4981-2-vkoul@kernel.org> <20190814171946.E9E8D20665@mail.kernel.org> <20190816042440.GY12733@vkoul-mobl.Dlink>
-Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add support for SM8150
+In-Reply-To: <20190816155806.22869-2-joel@jms.id.au>
+References: <20190816155806.22869-1-joel@jms.id.au> <20190816155806.22869-2-joel@jms.id.au>
+Subject: Re: [PATCH 1/2] clk: aspeed: Move structures to header
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Ryan Chen <ryan_chen@aspeedtech.com>,
+        Andrew Jeffery <andrew@aj.id.au>,
+        Rob Herring <robh+dt@kernel.org>, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org
+To:     Joel Stanley <joel@jms.id.au>,
+        Michael Turquette <mturquette@baylibre.com>
 User-Agent: alot/0.8.1
-Date:   Fri, 16 Aug 2019 09:58:11 -0700
-Message-Id: <20190816165812.BC64B2077C@mail.kernel.org>
+Date:   Fri, 16 Aug 2019 10:01:49 -0700
+Message-Id: <20190816170150.4E6772077C@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-08-15 21:24:40)
-> On 14-08-19, 10:19, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2019-08-14 05:29:58)
-> > > Add support for rpmh clocks found in SM8150
-> > >=20
-> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > > ---
-> >=20
-> > Patch looks OK, but can you convert this driver to use the new parent
-> > style and then update the binding to handle it? We can fix the other
-> > platforms and dts files that use this driver in parallel, but sm8150
-> > will be forward looking.
->=20
-> Yes but that would also impact sdm845 as it uses this driver, so I
-> wanted to get this one done so that we have support for rpm clock and
-> then do the conversion.
->=20
-> Would that be okay with you to get this in and then I convert this?
->=20
+Quoting Joel Stanley (2019-08-16 08:58:05)
+> diff --git a/drivers/clk/clk-aspeed.h b/drivers/clk/clk-aspeed.h
+> new file mode 100644
+> index 000000000000..92d384367c25
+> --- /dev/null
+> +++ b/drivers/clk/clk-aspeed.h
+> @@ -0,0 +1,74 @@
+> +/* SPDX-License-Identifier: GPL-2.0-or-later */
+> +/*
+> + * Structures used by ASPEED clock drivers
+> + *
+> + * Copyright 2019 IBM Corp.
+> + */
 
-How does it impact sdm845? The new way of specifying parents supports
-fallback to legacy string matching.
+Please include reset.h (or whatever defines reset_controller_dev),
+clk-provider.h, kernel.h (for container_of and types), and forward
+declare struct regmap and clk_div_table here.
 
+> +
+> +/**
+> + * struct aspeed_gate_data - Aspeed gated clocks
