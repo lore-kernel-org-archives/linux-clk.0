@@ -2,197 +2,228 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB87C3A59D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68315C3A59D
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1C6206C1
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:11:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hYDGoP7e"
+	by mail.kernel.org (Postfix) with ESMTP id 3F56F206C1
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 18:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfHPSLG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 14:11:06 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:37715 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727514AbfHPSLF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 14:11:05 -0400
-Received: by mail-pf1-f196.google.com with SMTP id 129so3508096pfa.4;
-        Fri, 16 Aug 2019 11:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=pZgnw9xElMCTV0zIeRh1nqaIWL7kLIF/NZrqASjmI68=;
-        b=hYDGoP7eKQ/EJVmK5o1UWhcDvnrVoUNK9F+HPJ9SoFzY6E0gIvsDya/0iJXp2Udo2i
-         h1SOC3FqXKqeANXkDKnfui7dExy58gb+eAbVEcDRirUdZ9l9aMfreeLt+++/72WDWknA
-         YIJOd02iBhR0P28s9TQkwwZUaXooknwlDuLWe1eB0qBrd3SAIkNbFGhTcFs6TSs/E9Zn
-         DiXPJaFVU56cs9zxwknSQhSD6KKNm3DqFrGV28LPJ65c0T2gGsglrXlC0/EBJysuaYW9
-         72qLmZAZ5Yuad1sxeYllR71NYKurQTrAv/pOxDjMXgYmT3nV7heIRmZ/BnBps37kYZOX
-         bN1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=pZgnw9xElMCTV0zIeRh1nqaIWL7kLIF/NZrqASjmI68=;
-        b=sE3ApOx04YCOZEq+Ag4qdiRo+xaEUv1FuDC3Lf/tAcmF7FA5rd5nCc2tYVQOAA15F7
-         1Z92MWrc8I91VhKC+mrpeO1f9sqPBpJyjKyPNFrJS1CH+a6Vgs4PO6bcKRiP67gdPNk/
-         Nt1SRlSXlRHiNh8x2ZrexfsDFCKbfv1oZmGfdogzs1ZAipspf7thf7t8a6muNbLl9e4X
-         uVn8/QXLutSL3bKfhC+5xVJjkcH7RVMeYzLHOueSmXPp4ss0dN0SYb1QG17jD+o/vGTz
-         Y/LrT3jkN+YdOMzC2bQXBNjE3piPbQ41oIYzy21F0JEtQojikDxyVh4S2vbkGegKz7Mo
-         N2Sg==
-X-Gm-Message-State: APjAAAWP6s68UOsH5r2B2Yk/n6tktZuoB17s+/F23THI90zoTogW1+7Z
-        8xWc8CANkV0Y7s5tO9tJYUCWbldR
-X-Google-Smtp-Source: APXvYqx8Z4sKiAzHWCJDR36y7U0SnkV4gG0U47QzNCXlqsXveb8w4CdqIJPA6krd8nVtwMHpV5/FbA==
-X-Received: by 2002:a63:484d:: with SMTP id x13mr8839776pgk.122.1565979063963;
-        Fri, 16 Aug 2019 11:11:03 -0700 (PDT)
-Received: from [10.67.49.31] ([192.19.223.252])
-        by smtp.googlemail.com with ESMTPSA id l17sm6103913pgj.44.2019.08.16.11.11.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Aug 2019 11:11:03 -0700 (PDT)
-Subject: Re: [PATCH 15/19] ARM: mmp: add SMP support
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
+        id S1727503AbfHPSQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 14:16:15 -0400
+Received: from shell.v3.sk ([90.176.6.54]:58637 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727437AbfHPSQO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 14:16:14 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 019F2D6DCD;
+        Fri, 16 Aug 2019 20:15:57 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id lcjr_n3cdX7b; Fri, 16 Aug 2019 20:15:50 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1AF27D6DCE;
+        Fri, 16 Aug 2019 20:15:50 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id xJOvBvIactQL; Fri, 16 Aug 2019 20:15:49 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id A8F80D6DCD;
+        Fri, 16 Aug 2019 20:15:48 +0200 (CEST)
+Message-ID: <4aa480578d4711645f6a1617d9218812f0af4cac.camel@v3.sk>
+Subject: Re: [PATCH 07/19] irqchip/mmp: mask off interrupts from other cores
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
+        linux-clk@vger.kernel.org, Andres Salomon <dilinger@queued.net>
+Date:   Fri, 16 Aug 2019 20:15:47 +0200
+In-Reply-To: <19a21c54-93ac-19dc-d679-8d376d44e68c@kernel.org>
 References: <20190809093158.7969-1-lkundrak@v3.sk>
- <20190809093158.7969-16-lkundrak@v3.sk>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <a433ba97-d317-2876-931b-8e4930681711@gmail.com>
-Date:   Fri, 16 Aug 2019 11:11:00 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+         <20190809093158.7969-8-lkundrak@v3.sk>
+         <19a21c54-93ac-19dc-d679-8d376d44e68c@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-In-Reply-To: <20190809093158.7969-16-lkundrak@v3.sk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 8/9/19 2:31 AM, Lubomir Rintel wrote:
-> Used to bring up the second core on MMP3.
+On Fri, 2019-08-09 at 13:18 +0100, Marc Zyngier wrote:
+> On 09/08/2019 10:31, Lubomir Rintel wrote:
+> > From: Andres Salomon <dilinger@queued.net>
+> > 
+> > On mmp3, there's an extra set of ICU registers (ICU2) that handle
+> > interrupts on the extra cores.  When masking off interrupts on MP1,
+> > these should be masked as well.
+> > 
+> > We add a new interrupt controller via device tree to identify when we're
+> > looking at an mmp3 machine via compatible field of "marvell,mmp3-intc".
+> > 
+> > [lkundrak@v3.sk: Changed "mrvl,mmp3-intc" compatible strings to
+> > "marvell,mmp3-intc". Tidied up the subject line a bit.]
+> > 
+> > Signed-off-by: Andres Salomon <dilinger@queued.net>
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > 
+> > ---
+> >  arch/arm/mach-mmp/regs-icu.h |  3 +++
+> >  drivers/irqchip/irq-mmp.c    | 51 ++++++++++++++++++++++++++++++++++++
+> >  2 files changed, 54 insertions(+)
+> > 
+> > diff --git a/arch/arm/mach-mmp/regs-icu.h b/arch/arm/mach-mmp/regs-icu.h
+> > index 0375d5a7fcb2b..410743d2b4020 100644
+> > --- a/arch/arm/mach-mmp/regs-icu.h
+> > +++ b/arch/arm/mach-mmp/regs-icu.h
+> > @@ -11,6 +11,9 @@
+> >  #define ICU_VIRT_BASE	(AXI_VIRT_BASE + 0x82000)
+> >  #define ICU_REG(x)	(ICU_VIRT_BASE + (x))
+> >  
+> > +#define ICU2_VIRT_BASE	(AXI_VIRT_BASE + 0x84000)
+> > +#define ICU2_REG(x)	(ICU2_VIRT_BASE + (x))
+> > +
+> >  #define ICU_INT_CONF(n)		ICU_REG((n) << 2)
+> >  #define ICU_INT_CONF_MASK	(0xf)
+> >  
+> > diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+> > index cd8d2253f56d1..25497c75cc861 100644
+> > --- a/drivers/irqchip/irq-mmp.c
+> > +++ b/drivers/irqchip/irq-mmp.c
+> > @@ -44,6 +44,7 @@ struct icu_chip_data {
+> >  	unsigned int		conf_enable;
+> >  	unsigned int		conf_disable;
+> >  	unsigned int		conf_mask;
+> > +	unsigned int		conf2_mask;
+> >  	unsigned int		clr_mfp_irq_base;
+> >  	unsigned int		clr_mfp_hwirq;
+> >  	struct irq_domain	*domain;
+> > @@ -53,9 +54,11 @@ struct mmp_intc_conf {
+> >  	unsigned int	conf_enable;
+> >  	unsigned int	conf_disable;
+> >  	unsigned int	conf_mask;
+> > +	unsigned int	conf2_mask;
+> >  };
+> >  
+> >  static void __iomem *mmp_icu_base;
+> > +static void __iomem *mmp_icu2_base;
+> >  static struct icu_chip_data icu_data[MAX_ICU_NR];
+> >  static int max_icu_nr;
+> >  
+> > @@ -98,6 +101,16 @@ static void icu_mask_irq(struct irq_data *d)
+> >  		r &= ~data->conf_mask;
+> >  		r |= data->conf_disable;
+> >  		writel_relaxed(r, mmp_icu_base + (hwirq << 2));
+> > +
+> > +		if (data->conf2_mask) {
+> > +			/*
+> > +			 * ICU1 (above) only controls PJ4 MP1; if using SMP,
+> > +			 * we need to also mask the MP2 and MM cores via ICU2.
+> > +			 */
+> > +			r = readl_relaxed(mmp_icu2_base + (hwirq << 2));
+> > +			r &= ~data->conf2_mask;
+> > +			writel_relaxed(r, mmp_icu2_base + (hwirq << 2));
+> > +		}
+> >  	} else {
+> >  		r = readl_relaxed(data->reg_mask) | (1 << hwirq);
+> >  		writel_relaxed(r, data->reg_mask);
+> > @@ -201,6 +214,14 @@ static const struct mmp_intc_conf mmp2_conf = {
+> >  			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
+> >  };
+> >  
+> > +static struct mmp_intc_conf mmp3_conf = {
+> > +	.conf_enable	= 0x20,
+> > +	.conf_disable	= 0x0,
+> > +	.conf_mask	= MMP2_ICU_INT_ROUTE_PJ4_IRQ |
+> > +			  MMP2_ICU_INT_ROUTE_PJ4_FIQ,
+> > +	.conf2_mask	= 0xf0,
+> > +};
+> > +
+> >  static void __exception_irq_entry mmp_handle_irq(struct pt_regs *regs)
+> >  {
+> >  	int hwirq;
+> > @@ -364,6 +385,14 @@ static int __init mmp_init_bases(struct device_node *node)
+> >  		pr_err("Failed to get interrupt controller register\n");
+> >  		return -ENOMEM;
+> >  	}
+> > +	if (of_device_is_compatible(node, "marvell,mmp3-intc")) {
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  arch/arm/mach-mmp/Makefile  |  3 +++
->  arch/arm/mach-mmp/platsmp.c | 32 ++++++++++++++++++++++++++++++++
->  2 files changed, 35 insertions(+)
->  create mode 100644 arch/arm/mach-mmp/platsmp.c
-> 
-> diff --git a/arch/arm/mach-mmp/Makefile b/arch/arm/mach-mmp/Makefile
-> index 322c1c97dc900..7b3a7f979eece 100644
-> --- a/arch/arm/mach-mmp/Makefile
-> +++ b/arch/arm/mach-mmp/Makefile
-> @@ -22,6 +22,9 @@ ifeq ($(CONFIG_PM),y)
->  obj-$(CONFIG_CPU_PXA910)	+= pm-pxa910.o
->  obj-$(CONFIG_CPU_MMP2)		+= pm-mmp2.o
->  endif
-> +ifeq ($(CONFIG_SMP),y)
-> +obj-$(CONFIG_MACH_MMP3_DT)	+= platsmp.o
-> +endif
->  
->  # board support
->  obj-$(CONFIG_MACH_ASPENITE)	+= aspenite.o
-> diff --git a/arch/arm/mach-mmp/platsmp.c b/arch/arm/mach-mmp/platsmp.c
-> new file mode 100644
-> index 0000000000000..255df640b5bc1
-> --- /dev/null
-> +++ b/arch/arm/mach-mmp/platsmp.c
-> @@ -0,0 +1,32 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Copyright (C) 2019 Lubomir Rintel <lkundrak@v3.sk>
-> + */
-> +#include <linux/io.h>
-> +#include <asm/smp_scu.h>
-> +#include <asm/smp.h>
-> +#include "addr-map.h"
-> +
-> +#define SW_BRANCH_VIRT_ADDR	CIU_REG(0x24)
-> +
-> +static int mmp3_boot_secondary(unsigned int cpu, struct task_struct *idle)
-> +{
-> +	/*
-> +	 * Apparently, the boot ROM on the second core spins on this
-> +	 * register becoming non-zero and then jumps to the address written
-> +	 * there. No IPIs involved.
-> +	 */
-> +	__raw_writel(virt_to_phys(secondary_startup), SW_BRANCH_VIRT_ADDR);
+> Instead of harcoding the compatible property once more, why don't you
+> simply pass a flag from mmpx_of_init()?
 
-You would want to use __pa_symbol() here (which is equivalent, but will
-avoid barfing on you with CONFIG_DEBUG_VIRTUAL).
--- 
-Florian
+Will do so in next version.
+
+> > +		mmp_icu2_base = of_iomap(node, 1);
+> > +		if (!mmp_icu2_base) {
+> > +			pr_err("Failed to get interrupt controller register #2\n");
+> > +			iounmap(mmp_icu_base);
+> > +			return -ENOMEM;
+> > +		}
+> > +	}
+> >  
+> >  	icu_data[0].virq_base = 0;
+> >  	icu_data[0].domain = irq_domain_add_linear(node, nr_irqs,
+> > @@ -386,6 +415,8 @@ static int __init mmp_init_bases(struct device_node *node)
+> >  			irq_dispose_mapping(icu_data[0].virq_base + i);
+> >  	}
+> >  	irq_domain_remove(icu_data[0].domain);
+> > +	if (of_device_is_compatible(node, "marvell,mmp3-intc"))
+> > +		iounmap(mmp_icu2_base);
+> >  	iounmap(mmp_icu_base);
+> >  	return -EINVAL;
+> >  }
+> > @@ -428,6 +459,26 @@ static int __init mmp2_of_init(struct device_node *node,
+> >  }
+> >  IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
+> >  
+> > +static int __init mmp3_of_init(struct device_node *node,
+> > +			       struct device_node *parent)
+> > +{
+> > +	int ret;
+> > +
+> > +	ret = mmp_init_bases(node);
+> > +	if (ret < 0)
+> > +		return ret;
+> > +
+> > +	icu_data[0].conf_enable = mmp3_conf.conf_enable;
+> > +	icu_data[0].conf_disable = mmp3_conf.conf_disable;
+> > +	icu_data[0].conf_mask = mmp3_conf.conf_mask;
+> > +	icu_data[0].conf2_mask = mmp3_conf.conf2_mask;
+> > +	irq_set_default_host(icu_data[0].domain);
+> 
+> Why do you need this? On a fully DT-ified platform, there should be no
+> notion of a default domain.
+
+I didn't know. Pretty sure this was cargo-culted, because it's done
+elsewhere too and also unnecessary. Will remove those cases too.
+
+> > +	set_handle_irq(mmp2_handle_irq);
+> > +	max_icu_nr = 1;
+> > +	return 0;
+> > +}
+> > +IRQCHIP_DECLARE(mmp3_intc, "marvell,mmp3-intc", mmp3_of_init);
+> > +
+> >  static int __init mmp2_mux_of_init(struct device_node *node,
+> >  				   struct device_node *parent)
+> >  {
+> > 
+> 
+> Thanks,
+> 
+> 	M.
+
+Thanks
+Lubo
+
