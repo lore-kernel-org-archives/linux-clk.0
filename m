@@ -2,112 +2,121 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69D1DC3A59C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 08:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9E1C3A59C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 11:22:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39B882133F
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 08:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFD782086C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 11:22:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AN6gN6oT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfHPIx6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 04:53:58 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:36699 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726753AbfHPIx6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 04:53:58 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id AB0FF4B14
-        for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2019 10:54:41 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 0YJYfWe3J9kc for <linux-clk@vger.kernel.org>;
-        Fri, 16 Aug 2019 10:54:41 +0200 (CEST)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id 34F4FA785; Fri, 16 Aug 2019 10:54:39 +0200 (CEST)
-From:   Alexander Dahl <ada@thorsis.com>
-To:     linux-clk@vger.kernel.org
-Cc:     Uwe =?ISO-8859-1?Q?Kleine=2DK=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        kernel@pengutronix.de
-Subject: Re: [PATCH] dt-bindings: clk: Make example a bit clearer
-Date:   Fri, 16 Aug 2019 10:53:48 +0200
-Message-ID: <87001375.oQs5gUaWZR@ada>
-In-Reply-To: <20190815095059.ljqznve6pvqqfl57@pengutronix.de>
-References: <20190815074604.5416-1-uwe@kleine-koenig.org> <1870872.EFtpEp3zHr@ada> <20190815095059.ljqznve6pvqqfl57@pengutronix.de>
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+        id S1727021AbfHPLW3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 07:22:29 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:36301 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726261AbfHPLW3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 07:22:29 -0400
+Received: by mail-pl1-f194.google.com with SMTP id g4so2350077plo.3
+        for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2019 04:22:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0q0Ad7FJUc5G6KGE6mqpIyMbRI+ItC5oZxqe4cglbIk=;
+        b=AN6gN6oTYl5wNAYz5mVoQPpGa147CxFxA81isHGIEHx1eKOm37ltBtEpHyPU0Yx5eE
+         aurdX3oSnHjrRXjdWWtY8jUA9AZ5vnb39ZTdrkfpW0d9geQ99ES0L6rxQpTuhaWDXzfi
+         GREetGVy64Ty53lFBjuCqS0DKWJVO0HWnvvMzo7hFpyo53C1L8dwzZq0Y8hQA/LztXK4
+         1ch+EGL+hTu5WR3mPGm/0KVY/R60SAyJbunKv25CjFp5WMkR7tIiQGJrz2eLi+klNSCw
+         Bbj7G2yw8iIA3mHspeMLhnGqbeB848Xbgb7Nqy3zURFX5yZi0SV5n5ECSCQMDwCJC2wI
+         bqdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0q0Ad7FJUc5G6KGE6mqpIyMbRI+ItC5oZxqe4cglbIk=;
+        b=PIabVHIyvuYIXV6WAEdoj4ZUWkptAMEqF7WJUu6jrwBdc56oJ0dSdJClchibTTaT6t
+         8fHyAW5UC1h0dDJAv3mLmbjouyQ7jd0gNvMZB2829S+t7VgFA9tO1trimFGObymVTdRi
+         J2rgNK+WbzULvQPHldsnxWJM7QWs6BbjevugDFUwDcCjueg6H1JnwIE6xV8ZjFC1FjuS
+         kecH+5ytjcDLE+/BrcvOKbBDMlorJZVpIHoCNqy02vtqGUhuRAsW08glUlQHMRbNsqs3
+         TFlrPyFeKH4fKkaKHH8K/NfPO0t70o6oM7R0NfjEtVdS9AXGEuYubwEwMw12cvSW0yVj
+         eFDg==
+X-Gm-Message-State: APjAAAXy4wov/QSZ7I/2yCJ6mQZvDgbdICa4L2jRtL8nw6dbr5xBO2Ky
+        ua7Sq9HIFjwkfp7TbIxarSBf
+X-Google-Smtp-Source: APXvYqyJLmgQMiFoRnIGMLMSlMn8oCRd6AjiddKEiYMvJBRSKTds5rIfzjyRzSZYp8S3OEMzsVWUCg==
+X-Received: by 2002:a17:902:ab8e:: with SMTP id f14mr8950178plr.6.1565954548200;
+        Fri, 16 Aug 2019 04:22:28 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id m9sm9759918pgr.24.2019.08.16.04.22.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Aug 2019 04:22:27 -0700 (PDT)
+Date:   Fri, 16 Aug 2019 16:52:10 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/9] clk: actions: Don't reference clk_init_data after
+ registration
+Message-ID: <20190816112210.GA27094@mani>
+References: <20190731193517.237136-1-sboyd@kernel.org>
+ <20190731193517.237136-2-sboyd@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190731193517.237136-2-sboyd@kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Uwe,
-
-Am Donnerstag, 15. August 2019, 11:50:59 CEST schrieb Uwe Kleine-K=F6nig:
-> Maybe pick <&pll 3> instead of <&pll 1> in my patch and merge the two
-> changes? Or drop clocks and clock-names from the example because
-> otherwise unrelated clocks are modified which shouldn't be done. The
-> result is below.
-
-I like that result below with the dots for the 'clock' properties and the=20
-additional explanations. Can we resend that as new patch?
-
-Greets
-Alex
-
-> ---->8----
-> From: =3D?UTF-8?q?Uwe=3D20Kleine-K=3DC3=3DB6nig?=3D <u.kleine-koenig@peng=
-utronix.de>
-> Date: Thu, 15 Aug 2019 11:48:25 +0200
-> Subject: [PATCH] dt-bindings: clk: Make example a bit clearer
-> MIME-Version: 1.0
-> Content-Type: text/plain; charset=3DUTF-8
-> Content-Transfer-Encoding: 8bit
->=20
-> Previously the example used <&pll 2> in two places which made it harder
-> than necessary to understand why this clock gets the parent of
-> <&clkcon 0>. Also describe why <&pll 2> isn't reparented and <&clkcon 0>
-> gets no rate assigned.
->=20
-> Signed-off-by: Uwe Kleine-K=F6nig <u.kleine-koenig@pengutronix.de>
+On Wed, Jul 31, 2019 at 12:35:09PM -0700, Stephen Boyd wrote:
+> A future patch is going to change semantics of clk_register() so that
+> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+> referencing this member here so that we don't run into NULL pointer
+> exceptions.
+> 
+> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  .../devicetree/bindings/clock/clock-bindings.txt     | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> b/Documentation/devicetree/bindings/clock/clock-bindings.txt index
-> b646bbcf7f92..1d4942380918 100644
-> --- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-> @@ -150,16 +150,18 @@ set to 0, or can be omitted if it is not followed by
-> any non-zero entry. compatible =3D "fsl,imx-uart";
->          reg =3D <0xa000 0x1000>;
->          ...
-> -        clocks =3D <&osc 0>, <&pll 1>;
-> -        clock-names =3D "baud", "register";
-> +        clocks =3D ...
-> +        clock-names =3D ...
->=20
->          assigned-clocks =3D <&clkcon 0>, <&pll 2>;
-> -        assigned-clock-parents =3D <&pll 2>;
-> +        assigned-clock-parents =3D <&pll 1>;
->          assigned-clock-rates =3D <0>, <460800>;
->      };
->=20
-> -In this example the <&pll 2> clock is set as parent of clock <&clkcon 0>
-> and -the <&pll 2> clock is assigned a frequency value of 460800 Hz.
-> +In this example the <&pll 1> clock is set as parent of clock <&clkcon 0>
-> and +the <&pll 2> clock is assigned a frequency value of 460800 Hz.  A
-> parent +setting for <&pll 2> is omitted (end of list) and rate setting for
-> <&clkcon 0> +is skipped because set to <0>.
->=20
->  Configuring a clock's parent and rate through the device node that consu=
-mes
-> the clock can be done only for clocks that have a single user. Specifying
+> 
+> Please ack so I can take this through clk tree
+> 
+>  drivers/clk/actions/owl-common.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+> index 32dd29e0a37e..71b683c4e643 100644
+> --- a/drivers/clk/actions/owl-common.c
+> +++ b/drivers/clk/actions/owl-common.c
+> @@ -68,6 +68,7 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+>  	struct clk_hw *hw;
+>  
+>  	for (i = 0; i < hw_clks->num; i++) {
+> +		const char *name = hw->init->name;
+>  
 
+This should come after below statement and hence the warning is generated
+in linux-next. Sorry for missing!
 
+Thanks,
+Mani
+
+>  		hw = hw_clks->hws[i];
+>  
+> @@ -77,7 +78,7 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+>  		ret = devm_clk_hw_register(dev, hw);
+>  		if (ret) {
+>  			dev_err(dev, "Couldn't register clock %d - %s\n",
+> -				i, hw->init->name);
+> +				i, name);
+>  			return ret;
+>  		}
+>  	}
+> -- 
+> Sent by a computer through tubes
+> 
