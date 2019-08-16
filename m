@@ -2,121 +2,68 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9E1C3A59C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 11:22:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88010C3A59C
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:28:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFD782086C
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 11:22:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AN6gN6oT"
+	by mail.kernel.org (Postfix) with ESMTP id 69C3F2064A
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:28:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727021AbfHPLW3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 07:22:29 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:36301 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726261AbfHPLW3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 07:22:29 -0400
-Received: by mail-pl1-f194.google.com with SMTP id g4so2350077plo.3
-        for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2019 04:22:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=0q0Ad7FJUc5G6KGE6mqpIyMbRI+ItC5oZxqe4cglbIk=;
-        b=AN6gN6oTYl5wNAYz5mVoQPpGa147CxFxA81isHGIEHx1eKOm37ltBtEpHyPU0Yx5eE
-         aurdX3oSnHjrRXjdWWtY8jUA9AZ5vnb39ZTdrkfpW0d9geQ99ES0L6rxQpTuhaWDXzfi
-         GREetGVy64Ty53lFBjuCqS0DKWJVO0HWnvvMzo7hFpyo53C1L8dwzZq0Y8hQA/LztXK4
-         1ch+EGL+hTu5WR3mPGm/0KVY/R60SAyJbunKv25CjFp5WMkR7tIiQGJrz2eLi+klNSCw
-         Bbj7G2yw8iIA3mHspeMLhnGqbeB848Xbgb7Nqy3zURFX5yZi0SV5n5ECSCQMDwCJC2wI
-         bqdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0q0Ad7FJUc5G6KGE6mqpIyMbRI+ItC5oZxqe4cglbIk=;
-        b=PIabVHIyvuYIXV6WAEdoj4ZUWkptAMEqF7WJUu6jrwBdc56oJ0dSdJClchibTTaT6t
-         8fHyAW5UC1h0dDJAv3mLmbjouyQ7jd0gNvMZB2829S+t7VgFA9tO1trimFGObymVTdRi
-         J2rgNK+WbzULvQPHldsnxWJM7QWs6BbjevugDFUwDcCjueg6H1JnwIE6xV8ZjFC1FjuS
-         kecH+5ytjcDLE+/BrcvOKbBDMlorJZVpIHoCNqy02vtqGUhuRAsW08glUlQHMRbNsqs3
-         TFlrPyFeKH4fKkaKHH8K/NfPO0t70o6oM7R0NfjEtVdS9AXGEuYubwEwMw12cvSW0yVj
-         eFDg==
-X-Gm-Message-State: APjAAAXy4wov/QSZ7I/2yCJ6mQZvDgbdICa4L2jRtL8nw6dbr5xBO2Ky
-        ua7Sq9HIFjwkfp7TbIxarSBf
-X-Google-Smtp-Source: APXvYqyJLmgQMiFoRnIGMLMSlMn8oCRd6AjiddKEiYMvJBRSKTds5rIfzjyRzSZYp8S3OEMzsVWUCg==
-X-Received: by 2002:a17:902:ab8e:: with SMTP id f14mr8950178plr.6.1565954548200;
-        Fri, 16 Aug 2019 04:22:28 -0700 (PDT)
-Received: from mani ([103.59.133.81])
-        by smtp.gmail.com with ESMTPSA id m9sm9759918pgr.24.2019.08.16.04.22.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Aug 2019 04:22:27 -0700 (PDT)
-Date:   Fri, 16 Aug 2019 16:52:10 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/9] clk: actions: Don't reference clk_init_data after
- registration
-Message-ID: <20190816112210.GA27094@mani>
-References: <20190731193517.237136-1-sboyd@kernel.org>
- <20190731193517.237136-2-sboyd@kernel.org>
+        id S1727104AbfHPM2x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 08:28:53 -0400
+Received: from Galois.linutronix.de ([193.142.43.55]:42139 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727087AbfHPM2w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 08:28:52 -0400
+Received: from [5.158.153.52] (helo=nanos.tec.linutronix.de)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1hybLX-0000mB-9V; Fri, 16 Aug 2019 14:28:43 +0200
+Date:   Fri, 16 Aug 2019 14:28:42 +0200 (CEST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     YueHaibing <yuehaibing@huawei.com>
+cc:     jason@lakedaemon.net, maz@kernel.org, paul@crapouillou.net,
+        malat@debian.org, paul.burton@mips.com,
+        linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] irqchip/irq-ingenic-tcu: Fix COMPILE_TEST building
+In-Reply-To: <20190813015602.30576-1-yuehaibing@huawei.com>
+Message-ID: <alpine.DEB.2.21.1908161428001.8238@nanos.tec.linutronix.de>
+References: <20190813015602.30576-1-yuehaibing@huawei.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190731193517.237136-2-sboyd@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Jul 31, 2019 at 12:35:09PM -0700, Stephen Boyd wrote:
-> A future patch is going to change semantics of clk_register() so that
-> clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-> referencing this member here so that we don't run into NULL pointer
-> exceptions.
-> 
-> Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> Please ack so I can take this through clk tree
-> 
->  drivers/clk/actions/owl-common.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-> index 32dd29e0a37e..71b683c4e643 100644
-> --- a/drivers/clk/actions/owl-common.c
-> +++ b/drivers/clk/actions/owl-common.c
-> @@ -68,6 +68,7 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
->  	struct clk_hw *hw;
->  
->  	for (i = 0; i < hw_clks->num; i++) {
-> +		const char *name = hw->init->name;
->  
+On Tue, 13 Aug 2019, YueHaibing wrote:
 
-This should come after below statement and hence the warning is generated
-in linux-next. Sorry for missing!
+> While do COMPILE_TEST building, if GENERIC_IRQ_CHIP is
+> not selected, it fails:
+> 
+> drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_intc_cascade':
+> irq-ingenic-tcu.c:(.text+0x13f): undefined reference to `irq_get_domain_generic_chip'
+> drivers/irqchip/irq-ingenic-tcu.o: In function `ingenic_tcu_irq_init':
+> irq-ingenic-tcu.c:(.init.text+0x97): undefined reference to `irq_generic_chip_ops'
+> irq-ingenic-tcu.c:(.init.text+0xdd): undefined reference to `__irq_alloc_domain_generic_chips'
+> irq-ingenic-tcu.c:(.init.text+0x10b): undefined reference to `irq_get_domain_generic_chip'
+> 
+> select GENERIC_IRQ_CHIP to fix this.
+> 
+> Reported-by: Hulk Robot <hulkci@huawei.com>
+> Fixes: 9536eba03ec7 ("irqchip: Add irq-ingenic-tcu driver")
+
+git show 9536eba03ec7
+
+fatal: ambiguous argument '9536eba03ec7': unknown revision or path not in
+       the working tree.
 
 Thanks,
-Mani
 
->  		hw = hw_clks->hws[i];
->  
-> @@ -77,7 +78,7 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
->  		ret = devm_clk_hw_register(dev, hw);
->  		if (ret) {
->  			dev_err(dev, "Couldn't register clock %d - %s\n",
-> -				i, hw->init->name);
-> +				i, name);
->  			return ret;
->  		}
->  	}
-> -- 
-> Sent by a computer through tubes
-> 
+	tglx
