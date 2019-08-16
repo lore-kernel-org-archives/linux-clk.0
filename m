@@ -2,32 +2,32 @@ Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E464C3A59C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AE38C3A59E
 	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F01362064A
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7CD21655
+	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 12:52:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfHPMw2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1727245AbfHPMw2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 16 Aug 2019 08:52:28 -0400
-Received: from albert.telenet-ops.be ([195.130.137.90]:40004 "EHLO
+Received: from albert.telenet-ops.be ([195.130.137.90]:40036 "EHLO
         albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727104AbfHPMw2 (ORCPT
+        with ESMTP id S1727181AbfHPMw2 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 08:52:28 -0400
 Received: from ramsan ([84.194.98.4])
         by albert.telenet-ops.be with bizsmtp
-        id posT2000405gfCL06osTCy; Fri, 16 Aug 2019 14:52:27 +0200
+        id posT2000A05gfCL06osTD2; Fri, 16 Aug 2019 14:52:27 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hybiU-0005JA-Ug; Fri, 16 Aug 2019 14:52:26 +0200
+        id 1hybiV-0005JD-Af; Fri, 16 Aug 2019 14:52:27 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1hybiU-0004Bs-ST; Fri, 16 Aug 2019 14:52:26 +0200
+        id 1hybiV-0004Bv-9R; Fri, 16 Aug 2019 14:52:27 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
@@ -37,55 +37,45 @@ Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-pm@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/3] clk: renesas: Set GENPD_FLAG_ALWAYS_ON for clock domain
-Date:   Fri, 16 Aug 2019 14:52:22 +0200
-Message-Id: <20190816125225.16061-1-geert+renesas@glider.be>
+Subject: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+Date:   Fri, 16 Aug 2019 14:52:23 +0200
+Message-Id: <20190816125225.16061-2-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190816125225.16061-1-geert+renesas@glider.be>
+References: <20190816125225.16061-1-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
-
-The Renesas Clock Domain drivers do not implement the
-generic_pm_domain.power_{on,off}() callbacks, as the domains themselves
-cannot be powered down.  Hence the domains should be marked as always-on
+The CPG/MSTP Clock Domain driver does not implement the
+generic_pm_domain.power_{on,off}() callbacks, as the domain itself
+cannot be powered down.  Hence the domain should be marked as always-on
 by setting the GENPD_FLAG_ALWAYS_ON flag.
 
-This patch series that issue for R-Car M1A, RZ/A1, RZ/A2, and
-RZ/N1 SoCs.
-SH/R-Mobile SoCs are fixed in "[PATCH] soc: renesas: rmobile-sysc: Set
-GENPD_FLAG_ALWAYS_ON for always-on domain"
-(https://lore.kernel.org/linux-renesas-soc/20190816124106.15383-1-geert+renesas@glider.be/T/#u).
-R-Car H1, Gen2, and Gen3 SoCs do not need a fix, as these SoCS use the
-R-Car SYSC driver for Clock Domain creation, which already sets the
-flag.
+This gets rid of the following boot warning on RZ/A1:
 
-To be queued in clk-renesas for v5.4.
+    sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
 
-Thanks!
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/clk-mstp.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Geert Uytterhoeven (3):
-  clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
-  clk: renesas: r9a06g032: Set GENPD_FLAG_ALWAYS_ON for clock domain
-  clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain
-
- drivers/clk/renesas/clk-mstp.c         | 3 ++-
- drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
- 3 files changed, 6 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index dfbef37eed4a82e8..fcf753a6249a0e53 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -335,7 +335,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
+ 
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
++		    GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
 2.17.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
