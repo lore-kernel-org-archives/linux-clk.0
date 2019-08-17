@@ -1,133 +1,151 @@
-Return-Path: <SRS0=XVLz=WM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60954C3A59D
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 22:31:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F5D3C3A59E
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A297206C2
-	for <linux-clk@archiver.kernel.org>; Fri, 16 Aug 2019 22:31:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CFED21743
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:34:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J77/Al2J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727696AbfHPWbO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 18:31:14 -0400
-Received: from youngberry.canonical.com ([91.189.89.112]:38150 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727669AbfHPWbO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 18:31:14 -0400
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1hykka-00032W-IX; Fri, 16 Aug 2019 22:31:12 +0000
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>, linux-clk@vger.kernel.org
-From:   Colin Ian King <colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: re: clk: actions: Don't reference clk_init_data after registration
- [bug report]
-Message-ID: <7132b72b-bd73-f53f-8966-a9b88dd444e4@canonical.com>
-Date:   Fri, 16 Aug 2019 23:31:11 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726203AbfHQDee (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 23:34:34 -0400
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41519 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726189AbfHQDed (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 23:34:33 -0400
+Received: by mail-pf1-f193.google.com with SMTP id 196so4083281pfz.8
+        for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2019 20:34:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=8LLTjw5mbCMjfVCCXAOoDmaHq3n7/+aUHXsTBnjLG9Y=;
+        b=J77/Al2JrQdADWKKNIPoaZH5pQZBty78giuD5J9XNZnpk6DgNLj4q1kBZSO22VqKvi
+         P67jYqxrLZVEeilMeHiehh8kmCUbAlXPIn6+kU6HFQQVTOjCZOp2oYD4JqGpamjMWaor
+         b94xURoyLakXaVKLDf+485u5vlkYwOlm+CM51giZZROHMOYNSU6Hx7+HBs8aIrbX4rYk
+         zvtBVWA8kQxALBdemmzipKzQT+y2qZtu3t7ubRdotZfeMTCZjYXlFPnwNiSzPzlWVx08
+         uCynIkkjRVzfWDtLISalyT+teOvR8GS+izovrsgraIgmilaKDzjDtYNmKne34EC1Kvm6
+         Jasw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8LLTjw5mbCMjfVCCXAOoDmaHq3n7/+aUHXsTBnjLG9Y=;
+        b=rz1eRgVLxfo3mfHz3e3bXvhnbvUQwmQRrTxHFgr0XnUyzb2H8L2WdPfG4UnllI5hRV
+         pL6uEF8BwvRh7KKsSbvQBg7CEdPXITVtXAk+bhPcJShmUnmH8LCeZ3VUBd5/cG9wN2J9
+         gpCtBGhmi9intp9UQRiVqlBcAia4Nh7EidQzu9xbSW8VwHrnJIvxbLNQlR7PCHm4Mhas
+         rX/d/YN3vvc7YcNnhKSUzU2xHkXw0YCZcn8bL1B6niFVdI/hi0TMrEo71TS52U4FUWfD
+         vCxaRd8sM1rBnI8OsloQOxdPC+RtaFwhJQ4hwkygGyVNpvC6HopSEIO33dcFz5ZXzKiL
+         cNPQ==
+X-Gm-Message-State: APjAAAXBwLd2NecbTn/XBaJ6gCzMH4y9by8VfDrVVNiiMpzM6u5Ujyqs
+        XKN8M+ToAGAucW7nA2yagXTq
+X-Google-Smtp-Source: APXvYqy0SEIRcAWpwqX/HsANHjZDK345W2Se4HhcQbc69mXsBK62Pux3dAmVE7iHRjrD7n11NvxCmA==
+X-Received: by 2002:a62:144f:: with SMTP id 76mr14051167pfu.62.1566012873127;
+        Fri, 16 Aug 2019 20:34:33 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2409:4072:70a:af69:9185:a772:a21d:70ac])
+        by smtp.gmail.com with ESMTPSA id v22sm6184218pgk.69.2019.08.16.20.34.25
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Aug 2019 20:34:32 -0700 (PDT)
+Date:   Sat, 17 Aug 2019 09:04:22 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        fisher.cheng@bitmain.com, alec.lin@bitmain.com
+Subject: Re: [PATCH 1/5] dt-bindings: clock: Add Bitmain BM1880 SoC clock
+ controller binding
+Message-ID: <20190817033422.GB14652@Mani-XPS-13-9360>
+References: <20190705151440.20844-1-manivannan.sadhasivam@linaro.org>
+ <20190705151440.20844-2-manivannan.sadhasivam@linaro.org>
+ <20190808050128.E3DA52186A@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190808050128.E3DA52186A@mail.kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hi Stephen,
 
-Static analysis with Coverity Scan on linux-next has found an issue with
-the following commit:
+On Wed, Aug 07, 2019 at 10:01:28PM -0700, Stephen Boyd wrote:
+> Quoting Manivannan Sadhasivam (2019-07-05 08:14:36)
+> > Add devicetree binding for Bitmain BM1880 SoC clock controller.
+> > 
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  .../bindings/clock/bitmain,bm1880-clk.txt     | 47 +++++++++++
+> 
+> Can you convert this to YAML? It's all the rage right now.
+> 
 
-commit 20cac6d02815edcc0b1c87bc3e8858b3d1fda3fa
-Author: Stephen Boyd <sboyd@kernel.org>
-Date:   Wed Jul 31 12:35:09 2019 -0700
+Sure.
 
-    clk: actions: Don't reference clk_init_data after registration
+> >  include/dt-bindings/clock/bm1880-clock.h      | 82 +++++++++++++++++++
+> >  2 files changed, 129 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.txt
+> >  create mode 100644 include/dt-bindings/clock/bm1880-clock.h
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.txt b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.txt
+> > new file mode 100644
+> > index 000000000000..9c967095d430
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.txt
+> > @@ -0,0 +1,47 @@
+> > +* Bitmain BM1880 Clock Controller
+> > +
+> > +The Bitmain BM1880 clock controler generates and supplies clock to
+> > +various peripherals within the SoC.
+> > +
+> > +Required Properties:
+> > +
+> > +- compatible: Should be "bitmain,bm1880-clk"
+> > +- reg :        Register address and size of PLL and SYS control domains
+> > +- reg-names : Register domain names: "pll" and "sys"
+> > +- clocks : Phandle of the input reference clock.
+> > +- #clock-cells: Should be 1.
+> > +
+> > +Each clock is assigned an identifier, and client nodes can use this identifier
+> > +to specify the clock which they consume.
+> > +
+> > +All available clocks are defined as preprocessor macros in corresponding
+> > +dt-bindings/clock/bm1880-clock.h header and can be used in device tree sources.
+> > +
+> > +External clocks:
+> > +
+> > +The osc clock used as the input for the plls is generated outside the SoC.
+> > +It is expected that it is defined using standard clock bindings as "osc".
+> > +
+> > +Example: 
+> > +
+> > +        clk: clock-controller@800 {
+> > +                compatible = "bitmain,bm1880-clk";
+> > +                reg = <0xe8 0x0c>,<0x800 0xb0>;
+> 
+> It looks weird still. What hardware module is this actually part of?
+> Some larger power manager block?
+> 
 
-The analysis is as follows:
+These are all part of the sysctrl block (clock + pinctrl + reset) and the
+register domains got split between system and pll.
 
-7        int i, ret;
+Thanks,
+Mani
 
-  1. var_decl: Declaring variable hw without initializer.
-
-68        struct clk_hw *hw;
-69
-
-  2. Condition i < hw_clks->num, taking true branch.
-
-70        for (i = 0; i < hw_clks->num; i++) {
-
-  CID 85252 (#1 of 1): Uninitialized pointer read (UNINIT)
-  3. uninit_use:  Using uninitialized value hw.
-
-71                const char *name = hw->init->name;
-72
-73                hw = hw_clks->hws[i];
-
-hw is being dereferenced on line 71 however it is not assigned until
-line 73.
-
-Did you instead intent this to be:
-
-		const char *name;
-
-		hw = hw_clks->hws[i];
-		name = hw->init->name;
-
-Colin
+> > +                reg-names = "pll", "sys";
+> > +                clocks = <&osc>;
+> > +                #clock-cells = <1>;
+> > +        };
+> > +
