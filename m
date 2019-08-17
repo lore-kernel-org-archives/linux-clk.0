@@ -2,108 +2,92 @@ Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBCC1C3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:58:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00D93C3A59B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 06:36:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DB442173B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:58:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C16C620880
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 06:36:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zj4wTskw"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g43AWVJb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726193AbfHQD64 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 23:58:56 -0400
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35340 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725937AbfHQD64 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 16 Aug 2019 23:58:56 -0400
-Received: by mail-pl1-f193.google.com with SMTP id gn20so3228482plb.2
-        for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2019 20:58:55 -0700 (PDT)
+        id S1726047AbfHQGgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 02:36:10 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44132 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfHQGgK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 02:36:10 -0400
+Received: by mail-pf1-f196.google.com with SMTP id c81so4217971pfc.11;
+        Fri, 16 Aug 2019 23:36:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fpzq1IJyTN3+XLH7OodHaHJGoEjp28ZAcokHx0BKwM8=;
-        b=zj4wTskwXi8JTaFitu4xIdG1IKRFka99SesptRKIhfkVA9A3VUY8yxC+C6V5UFh1EJ
-         BL3kfdAw/RH+la1vpcg1SJWRfLITpUj5rbuMbZQ3kd7BJLWhTQyLReBp5wg4iiGd8n6F
-         /TDmGGNEbLWhCTFPeScJfGvABGU3dWQdhQFqKJ9Xa6JgmG8r3VmspZ3BaH4aHaXWWK/6
-         W+6MxtpTUyxRSJsKCGFHH5BIrGPp6Jm2CRy5rZVGQiqxgwJKTuQvJhvzJ8lYYX0MeoXN
-         UEndhJEX/f0wLy7ztz4/Y5rk9U2OlywenbKF1/Ag+KfUO/6F3KUcHJM/+TTGTBYMtJrj
-         pxaA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=+PI8xYMmQT6NNfDdweNs9HSTX3tHpoVnE9BvBVMxdZU=;
+        b=g43AWVJbUtAHfp+VhCn/tGUNOVJfJhi3m84lkIc/VGINdE9clGUqqmWUc38kITDIeX
+         sCDp1vCgdJzOXtR2EAsq4tOU/nRWv+t+1dWBMRa88YKIUbEd9d1KxoosXN79041AX9Pf
+         PYzqs5x2L2MOSMdOroQ6yEhnu6ILfeNo82cvGoOaxKUL95cnmm2wJuJTE0i2zOHXDaKk
+         yaQuAxuAwT1Pb+4YgYsR80PaGIkbf1pwP3hjK/ZbbgaoafEtx8lbZM7b0+eYp7EPMsnO
+         ZVvGxf5C4Je/24/L44c5z0QuMYDAulErQtmGMUIjzK+GmN1VpbdmR1C5r3SFyaOOj4k/
+         sjtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fpzq1IJyTN3+XLH7OodHaHJGoEjp28ZAcokHx0BKwM8=;
-        b=A5nFlkx0wuGBGA6TMfPiYz6eUQQa6wRtyIzuyO1BFir29GxHI0URaw91AMUcWdEKar
-         fDW12CbimFVRZYKzvifYnuR6chutwCFWPN0GVZBZKas/wt7B+WOttD/1divP+bDw3Fa6
-         flBevjs9SM7b/1qc2CbmsESSM8uwOJE27UVKqGdXIOKh31RT2FKLaaFlhbVE1E7IfPxG
-         bvzslBvMzc+uyeFsfyatIGrU/nHeCW3R12eG0GcEuTfrb+n2YbWeWPRMfSfwGu4yN9hT
-         qb6O44tS+6CeGwx3Q34n0NUt/eNPeiLD4IcArfrRFR5ckQcMzWfs/rDmSUalbkzzPIlE
-         UoNw==
-X-Gm-Message-State: APjAAAUBvxzvfxoeDuR91xiVHxpTT3G/atPy5D5IgE0Q7TD0CNkwl81A
-        a/8o4Y8x3fCMM2l957LFm3aK
-X-Google-Smtp-Source: APXvYqxdLtY4XshCz+FNTJXBVbPVkfdMbdGtSuK9U+G+VAYToLM0bknoU7ihCSGgVowQBAlCe/CjAA==
-X-Received: by 2002:a17:902:7612:: with SMTP id k18mr12190722pll.48.1566014335297;
-        Fri, 16 Aug 2019 20:58:55 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:70a:af69:9185:a772:a21d:70ac])
-        by smtp.gmail.com with ESMTPSA id u7sm8165596pfm.96.2019.08.16.20.58.48
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Aug 2019 20:58:54 -0700 (PDT)
-Date:   Sat, 17 Aug 2019 09:28:45 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add Bitmain BM1880 SoC clock
- controller binding
-Message-ID: <20190817035845.GD14652@Mani-XPS-13-9360>
-References: <20190705151440.20844-1-manivannan.sadhasivam@linaro.org>
- <20190705151440.20844-2-manivannan.sadhasivam@linaro.org>
- <20190808050128.E3DA52186A@mail.kernel.org>
- <20190817033422.GB14652@Mani-XPS-13-9360>
- <20190817034612.6DA7E21721@mail.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190817034612.6DA7E21721@mail.kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=+PI8xYMmQT6NNfDdweNs9HSTX3tHpoVnE9BvBVMxdZU=;
+        b=e3Alk9b5AspuX07OJSgWkiODghpztStaDERJFpqp6O0Z7WRMRLLk8qnSEeIwScM+t6
+         Uj4wJX4lKl/P7cmnElSYGzlR+kORCXQorgUVTJaDZGcU9GPJk+nO/kiY/szEV/vgKnbT
+         DfSrqjxXl/64gKEMOP2yLzAG3gefvJAEtYLUgVLmalUoZZhDDv5HhRgEGlhWNouJVudr
+         I6C+5TDC3QAyTFJa6vSFwynptN4byQMvdFwUvrIjydcaY/YTY6suWnmpa5mGweBW7POD
+         LdkgvSq+g4mFPlVzvlX4LZr2GBJEMa+Ql6KCE1fjzcYX9J7SN22fVMPxGIycx/C5BsTW
+         DwNw==
+X-Gm-Message-State: APjAAAUCeDYf670FbXC4j0IfLexgGwVBX4GLwNLHgjN5bQw1sePeeFIF
+        IxuFCVUQh+FzWOW7SfREzn/PEB1rNkA=
+X-Google-Smtp-Source: APXvYqzDGz3eQNNY21M/ZZKpG6/ZSsKwVyqgoHxV2L4+EivxjgniJm5fCYsdrW234k7PrAp/5Ln7dw==
+X-Received: by 2002:a62:4e09:: with SMTP id c9mr14974770pfb.130.1566023769267;
+        Fri, 16 Aug 2019 23:36:09 -0700 (PDT)
+Received: from localhost.localdomain ([106.51.107.242])
+        by smtp.gmail.com with ESMTPSA id e5sm7135942pgt.91.2019.08.16.23.36.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 16 Aug 2019 23:36:08 -0700 (PDT)
+From:   Rishi Gupta <gupt21@gmail.com>
+To:     sboyd@kernel.org
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rishi Gupta <gupt21@gmail.com>
+Subject: [PATCH] clk: Remove extraneous 'for' word in comments
+Date:   Sat, 17 Aug 2019 12:05:59 +0530
+Message-Id: <1566023759-7880-1-git-send-email-gupt21@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 16, 2019 at 08:46:11PM -0700, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2019-08-16 20:34:22)
-> > On Wed, Aug 07, 2019 at 10:01:28PM -0700, Stephen Boyd wrote:
-> > > Quoting Manivannan Sadhasivam (2019-07-05 08:14:36)
-> > > > +It is expected that it is defined using standard clock bindings as "osc".
-> > > > +
-> > > > +Example: 
-> > > > +
-> > > > +        clk: clock-controller@800 {
-> > > > +                compatible = "bitmain,bm1880-clk";
-> > > > +                reg = <0xe8 0x0c>,<0x800 0xb0>;
-> > > 
-> > > It looks weird still. What hardware module is this actually part of?
-> > > Some larger power manager block?
-> > > 
-> > 
-> > These are all part of the sysctrl block (clock + pinctrl + reset) and the
-> > register domains got split between system and pll.
-> > 
-> 
-> And that can't be one node that probes the clk, pinctrl, and reset
-> drivers from C code?
+An extra 'for' word is grammatically incorrect in the comment
+'verifying ops for multi-parent clks'. This commit removes
+this extra for word.
 
-It is not a MFD for sure. It's just grouping of the register domains together.
+Signed-off-by: Rishi Gupta <gupt21@gmail.com>
+---
+ drivers/clk/clk.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Mani
-> 
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c099070..bea50ee 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2437,7 +2437,7 @@ static int clk_core_set_parent_nolock(struct clk_core *core,
+ 	if (core->parent == parent)
+ 		return 0;
+ 
+-	/* verify ops for for multi-parent clks */
++	/* verify ops for multi-parent clks */
+ 	if (core->num_parents > 1 && !core->ops->set_parent)
+ 		return -EPERM;
+ 
+-- 
+2.7.4
+
