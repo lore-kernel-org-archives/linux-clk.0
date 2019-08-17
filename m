@@ -2,93 +2,121 @@ Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260FCC3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 08:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EBDC3A59B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 14:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 026DF21773
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 08:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CC7A21773
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 14:42:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWWveDza"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbfHQIaT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Aug 2019 04:30:19 -0400
-Received: from sauhun.de ([88.99.104.3]:54100 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725911AbfHQIaT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Aug 2019 04:30:19 -0400
-Received: from localhost (p5486C5A7.dip0.t-ipconnect.de [84.134.197.167])
-        by pokefinder.org (Postfix) with ESMTPSA id E68562C290E;
-        Sat, 17 Aug 2019 10:30:16 +0200 (CEST)
-Date:   Sat, 17 Aug 2019 10:30:16 +0200
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Stefan Wahren <wahrenst@gmx.net>
-Cc:     Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1726087AbfHQOmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 10:42:24 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33050 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725832AbfHQOmY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 10:42:24 -0400
+Received: by mail-ot1-f66.google.com with SMTP id q20so11445941otl.0;
+        Sat, 17 Aug 2019 07:42:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u+ouuMQrNVti/jSM5pYCBsXYcjd9f+fOqg85jip3rp8=;
+        b=UWWveDzaXrnRWzm77yDCOLyoGFGeMfwlcrcoDAlg+n2BRt2WEWB+dpBiXK97kiEVRW
+         YLslFXHdVfC/GFkbxBh6Gdu+SWw8331QjQC4zEte152sB0ESTXRTCOUbwt/2NLDYtOKx
+         8x4YttqP2cffWMMb59Y5HOAWsDO97/1519Du2PTbYAKeCg14TS/QiD6i9PDXlLQWNvXR
+         6kslMkAzXMm9HtWfEnB4f0gVx6gPQn57wPLjuujlARLCoOugYV8BGr1cOT43lj9FNhae
+         QlaM/ig6tXqy2Ch72M9GC//cNQXpQ6crg3hfg3Q0rHRMqQ/FIk0B3+y5YmIQCpkT+Wi1
+         GWWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u+ouuMQrNVti/jSM5pYCBsXYcjd9f+fOqg85jip3rp8=;
+        b=VkoUw6yaygih1gnIuD+w142Wc52KdPj/pYd/8kXL0vILO6afv1lyvmql/PiTjw2+Ux
+         t1QVgqlghUUvc7Yvpuo4AYCChXA5eCKTXtewnkWAXg6/udfesnXlwqbQWjtIY6x75zq+
+         PRBa9KNY9OJJPPWjeyMIMbpHnW8wB/wxuclDeZnioEOTMYRgqEaP2Ad0bUfLXPoSgy8S
+         aKn0w+xDEPY7rB1qRFqDcuVLHvb7iHcXsjHdj5eErVHtTBMYZWKbSRpYjmg3XD94aVUz
+         YJDUBOE4m5JLiNsdh50xyUXqIdQvaYzg2yeaILt2+OxamPSbWFp5+/T/5B10nVBOqA63
+         S3GQ==
+X-Gm-Message-State: APjAAAWzOO9QVJNl8CQ52xPKSENAPVDiXouy2xQxdo8Hu7FhzMyR3WQ9
+        tmlXNksdDi8PjXrbwDjIM3JvTtZZFK1KKODJDRg=
+X-Google-Smtp-Source: APXvYqz5ceM2JCDDDSIcgUhj8lMv5v0FOmMnXg2IeO6sSggcznPDuJampGWaCUwiZ5tB3C/ohH295tN+dd8XvA8ef8o=
+X-Received: by 2002:a05:6830:1592:: with SMTP id i18mr5384197otr.86.1566052943046;
+ Sat, 17 Aug 2019 07:42:23 -0700 (PDT)
+MIME-Version: 1.0
+References: <20190724022310.28010-1-gch981213@gmail.com> <20190724022310.28010-5-gch981213@gmail.com>
+ <20190813155143.GA19830@bogus>
+In-Reply-To: <20190813155143.GA19830@bogus>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Sat, 17 Aug 2019 22:42:12 +0800
+Message-ID: <CAJsYDVKnf4M8jyVOyotRxs=SsHqjex_q60AwkX=QAPK33ivw-Q@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding documentation
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH V2 08/13] i2c: bcm2835: Avoid clk stretch quirk for
- BCM2711
-Message-ID: <20190817083016.GA1315@kunai>
-References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
- <1565713248-4906-9-git-send-email-wahrenst@gmx.net>
- <20190814193628.GA9756@kunai>
- <bb924d04-b4a9-56c7-c7d5-31f3cc8c1da3@gmx.net>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="SUOF0GtieIMvvwua"
-Content-Disposition: inline
-In-Reply-To: <bb924d04-b4a9-56c7-c7d5-31f3cc8c1da3@gmx.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi!
 
---SUOF0GtieIMvvwua
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, Aug 13, 2019 at 11:51 PM Rob Herring <robh@kernel.org> wrote:
+> [...]
+> > +Example:
+> > +     pll {
+> > +             compatible = "mediatek,mt7621-pll";
+>
+> You didn't answer Stephen's question on v1.
 
+I thought he was asking why there's a syscon in compatible string. I
+noticed that the syscon in my previous patch is a copy-paste error
+from elsewhere and dropped it.
 
-> quirks =3D (const struct i2c_adapter_quirks *)of_device_get_match_data(de=
-v);
->=20
-> would hit the line limit. Do you insists on the cast, because it's
-> actually not required?
+>
+> Based on this binding, there is no way to control/program the PLL. Is
+> this part of some IP block?
 
-Not at all, I mixed sth up and forgot that of_device_get_match_data
-returns void*.
+The entire section is called "system control" in datasheet and is
+occupied in arch/mips/ralink/mt7621.c [0]
+Two clocks provided here is determined by reading some read-only
+registers in this part.
+There's another register in this section providing clock gates for
+every peripherals, but MTK doesn't provide a clock plan in their
+datasheet. I can't determine corresponding clock frequencies for every
+peripherals, thus unable to write a working clock driver.
 
+>
+> > +
+> > +             #clock-cells = <1>;
+> > +             clock-output-names = "cpu", "bus";
+> > +     };
+> > --
+> > 2.21.0
+> >
 
---SUOF0GtieIMvvwua
-Content-Type: application/pgp-signature; name="signature.asc"
+Regards,
+Chuanhong Guo
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl1XuxQACgkQFA3kzBSg
-KbZqww/8Caf0okFY7IK0Ft6q6YcN2wNLlAFl3EYp1noT/64s7GDZE/wIPPL/xf2K
-wP3EXxEIlAqnI2b9dw+L5uF4UIKOJlMnH6xQC5mtm+xNWgyTzFG/10gb6vPMdVdY
-8PsXASQzotqQW6BZUVMFwyTusvu7X6JXrMJm+fO8VPMjfyd+RPIV7IWiKddz+jo2
-XV7FJWnnfWG2LU+EMpIyu2g3TzQAlZxEa6LZb4pkG1SG7Vi38g6Ne1vKxvHwRSFS
-MeyW9G81d3nidCBlif+xpHG28hSv9hkK013M5JD4guTaOUMAgDUdVn5ds7zkKw1x
-KsUeYmpH/UcCqrZ3vRFh5Fw4CqRZB+VydC5QOo7bDjUuWy+PgufGgNOe3pLYoH8f
-ztWK9Il+DEUnT73OV6r+55MiRHXm7NaecC36v1lNsZUT/aCZqnUS29vt/u28Etvz
-ESJxRIDLjoGSg8CGyW1/zqgHe0lCjZEZCpx0ou6VtjsDGLHrSfdqWHb5Nz5nQLg8
-osUepGUo4rZ8ucapKZrYA6LJ7TkwaIRdHLUQQzJLceTOaZXeXGvrGaTX8r1Tg8bA
-69FjU2hlqro5RNCJ9ECTsF8jXpQQ1EwXEJ8w7ck2OuZlkMSFq5TLIFcdLrNe31Xd
-ampw0Qtlja1zafuXEgRsiemWsfXoy+7kxW7tK7QNtPmitWp2Ruw=
-=Ip2v
------END PGP SIGNATURE-----
-
---SUOF0GtieIMvvwua--
+[0] https://elixir.bootlin.com/linux/latest/source/arch/mips/ralink/mt7621.c#L156
