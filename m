@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C687AC3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 18:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D299C3A59B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 18:37:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8158D21019
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 18:37:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2F2C2075E
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 18:37:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dqguwweG"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T9fyNuGo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfHQShF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Aug 2019 14:37:05 -0400
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34243 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726457AbfHQShE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 14:37:04 -0400
-Received: by mail-pg1-f193.google.com with SMTP id n9so4594324pgc.1
-        for <linux-clk@vger.kernel.org>; Sat, 17 Aug 2019 11:37:04 -0700 (PDT)
+        id S1726483AbfHQShL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 14:37:11 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:35398 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726406AbfHQShL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 14:37:11 -0400
+Received: by mail-pf1-f196.google.com with SMTP id d85so4824347pfd.2
+        for <linux-clk@vger.kernel.org>; Sat, 17 Aug 2019 11:37:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=K+pJPk2iXl0LixGuiysFHZxmO1vjBGFGOdrJivWtPCQ=;
-        b=dqguwweGv8m3jWuayl4ZIpq5unEXOopx/JAA/LfCxYiy9ROeW2F9g9c+65zQR5QPwB
-         9CIN004auoeyYJTCT7vFNVgWqtJCaKHi3t/sSswuwQlv2+IOVxbQltyLVHe962wvKUnl
-         JS2iIPVwDoaIkZ55RK7mxUwoOOLZxHpjnwrryQIcrznqxk7Ye1SdNSzfCqrI2mTtCi1C
-         EKm3qhWNnQVYpGM61n/jCF3PYQcBnnyAfPOoOFFZK5UcM6Fm8/swH/zKlrhrqMenB9NG
-         J3KtLdHMGMfVvdZUq1ikT1b8Eaf3EfuVQaaGP5Hqhfu1M83iWm2uOMVn/N8i8p0pyaIC
-         GaIg==
+        bh=a/DBFL5pnFxmW7r8pfJ654oUFkPKTYmOJJb8EXbuSt0=;
+        b=T9fyNuGo7nXkSqgRbKRXwczkyhajG9D4rCnAPsUVh/g/paIXjQTwipVm1uF/ABT2V9
+         cjX/57obkUbaSbUg2sQ8coroy4v0Hgd51SHP8S9tOEXpVOuYbVtzYwtNJlPCnOktQjFf
+         kOVOpXGYlxPLKVxW8k0WsCm0fid2aAyuCeLH4rsHkbgV772Ak58F7M0gCcNFFm5TLEes
+         E5vxEmhWsTueRFidXcLztgrb0kAly+e8Sy/3bFx3pZ/8RWtz+SNR+zbFFMiXAp7QmObT
+         0cTuFNpdDqLdAseLFnL80NXg7Cx1cbma6cPnuzGALJhT/+zYduRgU3QADv2WfG8bVBaD
+         J5XQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=K+pJPk2iXl0LixGuiysFHZxmO1vjBGFGOdrJivWtPCQ=;
-        b=VbRybsf8fwZVsQTyIRK8jM3rSV0uvUCRa3bzLVRiPN0BopAOI7VOMVB4uC333iosfI
-         N2/nJDK7lG1MTCBj8t4B/07IEAFGV/vLcrBRYA458LXvttJdcmvhI4WrS5yGzqitPQzw
-         8mRLK211noMb9OqnC2RqNbW1k2A9K7I/Ik0I4TMkEOwYTPxhBJWzkjYEOFMK+N6t+asn
-         o1P93hN7JnVVPNp57cfYeiS5NzLVmx0l3J6aENAVEPxb00ZDdCK4rsLo2pwGzJbPjg//
-         VFdy+CDAX9iTKC0g9sRSVJSxzysUNMpvIS/j79UPFMXVdHNcx/VUTbN3hNVR/ZCmeWUm
-         rQiw==
-X-Gm-Message-State: APjAAAUbQ5NKGLfPOwffSi7j5zrWd6M7dDpmwcKKjwzqHL8kpG693urg
-        d0Qarb4pM/q1lH87kU1plskb
-X-Google-Smtp-Source: APXvYqyNYDKZVgPbO6xvWKY8Qk0vt2+wG3ehY9XlYnpkjyxRyqxyasCLT5TPNa25fa8LpeGDa6KhLA==
-X-Received: by 2002:a17:90a:2629:: with SMTP id l38mr13445995pje.71.1566067023939;
-        Sat, 17 Aug 2019 11:37:03 -0700 (PDT)
+        bh=a/DBFL5pnFxmW7r8pfJ654oUFkPKTYmOJJb8EXbuSt0=;
+        b=Y1xgCQy2t8Nvc/ArXhoqP0QWonRKz/G5kn9QQvGI3Mk2OwWcpYLqi6ZibJv0lyRSEY
+         GnPQ7WMKZlvUYiUO5y2N5sjEeQ6tQtnGcYXJsLtykGQAdWox4UYQIbzyWLGGsT7qCCkw
+         10CMjMbomaqszQ9KrTj0D76vMGrxSbwXn8y+zQCDiUbu5560B6nLNMNsTPSGeG3JPhZw
+         MIIbkLrIT3S3ID5xwTYIpChGp04hfasb7vt+AWg3wjOoRNob54IvINhPjxXZFzrylR9m
+         k00bjYOWLcX9eEz9/klhWvm8fIDsJQ4DKL+wrHA4WCWqhro2bymUqcJhydcsPuMZiY/U
+         5Z6g==
+X-Gm-Message-State: APjAAAWnO/iZ24/A5ZIHlNJhzrTX6/YFXTfpmFaxiAtGE5YJjhF+LZzv
+        Qm+gVcv03DL43NpwsWMdwDEf
+X-Google-Smtp-Source: APXvYqysG+ORw2lSBaxTYwdL1FKWqn7EDAacICLrMuXWKnS8dBwKXrAqnklYhymDEx1/Eb48y+/nkQ==
+X-Received: by 2002:a17:90a:21c1:: with SMTP id q59mr12582966pjc.6.1566067030621;
+        Sat, 17 Aug 2019 11:37:10 -0700 (PDT)
 Received: from localhost.localdomain ([2409:4072:909:4559:9185:a772:a21d:70ac])
-        by smtp.gmail.com with ESMTPSA id 33sm8588640pgy.22.2019.08.17.11.36.57
+        by smtp.gmail.com with ESMTPSA id 33sm8588640pgy.22.2019.08.17.11.37.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2019 11:37:03 -0700 (PDT)
+        Sat, 17 Aug 2019 11:37:10 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -60,9 +60,9 @@ Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         haitao.suo@bitmain.com, darren.tsao@bitmain.com,
         fisher.cheng@bitmain.com, alec.lin@bitmain.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 5/7] MAINTAINERS: Add entry for BM1880 SoC clock driver
-Date:   Sun, 18 Aug 2019 00:06:12 +0530
-Message-Id: <20190817183614.8429-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 6/7] clk: Warn if clk_init_data is not zero initialized
+Date:   Sun, 18 Aug 2019 00:06:13 +0530
+Message-Id: <20190817183614.8429-7-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190817183614.8429-1-manivannan.sadhasivam@linaro.org>
 References: <20190817183614.8429-1-manivannan.sadhasivam@linaro.org>
@@ -71,28 +71,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MAINTAINERS entry for Bitmain BM1880 SoC clock driver.
+The new implementation for determining parent map uses multiple ways
+to pass parent info. The order in which it gets processed depends on
+the first available member. Hence, it is necessary to zero init the
+clk_init_data struct so that the expected member gets processed correctly.
+So, add a warning if multiple clk_init_data members are available during
+clk registration.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 997a4f8fe88e..280defec35b2 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1503,8 +1503,10 @@ M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm64/boot/dts/bitmain/
-+F:	drivers/clk/clk-bm1880.c
- F:	drivers/pinctrl/pinctrl-bm1880.c
- F:	Documentation/devicetree/bindings/arm/bitmain.yaml
-+F:	Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
- F:	Documentation/devicetree/bindings/pinctrl/bitmain,bm1880-pinctrl.txt
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..7d6d6984c979 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3497,6 +3497,14 @@ static int clk_core_populate_parent_map(struct clk_core *core)
+ 	if (!num_parents)
+ 		return 0;
  
- ARM/CALXEDA HIGHBANK ARCHITECTURE
++	/*
++	 * Check for non-zero initialized clk_init_data struct. This is
++	 * required because, we only require one of the (parent_names/
++	 * parent_data/parent_hws) to be set at a time. Otherwise, the
++	 * current code would use first available member.
++	 */
++	WARN_ON((parent_names && parent_data) || (parent_names && parent_hws));
++
+ 	/*
+ 	 * Avoid unnecessary string look-ups of clk_core's possible parents by
+ 	 * having a cache of names/clk_hw pointers to clk_core pointers.
 -- 
 2.17.1
 
