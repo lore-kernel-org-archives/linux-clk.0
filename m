@@ -2,82 +2,103 @@ Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83DE4C3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:46:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6250BC41514
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF1F21721
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:46:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38ABA21773
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 03:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566013574;
-	bh=Ceb8jDe4ZN3E1BKGFRkTVG7X9cSBE7uIXb55UYz9P6A=;
+	s=default; t=1566013694;
+	bh=HxsSwNwiVHXbty9BjtNr6DuJclpMy2U5qUXHSszZxrM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=PdkmCDEhahCCL+/3tImJvVbmsQWbUTgvw1GVG0rTRLful/9FHAkP9YEBgLi6X/JsO
-	 5EmomPiAc1k5BZ8sq8gEH99z3R8T9oim8EwVZjU/uN8/jjP9B8ZFQ8ZTpzuwH6e9tm
-	 G9BqCFbjqcP9P2mep3OFprAOBaIS+culN3dXw0Js=
+	b=1WYXDIHm9Y2OwI65SB4T3Sh1SWRsH//SnfDvv49UjS21877o13bTMDmRMk2nBCMIj
+	 bw7Ju6D3GU0/eiNcCWikNyFP/BDKz0hYflbNr4pClJ6yzz74y/jITPdIXUYV1x3Gzh
+	 /e7BXYYlMHYMjvEfcFaa0XBpP8VjWGSRI30SEWyw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbfHQDqN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 16 Aug 2019 23:46:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42402 "EHLO mail.kernel.org"
+        id S1726012AbfHQDsN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 16 Aug 2019 23:48:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726088AbfHQDqN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 16 Aug 2019 23:46:13 -0400
+        id S1725938AbfHQDsN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 16 Aug 2019 23:48:13 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DA7E21721;
-        Sat, 17 Aug 2019 03:46:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5435B21721;
+        Sat, 17 Aug 2019 03:48:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566013572;
-        bh=Ceb8jDe4ZN3E1BKGFRkTVG7X9cSBE7uIXb55UYz9P6A=;
+        s=default; t=1566013692;
+        bh=HxsSwNwiVHXbty9BjtNr6DuJclpMy2U5qUXHSszZxrM=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=Tqozy/nZkkQ+GMDOJjYHBa/24QsMLHgpIYmpe3LiCwmEXw1zqncAgO+gPp0+TLwzv
-         ehFP029agWLq9gcTwZmZ4bn3KhL6A7503G/GvgyuorMvJQexTtdCZw6PznaMPqREI2
-         FumXZbiqz7ovopHiMVC6X9GOAOul+sF00e4UZUtw=
+        b=e8Au8v1YjIZnWREKfQOag1wlJ5dlrZgSMRbp90GK5UTPY+nUl2WJc1otkEjseKTHD
+         3520uhhDA1MOfMC6z+SshHGl8yLV5hAyKMxhpPm5HKjtVazIzaF8qeRTw9/o/K0lqr
+         o/oE9EuoQwMQ1Ku1q59wIcPUKdI9WFywtxJJo4W0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190817033422.GB14652@Mani-XPS-13-9360>
-References: <20190705151440.20844-1-manivannan.sadhasivam@linaro.org> <20190705151440.20844-2-manivannan.sadhasivam@linaro.org> <20190808050128.E3DA52186A@mail.kernel.org> <20190817033422.GB14652@Mani-XPS-13-9360>
-Subject: Re: [PATCH 1/5] dt-bindings: clock: Add Bitmain BM1880 SoC clock controller binding
+In-Reply-To: <CAMuHMdVvwsXU2YwFRA2Y2K9KKzF4L-hqDudarmc-OeHXRMCifQ@mail.gmail.com>
+References: <20190816125225.16061-1-geert+renesas@glider.be> <20190816125225.16061-2-geert+renesas@glider.be> <20190816180123.6299720665@mail.kernel.org> <CAMuHMdVvwsXU2YwFRA2Y2K9KKzF4L-hqDudarmc-OeHXRMCifQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 User-Agent: alot/0.8.1
-Date:   Fri, 16 Aug 2019 20:46:11 -0700
-Message-Id: <20190817034612.6DA7E21721@mail.kernel.org>
+Date:   Fri, 16 Aug 2019 20:48:11 -0700
+Message-Id: <20190817034812.5435B21721@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-08-16 20:34:22)
-> On Wed, Aug 07, 2019 at 10:01:28PM -0700, Stephen Boyd wrote:
-> > Quoting Manivannan Sadhasivam (2019-07-05 08:14:36)
-> > > +It is expected that it is defined using standard clock bindings as "=
-osc".
-> > > +
-> > > +Example:=20
-> > > +
-> > > +        clk: clock-controller@800 {
-> > > +                compatible =3D "bitmain,bm1880-clk";
-> > > +                reg =3D <0xe8 0x0c>,<0x800 0xb0>;
-> >=20
-> > It looks weird still. What hardware module is this actually part of?
-> > Some larger power manager block?
-> >=20
+Quoting Geert Uytterhoeven (2019-08-16 12:59:32)
+> Hi Stephen,
 >=20
-> These are all part of the sysctrl block (clock + pinctrl + reset) and the
-> register domains got split between system and pll.
+> On Fri, Aug 16, 2019 at 8:01 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > Quoting Geert Uytterhoeven (2019-08-16 05:52:23)
+> > > The CPG/MSTP Clock Domain driver does not implement the
+> > > generic_pm_domain.power_{on,off}() callbacks, as the domain itself
+> > > cannot be powered down.  Hence the domain should be marked as always-=
+on
+> > > by setting the GENPD_FLAG_ALWAYS_ON flag.
+> > >
+> > > This gets rid of the following boot warning on RZ/A1:
+> > >
+> > >     sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered =
+off
+> > >
+> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > ---
+> >
+> > Are you going to add a Fixes tag?
+>=20
+> I didn't add a Fixes tag, as there's no clear point in history where the
+> problem appeared: the Clock Domain code in this driver predates the
+> introduction of the GENPD_FLAG_ALWAYS_ON flag by ca. 18 months.
+>=20
+> Candidates are:
+> d716f4798ff8c65a ("PM / Domains: Support IRQ safe PM domains")
+> ffaa42e8a40b7f10 ("PM / Domains: Enable users of genpd to specify
+> always on PM domains")
+> 075c37d59ecd4a8b ("PM / Domains: Don't warn about IRQ safe device for
+> an always on PM domain")
+>=20
+> Do you think it's worth adding one or more of the above?
+> Thanks!
 >=20
 
-And that can't be one node that probes the clk, pinctrl, and reset
-drivers from C code?
+Well is it actually a problem to not specify the flag? I guess it's just
+a potential problem if the genpd is ever powered off, but given that the
+governor decides to leave it always enabled it doesn't actually matter?
+So it's not really fixing anything besides silencing a harmless warning?
 
