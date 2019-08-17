@@ -2,74 +2,105 @@ Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E810C3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 07:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAB45C3A59B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 07:32:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E639F2077C
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 07:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 754442077C
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 07:32:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="NZl8Tmdp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725889AbfHQH3h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Aug 2019 03:29:37 -0400
-Received: from smtprelay0095.hostedemail.com ([216.40.44.95]:39730 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725832AbfHQH3h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 03:29:37 -0400
-X-Greylist: delayed 402 seconds by postgrey-1.27 at vger.kernel.org; Sat, 17 Aug 2019 03:29:36 EDT
-Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
-        by smtpgrave05.hostedemail.com (Postfix) with ESMTP id 5360218026599
-        for <linux-clk@vger.kernel.org>; Sat, 17 Aug 2019 07:22:55 +0000 (UTC)
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay07.hostedemail.com (Postfix) with ESMTP id BF910181D33FC;
-        Sat, 17 Aug 2019 07:22:53 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: fish56_5354f57556556
-X-Filterd-Recvd-Size: 1469
-Received: from XPS-9350.home (cpe-23-242-196-136.socal.res.rr.com [23.242.196.136])
-        (Authenticated sender: joe@perches.com)
-        by omf02.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 17 Aug 2019 07:22:52 +0000 (UTC)
-Message-ID: <74b4a00b524cf8dd11631692dee65ccbba34b8cb.camel@perches.com>
-Subject: Re: [PATCH] clk: Remove extraneous 'for' word in comments
-From:   Joe Perches <joe@perches.com>
-To:     Rishi Gupta <gupt21@gmail.com>, sboyd@kernel.org,
-        kernel-janitors <kernel-janitors@vger.kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Date:   Sat, 17 Aug 2019 00:22:51 -0700
-In-Reply-To: <1566023759-7880-1-git-send-email-gupt21@gmail.com>
-References: <1566023759-7880-1-git-send-email-gupt21@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.32.1-2 
+        id S1725945AbfHQHc3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 03:32:29 -0400
+Received: from mout.gmx.net ([212.227.17.22]:46163 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbfHQHc3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 17 Aug 2019 03:32:29 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1566027124;
+        bh=79c1Qiwd78Z6gHB2H4pQRBwu61ap1LwxLc8fK5Abisk=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=NZl8Tmdp/ezt6FiEYl2PBlTbYdZKwj9RcFtZjGSJn/7uw667z71uHz7QcequF4+fg
+         WGhcZm7hUboTt642tQXdfefE+FcBrxopY0c1NE2qS72VQmFbrZVfwpeRTsV9rUpjGD
+         s7/Vb+TAsR2zn9POmYQAJM76E9Fx1u3pRbncRuI8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from [192.168.1.162] ([37.4.249.106]) by mail.gmx.com (mrgmx102
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 0LjdS8-1ia8p221u4-00baXc; Sat, 17
+ Aug 2019 09:32:04 +0200
+Subject: Re: [PATCH V2 08/13] i2c: bcm2835: Avoid clk stretch quirk for
+ BCM2711
+To:     Wolfram Sang <wsa@the-dreams.de>
+Cc:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        bcm-kernel-feedback-list@broadcom.com,
+        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org
+References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
+ <1565713248-4906-9-git-send-email-wahrenst@gmx.net>
+ <20190814193628.GA9756@kunai>
+From:   Stefan Wahren <wahrenst@gmx.net>
+Message-ID: <bb924d04-b4a9-56c7-c7d5-31f3cc8c1da3@gmx.net>
+Date:   Sat, 17 Aug 2019 09:32:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190814193628.GA9756@kunai>
+Content-Type: text/plain; charset=windows-1252
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Provags-ID: V03:K1:MYYp/EY0zAmFLDdjas94knWfcnTU3EQgK4637yghfQalxZkOem6
+ iQS5oBLTT6i9RCppasf/mYECnDySmMTKWswDhTOYC1fmOtzWdfYinEPNmiJAWbRfbvb6GwH
+ 8A2Go6sXdtfVoU2Lmva1IJUonQEbpvHKigI31xDLH8u8VlkBf2EuBJ0lLJEWNeFGr49a7fl
+ 8WVeJB6VIy6hDuz2Dg/qA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:tcerPsRZ5/o=:H7AqX+83ICOeyvNpx0DDvO
+ gIXuDAsdC+0xkeAV4O5gU8BPMijJ9NHYuy6AYNKT5R+LPSpLkxV82miwOU2+CCLImFrtkx6I+
+ 4VagaT3zGtzPb75vik0DbP+bnqFfdmLYa4gj/c4btgF1+KpC5L+7kAGo2t/HBd+zT8G8CjrcQ
+ 2rQ447Kgyzb4GdIy8ydKK+5sDZTMyXkOBvsFhAoNLY1FIbsD8QS+uU/f+YG3iZf6wqQZlUL+F
+ Adi84cufhubHDGv4CW8IaWO7DaVd29C5mtgOc9y3dJpYhY+CWI0kBn7R10B/04ZIQ7D6iS9z6
+ RiVYbeJ1WzkGSpqimOuFTlrbKg+QngBNn4qy55N6iN4HC3F+WEEHetuiAP7aKegIvmQL15Ium
+ GIR0ynngQXtME5aph1DYH6Lu2kD0IGeWuwp7f/qGWWWqxaQyfnvf1ieDdteaZzYpYjVtx/fYW
+ mcZJebB4kSRCrWA5OPWjC5FxVInPN6EOghHEnkQguB14oSwfXZJ/oyIZH8uN4a71hXFW01t53
+ 41plg9YxbtmdXhboo0Jy64RTH3e/Dy9EOv34vhN0WYQwxnXiTk4h7XScz3ylsD59NO3FLsweM
+ D8Rpg4sBGlC4yUsMtCrOWO+g+rsg1xfSZKXw0Q/ARowig6WAFVNrM6das//t3BmnKynshtsqs
+ tUrO3kFGIsQxjP5BxjS//1z8uYmmNw21yp4PDRftWULjaMjKDLGYaus5QtORmCoy8krsS9ifS
+ nl06pyAEP1t2bn4P1CIuq7OSuFchGVnM9eK7PvcgGJUfmPmrKRmKiQZDFv4qrbmNC2ctti0wP
+ Cwiq/APoZ2wKeZZv/lwcISEjeygwzGByPv0d5hdPO9QFpE7FerpI+vtjMc7ADyLq3YX3VZRyn
+ PHWYu6ieY7ujJ67EZfLhoqR6wQemZTz2FMJnhpBQzMVw+MKP4FFGf+WsSpfxpkCRRIBVNE0Wf
+ zZQK0D2sPYxHIq534H+O1n8uv/RUQwqWmWK5wmgispD1iOs5p66Gy5reaJm0y0eCP0x69YiwQ
+ prfA1tVHDXLYQYSbrW63NTc9fB0x92Jes5AsBVGuWjsQVxDk8dUKMf2kZYdfQAHLaKO4O0Bcf
+ XrhxJsL4ZWA/L352tM0hjQ26Ojp4wCVA8tMfC0FKjeEfpO8snfYTl5QL6okoZgjiJpvBOrZbo
+ a0Yao=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 2019-08-17 at 12:05 +0530, Rishi Gupta wrote:
-> An extra 'for' word is grammatically incorrect in the comment
-> 'verifying ops for multi-parent clks'. This commit removes
-> this extra for word.
+Hi Wolfram,
 
-A few other repeated word typos in comments are 
-common in the kernel and most could be changed.
+Am 14.08.19 um 21:36 schrieb Wolfram Sang:
+>>  static const struct of_device_id bcm2835_i2c_of_match[] = {
+>> -	{ .compatible = "brcm,bcm2835-i2c" },
+>> +	{ .compatible = "brcm,bcm2711-i2c", .data = (void *)NO_STRETCH_BUG },
+>> +	{ .compatible = "brcm,bcm2835-i2c", .data = (void *)STRETCH_BUG },
+> What about simply putting a pointer to the quirks data (or NULL) as
+> match_data? Then the code should be:
+>
+> adap->quirks = (cast)of_device_get_match_data(&pdev->dev);
 
-$ git grep -P '^\s*/?\*.*\bthe the\b' | wc -l
-285
-$ git grep -P '^\s*/?\*.*\bto to\b' | wc -l
-62
-$ git grep -P '^\s*/?\*.*\bfor for\b' | wc -l
-31
-$ git grep -P
-'^\s*/?\*.*\bfrom from\b' | wc -l
-22
-$ git grep -P '^\s*/?\*.*\bare are\b'
-| wc -l
-16
+quirks = (const struct i2c_adapter_quirks *)of_device_get_match_data(dev);
 
+would hit the line limit. Do you insists on the cast, because it's
+actually not required?
 
