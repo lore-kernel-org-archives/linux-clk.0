@@ -2,121 +2,72 @@ Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EBDC3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 14:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C959DC3A59B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 14:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CC7A21773
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 14:42:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CF9D21744
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 14:58:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWWveDza"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVaPltO2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbfHQOmY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Aug 2019 10:42:24 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:33050 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725832AbfHQOmY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 10:42:24 -0400
-Received: by mail-ot1-f66.google.com with SMTP id q20so11445941otl.0;
-        Sat, 17 Aug 2019 07:42:23 -0700 (PDT)
+        id S1725937AbfHQO6I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 10:58:08 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:43007 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725929AbfHQO6H (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 10:58:07 -0400
+Received: by mail-pg1-f195.google.com with SMTP id p3so4410237pgb.9;
+        Sat, 17 Aug 2019 07:58:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=u+ouuMQrNVti/jSM5pYCBsXYcjd9f+fOqg85jip3rp8=;
-        b=UWWveDzaXrnRWzm77yDCOLyoGFGeMfwlcrcoDAlg+n2BRt2WEWB+dpBiXK97kiEVRW
-         YLslFXHdVfC/GFkbxBh6Gdu+SWw8331QjQC4zEte152sB0ESTXRTCOUbwt/2NLDYtOKx
-         8x4YttqP2cffWMMb59Y5HOAWsDO97/1519Du2PTbYAKeCg14TS/QiD6i9PDXlLQWNvXR
-         6kslMkAzXMm9HtWfEnB4f0gVx6gPQn57wPLjuujlARLCoOugYV8BGr1cOT43lj9FNhae
-         QlaM/ig6tXqy2Ch72M9GC//cNQXpQ6crg3hfg3Q0rHRMqQ/FIk0B3+y5YmIQCpkT+Wi1
-         GWWg==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=dnuNHe9aubRcZm/ceJk/Dq78R3sCq8agIg9M5WopPt8=;
+        b=bVaPltO2r6SQqjVw0w0JXMwp2Y1P80xyi4uzOQR5poeTriQi0s/ZeYNnc80+57agnU
+         MtJuMLFU7aj2Oc7S4B1KItW3HoG3AZny3oiKA9wspjwNhbpTsHHG3t7ea9UgLS7wZWha
+         4i7yOIvDemrocfNbGt5E4AeV0fxHxKQNw6CV7FO2yWAbxUUQtVcJW0dgtUruks8WwMBx
+         AnUjgN4d4jDe+cg52x0MXIlN4TdbftIBi7LA65vga4EIAy00fvui1lVVp4WkSoUoJGY9
+         loq/fqjQ9P3NoINx/GjZbS6QB4kEphWYkJUUjP4rpzx35kRKZ9EW9OryTSSAN+8nYSgx
+         TkRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=u+ouuMQrNVti/jSM5pYCBsXYcjd9f+fOqg85jip3rp8=;
-        b=VkoUw6yaygih1gnIuD+w142Wc52KdPj/pYd/8kXL0vILO6afv1lyvmql/PiTjw2+Ux
-         t1QVgqlghUUvc7Yvpuo4AYCChXA5eCKTXtewnkWAXg6/udfesnXlwqbQWjtIY6x75zq+
-         PRBa9KNY9OJJPPWjeyMIMbpHnW8wB/wxuclDeZnioEOTMYRgqEaP2Ad0bUfLXPoSgy8S
-         aKn0w+xDEPY7rB1qRFqDcuVLHvb7iHcXsjHdj5eErVHtTBMYZWKbSRpYjmg3XD94aVUz
-         YJDUBOE4m5JLiNsdh50xyUXqIdQvaYzg2yeaILt2+OxamPSbWFp5+/T/5B10nVBOqA63
-         S3GQ==
-X-Gm-Message-State: APjAAAWzOO9QVJNl8CQ52xPKSENAPVDiXouy2xQxdo8Hu7FhzMyR3WQ9
-        tmlXNksdDi8PjXrbwDjIM3JvTtZZFK1KKODJDRg=
-X-Google-Smtp-Source: APXvYqz5ceM2JCDDDSIcgUhj8lMv5v0FOmMnXg2IeO6sSggcznPDuJampGWaCUwiZ5tB3C/ohH295tN+dd8XvA8ef8o=
-X-Received: by 2002:a05:6830:1592:: with SMTP id i18mr5384197otr.86.1566052943046;
- Sat, 17 Aug 2019 07:42:23 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190724022310.28010-1-gch981213@gmail.com> <20190724022310.28010-5-gch981213@gmail.com>
- <20190813155143.GA19830@bogus>
-In-Reply-To: <20190813155143.GA19830@bogus>
-From:   Chuanhong Guo <gch981213@gmail.com>
-Date:   Sat, 17 Aug 2019 22:42:12 +0800
-Message-ID: <CAJsYDVKnf4M8jyVOyotRxs=SsHqjex_q60AwkX=QAPK33ivw-Q@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding documentation
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=dnuNHe9aubRcZm/ceJk/Dq78R3sCq8agIg9M5WopPt8=;
+        b=daN7ZHxxMCdo3eofV0AIz6cvv9WVM4Z/Ifo40Rt6OA/I+y7zh50T9Lxsk84Vk7UqEt
+         CK5aE4GeVKWQeB7ig0OAsfnDpbtW1TTT/2axRpVraI11YaLesKpuECVOEPvzOcO22BVX
+         NYBYG38PwdszBARIw3WsoE2oKcbzDXv8YDoCzhaYfJTBRvoj4RwWSfAhdXrskmfdqEGz
+         MeC5KHs1+OQ5mKi84HJCXIObyPldnHnz0Wi7rKPqGF6vV9ipMaFD7wj5hCQd3/Qhxjrb
+         x1vEq7MwdyzhQGDFd+DoWAgwuDULWzP8DHmk0I+gRTLqyVbyk9OPCzQiHC7ytZvnRoEk
+         B1Rw==
+X-Gm-Message-State: APjAAAVUUD+n/ndCTRBpmGxXxZNja7l7v/ONEp+6TVOCft/Q6l1RhBHa
+        s6uWVRLYLrR5Hccuva5vTXcJiw7UWkk=
+X-Google-Smtp-Source: APXvYqwP07iMq6zKJEIXYh8NBNC6LQJ9ieCaNG4Vfmvdw0ekTWVBQGmTqfGS5oLnZ3dxbKmYKo+gmg==
+X-Received: by 2002:a62:7912:: with SMTP id u18mr16793996pfc.254.1566053886918;
+        Sat, 17 Aug 2019 07:58:06 -0700 (PDT)
+Received: from localhost.localdomain ([106.51.107.242])
+        by smtp.gmail.com with ESMTPSA id g1sm9079805pgg.27.2019.08.17.07.58.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Sat, 17 Aug 2019 07:58:06 -0700 (PDT)
+From:   Rishi Gupta <gupt21@gmail.com>
+To:     joe@perches.com
+Cc:     kernel-janitors@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rishi Gupta <gupt21@gmail.com>
+Subject: Re: [PATCH] clk: Remove extraneous 'for' word in comments
+Date:   Sat, 17 Aug 2019 20:27:55 +0530
+Message-Id: <1566053875-32322-1-git-send-email-gupt21@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <74b4a00b524cf8dd11631692dee65ccbba34b8cb.camel@perches.com>
+References: <74b4a00b524cf8dd11631692dee65ccbba34b8cb.camel@perches.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
-
-On Tue, Aug 13, 2019 at 11:51 PM Rob Herring <robh@kernel.org> wrote:
-> [...]
-> > +Example:
-> > +     pll {
-> > +             compatible = "mediatek,mt7621-pll";
->
-> You didn't answer Stephen's question on v1.
-
-I thought he was asking why there's a syscon in compatible string. I
-noticed that the syscon in my previous patch is a copy-paste error
-from elsewhere and dropped it.
-
->
-> Based on this binding, there is no way to control/program the PLL. Is
-> this part of some IP block?
-
-The entire section is called "system control" in datasheet and is
-occupied in arch/mips/ralink/mt7621.c [0]
-Two clocks provided here is determined by reading some read-only
-registers in this part.
-There's another register in this section providing clock gates for
-every peripherals, but MTK doesn't provide a clock plan in their
-datasheet. I can't determine corresponding clock frequencies for every
-peripherals, thus unable to write a working clock driver.
-
->
-> > +
-> > +             #clock-cells = <1>;
-> > +             clock-output-names = "cpu", "bus";
-> > +     };
-> > --
-> > 2.21.0
-> >
-
-Regards,
-Chuanhong Guo
-
-[0] https://elixir.bootlin.com/linux/latest/source/arch/mips/ralink/mt7621.c#L156
+Thanks Joe for higlighting this. I am going
+to send patches for them as well soon.
