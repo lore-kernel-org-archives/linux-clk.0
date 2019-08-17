@@ -2,153 +2,140 @@ Return-Path: <SRS0=iaTJ=WN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C2EC3A59B
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 18:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 290C6C3A59B
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 19:01:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B03217F4
-	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 18:37:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ewzPkNyB"
+	by mail.kernel.org (Postfix) with ESMTP id E6C0C206DF
+	for <linux-clk@archiver.kernel.org>; Sat, 17 Aug 2019 19:01:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566068509;
+	bh=ajbTeKxBc5eehrIoCvTp7T61OlNRVuznELfGxUMvpVo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=NyoRgaZWy8lGuCNzvREL2/zOxqzI6xkHW5Pn3Wu6yWVLNtCnglMyGpQAiIy+nJNm9
+	 Z2lX/pyx4p6m8eD8qpow8EHvW8bVFs5Pscv+QJJ4TfmUkkd2APkdFtLHgvfFlIZ+YK
+	 NSeFvNc/4FQUViI2Vgw97mG6V6wciJOaQB8ywzec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726509AbfHQShR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Aug 2019 14:37:17 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37533 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfHQShR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 14:37:17 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so3991876pgp.4
-        for <linux-clk@vger.kernel.org>; Sat, 17 Aug 2019 11:37:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=70nxwZafCYlFjcUnZixCqBC0Lk3FuIHCQ+uw4WwvqpE=;
-        b=ewzPkNyBhU4d9d5GhkPbSPGovE1vgDCdth74QZAq1r+/vMTb1o9o3DxSqMeS2tdFKA
-         C1Sjun1kcy++u3Y0JYUo9na9qIphqFKJe8/Fsb4x2+5B3RDXKdMLlh/hbtP56sHGT5F9
-         8o2aZSHCq4DbMoJJ0O00X3EZaW6mJO/yWmoZe2nofvuJNs633XHapwvEonzOkUw0lrHO
-         S0MgAtpyfQmP7bqvgbiP8WPKaRHAmuREnzrttpIsrXNQuFzu9IXR+WH6sJxjwz0GSOyU
-         XeZS6V4dYx4MipPyuMKzqpjDDqWnpwYZvh2TGBYsNLAn0kUhe2YDYgA9rCjhL9Jhsbdc
-         8cmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=70nxwZafCYlFjcUnZixCqBC0Lk3FuIHCQ+uw4WwvqpE=;
-        b=brugCaxj6fOe81qoZ5D+nHFtet0VsbuF+3o+wKlt9sDpl+zPtYfnW2D+mErXwHuSjH
-         2UYSR3fM03O+McVkxjz/dyvWUF7+H57AuEKKaKbm1iNeZg9TdangQ5+AyFySQWAmP+7x
-         k2jBekmxxg+sXDFz4xj84siLqKobUhSqAr9QI/59Y5QxpNHYo1nmwq18st2TuepruD9S
-         7x7V7LuaZ/aC+pUBGIbdEaO0nyTgLzE1QYYfkhuOl3Qx8sWmqBV8vD8sRQG1ctoKHUvV
-         CKvyBv2+JN8sVWoNwNvJg/DIkaEEpuBVO8Pl6/tnhCGveiCjaY2kJR+ZJxqjIgJgeU4E
-         uzsQ==
-X-Gm-Message-State: APjAAAUzoEp9Tjau5rGDQdFetH0XPkoy652ZBkqd2BJovOkXnbKXJJUy
-        WXqM4f2sCzL96RRRFWGyltUJ
-X-Google-Smtp-Source: APXvYqwWNvpYuoAKFJIPuEaLE90pJKDy45SbYeGRmqxwMmb5psxMyRQAQGmgh+XC3kxow/1OOYyjLA==
-X-Received: by 2002:a17:90a:2069:: with SMTP id n96mr12892621pjc.4.1566067036517;
-        Sat, 17 Aug 2019 11:37:16 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:909:4559:9185:a772:a21d:70ac])
-        by smtp.gmail.com with ESMTPSA id 33sm8588640pgy.22.2019.08.17.11.37.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 17 Aug 2019 11:37:16 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 7/7] clk: Zero init clk_init_data in helpers
-Date:   Sun, 18 Aug 2019 00:06:14 +0530
-Message-Id: <20190817183614.8429-8-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190817183614.8429-1-manivannan.sadhasivam@linaro.org>
-References: <20190817183614.8429-1-manivannan.sadhasivam@linaro.org>
+        id S1725966AbfHQTBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 15:01:48 -0400
+Received: from inca-roads.misterjones.org ([213.251.177.50]:45300 "EHLO
+        inca-roads.misterjones.org" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725945AbfHQTBs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 15:01:48 -0400
+X-Greylist: delayed 2660 seconds by postgrey-1.27 at vger.kernel.org; Sat, 17 Aug 2019 15:01:48 EDT
+Received: from 78.163-31-62.static.virginmediabusiness.co.uk ([62.31.163.78] helo=why)
+        by cheepnis.misterjones.org with esmtpsa (TLSv1.2:AES256-GCM-SHA384:256)
+        (Exim 4.80)
+        (envelope-from <maz@kernel.org>)
+        id 1hz3GL-0002bG-LD; Sat, 17 Aug 2019 20:17:13 +0200
+Date:   Sat, 17 Aug 2019 19:17:10 +0100
+From:   Marc Zyngier <maz@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Olof Johansson <olof@lixom.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
+Subject: Re: [PATCH 05/19] irqchip/mmp: do not use of_address_to_resource()
+ to get mux regs
+Message-ID: <20190817191710.539daa01@why>
+In-Reply-To: <e0c0cf62a1f087fd6c1d7307e5e2a65603148341.camel@v3.sk>
+References: <20190809093158.7969-1-lkundrak@v3.sk>
+        <20190809093158.7969-6-lkundrak@v3.sk>
+        <16d77ca3-7ad1-3af2-650e-722cf6a931ed@kernel.org>
+        <e0c0cf62a1f087fd6c1d7307e5e2a65603148341.camel@v3.sk>
+Organization: Approximate
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 62.31.163.78
+X-SA-Exim-Rcpt-To: lkundrak@v3.sk, olof@lixom.net, robh+dt@kernel.org, mark.rutland@arm.com, tglx@linutronix.de, jason@lakedaemon.net, kishon@ti.com, linux@armlinux.org.uk, mturquette@baylibre.com, sboyd@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, pavel@ucw.cz
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on cheepnis.misterjones.org); SAEximRunCond expanded to false
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk_init_data struct needs to be initialized to zero for the new
-parent_map implementation to work correctly. Otherwise, the member which
-is available first will get processed.
+On Fri, 16 Aug 2019 20:41:22 +0200
+Lubomir Rintel <lkundrak@v3.sk> wrote:
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/clk-composite.c  | 2 +-
- drivers/clk/clk-divider.c    | 2 +-
- drivers/clk/clk-fixed-rate.c | 2 +-
- drivers/clk/clk-gate.c       | 2 +-
- drivers/clk/clk-mux.c        | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+> On Fri, 2019-08-09 at 13:12 +0100, Marc Zyngier wrote:
+> > On 09/08/2019 10:31, Lubomir Rintel wrote:  
+> > > The "regs" property of the "mrvl,mmp2-mux-intc" devices are silly. They
+> > > are offsets from intc's base, not addresses on the parent bus. At this
+> > > point it probably can't be fixed.
+> > > 
+> > > On an OLPC XO-1.75 machine, the muxes are children of the intc, not the
+> > > axi bus, and thus of_address_to_resource() won't work. We should treat
+> > > the values as mere integers as opposed to bus addresses.
+> > > 
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > > Acked-by: Pavel Machek <pavel@ucw.cz>
+> > > 
+> > > ---
+> > >  drivers/irqchip/irq-mmp.c | 20 +++++++++++---------
+> > >  1 file changed, 11 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+> > > index 14618dc0bd396..af9cba4a51c2e 100644
+> > > --- a/drivers/irqchip/irq-mmp.c
+> > > +++ b/drivers/irqchip/irq-mmp.c
+> > > @@ -424,9 +424,9 @@ IRQCHIP_DECLARE(mmp2_intc, "mrvl,mmp2-intc", mmp2_of_init);
+> > >  static int __init mmp2_mux_of_init(struct device_node *node,
+> > >  				   struct device_node *parent)
+> > >  {
+> > > -	struct resource res;
+> > >  	int i, ret, irq, j = 0;
+> > >  	u32 nr_irqs, mfp_irq;
+> > > +	u32 reg[4];
+> > >  
+> > >  	if (!parent)
+> > >  		return -ENODEV;
+> > > @@ -438,18 +438,20 @@ static int __init mmp2_mux_of_init(struct device_node *node,
+> > >  		pr_err("Not found mrvl,intc-nr-irqs property\n");
+> > >  		return -EINVAL;
+> > >  	}
+> > > -	ret = of_address_to_resource(node, 0, &res);
+> > > +
+> > > +	/*
+> > > +	 * For historical reasonsm, the "regs" property of the
+> > > +	 * mrvl,mmp2-mux-intc is not a regular * "regs" property containing
+> > > +	 * addresses on the parent bus, but offsets from the intc's base.
+> > > +	 * That is why we can't use of_address_to_resource() here.
+> > > +	 */
+> > > +	ret = of_property_read_u32_array(node, "reg", reg, ARRAY_SIZE(reg));  
+> > 
+> > This will return 0 even if you've read less than your expected 4 u32s.
+> > You may want to try of_property_read_variable_u32_array instead.  
+> 
+> Will it? Unless I'm reading the of_property_read_u32_array()
+> documentation wrong, it suggests that would return -EOVERFLOW in that
+> case.
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index b06038b8f658..4d579f9d20f6 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -208,7 +208,7 @@ struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
- 			unsigned long flags)
- {
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	struct clk_composite *composite;
- 	struct clk_ops *clk_composite_ops;
- 	int ret;
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 3f9ff78c4a2a..65dd8137f9ec 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -471,7 +471,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- {
- 	struct clk_divider *div;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	int ret;
- 
- 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index a7e4aef7a376..746c3ecdc5b3 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -58,7 +58,7 @@ struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
- {
- 	struct clk_fixed_rate *fixed;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	int ret;
- 
- 	/* allocate fixed-rate clock */
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 1b99fc962745..8ed83ec730cb 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -141,7 +141,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- {
- 	struct clk_gate *gate;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	int ret;
- 
- 	if (clk_gate_flags & CLK_GATE_HIWORD_MASK) {
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 66e91f740508..2caa6b2a9ee5 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -153,7 +153,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- {
- 	struct clk_mux *mux;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	u8 width = 0;
- 	int ret;
- 
+You're appear to be right, and I read it wrong.
+
+> 
+> It ignores the extra values it the property is larger. I guess that is
+> not a good thing and we still want to use
+> of_property_read_variable_u32_array() though.
+
+It doesn't hurt to check for all possible problems, specially given
+that this machine doesn't appear to have a mainline DT (and its OF
+implementation looks a bit buggy).
+
+Thanks,
+
+	M.
 -- 
-2.17.1
-
+Without deviation from the norm, progress is not possible.
