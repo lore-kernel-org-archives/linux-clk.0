@@ -2,204 +2,120 @@ Return-Path: <SRS0=w6Q+=WO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD5D5C3A59F
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 01:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17B4EC3A59B
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 02:29:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1A8D21783
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 01:22:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566091323;
-	bh=xejrLwa66URdSbHgEWH+VYlZlmVMdEM+Iat9Fp4d62g=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=dYZ0LBliiz3MoP5VsOby84f5eEaAicnKceYG+YJvxbU/cucCBvxenwqSWW9kuMcmG
-	 rJ/lCZOddTcJT/HOr72tPUG0pGE25p4TS3uNeg2CAPztwn54ChGXkSgIe/4mCL++q4
-	 B5nvLO8pUioFSE6fZPSpoMrUZPHpiNRA3mfZuz7w=
+	by mail.kernel.org (Postfix) with ESMTP id D3F4E2086C
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 02:29:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CW3drVPL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726097AbfHRBWA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 17 Aug 2019 21:22:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbfHRBWA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 17 Aug 2019 21:22:00 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1EF652077C;
-        Sun, 18 Aug 2019 01:21:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566091319;
-        bh=xejrLwa66URdSbHgEWH+VYlZlmVMdEM+Iat9Fp4d62g=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=YNtSfO44v0PazpS7CkN2kGoRs8D5ceC8i+mcj5BdB3R9iAUCdx1C9j7NQGD0NIrKc
-         B2hn3vF6u13fvWoHxlo3os7i3BfLCMDm+O3UVl8hW2wUYjnNnlNmaobgWSV3eqPNy8
-         P7TroKe4pKbyHpRLa7/hULRqGBAPgP4Uutwh39lU=
-Content-Type: text/plain; charset="utf-8"
+        id S1726256AbfHRC3l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 17 Aug 2019 22:29:41 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41690 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726247AbfHRC3l (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 17 Aug 2019 22:29:41 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g7so7459366oia.8;
+        Sat, 17 Aug 2019 19:29:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Epy/wiFdMahX+RcrO6BylN4SVEqUlDpp4VHq8uy62L8=;
+        b=CW3drVPLLqonFPNLRtQRlHJk3CvJCBF10ngKwEO2lvD/+AgY+xETP3TTv1BsSYpBju
+         CRRKhcHLUli8oBCxhgvkmuQcOFJ9+NJNf/jR9MNiDHQ3840tjdPrHnS3FNloeYUcY0JH
+         hrc1JE3FUgGtJ6+ueIh3Z0L6LhVcNWuxdC5LxtJyr9aXWdk84OG4K4BVYh2I9gN3Wz6L
+         yCBsMpPtDI/AXny+iBCytakPEYy52T2htxPCp5qkEDS8qLPzHYGrAte/BMgubreVpWj/
+         28kkXb1DDSzQPj3omc8QcuLk+Cg/4Wppibg6od+YcNmUSepCmnLAqUZbweCEFNo6dHzv
+         duQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Epy/wiFdMahX+RcrO6BylN4SVEqUlDpp4VHq8uy62L8=;
+        b=XXyMuAheCNeSseVbGLbSwmYu/Ih2fnQuo7hJlYg6oPjYmaDb90fZnxK7GxvaGBFMIh
+         sTCVxCUYXkNYOWwOUdENW1foOEqO1gO4aCdkT++NeLxTGAftlt6Mcj4meGY38NTaOxcb
+         jSU8FnOVIpqgJ2yc900hQ6rO4/oiNGYvSrRehi53PLhtljdPkJ6fE6jwga72/nKjsacs
+         U4PPH4EHAtB/LDGzQJF0J1p89OxOF/vT4h/PWBACC4lwc0EOexcxvkeTiux2SXbEOKIW
+         8rFgx3TiML4OSrGfHpmMGDqQa4+ITUfkGwyWlJjcEJSiLeKWE8jc4Lf01rxGnNS7jjjZ
+         2uSQ==
+X-Gm-Message-State: APjAAAWHvGepWnMXWhTxL9jG4FMcPG7VlTEdVuTHBE7Y3TlHQoO2gF5g
+        Sf06ujjFxlY2nyrbIay0MYjPewb7LBY3HMkHOME=
+X-Google-Smtp-Source: APXvYqwDnwZvJO1bQNNX2gziXRdvteTMHyC0n9PY9/2wekwt4q2j5TdudTm3N25tr8wrimRZr0WLEJ2JaTa6g8Kzbyg=
+X-Received: by 2002:aca:df08:: with SMTP id w8mr9038674oig.84.1566095380102;
+ Sat, 17 Aug 2019 19:29:40 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190817035557.GC14652@Mani-XPS-13-9360>
-References: <20190705151440.20844-1-manivannan.sadhasivam@linaro.org> <20190705151440.20844-5-manivannan.sadhasivam@linaro.org> <20190808051600.4EF7D2186A@mail.kernel.org> <20190817035557.GC14652@Mani-XPS-13-9360>
-Subject: Re: [PATCH 4/5] clk: Add driver for Bitmain BM1880 SoC clock controller
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-User-Agent: alot/0.8.1
-Date:   Sat, 17 Aug 2019 18:21:58 -0700
-Message-Id: <20190818012159.1EF652077C@mail.kernel.org>
+References: <20190724022310.28010-1-gch981213@gmail.com> <20190724022310.28010-5-gch981213@gmail.com>
+ <20190813155143.GA19830@bogus> <CAJsYDVKnf4M8jyVOyotRxs=SsHqjex_q60AwkX=QAPK33ivw-Q@mail.gmail.com>
+ <2d48f4a4-7d30-547b-21ee-6aadabe7d7c3@gmx.net> <CAJsYDVLq1-U_AngA4=YKHS_L=zurhLse9XwQ0Rzup9BdXfri-w@mail.gmail.com>
+ <6b6ee744-61d3-8848-19e7-0a301fe4d1b3@rempel-privat.de>
+In-Reply-To: <6b6ee744-61d3-8848-19e7-0a301fe4d1b3@rempel-privat.de>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Sun, 18 Aug 2019 10:29:29 +0800
+Message-ID: <CAJsYDVLLPa07wUg2EoeJww9XSJYgX_kBu-oGiv7n+zejUc877w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding documentation
+To:     Oleksij Rempel <linux@rempel-privat.de>
+Cc:     Rob Herring <robh@kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-08-16 20:55:57)
-> Hi Stephen,
->=20
-> On Wed, Aug 07, 2019 at 10:15:59PM -0700, Stephen Boyd wrote:
-> > Quoting Manivannan Sadhasivam (2019-07-05 08:14:39)
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> > > index fc1e0cf44995..ffc61ed85ade 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -304,6 +304,12 @@ config COMMON_CLK_FIXED_MMIO
-> > >         help
-> > >           Support for Memory Mapped IO Fixed clocks
-> > > =20
-> > > +config COMMON_CLK_BM1880
-> > > +       bool "Clock driver for Bitmain BM1880 SoC"
-> > > +       depends on ARCH_BITMAIN || COMPILE_TEST
-> > > +       help
-> > > +         This driver supports the clocks on Bitmain BM1880 SoC.
-> >=20
-> > Can you add this config somewhere else besides the end? Preferably
-> > close to alphabetically in this file.
-> >=20
->=20
-> Okay. I got confused by the fact that Makefile is sorted but not the
-> Kconfig.
+Hi!
 
-Ok. I'll make a reminder to sort the Kconfig after -rc1 next time.
+On Sun, Aug 18, 2019 at 2:06 AM Oleksij Rempel <linux@rempel-privat.de> wrote:
+> >> SYSC_REG_CPLL_CLKCFG1 register is a clock gate controller. It is used to enable or disable clocks.
+> >> Jist wild assumption. All peripheral devices are suing bus clock.
+> >
+> > This assumption is incorrect. When this patchset is applied in
+> > OpenWrt, I asked the author why there's still a fixed clock in
+> > mt7621.dtsi, He told me that there's another clock for those unchanged
+> > peripherals and he doesn't have time to write a clock provider for it.
+>
+> Can you please provide a link to this patch or email.
 
->=20
-> > > +
-> > >  source "drivers/clk/actions/Kconfig"
-> > >  source "drivers/clk/analogbits/Kconfig"
-> > >  source "drivers/clk/bcm/Kconfig"
-> > > diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-> > > new file mode 100644
-> > > index 000000000000..26cdb75bb936
-> > > --- /dev/null
-> > > +++ b/drivers/clk/clk-bm1880.c
-[....]
-> > > +
-> > > +struct clk *bm1880_clk_register_pll(const struct bm1880_pll_clock *p=
-ll_clk,
-> > > +                                   void __iomem *sys_base)
-> > > +{
-> > > +       struct bm1880_pll_hw_clock *pll_hw;
-> > > +       struct clk_init_data init;
-> > > +       struct clk_hw *hw;
-> > > +       int err;
-> > > +
-> > > +       pll_hw =3D kzalloc(sizeof(*pll_hw), GFP_KERNEL);
-> > > +       if (!pll_hw)
-> > > +               return ERR_PTR(-ENOMEM);
-> > > +
-> > > +       init.name =3D pll_clk->name;
-> > > +       init.ops =3D &bm1880_pll_ops;
-> > > +       init.flags =3D pll_clk->flags;
-> > > +       init.parent_names =3D &pll_clk->parent;
-> >=20
-> > Can you use the new way of specifying parents instead of using strings
-> > for everything?
-> >=20
->=20
-> Sure, will do it for clocks which doesn't use helper APIs.
->=20
-> > > +       init.num_parents =3D 1;
-> > > +
-> > > +       pll_hw->hw.init =3D &init;
-> > > +       pll_hw->pll.reg =3D pll_clk->reg;
-> > > +       pll_hw->base =3D sys_base;
-> > > +
-> > > +       hw =3D &pll_hw->hw;
-> > > +       err =3D clk_hw_register(NULL, hw);
-> > > +
-> > > +       if (err) {
-> > > +               kfree(pll_hw);
-> > > +               return ERR_PTR(err);
-> > > +       }
-> > > +
-> > > +       return hw->clk;
-> >=20
-> > Can this return the clk_hw pointer instead?
-> >=20
->=20
-> What is the benefit? I see that only hw:init is going to be NULL in futur=
-e.
+This discussion is in Chinese and using an IM software so there's no
+link available.
 
-Eventually we will remove ->clk from struct clk_hw and then this will
-break. It also clearly makes this driver a clk provider driver and not a
-clk consumer.
+> We have at least 2 know registers:
+> SYSC_REG_CPLL_CLKCFG0 - it provides some information about boostrapped
+> refclock. PLL and dividers used for CPU and some sort of BUS (AHB?).
+> SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable clocks for
+> all or some ip cores.
+> What is probably missing is a set of dividers for
+> each ip core. From your words it is not document.
 
-> So, I'll keep it as it is.
+The specific missing part I was referring to, is parent clocks for
+every gates. I'm not going to assume this with current openwrt device
+tree because some peripherals doesn't have a clock binding at all or
+have a dummy one there.
 
-Please no!
+>
+> With this information the clk driver will provide gate functionality and
+> a set of hardcoded clocks. With this driver will work part of power
+> management and nice devicetree without fixed clocks.
 
-> > > +               bm1880_clk_unregister_pll(data->clk_data.clks[clks[i]=
-.id]);
-> > > +
-> > > +       return PTR_ERR(clk);
-> > > +}
-> > > +
-> > > +int bm1880_clk_register_mux(const struct bm1880_mux_clock *clks,
-> > > +                           int num_clks, struct bm1880_clock_data *d=
-ata)
-> > > +{
-> > > +       struct clk *clk;
-> > > +       void __iomem *sys_base =3D data->sys_base;
-> > > +       int i;
-> > > +
-> > > +       for (i =3D 0; i < num_clks; i++) {
-> > > +               clk =3D clk_register_mux(NULL, clks[i].name,
-> >=20
-> > Can you use the clk_hw based APIs for generic type clks?
-> >=20
->=20
-> IMO using helper APIs greatly reduce code size and makes the driver
-> look more clean. So I prefer to use the helpers wherever applicable.
-> When you plan to deprecate those, I'll switch over to plain clk_hw APIs.
-
-We have clk_hw_register_mux(). Please use it. The clk based registration
-APIs are deprecated.
-
-> > > +       kfree(clk_data);
-> > > +}
-> > > +
-> > > +CLK_OF_DECLARE_DRIVER(bm1880_clk, "bitmain,bm1880-clk", bm1880_clk_i=
-nit);
-> >=20
-> > Is there a reason why it can't be a platform driver?
-> >=20
->=20
-> Hmm, I looked into the majority of drivers which live under `driver/clk/`.
-> Most of them are using CLK_OF_DECLARE_DRIVER, so I thought that only driv=
-ers
-> which have a separate directory are preferred by the maintainers to use
-> platform driver way.
->=20
-> Anyway, I can switch over to platform driver and that's what I prefer.
->=20
-
-Yes please use a platform driver unless it doesn't work for some reason.
-Even then, use a platform driver and CLK_OF_DECLARE_DRIVER() in
-conjunction to register the early clks from the OF_DECLARED section and
-then adopt the rest to the proper device driver later on. This way we
-gain the benefits of driver core.
-
+Regards,
+Chuanhong Guo
