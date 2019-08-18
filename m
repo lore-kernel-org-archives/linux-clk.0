@@ -2,128 +2,203 @@ Return-Path: <SRS0=w6Q+=WO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BDD2C3A589
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 08:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA57DC3A589
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 08:44:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58A9D2173B
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 08:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8360120B7C
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 08:44:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="je1I3Urg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfHRI1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Aug 2019 04:27:41 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:34058 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726247AbfHRI1k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Aug 2019 04:27:40 -0400
-Received: by mail-ot1-f66.google.com with SMTP id c7so13467780otp.1;
-        Sun, 18 Aug 2019 01:27:40 -0700 (PDT)
+        id S1726372AbfHRIot (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Aug 2019 04:44:49 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:41878 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726208AbfHRIot (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Aug 2019 04:44:49 -0400
+Received: by mail-oi1-f195.google.com with SMTP id g7so7706700oia.8;
+        Sun, 18 Aug 2019 01:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9QdGesgMDK3FdcMMIoIwknk9WaLcRvYY+rvqXeny+bc=;
+        b=je1I3UrgrBpvyds9g5EVI7f3FJ10MKi2rZwd8Do6X6jxhjI7mqI5lLZTeCvqr6fiw6
+         V3fhjBfvBxIk+WcEBxGx10CRDtcLLRErXIgLGiLXOz+nLQ2XPjuM/Qac2wpHr8oKLoSX
+         j7YA3V37mdv2b1ZpgWsKQY56EbNlIS4jBLEDPDf6pEkEUf6WPHcNEoWy+EP5v6sEzPTT
+         AI12ixi5R7QLRn5mvqI4ogQtoZ5SkCGqu0F9pnRVwQhfFDf6uA3m0D959hdHd5K6InSm
+         UBscr2ygkF+lO/scceIa+YXtsrwlrsxsoH0bgbumeSIcryw8QkGy0X/ktuTKTY55KuX+
+         Vspg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=iGsbphl0FQQGBuaRly5CWz/iJFmuKNjtWAnSJ2N4x+0=;
-        b=dUcsNVHIiueFDkN4qMQ/xgJKFVim6rXPU2vPe8DySPZ2y37HnkcLshStNYpR4m9sii
-         6BjsM/mR8P19NwiRHHOqv44CL5lduXAG+wrSVTe1S+WhshDVHk9pFaHziVlxHfjeJlQJ
-         vuU8PrHslBPFabqwqED5t/BWsh7fLsCwKkREKsJN8OTWQRG7H6XobgmFTC6Z313s2s5b
-         j0bPpA/ALsrdiA/AnLEVgyludy12ViUxvjfHyJS0X7iaMxQmRaPO/NAdazhTNQCa28C6
-         TokBhOQzQVJ96MZZjx93zzykHVKypgtISFkqhKBXAPHCmYQJbyzLvCkchoNqgX8kzCeX
-         rTwQ==
-X-Gm-Message-State: APjAAAVR+dERphw6MIArOIOHk/A39kk3zv++iNExY7dLZ3cYYWhC2EAN
-        01LEIKWat/TJJbPyTEp0Ve5nwzkYGxGd0j5H9Bk=
-X-Google-Smtp-Source: APXvYqx7IA3LHDxIT7relAV7fI5zU5sPnu2xMiAU9Hh4XnETjwrFtGdKnmornqsRB0cg2qycSCFuJg+2WRrk3UyjPh4=
-X-Received: by 2002:a9d:5c0c:: with SMTP id o12mr14124466otk.145.1566116859589;
- Sun, 18 Aug 2019 01:27:39 -0700 (PDT)
+        bh=9QdGesgMDK3FdcMMIoIwknk9WaLcRvYY+rvqXeny+bc=;
+        b=biroW21iYk+ra5VoDZYlHFEWoIrHv6tsripqFqdbhll/c1hzsooMkLqSZpMMxZj7cN
+         aXtkaBQr8qNSzAeUdEyEhZXJ6oj6A6AUQrCss/GZF8F5xKDCqaZFDG+879m1QI1bO/i6
+         CFvduXjins7EKSShGvqI7RZhptdjnEo/Ri1rX9DPs55SEoTIiqXRfrJvV3RyhqITu+hW
+         RBTnc2yctlNwr2qGFLkTYqopV/NPn1FHwn/SvfHuvVMJdSbuV5Momuo642Zw5PUaRhg2
+         W28Opk7+T+Mz8nGHEqfd82Ex9f2T97U00uX24HOBkS1l4PgrIExv8nrYcLS4pky836rK
+         CKVA==
+X-Gm-Message-State: APjAAAUslTBBSZSg2l7clC/eNoPKE8lQ9k67UsoStytgFOqc61dDaICX
+        LBv+eog3vgZejctN5BiA0ETzVBjLodOOycG3cjk=
+X-Google-Smtp-Source: APXvYqyRVxHma46j2OAvfKQwqyRWcRxz6zwKRky9d6l5ea1tExvRyR+/AN0aIHuOCKYnEzAKHNMfpmwmzkDrNvFF+RU=
+X-Received: by 2002:aca:3fc2:: with SMTP id m185mr10466468oia.24.1566117887933;
+ Sun, 18 Aug 2019 01:44:47 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190816125225.16061-1-geert+renesas@glider.be>
- <20190816125225.16061-2-geert+renesas@glider.be> <20190816180123.6299720665@mail.kernel.org>
- <CAMuHMdVvwsXU2YwFRA2Y2K9KKzF4L-hqDudarmc-OeHXRMCifQ@mail.gmail.com> <20190817034812.5435B21721@mail.kernel.org>
-In-Reply-To: <20190817034812.5435B21721@mail.kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Sun, 18 Aug 2019 10:27:28 +0200
-Message-ID: <CAMuHMdWpUEt-wxEdAK7NsAOadS5TtHYdO=JTGT=CtSROHuR+Pw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for
- clock domain
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+References: <20190724022310.28010-1-gch981213@gmail.com> <20190724022310.28010-5-gch981213@gmail.com>
+ <20190813155143.GA19830@bogus> <CAJsYDVKnf4M8jyVOyotRxs=SsHqjex_q60AwkX=QAPK33ivw-Q@mail.gmail.com>
+ <2d48f4a4-7d30-547b-21ee-6aadabe7d7c3@gmx.net> <CAJsYDVLq1-U_AngA4=YKHS_L=zurhLse9XwQ0Rzup9BdXfri-w@mail.gmail.com>
+ <6b6ee744-61d3-8848-19e7-0a301fe4d1b3@rempel-privat.de> <CAJsYDVLLPa07wUg2EoeJww9XSJYgX_kBu-oGiv7n+zejUc877w@mail.gmail.com>
+ <fb39803d-d303-f259-d78d-9f8b1fc7dde3@rempel-privat.de> <CAJsYDVK9Yj02WxNFo7iEP3aJn+j5MqzCtLrmgsz=4zWnfQ4VOw@mail.gmail.com>
+ <6426d4d2-9961-83f2-d3bc-5834ff36b40d@rempel-privat.de> <CAJsYDVKW9-7ityUn83NXcQYmqJi_t-VSV8F0c+BA14_w+poPkA@mail.gmail.com>
+In-Reply-To: <CAJsYDVKW9-7ityUn83NXcQYmqJi_t-VSV8F0c+BA14_w+poPkA@mail.gmail.com>
+From:   Chuanhong Guo <gch981213@gmail.com>
+Date:   Sun, 18 Aug 2019 16:44:32 +0800
+Message-ID: <CAJsYDVJnQyOXHKWztoE72KKnMinJL+1AZGy_CvTT6oOs5m5U2w@mail.gmail.com>
+Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding documentation
+To:     Oleksij Rempel <linux@rempel-privat.de>
+Cc:     Rob Herring <robh@kernel.org>,
+        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:MIPS" <linux-mips@vger.kernel.org>,
+        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        John Crispin <john@phrozen.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
+        Paul Fertser <fercerpav@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On Sat, Aug 17, 2019 at 5:48 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2019-08-16 12:59:32)
-> > On Fri, Aug 16, 2019 at 8:01 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > Quoting Geert Uytterhoeven (2019-08-16 05:52:23)
-> > > > The CPG/MSTP Clock Domain driver does not implement the
-> > > > generic_pm_domain.power_{on,off}() callbacks, as the domain itself
-> > > > cannot be powered down.  Hence the domain should be marked as always-on
-> > > > by setting the GENPD_FLAG_ALWAYS_ON flag.
-> > > >
-> > > > This gets rid of the following boot warning on RZ/A1:
-> > > >
-> > > >     sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
-> > > >
-> > > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > > ---
-> > >
-> > > Are you going to add a Fixes tag?
-> >
-> > I didn't add a Fixes tag, as there's no clear point in history where the
-> > problem appeared: the Clock Domain code in this driver predates the
-> > introduction of the GENPD_FLAG_ALWAYS_ON flag by ca. 18 months.
-> >
-> > Candidates are:
-> > d716f4798ff8c65a ("PM / Domains: Support IRQ safe PM domains")
-> > ffaa42e8a40b7f10 ("PM / Domains: Enable users of genpd to specify
-> > always on PM domains")
-> > 075c37d59ecd4a8b ("PM / Domains: Don't warn about IRQ safe device for
-> > an always on PM domain")
-> >
-> > Do you think it's worth adding one or more of the above?
+On Sun, Aug 18, 2019 at 4:26 PM Chuanhong Guo <gch981213@gmail.com> wrote:
 >
-> Well is it actually a problem to not specify the flag? I guess it's just
-> a potential problem if the genpd is ever powered off, but given that the
-> governor decides to leave it always enabled it doesn't actually matter?
-> So it's not really fixing anything besides silencing a harmless warning?
+> Hi!
+>
+> On Sun, Aug 18, 2019 at 3:59 PM Oleksij Rempel <linux@rempel-privat.de> wrote:
+> >
+> > Am 18.08.19 um 09:19 schrieb Chuanhong Guo:
+> > > Hi!
+> > >
+> > > On Sun, Aug 18, 2019 at 2:10 PM Oleksij Rempel <linux@rempel-privat.de> wrote:
+> > >>
+> > >>>> We have at least 2 know registers:
+> > >>>> SYSC_REG_CPLL_CLKCFG0 - it provides some information about boostrapped
+> > >>>> refclock. PLL and dividers used for CPU and some sort of BUS (AHB?).
+> > >>>> SYSC_REG_CPLL_CLKCFG1 - a banch of gates to enable/disable clocks for
+> > >>>> all or some ip cores.
+> > >>>> What is probably missing is a set of dividers for
+> > >>>> each ip core. From your words it is not document.
+> > >>>
+> > >>> The specific missing part I was referring to, is parent clocks for
+> > >>> every gates. I'm not going to assume this with current openwrt device
+> > >>> tree because some peripherals doesn't have a clock binding at all or
+> > >>> have a dummy one there.
+> > >>
+> > >> Ok, then I do not understand what is the motivation to upstream
+> > >> something what is not nearly ready for use.
+> > >
+> > > Why isn't it "ready for use" then?
+> > > A complete mt7621-pll driver will contain two parts:
+> > > 1. A clock provider which outputs several clocks
+> > > 2. A clock gate with parent clocks properly configured
+> > >
+> > > Two clocks provided here are just two clocks that can't be controlled
+> > > in kernel no matter where it goes (arch/mips/ralink or drivers/clk).
+> > > Having a working CPU clock provider is better than defining a fixed
+> > > clock in dts because CPU clock can be controlled by bootloader.
+> > > (BTW description for CPU PLL register is also missing in datasheet.)
+> > > Clock gate is an unrelated part and there is no information to
+> > > properly implement it unless MTK decided to release a clock plan
+> > > somehow.
+> >
+> > With other words, your complete system is running with unknown clock
+> > rates.
+>
+> And without this patchset the complete system is running with unknown
+> clock and, even worse, we make assumptions about what clock bootloader
+> uses, hardcoded it in dts and hope it is the correct value.
+>
+> > The source clock in the clock three can be configured differently
+> > by bootloader but you don't know how it is done how and it is not
+> > documented.
+>
+> Actually, I don't know about this and I didn't wrote the original
+> clock calculation code. I just ported it from downstream OpenWrt
+> kernel. Here's a piece of code from Mediatek's SDK kernel:
+>
+> case 0:
+>         reg = (*(volatile u32 *)(RALINK_SYSCTL_BASE + 0x44));
+>         cpu_fdiv = ((reg >> 8) & 0x1F);
+>         cpu_ffrac = (reg & 0x1F);
+> mips_cpu_feq = (500 * cpu_ffrac / cpu_fdiv) * 1000 * 1000;
+> break;
+> case 1: //CPU PLL
+>         reg = (*(volatile u32 *)(RALINK_MEMCTRL_BASE + 0x648));
+>         fbdiv = ((reg >> 4) & 0x7F) + 1;
+>         reg = (*(volatile u32 *)(RALINK_SYSCTL_BASE + 0x10));
+>         reg = (reg >> 6) & 0x7;
+>         if(reg >= 6) { //25Mhz Xtal
+>             mips_cpu_feq = 25 * fbdiv * 1000 * 1000;
+>         } else if(reg >=3) { //40Mhz Xtal
+>             mips_cpu_feq = 20 * fbdiv * 1000 * 1000;
+>         } else { // 20Mhz Xtal
+>             /* TODO */
+>         }
+>         break;
+>
+>
+>
+> >
+> > >> This code is currently on prototyping phase
+> > >
+> > > Code for clock calculation is done, not "prototyping".
+> > >
+> > >> It means, we cannot expect that this driver will be fixed any time soon.
+> > >
+> > > I think clock gating is a separated feature instead of a broken part
+> > > that has to be fixed.
+> >
+> > Ok, i would agree with it. But from what you said, this feature will be
+> > never implemented.
+> >
+> > So, I repeat my question. What is the point to upstream code for a
+> > system, which has not enough information to get proper clock rate even
+> > for uart? or is uart running with cpu or bus clock rate?
+>
+> uart runs of a fixed 50MHz clock according to another piece of code
+> from MTK SDK:
+> (a pastebin version here for better readability. This specific
+> question has nothing to do with patch reviewing and doesn't need to be
+> preserved in mail forever.)
+> https://paste.ubuntu.com/p/fYmtDFW9nh/
+>
+> I could ask the same question:
+> What is the point of upstreaming an incomplete MT7621 support in the
+> first place? Current MT7621 support in upstream kernel works only for
+> mt7621a not mt7621s and it runs of unknown clocks. These kind of code
+> should stay in downstream projects like OpenWrt forever isn't it?
 
-The warning is indeed harmless.
+And in fact you've upstreamed a broken ag71xx driver anyway.
 
-The "interesting" case is the case where no warning is printed, as no
-IRQ-safe device is present.  In that case, the absence of the
-GENPD_FLAG_ALWAYS_ON flag means that the core PM Domain code will
-consider the domain for power-off, and will loop over all devices part
-of it, which is suboptimal.  Setting the flag avoids that.
+This debate goes nowhere. I've clarified the situation and made my
+point. Of course I can't read through the ancient and heavily hacked
+vendor kernel to figure out a clock plan myself.
 
-Thanks for your continued questions, it made me realize I need to add more
-meat to the description to these "simple" patches!
-
-For the PM people: would it make sense to add a
-WARN(!genpd->power_off && !genpd_is_always_on(genpd), "...") check to
-pm_genpd_init()?
-Or set GENPD_FLAG_ALWAYS_ON automatically if !genpd->power_off?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Regards,
+Chuanhong Guo
