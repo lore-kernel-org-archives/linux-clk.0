@@ -2,147 +2,118 @@ Return-Path: <SRS0=w6Q+=WO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D0FC3A589
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 10:07:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E11C3A589
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 16:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DE412146E
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 10:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 083A7206DF
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 16:24:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OYvpihow"
+	dkim=pass (1024-bit key) header.d=gmx.net header.i=@gmx.net header.b="BE9iF8C9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfHRKHw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Aug 2019 06:07:52 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37145 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726005AbfHRKHw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Aug 2019 06:07:52 -0400
-Received: by mail-oi1-f194.google.com with SMTP id b25so3760779oib.4;
-        Sun, 18 Aug 2019 03:07:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=YkFe2JIc6EMQJGj0WxQHcOjVaDMAzwpdLs7Yu/jMyQ4=;
-        b=OYvpihow/Ad8ErBbX5xM7GFmbI1PBEhFyR9ckeqsdjgwOWUCdKPxiP1InEXvdJxfOW
-         wM+iVlSY9a/YSXNQkHRcp7g1bKYjxBhY5q8A3bGd0X+VHNMCcYOgIBLj/9ohNm3hJ04H
-         d9puj1Piwh9JU7iVR0K6UGuMVO6TV704KS4eWVQS6s+p99Lz9TsrTQPN5v/+AyUPqx2f
-         GqIbc9XI8qoDCJjl47zf57v99Le72HyTFBzMZ4+Fz6pQwIFihSd9tW1/XdGaYNKjANsQ
-         /5mbkH2+4kHDf8ynqI6xBzwgzG5X2t3XoZZH7CBuGO7WE9lL6/io/BNx+Ja5bTBdFFHz
-         eTig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=YkFe2JIc6EMQJGj0WxQHcOjVaDMAzwpdLs7Yu/jMyQ4=;
-        b=IZM4AuCaQeuDvdsnzX/vIDIgk38nA5M0GkKfEO40y0Pj8u4rxotMjT6CukgyIWJvlB
-         0KAHS6AaUA0Ue6gQmsvkBnghf9ki4sUmyQXIzvOxyIjWBhjnpBQtRYG4jJQbUSbE63Mj
-         LC4NkgTb1SEX7E+gv5vbAD58Uvb3ZBJ1Z+SKGW7wzrDMX/p2F1EHejfWkB353037tQAB
-         9n6TEO8KAJDzYQVWA9ghE/fC3Mpfi8pHygbvpSfydISrrnLmrT3PNRXgncTLr4CAp/tS
-         nKWK8y9+z9m3MOOIpAcJQo3PUUXU+Y3PwEZ1DmCPVkqCI/VzCwfHqmovmpZGzNcnUnuC
-         Pnxg==
-X-Gm-Message-State: APjAAAUmiRTAmsvx1lt6NGlXPNEEL0zwm4I3S0S/M/CpbFRW+BTKzQ21
-        z4JibY1c357DL4NkoMfgZljIYB2jH1TUWglQeWY=
-X-Google-Smtp-Source: APXvYqx1cV1LZucNSuD1rjVkQjwmnmOzXLH6FwY4elEknL8u+swKFt3FU5g/8IaQXuJ5ScC9n8zad53G2tQY99Gq+Gg=
-X-Received: by 2002:aca:3fc2:: with SMTP id m185mr10605077oia.24.1566122871334;
- Sun, 18 Aug 2019 03:07:51 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190724022310.28010-1-gch981213@gmail.com> <20190724022310.28010-5-gch981213@gmail.com>
- <20190813155143.GA19830@bogus> <CAJsYDVKnf4M8jyVOyotRxs=SsHqjex_q60AwkX=QAPK33ivw-Q@mail.gmail.com>
- <2d48f4a4-7d30-547b-21ee-6aadabe7d7c3@gmx.net> <CAJsYDVLq1-U_AngA4=YKHS_L=zurhLse9XwQ0Rzup9BdXfri-w@mail.gmail.com>
- <6b6ee744-61d3-8848-19e7-0a301fe4d1b3@rempel-privat.de> <CAJsYDVLLPa07wUg2EoeJww9XSJYgX_kBu-oGiv7n+zejUc877w@mail.gmail.com>
- <fb39803d-d303-f259-d78d-9f8b1fc7dde3@rempel-privat.de> <CAJsYDVK9Yj02WxNFo7iEP3aJn+j5MqzCtLrmgsz=4zWnfQ4VOw@mail.gmail.com>
- <6426d4d2-9961-83f2-d3bc-5834ff36b40d@rempel-privat.de> <CAJsYDVKW9-7ityUn83NXcQYmqJi_t-VSV8F0c+BA14_w+poPkA@mail.gmail.com>
- <CAJsYDVJnQyOXHKWztoE72KKnMinJL+1AZGy_CvTT6oOs5m5U2w@mail.gmail.com> <c8551d99-7296-c621-1b56-017910f28400@rempel-privat.de>
-In-Reply-To: <c8551d99-7296-c621-1b56-017910f28400@rempel-privat.de>
-From:   Chuanhong Guo <gch981213@gmail.com>
-Date:   Sun, 18 Aug 2019 18:07:40 +0800
-Message-ID: <CAJsYDVJ4uo-Ke159C2Xmed6A5vCjB7J6JuD+woPF+gY9cLct+w@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] dt: bindings: add mt7621-pll dt binding documentation
-To:     Oleksij Rempel <linux@rempel-privat.de>
-Cc:     Rob Herring <robh@kernel.org>,
-        "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:MIPS" <linux-mips@vger.kernel.org>,
-        "open list:STAGING SUBSYSTEM" <devel@driverdev.osuosl.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726742AbfHRQYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Aug 2019 12:24:22 -0400
+Received: from mout.gmx.net ([212.227.15.18]:57915 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726089AbfHRQYW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 18 Aug 2019 12:24:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gmx.net;
+        s=badeba3b8450; t=1566145453;
+        bh=CzdbVQq8IrILnm9Q22KWEYU789AoTBUeM4pr8EHs4B0=;
+        h=X-UI-Sender-Class:From:To:Cc:Subject:Date:In-Reply-To:References;
+        b=BE9iF8C9awFP40knspDwDKei8JkqD7bb9v5Gi76ncS8K5jBzRguKhTSnq8tlqV+/x
+         MwuCbxOZ47MpMMglpq9dybmhqtl4OZ86/UsZGS+/ZUpghSjnA3/r6lF2PwWD+EQRfA
+         JpCiMyy6mD80XCggcJmH/vNZ4CR9MgEBRPC7W1U8=
+X-UI-Sender-Class: 01bb95c1-4bf8-414a-932a-4f6e2808ef9c
+Received: from localhost.localdomain ([37.4.249.106]) by mail.gmx.com
+ (mrgmx003 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 0LikE1-1iXL961U8j-00cwDf; Sun, 18 Aug 2019 18:24:13 +0200
+From:   Stefan Wahren <wahrenst@gmx.net>
+To:     Eric Anholt <eric@anholt.net>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        John Crispin <john@phrozen.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Weijie Gao <hackpascal@gmail.com>, NeilBrown <neil@brown.name>,
-        Paul Fertser <fercerpav@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
+Subject: [PATCH 4/4] clk: bcm2835: Mark PLLD_PER as CRITICAL
+Date:   Sun, 18 Aug 2019 18:23:44 +0200
+Message-Id: <1566145424-3186-5-git-send-email-wahrenst@gmx.net>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1566145424-3186-1-git-send-email-wahrenst@gmx.net>
+References: <1566145424-3186-1-git-send-email-wahrenst@gmx.net>
+X-Provags-ID: V03:K1:Y5KnN3P4dN6rJKtSRnxV6bmbDrsIR6RJHsGa2SS5ZGPEIdDjLld
+ m9M0ggJUPJlABn8hfTzpFBgFqiYKPW5JlB5RGi+IvwChqvpw7psC09DRv2MM+TDMNATZCE3
+ G4l1+YDGPkAM574T8IeaN/7Vdauxv9c2tqnK5l0dpWv3V8n2W2AV4q4FoKZvvePl5g6afXY
+ itREXpAZkk6eV5xJwAMpw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:6nY4L7DJmR8=:qhqpx98PZ0Yv7ARb0iDSAf
+ h2jl3qUYO/BYr+H/YYgmWcwtz1Iz6YTHj0jSXT4ri44f5vZsuYU5nCMsgzxakTYnSUnOCayXi
+ 3jghAzsIWTwYXFfFmv+KKDhQMlTkBL0dleN9e5c34P4eVhPMNdtmfzZgjpQjPuj6O37VWU9Hl
+ 8om56VkzvFVkHwRuugO/4+roZQLgg9QGexvtS7xsBcbm7MpltLKKqJ8KaVCNHFYAPSPWAt9Bk
+ UxdjgujtrotUVTeWuKcKzSpwf9dVde15sXHtUKoHvBKWwLSypkxsKXU503ykjrD2peGxhWXz4
+ tVH6Dslruvn59VAL6MycATISgVL8EeMM/gERlOOh9MfF/yapVaUMXE14oxixsE4VrooWeOo/z
+ 6fTILJZC9dssUEU8SzbvlH93OlGAjnePFjk+B2CJ7RSHX8NiJbWbOlFhEA7FU4RVL3eJZw6zY
+ 5EQxckN9iUNzqv3Is1zhKJSWpQU951FYleYSo9KcB9jo6ZgXeHuGCEwIXCTsRdHZokZQ36dBZ
+ DeAHtkuGuWNPhFiDn9bgNllVmoW6IyOI5TeIpPgcloH9aqsBJzn6F1i6U1cjRsiw6ba19FN8z
+ AuJ9LWblHpgFsVZzY/1nDUloY6BUNlkYunlUHOf7sjP1PyDUMO7dNvW7+I6D6UgaGvV3RWfvy
+ 74zmGfI780eyqA1BxJlcxkoWv6slxYY12jDw+85ItsYkf3CMo6J9seVW5Ge9em1Jy6FeQdNix
+ 8zrITqCH+HiADIMXbpFoi70etb9NwIQ+z+t+ykhfBsi7eQV+B6uRdpOQl1Xfrd7jdo7tagYgK
+ sJRGuyvumkKICNyaLyKC8h2SSbUdbyfaTDUE9x4qTYGDKU9n3WMyBusU0ekXAAjtGIXVEDJKl
+ sgb5yn2VmWSd1dskSnkynpVsZQLu4rYs+Y2ntcByXXamfzfrTT3wpHL7Pi/rcI2dZOMXhXbG4
+ wSIl5eRxC42HjYGdgaQuKW1Im6z+T7JJaAKffe+varrIARFWFURLxj67BdT0Swiz28P0kmriK
+ Ugte/8SCJsdJzDsvIPmhrLnHWQVHOcrrbXzi1CpF9xqZNQ8XxbtH6vhEJeCBJoHw5kqcsFVCm
+ Ddp+Cw6a5hIaMTqsZpo1VXc2xV+pE+ryXSCqVf8J1NQNtTXbNySvuJB4X3bYGpnoBLaqbzyfC
+ O0zwjoIsF8nN/La0J/60/xCWk455dDKt9r2EjdfFCO25se2g==
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi!
+The VPU firmware assume that the PLLD_PER isn't modified by the ARM core.
+Otherwise this could cause firmware lookups. So mark the clock as critical
+to avoid this.
 
-On Sun, Aug 18, 2019 at 5:51 PM Oleksij Rempel <linux@rempel-privat.de> wrote:
->
-> lets see more code:
-> drivers/staging/mt7621-mmc/sd.c
-> /* clock source for host: global */
-> #if defined(CONFIG_SOC_MT7620)
-> static u32 hclks[] = {48000000}; /* +/- by chhung */
-> #elif defined(CONFIG_SOC_MT7621)
-> static u32 hclks[] = {50000000}; /* +/- by chhung */
-> #endif
->
-> hm.. 50Mhz again. Feels like APB clock.
->
-> ./drivers/staging/mt7621-dts/mt7621.dtsi
->         cpuclock: cpuclock@0 {
->                 #clock-cells = <0>;
->                 compatible = "fixed-clock";
->
->                 /* FIXME: there should be way to detect this */
->                 clock-frequency = <880000000>;
->         };
->
-> Your driver is trying to cover cpuclock
->
->         sysclock: sysclock@0 {
->                 #clock-cells = <0>;
->                 compatible = "fixed-clock";
->
->                 /* This is normally 1/4 of cpuclock */
->                 clock-frequency = <220000000>;
->         };
->
-> and most probably system clock alias "bus clock", most probably AHB.
+Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
+Reviewed-by: Eric Anholt <eric@anholt.net>
+=2D--
+ drivers/clk/bcm/clk-bcm2835.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-This sysclock was the 50MHz clock in OpenWrt. It's set as "bus clock"
-upstream by an incorrect commit.
-As already stated in previous reply: I'm not going to make assumption
-about clock plan using OpenWrt's device tree because it already
-contains several mistakes on clocks. Since the upstream device tree
-comes from there, I don't trust it either. You might want to check out
-patch 6/6 in this series where the original author of this commit in
-openwrt fixed some clocks and I ported it here.
+diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
+index fdf672a..802e488 100644
+=2D-- a/drivers/clk/bcm/clk-bcm2835.c
++++ b/drivers/clk/bcm/clk-bcm2835.c
+@@ -1776,6 +1776,11 @@ static const struct bcm2835_clk_desc clk_desc_array=
+[] =3D {
+ 		.hold_mask =3D CM_PLLD_HOLDCORE,
+ 		.fixed_divider =3D 1,
+ 		.flags =3D CLK_SET_RATE_PARENT),
++	/*
++	 * VPU firmware assumes that PLLD_PER isn't disabled by the ARM core.
++	 * Otherwise this could cause firmware lookups. That's why we mark
++	 * it as critical.
++	 */
+ 	[BCM2835_PLLD_PER]	=3D REGISTER_PLL_DIV(
+ 		SOC_ALL,
+ 		.name =3D "plld_per",
+@@ -1785,7 +1790,7 @@ static const struct bcm2835_clk_desc clk_desc_array[=
+] =3D {
+ 		.load_mask =3D CM_PLLD_LOADPER,
+ 		.hold_mask =3D CM_PLLD_HOLDPER,
+ 		.fixed_divider =3D 1,
+-		.flags =3D CLK_SET_RATE_PARENT),
++		.flags =3D CLK_IS_CRITICAL | CLK_SET_RATE_PARENT),
+ 	[BCM2835_PLLD_DSI0]	=3D REGISTER_PLL_DIV(
+ 		SOC_ALL,
+ 		.name =3D "plld_dsi0",
+=2D-
+2.7.4
 
-> [...]
-> > This debate goes nowhere. I've clarified the situation and made my
-> > point. Of course I can't read through the ancient and heavily hacked
-> > vendor kernel to figure out a clock plan myself.
->
-> Ok, I provided you some productive technical hints how it should be
-> done. I don't think mt7620 has better documentation then mt7621 and even
-> in this case it was possible to make more or less good driver.
-
-It does. A clock plan for mt7620 is available in MT7620 Programming
-Guide, Page 14.
-
-Regards,
-Chuanhong Guo
