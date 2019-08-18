@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61A7AC3A589
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 06:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8330EC3A589
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 06:51:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37A702183E
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 06:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 593422183E
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 06:51:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfHRGvL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Aug 2019 02:51:11 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:33010 "EHLO inva021.nxp.com"
+        id S1726598AbfHRGvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Aug 2019 02:51:09 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:50474 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726606AbfHRGvL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 18 Aug 2019 02:51:11 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 69795200003;
-        Sun, 18 Aug 2019 08:51:09 +0200 (CEST)
+        id S1726550AbfHRGvJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 18 Aug 2019 02:51:09 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9BD741A02EC;
+        Sun, 18 Aug 2019 08:51:06 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 84A28200710;
-        Sun, 18 Aug 2019 08:51:01 +0200 (CEST)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B78771A00D1;
+        Sun, 18 Aug 2019 08:50:58 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 222064031E;
-        Sun, 18 Aug 2019 14:50:52 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id EDF3C40318;
+        Sun, 18 Aug 2019 14:50:48 +0800 (SGT)
 From:   Anson Huang <Anson.Huang@nxp.com>
 To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
@@ -37,9 +37,9 @@ To:     robh+dt@kernel.org, mark.rutland@arm.com, shawnguo@kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
 Cc:     Linux-imx@nxp.com
-Subject: [PATCH RESEND V2 6/7] clk: imx8mn: Add necessary frequency support for ARM PLL table
-Date:   Sun, 18 Aug 2019 02:32:24 -0400
-Message-Id: <1566109945-11149-6-git-send-email-Anson.Huang@nxp.com>
+Subject: [PATCH RESEND V2 4/7] cpufreq: imx-cpufreq-dt: Add i.MX8MN support
+Date:   Sun, 18 Aug 2019 02:32:22 -0400
+Message-Id: <1566109945-11149-4-git-send-email-Anson.Huang@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566109945-11149-1-git-send-email-Anson.Huang@nxp.com>
 References: <1566109945-11149-1-git-send-email-Anson.Huang@nxp.com>
@@ -49,31 +49,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-i.MX8MN supports CPU running at 1.5GHz/1.4GHz/1.2GHz, add missing
-frequency for ARM PLL table.
+i.MX8MN has different speed grading definition as below, it has 4 bits
+to define speed grading, add support for it.
+
+ SPEED_GRADE[3:0]    MHz
+    0000            2300
+    0001            2200
+    0010            2100
+    0011            2000
+    0100            1900
+    0101            1800
+    0110            1700
+    0111            1600
+    1000            1500
+    1001            1400
+    1010            1300
+    1011            1200
+    1100            1100
+    1101            1000
+    1110             900
+    1111             800
 
 Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 ---
-Changes since V1:
-         - split the patch into 2 patches, #1 fixed those missing .rate_count assignment,
-           #2 add missing frequency points.
+No changes.
 ---
- drivers/clk/imx/clk-imx8mn.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/cpufreq/imx-cpufreq-dt.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index b5a027c..48884f9 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -42,6 +42,8 @@ enum {
- static const struct imx_pll14xx_rate_table imx8mn_pll1416x_tbl[] = {
- 	PLL_1416X_RATE(1800000000U, 225, 3, 0),
- 	PLL_1416X_RATE(1600000000U, 200, 3, 0),
-+	PLL_1416X_RATE(1500000000U, 375, 3, 1),
-+	PLL_1416X_RATE(1400000000U, 350, 3, 1),
- 	PLL_1416X_RATE(1200000000U, 300, 3, 1),
- 	PLL_1416X_RATE(1000000000U, 250, 3, 1),
- 	PLL_1416X_RATE(800000000U,  200, 3, 1),
+diff --git a/drivers/cpufreq/imx-cpufreq-dt.c b/drivers/cpufreq/imx-cpufreq-dt.c
+index 4f85f31..35db14c 100644
+--- a/drivers/cpufreq/imx-cpufreq-dt.c
++++ b/drivers/cpufreq/imx-cpufreq-dt.c
+@@ -16,6 +16,7 @@
+ 
+ #define OCOTP_CFG3_SPEED_GRADE_SHIFT	8
+ #define OCOTP_CFG3_SPEED_GRADE_MASK	(0x3 << 8)
++#define IMX8MN_OCOTP_CFG3_SPEED_GRADE_MASK	(0xf << 8)
+ #define OCOTP_CFG3_MKT_SEGMENT_SHIFT    6
+ #define OCOTP_CFG3_MKT_SEGMENT_MASK     (0x3 << 6)
+ 
+@@ -34,7 +35,12 @@ static int imx_cpufreq_dt_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
+-	speed_grade = (cell_value & OCOTP_CFG3_SPEED_GRADE_MASK) >> OCOTP_CFG3_SPEED_GRADE_SHIFT;
++	if (of_machine_is_compatible("fsl,imx8mn"))
++		speed_grade = (cell_value & IMX8MN_OCOTP_CFG3_SPEED_GRADE_MASK)
++			      >> OCOTP_CFG3_SPEED_GRADE_SHIFT;
++	else
++		speed_grade = (cell_value & OCOTP_CFG3_SPEED_GRADE_MASK)
++			      >> OCOTP_CFG3_SPEED_GRADE_SHIFT;
+ 	mkt_segment = (cell_value & OCOTP_CFG3_MKT_SEGMENT_MASK) >> OCOTP_CFG3_MKT_SEGMENT_SHIFT;
+ 
+ 	/*
 -- 
 2.7.4
 
