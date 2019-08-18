@@ -2,125 +2,105 @@ Return-Path: <SRS0=w6Q+=WO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4D27C3A589
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 17:28:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BBA5C3A589
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 22:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 771CF2183E
-	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 17:28:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566149281;
-	bh=iig6Re8PWJsFt/crrOvV4t6QJEhoY/povqVGZtQWCL8=;
-	h=From:To:Subject:Date:List-ID:From;
-	b=tN7zccnJu+N0p9TgGa5GhMwMMtGF0eK/bKLZeIu/1MHDlp1ZrsOxXn6sTlVGCQSTW
-	 ZE8gSC3n06r/L+Y5RCSv0Fto9qoltPtg3ANYjHVuJkZQT+wK40brbFgjMPnC5C+x3z
-	 10PCnBTkqPPncnH78nfOV2eEdIa+3RKFByzFVJfw=
+	by mail.kernel.org (Postfix) with ESMTP id 5E4392186A
+	for <linux-clk@archiver.kernel.org>; Sun, 18 Aug 2019 22:20:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WQo7LW0w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbfHRR2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 18 Aug 2019 13:28:01 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39704 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725786AbfHRR2A (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 18 Aug 2019 13:28:00 -0400
-Received: from localhost.localdomain (unknown [194.230.155.124])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A67302146E;
-        Sun, 18 Aug 2019 17:27:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566149279;
-        bh=iig6Re8PWJsFt/crrOvV4t6QJEhoY/povqVGZtQWCL8=;
-        h=From:To:Subject:Date:From;
-        b=xkCa3hC33h5bg5KUuIkrzhe1uCPvM7Tl/5rmvlydeZZ5K8asuzIByBwRVGSLc0I75
-         XFDFI6xzc/4Dptm6HwBTdxhmviFC7R0LryBCOuDNdp/qnZTJfCiaGTPBC4GA/NYgZ7
-         G+btALSxtO5dpm8uO0FF9jEZnumSpanY166oLTG0=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1726191AbfHRWUP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 18 Aug 2019 18:20:15 -0400
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:36849 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726115AbfHRWUP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 18 Aug 2019 18:20:15 -0400
+Received: by mail-lf1-f67.google.com with SMTP id j17so7559556lfp.3
+        for <linux-clk@vger.kernel.org>; Sun, 18 Aug 2019 15:20:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oDJV2qKgc2rE1ZecO56MT3ujkmelBSa9vGB/ZXufqTw=;
+        b=WQo7LW0wZCePzyiGp719cN5hGt2IqiOZor8+bvWmUAuHbV9PGpTkPF2bK8mSoOXKsk
+         cXos23XIkSNlw0j+eYIVrAy4wm2b3mzq63weuFYrOh9fayfx7WXFe8iSR6qpRdjO706B
+         rZ+5VK/R0mvml612IDYouJwZmejn8+fTgFXdMcvHDx9HRgqz5GEK4f9LALcvvM6rUbci
+         M4mKmHbo8CAYGNbRwBoRtp9vQBSecxXLMFdsHbhuwir5Dk/WpwGKyZBA0s/Rdsr5+nHk
+         jlS3RDdEtsGYcj1oAF3qTYjb6o7I26Q1FPM0SBih/XnZdml1vUXnn5vOE0lsOwhb0Ff8
+         6Chw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oDJV2qKgc2rE1ZecO56MT3ujkmelBSa9vGB/ZXufqTw=;
+        b=V3RM2ZMxi3jmyvGANWQiNUNYWBpheiTkoo0h6OWv1X84frwBERFz8AP9ECVa6OGCmg
+         mNEsrm998MIctRHRDn36UYNuoyT4stgsDoJkOnG61KdtIaqDKFlYB5NTYjllR+ISnDqa
+         uLcvkYVy9Co2p8H6hyx7WdAsihSh7hO4cFgKENfNosESdDxFWAKiXD1poW1t+L2cJ+EI
+         EYlNJfiQSyPFRPk+ddFCnoBm5gfDABUVdoDxm2/OORbNYZZZ4Psi0OiI7xDYy5xZ1vsx
+         yGbCohxY1RnkaURifIg+5NyoXyjEqPXV2HmIZh5vpQ6+5ttsG9bmHYRg19NEcyN2kE2d
+         y8AQ==
+X-Gm-Message-State: APjAAAVz6Gt2ONpyVAZVtOZ4DrdnX0hIQrMijJOwxWXM6mAr0In4Vc1/
+        xaoVuCJi73vmnncboi6e78FpLdP6jKSZUuuBXfRV/w==
+X-Google-Smtp-Source: APXvYqy5zNUWEXYZ2BNwjMv+MHdjmq2+twXb9Dmljui/KTewQHGrsVYvarl4oFwHNOai9V/3ApArVT6G7+uz+EzX27Y=
+X-Received: by 2002:ac2:5939:: with SMTP id v25mr10723641lfi.115.1566166813184;
+ Sun, 18 Aug 2019 15:20:13 -0700 (PDT)
+MIME-Version: 1.0
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com> <1565984527-5272-2-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1565984527-5272-2-git-send-email-skomatineni@nvidia.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Mon, 19 Aug 2019 00:20:01 +0200
+Message-ID: <CACRpkdbTYON9nhrP1ritBNcm49u7-c190wL5zeufvUoGQt1jOw@mail.gmail.com>
+Subject: Re: [PATCH v9 01/22] pinctrl: tegra: Fix write barrier placement in pmx_writel
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: Extend patterns for Samsung SoC, Security Subsystem and clock drivers
-Date:   Sun, 18 Aug 2019 19:27:50 +0200
-Message-Id: <20190818172750.20921-1-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        jckuo@nvidia.com, Joseph Lo <josephl@nvidia.com>, talho@nvidia.com,
+        linux-tegra@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Mikko Perttunen <mperttunen@nvidia.com>, spatra@nvidia.com,
+        Rob Herring <robh+dt@kernel.org>,
+        Dmitry Osipenko <digetx@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        viresh kumar <viresh.kumar@linaro.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Extend the patterns to cover all related files in respective
-categories:
-1. Samsung Exynos ARM architecture: add soc drivers headers and make
-   directory matches consistent,
-2. Samsung Security SubSystem driver (crypto): add bindings,
-3. Samsung SoC clock drivers: add S3C24xx, S3C64xx and S5Pv210 bindings.
+On Fri, Aug 16, 2019 at 9:42 PM Sowjanya Komatineni
+<skomatineni@nvidia.com> wrote:
+>
+> pmx_writel uses writel which inserts write barrier before the
+> register write.
+>
+> This patch has fix to replace writel with writel_relaxed followed
+> by a readback and memory barrier to ensure write operation is
+> completed for successful pinctrl change.
+>
+> Acked-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-Cc: Kukjin Kim <kgene@kernel.org>
-Cc: Vladimir Zapolskiy <vz@mleia.com>
-Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
-Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc: Tomasz Figa <tomasz.figa@gmail.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Took out the previous patches and applied this instead.
 
----
-
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-samsung-soc@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
----
- MAINTAINERS | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
-
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 420567d1519a..35a4002ac58b 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2199,8 +2199,9 @@ F:	drivers/*/*s3c24*
- F:	drivers/*/*/*s3c24*
- F:	drivers/*/*s3c64xx*
- F:	drivers/*/*s5pv210*
--F:	drivers/memory/samsung/*
--F:	drivers/soc/samsung/*
-+F:	drivers/memory/samsung/
-+F:	drivers/soc/samsung/
-+F:	include/linux/soc/samsung/
- F:	Documentation/arm/samsung/
- F:	Documentation/devicetree/bindings/arm/samsung/
- F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
-@@ -14174,6 +14175,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
- L:	linux-crypto@vger.kernel.org
- L:	linux-samsung-soc@vger.kernel.org
- S:	Maintained
-+F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
-+F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
- F:	drivers/crypto/s5p-sss.c
- 
- SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
-@@ -14194,6 +14197,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
- F:	drivers/clk/samsung/
- F:	include/dt-bindings/clock/exynos*.h
- F:	Documentation/devicetree/bindings/clock/exynos*.txt
-+F:	Documentation/devicetree/bindings/clock/samsung,s3c*
-+F:	Documentation/devicetree/bindings/clock/samsung,s5p*
- 
- SAMSUNG SPI DRIVERS
- M:	Kukjin Kim <kgene@kernel.org>
--- 
-2.17.1
-
+Yours,
+Linus Walleij
