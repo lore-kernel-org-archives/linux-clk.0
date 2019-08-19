@@ -2,179 +2,292 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A8DC3A5A3
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:34:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEFBC3A5A0
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 21:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81ADF22CF4
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A4D422CF4
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 21:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/Xz5WNg"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RHOSYZ0g"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728464AbfHSTd5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 15:33:57 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:52861 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728375AbfHSTd5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 15:33:57 -0400
-Received: by mail-wm1-f67.google.com with SMTP id o4so573914wmh.2;
-        Mon, 19 Aug 2019 12:33:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=M8LYhD4lhXPC7C0Kz4FM0eI8Uon0RGyTbjZ7iSLdUwY=;
-        b=G/Xz5WNgJus57o+i2ehU+l0iHOMv8K+eX7esd5Hsp8ECu1hc9Ij2lFCCMT8c/TeTQx
-         KPxGFnwhHfLCIuhABPymGXDPH0oEnZlCiWXK4u0Ggx6yY8rqCwwB764VaXJ2WamY2LwK
-         V0y5VSxnkH2oPCLaRqgkNtJKf+KXfenR2Mgqd52G43nCPwFJY4jkEoY4yIi92vlt8HU8
-         ENKFx7T9KuXh511hTtpe7jujVFXmzEyWHXNhyrD9ZGosBFQgGvTbjw9aVwqtOnqp9XpT
-         2x3s4e6pw/JIijGy+an8s+tsrNoMURxBIKU583BC6tsFmleaeStVM3g3pSv6Oa0eeXSY
-         ZmYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=M8LYhD4lhXPC7C0Kz4FM0eI8Uon0RGyTbjZ7iSLdUwY=;
-        b=IXS76+FZTUGHBAxESpVXRK31XSmSe/DDlVeF+bU7jKIbF4YK3Xkf/vwiBPq5GeyfAe
-         0JUrzz8kK4lEub/vRBA7798Z5BpVpO9YibC00K7Re/B6whvXadpNDF6bR1dgEUFyX0Ob
-         xIfUjQ27Q375vBA93fmmlcXDd25TXiQxQhTUCTIVxj7tLvwff/eb4bnj4+MANDzx00RM
-         IsjzPFpqsr/33Ut1iVN+lc+14wTGE6klFIJSAu8rC8ZTgsVNsIM8jr0ODH6m/o8XItnb
-         8Qa7bzySeDyLy261UDcZ2IFuY4S2RJTxroPdegseoyLzEIXM1YSzNuqQUo+VCsiTtbjD
-         gZag==
-X-Gm-Message-State: APjAAAXbqmpx8WvcXLdjSltC2KXT19OzATWl6uDh88sEowKdFdJUEu3X
-        rPAkxo+6aTCwHH4fQQPu5Qazc4HH
-X-Google-Smtp-Source: APXvYqx3j1A+XbE8p3KzEPzhIilb1DSi7SDFHoAeZejzy26ay1t6am8l3zqKSE2XA96TglOR8BVogQ==
-X-Received: by 2002:a1c:d108:: with SMTP id i8mr23171852wmg.28.1566243233356;
-        Mon, 19 Aug 2019 12:33:53 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.34.218])
-        by smtp.googlemail.com with ESMTPSA id o11sm12528508wrw.19.2019.08.19.12.33.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 19 Aug 2019 12:33:52 -0700 (PDT)
-Subject: Re: [PATCH v9 20/22] soc/tegra: pmc: Configure deep sleep control
- settings
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
-        jason@lakedaemon.net, marc.zyngier@arm.com,
-        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
- <1565984527-5272-21-git-send-email-skomatineni@nvidia.com>
- <bf5541d2-1bad-8a8c-fd9d-821b55861136@gmail.com>
- <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
- <a8d65dbc-6924-c972-06e9-5bc47d66e94f@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <8f5630bd-2869-4f5b-c18d-7ee8326432d6@gmail.com>
-Date:   Mon, 19 Aug 2019 22:33:49 +0300
+        id S1728432AbfHSVHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 17:07:14 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60750 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728018AbfHSVHN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 17:07:13 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7JL77uC002269;
+        Mon, 19 Aug 2019 16:07:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1566248827;
+        bh=8YegP2wAru2VH++m0rvbBD1uWrCBQvEAW5hESAlMQsw=;
+        h=From:Subject:To:CC:References:Date:In-Reply-To;
+        b=RHOSYZ0g5h5cMeTH5B6SHdoddsLbGW5g+OxFAUN+ZgV1dNSl4lb4JqeEAJcTFAzUT
+         sSe3fDC/mwZqbH7Kaj1KDSmH3Z0kKj6Ym11FcUH2CE4zLISK+dS8ohgUL+yZoV2m0R
+         ETkr7tYgOvM4KAbExE7br11IB6pZVmit9LxXN/zg=
+Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7JL77g3054174
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 19 Aug 2019 16:07:07 -0500
+Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 19
+ Aug 2019 16:07:06 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE110.ent.ti.com
+ (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 19 Aug 2019 16:07:07 -0500
+Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7JL76TC001937;
+        Mon, 19 Aug 2019 16:07:06 -0500
+From:   Suman Anna <s-anna@ti.com>
+Subject: Re: [PATCH 1/3] clk: ti: clkctrl: add support for polling clock
+ status for enable only
+To:     "Kristo, Tero" <t-kristo@ti.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>
+CC:     "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
+        "tony@atomide.com" <tony@atomide.com>
+References: <1565183079-27798-1-git-send-email-t-kristo@ti.com>
+ <1565183079-27798-2-git-send-email-t-kristo@ti.com>
+ <6a088bc2-e854-b4fa-3c97-ce94dd2a92cb@ti.com>
+ <99f2b99f-6b5a-eef6-cc6f-fed7431f7cc8@ti.com>
+Message-ID: <839910f6-e533-b823-c2ca-22525a7b8733@ti.com>
+Date:   Mon, 19 Aug 2019 16:07:06 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ Thunderbird/60.6.1
 MIME-Version: 1.0
-In-Reply-To: <a8d65dbc-6924-c972-06e9-5bc47d66e94f@nvidia.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <99f2b99f-6b5a-eef6-cc6f-fed7431f7cc8@ti.com>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-19.08.2019 22:07, Sowjanya Komatineni пишет:
+On 8/19/19 4:13 AM, Tero Kristo wrote:
+> On 08/08/2019 01:43, Suman Anna wrote:
+>> Hi Tero,
+>>
+>> On 8/7/19 8:04 AM, Tero Kristo wrote:
+>>> The activity status for certain clocks is possible to be polled only
+>>> during enable phase; the disable phase depends on additional reset
+>>> logic.
+>>
+>> I am not sure this is an entirely accurate statement. Can you explain
+>> why this is an issue only with disable sequence and not enable sequence?
+>> Almost sounds like you are doing some asymmetric sequence w.r.t clocks
+>> and resets.
 > 
-> On 8/19/19 11:20 AM, Sowjanya Komatineni wrote:
->>
->> On 8/19/19 9:48 AM, Dmitry Osipenko wrote:
->>> 16.08.2019 22:42, Sowjanya Komatineni пишет:
->>>> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
->>>> timings which are platform specific that should be configured before
->>>> entering into deep sleep.
->>>>
->>>> Below are the timing specific configurations for deep sleep entry and
->>>> wakeup.
->>>> - Core rail power-on stabilization timer
->>>> - OSC clock stabilization timer after SOC rail power is stabilized.
->>>> - Core power off time is the minimum wake delay to keep the system
->>>>    in deep sleep state irrespective of any quick wake event.
->>>>
->>>> These values depends on the discharge time of regulators and turn OFF
->>>> time of the PMIC to allow the complete system to finish entering into
->>>> deep sleep state.
->>>>
->>>> These values vary based on the platform design and are specified
->>>> through the device tree.
->>>>
->>>> This patch has implementation to configure these timings which are must
->>>> to have for proper deep sleep and wakeup operations.
->>>>
->>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>> ---
->>>>   drivers/soc/tegra/pmc.c | 14 +++++++++++++-
->>>>   1 file changed, 13 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>> index 53ed70773872..710969043668 100644
->>>> --- a/drivers/soc/tegra/pmc.c
->>>> +++ b/drivers/soc/tegra/pmc.c
->>>> @@ -88,6 +88,8 @@
->>>>     #define PMC_CPUPWRGOOD_TIMER        0xc8
->>>>   #define PMC_CPUPWROFF_TIMER        0xcc
->>>> +#define PMC_COREPWRGOOD_TIMER        0x3c
->>>> +#define PMC_COREPWROFF_TIMER        0xe0
->>>>     #define PMC_PWR_DET_VALUE        0xe4
->>>>   @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs
->>>> tegra20_pmc_regs = {
->>>>     static void tegra20_pmc_init(struct tegra_pmc *pmc)
->>>>   {
->>>> -    u32 value;
->>>> +    u32 value, osc, pmu, off;
->>>>         /* Always enable CPU power request */
->>>>       value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>> @@ -2303,6 +2305,16 @@ static void tegra20_pmc_init(struct tegra_pmc
->>>> *pmc)
->>>>       value = tegra_pmc_readl(pmc, PMC_CNTRL);
->>>>       value |= PMC_CNTRL_SYSCLK_OE;
->>>>       tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>>> +
->>>> +    /* program core timings which are applicable only for suspend
->>>> state */
->>>> +    if (pmc->suspend_mode != TEGRA_SUSPEND_NONE) {
->>>> +        osc = DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
->>>> +        pmu = DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
->>>> +        off = DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
->>>> +        tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
->>>> +                 PMC_COREPWRGOOD_TIMER);
->>>> +        tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
->>>> +    }
->>>>   }
->>>>     static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
->>>>
->>> In the previous version of this patch there were checks for zero values
->>> of the timers with intention to skip programming of the timers if value
->>> is zero. I'm a bit puzzled by the new version, given that SUSPEND_NONE
->>> means that suspending isn't available at all and thus PMC timers won't
->>> be utilized, hence it shouldn't matter what values are programmed for
->>> the counters, isn't it?
->>
->> Yes, as I see in documentation we already specify all these timings
->> are required properties when suspend mode is used, I updated in this
->> version to program core timings only when suspend mode is enabled.
->>
-> In other words, core timings are for SC7 entry only. So when SC7/suspend
-> mode is not used, these timings doesn't matter.
+> This follows the recommended ordering sequence from TRM, so reset will
+> be de-asserted before enabling clock, so we can keep the polling there.
 
-In this case, it should be a bit more straightforward to always program
-the timers unconditionally. But since device-tree binding requires all
-the properties to be specified when suspend mode isn't NONE, then the
-new variant also makes sense. Either way is good to me, thanks.
+Can you please point out the section where this ordering sequence is
+mentioned? If anything, this is quite the opposite, and that is what the
+existing hwmod code also reflects. Please see the NOTE in Section
+5.3.3.2 of the DRA7 TRM [1] for reference and the section 3.5.6.6 and/or
+3.5.6.7.
 
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Your patch is a consequence of your on-going ti-sysc code where you have
+flipped the logic compared to hwmod code. In anycase, the mainline
+kernel has the various MMUs on OMAP3, OMAP4 and OMAP5 SoCs functional a
+long-time before ti-sysc and clkctrl are introduced and this was broken
+when clkctrl clks were introduced in 4.16 kernel. The issue can be seen
+rather easily with an OMAP IOMMU unit-test [2], and the error issue
+signatures are something like below. Below log is an example log
+generated when using OMAP5 DSP MMU on 5.3-rc1 + addition of test nodes
+from [2], and similar crashes are also seen with other MMUs.
+
+# insmod iommu_dt_test.ko count=4
+[  126.070188] iommu_dt_test: loading out-of-tree module taints kernel.
+[  126.077568] omap_iommu_test iommu_test: ignoring dependency for
+device, assuming no driver
+[  126.085963] omap_iommu_test_init: iommu_test_init entered
+[  126.091495] omap_iommu_test iommu_test: Enabling IOMMU...
+[  126.096997] omap_iommu_test iommu_test: dev->of_node->name:
+iommu_test dev_name iommu_test
+[  126.107352] dsp_cm:clk:0000:0: failed to enable
+[  126.111907] ------------[ cut here ]------------
+[  126.116553] WARNING: CPU: 0 PID: 1013 at drivers/clk/clk.c:924
+clk_core_disable_lock+0x18/0x24
+[  126.125198] dsp_cm:clk:0000:0 already disabled
+[  126.129656] Modules linked in: iommu_dt_test(O+)
+[  126.134299] CPU: 0 PID: 1013 Comm: insmod Tainted: G           O
+5.3.0-rc1-00005-gd893572f52c6 #129
+[  126.143816] Hardware name: Generic OMAP5 (Flattened Device Tree)
+[  126.149859] [<c01122d8>] (unwind_backtrace) from [<c010c8b8>]
+(show_stack+0x10/0x14)
+[  126.157641] [<c010c8b8>] (show_stack) from [<c08cce38>]
+(dump_stack+0xb4/0xd4)
+[  126.164900] [<c08cce38>] (dump_stack) from [<c0139d70>]
+(__warn.part.3+0xa8/0xd4)
+[  126.172419] [<c0139d70>] (__warn.part.3) from [<c0139df8>]
+(warn_slowpath_fmt+0x5c/0x88)
+[  126.180549] [<c0139df8>] (warn_slowpath_fmt) from [<c05733b4>]
+(clk_core_disable_lock+0x18/0x24)
+[  126.189376] [<c05733b4>] (clk_core_disable_lock) from [<c0122d5c>]
+(_disable_clocks+0x18/0x98)
+[  126.198027] [<c0122d5c>] (_disable_clocks) from [<c012569c>]
+(omap_hwmod_deassert_hardreset+0xc8/0x174)
+[  126.207463] [<c012569c>] (omap_hwmod_deassert_hardreset) from
+[<c0126160>] (omap_device_deassert_hardreset+0x30/0x50)
+[  126.218121] [<c0126160>] (omap_device_deassert_hardreset) from
+[<c05d5f24>] (omap_iommu_attach_dev+0x298/0x418)
+[  126.228256] [<c05d5f24>] (omap_iommu_attach_dev) from [<c05d0ba8>]
+(__iommu_attach_device+0x44/0xdc)
+[  126.237430] [<c05d0ba8>] (__iommu_attach_device) from [<c05d28e8>]
+(__iommu_attach_group+0x40/0x68)
+[  126.246517] [<c05d28e8>] (__iommu_attach_group) from [<c05d29c8>]
+(iommu_attach_device+0x80/0x88)
+[  126.255434] [<c05d29c8>] (iommu_attach_device) from [<bf000188>]
+(omap_iommu_test_probe+0x10c/0x210 [iommu_dt_test])
+[  126.266011] [<bf000188>] (omap_iommu_test_probe [iommu_dt_test]) from
+[<c05e0d8c>] (platform_drv_probe+0x48/0x98)
+[  126.276321] [<c05e0d8c>] (platform_drv_probe) from [<c05dedd0>]
+(really_probe+0xec/0x2cc)
+[  126.284537] [<c05dedd0>] (really_probe) from [<c05df134>]
+(driver_probe_device+0x5c/0x160)
+[  126.292839] [<c05df134>] (driver_probe_device) from [<c05df3d8>]
+(device_driver_attach+0x58/0x60)
+[  126.301751] [<c05df3d8>] (device_driver_attach) from [<c05df438>]
+(__driver_attach+0x58/0xcc)
+[  126.310314] [<c05df438>] (__driver_attach) from [<c05dd264>]
+(bus_for_each_dev+0x70/0xb4)
+[  126.318529] [<c05dd264>] (bus_for_each_dev) from [<c05de2ac>]
+(bus_add_driver+0x198/0x1d0)
+[  126.326831] [<c05de2ac>] (bus_add_driver) from [<c05dfea0>]
+(driver_register+0x74/0x108)
+[  126.334959] [<c05dfea0>] (driver_register) from [<c0102e80>]
+(do_one_initcall+0x48/0x224)
+[  126.343177] [<c0102e80>] (do_one_initcall) from [<c01d6fa4>]
+(do_init_module+0x5c/0x234)
+[  126.351307] [<c01d6fa4>] (do_init_module) from [<c01d9404>]
+(load_module+0x2200/0x24d0)
+[  126.359347] [<c01d9404>] (load_module) from [<c01d9928>]
+(sys_finit_module+0xbc/0xdc)
+[  126.367213] [<c01d9928>] (sys_finit_module) from [<c01011e0>]
+(__sys_trace_return+0x0/0x20)
+[  126.375598] Exception stack(0xebc99fa8 to 0xebc99ff0)
+[  126.380671] 9fa0:                   00000000 00035160 00000003
+00035150 00000000 00035ee8
+[  126.388885] 9fc0: 00000000 00035160 00000000 0000017b 00000007
+00000003 00035150 be8e3c2c
+[  126.397095] 9fe0: be8e3a80 be8e3a70 0001b42d b6e4a1b0
+[  126.402166] ---[ end trace 9ba6f4788aad890b ]---
+[  126.406896] omap-iommu 4a066000.mmu: 4a066000.mmu: version 2.0
+[  126.412765] omap_iommu_test iommu_test: Mapping da 0xa0100000, pa
+0x95100000, len 0x100000
+[  126.421196] omap_iommu_test iommu_test: Mapping da 0xa0200000, pa
+0x95200000, len 0x100000
+[  126.429622] omap_iommu_test iommu_test: Mapping da 0xa0300000, pa
+0x95300000, len 0x100000
+[  126.437997] omap_iommu_test iommu_test: Mapping da 0xa0400000, pa
+0x95400000, len 0x100000
+
+The fix for that is actually doing this poll bailout in _enable rather
+than disable. I would rather see these fixed first before the ti-sysc
+conversions and logic are vetted.
+
+> 
+> Going down, reset must be asserted post disabling clocks, which results
+> a timeout if the idle status check is not bypassed.
+> 
+> This is kind of not perfect and should be fixed later to somehow add a
+> direct link between the clock and reset lines, so that we know when
+> there is dependency between the two and can check the status of both to
+> see if we should poll something or not.
+
+Yeah, agreed. Unfortunately, I do not there is a clean way of doing this
+given that typically clocks and resets are treated and managed by
+separate subsystems in kernel. You will always end up with a quirk flags
+like this in either of the drivers.
+
+> 
+>>
+>> On the downstream kernel, we have reused the existing NO_IDLEST flag as
+>> a quirk within both the enable and disable functions for the IPs with
+>> hardreset lines, and this patch seems to introduce a new NO_IDLE_POLL
+>> flag but only during the disable path.
+> 
+> The NO_IDLEST patch is not perfect, as it introduces a timing hazard
+> where while enabling the module one can access the IP registers before
+> it has left idle, leading into a crash.
+
+Both these flag macro names are misnomers IMO, the IP registers cannot
+be accessed without releasing the resets and clocks on the IPs with the
+hard-reset lines.
+
+regards
+Suman
+
+[1] http://www.ti.com/lit/pdf/sprui30
+[2] https://github.com/sumananna/omap-test-iommu
+
+> 
+> -Tero
+> 
+>>
+>> regards
+>> Suman
+>>
+>> If the disable phase is polled with these clocks, it will
+>>> result in a timeout. To fix this, add logic for polling the clock
+>>> activity only during enable, and add a new flag for this purpose.
+>>>
+>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+>>> ---
+>>>   drivers/clk/ti/clkctrl.c | 5 ++++-
+>>>   drivers/clk/ti/clock.h   | 1 +
+>>>   2 files changed, 5 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+>>> index 975995e..f5517a8 100644
+>>> --- a/drivers/clk/ti/clkctrl.c
+>>> +++ b/drivers/clk/ti/clkctrl.c
+>>> @@ -25,6 +25,7 @@
+>>>   #include "clock.h"
+>>>     #define NO_IDLEST            0x1
+>>> +#define NO_IDLE_POLL            0x2
+>>>     #define OMAP4_MODULEMODE_MASK        0x3
+>>>   @@ -187,7 +188,7 @@ static void _omap4_clkctrl_clk_disable(struct
+>>> clk_hw *hw)
+>>>         ti_clk_ll_ops->clk_writel(val, &clk->enable_reg);
+>>>   -    if (clk->flags & NO_IDLEST)
+>>> +    if (clk->flags & (NO_IDLEST | NO_IDLE_POLL))
+>>>           goto exit;
+>>>         /* Wait until module is disabled */
+>>> @@ -597,6 +598,8 @@ static void __init _ti_omap4_clkctrl_setup(struct
+>>> device_node *node)
+>>>               hw->enable_bit = MODULEMODE_HWCTRL;
+>>>           if (reg_data->flags & CLKF_NO_IDLEST)
+>>>               hw->flags |= NO_IDLEST;
+>>> +        if (reg_data->flags & CLKF_NO_IDLE_POLL)
+>>> +            hw->flags |= NO_IDLE_POLL;
+>>>             if (reg_data->clkdm_name)
+>>>               hw->clkdm_name = reg_data->clkdm_name;
+>>> diff --git a/drivers/clk/ti/clock.h b/drivers/clk/ti/clock.h
+>>> index e4b8392..6410ff6 100644
+>>> --- a/drivers/clk/ti/clock.h
+>>> +++ b/drivers/clk/ti/clock.h
+>>> @@ -82,6 +82,7 @@ enum {
+>>>   #define CLKF_SW_SUP            BIT(5)
+>>>   #define CLKF_HW_SUP            BIT(6)
+>>>   #define CLKF_NO_IDLEST            BIT(7)
+>>> +#define CLKF_NO_IDLE_POLL        BIT(8)
+>>>     #define CLKF_SOC_MASK            GENMASK(11, 8)
+>>>  
+>>
+> 
+> -- 
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+
