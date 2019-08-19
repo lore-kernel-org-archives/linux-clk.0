@@ -2,80 +2,93 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E4C6C3A59D
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 11:55:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C99BC3A59D
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 11:59:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAF6A2086C
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 11:55:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 233282086C
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 11:59:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566215717;
-	bh=dEeA2uQyaoXqutXQcrXuZVMeCePDLqTpkPsRnQe15N8=;
+	s=default; t=1566215962;
+	bh=BlF5eyN8+BYQuNaKgdgBAcb8evFPpg8cxRjy3CPmiRE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sayOjZzFzD4mAd3HyhBwkX1TK4hiDdDpjUjyInti5Y6VCx/wgO3WCmz/TPdeRGL5x
-	 rU/hjmWyGoJttUCkikuvUYao3iblZIN+/K1zi9xQRh3VbznzzehsfhNBc8VHyqmTPl
-	 WBJp3kvZrqxCoPZDuCkqkqPgC8HoXpFewUf7EKWc=
+	b=MV3eXE6b4O7RWqH/SIrv+nPX3Dna+EE+OurIM5ZasoWGVAMeqQQSbUuog3FvRB1wK
+	 aqruucwtks1CoDe1oqZM+MiUU24ZDYziJb0jw7wyMdTNR++hGrV8rKLCauMXep7IGL
+	 FvZt0qZW5d3bV5ayD9IPVDkmCUHN3ZaXxo8OWQUQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbfHSLzQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 07:55:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43592 "EHLO mail.kernel.org"
+        id S1726987AbfHSL7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 07:59:21 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45152 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726491AbfHSLzQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Aug 2019 07:55:16 -0400
+        id S1726491AbfHSL7V (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Aug 2019 07:59:21 -0400
 Received: from X250 (37.80-203-192.nextgentel.com [80.203.192.37])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B5A992085A;
-        Mon, 19 Aug 2019 11:55:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEDF12085A;
+        Mon, 19 Aug 2019 11:59:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566215715;
-        bh=dEeA2uQyaoXqutXQcrXuZVMeCePDLqTpkPsRnQe15N8=;
+        s=default; t=1566215960;
+        bh=BlF5eyN8+BYQuNaKgdgBAcb8evFPpg8cxRjy3CPmiRE=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t6w9eaym8VxzPY29L9jVJSOgQXWZKbfZnoYfh2255ufHURxQstc1vc4z5/7KjfJBP
-         1Vk0ED/DyhxJbI4OfaU1nQkgYvU73mtQuzoIKHaFNH3b7bSZ5bLHDo259KKc6bNXZw
-         8KnVWuPfaX9e/K0CUVy8RVwOa6h7RTfMEVOe7/KA=
-Date:   Mon, 19 Aug 2019 13:55:03 +0200
+        b=N/S1qpYiSKTHfHFnyA5YvjHA45F9f9gS2wu4MxcxIXVBMokQT2MskhpPwU0eBohhZ
+         k2iJWiPJx/Rr9D4SsqUjBQwwGBgE/kU+WIFNI9kOWvU46yG9z+N2PbbwhnGUDzICzK
+         TB+W5XK0hC8wxg01tmpoCqFv6au/KqzISkPbUiBM=
+Date:   Mon, 19 Aug 2019 13:59:09 +0200
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        linux-clk@vger.kernel.org, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 0/4] clk: imx8m: Fix incorrect parents
-Message-ID: <20190819115502.GA5999@X250>
-References: <cover.1565715590.git.leonard.crestez@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: imx8mn: fix int pll clk gate
+Message-ID: <20190819115907.GB5999@X250>
+References: <20190814015312.11711-1-peng.fan@nxp.com>
+ <20190816180246.D37BD20665@mail.kernel.org>
+ <AM0PR04MB4481D73817CFCB7491DE89CB88A80@AM0PR04MB4481.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cover.1565715590.git.leonard.crestez@nxp.com>
+In-Reply-To: <AM0PR04MB4481D73817CFCB7491DE89CB88A80@AM0PR04MB4481.eurprd04.prod.outlook.com>
 User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 13, 2019 at 08:05:27PM +0300, Leonard Crestez wrote:
-> No checks are made to ensure the parents in the _sels arrays actually
-> exist and it turns out that several are incorrect.
+On Mon, Aug 19, 2019 at 01:05:42AM +0000, Peng Fan wrote:
+> Hi Stephen,
 > 
-> I found the errors using a hack to clk core, is there a better way?
-> Link: https://github.com/cdleonard/linux/commit/da32c2e76eb373e8a03aec905af2eef28a7997a7
+> > Subject: Re: [PATCH] clk: imx8mn: fix int pll clk gate
+> > 
+> > Quoting peng.fan@nxp.com (2019-08-13 18:53:12)
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > To Frac pll, the gate shift is 13, however to Int PLL the gate shift
+> > > is 11.
+> > >
+> > > Cc: <stable@vger.kernel.org>
+> > > Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> > > ---
+> > 
+> > This is a fix for a change in -next. Why is stable Cced?
 > 
-> Also add imx8mn GIC clock while we're at it because otherwise parent
-> could get disabled and lock the system.
-> 
-> Leonard Crestez (4):
->   clk: imx8mq: Fix sys3 pll references
->   clk: imx8mm: Fix incorrect parents
->   clk: imx8mn: Fix incorrect parents
->   clk: imx8mn: Add GIC clock
+> Sorry, that was added by mistaken. Should I resend v2 to drop it?
 
-Applied all, thanks.
+Applied with both stable and Fixes tag dropped, as the commit ID is
+unstable before it lands on mainline.
+
+Shawn
