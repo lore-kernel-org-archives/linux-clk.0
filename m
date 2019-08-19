@@ -2,181 +2,220 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E73C3A5A0
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A3DC3A5A0
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:12:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADB822CEB
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:07:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC56722CEB
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:12:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="k3PNkY/z"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CtsJS6pD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728425AbfHSTHx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 15:07:53 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:9385 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728185AbfHSTHx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 15:07:53 -0400
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5af3880001>; Mon, 19 Aug 2019 12:07:52 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 19 Aug 2019 12:07:51 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 12:07:51 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 19:07:51 +0000
-Received: from [10.110.103.66] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 19:07:50 +0000
-Subject: Re: [PATCH v9 20/22] soc/tegra: pmc: Configure deep sleep control
- settings
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
-References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
- <1565984527-5272-21-git-send-email-skomatineni@nvidia.com>
- <bf5541d2-1bad-8a8c-fd9d-821b55861136@gmail.com>
- <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
-Message-ID: <a8d65dbc-6924-c972-06e9-5bc47d66e94f@nvidia.com>
-Date:   Mon, 19 Aug 2019 12:07:50 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728127AbfHSTMr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 15:12:47 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:39946 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727957AbfHSTMq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 15:12:46 -0400
+Received: by mail-io1-f65.google.com with SMTP id t6so6740509ios.7;
+        Mon, 19 Aug 2019 12:12:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Ukv0qMe05muJlNYiQ6Uce5PMPZSpZc4axetoRBKz3DU=;
+        b=CtsJS6pDeGDB3H/bjAencjIeLETrnsj+C5WUnp3KWegzU7V2ozvSt5YYsCIuSHwDgn
+         tvfrpTVnOLt2KhKDA1QuJfaXJ7GuTRX8b6xW9VhcWGbGQU3VYztn0shxFNBQZq1mAB8a
+         3enlpM8bCzwkmrB+A3V+AckXTTxTCVTzrEpuKH6zfxurQRd/dR7Y0fpSJwxUBYdi3cml
+         FHDrgiVkzJWe1rRuGbJ6I1cNrsH886qjamZCGtAy2tLO0FK1h2vGbK1AsGLpEV4mOf46
+         IY2g47S5OYgTTakjbnFQgqkwF4HPNz8sx/fkgYwK0o2rn6g6mfYm9Kv9Kak8duIBsB8v
+         2B1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Ukv0qMe05muJlNYiQ6Uce5PMPZSpZc4axetoRBKz3DU=;
+        b=FULESQ+Gaj9FxNtHZVmAqYL5FvuKjdFk+8KCJlUeEVNRdq1kgi9fFihIznIm65a/da
+         AHLQOKUfuJfG0ZEqa2DQEJ/AUMdKqEZz+b1bIPNc6h+p6NOb4BLyNzLSz3J4sVyomBfW
+         49SUBKLubJJY7GfRBTdWZ6T590PZJq0eO7/B1kMYYg3ysidwxcpuW7PS0yocZvtheLa5
+         DeWWuWtvkRspTfagiXgVC/4YHeDwCaE8+5WkAM0ROTVJFiIETNF2QgrMPvFt7v+l1cTs
+         kvfgZDnJFbHtfUWMCLYW49ki/XDw4q9b8EJ73lSjbXAqWKjfFTz/hDMZCv6AZNjAr14g
+         zYxg==
+X-Gm-Message-State: APjAAAVHQNaGtHKtDBzHb2VpZvDEF3DsLdQYVhZZDO3s2SlpCqm7Acur
+        gvbrwJ8Ald+KdXD10BWWAHwvDpXythVActPIvxqwAQKXY1k=
+X-Google-Smtp-Source: APXvYqx1qvT1CWV+VD2I9q7HQKnIL875PSKMaII+tcdK6YT8KL3nR/Ui/gGwdZUF/WsOR7lAOT7CCZJALIzU5Rtn6QI=
+X-Received: by 2002:a6b:cdcc:: with SMTP id d195mr2813191iog.78.1566241965454;
+ Mon, 19 Aug 2019 12:12:45 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
+References: <20190814131408.57162-1-tony@atomide.com> <20190814131408.57162-6-tony@atomide.com>
+In-Reply-To: <20190814131408.57162-6-tony@atomide.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Mon, 19 Aug 2019 14:12:34 -0500
+Message-ID: <CAHCN7x+WxFSU4e72ESu0UUKj_RGfNCOkHS4zvjmwQVoZ_t13Nw@mail.gmail.com>
+Subject: Re: [PATCH 5/6] ARM: dts: Configure interconnect target module for
+ omap3 sgx
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?UTF-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        =?UTF-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566241672; bh=lDgc6QK33DRljdsnrvFj9EKf+a9SbqWwFOOiG9EuoAk=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=k3PNkY/zqJCaYV+SmTHtuqLnfIrIUjJap4KJsrwrW+761Wh6674laB+NR6y6whumN
-         IvinVjqCeLAR+wbFOdUKjsYgARJy1eRRpS31N+657GvaYq/UgVtJWfJE6jYC/LEdc9
-         exWUV/5obw5zb8Mb2pE5JHmA2D+sdX7MPNfPOyIFC1hr+9Q1qF3d9d3NXh7OuB9HAS
-         wNegGp+ishXCr+H6dkQivS9IFywlvqvHrc1CDbXVZBxnJ7jV6sJYW5PKkF/c0kzCoO
-         a8XWx4WNFb1ksAaoXq2G0cs59s76KMZdUFx2LA8hRf4ZBtaMaZrnGZWQhnYEHcPoi5
-         SjmXNk3kQ9eqg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Aug 14, 2019 at 8:14 AM Tony Lindgren <tony@atomide.com> wrote:
+>
+> Looks like omap34xx OCP registers are not readable unlike on omap36xx.
+> We use SGX revision register instead of the OCP revision register for
+> 34xx and do not configure any SYSCONFIG register unlike for 36xx.
+>
+> I've tested that the interconnect target module enables and idles
+> just fine with PM runtime control via sys:
+>
+> # echo on > $(find /sys -name control | grep \/5000); rwmem 0x5000fe10
+> # rwmem 0x50000014      # SGX revision register on 36xx
+> 0x50000014 =3D 0x00010205
 
-On 8/19/19 11:20 AM, Sowjanya Komatineni wrote:
+For an OMAP3530, I got:
+# echo on > $(find /sys -name control | grep \/5000)
+# devmem 0x50000014
+0x00010201
+
+Does 0x00010201 seem reasonable?  I am not sure where to find this in
+the TRM unless it's located elsewhere, but  [1] seems to lead me to
+believe this is correct.
+
+> # echo auto > $(find /sys -name control | grep \/5000)
+> # rwmem 0x5000fe00
+
+I assume the above address should be 0x50000014 for OMAP34/35, is that
+correct?  It was listed as 0x50000014 above.
+If my assumption if correct, it appears to work for me as well.
+
+
+[1] - http://processors.wiki.ti.com/index.php/GSG:_AM35x_and_OMAP35x_Rebuil=
+ding_the_Software#How_to_check_for_SGX_core_revision
+
+> And when idled, it will produce "Bus error" as expected.
 >
-> On 8/19/19 9:48 AM, Dmitry Osipenko wrote:
->> 16.08.2019 22:42, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
->>> timings which are platform specific that should be configured before
->>> entering into deep sleep.
->>>
->>> Below are the timing specific configurations for deep sleep entry and
->>> wakeup.
->>> - Core rail power-on stabilization timer
->>> - OSC clock stabilization timer after SOC rail power is stabilized.
->>> - Core power off time is the minimum wake delay to keep the system
->>> =C2=A0=C2=A0 in deep sleep state irrespective of any quick wake event.
->>>
->>> These values depends on the discharge time of regulators and turn OFF
->>> time of the PMIC to allow the complete system to finish entering into
->>> deep sleep state.
->>>
->>> These values vary based on the platform design and are specified
->>> through the device tree.
->>>
->>> This patch has implementation to configure these timings which are must
->>> to have for proper deep sleep and wakeup operations.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>> =C2=A0 drivers/soc/tegra/pmc.c | 14 +++++++++++++-
->>> =C2=A0 1 file changed, 13 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>> index 53ed70773872..710969043668 100644
->>> --- a/drivers/soc/tegra/pmc.c
->>> +++ b/drivers/soc/tegra/pmc.c
->>> @@ -88,6 +88,8 @@
->>> =C2=A0 =C2=A0 #define PMC_CPUPWRGOOD_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 0xc8
->>> =C2=A0 #define PMC_CPUPWROFF_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0 0xcc
->>> +#define PMC_COREPWRGOOD_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0 0x3c
->>> +#define PMC_COREPWROFF_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- 0xe0
->>> =C2=A0 =C2=A0 #define PMC_PWR_DET_VALUE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 0xe4
->>> =C2=A0 @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs=20
->>> tegra20_pmc_regs =3D {
->>> =C2=A0 =C2=A0 static void tegra20_pmc_init(struct tegra_pmc *pmc)
->>> =C2=A0 {
->>> -=C2=A0=C2=A0=C2=A0 u32 value;
->>> +=C2=A0=C2=A0=C2=A0 u32 value, osc, pmu, off;
->>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Always enable CPU power reques=
-t */
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D tegra_pmc_readl(pmc, PMC_CNTRL=
-);
->>> @@ -2303,6 +2305,16 @@ static void tegra20_pmc_init(struct tegra_pmc=20
->>> *pmc)
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D tegra_pmc_readl(pmc, PMC_CNTRL=
-);
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value |=3D PMC_CNTRL_SYSCLK_OE;
->>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, value, PMC_CNTRL);
->>> +
->>> +=C2=A0=C2=A0=C2=A0 /* program core timings which are applicable only f=
-or suspend=20
->>> state */
->>> +=C2=A0=C2=A0=C2=A0 if (pmc->suspend_mode !=3D TEGRA_SUSPEND_NONE) {
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 osc =3D DIV_ROUND_UP(pmc->c=
-ore_osc_time * 8192, 1000000);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmu =3D DIV_ROUND_UP(pmc->c=
-ore_pmu_time * 32768, 1000000);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 off =3D DIV_ROUND_UP(pmc->c=
-ore_off_time * 32768, 1000000);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, ((osc=
- << 8) & 0xff00) | (pmu & 0xff),
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMC_COREPWRGOOD_TIMER);
->>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, off, =
-PMC_COREPWROFF_TIMER);
->>> +=C2=A0=C2=A0=C2=A0 }
->>> =C2=A0 }
->>> =C2=A0 =C2=A0 static void tegra20_pmc_setup_irq_polarity(struct tegra_p=
-mc *pmc,
->>>
->> In the previous version of this patch there were checks for zero values
->> of the timers with intention to skip programming of the timers if value
->> is zero. I'm a bit puzzled by the new version, given that SUSPEND_NONE
->> means that suspending isn't available at all and thus PMC timers won't
->> be utilized, hence it shouldn't matter what values are programmed for
->> the counters, isn't it?
+> Cc: Adam Ford <aford173@gmail.com>
+> Cc: Filip Matijevi=C4=87 <filip.matijevic.pz@gmail.com>
+> Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> Cc: moaz korena <moaz@korena.xyz>
+> Cc: Merlijn Wajer <merlijn@wizzup.org>
+> Cc: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Cc: Philipp Rossak <embed3d@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+
+If my assumptions are correct, then you can mark it as
+
+Tested-by: Adam Ford <aford173@gmail.com> #logicpd-som-lv-35xx-devkit
+
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  arch/arm/boot/dts/omap34xx.dtsi | 26 ++++++++++++++++++++++++++
+>  arch/arm/boot/dts/omap36xx.dtsi | 27 +++++++++++++++++++++++++++
+>  2 files changed, 53 insertions(+)
 >
-> Yes, as I see in documentation we already specify all these timings=20
-> are required properties when suspend mode is used, I updated in this=20
-> version to program core timings only when suspend mode is enabled.
+> diff --git a/arch/arm/boot/dts/omap34xx.dtsi b/arch/arm/boot/dts/omap34xx=
+.dtsi
+> --- a/arch/arm/boot/dts/omap34xx.dtsi
+> +++ b/arch/arm/boot/dts/omap34xx.dtsi
+> @@ -100,6 +100,32 @@
+>                                 interrupts =3D <18>;
+>                         };
+>                 };
+> +
+> +               /*
+> +                * On omap34xx the OCP registers do not seem to be access=
+ible
+> +                * at all unlike on 36xx. Maybe SGX is permanently set to
+> +                * "OCP bypass mode", or maybe there is OCP_SYSCONFIG tha=
+t is
+> +                * write-only at 0x50000e10. We detect SGX based on the S=
+GX
+> +                * revision register instead of the unreadable OCP revisi=
+on
+> +                * register. Also note that on early 34xx es1 revision th=
+ere
+> +                * are also different clocks, but we do not have any dts =
+users
+> +                * for it.
+> +                */
+> +               sgx_module: target-module@50000000 {
+> +                       compatible =3D "ti,sysc-omap2", "ti,sysc";
+> +                       reg =3D <0x50000014 0x4>;
+> +                       reg-names =3D "rev";
+> +                       clocks =3D <&sgx_fck>, <&sgx_ick>;
+> +                       clock-names =3D "fck", "ick";
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <1>;
+> +                       ranges =3D <0 0x50000000 0x4000>;
+> +
+> +                       /*
+> +                        * Closed source PowerVR driver, no cnhild device
+> +                        * binding or driver in mainline
+> +                        */
+> +               };
+>         };
 >
-In other words, core timings are for SC7 entry only. So when SC7/suspend=20
-mode is not used, these timings doesn't matter.
+>         thermal_zones: thermal-zones {
+> diff --git a/arch/arm/boot/dts/omap36xx.dtsi b/arch/arm/boot/dts/omap36xx=
+.dtsi
+> --- a/arch/arm/boot/dts/omap36xx.dtsi
+> +++ b/arch/arm/boot/dts/omap36xx.dtsi
+> @@ -139,6 +139,33 @@
+>                                 interrupts =3D <18>;
+>                         };
+>                 };
+> +
+> +               /*
+> +                * The OCP register layout seems to be a subset of the
+> +                * "ti,sysc-omap4" with just sidle and midle bits.
+> +                */
+> +               sgx_module: target-module@50000000 {
+> +                       compatible =3D "ti,sysc-omap4", "ti,sysc";
+> +                       reg =3D <0x5000fe00 0x4>,
+> +                             <0x5000fe10 0x4>;
+> +                       reg-names =3D "rev", "sysc";
+> +                       ti,sysc-midle =3D <SYSC_IDLE_FORCE>,
+> +                                       <SYSC_IDLE_NO>,
+> +                                       <SYSC_IDLE_SMART>;
+> +                       ti,sysc-sidle =3D <SYSC_IDLE_FORCE>,
+> +                                       <SYSC_IDLE_NO>,
+> +                                       <SYSC_IDLE_SMART>;
+> +                       clocks =3D <&sgx_fck>, <&sgx_ick>;
+> +                       clock-names =3D "fck", "ick";
+> +                       #address-cells =3D <1>;
+> +                       #size-cells =3D <1>;
+> +                       ranges =3D <0 0x50000000 0x2000000>;
+> +
+> +                       /*
+> +                        * Closed source PowerVR driver, no cnhild device
+> +                        * binding or driver in mainline
+> +                        */
+> +               };
+>         };
+>
+>         thermal_zones: thermal-zones {
+> --
+> 2.21.0
