@@ -2,125 +2,181 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0EDC3A5A0
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 18:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09E73C3A5A0
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:07:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 247AD22CF7
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 18:29:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566239386;
-	bh=9KJGx4BFkLMtrPddjIKIua8/xZfK4VKXBzqHl/frVIw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=CNQ8tVwooHCx740ebgLbesZbynhkfOMuyXjOcNK9U/KrBlG05jJVSim/wZktsmOfq
-	 AyNIF1t/BjZtYyRJOT2dmLpquShDM/XJ7DHS/YSs7cmRoj4VbGqki6vPhraa8Flmxk
-	 SmPHnTzf+8nFG9MfE/QWv5B3WeQ2g5uxMpHgbTlM=
+	by mail.kernel.org (Postfix) with ESMTP id CADB822CEB
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:07:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="k3PNkY/z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbfHSS3p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 14:29:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53130 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728067AbfHSS3p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Aug 2019 14:29:45 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4AEAB22CF5;
-        Mon, 19 Aug 2019 18:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566239384;
-        bh=9KJGx4BFkLMtrPddjIKIua8/xZfK4VKXBzqHl/frVIw=;
-        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=vObOdoZKBzOLrl+OrfoUeLAklcAUefsz/QYIMD+BcxP8U/tKL8PrRLfKRvwIke1it
-         bKOK0sgBpBpB/vR1zPMm15U3fXNnhL2qvD4McWE+3CuzpONZyhAlXnemnO1a0sBD3q
-         1+jtq4C2psjvM4Wk9hKu2hyqvShaQ1VYqPg6ciM0=
-Content-Type: text/plain; charset="utf-8"
+        id S1728425AbfHSTHx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 15:07:53 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:9385 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728185AbfHSTHx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 15:07:53 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5d5af3880001>; Mon, 19 Aug 2019 12:07:52 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 19 Aug 2019 12:07:51 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 19 Aug 2019 12:07:51 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 19:07:51 +0000
+Received: from [10.110.103.66] (10.124.1.5) by DRHQMAIL107.nvidia.com
+ (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
+ 2019 19:07:50 +0000
+Subject: Re: [PATCH v9 20/22] soc/tegra: pmc: Configure deep sleep control
+ settings
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        <linus.walleij@linaro.org>, <stefan@agner.ch>,
+        <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
+        <josephl@nvidia.com>, <talho@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
+        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
+ <1565984527-5272-21-git-send-email-skomatineni@nvidia.com>
+ <bf5541d2-1bad-8a8c-fd9d-821b55861136@gmail.com>
+ <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
+Message-ID: <a8d65dbc-6924-c972-06e9-5bc47d66e94f@nvidia.com>
+Date:   Mon, 19 Aug 2019 12:07:50 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
+In-Reply-To: <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB7PR04MB51952DF4E1EE7FF10A947347E2A80@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190815101613.22872-1-wen.he_1@nxp.com> <20190815101613.22872-2-wen.he_1@nxp.com> <20190816174624.115FC205F4@mail.kernel.org> <DB7PR04MB51952DF4E1EE7FF10A947347E2A80@DB7PR04MB5195.eurprd04.prod.outlook.com>
-Subject: RE: [EXT] Re: [v2 2/3] clk: ls1028a: Add clock driver for Display output interface
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Leo Li <leoyang.li@nxp.com>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-devel@linux.nxdi.nxp.com" <linux-devel@linux.nxdi.nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Wen He <wen.he_1@nxp.com>
-User-Agent: alot/0.8.1
-Date:   Mon, 19 Aug 2019 11:29:43 -0700
-Message-Id: <20190819182944.4AEAB22CF5@mail.kernel.org>
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1566241672; bh=lDgc6QK33DRljdsnrvFj9EKf+a9SbqWwFOOiG9EuoAk=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=k3PNkY/zqJCaYV+SmTHtuqLnfIrIUjJap4KJsrwrW+761Wh6674laB+NR6y6whumN
+         IvinVjqCeLAR+wbFOdUKjsYgARJy1eRRpS31N+657GvaYq/UgVtJWfJE6jYC/LEdc9
+         exWUV/5obw5zb8Mb2pE5JHmA2D+sdX7MPNfPOyIFC1hr+9Q1qF3d9d3NXh7OuB9HAS
+         wNegGp+ishXCr+H6dkQivS9IFywlvqvHrc1CDbXVZBxnJ7jV6sJYW5PKkF/c0kzCoO
+         a8XWx4WNFb1ksAaoXq2G0cs59s76KMZdUFx2LA8hRf4ZBtaMaZrnGZWQhnYEHcPoi5
+         SjmXNk3kQ9eqg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wen He (2019-08-19 00:30:49)
-> > Quoting Wen He (2019-08-15 03:16:12)
-> > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig index
-> > > 801fa1cd0321..3c95d8ec31d4 100644
-> > > --- a/drivers/clk/Kconfig
-> > > +++ b/drivers/clk/Kconfig
-> > > @@ -223,6 +223,16 @@ config CLK_QORIQ
-> > >           This adds the clock driver support for Freescale QorIQ plat=
-forms
-> > >           using common clock framework.
-> > >
-> > > +config CLK_LS1028A_PLLDIG
-> > > +        bool "Clock driver for LS1028A Display output"
-> > > +       depends on (ARCH_LAYERSCAPE || COMPILE_TEST) && OF
-> >=20
-> > Where is the OF dependency to build anything? Doesn't this still compile
-> > without CONFIG_OF set?
->=20
-> Yes, current included some APIs of the OF, like of_get_parent_name()
 
-And there isn't a stub API for of_get_parent_name when OF isn't defined?
-
-> > > +
-> > > +static int plldig_clk_probe(struct platform_device *pdev) {
-> > > +       struct clk_plldig *data;
-> > > +       struct resource *mem;
-> > > +       const char *parent_name;
-> > > +       struct clk_init_data init =3D {};
-> > > +       struct device *dev =3D &pdev->dev;
-> > > +       int ret;
-> > > +
-> > > +       data =3D devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> > > +       if (!data)
-> > > +               return -ENOMEM;
-> > > +
-> > > +       mem =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +       data->regs =3D devm_ioremap_resource(dev, mem);
-> > > +       if (IS_ERR(data->regs))
-> > > +               return PTR_ERR(data->regs);
-> > > +
-> > > +       init.name =3D dev->of_node->name;
-> > > +       init.ops =3D &plldig_clk_ops;
-> > > +       parent_name =3D of_clk_get_parent_name(dev->of_node, 0);
-> > > +       init.parent_names =3D &parent_name;
-> >=20
-> > Can you use the new way of specifying clk parents with the parent_data
-> > member of clk_init?
->=20
-> Of course, but I don't understand why need recommend to use this member?
-> Is that the member parent_names will be discard in future?
->=20
-> Here are definition of the clk-provider.h
-> /* Only one of the following three should be assigned */
-> const char              * const *parent_names;
-> const struct clk_parent_data    *parent_data;
-> const struct clk_hw             **parent_hws;
->=20
-> For PLLDIG, it only has one parent.
-
-Yes. Can you use clk_parent_data array and specify a DT index of 0 and
-some name that would go into "clock-names" in the .fw_name member?
-
+On 8/19/19 11:20 AM, Sowjanya Komatineni wrote:
+>
+> On 8/19/19 9:48 AM, Dmitry Osipenko wrote:
+>> 16.08.2019 22:42, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
+>>> timings which are platform specific that should be configured before
+>>> entering into deep sleep.
+>>>
+>>> Below are the timing specific configurations for deep sleep entry and
+>>> wakeup.
+>>> - Core rail power-on stabilization timer
+>>> - OSC clock stabilization timer after SOC rail power is stabilized.
+>>> - Core power off time is the minimum wake delay to keep the system
+>>> =C2=A0=C2=A0 in deep sleep state irrespective of any quick wake event.
+>>>
+>>> These values depends on the discharge time of regulators and turn OFF
+>>> time of the PMIC to allow the complete system to finish entering into
+>>> deep sleep state.
+>>>
+>>> These values vary based on the platform design and are specified
+>>> through the device tree.
+>>>
+>>> This patch has implementation to configure these timings which are must
+>>> to have for proper deep sleep and wakeup operations.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>> =C2=A0 drivers/soc/tegra/pmc.c | 14 +++++++++++++-
+>>> =C2=A0 1 file changed, 13 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>> index 53ed70773872..710969043668 100644
+>>> --- a/drivers/soc/tegra/pmc.c
+>>> +++ b/drivers/soc/tegra/pmc.c
+>>> @@ -88,6 +88,8 @@
+>>> =C2=A0 =C2=A0 #define PMC_CPUPWRGOOD_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 0xc8
+>>> =C2=A0 #define PMC_CPUPWROFF_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 0xcc
+>>> +#define PMC_COREPWRGOOD_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0 0x3c
+>>> +#define PMC_COREPWROFF_TIMER=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+ 0xe0
+>>> =C2=A0 =C2=A0 #define PMC_PWR_DET_VALUE=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 0xe4
+>>> =C2=A0 @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs=20
+>>> tegra20_pmc_regs =3D {
+>>> =C2=A0 =C2=A0 static void tegra20_pmc_init(struct tegra_pmc *pmc)
+>>> =C2=A0 {
+>>> -=C2=A0=C2=A0=C2=A0 u32 value;
+>>> +=C2=A0=C2=A0=C2=A0 u32 value, osc, pmu, off;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Always enable CPU power reques=
+t */
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D tegra_pmc_readl(pmc, PMC_CNTRL=
+);
+>>> @@ -2303,6 +2305,16 @@ static void tegra20_pmc_init(struct tegra_pmc=20
+>>> *pmc)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value =3D tegra_pmc_readl(pmc, PMC_CNTRL=
+);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 value |=3D PMC_CNTRL_SYSCLK_OE;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0 /* program core timings which are applicable only f=
+or suspend=20
+>>> state */
+>>> +=C2=A0=C2=A0=C2=A0 if (pmc->suspend_mode !=3D TEGRA_SUSPEND_NONE) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 osc =3D DIV_ROUND_UP(pmc->c=
+ore_osc_time * 8192, 1000000);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pmu =3D DIV_ROUND_UP(pmc->c=
+ore_pmu_time * 32768, 1000000);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 off =3D DIV_ROUND_UP(pmc->c=
+ore_off_time * 32768, 1000000);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, ((osc=
+ << 8) & 0xff00) | (pmu & 0xff),
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0 PMC_COREPWRGOOD_TIMER);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 tegra_pmc_writel(pmc, off, =
+PMC_COREPWROFF_TIMER);
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 }
+>>> =C2=A0 =C2=A0 static void tegra20_pmc_setup_irq_polarity(struct tegra_p=
+mc *pmc,
+>>>
+>> In the previous version of this patch there were checks for zero values
+>> of the timers with intention to skip programming of the timers if value
+>> is zero. I'm a bit puzzled by the new version, given that SUSPEND_NONE
+>> means that suspending isn't available at all and thus PMC timers won't
+>> be utilized, hence it shouldn't matter what values are programmed for
+>> the counters, isn't it?
+>
+> Yes, as I see in documentation we already specify all these timings=20
+> are required properties when suspend mode is used, I updated in this=20
+> version to program core timings only when suspend mode is enabled.
+>
+In other words, core timings are for SC7 entry only. So when SC7/suspend=20
+mode is not used, these timings doesn't matter.
