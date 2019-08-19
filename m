@@ -2,122 +2,96 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAA91C3A59B
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 05:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6162C3A59B
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 06:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE1A32186A
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 05:29:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=st.com header.i=@st.com header.b="Xd6CD5+Q"
+	by mail.kernel.org (Postfix) with ESMTP id BA78120851
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 06:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566196188;
+	bh=ZWpAO8QSDtl6+Jkb5PfpmEgOiBWyUwySwH5wx/nV7b0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ZLO7KyPy2X3AvKTV64AiYyX8dO1PYwjsuKFAjE/YRLlLEpPdF7KUWo1dTc8CoiyLd
+	 wOkTOTfVuZHD6/YG7CAJM0k8Qr6Ghk+3oN4QThR6QtBLK6N6U8JhqKbyE2vbgAQY4x
+	 EGsTE4mhbMMftCmmZN6+BFRvmy2LldnhD0DUw+Fk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725958AbfHSF3Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 01:29:24 -0400
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53816 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725308AbfHSF3Y (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 01:29:24 -0400
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x7J5LhLT003955;
-        Mon, 19 Aug 2019 07:29:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=st.com; h=from : to : cc : subject
- : date : message-id : references : in-reply-to : content-type :
- content-transfer-encoding : mime-version; s=STMicroelectronics;
- bh=xruT1o96DDimISiLeIQPJA2wBQfu4f213a/txjAPZI0=;
- b=Xd6CD5+Q7PwNJitsgkiCBMkU6ZaqwwJaGv4pheNCI7s1kCFcVT+7Ql7fnHjo6kLQQLdZ
- IBxAaRrPmmQ/MFTwG/fGX4esWuq26Ji0k+gBYQrQOej13Cg2G4dpKcVJgmu6xYk5Znpv
- VB+ygllJcihLrDGZYuQXxZz4U57u7UUUWRyUhsbuVz38KFtToDfM5JTLaixeZTXagZxI
- HufLdla7OLysLT5lHPtCuyo5FTNqAiXSdMk05M+n7AFIHspXOyCIZuqGOBhmFQNO3XN2
- dih5YgaHbQw3FVt6Zz+xPY20uv+VQyxEr1eZno+V2ZHhpx7olOm7je+GzxE7Jk89vlLA wA== 
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2ue8fggxsy-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 19 Aug 2019 07:29:08 +0200
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id DEE1538;
-        Mon, 19 Aug 2019 05:29:07 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag4node1.st.com [10.75.127.10])
-        by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id A8A8521E797;
-        Mon, 19 Aug 2019 07:29:07 +0200 (CEST)
-Received: from SFHDAG4NODE2.st.com (10.75.127.11) by SFHDAG4NODE1.st.com
- (10.75.127.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 07:29:07 +0200
-Received: from SFHDAG4NODE2.st.com ([fe80::4457:45af:aece:883f]) by
- SFHDAG4NODE2.st.com ([fe80::4457:45af:aece:883f%20]) with mapi id
- 15.00.1473.003; Mon, 19 Aug 2019 07:29:07 +0200
-From:   Gabriel FERNANDEZ <gabriel.fernandez@st.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        "info@metux.net" <info@metux.net>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh@kernel.org" <robh@kernel.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH -next] clk: st: clkgen-fsyn: remove unused variable
- 'st_quadfs_fs660c32_ops'
-Thread-Topic: [PATCH -next] clk: st: clkgen-fsyn: remove unused variable
- 'st_quadfs_fs660c32_ops'
-Thread-Index: AQHVVFk4wzhRgyRVpkig2XNbQPhwiKcB9RSX
-Date:   Mon, 19 Aug 2019 05:29:07 +0000
-Message-ID: <1566192547262.14182@st.com>
-References: <20190816135341.52248-1-yuehaibing@huawei.com>,<20190816173655.17BB2205F4@mail.kernel.org>
-In-Reply-To: <20190816173655.17BB2205F4@mail.kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.45]
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726261AbfHSG3o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 02:29:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725872AbfHSG3o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Aug 2019 02:29:44 -0400
+Received: from localhost (unknown [122.182.221.154])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1351520851;
+        Mon, 19 Aug 2019 06:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566196183;
+        bh=ZWpAO8QSDtl6+Jkb5PfpmEgOiBWyUwySwH5wx/nV7b0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Z2eZOcRAIUnvXsUrfpOrZPFzDOBpiYH569dKoyLea3syk6QKVRNI3PMD1NhDjhBFt
+         oBVmW3MPXJO0dCKVD1ZIJljxsWF060pNlQXvw9hHm0YY9pxOB5QuEfCssgG0cYw4K+
+         N9PUF9Jv/oMCDDF6AjTKuH1N0n6whphyHZeRFNzo=
+Date:   Mon, 19 Aug 2019 11:58:21 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] clk: qcom: clk-rpmh: Add support for SM8150
+Message-ID: <20190819062821.GF12733@vkoul-mobl.Dlink>
+References: <20190814122958.4981-1-vkoul@kernel.org>
+ <20190814122958.4981-2-vkoul@kernel.org>
+ <20190814171946.E9E8D20665@mail.kernel.org>
+ <20190816042440.GY12733@vkoul-mobl.Dlink>
+ <20190816165812.BC64B2077C@mail.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-08-19_02:,,
- signatures=0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190816165812.BC64B2077C@mail.kernel.org>
+User-Agent: Mutt/1.11.3 (2019-02-01)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Acked-by: Gabriel Fernandez <gabriel.fernandez@st.com>=0A=
-________________________________________=0A=
-From: Stephen Boyd <sboyd@kernel.org>=0A=
-Sent: Friday, August 16, 2019 7:36 PM=0A=
-To: YueHaibing; info@metux.net; mturquette@baylibre.com; robh@kernel.org; G=
-abriel FERNANDEZ=0A=
-Cc: linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; YueHaibing=0A=
-Subject: Re: [PATCH -next] clk: st: clkgen-fsyn: remove unused variable 'st=
-_quadfs_fs660c32_ops'=0A=
-=0A=
-Quoting YueHaibing (2019-08-16 06:53:41)=0A=
-> drivers/clk/st/clkgen-fsyn.c:70:29: warning:=0A=
->  st_quadfs_fs660c32_ops defined but not used [-Wunused-const-variable=3D]=
-=0A=
->=0A=
-> It is never used, so can be removed.=0A=
->=0A=
-> Reported-by: Hulk Robot <hulkci@huawei.com>=0A=
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>=0A=
-> ---=0A=
-=0A=
-Adding Gabriel, please ack/review.=0A=
-=0A=
->  drivers/clk/st/clkgen-fsyn.c | 1 -=0A=
->  1 file changed, 1 deletion(-)=0A=
->=0A=
-> diff --git a/drivers/clk/st/clkgen-fsyn.c b/drivers/clk/st/clkgen-fsyn.c=
-=0A=
-> index ca1ccdb..a156bd0 100644=0A=
-> --- a/drivers/clk/st/clkgen-fsyn.c=0A=
-> +++ b/drivers/clk/st/clkgen-fsyn.c=0A=
-> @@ -67,7 +67,6 @@ struct clkgen_quadfs_data {=0A=
->  };=0A=
->=0A=
->  static const struct clk_ops st_quadfs_pll_c32_ops;=0A=
-> -static const struct clk_ops st_quadfs_fs660c32_ops;=0A=
->=0A=
->  static int clk_fs660c32_dig_get_params(unsigned long input,=0A=
->                 unsigned long output, struct stm_fs *fs);=0A=
+On 16-08-19, 09:58, Stephen Boyd wrote:
+> Quoting Vinod Koul (2019-08-15 21:24:40)
+> > On 14-08-19, 10:19, Stephen Boyd wrote:
+> > > Quoting Vinod Koul (2019-08-14 05:29:58)
+> > > > Add support for rpmh clocks found in SM8150
+> > > > 
+> > > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > > ---
+> > > 
+> > > Patch looks OK, but can you convert this driver to use the new parent
+> > > style and then update the binding to handle it? We can fix the other
+> > > platforms and dts files that use this driver in parallel, but sm8150
+> > > will be forward looking.
+> > 
+> > Yes but that would also impact sdm845 as it uses this driver, so I
+> > wanted to get this one done so that we have support for rpm clock and
+> > then do the conversion.
+> > 
+> > Would that be okay with you to get this in and then I convert this?
+> > 
+> 
+> How does it impact sdm845? The new way of specifying parents supports
+> fallback to legacy string matching.
+
+Yes it does, I have managed to convert this as well as sdm845 and test.
+I will send updates shortly
+
+Thanks
+-- 
+~Vinod
