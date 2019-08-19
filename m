@@ -4,408 +4,281 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D981C3A5A0
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:14:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C19C3A5A0
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2869A22CEB
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:14:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F3DE2087E
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566242086;
-	bh=c946rwdibNMvV1nlfQiCtmpsSWPqptsPLmAHgN1mY0M=;
+	s=default; t=1566242353;
+	bh=m5k/dKgxoNFL9CE5OJQ0J1mAEZhAcE7RlJlTNYGMXKg=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=AMSSblfJqF8TrksrJ22tHXAZjv0Uq8zSyeIBDcV+SHWCpwtkuQhtdLoIh5yJL4tK9
-	 3e0wnvlJrRFXO36hi6hsYu5BaaKZqMa/iRD1pOeCs3Zb63mQvujbJ5DU9+yj88Juhg
-	 cXT2z7uFUosvGxy/v9FyVD4vv+o4M6tflKwTTY/E=
+	b=fmiJ6MDqXB7/XUQOWosjCCqmC3LcMbdsj3C/4is5cpS+IVW5Vd2pHxFX2u4ekkgUb
+	 otrk1kAqHl5Hm3NDD8USV0rbC2qAqWoxCe1eFtYjW0FYrUHyH3hRiJxy1Gx4dUG2+b
+	 pWrZgKf/C4JqWgmMdIQC6bS4+vc2Zg5ZBjiO2S8Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728341AbfHSTOm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 15:14:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37912 "EHLO mail.kernel.org"
+        id S1728243AbfHSTTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 15:19:13 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39058 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727957AbfHSTOm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:14:42 -0400
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        id S1728218AbfHSTTN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Aug 2019 15:19:13 -0400
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4E1422CE8;
-        Mon, 19 Aug 2019 19:14:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 671D222CEC;
+        Mon, 19 Aug 2019 19:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566242080;
-        bh=c946rwdibNMvV1nlfQiCtmpsSWPqptsPLmAHgN1mY0M=;
+        s=default; t=1566242351;
+        bh=m5k/dKgxoNFL9CE5OJQ0J1mAEZhAcE7RlJlTNYGMXKg=;
         h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=IMr3v9WAfSS8YooNbNjhcpGv5yEfTkytwpWbdxIhrQNKkS0klf5eYhqmSve2urtrp
-         00yCTwef06htHvdHCgxUZJ9YHkHXkefrXY/KuIxI8J4DJw50zVTx0YASIncLOYxe06
-         GkSXBic38ntVNVfB0coXqg2r+VlFXR/dB54mo2xI=
-Received: by mail-qt1-f174.google.com with SMTP id j15so3121740qtl.13;
-        Mon, 19 Aug 2019 12:14:39 -0700 (PDT)
-X-Gm-Message-State: APjAAAWQwiqzKhme6j8muCYQ//o9NUfkLJ0GtVv1Ghg6y01BvO+MjRC+
-        5R6UPPL5tENhlgIweHHPr4+Qg0Myw+OA2xFUIQ==
-X-Google-Smtp-Source: APXvYqxZz2tEP3tEss0yOMU72E5AFQ1yR23bg/LCKGU8gsaOyIS7p4q4EsVummyzbRP9RZf0M/hPFIS1CYXbg9Os1hM=
-X-Received: by 2002:a05:6214:10e1:: with SMTP id q1mr4927369qvt.148.1566242078962;
- Mon, 19 Aug 2019 12:14:38 -0700 (PDT)
+        b=adKdACk3DG6n7olLKxlOA2FQFwp1c6on+rtkK7ffmaevSA4JaVJHFULggsUQlV2FY
+         AF/paJwiGMo9PSin48AYUyKQH6SzOxMDUU/o8NKamQkLlFN/jkU9D1hdNPij4CA44+
+         22GZw1P+uBi+1Z01/+XByyeX/Tw2aBUDFp0bCWMM=
+Received: by mail-qk1-f175.google.com with SMTP id s14so2401357qkm.4;
+        Mon, 19 Aug 2019 12:19:11 -0700 (PDT)
+X-Gm-Message-State: APjAAAV7zgdeb+coYwqE9Wms6HRK3Ex/ALKy0HZrYmjvakR6D/7sOd2U
+        0g49/xbIU+YX7svvRrfLDfwV4TnKC/eGN0lJPA==
+X-Google-Smtp-Source: APXvYqwywCKFrxUGXe1dzDKOKdn7UDjBT7BeQlquV4HYXItFVBdeO9hnhuqf/A3ZQAmkFttswCEwRJJ+KNdEqPku1R0=
+X-Received: by 2002:a37:d8f:: with SMTP id 137mr21547412qkn.254.1566242350541;
+ Mon, 19 Aug 2019 12:19:10 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190819163748.18318-1-tdas@codeaurora.org> <20190819163748.18318-3-tdas@codeaurora.org>
-In-Reply-To: <20190819163748.18318-3-tdas@codeaurora.org>
+References: <20190819130143.18778-1-manivannan.sadhasivam@linaro.org> <20190819130143.18778-5-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190819130143.18778-5-manivannan.sadhasivam@linaro.org>
 From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 19 Aug 2019 14:14:27 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+inANgxf2vjKtOQzydFdhjBwgArfn=L3e_nGUwRPyv_g@mail.gmail.com>
-Message-ID: <CAL_Jsq+inANgxf2vjKtOQzydFdhjBwgArfn=L3e_nGUwRPyv_g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] dt-bindings: clk: qcom: Add YAML schemas for the
- GCC clock bindings
-To:     Taniya Das <tdas@codeaurora.org>
+Date:   Mon, 19 Aug 2019 14:18:59 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqL7iXWU9YS-_8HkEZRgqPE8WkAm85Sai=Kx-wV8hD-3HA@mail.gmail.com>
+Message-ID: <CAL_JsqL7iXWU9YS-_8HkEZRgqPE8WkAm85Sai=Kx-wV8hD-3HA@mail.gmail.com>
+Subject: Re: [PATCH v3 4/8] dt-bindings: clock: Add devicetree binding for
+ BM1880 SoC
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
+        devicetree@vger.kernel.org, haitao.suo@bitmain.com,
+        darren.tsao@bitmain.com, fisher.cheng@bitmain.com,
+        alec.lin@bitmain.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 11:38 AM Taniya Das <tdas@codeaurora.org> wrote:
+On Mon, Aug 19, 2019 at 8:02 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
 >
-> The GCC clock provider have a bunch of generic properties that
-> are needed in a device tree. Add a YAML schemas for those. Also update
-> the compatible for SC7180 along with example for clocks & clock-names.
+> Add YAML devicetree binding for Bitmain BM1880 SoC.
 >
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > ---
->  .../devicetree/bindings/clock/qcom,gcc.yaml   | 141 ++++++++++++++++
->  include/dt-bindings/clock/qcom,gcc-sc7180.h   | 155 ++++++++++++++++++
->  2 files changed, 296 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc.yaml
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sc7180.h
-
-You need to remove the old doc.
-
+>  .../bindings/clock/bitmain,bm1880-clk.yaml    | 83 +++++++++++++++++++
+>  include/dt-bindings/clock/bm1880-clock.h      | 82 ++++++++++++++++++
+>  2 files changed, 165 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/bm1880-clock.h
 >
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
 > new file mode 100644
-> index 000000000000..17c563a036c7
+> index 000000000000..a457f996287d
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> @@ -0,0 +1,141 @@
+> +++ b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
+> @@ -0,0 +1,83 @@
 > +# SPDX-License-Identifier: GPL-2.0
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+> +$id: http://devicetree.org/schemas/bindings/clock/bitmain,bm1880-clk.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Qualcomm Global Clock & Reset Controller Binding
+> +title: Bitmain BM1880 Clock Controller
 > +
 > +maintainers:
-> +  - Stephen Boyd <sboyd@kernel.org>
+> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +description: |
+> +  The Bitmain BM1880 clock controller generates and supplies clock to
+> +  various peripherals within the SoC.
+> +
+> +  This binding uses common clock bindings
+> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 > +
 > +properties:
-> +  "#clock-cells":
-> +    const: 1
-> +
-> +  "#reset-cells":
-> +    const: 1
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - bitmain,bm1880-clk
+
+Just 'const: bitmain,bm1880-clk' is enough.
+
 > +
 > +  reg:
-> +    maxItems: 1
-> +    description: |
-> +      shall contain the base register location and length
+> +    minItems: 2
+> +    maxItems: 2
 
-Don't need a description if there's only 1 entry.
+These 2 are implied by the items list and can be dropped.
 
+> +    items:
+> +      - description: pll registers
+> +      - description: system registers
 > +
-> +  compatible :
-> +     enum:
-> +       - qcom,gcc-apq8064
-> +       - qcom,gcc-apq8084
-> +       - qcom,gcc-ipq8064
-> +       - qcom,gcc-ipq4019
-> +       - qcom,gcc-ipq8074
-> +       - qcom,gcc-msm8660
-> +       - qcom,gcc-msm8916
-> +       - qcom,gcc-msm8960
-> +       - qcom,gcc-msm8974
-> +       - qcom,gcc-msm8974pro
-> +       - qcom,gcc-msm8974pro-ac
-> +       - qcom,gcc-msm8994
-> +       - qcom,gcc-msm8996
-> +       - qcom,gcc-msm8998
-> +       - qcom,gcc-mdm9615
-> +       - qcom,gcc-qcs404
-> +       - qcom,gcc-sdm630
-> +       - qcom,gcc-sdm660
-> +       - qcom,gcc-sdm845
-> +       - qcom,gcc-sc7180
+> +  reg-names:
+> +    items:
+> +      - const: pll
+> +      - const: sys
 > +
 > +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description: Board XO source
-> +      - description: Board active XO source
+> +    maxItems: 1
+> +    description: Phandle of the input reference clock
+
+Don't need a description if there's only one entry.
+
 > +
 > +  clock-names:
-> +    minItems: 1
-> +    maxItems: 2
+> +    maxItems: 1
 > +    items:
-> +      - const: bi_tcxo
-> +      - const: bi_tcxo_ao
+> +      - const: osc
+
+Just:
+
+clock-names:
+  const: osc
+
 > +
-> +  nvmem-cells:
-> +    $ref: /schemas/types.yaml#/definitions/phandle-array
-
-Standard property, you don't need the type here. What's needed is the size.
-
-> +    description:
-> +      Qualcomm TSENS (thermal sensor device) on some devices can
-> +      be part of GCC and hence the TSENS properties can also be part
-> +      of the GCC/clock-controller node.
-> +      For more details on the TSENS properties please refer
-> +      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
-> +
-> +  nvmem-cell-names:
-> +    $ref: /schemas/types.yaml#/definitions/string-array
-
-Don't need the type (and this would have to be under an 'allOf' to
-actually work).
-
-> +    description:
-> +      Names for each nvmem-cells specified.
-> +    items:
-> +      - const: calib
-> +      - const: calib_backup
-> +
-> +  "#thermal-sensor-cells":
+> +  '#clock-cells':
 > +    const: 1
-> +
-> +  "#power-domain-cells":
-> +    const: 1
-> +
-> +  protected-clocks:
-> +    description:
-> +       Protected clock specifier list as per common clock binding
 > +
 > +required:
-> +  - "#clock-cells"
-> +  - "#reset-cells"
 > +  - compatible
 > +  - reg
+> +  - reg-names
 > +  - clocks
 > +  - clock-names
+> +  - '#clock-cells'
 > +
 > +examples:
+> +  # Clock controller node:
 > +  - |
-> +    clock-controller@900000 {
-> +      compatible = "qcom,gcc-msm8960";
-> +      reg = <0x900000 0x4000>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
+> +    clk: clock-controller@e8 {
+> +        compatible = "bitmain,bm1880-clk";
+> +        reg = <0xe8 0x0c>, <0x800 0xb0>;
+> +        reg-names = "pll", "sys";
+> +        clocks = <&osc>;
+> +        clock-names = "osc";
+> +        #clock-cells = <1>;
 > +    };
 > +
-> +
+> +  # Example UART controller node that consumes clock generated by the clock controller:
 > +  - |
-> +    // Example of GCC with TSENS properties:
-> +    clock-controller@900000 {
-> +      compatible = "qcom,gcc-apq8064";
-> +      reg = <0x00900000 0x4000>;
-> +      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
-> +      nvmem-cell-names = "calib", "calib_backup";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #thermal-sensor-cells = <1>;
+> +    uart0: serial@58018000 {
+> +         compatible = "snps,dw-apb-uart";
+> +         reg = <0x0 0x58018000 0x0 0x2000>;
+> +         clocks = <&clk BM1880_CLK_UART_500M>;
+> +                  <&clk BM1880_CLK_APB_UART>;
+
+This won't build without includes. Please run 'make dt_binding_check'
+before you submit bindings.
+
+> +         clock-names = "baudclk", "apb_pclk";
+> +         interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
+> +         reg-shift = <2>;
+> +         reg-io-width = <4>;
 > +    };
 > +
-> +  - |
-> +    //Example of GCC with protected-clocks properties:
-> +    clock-controller@100000 {
-> +      compatible = "qcom,gcc-sdm845";
-> +      reg = <0x100000 0x1f0000>;
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +      protected-clocks = <187>, <188>, <189>, <190>, <191>;
-> +    };
-> +
-> +  - |
-> +    //Example of GCC with clock nodes properties:
-> +    clock-controller@100000 {
-> +      compatible = "qcom,gcc-sc7180";
-> +      reg = <0x100000 0x1f0000>;
-> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
-> +      clock-names = "bi_tcxo", "bi_tcxo_ao";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +    };
 > +...
-> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> diff --git a/include/dt-bindings/clock/bm1880-clock.h b/include/dt-bindings/clock/bm1880-clock.h
 > new file mode 100644
-> index 000000000000..d76b061f6a4e
+> index 000000000000..895646d66b07
 > --- /dev/null
-> +++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
-> @@ -0,0 +1,155 @@
+> +++ b/include/dt-bindings/clock/bm1880-clock.h
+> @@ -0,0 +1,82 @@
 > +/* SPDX-License-Identifier: GPL-2.0 */
 > +/*
-> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> + * Device Tree binding constants for Bitmain BM1880 SoC
+> + *
+> + * Copyright (c) 2019 Linaro Ltd.
 > + */
 > +
-> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
-> +#define _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+> +#ifndef __DT_BINDINGS_CLOCK_BM1880_H
+> +#define __DT_BINDINGS_CLOCK_BM1880_H
 > +
-> +/* GCC clocks */
-> +#define GCC_GPLL0_MAIN_DIV_CDIV                                        0
-> +#define GPLL0                                                  1
-> +#define GPLL0_OUT_EVEN                                         2
-> +#define GPLL1                                                  3
-> +#define GPLL4                                                  4
-> +#define GPLL6                                                  5
-> +#define GPLL7                                                  6
-> +#define GCC_AGGRE_UFS_PHY_AXI_CLK                              7
-> +#define GCC_AGGRE_USB3_PRIM_AXI_CLK                            8
-> +#define GCC_BOOT_ROM_AHB_CLK                                   9
-> +#define GCC_CAMERA_AHB_CLK                                     10
-> +#define GCC_CAMERA_HF_AXI_CLK                                  11
-> +#define GCC_CAMERA_THROTTLE_HF_AXI_CLK                         12
-> +#define GCC_CAMERA_XO_CLK                                      13
-> +#define GCC_CE1_AHB_CLK                                                14
-> +#define GCC_CE1_AXI_CLK                                                15
-> +#define GCC_CE1_CLK                                            16
-> +#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK                          17
-> +#define GCC_CPUSS_AHB_CLK                                      18
-> +#define GCC_CPUSS_AHB_CLK_SRC                                  19
-> +#define GCC_CPUSS_GNOC_CLK                                     20
-> +#define GCC_CPUSS_RBCPR_CLK                                    21
-> +#define GCC_DDRSS_GPU_AXI_CLK                                  22
-> +#define GCC_DISP_AHB_CLK                                       23
-> +#define GCC_DISP_GPLL0_CLK_SRC                                 24
-> +#define GCC_DISP_GPLL0_DIV_CLK_SRC                             25
-> +#define GCC_DISP_HF_AXI_CLK                                    26
-> +#define GCC_DISP_THROTTLE_HF_AXI_CLK                           27
-> +#define GCC_DISP_XO_CLK                                                28
-> +#define GCC_GP1_CLK                                            29
-> +#define GCC_GP1_CLK_SRC                                                30
-> +#define GCC_GP2_CLK                                            31
-> +#define GCC_GP2_CLK_SRC                                                32
-> +#define GCC_GP3_CLK                                            33
-> +#define GCC_GP3_CLK_SRC                                                34
-> +#define GCC_GPU_CFG_AHB_CLK                                    35
-> +#define GCC_GPU_GPLL0_CLK_SRC                                  36
-> +#define GCC_GPU_GPLL0_DIV_CLK_SRC                              37
-> +#define GCC_GPU_MEMNOC_GFX_CLK                                 38
-> +#define GCC_GPU_SNOC_DVM_GFX_CLK                               39
-> +#define GCC_NPU_AXI_CLK                                                40
-> +#define GCC_NPU_BWMON_AXI_CLK                                  41
-> +#define GCC_NPU_BWMON_DMA_CFG_AHB_CLK                          42
-> +#define GCC_NPU_BWMON_DSP_CFG_AHB_CLK                          43
-> +#define GCC_NPU_CFG_AHB_CLK                                    44
-> +#define GCC_NPU_DMA_CLK                                                45
-> +#define GCC_NPU_GPLL0_CLK_SRC                                  46
-> +#define GCC_NPU_GPLL0_DIV_CLK_SRC                              47
-> +#define GCC_PDM2_CLK                                           48
-> +#define GCC_PDM2_CLK_SRC                                       49
-> +#define GCC_PDM_AHB_CLK                                                50
-> +#define GCC_PDM_XO4_CLK                                                51
-> +#define GCC_PRNG_AHB_CLK                                       52
-> +#define GCC_QSPI_CNOC_PERIPH_AHB_CLK                           53
-> +#define GCC_QSPI_CORE_CLK                                      54
-> +#define GCC_QSPI_CORE_CLK_SRC                                  55
-> +#define GCC_QUPV3_WRAP0_CORE_2X_CLK                            56
-> +#define GCC_QUPV3_WRAP0_CORE_CLK                               57
-> +#define GCC_QUPV3_WRAP0_S0_CLK                                 58
-> +#define GCC_QUPV3_WRAP0_S0_CLK_SRC                             59
-> +#define GCC_QUPV3_WRAP0_S1_CLK                                 60
-> +#define GCC_QUPV3_WRAP0_S1_CLK_SRC                             61
-> +#define GCC_QUPV3_WRAP0_S2_CLK                                 62
-> +#define GCC_QUPV3_WRAP0_S2_CLK_SRC                             63
-> +#define GCC_QUPV3_WRAP0_S3_CLK                                 64
-> +#define GCC_QUPV3_WRAP0_S3_CLK_SRC                             65
-> +#define GCC_QUPV3_WRAP0_S4_CLK                                 66
-> +#define GCC_QUPV3_WRAP0_S4_CLK_SRC                             67
-> +#define GCC_QUPV3_WRAP0_S5_CLK                                 68
-> +#define GCC_QUPV3_WRAP0_S5_CLK_SRC                             69
-> +#define GCC_QUPV3_WRAP1_CORE_2X_CLK                            70
-> +#define GCC_QUPV3_WRAP1_CORE_CLK                               71
-> +#define GCC_QUPV3_WRAP1_S0_CLK                                 72
-> +#define GCC_QUPV3_WRAP1_S0_CLK_SRC                             73
-> +#define GCC_QUPV3_WRAP1_S1_CLK                                 74
-> +#define GCC_QUPV3_WRAP1_S1_CLK_SRC                             75
-> +#define GCC_QUPV3_WRAP1_S2_CLK                                 76
-> +#define GCC_QUPV3_WRAP1_S2_CLK_SRC                             77
-> +#define GCC_QUPV3_WRAP1_S3_CLK                                 78
-> +#define GCC_QUPV3_WRAP1_S3_CLK_SRC                             79
-> +#define GCC_QUPV3_WRAP1_S4_CLK                                 80
-> +#define GCC_QUPV3_WRAP1_S4_CLK_SRC                             81
-> +#define GCC_QUPV3_WRAP1_S5_CLK                                 82
-> +#define GCC_QUPV3_WRAP1_S5_CLK_SRC                             83
-> +#define GCC_QUPV3_WRAP_0_M_AHB_CLK                             84
-> +#define GCC_QUPV3_WRAP_0_S_AHB_CLK                             85
-> +#define GCC_QUPV3_WRAP_1_M_AHB_CLK                             86
-> +#define GCC_QUPV3_WRAP_1_S_AHB_CLK                             87
-> +#define GCC_SDCC1_AHB_CLK                                      88
-> +#define GCC_SDCC1_APPS_CLK                                     89
-> +#define GCC_SDCC1_APPS_CLK_SRC                                 90
-> +#define GCC_SDCC1_ICE_CORE_CLK                                 91
-> +#define GCC_SDCC1_ICE_CORE_CLK_SRC                             92
-> +#define GCC_SDCC2_AHB_CLK                                      93
-> +#define GCC_SDCC2_APPS_CLK                                     94
-> +#define GCC_SDCC2_APPS_CLK_SRC                                 95
-> +#define GCC_SYS_NOC_CPUSS_AHB_CLK                              96
-> +#define GCC_UFS_MEM_CLKREF_CLK                                 97
-> +#define GCC_UFS_PHY_AHB_CLK                                    98
-> +#define GCC_UFS_PHY_AXI_CLK                                    99
-> +#define GCC_UFS_PHY_AXI_CLK_SRC                                        100
-> +#define GCC_UFS_PHY_ICE_CORE_CLK                               101
-> +#define GCC_UFS_PHY_ICE_CORE_CLK_SRC                           102
-> +#define GCC_UFS_PHY_PHY_AUX_CLK                                        103
-> +#define GCC_UFS_PHY_PHY_AUX_CLK_SRC                            104
-> +#define GCC_UFS_PHY_RX_SYMBOL_0_CLK                            105
-> +#define GCC_UFS_PHY_TX_SYMBOL_0_CLK                            106
-> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK                            107
-> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC                                108
-> +#define GCC_USB30_PRIM_MASTER_CLK                              109
-> +#define GCC_USB30_PRIM_MASTER_CLK_SRC                          110
-> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK                           111
-> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC                       112
-> +#define GCC_USB30_PRIM_SLEEP_CLK                               113
-> +#define GCC_USB3_PRIM_CLKREF_CLK                               114
-> +#define GCC_USB3_PRIM_PHY_AUX_CLK                              115
-> +#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC                          116
-> +#define GCC_USB3_PRIM_PHY_COM_AUX_CLK                          117
-> +#define GCC_USB3_PRIM_PHY_PIPE_CLK                             118
-> +#define GCC_USB_PHY_CFG_AHB2PHY_CLK                            119
-> +#define GCC_VIDEO_AHB_CLK                                      120
-> +#define GCC_VIDEO_AXI_CLK                                      121
-> +#define GCC_VIDEO_GPLL0_DIV_CLK_SRC                            122
-> +#define GCC_VIDEO_THROTTLE_AXI_CLK                             123
-> +#define GCC_VIDEO_XO_CLK                                       124
+> +#define BM1880_CLK_OSC                 0
+> +#define BM1880_CLK_MPLL                        1
+> +#define BM1880_CLK_SPLL                        2
+> +#define BM1880_CLK_FPLL                        3
+> +#define BM1880_CLK_DDRPLL              4
+> +#define BM1880_CLK_A53                 5
+> +#define BM1880_CLK_50M_A53             6
+> +#define BM1880_CLK_AHB_ROM             7
+> +#define BM1880_CLK_AXI_SRAM            8
+> +#define BM1880_CLK_DDR_AXI             9
+> +#define BM1880_CLK_EFUSE               10
+> +#define BM1880_CLK_APB_EFUSE           11
+> +#define BM1880_CLK_AXI5_EMMC           12
+> +#define BM1880_CLK_EMMC                        13
+> +#define BM1880_CLK_100K_EMMC           14
+> +#define BM1880_CLK_AXI5_SD             15
+> +#define BM1880_CLK_SD                  16
+> +#define BM1880_CLK_100K_SD             17
+> +#define BM1880_CLK_500M_ETH0           18
+> +#define BM1880_CLK_AXI4_ETH0           19
+> +#define BM1880_CLK_500M_ETH1           20
+> +#define BM1880_CLK_AXI4_ETH1           21
+> +#define BM1880_CLK_AXI1_GDMA           22
+> +#define BM1880_CLK_APB_GPIO            23
+> +#define BM1880_CLK_APB_GPIO_INTR       24
+> +#define BM1880_CLK_GPIO_DB             25
+> +#define BM1880_CLK_AXI1_MINER          26
+> +#define BM1880_CLK_AHB_SF              27
+> +#define BM1880_CLK_SDMA_AXI            28
+> +#define BM1880_CLK_SDMA_AUD            29
+> +#define BM1880_CLK_APB_I2C             30
+> +#define BM1880_CLK_APB_WDT             31
+> +#define BM1880_CLK_APB_JPEG            32
+> +#define BM1880_CLK_JPEG_AXI            33
+> +#define BM1880_CLK_AXI5_NF             34
+> +#define BM1880_CLK_APB_NF              35
+> +#define BM1880_CLK_NF                  36
+> +#define BM1880_CLK_APB_PWM             37
+> +#define BM1880_CLK_DIV_0_RV            38
+> +#define BM1880_CLK_DIV_1_RV            39
+> +#define BM1880_CLK_MUX_RV              40
+> +#define BM1880_CLK_RV                  41
+> +#define BM1880_CLK_APB_SPI             42
+> +#define BM1880_CLK_TPU_AXI             43
+> +#define BM1880_CLK_DIV_UART_500M       44
+> +#define BM1880_CLK_UART_500M           45
+> +#define BM1880_CLK_APB_UART            46
+> +#define BM1880_CLK_APB_I2S             47
+> +#define BM1880_CLK_AXI4_USB            48
+> +#define BM1880_CLK_APB_USB             49
+> +#define BM1880_CLK_125M_USB            50
+> +#define BM1880_CLK_33K_USB             51
+> +#define BM1880_CLK_DIV_12M_USB         52
+> +#define BM1880_CLK_12M_USB             53
+> +#define BM1880_CLK_APB_VIDEO           54
+> +#define BM1880_CLK_VIDEO_AXI           55
+> +#define BM1880_CLK_VPP_AXI             56
+> +#define BM1880_CLK_APB_VPP             57
+> +#define BM1880_CLK_DIV_0_AXI1          58
+> +#define BM1880_CLK_DIV_1_AXI1          59
+> +#define BM1880_CLK_AXI1                        60
+> +#define BM1880_CLK_AXI2                        61
+> +#define BM1880_CLK_AXI3                        62
+> +#define BM1880_CLK_AXI4                        63
+> +#define BM1880_CLK_AXI5                        64
+> +#define BM1880_CLK_DIV_0_AXI6          65
+> +#define BM1880_CLK_DIV_1_AXI6          66
+> +#define BM1880_CLK_MUX_AXI6            67
+> +#define BM1880_CLK_AXI6                        68
+> +#define BM1880_NR_CLKS                 69
 > +
-> +/* GCC resets */
-> +#define GCC_QUSB2PHY_PRIM_BCR                                  0
-> +#define GCC_QUSB2PHY_SEC_BCR                                   1
-> +#define GCC_UFS_PHY_BCR                                                2
-> +#define GCC_USB30_PRIM_BCR                                     3
-> +#define GCC_USB3_DP_PHY_PRIM_BCR                               4
-> +#define GCC_USB3_DP_PHY_SEC_BCR                                        5
-> +#define GCC_USB3_PHY_PRIM_BCR                                  6
-> +#define GCC_USB3_PHY_SEC_BCR                                   7
-> +#define GCC_USB3PHY_PHY_PRIM_BCR                               8
-> +#define GCC_USB3PHY_PHY_SEC_BCR                                        9
-> +#define GCC_USB_PHY_CFG_AHB2PHY_BCR                            10
-> +
-> +/* GCC GDSCRs */
-> +#define UFS_PHY_GDSC                                           0
-> +#define USB30_PRIM_GDSC                                                1
-> +#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC                      2
-> +#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC                       3
-> +
-> +#endif
+> +#endif /* __DT_BINDINGS_CLOCK_BM1880_H */
 > --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 2.17.1
 >
