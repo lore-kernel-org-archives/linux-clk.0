@@ -2,283 +2,179 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4C19C3A5A0
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:19:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9A8DC3A5A3
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:34:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F3DE2087E
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:19:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566242353;
-	bh=m5k/dKgxoNFL9CE5OJQ0J1mAEZhAcE7RlJlTNYGMXKg=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=fmiJ6MDqXB7/XUQOWosjCCqmC3LcMbdsj3C/4is5cpS+IVW5Vd2pHxFX2u4ekkgUb
-	 otrk1kAqHl5Hm3NDD8USV0rbC2qAqWoxCe1eFtYjW0FYrUHyH3hRiJxy1Gx4dUG2+b
-	 pWrZgKf/C4JqWgmMdIQC6bS4+vc2Zg5ZBjiO2S8Q=
+	by mail.kernel.org (Postfix) with ESMTP id 81ADF22CF4
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 19:34:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G/Xz5WNg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728243AbfHSTTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 15:19:13 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39058 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728218AbfHSTTN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 19 Aug 2019 15:19:13 -0400
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 671D222CEC;
-        Mon, 19 Aug 2019 19:19:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566242351;
-        bh=m5k/dKgxoNFL9CE5OJQ0J1mAEZhAcE7RlJlTNYGMXKg=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=adKdACk3DG6n7olLKxlOA2FQFwp1c6on+rtkK7ffmaevSA4JaVJHFULggsUQlV2FY
-         AF/paJwiGMo9PSin48AYUyKQH6SzOxMDUU/o8NKamQkLlFN/jkU9D1hdNPij4CA44+
-         22GZw1P+uBi+1Z01/+XByyeX/Tw2aBUDFp0bCWMM=
-Received: by mail-qk1-f175.google.com with SMTP id s14so2401357qkm.4;
-        Mon, 19 Aug 2019 12:19:11 -0700 (PDT)
-X-Gm-Message-State: APjAAAV7zgdeb+coYwqE9Wms6HRK3Ex/ALKy0HZrYmjvakR6D/7sOd2U
-        0g49/xbIU+YX7svvRrfLDfwV4TnKC/eGN0lJPA==
-X-Google-Smtp-Source: APXvYqwywCKFrxUGXe1dzDKOKdn7UDjBT7BeQlquV4HYXItFVBdeO9hnhuqf/A3ZQAmkFttswCEwRJJ+KNdEqPku1R0=
-X-Received: by 2002:a37:d8f:: with SMTP id 137mr21547412qkn.254.1566242350541;
- Mon, 19 Aug 2019 12:19:10 -0700 (PDT)
+        id S1728464AbfHSTd5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 15:33:57 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:52861 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728375AbfHSTd5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 15:33:57 -0400
+Received: by mail-wm1-f67.google.com with SMTP id o4so573914wmh.2;
+        Mon, 19 Aug 2019 12:33:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M8LYhD4lhXPC7C0Kz4FM0eI8Uon0RGyTbjZ7iSLdUwY=;
+        b=G/Xz5WNgJus57o+i2ehU+l0iHOMv8K+eX7esd5Hsp8ECu1hc9Ij2lFCCMT8c/TeTQx
+         KPxGFnwhHfLCIuhABPymGXDPH0oEnZlCiWXK4u0Ggx6yY8rqCwwB764VaXJ2WamY2LwK
+         V0y5VSxnkH2oPCLaRqgkNtJKf+KXfenR2Mgqd52G43nCPwFJY4jkEoY4yIi92vlt8HU8
+         ENKFx7T9KuXh511hTtpe7jujVFXmzEyWHXNhyrD9ZGosBFQgGvTbjw9aVwqtOnqp9XpT
+         2x3s4e6pw/JIijGy+an8s+tsrNoMURxBIKU583BC6tsFmleaeStVM3g3pSv6Oa0eeXSY
+         ZmYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M8LYhD4lhXPC7C0Kz4FM0eI8Uon0RGyTbjZ7iSLdUwY=;
+        b=IXS76+FZTUGHBAxESpVXRK31XSmSe/DDlVeF+bU7jKIbF4YK3Xkf/vwiBPq5GeyfAe
+         0JUrzz8kK4lEub/vRBA7798Z5BpVpO9YibC00K7Re/B6whvXadpNDF6bR1dgEUFyX0Ob
+         xIfUjQ27Q375vBA93fmmlcXDd25TXiQxQhTUCTIVxj7tLvwff/eb4bnj4+MANDzx00RM
+         IsjzPFpqsr/33Ut1iVN+lc+14wTGE6klFIJSAu8rC8ZTgsVNsIM8jr0ODH6m/o8XItnb
+         8Qa7bzySeDyLy261UDcZ2IFuY4S2RJTxroPdegseoyLzEIXM1YSzNuqQUo+VCsiTtbjD
+         gZag==
+X-Gm-Message-State: APjAAAXbqmpx8WvcXLdjSltC2KXT19OzATWl6uDh88sEowKdFdJUEu3X
+        rPAkxo+6aTCwHH4fQQPu5Qazc4HH
+X-Google-Smtp-Source: APXvYqx3j1A+XbE8p3KzEPzhIilb1DSi7SDFHoAeZejzy26ay1t6am8l3zqKSE2XA96TglOR8BVogQ==
+X-Received: by 2002:a1c:d108:: with SMTP id i8mr23171852wmg.28.1566243233356;
+        Mon, 19 Aug 2019 12:33:53 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.218])
+        by smtp.googlemail.com with ESMTPSA id o11sm12528508wrw.19.2019.08.19.12.33.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 19 Aug 2019 12:33:52 -0700 (PDT)
+Subject: Re: [PATCH v9 20/22] soc/tegra: pmc: Configure deep sleep control
+ settings
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, tglx@linutronix.de,
+        jason@lakedaemon.net, marc.zyngier@arm.com,
+        linus.walleij@linaro.org, stefan@agner.ch, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
+ <1565984527-5272-21-git-send-email-skomatineni@nvidia.com>
+ <bf5541d2-1bad-8a8c-fd9d-821b55861136@gmail.com>
+ <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
+ <a8d65dbc-6924-c972-06e9-5bc47d66e94f@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8f5630bd-2869-4f5b-c18d-7ee8326432d6@gmail.com>
+Date:   Mon, 19 Aug 2019 22:33:49 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-References: <20190819130143.18778-1-manivannan.sadhasivam@linaro.org> <20190819130143.18778-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20190819130143.18778-5-manivannan.sadhasivam@linaro.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 19 Aug 2019 14:18:59 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL7iXWU9YS-_8HkEZRgqPE8WkAm85Sai=Kx-wV8hD-3HA@mail.gmail.com>
-Message-ID: <CAL_JsqL7iXWU9YS-_8HkEZRgqPE8WkAm85Sai=Kx-wV8hD-3HA@mail.gmail.com>
-Subject: Re: [PATCH v3 4/8] dt-bindings: clock: Add devicetree binding for
- BM1880 SoC
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org, haitao.suo@bitmain.com,
-        darren.tsao@bitmain.com, fisher.cheng@bitmain.com,
-        alec.lin@bitmain.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <a8d65dbc-6924-c972-06e9-5bc47d66e94f@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 8:02 AM Manivannan Sadhasivam
-<manivannan.sadhasivam@linaro.org> wrote:
->
-> Add YAML devicetree binding for Bitmain BM1880 SoC.
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../bindings/clock/bitmain,bm1880-clk.yaml    | 83 +++++++++++++++++++
->  include/dt-bindings/clock/bm1880-clock.h      | 82 ++++++++++++++++++
->  2 files changed, 165 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
->  create mode 100644 include/dt-bindings/clock/bm1880-clock.h
->
-> diff --git a/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
-> new file mode 100644
-> index 000000000000..a457f996287d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
-> @@ -0,0 +1,83 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/bitmain,bm1880-clk.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Bitmain BM1880 Clock Controller
-> +
-> +maintainers:
-> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> +
-> +description: |
-> +  The Bitmain BM1880 clock controller generates and supplies clock to
-> +  various peripherals within the SoC.
-> +
-> +  This binding uses common clock bindings
-> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +
-> +properties:
-> +  compatible:
-> +    oneOf:
-> +      - items:
-> +          - enum:
-> +              - bitmain,bm1880-clk
+19.08.2019 22:07, Sowjanya Komatineni пишет:
+> 
+> On 8/19/19 11:20 AM, Sowjanya Komatineni wrote:
+>>
+>> On 8/19/19 9:48 AM, Dmitry Osipenko wrote:
+>>> 16.08.2019 22:42, Sowjanya Komatineni пишет:
+>>>> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
+>>>> timings which are platform specific that should be configured before
+>>>> entering into deep sleep.
+>>>>
+>>>> Below are the timing specific configurations for deep sleep entry and
+>>>> wakeup.
+>>>> - Core rail power-on stabilization timer
+>>>> - OSC clock stabilization timer after SOC rail power is stabilized.
+>>>> - Core power off time is the minimum wake delay to keep the system
+>>>>    in deep sleep state irrespective of any quick wake event.
+>>>>
+>>>> These values depends on the discharge time of regulators and turn OFF
+>>>> time of the PMIC to allow the complete system to finish entering into
+>>>> deep sleep state.
+>>>>
+>>>> These values vary based on the platform design and are specified
+>>>> through the device tree.
+>>>>
+>>>> This patch has implementation to configure these timings which are must
+>>>> to have for proper deep sleep and wakeup operations.
+>>>>
+>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>> ---
+>>>>   drivers/soc/tegra/pmc.c | 14 +++++++++++++-
+>>>>   1 file changed, 13 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>> index 53ed70773872..710969043668 100644
+>>>> --- a/drivers/soc/tegra/pmc.c
+>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>> @@ -88,6 +88,8 @@
+>>>>     #define PMC_CPUPWRGOOD_TIMER        0xc8
+>>>>   #define PMC_CPUPWROFF_TIMER        0xcc
+>>>> +#define PMC_COREPWRGOOD_TIMER        0x3c
+>>>> +#define PMC_COREPWROFF_TIMER        0xe0
+>>>>     #define PMC_PWR_DET_VALUE        0xe4
+>>>>   @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs
+>>>> tegra20_pmc_regs = {
+>>>>     static void tegra20_pmc_init(struct tegra_pmc *pmc)
+>>>>   {
+>>>> -    u32 value;
+>>>> +    u32 value, osc, pmu, off;
+>>>>         /* Always enable CPU power request */
+>>>>       value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>>>> @@ -2303,6 +2305,16 @@ static void tegra20_pmc_init(struct tegra_pmc
+>>>> *pmc)
+>>>>       value = tegra_pmc_readl(pmc, PMC_CNTRL);
+>>>>       value |= PMC_CNTRL_SYSCLK_OE;
+>>>>       tegra_pmc_writel(pmc, value, PMC_CNTRL);
+>>>> +
+>>>> +    /* program core timings which are applicable only for suspend
+>>>> state */
+>>>> +    if (pmc->suspend_mode != TEGRA_SUSPEND_NONE) {
+>>>> +        osc = DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
+>>>> +        pmu = DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
+>>>> +        off = DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
+>>>> +        tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
+>>>> +                 PMC_COREPWRGOOD_TIMER);
+>>>> +        tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
+>>>> +    }
+>>>>   }
+>>>>     static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
+>>>>
+>>> In the previous version of this patch there were checks for zero values
+>>> of the timers with intention to skip programming of the timers if value
+>>> is zero. I'm a bit puzzled by the new version, given that SUSPEND_NONE
+>>> means that suspending isn't available at all and thus PMC timers won't
+>>> be utilized, hence it shouldn't matter what values are programmed for
+>>> the counters, isn't it?
+>>
+>> Yes, as I see in documentation we already specify all these timings
+>> are required properties when suspend mode is used, I updated in this
+>> version to program core timings only when suspend mode is enabled.
+>>
+> In other words, core timings are for SC7 entry only. So when SC7/suspend
+> mode is not used, these timings doesn't matter.
 
-Just 'const: bitmain,bm1880-clk' is enough.
+In this case, it should be a bit more straightforward to always program
+the timers unconditionally. But since device-tree binding requires all
+the properties to be specified when suspend mode isn't NONE, then the
+new variant also makes sense. Either way is good to me, thanks.
 
-> +
-> +  reg:
-> +    minItems: 2
-> +    maxItems: 2
-
-These 2 are implied by the items list and can be dropped.
-
-> +    items:
-> +      - description: pll registers
-> +      - description: system registers
-> +
-> +  reg-names:
-> +    items:
-> +      - const: pll
-> +      - const: sys
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: Phandle of the input reference clock
-
-Don't need a description if there's only one entry.
-
-> +
-> +  clock-names:
-> +    maxItems: 1
-> +    items:
-> +      - const: osc
-
-Just:
-
-clock-names:
-  const: osc
-
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - reg-names
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +
-> +examples:
-> +  # Clock controller node:
-> +  - |
-> +    clk: clock-controller@e8 {
-> +        compatible = "bitmain,bm1880-clk";
-> +        reg = <0xe8 0x0c>, <0x800 0xb0>;
-> +        reg-names = "pll", "sys";
-> +        clocks = <&osc>;
-> +        clock-names = "osc";
-> +        #clock-cells = <1>;
-> +    };
-> +
-> +  # Example UART controller node that consumes clock generated by the clock controller:
-> +  - |
-> +    uart0: serial@58018000 {
-> +         compatible = "snps,dw-apb-uart";
-> +         reg = <0x0 0x58018000 0x0 0x2000>;
-> +         clocks = <&clk BM1880_CLK_UART_500M>;
-> +                  <&clk BM1880_CLK_APB_UART>;
-
-This won't build without includes. Please run 'make dt_binding_check'
-before you submit bindings.
-
-> +         clock-names = "baudclk", "apb_pclk";
-> +         interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +         reg-shift = <2>;
-> +         reg-io-width = <4>;
-> +    };
-> +
-> +...
-> diff --git a/include/dt-bindings/clock/bm1880-clock.h b/include/dt-bindings/clock/bm1880-clock.h
-> new file mode 100644
-> index 000000000000..895646d66b07
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/bm1880-clock.h
-> @@ -0,0 +1,82 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Device Tree binding constants for Bitmain BM1880 SoC
-> + *
-> + * Copyright (c) 2019 Linaro Ltd.
-> + */
-> +
-> +#ifndef __DT_BINDINGS_CLOCK_BM1880_H
-> +#define __DT_BINDINGS_CLOCK_BM1880_H
-> +
-> +#define BM1880_CLK_OSC                 0
-> +#define BM1880_CLK_MPLL                        1
-> +#define BM1880_CLK_SPLL                        2
-> +#define BM1880_CLK_FPLL                        3
-> +#define BM1880_CLK_DDRPLL              4
-> +#define BM1880_CLK_A53                 5
-> +#define BM1880_CLK_50M_A53             6
-> +#define BM1880_CLK_AHB_ROM             7
-> +#define BM1880_CLK_AXI_SRAM            8
-> +#define BM1880_CLK_DDR_AXI             9
-> +#define BM1880_CLK_EFUSE               10
-> +#define BM1880_CLK_APB_EFUSE           11
-> +#define BM1880_CLK_AXI5_EMMC           12
-> +#define BM1880_CLK_EMMC                        13
-> +#define BM1880_CLK_100K_EMMC           14
-> +#define BM1880_CLK_AXI5_SD             15
-> +#define BM1880_CLK_SD                  16
-> +#define BM1880_CLK_100K_SD             17
-> +#define BM1880_CLK_500M_ETH0           18
-> +#define BM1880_CLK_AXI4_ETH0           19
-> +#define BM1880_CLK_500M_ETH1           20
-> +#define BM1880_CLK_AXI4_ETH1           21
-> +#define BM1880_CLK_AXI1_GDMA           22
-> +#define BM1880_CLK_APB_GPIO            23
-> +#define BM1880_CLK_APB_GPIO_INTR       24
-> +#define BM1880_CLK_GPIO_DB             25
-> +#define BM1880_CLK_AXI1_MINER          26
-> +#define BM1880_CLK_AHB_SF              27
-> +#define BM1880_CLK_SDMA_AXI            28
-> +#define BM1880_CLK_SDMA_AUD            29
-> +#define BM1880_CLK_APB_I2C             30
-> +#define BM1880_CLK_APB_WDT             31
-> +#define BM1880_CLK_APB_JPEG            32
-> +#define BM1880_CLK_JPEG_AXI            33
-> +#define BM1880_CLK_AXI5_NF             34
-> +#define BM1880_CLK_APB_NF              35
-> +#define BM1880_CLK_NF                  36
-> +#define BM1880_CLK_APB_PWM             37
-> +#define BM1880_CLK_DIV_0_RV            38
-> +#define BM1880_CLK_DIV_1_RV            39
-> +#define BM1880_CLK_MUX_RV              40
-> +#define BM1880_CLK_RV                  41
-> +#define BM1880_CLK_APB_SPI             42
-> +#define BM1880_CLK_TPU_AXI             43
-> +#define BM1880_CLK_DIV_UART_500M       44
-> +#define BM1880_CLK_UART_500M           45
-> +#define BM1880_CLK_APB_UART            46
-> +#define BM1880_CLK_APB_I2S             47
-> +#define BM1880_CLK_AXI4_USB            48
-> +#define BM1880_CLK_APB_USB             49
-> +#define BM1880_CLK_125M_USB            50
-> +#define BM1880_CLK_33K_USB             51
-> +#define BM1880_CLK_DIV_12M_USB         52
-> +#define BM1880_CLK_12M_USB             53
-> +#define BM1880_CLK_APB_VIDEO           54
-> +#define BM1880_CLK_VIDEO_AXI           55
-> +#define BM1880_CLK_VPP_AXI             56
-> +#define BM1880_CLK_APB_VPP             57
-> +#define BM1880_CLK_DIV_0_AXI1          58
-> +#define BM1880_CLK_DIV_1_AXI1          59
-> +#define BM1880_CLK_AXI1                        60
-> +#define BM1880_CLK_AXI2                        61
-> +#define BM1880_CLK_AXI3                        62
-> +#define BM1880_CLK_AXI4                        63
-> +#define BM1880_CLK_AXI5                        64
-> +#define BM1880_CLK_DIV_0_AXI6          65
-> +#define BM1880_CLK_DIV_1_AXI6          66
-> +#define BM1880_CLK_MUX_AXI6            67
-> +#define BM1880_CLK_AXI6                        68
-> +#define BM1880_NR_CLKS                 69
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_BM1880_H */
-> --
-> 2.17.1
->
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
