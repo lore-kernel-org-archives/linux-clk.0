@@ -2,166 +2,101 @@ Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BF2C3A5A0
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 18:20:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DCA2C3A5A0
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 18:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6DA20644
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 18:20:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Y8wgVA4p"
+	by mail.kernel.org (Postfix) with ESMTP id 48AC622CF5
+	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 18:26:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566239216;
+	bh=Ivyitg0Ej4OT9+wlNtHSfddysy0Yzo6f+ai2y1gszXo=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=EfbJg5Y25PunGMr8KZRFm8evleUHAqycg4r8wrU02FfVetFJBXm124w5oqwROiAo/
+	 kDywHLwODTs5Vxax/snG/kvse3BAOAmavr3KnAHUcc6a2ER95NLFpmArDgwiaDukfK
+	 aNs8uFAzxKqBADCEOICzpHVFv5Cqh6++9UCA4Ge8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727870AbfHSSUY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 14:20:24 -0400
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:16071 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727769AbfHSSUY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 14:20:24 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5d5ae8660007>; Mon, 19 Aug 2019 11:20:22 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 19 Aug 2019 11:20:23 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 19 Aug 2019 11:20:23 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 18:20:22 +0000
-Received: from [10.110.103.66] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 19 Aug
- 2019 18:20:22 +0000
-Subject: Re: [PATCH v9 20/22] soc/tegra: pmc: Configure deep sleep control
- settings
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        <linus.walleij@linaro.org>, <stefan@agner.ch>,
-        <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <jckuo@nvidia.com>,
-        <josephl@nvidia.com>, <talho@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mperttunen@nvidia.com>, <spatra@nvidia.com>, <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <rjw@rjwysocki.net>,
-        <viresh.kumar@linaro.org>, <linux-pm@vger.kernel.org>
-References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
- <1565984527-5272-21-git-send-email-skomatineni@nvidia.com>
- <bf5541d2-1bad-8a8c-fd9d-821b55861136@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <2092e557-06cb-4a74-fe40-1d83bf67ccca@nvidia.com>
-Date:   Mon, 19 Aug 2019 11:20:21 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728292AbfHSS04 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 14:26:56 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52100 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727970AbfHSS0z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Aug 2019 14:26:55 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A950222CF6;
+        Mon, 19 Aug 2019 18:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566239214;
+        bh=Ivyitg0Ej4OT9+wlNtHSfddysy0Yzo6f+ai2y1gszXo=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=yKwuiNEaKXSYTOZwJLHBcizgkZa/S9//ofj0LoEwmolfjTUp76LpNj7X/Gw2u9OVT
+         lA2rQ2cnpzqET0Sj2IWzg0jTiYtu6cz3rBpDG/h5df4HVfJVWcUGMAydFgak4HldCg
+         yjvbx6h0fC4neMZWruWmN2spKfWn+0bAiGb0txB4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <bf5541d2-1bad-8a8c-fd9d-821b55861136@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1566238823; bh=DG3Ncvdyhdgnv9HjB4ejbpQrlRq3pOO4ZH69laUIV64=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=Y8wgVA4pfeRKLIYg2KrGx9URLHJ4egqhwFl+VoI+e5pkLq7Dr+CJjxdfZe/+PIWvm
-         tbeGbpDsRjTenb3ybLjI3O5/OgofFuZD6ZlVYAl5GT2VO+wZDeTgehO4Lyx5yWPWA2
-         axs+WKmdVfPBZOnS3+Wh4a8OIoAQMN1yUQrnez2AFyXZvSNZlRllMsRFLmb0r9+nTQ
-         jr9+jOGlXhUEl7IPnlT+0h8TqaQ9S2ZX1iJqsSqJ5u4iYCwrf2hkz3d5Ft7CMe9JU3
-         Qaw9XuAp1G3xi8NZ3PNDumrp83oC++7DbYnRlT3nD0AS6WCUSJhQ3f8gmVZL5z7Qvm
-         HDclZS5QY6WTg==
+In-Reply-To: <20190819165255.GA26807@tuxbook-pro>
+References: <1565037226-1684-1-git-send-email-jcrouse@codeaurora.org> <20190807234232.27AA720880@mail.kernel.org> <20190819165255.GA26807@tuxbook-pro>
+Subject: Re: [PATCH v2] drivers: qcom: Add BCM vote macro to header
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Jordan Crouse <jcrouse@codeaurora.org>,
+        freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        linux-clk@vger.kernel.org, Taniya Das <tdas@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 19 Aug 2019 11:26:53 -0700
+Message-Id: <20190819182654.A950222CF6@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Bjorn Andersson (2019-08-19 09:52:55)
+> On Wed 07 Aug 16:42 PDT 2019, Stephen Boyd wrote:
+>=20
+> > Quoting Jordan Crouse (2019-08-05 13:33:46)
+> > > The macro to generate a Bus Controller Manager (BCM) TCS command is u=
+sed
+> > > by the interconnect driver but might also be interesting to other
+> > > drivers that need to construct TCS commands for sub processors so move
+> > > it out of the sdm845 specific file and into the header.
+> > >=20
+> > > Signed-off-by: Jordan Crouse <jcrouse@codeaurora.org>
+> > > ---
+> >=20
+> > Acked-by: Stephen Boyd <sboyd@kernel.org>
+> >=20
+> > Unless this is supposed to be applied by me?
+> >=20
+> > BTW, I wonder why we need an rpm clk driver much at all nowadays, except
+> > maybe for the XO clk state. The big user, from what I can tell, is the
+> > interconnect driver and we don't use any of the features of the clk
+> > framework besides the API to set a frequency. Maybe it would be better
+> > to just push push the bus frequency logic into interconnect code, then
+> > XO clk is the only thing we need to keep, and it can be a simple on/off
+> > thing.
+> >=20
+>=20
+> There's been a number of cases where we'll need to enable the buffered
+> XOs, but perhaps these are handled by other subsystems these days(?)
+>=20
+> If so the one case that remains would be the operation of explicitly
+> holding CXO enabled during operations such as booting the remoteprocs.
+>=20
 
-On 8/19/19 9:48 AM, Dmitry Osipenko wrote:
-> 16.08.2019 22:42, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> Tegra210 and prior Tegra chips have deep sleep entry and wakeup related
->> timings which are platform specific that should be configured before
->> entering into deep sleep.
->>
->> Below are the timing specific configurations for deep sleep entry and
->> wakeup.
->> - Core rail power-on stabilization timer
->> - OSC clock stabilization timer after SOC rail power is stabilized.
->> - Core power off time is the minimum wake delay to keep the system
->>    in deep sleep state irrespective of any quick wake event.
->>
->> These values depends on the discharge time of regulators and turn OFF
->> time of the PMIC to allow the complete system to finish entering into
->> deep sleep state.
->>
->> These values vary based on the platform design and are specified
->> through the device tree.
->>
->> This patch has implementation to configure these timings which are must
->> to have for proper deep sleep and wakeup operations.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/soc/tegra/pmc.c | 14 +++++++++++++-
->>   1 file changed, 13 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->> index 53ed70773872..710969043668 100644
->> --- a/drivers/soc/tegra/pmc.c
->> +++ b/drivers/soc/tegra/pmc.c
->> @@ -88,6 +88,8 @@
->>  =20
->>   #define PMC_CPUPWRGOOD_TIMER		0xc8
->>   #define PMC_CPUPWROFF_TIMER		0xcc
->> +#define PMC_COREPWRGOOD_TIMER		0x3c
->> +#define PMC_COREPWROFF_TIMER		0xe0
->>  =20
->>   #define PMC_PWR_DET_VALUE		0xe4
->>  =20
->> @@ -2277,7 +2279,7 @@ static const struct tegra_pmc_regs tegra20_pmc_reg=
-s =3D {
->>  =20
->>   static void tegra20_pmc_init(struct tegra_pmc *pmc)
->>   {
->> -	u32 value;
->> +	u32 value, osc, pmu, off;
->>  =20
->>   	/* Always enable CPU power request */
->>   	value =3D tegra_pmc_readl(pmc, PMC_CNTRL);
->> @@ -2303,6 +2305,16 @@ static void tegra20_pmc_init(struct tegra_pmc *pm=
-c)
->>   	value =3D tegra_pmc_readl(pmc, PMC_CNTRL);
->>   	value |=3D PMC_CNTRL_SYSCLK_OE;
->>   	tegra_pmc_writel(pmc, value, PMC_CNTRL);
->> +
->> +	/* program core timings which are applicable only for suspend state */
->> +	if (pmc->suspend_mode !=3D TEGRA_SUSPEND_NONE) {
->> +		osc =3D DIV_ROUND_UP(pmc->core_osc_time * 8192, 1000000);
->> +		pmu =3D DIV_ROUND_UP(pmc->core_pmu_time * 32768, 1000000);
->> +		off =3D DIV_ROUND_UP(pmc->core_off_time * 32768, 1000000);
->> +		tegra_pmc_writel(pmc, ((osc << 8) & 0xff00) | (pmu & 0xff),
->> +				 PMC_COREPWRGOOD_TIMER);
->> +		tegra_pmc_writel(pmc, off, PMC_COREPWROFF_TIMER);
->> +	}
->>   }
->>  =20
->>   static void tegra20_pmc_setup_irq_polarity(struct tegra_pmc *pmc,
->>
-> In the previous version of this patch there were checks for zero values
-> of the timers with intention to skip programming of the timers if value
-> is zero. I'm a bit puzzled by the new version, given that SUSPEND_NONE
-> means that suspending isn't available at all and thus PMC timers won't
-> be utilized, hence it shouldn't matter what values are programmed for
-> the counters, isn't it?
-
-Yes, as I see in documentation we already specify all these timings are=20
-required properties when suspend mode is used, I updated in this version=20
-to program core timings only when suspend mode is enabled.
-
+Yes I think the XO (and the buffers) is the only thing that we really
+seem to care about for the clk tree. Otherwise, the sole user is
+interconnect code and thus handling it in the rpmh clk driver doesn't
+really gain us anything. In fact, it just makes it worse because it ties
+the clk tree up with things that could take a while to process on the
+RPM side.
 
