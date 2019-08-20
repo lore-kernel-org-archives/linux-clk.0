@@ -1,205 +1,141 @@
-Return-Path: <SRS0=w22C=WP=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=z1pn=WQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC8AC3A5A1
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 23:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3576BC3A5A2
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 01:55:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A0F922CF5
-	for <linux-clk@archiver.kernel.org>; Mon, 19 Aug 2019 23:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9136218BA
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 01:55:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="K/sy7g3s"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Rej2dU+V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfHSXoV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 19 Aug 2019 19:44:21 -0400
-Received: from mailout4.samsung.com ([203.254.224.34]:44020 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728484AbfHSXoU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 19 Aug 2019 19:44:20 -0400
-Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20190819234417epoutp04c3a7849ca367f9ff8367535dcee69c3e~8d5YsTdTV1100111001epoutp04g
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2019 23:44:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20190819234417epoutp04c3a7849ca367f9ff8367535dcee69c3e~8d5YsTdTV1100111001epoutp04g
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1566258257;
-        bh=vmQQpSvhO+NOIFRR33czksndsdtC6ZWE3vrlipr9SU0=;
-        h=Subject:To:From:Date:In-Reply-To:References:From;
-        b=K/sy7g3sqhM5o09aJf2zg2WLLjCgcs0fqBl/q2EfBLQisuIDhGHKQrMqgwXZuQ+DD
-         N3YQu4nb6oatCniNUuMak9wQZJhDm6QkEQwmezy/E7nMrUEngwDrgIrrcDtAsEmqrZ
-         zGxE6feVtqnVVUDoM9xeMJ0hHHPH/ki4BcHO4/Xo=
-Received: from epsnrtp5.localdomain (unknown [182.195.42.166]) by
-        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
-        20190819234416epcas1p47ce8684570146aa0344c59cabf337814~8d5YR6nyQ1517015170epcas1p4M;
-        Mon, 19 Aug 2019 23:44:16 +0000 (GMT)
-Received: from epsmges1p3.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp5.localdomain (Postfix) with ESMTP id 46C9W23v0FzMqYkf; Mon, 19 Aug
-        2019 23:44:14 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        FC.91.04066.E443B5D5; Tue, 20 Aug 2019 08:44:14 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20190819234413epcas1p39f66a61fda4a86b7913d6f9bd7ba8c55~8d5U9KjTh0081300813epcas1p3-;
-        Mon, 19 Aug 2019 23:44:13 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20190819234413epsmtrp2e632f52582d069a8cc20b205d1a4a5b2~8d5U8NuEm2043620436epsmtrp2Q;
-        Mon, 19 Aug 2019 23:44:13 +0000 (GMT)
-X-AuditID: b6c32a37-e27ff70000000fe2-c5-5d5b344e3b33
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        91.42.03706.D443B5D5; Tue, 20 Aug 2019 08:44:13 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20190819234412epsmtip12cb3f8d7a40f36bb54864a1ce6b17f1e~8d5UpZc081355113551epsmtip19;
-        Mon, 19 Aug 2019 23:44:12 +0000 (GMT)
-Subject: Re: [PATCH] MAINTAINERS: Extend patterns for Samsung SoC, Security
- Subsystem and clock drivers
-To:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Kukjin Kim <kgene@kernel.org>,
-        Vladimir Zapolskiy <vz@mleia.com>,
-        Kamil Konieczny <k.konieczny@partner.samsung.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-clk@vger.kernel.org,
-        "cpgs (cpgs@samsung.com)" <cpgs@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <0bc1c3a5-cdf2-eeab-e547-97598ca1fbd1@samsung.com>
-Date:   Tue, 20 Aug 2019 08:48:07 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190818172750.20921-1-krzk@kernel.org>
+        id S1728786AbfHTBzL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 19 Aug 2019 21:55:11 -0400
+Received: from mail-eopbgr150048.outbound.protection.outlook.com ([40.107.15.48]:10574
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728773AbfHTBzL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 19 Aug 2019 21:55:11 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=UvNp0dsV0rtp1SFp79Ntx2JF3eGTDY/kCfhinI46b/13bC1pNF29RtrzYJVyVLdVJhyyeXJGQhHLZCiNg4uZkF7+ekx3FurtxiV+NGvs+6I9H4vFbPUS3EPA2qyeNwXBYc4O4dnh41PW6DmM2wfiSqAeEUJYTThMug1FYgdfyv0jcrHm4l1/e45PM7CtQ7AhOOYZByEuFa3xlZu10/EC4rkmrV5qjATFfQgVQReFWOVCEfShTvTgOTPf8SH9332UpPB40cobrW/9BE8tE/TdbdvFIgXRtR2uumlkdLHNkK8Nty6OGhc9YX9+gVm2Mq/IUGuXolb5r7je0Y8OjdU33A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9Rsp3bvn1VYswwty9Qp0NHusnBbdFVLvw46pvTZBIpM=;
+ b=TLJ1Yz3p73VyIoeEZthnPu2JIGf5K42Qf30lp3of1wwjWdoGtipc/XRcMj74PuYKSCtGWDym+1dr3kh36xUFjKLJS/3JQXWRusHajywVVNxDh0sTiBYG0GVZcPdv3aUkPdSs25jceys0ktgIfqaR9D7ZzjXt8qreb8vlCCcQ2h2W6rHip3zxpodVk+mX6midohJ7XwjGUTXI8UHeTuXPveGsBXz9YJaONVc7hHMbQIFsFYfJKTWaUJk4RfLyxEsh8QEi36l9hnnRrtECss+03RYWDSX+gJA9lx89ZgSghFtQF4AythLB9xV20jFaqjmHlEL+N4IxEo3fllp+FTTXFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9Rsp3bvn1VYswwty9Qp0NHusnBbdFVLvw46pvTZBIpM=;
+ b=Rej2dU+VFfZaUkkDmzm/qT3nMTLhwc9Ilf5K0DQ2O1mn0GPr1rt5dwkQdvJzeF4MQpuNTVUvyeK0WbrU3tH7+AiZ5CqQvanjjO6SlnQkDxFx5nMCrcySPKFJNDsGOaO02pPmfSqVjsoLSYErK4qG8tRQi9fIp0leZm71gkuN9Vg=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5874.eurprd04.prod.outlook.com (20.178.202.21) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2178.18; Tue, 20 Aug 2019 01:55:07 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4%4]) with mapi id 15.20.2178.018; Tue, 20 Aug 2019
+ 01:55:07 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: imx8mn: fix audio pll setting
+Thread-Topic: [PATCH] clk: imx: imx8mn: fix audio pll setting
+Thread-Index: AQHVVvpKZsJi+GA1m0yPuh1H25F+Bw==
+Date:   Tue, 20 Aug 2019 01:55:07 +0000
+Message-ID: <1566264894-31788-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJsWRmVeSWpSXmKPExsWy7bCmga6fSXSswdn10hYvD2lazDnfwmLR
-        /UrGom/ff0aL/sevmS3On9/AbrHp8TVWi48991gt7t/7yWRxedccNosZ5/cxWVw85Wpx+E07
-        q8W/axtZLFbt+sNo8f9XM7ODgMf7G63sHltW3mTy2DnrLrvHtgOqHptWdbJ5bF5S7/Fv4RQW
-        j4Pv9jB59G1ZxejxeZNcAFdUtk1GamJKapFCal5yfkpmXrqtkndwvHO8qZmBoa6hpYW5kkJe
-        Ym6qrZKLT4CuW2YO0B9KCmWJOaVAoYDE4mIlfTubovzSklSFjPziElul1IKUnALLAr3ixNzi
-        0rx0veT8XCtDAwMjU6DChOyMv525BUeFK17/ucvYwHhOoIuRk0NCwERiweL9LF2MXBxCAjsY
-        JT4vvM0I4XxilNg2aw2U841R4sej3cwwLQ3zX7JBJPYySlxcfpgJwnnPKPHn9lwWkCphgUyJ
-        /et/gbWLCLxnkVixeDY7SIJNQEti/4sbbCA2v4CixNUfjxlBbF4BO4ntPc/BbBYBVYkv358y
-        gdiiAhESnx4cZoWoEZQ4OfMJ2AJOAVOJmzv+gp3ELCAucevJfCYIW16ieetsZpDFEgKH2CXe
-        Nr5ng7jbReLy+WusELawxKvjW9ghbCmJz+/2QtVUS6w8eYQNormDUWLL/gtQDcYS+5dOBtrA
-        AbRBU2L9Ln2IsKLEzt9zGSFsXomGjb/ZIY7gk3j3tYcVpBwk3tEmBFGiLHH5wV0mCFtSYnF7
-        J9sERqVZSF6bheSdWUjemYWweAEjyypGsdSC4tz01GLDAmPk6N7ECE7kWuY7GDec8znEKMDB
-        qMTD6zEtKlaINbGsuDL3EKMEB7OSCG/FHKAQb0piZVVqUX58UWlOavEhRlNgyE9klhJNzgdm
-        mbySeENTI2NjYwsTQzNTQ0Mlcd6FPyxihQTSE0tSs1NTC1KLYPqYODilGhgFTl/iu3ZLcmn8
-        kc2Gn2LfbzqnKqL78JLhnsR54m/O6wUUORzdp8I0Mf+/0RqlIy+27tZNeirwrulcStPG5bJS
-        UZO2vp50tub6D6OypX89zR3M2oXuv529vc7JqNV2q88e5ytOHLM9r7jZ7N7VJynXdKJVs8j4
-        2yUznRdL1u9ll83T9GJWfjBZiaU4I9FQi7moOBEAmBA7/PoDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKIsWRmVeSWpSXmKPExsWy7bCSnK6vSXSswcF+NouXhzQt5pxvYbHo
-        fiVj0bfvP6NF/+PXzBbnz29gt9j0+Bqrxceee6wW9+/9ZLK4vGsOm8WM8/uYLC6ecrU4/Kad
-        1eLftY0sFqt2/WG0+P+rmdlBwOP9jVZ2jy0rbzJ57Jx1l91j2wFVj02rOtk8Ni+p9/i3cAqL
-        x8F3e5g8+rasYvT4vEkugCuKyyYlNSezLLVI3y6BK+NvZ27BUeGK13/uMjYwnhPoYuTkkBAw
-        kWiY/5Kti5GLQ0hgN6PEnblrWSESkhLTLh5l7mLkALKFJQ4fLoaoecsosX3hTjaQGmGBTIn9
-        638xgiREBL6ySDy/vI8FoqqDUeLMhVZ2kCo2AS2J/S9ugHXwCyhKXP3xmBHE5hWwk9je8xzM
-        ZhFQlfjy/SkTiC0qECFxeMcsqBpBiZMzn7CA2JwCphI3d/xlBrGZBdQl/sy7BGWLS9x6Mp8J
-        wpaXaN46m3kCo9AsJO2zkLTMQtIyC0nLAkaWVYySqQXFuem5xYYFhnmp5XrFibnFpXnpesn5
-        uZsYwZGrpbmD8fKS+EOMAhyMSjy8HtOiYoVYE8uKK3MPMUpwMCuJ8FbMAQrxpiRWVqUW5ccX
-        leakFh9ilOZgURLnfZp3LFJIID2xJDU7NbUgtQgmy8TBKdXAuE5MkVdHNyGI8+gTps332Lo7
-        Sr49qVO8oLLr1NbleT8qDeWv+77JPtuvmr/y7+RHTcb/Hiu5pynFzJgVoJacnpN2IEZsft/S
-        4yVOL+I1Awzazv5jXCCyT8+Zf8GZ5X98yysPrtnKE9f76pZ+jq/KpHulW6fc8Jz+SjPt0Z8F
-        F7fJR5w3dfBWV2Ipzkg01GIuKk4EAOjbrsTYAgAA
-X-CMS-MailID: 20190819234413epcas1p39f66a61fda4a86b7913d6f9bd7ba8c55
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-X-CPGSPASS: Y
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20190818172803epcas1p32db0707cb391c5ca1795ba2690284a56
-References: <CGME20190818172803epcas1p32db0707cb391c5ca1795ba2690284a56@epcas1p3.samsung.com>
-        <20190818172750.20921-1-krzk@kernel.org>
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0048.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:3e::36) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e4efa2d5-a1e5-4f33-e9d9-08d725116d10
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600148)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR04MB5874;
+x-ms-traffictypediagnostic: AM0PR04MB5874:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB587459DAA9B5DD9C49FFBB1D88AB0@AM0PR04MB5874.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2331;
+x-forefront-prvs: 013568035E
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(376002)(366004)(136003)(346002)(199004)(189003)(2501003)(2906002)(478600001)(66066001)(6486002)(305945005)(4326008)(52116002)(7736002)(53936002)(5660300002)(3846002)(6116002)(102836004)(256004)(14444005)(14454004)(36756003)(6512007)(316002)(54906003)(71190400001)(186003)(81166006)(71200400001)(8936002)(81156014)(66556008)(64756008)(66446008)(66476007)(44832011)(110136005)(6506007)(25786009)(386003)(486006)(2616005)(476003)(8676002)(6436002)(86362001)(50226002)(26005)(2201001)(99286004)(66946007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5874;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: UpSHm4oe0QLKY+aLMV1wS4jgz+62+sGz7t7slAeEJjKOCiIdsXYzZu3qNARltsOVrRRUCZykmZqjKZgj9Jo/XKw9rYcJUS/DXzR2ZjhwqBaLuk85Hlg5Aqo2jhZEWwrOfOURGhpgikefI2vPdhNThOGTjoXUERvRCwlhAkBMP8ybvnUqsmVoSrXg2H2JUsXx4Hw+Te/GGwmdNr4umlx+cvI80OBBPkRM/UKe/u1QYmWVBJqYKmcjQtnDlkmTWXBG9rXmjGqNBxe4H4I8fHhmXiBjO336V82+HonhAQMrvavst9zerpmtap3RD/oIrD3V4L8Rhkuub5R7comZOw87W07U8UsJtWpBJkfxaeDmhtsDRwnHU0Mi950zkdEPwSSnlaHSHXzOEdFrWU2sZRobKzKvWCEB8uEqUv0/uNb6Ikk=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e4efa2d5-a1e5-4f33-e9d9-08d725116d10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Aug 2019 01:55:07.4838
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dPAX6hEMadN4tvxpDvPjW2/rqCgliLyOcXxKzYu4VOSA34DvWGztoOmRNFdxP6xsav4uRcDIf/lx9wjii/W+kw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5874
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Krzysztof,
+From: Peng Fan <peng.fan@nxp.com>
 
-On 19. 8. 19. 오전 2:27, Krzysztof Kozlowski wrote:
-> Extend the patterns to cover all related files in respective
-> categories:
-> 1. Samsung Exynos ARM architecture: add soc drivers headers and make
->    directory matches consistent,
-> 2. Samsung Security SubSystem driver (crypto): add bindings,
-> 3. Samsung SoC clock drivers: add S3C24xx, S3C64xx and S5Pv210 bindings.
-> 
-> Cc: Kukjin Kim <kgene@kernel.org>
-> Cc: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Kamil Konieczny <k.konieczny@partner.samsung.com>
-> Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>
-> Cc: Tomasz Figa <tomasz.figa@gmail.com>
-> Cc: Chanwoo Choi <cw00.choi@samsung.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-samsung-soc@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  MAINTAINERS | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 420567d1519a..35a4002ac58b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2199,8 +2199,9 @@ F:	drivers/*/*s3c24*
->  F:	drivers/*/*/*s3c24*
->  F:	drivers/*/*s3c64xx*
->  F:	drivers/*/*s5pv210*
-> -F:	drivers/memory/samsung/*
-> -F:	drivers/soc/samsung/*
-> +F:	drivers/memory/samsung/
-> +F:	drivers/soc/samsung/
-> +F:	include/linux/soc/samsung/
->  F:	Documentation/arm/samsung/
->  F:	Documentation/devicetree/bindings/arm/samsung/
->  F:	Documentation/devicetree/bindings/sram/samsung-sram.txt
-> @@ -14174,6 +14175,8 @@ M:	Kamil Konieczny <k.konieczny@partner.samsung.com>
->  L:	linux-crypto@vger.kernel.org
->  L:	linux-samsung-soc@vger.kernel.org
->  S:	Maintained
-> +F:	Documentation/devicetree/bindings/crypto/samsung-slimsss.txt
-> +F:	Documentation/devicetree/bindings/crypto/samsung-sss.txt
->  F:	drivers/crypto/s5p-sss.c
->  
->  SAMSUNG S5P/EXYNOS4 SOC SERIES CAMERA SUBSYSTEM DRIVERS
-> @@ -14194,6 +14197,8 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git
->  F:	drivers/clk/samsung/
->  F:	include/dt-bindings/clock/exynos*.h
->  F:	Documentation/devicetree/bindings/clock/exynos*.txt
-> +F:	Documentation/devicetree/bindings/clock/samsung,s3c*
-> +F:	Documentation/devicetree/bindings/clock/samsung,s5p*
->  
->  SAMSUNG SPI DRIVERS
->  M:	Kukjin Kim <kgene@kernel.org>
-> 
+The AUDIO PLL max support 650M, so the original clk settings violate
+spec. This patch makes the output 786432000 -> 393216000,
+and 722534400 -> 361267200 to aligned with NXP vendor kernel without any
+impact on audio functionality and go within 650MHz PLL limit.
 
-For clock part,
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mn.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index c5838710e1d8..0e7fb39bcb44 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -51,8 +51,8 @@ static const struct imx_pll14xx_rate_table imx8mn_pll1416=
+x_tbl[] =3D {
+ };
+=20
+ static const struct imx_pll14xx_rate_table imx8mn_audiopll_tbl[] =3D {
+-	PLL_1443X_RATE(786432000U, 655, 5, 2, 23593),
+-	PLL_1443X_RATE(722534400U, 301, 5, 1, 3670),
++	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
++	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
+ };
+=20
+ static const struct imx_pll14xx_rate_table imx8mn_videopll_tbl[] =3D {
+--=20
+2.16.4
 
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
