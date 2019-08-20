@@ -2,103 +2,68 @@ Return-Path: <SRS0=z1pn=WQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29A24C3A589
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 08:27:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2486C3A589
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 08:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE8F123A45
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 08:27:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C890233FD
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 08:46:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728827AbfHTI1z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 04:27:55 -0400
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:44141 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfHTI1z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 04:27:55 -0400
-X-Originating-IP: 86.250.200.211
-Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
-        (Authenticated sender: maxime.ripard@bootlin.com)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 19956240009;
-        Tue, 20 Aug 2019 08:27:51 +0000 (UTC)
-Date:   Tue, 20 Aug 2019 10:27:51 +0200
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v4 04/10] mailbox: sunxi-msgbox: Add a new mailbox driver
-Message-ID: <20190820082751.nfn76nlgl3ivphff@flea>
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190820032311.6506-5-samuel@sholland.org>
+        id S1729421AbfHTIqp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 04:46:45 -0400
+Received: from ns.iliad.fr ([212.27.33.1]:55198 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728426AbfHTIqp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Aug 2019 04:46:45 -0400
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id 42788213EB;
+        Tue, 20 Aug 2019 10:46:43 +0200 (CEST)
+Received: from [192.168.108.37] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id 2BEBE201B3;
+        Tue, 20 Aug 2019 10:46:43 +0200 (CEST)
+Subject: Re: [PATCH v1] clk: Add devm_clk_{prepare,enable,prepare_enable}
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Jonathan_Neusch=c3=a4fer?= <j.neuschaefer@gmx.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Guenter Roeck <linux@roeck-us.net>
+References: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
+Message-ID: <96b30b79-1e9b-bbdb-8bd5-b1e82b83e78c@free.fr>
+Date:   Tue, 20 Aug 2019 10:46:43 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="gkmhex6scyynmxz2"
-Content-Disposition: inline
-In-Reply-To: <20190820032311.6506-5-samuel@sholland.org>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Aug 20 10:46:43 2019 +0200 (CEST)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 15/07/2019 17:34, Marc Gonzalez wrote:
 
---gkmhex6scyynmxz2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-On Mon, Aug 19, 2019 at 10:23:05PM -0500, Samuel Holland wrote:
-> Allwinner sun8i, sun9i, and sun50i SoCs contain a hardware message box
-> used for communication between the ARM CPUs and the ARISC management
-> coprocessor. The hardware contains 8 unidirectional 4-message FIFOs.
->
-> Add a driver for it, so it can be used for SCPI or other communication
-> protocols.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> Provide devm variants for automatic resource release on device removal.
+> probe() error-handling is simpler, and remove is no longer required.
+> 
+> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 > ---
->  drivers/mailbox/Kconfig        |  10 +
->  drivers/mailbox/Makefile       |   2 +
->  drivers/mailbox/sunxi-msgbox.c | 323 +++++++++++++++++++++++++++++++++
->  3 files changed, 335 insertions(+)
->  create mode 100644 drivers/mailbox/sunxi-msgbox.c
+>  Documentation/driver-model/devres.rst |  3 +++
+>  drivers/clk/clk.c                     | 24 ++++++++++++++++++++++++
+>  include/linux/clk.h                   |  8 ++++++++
+>  3 files changed, 35 insertions(+)
 
-It's pretty much the same remark than for the name of the binding
-file, but sunxi in itself is pretty confusing, it covers a range of
-SoCs going from armv5 to armv8, some with a single CPU and some with
-more, and some with an OpenRISC core and some without.
+Stephen, Mike,
 
-It would be less confusing (albeit not perfect) to use sun6i there,
-the family that IP was first introduced in.
+Thoughts? Comments?
 
-Maxime
-
---
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---gkmhex6scyynmxz2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVuvBwAKCRDj7w1vZxhR
-xV7WAQCXdOhK3aygWsBU1Ob0okTJbPWhSiAl4T7XZhHH/36ZiQEA6pZ/KLw9KS1c
-2kVKRLeNf7nMSDrNt/PPkrb11elNcgA=
-=KJoz
------END PGP SIGNATURE-----
-
---gkmhex6scyynmxz2--
+Regards.
