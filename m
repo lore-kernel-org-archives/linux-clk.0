@@ -2,41 +2,40 @@ Return-Path: <SRS0=z1pn=WQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0A00C3A589
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 11:32:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FE9C3A59D
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 11:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF6F622CF5
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 11:32:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FF67205C9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 11:32:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729723AbfHTLcL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 07:32:11 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:48886 "EHLO inva021.nxp.com"
+        id S1729639AbfHTLcM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 07:32:12 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:48910 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729639AbfHTLcL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:32:11 -0400
+        id S1729699AbfHTLcM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 20 Aug 2019 07:32:12 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 43C012001C6;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7E75E20006A;
         Tue, 20 Aug 2019 13:32:09 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0034420029D;
-        Tue, 20 Aug 2019 13:32:05 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0013C20029A;
+        Tue, 20 Aug 2019 13:32:04 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 74D034031D;
-        Tue, 20 Aug 2019 19:31:56 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 7FD414031C;
+        Tue, 20 Aug 2019 19:31:55 +0800 (SGT)
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
         mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V4 06/11] clk: imx: scu: add runtime pm support
-Date:   Tue, 20 Aug 2019 07:13:20 -0400
-Message-Id: <1566299605-15641-7-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V4 05/11] clk: imx: scu: allow scu clk to take device pointer
+Date:   Tue, 20 Aug 2019 07:13:19 -0400
+Message-Id: <1566299605-15641-6-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
 References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
@@ -46,7 +45,7 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add runtime pm support
+Used to support runtime pm.
 
 Cc: Stephen Boyd <sboyd@kernel.org>
 Cc: Shawn Guo <shawnguo@kernel.org>
@@ -55,59 +54,82 @@ Cc: Michael Turquette <mturquette@baylibre.com>
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
 ChangeLog:
-v4: no changes
+v3->v4:
+ * add the missing dev poninter when call __imx_clk_scu in probe
 v3: new patch
 ---
- drivers/clk/imx/clk-scu.c | 22 ++++++++++++++++++++--
- 1 file changed, 20 insertions(+), 2 deletions(-)
+ drivers/clk/imx/clk-scu.c | 9 +++++----
+ drivers/clk/imx/clk-scu.h | 9 +++++----
+ 2 files changed, 10 insertions(+), 8 deletions(-)
 
 diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-index 9005584..edc39d7 100644
+index 5f935b1..9005584 100644
 --- a/drivers/clk/imx/clk-scu.c
 +++ b/drivers/clk/imx/clk-scu.c
-@@ -11,6 +11,7 @@
- #include <linux/of_platform.h>
- #include <linux/platform_device.h>
- #include <linux/pm_domain.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
+@@ -382,8 +382,9 @@ static const struct clk_ops clk_scu_cpu_ops = {
+ 	.unprepare = clk_scu_unprepare,
+ };
  
- #include "clk-scu.h"
-@@ -448,15 +449,32 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
+-struct clk_hw *__imx_clk_scu(const char *name, const char * const *parents,
+-			     int num_parents, u32 rsrc_id, u8 clk_type)
++struct clk_hw *__imx_clk_scu(struct device *dev, const char *name,
++			     const char * const *parents, int num_parents,
++			     u32 rsrc_id, u8 clk_type)
+ {
+ 	struct clk_init_data init;
+ 	struct clk_scu *clk;
+@@ -417,7 +418,7 @@ struct clk_hw *__imx_clk_scu(const char *name, const char * const *parents,
+ 	clk->hw.init = &init;
+ 
+ 	hw = &clk->hw;
+-	ret = clk_hw_register(NULL, hw);
++	ret = clk_hw_register(dev, hw);
+ 	if (ret) {
+ 		kfree(clk);
+ 		hw = ERR_PTR(ret);
+@@ -448,7 +449,7 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
  	struct imx_scu_clk_node *clk = dev_get_platdata(dev);
  	struct clk_hw *hw;
-+	int ret;
-+
-+	pm_runtime_set_suspended(dev);
-+	pm_runtime_set_autosuspend_delay(dev, 50);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_enable(dev);
-+
-+	ret = pm_runtime_get_sync(dev);
-+	if (ret) {
-+		pm_runtime_disable(dev);
-+		return ret;
-+	}
  
--	hw = __imx_clk_scu(NULL, clk->name, clk->parents, clk->num_parents,
-+	hw = __imx_clk_scu(dev, clk->name, clk->parents, clk->num_parents,
+-	hw = __imx_clk_scu(clk->name, clk->parents, clk->num_parents,
++	hw = __imx_clk_scu(NULL, clk->name, clk->parents, clk->num_parents,
  			   clk->rsrc, clk->clk_type);
--	if (IS_ERR(hw))
-+	if (IS_ERR(hw)) {
-+		pm_runtime_disable(dev);
+ 	if (IS_ERR(hw))
  		return PTR_ERR(hw);
-+	}
+diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
+index 819dc32..a2c6b42 100644
+--- a/drivers/clk/imx/clk-scu.h
++++ b/drivers/clk/imx/clk-scu.h
+@@ -20,8 +20,9 @@ struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
+ 				     const char * const *parents,
+ 				     int num_parents, u32 rsrc_id, u8 clk_type);
  
- 	clk->hw = hw;
- 	list_add_tail(&clk->node, &imx_scu_clks[clk->rsrc]);
+-struct clk_hw *__imx_clk_scu(const char *name, const char * const *parents,
+-			     int num_parents, u32 rsrc_id, u8 clk_type);
++struct clk_hw *__imx_clk_scu(struct device *dev, const char *name,
++			     const char * const *parents, int num_parents,
++			     u32 rsrc_id, u8 clk_type);
  
-+	pm_runtime_mark_last_busy(&pdev->dev);
-+	pm_runtime_put_autosuspend(&pdev->dev);
-+
- 	dev_dbg(dev, "register SCU clock rsrc:%d type:%d\n", clk->rsrc,
- 		clk->clk_type);
+ static inline struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id,
+ 					 u8 clk_type)
+@@ -29,7 +30,7 @@ static inline struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id,
+ 	if (clock_cells == 2)
+ 		return imx_clk_scu_alloc_dev(name, NULL, 0, rsrc_id, clk_type);
+ 	else
+-		return __imx_clk_scu(name, NULL, 0, rsrc_id, clk_type);
++		return __imx_clk_scu(NULL, name, NULL, 0, rsrc_id, clk_type);
+ }
  
+ static inline struct clk_hw *imx_clk_scu2(const char *name, const char * const *parents,
+@@ -38,7 +39,7 @@ static inline struct clk_hw *imx_clk_scu2(const char *name, const char * const *
+ 	if (clock_cells == 2)
+ 		return imx_clk_scu_alloc_dev(name, parents, num_parents, rsrc_id, clk_type);
+ 	else
+-		return __imx_clk_scu(name, parents, num_parents, rsrc_id, clk_type);
++		return __imx_clk_scu(NULL, name, parents, num_parents, rsrc_id, clk_type);
+ }
+ 
+ struct clk_hw *imx_clk_lpcg_scu(const char *name, const char *parent_name,
 -- 
 2.7.4
 
