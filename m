@@ -2,144 +2,117 @@ Return-Path: <SRS0=z1pn=WQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F490C3A589
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 05:08:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D072BC3A589
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 07:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F68722CF8
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 05:08:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yoStAr6y"
+	by mail.kernel.org (Postfix) with ESMTP id AE27B22CF5
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 07:11:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbfHTFIC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 01:08:02 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:37627 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729060AbfHTFIC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 01:08:02 -0400
-Received: by mail-pl1-f196.google.com with SMTP id bj8so2117163plb.4
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2019 22:08:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X0RALe/oCLLbFYKOz+mFdGYTmz4Bg6uXMn9I91aUmVQ=;
-        b=yoStAr6ymurtV2ikx4ft95lv5WFYdKXAOmLgGdPFwmAIKWHkr3/vRYJ6g6fMOGVnvf
-         zBisfnxERsNRNYh51te6OMltVF+PeFfr0P/2MvaO77Kp6K0xraqJAlCm+d/hHE4jfBl+
-         ZYnTrek4iwdH9zr7nZSK8L+FFYpvgVjVDlsSBKW5QGeIOv5aEe2FGKj5mxqV+4VS14O/
-         buL2/RKNI2B8mu6F1e+c+5Gmw4yMgOs4nP4rSdeNLEyxWOWOjiN7zmOvopCpjuYqmrFu
-         E8TMwa9NxV2zMdXcQGf1CI78FM7zGMkd7R3tnkMXT15CZDcWr/8TLvVmQ8ZKMh02Lrm9
-         LRyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X0RALe/oCLLbFYKOz+mFdGYTmz4Bg6uXMn9I91aUmVQ=;
-        b=KtBaWesS6cj68tn0s8M1g29wWk3ZmpIOf8zCxp/aMRJUp9yCLWTuPaIdahqjprcJIb
-         i/QWBQ7VIHYx3ueg1KmOPZuHtI+UetZRwJSHzwlIld1XsENs9bqTdq+aSg47JpuAB170
-         zIZBGLKb7y2HLa3UVgNJs94eBcxAulNxYFGopigCO9PCkvwTXW53xXWQ3pFBw3udUrhG
-         olhUg9QN5iFrO9tVJLHHFrzgJ/Pe+rENiBnXVb8XW7JXPhJ+qskBqFQ0gnfj4l5x9lMX
-         Ig7VfL1Jp42QHrSvnOEQo4Aty6q15uK2kW1v+j4tBbcxHikh2uiAmxia+v+ssXKsPzFQ
-         UPUg==
-X-Gm-Message-State: APjAAAWgnD9ZQNpyVskBxp0kZbkZS711xOlhpqMSyz9KGNAR1APe9Mc7
-        SgjMDlfjBXN3TdxAS1tosj0KQg==
-X-Google-Smtp-Source: APXvYqxnbtpYfHf4DI7CzWwEfyLBSbbPObmlVar90y00ULixju4JrpyOcJKYoSXXPw0x1oXHjOOnAQ==
-X-Received: by 2002:a17:902:288b:: with SMTP id f11mr42667plb.13.1566277681833;
-        Mon, 19 Aug 2019 22:08:01 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y68sm8288666pfy.25.2019.08.19.22.08.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 19 Aug 2019 22:08:01 -0700 (PDT)
-Date:   Mon, 19 Aug 2019 22:09:44 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Andy Gross <agross@kernel.org>,
+        id S1729181AbfHTHLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 03:11:46 -0400
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:50919 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728777AbfHTHLq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 03:11:46 -0400
+X-Originating-IP: 86.250.200.211
+Received: from localhost (lfbn-1-17395-211.w86-250.abo.wanadoo.fr [86.250.200.211])
+        (Authenticated sender: maxime.ripard@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id A19A340002;
+        Tue, 20 Aug 2019 07:11:42 +0000 (UTC)
+Date:   Tue, 20 Aug 2019 09:11:42 +0200
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 4/4] clk: qcom: clk-rpmh: Add support for SM8150
-Message-ID: <20190820050944.GL26807@tuxbook-pro>
-References: <20190819073947.17258-1-vkoul@kernel.org>
- <20190819073947.17258-5-vkoul@kernel.org>
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v4 02/10] clk: sunxi-ng: Mark AR100 clocks as critical
+Message-ID: <20190820071142.2bgfsnt75xfeyusp@flea>
+References: <20190820032311.6506-1-samuel@sholland.org>
+ <20190820032311.6506-3-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="i7cnfwqz3x4wuuzw"
 Content-Disposition: inline
-In-Reply-To: <20190819073947.17258-5-vkoul@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190820032311.6506-3-samuel@sholland.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 19 Aug 00:39 PDT 2019, Vinod Koul wrote:
 
-> Add support for rpmh clocks found in SM8150
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/clk/qcom/clk-rpmh.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 16d689e5bb3c..3b304a3fb5c9 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -374,6 +374,32 @@ static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
->  	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
->  };
->  
-> +DEFINE_CLK_RPMH_ARC(sm8150, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
-> +DEFINE_CLK_RPMH_VRM(sm8150, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
-> +DEFINE_CLK_RPMH_VRM(sm8150, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
-> +DEFINE_CLK_RPMH_VRM(sm8150, rf_clk1, rf_clk1_ao, "rfclka1", 1);
-> +DEFINE_CLK_RPMH_VRM(sm8150, rf_clk2, rf_clk2_ao, "rfclka2", 1);
-> +DEFINE_CLK_RPMH_VRM(sm8150, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-> +
-> +static struct clk_hw *sm8150_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &sm8150_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]	= &sm8150_bi_tcxo_ao.hw,
-> +	[RPMH_LN_BB_CLK2]	= &sm8150_ln_bb_clk2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &sm8150_ln_bb_clk2_ao.hw,
-> +	[RPMH_LN_BB_CLK3]	= &sm8150_ln_bb_clk3.hw,
-> +	[RPMH_LN_BB_CLK3_A]	= &sm8150_ln_bb_clk3_ao.hw,
-> +	[RPMH_RF_CLK1]		= &sm8150_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]	= &sm8150_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]		= &sm8150_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]	= &sm8150_rf_clk2_ao.hw,
-> +	[RPMH_RF_CLK3]		= &sm8150_rf_clk3.hw,
-> +	[RPMH_RF_CLK3_A]	= &sm8150_rf_clk3_ao.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
-> +	.clks = sm8150_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
-> +};
+--i7cnfwqz3x4wuuzw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Maybe an empty line here?
+Hi,
 
->  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->  					 void *data)
->  {
-> @@ -453,6 +479,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->  
->  static const struct of_device_id clk_rpmh_match_table[] = {
->  	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
-> +	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+On Mon, Aug 19, 2019 at 10:23:03PM -0500, Samuel Holland wrote:
+> On sun8i, sun9i, and sun50i SoCs, system suspend/resume support requires
+> firmware running on the AR100 coprocessor (the "SCP"). Such firmware can
+> provide additional features, such as thermal monitoring and poweron/off
+> support for boards without a PMIC.
+>
+> Since the AR100 may be running critical firmware, even if Linux does not
+> know about it or directly interact with it (all requests may go through
+> an intermediary interface such as PSCI), Linux must not turn off its
+> clock.
+>
+> At this time, such power management firmware only exists for the A64 and
+> H5 SoCs.  However, it makes sense to take care of all CCU drivers now
+> for consistency, and to ease the transition in the future once firmware
+> is ported to the other SoCs.
+>
+> Leaving the clock running is safe even if no firmware is present, since
+> the AR100 stays in reset by default. In most cases, the AR100 clock is
+> kept enabled by Linux anyway, since it is the parent of all APB0 bus
+> peripherals. This change only prevents Linux from turning off the AR100
+> clock in the rare case that no peripherals are in use.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+So I'm not really sure where you want to go with this.
 
-Regards,
-Bjorn
+That clock is only useful where you're having a firmware running on
+the AR100, and that firmware would have a device tree node of its own,
+where we could list the clocks needed for the firmware to keep
+running, if it ever runs. If the driver has not been compiled in /
+loaded, then we don't care either.
 
-> -- 
-> 2.20.1
-> 
+But more fundamentally, if we're going to use SCPI, then those clocks
+will not be handled by that driver anyway, but by the firmware, right?
+
+So I'm not really sure that we should do it statically this way, and
+that we should do it at all.
+
+Maxime
+
+--
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--i7cnfwqz3x4wuuzw
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXVudLgAKCRDj7w1vZxhR
+xUA2AP9aAfcTGshTf2qlHF7BN2TrmF218A9337dfKfbyq+0aCAD7Bcox3Vtd+uUp
+V0EntkOUoyN+OLRb+3kD0UVgB/gcBwM=
+=xm76
+-----END PGP SIGNATURE-----
+
+--i7cnfwqz3x4wuuzw--
