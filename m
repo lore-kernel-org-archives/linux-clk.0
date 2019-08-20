@@ -2,123 +2,131 @@ Return-Path: <SRS0=z1pn=WQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3CAC3A589
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 13:17:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DC2C3A589
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 13:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDE1D22DA7
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 13:17:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4AAF22DA9
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 13:34:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="TKnHxb30";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="P566rOuk"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n5ciGKL9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729351AbfHTNRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 09:17:53 -0400
-Received: from new2-smtp.messagingengine.com ([66.111.4.224]:35975 "EHLO
-        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727006AbfHTNRx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 09:17:53 -0400
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id E18FC19FC;
-        Tue, 20 Aug 2019 09:17:51 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Tue, 20 Aug 2019 09:17:51 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        subject:to:cc:references:from:message-id:date:mime-version
-        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=q
-        1zMCHP9N5dVVFnUfRVs/+hK9HwHAxsq2830Gk8Otsg=; b=TKnHxb30U2xLo5RnR
-        KlEyBBAb+ChXyncMtNVmDnLF3EhbIBW6zwW4BUbMpJA8iBZ5R1EfCY5gtOhqtvbN
-        7cnfPLR/vxNLffoxJrjRxpkon7yCCkCPK1pyhjplXtX4I8Jq9HA/+rIQid+SIh7i
-        A2/n3pj7quWpytyiSvRWasKIAPB7/7sKnGG203xhTbkOOJX1TpVTkt+ZujqmlSTl
-        nBi7/kKyP/ed8hP6NA8Fq9NDTD9LNEKmMtyO1TYWA3HAyvoJrISpLW+qEAnF8K7T
-        Lcf8nAneMs1AF5g4iPiM1R7CnwgYbAJI3F4Dg/nhGenlRm1Y9bROVXSxH7pYqxyD
-        3F0rg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm3; bh=q1zMCHP9N5dVVFnUfRVs/+hK9HwHAxsq2830Gk8Ot
-        sg=; b=P566rOuk25uZ8kvW2Qcy7xPqQAvYpqGna+vaACB0COl254I6sG+rJM8tV
-        og8Fq/f/OM9udD0D3TzgO1xxeOc+GBLa8IUnAYiezLITXVA+SNtOZdbZqX6qYxlp
-        TMLh9jNmz9Mam7DExzTC6n5C4l6ZSOQelzMDaKVrhPu2F4VwIoG5yXX1c5w1u7Pt
-        nX/UC/VAeN3bT0vm31KpIlpZw/o7H/EJ+EcJ+nvNiMKQyBx1SoplMIWhKq+m7rw6
-        gr3qOWX7lGJQXGRyA7AudPZcBGSWp0IfNAuSd8CcUf9nPJ24P9hQqER06VOWXLu0
-        sBNel/sEsBdSWzh3uZrhNZM+IMagg==
-X-ME-Sender: <xms:_vJbXQ5RO5O9O1Rczy5smOCcSkohwcFzrAUqNdmYYmKfsUWO1G3zkA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeguddgieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    goufhprghmkfhpqdhouhhtucdlhedttddmnecujfgurhepuffvfhfhkffffgggjggtgfes
-    thejredttdefjeenucfhrhhomhepufgrmhhuvghlucfjohhllhgrnhguuceoshgrmhhuvg
-    hlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtddrudefhedrudegkedrudehuden
-    ucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
-    enucevlhhushhtvghrufhiiigvpedt
-X-ME-Proxy: <xmx:_vJbXQLP4-G8J52XBWp3Oa34_OhDPDoTAN1cAfUR217WjvVuk-9gJw>
-    <xmx:_vJbXclwYk_iWxKdsVVnmGdYi1LS2aMU48Q4RjV-T4EW3k6R1X5sXQ>
-    <xmx:_vJbXX_maJBFjW-7ggTBO5hZDoiWM227wr87IFn7VVbempcryJfYRg>
-    <xmx:__JbXWfxxQEm5aSfIkZCk4bK5_ro-AT2199PORzHo8kYpsHUbVPJ2q1jzw4>
-Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id C09B1380075;
-        Tue, 20 Aug 2019 09:17:49 -0400 (EDT)
-Subject: Re: [PATCH v4 05/10] ARM: dts: sunxi: a80: Add msgbox node
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
+        id S1729983AbfHTNeP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 09:34:15 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:51897 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729926AbfHTNeP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 09:34:15 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190820133413euoutp026c7fa7e0687e28a63f65bff5ba890e96~8pOBFyc3z1037710377euoutp02B
+        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2019 13:34:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190820133413euoutp026c7fa7e0687e28a63f65bff5ba890e96~8pOBFyc3z1037710377euoutp02B
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1566308053;
+        bh=y5+m4oh3f5HZ9GaPBhzEmkmmjPQmnF4NtajzvtKbr18=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=n5ciGKL9vwsCN5Oy5LCLmlyh75DdU7gQpyuqVEallfgUS5vxlaRDs8n981kAfwYDr
+         eHHmqLjEp6QFmuHGAzDR1QxaqE7h/MWscRV1NgCPP39qL5Wit5tWcBymbHS+N6cwhF
+         ZkuNCOSYhgEl4xzKvIhmm3jSj6vAqHn0tP5oJigQ=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190820133412eucas1p2abe6fdaea89cd7caacb8ed0681e64479~8pOAPM6QD2748027480eucas1p2J;
+        Tue, 20 Aug 2019 13:34:12 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 85.61.04469.4D6FB5D5; Tue, 20
+        Aug 2019 14:34:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190820133411eucas1p25741893d0f33d3b7603b3ccce81532c7~8pN-STqtL2646926469eucas1p2F;
+        Tue, 20 Aug 2019 13:34:11 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20190820133411eusmtrp2ee3c3cd7ae983a4c99fdc918737663e8~8pN-EE3nw0087000870eusmtrp2j;
+        Tue, 20 Aug 2019 13:34:11 +0000 (GMT)
+X-AuditID: cbfec7f2-569ff70000001175-ff-5d5bf6d49254
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C8.16.04166.3D6FB5D5; Tue, 20
+        Aug 2019 14:34:11 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190820133410eusmtip2e34747c4bdc0b17fec87fddf04b9e97d~8pN_C699I1271112711eusmtip21;
+        Tue, 20 Aug 2019 13:34:10 +0000 (GMT)
+Subject: Re: [PATCH] MAINTAINERS: Extend patterns for Samsung SoC, Security
+ Subsystem and clock drivers
+To:     Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     Kukjin Kim <kgene@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>,
+        Kamil Konieczny <k.konieczny@partner.samsung.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190820032311.6506-6-samuel@sholland.org>
- <20190820081528.7g2lo4njkut5lanu@flea>
-From:   Samuel Holland <samuel@sholland.org>
-Message-ID: <f3e3420e-450a-7d41-edf8-776c0cd5a320@sholland.org>
-Date:   Tue, 20 Aug 2019 08:17:49 -0500
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-crypto@vger.kernel.org
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <83e1be95-1fb5-ab23-0517-aef220ebdd9e@samsung.com>
+Date:   Tue, 20 Aug 2019 15:34:08 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190820081528.7g2lo4njkut5lanu@flea>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190818172750.20921-1-krzk@kernel.org>
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRjtvR/bdTS7rYWPS/oYCSmWCQU3ij4g69avfpZiecuLWm7K7lxa
+        UaYVactMTW0MtAiWs1KnmS7T0tSyH0MLnYm1yJKMWeqytNLcrpL/zjnPed7nHHgpXPGFVFGJ
+        Wj2v03JJaomMqGufdKx/MxEds7GodTnT6xkiGbPjAsFcGQ5icptmEHPt41eccTiqpIztYw/J
+        jBrfkcz7d5MY89puljAljiaM6eqMZKZ7qgnGav+DmJmpLHznEvab86KUrS3vw9gG04CUrXsa
+        zNqs2RK25s45dvpWIcE+G2nE2NxaK2LHbSsPyKJk2+L4pEQDrwvfHitLqK5ySVMe4GmWC+1k
+        BvqE5SA/CuhN0DNYIclBMkpB30WQY/6LicSDYKCrExfJOIJHJrN0fqXKOU2KAwuC0oJ2qUjc
+        sysVJsLrWkYnQnPlFPJi5SwutWf6TDjdhUOJxe27LqEj4Gpbrs8kp7dDhTt/9lmKIuhgGKpc
+        4pWX0wdhzNVKipal8PLmoO99P3oz9NX/xb0YpwMg01NOingVPHKbfbGBvk5Br6durulusGeM
+        zuFlMNxRO1cnCGYaSjFxIQuB8XG/VCR5CN53lCHRtRVaO7p86XA6BCrt4aK8CyraX2JeGWh/
+        cLqXiiH8Ib+uGBdlOVy+pBDda+G3tXguggquDM4QeUhtWlDNtKCOaUEd0/+7ZYiwogA+VdDE
+        80KElj+5QeA0Qqo2fsOxZI0NzX7AV9MdY/XoR/fRFkRTSL1YXt8XHaMgOYOQrmlBQOFqpTzN
+        HBWjkMdx6ad4XfIRXWoSL7SgFRShDpCfXuSKVtDxnJ4/wfMpvG5+ilF+qgwUlX9272TcuoKQ
+        kNiRtn0vSsIOK8nP96Mjjfs1/R8eN/96wxWw5QePH+pNP94clp3tXG+0DiuLIy3BeRMDKzhX
+        9fdjL3b8tOzBn1za1HZRjxq0Sd2F5y0jKmNojKXQUPTwwW1bZGDK6i2NN9IMu0PSbqavCXzu
+        DnjbVKM/fOZeWaVSTQgJXEQorhO4fxibm+R8AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFIsWRmVeSWpSXmKPExsVy+t/xe7qXv0XHGqw9LGpx/ctzVos551tY
+        LLpfyVj07fvPaNH/+DWzxfnzG9gtNj2+xmrxseceq8X9ez+ZLC7vmsNmMeP8PiaLi6dcLf5d
+        28hisWrXH0aL/7+amR34Pd7faGX32LLyJpPHzll32T22HVD12LSqk81j85J6j38Lp7B4HHy3
+        h8mjb8sqRo/Pm+QCuKL0bIryS0tSFTLyi0tslaINLYz0DC0t9IxMLPUMjc1jrYxMlfTtbFJS
+        czLLUov07RL0MjZueMBesI65YnnLMdYGxqdMXYycHBICJhIbbvxj7WLk4hASWMoo0da9m7GL
+        kQMoISUxv0UJokZY4s+1LjaImteMEi9nT2IBSQgLZErsX/+LEcQWAbJvvV3LAlHUwSjRc/gm
+        M4jDLHCZWeLJzjZ2kCo2AUOJ3qN9YB28AnYSq99OYgXZxiKgKvF8PT9IWFQgQuLwjllQJYIS
+        J2c+AVvGKWAqcXPHX2YQm1lAXeLPvEtQtrhE05eVrBC2vMT2t3OYJzAKzULSPgtJyywkLbOQ
+        tCxgZFnFKJJaWpybnltsqFecmFtcmpeul5yfu4kRGO/bjv3cvIPx0sbgQ4wCHIxKPLw7bkbH
+        CrEmlhVX5h5ilOBgVhLhrZgTFSvEm5JYWZValB9fVJqTWnyI0RTot4nMUqLJ+cBUlFcSb2hq
+        aG5haWhubG5sZqEkztshcDBGSCA9sSQ1OzW1ILUIpo+Jg1OqgVH8/UmtpWfmPbt/IPKFz/ad
+        K9f8cp2SuFhmJU/6Cefzjg6FItP1b784MEdXdfcBhgb/s2cezrxxRvD8mRerVbyesG+4aJ5U
+        17rZ/atQ9O6i0w4cTbeDI6tuln7d8PiNhf0vttz6OTVZdgU7ehsab0UbqpvGL+t303ZaZ3b2
+        nuiWU3u8kivDFssosRRnJBpqMRcVJwIAwa6cxg0DAAA=
+X-CMS-MailID: 20190820133411eucas1p25741893d0f33d3b7603b3ccce81532c7
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190818172803epcas2p42fa4c0219beb7de452d276cb06bfa73a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190818172803epcas2p42fa4c0219beb7de452d276cb06bfa73a
+References: <CGME20190818172803epcas2p42fa4c0219beb7de452d276cb06bfa73a@epcas2p4.samsung.com>
+        <20190818172750.20921-1-krzk@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 8/18/19 19:27, Krzysztof Kozlowski wrote:
+> Extend the patterns to cover all related files in respective
+> categories:
+> 1. Samsung Exynos ARM architecture: add soc drivers headers and make
+>    directory matches consistent,
+> 2. Samsung Security SubSystem driver (crypto): add bindings,
+> 3. Samsung SoC clock drivers: add S3C24xx, S3C64xx and S5Pv210 bindings.
 
-On 8/20/19 3:15 AM, Maxime Ripard wrote:
-> On Mon, Aug 19, 2019 at 10:23:06PM -0500, Samuel Holland wrote:
->> The A80 SoC contains a message box that can be used to send messages and
->> interrupts back and forth between the ARM application CPUs and the ARISC
->> coprocessor. Add a device tree node for it.
->>
->> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> 
-> I think you mentionned that crust has been tested only on the A64 and
-> the H3/H5, did you test the mailbox on those other SoCs as well?
-
-No, I only have A64/H3/H5, and recently H6, hardware to test. I've looked
-through the manuals to verify that the registers are all the same, but I haven't
-run the driver on earlier SoCs.
-
-On 32-bit SoCs, where there's no other user of SRAM A2, it should be easy to get
-the toy firmware running. All you should need to do is:
-  1) Update the MMIO base/clock addresses in drivers/msgbox/sunxi-msgbox.c
-  2) Update the load address in platform/sun50i/include/platform/memory.h
-  3) Load the firmware to SRAM A2 (can be done from a U-Boot shell)
-  4) Initialize the reset vector (algorithm is in tools/test.c:109)
-  5) Deassert AR100 reset (again, these last two steps can be done from U-Boot)
-
-Thanks,
-Samuel
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
