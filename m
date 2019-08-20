@@ -2,203 +2,167 @@ Return-Path: <SRS0=z1pn=WQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FF56C41514
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 11:32:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548AFC3A589
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 13:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F36912082F
-	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 11:32:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E5222D6D
+	for <linux-clk@archiver.kernel.org>; Tue, 20 Aug 2019 13:03:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="LiOhSbi5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="EypA7Rvf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729784AbfHTLcR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 07:32:17 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:48986 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729712AbfHTLcO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 20 Aug 2019 07:32:14 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 676AF20029A;
-        Tue, 20 Aug 2019 13:32:12 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id DC98E200107;
-        Tue, 20 Aug 2019 13:32:07 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5F0AE40320;
-        Tue, 20 Aug 2019 19:31:58 +0800 (SGT)
-From:   Dong Aisheng <aisheng.dong@nxp.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-        mturquette@baylibre.com, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V4 08/11] clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
-Date:   Tue, 20 Aug 2019 07:13:22 -0400
-Message-Id: <1566299605-15641-9-git-send-email-aisheng.dong@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
-References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1728283AbfHTNDA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 09:03:00 -0400
+Received: from new2-smtp.messagingengine.com ([66.111.4.224]:50539 "EHLO
+        new2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727006AbfHTNDA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 09:03:00 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 1CB561A74;
+        Tue, 20 Aug 2019 09:02:59 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute5.internal (MEProxy); Tue, 20 Aug 2019 09:02:59 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=1
+        usIyl6jBRrcd9bI7o9gbxd6pE66tvE7eiKPLxty27A=; b=LiOhSbi5IJNsXVgMD
+        Qnc0zT60+2lOlbSltEck6AJ4prekCDYxWAEMv+giRPRCuqVRDlWwauFKrOmNhAiE
+        +CB34WVyU2GhNxPodFT4AP9Wj7f3AG+6/ftZfXnggizy131pduBImIiQdkk02k0C
+        D7ZfEBMzrYkXyBzw9VAolt8g5vUXhNxtyXaq7NjxBZNR6IbCTwjakdMPu+mF11KG
+        vv0vEtjYbpqm60N8UmlEADyzbMLfORa/UURKAwN8PFVg4CS5B6Li0AVw5wTScLiq
+        m4YTHdrPqQlUpfba3IGXJAo/84yWF8bvAIaEL1P1pFxeFPVJvALbceqcHtSGxPdK
+        yFnxw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=1usIyl6jBRrcd9bI7o9gbxd6pE66tvE7eiKPLxty2
+        7A=; b=EypA7RvfDE5jwfTIyRB0mMJuOIfQQfHGCG4abVQDW7zn/6LTV5aNNK8aV
+        XBBCGD/e4ZIPZeR+CNMqhnlLKM3jlOEI/8ig5ERwuVUfZepuSs8HH0zUivTvIQO+
+        uztQKYIYeioz7JTl6ZwPtV4josiU3V4lRdm0gazn4xVKPSFICJSxpfq3V9QAjJLS
+        U85qzTyHCKWqfaeuwMRt6yDlxptdnTj2FWYPpTLJ3b9iVW7lA1V772f6JWpsczkl
+        Z6vWDNPKyC+yzZnHU3Mgc3HdEtv0r3FqLATGNppq+azRapLXUlMhBzQcuE5P7QSP
+        mlxCL+n37OQIVVbnKOFocIcYnrMyQ==
+X-ME-Sender: <xms:ge9bXYgRHXVxUiYDoQyP6boSZH3D_2mW33CKOUYLXTPC16V198SkNQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudeguddgheekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    goufhprghmkfhpqdhouhhtucdlhedttddmnecujfgurhepuffvfhfhkffffgggjggtgfes
+    thejredttdefjeenucfhrhhomhepufgrmhhuvghlucfjohhllhgrnhguuceoshgrmhhuvg
+    hlsehshhholhhlrghnugdrohhrgheqnecukfhppeejtddrudefhedrudegkedrudehuden
+    ucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrgh
+    enucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:ge9bXaY4wThlynGNdxR2RoMtj90VMsONx9Gr7i1fJkXkUA-tMJH8UQ>
+    <xmx:ge9bXZPBVP-n5D76B7tsNqU1FUWFgUKybxt3nLKCRPrrVSkAe7bk8Q>
+    <xmx:ge9bXcSrYQWR-HKkZyvnl5gVZWID451AXgTjTo9-4BKPiq90UXS6ug>
+    <xmx:g-9bXRhUUZYoxA7ROwch_EfWRiGPjBXmQuQh6ZEm_2DY1jQhbtAHxRscFqA>
+Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id BB527380083;
+        Tue, 20 Aug 2019 09:02:56 -0400 (EDT)
+Subject: Re: [PATCH v4 02/10] clk: sunxi-ng: Mark AR100 clocks as critical
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+References: <20190820032311.6506-1-samuel@sholland.org>
+ <20190820032311.6506-3-samuel@sholland.org>
+ <20190820071142.2bgfsnt75xfeyusp@flea>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <3b67534a-eb1b-c1e8-b5e8-e0a74ae85792@sholland.org>
+Date:   Tue, 20 Aug 2019 08:02:55 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
+MIME-Version: 1.0
+In-Reply-To: <20190820071142.2bgfsnt75xfeyusp@flea>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add parsing clocks from device tree.
+On 8/20/19 2:11 AM, Maxime Ripard wrote:
+> Hi,
+> 
+> On Mon, Aug 19, 2019 at 10:23:03PM -0500, Samuel Holland wrote:
+>> On sun8i, sun9i, and sun50i SoCs, system suspend/resume support requires
+>> firmware running on the AR100 coprocessor (the "SCP"). Such firmware can
+>> provide additional features, such as thermal monitoring and poweron/off
+>> support for boards without a PMIC.
+>>
+>> Since the AR100 may be running critical firmware, even if Linux does not
+>> know about it or directly interact with it (all requests may go through
+>> an intermediary interface such as PSCI), Linux must not turn off its
+>> clock.
 
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-Changelog:
-v3->v4:
- * remove hw_autogate which is not still used by driver
- * use clock-indices to indicate LPCG clock bit offset
-v1->v3: no changes
----
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 103 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 103 insertions(+)
+This paragraph here is the key. The firmware won't necessarily have a device
+tree node, and in the current design it will not, since Linux never communicates
+with it directly. All communication goes through ATF via PSCI.
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index c0aff7c..90326e5 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -9,6 +9,7 @@
- #include <linux/io.h>
- #include <linux/module.h>
- #include <linux/of.h>
-+#include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
- #include <linux/slab.h>
-@@ -157,6 +158,101 @@ static const struct imx8qxp_ss_lpcg imx8qxp_ss_lsio = {
- 	.num_max = IMX_LSIO_LPCG_CLK_END,
- };
- 
-+#define IMX_LPCG_MAX_CLKS	8
-+
-+static struct clk_hw *imx_lpcg_of_clk_src_get(struct of_phandle_args *clkspec,
-+					      void *data)
-+{
-+	struct clk_hw_onecell_data *hw_data = data;
-+	unsigned int idx = clkspec->args[0] / 4;
-+
-+	if (idx >= hw_data->num) {
-+		pr_err("%s: invalid index %u\n", __func__, idx);
-+		return ERR_PTR(-EINVAL);
-+	}
-+
-+	return hw_data->hws[idx];
-+}
-+
-+static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
-+				       struct device_node *np)
-+{
-+	const char *output_names[IMX_LPCG_MAX_CLKS];
-+	const char *parent_names[IMX_LPCG_MAX_CLKS];
-+	unsigned int bit_offset[IMX_LPCG_MAX_CLKS];
-+	struct clk_hw_onecell_data *clk_data;
-+	struct clk_hw **clk_hws;
-+	struct resource *res;
-+	void __iomem *base;
-+	int count;
-+	int idx;
-+	int ret;
-+	int i;
-+
-+	if (!of_device_is_compatible(np, "fsl,imx8qxp-lpcg"))
-+		return -EINVAL;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	base = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
-+
-+	count = of_property_count_u32_elems(np, "clock-indices");
-+	if (count < 0) {
-+		dev_err(&pdev->dev, "failed to count clocks\n");
-+		return -EINVAL;
-+	}
-+
-+	clk_data = devm_kzalloc(&pdev->dev, struct_size(clk_data, hws, IMX_LPCG_MAX_CLKS),
-+				GFP_KERNEL);
-+	if (!clk_data)
-+		return -ENOMEM;
-+
-+	clk_data->num = IMX_LPCG_MAX_CLKS;
-+	clk_hws = clk_data->hws;
-+
-+	ret = of_property_read_u32_array(np, "clock-indices", bit_offset,
-+					 count);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to read clocks bit-offset\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_clk_parent_fill(np, parent_names, count);
-+	if (ret != count) {
-+		dev_err(&pdev->dev, "failed to get clock parent names\n");
-+		return -EINVAL;
-+	}
-+
-+	ret = of_property_read_string_array(np, "clock-output-names",
-+					    output_names, count);
-+	if (ret != count) {
-+		dev_err(&pdev->dev, "failed to read clock-output-names\n");
-+		return -EINVAL;
-+	}
-+
-+	for (i = 0; i < count; i++) {
-+		idx = bit_offset[i] / 4;
-+		if (idx > IMX_LPCG_MAX_CLKS) {
-+			dev_warn(&pdev->dev, "invalid bit offset of clock %d\n",
-+				 i);
-+			return -EINVAL;
-+		}
-+
-+		clk_hws[idx] = imx_clk_lpcg_scu(output_names[i],
-+						parent_names[i], 0, base,
-+						bit_offset[i], false);
-+		if (IS_ERR(clk_hws[idx])) {
-+			dev_warn(&pdev->dev, "failed to register clock %d\n",
-+				 idx);
-+			return -EINVAL;
-+		}
-+	}
-+
-+	return devm_of_clk_add_hw_provider(&pdev->dev, imx_lpcg_of_clk_src_get,
-+					   clk_data);
-+}
-+
- static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
- {
- 	struct device *dev = &pdev->dev;
-@@ -167,8 +263,14 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
- 	struct resource *res;
- 	struct clk_hw **clks;
- 	void __iomem *base;
-+	int ret;
- 	int i;
- 
-+	/* try new binding to parse clocks from device tree first */
-+	ret = imx_lpcg_parse_clks_from_dt(pdev, np);
-+	if (!ret)
-+		return 0;
-+
- 	ss_lpcg = of_device_get_match_data(dev);
- 	if (!ss_lpcg)
- 		return -ENODEV;
-@@ -208,6 +310,7 @@ static const struct of_device_id imx8qxp_lpcg_match[] = {
- 	{ .compatible = "fsl,imx8qxp-lpcg-adma", &imx8qxp_ss_adma, },
- 	{ .compatible = "fsl,imx8qxp-lpcg-conn", &imx8qxp_ss_conn, },
- 	{ .compatible = "fsl,imx8qxp-lpcg-lsio", &imx8qxp_ss_lsio, },
-+	{ .compatible = "fsl,imx8qxp-lpcg", NULL },
- 	{ /* sentinel */ }
- };
- 
--- 
-2.7.4
+>> At this time, such power management firmware only exists for the A64 and
+>> H5 SoCs.  However, it makes sense to take care of all CCU drivers now
+>> for consistency, and to ease the transition in the future once firmware
+>> is ported to the other SoCs.
+>>
+>> Leaving the clock running is safe even if no firmware is present, since
+>> the AR100 stays in reset by default. In most cases, the AR100 clock is
+>> kept enabled by Linux anyway, since it is the parent of all APB0 bus
+>> peripherals. This change only prevents Linux from turning off the AR100
+>> clock in the rare case that no peripherals are in use.
+>>
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> 
+> So I'm not really sure where you want to go with this.
+> 
+> That clock is only useful where you're having a firmware running on
+> the AR100, and that firmware would have a device tree node of its own,
+> where we could list the clocks needed for the firmware to keep
+> running, if it ever runs. If the driver has not been compiled in /
+> loaded, then we don't care either.
 
+See above. I don't expect that the firmware would have a device tree node,
+because the firmware doesn't need any Linux drivers.
+
+> But more fundamentally, if we're going to use SCPI, then those clocks
+> will not be handled by that driver anyway, but by the firmware, right?
+
+In the future, we might use SCPI clocks/sensors/regulators/etc. from Linux, but
+that's not the plan at the moment. Given that it's already been two years since
+I started this project, I'm trying to limit its scope so I can get at least some
+part merged. The first step is to integrate a firmware that provides
+suspend/resume functionality only. That firmware does implement SCPI, and if the
+top-level Linux SCPI driver worked with multiple mailbox channels, it could
+query the firmware's version and fetures. But all of the SCPI commands used for
+suspend/resume must go through ATF via PSCI.
+
+> So I'm not really sure that we should do it statically this way, and
+> that we should do it at all.
+
+Do you have a better way to model "firmware uses this clock behind the scenes,
+so Linux please don't touch it"? It's unfortunate that we have Linux and
+firmware fighting over the R_CCU, but since we didn't have firmware (e.g. SCPI
+clocks) in the beginning, it's where we are today.
+
+The AR100 clock doesn't actually have a gate, and it generally has dependencies
+like R_INTC in use. So as I mentioned in the commit message, the clock will
+normally be on anyway. The goal was to model the fact that there are users of
+this clock that Linux doesn't/can't know about.
+
+> Maxime
+
+Thanks,
+Samuel
