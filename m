@@ -2,96 +2,119 @@ Return-Path: <SRS0=LMZy=WR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1D47C3A589
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02B5EC3A5A1
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 07:56:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83B9922DD6
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:57:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CACF9233A1
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 07:56:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uK44JlaR"
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="r4qTCJNK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726749AbfHUC5h (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 22:57:37 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:43239 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726843AbfHUC5g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 22:57:36 -0400
-Received: by mail-pl1-f196.google.com with SMTP id 4so481678pld.10
-        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2019 19:57:36 -0700 (PDT)
+        id S1726921AbfHUH4Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Aug 2019 03:56:24 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45132 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726354AbfHUH4Y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Aug 2019 03:56:24 -0400
+Received: by mail-lj1-f195.google.com with SMTP id l1so1210824lji.12
+        for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2019 00:56:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0YPh4ZPworY3ZEjE24wMYeyXg9KZRbq3tqWyWWQ8XlQ=;
-        b=uK44JlaR1k3uAS4AX3pTDEr/vTzJzlJG3h0cfLeudtdjt2eTHBjAcnUQl+nX8E2LhN
-         qCLGyyMqNg23YESt9V6DoY3pHFBGGmRlYuDnqyYX+iShevZAV/Dn4G6IDT9lBXJAHj3m
-         9nBp91YmOaxbaS1aW6IK2JuDZchAGjlCHl478vqdoYAm9UMDunVKLDVy/V3v899zP9Qi
-         pvMu4EarvlbOHOzVJgP1hSfPL7LSJGBbhSmY1nMwmX9s3cTwlV+fc+8tAmc+OP4bZ1lz
-         lyQ0oP9/J9EAAVm8Ir1EoxS8w8tmPI2dkAjFZC8t9BGt/ILxUKrdiBnGWy4sib1utZNq
-         BqrQ==
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=QOA27fQvmt0ItpWVuER8Cd/2ccQ264UvV5OBM8TClfA=;
+        b=r4qTCJNK5SJ8ogQ4WghaMDrAuodPTaNyFs7N2SEfsWO/khHUCoesuERqXfXhBfYQre
+         BZhSDXDue9g8DqYmEQmgzJrqG0toR/vo6n3qqMg+v0Nfmf1+LEusn9bfeAkSAi/JWlCh
+         D7dlKbNfUNJHct1B5cq9EKFO5qPTk1j4vsDUQIz4LmdlBrZiyxkESssVjfdZmlSL10+U
+         8RNqPqaHiRExoljUbJDthvobAspkeISAe1+PTSNJKl+SZZpwF49JQ5uB1Cj7st7tDVb7
+         nCJWGi2eK25KX46F+acDZZkzHQEzEUmFLwNXV2+Lz2F1fKWjbsNTztybhtF0FLzI9Wf6
+         4fMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0YPh4ZPworY3ZEjE24wMYeyXg9KZRbq3tqWyWWQ8XlQ=;
-        b=FyFYcDubxlGwxfMXvpPFw5UYi3tEAPE+zaHY9j/VvSPlY+g6jdVaBmguNGlK6rVeAv
-         a6UnmLUEdBBfoXi5piwdRDUz3LIcZtJ7v9dtao5xs4dLfWHHderLO4OfOw6k2f2aXFEv
-         4K+4eElpVLVbj/kqjWPRoGlx/cQ6GELf5ef8v1Z7R9cZKwWmKNVGIpswN4ONjW7Fa2+n
-         Y9iP5wnexNkuUHAdEjL2n8N9A5LNqMBW8aBc2Irh5vQOkRAdsho17t8f1s8fRXgmdj7y
-         lZxGsvznVb7aqGEJ7jRSb4Ftz8S6tCxNijYCjjCs56sHUv6EvHjfaGpwtLHLBiXrw6+4
-         Y5eg==
-X-Gm-Message-State: APjAAAW5PGsBBcbCxOtRjR/Um72SlHimmkiZYoHbJiLkWppt99xR0FGx
-        4oPOX2rf1d6sUAUe8ShWYvMR
-X-Google-Smtp-Source: APXvYqxWX41fVvpAy5mDzcBY4knA0x++pNqIAFAUMif6+qT59dLNFyls0cGJowbkdKkvLw/bLqAyCw==
-X-Received: by 2002:a17:902:b710:: with SMTP id d16mr25772303pls.165.1566356255979;
-        Tue, 20 Aug 2019 19:57:35 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:7101:175:ddd7:6c31:ebc7:37e8])
-        by smtp.gmail.com with ESMTPSA id d16sm13251682pfd.81.2019.08.20.19.57.30
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=QOA27fQvmt0ItpWVuER8Cd/2ccQ264UvV5OBM8TClfA=;
+        b=QtD8J6Uh2UW8sdGAy/FbNMny9DLYs/r0wRjaADVk8SVOrYzOEbk9v1zSUJC4C70Lf5
+         9TB9CI6FgsewVZMGVObAL3wwS+Clc2GL6ngkrgeTQ6FVP672ZeFWmFQKnoPOppKEcZ6w
+         u2Gmv5JMoIyu9Zjk6erU7LnrXeHycGDcG/UJYaeAbaio2qiQCsbFv/x8UEAbzJZzhhRu
+         0H2U1W94uBVH2BgWQykSbHufwr5g/D0heYZoQjld7GO3qd2YSv3UJlwv4pgsbpKIio0Q
+         6o7ZvyKrIBXOnF2JPTpnd7DRBPs0Fs+jwOck7+IBRdp+0ZhYM2CPUOguol7a4N0Y5O0G
+         WOkQ==
+X-Gm-Message-State: APjAAAXNTgmgN30K0seEnIA9jnYIGIHQ+6cOIhCeYIL3ey36OF9fLLEe
+        lt8WEeShBBXzG4OwTs89sYBrTKWrjHo=
+X-Google-Smtp-Source: APXvYqxyRNa53b5Cigx2MTrXUcy4HqDnc2hTJX1bT9880ZE78ku7EN1Dk8F5EZafozo6IQNHWVXYsA==
+X-Received: by 2002:a2e:3608:: with SMTP id d8mr18453513lja.140.1566374182107;
+        Wed, 21 Aug 2019 00:56:22 -0700 (PDT)
+Received: from localhost (h-177-236.A463.priv.bahnhof.se. [217.31.177.236])
+        by smtp.gmail.com with ESMTPSA id h3sm1829962ljb.8.2019.08.21.00.56.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 19:57:35 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     ulf.hansson@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
-        sboyd@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v3 7/7] arm64: configs: Enable Actions Semi platform in defconfig
-Date:   Wed, 21 Aug 2019 08:26:29 +0530
-Message-Id: <20190821025629.15470-8-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190821025629.15470-1-manivannan.sadhasivam@linaro.org>
-References: <20190821025629.15470-1-manivannan.sadhasivam@linaro.org>
+        Wed, 21 Aug 2019 00:56:21 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 09:56:20 +0200
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Simon Horman <horms+renesas@verge.net.au>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Magnus Damm <magnus.damm@gmail.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clk: emev2: Rename bindings documentation
+ file
+Message-ID: <20190821075620.GB28351@bigcity.dyn.berto.se>
+References: <20190819135630.18462-1-horms+renesas@verge.net.au>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190819135630.18462-1-horms+renesas@verge.net.au>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Since the Actions Semi platform can now boot a distro, enable it in
-ARM64 defconfig.
+Hi Simon,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for your work.
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 0e58ef02880c..8e27777d6687 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -29,6 +29,7 @@ CONFIG_BLK_DEV_INITRD=y
- CONFIG_KALLSYMS_ALL=y
- # CONFIG_COMPAT_BRK is not set
- CONFIG_PROFILING=y
-+CONFIG_ARCH_ACTIONS=y
- CONFIG_ARCH_AGILEX=y
- CONFIG_ARCH_SUNXI=y
- CONFIG_ARCH_ALPINE=y
+On 2019-08-19 15:56:30 +0200, Simon Horman wrote:
+> Rename the device tree clock bindings for Renesas EMMA Mobile EV2
+> from emev2-clock.txt to emev2-renesas,emev2-smu.txt.
+
+Should this not be renesas,emev2-smu.txt to align with the compatible 
+string?
+
+> 
+> This is part of an ongoing effort to name bindings documentation files for
+> Renesas IP blocks consistently, in line with the compat strings they
+> document.
+> 
+> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> ---
+> Based on v5.3-rc1
+> ---
+>  .../bindings/clock/{emev2-clock.txt => emev2-renesas,emev2-smu.txt}       | 0
+>  1 file changed, 0 insertions(+), 0 deletions(-)
+>  rename Documentation/devicetree/bindings/clock/{emev2-clock.txt => emev2-renesas,emev2-smu.txt} (100%)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/emev2-clock.txt b/Documentation/devicetree/bindings/clock/emev2-renesas,emev2-smu.txt
+> similarity index 100%
+> rename from Documentation/devicetree/bindings/clock/emev2-clock.txt
+> rename to Documentation/devicetree/bindings/clock/emev2-renesas,emev2-smu.txt
+> -- 
+> 2.11.0
+> 
+
 -- 
-2.17.1
-
+Regards,
+Niklas Söderlund
