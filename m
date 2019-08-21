@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA2C9C3A589
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:41:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72795C3A589
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:41:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F5EC2339E
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:41:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47FD52339E
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:41:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWmyO/ZO"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rLyhcFrh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727241AbfHUClP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 22:41:15 -0400
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42674 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727217AbfHUClP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 22:41:15 -0400
-Received: by mail-pf1-f193.google.com with SMTP id i30so380694pfk.9
-        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2019 19:41:15 -0700 (PDT)
+        id S1727256AbfHUClW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 22:41:22 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:37131 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbfHUClW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 22:41:22 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y9so21299pfl.4
+        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2019 19:41:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=ZOe0QY1KzUF5P+bCoUM0BJ5F01MAdy4sijBj6AsQWEY=;
-        b=HWmyO/ZOIBs+A7zmQrIMqVgyxPQ2jB0Ddy0+rEqooIS+YxUle0+bJYmfSvbdeKYUX2
-         0EmoZ95HMKoXzihfE59cWYZwRpKM9O3xOMZfsCGegfiFytsqkv6Xc5JccykPm9L3PRrk
-         Up8koMo3E6TXR/qynopS8F42HgAN/sDyd2zFCFyoZVGuzp1O9a26qm6MlXTXfsiE7QAy
-         hq1I8SJNFGSQes+82DZeGKlJHrnp0OS41f/RCV9JHQomXmBFHLimNj1BNCq0gLiaNgCw
-         Xb4mIjU/7I8lyINue6igBtz/3bWVguWnPYITjEV2KwbOQ6Zn61NLBpnXGt8RiZmShFeX
-         +fww==
+        bh=0YPh4ZPworY3ZEjE24wMYeyXg9KZRbq3tqWyWWQ8XlQ=;
+        b=rLyhcFrheG3o5Qx36QQ7u9F9uz6BwEvvGRbEFwHczuyYBmBtSTcgoqnF/CpXUVKaUF
+         oFPWCqQ4uFTZ86OpbY1QLizgo72Qacqp4vAUUu7JOSh9ify6x0ZJRRcGFapCIP/AO0AY
+         Vsihv62MIoIyy5uSqLpZHyHqaFFEda8zb2G3FIV2Xw2fzJVGD4eHfhtIzlc8H5QFlt3Z
+         yJPO05K75raZr5sErAAPhuaYP0ioHGau7+VtaimX4l5tiBEnWy+Csd8f3CTSrP4/MhkT
+         idghhLoGl7DRYN6wJeVfO/IDfPyE5E0FeAGuQWaQCvsY75FGgAwSsXCcq3xbt5ivgjXM
+         B4bQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=ZOe0QY1KzUF5P+bCoUM0BJ5F01MAdy4sijBj6AsQWEY=;
-        b=Szj1L0VwoYi7fvGGQCATpO4rUsH4hdpRxgdS+/UvU3IUkFMHavT/Qqe8CDUm/nuFF0
-         K5036Rnk3Zc0pQ1T5lQ/28VKgKdZ4hyTneGV8b9QbIoRSwasEtUHUnmOK0e3yB8i3Sea
-         i4Msxbu/i4XtVc2IBmgCZjbaScJzLdfYEw4d596nDBXY5nOVVznFfzmqwSjmeQNRs1FA
-         mwfqn0o9cclUqGZnciRJP/UkmZY5Mnj7YMMtpBuxRG3qmEv3AMU2Dn1T+ZOt0VZ89U3j
-         LgfQg53GZ1Q8T+Jmm9ISnSgoDcaK7D19eCMlQoX4kd1l6M4/FiTPivFIP9QVts0iIbAv
-         G6oQ==
-X-Gm-Message-State: APjAAAXu762lsc4dDW6m/UnU2q539hxeuJuBbtdwmbPHU8LidTLtql4X
-        yTnvKVyTOCqiEVzp9EnJP7lD
-X-Google-Smtp-Source: APXvYqx8as53UWMctePrdUCwm/ptziUdDjmDttJKVhO0LjcJc5tCGhcTtg3y6wHbQE7foFo3/P5+Gg==
-X-Received: by 2002:a63:4e05:: with SMTP id c5mr26433918pgb.82.1566355274706;
-        Tue, 20 Aug 2019 19:41:14 -0700 (PDT)
+        bh=0YPh4ZPworY3ZEjE24wMYeyXg9KZRbq3tqWyWWQ8XlQ=;
+        b=i3cHsP7sdO/mY12mTqLYnwmqFXp6hjgnXyGscVmO5vjMtrpT0GY8zNE44nJF41PVfF
+         WO3594OYo0PqhjpYYl1LFsnhypMmqt/dcre5bP3GufxtZvLq7MulQd7Fhl37GDRo+8HG
+         ECeg0nTCb63kCfC1BYcur8LSnL+K84WYYVfAl2vCM1V4yQmbC4zQ1akXaPngczi7a3nK
+         rSP/G6u6JFWCO2tXmaP+bo5keiY5zjY0aHMZ3BZ1bwzjgtVPAxYZWO9RIM32+YBF53Yh
+         eI7Wo/+kPbRU5V0R5edVQKYrhG8MfY2CIaJ0k+coQg4WiI3n6Fy492fQDfnshnCG4sEy
+         TSXQ==
+X-Gm-Message-State: APjAAAWemgvtQLUeRXVkx/CeoxKqjj/t4zlKdTxHXf306/BBBs4zNC6m
+        mlbtND9XKlhukubCMUmNsiib
+X-Google-Smtp-Source: APXvYqwmigcKaPRf+OIOd50oOxOjUzfx0doqmb3OFqSsh3CLhHvbUYDNLJUbQly1qsFB7EvMt3oOsw==
+X-Received: by 2002:a63:1f1f:: with SMTP id f31mr26894682pgf.353.1566355281516;
+        Tue, 20 Aug 2019 19:41:21 -0700 (PDT)
 Received: from localhost.localdomain ([2405:204:7101:175:ddd7:6c31:ebc7:37e8])
-        by smtp.gmail.com with ESMTPSA id b126sm26091608pfa.177.2019.08.20.19.41.08
+        by smtp.gmail.com with ESMTPSA id b126sm26091608pfa.177.2019.08.20.19.41.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2019 19:41:14 -0700 (PDT)
+        Tue, 20 Aug 2019 19:41:21 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     ulf.hansson@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
         sboyd@kernel.org
@@ -61,9 +61,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
         thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
         linus.walleij@linaro.org, linux-clk@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v2 6/7] MAINTAINERS: Add entry for Actions Semi SD/MMC driver and binding
-Date:   Wed, 21 Aug 2019 08:10:13 +0530
-Message-Id: <20190821024014.14070-7-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2 7/7] arm64: configs: Enable Actions Semi platform in defconfig
+Date:   Wed, 21 Aug 2019 08:10:14 +0530
+Message-Id: <20190821024014.14070-8-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190821024014.14070-1-manivannan.sadhasivam@linaro.org>
 References: <20190821024014.14070-1-manivannan.sadhasivam@linaro.org>
@@ -72,33 +72,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MAINTAINERS entry for Actions Semi SD/MMC driver with its binding.
+Since the Actions Semi platform can now boot a distro, enable it in
+ARM64 defconfig.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index c31e6492b601..247d5332f7b7 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1375,6 +1375,7 @@ F:	drivers/clk/actions/
- F:	drivers/clocksource/timer-owl*
- F:	drivers/dma/owl-dma.c
- F:	drivers/i2c/busses/i2c-owl.c
-+F:	drivers/mmc/host/owl-mmc.c
- F:	drivers/pinctrl/actions/*
- F:	drivers/soc/actions/
- F:	include/dt-bindings/power/owl-*
-@@ -1383,6 +1384,7 @@ F:	Documentation/devicetree/bindings/arm/actions.yaml
- F:	Documentation/devicetree/bindings/clock/actions,owl-cmu.txt
- F:	Documentation/devicetree/bindings/dma/owl-dma.txt
- F:	Documentation/devicetree/bindings/i2c/i2c-owl.txt
-+F:	Documentation/devicetree/bindings/mmc/owl-mmc.txt
- F:	Documentation/devicetree/bindings/pinctrl/actions,s900-pinctrl.txt
- F:	Documentation/devicetree/bindings/power/actions,owl-sps.txt
- F:	Documentation/devicetree/bindings/timer/actions,owl-timer.txt
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index 0e58ef02880c..8e27777d6687 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -29,6 +29,7 @@ CONFIG_BLK_DEV_INITRD=y
+ CONFIG_KALLSYMS_ALL=y
+ # CONFIG_COMPAT_BRK is not set
+ CONFIG_PROFILING=y
++CONFIG_ARCH_ACTIONS=y
+ CONFIG_ARCH_AGILEX=y
+ CONFIG_ARCH_SUNXI=y
+ CONFIG_ARCH_ALPINE=y
 -- 
 2.17.1
 
