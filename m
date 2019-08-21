@@ -2,171 +2,88 @@ Return-Path: <SRS0=LMZy=WR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9C25C3A59E
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 18:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61385C3A59E
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 18:51:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AFDA2339E
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 18:42:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YKGnwDoU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="idRT9qzG"
+	by mail.kernel.org (Postfix) with ESMTP id 2D8E5214DA
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 18:51:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566413490;
+	bh=jVtTWU2Yk2XfFNdXQlMSHlqlbUqRfUY4WJZnNHzAzSU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wQQl6tPgD/i/juCVZU5tgEEPLOSCXpEN+ZNvqAEj6dATUlT+4+2p6wrm+0aLcz59n
+	 XECKZM/86W6d0MRKxsIJSv08LVD/KiHWpz2ijx0FY5AHzkvre2AmWFI/k/iKBftWER
+	 OF8ERGlJl/TweeKWjr6R1ge6NnPTtlVr0WhR15F0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727719AbfHUSm4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Aug 2019 14:42:56 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:54174 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727266AbfHUSm4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Aug 2019 14:42:56 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1186A608D4; Wed, 21 Aug 2019 18:42:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1566412974;
-        bh=3usH6zGMgZfcdZibKCpV+j/4/h6fq0KXvbyLRIfF+co=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=YKGnwDoUyenvSthxx76i5QvPWbLOU+HSzyuSKnExVA+mEBNJpY9C+7CznJNh/Y8sO
-         5+LB+KU7BlH7iRpFNy/3/NLiTtQOdkFfE3IqLJSKshD1EtQA/Kbz6XABoKK2t6plBc
-         boXdxktUz6imBdnhKQl5iTSCMRcL74H8VE5vUtVU=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id EF629604D4;
-        Wed, 21 Aug 2019 18:42:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1566412971;
-        bh=3usH6zGMgZfcdZibKCpV+j/4/h6fq0KXvbyLRIfF+co=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=idRT9qzGLFoSCKsv9stMXEWvr822bkf15z66JB7qNIJ4nrBUNTolbzzNI3tByRKXt
-         UH0vrvvdKwrQa2NJbHzPchYNzAWwmSB6w0gGshiuRDVsXw8/OtDJTACfMowB9MBBtZ
-         l54YPA35/OiSIYkHWgLzNP7xms8trgOEx3H3CwO4=
+        id S1727910AbfHUSv3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Aug 2019 14:51:29 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:47042 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727491AbfHUSv3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Aug 2019 14:51:29 -0400
+Received: by mail-ot1-f67.google.com with SMTP id z17so3011222otk.13;
+        Wed, 21 Aug 2019 11:51:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PJrTASEKayF/rEeulkvx0sHH3TMvgVsWZZSoMN8GMAU=;
+        b=JC9OennyzjiXnnoLx6e3k2vgr3QSngfK965NTFI8BDiIloIyD+xnI8rUgOIueSjGlW
+         lCKiVVUDBwRN5vuNiH7Eq07B0bhuAnRMUfL83UaVN423ynOR049Ei9z1NaEKR4mcyGI/
+         eZJBrZS+Lftr+Z3wQsJ0QLBzkrJ991/phIeoUnxcDsaLB+3OQUNo17EUBZD7frBHEaA6
+         fNABRmmKqS6C1hDdoOXjftAlRT2+gjxmFA9qtWjTwPfXd6fKbdg0YfztSzx8xOf+e/Fs
+         l5GHRFmVf/hmsMMasDwfm4dhfZu8m85x1EvCb5QU8pUVQcqdyMDd/dtQR28n8ZlROral
+         b3WA==
+X-Gm-Message-State: APjAAAVr7rPVVlJnE0Na4stLJmBKP9rfsDppgmtM4Wv2xnDxxeA9W5gw
+        pxsf4QRi7eU0oJRU1mZlCA==
+X-Google-Smtp-Source: APXvYqy/UXU8uOcZSwzz0A/lzHXwsb1CAH8//XJMJZG5y+0bXA8CBfoaG1iAIXPUrRvACjt97pkFXA==
+X-Received: by 2002:a9d:1d5:: with SMTP id e79mr27405987ote.98.1566413488485;
+        Wed, 21 Aug 2019 11:51:28 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id u5sm8754198ote.27.2019.08.21.11.51.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 21 Aug 2019 11:51:28 -0700 (PDT)
+Date:   Wed, 21 Aug 2019 13:51:27 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Grzegorz Jaszczyk <jaz@semihalf.com>,
+        Marcin Wojtas <mw@semihalf.com>,
+        Stefan Chulski <stefanc@marvell.com>,
+        Yan Markman <ymarkman@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: Re: [PATCH 1/8] dt-bindings: ap80x: Document AP807 CPU clock
+ compatible
+Message-ID: <20190821185127.GA24995@bogus>
+References: <20190805100310.29048-1-miquel.raynal@bootlin.com>
+ <20190805100310.29048-2-miquel.raynal@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 21 Aug 2019 18:42:50 +0000
-From:   saiprakash.ranjan@codeaurora.org
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Rob Clark <robclark@gmail.com>,
-        Sean Paul <seanpaul@chromium.org>,
-        linux-arm-msm-owner@vger.kernel.org
-Subject: Re: [RFC] clk: Remove cached cores in parent map during unregister
-In-Reply-To: <20190821181009.00D6322D6D@mail.kernel.org>
-References: <20190723051446.20013-1-bjorn.andersson@linaro.org>
- <20190729224652.17291206E0@mail.kernel.org>
- <20190821181009.00D6322D6D@mail.kernel.org>
-Message-ID: <cda27c942f332d9da47fe8c4c5305207@codeaurora.org>
-X-Sender: saiprakash.ranjan@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190805100310.29048-2-miquel.raynal@bootlin.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On 2019-08-21 18:10, Stephen Boyd wrote:
+On Mon,  5 Aug 2019 12:03:03 +0200, Miquel Raynal wrote:
+> Add AP807 CPU clock compatible to the bindings.
 > 
-> Here's an attempt at the simple approach. There's another problem where
-> the cached 'hw' member of the parent data is held around when we don't
-> know when the caller has destroyed it. Not much else we can do for that
-> though.
+> Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+> ---
+>  .../bindings/arm/marvell/ap806-system-controller.txt     | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
-> ---8<---
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c0990703ce54..f42a803fb11a 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3737,6 +3737,37 @@ static const struct clk_ops clk_nodrv_ops = {
->  	.set_parent	= clk_nodrv_set_parent,
->  };
-> 
-> +static void clk_core_evict_parent_cache_subtree(struct clk_core *root,
-> +						struct clk_core *target)
-> +{
-> +	int i;
-> +	struct clk_core *child;
-> +
-> +	if (!root)
-> +		return;
-> +
-> +	for (i = 0; i < root->num_parents; i++)
-> +		if (root->parents[i].core == target)
-> +			root->parents[i].core = NULL;
-> +
-> +	hlist_for_each_entry(child, &root->children, child_node)
-> +		clk_core_evict_parent_cache_subtree(child, target);
-> +}
-> +
-> +/* Remove this clk from all parent caches */
-> +static void clk_core_evict_parent_cache(struct clk_core *core)
-> +{
-> +	struct hlist_head **lists;
-> +	struct clk_core *root;
-> +
-> +	lockdep_assert_held(&prepare_lock);
-> +
-> +	for (lists = all_lists; *lists; lists++)
-> +		hlist_for_each_entry(root, *lists, child_node)
-> +			clk_core_evict_parent_cache_subtree(root, core);
-> +
-> +}
-> +
->  /**
->   * clk_unregister - unregister a currently registered clock
->   * @clk: clock to unregister
-> @@ -3775,6 +3806,8 @@ void clk_unregister(struct clk *clk)
->  			clk_core_set_parent_nolock(child, NULL);
->  	}
-> 
-> +	clk_core_evict_parent_cache(clk->core);
-> +
->  	hlist_del_init(&clk->core->child_node);
-> 
->  	if (clk->core->prepare_count)
 
-
-Thanks for the patch. This fixes the dispcc issue which I was observing 
-with latest kernel on cheza.
-You can have the tested by when you post the actual patch.
-
-Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-
-For reference, below is the error log:
-
-[    3.992243] msm ae00000.mdss: Adding to iommu group 1
-[    3.999877] msm ae00000.mdss: bound ae01000.mdp (ops 
-0xffffff8010a87b78)
-[    4.023597] msm ae00000.mdss: failed to bind ae94000.dsi (ops 
-0xffffff8010a8b360): -517
-[    4.031898] msm ae00000.mdss: master bind failed: -517
-[    5.297509] msm ae00000.mdss: bound ae01000.mdp (ops 
-0xffffff8010a87b78)
-[    5.320906] msm ae00000.mdss: failed to bind ae94000.dsi (ops 
-0xffffff8010a8b360): -517
-[    5.329261] msm ae00000.mdss: master bind failed: -517
-[    5.648667] msm ae00000.mdss: bound ae01000.mdp (ops 
-0xffffff8010a87b78)
-[    5.672005] clk_core_set_parent_nolock: clk dsi0_phy_pll_out_byteclk 
-can not be parent of clk disp_cc_mdss_byte0_clk_src p_index=-22 <--- 
-error
-[    5.699799] msm ae00000.mdss: failed to bind ae94000.dsi (ops 
-0xffffff8010a8b360): -22
-[    5.708086] msm ae00000.mdss: master bind failed: -22
-[    5.714052] msm: probe of ae00000.mdss failed with error -22
-
-[    6.033541] clk_core_set_parent_nolock: clk dsi0_phy_pll_out_dsiclk 
-can not be parent of clk disp_cc_mdss_pclk0_clk_src p_index=-22 <--- 
-error
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a 
-member
-of Code Aurora Forum, hosted by The Linux Foundation
-
+Reviewed-by: Rob Herring <robh@kernel.org>
