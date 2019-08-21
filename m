@@ -2,189 +2,126 @@ Return-Path: <SRS0=LMZy=WR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34085C3A589
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:46:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB28C3A589
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:56:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03BDF22D6D
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94A0D22DA7
+	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 02:56:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s+ipYvK/"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ic8dxupL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726601AbfHUCqw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 20 Aug 2019 22:46:52 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:34047 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726512AbfHUCqw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 22:46:52 -0400
-Received: by mail-pf1-f196.google.com with SMTP id b24so409033pfp.1
-        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2019 19:46:52 -0700 (PDT)
+        id S1726895AbfHUC4q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 20 Aug 2019 22:56:46 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33575 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfHUC4q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 20 Aug 2019 22:56:46 -0400
+Received: by mail-pg1-f193.google.com with SMTP id n190so451914pgn.0
+        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2019 19:56:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rzA9S1AIz/6xQmIDVoSvFl0QH4KJ3JhpAFF3D1CfKh0=;
-        b=s+ipYvK/PXc0BFsqo5Tnmt2Vnc6JFR0aG8HAWklRvlWdQyin8D1mC7EnMGjfhhEy7O
-         qGmpCNR02TbHZhdQ/+2f7zpJJAJ1jyftQeKEWnNFTYymKnDuID4xnBxALF7r9DMvAiwe
-         f0n42KeMUI2n3utsk8x+EKkqiXYKo9BtU3xWPR22lQ7A5ThtHJ4rJxXSfg3+NguML63t
-         VL7nUXJe8KbLx36EXA0i4nQdDQtMmvRJADZbIrOPuBliIvCw/JEL+DYXdBh1cdLlpIyL
-         hs/gPjQSXzFGNPnsYytfIqvcVXjg2MxQ36l0r8Y1drjG/qqd4lziE/XKOvupAVPalNs9
-         iXWA==
+        h=from:to:cc:subject:date:message-id;
+        bh=soIydz/rgNKJaCy/gC57Rz46eI4EuGd1mOjpc4LfKIo=;
+        b=Ic8dxupL3xZxcnGS16o8Ydv+lcngJuVUr7X4h3XFGrDV1pVWQjv2ZWczkhLo1g2JrP
+         GlY3oeUn8eOeyhZ2N0u1MzVAuWFlj84cLk7vGTqw0zVzhACVNolO1ljl/qi2XsoXCE2u
+         +EM2u/HqHhJvBLYWXzy+Pl9IqpLaR7JTQMdQ/Ercq7LZhkIw7vCHI63uncItpKfItXDE
+         EzrcKzbQFRtHI6RdqRXJ3Aaag2A9fY4RkGf+Zv+CJFyFOQ0vO5p2X793IC9gQUU2b2pO
+         mJ8HgyMSilr678FRNVD8KMa+VZjA9fc+Cxgo7akQ7tuntFIZgz+urRp5ew/LqsihLSMs
+         vUlg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rzA9S1AIz/6xQmIDVoSvFl0QH4KJ3JhpAFF3D1CfKh0=;
-        b=tvhSdjQjr4KipIcnrZe2ago0OYGm/usrMr9GTxeL0mJRejneKVejSBKdK6buJIInDX
-         3o4G5HAgmtEX/Xj+ccIDw4rbTVYIpiOq8nG73SJY4IMYG0AmEXXAkBXaCl4ntNvsCvVr
-         L/pLxGeIeUh9UjxMUrbeHiPUzrKjzObaLl1pA4qEIDHaM4Zke174h51yYppNDUUPGSU0
-         ul74tA3oSSphqFj/X0OvSVKkJ8HjIV3JiwpUvqEbh60yKzb5kM+5N08JQehIwV5Gbp81
-         v63QuXmeBbBrUmnJyGNsqZ33w1hoPnftv2mc+/g9FT3u+Hv+zjQN6wEmrA54kf5rqo/4
-         /FPw==
-X-Gm-Message-State: APjAAAWJdQgFNDJaNzs5ImiiQD2ZfP+UjW0rHf4qcY0K5Ht+Nl3R8YnT
-        xpIjTZaR4k6HCy0PmOE5r7sY
-X-Google-Smtp-Source: APXvYqxWjSAeaVO7l8MTk1p6uF2HhW/owqfIUdX/K1HMqNwAehrCyxIRk1mn/yYnS0T+S5vx1rqVzA==
-X-Received: by 2002:a17:90a:c24e:: with SMTP id d14mr3161488pjx.129.1566355611709;
-        Tue, 20 Aug 2019 19:46:51 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2405:204:7101:175:ddd7:6c31:ebc7:37e8])
-        by smtp.gmail.com with ESMTPSA id x2sm1517865pja.22.2019.08.20.19.46.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 20 Aug 2019 19:46:51 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 08:16:43 +0530
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=soIydz/rgNKJaCy/gC57Rz46eI4EuGd1mOjpc4LfKIo=;
+        b=baEpENurCeQuOjwUq8SK3/lM6StUJALLs5+pGX1CY9I7yp9d7ldgJgn6AQOZSN5nkh
+         Ev8VlZuRkCc2eiU6E4DDdn2nNK4qtQMciooJxM8y7reklvNEhGvSZo77XU/AFv7pi0x1
+         EG47OydFDthPzUwzc7tykyDn5QR8jrawnzvWd8QZh06zcHXRqS2Ahwn9kk8s9FW2xQg/
+         4s/V/x3JArgJaIDlFedXqVF/az+7caYuP//4Y8YotyuvcdOngDc3HGtOWSGe3X1Xs6/U
+         Iv1aP41QtHASMi3euqJ1KvofcH5jIgCidFk9Fpn6ADK1xvMDl6AzJIBt/5jAnajQzzO5
+         i4GA==
+X-Gm-Message-State: APjAAAWuHk1wq3t3hk+x1fsOTiUl09WUYFlTUTTgE0cZ71qK5lL4PxFi
+        Cyud4/f8kxFxo9Lngo5Vr3H0
+X-Google-Smtp-Source: APXvYqx897GzsEFoofdDkQskosAqgrhiKaFJ1of7zLrcRUF0GdrmFpF19QtTv45xPM4v1D/HT17izw==
+X-Received: by 2002:a62:7e11:: with SMTP id z17mr3917397pfc.211.1566356204895;
+        Tue, 20 Aug 2019 19:56:44 -0700 (PDT)
+Received: from localhost.localdomain ([2405:204:7101:175:ddd7:6c31:ebc7:37e8])
+        by smtp.gmail.com with ESMTPSA id d16sm13251682pfd.81.2019.08.20.19.56.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2019 19:56:44 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     afaerber@suse.de
+To:     ulf.hansson@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
+        sboyd@kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
         linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
         thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
         linus.walleij@linaro.org, linux-clk@vger.kernel.org,
-        ulf.hansson@linaro.org, robh+dt@kernel.org, sboyd@kernel.org
-Subject: Re: [PATCH v2 4/7] arm64: dts: actions: Add uSD and eMMC support for
- Bubblegum96
-Message-ID: <20190821024643.GA14176@Mani-XPS-13-9360>
-References: <20190821024014.14070-1-manivannan.sadhasivam@linaro.org>
- <20190821024014.14070-5-manivannan.sadhasivam@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190821024014.14070-5-manivannan.sadhasivam@linaro.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v3 0/7] Add SD/MMC driver for Actions Semi S900 SoC
+Date:   Wed, 21 Aug 2019 08:26:22 +0530
+Message-Id: <20190821025629.15470-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Andreas,
+Hello,
 
-On Wed, Aug 21, 2019 at 08:10:11AM +0530, Manivannan Sadhasivam wrote:
-> Add uSD and eMMC support for Bubblegum96 board based on Actions Semi
-> Owl SoC. SD0 is connected to uSD slot and SD2 is connected to eMMC.
-> Since there is no PMIC support added yet, fixed regulator has been
-> used as a regulator node.
-> 
+This patchset adds SD/MMC driver for Actions Semi S900 SoC from Owl
+family SoCs. There are 4 SD/MMC controller present in this SoC but
+only 2 are enabled currently for Bubblegum96 board to access uSD and
+onboard eMMC. SDIO support for this driver is not currently implemented.
 
-Just realised that I missed your review on the patch description here.
-Will either modify in next iteration (if needed) or modify it while
-applying.
+Note: Currently, driver uses 2 completion mechanisms for maintaining
+the coherency between SDC and DMA interrupts and I know that it is not
+efficient. Hence, I'd like to hear any suggestions for reimplementing
+the logic if anyone has.
 
-Sorry for that!
+With this driver, this patchset also fixes one clk driver issue and enables
+the Actions Semi platform in ARM64 defconfig.
 
 Thanks,
 Mani
 
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> ---
->  .../boot/dts/actions/s900-bubblegum-96.dts    | 60 +++++++++++++++++++
->  1 file changed, 60 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-> index 732daaa6e9d3..92376b71cb8f 100644
-> --- a/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-> +++ b/arch/arm64/boot/dts/actions/s900-bubblegum-96.dts
-> @@ -12,6 +12,9 @@
->  	model = "Bubblegum-96";
->  
->  	aliases {
-> +		mmc0 = &mmc0;
-> +		mmc1 = &mmc1;
-> +		mmc2 = &mmc2;
->  		serial5 = &uart5;
->  	};
->  
-> @@ -23,6 +26,22 @@
->  		device_type = "memory";
->  		reg = <0x0 0x0 0x0 0x80000000>;
->  	};
-> +
-> +	vcc_3v1: vcc-3v1 {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "fixed-3.1V";
-> +		regulator-min-microvolt = <3100000>;
-> +		regulator-max-microvolt = <3100000>;
-> +		regulator-always-on;
-> +	};
-> +
-> +	sd_vcc: sd-vcc {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "fixed-3.1V";
-> +		regulator-min-microvolt = <3100000>;
-> +		regulator-max-microvolt = <3100000>;
-> +		regulator-always-on;
-> +	};
->  };
->  
->  &i2c0 {
-> @@ -241,6 +260,47 @@
->  			bias-pull-up;
->  		};
->  	};
-> +
-> +	mmc0_default: mmc0_default {
-> +		pinmux {
-> +			groups = "sd0_d0_mfp", "sd0_d1_mfp", "sd0_d2_d3_mfp",
-> +				 "sd0_cmd_mfp", "sd0_clk_mfp";
-> +			function = "sd0";
-> +		};
-> +	};
-> +
-> +	mmc2_default: mmc2_default {
-> +		pinmux {
-> +			groups = "nand0_d0_ceb3_mfp";
-> +			function = "sd2";
-> +		};
-> +	};
-> +};
-> +
-> +/* uSD */
-> +&mmc0 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc0_default>;
-> +	no-sdio;
-> +	no-mmc;
-> +	no-1-8-v;
-> +	cd-gpios = <&pinctrl 120 GPIO_ACTIVE_LOW>;
-> +	bus-width = <4>;
-> +	vmmc-supply = <&sd_vcc>;
-> +	vqmmc-supply = <&sd_vcc>;
-> +};
-> +
-> +/* eMMC */
-> +&mmc2 {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&mmc2_default>;
-> +	no-sdio;
-> +	no-sd;
-> +	non-removable;
-> +	bus-width = <8>;
-> +	vmmc-supply = <&vcc_3v1>;
->  };
->  
->  &timer {
-> -- 
-> 2.17.1
-> 
+Changes in v3:
+
+* Incorporated a review comment from Andreas on board dts patch
+* Modified the MAINTAINERS entry for devicetree YAML binding
+
+Changes in v2:
+
+* Converted the devicetree bindings to YAML
+* Misc changes to bubblegum devicetree as per the review from Andreas
+* Dropped the read/write wrappers and renamed all functions to use owl-
+  prefix as per the review from Ulf
+* Renamed clk_val_best to owl_clk_val_best and added Reviewed-by tag
+  from Stephen
+
+Manivannan Sadhasivam (7):
+  clk: actions: Fix factor clk struct member access
+  dt-bindings: mmc: Add Actions Semi SD/MMC/SDIO controller binding
+  arm64: dts: actions: Add MMC controller support for S900
+  arm64: dts: actions: Add uSD and eMMC support for Bubblegum96
+  mmc: Add Actions Semi Owl SoCs SD/MMC driver
+  MAINTAINERS: Add entry for Actions Semi SD/MMC driver and binding
+  arm64: configs: Enable Actions Semi platform in defconfig
+
+ .../devicetree/bindings/mmc/owl-mmc.yaml      |  62 ++
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  62 ++
+ arch/arm64/boot/dts/actions/s900.dtsi         |  45 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/actions/owl-factor.c              |   7 +-
+ drivers/mmc/host/Kconfig                      |   8 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/owl-mmc.c                    | 696 ++++++++++++++++++
+ 9 files changed, 880 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/owl-mmc.yaml
+ create mode 100644 drivers/mmc/host/owl-mmc.c
+
+-- 
+2.17.1
+
