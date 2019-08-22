@@ -2,39 +2,39 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 684A8C3A59D
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C54F0C3A59D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E6AA233FF
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6817233A0
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731033AbfHVJet (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 05:34:49 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35921 "EHLO shell.v3.sk"
+        id S1733267AbfHVJdv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 05:33:51 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35817 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726693AbfHVJeV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:34:21 -0400
+        id S1733261AbfHVJdu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:50 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 5FF33D7567;
-        Thu, 22 Aug 2019 11:34:19 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id DE820D7562;
+        Thu, 22 Aug 2019 11:33:46 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id uiRR5u0ASFBZ; Thu, 22 Aug 2019 11:33:39 +0200 (CEST)
+        with ESMTP id ChwZ04mvNs-n; Thu, 22 Aug 2019 11:33:20 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3B738D7571;
-        Thu, 22 Aug 2019 11:33:03 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 239B0D7570;
+        Thu, 22 Aug 2019 11:32:58 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id FiRjZKE5M8nP; Thu, 22 Aug 2019 11:32:59 +0200 (CEST)
+        with ESMTP id 5GDqGikVRw22; Thu, 22 Aug 2019 11:27:28 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id E9798D756B;
-        Thu, 22 Aug 2019 11:26:51 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 866AFD755E;
+        Thu, 22 Aug 2019 11:26:48 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 17/20] ARM: mmp: move cputype.h to include/linux/soc/
-Date:   Thu, 22 Aug 2019 11:26:40 +0200
-Message-Id: <20190822092643.593488-18-lkundrak@v3.sk>
+Subject: [PATCH v2 07/20] irqchip/mmp: add missing chained_irq_{enter,exit}()
+Date:   Thu, 22 Aug 2019 11:26:30 +0200
+Message-Id: <20190822092643.593488-8-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -61,148 +61,64 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Let's move cputype.h away from mach-mmp/ so that the drivers outside that
-directory are able to tell the precise silicon revision. The MMP3 USB OTG
-PHY driver needs this.
+The lack of chained_irq_exit() leaves the muxed interrupt masked on MMP3.
+For reasons unknown this is not a problem on MMP2.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- MAINTAINERS                                            | 1 +
- arch/arm/mach-mmp/common.c                             | 2 +-
- arch/arm/mach-mmp/devices.c                            | 2 +-
- arch/arm/mach-mmp/mmp2.c                               | 2 +-
- arch/arm/mach-mmp/pm-mmp2.c                            | 2 +-
- arch/arm/mach-mmp/pm-pxa910.c                          | 2 +-
- arch/arm/mach-mmp/pxa168.c                             | 2 +-
- arch/arm/mach-mmp/pxa910.c                             | 2 +-
- arch/arm/mach-mmp/time.c                               | 2 +-
- {arch/arm/mach-mmp =3D> include/linux/soc/mmp}/cputype.h | 0
- 10 files changed, 9 insertions(+), 8 deletions(-)
- rename {arch/arm/mach-mmp =3D> include/linux/soc/mmp}/cputype.h (100%)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 43604d6ab96c2..014f533d5aff8 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10796,6 +10796,7 @@ L:	linux-arm-kernel@lists.infradead.org (moderate=
-d for non-subscribers)
- S:	Odd Fixes
- F:	arch/arm/boot/dts/mmp*
- F:	arch/arm/mach-mmp/
-+F:	linux/soc/mmp/
+---
+Changes since v1:
+- Use irq_desc_get_chip() instead of irq_get_chip()
+
+ drivers/irqchip/irq-mmp.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/irqchip/irq-mmp.c b/drivers/irqchip/irq-mmp.c
+index e41e47ab71d3b..126ffdbffdddf 100644
+--- a/drivers/irqchip/irq-mmp.c
++++ b/drivers/irqchip/irq-mmp.c
+@@ -13,6 +13,7 @@
+ #include <linux/init.h>
+ #include <linux/irq.h>
+ #include <linux/irqchip.h>
++#include <linux/irqchip/chained_irq.h>
+ #include <linux/irqdomain.h>
+ #include <linux/io.h>
+ #include <linux/ioport.h>
+@@ -132,11 +133,14 @@ struct irq_chip icu_irq_chip =3D {
+ static void icu_mux_irq_demux(struct irq_desc *desc)
+ {
+ 	unsigned int irq =3D irq_desc_get_irq(desc);
++	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+ 	struct irq_domain *domain;
+ 	struct icu_chip_data *data;
+ 	int i;
+ 	unsigned long mask, status, n;
 =20
- MMU GATHER AND TLB INVALIDATION
- M:	Will Deacon <will@kernel.org>
-diff --git a/arch/arm/mach-mmp/common.c b/arch/arm/mach-mmp/common.c
-index 24c689a01ecb7..e94349d4726ca 100644
---- a/arch/arm/mach-mmp/common.c
-+++ b/arch/arm/mach-mmp/common.c
-@@ -13,7 +13,7 @@
- #include <asm/mach/map.h>
- #include <asm/system_misc.h>
- #include "addr-map.h"
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
++	chained_irq_enter(chip, desc);
++
+ 	for (i =3D 1; i < max_icu_nr; i++) {
+ 		if (irq =3D=3D icu_data[i].cascade_irq) {
+ 			domain =3D icu_data[i].domain;
+@@ -146,7 +150,7 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
+ 	}
+ 	if (i >=3D max_icu_nr) {
+ 		pr_err("Spurious irq %d in MMP INTC\n", irq);
+-		return;
++		goto out;
+ 	}
 =20
- #include "common.h"
+ 	mask =3D readl_relaxed(data->reg_mask);
+@@ -158,6 +162,9 @@ static void icu_mux_irq_demux(struct irq_desc *desc)
+ 			generic_handle_irq(icu_data[i].virq_base + n);
+ 		}
+ 	}
++
++out:
++	chained_irq_exit(chip, desc);
+ }
 =20
-diff --git a/arch/arm/mach-mmp/devices.c b/arch/arm/mach-mmp/devices.c
-index 130c1a603ba29..18bee66a671ff 100644
---- a/arch/arm/mach-mmp/devices.c
-+++ b/arch/arm/mach-mmp/devices.c
-@@ -11,7 +11,7 @@
- #include <asm/irq.h>
- #include "irqs.h"
- #include "devices.h"
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "regs-usb.h"
-=20
- int __init pxa_register_device(struct pxa_device_desc *desc,
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index 18ea3e1a26e69..bbc4c2274de3a 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -20,7 +20,7 @@
- #include <asm/mach/time.h>
- #include "addr-map.h"
- #include "regs-apbc.h"
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "irqs.h"
- #include "mfp.h"
- #include "devices.h"
-diff --git a/arch/arm/mach-mmp/pm-mmp2.c b/arch/arm/mach-mmp/pm-mmp2.c
-index 2923dd5732a62..2d86381e152d6 100644
---- a/arch/arm/mach-mmp/pm-mmp2.c
-+++ b/arch/arm/mach-mmp/pm-mmp2.c
-@@ -17,7 +17,7 @@
- #include <linux/interrupt.h>
- #include <asm/mach-types.h>
-=20
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "addr-map.h"
- #include "pm-mmp2.h"
- #include "regs-icu.h"
-diff --git a/arch/arm/mach-mmp/pm-pxa910.c b/arch/arm/mach-mmp/pm-pxa910.=
-c
-index 58535ce206dc5..69ebe18ff209f 100644
---- a/arch/arm/mach-mmp/pm-pxa910.c
-+++ b/arch/arm/mach-mmp/pm-pxa910.c
-@@ -18,7 +18,7 @@
- #include <asm/mach-types.h>
- #include <asm/outercache.h>
-=20
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "addr-map.h"
- #include "pm-pxa910.h"
- #include "regs-icu.h"
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 6e02774889679..b642e900727a5 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -21,7 +21,7 @@
- #include "addr-map.h"
- #include "clock.h"
- #include "common.h"
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "devices.h"
- #include "irqs.h"
- #include "mfp.h"
-diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
-index cba31c758dea6..b19a069d9fabe 100644
---- a/arch/arm/mach-mmp/pxa910.c
-+++ b/arch/arm/mach-mmp/pxa910.c
-@@ -18,7 +18,7 @@
- #include <asm/mach/time.h>
- #include "addr-map.h"
- #include "regs-apbc.h"
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "irqs.h"
- #include "mfp.h"
- #include "devices.h"
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index 8f4cacbf640e9..110dcb3314d13 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -33,7 +33,7 @@
- #include "regs-timers.h"
- #include "regs-apbc.h"
- #include "irqs.h"
--#include "cputype.h"
-+#include <linux/soc/mmp/cputype.h>
- #include "clock.h"
-=20
- #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
-diff --git a/arch/arm/mach-mmp/cputype.h b/include/linux/soc/mmp/cputype.=
-h
-similarity index 100%
-rename from arch/arm/mach-mmp/cputype.h
-rename to include/linux/soc/mmp/cputype.h
+ static int mmp_irq_domain_map(struct irq_domain *d, unsigned int irq,
 --=20
 2.21.0
 
