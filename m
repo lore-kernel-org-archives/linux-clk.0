@@ -2,57 +2,57 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FF6C3A5A3
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:34:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C86EC3A5A2
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:36:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA8023402
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:34:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 225C8233FD
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:36:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TOXDCBl6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RX3L3NEy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404381AbfHVRZT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 13:25:19 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:44635 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404376AbfHVRZS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 13:25:18 -0400
-Received: by mail-pl1-f196.google.com with SMTP id t14so3824695plr.11
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 10:25:18 -0700 (PDT)
+        id S2391643AbfHVRgF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 13:36:05 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38820 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391722AbfHVRY4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 13:24:56 -0400
+Received: by mail-pg1-f194.google.com with SMTP id e11so4046671pga.5
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 10:24:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Y6Dgg0LHIAz3laO+y1ntUkl0I7eVRTHEz+QlpqCcJzM=;
-        b=TOXDCBl6f8xlElGz/1VgT87+cdII1cmN5ZgoolaAd7oEb3dKLp1S1aL8eIAK602wRA
-         rFV3kajNzuMqA4UEKTCS3p+weiq9BteIBukmbisFxA48gsaY84KdHTxbIl+R7uti/zmz
-         vKmYinXsuEL5HmhH7cQg7SvGd3IMVzS+tidp1iSw7IeQ5I3BILh31uDv6xkYym/ZUF22
-         I+N3iNN6gjUqxDsC7MVj180HA/sXR/waBKbKAC6Ujfjt91vw4asNcnDuH9yG8hcd+pla
-         GAc0mCLgB3uLH3bVSL7ZcOSv9zFfBCOpTcrSc+K2XP/54ZTAa50tjiJvklrL9DieJktS
-         oDYg==
+        bh=a/DBFL5pnFxmW7r8pfJ654oUFkPKTYmOJJb8EXbuSt0=;
+        b=RX3L3NEysLNGueK8XYcm4tI5nQZ2pEFyeSxHYiObmFt8nWRtF62qzckIHmf2rpGxrP
+         BLn4KXyVPFgfoviJQgPO/s2j82QZFQl96pFgqGNU4z2fsVsaxfgeFqyUhckvdrHLzqrA
+         p8HLWOVvrNzJ8jujwhikFfgqm0RNuFfV4wK1Xj4qfo6pDRR2KeGAgorfqhi1U2Q1agzD
+         qLOLhFMM0fBHGwattVPoacW0SA8gg+UqkAchcyWJxEspzojX5olDwPFZWk9xUAaO6LPb
+         8Qp3+xNgeubaXFd3rIDxjUGNumFk054qag4X+vH9xDBisRUZi4LK940Ny0tqYab7R/zY
+         5V+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Y6Dgg0LHIAz3laO+y1ntUkl0I7eVRTHEz+QlpqCcJzM=;
-        b=D0cMEbSJPjvTJQN5m+6XrfEFUQvpT0TwXFAL9B6/F6EERqURzMhk/T0sXl3yg8pvsg
-         D5Xz23CipEIoadqSSWjSYMc8b1m5phN+8ZrZlw7TcWTVG0PB4gghvbtSJKm7WDNiDQnK
-         PkaE95fY2iNsgOOHtngVbYCkKSImZUgN41A65u8FIy2+ElTiiiJ4AN/8xVUdZ9EDFkuP
-         DkV+GARqyXCMYqRj1pnoTHRjLLJpbPqtTlig0gw5ihUGhNHteYGJ//W3jdP1mgp6O4g2
-         TXEmDFE3CAzGVYX4DJ0NyDH0j63aMMmtgCdMdtcoW0BP+tNkA2yhnV5Xgb2p6JGU1/sO
-         52Eg==
-X-Gm-Message-State: APjAAAV+m2QMij0q+Q4QJpTCqaC0YX4h2E0PUdpIvsOgXgZ3t2iHJjTU
-        7x/ljwReXHhlWBUb9j4BYPCO
-X-Google-Smtp-Source: APXvYqyQha/e6kS2nojAOGpDDw4shsyn1hRc1sxUaHNJWwVW+IOzYG5yHHeYZaNx46NEZ2lrt6i+Eg==
-X-Received: by 2002:a17:902:ab8f:: with SMTP id f15mr41150750plr.301.1566494717986;
-        Thu, 22 Aug 2019 10:25:17 -0700 (PDT)
+        bh=a/DBFL5pnFxmW7r8pfJ654oUFkPKTYmOJJb8EXbuSt0=;
+        b=Ie3CZJCJ891tbyDppwjGXKj4NbuHekg1Vb1OCjhayC+YBI95PcnSBL/irQHvK7teJC
+         T8cR7gzwTRNGyWZffjw6pUQy8npS5WJlmnPGI88BFD7FQpw1mBFoeLUy7dLRyEfjm9Mo
+         qM2H3/TiDhaGuQGudEntk8ua1lYuQlCpFZW3rOCRzaXbKyW/kfimnbO75mvOGfJ5jfGt
+         TFqSQZqqlDadSyhWAnNiu5NW7rVLuTcpw1g8DJgmtfoQFZax30+UOMh80fRTfpdW/Qhy
+         4WaP5BQfR1lEfV4wfLrGbV/3hrahLpq+owpcw/saHW9xTBD95gCIQnV39n+U86Kn6U8X
+         8zeQ==
+X-Gm-Message-State: APjAAAV7YS/V2bwXnohjm/tGffY0kB5eODToW59rYW6E0Pu4UJRKv/gN
+        rolD9YqJBkNqME8s5UNn9W9P
+X-Google-Smtp-Source: APXvYqxXFDaJ955RJz/a34+rWtNfFOs3hBYdX2U9Etyi7MVotAVqBYvnVOl+UsQc16TjNDKQSF4Dkw==
+X-Received: by 2002:a63:e20a:: with SMTP id q10mr327282pgh.24.1566494695791;
+        Thu, 22 Aug 2019 10:24:55 -0700 (PDT)
 Received: from localhost.localdomain ([2405:204:71cc:5738:24ad:193e:4b59:8a76])
-        by smtp.gmail.com with ESMTPSA id r12sm31705798pgb.73.2019.08.22.10.25.12
+        by smtp.gmail.com with ESMTPSA id r12sm31705798pgb.73.2019.08.22.10.24.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:25:17 -0700 (PDT)
+        Thu, 22 Aug 2019 10:24:55 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -60,9 +60,9 @@ Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         haitao.suo@bitmain.com, darren.tsao@bitmain.com,
         fisher.cheng@bitmain.com, alec.lin@bitmain.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 5/8] arm64: dts: bitmain: Add clock controller support for BM1880 SoC
-Date:   Thu, 22 Aug 2019 22:54:23 +0530
-Message-Id: <20190822172426.25879-6-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 2/8] clk: Warn if clk_init_data is not zero initialized
+Date:   Thu, 22 Aug 2019 22:54:20 +0530
+Message-Id: <20190822172426.25879-3-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
 References: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
@@ -71,54 +71,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock controller support for Bitmain BM1880 SoC.
+The new implementation for determining parent map uses multiple ways
+to pass parent info. The order in which it gets processed depends on
+the first available member. Hence, it is necessary to zero init the
+clk_init_data struct so that the expected member gets processed correctly.
+So, add a warning if multiple clk_init_data members are available during
+clk registration.
 
 Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 ---
- arch/arm64/boot/dts/bitmain/bm1880.dtsi | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+ drivers/clk/clk.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/bitmain/bm1880.dtsi b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
-index d65453f99a99..8471662413da 100644
---- a/arch/arm64/boot/dts/bitmain/bm1880.dtsi
-+++ b/arch/arm64/boot/dts/bitmain/bm1880.dtsi
-@@ -4,6 +4,7 @@
-  * Author: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-  */
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..7d6d6984c979 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3497,6 +3497,14 @@ static int clk_core_populate_parent_map(struct clk_core *core)
+ 	if (!num_parents)
+ 		return 0;
  
-+#include <dt-bindings/clock/bm1880-clock.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/reset/bitmain,bm1880-reset.h>
- 
-@@ -66,6 +67,12 @@
- 			     <GIC_PPI 10 IRQ_TYPE_LEVEL_LOW>;
- 	};
- 
-+	osc: osc {
-+		compatible = "fixed-clock";
-+		clock-frequency = <25000000>;
-+		#clock-cells = <0>;
-+	};
++	/*
++	 * Check for non-zero initialized clk_init_data struct. This is
++	 * required because, we only require one of the (parent_names/
++	 * parent_data/parent_hws) to be set at a time. Otherwise, the
++	 * current code would use first available member.
++	 */
++	WARN_ON((parent_names && parent_data) || (parent_names && parent_hws));
 +
- 	soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
-@@ -94,6 +101,15 @@
- 				reg = <0x400 0x120>;
- 			};
- 
-+			clk: clock-controller@e8 {
-+				compatible = "bitmain,bm1880-clk";
-+				reg = <0xe8 0x0c>, <0x800 0xb0>;
-+				reg-names = "pll", "sys";
-+				clocks = <&osc>;
-+				clock-names = "osc";
-+				#clock-cells = <1>;
-+			};
-+
- 			rst: reset-controller@c00 {
- 				compatible = "bitmain,bm1880-reset";
- 				reg = <0xc00 0x8>;
+ 	/*
+ 	 * Avoid unnecessary string look-ups of clk_core's possible parents by
+ 	 * having a cache of names/clk_hw pointers to clk_core pointers.
 -- 
 2.17.1
 
