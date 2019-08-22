@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5F5C3A5A1
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:33:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB47FC3A5A1
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:34:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08FB2082F
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:33:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 734972082F
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:34:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PEtylWsc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rct8fGGR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388400AbfHVOda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 10:33:30 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:46842 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725886AbfHVOda (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 10:33:30 -0400
-Received: by mail-ed1-f67.google.com with SMTP id z51so8202214edz.13
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 07:33:29 -0700 (PDT)
+        id S1729716AbfHVOed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 10:34:33 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:43290 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725886AbfHVOec (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 10:34:32 -0400
+Received: by mail-ed1-f65.google.com with SMTP id h13so8224646edq.10
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 07:34:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=XzY3Dz/EWvptntPjJoBoC8QtEPoxpWBVlYj2OlM/q1Q=;
-        b=PEtylWscnS8vGtDzSCFyywrkJGg/5DY/aFFGZz9Clm4aagdpo3bE9V7eOASwGKxqjI
-         aoCXMary+xo30rD9KaJyV3IM2tFxGLTBiyFqcWapzQ6hWuTAdSICDlzp/nHrhtW5MkGu
-         oFZQdYXrZJFFa8+mhInhKbcdPbHn6UXTwql02x+4uLA70UPzRtrKRBQ/H9cwqWzJdO+6
-         U4ar2k4G4f0QXulRQB+wfWqYD+bSpcNpuqy08E1cLH8DP64Oo3RfGspD7KEhg261OGia
-         Z4jjVPlMl/S/tsKDV6ynKCATfSHMXRD9H8nRFLOBGdCrWXWjF8apPKsFUSZEQQgKyxwU
-         Jqng==
+        bh=Qk5Jv+ZigKQd8hWF7XzKqjwdtpqJangvF7uRKkc4xK8=;
+        b=Rct8fGGRdzQR/XxD0XbtKxVc70VmAtDQ3Ip+bt3D4MPQhQiJzXG7IEQbxwfw7WErJR
+         Skq5e5ACSNuKxDSVpJ5+yrDLBM1DQrgkVyqy3rdlyVwldaj1NZ27Bm3zW/hKFAU5ThEy
+         H9GLWOOBUESmiLzPijldzJ9WddraSfD+zQi03x+gvFqCGiYBSQB4D5QipE3LmC2oIp1w
+         744x5jm8YMbZRIKrZo6Azhz6A3dYx1uHV2UQFCCYlI9cxQdEx/2BmCO+isS5Mwk1dpju
+         1VyvrxfkbgxPysTLPVILNWwBQMnAw3IQAIV/2NMbipe1e0qnvHy1CiIDoJJNKIM2Wskk
+         H7Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=XzY3Dz/EWvptntPjJoBoC8QtEPoxpWBVlYj2OlM/q1Q=;
-        b=jR39LzUIdLTl9fqhUdVgnRwy9PG9GuzIoPfURZxt/pXd5zo6ap4X5ffR5o/krVVkOf
-         1cNJLb6gMKVwLgefd9HoC0XzZSUc8Lsti8C1GMfG4T0JKpxzxVrdT8BTUbpdQ/PNvALB
-         xg7mLme9La9iQTs23uhROGJFF8X8o7DdH6eH1y6QUV2p+ELEXfpO4iEEQJ95qOpbAopz
-         97aXUkZ79LQNMZbgcRaSujMD4wMSIKGPSjeStl7X4u7TlN4YANuhnjn+5yQX2pAG2HbH
-         /4D4MP/WZfDjyGvcXpgJETzneuGeSAvxYwbB0E47p4MiDVlKsnavOdoJpWq9YDW009+4
-         IMsg==
-X-Gm-Message-State: APjAAAVwaQsX6VELwmJdhbJh+6A8oIVZeDCG3U9u8r1nSgguzYmBAacp
-        zu//4oMQ4jYrliVRQgYHKoDcPBdNpkT+ng==
-X-Google-Smtp-Source: APXvYqwI1B9J6IFuZ0L+pPkf/gbCTYufz4DistM00y1zTmJW9BBruAmiCNvuoUFcVY3hj06eSCC24Q==
-X-Received: by 2002:aa7:c611:: with SMTP id h17mr41973707edq.75.1566484408148;
-        Thu, 22 Aug 2019 07:33:28 -0700 (PDT)
+        bh=Qk5Jv+ZigKQd8hWF7XzKqjwdtpqJangvF7uRKkc4xK8=;
+        b=UuUHAqEmmQEGBRh9rucUz5w4CsuOFQ8OVpjUnbX7GpWQiFGwgJ3iEWTz9GF94IEnW4
+         ssFJ7Sfcq9mPB2v8OAK7SGgX0e2rOp7W4ZFEhRW8lCShFyo99WSam92qxz9Dh6kDDlkV
+         CCrgmgRYALVshavANUNZU46FGvw7OqoJ8+BBGc3UShq2UBvXi5ET1DB/2VPnnM3ieUh0
+         UievtKJLm6/a23ra24SZ0+2lxBX7RNqcatSlJMsN5TXNOJAmODDQ8sDSVZKyGDnHCxVy
+         6Uj4LJBMPIJRjHZXpDVXKB5mnU+uV3ualm9juA/ckzY9MK3xXiJ54zEDR4XLZuMnotke
+         BTDw==
+X-Gm-Message-State: APjAAAXV2FSB9//8ucTO3V0Qp8ah83R+PtJqyl/JuIbUGJKAj+up72lx
+        dANJA6eisqyZ4JSWGMxneaVVcc1G3lStaw==
+X-Google-Smtp-Source: APXvYqxiG7KGBacNVl+D4X0n/mwdnePS/kGW8KK+ZRVQDECFFLjC2y/j7fXnuvPUJ/4Pp2NREMgoTg==
+X-Received: by 2002:a17:906:811:: with SMTP id e17mr36953182ejd.274.1566484470500;
+        Thu, 22 Aug 2019 07:34:30 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.137.147])
-        by smtp.gmail.com with ESMTPSA id g20sm3931394edp.92.2019.08.22.07.33.26
+        by smtp.gmail.com with ESMTPSA id 59sm4883714edg.44.2019.08.22.07.34.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 22 Aug 2019 07:33:27 -0700 (PDT)
+        Thu, 22 Aug 2019 07:34:29 -0700 (PDT)
 Subject: Re: [PATCH 1/2] Include mt8183-reset.h and add reset-cells in
  infracfg in dtsi file.
 To:     Yong Liang <yong.liang@mediatek.com>, mturquette@baylibre.com,
@@ -163,8 +163,8 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <24e4a0a9-065e-410d-7c3f-403ec859ae07@gmail.com>
-Date:   Thu, 22 Aug 2019 16:33:25 +0200
+Message-ID: <722d0ef0-976e-5241-a492-57dc56e3921e@gmail.com>
+Date:   Thu, 22 Aug 2019 16:34:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
@@ -182,17 +182,12 @@ X-Mailing-List: linux-clk@vger.kernel.org
 On 25/07/2019 10:09, Yong Liang wrote:
 > From: "yong.liang" <yong.liang@mediatek.com>
 > 
-
-Missing commit message.
-Subject could be shorter, something like:
-arm64: dts: add reset-cells for infracfg
-
 > Change-Id: I46e0aca76a206ac86ee0477d9dbd67e1e924b118
-
-Please delete Change-Id it's not meaning full for upstream work.
-
 > Signed-off-by: yong.liang <yong.liang@mediatek.com>
 > ---
+
+Somehow I only have patch 1 of the series in my inbox.
+
 >  arch/arm64/boot/dts/mediatek/mt8183.dtsi | 2 ++
 >  1 file changed, 2 insertions(+)
 > 
