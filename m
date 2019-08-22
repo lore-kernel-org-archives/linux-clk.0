@@ -2,109 +2,98 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ECA0C3A59E
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 02:19:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25EFFC3A59D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 08:12:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D050216F4
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 02:19:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 052E320870
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 08:12:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731222AbfHVCSy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Aug 2019 22:18:54 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:37128 "EHLO inva021.nxp.com"
+        id S1732159AbfHVIMu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 04:12:50 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35371 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731190AbfHVCSx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 21 Aug 2019 22:18:53 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 738A32005B5;
-        Thu, 22 Aug 2019 04:18:51 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EC4D82005B4;
-        Thu, 22 Aug 2019 04:18:45 +0200 (CEST)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id F407740296;
-        Thu, 22 Aug 2019 10:18:38 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     linux-devel@linux.nxdi.nxp.com, Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1732158AbfHVIMu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 04:12:50 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id E5CD749470;
+        Thu, 22 Aug 2019 10:12:45 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id DGrO6zawJa6R; Thu, 22 Aug 2019 10:12:42 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 5D8A34941E;
+        Thu, 22 Aug 2019 10:12:42 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id lvSPKS5MRZ-2; Thu, 22 Aug 2019 10:12:40 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 3B934494AD;
+        Thu, 22 Aug 2019 10:12:40 +0200 (CEST)
+Message-ID: <c859d12167d18c21dda13b30c2dd3256f407d1d9.camel@v3.sk>
+Subject: Re: [PATCH 02/19] dt-bindings: arm: mrvl: Document MMP3 compatible
+ string
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Olof Johansson <olof@lixom.net>,
         Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
-Subject: [v3 1/2] dt/bindings: clk: Add YAML schemas for LS1028A Display Clock bindings
-Date:   Thu, 22 Aug 2019 10:08:46 +0800
-Message-Id: <20190822020847.10159-1-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.9.5
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Date:   Thu, 22 Aug 2019 10:12:38 +0200
+In-Reply-To: <20190821210349.GA29732@bogus>
+References: <20190809093158.7969-1-lkundrak@v3.sk>
+         <20190809093158.7969-3-lkundrak@v3.sk> <20190821210349.GA29732@bogus>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
-output interface. Add a YAML schema for this.
+On Wed, 2019-08-21 at 16:03 -0500, Rob Herring wrote:
+> On Fri, Aug 09, 2019 at 11:31:41AM +0200, Lubomir Rintel wrote:
+> > Marvel MMP3 is a successor to MMP2, containing similar peripherals with two
+> > PJ4B cores.
+> > 
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > ---
+> >  Documentation/devicetree/bindings/arm/mrvl/mrvl.txt | 4 ++++
+> >  1 file changed, 4 insertions(+)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > index 951687528efb0..66e1e1414245b 100644
+> > --- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > +++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > @@ -12,3 +12,7 @@ Required root node properties:
+> >  MMP2 Brownstone Board
+> >  Required root node properties:
+> >  	- compatible = "mrvl,mmp2-brownstone", "mrvl,mmp2";
+> > +
+> > +MMP3 SoC
+> > +Required root node properties:
+> > +	- compatible = "marvell,mmp3";
+> 
+> Please convert this file to DT schema before adding new SoCs.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
----
- .../devicetree/bindings/clock/fsl,plldig.yaml | 43 +++++++++++++++++++
- 1 file changed, 43 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+Is this something that should generally be done for all new or changed
+DT bindings?
 
-diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-new file mode 100644
-index 000000000000..32274e94aafc
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-@@ -0,0 +1,43 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
-+
-+maintainers:
-+  - Wen He <wen.he_1@nxp.com>
-+
-+description: |
-+  NXP LS1028A has a clock domain PXLCLK0 used for the Display output
-+  interface in the display core, as implemented in TSMC CLN28HPM PLL.
-+  which generate and offers pixel clocks to Display.
-+
-+properties:
-+  compatible:
-+    const: fsl,ls1028a-plldig
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 0
-+
-+required:
-+  - compatible
-+  - reg
-+  - clocks
-+  - '#clock-cells'
-+
-+examples:
-+  # Display PIXEL Clock node:
-+  - |
-+    dpclk: clock-display@f1f0000 {
-+        compatible = "fsl,ls1028a-plldig";
-+        reg = <0x0 0xf1f0000 0x0 0xffff>;
-+        #clock-cells = <0>;
-+        clocks = <&osc_27m>;
-+    };
-+
-+...
--- 
-2.17.1
+> 
+> Rob
+
+Thanks
+Lubo
 
