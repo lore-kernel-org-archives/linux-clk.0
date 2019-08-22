@@ -1,119 +1,134 @@
-Return-Path: <SRS0=LMZy=WR=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 678E4C3A59E
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 21:13:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E3AC3A59E
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 00:46:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3749F206DD
-	for <linux-clk@archiver.kernel.org>; Wed, 21 Aug 2019 21:13:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566422005;
-	bh=fijuuQb22nIjd7MQ2KQXNDXm2IFUgI3e6ymXES629RQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=c/28WUoQp6TVH9AR2JXmOqvKL9DhmmgTjL1QAJ2WxATOOfzaa9kl2cldt/Zn8U/io
-	 oVG/wWxt9jGXAMr4ovzArtQi0rrX/pRwKQECkXr6EBJzIbH73KIkR/kCUDs5cKR+c5
-	 m/DYfx0JpHFb1bqwcX2XyhsjeSAnHkK9n5O2uMf4=
+	by mail.kernel.org (Postfix) with ESMTP id 1E654216F4
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 00:46:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730744AbfHUVNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 21 Aug 2019 17:13:25 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42872 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728050AbfHUVNY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Aug 2019 17:13:24 -0400
-Received: by mail-ot1-f66.google.com with SMTP id j7so3431359ota.9;
-        Wed, 21 Aug 2019 14:13:24 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DlphJMx4PV9qLWiQ86VK3TgLQxXCfQ+knFHYAIuA5Ik=;
-        b=ms0iIEd8Q3F2zyjvKoJwxsEviTb1g84AcQ/kxaGRebPaVy4Op6drC6rmcgA/5inDra
-         u25WwI3x+I+WmW3zeBDC94GO2W13eiR0qEw2t3fKMd1cnO+gDrddnTUNar0gApKxoCvl
-         2l+zz2D2JzgtiRwBlgiKfaJlXhYgIk0UPylUaQtRJZotbnKxkNvfiTI5Go5VXOPXLH8n
-         dsnJO/dTuqRPswvInPib14PO7ivyOZsurh1hApAG1W7HoO0nUvN/iAPJuJ94b48uRpC/
-         U+xeM+iwKJ3K1gdQTMESdi6KVVHS4ylpDEQUFF5S0qvJtI5DksrOXkoNC6tKLJLgWrVy
-         Y+ZA==
-X-Gm-Message-State: APjAAAV2n77O+nV4bAiMoCy/y7A456AYSZ4EdPVHeeIN5OGbEe9hQkGt
-        p4DPBShEV3y4842j4ZdcVg==
-X-Google-Smtp-Source: APXvYqxe6j0dbYUWNdi9Juyx9Aja0v51eVfa9yGrlfykgD7zu1GxDpXPwvZ2wbOONxfzCfKKid12kA==
-X-Received: by 2002:a05:6830:1018:: with SMTP id a24mr1654419otp.191.1566422003778;
-        Wed, 21 Aug 2019 14:13:23 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t10sm8052271otb.13.2019.08.21.14.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2019 14:13:23 -0700 (PDT)
-Date:   Wed, 21 Aug 2019 16:13:22 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Olof Johansson <olof@lixom.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 04/19] dt-bindings: phy-mmp3-usb: Add bindings
-Message-ID: <20190821211322.GA12457@bogus>
-References: <20190809093158.7969-1-lkundrak@v3.sk>
- <20190809093158.7969-5-lkundrak@v3.sk>
+        id S1729212AbfHVAqL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 21 Aug 2019 20:46:11 -0400
+Received: from mailgw02.mediatek.com ([210.61.82.184]:12180 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729081AbfHVAqL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 21 Aug 2019 20:46:11 -0400
+X-UUID: 3903fa845faf47d685a9fa1ac8adcc0d-20190822
+X-UUID: 3903fa845faf47d685a9fa1ac8adcc0d-20190822
+Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw02.mediatek.com
+        (envelope-from <mars.cheng@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0707 with TLS)
+        with ESMTP id 658753542; Thu, 22 Aug 2019 08:46:04 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Thu, 22 Aug 2019 08:46:00 +0800
+Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Thu, 22 Aug 2019 08:46:00 +0800
+Message-ID: <1566434764.14794.2.camel@mtkswgap22>
+Subject: Re: [PATCH v2 11/11] arm64: dts: add dts nodes for MT6779
+From:   Mars Cheng <mars.cheng@mediatek.com>
+To:     Marc Zyngier <maz@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        <devicetree@vger.kernel.org>, CC Hwang <cc.hwang@mediatek.com>,
+        <wsd_upstream@mediatek.com>, Loda Chou <loda.chou@mediatek.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>,
+        mtk01761 <wendell.lin@mediatek.com>, <linux-clk@vger.kernel.org>
+Date:   Thu, 22 Aug 2019 08:46:04 +0800
+In-Reply-To: <c533371d-efcd-59dc-0172-3f5775221302@kernel.org>
+References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
+         <1566206502-4347-12-git-send-email-mars.cheng@mediatek.com>
+         <adec38bf-735b-9131-2b9d-1e427d47f88d@kernel.org>
+         <1566214950.17081.3.camel@mtkswgap22>
+         <c533371d-efcd-59dc-0172-3f5775221302@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190809093158.7969-5-lkundrak@v3.sk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 09, 2019 at 11:31:43AM +0200, Lubomir Rintel wrote:
-> This is the PHY chip for USB OTG on MMP3 platform.
+Hi Marc
+
+> >>> +	soc {
+> >>> +		#address-cells = <2>;
+> >>> +		#size-cells = <2>;
+> >>> +		compatible = "simple-bus";
+> >>> +		ranges;
+> >>> +
+> >>> +		gic: interrupt-controller@0c000000 {
+> >>> +			compatible = "arm,gic-v3";
+> >>> +			#interrupt-cells = <3>;
+> >>
+> >> You also haven't described the CPU PMUs. Depending on how they are wired
+> >> (SPIs or PPIs), you may have to change the interrupt-cells property to
+> >> include a cell for the PPI partitioning.
+> >>
+> > 
+> > pmu nodes would be:
+> > 
+> >         pmu {
+> >                 compatible = "arm,armv8-pmuv3";
+> >                 interrupt-parent = <&gic>;
+> >                 interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW>;
+> >         };
+> > 
+> >         dsu-pmu-0 {
+> >                 compatible = "arm,dsu-pmu";
+> >                 interrupts = <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
+> >                 cpus = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>,
+> >                         <&cpu4>, <&cpu5>, <&cpu6>, <&cpu7>;
+> >         };
+> > 
+> > so I think interrupt-cells could be <3>, will add pmu nodes in v3.
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  .../devicetree/bindings/phy/phy-mmp3-usb.txt     | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
+> No, that's wrong, at least for the CPU pmu node.
 > 
-> diff --git a/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt b/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-> new file mode 100644
-> index 0000000000000..b9623b98151bc
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-> @@ -0,0 +1,16 @@
-> +Marvell MMP3 USB PHY
-> +--------------------
-> +
-> +Required properties:
-> +- compatible: must be "marvell,mmp3-usb-phy"
-> +- #phy-cells: must be 0
-> +
-> +Example:
-> +	usb-phy: usbphy@d4207000 {
-
-usb-phy@...
-
-> +		compatible = "marvell,mmp3-usb-phy";
-> +		reg = <0xd4207000 0x40>;
-> +		#phy-cells = <0>;
-> +	};
-> +
-> +This document explains the device tree binding. For general information
-> +about PHY subsystem refer to Documentation/phy.txt
-
-Drop this statement.
-
-
-> -- 
-> 2.21.0
+> First, you need two of them (one for the A55s, one for the A75s).
+> Then you need to partition the corresponding PPI so that they can be
+> described as separate affinity sets.
+> Finally, this implies that #interrupt-cells goes up to 4, and all the
+> interrupts directly routed to the GIC must be updated.
 > 
+> You should have something like this:
+> 
+> 	&gic {
+> 		ppi-partitions {
+> 			cluster0: interrupt-partition-0 {
+> 				affinity = <&cpu0 &cpu1 &cpu2
+>                                             &cpu3 &cpu4 &cpu5>;
+> 			};
+> 
+> 			cluster1: interrupt-partition-1 {
+> 				affinity = <&cpu6 &cpu7>;
+> 			};
+> 	};
+> 
+> 	pmu_a55 {
+> 		compatible = "arm,cortex-a55-pmu", "arm,armv8-pmuv3";
+> 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &cluster0>;
+> 	};
+> 
+> 	pmu_a75 {
+> 		compatible = "arm,cortex-a75-pmu", "arm,armv8-pmuv3";
+> 		interrupts = <GIC_PPI 7 IRQ_TYPE_LEVEL_LOW &cluster1>;
+> 	};
+> 
+> Please see the rk3399 usage of the binding, as it is the canonical example.
+> 
+> > 
+
+Got the idea. Will check rk3399 and fix our part. Thanks for reviewing.
+
