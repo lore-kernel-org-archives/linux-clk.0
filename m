@@ -2,57 +2,55 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E45C3A5A3
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:36:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0B4C3A5A2
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3B1F20856
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:36:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 150B8233FD
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:37:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wjDlZAUy"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T9ASLZ5H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392510AbfHVRgj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 13:36:39 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34303 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391578AbfHVRYt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 13:24:49 -0400
-Received: by mail-pl1-f194.google.com with SMTP id d3so3857682plr.1
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 10:24:49 -0700 (PDT)
+        id S2392563AbfHVRg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 13:36:58 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37599 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404298AbfHVRYm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 13:24:42 -0400
+Received: by mail-pg1-f194.google.com with SMTP id d1so4049341pgp.4
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 10:24:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=70nxwZafCYlFjcUnZixCqBC0Lk3FuIHCQ+uw4WwvqpE=;
-        b=wjDlZAUyA+79EgPCGsEzncxofResf0ntanYurX8vDWxjInime4FmFm6ORYEgwqXo7z
-         /0virIKbDYaQEaPcAP76VxXXkDOeaI3ZWvseBaGwlW07x2HlEzF8oa7tL2+Pt6itKZg6
-         351N80qRTQsgtn8yNEhTokgA0L4COEYnf911oeXo9EsvSgFhzUxqDXjmMkHmjh1+abNx
-         p0YC1ybNMoWamMUui+k2D/sepRVDNSOWX9OHZcpgfAJWJ5Mf9Jv5nQ3nUNmWifGjqXiQ
-         +BbeGYZniUPpiMqKmd14A3vzc9e1I2CBSExLbMNDdvrFOhknPEbljs91QfSqDMwWGks6
-         t7CA==
+        h=from:to:cc:subject:date:message-id;
+        bh=MF3rEeHYTUUv66jVOAxgim3ss6TORCYiUQPquvwjq/w=;
+        b=T9ASLZ5H74R8EU3DNbNPmIhAyCpFblFUW358Ua0N6C7yqOpNGuiNzAsJYkCUeO7nRP
+         rHGVPRqBC44PjSsFCVQnOQXOehBDh4tH5gwlPTBab4mK0uz3FBobBeUH/JAkt5rf9Gdk
+         kcgjpC1QmqDSpll1BIIr+bXpTVQxLwJ+2lOu+jI8kdf4AULzH7GFRIUbQHB9mJQ+VVDP
+         Dl3lwHnVuvseHJlOePUKuh95yuihDeaqoS9QOKCHvXOAm5E1HIxaOH15jKFCj4neDd9c
+         lj64achj6Q3F+xMUqPrkExrblamN3MX4s92m9ky46WzHfGtbfdA9EDVi6kZ1fQsUgbQr
+         fEFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=70nxwZafCYlFjcUnZixCqBC0Lk3FuIHCQ+uw4WwvqpE=;
-        b=DLz4gLJKrbelXYTbtmOwLilvom+LIqOV0BV/MvR8kSpmwvkScU5e0yydeLZHmrHnV2
-         uSB+mTF6FCkgBgeGj7KdiJO5RyHSgNXyUqDM3j6vfI0Rwq+tRfeBcMSxZiujw5+lH9yF
-         K1TVMVcglXOrORo7TGpd3X7qCOFjMcKmY3BR6hZWu78ycTuKzA74NH90elCHYacCnKI7
-         l9CfN0Fx6RZB9tPIhS3cnUhFYgsnU2GZkiZ/SHtisu3cyfgMqSeDNJGElIBaY79BWkLv
-         LSFA/GvqKEDVCpPZfxRyaN/oNDVoohA7hsnjYucf1ObJnYIXd0a9FxVLgJMpE9IrCwYP
-         uhzQ==
-X-Gm-Message-State: APjAAAWARmISoiWf+qF3d2/4heUr39L8hpN4KbpEnlYIiLVJ3AaRTOCR
-        4Y/qlN5ngWLMiqUX8NeWuE7A
-X-Google-Smtp-Source: APXvYqyGPkXXQfTveOLHfKtvtOEU23e9V2exsqqblaUouTOQNZ/alWYRyrWpHuw/O2f7ZDi/ObIWbw==
-X-Received: by 2002:a17:902:aa93:: with SMTP id d19mr41354972plr.148.1566494688626;
-        Thu, 22 Aug 2019 10:24:48 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=MF3rEeHYTUUv66jVOAxgim3ss6TORCYiUQPquvwjq/w=;
+        b=T8doAXO8m3laj6m1BZ+dCF0gCBtyTL9c9Aq7krBzajU6vTZaCSQ2Xh1HHixb8UJAAh
+         CD9HaUaVf+6sjDtkfJsFvq3C3G9AGuv5uxx72eOQ7h/Tzpu1JEqx3n7lMqaBesWFslu0
+         jTia4flnkr/j2u2sC/T2IUuvPh0FSKY3OJFJk5KzLuqOof24LFd8bWzEWs2etosqTqri
+         AsMy6XUx4CEUDyufWN7xdOnp7yAJ2e2Th+AsmW2ftFpns4KXfAzXg8rQ+M3mf3T6koUM
+         tJe507NPq2y6abF75oDqsOs27wYD+7eAlUQMJ7pW+SbjFFrtRORhsJSauoycOZ9rAV2/
+         rq6w==
+X-Gm-Message-State: APjAAAXyOv1nW4oB5Ib93mQHTZZNsKmFIsf/C83pDM0PxPOcAm9HqWZm
+        0b5pdk7TRVCA/PKBITZTbeF0
+X-Google-Smtp-Source: APXvYqx7kYtYjdmxnhOrl1gFD7IsOVakbGUR1RKgLNPTbutbHQR9wpV3+h7cJenEiWUeTrvSKOZxWA==
+X-Received: by 2002:a65:6406:: with SMTP id a6mr256662pgv.393.1566494681681;
+        Thu, 22 Aug 2019 10:24:41 -0700 (PDT)
 Received: from localhost.localdomain ([2405:204:71cc:5738:24ad:193e:4b59:8a76])
-        by smtp.gmail.com with ESMTPSA id r12sm31705798pgb.73.2019.08.22.10.24.42
+        by smtp.gmail.com with ESMTPSA id r12sm31705798pgb.73.2019.08.22.10.24.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:24:48 -0700 (PDT)
+        Thu, 22 Aug 2019 10:24:40 -0700 (PDT)
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -60,95 +58,74 @@ Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         haitao.suo@bitmain.com, darren.tsao@bitmain.com,
         fisher.cheng@bitmain.com, alec.lin@bitmain.com,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 1/8] clk: Zero init clk_init_data in helpers
-Date:   Thu, 22 Aug 2019 22:54:19 +0530
-Message-Id: <20190822172426.25879-2-manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 0/8] Add Bitmain BM1880 clock driver
+Date:   Thu, 22 Aug 2019 22:54:18 +0530
+Message-Id: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
-References: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk_init_data struct needs to be initialized to zero for the new
-parent_map implementation to work correctly. Otherwise, the member which
-is available first will get processed.
+Hello,
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- drivers/clk/clk-composite.c  | 2 +-
- drivers/clk/clk-divider.c    | 2 +-
- drivers/clk/clk-fixed-rate.c | 2 +-
- drivers/clk/clk-gate.c       | 2 +-
- drivers/clk/clk-mux.c        | 2 +-
- 5 files changed, 5 insertions(+), 5 deletions(-)
+This patchset adds common clock driver for Bitmain BM1880 SoC clock
+controller. The clock controller consists of gate, divider, mux
+and pll clocks with different compositions. Hence, the driver uses
+composite clock structure in place where multiple clocking units are
+combined together.
 
-diff --git a/drivers/clk/clk-composite.c b/drivers/clk/clk-composite.c
-index b06038b8f658..4d579f9d20f6 100644
---- a/drivers/clk/clk-composite.c
-+++ b/drivers/clk/clk-composite.c
-@@ -208,7 +208,7 @@ struct clk_hw *clk_hw_register_composite(struct device *dev, const char *name,
- 			unsigned long flags)
- {
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	struct clk_composite *composite;
- 	struct clk_ops *clk_composite_ops;
- 	int ret;
-diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
-index 3f9ff78c4a2a..65dd8137f9ec 100644
---- a/drivers/clk/clk-divider.c
-+++ b/drivers/clk/clk-divider.c
-@@ -471,7 +471,7 @@ static struct clk_hw *_register_divider(struct device *dev, const char *name,
- {
- 	struct clk_divider *div;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	int ret;
- 
- 	if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
-diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index a7e4aef7a376..746c3ecdc5b3 100644
---- a/drivers/clk/clk-fixed-rate.c
-+++ b/drivers/clk/clk-fixed-rate.c
-@@ -58,7 +58,7 @@ struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
- {
- 	struct clk_fixed_rate *fixed;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	int ret;
- 
- 	/* allocate fixed-rate clock */
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 1b99fc962745..8ed83ec730cb 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -141,7 +141,7 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- {
- 	struct clk_gate *gate;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	int ret;
- 
- 	if (clk_gate_flags & CLK_GATE_HIWORD_MASK) {
-diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
-index 66e91f740508..2caa6b2a9ee5 100644
---- a/drivers/clk/clk-mux.c
-+++ b/drivers/clk/clk-mux.c
-@@ -153,7 +153,7 @@ struct clk_hw *clk_hw_register_mux_table(struct device *dev, const char *name,
- {
- 	struct clk_mux *mux;
- 	struct clk_hw *hw;
--	struct clk_init_data init;
-+	struct clk_init_data init = { NULL };
- 	u8 width = 0;
- 	int ret;
- 
+This patchset also removes UART fixed clock and sources clocks from clock
+controller for Sophon Edge board where the driver has been validated.
+
+Thanks,
+Mani
+
+Changes in v4:
+
+* Fixed devicetree binding issue
+* Added ARCH_BITMAIN as the default for the clk driver
+
+Changes in v3:
+
+* Switched to clk_hw_{register/unregister} APIs
+* Returned clk_hw from the in-driver registration helpers
+
+Changes in v2:
+
+* Converted the dt binding to YAML
+* Incorporated review comments from Stephen (majority of change is switching
+  to new way of specifying clk parents)
+
+Manivannan Sadhasivam (8):
+  clk: Zero init clk_init_data in helpers
+  clk: Warn if clk_init_data is not zero initialized
+  clk: Add clk_hw_unregister_composite helper function definition
+  dt-bindings: clock: Add devicetree binding for BM1880 SoC
+  arm64: dts: bitmain: Add clock controller support for BM1880 SoC
+  arm64: dts: bitmain: Source common clock for UART controllers
+  clk: Add common clock driver for BM1880 SoC
+  MAINTAINERS: Add entry for BM1880 SoC clock driver
+
+ .../bindings/clock/bitmain,bm1880-clk.yaml    |  74 ++
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/bitmain/bm1880-sophon-edge.dts   |   9 -
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi       |  28 +
+ drivers/clk/Kconfig                           |   7 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-bm1880.c                      | 966 ++++++++++++++++++
+ drivers/clk/clk-composite.c                   |  13 +-
+ drivers/clk/clk-divider.c                     |   2 +-
+ drivers/clk/clk-fixed-rate.c                  |   2 +-
+ drivers/clk/clk-gate.c                        |   2 +-
+ drivers/clk/clk-mux.c                         |   2 +-
+ drivers/clk/clk.c                             |   8 +
+ include/dt-bindings/clock/bm1880-clock.h      |  82 ++
+ 14 files changed, 1184 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
+ create mode 100644 drivers/clk/clk-bm1880.c
+ create mode 100644 include/dt-bindings/clock/bm1880-clock.h
+
 -- 
 2.17.1
 
