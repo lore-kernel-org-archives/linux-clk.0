@@ -2,66 +2,69 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748B8C3A5A1
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6187EC3A5A1
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4103421743
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C11D233FE
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 14:25:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="idQ8iW2x"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="dB+Tq4VI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387991AbfHVOZA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 10:25:00 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38731 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387945AbfHVOZA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 10:25:00 -0400
-Received: by mail-wr1-f65.google.com with SMTP id g17so5636100wrr.5
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 07:24:59 -0700 (PDT)
+        id S2388127AbfHVOZG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 10:25:06 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41524 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388052AbfHVOZG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 10:25:06 -0400
+Received: by mail-wr1-f67.google.com with SMTP id j16so5624094wrr.8
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 07:25:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9OVx3jQWP4kZ5xJyqef16dDp2+r5/pkxkhk8LNAWmX4=;
-        b=idQ8iW2xtN9Z7AliSk77ovUIB903UmaYQgKv3ApPk4O3q0V27W7ZDIobQ4+dlnAMiH
-         cHbKdpngCnKxltSls1Y7TZXrbhU1iazWGtK96aKaaXSSWHc67X3E6Xl9RjMIylZOCkpO
-         SHe2quUdPXW2RYKDJTf1SnjXzxANBS3R++T+aaNHCdOGH1KIkoSSS0FP+rfQu0/1Vf4g
-         codkCiEWII91vRMM1SLUswJkkI//E4JAuruZMlk0uxgkqrSR9peFGZV98FGd5ScnoGz4
-         BAj9fMJ0xoNrRvwOEIs2jB2bw5eEYGkRFzgU3Y5GC3cwdcSiRYRNTQwAy2QlVCsuh/bB
-         uf1A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=W3ZKe7wvKgp9DF/q5SFHFIH+wtFWKtkn+RuPE2jKOyU=;
+        b=dB+Tq4VIXfDguxnS2wK3qq7fYZrWRF6Dq9YjVxnkS+2pbFvz9gTgPhcaY1IXYWEdFS
+         JNVvHcnjdLy4c4ZViOoM7qcJj+jyrG4/ExqAh8Swh56vWFk5j7AUkq6Bbv2v6XLXOBap
+         rkaIVCZ9kkViJJB41/pJa+HJLDFfTtcmyi04f6H3GnzcXKOXNTjn/xg5oVph1mqbMTJ2
+         byzK0KMjBYcaaW5TL/QJW3u23TN3+M9pLwaV7Lsa3P6YfKcp8qAxzMZ8GU7X5oMsViN0
+         h3V22IvYEVdbJaV2+EL4VQuAkmidelRcpIWinDnBVgyBdIpQgMZS9ULJ45OMZ6I99FJH
+         cnSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=9OVx3jQWP4kZ5xJyqef16dDp2+r5/pkxkhk8LNAWmX4=;
-        b=eeUyCvuhXTHqDNSjQ2QH4x+HF5gof2zOPwwNFXaMwORaphjTmnrh8AOHajgCNBUTDG
-         WU0r7o1PfHCnyA0ShIEeWEAXT/jHMXz4+x62dNrQ7Cws8AjB0ddBN2o/0qrPMINbACb6
-         mvfSp8bvXTgI/Q+GFdhW1O0p3RwY01YSgExYFOALbgdEHTzK2+vRZcdGLvPtaCWpIfwT
-         rGoBnyaXOzHQCa5c3V6PiqGcgm9WZInYOAKbh6ubtJOvplNd28M2jX5iq/TIk/kyhTsE
-         ZoNc1VEvmV2cU9ms4CX6ozxr/rxyZj+kuKqhCHDkhIEzl94lr/9AoI6B5TeOh7lKVbEI
-         WEzg==
-X-Gm-Message-State: APjAAAVSvzPCoFMOza/dJ2N8NhT1ZNI28bMzwduDGLkpKOp28bEJ4E0T
-        TUVYCeHaj7EuyGBJeUbAQV9Egg==
-X-Google-Smtp-Source: APXvYqx3a41MFNhYZEgCdkzdje7C0zBjdhT4MO5uJCc4++EvcwS9Uz/v1rJGzSeEpyFmCrumGT1VbQ==
-X-Received: by 2002:adf:f281:: with SMTP id k1mr47694586wro.154.1566483898729;
-        Thu, 22 Aug 2019 07:24:58 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=W3ZKe7wvKgp9DF/q5SFHFIH+wtFWKtkn+RuPE2jKOyU=;
+        b=ruBxI/XVtpkEnRM6O4KFFwwJjyligoPS1dufqDlzNs42IYAm+qKhagIhiHXRerbr1O
+         sgvZAGICgFcRJP1gECCocivWvkIbMj3bIWHED9pvf+me/C8C6+J1iHXeD4Nzj3hS9aeP
+         +cQQInFo2M58zfUMok+19nmzO3Blx9jqq+cHy392Qi/4qAO/W/ULyJ4qgLAXdcdKZkoQ
+         xqwL4okWqaBdwQIY85coRXTDxgyETTgARzneAUj0qZUgBHdmdUj73d97g88hYg2vFgOW
+         6uyegtLze5rPiLJbAPp1+7srm5FleSPSorFS1SXX2xsUQI3VjQwOk2JG2AeHpEuihMrc
+         BSAA==
+X-Gm-Message-State: APjAAAXJG6B+g1YKgIvfBLORflt5pb4rUw/h+MpFaR/g492+t0w570zm
+        7sUd8V5cr6/Up7OqYy2ZZ8L4iQ==
+X-Google-Smtp-Source: APXvYqy95iev0+owFdCqfO0PpxZORxPdAzw8OPciuPUksTpXu25Ul6RX+u5sudlsCf5Dt8bD+CAKug==
+X-Received: by 2002:adf:ec4f:: with SMTP id w15mr31736699wrn.311.1566483903215;
+        Thu, 22 Aug 2019 07:25:03 -0700 (PDT)
 Received: from bender.baylibre.local (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id d17sm25806547wrm.52.2019.08.22.07.24.57
+        by smtp.gmail.com with ESMTPSA id d17sm25806547wrm.52.2019.08.22.07.25.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 07:24:58 -0700 (PDT)
+        Thu, 22 Aug 2019 07:25:02 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     khilman@baylibre.com, jbrunet@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/6] arm64: meson-sm1: add support for DVFS
-Date:   Thu, 22 Aug 2019 16:24:49 +0200
-Message-Id: <20190822142455.12506-1-narmstrong@baylibre.com>
+Subject: [PATCH 4/6] clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
+Date:   Thu, 22 Aug 2019 16:24:53 +0200
+Message-Id: <20190822142455.12506-5-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190822142455.12506-1-narmstrong@baylibre.com>
+References: <20190822142455.12506-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -69,41 +72,126 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Following DVFS support for the Amlogic G12A and G12B SoCs, this serie
-enables DVFS on the SM1 SoC for the SEI610 board.
+The Amlogic SM1 can set a dedicated clock frequency for each CPU core by
+having a dedicate tree for each core similar to the CPU0 tree.
+Like the DSU tree, a supplementaty mux has been added to use the CPU0
+frequency instead.
 
-The SM1 Clock structure is slightly different because of the Cortex-A55
-core used, having the capability for each core of a same cluster to run
-at a different frequency thanks to the newly used DynamIQ Shared Unit.
+But since the cluster only has a single power rail and shares a single PLL,
+it's not worth adding 3 unsused clock tree, so we add only the mux to
+select the CPU0 clock frequency for each CPU1, CPU2 and CPU3 cores.
 
-This is why SM1 has a CPU clock tree for each core and for DynamIQ Shared Unit,
-with a bypass mux to use the CPU0 instead of the dedicated trees.
+They are set read-only because the early boot stages sets them to select
+the CPU0 input clock.
 
-The DSU uses a new GP1 PLL as default clock, thus GP1 is added as read-only.
+Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+---
+ drivers/clk/meson/g12a.c | 60 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.h |  5 +++-
+ 2 files changed, 64 insertions(+), 1 deletion(-)
 
-The SM1 OPPs has been taken from the Amlogic Vendor tree, and unlike
-G12A only a single version of the SoC is available.
-
-Dependencies:
-- patch 6 is based on the "arm64: meson: add support for SM1 Power Domains" serie,
-	but is not a strong dependency, it will work without
-
-Neil Armstrong (6):
-  dt-bindings: clk: meson: add sm1 periph clock controller bindings
-  clk: meson: g12a: add support for SM1 GP1 PLL
-  clk: meson: g12a: add support for SM1 DynamIQ Shared Unit clock
-  clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
-  clk: meson: g12a: expose SM1 CPU 1, 2 & 3 clocks
-  arm64: dts: meson-sm1-sei610: enable DVFS
-
- .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
- .../boot/dts/amlogic/meson-sm1-sei610.dts     |  59 +-
- arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  69 +++
- drivers/clk/meson/g12a.c                      | 544 ++++++++++++++++++
- drivers/clk/meson/g12a.h                      |  26 +-
- include/dt-bindings/clock/g12a-clkc.h         |   3 +
- 6 files changed, 697 insertions(+), 5 deletions(-)
-
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index e00df17f800a..ea4c791f106d 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -824,6 +824,60 @@ static struct clk_regmap sm1_dsu_final_clk = {
+ 	},
+ };
+ 
++/* Datasheet names this field as "Cpu_clk_sync_mux_sel" bit 0 */
++static struct clk_regmap sm1_cpu1_clk = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_SYS_CPU_CLK_CNTL6,
++		.mask = 0x1,
++		.shift = 24,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cpu1_clk",
++		.ops = &clk_regmap_mux_ro_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&g12a_cpu_clk.hw,
++			/* This CPU also have a dedicated clock tree */
++		},
++		.num_parents = 1,
++	},
++};
++
++/* Datasheet names this field as "Cpu_clk_sync_mux_sel" bit 1 */
++static struct clk_regmap sm1_cpu2_clk = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_SYS_CPU_CLK_CNTL6,
++		.mask = 0x1,
++		.shift = 25,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cpu2_clk",
++		.ops = &clk_regmap_mux_ro_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&g12a_cpu_clk.hw,
++			/* This CPU also have a dedicated clock tree */
++		},
++		.num_parents = 1,
++	},
++};
++
++/* Datasheet names this field as "Cpu_clk_sync_mux_sel" bit 2 */
++static struct clk_regmap sm1_cpu3_clk = {
++	.data = &(struct clk_regmap_mux_data){
++		.offset = HHI_SYS_CPU_CLK_CNTL6,
++		.mask = 0x1,
++		.shift = 26,
++	},
++	.hw.init = &(struct clk_init_data){
++		.name = "cpu3_clk",
++		.ops = &clk_regmap_mux_ro_ops,
++		.parent_hws = (const struct clk_hw *[]) {
++			&g12a_cpu_clk.hw,
++			/* This CPU also have a dedicated clock tree */
++		},
++		.num_parents = 1,
++	},
++};
++
+ /* Datasheet names this field as "Cpu_clk_sync_mux_sel" bit 4 */
+ static struct clk_regmap sm1_dsu_clk = {
+ 	.data = &(struct clk_regmap_mux_data){
+@@ -4576,6 +4630,9 @@ static struct clk_hw_onecell_data sm1_hw_onecell_data = {
+ 		[CLKID_DSU_CLK_DYN]		= &sm1_dsu_clk_dyn.hw,
+ 		[CLKID_DSU_CLK_FINAL]		= &sm1_dsu_final_clk.hw,
+ 		[CLKID_DSU_CLK]			= &sm1_dsu_clk.hw,
++		[CLKID_CPU1_CLK]		= &sm1_cpu1_clk.hw,
++		[CLKID_CPU2_CLK]		= &sm1_cpu2_clk.hw,
++		[CLKID_CPU3_CLK]		= &sm1_cpu3_clk.hw,
+ 		[NR_CLKS]			= NULL,
+ 	},
+ 	.num = NR_CLKS,
+@@ -4807,6 +4864,9 @@ static struct clk_regmap *const g12a_clk_regmaps[] = {
+ 	&sm1_dsu_clk_dyn,
+ 	&sm1_dsu_final_clk,
+ 	&sm1_dsu_clk,
++	&sm1_cpu1_clk,
++	&sm1_cpu2_clk,
++	&sm1_cpu3_clk,
+ };
+ 
+ static const struct reg_sequence g12a_init_regs[] = {
+diff --git a/drivers/clk/meson/g12a.h b/drivers/clk/meson/g12a.h
+index 66fd46940f91..4682a4442ae9 100644
+--- a/drivers/clk/meson/g12a.h
++++ b/drivers/clk/meson/g12a.h
+@@ -257,8 +257,11 @@
+ #define CLKID_DSU_CLK_DYN			250
+ #define CLKID_DSU_CLK_FINAL			251
+ #define CLKID_DSU_CLK				252
++#define CLKID_CPU1_CLK				253
++#define CLKID_CPU2_CLK				254
++#define CLKID_CPU3_CLK				255
+ 
+-#define NR_CLKS					253
++#define NR_CLKS					256
+ 
+ /* include the CLKIDs that have been made part of the DT binding */
+ #include <dt-bindings/clock/g12a-clkc.h>
 -- 
 2.22.0
 
