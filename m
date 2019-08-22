@@ -2,130 +2,112 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0B4C3A5A2
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:37:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD2CCC3A5A1
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 18:14:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 150B8233FD
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 17:37:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T9ASLZ5H"
+	by mail.kernel.org (Postfix) with ESMTP id 93C0C23405
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 18:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566497642;
+	bh=E0tPMOEUv3jrqDmtrvwzedPZXnnURm97wF7wyeFfPrI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=kror7UZMGTMtgE9ccVINPvsu7BSByWMYkkIRlMoA6ixwqQTXLMKIysnM7IBZaAglE
+	 KW6kY/kJlWFYGxM7B9K5RxpSzNNTCDAOefkQLm1KCpsj0yuqwtrEgffppdxu4Spsss
+	 yd1i86C/aKjBY/h4QZ1o9RHYjlZfhYZ5ScW/ja04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392563AbfHVRg6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 13:36:58 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37599 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404298AbfHVRYm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 22 Aug 2019 13:24:42 -0400
-Received: by mail-pg1-f194.google.com with SMTP id d1so4049341pgp.4
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2019 10:24:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=MF3rEeHYTUUv66jVOAxgim3ss6TORCYiUQPquvwjq/w=;
-        b=T9ASLZ5H74R8EU3DNbNPmIhAyCpFblFUW358Ua0N6C7yqOpNGuiNzAsJYkCUeO7nRP
-         rHGVPRqBC44PjSsFCVQnOQXOehBDh4tH5gwlPTBab4mK0uz3FBobBeUH/JAkt5rf9Gdk
-         kcgjpC1QmqDSpll1BIIr+bXpTVQxLwJ+2lOu+jI8kdf4AULzH7GFRIUbQHB9mJQ+VVDP
-         Dl3lwHnVuvseHJlOePUKuh95yuihDeaqoS9QOKCHvXOAm5E1HIxaOH15jKFCj4neDd9c
-         lj64achj6Q3F+xMUqPrkExrblamN3MX4s92m9ky46WzHfGtbfdA9EDVi6kZ1fQsUgbQr
-         fEFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=MF3rEeHYTUUv66jVOAxgim3ss6TORCYiUQPquvwjq/w=;
-        b=T8doAXO8m3laj6m1BZ+dCF0gCBtyTL9c9Aq7krBzajU6vTZaCSQ2Xh1HHixb8UJAAh
-         CD9HaUaVf+6sjDtkfJsFvq3C3G9AGuv5uxx72eOQ7h/Tzpu1JEqx3n7lMqaBesWFslu0
-         jTia4flnkr/j2u2sC/T2IUuvPh0FSKY3OJFJk5KzLuqOof24LFd8bWzEWs2etosqTqri
-         AsMy6XUx4CEUDyufWN7xdOnp7yAJ2e2Th+AsmW2ftFpns4KXfAzXg8rQ+M3mf3T6koUM
-         tJe507NPq2y6abF75oDqsOs27wYD+7eAlUQMJ7pW+SbjFFrtRORhsJSauoycOZ9rAV2/
-         rq6w==
-X-Gm-Message-State: APjAAAXyOv1nW4oB5Ib93mQHTZZNsKmFIsf/C83pDM0PxPOcAm9HqWZm
-        0b5pdk7TRVCA/PKBITZTbeF0
-X-Google-Smtp-Source: APXvYqx7kYtYjdmxnhOrl1gFD7IsOVakbGUR1RKgLNPTbutbHQR9wpV3+h7cJenEiWUeTrvSKOZxWA==
-X-Received: by 2002:a65:6406:: with SMTP id a6mr256662pgv.393.1566494681681;
-        Thu, 22 Aug 2019 10:24:41 -0700 (PDT)
-Received: from localhost.localdomain ([2405:204:71cc:5738:24ad:193e:4b59:8a76])
-        by smtp.gmail.com with ESMTPSA id r12sm31705798pgb.73.2019.08.22.10.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2019 10:24:40 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v4 0/8] Add Bitmain BM1880 clock driver
-Date:   Thu, 22 Aug 2019 22:54:18 +0530
-Message-Id: <20190822172426.25879-1-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
+        id S2387929AbfHVSOC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 14:14:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46862 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387698AbfHVSOC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 14:14:02 -0400
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 409AE23402;
+        Thu, 22 Aug 2019 18:14:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566497641;
+        bh=E0tPMOEUv3jrqDmtrvwzedPZXnnURm97wF7wyeFfPrI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=rEPVrIANqHOqSJfeCRLws+WJyuKUk9JaQQsjGBRJIAiIp+qTcPJ0Ku4Zk5YQoAi1q
+         h7+N4yk/T1mHKy8RmeDqvaL6cpy41HvdOEsvnEdLQC1wegcqCSnXpOkIY8/PBcRKps
+         7DwpiqK+JvLZer+86GGJmODZiAY7inkt8TlzuFFQ=
+Received: by mail-wm1-f52.google.com with SMTP id 10so6535609wmp.3;
+        Thu, 22 Aug 2019 11:14:01 -0700 (PDT)
+X-Gm-Message-State: APjAAAUoO+fIIGM50V+5PSJlj/pg909msZELIpN/CjI05wZZE8zlByg2
+        WrHgo2fN0GwErXxHExCKGaefAT8J0Ydzm/C/zfs=
+X-Google-Smtp-Source: APXvYqz9VKO+A36Lao8izp41Osz7VfriIA6pPPz+vN/d2kRbuSlNxEbSGedMUhbQXO1m65E/CzbYTQQNziZlZ0ZLYKk=
+X-Received: by 2002:a1c:2314:: with SMTP id j20mr394213wmj.152.1566497639822;
+ Thu, 22 Aug 2019 11:13:59 -0700 (PDT)
+MIME-Version: 1.0
+References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com> <1566206502-4347-8-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1566206502-4347-8-git-send-email-mars.cheng@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Thu, 22 Aug 2019 11:13:48 -0700
+X-Gmail-Original-Message-ID: <CAGp9Lzpsg2ZjP3Ydj+Fo88FXT_jrV=GnJ+vf4AsSNacwEEx=BA@mail.gmail.com>
+Message-ID: <CAGp9Lzpsg2ZjP3Ydj+Fo88FXT_jrV=GnJ+vf4AsSNacwEEx=BA@mail.gmail.com>
+Subject: Re: [PATCH v2 07/11] pinctrl: mediatek: add mt6779 eint support
+To:     Mars Cheng <mars.cheng@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>, devicetree@vger.kernel.org,
+        wsd_upstream@mediatek.com, mtk01761 <wendell.lin@mediatek.com>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+On Mon, Aug 19, 2019 at 2:22 AM Mars Cheng <mars.cheng@mediatek.com> wrote:
+>
+> add driver setting to support mt6779 eint
+>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 
-This patchset adds common clock driver for Bitmain BM1880 SoC clock
-controller. The clock controller consists of gate, divider, mux
-and pll clocks with different compositions. Hence, the driver uses
-composite clock structure in place where multiple clocking units are
-combined together.
+Acked-by: Sean Wang <sean.wang@kernel.org>
 
-This patchset also removes UART fixed clock and sources clocks from clock
-controller for Sophon Edge board where the driver has been validated.
-
-Thanks,
-Mani
-
-Changes in v4:
-
-* Fixed devicetree binding issue
-* Added ARCH_BITMAIN as the default for the clk driver
-
-Changes in v3:
-
-* Switched to clk_hw_{register/unregister} APIs
-* Returned clk_hw from the in-driver registration helpers
-
-Changes in v2:
-
-* Converted the dt binding to YAML
-* Incorporated review comments from Stephen (majority of change is switching
-  to new way of specifying clk parents)
-
-Manivannan Sadhasivam (8):
-  clk: Zero init clk_init_data in helpers
-  clk: Warn if clk_init_data is not zero initialized
-  clk: Add clk_hw_unregister_composite helper function definition
-  dt-bindings: clock: Add devicetree binding for BM1880 SoC
-  arm64: dts: bitmain: Add clock controller support for BM1880 SoC
-  arm64: dts: bitmain: Source common clock for UART controllers
-  clk: Add common clock driver for BM1880 SoC
-  MAINTAINERS: Add entry for BM1880 SoC clock driver
-
- .../bindings/clock/bitmain,bm1880-clk.yaml    |  74 ++
- MAINTAINERS                                   |   2 +
- .../boot/dts/bitmain/bm1880-sophon-edge.dts   |   9 -
- arch/arm64/boot/dts/bitmain/bm1880.dtsi       |  28 +
- drivers/clk/Kconfig                           |   7 +
- drivers/clk/Makefile                          |   1 +
- drivers/clk/clk-bm1880.c                      | 966 ++++++++++++++++++
- drivers/clk/clk-composite.c                   |  13 +-
- drivers/clk/clk-divider.c                     |   2 +-
- drivers/clk/clk-fixed-rate.c                  |   2 +-
- drivers/clk/clk-gate.c                        |   2 +-
- drivers/clk/clk-mux.c                         |   2 +-
- drivers/clk/clk.c                             |   8 +
- include/dt-bindings/clock/bm1880-clock.h      |  82 ++
- 14 files changed, 1184 insertions(+), 14 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
- create mode 100644 drivers/clk/clk-bm1880.c
- create mode 100644 include/dt-bindings/clock/bm1880-clock.h
-
--- 
-2.17.1
-
+> ---
+>  drivers/pinctrl/mediatek/pinctrl-mt6779.c |    8 ++++++++
+>  1 file changed, 8 insertions(+)
+>
+> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt6779.c b/drivers/pinctrl/mediatek/pinctrl-mt6779.c
+> index 145bf22..49ff3cc 100644
+> --- a/drivers/pinctrl/mediatek/pinctrl-mt6779.c
+> +++ b/drivers/pinctrl/mediatek/pinctrl-mt6779.c
+> @@ -731,11 +731,19 @@
+>         "iocfg_rt", "iocfg_lt", "iocfg_tl",
+>  };
+>
+> +static const struct mtk_eint_hw mt6779_eint_hw = {
+> +       .port_mask = 7,
+> +       .ports     = 6,
+> +       .ap_num    = 209,
+> +       .db_cnt    = 16,
+> +};
+> +
+>  static const struct mtk_pin_soc mt6779_data = {
+>         .reg_cal = mt6779_reg_cals,
+>         .pins = mtk_pins_mt6779,
+>         .npins = ARRAY_SIZE(mtk_pins_mt6779),
+>         .ngrps = ARRAY_SIZE(mtk_pins_mt6779),
+> +       .eint_hw = &mt6779_eint_hw,
+>         .gpio_m = 0,
+>         .ies_present = true,
+>         .base_names = mt6779_pinctrl_register_base_names,
+> --
+> 1.7.9.5
+>
