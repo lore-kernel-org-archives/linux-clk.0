@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C6AAC3A5A2
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5601C3A5A1
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:35:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CD1523402
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A54B6233A0
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:35:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733260AbfHVJds (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 05:33:48 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35803 "EHLO shell.v3.sk"
+        id S1726693AbfHVJe4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 05:34:56 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35771 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733250AbfHVJdl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:33:41 -0400
+        id S1725799AbfHVJdd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:33:33 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 0B695D755D;
-        Thu, 22 Aug 2019 11:33:39 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 380EED756F;
+        Thu, 22 Aug 2019 11:33:30 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 4unv-X_hsYuD; Thu, 22 Aug 2019 11:33:08 +0200 (CEST)
+        with ESMTP id BIQM0mIilM-s; Thu, 22 Aug 2019 11:33:09 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D98AFD7573;
-        Thu, 22 Aug 2019 11:27:26 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id CF4FCD7558;
+        Thu, 22 Aug 2019 11:32:57 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LlNDxuEL98F7; Thu, 22 Aug 2019 11:26:47 +0200 (CEST)
+        with ESMTP id FoEvkFic-Fvu; Thu, 22 Aug 2019 11:27:29 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 3E622D7558;
-        Thu, 22 Aug 2019 11:26:47 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id E5B8AD7565;
+        Thu, 22 Aug 2019 11:26:49 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 03/20] dt-bindings: arm: mrvl: Document MMP3 compatible string
-Date:   Thu, 22 Aug 2019 11:26:26 +0200
-Message-Id: <20190822092643.593488-4-lkundrak@v3.sk>
+Subject: [PATCH v2 11/20] ARM: mmp: don't select CACHE_TAUROS2 on all ARCH_MMP
+Date:   Thu, 22 Aug 2019 11:26:34 +0200
+Message-Id: <20190822092643.593488-12-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -61,32 +61,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Marvel MMP3 is a successor to MMP2, containing similar peripherals with t=
-wo
-PJ4B cores.
+MMP3 has a PJ4B with a Tauros 3 cache controller that uses CACHE_L2X0
+instead, while CACHE_TAUROS2 is present on PJ4 and PJ1 (Mohawk) based
+platforms only.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
 ---
-Changes since v1:
-- Rebased on top of mrvl.txt->mrvl.yaml conversion
+ arch/arm/mm/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Docum=
-entation/devicetree/bindings/arm/mrvl/mrvl.yaml
-index dc9de506ac6e3..b872702f04dc0 100644
---- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-+++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-@@ -28,4 +28,7 @@ properties:
-           - enum:
-               - mrvl,mmp2-brownstone
-           - const: mrvl,mmp2
-+      - description: MMP3 SoC
-+        items:
-+          - const: mrvl,mmp3
- ...
+diff --git a/arch/arm/mm/Kconfig b/arch/arm/mm/Kconfig
+index c54cd7ed90ba5..8dabce4507025 100644
+--- a/arch/arm/mm/Kconfig
++++ b/arch/arm/mm/Kconfig
+@@ -1045,7 +1045,7 @@ endif
+=20
+ config CACHE_TAUROS2
+ 	bool "Enable the Tauros2 L2 cache controller"
+-	depends on (ARCH_DOVE || ARCH_MMP || CPU_PJ4)
++	depends on (CPU_MOHAWK || CPU_PJ4)
+ 	default y
+ 	select OUTER_CACHE
+ 	help
 --=20
 2.21.0
 
