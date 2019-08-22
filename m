@@ -6,34 +6,34 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C91BC41514
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98228C3A59D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73A1923404
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 752F0233FE
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387409AbfHVJeE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 05:34:04 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35868 "EHLO shell.v3.sk"
+        id S1731346AbfHVJeJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 05:34:09 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35892 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733284AbfHVJeD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:34:03 -0400
+        id S1730997AbfHVJeJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:34:09 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 68658D7360;
-        Thu, 22 Aug 2019 11:34:00 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 22C2FD756D;
+        Thu, 22 Aug 2019 11:34:07 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id YUBFkgUThecf; Thu, 22 Aug 2019 11:33:36 +0200 (CEST)
+        with ESMTP id 1s6NOXvPEXz0; Thu, 22 Aug 2019 11:33:41 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 70E43D7564;
-        Thu, 22 Aug 2019 11:33:02 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 904E0D7575;
+        Thu, 22 Aug 2019 11:33:03 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id LgHquIbDbj1O; Thu, 22 Aug 2019 11:27:28 +0200 (CEST)
+        with ESMTP id ZspnM06xgjxx; Thu, 22 Aug 2019 11:28:20 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D5672D755B;
-        Thu, 22 Aug 2019 11:26:47 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id E8DF9D7568;
+        Thu, 22 Aug 2019 11:26:50 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -47,9 +47,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 05/20] dt-bindings: phy-mmp3-usb: Add bindings
-Date:   Thu, 22 Aug 2019 11:26:28 +0200
-Message-Id: <20190822092643.593488-6-lkundrak@v3.sk>
+Subject: [PATCH v2 14/20] ARM: mmp: define MMP_CHIPID by the means of CIU_REG()
+Date:   Thu, 22 Aug 2019 11:26:37 +0200
+Message-Id: <20190822092643.593488-15-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -60,40 +60,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is the PHY chip for USB OTG on MMP3 platform.
+A rather trivial cosmetic improvement.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
 ---
-Changes since v1:
-- s/usbphy@/usb-phy@/
-- Dropped a reference to Documentation/phy.txt
+ arch/arm/mach-mmp/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- .../devicetree/bindings/phy/phy-mmp3-usb.txt        | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-mmp3-usb.tx=
-t
-
-diff --git a/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt b/Doc=
-umentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-new file mode 100644
-index 0000000000000..7183b9102f917
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-mmp3-usb.txt
-@@ -0,0 +1,13 @@
-+Marvell MMP3 USB PHY
-+--------------------
-+
-+Required properties:
-+- compatible: must be "marvell,mmp3-usb-phy"
-+- #phy-cells: must be 0
-+
-+Example:
-+	usb-phy: usb-phy@d4207000 {
-+		compatible =3D "marvell,mmp3-usb-phy";
-+		reg =3D <0xd4207000 0x40>;
-+		#phy-cells =3D <0>;
-+	};
+diff --git a/arch/arm/mach-mmp/common.c b/arch/arm/mach-mmp/common.c
+index 2ee08c78e8bc9..24c689a01ecb7 100644
+--- a/arch/arm/mach-mmp/common.c
++++ b/arch/arm/mach-mmp/common.c
+@@ -17,7 +17,7 @@
+=20
+ #include "common.h"
+=20
+-#define MMP_CHIPID	(AXI_VIRT_BASE + 0x82c00)
++#define MMP_CHIPID	CIU_REG(0x00)
+=20
+ unsigned int mmp_chip_id;
+ EXPORT_SYMBOL(mmp_chip_id);
 --=20
 2.21.0
 
