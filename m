@@ -2,91 +2,71 @@ Return-Path: <SRS0=TujE=WS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C75B6C3A59D
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:35:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1860C3A59D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:36:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A31F323405
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:35:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91010233FE
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:36:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733208AbfHVJd3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 05:33:29 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35744 "EHLO shell.v3.sk"
+        id S1731161AbfHVJgL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 05:36:11 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35995 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfHVJd3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:33:29 -0400
+        id S1726738AbfHVJgL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:36:11 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 7BD9BD7579;
-        Thu, 22 Aug 2019 11:33:22 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id BE832D7556;
+        Thu, 22 Aug 2019 11:36:09 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id S79Ua9Tqdkhs; Thu, 22 Aug 2019 11:33:05 +0200 (CEST)
+        with ESMTP id 1v5Ri6TRypyq; Thu, 22 Aug 2019 11:36:05 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id EE85ED7572;
-        Thu, 22 Aug 2019 11:27:25 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 3B668D755A;
+        Thu, 22 Aug 2019 11:36:05 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id mFYNEnDafuDf; Thu, 22 Aug 2019 11:26:47 +0200 (CEST)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 9BEEB57D64;
-        Thu, 22 Aug 2019 11:26:46 +0200 (CEST)
+        with ESMTP id jvTFurhOyODo; Thu, 22 Aug 2019 11:36:04 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 009DDD7556;
+        Thu, 22 Aug 2019 11:36:03 +0200 (CEST)
+Message-ID: <1e13a307539b47b8d874bdc5c36b705ba7a72f7e.camel@v3.sk>
+Subject: Re: [PATCH] clk: tidy up the help tags in Kconfig
 From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        Rob Herring <robh@kernel.org>
-Subject: [PATCH v2 01/20] dt-bindings: arm: cpu: Add Marvell MMP3 SMP enable method
-Date:   Thu, 22 Aug 2019 11:26:24 +0200
-Message-Id: <20190822092643.593488-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.21.0
-In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
-References: <20190822092643.593488-1-lkundrak@v3.sk>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Date:   Thu, 22 Aug 2019 11:36:02 +0200
+In-Reply-To: <20190816192707.DCC022133F@mail.kernel.org>
+References: <20190816185716.530013-1-lkundrak@v3.sk>
+         <20190816192707.DCC022133F@mail.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the enable method for the second PJ4B core of the Marvell MMP3 SoC.
+On Fri, 2019-08-16 at 12:27 -0700, Stephen Boyd wrote:
+> Quoting Lubomir Rintel (2019-08-16 11:57:16)
+> > Sometimes an extraneous "---help---" follows "help". That is probably a
+> > copy&paste error stemming from their inconsistent use. Let's just replace
+> > them all with "help", removing the extra ones along the way.
+> 
+> Can you just send the patch to remove the extra ones? I don't really
+> care to make it consistent in the same patch.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Rob Herring <robh@kernel.org>
+Sure. Just done so.
 
----
-Changes since v1:
-- Add Rob's Reviewed-by tag
+Do you also care about making it consistent, or is it okay to just
+leave it as it is?
 
- Documentation/devicetree/bindings/arm/cpus.yaml | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/arm/cpus.yaml b/Documentat=
-ion/devicetree/bindings/arm/cpus.yaml
-index aa40b074b8648..fcba84e32e68a 100644
---- a/Documentation/devicetree/bindings/arm/cpus.yaml
-+++ b/Documentation/devicetree/bindings/arm/cpus.yaml
-@@ -186,6 +186,7 @@ properties:
-               - marvell,armada-390-smp
-               - marvell,armada-xp-smp
-               - marvell,98dx3236-smp
-+              - marvell,mmp3-smp
-               - mediatek,mt6589-smp
-               - mediatek,mt81xx-tz-smp
-               - qcom,gcc-msm8660
---=20
-2.21.0
+Thanks
+Lubo
 
