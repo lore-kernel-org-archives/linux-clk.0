@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18CE0C3A5A1
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BE1C3A59D
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9A9A233A0
-	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8589B233A0
+	for <linux-clk@archiver.kernel.org>; Thu, 22 Aug 2019 09:34:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731370AbfHVJem (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 22 Aug 2019 05:34:42 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35981 "EHLO shell.v3.sk"
+        id S2387447AbfHVJe1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 22 Aug 2019 05:34:27 -0400
+Received: from shell.v3.sk ([90.176.6.54]:35932 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387483AbfHVJel (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 22 Aug 2019 05:34:41 -0400
+        id S2387444AbfHVJe1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 22 Aug 2019 05:34:27 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 41370D755A;
-        Thu, 22 Aug 2019 11:34:36 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id 4BD40D749F;
+        Thu, 22 Aug 2019 11:34:24 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id o9Ang9bBG3yQ; Thu, 22 Aug 2019 11:33:59 +0200 (CEST)
+        with ESMTP id ixjMCyvf3L0i; Thu, 22 Aug 2019 11:33:42 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 6650ED755C;
-        Thu, 22 Aug 2019 11:33:06 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id C3300D7577;
+        Thu, 22 Aug 2019 11:33:03 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id B8g1LW0JxeXx; Thu, 22 Aug 2019 11:33:01 +0200 (CEST)
+        with ESMTP id yUNYub5hOIFe; Thu, 22 Aug 2019 11:32:58 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D92BFD756F;
-        Thu, 22 Aug 2019 11:26:52 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 4FE67D7569;
+        Thu, 22 Aug 2019 11:26:51 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Olof Johansson <olof@lixom.net>
 Cc:     Rob Herring <robh+dt@kernel.org>,
@@ -48,9 +48,9 @@ Cc:     Rob Herring <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v2 20/20] ARM: dts: mmp3: Add MMP3 SoC dts file
-Date:   Thu, 22 Aug 2019 11:26:43 +0200
-Message-Id: <20190822092643.593488-21-lkundrak@v3.sk>
+Subject: [PATCH v2 15/20] ARM: mmp: add support for MMP3 SoC
+Date:   Thu, 22 Aug 2019 11:26:38 +0200
+Message-Id: <20190822092643.593488-16-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190822092643.593488-1-lkundrak@v3.sk>
 References: <20190822092643.593488-1-lkundrak@v3.sk>
@@ -61,556 +61,216 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Describes most of the hardware found on Marvell MMP3, aka PXA2128, aka
-Armada 620. Missing bits are the LCD controller, HSIC controllers,
-Audio and GPU. Will be completed once bindings and drivers settle.
+Similar to MMP2, which this patch is based on. Known differencies from MM=
+P2
+are:
+
+* Two PJ4B cores instead of one PJ4
+* Tauros 3 L2 cache controller instead of Tauros 2
+* A GIC interrupt controller optionally used instead of the MMP one
+* A TWD local timer
+* Different USB2 PHY
+* A USB3 SS controller
+* More interrupt muxes
+
+Hard to tell what else is different, because documentation is not
+available.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- arch/arm/boot/dts/mmp3.dtsi | 534 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 534 insertions(+)
- create mode 100644 arch/arm/boot/dts/mmp3.dtsi
 
-diff --git a/arch/arm/boot/dts/mmp3.dtsi b/arch/arm/boot/dts/mmp3.dtsi
+---
+Changes since v1:
+- Add CONFIG_COMMON_CLK_MMP2 to streamline the Makefile rule a tiny bit.
+
+ arch/arm/mach-mmp/Kconfig   | 22 ++++++++++++++++++++--
+ arch/arm/mach-mmp/Makefile  |  1 +
+ arch/arm/mach-mmp/cputype.h | 27 +++++++++++++++++++++++++++
+ arch/arm/mach-mmp/mmp3.c    | 29 +++++++++++++++++++++++++++++
+ arch/arm/mach-mmp/time.c    |  3 ++-
+ drivers/clk/Kconfig         |  5 +++++
+ drivers/clk/mmp/Makefile    |  2 +-
+ 7 files changed, 85 insertions(+), 4 deletions(-)
+ create mode 100644 arch/arm/mach-mmp/mmp3.c
+
+diff --git a/arch/arm/mach-mmp/Kconfig b/arch/arm/mach-mmp/Kconfig
+index 0440109e973b9..b58a03b18bdef 100644
+--- a/arch/arm/mach-mmp/Kconfig
++++ b/arch/arm/mach-mmp/Kconfig
+@@ -1,13 +1,13 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menuconfig ARCH_MMP
+-	bool "Marvell PXA168/910/MMP2"
++	bool "Marvell PXA168/910/MMP2/MMP3"
+ 	depends on ARCH_MULTI_V5 || ARCH_MULTI_V7
+ 	select GPIO_PXA
+ 	select GPIOLIB
+ 	select PINCTRL
+ 	select PLAT_PXA
+ 	help
+-	  Support for Marvell's PXA168/PXA910(MMP) and MMP2 processor line.
++	  Support for Marvell's PXA168/PXA910(MMP), MMP2, and MMP3 processor li=
+nes.
+=20
+ if ARCH_MMP
+=20
+@@ -129,6 +129,24 @@ config MACH_MMP2_DT
+ 	  Include support for Marvell MMP2 based platforms using
+ 	  the device tree.
+=20
++config MACH_MMP3_DT
++	bool "Support MMP3 (ARMv7) platforms"
++	depends on ARCH_MULTI_V7
++	select ARM_GIC
++	select HAVE_ARM_SCU if SMP
++	select HAVE_ARM_TWD if SMP
++	select CACHE_L2X0
++	select PINCTRL
++	select PINCTRL_SINGLE
++	select ARCH_HAS_RESET_CONTROLLER
++	select CPU_PJ4B
++	select PM_GENERIC_DOMAINS if PM
++	select PM_GENERIC_DOMAINS_OF if PM && OF
++	help
++	  Say 'Y' here if you want to include support for platforms
++	  with Marvell MMP3 processor, also known as PXA2128 or
++	  Armada 620.
++
+ endmenu
+=20
+ config CPU_PXA168
+diff --git a/arch/arm/mach-mmp/Makefile b/arch/arm/mach-mmp/Makefile
+index 8f267c7bc6e86..322c1c97dc900 100644
+--- a/arch/arm/mach-mmp/Makefile
++++ b/arch/arm/mach-mmp/Makefile
+@@ -34,5 +34,6 @@ obj-$(CONFIG_MACH_FLINT)	+=3D flint.o
+ obj-$(CONFIG_MACH_MARVELL_JASPER) +=3D jasper.o
+ obj-$(CONFIG_MACH_MMP_DT)	+=3D mmp-dt.o
+ obj-$(CONFIG_MACH_MMP2_DT)	+=3D mmp2-dt.o
++obj-$(CONFIG_MACH_MMP3_DT)	+=3D mmp3.o
+ obj-$(CONFIG_MACH_TETON_BGA)	+=3D teton_bga.o
+ obj-$(CONFIG_MACH_GPLUGD)	+=3D gplugd.o
+diff --git a/arch/arm/mach-mmp/cputype.h b/arch/arm/mach-mmp/cputype.h
+index a96abcf521b4b..c3ec88983e940 100644
+--- a/arch/arm/mach-mmp/cputype.h
++++ b/arch/arm/mach-mmp/cputype.h
+@@ -18,6 +18,8 @@
+  * MMP2	     Z0	   0x560f5811   0x00F00410
+  * MMP2      Z1    0x560f5811   0x00E00410
+  * MMP2      A0    0x560f5811   0x00A0A610
++ * MMP3      A0    0x562f5842   0x00A02128
++ * MMP3      B0    0x562f5842   0x00B02128
+  */
+=20
+ extern unsigned int mmp_chip_id;
+@@ -55,4 +57,29 @@ static inline int cpu_is_mmp2(void)
+ #define cpu_is_mmp2()	(0)
+ #endif
+=20
++#ifdef CONFIG_MACH_MMP3_DT
++static inline int cpu_is_mmp3(void)
++{
++	return (((read_cpuid_id() >> 8) & 0xff) =3D=3D 0x58) &&
++		((mmp_chip_id & 0xffff) =3D=3D 0x2128);
++}
++
++static inline int cpu_is_mmp3_a0(void)
++{
++	return (cpu_is_mmp3() &&
++		((mmp_chip_id & 0x00ff0000) =3D=3D 0x00a00000));
++}
++
++static inline int cpu_is_mmp3_b0(void)
++{
++	return (cpu_is_mmp3() &&
++		((mmp_chip_id & 0x00ff0000) =3D=3D 0x00b00000));
++}
++
++#else
++#define cpu_is_mmp3()		(0)
++#define cpu_is_mmp3_a0()	(0)
++#define cpu_is_mmp3_b0()	(0)
++#endif
++
+ #endif /* __ASM_MACH_CPUTYPE_H */
+diff --git a/arch/arm/mach-mmp/mmp3.c b/arch/arm/mach-mmp/mmp3.c
 new file mode 100644
-index 0000000000000..5a6275257ebdd
+index 0000000000000..b0e86964f302a
 --- /dev/null
-+++ b/arch/arm/boot/dts/mmp3.dtsi
-@@ -0,0 +1,534 @@
-+// SPDX-License-Identifier: GPL-2.0+ OR MIT
++++ b/arch/arm/mach-mmp/mmp3.c
+@@ -0,0 +1,29 @@
++// SPDX-License-Identifier: GPL-2.0-only
 +/*
++ *  Marvell MMP3 aka PXA2128 aka 88AP2128 support
++ *
 + *  Copyright (C) 2019 Lubomir Rintel <lkundrak@v3.sk>
 + */
 +
-+#include <dt-bindings/clock/marvell,mmp2.h>
-+#include <dt-bindings/interrupt-controller/arm-gic.h>
++#include <linux/io.h>
++#include <linux/irqchip.h>
++#include <linux/of_platform.h>
++#include <linux/clk-provider.h>
++#include <asm/mach/arch.h>
++#include <asm/hardware/cache-l2x0.h>
 +
-+/ {
-+	#address-cells =3D <1>;
-+	#size-cells =3D <1>;
++#include "common.h"
 +
-+	aliases {
-+		serial0 =3D &uart1;
-+		serial1 =3D &uart2;
-+		serial2 =3D &uart3;
-+		serial3 =3D &uart4;
-+	};
-+
-+	cpus {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <0>;
-+		enable-method =3D "marvell,mmp3-smp";
-+
-+		cpu@0 {
-+			compatible =3D "marvell,pj4b";
-+			device_type =3D "cpu";
-+			next-level-cache =3D <&l2>;
-+			reg =3D <0>;
-+		};
-+
-+		cpu@1 {
-+			compatible =3D "marvell,pj4b";
-+			device_type =3D "cpu";
-+			next-level-cache =3D <&l2>;
-+			reg =3D <1>;
-+		};
-+	};
-+
-+	soc {
-+		#address-cells =3D <1>;
-+		#size-cells =3D <1>;
-+		compatible =3D "simple-bus";
-+		interrupt-parent =3D <&gic>;
-+		ranges;
-+
-+		axi@d4200000 {
-+			compatible =3D "simple-bus";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <1>;
-+			reg =3D <0xd4200000 0x00200000>;
-+			ranges;
-+
-+			interrupt-controller@d4282000 {
-+				compatible =3D "marvell,mmp3-intc";
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0xd4282000 0x1000>,
-+				      <0xd4284000 0x100>;
-+				mrvl,intc-nr-irqs =3D <64>;
-+			};
-+
-+			pmic_mux: interrupt-controller@d4282150 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x150 0x4>, <0x168 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <4>;
-+			};
-+
-+			rtc_mux: interrupt-controller@d4282154 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x154 0x4>, <0x16c 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <2>;
-+			};
-+
-+			hsi3_mux: interrupt-controller@d42821bc {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 6 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x1bc 0x4>, <0x1a4 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <3>;
-+			};
-+
-+			gpu_mux: interrupt-controller@d42821c0 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x1c0 0x4>, <0x1a8 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <3>;
-+			};
-+
-+			twsi_mux: interrupt-controller@d4282158 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x158 0x4>, <0x170 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <5>;
-+			};
-+
-+			hsi2_mux: interrupt-controller@d42821c4 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 18 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x1c4 0x4>, <0x1ac 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <2>;
-+			};
-+
-+			dxo_mux: interrupt-controller@d42821c8 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x1c8 0x4>, <0x1b0 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <2>;
-+			};
-+
-+			misc1_mux: interrupt-controller@d428215c {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 35 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x15c 0x4>, <0x174 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <31>;
-+			};
-+
-+			ci_mux: interrupt-controller@d42821cc {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x1cc 0x4>, <0x1b4 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <2>;
-+			};
-+
-+			ssp_mux: interrupt-controller@d4282160 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 51 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x160 0x4>, <0x178 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <2>;
-+			};
-+
-+			hsi1_mux: interrupt-controller@d4282184 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 55 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x184 0x4>, <0x17c 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <4>;
-+			};
-+
-+			misc2_mux: interrupt-controller@d4282188 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x188 0x4>, <0x180 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <20>;
-+			};
-+
-+			hsi0_mux: interrupt-controller@d42821d0 {
-+				compatible =3D "mrvl,mmp2-mux-intc";
-+				interrupts =3D <GIC_SPI 58 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <1>;
-+				reg =3D <0x1d0 0x4>, <0x1b8 0x4>;
-+				reg-names =3D "mux status", "mux mask";
-+				mrvl,intc-nr-irqs =3D <5>;
-+			};
-+
-+			usb_otg_phy0: usb-otg-phy@d4207000 {
-+				compatible =3D "marvell,mmp3-usb-phy";
-+				reg =3D <0xd4207000 0x40>;
-+				#phy-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			usb_otg0: usb-otg@d4208000 {
-+				compatible =3D "marvell,pxau2o-ehci";
-+				reg =3D <0xd4208000 0x200>;
-+				interrupts =3D <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_USB>;
-+				clock-names =3D "USBCLK";
-+				phys =3D <&usb_otg_phy0>;
-+				phy-names =3D "usb";
-+				status =3D "disabled";
-+			};
-+
-+			mmc1: mmc@d4280000 {
-+				compatible =3D "mrvl,pxav3-mmc";
-+				reg =3D <0xd4280000 0x120>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SDH0>;
-+				clock-names =3D "io";
-+				interrupts =3D <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>;
-+				status =3D "disabled";
-+			};
-+
-+			mmc2: mmc@d4280800 {
-+				compatible =3D "mrvl,pxav3-mmc";
-+				reg =3D <0xd4280800 0x120>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SDH1>;
-+				clock-names =3D "io";
-+				interrupts =3D <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+				status =3D "disabled";
-+			};
-+
-+			mmc3: mmc@d4281000 {
-+				compatible =3D "mrvl,pxav3-mmc";
-+				reg =3D <0xd4281000 0x120>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SDH2>;
-+				clock-names =3D "io";
-+				interrupts =3D <GIC_SPI 53 IRQ_TYPE_LEVEL_HIGH>;
-+				status =3D "disabled";
-+			};
-+
-+			mmc4: mmc@d4281800 {
-+				compatible =3D "mrvl,pxav3-mmc";
-+				reg =3D <0xd4281800 0x120>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SDH3>;
-+				clock-names =3D "io";
-+				interrupts =3D <GIC_SPI 54 IRQ_TYPE_LEVEL_HIGH>;
-+				status =3D "disabled";
-+			};
-+
-+			camera0: camera@d420a000 {
-+				compatible =3D "marvell,mmp2-ccic";
-+				reg =3D <0xd420a000 0x800>;
-+				interrupts =3D <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_CCIC0>;
-+				clock-names =3D "axi";
-+				#clock-cells =3D <0>;
-+				clock-output-names =3D "mclk";
-+				status =3D "disabled";
-+			};
-+
-+			camera1: camera@d420a800 {
-+				compatible =3D "marvell,mmp2-ccic";
-+				reg =3D <0xd420a800 0x800>;
-+				interrupts =3D <GIC_SPI 30 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_CCIC1>;
-+				clock-names =3D "axi";
-+				#clock-cells =3D <0>;
-+				clock-output-names =3D "mclk";
-+				status =3D "disabled";
-+			};
-+		};
-+
-+		apb@d4000000 {
-+			compatible =3D "simple-bus";
-+			#address-cells =3D <1>;
-+			#size-cells =3D <1>;
-+			reg =3D <0xd4000000 0x00200000>;
-+			ranges;
-+
-+			timer: timer@d4014000 {
-+				compatible =3D "mrvl,mmp-timer";
-+				reg =3D <0xd4014000 0x100>;
-+				interrupts =3D <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TIMER>;
-+			};
-+
-+			uart1: uart@d4030000 {
-+				compatible =3D "mrvl,mmp-uart";
-+				reg =3D <0xd4030000 0x1000>;
-+				interrupts =3D <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_UART0>;
-+				resets =3D <&soc_clocks MMP2_CLK_UART0>;
-+				reg-shift =3D <2>;
-+				status =3D "disabled";
-+			};
-+
-+			uart2: uart@d4017000 {
-+				compatible =3D "mrvl,mmp-uart";
-+				reg =3D <0xd4017000 0x1000>;
-+				interrupts =3D <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_UART1>;
-+				resets =3D <&soc_clocks MMP2_CLK_UART1>;
-+				reg-shift =3D <2>;
-+				status =3D "disabled";
-+			};
-+
-+			uart3: uart@d4018000 {
-+				compatible =3D "mrvl,mmp-uart";
-+				reg =3D <0xd4018000 0x1000>;
-+				interrupts =3D <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_UART2>;
-+				resets =3D <&soc_clocks MMP2_CLK_UART2>;
-+				reg-shift =3D <2>;
-+				status =3D "disabled";
-+			};
-+
-+			uart4: uart@d4016000 {
-+				compatible =3D "mrvl,mmp-uart";
-+				reg =3D <0xd4016000 0x1000>;
-+				interrupts =3D <GIC_SPI 46 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_UART3>;
-+				resets =3D <&soc_clocks MMP2_CLK_UART3>;
-+				reg-shift =3D <2>;
-+				status =3D "disabled";
-+			};
-+
-+			gpio: gpio@d4019000 {
-+				compatible =3D "marvell,mmp2-gpio";
-+				#address-cells =3D <1>;
-+				#size-cells =3D <1>;
-+				reg =3D <0xd4019000 0x1000>;
-+				gpio-controller;
-+				#gpio-cells =3D <2>;
-+				interrupts =3D <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-+				interrupt-names =3D "gpio_mux";
-+				clocks =3D <&soc_clocks MMP2_CLK_GPIO>;
-+				resets =3D <&soc_clocks MMP2_CLK_GPIO>;
-+				interrupt-controller;
-+				#interrupt-cells =3D <2>;
-+				ranges;
-+
-+				gcb0: gpio@d4019000 {
-+					reg =3D <0xd4019000 0x4>;
-+				};
-+
-+				gcb1: gpio@d4019004 {
-+					reg =3D <0xd4019004 0x4>;
-+				};
-+
-+				gcb2: gpio@d4019008 {
-+					reg =3D <0xd4019008 0x4>;
-+				};
-+
-+				gcb3: gpio@d4019100 {
-+					reg =3D <0xd4019100 0x4>;
-+				};
-+
-+				gcb4: gpio@d4019104 {
-+					reg =3D <0xd4019104 0x4>;
-+				};
-+
-+				gcb5: gpio@d4019108 {
-+					reg =3D <0xd4019108 0x4>;
-+				};
-+			};
-+
-+			twsi1: i2c@d4011000 {
-+				compatible =3D "mrvl,mmp-twsi";
-+				reg =3D <0xd4011000 0x1000>;
-+				interrupts =3D <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TWSI0>;
-+				resets =3D <&soc_clocks MMP2_CLK_TWSI0>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				mrvl,i2c-fast-mode;
-+				status =3D "disabled";
-+			};
-+
-+			twsi2: i2c@d4031000 {
-+				compatible =3D "mrvl,mmp-twsi";
-+				reg =3D <0xd4031000 0x1000>;
-+				interrupt-parent =3D <&twsi_mux>;
-+				interrupts =3D <0>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TWSI1>;
-+				resets =3D <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			twsi3: i2c@d4032000 {
-+				compatible =3D "mrvl,mmp-twsi";
-+				reg =3D <0xd4032000 0x1000>;
-+				interrupt-parent =3D <&twsi_mux>;
-+				interrupts =3D <1>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TWSI2>;
-+				resets =3D <&soc_clocks MMP2_CLK_TWSI2>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			twsi4: i2c@d4033000 {
-+				compatible =3D "mrvl,mmp-twsi";
-+				reg =3D <0xd4033000 0x1000>;
-+				interrupt-parent =3D <&twsi_mux>;
-+				interrupts =3D <2>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TWSI3>;
-+				resets =3D <&soc_clocks MMP2_CLK_TWSI3>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+
-+			twsi5: i2c@d4033800 {
-+				compatible =3D "mrvl,mmp-twsi";
-+				reg =3D <0xd4033800 0x1000>;
-+				interrupt-parent =3D <&twsi_mux>;
-+				interrupts =3D <3>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TWSI4>;
-+				resets =3D <&soc_clocks MMP2_CLK_TWSI4>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			twsi6: i2c@d4034000 {
-+				compatible =3D "mrvl,mmp-twsi";
-+				reg =3D <0xd4034000 0x1000>;
-+				interrupt-parent =3D <&twsi_mux>;
-+				interrupts =3D <4>;
-+				clocks =3D <&soc_clocks MMP2_CLK_TWSI5>;
-+				resets =3D <&soc_clocks MMP2_CLK_TWSI5>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			rtc: rtc@d4010000 {
-+				compatible =3D "mrvl,mmp-rtc";
-+				reg =3D <0xd4010000 0x1000>;
-+				interrupts =3D <1 0>;
-+				interrupt-names =3D "rtc 1Hz", "rtc alarm";
-+				interrupt-parent =3D <&rtc_mux>;
-+				clocks =3D <&soc_clocks MMP2_CLK_RTC>;
-+				resets =3D <&soc_clocks MMP2_CLK_RTC>;
-+				status =3D "disabled";
-+			};
-+
-+			ssp1: spi@d4035000 {
-+				compatible =3D "marvell,mmp2-ssp";
-+				reg =3D <0xd4035000 0x1000>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SSP0>;
-+				interrupts =3D <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			ssp2: spi@d4036000 {
-+				compatible =3D "marvell,mmp2-ssp";
-+				reg =3D <0xd4036000 0x1000>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SSP1>;
-+				interrupts =3D <GIC_SPI 1 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			ssp3: spi@d4037000 {
-+				compatible =3D "marvell,mmp2-ssp";
-+				reg =3D <0xd4037000 0x1000>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SSP2>;
-+				interrupts =3D <GIC_SPI 20 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+
-+			ssp4: spi@d4039000 {
-+				compatible =3D "marvell,mmp2-ssp";
-+				reg =3D <0xd4039000 0x1000>;
-+				clocks =3D <&soc_clocks MMP2_CLK_SSP3>;
-+				interrupts =3D <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
-+				#address-cells =3D <1>;
-+				#size-cells =3D <0>;
-+				status =3D "disabled";
-+			};
-+		};
-+
-+		l2: l2-cache-controller@d0020000 {
-+			compatible =3D "marvell,tauros3-cache", "arm,pl310-cache";
-+			reg =3D <0xd0020000 0x1000>;
-+			cache-unified;
-+			cache-level =3D <2>;
-+		};
-+
-+		soc_clocks: clocks {
-+			compatible =3D "marvell,mmp2-clock";
-+			reg =3D <0xd4050000 0x1000>,
-+			      <0xd4282800 0x400>,
-+			      <0xd4015000 0x1000>;
-+			reg-names =3D "mpmu", "apmu", "apbc";
-+			#clock-cells =3D <1>;
-+			#reset-cells =3D <1>;
-+			#power-domain-cells =3D <1>;
-+		};
-+
-+		snoop-control-unit@e0000000 {
-+			compatible =3D "arm,arm11mp-scu";
-+			reg =3D <0xe0000000 0x100>;
-+		};
-+
-+		gic: interrupt-controller@e0001000 {
-+			compatible =3D "arm,arm11mp-gic";
-+			interrupt-controller;
-+			#interrupt-cells =3D <3>;
-+			reg =3D <0xe0001000 0x1000>,
-+			      <0xe0000100 0x100>;
-+		};
-+
-+		local-timer@e0000600 {
-+			compatible =3D "arm,arm11mp-twd-timer";
-+			interrupts =3D <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_EDGE_RISING)>;
-+			reg =3D <0xe0000600 0x20>;
-+		};
-+
-+		watchdog@2c000620 {
-+			compatible =3D "arm,arm11mp-twd-wdt";
-+			reg =3D <0xe0000620 0x20>;
-+			interrupts =3D <GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) |
-+						  IRQ_TYPE_EDGE_RISING)>;
-+		};
-+	};
++static const char *const mmp3_dt_board_compat[] __initconst =3D {
++	"marvell,mmp3",
++	NULL,
 +};
++
++DT_MACHINE_START(MMP2_DT, "Marvell MMP3")
++	.map_io		=3D mmp2_map_io,
++	.dt_compat	=3D mmp3_dt_board_compat,
++	.l2c_aux_val	=3D 1 << L310_AUX_CTRL_FWA_SHIFT |
++			  L310_AUX_CTRL_DATA_PREFETCH |
++			  L310_AUX_CTRL_INSTR_PREFETCH,
++	.l2c_aux_mask	=3D 0xc20fffff,
++MACHINE_END
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 3f6fd0be00512..8f4cacbf640e9 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -155,7 +155,8 @@ static void __init timer_config(void)
+=20
+ 	__raw_writel(0x0, mmp_timer_base + TMR_CER); /* disable */
+=20
+-	ccr &=3D (cpu_is_mmp2()) ? (TMR_CCR_CS_0(0) | TMR_CCR_CS_1(0)) :
++	ccr &=3D (cpu_is_mmp2() || cpu_is_mmp3()) ?
++		(TMR_CCR_CS_0(0) | TMR_CCR_CS_1(0)) :
+ 		(TMR_CCR_CS_0(3) | TMR_CCR_CS_1(3));
+ 	__raw_writel(ccr, mmp_timer_base + TMR_CCR);
+=20
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 801fa1cd03217..8bb2ac83a1fcc 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -301,6 +301,11 @@ config COMMON_CLK_STM32H7
+ 	---help---
+ 	  Support for stm32h7 SoC family clocks
+=20
++config COMMON_CLK_MMP2
++	def_bool COMMON_CLK && (MACH_MMP2_DT || MACH_MMP3_DT)
++	help
++	  Support for Marvell MMP2 and MMP3 SoC clocks
++
+ config COMMON_CLK_BD718XX
+ 	tristate "Clock driver for ROHM BD718x7 PMIC"
+ 	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
+diff --git a/drivers/clk/mmp/Makefile b/drivers/clk/mmp/Makefile
+index 7bc7ac69391e3..acc141adf087c 100644
+--- a/drivers/clk/mmp/Makefile
++++ b/drivers/clk/mmp/Makefile
+@@ -8,7 +8,7 @@ obj-y +=3D clk-apbc.o clk-apmu.o clk-frac.o clk-mix.o clk=
+-gate.o clk.o
+ obj-$(CONFIG_RESET_CONTROLLER) +=3D reset.o
+=20
+ obj-$(CONFIG_MACH_MMP_DT) +=3D clk-of-pxa168.o clk-of-pxa910.o
+-obj-$(CONFIG_MACH_MMP2_DT) +=3D clk-of-mmp2.o
++obj-$(CONFIG_COMMON_CLK_MMP2) +=3D clk-of-mmp2.o
+=20
+ obj-$(CONFIG_CPU_PXA168) +=3D clk-pxa168.o
+ obj-$(CONFIG_CPU_PXA910) +=3D clk-pxa910.o
 --=20
 2.21.0
 
