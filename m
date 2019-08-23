@@ -2,138 +2,106 @@ Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 173C6C3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72552C3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:59:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE13B23401
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:57:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h8cIzFHR"
+	by mail.kernel.org (Postfix) with ESMTP id 266B622CE3
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:59:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388177AbfHWI5R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 04:57:17 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:34539 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732276AbfHWI5R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 04:57:17 -0400
-Received: by mail-lf1-f68.google.com with SMTP id b29so6603457lfq.1
-        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2019 01:57:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=a/R2J79LKOKlLeZ/xIkFf9uifEgRMGT7tAE/FX+J+fk=;
-        b=h8cIzFHRwV5mKvh20JVoTWYAVSCIkWyjSzPx/vFSHkOSlO5Q4g9CCbm+693s4TXchd
-         FgS3UGD0guDUAw5xUViOFwLDP+ix8kP+F+oK5Shgc5An7QkANVSs7IZOKKfE0WiEXnef
-         kPY2tdrxMXtW0xoIni2RPvEfgFvOX+gRUf2nclzTLsMc0FJCRgdhGKlGBy3IVnZWfltC
-         LqxGoZo26oS2KvwARlRA8I8eNM6EWNRO4SaOtPtGfw1U39DRvi2A98cs++ugvTCGYM7d
-         2Ge1VMDoj2+9Xy/800qepwswucADX+MTC27muULbqLYD+3WVK9Ym9l1yrBdICpClSvpX
-         HflQ==
+        id S2391001AbfHWI7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 04:59:17 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:37341 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732254AbfHWI7R (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 04:59:17 -0400
+Received: by mail-oi1-f193.google.com with SMTP id b25so6512452oib.4;
+        Fri, 23 Aug 2019 01:59:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=a/R2J79LKOKlLeZ/xIkFf9uifEgRMGT7tAE/FX+J+fk=;
-        b=XANWii7pF0c3aZ2tG00QP3yG1JmD+LmWYwW6tOhBfSLJICREX0RrAVymxdSgIfQDRT
-         sJ3qxfnCblWwoEBixT5ssQExLpjFPHVhTkaIqDr6aPN5sDPXmLchNBpAmPSQeJchuoYe
-         swsRdc1CLRrTVJ71+AGaBeAjNOlYdkgjfJ2tknRiA8qCZgIyzNbZYHnzj/hpW6MSu6e9
-         GTb1m+zd2Lp7gzNzgOo8lQ/9IbEPW2fXtxMp8wB1jY9AaqHIP/DQqC1l3pxmu7NbTRWP
-         uH4QUF32L6i2GpzSMvq9qzkB4T6OdyQYa/+ITiJ/quNdr343arFeC1q+SbHSbcxRniPa
-         Lq3w==
-X-Gm-Message-State: APjAAAX/15re1IXt4itapWT8YvY8ezJ+sDwmppPpUNAgYjC/fL10Dlg1
-        QWIKdGwA1YknnjsVeT2wajj75xTXdA5mS2jGcVa8ng==
-X-Google-Smtp-Source: APXvYqyiIRQnPqOMRMnznsHxW2APqKA5JW/FUTpLK9hj/I1LedUm+QCEFmX2UPpcBK5I9whssuW2AmLbJBfUVKBqcLU=
-X-Received: by 2002:ac2:5939:: with SMTP id v25mr2135109lfi.115.1566550635185;
- Fri, 23 Aug 2019 01:57:15 -0700 (PDT)
+        bh=/O7KDJXrmJK4XRdRsrYODhtwGGh/VBJ/wqdtL3MX3sw=;
+        b=LTt8M6qLv7V1FG1e2tCq9VLo0aySlS1cAxdbJwbbGUVMP21GiCwqsGtN7D+b3yJGJ9
+         P+u5ZURQIglVR8jxxw2NGnn0Tgpe6bKKDeWO3AP/aj3Q/lMr5K4133x3mKHEI9zs5jLe
+         ZAODsGYTAmVk3yu3B0uqZDxevz2sYOTTw5D7rWJcmIDHRlRE7IXL4zasWUPvzviEF3Rx
+         Ur/wTEON484fOSGTHwkkkkC2gxHGnW+wtdvreyfY01nR5ym5AoXoVjsfxQJJS0nhijEC
+         bRXmuL18+Mt8Eyh0NMAXXLBs3kNxOuXt+JoFD8h4rItaypf4jjDVaFfWOSt4gDmXaZw8
+         A5UQ==
+X-Gm-Message-State: APjAAAW07WZanWQLKznwbFFzfxtXdfo/UQFHfUoXhqzZxP1MIA458vYT
+        1Bo4C6Hzt26wJ4xm1OecC9uiTyQE01jpu3m1K8Q=
+X-Google-Smtp-Source: APXvYqx9JRH9R2CUtnvFbptw0kgUk2Jw8SnkNPr8UkV++6uNcE/kyPEoGMVzQ+AbDAX6xLdhldBkk2mDpVjxvtvWgsQ=
+X-Received: by 2002:aca:b154:: with SMTP id a81mr2257779oif.148.1566550756016;
+ Fri, 23 Aug 2019 01:59:16 -0700 (PDT)
 MIME-Version: 1.0
-References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com> <1566206502-4347-6-git-send-email-mars.cheng@mediatek.com>
-In-Reply-To: <1566206502-4347-6-git-send-email-mars.cheng@mediatek.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 23 Aug 2019 10:57:03 +0200
-Message-ID: <CACRpkdZa_sQgvWC3ic0NxrVi9gS1cNTsV-wa-SDpA0e5kutBRw@mail.gmail.com>
-Subject: Re: [PATCH v2 05/11] pinctrl: mediatek: avoid virtual gpio trying to
- set reg
-To:     Mars Cheng <mars.cheng@mediatek.com>
-Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Rob Herring <robh@kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        CC Hwang <cc.hwang@mediatek.com>,
-        Loda Chou <loda.chou@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, wsd_upstream@mediatek.com,
-        mtk01761 <wendell.lin@mediatek.com>,
-        linux-clk <linux-clk@vger.kernel.org>
+References: <20190816125225.16061-1-geert+renesas@glider.be>
+ <20190816125225.16061-2-geert+renesas@glider.be> <20190816180123.6299720665@mail.kernel.org>
+ <CAMuHMdVvwsXU2YwFRA2Y2K9KKzF4L-hqDudarmc-OeHXRMCifQ@mail.gmail.com>
+ <20190817034812.5435B21721@mail.kernel.org> <CAMuHMdWpUEt-wxEdAK7NsAOadS5TtHYdO=JTGT=CtSROHuR+Pw@mail.gmail.com>
+ <CAPDyKFpr7fw_rCciXzZNk2is8KFkd7Tvdx-fzyka_vobCK0U=g@mail.gmail.com>
+In-Reply-To: <CAPDyKFpr7fw_rCciXzZNk2is8KFkd7Tvdx-fzyka_vobCK0U=g@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 23 Aug 2019 10:59:04 +0200
+Message-ID: <CAMuHMdU+szi38Ygk8bu8jrwE4fgsdWVL4Vkf2_Lf4crJQSDm5w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for
+ clock domain
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Aug 19, 2019 at 11:22 AM Mars Cheng <mars.cheng@mediatek.com> wrote:
+Hi Ulf,
 
-> for virtual gpios, they should not do reg setting and
-> should behave as expected for eint function.
+On Thu, Aug 22, 2019 at 4:06 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+> > > Well is it actually a problem to not specify the flag? I guess it's just
+> > > a potential problem if the genpd is ever powered off, but given that the
+> > > governor decides to leave it always enabled it doesn't actually matter?
+> > > So it's not really fixing anything besides silencing a harmless warning?
+> >
+> > The warning is indeed harmless.
+> >
+> > The "interesting" case is the case where no warning is printed, as no
+> > IRQ-safe device is present.  In that case, the absence of the
+> > GENPD_FLAG_ALWAYS_ON flag means that the core PM Domain code will
+> > consider the domain for power-off, and will loop over all devices part
+> > of it, which is suboptimal.  Setting the flag avoids that.
+> >
+> > Thanks for your continued questions, it made me realize I need to add more
+> > meat to the description to these "simple" patches!
+> >
+> > For the PM people: would it make sense to add a
+> > WARN(!genpd->power_off && !genpd_is_always_on(genpd), "...") check to
+> > pm_genpd_init()?
+> > Or set GENPD_FLAG_ALWAYS_ON automatically if !genpd->power_off?
 >
-> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> Well, wouldn't it be possible that the power is provided through a
+> master domain, thus not having the ->power_off() callback assigned for
+> the subdomain is perfectly fine, even without having
+> GENPD_FLAG_ALWAYS_ON not set.
 
-This does not explain what a "virtual GPIO" is in this
-context, so please elaborate. What is this? Why does
-it exist? What is it used for?
+Thanks, I hadn't considered that the clock domain might be a subdomain
+of a power domain.
 
-GPIO is "general purpose input/output" and it is a
-pretty rubbery category already as it is, so we need
-to define our terms pretty strictly.
+Gr{oetje,eeting}s,
 
-> +bool mtk_is_virt_gpio(struct mtk_pinctrl *hw, unsigned int gpio_n)
-> +{
-> +       const struct mtk_pin_desc *desc;
-> +       bool virt_gpio = false;
-> +
-> +       if (gpio_n >= hw->soc->npins)
-> +               return virt_gpio;
-> +
-> +       desc = (const struct mtk_pin_desc *)&hw->soc->pins[gpio_n];
-> +
-> +       if (desc->funcs &&
-> +           desc->funcs[desc->eint.eint_m].name == 0)
+                        Geert
 
-NULL check is done like this:
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-if (desc->funcs && !desc->funcs[desc->eint.eint_m].name)
-
-> +               virt_gpio = true;
-
-So why is this GPIO "virtual" because it does not have
-a name in the funcs table?
-
-> @@ -278,6 +295,9 @@ static int mtk_xt_set_gpio_as_eint(void *data, unsigned long eint_n)
->         if (err)
->                 return err;
->
-> +       if (mtk_is_virt_gpio(hw, gpio_n))
-> +               return 0;
-
-So does this mean we always succeed in setting a GPIO as eint
-if it is virtual? Why? Explanatory comment is needed.
-
-> @@ -693,6 +693,9 @@ static int mtk_gpio_get_direction(struct gpio_chip *chip, unsigned int gpio)
->         const struct mtk_pin_desc *desc;
->         int value, err;
->
-> +       if (mtk_is_virt_gpio(hw, gpio))
-> +               return 1;
-
-Why are "virtual GPIOs" always inputs?
-
-Yours,
-Linus Walleij
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
