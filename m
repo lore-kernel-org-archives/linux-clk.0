@@ -2,117 +2,109 @@ Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 297E8C3A5A4
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 09:08:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 851D2C3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 09:43:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 051A4233A0
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 09:08:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58180233A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 09:43:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566553380;
+	bh=4BEiFIOchDOtB8GlIw0hoo4htbbbRiQng1M6bTh6Z2o=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=CVLzNeOBe8gxaVcxby+iuEVnz6cMRxyNBY3+I2nZV2gV6zZfGdy02VtkevKl8/sM5
+	 aPmzagH84iYth1bsQSPKe4p9uJWv6J/HGRKzxlthNSznuFoPS5IR4242EVFpWAMAyV
+	 D7Wn42r/EbkWV4v4MkhwPhNNrIcdHddpuiIG3304=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726566AbfHWJIW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 05:08:22 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45772 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725857AbfHWJIW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 05:08:22 -0400
-Received: by mail-oi1-f193.google.com with SMTP id v12so6493263oic.12;
-        Fri, 23 Aug 2019 02:08:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vv7AIXHXpjyqYAZ2S7B2OmOZt6qGKJgxmRiKB2RUIlY=;
-        b=q1ecNwF83ugVXJcnCqUmw/sMQAcklHIIy1ruHkVb3ClLaE8GluNTHPWaKkH8293NpW
-         2nmQsDUZnESviYaZ7laWuPWiyzkwiFl5Pfs0bk1/REGnB6cqFcEV6ASZyaa+rPu2G/IF
-         1WpANIUAlRlXMaSBXkqOvWOiYPRFCNASGoxmvKsBsioJRO13zz54xXKAULAI+1Jc/X+S
-         5BPuxWSO3x512mmQHtAjsaa5bnIZ0cZGTOZYmkmHTY9ZAcvLI20kkhOXopiNJy9o7EMz
-         fdUpTht5jdNmax5U2EnUhgBSuBubBjwf4UhYrlZJ8XFMWdF58z1EnGeCC5dM1xTd2aGv
-         Fjhg==
-X-Gm-Message-State: APjAAAWprP0wlO6Pn+n2koiGgqMPFPiYVdzlz6cirf8VmXNsaeKhQcNh
-        otBl69vW3V0G42WRwA162oZOjyKeWaenZ7Gxa30=
-X-Google-Smtp-Source: APXvYqyEnIDhJoxsBgSVUV558kban19R/tfa1+VWnxVQTBEbq2Dh73GIhYgK4nIksCgA8MMkTXFHDJckp5fokG8Tdzw=
-X-Received: by 2002:aca:b154:: with SMTP id a81mr2283349oif.148.1566551301228;
- Fri, 23 Aug 2019 02:08:21 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190816125225.16061-1-geert+renesas@glider.be> <CAPDyKFrxF26gmt3pxp32L6Bt=5tr1PLZVg1bsrjdWKiBqJWf9g@mail.gmail.com>
-In-Reply-To: <CAPDyKFrxF26gmt3pxp32L6Bt=5tr1PLZVg1bsrjdWKiBqJWf9g@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Aug 2019 11:08:10 +0200
-Message-ID: <CAMuHMdUPaBjU6SqVVe8KAGjzSAVgMY50bWCVcxBRF97N6s6grQ@mail.gmail.com>
-Subject: Re: [PATCH 0/3] clk: renesas: Set GENPD_FLAG_ALWAYS_ON for clock domain
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        id S2388137AbfHWJnA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 05:43:00 -0400
+Received: from foss.arm.com ([217.140.110.172]:58646 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387777AbfHWJm7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 23 Aug 2019 05:42:59 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7C19337;
+        Fri, 23 Aug 2019 02:42:58 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C62C63F246;
+        Fri, 23 Aug 2019 02:42:56 -0700 (PDT)
+Subject: Re: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC
+To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <20190822092643.593488-1-lkundrak@v3.sk>
+ <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
+ <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <08a0e65e-4a80-f611-e36e-8e3f70fa8113@kernel.org>
+Date:   Fri, 23 Aug 2019 10:42:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Aug 22, 2019 at 4:09 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Fri, 16 Aug 2019 at 14:52, Geert Uytterhoeven
-> <geert+renesas@glider.be> wrote:
-> > The Renesas Clock Domain drivers do not implement the
-> > generic_pm_domain.power_{on,off}() callbacks, as the domains themselves
-> > cannot be powered down.  Hence the domains should be marked as always-on
-> > by setting the GENPD_FLAG_ALWAYS_ON flag.
-> >
-> > This patch series that issue for R-Car M1A, RZ/A1, RZ/A2, and
-> > RZ/N1 SoCs.
-> > SH/R-Mobile SoCs are fixed in "[PATCH] soc: renesas: rmobile-sysc: Set
-> > GENPD_FLAG_ALWAYS_ON for always-on domain"
-> > (https://lore.kernel.org/linux-renesas-soc/20190816124106.15383-1-geert+renesas@glider.be/T/#u).
-> > R-Car H1, Gen2, and Gen3 SoCs do not need a fix, as these SoCS use the
-> > R-Car SYSC driver for Clock Domain creation, which already sets the
-> > flag.
-> >
-> > To be queued in clk-renesas for v5.4.
-> >
-> > Thanks!
-> >
-> > Geert Uytterhoeven (3):
-> >   clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
-> >   clk: renesas: r9a06g032: Set GENPD_FLAG_ALWAYS_ON for clock domain
-> >   clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain
-> >
-> >  drivers/clk/renesas/clk-mstp.c         | 3 ++-
-> >  drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
-> >  drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
-> >  3 files changed, 6 insertions(+), 3 deletions(-)
-> >
->
-> Feel free to add:
->
-> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+On 23/08/2019 08:21, Lubomir Rintel wrote:
+> On Thu, 2019-08-22 at 11:31 +0100, Marc Zyngier wrote:
+>> On 22/08/2019 10:26, Lubomir Rintel wrote:
+>>> Hi, 
+>>>
+>>> this is a second spin of a patch set that adds support for the Marvell
+>>> MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
+>>> FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients. 
+>>>
+>>> Compared to v1, there's a handful of fixes in response to reviews. Patch
+>>> 02/20 is new. Details in individual patches.
+>>>  
+>>> Apart from the adjustments in mach-mmp/, the patch makes necessary 
+>>> changes to the irqchip driver and adds an USB2 PHY driver. The latter 
+>>> has a dependency on the mach-mmp/ changes, so it can't be submitted 
+>>> separately.
+>>>  
+>>> The patch set has been tested to work on Wyse Tx0D and not ruin MMP2 
+>>> support on XO-1.75. 
+>>
+>> How do you want this series to be merged? I'm happy to take the irqchip
+>> related patches as well as the corresponding DT change (once reviewed)
+>> through my tree.
+> 
+> I was hoping for the Arm SoC tree, because there are some dependencies
+> (MMP3 USB PHY depends on MMP3 SoC).
+> 
+> That said, the irqchip patches are rather independent and the only
+> downside of them going in via a different tree will be that the other
+> tree that will lack them won't boot on MMP3 (things will compile
+> though). I don't know if that's okay. What's typically done in cases
+> like these?
 
-Thanks, queuing in clk-renesas-for-v5.4, with enhanced commit description:
+I usually take the irqchip patches that can be built standalone (without
+dependency on header files, for example). If you want them to go via
+another tree, stick my
 
-    ... to prevent the core PM Domain code from considering it for power-off,
-    and doing unnessary processing.
+	Acked-by: Marc Zyngier <maz@kernel.org>
 
-for all three of them, and
+on patches #6 through #9.
 
-    This also gets rid of a boot warning when the Clock Domain contains an
-    IRQ-safe device, e.g. on RZ/A1:
+Thanks,
 
-for the first patch.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+	M.
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Jazz is not dead, it just smells funny...
