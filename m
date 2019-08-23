@@ -2,109 +2,99 @@ Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 851D2C3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 09:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EFFC3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 10:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58180233A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 09:43:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566553380;
-	bh=4BEiFIOchDOtB8GlIw0hoo4htbbbRiQng1M6bTh6Z2o=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=CVLzNeOBe8gxaVcxby+iuEVnz6cMRxyNBY3+I2nZV2gV6zZfGdy02VtkevKl8/sM5
-	 aPmzagH84iYth1bsQSPKe4p9uJWv6J/HGRKzxlthNSznuFoPS5IR4242EVFpWAMAyV
-	 D7Wn42r/EbkWV4v4MkhwPhNNrIcdHddpuiIG3304=
+	by mail.kernel.org (Postfix) with ESMTP id 3304722CE3
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 10:03:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388137AbfHWJnA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 05:43:00 -0400
-Received: from foss.arm.com ([217.140.110.172]:58646 "EHLO foss.arm.com"
+        id S2391688AbfHWKDY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 06:03:24 -0400
+Received: from mail.thorsis.com ([92.198.35.195]:35305 "EHLO mail.thorsis.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387777AbfHWJm7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Aug 2019 05:42:59 -0400
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E7C19337;
-        Fri, 23 Aug 2019 02:42:58 -0700 (PDT)
-Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C62C63F246;
-        Fri, 23 Aug 2019 02:42:56 -0700 (PDT)
-Subject: Re: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1729716AbfHWKDY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 23 Aug 2019 06:03:24 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by mail.thorsis.com (Postfix) with ESMTP id 9CA55F6B
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2019 12:04:21 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
+Received: from mail.thorsis.com ([127.0.0.1])
+        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id MQTGVtlaHhww for <linux-clk@vger.kernel.org>;
+        Fri, 23 Aug 2019 12:04:21 +0200 (CEST)
+Received: by mail.thorsis.com (Postfix, from userid 109)
+        id 62B444965; Fri, 23 Aug 2019 12:04:21 +0200 (CEST)
+Received: from adahl by ada.ifak-system.com with local (Exim 4.89)
+        (envelope-from <ada@thorsis.com>)
+        id 1i16Pb-0000ZN-VJ; Fri, 23 Aug 2019 12:03:15 +0200
+From:   Alexander Dahl <ada@thorsis.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>, kernel@pengutronix.de,
         linux-clk@vger.kernel.org
-References: <20190822092643.593488-1-lkundrak@v3.sk>
- <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
- <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
-From:   Marc Zyngier <maz@kernel.org>
-Organization: Approximate
-Message-ID: <08a0e65e-4a80-f611-e36e-8e3f70fa8113@kernel.org>
-Date:   Fri, 23 Aug 2019 10:42:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Subject: [PATCH v2] dt-bindings: clk: Make example a bit clearer
+Date:   Fri, 23 Aug 2019 12:03:15 +0200
+Message-Id: <20190823100315.2148-1-ada@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 23/08/2019 08:21, Lubomir Rintel wrote:
-> On Thu, 2019-08-22 at 11:31 +0100, Marc Zyngier wrote:
->> On 22/08/2019 10:26, Lubomir Rintel wrote:
->>> Hi, 
->>>
->>> this is a second spin of a patch set that adds support for the Marvell
->>> MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
->>> FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients. 
->>>
->>> Compared to v1, there's a handful of fixes in response to reviews. Patch
->>> 02/20 is new. Details in individual patches.
->>>  
->>> Apart from the adjustments in mach-mmp/, the patch makes necessary 
->>> changes to the irqchip driver and adds an USB2 PHY driver. The latter 
->>> has a dependency on the mach-mmp/ changes, so it can't be submitted 
->>> separately.
->>>  
->>> The patch set has been tested to work on Wyse Tx0D and not ruin MMP2 
->>> support on XO-1.75. 
->>
->> How do you want this series to be merged? I'm happy to take the irqchip
->> related patches as well as the corresponding DT change (once reviewed)
->> through my tree.
-> 
-> I was hoping for the Arm SoC tree, because there are some dependencies
-> (MMP3 USB PHY depends on MMP3 SoC).
-> 
-> That said, the irqchip patches are rather independent and the only
-> downside of them going in via a different tree will be that the other
-> tree that will lack them won't boot on MMP3 (things will compile
-> though). I don't know if that's okay. What's typically done in cases
-> like these?
+From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 
-I usually take the irqchip patches that can be built standalone (without
-dependency on header files, for example). If you want them to go via
-another tree, stick my
+Previously the example used <&pll 2> in two places which made it harder
+than necessary to understand why this clock gets the parent of
+<&clkcon 0>. Also describe why <&pll 2> isn't reparented and <&clkcon 0>
+gets no rate assigned.
 
-	Acked-by: Marc Zyngier <maz@kernel.org>
+Co-authored-by: Alexander Dahl <ada@thorsis.com>
+Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
 
-on patches #6 through #9.
+Notes:
+    v2:
+        Add additional explaining text to following paragraph and strip mail
+        headers from commit message.
 
-Thanks,
+ .../devicetree/bindings/clock/clock-bindings.txt     | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-	M.
+diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+index b646bbcf7f92..1d4942380918 100644
+--- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
++++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
+@@ -150,16 +150,18 @@ set to 0, or can be omitted if it is not followed by any non-zero entry.
+         compatible = "fsl,imx-uart";
+         reg = <0xa000 0x1000>;
+         ...
+-        clocks = <&osc 0>, <&pll 1>;
+-        clock-names = "baud", "register";
++        clocks = ...
++        clock-names = ...
+ 
+         assigned-clocks = <&clkcon 0>, <&pll 2>;
+-        assigned-clock-parents = <&pll 2>;
++        assigned-clock-parents = <&pll 1>;
+         assigned-clock-rates = <0>, <460800>;
+     };
+ 
+-In this example the <&pll 2> clock is set as parent of clock <&clkcon 0> and
+-the <&pll 2> clock is assigned a frequency value of 460800 Hz.
++In this example the <&pll 1> clock is set as parent of clock <&clkcon 0> and
++the <&pll 2> clock is assigned a frequency value of 460800 Hz.  A parent
++setting for <&pll 2> is omitted (end of list) and rate setting for <&clkcon 0>
++is skipped because set to <0>.
+ 
+ Configuring a clock's parent and rate through the device node that consumes
+ the clock can be done only for clocks that have a single user. Specifying
 -- 
-Jazz is not dead, it just smells funny...
+2.20.1
+
