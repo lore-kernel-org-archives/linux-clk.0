@@ -5,60 +5,59 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3818FC3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 15:44:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECE6C3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 15:47:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE4221726
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 15:44:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A90DA21726
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 15:47:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifwPUCV1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nSaCUTL+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394413AbfHWPo5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 11:44:57 -0400
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40634 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387803AbfHWPo5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 11:44:57 -0400
-Received: by mail-ed1-f67.google.com with SMTP id h8so14120897edv.7;
-        Fri, 23 Aug 2019 08:44:55 -0700 (PDT)
+        id S2436530AbfHWPrd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 11:47:33 -0400
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:42619 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2436529AbfHWPrd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 11:47:33 -0400
+Received: by mail-ed1-f66.google.com with SMTP id m44so14099690edd.9;
+        Fri, 23 Aug 2019 08:47:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=d/83ox4KovBLVs9+wu2Ln3TWWfMCmDPxiPVmwOKOEgQ=;
-        b=ifwPUCV1IDq2mF9Z3fqzldLBwX5i4cPpMTw+M9LSQ5siNrDk0xO5yotEatu4yROrcl
-         YEcau9L/Fdpx5Cr5523gvUnKJuPdNZtMwbrstnAJqzIViTqJ7sW8plBs05sQnniVEJXz
-         1X/0l/KhX9vxKeus6U5uZ2cg40yVYAyUn1dGXeaxb+RMNEmSgE5oAy/M23qNKMvJ/h0U
-         cSsWcF+k2pJVfBHWOKRf/0aqL+zecteNEJS5nhfSR86uJeLDW9RqVJUQTk71BQ7is3UY
-         oDn0n0EfU/lFhr6V2p9BpbTK1xVEtFKn1/1SLFrVuu0E8GIXnYnWGtBKwyMYIAee5E1O
-         +5MQ==
+        bh=bGz8XaXIFErtIu9XG/kvEKw7lG/6DBuwbU2VpHjVKas=;
+        b=nSaCUTL+KyzUw7yLOTNNwfVJXci5P78eYs7inDH8u1oAITqcf8+1Px9aCyldn+T8LB
+         H+gUrmfHcLZ6r7cPUEAA/vabDH/mr5bAWcUFCrN7E8Fhq3N+j9S0hdfTGYbqqEwZfk7N
+         wcwL+RHNeSYbqXlt2Z3DR3/lJJm4LSOPceUFAurFmP3K5eFdRZxoQVqZ92WuOHAsEPV7
+         iENafMu+k93s4p2FvKYQ1YisM0BKgxh25RZeOR3Z0+F6SSxcHeAygVeaSC9s21AxTtgn
+         OzKxa05j1VTU9F63u33/GTk060VkyS9A7y3FxAggcasnl6i55uY/6pkdOy+BErppzkh/
+         bM1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=d/83ox4KovBLVs9+wu2Ln3TWWfMCmDPxiPVmwOKOEgQ=;
-        b=lKZ8rM4E1uUAF/3oHShCDR7d4Xul/WdDhmqvGccjh/DUlo/KFVkqoNNB0NgfTGsHbc
-         gpOZmKVb22fevQrMbEoTOrKLvB62eVaAOAToZB6dulr1nRHqGi/oV93A2TyXn5MHGcdd
-         7QIyK5fSTt8lARoHuEB6yjFHg6pirSebtqKUOZjzRC0m6Pi/WlSF9pAuTaVAtvGQOayX
-         vCKYlfM+ms1vw0/iyRdxh97RXcn9Ld4PUff/7M9F2/9lcLf54az/Vc4GqpUn6rDbEqG7
-         vqA+VLzBTucUyOJAJ5lSjlJpOXJmkfd2KpIDdODpbJA8vmRrftYN49/lM7mSTa/GiOBf
-         G7Pg==
-X-Gm-Message-State: APjAAAXQiY0O879/fmTiEnbcZVFxRwQkjFHao4yrzoquf3354k+gpDHc
-        T7Kx8gHCjxYeXQ3C4WMez15AJ3QGXUQ=
-X-Google-Smtp-Source: APXvYqztVgzCLUoCO2LNZZOg1lG/LZkOBiohpX07xs+EYRdFG8Pr6qrJO1qaXBnpC1/Q544Bk7DYMw==
-X-Received: by 2002:a17:906:f211:: with SMTP id gt17mr4795967ejb.263.1566575094470;
-        Fri, 23 Aug 2019 08:44:54 -0700 (PDT)
+        bh=bGz8XaXIFErtIu9XG/kvEKw7lG/6DBuwbU2VpHjVKas=;
+        b=apq6byOSvaJ73UrhOODPnB9nXjkbYYwsTlSCo80y4ZoQcrj3aiSkqQ9I4O8y6spAoH
+         IIjQ2MFqdH2HkgYuXH78UqEXXFfHc7q1wGcjsv0Adm63QfLiSgNNcvUGDGr2VEAmxEu9
+         rV8oWLw1NbRUaiga/vo+xol3hbOI1x+htb0phKd/XDlbfav6gIONm8K+WpCmTr6YfSjW
+         69Ag3v8kOm03qfs5H2Fiv8ncIjAOaq+jQhQ5f+GZMeaImd5Ha4OGVBnEk5JIuQEbiKfm
+         Q90WcivUuqG9d4z6fgR/ciOYTWKBex1Sa1/13WbYVNipGmY0ZsYh9XOZrPGKy+MFBKBi
+         ypLw==
+X-Gm-Message-State: APjAAAUPWNLN2D6yWvjWmfsG1FA5J8PrXo0hFzazby9u3x3eoWhtgFgC
+        KANpCibxlDiAid6KWSYHHUDbmsTvZuc=
+X-Google-Smtp-Source: APXvYqzeo3CGXvOh+TYJGQmDB9073v/pWNUBUDNdJUsgnd0OyCRCkR5Ey7bq8sav3wApodQT3R+1fg==
+X-Received: by 2002:aa7:c4ce:: with SMTP id p14mr5434563edr.238.1566575250243;
+        Fri, 23 Aug 2019 08:47:30 -0700 (PDT)
 Received: from ziggy.stardust ([37.223.137.147])
-        by smtp.gmail.com with ESMTPSA id w19sm592772edt.41.2019.08.23.08.44.53
+        by smtp.gmail.com with ESMTPSA id f2sm587201eds.87.2019.08.23.08.47.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 23 Aug 2019 08:44:53 -0700 (PDT)
-Subject: Re: [PATCH v2 03/11] dt-bindings: irq: mtk,sysirq: add support for
- mt6779
+        Fri, 23 Aug 2019 08:47:29 -0700 (PDT)
+Subject: Re: [PATCH v2 02/11] dt-bindings: mtk-uart: add mt6779 uart bindings
 To:     Mars Cheng <mars.cheng@mediatek.com>,
         Rob Herring <robh@kernel.org>,
         Marc Zyngier <marc.zyngier@arm.com>,
@@ -71,7 +70,7 @@ Cc:     CC Hwang <cc.hwang@mediatek.com>,
         devicetree@vger.kernel.org, wsd_upstream@mediatek.com,
         mtk01761 <wendell.lin@mediatek.com>, linux-clk@vger.kernel.org
 References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
- <1566206502-4347-4-git-send-email-mars.cheng@mediatek.com>
+ <1566206502-4347-3-git-send-email-mars.cheng@mediatek.com>
 From:   Matthias Brugger <matthias.bgg@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
@@ -167,12 +166,12 @@ Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
  pac005PuhxCWkKTJz3gCmznnoat4GCnL5gy/m0Qk45l4PFqwWXVLo9AQg2Kp3mlIFZ6fsEKI
  AN5hxlbNvNb9V2Zo5bFZjPWPFTxOteM0omUAS+QopwU0yPLLGJVf2iCmItHcUXI+r2JwH1CJ
  jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <72f68d3b-1011-5746-7bb0-8bc40ce0961d@gmail.com>
-Date:   Fri, 23 Aug 2019 17:44:52 +0200
+Message-ID: <30d7e9ba-2cc2-7e7b-37b1-2f9821a0fc53@gmail.com>
+Date:   Fri, 23 Aug 2019 17:47:28 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <1566206502-4347-4-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1566206502-4347-3-git-send-email-mars.cheng@mediatek.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -184,26 +183,28 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 19/08/2019 11:21, Mars Cheng wrote:
-> Add binding documentation of mediatek,sysirq for mt6779 SoC.
+> Add documentation for mt6779 uart dt-bindings
 > 
 > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 
-Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+Pushed to v5.3-next/dts64
+
+Thanks!
 
 > ---
->  .../interrupt-controller/mediatek,sysirq.txt       |    1 +
+>  .../devicetree/bindings/serial/mtk-uart.txt        |    1 +
 >  1 file changed, 1 insertion(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> index 0e312fe..84ced3f 100644
-> --- a/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> +++ b/Documentation/devicetree/bindings/interrupt-controller/mediatek,sysirq.txt
-> @@ -15,6 +15,7 @@ Required properties:
->  	"mediatek,mt7629-sysirq", "mediatek,mt6577-sysirq": for MT7629
->  	"mediatek,mt6795-sysirq", "mediatek,mt6577-sysirq": for MT6795
->  	"mediatek,mt6797-sysirq", "mediatek,mt6577-sysirq": for MT6797
-> +	"mediatek,mt6779-sysirq", "mediatek,mt6577-sysirq": for MT6779
->  	"mediatek,mt6765-sysirq", "mediatek,mt6577-sysirq": for MT6765
->  	"mediatek,mt6755-sysirq", "mediatek,mt6577-sysirq": for MT6755
->  	"mediatek,mt6592-sysirq", "mediatek,mt6577-sysirq": for MT6592
+> diff --git a/Documentation/devicetree/bindings/serial/mtk-uart.txt b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+> index 6fdffb7..3a3b570 100644
+> --- a/Documentation/devicetree/bindings/serial/mtk-uart.txt
+> +++ b/Documentation/devicetree/bindings/serial/mtk-uart.txt
+> @@ -9,6 +9,7 @@ Required properties:
+>    * "mediatek,mt6589-uart" for MT6589 compatible UARTS
+>    * "mediatek,mt6755-uart" for MT6755 compatible UARTS
+>    * "mediatek,mt6765-uart" for MT6765 compatible UARTS
+> +  * "mediatek,mt6779-uart" for MT6779 compatible UARTS
+>    * "mediatek,mt6795-uart" for MT6795 compatible UARTS
+>    * "mediatek,mt6797-uart" for MT6797 compatible UARTS
+>    * "mediatek,mt7622-uart" for MT7622 compatible UARTS
 > 
