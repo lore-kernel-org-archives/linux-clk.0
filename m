@@ -2,102 +2,89 @@ Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15724C3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 07:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF55AC3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:51:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E73B622CF7
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 07:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE46722CEC
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:51:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p6SBn6sD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732160AbfHWHV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 03:21:28 -0400
-Received: from shell.v3.sk ([90.176.6.54]:40155 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731211AbfHWHV2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Aug 2019 03:21:28 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 55174D7697;
-        Fri, 23 Aug 2019 09:21:24 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id pMkOYpuRgxH6; Fri, 23 Aug 2019 09:21:20 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id E8F49D7699;
-        Fri, 23 Aug 2019 09:21:19 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 5ToaOpSmwFul; Fri, 23 Aug 2019 09:21:19 +0200 (CEST)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id B15DFD7697;
-        Fri, 23 Aug 2019 09:21:18 +0200 (CEST)
-Message-ID: <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
-Subject: Re: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Date:   Fri, 23 Aug 2019 09:21:17 +0200
-In-Reply-To: <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
-References: <20190822092643.593488-1-lkundrak@v3.sk>
-         <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        id S2405047AbfHWIvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 04:51:19 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:44502 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390826AbfHWIvS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 04:51:18 -0400
+Received: by mail-lj1-f196.google.com with SMTP id e24so8120756ljg.11
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2019 01:51:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=FXtQDuMScF/1nReve4eretX2TO/jfCiedtGuRQR2hjM=;
+        b=p6SBn6sDUBeFLX9nMJmZGZC+PTQMLkZJ8aTvGmL+qINEfOstq/jNuLob/ghlirv1KJ
+         cZRyeXtQ1faKYUnTHuBCVNy/y+gs5O1Ob5u1hV9AU5ut4mXZX+Okq3HmZsxsT+DBbIGs
+         J7sCK51VUU3lrdn3m0sttx9PyWO3QwemGQnd1cRnP0eZPC4Pa8fqdl0xMWR23wDeqeAt
+         FBxKNcv/H0DFEFdPjz9wsTwbnCzc2Hnz2I0UXU6Qlf1/20m+dC5NojBZhY02m301Xx20
+         8SBl2+ZAWxgHnmt/joknqH100+Al87qai/W4q6tyFUZ1rvjBxGuZwVUWExcs1/CQ4lLY
+         4fhA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FXtQDuMScF/1nReve4eretX2TO/jfCiedtGuRQR2hjM=;
+        b=GX/6sEroD9JyiNNNhjTBGcMN+biz9hgPp9KQAIBe9qXocZuCGbZ+Yd67HiBkjjvhjg
+         7JR4ei7+SM7r2QOec9mpekVjSU8VBWI5hGxlPe/dFYvOQitGZQCFC9iFJq9PgD6P9ED5
+         S4kYUIJCmSTK0AQqwQmy4/bO5xfpPASvSG6mMcA+qEADORFhDJ0Xh9hEXHewo6ln0hpk
+         2pil/VRFzE+OrvlloSBP4oBmK/+ZRVwU/8vqFEPSyY0wduATfH0UFiHy+bHCmebFUbA6
+         TS1c6I9q3Ho3GnO8cnLFmQQCE+zr+tgtd/7N9t2O1A91hu116yL+81an3/GLa2uHBF/o
+         W/Ug==
+X-Gm-Message-State: APjAAAW7Urz/TPgViY4P+yf+let0sEM/LamFp60mWJM04LIWa7IaWmNS
+        DFojvIwFvoXTRhl//8PWHFMJg5JvPwSMkinTG3zsfA==
+X-Google-Smtp-Source: APXvYqyppYyNq83SxxmmRdWOnL0oOzeUD0rB8qh3X7YKYtXA9sxXcXqHi/9iYmrgLahKeTty/OM4UHWE1xxoqpX3Dgw=
+X-Received: by 2002:a2e:80da:: with SMTP id r26mr2124440ljg.62.1566550276856;
+ Fri, 23 Aug 2019 01:51:16 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com> <1566206502-4347-4-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1566206502-4347-4-git-send-email-mars.cheng@mediatek.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 23 Aug 2019 10:51:04 +0200
+Message-ID: <CACRpkdY4sVV5oyFa+a30dY2A9tsKpzTeuQ8ChmnXcm-5_eZkVA@mail.gmail.com>
+Subject: Re: [PATCH v2 03/11] dt-bindings: irq: mtk,sysirq: add support for mt6779
+To:     Mars Cheng <mars.cheng@mediatek.com>
+Cc:     Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, wsd_upstream@mediatek.com,
+        mtk01761 <wendell.lin@mediatek.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 2019-08-22 at 11:31 +0100, Marc Zyngier wrote:
-> On 22/08/2019 10:26, Lubomir Rintel wrote:
-> > Hi, 
-> > 
-> > this is a second spin of a patch set that adds support for the Marvell
-> > MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
-> > FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients. 
-> > 
-> > Compared to v1, there's a handful of fixes in response to reviews. Patch
-> > 02/20 is new. Details in individual patches.
-> >  
-> > Apart from the adjustments in mach-mmp/, the patch makes necessary 
-> > changes to the irqchip driver and adds an USB2 PHY driver. The latter 
-> > has a dependency on the mach-mmp/ changes, so it can't be submitted 
-> > separately.
-> >  
-> > The patch set has been tested to work on Wyse Tx0D and not ruin MMP2 
-> > support on XO-1.75. 
-> 
-> How do you want this series to be merged? I'm happy to take the irqchip
-> related patches as well as the corresponding DT change (once reviewed)
-> through my tree.
+On Mon, Aug 19, 2019 at 11:22 AM Mars Cheng <mars.cheng@mediatek.com> wrote:
 
-I was hoping for the Arm SoC tree, because there are some dependencies
-(MMP3 USB PHY depends on MMP3 SoC).
+> Add binding documentation of mediatek,sysirq for mt6779 SoC.
+>
+> Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
 
-That said, the irqchip patches are rather independent and the only
-downside of them going in via a different tree will be that the other
-tree that will lack them won't boot on MMP3 (things will compile
-though). I don't know if that's okay. What's typically done in cases
-like these?
+I'm relying on Sean to review this and ACK when he's pleased
+with the result.
 
-
-> Thanks,
-> 
-> 	M.
-
-Thank you
-Lubo
-
+Yours,
+Linus Walleij
