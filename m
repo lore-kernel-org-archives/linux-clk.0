@@ -2,106 +2,101 @@ Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72552C3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4E27C3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:59:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266B622CE3
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:59:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83D46233A2
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 08:59:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w0B3dzBT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391001AbfHWI7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 04:59:17 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:37341 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732254AbfHWI7R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 04:59:17 -0400
-Received: by mail-oi1-f193.google.com with SMTP id b25so6512452oib.4;
-        Fri, 23 Aug 2019 01:59:16 -0700 (PDT)
+        id S2393347AbfHWI7V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 04:59:21 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33618 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393338AbfHWI7V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 04:59:21 -0400
+Received: by mail-lf1-f66.google.com with SMTP id x3so6620274lfc.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2019 01:59:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GxUgalfpHvlU7G4S1EP7MwtQKJLrxEoCVtsJwnBq2SU=;
+        b=w0B3dzBTa3+JyrZeVRsr9ly//+C08gCfIk8KvddiJai9vJRoezhj54mrdyVwb1cbFl
+         sRPkN+bru2wP4dmVDTkn20UOrljSktzElsDLmYwfeNBsz3BkNKlwWa6y0Kr4+GWEfwG1
+         YK9K3GDGdmw/+mt4yBZZ0rCBOvJ2wRiMivQwwjJJnFfQXf1LiACtdWqo7SnZbI9pSXdG
+         FdguDX7EHD7VaI4fG3ApljZIFeKDUrSvlzeHp0Se0NWNeZNXwlDemX+J/tIyKK2beWBF
+         YkS5UFt+u6TP+JMCmWolrRdMU/+bvPBegM8ACCpr9RWdg/IGiTuhMcKbWCZioaHt7WP/
+         FWEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=/O7KDJXrmJK4XRdRsrYODhtwGGh/VBJ/wqdtL3MX3sw=;
-        b=LTt8M6qLv7V1FG1e2tCq9VLo0aySlS1cAxdbJwbbGUVMP21GiCwqsGtN7D+b3yJGJ9
-         P+u5ZURQIglVR8jxxw2NGnn0Tgpe6bKKDeWO3AP/aj3Q/lMr5K4133x3mKHEI9zs5jLe
-         ZAODsGYTAmVk3yu3B0uqZDxevz2sYOTTw5D7rWJcmIDHRlRE7IXL4zasWUPvzviEF3Rx
-         Ur/wTEON484fOSGTHwkkkkC2gxHGnW+wtdvreyfY01nR5ym5AoXoVjsfxQJJS0nhijEC
-         bRXmuL18+Mt8Eyh0NMAXXLBs3kNxOuXt+JoFD8h4rItaypf4jjDVaFfWOSt4gDmXaZw8
-         A5UQ==
-X-Gm-Message-State: APjAAAW07WZanWQLKznwbFFzfxtXdfo/UQFHfUoXhqzZxP1MIA458vYT
-        1Bo4C6Hzt26wJ4xm1OecC9uiTyQE01jpu3m1K8Q=
-X-Google-Smtp-Source: APXvYqx9JRH9R2CUtnvFbptw0kgUk2Jw8SnkNPr8UkV++6uNcE/kyPEoGMVzQ+AbDAX6xLdhldBkk2mDpVjxvtvWgsQ=
-X-Received: by 2002:aca:b154:: with SMTP id a81mr2257779oif.148.1566550756016;
- Fri, 23 Aug 2019 01:59:16 -0700 (PDT)
+        bh=GxUgalfpHvlU7G4S1EP7MwtQKJLrxEoCVtsJwnBq2SU=;
+        b=XUP6Ipkl7DGMI9EGrbhzgAJDmcH+tnRf4x2QfOBhsYM+wuUIypj4RgDz7eA7vWIiUW
+         7uNu+rYrI5GBiiwIJlCNNxdgiUHtBx1svKumoHy4Btwa+loUIKYNhdzSSzCtxpzXpGF3
+         8PR49UbdSZka7zl/k8PLmD1PFAoRRucBP2dNbdrzBSr957YtHjV/IW+L6honDVW72djf
+         3uC8jiklHGmcS72RvjKweAbw5RU5ONl4LjsxlzJM4Pvl0MjfS5khz4wzs125D5x4HUNR
+         odeT+3VwOXuLksF/hlG8qidkUMMugTr/blSHCnhWwijNkLT4x7kfbylMk66LHZn4eGe5
+         kNcA==
+X-Gm-Message-State: APjAAAW4jKBg+i0N1/pxTE7p2bg4qj8DuH5wYGhp1mTHFemZVUhB7DGd
+        TjlV/s3IN86fs/O44E3L8odcGjdRblg4sASiM7oVAg==
+X-Google-Smtp-Source: APXvYqw5ndRJYH6Pq0vRfXqvSpTurLxTZpp9+LCmk3CwLeQH9ygW2pVl8/ZMQ7YOPv6vJPkMu932f3Yxr6LWZ0GzqPI=
+X-Received: by 2002:a19:ed11:: with SMTP id y17mr2096873lfy.141.1566550759342;
+ Fri, 23 Aug 2019 01:59:19 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190816125225.16061-1-geert+renesas@glider.be>
- <20190816125225.16061-2-geert+renesas@glider.be> <20190816180123.6299720665@mail.kernel.org>
- <CAMuHMdVvwsXU2YwFRA2Y2K9KKzF4L-hqDudarmc-OeHXRMCifQ@mail.gmail.com>
- <20190817034812.5435B21721@mail.kernel.org> <CAMuHMdWpUEt-wxEdAK7NsAOadS5TtHYdO=JTGT=CtSROHuR+Pw@mail.gmail.com>
- <CAPDyKFpr7fw_rCciXzZNk2is8KFkd7Tvdx-fzyka_vobCK0U=g@mail.gmail.com>
-In-Reply-To: <CAPDyKFpr7fw_rCciXzZNk2is8KFkd7Tvdx-fzyka_vobCK0U=g@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 23 Aug 2019 10:59:04 +0200
-Message-ID: <CAMuHMdU+szi38Ygk8bu8jrwE4fgsdWVL4Vkf2_Lf4crJQSDm5w@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for
- clock domain
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Kevin Hilman <khilman@kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
+ <1566206502-4347-7-git-send-email-mars.cheng@mediatek.com> <CAGp9LzoVwNxY8Q3G4hxpa7=orsEox+J0mNamag70wyjrGvDiZw@mail.gmail.com>
+In-Reply-To: <CAGp9LzoVwNxY8Q3G4hxpa7=orsEox+J0mNamag70wyjrGvDiZw@mail.gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 23 Aug 2019 10:59:08 +0200
+Message-ID: <CACRpkdbZY2vZBaEXDMsjLxA1NGYWirhCdspu0W-foXJX=Fd4yg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] pinctrl: mediatek: add pinctrl support for
+ MT6779 SoC
+To:     Sean Wang <sean.wang@kernel.org>
+Cc:     Mars Cheng <mars.cheng@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Rob Herring <robh@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        CC Hwang <cc.hwang@mediatek.com>,
+        Loda Chou <loda.chou@mediatek.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/Mediatek SoC support" 
+        <linux-mediatek@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, wsd_upstream@mediatek.com,
+        mtk01761 <wendell.lin@mediatek.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
+        Andy Teng <andy.teng@mediatek.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Ulf,
-
-On Thu, Aug 22, 2019 at 4:06 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> > > Well is it actually a problem to not specify the flag? I guess it's just
-> > > a potential problem if the genpd is ever powered off, but given that the
-> > > governor decides to leave it always enabled it doesn't actually matter?
-> > > So it's not really fixing anything besides silencing a harmless warning?
+On Thu, Aug 22, 2019 at 8:12 PM Sean Wang <sean.wang@kernel.org> wrote:
+> On Mon, Aug 19, 2019 at 2:22 AM Mars Cheng <mars.cheng@mediatek.com> wrote:
 > >
-> > The warning is indeed harmless.
+> > This adds MT6779 pinctrl driver based on MediaTek pinctrl-paris core.
 > >
-> > The "interesting" case is the case where no warning is printed, as no
-> > IRQ-safe device is present.  In that case, the absence of the
-> > GENPD_FLAG_ALWAYS_ON flag means that the core PM Domain code will
-> > consider the domain for power-off, and will loop over all devices part
-> > of it, which is suboptimal.  Setting the flag avoids that.
-> >
-> > Thanks for your continued questions, it made me realize I need to add more
-> > meat to the description to these "simple" patches!
-> >
-> > For the PM people: would it make sense to add a
-> > WARN(!genpd->power_off && !genpd_is_always_on(genpd), "...") check to
-> > pm_genpd_init()?
-> > Or set GENPD_FLAG_ALWAYS_ON automatically if !genpd->power_off?
+> > Signed-off-by: Mars Cheng <mars.cheng@mediatek.com>
+> > Signed-off-by: Andy Teng <andy.teng@mediatek.com>
 >
-> Well, wouldn't it be possible that the power is provided through a
-> master domain, thus not having the ->power_off() callback assigned for
-> the subdomain is perfectly fine, even without having
-> GENPD_FLAG_ALWAYS_ON not set.
+> Acked-by: Sean Wang <sean.wang@kernel.org>
 
-Thanks, I hadn't considered that the clock domain might be a subdomain
-of a power domain.
+Please look at the DT bindings as well when you have time, and
+especially the "virtual GPIO" patch, I don't understand that at all.
 
-Gr{oetje,eeting}s,
+I suspect the "virtual GPIO" is maybe more about something that
+should be done by setting up the valid_mask in the gpio_chip
+or something.
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
