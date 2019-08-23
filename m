@@ -2,99 +2,95 @@ Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.9 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57EFFC3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 10:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B322C3A5A4
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 12:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3304722CE3
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 10:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2187C2339D
+	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 12:58:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391688AbfHWKDY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 06:03:24 -0400
-Received: from mail.thorsis.com ([92.198.35.195]:35305 "EHLO mail.thorsis.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729716AbfHWKDY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 23 Aug 2019 06:03:24 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by mail.thorsis.com (Postfix) with ESMTP id 9CA55F6B
-        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2019 12:04:21 +0200 (CEST)
-X-Virus-Scanned: Debian amavisd-new at mail.thorsis.com
-Received: from mail.thorsis.com ([127.0.0.1])
-        by localhost (mail.thorsis.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id MQTGVtlaHhww for <linux-clk@vger.kernel.org>;
-        Fri, 23 Aug 2019 12:04:21 +0200 (CEST)
-Received: by mail.thorsis.com (Postfix, from userid 109)
-        id 62B444965; Fri, 23 Aug 2019 12:04:21 +0200 (CEST)
-Received: from adahl by ada.ifak-system.com with local (Exim 4.89)
-        (envelope-from <ada@thorsis.com>)
-        id 1i16Pb-0000ZN-VJ; Fri, 23 Aug 2019 12:03:15 +0200
-From:   Alexander Dahl <ada@thorsis.com>
+        id S2395111AbfHWM6U (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 23 Aug 2019 08:58:20 -0400
+Received: from xavier.telenet-ops.be ([195.130.132.52]:41578 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2395109AbfHWM6U (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 08:58:20 -0400
+Received: from ramsan ([84.194.98.4])
+        by xavier.telenet-ops.be with bizsmtp
+        id scyH2000d05gfCL01cyH0Z; Fri, 23 Aug 2019 14:58:18 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i198z-0006dZ-NK; Fri, 23 Aug 2019 14:58:17 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1i198z-0005bo-LJ; Fri, 23 Aug 2019 14:58:17 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, kernel@pengutronix.de,
-        linux-clk@vger.kernel.org
-Subject: [PATCH v2] dt-bindings: clk: Make example a bit clearer
-Date:   Fri, 23 Aug 2019 12:03:15 +0200
-Message-Id: <20190823100315.2148-1-ada@thorsis.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [git pull] clk: renesas: Updates for v5.4
+Date:   Fri, 23 Aug 2019 14:58:16 +0200
+Message-Id: <20190823125816.21519-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+	Hi Mike, Stephen,
 
-Previously the example used <&pll 2> in two places which made it harder
-than necessary to understand why this clock gets the parent of
-<&clkcon 0>. Also describe why <&pll 2> isn't reparented and <&clkcon 0>
-gets no rate assigned.
+The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca4b:
 
-Co-authored-by: Alexander Dahl <ada@thorsis.com>
-Signed-off-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Alexander Dahl <ada@thorsis.com>
----
+  Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
 
-Notes:
-    v2:
-        Add additional explaining text to following paragraph and strip mail
-        headers from commit message.
+are available in the Git repository at:
 
- .../devicetree/bindings/clock/clock-bindings.txt     | 12 +++++++-----
- 1 file changed, 7 insertions(+), 5 deletions(-)
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.4-tag1
 
-diff --git a/Documentation/devicetree/bindings/clock/clock-bindings.txt b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-index b646bbcf7f92..1d4942380918 100644
---- a/Documentation/devicetree/bindings/clock/clock-bindings.txt
-+++ b/Documentation/devicetree/bindings/clock/clock-bindings.txt
-@@ -150,16 +150,18 @@ set to 0, or can be omitted if it is not followed by any non-zero entry.
-         compatible = "fsl,imx-uart";
-         reg = <0xa000 0x1000>;
-         ...
--        clocks = <&osc 0>, <&pll 1>;
--        clock-names = "baud", "register";
-+        clocks = ...
-+        clock-names = ...
- 
-         assigned-clocks = <&clkcon 0>, <&pll 2>;
--        assigned-clock-parents = <&pll 2>;
-+        assigned-clock-parents = <&pll 1>;
-         assigned-clock-rates = <0>, <460800>;
-     };
- 
--In this example the <&pll 2> clock is set as parent of clock <&clkcon 0> and
--the <&pll 2> clock is assigned a frequency value of 460800 Hz.
-+In this example the <&pll 1> clock is set as parent of clock <&clkcon 0> and
-+the <&pll 2> clock is assigned a frequency value of 460800 Hz.  A parent
-+setting for <&pll 2> is omitted (end of list) and rate setting for <&clkcon 0>
-+is skipped because set to <0>.
- 
- Configuring a clock's parent and rate through the device node that consumes
- the clock can be done only for clocks that have a single user. Specifying
--- 
-2.20.1
+for you to fetch changes up to f787216f33ce5b5a2567766398f44ab62157114c:
 
+  clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain (2019-08-23 11:09:57 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.4
+
+  - Fix "always-on" Clock Domains on R-Car M1A, RZ/A1, RZ/A2, and RZ/N1,
+  - Minor cleanups.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (4):
+      clk: renesas: rcar-usb2-clock-sel: Use devm_platform_ioremap_resource() helper
+      clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+      clk: renesas: r9a06g032: Set GENPD_FLAG_ALWAYS_ON for clock domain
+      clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain
+
+Simon Horman (1):
+      dt-bindings: clk: emev2: Rename bindings documentation file
+
+ .../bindings/clock/{emev2-clock.txt => renesas,emev2-smu.txt}         | 0
+ drivers/clk/renesas/clk-mstp.c                                        | 3 ++-
+ drivers/clk/renesas/r9a06g032-clocks.c                                | 3 ++-
+ drivers/clk/renesas/rcar-usb2-clock-sel.c                             | 4 +---
+ drivers/clk/renesas/renesas-cpg-mssr.c                                | 3 ++-
+ 5 files changed, 7 insertions(+), 6 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{emev2-clock.txt => renesas,emev2-smu.txt} (100%)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
