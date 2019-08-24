@@ -1,165 +1,133 @@
-Return-Path: <SRS0=Qq/y=WT=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=P1/z=WU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81C80C3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 18:16:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B627C3A59E
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Aug 2019 06:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5957021848
-	for <linux-clk@archiver.kernel.org>; Fri, 23 Aug 2019 18:16:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517B021897
+	for <linux-clk@archiver.kernel.org>; Sat, 24 Aug 2019 06:29:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qdrtLsEk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MmZFw4++"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390457AbfHWSQz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 23 Aug 2019 14:16:55 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48432 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390422AbfHWSQy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 23 Aug 2019 14:16:54 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7NIGnjn061687;
-        Fri, 23 Aug 2019 13:16:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566584209;
-        bh=FMLSygCw6ss56+cWZANwKBAvWc1Q1/9AHdxfh6O7xAA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qdrtLsEkJUq+QVYUQxunJuF1stxvp871yFab3Hg3pBVximp/iHFzge9vgo5Ua07oO
-         DHrCa0+HavjVmymt0Qtw3JBoRjhh2x490SjSNiq0Q6UvukRH4VqrD91oc9/t/9C/D6
-         +I4Z8A+35q/7wGbQcfBqa85sGbOZWT4mH6Hw+Gao=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7NIGnEL104575
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 23 Aug 2019 13:16:49 -0500
-Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 23
- Aug 2019 13:16:49 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 23 Aug 2019 13:16:49 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7NIGlVE126177;
-        Fri, 23 Aug 2019 13:16:47 -0500
-Subject: Re: [PATCH 3/3] clk: ti: dra7xx: add timer_sys_ck clock alias
-To:     Suman Anna <s-anna@ti.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>
-References: <1565183079-27798-1-git-send-email-t-kristo@ti.com>
- <1565183079-27798-4-git-send-email-t-kristo@ti.com>
- <9d0edab4-cae2-50d5-2df9-42c879f2623f@ti.com>
- <b1005a98-e098-f651-d70e-c519fd740540@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <12f0fa92-f6e1-0e71-09da-78722f040966@ti.com>
-Date:   Fri, 23 Aug 2019 21:16:46 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726739AbfHXG31 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 24 Aug 2019 02:29:27 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:47087 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfHXG3Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 24 Aug 2019 02:29:25 -0400
+Received: by mail-pf1-f194.google.com with SMTP id q139so8053939pfc.13
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2019 23:29:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=lk3/fdWNHGpXSG4wNNd4Z51nWhNqtO7vua0PVil2X8k=;
+        b=MmZFw4++6ajNtGcDjnTyEZX45owjmCdZ77MjxfCiLNnUI6FmuFS/kri/kbpAgTsdzS
+         cbmA9XAWRXj9gfAsdppqv/ff/ZeRU7OAmyY2sLRehhuBXaRkxR5jGUl0UFL6zkuQHni0
+         zxoPgS3ZxJ7tFveYa+1FM5lF8srYTmrTqv3kPOhfO7S9UxwXylkR14GzFHwvVQm7pXOS
+         Nae34H7jXleGz0JuV2eEYKgAS3iu61sZHrhcV8OjMKr6/eMQb6/M0cnaJgDKBw+yqVzM
+         TAS3vluUriOA9JL5s8zEqc92AGJXaaEXBJ8qjWeNMj+PxdX1mlEKh8h54TNcFgtodkBJ
+         HyIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=lk3/fdWNHGpXSG4wNNd4Z51nWhNqtO7vua0PVil2X8k=;
+        b=YOHdfv5bJqWJ2pzE1Wgg/Wd68VKrDCqNKmYrCl3jAODOfIinDt6MmZ96O987Y6eeuh
+         7PuPkd+uXh+rTn+4kHNQFi8x+/0e91S1yOY9js9pANNrC7djdWPbdpEs3W/o2wOtoRi5
+         vkvz2w0DQdbR6Ze1N41hGiyU9E5NM61prrHaMRfz7sTxC0J2M47qwDyH0HQwV3MnM3NV
+         PUBOjLFk8VrbeAVEF3kFdoZh2GSrOlo+m82bykZ9OQSSijWb6mZjexH9fvAZ421D+DcU
+         6aIWc37y2S+Mh8qMjJwhDAsUfCL0MO77LQaejaQvnVFJaZsRPF4Kq0Bd8e+V+AHyhrFd
+         Nlow==
+X-Gm-Message-State: APjAAAUrUBmlTUQhgKAgNGDvImkflfkCgrKS6zhYjXkFepLz/Uff+nk7
+        heHoNJAqrBJpb5Rdpjm3Tbq6nQ==
+X-Google-Smtp-Source: APXvYqzP5aW10UjB6WQjHdGXFspmjnPMEW+2ogI0RPCqFngLxhyRS7aAGs3AqLaugeVz1K62+sqiHA==
+X-Received: by 2002:a17:90a:ab01:: with SMTP id m1mr8623968pjq.69.1566628164813;
+        Fri, 23 Aug 2019 23:29:24 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id w129sm8673188pfd.89.2019.08.23.23.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2019 23:29:24 -0700 (PDT)
+Date:   Fri, 23 Aug 2019 23:31:15 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/4] clk: qcom: clk-rpmh: Convert to parent data scheme
+Message-ID: <20190824063115.GW26807@tuxbook-pro>
+References: <20190822170140.7615-1-vkoul@kernel.org>
+ <20190822170140.7615-3-vkoul@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <b1005a98-e098-f651-d70e-c519fd740540@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190822170140.7615-3-vkoul@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20.8.2019 0.14, Suman Anna wrote:
-> Hi Tero,
+On Thu 22 Aug 10:01 PDT 2019, Vinod Koul wrote:
+
+> Convert the rpmh clock driver to use the new parent data scheme by
+> specifying the parent data for board clock.
 > 
-> On 8/7/19 5:56 PM, Anna, Suman wrote:
->> Hi Tero,
->>
->> On 8/7/19 8:04 AM, Tero Kristo wrote:
->>> This is needed by the TI DM timer driver.
->>
->> Again can do with some better patch descriptions. Similar to the
->> previous patch, missing the equivalent patches for OMAP4 and OMAP5.
->> You can use my downstream patches for these - [1][2][3] that has all the
->> needed Fixes by details. Only difference is that you used a single line
->> change on DRA7, and this should suffice since all the sources are same,
->> but OMAP4 and OMAP5 needed different ones.
->>
->> [1] OMAP4:
->> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=9d45dc42fbed8395d733366dbf6c0fd5ec171e2f
->> [2] OMAP5:
->> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=34f4682a91173386307b310d7f4955d46dcaaea2
->> [3] DRA7:
->> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=2a662694437ae7192b5ef759ec40abe796d2a058
->>
->> Technically, this data need to be added back for all OMAP2+ SoCs which
->> support dmtimer with any other drivers wanting to use the timers.
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> ---
+>  drivers/clk/qcom/clk-rpmh.c | 10 ++++++++--
+>  1 file changed, 8 insertions(+), 2 deletions(-)
 > 
-> So, I checked and these aliases already are defined on OMAP2, OMAP3,
-> AM33xx, AM43xx, DM814x and DM816x SoCs. So, just include the OMAP4 and
-> OMAP5 ones along with the DRA7x one.
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index c3fd632af119..0bced7326a20 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -95,7 +95,10 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>  		.hw.init = &(struct clk_init_data){			\
+>  			.ops = &clk_rpmh_ops,				\
+>  			.name = #_name,					\
+> -			.parent_names = (const char *[]){ "xo_board" },	\
+> +			.parent_data =  &(const struct clk_parent_data){ \
+> +					.fw_name = "xo_board",		\
+> +					.name = "xo_board",		\
 
-Actually, all these alias definitions can be completely removed, and can 
-be replaced with DT data. Here's sample how it can be done for dra7xx 
-timer11:
+Iiuc .name here refers to the global clock namespace and .fw_name refers
+to the device_node local name space. As such I really prefer this to be:
 
-diff --git a/arch/arm/boot/dts/dra7-l4.dtsi b/arch/arm/boot/dts/dra7-l4.dtsi
-index bed67603c186..fafa0a131af0 100644
---- a/arch/arm/boot/dts/dra7-l4.dtsi
-+++ b/arch/arm/boot/dts/dra7-l4.dtsi
-@@ -1910,8 +1910,8 @@
-                         timer11: timer@0 {
-                                 compatible = "ti,omap5430-timer";
-                                 reg = <0x0 0x80>;
--                               clocks = <&l4per_clkctrl 
-DRA7_L4PER_TIMER11_CLKCTRL 24>;
--                               clock-names = "fck";
-+                               clocks = <&l4per_clkctrl 
-DRA7_L4PER_TIMER11_CLKCTRL 24>, <&timer_sys_clk_div>;
-+                               clock-names = "fck", "timer_sys_ck";
-                                 interrupts = <GIC_SPI 42 
-IRQ_TYPE_LEVEL_HIGH>;
-                         };
-                 };
+  .fw_name = "xo",
+  .name = "xo_board",
 
-I will post these changes along with other DTS patches once the time is 
-right. For now, I will just drop these aliases completely.
+This ensures the backwards compatibility (when using global lookup),
+without complicating the node-local naming.
 
--Tero
+Regards,
+Bjorn
 
+> +			},						\
+>  			.num_parents = 1,				\
+>  		},							\
+>  	};								\
+> @@ -110,7 +113,10 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+>  		.hw.init = &(struct clk_init_data){			\
+>  			.ops = &clk_rpmh_ops,				\
+>  			.name = #_name_active,				\
+> -			.parent_names = (const char *[]){ "xo_board" },	\
+> +			.parent_data =  &(const struct clk_parent_data){ \
+> +					.fw_name = "xo_board",		\
+> +					.name = "xo_board",		\
+> +			},						\
+>  			.num_parents = 1,				\
+>  		},							\
+>  	}
+> -- 
+> 2.20.1
 > 
-> regards
-> Suman
-> 
->>
->> regards
->> Suman
->>
->>>
->>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>> ---
->>>   drivers/clk/ti/clk-7xx.c | 1 +
->>>   1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
->>> index 5208eb8..64507b8 100644
->>> --- a/drivers/clk/ti/clk-7xx.c
->>> +++ b/drivers/clk/ti/clk-7xx.c
->>> @@ -792,6 +792,7 @@
->>>   static struct ti_dt_clk dra7xx_clks[] = {
->>>   	DT_CLK(NULL, "timer_32k_ck", "sys_32k_ck"),
->>>   	DT_CLK(NULL, "sys_clkin_ck", "timer_sys_clk_div"),
->>> +	DT_CLK(NULL, "timer_sys_ck", "timer_sys_clk_div"),
->>>   	DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
->>>   	DT_CLK(NULL, "atl_dpll_clk_mux", "atl-clkctrl:0000:24"),
->>>   	DT_CLK(NULL, "atl_gfclk_mux", "atl-clkctrl:0000:26"),
->>>
->>
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
