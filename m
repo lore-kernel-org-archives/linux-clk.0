@@ -2,170 +2,125 @@ Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDE8AC3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 14:55:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31F5C3A59F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 16:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB39F20679
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 14:55:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA61A206BA
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 16:45:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZIQIzeKY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732400AbfHZOzg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 10:55:36 -0400
-Received: from muru.com ([72.249.23.125]:58640 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732396AbfHZOzg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Aug 2019 10:55:36 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 96AAC80AA;
-        Mon, 26 Aug 2019 14:56:02 +0000 (UTC)
-Date:   Mon, 26 Aug 2019 07:55:30 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        devicetree@vger.kernel.org, Adam Ford <aford173@gmail.com>,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        "H. Nikolaus Schaller" <hns@goldelico.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        moaz korena <moaz@korena.xyz>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 4/6] ARM: dts: Configure sgx for omap5
-Message-ID: <20190826145530.GT52127@atomide.com>
-References: <20190814131408.57162-1-tony@atomide.com>
- <20190814131408.57162-5-tony@atomide.com>
- <20190815182348.8A1BA2063F@mail.kernel.org>
- <20190817065615.GI52127@atomide.com>
+        id S1732996AbfHZQpU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 12:45:20 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35391 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732983AbfHZQpU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 12:45:20 -0400
+Received: by mail-wr1-f68.google.com with SMTP id k2so16001048wrq.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2019 09:45:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=AduWeROQMDkKls+kl/fLswGL+rHZfEiqcyM0mR/LCMQ=;
+        b=ZIQIzeKYCgaQGA3mvoHdMljzb0wEi7oer9LTbZr5HMpxDFPOgxtKb6VqdW862YV8km
+         04stCMBB1CU0drEjv/HuwbCLA/Jd1m4jBj2IX5eP5GcLNb5H0y96of/8RLrgkCVmJDiA
+         t6avVK9FSWPEWWBcj4zHGwA+FTc9+7NYbGw2PSPIWtdzIIsiVV33OHd06oRpaEnDWfjN
+         kAPZ/UIGq3FLf5aMXUUhbColc9tbabiobhcFIRuv2HQxs7FFIh+m2bjFJ1v2eRfkr8lt
+         L8NkMZsn9ZC+KG+n8ZrT/975M13k6QJZKo3CsK2SJT13L/Z7K/MRW8HEtqxwztb/2Xk0
+         6QVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=AduWeROQMDkKls+kl/fLswGL+rHZfEiqcyM0mR/LCMQ=;
+        b=syR7NCtFZbEFIeOg1Zn2Ow+mc+DjDbK0wLyUkoIMkiIFVPv5VGsy/vBLWwOcqn2NSx
+         gqJPiJyH8tjyLc4/yZ7+lLyqRrKTkafQiMUkRNiVeBnE7URDsy9ijJDXPhXwxtv8VZ9Q
+         Bzltl4Mxnr15EXkv2g+FR2hrlOfkEWKitMBk01rIHDbzbpi3KnBXanjpLqC2wIgVlV/G
+         PlgbppfIZ6qptav2p3UB/oIxdJ5eZUYK1Vu9HyrQyCUJSmfMNZnAGFJwpGx1uPB5kYGD
+         s4S08tqmbNXiEekYeERVNzM+Ru5YPx3uS0zxCF5mz47raVPab6/K8Le+ELz5ZmzKEF1M
+         L8Lg==
+X-Gm-Message-State: APjAAAUvJhVc5ojGEHFvwF4vSbBXmIc4vQothtKewB4SIS6ZPOM0JGe1
+        oMtW6dVdWPcxjfY/Hc/N9hZioA==
+X-Google-Smtp-Source: APXvYqy0keQA67hzBHSf6JmnEJPjZvrevuThhyTnApH6TfZIBG2gotXVyRWSN+8mPw7MptkOjV1tqw==
+X-Received: by 2002:a5d:610d:: with SMTP id v13mr24331376wrt.249.1566837918384;
+        Mon, 26 Aug 2019 09:45:18 -0700 (PDT)
+Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id l62sm77872wml.13.2019.08.26.09.45.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 26 Aug 2019 09:45:17 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
+        agross@kernel.org, mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, niklas.cassel@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 5/5] clk: qcom: hfpll: CLK_IGNORE_UNUSED
+Date:   Mon, 26 Aug 2019 18:45:10 +0200
+Message-Id: <20190826164510.6425-5-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org>
+References: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190817065615.GI52127@atomide.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Tony Lindgren <tony@atomide.com> [190817 06:56]:
-> * Stephen Boyd <sboyd@kernel.org> [190815 18:24]:
-> > Quoting Tony Lindgren (2019-08-14 06:14:06)
-> > > diff --git a/arch/arm/boot/dts/omap54xx-clocks.dtsi b/arch/arm/boot/dts/omap54xx-clocks.dtsi
-> > > --- a/arch/arm/boot/dts/omap54xx-clocks.dtsi
-> > > +++ b/arch/arm/boot/dts/omap54xx-clocks.dtsi
-> > > @@ -1146,6 +1146,20 @@
-> > >                 };
-> > >         };
-> > >  
-> > > +       gpu_cm: gpu_cm@1500 {
-> > 
-> > Node names shouldn't have underscores. Maybe clock-controller?
-> 
-> OK yeah clock-controller sounds good to me.
+When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
+to keep the software model of the clock in line with reality, the
+framework transverses the clock tree and disables those clocks that
+were enabled by the firmware but have not been enabled by any device
+driver.
 
-Below is this one updated to use clock-controller naming.
+If CPUFREQ is enabled, early during the system boot, it might attempt
+to change the CPU frequency ("set_rate"). If the HFPLL is selected as
+a provider, it will then change the rate for this clock.
 
-Regards,
+As boot continues, clk_disable_unused_subtree will run. Since it wont
+find a valid counter (enable_count) for a clock that is actually
+enabled it will attempt to disable it which will cause the CPU to
+stop. Notice that in this driver, calls to check whether the clock is
+enabled are routed via the is_enabled callback which queries the
+hardware.
 
-Tony
+The following commit, rather than marking the clock critical and
+forcing the clock to be always enabled, addresses the above scenario
+making sure the clock is not disabled but it continues to rely on the
+firmware to enable the clock.
 
-8< ---------------------------
-From tony Mon Sep 17 00:00:00 2001
-From: Tony Lindgren <tony@atomide.com>
-Date: Wed, 14 Aug 2019 05:18:16 -0700
-Subject: [PATCH] ARM: dts: Configure sgx for omap5
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-I've tested that the interconnect target module enables and idles
-just fine when probed with ti-sysc with PM runtime control via sys:
-
-# echo on > $(find /sys -name control | grep \/5600)
-# rwmem 0x5600fe00	# OCP Revision
-0x5600fe00 = 0x40000000
-# echo auto > $(find /sys -name control | grep \/5600)
-# rwmem 0x5600fe10
-# rwmem 0x56000024
-
-Cc: Adam Ford <aford173@gmail.com>
-Cc: Filip Matijević <filip.matijevic.pz@gmail.com>
-Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
-Cc: moaz korena <moaz@korena.xyz>
-Cc: Merlijn Wajer <merlijn@wizzup.org>
-Cc: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-Cc: Philipp Rossak <embed3d@gmail.com>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- arch/arm/boot/dts/omap5.dtsi           | 23 +++++++++++++++++++++++
- arch/arm/boot/dts/omap54xx-clocks.dtsi | 14 ++++++++++++++
- 2 files changed, 37 insertions(+)
+ drivers/clk/qcom/hfpll.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm/boot/dts/omap5.dtsi b/arch/arm/boot/dts/omap5.dtsi
---- a/arch/arm/boot/dts/omap5.dtsi
-+++ b/arch/arm/boot/dts/omap5.dtsi
-@@ -257,6 +257,29 @@
- 			ports-implemented = <0x1>;
- 		};
- 
-+		target-module@56000000 {
-+			compatible = "ti,sysc-omap4", "ti,sysc";
-+			reg = <0x5600fe00 0x4>,
-+			      <0x5600fe10 0x4>;
-+			reg-names = "rev", "sysc";
-+			ti,sysc-midle = <SYSC_IDLE_FORCE>,
-+					<SYSC_IDLE_NO>,
-+					<SYSC_IDLE_SMART>;
-+			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-+					<SYSC_IDLE_NO>,
-+					<SYSC_IDLE_SMART>;
-+			clocks = <&gpu_clkctrl OMAP5_GPU_CLKCTRL 0>;
-+			clock-names = "fck";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			ranges = <0 0x56000000 0x2000000>;
-+
-+			/*
-+			 * Closed source PowerVR driver, no child device
-+			 * binding or driver in mainline
-+			 */
-+		};
-+
- 		dss: dss@58000000 {
- 			compatible = "ti,omap5-dss";
- 			reg = <0x58000000 0x80>;
-diff --git a/arch/arm/boot/dts/omap54xx-clocks.dtsi b/arch/arm/boot/dts/omap54xx-clocks.dtsi
---- a/arch/arm/boot/dts/omap54xx-clocks.dtsi
-+++ b/arch/arm/boot/dts/omap54xx-clocks.dtsi
-@@ -1146,6 +1146,20 @@
- 		};
+diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
+index 0ffed0d41c50..d5fd27938e7b 100644
+--- a/drivers/clk/qcom/hfpll.c
++++ b/drivers/clk/qcom/hfpll.c
+@@ -58,6 +58,13 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+ 		.parent_names = (const char *[]){ "xo" },
+ 		.num_parents = 1,
+ 		.ops = &clk_ops_hfpll,
++		/*
++		 * rather than marking the clock critical and forcing the clock
++		 * to be always enabled, we make sure that the clock is not
++		 * disabled: the firmware remains responsible of enabling this
++		 * clock (for more info check the commit log)
++		 */
++		.flags = CLK_IGNORE_UNUSED,
  	};
  
-+	gpu_cm: clock-controller@1500 {
-+		compatible = "ti,omap4-cm";
-+		reg = <0x1500 0x100>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0 0x1500 0x100>;
-+
-+		gpu_clkctrl: clk@20 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x20 0x4>;
-+			#clock-cells = <2>;
-+		};
-+	};
-+
- 	l3init_cm: l3init_cm@1600 {
- 		compatible = "ti,omap4-cm";
- 		reg = <0x1600 0x100>;
+ 	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
 -- 
-2.23.0
+2.22.0
+
