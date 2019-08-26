@@ -2,120 +2,114 @@ Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6277AC3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 11:54:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33859C3A59F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 11:59:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 340BA2184D
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 11:54:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nLBZKlrp"
+	by mail.kernel.org (Postfix) with ESMTP id F2B1D2187F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 11:59:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729813AbfHZLyx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 07:54:53 -0400
-Received: from mail-wm1-f43.google.com ([209.85.128.43]:36624 "EHLO
-        mail-wm1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727182AbfHZLyw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 07:54:52 -0400
-Received: by mail-wm1-f43.google.com with SMTP id g67so15544778wme.1
-        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2019 04:54:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version;
-        bh=mIqaLu1SfbTpcrgwTVGCf5VhKM6jJiI/OPInMvNVNQk=;
-        b=nLBZKlrpvXm1nWOcbAsECca5e0S2Ae/0uyRtQYoXtsFLBnsa2+6YrtEt7b1adoQdrQ
-         pv2PWNPeyCm9jX6k5iPXbVDs4K49YAtBcVG6OCWIiU4Ih3P47bimIX/ZB2W0pDx/Phbv
-         r3jYbGsbC1ilCY4PpFU2krNt1Q9RAAKQjEcKSaBp1oBtmP5zToFNrootvjxWgq7vJwe5
-         Hp2PvnsUz+KIOQ/vUFptnZNee3tC6vm9ZluGib9JQmWotzVr7SpHn9clwtL0nb203BQA
-         mjJvqlgGOth3gUiRFj3jB+OWaIQszRibZ1mdkCQgXWr2cnM0dfdEPX7uxsbGVa+uiCtR
-         xhmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version;
-        bh=mIqaLu1SfbTpcrgwTVGCf5VhKM6jJiI/OPInMvNVNQk=;
-        b=CtP0coZpG8rWL77+vuk3BoDK8hlR2U8pF7KDSBpofBU7GVh9ohiQP+UR7Tvwv/xtVD
-         rr/9HpYyvc43kPCVdVQQZydyZldj6uTwszRIzwfznoEYlKNoIhKYXvKt3Cmj1LNDyM7X
-         8hQhUDqPJ0NAy/wn0+X9opX2C3Z+TxNpUaxBEXwNde+ga5G1vnwvAXIWNeVl6fwA943/
-         9Mbc5S+xRF6Ui/dRG5oySwNxlRXF5M3rwUmyCowYCv64M02AXnkwFmTCmYTU2ZJFDeEc
-         DR7iDV/KJd0+9TrsuA2suAlrTDUnLLIADC/Mp1TllP4YIwr1xZj/IqMH76q6DDovZgDy
-         kFew==
-X-Gm-Message-State: APjAAAXaL4pG/E5tg1nLlw1rMMrX4E/F9lXALJUH4NKJ7SqVQktyU013
-        M0SWnOhhOmn6L8NSzCGvv1X1Jw==
-X-Google-Smtp-Source: APXvYqwZZ+OBS8TLO989Qm5py1pa4UCf/gKyA4eL6sJJOOXQTSkJpV+ttv3x/MrQpX4ILXdpkX3nmw==
-X-Received: by 2002:a1c:9e4b:: with SMTP id h72mr20358120wme.99.1566820490663;
-        Mon, 26 Aug 2019 04:54:50 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f134sm20897712wmg.20.2019.08.26.04.54.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2019 04:54:50 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: [GIT PULL] clk: meson: 2nd round of updates for 5.4
-Date:   Mon, 26 Aug 2019 13:54:49 +0200
-Message-ID: <1j8srg6t12.fsf@starbuckisacylon.baylibre.com>
+        id S1731160AbfHZL7l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 07:59:41 -0400
+Received: from shell.v3.sk ([90.176.6.54]:57265 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731060AbfHZL7l (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Aug 2019 07:59:41 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id DEB47D7E57;
+        Mon, 26 Aug 2019 13:59:35 +0200 (CEST)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 55msylzmP3Vl; Mon, 26 Aug 2019 13:59:29 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 62D99D7E55;
+        Mon, 26 Aug 2019 13:59:29 +0200 (CEST)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id xuimRokRPtg9; Mon, 26 Aug 2019 13:59:28 +0200 (CEST)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 368ECD7E54;
+        Mon, 26 Aug 2019 13:59:28 +0200 (CEST)
+Message-ID: <481e832401c148baf222639f10f494b90dcd23c9.camel@v3.sk>
+Subject: Re: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Marc Zyngier <maz@kernel.org>, Olof Johansson <olof@lixom.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+Date:   Mon, 26 Aug 2019 13:59:27 +0200
+In-Reply-To: <08a0e65e-4a80-f611-e36e-8e3f70fa8113@kernel.org>
+References: <20190822092643.593488-1-lkundrak@v3.sk>
+         <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
+         <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
+         <08a0e65e-4a80-f611-e36e-8e3f70fa8113@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, 2019-08-23 at 10:42 +0100, Marc Zyngier wrote:
+> On 23/08/2019 08:21, Lubomir Rintel wrote:
+> > On Thu, 2019-08-22 at 11:31 +0100, Marc Zyngier wrote:
+> > > On 22/08/2019 10:26, Lubomir Rintel wrote:
+> > > > Hi, 
+> > > > 
+> > > > this is a second spin of a patch set that adds support for the Marvell
+> > > > MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
+> > > > FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients. 
+> > > > 
+> > > > Compared to v1, there's a handful of fixes in response to reviews. Patch
+> > > > 02/20 is new. Details in individual patches.
+> > > >  
+> > > > Apart from the adjustments in mach-mmp/, the patch makes necessary 
+> > > > changes to the irqchip driver and adds an USB2 PHY driver. The latter 
+> > > > has a dependency on the mach-mmp/ changes, so it can't be submitted 
+> > > > separately.
+> > > >  
+> > > > The patch set has been tested to work on Wyse Tx0D and not ruin MMP2 
+> > > > support on XO-1.75. 
+> > > 
+> > > How do you want this series to be merged? I'm happy to take the irqchip
+> > > related patches as well as the corresponding DT change (once reviewed)
+> > > through my tree.
+> > 
+> > I was hoping for the Arm SoC tree, because there are some dependencies
+> > (MMP3 USB PHY depends on MMP3 SoC).
+> > 
+> > That said, the irqchip patches are rather independent and the only
+> > downside of them going in via a different tree will be that the other
+> > tree that will lack them won't boot on MMP3 (things will compile
+> > though). I don't know if that's okay. What's typically done in cases
+> > like these?
+> 
+> I usually take the irqchip patches that can be built standalone (without
+> dependency on header files, for example). If you want them to go via
+> another tree, stick my
+> 
+> 	Acked-by: Marc Zyngier <maz@kernel.org>
+> 
+> on patches #6 through #9.
 
-Dear clock maintainers,
+Actually, please go ahead and pick the irqchip patches into your tree.
 
-Below is a request to pull another batch of Amlogic clock updates for
-v5.4. It brings reset support in the for the g12a audio controller and
-sm1 support in the main clock controller.
+The rest of the patch set may need a couple more spins, and it will be
+nice if it gets shorter.
 
-Cheers
-Jerome
+Thank you
+Lubo
 
-The following changes since commit 1d97657a4794ab23b47bd9921978ddd82569fcf4:
-
-  Merge branch 'v5.4/dt' into v5.4/drivers (2019-08-09 12:12:58 +0200)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.4-2
-
-for you to fetch changes up to da3ceae4ec9f581a50dc0763710078f22d3bc72a:
-
-  clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks (2019-08-26 11:04:54 +0200)
-
-----------------------------------------------------------------
-Amlogic 2nd round of clock changes for v5.4
-
-* Add g12a reset support to the axg audio clock controller
-* Add sm1 support to the g12a clock controller
-
-----------------------------------------------------------------
-Jerome Brunet (4):
-      dt-bindings: clock: meson: add resets to the audio clock controller
-      Merge branch 'v5.4/dt' into v5.4/drivers
-      clk: meson: axg-audio: add g12a reset support
-      Merge branch 'v5.4/dt' into v5.4/drivers
-
-Neil Armstrong (4):
-      dt-bindings: clk: meson: add sm1 periph clock controller bindings
-      clk: meson: g12a: add support for SM1 GP1 PLL
-      clk: meson: g12a: add support for SM1 DynamIQ Shared Unit clock
-      clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
-
- .../bindings/clock/amlogic,axg-audio-clkc.txt      |   1 +
- .../bindings/clock/amlogic,gxbb-clkc.txt           |   1 +
- drivers/clk/meson/axg-audio.c                      | 107 +++-
- drivers/clk/meson/axg-audio.h                      |   1 +
- drivers/clk/meson/g12a.c                           | 544 +++++++++++++++++++++
- drivers/clk/meson/g12a.h                           |  24 +-
- include/dt-bindings/clock/g12a-clkc.h              |   5 +
- .../reset/amlogic,meson-g12a-audio-reset.h         |  38 ++
- 8 files changed, 718 insertions(+), 3 deletions(-)
- create mode 100644 include/dt-bindings/reset/amlogic,meson-g12a-audio-reset.h
