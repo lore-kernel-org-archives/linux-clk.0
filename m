@@ -2,336 +2,196 @@ Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3588FC41514
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 07:26:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D414C3A59E
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 09:42:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0E0A206BA
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 07:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25EDF2070B
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 09:42:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SxK04tzt"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ga8qEmMR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbfHZH0e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 03:26:34 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:56001 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727963AbfHZH0e (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 03:26:34 -0400
-Received: by mail-wm1-f66.google.com with SMTP id f72so14409953wmf.5
-        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2019 00:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=eMztcD5T3f6mdE4zYfhwD64KmaOGDT/GGN6RKYoRptA=;
-        b=SxK04tzt9VTk4oLl4TMi54tt1C+lE3qmqtJVTwrYz4s7xxeSx0sCVeoZANY89ZXKWt
-         1hEORciFxGmvfT37VS3tqS0EjKrCJcsF4AdMKb50LqHLNc5rpbefxpBJrwoHzJSaDOM4
-         9nulyZJw4CWT/BCpZfNIZytitTCiho7QaLotGamvP4NE3qzen30gLD/g+9LeZYqKLq6Y
-         0qd2WtlG4WMmalNIYAb24pSbkI9lDezFMcgZz4QSu8DZ81mNH6+ashK3ack36L4W/5Wo
-         3RI3PB4euy2zNHX7x+Px8hZz56xD17e1nrUY199s87V6sVsLCn52UfJcxSUbFeJgr6oN
-         xsbA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=eMztcD5T3f6mdE4zYfhwD64KmaOGDT/GGN6RKYoRptA=;
-        b=OggGQPzLY3eCN26VNV8siTQbQP5Ux1b6vqratyvcJ3pqQgKzE7NPzvkPB5bAqP1i9q
-         4F5nJmFknlVaOJZi/TQ298QpYFugN4u99Bs50IkyhXI6AhiOwh6hzVTBCVJl46+nDGcj
-         YnEt1wD/1ZqjTMNGJc6uZLCU6Hpya/9Dc+FdBKqe4S7mdpT9eh6zER9Ms+C5TISlNiqT
-         FOM9YhfyUnmRcbQwRWsHNnkR0FZ0WFjCrnuAB24CQaD5omAd3qZz7sjxa2TqBVkWJtER
-         HcFWhTZaW/uWDUyYRuUbEhG7AtEJw65ypbKJc5fxQSumSxP/L8mjvLShaJmuaN8dwc0P
-         WuUg==
-X-Gm-Message-State: APjAAAWk11qqS33zihiuV1ILpUzajXBjK1Qed8YPpGJQJ2i6uUqu/6Vc
-        KQ/h+sIujFnnGZOvx8eHRWR7p2GTD3xOKg==
-X-Google-Smtp-Source: APXvYqxjv84TSy0MwgeJAa+e+vhl7LhblxZmbqjR07kjZZnQefi++a6lFhbIRLUhnItrU9SlqvwTtA==
-X-Received: by 2002:a1c:f916:: with SMTP id x22mr19797372wmh.156.1566804390416;
-        Mon, 26 Aug 2019 00:26:30 -0700 (PDT)
-Received: from [10.1.2.12] (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id a6sm9720095wmj.15.2019.08.26.00.26.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 26 Aug 2019 00:26:29 -0700 (PDT)
-Subject: Re: [PATCH v2 5/5] arm64: dts: meson-sm1-sei610: enable DVFS
-To:     khilman@baylibre.com, jbrunet@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20190826072539.27725-1-narmstrong@baylibre.com>
- <20190826072539.27725-6-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- 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
- ZaTUOEkgIor5losDrePdPgE=
-Organization: Baylibre
-Message-ID: <16322ca1-d66d-ccab-adf1-eddc51746305@baylibre.com>
-Date:   Mon, 26 Aug 2019 09:26:29 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190826072539.27725-6-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
+        id S1729410AbfHZJm5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 05:42:57 -0400
+Received: from mail-eopbgr60048.outbound.protection.outlook.com ([40.107.6.48]:9346
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726266AbfHZJm5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Aug 2019 05:42:57 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HodChanQkoFD8BPABuFE8PRg0k/77d7WGWkn5nroQog91QhGkDquVTLXTj+DTGD5+14wcdyEIKxDItHS1wXLWWdVIlAyy3bXS9EDVIzEkP5uzUDFwn1jZCeQXsKeJV/gty32A1m1/1sofNnx3qMaUO1U85h4Z28SHY0dEJzMuTQIaYiv3iS9GmRedRzaJnKlZbHXqulwNNCh1NVE0hF9ldVGCnFxCZOX39u7liMXRVjkaS3rc4h+BfSKpJpwUnPjQDNHtDv/Ki4Z5C0HRncDRuKMc6f5gIdTwH9/Y6akQf2XnTsPBRvASaxF/QQ2NY563INcyTsu7xHyPKfdfLuSPA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A11c6YqLZ+w8YbRtLdr11LAUgnZRPRhPzG6+nMim9Hw=;
+ b=Epc2Su5qfI8EIzP/DP8/S7eVkXiJrtiKweG0+NA5vAdkSmMJU17HsCqI9DDXxkQmRGwj/Sub7z/c45oFoaRFzeZ2zSNdKM0hcrzB9wIarfcdyVEQHeB9hnBUHL4be4NekbnKtLUBiRmeCdQ3+fI6lSo0AQDCZvVIromGaYXgHgn1zrrSTEkQa5jaJT7nJ3+jCC4rHK87tTtsaM52qqsoEJXjfq7ESUn/JW2aVVs1PlgLQviaHNKkHz/jp4XsMTTE90YvwOAFmPig4CT4ZUpHtZzkoRW85gl8tFtr4zIvimXd1+OrG8wRRgpRUy+s4P8naQ53Pz5USu3QRnuG7lNa0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=A11c6YqLZ+w8YbRtLdr11LAUgnZRPRhPzG6+nMim9Hw=;
+ b=Ga8qEmMRz80oX6LM7dZzMtrisnaSe2r1BWDGTBxN491ufUT2OFVyZtQKrXOZSnnkI358N5d6nvebanRo/fCqP2h/KV47L4E7kyuFQpJnPOF48prZPwrLTbmduwX+ohRYQkt6p1kAbp9X3yM0ugXjeVtI/+uknLPeB3p2gdckbMw=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB4194.eurprd04.prod.outlook.com (52.134.126.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Mon, 26 Aug 2019 09:42:14 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4%4]) with mapi id 15.20.2178.022; Mon, 26 Aug 2019
+ 09:42:14 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH V2 1/4] clk: imx: pll14xx: avoid glitch when set rate
+Thread-Topic: [PATCH V2 1/4] clk: imx: pll14xx: avoid glitch when set rate
+Thread-Index: AQHVW/KK74JBQxFn0kSNJpxYwL3XVQ==
+Date:   Mon, 26 Aug 2019 09:42:14 +0000
+Message-ID: <1566855676-11510-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR04CA0047.apcprd04.prod.outlook.com
+ (2603:1096:202:14::15) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 50cafe09-948c-4e55-0c99-08d72a09acf0
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB4194;
+x-ms-traffictypediagnostic: AM0PR04MB4194:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB4194C75557579220DED810D088A10@AM0PR04MB4194.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1751;
+x-forefront-prvs: 01415BB535
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(39860400002)(136003)(376002)(43544003)(189003)(199004)(478600001)(2501003)(25786009)(66066001)(81166006)(81156014)(66476007)(44832011)(7736002)(486006)(305945005)(2616005)(476003)(36756003)(8676002)(66946007)(66556008)(66446008)(64756008)(14454004)(316002)(110136005)(54906003)(6116002)(256004)(14444005)(8936002)(50226002)(2201001)(99286004)(4326008)(6512007)(2906002)(86362001)(53936002)(386003)(71200400001)(71190400001)(6506007)(102836004)(186003)(26005)(5660300002)(52116002)(3846002)(6436002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4194;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: bAiVVXYMZcvfiSsmqHplSZmcwSALF01eVPT8IVFRFZ9r/UDIX0uHQrdHvNZ8+R6VxflTP08qGNACRbrrvHCnlRBrf4haL2sHKjyfwt6STGkn0MloFzRSN/QFrpwF+dPvMWxYwSAXjpvPDENkzbI8qR2uAMIam3dyFhYyrC+vJX35xwpNYIcQMTCV3MQz5f4eAsnaoDj5AFg+3XwMvQdCjfcUIM2nLcDcomUKxRNww31jzzOYspYZfMvOsQnndoKFTYaZvpEq/dwy4lAg9Ao3sgggWU6+cs9hPkvK6cidWRzsBCV/phOj2Ms1uMRB3TmIsMJioTHZRWACGZDRis4AmKF776a20/0v1Xppo2zGlErqQYKiWriBO9RRO0UWIZjHhBG+4W0M3cX3GiRRHXtyg57RYOrP5+9vT/8x5Orqbc0=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50cafe09-948c-4e55-0c99-08d72a09acf0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Aug 2019 09:42:14.2608
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AbfXkPej4cyNWw2QpctKGhPTEaqWX6SIzEPZytrzML+Pj1UYgVxBJLSB8VF9RKbwn68mtHNVkQR3PGo39YEL5Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4194
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 26/08/2019 09:25, Neil Armstrong wrote:
-> This enables DVFS for the Amlogic SM1 based SEI610 board by:
-> - Adding the SM1 SoC OPPs taken from the vendor tree
-> - Selecting the SM1 Clock controller instead of the G12A one
-> - Adding the CPU rail regulator, PWM and OPPs for each CPU nodes.
-> 
-> Each power supply can achieve 0.69V to 1.05V using a single PWM
-> output clocked at 666KHz with an inverse duty-cycle.
-> 
-> DVFS has been tested by running the arm64 cpuburn at [1] and cycling
-> between all the possible cpufreq translations of the cpu cluster and
-> checking the final frequency using the clock-measurer, script at [2].
-> 
-> [1] https://github.com/ssvb/cpuburn-arm/blob/master/cpuburn-a53.S
-> [2] https://gist.github.com/superna9999/d4de964dbc0f84b7d527e1df2ddea25f
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-Sorry forgot:
-Reviewed-by: Kevin Hilman <khilman@baylibre.com>
-Tested-by: Kevin Hilman <khilman@baylibre.com>
+According to PLL1443XA and PLL1416X spec,
+"When BYPASS is 0 and RESETB is changed from 0 to 1, FOUT starts to
+output unstable clock until lock time passes. PLL1416X/PLL1443XA may
+generate a glitch at FOUT."
 
-> ---
->  .../boot/dts/amlogic/meson-sm1-sei610.dts     | 59 ++++++++++++++--
->  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    | 69 +++++++++++++++++++
->  2 files changed, 124 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-> index 36ac2e4b970d..69966e2e0611 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1-sei610.dts
-> @@ -19,10 +19,6 @@
->  		ethernet0 = &ethmac;
->  	};
->  
-> -	chosen {
-> -		stdout-path = "serial0:115200n8";
-> -	};
-> -
->  	emmc_pwrseq: emmc-pwrseq {
->  		compatible = "mmc-pwrseq-emmc";
->  		reset-gpios = <&gpio BOOT_12 GPIO_ACTIVE_LOW>;
-> @@ -136,6 +132,25 @@
->  		regulator-always-on;
->  	};
->  
-> +	vddcpu: regulator-vddcpu {
-> +		/*
-> +		 * SY8120B1ABC DC/DC Regulator.
-> +		 */
-> +		compatible = "pwm-regulator";
-> +
-> +		regulator-name = "VDDCPU";
-> +		regulator-min-microvolt = <690000>;
-> +		regulator-max-microvolt = <1050000>;
-> +
-> +		vin-supply = <&dc_in>;
-> +
-> +		pwms = <&pwm_AO_cd 1 1500 0>;
-> +		pwm-dutycycle-range = <100 0>;
-> +
-> +		regulator-boot-on;
-> +		regulator-always-on;
-> +	};
-> +
->  	vddio_ao1v8: regulator-vddio_ao1v8 {
->  		compatible = "regulator-fixed";
->  		regulator-name = "VDDIO_AO1V8";
-> @@ -182,6 +197,34 @@
->  	hdmi-phandle = <&hdmi_tx>;
->  };
->  
-> +&cpu0 {
-> +	cpu-supply = <&vddcpu>;
-> +	operating-points-v2 = <&cpu_opp_table>;
-> +	clocks = <&clkc CLKID_CPU_CLK>;
-> +	clock-latency = <50000>;
-> +};
-> +
-> +&cpu1 {
-> +	cpu-supply = <&vddcpu>;
-> +	operating-points-v2 = <&cpu_opp_table>;
-> +	clocks = <&clkc CLKID_CPU1_CLK>;
-> +	clock-latency = <50000>;
-> +};
-> +
-> +&cpu2 {
-> +	cpu-supply = <&vddcpu>;
-> +	operating-points-v2 = <&cpu_opp_table>;
-> +	clocks = <&clkc CLKID_CPU2_CLK>;
-> +	clock-latency = <50000>;
-> +};
-> +
-> +&cpu3 {
-> +	cpu-supply = <&vddcpu>;
-> +	operating-points-v2 = <&cpu_opp_table>;
-> +	clocks = <&clkc CLKID_CPU3_CLK>;
-> +	clock-latency = <50000>;
-> +};
-> +
->  &ethmac {
->  	status = "okay";
->  	phy-handle = <&internal_ephy>;
-> @@ -220,6 +263,14 @@
->  	clock-names = "clkin0";
->  };
->  
-> +&pwm_AO_cd {
-> +	pinctrl-0 = <&pwm_ao_d_e_pins>;
-> +	pinctrl-names = "default";
-> +	clocks = <&xtal>;
-> +	clock-names = "clkin1";
-> +	status = "okay";
-> +};
-> +
->  &pwm_ef {
->  	status = "okay";
->  	pinctrl-0 = <&pwm_e_pins>;
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-> index 37064d7f66c1..2b61406b0610 100644
-> --- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-> +++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-> @@ -50,6 +50,71 @@
->  			compatible = "cache";
->  		};
->  	};
-> +
-> +	cpu_opp_table: opp-table {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp-100000000 {
-> +			opp-hz = /bits/ 64 <100000000>;
-> +			opp-microvolt = <730000>;
-> +		};
-> +
-> +		opp-250000000 {
-> +			opp-hz = /bits/ 64 <250000000>;
-> +			opp-microvolt = <730000>;
-> +		};
-> +
-> +		opp-500000000 {
-> +			opp-hz = /bits/ 64 <500000000>;
-> +			opp-microvolt = <730000>;
-> +		};
-> +
-> +		opp-667000000 {
-> +			opp-hz = /bits/ 64 <666666666>;
-> +			opp-microvolt = <750000>;
-> +		};
-> +
-> +		opp-1000000000 {
-> +			opp-hz = /bits/ 64 <1000000000>;
-> +			opp-microvolt = <770000>;
-> +		};
-> +
-> +		opp-1200000000 {
-> +			opp-hz = /bits/ 64 <1200000000>;
-> +			opp-microvolt = <780000>;
-> +		};
-> +
-> +		opp-1404000000 {
-> +			opp-hz = /bits/ 64 <1404000000>;
-> +			opp-microvolt = <790000>;
-> +		};
-> +
-> +		opp-1512000000 {
-> +			opp-hz = /bits/ 64 <1500000000>;
-> +			opp-microvolt = <800000>;
-> +		};
-> +
-> +		opp-1608000000 {
-> +			opp-hz = /bits/ 64 <1608000000>;
-> +			opp-microvolt = <810000>;
-> +		};
-> +
-> +		opp-1704000000 {
-> +			opp-hz = /bits/ 64 <1704000000>;
-> +			opp-microvolt = <850000>;
-> +		};
-> +
-> +		opp-1800000000 {
-> +			opp-hz = /bits/ 64 <1800000000>;
-> +			opp-microvolt = <900000>;
-> +		};
-> +
-> +		opp-1908000000 {
-> +			opp-hz = /bits/ 64 <1908000000>;
-> +			opp-microvolt = <950000>;
-> +		};
-> +	};
->  };
->  
->  &cecb_AO {
-> @@ -60,6 +125,10 @@
->  	compatible = "amlogic,meson-sm1-clk-measure";
->  };
->  
-> +&clkc {
-> +	compatible = "amlogic,sm1-clkc";
-> +};
-> +
->  &ethmac {
->  	power-domains = <&pwrc PWRC_SM1_ETH_ID>;
->  };
-> 
+So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.
+In the end of set rate, BYPASS will be cleared.
+
+When prepare clock, also need to take care to avoid glitch. So
+we also follow Spec to set BYPASS before RESETB changed from 0 to 1.
+And add a check if the RESETB is already 0, directly return 0;
+
+Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+
+V2:
+  Avoid glitch when prepare
+  update commit log
+
+ drivers/clk/imx/clk-pll14xx.c | 22 +++++++++++++++++++++-
+ 1 file changed, 21 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index b7213023b238..656f48b002dd 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -191,6 +191,10 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, un=
+signed long drate,
+ 	tmp &=3D ~RST_MASK;
+ 	writel_relaxed(tmp, pll->base);
+=20
++	/* Enable BYPASS */
++	tmp |=3D BYPASS_MASK;
++	writel(tmp, pll->base);
++
+ 	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
+ 		(rate->sdiv << SDIV_SHIFT);
+ 	writel_relaxed(div_val, pll->base + 0x4);
+@@ -250,6 +254,10 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, un=
+signed long drate,
+ 	tmp &=3D ~RST_MASK;
+ 	writel_relaxed(tmp, pll->base);
+=20
++	/* Enable BYPASS */
++	tmp |=3D BYPASS_MASK;
++	writel_relaxed(tmp, pll->base);
++
+ 	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
+ 		(rate->sdiv << SDIV_SHIFT);
+ 	writel_relaxed(div_val, pll->base + 0x4);
+@@ -283,16 +291,28 @@ static int clk_pll14xx_prepare(struct clk_hw *hw)
+ {
+ 	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
+ 	u32 val;
++	int ret;
+=20
+ 	/*
+ 	 * RESETB =3D 1 from 0, PLL starts its normal
+ 	 * operation after lock time
+ 	 */
+ 	val =3D readl_relaxed(pll->base + GNRL_CTL);
++	if (val & RST_MASK)
++		return 0;
++	val |=3D BYPASS_MASK;
++	writel_relaxed(val, pll->base + GNRL_CTL);
+ 	val |=3D RST_MASK;
+ 	writel_relaxed(val, pll->base + GNRL_CTL);
+=20
+-	return clk_pll14xx_wait_lock(pll);
++	ret =3D clk_pll14xx_wait_lock(pll);
++	if (ret)
++		return ret;
++
++	val &=3D ~BYPASS_MASK;
++	writel_relaxed(val, pll->base + GNRL_CTL);
++
++	return 0;
+ }
+=20
+ static int clk_pll14xx_is_prepared(struct clk_hw *hw)
+--=20
+2.16.4
 
