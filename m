@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B26EC3A5A4
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B642DC3A5A6
 	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 17:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC1520578
+	by mail.kernel.org (Postfix) with ESMTP id 8803321872
 	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 17:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1566840789;
-	bh=hnznFt9S7TVw1/KfY6zUnuJXYTwixNogOEE40VUowrI=;
+	bh=Q7kiEkSXrf3gA7puG/o7zAZMeX+4Qx+gMA0f7vCks6g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=whax+6139nShkYN96sd6AOAPvFn9Et+QiK/AClzxPO+/0KZhXIL/ZfMj3FV1z8M5C
-	 d1P1yJrg/vHq937qq+Uom3i+eYZ40ptgz2vXE9gHKVGDZSy5AZY6OBQKeMscU3l3gn
-	 PuvIYGgkUnI2ctxiiFo8/Yp8ZlOlFN9D3PXlICNY=
+	b=jPHY2egJTionlpSZwW+wX0AC2HxsQqhjDyS1aMMNH1ZATFZ3LQOAWsSf/lwpYdmEt
+	 IePBeJbRoa4rK1AvforVLeM8zIxiQrMCleXrUJnCnbFl0jYAkhYyxR0CMHUaZR447A
+	 zPaseB7983N0IPEosOfwRg0kDti8DsVOqBZSsyVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733096AbfHZRc7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 13:32:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53506 "EHLO mail.kernel.org"
+        id S1732967AbfHZRcv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 13:32:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733051AbfHZRc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Aug 2019 13:32:58 -0400
+        id S1727211AbfHZRct (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Aug 2019 13:32:49 -0400
 Received: from localhost.localdomain (unknown [122.178.200.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A19D206E0;
-        Mon, 26 Aug 2019 17:32:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CDD02186A;
+        Mon, 26 Aug 2019 17:32:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566840777;
-        bh=hnznFt9S7TVw1/KfY6zUnuJXYTwixNogOEE40VUowrI=;
+        s=default; t=1566840769;
+        bh=Q7kiEkSXrf3gA7puG/o7zAZMeX+4Qx+gMA0f7vCks6g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UvgMAvgVfzaACmtxCWN9m9/V+kLe9v9ciGMkFL8QoiFF+XOzNJwABTHTJEfPdG3db
-         Lc5AhlOS7D0pCTju1ZGtL9WJzH1JCH0ZeuPi/RcBAp6d7ltJLx7bZy96hKLwCAF/vT
-         aB56W89bUBpNgzbwY7ExH6Nh8wzlTL3acMu8Mk+o=
+        b=mykDUBPXgguP2eO0Ndl8jUSCIEDDFJ9ajPgG+BH+wkFh2YBIa8pJ+57JS7ns9aekE
+         /DKuc1DgxcB+1iqXFt8vCfQoicvdGb9U4CkRQ+IQ4Yq/U8hhLvTxtNMij+/C5MO6eE
+         iu4dQ6fJErdP9Am4ZPCYofpjARUD/n6K3HUED5/I=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 3/4] dt-bindings: clock: Document SM8150 rpmh-clock compatible
-Date:   Mon, 26 Aug 2019 23:01:19 +0530
-Message-Id: <20190826173120.2971-4-vkoul@kernel.org>
+Subject: [PATCH v5 1/4] dt-bindings: clock: Document the parent clocks
+Date:   Mon, 26 Aug 2019 23:01:17 +0530
+Message-Id: <20190826173120.2971-2-vkoul@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190826173120.2971-1-vkoul@kernel.org>
 References: <20190826173120.2971-1-vkoul@kernel.org>
@@ -60,30 +60,29 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Document the SM8150 rpmh-clock compatible for rpmh clock controller
-found on SM8150 platforms.
+With clock parent data scheme we must specify the parent clocks for the
+rpmhcc nodes. So describe the parent clock for rpmhcc in the bindings.
 
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-index 8b97968f9c88..365bbde599b1 100644
+index 3c007653da31..8b97968f9c88 100644
 --- a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
 +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
-@@ -6,7 +6,9 @@ some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
- other hardware subsystems via RSC to control clocks.
- 
- Required properties :
--- compatible : shall contain "qcom,sdm845-rpmh-clk"
-+- compatible : must be one of:
-+	       "qcom,sdm845-rpmh-clk"
-+	       "qcom,sm8150-rpmh-clk"
+@@ -9,6 +9,9 @@ Required properties :
+ - compatible : shall contain "qcom,sdm845-rpmh-clk"
  
  - #clock-cells : must contain 1
- - clocks: a list of phandles and clock-specifier pairs,
++- clocks: a list of phandles and clock-specifier pairs,
++	  one for each entry in clock-names.
++- clock-names: Parent board clock: "xo".
+ 
+ Example :
+ 
 -- 
 2.20.1
 
