@@ -2,186 +2,142 @@ Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DBF6C3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 22:27:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B656DC3A59F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 23:43:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139882186A
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 22:27:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FDVodDHQ"
+	by mail.kernel.org (Postfix) with ESMTP id 841032070B
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 23:43:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566862994;
+	bh=5TX3sN6ggVjR2lC78XvpMigPOe2ekPP4Nw027KQ221Q=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=XLJOdWoNm56lBQ8m+ba1y4sjVsWRpmZnL4EWbAL4b6dXiWHeGE2TghbI6GteCIrAJ
+	 Jdf5ZgqYkKr4tqpViS7GYgTsGM35l56LzKBpPP/UIEA59jU/j+2OV3PS7VlsD1NaNI
+	 d6Vs+jaketF9cTpKOng5ZFuvKCY0FZRp7mmGcdx4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726307AbfHZW1A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 18:27:00 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:55536 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbfHZW1A (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 18:27:00 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7QMQtsc098328;
-        Mon, 26 Aug 2019 17:26:55 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566858415;
-        bh=X+GmS/I0nk1TC/rPg4uKMoK0DXcSRBQk92yvQpdkDaQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=FDVodDHQrgVrpT/1t6xnprHMUUxiCBPtY3ZtQxIxbCcd2QHKilROTb9rK8rNIwSGE
-         /UDh9uQ56uE6YykJs86/5LIBmhkxMNwEC7wviKS/hhZYeLXP1dl+5f6dqTFeHi+Xll
-         yxVoE+D9NACyjt4VFr/UmUgLpT8mwajlL4s3ASaY=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7QMQtwK130627
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 26 Aug 2019 17:26:55 -0500
-Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 26
- Aug 2019 17:26:54 -0500
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Mon, 26 Aug 2019 17:26:54 -0500
-Received: from [128.247.58.153] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7QMQsbx076867;
-        Mon, 26 Aug 2019 17:26:54 -0500
-Subject: Re: [PATCH 3/3] clk: ti: dra7xx: add timer_sys_ck clock alias
-To:     Tero Kristo <t-kristo@ti.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>
-References: <1565183079-27798-1-git-send-email-t-kristo@ti.com>
- <1565183079-27798-4-git-send-email-t-kristo@ti.com>
- <9d0edab4-cae2-50d5-2df9-42c879f2623f@ti.com>
- <b1005a98-e098-f651-d70e-c519fd740540@ti.com>
- <12f0fa92-f6e1-0e71-09da-78722f040966@ti.com>
-From:   Suman Anna <s-anna@ti.com>
-Message-ID: <78fe85dc-6349-1cd7-e0fb-b0ccd6a81ad8@ti.com>
-Date:   Mon, 26 Aug 2019 17:26:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.6.1
+        id S1726278AbfHZXnO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 19:43:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726020AbfHZXnO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Aug 2019 19:43:14 -0400
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 854F92070B;
+        Mon, 26 Aug 2019 23:43:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566862992;
+        bh=5TX3sN6ggVjR2lC78XvpMigPOe2ekPP4Nw027KQ221Q=;
+        h=From:To:Cc:Subject:Date:From;
+        b=B4ynBZ9J0oCsIxXnHNUHyuc3LzNWvyclukdm3TPnns8mvBlrb3PN3+jb9IIOdJAIj
+         xhP6hQz51Hfd+KWSte/T2prfRsPAxXF7e8eWVWKgmNRzdHKfGjVT671O61796AjPG2
+         1xtUnZPD/pMioiROesuBpxmyZA8lqsvN1V6dAq4s=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: [PATCH] clk: Evict unregistered clks from parent caches
+Date:   Mon, 26 Aug 2019 16:43:11 -0700
+Message-Id: <20190826234311.138147-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 MIME-Version: 1.0
-In-Reply-To: <12f0fa92-f6e1-0e71-09da-78722f040966@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Tero,
+We leave a dangling pointer in each clk_core::parents array that has an
+unregistered clk as a potential parent when that clk_core pointer is
+freed by clk{_hw}_unregister(). It is impossible for the true parent of
+a clk to be set with clk_set_parent() once the dangling pointer is left
+in the cache because we compare parent pointers in
+clk_fetch_parent_index() instead of checking for a matching clk name or
+clk_hw pointer.
 
-On 8/23/19 1:16 PM, Tero Kristo wrote:
->>>
->>> On 8/7/19 8:04 AM, Tero Kristo wrote:
->>>> This is needed by the TI DM timer driver.
->>>
->>> Again can do with some better patch descriptions. Similar to the
->>> previous patch, missing the equivalent patches for OMAP4 and OMAP5.
->>> You can use my downstream patches for these - [1][2][3] that has all the
->>> needed Fixes by details. Only difference is that you used a single line
->>> change on DRA7, and this should suffice since all the sources are same,
->>> but OMAP4 and OMAP5 needed different ones.
->>>
->>> [1] OMAP4:
->>> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=9d45dc42fbed8395d733366dbf6c0fd5ec171e2f
->>>
->>> [2] OMAP5:
->>> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=34f4682a91173386307b310d7f4955d46dcaaea2
->>>
->>> [3] DRA7:
->>> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=2a662694437ae7192b5ef759ec40abe796d2a058
->>>
->>>
->>> Technically, this data need to be added back for all OMAP2+ SoCs which
->>> support dmtimer with any other drivers wanting to use the timers.
->>
->> So, I checked and these aliases already are defined on OMAP2, OMAP3,
->> AM33xx, AM43xx, DM814x and DM816x SoCs. So, just include the OMAP4 and
->> OMAP5 ones along with the DRA7x one.
-> 
-> Actually, all these alias definitions can be completely removed, and can
-> be replaced with DT data. Here's sample how it can be done for dra7xx
-> timer11:
-> 
-> diff --git a/arch/arm/boot/dts/dra7-l4.dtsi
-> b/arch/arm/boot/dts/dra7-l4.dtsi
-> index bed67603c186..fafa0a131af0 100644
-> --- a/arch/arm/boot/dts/dra7-l4.dtsi
-> +++ b/arch/arm/boot/dts/dra7-l4.dtsi
-> @@ -1910,8 +1910,8 @@
->                         timer11: timer@0 {
->                                 compatible = "ti,omap5430-timer";
->                                 reg = <0x0 0x80>;
-> -                               clocks = <&l4per_clkctrl
-> DRA7_L4PER_TIMER11_CLKCTRL 24>;
-> -                               clock-names = "fck";
-> +                               clocks = <&l4per_clkctrl
-> DRA7_L4PER_TIMER11_CLKCTRL 24>, <&timer_sys_clk_div>;
-> +                               clock-names = "fck", "timer_sys_ck";
->                                 interrupts = <GIC_SPI 42
-> IRQ_TYPE_LEVEL_HIGH>;
->                         };
->                 };
-> 
-> I will post these changes along with other DTS patches once the time is
-> right. For now, I will just drop these aliases completely.
+Before commit ede77858473a ("clk: Remove global clk traversal on fetch
+parent index"), we would check clk_hw pointers, which has a higher
+chance of being the same between registration and unregistration, but it
+can still be allocated and freed by the clk provider. In fact, this has
+been a long standing problem since commit da0f0b2c3ad2 ("clk: Correct
+lookup logic in clk_fetch_parent_index()") where we stopped trying to
+compare clk names and skipped over entries in the cache that weren't
+NULL.
 
-I am not sure if this is gonna buy us anything and if it is scalable.
-The added clock is neither a functional clock nor an optional clock of
-the timer device, but is just a name to use to set the clock parent. Are
-you going to add the aliases from clk-<soc>.h to all the device nodes?
-DRA7 dmtimers can actually be parented from one of 13 clocks (driver was
-never updated to support those).
+There are good (performance) reasons to not do the global tree lookup in
+cases where the cache holds dangling pointers to parents that have been
+unregistered. Let's take the performance hit on the uncommon
+registration path instead. Loop through all the clk_core::parents arrays
+when a clk is unregistered and set the entry to NULL when the parent
+cache entry and clk being unregistered are the same pointer. This will
+fix this problem and avoid the overhead for the "normal" case.
 
-Given that the dmtimers can only be requested using phandle on DT boots,
-it is possible to eliminate the naming and rely on
-assigned-clock-parents in either the dmtimer nodes or the client nodes
-(provided all the clock parents are listed in dts), and eliminate this
-set_source logic.
+Based on a patch by Bjorn Andersson.
 
-regards
-Suman
+Fixes: da0f0b2c3ad2 ("clk: Correct lookup logic in clk_fetch_parent_index()")
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/clk.c | 30 ++++++++++++++++++++++++++++++
+ 1 file changed, 30 insertions(+)
 
-> 
-> -Tero
-> 
->>
->> regards
->> Suman
->>
->>>
->>> regards
->>> Suman
->>>
->>>>
->>>> Signed-off-by: Tero Kristo <t-kristo@ti.com>
->>>> ---
->>>>   drivers/clk/ti/clk-7xx.c | 1 +
->>>>   1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
->>>> index 5208eb8..64507b8 100644
->>>> --- a/drivers/clk/ti/clk-7xx.c
->>>> +++ b/drivers/clk/ti/clk-7xx.c
->>>> @@ -792,6 +792,7 @@
->>>>   static struct ti_dt_clk dra7xx_clks[] = {
->>>>       DT_CLK(NULL, "timer_32k_ck", "sys_32k_ck"),
->>>>       DT_CLK(NULL, "sys_clkin_ck", "timer_sys_clk_div"),
->>>> +    DT_CLK(NULL, "timer_sys_ck", "timer_sys_clk_div"),
->>>>       DT_CLK(NULL, "sys_clkin", "sys_clkin1"),
->>>>       DT_CLK(NULL, "atl_dpll_clk_mux", "atl-clkctrl:0000:24"),
->>>>       DT_CLK(NULL, "atl_gfclk_mux", "atl-clkctrl:0000:26"),
->>>>
->>>
->>
-> 
-> -- 
-> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-> Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index c0990703ce54..f3982bfa39d6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3737,6 +3737,34 @@ static const struct clk_ops clk_nodrv_ops = {
+ 	.set_parent	= clk_nodrv_set_parent,
+ };
+ 
++static void clk_core_evict_parent_cache_subtree(struct clk_core *root,
++						struct clk_core *target)
++{
++	int i;
++	struct clk_core *child;
++
++	for (i = 0; i < root->num_parents; i++)
++		if (root->parents[i].core == target)
++			root->parents[i].core = NULL;
++
++	hlist_for_each_entry(child, &root->children, child_node)
++		clk_core_evict_parent_cache_subtree(child, target);
++}
++
++/* Remove this clk from all parent caches */
++static void clk_core_evict_parent_cache(struct clk_core *core)
++{
++	struct hlist_head **lists;
++	struct clk_core *root;
++
++	lockdep_assert_held(&prepare_lock);
++
++	for (lists = all_lists; *lists; lists++)
++		hlist_for_each_entry(root, *lists, child_node)
++			clk_core_evict_parent_cache_subtree(root, core);
++
++}
++
+ /**
+  * clk_unregister - unregister a currently registered clock
+  * @clk: clock to unregister
+@@ -3775,6 +3803,8 @@ void clk_unregister(struct clk *clk)
+ 			clk_core_set_parent_nolock(child, NULL);
+ 	}
+ 
++	clk_core_evict_parent_cache(clk->core);
++
+ 	hlist_del_init(&clk->core->child_node);
+ 
+ 	if (clk->core->prepare_count)
+-- 
+Sent by a computer through tubes
 
