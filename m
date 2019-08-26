@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51788C3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 17:33:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B26EC3A5A4
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 17:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29DD62070B
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 17:33:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CC1520578
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 17:33:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566840788;
-	bh=4wFu03Ac/Jjd2z/fTVgXD079XnLR7S29H7ylY2f171Q=;
+	s=default; t=1566840789;
+	bh=hnznFt9S7TVw1/KfY6zUnuJXYTwixNogOEE40VUowrI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Sdiz8nF/tUP3H449qlSA22KFw753/EqtR2nQ7YUMsyM7TwxMD0CqLQVaaGFob3l6A
-	 YGIK9CflyQJcgbK5PMqoTGFMEGkX1abwtuaJfvmgjj4ZdA45kRhtuRNYbHAi+Q5PD+
-	 CgkAhphYPm1cDTsw6dFe52ZGoCTUJydiidyj8VJs=
+	b=whax+6139nShkYN96sd6AOAPvFn9Et+QiK/AClzxPO+/0KZhXIL/ZfMj3FV1z8M5C
+	 d1P1yJrg/vHq937qq+Uom3i+eYZ40ptgz2vXE9gHKVGDZSy5AZY6OBQKeMscU3l3gn
+	 PuvIYGgkUnI2ctxiiFo8/Yp8ZlOlFN9D3PXlICNY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730962AbfHZRdD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 13:33:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53580 "EHLO mail.kernel.org"
+        id S1733096AbfHZRc7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 13:32:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53506 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733129AbfHZRdC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Aug 2019 13:33:02 -0400
+        id S1733051AbfHZRc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Aug 2019 13:32:58 -0400
 Received: from localhost.localdomain (unknown [122.178.200.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 433F22186A;
-        Mon, 26 Aug 2019 17:32:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0A19D206E0;
+        Mon, 26 Aug 2019 17:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566840781;
-        bh=4wFu03Ac/Jjd2z/fTVgXD079XnLR7S29H7ylY2f171Q=;
+        s=default; t=1566840777;
+        bh=hnznFt9S7TVw1/KfY6zUnuJXYTwixNogOEE40VUowrI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Eg3Ijfi7eUHBdltdQHGVDDDVEn0JHoBDBxfZ8H3pIBPQaNqWJOXFsIZFUzJVp8Wkn
-         3tV/Hg6KcT6yEGLXEGuIimZtJBj6PRyg4bQmjFTaw4O9l87OmXKFWGse81UQhxkbjl
-         t/dOTdGk0YpTlH1lN9aXBoe6o+1lSB/BnBhqUP3c=
+        b=UvgMAvgVfzaACmtxCWN9m9/V+kLe9v9ciGMkFL8QoiFF+XOzNJwABTHTJEfPdG3db
+         Lc5AhlOS7D0pCTju1ZGtL9WJzH1JCH0ZeuPi/RcBAp6d7ltJLx7bZy96hKLwCAF/vT
+         aB56W89bUBpNgzbwY7ExH6Nh8wzlTL3acMu8Mk+o=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v5 4/4] clk: qcom: clk-rpmh: Add support for SM8150
-Date:   Mon, 26 Aug 2019 23:01:20 +0530
-Message-Id: <20190826173120.2971-5-vkoul@kernel.org>
+Subject: [PATCH v5 3/4] dt-bindings: clock: Document SM8150 rpmh-clock compatible
+Date:   Mon, 26 Aug 2019 23:01:19 +0530
+Message-Id: <20190826173120.2971-4-vkoul@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190826173120.2971-1-vkoul@kernel.org>
 References: <20190826173120.2971-1-vkoul@kernel.org>
@@ -60,60 +60,30 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for rpmh clocks found in SM8150
+Document the SM8150 rpmh-clock compatible for rpmh clock controller
+found on SM8150 platforms.
 
 Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 ---
- drivers/clk/qcom/clk-rpmh.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 35d55aee6a01..49694082e9ec 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -374,6 +374,33 @@ static const struct clk_rpmh_desc clk_rpmh_sdm845 = {
- 	.num_clks = ARRAY_SIZE(sdm845_rpmh_clocks),
- };
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+index 8b97968f9c88..365bbde599b1 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+@@ -6,7 +6,9 @@ some Qualcomm Technologies Inc. SoCs. It accepts clock requests from
+ other hardware subsystems via RSC to control clocks.
  
-+DEFINE_CLK_RPMH_ARC(sm8150, bi_tcxo, bi_tcxo_ao, "xo.lvl", 0x3, 2);
-+DEFINE_CLK_RPMH_VRM(sm8150, ln_bb_clk2, ln_bb_clk2_ao, "lnbclka2", 2);
-+DEFINE_CLK_RPMH_VRM(sm8150, ln_bb_clk3, ln_bb_clk3_ao, "lnbclka3", 2);
-+DEFINE_CLK_RPMH_VRM(sm8150, rf_clk1, rf_clk1_ao, "rfclka1", 1);
-+DEFINE_CLK_RPMH_VRM(sm8150, rf_clk2, rf_clk2_ao, "rfclka2", 1);
-+DEFINE_CLK_RPMH_VRM(sm8150, rf_clk3, rf_clk3_ao, "rfclka3", 1);
-+
-+static struct clk_hw *sm8150_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sm8150_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sm8150_bi_tcxo_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &sm8150_ln_bb_clk2.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &sm8150_ln_bb_clk2_ao.hw,
-+	[RPMH_LN_BB_CLK3]	= &sm8150_ln_bb_clk3.hw,
-+	[RPMH_LN_BB_CLK3_A]	= &sm8150_ln_bb_clk3_ao.hw,
-+	[RPMH_RF_CLK1]		= &sm8150_rf_clk1.hw,
-+	[RPMH_RF_CLK1_A]	= &sm8150_rf_clk1_ao.hw,
-+	[RPMH_RF_CLK2]		= &sm8150_rf_clk2.hw,
-+	[RPMH_RF_CLK2_A]	= &sm8150_rf_clk2_ao.hw,
-+	[RPMH_RF_CLK3]		= &sm8150_rf_clk3.hw,
-+	[RPMH_RF_CLK3_A]	= &sm8150_rf_clk3_ao.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
-+	.clks = sm8150_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
-+};
-+
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -453,6 +480,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+ Required properties :
+-- compatible : shall contain "qcom,sdm845-rpmh-clk"
++- compatible : must be one of:
++	       "qcom,sdm845-rpmh-clk"
++	       "qcom,sm8150-rpmh-clk"
  
- static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
-+	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+ - #clock-cells : must contain 1
+ - clocks: a list of phandles and clock-specifier pairs,
 -- 
 2.20.1
 
