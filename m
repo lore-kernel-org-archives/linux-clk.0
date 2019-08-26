@@ -2,41 +2,42 @@ Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0452C3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 12:16:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B05C3A59F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 12:16:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BE121872
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 12:16:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39976217F5
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 12:16:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566821794;
-	bh=S6oGlqVHEeMffta/FzpKQdWs0mHsBTyLqpmwkxWrE7c=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=y7A9Hqw5P/muVYOGWhjP/zRxvhn0r1WyLQJ5QsBX/dD8a9bKW4PoZxrfSq5hagyQe
-	 qhiQg2spuhby5V/zco72N4JmxHhlaEvLXfRISSI8LgF0QzPgE08Yud9HV4ZHErn1jq
-	 m/fLtsphEd2fk8+xNh+hfksOgYqsgtYOgZR9Ucxs=
+	s=default; t=1566821803;
+	bh=iwOFBOI7Gq5ajYrPylzZLoZNnSQjqr85990hVj91PIs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=yZhnO0V/pnrBOrKJqaC3WskQ3D0/g7fK9Zznhygt3waNn3VtmUgLm3l7spydlTbFD
+	 Tpg+un+4rnReJm+4vYdWLQUiD7PmzVSGJ3Bdv7E4m3Sdt22YRu75tffWF8lnkvTIuu
+	 dQUNACNQXQR5f0gKpxfHohhZriSDIe8cE2dT6JQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731636AbfHZMQa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 08:16:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37778 "EHLO mail.kernel.org"
+        id S1731710AbfHZMQi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 08:16:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731592AbfHZMQ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Aug 2019 08:16:29 -0400
+        id S1731709AbfHZMQi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 26 Aug 2019 08:16:38 -0400
 Received: from localhost.localdomain (unknown [122.178.200.231])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 18DE7217F5;
-        Mon, 26 Aug 2019 12:16:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9EED217F5;
+        Mon, 26 Aug 2019 12:16:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566821788;
-        bh=S6oGlqVHEeMffta/FzpKQdWs0mHsBTyLqpmwkxWrE7c=;
-        h=From:To:Cc:Subject:Date:From;
-        b=RM1bz1eD0k817b+hdzpnmOhS4Q1IrfCqmKAz9re2X3O13ZcPSJtKb7Q2qzzEto9mc
-         JVbXhC2j0MQqUozh9XQs+Jf9DGZ8htrdbY9UHI9xYs8fmx/Xl4uywuZwkzEU3l6Wkr
-         31nGNw4+NcWsye2QIcXtm0sPbbddRWoUxvnMN4Ek=
+        s=default; t=1566821797;
+        bh=iwOFBOI7Gq5ajYrPylzZLoZNnSQjqr85990hVj91PIs=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0p8Lp2aLQ4s0kJ2E1MbwWM0Obc5HqtoInRtyiIcxCCH07yLNekuwJqQXnGtmd7K4I
+         3s6ClIZK6Bf8ehUqGv4+q6Q31QtfZdNn9Rfx8rEvxEEG0KkPtQ/Pze64XSpqi735rA
+         GhJ1yEAWi+Zol2W8IdVPRLRA9nupPqlaHUaEbibQ=
 From:   Vinod Koul <vkoul@kernel.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-msm@vger.kernel.org,
@@ -46,10 +47,12 @@ Cc:     linux-arm-msm@vger.kernel.org,
         Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 0/4] clk: qcom: Add support for SM8150
-Date:   Mon, 26 Aug 2019 17:44:49 +0530
-Message-Id: <20190826121453.21732-1-vkoul@kernel.org>
+Subject: [PATCH v4 2/4] clk: qcom: clk-rpmh: Convert to parent data scheme
+Date:   Mon, 26 Aug 2019 17:44:51 +0530
+Message-Id: <20190826121453.21732-3-vkoul@kernel.org>
 X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190826121453.21732-1-vkoul@kernel.org>
+References: <20190826121453.21732-1-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -57,31 +60,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for rpm clock controller found in SM8150 and while at it update
-the driver to support parent data clock scheme as suggested by Stephen.
+Convert the rpmh clock driver to use the new parent data scheme by
+specifying the parent data for board clock.
 
-Changes since v3:
- - Make clock parent name as xo instead of xo_board
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
+---
+ drivers/clk/qcom/clk-rpmh.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-Changes since v2:
- - Add reviewed-by from Bjorn
- - Update the parent name as xo_board
- - Fix style issue
-
-Changes since v1:
- - Describe parent clocks for rpmhcc
- - Add support for parent data scheme for rpmhcc
-
-Vinod Koul (4):
-  dt-bindings: clock: Document the parent clocks
-  clk: qcom: clk-rpmh: Convert to parent data scheme
-  dt-bindings: clock: Document SM8150 rpmh-clock compatible
-  clk: qcom: clk-rpmh: Add support for SM8150
-
- .../bindings/clock/qcom,rpmh-clk.txt          |  7 +++-
- drivers/clk/qcom/clk-rpmh.c                   | 38 ++++++++++++++++++-
- 2 files changed, 42 insertions(+), 3 deletions(-)
-
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index c3fd632af119..97aa092f5f40 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -95,7 +95,10 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+ 		.hw.init = &(struct clk_init_data){			\
+ 			.ops = &clk_rpmh_ops,				\
+ 			.name = #_name,					\
+-			.parent_names = (const char *[]){ "xo_board" },	\
++			.parent_data =  &(const struct clk_parent_data){ \
++					.fw_name = "xo_board",		\
++					.name = "xo",			\
++			},						\
+ 			.num_parents = 1,				\
+ 		},							\
+ 	};								\
+@@ -110,7 +113,10 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+ 		.hw.init = &(struct clk_init_data){			\
+ 			.ops = &clk_rpmh_ops,				\
+ 			.name = #_name_active,				\
+-			.parent_names = (const char *[]){ "xo_board" },	\
++			.parent_data =  &(const struct clk_parent_data){ \
++					.fw_name = "xo_board",		\
++					.name = "xo",			\
++			},						\
+ 			.num_parents = 1,				\
+ 		},							\
+ 	}
 -- 
 2.20.1
 
