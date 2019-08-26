@@ -2,133 +2,193 @@ Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD86C3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 16:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3810C3A59F
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 16:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17EB9206BA
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 16:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B19521848
+	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 16:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GN6MYYYH"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HWMFq+cz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbfHZQpR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 12:45:17 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:38802 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732524AbfHZQpQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 12:45:16 -0400
-Received: by mail-wm1-f66.google.com with SMTP id m125so176250wmm.3
-        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2019 09:45:15 -0700 (PDT)
+        id S1732358AbfHZQuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 12:50:02 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34703 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731149AbfHZQuB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 12:50:01 -0400
+Received: by mail-wr1-f68.google.com with SMTP id s18so16033690wrn.1
+        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2019 09:49:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=40OiuM1nuJAlvKWfMTtKgR/XOwSSjLB8LuDFl5DKXzY=;
-        b=GN6MYYYHB3XQKR+KiwiVIeeM+2G4bD2QVjJ0i4C+/s4CBPD92zJDGewr9zJsWAgCRN
-         /z45GHS5Uf1w6DWI8hlpFtkeIsMSlftBpG6gJ22S3dI3X7s70ELcZ3mclie1tUmUtfX+
-         7pSX+Q9Ic4LZ2i1TtIGatlciKeYIMHfq2cQGn4RqSdKevBITEYAnSgSL0AQOZhdJWE2V
-         K4U7eHqz160iQTcPGp/97QN/v6FHd0Pu3PPD505UezV34nYhvf/t7bezKlDgHDu/HOHj
-         P+1lnPj6hPWhzZ0P3jWvjG75//1tON4d5jP/dlA5EzYpFSW+CUy/Z5vD3LS+Y++h62OC
-         fYyw==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9O3VW3qz3WP/gvDFs/gxnhqdNJMrlfVE1S3aHZOLj9E=;
+        b=HWMFq+cz5DqcHZUfi0dmj3bx0hOg0UV25W7l6S656MlMQyKPXIcSUcrnzpLxkluIYh
+         OilnzePPW1Z6DjubzBLxs+3jW5nIc9WdTQnLjS5oJbRRdZK4303IVNDj1be+qElbZe0q
+         /pNOrM/MTeU3voPjffFv9+Zxh3dQEQX2NObtrbLh+9D13NA7qeiD+R6xCNOBYXKJ6XzY
+         ku73gyCf5EyxKwaH9e8nWcfrNquMFyPD9L7dsLYjorOlWRMX6dZE+KPXOIQDq4QP+mO+
+         R0UjhUAdcM79vu43aHBTs4bUFjC70Do/BKPxrxiLHzADeTtwg9KEvzGRTSooxslorgVu
+         SZ5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=40OiuM1nuJAlvKWfMTtKgR/XOwSSjLB8LuDFl5DKXzY=;
-        b=A4sJyD3SiSRitRaaKGZius39FmpFEG6853ZzzFSTw836w+Ehwft0SpLrAyUuHa1V6C
-         stX+n+laSauskK9F7UsAPz0XNnEqHFc1MAt6k7a0nq+H1UNBug/x1EHR2DNQ09Pb9R7v
-         ir456kJCR/Nds7XabeJArl/TPOA+Sh7dBjhkrHJnHjxaz6gGHhri5jM8eCwiQ/DjRyh9
-         xNr8XlTtx52Kc/pWG2aFoXmS23kqDJEV+GAKqvTCAtQzOljVrxyoZMb+mytDL2m9QOAf
-         5TjvYSfmLUTZK1pR6rbRgH2Jaiwmkk/HmO7td7cZ5NNIoeXoJ4hUpmaEBY+CFXyTT1zu
-         lumg==
-X-Gm-Message-State: APjAAAXbDmk/rSOgNn5bs/cMq+aWRDMQ1N9UtLRh50UQoAf/UAa+qVmq
-        QMioaFd5iNIwclLGipxtG8oM8Q==
-X-Google-Smtp-Source: APXvYqz15pvffql6Kf9l8H7kJ6RNaJf4BK1apbLb2u0bWrcxkLHHlUQlchWJBjOeUDMhDxya4m/k1w==
-X-Received: by 2002:a7b:c4c6:: with SMTP id g6mr23832612wmk.52.1566837914285;
-        Mon, 26 Aug 2019 09:45:14 -0700 (PDT)
-Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
-        by smtp.gmail.com with ESMTPSA id l62sm77872wml.13.2019.08.26.09.45.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 26 Aug 2019 09:45:12 -0700 (PDT)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
-        agross@kernel.org, mturquette@baylibre.com
-Cc:     bjorn.andersson@linaro.org, niklas.cassel@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/5] clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
-Date:   Mon, 26 Aug 2019 18:45:06 +0200
-Message-Id: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.22.0
+        bh=9O3VW3qz3WP/gvDFs/gxnhqdNJMrlfVE1S3aHZOLj9E=;
+        b=Q+ETbR2w+PioeJu/RhY4KiEy80g51Adod50Jn2KpVK070tKRqhC/FEupezNl1MY69G
+         WabZuT/OifSAJgCMxn3BqjGngDudBgY0H7XgD+Tj/pLtkGDGtTRjFwV+3MXCqFQkU4xB
+         yDuGiU3N7p38YaTo44C9/n5dIH79i2K0isriPBMS+pxxCU0FKMIyz7rEv3fVsThoikox
+         Eo7rP8JzQiEcb9MGSEilQaWh3U26ubjRXmYpFai1mu3V/lTnAAqr9j79o55aXcFsj4Yq
+         MN22TXmwdSSISzyHO0qLF4YVpAoL21dq1z0w3Ifh0SlHxGwrClb4l2DQRN1Bw/Uuni8j
+         GIyw==
+X-Gm-Message-State: APjAAAW4Am+pvNAoR4RYrI7wIP7JSYqXiI9PWNOvQgCq2mwrmYs0T5zf
+        w9DA2C7IdMkLvVvc5uRGkLI/2g==
+X-Google-Smtp-Source: APXvYqzZyta820DGKYuXk323AK7pGPLNWaOkL+Aei8zaUqk5nIuD17ybsHumS8O17dakMKqBLy73gw==
+X-Received: by 2002:adf:90e7:: with SMTP id i94mr22117449wri.224.1566838199090;
+        Mon, 26 Aug 2019 09:49:59 -0700 (PDT)
+Received: from [192.168.1.6] (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id j20sm32590323wre.65.2019.08.26.09.49.56
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 26 Aug 2019 09:49:58 -0700 (PDT)
+Subject: Re: [PATCH v4 00/13] Support CPU frequency scaling on QCS404
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+To:     bjorn.andersson@linaro.org, sboyd@kernel.org,
+        david.brown@linaro.org, jassisinghbrar@gmail.com,
+        mark.rutland@arm.com, mturquette@baylibre.com, robh+dt@kernel.org,
+        will.deacon@arm.com, arnd@arndb.de, horms+renesas@verge.net.au,
+        heiko@sntech.de, sibis@codeaurora.org,
+        enric.balletbo@collabora.com, jagan@amarulasolutions.com,
+        olof@lixom.net
+Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
+        georgi.djakov@linaro.org, amit.kucheria@linaro.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
+References: <20190731202929.16443-1-jorge.ramirez-ortiz@linaro.org>
+ <f34a75d0-c479-267d-b4a1-c2418d4efb22@linaro.org>
+Message-ID: <0098ab9d-9abc-ac9d-5f36-67ad7cbc4f9c@linaro.org>
+Date:   Mon, 26 Aug 2019 18:49:56 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f34a75d0-c479-267d-b4a1-c2418d4efb22@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
-specifications.
+On 8/26/19 08:54, Jorge Ramirez wrote:
+> On 7/31/19 22:29, Jorge Ramirez-Ortiz wrote:
+>> The following patchset enables CPU frequency scaling support on the
+>> QCS404 (with dynamic voltage scaling).
+>>
+>> It is important to notice that this functionality will be superseded
+>> by Core Power Reduction (CPR), a more accurate form of AVS found on
+>> certain Qualcomm SoCs.
+>>
+>> Some of the changes required to support CPR do conflict with the
+>> configuration required for CPUFreq.
+>>
+>> In particular, the following commit for CPR - already merged - will
+>> need to be reverted in order to enable CPUFreq.
+>>
+>>    Author: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+>>    Date:   Thu Jul 25 12:41:36 2019 +0200
+>>        cpufreq: Add qcs404 to cpufreq-dt-platdev blacklist
+>>     
+>> Patch 8 "clk: qcom: hfpll: CLK_IGNORE_UNUSED" is a bit controversial;
+>> in this platform, this PLL provides the clock signal to a CPU
+>> core. But in others it might not.
+>>
+>> We opted for the minimal ammount of changes without affecting the
+>> default functionality: simply bypassing the COMMON_CLK_DISABLE_UNUSED
+>> framework and letting the firwmare chose whether to enable or disable
+>> the clock at boot. However maybe a DT property and marking the clock
+>> as critical would be more appropriate for this PLL. we'd appreciate the
+>> maintainer's input on this topic.
+>>
+>> v2:
+>>    - dts: ms8916: apcs mux/divider: new bindings
+>>      (the driver can still support the old bindings)
+>>
+>>    - qcs404.dtsi
+>>      fix apcs-hfpll definition
+>>      fix cpu_opp_table definition
+>>
+>>    - GPLL0_AO_OUT operating frequency
+>>      define new alpha_pll_fixed_ops to limit the operating frequency
+>>
+>> v3:
+>>   - qcom-apcs-ipc-mailbox
+>>     replace goto to ease readability
+>>
+>>   - apcs-msm8916.c
+>>     rework patch to use of_clk_parent_fill
+>>
+>>   - hfpll.c
+>>     add relevant comments to the code
+>>
+>>   - qcs404.dtsi
+>>     add voltage scaling support
+>>
+>> v4:
+>>  - squash OPP definition and DVFS enablement in dts
+>>    (patches 10 and 13 in previous version)
+>>    
+>>  - qcom-apcs-ipc-mailbox
+>>    replace return condition for readability
+>>    
+>>  - answer one question on CLK_IGNORE_UNUSED in mailing list
+>>
+>> Jorge Ramirez-Ortiz, Niklas Cassel (13):
+>>   clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
+>>   mbox: qcom: add APCS child device for QCS404
+>>   mbox: qcom: replace integer with valid macro
+>>   dt-bindings: mailbox: qcom: Add clock-name optional property
+>>   clk: qcom: apcs-msm8916: get parent clock names from DT
+>>   clk: qcom: hfpll: get parent clock names from DT
+>>   clk: qcom: hfpll: register as clock provider
+>>   clk: qcom: hfpll: CLK_IGNORE_UNUSED
+>>   arm64: dts: qcom: msm8916: Add the clocks for the APCS mux/divider
+>>   arm64: dts: qcom: qcs404: Add HFPLL node
+>>   arm64: dts: qcom: qcs404: Add the clocks for APCS mux/divider
+>>   arm64: dts: qcom: qcs404: Add DVFS support
+>>   arm64: defconfig: Enable HFPLL
+>>
+>>  .../mailbox/qcom,apcs-kpss-global.txt         | 24 +++++++++--
+>>  arch/arm64/boot/dts/qcom/msm8916.dtsi         |  3 +-
+>>  arch/arm64/boot/dts/qcom/qcs404.dtsi          | 43 +++++++++++++++++++
+>>  arch/arm64/configs/defconfig                  |  1 +
+>>  drivers/clk/qcom/apcs-msm8916.c               | 23 ++++++++--
+>>  drivers/clk/qcom/clk-alpha-pll.c              |  8 ++++
+>>  drivers/clk/qcom/clk-alpha-pll.h              |  1 +
+>>  drivers/clk/qcom/gcc-qcs404.c                 |  2 +-
+>>  drivers/clk/qcom/hfpll.c                      | 25 ++++++++++-
+>>  drivers/mailbox/qcom-apcs-ipc-mailbox.c       | 11 +++--
+>>  10 files changed, 128 insertions(+), 13 deletions(-)
+>>
+> 
+> any feedback on this set?
+> 
+> TIA
+> 
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 8 ++++++++
- drivers/clk/qcom/clk-alpha-pll.h | 1 +
- drivers/clk/qcom/gcc-qcs404.c    | 2 +-
- 3 files changed, 10 insertions(+), 1 deletion(-)
+trying to ease the maintainers task, I have resent the series split in
+three individual sets:
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 055318f97991..9228b7b1f56e 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -878,6 +878,14 @@ static long clk_trion_pll_round_rate(struct clk_hw *hw, unsigned long rate,
- 	return clamp(rate, min_freq, max_freq);
- }
- 
-+const struct clk_ops clk_alpha_pll_fixed_ops = {
-+	.enable = clk_alpha_pll_enable,
-+	.disable = clk_alpha_pll_disable,
-+	.is_enabled = clk_alpha_pll_is_enabled,
-+	.recalc_rate = clk_alpha_pll_recalc_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_ops);
-+
- const struct clk_ops clk_alpha_pll_ops = {
- 	.enable = clk_alpha_pll_enable,
- 	.disable = clk_alpha_pll_disable,
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index 15f27f4b06df..c28eb1a08c0c 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -109,6 +109,7 @@ struct alpha_pll_config {
- };
- 
- extern const struct clk_ops clk_alpha_pll_ops;
-+extern const struct clk_ops clk_alpha_pll_fixed_ops;
- extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_ops;
- extern const struct clk_ops clk_alpha_pll_huayra_ops;
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index e12c04c09a6a..567140709c7d 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -330,7 +330,7 @@ static struct clk_alpha_pll gpll0_ao_out_main = {
- 			.parent_names = (const char *[]){ "cxo" },
- 			.num_parents = 1,
- 			.flags = CLK_IS_CRITICAL,
--			.ops = &clk_alpha_pll_ops,
-+			.ops = &clk_alpha_pll_fixed_ops,
- 		},
- 	},
- };
--- 
-2.22.0
+- device tree
+- clk
+- mbox
+
+for full functionality obviously all of them are required
+
+please let me know if there is anything else I can do.
 
