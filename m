@@ -2,177 +2,160 @@ Return-Path: <SRS0=sRHc=WX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0E33C3A5A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:24:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15845C3A5A3
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFA6A2054F
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:24:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC25E20828
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:27:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="L8fMqmO7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729056AbfH0NYR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 09:24:17 -0400
-Received: from shell.v3.sk ([90.176.6.54]:35524 "EHLO shell.v3.sk"
+        id S1726190AbfH0N1j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 09:27:39 -0400
+Received: from mout.web.de ([217.72.192.78]:47807 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727380AbfH0NYR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Aug 2019 09:24:17 -0400
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C31EAD80FE;
-        Tue, 27 Aug 2019 15:24:11 +0200 (CEST)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id fX9pmDjAEMa4; Tue, 27 Aug 2019 15:24:03 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C4E0CD80FF;
-        Tue, 27 Aug 2019 15:24:02 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ASGlmL8EOUht; Tue, 27 Aug 2019 15:24:01 +0200 (CEST)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 6DE9DD80FE;
-        Tue, 27 Aug 2019 15:24:00 +0200 (CEST)
-Message-ID: <136a57cf3d293e3233f31d5ee660a6418726333a.camel@v3.sk>
-Subject: Re: [PATCH v2 02/20] dt-bindings: arm: Convert Marvell MMP
- board/soc bindings to json-schema
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Olof Johansson <olof@lixom.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <maz@kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
+        id S1726065AbfH0N1j (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:27:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1566912452;
+        bh=Xnd5LVmhc8noExp7aIizMSHiafVFucLYD9hs1U+rD+4=;
+        h=X-UI-Sender-Class:To:Cc:From:Subject:Date;
+        b=L8fMqmO7lhVWns3jAvEatSJYDkdvldQTjityRUXnYsSqjjs968DaXy5F4Id+xU+V+
+         s8F4stAAqJwMS/wTYtzU2ma+gl1byw3pmyogOZSHQQtm47V8TtcTB2fcYJ0Y5qYeQs
+         nPjYFyZ/l3l6PtOow5hc4wAujp6ONWubk33+zGoA=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.135.143.232]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0M5OYl-1iQBTQ34n9-00zTVO; Tue, 27
+ Aug 2019 15:27:31 +0200
+To:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Date:   Tue, 27 Aug 2019 15:23:58 +0200
-In-Reply-To: <CAL_JsqJ4_h+M=6L-nzK2N+A9TAy-N8SoiFv1SSTk_kCcKt0eXw@mail.gmail.com>
-References: <20190822092643.593488-1-lkundrak@v3.sk>
-         <20190822092643.593488-3-lkundrak@v3.sk>
-         <CAL_JsqJ4_h+M=6L-nzK2N+A9TAy-N8SoiFv1SSTk_kCcKt0eXw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.32.4 (3.32.4-1.fc30) 
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        kernel-janitors@vger.kernel.org
+From:   Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] clk: renesas: mstp: Delete an unnecessary kfree() call in
+ cpg_mstp_clocks_init()
+Openpgp: preference=signencrypt
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
+ +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
+ mpVJgXGKkNJ1ey+QOXouzlErVvE2fRh+KXXN1Q7fSmTJlAW9XJYHS3BDHb0uRpymRSX3O+E2
+ lA87C7R8qAigPDZi6Z7UmwIA83ZMKXQ5stA0lhPyYgQcM7fh7V4ZYhnR0I5/qkUoxKpqaYLp
+ YHBczVP+Zx/zHOM0KQphOMbU7X3c1pmMruoe6ti9uZzqZSLsF+NKXFEPBS665tQr66HJvZvY
+ GMDlntZFAZ6xQvCC1r3MGoxEC1tuEa24vPCC9RZ9wk2sY5Csbva0WwYv3WKRZZBv8eIhGMxs
+ rcpeGShRFyZ/0BYO53wZAPV1pEhGLLxd8eLN/nEWjJE0ejakPC1H/mt5F+yQBJAzz9JzbToU
+ 5jKLu0SugNI18MspJut8AiA1M44CIWrNHXvWsQ+nnBKHDHHYZu7MoXlOmB32ndsfPthR3GSv
+ jN7YD4Ad724H8fhRijmC1+RpuSce7w2JLj5cYj4MlccmNb8YUxsE8brY2WkXQYS8Ivse39MX
+ BE66MQN0r5DQ6oqgoJ4gHIVBUv/ZwgcmUNS5gQkNCFA0dWXznQARAQABtCZNYXJrdXMgRWxm
+ cmluZyA8TWFya3VzLkVsZnJpbmdAd2ViLmRlPokCVAQTAQgAPhYhBHDP0hzibeXjwQ/ITuU9
+ Figxg9azBQJYNvsQAhsjBQkJZgGABQsJCAcCBhUICQoLAgQWAgMBAh4BAheAAAoJEOU9Figx
+ g9azcyMP/iVihZkZ4VyH3/wlV3nRiXvSreqg+pGPI3c8J6DjP9zvz7QHN35zWM++1yNek7Ar
+ OVXwuKBo18ASlYzZPTFJZwQQdkZSV+atwIzG3US50ZZ4p7VyUuDuQQVVqFlaf6qZOkwHSnk+
+ CeGxlDz1POSHY17VbJG2CzPuqMfgBtqIU1dODFLpFq4oIAwEOG6fxRa59qbsTLXxyw+PzRaR
+ LIjVOit28raM83Efk07JKow8URb4u1n7k9RGAcnsM5/WMLRbDYjWTx0lJ2WO9zYwPgRykhn2
+ sOyJVXk9xVESGTwEPbTtfHM+4x0n0gC6GzfTMvwvZ9G6xoM0S4/+lgbaaa9t5tT/PrsvJiob
+ kfqDrPbmSwr2G5mHnSM9M7B+w8odjmQFOwAjfcxoVIHxC4Cl/GAAKsX3KNKTspCHR0Yag78w
+ i8duH/eEd4tB8twcqCi3aCgWoIrhjNS0myusmuA89kAWFFW5z26qNCOefovCx8drdMXQfMYv
+ g5lRk821ZCNBosfRUvcMXoY6lTwHLIDrEfkJQtjxfdTlWQdwr0mM5ye7vd83AManSQwutgpI
+ q+wE8CNY2VN9xAlE7OhcmWXlnAw3MJLW863SXdGlnkA3N+U4BoKQSIToGuXARQ14IMNvfeKX
+ NphLPpUUnUNdfxAHu/S3tPTc/E/oePbHo794dnEm57LuuQINBFg2+xABEADZg/T+4o5qj4cw
+ nd0G5pFy7ACxk28mSrLuva9tyzqPgRZ2bdPiwNXJUvBg1es2u81urekeUvGvnERB/TKekp25
+ 4wU3I2lEhIXj5NVdLc6eU5czZQs4YEZbu1U5iqhhZmKhlLrhLlZv2whLOXRlLwi4jAzXIZAu
+ 76mT813jbczl2dwxFxcT8XRzk9+dwzNTdOg75683uinMgskiiul+dzd6sumdOhRZR7YBT+xC
+ wzfykOgBKnzfFscMwKR0iuHNB+VdEnZw80XGZi4N1ku81DHxmo2HG3icg7CwO1ih2jx8ik0r
+ riIyMhJrTXgR1hF6kQnX7p2mXe6K0s8tQFK0ZZmYpZuGYYsV05OvU8yqrRVL/GYvy4Xgplm3
+ DuMuC7/A9/BfmxZVEPAS1gW6QQ8vSO4zf60zREKoSNYeiv+tURM2KOEj8tCMZN3k3sNASfoG
+ fMvTvOjT0yzMbJsI1jwLwy5uA2JVdSLoWzBD8awZ2X/eCU9YDZeGuWmxzIHvkuMj8FfX8cK/
+ 2m437UA877eqmcgiEy/3B7XeHUipOL83gjfq4ETzVmxVswkVvZvR6j2blQVr+MhCZPq83Ota
+ xNB7QptPxJuNRZ49gtT6uQkyGI+2daXqkj/Mot5tKxNKtM1Vbr/3b+AEMA7qLz7QjhgGJcie
+ qp4b0gELjY1Oe9dBAXMiDwARAQABiQI8BBgBCAAmFiEEcM/SHOJt5ePBD8hO5T0WKDGD1rMF
+ Alg2+xACGwwFCQlmAYAACgkQ5T0WKDGD1rOYSw/+P6fYSZjTJDAl9XNfXRjRRyJSfaw6N1pA
+ Ahuu0MIa3djFRuFCrAHUaaFZf5V2iW5xhGnrhDwE1Ksf7tlstSne/G0a+Ef7vhUyeTn6U/0m
+ +/BrsCsBUXhqeNuraGUtaleatQijXfuemUwgB+mE3B0SobE601XLo6MYIhPh8MG32MKO5kOY
+ hB5jzyor7WoN3ETVNQoGgMzPVWIRElwpcXr+yGoTLAOpG7nkAUBBj9n9TPpSdt/npfok9ZfL
+ /Q+ranrxb2Cy4tvOPxeVfR58XveX85ICrW9VHPVq9sJf/a24bMm6+qEg1V/G7u/AM3fM8U2m
+ tdrTqOrfxklZ7beppGKzC1/WLrcr072vrdiN0icyOHQlfWmaPv0pUnW3AwtiMYngT96BevfA
+ qlwaymjPTvH+cTXScnbydfOQW8220JQwykUe+sHRZfAF5TS2YCkQvsyf7vIpSqo/ttDk4+xc
+ Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
+ x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
+ pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
+Message-ID: <e66b822b-026b-29cc-e461-6334aafd1d30@web.de>
+Date:   Tue, 27 Aug 2019 15:27:30 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ASk+615opBrm178uZsylKNSotRbH9KO3sjCsXzbQGiHTbKpchIL
+ nQloxfyfF7HQF4RpwgnOvSQJ+wl2PFOICtYdHGThgS4MmAC5Vm1QggA2BlnK2R4PUc/5ygB
+ xpt0Wa2D/C5OP/79sElGOua120r3CbQjz6Jm8u/lpP/7m5WslrBZj2ZM1WL05GPvJI5UC00
+ 1cFEwl+rN5hC72m+b/B+A==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:c/aMIvMV+eI=:rwemFwBnMQABKAfF5XuLgy
+ 8dxXLQXhdDlc/HTJ1uCS+NZroggLRAqZNFHewNZR3Z+xpseyVM5RDXZGVcM4hsvEHRsAxe4pC
+ 8Mb3D/q4gwXTKHw/8k2U25udxwHs3XdDnNUXnnrz+EEPXIWKRdlOam+SMRl3ytel/BQSufP+Q
+ oH8pfQI+MKtVMUQ83D/PNX3aVfbDDomzyvtDMf4QsDpSejRetCu+0EKgII01K/4xenodffdve
+ +7256kvLg+j+OHxdyiSlTexOPoUrMfmTwZLlRWLaCOlMUOom26domeyeHthi4TguCv8h3Lh4Z
+ cDa8Q6YQMrED5LlsZzmDWW/UzGeLSQi2LwYDtWoKGC5CeN7GjiewVXmwZf3f51kKvhR+XbCK1
+ fOmL3KKnBIrPSIzLy5W2Zsp5ivCsUxJk4qRmuRv6d6Z82YJo4tRLjGcKmGzQcNDB9zEvzYqLW
+ 84QSnCmawLHkf692J765BHlWk1huIl+LWkafIOCdOCvFBDZuChQ3QJpKMY6M8vu3QpDNHG22d
+ IFM7TyQjQX52/PqEYi+0ejHYB5j7Y7pR+XCJ4WcKKimPwLtyGSahiNZUfUDW9KmERZaruSjpY
+ PIWHsLYXww3LdPx2+MfGUzS5bzG5GY1SBkGzNrLOoZTqpiSnM+Bl1vKdmu6lR5+TcV/GxcRMA
+ hg+9UVq9uTFFGd2OOITNz1CEbyFOjgLz4c1PWg2IpucnG8AWwX6u6M5bkm46mFTawLCTFXtBm
+ Aqc1kDLrS+fQocvfN6dySZtIo1tKzQiFm+6d5Mw/BRKRr8DyIGBUf1O2qdCjjRJlhXz6/XH5t
+ A+AgJt346RV3/pdCrnq4o8mB0DyYHUGuQ2Ym6Ur0fEsNAH+vknKDHhXcLjnm4I3RXj+7DqNDK
+ Xd1E2hdwv9ZjGIUAuGjrkU1/2rXhktyfrDqFzkiTBz0thioCBuKjKN81IkQEzTq8zu8V4N4JK
+ A3UK7Y3dWOm2n5x1U/kA3v5h2wKfsuzXfsh3UvgNmVrKez6vjny+FpP9isCRMQtUgsCPlMbYA
+ bGX2qkR+Fq81l2N3oeE5AmWhnCvjjfwpWXqnA9TsFZzc+Bl8/pDNfOmIZ/IvJp2Y6b/dW5SBc
+ t5W4gqlN6vfqBks1vmTayxyPgi/JDpgnEV3chpfOROYu4FyozEMerjYmot9w2tC80p+E1Pdbh
+ I/hLU=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 2019-08-27 at 06:59 -0500, Rob Herring wrote:
-> On Thu, Aug 22, 2019 at 4:27 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> > Convert Marvell MMP SoC bindings to DT schema format using json-schema.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > 
-> > ---
-> > Changes since v1:
-> > - Added this patch
-> > 
-> >  .../devicetree/bindings/arm/mrvl/mrvl.txt     | 14 ---------
-> >  .../devicetree/bindings/arm/mrvl/mrvl.yaml    | 31 +++++++++++++++++++
-> >  2 files changed, 31 insertions(+), 14 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
-> >  create mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
-> > deleted file mode 100644
-> > index 951687528efb0..0000000000000
-> > --- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
-> > +++ /dev/null
-> > @@ -1,14 +0,0 @@
-> > -Marvell Platforms Device Tree Bindings
-> > -----------------------------------------------------
-> > -
-> > -PXA168 Aspenite Board
-> > -Required root node properties:
-> > -       - compatible = "mrvl,pxa168-aspenite", "mrvl,pxa168";
-> > -
-> > -PXA910 DKB Board
-> > -Required root node properties:
-> > -       - compatible = "mrvl,pxa910-dkb";
-> > -
-> > -MMP2 Brownstone Board
-> > -Required root node properties:
-> > -       - compatible = "mrvl,mmp2-brownstone", "mrvl,mmp2";
-> > diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-> > new file mode 100644
-> > index 0000000000000..dc9de506ac6e3
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-> > @@ -0,0 +1,31 @@
-> > +# SPDX-License-Identifier: GPL-2.0
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/arm/mrvl/mrvl.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Marvell Platforms Device Tree Bindings
-> > +
-> > +maintainers:
-> > +  - Lubomir Rintel <lkundrak@v3.sk>
-> > +
-> > +properties:
-> > +  $nodename:
-> > +    const: '/'
-> > +  compatible:
-> > +    oneOf:
-> > +      - description: PXA168 Aspenite Board
-> > +        items:
-> > +          - enum:
-> > +              - mrvl,pxa168-aspenite
-> > +          - const: mrvl,pxa168
-> > +      - description: PXA910 DKB Board
-> > +        items:
-> > +          - enum:
-> > +              - mrvl,pxa910-dkb
-> 
-> Doesn't match what's in dts file:
-> 
-> arch/arm/boot/dts/pxa910-dkb.dts:       compatible =
-> "mrvl,pxa910-dkb", "mrvl,pxa910";
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Tue, 27 Aug 2019 15:22:12 +0200
 
-It corresponds to the .txt bindings specification this commit is
-converting. I thought it wouldn't be a good idea to do any changes to
-the contents at the time the conversion is done.
+A null pointer would be passed to a call of the function =E2=80=9Ckfree=E2=
+=80=9D
+directly after a call of the function =E2=80=9Ckzalloc=E2=80=9D failed at =
+one place.
+Remove this superfluous function call.
 
-I also don't understand why does the dts file specify the board-
-specific compatible string. Surely "mrvl,pxa910" alone would be
-sufficient?
+This issue was detected by using the Coccinelle software.
 
-> > +      - description: MMP2 Brownstone Board
-> 
-> If this entry is only for this board...
-> 
-> > +        items:
-> > +          - enum:
-> > +              - mrvl,mmp2-brownstone
-> 
-> ...then this can be a 'const' instead. Same for the others.
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/clk/renesas/clk-mstp.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Sure, but is it preferable? I've actually done a "git grep -A3 enum
-Documentation/devicetree/bindings/" to see if the single-element is
-typically used and it seems like it is. Perhaps it's a good idea to
-indicate to a human reader that this is a list that's expected to
-eventually be extended with new elements.
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp=
+.c
+index 2db9093546c6..09f8894bb91b 100644
+=2D-- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -189,10 +189,8 @@ static void __init cpg_mstp_clocks_init(struct device=
+_node *np)
+ 	unsigned int i;
 
-In any case, there are more boards with MMP2 currently supported,
-notably the XO-1.75 laptop. I've actually sent out the dts file for
-review some time ago. I haven't added a separate compatible string for
-it because I thought it is not necessary (see above).
+ 	group =3D kzalloc(struct_size(group, clks, MSTP_MAX_CLOCKS), GFP_KERNEL)=
+;
+-	if (group =3D=3D NULL) {
+-		kfree(group);
++	if (!group)
+ 		return;
+-	}
 
-> > +          - const: mrvl,mmp2
-> > +...
-> > --
-> > 2.21.0
-
-Thank you
-Lubo
+ 	clks =3D group->clks;
+ 	spin_lock_init(&group->lock);
+=2D-
+2.23.0
 
