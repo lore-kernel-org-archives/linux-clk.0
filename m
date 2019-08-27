@@ -7,86 +7,79 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC81C3A5A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 17:04:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E976C3A5A3
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 17:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65A3E2189D
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 17:04:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3C7722CBB
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 17:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566925492;
-	bh=TF583lpqGqAfqYIr5T81s/7fUoHvU7Jv/F8trRtgTAg=;
+	s=default; t=1566925509;
+	bh=Omk+IfbQahQ4khTeFW4LWQPt8MkQo1QxJ8da2ZUTQP0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=u8ZdLVu30tVx+drdqDDlYxIcF9aoUCmWL1fMgGTlLZgK/ocskJIjfee8xFYdbx+4E
-	 Mg5XTEAVuhqrabbFt4h83zAjV71djhRm5LK7LhT28Vt0QwP3LOLWedJRm9KqCLCzwi
-	 jzKY3EV85XVjabU+eCCuF5zb2f08EyEobw0765nY=
+	b=KR0UC1OnpUn17LEampL26k+ppzwlVuMqwmeYF6sN6b4hAZPj2qfgnFK+duhD+8NdS
+	 1fblSJnliiCH0UTr2Y0UlnjSoI5k4ARm07LbmgpGf3o7wJxk9NjGFp78gYdizWmK4X
+	 fyJQIYtmRQYarSMY0pkFdVtfIOIgLiBRii48XznI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730339AbfH0REv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 13:04:51 -0400
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33512 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfH0REu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 13:04:50 -0400
-Received: by mail-oi1-f194.google.com with SMTP id l2so15549433oil.0;
-        Tue, 27 Aug 2019 10:04:50 -0700 (PDT)
+        id S1729626AbfH0RFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 13:05:09 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:37735 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727064AbfH0RFJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 13:05:09 -0400
+Received: by mail-ot1-f67.google.com with SMTP id f17so19403631otq.4;
+        Tue, 27 Aug 2019 10:05:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MOuzbil80+G9gYzAiopiCVDBooAH3B/XNeV0uY3F0I8=;
-        b=YIIPYcz48I8nZWggVktuyWDaA3H41zM7eAmuhqHXxqLl/azfplN1y62/yzTXORkL7x
-         OipwvPdTHJZBfwcjnDeUFoiWb2AchQJoQazgSlUQj6wpbDG5EF6Z/LdqvnnIvQO2F+zR
-         an5DE9EiHLt+KIXEvLhgMSr01ezIEOinrXvCwy7auEf3JCQ95//1i+uSX3fyDoF1bdsJ
-         5eHekpcpGWlFyO5dMVeKq/eQ0qtFaZCnmofWACm0vyy0bFLe/otPwmTNpNQHLfnqB4Tq
-         aYGhVOT68ApuQF5NTe68fS4nFotWIcEMOo3JXWA2BXXaJ5tk12sd4txzybEW2Dzrh8lr
-         SgpA==
-X-Gm-Message-State: APjAAAWd+PQo81pbt11/qzFUM9BmBDFw4KyppG+S8eC0HogXtalTQqYm
-        mSVGtiOnDeJVbq5l1L7ziA==
-X-Google-Smtp-Source: APXvYqxQM/gESOiP+h1wYgpZhd53hKVRGNNezbbV85qz8HiBzlfPBARHfluEK6KErDc/DhbhvNrKoQ==
-X-Received: by 2002:a54:4414:: with SMTP id k20mr1968312oiw.120.1566925489593;
-        Tue, 27 Aug 2019 10:04:49 -0700 (PDT)
+        bh=+gB1Kla9RO8vfObOwL3Zz+I0DqxA21AD90CmgmUfSMU=;
+        b=jgUO75GUOvPyF5eNnpoE60+/wIHxgaAcPjokMHJmrzssBsa78Glh/6PkGCYPuSUcYE
+         dclxwF4QKeq8jtN9qTCLB4oIKIb8Gc1jwBw15GRgXwrnZS8nBp+c/U/L9JW3noA7yzi7
+         BON+2jyGx7eNAmMXHWlSTwrr+aZ4X5ZYRKHIzxMKngYm534gndaMDEAy402AG76yN2Vd
+         K1UuXsZ7JG3BY+Ws4rtaU3Kc0PmPexyXopBRmIaSNbzgaP1WnhgEfKkWhmtxy7K9MEEi
+         ZvntwUdn7cc8MAK41Zj0PL2md7vGWdrJQxJ1D1IEQiou9YbhZutchK3V+IhmqRT6AOJX
+         3C0w==
+X-Gm-Message-State: APjAAAWlNDkaQsKTGvwUb+klolR+N2K8YJT9WAdBKzPaME8ONnLZQV8d
+        aVG3AoVYQypPd14pbbDS6g==
+X-Google-Smtp-Source: APXvYqzHBNcmJDDpan/WxDf0ZvA9bvKRVFpjTGeXe4nK7SEkveYLa6EsV/XHxkTBjZz4pnXQa5wvNQ==
+X-Received: by 2002:a9d:7d12:: with SMTP id v18mr13007924otn.342.1566925508616;
+        Tue, 27 Aug 2019 10:05:08 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r3sm5366680otq.10.2019.08.27.10.04.48
+        by smtp.gmail.com with ESMTPSA id 20sm5617048oth.43.2019.08.27.10.05.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 10:04:48 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 12:04:48 -0500
+        Tue, 27 Aug 2019 10:05:08 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 12:05:07 -0500
 From:   Rob Herring <robh@kernel.org>
 To:     Dong Aisheng <aisheng.dong@nxp.com>
 Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         sboyd@kernel.org, mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
         Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH V4 01/11] dt-bindings: firmware: imx-scu: new binding to
+Subject: Re: [PATCH V4 02/11] dt-bindings: clock: imx-lpcg: add support to
  parse clocks from device tree
-Message-ID: <20190827170448.GA15803@bogus>
+Message-ID: <20190827170507.GA16423@bogus>
 References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
- <1566299605-15641-2-git-send-email-aisheng.dong@nxp.com>
+ <1566299605-15641-3-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1566299605-15641-2-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1566299605-15641-3-git-send-email-aisheng.dong@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 20 Aug 2019 07:13:15 -0400, Dong Aisheng wrote:
-> There's a few limitations on the original one cell clock binding
-> (#clock-cells = <1>) that we have to define some SW clock IDs for device
-> tree to reference. This may cause troubles if we want to use common
-> clock IDs for multi platforms support when the clock of those platforms
-> are mostly the same.
-> e.g. Current clock IDs name are defined with SS prefix.
+On Tue, 20 Aug 2019 07:13:16 -0400, Dong Aisheng wrote:
+> MX8QM and MX8QXP LPCG Clocks are mostly the same except they may reside
+> in different subsystems across CPUs and also vary a bit on the availability.
 > 
-> However the device may reside in different SS across CPUs, that means the
-> SS prefix may not valid anymore for a new SoC. Furthermore, the device
-> availability of those clocks may also vary a bit.
+> Same as SCU clock, we want to move the clock definition into device tree
+> which can fully decouple the dependency of Clock ID definition from device
+> tree and make us be able to write a fully generic lpcg clock driver.
 > 
-> For such situation, we want to eliminate the using of SW Clock IDs and
-> change to use a more close to HW one instead.
-> For SCU clocks usage, only two params required: Resource id + Clock Type.
-> Both parameters are platform independent. So we could use two cells binding
-> to pass those parameters,
+> And we can also use the existence of clock nodes in device tree to address
+> the device and clock availability differences across different SoCs.
 > 
 > Cc: Rob Herring <robh+dt@kernel.org>
 > Cc: Stephen Boyd <sboyd@kernel.org>
@@ -98,23 +91,19 @@ On Tue, 20 Aug 2019 07:13:15 -0400, Dong Aisheng wrote:
 > ---
 > ChangeLog:
 > v3->v4:
->  * add some comments for various clock types
+>  * change bit-offset property to clock-indices
+>  * use constant macro to define clock indinces
+>  * drop hw-autogate property which is still not used by drivers
 > v2->v3:
->  * Changed to two cells binding and register all clocks in driver
->    instead of parse from device tree.
+>  * no changes
 > v1->v2:
->  * changed to one cell binding inspired by arm,scpi.txt
->    Documentation/devicetree/bindings/arm/arm,scpi.txt
->    Resource ID is encoded in 'reg' property.
->    Clock type is encoded in generic clock-indices property.
->    Then we don't have to search all the DT nodes to fetch
->    those two value to construct clocks which is relatively
->    low efficiency.
->  * Add required power-domain property as well.
+>  * Update example
+>  * Add power domain property
 > ---
->  .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 12 ++++++-----
->  include/dt-bindings/firmware/imx/rsrc.h            | 23 ++++++++++++++++++++++
->  2 files changed, 30 insertions(+), 5 deletions(-)
+>  .../devicetree/bindings/clock/imx8qxp-lpcg.txt     | 36 ++++++++++++++++++----
+>  include/dt-bindings/clock/imx8-lpcg.h              | 14 +++++++++
+>  2 files changed, 44 insertions(+), 6 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
