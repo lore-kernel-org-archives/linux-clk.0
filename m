@@ -4,94 +4,82 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16590C41514
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 17:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 426F9C41514
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 18:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA2AF21883
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 17:24:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F6AF20644
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 18:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566926689;
-	bh=iK610BpKpycEj3NDut5ZFxo2jMgjWVkBWXCHyJz4E0A=;
+	s=default; t=1566931862;
+	bh=X3vKmdTeuk16kODD+gAxNqG6iKfxQevEOHduNdXHa20=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lIcT7p+gu1T3vvNJCt6sx2iq6TM3I27Ne9FE6wnsMY36pfqKwXsQv3n7HjTNvQ++l
-	 mYeFs+y7rLTo7rF60PxGqlZLyUuBwD03r4F9pfDtQL4D0ShV9RKDjrz7n5zLwGxIAw
-	 Z09kDkyDKzLSadGkFMVMY19PntSl2qyRVBc9Rs5o=
+	b=C38SGc5dyYIosNbZKOY1haU9b0HfetzxIaMOUtUHZ7uSA30luTpeOyOIEZloNTacD
+	 F4fVU7u5+HavYfXDg73+vn0z0xLDfs5W097W7D+TlVX70ARoGDUIxcBVNzuEIMbndE
+	 LWyjJh/W/AScvsvP3SMV93w0D2N30fqihcxPO3AQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbfH0RYs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 13:24:48 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34334 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727064AbfH0RYs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 13:24:48 -0400
-Received: by mail-oi1-f196.google.com with SMTP id g128so15617234oib.1;
-        Tue, 27 Aug 2019 10:24:47 -0700 (PDT)
+        id S1730495AbfH0SvB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 14:51:01 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:46005 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728972AbfH0SvB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 14:51:01 -0400
+Received: by mail-ot1-f68.google.com with SMTP id m24so143876otp.12;
+        Tue, 27 Aug 2019 11:51:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=iiSGGVLxiO5dXRiIuYVfYDjgr5BeTYu6HKE0U9IDlr8=;
-        b=jLkVOojzvUnaOJNLK1zWL7ggTxkJ0xxYh+P45rqTU0qTbuSnQ6heYOGTFwFz9ON8iy
-         y9AjjrKui+W1aNf77vxalVa062hBs0VXjkAoLPCZZJeGP8HO4e81Atwa8LzN38rBJFvA
-         jWs6T+mnJ9Z53zP6UW0g6lzyTZSsjobjvADM8XsdRszYywQ0PJlsuN8QYN5ArWrtC0Ee
-         H6rOt8v8iPOu2eprlDn3rYc17bDN0AZYGXirG1MXbhyI1xYLPUucoqTMH4yMIeICRcxM
-         PQ1HoUmTum52V8bA3oMhUiWGfbkGQNW6Mhf4auovyrFhhWzML97GSqeERHD44ni6DnES
-         eYgA==
-X-Gm-Message-State: APjAAAV33t0MBT8yFP/YADAsxUIMwExf5Zag9uxchZHM97C7ZjWZfbw+
-        K3nUdqqYB141+9Hhpnc+cQ==
-X-Google-Smtp-Source: APXvYqw9Z0yuc9c97insSvpXEnh5CIsK0GLVAo7MRbMxts4XopU9ATqRwMv1HoaOdySJh9uI+fvgqg==
-X-Received: by 2002:a05:6808:b30:: with SMTP id t16mr4563oij.166.1566926687170;
-        Tue, 27 Aug 2019 10:24:47 -0700 (PDT)
+        bh=oPoTdeqM0P75hcFYgSTuxBhxtUvuWZSubw/9Hs6o4sM=;
+        b=hfZv55F3gBCT67v8xux5lJuZ6K9c3tT9TpYQhsxclu54VeDEZZVUvsYiJQ3+V3ONCF
+         JDWCngSVT7UlOAYJCZWR3z0wGoW0rEOuL1T4DZy3dSzqa9AeoZQwyJ2Rl4qs8+5lXzcL
+         1mUURzzyNtBDWcKi4cRc/kExZaNRhY+hU1WNPfCRKvykIEvHC2CWLfhoJP2FvFwUhNjC
+         oqC4Z7LX/Gb3mO+uVsASBFI823Z0z8FFq81W7p7q0CZN4EH/CsGijdrThaGCCOMqbbvb
+         AlfuEoxxrPzCoGhj+kkgMg+81DOsHUXkQsGTXjcCMKu2WA5QGpbrZEmXYXi8FSJGiMBM
+         90dg==
+X-Gm-Message-State: APjAAAUIWd+rNBKk51YRXdr/ELwu0EtJfwX11lkX3lborCMhcvZS0cUM
+        NcuuNvE7inS4Tlb58p/SdA==
+X-Google-Smtp-Source: APXvYqz+bG5+fGhyalD276cK1+3QAQWF94WLq9FkbYF+Z7WGgBVskS5GVp+KAEL1cRVAgHYj9mupgQ==
+X-Received: by 2002:a9d:68c5:: with SMTP id i5mr50587oto.250.1566931860502;
+        Tue, 27 Aug 2019 11:51:00 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id z9sm4377015oid.39.2019.08.27.10.24.46
+        by smtp.gmail.com with ESMTPSA id d27sm59836otf.25.2019.08.27.11.50.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 10:24:46 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 12:24:45 -0500
+        Tue, 27 Aug 2019 11:51:00 -0700 (PDT)
+Date:   Tue, 27 Aug 2019 13:50:59 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Simon Horman <horms+renesas@verge.net.au>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Simon Horman <horms+renesas@verge.net.au>
-Subject: Re: [PATCH v2] dt-bindings: clk: emev2: Rename bindings
- documentation file
-Message-ID: <20190827172445.GA15211@bogus>
-References: <20190821091516.16372-1-horms+renesas@verge.net.au>
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 1/4] dt-bindings: clock: Document the parent clocks
+Message-ID: <20190827185059.GA18373@bogus>
+References: <20190826173120.2971-1-vkoul@kernel.org>
+ <20190826173120.2971-2-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190821091516.16372-1-horms+renesas@verge.net.au>
+In-Reply-To: <20190826173120.2971-2-vkoul@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 21 Aug 2019 11:15:16 +0200, Simon Horman wrote:
-> Rename the device tree clock bindings for Renesas EMMA Mobile EV2
-> from emev2-clock.txt to renesas,emev2-smu.txt.
+On Mon, 26 Aug 2019 23:01:17 +0530, Vinod Koul wrote:
+> With clock parent data scheme we must specify the parent clocks for the
+> rpmhcc nodes. So describe the parent clock for rpmhcc in the bindings.
 > 
-> This is part of an ongoing effort to name bindings documentation files for
-> Renesas IP blocks consistently, in line with the compat strings they
-> document.
-> 
-> Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
-> Based on v5.3-rc1
-> 
-> v2
-> * Drop emev2 prefix from new filename, it was unintentional
->   and does not match the proposed naming scheme
-> ---
->  .../devicetree/bindings/clock/{emev2-clock.txt => renesas,emev2-smu.txt}  | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  rename Documentation/devicetree/bindings/clock/{emev2-clock.txt => renesas,emev2-smu.txt} (100%)
+>  Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
