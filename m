@@ -2,85 +2,118 @@ Return-Path: <SRS0=sRHc=WX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6327CC3A5A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 18:51:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70DD9C3A5A3
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 19:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA2F20644
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 18:51:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566931874;
-	bh=xZiNDnlgbXEh4BwS1/b/Lrp9uwRIEglxXryCGseMgeo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sXNYBFy7qX5sPbVfR6tFkoFDAY2ZdB3/ndXcfgQfXbVFhzD6CgMkq+HpT3IoLx/Ad
-	 YtJ2wFBJ81v5w6luLMBuTrty7unumKjKU5TN0DYGJUdwHDSS0wXQMRaau0+GLS4MBs
-	 lWX7tyJZJYiRa4zeEepnGvL0skwuBY4NT9SGoxE8=
+	by mail.kernel.org (Postfix) with ESMTP id 41CC721883
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 19:12:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="m0bqYITn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730540AbfH0SvO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 14:51:14 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:39925 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730423AbfH0SvN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 14:51:13 -0400
-Received: by mail-oi1-f195.google.com with SMTP id 16so68716oiq.6;
-        Tue, 27 Aug 2019 11:51:13 -0700 (PDT)
+        id S1730904AbfH0TMM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 15:12:12 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42963 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730622AbfH0TMM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 15:12:12 -0400
+Received: by mail-pf1-f196.google.com with SMTP id i30so14696pfk.9
+        for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2019 12:12:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=QlG0MCXrlsLf9bJR8f8bjOG6+UwZjxA04tjv5z1sPNs=;
+        b=m0bqYITngjSGYta6fMhmwP9YQH2m9QkENNogl9TLA8dzoJ0grFsKJyyADSsDUGFKgl
+         /lsrx+CnXSeR2yPHYhRo0ixyyTKX5o+K0XOW3OcLwnD4uDU83F9MRxTHzSKQKQ8a5/8B
+         aM/9ojvpNGOWl9IBG9ymayfZcsD1SG7mDjPz7EB+S9XGkuUXqWnUN924CyQGlrHqp7kB
+         kAFj8DUp9BYOPSi7tojk9KsDikWnTCCpqsXOJt/PN53gTGqluU1138cGMBaI0ZSM7AnV
+         DbI9BFeHTFOU9I3a5Rqg2kc7TkI5eImebFMx47lzJ98BbHXw5ODCCZZ11AW2O36P5kE/
+         McpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AF/vPj882HI7YsynVJ+eUKtXTDth7gEC3eMKqWT4ttU=;
-        b=X+xahYshHV/ansaf4x+dDez9PqKNAatS8zbmZofNYhbM3w68AN0nnKOzJ0qbJ/UOqN
-         p/VEgBZxKYH0FR007bX4FEhN6AwVBL+JtGiA/bRWDLFsP1yEPTrn0OVsAw6Ts57KqefX
-         HyVMrlxpxi5RE/23JYd2RCrSTUlFUfC2kryeEFo0bikpDqzLf81LwUfFThXfXsQFFvcX
-         LOlVjcBqKDCNZtFpdNCt1HuyqmJY3PYERVXkpZxCGaL9UZtQGNescp/OFogi1IeXhYfC
-         MolV0uGjAaoI+wXBcr99LNZR5v+nClJFOzPuKbDjy1ugx3XAnx4oSwxUdiejdvRkt+H+
-         oUvA==
-X-Gm-Message-State: APjAAAXZhwa8l+z3wTPSGSRYqLE89WH1TarsNn0Mshn1yRS2yERF4U1k
-        wnW7MOkPnapkXDgTcPkNfw==
-X-Google-Smtp-Source: APXvYqynGxcwWIqR2yCtDIquBPLt29G37dmdQJBwClIM6/HTbta6GJm5kdG06YLi3Q1jlob8CgoyDA==
-X-Received: by 2002:aca:cc81:: with SMTP id c123mr150734oig.30.1566931872553;
-        Tue, 27 Aug 2019 11:51:12 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p11sm63392oto.4.2019.08.27.11.51.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 27 Aug 2019 11:51:12 -0700 (PDT)
-Date:   Tue, 27 Aug 2019 13:51:11 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] dt-bindings: clock: Document SM8150 rpmh-clock
- compatible
-Message-ID: <20190827185111.GA18812@bogus>
-References: <20190826173120.2971-1-vkoul@kernel.org>
- <20190826173120.2971-4-vkoul@kernel.org>
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=QlG0MCXrlsLf9bJR8f8bjOG6+UwZjxA04tjv5z1sPNs=;
+        b=JxShcUL5xZhJ+GU1V0bnFV6uRlEC2iKDCpHsDXlUDOGlRptRY0NKYcVQaAUwvCgbDz
+         0klpNSevJm0Xgif5xFES6L/CU7bVDykCwhS7eRLlFG5zIgr/smp/KfX/KlGyjbaK63h6
+         Cme30VbkEGUI98g6GliPeRMt6W/tihVecPJNRtdTB+Ek7uKomlNyZEITnmgWVSyLPE6y
+         bvvJOoTG1g/IjcRUfEfYKpJwMWVr3PefRy+rsEgQBVKJPbv2x9DxOSYc90g0TySI/l6i
+         4lx1vcQrJCrGdt9OnicbSyVbRlC0IaI6SZpfsNfhMZEvefDD22HCJWh9mxxQiZLyN9zp
+         QvFg==
+X-Gm-Message-State: APjAAAX3y6tGoGVm38psjWTjNP87Vq0sfiYpwEsxMYIRHVxt8xy41fIc
+        +jBhWO1qf9Nq0R4MKqvPG2h9xQ==
+X-Google-Smtp-Source: APXvYqzzoUzbs2yNWZLrVcTZcXe2K8bnbvlaeqGp8P/D5qzS/gw8hp34XezYimT2ZeaIuDknZJoZJg==
+X-Received: by 2002:a65:60cd:: with SMTP id r13mr7312189pgv.315.1566933131786;
+        Tue, 27 Aug 2019 12:12:11 -0700 (PDT)
+Received: from localhost ([2601:602:9200:a1a5:cc35:e750:308e:47f])
+        by smtp.gmail.com with ESMTPSA id 14sm56500pfy.40.2019.08.27.12.12.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 27 Aug 2019 12:12:11 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/5] 0/6] arm64: meson-sm1: add support for DVFS
+In-Reply-To: <1jblwc6wjq.fsf@starbuckisacylon.baylibre.com>
+References: <20190826072539.27725-1-narmstrong@baylibre.com> <1jblwc6wjq.fsf@starbuckisacylon.baylibre.com>
+Date:   Tue, 27 Aug 2019 12:12:09 -0700
+Message-ID: <7h8srexw1i.fsf@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190826173120.2971-4-vkoul@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 26 Aug 2019 23:01:19 +0530, Vinod Koul wrote:
-> Document the SM8150 rpmh-clock compatible for rpmh clock controller
-> found on SM8150 platforms.
-> 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+> On Mon 26 Aug 2019 at 09:25, Neil Armstrong <narmstrong@baylibre.com> wrote:
+>
+>> Following DVFS support for the Amlogic G12A and G12B SoCs, this serie
+>> enables DVFS on the SM1 SoC for the SEI610 board.
+>>
+>> The SM1 Clock structure is slightly different because of the Cortex-A55
+>> core used, having the capability for each core of a same cluster to run
+>> at a different frequency thanks to the newly used DynamIQ Shared Unit.
+>>
+>> This is why SM1 has a CPU clock tree for each core and for DynamIQ Shared Unit,
+>> with a bypass mux to use the CPU0 instead of the dedicated trees.
+>>
+>> The DSU uses a new GP1 PLL as default clock, thus GP1 is added as read-only.
+>>
+>> The SM1 OPPs has been taken from the Amlogic Vendor tree, and unlike
+>> G12A only a single version of the SoC is available.
+>>
+>> Dependencies:
+>> - patch 6 is based on the "arm64: meson: add support for SM1 Power Domains" serie,
+>> 	but is not a strong dependency, it will work without
+>>
+>> Changes since v1:
+>> - exposed GP1, DSU and CPU 1,2,3 clock in patch 1
+>>
+>> Neil Armstrong (5):
+>>   dt-bindings: clk: meson: add sm1 periph clock controller bindings
+>>   clk: meson: g12a: add support for SM1 GP1 PLL
+>>   clk: meson: g12a: add support for SM1 DynamIQ Shared Unit clock
+>>   clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks
+>>   arm64: dts: meson-sm1-sei610: enable DVFS
+>>
+>>  .../bindings/clock/amlogic,gxbb-clkc.txt      |   1 +
+>>  .../boot/dts/amlogic/meson-sm1-sei610.dts     |  59 +-
+>>  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi    |  69 +++
+>>  drivers/clk/meson/g12a.c                      | 544 ++++++++++++++++++
+>>  drivers/clk/meson/g12a.h                      |  24 +-
+>>  include/dt-bindings/clock/g12a-clkc.h         |   5 +
+>>  6 files changed, 697 insertions(+), 5 deletions(-)
+>
+> Applied 1 to 4
+
+Will there be a stable tag I can use for that so I can apply patch 5?
+
+Kevin
