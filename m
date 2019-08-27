@@ -2,85 +2,191 @@ Return-Path: <SRS0=sRHc=WX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F37BC3A5A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:31:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C0AC3A5A3
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54FA920673
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:31:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7681D2189D
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 13:37:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566913021;
+	bh=mD4q3LMo8D/oOkYLDOKCUAJJn9XFxRojkzOMMIIoH1I=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=FK9geoR7WPOS4EDkmp+tZM5Y1YDD/ZijAmp8kp0pUpGpW1lpxZP7MsrV+Pi1IN8PB
+	 mA+uTu3gQQM7UdFcu/FlRppwb0tjeOF93sfmEt5zlMI0m8G2O5BoDnvmAi1vVOVA+k
+	 UZbI/1jisA0afD5zFKImcrgpKx0Gb/+p16ozertU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728742AbfH0Nb2 convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 09:31:28 -0400
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41214 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfH0Nb1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 09:31:27 -0400
-Received: by mail-oi1-f193.google.com with SMTP id p127so6314458oic.8;
-        Tue, 27 Aug 2019 06:31:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=fbrpcnaW6FeusXGWHy/FZL17iPbB9NJ4oGcjQCYCxAc=;
-        b=RakY2sD09NKfmQRgIm5vkJ6AD90XUEMiPdtphaWnbaz6kuZ3msa/zniJWSblqmLsm5
-         CQ3Y7FMIUUeJzESZRJh/pFXN4rTDrlwoAbnnl57RxoOVuVncCOmdBqk6IUl/CGsPRZCu
-         oJaAqu5b+ZDsotlFFj+MkoJ+CoOm2rmAAi/xJ2y/M09Vf2Z1eqYqGdL/KIb21ApzZw+A
-         Yl77l8BgxFvCtpGdgbIRu6xdqecBfeu0lnDsyEOOvmqKZGJVArUEEEMfgUTaWpQ7/GBP
-         eJ7i/HXnPHbqC3YpD6QqLM+5yBbyzbt0iNXH/LpI3hSJ0sDx/ufas+isaYWCUp6qWWYo
-         lS3Q==
-X-Gm-Message-State: APjAAAVj+fSpW5P2a1T99jfa7B7Gc+jZv5pNccHfjsnii1pnerxS0MQ9
-        ydQnbBAAhPTNtL/LiBfbyXJUIYAxkAc1kYtWEcc=
-X-Google-Smtp-Source: APXvYqzZzbXU+RqScZH8H98sHGPvNyaTmnwaD9hadGmeyRCrAgllptmivlqOHf5SeYogP/M2CHNeVInHgpGlCSPZLcY=
-X-Received: by 2002:aca:f4ca:: with SMTP id s193mr15420301oih.131.1566912686716;
- Tue, 27 Aug 2019 06:31:26 -0700 (PDT)
+        id S1727864AbfH0NhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 09:37:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725811AbfH0NhB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Aug 2019 09:37:01 -0400
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A82A820673;
+        Tue, 27 Aug 2019 13:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566913019;
+        bh=mD4q3LMo8D/oOkYLDOKCUAJJn9XFxRojkzOMMIIoH1I=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=iIHtOikMNFdIzPT8jWOw/5DwxGlxnvIEDZv9e0PiIiaJHWvdLX+iDsXGeyppF1TUt
+         c17W7Fc/T4Ik+b8XGYSHnukX7bjPDJcSTOeFIdDfjLuyWZrYhffCGT6g1hesZDhpUj
+         3ZgF2FfSALXvFmHTL98And13MaG/+fN4e5USc9s4=
+Received: by mail-qt1-f177.google.com with SMTP id z4so21308542qtc.3;
+        Tue, 27 Aug 2019 06:36:59 -0700 (PDT)
+X-Gm-Message-State: APjAAAU7mfZwakEtztu/sMj5ID/Uyt9AY8SLd0ZRYKMJM4kH7V8NLZ/0
+        ok97OqN9a2T9MWbWZlAgsWg3nUEhOCJIEReUwQ==
+X-Google-Smtp-Source: APXvYqzEOWLWWqszNcnpUlBSWwsUeCt8Jjat6t6FjKZi0ldOgh/0RivRU5T9R/NH2jHj7b42YDO9ISbX143dqtx8U7A=
+X-Received: by 2002:a0c:eb92:: with SMTP id x18mr20126969qvo.39.1566913018683;
+ Tue, 27 Aug 2019 06:36:58 -0700 (PDT)
 MIME-Version: 1.0
-References: <e66b822b-026b-29cc-e461-6334aafd1d30@web.de>
-In-Reply-To: <e66b822b-026b-29cc-e461-6334aafd1d30@web.de>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 27 Aug 2019 15:31:15 +0200
-Message-ID: <CAMuHMdVCcHn1YHFhehkvNV29s5jCDDsDWBOkVcWmf1XBPRdfYg@mail.gmail.com>
-Subject: Re: [PATCH] clk: renesas: mstp: Delete an unnecessary kfree() call in cpg_mstp_clocks_init()
-To:     Markus Elfring <Markus.Elfring@web.de>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
+References: <20190822092643.593488-1-lkundrak@v3.sk> <20190822092643.593488-3-lkundrak@v3.sk>
+ <CAL_JsqJ4_h+M=6L-nzK2N+A9TAy-N8SoiFv1SSTk_kCcKt0eXw@mail.gmail.com> <136a57cf3d293e3233f31d5ee660a6418726333a.camel@v3.sk>
+In-Reply-To: <136a57cf3d293e3233f31d5ee660a6418726333a.camel@v3.sk>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 27 Aug 2019 08:36:47 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqK1pkwPZj+Us8CecNnfA7L17YVk9aTe3qPoNTAvRiHibw@mail.gmail.com>
+Message-ID: <CAL_JsqK1pkwPZj+Us8CecNnfA7L17YVk9aTe3qPoNTAvRiHibw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/20] dt-bindings: arm: Convert Marvell MMP board/soc
+ bindings to json-schema
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        kernel-janitors@vger.kernel.org
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 3:27 PM Markus Elfring <Markus.Elfring@web.de> wrote:
-> From: Markus Elfring <elfring@users.sourceforge.net>
-> Date: Tue, 27 Aug 2019 15:22:12 +0200
+On Tue, Aug 27, 2019 at 8:24 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
 >
-> A null pointer would be passed to a call of the function “kfree”
-> directly after a call of the function “kzalloc” failed at one place.
-> Remove this superfluous function call.
+> On Tue, 2019-08-27 at 06:59 -0500, Rob Herring wrote:
+> > On Thu, Aug 22, 2019 at 4:27 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> > > Convert Marvell MMP SoC bindings to DT schema format using json-schema.
+> > >
+> > > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > >
+> > > ---
+> > > Changes since v1:
+> > > - Added this patch
+> > >
+> > >  .../devicetree/bindings/arm/mrvl/mrvl.txt     | 14 ---------
+> > >  .../devicetree/bindings/arm/mrvl/mrvl.yaml    | 31 +++++++++++++++++++
+> > >  2 files changed, 31 insertions(+), 14 deletions(-)
+> > >  delete mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > >  create mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > > deleted file mode 100644
+> > > index 951687528efb0..0000000000000
+> > > --- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> > > +++ /dev/null
+> > > @@ -1,14 +0,0 @@
+> > > -Marvell Platforms Device Tree Bindings
+> > > -----------------------------------------------------
+> > > -
+> > > -PXA168 Aspenite Board
+> > > -Required root node properties:
+> > > -       - compatible = "mrvl,pxa168-aspenite", "mrvl,pxa168";
+> > > -
+> > > -PXA910 DKB Board
+> > > -Required root node properties:
+> > > -       - compatible = "mrvl,pxa910-dkb";
+> > > -
+> > > -MMP2 Brownstone Board
+> > > -Required root node properties:
+> > > -       - compatible = "mrvl,mmp2-brownstone", "mrvl,mmp2";
+> > > diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+> > > new file mode 100644
+> > > index 0000000000000..dc9de506ac6e3
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+> > > @@ -0,0 +1,31 @@
+> > > +# SPDX-License-Identifier: GPL-2.0
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/arm/mrvl/mrvl.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Marvell Platforms Device Tree Bindings
+> > > +
+> > > +maintainers:
+> > > +  - Lubomir Rintel <lkundrak@v3.sk>
+> > > +
+> > > +properties:
+> > > +  $nodename:
+> > > +    const: '/'
+> > > +  compatible:
+> > > +    oneOf:
+> > > +      - description: PXA168 Aspenite Board
+> > > +        items:
+> > > +          - enum:
+> > > +              - mrvl,pxa168-aspenite
+> > > +          - const: mrvl,pxa168
+> > > +      - description: PXA910 DKB Board
+> > > +        items:
+> > > +          - enum:
+> > > +              - mrvl,pxa910-dkb
+> >
+> > Doesn't match what's in dts file:
+> >
+> > arch/arm/boot/dts/pxa910-dkb.dts:       compatible =
+> > "mrvl,pxa910-dkb", "mrvl,pxa910";
 >
-> This issue was detected by using the Coccinelle software.
+> It corresponds to the .txt bindings specification this commit is
+> converting. I thought it wouldn't be a good idea to do any changes to
+> the contents at the time the conversion is done.
+
+There are so many errors like this, that it's fine to do it in the
+conversion. A separate patch is fine too.
+
+> I also don't understand why does the dts file specify the board-
+> specific compatible string. Surely "mrvl,pxa910" alone would be
+> sufficient?
+
+To potentially work around any board specific issue without a dtb change.
+
 >
-> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > > +      - description: MMP2 Brownstone Board
+> >
+> > If this entry is only for this board...
+> >
+> > > +        items:
+> > > +          - enum:
+> > > +              - mrvl,mmp2-brownstone
+> >
+> > ...then this can be a 'const' instead. Same for the others.
+>
+> Sure, but is it preferable? I've actually done a "git grep -A3 enum
+> Documentation/devicetree/bindings/" to see if the single-element is
+> typically used and it seems like it is. Perhaps it's a good idea to
+> indicate to a human reader that this is a list that's expected to
+> eventually be extended with new elements.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in clk-renesas-for-v5.5.
+Then the description should match and say 'MMP2 based boards'.
 
-Gr{oetje,eeting}s,
+> In any case, there are more boards with MMP2 currently supported,
+> notably the XO-1.75 laptop. I've actually sent out the dts file for
+> review some time ago. I haven't added a separate compatible string for
+> it because I thought it is not necessary (see above).
 
-                        Geert
+You should add one.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Rob
