@@ -1,113 +1,168 @@
-Return-Path: <SRS0=daJW=WW=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=sRHc=WX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8B53C3A59F
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 23:47:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49929C3A59F
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 00:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A24852080C
-	for <linux-clk@archiver.kernel.org>; Mon, 26 Aug 2019 23:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1566863251;
-	bh=Yr2E6qB0qKTdQPuJDk0Uy2OePf+bLbKdzWtfm/XHE/Q=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=fxGocgoiyLVKENjxLAhI9mAZnALLbJQYv3dwwZ12Ks2Bt5hK3/ZFfbYQfAMlCN2m8
-	 GwWhEZdHubunlMq+ME1nrlP1U/H0+rZkkIb430G976h0ilwyoka8zaTKk3iUwGJwRc
-	 6n1RXgsk8+BZ3Sh+kzrQnhB4X46P/3ghlVNjrAAE=
+	by mail.kernel.org (Postfix) with ESMTP id 12F75217F5
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 00:38:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nv3JPgoD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726278AbfHZXrb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 26 Aug 2019 19:47:31 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726020AbfHZXrb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 26 Aug 2019 19:47:31 -0400
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4AFE2070B;
-        Mon, 26 Aug 2019 23:47:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1566863250;
-        bh=Yr2E6qB0qKTdQPuJDk0Uy2OePf+bLbKdzWtfm/XHE/Q=;
-        h=From:To:Cc:Subject:Date:From;
-        b=GJ8gAJ/vZYfbmDcg/TWgdFmQ5472gQoWWYN0u6rklpD4NsTyiapbZ1sC+XwNUjPyQ
-         B6CP+DVGFRRh1DNk/1BQ6+bnesY1GVc+oCj5Odf41mv57qiQ8sxuIIxrdvqT4b39M3
-         zyl/K1nE0OEwKi+eYWhkXw30QVDO73+vjADRoLXA=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH] clk: Drop !clk checks in debugfs dumping
-Date:   Mon, 26 Aug 2019 16:47:29 -0700
-Message-Id: <20190826234729.145593-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
+        id S1727646AbfH0AiZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 26 Aug 2019 20:38:25 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:34379 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfH0AiZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 26 Aug 2019 20:38:25 -0400
+Received: by mail-pf1-f196.google.com with SMTP id b24so12936742pfp.1
+        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2019 17:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CzJ4L/ndy3TmvMzhc3lAYgIRX3iQZIHJfLoJy4FPyOo=;
+        b=nv3JPgoD/qTSnxeEOXknD51aWQjDcbr9AW9jwKCFqtUBoS2TevqfKmchyAm7BSRQ4O
+         tyFdft4fk96lQUJQjLGWRk8gqS1yYNUFw10qfpqxTVt2ZSNhdPCC+t1nrkI7F45P0KG7
+         cczO71SHVoSV4NXTdmgJL8ayA9dXWwqY6e9VrbOYHYqLyAL+zA7R5sQFdIcDkhYfYPpx
+         E/a9/2Qs1k0SUZcfS0cW4IaLmz1zonx6AthpxMnb+xykVvqM/mtoDHAOcEHxu2DNOh+J
+         b7TVdSuoCr4cw5I2vJGijjDaXCNiRURx19LBmaFI9ncZagxgF16+E/l+yQ07sk6AAfkc
+         5Ncg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CzJ4L/ndy3TmvMzhc3lAYgIRX3iQZIHJfLoJy4FPyOo=;
+        b=dsST46gLJDNBIoi+51w9gd02mg38Dd1X9qaYhqUiMqJsdzAOGkKXG41qVy7o6r1Eol
+         aq+XQoS8XXanAc48L3nwQ8JqiHzfW68fdAiFMaOvmgxZhxuRQdj1oHmeJLj2o3XHQsNg
+         Xk/XoI5kwLCMs9vlwQ3Kx05EP8Ed+4K90uh1IXWM0BaLwkS5kT/beMdIwym2CaG9UVxE
+         1Zg4xbYfz1m2VLio95hq2O4QKsYav23UR/E+sqGVdFzPHbPEPDSEL5KfRivY+BuVVL/O
+         weW5yLhEjW59MQCNaMBDVaVu0ddXkjHu0KHZTb0f90D+H91ds3BBSqKr3dSqRqvSTxvN
+         sM9A==
+X-Gm-Message-State: APjAAAVPAn+szLXcJQj+R8jV+7AgYbaH338pmfjB7o3QcvwUnZZ8+MKO
+        Iz2pTacSAfLDp88mgfzOwpA2lg==
+X-Google-Smtp-Source: APXvYqyjPwSyOmWAUWNl7BdiwhUe9MPVY5a44iaTMCz8MH8pBwqliT2FJ3xcoyhkNLlnBO1mO7g7qQ==
+X-Received: by 2002:a62:6489:: with SMTP id y131mr14055419pfb.124.1566866304601;
+        Mon, 26 Aug 2019 17:38:24 -0700 (PDT)
+Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id z68sm14631861pgz.88.2019.08.26.17.38.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2019 17:38:23 -0700 (PDT)
+Date:   Mon, 26 Aug 2019 17:40:14 -0700
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Subject: Re: [PATCH] clk: Evict unregistered clks from parent caches
+Message-ID: <20190827004014.GA26807@tuxbook-pro>
+References: <20190826234311.138147-1-sboyd@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190826234311.138147-1-sboyd@kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-These recursive functions have checks for !clk being passed in, but the
-callers are always looping through lists and therefore the pointers
-can't be NULL. Drop the checks to simplify the code.
+On Mon 26 Aug 16:43 PDT 2019, Stephen Boyd wrote:
 
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/clk.c | 12 ------------
- 1 file changed, 12 deletions(-)
+> We leave a dangling pointer in each clk_core::parents array that has an
+> unregistered clk as a potential parent when that clk_core pointer is
+> freed by clk{_hw}_unregister(). It is impossible for the true parent of
+> a clk to be set with clk_set_parent() once the dangling pointer is left
+> in the cache because we compare parent pointers in
+> clk_fetch_parent_index() instead of checking for a matching clk name or
+> clk_hw pointer.
+> 
+> Before commit ede77858473a ("clk: Remove global clk traversal on fetch
+> parent index"), we would check clk_hw pointers, which has a higher
+> chance of being the same between registration and unregistration, but it
+> can still be allocated and freed by the clk provider. In fact, this has
+> been a long standing problem since commit da0f0b2c3ad2 ("clk: Correct
+> lookup logic in clk_fetch_parent_index()") where we stopped trying to
+> compare clk names and skipped over entries in the cache that weren't
+> NULL.
+> 
+> There are good (performance) reasons to not do the global tree lookup in
+> cases where the cache holds dangling pointers to parents that have been
+> unregistered. Let's take the performance hit on the uncommon
+> registration path instead. Loop through all the clk_core::parents arrays
+> when a clk is unregistered and set the entry to NULL when the parent
+> cache entry and clk being unregistered are the same pointer. This will
+> fix this problem and avoid the overhead for the "normal" case.
+> 
+> Based on a patch by Bjorn Andersson.
+> 
+> Fixes: da0f0b2c3ad2 ("clk: Correct lookup logic in clk_fetch_parent_index()")
+> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index c0990703ce54..a5b686307c38 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2847,9 +2847,6 @@ static struct hlist_head *orphan_list[] = {
- static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
- 				 int level)
- {
--	if (!c)
--		return;
--
- 	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
- 		   level * 3 + 1, "",
- 		   30 - level * 3, c->name,
-@@ -2864,9 +2861,6 @@ static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
- {
- 	struct clk_core *child;
- 
--	if (!c)
--		return;
--
- 	clk_summary_show_one(s, c, level);
- 
- 	hlist_for_each_entry(child, &c->children, child_node)
-@@ -2896,9 +2890,6 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
- 
- static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
- {
--	if (!c)
--		return;
--
- 	/* This should be JSON format, i.e. elements separated with a comma */
- 	seq_printf(s, "\"%s\": { ", c->name);
- 	seq_printf(s, "\"enable_count\": %d,", c->enable_count);
-@@ -2915,9 +2906,6 @@ static void clk_dump_subtree(struct seq_file *s, struct clk_core *c, int level)
- {
- 	struct clk_core *child;
- 
--	if (!c)
--		return;
--
- 	clk_dump_one(s, c, level);
- 
- 	hlist_for_each_entry(child, &c->children, child_node) {
+Thanks for writing this up.
 
-base-commit: 5f9e832c137075045d15cd6899ab0505cfb2ca4b
--- 
-Sent by a computer through tubes
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
+> Cc: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/clk.c | 30 ++++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+> 
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index c0990703ce54..f3982bfa39d6 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3737,6 +3737,34 @@ static const struct clk_ops clk_nodrv_ops = {
+>  	.set_parent	= clk_nodrv_set_parent,
+>  };
+>  
+> +static void clk_core_evict_parent_cache_subtree(struct clk_core *root,
+> +						struct clk_core *target)
+> +{
+> +	int i;
+> +	struct clk_core *child;
+> +
+> +	for (i = 0; i < root->num_parents; i++)
+> +		if (root->parents[i].core == target)
+> +			root->parents[i].core = NULL;
+> +
+> +	hlist_for_each_entry(child, &root->children, child_node)
+> +		clk_core_evict_parent_cache_subtree(child, target);
+> +}
+> +
+> +/* Remove this clk from all parent caches */
+> +static void clk_core_evict_parent_cache(struct clk_core *core)
+> +{
+> +	struct hlist_head **lists;
+> +	struct clk_core *root;
+> +
+> +	lockdep_assert_held(&prepare_lock);
+> +
+> +	for (lists = all_lists; *lists; lists++)
+> +		hlist_for_each_entry(root, *lists, child_node)
+> +			clk_core_evict_parent_cache_subtree(root, core);
+> +
+> +}
+> +
+>  /**
+>   * clk_unregister - unregister a currently registered clock
+>   * @clk: clock to unregister
+> @@ -3775,6 +3803,8 @@ void clk_unregister(struct clk *clk)
+>  			clk_core_set_parent_nolock(child, NULL);
+>  	}
+>  
+> +	clk_core_evict_parent_cache(clk->core);
+> +
+>  	hlist_del_init(&clk->core->child_node);
+>  
+>  	if (clk->core->prepare_count)
+> -- 
+> Sent by a computer through tubes
+> 
