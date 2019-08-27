@@ -2,160 +2,156 @@ Return-Path: <SRS0=sRHc=WX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89447C3A5A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 05:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A65DAC3A5A3
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 08:17:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5578E2184D
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 05:57:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 708A1206BA
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 08:17:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GF8GHOGz"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rGN9XdhV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725879AbfH0F5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 01:57:21 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:60472 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfH0F5V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 27 Aug 2019 01:57:21 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7R5vHUX086686;
-        Tue, 27 Aug 2019 00:57:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566885437;
-        bh=Ph3+W7BZUY9kT74tOsS+qeS2WWgajfa4Dtl0zioATD0=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=GF8GHOGzrO9BjSnV6G5cI9mZJQ5ZoFKuRC6289FRoROvbDb4EH5kC8+xYN1QrZz7y
-         Q8PUkcODh8xRDo3WgjfC5EolUp0zbzp24zI9CyWFbsC4r6MKlf3pE/PAgvFW4suZGy
-         f2HGTS4v9vztA/a5zAxb1um1IriZjjCZ8P8TsmH8=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7R5vHL8047771
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 27 Aug 2019 00:57:17 -0500
-Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 27
- Aug 2019 00:57:16 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 27 Aug 2019 00:57:16 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7R5vEc8063165;
-        Tue, 27 Aug 2019 00:57:15 -0500
-Subject: Re: [PATCH 3/3] clk: ti: dra7xx: add timer_sys_ck clock alias
-To:     Suman Anna <s-anna@ti.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        id S1728447AbfH0IRy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 04:17:54 -0400
+Received: from mail-eopbgr60053.outbound.protection.outlook.com ([40.107.6.53]:14917
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727788AbfH0IRx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Aug 2019 04:17:53 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=mC6SGfUGcj5qfowVWSJ996L5OzXYwktpH8iMQC2pLbM1ADZOtA4ZTllXCzGeYxZ/q49PldKvlaKqln3FVYJAa+fzFzYF9kPN88P3Hx8YIQxLGS0VZ3IJ7Nd4HKdczSBuEjqW//KTCy9iUz7UmRcCEEllnwR/Sv0pbw033bWRUPSvanRzuX+PJ5dUZTFAKM3eEQ7z5Ur73VdXQsuaD2nnTvpDZT4msP1e5mmzUS4BloKxEYd2y4Up/KHk0XQl/sGjq7gt9avOkpKSrWOWh8odLGNUzmeXnVgZyju3dfeGWiO/4kBHvDxPvgzG6X2qGVVwXW/Ch837WE/eCPoRjYFetQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tLgUOAdcUK2g4ZMA3HdTrrSdjZWSUZVsh5luoh4dMA=;
+ b=EWit/mVuTId+PLQDdfPdFEklX278AjaUp4K/eCE/D0p2/6zO9e+xIsNgdyC/Wp/guukcq1BtZ4OK4jPh/gVED1YAZY4hS8KAyfThYtv2i4WvTkP1rs1pY0s1Hfza1ppPezXbpAiJ1IlEkBxLXlWDjr09fIM/TliuY8qtlaaTU86f9WKEzJn38xI0F9uZWgDWuKAhbI+9DW8D9WoCOk54+3ejzLl/ch9m7MB2wYMsLXTg/f+IcivJkFbW/lQXA2PCVof87Ejs5U01uJjbU0F/vIdDpws31h+ANS9sgEWo+rWhkjQSkC0DalI7U35pmkLsg4GFOT/3DfR4ELPJptanKA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6tLgUOAdcUK2g4ZMA3HdTrrSdjZWSUZVsh5luoh4dMA=;
+ b=rGN9XdhVXSK6FQKzLQd1oOON8o4jwQSZnErHFROQIbdG8UX5bkPRlWT9shQ1o1At85ti97MaJef3s+3g5LJ9VZr4OwpR+WYo0zM7sWGoVN3uvS2nwWTYuYzt139bOhga1adUZsIPeCSznaVi2tmIk0nRDTs10fCZpgVNIHG3VxQ=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6961.eurprd04.prod.outlook.com (52.132.214.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2199.21; Tue, 27 Aug 2019 08:17:50 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::5d98:e1f4:aa72:16b4%4]) with mapi id 15.20.2178.022; Tue, 27 Aug 2019
+ 08:17:50 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>
-CC:     "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>,
-        "tony@atomide.com" <tony@atomide.com>
-References: <1565183079-27798-1-git-send-email-t-kristo@ti.com>
- <1565183079-27798-4-git-send-email-t-kristo@ti.com>
- <9d0edab4-cae2-50d5-2df9-42c879f2623f@ti.com>
- <b1005a98-e098-f651-d70e-c519fd740540@ti.com>
- <12f0fa92-f6e1-0e71-09da-78722f040966@ti.com>
- <78fe85dc-6349-1cd7-e0fb-b0ccd6a81ad8@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <c2e7b2ce-7d52-415f-e867-4af509cc3286@ti.com>
-Date:   Tue, 27 Aug 2019 08:57:14 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <78fe85dc-6349-1cd7-e0fb-b0ccd6a81ad8@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
+Thread-Topic: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
+Thread-Index: AQHVXK/qRNohGClvt0yC94cqOwkPUA==
+Date:   Tue, 27 Aug 2019 08:17:50 +0000
+Message-ID: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR02CA0143.apcprd02.prod.outlook.com
+ (2603:1096:202:16::27) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 31915c1d-db0b-4f77-1171-08d72ac70cc4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6961;
+x-ms-traffictypediagnostic: AM0PR04MB6961:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB696121F771311C6327AA6D9C88A00@AM0PR04MB6961.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 0142F22657
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(136003)(39860400002)(366004)(346002)(199004)(189003)(71200400001)(54906003)(2501003)(8936002)(66066001)(478600001)(36756003)(64756008)(66556008)(6436002)(6486002)(66446008)(386003)(6506007)(66476007)(71190400001)(7736002)(110136005)(305945005)(2201001)(86362001)(316002)(14454004)(6636002)(81156014)(81166006)(2906002)(486006)(2616005)(476003)(26005)(4326008)(44832011)(66946007)(53936002)(186003)(14444005)(52116002)(102836004)(99286004)(25786009)(6512007)(256004)(50226002)(3846002)(6116002)(5660300002)(8676002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6961;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: JaamQxk4G4A+hccSgbT3aTuuAafYjkuY65ZzYnFOIQblxCbZe1qlbpJcI5cPT0nu3ofMKsAYLR9zkghodqNlY23CJx3AHW59knHEHFz2B3Zw4Gba0nCKZLuDntMoBH07iPXlWphzMbUXCga0Xn7Vtf1H3Sci2YqmQm1vNTFUT98tOATjaeWjxHR6KWd9VvaKpGpNelXetfe1pt0WXwQv3dk6dwhCC8U3/O0d52V4z9/N8cT4MMbiL882ZZ9ItppJUVIwCfmvrH3zgQcT8VUJDTHOUk9qL+fFySlcfFVJUK/J7vyg0CLJlNssDKvM9QfHNaSTnnKjCIjGRGZL6jO1zlgk+LoE1qBvBN52HN2/sYTxOHAGC5Ii/biDwf6zX/fU07nZNrOTwG7o/Rxex0hyYEGNYIabOTEEr/tZkHzG32k=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 31915c1d-db0b-4f77-1171-08d72ac70cc4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 08:17:50.1446
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: QAq71gkrnoh1/AcRotgSzzX5jZ0h43vi6PEuR8IzdXScqTdTeCB2PVd4YC3FLnefUqRmVumMF2pzHqetUypeaw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6961
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 27.8.2019 1.26, Suman Anna wrote:
-> Hi Tero,
-> 
-> On 8/23/19 1:16 PM, Tero Kristo wrote:
->>>>
->>>> On 8/7/19 8:04 AM, Tero Kristo wrote:
->>>>> This is needed by the TI DM timer driver.
->>>>
->>>> Again can do with some better patch descriptions. Similar to the
->>>> previous patch, missing the equivalent patches for OMAP4 and OMAP5.
->>>> You can use my downstream patches for these - [1][2][3] that has all the
->>>> needed Fixes by details. Only difference is that you used a single line
->>>> change on DRA7, and this should suffice since all the sources are same,
->>>> but OMAP4 and OMAP5 needed different ones.
->>>>
->>>> [1] OMAP4:
->>>> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=9d45dc42fbed8395d733366dbf6c0fd5ec171e2f
->>>>
->>>> [2] OMAP5:
->>>> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=34f4682a91173386307b310d7f4955d46dcaaea2
->>>>
->>>> [3] DRA7:
->>>> http://git.ti.com/gitweb/?p=rpmsg/remoteproc.git;a=commit;h=2a662694437ae7192b5ef759ec40abe796d2a058
->>>>
->>>>
->>>> Technically, this data need to be added back for all OMAP2+ SoCs which
->>>> support dmtimer with any other drivers wanting to use the timers.
->>>
->>> So, I checked and these aliases already are defined on OMAP2, OMAP3,
->>> AM33xx, AM43xx, DM814x and DM816x SoCs. So, just include the OMAP4 and
->>> OMAP5 ones along with the DRA7x one.
->>
->> Actually, all these alias definitions can be completely removed, and can
->> be replaced with DT data. Here's sample how it can be done for dra7xx
->> timer11:
->>
->> diff --git a/arch/arm/boot/dts/dra7-l4.dtsi
->> b/arch/arm/boot/dts/dra7-l4.dtsi
->> index bed67603c186..fafa0a131af0 100644
->> --- a/arch/arm/boot/dts/dra7-l4.dtsi
->> +++ b/arch/arm/boot/dts/dra7-l4.dtsi
->> @@ -1910,8 +1910,8 @@
->>                          timer11: timer@0 {
->>                                  compatible = "ti,omap5430-timer";
->>                                  reg = <0x0 0x80>;
->> -                               clocks = <&l4per_clkctrl
->> DRA7_L4PER_TIMER11_CLKCTRL 24>;
->> -                               clock-names = "fck";
->> +                               clocks = <&l4per_clkctrl
->> DRA7_L4PER_TIMER11_CLKCTRL 24>, <&timer_sys_clk_div>;
->> +                               clock-names = "fck", "timer_sys_ck";
->>                                  interrupts = <GIC_SPI 42
->> IRQ_TYPE_LEVEL_HIGH>;
->>                          };
->>                  };
->>
->> I will post these changes along with other DTS patches once the time is
->> right. For now, I will just drop these aliases completely.
-> 
-> I am not sure if this is gonna buy us anything and if it is scalable.
-> The added clock is neither a functional clock nor an optional clock of
-> the timer device, but is just a name to use to set the clock parent. Are
-> you going to add the aliases from clk-<soc>.h to all the device nodes?
-> DRA7 dmtimers can actually be parented from one of 13 clocks (driver was
-> never updated to support those).
+From: Peng Fan <peng.fan@nxp.com>
 
-No, adding all of these has no point.
+There is hardware issue that:
+The output clock the LPCG cell will not turn back on as expected,
+even though a read of the IPG registers in the LPCG indicates that
+the clock should be enabled.
 
-> 
-> Given that the dmtimers can only be requested using phandle on DT boots,
-> it is possible to eliminate the naming and rely on
-> assigned-clock-parents in either the dmtimer nodes or the client nodes
-> (provided all the clock parents are listed in dts), and eliminate this
-> set_source logic.
+The software workaround is to write twice to enable the LPCG clock
+output.
 
-Either way works, however the alias mechanism provided inside the TI 
-clock driver was meant to be temporary only when it was introduced a few 
-years back... Any clock handles needed by drivers should be provided via DT.
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-lpcg-scu.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-If you need re-parenting of things, using assigned-clocks would be ideal.
+diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.=
+c
+index a73a799fb777..7391d0668ec4 100644
+--- a/drivers/clk/imx/clk-lpcg-scu.c
++++ b/drivers/clk/imx/clk-lpcg-scu.c
+@@ -54,6 +54,11 @@ static int clk_lpcg_scu_enable(struct clk_hw *hw)
+=20
+ 	reg |=3D val << clk->bit_idx;
+ 	writel(reg, clk->reg);
++	/*
++	 * There is hardware bug. When enabling the LPCG clock
++	 * output, SW can write the enabling value twice
++	 */
++	writel(reg, clk->reg);
+=20
+ 	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
+=20
+@@ -71,6 +76,11 @@ static void clk_lpcg_scu_disable(struct clk_hw *hw)
+ 	reg =3D readl_relaxed(clk->reg);
+ 	reg &=3D ~(CLK_GATE_SCU_LPCG_MASK << clk->bit_idx);
+ 	writel(reg, clk->reg);
++	/*
++	 * There is hardware bug. When enabling the LPCG clock
++	 * output, SW can write the enabling value twice
++	 */
++	writel(reg, clk->reg);
+=20
+ 	spin_unlock_irqrestore(&imx_lpcg_scu_lock, flags);
+ }
+--=20
+2.16.4
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
