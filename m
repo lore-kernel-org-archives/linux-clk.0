@@ -2,191 +2,163 @@ Return-Path: <SRS0=sRHc=WX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B88C3A5A3
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 10:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E2DFC3A5A3
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 12:00:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CBED20656
-	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 10:53:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="PzF/CKqI"
+	by mail.kernel.org (Postfix) with ESMTP id 2F63F2186A
+	for <linux-clk@archiver.kernel.org>; Tue, 27 Aug 2019 12:00:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1566907200;
+	bh=cojGaPwwiuNAb/W4vwUgL1AZRj1AsasbQrMb/I1e6iI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=tHLFrct49DQfwgBfm82TD+ai5jISKnVXrRtvvxISvpENiQRxNUuQ6MnOXMDRc8V48
+	 0wq6uEixauFB6VkYilJfMl2IR2nT61nbaEHr1kVt4KX1Bn5CZhBs7hVxpH4n3WXi8Q
+	 U7g9xUiC5FzPZ5fC9vEAUHBJh5xUEqHHFIvZyQno=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725912AbfH0Kx7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 27 Aug 2019 06:53:59 -0400
-Received: from mail-eopbgr1400110.outbound.protection.outlook.com ([40.107.140.110]:24529
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725793AbfH0Kx6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 27 Aug 2019 06:53:58 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=eRiyIp+cacLYe0ZTQ40Nt8/T1wQnsIC9aLax9jeUfUTgmilsBblQoH6n+86IPDAKD5igJF7dy4VpvK+uxRhQ5QyoX+Vr8WAJdyCzA2BxuiSsFdKqbEAwkXAgW9gplzx7tT34r/xY4OheFu1Zqj5mFVM3I1Ut0Atp3ZAY78Z2es6vOAxJQWEBgDBhK9d5qYV4SjRU0EJk7BBw+HxJXLj37LhgB68GbHJVn1ufU7udr8uaPQcKBCy2MQ4h6mDJbZYM8r5EvqmPzzQ8xV85zf5wjTcFTBSv8fk6C1hk6x92EH5sTfKI3kub5LaO4NB2HJzlI4XZZ2vJIfDoItf0yI67gQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9UvsmTXgdYsMpf4uawkLnNmOwXOoF94FDXJkNd8pGDM=;
- b=fwzn7XBOkADVOCSfkGvxGqmu4Ca0oKaVLZ0y5tWKsL15RcWr8eyNfkqxW13KLlgQLnsjYIZn/m+zsmoZWj1RNg84ATUFZDaDnpVaTzzEYjDBrIWMdG7VtpiINGi0YUPxq8VcU/lakApPXJ05XVVLiRdEYYj+k2JG55XsXa2dRuRWC++DMjoE943JmRwSqedF10iYa4y8lPhqYxyFg6Ih/w4VOSwC97TVpdvfqK3qQ63hUCv3pNp8b3YsmgVbQFIxWPfaMHXaRFO+3xZjaZf178pOmNqum/j5luhUeqgfEg96ZsjqYoM+KYaGWvN4IPTKkfXWXtqRalINOz/dFSvNpw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9UvsmTXgdYsMpf4uawkLnNmOwXOoF94FDXJkNd8pGDM=;
- b=PzF/CKqIstANMBa9ph7rEpgiDTXswXi/C38aZJDSbVl7BYWtz69F2oP2sDnwtjmvJR24IYhnv6QKl9BamQqerHAecTmd4iEzIAOVfg9jdiBiK6buZ9Dt5npix/O3srkAxvk72EryxHac/u54SxVeCwTzdZYxSsJRzfsCAtIs0Co=
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com (52.133.160.138) by
- TY1PR01MB1692.jpnprd01.prod.outlook.com (52.133.160.145) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2199.19; Tue, 27 Aug 2019 10:53:54 +0000
-Received: from TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::acc8:abe:6eac:76e0]) by TY1PR01MB1769.jpnprd01.prod.outlook.com
- ([fe80::acc8:abe:6eac:76e0%7]) with mapi id 15.20.2178.023; Tue, 27 Aug 2019
- 10:53:54 +0000
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: Document of_parse_clkspec() some more
-Thread-Topic: [PATCH v2] clk: Document of_parse_clkspec() some more
-Thread-Index: AQHVXFQhjzSS11Xl9kyvJ1FqF5kDOqcOz06Q
-Date:   Tue, 27 Aug 2019 10:53:54 +0000
-Message-ID: <TY1PR01MB1769DCBAD9B79AA2AD36F241F5A00@TY1PR01MB1769.jpnprd01.prod.outlook.com>
-References: <20190826212042.48642-1-sboyd@kernel.org>
-In-Reply-To: <20190826212042.48642-1-sboyd@kernel.org>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=phil.edworthy@renesas.com; 
-x-originating-ip: [193.141.220.21]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 61374bd9-7ea1-46b5-e65e-08d72adcdaca
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:TY1PR01MB1692;
-x-ms-traffictypediagnostic: TY1PR01MB1692:
-x-microsoft-antispam-prvs: <TY1PR01MB16925873D4E3ED3E0E38FACEF5A00@TY1PR01MB1692.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1443;
-x-forefront-prvs: 0142F22657
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(376002)(346002)(39860400002)(366004)(396003)(136003)(199004)(189003)(6436002)(71190400001)(71200400001)(44832011)(81166006)(81156014)(6116002)(3846002)(486006)(8936002)(316002)(478600001)(54906003)(110136005)(5660300002)(7736002)(14454004)(74316002)(305945005)(66066001)(9686003)(55016002)(256004)(4326008)(25786009)(66946007)(66446008)(8676002)(64756008)(476003)(99286004)(76176011)(7696005)(2906002)(66476007)(66556008)(446003)(76116006)(11346002)(6246003)(6506007)(102836004)(229853002)(53936002)(33656002)(26005)(86362001)(52536014)(53546011)(186003);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1692;H:TY1PR01MB1769.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: C7yjRYhXbkF9RV7mpEqwE9vf6pRS8FYgykZY1jhJ7rJZL4shca4hYWJELr5ghFgYbuKUs3YQZp5ey1YcJjl3khhIeSOf4ATsjZZq9WbCG9XSGYR/PAnCU6ILOFphQAckCYuATVyHlbo658g9zrA+pbnIUi0rwfD1vk4gb0KwM5iNYZfSflMSt3yoHycso1ayqtWD2kyHlAaPxcJbCTt69aGvoH0ssDK6gIwGwqeZ77Mr2hNPkm48+5xakjfPXBKWElOuCuJn7K9WbCAEjaHJenBWSRX6uD5t3YjbDgZNkNNhZ7Fz5M3+Sxfn0dMpqi7cm+GRQ456JhxEbLKRxYxGXrAp7+2qrIYaQ5wfyjSlLg3FhJep2EGa4r4SwH81w/FlqQUo3xx/CupNhFxLRs7T1TGqD4pTKm/nabVdhHnkFZc=
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726125AbfH0L77 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 27 Aug 2019 07:59:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34856 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726039AbfH0L77 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 27 Aug 2019 07:59:59 -0400
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE442186A;
+        Tue, 27 Aug 2019 11:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1566907198;
+        bh=cojGaPwwiuNAb/W4vwUgL1AZRj1AsasbQrMb/I1e6iI=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=T0pJ99OEmlQBr7pPoQJoDHmOtqwMOKuEXwbmbigauW6MlUwHMiCooYtqwR8OgpAnS
+         Z8xNy1gdTVGPI3MkG+btJusN57WfVBUu3E5qOHKl96b73LRExbxcxFew7In4KKhx+o
+         T/avNFZxabrlaVvNYxVFrq6mQ0633EAHtFlX4mVU=
+Received: by mail-qt1-f179.google.com with SMTP id u34so20990058qte.2;
+        Tue, 27 Aug 2019 04:59:58 -0700 (PDT)
+X-Gm-Message-State: APjAAAUbfn0lxQhvFUqyCTXuLoaQ7rVrFIsdX3sXKXmSgFS+TpPf3v7v
+        CIK7diUqD2Khs8Xh7vsbiVSPxW+dtE9iXi+NFg==
+X-Google-Smtp-Source: APXvYqxzLkdUJzCt/zWOg6IuhiGFBaSLvGFnC+KgLNTyvxF+vcnBvHOa0oGv5spSX6RPZ8f6ZyHhXNAQ/NwAtPhzuWs=
+X-Received: by 2002:aed:22b3:: with SMTP id p48mr20191755qtc.136.1566907197288;
+ Tue, 27 Aug 2019 04:59:57 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 61374bd9-7ea1-46b5-e65e-08d72adcdaca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Aug 2019 10:53:54.6947
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dlm+9yTlIlN3AKLoe+2jmAWJtgX0Yettyn+VmaaTh3W7RWXdVH0+o/Hf8+s5MIyYiUtCxIgQ6Wl/yVqhQXW6UzAhwplhyZkRCbSQ2NSkMBs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1692
+References: <20190822092643.593488-1-lkundrak@v3.sk> <20190822092643.593488-3-lkundrak@v3.sk>
+In-Reply-To: <20190822092643.593488-3-lkundrak@v3.sk>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 27 Aug 2019 06:59:45 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ4_h+M=6L-nzK2N+A9TAy-N8SoiFv1SSTk_kCcKt0eXw@mail.gmail.com>
+Message-ID: <CAL_JsqJ4_h+M=6L-nzK2N+A9TAy-N8SoiFv1SSTk_kCcKt0eXw@mail.gmail.com>
+Subject: Re: [PATCH v2 02/20] dt-bindings: arm: Convert Marvell MMP board/soc
+ bindings to json-schema
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Olof Johansson <olof@lixom.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Marc Zyngier <maz@kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On 26 August 2019 22:21 Stephen Boyd wrote:
-> The return value of of_parse_clkspec() is peculiar. If the function is
-> called with a NULL argument for 'name' it will return -ENOENT, but if
-> it's called with a non-NULL argument for 'name' it will return -EINVAL.
-> This peculiarity is documented by commit 5c56dfe63b6e ("clk: Add comment
-> about __of_clk_get_by_name() error values").
->=20
-> Let's further document this function so that it's clear what the return
-> value is and how to use the arguments to parse clk specifiers.
->=20
-> Cc: Phil Edworthy <phil.edworthy@renesas.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-
-Thanks, this is much better than my comment!
-
-Reviewed-by: Phil Edworthy <phil.edworthy@renesas.com>
-
+On Thu, Aug 22, 2019 at 4:27 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+>
+> Convert Marvell MMP SoC bindings to DT schema format using json-schema.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+>
 > ---
->  drivers/clk/clk.c | 43 +++++++++++++++++++++++++++++++++++++------
->  1 file changed, 37 insertions(+), 6 deletions(-)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index c0990703ce54..5c6585eb35d4 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -4316,12 +4316,43 @@ void devm_of_clk_del_provider(struct device
-> *dev)
->  }
->  EXPORT_SYMBOL(devm_of_clk_del_provider);
->=20
-> -/*
-> - * Beware the return values when np is valid, but no clock provider is f=
-ound.
-> - * If name =3D=3D NULL, the function returns -ENOENT.
-> - * If name !=3D NULL, the function returns -EINVAL. This is because
-> - * of_parse_phandle_with_args() is called even if
-> of_property_match_string()
-> - * returns an error.
-> +/**
-> + * of_parse_clkspec() - Parse a DT clock specifier for a given device no=
-de
-> + * @np: device node to parse clock specifier from
-> + * @index: index of phandle to parse clock out of. If index < 0, @name i=
-s
-> used
-> + * @name: clock name to find and parse. If name is NULL, the index is us=
-ed
-> + * @out_args: Result of parsing the clock specifier
-> + *
-> + * Parses a device node's "clocks" and "clock-names" properties to find =
-the
-> + * phandle and cells for the index or name that is desired. The resultin=
-g
-> clock
-> + * specifier is placed into @out_args, or an errno is returned when ther=
-e's a
-> + * parsing error. The @index argument is ignored if @name is non-NULL.
-> + *
-> + * Example:
-> + *
-> + * phandle1: clock-controller@1 {
-> + *	#clock-cells =3D <2>;
-> + * }
-> + *
-> + * phandle2: clock-controller@2 {
-> + *	#clock-cells =3D <1>;
-> + * }
-> + *
-> + * clock-consumer@3 {
-> + *	clocks =3D <&phandle1 1 2 &phandle2 3>;
-> + *	clock-names =3D "name1", "name2";
-> + * }
-> + *
-> + * To get a device_node for `clock-controller@2' node you may call this
-> + * function a few different ways:
-> + *
-> + *   of_parse_clkspec(clock-consumer@3, -1, "name2", &args);
-> + *   of_parse_clkspec(clock-consumer@3, 1, NULL, &args);
-> + *   of_parse_clkspec(clock-consumer@3, 1, "name2", &args);
-> + *
-> + * Return: 0 upon successfully parsing the clock specifier. Otherwise, -
-> ENOENT
-> + * if @name is NULL or -EINVAL if @name is non-NULL and it can't be foun=
-d
-> in
-> + * the "clock-names" property of @np.
->   */
->  static int of_parse_clkspec(const struct device_node *np, int index,
->  			    const char *name, struct of_phandle_args
-> *out_args)
-> --
-> Sent by a computer through tubes
+> Changes since v1:
+> - Added this patch
+>
+>  .../devicetree/bindings/arm/mrvl/mrvl.txt     | 14 ---------
+>  .../devicetree/bindings/arm/mrvl/mrvl.yaml    | 31 +++++++++++++++++++
+>  2 files changed, 31 insertions(+), 14 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt b/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> deleted file mode 100644
+> index 951687528efb0..0000000000000
+> --- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+> +++ /dev/null
+> @@ -1,14 +0,0 @@
+> -Marvell Platforms Device Tree Bindings
+> -----------------------------------------------------
+> -
+> -PXA168 Aspenite Board
+> -Required root node properties:
+> -       - compatible = "mrvl,pxa168-aspenite", "mrvl,pxa168";
+> -
+> -PXA910 DKB Board
+> -Required root node properties:
+> -       - compatible = "mrvl,pxa910-dkb";
+> -
+> -MMP2 Brownstone Board
+> -Required root node properties:
+> -       - compatible = "mrvl,mmp2-brownstone", "mrvl,mmp2";
+> diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+> new file mode 100644
+> index 0000000000000..dc9de506ac6e3
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
+> @@ -0,0 +1,31 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/arm/mrvl/mrvl.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Marvell Platforms Device Tree Bindings
+> +
+> +maintainers:
+> +  - Lubomir Rintel <lkundrak@v3.sk>
+> +
+> +properties:
+> +  $nodename:
+> +    const: '/'
+> +  compatible:
+> +    oneOf:
+> +      - description: PXA168 Aspenite Board
+> +        items:
+> +          - enum:
+> +              - mrvl,pxa168-aspenite
+> +          - const: mrvl,pxa168
+> +      - description: PXA910 DKB Board
+> +        items:
+> +          - enum:
+> +              - mrvl,pxa910-dkb
 
+Doesn't match what's in dts file:
+
+arch/arm/boot/dts/pxa910-dkb.dts:       compatible =
+"mrvl,pxa910-dkb", "mrvl,pxa910";
+
+> +      - description: MMP2 Brownstone Board
+
+If this entry is only for this board...
+
+> +        items:
+> +          - enum:
+> +              - mrvl,mmp2-brownstone
+
+...then this can be a 'const' instead. Same for the others.
+
+> +          - const: mrvl,mmp2
+> +...
+> --
+> 2.21.0
+>
