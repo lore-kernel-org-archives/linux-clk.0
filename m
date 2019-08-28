@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC783C3A5A1
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 06:59:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 281C6C3A5A1
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 06:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B25E42173E
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 06:59:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E349D22CF4
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 06:59:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aiKB1b+h"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="e5olAih1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfH1G7p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Aug 2019 02:59:45 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:58044 "EHLO
+        id S1726378AbfH1G7r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Aug 2019 02:59:47 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:58060 "EHLO
         lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726340AbfH1G7p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Aug 2019 02:59:45 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7S6xgRN120632;
-        Wed, 28 Aug 2019 01:59:42 -0500
+        with ESMTP id S1726340AbfH1G7r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Aug 2019 02:59:47 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7S6xjQi120643;
+        Wed, 28 Aug 2019 01:59:45 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1566975582;
-        bh=+qrcnaR3a/pZ4OviE1ZKc8IWLJlt6Yebqe6i5IEbb64=;
+        s=ti-com-17Q1; t=1566975585;
+        bh=lAooCRUVMyzHhADwC9qZkva36ihXtVfNEPnWC8n4rlE=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=aiKB1b+hoLadlo/Pbo47IaGcDNhCLTUj+VEmgIzMSnjuOXWKixxAa+sFlElu5LM4y
-         +ElQHLaAaPyNUPSHIFm088xr3aCa1aItjDfIfjP7R8GUjLKJAqKr7517G4fmYtgrBP
-         43MkSf0QTnTzJ/vaK6sN8xCkOobiz+piraLdytQg=
+        b=e5olAih1m1iQQE+2h+LNUNaAgqigAaR3xF01rYn6Ydqvm9rDs7pLgENyculJOhx31
+         A0J+o+zvCNSm18rg/TM+Av0/xkvyVuBiEeZL8SPUyEfAWZ9mO7+M/KEUrPuDB5y6c3
+         5mhwH+lGTEZJRycz27ec7sYYB6R7AcGGfn3CMq0g=
 Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7S6xg2J056136
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7S6xiJm129571
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 28 Aug 2019 01:59:42 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE108.ent.ti.com
+        Wed, 28 Aug 2019 01:59:45 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE108.ent.ti.com
  (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 28
- Aug 2019 01:59:41 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ Aug 2019 01:59:44 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 28 Aug 2019 01:59:40 -0500
+ Frontend Transport; Wed, 28 Aug 2019 01:59:44 -0500
 Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7S6xXVD074399;
-        Wed, 28 Aug 2019 01:59:39 -0500
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7S6xXVF074399;
+        Wed, 28 Aug 2019 01:59:43 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
         <mturquette@baylibre.com>
 CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>, <s-anna@ti.com>
-Subject: [PATCHv2 3/6] clk: ti: clkctrl: add new exported API for checking standby info
-Date:   Wed, 28 Aug 2019 09:59:26 +0300
-Message-ID: <20190828065929.32150-4-t-kristo@ti.com>
+Subject: [PATCHv2 5/6] dt-bindings: clk: add omap5 iva clkctrl definitions
+Date:   Wed, 28 Aug 2019 09:59:28 +0300
+Message-ID: <20190828065929.32150-6-t-kristo@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190828065929.32150-1-t-kristo@ti.com>
 References: <20190828065929.32150-1-t-kristo@ti.com>
@@ -64,76 +64,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Standby status is provided for certain clkctrl clocks to see if the
-given module has entered standby or not. This is mostly needed by
-remoteproc code to see if the remoteproc has entered standby and the clock
-can be turned off safely.
+OMAP5 device contains an IVA subsystem (Image and Video Accelerator.)
+IVA subsystem clkctrl definitions are currently missing, so add them.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/ti/clkctrl.c | 33 +++++++++++++++++++++++++++++++++
- include/linux/clk/ti.h   |  1 +
- 2 files changed, 34 insertions(+)
+ include/dt-bindings/clock/omap5.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index d904a9a7626a..e3e0a66a6ce2 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -34,6 +34,9 @@
- #define OMAP4_IDLEST_MASK		(0x3 << 16)
- #define OMAP4_IDLEST_SHIFT		16
+diff --git a/include/dt-bindings/clock/omap5.h b/include/dt-bindings/clock/omap5.h
+index f3283957f48d..eb6d2fbe78f9 100644
+--- a/include/dt-bindings/clock/omap5.h
++++ b/include/dt-bindings/clock/omap5.h
+@@ -86,6 +86,10 @@
+ #define OMAP5_UART5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x170)
+ #define OMAP5_UART6_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x178)
  
-+#define OMAP4_STBYST_MASK		BIT(18)
-+#define OMAP4_STBYST_SHIFT		18
++/* iva clocks */
++#define OMAP5_IVA_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
++#define OMAP5_SL2IF_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
 +
- #define CLKCTRL_IDLEST_FUNCTIONAL	0x0
- #define CLKCTRL_IDLEST_INTERFACE_IDLE	0x2
- #define CLKCTRL_IDLEST_DISABLED		0x3
-@@ -647,3 +650,33 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- }
- CLK_OF_DECLARE(ti_omap4_clkctrl_clock, "ti,clkctrl",
- 	       _ti_omap4_clkctrl_setup);
-+
-+/**
-+ * ti_clk_is_in_standby - Check if clkctrl clock is in standby or not
-+ * @clk: clock to check standby status for
-+ *
-+ * Finds whether the provided clock is in standby mode or not. Returns
-+ * true if the provided clock is a clkctrl type clock and it is in standby,
-+ * false otherwise.
-+ */
-+u32 ti_clk_is_in_standby(struct clk *clk)
-+{
-+	struct clk_hw *hw;
-+	struct clk_hw_omap *hwclk;
-+	u32 val;
-+
-+	hw = __clk_get_hw(clk);
-+
-+	if (!omap2_clk_is_hw_omap(hw))
-+		return false;
-+
-+	hwclk = to_clk_hw_omap(hw);
-+
-+	val = ti_clk_ll_ops->clk_readl(&hwclk->enable_reg);
-+
-+	if (val & OMAP4_STBYST_MASK)
-+		return true;
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index bb2c5af9082a..3fb777f7103a 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -298,6 +298,7 @@ struct ti_clk_features {
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
-+u32 ti_clk_is_in_standby(struct clk *clk);
- int omap3_noncore_dpll_save_context(struct clk_hw *hw);
- void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
+ /* dss clocks */
+ #define OMAP5_DSS_CORE_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
  
 -- 
 2.17.1
