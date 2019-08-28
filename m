@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49E09C3A5A4
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 10:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B792C3A5A1
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 10:20:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2100F208CB
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 10:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 705DA208CB
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 10:20:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="BDeAjkuI"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="iXoXKKVp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726651AbfH1KU3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Aug 2019 06:20:29 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37741 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726370AbfH1KU3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Aug 2019 06:20:29 -0400
-Received: by mail-wr1-f68.google.com with SMTP id z11so1916300wrt.4
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2019 03:20:28 -0700 (PDT)
+        id S1726571AbfH1KUc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Aug 2019 06:20:32 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35270 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726370AbfH1KUc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Aug 2019 06:20:32 -0400
+Received: by mail-wr1-f66.google.com with SMTP id g7so710942wrx.2
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2019 03:20:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ocJZV37nPOjCQpD5jGIqbfcblqJ3FvP/nrAfM6Yzp2k=;
-        b=BDeAjkuIKtMtqzLAgv+Uw8aeCCdZJjXr4SY6NpOzS1QELI9FW9kcm4RxOJ+sro995B
-         e7DAriJSXeclG0yz8H+6X33CcfByiSjtJ86Q7t3rLRV1MfVcgohdZ3JAALMP9x+QZDJv
-         88w3GNYojueYchGkxve6WUyhhxb5T2KFzrwg6fn2qfZk4/g8dzbEtL2hovhMu0YAtiNP
-         okpMDOXobpUkd3TH924jYcQeJz9AHkwpWkq5++kGxurcp4UQVxRVOtMoIyse/0nF/e+C
-         eaSsfDRCLtPYsWHl99PObWNFCnNB/Mftz2qwnWkg1mHV8sKxH8o7KHVZEKChYU4etf+T
-         09kA==
+        bh=vhUrL9mznbKbDwWt10f4mJGIdooAUf9Uhe1m9/Iutrw=;
+        b=iXoXKKVpfVZQOKjhT3vzMvUGPd8S+FlwLWuYAabc4A2vOH8Fw1YYctz+lcT/aUlsMB
+         gDIBhgg2LzhBN5I855AoE/Omjyg64lINze/sqC+hgWZFS3EVlJM3CovV62q5D4f70gSD
+         DMgY7MRIr/CWOUEF+yDVODqMIiLyxLrl1x2dC055GN6eH4AXL/JCdpk5Mvwfnwf+0Xni
+         79Yk15/UxpkcA/pt7jw6f82IrRZQXdNjKKnhf3DPKIVLlo9cuDS6SrHMouP97AJPryr1
+         xMl6TzYzwOxD01fZFpMY5J3IyFov0ChQceU3mjAkikIlhBmV+MfZSBlXB4p0YjWGfUii
+         dRVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ocJZV37nPOjCQpD5jGIqbfcblqJ3FvP/nrAfM6Yzp2k=;
-        b=fv3sS5xH70gITfiM4MD0Eaa5iaF/27feCSI6SKFSmjdQVl7fNhCmLj+vUJDOZHB32W
-         Tz0u4BoORyIVFDftAyQmYqxEIA1/t1pX5FjSIobT3KJjMwyOYAAXfGSsM9I7zMQg2539
-         7vm6WgjDR1GBiqOMmV9dhwaFV385BsdxzbR+oN08rO8fsblg90/cGthR8R+EQVOUHv3d
-         2Hz4hWNhFYIxbrw7U8pFlh3BfC6o47W1C5T0/+aezGfsFqzH2hnGCNbd/WsbaRNILS51
-         47t0gKopugsudyVZ6/udWgSq9vC8So6HsjjBjnZLfgBsnaH9E4coa5KbnYzXq812g2Jk
-         AYcQ==
-X-Gm-Message-State: APjAAAUjVWxUkNvC/iqV6DQPOI0suucEXLdUup/SD33PQZFZXo1Kqx49
-        0EhTw4DfLr28yPQOsK2IHIzaiaMKh0A=
-X-Google-Smtp-Source: APXvYqzSVY4Scs/TlaFrvHScrN3SI4TK4d/DNHMphCuM0FQXg4qZ1pHKcPGEjspJ1LhJJZzQv+2gWQ==
-X-Received: by 2002:adf:9224:: with SMTP id 33mr3564952wrj.238.1566987627933;
-        Wed, 28 Aug 2019 03:20:27 -0700 (PDT)
+        bh=vhUrL9mznbKbDwWt10f4mJGIdooAUf9Uhe1m9/Iutrw=;
+        b=TZ5RPUk+ogdfE2BLA0HFAX3tGropnvU3hgIUJrLws+LtNGM0MVYHefAMJlLno+VsvK
+         nuX55QyM2rYvMgNwimLMW4ANe/IWBXR4N4hjOW9qoj4sR45MABCY/3ZdtDiugmwu6Ffi
+         wtIuY+6+RpFMvXj7/QX3RGJKwAByGwmsUFMuolN18KNizp/Sdiez+k3Sm5MJ44kSYlwm
+         8Wc7upyBw1gXxirp6Iid0cGTaGlhdxAa2eAtRjKRJpwB+tyhh/jjSX121g6ala+MJwJg
+         kHOTm2G+Hg/37bGZrMY6iwN3MOg4rQbr6DLlEesDDfjdP15Su9abAH49VJ79LPcgmNhX
+         JLOg==
+X-Gm-Message-State: APjAAAUEuh4sWq7imhynkXZFSOah3BfjaW/olORWj5modS9R5vqUHY65
+        8X8OCVMG48UlhASjP9RfgCglCw==
+X-Google-Smtp-Source: APXvYqymGpHh/gsheS6NtTZqrLpy7ADw869X1AOQbTcA2ljSHC73cnXbo/RDYN9uF4OrkKEBFRq04g==
+X-Received: by 2002:a5d:4b8c:: with SMTP id b12mr3937852wrt.26.1566987629931;
+        Wed, 28 Aug 2019 03:20:29 -0700 (PDT)
 Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id k9sm2583522wrq.15.2019.08.28.03.20.27
+        by smtp.googlemail.com with ESMTPSA id k9sm2583522wrq.15.2019.08.28.03.20.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2019 03:20:27 -0700 (PDT)
+        Wed, 28 Aug 2019 03:20:29 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org
-Subject: [PATCH RFC 1/5] clk: actually call the clock init before any other callback of the clock
-Date:   Wed, 28 Aug 2019 12:20:08 +0200
-Message-Id: <20190828102012.4493-2-jbrunet@baylibre.com>
+Subject: [PATCH RFC 3/5] clk: add terminate callback to clk_ops
+Date:   Wed, 28 Aug 2019 12:20:10 +0200
+Message-Id: <20190828102012.4493-4-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190828102012.4493-1-jbrunet@baylibre.com>
 References: <20190828102012.4493-1-jbrunet@baylibre.com>
@@ -72,59 +72,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
- __clk_init_parent() will call the .get_parent() callback of the clock
- so .init() must run before.
+Add a terminate callback to the clk_ops to release the resources
+claimed in .init()
 
-Fixes: 541debae0adf ("clk: call the clock init() callback before any other ops callback")
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/clk.c | 26 +++++++++++++++-----------
- 1 file changed, 15 insertions(+), 11 deletions(-)
+ drivers/clk/clk.c            | 7 ++++++-
+ include/linux/clk-provider.h | 3 +++
+ 2 files changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 2ba52b8dafcc..4ae25c1c1824 100644
+index f1681555abdf..c703aa35ca37 100644
 --- a/drivers/clk/clk.c
 +++ b/drivers/clk/clk.c
-@@ -3306,6 +3306,21 @@ static int __clk_core_init(struct clk_core *core)
- 		goto out;
- 	}
+@@ -3828,6 +3828,7 @@ static const struct clk_ops clk_nodrv_ops = {
+ void clk_unregister(struct clk *clk)
+ {
+ 	unsigned long flags;
++	const struct clk_ops *ops;
  
-+	/*
-+	 * optional platform-specific magic
-+	 *
-+	 * The .init callback is not used by any of the basic clock types, but
-+	 * exists for weird hardware that must perform initialization magic.
-+	 * Please consider other ways of solving initialization problems before
-+	 * using this callback, as its use is discouraged.
-+	 *
-+	 * If it exist, this callback should called before any other callback of
-+	 * the clock
-+	 */
-+	if (core->ops->init)
-+		core->ops->init(core->hw);
+ 	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
+ 		return;
+@@ -3836,7 +3837,8 @@ void clk_unregister(struct clk *clk)
+ 
+ 	clk_prepare_lock();
+ 
+-	if (clk->core->ops == &clk_nodrv_ops) {
++	ops = clk->core->ops;
++	if (ops == &clk_nodrv_ops) {
+ 		pr_err("%s: unregistered clock: %s\n", __func__,
+ 		       clk->core->name);
+ 		goto unlock;
+@@ -3849,6 +3851,9 @@ void clk_unregister(struct clk *clk)
+ 	clk->core->ops = &clk_nodrv_ops;
+ 	clk_enable_unlock(flags);
+ 
++	if (ops->terminate)
++		ops->terminate(clk->core->hw);
 +
-+
- 	core->parent = __clk_init_parent(core);
+ 	if (!hlist_empty(&clk->core->children)) {
+ 		struct clk_core *child;
+ 		struct hlist_node *t;
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index b82ec4c4ca95..5a5a64785923 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -197,6 +197,8 @@ struct clk_duty {
+  *		such as rate or parents.
+  *		Returns 0 on success, -EERROR otherwise.
+  *
++ * @terminate:  Free any resource allocated by init.
++ *
+  * @debug_init:	Set up type-specific debugfs entries for this clock.  This
+  *		is called once, after the debugfs directory entry for this
+  *		clock has been created.  The dentry pointer representing that
+@@ -248,6 +250,7 @@ struct clk_ops {
+ 	int		(*set_duty_cycle)(struct clk_hw *hw,
+ 					  struct clk_duty *duty);
+ 	int		(*init)(struct clk_hw *hw);
++	void		(*terminate)(struct clk_hw *hw);
+ 	void		(*debug_init)(struct clk_hw *hw, struct dentry *dentry);
+ };
  
- 	/*
-@@ -3330,17 +3345,6 @@ static int __clk_core_init(struct clk_core *core)
- 		core->orphan = true;
- 	}
- 
--	/*
--	 * optional platform-specific magic
--	 *
--	 * The .init callback is not used by any of the basic clock types, but
--	 * exists for weird hardware that must perform initialization magic.
--	 * Please consider other ways of solving initialization problems before
--	 * using this callback, as its use is discouraged.
--	 */
--	if (core->ops->init)
--		core->ops->init(core->hw);
--
- 	/*
- 	 * Set clk's accuracy.  The preferred method is to use
- 	 * .recalc_accuracy. For simple clocks and lazy developers the default
 -- 
 2.21.0
 
