@@ -2,146 +2,126 @@ Return-Path: <SRS0=KEZg=WY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA6CC3A5A1
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 08:22:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D8B7C3A5A1
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 10:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CAA723405
-	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 08:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1423922CF5
+	for <linux-clk@archiver.kernel.org>; Wed, 28 Aug 2019 10:20:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VEQ9UHsx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726571AbfH1IWh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 28 Aug 2019 04:22:37 -0400
-Received: from mailgw02.mediatek.com ([210.61.82.184]:39870 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726292AbfH1IWg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Aug 2019 04:22:36 -0400
-X-UUID: e5c8508b7fe1438aac5d7a5d0f03f01c-20190828
-X-UUID: e5c8508b7fe1438aac5d7a5d0f03f01c-20190828
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <chunfeng.yun@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1574006817; Wed, 28 Aug 2019 16:22:32 +0800
-Received: from mtkcas09.mediatek.inc (172.21.101.178) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 28 Aug 2019 16:22:37 +0800
-Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 28 Aug 2019 16:22:36 +0800
-From:   Chunfeng Yun <chunfeng.yun@mediatek.com>
-To:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-CC:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Erin Lo <erin.lo@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH v2 2/2] clk: mediatek: add pericfg clocks for MT8183
-Date:   Wed, 28 Aug 2019 16:22:13 +0800
-Message-ID: <1566980533-28282-2-git-send-email-chunfeng.yun@mediatek.com>
-X-Mailer: git-send-email 1.8.1.1.dirty
-In-Reply-To: <1566980533-28282-1-git-send-email-chunfeng.yun@mediatek.com>
-References: <1566980533-28282-1-git-send-email-chunfeng.yun@mediatek.com>
+        id S1726395AbfH1KU2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 28 Aug 2019 06:20:28 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41814 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726583AbfH1KU2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 28 Aug 2019 06:20:28 -0400
+Received: by mail-wr1-f65.google.com with SMTP id j16so1898672wrr.8
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2019 03:20:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oJuPufRk4NddEccfMO2AcsgQW95hQasuioSyHjZbBLs=;
+        b=VEQ9UHsxmO2h4mup5tc3ZBrPw1wkznrdyeCrjxWN1wYa5yg93E9cY6JGZqbebFao6u
+         ngrkEv2+JaVsLNjBT6oNuC2qsU1aCSiWzCgT9XRz2/XPuIAGS36NC5E8gFxjvsXUJ9Up
+         +tU5qDIFiVTX68HkG5OhtnXkdNJmt3DBWu9c3cfsH7ylo2I9+IhTGXb8F5ToQnIRbI2A
+         sc+n1w252wgg4C66jBPW3mRm0/Y1ZRYMBbgdOYB5oRfGxTYVDctsu65ZRVZxf7gS19OQ
+         9jnEmxzHrIHBoKwJDj5AIfpU9hGBe4URaWjPCbIdn+U6klbNH9XBJfpqTP1Ll98cUBKJ
+         T/Kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=oJuPufRk4NddEccfMO2AcsgQW95hQasuioSyHjZbBLs=;
+        b=fw5aC8nTumMJkbIiN9cf+14r/6PHo7LbCrq4xn+0YakNqbVMClWxOOKQQE1VvDAf6G
+         csegJMUbZlkyDQKrcIBiCXrSRRfHuAcV5MEM3Aj1nq5JpJAKBHBxnQj1pVvbZkSOmIcV
+         L5/++miydRiTW3ZBjGkfh7SieHWfDGYC0R+QQrTTConmIS5AfOof99xdNooFRnhNKsoY
+         YT/e/lgbqC8ooToEyHI6pJandHXVfN8SMTHrqArb8QTYSDrQG/VQrvYQg68qUjl9n17t
+         4Fnv1ohCHyxhjJ6CziINzEe3HDZpqc59QWDbeRHCIPWOwUVjj3m4g0XXIKH1tAzaUsba
+         ayxQ==
+X-Gm-Message-State: APjAAAXoWHCBRYnlfDEr4gSfFUoYiLYVqzeimYDV2HOQ3JsfZI3iZ+A3
+        4UX/l3cLhhlFOXohlOmt4RXoTQ==
+X-Google-Smtp-Source: APXvYqyn/t085HUPCFFEsM81PywQgkFHefkdGD7XIbSNGVUTzAq3NhJnwttlg0umVJ71mvmWEnieoA==
+X-Received: by 2002:a5d:45cb:: with SMTP id b11mr3839624wrs.117.1566987627024;
+        Wed, 28 Aug 2019 03:20:27 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id k9sm2583522wrq.15.2019.08.28.03.20.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2019 03:20:26 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org
+Subject: [PATCH RFC 0/5] clk: let clock claim resources
+Date:   Wed, 28 Aug 2019 12:20:07 +0200
+Message-Id: <20190828102012.4493-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-SNTS-SMTP: 6DC754C66BDCD856598D92120E25C2ECC60FDFB513228A16B278547B46FB24CC2000:8
-X-MTK:  N
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add pericfg clocks for MT8183, it's used when support USB
-remote wakeup
+This patchset is a follow up on this pinky swear [0].
+Its purpose is:
+ * Clarify the acceptable use of clk_ops init() callback
+ * Let the init() callback return an error code in case anything
+   fail.
+ * Add the terminate() counter part of of init() to release the
+   resources which may have been claimed in init()
+ * Add a per-clock placeholder for clock runtime data in the clock
+   core. This may be useful to init() and save/restore_context()
 
-Cc: Weiyi Lu <weiyi.lu@mediatek.com>
-Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
----
-v2:
-   use GATE_MTK to define GATE_PERI suggested by Weiyi
----
- drivers/clk/mediatek/clk-mt8183.c      | 30 ++++++++++++++++++++++++++
- include/dt-bindings/clock/mt8183-clk.h |  4 ++++
- 2 files changed, 34 insertions(+)
+It was initially suggested to rename these callbacks register/deregister().
+But, 'register' is reserved word of C ... :P
 
-diff --git a/drivers/clk/mediatek/clk-mt8183.c b/drivers/clk/mediatek/clk-mt8183.c
-index 1aa5f4059251..f3765bbdbe85 100644
---- a/drivers/clk/mediatek/clk-mt8183.c
-+++ b/drivers/clk/mediatek/clk-mt8183.c
-@@ -999,6 +999,20 @@ static const struct mtk_gate infra_clks[] = {
- 		"msdc50_0_sel", 24),
- };
- 
-+static const struct mtk_gate_regs peri_cg_regs = {
-+	.set_ofs = 0x20c,
-+	.clr_ofs = 0x20c,
-+	.sta_ofs = 0x20c,
-+};
-+
-+#define GATE_PERI(_id, _name, _parent, _shift)			\
-+	GATE_MTK(_id, _name, _parent, &peri_cg_regs, _shift,	\
-+		&mtk_clk_gate_ops_no_setclr_inv)
-+
-+static const struct mtk_gate peri_clks[] = {
-+	GATE_PERI(CLK_PERI_AXI, "peri_axi", "axi_sel", 31),
-+};
-+
- static const struct mtk_gate_regs apmixed_cg_regs = {
- 	.set_ofs = 0x20,
- 	.clr_ofs = 0x20,
-@@ -1194,6 +1208,19 @@ static int clk_mt8183_infra_probe(struct platform_device *pdev)
- 	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
- }
- 
-+static int clk_mt8183_peri_probe(struct platform_device *pdev)
-+{
-+	struct clk_onecell_data *clk_data;
-+	struct device_node *node = pdev->dev.of_node;
-+
-+	clk_data = mtk_alloc_clk_data(CLK_PERI_NR_CLK);
-+
-+	mtk_clk_register_gates(node, peri_clks, ARRAY_SIZE(peri_clks),
-+			       clk_data);
-+
-+	return of_clk_add_provider(node, of_clk_src_onecell_get, clk_data);
-+}
-+
- static int clk_mt8183_mcu_probe(struct platform_device *pdev)
- {
- 	struct clk_onecell_data *clk_data;
-@@ -1223,6 +1250,9 @@ static const struct of_device_id of_match_clk_mt8183[] = {
- 	}, {
- 		.compatible = "mediatek,mt8183-infracfg",
- 		.data = clk_mt8183_infra_probe,
-+	}, {
-+		.compatible = "mediatek,mt8183-pericfg",
-+		.data = clk_mt8183_peri_probe,
- 	}, {
- 		.compatible = "mediatek,mt8183-mcucfg",
- 		.data = clk_mt8183_mcu_probe,
-diff --git a/include/dt-bindings/clock/mt8183-clk.h b/include/dt-bindings/clock/mt8183-clk.h
-index 0046506eb24c..a7b470b0ec8a 100644
---- a/include/dt-bindings/clock/mt8183-clk.h
-+++ b/include/dt-bindings/clock/mt8183-clk.h
-@@ -284,6 +284,10 @@
- #define CLK_INFRA_FBIST2FPC		100
- #define CLK_INFRA_NR_CLK		101
- 
-+/* PERICFG */
-+#define CLK_PERI_AXI			0
-+#define CLK_PERI_NR_CLK			1
-+
- /* MFGCFG */
- #define CLK_MFG_BG3D			0
- #define CLK_MFG_NR_CLK			1
+In the end, after discussing with Mike, I decided to keep the name "init".
+It does not feel that important to change this. I really don't mind
+changing this if you feel differently and have a suggestion.
+
+The last patch in this series is just an example of how the above can be
+used.
+
+This is sent as an RFC to get the discussion going without bothering too
+many people.
+
+In the final series, Patch 2 and 3 will probably be squashed and series
+sent to a wider audience.
+
+[0]: https://lkml.kernel.org/r/CAEG3pNB-143Pr_xCTPj=tURhpiTiJqi61xfDGDVdU7zG5H-2tA@mail.gmail.com
+
+Jerome Brunet (5):
+  clk: actually call the clock init before any other callback of the
+    clock
+  clk: let init callback return an error code
+  clk: add terminate callback to clk_ops
+  clk: add placeholder for clock internal data
+  clk: meson: sclk-div: use runtime data
+
+ drivers/clk/clk.c                     | 51 ++++++++++++++-----
+ drivers/clk/meson/clk-mpll.c          |  4 +-
+ drivers/clk/meson/clk-phase.c         |  4 +-
+ drivers/clk/meson/clk-pll.c           |  4 +-
+ drivers/clk/meson/sclk-div.c          | 72 +++++++++++++++++++--------
+ drivers/clk/meson/sclk-div.h          |  2 -
+ drivers/clk/microchip/clk-core.c      |  8 ++-
+ drivers/clk/mmp/clk-frac.c            |  4 +-
+ drivers/clk/mmp/clk-mix.c             |  4 +-
+ drivers/clk/qcom/clk-hfpll.c          |  6 ++-
+ drivers/clk/rockchip/clk-pll.c        | 28 +++++++----
+ drivers/clk/ti/clock.h                |  2 +-
+ drivers/clk/ti/clockdomain.c          |  8 +--
+ drivers/net/phy/mdio-mux-meson-g12a.c |  4 +-
+ include/linux/clk-provider.h          | 15 ++++--
+ 15 files changed, 154 insertions(+), 62 deletions(-)
+
 -- 
-2.23.0
+2.21.0
 
