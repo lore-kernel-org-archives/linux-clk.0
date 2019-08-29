@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A25C3A59F
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 10:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F972C3A5A6
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 10:54:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B6112053B
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 10:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56B4622CF5
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 10:54:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567075986;
-	bh=6ZTbBvYvBxAA5ThjBoEmBwgFxQiPy3QjeGMo/nvlzno=;
+	s=default; t=1567076042;
+	bh=g71sreECdzxwUuabYhpqlsUos7zXFFS+U3b1OKGi7uk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jOjt2eT9kSz6fSNl0objI6yMJbQy6KpdkYBEBaKPvgQ4mb7juwcqQ9eg+Y7OAhdJM
-	 GtvKWWVZOljEZlJXKoy48uewq3MDz9QhGhWHqiFp/XOVojbcA4JycZ66juShCTW769
-	 s1ms9znENGlJ35e8MDi3Uw2FDMi+VlWU3cbGCHPs=
+	b=MU9RshcZ9R/LX7ui8o+o2QS0afM8BwDwEMNe0n+8tHdQWEWDsRDW8ArciIh4gZil1
+	 fVL8cx7Q72gW9odNhgiXXNfYYSW9hZZGySq+eDahMPlv5K1NX8oxrva3fnp0WM8SXT
+	 8keIutREzx5dO+FX9UussODf5MdxlxfeCOsbp8pE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728386AbfH2KvA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Aug 2019 06:51:00 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58586 "EHLO mail.kernel.org"
+        id S1728617AbfH2Kxy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Aug 2019 06:53:54 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728372AbfH2KvA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Aug 2019 06:51:00 -0400
+        id S1728165AbfH2Kuk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Aug 2019 06:50:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ABDC23403;
-        Thu, 29 Aug 2019 10:50:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 164B42341B;
+        Thu, 29 Aug 2019 10:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567075859;
-        bh=6ZTbBvYvBxAA5ThjBoEmBwgFxQiPy3QjeGMo/nvlzno=;
+        s=default; t=1567075839;
+        bh=g71sreECdzxwUuabYhpqlsUos7zXFFS+U3b1OKGi7uk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U5dlvMFX57iJDb5EFah8dt/RlwZM4LJ7gZIk29NAa25m6BsEYeuA+zUUzkaMyqMi5
-         dLbnEZcWi4RV9sAcxO7ftTLVeoESHePXCpZQmC48xLIzOKJ4bJtyl3vxIIrz3+nKxB
-         EwXjqzIQP+vWc/mwvsxRfu7kDyBJlbr8H5IarYAo=
+        b=RafyRQuhIcLrjhL8kUOllFYpm6RuN6TgU8Vj6nN7CaftQc+Yd6OgRtAUrOHpZgDdE
+         sry+fiiXKjp/vl+HGb1M9BWUvQma99aXoWbw8dPKs8M+HriqLGFfhOElyA6VY93ae6
+         3HZD4QW4DqaJDRLyh2X04AVynM9ZLiH0voYPL5uQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Nathan Chancellor <natechancellor@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 13/14] clk: s2mps11: Add used attribute to s2mps11_dt_match
-Date:   Thu, 29 Aug 2019 06:50:42 -0400
-Message-Id: <20190829105043.2508-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 26/29] clk: s2mps11: Add used attribute to s2mps11_dt_match
+Date:   Thu, 29 Aug 2019 06:50:06 -0400
+Message-Id: <20190829105009.2265-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190829105043.2508-1-sashal@kernel.org>
-References: <20190829105043.2508-1-sashal@kernel.org>
+In-Reply-To: <20190829105009.2265-1-sashal@kernel.org>
+References: <20190829105009.2265-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -103,7 +103,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/clk-s2mps11.c b/drivers/clk/clk-s2mps11.c
-index 14071a57c9262..f5d74e8db4327 100644
+index 0934d3724495a..4080d4e78e8e4 100644
 --- a/drivers/clk/clk-s2mps11.c
 +++ b/drivers/clk/clk-s2mps11.c
 @@ -255,7 +255,7 @@ MODULE_DEVICE_TABLE(platform, s2mps11_clk_id);
