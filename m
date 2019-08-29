@@ -2,50 +2,52 @@ Return-Path: <SRS0=zV46=WZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A34BC3A5A3
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 18:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAE22C3A59F
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 18:34:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F95C23403
-	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 18:32:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79410205C9
+	for <linux-clk@archiver.kernel.org>; Thu, 29 Aug 2019 18:34:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567103529;
-	bh=8Dh0VjqQRCbHaTfzo0/ighO2kEf8okUvbAZrdEr+2Oo=;
+	s=default; t=1567103658;
+	bh=LA1osv1knb85aMWMeg3UWllHAUwn23d4BkvyaIAIuAI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HQmxcrlSbgxWOD6JRhckeCalEZL1lWWTrOklMUqJC+/5C1FxOoqhtGy6PPfci+Buw
-	 ooYgaHXltRXMDYt3iGtzhsqoH+SOxzsRJhRkYyzBYnXwemsyoZiEHufc42zVrhuZ3L
-	 yWPEPcLhjE2B+rIm93gCy4doEbHY5iQRyum4Firk=
+	b=OznLkzyX+e+UxysZroHDL+CQdzOvQF77t1jcIYhl3pr84M5AfZl7exDv6giuu/TxV
+	 lHtf1X1LiiJqZE7U90/dDDiFZsveBysX40lS+Nzh95Onl1k3dM7Q7GVJ0tavzewXis
+	 JwRLndio+wLuWW3JOM+orqN/eC+RzrR/7rOXpfK8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726518AbfH2Sb6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 29 Aug 2019 14:31:58 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56214 "EHLO mail.kernel.org"
+        id S1728279AbfH2SNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 29 Aug 2019 14:13:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728896AbfH2SOe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 29 Aug 2019 14:14:34 -0400
+        id S1728255AbfH2SNc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 29 Aug 2019 14:13:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1281233FF;
-        Thu, 29 Aug 2019 18:14:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9AF8A233FF;
+        Thu, 29 Aug 2019 18:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567102474;
-        bh=8Dh0VjqQRCbHaTfzo0/ighO2kEf8okUvbAZrdEr+2Oo=;
+        s=default; t=1567102410;
+        bh=LA1osv1knb85aMWMeg3UWllHAUwn23d4BkvyaIAIuAI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xITAsaJEXqjstOoDB9xqL8sIFBVfdDLvaI1eI7Eee3/3zztSo1A3//Zlf+/8rksKc
-         9EcPrSfLWUJN5PTHLnt7Aq5UiECron0eeCLA3RdheXgB97t1ToDZalJOOihBtt39bz
-         iJgyT3gnMeUec+rG/SOBkMlDGaVEYd/vjOZed8J4=
+        b=I4+Ub0Pj88T4FASK4QKFaddBOBeguHsxqHkddktEAW34lIi0oVxN4XJAJdU4OBt7g
+         3h9jlHiioLXRgFU+pjlEWI8PtKU05OacgimRaIL0OjJfSFzOAgZsvuVLfFVnwt2Nv0
+         +5p1gMMNFPCoj+9K+IVuVawbIGETaZgu+6Y/pRTc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Jaafar Ali <jaafarkhalaf@gmail.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 38/76] clk: Fix potential NULL dereference in clk_fetch_parent_index()
-Date:   Thu, 29 Aug 2019 14:12:33 -0400
-Message-Id: <20190829181311.7562-38-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 07/76] clk: samsung: exynos5800: Move MAU subsystem clocks to MAU sub-CMU
+Date:   Thu, 29 Aug 2019 14:12:02 -0400
+Message-Id: <20190829181311.7562-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190829181311.7562-1-sashal@kernel.org>
 References: <20190829181311.7562-1-sashal@kernel.org>
@@ -58,54 +60,148 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Sylwester Nawrocki <s.nawrocki@samsung.com>
 
-[ Upstream commit 24876f09a7dfe36a82f53d304d8c1bceb3257a0f ]
+[ Upstream commit b6adeb6bc61c2567b9efd815d61a61b34a2e51a6 ]
 
-Don't compare the parent clock name with a NULL name in the
-clk_parent_map. This prevents a kernel crash when passing NULL
-core->parents[i].name to strcmp().
+This patch fixes broken sound on Exynos5422/5800 platforms after
+system/suspend resume cycle in cases where the audio root clock
+is derived from MAU_EPLL_CLK.
 
-An example which triggered this is a mux clock with four parents when
-each of them is referenced in the clock driver using
-clk_parent_data.fw_name and then calling clk_set_parent(clk, 3rd_parent)
-on this mux.
-In this case the first parent is also the HW default so
-core->parents[i].hw is populated when the clock is registered. Calling
-clk_set_parent(clk, 3rd_parent) will then go through all parents and
-skip the first parent because it's hw pointer doesn't match. For the
-second parent no hw pointer is cached yet and clk_core_get(core, 1)
-returns a non-matching pointer (which is correct because we are comparing
-the second with the third parent). Comparing the result of
-clk_core_get(core, 2) with the requested parent gives a match. However
-we don't reach this point because right after the clk_core_get(core, 1)
-mismatch the old code tried to !strcmp(parent->name, NULL) (where the
-second argument is actually core->parents[i].name, but that was never
-populated by the clock driver).
+In order to preserve state of the USER_MUX_MAU_EPLL_CLK clock mux
+during system suspend/resume cycle for Exynos5800 we group the MAU
+block input clocks in "MAU" sub-CMU and add the clock mux control
+bit to .suspend_regs.  This ensures that user configuration of the mux
+is not lost after the PMU block changes the mux setting to OSC_DIV
+when switching off the MAU power domain.
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Link: https://lkml.kernel.org/r/20190815223155.21384-1-martin.blumenstingl@googlemail.com
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+Adding the SRC_TOP9 register to exynos5800_clk_regs[] array is not
+sufficient as at the time of the syscore_ops suspend call MAU power
+domain is already turned off and we already save and subsequently
+restore an incorrect register's value.
+
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Reported-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+Suggested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Jaafar Ali <jaafarkhalaf@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Link: https://lkml.kernel.org/r/20190808144929.18685-2-s.nawrocki@samsung.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos5420.c | 54 ++++++++++++++++++++++------
+ 1 file changed, 43 insertions(+), 11 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 498cd7bbe8984..3a4961dc58313 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -1657,7 +1657,8 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 			break;
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index a6ea5d7e63d02..5eb0ce4b2648b 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -524,8 +524,6 @@ static const struct samsung_gate_clock exynos5800_gate_clks[] __initconst = {
+ 				GATE_BUS_TOP, 24, 0, 0),
+ 	GATE(CLK_ACLK432_SCALER, "aclk432_scaler", "mout_user_aclk432_scaler",
+ 				GATE_BUS_TOP, 27, CLK_IS_CRITICAL, 0),
+-	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
+-			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
+ };
  
- 		/* Fallback to comparing globally unique names */
--		if (!strcmp(parent->name, core->parents[i].name))
-+		if (core->parents[i].name &&
-+		    !strcmp(parent->name, core->parents[i].name))
- 			break;
- 	}
+ static const struct samsung_mux_clock exynos5420_mux_clks[] __initconst = {
+@@ -567,8 +565,13 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
  
+ static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
+ 	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
++	/* Maudio Block */
+ 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
+ 			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
++		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
++		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+ };
+ 
+ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+@@ -994,12 +997,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_DP1, "sclk_dp1", "dout_dp1",
+ 			GATE_TOP_SCLK_DISP1, 20, CLK_SET_RATE_PARENT, 0),
+ 
+-	/* Maudio Block */
+-	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
+-		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
+-	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
+-		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
+-
+ 	/* FSYS Block */
+ 	GATE(CLK_TSI, "tsi", "aclk200_fsys", GATE_BUS_FSYS0, 0, 0, 0),
+ 	GATE(CLK_PDMA0, "pdma0", "aclk200_fsys", GATE_BUS_FSYS0, 1, 0, 0),
+@@ -1232,6 +1229,20 @@ static struct exynos5_subcmu_reg_dump exynos5x_mfc_suspend_regs[] = {
+ 	{ DIV4_RATIO, 0, 0x3 },			/* DIV dout_mfc_blk */
+ };
+ 
++
++static const struct samsung_gate_clock exynos5800_mau_gate_clks[] __initconst = {
++	GATE(CLK_MAU_EPLL, "mau_epll", "mout_user_mau_epll",
++			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUDIO0, "sclk_maudio0", "dout_maudio0",
++		GATE_TOP_SCLK_MAU, 0, CLK_SET_RATE_PARENT, 0),
++	GATE(CLK_SCLK_MAUPCM0, "sclk_maupcm0", "dout_maupcm0",
++		GATE_TOP_SCLK_MAU, 1, CLK_SET_RATE_PARENT, 0),
++};
++
++static struct exynos5_subcmu_reg_dump exynos5800_mau_suspend_regs[] = {
++	{ SRC_TOP9, 0, BIT(8) },	/* MUX mout_user_mau_epll */
++};
++
+ static const struct exynos5_subcmu_info exynos5x_disp_subcmu = {
+ 	.div_clks	= exynos5x_disp_div_clks,
+ 	.nr_div_clks	= ARRAY_SIZE(exynos5x_disp_div_clks),
+@@ -1262,12 +1273,27 @@ static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
+ 	.pd_name	= "MFC",
+ };
+ 
++static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
++	.gate_clks	= exynos5800_mau_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5800_mau_gate_clks),
++	.suspend_regs	= exynos5800_mau_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5800_mau_suspend_regs),
++	.pd_name	= "MAU",
++};
++
+ static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
+ 	&exynos5x_mfc_subcmu,
+ };
+ 
++static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
++	&exynos5x_disp_subcmu,
++	&exynos5x_gsc_subcmu,
++	&exynos5x_mfc_subcmu,
++	&exynos5800_mau_subcmu,
++};
++
+ static const struct samsung_pll_rate_table exynos5420_pll2550x_24mhz_tbl[] __initconst = {
+ 	PLL_35XX_RATE(24 * MHZ, 2000000000, 250, 3, 0),
+ 	PLL_35XX_RATE(24 * MHZ, 1900000000, 475, 6, 0),
+@@ -1483,11 +1509,17 @@ static void __init exynos5x_clk_init(struct device_node *np,
+ 	samsung_clk_extended_sleep_init(reg_base,
+ 		exynos5x_clk_regs, ARRAY_SIZE(exynos5x_clk_regs),
+ 		exynos5420_set_clksrc, ARRAY_SIZE(exynos5420_set_clksrc));
+-	if (soc == EXYNOS5800)
++
++	if (soc == EXYNOS5800) {
+ 		samsung_clk_sleep_init(reg_base, exynos5800_clk_regs,
+ 				       ARRAY_SIZE(exynos5800_clk_regs));
+-	exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
+-			     exynos5x_subcmus);
++
++		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5800_subcmus),
++				     exynos5800_subcmus);
++	} else {
++		exynos5_subcmus_init(ctx, ARRAY_SIZE(exynos5x_subcmus),
++				     exynos5x_subcmus);
++	}
+ 
+ 	samsung_clk_of_add_provider(np, ctx);
+ }
 -- 
 2.20.1
 
