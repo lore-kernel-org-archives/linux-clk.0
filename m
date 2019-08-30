@@ -2,142 +2,118 @@ Return-Path: <SRS0=cuWe=W2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9286C3A59B
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 14:06:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6DB8C3A59B
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 14:26:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA65B21897
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 14:06:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="YiPsfSYl"
+	by mail.kernel.org (Postfix) with ESMTP id BAE4B23407
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 14:26:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567175214;
+	bh=yWzcaCkt9XVIzrbWWo/4tDyL/qMekNCK4plXFdMAR6o=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=RcQQBnHP42NXNjPT0dmc4JlXbOMaYqQHbxmHtBc0ksSL4bwnLTcQRltO0sgjnL7Ct
+	 Nsgh1dfYvCWBL07hOD12kJPCWWprFjidBpOP7KUK5zLCHJ3V9kbpivnHvAZgg0fhjf
+	 HabDu0Bww6CaAtT7mgSTA7mdZkPo+NK79SPAdib8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbfH3OGd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Aug 2019 10:06:33 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:41176 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727135AbfH3OGd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Aug 2019 10:06:33 -0400
-Received: by mail-wr1-f65.google.com with SMTP id j16so7097125wrr.8
-        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2019 07:06:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=EsR85JzPdRc14+CRf3wj0nWStazxAOBjegFjmbmj/Uo=;
-        b=YiPsfSYlJj5c1kvZ1j6/8kDQa2N0XSh2MsXqSywDhoWYucJkZ62yQjpsJkeIQVhaTe
-         YHC5fQVtjLQ/S6ggNxFyPnmd+38kF+7o5SdNzEDa5B+pTyfen66KdEcKvxaiJqvW+qwl
-         OkKb37G3vO7lqMsjTyMKrDdaQGwb23RTEDapgalAwyPfA5FiHKDkB9bj+l8DVPDQz+XQ
-         ob3lvvz2aJBEj2ir1u6aq+NexBIWfPXp3wPysvq6E8AZv1bdega0bcTJEclbq2hdm4J1
-         1D0+1YfGEbjltV/bFGi4HJKm/OCtNDGiKykRnBUA24GtT8amrPm/l7KysfcbQuzx0XYS
-         EJ3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=EsR85JzPdRc14+CRf3wj0nWStazxAOBjegFjmbmj/Uo=;
-        b=pzeZ4UTNaj6Yd6E/1l7aKD2x3jcn4UghbJa3ITHo2Wue4Dl5lvQBiySOgaUrv4uZdV
-         F8KJJ5jxWts6RYrTK7/WKoELxHVWrfBqAqxkFx+U7eXGKQ1CwoVl+W4PhLHijaajUUD5
-         uwrLANbvmyMDz0x/7e1Fe3Dfvl0m2CHdbXqG9YEWyXk2PkOsJP2U5GNxRP8uzDHX1ojM
-         dp5rMQn2xedJevKHDkT+tzYcP/QHGuoydStR4kVxfuYqOZmFMdc2qgsnTQGBldN0/q5O
-         R4hfYbKJ4rpk574Cu8wLMDNywL0JQzTFeVFcaSwJIOo1M7IoK5w3kpCg9kGmNk4bCxyG
-         UQ/Q==
-X-Gm-Message-State: APjAAAWLCljBj9zGLe5dJOamWsiHbF/xY/h6aBBgvEuUkgXbLglj5U4Z
-        6uJT4CjC8Bbd2HuKMBTeBbaV93pY5XY=
-X-Google-Smtp-Source: APXvYqziZJ8gjcsdx9xeS97bCetLHoX2N7MvwTMiy+67EB+n8z/ACILsO06xyjPaZaGMbJ6Fd1H5XA==
-X-Received: by 2002:adf:de02:: with SMTP id b2mr19074478wrm.204.1567173990693;
-        Fri, 30 Aug 2019 07:06:30 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id u6sm6052438wmm.26.2019.08.30.07.06.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 07:06:30 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC 4/5] clk: add placeholder for clock internal data
-In-Reply-To: <20190829171743.577932173E@mail.kernel.org>
-References: <20190828102012.4493-1-jbrunet@baylibre.com> <20190828102012.4493-5-jbrunet@baylibre.com> <20190828221529.026C522DA7@mail.kernel.org> <1jy2zcv3nd.fsf@starbuckisacylon.baylibre.com> <20190829171743.577932173E@mail.kernel.org>
-Date:   Fri, 30 Aug 2019 16:06:29 +0200
-Message-ID: <1jsgpivjbu.fsf@starbuckisacylon.baylibre.com>
+        id S1728026AbfH3O0y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Aug 2019 10:26:54 -0400
+Received: from foss.arm.com ([217.140.110.172]:33052 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727751AbfH3O0y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Aug 2019 10:26:54 -0400
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7556D344;
+        Fri, 30 Aug 2019 07:26:53 -0700 (PDT)
+Received: from [10.1.197.61] (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 868E83F703;
+        Fri, 30 Aug 2019 07:26:51 -0700 (PDT)
+Subject: Re: [PATCH v2 00/20] Initial support for Marvell MMP3 SoC
+To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org
+References: <20190822092643.593488-1-lkundrak@v3.sk>
+ <244fdc87-0fe5-be79-d9cd-2395d0ac3f57@kernel.org>
+ <424d2881edcaf7cedbfa5cbbf2e73aaff5355df3.camel@v3.sk>
+ <08a0e65e-4a80-f611-e36e-8e3f70fa8113@kernel.org>
+ <481e832401c148baf222639f10f494b90dcd23c9.camel@v3.sk>
+From:   Marc Zyngier <maz@kernel.org>
+Organization: Approximate
+Message-ID: <faf7b7e8-48b0-ba58-51e6-cb6a5ee44dfc@kernel.org>
+Date:   Fri, 30 Aug 2019 15:26:50 +0100
+User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <481e832401c148baf222639f10f494b90dcd23c9.camel@v3.sk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 29 Aug 2019 at 10:17, Stephen Boyd <sboyd@kernel.org> wrote:
+On 26/08/2019 12:59, Lubomir Rintel wrote:
+> On Fri, 2019-08-23 at 10:42 +0100, Marc Zyngier wrote:
+>> On 23/08/2019 08:21, Lubomir Rintel wrote:
+>>> On Thu, 2019-08-22 at 11:31 +0100, Marc Zyngier wrote:
+>>>> On 22/08/2019 10:26, Lubomir Rintel wrote:
+>>>>> Hi, 
+>>>>>
+>>>>> this is a second spin of a patch set that adds support for the Marvell
+>>>>> MMP3 processor. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad
+>>>>> FZ-A1 tablet and Dell Wyse 3020 Tx0D thin clients. 
+>>>>>
+>>>>> Compared to v1, there's a handful of fixes in response to reviews. Patch
+>>>>> 02/20 is new. Details in individual patches.
+>>>>>  
+>>>>> Apart from the adjustments in mach-mmp/, the patch makes necessary 
+>>>>> changes to the irqchip driver and adds an USB2 PHY driver. The latter 
+>>>>> has a dependency on the mach-mmp/ changes, so it can't be submitted 
+>>>>> separately.
+>>>>>  
+>>>>> The patch set has been tested to work on Wyse Tx0D and not ruin MMP2 
+>>>>> support on XO-1.75. 
+>>>>
+>>>> How do you want this series to be merged? I'm happy to take the irqchip
+>>>> related patches as well as the corresponding DT change (once reviewed)
+>>>> through my tree.
+>>>
+>>> I was hoping for the Arm SoC tree, because there are some dependencies
+>>> (MMP3 USB PHY depends on MMP3 SoC).
+>>>
+>>> That said, the irqchip patches are rather independent and the only
+>>> downside of them going in via a different tree will be that the other
+>>> tree that will lack them won't boot on MMP3 (things will compile
+>>> though). I don't know if that's okay. What's typically done in cases
+>>> like these?
+>>
+>> I usually take the irqchip patches that can be built standalone (without
+>> dependency on header files, for example). If you want them to go via
+>> another tree, stick my
+>>
+>> 	Acked-by: Marc Zyngier <maz@kernel.org>
+>>
+>> on patches #6 through #9.
+> 
+> Actually, please go ahead and pick the irqchip patches into your tree.
+> 
+> The rest of the patch set may need a couple more spins, and it will be
+> nice if it gets shorter.
 
-> Quoting Jerome Brunet (2019-08-29 00:20:38)
->> On Wed 28 Aug 2019 at 15:15, Stephen Boyd <sboyd@kernel.org> wrote:
->> 
->> > Quoting Jerome Brunet (2019-08-28 03:20:11)
->> >> Add placeholder in clock core to save per clock data.
->> >> Such placeholder could use for clock doing memory allocation in .init().
->> >> It may also be useful for the save/restore_context() callbacks.
->> >> 
->> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> >> ---
->> >>  drivers/clk/clk.c            | 13 +++++++++++++
->> >>  include/linux/clk-provider.h |  2 ++
->> >>  2 files changed, 15 insertions(+)
->> >> 
->> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> >> index c703aa35ca37..aa77a2a98ea4 100644
->> >> --- a/drivers/clk/clk.c
->> >> +++ b/drivers/clk/clk.c
->> >> @@ -83,6 +83,7 @@ struct clk_core {
->> >>         struct hlist_node       debug_node;
->> >>  #endif
->> >>         struct kref             ref;
->> >> +       void                    *priv;
->> >
->> > Why? We have container structures around clk_hw that can be used to
->> > store data and clk_ops that should know to deref said clk_hw pointer in
->> > some way to access that data.
->> 
->> This simple addition give a placeholder to each clock instance that is
->> hosted under the clock core so we know it can only be accesed from this
->> particular instance. Seems like a better fit for runtime data, such as
->> saved context.
->> 
->> It gives a way to avoid mixing the clock description and its runtime
->> data. In the end, It would be nice if the clock description part could
->> be made const.
->> 
->> This is a (fairly usual) way to do it 
->
-> Maybe you can provide an example or usage? Is that the last patch in
-> this series?
+Applied to irqchip-next.
 
-Yes, I thought that was in my cover letter
-
-> I still don't quite understand why we need this.
->
-> I imagine that if you wanted to have a const description part you could
-> have a container structure around the clk_hw struct
->
-> 	struct my_clk_foo {
-> 		const struct clk_description *desc;
-> 		<runtime modifiable members>;
-> 		struct clk_hw hw;
-> 	};
->
-> Did I miss something?
-
-Not really. As with all C code, there are many way to do things.
-Your way could work, mine too.
-
-As explained in the previous mail, what I propose guaranteed to specific
-to each clock instance. It's a fairly usual and simple way to give a
-placeholder to the instance of something.
-
-Things gets complicated with your way if the clock declaration uses
-static data and there there multiple instance of it.
-
-In the end that was merely a suggestion, so let's spend to much time on
-this. If don't want it, that's fine. I'll just drop it.
+	M.
+-- 
+Jazz is not dead, it just smells funny...
