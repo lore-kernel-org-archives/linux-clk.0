@@ -4,37 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5CCC3A59B
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 22:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 272C0C3A5A4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 22:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A88E12342E
+	by mail.kernel.org (Postfix) with ESMTP id EAF8D2342E
 	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 22:17:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728364AbfH3WQT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Aug 2019 18:16:19 -0400
-Received: from shell.v3.sk ([90.176.6.54]:56358 "EHLO shell.v3.sk"
+        id S1728164AbfH3WRV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Aug 2019 18:17:21 -0400
+Received: from shell.v3.sk ([90.176.6.54]:56362 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728182AbfH3WQT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Aug 2019 18:16:19 -0400
+        id S1728331AbfH3WQU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Aug 2019 18:16:20 -0400
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id A5052D87F6;
-        Sat, 31 Aug 2019 00:08:14 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id C4C3AD8818;
+        Sat, 31 Aug 2019 00:08:40 +0200 (CEST)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id p5fumya1ofgY; Sat, 31 Aug 2019 00:07:56 +0200 (CEST)
+        with ESMTP id ibtyPwjBqQuH; Sat, 31 Aug 2019 00:08:20 +0200 (CEST)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 2E487D87F8;
-        Sat, 31 Aug 2019 00:07:54 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTP id E6FDDD87E7;
+        Sat, 31 Aug 2019 00:08:01 +0200 (CEST)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id dFrAC7-6_UxN; Sat, 31 Aug 2019 00:07:49 +0200 (CEST)
+        with ESMTP id xkL2hgZXJl6F; Sat, 31 Aug 2019 00:07:58 +0200 (CEST)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 1B478D87E4;
-        Sat, 31 Aug 2019 00:07:49 +0200 (CEST)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id DBFC6D87EE;
+        Sat, 31 Aug 2019 00:07:51 +0200 (CEST)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     "To : Olof Johansson" <olof@lixom.net>
 Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
@@ -47,9 +46,9 @@ Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 02/16] dt-bindings: arm: Convert Marvell MMP board/soc bindings to json-schema
-Date:   Sat, 31 Aug 2019 00:07:29 +0200
-Message-Id: <20190830220743.439670-3-lkundrak@v3.sk>
+Subject: [PATCH v3 10/16] ARM: mmp: define MMP_CHIPID by the means of CIU_REG()
+Date:   Sat, 31 Aug 2019 00:07:37 +0200
+Message-Id: <20190830220743.439670-11-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.21.0
 In-Reply-To: <20190830220743.439670-1-lkundrak@v3.sk>
 References: <20190830220743.439670-1-lkundrak@v3.sk>
@@ -60,84 +59,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Marvell MMP SoC bindings to DT schema format using json-schema.
+A rather trivial cosmetic improvement.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-
 ---
-Changes since v2:
-- Add mrvl,pxa910
-- s/MMP2 Brownstone Board/MMP2 based boards/
+ arch/arm/mach-mmp/common.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Changes since v1:
-- Added this patch
-
- .../devicetree/bindings/arm/mrvl/mrvl.txt     | 14 --------
- .../devicetree/bindings/arm/mrvl/mrvl.yaml    | 32 +++++++++++++++++++
- 2 files changed, 32 insertions(+), 14 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
- create mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-
-diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt b/Docume=
-ntation/devicetree/bindings/arm/mrvl/mrvl.txt
-deleted file mode 100644
-index 951687528efb0..0000000000000
---- a/Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
-+++ /dev/null
-@@ -1,14 +0,0 @@
--Marvell Platforms Device Tree Bindings
------------------------------------------------------
--
--PXA168 Aspenite Board
--Required root node properties:
--	- compatible =3D "mrvl,pxa168-aspenite", "mrvl,pxa168";
--
--PXA910 DKB Board
--Required root node properties:
--	- compatible =3D "mrvl,pxa910-dkb";
--
--MMP2 Brownstone Board
--Required root node properties:
--	- compatible =3D "mrvl,mmp2-brownstone", "mrvl,mmp2";
-diff --git a/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml b/Docum=
-entation/devicetree/bindings/arm/mrvl/mrvl.yaml
-new file mode 100644
-index 0000000000000..ef59d6e35bb66
---- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
-@@ -0,0 +1,32 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/arm/mrvl/mrvl.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Marvell Platforms Device Tree Bindings
-+
-+maintainers:
-+  - Lubomir Rintel <lkundrak@v3.sk>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: PXA168 Aspenite Board
-+        items:
-+          - enum:
-+              - mrvl,pxa168-aspenite
-+          - const: mrvl,pxa168
-+      - description: PXA910 DKB Board
-+        items:
-+          - enum:
-+              - mrvl,pxa910-dkb
-+          - const: mrvl,pxa910
-+      - description: MMP2 based boards
-+        items:
-+          - enum:
-+              - mrvl,mmp2-brownstone
-+          - const: mrvl,mmp2
-+...
+diff --git a/arch/arm/mach-mmp/common.c b/arch/arm/mach-mmp/common.c
+index 2ee08c78e8bc9..24c689a01ecb7 100644
+--- a/arch/arm/mach-mmp/common.c
++++ b/arch/arm/mach-mmp/common.c
+@@ -17,7 +17,7 @@
+=20
+ #include "common.h"
+=20
+-#define MMP_CHIPID	(AXI_VIRT_BASE + 0x82c00)
++#define MMP_CHIPID	CIU_REG(0x00)
+=20
+ unsigned int mmp_chip_id;
+ EXPORT_SYMBOL(mmp_chip_id);
 --=20
 2.21.0
 
