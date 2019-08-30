@@ -2,104 +2,121 @@ Return-Path: <SRS0=cuWe=W2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 562FBC3A5A3
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 06:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CA16C3A5A4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 08:43:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 187632186A
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 06:06:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="X/14isQB"
+	by mail.kernel.org (Postfix) with ESMTP id DA4CF238C5
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 08:43:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726920AbfH3GGs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Aug 2019 02:06:48 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33884 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726791AbfH3GGs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Aug 2019 02:06:48 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x7U66iKq014590;
-        Fri, 30 Aug 2019 01:06:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1567145204;
-        bh=qwhQsFTna3/EuFjyUJIYZ0Bj2vIrtTq3mKUVrHojvnY=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=X/14isQBg9M69LaPsb5AgVAsluLVpQpFprSYyZxpoMefEen0L+9kOdppRWXphAUJd
-         mRWHOqNvd+eBQZKZpXNeoSQZh1dYpwS0mD0SfNNojN9iUsq0ey0PwxAeUSMjJ0RcW8
-         /LfTGrau0IIzbP+W2fGh1nytl3xunhOtGmji7KxY=
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x7U66iPk054137
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 30 Aug 2019 01:06:44 -0500
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 30
- Aug 2019 01:06:44 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Fri, 30 Aug 2019 01:06:44 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x7U66gLQ116654;
-        Fri, 30 Aug 2019 01:06:42 -0500
-Subject: Re: [PATCHv2 4/6] clk: ti: clkctrl: add API to notify reset status
-To:     Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <mturquette@baylibre.com>
-CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>, <s-anna@ti.com>
-References: <20190828065929.32150-1-t-kristo@ti.com>
- <20190828065929.32150-5-t-kristo@ti.com>
- <20190829200515.AFB0622CEA@mail.kernel.org>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <ed1e3868-af4d-8141-2a04-202923715d06@ti.com>
-Date:   Fri, 30 Aug 2019 09:06:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1728210AbfH3InN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Aug 2019 04:43:13 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:45476 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728211AbfH3InM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Aug 2019 04:43:12 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m24so6179977otp.12;
+        Fri, 30 Aug 2019 01:43:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x+eQ4ygc879/tUqyWUApJY09ToNtkEXXbRgeINUKyoc=;
+        b=oqTvteU8QyH6bS2ZcROjY64E+dzmBVpHjiZJCX/8Ff6dixOqFT7uKRZSzl6lW606uK
+         5GWUNV3A5BMmdvhxFstUNjQSqjySQ682kjbnx1wrFuV79kPRH9yV7Z+bMxGmg9aj1vNB
+         qHBX422KK/Bn1p193oHoCJX6bUsu1VwdhVx32GZrde6L6mLNjBb8GNRtUTxpiz7ZUx3/
+         eg905zbNqYZVJe/bnfsN58TkPYKEeLy+J3gLr2jwYJ4k02TTSfVYodvSVQXCQ+Xbb9aA
+         AedKGoMFdY74fhku4PYpIugEmyV1LTQZs1Qh3iGnu0mtWeYbVdHNokv0w8YzLhHDJf7l
+         e/eg==
+X-Gm-Message-State: APjAAAU4cE83jWI3JHNyiSVNOkqHk6pSHhqBw0D04Hpu+f9R6DCn6Otl
+        fyaotaFJrMZNoK7zwd2CW/OW2g4mu5Jigv0tbMY=
+X-Google-Smtp-Source: APXvYqxUPtRzDOkBrOYmHo96TQGYYZ+ECdJ3YdUU7QY5Dfa9xLLnS5vg7oGNZgYYHTnWv6pdG8EFYTXoT2FxUGOM/cU=
+X-Received: by 2002:a9d:3e50:: with SMTP id h16mr10748352otg.107.1567154592099;
+ Fri, 30 Aug 2019 01:43:12 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20190829200515.AFB0622CEA@mail.kernel.org>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20190617125238.13761-1-geert+renesas@glider.be>
+ <20190617125238.13761-2-geert+renesas@glider.be> <20190618110937.2s7h5vtssymfrxxq@verge.net.au>
+In-Reply-To: <20190618110937.2s7h5vtssymfrxxq@verge.net.au>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 30 Aug 2019 10:43:01 +0200
+Message-ID: <CAMuHMdUe_kvB_z0y99y_kkRaUCW9NZneRUtNh=+PC9sC3buDjg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] clk: renesas: rcar-gen2-legacy: Switch Z clock to .determine_rate()
+To:     Simon Horman <horms@verge.net.au>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29/08/2019 23:05, Stephen Boyd wrote:
-> Quoting Tero Kristo (2019-08-27 23:59:27)
->> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
->> index e3e0a66a6ce2..47a0d1398c6f 100644
->> --- a/drivers/clk/ti/clkctrl.c
->> +++ b/drivers/clk/ti/clkctrl.c
->> @@ -680,3 +689,38 @@ u32 ti_clk_is_in_standby(struct clk *clk)
->>          return false;
->>   }
->>   EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
->> +
->> +/**
->> + * ti_clk_notify_resets - Notify the clock driver associated reset status
-> 
-> This is completely unused in this patch series. What's going on?
+Hi Simon,
 
-This is needed by the OMAP reset driver. See:
+On Tue, Jun 18, 2019 at 1:09 PM Simon Horman <horms@verge.net.au> wrote:
+> On Mon, Jun 17, 2019 at 02:52:34PM +0200, Geert Uytterhoeven wrote:
+> > As the .round_rate() callback returns a long clock rate, it cannot
+> > return clock rates that do not fit in signed long, but do fit in
+> > unsigned long.  Hence switch the Z clock on R-Car Gen2 from the old
+> > .round_rate() callback to the newer .determine_rate() callback, which
+> > does not suffer from this limitation.
+> >
+> > This includes implementing range checking.
+> >
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-https://lwn.net/Articles/797597/
+> > --- a/drivers/clk/renesas/clk-rcar-gen2.c
+> > +++ b/drivers/clk/renesas/clk-rcar-gen2.c
+> > @@ -66,19 +66,22 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
+> >       return div_u64((u64)parent_rate * mult, 32);
+> >  }
+> >
+> > -static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
+> > -                              unsigned long *parent_rate)
+> > +static int cpg_z_clk_determine_rate(struct clk_hw *hw,
+> > +                                 struct clk_rate_request *req)
+> >  {
+> > -     unsigned long prate  = *parent_rate;
+> > -     unsigned int mult;
+> > +     unsigned long prate = req->best_parent_rate;
+> > +     unsigned int min_mult, max_mult, mult;
+> >
+> > -     if (!prate)
+> > -             prate = 1;
+> > +     min_mult = max(div_u64(req->min_rate * 32ULL, prate), 1ULL);
+> > +     max_mult = min(div_u64(req->max_rate * 32ULL, prate), 32ULL);
+>
+> nit: the type of the second parameter doesn't look correct to me,
+> div_u64 expects a u32 divisor.
 
--Tero
+Yes, this should use div64_ul() instead.
 
->> + * @clk: clock to notify reset status for
->> + * @asserted: true if all HW reset lines are asserted
->> + *
->> + * Some clkctrl clocks have associated resets for them which effectively
->> + * prevent the clock to transition from/to idle if the reset state is not
->> + * in sync. For the clock to transition to idle properly, all associated
->> + * resets must be asserted, and to leave idle, vice versa. To provide the
->> + * current reset status, the reset driver should issue this callback.
->> + */
+> > +     if (max_mult < min_mult)
+> > +             return -EINVAL;
+> >
+> > -     mult = div_u64((u64)rate * 32, prate);
+> > -     mult = clamp(mult, 1U, 32U);
+> > +     mult = div_u64(req->rate * 32ULL, prate);
+>
+> Likewise, do we care that prate will be 64bit on 64bit platforms?
+> (Yes, I know gen2 SoCs are 32bit :)
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Likewise, div64_ul().
+
+Thanks a lot!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
