@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2740CC3A5A7
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:09:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49893C3A5A4
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED48323429
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1EFAA23427
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567177790;
-	bh=MJlkPCYkMD+Y4plwpCnKgMza3JHPd1xCzxfWRQinRPY=;
+	s=default; t=1567177793;
+	bh=Ei+UUuI2bjs9MCSyFZ3sjrySi931/9VchlR6vlNSp5E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=li+5DjoJmd6Yxk9LPld1+IUMmWZoyxnOmY2BfAEg+xg6SBmiHhDeZWUvmuixJfQp2
-	 MpcYZdU0cXAcTOF9XHvD8ePBEMQ0mvmzRFm8Hd2W3k/4Jbs7iO2LhOXTnzlrzmgO35
-	 bod3VspMxKBvu5/tt988/vBOtH+o8H7Ve2idmwik=
+	b=fOwqQ8kFq0M3QhogKHdoij+ybeXYimaO/65Gbz9YYPNmvKmp6WoEuslMoJj5rINRA
+	 UAEzhymieR6j8zq6NRaiH1ErvDFrdJ097hEx4Ryh+UNGc69BchmJA78XtPOIIAb3sd
+	 zTDIFbVJ3PE9RcdlP1OkkqaZSHzn4Np2ZsHXN+H4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727135AbfH3PJm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Aug 2019 11:09:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42540 "EHLO mail.kernel.org"
+        id S1728225AbfH3PJ1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Aug 2019 11:09:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728236AbfH3PJ3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 30 Aug 2019 11:09:29 -0400
+        id S1728195AbfH3PJ1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 30 Aug 2019 11:09:27 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B622342C;
-        Fri, 30 Aug 2019 15:09:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 765FC2342A;
+        Fri, 30 Aug 2019 15:09:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567177767;
-        bh=MJlkPCYkMD+Y4plwpCnKgMza3JHPd1xCzxfWRQinRPY=;
+        s=default; t=1567177766;
+        bh=Ei+UUuI2bjs9MCSyFZ3sjrySi931/9VchlR6vlNSp5E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=A3eaj/gfSXqT12nTZlrstVUXIce3wQVBSETDlIcLybRHyum1IS0MDZytDZzrmdGap
-         ygOu1zJMWe26WMuwznYqEpAY9a9qNRxyD6n29sLtduHMhNu1IlEcxXgoha27ZqZziG
-         xVwIs+TyMxvMjyEU0NiQ9Ac50T+Ihxw4mtm3bs+Q=
+        b=B1CKzGdB4sF99gq98msmqUSBmQuG0RmHrf8M4uvLeAH6qzKDqLaMZSsAOCvzd4Pv2
+         N6OW+6++0D8JjgLbfu7nEpuIAFmD4kZsj4OxTl30XBLg+gayj4S6CxuFhk4M6vqHFl
+         VvTKMNM07iYuoZ9MtxB00lpeENkYDzR4EHl2A4EU=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 11/12] clk: gate: Add support for specifying parents via DT/pointers
-Date:   Fri, 30 Aug 2019 08:09:22 -0700
-Message-Id: <20190830150923.259497-12-sboyd@kernel.org>
+Subject: [PATCH 07/12] clk: fixed-rate: Add clk flags for parent accuracy
+Date:   Fri, 30 Aug 2019 08:09:18 -0700
+Message-Id: <20190830150923.259497-8-sboyd@kernel.org>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 In-Reply-To: <20190830150923.259497-1-sboyd@kernel.org>
 References: <20190830150923.259497-1-sboyd@kernel.org>
@@ -56,174 +56,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-After commit fc0c209c147f ("clk: Allow parents to be specified without
-string names") we can use DT or direct clk_hw pointers to specify
-parents. Create a generic function that shouldn't be used very often to
-encode the multitude of ways of registering a gate clk with different
-parent information. Then add a bunch of wrapper macros that only pass
-down what needs to be passed down to the generic function to support
-this with less arguments.
+Some clk providers want to use the accuracy of the parent clk and use
+the fixed rate basic type clk to do that. This requires getting the
+parent clk and extracting the accuracy before registering the fixed rate
+clk. Let's add a flag for this and update the clk_ops to support this.
 
 Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
+ drivers/clk/clk-fixed-rate.c | 7 ++++++-
+ include/linux/clk-provider.h | 6 ++++++
+ 2 files changed, 12 insertions(+), 1 deletion(-)
 
-I'm debating having the multiplexer function take a DT index, clk_hw
-pointer, fw_name and name as different parameters. Then we can just
-always use the parent_data approach and cover all bases.
-
- drivers/clk/clk-gate.c       | 35 ++++++++++-----------
- include/linux/clk-provider.h | 59 ++++++++++++++++++++++++++++++++++--
- 2 files changed, 74 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
-index 1b99fc962745..4296bb012abf 100644
---- a/drivers/clk/clk-gate.c
-+++ b/drivers/clk/clk-gate.c
-@@ -123,26 +123,18 @@ const struct clk_ops clk_gate_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_gate_ops);
- 
--/**
-- * clk_hw_register_gate - register a gate clock with the clock framework
-- * @dev: device that is registering this clock
-- * @name: name of this clock
-- * @parent_name: name of this clock's parent
-- * @flags: framework-specific flags for this clock
-- * @reg: register address to control gating of this clock
-- * @bit_idx: which bit in the register controls gating of this clock
-- * @clk_gate_flags: gate-specific flags for this clock
-- * @lock: shared register lock for this clock
-- */
--struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
--		const char *parent_name, unsigned long flags,
-+struct clk_hw *__clk_hw_register_gate(struct device *dev,
-+		struct device_node *np, const char *name,
-+		const char *parent_name, const struct clk_hw *parent_hw,
-+		const struct clk_parent_data *parent_data,
-+		unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock)
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index 6ee25e2dae76..f6d9eb982c20 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -35,7 +35,12 @@ static unsigned long clk_fixed_rate_recalc_rate(struct clk_hw *hw,
+ static unsigned long clk_fixed_rate_recalc_accuracy(struct clk_hw *hw,
+ 		unsigned long parent_accuracy)
  {
- 	struct clk_gate *gate;
- 	struct clk_hw *hw;
- 	struct clk_init_data init;
--	int ret;
-+	int ret = -EINVAL;
- 
- 	if (clk_gate_flags & CLK_GATE_HIWORD_MASK) {
- 		if (bit_idx > 15) {
-@@ -160,7 +152,12 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 	init.ops = &clk_gate_ops;
- 	init.flags = flags;
- 	init.parent_names = parent_name ? &parent_name : NULL;
--	init.num_parents = parent_name ? 1 : 0;
-+	init.parent_hws = parent_hw ? &parent_hw : NULL;
-+	init.parent_data = parent_data;
-+	if (parent_name || parent_hw || parent_data)
-+		init.num_parents = 1;
-+	else
-+		init.num_parents = 0;
- 
- 	/* struct clk_gate assignments */
- 	gate->reg = reg;
-@@ -170,15 +167,19 @@ struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
- 	gate->hw.init = &init;
- 
- 	hw = &gate->hw;
--	ret = clk_hw_register(dev, hw);
-+	if (dev || !np)
-+		ret = clk_hw_register(dev, hw);
-+	else if (np)
-+		ret = of_clk_hw_register(np, hw);
- 	if (ret) {
- 		kfree(gate);
- 		hw = ERR_PTR(ret);
- 	}
- 
- 	return hw;
+-	return to_clk_fixed_rate(hw)->fixed_accuracy;
++	struct clk_fixed_rate *fixed = to_clk_fixed_rate(hw);
 +
++	if (fixed->flags & CLK_FIXED_RATE_PARENT_ACCURACY)
++		return parent_accuracy;
++
++	return fixed->fixed_accuracy;
  }
--EXPORT_SYMBOL_GPL(clk_hw_register_gate);
-+EXPORT_SYMBOL_GPL(__clk_hw_register_gate);
  
- struct clk *clk_register_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
+ const struct clk_ops clk_fixed_rate_ops = {
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 47dd0efce416..04576a7a0f37 100644
+index 9acafd9de216..b1ed4b840476 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -475,14 +475,67 @@ struct clk_gate {
- #define CLK_GATE_BIG_ENDIAN		BIT(2)
+@@ -322,6 +322,10 @@ struct clk_hw {
+  * @fixed_rate:	constant frequency of clock
+  * @fixed_accuracy: constant accuracy of clock in ppb (parts per billion)
+  * @flags:	hardware specific flags
++ *
++ * Flags:
++ * CLK_FIXED_RATE_PARENT_ACCURACY - Use the accuracy of the parent clk
++ * 	instead of what's set in @fixed_accuracy.
+  */
+ struct clk_fixed_rate {
+ 	struct		clk_hw hw;
+@@ -330,6 +334,8 @@ struct clk_fixed_rate {
+ 	unsigned long	flags;
+ };
  
- extern const struct clk_ops clk_gate_ops;
--struct clk *clk_register_gate(struct device *dev, const char *name,
--		const char *parent_name, unsigned long flags,
-+struct clk_hw *__clk_hw_register_gate(struct device *dev,
-+		struct device_node *np, const char *name,
-+		const char *parent_name, const struct clk_hw *parent_hw,
-+		const struct clk_parent_data *parent_data,
-+		unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock);
--struct clk_hw *clk_hw_register_gate(struct device *dev, const char *name,
-+struct clk *clk_register_gate(struct device *dev, const char *name,
- 		const char *parent_name, unsigned long flags,
- 		void __iomem *reg, u8 bit_idx,
- 		u8 clk_gate_flags, spinlock_t *lock);
-+/**
-+ * clk_hw_register_gate - register a gate clock with the clock framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_name: name of this clock's parent
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define clk_hw_register_gate(dev, name, parent_name, flags, reg, bit_idx,     \
-+			     clk_gate_flags, lock)			      \
-+	__clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-+			       NULL, (flags), (reg), (bit_idx),		      \
-+			       (clk_gate_flags), (lock))
-+/**
-+ * clk_hw_register_gate_parent_hw - register a gate clock with the clock
-+ * framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_hw: pointer to parent clk
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define clk_hw_register_gate_parent_hw(dev, name, parent_name, flags, reg,    \
-+				       bit_idx, clk_gate_flags, lock)	      \
-+	__clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-+			       NULL, (flags), (reg), (bit_idx),		      \
-+			       (clk_gate_flags), (lock))
-+/**
-+ * clk_hw_register_gate_parent_data - register a gate clock with the clock
-+ * framework
-+ * @dev: device that is registering this clock
-+ * @name: name of this clock
-+ * @parent_data: parent clk data
-+ * @flags: framework-specific flags for this clock
-+ * @reg: register address to control gating of this clock
-+ * @bit_idx: which bit in the register controls gating of this clock
-+ * @clk_gate_flags: gate-specific flags for this clock
-+ * @lock: shared register lock for this clock
-+ */
-+#define clk_hw_register_gate_parent_data(dev, name, parent_name, flags, reg,  \
-+				       bit_idx, clk_gate_flags, lock)	      \
-+	__clk_hw_register_gate((dev), NULL, (name), (parent_name), NULL,      \
-+			       NULL, (flags), (reg), (bit_idx),		      \
-+			       (clk_gate_flags), (lock))
- void clk_unregister_gate(struct clk *clk);
- void clk_hw_unregister_gate(struct clk_hw *hw);
- int clk_gate_is_enabled(struct clk_hw *hw);
++#define CLK_FIXED_RATE_PARENT_ACCURACY		BIT(0)
++
+ extern const struct clk_ops clk_fixed_rate_ops;
+ struct clk_hw *__clk_hw_register_fixed_rate(struct device *dev,
+ 		struct device_node *np, const char *name,
 -- 
 Sent by a computer through tubes
 
