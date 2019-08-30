@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8206CC3A5A4
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 749A5C3A59B
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E1DC23407
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4588B23407
+	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 15:10:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567177815;
-	bh=/hnuajz4jZZo0tGrLg5f+zF+jCL6MFUKdWmwpFV9keM=;
+	s=default; t=1567177816;
+	bh=M3Fl0uQFBB1nB7g0eSzHp8Gkjc0rQVUxsBYc58NL1Ys=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oiE3vnKIScE6kP8RiVn0Di3VTX0RAd2ycp9sK/xvaEvMwtuW9mVx865tV/ZsqdX1F
-	 RhBmk3DGrPNL0Llj1Odo6holXDQzRctDnHuHQ3miaaAWLuSOMqnMJ7nzRMsz9SJAA9
-	 FX7F8zEBm2rlSUK4eM9ByGF/8/3Ap1oRc1mdFwIw=
+	b=t/31+7h8s9n3SgGSk1DyPhVSlyWuQKhxomwStO87krpqfv/bBobyqoOJV03WilxPm
+	 FYkv0/vSC9jQfeI90r/ecbYt/j0nArut3sNYAgbRFh7ImtIAB7AVPdzP6us47VZFWK
+	 9LiRpF3NRpK9YBb9HWDOrOmcnxIblk7jOPJcJJ04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728186AbfH3PJ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Aug 2019 11:09:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42540 "EHLO mail.kernel.org"
+        id S1728463AbfH3PKP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 30 Aug 2019 11:10:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42532 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727603AbfH3PJ0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S1728072AbfH3PJ0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Fri, 30 Aug 2019 11:09:26 -0400
 Received: from mail.kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 870132342B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AD042342A;
         Fri, 30 Aug 2019 15:09:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1567177765;
-        bh=/hnuajz4jZZo0tGrLg5f+zF+jCL6MFUKdWmwpFV9keM=;
+        bh=M3Fl0uQFBB1nB7g0eSzHp8Gkjc0rQVUxsBYc58NL1Ys=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U20X+7lB/NHeQ4emHTkTmhQlvT5181BW1tE0zMyXVAHJQYzvAqhRJZBcZjnymOZH0
-         Ea3apXK8hGJXYaDzP/IdnADijDyzniLDuvTYwJ0FCaXu2Cx5uwqv0nOaVmwHz8s9ka
-         bL9QSeFNCVQ5ZH2bWa2yEyfcB0z3igr5s5sVjvAw=
+        b=Mb9SoIQYAchwKNOyX9XLVV1AI0H5MpUnaNYXOr0yURusYgCVdbwjxiAxT1yykMvxE
+         Iid4xCC1puokSs3ZcRdCSepqSTsVwReUGd8Kmdd5HUHm0QMkGD17G8o4rcDjomWGkN
+         nFJ0G3HLvUf+m2lgg9rYPUue/l1YRXAd/3OP5xbk=
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 04/12] clk: fixed-rate: Move to_clk_fixed_rate() to C file
-Date:   Fri, 30 Aug 2019 08:09:15 -0700
-Message-Id: <20190830150923.259497-5-sboyd@kernel.org>
+Subject: [PATCH 03/12] clk: fixed-rate: Remove clk_register_fixed_rate_with_accuracy()
+Date:   Fri, 30 Aug 2019 08:09:14 -0700
+Message-Id: <20190830150923.259497-4-sboyd@kernel.org>
 X-Mailer: git-send-email 2.23.0.187.g17f5b7556c-goog
 In-Reply-To: <20190830150923.259497-1-sboyd@kernel.org>
 References: <20190830150923.259497-1-sboyd@kernel.org>
@@ -56,42 +56,70 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The only user of this macro is the fixed rate basic type. Move it there
-to avoid polluting provider drivers.
+There aren't any users of this API anymore. Remove it.
 
 Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/clk-fixed-rate.c | 2 ++
- include/linux/clk-provider.h | 2 --
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/clk-fixed-rate.c | 23 +++++++----------------
+ include/linux/clk-provider.h |  3 ---
+ 2 files changed, 7 insertions(+), 19 deletions(-)
 
 diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
-index f4044091907f..ba626661535b 100644
+index eed0be664c07..f4044091907f 100644
 --- a/drivers/clk/clk-fixed-rate.c
 +++ b/drivers/clk/clk-fixed-rate.c
-@@ -24,6 +24,8 @@
-  * parent - fixed parent.  No clk_set_parent support
-  */
+@@ -89,20 +89,6 @@ struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register_fixed_rate_with_accuracy);
  
-+#define to_clk_fixed_rate(_hw) container_of(_hw, struct clk_fixed_rate, hw)
-+
- static unsigned long clk_fixed_rate_recalc_rate(struct clk_hw *hw,
- 		unsigned long parent_rate)
+-struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned long fixed_rate, unsigned long fixed_accuracy)
+-{
+-	struct clk_hw *hw;
+-
+-	hw = clk_hw_register_fixed_rate_with_accuracy(dev, name, parent_name,
+-			flags, fixed_rate, fixed_accuracy);
+-	if (IS_ERR(hw))
+-		return ERR_CAST(hw);
+-	return hw->clk;
+-}
+-EXPORT_SYMBOL_GPL(clk_register_fixed_rate_with_accuracy);
+-
+ /**
+  * clk_hw_register_fixed_rate - register fixed-rate clock with the clock
+  * framework
+@@ -125,8 +111,13 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ 		const char *parent_name, unsigned long flags,
+ 		unsigned long fixed_rate)
  {
+-	return clk_register_fixed_rate_with_accuracy(dev, name, parent_name,
+-						     flags, fixed_rate, 0);
++	struct clk_hw *hw;
++
++	hw = clk_hw_register_fixed_rate_with_accuracy(dev, name, parent_name,
++						      flags, fixed_rate, 0);
++	if (IS_ERR(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
+ }
+ EXPORT_SYMBOL_GPL(clk_register_fixed_rate);
+ 
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 52c08fd0211c..028f7d3cea85 100644
+index 32beac39e5a3..52c08fd0211c 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -327,8 +327,6 @@ struct clk_fixed_rate {
- 	unsigned long	fixed_accuracy;
- };
- 
--#define to_clk_fixed_rate(_hw) container_of(_hw, struct clk_fixed_rate, hw)
--
- extern const struct clk_ops clk_fixed_rate_ops;
- struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+@@ -336,9 +336,6 @@ struct clk *clk_register_fixed_rate(struct device *dev, const char *name,
+ struct clk_hw *clk_hw_register_fixed_rate(struct device *dev, const char *name,
  		const char *parent_name, unsigned long flags,
+ 		unsigned long fixed_rate);
+-struct clk *clk_register_fixed_rate_with_accuracy(struct device *dev,
+-		const char *name, const char *parent_name, unsigned long flags,
+-		unsigned long fixed_rate, unsigned long fixed_accuracy);
+ void clk_unregister_fixed_rate(struct clk *clk);
+ struct clk_hw *clk_hw_register_fixed_rate_with_accuracy(struct device *dev,
+ 		const char *name, const char *parent_name, unsigned long flags,
 -- 
 Sent by a computer through tubes
 
