@@ -1,145 +1,89 @@
-Return-Path: <SRS0=cuWe=W2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=qGlB=W4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0513BC3A5A6
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 22:23:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11579C3A5A4
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Sep 2019 13:19:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA5B623431
-	for <linux-clk@archiver.kernel.org>; Fri, 30 Aug 2019 22:23:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD0B32339D
+	for <linux-clk@archiver.kernel.org>; Sun,  1 Sep 2019 13:19:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="p8F42Hz8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jB9FDimY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728185AbfH3WXL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 30 Aug 2019 18:23:11 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45958 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728122AbfH3WXL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 30 Aug 2019 18:23:11 -0400
-Received: by mail-lj1-f195.google.com with SMTP id l1so7768327lji.12
-        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2019 15:23:10 -0700 (PDT)
+        id S1728938AbfIANTE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Sep 2019 09:19:04 -0400
+Received: from mail-io1-f68.google.com ([209.85.166.68]:37123 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728934AbfIANTE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Sep 2019 09:19:04 -0400
+Received: by mail-io1-f68.google.com with SMTP id r4so8797264iop.4;
+        Sun, 01 Sep 2019 06:19:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=aFhn7iu9I5henNaKqHi8L7m05WmSjwIRVZYHP8MdkwY=;
-        b=p8F42Hz85A/2/K3UAyY7njPU6+S6o3PFI6WBLvzxiF6xubBIze4iseKYD8HBWhNTyR
-         I3vqR8EI6TogIXXp+qkhIfZCbZGJ1JzeCp5LQJOG3EKLFpIZsipeF3Q4vnaJ6BHd8fyr
-         AgHPxOTzGkzL1EBtfa+AgVsUD5U1r0CvBJk4+SxzepfD78zbCBh/r2VnfmIX9nzSCsjM
-         d9jTzzvj2vjyK1fVjfPCPG+BDyV9oKldBb8kXHpBefEA5nhl60O47wA60XxI8u1S8Rai
-         wK2G9JQKMNylGBXxXpOPGstmvNx6gJy7uKSdt0bCiVNVz26qSWEdX8ZrRbT5VPHATxUN
-         Cmvg==
+        d=gmail.com; s=20161025;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=Oy9vbVSjk4JRk5gZtaXEHlSIoXq+rSlaq2jhBh5Gric=;
+        b=jB9FDimYiKWkYoSdSws6i2oCvHgvDv9kst7x48wNIh1jRcOwL/68qaH3tPBKQt92vI
+         LBcSqlIFydSUHScYQ8/IzKNWJsLAO22qMtpcSNrvm6VxzE4I6devfchF/bSB9G+BfaoO
+         XtIs74xkt/ciyiMGazA4+2tuLegPkjzbmDAsVlC6ZGKiBi8EPGK59ldKYzsp/bUFVHwU
+         Wtlsim8pT2IDJTUUKtMSbfxTxVVY/3xfgFVFOna4t5+wKA+Gz4gQvkqEP0grMMiX4EXD
+         NaayUKBDI+4CAZ2ssU0xjpdTvusNCjXo3pI2XLI+wVrkZQ0Or4K7yQ/QIh7p1DB/60ff
+         wgxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=aFhn7iu9I5henNaKqHi8L7m05WmSjwIRVZYHP8MdkwY=;
-        b=agag0nc8dBc+0zGMmqWLh6KvX345T2An8+bQ4/l70AXUiDWAPBudlP+0l+7hFzbTTo
-         QAFrN8nYcR/ot3a/k7/AtD0l+NTdHleG6vinSDh/NF5uThFposAlrvpuQz+kw0xNJKR8
-         l7AvA4V8fy2hyjZ4/4Zx2SzM3SjB5H8pWcCOdYXioiStxtyv/hIbMpnD+a6GmJT/7ldz
-         Z9VD6nopJTKT34Ed2fzsVWkaUB6kzc05ohyY3JXKl8g4oAQI6HjVvRAEW1MM1llpVg9E
-         xtonk6pCTOVSCFjNv1+LECJSN8ZnYZC6Y5h78lFdx8M80msxCclW2B43mrXPsUtPDXGm
-         aq0w==
-X-Gm-Message-State: APjAAAUL6sUaiqiVyf8GSQbQQPpduXGj0Zfskg/2V0XNIKjst4NUf/GN
-        EtKnp/V7VvoCYgXJcAEHwwc8gQ==
-X-Google-Smtp-Source: APXvYqyhbYgJEHEwysGkvqQbzaPTOsUlDgHi6Zy0tB39/amTTYUPoeM7rz/ayLHMEeLeAG1JpXjEKw==
-X-Received: by 2002:a2e:800a:: with SMTP id j10mr9761006ljg.137.1567203789433;
-        Fri, 30 Aug 2019 15:23:09 -0700 (PDT)
-Received: from localhost (h-177-236.A463.priv.bahnhof.se. [217.31.177.236])
-        by smtp.gmail.com with ESMTPSA id b11sm1139770lfi.91.2019.08.30.15.23.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2019 15:23:08 -0700 (PDT)
-Date:   Sat, 31 Aug 2019 00:23:07 +0200
-From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
-        <niklas.soderlund@ragnatech.se>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org
-Subject: Re: [PATCH v2 5/8] clk: renesas: rcar-gen3: Loop to find best rate
- in cpg_sd_clock_round_rate()
-Message-ID: <20190830222307.GU8479@bigcity.dyn.berto.se>
-References: <20190830134515.11925-1-geert+renesas@glider.be>
- <20190830134515.11925-6-geert+renesas@glider.be>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=Oy9vbVSjk4JRk5gZtaXEHlSIoXq+rSlaq2jhBh5Gric=;
+        b=C2jCrm1BdmHRQQwo2Pu0wVGL+nMubXSR8orARapq2gnn/vV2Mc1e1IkH7IQXpkrlCM
+         eJqfg9aLmBeAkLKtufAy6ntqmroYFMx4GrZkKqUbcUspMxeiqi6W3kaUB2tzUhCAp7dX
+         csV2nT7F18iETySSbuDCbAveuxwcavfpQ+R2ofpfSI7ZwDHHz46TtsgXdCl5c9hA/HaK
+         D5ttvAOCY9qvMgJZO23PyBvuzVKUPBPrm+m95NBqwgLmIH+dy503/rNkb/nMPkHtIybS
+         0mNY3oU4r/a41LMhALbu+lsCJtiWUdKVSo0w1ZCJXMa4T0/eFI40w0YHIpzMrGI0UxAl
+         JOwg==
+X-Gm-Message-State: APjAAAWscU5p/th2sjcTkf/wLb710XC94JmXqiRxFW0mUmLYcGx2s601
+        bZyxOA1hsv+4mKV+i5IcOaWMGCLU0cpAszCV0X0=
+X-Google-Smtp-Source: APXvYqxW5iZcY2aF9i2m1ABpcKzHtbm1+gFP5irmLny6GEH/tT20b38UfJjaTAm/6K6c5zO/0G+jSg9StO8YJE0DBrE=
+X-Received: by 2002:a5d:8c8b:: with SMTP id g11mr30622237ion.134.1567343943040;
+ Sun, 01 Sep 2019 06:19:03 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190830134515.11925-6-geert+renesas@glider.be>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+From:   Jaafar Ali <jaafarkhalaf@gmail.com>
+Date:   Sun, 1 Sep 2019 16:13:03 +0300
+Message-ID: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
+Subject: cpuidle big_little driver on Odroid-xu4
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+        sam@ravnborg.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Geert,
+Dear Sylwester,
+Kernel 5.3rc1
+Hardware Odroid-XU4
+cpuidle-big_little driver for exynos 5422 of odroid-xu3/4 is not working.
+when I enable it in the defconfig , CONFIG_ARM_BIG_LITTLE_CPUIDLE=y,
+the device will not boot and the heartbeat blue LED stops.
+when the powerdown state[1] is removed form cpuidle-big_little driver
+or the function bl_enter_powerdown is disabled by early return, the
+kernel boots successfully and I can see cpuidle driver inside
+/sys/devices/system/cpu/cpuidle/current_driver
+both cpuidle-big_little power down state (exynos5420) and suspend
+stuff are using mcpm_cpu_suspend() which in turn calls
+mcpm_cpu_power_down() eventually.
+while suspend stuff is working correctly and the cpu can
+suspend/resume without problems, the cpuidle-bl is not working
+the few difference between suspend.c and cpuidle-big_little that I
+found are suspend.c do some more preparations such as storing resume
+entry point "mcpm_entry_point" into S5P_INFORM0, reset
+EXYNOS5420_CPU_STATE and save and restore some other registers.
+Can we repeat the scenario of suspend in cpuidle-big_little
 
-Thanks for your patch.
-
-On 2019-08-30 15:45:12 +0200, Geert Uytterhoeven wrote:
-> cpg_sd_clock_round_rate() really needs the best rate, not the best
-> divider.  Hence change the iteration to find the former, and get rid of
-> the final division.
-> 
-> Add an out-of-range rate check while at it.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> v2:
->   - Split off from "clk: renesas: rcar-gen3: Switch SD clocks to
->     .determine_rate()".
-> ---
->  drivers/clk/renesas/rcar-gen3-cpg.c | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-> index 12ea5c9a671de788..a612045cba7d97b7 100644
-> --- a/drivers/clk/renesas/rcar-gen3-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-> @@ -312,21 +312,25 @@ static unsigned long cpg_sd_clock_recalc_rate(struct clk_hw *hw,
->  static long cpg_sd_clock_round_rate(struct clk_hw *hw, unsigned long rate,
->  				      unsigned long *parent_rate)
->  {
-> -	unsigned long calc_rate, diff, diff_min = ULONG_MAX;
-> +	unsigned long best_rate = ULONG_MAX, diff_min = ULONG_MAX;
->  	struct sd_clock *clock = to_sd_clock(hw);
-> -	unsigned int i, best_div = 0;
-> +	unsigned long calc_rate, diff;
-> +	unsigned int i;
->  
->  	for (i = 0; i < clock->div_num; i++) {
->  		calc_rate = DIV_ROUND_CLOSEST(*parent_rate,
->  					      clock->div_table[i].div);
->  		diff = calc_rate > rate ? calc_rate - rate : rate - calc_rate;
->  		if (diff < diff_min) {
-> -			best_div = clock->div_table[i].div;
-> +			best_rate = calc_rate;
->  			diff_min = diff;
->  		}
->  	}
->  
-> -	return DIV_ROUND_CLOSEST(*parent_rate, best_div);
-> +	if (best_rate > LONG_MAX)
-> +		return -EINVAL;
-> +
-> +	return best_rate;
->  }
->  
->  static int cpg_sd_clock_set_rate(struct clk_hw *hw, unsigned long rate,
-> -- 
-> 2.17.1
-> 
-
+Best Regards
 -- 
-Regards,
-Niklas Söderlund
+Jaafar Khalaf
