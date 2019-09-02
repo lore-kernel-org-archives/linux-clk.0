@@ -4,83 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8367DC3A5A7
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 13:38:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C29AC3A5A7
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 13:39:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5103D21881
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 13:38:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DE982339D
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 13:39:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567431525;
-	bh=Whcs8mlKmTqfZxOhgtYZCcxn/vWlYEtkR6WkX+mAmQg=;
-	h=Date:From:Subject:References:In-Reply-To:CC:To:List-ID:From;
-	b=JIz2TRn+SPND3X3pGFVT16sekrNzDNMVIEGiTRlyBchk32tz6Gm6YW1YtiLTyF7BV
-	 NZRJNAag8cp+G3pE1X7PJ2mKXT8KilgBdh6kELoiehK/6Q48O6COWE5NT1Jzw4jsQ8
-	 RO1WyFgx/Xd2fqp2TvQz89P+mKJv+lSAaE6XJ++E=
+	s=default; t=1567431557;
+	bh=9s1MLpQBnTPoEPNWEkJNU1rCcpemKnblWFJfaoZI1lo=;
+	h=Date:From:Subject:References:In-Reply-To:Cc:Cc:To:List-ID:From;
+	b=yD1cxYELYm4xZjNHl/gSOVPJPBOgDsum7uCV3xul2trvLTKSBtdIFTbFam2+QWaQZ
+	 ktDz/oAeVYWLimlJM8k+o8/eu1EU7TgiBckF6k01jUKaaK/6tK8Zf5wyAiloEzUm3P
+	 41i84OJwk5Afeu8STHuIjGdC8PvB4CcqCTffH9d0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbfIBNip (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Sep 2019 09:38:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51881 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730662AbfIBNio (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Sep 2019 09:38:44 -0400
-Received: by mail-wm1-f66.google.com with SMTP id k1so14644994wmi.1;
-        Mon, 02 Sep 2019 06:38:43 -0700 (PDT)
+        id S1731270AbfIBNjP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Sep 2019 09:39:15 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55515 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731207AbfIBNjO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Sep 2019 09:39:14 -0400
+Received: by mail-wm1-f67.google.com with SMTP id g207so10661172wmg.5;
+        Mon, 02 Sep 2019 06:39:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:message-id:date:from:subject:references
          :in-reply-to:cc:cc:to;
-        bh=0A2NGMWOy3zEuz3VxC/asQLJTnz9aoB2esNpQEgqd1g=;
-        b=ujRAtidc97z7NergjRki6rSUAt6MIYwYCWaOjmN+fQfgv1WPYXORXma59zbTEqLXOI
-         qlOxIhmHkFa8t8pUwadG2JS4hsaYbmCqvxvSyiKoLisd7k0BQVEkCTZf9sKGkq4tSqY0
-         UPSJEDUB3U+zj7psO0bhPCnckAvXqkG+x0ZvuFMcSk05qHGfZiCR+2soz5ontBZsVlne
-         QIZwxzgRyBmebZVYl9kzLj9Qs7oKUwDGGv2qSsjAiXZQ4Ub2+9FOhCsaC82yZmTQ13Wz
-         DpooEpLUCROjVphGjZigW2mfFT+2RxZ9j+2EhqWWFVs1Y3Y2J5GXf7WiWT1EtWApKsoP
-         WsKw==
-X-Gm-Message-State: APjAAAWC9wIwxtvXacSKjrBLpK1lW+ob4L1Ry/2B/AcZNZI3GQpgP6r9
-        uj/R45p89sAVVyKF6BUFwg==
-X-Google-Smtp-Source: APXvYqyryTjFEoAjRiTRD/cveMVvJ62e6tv3eGdxZSToRxqfmTU0cEJbrtDlZV7N6If8HbCiP6JxUw==
-X-Received: by 2002:a7b:cc02:: with SMTP id f2mr34634993wmh.92.1567431522631;
-        Mon, 02 Sep 2019 06:38:42 -0700 (PDT)
+        bh=i8e++xz5qwKu0AXEKpTq0jloPuTWkhcukfEQYljIeuQ=;
+        b=Jn9u38XFyFzKzqGawyU8pBN6QReSHG1vgbiGlYIUZS4I/DC28p9gACrtBSsY3csVh+
+         CvwY3yYMNbBCiFQyzQ1PtSlI0LFTEQ2UKFpkX4jf9WoJd1lGLzqKOmSxOITuLsAqvqiG
+         KzBbrAmey8dJC3Y9jnxhfeY8JQMsxR+CXW6k89xSnes3C8xCIDBnXhIqYKrn5h5ChMiH
+         dfDCC57rCwiKy25ZtIUzdzsAhgsCiMNmgXdM4jbhONYY0eOQ6hBVMHoyUJRhRGvY26iy
+         bKQR4zuVVIGteq9NzkgnXU1/5xJ42V15Vbl/Vx/roYKG5O4liU+jOurmGE/JRfxXfvVF
+         3LOA==
+X-Gm-Message-State: APjAAAWPhgYfLJnPLtrVQ/8midxPmCeo4Wex9HR/wNdtkrhaC082Vuyu
+        LRXJEAzvfpp+uVLuwz+SWQ==
+X-Google-Smtp-Source: APXvYqyy/yBgbJt3aiug7T/vVbjfsxmvYSbbhNfYrxpQphu6DF8mImW2gQmz1fvkwgPMM6JR6vii2Q==
+X-Received: by 2002:a7b:cf09:: with SMTP id l9mr35159260wmg.20.1567431552216;
+        Mon, 02 Sep 2019 06:39:12 -0700 (PDT)
 Received: from localhost ([212.187.182.166])
-        by smtp.gmail.com with ESMTPSA id n2sm9271557wro.52.2019.09.02.06.38.41
+        by smtp.gmail.com with ESMTPSA id w5sm12113377wmm.43.2019.09.02.06.39.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2019 06:38:41 -0700 (PDT)
-Message-ID: <5d6d1b61.1c69fb81.735c8.535d@mx.google.com>
-Date:   Mon, 02 Sep 2019 14:38:41 +0100
+        Mon, 02 Sep 2019 06:39:11 -0700 (PDT)
+Message-ID: <5d6d1b7f.1c69fb81.3c9bb.222d@mx.google.com>
+Date:   Mon, 02 Sep 2019 14:39:11 +0100
 From:   Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/2] dt-bindings: clock: mediatek: add pericfg for MT8183
-References: <1566980533-28282-1-git-send-email-chunfeng.yun@mediatek.com>
-In-Reply-To: <1566980533-28282-1-git-send-email-chunfeng.yun@mediatek.com>
-Content-Type: text/plain
-CC:     Mark Rutland <mark.rutland@arm.com>,
+Subject: Re: [PATCH v3 02/16] dt-bindings: arm: Convert Marvell MMP board/soc bindings to json-schema
+References: <20190830220743.439670-1-lkundrak@v3.sk> <20190830220743.439670-3-lkundrak@v3.sk>
+In-Reply-To: <20190830220743.439670-3-lkundrak@v3.sk>
+Cc:     "To : Olof Johansson" <olof@lixom.net>
+Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        Chunfeng Yun <chunfeng.yun@mediatek.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Weiyi Lu <weiyi.lu@mediatek.com>,
-        Erin Lo <erin.lo@mediatek.com>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-To:     Chunfeng Yun <chunfeng.yun@mediatek.com>
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+To:     Lubomir Rintel <lkundrak@v3.sk>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 28 Aug 2019 16:22:12 +0800, Chunfeng Yun wrote:
-> This patch adds binding of pericfg for MT8183.
+On Sat, 31 Aug 2019 00:07:29 +0200, Lubomir Rintel wrote:
+> Convert Marvell MMP SoC bindings to DT schema format using json-schema.
 > 
-> Signed-off-by: Chunfeng Yun <chunfeng.yun@mediatek.com>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> 
 > ---
-> v2: no changes
-> ---
->  .../devicetree/bindings/arm/mediatek/mediatek,pericfg.txt        | 1 +
->  1 file changed, 1 insertion(+)
+> Changes since v2:
+> - Add mrvl,pxa910
+> - s/MMP2 Brownstone Board/MMP2 based boards/
+> 
+> Changes since v1:
+> - Added this patch
+> 
+>  .../devicetree/bindings/arm/mrvl/mrvl.txt     | 14 --------
+>  .../devicetree/bindings/arm/mrvl/mrvl.yaml    | 32 +++++++++++++++++++
+>  2 files changed, 32 insertions(+), 14 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.txt
+>  create mode 100644 Documentation/devicetree/bindings/arm/mrvl/mrvl.yaml
 > 
 
-Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 
