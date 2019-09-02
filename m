@@ -2,119 +2,76 @@ Return-Path: <SRS0=wHDT=W5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC9AC3A5A8
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 08:31:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A21C3A59B
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 08:35:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD7D21881
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 08:31:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3A9521881
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 08:35:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfIBIbn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Sep 2019 04:31:43 -0400
-Received: from kirsty.vergenet.net ([202.4.237.240]:33634 "EHLO
-        kirsty.vergenet.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729378AbfIBIbn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Sep 2019 04:31:43 -0400
-Received: from reginn.horms.nl (watermunt.horms.nl [80.127.179.77])
-        by kirsty.vergenet.net (Postfix) with ESMTPA id A78BE25B75F;
-        Mon,  2 Sep 2019 18:31:41 +1000 (AEST)
-Received: by reginn.horms.nl (Postfix, from userid 7100)
-        id 8A3109401E6; Mon,  2 Sep 2019 10:31:39 +0200 (CEST)
-Date:   Mon, 2 Sep 2019 10:31:39 +0200
-From:   Simon Horman <horms@verge.net.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH 1/5] clk: renesas: rcar-gen2-legacy: Switch Z clock to
- .determine_rate()
-Message-ID: <20190902083139.qicqmtrxosnzay2s@verge.net.au>
-References: <20190617125238.13761-1-geert+renesas@glider.be>
- <20190617125238.13761-2-geert+renesas@glider.be>
- <20190618110937.2s7h5vtssymfrxxq@verge.net.au>
- <CAMuHMdUe_kvB_z0y99y_kkRaUCW9NZneRUtNh=+PC9sC3buDjg@mail.gmail.com>
+        id S1730310AbfIBIfj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Sep 2019 04:35:39 -0400
+Received: from mailgw01.mediatek.com ([210.61.82.183]:15162 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729459AbfIBIfj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Sep 2019 04:35:39 -0400
+X-UUID: 5c2a12c169cf47e4a0c810056e94d8ec-20190902
+X-UUID: 5c2a12c169cf47e4a0c810056e94d8ec-20190902
+Received: from mtkexhb01.mediatek.inc [(172.21.101.102)] by mailgw01.mediatek.com
+        (envelope-from <weiyi.lu@mediatek.com>)
+        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
+        with ESMTP id 1645724099; Mon, 02 Sep 2019 16:35:32 +0800
+Received: from mtkcas09.mediatek.inc (172.21.101.178) by
+ mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 2 Sep 2019 16:35:32 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by mtkcas09.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 2 Sep 2019 16:35:32 +0800
+From:   Weiyi Lu <weiyi.lu@mediatek.com>
+To:     Nicolas Boichat <drinkcat@chromium.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Rob Herring <robh@kernel.org>
+CC:     James Liao <jamesjj.liao@mediatek.com>,
+        Fan Chen <fan.chen@mediatek.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-mediatek@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <srv_heupstream@mediatek.com>, CK Hu <ck.hu@mediatek.com>,
+        Weiyi Lu <weiyi.lu@mediatek.com>
+Subject: [PATCH v1 0/3] Runtime PM support for MT8183 mcucfg clock provider
+Date:   Mon, 2 Sep 2019 16:35:07 +0800
+Message-ID: <1567413310-2589-1-git-send-email-weiyi.lu@mediatek.com>
+X-Mailer: git-send-email 1.8.1.1.dirty
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMuHMdUe_kvB_z0y99y_kkRaUCW9NZneRUtNh=+PC9sC3buDjg@mail.gmail.com>
-Organisation: Horms Solutions BV
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 30, 2019 at 10:43:01AM +0200, Geert Uytterhoeven wrote:
-> Hi Simon,
-> 
-> On Tue, Jun 18, 2019 at 1:09 PM Simon Horman <horms@verge.net.au> wrote:
-> > On Mon, Jun 17, 2019 at 02:52:34PM +0200, Geert Uytterhoeven wrote:
-> > > As the .round_rate() callback returns a long clock rate, it cannot
-> > > return clock rates that do not fit in signed long, but do fit in
-> > > unsigned long.  Hence switch the Z clock on R-Car Gen2 from the old
-> > > .round_rate() callback to the newer .determine_rate() callback, which
-> > > does not suffer from this limitation.
-> > >
-> > > This includes implementing range checking.
-> > >
-> > > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> > > --- a/drivers/clk/renesas/clk-rcar-gen2.c
-> > > +++ b/drivers/clk/renesas/clk-rcar-gen2.c
-> > > @@ -66,19 +66,22 @@ static unsigned long cpg_z_clk_recalc_rate(struct clk_hw *hw,
-> > >       return div_u64((u64)parent_rate * mult, 32);
-> > >  }
-> > >
-> > > -static long cpg_z_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> > > -                              unsigned long *parent_rate)
-> > > +static int cpg_z_clk_determine_rate(struct clk_hw *hw,
-> > > +                                 struct clk_rate_request *req)
-> > >  {
-> > > -     unsigned long prate  = *parent_rate;
-> > > -     unsigned int mult;
-> > > +     unsigned long prate = req->best_parent_rate;
-> > > +     unsigned int min_mult, max_mult, mult;
-> > >
-> > > -     if (!prate)
-> > > -             prate = 1;
-> > > +     min_mult = max(div_u64(req->min_rate * 32ULL, prate), 1ULL);
-> > > +     max_mult = min(div_u64(req->max_rate * 32ULL, prate), 32ULL);
-> >
-> > nit: the type of the second parameter doesn't look correct to me,
-> > div_u64 expects a u32 divisor.
-> 
-> Yes, this should use div64_ul() instead.
+This series is based on v5.3-rc1 and Mediatek MT8183 scpsys support v7[1].
+Since Runtime PM is supported in Common Clock Framework which keeps
+clock controller's power domain enabled to ensure clock status accessing correctly.
 
-Ok, but in that case should the constants be "UL" instead of "UUL" ?
+[1] https://patchwork.kernel.org/cover/11118371/
 
-> 
-> > > +     if (max_mult < min_mult)
-> > > +             return -EINVAL;
-> > >
-> > > -     mult = div_u64((u64)rate * 32, prate);
-> > > -     mult = clamp(mult, 1U, 32U);
-> > > +     mult = div_u64(req->rate * 32ULL, prate);
-> >
-> > Likewise, do we care that prate will be 64bit on 64bit platforms?
-> > (Yes, I know gen2 SoCs are 32bit :)
-> 
-> Likewise, div64_ul().
-> 
-> Thanks a lot!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
-> 
+---
+
+Weiyi Lu (3):
+  clk: mediatek: Register clock gate with device
+  clk: mediatek: Runtime PM support for MT8183 mcucfg clock provider
+  arm64: dts: Add power-domains properity to mfgcfg
+
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi |  1 +
+ drivers/clk/mediatek/clk-gate.c          |  5 +++--
+ drivers/clk/mediatek/clk-gate.h          |  3 ++-
+ drivers/clk/mediatek/clk-mt8183-mfgcfg.c |  7 +++++--
+ drivers/clk/mediatek/clk-mtk.c           | 16 +++++++++++++---
+ drivers/clk/mediatek/clk-mtk.h           |  5 +++++
+ 6 files changed, 29 insertions(+), 8 deletions(-)
+
