@@ -1,89 +1,321 @@
-Return-Path: <SRS0=qGlB=W4=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=wHDT=W5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11579C3A5A4
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Sep 2019 13:19:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A4AC3A59B
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 07:43:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0B32339D
-	for <linux-clk@archiver.kernel.org>; Sun,  1 Sep 2019 13:19:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jB9FDimY"
+	by mail.kernel.org (Postfix) with ESMTP id 3EFCA22CF7
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Sep 2019 07:43:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728938AbfIANTE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 1 Sep 2019 09:19:04 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:37123 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728934AbfIANTE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 1 Sep 2019 09:19:04 -0400
-Received: by mail-io1-f68.google.com with SMTP id r4so8797264iop.4;
-        Sun, 01 Sep 2019 06:19:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc;
-        bh=Oy9vbVSjk4JRk5gZtaXEHlSIoXq+rSlaq2jhBh5Gric=;
-        b=jB9FDimYiKWkYoSdSws6i2oCvHgvDv9kst7x48wNIh1jRcOwL/68qaH3tPBKQt92vI
-         LBcSqlIFydSUHScYQ8/IzKNWJsLAO22qMtpcSNrvm6VxzE4I6devfchF/bSB9G+BfaoO
-         XtIs74xkt/ciyiMGazA4+2tuLegPkjzbmDAsVlC6ZGKiBi8EPGK59ldKYzsp/bUFVHwU
-         Wtlsim8pT2IDJTUUKtMSbfxTxVVY/3xfgFVFOna4t5+wKA+Gz4gQvkqEP0grMMiX4EXD
-         NaayUKBDI+4CAZ2ssU0xjpdTvusNCjXo3pI2XLI+wVrkZQ0Or4K7yQ/QIh7p1DB/60ff
-         wgxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
-        bh=Oy9vbVSjk4JRk5gZtaXEHlSIoXq+rSlaq2jhBh5Gric=;
-        b=C2jCrm1BdmHRQQwo2Pu0wVGL+nMubXSR8orARapq2gnn/vV2Mc1e1IkH7IQXpkrlCM
-         eJqfg9aLmBeAkLKtufAy6ntqmroYFMx4GrZkKqUbcUspMxeiqi6W3kaUB2tzUhCAp7dX
-         csV2nT7F18iETySSbuDCbAveuxwcavfpQ+R2ofpfSI7ZwDHHz46TtsgXdCl5c9hA/HaK
-         D5ttvAOCY9qvMgJZO23PyBvuzVKUPBPrm+m95NBqwgLmIH+dy503/rNkb/nMPkHtIybS
-         0mNY3oU4r/a41LMhALbu+lsCJtiWUdKVSo0w1ZCJXMa4T0/eFI40w0YHIpzMrGI0UxAl
-         JOwg==
-X-Gm-Message-State: APjAAAWscU5p/th2sjcTkf/wLb710XC94JmXqiRxFW0mUmLYcGx2s601
-        bZyxOA1hsv+4mKV+i5IcOaWMGCLU0cpAszCV0X0=
-X-Google-Smtp-Source: APXvYqxW5iZcY2aF9i2m1ABpcKzHtbm1+gFP5irmLny6GEH/tT20b38UfJjaTAm/6K6c5zO/0G+jSg9StO8YJE0DBrE=
-X-Received: by 2002:a5d:8c8b:: with SMTP id g11mr30622237ion.134.1567343943040;
- Sun, 01 Sep 2019 06:19:03 -0700 (PDT)
+        id S1729702AbfIBHnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Sep 2019 03:43:19 -0400
+Received: from mga04.intel.com ([192.55.52.120]:10451 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726540AbfIBHnT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 2 Sep 2019 03:43:19 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 02 Sep 2019 00:43:19 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,457,1559545200"; 
+   d="scan'208";a="176255872"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga008.jf.intel.com with ESMTP; 02 Sep 2019 00:43:18 -0700
+Received: from [10.226.38.83] (rtanwar-mobl.gar.corp.intel.com [10.226.38.83])
+        by linux.intel.com (Postfix) with ESMTP id 6763F58043A;
+        Mon,  2 Sep 2019 00:43:16 -0700 (PDT)
+Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
+To:     Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        robhkernel.org@smile.fi.intel.com, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com, rahul.tanwar@intel.com
+References: <cover.1566975410.git.rahul.tanwar@linux.intel.com>
+ <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com>
+ <20190828150951.GS2680@smile.fi.intel.com>
+From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Message-ID: <e4a1fd0a-b179-92dd-fb81-22d9d7465a33@linux.intel.com>
+Date:   Mon, 2 Sep 2019 15:43:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-From:   Jaafar Ali <jaafarkhalaf@gmail.com>
-Date:   Sun, 1 Sep 2019 16:13:03 +0300
-Message-ID: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
-Subject: cpuidle big_little driver on Odroid-xu4
-To:     Sylwester Nawrocki <s.nawrocki@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        kgene@kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
-        sam@ravnborg.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190828150951.GS2680@smile.fi.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dear Sylwester,
-Kernel 5.3rc1
-Hardware Odroid-XU4
-cpuidle-big_little driver for exynos 5422 of odroid-xu3/4 is not working.
-when I enable it in the defconfig , CONFIG_ARM_BIG_LITTLE_CPUIDLE=y,
-the device will not boot and the heartbeat blue LED stops.
-when the powerdown state[1] is removed form cpuidle-big_little driver
-or the function bl_enter_powerdown is disabled by early return, the
-kernel boots successfully and I can see cpuidle driver inside
-/sys/devices/system/cpu/cpuidle/current_driver
-both cpuidle-big_little power down state (exynos5420) and suspend
-stuff are using mcpm_cpu_suspend() which in turn calls
-mcpm_cpu_power_down() eventually.
-while suspend stuff is working correctly and the cpu can
-suspend/resume without problems, the cpuidle-bl is not working
-the few difference between suspend.c and cpuidle-big_little that I
-found are suspend.c do some more preparations such as storing resume
-entry point "mcpm_entry_point" into S5P_INFORM0, reset
-EXYNOS5420_CPU_STATE and save and restore some other registers.
-Can we repeat the scenario of suspend in cpuidle-big_little
 
-Best Regards
--- 
-Jaafar Khalaf
+Hi Andy,
+
+Thanks for your review comments.
+
+On 28/8/2019 11:09 PM, Andy Shevchenko wrote:
+> On Wed, Aug 28, 2019 at 03:00:17PM +0800, Rahul Tanwar wrote:
+>> From: rtanwar <rahul.tanwar@intel.com>
+>>
+>> Clock Generation Unit(CGU) is a new clock controller IP of a forthcoming
+>> Intel network processor SoC. It provides programming interfaces to control
+>> & configure all CPU & peripheral clocks. Add common clock framework based
+>> clock controller driver for CGU.
+>>   drivers/clk/intel/Kconfig       |  13 +
+>>   drivers/clk/intel/Makefile      |   4 +
+> Any plans what to do with existing x86 folder there?
+
+
+I checked the x86 folder. This driver's clock controller IP is totally
+
+different than other clock drivers inside x86. So having a common
+
+driver source is not a option. It is of course possible to move this
+
+driver inside x86 folder. Please let me know if you think moving
+
+this driver inside x86 folder makes more sense.
+
+>> +++ b/drivers/clk/intel/Kconfig
+>> @@ -0,0 +1,13 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +config INTEL_LGM_CGU_CLK
+>> +	depends on COMMON_CLK
+>> +	select MFD_SYSCON
+>> +	select OF_EARLY_FLATTREE
+>> +	bool "Intel Clock Genration Unit support"
+> Is it for X86? Don't you need a dependency?
+
+
+Yes agree, will update in v2.
+
+>> +/*
+>> + * Calculate formula:
+>> + * rate = (prate * mult + (prate * frac) / frac_div) / div
+>> + */
+>> +static unsigned long
+>> +intel_pll_calc_rate(unsigned long prate, unsigned int mult,
+>> +		    unsigned int div, unsigned int frac, unsigned int frac_div)
+>> +{
+>> +	u64 crate, frate, rate64;
+>> +
+>> +	rate64 = prate;
+>> +	crate = rate64 * mult;
+>> +
+>> +	if (frac) {
+> This seems unnecessary.
+> I think you would like to check for frac_div instead?
+> Though I would rather to use frac = 0, frac_div = 1 and drop this conditional
+> completely.
+
+
+frac_div value is fixed to BIT(24) i.e. always a non zero value. mult & div
+
+are directly read from registers and by design the register values for
+
+mult & div is also always a non zero value. However, frac can logically
+
+be zero. So, I still find if (frac) condition most suitable here.
+
+>> +		frate = rate64 * frac;
+>> +		do_div(frate, frac_div);
+>> +		crate += frate;
+>> +	}
+>> +	do_div(crate, div);
+>> +
+>> +	return (unsigned long)crate;
+>> +}
+>> +static struct clk_hw
+>> +*intel_clk_register_pll(struct intel_clk_provider *ctx,
+> * is part of type.
+
+
+Yes, will update in v2.
+
+>> +			const struct intel_pll_clk_data *list)
+>> +{
+>> +	struct clk_init_data init;
+>> +	struct intel_clk_pll *pll;
+>> +	struct device *dev = ctx->dev;
+>> +	struct clk_hw *hw;
+>> +	int ret;
+>> +
+>> +	init.ops = &intel_lgm_pll_ops;
+>> +	init.name = list->name;
+>> +	init.parent_names = list->parent_names;
+>> +	init.num_parents = list->num_parents;
+>> +
+>> +	pll = devm_kzalloc(dev, sizeof(*pll), GFP_KERNEL);
+>> +	if (!pll)
+>> +		return ERR_PTR(-ENOMEM);
+>> +
+>> +	pll->map = ctx->map;
+>> +	pll->dev = ctx->dev;
+>> +	pll->reg = list->reg;
+>> +	pll->flags = list->flags;
+>> +	pll->type = list->type;
+>> +	pll->hw.init = &init;
+>> +
+>> +	hw = &pll->hw;
+> Seems redundant temporary variable.
+
+
+Agree, will update in v2.
+
+>> +	ret = clk_hw_register(dev, hw);
+>> +	if (ret)
+>> +		return ERR_PTR(ret);
+>> +
+>> +	return hw;
+>> +}
+>> +void intel_clk_register_plls(struct intel_clk_provider *ctx,
+>> +			     const struct intel_pll_clk_data *list,
+>> +				unsigned int nr_clk)
+> Indentation issues.
+
+
+Will fix in v2.
+
+>> +{
+>> +	struct clk_hw *hw;
+>> +	int i;
+>> +
+>> +	for (i = 0; i < nr_clk; i++, list++) {
+>> +		hw = intel_clk_register_pll(ctx, list);
+>> +		if (IS_ERR(hw)) {
+>> +			dev_err(ctx->dev, "failed to register pll: %s\n",
+>> +				list->name);
+> Is it fatal or not?
+
+
+Agree that its fatal if PLL registration fails, just that its highly 
+unlikely.
+
+I will modify it to return error & make probe fail in failure cases.
+
+>> +			continue;
+>> +		}
+>> +
+>> +		intel_clk_add_lookup(ctx, hw, list->id);
+>> +	}
+> No error to return? Are all PLLs optional?
+
+
+Will change it to return error code.
+
+>> +}
+>> +#endif				/* __INTEL_CLK_PLL_H */
+> One TAB is enough.
+
+
+Will fix in v2.
+
+>> +/*
+>> + *  Copyright (C) 2018 Intel Corporation.
+>> + *  Zhu YiXin <Yixin.zhu@intel.com>
+> On space after asterisk is enough.
+
+
+Will fix in v2.
+
+>> + */
+>> +#define to_intel_clk_divider(_hw) \
+>> +			container_of(_hw, struct intel_clk_divider, hw)
+> One TAB is enough.
+
+
+Will fix in v2.
+
+>> +	pr_debug("Add clk: %s, id: %u\n", clk_hw_get_name(hw), id);
+> Is this useful?
+
+
+Yes, IMO, this proves very useful for system wide clock issues
+
+debugging during bootup.
+
+>> +/*
+>> + * Below table defines the pair's of regval & effective dividers.
+>> + * It's more efficient to provide an explicit table due to non-linear
+>> + * relation between values.
+>> + */
+>> +static const struct clk_div_table pll_div[] = {
+> Does val == 0 follows the table, i.e. makes div == 1?
+
+
+0 val means output clock is ref clock i.e. div ==1. Agree that adding
+
+.val = 0, .div =1 entry will make it more clear & complete.
+
+>> +	{ .val = 1, .div = 2 },
+>> +	{ .val = 2, .div = 3 },
+>> +	{ .val = 3, .div = 4 },
+>> +	{ .val = 4, .div = 5 },
+>> +	{ .val = 5, .div = 6 },
+>> +	{ .val = 6, .div = 8 },
+>> +	{ .val = 7, .div = 10 },
+>> +	{ .val = 8, .div = 12 },
+>> +	{ .val = 9, .div = 16 },
+>> +	{ .val = 10, .div = 20 },
+>> +	{ .val = 11, .div = 24 },
+>> +	{ .val = 12, .div = 32 },
+>> +	{ .val = 13, .div = 40 },
+>> +	{ .val = 14, .div = 48 },
+>> +	{ .val = 15, .div = 64 },
+>> +	{}
+>> +};
+>> +enum lgm_plls {
+>> +	PLL0CZ, PLL0B, PLL1, PLL2, PLLPP, LJPLL3, LJPLL4
+> At the end you may put comma just for slightly better maintenance.
+
+
+Sure, will add.
+
+>> +};
+>> +static int __init intel_lgm_cgu_probe(struct platform_device *pdev)
+>> +{
+>> +	struct intel_clk_provider *ctx;
+>> +	struct regmap *map;
+>> +	struct device *dev = &pdev->dev;
+>> +	struct device_node *np = dev->of_node;
+>> +	int ret;
+>> +
+>> +	if (!np)
+>> +		return -ENODEV;
+> Wouldn't the below fail?
+> That said, do you need this check at all?
+
+
+Agree, that this check is not needed. Will update in v2.
+
+>> +
+>> +	map = syscon_node_to_regmap(np);
+>> +	if (IS_ERR(map))
+>> +		return -ENODEV;
+> Why shadow error code?
+
+
+Yes, will change in v2.
+
+>> +
+>> +	ctx = intel_clk_init(dev, map, CLK_NR_CLKS);
+>> +	if (IS_ERR(ctx))
+>> +		return -ENOMEM;
+> Ditto.
+
+
+Will change in v2.
+
+
+Regards,
+
+Rahul
+
+>> +}
