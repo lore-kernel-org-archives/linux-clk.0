@@ -2,123 +2,97 @@ Return-Path: <SRS0=SKve=W6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A23C3A5A2
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 15:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72CA5C3A5A2
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AB6923697
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 15:52:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c48Gvms/";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="avYu6TG+"
+	by mail.kernel.org (Postfix) with ESMTP id 387B52343A
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567528246;
+	bh=illcA2Vg8dGye9AQEhIJF7IMRTLE5LNv308jLPFTO9Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=GSzDhNkJbvbNYbiT961qs/eEekFp8jrb4mZjSlm+bLhCx3O5QX+npKKR+rZGTY9cY
+	 Zgvups26GB6tKckfS3Y5YkcZ33jD1CM98ks6DUzfzyJRwoFNxILt9uXcg6e9ZtChYP
+	 LaHEpG6GSokTEUVktuEPQYRMwvo4vHGbvmt8lTa0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfICPwV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Sep 2019 11:52:21 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38114 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728854AbfICPwV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Sep 2019 11:52:21 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 13FD66076A; Tue,  3 Sep 2019 15:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567525940;
-        bh=xELRIzX5ix1iHVQhh0r8DllAwIsyg8XuG2EhPbwexW8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=c48Gvms/P9zhw/nQ0OvZC2/7trYLOAL16vUVR5/i0Fzn/H5i52EfhJf7LenIAV7EJ
-         fSGrUrYve8tQJmMj22+FZYm5sKhw4Cgqtd5736feN5DIQ+5XUSihT/R73CJieD/pFu
-         kcinhF/uvDi56KLJzgrzfZuaGiyAw/w7iz8CkRas=
-Received: from [10.79.164.101] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        id S1731160AbfICQ2q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Sep 2019 12:28:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50994 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731153AbfICQ2q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Sep 2019 12:28:46 -0400
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1E560602A9;
-        Tue,  3 Sep 2019 15:52:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1567525939;
-        bh=xELRIzX5ix1iHVQhh0r8DllAwIsyg8XuG2EhPbwexW8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=avYu6TG+28F9mAiVZQyjCuYUl85FvTRw5L3aaNARDjEvlyA5ADuSYcZRgbAV8enJC
-         X0nzHyJHcWeEyl3nJ9O9FGNoaiNbXlz3gHy+fX5X7kI1WByXf9w7ikjMHlt2uJapsd
-         uSFqb1BkUFekLsoL1Tn+LVVHhXi76Aba4vqny3TY=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1E560602A9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH] clk: qcom: gcc-sdm845: Use floor ops for sdcc clks
-To:     Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        by mail.kernel.org (Postfix) with ESMTPSA id 6169D23431;
+        Tue,  3 Sep 2019 16:28:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567528125;
+        bh=illcA2Vg8dGye9AQEhIJF7IMRTLE5LNv308jLPFTO9Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RWJriNx+Z0gBSeIScjO9+WgqmN6auYTZpdDm27vPeDG0lfeIH+BTbua6BsaUdktKc
+         o6HJsR7Stw0V5OguFJfZiOcaXPqQcju+51LAmsc01eQtyQlT8IRM8TD0l5YTj0oJ9I
+         6/HxaIiinjTxaZjA64grPJhy38Rd5JiiU0K3NKCU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <treding@nvidia.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-References: <20190830195142.103564-1-swboyd@chromium.org>
- <CAD=FV=Vr5o-b86588qe--bVZ5YjKVB3gzaoYa6YcqCd9smkxVg@mail.gmail.com>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <93435591-152a-46fd-4768-78f5e7af77ed@codeaurora.org>
-Date:   Tue, 3 Sep 2019 21:22:12 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 121/167] clk: tegra210: Fix default rates for HDA clocks
+Date:   Tue,  3 Sep 2019 12:24:33 -0400
+Message-Id: <20190903162519.7136-121-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
+References: <20190903162519.7136-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=Vr5o-b86588qe--bVZ5YjKVB3gzaoYa6YcqCd9smkxVg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+From: Jon Hunter <jonathanh@nvidia.com>
 
-On 8/31/2019 3:04 AM, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Aug 30, 2019 at 12:51 PM Stephen Boyd <swboyd@chromium.org> wrote:
->>
->> Some MMC cards fail to enumerate properly when inserted into an MMC slot
->> on sdm845 devices. This is because the clk ops for qcom clks round the
->> frequency up to the nearest rate instead of down to the nearest rate.
->> For example, the MMC driver requests a frequency of 52MHz from
->> clk_set_rate() but the qcom implementation for these clks rounds 52MHz
->> up to the next supported frequency of 100MHz. The MMC driver could be
->> modified to request clk rate ranges but for now we can fix this in the
->> clk driver by changing the rounding policy for this clk to be round down
->> instead of round up.
-> 
-> Since all the MMC rates are expressed as "maximum" clock rates doing
-> it like you are doing it now seems sane.
-> 
-> 
+[ Upstream commit 9caec6620f25b6d15646bbdb93062c872ba3b56f ]
 
-Looks like we need to update/track it for all SDCC clocks for all targets.
+Currently the default clock rates for the HDA and HDA2CODEC_2X clocks
+are both 19.2MHz. However, the default rates for these clocks should
+actually be 51MHz and 48MHz, respectively. The current clock settings
+results in a distorted output during audio playback. Correct the default
+clock rates for these clocks by specifying them in the clock init table
+for Tegra210.
 
+Cc: stable@vger.kernel.org
+Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
+Acked-by: Thierry Reding <treding@nvidia.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/tegra/clk-tegra210.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
->> Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
->> Reported-by: Douglas Anderson <dianders@chromium.org>
->> Cc: Taniya Das <tdas@codeaurora.org>
->> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
->> ---
->>
->> I suppose we need to do this for all the sdc clks in qcom driver?
-> 
-> Seems like a good idea to me.
-> 
-> 
->>   drivers/clk/qcom/gcc-sdm845.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> Reviewed-by: Douglas Anderson <dianders@chromium.org>
-> 
-> 
-> -Doug
-> 
-
+diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
+index f58480fe17674..080bfa24863ee 100644
+--- a/drivers/clk/tegra/clk-tegra210.c
++++ b/drivers/clk/tegra/clk-tegra210.c
+@@ -3376,6 +3376,8 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA210_CLK_I2S3_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_I2S4_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
+ 	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
++	{ TEGRA210_CLK_HDA, TEGRA210_CLK_PLL_P, 51000000, 0 },
++	{ TEGRA210_CLK_HDA2CODEC_2X, TEGRA210_CLK_PLL_P, 48000000, 0 },
+ 	/* This MUST be the last entry. */
+ 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
+ };
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.20.1
 
---
