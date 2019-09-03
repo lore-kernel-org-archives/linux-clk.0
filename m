@@ -2,277 +2,230 @@ Return-Path: <SRS0=SKve=W6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5810C3A5A5
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC986C3A5A2
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 18:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAB162343A
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 16:30:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567528253;
-	bh=IHG4kGjHjXFz0iXgac1HVtFfEUakphe120rav30eSp8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PQm/lwbvs/jVpefAmLA5HEmP7uVUpAXvXjOUVaC8mVV/NMLvOh4861KXVRCqZAjac
-	 qx6AcUsdT4EhsmsjYj/qxfms4Hf6xaFkpmsea8YCU045mLge+4t6/uxNO5EoshL+Xf
-	 +OOr+tj80W11LLcJ7ijEfXaU8YdJ1p4UZg/80wjA=
+	by mail.kernel.org (Postfix) with ESMTP id 7832422CED
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 18:53:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iRPeBdYh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730052AbfICQar (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Sep 2019 12:30:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50962 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731148AbfICQ2p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Sep 2019 12:28:45 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C06E215EA;
-        Tue,  3 Sep 2019 16:28:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567528124;
-        bh=IHG4kGjHjXFz0iXgac1HVtFfEUakphe120rav30eSp8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Tay8+3Gl9KIrSc71W5jAAQWzV8d0us9lrjk3uW9g9J0fis+mKc2vPwdz8Njl003BO
-         DRHCIP6GuHdrTxM6SHFArWhEuL3WrdnZSPVIC3RzGPNTArF2rzAKAskWYLklDYqjx/
-         vbWa0O3kplyQRtGYLd9WhlCn1gmpAR7IgHahUg1I=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 120/167] clk: tegra: Fix maximum audio sync clock for Tegra124/210
-Date:   Tue,  3 Sep 2019 12:24:32 -0400
-Message-Id: <20190903162519.7136-120-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190903162519.7136-1-sashal@kernel.org>
-References: <20190903162519.7136-1-sashal@kernel.org>
+        id S1726219AbfICSxZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Sep 2019 14:53:25 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40987 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726179AbfICSxY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Sep 2019 14:53:24 -0400
+Received: by mail-ot1-f66.google.com with SMTP id o101so17848636ota.8;
+        Tue, 03 Sep 2019 11:53:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=aHRE5vwiRsQmfIKzNfU8ikSjk1aL5KFpLsPpGNJVAMg=;
+        b=iRPeBdYh0u1hlAXI6cf1aRo0DL72wMxf0NTwByNR0SRvyQUUCZW/x1+QTsCy8vh/nX
+         WdgsNz5AC6hJqB2nZMaIekK7xPqoi5ElXT+YoEDaZ5G4hJflH52yGEH00RguaBZ0urRj
+         B93DQ3WOzAMprr7o2KzVOI/5h7bHuYDd2wNZhrev9T88jTlOpzmEvuHFrMrjet5Gh5+F
+         dLk7MvET3X9puld8m6nXR+RPYcWhf+eiuoBXRbUWjYjBGIdjJokN8iGTIYTEBoJj7pra
+         14AUXji/y7updF9ppREQnOCF0opidQ39Zdtw0YWU+240gIilSHOlf+txWrb4HWFQK01G
+         aHTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=aHRE5vwiRsQmfIKzNfU8ikSjk1aL5KFpLsPpGNJVAMg=;
+        b=bYKYpAJrAPpWtZS+HY27IYzhsjdHE/qV4eISOjVmSuL7dXRAQr/FpmI9pKfT3Bncy5
+         Xwhgx8o7pk1BW8dD/8TrkPSrA/u/17DNPgk0Qz/FpitSxq3E/5eS1gMmy9XOzMWnRfbb
+         bSBPcjjnKYu45ZsQ/HJiZ6Fp51/whoYtjB9uXbMfjA+RW4czjAnoJRL0eI+c42FdmUbP
+         Qbd3xf+54yyp4Ugqp9Sp27yAtsQiec4sJ2jeEEj+Xrp28x/GzmC0XUdEnXw7t66wg25V
+         ih7rqArCCRbzqwTKBqNEB/DrEcDg2bAr/ys45iu2mBwl2wt+KTlBHbFz+lr9jyu7IwCr
+         Dauw==
+X-Gm-Message-State: APjAAAUBrTF76h7w+O4BhjMIg+2gbiOwGvvrVjoxCQMz4+qVUKcpnRur
+        aw4u4Vd6pWyPFI/QNjWAnduqRA/cRGGjlkEaybY=
+X-Google-Smtp-Source: APXvYqzzjGs3iGz+R+DZYmk5mp9DxKA0s/DLw1QQfhoyZhzXDHQBhZZhHuNr7gIxErH1dwH24+7E1JiR4fWTAsVzxQ0=
+X-Received: by 2002:a9d:5c0f:: with SMTP id o15mr30653969otk.81.1567536803307;
+ Tue, 03 Sep 2019 11:53:23 -0700 (PDT)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com>
+ <20190902222015.11360-1-martin.blumenstingl@googlemail.com> <d9e96dab-96be-0c14-b7af-e1f2dc07ebd2@linux.intel.com>
+In-Reply-To: <d9e96dab-96be-0c14-b7af-e1f2dc07ebd2@linux.intel.com>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Tue, 3 Sep 2019 20:53:12 +0200
+Message-ID: <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
+Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
+To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
+Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com,
+        qi-ming.wu@intel.com, rahul.tanwar@intel.com, robh+dt@kernel.org,
+        robh@kernel.org, sboyd@kernel.org, yixin.zhu@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jon Hunter <jonathanh@nvidia.com>
+Hi Rahul,
 
-[ Upstream commit 845d782d91448e0fbca686bca2cc9f9c2a9ba3e7 ]
+On Tue, Sep 3, 2019 at 11:54 AM Tanwar, Rahul
+<rahul.tanwar@linux.intel.com> wrote:
+>
+>
+> Hi Martin,
+>
+> On 3/9/2019 6:20 AM, Martin Blumenstingl wrote:
+> > Hello,
+> >
+> > I only noticed this patchset today and I don't have much time left.
+> > Here's my initial impressions without going through the code in detail.
+> > I'll continue my review in the next days (as time permits).
+> >
+> > As with all other Intel LGM patches: I don't have access to the
+> > datasheets, so it's possible that I don't understand <insert topic here>
+> > feel free to correct me in this case (I appreciate an explanation where
+> > I was wrong, so I can learn from it)
+> >
+> >
+> > [...]
+> > --- /dev/null
+> > +++ b/drivers/clk/intel/Kconfig
+> > @@ -0,0 +1,13 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +config INTEL_LGM_CGU_CLK
+> > +     depends on COMMON_CLK
+> > +     select MFD_SYSCON
+> > can you please explain the reason why you need to use syscon?
+> > also please see [0] for a comment from Rob on another LGM dt-binding
+> > regarding syscon
+>
+>
+> Actually, there is no need to use syscon for CGU in LGM. It got carried
+> over from older SoCs (Falcon Mountain) where CGU was a MFD device
+> because it included PHY registers as well. And PHY drivers were using
+> syscon node to access CGU regmap. But for LGM, this is not the case.
+I see, to me it seems like LGM got a nice set of register cleanups!
+so I'm all for dropping the syscon compatible
 
-The maximum frequency supported for I2S on Tegra124 and Tegra210 is
-24.576MHz (as stated in the Tegra TK1 data sheet for Tegra124 and the
-Jetson TX1 module data sheet for Tegra210). However, the maximum I2S
-frequency is limited to 24MHz because that is the maximum frequency of
-the audio sync clock. Increase the maximum audio sync clock frequency
-to 24.576MHz for Tegra124 and Tegra210 in order to support 24.576MHz
-for I2S.
+> My understanding is that if we do not use syscon, then there is no
+> point in using regmap because this driver uses simple 32 bit register
+> access. Can directly read/write registers using readl() & writel().
+>
+> Would you agree ?
+if there was only the LGM SoC then I would say: drop regmap
 
-Update the tegra_clk_register_sync_source() function so that it does
-not set the initial rate for the sync clocks and use the clock init
-tables to set the initial rate instead.
+however, last year a driver for the GRX350/GRX550 SoCs was proposed: [0]
+this was never updated but it seems to use the same "framework" as the
+LGM driver
+with this in mind I am for keeping regmap support because.
+I think it will be easier to add support for old SoCs like
+GRX350/GRX550 (but also VRX200), because the PLL sub-driver (I am
+assuming that it is similar on all SoCs) or some other helpers can be
+re-used across various SoCs instead of "duplicating" code (where one
+variant would use regmap and the other readl/writel).
 
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-audio-sync.c  | 3 +--
- drivers/clk/tegra/clk-tegra-audio.c | 7 ++-----
- drivers/clk/tegra/clk-tegra114.c    | 9 ++++++++-
- drivers/clk/tegra/clk-tegra124.c    | 9 ++++++++-
- drivers/clk/tegra/clk-tegra210.c    | 9 ++++++++-
- drivers/clk/tegra/clk-tegra30.c     | 9 ++++++++-
- drivers/clk/tegra/clk.h             | 4 ++--
- 7 files changed, 37 insertions(+), 13 deletions(-)
+[...]
+> > +     select OF_EARLY_FLATTREE
+> > there's not a single other "select OF_EARLY_FLATTREE" in driver/clk
+> > I'm not saying this is wrong but it makes me curious why you need this
+>
+>
+> We need OF_EARLY_FLATTREE for LGM. But adding a new x86
+> platform for LGM is discouraged because that would lead to too
+> many platforms. Only differentiating factor for LGM is CPU model
+> ID but it can differentiate only at run time. So i had no option
+> other then enabling it with some LGM specific core system module
+> driver and CGU seemed perfect for this purpose.
+so when my x86 kernel maintainer enables CONFIG_INTEL_LGM_CGU_CLK then
+OF_EARLY_FLATTREE is enabled as well.
+does this hurt any existing x86 platform? if not: why can't we enable
+it for x86 unconditionally?
 
-diff --git a/drivers/clk/tegra/clk-audio-sync.c b/drivers/clk/tegra/clk-audio-sync.c
-index 92d04ce2dee6b..53cdc0ec40f33 100644
---- a/drivers/clk/tegra/clk-audio-sync.c
-+++ b/drivers/clk/tegra/clk-audio-sync.c
-@@ -55,7 +55,7 @@ const struct clk_ops tegra_clk_sync_source_ops = {
- };
- 
- struct clk *tegra_clk_register_sync_source(const char *name,
--		unsigned long rate, unsigned long max_rate)
-+					   unsigned long max_rate)
- {
- 	struct tegra_clk_sync_source *sync;
- 	struct clk_init_data init;
-@@ -67,7 +67,6 @@ struct clk *tegra_clk_register_sync_source(const char *name,
- 		return ERR_PTR(-ENOMEM);
- 	}
- 
--	sync->rate = rate;
- 	sync->max_rate = max_rate;
- 
- 	init.ops = &tegra_clk_sync_source_ops;
-diff --git a/drivers/clk/tegra/clk-tegra-audio.c b/drivers/clk/tegra/clk-tegra-audio.c
-index b37cae7af26da..02dd6487d855d 100644
---- a/drivers/clk/tegra/clk-tegra-audio.c
-+++ b/drivers/clk/tegra/clk-tegra-audio.c
-@@ -49,8 +49,6 @@ struct tegra_sync_source_initdata {
- #define SYNC(_name) \
- 	{\
- 		.name		= #_name,\
--		.rate		= 24000000,\
--		.max_rate	= 24000000,\
- 		.clk_id		= tegra_clk_ ## _name,\
- 	}
- 
-@@ -176,7 +174,7 @@ static void __init tegra_audio_sync_clk_init(void __iomem *clk_base,
- void __init tegra_audio_clk_init(void __iomem *clk_base,
- 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
- 			struct tegra_audio_clk_info *audio_info,
--			unsigned int num_plls)
-+			unsigned int num_plls, unsigned long sync_max_rate)
- {
- 	struct clk *clk;
- 	struct clk **dt_clk;
-@@ -221,8 +219,7 @@ void __init tegra_audio_clk_init(void __iomem *clk_base,
- 		if (!dt_clk)
- 			continue;
- 
--		clk = tegra_clk_register_sync_source(data->name,
--					data->rate, data->max_rate);
-+		clk = tegra_clk_register_sync_source(data->name, sync_max_rate);
- 		*dt_clk = clk;
- 	}
- 
-diff --git a/drivers/clk/tegra/clk-tegra114.c b/drivers/clk/tegra/clk-tegra114.c
-index 1824f014202b0..625d110913308 100644
---- a/drivers/clk/tegra/clk-tegra114.c
-+++ b/drivers/clk/tegra/clk-tegra114.c
-@@ -1190,6 +1190,13 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA114_CLK_XUSB_FALCON_SRC, TEGRA114_CLK_PLL_P, 204000000, 0 },
- 	{ TEGRA114_CLK_XUSB_HOST_SRC, TEGRA114_CLK_PLL_P, 102000000, 0 },
- 	{ TEGRA114_CLK_VDE, TEGRA114_CLK_CLK_MAX, 600000000, 0 },
-+	{ TEGRA114_CLK_SPDIF_IN_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA114_CLK_I2S0_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA114_CLK_I2S1_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA114_CLK_I2S2_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA114_CLK_I2S3_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA114_CLK_I2S4_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA114_CLK_VIMCLK_SYNC, TEGRA114_CLK_CLK_MAX, 24000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA114_CLK_CLK_MAX, TEGRA114_CLK_CLK_MAX, 0, 0 },
- };
-@@ -1362,7 +1369,7 @@ static void __init tegra114_clock_init(struct device_node *np)
- 	tegra114_periph_clk_init(clk_base, pmc_base);
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra114_clks,
- 			     tegra114_audio_plls,
--			     ARRAY_SIZE(tegra114_audio_plls));
-+			     ARRAY_SIZE(tegra114_audio_plls), 24000000);
- 	tegra_pmc_clk_init(pmc_base, tegra114_clks);
- 	tegra_super_clk_gen4_init(clk_base, pmc_base, tegra114_clks,
- 					&pll_x_params);
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-index b6cf28ca2ed29..df0018f7bf7ed 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1291,6 +1291,13 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
- 	{ TEGRA124_CLK_CSITE, TEGRA124_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA124_CLK_TSENSOR, TEGRA124_CLK_CLK_M, 400000, 0 },
- 	{ TEGRA124_CLK_VIC03, TEGRA124_CLK_PLL_C3, 0, 0 },
-+	{ TEGRA124_CLK_SPDIF_IN_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_I2S0_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_I2S1_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_I2S2_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_I2S3_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_I2S4_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA124_CLK_VIMCLK_SYNC, TEGRA124_CLK_CLK_MAX, 24576000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA124_CLK_CLK_MAX, TEGRA124_CLK_CLK_MAX, 0, 0 },
- };
-@@ -1455,7 +1462,7 @@ static void __init tegra124_132_clock_init_pre(struct device_node *np)
- 	tegra124_periph_clk_init(clk_base, pmc_base);
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra124_clks,
- 			     tegra124_audio_plls,
--			     ARRAY_SIZE(tegra124_audio_plls));
-+			     ARRAY_SIZE(tegra124_audio_plls), 24576000);
- 	tegra_pmc_clk_init(pmc_base, tegra124_clks);
- 
- 	/* For Tegra124 & Tegra132, PLLD is the only source for DSIA & DSIB */
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 4e1bc23c98655..f58480fe17674 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3369,6 +3369,13 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA210_CLK_SOC_THERM, TEGRA210_CLK_PLL_P, 51000000, 0 },
- 	{ TEGRA210_CLK_CCLK_G, TEGRA210_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA210_CLK_PLL_U_OUT2, TEGRA210_CLK_CLK_MAX, 60000000, 1 },
-+	{ TEGRA210_CLK_SPDIF_IN_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_I2S0_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_I2S1_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_I2S2_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_I2S3_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_I2S4_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
-+	{ TEGRA210_CLK_VIMCLK_SYNC, TEGRA210_CLK_CLK_MAX, 24576000, 0 },
- 	/* This MUST be the last entry. */
- 	{ TEGRA210_CLK_CLK_MAX, TEGRA210_CLK_CLK_MAX, 0, 0 },
- };
-@@ -3562,7 +3569,7 @@ static void __init tegra210_clock_init(struct device_node *np)
- 	tegra210_periph_clk_init(clk_base, pmc_base);
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra210_clks,
- 			     tegra210_audio_plls,
--			     ARRAY_SIZE(tegra210_audio_plls));
-+			     ARRAY_SIZE(tegra210_audio_plls), 24576000);
- 	tegra_pmc_clk_init(pmc_base, tegra210_clks);
- 
- 	/* For Tegra210, PLLD is the only source for DSIA & DSIB */
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index acfe661b2ae72..e0aaecd98fbff 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1267,6 +1267,13 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_GR3D2, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_PLL_U, TEGRA30_CLK_CLK_MAX, 480000000, 0 },
- 	{ TEGRA30_CLK_VDE, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
-+	{ TEGRA30_CLK_SPDIF_IN_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_I2S0_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_I2S1_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_I2S2_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_I2S3_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_I2S4_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
-+	{ TEGRA30_CLK_VIMCLK_SYNC, TEGRA30_CLK_CLK_MAX, 24000000, 0 },
- 	/* must be the last entry */
- 	{ TEGRA30_CLK_CLK_MAX, TEGRA30_CLK_CLK_MAX, 0, 0 },
- };
-@@ -1344,7 +1351,7 @@ static void __init tegra30_clock_init(struct device_node *np)
- 	tegra30_periph_clk_init();
- 	tegra_audio_clk_init(clk_base, pmc_base, tegra30_clks,
- 			     tegra30_audio_plls,
--			     ARRAY_SIZE(tegra30_audio_plls));
-+			     ARRAY_SIZE(tegra30_audio_plls), 24000000);
- 	tegra_pmc_clk_init(pmc_base, tegra30_clks);
- 
- 	tegra_init_dup_clks(tegra_clk_duplicates, clks, TEGRA30_CLK_CLK_MAX);
-diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-index d2c3a010f8e9b..09bccbb9640c4 100644
---- a/drivers/clk/tegra/clk.h
-+++ b/drivers/clk/tegra/clk.h
-@@ -41,7 +41,7 @@ extern const struct clk_ops tegra_clk_sync_source_ops;
- extern int *periph_clk_enb_refcnt;
- 
- struct clk *tegra_clk_register_sync_source(const char *name,
--		unsigned long fixed_rate, unsigned long max_rate);
-+					   unsigned long max_rate);
- 
- /**
-  * struct tegra_clk_frac_div - fractional divider clock
-@@ -796,7 +796,7 @@ void tegra_register_devclks(struct tegra_devclk *dev_clks, int num);
- void tegra_audio_clk_init(void __iomem *clk_base,
- 			void __iomem *pmc_base, struct tegra_clk *tegra_clks,
- 			struct tegra_audio_clk_info *audio_info,
--			unsigned int num_plls);
-+			unsigned int num_plls, unsigned long sync_max_rate);
- 
- void tegra_periph_clk_init(void __iomem *clk_base, void __iomem *pmc_base,
- 			struct tegra_clk *tegra_clks,
--- 
-2.20.1
+[...]
+> > diff --git a/drivers/clk/intel/clk-cgu.h b/drivers/clk/intel/clk-cgu.h
+> > new file mode 100644
+> > index 000000000000..e44396b4aad7
+> > --- /dev/null
+> > +++ b/drivers/clk/intel/clk-cgu.h
+> > @@ -0,0 +1,278 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +/*
+> > + *  Copyright(c) 2018 Intel Corporation.
+> > + *  Zhu YiXin <Yixin.zhu@intel.com>
+> > + */
+> > +
+> > +#ifndef __INTEL_CLK_H
+> > +#define __INTEL_CLK_H
+> > +
+> > +struct intel_clk_mux {
+> > +     struct clk_hw hw;
+> > +     struct device *dev;
+> > +     struct regmap *map;
+> > +     unsigned int reg;
+> > +     u8 shift;
+> > +     u8 width;
+> > +     unsigned long flags;
+> > +};
+> > +
+> > +struct intel_clk_divider {
+> > +     struct clk_hw hw;
+> > +     struct device *dev;
+> > +     struct regmap *map;
+> > +     unsigned int reg;
+> > +     u8 shift;
+> > +     u8 width;
+> > +     unsigned long flags;
+> > +     const struct clk_div_table *table;
+> > +};
+> > +
+> > +struct intel_clk_ddiv {
+> > +     struct clk_hw hw;
+> > +     struct device *dev;
+> > +     struct regmap *map;
+> > +     unsigned int reg;
+> > +     u8 shift0;
+> > +     u8 width0;
+> > +     u8 shift1;
+> > +     u8 width1;
+> > +     u8 shift2;
+> > +     u8 width2;
+> > +     unsigned int mult;
+> > +     unsigned int div;
+> > +     unsigned long flags;
+> > +};
+> > +
+> > +struct intel_clk_gate {
+> > +     struct clk_hw hw;
+> > +     struct device *dev;
+> > +     struct regmap *map;
+> > +     unsigned int reg;
+> > +     u8 shift;
+> > +     unsigned long flags;
+> > +};
+> > I know at least two existing regmap clock implementations:
+> > - drivers/clk/qcom/clk-regmap*
+> > - drivers/clk/meson/clk-regmap*
+> >
+> > it would be great if we could decide to re-use one of those for the
+> > "generic" clock types (mux, divider and gate).
+> > Stephen, do you have any preference here?
+> > personally I like the meson one, but I'm biased because I've used it
+> > a lot in the past and I haven't used the qcom one at all.
+>
+>
+> I went through meson & qcom regmap clock code. Agree, it can be
+> reused for mux, divider and gate. But as mentioned above, i am now
+> considering to move away from using regmap.
+thank you for evaluating them. let's continue the discussion above
+whether regmap should be used - after that we decide (if needed) which
+regmap implementation to use
 
+
+Martin
+
+
+[0] https://patchwork.kernel.org/patch/10554401/
