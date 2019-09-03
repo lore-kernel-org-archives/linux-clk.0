@@ -2,106 +2,100 @@ Return-Path: <SRS0=SKve=W6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5223CC3A5A2
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 22:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E096C3A5A2
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 23:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2340522DBF
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 22:47:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lrzb33d5"
+	by mail.kernel.org (Postfix) with ESMTP id 663AF22DBF
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Sep 2019 23:54:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567554850;
+	bh=nwbU19/t7DWIPKZnDjeNNVulS/e09x43j9BhKD8wDH8=;
+	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
+	b=PO5TBy+YjubHE9eYfZXKhbUWIVB5QQCfI0/P6PsMs6mtxdxcavmtNRs00Mn4e4Zvu
+	 ugZBBNW9YuR1Bv88yi82Hn0dcPhz3xKcgK/KJkfc0NM/GL/gaYGHJV2eU0LTArOQXj
+	 YXcjB3OJlYtsMLKlMk6jwrYfgB8Aowk3qGyBcQw8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725977AbfICWrG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Sep 2019 18:47:06 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:32971 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfICWrG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Sep 2019 18:47:06 -0400
-Received: by mail-pg1-f196.google.com with SMTP id n190so10039310pgn.0
-        for <linux-clk@vger.kernel.org>; Tue, 03 Sep 2019 15:47:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=message-id:mime-version:content-transfer-encoding:in-reply-to
-         :references:cc:subject:to:from:user-agent:date;
-        bh=hoDQ2otvh4YzrazXkMiS2cracj6ZVD3U75QlqFUCiSs=;
-        b=lrzb33d5V9vzzhO82c5zXyKH4TqmgJW2X7aw4qMa7JO7/n4grzGNYlPbFDGM5JBZbC
-         twNeBapGoiWv0TSEuroy5RaHLuLtTBkNBdo8VqsOeDaio4lo4/Tij9Pwy7OayQzfNqyD
-         wm59VGKZTWH8uMoFTHamGpJfQ0K6J3rjK6o5s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:mime-version
-         :content-transfer-encoding:in-reply-to:references:cc:subject:to:from
-         :user-agent:date;
-        bh=hoDQ2otvh4YzrazXkMiS2cracj6ZVD3U75QlqFUCiSs=;
-        b=D29RZ0NbM8ttMH2IZsTpASBo87ySMjn6V3QYDI6GHUjtH1PTCmfjfGRRNnZ+z96a78
-         KabYo/1XaEorGpb+2Mr8Linx7ILe0PNImW90O31i/J1ubEGiF0D7qWk3+X/5FkKlQvKn
-         jDSRmlV/ENDAuClT+eGVwPO3hyxwS2+Gb9ksTUHtCy3enbgd55XD5Dkwd4C3NQv/5W3U
-         frSZFhJ3vmVXtdyVcX10u1+03KVoL+TeVWcCACHKrj8ws8VahFKb8eQKMAOfypMZ4Z/t
-         IbUi/9dZqrXpfQ83TZPltAXPowoXKKUTwhiJfta7b/yyghmzptNkR0lwKdz6uK/Fff8e
-         vHgA==
-X-Gm-Message-State: APjAAAUjcxX+ugUZMIZRC+VVu1jxoKz2ESTtnO+fZoDK2Xi9coNXPE+1
-        lkRwxuJKi1o9zQb4SB/ZRoVkKQ==
-X-Google-Smtp-Source: APXvYqzWeCl7biAHHpauQRTYTdxKfJz4B7BxzgfR3nLDWhc1dYlvSW9t0r7ElVhEYX177Zn6WDT38g==
-X-Received: by 2002:a63:8f55:: with SMTP id r21mr32188253pgn.318.1567550825858;
-        Tue, 03 Sep 2019 15:47:05 -0700 (PDT)
-Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
-        by smtp.gmail.com with ESMTPSA id u69sm23055074pgu.77.2019.09.03.15.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Sep 2019 15:47:05 -0700 (PDT)
-Message-ID: <5d6eed69.1c69fb81.b7ca5.7345@mx.google.com>
+        id S1726441AbfICXyK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Sep 2019 19:54:10 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39196 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726177AbfICXyJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Sep 2019 19:54:09 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B546D208E3;
+        Tue,  3 Sep 2019 23:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567554848;
+        bh=nwbU19/t7DWIPKZnDjeNNVulS/e09x43j9BhKD8wDH8=;
+        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
+        b=kIom794De0UUl+7jBeGr2gWuWkIBNuz2j+6awfHfYZ7E/qrOE5efpcQlt0TE8QriW
+         C+3rbHD0gNKZHd/Bug8Qs4zyJ+37IQpEoUCuVhPReuh3G9D/OwWjkQVLsCOs2B+Zc0
+         FfBYNOi/otwEQJkVQbu2W+eIfm8U9DsmNqtlJjPQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <93435591-152a-46fd-4768-78f5e7af77ed@codeaurora.org>
-References: <20190830195142.103564-1-swboyd@chromium.org> <CAD=FV=Vr5o-b86588qe--bVZ5YjKVB3gzaoYa6YcqCd9smkxVg@mail.gmail.com> <93435591-152a-46fd-4768-78f5e7af77ed@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: gcc-sdm845: Use floor ops for sdcc clks
-To:     Doug Anderson <dianders@chromium.org>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20190902222015.11360-1-martin.blumenstingl@googlemail.com>
+References: <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com> <20190902222015.11360-1-martin.blumenstingl@googlemail.com>
+Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com,
+        qi-ming.wu@intel.com, rahul.tanwar@intel.com, robh+dt@kernel.org,
+        robhkernel.org@vger.kernel.org, yixin.zhu@linux.intel.com
+Subject: RE: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        rahul.tanwar@linux.intel.com
+From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Tue, 03 Sep 2019 15:47:04 -0700
+Date:   Tue, 03 Sep 2019 16:54:07 -0700
+Message-Id: <20190903235408.B546D208E3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-09-03 08:52:12)
-> Hi,
+Quoting Martin Blumenstingl (2019-09-02 15:20:15)
+> +struct intel_clk_gate {
+> +       struct clk_hw hw;
+> +       struct device *dev;
+> +       struct regmap *map;
+> +       unsigned int reg;
+> +       u8 shift;
+> +       unsigned long flags;
+> +};
+> I know at least two existing regmap clock implementations:
+> - drivers/clk/qcom/clk-regmap*
+> - drivers/clk/meson/clk-regmap*
 >=20
-> On 8/31/2019 3:04 AM, Doug Anderson wrote:
-> > Hi,
-> >=20
-> > On Fri, Aug 30, 2019 at 12:51 PM Stephen Boyd <swboyd@chromium.org> wro=
-te:
-> >>
-> >> Some MMC cards fail to enumerate properly when inserted into an MMC sl=
-ot
-> >> on sdm845 devices. This is because the clk ops for qcom clks round the
-> >> frequency up to the nearest rate instead of down to the nearest rate.
-> >> For example, the MMC driver requests a frequency of 52MHz from
-> >> clk_set_rate() but the qcom implementation for these clks rounds 52MHz
-> >> up to the next supported frequency of 100MHz. The MMC driver could be
-> >> modified to request clk rate ranges but for now we can fix this in the
-> >> clk driver by changing the rounding policy for this clk to be round do=
-wn
-> >> instead of round up.
-> >=20
-> > Since all the MMC rates are expressed as "maximum" clock rates doing
-> > it like you are doing it now seems sane.
-> >=20
-> >=20
->=20
-> Looks like we need to update/track it for all SDCC clocks for all targets.
->=20
+> it would be great if we could decide to re-use one of those for the
+> "generic" clock types (mux, divider and gate).
+> Stephen, do you have any preference here?
+> personally I like the meson one, but I'm biased because I've used it
+> a lot in the past and I haven't used the qcom one at all.
 
-Yeah. It would be great if you can send the patches. Otherwise I'll
-throw it on my todo list named 'forever'.
+The topic comes up once in a while. Making a set of regmap clk_ops and
+structures might work to consolidate the code across the different
+drivers. I can't recall why we didn't combine the two implementations at
+that point. I do remember that Mike was opposed to pushing it directly
+into the core framework as part of struct clk_hw out of fear of bloating
+the clk_hw structure.
+
+I don't particularly like how the meson implementation makes every clk
+the same type and has a 'data' member of clk_regmap to differentiate the
+types (mux, gate, div, etc.) It avoids nesting structures but otherwise
+serves the same purpose as having there be container structures for the
+different types that all have a clk_regmap structure inside. qcom
+implementation also takes a shortcut and adds enable/disable logic into
+the clk_regmap structure. To consolidate the two I imagine we would need
+to change both implementations to use a struct like:
+
+	struct clk_regmap {
+		struct clk_hw hw;
+		struct regmap *map;
+	};
 
