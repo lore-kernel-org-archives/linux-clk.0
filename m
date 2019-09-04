@@ -2,123 +2,147 @@ Return-Path: <SRS0=96bN=W7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E57C3A5A8
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:40:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5776DC3A59E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 22:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C8752168B
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:40:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 290B420674
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 22:52:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567622445;
-	bh=QjKB4n4ji78iVovIXcpUQDOwQmi9i+Rbr54MnfBrpFM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=BF/D23I5SEt8RYb0o5EAR1zcYqWowz472z9TknM/dWiBWAThxlAXmyWGPL7nt2QSm
-	 sqvh/7RgvEABuZV0Fg00kjyzbIjbN398B42/Sj1K8quVstqyF32DRMkOTGqNIT3pl2
-	 cYNwUeMjOuYiXxP0Z2txh0rVV4VFBNzy16kQNv+0=
+	s=default; t=1567637526;
+	bh=KjjsNXmfU6/bVaHxOLwPlulfnpjobE+eKeHoWxDEmgo=;
+	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
+	b=KTOKAkzstBGiHzoo4/mgMLA1exH+nOB6/B9X89T8XXndxbZPD9e4PLk1WotQ3js34
+	 QerqUkTlpSCi5thZ6Z/cIz1Zl3aERTdKunHcW5+wa5IP0SiyBYhrlxl14QcFXdD7fo
+	 bWstVGr4vYzDPfaFUadnM3MqQlzXu7jgKc+D7Dp4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387560AbfIDSko (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Sep 2019 14:40:44 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46231 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732798AbfIDSko (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Sep 2019 14:40:44 -0400
-Received: by mail-wr1-f65.google.com with SMTP id h7so21041859wrt.13;
-        Wed, 04 Sep 2019 11:40:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wDpdMlMCF5UrovGjF4Va2FMMy9gFIfRsLeQXmXiaV3g=;
-        b=D+mkB834o7u+D0K5/oNHvDZV8qN0Zb/HFP2C86d8N0wIao+bRF75NBPZ7cKvvoghVn
-         y0iqo8dKIhruiSDxrGIz+/A906I7wGUK7LkTce54qrFc7n61jqnuIlgy5lhZo1d3b/el
-         IsVm6gUImJPr8bczueedN8Inpwd8pJ3BRo99SUfywj/mthRVZd8C3B9Wt+lNnasfy8JV
-         R0ZQ8KfZDJDw/kLEy7GhlSOsxWxb7Pgfu2ra45DzARcF4LjZCssmgb1Sh+h6L6UWY6fL
-         m6FYyqiYA7+mh1FlgFaowliQPZJ9vj2oj19IEm4riNNq9/EFYFVNneqHijeVw8uyk2oA
-         RQLg==
-X-Gm-Message-State: APjAAAU8pwDVbJegRqsiDHxDj3APuxkxLHbZrX9igNGJ/mwdyQNYbl9Q
-        G5Aft1/TifixRH8TYi/MUEM=
-X-Google-Smtp-Source: APXvYqxvtG9kHPmcaKLv3d1DsMI6LazeZbKqnHU6FsxKP7huILUBq0jw4mH4+uhsH812Uk0oEnJa9g==
-X-Received: by 2002:adf:c613:: with SMTP id n19mr29554578wrg.109.1567622441839;
-        Wed, 04 Sep 2019 11:40:41 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id 207sm6841451wme.17.2019.09.04.11.40.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Sep 2019 11:40:41 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 20:40:37 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
-Message-ID: <20190904184037.GD12918@kozik-lap>
-References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
- <20190821104303.32079-1-l.luba@partner.samsung.com>
+        id S1725965AbfIDWwF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Sep 2019 18:52:05 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728072AbfIDWwF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Sep 2019 18:52:05 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7289420674;
+        Wed,  4 Sep 2019 22:52:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567637524;
+        bh=KjjsNXmfU6/bVaHxOLwPlulfnpjobE+eKeHoWxDEmgo=;
+        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
+        b=eTeUD43/+KlrzCmj7/FXDFZAenuM2vYKiXs6HKBozuDJXMvJpT5WofiSnVORRqOQl
+         BJu4ApZF1BvUn8Uf15jcHF/Hv7FUyTlTt6b5AiH4/zo4vXRlJLI7Pq813Hfv3iex82
+         pZtVxstmOtqtrhbyXfVe5YUGqNZvLMdz2W5tbe5s=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190821104303.32079-1-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jsgpivjbu.fsf@starbuckisacylon.baylibre.com>
+References: <20190828102012.4493-1-jbrunet@baylibre.com> <20190828102012.4493-5-jbrunet@baylibre.com> <20190828221529.026C522DA7@mail.kernel.org> <1jy2zcv3nd.fsf@starbuckisacylon.baylibre.com> <20190829171743.577932173E@mail.kernel.org> <1jsgpivjbu.fsf@starbuckisacylon.baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH RFC 4/5] clk: add placeholder for clock internal data
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 04 Sep 2019 15:52:03 -0700
+Message-Id: <20190904225204.7289420674@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 12:42:55PM +0200, Lukasz Luba wrote:
-> Hi all,
-> 
-> This is v13 which makes cosmetic changes. It is based on current mainline
-> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
-> 
-> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
-> The driver supports Dynamic Voltage and Frequency Scaling
-> for the DMC and DRAM. It also provides needed timings for different
-> speed operations of the DRAM memory.
-> There is also new generic code in of_memory and headers which allows to parse
-> LPDDR3 memories defined in device-tree.
-> 
-> Here are the last changes suggested by Krzysztof during his review.
-> For the previous changes in older revisions please refer to [2], there is
-> more detailed change log.
-> 
-> changes:
-> v13:
-> - skipped patch with chipID changes in DT, since it is not used anymore,
-> - removed license comment in of_memory.c since SPDX has been merged,
-> - aligned comment to the current fields in the structure,
-> - changed printed warning when timings are not found,
-> 
-> Regards,
-> Lukasz Luba
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
-> [2] https://lkml.org/lkml/2019/7/22/251
-> 
+Quoting Jerome Brunet (2019-08-30 07:06:29)
+> On Thu 29 Aug 2019 at 10:17, Stephen Boyd <sboyd@kernel.org> wrote:
+>=20
+> > Quoting Jerome Brunet (2019-08-29 00:20:38)
+> >> On Wed 28 Aug 2019 at 15:15, Stephen Boyd <sboyd@kernel.org> wrote:
+> >>=20
+> >> > Quoting Jerome Brunet (2019-08-28 03:20:11)
+> >> >> Add placeholder in clock core to save per clock data.
+> >> >> Such placeholder could use for clock doing memory allocation in .in=
+it().
+> >> >> It may also be useful for the save/restore_context() callbacks.
+> >> >>=20
+> >> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> >> >> ---
+> >> >>  drivers/clk/clk.c            | 13 +++++++++++++
+> >> >>  include/linux/clk-provider.h |  2 ++
+> >> >>  2 files changed, 15 insertions(+)
+> >> >>=20
+> >> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> >> >> index c703aa35ca37..aa77a2a98ea4 100644
+> >> >> --- a/drivers/clk/clk.c
+> >> >> +++ b/drivers/clk/clk.c
+> >> >> @@ -83,6 +83,7 @@ struct clk_core {
+> >> >>         struct hlist_node       debug_node;
+> >> >>  #endif
+> >> >>         struct kref             ref;
+> >> >> +       void                    *priv;
+> >> >
+> >> > Why? We have container structures around clk_hw that can be used to
+> >> > store data and clk_ops that should know to deref said clk_hw pointer=
+ in
+> >> > some way to access that data.
+> >>=20
+> >> This simple addition give a placeholder to each clock instance that is
+> >> hosted under the clock core so we know it can only be accesed from this
+> >> particular instance. Seems like a better fit for runtime data, such as
+> >> saved context.
+> >>=20
+> >> It gives a way to avoid mixing the clock description and its runtime
+> >> data. In the end, It would be nice if the clock description part could
+> >> be made const.
+> >>=20
+> >> This is a (fairly usual) way to do it=20
+> >
+> > Maybe you can provide an example or usage? Is that the last patch in
+> > this series?
+>=20
+> Yes, I thought that was in my cover letter
+>=20
+> > I still don't quite understand why we need this.
+> >
+> > I imagine that if you wanted to have a const description part you could
+> > have a container structure around the clk_hw struct
+> >
+> >       struct my_clk_foo {
+> >               const struct clk_description *desc;
+> >               <runtime modifiable members>;
+> >               struct clk_hw hw;
+> >       };
+> >
+> > Did I miss something?
+>=20
+> Not really. As with all C code, there are many way to do things.
+> Your way could work, mine too.
+>=20
+> As explained in the previous mail, what I propose guaranteed to specific
+> to each clock instance. It's a fairly usual and simple way to give a
+> placeholder to the instance of something.
+>=20
+> Things gets complicated with your way if the clock declaration uses
+> static data and there there multiple instance of it.
+>=20
+> In the end that was merely a suggestion, so let's spend to much time on
+> this. If don't want it, that's fine. I'll just drop it.
 
-Thanks, applied entire set (except last defconfig patch) to two topic
-branches, either for v5.4 or for v5.5 (it is quite late). I'll take the
-last defconfig separately.
+Ok. I see that this is how the meson clk driver does clk_regmap structs.
+I agree that if the same data exists for many clks then having a pointer
+to that data instead of duplicating it is good for saving space, but
+that sort of detail can still be put into a void *data member of the
+wrapper structure(s) and then passed to some function that knows the
+type of the data that's the same. It may require writing a few more
+functions to unwrap the data member out of the wrapper struct though so
+having a data member of the clk_hw or clk_core pointer may be useful to
+make "polymorphic" code that just knows that the data member is some
+particular type and can operate on that generically without having to
+unwrap the container for each different type.
 
-Automated tools found few issues to fix, please send incremental
-patches.
-
-In general, for new drivers always run automated checks - Smatch and
-Sparse. Coccinelle is also recommended. Checkpatch pointed missing
-compatible documentation - need to be fixed (see
-https://elixir.bootlin.com/linux/v5.3-rc7/source/Documentation/devicetree/bindings/eeprom/at25.txt
-as an example).
-
-Best regards,
-Krzysztof
+TL;DR is I'm half convinced that this is a good approach to solving that
+sort of problem.
 
