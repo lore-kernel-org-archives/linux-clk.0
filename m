@@ -2,88 +2,92 @@ Return-Path: <SRS0=96bN=W7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B61E9C3A5A8
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E1E2C3A5AA
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8860E20882
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:25:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E5312070C
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:31:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567621533;
-	bh=B2bXI6eXgFsDNSmO81chznZP1whYX5IyKLZi4UfA7ek=;
-	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
-	b=JILomYwYVMgOAGHpPbFBQsTUQWY5dCa8fCr1IkNPQfCsLQH2ww1C2ZoasMrXsCgud
-	 tpu3KD1XMhliE0OYbeeCQ/RjAS2eV/9ZkN6Sxpry1BOHVlJMjEh1pMD+4I+nyd5NzX
-	 b/4oPiCeR8wCC/5ibj6ysg51wyZ+hHF8EUp8093g=
+	s=default; t=1567621885;
+	bh=hsJdVa01uomsFV9ahOXalHDfMaTyQcIwI+m2ZgSZm1o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GGrpEA0lUTURn3VShoFEgMgu6XBfF8rOGlCFyso8TEIYDskt+y4pZ/D9NhL2DfA7b
+	 QIwBUvI77E6OvoDTt2FwNgDrf80U4Nl7RSduRAxo6Hdnf494gA5dDjFX1mV12QkjEk
+	 wtAhGKvibbnUK87qEUYDE8OedB1lt0J3Y7jg/jjw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387899AbfIDR7x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Sep 2019 13:59:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388299AbfIDR7x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Sep 2019 13:59:53 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 743DF22CEA;
-        Wed,  4 Sep 2019 17:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567619992;
-        bh=B2bXI6eXgFsDNSmO81chznZP1whYX5IyKLZi4UfA7ek=;
-        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=EtZenjjLlZ3DAnLkRCqez2j2Trg9Z1uF2ol5DoH4SFwbYtZiLldm6ntyaGkzlj4jd
-         uYIPZRcv9c2HZbh92jeUS8TwfdPUJxgA1DrYUVMiPoD2QNtdMoGpnmZfN7YOOLNy2G
-         2GN2gY/d/RTx7kyy0TT7ZXQAOjHLSk/5kd6TdYis=
-Content-Type: text/plain; charset="utf-8"
+        id S1732455AbfIDSbV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Sep 2019 14:31:21 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:38443 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732951AbfIDSbV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Sep 2019 14:31:21 -0400
+Received: by mail-wm1-f68.google.com with SMTP id o184so4949008wme.3;
+        Wed, 04 Sep 2019 11:31:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hsJdVa01uomsFV9ahOXalHDfMaTyQcIwI+m2ZgSZm1o=;
+        b=IMGfQjZMM/rwo/iIhT2xgttUTu01BNIpib3yfQNY5PsbwkZ1Rw4mUGm5O59bo+HNUR
+         J3HBJ+M3Wt4LRmtR+zbj+15jVFvtC7M++7FL6T+QTQVqqSsBoJLij6tYMpPlmBpocgFu
+         Wmx8/sDSGuVsl1XEj5rQjCs/3An+MDLZijmsjKzgOOTMcJTEq+GoZTNmg8L162+BAgWx
+         mNu25WUe56CUztAjvkzFhMG00+0pJLlyrAYsbSfCeQgap7aVK43lIRcSU+rliYnZCh3H
+         pdBBeuRWpaCP1UjjY0+/o2L4aqIO4ijGxMY71/eaFhZBfLyIbJ3wUTERWh0c4ZetkIbY
+         /1BA==
+X-Gm-Message-State: APjAAAVcEcN8UteqElFgLW4SfmUEbePvVWB6FTChnvpQrwhTEbDE9OIf
+        4rwJuC2k/gNgk+b8olfp/Mg=
+X-Google-Smtp-Source: APXvYqx50kGyewoRhEfHRm1dIpaYZpn3D+gdSEGrCOzZ/nz1uVLkScoUS0FqBfE7Wg150Co82Xs4eg==
+X-Received: by 2002:a1c:c911:: with SMTP id f17mr5625501wmb.73.1567621879136;
+        Wed, 04 Sep 2019 11:31:19 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id f24sm3252156wmc.25.2019.09.04.11.31.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 04 Sep 2019 11:31:18 -0700 (PDT)
+Date:   Wed, 4 Sep 2019 20:31:14 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH v13 3/8] drivers: memory: extend of_memory by LPDDR3
+ support
+Message-ID: <20190904183114.GB12918@kozik-lap>
+References: <20190821104303.32079-1-l.luba@partner.samsung.com>
+ <CGME20190821104320eucas1p10c911c2ce59007bcf6c039f52b869656@eucas1p1.samsung.com>
+ <20190821104303.32079-4-l.luba@partner.samsung.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j8srg6t12.fsf@starbuckisacylon.baylibre.com>
-References: <1j8srg6t12.fsf@starbuckisacylon.baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
-Subject: Re: [GIT PULL] clk: meson: 2nd round of updates for 5.4
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 04 Sep 2019 10:59:51 -0700
-Message-Id: <20190904175952.743DF22CEA@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190821104303.32079-4-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-08-26 04:54:49)
->=20
-> Dear clock maintainers,
->=20
-> Below is a request to pull another batch of Amlogic clock updates for
-> v5.4. It brings reset support in the for the g12a audio controller and
-> sm1 support in the main clock controller.
->=20
-> Cheers
-> Jerome
->=20
-> The following changes since commit 1d97657a4794ab23b47bd9921978ddd82569fc=
-f4:
->=20
->   Merge branch 'v5.4/dt' into v5.4/drivers (2019-08-09 12:12:58 +0200)
->=20
-> are available in the Git repository at:
->=20
->   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.4-2
->=20
-> for you to fetch changes up to da3ceae4ec9f581a50dc0763710078f22d3bc72a:
->=20
->   clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks (2019-08-26 1=
-1:04:54 +0200)
->=20
-> ----------------------------------------------------------------
+On Wed, Aug 21, 2019 at 12:42:58PM +0200, Lukasz Luba wrote:
+> The patch adds AC timings information needed to support LPDDR3 and memory
+> controllers. The structure is used in of_memory and currently in Exynos
+> 5422 DMC. Add parsing data needed for LPDDR3 support.
 
-Thanks. Pulled into clk-next
+Thanks, applied, with commit msg fixes.
+
+Please do not write "This patch" (submitting patches mentions preferred
+format). Also at this point, this is not "used currently in Exynos 5422
+DMC" because there is no such driver. Just say that it is necessary for
+upcoming DMC driver.
+
+Best regards,
+Krzysztof
 
