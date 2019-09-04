@@ -2,99 +2,88 @@ Return-Path: <SRS0=96bN=W7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B44C3A5A8
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B61E9C3A5A8
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:25:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F288122CEA
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:25:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8860E20882
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 18:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567621515;
-	bh=fG4//tWhx9xzYmwCvisGMWODHLy5eOjE33qAobE9dVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=pmo8l0fN0cQ1yZBS7/06CI47IsJ3Z55Hg9Zqqc3qz5jZ7+3Qq/3f4IDeQDyUjrR42
-	 VdwqjTQGtTndTgzSjNxhVCE0WKB3bO/VSzsG9KGOvq9UPhp1PEuFdnKfqBPEbvx/5D
-	 h11+13y/7qGu5HE6SL4GDydMmFjZRIYFyRtAyGX8=
+	s=default; t=1567621533;
+	bh=B2bXI6eXgFsDNSmO81chznZP1whYX5IyKLZi4UfA7ek=;
+	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
+	b=JILomYwYVMgOAGHpPbFBQsTUQWY5dCa8fCr1IkNPQfCsLQH2ww1C2ZoasMrXsCgud
+	 tpu3KD1XMhliE0OYbeeCQ/RjAS2eV/9ZkN6Sxpry1BOHVlJMjEh1pMD+4I+nyd5NzX
+	 b/4oPiCeR8wCC/5ibj6ysg51wyZ+hHF8EUp8093g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388258AbfIDSZK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Sep 2019 14:25:10 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39642 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387988AbfIDSZJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Sep 2019 14:25:09 -0400
-Received: by mail-wm1-f66.google.com with SMTP id q12so3136353wmj.4;
-        Wed, 04 Sep 2019 11:25:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ZNs26im8IZSiycRp5YdzdEf5xY+Panks2L0eHlZ793s=;
-        b=Qo/FhpDlrpLbmZy2AOO5cvsZQKPxLx53cw2F2bhjcD0IsT8ffwi1wSd1LFXmvLDYwV
-         uAjyijfk2M8YwZw9XktUtF0rEnGNek0Jc+/GLiJugzvXmuXQH5v6NeR9Mt+VZMP3iqJo
-         0w84fJY9gcNsEEadVnwtp8l8D2ZxfvkTkRfMepAvTM68WvVEmxYwaYsWyKdVD4Vn6BEZ
-         +J6HUcR2kK6fbwi6P6LSYTJ21ATYfqOLBNKu2XNSwIxvV4F+gEAe7tV6qG5dSOVbATIs
-         totGlRUmDm93sUTk01IkMB2zvoohqdRHukj0bTaJFepQ5knMAZW0AkLrjMnTw+6IS+6Q
-         hVqg==
-X-Gm-Message-State: APjAAAXOaj5RRNDWDMszx/cHmK+Quj8KaTlgVEiF1ML+wNjtLwP4gs3l
-        W7kL4tpsY8zSTedTfVVRAts=
-X-Google-Smtp-Source: APXvYqzKhl9Da3x+NOQGn/asSthLbZVbQBHuEIslYz5CVROihkX7N/X4nng7WKd5gmnOLs0uBCdTJA==
-X-Received: by 2002:a1c:c78f:: with SMTP id x137mr6042843wmf.42.1567621506722;
-        Wed, 04 Sep 2019 11:25:06 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id k6sm71403811wrg.0.2019.09.04.11.25.04
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 04 Sep 2019 11:25:05 -0700 (PDT)
-Date:   Wed, 4 Sep 2019 20:25:02 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Lukasz Luba <l.luba@partner.samsung.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, mturquette@baylibre.com,
-        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
-        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
-        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
-        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
-        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
-        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
-        willy.mh.wolff.ml@gmail.com
-Subject: Re: [PATCH v13 7/8] ARM: dts: exynos: add DMC device for exynos5422
-Message-ID: <20190904182502.GA12918@kozik-lap>
-References: <20190821104303.32079-1-l.luba@partner.samsung.com>
- <CGME20190821104324eucas1p16bdeb27250c8c9fa87591d6bd9743a17@eucas1p1.samsung.com>
- <20190821104303.32079-8-l.luba@partner.samsung.com>
+        id S2387899AbfIDR7x (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Sep 2019 13:59:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388299AbfIDR7x (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Sep 2019 13:59:53 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 743DF22CEA;
+        Wed,  4 Sep 2019 17:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567619992;
+        bh=B2bXI6eXgFsDNSmO81chznZP1whYX5IyKLZi4UfA7ek=;
+        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
+        b=EtZenjjLlZ3DAnLkRCqez2j2Trg9Z1uF2ol5DoH4SFwbYtZiLldm6ntyaGkzlj4jd
+         uYIPZRcv9c2HZbh92jeUS8TwfdPUJxgA1DrYUVMiPoD2QNtdMoGpnmZfN7YOOLNy2G
+         2GN2gY/d/RTx7kyy0TT7ZXQAOjHLSk/5kd6TdYis=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190821104303.32079-8-l.luba@partner.samsung.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1j8srg6t12.fsf@starbuckisacylon.baylibre.com>
+References: <1j8srg6t12.fsf@starbuckisacylon.baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org
+Subject: Re: [GIT PULL] clk: meson: 2nd round of updates for 5.4
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 04 Sep 2019 10:59:51 -0700
+Message-Id: <20190904175952.743DF22CEA@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Aug 21, 2019 at 12:43:02PM +0200, Lukasz Luba wrote:
-> Add description of Dynamic Memory Controller and PPMU counters.
-> They are used by exynos5422-dmc driver.
-> There is a definition of the memory chip, which is then used during
-> calculation of timings for each OPP.
-> The algorithm in the driver needs these two sets to bound the timings.
-> 
-> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
-> ---
->  arch/arm/boot/dts/exynos5420.dtsi             |  71 +++++++++++
->  arch/arm/boot/dts/exynos5422-odroid-core.dtsi | 116 ++++++++++++++++++
->  2 files changed, 187 insertions(+)
+Quoting Jerome Brunet (2019-08-26 04:54:49)
+>=20
+> Dear clock maintainers,
+>=20
+> Below is a request to pull another batch of Amlogic clock updates for
+> v5.4. It brings reset support in the for the g12a audio controller and
+> sm1 support in the main clock controller.
+>=20
+> Cheers
+> Jerome
+>=20
+> The following changes since commit 1d97657a4794ab23b47bd9921978ddd82569fc=
+f4:
+>=20
+>   Merge branch 'v5.4/dt' into v5.4/drivers (2019-08-09 12:12:58 +0200)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.4-2
+>=20
+> for you to fetch changes up to da3ceae4ec9f581a50dc0763710078f22d3bc72a:
+>=20
+>   clk: meson: g12a: add support for SM1 CPU 1, 2 & 3 clocks (2019-08-26 1=
+1:04:54 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Thanks, applied conditionally. Please send a follow up fixing the
-checkpatch error about undocumented binding:
-https://krzk.eu/#/builders/26/builds/392
-
-You should not skip such checkpatch warning.
-
-Best regards,
-Krzysztof
+Thanks. Pulled into clk-next
 
