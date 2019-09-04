@@ -2,134 +2,161 @@ Return-Path: <SRS0=96bN=W7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BB0CC3A5A7
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 08:04:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 899C7C3A5A7
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 09:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5882620870
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 08:04:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 675DC2339E
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 09:49:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728700AbfIDIEG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Sep 2019 04:04:06 -0400
-Received: from mga11.intel.com ([192.55.52.93]:47680 "EHLO mga11.intel.com"
+        id S1726486AbfIDJtY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Sep 2019 05:49:24 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:49754 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727787AbfIDIEF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Sep 2019 04:04:05 -0400
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 04 Sep 2019 01:04:05 -0700
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.64,465,1559545200"; 
-   d="scan'208";a="182406388"
-Received: from linux.intel.com ([10.54.29.200])
-  by fmsmga008.fm.intel.com with ESMTP; 04 Sep 2019 01:04:04 -0700
-Received: from [10.226.38.83] (rtanwar-mobl.gar.corp.intel.com [10.226.38.83])
-        by linux.intel.com (Postfix) with ESMTP id 336DC580105;
-        Wed,  4 Sep 2019 01:04:02 -0700 (PDT)
-Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com,
-        qi-ming.wu@intel.com, rahul.tanwar@intel.com, robh+dt@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, yixin.zhu@linux.intel.com
-References: <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com>
- <20190902222015.11360-1-martin.blumenstingl@googlemail.com>
- <d9e96dab-96be-0c14-b7af-e1f2dc07ebd2@linux.intel.com>
- <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
-From:   "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Message-ID: <b7920723-1df2-62df-61c7-98c3a1665aa1@linux.intel.com>
-Date:   Wed, 4 Sep 2019 16:03:59 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        id S1726304AbfIDJtX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 4 Sep 2019 05:49:23 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 318DE2001B1;
+        Wed,  4 Sep 2019 11:49:21 +0200 (CEST)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 196FF200096;
+        Wed,  4 Sep 2019 11:49:21 +0200 (CEST)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 7AE1E20612;
+        Wed,  4 Sep 2019 11:49:20 +0200 (CEST)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Cc:     Jacky Bai <ping.bai@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: imx: pll14xx: Fix quick switch of S/K parameter
+Date:   Wed,  4 Sep 2019 12:49:18 +0300
+Message-Id: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The PLL14xx on imx8m can change the S and K parameter without requiring
+a reset and relock of the whole PLL.
 
-Hi Martin,
+Fix clk_pll144xx_mp_change register reading and use it for pll1443 as
+well since no reset+relock is required on K changes either.
 
-On 4/9/2019 2:53 AM, Martin Blumenstingl wrote:
->> My understanding is that if we do not use syscon, then there is no
->> point in using regmap because this driver uses simple 32 bit register
->> access. Can directly read/write registers using readl() & writel().
->>
->> Would you agree ?
-> if there was only the LGM SoC then I would say: drop regmap
->
-> however, last year a driver for the GRX350/GRX550 SoCs was proposed: [0]
-> this was never updated but it seems to use the same "framework" as the
-> LGM driver
-> with this in mind I am for keeping regmap support because.
-> I think it will be easier to add support for old SoCs like
-> GRX350/GRX550 (but also VRX200), because the PLL sub-driver (I am
-> assuming that it is similar on all SoCs) or some other helpers can be
-> re-used across various SoCs instead of "duplicating" code (where one
-> variant would use regmap and the other readl/writel).
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+---
+ drivers/clk/imx/clk-pll14xx.c | 40 +++++++----------------------------
+ 1 file changed, 8 insertions(+), 32 deletions(-)
 
+The PLLs are currently table-based and none of the entries differ only
+in S/K so further work would be required to make use of this. The
+prospective user is audio doing tiny freq adjustments and there is no
+standard API for that.
 
-Earlier, we had discussed about it in our team.  There are no plans to
+Lacking users is not a good reason to carry broken code around.
 
-upstream mips based platform code, past up-streaming efforts for mips
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index b7213023b238..25342297e5a6 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -110,47 +110,21 @@ static unsigned long clk_pll1443x_recalc_rate(struct clk_hw *hw,
+ 	do_div(fvco, pdiv << sdiv);
+ 
+ 	return fvco;
+ }
+ 
+-static inline bool clk_pll1416x_mp_change(const struct imx_pll14xx_rate_table *rate,
++static inline bool clk_pll14xx_mp_change(const struct imx_pll14xx_rate_table *rate,
+ 					  u32 pll_div)
+ {
+ 	u32 old_mdiv, old_pdiv;
+ 
+-	old_mdiv = (pll_div >> MDIV_SHIFT) & MDIV_MASK;
+-	old_pdiv = (pll_div >> PDIV_SHIFT) & PDIV_MASK;
++	old_mdiv = (pll_div & MDIV_MASK) >> MDIV_SHIFT;
++	old_pdiv = (pll_div & PDIV_MASK) >> PDIV_SHIFT;
+ 
+ 	return rate->mdiv != old_mdiv || rate->pdiv != old_pdiv;
+ }
+ 
+-static inline bool clk_pll1443x_mpk_change(const struct imx_pll14xx_rate_table *rate,
+-					  u32 pll_div_ctl0, u32 pll_div_ctl1)
+-{
+-	u32 old_mdiv, old_pdiv, old_kdiv;
+-
+-	old_mdiv = (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
+-	old_pdiv = (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
+-	old_kdiv = (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
+-
+-	return rate->mdiv != old_mdiv || rate->pdiv != old_pdiv ||
+-		rate->kdiv != old_kdiv;
+-}
+-
+-static inline bool clk_pll1443x_mp_change(const struct imx_pll14xx_rate_table *rate,
+-					  u32 pll_div_ctl0, u32 pll_div_ctl1)
+-{
+-	u32 old_mdiv, old_pdiv, old_kdiv;
+-
+-	old_mdiv = (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
+-	old_pdiv = (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
+-	old_kdiv = (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
+-
+-	return rate->mdiv != old_mdiv || rate->pdiv != old_pdiv ||
+-		rate->kdiv != old_kdiv;
+-}
+-
+ static int clk_pll14xx_wait_lock(struct clk_pll14xx *pll)
+ {
+ 	u32 val;
+ 
+ 	return readl_poll_timeout(pll->base, val, val & LOCK_TIMEOUT_US, 0,
+@@ -172,11 +146,11 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 		return -EINVAL;
+ 	}
+ 
+ 	tmp = readl_relaxed(pll->base + 4);
+ 
+-	if (!clk_pll1416x_mp_change(rate, tmp)) {
++	if (!clk_pll14xx_mp_change(rate, tmp)) {
+ 		tmp &= ~(SDIV_MASK) << SDIV_SHIFT;
+ 		tmp |= rate->sdiv << SDIV_SHIFT;
+ 		writel_relaxed(tmp, pll->base + 4);
+ 
+ 		return 0;
+@@ -233,17 +207,19 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
+ 			drate, clk_hw_get_name(hw));
+ 		return -EINVAL;
+ 	}
+ 
+ 	tmp = readl_relaxed(pll->base + 4);
+-	div_val = readl_relaxed(pll->base + 8);
+ 
+-	if (!clk_pll1443x_mpk_change(rate, tmp, div_val)) {
++	if (!clk_pll14xx_mp_change(rate, tmp)) {
+ 		tmp &= ~(SDIV_MASK) << SDIV_SHIFT;
+ 		tmp |= rate->sdiv << SDIV_SHIFT;
+ 		writel_relaxed(tmp, pll->base + 4);
+ 
++		tmp = rate->kdiv << KDIV_SHIFT;
++		writel_relaxed(tmp, pll->base + 8);
++
+ 		return 0;
+ 	}
+ 
+ 	/* Enable RST */
+ 	tmp = readl_relaxed(pll->base);
+-- 
+2.17.1
 
-platforms were also dropped. GRX350/GRX550/VRX200 are all mips
-
-based platforms. Plan is to upstream only x86 based platforms. In-fact,
-
-i had removed GRX & other older SoCs support from this driver before
-
-sending for review. So we can consider only x86 based LGM family of
-
-SoCs for this driver & all of them will be reusing same IP.
-
-> [...]
->>> +     select OF_EARLY_FLATTREE
->>> there's not a single other "select OF_EARLY_FLATTREE" in driver/clk
->>> I'm not saying this is wrong but it makes me curious why you need this
->>
->> We need OF_EARLY_FLATTREE for LGM. But adding a new x86
->> platform for LGM is discouraged because that would lead to too
->> many platforms. Only differentiating factor for LGM is CPU model
->> ID but it can differentiate only at run time. So i had no option
->> other then enabling it with some LGM specific core system module
->> driver and CGU seemed perfect for this purpose.
-> so when my x86 kernel maintainer enables CONFIG_INTEL_LGM_CGU_CLK then
-> OF_EARLY_FLATTREE is enabled as well.
-> does this hurt any existing x86 platform? if not: why can't we enable
-> it for x86 unconditionally?
-
-
-IMHO, it will not hurt any other existing x86 platform but enabling it for
-
-x86 unconditionally also doesn't sound like a good idea. I now get your
-
-point that enabling OF_EARLY_FLATTREE here is a bit odd. I will remove
-
-it in next patch.
-
-Regards,
-
-Rahul
-
-> I went through meson & qcom regmap clock code. Agree, it can be
-> reused for mux, divider and gate. But as mentioned above, i am now
-> considering to move away from using regmap.
-> thank you for evaluating them. let's continue the discussion above
-> whether regmap should be used - after that we decide (if needed) which
-> regmap implementation to use
->
->
-> Martin
->
->
-> [0] https://patchwork.kernel.org/patch/10554401/
