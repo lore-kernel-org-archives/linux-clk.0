@@ -2,137 +2,86 @@ Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B20EC43331
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 15:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7EFC43331
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 18:48:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB762082C
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 15:28:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADFB620828
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 18:48:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567709327;
+	bh=w50tD+33F5R8dc2fXJEl8SIoqEQOVGYCi7R9J3SrOV8=;
+	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
+	b=sikPpHliCw8PO/c9BDgsl3qzAjywYUbUvH+YxW6qM4OQT/miK6FVSuYCIYaqGFh4I
+	 ihKa9Ay1yn+VFhAVytJskTRstRp5nnF702A9DoxxAkuL2GxLyp6iOqIx4JQnziU4yq
+	 xP7rn6HfynAGKMLtPVvTHzg+udOvqsrQP8LYUWiI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390376AbfIEP2c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Sep 2019 11:28:32 -0400
-Received: from muru.com ([72.249.23.125]:59832 "EHLO muru.com"
+        id S2391351AbfIESsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 14:48:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388218AbfIEP2c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Sep 2019 11:28:32 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 9ECBE810D;
-        Thu,  5 Sep 2019 15:28:59 +0000 (UTC)
-Date:   Thu, 5 Sep 2019 08:28:26 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        moaz korena <moaz@korena.xyz>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        Discussions about the Letux Kernel 
-        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
-Subject: Re: [PATCH 4/6] ARM: dts: Configure sgx for omap5
-Message-ID: <20190905152826.GY52127@atomide.com>
-References: <20190814131408.57162-1-tony@atomide.com>
- <20190814131408.57162-5-tony@atomide.com>
- <20190815182348.8A1BA2063F@mail.kernel.org>
- <20190817065615.GI52127@atomide.com>
- <20190826145530.GT52127@atomide.com>
- <4BC961D4-1D6E-457B-944A-7137414BC163@goldelico.com>
+        id S2388142AbfIESsq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Sep 2019 14:48:46 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C015520825;
+        Thu,  5 Sep 2019 18:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567709326;
+        bh=w50tD+33F5R8dc2fXJEl8SIoqEQOVGYCi7R9J3SrOV8=;
+        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
+        b=VIMSHFkGskoaCxhINBinMken3pf2l4A0IuhKPUF4mfZOBRhqcF7b0aF1PD94/mrwm
+         rtXpBvt2jZgnEkBPLs92JcDYq+8ot6ai7g6YVCHIx+5LCOQ/Uz6+D8S/84de+0k79C
+         zLknPoufl0L7JxAyxHxIZOo/Bb+EKRpe9048KHb4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4BC961D4-1D6E-457B-944A-7137414BC163@goldelico.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1787421.rStINWtZbh@phil>
+References: <1787421.rStINWtZbh@phil>
+Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
+Subject: Re: [GIT PULL] Rockchip clock updates for 5.4
+To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 05 Sep 2019 11:48:44 -0700
+Message-Id: <20190905184846.C015520825@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* H. Nikolaus Schaller <hns@goldelico.com> [190905 15:04]:
-> Hi Tony,
-> I found some time to update my drivers/stating/pvr/1.14.369993 tree to make
-> use of the new sgx soc integration code and it works on omap5!
-> 
-> > root@letux:~# modprobe pvrsrvkm_omap_omap5_sgx544_116
-> > [  106.478254] pvrsrvkm_omap_omap5_sgx544_116: module is from the staging directory, the quality is unknown, you have been warned.
-> > [  106.526201] [drm] Initialized pvr 1.14.3699939 20110701 for 5600fe00.sgx on minor 1
-> > root@letux:~# pvrsrvctl --no-module --start
-> > [  261.091978] PVR_K: UM DDK-(3699939) and KM DDK-(3699939) match. [ OK ]
-> > root@letux:~# gles1test1 0
-> > ^C
-> > root@letux:~# 
+Quoting Heiko Stuebner (2019-09-05 05:25:14)
+> Hi Mike, Stephen,
+>=20
+> please find below rockchip clock changes for 5.4
+>=20
+> Please pull
+>=20
+> Thanks
+> Heiko
+>=20
+>=20
+> The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca=
+4b:
+>=20
+>   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
+tags/v5.4-rockchip-clk1
+>=20
+> for you to fetch changes up to ac68dfd3c4836bb2636fd37f3e075ed218afdb2b:
+>=20
+>   clk: rockchip: Add clock controller for the rk3308 (2019-09-05 12:43:39=
+ +0200)
+>=20
+> ----------------------------------------------------------------
 
-Hey that's great, good to hear :)
+Thanks. Pulled into clk-next
 
-> To make it work, I have added a child node to the target-module@56000000
-> that describes the img,sgx5xx. Here are the work-in-progress patches if
-> you want to take a look inside:
-> 
-> 	https://github.com/openpvrsgx-devgroup/linux_openpvrsgx/commits/letux/omap-pvr-soc-glue-v2
-
-OK
-
-> On omap3630 the driver module loads but pvrsrvinit fails:
-> 
-> > root@letux:~# modprobe pvrsrvkm_omap_omap3630_sgx530_125
-> > [  390.429260] pvrsrvkm_omap_omap3630_sgx530_125: module is from the staging directory, the quality is unknown, you have been warned.
-> > [  390.474304] [drm] Initialized pvr 1.14.3699939 20110701 for 50000000.sgx on minor 1
-> > root@letux:~# pvrsrvctl --start --no-module
-> > [  402.200439] PVR_K: UM DDK-(3699939) and KM DDK-(3699939) match. [ OK ]
-> > [  402.219604] PVR_K:(Error): BridgedDispatchKM: Initialisation failed.  Driver unusable.
-> > PVR:(Error): LoaduKernelProgram : SGX ukernel program Device Addr: 0xe400000 invalid alignment [0, ]
-> > PVR:(Error): SetupuKernel : Failed to load uKernel programs [0, ]
-> > PVR:(Error): SrvInit: Initialisation for device of class 0, type 7, index 0, failed (1) [0, ]
-> > PVR:(Error): PVRSRVBridgeCall: Failed to access device.  Function ID:3223086862 (strerror returns no value.). [0, ]
-> > pvrsrvctl: SrvInit failed (already initialized?) (err=PVRSRV_ERROR_OUT_OF_MEMORY - Unable to allocate required memory)
-> > root@letux:~# 
-> 
-> Maybe I do not have done the address range translation properly. Or I am missing
-> some of your PRM rstctrl patches since I am working on top of linus/master.
-> Because of that I had to comment out prm_gfx in am33xx.dtsi to get it compile and could
-> not test yet on Beagle Bone.
-
-My guess is that on 36xx the sgx registers are at a different offset
-that does not start at offset 0? And this might be different again
-for 34xx?
-
-If you enable the module via sysfs, you should be able to just
-read out some registers to figure out where it might be is my
-guess.
-
-> A little unclear is how to properly handle omap4. omap4430/4440 and 4460 have the sgx540
-> while only omap4470 has an sgx544 inside. But omap4420/30 share one .dtsi and omap4460/70
-> the other. So we might have to define a new omap4470.dtsi and #include in the real omap4470
-> boards.
-
-Oh OK. Well for 4460, see omap4460.dtsi that already has some ranges
-updated compared to 4430 in l4_cfg_segment_300000 and l4_cfg_target_0.
-I recall that was the only difference for the added 2d accelerator
-between 4430 and 4460.
-
-Adding a omap4470.dtsi in a similar way should work, just also update
-also &sgx_module there too.
-
-> And am3517 and am43/am57/am65/... support is missing. But that can be added later if we
-> have it running on omap3 and am33xx.
-
-Yeah sure at least 335x depends on the pending rstctrl patches.
-
-> Anyways, we again have made a big step forwards. Let's hope that we can get
-> the FLOSS part of the sgx drivers to staging in some not too far future.
-
-Yeah great.
-
-Regards,
-
-Tony
