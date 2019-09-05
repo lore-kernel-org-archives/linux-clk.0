@@ -2,86 +2,73 @@ Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7EFC43331
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 18:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A7DDC43331
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 18:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADFB620828
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 18:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E019820828
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 18:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567709327;
-	bh=w50tD+33F5R8dc2fXJEl8SIoqEQOVGYCi7R9J3SrOV8=;
+	s=default; t=1567709499;
+	bh=/M5vtmCXrJZ2Y/8dz6N+gt8X33XfB4PU4LvW9FAENFw=;
 	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
-	b=sikPpHliCw8PO/c9BDgsl3qzAjywYUbUvH+YxW6qM4OQT/miK6FVSuYCIYaqGFh4I
-	 ihKa9Ay1yn+VFhAVytJskTRstRp5nnF702A9DoxxAkuL2GxLyp6iOqIx4JQnziU4yq
-	 xP7rn6HfynAGKMLtPVvTHzg+udOvqsrQP8LYUWiI=
+	b=KcBU/Rx0FqVmBOYrq1M/9DZDTCLRXXm3jEOdmb4odKlk68Lk5uYdDz4nVvkDPVrjG
+	 CufHOnDRKukN/t+N0Nxtp11nm2isF/k3Q7yYz5EPI88XD/fuposhkm4Dkxw38TjUOW
+	 flRr0s/D7x2jV0zFpIsyUU/z4YjY6aRy1qfwqNKQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391351AbfIESsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Sep 2019 14:48:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52276 "EHLO mail.kernel.org"
+        id S1732280AbfIESvi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 14:51:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388142AbfIESsq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Sep 2019 14:48:46 -0400
+        id S1726837AbfIESvi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Sep 2019 14:51:38 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C015520825;
-        Thu,  5 Sep 2019 18:48:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C2BB520825;
+        Thu,  5 Sep 2019 18:51:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567709326;
-        bh=w50tD+33F5R8dc2fXJEl8SIoqEQOVGYCi7R9J3SrOV8=;
+        s=default; t=1567709498;
+        bh=/M5vtmCXrJZ2Y/8dz6N+gt8X33XfB4PU4LvW9FAENFw=;
         h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=VIMSHFkGskoaCxhINBinMken3pf2l4A0IuhKPUF4mfZOBRhqcF7b0aF1PD94/mrwm
-         rtXpBvt2jZgnEkBPLs92JcDYq+8ot6ai7g6YVCHIx+5LCOQ/Uz6+D8S/84de+0k79C
-         zLknPoufl0L7JxAyxHxIZOo/Bb+EKRpe9048KHb4=
+        b=C5/z6F/7aQ9evaZh/nFx7qV9hMzyCUHWE6dFzQHXHwOERFMhUvEjXyroRS1vegqR5
+         eAWEabgpNQYZovf4dUJloyQEC4EOVnaTAonwqgJpUPBwXVhG8ovok84uXOCWSXCpe6
+         Q9m7v2fdFXUYpEbQpMFMysy5j+icvHU1NbL1u2rs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1787421.rStINWtZbh@phil>
-References: <1787421.rStINWtZbh@phil>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [GIT PULL] Rockchip clock updates for 5.4
-To:     Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+In-Reply-To: <20190826212042.48642-1-sboyd@kernel.org>
+References: <20190826212042.48642-1-sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: Re: [PATCH v2] clk: Document of_parse_clkspec() some more
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Thu, 05 Sep 2019 11:48:44 -0700
-Message-Id: <20190905184846.C015520825@mail.kernel.org>
+Date:   Thu, 05 Sep 2019 11:51:36 -0700
+Message-Id: <20190905185138.C2BB520825@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Heiko Stuebner (2019-09-05 05:25:14)
-> Hi Mike, Stephen,
+Quoting Stephen Boyd (2019-08-26 14:20:42)
+> The return value of of_parse_clkspec() is peculiar. If the function is
+> called with a NULL argument for 'name' it will return -ENOENT, but if
+> it's called with a non-NULL argument for 'name' it will return -EINVAL.
+> This peculiarity is documented by commit 5c56dfe63b6e ("clk: Add comment
+> about __of_clk_get_by_name() error values").
 >=20
-> please find below rockchip clock changes for 5.4
+> Let's further document this function so that it's clear what the return
+> value is and how to use the arguments to parse clk specifiers.
 >=20
-> Please pull
->=20
-> Thanks
-> Heiko
->=20
->=20
-> The following changes since commit 5f9e832c137075045d15cd6899ab0505cfb2ca=
-4b:
->=20
->   Linus 5.3-rc1 (2019-07-21 14:05:38 -0700)
->=20
-> are available in the Git repository at:
->=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v5.4-rockchip-clk1
->=20
-> for you to fetch changes up to ac68dfd3c4836bb2636fd37f3e075ed218afdb2b:
->=20
->   clk: rockchip: Add clock controller for the rk3308 (2019-09-05 12:43:39=
- +0200)
->=20
-> ----------------------------------------------------------------
+> Cc: Phil Edworthy <phil.edworthy@renesas.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
 
