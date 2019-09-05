@@ -2,161 +2,271 @@ Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DBE6C3A5A5
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 13:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D892C43331
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 15:09:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0842621D79
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 13:05:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF5C92070C
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 15:09:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="g4aUfVC7"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="CswbfkeE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388244AbfIENFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Sep 2019 09:05:20 -0400
-Received: from mail-eopbgr60063.outbound.protection.outlook.com ([40.107.6.63]:13409
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730704AbfIENFS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Sep 2019 09:05:18 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i65KlgKCRQq1w2cVN1dmAsqE3i4irWlr8ekJab4LLi8W/6sppn7dkZjAiTXxAGMUo8lf34B+172iFwCOxMQl0VgRC8Dlgbf1ptfc+QmR8AlxIHzzTe1DV6o3wQjxzTwHcrxUVuTj7XI71n2FV8lrOGyKFn6QMBWLsanquJqfFX1TDYnvowQfD22WLky0mv5qgIEmB5uiJRyDHI8k70fRDWc19m53qHYvyYY6h8f4b5C6E9py7TAltNbVQx9GIie972WRbG5aeQwFasmOMGLv7h62dxHsNS81HyK1UpB8cmk03akk1TZEPgOlkx2r9nYAghWuHcB3WErZ1S6hvlL8Fw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DmDhPfwW551IfFLKzozfRessrUc855ynidHa52aJ364=;
- b=ZY1Fn04Zo5ZAIaoXC0Ldrzez3OooHW3Fso7sBnEVIwXvsV/MmZ8KMuCURmOJZxDtMW6/fcSJTxQFwR1ZKhYqYrRhBiSQ6t5FLxhbZ3zmIjKLu74wHrc/pOP2iLbahuXJD4hH7iJUzLcGs7cn/XX09wBqir+ox/tQAHvO4i7qrSfP3FGNKV9yI9UxVqFrZj2WmeKQdrs0FeejT3elwhsrXyt8kVOmjQ9s2pu3fmlFYkH93F41Wiwu6zkGf1MLOxCGKgBNWDo7jE0mifTRlT0zd0j8lG6EOBB/x73k7EU57b1FAu3Lk4OQ1ZLPzwJEygLyJXydLyHsyTsbj/P7lyuC5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DmDhPfwW551IfFLKzozfRessrUc855ynidHa52aJ364=;
- b=g4aUfVC7L0Mi9ydccN1Oo2DiP7B4yWgCqzpgGqX646llY0KoDBu4yIKUU811qvDBLn8GxBJQx7W6G42Ou7ookA9ioRau2PrfzKPvT5emdfHYeNj26RqYOHMuD4R6RQIKYNIKIMiKN3puISv1Xt0Vod4zNK7HdBV6lRkK6MTw7zw=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB4349.eurprd04.prod.outlook.com (52.134.122.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.14; Thu, 5 Sep 2019 13:05:11 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2220.022; Thu, 5 Sep 2019
- 13:05:11 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Peng Fan <peng.fan@nxp.com>, Fancy Fang <chen.fang@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure to
- common place
-Thread-Topic: [PATCH 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure to
- common place
-Thread-Index: AQHVY9Cav3A/XqpohU+k0poiSHpABg==
-Date:   Thu, 5 Sep 2019 13:05:11 +0000
-Message-ID: <VI1PR04MB7023460FBB9FB8D034ECC2A1EEBB0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1567720699-23514-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 463024ee-fc10-4210-c760-08d73201af7c
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4349;
-x-ms-traffictypediagnostic: VI1PR04MB4349:|VI1PR04MB4349:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB43496F47943C12AB535060F5EEBB0@VI1PR04MB4349.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2657;
-x-forefront-prvs: 015114592F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(376002)(136003)(366004)(39860400002)(189003)(199004)(25786009)(71190400001)(66066001)(71200400001)(54906003)(110136005)(316002)(7416002)(86362001)(6246003)(53936002)(6436002)(3846002)(6116002)(9686003)(4326008)(2906002)(33656002)(55016002)(5660300002)(52536014)(76116006)(91956017)(305945005)(66946007)(66476007)(66556008)(64756008)(66446008)(256004)(8676002)(81156014)(81166006)(14454004)(186003)(102836004)(53546011)(7736002)(6506007)(99286004)(26005)(476003)(7696005)(6636002)(446003)(486006)(478600001)(44832011)(76176011)(229853002)(8936002)(74316002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4349;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: TEgIbiAVIX/fHlpoWPxdKcyP6CRkOtNhlI+WKPHqm8+esnXqk2eak2Q/ONVhqFtjjeTQSHB3b0RHrk6PPoztpDgJ8hdtiNcgmFgwjFJsO4IXrnbiCAhNochMrWsEdjkMU4InRQvuSJPT5bfCpw7J6cnLTOLbjDH9C7ihR0VP01j8gYkftyHgrJfPDN23HqPS4Bquhsb8Z1/mlsQW6wWcUMqytfoj/TjBgqZRElePrmbpJ81uQ/nw3x6JHadsjwefPEIBnFOgVCoC25qtje8EGePzAJvleFRHQ+SRiFUM9w+yRh4/8506e6Ubc4tMkNF5Qm6VEsG+/rDwB44d5QAY8cVYTV6rHfTOjcRhKHFvBwfmhROyzayAiMVNkOdhogxaK69KdodyNn+2/F3buEkFn3tTMhu3MHU8ZMzoO/kBAD0=
-Content-Type: text/plain; charset="us-ascii"
+        id S1732207AbfIEPJT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 11:09:19 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.53]:25933 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732067AbfIEPJS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 11:09:18 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567696154;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=sjTmZbBx00G24DCuo44NeyGu9houwWQ9Ef7hhYGN/jo=;
+        b=CswbfkeEI+IZ+Nq6Ef7JtFj3qy1iQpYr+MLHLyDEIC4e15YL8wkKG54qBxfMs2Ayzt
+        UCbGKltVpyfLmugr5T0EfhFLfq/kUXHQoF4kztx8iolGuUWQ7v/0vMFArFuZXts8UWw5
+        7LSky7C59+cL1A1Yn57nzj7YxpJM9NVLg1gM7DBKUokUBdxeTDPJAYegSWdIA2uDiMIq
+        a09RfTQ3aqyIkQXuX/dMJUfiTYhr0QQnIBzeI8zQ6d2GIO6R8nDOIR1BS6vMG7Smo5Yq
+        xn2vxDFtgoCmyn1+usfG7r8FrD84/MlKOI0j/HhX9UWC/B7SBFnRjefBPHb2CQMPQGnL
+        lVPQ==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj7wpz8NIGH+To3jrG"
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v85F3SkI4
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Thu, 5 Sep 2019 17:03:28 +0200 (CEST)
+Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 4/6] ARM: dts: Configure sgx for omap5
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190826145530.GT52127@atomide.com>
+Date:   Thu, 5 Sep 2019 17:03:28 +0200
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
 Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 463024ee-fc10-4210-c760-08d73201af7c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Sep 2019 13:05:11.5149
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: aqHNWq+X11Xei9em8C1p7rQZPiBWLUAeKKzUFx9PsQXhpHYEK0LGuNHGhzYqMs3Y6GcnbKvOsOiyxEm132XH2w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4349
+Message-Id: <4BC961D4-1D6E-457B-944A-7137414BC163@goldelico.com>
+References: <20190814131408.57162-1-tony@atomide.com> <20190814131408.57162-5-tony@atomide.com> <20190815182348.8A1BA2063F@mail.kernel.org> <20190817065615.GI52127@atomide.com> <20190826145530.GT52127@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 05.09.2019 12:59, Anson Huang wrote:=0A=
-> Many i.MX8M SoCs use same 1443X/1416X PLL, such as i.MX8MM,=0A=
-> i.MX8MN and later i.MX8M SoCs, moving these PLL definitions=0A=
-> to common place can save a lot of duplicated code on each=0A=
-> platform.=0A=
-=0A=
-There are lots of similarities between imx8m clocks, do you plan to do =0A=
-combine them further?=0A=
-=0A=
-> Meanwhile, no need to define PLL clock structure for every=0A=
-> module which uses same type of PLL, e.g., audio/video/dram use=0A=
-> 1443X PLL, arm/gpu/vpu/sys use 1416X PLL, define 2 PLL clock=0A=
-> structure for each group is enough.=0A=
-=0A=
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c=0A=
-=0A=
-> +const struct imx_pll14xx_rate_table imx_pll1416x_tbl[] =3D {=0A=
-> +	PLL_1416X_RATE(1800000000U, 225, 3, 0),=0A=
-> +	PLL_1416X_RATE(1600000000U, 200, 3, 0),=0A=
-> +	PLL_1416X_RATE(1200000000U, 300, 3, 1),=0A=
-> +	PLL_1416X_RATE(1000000000U, 250, 3, 1),=0A=
-> +	PLL_1416X_RATE(800000000U,  200, 3, 1),=0A=
-> +	PLL_1416X_RATE(750000000U,  250, 2, 2),=0A=
-> +	PLL_1416X_RATE(700000000U,  350, 3, 2),=0A=
-> +	PLL_1416X_RATE(600000000U,  300, 3, 2),=0A=
-> +};=0A=
-> +=0A=
-> +const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] =3D {=0A=
-> +	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),=0A=
-> +	PLL_1443X_RATE(594000000U, 198, 2, 2, 0),=0A=
-> +	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),=0A=
-> +	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),=0A=
-> +};=0A=
-> +=0A=
-> +struct imx_pll14xx_clk imx_1443x_pll =3D {=0A=
-> +	.type =3D PLL_1443X,=0A=
-> +	.rate_table =3D imx_pll1443x_tbl,=0A=
-> +	.rate_count =3D ARRAY_SIZE(imx_pll1443x_tbl),=0A=
-> +};=0A=
-> +=0A=
-> +struct imx_pll14xx_clk imx_1416x_pll =3D {=0A=
-> +	.type =3D PLL_1416X,=0A=
-> +	.rate_table =3D imx_pll1416x_tbl,=0A=
-> +	.rate_count =3D ARRAY_SIZE(imx_pll1416x_tbl),=0A=
-> +};=0A=
-=0A=
-Perhaps these consts should be in clk-pll14xx.c? That way they won't be =0A=
-compiled for imx6 as well.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+Hi Tony,
+I found some time to update my drivers/stating/pvr/1.14.369993 tree to =
+make
+use of the new sgx soc integration code and it works on omap5!
+
+> root@letux:~# modprobe pvrsrvkm_omap_omap5_sgx544_116
+> [  106.478254] pvrsrvkm_omap_omap5_sgx544_116: module is from the =
+staging directory, the quality is unknown, you have been warned.
+> [  106.526201] [drm] Initialized pvr 1.14.3699939 20110701 for =
+5600fe00.sgx on minor 1
+> root@letux:~# pvrsrvctl --no-module --start
+> [  261.091978] PVR_K: UM DDK-(3699939) and KM DDK-(3699939) match. [ =
+OK ]
+> root@letux:~# gles1test1 0
+> ^C
+> root@letux:~#=20
+
+
+To make it work, I have added a child node to the target-module@56000000
+that describes the img,sgx5xx. Here are the work-in-progress patches if
+you want to take a look inside:
+
+	=
+https://github.com/openpvrsgx-devgroup/linux_openpvrsgx/commits/letux/omap=
+-pvr-soc-glue-v2
+
+On omap3630 the driver module loads but pvrsrvinit fails:
+
+> root@letux:~# modprobe pvrsrvkm_omap_omap3630_sgx530_125
+> [  390.429260] pvrsrvkm_omap_omap3630_sgx530_125: module is from the =
+staging directory, the quality is unknown, you have been warned.
+> [  390.474304] [drm] Initialized pvr 1.14.3699939 20110701 for =
+50000000.sgx on minor 1
+> root@letux:~# pvrsrvctl --start --no-module
+> [  402.200439] PVR_K: UM DDK-(3699939) and KM DDK-(3699939) match. [ =
+OK ]
+> [  402.219604] PVR_K:(Error): BridgedDispatchKM: Initialisation =
+failed.  Driver unusable.
+> PVR:(Error): LoaduKernelProgram : SGX ukernel program Device Addr: =
+0xe400000 invalid alignment [0, ]
+> PVR:(Error): SetupuKernel : Failed to load uKernel programs [0, ]
+> PVR:(Error): SrvInit: Initialisation for device of class 0, type 7, =
+index 0, failed (1) [0, ]
+> PVR:(Error): PVRSRVBridgeCall: Failed to access device.  Function =
+ID:3223086862 (strerror returns no value.). [0, ]
+> pvrsrvctl: SrvInit failed (already initialized?) =
+(err=3DPVRSRV_ERROR_OUT_OF_MEMORY - Unable to allocate required memory)
+> root@letux:~#=20
+
+Maybe I do not have done the address range translation properly. Or I am =
+missing
+some of your PRM rstctrl patches since I am working on top of =
+linus/master.
+Because of that I had to comment out prm_gfx in am33xx.dtsi to get it =
+compile and could
+not test yet on Beagle Bone.
+
+A little unclear is how to properly handle omap4. omap4430/4440 and 4460 =
+have the sgx540
+while only omap4470 has an sgx544 inside. But omap4420/30 share one =
+.dtsi and omap4460/70
+the other. So we might have to define a new omap4470.dtsi and #include =
+in the real omap4470
+boards.
+
+And am3517 and am43/am57/am65/... support is missing. But that can be =
+added later if we
+have it running on omap3 and am33xx.
+
+Anyways, we again have made a big step forwards. Let's hope that we can =
+get
+the FLOSS part of the sgx drivers to staging in some not too far future.
+
+BR and thanks,
+Nikolaus
+
+
+> Am 26.08.2019 um 16:55 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * Tony Lindgren <tony@atomide.com> [190817 06:56]:
+>> * Stephen Boyd <sboyd@kernel.org> [190815 18:24]:
+>>> Quoting Tony Lindgren (2019-08-14 06:14:06)
+>>>> diff --git a/arch/arm/boot/dts/omap54xx-clocks.dtsi =
+b/arch/arm/boot/dts/omap54xx-clocks.dtsi
+>>>> --- a/arch/arm/boot/dts/omap54xx-clocks.dtsi
+>>>> +++ b/arch/arm/boot/dts/omap54xx-clocks.dtsi
+>>>> @@ -1146,6 +1146,20 @@
+>>>>                };
+>>>>        };
+>>>>=20
+>>>> +       gpu_cm: gpu_cm@1500 {
+>>>=20
+>>> Node names shouldn't have underscores. Maybe clock-controller?
+>>=20
+>> OK yeah clock-controller sounds good to me.
+>=20
+> Below is this one updated to use clock-controller naming.
+>=20
+> Regards,
+>=20
+> Tony
+>=20
+> 8< ---------------------------
+> =46rom tony Mon Sep 17 00:00:00 2001
+> From: Tony Lindgren <tony@atomide.com>
+> Date: Wed, 14 Aug 2019 05:18:16 -0700
+> Subject: [PATCH] ARM: dts: Configure sgx for omap5
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>=20
+> I've tested that the interconnect target module enables and idles
+> just fine when probed with ti-sysc with PM runtime control via sys:
+>=20
+> # echo on > $(find /sys -name control | grep \/5600)
+> # rwmem 0x5600fe00	# OCP Revision
+> 0x5600fe00 =3D 0x40000000
+> # echo auto > $(find /sys -name control | grep \/5600)
+> # rwmem 0x5600fe10
+> # rwmem 0x56000024
+>=20
+> Cc: Adam Ford <aford173@gmail.com>
+> Cc: Filip Matijevi=C4=87 <filip.matijevic.pz@gmail.com>
+> Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> Cc: moaz korena <moaz@korena.xyz>
+> Cc: Merlijn Wajer <merlijn@wizzup.org>
+> Cc: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Cc: Philipp Rossak <embed3d@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+> arch/arm/boot/dts/omap5.dtsi           | 23 +++++++++++++++++++++++
+> arch/arm/boot/dts/omap54xx-clocks.dtsi | 14 ++++++++++++++
+> 2 files changed, 37 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/omap5.dtsi =
+b/arch/arm/boot/dts/omap5.dtsi
+> --- a/arch/arm/boot/dts/omap5.dtsi
+> +++ b/arch/arm/boot/dts/omap5.dtsi
+> @@ -257,6 +257,29 @@
+> 			ports-implemented =3D <0x1>;
+> 		};
+>=20
+> +		target-module@56000000 {
+> +			compatible =3D "ti,sysc-omap4", "ti,sysc";
+> +			reg =3D <0x5600fe00 0x4>,
+> +			      <0x5600fe10 0x4>;
+> +			reg-names =3D "rev", "sysc";
+> +			ti,sysc-midle =3D <SYSC_IDLE_FORCE>,
+> +					<SYSC_IDLE_NO>,
+> +					<SYSC_IDLE_SMART>;
+> +			ti,sysc-sidle =3D <SYSC_IDLE_FORCE>,
+> +					<SYSC_IDLE_NO>,
+> +					<SYSC_IDLE_SMART>;
+> +			clocks =3D <&gpu_clkctrl OMAP5_GPU_CLKCTRL 0>;
+> +			clock-names =3D "fck";
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +			ranges =3D <0 0x56000000 0x2000000>;
+> +
+> +			/*
+> +			 * Closed source PowerVR driver, no child device
+> +			 * binding or driver in mainline
+> +			 */
+> +		};
+> +
+> 		dss: dss@58000000 {
+> 			compatible =3D "ti,omap5-dss";
+> 			reg =3D <0x58000000 0x80>;
+> diff --git a/arch/arm/boot/dts/omap54xx-clocks.dtsi =
+b/arch/arm/boot/dts/omap54xx-clocks.dtsi
+> --- a/arch/arm/boot/dts/omap54xx-clocks.dtsi
+> +++ b/arch/arm/boot/dts/omap54xx-clocks.dtsi
+> @@ -1146,6 +1146,20 @@
+> 		};
+> 	};
+>=20
+> +	gpu_cm: clock-controller@1500 {
+> +		compatible =3D "ti,omap4-cm";
+> +		reg =3D <0x1500 0x100>;
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		ranges =3D <0 0x1500 0x100>;
+> +
+> +		gpu_clkctrl: clk@20 {
+> +			compatible =3D "ti,clkctrl";
+> +			reg =3D <0x20 0x4>;
+> +			#clock-cells =3D <2>;
+> +		};
+> +	};
+> +
+> 	l3init_cm: l3init_cm@1600 {
+> 		compatible =3D "ti,omap4-cm";
+> 		reg =3D <0x1600 0x100>;
+> --=20
+> 2.23.0
+
