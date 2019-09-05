@@ -2,49 +2,49 @@ Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5E5C3A5A5
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:17:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8BDC3A5A5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:21:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18B2120693
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:17:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5460120693
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:21:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731142AbfIEKRx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Sep 2019 06:17:53 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:40718 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfIEKRx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 06:17:53 -0400
-Received: by mail-qt1-f194.google.com with SMTP id g4so2109353qtq.7;
-        Thu, 05 Sep 2019 03:17:52 -0700 (PDT)
+        id S1730633AbfIEKVO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 06:21:14 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:44194 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726175AbfIEKVN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 06:21:13 -0400
+Received: by mail-qt1-f193.google.com with SMTP id u40so2089482qth.11;
+        Thu, 05 Sep 2019 03:21:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RffJ7InQL31j5GA0tk88FRNmNw9DfUtPHCAY7O517yY=;
-        b=b8XbRLWCAXrLgkKAA616QdR+QSFLo+jmrxfrCrIIxmKxBMLIJcrsWlnTn49rukInuS
-         URNGnMtDMRzw6r5QpPjvfJBXCzMBQoUo+q62Gif75X1aoBf1Yfe86rcsre7RcLmPD4C4
-         8Slc2/3kVNXmN9Wgep5qzMzMf37PIFbBsH5TxmtAv8KhFGLhlhRZH94rVscGixV1u2Mm
-         IXZ2nmAPiChSMNLowHZC3X5GPUiDxop60oSUuhWj7S6lG4zY2jBoh2P6tD/W7VaBauN7
-         vfxdDuEkQ5aAE34Z1eXg657QDPEQLwQwd4g7taybsfhHKtYcPeJ3S34aeFtOaq9xD8J2
-         +AvQ==
-X-Gm-Message-State: APjAAAV+YIZdyLElQc1yYObgDe9xIPyEoA/wbupGnaAoVJeejfafpa2/
-        WmE0NCNh1ITjlVkPtgN8ozQhNZBwQP6e8fJNK3c=
-X-Google-Smtp-Source: APXvYqwuebU2u/F2gHA1bDb+BAE+/VJQoganY1fAoMnsD+auDbyJLIa9btOXgvoh8se4YaEzjBq01+7ONjYkz7KCiJ4=
-X-Received: by 2002:ac8:342a:: with SMTP id u39mr2699225qtb.7.1567678672404;
- Thu, 05 Sep 2019 03:17:52 -0700 (PDT)
+        bh=W9ASHhPKpQsIU9mZBi7LyeVQlq2CQJ2Nfa0cGg2cxjU=;
+        b=gqfY4PmwVDxruCWQzhbyPxIwP/7yT85hzCcnRhXJc4Cwlw2UGO3c+PpUqxkV91858F
+         jznwKHR3baPoA5Ybq0KpWV8bGVFH/sS72nGK0EvwxxaD6RVgz9eb/AZpKKGMLnB1lCZd
+         /hMYiwps1WJLujsUMGNJlxe4SozjmbqKea1IDKuyLlp0cu17G6ahhF2ElwhOnamutE5k
+         r+s0Nh+Z1ikv35v50oRuWhLlgUBSJV6IHshQRbfxOEBYrZHg4aohLzcNqloDacm4EBsa
+         kZhwBeBozcXudXmX6AqYOswh696bLcpeIMO5sxon7/JKinIjRTKBb2uaoOU/bEZe7h6J
+         QmaQ==
+X-Gm-Message-State: APjAAAXX4xUqtWO/CfGA6QUsIe0agIcNfLounfjyDhqsWNdnNh8zLO3d
+        4tUrZvCESQQGw0Kmo4huXFkO4NUZeMOz0Z4tTkY=
+X-Google-Smtp-Source: APXvYqw66BDokdBxyKl2ZBebLXBdM0Uc+EDEJXEwWO/OOdpU9zSB4XfPNlLYUumfYtGYq8zDk75S62/byvrXBZWShig=
+X-Received: by 2002:ac8:32ec:: with SMTP id a41mr2625217qtb.18.1567678872786;
+ Thu, 05 Sep 2019 03:21:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190830220743.439670-1-lkundrak@v3.sk> <20190830220743.439670-17-lkundrak@v3.sk>
-In-Reply-To: <20190830220743.439670-17-lkundrak@v3.sk>
+References: <20190830220743.439670-14-lkundrak@v3.sk> <201909021510.0g4L7Wva%lkp@intel.com>
+In-Reply-To: <201909021510.0g4L7Wva%lkp@intel.com>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 5 Sep 2019 12:17:36 +0200
-Message-ID: <CAK8P3a1oqj5wXFgf+99=H4=hNrpnrwa05c+YctN64tHLvmoz5g@mail.gmail.com>
-Subject: Re: [PATCH v3 16/16] ARM: dts: mmp3: Add MMP3 SoC dts file
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     "To : Olof Johansson" <olof@lixom.net>,
+Date:   Thu, 5 Sep 2019 12:20:56 +0200
+Message-ID: <CAK8P3a1kpRcmTW0hH7-9vd4SiJjEuTMRPb6Kb06LSiRj0AGd8A@mail.gmail.com>
+Subject: Re: [PATCH v3 13/16] ARM: mmp: move cputype.h to include/linux/soc/
+To:     kbuild test robot <lkp@intel.com>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
         Mark Rutland <mark.rutland@arm.com>,
         DTML <devicetree@vger.kernel.org>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -53,7 +53,8 @@ Cc:     "To : Olof Johansson" <olof@lixom.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Russell King <linux@armlinux.org.uk>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        "Cc : Rob Herring" <robh+dt@kernel.org>,
+        "Cc : Rob Herring" <robh+dt@kernel.org>, kbuild-all@01.org,
+        "To : Olof Johansson" <olof@lixom.net>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
@@ -63,21 +64,26 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Aug 31, 2019 at 12:12 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+On Mon, Sep 2, 2019 at 10:16 AM kbuild test robot <lkp@intel.com> wrote:
 
-> +/ {
-> +       #address-cells = <1>;
-> +       #size-cells = <1>;
-> +
-> +       aliases {
-> +               serial0 = &uart1;
-> +               serial1 = &uart2;
-> +               serial2 = &uart3;
-> +               serial3 = &uart4;
-> +       };
+>
+> vim +5 include/linux/soc/mmp/cputype.h
+>
+> 49cbe78637eb05 arch/arm/mach-mmp/include/mach/cputype.h Eric Miao 2009-01-20  4
+> 49cbe78637eb05 arch/arm/mach-mmp/include/mach/cputype.h Eric Miao 2009-01-20 @5  #include <asm/cputype.h>
+> 49cbe78637eb05 arch/arm/mach-mmp/include/mach/cputype.h Eric Miao 2009-01-20  6
+>
 
-Better move the aliases into the per-board file, not every board
-would have all four uarts connected, or labeled in that particular
-order.
+You can probably do something like
 
-        Arnd
+#ifdef CONFIG_ARM
+#include <asm/cputype.h>
+#else
+static inline read_cpuid_id(void) { return 0; }
+#endif
+
+Then again, ideally drivers don't even have to know about this,
+but would distinguish between devices based on the
+compatible string for the particular device.
+
+       Arnd
