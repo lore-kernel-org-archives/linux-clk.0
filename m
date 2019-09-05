@@ -2,132 +2,129 @@ Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DDEAC43331
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 20:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 817DCC43331
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 21:55:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C67C206CD
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 20:47:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iKQy7pcK"
+	by mail.kernel.org (Postfix) with ESMTP id B8B28206DE
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 21:55:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389236AbfIEUrg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Sep 2019 16:47:36 -0400
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34167 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731142AbfIEUrf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 16:47:35 -0400
-Received: by mail-ot1-f65.google.com with SMTP id c7so3664722otp.1;
-        Thu, 05 Sep 2019 13:47:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Hpe67X407tYeVqfqBtx1jH+uTg6tH8jR8FjjDadQp48=;
-        b=iKQy7pcK0+Aeu3voToJo4z1xhtUcKL/cjAGPDL1dk5XMxb+QXiVvcJoGUZtgExUzeI
-         0hKt0/2ycoBwf5Z5px0oYNSi7eDdWCwY1ozNcT6q2VFHCaOwxI3WE9BvckNlXDy/i9hJ
-         V+2OFzq+TS1o62Qa8oTi0Gi5XnvMDgkhQ9d3EJkUCkce02hswivWIozI2vLA3iLBcfOT
-         EKuLOV494WmLcFsmKFRHBw7xtch424iX/B3Rc0WDxErtSkb5t/zMcVjpVArtPZwcXPTv
-         343poVAErivgK65+70F89MRATt/aK8bBqAkttohiPgY+X5jaAjAxw1azr+yv0RasNH07
-         SpcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Hpe67X407tYeVqfqBtx1jH+uTg6tH8jR8FjjDadQp48=;
-        b=K4P+HdWUL0H+u3UvA1wLCvqLQSycYyncCE5cLlBoDAt84fkdBJBU1QpiWNjc0ITPbW
-         oc/f49eIzfWSqAZ7a3HrDT5MNRsHfF40dXfaffmY9MbgsZ0VWCpsFxH2l/iZ/KunurLm
-         Y4p850vsdpseeCC9noyT8LdC3XbK3v6WlKYJghDbVNZ9iQEXUo2hQ2lhdTyyFyXqGChl
-         OKcAe+9OpfFnWAPHTl23Z4m/BhRW7szrF1pgdGw8enkRq7OUmOIc5G3BCE4veJbmNV7Z
-         NLh1Xee1ua8tcLFLzAv/7y0SniIhVVmWCZUA2xCEUFQ11Q/bKjOIfXkG5PWJy6a08SDQ
-         z1kQ==
-X-Gm-Message-State: APjAAAVEhcjrkzo3Eez7GqLG1GEbAcd5Jn1I3DQl6fhgxZvho+Qwcdtq
-        039NlITugVA+wIoQhblW46dsK5mDAfNUenTvdXc=
-X-Google-Smtp-Source: APXvYqxBMSHXDs1QQOhrT5ERhwwBvzG1utnZHIaaBimzhgUetRGpQI2B9o8vZcXvI+RHZcyVr430j2kSYmOU1uYY5Ps=
-X-Received: by 2002:a9d:12e7:: with SMTP id g94mr3041613otg.6.1567716454237;
- Thu, 05 Sep 2019 13:47:34 -0700 (PDT)
+        id S2388541AbfIEVzj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 17:55:39 -0400
+Received: from muru.com ([72.249.23.125]:59878 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731215AbfIEVzj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Sep 2019 17:55:39 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id B668E810D;
+        Thu,  5 Sep 2019 21:56:08 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name with reg-names
+Date:   Thu,  5 Sep 2019 14:55:32 -0700
+Message-Id: <20190905215532.8357-1-tony@atomide.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-References: <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com>
- <20190902222015.11360-1-martin.blumenstingl@googlemail.com>
- <d9e96dab-96be-0c14-b7af-e1f2dc07ebd2@linux.intel.com> <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
- <b7920723-1df2-62df-61c7-98c3a1665aa1@linux.intel.com>
-In-Reply-To: <b7920723-1df2-62df-61c7-98c3a1665aa1@linux.intel.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 5 Sep 2019 22:47:23 +0200
-Message-ID: <CAFBinCA+J-HnXfRnquqviXvX0Jo84hoLC9=_uHbyWKZycwyAFw@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
-To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>
-Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com,
-        qi-ming.wu@intel.com, rahul.tanwar@intel.com, robh+dt@kernel.org,
-        robh@kernel.org, sboyd@kernel.org, yixin.zhu@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rahul,
+We currently have a hidden dependency to the device tree node name for
+the clkctrl clocks. Instead of using standard node name like "clock", we
+must use "l4-per-clkctrl" naming so the clock driver can find the
+associated clock domain. Further, if "clk" is specified for a clock node
+name, the driver sets TI_CLK_CLKCTRL_COMPAT flag that uses different
+logic with earlier naming for the clock node name.
 
-On Wed, Sep 4, 2019 at 10:04 AM Tanwar, Rahul
-<rahul.tanwar@linux.intel.com> wrote:
->
->
-> Hi Martin,
->
-> On 4/9/2019 2:53 AM, Martin Blumenstingl wrote:
-> >> My understanding is that if we do not use syscon, then there is no
-> >> point in using regmap because this driver uses simple 32 bit register
-> >> access. Can directly read/write registers using readl() & writel().
-> >>
-> >> Would you agree ?
-> > if there was only the LGM SoC then I would say: drop regmap
-> >
-> > however, last year a driver for the GRX350/GRX550 SoCs was proposed: [0]
-> > this was never updated but it seems to use the same "framework" as the
-> > LGM driver
-> > with this in mind I am for keeping regmap support because.
-> > I think it will be easier to add support for old SoCs like
-> > GRX350/GRX550 (but also VRX200), because the PLL sub-driver (I am
-> > assuming that it is similar on all SoCs) or some other helpers can be
-> > re-used across various SoCs instead of "duplicating" code (where one
-> > variant would use regmap and the other readl/writel).
->
->
-> Earlier, we had discussed about it in our team.  There are no plans to
-> upstream mips based platform code, past up-streaming efforts for mips
-> platforms were also dropped. GRX350/GRX550/VRX200 are all mips
-> based platforms. Plan is to upstream only x86 based platforms. In-fact,
-> i had removed GRX & other older SoCs support from this driver before
-> sending for review. So we can consider only x86 based LGM family of
-> SoCs for this driver & all of them will be reusing same IP.
-this is very sad news
-as far as I can tell many IP cores are similar/identical on
-GRX350/GRX550, LGM and even VRX200
+If the clock node naming dependency is not understood, the related
+clockdomain is not found, or a wrong one can get used if a clock manager
+instance has multiple domains.
 
-I already know that VRX200 is a legacy product and you won't be supporting it
-once LGM support lands upstream you could add support for
-GRX350/GRX550 with small to medium effort
-that is a big win (in my opinion) because it means happier end-users
-(see XWAY and VRX200 support in OpenWrt for example: while support
-from Intel/Lantiq has died long ago these devices can still run a
-recent LTS kernel and get security updates. without OpenWrt these
-devices would probably end up as electronic waste)
+As each clkctrl instance represents a single clock domain with it's
+reg property describing the clocks available in that clock domain,
+we can simply use "reg-names" property for the clock domain.
 
-maybe implementing a re-usable regmap clock driver (for mux, gate and
-divider) means less effort (compared to converting everything to
-standard clock ops) for you.
-(we did the switch from standard clock ops to regmap for the Amlogic
-Meson clock drivers when we discovered that there were some non-clock
-registers that belong to other IP blocks in it and it was a lot of
-effort)
-this will allow you to add support for GRX350/GRX550 in the future if
-demand for upstream drivers rises.
+This simplifies things and removes the hidden dependency to the node
+name. And then later on, we should be able to drop the related code
+for parsing the node names.
 
+Let's also update the binding to use standard "clock" node naming
+instead of "clk".
 
-Martin
+Cc: devicetree@vger.kernel.org
+Cc: Rob Herring <robh+dt@kernel.org>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ Documentation/devicetree/bindings/clock/ti-clkctrl.txt |  6 +++++-
+ drivers/clk/ti/clkctrl.c                               | 10 ++++++++--
+ 2 files changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+--- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
++++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+@@ -20,15 +20,19 @@ Required properties :
+ - #clock-cells : shall contain 2 with the first entry being the instance
+ 		 offset from the clock domain base and the second being the
+ 		 clock index
++- reg : clock registers
++- reg-names : clock register names for the clock, should be same as the
++	      domain name
+ 
+ Example: Clock controller node on omap 4430:
+ 
+ &cm2 {
+ 	l4per: cm@1400 {
+ 		cm_l4per@0 {
+-			cm_l4per_clkctrl: clk@20 {
++			cm_l4per_clkctrl: clock@20 {
+ 				compatible = "ti,clkctrl";
+ 				reg = <0x20 0x1b0>;
++				reg-names = "l4_per";
+ 				#clock-cells = <2>;
+ 			};
+ 		};
+diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+--- a/drivers/clk/ti/clkctrl.c
++++ b/drivers/clk/ti/clkctrl.c
+@@ -446,6 +446,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 	struct clk_hw_omap *hw;
+ 	struct clk *clk;
+ 	struct omap_clkctrl_clk *clkctrl_clk;
++	const char *clkdm_name;
+ 	const __be32 *addrp;
+ 	u32 addr;
+ 	int ret;
+@@ -534,7 +535,12 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 
+ 	provider->base = of_iomap(node, 0);
+ 
+-	if (ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) {
++	ret = of_property_read_string_index(node, "reg-names", 0, &clkdm_name);
++	if (!ret) {
++		provider->clkdm_name = kasprintf(GFP_KERNEL, "%s_clkdm",
++						 clkdm_name);
++		goto clkdm_found;
++	} else if (ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) {
+ 		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
+ 		if (!provider->clkdm_name) {
+ 			kfree(provider);
+@@ -570,7 +576,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 			*c = '_';
+ 		c++;
+ 	}
+-
++clkdm_found:
+ 	INIT_LIST_HEAD(&provider->clocks);
+ 
+ 	/* Generate clocks */
+-- 
+2.23.0
