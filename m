@@ -2,49 +2,49 @@ Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D8BDC3A5A5
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:21:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E857C3A5A5
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5460120693
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:21:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 820C020825
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 10:24:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730633AbfIEKVO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Sep 2019 06:21:14 -0400
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:44194 "EHLO
+        id S1732467AbfIEKYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 06:24:22 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:41558 "EHLO
         mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726175AbfIEKVN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 06:21:13 -0400
-Received: by mail-qt1-f193.google.com with SMTP id u40so2089482qth.11;
-        Thu, 05 Sep 2019 03:21:13 -0700 (PDT)
+        with ESMTP id S1730973AbfIEKYW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 06:24:22 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j10so2116417qtp.8;
+        Thu, 05 Sep 2019 03:24:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=W9ASHhPKpQsIU9mZBi7LyeVQlq2CQJ2Nfa0cGg2cxjU=;
-        b=gqfY4PmwVDxruCWQzhbyPxIwP/7yT85hzCcnRhXJc4Cwlw2UGO3c+PpUqxkV91858F
-         jznwKHR3baPoA5Ybq0KpWV8bGVFH/sS72nGK0EvwxxaD6RVgz9eb/AZpKKGMLnB1lCZd
-         /hMYiwps1WJLujsUMGNJlxe4SozjmbqKea1IDKuyLlp0cu17G6ahhF2ElwhOnamutE5k
-         r+s0Nh+Z1ikv35v50oRuWhLlgUBSJV6IHshQRbfxOEBYrZHg4aohLzcNqloDacm4EBsa
-         kZhwBeBozcXudXmX6AqYOswh696bLcpeIMO5sxon7/JKinIjRTKBb2uaoOU/bEZe7h6J
-         QmaQ==
-X-Gm-Message-State: APjAAAXX4xUqtWO/CfGA6QUsIe0agIcNfLounfjyDhqsWNdnNh8zLO3d
-        4tUrZvCESQQGw0Kmo4huXFkO4NUZeMOz0Z4tTkY=
-X-Google-Smtp-Source: APXvYqw66BDokdBxyKl2ZBebLXBdM0Uc+EDEJXEwWO/OOdpU9zSB4XfPNlLYUumfYtGYq8zDk75S62/byvrXBZWShig=
-X-Received: by 2002:ac8:32ec:: with SMTP id a41mr2625217qtb.18.1567678872786;
- Thu, 05 Sep 2019 03:21:12 -0700 (PDT)
+        bh=BTvF8zjGmq/0EMeGlHa1T87FqGqS6SItRz22+XKCJwU=;
+        b=j1oRRml530b3Pg29tRbCvLM5uEQv6NFHoEINS2vN6d0/tjKSvRFAgi65R/il6z2j5P
+         xZ7SLHu0TIHVwSZziA+g3iCp6kRfBGUisIVtTyyZ2RSZVrcFZu22YbaFBbC43+j8V7gc
+         x4y+rzSbE3nGYZ6mdVWBQyEH1fsgFj8CEabsuzO0bJggEsb3r5uhZF725LXLL05PfW1L
+         AhmZeHKIQMx/mIMRWLkvdbKnIyvC+OZbNS6CtG55PAkozONnPIhCr6YxHTa33Xu25WsV
+         n1l2RLtVEvN0NU4ARYJUGf8ET6pZ+X5pPaiSfmd3eswqvNjxjyklmvXHGsDLa1uWDIvZ
+         BjDQ==
+X-Gm-Message-State: APjAAAVgKvU9tNFkZZFmvgNATE81F0jcbt8i9W5kUKlCPSyvbkXRYHmQ
+        9Z0kHg9gQug2vqfnmnhLlA8FIcCItqk56uNYExM=
+X-Google-Smtp-Source: APXvYqxkEWxnSb9+QHBkg5tCdGDmyuWzLiorsbR4YMGIMMSACe2z+j0WfCG2ir1sARPeqZ2V1OnVrbTAvXqPisM4J/U=
+X-Received: by 2002:ac8:32ec:: with SMTP id a41mr2636284qtb.18.1567679060868;
+ Thu, 05 Sep 2019 03:24:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190830220743.439670-14-lkundrak@v3.sk> <201909021510.0g4L7Wva%lkp@intel.com>
-In-Reply-To: <201909021510.0g4L7Wva%lkp@intel.com>
+References: <20190830220743.439670-1-lkundrak@v3.sk>
+In-Reply-To: <20190830220743.439670-1-lkundrak@v3.sk>
 From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 5 Sep 2019 12:20:56 +0200
-Message-ID: <CAK8P3a1kpRcmTW0hH7-9vd4SiJjEuTMRPb6Kb06LSiRj0AGd8A@mail.gmail.com>
-Subject: Re: [PATCH v3 13/16] ARM: mmp: move cputype.h to include/linux/soc/
-To:     kbuild test robot <lkp@intel.com>
-Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+Date:   Thu, 5 Sep 2019 12:24:04 +0200
+Message-ID: <CAK8P3a0Jq93AVYau_7odZz73ZL22buVCveiHoC6oGf=Oy6KEKQ@mail.gmail.com>
+Subject: Re: [PATCH v3 00/16] Initial support for Marvell MMP3 SoC
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     "To : Olof Johansson" <olof@lixom.net>,
         Mark Rutland <mark.rutland@arm.com>,
         DTML <devicetree@vger.kernel.org>,
         Jason Cooper <jason@lakedaemon.net>,
@@ -53,8 +53,7 @@ Cc:     Lubomir Rintel <lkundrak@v3.sk>,
         Michael Turquette <mturquette@baylibre.com>,
         Russell King <linux@armlinux.org.uk>,
         Kishon Vijay Abraham I <kishon@ti.com>,
-        "Cc : Rob Herring" <robh+dt@kernel.org>, kbuild-all@01.org,
-        "To : Olof Johansson" <olof@lixom.net>,
+        "Cc : Rob Herring" <robh+dt@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         linux-clk <linux-clk@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>
@@ -64,26 +63,21 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 2, 2019 at 10:16 AM kbuild test robot <lkp@intel.com> wrote:
-
+On Sat, Aug 31, 2019 at 12:08 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
 >
-> vim +5 include/linux/soc/mmp/cputype.h
+> this is the third spin of a patch set that adds support for the Marvell
+> MMP3 processor, that I'd eventually love to see land in the Arm SoC
+> tree. MMP3 is used in OLPC XO-4 laptops, Panasonic Toughpad FZ-A1 tablet
+> and Dell Wyse 3020/Tx0D thin clients.
 >
-> 49cbe78637eb05 arch/arm/mach-mmp/include/mach/cputype.h Eric Miao 2009-01-20  4
-> 49cbe78637eb05 arch/arm/mach-mmp/include/mach/cputype.h Eric Miao 2009-01-20 @5  #include <asm/cputype.h>
-> 49cbe78637eb05 arch/arm/mach-mmp/include/mach/cputype.h Eric Miao 2009-01-20  6
->
+> Compared to v2, there's a handful of fixes in response to reviews. Four
+> irqchip patches have been removed because they've been applied to the
+> irqchip-next tree. Details in individual patches.
 
-You can probably do something like
+I just looked at the series, looks great overall, but the timing means
+this is going to be 5.5 material by now. Please send a pull request
+to soc@kernel.org cc:lakml after -rc1 is out.
 
-#ifdef CONFIG_ARM
-#include <asm/cputype.h>
-#else
-static inline read_cpuid_id(void) { return 0; }
-#endif
-
-Then again, ideally drivers don't even have to know about this,
-but would distinguish between devices based on the
-compatible string for the particular device.
+I replied with a couple of comments for details I noticed.
 
        Arnd
