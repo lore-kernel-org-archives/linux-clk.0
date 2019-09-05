@@ -1,148 +1,141 @@
-Return-Path: <SRS0=96bN=W7=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=zpb1=XA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5776DC3A59E
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 22:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECDF9C3A5AB
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 07:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 290B420674
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Sep 2019 22:52:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567637526;
-	bh=KjjsNXmfU6/bVaHxOLwPlulfnpjobE+eKeHoWxDEmgo=;
-	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
-	b=KTOKAkzstBGiHzoo4/mgMLA1exH+nOB6/B9X89T8XXndxbZPD9e4PLk1WotQ3js34
-	 QerqUkTlpSCi5thZ6Z/cIz1Zl3aERTdKunHcW5+wa5IP0SiyBYhrlxl14QcFXdD7fo
-	 bWstVGr4vYzDPfaFUadnM3MqQlzXu7jgKc+D7Dp4=
+	by mail.kernel.org (Postfix) with ESMTP id C33BA2339D
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Sep 2019 07:30:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Kv5HIPYV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725965AbfIDWwF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Sep 2019 18:52:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39956 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728072AbfIDWwF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Sep 2019 18:52:05 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7289420674;
-        Wed,  4 Sep 2019 22:52:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567637524;
-        bh=KjjsNXmfU6/bVaHxOLwPlulfnpjobE+eKeHoWxDEmgo=;
-        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=eTeUD43/+KlrzCmj7/FXDFZAenuM2vYKiXs6HKBozuDJXMvJpT5WofiSnVORRqOQl
-         BJu4ApZF1BvUn8Uf15jcHF/Hv7FUyTlTt6b5AiH4/zo4vXRlJLI7Pq813Hfv3iex82
-         pZtVxstmOtqtrhbyXfVe5YUGqNZvLMdz2W5tbe5s=
-Content-Type: text/plain; charset="utf-8"
+        id S1732030AbfIEHaq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Sep 2019 03:30:46 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37292 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731641AbfIEHaq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Sep 2019 03:30:46 -0400
+Received: by mail-wr1-f68.google.com with SMTP id i1so828073wro.4
+        for <linux-clk@vger.kernel.org>; Thu, 05 Sep 2019 00:30:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UrUg55b04dM+yl9nRPJPjzzhoddXyzVLDYekdXcQSgc=;
+        b=Kv5HIPYVfI9PgdgwlCV07ZyFJgXqw7sq2+0Vh5bvfl+bSA4H2DjB6yuku9I/09UJw0
+         c7wiE0Ah5S4Fwoi9aBtWJH9SA4mfKNahb4AgmRQ8aZPo9BWBWuINo1P0Tn7z4hJ+4o1s
+         m9aEA88V6xZZlC5r+OqaJE0phxLyFQx9G2JkUi6cTgFXGyHk7dyWzV6kVkwQsDV1KUBY
+         TvfJiDilT5QL7nboF06DNKSjOH+13DXqo4K76QFFXnFY+3lzNTkOCb27liOVWBjTBcwN
+         2cuANjLSloAdEcbrbP/5EwasNynZDopVKktayAkqiU9ZOqJSJblQ4qdOTzyJwGtq4u6k
+         IPrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UrUg55b04dM+yl9nRPJPjzzhoddXyzVLDYekdXcQSgc=;
+        b=lA/aIzwaYmkRAQmpKLUeus6w3lfJ7KJobNk9S8djegZURFT0KBAj4q1mByz83nhbE3
+         7DRtpy1LMO8IBwKK5BboM7a1kn4z1E2zv5xV0B2NXceoSoQWj+DSXXAnTbpYUvxGvi8j
+         2ftJ3+zyEh6qNMj+jp6yIz9rFY1lWvL5ru9lQyR5HjXPrLSEdLakaXNZs3ROnca3s9m1
+         vnyJOwTAknj9KnxxXWx6AfpbcVSK7IPkkCSo6SKm00KAZn7sm666LJYRFVtllMJreJsK
+         UCkin3TshK93fstJPQrRKWJ8mtoW0mTvwoqDR6LUC4Ix25kaWjA6zR3ZLYuTa+BND609
+         uC2g==
+X-Gm-Message-State: APjAAAXqbHVI3qGbpzjF1nV5kf7Tq7oBVGmJD82d2OrV2R7ltli5SnoQ
+        /bbR/yNkmNrYRUCaadRPTTKEpw==
+X-Google-Smtp-Source: APXvYqxH10enx77PdMtYP8D35eEzL9IT8FWMAW4RDBDvOLJ+k8dnLJcHq1w5oeNLhxbZDZ5naLBEdQ==
+X-Received: by 2002:adf:f20f:: with SMTP id p15mr1376482wro.17.1567668644139;
+        Thu, 05 Sep 2019 00:30:44 -0700 (PDT)
+Received: from [192.168.1.6] (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id j26sm3633386wrd.2.2019.09.05.00.30.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 05 Sep 2019 00:30:43 -0700 (PDT)
+Subject: Re: [PATCH 1/5] clk: qcom: gcc: limit GPLL0_AO_OUT operating
+ frequency
+To:     sboyd@kernel.org, agross@kernel.org, mturquette@baylibre.com
+Cc:     bjorn.andersson@linaro.org, niklas.cassel@linaro.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org>
+From:   Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+Message-ID: <f2e43da9-2d31-e8d5-83d2-77020e85e2a7@linaro.org>
+Date:   Thu, 5 Sep 2019 09:30:42 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jsgpivjbu.fsf@starbuckisacylon.baylibre.com>
-References: <20190828102012.4493-1-jbrunet@baylibre.com> <20190828102012.4493-5-jbrunet@baylibre.com> <20190828221529.026C522DA7@mail.kernel.org> <1jy2zcv3nd.fsf@starbuckisacylon.baylibre.com> <20190829171743.577932173E@mail.kernel.org> <1jsgpivjbu.fsf@starbuckisacylon.baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC 4/5] clk: add placeholder for clock internal data
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 04 Sep 2019 15:52:03 -0700
-Message-Id: <20190904225204.7289420674@mail.kernel.org>
+In-Reply-To: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-08-30 07:06:29)
-> On Thu 29 Aug 2019 at 10:17, Stephen Boyd <sboyd@kernel.org> wrote:
->=20
-> > Quoting Jerome Brunet (2019-08-29 00:20:38)
-> >> On Wed 28 Aug 2019 at 15:15, Stephen Boyd <sboyd@kernel.org> wrote:
-> >>=20
-> >> > Quoting Jerome Brunet (2019-08-28 03:20:11)
-> >> >> Add placeholder in clock core to save per clock data.
-> >> >> Such placeholder could use for clock doing memory allocation in .in=
-it().
-> >> >> It may also be useful for the save/restore_context() callbacks.
-> >> >>=20
-> >> >> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> >> >> ---
-> >> >>  drivers/clk/clk.c            | 13 +++++++++++++
-> >> >>  include/linux/clk-provider.h |  2 ++
-> >> >>  2 files changed, 15 insertions(+)
-> >> >>=20
-> >> >> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> >> >> index c703aa35ca37..aa77a2a98ea4 100644
-> >> >> --- a/drivers/clk/clk.c
-> >> >> +++ b/drivers/clk/clk.c
-> >> >> @@ -83,6 +83,7 @@ struct clk_core {
-> >> >>         struct hlist_node       debug_node;
-> >> >>  #endif
-> >> >>         struct kref             ref;
-> >> >> +       void                    *priv;
-> >> >
-> >> > Why? We have container structures around clk_hw that can be used to
-> >> > store data and clk_ops that should know to deref said clk_hw pointer=
- in
-> >> > some way to access that data.
-> >>=20
-> >> This simple addition give a placeholder to each clock instance that is
-> >> hosted under the clock core so we know it can only be accesed from this
-> >> particular instance. Seems like a better fit for runtime data, such as
-> >> saved context.
-> >>=20
-> >> It gives a way to avoid mixing the clock description and its runtime
-> >> data. In the end, It would be nice if the clock description part could
-> >> be made const.
-> >>=20
-> >> This is a (fairly usual) way to do it=20
-> >
-> > Maybe you can provide an example or usage? Is that the last patch in
-> > this series?
->=20
-> Yes, I thought that was in my cover letter
->=20
-> > I still don't quite understand why we need this.
-> >
-> > I imagine that if you wanted to have a const description part you could
-> > have a container structure around the clk_hw struct
-> >
-> >       struct my_clk_foo {
-> >               const struct clk_description *desc;
-> >               <runtime modifiable members>;
-> >               struct clk_hw hw;
-> >       };
-> >
-> > Did I miss something?
->=20
-> Not really. As with all C code, there are many way to do things.
-> Your way could work, mine too.
->=20
-> As explained in the previous mail, what I propose guaranteed to specific
-> to each clock instance. It's a fairly usual and simple way to give a
-> placeholder to the instance of something.
->=20
-> Things gets complicated with your way if the clock declaration uses
-> static data and there there multiple instance of it.
->=20
-> In the end that was merely a suggestion, so let's spend to much time on
-> this. If don't want it, that's fine. I'll just drop it.
+On 8/26/19 18:45, Jorge Ramirez-Ortiz wrote:
+> Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
+> specifications.
+> 
+> Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 8 ++++++++
+>  drivers/clk/qcom/clk-alpha-pll.h | 1 +
+>  drivers/clk/qcom/gcc-qcs404.c    | 2 +-
+>  3 files changed, 10 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index 055318f97991..9228b7b1f56e 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -878,6 +878,14 @@ static long clk_trion_pll_round_rate(struct clk_hw *hw, unsigned long rate,
+>  	return clamp(rate, min_freq, max_freq);
+>  }
+>  
+> +const struct clk_ops clk_alpha_pll_fixed_ops = {
+> +	.enable = clk_alpha_pll_enable,
+> +	.disable = clk_alpha_pll_disable,
+> +	.is_enabled = clk_alpha_pll_is_enabled,
+> +	.recalc_rate = clk_alpha_pll_recalc_rate,
+> +};
+> +EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_ops);
+> +
+>  const struct clk_ops clk_alpha_pll_ops = {
+>  	.enable = clk_alpha_pll_enable,
+>  	.disable = clk_alpha_pll_disable,
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+> index 15f27f4b06df..c28eb1a08c0c 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.h
+> +++ b/drivers/clk/qcom/clk-alpha-pll.h
+> @@ -109,6 +109,7 @@ struct alpha_pll_config {
+>  };
+>  
+>  extern const struct clk_ops clk_alpha_pll_ops;
+> +extern const struct clk_ops clk_alpha_pll_fixed_ops;
+>  extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+>  extern const struct clk_ops clk_alpha_pll_postdiv_ops;
+>  extern const struct clk_ops clk_alpha_pll_huayra_ops;
+> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+> index e12c04c09a6a..567140709c7d 100644
+> --- a/drivers/clk/qcom/gcc-qcs404.c
+> +++ b/drivers/clk/qcom/gcc-qcs404.c
+> @@ -330,7 +330,7 @@ static struct clk_alpha_pll gpll0_ao_out_main = {
+>  			.parent_names = (const char *[]){ "cxo" },
+>  			.num_parents = 1,
+>  			.flags = CLK_IS_CRITICAL,
+> -			.ops = &clk_alpha_pll_ops,
+> +			.ops = &clk_alpha_pll_fixed_ops,
+>  		},
+>  	},
+>  };
+> 
 
-Ok. I see that this is how the meson clk driver does clk_regmap structs.
-I agree that if the same data exists for many clks then having a pointer
-to that data instead of duplicating it is good for saving space, but
-that sort of detail can still be put into a void *data member of the
-wrapper structure(s) and then passed to some function that knows the
-type of the data that's the same. It may require writing a few more
-functions to unwrap the data member out of the wrapper struct though so
-having a data member of the clk_hw or clk_core pointer may be useful to
-make "polymorphic" code that just knows that the data member is some
-particular type and can operate on that generically without having to
-unwrap the container for each different type.
-
-TL;DR is I'm half convinced that this is a good approach to solving that
-sort of problem.
-
+just a quick follow up, is this series being picked-up?
