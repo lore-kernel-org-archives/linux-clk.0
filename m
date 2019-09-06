@@ -2,129 +2,66 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0415AC43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 22:03:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48022C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 22:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5F3820838
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 22:03:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE1720854
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 22:23:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567807389;
-	bh=JYOTkYYE3g9CREcW4Rr1oQgc7T/eq+7DhhZhFapLkq8=;
+	s=default; t=1567808623;
+	bh=bZdcjHRTRictQKuKHROlwLDaTmKRAORwUFoQbRhpj28=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=Nw0euoQ+cdQRkULR11xfIBG2irSJ76iNXJIA3hU81+l96VVIPVBSqBrzs3+Q1uiE4
-	 f4R0CrLJSkLla9bPA2hXS0DyoXyrCAXtCmIx8oFWxAoN8uWRbs3bxNQHW1MrUEgFcL
-	 Y5hClbO0VL1MiVvXq5wO0Iq75YmPW6MpYmCskNso=
+	b=zBHr5358a3NnsNmu2hC20w4beifT5/SDMpZLPNQ3sJmTz6OB6KbCm2tT3ujS4nJhg
+	 gCmu6yUoiKlSnaV5LU19Q23e0DPdohBJn1ITuDKnR0tlU/Y7Cumni8L3UC0iOIr6M3
+	 Tbq2c3biWMaVzQPTo4yr4MWJ5NV7osDtmx8ugZEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391700AbfIFWDJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 18:03:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49728 "EHLO mail.kernel.org"
+        id S2392091AbfIFWXm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 18:23:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390045AbfIFWDJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 18:03:09 -0400
+        id S2391961AbfIFWXm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 18:23:42 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C8742081B;
-        Fri,  6 Sep 2019 22:03:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E63C2207FC;
+        Fri,  6 Sep 2019 22:23:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567807388;
-        bh=JYOTkYYE3g9CREcW4Rr1oQgc7T/eq+7DhhZhFapLkq8=;
+        s=default; t=1567808622;
+        bh=bZdcjHRTRictQKuKHROlwLDaTmKRAORwUFoQbRhpj28=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=sP6sCyo5xiItbKXA2QHUtl2blDkXsni7Mgxs4uuomLLMvb2Eib+I1px0DIRy7OMUA
-         UzF5N1e9CJMlOgYUX0zcdjUxVoFEs5v/AZNeGj2DTaDvv4xNlGDr4ESI+s57DvxZD6
-         JT2HajE5DVqfglx5YrEaoDDuPkkASHqo80KmRetU=
+        b=DZ6igBgMOMpRoIV4Lq6HqTpdhr2Z7iGqIkhs8+ySpg6iV9iUejH5iUEkMTxD4A0VZ
+         aX9iy9LAUaxyqPWfQJdUPXtfHMOGVO8gpngAezv1MyZ1MD0b+z3A/JWBNGzQFDC8JY
+         HQ3HdZ14sHe6zjmvhx7iYeToJ8rKdCyCLnTCCKzg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CACPK8Xf3C36KMgDmmRtNFqVFHzZx81ko+=54PA4+d5xPitum3g@mail.gmail.com>
-References: <20190816155806.22869-1-joel@jms.id.au> <20190816155806.22869-3-joel@jms.id.au> <20190816171441.3B8F720665@mail.kernel.org> <CACPK8Xf3C36KMgDmmRtNFqVFHzZx81ko+=54PA4+d5xPitum3g@mail.gmail.com>
-To:     Joel Stanley <joel@jms.id.au>
+In-Reply-To: <20190825141848.17346-2-joel@jms.id.au>
+References: <20190825141848.17346-1-joel@jms.id.au> <20190825141848.17346-2-joel@jms.id.au>
+To:     Joel Stanley <joel@jms.id.au>,
+        Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Ryan Chen <ryan_chen@aspeedtech.com>,
-        Andrew Jeffery <andrew@aj.id.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-Subject: Re: [PATCH 2/2] clk: Add support for AST2600 SoC
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH v2 1/2] clk: aspeed: Move structures to header
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 15:03:07 -0700
-Message-Id: <20190906220308.6C8742081B@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 15:23:41 -0700
+Message-Id: <20190906222341.E63C2207FC@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Joel Stanley (2019-08-18 19:03:54)
-> On Fri, 16 Aug 2019 at 17:14, Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Joel Stanley (2019-08-16 08:58:06)
-> > > +static const char * const vclk_parent_names[] =3D {
-> >
-> > Can you use the new way of specifying clk parents instead of just using
-> > strings?
+Quoting Joel Stanley (2019-08-25 07:18:47)
+> They will be reused by the ast2600 driver.
 >=20
-> How does this work? I had a browse of the APIs in clk-provider.h and
-> it appeared the functions all take char *s still.
+> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> ---
 
-Sorry I didn't reply earlier. I'm going to write a kernel-doc to
-describe how to write a "modern" clk driver which should hopefully help
-here.
-
-The gist is that you can fill out a clk_parent_data array or a clk_hw
-array and set the .name and .fw_name and .index in the clk_parent_data
-array to indicate which clks to get from the DT node's "clocks" and
-"clock-names" properties.
-
->=20
-> > > +       hw =3D clk_hw_register_fixed_factor(NULL, "ahb", "hpll", 0, 1=
-, axi_div * ahb_div);
-
-Take this one for example. If 'hpll' is actually a clk_hw pointer in
-hand, then you could do something like:
-
-	clk_hw_register_fixed_factor_parent_hw(NULL, "ahb", &hpll, 0, 1, axi_div *=
- ahb_div);
-
-And if it's something like a clock from DT you could do
-
-	struct clk_parent_data pdata =3D {
-		.name =3D "hpll",
-		.fw_name =3D <clock-names string>,
-		.index =3D <whatever clock index it is>
-	};
-
-	clk_hw_register_fixed_factor_parent_data(NULL, "ahb", &pdata, 0, 1, axi_di=
-v * ahb_div);
-
-I haven't actually written the clk_hw_register_fixed_factor_*() APIs,
-because I'm thinking that it would be better to register the pdata with
-some more parameters so that the
-clk_hw_register_fixed_factor_parent_data() API becomes more like:
-
-	clk_hw_register_fixed_factor_parent_data(NULL, "ahb", "hpll",
-		<clock-names string>, <whatever clock index it is>, 0, 1,
-		axi_div * ahb_div);
-
-Because there's only one parent. For the mux clk it will be a pointer to
-parent_data because I don't see a way around it.
-
-> >
-> > There aren't checks for if these things fail. I guess it doesn't matter
-> > and just let it fail hard?
->=20
-> I think that's sensible here. If the system has run out of memory this
-> early on then there's not going to be much that works.
->=20
-> Thanks for the review. I've fixed all of the style issues you
-> mentioned, but would appreciate some guidance on the parent API.
->=20
-
-Cool! Thanks.
+Applied to clk-next
 
