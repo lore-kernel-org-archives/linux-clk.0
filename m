@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14E37C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B1CC43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:21:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFDC720842
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:20:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3757208C3
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:21:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567790445;
-	bh=MqN/EtBkVnxG8eZiColGzmDCTwXUPyPh5+LpIVe0YG4=;
+	s=default; t=1567790506;
+	bh=ADje3siOrKc3kc72eJWckxUuVI+/07TKsbTBTdCEemg=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=SgXm9ppo53kS6e3fF9YWjqhmgH0ooqILah6zjnXNNlk3ABcpS+UnULbTvaHwrJNTz
-	 3M75lOXhyMetPTfbb1p4muXAWzJ7Ni2I+Z8eAxNhYGmMxWBzwYioDDBVky/2KVprte
-	 y3mmgreIYkyBu/KLuRFs08NjGQ0vzz1vn1l05GjI=
+	b=b2bMIQFFnbJ5a/VRCbBiz+omBvTIhbk2T354CGI+mEa/3oTa0t3d0gkXhbAqMRuMB
+	 00ZYYOBhBUivgxVEqoUb4qqYiN+LzAs5++BTVA10EpTlg/eZ3Vt9Rmd5A7zgRI8Upg
+	 gFmmL+eT23C4RPeAp7/LBweuaAIAPW7xWPwoGiTM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406041AbfIFRUp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 13:20:45 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35152 "EHLO mail.kernel.org"
+        id S1732082AbfIFRVq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 13:21:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbfIFRUp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:20:45 -0400
+        id S1729928AbfIFRVq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 13:21:46 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B99FB20838;
-        Fri,  6 Sep 2019 17:20:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAD3C20838;
+        Fri,  6 Sep 2019 17:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567790444;
-        bh=MqN/EtBkVnxG8eZiColGzmDCTwXUPyPh5+LpIVe0YG4=;
+        s=default; t=1567790505;
+        bh=ADje3siOrKc3kc72eJWckxUuVI+/07TKsbTBTdCEemg=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=CYozECqVpRrFJH2xvk6dZ4mN6OY4KecJUOzK1vGdSGMnbIKxRA8qh/Kc+LdHjTEx5
-         PUZXjE89eK7y1b+ifK4UXKqZC6DrG2/yezn1PYX7R3f5S+sw3IiAvYj3lL3oy5GVCa
-         FqYmivqaXH8/EfZQDELvYwg6vU0Xnas34hkqips0=
+        b=F6Gg7R7VzPr/ErhXep+secgJOYEBq4w1EPvGI9pGvgXLJyGo8svrm/oW7drg/3L4u
+         l3sPzoyhGbENPNLTSVFQLrEjB5xpS/XsulalWsinGBLJ2kG5JvxneKC7kQS/BDAewx
+         9I6tlGM8NyofUoWppoluz4rzEsTAz6npxf9yJ2Fk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
-References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1566855676-11510-1-git-send-email-peng.fan@nxp.com>
+References: <1566855676-11510-1-git-send-email-peng.fan@nxp.com>
 To:     "festevam@gmail.com" <festevam@gmail.com>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
         Peng Fan <peng.fan@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
@@ -57,28 +56,36 @@ Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
         Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
+Subject: Re: [PATCH V2 1/4] clk: imx: pll14xx: avoid glitch when set rate
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 10:20:43 -0700
-Message-Id: <20190906172044.B99FB20838@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 10:21:45 -0700
+Message-Id: <20190906172145.CAD3C20838@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (2019-08-27 01:17:50)
+Quoting Peng Fan (2019-08-26 02:42:14)
 > From: Peng Fan <peng.fan@nxp.com>
 >=20
-> There is hardware issue that:
-> The output clock the LPCG cell will not turn back on as expected,
-> even though a read of the IPG registers in the LPCG indicates that
-> the clock should be enabled.
+> According to PLL1443XA and PLL1416X spec,
+> "When BYPASS is 0 and RESETB is changed from 0 to 1, FOUT starts to
+> output unstable clock until lock time passes. PLL1416X/PLL1443XA may
+> generate a glitch at FOUT."
 >=20
-> The software workaround is to write twice to enable the LPCG clock
-> output.
+> So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.
+> In the end of set rate, BYPASS will be cleared.
 >=20
+> When prepare clock, also need to take care to avoid glitch. So
+> we also follow Spec to set BYPASS before RESETB changed from 0 to 1.
+> And add a check if the RESETB is already 0, directly return 0;
+>=20
+> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
 > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Does this need a Fixes tag?
+Please make cover letters for multi-patch series.
 
