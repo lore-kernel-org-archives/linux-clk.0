@@ -4,88 +4,88 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B1CC43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:21:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 140A6C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3757208C3
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:21:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D16B620842
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:24:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567790506;
-	bh=ADje3siOrKc3kc72eJWckxUuVI+/07TKsbTBTdCEemg=;
+	s=default; t=1567790693;
+	bh=VFA2y6aGSEi1O7IjtmDRuhV4iW9oDnoUYHFJr+NnkZw=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=b2bMIQFFnbJ5a/VRCbBiz+omBvTIhbk2T354CGI+mEa/3oTa0t3d0gkXhbAqMRuMB
-	 00ZYYOBhBUivgxVEqoUb4qqYiN+LzAs5++BTVA10EpTlg/eZ3Vt9Rmd5A7zgRI8Upg
-	 gFmmL+eT23C4RPeAp7/LBweuaAIAPW7xWPwoGiTM=
+	b=iiy+Qkep57dljoBWPeU4IetNKYDyDDEHgJLaWS9wOV9dIpjokg47FKjro/dxJuDzZ
+	 AFPuputNo1VEtclT6oDTahR5N/wv58N73+3wnk6M9B0VeRjwH9fkfPxoQKXT8jyYDP
+	 LfNAt0+7GM5StiW/V4d8aCbyN7m5VYTQUkLSUkfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732082AbfIFRVq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 13:21:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35514 "EHLO mail.kernel.org"
+        id S2388202AbfIFRYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 13:24:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729928AbfIFRVq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:21:46 -0400
+        id S1732247AbfIFRYx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 13:24:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAD3C20838;
-        Fri,  6 Sep 2019 17:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1ED620838;
+        Fri,  6 Sep 2019 17:24:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567790505;
-        bh=ADje3siOrKc3kc72eJWckxUuVI+/07TKsbTBTdCEemg=;
+        s=default; t=1567790692;
+        bh=VFA2y6aGSEi1O7IjtmDRuhV4iW9oDnoUYHFJr+NnkZw=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=F6Gg7R7VzPr/ErhXep+secgJOYEBq4w1EPvGI9pGvgXLJyGo8svrm/oW7drg/3L4u
-         l3sPzoyhGbENPNLTSVFQLrEjB5xpS/XsulalWsinGBLJ2kG5JvxneKC7kQS/BDAewx
-         9I6tlGM8NyofUoWppoluz4rzEsTAz6npxf9yJ2Fk=
+        b=2wTQ0bRk+dT5wClH2j/LUxzHRh/DqGD52/v9A6Ct++U/etB+2/+3zj5FvvNZCSqFB
+         vKsJpAU8WI43KaV3kjS3zqr7kwZL2KS9jiiANcjo2eqH+QL7lQhtad4nvReOwtFlvL
+         infNYS+DXT/9y0hmiCEmYGsUtd2SfQHXH3liB610=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1566855676-11510-1-git-send-email-peng.fan@nxp.com>
-References: <1566855676-11510-1-git-send-email-peng.fan@nxp.com>
-To:     "festevam@gmail.com" <festevam@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
+In-Reply-To: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
+References: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH V2 1/4] clk: imx: pll14xx: avoid glitch when set rate
+Cc:     Jacky Bai <ping.bai@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: imx: pll14xx: Fix quick switch of S/K parameter
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 10:21:45 -0700
-Message-Id: <20190906172145.CAD3C20838@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 10:24:51 -0700
+Message-Id: <20190906172452.D1ED620838@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (2019-08-26 02:42:14)
-> From: Peng Fan <peng.fan@nxp.com>
+Quoting Leonard Crestez (2019-09-04 02:49:18)
+> The PLL14xx on imx8m can change the S and K parameter without requiring
+> a reset and relock of the whole PLL.
 >=20
-> According to PLL1443XA and PLL1416X spec,
-> "When BYPASS is 0 and RESETB is changed from 0 to 1, FOUT starts to
-> output unstable clock until lock time passes. PLL1416X/PLL1443XA may
-> generate a glitch at FOUT."
+> Fix clk_pll144xx_mp_change register reading and use it for pll1443 as
+> well since no reset+relock is required on K changes either.
 >=20
-> So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.
-> In the end of set rate, BYPASS will be cleared.
->=20
-> When prepare clock, also need to take care to avoid glitch. So
-> we also follow Spec to set BYPASS before RESETB changed from 0 to 1.
-> And add a check if the RESETB is already 0, directly return 0;
->=20
-> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 > ---
+>  drivers/clk/imx/clk-pll14xx.c | 40 +++++++----------------------------
+>  1 file changed, 8 insertions(+), 32 deletions(-)
+>=20
+> The PLLs are currently table-based and none of the entries differ only
+> in S/K so further work would be required to make use of this. The
+> prospective user is audio doing tiny freq adjustments and there is no
+> standard API for that.
 
-Please make cover letters for multi-patch series.
+sub-Hz adjustments?
+
+>=20
+> Lacking users is not a good reason to carry broken code around.
+
+Maybe add a Fixes tag so if anyone wants to use it in LTS kernels there
+might be a chance that they'll find this patch mention code they're
+using.
 
