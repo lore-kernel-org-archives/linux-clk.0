@@ -2,123 +2,90 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0AE9C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 13:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F46C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 16:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05AF206B8
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 13:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="okyLbWdR"
+	by mail.kernel.org (Postfix) with ESMTP id 2D0D8214E0
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 16:15:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1567786545;
+	bh=nzpbbhBSmOBAmMXGnpeFdp3Gxx5EYYTyVWH8el0aL8Q=;
+	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
+	b=2e51iDgbnQuElPfuJxU31nPtIn1I4/5qGS9IwgQ/qxLfqS1sJmjeOxF7IXaiV0O1x
+	 tXBGF2l01PHYkW3GIo2AykRZjr/UUGJrCAYfGCr41MSyLCVcXUaPSPbOoAziQAX+cU
+	 Ouy/Usd8EGse3blFMTT1P5givIkf7MdXtNCO3p8Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388097AbfIFN4w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 09:56:52 -0400
-Received: from mail-eopbgr70077.outbound.protection.outlook.com ([40.107.7.77]:23297
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2393775AbfIFN4w (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 09:56:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=fWYo6mMieaGocSK+hK7fVQsquCms/6rPQz4yORvjykSHkaio81rpCK6f+xUiWSXLxCWrvFLlSipx5WHCkh+Yuc0C10H+g9diVAzKicummw7dnweBtoBD7BHAeRXEIFOd4yCxy0buMGCsrVus5ScHkMWGMqL1h4smtDBXeX7xEYJU1TjwRs1LPwzcnFitYOCHDjL9HVYxfgkPN37Wx+AdGiV2+TQWjXBhF+b21fI4e1s8T6VNfA65rKTbOxG6JIdQl6eD+JqdXMe9ZphRPkx1TItdYqNwOrNz3S9b6yih2GdcBtfRCokqx2C3fqR1GNoSGUCvVFH5qAjFj6+PbB6rBQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BV8AXvmPi2NpjYYx3NCFbc2gJzv+RTNwfGRiU2PSHgM=;
- b=ZdcSa0fLSshKOZcEAnNNPZgKknWfkcLynBvhRpPY9O5kv3t1OaxkIxJtKB1nkj6i/Yy287VEb6McqjTOurBNzBlGtcj+UMOwCy/g7AOWn84w0T5LLhkqmgzhdOrLQso2j7zUSH7aEz8TTM2c+aEoETAE7YXmhhZ/y0ypwqikC3ROmfUWY3BQEdOncXttaa7vkkQ/d//a9XdUIDkjrNgodtkZ8VUucDs7dvWAujo7jNZ9Vd+7Lcyy4nFIh/ItERASUuaek9usHfH/lRCd03LhUXg9hkndnL5C9KlXEpkVZf1y1ygF5H/Q0tV2tNgOVlSsvMkBVKcXKNZPaS+0Q+wsHA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=BV8AXvmPi2NpjYYx3NCFbc2gJzv+RTNwfGRiU2PSHgM=;
- b=okyLbWdRMWCYJYS6Au4+MwLQH0oFAztsMg8mPkFMuD50BNEVVSGMJ9m7fVJkuNENq7nqN/ceGwcegdwSUd8648ANSJFM8mww3btVp0rdxXDxEzl85Mt/sv017Tym4WS+8v/X791qPCj1d8tlJy2lFLrhNI+aHO4Jzoo/Grnnfes=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB5040.eurprd04.prod.outlook.com (20.177.50.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2220.19; Fri, 6 Sep 2019 13:56:47 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2241.018; Fri, 6 Sep 2019
- 13:56:47 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Anson Huang <anson.huang@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Peng Fan <peng.fan@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Fancy Fang <chen.fang@nxp.com>,
-        "S.j. Wang" <shengjiu.wang@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH V2 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure
- to common place
-Thread-Topic: [PATCH V2 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure
- to common place
-Thread-Index: AQHVZFNWfQl41vmmtkmNMXjVtPmV0A==
-Date:   Fri, 6 Sep 2019 13:56:47 +0000
-Message-ID: <VI1PR04MB702336953B1C7E0E2212A10BEEBA0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1567776846-6373-1-git-send-email-Anson.Huang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [89.37.124.34]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: c8a027d9-1839-476a-dab8-08d732d20f15
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB5040;
-x-ms-traffictypediagnostic: VI1PR04MB5040:|VI1PR04MB5040:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB5040BC7B6244C72D8243B88BEEBA0@VI1PR04MB5040.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2201;
-x-forefront-prvs: 0152EBA40F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(346002)(376002)(136003)(39860400002)(189003)(199004)(3846002)(316002)(110136005)(81156014)(76176011)(8936002)(14454004)(25786009)(8676002)(71190400001)(71200400001)(81166006)(478600001)(6506007)(53546011)(186003)(102836004)(54906003)(6116002)(256004)(99286004)(4326008)(26005)(4744005)(74316002)(305945005)(66446008)(64756008)(66556008)(91956017)(2906002)(7696005)(2201001)(6246003)(7736002)(76116006)(66476007)(66946007)(66066001)(86362001)(476003)(53936002)(33656002)(446003)(2501003)(44832011)(486006)(55016002)(9686003)(7416002)(52536014)(5660300002)(6436002)(229853002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5040;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Y0dkITIiQR6VZOwohP5/lqfs0kgrmt3SBiIDEIFjNwGvZKOCgGn5VesYmDqmWL2ZdT5bdA0hlCCMCVaPtX88AEfkvDcQgYXVTBHQhW2+rq97Bt1DUt2/qRYQ4iBBkuI3/Cf7ZNNwfJaLlxJr0jrcLoUetF1iGmibct3ZuawUkuLvlSnpEJAoV2F9owbVUJ8IVPVutHgRcHDE651vL4rlBUBVQs8bOW5+GWsEkYVvmh0tixI8KIYA2d9cjFg7OENOksTm/2VFZ3j4rb/dChR81ebrcIFYpjUdMxvLF38ohP4PPpHSKtdfn2LP4I9VheeY8MGegXZ+7n26/aAdpKmK2hQCmk17/b9yWM/vAA1wWLdU2RBjwch5H9d2jtFyrZ5Vu9QrvGcDO2XQe6dtavMgnXhLXuELvPjPFQTupNyRqig=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729565AbfIFQPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 12:15:44 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40984 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729557AbfIFQPo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 12:15:44 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB392206CD;
+        Fri,  6 Sep 2019 16:15:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1567786544;
+        bh=nzpbbhBSmOBAmMXGnpeFdp3Gxx5EYYTyVWH8el0aL8Q=;
+        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
+        b=z1OU2ibJ+oTyuLLjGPF/BUO1Rmst309Xfaqq5zkH8i70Ar5LMTHqRbYPBAt1LaMyY
+         P3Gx6nSWJT/7SqrC5XpDCWB/uv5UkWkxun60FyYkc24Bl2B01Ea/QG0NRYlS/UQSjW
+         uOuXu6P3PGtVDpkBdcmiD4LRnsJoOYHDogm5lEZQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8a027d9-1839-476a-dab8-08d732d20f15
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Sep 2019 13:56:47.1954
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: d76E/ipb0rWGGWB/d6sFYek++/G+xqwJr5sbrZ2LoAl3sAZ4+F8Kh5hVgZV9eBY1M4xdSDcRh+wTkCexSDSBSw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5040
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ed1e3868-af4d-8141-2a04-202923715d06@ti.com>
+References: <20190828065929.32150-1-t-kristo@ti.com> <20190828065929.32150-5-t-kristo@ti.com> <20190829200515.AFB0622CEA@mail.kernel.org> <ed1e3868-af4d-8141-2a04-202923715d06@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-omap@vger.kernel.org, tony@atomide.com, s-anna@ti.com
+Subject: Re: [PATCHv2 4/6] clk: ti: clkctrl: add API to notify reset status
+User-Agent: alot/0.8.1
+Date:   Fri, 06 Sep 2019 09:15:43 -0700
+Message-Id: <20190906161543.EB392206CD@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06.09.2019 04:35, Anson Huang wrote:=0A=
-> Many i.MX8M SoCs use same 1443X/1416X PLL, such as i.MX8MM,=0A=
-> i.MX8MN and later i.MX8M SoCs, moving these PLL definitions=0A=
-> to pll14xx driver can save a lot of duplicated code on each=0A=
-> platform.=0A=
-> =0A=
-> Meanwhile, no need to define PLL clock structure for every=0A=
-> module which uses same type of PLL, e.g., audio/video/dram use=0A=
-> 1443X PLL, arm/gpu/vpu/sys use 1416X PLL, define 2 PLL clock=0A=
-> structure for each group is enough. >=0A=
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>=0A=
-=0A=
-For both:=0A=
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+Quoting Tero Kristo (2019-08-29 23:06:41)
+> On 29/08/2019 23:05, Stephen Boyd wrote:
+> > Quoting Tero Kristo (2019-08-27 23:59:27)
+> >> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> >> index e3e0a66a6ce2..47a0d1398c6f 100644
+> >> --- a/drivers/clk/ti/clkctrl.c
+> >> +++ b/drivers/clk/ti/clkctrl.c
+> >> @@ -680,3 +689,38 @@ u32 ti_clk_is_in_standby(struct clk *clk)
+> >>          return false;
+> >>   }
+> >>   EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
+> >> +
+> >> +/**
+> >> + * ti_clk_notify_resets - Notify the clock driver associated reset st=
+atus
+> >=20
+> > This is completely unused in this patch series. What's going on?
+>=20
+> This is needed by the OMAP reset driver. See:
+>=20
+> https://lwn.net/Articles/797597/
+>=20
+
+Ok. I decided to punt this topic forward to next release at the least.
+To clarify, TI is not special with regards to coordinating resets and
+clk enable/disable state. Every other silicon vendor has the same
+requirements and nobody is doing a good job at it.
+
+Please devise a way that avoids making a tight coupling between the clk
+driver and the reset driver in this way. Are the two in the same
+register space? Perhaps we need to combine the two drivers then. Or can
+this be implemented as a genpd that coordinates the resets and clk
+controls for various devices?
+
