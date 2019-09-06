@@ -2,90 +2,148 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B23C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 20:31:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF394C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 20:37:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5415F214E0
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 20:31:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E2872070C
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 20:37:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567801893;
-	bh=20grs7Gqqchzro5nWBOpPISHzAksfuflzl2AEwFrb5k=;
+	s=default; t=1567802259;
+	bh=kDvMHv3TwiSKK0oZRUf58uBDdc0xHs3w2kiIWMY/3gw=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=JInLcl+UdcTMVEDN9ZQ39zf1dZL1JuK4vnAwxbsmhJHrMO0OyO658gYRdZ7hWoVmQ
-	 oVa+6HdTRzpA5yr17mi7+QfKEcG/5EL8BiNuBpjQ637M1sfX3Pvq97XDwjNz6HQPpF
-	 gCmNDaHNbK1zbIpGc+tOe331FTa/fhD3cumfpKTQ=
+	b=NNApLHNnp0BakdxnGSuRaiyFkg/kc/A8DytcAilRSfeZczl68WvcBzancBEhe3799
+	 dQY1NhJYRHeDltuJvpLqMh/UmjxNAUzk2U+MBLeFTZ0IHaY2N9tdhTm9x6o95WeqTT
+	 wo6qV3OIVMykYjLhd17CMK/GUoblElAajcMX0Pdo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391161AbfIFUbc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 16:31:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46836 "EHLO mail.kernel.org"
+        id S1727014AbfIFUhj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 16:37:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389915AbfIFUbc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 16:31:32 -0400
+        id S1726776AbfIFUhi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 16:37:38 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 936A22070C;
-        Fri,  6 Sep 2019 20:31:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59A592070C;
+        Fri,  6 Sep 2019 20:37:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567801891;
-        bh=20grs7Gqqchzro5nWBOpPISHzAksfuflzl2AEwFrb5k=;
+        s=default; t=1567802257;
+        bh=kDvMHv3TwiSKK0oZRUf58uBDdc0xHs3w2kiIWMY/3gw=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=eAKiu8m3HYdMJroSvMHGlkhEyU2OKcPdwxWQw4Jd+KimsSqXP1LxCkgYIkMx7ydY5
-         jv8AhiQjyaZNQf1sjsldTv+eGQcDR7xdJ6H9/+bXP8xuyPMhE/MaqCjK7tvBSQ3BpT
-         BE5j6/8OR/86cd7QooJ4JK7CXm5hGo2S9HyVx2Y8=
+        b=WWqyHesMUAZswloxpKHAI0z6/Z+5h29ewfO+UTbCpz1j9iooovd38PU0MYAoGHCNv
+         8RxWdekDWGOSQkTKcLDUL0KBne/fd0fLFrAF04KDkoU09n+F1xv2Lm+jg6v0ATlY8u
+         3TP+FL9hoo8JeeY9wBBmFTyN+DAEYsrs/bDNz/t0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAL_JsqLpVDJBh5qZwudncB8sggb85f3efqs1z9EA+zbVPWX++g@mail.gmail.com>
-References: <20190823131401.4011-1-govinds@codeaurora.org> <20190823131401.4011-2-govinds@codeaurora.org> <CAL_JsqLpVDJBh5qZwudncB8sggb85f3efqs1z9EA+zbVPWX++g@mail.gmail.com>
-To:     Govind Singh <govinds@codeaurora.org>,
-        Rob Herring <robh@kernel.org>
+In-Reply-To: <3c1c9285-1627-0b71-18aa-f3bc1f5286ca@ti.com>
+References: <20190828065929.32150-1-t-kristo@ti.com> <20190828065929.32150-5-t-kristo@ti.com> <20190829200515.AFB0622CEA@mail.kernel.org> <ed1e3868-af4d-8141-2a04-202923715d06@ti.com> <20190906161543.EB392206CD@mail.kernel.org> <3c1c9285-1627-0b71-18aa-f3bc1f5286ca@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:REMOTE PROCESSOR (REMOTEPROC) SUBSYSTEM" 
-        <linux-remoteproc@vger.kernel.org>
-Subject: Re: [PATCH_v3 1/2] dt-bindings: clock: qcom: Add QCOM Q6SSTOP clock controller bindings
+Cc:     linux-omap@vger.kernel.org, tony@atomide.com, s-anna@ti.com
+Subject: Re: [PATCHv2 4/6] clk: ti: clkctrl: add API to notify reset status
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 13:31:30 -0700
-Message-Id: <20190906203131.936A22070C@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 13:37:36 -0700
+Message-Id: <20190906203737.59A592070C@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rob Herring (2019-08-27 05:27:19)
-> On Fri, Aug 23, 2019 at 8:14 AM Govind Singh <govinds@codeaurora.org> wro=
-te:
-> >
-> > Add devicetree binding for the Q6SSTOP clock controller found in QCS404.
-> >
-> > Signed-off-by: Govind Singh <govinds@codeaurora.org>
-> > ---
-> >  .../bindings/clock/qcom,q6sstopcc.yaml        | 47 +++++++++++++++++++
-> >  1 file changed, 47 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,q6ssto=
-pcc.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yam=
-l b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
-> > new file mode 100644
-> > index 000000000000..39621e2e2f4e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,q6sstopcc.yaml
-> > @@ -0,0 +1,47 @@
-> > +# SPDX-License-Identifier: BSD-2-Clause
+Quoting Tero Kristo (2019-09-06 12:57:06)
+> On 06/09/2019 19:15, Stephen Boyd wrote:
+> > Quoting Tero Kristo (2019-08-29 23:06:41)
+> >> On 29/08/2019 23:05, Stephen Boyd wrote:
+> >>> Quoting Tero Kristo (2019-08-27 23:59:27)
+> >>>> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> >>>> index e3e0a66a6ce2..47a0d1398c6f 100644
+> >>>> --- a/drivers/clk/ti/clkctrl.c
+> >>>> +++ b/drivers/clk/ti/clkctrl.c
+> >>>> @@ -680,3 +689,38 @@ u32 ti_clk_is_in_standby(struct clk *clk)
+> >>>>           return false;
+> >>>>    }
+> >>>>    EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
+> >>>> +
+> >>>> +/**
+> >>>> + * ti_clk_notify_resets - Notify the clock driver associated reset =
+status
+> >>>
+> >>> This is completely unused in this patch series. What's going on?
+> >>
+> >> This is needed by the OMAP reset driver. See:
+> >>
+> >> https://lwn.net/Articles/797597/
+> >>
+> >=20
+> > Ok. I decided to punt this topic forward to next release at the least.
+> > To clarify, TI is not special with regards to coordinating resets and
+> > clk enable/disable state. Every other silicon vendor has the same
+> > requirements and nobody is doing a good job at it.
+> >=20
+> > Please devise a way that avoids making a tight coupling between the clk
+> > driver and the reset driver in this way. Are the two in the same
+> > register space?
 >=20
-> Dual license please.
+> No, they do not share register space. One is under a PRM node, one is=20
+> under CM node, and there are multiple instances of each following each=20
+> other:
+>=20
+> prm-1
+> prm-2
+> prm-3
+
+So PRM is reset?
+
+>=20
+> ...
+>=20
+> cm-1
+> cm-2
+> cm-3
+
+And CM is clk?
+
+>=20
+> And the gap between PRM + CM nodes is multiple megabytes in register=20
+> space. To make things worse, there are some mutant CM nodes in the=20
+> middle of the PRM nodes on certain SoCs.
+
+Ok, sounds fair!
+
+>=20
+>   Perhaps we need to combine the two drivers then. Or can
+> > this be implemented as a genpd that coordinates the resets and clk
+> > controls for various devices?
+>=20
+> Generally, ti-sysc bus driver is the one doing the trick combining reset =
+
+> + clock handling. However, this is linked at the pm-runtime on device=20
+> level so it imposes certain sequencing due to way kernel PM is=20
+> implemented. Basically we can't enable the clocks + deassert reset for=20
+> remoteproc before the driver is able to load up the firmware for it.=20
+> Maybe if I add a custom genpd or just custom PM runtime for the=20
+> remoteprocs that would handle both clk + reset...
+>=20
+> Another potential change I can think of here is that I would add resets=20
+> property under the clkctrl nodes, and link them via DT handles. The=20
+> clock driver would get a handle to the reset controller, and query its=20
+> state via generic API instead of adding this custom one. I would still=20
+> need to add a separate custom API for telling the clocks that reset=20
+> controller is in place though... And this would still be a hard link=20
+> between reset + clocks.
+>=20
+> Do you think fully custom PM implementation would be better here which=20
+> would just control reset + clock signals directly?
 >=20
 
-Yes, please fix the binding.
+From what you're saying it sounds like a job for genpds. Maybe genpds
+aren't up to the task yet, but we want devices that have resets and clks
+going to them to manage the order of operations somehow without having
+to "lie" and say that the resets go to the clk controller when they
+don't (or vice versa).
 
