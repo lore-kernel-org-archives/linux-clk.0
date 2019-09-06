@@ -4,68 +4,77 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F133C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E2CC43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:30:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06337214DE
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E596520842
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:30:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567790877;
-	bh=aLRmPl43ZbLFE5HkFDGotmTtNfpnGumo9iTQkZUEWHA=;
+	s=default; t=1567791037;
+	bh=i1CVD4eeoDs3jI2oDy7B58p/ldJyg1fEXzVadkF+/ho=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=fYmMqIJO5XBcKavpvkohrzsnx2xrJg8TXHc2+nFMMgOOuakdj9tlFK+k1qWl7fqFR
-	 Q/DkzRaxbk4MSfnWewzALfe5ub+VYRC4cD8Zt7dRBxavinMrz1rl1QFvfzL+5gJG4F
-	 GTfP0qh+dK2DY4POqvmGThic3bvEATNHwdlBBSEY=
+	b=zymO26zLjB8W7/xnmzbje9Ym6jAIFM94CyLRhq7MWGtwJncjPckSZEnSQOhvoYmza
+	 OYJFVMiHJaNM5bbrwLkOqQwIP0j24kQVWafAWAIfEWcnSKqnd0WzSyysYp8EDEy7D6
+	 B9Ylk9Uwn3EEVMhFiZpgZIDARai0sKGqW591y9/w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388626AbfIFR14 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 13:27:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37208 "EHLO mail.kernel.org"
+        id S2395183AbfIFRag (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 13:30:36 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38014 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731974AbfIFR14 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:27:56 -0400
+        id S1732789AbfIFRag (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 13:30:36 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0146020838;
-        Fri,  6 Sep 2019 17:27:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE16520838;
+        Fri,  6 Sep 2019 17:30:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567790876;
-        bh=aLRmPl43ZbLFE5HkFDGotmTtNfpnGumo9iTQkZUEWHA=;
+        s=default; t=1567791035;
+        bh=i1CVD4eeoDs3jI2oDy7B58p/ldJyg1fEXzVadkF+/ho=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=NXeAVOXDmbDAR6b8gVPBLnnahqfeZNg6ihO6nSKugJCoA53yiqFcfp+s+i98IaPGi
-         FQuPIhtsTzbFZDerXuHHCUXk/+NUCuy+VNGEpNE59Ms9FXLGFAECSNE2elu0DUAkwG
-         geVPM/by/joxsfKwQGQgNW8B+DkbdVN48mt/wzSI=
+        b=YrGEIBTNgkBjx5GuhaHqy+wgb//ReGDHpTZUKwCygfqSMFfFJBuv43BH/lnRMCMHQ
+         DAJyo4qze6+djqt5qS5MwloqpXLLNNL1Evy2Kz7zgKalMT+sqGnoiXkIVoEwfB6Pnq
+         CMfLoNPj3oLg+kd4lLrsS1V3Fa4JiziCQaK2PYq8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190813085714.8079-1-nishkadg.linux@gmail.com>
-References: <20190813085714.8079-1-nishkadg.linux@gmail.com>
-To:     Nishka Dasgupta <nishkadg.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, vireshk@kernel.org
+In-Reply-To: <alpine.DEB.2.21.1908081809160.2995@hadrien>
+References: <alpine.DEB.2.21.1908081809160.2995@hadrien>
+To:     Jonas Gorski <jonas.gorski@gmail.com>,
+        Julia Lawall <julia.lawall@lip6.fr>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Nishka Dasgupta <nishkadg.linux@gmail.com>
-Subject: Re: [PATCH] clk: spear: Make structure i2s_sclk_masks constant
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        Michael Turquette <mturquette@baylibre.com>,
+        Philippe Mathieu-Daud?? <f4bug@amsat.org>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        linux-kernel@vger.kernel.org, kbuild-all@01.org
+Subject: Re: [PATCH] clk: fix devm_platform_ioremap_resource.cocci warnings
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 10:27:55 -0700
-Message-Id: <20190906172756.0146020838@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 10:30:34 -0700
+Message-Id: <20190906173035.BE16520838@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Nishka Dasgupta (2019-08-13 01:57:14)
-> Static structure i2s_sclk_masks, having type aux_clk_masks, is only used
-> when it is passed as the sixth argument to function clk_register_aux().
-> However, clk_register_aux() is defined with its sixth argument as const.
-> Hence i2s_sclk_masks is not modified by clk_register_aux, which is also
-> the only usage of the former. Therefore make i2s_sclk_masks constant as
-> it is never modified.
-> Issue found with Coccinelle.
+Quoting Julia Lawall (2019-08-08 09:10:53)
+> From: kbuild test robot <lkp@intel.com>
 >=20
-> Signed-off-by: Nishka Dasgupta <nishkadg.linux@gmail.com>
+> drivers/clk/bcm/clk-bcm63xx-gate.c:174:1-9: WARNING: Use devm_platform_io=
+remap_resource for hw -> regs
+>=20
+>  Use devm_platform_ioremap_resource helper which wraps
+>  platform_get_resource() and devm_ioremap_resource() together.
+>=20
+> Generated by: scripts/coccinelle/api/devm_platform_ioremap_resource.cocci
+>=20
+> Fixes: 1c099779c1e2 ("clk: add BCM63XX gated clock controller driver")
+> CC: Jonas Gorski <jonas.gorski@gmail.com>
+> Signed-off-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Julia Lawall <julia.lawall@lip6.fr>
 > ---
 
 Applied to clk-next
