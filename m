@@ -2,136 +2,197 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 333F2C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:00:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35D1DC43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081CD20578
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:00:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A1DF20842
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 17:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567789240;
-	bh=edmt0mWAVzMrncvBSTQ4sSM8tDFkQPsUZ6bHredUyAE=;
+	s=default; t=1567789606;
+	bh=1MVy/9wvLo71rdz2H0vA5KvrduoOOIPfzIlegAyfSlU=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=14oJz7LylVkrb9JnsvJ6a/IPF77iVVZ0oO3OkTGvfEusebzWM21Z99tbxS9/eQZXK
-	 8LX8ZdYsN/dUsn7rIh0Q/rCgrM0ff6Iup5SpPiPDjMXBfx+qqMV6l/d4yyua1C2thv
-	 F9EG1exwkon6Kw3NIYH/iyqbF4r0gDAyjzirlS/s=
+	b=BU8wErIO5GSqg1h3HSoThyKds6/lJTUseCY1ux6JyAfN7/Ft+thmPjx3ZRnEKhDSJ
+	 fJUvJj6WdT44Qu3+ng42d3gmL/HZRAQFH+IkIJgl6L10A//sl0LqdpS0x6ujvDWXKo
+	 lTY38vyNaXPMROVjHi7AbPOrrZOlmODgyRaiWoeg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388314AbfIFRAj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 13:00:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57638 "EHLO mail.kernel.org"
+        id S2405962AbfIFRGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 13:06:45 -0400
+Received: from mail.kernel.org ([198.145.29.99]:58758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727816AbfIFRAj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 13:00:39 -0400
+        id S2405919AbfIFRGo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 13:06:44 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7271720693;
-        Fri,  6 Sep 2019 17:00:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B310F20578;
+        Fri,  6 Sep 2019 17:06:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567789238;
-        bh=edmt0mWAVzMrncvBSTQ4sSM8tDFkQPsUZ6bHredUyAE=;
+        s=default; t=1567789603;
+        bh=1MVy/9wvLo71rdz2H0vA5KvrduoOOIPfzIlegAyfSlU=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=VOiJ/CZaGT0AlatZpumHMBvaMiBcMzchXIfHDZjECNtalH9Q/tYgJwBBpJMH9j7Vu
-         vyt4vnSi8a9QhBbzQGl+cTeDrbvt1Wnh+XIoqmWAtE82Cy+YcE+/aJOxSLhg+vQUgQ
-         0yKMiTrlSt/+Fjs1U16kGKAL/gFjslxK7mLMMgkc=
+        b=Ikzc05jKmYatV4yREUdEP/9Pmh/p5WzKCjxeOD86TDmbuOFq8LJPPi8cBJmSP6x3y
+         glblaj5rJaR0HrHySzXehUMAvZK7V4mLVjYrmoP68kc2UkRZMuPAzJYUz2OSvEURIP
+         4wgQ8lQUx1t2rX2FLzYXynEk8zqHNZ4z1KYNJwdk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1566299605-15641-3-git-send-email-aisheng.dong@nxp.com>
-References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com> <1566299605-15641-3-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1566299605-15641-4-git-send-email-aisheng.dong@nxp.com>
+References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com> <1566299605-15641-4-git-send-email-aisheng.dong@nxp.com>
 To:     Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
         shawnguo@kernel.org, fabio.estevam@nxp.com, linux-imx@nxp.com,
-        kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
-Subject: Re: [PATCH V4 02/11] dt-bindings: clock: imx-lpcg: add support to parse clocks from device tree
+        kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>
+Subject: Re: [PATCH V4 03/11] clk: imx: scu: add two cells binding support
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 10:00:37 -0700
-Message-Id: <20190906170038.7271720693@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 10:06:42 -0700
+Message-Id: <20190906170643.B310F20578@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dong Aisheng (2019-08-20 04:13:16)
-> MX8QM and MX8QXP LPCG Clocks are mostly the same except they may reside
-> in different subsystems across CPUs and also vary a bit on the availabili=
-ty.
->=20
-> Same as SCU clock, we want to move the clock definition into device tree
-> which can fully decouple the dependency of Clock ID definition from device
-> tree and make us be able to write a fully generic lpcg clock driver.
->=20
-> And we can also use the existence of clock nodes in device tree to address
-> the device and clock availability differences across different SoCs.
->=20
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Sascha Hauer <kernel@pengutronix.de>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: devicetree@vger.kernel.org
-> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
-> ---
-
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-
-> ChangeLog:
-> v3->v4:
->  * change bit-offset property to clock-indices
->  * use constant macro to define clock indinces
->  * drop hw-autogate property which is still not used by drivers
-> v2->v3:
->  * no changes
-> v1->v2:
->  * Update example
->  * Add power domain property
-> ---
->  .../devicetree/bindings/clock/imx8qxp-lpcg.txt     | 36 ++++++++++++++++=
-++----
->  include/dt-bindings/clock/imx8-lpcg.h              | 14 +++++++++
->  2 files changed, 44 insertions(+), 6 deletions(-)
->  create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt b/D=
-ocumentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
-> index 965cfa4..cad8fc4 100644
-> --- a/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
-> +++ b/Documentation/devicetree/bindings/clock/imx8qxp-lpcg.txt
-> @@ -11,6 +11,21 @@ enabled by these control bits, it might still not be r=
-unning based
->  on the base resource.
+Quoting Dong Aisheng (2019-08-20 04:13:17)
+> diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+> index 5e2903e..1ad3f2a 100644
+> --- a/drivers/clk/imx/clk-imx8qxp.c
+> +++ b/drivers/clk/imx/clk-imx8qxp.c
+> @@ -134,7 +134,12 @@ static int imx8qxp_clk_probe(struct platform_device =
+*pdev)
+>                                 i, PTR_ERR(clks[i]));
+>         }
 > =20
->  Required properties:
-> +- compatible:          Should be one of:
-> +                         "fsl,imx8qxp-lpcg"
-> +                         "fsl,imx8qm-lpcg" followed by "fsl,imx8qxp-lpcg=
-".
-> +- reg:                 Address and length of the register set.
-> +- #clock-cells:                Should be 1. One LPCG supports multiple c=
-locks.
-> +- clocks:              Input parent clocks phandle array for each clock.
-> +- clock-indices:       An integer array indicating the bit offset for ea=
-ch clock.
-> +                       Refer to <include/dt-bindings/clock/imx8-lpcg.h> =
-for the
-> +                       supported LPCG clock indices.
+> -       return of_clk_add_hw_provider(ccm_node, of_clk_hw_onecell_get, cl=
+k_data);
+> +       if (clock_cells =3D=3D 2)
 
-This is an interesting solution.
+Can you just read this from the DT node again instead of having a global
+variable called "clock_cells" for this?
 
-> +- clock-output-names:  Shall be the corresponding names of the outputs.
-> +                       NOTE this property must be specified in the same =
-order
-> +                       as the clock-indices property.
-> +- power-domains:       Should contain the power domain used by this cloc=
-k.
+> +               ret =3D of_clk_add_hw_provider(ccm_node, imx_scu_of_clk_s=
+rc_get, imx_scu_clks);
+> +       else
+> +               ret =3D of_clk_add_hw_provider(ccm_node, of_clk_hw_onecel=
+l_get, clk_data);
 > +
-> +Legacy binding (DEPRECATED):
->  - compatible:  Should be one of:
->                   "fsl,imx8qxp-lpcg-adma",
->                   "fsl,imx8qxp-lpcg-conn",
+> +       return ret;
+>  }
+> =20
+>  static const struct of_device_id imx8qxp_match[] =3D {
+> diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
+> index fbef740..48bfb08 100644
+> --- a/drivers/clk/imx/clk-scu.c
+> +++ b/drivers/clk/imx/clk-scu.c
+> @@ -16,6 +19,21 @@
+>  #define IMX_SIP_SET_CPUFREQ            0x00
+> =20
+>  static struct imx_sc_ipc *ccm_ipc_handle;
+> +struct device_node *pd_np;
+> +u32 clock_cells;
+> +
+> +struct imx_scu_clk_node {
+> +       const char *name;
+> +       u32 rsrc;
+> +       u8 clk_type;
+> +       const char * const *parents;
+> +       int num_parents;
+> +
+> +       struct clk_hw *hw;
+> +       struct list_head node;
+> +};
+> +
+> +struct list_head imx_scu_clks[IMX_SC_R_LAST];
+> =20
+>  /*
+>   * struct clk_scu - Description of one SCU clock
+> @@ -128,9 +146,29 @@ static inline struct clk_scu *to_clk_scu(struct clk_=
+hw *hw)
+>         return container_of(hw, struct clk_scu, hw);
+>  }
+> =20
+> -int imx_clk_scu_init(void)
+> +int imx_clk_scu_init(struct device_node *np)
+>  {
+> -       return imx_scu_get_handle(&ccm_ipc_handle);
+> +       struct platform_device *pd_dev;
+> +       int ret, i;
+> +
+> +       ret =3D imx_scu_get_handle(&ccm_ipc_handle);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (of_property_read_u32(np, "#clock-cells", &clock_cells))
+> +               return -EINVAL;
+> +
+> +       if (clock_cells =3D=3D 2) {
+> +               for (i =3D 0; i < IMX_SC_R_LAST; i++)
+> +                       INIT_LIST_HEAD(&imx_scu_clks[i]);
+> +
+> +               pd_np =3D of_find_compatible_node(NULL, NULL, "fsl,scu-pd=
+");
+> +               pd_dev =3D of_find_device_by_node(pd_np);
+> +               if (!pd_dev || !device_is_bound(&pd_dev->dev))
+> +                       return -EPROBE_DEFER;
+
+Do you need to put some nodes here with of_node_put() one failure or
+when they're done being used?
+
+> +       }
+> +
+> +       return 0;
+>  }
+> =20
+>  /*
+> @@ -387,3 +425,99 @@ struct clk_hw *__imx_clk_scu(const char *name, const=
+ char * const *parents,
+[...]
+> +
+> +struct clk_hw *imx_clk_scu_alloc_dev(const char *name,
+> +                                    const char * const *parents,
+> +                                    int num_parents, u32 rsrc_id, u8 clk=
+_type)
+> +{
+> +       struct imx_scu_clk_node clk =3D {
+> +               .name =3D name,
+> +               .rsrc =3D rsrc_id,
+> +               .clk_type =3D clk_type,
+> +               .parents =3D parents,
+> +               .num_parents =3D num_parents,
+> +       };
+> +       struct platform_device *pdev;
+> +       int ret;
+> +
+> +       pdev =3D platform_device_alloc(name, PLATFORM_DEVID_NONE);
+> +       if (!pdev) {
+> +               pr_err("%s: failed to allocate scu clk dev rsrc %d type %=
+d\n",
+> +                      name, rsrc_id, clk_type);
+> +               return ERR_PTR(-ENOMEM);
+> +       }
+> +
+> +       ret =3D platform_device_add_data(pdev, &clk, sizeof(clk));
+> +       if (ret) {
+> +               platform_device_put(pdev);
+> +               return ERR_PTR(-ENOMEM);
+
+Why not ERR_PTR(ret)?
+
+> +       }
+> +
+> +       pdev->driver_override =3D "imx-scu-clk";
+> +
+> +       ret =3D imx_clk_scu_attach_pd(&pdev->dev, rsrc_id);
+> +       if (ret)
+> +               pr_warn("%s: failed to attached the power domain %d\n",
+> +                       name, ret);
+> +
+> +       platform_device_add(pdev);
+> +
+> +       /* For API backwards compatiblilty, simply return NULL for succes=
+s */
+> +       return NULL;
+> +}
