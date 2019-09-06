@@ -3,89 +3,87 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F46C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 16:15:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9E3C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 16:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D0D8214E0
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 16:15:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F1E4720842
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 16:56:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567786545;
-	bh=nzpbbhBSmOBAmMXGnpeFdp3Gxx5EYYTyVWH8el0aL8Q=;
+	s=default; t=1567789007;
+	bh=XLiSshmmIvhKSn19Y5Ycy0IjYyEkcV7i/Om32f9YTCs=;
 	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=2e51iDgbnQuElPfuJxU31nPtIn1I4/5qGS9IwgQ/qxLfqS1sJmjeOxF7IXaiV0O1x
-	 tXBGF2l01PHYkW3GIo2AykRZjr/UUGJrCAYfGCr41MSyLCVcXUaPSPbOoAziQAX+cU
-	 Ouy/Usd8EGse3blFMTT1P5givIkf7MdXtNCO3p8Y=
+	b=Ayg8BaMMH418KJ7I/SYAYvPHJvzvDuBfcC93y9yUGbs9pWXtiBbipNpym2Efkj+xJ
+	 R0ZDuCtTOpxr2ddCqVyrl7pGn1EanI3CFgOMRgF3isCsGhlVU7tDc8i02Q9f2Q8eu/
+	 GZYm89P0fGaNWUwmJZsBjfkFOEcasOF+nCgWP6q4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729565AbfIFQPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 12:15:44 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40984 "EHLO mail.kernel.org"
+        id S1727770AbfIFQ4q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 12:56:46 -0400
+Received: from mail.kernel.org ([198.145.29.99]:56896 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729557AbfIFQPo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 12:15:44 -0400
+        id S1727521AbfIFQ4q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 12:56:46 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB392206CD;
-        Fri,  6 Sep 2019 16:15:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9253120838;
+        Fri,  6 Sep 2019 16:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567786544;
-        bh=nzpbbhBSmOBAmMXGnpeFdp3Gxx5EYYTyVWH8el0aL8Q=;
+        s=default; t=1567789005;
+        bh=XLiSshmmIvhKSn19Y5Ycy0IjYyEkcV7i/Om32f9YTCs=;
         h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=z1OU2ibJ+oTyuLLjGPF/BUO1Rmst309Xfaqq5zkH8i70Ar5LMTHqRbYPBAt1LaMyY
-         P3Gx6nSWJT/7SqrC5XpDCWB/uv5UkWkxun60FyYkc24Bl2B01Ea/QG0NRYlS/UQSjW
-         uOuXu6P3PGtVDpkBdcmiD4LRnsJoOYHDogm5lEZQ=
+        b=zab+L7xreeoQiYiiP1PW139DUm9DwlukkoY/+5QLWhdMORo5KV9IbxytCew+5sS1y
+         3J39cU8ilrpAsoG7vxXWjbWlRIKvwErYmsgk2RO+QlbRv5/x4OZrBSMNDOG6fKPaGA
+         4KFkzBj2W8KmU/BpNetXaq2JRhioVGdDhaeKolB0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ed1e3868-af4d-8141-2a04-202923715d06@ti.com>
-References: <20190828065929.32150-1-t-kristo@ti.com> <20190828065929.32150-5-t-kristo@ti.com> <20190829200515.AFB0622CEA@mail.kernel.org> <ed1e3868-af4d-8141-2a04-202923715d06@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com
+In-Reply-To: <1566299605-15641-2-git-send-email-aisheng.dong@nxp.com>
+References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com> <1566299605-15641-2-git-send-email-aisheng.dong@nxp.com>
+To:     Dong Aisheng <aisheng.dong@nxp.com>, linux-clk@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-omap@vger.kernel.org, tony@atomide.com, s-anna@ti.com
-Subject: Re: [PATCHv2 4/6] clk: ti: clkctrl: add API to notify reset status
+Cc:     linux-arm-kernel@lists.infradead.org, mturquette@baylibre.com,
+        shawnguo@kernel.org, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        kernel@pengutronix.de, Dong Aisheng <aisheng.dong@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org
+Subject: Re: [PATCH V4 01/11] dt-bindings: firmware: imx-scu: new binding to parse clocks from device tree
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 09:15:43 -0700
-Message-Id: <20190906161543.EB392206CD@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 09:56:44 -0700
+Message-Id: <20190906165645.9253120838@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tero Kristo (2019-08-29 23:06:41)
-> On 29/08/2019 23:05, Stephen Boyd wrote:
-> > Quoting Tero Kristo (2019-08-27 23:59:27)
-> >> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> >> index e3e0a66a6ce2..47a0d1398c6f 100644
-> >> --- a/drivers/clk/ti/clkctrl.c
-> >> +++ b/drivers/clk/ti/clkctrl.c
-> >> @@ -680,3 +689,38 @@ u32 ti_clk_is_in_standby(struct clk *clk)
-> >>          return false;
-> >>   }
-> >>   EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
-> >> +
-> >> +/**
-> >> + * ti_clk_notify_resets - Notify the clock driver associated reset st=
-atus
-> >=20
-> > This is completely unused in this patch series. What's going on?
+Quoting Dong Aisheng (2019-08-20 04:13:15)
+> There's a few limitations on the original one cell clock binding
+> (#clock-cells =3D <1>) that we have to define some SW clock IDs for device
+> tree to reference. This may cause troubles if we want to use common
+> clock IDs for multi platforms support when the clock of those platforms
+> are mostly the same.
+> e.g. Current clock IDs name are defined with SS prefix.
 >=20
-> This is needed by the OMAP reset driver. See:
+> However the device may reside in different SS across CPUs, that means the
+> SS prefix may not valid anymore for a new SoC. Furthermore, the device
+> availability of those clocks may also vary a bit.
 >=20
-> https://lwn.net/Articles/797597/
+> For such situation, we want to eliminate the using of SW Clock IDs and
+> change to use a more close to HW one instead.
+> For SCU clocks usage, only two params required: Resource id + Clock Type.
+> Both parameters are platform independent. So we could use two cells bindi=
+ng
+> to pass those parameters,
 >=20
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Sascha Hauer <kernel@pengutronix.de>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: devicetree@vger.kernel.org
+> Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
 
-Ok. I decided to punt this topic forward to next release at the least.
-To clarify, TI is not special with regards to coordinating resets and
-clk enable/disable state. Every other silicon vendor has the same
-requirements and nobody is doing a good job at it.
-
-Please devise a way that avoids making a tight coupling between the clk
-driver and the reset driver in this way. Are the two in the same
-register space? Perhaps we need to combine the two drivers then. Or can
-this be implemented as a genpd that coordinates the resets and clk
-controls for various devices?
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
