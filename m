@@ -2,117 +2,148 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C761C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 19:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8288C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 19:57:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1001D20842
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 19:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACD7920854
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 19:57:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wBUgozjV"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="mMmnyTDK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387948AbfIFTzd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 15:55:33 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:37077 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727604AbfIFTzd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Sep 2019 15:55:33 -0400
-Received: by mail-pg1-f196.google.com with SMTP id d1so4093839pgp.4
-        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2019 12:55:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=SILWfPQITEzQzHWNNLecuPsDRy5q9AdLY606J6oClnY=;
-        b=wBUgozjV2S8FwyBnHvJQ+1gJgURTKSDVqB7Nk18Pu+Ns0WCRaD5Qz1xqHLWOA7FhJY
-         fuhfd+VqgDA9NJMzWrVNSDcverxN0exAISZIA2jQ+IDUnkodcEsxfHk+eBva5PEoYy7I
-         QFfnkstGkvjKIHGhF2+l1OeiFHLRf9r4pO81AgT8/5heWSnAEEHijMGKAxO7V4motirf
-         uUC8jFvNwLk8ijC4AjbV3ioYI9MPgORudTVCZ9aQX4bTsPwh44INcr3mxGyghgfJ34fM
-         2ozpSGNpCQH73XIgc4g1Q539+Y7x8bT9fc7jZVbPubLLyx1xNfYHiggH0ttniMxsfOJY
-         unbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SILWfPQITEzQzHWNNLecuPsDRy5q9AdLY606J6oClnY=;
-        b=GfsWUR8NKSVMTiYpseExfebblEE+pxmd6FmRFsDUVNRUgtKTlBBnyB1woG9/A59wxv
-         oEC6aCEX5LWTuNTeMI5VJYa2vdioIjtdta1p4hEF0Mt0P/MHKXj+7EL8caiATi6IAxyx
-         F0X9T9peKAEt5C7iREveZUh1RUmAtLVVl3tTl6XpbTp42z90Yva6KHPiU19PJX3sO6rz
-         zSH1QOT/iwhERDkVFr2cOazEYXeIBiJRLrHutlXGgxRCrnLCt/HS9RUG9UkQUlsX4O7d
-         CHzBHM88m30YQFOpELLjEa894v6MoIBiKiLLzkRiX7oNqz+NkCl8mE6lTZSmwfM6VbA5
-         eZsA==
-X-Gm-Message-State: APjAAAUN07fRIEz6yZDAdPaOgAl8F9BD7wSWXKUUhs2NEqvPEreuL3pN
-        d+2D4xZ62BxH56JgDefQuDVH9xIzMqs=
-X-Google-Smtp-Source: APXvYqwpEiMWv0H5jMTp38VaSKOOXBrv+k5VQce5ea6KjMiUXukVdvL3FUJXnkCRsGi8KsTeJve2hw==
-X-Received: by 2002:a17:90a:fc8d:: with SMTP id ci13mr11340584pjb.32.1567799732669;
-        Fri, 06 Sep 2019 12:55:32 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id v66sm7480460pfv.79.2019.09.06.12.55.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Sep 2019 12:55:32 -0700 (PDT)
-Date:   Fri, 6 Sep 2019 12:55:29 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Vinod Koul <vkoul@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: Use floor ops for sdcc clks
-Message-ID: <20190906195529.GF11938@tuxbook-pro>
-References: <20190906045659.20621-1-vkoul@kernel.org>
+        id S1731865AbfIFT5P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 15:57:15 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:32946 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726168AbfIFT5P (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Sep 2019 15:57:15 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x86JvAbZ100721;
+        Fri, 6 Sep 2019 14:57:10 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1567799830;
+        bh=jGgzEpvx2SwIlJaQUdrwySzNq4xTkSsm8n7VDLxniQE=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=mMmnyTDKHok3Du6q7TytGgAMNQEKU7dJzjrIW5EM5KZx4CA9yBMiLdNmgGW3KYlHx
+         RSfDKojiYTP4MhGM5C7OgTQvWMJDpC9igwdWCJsrA1F9JT9HJzQcq4Apa0tpgXWpjq
+         qC4VSWTbgG3uGkDWwZvicRj8mUAwi3Po8BK30bjk=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x86JvAcD021927
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 6 Sep 2019 14:57:10 -0500
+Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Fri, 6 Sep
+ 2019 14:57:09 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Fri, 6 Sep 2019 14:57:09 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x86Jv7U7062971;
+        Fri, 6 Sep 2019 14:57:08 -0500
+Subject: Re: [PATCHv2 4/6] clk: ti: clkctrl: add API to notify reset status
+To:     Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <mturquette@baylibre.com>
+CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>, <s-anna@ti.com>
+References: <20190828065929.32150-1-t-kristo@ti.com>
+ <20190828065929.32150-5-t-kristo@ti.com>
+ <20190829200515.AFB0622CEA@mail.kernel.org>
+ <ed1e3868-af4d-8141-2a04-202923715d06@ti.com>
+ <20190906161543.EB392206CD@mail.kernel.org>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <3c1c9285-1627-0b71-18aa-f3bc1f5286ca@ti.com>
+Date:   Fri, 6 Sep 2019 22:57:06 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906045659.20621-1-vkoul@kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <20190906161543.EB392206CD@mail.kernel.org>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 05 Sep 21:56 PDT 2019, Vinod Koul wrote:
+On 06/09/2019 19:15, Stephen Boyd wrote:
+> Quoting Tero Kristo (2019-08-29 23:06:41)
+>> On 29/08/2019 23:05, Stephen Boyd wrote:
+>>> Quoting Tero Kristo (2019-08-27 23:59:27)
+>>>> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+>>>> index e3e0a66a6ce2..47a0d1398c6f 100644
+>>>> --- a/drivers/clk/ti/clkctrl.c
+>>>> +++ b/drivers/clk/ti/clkctrl.c
+>>>> @@ -680,3 +689,38 @@ u32 ti_clk_is_in_standby(struct clk *clk)
+>>>>           return false;
+>>>>    }
+>>>>    EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
+>>>> +
+>>>> +/**
+>>>> + * ti_clk_notify_resets - Notify the clock driver associated reset status
+>>>
+>>> This is completely unused in this patch series. What's going on?
+>>
+>> This is needed by the OMAP reset driver. See:
+>>
+>> https://lwn.net/Articles/797597/
+>>
+> 
+> Ok. I decided to punt this topic forward to next release at the least.
+> To clarify, TI is not special with regards to coordinating resets and
+> clk enable/disable state. Every other silicon vendor has the same
+> requirements and nobody is doing a good job at it.
+> 
+> Please devise a way that avoids making a tight coupling between the clk
+> driver and the reset driver in this way. Are the two in the same
+> register space?
 
-> Update the gcc qcs404 clock driver to use floor ops for sdcc clocks. As
-> disuccsed in [1] it is good idea to use floor ops for sdcc clocks as we
-> dont want the clock rates to do round up.
-> 
-> [1]: https://lore.kernel.org/linux-arm-msm/20190830195142.103564-1-swboyd@chromium.org/
-> 
+No, they do not share register space. One is under a PRM node, one is 
+under CM node, and there are multiple instances of each following each 
+other:
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+prm-1
+prm-2
+prm-3
 
-> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> ---
->  drivers/clk/qcom/gcc-qcs404.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-> index e12c04c09a6a..bd32212f37e6 100644
-> --- a/drivers/clk/qcom/gcc-qcs404.c
-> +++ b/drivers/clk/qcom/gcc-qcs404.c
-> @@ -1057,7 +1057,7 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
->  		.name = "sdcc1_apps_clk_src",
->  		.parent_names = gcc_parent_names_13,
->  		.num_parents = 5,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->  	},
->  };
->  
-> @@ -1103,7 +1103,7 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
->  		.name = "sdcc2_apps_clk_src",
->  		.parent_names = gcc_parent_names_14,
->  		.num_parents = 4,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_floor_ops,
->  	},
->  };
->  
-> -- 
-> 2.20.1
-> 
+...
+
+cm-1
+cm-2
+cm-3
+
+And the gap between PRM + CM nodes is multiple megabytes in register 
+space. To make things worse, there are some mutant CM nodes in the 
+middle of the PRM nodes on certain SoCs.
+
+  Perhaps we need to combine the two drivers then. Or can
+> this be implemented as a genpd that coordinates the resets and clk
+> controls for various devices?
+
+Generally, ti-sysc bus driver is the one doing the trick combining reset 
++ clock handling. However, this is linked at the pm-runtime on device 
+level so it imposes certain sequencing due to way kernel PM is 
+implemented. Basically we can't enable the clocks + deassert reset for 
+remoteproc before the driver is able to load up the firmware for it. 
+Maybe if I add a custom genpd or just custom PM runtime for the 
+remoteprocs that would handle both clk + reset...
+
+Another potential change I can think of here is that I would add resets 
+property under the clkctrl nodes, and link them via DT handles. The 
+clock driver would get a handle to the reset controller, and query its 
+state via generic API instead of adding this custom one. I would still 
+need to add a separate custom API for telling the clocks that reset 
+controller is in place though... And this would still be a hard link 
+between reset + clocks.
+
+Do you think fully custom PM implementation would be better here which 
+would just control reset + clock signals directly?
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
