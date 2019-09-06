@@ -2,95 +2,97 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5534AC43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 04:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F2C1C43331
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 07:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B924207FC
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 04:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72DC72070C
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 07:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567745919;
-	bh=zvy0GlP/XHjEuOF/F5T+o2/beVvliDTkHocl2QsHJ3k=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=v79+O2hW15WaJoTLo9HtZuWPwRmFJkaOKdqRFE+FHAWiC09i0tV9XKP97KAuADagr
-	 2MxNHrSdZhm4XPUZ4P/ZYk4ezYdDOV0HUECv4EhSkk7dZa+XQz7ECFJpetbgdOwPSk
-	 xfBGTPlGHPTTQoOqU4GdaCqNPaS0z+fN8vsizOM8=
+	s=default; t=1567756368;
+	bh=winWBgL5TQGcDxGKWAnYQDvbmLb4EaB1sIi2qiT87RM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=SushsZYw2EHV7EWq7akcWEuq1GfgBTpDwmbIEVTuaJH+CDLuofllkkvcBWPSlmh5v
+	 /j07hIK5Gb+j6dQo6n2XSjGlDcKe+BtWoGUB1ZdRrUs7v2aSr1kX8VSSKZacp0wP/D
+	 gk19iWzrGIpfGqBOeLcjbDQdiFxjxbFOqjWdTrdc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729831AbfIFE6e (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 00:58:34 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40504 "EHLO mail.kernel.org"
+        id S1727604AbfIFHws (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 03:52:48 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725828AbfIFE6e (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 00:58:34 -0400
-Received: from localhost.localdomain (unknown [223.226.32.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1725290AbfIFHws (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 03:52:48 -0400
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F0185207FC;
-        Fri,  6 Sep 2019 04:58:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D010220842;
+        Fri,  6 Sep 2019 07:52:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567745914;
-        bh=zvy0GlP/XHjEuOF/F5T+o2/beVvliDTkHocl2QsHJ3k=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KVGNyYYGrvTmwGhJkMLriGQ05SwusBSDnYO01GzhuMgtRm/v/+7IVre9R3h8pJwEK
-         ynnk4hsd/OQDBLP2vNchDR0kbXfdp+hzSbG+A6f/0MWw3QZwEYtaWKs3C/+ba3fB7h
-         RxHLiOd4HoIcBdEGfYSAWpMKPVprgs8qQOx1k6w8=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc-qcs404: Use floor ops for sdcc clks
-Date:   Fri,  6 Sep 2019 10:26:59 +0530
-Message-Id: <20190906045659.20621-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
+        s=default; t=1567756367;
+        bh=winWBgL5TQGcDxGKWAnYQDvbmLb4EaB1sIi2qiT87RM=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=I3iTW5c2Sy3Jw3wH3U8rb8Ck6BcfVtTSx7cY9quGWXplqe9xYiY/t/Nf5QupucKIi
+         iUeiD70snyQwk4hk104xe5tiV4oH5Pw/Q75/xbvl7ljpqZ/lac5ciPTi3u1zolMh8b
+         TivWfpZrPerwQ+Cmmd6uuu7x8vFE6WEGFX38/GsU=
+Received: by mail-lj1-f170.google.com with SMTP id y23so4778124ljn.5;
+        Fri, 06 Sep 2019 00:52:46 -0700 (PDT)
+X-Gm-Message-State: APjAAAVaTFIB2zKjg6HVOLRw0kTq6ELq0kSLkZoRP0JgqawjiGnr9SsH
+        yMfCYh3DpfsKVyEi0LJeicKaubXlWeb4kYGzpBo=
+X-Google-Smtp-Source: APXvYqwlILqYRT4xGA2lf0NyhxXTFgqTN26f5VG4eIgJJFkGkypXCZxvH9/zNmt7h0mx2yp1J0eOPraYUnXRWZw8Ud8=
+X-Received: by 2002:a2e:8091:: with SMTP id i17mr4913713ljg.13.1567756364930;
+ Fri, 06 Sep 2019 00:52:44 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
+In-Reply-To: <CAF-0O_5TSO04M=0kdghhGKTs54QVEYn5mBh7e83EusFjS_Hg3Q@mail.gmail.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Fri, 6 Sep 2019 09:52:33 +0200
+X-Gmail-Original-Message-ID: <CAJKOXPdSmCbkUxbhuoEG8+0U_o1=heHrOeWjrddgy7bedN8Rag@mail.gmail.com>
+Message-ID: <CAJKOXPdSmCbkUxbhuoEG8+0U_o1=heHrOeWjrddgy7bedN8Rag@mail.gmail.com>
+Subject: Re: cpuidle big_little driver on Odroid-xu4
+To:     Jaafar Ali <jaafarkhalaf@gmail.com>
+Cc:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        kgene@kernel.org, sam@ravnborg.org, linux-clk@vger.kernel.org,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Update the gcc qcs404 clock driver to use floor ops for sdcc clocks. As
-disuccsed in [1] it is good idea to use floor ops for sdcc clocks as we
-dont want the clock rates to do round up.
+On Sun, 1 Sep 2019 at 15:19, Jaafar Ali <jaafarkhalaf@gmail.com> wrote:
+>
+> Dear Sylwester,
+> Kernel 5.3rc1
+> Hardware Odroid-XU4
+> cpuidle-big_little driver for exynos 5422 of odroid-xu3/4 is not working.
+> when I enable it in the defconfig , CONFIG_ARM_BIG_LITTLE_CPUIDLE=y,
+> the device will not boot and the heartbeat blue LED stops.
+> when the powerdown state[1] is removed form cpuidle-big_little driver
+> or the function bl_enter_powerdown is disabled by early return, the
+> kernel boots successfully and I can see cpuidle driver inside
+> /sys/devices/system/cpu/cpuidle/current_driver
+> both cpuidle-big_little power down state (exynos5420) and suspend
+> stuff are using mcpm_cpu_suspend() which in turn calls
+> mcpm_cpu_power_down() eventually.
+> while suspend stuff is working correctly and the cpu can
+> suspend/resume without problems, the cpuidle-bl is not working
+> the few difference between suspend.c and cpuidle-big_little that I
+> found are suspend.c do some more preparations such as storing resume
+> entry point "mcpm_entry_point" into S5P_INFORM0, reset
+> EXYNOS5420_CPU_STATE and save and restore some other registers.
+> Can we repeat the scenario of suspend in cpuidle-big_little
 
-[1]: https://lore.kernel.org/linux-arm-msm/20190830195142.103564-1-swboyd@chromium.org/
+Hi Jaafar,
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/gcc-qcs404.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thank you for the report. I am not sure whether big-little cpuidle was
+working properly before... (before v5.3-rc1) I added your report to
+https://exynos.wiki.kernel.org/todo_tasks
 
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index e12c04c09a6a..bd32212f37e6 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -1057,7 +1057,7 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
- 		.name = "sdcc1_apps_clk_src",
- 		.parent_names = gcc_parent_names_13,
- 		.num_parents = 5,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
-@@ -1103,7 +1103,7 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
- 		.name = "sdcc2_apps_clk_src",
- 		.parent_names = gcc_parent_names_14,
- 		.num_parents = 4,
--		.ops = &clk_rcg2_ops,
-+		.ops = &clk_rcg2_floor_ops,
- 	},
- };
- 
--- 
-2.20.1
-
+Best regards,
+Krzysztof
