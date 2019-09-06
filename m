@@ -2,68 +2,95 @@ Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CEF2C43331
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 22:23:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4E71C00307
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 23:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 130ED207FC
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 22:23:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567808630;
-	bh=7fWT4pSEpV668ptngcAoGmXNSeOFGFx6ayqh1U9b/uc=;
-	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
-	b=CPPnEax9AMuTL1lU8h68oKs/8fiygMPtn1UCFZxrJoVL6QN11pZWVFYn3i3iSygId
-	 bYI6LIsstjJ6zjhA1dtp9+rREzUD4rB/iCVevJPa1eGOuyB9yPlNCQC5qQJVRbZHVj
-	 n5CfhCjyUiZj4XDDnvU3jFP5nx4k+nTG8AOlL3bI=
+	by mail.kernel.org (Postfix) with ESMTP id 942D02173B
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 23:23:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JaPw67OA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392370AbfIFWXt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 18:23:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55834 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391961AbfIFWXt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 18:23:49 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04419214E0;
-        Fri,  6 Sep 2019 22:23:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567808629;
-        bh=7fWT4pSEpV668ptngcAoGmXNSeOFGFx6ayqh1U9b/uc=;
-        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
-        b=PcVCeOpwb38RDWS/yuj5NA6PzqfUXRkDLDdWnyHqWvGf+ibd3zRGHXkz+W5PI+Mi/
-         uQsMpsP4fmSBvZDsCFX2sxrmLFU0QaBs7hGaJzuUfm9PQIP57QxduygJsaYI5UMf8Q
-         yltad5HTkUhYeC0w5OhY+BKUvA026HZlDJ5p5wmc=
-Content-Type: text/plain; charset="utf-8"
+        id S2405224AbfIFXXw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 19:23:52 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39264 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390072AbfIFXXw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Sep 2019 19:23:52 -0400
+Received: by mail-wm1-f67.google.com with SMTP id q12so8739412wmj.4
+        for <linux-clk@vger.kernel.org>; Fri, 06 Sep 2019 16:23:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mipkxs/K3VQhxvIuUjc7V8qspofVUAqg0yqG9RDRrhA=;
+        b=JaPw67OAiUZvfpUlDcvnVfl7MJaj45DXVlS6fFKW0ZOB598Orgq1TgSx5pD4Y9OwwZ
+         rrvF/2B0uWVCmZcS2sChE03AJt/7jHrRwR71TuCquzTiCown6sm3kCPV41jYriy51yoB
+         k/vVV8l5S/NznpFNLRncX/ac1FPnSECemWAXiH6op/TUB4xTG7fd3CQffV4/YSTpxjrv
+         sNnJqykGtElHGgjGjolLHPgCG7YCWFCA8iy5Hrf0wmRk41IohU6/3yIVDKar19CU3pNP
+         ejiTyst6VrZX1jlt4TWh0bsUTmvORLoc1cvgflQ39VzVZ58ek1ShzuU3uLOX+s+fHop9
+         1fvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=mipkxs/K3VQhxvIuUjc7V8qspofVUAqg0yqG9RDRrhA=;
+        b=YmNUcL58wZHYcAGOI2CKPMD6y8y8LgE2objV1kFqW+Nzzurlb4J6pmMPEiTinzTPZr
+         IuTUeZ1gJCda2f7mbtK9ikUiT9tng6uwjNcD0Kpk6lyfgYSuQ6aieT7KxNh1gRPrlghb
+         m/shAXoCUyk1xFpCOUQxqnGv5QKlP9s9ACBin8+MYGROGVsuGbIKFScLz5EVCM0R56k6
+         ASP3jC2fHg8HLo6y0gdh/n1RZE5Car5bKR8ynKVQ3zeAHVd2+tfVRtP4waEQIp5HQTfT
+         nah6Z4ehfk8dSySu2qzInr58UAZcifq6nqN/W3U70sINJv+vQzapd2XSHkIp1/JcOoKS
+         m6GQ==
+X-Gm-Message-State: APjAAAUH0DmxxXsS7VvpZi8+lRo16QWF+ygO+E1nAvG34nrzEbx21DPc
+        oIDIucIe0E2dt1/88hvWpwoWoA==
+X-Google-Smtp-Source: APXvYqwqXkZWIKePDvL0sp5Ia/BhDsaQd11TDzBwPdj+Ow9E+ohcnQrkF5KKS1DAmx0ATOmylp+78Q==
+X-Received: by 2002:a1c:a796:: with SMTP id q144mr9295015wme.15.1567812230476;
+        Fri, 06 Sep 2019 16:23:50 -0700 (PDT)
+Received: from localhost.localdomain (124.red-83-36-179.dynamicip.rima-tde.net. [83.36.179.124])
+        by smtp.gmail.com with ESMTPSA id q66sm9254919wme.39.2019.09.06.16.23.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Fri, 06 Sep 2019 16:23:50 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: qcom: fix QCS404 TuringCC regmap
+Date:   Sat,  7 Sep 2019 01:23:46 +0200
+Message-Id: <20190906232346.8435-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190825141848.17346-3-joel@jms.id.au>
-References: <20190825141848.17346-1-joel@jms.id.au> <20190825141848.17346-3-joel@jms.id.au>
-To:     Joel Stanley <joel@jms.id.au>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
-Subject: Re: [PATCH v2 2/2] clk: Add support for AST2600 SoC
-User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 15:23:48 -0700
-Message-Id: <20190906222349.04419214E0@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Joel Stanley (2019-08-25 07:18:48)
-> The ast2600 is a new BMC SoC from ASPEED. It contains many more clocks
-> than the previous iterations, so support is broken out into it's own
-> driver.
->=20
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
-> ---
+The max register is 0x23004 as per the manual (the current
+max_register that this commit is fixing is actually out of bounds).
 
-Applied to clk-next
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
+ drivers/clk/qcom/turingcc-qcs404.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
+index aa859e6ec9bd..4cfbbf5bf4d9 100644
+--- a/drivers/clk/qcom/turingcc-qcs404.c
++++ b/drivers/clk/qcom/turingcc-qcs404.c
+@@ -96,7 +96,7 @@ static const struct regmap_config turingcc_regmap_config = {
+ 	.reg_bits	= 32,
+ 	.reg_stride	= 4,
+ 	.val_bits	= 32,
+-	.max_register	= 0x30000,
++	.max_register	= 0x23004,
+ 	.fast_io	= true,
+ };
+ 
+-- 
+2.23.0
 
