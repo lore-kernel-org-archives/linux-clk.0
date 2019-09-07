@@ -2,125 +2,81 @@ Return-Path: <SRS0=Yk8Z=XC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99610C43331
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 03:55:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F54C43331
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 07:50:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DBD221670
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 03:55:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC1842173B
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 07:50:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567828521;
-	bh=ouj8soGL/AW5IIZJSFR1lrkDv7ywyAdB6F1D/OVOLjQ=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=0e30HfHJ31qJRYuvgJoE156TwWqSF7oX/eV69HA/xw2dIYBf4NBjVfNC5TG7sd8OR
-	 I5NSmE3X6lMC/yHu4pw70z5T65/aOSYJc0tQEtlJ3n39D+L9s4mbSuLZ7S5k3xzFkZ
-	 dWPk42+S62f5NMTGUuJu99yawCxJEY9ehsbaOIMc=
+	s=default; t=1567842603;
+	bh=5pobKH5kpChuhb/hM732oKQFMLUdUp2FcOEoh5JNV+c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Y7zlGIea0bwSBQdDfQD6FdF1D8hLubC8zBrJgWAYBZm4hXZigevZKr4dvh/eHF/Z3
+	 hreqCKM++knZoDq/29f8ssODFw3Ax5kpi8IgWkoHVMCA36ffaJGzsXJeQFU1n3So9t
+	 eCC1MZKfHGMLhR6Gk0YbmmtGnHwDihcGQ87+WLYA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389919AbfIGDzU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 23:55:20 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46140 "EHLO mail.kernel.org"
+        id S2392000AbfIGHuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Sep 2019 03:50:02 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387398AbfIGDzU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 23:55:20 -0400
-Received: from kernel.org (unknown [104.132.0.74])
+        id S1726133AbfIGHuB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 7 Sep 2019 03:50:01 -0400
+Received: from localhost (unknown [223.226.124.26])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB40C208C3;
-        Sat,  7 Sep 2019 03:55:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 736AF2173B;
+        Sat,  7 Sep 2019 07:50:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567828519;
-        bh=ouj8soGL/AW5IIZJSFR1lrkDv7ywyAdB6F1D/OVOLjQ=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=NIl1Y9QDvnViM4pR0oe+PUjIOUt03KUh6XTfAvPFMqc6tX8lCAg0T4K/zybJBtmmz
-         fO4tM32F/JId5mwT5LsT4XeKeqRAR4fuwMLCxXgp7oGmJImUMtXd+crGJCATARotL5
-         PJygavkiisRoRjdVGK4kt76vPXeJHM1sv9DD76Vg=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1567842601;
+        bh=5pobKH5kpChuhb/hM732oKQFMLUdUp2FcOEoh5JNV+c=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=Y1RHYCWEnvXTeOyiRb38s1MMJsTSJ675b7qH4gEY1A5qMA6HuEMmxGvK20+MR5E3t
+         /RJ5n1WiwHrqbCs3QqOgBeozMtvICz1QmjXSn1iTKlkD9I7WLzgFljcU/iZtmZqghu
+         XPWi4Oi7/RAda5UVzirbaPHRsz1FNGneG6kxX78A=
+Date:   Sat, 7 Sep 2019 13:18:52 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-qcs404: Use floor ops for sdcc clks
+Message-ID: <20190907074852.GI2672@vkoul-mobl>
+References: <20190906045659.20621-1-vkoul@kernel.org>
+ <20190906203827.A2259208C3@mail.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190905215532.8357-1-tony@atomide.com>
-References: <20190905215532.8357-1-tony@atomide.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name with reg-names
-User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 20:55:18 -0700
-Message-Id: <20190907035518.EB40C208C3@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190906203827.A2259208C3@mail.kernel.org>
+User-Agent: Mutt/1.12.0 (2019-05-25)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2019-09-05 14:55:32)
-> We currently have a hidden dependency to the device tree node name for
-> the clkctrl clocks. Instead of using standard node name like "clock", we
-> must use "l4-per-clkctrl" naming so the clock driver can find the
+On 06-09-19, 13:38, Stephen Boyd wrote:
+> Quoting Vinod Koul (2019-09-05 21:56:59)
+> > Update the gcc qcs404 clock driver to use floor ops for sdcc clocks. As
+> > disuccsed in [1] it is good idea to use floor ops for sdcc clocks as we
+> > dont want the clock rates to do round up.
+> > 
+> > [1]: https://lore.kernel.org/linux-arm-msm/20190830195142.103564-1-swboyd@chromium.org/
+> > 
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> 
+> Is Taniya writing the rest? Please don't dribble it out over the next
+> few weeks!
 
-The node name is "clk" though.
+Taniya is Cced. Since I upstream qcs404 driver and have a board handy to
+test, did that :) 
 
-> associated clock domain. Further, if "clk" is specified for a clock node
-> name, the driver sets TI_CLK_CLKCTRL_COMPAT flag that uses different
-> logic with earlier naming for the clock node name.
->=20
-> If the clock node naming dependency is not understood, the related
-> clockdomain is not found, or a wrong one can get used if a clock manager
-> instance has multiple domains.
->=20
-> As each clkctrl instance represents a single clock domain with it's
-> reg property describing the clocks available in that clock domain,
-> we can simply use "reg-names" property for the clock domain.
->=20
-> This simplifies things and removes the hidden dependency to the node
-> name. And then later on, we should be able to drop the related code
-> for parsing the node names.
->=20
-> Let's also update the binding to use standard "clock" node naming
-> instead of "clk".
->=20
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->  Documentation/devicetree/bindings/clock/ti-clkctrl.txt |  6 +++++-
->  drivers/clk/ti/clkctrl.c                               | 10 ++++++++--
->  2 files changed, 13 insertions(+), 3 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Doc=
-umentation/devicetree/bindings/clock/ti-clkctrl.txt
-> --- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> @@ -20,15 +20,19 @@ Required properties :
->  - #clock-cells : shall contain 2 with the first entry being the instance
->                  offset from the clock domain base and the second being t=
-he
->                  clock index
-> +- reg : clock registers
-> +- reg-names : clock register names for the clock, should be same as the
-> +             domain name
-
-Is this necessary? I'd rather see that the names of the clks don't
-actually matter by means of connecting the clk tree through the "clocks"
-property when the parent clks are provided by external nodes and through
-direct pointers when they're within a controller. If that works then it
-should be possible to ignore this name in general?
-
-> =20
->  Example: Clock controller node on omap 4430:
-> =20
->  &cm2 {
->         l4per: cm@1400 {
->                 cm_l4per@0 {
-> -                       cm_l4per_clkctrl: clk@20 {
-> +                       cm_l4per_clkctrl: clock@20 {
->                                 compatible =3D "ti,clkctrl";
->                                 reg =3D <0x20 0x1b0>;
-> +                               reg-names =3D "l4_per";
->                                 #clock-cells =3D <2>;
->                         };
->                 };
+Thanks
+-- 
+~Vinod
