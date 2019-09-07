@@ -1,88 +1,126 @@
-Return-Path: <SRS0=yL/a=XB=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Yk8Z=XC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E05DC00307
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 23:48:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99610C43331
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 03:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3863F21670
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Sep 2019 23:48:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6DBD221670
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 03:55:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567813700;
-	bh=NSLywlCOcgcWPM52MbfyuhWTAOW2/4du9FX0KFp7RSI=;
+	s=default; t=1567828521;
+	bh=ouj8soGL/AW5IIZJSFR1lrkDv7ywyAdB6F1D/OVOLjQ=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=O/8gdNduRRFJr8GeclCjjsvWmd+Ujt3x0yS4vS8kHbVQH5OrA/5V+GB0XsPzw0vid
-	 YBQ3l1UZxrpU50NKN57lxeZ5mam59kzaEsj4X+yacBWOn6joJbvt7XydSllV9D5M2j
-	 Ek7/ZUY5SWVm/qny9txRkyOUvzkHSfRYGfF0eMVg=
+	b=0e30HfHJ31qJRYuvgJoE156TwWqSF7oX/eV69HA/xw2dIYBf4NBjVfNC5TG7sd8OR
+	 I5NSmE3X6lMC/yHu4pw70z5T65/aOSYJc0tQEtlJ3n39D+L9s4mbSuLZ7S5k3xzFkZ
+	 dWPk42+S62f5NMTGUuJu99yawCxJEY9ehsbaOIMc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406130AbfIFXsT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Sep 2019 19:48:19 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42622 "EHLO mail.kernel.org"
+        id S2389919AbfIGDzU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Sep 2019 23:55:20 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405441AbfIFXsT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Sep 2019 19:48:19 -0400
+        id S2387398AbfIGDzU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Sep 2019 23:55:20 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC0DA20842;
-        Fri,  6 Sep 2019 23:48:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EB40C208C3;
+        Sat,  7 Sep 2019 03:55:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567813699;
-        bh=NSLywlCOcgcWPM52MbfyuhWTAOW2/4du9FX0KFp7RSI=;
+        s=default; t=1567828519;
+        bh=ouj8soGL/AW5IIZJSFR1lrkDv7ywyAdB6F1D/OVOLjQ=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=KwtHGJhGEM4BfLeqXjbsZT07sFB7biEeHKuQ9ohRGYNIP+wMSmwfyp48kbdV4SUug
-         9M91UWABZNoGL2ftCmjs/VA0iuLyajB//EFiauZlmyBqMSnWqUAU5XYGAqo9yY+2fj
-         yelyGsFZ9lWHC9sKK4riqUF9SI/AwZEQtDSQvrHU=
+        b=NIl1Y9QDvnViM4pR0oe+PUjIOUt03KUh6XTfAvPFMqc6tX8lCAg0T4K/zybJBtmmz
+         fO4tM32F/JId5mwT5LsT4XeKeqRAR4fuwMLCxXgp7oGmJImUMtXd+crGJCATARotL5
+         PJygavkiisRoRjdVGK4kt76vPXeJHM1sv9DD76Vg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190830220743.439670-12-lkundrak@v3.sk>
-References: <20190830220743.439670-1-lkundrak@v3.sk> <20190830220743.439670-12-lkundrak@v3.sk>
-Cc:     "Cc : Rob Herring" <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-To:     "To : Olof Johansson" <olof@lixom.net>,
-        Lubomir Rintel <lkundrak@v3.sk>
+In-Reply-To: <20190905215532.8357-1-tony@atomide.com>
+References: <20190905215532.8357-1-tony@atomide.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 11/16] ARM: mmp: add support for MMP3 SoC
+Subject: Re: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name with reg-names
 User-Agent: alot/0.8.1
-Date:   Fri, 06 Sep 2019 16:48:18 -0700
-Message-Id: <20190906234818.EC0DA20842@mail.kernel.org>
+Date:   Fri, 06 Sep 2019 20:55:18 -0700
+Message-Id: <20190907035518.EB40C208C3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-08-30 15:07:38)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 801fa1cd03217..8bb2ac83a1fcc 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -301,6 +301,11 @@ config COMMON_CLK_STM32H7
->         ---help---
->           Support for stm32h7 SoC family clocks
+Quoting Tony Lindgren (2019-09-05 14:55:32)
+> We currently have a hidden dependency to the device tree node name for
+> the clkctrl clocks. Instead of using standard node name like "clock", we
+> must use "l4-per-clkctrl" naming so the clock driver can find the
+
+The node name is "clk" though.
+
+> associated clock domain. Further, if "clk" is specified for a clock node
+> name, the driver sets TI_CLK_CLKCTRL_COMPAT flag that uses different
+> logic with earlier naming for the clock node name.
+>=20
+> If the clock node naming dependency is not understood, the related
+> clockdomain is not found, or a wrong one can get used if a clock manager
+> instance has multiple domains.
+>=20
+> As each clkctrl instance represents a single clock domain with it's
+> reg property describing the clocks available in that clock domain,
+> we can simply use "reg-names" property for the clock domain.
+>=20
+> This simplifies things and removes the hidden dependency to the node
+> name. And then later on, we should be able to drop the related code
+> for parsing the node names.
+>=20
+> Let's also update the binding to use standard "clock" node naming
+> instead of "clk".
+>=20
+> Cc: devicetree@vger.kernel.org
+> Cc: Rob Herring <robh+dt@kernel.org>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  Documentation/devicetree/bindings/clock/ti-clkctrl.txt |  6 +++++-
+>  drivers/clk/ti/clkctrl.c                               | 10 ++++++++--
+>  2 files changed, 13 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Doc=
+umentation/devicetree/bindings/clock/ti-clkctrl.txt
+> --- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+> +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
+> @@ -20,15 +20,19 @@ Required properties :
+>  - #clock-cells : shall contain 2 with the first entry being the instance
+>                  offset from the clock domain base and the second being t=
+he
+>                  clock index
+> +- reg : clock registers
+> +- reg-names : clock register names for the clock, should be same as the
+> +             domain name
+
+Is this necessary? I'd rather see that the names of the clks don't
+actually matter by means of connecting the clk tree through the "clocks"
+property when the parent clks are provided by external nodes and through
+direct pointers when they're within a controller. If that works then it
+should be possible to ignore this name in general?
+
 > =20
-> +config COMMON_CLK_MMP2
-> +       def_bool COMMON_CLK && (MACH_MMP2_DT || MACH_MMP3_DT)
-
-Does it need to depend on COMMON_CLK? I thought that by being part of
-the menuconfig (even if it's a hidden symbol) mean that it wouldn't be
-evaulated unless the COMMON_CLK define is =3DY.
-
-> +       help
-> +         Support for Marvell MMP2 and MMP3 SoC clocks
-> +
->  config COMMON_CLK_BD718XX
->         tristate "Clock driver for ROHM BD718x7 PMIC"
->         depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
+>  Example: Clock controller node on omap 4430:
+> =20
+>  &cm2 {
+>         l4per: cm@1400 {
+>                 cm_l4per@0 {
+> -                       cm_l4per_clkctrl: clk@20 {
+> +                       cm_l4per_clkctrl: clock@20 {
+>                                 compatible =3D "ti,clkctrl";
+>                                 reg =3D <0x20 0x1b0>;
+> +                               reg-names =3D "l4_per";
+>                                 #clock-cells =3D <2>;
+>                         };
+>                 };
