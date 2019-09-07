@@ -2,81 +2,116 @@ Return-Path: <SRS0=Yk8Z=XC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16F54C43331
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 07:50:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 865F8C43331
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 11:51:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC1842173B
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 07:50:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1567842603;
-	bh=5pobKH5kpChuhb/hM732oKQFMLUdUp2FcOEoh5JNV+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Y7zlGIea0bwSBQdDfQD6FdF1D8hLubC8zBrJgWAYBZm4hXZigevZKr4dvh/eHF/Z3
-	 hreqCKM++knZoDq/29f8ssODFw3Ax5kpi8IgWkoHVMCA36ffaJGzsXJeQFU1n3So9t
-	 eCC1MZKfHGMLhR6Gk0YbmmtGnHwDihcGQ87+WLYA=
+	by mail.kernel.org (Postfix) with ESMTP id 2CD10218AE
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Sep 2019 11:51:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="q2qfSdeD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2392000AbfIGHuC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 7 Sep 2019 03:50:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35590 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbfIGHuB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 7 Sep 2019 03:50:01 -0400
-Received: from localhost (unknown [223.226.124.26])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 736AF2173B;
-        Sat,  7 Sep 2019 07:50:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1567842601;
-        bh=5pobKH5kpChuhb/hM732oKQFMLUdUp2FcOEoh5JNV+c=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y1RHYCWEnvXTeOyiRb38s1MMJsTSJ675b7qH4gEY1A5qMA6HuEMmxGvK20+MR5E3t
-         /RJ5n1WiwHrqbCs3QqOgBeozMtvICz1QmjXSn1iTKlkD9I7WLzgFljcU/iZtmZqghu
-         XPWi4Oi7/RAda5UVzirbaPHRsz1FNGneG6kxX78A=
-Date:   Sat, 7 Sep 2019 13:18:52 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: Use floor ops for sdcc clks
-Message-ID: <20190907074852.GI2672@vkoul-mobl>
-References: <20190906045659.20621-1-vkoul@kernel.org>
- <20190906203827.A2259208C3@mail.kernel.org>
-MIME-Version: 1.0
+        id S2405835AbfIGLvn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Sep 2019 07:51:43 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.164]:12736 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392149AbfIGLvn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 7 Sep 2019 07:51:43 -0400
+X-Greylist: delayed 161127 seconds by postgrey-1.27 at vger.kernel.org; Sat, 07 Sep 2019 07:51:41 EDT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1567857100;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=Z/XEQfXKMDbN9W+gYgoAURXwsSBKlj7j0lovZOUOhFo=;
+        b=q2qfSdeDOfZf/cXFjPneTVqBx6DkwN/5BGfpxjU7ygw35IjEccVbFiIOH2Obd8WVta
+        IZ+f83s+c1W4kzj3URzLOUAGTeAUdLgXJP4N2Y7El0/xTNB6ArTjCkq7kAxMkylNT9sQ
+        lfBSNdcZ+mi6RvgW8GtrFLYkEDXsaphu8Xbuqz4okVmnsz2HcLH2OKtUwbOiDNQy5VBi
+        ODIsERUjFss9tv7xBkYrERRtcSdGgu2uwcX0HjfGeDspOHQv53TcIlIuyqSJ1cC6Relq
+        TZjglSVXlwQrAgx2EbiWEM/mdNezvI04/ywYRobJmmnQGB1CSqrUz3UTEY2Z3ase4tPX
+        bpxw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDVCaXAwLbA=="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v87BpTr96
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 7 Sep 2019 13:51:29 +0200 (CEST)
 Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190906203827.A2259208C3@mail.kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 5/6] ARM: dts: Configure interconnect target module for omap3 sgx
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <CAHCN7x+WxFSU4e72ESu0UUKj_RGfNCOkHS4zvjmwQVoZ_t13Nw@mail.gmail.com>
+Date:   Sat, 7 Sep 2019 13:51:28 +0200
+Cc:     Tony Lindgren <tony@atomide.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <26DDC0FB-C954-4169-AA08-E39BDDFF2E4A@goldelico.com>
+References: <20190814131408.57162-1-tony@atomide.com> <20190814131408.57162-6-tony@atomide.com> <CAHCN7x+WxFSU4e72ESu0UUKj_RGfNCOkHS4zvjmwQVoZ_t13Nw@mail.gmail.com>
+To:     Adam Ford <aford173@gmail.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06-09-19, 13:38, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-09-05 21:56:59)
-> > Update the gcc qcs404 clock driver to use floor ops for sdcc clocks. As
-> > disuccsed in [1] it is good idea to use floor ops for sdcc clocks as we
-> > dont want the clock rates to do round up.
-> > 
-> > [1]: https://lore.kernel.org/linux-arm-msm/20190830195142.103564-1-swboyd@chromium.org/
-> > 
-> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> > ---
-> 
-> Is Taniya writing the rest? Please don't dribble it out over the next
-> few weeks!
+Hi Adam,
 
-Taniya is Cced. Since I upstream qcs404 driver and have a board handy to
-test, did that :) 
+> Am 19.08.2019 um 21:12 schrieb Adam Ford <aford173@gmail.com>:
+>=20
+> On Wed, Aug 14, 2019 at 8:14 AM Tony Lindgren <tony@atomide.com> =
+wrote:
+>>=20
+>> Looks like omap34xx OCP registers are not readable unlike on =
+omap36xx.
+>> We use SGX revision register instead of the OCP revision register for
+>> 34xx and do not configure any SYSCONFIG register unlike for 36xx.
+>>=20
+>> I've tested that the interconnect target module enables and idles
+>> just fine with PM runtime control via sys:
+>>=20
+>> # echo on > $(find /sys -name control | grep \/5000); rwmem =
+0x5000fe10
+>> # rwmem 0x50000014      # SGX revision register on 36xx
+>> 0x50000014 =3D 0x00010205
+>=20
+> For an OMAP3530, I got:
+> # echo on > $(find /sys -name control | grep \/5000)
+> # devmem 0x50000014
+> 0x00010201
+>=20
+> Does 0x00010201 seem reasonable?  I am not sure where to find this in
+> the TRM unless it's located elsewhere, but  [1] seems to lead me to
+> believe this is correct.
 
-Thanks
--- 
-~Vinod
+I got on dm3730:
+
+root@letux:~# echo on =
+>/sys/devices/platform/68000000.ocp/5000fe00.target-module/50000000.sgx/po=
+wer/control
+root@letux:~# /usr/bin/arm-linux-gnueabihf/devmem2 0x50000014
+/dev/mem opened.
+Memory mapped at address 0xb6fc0000.
+Value at address 0x50000014 (0xb6fc0014): 0x10205
+root@letux:~#=20
+
+which indicates ES5.0, as expected for dm3730.
+
+BR,
+Nikolaus
+
