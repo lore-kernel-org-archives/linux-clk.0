@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 424B9C4740A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C63CC4740A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 144EA21A4C
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:34:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FE5C2086D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:45:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sOPrJkIN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sIHnj+NX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730692AbfIIKe0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 06:34:26 -0400
-Received: from mail-io1-f68.google.com ([209.85.166.68]:44493 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730682AbfIIKe0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 06:34:26 -0400
-Received: by mail-io1-f68.google.com with SMTP id j4so27415625iog.11
-        for <linux-clk@vger.kernel.org>; Mon, 09 Sep 2019 03:34:26 -0700 (PDT)
+        id S1729660AbfIIKpQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 06:45:16 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46508 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729368AbfIIKpQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 06:45:16 -0400
+Received: by mail-io1-f67.google.com with SMTP id d17so5594757ios.13
+        for <linux-clk@vger.kernel.org>; Mon, 09 Sep 2019 03:45:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=O0QbGRskzrGZBzidNtq9nhCjCnWMKLOTPXNRwEbysuA=;
-        b=sOPrJkINWZ9chYhieAt9vKbn3ZaV6zTIHbUkr/LiP+zolndnHYeMB3jd/1o9v0qE/U
-         2IAe8eA8gChOJNlFhyCET/dmJPstOTAzXJX+kJKKEUfKz7st/Ce+JhHuzB/WOK2rEKcW
-         mhbbhJTgouTkM0oxNby+Xv/6Gjvz3XZ6bYiUVWle9E6lcsMYXrnrkAu9qQQ4MHhB+rxg
-         48A7WFPkXTj87gWO11iD9/DRYuEJk0IzUL6ayEjyYJXoi72GK5bNnKzspccA7ej3K2WR
-         +w4Wox8+YXhXoiGB9JZ/I5iqB/dLa1pFOjaS03W3xB4aBMEvxuXkO/Bc1sRYZdIvNw3V
-         wePA==
+        bh=w5dfQIfclsaxzYHBXRshhSGRuyP1tO5QBkMM8Tmc/wc=;
+        b=sIHnj+NXsmewoJ6E9temqBg6go0OyzlInmMm+ojBsMNeMbAHovv2AUcKI9sRROhtSz
+         6snHeDqjoNLHSPIs/cSa24aiRxuWbUyq2/St+L9j2DlixFP2p8eweAABDowm0VaVb6XG
+         pSy5wTWwiA6NjjNxcdGp6XznrfbHrwKGuhtXmQhs6ojRo6iMZnaNnv+zE4W8P/o4cKuR
+         1KD2sB8zFbswPTldfl82dN3OUK9doFOeI1pZsZA7/KPMncv7MHlyH96E0zMKFCBa4CKa
+         DmfEToVzb+hhnbiwY6sfgN/VKqd0WmHAJj/h5rgA02zl7kFWqEGVcSxj593gpIBaxMqQ
+         6WPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=O0QbGRskzrGZBzidNtq9nhCjCnWMKLOTPXNRwEbysuA=;
-        b=r6u2/bOG7kipl19X4H2YGF2IM0JYa9iqNj+Yy+7pMk0ZbVoB+TpdNflq+iP4tI8/7S
-         zw9Fjl6DYXNajIGJtUenpJP3nURuzBnrB3cbrMzC1xt/4TmkjH90dMlYLDj+v3bPTdeK
-         QIMabERJ04eNPZEjKxZjBKO8sUw0IJsQsHD9gZwqvRLFxzZ0CQ+TCt4lT+yPEzUOUQgY
-         NKkJPPEln2SrLQl4pu2mLjvbOEMg2u5SYFeht1O/CyI9lbMdCupYH7KuNiZxHGTpR+hU
-         /ntR6i9W3HoEKeyaH5O3xcCwxGoYLRGe6PSLjCTtUOVkZqFVcUl7laJN5jjXM3MrRhdc
-         mkAA==
-X-Gm-Message-State: APjAAAWWus8cVwAObaumAhAVA8P3q0OIV9ydKyyrlzkZaxlzSd6wlPdL
-        oyZkOFV9BFd+Nybr30xz6HeJMeKNvuTKsDzV2Is=
-X-Google-Smtp-Source: APXvYqzomjPQZpm8daOnKsSrwIo91DYZOw1RSvvtl7CX97sdCj8AUi8cS4AHx4tFCCjv+WbAY18OVtj5PmUY+Q3CPcw=
-X-Received: by 2002:a02:cb9b:: with SMTP id u27mr25832579jap.26.1568025265896;
- Mon, 09 Sep 2019 03:34:25 -0700 (PDT)
+        bh=w5dfQIfclsaxzYHBXRshhSGRuyP1tO5QBkMM8Tmc/wc=;
+        b=jDx/004U97uF7ugwJ8B15t1am10KqiRgqwcxFi9FdlNi6ZEuEjGNTvoAhNQUs8t66o
+         4AX0tsuSlGyawvE+iyBklTS/p8mbDC1Wm2l+IX012V+Qs5p8fs/aQ5q1cBn/4NOAnCIF
+         2GWl+nSh9rTBq6HQl0M4YEjQilaI2+IEwZCe/8P6r+xgPyy2kmkB5/Lp5S7A1SOuOLBJ
+         hgvCCmPC1vnX8ADR/ZjdQBZG18fkvAZlMo6ucUkcWxWowxtki7q78NLHnq+VPF4AODa0
+         wSkSs9AzSRrHCJcDtez21pl/89I3oxtRw7Mw/qk3bCkA2lt4xfkuwpk0C6knAOj1Pukd
+         37Kg==
+X-Gm-Message-State: APjAAAUNbl6eL30dZreybRbcmcEFRveGk+7OHTSCEhACqPdbxQ8FYuXz
+        AUsv6QdD+pLmlzkPaTZd/D4De0HF8DTQno+jzbM=
+X-Google-Smtp-Source: APXvYqwFJ0Nc1ve8XGIHwiINnyPrRCrW2wXL5aRsXNiJ16FFueAHgNcf7/uvqROaQkFwe+iPu+20SpGdjm44lqD3O6M=
+X-Received: by 2002:a02:7f8a:: with SMTP id r132mr5492024jac.46.1568025915953;
+ Mon, 09 Sep 2019 03:45:15 -0700 (PDT)
 MIME-Version: 1.0
 References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
- <1566299605-15641-5-git-send-email-aisheng.dong@nxp.com> <20190906170713.81A1A20578@mail.kernel.org>
-In-Reply-To: <20190906170713.81A1A20578@mail.kernel.org>
+ <1566299605-15641-8-git-send-email-aisheng.dong@nxp.com> <20190906170944.B861620578@mail.kernel.org>
+In-Reply-To: <20190906170944.B861620578@mail.kernel.org>
 From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 9 Sep 2019 18:24:25 +0800
-Message-ID: <CAA+hA=QAFJoLVXzY8oSkAOf65psAyiv31EDwO0G1yFUzE9t1xQ@mail.gmail.com>
-Subject: Re: [PATCH V4 04/11] clk: imx: scu: bypass cpu power domains
+Date:   Mon, 9 Sep 2019 18:35:15 +0800
+Message-ID: <CAA+hA=Rds2Pvv0iJVhFr3nb0N8iKjTtO=uu8c_gTymiVr-dewA@mail.gmail.com>
+Subject: Re: [PATCH V4 07/11] clk: imx: scu: add suspend/resume support
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
         linux-clk <linux-clk@vger.kernel.org>,
@@ -74,28 +74,104 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Sep 7, 2019 at 5:28 PM Stephen Boyd <sboyd@kernel.org> wrote:
+On Sat, Sep 7, 2019 at 5:32 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Quoting Dong Aisheng (2019-08-20 04:13:18)
+> Quoting Dong Aisheng (2019-08-20 04:13:21)
+> > Clock state will be lost when its power domain is completely off
+> > during system suspend/resume. So we save and restore the state
+> > accordingly in suspend/resume callback.
+>
+> And this doesn't need any coordination with other clks in the clk tree
+> right?
+
+AFAIK no as SC firmware may have handled it properly.
+
+>
 > > diff --git a/drivers/clk/imx/clk-scu.c b/drivers/clk/imx/clk-scu.c
-> > index 48bfb08..5f935b1 100644
+> > index edc39d7..8d9cfa2 100644
 > > --- a/drivers/clk/imx/clk-scu.c
 > > +++ b/drivers/clk/imx/clk-scu.c
-> > @@ -479,6 +479,10 @@ static int imx_clk_scu_attach_pd(struct device *dev, u32 rsrc_id)
-> >                 .args[0] = rsrc_id,
-> >         };
+> > @@ -46,6 +46,10 @@ struct clk_scu {
+> >         struct clk_hw hw;
+> >         u16 rsrc_id;
+> >         u8 clk_type;
+> > +
+> > +       /* for state save&restore */
+> > +       bool is_enabled;
+> > +       u32 rate;
+> >  };
 > >
-> > +       if ((rsrc_id == IMX_SC_R_A35) || (rsrc_id == IMX_SC_R_A53) ||
-> > +           (rsrc_id == IMX_SC_R_A72))
+> >  /*
+> > @@ -425,6 +429,9 @@ struct clk_hw *__imx_clk_scu(struct device *dev, const char *name,
+> >                 hw = ERR_PTR(ret);
+> >         }
+> >
+> > +       if (dev)
+> > +               dev_set_drvdata(dev, clk);
+> > +
+> >         return hw;
+> >  }
+> >
+> > @@ -481,10 +488,52 @@ static int imx_clk_scu_probe(struct platform_device *pdev)
+> >         return 0;
+> >  }
+> >
+> > +int __maybe_unused imx_clk_scu_suspend(struct device *dev)
 >
-> Please drop the extra parenthesis. It makes it hard to read.
+> static?
+>
+> > +{
+> > +       struct clk_scu *clk = dev_get_drvdata(dev);
+> > +
+> > +       clk->rate = clk_hw_get_rate(&clk->hw);
+> > +       clk->is_enabled = clk_hw_is_enabled(&clk->hw);
+> > +
+> > +       if (clk->rate)
+> > +               dev_dbg(dev, "save rate %d\n", clk->rate);
+> > +
+> > +       if (clk->is_enabled)
+> > +               dev_dbg(dev, "save enabled state\n");
+> > +
+> > +       return 0;
+> > +}
+> > +
+> > +int __maybe_unused imx_clk_scu_resume(struct device *dev)
+>
+> static?
+>
+> > +{
+> > +       struct clk_scu *clk = dev_get_drvdata(dev);
+> > +       int ret = 0;
+> > +
+> > +       if (clk->rate) {
+> > +               ret = clk_scu_set_rate(&clk->hw, clk->rate, 0);
+> > +               dev_dbg(dev, "restore rate %d %s\n", clk->rate,
+> > +                       !ret ? "success" : "failed");
+> > +       }
+> > +
+> > +       if (clk->is_enabled) {
+> > +               ret = clk_scu_prepare(&clk->hw);
+> > +               dev_dbg(dev, "restore enabled state %s\n",
+> > +                       !ret ? "success" : "failed");
+> > +       }
+> > +
+> > +       return ret;
+> > +}
+> > +
+> > +const struct dev_pm_ops imx_clk_scu_pm_ops = {
+>
+> static?
 >
 
-Will drop it, thx
+Sorry that i missed to update here as those function are changed to be
+used within
+this file now.
+Will fix.
 
 Regards
 Aisheng
 
-> > +               return 0;
+> > +       SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx_clk_scu_suspend,
+> > +                                     imx_clk_scu_resume)
+> > +};
 > > +
-> >         return of_genpd_add_device(&genpdspec, dev);
