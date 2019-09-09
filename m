@@ -2,102 +2,87 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8CC8C433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 07:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8926DC433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 08:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF18B218AC
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 07:48:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FsV+bI66";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FsV+bI66"
+	by mail.kernel.org (Postfix) with ESMTP id 4FFC820678
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 08:19:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568017178;
+	bh=Mpvur8qXCAfHMVIkSt2wICPWYL86B+HBB+4HLiCewek=;
+	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
+	b=GrtBVZoeHfUptJAoOPAfzgtQG8q7Rekr8RxpDcsa16bOn0+9AvqRgMOlPGww1lyj7
+	 WQ6lqEY06f+09bhs48J+FgfFRnW3CJtq/vYcq9rPc+TJMI2jxq9HJz7jsJVjO9Avz3
+	 Jkpuxm7VNxi8blaVxkcOCtZ5II4bWRM8z8K3HtFg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388352AbfIIHsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 03:48:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:38432 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388282AbfIIHsr (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 03:48:47 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8A6CF607C6; Mon,  9 Sep 2019 07:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568015325;
-        bh=LBIHaUHy7oCabOja1vBhxQ0rSOGqjdP1HeHyaPjBtvA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FsV+bI66Pdy2oEVRZFLBlACJzR7q64OhTjw9FxTFu0G6N6APK5vM4fKbDFB49lqC1
-         X1eN0DAN9Gg3ItZVm+w0VecFJnaO35Vq6mzJv3yi6gZ5RTw1oJOY5w6lWF99cF6ktp
-         m9LmcNAFG1HzRGYK8QvFEJkT/sRY+mY4D5/4HxcU=
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727843AbfIIITi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 04:19:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726928AbfIIITh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Sep 2019 04:19:37 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 764CC602F8;
-        Mon,  9 Sep 2019 07:48:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568015325;
-        bh=LBIHaUHy7oCabOja1vBhxQ0rSOGqjdP1HeHyaPjBtvA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FsV+bI66Pdy2oEVRZFLBlACJzR7q64OhTjw9FxTFu0G6N6APK5vM4fKbDFB49lqC1
-         X1eN0DAN9Gg3ItZVm+w0VecFJnaO35Vq6mzJv3yi6gZ5RTw1oJOY5w6lWF99cF6ktp
-         m9LmcNAFG1HzRGYK8QvFEJkT/sRY+mY4D5/4HxcU=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 764CC602F8
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: Use floor ops for sdcc clks
-To:     Stephen Boyd <sboyd@kernel.org>, Vinod Koul <vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190906045659.20621-1-vkoul@kernel.org>
- <20190906203827.A2259208C3@mail.kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <adaad84a-15ce-3212-9fec-7ff387da2a88@codeaurora.org>
-Date:   Mon, 9 Sep 2019 13:18:39 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 13E0920678;
+        Mon,  9 Sep 2019 08:19:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568017177;
+        bh=Mpvur8qXCAfHMVIkSt2wICPWYL86B+HBB+4HLiCewek=;
+        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
+        b=KpzuiJlGsoWanuGSVCqfCjO3vIipkZZTvOENlVFQ8n6E3JGXLj5TJWkfCDUAYUM92
+         2zL4QfzE0r5wgjooSyLdsv+c/LWYuV3cdtH/cuztjA5jcEIO1OsKX9RDpUDj1NdTJt
+         8l2o+L3MHEJ9wpQravNQDag118dTctlOt7Y/z+0M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20190906203827.A2259208C3@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190906232346.8435-1-jorge.ramirez-ortiz@linaro.org>
+References: <20190906232346.8435-1-jorge.ramirez-ortiz@linaro.org>
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     agross@kernel.org, jorge.ramirez-ortiz@linaro.org,
+        mturquette@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: qcom: fix QCS404 TuringCC regmap
+User-Agent: alot/0.8.1
+Date:   Mon, 09 Sep 2019 01:19:36 -0700
+Message-Id: <20190909081937.13E0920678@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Vinod,
+Quoting Jorge Ramirez-Ortiz (2019-09-06 16:23:46)
+> The max register is 0x23004 as per the manual (the current
+> max_register that this commit is fixing is actually out of bounds).
+>=20
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> ---
 
-On 9/7/2019 2:08 AM, Stephen Boyd wrote:
-> Quoting Vinod Koul (2019-09-05 21:56:59)
->> Update the gcc qcs404 clock driver to use floor ops for sdcc clocks. As
->> disuccsed in [1] it is good idea to use floor ops for sdcc clocks as we
->> dont want the clock rates to do round up.
->>
->> [1]: https://lore.kernel.org/linux-arm-msm/20190830195142.103564-1-swboyd@chromium.org/
->>
->> Signed-off-by: Vinod Koul <vkoul@kernel.org>
->> ---
-> 
-> Is Taniya writing the rest? Please don't dribble it out over the next
-> few weeks!
+Fixes tag?
 
-I have pushed the patch : https://patchwork.kernel.org/patch/11137393/
-
-Vinod, I have taken care of the QCS404 in the same patch, so as to keep 
-the change in one patch.
-
-> 
->>   drivers/clk/qcom/gcc-qcs404.c | 4 ++--
->>   1 file changed, 2 insertions(+), 2 deletions(-)
->>
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+>  drivers/clk/qcom/turingcc-qcs404.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turing=
+cc-qcs404.c
+> index aa859e6ec9bd..4cfbbf5bf4d9 100644
+> --- a/drivers/clk/qcom/turingcc-qcs404.c
+> +++ b/drivers/clk/qcom/turingcc-qcs404.c
+> @@ -96,7 +96,7 @@ static const struct regmap_config turingcc_regmap_confi=
+g =3D {
+>         .reg_bits       =3D 32,
+>         .reg_stride     =3D 4,
+>         .val_bits       =3D 32,
+> -       .max_register   =3D 0x30000,
+> +       .max_register   =3D 0x23004,
+>         .fast_io        =3D true,
+>  };
+> =20
+> --=20
+> 2.23.0
+>=20
