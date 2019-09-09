@@ -2,113 +2,100 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2262DC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 08:20:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D4DC00307
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 08:54:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51442086D
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 08:20:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568017233;
-	bh=hUjMFYDt15aaG0KcZhtWuZvcPW21IIr+paV7LbXYOQk=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=a4zZFUlUWe7zpA7hnIZ7ESWDdma8a4ykoMxo/qptt55bg0VQuTqeIJVzxQK3pWuzs
-	 Wbcbfpw8enafv9dP+m1rWdxr2bvXVSJlIlt/5hwgWZYqJW7zTz63YUG8ikWMoUG6F7
-	 JFehohFQlp4fKtOlUXPmNrofbs5pFJFCbV6IJJf4=
+	by mail.kernel.org (Postfix) with ESMTP id EB9682086D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 08:54:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="elru8+rT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726971AbfIIIUd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 04:20:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:56320 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726924AbfIIIUd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Sep 2019 04:20:33 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B704D20678;
-        Mon,  9 Sep 2019 08:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568017232;
-        bh=hUjMFYDt15aaG0KcZhtWuZvcPW21IIr+paV7LbXYOQk=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=LXLYTbc0hnvTUjlZJEbqYjodBBHPV/b8iEKfS7UbLV2zb1p75QOnTkeUJhQRRxc6M
-         8GJWSw0+K+FqKPGS3JLrn1fTiPDdflA3APu33YlNsim7A72E9EarwUu2vCFbQheA93
-         YNiqaT/PfggdraDmM5l56vTOFLEUmUh794cM81Xc=
-Content-Type: text/plain; charset="utf-8"
+        id S2389573AbfIIIyh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 04:54:37 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:52200 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389559AbfIIIyh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 04:54:37 -0400
+Received: by mail-wm1-f66.google.com with SMTP id 7so3157943wme.1
+        for <linux-clk@vger.kernel.org>; Mon, 09 Sep 2019 01:54:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=93tDfN83mQsd0DPVLc0brfVYsJhwPv42JzLgK6vCzz4=;
+        b=elru8+rTyxJnAkRhSgpCtGKhvAzkZlMgML1O+PjWOVzMhVAwGdF9mdMl17yIKWinbF
+         Pyy6PK6nwfQV5XGO52F6rddjfLoTuo42XyaL8+vXtJxbuvOKtoETYTCgowHJU7dGBtaZ
+         yDFVoVhq0NiwV8DC3DNqEKBbhS0xYPVmxfqacrxJcuOC+lqP1wI4v4jR3kpLPvkeNfgJ
+         MMpU8LbFzSZ8+v+24aIyPlKotBw+kF87nnHbIrvLu9gISBhkJsGqrFJnZvT1DRHajBkP
+         wPRdWm4WWfuVQYLL6SxMeATk/Z2Y1tisSr9TtcTvz8TOBWamw9eYO9oMfOZS3fCyKtdt
+         pUnw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=93tDfN83mQsd0DPVLc0brfVYsJhwPv42JzLgK6vCzz4=;
+        b=V64qY45WtYKivXS+TXUFyUYDjDay7m/zD7XXBDMey/3AZPkhhvXyOeJCiwyCBnru30
+         U1gbdV97MfI6fGudoxtwrXNUuGC9XItWObCt/3eR6xhPe32akPHlxFMQ4KtySl5Vfe8o
+         T4CYGTWjEpQ8sQuwxr9GhqV4fQQYl9jU5AejIHNsXkqlo/Sh+K5ztv9wIAnwbXwHMjhd
+         +caHJhajqOLDp3sqKElq4sPdR51l4acojCXHMQ5GutQcTRMb+0lCkiTliyGUUY/3mOh0
+         zJ0o3bjhsVD2bCyCT9mW7NQJbRRNXG21rthOrWHoy5tSSm0d/0tSMVcqzEpONL73yiiA
+         3Vbg==
+X-Gm-Message-State: APjAAAVTXPMymw2KDLE+oBQ6lV0gHbkQ5LlIShJbBDm/1XXtoY2zY6Ct
+        6f/vqt1h+v32OV9GXABsNQ6yYpNSH+I=
+X-Google-Smtp-Source: APXvYqwNLAGFJD/5uFgLmvZMGl1fB1pcIoE/EBBaGXx9m7Z80mi6LrNWXEAXrgLH7W7MUpCzjsy0oA==
+X-Received: by 2002:a1c:98c9:: with SMTP id a192mr18219335wme.29.1568019274219;
+        Mon, 09 Sep 2019 01:54:34 -0700 (PDT)
+Received: from localhost.localdomain (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
+        by smtp.gmail.com with ESMTPSA id r17sm13265220wrt.68.2019.09.09.01.54.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 09 Sep 2019 01:54:33 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, agross@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        bjorn.andersson@linaro.org
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: qcom: fix QCS404 TuringCC regmap
+Date:   Mon,  9 Sep 2019 10:54:30 +0200
+Message-Id: <20190909085430.8700-1-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <VI1PR04MB70239D5AA9604E72E74CD555EEBA0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com> <20190906172452.D1ED620838@mail.kernel.org> <VI1PR04MB70239D5AA9604E72E74CD555EEBA0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-Cc:     Jacky Bai <ping.bai@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-To:     Daniel Baluta <daniel.baluta@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: imx: pll14xx: Fix quick switch of S/K parameter
-User-Agent: alot/0.8.1
-Date:   Mon, 09 Sep 2019 01:20:31 -0700
-Message-Id: <20190909082032.B704D20678@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Leonard Crestez (2019-09-06 12:36:47)
-> On 06.09.2019 20:24, Stephen Boyd wrote:
-> > Quoting Leonard Crestez (2019-09-04 02:49:18)
-> >> The PLL14xx on imx8m can change the S and K parameter without requiring
-> >> a reset and relock of the whole PLL.
-> >>
-> >> Fix clk_pll144xx_mp_change register reading and use it for pll1443 as
-> >> well since no reset+relock is required on K changes either.
-> >>
-> >> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> >> ---
-> >>   drivers/clk/imx/clk-pll14xx.c | 40 +++++++--------------------------=
---
-> >>   1 file changed, 8 insertions(+), 32 deletions(-)
-> >>
-> >> The PLLs are currently table-based and none of the entries differ only
-> >> in S/K so further work would be required to make use of this. The
-> >> prospective user is audio doing tiny freq adjustments and there is no
-> >> standard API for that.
-> >=20
-> > sub-Hz adjustments?
->=20
-> Maybe at the audio level? The PLL itself runs at ~400Mhz so wouldn't=20
-> need sub-hz adjustment.
->=20
-> My understanding is that adjustments would be made based on an external=20
-> clock so if CLK framework rounds to 1hz then it would just take longer=20
-> for adjustment to kick in.
+The max register is 0x23004 as per the manual (the current
+max_register that this commit is fixing is actually out of bounds).
 
-Ok.
+Fixes: 892df0191b29 ("clk: qcom: Add QCS404 TuringCC")
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+---
 
->=20
-> >> Lacking users is not a good reason to carry broken code around.
-> >=20
-> > Maybe add a Fixes tag so if anyone wants to use it in LTS kernels there
-> > might be a chance that they'll find this patch mention code they're
-> > using.
->=20
-> It doesn't meet stable kernel rules because it doesn't "fix a real bug=20
-> that bothers people" but it's still technically a fix:
->=20
-> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
->=20
+ v2: add Fixes tag
+ 
+ drivers/clk/qcom/turingcc-qcs404.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Sure. Thanks! I assume Shawn will pick this up.
+diff --git a/drivers/clk/qcom/turingcc-qcs404.c b/drivers/clk/qcom/turingcc-qcs404.c
+index aa859e6ec9bd..4cfbbf5bf4d9 100644
+--- a/drivers/clk/qcom/turingcc-qcs404.c
++++ b/drivers/clk/qcom/turingcc-qcs404.c
+@@ -96,7 +96,7 @@ static const struct regmap_config turingcc_regmap_config = {
+ 	.reg_bits	= 32,
+ 	.reg_stride	= 4,
+ 	.val_bits	= 32,
+-	.max_register	= 0x30000,
++	.max_register	= 0x23004,
+ 	.fast_io	= true,
+ };
+ 
+-- 
+2.23.0
 
