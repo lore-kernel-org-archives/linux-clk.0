@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8691CC4740A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 11:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBB3EC4740A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 12:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5840D21920
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 11:54:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2AED21924
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 12:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VDd8X9zc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sBnSROaY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404474AbfIILyH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 07:54:07 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:39300 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404309AbfIILyG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 07:54:06 -0400
-Received: by mail-io1-f66.google.com with SMTP id d25so27927702iob.6;
-        Mon, 09 Sep 2019 04:54:06 -0700 (PDT)
+        id S2404562AbfIIMBP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 08:01:15 -0400
+Received: from mail-io1-f65.google.com ([209.85.166.65]:40957 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404591AbfIIMBP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 08:01:15 -0400
+Received: by mail-io1-f65.google.com with SMTP id h144so27918688iof.7;
+        Mon, 09 Sep 2019 05:01:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Q+FVrqN+TPgVuaJbEMEH4wOrjm4xLEXbmHAWOrXAKL4=;
-        b=VDd8X9zcdNLDRoJOUphP05A0tGYAcRtCichkpvkySC3B2yJlXLh6eB6Q5Yc4gCuqej
-         +kA5Rr4Ch0sn1C20GDNoq/Ek7yQTbRsdY6oJyCEoh7acVqLTGppu+Z6BYAKDDP7ECJFe
-         JjpTzBVM8Vo922kxFrZ8NZoCvZ7Cia0mz8utakq7eHe7hsh8gdWoDJuQHNLXfcBHt6Mc
-         1tQ8Ma8U+aBt9hpTILWqwmRgr9IBZsQiI3SXuh6SgTaUtQ9OrqdseupTzVS3T1FXkSiF
-         FXBj55oCIcLNhCZHBPI8Q1qqYcpYmfmDpbM5GuvDoYEF4NeCXSQ43bJMtc08O9FlXe10
-         MRKA==
+        bh=gjzSJy3NDD7sYggLday3lhixH+9SUC/EVeZUWoe2eU4=;
+        b=sBnSROaYcwf48BNTZC63gADs6dyXJsKsfnm5pvlYuv5jzlMTu/aPSFTGhshJ5Ll2Ik
+         vp3iKTlPbMgxE6XkoPHIJ/qTcKQQEIG5TxF+1nU1OVHAw1XATgur1o4zXdsj6Tl06D07
+         IVt098D2fTUdr0zDTvJJNG6PS5KsBOW0c2GESGvGta4qvr3/oOGCkc7ZXFfuiHRI2eP+
+         jNx5OyS14T4hjexE+g4JM9Ovu0yh/3y36DnCXdIPNEMImJM4bhEXEWUpxJnIOw2j0N8p
+         VKfPXMRpbA4pqQXRi8/WFkUfYT9a3yEaV7KGTZAW27gtUxRfz210Ov9jSc972wldEYOe
+         B8BA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Q+FVrqN+TPgVuaJbEMEH4wOrjm4xLEXbmHAWOrXAKL4=;
-        b=k2GQwVSpQTkvJiZ1gsg4PkNlH4LgpUvxu6Grl6x4S7W929fGi3BN1H6ZPCTno9z1vi
-         mWzOU3PoxF+0h79fytvJfRtAhvHDCivOmzFdERf4C0VgQ8UrzQwfpmbTDo6ogkw55E4Z
-         LVg1GtPfpOlP9nPtDySnh2JMNZzNzkO35++arKvywpRUF6cpQF+HVgipH6d8u59e4371
-         biNzSnML6tv3y7zJhEftj50sMjcs04a1RjoA4qzU6YziI0Z4TToVHcJ2Vh3bLEd/Bwwv
-         x3pYdEMBAtyo1pVRUslFS/NQT/F9w+cwwucZptTQ/PGepoUSAEvwwVw4N7lcSOTOB0w1
-         6tcQ==
-X-Gm-Message-State: APjAAAUOABqrjBVW55Ap+8buaWT1aOlxEmEj09e6lJE0ivMptzTBwN6O
-        GSEsMCHXypD29wkwKCi6W1+ZecDqwmivejObGUQ=
-X-Google-Smtp-Source: APXvYqyEx6LU/OST6+fUfCh4+zHDIfeEbtFGTFgt/Tb6wja+aAz6+MPQhsJFSIA+xIrZc/v9eoeTiTaJB7tXTaeJ2VI=
-X-Received: by 2002:a02:3b6f:: with SMTP id i47mr546015jaf.24.1568030046006;
- Mon, 09 Sep 2019 04:54:06 -0700 (PDT)
+        bh=gjzSJy3NDD7sYggLday3lhixH+9SUC/EVeZUWoe2eU4=;
+        b=Ytx/m/6deJw9J/03bD4bFRkoyB9eUyu1ObgdWMKsiPCvQ4zE3lXGdZbYOOhZ3HattU
+         X/rLffcVU3BnCOqAzcIQKC7Gfry7/bFs/c5wLdaULfaCxW8cJW4uNWIEto1i2z/1DHEA
+         RikvXeL6mkdRLSL+vwqHDrGC2hd36ouiQGWjXFWo7EI4LANk8+jGiIapC1zPxaEqPXEe
+         kYG07MQtmfRDEyrJtXj9Fs5wGfy/P0TpsQa9ZB6PYcWG0/T+2FkxazI7iuhxW12NODbT
+         c9z5cOvEF9h/zcr/Jk2yxsweJX5RmbFgEW+5y3sp9719O4zxczZZh80eZV6i3MM1seSF
+         R8Pg==
+X-Gm-Message-State: APjAAAU+v/4+kO4GGjY9yl/ugptv8AqoNCSSlpU4Xj3UazuzB15tB6t5
+        HO0TIUqoN8DMIEQ5Xszy6IEX3ebrnj/2qR+El6Q=
+X-Google-Smtp-Source: APXvYqyKrMcPIeFry4pmSxcirJ0sZlzv9BWvR/f7rXRlNraERjFdqJdXoc1ys7lbOzrlKqXMAIHEzvwlSjm0lpNwlDo=
+X-Received: by 2002:a6b:e514:: with SMTP id y20mr18930982ioc.197.1568030472875;
+ Mon, 09 Sep 2019 05:01:12 -0700 (PDT)
 MIME-Version: 1.0
-References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1566936978-28519-1-git-send-email-peng.fan@nxp.com>
+References: <1566936978-28519-1-git-send-email-peng.fan@nxp.com> <20190906172044.B99FB20838@mail.kernel.org>
+In-Reply-To: <20190906172044.B99FB20838@mail.kernel.org>
 From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Mon, 9 Sep 2019 19:44:04 +0800
-Message-ID: <CAA+hA=QeVphhsmuuM6XQhku7XVi+858nRrJ3jCneP+bRWBbNAw@mail.gmail.com>
+Date:   Mon, 9 Sep 2019 19:51:12 +0800
+Message-ID: <CAA+hA=To9B0H1z6Hh1eSZN9_rcextT_Oe-CTMmz9fC9CDNUBTQ@mail.gmail.com>
 Subject: Re: [PATCH] clk: imx: lpcg: write twice when writing lpcg regs
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
         Aisheng Dong <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         dl-linux-imx <linux-imx@nxp.com>,
         Anson Huang <anson.huang@nxp.com>,
@@ -78,21 +78,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Aug 27, 2019 at 4:19 PM Peng Fan <peng.fan@nxp.com> wrote:
+On Sat, Sep 7, 2019 at 9:47 PM Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> From: Peng Fan <peng.fan@nxp.com>
+> Quoting Peng Fan (2019-08-27 01:17:50)
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > There is hardware issue that:
+> > The output clock the LPCG cell will not turn back on as expected,
+> > even though a read of the IPG registers in the LPCG indicates that
+> > the clock should be enabled.
+> >
+> > The software workaround is to write twice to enable the LPCG clock
+> > output.
+> >
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
 >
-> There is hardware issue that:
-> The output clock the LPCG cell will not turn back on as expected,
-> even though a read of the IPG registers in the LPCG indicates that
-> the clock should be enabled.
->
-> The software workaround is to write twice to enable the LPCG clock
-> output.
->
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Does this need a Fixes tag?
 
-Reviewed-by: Dong Aisheng <aisheng.dong@nxp.com>
+Not sure as it's not code logic issue but a hardware bug.
+And 4.19 LTS still have not this driver support.
 
 Regards
 Aisheng
+
+>
