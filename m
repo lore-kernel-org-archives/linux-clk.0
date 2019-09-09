@@ -2,67 +2,86 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95D5BC4740A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 16:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83E24C4740A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 16:10:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6ABA221920
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 16:05:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53C952082C
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 16:10:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568045134;
-	bh=tbUVfRPpbud8L9YMdc4zBmylzHlmc625NS7dVlLtZy4=;
+	s=default; t=1568045457;
+	bh=jv+lB6acHNmcxzA4svQYs31plQCvgdNvK7cuKzZn79s=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=l4l4TUoyaMOU/QD68zFYQrhmNxPV84R59NGNSJVksdmNpRay5J026sqYyJqHKmgVb
-	 V9hReYJJnKGu2h9605Vx4p6oHGbd9sN7ztUL1D21zKk5qYpqcs5+0l5OgiSSElWtpW
-	 EpIqHevBr38k4VCQTOlexTlfBdjBeKTUKovoTxqk=
+	b=M9okjAhFeVbl8qWjoalm42lA8V1mSMELe2nEH28y4Hzx2EkaDQJgwJwkKFPp03NC2
+	 sG4emgjzK+yrp7Vr1PO73toEtvhY3IcQVhjmmhgasPpjXRoc+/HitMhf58d5YuPIyY
+	 ixjektVYZN6W3q62y4B40HZ4tlGvZisNIQKgJeIw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727602AbfIIQFc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 12:05:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47760 "EHLO mail.kernel.org"
+        id S1726403AbfIIQKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 12:10:53 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725263AbfIIQFc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Sep 2019 12:05:32 -0400
+        id S1725832AbfIIQKx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Sep 2019 12:10:53 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 940F621924;
-        Mon,  9 Sep 2019 16:05:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0FC62084D;
+        Mon,  9 Sep 2019 16:03:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568045131;
-        bh=tbUVfRPpbud8L9YMdc4zBmylzHlmc625NS7dVlLtZy4=;
+        s=default; t=1568044986;
+        bh=jv+lB6acHNmcxzA4svQYs31plQCvgdNvK7cuKzZn79s=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=oXwarqvwvM7Cl93PjauUrEF/VupIk2KSS9Har/TXW94LEe6c5QYZszgFHKS3whGEh
-         kpSCagCyVjMvRszhiYsoPkuXJTRaiJgL7NEo4DbyXL9mg3/DSiZOwbyvU0ug3FZfMj
-         HnrTWekPk6ExJ2ZOSSkoQAdw61bjU/+sWqrvqNtc=
+        b=NHGQIQa6hXnkYMu8wrfBHNikhz5+XfEZxuV3XIBK8yIY7rWHVB46YkUaclIv0ba1g
+         bRRhXmBcPHP6POSR/izAQ9O7Kf0qYnzZmjvnHpalWk3Z/4UGuLkJyOkKeezuRkGsN7
+         zqZ7uv4XnG5O1PvoC3FQ57GfU96wQtG7GgiKChxU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190909085430.8700-1-jorge.ramirez-ortiz@linaro.org>
-References: <20190909085430.8700-1-jorge.ramirez-ortiz@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        jorge.ramirez-ortiz@linaro.org, mturquette@baylibre.com
+In-Reply-To: <20190826121453.21732-2-vkoul@kernel.org>
+References: <20190826121453.21732-1-vkoul@kernel.org> <20190826121453.21732-2-vkoul@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Vinod Koul <vkoul@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: qcom: fix QCS404 TuringCC regmap
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: Document the parent clocks
 User-Agent: alot/0.8.1
-Date:   Mon, 09 Sep 2019 09:05:30 -0700
-Message-Id: <20190909160531.940F621924@mail.kernel.org>
+Date:   Mon, 09 Sep 2019 09:03:05 -0700
+Message-Id: <20190909160305.E0FC62084D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jorge Ramirez-Ortiz (2019-09-09 01:54:30)
-> The max register is 0x23004 as per the manual (the current
-> max_register that this commit is fixing is actually out of bounds).
+Quoting Vinod Koul (2019-08-26 05:14:50)
+> With clock parent data scheme we must specify the parent clocks for the
+> rpmhcc nodes. So describe the parent clock for rpmhcc in the bindings.
 >=20
-> Fixes: 892df0191b29 ("clk: qcom: Add QCS404 TuringCC")
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt b/=
+Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+> index 3c007653da31..8b97968f9c88 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+> +++ b/Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+> @@ -9,6 +9,9 @@ Required properties :
+>  - compatible : shall contain "qcom,sdm845-rpmh-clk"
+> =20
+>  - #clock-cells : must contain 1
+> +- clocks: a list of phandles and clock-specifier pairs,
+> +         one for each entry in clock-names.
+> +- clock-names: Parent board clock: "xo".
 
-Applied to clk-next
+Ok. xo is fine!
 
