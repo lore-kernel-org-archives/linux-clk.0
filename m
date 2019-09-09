@@ -2,200 +2,243 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D37FC00307
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 03:40:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A0ACEC00307
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 03:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5EFC021D6C
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 03:40:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65A672196E
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 03:54:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="W4O8mwqP"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="iu4B9w0o";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TYLSv09/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387799AbfIIDkR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Sep 2019 23:40:17 -0400
-Received: from mail-eopbgr60081.outbound.protection.outlook.com ([40.107.6.81]:42057
-        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727530AbfIIDkR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 8 Sep 2019 23:40:17 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=AqKDxZQIKGJTDbycYvfigpyl93mWc6188pkU/3AHwmj55t7qhEnaLRQxlTdJ1sno3Ww7UTzaCyj2ETPJK8bSwI7h9tjwKwnbkYg3h+b4nGddnIQ4h7e8y/pdINmjFbuPGO9XFH4j7/sO0SeqjSa4mvWnCp8aXQi/yi6BZk4kgpx+85t6+Mcy0mxkncriz6eEhLhsL5HF/wr/+/dkqwppdA3DdbbgTfpIw6lS0TvmbIZj2wJ8Mrify58l8hccDgIdpzX5uNy7bBPqTw6NW1AXu0vY3+oMfptYxOgXaw38VOqzagxLf/NA7brxdHxpjK1HSSV0g6DwJ4ZIb1g38N9Srg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9aXmx041BybGXPoe0cYDBv9LJEwhslqrW0bn17QWeT0=;
- b=fX7p9fRZH2CnRZo9wUDLHvbNQNu8ZWH4sSYuIsvIBwc9NVh0s1Sb4xCScFFsvRIhpOWEW3U7JMzt15aIUanry3WUeZv6SUiaflkd/4I36qW1HxWE6FwCkce4efPqxEVFFpiU7VSIKLInjlIVHaSlFz8eepENK7B32/66CPaEnb6mxbPsDuX6dXPkQ2bmmju70noxChGZhTv/Y0UtGjninlgOBTfhN5yTww05UsVye2FNzcdVQaGNBSKUOvLYV2t9I/VflE2bojaw4dzgT18zN9TWjdNbcmO2MrIKSYnJjncul07X1mUrGahS0WmA2AEh85NHVPpdhtzvLnSL0/084g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9aXmx041BybGXPoe0cYDBv9LJEwhslqrW0bn17QWeT0=;
- b=W4O8mwqPJxva1AOdqAIc9jvpU9DXAbdDxfWtfmJ1vVvxSrJREnUJxUfJrxuAvu3B4mMeHDrR2R0bpq32PUo1chw2RzP5O2vxp7YmDq/NmbyTDyZcInV2AXDMyp5DPIXokppbQOibzd68KOWkfvJUmfvb0s55d4OQTV6igPYEY3w=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6020.eurprd04.prod.outlook.com (20.179.32.17) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2241.19; Mon, 9 Sep 2019 03:39:34 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8%6]) with mapi id 15.20.2241.018; Mon, 9 Sep 2019
- 03:39:34 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V3 1/4] clk: imx: pll14xx: avoid glitch when set rate
-Thread-Topic: [PATCH V3 1/4] clk: imx: pll14xx: avoid glitch when set rate
-Thread-Index: AQHVZsAyq003b0x3bECm8z4jl80Scw==
-Date:   Mon, 9 Sep 2019 03:39:34 +0000
-Message-ID: <1568043491-20680-2-git-send-email-peng.fan@nxp.com>
-References: <1568043491-20680-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1568043491-20680-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0004.apcprd03.prod.outlook.com
- (2603:1096:203:2e::16) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 2743aff7-5a43-4aa4-8d67-08d734d754f2
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600166)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM0PR04MB6020;
-x-ms-traffictypediagnostic: AM0PR04MB6020:|AM0PR04MB6020:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB60207EE3B61C488AC3EFE04C88B70@AM0PR04MB6020.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:1751;
-x-forefront-prvs: 01559F388D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(396003)(39860400002)(376002)(136003)(346002)(199004)(189003)(43544003)(7736002)(186003)(26005)(54906003)(316002)(66446008)(64756008)(76176011)(14444005)(50226002)(446003)(2616005)(4326008)(6512007)(11346002)(44832011)(3846002)(6116002)(66946007)(102836004)(110136005)(2201001)(25786009)(8676002)(52116002)(2501003)(386003)(478600001)(36756003)(14454004)(99286004)(66556008)(5660300002)(66476007)(86362001)(71190400001)(6506007)(2906002)(256004)(476003)(486006)(53936002)(8936002)(6486002)(66066001)(81166006)(6436002)(71200400001)(81156014)(305945005);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6020;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: JhLG1AZ1XDjJ7WwuSQOg4OcDYqJ1ggyhnqOdXgbUqNdEljgeBa4FtxHEVH6wJGJ6Hj1oO4vy0ip0+zDIvJJJRHzMG9RZN6nf31n6GQL02bjodvLxxWHcreXKe43nkYlX79LK/TgLzxZtcr63zDbTW3vLMe8Ez0S/6+mQG5Fve9zC1rrCriQ4qjbyW33CDdrxNmd3z5o6qh1Oho4ClZYSw6egOBz7RtWa7T9QEkW6OYFWFWA7L90Pd1jkj2W/gZ1rcWXPganuUfBFazbqAXTDta+GmzHkgk4xEoI9rZSX2t1VBepVaX12jsFgtkK/yPFy/yW4d+SG5Wkuo1Wrq1HikodP2dsjFlXt74PLPS2zEaB7COeU3ReRpgFjDC0UzdAobro4/5A1tEmCzpbhKLzdPET/3MqRQP6rGvxeLxmzdQk=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S2388006AbfIIDyZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Sep 2019 23:54:25 -0400
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:54797 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387833AbfIIDyY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Sep 2019 23:54:24 -0400
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 5EF832963;
+        Sun,  8 Sep 2019 23:54:23 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Sun, 08 Sep 2019 23:54:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm3; bh=R
+        8LbfYJffu40yx4D2FHnjPmSQXgd166zgHqkOmUJu4c=; b=iu4B9w0ov0PFn7Z43
+        B2kcCLpfVBG6uYLLzqLuSL98yBobuzoF1/4a0hV75u06BO+EOstibZgvlQMGIx6D
+        8cUn42fyLS9kpmfTUmrl0IEYNO0FJW6nRM/wyFkPUkTHTyvhC7DgS1sBxxPLMyyb
+        utgvh33+KpRX0AKtR6CZR42Mt6cDhF/ts1oHapoUjNFtH7gAey6xiDTVTVFm+7K1
+        Z5JQ/qQlEkR+0uCSWbVz02fR3qN0oewL/XpcLlBlLal05fT9wtgVJdEaqtQ5UPWs
+        qDUn+1hcbZEF89aN69qSRtuifrxbYLCELx5DZ1xO1ex02Wv/THyMm9N8T3UpsLKB
+        J8cHA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm3; bh=R8LbfYJffu40yx4D2FHnjPmSQXgd166zgHqkOmUJu
+        4c=; b=TYLSv09/4b1ljpj1zIOINXn54LVaUxu5XSh16wEUAzmcv4sgf8vD1wbgI
+        1Yq0/cKY4npJSLvprYSOqKCl3qAmBm3k9QyweaORoGvMWMFhrsIL7c6ai3d3X4kq
+        5J7IYa5Go+GAUqXX29ic46/slZprthadLNjqAtgznvgqi+h406xkmqTk0cB4qt2z
+        aGiL7Kf3aeGloQbdC389ODVtZIlxwAdlZ+7kSUL9iw9qNbWi+1UuVu2/BeVGFPte
+        i73WMnKlOI1g9q0wxUt1jWzZnCAoJxXQ7LSrVR8GVRTxjFwVx7ViBVvUE48Syfjg
+        7mp+Wl9SwhRebAT6bsTZnlyBsac6w==
+X-ME-Sender: <xms:68x1XcjwMybboUx96Nz6iK21VOZ6DSCQdMlfuKtWOC02Do5B_iKODg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeduvddrudekhedgjeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepuffvfhfhkffffgggjggtgfesthekredttdefjeenucfhrhhomhepufgrmhhu
+    vghlucfjohhllhgrnhguuceoshgrmhhuvghlsehshhholhhlrghnugdrohhrgheqnecuff
+    homhgrihhnpehlkhhmlhdrohhrghdpghhithhhuhgsrdgtohhmpdhinhhfrhgruggvrggu
+    rdhorhhgnecukfhppeejtddrudefhedrudegkedrudehudenucfrrghrrghmpehmrghilh
+    hfrhhomhepshgrmhhuvghlsehshhholhhlrghnugdrohhrghenucevlhhushhtvghrufhi
+    iigvpedt
+X-ME-Proxy: <xmx:68x1XQZUEHW157Lt9IVLaDo51zS-UFCxLz5NVTawGFTv0MywjFMumA>
+    <xmx:68x1XdcwqlkSlLXVhRY1rvm-uQEONXHXq68SIpWQL8YHpn1HhtfX-A>
+    <xmx:68x1XVA99wDS0AVgMWorin6YsHvHi5Qtk6G_kOWEA7X85xIUhNlLiw>
+    <xmx:78x1XcuWOUsyYKxFMvX376sVeg2m-iXP4Qk6yhVmb5fkfhlbqAqPHA>
+Received: from [192.168.50.162] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id D055580059;
+        Sun,  8 Sep 2019 23:54:18 -0400 (EDT)
+Subject: Re: [PATCH v4 00/10] Allwinner sunxi message box support
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Corentin Labbe <clabbe.montjoie@gmail.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <20190820032311.6506-1-samuel@sholland.org>
+ <20190909032208.rlorx2ppytymtyej@core.my.home>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <bb6eab9a-f9cc-81ca-5e8c-9fb867c61ec2@sholland.org>
+Date:   Sun, 8 Sep 2019 22:54:17 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2743aff7-5a43-4aa4-8d67-08d734d754f2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Sep 2019 03:39:34.5518
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: vBceA4wgGAJMRRoBGzBtY+Ers2y3wCZb0ICcp4wTXGDjjXGTe1fINo2f8rBAKwvszkVHnjvy8T9Qo6rQZAaOgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6020
+In-Reply-To: <20190909032208.rlorx2ppytymtyej@core.my.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+On 9/8/19 10:22 PM, Ondřej Jirman wrote:
+> Hello Samuel,
+> 
+> On Mon, Aug 19, 2019 at 10:23:01PM -0500, Samuel Holland wrote:
+>> This series adds support for the "hardware message box" in sun8i, sun9i,
+>> and sun50i SoCs, used for communication with the ARISC management
+>> processor (the platform's equivalent of the ARM SCP). The end goal is to
+>> use the arm_scpi driver as a client, communicating with firmware running
+>> on the AR100 CPU, or to use the mailbox to forward NMIs that the
+>> firmware picks up from R_INTC.
+>>
+>> Unfortunately, the ARM SCPI client no longer works with this driver
+>> since it now exposes all 8 hardware FIFOs individually. The SCPI client
+>> could be made to work (and I posted proof-of-concept code to that effect
+>> with v1 of this series), but that is a low priority, as Linux does not
+>> directly use SCPI with the current firmware version; all SCPI use goes
+>> through ATF via PSCI.
+>>
+>> As requested in the comments to v3 of this patchset, a demo client is
+>> provided in the final patch. This demo goes along with a toy firmware
+>> which shows that the driver does indeed work for two-way communication
+>> on all channels. To build the firmware component, run:
+> 
+> I've tried using this driver with mainline arm_scpi driver (which is probably
+> an expected future use, since crust provides SCPI interface).
 
-According to PLL1443XA and PLL1416X spec,
-"When BYPASS is 0 and RESETB is changed from 0 to 1, FOUT starts to
-output unstable clock until lock time passes. PLL1416X/PLL1443XA may
-generate a glitch at FOUT."
+If you've verified in some way that this driver works on A83T, I'd appreciate
+your Tested-by, so I can send a patch for the A83T device tree node.
 
-So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.
-In the end of set rate, BYPASS will be cleared.
+> The problem I've found is that arm_scpi expects message box to be
+> bi-directional, but this driver provides uni-directional interface.
+> 
+> What do you think about making this driver provide bi-directional interface?
+> We could halve the number of channels to 4 and mandate TX/RX configuration
+> (from main CPU's PoV) as ABI.
 
-When prepare clock, also need to take care to avoid glitch. So
-we also follow Spec to set BYPASS before RESETB changed from 0 to 1.
-And add a check if the RESETB is already 0, directly return 0;
+Funny you mention that. That's what I did originally for v1, but it got NAKed by
+Maxime, Andre, and Jassi:
 
-Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
+https://lkml.org/lkml/2018/2/28/125
+https://lkml.org/lkml/2018/2/28/944
 
-V3:
- None
-V2:
-  Avoid glitch when prepare
-  update commit log
+> Otherwise it's impossible to use it with the arm_scpi driver.
+> 
+> Or do you have any other ideas? I guess arm_scpi can be fixed to add a
+> property that would make it possible to use single shmem with two
+> mailboxes, one for rx and one for tx, but making sun6i mailbox have
+> bi-directional interface sounds easier.
 
- drivers/clk/imx/clk-pll14xx.c | 22 +++++++++++++++++++++-
- 1 file changed, 21 insertions(+), 1 deletion(-)
+Yes, you can use the existence of the mbox-names property to determine if the
+driver needs one mailbox or two, as I did in this driver:
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index b7213023b238..656f48b002dd 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -191,6 +191,10 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, un=
-signed long drate,
- 	tmp &=3D ~RST_MASK;
- 	writel_relaxed(tmp, pll->base);
-=20
-+	/* Enable BYPASS */
-+	tmp |=3D BYPASS_MASK;
-+	writel(tmp, pll->base);
-+
- 	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
- 		(rate->sdiv << SDIV_SHIFT);
- 	writel_relaxed(div_val, pll->base + 0x4);
-@@ -250,6 +254,10 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, un=
-signed long drate,
- 	tmp &=3D ~RST_MASK;
- 	writel_relaxed(tmp, pll->base);
-=20
-+	/* Enable BYPASS */
-+	tmp |=3D BYPASS_MASK;
-+	writel_relaxed(tmp, pll->base);
-+
- 	div_val =3D (rate->mdiv << MDIV_SHIFT) | (rate->pdiv << PDIV_SHIFT) |
- 		(rate->sdiv << SDIV_SHIFT);
- 	writel_relaxed(div_val, pll->base + 0x4);
-@@ -283,16 +291,28 @@ static int clk_pll14xx_prepare(struct clk_hw *hw)
- {
- 	struct clk_pll14xx *pll =3D to_clk_pll14xx(hw);
- 	u32 val;
-+	int ret;
-=20
- 	/*
- 	 * RESETB =3D 1 from 0, PLL starts its normal
- 	 * operation after lock time
- 	 */
- 	val =3D readl_relaxed(pll->base + GNRL_CTL);
-+	if (val & RST_MASK)
-+		return 0;
-+	val |=3D BYPASS_MASK;
-+	writel_relaxed(val, pll->base + GNRL_CTL);
- 	val |=3D RST_MASK;
- 	writel_relaxed(val, pll->base + GNRL_CTL);
-=20
--	return clk_pll14xx_wait_lock(pll);
-+	ret =3D clk_pll14xx_wait_lock(pll);
-+	if (ret)
-+		return ret;
-+
-+	val &=3D ~BYPASS_MASK;
-+	writel_relaxed(val, pll->base + GNRL_CTL);
-+
-+	return 0;
- }
-=20
- static int clk_pll14xx_is_prepared(struct clk_hw *hw)
---=20
-2.16.4
+https://lkml.org/lkml/2019/3/1/789
+
+I'll have a patch available soon that implements this for arm_scpi.
+
+Cheers,
+Samuel
+
+> regards,
+> 	o.
+> 
+>>   git clone https://github.com/crust-firmware/meta meta
+>>   git clone -b mailbox-demo https://github.com/crust-firmware/crust meta/crust
+>>   cd meta
+>>   make
+>>
+>> That will by default produce a U-Boot + ATF + SCP firmware image in
+>> [meta/]build/pinebook/u-boot-sunxi-with-spl.bin. See the top-level
+>> README.md for more information, such as cross-compiler setup.
+>>
+>> I've now used this driver with three separate clients over the past two
+>> years, and they all work. If there are no remaining concerns with the
+>> driver, I'd like it to get merged.
+>>
+>> Even without the driver, the clock patches (1-2) can go in at any time.
+>>
+>> Changes from v3:
+>>   - Rebased on sunxi-next
+>>   - Added Rob's Reviewed-by for patch 3
+>>   - Fixed a crash when receiving a message on a disabled channel
+>>   - Cleaned up some comments/formatting in the driver
+>>   - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
+>>   - Removed the irqchip example (no longer relevant to the fw design)
+>>   - Added a demo/example client that uses the driver and a toy firmware
+>>
+>> Changes from v2:
+>>   - Merge patches 1-3
+>>   - Add a comment in the code explaining the CLK_IS_CRITICAL usage
+>>   - Add a patch to mark the AR100 clocks as critical
+>>   - Use YAML for the device tree binding
+>>   - Include a not-for-merge example usage of the mailbox
+>>
+>> Changes from v1:
+>>   - Marked message box clocks as critical instead of hacks in the driver
+>>   - 8 unidirectional channels instead of 4 bidirectional pairs
+>>   - Use per-SoC compatible strings and an A31 fallback compatible
+>>   - Dropped the mailbox framework patch
+>>   - Include DT patches for SoCs that document the message box
+>>
+>> Samuel Holland (10):
+>>   clk: sunxi-ng: Mark msgbox clocks as critical
+>>   clk: sunxi-ng: Mark AR100 clocks as critical
+>>   dt-bindings: mailbox: Add a sunxi message box binding
+>>   mailbox: sunxi-msgbox: Add a new mailbox driver
+>>   ARM: dts: sunxi: a80: Add msgbox node
+>>   ARM: dts: sunxi: a83t: Add msgbox node
+>>   ARM: dts: sunxi: h3/h5: Add msgbox node
+>>   arm64: dts: allwinner: a64: Add msgbox node
+>>   arm64: dts: allwinner: h6: Add msgbox node
+>>   [DO NOT MERGE] drivers: firmware: msgbox demo
+>>
+>>  .../mailbox/allwinner,sunxi-msgbox.yaml       |  79 +++++
+>>  arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
+>>  arch/arm/boot/dts/sun9i-a80.dtsi              |  10 +
+>>  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
+>>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  34 ++
+>>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |  24 ++
+>>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
+>>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   3 +-
+>>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |   2 +-
+>>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   3 +-
+>>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c          |   3 +-
+>>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c          |   3 +-
+>>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   3 +-
+>>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c           |   3 +-
+>>  drivers/clk/sunxi-ng/ccu-sun8i-r.c            |   2 +-
+>>  drivers/clk/sunxi-ng/ccu-sun9i-a80.c          |   3 +-
+>>  drivers/firmware/Kconfig                      |   6 +
+>>  drivers/firmware/Makefile                     |   1 +
+>>  drivers/firmware/sunxi_msgbox_demo.c          | 307 +++++++++++++++++
+>>  drivers/mailbox/Kconfig                       |  10 +
+>>  drivers/mailbox/Makefile                      |   2 +
+>>  drivers/mailbox/sunxi-msgbox.c                | 323 ++++++++++++++++++
+>>  22 files changed, 842 insertions(+), 9 deletions(-)
+>>  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
+>>  create mode 100644 drivers/firmware/sunxi_msgbox_demo.c
+>>  create mode 100644 drivers/mailbox/sunxi-msgbox.c
+>>
+>> -- 
+>> 2.21.0
+>>
+>> _______________________________________________
+>> linux-arm-kernel mailing list
+>> linux-arm-kernel@lists.infradead.org
+>> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
 
