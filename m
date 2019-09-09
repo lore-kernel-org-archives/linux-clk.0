@@ -3,84 +3,93 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D111AC433EF
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4B8C433EF
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6EA21A4C
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:24:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568024676;
-	bh=kjV5UmPW+o1J0y5yc5/2T9jcM8+FpxAQwKQ1DszQ4wg=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=WMACh3xO7l/n0zBR1YYKmsskPo+LJB3OToGbjjrvcOk2Fvp6ihz4Srtyz0cUl8Y9E
-	 2mqLqvzC46+VDYghj/oz+s3KH6GpSNEIaA7Fmvty0ZFzhU6/dMN+i8Wdm9EdK7/6qm
-	 ubHn6eKMaZLauzr4FrmXYSeVWu9JkvEY8yMJjUFQ=
+	by mail.kernel.org (Postfix) with ESMTP id 3617721920
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 10:25:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gy3GdGrC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390602AbfIIKYg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 06:24:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38604 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390541AbfIIKYg (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Sep 2019 06:24:36 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60ED22089F;
-        Mon,  9 Sep 2019 10:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568024675;
-        bh=kjV5UmPW+o1J0y5yc5/2T9jcM8+FpxAQwKQ1DszQ4wg=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=hq3gDhgmuFSBWM19gRvwEZVY7joCUP6LcIMfiG6hwI1ONsvQKARCD1r9U+6VKpDp6
-         TGJU4eSfvX5UvUuOSyhSj0Y/ihIaPYqw7SWpVFux/T2r2oW7UKR61mOQGnao8LgzGR
-         6rpxJXRH7YYbz/oyvwdOtbZdiAZg4f7rIXwnwX1E=
+        id S2403790AbfIIKZD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 06:25:03 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41243 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730292AbfIIKZD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Sep 2019 06:25:03 -0400
+Received: by mail-pl1-f195.google.com with SMTP id m9so6337010pls.8
+        for <linux-clk@vger.kernel.org>; Mon, 09 Sep 2019 03:25:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=message-id:mime-version:content-transfer-encoding:in-reply-to
+         :references:cc:to:from:subject:user-agent:date;
+        bh=TyNObdox1Iixd3zdjTU48f1Hvwe8ktTALjvLZDb3R8o=;
+        b=Gy3GdGrC2H0vAPvVXFy7E3x7By74bGTaeH6NGTKpD7w8/GgGJHjYKmbfMF22EDtA5B
+         f5t5fUsvRZnfkAg2s2I3/vJwMxsVh0krMkkMa7Ee4s/w4KIBoRIUCTM0OI59Mh4RXkVw
+         R7LTkg25XjGZcEUZlnpMa19BBp6+z5JcwqKWg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:mime-version
+         :content-transfer-encoding:in-reply-to:references:cc:to:from:subject
+         :user-agent:date;
+        bh=TyNObdox1Iixd3zdjTU48f1Hvwe8ktTALjvLZDb3R8o=;
+        b=cS1uWAChApYrWzH3IY47b01A5DJSATM00fAEX+w/pn19AQzBpy2FX1/z3/t8rCgB9u
+         bEzzxgFtbjjw5dSkhF7AfdKfHSYUcaz4W+knFweIgCgIQBZboN1ZShQyJRrNE5pYWpOD
+         l7hzhKGPqHTLp8/MmWZ1QCsB9x+HsqqVLrN/UUpbWC0zKwPhB4khEaGU7oxcSGwEAtel
+         4zxdLMgvEwGSlLWnre7y5yi0MszxfQOaaI3bFGjnCw2WuGNdAzeEkQ2DeQckT8QW+AWh
+         azD20uhTEc8zV+l8KUzGecu9ZESER3uPr3Ggo8DcxNG+Wn5VPexi3Fc64JRbczKkALn/
+         Rxhg==
+X-Gm-Message-State: APjAAAXM1EVcb5bm0Lu3vs2lOaHn6WAo8AmEpFPCbfgdflgeUXg0krpU
+        Ukkvfxtynd+buOTQskhCDJYYEg==
+X-Google-Smtp-Source: APXvYqzpzWFH0V95+RGywC3U3nviZcDv33Y78qLcJHexUGEwPoPTOCrEwCOBBtQM/gjQNV2ltj/5YA==
+X-Received: by 2002:a17:902:9347:: with SMTP id g7mr23722181plp.0.1568024702129;
+        Mon, 09 Sep 2019 03:25:02 -0700 (PDT)
+Received: from chromium.org ([2620:15c:202:1:fa53:7765:582b:82b9])
+        by smtp.gmail.com with ESMTPSA id l6sm33369863pje.28.2019.09.09.03.25.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Sep 2019 03:25:01 -0700 (PDT)
+Message-ID: <5d76287d.1c69fb81.1631c.4ca4@mx.google.com>
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <adaad84a-15ce-3212-9fec-7ff387da2a88@codeaurora.org>
-References: <20190906045659.20621-1-vkoul@kernel.org> <20190906203827.A2259208C3@mail.kernel.org> <adaad84a-15ce-3212-9fec-7ff387da2a88@codeaurora.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: qcom: gcc-qcs404: Use floor ops for sdcc clks
+In-Reply-To: <20190830195142.103564-1-swboyd@chromium.org>
+References: <20190830195142.103564-1-swboyd@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sdm845: Use floor ops for sdcc clks
 User-Agent: alot/0.8.1
-Date:   Mon, 09 Sep 2019 03:24:34 -0700
-Message-Id: <20190909102435.60ED22089F@mail.kernel.org>
+Date:   Mon, 09 Sep 2019 03:25:00 -0700
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-09-09 00:48:39)
-> Hi Stephen, Vinod,
+Quoting Stephen Boyd (2019-08-30 12:51:42)
+> Some MMC cards fail to enumerate properly when inserted into an MMC slot
+> on sdm845 devices. This is because the clk ops for qcom clks round the
+> frequency up to the nearest rate instead of down to the nearest rate.
+> For example, the MMC driver requests a frequency of 52MHz from
+> clk_set_rate() but the qcom implementation for these clks rounds 52MHz
+> up to the next supported frequency of 100MHz. The MMC driver could be
+> modified to request clk rate ranges but for now we can fix this in the
+> clk driver by changing the rounding policy for this clk to be round down
+> instead of round up.
 >=20
-> On 9/7/2019 2:08 AM, Stephen Boyd wrote:
-> > Quoting Vinod Koul (2019-09-05 21:56:59)
-> >> Update the gcc qcs404 clock driver to use floor ops for sdcc clocks. As
-> >> disuccsed in [1] it is good idea to use floor ops for sdcc clocks as we
-> >> dont want the clock rates to do round up.
-> >>
-> >> [1]: https://lore.kernel.org/linux-arm-msm/20190830195142.103564-1-swb=
-oyd@chromium.org/
-> >>
-> >> Signed-off-by: Vinod Koul <vkoul@kernel.org>
-> >> ---
-> >=20
-> > Is Taniya writing the rest? Please don't dribble it out over the next
-> > few weeks!
->=20
-> I have pushed the patch : https://patchwork.kernel.org/patch/11137393/
->=20
-> Vinod, I have taken care of the QCS404 in the same patch, so as to keep=20
-> the change in one patch.
->=20
+> Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver=
+ for SDM845")
+> Reported-by: Douglas Anderson <dianders@chromium.org>
+> Cc: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+> ---
 
-Cool thanks.
+Applied to clk-next
 
