@@ -2,146 +2,140 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 966F3C5ACAE
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6CA8C4740A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7732B2196E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4781206CD
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:16:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405242AbfIIOLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 10:11:39 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:40890 "EHLO inva021.nxp.com"
+        id S2387401AbfIIOQf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 10:16:35 -0400
+Received: from mga09.intel.com ([134.134.136.24]:33539 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405245AbfIIOLi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Sep 2019 10:11:38 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9ECC4200B03;
-        Mon,  9 Sep 2019 16:11:36 +0200 (CEST)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 72977200858;
-        Mon,  9 Sep 2019 16:11:32 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5F14840323;
-        Mon,  9 Sep 2019 22:11:26 +0800 (SGT)
-From:   Dong Aisheng <aisheng.dong@nxp.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-        mturquette@baylibre.com, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V5 11/11] clk: imx: lpcg: add suspend/resume support
-Date:   Mon,  9 Sep 2019 22:10:08 -0400
-Message-Id: <1568081408-26800-12-git-send-email-aisheng.dong@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
-References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1730690AbfIIOQf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Sep 2019 10:16:35 -0400
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga007.fm.intel.com ([10.253.24.52])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 09 Sep 2019 07:16:34 -0700
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.64,484,1559545200"; 
+   d="scan'208";a="185204986"
+Received: from cheolyon-mobl.gar.corp.intel.com (HELO [10.249.76.127]) ([10.249.76.127])
+  by fmsmga007.fm.intel.com with ESMTP; 09 Sep 2019 07:16:30 -0700
+Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>, sboyd@kernel.org
+Cc:     andriy.shevchenko@intel.com, cheol.yong.kim@intel.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com,
+        qi-ming.wu@intel.com, rahul.tanwar@intel.com, robh+dt@kernel.org,
+        robh@kernel.org, yixin.zhu@linux.intel.com
+References: <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com>
+ <20190902222015.11360-1-martin.blumenstingl@googlemail.com>
+ <d9e96dab-96be-0c14-b7af-e1f2dc07ebd2@linux.intel.com>
+ <CAFBinCARQJ7q9q3r6c6Yr2SD0Oo_Drah-kxss3Obs-g=B1M28A@mail.gmail.com>
+ <b7920723-1df2-62df-61c7-98c3a1665aa1@linux.intel.com>
+ <CAFBinCA+J-HnXfRnquqviXvX0Jo84hoLC9=_uHbyWKZycwyAFw@mail.gmail.com>
+From:   "Kim, Cheol Yong" <cheol.yong.kim@linux.intel.com>
+Message-ID: <4e1ddc50-7ae3-3ba9-7e41-80a834fa2dbf@linux.intel.com>
+Date:   Mon, 9 Sep 2019 22:16:29 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <CAFBinCA+J-HnXfRnquqviXvX0Jo84hoLC9=_uHbyWKZycwyAFw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-LPCG clock state may be lost when it's power domain is completely
-off during system suspend/resume and we need save and restore the
-state properly.
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-ChangeLog:
-v5:
- * make suspend/resume function static
- * improve code comments
-v4: no changes
-v3: new patch
----
- drivers/clk/imx/clk-imx8qxp-lpcg.c |  1 +
- drivers/clk/imx/clk-lpcg-scu.c     | 37 +++++++++++++++++++++++++++++++++++++
- drivers/clk/imx/clk-scu.h          |  1 +
- 3 files changed, 39 insertions(+)
+On 9/6/2019 4:47 AM, Martin Blumenstingl wrote:
+> Hi Rahul,
+>
+> On Wed, Sep 4, 2019 at 10:04 AM Tanwar, Rahul
+> <rahul.tanwar@linux.intel.com> wrote:
+>>
+>> Hi Martin,
+>>
+>> On 4/9/2019 2:53 AM, Martin Blumenstingl wrote:
+>>>> My understanding is that if we do not use syscon, then there is no
+>>>> point in using regmap because this driver uses simple 32 bit register
+>>>> access. Can directly read/write registers using readl() & writel().
+>>>>
+>>>> Would you agree ?
+>>> if there was only the LGM SoC then I would say: drop regmap
+>>>
+>>> however, last year a driver for the GRX350/GRX550 SoCs was proposed: [0]
+>>> this was never updated but it seems to use the same "framework" as the
+>>> LGM driver
+>>> with this in mind I am for keeping regmap support because.
+>>> I think it will be easier to add support for old SoCs like
+>>> GRX350/GRX550 (but also VRX200), because the PLL sub-driver (I am
+>>> assuming that it is similar on all SoCs) or some other helpers can be
+>>> re-used across various SoCs instead of "duplicating" code (where one
+>>> variant would use regmap and the other readl/writel).
+>>
+>> Earlier, we had discussed about it in our team.  There are no plans to
+>> upstream mips based platform code, past up-streaming efforts for mips
+>> platforms were also dropped. GRX350/GRX550/VRX200 are all mips
+>> based platforms. Plan is to upstream only x86 based platforms. In-fact,
+>> i had removed GRX & other older SoCs support from this driver before
+>> sending for review. So we can consider only x86 based LGM family of
+>> SoCs for this driver & all of them will be reusing same IP.
+> this is very sad news
+> as far as I can tell many IP cores are similar/identical on
+> GRX350/GRX550, LGM and even VRX200
+>
+> I already know that VRX200 is a legacy product and you won't be supporting it
+> once LGM support lands upstream you could add support for
+> GRX350/GRX550 with small to medium effort
+> that is a big win (in my opinion) because it means happier end-users
+> (see XWAY and VRX200 support in OpenWrt for example: while support
+> from Intel/Lantiq has died long ago these devices can still run a
+> recent LTS kernel and get security updates. without OpenWrt these
+> devices would probably end up as electronic waste)
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index f395eb5..99a5f55 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -338,6 +338,7 @@ static struct platform_driver imx8qxp_lpcg_clk_driver = {
- 	.driver = {
- 		.name = "imx8qxp-lpcg-clk",
- 		.of_match_table = imx8qxp_lpcg_match,
-+		.pm = &imx_clk_lpcg_scu_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8qxp_lpcg_clk_probe,
-diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
-index 3c092a0..1dd928a 100644
---- a/drivers/clk/imx/clk-lpcg-scu.c
-+++ b/drivers/clk/imx/clk-lpcg-scu.c
-@@ -33,6 +33,9 @@ struct clk_lpcg_scu {
- 	void __iomem *reg;
- 	u8 bit_idx;
- 	bool hw_gate;
-+
-+	/* for state save&restore */
-+	u32 state;
- };
- 
- #define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
-@@ -112,5 +115,39 @@ struct clk_hw *__imx_clk_lpcg_scu(struct device *dev, const char *name,
- 		hw = ERR_PTR(ret);
- 	}
- 
-+	if (dev)
-+		dev_set_drvdata(dev, clk);
-+
- 	return hw;
- }
-+
-+static int __maybe_unused imx_clk_lpcg_scu_suspend(struct device *dev)
-+{
-+	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
-+
-+	clk->state = readl_relaxed(clk->reg);
-+	dev_dbg(dev, "save lpcg state 0x%x\n", clk->state);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused imx_clk_lpcg_scu_resume(struct device *dev)
-+{
-+	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
-+
-+	/*
-+	 * FIXME: Sometimes writes don't work unless the CPU issues
-+	 * them twice
-+	 */
-+
-+	writel(clk->state, clk->reg);
-+	writel(clk->state, clk->reg);
-+	dev_dbg(dev, "restore lpcg state 0x%x\n", clk->state);
-+
-+	return 0;
-+}
-+
-+const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx_clk_lpcg_scu_suspend,
-+				      imx_clk_lpcg_scu_resume)
-+};
-diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
-index 84efda3..6d4b6e2 100644
---- a/drivers/clk/imx/clk-scu.h
-+++ b/drivers/clk/imx/clk-scu.h
-@@ -12,6 +12,7 @@
- 
- extern u32 clock_cells;
- extern struct list_head imx_scu_clks[];
-+extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
- 
- int imx_clk_scu_init(struct device_node *np);
- struct clk_hw *imx_scu_of_clk_src_get(struct of_phandle_args *clkspec,
--- 
-2.7.4
+I'm sorry to say that we don't plan to support legacy SOCs. As you might 
+know, we tried to upstream some of drivers last year but found a lot of 
+problems to support both legacy SOCs and LGM.
 
+It was a real pain to support all of them with limited resources/time 
+and we couldn't make it. Our new plan was to reattempt to upstream LGM 
+drivers only. This can be more realistic target for us.
+
+>
+> maybe implementing a re-usable regmap clock driver (for mux, gate and
+> divider) means less effort (compared to converting everything to
+> standard clock ops) for you.
+> (we did the switch from standard clock ops to regmap for the Amlogic
+> Meson clock drivers when we discovered that there were some non-clock
+> registers that belong to other IP blocks in it and it was a lot of
+> effort)
+> this will allow you to add support for GRX350/GRX550 in the future if
+> demand for upstream drivers rises.
+
+I've discussed internally the amount of efforts to create a reusable 
+regmap clock driver which might be reused by other companies too.
+
+It seems it requires significant efforts for implementation/tests. As we 
+don't plan to support our old SOCs for now, I'm not sure if we need to 
+put such a big efforts.
+
+Stephan,
+
+It seems you don't like both meson/qcom regmap clock implementation.
+
+What is your opinion for our current CGU clock driver implementation?
+
+
+>
+> Martin
+>
