@@ -2,114 +2,163 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92089C4740A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FD6C4740A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709042196E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA2702196E
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405212AbfIIOL2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 10:11:28 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:40506 "EHLO inva021.nxp.com"
+        id S2405218AbfIIOL3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 10:11:29 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40570 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405209AbfIIOL1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Sep 2019 10:11:27 -0400
+        id S2405211AbfIIOL3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Sep 2019 10:11:29 -0400
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 44FF9200890;
-        Mon,  9 Sep 2019 16:11:25 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 54A622003F7;
+        Mon,  9 Sep 2019 16:11:27 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 179A02000FD;
-        Mon,  9 Sep 2019 16:11:21 +0200 (CEST)
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 808202000F6;
+        Mon,  9 Sep 2019 16:11:22 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A32E7402AF;
-        Mon,  9 Sep 2019 22:11:15 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 9908F402CF;
+        Mon,  9 Sep 2019 22:11:16 +0800 (SGT)
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
         mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V5 00/11] clk: imx8: add new clock binding for better pm support
-Date:   Mon,  9 Sep 2019 22:09:57 -0400
-Message-Id: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
+        Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org
+Subject: [PATCH V5 01/11] dt-bindings: firmware: imx-scu: new binding to parse clocks from device tree
+Date:   Mon,  9 Sep 2019 22:09:58 -0400
+Message-Id: <1568081408-26800-2-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
+References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
 X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This is a follow up of this patch series.
-https://patchwork.kernel.org/cover/10924029/
-[V2,0/2] clk: imx: scu: add parsing clocks from device tree support
+There's a few limitations on the original one cell clock binding
+(#clock-cells = <1>) that we have to define some SW clock IDs for device
+tree to reference. This may cause troubles if we want to use common
+clock IDs for multi platforms support when the clock of those platforms
+are mostly the same.
+e.g. Current clock IDs name are defined with SS prefix.
 
-This patch series is a preparation for the MX8 Architecture improvement.
-As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
-of a couple of SS(Subsystems) while most of them within the same SS
-can be shared. e.g. Clocks, Devices and etc.
+However the device may reside in different SS across CPUs, that means the
+SS prefix may not valid anymore for a new SoC. Furthermore, the device
+availability of those clocks may also vary a bit.
 
-However, current clock binding is using SW IDs for device tree to use
-which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
-different SoCs.
+For such situation, we want to eliminate the using of SW Clock IDs and
+change to use a more close to HW one instead.
+For SCU clocks usage, only two params required: Resource id + Clock Type.
+Both parameters are platform independent. So we could use two cells binding
+to pass those parameters,
 
-This patch series aims to introduce a new binding which is more close to
-hardware and platform independent and can makes us write a more general
-drivers for different SCU based SoCs.
-
-Another important thing is that on MX8, each Clock resource is associated
-with a power domain. So we have to attach that clock device to the power
-domain in order to make it work properly. Further more, the clock state
-will be lost when its power domain is completely off during suspend/resume,
-so we also introduce the clock state save&restore mechanism.
-
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: devicetree@vger.kernel.org
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
 ChangeLog:
-v4->v5:
- * Address many comments from Stephen
 v3->v4:
- * use clk-indices for LPCG to fetch each clks offset from dt
+ * add some comments for various clock types
 v2->v3:
- * change scu clk into two cells binding
- * add clk pm patches to ease the understand of the changes
+ * Changed to two cells binding and register all clocks in driver
+   instead of parse from device tree.
 v1->v2:
- * SCU clock changed to one cell clock binding inspired by arm,scpi.txt
+ * changed to one cell binding inspired by arm,scpi.txt
    Documentation/devicetree/bindings/arm/arm,scpi.txt
- * Add required power domain property
- * Dropped PATCH 3&4 first, will send the updated version accordingly
-   after the binding is finally determined,
+   Resource ID is encoded in 'reg' property.
+   Clock type is encoded in generic clock-indices property.
+   Then we don't have to search all the DT nodes to fetch
+   those two value to construct clocks which is relatively
+   low efficiency.
+ * Add required power-domain property as well.
+---
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt  | 12 ++++++-----
+ include/dt-bindings/firmware/imx/rsrc.h            | 23 ++++++++++++++++++++++
+ 2 files changed, 30 insertions(+), 5 deletions(-)
 
-
-
-Dong Aisheng (11):
-  dt-bindings: firmware: imx-scu: new binding to parse clocks from
-    device tree
-  dt-bindings: clock: imx-lpcg: add support to parse clocks from device
-    tree
-  clk: imx: scu: add two cells binding support
-  clk: imx: scu: bypass cpu power domains
-  clk: imx: scu: allow scu clk to take device pointer
-  clk: imx: scu: add runtime pm support
-  clk: imx: scu: add suspend/resume support
-  clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
-  clk: imx: lpcg: allow lpcg clk to take device pointer
-  clk: imx: clk-imx8qxp-lpcg: add runtime pm support
-  clk: imx: lpcg: add suspend/resume support
-
- .../devicetree/bindings/arm/freescale/fsl,scu.txt  |  12 +-
- .../devicetree/bindings/clock/imx8qxp-lpcg.txt     |  36 +++-
- drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 124 ++++++++++++
- drivers/clk/imx/clk-imx8qxp.c                      |   9 +-
- drivers/clk/imx/clk-lpcg-scu.c                     |  45 ++++-
- drivers/clk/imx/clk-scu.c                          | 218 ++++++++++++++++++++-
- drivers/clk/imx/clk-scu.h                          |  50 ++++-
- include/dt-bindings/clock/imx8-lpcg.h              |  14 ++
- include/dt-bindings/firmware/imx/rsrc.h            |  23 +++
- 9 files changed, 501 insertions(+), 30 deletions(-)
- create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
-
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index a575e42..8cee5bf 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -89,7 +89,10 @@ Required properties:
+ 			  "fsl,imx8qm-clock"
+ 			  "fsl,imx8qxp-clock"
+ 			followed by "fsl,scu-clk"
+-- #clock-cells:		Should be 1. Contains the Clock ID value.
++- #clock-cells:		Should be either
++			2: Contains the Resource and Clock ID value.
++			or
++			1: Contains the Clock ID value. (DEPRECATED)
+ - clocks:		List of clock specifiers, must contain an entry for
+ 			each required entry in clock-names
+ - clock-names:		Should include entries "xtal_32KHz", "xtal_24MHz"
+@@ -184,7 +187,7 @@ firmware {
+ 
+ 		clk: clk {
+ 			compatible = "fsl,imx8qxp-clk", "fsl,scu-clk";
+-			#clock-cells = <1>;
++			#clock-cells = <2>;
+ 		};
+ 
+ 		iomuxc {
+@@ -229,8 +232,7 @@ serial@5a060000 {
+ 	...
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_lpuart0>;
+-	clocks = <&clk IMX8QXP_UART0_CLK>,
+-		 <&clk IMX8QXP_UART0_IPG_CLK>;
+-	clock-names = "per", "ipg";
++	clocks = <&uart0_clk IMX_SC_R_UART_0 IMX_SC_PM_CLK_PER>;
++	clock-names = "ipg";
+ 	power-domains = <&pd IMX_SC_R_UART_0>;
+ };
+diff --git a/include/dt-bindings/firmware/imx/rsrc.h b/include/dt-bindings/firmware/imx/rsrc.h
+index 4e61f64..24c153d 100644
+--- a/include/dt-bindings/firmware/imx/rsrc.h
++++ b/include/dt-bindings/firmware/imx/rsrc.h
+@@ -547,4 +547,27 @@
+ #define IMX_SC_R_ATTESTATION		545
+ #define IMX_SC_R_LAST			546
+ 
++/*
++ * Defines for SC PM CLK
++ */
++
++/* Normal device resource clock */
++#define IMX_SC_PM_CLK_SLV_BUS		0	/* Slave bus clock */
++#define IMX_SC_PM_CLK_MST_BUS		1	/* Master bus clock */
++#define IMX_SC_PM_CLK_PER		2	/* Peripheral clock */
++#define IMX_SC_PM_CLK_PHY		3	/* Phy clock */
++#define IMX_SC_PM_CLK_MISC		4	/* Misc clock */
++
++/* Special clock types which do not belong to above normal clock types */
++#define IMX_SC_PM_CLK_MISC0		0	/* Misc 0 clock */
++#define IMX_SC_PM_CLK_MISC1		1	/* Misc 1 clock */
++#define IMX_SC_PM_CLK_MISC2		2	/* Misc 2 clock */
++#define IMX_SC_PM_CLK_MISC3		3	/* Misc 3 clock */
++#define IMX_SC_PM_CLK_MISC4		4	/* Misc 4 clock */
++
++/* Special clock types for CPU/PLL/BYPASS only */
++#define IMX_SC_PM_CLK_CPU		2	/* CPU clock */
++#define IMX_SC_PM_CLK_PLL		4	/* PLL */
++#define IMX_SC_PM_CLK_BYPASS		4	/* Bypass clock */
++
+ #endif /* __DT_BINDINGS_RSCRC_IMX_H */
 -- 
 2.7.4
 
