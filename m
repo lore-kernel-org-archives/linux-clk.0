@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87DD4C49ED8
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 14:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B297C49ED8
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 14:53:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F4E92168B
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 14:53:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6EB67216F4
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 14:53:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568127199;
-	bh=ntFjl67nxoRyK8Sdto19vdllPdxmhbm0zE2ozFdj2D0=;
+	s=default; t=1568127214;
+	bh=pUryn9WqGUSNogBctTeoXa0sx1NkQRLY6uysdLw32VE=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=EAFImnQLK0hxExcvXgRsfjzveUD8QXqS8u4479wlTz332i1XV8zbiDP57utt+CKhD
-	 PO/fBTmlNp9qvuQ9Kt6WfRZdT4bBGMb0w2VQHCdB56rdNTKMk3kiDKp2J4jH4pScdc
-	 a+SknMjsm9qysUaeNMt4WGA9eTOYhM29U3/aIFtU=
+	b=X6ErehPEVW2JfK14S+qQl++y3of7FzcSOwjs5g09cpp4wT7GDVUTqRjEM6eKirF1j
+	 hPjv09Sv0PiF/JiBo8roaiPadAWu4FvMnl4M7OAOavwzOEv7/fCact8E9XEidxbLQH
+	 uyFwl4ChlflVZeawqJl0xCw4ZrK+GI5/QiKzADHc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393454AbfIJOxQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Sep 2019 10:53:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35118 "EHLO mail.kernel.org"
+        id S2393695AbfIJOx1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Sep 2019 10:53:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35302 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732106AbfIJOxP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Sep 2019 10:53:15 -0400
+        id S2393693AbfIJOx1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Sep 2019 10:53:27 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1209E216F4;
-        Tue, 10 Sep 2019 14:53:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 946A621479;
+        Tue, 10 Sep 2019 14:53:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568127195;
-        bh=ntFjl67nxoRyK8Sdto19vdllPdxmhbm0zE2ozFdj2D0=;
+        s=default; t=1568127206;
+        bh=pUryn9WqGUSNogBctTeoXa0sx1NkQRLY6uysdLw32VE=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=OQVRXs6Yol30TirIuzbeEzizXtcskMTz5Y3EZcqXs0JoyWTBFGJsaycxXx5pM188I
-         j2Wtt2fib1CwZ+qmXl38NE4x1J+Ne6VqTYgu21MOP9ui84dHLe8+8z53k2ourCAPiq
-         ejxfWbW5S6wfsIvAZ/sjMh0Hvzvb5QtR/2OSip84=
+        b=IlqPaKo38YOb2bnVgeiWP3n/6PBesSjcaF3Ce3yIjfRwyOS7TENRbKaIcHPgVcXYY
+         PtXdZb8ZfSNUjQteNvvXvH941h5CcXAK+feuiNSlBOmVbzrxmxop0lPnVaHDtCQw9j
+         3CoQO6FteCUAU+89CWR1bJcwP916ja1Nx1pCdyo4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1566206502-4347-10-git-send-email-mars.cheng@mediatek.com>
-References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com> <1566206502-4347-10-git-send-email-mars.cheng@mediatek.com>
+In-Reply-To: <1566206502-4347-11-git-send-email-mars.cheng@mediatek.com>
+References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com> <1566206502-4347-11-git-send-email-mars.cheng@mediatek.com>
 Cc:     CC Hwang <cc.hwang@mediatek.com>,
         Loda Chou <loda.chou@mediatek.com>,
         linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
@@ -53,19 +53,19 @@ To:     Linus Walleij <linus.walleij@linaro.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh@kernel.org>, Sean Wang <sean.wang@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 09/11] clk: mediatek: Add dt-bindings for MT6779 clocks
+Subject: Re: [PATCH v2 10/11] clk: mediatek: Add MT6779 clock support
 User-Agent: alot/0.8.1
-Date:   Tue, 10 Sep 2019 07:53:14 -0700
-Message-Id: <20190910145315.1209E216F4@mail.kernel.org>
+Date:   Tue, 10 Sep 2019 07:53:25 -0700
+Message-Id: <20190910145326.946A621479@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mars Cheng (2019-08-19 02:21:40)
+Quoting Mars Cheng (2019-08-19 02:21:41)
 > From: mtk01761 <wendell.lin@mediatek.com>
 >=20
-> Add MT6779 clock dt-bindings, include topckgen, apmixedsys,
+> Add MT6779 clock support, include topckgen, apmixedsys,
 > infracfg, and subsystem clocks.
 >=20
 > Signed-off-by: mtk01761 <wendell.lin@mediatek.com>
