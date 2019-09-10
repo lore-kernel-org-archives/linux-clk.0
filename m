@@ -2,107 +2,85 @@ Return-Path: <SRS0=8oHU=XF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 786C2C3A5A2
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 10:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6931AC3A5A2
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 10:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 495F42089F
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 10:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F752208E4
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Sep 2019 10:33:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568110816;
-	bh=3omawxBmTSTQ4L4eFHnvS5YYJiKjDUvu+gM4S3o1u4A=;
+	s=default; t=1568111587;
+	bh=LJtBmi1tzU6euOWenIIUw2u/xvJ895RqpElZGcqoEFA=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=cxnMBb38vm7X6ltn5KESMgDKqK979nhDAVsHiW6w0uSmGLxhA8UDufh9pZ5kZRG0m
-	 bjoBpke1ytb0+4jjhx50CbYsyOTGp/Wjybeibn6TBIRkY9rE66U/ajPzjmjWaPTvaD
-	 lGGa8MbigE4kom5TBJcBV7uFrkcUUjhr5jdj6u5Q=
+	b=G6PJlfEYLd2W3NdNObDc2b34xUryG2ZRqcpoJcsVYEwK0EOMG9/zK+/cD+Odb5qw8
+	 dCP+UAf7kh3VDYhB44eYlYZpB+vwPaPGJmh82sXCd3t7hQZK56PSZwlDI9AyMw9hWx
+	 +ItGwngk8Pu8pgTu8aVxFvFWiZ1a1/bn1RUuKMHI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728964AbfIJKUP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Sep 2019 06:20:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48232 "EHLO mail.kernel.org"
+        id S1727207AbfIJKdG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Sep 2019 06:33:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:55350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732367AbfIJKUP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Sep 2019 06:20:15 -0400
+        id S1726869AbfIJKdG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Sep 2019 06:33:06 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1CD3C2081B;
-        Tue, 10 Sep 2019 10:20:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4E1B20872;
+        Tue, 10 Sep 2019 10:33:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568110815;
-        bh=3omawxBmTSTQ4L4eFHnvS5YYJiKjDUvu+gM4S3o1u4A=;
+        s=default; t=1568111585;
+        bh=LJtBmi1tzU6euOWenIIUw2u/xvJ895RqpElZGcqoEFA=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=lMchchyBM1wQPTh0xgo8L18bKMq4gy+2VZw757QGmCdDrGHuf1R20mhc7qMeg8P4V
-         QUKrsRe6rjuPr1Er/FMOhlZge5JWGHEzrkJOjh5KkFAGTD/JVW+Tp8JG8jcyRyndme
-         7Q/1ZOXhb8bxz+C5EJZjxdy+xvzmeu4oh80ruBNM=
+        b=OAZJ7pZnOmv9TWBnrIlLZYkgxdz9nE3yZkkswcGMUvEz1dDtQQtUpjisOcxQVWi8m
+         pSr+mBZWVY9wjfPqJncBp2lPnBzesriGkO0xQ7zUSzOnyAUjNCPwVhecpHQPreRFHS
+         JoMAZd14rknZjzD54lrSggDKmIYLet8VngkurqyI=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3517a1e0-6092-362f-f696-fcc1528ce026@linaro.org>
-References: <20190826164510.6425-1-jorge.ramirez-ortiz@linaro.org> <20190826164510.6425-2-jorge.ramirez-ortiz@linaro.org> <20190909102117.245112089F@mail.kernel.org> <20190909141740.GA23964@igloo> <20190909161704.07FAE20640@mail.kernel.org> <20190909165408.GC23964@igloo> <20190910091437.CCA78208E4@mail.kernel.org> <fcac3f60-6a96-b3ee-f734-a03636fbbee4@linaro.org> <3517a1e0-6092-362f-f696-fcc1528ce026@linaro.org>
-Cc:     agross@kernel.org, mturquette@baylibre.com,
-        bjorn.andersson@linaro.org, niklas.cassel@linaro.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-To:     Jorge Ramirez <jorge.ramirez-ortiz@linaro.org>
+In-Reply-To: <20190811210043.20122-2-digetx@gmail.com>
+References: <20190811210043.20122-1-digetx@gmail.com> <20190811210043.20122-2-digetx@gmail.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     Dmitry Osipenko <digetx@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Thierry Reding <thierry.reding@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/5] clk: qcom: apcs-msm8916: get parent clock names from DT
+Subject: Re: [PATCH v10 01/15] clk: tegra20/30: Add custom EMC clock implementation
 User-Agent: alot/0.8.1
-Date:   Tue, 10 Sep 2019 03:20:03 -0700
-Message-Id: <20190910102015.1CD3C2081B@mail.kernel.org>
+Date:   Tue, 10 Sep 2019 03:33:04 -0700
+Message-Id: <20190910103305.B4E1B20872@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jorge Ramirez (2019-09-10 02:40:34)
-> On 9/10/19 11:34, Jorge Ramirez wrote:
-> > On 9/10/19 11:14, Stephen Boyd wrote:
-> >>
-> >> This is not a backwards compatible change.
-> >>
-> >>>>> --- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> >>>>> +++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-> >>>>> @@ -429,7 +429,8 @@
-> >>>>>      compatible =3D "qcom,msm8916-apcs-kpss-global", "syscon";
-> >>>>>      reg =3D <0xb011000 0x1000>;
-> >>>>>      #mbox-cells =3D <1>;
-> >>>>> -                   clocks =3D <&a53pll>;
-> >>>>> +                 clocks =3D <&gcc GPLL0_VOTE>, <&a53pll>;
-> >>>>> +                 clock-names =3D "aux", "pll";
-> >>>>>                       #clock-cells =3D <0>;
-> >>>>>                };
-> >>>>>                                                                    =
-                                            =20
-> >>
-> >> Because the "clocks" property changed from
-> >>
-> >>      <&a53pll>
-> >>
-> >> to
-> >>
-> >>      <&gcc GPLL0_VOTE>, <&a53pll>
-> >>
-> >> and that moves pll to cell 1 instead of cell 0.
-> >>
-> >>
-> >=20
-> > what do you mean by backwards compatible? because this change does not
-> > break previous clients.
+Quoting Dmitry Osipenko (2019-08-11 14:00:29)
+> A proper External Memory Controller clock rounding and parent selection
+> functionality is required by the EMC drivers, it is not available using
+> the generic clock implementation because only the Memory Controller driver
+> is aware of what clock rates are actually available for a particular
+> device. EMC drivers will have to register a Tegra-specific CLK-API
+> callback which will perform rounding of a requested rate. EMC clock users
+> won't be able to request EMC clock by getting -EPROBE_DEFER until EMC
+> driver is probed and the callback is set up.
 >=20
-> as per the comments I added to the code (in case this helps framing the
-> discussion)
+> The functionality is somewhat similar to the clk-emc.c which serves
+> Tegra124+ SoCs. The later HW generations support more parent clock sources
+> and the HW configuration / integration with the EMC drivers differs a tad
+> from the older gens, hence it's not really worth to try to squash
+> everything into a single source file.
 >=20
-> [..]
-> legacy bindings only defined the pll parent clock (index =3D 0) with no
-> name; when both of the parents are specified in the bindings, the
-> pll is the second one (index =3D 1).
+> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
 
-The 'clock-names' property is entirely irrelevant to this discussion.
-The PLL _must_ be index 0 forever so that the binding is left in a
-backwards compatible state. Moving the PLL to index 1 and then using
-clock-names to find it is a backwards incompatible change. The order of
-clks in the 'clocks' property is an ABI.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
