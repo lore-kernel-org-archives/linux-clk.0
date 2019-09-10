@@ -2,247 +2,114 @@ Return-Path: <SRS0=VG/9=XE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF8CC4740A
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 12:36:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92089C4740A
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B05021920
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 12:36:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=megous.com header.i=@megous.com header.b="f8TSLfG0"
+	by mail.kernel.org (Postfix) with ESMTP id 709042196E
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfIIMgK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 08:36:10 -0400
-Received: from vps.xff.cz ([195.181.215.36]:37556 "EHLO vps.xff.cz"
+        id S2405212AbfIIOL2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 10:11:28 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40506 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727428AbfIIMgK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Sep 2019 08:36:10 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=megous.com; s=mail;
-        t=1568032567; bh=uTm+MnC373y5QNcajftT9i4MZQ4QqvnPoh06Z6jmTyU=;
-        h=Date:From:To:Cc:Subject:References:X-My-GPG-KeyId:From;
-        b=f8TSLfG0FgnnsVDqQHUDpPwvjBM30WhHeeNdeMT6ybxKyqMt8/zLjAyZPRRoB4qEA
-         49EeMmF3ZolOe1v3gnza8o59B+1sH9f2zigNcPhry7l4Zn+Pes6wcvQ3BMBl0khMW0
-         Ii/WXL4ece+wdMOu7f12J1Ipr0rR+rVAGaieX45E=
-Date:   Mon, 9 Sep 2019 14:36:06 +0200
-From:   =?utf-8?Q?Ond=C5=99ej?= Jirman <megous@megous.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v4 00/10] Allwinner sunxi message box support
-Message-ID: <20190909123606.ezsjisxpj7747h6b@core.my.home>
-Mail-Followup-To: Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Corentin Labbe <clabbe.montjoie@gmail.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20190820032311.6506-1-samuel@sholland.org>
- <20190909032208.rlorx2ppytymtyej@core.my.home>
- <bb6eab9a-f9cc-81ca-5e8c-9fb867c61ec2@sholland.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bb6eab9a-f9cc-81ca-5e8c-9fb867c61ec2@sholland.org>
-X-My-GPG-KeyId: EBFBDDE11FB918D44D1F56C1F9F0A873BE9777ED
- <https://xff.cz/key.txt>
+        id S2405209AbfIIOL1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Sep 2019 10:11:27 -0400
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 44FF9200890;
+        Mon,  9 Sep 2019 16:11:25 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 179A02000FD;
+        Mon,  9 Sep 2019 16:11:21 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id A32E7402AF;
+        Mon,  9 Sep 2019 22:11:15 +0800 (SGT)
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
+        mturquette@baylibre.com, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH V5 00/11] clk: imx8: add new clock binding for better pm support
+Date:   Mon,  9 Sep 2019 22:09:57 -0400
+Message-Id: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+This is a follow up of this patch series.
+https://patchwork.kernel.org/cover/10924029/
+[V2,0/2] clk: imx: scu: add parsing clocks from device tree support
 
-On Sun, Sep 08, 2019 at 10:54:17PM -0500, Samuel Holland wrote:
-> On 9/8/19 10:22 PM, Ondřej Jirman wrote:
-> > Hello Samuel,
-> > 
-> > On Mon, Aug 19, 2019 at 10:23:01PM -0500, Samuel Holland wrote:
-> >> This series adds support for the "hardware message box" in sun8i, sun9i,
-> >> and sun50i SoCs, used for communication with the ARISC management
-> >> processor (the platform's equivalent of the ARM SCP). The end goal is to
-> >> use the arm_scpi driver as a client, communicating with firmware running
-> >> on the AR100 CPU, or to use the mailbox to forward NMIs that the
-> >> firmware picks up from R_INTC.
-> >>
-> >> Unfortunately, the ARM SCPI client no longer works with this driver
-> >> since it now exposes all 8 hardware FIFOs individually. The SCPI client
-> >> could be made to work (and I posted proof-of-concept code to that effect
-> >> with v1 of this series), but that is a low priority, as Linux does not
-> >> directly use SCPI with the current firmware version; all SCPI use goes
-> >> through ATF via PSCI.
-> >>
-> >> As requested in the comments to v3 of this patchset, a demo client is
-> >> provided in the final patch. This demo goes along with a toy firmware
-> >> which shows that the driver does indeed work for two-way communication
-> >> on all channels. To build the firmware component, run:
-> > 
-> > I've tried using this driver with mainline arm_scpi driver (which is probably
-> > an expected future use, since crust provides SCPI interface).
-> 
-> If you've verified in some way that this driver works on A83T, I'd appreciate
-> your Tested-by, so I can send a patch for the A83T device tree node.
+This patch series is a preparation for the MX8 Architecture improvement.
+As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+of a couple of SS(Subsystems) while most of them within the same SS
+can be shared. e.g. Clocks, Devices and etc.
 
-Tested-by: Ondrej Jirman <megous@megous.com>
+However, current clock binding is using SW IDs for device tree to use
+which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
+different SoCs.
 
-(on A83T)
+This patch series aims to introduce a new binding which is more close to
+hardware and platform independent and can makes us write a more general
+drivers for different SCU based SoCs.
 
-> > The problem I've found is that arm_scpi expects message box to be
-> > bi-directional, but this driver provides uni-directional interface.
-> > 
-> > What do you think about making this driver provide bi-directional interface?
-> > We could halve the number of channels to 4 and mandate TX/RX configuration
-> > (from main CPU's PoV) as ABI.
-> 
-> Funny you mention that. That's what I did originally for v1, but it got NAKed by
-> Maxime, Andre, and Jassi:
-> 
-> https://lkml.org/lkml/2018/2/28/125
-> https://lkml.org/lkml/2018/2/28/944
-> 
-> > Otherwise it's impossible to use it with the arm_scpi driver.
-> > 
-> > Or do you have any other ideas? I guess arm_scpi can be fixed to add a
-> > property that would make it possible to use single shmem with two
-> > mailboxes, one for rx and one for tx, but making sun6i mailbox have
-> > bi-directional interface sounds easier.
-> 
-> Yes, you can use the existence of the mbox-names property to determine if the
-> driver needs one mailbox or two, as I did in this driver:
-> 
-> https://lkml.org/lkml/2019/3/1/789
-> 
-> I'll have a patch available soon that implements this for arm_scpi.
+Another important thing is that on MX8, each Clock resource is associated
+with a power domain. So we have to attach that clock device to the power
+domain in order to make it work properly. Further more, the clock state
+will be lost when its power domain is completely off during suspend/resume,
+so we also introduce the clock state save&restore mechanism.
 
-Yeah, I've patched arm_scpi too. :)
+ChangeLog:
+v4->v5:
+ * Address many comments from Stephen
+v3->v4:
+ * use clk-indices for LPCG to fetch each clks offset from dt
+v2->v3:
+ * change scu clk into two cells binding
+ * add clk pm patches to ease the understand of the changes
+v1->v2:
+ * SCU clock changed to one cell clock binding inspired by arm,scpi.txt
+   Documentation/devicetree/bindings/arm/arm,scpi.txt
+ * Add required power domain property
+ * Dropped PATCH 3&4 first, will send the updated version accordingly
+   after the binding is finally determined,
 
-https://megous.com/git/linux/commit/?h=tbs-5.3&id=69a0cd0093a63039ace2f763e8d82009c50ff03c
 
-(but that's just for the test, because it breaks the existing interface for
-other uses)
 
-Anyway, using mbox-names looks like a nice solution! Thanks! Though,
-arm_scpi driver has a bit more complicated existing interface, where it can use
-multiple mailboxes and rotates through them after every message.
+Dong Aisheng (11):
+  dt-bindings: firmware: imx-scu: new binding to parse clocks from
+    device tree
+  dt-bindings: clock: imx-lpcg: add support to parse clocks from device
+    tree
+  clk: imx: scu: add two cells binding support
+  clk: imx: scu: bypass cpu power domains
+  clk: imx: scu: allow scu clk to take device pointer
+  clk: imx: scu: add runtime pm support
+  clk: imx: scu: add suspend/resume support
+  clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
+  clk: imx: lpcg: allow lpcg clk to take device pointer
+  clk: imx: clk-imx8qxp-lpcg: add runtime pm support
+  clk: imx: lpcg: add suspend/resume support
 
-BTW, I'm slowly laboring through understanding how to get suspend to ram working
-on one A83T tablet. https://xnux.eu/tablet-hacking/ Which is how I tested this
-driver.
+ .../devicetree/bindings/arm/freescale/fsl,scu.txt  |  12 +-
+ .../devicetree/bindings/clock/imx8qxp-lpcg.txt     |  36 +++-
+ drivers/clk/imx/clk-imx8qxp-lpcg.c                 | 124 ++++++++++++
+ drivers/clk/imx/clk-imx8qxp.c                      |   9 +-
+ drivers/clk/imx/clk-lpcg-scu.c                     |  45 ++++-
+ drivers/clk/imx/clk-scu.c                          | 218 ++++++++++++++++++++-
+ drivers/clk/imx/clk-scu.h                          |  50 ++++-
+ include/dt-bindings/clock/imx8-lpcg.h              |  14 ++
+ include/dt-bindings/firmware/imx/rsrc.h            |  23 +++
+ 9 files changed, 501 insertions(+), 30 deletions(-)
+ create mode 100644 include/dt-bindings/clock/imx8-lpcg.h
 
-regards,
-	o.
+-- 
+2.7.4
 
-> Cheers,
-> Samuel
-> 
-> > regards,
-> > 	o.
-> > 
-> >>   git clone https://github.com/crust-firmware/meta meta
-> >>   git clone -b mailbox-demo https://github.com/crust-firmware/crust meta/crust
-> >>   cd meta
-> >>   make
-> >>
-> >> That will by default produce a U-Boot + ATF + SCP firmware image in
-> >> [meta/]build/pinebook/u-boot-sunxi-with-spl.bin. See the top-level
-> >> README.md for more information, such as cross-compiler setup.
-> >>
-> >> I've now used this driver with three separate clients over the past two
-> >> years, and they all work. If there are no remaining concerns with the
-> >> driver, I'd like it to get merged.
-> >>
-> >> Even without the driver, the clock patches (1-2) can go in at any time.
-> >>
-> >> Changes from v3:
-> >>   - Rebased on sunxi-next
-> >>   - Added Rob's Reviewed-by for patch 3
-> >>   - Fixed a crash when receiving a message on a disabled channel
-> >>   - Cleaned up some comments/formatting in the driver
-> >>   - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
-> >>   - Removed the irqchip example (no longer relevant to the fw design)
-> >>   - Added a demo/example client that uses the driver and a toy firmware
-> >>
-> >> Changes from v2:
-> >>   - Merge patches 1-3
-> >>   - Add a comment in the code explaining the CLK_IS_CRITICAL usage
-> >>   - Add a patch to mark the AR100 clocks as critical
-> >>   - Use YAML for the device tree binding
-> >>   - Include a not-for-merge example usage of the mailbox
-> >>
-> >> Changes from v1:
-> >>   - Marked message box clocks as critical instead of hacks in the driver
-> >>   - 8 unidirectional channels instead of 4 bidirectional pairs
-> >>   - Use per-SoC compatible strings and an A31 fallback compatible
-> >>   - Dropped the mailbox framework patch
-> >>   - Include DT patches for SoCs that document the message box
-> >>
-> >> Samuel Holland (10):
-> >>   clk: sunxi-ng: Mark msgbox clocks as critical
-> >>   clk: sunxi-ng: Mark AR100 clocks as critical
-> >>   dt-bindings: mailbox: Add a sunxi message box binding
-> >>   mailbox: sunxi-msgbox: Add a new mailbox driver
-> >>   ARM: dts: sunxi: a80: Add msgbox node
-> >>   ARM: dts: sunxi: a83t: Add msgbox node
-> >>   ARM: dts: sunxi: h3/h5: Add msgbox node
-> >>   arm64: dts: allwinner: a64: Add msgbox node
-> >>   arm64: dts: allwinner: h6: Add msgbox node
-> >>   [DO NOT MERGE] drivers: firmware: msgbox demo
-> >>
-> >>  .../mailbox/allwinner,sunxi-msgbox.yaml       |  79 +++++
-> >>  arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
-> >>  arch/arm/boot/dts/sun9i-a80.dtsi              |  10 +
-> >>  arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
-> >>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  34 ++
-> >>  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi  |  24 ++
-> >>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
-> >>  drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c        |   2 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-a23.c          |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-a33.c          |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-h3.c           |   3 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun8i-r.c            |   2 +-
-> >>  drivers/clk/sunxi-ng/ccu-sun9i-a80.c          |   3 +-
-> >>  drivers/firmware/Kconfig                      |   6 +
-> >>  drivers/firmware/Makefile                     |   1 +
-> >>  drivers/firmware/sunxi_msgbox_demo.c          | 307 +++++++++++++++++
-> >>  drivers/mailbox/Kconfig                       |  10 +
-> >>  drivers/mailbox/Makefile                      |   2 +
-> >>  drivers/mailbox/sunxi-msgbox.c                | 323 ++++++++++++++++++
-> >>  22 files changed, 842 insertions(+), 9 deletions(-)
-> >>  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sunxi-msgbox.yaml
-> >>  create mode 100644 drivers/firmware/sunxi_msgbox_demo.c
-> >>  create mode 100644 drivers/mailbox/sunxi-msgbox.c
-> >>
-> >> -- 
-> >> 2.21.0
-> >>
-> >> _______________________________________________
-> >> linux-arm-kernel mailing list
-> >> linux-arm-kernel@lists.infradead.org
-> >> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
-> 
-> 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
