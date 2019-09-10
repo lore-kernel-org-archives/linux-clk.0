@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DATE_IN_FUTURE_06_12,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A0F6C49ED6
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 966F3C5ACAE
 	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19AA72196E
+	by mail.kernel.org (Postfix) with ESMTP id 7732B2196E
 	for <linux-clk@archiver.kernel.org>; Mon,  9 Sep 2019 14:11:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405170AbfIIOLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Sep 2019 10:11:38 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:55574 "EHLO inva020.nxp.com"
+        id S2405242AbfIIOLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Sep 2019 10:11:39 -0400
+Received: from inva021.nxp.com ([92.121.34.21]:40890 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405242AbfIIOLi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        id S2405245AbfIIOLi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
         Mon, 9 Sep 2019 10:11:38 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 409441A0EB7;
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 9ECC4200B03;
         Mon,  9 Sep 2019 16:11:36 +0200 (CEST)
 Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 13A211A03DA;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 72977200858;
         Mon,  9 Sep 2019 16:11:32 +0200 (CEST)
 Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 6A3CF402AF;
-        Mon,  9 Sep 2019 22:11:25 +0800 (SGT)
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5F14840323;
+        Mon,  9 Sep 2019 22:11:26 +0800 (SGT)
 From:   Dong Aisheng <aisheng.dong@nxp.com>
 To:     linux-clk@vger.kernel.org
 Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
         mturquette@baylibre.com, shawnguo@kernel.org,
         fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
         Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH V5 10/11] clk: imx: clk-imx8qxp-lpcg: add runtime pm support
-Date:   Mon,  9 Sep 2019 22:10:07 -0400
-Message-Id: <1568081408-26800-11-git-send-email-aisheng.dong@nxp.com>
+Subject: [PATCH V5 11/11] clk: imx: lpcg: add suspend/resume support
+Date:   Mon,  9 Sep 2019 22:10:08 -0400
+Message-Id: <1568081408-26800-12-git-send-email-aisheng.dong@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
 References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com>
@@ -46,85 +46,102 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-add runtime pm support
+LPCG clock state may be lost when it's power domain is completely
+off during system suspend/resume and we need save and restore the
+state properly.
 
 Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 ---
 ChangeLog:
-v4->v5:
- * no changes
-v3->v4:
- * disable rpm when error out
+v5:
+ * make suspend/resume function static
+ * improve code comments
+v4: no changes
 v3: new patch
 ---
- drivers/clk/imx/clk-imx8qxp-lpcg.c | 34 +++++++++++++++++++++++++++-------
- 1 file changed, 27 insertions(+), 7 deletions(-)
+ drivers/clk/imx/clk-imx8qxp-lpcg.c |  1 +
+ drivers/clk/imx/clk-lpcg-scu.c     | 37 +++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk-scu.h          |  1 +
+ 3 files changed, 39 insertions(+)
 
 diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index 31efc7a..f395eb5 100644
+index f395eb5..99a5f55 100644
 --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
 +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -12,6 +12,7 @@
- #include <linux/of_address.h>
- #include <linux/of_device.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
- #include <linux/slab.h>
+@@ -338,6 +338,7 @@ static struct platform_driver imx8qxp_lpcg_clk_driver = {
+ 	.driver = {
+ 		.name = "imx8qxp-lpcg-clk",
+ 		.of_match_table = imx8qxp_lpcg_match,
++		.pm = &imx_clk_lpcg_scu_pm_ops,
+ 		.suppress_bind_attrs = true,
+ 	},
+ 	.probe = imx8qxp_lpcg_clk_probe,
+diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
+index 3c092a0..1dd928a 100644
+--- a/drivers/clk/imx/clk-lpcg-scu.c
++++ b/drivers/clk/imx/clk-lpcg-scu.c
+@@ -33,6 +33,9 @@ struct clk_lpcg_scu {
+ 	void __iomem *reg;
+ 	u8 bit_idx;
+ 	bool hw_gate;
++
++	/* for state save&restore */
++	u32 state;
+ };
  
- #include "clk-scu.h"
-@@ -231,26 +232,45 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
- 		return -EINVAL;
+ #define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
+@@ -112,5 +115,39 @@ struct clk_hw *__imx_clk_lpcg_scu(struct device *dev, const char *name,
+ 		hw = ERR_PTR(ret);
  	}
  
-+	pm_runtime_get_noresume(&pdev->dev);
-+	pm_runtime_set_active(&pdev->dev);
-+	pm_runtime_set_autosuspend_delay(&pdev->dev, 500);
-+	pm_runtime_use_autosuspend(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
++	if (dev)
++		dev_set_drvdata(dev, clk);
 +
- 	for (i = 0; i < count; i++) {
- 		idx = bit_offset[i] / 4;
- 		if (idx > IMX_LPCG_MAX_CLKS) {
- 			dev_warn(&pdev->dev, "invalid bit offset of clock %d\n",
- 				 i);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto out;
- 		}
- 
--		clk_hws[idx] = imx_clk_lpcg_scu(output_names[i],
--						parent_names[i], 0, base,
--						bit_offset[i], false);
-+		clk_hws[idx] = imx_clk_lpcg_scu_dev(&pdev->dev, output_names[i],
-+						    parent_names[i], 0, base,
-+						    bit_offset[i], false);
- 		if (IS_ERR(clk_hws[idx])) {
- 			dev_warn(&pdev->dev, "failed to register clock %d\n",
- 				 idx);
--			return -EINVAL;
-+			ret = -EINVAL;
-+			goto out;
- 		}
- 	}
- 
--	return devm_of_clk_add_hw_provider(&pdev->dev, imx_lpcg_of_clk_src_get,
--					   clk_data);
-+	ret = devm_of_clk_add_hw_provider(&pdev->dev, imx_lpcg_of_clk_src_get,
-+					  clk_data);
-+	if (ret)
-+		goto out;
+ 	return hw;
+ }
 +
-+	pm_runtime_mark_last_busy(&pdev->dev);
-+	pm_runtime_put_autosuspend(&pdev->dev);
++static int __maybe_unused imx_clk_lpcg_scu_suspend(struct device *dev)
++{
++	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
++
++	clk->state = readl_relaxed(clk->reg);
++	dev_dbg(dev, "save lpcg state 0x%x\n", clk->state);
 +
 +	return 0;
++}
 +
-+out:
-+	pm_runtime_disable(&pdev->dev);
-+	return ret;
- }
++static int __maybe_unused imx_clk_lpcg_scu_resume(struct device *dev)
++{
++	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
++
++	/*
++	 * FIXME: Sometimes writes don't work unless the CPU issues
++	 * them twice
++	 */
++
++	writel(clk->state, clk->reg);
++	writel(clk->state, clk->reg);
++	dev_dbg(dev, "restore lpcg state 0x%x\n", clk->state);
++
++	return 0;
++}
++
++const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops = {
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx_clk_lpcg_scu_suspend,
++				      imx_clk_lpcg_scu_resume)
++};
+diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
+index 84efda3..6d4b6e2 100644
+--- a/drivers/clk/imx/clk-scu.h
++++ b/drivers/clk/imx/clk-scu.h
+@@ -12,6 +12,7 @@
  
- static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+ extern u32 clock_cells;
+ extern struct list_head imx_scu_clks[];
++extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
+ 
+ int imx_clk_scu_init(struct device_node *np);
+ struct clk_hw *imx_scu_of_clk_src_get(struct of_phandle_args *clkspec,
 -- 
 2.7.4
 
