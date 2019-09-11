@@ -2,117 +2,104 @@ Return-Path: <SRS0=WWrt=XG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFAD0C5ACAE
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 22:19:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46280C5ACAE
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 22:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95B10216F4
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 22:19:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AE05206CD
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 22:32:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a8PMTBBT"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rfyz/8Y6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729273AbfIKWTL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Sep 2019 18:19:11 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36264 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728582AbfIKWTJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Sep 2019 18:19:09 -0400
-Received: by mail-pl1-f195.google.com with SMTP id f19so10775040plr.3
-        for <linux-clk@vger.kernel.org>; Wed, 11 Sep 2019 15:19:09 -0700 (PDT)
+        id S1728253AbfIKWcm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Sep 2019 18:32:42 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35634 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728701AbfIKWcl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Sep 2019 18:32:41 -0400
+Received: by mail-pg1-f194.google.com with SMTP id n4so12287849pgv.2
+        for <linux-clk@vger.kernel.org>; Wed, 11 Sep 2019 15:32:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=mMNl63FO67KUuEHw42vIWKlthSpMwd5FVOOXIHmqrU4=;
-        b=a8PMTBBTeeZyu/Wvz6ibbwLc/1cJ7vElKoSkSXAji0+1n+9jR/t/r7x/pf8m+oNx7I
-         7DSzXISCFD+sD00yT2TicutThMC9mFxdIcPpLvxkcBseFcgNlCwSKCbVM20+jp4pQGu3
-         CnExwUjzYpA2YT+AfVkJr/xlkDxC8joLHCGhWZBITmmkqldtD8BD3W30lM3IXT6t6Qcc
-         Euk0Yp8DJlwSseJv53H0WKPmfZNPCnVsL5Z/CotAsmdO2tFTKSizohPZrDC6a/rbfzmZ
-         kQfygH+3vorPTAqv2ENiOYfY5POKMqh2gH6PW3WeAfwSm2RyHHQFxOjzkCHBMgw8Ly1k
-         PNrA==
+        h=from:to:cc:subject:date:message-id;
+        bh=/bQw1cLtYl3A/83AJDVmJyoX1dKxkgmG5lvK3TLTKfU=;
+        b=rfyz/8Y6c+xb9OzI5IP+lQyuY/4jk4SjFzwznzoKviS07fYRPcefDwgbO0/tpZoK6I
+         Hr6j5zaXTQm8DKWwX7b+psY4sqYKmp13roe4mQ41hWiTxdOBxuQszZcYhn5O5lVNsdHD
+         mF14GkPo2gMFttOdBFO17sLlkUOL48NDIiRooX1wnmYufhbTOE61Z2aSp+0ADr6Txoui
+         ZGGcY16dhu3nAQyOPZCkPyQJXOH6YhZMnIXnCXNKx7aG7Rm051hRhPvIIdZb5HMfS2KC
+         H2ZnpCSgPwFnSm8UwL9hpjvS83u8sgKB2JeVQOqBy3Br5fWywUXmmKmfK9iVuLw22wdI
+         b+0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=mMNl63FO67KUuEHw42vIWKlthSpMwd5FVOOXIHmqrU4=;
-        b=P65jbBIFQCifqIbQshxxYPfm2/6yy2JMm1r01Eo1MDuV/CQ42KjAN2F0IAfw6FVkWg
-         lPJBW6uSk3Y2GNFokwF18m2IhKDhq063nwpbmEWNELsfYQ7kmIMqTgA9PaHuTNTbYJIw
-         vMyJIG0mJyKDciLKs1tMFCT3ZPfuFaBTGWbv6NX608+y+3gaqwt/a4/wqDXz+zbbskJI
-         DV1R1BFW6HWbittdKgqGBR7Icwli0t9CpGtYZHhE3Hm8uq80vDWkHy4z8ol8lKkqaz0q
-         4CRXJW9gnUhoV1RcYIv9rTe+fFZB3eHmmj++U0lWgBsR8HrcagFqHvlvDNpXYLHz9am/
-         YHfw==
-X-Gm-Message-State: APjAAAVYfdYz/h1e36mBpobz5Ulk5P1bd6KjzlQwVuLSqdBmz+36Uhn/
-        90OGUGucDhUnSq3nSNZQpt+rEUYNSpLorA==
-X-Google-Smtp-Source: APXvYqxywK/VqaJubZy+tpMXHI2hldjrJm9ASPz2i3rYysqWyhJf1sL0Mqz/b5O7hDlKl+2gVQIUJg==
-X-Received: by 2002:a17:902:8d81:: with SMTP id v1mr22729125plo.23.1568240348925;
-        Wed, 11 Sep 2019 15:19:08 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=/bQw1cLtYl3A/83AJDVmJyoX1dKxkgmG5lvK3TLTKfU=;
+        b=hrhctSgdzplap0lLnMfP8UtYYuIErx7u15YwZqRGez8N6LCIbuAVGOFGlLithQqs9w
+         ejIJV2BPXevxZzd4RfkXUBKvIoOHItWjOaXDBB3wMJYIrDTWk0WP8VqCxqKhE9rO6vJP
+         ELWyZehI23KPfisK6QBI/rYBT3WZu+aN6c+Kn4QAuRgbnIUR+T7Cslb5hH6eaRy2aR0Z
+         E+YisTSZybEd8rjMKu3eIbFMN0ZyppQKZSYumIbe5gfWKrDms7+EK2Mloa0MzwyCSoUx
+         EnA3rLo5B473sxvVDvzlUlVgFLoo/iN7TxnwqiDBqcpxea7Mb12VNcn/+oLozhb1CTKz
+         Zorw==
+X-Gm-Message-State: APjAAAXixiKAeAImEPy7LLQXq7wYkyubfsqprrhbmtV+y8vHweuiIZsr
+        p4ZYIEeWYHgF2U8Vv2QRGFPT2pEzJXKdig==
+X-Google-Smtp-Source: APXvYqzUEXKAsnlMNfnDwvV9kBcQAdBfFiGL46JnjJS/6c6L7kK23lwN0m3iztut8dHj03BGHhCU4A==
+X-Received: by 2002:a17:90b:308:: with SMTP id ay8mr8100469pjb.7.1568241159900;
+        Wed, 11 Sep 2019 15:32:39 -0700 (PDT)
 Received: from localhost ([49.248.179.160])
-        by smtp.gmail.com with ESMTPSA id c2sm23999870pfd.66.2019.09.11.15.19.07
+        by smtp.gmail.com with ESMTPSA id 20sm27074002pfh.72.2019.09.11.15.32.38
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 11 Sep 2019 15:19:08 -0700 (PDT)
+        Wed, 11 Sep 2019 15:32:39 -0700 (PDT)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        arm@kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Sebastian Reichel <sre@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>
-Cc:     linux-clk@vger.kernel.org
-Subject: [PATCH 4/4] arm64: Kconfig: Fix EXYNOS driver dependencies
-Date:   Thu, 12 Sep 2019 03:48:48 +0530
-Message-Id: <79755cb29b8c23709e346b5dd290481a36627648.1568239378.git.amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
+        tdas@codeaurora.org, swboyd@chromium.org, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: [PATCH 0/5] Initialise thermal framework earlier during boot
+Date:   Thu, 12 Sep 2019 04:02:29 +0530
+Message-Id: <cover.1568240476.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1568239378.git.amit.kucheria@linaro.org>
-References: <cover.1568239378.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1568239378.git.amit.kucheria@linaro.org>
-References: <cover.1568239378.git.amit.kucheria@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Push various EXYNOS drivers behind ARCH_EXYNOS dependency so that it
-doesn't get enabled by default on other platforms.
+Device boot needs to be as fast as possible while keeping under the thermal
+envelope. Now that thermal framework is built-in to the kernel, we can
+initialize it earlier to enable thermal mitigation during boot.
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/clk/Kconfig       | 1 +
- drivers/regulator/Kconfig | 1 +
- 2 files changed, 2 insertions(+)
+We also need the cpufreq HW drivers to be initialised earlier to act as the
+cooling devices. This series only converts over the qcom-hw driver to
+initialize earlier but can be extended to other platforms as well.
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 9b2790d3f18a..bdf164a7a7c5 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -194,6 +194,7 @@ config COMMON_CLK_ASPEED
- 
- config COMMON_CLK_S2MPS11
- 	tristate "Clock driver for S2MPS1X/S5M8767 MFD"
-+	depends on ARCH_EXYNOS
- 	depends on MFD_SEC_CORE || COMPILE_TEST
- 	---help---
- 	  This driver supports S2MPS11/S2MPS14/S5M8767 crystal oscillator
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index b57093d7c01f..a4c4f01343fd 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -797,6 +797,7 @@ config REGULATOR_S2MPA01
- 
- config REGULATOR_S2MPS11
- 	tristate "Samsung S2MPS11/13/14/15/S2MPU02 voltage regulator"
-+	depends on ARCH_EXYNOS
- 	depends on MFD_SEC_CORE
- 	help
- 	 This driver supports a Samsung S2MPS11/13/14/15/S2MPU02 voltage
+
+Amit Kucheria (4):
+  cpufreq: Initialise the governors in core_initcall
+  cpufreq: Initialize cpufreq-dt driver earlier
+  clk: qcom: Initialise clock drivers earlier
+  cpufreq: qcom-hw: Move driver initialisation earlier
+
+Lina Iyer (1):
+  thermal: Initialize thermal subsystem earlier
+
+ drivers/clk/qcom/clk-rpmh.c            |  2 +-
+ drivers/clk/qcom/gcc-qcs404.c          |  2 +-
+ drivers/clk/qcom/gcc-sdm845.c          |  2 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c   |  2 +-
+ drivers/cpufreq/cpufreq_conservative.c |  2 +-
+ drivers/cpufreq/cpufreq_ondemand.c     |  2 +-
+ drivers/cpufreq/cpufreq_performance.c  |  2 +-
+ drivers/cpufreq/cpufreq_powersave.c    |  2 +-
+ drivers/cpufreq/cpufreq_userspace.c    |  2 +-
+ drivers/cpufreq/qcom-cpufreq-hw.c      |  2 +-
+ drivers/thermal/thermal_core.c         | 41 +++++++++++++++-----------
+ 11 files changed, 34 insertions(+), 27 deletions(-)
+
 -- 
 2.17.1
 
