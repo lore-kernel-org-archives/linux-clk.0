@@ -2,43 +2,43 @@ Return-Path: <SRS0=WWrt=XG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C94ECDE27
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 06:43:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D126FECDE20
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 06:46:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E664D21D79
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 06:42:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A449021A4C
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Sep 2019 06:46:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568184180;
-	bh=5fDkxYy4jOJS/+QkDeYxCAE8Sxo/JVPofcF3L2N5Fic=;
+	s=default; t=1568184374;
+	bh=qIBVFBd3Uzn1ZDrcBL8VAS5pV0/6Y6gy5xboCpJ+3/g=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nMD5ZJPwcVeHJTuAqr2dl0w5P/6ub4iLNeDOFvNyp+1oakvBK/m5IZ7pKK1lt/2bN
-	 bFzcW2b50Zl1Sv2fzXCBWWQIiK8bDruPfCoS6eW1JfqQypW38rDKTBKp6U2Bu6Mwag
-	 Lm0RMlIG0oo9nMhhYGZm/TK4CJhWpsxWmTuskLjg=
+	b=MNemjImynQYAJJFKbw67PVIF7Zl55Ew+9G0cHVGkSm0ien54gnYSfUp54NmOhGzSg
+	 ikUE4O/tVyj47FA+vvLZsbr1TvQDNqopDR4oUtj+I94It7nSgtkUgKSNqEc9D4g4Yl
+	 FToTFVECmgwaBzm+KvdHCZ/Y6ehHdG3pmqWF1yyU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbfIKGm7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Sep 2019 02:42:59 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40778 "EHLO mail.kernel.org"
+        id S1725906AbfIKGqO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Sep 2019 02:46:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41586 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725747AbfIKGm7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Sep 2019 02:42:59 -0400
+        id S1725747AbfIKGqO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Sep 2019 02:46:14 -0400
 Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7EC7D21A4C;
-        Wed, 11 Sep 2019 06:42:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C39E21928;
+        Wed, 11 Sep 2019 06:46:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568184179;
-        bh=5fDkxYy4jOJS/+QkDeYxCAE8Sxo/JVPofcF3L2N5Fic=;
+        s=default; t=1568184372;
+        bh=qIBVFBd3Uzn1ZDrcBL8VAS5pV0/6Y6gy5xboCpJ+3/g=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Y9IQJVh4gWWvNhP69nMQB9GqIa6147EQg+yKHp+8dtZOLWPT0SiiubwSFtWogeqKb
-         WBEs+sFuXPJJjJZ36g1A4MkIszLObdh7dyzQ2eOGo5JR1AGBR69g4Vv5VuL/C+GNKX
-         p3dFw6HxfOqh/ZGsP7fIeBC23ZkyR+j34Wmie6sw=
-Date:   Wed, 11 Sep 2019 14:42:47 +0800
+        b=y714A/OZ45VZt+Bk1N9sfI0EdgWcR7HUGZ9LgvsRB4mLhZ0T6qhLi2kX+E7Til6gF
+         pq2q/RPs2GxKEJXiXnSRX6X8xzZNNtZDW79t9kbutbowD1zlW70J8WhOFQinZBckzb
+         S3BXq+PGPVQZkJQ3slRkMVX+7x18y6zvP/QslzsI=
+Date:   Wed, 11 Sep 2019 14:45:58 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Fancy Fang <chen.fang@nxp.com>
 Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -55,25 +55,104 @@ Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         Aisheng Dong <aisheng.dong@nxp.com>,
         "festevam@gmail.com" <festevam@gmail.com>,
         dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH 1/2] ARM: dts: imx7ulp: remove mipi pll clock node
-Message-ID: <20190911064246.GC17142@dragon>
+Subject: Re: [PATCH 2/2] clk: imx7ulp: remove IMX7ULP_CLK_MIPI_PLL clock
+Message-ID: <20190911064556.GD17142@dragon>
 References: <20190823003600.8317-1-chen.fang@nxp.com>
+ <20190823003600.8317-2-chen.fang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190823003600.8317-1-chen.fang@nxp.com>
+In-Reply-To: <20190823003600.8317-2-chen.fang@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Aug 23, 2019 at 12:37:30AM +0000, Fancy Fang wrote:
-> According to the IMX7ULP reference manual, the mipi pll
-> clock comes from the MIPI PHY PLL output. So it should
-> not be defined as a fixed clock. So remove this clock
-> node and all the references to it.
+On Fri, Aug 23, 2019 at 12:37:35AM +0000, Fancy Fang wrote:
+> The mipi pll clock comes from the MIPI PHY PLL output, so
+> it should not be a fixed clock.
+> 
+> MIPI PHY PLL is in the MIPI DSI space, and it is used as
+> the bit clock for transferring the pixel data out and its
+> output clock is configured according to the display mode.
+> 
+> So it should be used only for MIPI DSI and not be exported
+> out for other usages.
 > 
 > Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+> ---
+>  .../devicetree/bindings/clock/imx7ulp-clock.txt   |  1 -
+>  drivers/clk/imx/clk-imx7ulp.c                     |  3 +--
+>  include/dt-bindings/clock/imx7ulp-clock.h         | 15 +++++++--------
+>  3 files changed, 8 insertions(+), 11 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> index a4f8cd478f92..93d89adb7afe 100644
+> --- a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> @@ -82,7 +82,6 @@ pcc2: pcc2@403f0000 {
+>  		 <&scg1 IMX7ULP_CLK_APLL_PFD0>,
+>  		 <&scg1 IMX7ULP_CLK_UPLL>,
+>  		 <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>,
+> -		 <&scg1 IMX7ULP_CLK_MIPI_PLL>,
+>  		 <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>,
+>  		 <&scg1 IMX7ULP_CLK_ROSC>,
+>  		 <&scg1 IMX7ULP_CLK_SPLL_BUS_CLK>;
+> diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+> index 2022d9bead91..459b120b71d5 100644
+> --- a/drivers/clk/imx/clk-imx7ulp.c
+> +++ b/drivers/clk/imx/clk-imx7ulp.c
+> @@ -28,7 +28,7 @@ static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dumm
+>  static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
+>  static const char * const nic_sels[]		= { "firc", "ddr_clk", };
+>  static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
+> -static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
+> +static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "dummy", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
+>  static const char * const arm_sels[]		= { "divcore", "dummy", "dummy", "hsrun_divcore", };
+>  
+>  /* used by sosc/sirc/firc/ddr/spll/apll dividers */
+> @@ -75,7 +75,6 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+>  	clks[IMX7ULP_CLK_SOSC]		= imx_obtain_fixed_clk_hw(np, "sosc");
+>  	clks[IMX7ULP_CLK_SIRC]		= imx_obtain_fixed_clk_hw(np, "sirc");
+>  	clks[IMX7ULP_CLK_FIRC]		= imx_obtain_fixed_clk_hw(np, "firc");
+> -	clks[IMX7ULP_CLK_MIPI_PLL]	= imx_obtain_fixed_clk_hw(np, "mpll");
+>  	clks[IMX7ULP_CLK_UPLL]		= imx_obtain_fixed_clk_hw(np, "upll");
+>  
+>  	/* SCG1 */
+> diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
+> index 6f66f9005c81..f8d34fb4378f 100644
+> --- a/include/dt-bindings/clock/imx7ulp-clock.h
+> +++ b/include/dt-bindings/clock/imx7ulp-clock.h
+> @@ -49,15 +49,14 @@
+>  #define IMX7ULP_CLK_NIC1_DIV		36
+>  #define IMX7ULP_CLK_NIC1_BUS_DIV	37
+>  #define IMX7ULP_CLK_NIC1_EXT_DIV	38
+> -#define IMX7ULP_CLK_MIPI_PLL		39
+> -#define IMX7ULP_CLK_SIRC		40
+> -#define IMX7ULP_CLK_SOSC_BUS_CLK	41
+> -#define IMX7ULP_CLK_FIRC_BUS_CLK	42
+> -#define IMX7ULP_CLK_SPLL_BUS_CLK	43
+> -#define IMX7ULP_CLK_HSRUN_SYS_SEL	44
+> -#define IMX7ULP_CLK_HSRUN_CORE_DIV	45
+> +#define IMX7ULP_CLK_SIRC		39
+> +#define IMX7ULP_CLK_SOSC_BUS_CLK	40
+> +#define IMX7ULP_CLK_FIRC_BUS_CLK	41
+> +#define IMX7ULP_CLK_SPLL_BUS_CLK	42
+> +#define IMX7ULP_CLK_HSRUN_SYS_SEL	43
+> +#define IMX7ULP_CLK_HSRUN_CORE_DIV	44
 
-Applied, thanks.
+No.  These clock IDs need to be stable, as they are referred by DT.
+If you want to remove an ID, just remove it, keep others unchanged.
+
+Shawn
+
+>  
+> -#define IMX7ULP_CLK_SCG1_END		46
+> +#define IMX7ULP_CLK_SCG1_END		45
+>  
+>  /* PCC2 */
+>  #define IMX7ULP_CLK_DMA1		0
+> -- 
+> 2.17.1
+> 
