@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CDFC4CEC5
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A49CC4CEC6
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF01520856
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0811820830
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XxLUX4Yt"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="xa4D904r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731840AbfILN02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Sep 2019 09:26:28 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:38344 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732098AbfILN02 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 09:26:28 -0400
+        id S1732102AbfILN0c (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Sep 2019 09:26:32 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:58654 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732098AbfILN0c (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 09:26:32 -0400
 Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQLB7021179;
-        Thu, 12 Sep 2019 08:26:21 -0500
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQPAX098827;
+        Thu, 12 Sep 2019 08:26:25 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568294781;
-        bh=ZhhtgfHz1PpryANYuepNGwQFWlONDXmjaSxUGLbbF0g=;
+        s=ti-com-17Q1; t=1568294785;
+        bh=lAooCRUVMyzHhADwC9qZkva36ihXtVfNEPnWC8n4rlE=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=XxLUX4Yteuu2XXr6dA3aF5yRzFMY/r5k4y1Cvwcisk7dvn1rs2zxqkAJf094+UqUR
-         VyYeH6wQ3cLiCjoOIu7eaK8noT9nlXSsvHl9KF5Y13hJ5I3Dgfx2HEaBHIeYyY8rBa
-         x7mE12ul4RmeQu6rSSpg+fmCfSwcqe78xAO65xZw=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQLDe070947;
-        Thu, 12 Sep 2019 08:26:21 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+        b=xa4D904r3oRK+1nEn52YVgjGmPidk5ijrBjzLkWOvyTmR7rVxeOglRiNFtZfUcPFc
+         HPEbt19lBHXtJ/NoV56yvBVtKc3/wNY/n/j01u64WRM2zrVt+CoYep2ufJ/VnCJRHa
+         P4bf7EKEwNAjBr7i9XTJqKL56tnezMGyWOFxpW38=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQPNl071069;
+        Thu, 12 Sep 2019 08:26:25 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 12
- Sep 2019 08:26:19 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ Sep 2019 08:26:25 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 12 Sep 2019 08:26:19 -0500
+ Frontend Transport; Thu, 12 Sep 2019 08:26:25 -0500
 Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQFvQ130575;
-        Thu, 12 Sep 2019 08:26:18 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQFvT130575;
+        Thu, 12 Sep 2019 08:26:23 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <sboyd@kernel.org>, <mturquette@baylibre.com>
 CC:     <tony@atomide.com>, <s-anna@ti.com>
-Subject: [PATCHv3 01/10] clk: ti: clkctrl: fix setting up clkctrl clocks
-Date:   Thu, 12 Sep 2019 16:26:04 +0300
-Message-ID: <20190912132613.28093-2-t-kristo@ti.com>
+Subject: [PATCHv3 04/10] dt-bindings: clk: add omap5 iva clkctrl definitions
+Date:   Thu, 12 Sep 2019 16:26:07 +0300
+Message-ID: <20190912132613.28093-5-t-kristo@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190912132613.28093-1-t-kristo@ti.com>
 References: <20190912132613.28093-1-t-kristo@ti.com>
@@ -63,27 +63,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Apply the proper register function for clkctrl clocks, so they get
-registered under the clk_hw_omap list also. This allows checking their
-type runtime.
+OMAP5 device contains an IVA subsystem (Image and Video Accelerator.)
+IVA subsystem clkctrl definitions are currently missing, so add them.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/ti/clkctrl.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/dt-bindings/clock/omap5.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index 975995eea15c..a914df2e9e1b 100644
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -622,7 +622,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- 		init.ops = &omap4_clkctrl_clk_ops;
- 		hw->hw.init = &init;
+diff --git a/include/dt-bindings/clock/omap5.h b/include/dt-bindings/clock/omap5.h
+index f3283957f48d..eb6d2fbe78f9 100644
+--- a/include/dt-bindings/clock/omap5.h
++++ b/include/dt-bindings/clock/omap5.h
+@@ -86,6 +86,10 @@
+ #define OMAP5_UART5_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x170)
+ #define OMAP5_UART6_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x178)
  
--		clk = ti_clk_register(NULL, &hw->hw, init.name);
-+		clk = ti_clk_register_omap_hw(NULL, &hw->hw, init.name);
- 		if (IS_ERR_OR_NULL(clk))
- 			goto cleanup;
++/* iva clocks */
++#define OMAP5_IVA_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
++#define OMAP5_SL2IF_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
++
+ /* dss clocks */
+ #define OMAP5_DSS_CORE_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
  
 -- 
 2.17.1
