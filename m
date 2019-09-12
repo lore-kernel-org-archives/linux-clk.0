@@ -2,107 +2,111 @@ Return-Path: <SRS0=F2l5=XH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14BAAC49ED9
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 05:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3E9C5ACAE
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 09:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF1720830
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 05:48:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WXAw4ZfY"
+	by mail.kernel.org (Postfix) with ESMTP id 2839920CC7
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 09:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727873AbfILFsS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Sep 2019 01:48:18 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35645 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728265AbfILFsS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 01:48:18 -0400
-Received: by mail-wr1-f66.google.com with SMTP id g7so27044087wrx.2;
-        Wed, 11 Sep 2019 22:48:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=J+7yYlnuB8SfpTVafLWQ5fsDMfbAda9xsGBUVs8Fvp8=;
-        b=WXAw4ZfYV5rE2nV/pMMkOQLd84SYrazXZPVLCd3K+Nm/SSXM+4mrp2rwiAqVUsFwUh
-         r9Yha87/wwLrIFRTxPLaSobwXzeakc3dqoKr4eGm8i352Dihhdr8u0sGunzZnyx6uHV1
-         WxqJaan5k1ea2oY1oPTLAAoV7PGlkV/+/yH2NJjxwIaQl1tLphDl1XZzqq2Eztry7C6o
-         8gv+wDN6baCF6P/liN+rsL1AL/H7MPZ9QRcC3neKCCWNSC0KXnanP+mR2WTOZJAisjzQ
-         NoZwENX/hvrbuLv5CHeo25eG2MLJj4+j+FWUaEiUg+q14+h5WUCrw5wFHhncWz0SyY/h
-         Bjvg==
+        id S1730542AbfILJRc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Sep 2019 05:17:32 -0400
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:38554 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730386AbfILJRb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 05:17:31 -0400
+Received: by mail-qt1-f193.google.com with SMTP id j31so1903930qta.5;
+        Thu, 12 Sep 2019 02:17:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=J+7yYlnuB8SfpTVafLWQ5fsDMfbAda9xsGBUVs8Fvp8=;
-        b=VhbmT/EbLMT3pJNqwfQbsljXrF7oqKLNbrTO0QHrssCjqtRFsjGmahrSq5QWYMmOj1
-         B1H72Zd1CilDCdnqTULiiYm0j7wCoLfDbX95FZlLMuGCXDqpdicoZ7pM54Jkpypp+yfx
-         SAsmUr3JLWh24hCzYnmHt8OW47oZ+6UHi9TYOedDE6fLGXPiYCRtA9Eeb1c/gvDtOMbR
-         ZszB02XcbhBTdBXX0eSyN5Gt8m4awCNAvaK29gQgMX/jjWjX4kWEHOIgBumopevz0lfe
-         URfmoNCgR8AIUhsd8YtHOXQRppOXHzE4inJ4hWGteZ5w/N/vcX0vIwIHKZHljerOs0kM
-         xchw==
-X-Gm-Message-State: APjAAAXBLmTd0q1U/RHf9VOA4g4DDXPytwDn3iYuDsKoYrDeu+3gO6sE
-        bRI3pijmyV5i6B5VKZHRyXJte9B96Z2ClrggClAlmQ==
-X-Google-Smtp-Source: APXvYqyiFcAWerCpqfDcaC0qwPj8N20mRn7E8xKm+Rmt7zy0lh+MRtJ2JTXCsp+wRS6givFhM6F9EsVts9tBy0ZmAbk=
-X-Received: by 2002:adf:d84f:: with SMTP id k15mr31421304wrl.70.1568267296241;
- Wed, 11 Sep 2019 22:48:16 -0700 (PDT)
+        bh=3v9vNWScPyFQpJOj2uC5NrtlNxn+puyxlyM0L6NxVxI=;
+        b=DFv/JSkSm/ASw4AJkKifQYAoWJFeMXObeBn8sY9QUNG/hhjudK0jJKQ9qvoQEecqGc
+         KWYfQy+yvkbZPvcJfQlLeGSVP10sbMBL9plVaneFAjbJSHII98yV6ENsgvXwTzdNDZc/
+         z1Hbexj7eSxCZvQ53ZHhmSohkRAUms9BS9t1jQCqKTCpOGw2Ng0p0TmNiGqBhs3UoVVu
+         GWj/hTUfXaREysSdtwBWvw7MRPWob8HNuLRN75nMcny1oKoy5e/MC2WWgb9cmNNekQSI
+         YjPmtVR/sKL0IiC4CsiIn9QGH7M0zw5IM4hIGoBQ3WsK5wxZqF6zhHXJc2CeQgvwp0/n
+         siWg==
+X-Gm-Message-State: APjAAAVD+S4ClH2PeD0dqlUQbrb3c14rBsb54KvijjW73m0tNKunO4o/
+        A9IEHne/Ocnp7Tzlj6ZA+jn9ofD8/5wTv1tgtFp+CHOhr3o=
+X-Google-Smtp-Source: APXvYqy+bZ/IsdWGG/lweYHMToFo2NNHZpONP/kd5+jqUDDglfiDRhLYrs6Ayjqcx3vUQ5sGnAv8u0JP9HHxRjVMY+w=
+X-Received: by 2002:ac8:6b1a:: with SMTP id w26mr39336977qts.304.1568279850382;
+ Thu, 12 Sep 2019 02:17:30 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190905103009.27166-1-zhang.lyra@gmail.com>
-In-Reply-To: <20190905103009.27166-1-zhang.lyra@gmail.com>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Thu, 12 Sep 2019 13:47:39 +0800
-Message-ID: <CAAfSe-uG0oDHznmYXUfbC86pw6nZvGzLHfpnpu1oUX+uk1NASQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: sprd: add missing kfree
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <cover.1568239378.git.amit.kucheria@linaro.org> <8f539b28c25d22b8f515c131cd6b24c309f7ca90.1568239378.git.amit.kucheria@linaro.org>
+In-Reply-To: <8f539b28c25d22b8f515c131cd6b24c309f7ca90.1568239378.git.amit.kucheria@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Thu, 12 Sep 2019 11:17:14 +0200
+Message-ID: <CAK8P3a3u8KhgaqoK0=2CXBs0HMh0fuN-ANvvQtSrWQm0J6xnvw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: Kconfig: Fix VEXPRESS driver dependencies
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        arm-soc <arm@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-gentle ping
-
-On Thu, 5 Sep 2019 at 18:30, Chunyan Zhang <zhang.lyra@gmail.com> wrote:
+On Thu, Sep 12, 2019 at 12:19 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
 >
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+> Push various VEXPRESS drivers behind ARCH_VEXPRESS dependency so that it
+> doesn't get enabled by default on other platforms.
 >
-> The number of config registers for different pll clocks probably are not
-> same, so we have to use malloc, and should free the memory before return.
->
-> Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 > ---
->  drivers/clk/sprd/pll.c | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/bus/Kconfig           | 2 +-
+>  drivers/clk/versatile/Kconfig | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
 >
-> diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-> index 36b4402bf09e..640270f51aa5 100644
-> --- a/drivers/clk/sprd/pll.c
-> +++ b/drivers/clk/sprd/pll.c
-> @@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
->                                          k2 + refin * nint * CLK_PLL_1M;
->         }
+> diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+> index d80e8d70bf10..b2b1beee9953 100644
+> --- a/drivers/bus/Kconfig
+> +++ b/drivers/bus/Kconfig
+> @@ -166,7 +166,7 @@ config UNIPHIER_SYSTEM_BUS
 >
-> +       kfree(cfg);
->         return rate;
->  }
->
-> @@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
->         if (!ret)
->                 udelay(pll->udelay);
->
-> +       kfree(cfg);
->         return ret;
->  }
->
-> --
-> 2.20.1
->
+>  config VEXPRESS_CONFIG
+>         bool "Versatile Express configuration bus"
+> -       default y if ARCH_VEXPRESS
+> +       depends on ARCH_VEXPRESS
+>         depends on ARM || ARM64
+>         depends on OF
+
+Removing the 'default y' breaks existing defconfig files,
+
+Adding the 'depends on ARCH_VEXPRESS' unnecessarily limits
+compile-testing. I'd rather extend it to other architectures than
+limit it to builds that have vexpress enabled.
+
+> diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> index ac766855ba16..826750292c1e 100644
+> --- a/drivers/clk/versatile/Kconfig
+> +++ b/drivers/clk/versatile/Kconfig
+> @@ -5,8 +5,8 @@ config ICST
+>  config COMMON_CLK_VERSATILE
+>         bool "Clock driver for ARM Reference designs"
+>         depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
+> -               ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
+> -               COMPILE_TEST
+> +               ARCH_VERSATILE || ARCH_VEXPRESS || COMPILE_TEST
+> +       depends on ARM64
+
+It's definitely wrong to limit this to 64 bit.
+
+      Arnd
