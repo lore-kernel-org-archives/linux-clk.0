@@ -7,52 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BCD9CC4CEC6
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CDFC4CEC5
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95C5420830
+	by mail.kernel.org (Postfix) with ESMTP id CF01520856
 	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A8JSNdgo"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XxLUX4Yt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732100AbfILN02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1731840AbfILN02 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 12 Sep 2019 09:26:28 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:59656 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732093AbfILN02 (ORCPT
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:38344 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732098AbfILN02 (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 09:26:28 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQOf6011927;
-        Thu, 12 Sep 2019 08:26:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568294784;
-        bh=+qrcnaR3a/pZ4OviE1ZKc8IWLJlt6Yebqe6i5IEbb64=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=A8JSNdgohFwtatBw+XFGPRUpp2hpxdX9Lq/w1OAb8zjFsNSw2NFg5fa9oTYnUyffx
-         1tc2kKk3P/zmQ8sg8AxTe2ZrKhzzWUymfUjvgYFUgLaDzllGjP1AdFR4RB0vu6ettW
-         qzTflc3wR7sZDCpRiz2RJnIfKvtI/8xWJDLlnyZw=
-Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8CDQOKw015237
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 12 Sep 2019 08:26:24 -0500
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 12
- Sep 2019 08:26:23 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 12 Sep 2019 08:26:23 -0500
-Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQFvS130575;
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQLB7021179;
         Thu, 12 Sep 2019 08:26:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1568294781;
+        bh=ZhhtgfHz1PpryANYuepNGwQFWlONDXmjaSxUGLbbF0g=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=XxLUX4Yteuu2XXr6dA3aF5yRzFMY/r5k4y1Cvwcisk7dvn1rs2zxqkAJf094+UqUR
+         VyYeH6wQ3cLiCjoOIu7eaK8noT9nlXSsvHl9KF5Y13hJ5I3Dgfx2HEaBHIeYyY8rBa
+         x7mE12ul4RmeQu6rSSpg+fmCfSwcqe78xAO65xZw=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQLDe070947;
+        Thu, 12 Sep 2019 08:26:21 -0500
+Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 12
+ Sep 2019 08:26:19 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE101.ent.ti.com
+ (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 12 Sep 2019 08:26:19 -0500
+Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQFvQ130575;
+        Thu, 12 Sep 2019 08:26:18 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <sboyd@kernel.org>, <mturquette@baylibre.com>
 CC:     <tony@atomide.com>, <s-anna@ti.com>
-Subject: [PATCHv3 03/10] clk: ti: clkctrl: add new exported API for checking standby info
-Date:   Thu, 12 Sep 2019 16:26:06 +0300
-Message-ID: <20190912132613.28093-4-t-kristo@ti.com>
+Subject: [PATCHv3 01/10] clk: ti: clkctrl: fix setting up clkctrl clocks
+Date:   Thu, 12 Sep 2019 16:26:04 +0300
+Message-ID: <20190912132613.28093-2-t-kristo@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190912132613.28093-1-t-kristo@ti.com>
 References: <20190912132613.28093-1-t-kristo@ti.com>
@@ -64,76 +63,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Standby status is provided for certain clkctrl clocks to see if the
-given module has entered standby or not. This is mostly needed by
-remoteproc code to see if the remoteproc has entered standby and the clock
-can be turned off safely.
+Apply the proper register function for clkctrl clocks, so they get
+registered under the clk_hw_omap list also. This allows checking their
+type runtime.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/ti/clkctrl.c | 33 +++++++++++++++++++++++++++++++++
- include/linux/clk/ti.h   |  1 +
- 2 files changed, 34 insertions(+)
+ drivers/clk/ti/clkctrl.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-index d904a9a7626a..e3e0a66a6ce2 100644
+index 975995eea15c..a914df2e9e1b 100644
 --- a/drivers/clk/ti/clkctrl.c
 +++ b/drivers/clk/ti/clkctrl.c
-@@ -34,6 +34,9 @@
- #define OMAP4_IDLEST_MASK		(0x3 << 16)
- #define OMAP4_IDLEST_SHIFT		16
+@@ -622,7 +622,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
+ 		init.ops = &omap4_clkctrl_clk_ops;
+ 		hw->hw.init = &init;
  
-+#define OMAP4_STBYST_MASK		BIT(18)
-+#define OMAP4_STBYST_SHIFT		18
-+
- #define CLKCTRL_IDLEST_FUNCTIONAL	0x0
- #define CLKCTRL_IDLEST_INTERFACE_IDLE	0x2
- #define CLKCTRL_IDLEST_DISABLED		0x3
-@@ -647,3 +650,33 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
- }
- CLK_OF_DECLARE(ti_omap4_clkctrl_clock, "ti,clkctrl",
- 	       _ti_omap4_clkctrl_setup);
-+
-+/**
-+ * ti_clk_is_in_standby - Check if clkctrl clock is in standby or not
-+ * @clk: clock to check standby status for
-+ *
-+ * Finds whether the provided clock is in standby mode or not. Returns
-+ * true if the provided clock is a clkctrl type clock and it is in standby,
-+ * false otherwise.
-+ */
-+u32 ti_clk_is_in_standby(struct clk *clk)
-+{
-+	struct clk_hw *hw;
-+	struct clk_hw_omap *hwclk;
-+	u32 val;
-+
-+	hw = __clk_get_hw(clk);
-+
-+	if (!omap2_clk_is_hw_omap(hw))
-+		return false;
-+
-+	hwclk = to_clk_hw_omap(hw);
-+
-+	val = ti_clk_ll_ops->clk_readl(&hwclk->enable_reg);
-+
-+	if (val & OMAP4_STBYST_MASK)
-+		return true;
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
-diff --git a/include/linux/clk/ti.h b/include/linux/clk/ti.h
-index bb2c5af9082a..3fb777f7103a 100644
---- a/include/linux/clk/ti.h
-+++ b/include/linux/clk/ti.h
-@@ -298,6 +298,7 @@ struct ti_clk_features {
- 
- void ti_clk_setup_features(struct ti_clk_features *features);
- const struct ti_clk_features *ti_clk_get_features(void);
-+u32 ti_clk_is_in_standby(struct clk *clk);
- int omap3_noncore_dpll_save_context(struct clk_hw *hw);
- void omap3_noncore_dpll_restore_context(struct clk_hw *hw);
+-		clk = ti_clk_register(NULL, &hw->hw, init.name);
++		clk = ti_clk_register_omap_hw(NULL, &hw->hw, init.name);
+ 		if (IS_ERR_OR_NULL(clk))
+ 			goto cleanup;
  
 -- 
 2.17.1
