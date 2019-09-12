@@ -2,97 +2,135 @@ Return-Path: <SRS0=F2l5=XH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4A7AC4CEC5
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3050C4CEC6
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 14:15:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7F2520CC7
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 13:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C846721479
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 14:15:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R5Sx57oF"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PUmIQ5HD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732114AbfILN0k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Sep 2019 09:26:40 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:41666 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732098AbfILN0k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 09:26:40 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQbaQ049583;
-        Thu, 12 Sep 2019 08:26:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568294797;
-        bh=K2Q92adlyOlFE+55nlrsCH8twyZ1qvVGlSQOn8cJ0jo=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=R5Sx57oFPzATZ7B13TRpt+LVvRAA0YJuP5aYxx+jWwNQS8vfMX2aRi0AnKQvVctj6
-         rd3Gyqgm0kY4w4SV8D22PnJimdgujRGc8b6mV/24mjp7YJFQ9zha7YqPb9IcnowqyP
-         SLlcNO9g8efjY/UQmGU1UXuIXex4Rfpf5mIkFftk=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQbGA071418;
-        Thu, 12 Sep 2019 08:26:37 -0500
-Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 12
- Sep 2019 08:26:37 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 12 Sep 2019 08:26:37 -0500
-Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8CDQFvZ130575;
-        Thu, 12 Sep 2019 08:26:35 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>
-CC:     <tony@atomide.com>, <s-anna@ti.com>
-Subject: [PATCHv3 10/10] clk: ti: am33xx: drop idlest polling from pruss clkctrl clock
-Date:   Thu, 12 Sep 2019 16:26:13 +0300
-Message-ID: <20190912132613.28093-11-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190912132613.28093-1-t-kristo@ti.com>
-References: <20190912132613.28093-1-t-kristo@ti.com>
+        id S1732563AbfILOPn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Sep 2019 10:15:43 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37946 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732480AbfILOPn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 10:15:43 -0400
+Received: by mail-wr1-f65.google.com with SMTP id l11so28624805wrx.5
+        for <linux-clk@vger.kernel.org>; Thu, 12 Sep 2019 07:15:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=z05c2SbQyHgmdiyuA9SdCH+TDRrblP4cUHUsGoERNgM=;
+        b=PUmIQ5HDdUAHPqQqa2qkOdoCcTkoTOmHBainGMaiWInzyotClK6/EvL+Lr5NX2w2pn
+         /51IqSxwmwlUB11nQJO51XWYrN1f8TZQrQSR+nsWJc0ru1KXHDZtduvWYvTLNImSiWba
+         7cylqwtEiPEzC/LQD+1vb9adi8MeFrOafQpA9S3CfQnT0t7TGUegUPHp6wPAMTNF7bZD
+         ZUtzngU4q3yceUwhcFiPt9gur5UX4H86SzjybcQgVnzuwzmBElqZv9deF+wovJ22gHWO
+         VjAx1hVSxrAkSivUMHqHJC1XKXjrUr7xm7sWTtPFJJg3KJAZZvqj+Vf5T2pWyEVVv3bX
+         O/vA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=z05c2SbQyHgmdiyuA9SdCH+TDRrblP4cUHUsGoERNgM=;
+        b=a9orVlhK2R2DFyTCuYYTkiLHRZ69jI5Z/AELdxVRK0CMln3KRRFMBfidl4/Jxrsaxf
+         AlffWCuNW/yQ/i4B2f3ZccWkdUBiHGqkFDTSK0ATHenstydJBgsxi8X7EmQ1kRs1snhL
+         CZmALAyaSqXvwukaddoqLEwYA7KVkbeRs2UcoIFPINPP03/EZml/x+L1b/0ghrwnRhqL
+         bquoPGrN4iP1cftHeCjrA7rd1WEkgkX/duuYCKcipi6Fgz9amOKFnDJyM2yAbT/CoY4A
+         0VryLdlP/C05mSdO+/lNEZXp/10NqnigzZsxkZhi2DMz42MwYf3vRkrPWKq8hGMdPkKC
+         g9Ng==
+X-Gm-Message-State: APjAAAXKhv/1+jlilk8D5bk5zx5Tm/AhmqsdUrhvW+EHNCrSx2i/6/6b
+        QAuehvkl50tL2qsPcpJRNKf2sw==
+X-Google-Smtp-Source: APXvYqyhMKOViR6GZTbCm1+FFBtUvh+7AEdHliZLV0+hczJUYYUBhFvGhSeEqdjd07H0xRiliAQpBg==
+X-Received: by 2002:a5d:650d:: with SMTP id x13mr2334646wru.37.1568297741707;
+        Thu, 12 Sep 2019 07:15:41 -0700 (PDT)
+Received: from localhost.localdomain (69.red-83-35-113.dynamicip.rima-tde.net. [83.35.113.69])
+        by smtp.gmail.com with ESMTPSA id p23sm137599wma.18.2019.09.12.07.15.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 12 Sep 2019 07:15:41 -0700 (PDT)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
+        agross@kernel.org, mturquette@baylibre.com,
+        bjorn.andersson@linaro.org
+Cc:     niklas.cassel@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/5] clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
+Date:   Thu, 12 Sep 2019 16:15:30 +0200
+Message-Id: <20190912141534.28870-2-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190912141534.28870-1-jorge.ramirez-ortiz@linaro.org>
+References: <20190912141534.28870-1-jorge.ramirez-ortiz@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The PRUSS module on AM33xx SoCs has a hardreset line and is controlled
-by a PRCM reset line. Any clkctrl enable/disable operations cannot be
-checked for module enabled/disabled status independent of the reset
-operation, and this causes some unwanted timeouts in the kernel and
-unbalanced states for the PRUSS clocks. These details should be handled
-by the driver integration code itself.
+Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
+specifications.
 
-Add the CLKF_NO_IDLEST flag to the PRUSS clkctrl clock so that these
-module status checks are skipped.
-
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
+Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/clk/ti/clk-33xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/qcom/clk-alpha-pll.c | 8 ++++++++
+ drivers/clk/qcom/clk-alpha-pll.h | 1 +
+ drivers/clk/qcom/gcc-qcs404.c    | 2 +-
+ 3 files changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/ti/clk-33xx.c b/drivers/clk/ti/clk-33xx.c
-index a360d3109555..935efb66b389 100644
---- a/drivers/clk/ti/clk-33xx.c
-+++ b/drivers/clk/ti/clk-33xx.c
-@@ -107,7 +107,7 @@ static const struct omap_clkctrl_reg_data am3_l4hs_clkctrl_regs[] __initconst =
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index 0ced4a5a9a17..ef51f302bdf0 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -730,6 +730,14 @@ static long alpha_pll_huayra_round_rate(struct clk_hw *hw, unsigned long rate,
+ 	return alpha_huayra_pll_round_rate(rate, *prate, &l, &a);
+ }
+ 
++const struct clk_ops clk_alpha_pll_fixed_ops = {
++	.enable = clk_alpha_pll_enable,
++	.disable = clk_alpha_pll_disable,
++	.is_enabled = clk_alpha_pll_is_enabled,
++	.recalc_rate = clk_alpha_pll_recalc_rate,
++};
++EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_ops);
++
+ const struct clk_ops clk_alpha_pll_ops = {
+ 	.enable = clk_alpha_pll_enable,
+ 	.disable = clk_alpha_pll_disable,
+diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
+index 66755f0f84fc..6b4eb74706b4 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.h
++++ b/drivers/clk/qcom/clk-alpha-pll.h
+@@ -104,6 +104,7 @@ struct alpha_pll_config {
  };
  
- static const struct omap_clkctrl_reg_data am3_pruss_ocp_clkctrl_regs[] __initconst = {
--	{ AM3_PRUSS_OCP_PRUSS_CLKCTRL, NULL, CLKF_SW_SUP, "pruss_ocp_gclk" },
-+	{ AM3_PRUSS_OCP_PRUSS_CLKCTRL, NULL, CLKF_SW_SUP | CLKF_NO_IDLEST, "pruss_ocp_gclk" },
- 	{ 0 },
+ extern const struct clk_ops clk_alpha_pll_ops;
++extern const struct clk_ops clk_alpha_pll_fixed_ops;
+ extern const struct clk_ops clk_alpha_pll_hwfsm_ops;
+ extern const struct clk_ops clk_alpha_pll_postdiv_ops;
+ extern const struct clk_ops clk_alpha_pll_huayra_ops;
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 29cf464dd2c8..18c6563889f3 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -330,7 +330,7 @@ static struct clk_alpha_pll gpll0_ao_out_main = {
+ 			.parent_names = (const char *[]){ "cxo" },
+ 			.num_parents = 1,
+ 			.flags = CLK_IS_CRITICAL,
+-			.ops = &clk_alpha_pll_ops,
++			.ops = &clk_alpha_pll_fixed_ops,
+ 		},
+ 	},
  };
- 
 -- 
-2.17.1
+2.23.0
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
