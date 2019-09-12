@@ -2,94 +2,111 @@ Return-Path: <SRS0=F2l5=XH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9087AC49ED9
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 09:29:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE24ECDE20
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 09:32:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713D42084F
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 09:29:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A09D620856
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Sep 2019 09:32:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568280760;
+	bh=NCCGHqcUsoAmYmJAE8U3jvNgVr+TTfXH7LprAZ8aZlc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Gq2dXoLLO1XUWNSpJdAx8VXpXRdKidv7gF7CcdToPy+tyEJnvdBxPebpFWXYup1Yu
+	 FcZ4PVdWgNhFAfVZKwLuf8AEhJAVgSIIzd1Dz022LNRjkijg1yfASa//62oGMvhPRv
+	 gJHo64HTCMYqLdrITSsyksVssgroAChx1TDN2ebI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbfILJ3T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Sep 2019 05:29:19 -0400
-Received: from mail-qk1-f193.google.com ([209.85.222.193]:45398 "EHLO
-        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730434AbfILJ3T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 05:29:19 -0400
-Received: by mail-qk1-f193.google.com with SMTP id z67so23703484qkb.12;
-        Thu, 12 Sep 2019 02:29:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wtGU4iMWfZeQ/FsklpEfRM6iPwzDv+XphhtaUmBwgSA=;
-        b=conIQTsvjKBscv9fPglL4IoNMHeXhdGelKfEyP7V9Py/OHbTW5L9vi2l0Ni8MrtZUV
-         HtrIW3c0wamh53QqfI9RO3brCirVF1CL7PVohPSouQUKqIS60Q5bGPR1iB+4g+qgT+hN
-         HsIDARICv8BcBTWQUq4YJ1zXpz0kyHL7OdfsNLHWqIksyMyPmB19PvfO6FZ+2CYEslAW
-         XiSsLeJcZlU3Q0PjsPL5a4IWg1UXrWEHVi3tj4q95Ndp+pH6GpHBumlpNNQCH7i0BBYV
-         MBCO9pTo4xyckqNBvwmsazMqcJ6CLTphCvwfRzHTJhNbBBnObWsnYvFPiuWB4SPyvlUq
-         HC8w==
-X-Gm-Message-State: APjAAAXj4nAr6INGJ8T7rhe6Q5nFDSO/1yr9vTLs+exJUy9ekP/qF4uS
-        GiRpQglJ3eHUYmu1rhsaejh0YgNDREd9/T9CJAk=
-X-Google-Smtp-Source: APXvYqycQWX7fEy2jA5D+LxaO4u4opsppoZ4/cfOD3zMYVxe++YCYyGMd3QpWn3hGnNZZJlZplYFA331lIror8ITmVA=
-X-Received: by 2002:a05:620a:145a:: with SMTP id i26mr40226931qkl.352.1568280556796;
- Thu, 12 Sep 2019 02:29:16 -0700 (PDT)
-MIME-Version: 1.0
-References: <cover.1568239378.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1568239378.git.amit.kucheria@linaro.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 12 Sep 2019 11:29:00 +0200
-Message-ID: <CAK8P3a2zGJx7SCA4LUHPGTybN8GU16Ah3H0FbaOEwR3H7uGCnA@mail.gmail.com>
-Subject: Re: [PATCH 0/4] Cleanup arm64 driver dependencies
+        id S1730237AbfILJck (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Sep 2019 05:32:40 -0400
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:59570 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730218AbfILJcj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Sep 2019 05:32:39 -0400
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=3mFlkL6LvJaHhmldjRcA8fde/UOpm7KObuOHbWtlrTc=; b=bwBZKqN5kk1WMU5x6Av29Vme7
+        4JM6sEhhrGVE5L/2MjiW4Q2LSCxBNhNzfX03LsqYWAuukw9LfptenmjZxSk1lrfy2txvcOtldCall
+        OXN22cYVw3wKOPzL+sjnK6oQ5FBrI+av85lScnLBbjnnByrmC0nRfD6dsYbNHbpU7DWBo=;
+Received: from 195-23-252-136.net.novis.pt ([195.23.252.136] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1i8LSp-0006Qq-L8; Thu, 12 Sep 2019 09:32:31 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id EF65DD00AB0; Thu, 12 Sep 2019 10:32:30 +0100 (BST)
+Date:   Thu, 12 Sep 2019 10:32:30 +0100
+From:   Mark Brown <broonie@kernel.org>
 To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        arm-soc <arm@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        arm@kernel.org, Bartosz Golaszewski <bgolaszewski@baylibre.com>,
         Catalin Marinas <catalin.marinas@arm.com>,
         Kishon Vijay Abraham I <kishon@ti.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Linus Walleij <linus.walleij@linaro.org>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Sebastian Reichel <sre@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-pci <linux-pci@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: Kconfig: Fix EXYNOS driver dependencies
+Message-ID: <20190912093230.GG2036@sirena.org.uk>
+References: <cover.1568239378.git.amit.kucheria@linaro.org>
+ <79755cb29b8c23709e346b5dd290481a36627648.1568239378.git.amit.kucheria@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="aPOcx+xoD6gZZHnz"
+Content-Disposition: inline
+In-Reply-To: <79755cb29b8c23709e346b5dd290481a36627648.1568239378.git.amit.kucheria@linaro.org>
+X-Cookie: Be careful!  UGLY strikes 9 out of 10!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 12:18 AM Amit Kucheria <amit.kucheria@linaro.org> wrote:
->
-> I was using initcall_debugging on a QCOM platform and ran across a bunch of
-> driver initcalls that are enabled even if their SoC support is disabled.
->
-> Here are some fixups for a subset of them.
 
-The idea seems reasonable, disabling a platform may just turn off
-all the drivers that are not useful elsewhere, but there are mistakes
-in a lot of your changes, so I'm certainly not applying these for 5.4.
+--aPOcx+xoD6gZZHnz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Generally speaking, the way that works best is
+On Thu, Sep 12, 2019 at 03:48:48AM +0530, Amit Kucheria wrote:
 
-config SUBSYS_DRIVER_FOO
-       tristate "SUBSYS support for FOO platform"
-       depends on ARCH_FOO || COMPILE_TEST
-       depends on SUBSYS
-       default "m" if ARCH_FOO
+> Push various EXYNOS drivers behind ARCH_EXYNOS dependency so that it
+> doesn't get enabled by default on other platforms.
 
-This means it's enabled as a loadable module by default (use
-default "y" instead where necessary) as long as the platform
-is enabled, but an x86 allmodconfig build also includes it
-because of COMPILE_TEST, while any configuration without
-ARCH_FOO that is not compile-testing cannot enable it.
+>  config REGULATOR_S2MPS11
+>  	tristate "Samsung S2MPS11/13/14/15/S2MPU02 voltage regulator"
+> +	depends on ARCH_EXYNOS
+>  	depends on MFD_SEC_CORE
+>  	help
+>  	 This driver supports a Samsung S2MPS11/13/14/15/S2MPU02 voltage
 
-       Arnd
+This doesn't match the changelog at all.  This driver is not
+enabled by default since it's just a normal tristate, they are
+disabled by default.  As far as I can see all this change will
+do is reduce our build test coverage by adding an artificial
+dependency without an || COMPILE_TEST.
+
+--aPOcx+xoD6gZZHnz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl16EK4ACgkQJNaLcl1U
+h9Dn7gf/YZh55qkA7bTLAJHRocCdo/3Gm4Me5DO+Rnt0FyEcbwX3+E2akxCedkaX
+vqvhDX4nSIwMVmq6qzNR+c4H2lZcev0KD0Glwi6Hi5olMJAiHYmVl9Da2MNPiYAe
+mnlnY/bgrpmJ41nqm63s2PvtEWp+PL2QbnIikDS4Rb5vGLjTQGSmhGlU3o6dB3Om
+WxlDHZkCMO/9csX/UHjJUro2TPkgc9FfLnqx9N3Rs5/pL6zdXtZL5TK+6PGpkC/B
+NRx26W9Az9yIWMAu0MO7QPlcpT1b1O8dCYg3mM6fMjSiv9y3u8NLnp+zwhrHfIx+
+3xM5RHEbBYANmiIr66vXfKMKbQvvEw==
+=hxyF
+-----END PGP SIGNATURE-----
+
+--aPOcx+xoD6gZZHnz--
