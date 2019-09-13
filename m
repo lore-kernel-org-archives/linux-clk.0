@@ -2,122 +2,85 @@ Return-Path: <SRS0=jGYp=XI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55830C49ED7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:44:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7176C49ED7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 21:49:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 287D320693
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:44:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j391YvrW";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LPFidS2T"
+	by mail.kernel.org (Postfix) with ESMTP id 871BB214D9
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 21:49:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568411346;
+	bh=5MC2UuZnwHy8x8XvaORdS+p/DTQxXcjtIxUj85fmD10=;
+	h=Date:From:Subject:References:In-Reply-To:Cc:To:List-ID:From;
+	b=nRNNto7PzQdUsdiC0BKvd4F2tb3ATc7MBegCTKGpOvhjX3R1bIz/cVepuqoKHXdVo
+	 lO+utRZ/CfXwZHSI3ocGkS6tGLqGZMbbtIwz6sg4XaB3Un0l4ffwQaYIw0REPD0X0v
+	 8r+GU9emuaVZFI0G0k8NNXyFYrRWGUSbPV1zbp9o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbfIMOow (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Sep 2019 10:44:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:59956 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729911AbfIMOow (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 10:44:52 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2DE4A6133A; Fri, 13 Sep 2019 14:44:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568385891;
-        bh=6Sd2dpM9HRfzA5DVteOBc7URO2Jumcbqg21Ygsai7AI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=j391YvrWswsDCumcZGnjL/lCSbKAolYn/m0WClXGjil62VBsEwPR1e7q9HhIv57CS
-         DorROLMtEn7hfajc/9E/BtANly54sJNKe90lM5jOqJUEf91IOaSEGyRX2h3TkYIP4V
-         GQT7I+eTCHgGPgbXKsB2niWVRT6FdWSuwlyk/zAc=
-Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E506A614DC;
-        Fri, 13 Sep 2019 14:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568385887;
-        bh=6Sd2dpM9HRfzA5DVteOBc7URO2Jumcbqg21Ygsai7AI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=LPFidS2TnVseHQyypdlOaG9GMQBwBr5Z2BeRpxtAVnRdfdTBb6jhAH/egQaqNvRIZ
-         HecTdMjWjY0B7RL+zzEEtM2p3b5i5GTh+FQy10oKkahFLdhc4DMghMSfDb2AbwUwxA
-         AKJ1bWN2P/Fk0FCq9ECNgJaeVoX1/Ej9KdoBf2e8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E506A614DC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Fri, 13 Sep 2019 08:44:45 -0600
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: Re: [PATCH] clk: Make clk_bulk_get_all() return a valid "id"
-Message-ID: <20190913144444.GA25762@jcrouse1-lnx.qualcomm.com>
-Mail-Followup-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        Dong Aisheng <aisheng.dong@nxp.com>
-References: <20190913024029.2640-1-bjorn.andersson@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190913024029.2640-1-bjorn.andersson@linaro.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        id S2390203AbfIMVtC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Sep 2019 17:49:02 -0400
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45818 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389815AbfIMVtB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 17:49:01 -0400
+Received: by mail-oi1-f196.google.com with SMTP id o205so3858683oib.12;
+        Fri, 13 Sep 2019 14:48:59 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:subject:references
+         :in-reply-to:cc:to;
+        bh=yfgqSFtw1luhLgArZwnEc8F6Xhggtmf4n8ZGTf+re+Q=;
+        b=bz1yG4NHplyXnQ3Gz5TkD6Rc1wMDy5lO+dMNbCM5/cKeEqunpaGO6uj0Xqfjwb5/iK
+         N17s9h2XgXQoSV0nGDIiLm2ndKo5a2cPkkp5Xu9ns/afYTDocPmvYu17P2hv4aS2k6Ms
+         Pb+NGhuDpSc9iTVgcFp2qxgSskZnAaI+AJDYUvYwxB6XQCwuDztQk/yl1zdC2Vlt92JC
+         I7hffJFaf5zpruym6Ki/aVhH1bDo66QqLGqfkTv0I6Q8mLiSsPmChaIC3BZA+Jo8EeHX
+         YgYKuZW65S2poO+XTaAGJMNFVpSDKHoBl9nXGK1Ifl1lFqx8cmfKxWCpm9KMTTS3TYry
+         hLfg==
+X-Gm-Message-State: APjAAAXX4GpjxNb31wGBrDc8ieUVvnE+LlQZpgUrBSlrsmyM1hw/SRaR
+        0LZ+W1H79F2jmggwHEiQ9rgKCY0=
+X-Google-Smtp-Source: APXvYqwXGGOdmVJ9VM0SMs+yDbufGw9QI/c2JyZOHo8t7vKAYhKyPcGBFklrMw7/VRt0sQyrUUFE9A==
+X-Received: by 2002:aca:ebd1:: with SMTP id j200mr5079576oih.111.1568411339449;
+        Fri, 13 Sep 2019 14:48:59 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r7sm1417118oih.41.2019.09.13.14.48.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2019 14:48:59 -0700 (PDT)
+Message-ID: <5d7c0ecb.1c69fb81.74810.a358@mx.google.com>
+Date:   Fri, 13 Sep 2019 16:48:58 -0500
+From:   Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH V2 10/12] dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org> <1568375771-22933-11-git-send-email-gokulsri@codeaurora.org>
+In-Reply-To: <1568375771-22933-11-git-send-email-gokulsri@codeaurora.org>
+Cc:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
+        bjorn.andersson@linaro.org, david.brown@linaro.org,
+        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
+        robh+dt@kernel.org, sricharan@codeaurora.org,
+        nprakash@codeaurora.org
+To:     Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Sep 12, 2019 at 07:40:29PM -0700, Bjorn Andersson wrote:
-> The adreno driver expects the "id" field of the returned clk_bulk_data
-> to be filled in with strings from the clock-names property.
+On Fri, 13 Sep 2019 17:26:09 +0530, Gokul Sriram Palanisamy wrote:
+> Add compatible for IPQ8074 support.
+> This does not need clocks for scm calls.
 > 
-> But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
-> receives a list of bogus pointers instead.
-> 
-> Zero-initialize the "id" field and attempt to populate with strings from
-> the clock-names property to resolve both these issues.
-
-This looks great to me.  Thanks for fixing that so quickly.
-
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
-
-> Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
-> Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
-> Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> Cc: Jordan Crouse <jcrouse@codeaurora.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
 > ---
->  drivers/clk/clk-bulk.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-> index 524bf9a53098..e9e16425c739 100644
-> --- a/drivers/clk/clk-bulk.c
-> +++ b/drivers/clk/clk-bulk.c
-> @@ -18,10 +18,13 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
->  	int ret;
->  	int i;
->  
-> -	for (i = 0; i < num_clks; i++)
-> +	for (i = 0; i < num_clks; i++) {
-> +		clks[i].id = NULL;
->  		clks[i].clk = NULL;
-> +	}
->  
->  	for (i = 0; i < num_clks; i++) {
-> +		of_property_read_string_index(np, "clock-names", i, &clks[i].id);
->  		clks[i].clk = of_clk_get(np, i);
->  		if (IS_ERR(clks[i].clk)) {
->  			ret = PTR_ERR(clks[i].clk);
-> -- 
-> 2.18.0
+>  Documentation/devicetree/bindings/firmware/qcom,scm.txt | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
+
+If a tag was not added on purpose, please state why and what changed.
+
