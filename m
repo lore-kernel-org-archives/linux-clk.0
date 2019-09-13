@@ -2,184 +2,224 @@ Return-Path: <SRS0=jGYp=XI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 384AFC4CEC7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 12:03:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF5FC4CEC5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:36:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19EBB208C2
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 12:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 500DD21734
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:36:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568385406;
+	bh=nthBLQoPDeIw/Cjr/p121TBjqps1npoJ2aVtTTRj15U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=n9W6/ibNEBUyOLJDaxhJdmd5sXUUJGUVqezD6LuZ+C50VnOYN1WVudKqvAw8jENt7
+	 SG5KsWq4NIB4j1kHSvfpleBBAQViwRLZH1+P/8myxxxUpJLIaiI0WH4FdufLepQB4T
+	 Ag3ndSdxkkVHkJMQqLGefDSDy8fl1WdreznePMiY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387644AbfIMMCx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Sep 2019 08:02:53 -0400
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:15352 "EHLO
-        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2387600AbfIMMCw (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 08:02:52 -0400
-X-Greylist: delayed 369 seconds by postgrey-1.27 at vger.kernel.org; Fri, 13 Sep 2019 08:02:48 EDT
-Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 13 Sep 2019 17:26:38 +0530
-Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
-  by ironmsg01-blr.qualcomm.com with ESMTP; 13 Sep 2019 17:26:13 +0530
-Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id C7C3C372B; Fri, 13 Sep 2019 17:26:11 +0530 (IST)
-From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
-        bjorn.andersson@linaro.org, david.brown@linaro.org,
-        devicetree@vger.kernel.org, jassisinghbrar@gmail.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org,
-        mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
-        robh+dt@kernel.org, sricharan@codeaurora.org,
-        nprakash@codeaurora.org
-Subject: [PATCH V2 02/12] remoteproc: qcom: Add secure PIL support
-Date:   Fri, 13 Sep 2019 17:26:01 +0530
-Message-Id: <1568375771-22933-3-git-send-email-gokulsri@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+        id S1730840AbfIMOg1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Sep 2019 10:36:27 -0400
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:35841 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729421AbfIMOg1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 10:36:27 -0400
+Received: by mail-oi1-f195.google.com with SMTP id k20so2820547oih.3;
+        Fri, 13 Sep 2019 07:36:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=+gFzsRCMB/S5/2NImCatrFU6mHejOO77M/5QHXhL2CE=;
+        b=jrutpeE7+krC7rUouqgACbAycUGqck/gLe1i/gMID+BhQg83ZN4ZkEPa7P3D6EtL6M
+         gmH67GqOwwnqDzyFlXm+cPWwAjviUzNxc2CoNPu1bs83Hn7pM72kKigGBG0rbahgFyzW
+         eu3oq2Pzj9nDoebdu6GSVRvkxIG8jeA4Ep53yfOJ3aaL8a5S+OhQEDwBhMPEBUFOoXk3
+         fFgEXp4JaOy2eY3CKBmW5aU4eVN75854bQz2fkepNthqKKxUuJ4LN9epJpK/cxEoRECO
+         RPojgTRJiJl/34f5ej0wj6bWks2giWZCn2Lu5It+t3CpbCbZ/6SU2dbYC1i9Qe0s+pJI
+         FiBg==
+X-Gm-Message-State: APjAAAWJ7NZLfmw3nzvPw/0ARfma9GNCFoqhWbZaitspuLL/ocFkPRRh
+        3jFcaSpzaQMiCIZzkDTTNQ==
+X-Google-Smtp-Source: APXvYqzDJcu7XMQwyfdu88xRNFK5/eDi+cajXRPFFVqk0IhjM9XwyTsN3OWNGDYIZvHiX+LnZBRMuw==
+X-Received: by 2002:a05:6808:8e3:: with SMTP id d3mr3373504oic.153.1568385385768;
+        Fri, 13 Sep 2019 07:36:25 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o19sm841989oic.26.2019.09.13.07.36.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 13 Sep 2019 07:36:25 -0700 (PDT)
+Date:   Fri, 13 Sep 2019 15:36:24 +0100
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Maciej Falkowski <m.falkowski@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [RFC PATCH 2/2] dt-bindings: pwm: Convert Samsung PWM bindings
+ to json-schema
+Message-ID: <20190912175001.GA29884@bogus>
+References: <20190909183436.9045-1-krzk@kernel.org>
+ <20190909183436.9045-2-krzk@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190909183436.9045-2-krzk@kernel.org>
+X-Mutt-References: <20190909183436.9045-2-krzk@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-IPQ8074 uses secure PIL. Hence, adding the support for the same.
+On Mon, Sep 09, 2019 at 08:34:36PM +0200, Krzysztof Kozlowski wrote:
+> Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
+> format using json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> ---
+>  .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 --------
+>  .../devicetree/bindings/pwm/pwm-samsung.yaml  | 111 ++++++++++++++++++
+>  2 files changed, 111 insertions(+), 51 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+>  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
 
-Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
-Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
----
- drivers/remoteproc/qcom_q6v5_wcss.c | 37 +++++++++++++++++++++++++++++++++++++
- 1 file changed, 37 insertions(+)
 
-diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
-index dc2bae4..8418f57 100644
---- a/drivers/remoteproc/qcom_q6v5_wcss.c
-+++ b/drivers/remoteproc/qcom_q6v5_wcss.c
-@@ -19,6 +19,7 @@
- #include <linux/regulator/consumer.h>
- #include <linux/reset.h>
- #include <linux/soc/qcom/mdt_loader.h>
-+#include <linux/qcom_scm.h>
- #include "qcom_common.h"
- #include "qcom_q6v5.h"
- 
-@@ -83,6 +84,9 @@
- #define TCSR_WCSS_CLK_ENABLE	0x14
- 
- #define MAX_HALT_REG		3
-+
-+#define WCNSS_PAS_ID		6
-+
- enum {
- 	WCSS_IPQ8074,
- 	WCSS_QCS404,
-@@ -133,6 +137,7 @@ struct q6v5_wcss {
- 	int crash_reason_smem;
- 	u8 version;
- 	bool requires_force_stop;
-+	bool need_mem_protection;
- };
- 
- struct wcss_data {
-@@ -147,6 +152,7 @@ struct wcss_data {
- 	int ssctl_id;
- 	const struct rproc_ops *ops;
- 	bool requires_force_stop;
-+	bool need_mem_protection;
- };
- 
- static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
-@@ -246,6 +252,15 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 
- 	qcom_q6v5_prepare(&wcss->q6v5);
- 
-+	if (wcss->need_mem_protection) {
-+		ret = qcom_scm_pas_auth_and_reset(WCNSS_PAS_ID);
-+		if (ret) {
-+			dev_err(wcss->dev, "wcss_reset failed\n");
-+			return ret;
-+		}
-+		goto wait_for_reset;
-+	}
-+
- 	/* Release Q6 and WCSS reset */
- 	ret = reset_control_deassert(wcss->wcss_reset);
- 	if (ret) {
-@@ -280,6 +295,7 @@ static int q6v5_wcss_start(struct rproc *rproc)
- 	if (ret)
- 		goto wcss_q6_reset;
- 
-+wait_for_reset:
- 	ret = qcom_q6v5_wait_for_start(&wcss->q6v5, 5 * HZ);
- 	if (ret == -ETIMEDOUT)
- 		dev_err(wcss->dev, "start timed out\n");
-@@ -688,6 +704,15 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 	struct q6v5_wcss *wcss = rproc->priv;
- 	int ret;
- 
-+	if (wcss->need_mem_protection) {
-+		ret = qcom_scm_pas_shutdown(WCNSS_PAS_ID);
-+		if (ret) {
-+			dev_err(wcss->dev, "not able to shutdown\n");
-+			return ret;
-+		}
-+		goto pas_done;
-+	}
-+
- 	/* WCSS powerdown */
- 	if (wcss->requires_force_stop) {
- 		ret = qcom_q6v5_request_stop(&wcss->q6v5);
-@@ -712,6 +737,7 @@ static int q6v5_wcss_stop(struct rproc *rproc)
- 			return ret;
- 	}
- 
-+pas_done:
- 	clk_disable_unprepare(wcss->prng_clk);
- 	qcom_q6v5_unprepare(&wcss->q6v5);
- 
-@@ -734,6 +760,12 @@ static int q6v5_wcss_load(struct rproc *rproc, const struct firmware *fw)
- {
- 	struct q6v5_wcss *wcss = rproc->priv;
- 
-+	if (wcss->need_mem_protection)
-+		return qcom_mdt_load(wcss->dev, fw, rproc->firmware,
-+				     WCNSS_PAS_ID, wcss->mem_region,
-+				     wcss->mem_phys, wcss->mem_size,
-+				     &wcss->mem_reloc);
-+
- 	return qcom_mdt_load_no_init(wcss->dev, fw, rproc->firmware,
- 				     0, wcss->mem_region, wcss->mem_phys,
- 				     wcss->mem_size, &wcss->mem_reloc);
-@@ -1019,6 +1051,9 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 	if (!desc)
- 		return -EINVAL;
- 
-+	if (desc->need_mem_protection && !qcom_scm_is_available())
-+		return -EPROBE_DEFER;
-+
- 	rproc = rproc_alloc(&pdev->dev, pdev->name, desc->ops,
- 			    desc->firmware_name, sizeof(*wcss));
- 	if (!rproc) {
-@@ -1032,6 +1067,7 @@ static int q6v5_wcss_probe(struct platform_device *pdev)
- 
- 	wcss->version = desc->version;
- 	wcss->requires_force_stop = desc->requires_force_stop;
-+	wcss->need_mem_protection = desc->need_mem_protection;
- 
- 	ret = q6v5_wcss_init_mmio(wcss, pdev);
- 	if (ret)
-@@ -1099,6 +1135,7 @@ static int q6v5_wcss_remove(struct platform_device *pdev)
- 	.aon_reset_required = true,
- 	.ops = &q6v5_wcss_ipq8074_ops,
- 	.requires_force_stop = true,
-+	.need_mem_protection = true,
- };
- 
- static const struct wcss_data wcss_qcs404_res_init = {
--- 
-1.9.1
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+> new file mode 100644
+> index 000000000000..90fb467bcdd5
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+> @@ -0,0 +1,111 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung SoC PWM timers
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +
+> +description: |+
+> +  Samsung SoCs contain PWM timer blocks which can be used for system clock source
+> +  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
+> +  PWM timer block provides 5 PWM channels (not all of them can drive physical
+> +  outputs - see SoC and board manual).
+> +
+> +  Be aware that the clocksource driver supports only uniprocessor systems.
+> +
+> +allOf:
+> +  - $ref: pwm.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
+> +      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
+> +      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
+> +      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
+> +      - samsung,exynos4210-pwm          # 32-bit, Exynos
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    description: |
+> +      Should contain all following required clock names:
+> +      - "timers" - PWM base clock used to generate PWM signals,
+> +      and any subset of following optional clock names:
+> +      - "pwm-tclk0" - first external PWM clock source,
+> +      - "pwm-tclk1" - second external PWM clock source.
+> +      Note that not all IP variants allow using all external clock sources.
+> +      Refer to SoC documentation to learn which clock source configurations
+> +      are available.
+> +    oneOf:
+> +      - items:
+> +        - const: "timers"
+> +      - items:
+> +        - const: "timers"
+> +        - const: "pwm-tclk0"
+> +      - items:
+> +        - const: "timers"
+> +        - const: "pwm-tclk1"
+> +      - items:
+> +        - const: "timers"
+> +        - const: "pwm-tclk0"
+> +        - const: "pwm-tclk1"
+> +
+> +  interrupts:
+> +    description:
+> +      One interrupt per timer, starting at timer 0.
+> +    minItems: 1
+> +    maxItems: 5
+> +
+> +  "#pwm-cells":
+> +    description:
+> +      The only third cell flag supported by this binding
+> +      is PWM_POLARITY_INVERTED.
+> +    const: 3
+> +
+> +  samsung,pwm-outputs:
+> +    description:
+> +      A list of PWM channels used as PWM outputs on particular platform.
+> +      It is an array of up to 5 elements being indices of PWM channels
+> +      (from 0 to 4), the order does not matter.
+> +    # TODO: Values should not repeat
+
+uniqueItems: true
+
+Though it looks like we have to enable that keyword. (As silently 
+ignoring unknown keywords (such as typos) is 'feature' of json-schema, 
+we explicitly list keywords we use.)
+
+> +    allOf:
+> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
+> +      # FIXME: min/max limit of items does not work
+> +      - items:
+> +          minItems: 1
+> +          maxItems: 5
+> +      - items:
+> +          minimum: 0
+> +          maximum: 4
+
+I think you want:
+
+minItems: 1
+maxItems: 2
+items:
+  minimum: 0
+  maximum: 4
+
+> +
+> +required:
+> +  - clocks
+> +  - clock-names
+> +  - compatible
+> +  - interrupts
+> +  - "#pwm-cells"
+> +  - reg
+> +
+> +examples:
+> +  - |
+> +    pwm@7f006000 {
+> +      compatible = "samsung,s3c6400-pwm";
+> +      reg = <0x7f006000 0x1000>;
+> +      interrupt-parent = <&vic0>;
+> +      interrupts = <23>, <24>, <25>, <27>, <28>;
+> +      clocks = <&clock 67>;
+> +      clock-names = "timers";
+> +      samsung,pwm-outputs = <0>, <1>;
+> +      #pwm-cells = <3>;
+> +    };
+> -- 
+> 2.17.1
+> 
 
