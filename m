@@ -2,224 +2,122 @@ Return-Path: <SRS0=jGYp=XI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF5FC4CEC5
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:36:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55830C49ED7
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 500DD21734
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568385406;
-	bh=nthBLQoPDeIw/Cjr/p121TBjqps1npoJ2aVtTTRj15U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=n9W6/ibNEBUyOLJDaxhJdmd5sXUUJGUVqezD6LuZ+C50VnOYN1WVudKqvAw8jENt7
-	 SG5KsWq4NIB4j1kHSvfpleBBAQViwRLZH1+P/8myxxxUpJLIaiI0WH4FdufLepQB4T
-	 Ag3ndSdxkkVHkJMQqLGefDSDy8fl1WdreznePMiY=
+	by mail.kernel.org (Postfix) with ESMTP id 287D320693
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 14:44:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="j391YvrW";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LPFidS2T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730840AbfIMOg1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Sep 2019 10:36:27 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:35841 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729421AbfIMOg1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 10:36:27 -0400
-Received: by mail-oi1-f195.google.com with SMTP id k20so2820547oih.3;
-        Fri, 13 Sep 2019 07:36:26 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=+gFzsRCMB/S5/2NImCatrFU6mHejOO77M/5QHXhL2CE=;
-        b=jrutpeE7+krC7rUouqgACbAycUGqck/gLe1i/gMID+BhQg83ZN4ZkEPa7P3D6EtL6M
-         gmH67GqOwwnqDzyFlXm+cPWwAjviUzNxc2CoNPu1bs83Hn7pM72kKigGBG0rbahgFyzW
-         eu3oq2Pzj9nDoebdu6GSVRvkxIG8jeA4Ep53yfOJ3aaL8a5S+OhQEDwBhMPEBUFOoXk3
-         fFgEXp4JaOy2eY3CKBmW5aU4eVN75854bQz2fkepNthqKKxUuJ4LN9epJpK/cxEoRECO
-         RPojgTRJiJl/34f5ej0wj6bWks2giWZCn2Lu5It+t3CpbCbZ/6SU2dbYC1i9Qe0s+pJI
-         FiBg==
-X-Gm-Message-State: APjAAAWJ7NZLfmw3nzvPw/0ARfma9GNCFoqhWbZaitspuLL/ocFkPRRh
-        3jFcaSpzaQMiCIZzkDTTNQ==
-X-Google-Smtp-Source: APXvYqzDJcu7XMQwyfdu88xRNFK5/eDi+cajXRPFFVqk0IhjM9XwyTsN3OWNGDYIZvHiX+LnZBRMuw==
-X-Received: by 2002:a05:6808:8e3:: with SMTP id d3mr3373504oic.153.1568385385768;
-        Fri, 13 Sep 2019 07:36:25 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o19sm841989oic.26.2019.09.13.07.36.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Sep 2019 07:36:25 -0700 (PDT)
-Date:   Fri, 13 Sep 2019 15:36:24 +0100
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pwm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Maciej Falkowski <m.falkowski@samsung.com>,
-        linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-leds@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [RFC PATCH 2/2] dt-bindings: pwm: Convert Samsung PWM bindings
- to json-schema
-Message-ID: <20190912175001.GA29884@bogus>
-References: <20190909183436.9045-1-krzk@kernel.org>
- <20190909183436.9045-2-krzk@kernel.org>
+        id S1729930AbfIMOow (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Sep 2019 10:44:52 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:59956 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729911AbfIMOow (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 10:44:52 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2DE4A6133A; Fri, 13 Sep 2019 14:44:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568385891;
+        bh=6Sd2dpM9HRfzA5DVteOBc7URO2Jumcbqg21Ygsai7AI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j391YvrWswsDCumcZGnjL/lCSbKAolYn/m0WClXGjil62VBsEwPR1e7q9HhIv57CS
+         DorROLMtEn7hfajc/9E/BtANly54sJNKe90lM5jOqJUEf91IOaSEGyRX2h3TkYIP4V
+         GQT7I+eTCHgGPgbXKsB2niWVRT6FdWSuwlyk/zAc=
+Received: from jcrouse1-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jcrouse@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E506A614DC;
+        Fri, 13 Sep 2019 14:44:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568385887;
+        bh=6Sd2dpM9HRfzA5DVteOBc7URO2Jumcbqg21Ygsai7AI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=LPFidS2TnVseHQyypdlOaG9GMQBwBr5Z2BeRpxtAVnRdfdTBb6jhAH/egQaqNvRIZ
+         HecTdMjWjY0B7RL+zzEEtM2p3b5i5GTh+FQy10oKkahFLdhc4DMghMSfDb2AbwUwxA
+         AKJ1bWN2P/Fk0FCq9ECNgJaeVoX1/Ej9KdoBf2e8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E506A614DC
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
+Date:   Fri, 13 Sep 2019 08:44:45 -0600
+From:   Jordan Crouse <jcrouse@codeaurora.org>
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: Re: [PATCH] clk: Make clk_bulk_get_all() return a valid "id"
+Message-ID: <20190913144444.GA25762@jcrouse1-lnx.qualcomm.com>
+Mail-Followup-To: Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        Dong Aisheng <aisheng.dong@nxp.com>
+References: <20190913024029.2640-1-bjorn.andersson@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190909183436.9045-2-krzk@kernel.org>
-X-Mutt-References: <20190909183436.9045-2-krzk@kernel.org>
+In-Reply-To: <20190913024029.2640-1-bjorn.andersson@linaro.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Sep 09, 2019 at 08:34:36PM +0200, Krzysztof Kozlowski wrote:
-> Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
-> format using json-schema.
+On Thu, Sep 12, 2019 at 07:40:29PM -0700, Bjorn Andersson wrote:
+> The adreno driver expects the "id" field of the returned clk_bulk_data
+> to be filled in with strings from the clock-names property.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
+> receives a list of bogus pointers instead.
+> 
+> Zero-initialize the "id" field and attempt to populate with strings from
+> the clock-names property to resolve both these issues.
+
+This looks great to me.  Thanks for fixing that so quickly.
+
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+
+> Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
+> Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
+> Cc: Dong Aisheng <aisheng.dong@nxp.com>
+> Cc: Jordan Crouse <jcrouse@codeaurora.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 > ---
->  .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 --------
->  .../devicetree/bindings/pwm/pwm-samsung.yaml  | 111 ++++++++++++++++++
->  2 files changed, 111 insertions(+), 51 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-
-
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-> new file mode 100644
-> index 000000000000..90fb467bcdd5
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-> @@ -0,0 +1,111 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Samsung SoC PWM timers
-> +
-> +maintainers:
-> +  - Thierry Reding <thierry.reding@gmail.com>
-> +  - Krzysztof Kozlowski <krzk@kernel.org>
-> +
-> +description: |+
-> +  Samsung SoCs contain PWM timer blocks which can be used for system clock source
-> +  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
-> +  PWM timer block provides 5 PWM channels (not all of them can drive physical
-> +  outputs - see SoC and board manual).
-> +
-> +  Be aware that the clocksource driver supports only uniprocessor systems.
-> +
-> +allOf:
-> +  - $ref: pwm.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
-> +      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
-> +      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
-> +      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
-> +      - samsung,exynos4210-pwm          # 32-bit, Exynos
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 3
-> +
-> +  clock-names:
-> +    description: |
-> +      Should contain all following required clock names:
-> +      - "timers" - PWM base clock used to generate PWM signals,
-> +      and any subset of following optional clock names:
-> +      - "pwm-tclk0" - first external PWM clock source,
-> +      - "pwm-tclk1" - second external PWM clock source.
-> +      Note that not all IP variants allow using all external clock sources.
-> +      Refer to SoC documentation to learn which clock source configurations
-> +      are available.
-> +    oneOf:
-> +      - items:
-> +        - const: "timers"
-> +      - items:
-> +        - const: "timers"
-> +        - const: "pwm-tclk0"
-> +      - items:
-> +        - const: "timers"
-> +        - const: "pwm-tclk1"
-> +      - items:
-> +        - const: "timers"
-> +        - const: "pwm-tclk0"
-> +        - const: "pwm-tclk1"
-> +
-> +  interrupts:
-> +    description:
-> +      One interrupt per timer, starting at timer 0.
-> +    minItems: 1
-> +    maxItems: 5
-> +
-> +  "#pwm-cells":
-> +    description:
-> +      The only third cell flag supported by this binding
-> +      is PWM_POLARITY_INVERTED.
-> +    const: 3
-> +
-> +  samsung,pwm-outputs:
-> +    description:
-> +      A list of PWM channels used as PWM outputs on particular platform.
-> +      It is an array of up to 5 elements being indices of PWM channels
-> +      (from 0 to 4), the order does not matter.
-> +    # TODO: Values should not repeat
-
-uniqueItems: true
-
-Though it looks like we have to enable that keyword. (As silently 
-ignoring unknown keywords (such as typos) is 'feature' of json-schema, 
-we explicitly list keywords we use.)
-
-> +    allOf:
-> +      - $ref: /schemas/types.yaml#/definitions/uint32-array
-> +      # FIXME: min/max limit of items does not work
-> +      - items:
-> +          minItems: 1
-> +          maxItems: 5
-> +      - items:
-> +          minimum: 0
-> +          maximum: 4
-
-I think you want:
-
-minItems: 1
-maxItems: 2
-items:
-  minimum: 0
-  maximum: 4
-
-> +
-> +required:
-> +  - clocks
-> +  - clock-names
-> +  - compatible
-> +  - interrupts
-> +  - "#pwm-cells"
-> +  - reg
-> +
-> +examples:
-> +  - |
-> +    pwm@7f006000 {
-> +      compatible = "samsung,s3c6400-pwm";
-> +      reg = <0x7f006000 0x1000>;
-> +      interrupt-parent = <&vic0>;
-> +      interrupts = <23>, <24>, <25>, <27>, <28>;
-> +      clocks = <&clock 67>;
-> +      clock-names = "timers";
-> +      samsung,pwm-outputs = <0>, <1>;
-> +      #pwm-cells = <3>;
-> +    };
+>  drivers/clk/clk-bulk.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+> index 524bf9a53098..e9e16425c739 100644
+> --- a/drivers/clk/clk-bulk.c
+> +++ b/drivers/clk/clk-bulk.c
+> @@ -18,10 +18,13 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+>  	int ret;
+>  	int i;
+>  
+> -	for (i = 0; i < num_clks; i++)
+> +	for (i = 0; i < num_clks; i++) {
+> +		clks[i].id = NULL;
+>  		clks[i].clk = NULL;
+> +	}
+>  
+>  	for (i = 0; i < num_clks; i++) {
+> +		of_property_read_string_index(np, "clock-names", i, &clks[i].id);
+>  		clks[i].clk = of_clk_get(np, i);
+>  		if (IS_ERR(clks[i].clk)) {
+>  			ret = PTR_ERR(clks[i].clk);
 > -- 
-> 2.17.1
+> 2.18.0
 > 
 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project
