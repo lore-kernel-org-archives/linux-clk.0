@@ -2,269 +2,159 @@ Return-Path: <SRS0=jGYp=XI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80BB3C49ED7
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 07:13:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B657C4CEC5
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 09:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42C6C20830
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 07:13:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8686120717
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Sep 2019 09:56:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qsadw621"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="faVnMqr9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726891AbfIMHNK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Sep 2019 03:13:10 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50928 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726636AbfIMHNK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 03:13:10 -0400
-Received: by mail-wm1-f68.google.com with SMTP id c10so1524947wmc.0;
-        Fri, 13 Sep 2019 00:13:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=I5vYOVKewZ8n8gmawMSd12FODEBG8jfHCYTC92z4/ZE=;
-        b=qsadw621dQXXVQSXhoLSsNZ9c5BBkSl/daR+yBD5mBIaQD95lxTF7qOtOSyjJbnkK1
-         qeKuQbDFBKM4F/Xq91CmeCVpeGA8zwmTiQcMQcx97WP2qp+ByxZHZ2hAXv6ftT+sfU9K
-         FjLgBiYbetOAAzOMcvmBJfv1pAigAh9fusN8Ws6FPw7IK6gRT+M3dwNXeoJ0t33/P1Yb
-         xbySRmLmFJPSiXh8rqQL0AjlaRZipnB+3ElCfv2tQAzkb/+Z40/SE5nHAyA6L/h4zPRl
-         QdrNiHiNNcBckBhFY6YYDG8FJ7jHHbYEGxLA/K3ZkvomameB/iXeTVE1UhzHHz/KhwvR
-         AYtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=I5vYOVKewZ8n8gmawMSd12FODEBG8jfHCYTC92z4/ZE=;
-        b=Cqcv2fatvDIXqFUuubOLyd75V1LSr6RxcCKOTGWahKGSaQgHR4LK5Z4R+PzyUck6ea
-         9rlt3TDbEQQcL6eU8lD91AlyK0y5H2bYDLxF3WjyAvGH1V5ZQcNBzN/IebGAUuvXs799
-         /7RHlvVs2bo+eCUVFebE3tYGNqAfrX0o0r/w6C2vSbYz9CQ3Fmt/VAEjDjPROSFUWstJ
-         OiCdV8sIWREZUeDxp1Ewl8hjglaDFz8ub356j9Q9gG/zSj954OjGXWcVEtnxo2LoCq6h
-         Yf3df8u5Zr6paAyRuC9KqnetFRZC7HzkpzkS7EXiKcjigHnsV/N28PHxYUpsVUGZU4Vs
-         BFeQ==
-X-Gm-Message-State: APjAAAXMchjoN4hL8/mldJloJPUUgJ3QQHyJZJh79Lu6C2ONu6jIUC8v
-        Trm2BkomQ5nnM62DX2Fk5DMqS8+iDdc=
-X-Google-Smtp-Source: APXvYqwLSyN7nXUbUW+Tyj6VXfjwj5s6oTrTdVD++aUoXbQZqmKR2cZiUQhS3yIMk7HGaJ3ecsnEKg==
-X-Received: by 2002:a05:600c:a:: with SMTP id g10mr1977429wmc.71.1568358785952;
-        Fri, 13 Sep 2019 00:13:05 -0700 (PDT)
-Received: from ziggy.stardust ([37.223.145.235])
-        by smtp.gmail.com with ESMTPSA id n14sm62974733wra.75.2019.09.13.00.13.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Sep 2019 00:13:05 -0700 (PDT)
-Subject: Re: [PATCH V2 05/13] clk: bcm2835: Add BCM2711_CLOCK_EMMC2 support
-To:     Stefan Wahren <wahrenst@gmx.net>, Eric Anholt <eric@anholt.net>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-i2c@vger.kernel.org
-References: <1565713248-4906-1-git-send-email-wahrenst@gmx.net>
- <1565713248-4906-6-git-send-email-wahrenst@gmx.net>
- <d89bbc4b-b6bc-0d4e-86d1-6be11876ce00@gmail.com> <87o8zp1h4u.fsf@anholt.net>
- <097c31de-4b11-92a8-af22-c34d6317359c@gmx.net>
-From:   Matthias Brugger <matthias.bgg@gmail.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
- 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
- jrHWeQEI2ucSKsNa8FllDmG/fQ==
-Message-ID: <218baa70-9849-63db-4989-c6d658b11c6d@gmail.com>
-Date:   Fri, 13 Sep 2019 09:13:04 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <097c31de-4b11-92a8-af22-c34d6317359c@gmx.net>
+        id S2387994AbfIMJ4E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Sep 2019 05:56:04 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.167]:22720 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387588AbfIMJ4E (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Sep 2019 05:56:04 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568368562;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=m1JrhGpcoTf3A/XkU+y96y/gCdsNYiZ/R+ndcPfLz80=;
+        b=faVnMqr9/+OEe2KtpJ7pq//VQX/EDVUl4jwajXKCj9EeNo8L4zrByBzjGePFnt4Bee
+        iaUIMLAS5wur7aXEmFsGJDJUCKJDyaBIDYGo67ZrayfFCUQPI8aFFFE6rVCnb7IctUPp
+        gvrFDKqVIzTmAtNDSVtlxheFnBN7I94L/XzF6ulTUVCtLn3xuz9ererM7gF8hXjo8RT1
+        xnZ+WXlbIRFTZ8HDn/qtGLY3tcl8zSt7TeHrtSDW0OPkDFrUINLZZiueAlTetHPYVU4F
+        MJkLBQAOFWqGzddS8Bs7wMzLeRyc8NXX6wsjbMQIAWSAZaLB//zUumEhyQumAxnYGeTr
+        2aLg==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj5Qpw97WFDlSVXA4OAWU="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v8D9nvH9I
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Fri, 13 Sep 2019 11:49:57 +0200 (CEST)
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 6/6] ARM: dts: Configure rstctrl reset for SGX
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190814131408.57162-7-tony@atomide.com>
+Date:   Fri, 13 Sep 2019 11:49:56 +0200
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <92652315-A763-485F-A4FA-CB868016E045@goldelico.com>
+References: <20190814131408.57162-1-tony@atomide.com> <20190814131408.57162-7-tony@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Tony,
+
+> Am 14.08.2019 um 15:14 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> The following can be tested via sysfs with the following to ensure the =
+SGX
+> module gets enabled and disabled properly:
+>=20
+> # echo on > =
+/sys/bus/platform/devices/5600fe00.target-module/power/control
+> # rwmem 0x5600fe00		# revision register
+> 0x5600fe00 =3D 0x40000000
+> # echo auto > =
+/sys/bus/platform/devices/5600fe00.target-module/power/control
+> # rwmem 0x5000fe00
+> Bus error
+>=20
+> Note that this patch depends on the PRM rstctrl driver that has
+> been recently posted.
+
+Do you have a list of these patches or a git for pulling the complete =
+set
+of changes? Does it depend on mainline or linux-next?
+
+I tried to find the correct patches but it does not seem to work for
+me on beaglebone.
+
+> If the child device driver(s) need to prevent
+> rstctrl reset on PM runtime suspend, the drivers need to increase
+> the usecount for the shared rstctrl reset that can be mapped also
+> for the child device(s) or accessed via dev->parent.
+>=20
+> Cc: Adam Ford <aford173@gmail.com>
+> Cc: Filip Matijevi=C4=87 <filip.matijevic.pz@gmail.com>
+> Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+> Cc: Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>
+> Cc: moaz korena <moaz@korena.xyz>
+> Cc: Merlijn Wajer <merlijn@wizzup.org>
+> Cc: Pawe=C5=82 Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Cc: Philipp Rossak <embed3d@gmail.com>
+> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+> arch/arm/boot/dts/am33xx.dtsi | 25 +++++++++++++++++++++++++
+> 1 file changed, 25 insertions(+)
+>=20
+> diff --git a/arch/arm/boot/dts/am33xx.dtsi =
+b/arch/arm/boot/dts/am33xx.dtsi
+> --- a/arch/arm/boot/dts/am33xx.dtsi
+> +++ b/arch/arm/boot/dts/am33xx.dtsi
+> @@ -460,6 +460,31 @@
+> 			       <&edma 5 0>;
+> 			dma-names =3D "tx", "rx";
+> 		};
+> +
+> +		target-module@56000000 {
+> +			compatible =3D "ti,sysc-omap4", "ti,sysc";
+> +			reg =3D <0x5600fe00 0x4>,
+> +			      <0x5600fe10 0x4>;
+> +			reg-names =3D "rev", "sysc";
+> +			ti,sysc-midle =3D <SYSC_IDLE_FORCE>,
+> +					<SYSC_IDLE_NO>,
+> +					<SYSC_IDLE_SMART>;
+> +			ti,sysc-sidle =3D <SYSC_IDLE_FORCE>,
+> +					<SYSC_IDLE_NO>,
+> +					<SYSC_IDLE_SMART>;
+> +			clocks =3D <&gfx_l3_clkctrl =
+AM3_GFX_L3_GFX_CLKCTRL 0>;
+> +			clock-names =3D "fck";
+> +			resets =3D <&prm_gfx 0>;
+> +			reset-names =3D "rstctrl";
+> +			#address-cells =3D <1>;
+> +			#size-cells =3D <1>;
+> +			ranges =3D <0 0x56000000 0x1000000>;
+> +
+> +			/*
+> +			 * Closed source PowerVR driver, no child device
+> +			 * binding or driver in mainline
+> +			 */
+> +		};
+> 	};
+> };
+>=20
+> --=20
+> 2.21.0
 
 
-On 13/09/2019 03:20, Stefan Wahren wrote:
-> Am 12.09.19 um 20:52 schrieb Eric Anholt:
->> Matthias Brugger <matthias.bgg@gmail.com> writes:
->>
->>> On 13/08/2019 18:20, Stefan Wahren wrote:
->>>> The new BCM2711 supports an additional clock for the emmc2 block.
->>>> So add a new compatible and register this clock only for BCM2711.
->>>>
->>>> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
->>>> Reviewed-by: Matthias Brugger <mbrugger@suse.com>
->>>> Acked-by: Eric Anholt <eric@anholt.net>
->>>> ---
->>>>  drivers/clk/bcm/clk-bcm2835.c | 20 +++++++++++++++++++-
->>>>  1 file changed, 19 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
->>>> index 21cd952..fdf672a 100644
->>>> --- a/drivers/clk/bcm/clk-bcm2835.c
->>>> +++ b/drivers/clk/bcm/clk-bcm2835.c
->>>> @@ -114,6 +114,8 @@
->>>>  #define CM_AVEODIV		0x1bc
->>>>  #define CM_EMMCCTL		0x1c0
->>>>  #define CM_EMMCDIV		0x1c4
->>>> +#define CM_EMMC2CTL		0x1d0
->>>> +#define CM_EMMC2DIV		0x1d4
->>>>
->>>>  /* General bits for the CM_*CTL regs */
->>>>  # define CM_ENABLE			BIT(4)
->>>> @@ -290,7 +292,8 @@
->>>>  #define BCM2835_MAX_FB_RATE	1750000000u
->>>>
->>>>  #define SOC_BCM2835		BIT(0)
->>>> -#define SOC_ALL			(SOC_BCM2835)
->>>> +#define SOC_BCM2711		BIT(1)
->>>> +#define SOC_ALL			(SOC_BCM2835 | SOC_BCM2711)
->>>>
->>>>  /*
->>>>   * Names of clocks used within the driver that need to be replaced
->>>> @@ -2003,6 +2006,16 @@ static const struct bcm2835_clk_desc clk_desc_array[] = {
->>>>  		.frac_bits = 8,
->>>>  		.tcnt_mux = 39),
->>>>
->>>> +	/* EMMC2 clock (only available for BCM2711) */
->>>> +	[BCM2711_CLOCK_EMMC2]	= REGISTER_PER_CLK(
->>>> +		SOC_BCM2711,
->>>> +		.name = "emmc2",
->>>> +		.ctl_reg = CM_EMMC2CTL,
->>>> +		.div_reg = CM_EMMC2DIV,
->>>> +		.int_bits = 4,
->>>> +		.frac_bits = 8,
->>>> +		.tcnt_mux = 42),
->>>> +
->>>>  	/* General purpose (GPIO) clocks */
->>>>  	[BCM2835_CLOCK_GP0]	= REGISTER_PER_CLK(
->>>>  		SOC_ALL,
->>>> @@ -2238,8 +2251,13 @@ static const struct cprman_plat_data cprman_bcm2835_plat_data = {
->>>>  	.soc = SOC_BCM2835,
->>>>  };
->>>>
->>>> +static const struct cprman_plat_data cprman_bcm2711_plat_data = {
->>>> +	.soc = SOC_BCM2711,
->>>> +};
->>>> +
->>>>  static const struct of_device_id bcm2835_clk_of_match[] = {
->>>>  	{ .compatible = "brcm,bcm2835-cprman", .data = &cprman_bcm2835_plat_data },
->>>> +	{ .compatible = "brcm,bcm2711-cprman", .data = &cprman_bcm2711_plat_data },
->>> Because the RPi4 FW uses bcm2838-cprman as compatible, we will need to add this
->>> here as well.
->> Upstream has not committed to backwards compat with Pi's firmware.  That
->> makes the ABI requirement we get held to for upstream's DT absurd, but
->> that's the state of things.
-> 
-> We also learned from past, that's not possible to keep things downstream
-> compatible. As soon as a binding is not accepted, this wont work
-> anymore. A lot of the downstream stuff is hacky.
-> 
-> For example yesterday, i learned that the thermal node is broken
-> (register is part of ring oscillator block). So do we really want to be
-> compatible with a hack? I would say: No
-> 
-
-There is always the possibility to fix this in the FW, which in many cases will
-be trivial.
+BR and thanks,
