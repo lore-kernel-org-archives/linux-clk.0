@@ -2,94 +2,90 @@ Return-Path: <SRS0=EXyH=XL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4021EC4CECE
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 11:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E4CC4CECD
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 15:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0497B214DE
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 11:52:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="In9KIYul";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="TRpgbyWT"
+	by mail.kernel.org (Postfix) with ESMTP id 6A0A22184D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 15:17:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730110AbfIPLwi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Sep 2019 07:52:38 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:55990 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727450AbfIPLwi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Sep 2019 07:52:38 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 349806122D; Mon, 16 Sep 2019 11:52:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568634757;
-        bh=LaHmGWueNmsYk/D656wA0aGZrexsCWQGgwO0aGCmiGE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=In9KIYultjxOoWST2tltskBcjkzOprGHJitfOoRfuCim64zbSp818TR21uscGpERw
-         CntysWppiFEpkOqu9bDq+LU4TbP2RjMK3i+wN2ZvH/PFbwxPHzkcHJFG+riewVxIJV
-         YMJPLQvM5iw+AigpCu2yV13B41eg+i2iWBLRS79s=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 485E86119F;
-        Mon, 16 Sep 2019 11:52:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1568634756;
-        bh=LaHmGWueNmsYk/D656wA0aGZrexsCWQGgwO0aGCmiGE=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=TRpgbyWT/a+h7u3LoVrOScXZygGsjCYxvaHP2dlWGjVl+vOwZa2hLvobNNNYhHVXk
-         pqSrse0HBMQvdXBYwgabtI4d6lCArvDmllphas95CtnLkH727z65X8Uf2wzrRoB1AH
-         9TNLYZTMCw8nQ57MpETyq1/GV+iAl8k2S+828Erg=
+        id S2388970AbfIPPRf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Sep 2019 11:17:35 -0400
+Received: from muru.com ([72.249.23.125]:33224 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388420AbfIPPRf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Sep 2019 11:17:35 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id D44F280EA;
+        Mon, 16 Sep 2019 15:18:04 +0000 (UTC)
+Date:   Mon, 16 Sep 2019 08:17:30 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 6/6] ARM: dts: Configure rstctrl reset for SGX
+Message-ID: <20190916151730.GZ52127@atomide.com>
+References: <20190814131408.57162-1-tony@atomide.com>
+ <20190814131408.57162-7-tony@atomide.com>
+ <92652315-A763-485F-A4FA-CB868016E045@goldelico.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 16 Sep 2019 17:22:36 +0530
-From:   gokulsri@codeaurora.org
-To:     Rob Herring <robh@kernel.org>
-Cc:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
-        david.brown@linaro.org, devicetree@vger.kernel.org,
-        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
-        mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
-        sricharan@codeaurora.org, nprakash@codeaurora.org
-Subject: Re: [PATCH V2 08/12] dt-bindings: mailbox: qom: Add ipq8074 APPS
- compatible
-In-Reply-To: <5d7c0ec9.1c69fb81.a7d47.78c1@mx.google.com>
-References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
- <1568375771-22933-9-git-send-email-gokulsri@codeaurora.org>
- <5d7c0ec9.1c69fb81.a7d47.78c1@mx.google.com>
-Message-ID: <d65db92f678c11e270c7c3c64de19163@codeaurora.org>
-X-Sender: gokulsri@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <92652315-A763-485F-A4FA-CB868016E045@goldelico.com>
+User-Agent: Mutt/1.11.4 (2019-03-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Rob,
+Hi,
 
-On 2019-09-14 03:18, Rob Herring wrote:
-> On Fri, 13 Sep 2019 17:26:07 +0530, Gokul Sriram Palanisamy wrote:
->> Add mailbox support required in IPQ8074 SoCs.
->> 
->> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
->> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
->> ---
->>  Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt | 
->> 1 +
->>  1 file changed, 1 insertion(+)
->> 
+* H. Nikolaus Schaller <hns@goldelico.com> [190913 09:50]:
+> Hi Tony,
 > 
-> Please add Acked-by/Reviewed-by tags when posting new versions. 
-> However,
-> there's no need to repost patches *only* to add the tags. The upstream
-> maintainer will do that for acks received on the version they apply.
+> > Am 14.08.2019 um 15:14 schrieb Tony Lindgren <tony@atomide.com>:
+> > 
+> > The following can be tested via sysfs with the following to ensure the SGX
+> > module gets enabled and disabled properly:
+> > 
+> > # echo on > /sys/bus/platform/devices/5600fe00.target-module/power/control
+> > # rwmem 0x5600fe00		# revision register
+> > 0x5600fe00 = 0x40000000
+> > # echo auto > /sys/bus/platform/devices/5600fe00.target-module/power/control
+> > # rwmem 0x5000fe00
+> > Bus error
+> > 
+> > Note that this patch depends on the PRM rstctrl driver that has
+> > been recently posted.
 > 
-> If a tag was not added on purpose, please state why and what changed.
+> Do you have a list of these patches or a git for pulling the complete set
+> of changes? Does it depend on mainline or linux-next?
 
-  Sorry, missed it. Will add it.
+You need the drivers/bus/ti-sysc.c changes from Linux next,
+and the most recent clkctrl and rstctrl patches posted by
+Tero.
+
+> I tried to find the correct patches but it does not seem to work for
+> me on beaglebone.
+
+OK can you please check the dependencies again and let me know
+if you still have issues?
 
 Regards,
-  Gokul
+
+Tony
