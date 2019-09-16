@@ -2,90 +2,130 @@ Return-Path: <SRS0=EXyH=XL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E4CC4CECD
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 15:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C585CC49ED7
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 15:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A0A22184D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 15:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 997B621852
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 15:46:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IKvxlx+n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388970AbfIPPRf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Sep 2019 11:17:35 -0400
-Received: from muru.com ([72.249.23.125]:33224 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388420AbfIPPRf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Sep 2019 11:17:35 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id D44F280EA;
-        Mon, 16 Sep 2019 15:18:04 +0000 (UTC)
-Date:   Mon, 16 Sep 2019 08:17:30 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     "H. Nikolaus Schaller" <hns@goldelico.com>
-Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
-        =?utf-8?Q?Beno=C3=AEt?= Cousson <bcousson@baylibre.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        Adam Ford <aford173@gmail.com>,
-        Filip =?utf-8?Q?Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
-        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
-        moaz korena <moaz@korena.xyz>,
-        Merlijn Wajer <merlijn@wizzup.org>,
-        =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
-        Philipp Rossak <embed3d@gmail.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 6/6] ARM: dts: Configure rstctrl reset for SGX
-Message-ID: <20190916151730.GZ52127@atomide.com>
-References: <20190814131408.57162-1-tony@atomide.com>
- <20190814131408.57162-7-tony@atomide.com>
- <92652315-A763-485F-A4FA-CB868016E045@goldelico.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <92652315-A763-485F-A4FA-CB868016E045@goldelico.com>
-User-Agent: Mutt/1.11.4 (2019-03-13)
+        id S2389343AbfIPPqS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Sep 2019 11:46:18 -0400
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43488 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728303AbfIPPqS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Sep 2019 11:46:18 -0400
+Received: by mail-pl1-f194.google.com with SMTP id 4so51766pld.10
+        for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2019 08:46:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=A4sU7UOqqLDDD2RT3o3Y/vMwQW6JnCqfyCA4YeqCaoI=;
+        b=IKvxlx+nu16eSsm9sL3A0k2aBI/C2r1rf9Yqhm/YfngGL8GNi2G8ltF+JPoKuYITmp
+         vi8iMMiBXxItKSE3SjVowtWhTsQPzemF1+I4gAkg+yXKiaMymxzivYM1Ydm0esiqOMKo
+         16loTJNenDz//rlIfBkCLd/BMUUdQcuJ4R8sCFuZ5y/mdNH1qSFoGXdgjh2CJcjoApXA
+         DR88nhw1vYmi4+AICxXge47mAfJ0gYakuefwxcwhZfCF4duNZB6pJ7tNTnSHcsB7fmzL
+         JoO0qvrD3wcL03dRDDNPUtmBr3J+MWWavDyPENpFGjWtjdaSDI53JzErfSAFzKlMBVEF
+         aQDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=A4sU7UOqqLDDD2RT3o3Y/vMwQW6JnCqfyCA4YeqCaoI=;
+        b=BAL+20Os0jxCO2xghlNtU2mOdiAqmVOdT2R59qSxwDjLBXCfcbhUynXCOumoNz/KYj
+         maXMzc/c4SPE2GeEb+LgJSS7/2x+m2XeMv0RWFGbeL/Si2oVZEKNQLN9n3/U/VhwRUDb
+         wfEHC/gvp2J7ZcVjEJMCILNfRS7Dd4ZipYq+BlADh/J3b52iw5rQF9Tah2rHz/3fTdYH
+         xjqEiYiY6dk4JWn4ejQKeYGdVIEGxQYRPEMWZInTUjGSLo6d8buKAU2EeFI5sM/Yxq/y
+         jQC4vLaZTJtv/BVRIJkeBnJdy35KG3RrC7Qt3N3AQ1nl5V2sc9Lvjq/pSsrFj+syerHu
+         m58Q==
+X-Gm-Message-State: APjAAAUvHDRbctx9FDL/Xen4GHkiIqbbm0rN1FlNavzktqni4rZ2gA+u
+        8LrZSplKxv/sJCPQcBXHdlhT
+X-Google-Smtp-Source: APXvYqxk5VLgwP3lklFM2rG/C+bvxjlT6Hptimo7FwML/QOQvdmeKrrB7LDz5ASrq59+SjzqZJfjqA==
+X-Received: by 2002:a17:902:8e84:: with SMTP id bg4mr445925plb.43.1568648777356;
+        Mon, 16 Sep 2019 08:46:17 -0700 (PDT)
+Received: from localhost.localdomain ([2409:4072:90b:91ce:94c2:ef93:5bd:cfe8])
+        by smtp.gmail.com with ESMTPSA id s5sm36227670pfe.52.2019.09.16.08.46.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Sep 2019 08:46:16 -0700 (PDT)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     ulf.hansson@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
+        sboyd@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v4 0/7] Add SD/MMC driver for Actions Semi S900 SoC
+Date:   Mon, 16 Sep 2019 21:15:39 +0530
+Message-Id: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+Hello,
 
-* H. Nikolaus Schaller <hns@goldelico.com> [190913 09:50]:
-> Hi Tony,
-> 
-> > Am 14.08.2019 um 15:14 schrieb Tony Lindgren <tony@atomide.com>:
-> > 
-> > The following can be tested via sysfs with the following to ensure the SGX
-> > module gets enabled and disabled properly:
-> > 
-> > # echo on > /sys/bus/platform/devices/5600fe00.target-module/power/control
-> > # rwmem 0x5600fe00		# revision register
-> > 0x5600fe00 = 0x40000000
-> > # echo auto > /sys/bus/platform/devices/5600fe00.target-module/power/control
-> > # rwmem 0x5000fe00
-> > Bus error
-> > 
-> > Note that this patch depends on the PRM rstctrl driver that has
-> > been recently posted.
-> 
-> Do you have a list of these patches or a git for pulling the complete set
-> of changes? Does it depend on mainline or linux-next?
+This patchset adds SD/MMC driver for Actions Semi S900 SoC from Owl
+family SoCs. There are 4 SD/MMC controller present in this SoC but
+only 2 are enabled currently for Bubblegum96 board to access uSD and
+onboard eMMC. SDIO support for this driver is not currently implemented.
 
-You need the drivers/bus/ti-sysc.c changes from Linux next,
-and the most recent clkctrl and rstctrl patches posted by
-Tero.
+Note: Currently, driver uses 2 completion mechanisms for maintaining
+the coherency between SDC and DMA interrupts and I know that it is not
+efficient. Hence, I'd like to hear any suggestions for reimplementing
+the logic if anyone has.
 
-> I tried to find the correct patches but it does not seem to work for
-> me on beaglebone.
+With this driver, this patchset also fixes one clk driver issue and enables
+the Actions Semi platform in ARM64 defconfig.
 
-OK can you please check the dependencies again and let me know
-if you still have issues?
+Thanks,
+Mani
 
-Regards,
+Changes in v4:
 
-Tony
+* Incorporated review comments from Rob on dt binding
+
+Changes in v3:
+
+* Incorporated a review comment from Andreas on board dts patch
+* Modified the MAINTAINERS entry for devicetree YAML binding
+
+Changes in v2:
+
+* Converted the devicetree bindings to YAML
+* Misc changes to bubblegum devicetree as per the review from Andreas
+* Dropped the read/write wrappers and renamed all functions to use owl-
+  prefix as per the review from Ulf
+* Renamed clk_val_best to owl_clk_val_best and added Reviewed-by tag
+  from Stephen
+
+Manivannan Sadhasivam (7):
+  clk: actions: Fix factor clk struct member access
+  dt-bindings: mmc: Add Actions Semi SD/MMC/SDIO controller binding
+  arm64: dts: actions: Add MMC controller support for S900
+  arm64: dts: actions: Add uSD and eMMC support for Bubblegum96
+  mmc: Add Actions Semi Owl SoCs SD/MMC driver
+  MAINTAINERS: Add entry for Actions Semi SD/MMC driver and binding
+  arm64: configs: Enable Actions Semi platform in defconfig
+
+ .../devicetree/bindings/mmc/owl-mmc.yaml      |  59 ++
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/actions/s900-bubblegum-96.dts    |  62 ++
+ arch/arm64/boot/dts/actions/s900.dtsi         |  45 ++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/actions/owl-factor.c              |   7 +-
+ drivers/mmc/host/Kconfig                      |   8 +
+ drivers/mmc/host/Makefile                     |   1 +
+ drivers/mmc/host/owl-mmc.c                    | 696 ++++++++++++++++++
+ 9 files changed, 877 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/mmc/owl-mmc.yaml
+ create mode 100644 drivers/mmc/host/owl-mmc.c
+
+-- 
+2.17.1
+
