@@ -2,98 +2,216 @@ Return-Path: <SRS0=EXyH=XL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D8D8C49ED7
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 18:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 149F5C49ED7
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 19:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657C920830
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 18:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568659506;
-	bh=GuCx8CbzJWU7fsB5PLSGwh7YL/SIJdzE0AFcQ+lRqIU=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=HonmzrqJzSAIg/KSw1i46CNUN2Gv9Js+4gfV8XbwyL0OlvWbzGpS/7FV1iZRBPjDV
-	 QBct8jw8gXVORw2ab9Jz0cMnBtbxAC+tIjAwa6ZHZseiMZiOgq36Fy0CBlPGHv1chA
-	 T6FwNe2+jX6aHjKGczkLf+ipA/dXoklrNP+pmC6w=
+	by mail.kernel.org (Postfix) with ESMTP id D5743214AF
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Sep 2019 19:15:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="XTt1LfRF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730088AbfIPSpG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Sep 2019 14:45:06 -0400
-Received: from mail.kernel.org ([198.145.29.99]:49292 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730015AbfIPSpG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Sep 2019 14:45:06 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 256CB20665;
-        Mon, 16 Sep 2019 18:45:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568659505;
-        bh=GuCx8CbzJWU7fsB5PLSGwh7YL/SIJdzE0AFcQ+lRqIU=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=NgjThRYrSkBw0Hk9jyFUNFvDJXkJakVGdDGftQw+53bo/6/PV6mtYkfigz1sZBEye
-         UFLn4I4TBGWAe603yhyC8+yFNukHrvUhEvOgO4pkw/iPec7fVaCQinXpiRK29yffYZ
-         mKYVPeAniMDgCIJReeXdk17CpXz6czGyoS0l+xbA=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA+hA=QJwfHsRA+G2oT2awLxx659qXLPsiECV6VYcJ181c6D8w@mail.gmail.com>
-References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com> <1566299605-15641-9-git-send-email-aisheng.dong@nxp.com> <20190906171323.8847820640@mail.kernel.org> <CAA+hA=QJwfHsRA+G2oT2awLxx659qXLPsiECV6VYcJ181c6D8w@mail.gmail.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+        id S2387674AbfIPTP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Sep 2019 15:15:56 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.166]:28025 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725912AbfIPTPz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Sep 2019 15:15:55 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1568661352;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=ISnqrCPfw9wyjpKuLKC4JbgTPu2Q46+zetbOpdb4vjQ=;
+        b=XTt1LfRFi0eQAZ8cuRAlyRs4RX6UDGyMCdM9BCzeV+udWSsNrTK04r3Vj3hAYy7zp/
+        mJDGWJopuKM/9oL3elaNjqhUIU0GmBemt+D/Jw84yTmXAQrLT3d4hyYp1C1Q/QF2dh/V
+        0F2owlkXmBGV9MwQD8aUWQBdmiiXYE02axw31z/8swFqPFJ4bV/Ol+s5Q3tEpTFdMmmt
+        X9pidBhPDVpDz70NIakU4nA8KgmX6iOXTcDvmCo/BAREeFJe/iXw+KHhHJL+bLa1us/B
+        4zbHiraQBF60VWZmqGNHT7dPF8CxtOdlPtedPgcG7EuXKK64dYQe2tECEUq/XmTTYCQg
+        Ba2Q==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAgw43rXTg="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.27.0 DYNA|AUTH)
+        with ESMTPSA id u036f9v8GJFcSjs
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Mon, 16 Sep 2019 21:15:38 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 6/6] ARM: dts: Configure rstctrl reset for SGX
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <6CF46DDB-2EC1-454E-83A1-30CC7BFC335D@goldelico.com>
+Date:   Mon, 16 Sep 2019 21:15:38 +0200
+Cc:     Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-To:     Dong Aisheng <dongas86@gmail.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH V4 08/11] clk: imx: imx8qxp-lpcg: add parsing clocks from device tree
-User-Agent: alot/0.8.1
-Date:   Mon, 16 Sep 2019 11:45:04 -0700
-Message-Id: <20190916184505.256CB20665@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D413323E-6B96-473E-979B-18D476AB3065@goldelico.com>
+References: <20190814131408.57162-1-tony@atomide.com> <20190814131408.57162-7-tony@atomide.com> <92652315-A763-485F-A4FA-CB868016E045@goldelico.com> <20190916151730.GZ52127@atomide.com> <20190916180418.GH52127@atomide.com> <6CF46DDB-2EC1-454E-83A1-30CC7BFC335D@goldelico.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dong Aisheng (2019-09-09 04:23:14)
-> ]On Sat, Sep 7, 2019 at 5:35 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > Quoting Dong Aisheng (2019-08-20 04:13:22)
-> > > Add parsing clocks from device tree.
-> >
-> > Please describe some more here.
->=20
-> Will improve.
->=20
-> > > +       res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > +       base =3D devm_ioremap_resource(&pdev->dev, res);
-> > > +       if (IS_ERR(base))
-> > > +               return PTR_ERR(base);
-> > > +
-> > > +       count =3D of_property_count_u32_elems(np, "clock-indices");
-> > > +       if (count < 0) {
-> > > +               dev_err(&pdev->dev, "failed to count clocks\n");
-> > > +               return -EINVAL;
-> > > +       }
-> >
-> > Is 'count' expected to be equal to IMX_LPCG_MAX_CLKS? Because later on
-> > in this function we set the num of clks to the MAX instead of the count
-> > from clock-indices.
-> >
->=20
-> No. Here is a tricky to ease the clk getting.
-> For example, one LPCG supports up to 8 clock outputs which each of them
-> is fixed to 4 bits. Then we can easily use the bit-offset/clk-indices
-> parsed from DT
-> to fetch the corresponding clock by hws[clkspec->args[0] / 4].
-> And the cost is very limited with only a few pointers.
 
-Ok. Can you add a comment into the code to explain this?
+> Am 16.09.2019 um 20:12 schrieb H. Nikolaus Schaller =
+<hns@goldelico.com>:
+>=20
+>=20
+>> Am 16.09.2019 um 20:04 schrieb Tony Lindgren <tony@atomide.com>:
+>>=20
+>> Hi,
+>>=20
+>> * Tony Lindgren <tony@atomide.com> [190916 15:18]:
+>>> * H. Nikolaus Schaller <hns@goldelico.com> [190913 09:50]:
+>>>> Hi Tony,
+>>>>=20
+>>>>> Am 14.08.2019 um 15:14 schrieb Tony Lindgren <tony@atomide.com>:
+>>>>>=20
+>>>>> The following can be tested via sysfs with the following to ensure =
+the SGX
+>>>>> module gets enabled and disabled properly:
+>>>>>=20
+>>>>> # echo on > =
+/sys/bus/platform/devices/5600fe00.target-module/power/control
+>>>>> # rwmem 0x5600fe00		# revision register
+>>>>> 0x5600fe00 =3D 0x40000000
+>>>>> # echo auto > =
+/sys/bus/platform/devices/5600fe00.target-module/power/control
+>>>>> # rwmem 0x5000fe00
+>>>>> Bus error
+>>>>>=20
+>>>>> Note that this patch depends on the PRM rstctrl driver that has
+>>>>> been recently posted.
+>>>>=20
+>>>> Do you have a list of these patches or a git for pulling the =
+complete set
+>>>> of changes? Does it depend on mainline or linux-next?
+>>>=20
+>>> You need the drivers/bus/ti-sysc.c changes from Linux next,
+>>> and the most recent clkctrl and rstctrl patches posted by
+>>> Tero.
+>>>=20
+>>>> I tried to find the correct patches but it does not seem to work =
+for
+>>>> me on beaglebone.
+>>>=20
+>>> OK can you please check the dependencies again and let me know
+>>> if you still have issues?
+>>=20
+>> To make things easier to test, I pushed out a test branch with
+>> all the pending dependencies :)
+>>=20
+>> It's basically v5.3 + ti-sysc changes in Linux next, and
+>> the following patches posted by Tero:
+>>=20
+>> [PATCHv5 00/10] soc: ti: add OMAP PRM driver (for reset)
+>> [PATCHv3 00/10] clk: ti: remoteproc / iommu support patches
+>> [PATCH 00/10] ARM: dts: omap changes for IOMMU / reset support
+>>=20
+>> And then finally the $subject patch applied on top, and the
+>> tests above still work for me.
+>=20
+> Ok, fine!
+>=20
+>>=20
+>> The test branch is test-pending-ti-sysc-clkctrl-rstctrl-v5.3
+>> at [0] and [1] below.
+>>=20
+>> Can you please test and see if that works for you?
+>>=20
+>> Regards,
+>>=20
+>> Tony
+>>=20
+>> [0] =
+git://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git =
+test-pending-ti-sysc-clkctrl-rstctrl-v5.3
+>> [1] =
+https://git.kernel.org/pub/scm/linux/kernel/git/tmlind/linux-omap.git/log/=
+?h=3Dtest-pending-ti-sysc-clkctrl-rstctrl-v5.3
+>=20
+> I'll check out and try to locate missing pieces.
+
+Ok, this variant works as a basis! At least for register access.
+
+root@letux:~# devmem2 0x5600fe00
+Value at address 0x5600FE00 (0xb6fede00): 0x40000000
+root@letux:~# devmem2 0x5600fe04
+Value at address 0x5600FE04 (0xb6fa1e04): 0x5
+root@letux:~# devmem2 0x5600fe10
+Value at address 0x5600FE10 (0xb6f80e10): 0x28
+root@letux:~#=20
+
+This is quite similar to OMAP5 where I got
+
+> root@letux:~# devmem2 0x5600fe00
+> Value at address 0x5600FE00 (0xb6f87e00): 0x40000000
+> root@letux:~# devmem2 0x5600fe04
+> Value at address 0x5600FE04 (0xb6f11e04): 0x5
+> root@letux:~# devmem2 0x5600fe10
+> Value at address 0x5600FE10 (0xb6f93e10): 0x3C
+
+or OMAP3:
+
+> root@letux:~# devmem2 0x5000fe00
+> Value at address 0x5000FE00 (0xb6f81e00): 0x40000000
+> root@letux:~# devmem2 0x5000fe04
+> Value at address 0x5000FE04 (0xb6f28e04): 0x5
+> root@letux:~# devmem2 0x5000fe10
+> Value at address 0x5000FE10 (0xb6f5fe10): 0x28
+> root@letux:~#=20
+
+But SGX driver initialization still fails with a reset_deassert timeout.
+
+root@letux:~# modprobe pvrsrvkm_omap_am335x_sgx530_125
+[  187.528139] pvrsrvkm_omap_am335x_sgx530_125: module is from the =
+staging directory, the quality is unknown, you have been warned.
+[  187.584580] omap_reset_deassert: timedout waiting for gfx:0
+[  187.614430] [drm] Initialized pvr 1.14.3699939 20110701 for =
+56000000.sgx on minor 1
+root@letux:~# pvrsrvctl --start --no-module
+[  209.085931] PVR_K: UM DDK-(3699939) and KM DDK-(3699939) match. [ OK =
+]
+[  209.116399] PVR_K:(Error): BridgedDispatchKM: Initialisation failed.  =
+Driver unusable.
+PVR:(Error): LoaduKernelProgram : SGX ukernel program Device Addr: =
+0xe400000 invalid alignment [0, ]
+PVR:(Error): SetupuKernel : Failed to load uKernel programs [0, ]
+PVR:(Error): SrvInit: Initialisation for device of class 0, type 7, =
+index 0, failed (1) [0, ]
+PVR:(Error): PVRSRVBridgeCall: Failed to access device.  Function =
+ID:3223086862 (strerror returns no value.). [0, ]
+pvrsrvctl: SrvInit failed (already initialized?) =
+(err=3DPVRSRV_ERROR_OUT_OF_MEMORY - Unable to allocate required memory)
+root@letux:~#
+
+A simple reason may be that I have a bad offset in my device tree setup
+and the driver doesn't see feedback from SGX.
+
+" for 56000000.sgx on minor 1" is suspect.
+IMHO, it should have to be " for 5600fe00.sgx on minor 1"
+But anyways this is a big step forwards having giving me three different
+platforms for testing and comparisons.
+
+BR and thanks,
+Nikolaus
+
 
