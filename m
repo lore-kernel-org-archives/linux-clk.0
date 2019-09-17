@@ -2,148 +2,152 @@ Return-Path: <SRS0=xl4E=XM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B95C4CECE
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 06:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11379C4CECD
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 06:54:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1820621852
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 06:20:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XcwM0eu0"
+	by mail.kernel.org (Postfix) with ESMTP id E2D7B21897
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 06:54:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733162AbfIQGUX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 02:20:23 -0400
-Received: from mail-eopbgr10064.outbound.protection.outlook.com ([40.107.1.64]:57815
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2403789AbfIQGUU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Sep 2019 02:20:20 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QFlKk6zPYrRXhd6BBsWPXpSkgn1S0Yp3OKVaRjmJbCS/T+ka86Abr3hcN/uYRSq7yLsVPC6kRbeCjK3dlo9pXQcD73mqnVraKN/Bo62dqEKDBFL2DrwgCiz5mxMsJsEDEvRmFbcla1bKOInGD4aZPCrc9FXA7z/eec2s4sIBNiuB53erWQmSPVPHiBTf+V3/p7Q7XtzfGq8nPWWG92uiwbY/kyO/AdMaeZqBDBI+aWrd3VbPLAubNYieeSd99EhTRinFmmntkNSpDvWLt+8IdngRiecqdSgspiaggaohRP0TMNRBwXXbPPneSfI8rXDAVXQd7HLZxH3/v26S/dA1Dg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xORgEn138aClpnkqf63ja5Qc6KTgERbYVZWyXxe/xcc=;
- b=Tqkb3MVEMtr47yGubd4rvStaegThN/3Gj95aHogZcJfIgDJxyuBEVRtcKbYLM4iw7wAbvDPSi/kZKrPiRx2Yz/xl3Ft53EbhhvHsDXBN3x2LL0UMv7xH7sWRSLFbvBc1roAzIQ9SAkdkhQZcPq9lMboITGKfDmm3qOfz2E274jTFmgYU7BaPQVgUakyZVyDBWik3DLWMiIpMW9wTxiruKHEa1jxg4/5mHS2Cnexb+z6JTOxUS6YhVvWj43v3LFKOus0KqIGXlWpToktvRw2sTRWchyQt+8znHSVKVrN4Xw4powyttnkvqJSmNQ2i6fMGMpLyGdu3JQnN9KDFgccgOg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=xORgEn138aClpnkqf63ja5Qc6KTgERbYVZWyXxe/xcc=;
- b=XcwM0eu06/g1gTRWfrlDU3AR+lQXE87Q2fR0Wo00pUAEubNtYApnTQHIhbx1l7eWTr1vq6ECHNxVQOWy+YFrMSQ2a3F/FQaf00u+EC7JdP1n5fAyN6uoZV20D7qVcQK08os8qbcOIy244ciIoLATwAD/RZPkHkS3QJFrbC5qaNs=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6370.eurprd04.prod.outlook.com (20.179.252.89) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2263.26; Tue, 17 Sep 2019 06:20:15 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::6ca2:ec08:2b37:8ab8%6]) with mapi id 15.20.2263.023; Tue, 17 Sep 2019
- 06:20:15 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: RE: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
-Thread-Topic: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
-Thread-Index: AQHVZsAvxNHrETdja06leIJqZC3kHacvcZcw
-Date:   Tue, 17 Sep 2019 06:20:15 +0000
-Message-ID: <AM0PR04MB4481A31DD68C3C3409E95339888F0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1568043491-20680-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1568043491-20680-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 63dcc41c-1861-4a0a-95bd-08d73b371abe
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:AM0PR04MB6370;
-x-ms-traffictypediagnostic: AM0PR04MB6370:|AM0PR04MB6370:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB6370362DA2EBCD2AB9E1D188888F0@AM0PR04MB6370.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01630974C0
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(136003)(346002)(376002)(39860400002)(396003)(199004)(189003)(26005)(52536014)(44832011)(54906003)(6436002)(110136005)(305945005)(2201001)(74316002)(66446008)(33656002)(66476007)(66556008)(55016002)(76116006)(229853002)(66946007)(6246003)(2906002)(7736002)(486006)(71200400001)(71190400001)(66066001)(2501003)(478600001)(25786009)(186003)(14454004)(102836004)(64756008)(316002)(9686003)(6506007)(5660300002)(446003)(476003)(99286004)(11346002)(6116002)(256004)(86362001)(81156014)(76176011)(81166006)(8676002)(3846002)(8936002)(7696005)(4326008)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6370;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: YJ+ZAHlQpDlZXTD1/T/vguVQO9yzjXXxb3pGPNaX8FPQI96MxtWv81lU6S6TLY9f6wnTZGHsT4vpQn4uwka0VjaHA+zIrJ6/vUjF9vc5Q703OFE/RLb5S732ek2KN0A/gWoKTlfI+KFm/tHGG29ofDFHu6xycwMi2lagWl0dR9RviXDPtf47eZf/UIRsOOyRcFLs275tyI2fWSBTtRsL2Yc4UZiDPifpA1UluIjpyv5CimoOCxl5Lpmh/GqdcntJtyvOho6mYSIuBd44ryZ3/JJuYjgpJrKRRrGbHg8Ff8lJM0La0/TKoW1bAm6En60FABOZsBK6h+KPD9wC8a5TG48nL3+IL45fY2LYBRHhcpxxmXCnpBAMzG+v6yW+aLhtq5c5wy3HFta0kFY4hTCDBc7Wh/MOqCmMz4riP9zGDug=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S2404383AbfIQGyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 02:54:24 -0400
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37315 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404348AbfIQGyY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 02:54:24 -0400
+Received: by mail-ed1-f65.google.com with SMTP id r4so2265907edy.4;
+        Mon, 16 Sep 2019 23:54:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=QcIjvbufynPeD91Mg15EYJOqVZcGPs0ArRORK/sU2Is=;
+        b=NORm7alJ/NNFYNkVsZw+y+4XhYlOEOShxHvxTJPWgXXUiVyAarBOcAenGtwDXaH2jz
+         GdPRxL67K1a5KlTt+a+FCsg7PpXh52KAOTl8xIYKpO58/HRF37EIZberLr+yXRCuaC/z
+         HId8brympq/JQFH3C00bulq67OzY3zHaLSeFAr0l+yA5QG6bSAE2vmNSYoHSvLLPOsW7
+         1E7jv8IcgNPppX9utxWYtBsWWkYw5388UAe/Hotui9vKINlKh+miLNHaYR5jdl43kGRV
+         6v1eLEWlLIxoq212lzEc9thUQ9BTQI1dQpgtmvtdyznHC/gA1w/3IfSK0yutA8vM1wYo
+         USoQ==
+X-Gm-Message-State: APjAAAXrAa8Ytc+2TYmyAuCuQSIDwXAwl1ulbJ/E5yirWXLeeoPBU4Ci
+        5TgVByFJ4epPunPgrB2kWeA5B+MEKTQ=
+X-Google-Smtp-Source: APXvYqzLUqfE8YUain5USpHp+Ppmc+vkqA5g9akw1Ro5kQZY2J0pWwc15KMdNJBtIktYxdN+ZbdIQw==
+X-Received: by 2002:a17:906:4c4c:: with SMTP id d12mr3351491ejw.174.1568703261676;
+        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
+        by smtp.gmail.com with ESMTPSA id ba28sm261139edb.4.2019.09.16.23.54.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
+Received: by mail-wm1-f44.google.com with SMTP id i16so1833406wmd.3;
+        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
+X-Received: by 2002:a1c:a54a:: with SMTP id o71mr2230059wme.51.1568703260882;
+ Mon, 16 Sep 2019 23:54:20 -0700 (PDT)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 63dcc41c-1861-4a0a-95bd-08d73b371abe
-X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2019 06:20:15.3132
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Sa9KdMtqb46GsAqgFZhroEcPenh9Cxu9h0ZXFa7Hsfcp+8AgPygEC6wmr2OTikqjdeW1e60d6MoAaa3AL36qYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6370
+References: <20190914135100.327412-1-jernej.skrabec@siol.net>
+In-Reply-To: <20190914135100.327412-1-jernej.skrabec@siol.net>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Tue, 17 Sep 2019 14:54:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
+Message-ID: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: h6: Use sigma-delta
+ modulation for audio PLL
+To:     Jernej Skrabec <jernej.skrabec@siol.net>
+Cc:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen, Shawn,
+On Sat, Sep 14, 2019 at 9:51 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
+>
+> Audio devices needs exact clock rates in order to correctly reproduce
+> the sound. Until now, only integer factors were used to configure H6
+> audio PLL which resulted in inexact rates. Fix that by adding support
+> for fractional factors using sigma-delta modulation look-up table. It
+> contains values for two most commonly used audio base frequencies.
+>
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> ---
+>  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> index d89353a3cdec..ed6338d74474 100644
+> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> @@ -203,12 +203,21 @@ static struct ccu_nkmp pll_hsic_clk = {
+>   * hardcode it to match with the clock names.
+>   */
+>  #define SUN50I_H6_PLL_AUDIO_REG                0x078
+> +
+> +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
+> +       { .rate = 541900800, .pattern = 0xc001288d, .m = 1, .n = 22 },
+> +       { .rate = 589824000, .pattern = 0xc00126e9, .m = 1, .n = 24 },
+> +};
+> +
+>  static struct ccu_nm pll_audio_base_clk = {
+>         .enable         = BIT(31),
+>         .lock           = BIT(28),
+>         .n              = _SUNXI_CCU_MULT_MIN(8, 8, 12),
+>         .m              = _SUNXI_CCU_DIV(1, 1), /* input divider */
+> +       .sdm            = _SUNXI_CCU_SDM(pll_audio_sdm_table,
+> +                                        BIT(24), 0x178, BIT(31)),
+>         .common         = {
+> +               .features       = CCU_FEATURE_SIGMA_DELTA_MOD,
+>                 .reg            = 0x078,
+>                 .hw.init        = CLK_HW_INIT("pll-audio-base", "osc24M",
+>                                               &ccu_nm_ops,
+> @@ -753,12 +762,12 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
+>  };
+>
+>  /*
+> - * The divider of pll-audio is fixed to 8 now, as pll-audio-4x has a
+> - * fixed post-divider 2.
+> + * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
+> + * rates can be set exactly in conjunction with sigma-delta modulation.
+>   */
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
+>                             clk_parent_pll_audio,
+> -                           8, 1, CLK_SET_RATE_PARENT);
+> +                           24, 1, CLK_SET_RATE_PARENT);
+>  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+>                             clk_parent_pll_audio,
+>                             4, 1, CLK_SET_RATE_PARENT);
 
-> Subject: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
+You need to fix the factors for the other two outputs as well, since all
+three are derived from pll-audio-base.
 
-Sorry to ping early. Is there a chance to land this patchset in 5.3 release=
-?
+ChenYu
 
-Thanks,
-Peng.
-
->=20
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> V3:
->  Add cover-letter
->=20
-> V2:
->  Added patch [2,3,4]/4 and avoid glitch when prepare
->=20
-> There is two bypass bit in the pll, BYPASS and EXT_BYPASS.
-> There is also a restriction that to avoid glitch, need set BYPASS bit whe=
-n
-> RESETB changed from 0 to 1, otherwise there will be glitch.
->=20
-> However the BYPASS bit is also used as mux bit in imx8mm/imx8mn clk drive=
-r.
->=20
-> This means two paths touch the same bit which is wrong. So switch to use
-> EXT_BYPASS bit as the mux.
->=20
-> Peng Fan (4):
->   clk: imx: pll14xx: avoid glitch when set rate
->   clk: imx: clk-pll14xx: unbypass PLL by default
->   clk: imx: imx8mm: fix pll mux bit
->   clk: imx: imx8mn: fix pll mux bit
->=20
->  drivers/clk/imx/clk-imx8mm.c  | 32 ++++++++++----------------------
-> drivers/clk/imx/clk-imx8mn.c  | 32 ++++++++++----------------------
-> drivers/clk/imx/clk-pll14xx.c | 27 ++++++++++++++++++++++++++-
->  3 files changed, 46 insertions(+), 45 deletions(-)
->=20
+> @@ -1215,12 +1224,12 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
+>         }
+>
+>         /*
+> -        * Force the post-divider of pll-audio to 8 and the output divider
+> -        * of it to 1, to make the clock name represents the real frequency.
+> +        * Force the post-divider of pll-audio to 12 and the output divider
+> +        * of it to 2, so 24576000 and 22579200 rates can be set exactly.
+>          */
+>         val = readl(reg + SUN50I_H6_PLL_AUDIO_REG);
+>         val &= ~(GENMASK(21, 16) | BIT(0));
+> -       writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
+> +       writel(val | (11 << 16) | BIT(0), reg + SUN50I_H6_PLL_AUDIO_REG);
+>
+>         /*
+>          * First clock parent (osc32K) is unusable for CEC. But since there
 > --
-> 2.16.4
-
+> 2.23.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20190914135100.327412-1-jernej.skrabec%40siol.net.
