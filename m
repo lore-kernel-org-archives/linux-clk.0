@@ -2,152 +2,94 @@ Return-Path: <SRS0=xl4E=XM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11379C4CECD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 06:54:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79176C4CECE
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 07:08:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2D7B21897
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 06:54:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4679821881
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 07:08:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OzN/Gtk3";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="hhmdmcsi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404383AbfIQGyY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 02:54:24 -0400
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:37315 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404348AbfIQGyY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 02:54:24 -0400
-Received: by mail-ed1-f65.google.com with SMTP id r4so2265907edy.4;
-        Mon, 16 Sep 2019 23:54:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=QcIjvbufynPeD91Mg15EYJOqVZcGPs0ArRORK/sU2Is=;
-        b=NORm7alJ/NNFYNkVsZw+y+4XhYlOEOShxHvxTJPWgXXUiVyAarBOcAenGtwDXaH2jz
-         GdPRxL67K1a5KlTt+a+FCsg7PpXh52KAOTl8xIYKpO58/HRF37EIZberLr+yXRCuaC/z
-         HId8brympq/JQFH3C00bulq67OzY3zHaLSeFAr0l+yA5QG6bSAE2vmNSYoHSvLLPOsW7
-         1E7jv8IcgNPppX9utxWYtBsWWkYw5388UAe/Hotui9vKINlKh+miLNHaYR5jdl43kGRV
-         6v1eLEWlLIxoq212lzEc9thUQ9BTQI1dQpgtmvtdyznHC/gA1w/3IfSK0yutA8vM1wYo
-         USoQ==
-X-Gm-Message-State: APjAAAXrAa8Ytc+2TYmyAuCuQSIDwXAwl1ulbJ/E5yirWXLeeoPBU4Ci
-        5TgVByFJ4epPunPgrB2kWeA5B+MEKTQ=
-X-Google-Smtp-Source: APXvYqzLUqfE8YUain5USpHp+Ppmc+vkqA5g9akw1Ro5kQZY2J0pWwc15KMdNJBtIktYxdN+ZbdIQw==
-X-Received: by 2002:a17:906:4c4c:: with SMTP id d12mr3351491ejw.174.1568703261676;
-        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com. [209.85.128.44])
-        by smtp.gmail.com with ESMTPSA id ba28sm261139edb.4.2019.09.16.23.54.21
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
-Received: by mail-wm1-f44.google.com with SMTP id i16so1833406wmd.3;
-        Mon, 16 Sep 2019 23:54:21 -0700 (PDT)
-X-Received: by 2002:a1c:a54a:: with SMTP id o71mr2230059wme.51.1568703260882;
- Mon, 16 Sep 2019 23:54:20 -0700 (PDT)
+        id S2387893AbfIQHH6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 03:07:58 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:53110 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729435AbfIQHH5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 03:07:57 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 99E5361213; Tue, 17 Sep 2019 07:07:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568704076;
+        bh=XOsx7e6qcaR44pSsilXmTVukrNoyBsfw/6ykaEalazM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OzN/Gtk3ZoKHZTgZ9fVTPVQjYnhNvVjgGjtX1Fo0ynsHKaifuPJLn8kufAPGIE0TX
+         8vHOpxjusQHFbzSfpBdDlNp6dGOCjsI04vLPvnyM7fgUiCcA1rsBGDuIGHByQnZX0o
+         EjOAtEEhUC91xbaBQgVVk+ay5SWTN+ihK0L6OKHo=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id ADD53611FA;
+        Tue, 17 Sep 2019 07:07:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568704075;
+        bh=XOsx7e6qcaR44pSsilXmTVukrNoyBsfw/6ykaEalazM=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=hhmdmcsilLPeAHhlXWfXw65jWqnkKaLX+R2TlRiLkkxWwOrEo+SbpqwVS/ofH+jv3
+         RPotvR/PIO6/LsG3mOksGG7ZmemEn5lWPStuLLSxvfG6i9B6i4foEOoibLjqtRudhx
+         IeFtfpOeSqMDvo2rcHHCPc4yyKltEyj3GvhBly0U=
 MIME-Version: 1.0
-References: <20190914135100.327412-1-jernej.skrabec@siol.net>
-In-Reply-To: <20190914135100.327412-1-jernej.skrabec@siol.net>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Tue, 17 Sep 2019 14:54:08 +0800
-X-Gmail-Original-Message-ID: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
-Message-ID: <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: h6: Use sigma-delta
- modulation for audio PLL
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Tue, 17 Sep 2019 12:37:55 +0530
+From:   gokulsri@codeaurora.org
+To:     Rob Herring <robh@kernel.org>
+Cc:     sboyd@kernel.org, agross@kernel.org, bjorn.andersson@linaro.org,
+        david.brown@linaro.org, devicetree@vger.kernel.org,
+        jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
+        mturquette@baylibre.com, ohad@wizery.com, robh+dt@kernel.org,
+        sricharan@codeaurora.org, nprakash@codeaurora.org
+Subject: Re: [PATCH V2 10/12] dt-bindings: firmware: qcom: Add compatible for
+ IPQ8074 SoC
+In-Reply-To: <5d7c0ecb.1c69fb81.74810.a358@mx.google.com>
+References: <1568375771-22933-1-git-send-email-gokulsri@codeaurora.org>
+ <1568375771-22933-11-git-send-email-gokulsri@codeaurora.org>
+ <5d7c0ecb.1c69fb81.74810.a358@mx.google.com>
+Message-ID: <1472f76e742d576fa5d6c6cad7b40605@codeaurora.org>
+X-Sender: gokulsri@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Sep 14, 2019 at 9:51 PM Jernej Skrabec <jernej.skrabec@siol.net> wrote:
->
-> Audio devices needs exact clock rates in order to correctly reproduce
-> the sound. Until now, only integer factors were used to configure H6
-> audio PLL which resulted in inexact rates. Fix that by adding support
-> for fractional factors using sigma-delta modulation look-up table. It
-> contains values for two most commonly used audio base frequencies.
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 21 +++++++++++++++------
->  1 file changed, 15 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> index d89353a3cdec..ed6338d74474 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> @@ -203,12 +203,21 @@ static struct ccu_nkmp pll_hsic_clk = {
->   * hardcode it to match with the clock names.
->   */
->  #define SUN50I_H6_PLL_AUDIO_REG                0x078
-> +
-> +static struct ccu_sdm_setting pll_audio_sdm_table[] = {
-> +       { .rate = 541900800, .pattern = 0xc001288d, .m = 1, .n = 22 },
-> +       { .rate = 589824000, .pattern = 0xc00126e9, .m = 1, .n = 24 },
-> +};
-> +
->  static struct ccu_nm pll_audio_base_clk = {
->         .enable         = BIT(31),
->         .lock           = BIT(28),
->         .n              = _SUNXI_CCU_MULT_MIN(8, 8, 12),
->         .m              = _SUNXI_CCU_DIV(1, 1), /* input divider */
-> +       .sdm            = _SUNXI_CCU_SDM(pll_audio_sdm_table,
-> +                                        BIT(24), 0x178, BIT(31)),
->         .common         = {
-> +               .features       = CCU_FEATURE_SIGMA_DELTA_MOD,
->                 .reg            = 0x078,
->                 .hw.init        = CLK_HW_INIT("pll-audio-base", "osc24M",
->                                               &ccu_nm_ops,
-> @@ -753,12 +762,12 @@ static const struct clk_hw *clk_parent_pll_audio[] = {
->  };
->
->  /*
-> - * The divider of pll-audio is fixed to 8 now, as pll-audio-4x has a
-> - * fixed post-divider 2.
-> + * The divider of pll-audio is fixed to 24 for now, so 24576000 and 22579200
-> + * rates can be set exactly in conjunction with sigma-delta modulation.
->   */
->  static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
->                             clk_parent_pll_audio,
-> -                           8, 1, CLK_SET_RATE_PARENT);
-> +                           24, 1, CLK_SET_RATE_PARENT);
->  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
->                             clk_parent_pll_audio,
->                             4, 1, CLK_SET_RATE_PARENT);
+Hi Rob,
 
-You need to fix the factors for the other two outputs as well, since all
-three are derived from pll-audio-base.
+On 2019-09-14 03:18, Rob Herring wrote:
+> On Fri, 13 Sep 2019 17:26:09 +0530, Gokul Sriram Palanisamy wrote:
+>> Add compatible for IPQ8074 support.
+>> This does not need clocks for scm calls.
+>> 
+>> Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
+>> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+>> ---
+>>  Documentation/devicetree/bindings/firmware/qcom,scm.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+>> 
+> 
+> Please add Acked-by/Reviewed-by tags when posting new versions. 
+> However,
+> there's no need to repost patches *only* to add the tags. The upstream
+> maintainer will do that for acks received on the version they apply.
+> 
+> If a tag was not added on purpose, please state why and what changed.
 
-ChenYu
+  Sorry, missed it. Will add it.
 
-> @@ -1215,12 +1224,12 @@ static int sun50i_h6_ccu_probe(struct platform_device *pdev)
->         }
->
->         /*
-> -        * Force the post-divider of pll-audio to 8 and the output divider
-> -        * of it to 1, to make the clock name represents the real frequency.
-> +        * Force the post-divider of pll-audio to 12 and the output divider
-> +        * of it to 2, so 24576000 and 22579200 rates can be set exactly.
->          */
->         val = readl(reg + SUN50I_H6_PLL_AUDIO_REG);
->         val &= ~(GENMASK(21, 16) | BIT(0));
-> -       writel(val | (7 << 16), reg + SUN50I_H6_PLL_AUDIO_REG);
-> +       writel(val | (11 << 16) | BIT(0), reg + SUN50I_H6_PLL_AUDIO_REG);
->
->         /*
->          * First clock parent (osc32K) is unusable for CEC. But since there
-> --
-> 2.23.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> To view this discussion on the web, visit https://groups.google.com/d/msgid/linux-sunxi/20190914135100.327412-1-jernej.skrabec%40siol.net.
+Regards,
+  Gokul
