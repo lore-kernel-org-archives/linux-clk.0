@@ -2,324 +2,87 @@ Return-Path: <SRS0=xl4E=XM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFB96C4CECD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 09:17:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E21C4CECD
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 12:42:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A01DC21881
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 09:17:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568711875;
-	bh=TzeDHdXpfNzA1DH1fYaV3kmEGYt6Kzvz35Bh/08YUVI=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=me9Mrc3lw6QkpN8Lbd+fr4jK9giVP/KCA17X1hSQ+4q8J4tALbyPgyXVd3yJs7C4i
-	 XBAOGMVpaXJ3kcylqRJQUz8RTCaBX0GO/8AnU1APxk4F8Zcx4cCBVeDX2gOxX8xr7i
-	 I2/WBAmtcviqZvQPJwK7sU95Dh103KGF9prqICuk=
+	by mail.kernel.org (Postfix) with ESMTP id 53C6B2067B
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 12:42:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfIQJRz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 05:17:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40908 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726250AbfIQJRz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Sep 2019 05:17:55 -0400
-Received: from localhost.localdomain (unknown [122.167.81.185])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7062D21852;
-        Tue, 17 Sep 2019 09:17:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568711873;
-        bh=TzeDHdXpfNzA1DH1fYaV3kmEGYt6Kzvz35Bh/08YUVI=;
-        h=From:To:Cc:Subject:Date:From;
-        b=sxlXPTBSiDnmx2EAe59lE88FhzbgSz61F3hvX32m2utBlGOcyFOHTzGgfpuP9S+CR
-         yHTCdL0rrF0QJwbJgI+JF6MzfN7eHHjwRzjKksQbSYmJz26fbI2BHG/uwlY9AwkaW6
-         vOtgTj5OHG79e+0G964FKdeUgR6hCd70Ei41QGQQ=
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
+        id S1728168AbfIQMmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 08:42:35 -0400
+Received: from relmlor2.renesas.com ([210.160.252.172]:54339 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727308AbfIQMme (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 08:42:34 -0400
+X-IronPort-AV: E=Sophos;i="5.64,516,1559487600"; 
+   d="scan'208";a="26574450"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Sep 2019 21:42:31 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9B7014235016;
+        Tue, 17 Sep 2019 21:42:28 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
-Date:   Tue, 17 Sep 2019 14:46:23 +0530
-Message-Id: <20190917091623.3453-1-vkoul@kernel.org>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH 0/8] Add RZ/G2N SYSC/RST/Clock/PFC support
+Date:   Tue, 17 Sep 2019 13:35:28 +0100
+Message-Id: <1568723736-14714-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The initial upstreaming of SM8150 GCC driver missed few clock so add
-them up now.
+This patch series add SYSC/RST/Clock/PFC driver support for RZ/G2N SoC.
 
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
----
- drivers/clk/qcom/gcc-sm8150.c | 172 ++++++++++++++++++++++++++++++++++
- 1 file changed, 172 insertions(+)
+Biju Das (8):
+  dt-bindings: power: rcar-sysc: Document r8a774b1 sysc
+  soc: renesas: rcar-sysc: Add r8a774b1 support
+  dt-bindings: reset: rcar-rst: Document r8a774b1 reset module
+  soc: renesas: rcar-rst: Add support for RZ/G2N
+  dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1 binding
+  clk: renesas: cpg-mssr: Add r8a774b1 support
+  dt-bindings: pinctrl: sh-pfc: Document r8a774b1 PFC support
+  pinctrl: sh-pfc: r8a77965: Add R8A774B1 PFC support
 
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 12ca2d14797f..13d4d14a5744 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_gpu_gpll0_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x52004,
-+		.enable_mask = BIT(15),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_gpu_gpll0_clk_src",
-+			.parent_hws = (const struct clk_hw *[]){
-+				&gpll0.clkr.hw },
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_gpu_gpll0_div_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x52004,
-+		.enable_mask = BIT(16),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_gpu_gpll0_div_clk_src",
-+			.parent_hws = (const struct clk_hw *[]){
-+				&gcc_gpu_gpll0_clk_src.clkr.hw },
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_gpu_iref_clk = {
- 	.halt_reg = 0x8c010,
- 	.halt_check = BRANCH_HALT,
-@@ -1698,6 +1730,38 @@ static struct clk_branch gcc_npu_cfg_ahb_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_npu_gpll0_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x52004,
-+		.enable_mask = BIT(18),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_npu_gpll0_clk_src",
-+			.parent_hws = (const struct clk_hw *[]){
-+				&gpll0.clkr.hw },
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_npu_gpll0_div_clk_src = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x52004,
-+		.enable_mask = BIT(19),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_npu_gpll0_div_clk_src",
-+			.parent_hws = (const struct clk_hw *[]){
-+				&gcc_npu_gpll0_clk_src.clkr.hw },
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_npu_trig_clk = {
- 	.halt_reg = 0x4d00c,
- 	.halt_check = BRANCH_VOTED,
-@@ -2812,6 +2876,42 @@ static struct clk_branch gcc_ufs_card_phy_aux_hw_ctl_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_ufs_card_rx_symbol_0_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x7501c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_ufs_card_rx_symbol_0_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_ufs_card_rx_symbol_1_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x750ac,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_ufs_card_rx_symbol_1_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_ufs_card_tx_symbol_0_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x75018,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_ufs_card_tx_symbol_0_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_ufs_card_unipro_core_clk = {
- 	.halt_reg = 0x75058,
- 	.halt_check = BRANCH_HALT,
-@@ -2992,6 +3092,42 @@ static struct clk_branch gcc_ufs_phy_phy_aux_hw_ctl_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x7701c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_ufs_phy_rx_symbol_0_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_ufs_phy_rx_symbol_1_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x770ac,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_ufs_phy_rx_symbol_1_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch gcc_ufs_phy_tx_symbol_0_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x77018,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_ufs_phy_tx_symbol_0_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_ufs_phy_unipro_core_clk = {
- 	.halt_reg = 0x77058,
- 	.halt_check = BRANCH_HALT,
-@@ -3171,6 +3307,18 @@ static struct clk_branch gcc_usb3_prim_phy_com_aux_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0xf058,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_usb3_prim_phy_pipe_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_usb3_sec_clkref_clk = {
- 	.halt_reg = 0x8c028,
- 	.halt_check = BRANCH_HALT,
-@@ -3201,6 +3349,18 @@ static struct clk_branch gcc_usb3_sec_phy_aux_clk = {
- 	},
- };
- 
-+static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
-+	.halt_check = BRANCH_HALT_SKIP,
-+	.clkr = {
-+		.enable_reg = 0x10058,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "gcc_usb3_sec_phy_pipe_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
- static struct clk_branch gcc_usb3_sec_phy_com_aux_clk = {
- 	.halt_reg = 0x10054,
- 	.halt_check = BRANCH_HALT,
-@@ -3332,12 +3492,16 @@ static struct clk_regmap *gcc_sm8150_clocks[] = {
- 	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
- 	[GCC_GP3_CLK_SRC] = &gcc_gp3_clk_src.clkr,
- 	[GCC_GPU_CFG_AHB_CLK] = &gcc_gpu_cfg_ahb_clk.clkr,
-+	[GCC_GPU_GPLL0_CLK_SRC] = &gcc_gpu_gpll0_clk_src.clkr,
-+	[GCC_GPU_GPLL0_DIV_CLK_SRC] = &gcc_gpu_gpll0_div_clk_src.clkr,
- 	[GCC_GPU_IREF_CLK] = &gcc_gpu_iref_clk.clkr,
- 	[GCC_GPU_MEMNOC_GFX_CLK] = &gcc_gpu_memnoc_gfx_clk.clkr,
- 	[GCC_GPU_SNOC_DVM_GFX_CLK] = &gcc_gpu_snoc_dvm_gfx_clk.clkr,
- 	[GCC_NPU_AT_CLK] = &gcc_npu_at_clk.clkr,
- 	[GCC_NPU_AXI_CLK] = &gcc_npu_axi_clk.clkr,
- 	[GCC_NPU_CFG_AHB_CLK] = &gcc_npu_cfg_ahb_clk.clkr,
-+	[GCC_NPU_GPLL0_CLK_SRC] = &gcc_npu_gpll0_clk_src.clkr,
-+	[GCC_NPU_GPLL0_DIV_CLK_SRC] = &gcc_npu_gpll0_div_clk_src.clkr,
- 	[GCC_NPU_TRIG_CLK] = &gcc_npu_trig_clk.clkr,
- 	[GCC_PCIE0_PHY_REFGEN_CLK] = &gcc_pcie0_phy_refgen_clk.clkr,
- 	[GCC_PCIE1_PHY_REFGEN_CLK] = &gcc_pcie1_phy_refgen_clk.clkr,
-@@ -3442,6 +3606,9 @@ static struct clk_regmap *gcc_sm8150_clocks[] = {
- 	[GCC_UFS_CARD_PHY_AUX_CLK_SRC] = &gcc_ufs_card_phy_aux_clk_src.clkr,
- 	[GCC_UFS_CARD_PHY_AUX_HW_CTL_CLK] =
- 		&gcc_ufs_card_phy_aux_hw_ctl_clk.clkr,
-+	[GCC_UFS_CARD_RX_SYMBOL_0_CLK] = &gcc_ufs_card_rx_symbol_0_clk.clkr,
-+	[GCC_UFS_CARD_RX_SYMBOL_1_CLK] = &gcc_ufs_card_rx_symbol_1_clk.clkr,
-+	[GCC_UFS_CARD_TX_SYMBOL_0_CLK] = &gcc_ufs_card_tx_symbol_0_clk.clkr,
- 	[GCC_UFS_CARD_UNIPRO_CORE_CLK] = &gcc_ufs_card_unipro_core_clk.clkr,
- 	[GCC_UFS_CARD_UNIPRO_CORE_CLK_SRC] =
- 		&gcc_ufs_card_unipro_core_clk_src.clkr,
-@@ -3459,6 +3626,9 @@ static struct clk_regmap *gcc_sm8150_clocks[] = {
- 	[GCC_UFS_PHY_PHY_AUX_CLK] = &gcc_ufs_phy_phy_aux_clk.clkr,
- 	[GCC_UFS_PHY_PHY_AUX_CLK_SRC] = &gcc_ufs_phy_phy_aux_clk_src.clkr,
- 	[GCC_UFS_PHY_PHY_AUX_HW_CTL_CLK] = &gcc_ufs_phy_phy_aux_hw_ctl_clk.clkr,
-+	[GCC_UFS_PHY_RX_SYMBOL_0_CLK] = &gcc_ufs_phy_rx_symbol_0_clk.clkr,
-+	[GCC_UFS_PHY_RX_SYMBOL_1_CLK] = &gcc_ufs_phy_rx_symbol_1_clk.clkr,
-+	[GCC_UFS_PHY_TX_SYMBOL_0_CLK] = &gcc_ufs_phy_tx_symbol_0_clk.clkr,
- 	[GCC_UFS_PHY_UNIPRO_CORE_CLK] = &gcc_ufs_phy_unipro_core_clk.clkr,
- 	[GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC] =
- 		&gcc_ufs_phy_unipro_core_clk_src.clkr,
-@@ -3480,10 +3650,12 @@ static struct clk_regmap *gcc_sm8150_clocks[] = {
- 	[GCC_USB3_PRIM_PHY_AUX_CLK] = &gcc_usb3_prim_phy_aux_clk.clkr,
- 	[GCC_USB3_PRIM_PHY_AUX_CLK_SRC] = &gcc_usb3_prim_phy_aux_clk_src.clkr,
- 	[GCC_USB3_PRIM_PHY_COM_AUX_CLK] = &gcc_usb3_prim_phy_com_aux_clk.clkr,
-+	[GCC_USB3_PRIM_PHY_PIPE_CLK] = &gcc_usb3_prim_phy_pipe_clk.clkr,
- 	[GCC_USB3_SEC_CLKREF_CLK] = &gcc_usb3_sec_clkref_clk.clkr,
- 	[GCC_USB3_SEC_PHY_AUX_CLK] = &gcc_usb3_sec_phy_aux_clk.clkr,
- 	[GCC_USB3_SEC_PHY_AUX_CLK_SRC] = &gcc_usb3_sec_phy_aux_clk_src.clkr,
- 	[GCC_USB3_SEC_PHY_COM_AUX_CLK] = &gcc_usb3_sec_phy_com_aux_clk.clkr,
-+	[GCC_USB3_SEC_PHY_PIPE_CLK] = &gcc_usb3_sec_phy_pipe_clk.clkr,
- 	[GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
- 	[GCC_VIDEO_AXI0_CLK] = &gcc_video_axi0_clk.clkr,
- 	[GCC_VIDEO_AXI1_CLK] = &gcc_video_axi1_clk.clkr,
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+ .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
+ .../bindings/power/renesas,rcar-sysc.txt           |   1 +
+ .../devicetree/bindings/reset/renesas,rst.txt      |   1 +
+ drivers/clk/renesas/Kconfig                        |   5 +
+ drivers/clk/renesas/Makefile                       |   1 +
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c            | 330 ++++++++
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ drivers/pinctrl/sh-pfc/Kconfig                     |   4 +
+ drivers/pinctrl/sh-pfc/Makefile                    |   1 +
+ drivers/pinctrl/sh-pfc/core.c                      |   6 +
+ drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 861 +++++++++++----------
+ drivers/pinctrl/sh-pfc/sh_pfc.h                    |   1 +
+ drivers/soc/renesas/Kconfig                        |   5 +
+ drivers/soc/renesas/Makefile                       |   1 +
+ drivers/soc/renesas/r8a774b1-sysc.c                |  35 +
+ drivers/soc/renesas/rcar-rst.c                     |   1 +
+ drivers/soc/renesas/rcar-sysc.c                    |   3 +
+ drivers/soc/renesas/rcar-sysc.h                    |   1 +
+ 20 files changed, 862 insertions(+), 413 deletions(-)
+ create mode 100644 drivers/clk/renesas/r8a774b1-cpg-mssr.c
+ create mode 100644 drivers/soc/renesas/r8a774b1-sysc.c
+
 -- 
-2.20.1
+2.7.4
 
