@@ -6,66 +6,90 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C48CBC4CECD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:23:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47EE2C4CECD
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97CAE20640
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EA7214AF
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:24:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568740996;
-	bh=1nkPyDmw3M1xYDQWHb5QNUaZfBwrP0Luz7WD0s9GULA=;
+	s=default; t=1568741066;
+	bh=0Art3gK5c5hrrmdkefySZA9KIDlpcFErLejaCZZ3HNQ=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=Kw4txjyf71F+bVr8bihuHIULTB1y1jouFMal/b7g5Mq3SBtYprIGYfu1tvmOxobNb
-	 aTgzEHMov6d0q+s+GPb3KFGQza44A9sGbg+1YqaW6RE5e+Bk7DFik1HuTPkeaXFfX9
-	 SLQQc/nsg6BIzzHJPTAHQ8YCiQirx0OAN/bvAtGo=
+	b=RHS9eanFcOniK+WrUblXZXPv3VROfz1FdtMkDdDGXuxCYp0WEK1Q9WtmMfwPBkaPq
+	 x5SC7RkPA86EuH6ojyafbMPadmVwQyCX73sDm9y0OPfks9/zuv0s8V0oHIc+btbUZx
+	 NQrF5EC7EMiXsGFO8InEHnBUzyyouXF0fhsEboTw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731021AbfIQRXQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 13:23:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37682 "EHLO mail.kernel.org"
+        id S1726523AbfIQRYZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 13:24:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727112AbfIQRXP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:23:15 -0400
+        id S1731017AbfIQRYZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:24:25 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2765214AF;
-        Tue, 17 Sep 2019 17:23:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AAF5C214AF;
+        Tue, 17 Sep 2019 17:24:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568740994;
-        bh=1nkPyDmw3M1xYDQWHb5QNUaZfBwrP0Luz7WD0s9GULA=;
+        s=default; t=1568741064;
+        bh=0Art3gK5c5hrrmdkefySZA9KIDlpcFErLejaCZZ3HNQ=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=bDAnYw3nkBrEZndtfMdLUcO2bf5o52dcBnEkQxZ5Pv1zGEEPPbLK9R6d7RnCzb39U
-         c7gPNh5gBUV4tTajhym0rdxLnJ/F3FReZ3ScYeekkHyTl7lkO33qof8aPtXC76Lugv
-         c1gKIbd6ysUW+B+32ZWATm6nO5Q2908ffjcuk0sQ=
+        b=em7sPNUKhN2YtBZAccWyaW84ugOmDBd44dgaqa3DPFMDDswhXf+jkie+X+DUwGeHn
+         7uZ7J4xpEJ8tMQWLoJhR2hyFJTo25beYciFNAzBcAKaJIRp9OXjmbEPARlQZ+ifCq7
+         9x/PaCVHDg5vmJcRQBsdrUESWoT4FbbUhnnX8wRg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1567414859-3244-3-git-send-email-weiyi.lu@mediatek.com>
-References: <1567414859-3244-1-git-send-email-weiyi.lu@mediatek.com> <1567414859-3244-3-git-send-email-weiyi.lu@mediatek.com>
-Cc:     James Liao <jamesjj.liao@mediatek.com>,
-        Fan Chen <fan.chen@mediatek.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        srv_heupstream@mediatek.com, CK Hu <ck.hu@mediatek.com>,
-        Weiyi Lu <weiyi.lu@mediatek.com>
-To:     Matthias Brugger <matthias.bgg@gmail.com>,
-        Nicolas Boichat <drinkcat@chromium.org>,
-        Rob Herring <robh@kernel.org>, Weiyi Lu <weiyi.lu@mediatek.com>
+In-Reply-To: <20190828181959.204401-1-sboyd@kernel.org>
+References: <20190828181959.204401-1-sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RESEND PATCH v1 2/3] clk: mediatek: Runtime PM support for MT8183 mcucfg clock provider
+Subject: Re: [PATCH v2] clk: Evict unregistered clks from parent caches
 User-Agent: alot/0.8.1
-Date:   Tue, 17 Sep 2019 10:23:14 -0700
-Message-Id: <20190917172314.D2765214AF@mail.kernel.org>
+Date:   Tue, 17 Sep 2019 10:24:23 -0700
+Message-Id: <20190917172424.AAF5C214AF@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Weiyi Lu (2019-09-02 02:00:58)
-> Enable the runtime PM support and forward the struct device pointer for
-> registration of MT8183 mcucfg clocks.
+Quoting Stephen Boyd (2019-08-28 11:19:59)
+> We leave a dangling pointer in each clk_core::parents array that has an
+> unregistered clk as a potential parent when that clk_core pointer is
+> freed by clk{_hw}_unregister(). It is impossible for the true parent of
+> a clk to be set with clk_set_parent() once the dangling pointer is left
+> in the cache because we compare parent pointers in
+> clk_fetch_parent_index() instead of checking for a matching clk name or
+> clk_hw pointer.
 >=20
-> Signed-off-by: Weiyi Lu <weiyi.lu@mediatek.com>
+> Before commit ede77858473a ("clk: Remove global clk traversal on fetch
+> parent index"), we would check clk_hw pointers, which has a higher
+> chance of being the same between registration and unregistration, but it
+> can still be allocated and freed by the clk provider. In fact, this has
+> been a long standing problem since commit da0f0b2c3ad2 ("clk: Correct
+> lookup logic in clk_fetch_parent_index()") where we stopped trying to
+> compare clk names and skipped over entries in the cache that weren't
+> NULL.
+>=20
+> There are good (performance) reasons to not do the global tree lookup in
+> cases where the cache holds dangling pointers to parents that have been
+> unregistered. Let's take the performance hit on the uncommon
+> registration path instead. Loop through all the clk_core::parents arrays
+> when a clk is unregistered and set the entry to NULL when the parent
+> cache entry and clk being unregistered are the same pointer. This will
+> fix this problem and avoid the overhead for the "normal" case.
+>=20
+> Based on a patch by Bjorn Andersson.
+>=20
+> Fixes: da0f0b2c3ad2 ("clk: Correct lookup logic in clk_fetch_parent_index=
+()")
+> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
 
 Applied to clk-next
