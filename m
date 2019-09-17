@@ -6,61 +6,61 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEBD9C4CECD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:27:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6008EC4CEC9
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B567F21848
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:27:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3620721852
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 17:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568741271;
-	bh=pWYWNjrafaEka3By8melCVwnYdQavo9zhE9xnRSmIVk=;
+	s=default; t=1568741306;
+	bh=i6cu//8UqqnO+AXA2MTlSGElpD6de5WiTt762/oa82w=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=D0S9ska0Zkiv0o24cLAhiFNs1GpppjZDMVgTgHhVNBu/b3bCCtMtTnBbnX2ktwnGX
-	 sGmlYYPBqijh0tD/iL9vfVRxPMQAB6zGEybhyAAleBI5XdpGzGKwTd5DNDeu7oYafy
-	 S1Ui7sE4m6KPml0kyJLU/DH8NgcYF0G13/kpz5BY=
+	b=ocm4BRwQ8/gcegadtNMG//WmQ4QOtzs5cGXgUrRXzDdXyBaBJvcRXjngMy8LEgiO4
+	 FTQSnirUYGLEO7OSyEQ5C/lyet0KnsJeUSco3XG95MzoiOwrG08KkWJixxvUJCmfk8
+	 gWe+peV1l5Kj9GsFq2HVfBgHTqZcvvlG6qNs8AbQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728016AbfIQR1v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 13:27:51 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41166 "EHLO mail.kernel.org"
+        id S1731149AbfIQR2Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 13:28:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727944AbfIQR1v (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Sep 2019 13:27:51 -0400
+        id S1731152AbfIQR2Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Sep 2019 13:28:25 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B20472171F;
-        Tue, 17 Sep 2019 17:27:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1760C2171F;
+        Tue, 17 Sep 2019 17:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568741270;
-        bh=pWYWNjrafaEka3By8melCVwnYdQavo9zhE9xnRSmIVk=;
+        s=default; t=1568741305;
+        bh=i6cu//8UqqnO+AXA2MTlSGElpD6de5WiTt762/oa82w=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=G2Jj+/t30a67gfE+Kg/xxIZ2Aq4hyC/HJlnECTbsVXHqdcHC4Ay0hqkmAGy/jleRr
-         jpB8fTxdORg5ggqS+QdpyiEkDZPKBg/qZlme0PyC+m7yxdiFClYNCCnVMBoGuFhz5u
-         dUz/CYFGC99a4ErBP92E6xXWZ7Z3EPBbUA3HG0Hs=
+        b=0tMCD6z73L9+9dQNwM1b+ZADypT22NiA64cLairhrh0p0O4PYjpxQ0uqjnqYxM53T
+         nRoQ1DC2HoFni38vzHwBxHOw97Pq8edm9msUqyeIVctZvwYP3MnkiASSJqvUUQ+h+R
+         FXAl8qvFKyOF0IQVB5d3uhq6qHXYIzkSH4xKcI2c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190820030536.1181-1-yamada.masahiro@socionext.com>
-References: <20190820030536.1181-1-yamada.masahiro@socionext.com>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-clk@vger.kernel.org
+In-Reply-To: <20190822093126.594013-1-lkundrak@v3.sk>
+References: <20190822093126.594013-1-lkundrak@v3.sk>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+To:     Lubomir Rintel <lkundrak@v3.sk>,
+        Michael Turquette <mturquette@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: add include guard to clk-conf.h
+Subject: Re: [PATCH] clk: remove extra ---help--- tags in Kconfig
 User-Agent: alot/0.8.1
-Date:   Tue, 17 Sep 2019 10:27:49 -0700
-Message-Id: <20190917172750.B20472171F@mail.kernel.org>
+Date:   Tue, 17 Sep 2019 10:28:24 -0700
+Message-Id: <20190917172825.1760C2171F@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Masahiro Yamada (2019-08-19 20:05:36)
-> Add a header include guard just in case.
+Quoting Lubomir Rintel (2019-08-22 02:31:26)
+> Sometimes an extraneous "---help---" follows "help". That is probably a
+> copy&paste error stemming from their inconsistent use. Remove those.
 >=20
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 > ---
 
 Applied to clk-next
