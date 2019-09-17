@@ -2,107 +2,171 @@ Return-Path: <SRS0=xl4E=XM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1A16C4CECD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 16:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12220C4CED0
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 16:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C87842067B
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 16:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D265C21881
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 16:59:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YA0FtVOq"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="V78rxD2Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730574AbfIQQgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 12:36:38 -0400
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:44096 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727229AbfIQQgi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 12:36:38 -0400
-Received: by mail-pf1-f195.google.com with SMTP id q21so2461737pfn.11
-        for <linux-clk@vger.kernel.org>; Tue, 17 Sep 2019 09:36:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=6oL27CCsiCgWC+s9QdRYX453QCLZxLS2++aHbtnJhwo=;
-        b=YA0FtVOqhPZ+x3BfaIoVZIEZexqC9TyNKApW9YBx6UryG5ITeV5G/PcVyovxlcN+mC
-         os44E6Ij+VtAx8kdLvm5CDW3dSDIYirj+oo2lcs2vH01UDW4bGLLNb9WTGyjObDvjKoj
-         fBuR+TQerwfgIFxcGZl8M9n99ztxdoJWyHTr3aKJskQWgCTjdqc3CzWAMMCPIWWV27uk
-         r6QlYUhCtyjRpnvTXR0DG8uzBazHmw40E5sw5yAMAHs41eotxnNZMhM36rvMkaTMxCjz
-         4Q5hfisagPglftlQNRwob/iecOFYUAkervhL5SGw2H57K6310ejYzOFpMM61c3xeiltY
-         gc0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=6oL27CCsiCgWC+s9QdRYX453QCLZxLS2++aHbtnJhwo=;
-        b=AsvjC/Ys+4UtP6CNAoyXfzT1jFFh5+u+UysQIA9m8TVZs8HB1MmJx2aazaTQjRnaa7
-         aWgdFpKHCHt5SVQWlxeKvbmglSpJrMpWm2wxS9KvpK0YQaNMWlFVsOZWaOI8Vt2C7qD+
-         VavOTCM1Cj7sAQu8Gla51P/AB7JD4iHtNFIYbJzsEAalaih/B8hYwXMiQf0FaNaDQ618
-         4iid3NQ4neR39yyIgPWbbqp5MWNNWbMgnmpUumbMqiLlJj3K9oul1BlKT2URsyNFkMJp
-         QLdoF0/cZe8ezAsl+0S/lNsMst3ibYGpG6ERwXifq69MWCzlrq2QOrJl/xjIpUHL4i/f
-         CWhA==
-X-Gm-Message-State: APjAAAVVUEqHHhRDUJ3EyUGUg7s6XQls/QbEaIxUnilhCyc6Eeif/9ka
-        HflWr7NqXNVxqDZHWncfCtlEi1uf+Q==
-X-Google-Smtp-Source: APXvYqylABHbwwGnTpG+yB/f0dYMRAjI9T2OAHarx7EJA+9sLbutDPD4P64xC24J0U/cyFBf2nmCMw==
-X-Received: by 2002:a17:90a:fa0c:: with SMTP id cm12mr5692720pjb.137.1568738197253;
-        Tue, 17 Sep 2019 09:36:37 -0700 (PDT)
-Received: from Mani-XPS-13-9360 ([2409:4072:111:7ed:2c13:36f7:e70f:4a47])
-        by smtp.gmail.com with ESMTPSA id w6sm8080461pfw.84.2019.09.17.09.36.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 17 Sep 2019 09:36:36 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 22:06:28 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     afaerber@suse.de, robh+dt@kernel.org, ulf.hansson@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
-        linus.walleij@linaro.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 1/7] clk: actions: Fix factor clk struct member access
-Message-ID: <20190917163628.GA2615@Mani-XPS-13-9360>
-References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
- <20190916154546.24982-2-manivannan.sadhasivam@linaro.org>
- <20190917163419.4C4DD20665@mail.kernel.org>
+        id S1730663AbfIQQ7M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 12:59:12 -0400
+Received: from mail-eopbgr140040.outbound.protection.outlook.com ([40.107.14.40]:64736
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727936AbfIQQ7L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Sep 2019 12:59:11 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nKHZ5UH1tBvAKqgB1Z4+zaduJ3Noguc3Rs81RJBQj9JUiWVGSSDYY+jhGDeScDHEyVOz0O0LPRGlh0jvppgA+vZ7jas8QRC4xlP8FtR5sypWlOEoln4sPkCJ8JH3dwn+GbihIyWOxV1EOZ+FvZ6Z8sCvGAhr2c6r2Gr/2wo5vatv03bV8P88FB0OL+Hoc+JujQXX32oMFgLm8K+ipUE384riOcTGTP82y1Tl7aWSBau3rzg8mDsZVVKQYrh+ADjUicjcQyKQs/tD3toI9bKsZItAKkVBoBpR2pu7yX+I/p+Wsne3nFic2FjEDlOEYwbnJ/jBqqnRT52K6vnLshJGBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YbU2rrspCG+0d2fYwQro1U279BxV8/zFN4LUC00lCUg=;
+ b=liBXsTDFUcYs9fUM4LKNjHXpiELDI7tgylBoeuPO1pZvg/ugMc5WJYTspcnLJENHtnHqczC7r1VNT8Upkf0wX+c/qHUgGFEQ/Xn4BMKSHfATxC9M0awXA/tnb1+YkgSjBYxQ+vLvrmgmSBpbrMjeQF4YN+nRzCcnhuqeRf8asBSoQifzRIgarmQqJQ/hiOfc2W9BXtt6/QAtmNXAvJtcvXt8qdaxgGJvOW8VLM0IPwQBK9//Dx2fsUV0xRm3P7Sn9r7eam88HHRozNQ8nLEgyhQ2h8DTCWXgshPlh03tWfdBmQaHvDjs9jVdBZgVYRcCk1via6LP7w3qVRDHlXrxwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YbU2rrspCG+0d2fYwQro1U279BxV8/zFN4LUC00lCUg=;
+ b=V78rxD2Ze8nUiJRCQFiPKsgLdA67ZIHoKxLHL2B/fRlOydimcqJeY/8+mrpoygFpNbBkze8h44gYsn00Hs7vHDT0H07Me++sFzR4yTtL4aSHQwLEfiaKFRw7runBkP0qklR0Zj5iM/oHlwogObQXKHV/7871nr+WHVRYl0CExrw=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB4013.eurprd04.prod.outlook.com (10.171.182.22) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2284.18; Tue, 17 Sep 2019 16:59:07 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::c5e8:90f8:da97:947e]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::c5e8:90f8:da97:947e%3]) with mapi id 15.20.2263.023; Tue, 17 Sep 2019
+ 16:59:07 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+CC:     Chanwoo Choi <cw00.choi@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 1/7] clk: imx8m: Set CLK_GET_RATE_NOCACHE on
+ dram_alt/apb
+Thread-Topic: [PATCH v2 1/7] clk: imx8m: Set CLK_GET_RATE_NOCACHE on
+ dram_alt/apb
+Thread-Index: AQHVV25IgdEhNlz9IkikhFBZNpksww==
+Date:   Tue, 17 Sep 2019 16:59:07 +0000
+Message-ID: <VI1PR04MB7023D4F1F3D02E1C7773A3D1EE8F0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <cover.1566315740.git.leonard.crestez@nxp.com>
+ <90bfeebcb76e76d286ed7f022ea9e0d9a569ebe2.1566315740.git.leonard.crestez@nxp.com>
+ <20190916203312.CF8D02067B@mail.kernel.org>
+ <VI1PR04MB70239F26BE42AD5E6FC3639DEE8C0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <20190917163215.A838020665@mail.kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [82.144.34.2]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 3adbe2bc-6b73-40a5-1fe9-08d73b905a65
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:VI1PR04MB4013;
+x-ms-traffictypediagnostic: VI1PR04MB4013:|VI1PR04MB4013:
+x-ms-exchange-purlcount: 1
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB401379666716168E961C67D3EE8F0@VI1PR04MB4013.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 01630974C0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(136003)(346002)(396003)(39860400002)(189003)(199004)(7416002)(5660300002)(446003)(44832011)(14454004)(66946007)(74316002)(14444005)(6116002)(66066001)(3846002)(53546011)(316002)(476003)(6506007)(71200400001)(33656002)(52536014)(4326008)(66476007)(66556008)(26005)(486006)(71190400001)(966005)(76116006)(91956017)(66446008)(54906003)(64756008)(6306002)(2906002)(55016002)(7736002)(9686003)(110136005)(86362001)(25786009)(6246003)(186003)(8936002)(8676002)(99286004)(81156014)(305945005)(81166006)(6436002)(256004)(7696005)(102836004)(76176011)(229853002)(478600001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4013;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: fw1mYWuhLAAw+sCtAca1nIJPwUNaLCzrvaXSDligXTvTHoEDDBZ1GSuoiAxBiXFePEYWxMBdOMgjvqqWpBpjthTmwqmPJ9eCd+iTz8RPpiAa+5i8X3DyIzsdtFrtq7U+Pf5ndKpuWNkP1SMn/uvKaF8PpTUhgXAzHhy0FlpckpXvGiwwED+yGEXNzAAdvLi6T/v1JH8wc+MjLpFVOSDPbrd5PrkR/Zvd5XTdcRHCqZRk97aAHv7txexRaS6iknaqls0VGTLyzjmLDgDw3SFYWIjb3kzrh9fRR79SpSVSn9Wh9mFhiY8MJKw6wh/jKZuFCZBfT55MKX24ofei6Fk8/gP+2pi5Bpfomh9KZV0jxkPrMjrMINhRkS9ZwhUpa8u4ROgfHoijCmMsCM/xVdO5a1kcxu3ie0FdeQQFk8fgQQM=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917163419.4C4DD20665@mail.kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 3adbe2bc-6b73-40a5-1fe9-08d73b905a65
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2019 16:59:07.2209
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 5/WRbKoO1zVb5QdrMAk52KJBf95MXw9v2rz0Wgwh4Y/Cdo+wxtTYADyFxkyolpBD0eFCnD/b0pwdI9y9OkmnJA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4013
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 09:34:18AM -0700, Stephen Boyd wrote:
-> Quoting Manivannan Sadhasivam (2019-09-16 08:45:40)
-> > Since the helper "owl_factor_helper_round_rate" is shared between factor
-> > and composite clocks, using the factor clk specific helper function
-> > like "hw_to_owl_factor" to access its members will create issues when
-> > called from composite clk specific code. Hence, pass the "factor_hw"
-> > struct pointer directly instead of fetching it using factor clk specific
-> > helpers.
-> > 
-> > This issue has been observed when a composite clock like "sd0_clk" tried
-> > to call "owl_factor_helper_round_rate" resulting in pointer dereferencing
-> > error.
-> > 
-> > While we are at it, let's rename the "clk_val_best" function to
-> > "owl_clk_val_best" since this is an owl SoCs specific helper.
-> > 
-> > Fixes: 4bb78fc9744a ("clk: actions: Add factor clock support")
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> > ---
-> 
-> I can apply this to clk-next?
-
-Yes, please :-) Rest can go through Ulf's tree.
-
-Thanks,
-Mani
-
-> 
+On 2019-09-17 7:32 PM, Stephen Boyd wrote:=0A=
+> Quoting Leonard Crestez (2019-09-16 16:03:53)=0A=
+>> On 2019-09-16 11:33 PM, Stephen Boyd wrote:=0A=
+>>> Quoting Leonard Crestez (2019-08-20 08:45:06)=0A=
+>>>> Dram frequency changes required modifying these clocks outside the=0A=
+>>>> control of clk framework. Mark them as CLK_GET_RATE_NOCACHE so that=0A=
+>>>> rates are always read back from registers.=0A=
+>>>=0A=
+>>> Why can't we control the clks from the clk framework? Please add that=
+=0A=
+>>> information in the commit text here.=0A=
+>>=0A=
+>> OK, I will update commit message and comments=0A=
+>>=0A=
+>> These clocks are only modified for DRAM frequency switches during which=
+=0A=
+>> DRAM is briefly inaccessible. The switch is performed with a SMC call to=
+=0A=
+>> by TF-A which runs from a SRAM area. Upon returning to linux several=0A=
+>> clocks bits are modified and we need to update them.=0A=
+>>=0A=
+>> For rate bits an easy solution is to just mark with=0A=
+>> CLK_GET_RATE_NOCACHE, muxes are handled explicitly.=0A=
+> =0A=
+> Is there any reason to expose or control these clks from Linux then? It=
+=0A=
+> might be easier to just make any children clks of the DRAM frequency clk=
+=0A=
+> "root" clks and then ignore any frequency that they might have.=0A=
+> Similarly, because the SMC call is used to change the frequency, it may=
+=0A=
+> be simpler to handle that completely outside of the clk framework (it=0A=
+> may already be this way in this patch series but I haven't read=0A=
+> everything here).=0A=
+=0A=
+The dram alt/apb clocks are real imx8m composite clocks with the same HW =
+=0A=
+implementation as used for peripherals. They also have mux parents which =
+=0A=
+are under the control of the clock framework so the freq switching code =0A=
+takes care to properly enable the new parents before calling SMC.=0A=
+=0A=
+See imx_ddrc_set_freq: https://patchwork.kernel.org/patch/11104145/=0A=
+=0A=
+Removing dram alt/apb clocks from the tree would still require keeping =0A=
+possible parents enabled somehow. It wouldn't be simpler but a lot uglier.=
+=0A=
+=0A=
+--=0A=
+Regards,=0A=
+Leonard=0A=
