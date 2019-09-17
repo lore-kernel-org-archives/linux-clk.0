@@ -2,93 +2,147 @@ Return-Path: <SRS0=xl4E=XM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFED2C4CEC9
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 05:44:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAD75C4CECD
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 05:59:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B217F20678
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 05:44:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83CA621848
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 05:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mHgLFOns"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="OTx9Nohw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391109AbfIQFof (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 01:44:35 -0400
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:46943 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726494AbfIQFof (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 01:44:35 -0400
-Received: by mail-ua1-f65.google.com with SMTP id k12so681982uan.13
-        for <linux-clk@vger.kernel.org>; Mon, 16 Sep 2019 22:44:34 -0700 (PDT)
+        id S1728833AbfIQF7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 01:59:54 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:26585 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727576AbfIQF7x (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 01:59:53 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Eugen.Hristev@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="Eugen.Hristev@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Eugen.Hristev@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Eugen.Hristev@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: nfOkmiVO6pbt4I/bs2EkRIiW+8l1TnNxunJZiit8ja9NN3RvmKap0LTaeJxq0Lej95Ak9fQEQX
+ KgfPSy875lPJWVWW0rulz8XWCiruC9zGo5dYbozGrFXFZyOd4Qqyd/coYrNtYIcTzHn1o9cJcC
+ xuGKUejo0Rm8BO0TzjeQEgXQ0Hexi8f7U7b95TTqvI3r0j+ae6fylr+LeX+Fz5M0uYMWe4WZEx
+ 5/IC6PrCAMr2UcPIZEC7GEEUsrWBFOt3it79dIXiv2ivss0zBnm4xjJ4DyfNcK++dVDOfQif6o
+ omk=
+X-IronPort-AV: E=Sophos;i="5.64,515,1559545200"; 
+   d="scan'208";a="47748416"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 16 Sep 2019 22:59:25 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Mon, 16 Sep 2019 22:59:21 -0700
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Mon, 16 Sep 2019 22:59:21 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=g1jBJZE5wux5hg+EerKgo7s97B8QNfi6zfna0PnvVDklJXK8c7KvDnmyEPs5aNzn0y/YUSyhUcx4NqWESm7Y9Pf5Kd+HyKX3sItyatnVZs31UiJupqh1crnMvDzaJpbgVWjxxP2B0uTSjEGfwYv7MLtFf6/CTIc4SpBxXJyG4JjixGGgPDQlo2MMJ8bKMhVsnwmWvDI9BnT757+RorTWhweKXnTTv3hfGYSzJAXXpOQEFVlqdE5SPt/1bhWbvKAv3ZYcxv+7LH+YM0xuXbg4S6w00AKeQwZkyCzL1MnPCT9nWwboON3BsEKHdaS0vuAHK1hgg+KPh5/i+bTAVGVEOA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JQdSV+TV47ffXhcwBGGOQ+AmEsHtpqsHoXMlhVUyDz8=;
+ b=G9EzO7RXiLe+bxSJ447nwrW2qWE0a9kuE4chQ86vzfVhrw4yPAPZXLDBkBJnYfafOlun1uHLgN/mPiHSNa/rTI6yCsZn8vEsfG0El/QO1pSrTbSQHLEpS22zaSlwHuSoHz9iSx5jiWf8FMolfOUX9wsEoAI6cXleFPI+W1bV3WyM4zBtXNqMCrk0NvT+W7/YR1rDzX2Mh8G35V1kZDKdo7LPtYXkeYDvdCI9NW4dvWRGFx9VfMGIkljq1xrCro3AQ24UYHYXebbX8x4gcGgJBRhNI7fBnI+BqCi7jEskk6ZDvBHRA4np47mebZr12JK8GHBgvPDtXVrKwJOx18mwtQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aWLbKiwRlS208Z3+3AMSNgvhyJJKUZ0x7Hzk0zm86yg=;
-        b=mHgLFOns1Q8pXhphDAfob5kfnh4UcmO03EkmEF12HNV6uR4Qno8zQEPxHXzhgHUrcr
-         kewUlr7NxVnQ4PnWNzV8t88xJLA3EKmTZUxISQDqOotlVDFgEd7zAQ/uPjFpd7Hldor3
-         d9oBHQku82cjL3DWPdKTo2lBdvoYiUd6yB1XHD8EXnHAbSwbugEAF7vPCB7W+hcHHICC
-         4XMgP+jZQENSLrAeTm/uNbxHaA0YjpvBJTs2fxmDN51BvYHMmzyk/2QYv9K2Vii18Xk+
-         MsJRPeayYD3HVFu2SvFWk6qswSvGngTNlz2DrWjU6LOkjOQy1g2Osvw1nC+/G7RsHuC8
-         Terw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aWLbKiwRlS208Z3+3AMSNgvhyJJKUZ0x7Hzk0zm86yg=;
-        b=Ey+719ySjj6iwKDFyPVE1vYZ1jwg8yV0QQyLwVSXutdQu3gf1dB1ksPY7aivmTdpbs
-         LkDZzDye/T4bxqwgbEL/dpF7K6LY1km/EaYs1u7ukr54D24fH1Mzb7YeKvz3wicCn+Aj
-         9ufjpw/0L3uVEkhuAsMZ9DgviSpyOAIJt8cAMJ2YezDnXt3fGaMz0hPL3Mnnsr/ybgkW
-         PtUhFtq/c8fhzGEbO7vcZYbi+5SlJF+tafwLEx+zyCZkqOp2gxUI96i7hzLmS+sixTgh
-         dmWDX5g6+HM2jEdX/qi0woC65AeEBFlbUI++l49JL/CoYB6cpxMpzjZ2dNA6Jw9ktYQy
-         w/6Q==
-X-Gm-Message-State: APjAAAUy8/kqcIf9EgsYTBYasOI9SpeltYWPQnXEnt6EnLpblvszHq9T
-        qA7EtWSsaTCLGD9IqzTXE+oDYG87fQnUJBhDDqsQnQ==
-X-Google-Smtp-Source: APXvYqykoJrSGi+xeUz/j8IFT5604ond2RCO1ES3sXqJPjir0wt/iu+bHY6zaeJiBuBtp/FFUSbJNrd1ImAhCmm6N9E=
-X-Received: by 2002:ab0:539d:: with SMTP id k29mr612429uaa.67.1568699073725;
- Mon, 16 Sep 2019 22:44:33 -0700 (PDT)
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=JQdSV+TV47ffXhcwBGGOQ+AmEsHtpqsHoXMlhVUyDz8=;
+ b=OTx9Nohw55HOiH1QAN/ciibCw4dXFbFmOcQSz/WJw7AObFVcexDeQg+lf5Atokd5cNl9wLjbW0kxufVScbH4/TnvW9rwlj1M4gkNVYQMVLZkr6zN5tx87T2ZmS20jGc6YZlYmSc/s5KsJ1BSd0H06a6b7LkCvwJWk3v/yyn+ANA=
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com (10.168.108.8) by
+ DM5PR11MB2028.namprd11.prod.outlook.com (10.168.104.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2263.17; Tue, 17 Sep 2019 05:59:19 +0000
+Received: from DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::a141:1974:9668:fbe2]) by DM5PR11MB1242.namprd11.prod.outlook.com
+ ([fe80::a141:1974:9668:fbe2%12]) with mapi id 15.20.2263.023; Tue, 17 Sep
+ 2019 05:59:18 +0000
+From:   <Eugen.Hristev@microchip.com>
+To:     <sboyd@kernel.org>, <alexandre.belloni@bootlin.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <mturquette@baylibre.com>
+CC:     <Nicolas.Ferre@microchip.com>
+Subject: Re: [PATCH] clk: at91: allow 24 Mhz clock as input for PLL
+Thread-Topic: [PATCH] clk: at91: allow 24 Mhz clock as input for PLL
+Thread-Index: AQHVaGukjPTRbry/ckGMFC3Lf3IeQKcuv8aAgACn8IA=
+Date:   Tue, 17 Sep 2019 05:59:18 +0000
+Message-ID: <dcae9812-5ae7-567f-0e84-b6166a7f7400@microchip.com>
+References: <1568183622-7858-1-git-send-email-eugen.hristev@microchip.com>
+ <20190916195246.CAE5C206C2@mail.kernel.org>
+In-Reply-To: <20190916195246.CAE5C206C2@mail.kernel.org>
+Accept-Language: en-US, ro-RO
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR06CA0130.eurprd06.prod.outlook.com
+ (2603:10a6:803:a0::23) To DM5PR11MB1242.namprd11.prod.outlook.com
+ (2603:10b6:3:14::8)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tagtoolbar-keys: D20190917085349902
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 1c67d17a-35b2-41c0-27b7-08d73b342d99
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DM5PR11MB2028;
+x-ms-traffictypediagnostic: DM5PR11MB2028:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM5PR11MB20288AD15618E0DB320D6B54E88F0@DM5PR11MB2028.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:1227;
+x-forefront-prvs: 01630974C0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(136003)(39860400002)(396003)(376002)(189003)(199004)(66476007)(8676002)(5660300002)(81156014)(81166006)(66556008)(102836004)(66446008)(64756008)(229853002)(52116002)(66946007)(66066001)(476003)(4326008)(11346002)(14444005)(256004)(86362001)(386003)(2906002)(8936002)(6512007)(6506007)(71190400001)(71200400001)(76176011)(25786009)(2501003)(478600001)(6486002)(14454004)(186003)(3846002)(107886003)(4744005)(53546011)(2616005)(6436002)(446003)(6246003)(6116002)(316002)(31696002)(7736002)(305945005)(99286004)(110136005)(486006)(2201001)(36756003)(26005)(31686004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR11MB2028;H:DM5PR11MB1242.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: CvAtTPr4oevRh2bh1bZnIOMIF+yy3wCZGhSSoRdOI4qsP2Aaj8Nyx6opVg9AMDJtSQzXTF4vdibqA+ucwwMqcx5PJsusDJxQ72zcRLeNekq7whJTYCDNEimonsFn661c8P2BOZquzzrkjEwRZfBArBl68Lr+WeVQ/ggx6a+RzWnO1PVa4GYppvnZ5PlavNNSMAgxTintVLRudEly7qLHnt9KWOklw+0s4caEi1tw4UEuoGPT4VcsioVxlLeQW8miLnuQESFW1kZLNkgsR2/p6tFZM4jIAHaZ00MxcoCgdpeIenZkebGMcRukxG9+W9LUBwLSTamJ7Y49IRt4MrqFcJu5pRQAj5aqpOuncI/oMIqriCEIvObuOzUefohExzoWzLMu5q+ex9yDS7aNKLtxVE8frnbetub3D27aQ6JGVsc=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4200A97683E0924CB8E43E43A25EBC99@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <cover.1568240476.git.amit.kucheria@linaro.org>
- <c88947d18c65a692a8f314e4ad996d9d2a997997.1568240476.git.amit.kucheria@linaro.org>
- <5d7fe862.1c69fb81.8e5e3.2325@mx.google.com>
-In-Reply-To: <5d7fe862.1c69fb81.8e5e3.2325@mx.google.com>
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-Date:   Tue, 17 Sep 2019 11:14:22 +0530
-Message-ID: <CAHLCerMnFvMvAYOnJHoHwkMNhn1n=vpT1TL9nuGM8tBc0sDDRg@mail.gmail.com>
-Subject: Re: [PATCH 4/5] clk: qcom: Initialise clock drivers earlier
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Eduardo Valentin <edubezval@gmail.com>, ilina@codeaurora.org,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1c67d17a-35b2-41c0-27b7-08d73b342d99
+X-MS-Exchange-CrossTenant-originalarrivaltime: 17 Sep 2019 05:59:18.8523
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: B1x8ZcXp/X7ouSknIbbQseoe6kD97S2/mrgjs3NiLBmyH5TUTLYwixraA3U11CLdLc4qfsd/JcCWnr6VbzMumg7UNVyEVqiE3SvJjrRx01Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR11MB2028
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 1:24 AM Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Amit Kucheria (2019-09-11 15:32:33)
-> > Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-> > can have earlier access to cpufreq during booting.
-> >
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
->
-> Did you want this patch to go through clk tree?
-
-Yes, This patch can go in via the clk tree regardless of the rest of the series.
-
-Regards,
-Amit
+DQoNCk9uIDE2LjA5LjIwMTkgMjI6NTIsIFN0ZXBoZW4gQm95ZCB3cm90ZToNCg0KPiBRdW90aW5n
+IEV1Z2VuLkhyaXN0ZXZAbWljcm9jaGlwLmNvbSAoMjAxOS0wOS0xMCAyMzozOToyMCkNCj4+IEZy
+b206IEV1Z2VuIEhyaXN0ZXYgPGV1Z2VuLmhyaXN0ZXZAbWljcm9jaGlwLmNvbT4NCj4+DQo+PiBU
+aGUgUExMIGlucHV0IHJhbmdlIG5lZWRzIHRvIGJlIGFibGUgdG8gYWxsb3cgMjQgTWh6IGNyeXN0
+YWwgYXMgaW5wdXQNCj4+IFVwZGF0ZSB0aGUgcmFuZ2UgYWNjb3JkaW5nbHkgaW4gcGxsYSBjaGFy
+YWN0ZXJpc3RpY3Mgc3RydWN0DQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogRXVnZW4gSHJpc3RldiA8
+ZXVnZW4uaHJpc3RldkBtaWNyb2NoaXAuY29tPg0KPj4gLS0tDQo+IA0KPiBJcyB0aGVyZSBhIEZp
+eGVzOiB0YWcgZm9yIHRoaXM/IFNlZW1zIGxpa2UgaXQgd2FzIGFsd2F5cyB3cm9uZz8NCj4gDQoN
+CkhpIFN0ZXBoZW4sDQoNCkF0IHRoZSBpbml0aWFsIGRlc2lnbiAsIHRoZSAxMiBNaHogd2FzIHRo
+ZSBvbmx5IHBvc3NpYmlsaXR5IGZvciB0aGUgDQpib2FyZHMgdGhlbXNlbHZlcy4gQnV0LCB3aXRo
+IHRoZSBjb21taXQgd2hvIGFkZGVkIHRoaXM6DQoNCkZpeGVzOiBjNTYxZTQxY2U0ZDIgKCJjbGs6
+IGF0OTE6IGFkZCBzYW1hNWQyIFBNQyBkcml2ZXIiKQ0KDQpFdWdlbg0K
