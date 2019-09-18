@@ -2,46 +2,46 @@ Return-Path: <SRS0=9teh=XN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279A8C4CEC9
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 05:53:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 170ECC4CEC4
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 06:07:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E596521906
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 05:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DED1821906
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 06:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568785999;
-	bh=HBh0qOHnVIY+RKDV01ik+wwHQTg6ypDerBR3WXnw6nI=;
+	s=default; t=1568786844;
+	bh=AIGreTLnb6bk3q8joO9XO69tVeABHA7b5VsQxkJP7Qk=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=js251mx5DJbWmk7sNsCM19I3NjkTavAxxwGhajr8vEBNBga2HnJ5HZMGpK/+a1BRK
-	 q5ymqix1JciID7GNzs5WQvL+mwoenXWq/P8AKZNzRdmZlAWgRHcH3x9ACg0l7eWmsZ
-	 W6E/TZ5I9qM6suyRWTAqYOJsJ6YIgzO6jQ2C4G5A=
+	b=LoHuEUWG31RTOYWj2gvqxFux/3Z5RqomThkHb4H10jgcbE/5MJ89LJrrSQ+JjXTDH
+	 NcwjAYXWJWvIndqeyIoTcD7HdDGITblMFOfVqr74cywRtRU0laf104Iqa2fXPsMKsa
+	 hnCAM7E+K2N1FnuYazvKUrTlXrDkl2dSTGWHcp5c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfIRFxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Sep 2019 01:53:18 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58370 "EHLO mail.kernel.org"
+        id S1727730AbfIRGHY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Sep 2019 02:07:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725920AbfIRFxS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Sep 2019 01:53:18 -0400
+        id S1725820AbfIRGHY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Sep 2019 02:07:24 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8EF6E214AF;
-        Wed, 18 Sep 2019 05:53:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61E0120856;
+        Wed, 18 Sep 2019 06:07:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568785997;
-        bh=HBh0qOHnVIY+RKDV01ik+wwHQTg6ypDerBR3WXnw6nI=;
+        s=default; t=1568786843;
+        bh=AIGreTLnb6bk3q8joO9XO69tVeABHA7b5VsQxkJP7Qk=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=hTHYmX++O88o26Nb3TxPY1SHRqgFZk+yOUfmagmW5DahK+67NNVPcrjrWDo3cCqrh
-         I73dLNgd0vuZDvDcjMZjICEnpZBwZnmAyDYp+40NiLla5PXGP9zcF1clA0pbaNiZm/
-         bedvjC6jvSL9otTeBIWkw7C864Ztymk1Lz8ww564=
+        b=PZgRV9uH68lZF9Yfar4tWWII27pZcPdHXgBuaRNuQVd1Cv+QPz6URLR2rzD/j6SpE
+         IT0b6IeHE4Dt5kthLM1AdLZ6iqgtXwu+HeYlILr/7u2q79rZUMs3zXR+e6qMGvBQyB
+         iGn39550ZKs89ndUK4QihxjtMXYMfKqoVkUshgB4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <AM0PR04MB4481D54C4508152E458BA9BE888E0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1568043491-20680-1-git-send-email-peng.fan@nxp.com> <AM0PR04MB4481A31DD68C3C3409E95339888F0@AM0PR04MB4481.eurprd04.prod.outlook.com> <20190917162820.8DC542067B@mail.kernel.org> <AM0PR04MB4481D54C4508152E458BA9BE888E0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <1568043491-20680-2-git-send-email-peng.fan@nxp.com>
+References: <1568043491-20680-1-git-send-email-peng.fan@nxp.com> <1568043491-20680-2-git-send-email-peng.fan@nxp.com>
 Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
         dl-linux-imx <linux-imx@nxp.com>,
         Anson Huang <anson.huang@nxp.com>,
@@ -50,43 +50,42 @@ Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
 To:     "festevam@gmail.com" <festevam@gmail.com>,
         "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
         Peng Fan <peng.fan@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
+Subject: Re: [PATCH V3 1/4] clk: imx: pll14xx: avoid glitch when set rate
 User-Agent: alot/0.8.1
-Date:   Tue, 17 Sep 2019 22:53:16 -0700
-Message-Id: <20190918055317.8EF6E214AF@mail.kernel.org>
+Date:   Tue, 17 Sep 2019 23:07:22 -0700
+Message-Id: <20190918060723.61E0120856@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Peng Fan (2019-09-17 22:45:20)
-> Hi Stephen,
+Quoting Peng Fan (2019-09-08 20:39:34)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> > Subject: RE: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
-> >=20
-> > Quoting Peng Fan (2019-09-16 23:20:15)
-> > > Hi Stephen, Shawn,
-> > >
-> > > > Subject: [PATCH V3 0/4] clk: imx8m: fix glitch/mux
-> > >
-> > > Sorry to ping early. Is there a chance to land this patchset in 5.3 r=
-elease?
-> > >
-> >=20
-> > No, it won't be in 5.3 because that version is released. Shawn already =
-sent the
-> > PR for 5.4 too so this will most likely be in v5.5 at the earliest.
+> According to PLL1443XA and PLL1416X spec,
+> "When BYPASS is 0 and RESETB is changed from 0 to 1, FOUT starts to
+> output unstable clock until lock time passes. PLL1416X/PLL1443XA may
+> generate a glitch at FOUT."
 >=20
-> Thanks for the info. But this patchset is bugfix, so hope this could be a=
-ccepted in 5.4.
+> So set BYPASS when RESETB is changed from 0 to 1 to avoid glitch.
+> In the end of set rate, BYPASS will be cleared.
 >=20
+> When prepare clock, also need to take care to avoid glitch. So
+> we also follow Spec to set BYPASS before RESETB changed from 0 to 1.
+> And add a check if the RESETB is already 0, directly return 0;
+>=20
+> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+> Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
 
-Ok. Then let's throw it into 5.4 PR and see what goes wrong.
+Applied to clk-next
 
