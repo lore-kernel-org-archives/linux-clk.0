@@ -2,146 +2,177 @@ Return-Path: <SRS0=9teh=XN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50DEBC4CEC4
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:00:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F13CFC4CEC4
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:32:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2226D21907
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:00:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9F3C21925
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:32:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568826053;
-	bh=+VV0O6MMtZyWgdqUHiASXwOLRO7jkiwEUpT92RQzt4g=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=Ffmen/j9ZEuskpO9Vsq1sTvvlGgL5cMXwxXA5CZ+dWNkqKTkpaN7Kzfn889CuxThE
-	 MEwkDAZOqjiovvqbIha8vMRcSrbE8/+UB/FUbCtuXUoR8qUqLXej6eVVo7JTdZYI+z
-	 IYx6Eo5k9JxZB6yytCXc415x6QReGBHsaH9Sbwmc=
+	s=default; t=1568827935;
+	bh=1TixgpnrbW74TJpZIMBN4jvpzcDubcE9UumV31l30Nk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Qw4pp5ITM5q4w3rDbLu2vUuPjItFq1IeAcPVJolOkenCqlYVe4B9IXaGMyQCl/Ojd
+	 MfUJKO2bTTYQITyPo0yBBMgi0aCUFaEjch1KAUQgAOwaByc2671WBE7+8uefML3qOF
+	 mK8nxGoT0VwdFEHoitKw9qdtKTIgBMR0ELdE2x7o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728764AbfIRRAw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Sep 2019 13:00:52 -0400
-Received: from mail.kernel.org ([198.145.29.99]:57974 "EHLO mail.kernel.org"
+        id S1731432AbfIRRcP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Sep 2019 13:32:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727821AbfIRRAw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:00:52 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1729042AbfIRRcP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Sep 2019 13:32:15 -0400
+Received: from localhost.localdomain (unknown [194.230.155.145])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AEAF21848;
-        Wed, 18 Sep 2019 17:00:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6680A208C0;
+        Wed, 18 Sep 2019 17:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568826051;
-        bh=+VV0O6MMtZyWgdqUHiASXwOLRO7jkiwEUpT92RQzt4g=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=1PMW3AoOt/ymX/M1dp08qnsJqv3s/b+YM+GZZMumAjq6O6h/eRnWn0TVcvCuvXQKE
-         GIKROoeOINGme7kF9BlLqLmQZ9g5x2+dkI8RtpxuRROFwu0Wrr+xqeVmy4v3YdzPcZ
-         2KPRvNqzdwk1QRrlVeSzfqA2zLlNFPqxw2kBVMPk=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB7PR04MB51953099D6331F4F844A45EFE28E0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190829105919.44363-1-wen.he_1@nxp.com> <20190829105919.44363-2-wen.he_1@nxp.com> <20190916202637.B5F542067B@mail.kernel.org> <DB7PR04MB51953099D6331F4F844A45EFE28E0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-Cc:     Leo Li <leoyang.li@nxp.com>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>
-To:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-devel@linux.nxdi.nxp.com" <linux-devel@linux.nxdi.nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        s=default; t=1568827933;
+        bh=1TixgpnrbW74TJpZIMBN4jvpzcDubcE9UumV31l30Nk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OzltOak1RI4M1f9eGUSNpFq39Ro2X4jHeAfIiXyq0c34FJmpbNaEv7Cjcemb0poM9
+         uE04q4mDU1LrkMk30mY4EX+LhD7KA8S6J8COMeBcIJZj56YzKZ7ZEf8xMUBTP+sWFK
+         ojyxY9o/4DOqaRfganDMdAi+8phtDnFnChg4e0II=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Wen He <wen.he_1@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [EXT] Re: [v4 2/2] clk: ls1028a: Add clock driver for Display output interface
-User-Agent: alot/0.8.1
-Date:   Wed, 18 Sep 2019 10:00:50 -0700
-Message-Id: <20190918170051.2AEAF21848@mail.kernel.org>
+        Thierry Reding <thierry.reding@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org
+Cc:     Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v2 1/8] dt-bindings: rng: exynos4-rng: Convert Exynos PRNG bindings to json-schema
+Date:   Wed, 18 Sep 2019 19:31:34 +0200
+Message-Id: <20190918173141.4314-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wen He (2019-09-18 02:20:26)
-> > -----Original Message-----
-> > From: Stephen Boyd <sboyd@kernel.org>
-> > Quoting Wen He (2019-08-29 03:59:19)
-> > > diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c new
-> > > file mode 100644 index 000000000000..d3239bcf59de
-> > > --- /dev/null
-> > > +++ b/drivers/clk/clk-plldig.c
-> > > @@ -0,0 +1,298 @@
-[...]
->=20
-> >=20
-> > > +
-> > > +/* Maximum of the divider */
-> > > +#define MAX_RFDPHI1          63
-> > > +
-> > > +/* Best value of multiplication factor divider */
-> > > +#define PLLDIG_DEFAULE_MULT         44
-> > > +
-> > > +/*
-> > > + * Clock configuration relationship between the PHI1
-> > > +frequency(fpll_phi) and
-> > > + * the output frequency of the PLL is determined by the PLLDV,
-> > > +according to
-> > > + * the following equation:
-> > > + * fpll_phi =3D (pll_ref * mfd) / div_rfdphi1  */ struct
-> > > +plldig_phi1_param {
-> > > +       unsigned long rate;
-> > > +       unsigned int rfdphi1;
-> > > +       unsigned int mfd;
-> > > +};
-> > > +
-> > > +enum plldig_phi1_freq_range {
-> > > +       PHI1_MIN        =3D 27000000U,
-> > > +       PHI1_MAX        =3D 600000000U
-> > > +};
-> >=20
-> > Please just inline these values in the one place they're used.
-> >=20
-> > > +
-> > > +struct clk_plldig {
-> > > +       struct clk_hw hw;
-> > > +       void __iomem *regs;
-> > > +       struct device *dev;
-> >=20
-> > Please remove this, it is unused.
->=20
-> It is used for probe.
+Convert Samsung Exynos Pseudo Random Number Generator bindings to DT
+schema format using json-schema.
 
-Use a local variable and don't store it away forever in the struct.
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-> >=20
-> > > +
-> > > +       val =3D readl(data->regs + PLLDIG_REG_PLLDV);
-> > > +       val =3D phi1_param.mfd;
-> > > +       rfdphi1 =3D phi1_param.rfdphi1;
-> > > +       val |=3D rfdphi1;
-> > > +
-> > > +       writel(val, data->regs + PLLDIG_REG_PLLDV);
-> > > +
-> > > +       /* delay 200us make sure that old lock state is cleared */
-> > > +       udelay(200);
-> > > +
-> > > +       /* Wait until PLL is locked or timeout (maximum 1000 usecs) */
-> > > +       ret =3D readl_poll_timeout_atomic(data->regs + PLLDIG_REG_PLL=
-SR,
-> > cond,
-> > > +                                       cond & PLLDIG_LOCK_MASK,
-> > 0,
-> > > +                                       USEC_PER_MSEC);
-> > > +
-> > > +       return ret;
-> >=20
-> > Just return readl_poll_timeout_atomic(...) here.
->=20
-> Maybe use below code will to best describes.
->=20
-> If (ret)
->         return -ETIMEOUT;
->=20
-> return 0;
+---
 
-No, just return readl_poll_timeout_atomic().
+Changes since v1:
+1. Indent example with four spaces (more readable).
+---
+ .../bindings/rng/samsung,exynos4-rng.txt      | 19 ---------
+ .../bindings/rng/samsung,exynos4-rng.yaml     | 41 +++++++++++++++++++
+ MAINTAINERS                                   |  2 +-
+ 3 files changed, 42 insertions(+), 20 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
+ create mode 100644 Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+
+diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
+deleted file mode 100644
+index a13fbdb4bd88..000000000000
+--- a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Exynos Pseudo Random Number Generator
+-
+-Required properties:
+-
+-- compatible  : One of:
+-                - "samsung,exynos4-rng" for Exynos4210 and Exynos4412
+-                - "samsung,exynos5250-prng" for Exynos5250+
+-- reg         : Specifies base physical address and size of the registers map.
+-- clocks      : Phandle to clock-controller plus clock-specifier pair.
+-- clock-names : "secss" as a clock name.
+-
+-Example:
+-
+-	rng@10830400 {
+-		compatible = "samsung,exynos4-rng";
+-		reg = <0x10830400 0x200>;
+-		clocks = <&clock CLK_SSS>;
+-		clock-names = "secss";
+-	};
+diff --git a/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+new file mode 100644
+index 000000000000..2d075d6c87b6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+@@ -0,0 +1,41 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/rng/samsung,exynos4-rng.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung Exynos SoC Pseudo Random Number Generator
++
++maintainers:
++  - Krzysztof Kozlowski <krzk@kernel.org>
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynos4-rng                   # for Exynos4210 and Exynos4412
++      - samsung,exynos5250-prng               # for Exynos5250+
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  clock-names:
++    items:
++      - const: secss
++
++required:
++  - compatible
++  - reg
++  - clock-names
++  - clocks
++
++examples:
++  - |
++    rng@10830400 {
++        compatible = "samsung,exynos4-rng";
++        reg = <0x10830400 0x200>;
++        clocks = <&clock 255>; // CLK_SSS
++        clock-names = "secss";
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 00969a90f94c..9cec4494b9a8 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14181,7 +14181,7 @@ L:	linux-crypto@vger.kernel.org
+ L:	linux-samsung-soc@vger.kernel.org
+ S:	Maintained
+ F:	drivers/crypto/exynos-rng.c
+-F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.txt
++F:	Documentation/devicetree/bindings/rng/samsung,exynos4-rng.yaml
+ 
+ SAMSUNG EXYNOS TRUE RANDOM NUMBER GENERATOR (TRNG) DRIVER
+ M:	Łukasz Stelmach <l.stelmach@samsung.com>
+-- 
+2.17.1
 
