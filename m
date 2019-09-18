@@ -2,344 +2,440 @@ Return-Path: <SRS0=9teh=XN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5882C4CEC9
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 09:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9FF4C4CEC9
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 09:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3F1214AF
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 09:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6524E218AF
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 09:42:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lVDELesF"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="AWzmCZ1O";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Wu+r07eo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbfIRJUe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Sep 2019 05:20:34 -0400
-Received: from mail-eopbgr50060.outbound.protection.outlook.com ([40.107.5.60]:15658
-        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728248AbfIRJUe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Sep 2019 05:20:34 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QIyV83p6l80cAb3Sy255fjNB/TxtpvwX7U/GjeaRMZkCN4zPIE89bh6GEFECYC6Us2nQa2/eGwCVaVZ7S5hZQ/Ky2K7rD/SOs8n9XDcc0ehVEtzvbPr9arV6aYfATbOrWMmowMifXeNdgQyEXCoBdY54QOOCBbYLd2isxqCwjN7q/oP+cMGACWWwwUpjlWJFAgnidhYvEjRvRXP534dwIlm7VNvV0kaPhOXUz53DAhhvN7hvlJ87/YxDaKxDK2ej+bBL2wxaMUyxzSPKCO50yyGW0y4ayjQBUEMlOi+A77qXThKRSYQEfW5Uqb9S/ca/3nb0iTcaSTQMVTsldhO4Vw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hQnSDViWkUYK0qXlIa7IqQj8ZvSu/W3O2S3ZRAi5Ox4=;
- b=QCxGM2GAEctV+8AZkNDvWZQ0N67e/OcmGOQJVxY8cCpbJHQNZvLBjaWe5Nlc8ko0nTcf4WmU7bvguz3XpCsXE8pgBfnzvN0sKIAPHAIn5/vhcVAKYVjiKYzam9BfxxZUQiFkOSC0XQ/jqtRBmYRAb+nREyNG30+4LgvnrWHnynx+Tq1keina9GOPVdR6+x2xIkYFOWjf6PDBcFta8NBj+FF1o6FtIaKZloghWGqrO9DXZVRtiKA2Xanp22kmVUeIgh5Bikoy8Tvdt9J5BGJBzyGCgQfS9d2mIeivYv4zB806QB+1LW941EAIN6C4qvPN1d+qC+3b/JbJOe4lcVeswQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hQnSDViWkUYK0qXlIa7IqQj8ZvSu/W3O2S3ZRAi5Ox4=;
- b=lVDELesFpo+24YgZgRwspqTGM9IvCStjyv0Vk1LllLL/HaiH62pHCgpsOnSpmdtZn70W4J45gSzhBORqYiFC8rgjuugpGtw6mjWS8T1x2F+j9fBYqg8FflKLHpOt2SjybvA3B7u3i82lvS4dhE2GR87ItOWTe+Ky0eMxKTf08Wk=
-Received: from DB7PR04MB5195.eurprd04.prod.outlook.com (20.176.236.27) by
- DB7PR04MB5212.eurprd04.prod.outlook.com (20.176.236.32) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2284.20; Wed, 18 Sep 2019 09:20:26 +0000
-Received: from DB7PR04MB5195.eurprd04.prod.outlook.com
- ([fe80::5cca:4549:eda4:7baf]) by DB7PR04MB5195.eurprd04.prod.outlook.com
- ([fe80::5cca:4549:eda4:7baf%7]) with mapi id 15.20.2284.009; Wed, 18 Sep 2019
- 09:20:26 +0000
-From:   Wen He <wen.he_1@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1727814AbfIRJm2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Sep 2019 05:42:28 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:54106 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbfIRJm1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Sep 2019 05:42:27 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 98B3C6156F; Wed, 18 Sep 2019 09:42:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568799745;
+        bh=WLXIi4f1QNdWbc3tOmtATiZAcgqtcMbzXOV035jMKsc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=AWzmCZ1O4gq/kfkzzGCR3kTvKCM9TMFyZEYhIe9GTiWBcfV13gLs4jfNuyxJojudS
+         Tzu8NVNPDOq6mRoataBimukIEM05a8iDGqiSlLh+P2+UuZyg/CUgnZao4WDlsyfQH9
+         5fp8WMfyTQwEvHAevb0XAZHc7jvZVEhwjo16joak=
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1DBE76156F;
+        Wed, 18 Sep 2019 09:42:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568799743;
+        bh=WLXIi4f1QNdWbc3tOmtATiZAcgqtcMbzXOV035jMKsc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Wu+r07eoUwKAeOmMw3butCA6404IQ/olZjh5Ig868vMhj0Hk+8NB8chASbGvX0otd
+         gRSaVQAYW4lvMEGFVOYokoDkVX75pV8SvkrR33r25/aRcmekWxmTBVHl2M1eaytmXK
+         HLAFsPJYuE1MUte817KYjDgGgFHfEIo0ZcL4rXaU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1DBE76156F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v2 2/3] dt-bindings: clk: qcom: Add YAML schemas for the
+ GCC clock bindings
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-devel@linux.nxdi.nxp.com" <linux-devel@linux.nxdi.nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Leo Li <leoyang.li@nxp.com>,
-        "liviu.dudau@arm.com" <liviu.dudau@arm.com>
-Subject: RE: [EXT] Re: [v4 2/2] clk: ls1028a: Add clock driver for Display
- output interface
-Thread-Topic: [EXT] Re: [v4 2/2] clk: ls1028a: Add clock driver for Display
- output interface
-Thread-Index: AQHVXlpDrHv3fQeGqUSSXzTNL08A8qcu3V4AgAISl5A=
-Date:   Wed, 18 Sep 2019 09:20:26 +0000
-Message-ID: <DB7PR04MB51953099D6331F4F844A45EFE28E0@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20190829105919.44363-1-wen.he_1@nxp.com>
- <20190829105919.44363-2-wen.he_1@nxp.com>
- <20190916202637.B5F542067B@mail.kernel.org>
-In-Reply-To: <20190916202637.B5F542067B@mail.kernel.org>
-Accept-Language: en-US, zh-CN
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=wen.he_1@nxp.com; 
-x-originating-ip: [119.31.174.73]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: f5c336ef-9ee4-496b-9b3e-08d73c197132
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600167)(711020)(4605104)(1401327)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7193020);SRVR:DB7PR04MB5212;
-x-ms-traffictypediagnostic: DB7PR04MB5212:|DB7PR04MB5212:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <DB7PR04MB5212B0124A18B3B45C5B88DFE28E0@DB7PR04MB5212.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 01644DCF4A
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(136003)(366004)(376002)(346002)(13464003)(189003)(199004)(8936002)(71190400001)(71200400001)(81156014)(81166006)(8676002)(7736002)(86362001)(54906003)(110136005)(14444005)(486006)(14454004)(478600001)(305945005)(256004)(74316002)(76116006)(476003)(11346002)(3846002)(6436002)(55016002)(102836004)(76176011)(53546011)(99286004)(33656002)(66476007)(30864003)(5660300002)(4326008)(66556008)(64756008)(6246003)(25786009)(229853002)(66946007)(446003)(66066001)(2201001)(2501003)(6506007)(6116002)(316002)(7696005)(52536014)(186003)(66446008)(2906002)(9686003)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB5212;H:DB7PR04MB5195.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: Z2dfI3Q01Zlt6G10T8LeUvkjcU1MdOzqt1V56YhMKGLu+9p8IK+uSwQDHJjJzZDNzEJvelLj77Qf6yZ7/u7Esn2SD1mc9ijm2QrvQk0FASkmggEOAOBIFjg2Tz2nORivFjUklWu4CcrcoCy1HdKf8110iMXOTKw/mtDe5L7F/OyhLjYIx+nQn/VdgWQGqgV3KHc5djwogiYm6saVLlscreoQHjeO5qZ4yMdKvB/zBXVILTSY8ExvvN18MftSV83bSoVImatEoFNDrtiEXUzTwW9YgGUYkrzZNc7Zlg2mxRQUpCWKbrLXI7WPYupVgYv7ofueQgqq1UZlbwljhZgUlKXIVecO+VDGLJbR8tlyi9j2S+bgP3+c04p+SJwNNs4UPkc/0qlVNPTxmqyQ2RVCFCzhd4gS19+BKl5sKSty4dE=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+References: <20190819163748.18318-1-tdas@codeaurora.org>
+ <20190819163748.18318-3-tdas@codeaurora.org>
+ <CAL_Jsq+inANgxf2vjKtOQzydFdhjBwgArfn=L3e_nGUwRPyv_g@mail.gmail.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <ff10ab15-6134-7921-a8a8-db47c4a1c0e2@codeaurora.org>
+Date:   Wed, 18 Sep 2019 15:12:17 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f5c336ef-9ee4-496b-9b3e-08d73c197132
-X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Sep 2019 09:20:26.4766
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: e+o0I8qAxknajNaGmGigpi2dBun9oHT6rd+DhT4+i9O5aXWzvshEnVleZUEfsz6DQruRli6YP115WYhhqiWiJA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB5212
+In-Reply-To: <CAL_Jsq+inANgxf2vjKtOQzydFdhjBwgArfn=L3e_nGUwRPyv_g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogU3RlcGhlbiBCb3lkIDxz
-Ym95ZEBrZXJuZWwub3JnPg0KPiBTZW50OiAyMDE55bm0OeaciDE35pelIDQ6MjcNCj4gVG86IE1h
-cmsgUnV0bGFuZCA8bWFyay5ydXRsYW5kQGFybS5jb20+OyBNaWNoYWVsIFR1cnF1ZXR0ZQ0KPiA8
-bXR1cnF1ZXR0ZUBiYXlsaWJyZS5jb20+OyBSb2IgSGVycmluZyA8cm9iaCtkdEBrZXJuZWwub3Jn
-PjsgV2VuIEhlDQo+IDx3ZW4uaGVfMUBueHAuY29tPjsgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
-cmc7IGxpbnV4LWNsa0B2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWRldmVsQGxpbnV4Lm54ZGku
-bnhwLmNvbTsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZw0KPiBDYzogTGVvIExpIDxsZW95
-YW5nLmxpQG54cC5jb20+OyBsaXZpdS5kdWRhdUBhcm0uY29tOyBXZW4gSGUNCj4gPHdlbi5oZV8x
-QG54cC5jb20+DQo+IFN1YmplY3Q6IFtFWFRdIFJlOiBbdjQgMi8yXSBjbGs6IGxzMTAyOGE6IEFk
-ZCBjbG9jayBkcml2ZXIgZm9yIERpc3BsYXkgb3V0cHV0DQo+IGludGVyZmFjZQ0KPiANCj4gDQo+
-IFF1b3RpbmcgV2VuIEhlICgyMDE5LTA4LTI5IDAzOjU5OjE5KQ0KPiA+IGRpZmYgLS1naXQgYS9k
-cml2ZXJzL2Nsay9LY29uZmlnIGIvZHJpdmVycy9jbGsvS2NvbmZpZyBpbmRleA0KPiA+IDgwMWZh
-MWNkMDMyMS4uYWIwNWYzNDJhZjA0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL0tjb25m
-aWcNCj4gPiArKysgYi9kcml2ZXJzL2Nsay9LY29uZmlnDQo+ID4gQEAgLTIyMyw2ICsyMjMsMTYg
-QEAgY29uZmlnIENMS19RT1JJUQ0KPiA+ICAgICAgICAgICBUaGlzIGFkZHMgdGhlIGNsb2NrIGRy
-aXZlciBzdXBwb3J0IGZvciBGcmVlc2NhbGUgUW9ySVEgcGxhdGZvcm1zDQo+ID4gICAgICAgICAg
-IHVzaW5nIGNvbW1vbiBjbG9jayBmcmFtZXdvcmsuDQo+ID4NCj4gPiArY29uZmlnIENMS19MUzEw
-MjhBX1BMTERJRw0KPiA+ICsgICAgICAgIGJvb2wgIkNsb2NrIGRyaXZlciBmb3IgTFMxMDI4QSBE
-aXNwbGF5IG91dHB1dCINCj4gDQo+IElzIHRoaXMgYSB0cmlzdGF0ZT8gVGhlIGRyaXZlciBpcyBt
-YWRlIHRvIGJlIGEgbW9kdWxlIGJ1dCBpdCBpc24ndCBhbGxvd2VkIHRvIGJlDQo+IGNvbXBpbGVk
-IGFzIHN1Y2guDQo+IA0KPiA+ICsgICAgICAgIGRlcGVuZHMgb24gQVJDSF9MQVlFUlNDQVBFIHx8
-IENPTVBJTEVfVEVTVA0KPiA+ICsgICAgICAgIGRlZmF1bHQgQVJDSF9MQVlFUlNDQVBFDQo+ID4g
-KyAgICAgICAgaGVscA0KPiA+ICsgICAgICAgICAgVGhpcyBkcml2ZXIgc3VwcG9ydCB0aGUgRGlz
-cGxheSBvdXRwdXQgaW50ZXJmYWNlcyhMQ0QsIERQSFkpDQo+IHBpeGVsIGNsb2Nrcw0KPiA+ICsg
-ICAgICAgICAgb2YgdGhlIFFvcklRIExheWVyc2NhcGUgTFMxMDI4QSwgYXMgaW1wbGVtZW50ZWQg
-VFNNQw0KPiBDTE4yOEhQTSBQTEwuIE5vdCBhbGwNCj4gPiArICAgICAgICAgIGZlYXR1cmVzIG9m
-IHRoZSBQTEwgYXJlIGN1cnJlbnRseSBzdXBwb3J0ZWQgYnkgdGhlIGRyaXZlci4gQnkNCj4gZGVm
-YXVsdCwNCj4gPiArICAgICAgICAgIGNvbmZpZ3VyZWQgYnlwYXNzIG1vZGUgd2l0aCB0aGlzIFBM
-TC4NCj4gPiArDQo+ID4gIGNvbmZpZyBDT01NT05fQ0xLX1hHRU5FDQo+ID4gICAgICAgICBib29s
-ICJDbG9jayBkcml2ZXIgZm9yIEFQTSBYR2VuZSBTb0MiDQo+ID4gICAgICAgICBkZWZhdWx0IEFS
-Q0hfWEdFTkUNCj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvY2xrLXBsbGRpZy5jIGIvZHJp
-dmVycy9jbGsvY2xrLXBsbGRpZy5jIG5ldw0KPiA+IGZpbGUgbW9kZSAxMDA2NDQgaW5kZXggMDAw
-MDAwMDAwMDAwLi5kMzIzOWJjZjU5ZGUNCj4gPiAtLS0gL2Rldi9udWxsDQo+ID4gKysrIGIvZHJp
-dmVycy9jbGsvY2xrLXBsbGRpZy5jDQo+ID4gQEAgLTAsMCArMSwyOTggQEANCj4gPiArLy8gU1BE
-WC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCj4gPiArLyoNCj4gPiArICogQ29weXJpZ2h0
-IDIwMTkgTlhQDQo+ID4gKyAqDQo+ID4gKyAqIENsb2NrIGRyaXZlciBmb3IgTFMxMDI4QSBEaXNw
-bGF5IG91dHB1dCBpbnRlcmZhY2VzKExDRCwgRFBIWSkuDQo+ID4gKyAqLw0KPiA+ICsNCj4gPiAr
-I2luY2x1ZGUgPGxpbnV4L2Nsay1wcm92aWRlci5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvZGV2
-aWNlLmg+DQo+ID4gKyNpbmNsdWRlIDxsaW51eC9tb2R1bGUuaD4NCj4gPiArI2luY2x1ZGUgPGxp
-bnV4L2Vyci5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvaW8uaD4NCj4gPiArI2luY2x1ZGUgPGxp
-bnV4L2lvcG9sbC5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvb2YuaD4NCj4gPiArI2luY2x1ZGUg
-PGxpbnV4L29mX2FkZHJlc3MuaD4NCj4gPiArI2luY2x1ZGUgPGxpbnV4L29mX2RldmljZS5oPg0K
-PiA+ICsjaW5jbHVkZSA8bGludXgvcGxhdGZvcm1fZGV2aWNlLmg+DQo+ID4gKyNpbmNsdWRlIDxs
-aW51eC9zbGFiLmg+DQo+ID4gKw0KPiA+ICsvKiBQTExESUcgcmVnaXN0ZXIgb2Zmc2V0cyBhbmQg
-Yml0IG1hc2tzICovDQo+ID4gKyNkZWZpbmUgUExMRElHX1JFR19QTExTUiAgICAgICAgICAgIDB4
-MjQNCj4gPiArI2RlZmluZSBQTExESUdfUkVHX1BMTERWICAgICAgICAgICAgMHgyOA0KPiA+ICsj
-ZGVmaW5lIFBMTERJR19SRUdfUExMRk0gICAgICAgICAgICAweDJjDQo+ID4gKyNkZWZpbmUgUExM
-RElHX1JFR19QTExGRCAgICAgICAgICAgIDB4MzANCj4gPiArI2RlZmluZSBQTExESUdfUkVHX1BM
-TENBTDEgICAgICAgICAgMHgzOA0KPiA+ICsjZGVmaW5lIFBMTERJR19SRUdfUExMQ0FMMiAgICAg
-ICAgICAweDNjDQo+ID4gKyNkZWZpbmUgUExMRElHX0xPQ0tfTUFTSyAgICAgICAgICAgIEJJVCgy
-KQ0KPiA+ICsjZGVmaW5lIFBMTERJR19TU0NHQllQX0VOQUJMRSAgICAgICBCSVQoMzApDQo+ID4g
-KyNkZWZpbmUgUExMRElHX0ZERU4gICAgICAgICAgICAgICAgIEJJVCgzMCkNCj4gPiArI2RlZmlu
-ZSBQTExESUdfRFRIUkNUTCAgICAgICAgICAgICAgKDB4MyA8PCAxNikNCj4gPiArDQo+ID4gKy8q
-IG1hY3JvIHRvIGdldC9zZXQgdmFsdWVzIGludG8gcmVnaXN0ZXIgKi8NCj4gPiArI2RlZmluZSBQ
-TExESUdfR0VUX01VTFQoeCkgICAgICAgICAgKCgoeCkgJiB+KDB4ZmZmZmZmMDApKSA8PCAwKQ0K
-PiA+ICsjZGVmaW5lIFBMTERJR19HRVRfUkZEUEhJMSh4KSAgICAgICAoKHUzMikoeCkgPj4gMjUp
-DQo+ID4gKyNkZWZpbmUgUExMRElHX1NFVF9SRkRQSEkxKHgpICAgICAgICgodTMyKSh4KSA8PCAy
-NSkNCj4gDQo+IE1heWJlIHlvdSBjYW4gdXNlIHRoZSBGSUVMRF9HRVQoKSBBUElzIGFuZCBnZW5t
-YXNrIGZyb20gYml0ZmllbGQuaD8NCg0KSG1tLCB0aGF0IGEgZ29vZCBpZGVhLiANCg0KPiANCj4g
-PiArDQo+ID4gKy8qIE1heGltdW0gb2YgdGhlIGRpdmlkZXIgKi8NCj4gPiArI2RlZmluZSBNQVhf
-UkZEUEhJMSAgICAgICAgICA2Mw0KPiA+ICsNCj4gPiArLyogQmVzdCB2YWx1ZSBvZiBtdWx0aXBs
-aWNhdGlvbiBmYWN0b3IgZGl2aWRlciAqLw0KPiA+ICsjZGVmaW5lIFBMTERJR19ERUZBVUxFX01V
-TFQgICAgICAgICA0NA0KPiA+ICsNCj4gPiArLyoNCj4gPiArICogQ2xvY2sgY29uZmlndXJhdGlv
-biByZWxhdGlvbnNoaXAgYmV0d2VlbiB0aGUgUEhJMQ0KPiA+ICtmcmVxdWVuY3koZnBsbF9waGkp
-IGFuZA0KPiA+ICsgKiB0aGUgb3V0cHV0IGZyZXF1ZW5jeSBvZiB0aGUgUExMIGlzIGRldGVybWlu
-ZWQgYnkgdGhlIFBMTERWLA0KPiA+ICthY2NvcmRpbmcgdG8NCj4gPiArICogdGhlIGZvbGxvd2lu
-ZyBlcXVhdGlvbjoNCj4gPiArICogZnBsbF9waGkgPSAocGxsX3JlZiAqIG1mZCkgLyBkaXZfcmZk
-cGhpMSAgKi8gc3RydWN0DQo+ID4gK3BsbGRpZ19waGkxX3BhcmFtIHsNCj4gPiArICAgICAgIHVu
-c2lnbmVkIGxvbmcgcmF0ZTsNCj4gPiArICAgICAgIHVuc2lnbmVkIGludCByZmRwaGkxOw0KPiA+
-ICsgICAgICAgdW5zaWduZWQgaW50IG1mZDsNCj4gPiArfTsNCj4gPiArDQo+ID4gK2VudW0gcGxs
-ZGlnX3BoaTFfZnJlcV9yYW5nZSB7DQo+ID4gKyAgICAgICBQSEkxX01JTiAgICAgICAgPSAyNzAw
-MDAwMFUsDQo+ID4gKyAgICAgICBQSEkxX01BWCAgICAgICAgPSA2MDAwMDAwMDBVDQo+ID4gK307
-DQo+IA0KPiBQbGVhc2UganVzdCBpbmxpbmUgdGhlc2UgdmFsdWVzIGluIHRoZSBvbmUgcGxhY2Ug
-dGhleSdyZSB1c2VkLg0KPiANCj4gPiArDQo+ID4gK3N0cnVjdCBjbGtfcGxsZGlnIHsNCj4gPiAr
-ICAgICAgIHN0cnVjdCBjbGtfaHcgaHc7DQo+ID4gKyAgICAgICB2b2lkIF9faW9tZW0gKnJlZ3M7
-DQo+ID4gKyAgICAgICBzdHJ1Y3QgZGV2aWNlICpkZXY7DQo+IA0KPiBQbGVhc2UgcmVtb3ZlIHRo
-aXMsIGl0IGlzIHVudXNlZC4NCg0KSXQgaXMgdXNlZCBmb3IgcHJvYmUuDQoNCj4gDQo+ID4gK307
-DQo+ID4gKw0KPiA+ICsjZGVmaW5lIHRvX2Nsa19wbGxkaWcoX2h3KSAgICAgY29udGFpbmVyX29m
-KF9odywgc3RydWN0IGNsa19wbGxkaWcsIGh3KQ0KPiA+ICsjZGVmaW5lIExPQ0tfVElNRU9VVF9V
-UyAgICAgICAgICAgICAgICBVU0VDX1BFUl9NU0VDDQo+IA0KPiBJcyB0aGlzIHVzZWQ/DQoNClll
-cywgaXQgaXMgdXNlZC4NCg0KPiANCj4gPiArDQo+ID4gK3N0YXRpYyBpbnQgcGxsZGlnX2VuYWJs
-ZShzdHJ1Y3QgY2xrX2h3ICpodykgew0KPiA+ICsgICAgICAgc3RydWN0IGNsa19wbGxkaWcgKmRh
-dGEgPSB0b19jbGtfcGxsZGlnKGh3KTsNCj4gPiArICAgICAgIHUzMiB2YWw7DQo+ID4gKw0KPiA+
-ICsgICAgICAgdmFsID0gcmVhZGwoZGF0YS0+cmVncyArIFBMTERJR19SRUdfUExMRk0pOw0KPiA+
-ICsgICAgICAgLyoNCj4gPiArICAgICAgICAqIFVzZSBCeXBhc3MgbW9kZSB3aXRoIFBMTCBvZmYg
-YnkgZGVmYXVsdCwgdGhlIGZyZXF1ZW5jeQ0KPiBvdmVyc2hvb3QNCj4gPiArICAgICAgICAqIGRl
-dGVjdG9yIG91dHB1dCB3YXMgZGlzYWJsZS4gU1NDRyBCeXBhc3MgbW9kZSBzaG91bGQgYmUNCj4g
-ZW5hYmxlLg0KPiA+ICsgICAgICAgICovDQo+ID4gKyAgICAgICB2YWwgfD0gUExMRElHX1NTQ0dC
-WVBfRU5BQkxFOw0KPiA+ICsgICAgICAgd3JpdGVsKHZhbCwgZGF0YS0+cmVncyArIFBMTERJR19S
-RUdfUExMRk0pOw0KPiA+ICsNCj4gPiArICAgICAgIHZhbCA9IHJlYWRsKGRhdGEtPnJlZ3MgKyBQ
-TExESUdfUkVHX1BMTEZEKTsNCj4gPiArICAgICAgIC8qIERpc2FibGUgZGl0aGVyIGFuZCBTaWdt
-YSBkZWx0YSBtb2R1bGF0aW9uIGluIGJ5cGFzcyBtb2RlICovDQo+ID4gKyAgICAgICB2YWwgfD0g
-KFBMTERJR19GREVOIHwgUExMRElHX0RUSFJDVEwpOw0KPiA+ICsgICAgICAgd3JpdGVsKHZhbCwg
-ZGF0YS0+cmVncyArIFBMTERJR19SRUdfUExMRkQpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVy
-biAwOw0KPiA+ICt9DQo+ID4gKw0KPiA+ICtzdGF0aWMgdm9pZCBwbGxkaWdfZGlzYWJsZShzdHJ1
-Y3QgY2xrX2h3ICpodykgew0KPiA+ICsgICAgICAgc3RydWN0IGNsa19wbGxkaWcgKmRhdGEgPSB0
-b19jbGtfcGxsZGlnKGh3KTsNCj4gPiArICAgICAgIHUzMiB2YWw7DQo+ID4gKw0KPiA+ICsgICAg
-ICAgdmFsID0gcmVhZGwoZGF0YS0+cmVncyArIFBMTERJR19SRUdfUExMRk0pOw0KPiA+ICsNCj4g
-PiArICAgICAgIHZhbCAmPSB+UExMRElHX1NTQ0dCWVBfRU5BQkxFOw0KPiA+ICsgICAgICAgd3Jp
-dGVsKHZhbCwgZGF0YS0+cmVncyArIFBMTERJR19SRUdfUExMRk0pOyB9DQo+ID4gKw0KPiA+ICtz
-dGF0aWMgaW50IHBsbGRpZ19pc19lbmFibGVkKHN0cnVjdCBjbGtfaHcgKmh3KSB7DQo+ID4gKyAg
-ICAgICBzdHJ1Y3QgY2xrX3BsbGRpZyAqZGF0YSA9IHRvX2Nsa19wbGxkaWcoaHcpOw0KPiA+ICsN
-Cj4gPiArICAgICAgIHJldHVybiAocmVhZGwoZGF0YS0+cmVncyArIFBMTERJR19SRUdfUExMRk0p
-ICYNCj4gPiArUExMRElHX1NTQ0dCWVBfRU5BQkxFKTsgfQ0KPiA+ICsNCj4gPiArc3RhdGljIHVu
-c2lnbmVkIGxvbmcgcGxsZGlnX3JlY2FsY19yYXRlKHN0cnVjdCBjbGtfaHcgKmh3LA0KPiA+ICsg
-ICAgICAgICAgICAgICB1bnNpZ25lZCBsb25nIHBhcmVudF9yYXRlKSB7DQo+ID4gKyAgICAgICBz
-dHJ1Y3QgY2xrX3BsbGRpZyAqZGF0YSA9IHRvX2Nsa19wbGxkaWcoaHcpOw0KPiA+ICsgICAgICAg
-dTMyIG11bHQsIGRpdiwgdmFsOw0KPiA+ICsNCj4gPiArICAgICAgIHZhbCA9IHJlYWRsKGRhdGEt
-PnJlZ3MgKyBQTExESUdfUkVHX1BMTERWKTsNCj4gPiArDQo+ID4gKyAgICAgICAvKiBDaGVjayBp
-ZiBQTEwgaXMgYnlwYXNzZWQgKi8NCj4gPiArICAgICAgIGlmICh2YWwgJiBQTExESUdfU1NDR0JZ
-UF9FTkFCTEUpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBwYXJlbnRfcmF0ZTsNCj4gPiAr
-DQo+ID4gKyAgICAgICAvKiBDaGVja291dCBtdWx0aXBsaWNhdGlvbiBmYWN0b3IgZGl2aWRlciB2
-YWx1ZSAqLw0KPiA+ICsgICAgICAgbXVsdCA9IHZhbDsNCj4gPiArICAgICAgIG11bHQgPSBQTExE
-SUdfR0VUX01VTFQobXVsdCk7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogQ2hlY2tvdXQgZGl2aWRl
-ciB2YWx1ZSBvZiB0aGUgb3V0cHV0IGZyZXF1ZW5jeSAqLw0KPiA+ICsgICAgICAgZGl2ID0gdmFs
-Ow0KPiA+ICsgICAgICAgZGl2ID0gUExMRElHX0dFVF9SRkRQSEkxKGRpdik7DQo+ID4gKw0KPiA+
-ICsgICAgICAgcmV0dXJuIChwYXJlbnRfcmF0ZSAqIG11bHQpIC8gZGl2OyB9DQo+ID4gKw0KPiA+
-ICtzdGF0aWMgaW50IHBsbGRpZ19jYWxjX3RhcmdldF9yYXRlKHVuc2lnbmVkIGxvbmcgdGFyZ2V0
-X3JhdGUsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB1bnNpZ25lZCBs
-b25nIHBhcmVudF9yYXRlLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-c3RydWN0IHBsbGRpZ19waGkxX3BhcmFtDQo+ICpwaGkxX291dCkNCj4gPiArew0KPiA+ICsgICAg
-ICAgdW5zaWduZWQgaW50IGRpdiwgbWZkLCByZXQ7DQo+ID4gKyAgICAgICB1bnNpZ25lZCBsb25n
-IHJvdW5kX3JhdGU7DQo+ID4gKw0KPiA+ICsgICAgICAgLyoNCj4gPiArICAgICAgICAqIEZpcnN0
-bHksIGNoZWNrIHRoZSB0YXJnZXQgcmF0ZSB3aGV0aGVyIGlzIGRpdmlzaWJsZQ0KPiA+ICsgICAg
-ICAgICogYnkgdGhlIGJlc3QgVkNPIGZyZXF1ZW5jeS4NCj4gPiArICAgICAgICAqLw0KPiA+ICsg
-ICAgICAgbWZkID0gUExMRElHX0RFRkFVTEVfTVVMVDsNCj4gPiArICAgICAgIHJvdW5kX3JhdGUg
-PSBwYXJlbnRfcmF0ZSAqIG1mZDsNCj4gPiArICAgICAgIGRpdiA9IHJvdW5kX3JhdGUgLyB0YXJn
-ZXRfcmF0ZTsNCj4gPiArICAgICAgIGlmICghZGl2IHx8IGRpdiA+IE1BWF9SRkRQSEkxKQ0KPiA+
-ICsgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gPiArDQo+ID4gKyAgICAgICByZXQg
-PSByb3VuZF9yYXRlICUgdGFyZ2V0X3JhdGU7DQo+ID4gKyAgICAgICBpZiAoIXJldCkNCj4gPiAr
-ICAgICAgICAgICAgICAgZ290byBvdXQ7DQo+IA0KPiBQbGVhc2UgZ2V0IHJpZCBvZiByZXQgYW5k
-IGRvIHRoZSB0ZXN0IGhlcmUgZGlyZWN0bHkgYW5kIHRoZW4gcHV0IHRoZSBiZWxvdyBjb2RlDQo+
-IGludG8gdGhlIGlmIHN0YXRlbWVudCB0byByZW1vdmUgdGhlIGdvdG8uDQoNCkhlcmUgcHJvdmlk
-ZSB0d28gY29uZGl0aW9uIHRvIHRlc3QgdGhlIHJlcXVlc3QgdGFyZ2V0IHJhdGUgd2hldGhlciBt
-ZWV0Lg0KMS4gYWx3YXlzIGNoZWNrIHRoZSByZXF1ZXN0IHJhdGUgd2hldGhlciBpcyBkaXZpc2li
-bGUgYnkgdGhlIFZDTyBmcmVxdWVuY3kuDQoyLiBJZiBvcHRpb24jMSBpcyBub3QgbWVldCwgdHJ5
-aW5nIHRvIHJvdW5kaW5nLg0KDQpPcHRpb24jMSBhbmQgb3B0aW9uIzIgYm90aCBuZWVkIHVzZSB0
-aGUgYmVsb3cgY29kZSwgaWYgcmVtb3ZlIHRoZSBnb3RvLCB3aWxsDQpzZWUgdGhlIGR1cGxpY2F0
-ZSBjb2RlIHN0YXRlbWVudC4NCg0KPiANCj4gDQo+ICAgICAgICAgaWYgKHJvdW5kX3JhdGUgJSB0
-YXJnZXRfcmF0ZSkgew0KPiAgICAgICAgICAgICAgICAvKg0KPiAgICAgICAgICAgICAgICAgKiBP
-dGhlcndpc2UsIHRyeSBhIHJvdW5kaW5nIGFsZ29yaXRobSB0byBkcml2ZW4gdGhlIHRhcmdldA0K
-PiByYXRlLA0KPiAgICAgICAgICAgICAgICAgKiB0aGlzIGFsZ29yaXRobSBhbGxvd3MgdG9sZXJh
-bmNlcyBiZXR3ZWVuIHRoZSB0YXJnZXQgcmF0ZQ0KPiBhbmQNCj4gICAgICAgICAgICAgICAgICog
-cmVhbCByYXRlLCBpdCBiYXNlZCBvbiB0aGUgYmVzdCBWQ08gb3V0cHV0IGZyZXF1ZW5jeS4NCj4g
-ICAgICAgICAgICAgICAgICovDQo+ICAgICAgICAgICAgICAgIG1mZCA9IFBMTERJR19ERUZBVUxF
-X01VTFQ7DQo+ICAgICAgICAgICAgICAgIHJvdW5kX3JhdGUgPSBwYXJlbnRfcmF0ZSAqIG1mZDsN
-Cj4gDQo+ICAgICAgICAgICAgICAgIC8qDQo+ICAgICAgICAgICAgICAgICAqIEFkZCBoYWxmIG9m
-IHRoZSB0YXJnZXQgcmF0ZSBzbyB0aGUgcmVzdWx0IHdpbGwgYmUNCj4gICAgICAgICAgICAgICAg
-ICogcm91bmRlZCB0byBjbG9lc2V0IGluc3RlYWQgb2Ygcm91bmRlZCBkb3duLg0KPiAgICAgICAg
-ICAgICAgICAgKi8NCj4gICAgICAgICAgICAgICAgcm91bmRfcmF0ZSArPSAodGFyZ2V0X3JhdGUg
-LyAyKTsNCj4gICAgICAgICAgICAgICAgZGl2ID0gcm91bmRfcmF0ZSAvIHRhcmdldF9yYXRlOw0K
-PiAgICAgICAgICAgICAgICBpZiAoIWRpdiB8fCBkaXYgPiBNQVhfUkZEUEhJMSkNCj4gICAgICAg
-ICAgICAgICAgICAgICAgICByZXR1cm4gLUVJTlZBTDsNCj4gDQo+ICAgICAgICAgfQ0KPiANCj4g
-PiArICAgICAgIHBoaTFfb3V0LT5yZmRwaGkxID0gUExMRElHX1NFVF9SRkRQSEkxKGRpdik7DQo+
-ID4gKyAgICAgICBwaGkxX291dC0+bWZkID0gbWZkOw0KPiA+ICsgICAgICAgcGhpMV9vdXQtPnJh
-dGUgPSB0YXJnZXRfcmF0ZTsNCj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gMDsNCj4gPiArfQ0K
-PiA+ICsNCj4gPiArc3RhdGljIGludCBwbGxkaWdfZGV0ZXJtaW5lX3JhdGUoc3RydWN0IGNsa19o
-dyAqaHcsDQo+ID4gKyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgc3RydWN0IGNsa19y
-YXRlX3JlcXVlc3QgKnJlcSkgew0KPiA+ICsgICAgICAgaW50IHJldDsNCj4gPiArICAgICAgIHN0
-cnVjdCBjbGtfaHcgKnBhcmVudDsNCj4gPiArICAgICAgIHN0cnVjdCBwbGxkaWdfcGhpMV9wYXJh
-bSBwaGkxX3BhcmFtOw0KPiA+ICsgICAgICAgdW5zaWduZWQgbG9uZyBwYXJlbnRfcmF0ZTsNCj4g
-PiArDQo+ID4gKyAgICAgICBpZiAocmVxLT5yYXRlID09IDAgfHwgcmVxLT5yYXRlIDwgUEhJMV9N
-SU4gfHwgcmVxLT5yYXRlID4NCj4gUEhJMV9NQVgpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVy
-biAtRUlOVkFMOw0KPiANCj4gUHJlZmVyYWJseSB5b3UgY2xhbXAgdGhlIHJlcXVlc3RlZCByYXRl
-IHRvIG1pbi9tYXggaW5zdGVhZCBvZiBqdXN0IHJldHVybmluZyBhDQo+IGZhaWx1cmUuIFRoYXQg
-d2F5IHRoZSBjbGtfc2V0X3JhdGUoKSBBUEkgIndvcmtzIiBieSB0cnlpbmcgdG8gYWNoaWV2ZSBz
-b21lDQo+IGZyZXF1ZW5jeSB0aGF0IGlzIHRoZXJlLiBZb3UnbGwgaGF2ZSB0byBsb29rIGF0IHRo
-ZSByZXF1ZXN0IHRoYXQgaXMgcGFzc2VkIGludG8NCj4gdGhpcyBmdW5jdGlvbiB0byBtYWtlIHN1
-cmUgdGhhdCB0aGUgbWluL21heCBvZiB0aGUgcmVxdWVzdCBpcyB3aXRoaW4gdGhlIHJhbmdlDQo+
-IHRoaXMgY2xrIHN1cHBvcnRzLCBidXQgaXQgd2lsbCBiZSBiZXR0ZXIgdGhhbiBqdXN0IGJsaW5k
-bHkgcmV0dXJuaW5nIGEgZmFpbHVyZQ0KPiBiZWNhdXNlIHRoaXMgZnVuY3Rpb24gc2hvdWxkIHRy
-eSB0byByb3VuZCB0aGUgcmF0ZSB0byBzb21ldGhpbmcgdGhhdCBpcw0KPiBzdXBwb3J0ZWQuDQoN
-CkkgYWdyZWUgd2l0aCB5b3UuDQoNCj4gDQo+ID4gKw0KPiA+ICsgICAgICAgcGFyZW50ID0gY2xr
-X2h3X2dldF9wYXJlbnQoaHcpOw0KPiA+ICsgICAgICAgcGFyZW50X3JhdGUgPSBjbGtfaHdfZ2V0
-X3JhdGUocGFyZW50KTsNCj4gPiArDQo+ID4gKyAgICAgICByZXQgPSBwbGxkaWdfY2FsY190YXJn
-ZXRfcmF0ZShyZXEtPnJhdGUsIHBhcmVudF9yYXRlLCAmcGhpMV9wYXJhbSk7DQo+ID4gKyAgICAg
-ICBpZiAocmV0KQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gcmV0Ow0KPiA+ICsNCj4gPiAr
-ICAgICAgIHJlcS0+cmF0ZSA9IHBoaTFfcGFyYW0ucmF0ZTsNCj4gPiArDQo+ID4gKyAgICAgICBy
-ZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGludCBwbGxkaWdfc2V0X3JhdGUo
-c3RydWN0IGNsa19odyAqaHcsIHVuc2lnbmVkIGxvbmcgcmF0ZSwNCj4gPiArICAgICAgICAgICAg
-ICAgdW5zaWduZWQgbG9uZyBwYXJlbnRfcmF0ZSkgew0KPiA+ICsgICAgICAgc3RydWN0IGNsa19w
-bGxkaWcgKmRhdGEgPSB0b19jbGtfcGxsZGlnKGh3KTsNCj4gPiArICAgICAgIHN0cnVjdCBwbGxk
-aWdfcGhpMV9wYXJhbSBwaGkxX3BhcmFtOw0KPiA+ICsgICAgICAgdW5zaWduZWQgaW50IHJmZHBo
-aTEsIHZhbCwgY29uZDsNCj4gPiArICAgICAgIGludCByZXQgPSAtRVRJTUVET1VUOw0KPiANCj4g
-RHJvcCB0aGlzIGluaXRpYWwgYXNzaWdubWVudCBwbGVhc2UuDQo+IA0KPiA+ICsNCj4gPiArICAg
-ICAgIHJldCA9IHBsbGRpZ19jYWxjX3RhcmdldF9yYXRlKHJhdGUsIHBhcmVudF9yYXRlLCAmcGhp
-MV9wYXJhbSk7DQo+ID4gKyAgICAgICBpZiAocmV0KQ0KPiA+ICsgICAgICAgICAgICAgICByZXR1
-cm4gcmV0Ow0KPiANCj4gQmVjYXVzZSBpdCdzIG92ZXJ3cml0dGVuIGltbWVkaWF0ZWx5Lg0KPiAN
-Cj4gPiArDQo+ID4gKyAgICAgICB2YWwgPSByZWFkbChkYXRhLT5yZWdzICsgUExMRElHX1JFR19Q
-TExEVik7DQo+ID4gKyAgICAgICB2YWwgPSBwaGkxX3BhcmFtLm1mZDsNCj4gPiArICAgICAgIHJm
-ZHBoaTEgPSBwaGkxX3BhcmFtLnJmZHBoaTE7DQo+ID4gKyAgICAgICB2YWwgfD0gcmZkcGhpMTsN
-Cj4gPiArDQo+ID4gKyAgICAgICB3cml0ZWwodmFsLCBkYXRhLT5yZWdzICsgUExMRElHX1JFR19Q
-TExEVik7DQo+ID4gKw0KPiA+ICsgICAgICAgLyogZGVsYXkgMjAwdXMgbWFrZSBzdXJlIHRoYXQg
-b2xkIGxvY2sgc3RhdGUgaXMgY2xlYXJlZCAqLw0KPiA+ICsgICAgICAgdWRlbGF5KDIwMCk7DQo+
-ID4gKw0KPiA+ICsgICAgICAgLyogV2FpdCB1bnRpbCBQTEwgaXMgbG9ja2VkIG9yIHRpbWVvdXQg
-KG1heGltdW0gMTAwMCB1c2VjcykgKi8NCj4gPiArICAgICAgIHJldCA9IHJlYWRsX3BvbGxfdGlt
-ZW91dF9hdG9taWMoZGF0YS0+cmVncyArIFBMTERJR19SRUdfUExMU1IsDQo+IGNvbmQsDQo+ID4g
-KyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGNvbmQgJiBQTExESUdfTE9D
-S19NQVNLLA0KPiAwLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-ICBVU0VDX1BFUl9NU0VDKTsNCj4gPiArDQo+ID4gKyAgICAgICByZXR1cm4gcmV0Ow0KPiANCj4g
-SnVzdCByZXR1cm4gcmVhZGxfcG9sbF90aW1lb3V0X2F0b21pYyguLi4pIGhlcmUuDQoNCk1heWJl
-IHVzZSBiZWxvdyBjb2RlIHdpbGwgdG8gYmVzdCBkZXNjcmliZXMuDQoNCklmIChyZXQpDQoJcmV0
-dXJuIC1FVElNRU9VVDsNCg0KcmV0dXJuIDA7DQoNCj4gDQo+ID4gK30NCj4gPiArDQo+ID4gK3N0
-YXRpYyBjb25zdCBzdHJ1Y3QgY2xrX29wcyBwbGxkaWdfY2xrX29wcyA9IHsNCj4gPiArICAgICAg
-IC5lbmFibGUgPSBwbGxkaWdfZW5hYmxlLA0KPiA+ICsgICAgICAgLmRpc2FibGUgPSBwbGxkaWdf
-ZGlzYWJsZSwNCj4gPiArICAgICAgIC5pc19lbmFibGVkID0gcGxsZGlnX2lzX2VuYWJsZWQsDQo+
-ID4gKyAgICAgICAucmVjYWxjX3JhdGUgPSBwbGxkaWdfcmVjYWxjX3JhdGUsDQo+ID4gKyAgICAg
-ICAuZGV0ZXJtaW5lX3JhdGUgPSBwbGxkaWdfZGV0ZXJtaW5lX3JhdGUsDQo+ID4gKyAgICAgICAu
-c2V0X3JhdGUgPSBwbGxkaWdfc2V0X3JhdGUsDQo+ID4gK307DQo+ID4gKw0KPiA+ICtzdGF0aWMg
-aW50IHBsbGRpZ19jbGtfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2RldmljZSAqcGRldikgew0KPiA+
-ICsgICAgICAgc3RydWN0IGNsa19wbGxkaWcgKmRhdGE7DQo+ID4gKyAgICAgICBzdHJ1Y3QgcmVz
-b3VyY2UgKm1lbTsNCj4gPiArICAgICAgIHN0cnVjdCBjbGtfaW5pdF9kYXRhIGluaXQgPSB7fTsN
-Cj4gPiArICAgICAgIHN0cnVjdCBkZXZpY2UgKmRldiA9ICZwZGV2LT5kZXY7DQo+ID4gKyAgICAg
-ICBzdHJ1Y3QgY2xrX3BhcmVudF9kYXRhIHBhcmVudF9kYXRhOw0KPiANCj4gU2V0IHRoaXMgdG8g
-PSB7IC5pbmRleCA9IDAgfQ0KDQpVbmRlcnN0YW5kLA0KDQo+IA0KPiA+ICsgICAgICAgaW50IHJl
-dDsNCj4gPiArDQo+ID4gKyAgICAgICBkYXRhID0gZGV2bV9remFsbG9jKGRldiwgc2l6ZW9mKCpk
-YXRhKSwgR0ZQX0tFUk5FTCk7DQo+ID4gKyAgICAgICBpZiAoIWRhdGEpDQo+ID4gKyAgICAgICAg
-ICAgICAgIHJldHVybiAtRU5PTUVNOw0KPiA+ICsNCj4gPiArICAgICAgIG1lbSA9IHBsYXRmb3Jt
-X2dldF9yZXNvdXJjZShwZGV2LCBJT1JFU09VUkNFX01FTSwgMCk7DQo+ID4gKyAgICAgICBkYXRh
-LT5yZWdzID0gZGV2bV9pb3JlbWFwX3Jlc291cmNlKGRldiwgbWVtKTsNCj4gPiArICAgICAgIGlm
-IChJU19FUlIoZGF0YS0+cmVncykpDQo+ID4gKyAgICAgICAgICAgICAgIHJldHVybiBQVFJfRVJS
-KGRhdGEtPnJlZ3MpOw0KPiA+ICsNCj4gPiArICAgICAgIHBhcmVudF9kYXRhLm5hbWUgPSBvZl9j
-bGtfZ2V0X3BhcmVudF9uYW1lKGRldi0+b2Zfbm9kZSwgMCk7DQo+ID4gKyAgICAgICBwYXJlbnRf
-ZGF0YS5pbmRleCA9IDA7DQo+IA0KPiBBbmQgZG9uJ3QgYXNzaWduIHRoZXNlLg0KDQpVbmRlcnN0
-YW5kLA0KDQo+IA0KPiA+ICsNCj4gPiArICAgICAgIGluaXQubmFtZSA9IGRldi0+b2Zfbm9kZS0+
-bmFtZTsNCj4gPiArICAgICAgIGluaXQub3BzID0gJnBsbGRpZ19jbGtfb3BzOw0KPiA+ICsgICAg
-ICAgaW5pdC5wYXJlbnRfZGF0YSA9ICZwYXJlbnRfZGF0YTsNCj4gPiArICAgICAgIGluaXQubnVt
-X3BhcmVudHMgPSAxOw0KPiA+ICsNCj4gPiArICAgICAgIGRhdGEtPmh3LmluaXQgPSAmaW5pdDsN
-Cj4gPiArICAgICAgIGRhdGEtPmRldiA9IGRldjsNCj4gPiArDQo+ID4gKyAgICAgICByZXQgPSBk
-ZXZtX2Nsa19od19yZWdpc3RlcihkZXYsICZkYXRhLT5odyk7DQo+ID4gKyAgICAgICBpZiAocmV0
-KSB7DQo+ID4gKyAgICAgICAgICAgICAgIGRldl9lcnIoZGV2LCAiZmFpbGVkIHRvIHJlZ2lzdGVy
-ICVzIGNsb2NrXG4iLCBpbml0Lm5hbWUpOw0KPiA+ICsgICAgICAgICAgICAgICByZXR1cm4gcmV0
-Ow0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAgIHJldCA9IGRldm1fb2ZfY2xrX2Fk
-ZF9od19wcm92aWRlcihkZXYsIG9mX2Nsa19od19zaW1wbGVfZ2V0LA0KPiAmZGF0YS0+aHcpOw0K
-PiA+ICsgICAgICAgaWYgKHJldCkNCj4gPiArICAgICAgICAgICAgICAgZGV2X2VycihkZXYsICJm
-YWlsZWQgYWRkaW5nIHRoZSBjbG9jayBwcm92aWRlclxuIik7DQo+ID4gKw0KPiA+ICsgICAgICAg
-cmV0dXJuIHJldDsNCj4gDQo+IEknZCBwcmVmZXIgdG8ganVzdCBzZWUgcmV0dXJuIGRldm1fb2Zf
-Y2xrX2FkZF9od19wcm92aWRlcigpLCBidXQgbm90IGEgYmlnDQo+IGRlYWwuDQoNClVuZGVyc3Rh
-bmQsIHRoYW5rIHlvdSBmb3IgdGhlIHJldmlldy4NCg0KQmVzdCBSZWdhcmRzLA0KV2VuDQoNCg==
+Hello Rob,
+
+Thank you for your review comments.
+
+On 8/20/2019 12:44 AM, Rob Herring wrote:
+> On Mon, Aug 19, 2019 at 11:38 AM Taniya Das <tdas@codeaurora.org> wrote:
+>>
+>> The GCC clock provider have a bunch of generic properties that
+>> are needed in a device tree. Add a YAML schemas for those. Also update
+>> the compatible for SC7180 along with example for clocks & clock-names.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,gcc.yaml   | 141 ++++++++++++++++
+>>   include/dt-bindings/clock/qcom,gcc-sc7180.h   | 155 ++++++++++++++++++
+>>   2 files changed, 296 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>>   create mode 100644 include/dt-bindings/clock/qcom,gcc-sc7180.h
+> 
+> You need to remove the old doc.
+> 
+
+Would remove it in the next patch.
+
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> new file mode 100644
+>> index 000000000000..17c563a036c7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> @@ -0,0 +1,141 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller Binding
+>> +
+>> +maintainers:
+>> +  - Stephen Boyd <sboyd@kernel.org>
+>> +
+>> +properties:
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  "#reset-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +    description: |
+>> +      shall contain the base register location and length
+> 
+> Don't need a description if there's only 1 entry.
+> 
+
+Thanks, would remove.
+
+>> +
+>> +  compatible :
+>> +     enum:
+>> +       - qcom,gcc-apq8064
+>> +       - qcom,gcc-apq8084
+>> +       - qcom,gcc-ipq8064
+>> +       - qcom,gcc-ipq4019
+>> +       - qcom,gcc-ipq8074
+>> +       - qcom,gcc-msm8660
+>> +       - qcom,gcc-msm8916
+>> +       - qcom,gcc-msm8960
+>> +       - qcom,gcc-msm8974
+>> +       - qcom,gcc-msm8974pro
+>> +       - qcom,gcc-msm8974pro-ac
+>> +       - qcom,gcc-msm8994
+>> +       - qcom,gcc-msm8996
+>> +       - qcom,gcc-msm8998
+>> +       - qcom,gcc-mdm9615
+>> +       - qcom,gcc-qcs404
+>> +       - qcom,gcc-sdm630
+>> +       - qcom,gcc-sdm660
+>> +       - qcom,gcc-sdm845
+>> +       - qcom,gcc-sc7180
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    items:
+>> +      - description: Board XO source
+>> +      - description: Board active XO source
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    items:
+>> +      - const: bi_tcxo
+>> +      - const: bi_tcxo_ao
+>> +
+>> +  nvmem-cells:
+>> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> 
+> Standard property, you don't need the type here. What's needed is the size.
+> 
+
+Would take care of it in the next patch.
+
+>> +    description:
+>> +      Qualcomm TSENS (thermal sensor device) on some devices can
+>> +      be part of GCC and hence the TSENS properties can also be part
+>> +      of the GCC/clock-controller node.
+>> +      For more details on the TSENS properties please refer
+>> +      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+>> +
+>> +  nvmem-cell-names:
+>> +    $ref: /schemas/types.yaml#/definitions/string-array
+> 
+> Don't need the type (and this would have to be under an 'allOf' to
+> actually work).
+> 
+
+Would take care of it in the next patch.
+
+>> +    description:
+>> +      Names for each nvmem-cells specified.
+>> +    items:
+>> +      - const: calib
+>> +      - const: calib_backup
+>> +
+>> +  "#thermal-sensor-cells":
+>> +    const: 1
+>> +
+>> +  "#power-domain-cells":
+>> +    const: 1
+>> +
+>> +  protected-clocks:
+>> +    description:
+>> +       Protected clock specifier list as per common clock binding
+>> +
+>> +required:
+>> +  - "#clock-cells"
+>> +  - "#reset-cells"
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +examples:
+>> +  - |
+>> +    clock-controller@900000 {
+>> +      compatible = "qcom,gcc-msm8960";
+>> +      reg = <0x900000 0x4000>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +    };
+>> +
+>> +
+>> +  - |
+>> +    // Example of GCC with TSENS properties:
+>> +    clock-controller@900000 {
+>> +      compatible = "qcom,gcc-apq8064";
+>> +      reg = <0x00900000 0x4000>;
+>> +      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+>> +      nvmem-cell-names = "calib", "calib_backup";
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #thermal-sensor-cells = <1>;
+>> +    };
+>> +
+>> +  - |
+>> +    //Example of GCC with protected-clocks properties:
+>> +    clock-controller@100000 {
+>> +      compatible = "qcom,gcc-sdm845";
+>> +      reg = <0x100000 0x1f0000>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +      protected-clocks = <187>, <188>, <189>, <190>, <191>;
+>> +    };
+>> +
+>> +  - |
+>> +    //Example of GCC with clock nodes properties:
+>> +    clock-controller@100000 {
+>> +      compatible = "qcom,gcc-sc7180";
+>> +      reg = <0x100000 0x1f0000>;
+>> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
+>> +      clock-names = "bi_tcxo", "bi_tcxo_ao";
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +    };
+>> +...
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+>> new file mode 100644
+>> index 000000000000..d76b061f6a4e
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+>> @@ -0,0 +1,155 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+>> +#define _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+>> +
+>> +/* GCC clocks */
+>> +#define GCC_GPLL0_MAIN_DIV_CDIV                                        0
+>> +#define GPLL0                                                  1
+>> +#define GPLL0_OUT_EVEN                                         2
+>> +#define GPLL1                                                  3
+>> +#define GPLL4                                                  4
+>> +#define GPLL6                                                  5
+>> +#define GPLL7                                                  6
+>> +#define GCC_AGGRE_UFS_PHY_AXI_CLK                              7
+>> +#define GCC_AGGRE_USB3_PRIM_AXI_CLK                            8
+>> +#define GCC_BOOT_ROM_AHB_CLK                                   9
+>> +#define GCC_CAMERA_AHB_CLK                                     10
+>> +#define GCC_CAMERA_HF_AXI_CLK                                  11
+>> +#define GCC_CAMERA_THROTTLE_HF_AXI_CLK                         12
+>> +#define GCC_CAMERA_XO_CLK                                      13
+>> +#define GCC_CE1_AHB_CLK                                                14
+>> +#define GCC_CE1_AXI_CLK                                                15
+>> +#define GCC_CE1_CLK                                            16
+>> +#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK                          17
+>> +#define GCC_CPUSS_AHB_CLK                                      18
+>> +#define GCC_CPUSS_AHB_CLK_SRC                                  19
+>> +#define GCC_CPUSS_GNOC_CLK                                     20
+>> +#define GCC_CPUSS_RBCPR_CLK                                    21
+>> +#define GCC_DDRSS_GPU_AXI_CLK                                  22
+>> +#define GCC_DISP_AHB_CLK                                       23
+>> +#define GCC_DISP_GPLL0_CLK_SRC                                 24
+>> +#define GCC_DISP_GPLL0_DIV_CLK_SRC                             25
+>> +#define GCC_DISP_HF_AXI_CLK                                    26
+>> +#define GCC_DISP_THROTTLE_HF_AXI_CLK                           27
+>> +#define GCC_DISP_XO_CLK                                                28
+>> +#define GCC_GP1_CLK                                            29
+>> +#define GCC_GP1_CLK_SRC                                                30
+>> +#define GCC_GP2_CLK                                            31
+>> +#define GCC_GP2_CLK_SRC                                                32
+>> +#define GCC_GP3_CLK                                            33
+>> +#define GCC_GP3_CLK_SRC                                                34
+>> +#define GCC_GPU_CFG_AHB_CLK                                    35
+>> +#define GCC_GPU_GPLL0_CLK_SRC                                  36
+>> +#define GCC_GPU_GPLL0_DIV_CLK_SRC                              37
+>> +#define GCC_GPU_MEMNOC_GFX_CLK                                 38
+>> +#define GCC_GPU_SNOC_DVM_GFX_CLK                               39
+>> +#define GCC_NPU_AXI_CLK                                                40
+>> +#define GCC_NPU_BWMON_AXI_CLK                                  41
+>> +#define GCC_NPU_BWMON_DMA_CFG_AHB_CLK                          42
+>> +#define GCC_NPU_BWMON_DSP_CFG_AHB_CLK                          43
+>> +#define GCC_NPU_CFG_AHB_CLK                                    44
+>> +#define GCC_NPU_DMA_CLK                                                45
+>> +#define GCC_NPU_GPLL0_CLK_SRC                                  46
+>> +#define GCC_NPU_GPLL0_DIV_CLK_SRC                              47
+>> +#define GCC_PDM2_CLK                                           48
+>> +#define GCC_PDM2_CLK_SRC                                       49
+>> +#define GCC_PDM_AHB_CLK                                                50
+>> +#define GCC_PDM_XO4_CLK                                                51
+>> +#define GCC_PRNG_AHB_CLK                                       52
+>> +#define GCC_QSPI_CNOC_PERIPH_AHB_CLK                           53
+>> +#define GCC_QSPI_CORE_CLK                                      54
+>> +#define GCC_QSPI_CORE_CLK_SRC                                  55
+>> +#define GCC_QUPV3_WRAP0_CORE_2X_CLK                            56
+>> +#define GCC_QUPV3_WRAP0_CORE_CLK                               57
+>> +#define GCC_QUPV3_WRAP0_S0_CLK                                 58
+>> +#define GCC_QUPV3_WRAP0_S0_CLK_SRC                             59
+>> +#define GCC_QUPV3_WRAP0_S1_CLK                                 60
+>> +#define GCC_QUPV3_WRAP0_S1_CLK_SRC                             61
+>> +#define GCC_QUPV3_WRAP0_S2_CLK                                 62
+>> +#define GCC_QUPV3_WRAP0_S2_CLK_SRC                             63
+>> +#define GCC_QUPV3_WRAP0_S3_CLK                                 64
+>> +#define GCC_QUPV3_WRAP0_S3_CLK_SRC                             65
+>> +#define GCC_QUPV3_WRAP0_S4_CLK                                 66
+>> +#define GCC_QUPV3_WRAP0_S4_CLK_SRC                             67
+>> +#define GCC_QUPV3_WRAP0_S5_CLK                                 68
+>> +#define GCC_QUPV3_WRAP0_S5_CLK_SRC                             69
+>> +#define GCC_QUPV3_WRAP1_CORE_2X_CLK                            70
+>> +#define GCC_QUPV3_WRAP1_CORE_CLK                               71
+>> +#define GCC_QUPV3_WRAP1_S0_CLK                                 72
+>> +#define GCC_QUPV3_WRAP1_S0_CLK_SRC                             73
+>> +#define GCC_QUPV3_WRAP1_S1_CLK                                 74
+>> +#define GCC_QUPV3_WRAP1_S1_CLK_SRC                             75
+>> +#define GCC_QUPV3_WRAP1_S2_CLK                                 76
+>> +#define GCC_QUPV3_WRAP1_S2_CLK_SRC                             77
+>> +#define GCC_QUPV3_WRAP1_S3_CLK                                 78
+>> +#define GCC_QUPV3_WRAP1_S3_CLK_SRC                             79
+>> +#define GCC_QUPV3_WRAP1_S4_CLK                                 80
+>> +#define GCC_QUPV3_WRAP1_S4_CLK_SRC                             81
+>> +#define GCC_QUPV3_WRAP1_S5_CLK                                 82
+>> +#define GCC_QUPV3_WRAP1_S5_CLK_SRC                             83
+>> +#define GCC_QUPV3_WRAP_0_M_AHB_CLK                             84
+>> +#define GCC_QUPV3_WRAP_0_S_AHB_CLK                             85
+>> +#define GCC_QUPV3_WRAP_1_M_AHB_CLK                             86
+>> +#define GCC_QUPV3_WRAP_1_S_AHB_CLK                             87
+>> +#define GCC_SDCC1_AHB_CLK                                      88
+>> +#define GCC_SDCC1_APPS_CLK                                     89
+>> +#define GCC_SDCC1_APPS_CLK_SRC                                 90
+>> +#define GCC_SDCC1_ICE_CORE_CLK                                 91
+>> +#define GCC_SDCC1_ICE_CORE_CLK_SRC                             92
+>> +#define GCC_SDCC2_AHB_CLK                                      93
+>> +#define GCC_SDCC2_APPS_CLK                                     94
+>> +#define GCC_SDCC2_APPS_CLK_SRC                                 95
+>> +#define GCC_SYS_NOC_CPUSS_AHB_CLK                              96
+>> +#define GCC_UFS_MEM_CLKREF_CLK                                 97
+>> +#define GCC_UFS_PHY_AHB_CLK                                    98
+>> +#define GCC_UFS_PHY_AXI_CLK                                    99
+>> +#define GCC_UFS_PHY_AXI_CLK_SRC                                        100
+>> +#define GCC_UFS_PHY_ICE_CORE_CLK                               101
+>> +#define GCC_UFS_PHY_ICE_CORE_CLK_SRC                           102
+>> +#define GCC_UFS_PHY_PHY_AUX_CLK                                        103
+>> +#define GCC_UFS_PHY_PHY_AUX_CLK_SRC                            104
+>> +#define GCC_UFS_PHY_RX_SYMBOL_0_CLK                            105
+>> +#define GCC_UFS_PHY_TX_SYMBOL_0_CLK                            106
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK                            107
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC                                108
+>> +#define GCC_USB30_PRIM_MASTER_CLK                              109
+>> +#define GCC_USB30_PRIM_MASTER_CLK_SRC                          110
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK                           111
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC                       112
+>> +#define GCC_USB30_PRIM_SLEEP_CLK                               113
+>> +#define GCC_USB3_PRIM_CLKREF_CLK                               114
+>> +#define GCC_USB3_PRIM_PHY_AUX_CLK                              115
+>> +#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC                          116
+>> +#define GCC_USB3_PRIM_PHY_COM_AUX_CLK                          117
+>> +#define GCC_USB3_PRIM_PHY_PIPE_CLK                             118
+>> +#define GCC_USB_PHY_CFG_AHB2PHY_CLK                            119
+>> +#define GCC_VIDEO_AHB_CLK                                      120
+>> +#define GCC_VIDEO_AXI_CLK                                      121
+>> +#define GCC_VIDEO_GPLL0_DIV_CLK_SRC                            122
+>> +#define GCC_VIDEO_THROTTLE_AXI_CLK                             123
+>> +#define GCC_VIDEO_XO_CLK                                       124
+>> +
+>> +/* GCC resets */
+>> +#define GCC_QUSB2PHY_PRIM_BCR                                  0
+>> +#define GCC_QUSB2PHY_SEC_BCR                                   1
+>> +#define GCC_UFS_PHY_BCR                                                2
+>> +#define GCC_USB30_PRIM_BCR                                     3
+>> +#define GCC_USB3_DP_PHY_PRIM_BCR                               4
+>> +#define GCC_USB3_DP_PHY_SEC_BCR                                        5
+>> +#define GCC_USB3_PHY_PRIM_BCR                                  6
+>> +#define GCC_USB3_PHY_SEC_BCR                                   7
+>> +#define GCC_USB3PHY_PHY_PRIM_BCR                               8
+>> +#define GCC_USB3PHY_PHY_SEC_BCR                                        9
+>> +#define GCC_USB_PHY_CFG_AHB2PHY_BCR                            10
+>> +
+>> +/* GCC GDSCRs */
+>> +#define UFS_PHY_GDSC                                           0
+>> +#define USB30_PRIM_GDSC                                                1
+>> +#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC                      2
+>> +#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC                       3
+>> +
+>> +#endif
+>> --
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the  Linux Foundation.
+>>
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
