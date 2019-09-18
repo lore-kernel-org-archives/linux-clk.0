@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA436C4CECE
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1516C4CEC9
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:33:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB1E621A4C
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:32:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFDA421907
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 17:33:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568827973;
-	bh=E9DwEf7R8b/H/w/pY582iNh72DFD9zpZbpy6YjCJtCA=;
+	s=default; t=1568827984;
+	bh=NfJ9sRleyQQ5tZgP4QFSZEUinJ+3DSTjk/BekNqpBzg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I7sIX9SSXpTS6xfm7ly676pYFOxpFJPlQI+c2Dn3N9v0d6ii7wYkZeYnxSUMJK0os
-	 am11AtS8QgWVXuoLNz3viwg1bYnrSxkXHHIdqP7GvmcEL6DlU4FlI/SYOPhVo+9xmu
-	 jmlXbodnIWBQe/raUrdCqnGoLop/5NziPOMw7oF8=
+	b=dTwCl0KBv1qA+Ygxkbox3dOKAAxHHujizdmtLICo0iVrx/riTnlotWnGMMDMW2Wcx
+	 ArMtgWz8lEyxaIt2fVpieo1nmrMxDx6ZltDhaVhIA84/YfHHWBXMg+nAxcJ7I6A7S5
+	 hoLA/ikOf6D+MOnyIsyMeNSRSKh85vJo9fys3wjM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387857AbfIRRcj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Sep 2019 13:32:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43046 "EHLO mail.kernel.org"
+        id S2387937AbfIRRc7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Sep 2019 13:32:59 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387818AbfIRRci (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Sep 2019 13:32:38 -0400
+        id S2387890AbfIRRc6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Sep 2019 13:32:58 -0400
 Received: from localhost.localdomain (unknown [194.230.155.145])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D79D821928;
-        Wed, 18 Sep 2019 17:32:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6F47621925;
+        Wed, 18 Sep 2019 17:32:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568827958;
-        bh=E9DwEf7R8b/H/w/pY582iNh72DFD9zpZbpy6YjCJtCA=;
+        s=default; t=1568827977;
+        bh=NfJ9sRleyQQ5tZgP4QFSZEUinJ+3DSTjk/BekNqpBzg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xHEiwH/r63UQYy4j6Uf8KGGtFbl4pyX4olLMK84c3ybxPXAShOU6AW7FSUIC76wh0
-         9foNamqzWle3Cgmi0S2/zX1D7GQgiwPMUPGJzBJkTKl0OzQP4UHOYYHcX9YiMaCUCb
-         5WhDtUwJ68hJrzzVaxE139BLp3UdDCgJMgSlHHEU=
+        b=DvkvvauWtTZxYAuzUUBqMADQXEYtupsymGMZ9i8bCRI0eD4uxwy9Mrekx+m7lo608
+         xXOoC18wwUbAVnB6tbyj6CivJ990xXRyTxbCl/ehV5A+YCwzqW6gWTAS6TYIk27B/m
+         t5v6muzQDp89MsyDGgmfGZt6jDCemAvG/Z7pkoDA=
 From:   Krzysztof Kozlowski <krzk@kernel.org>
 To:     Rob Herring <robh+dt@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
@@ -59,9 +59,9 @@ To:     Rob Herring <robh+dt@kernel.org>,
         linux-stm32@st-md-mailman.stormreply.com,
         linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org
 Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v2 5/8] dt-bindings: watchdog: Convert Samsung SoC watchdog bindings to json-schema
-Date:   Wed, 18 Sep 2019 19:31:38 +0200
-Message-Id: <20190918173141.4314-5-krzk@kernel.org>
+Subject: [PATCH v2 8/8] dt-bindings: pwm: Convert Samsung PWM bindings to json-schema
+Date:   Wed, 18 Sep 2019 19:31:41 +0200
+Message-Id: <20190918173141.4314-8-krzk@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190918173141.4314-1-krzk@kernel.org>
 References: <20190918173141.4314-1-krzk@kernel.org>
@@ -70,8 +70,8 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Samsung S3C/S5P/Exynos watchdog bindings to DT schema format
-using json-schema.
+Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
+format using json-schema.
 
 Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
@@ -79,127 +79,184 @@ Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
 Changes since v1:
 1. Indent example with four spaces (more readable),
-2. Remove unneeded timeout-sec description.
+2. Fix samsung,pwm-outputs after review,
+3. Remove double-quotes from clock names.
 ---
- .../bindings/watchdog/samsung-wdt.txt         | 35 ----------
- .../bindings/watchdog/samsung-wdt.yaml        | 67 +++++++++++++++++++
- 2 files changed, 67 insertions(+), 35 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
- create mode 100644 Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+ .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 ---------
+ .../devicetree/bindings/pwm/pwm-samsung.yaml  | 107 ++++++++++++++++++
+ 2 files changed, 107 insertions(+), 51 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
+ create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
 
-diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt b/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
 deleted file mode 100644
-index 46dcb48e75b4..000000000000
---- a/Documentation/devicetree/bindings/watchdog/samsung-wdt.txt
+index 5538de9c2007..000000000000
+--- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
 +++ /dev/null
-@@ -1,35 +0,0 @@
--* Samsung's Watchdog Timer Controller
+@@ -1,51 +0,0 @@
+-* Samsung PWM timers
 -
--The Samsung's Watchdog controller is used for resuming system operation
--after a preset amount of time during which the WDT reset event has not
--occurred.
+-Samsung SoCs contain PWM timer blocks which can be used for system clock source
+-and clock event timers, as well as to drive SoC outputs with PWM signal. Each
+-PWM timer block provides 5 PWM channels (not all of them can drive physical
+-outputs - see SoC and board manual).
+-
+-Be aware that the clocksource driver supports only uniprocessor systems.
 -
 -Required properties:
--- compatible : should be one among the following
--	- "samsung,s3c2410-wdt" for S3C2410
--	- "samsung,s3c6410-wdt" for S3C6410, S5PV210 and Exynos4
--	- "samsung,exynos5250-wdt" for Exynos5250
--	- "samsung,exynos5420-wdt" for Exynos5420
--	- "samsung,exynos7-wdt" for Exynos7
--
--- reg : base physical address of the controller and length of memory mapped
--	region.
--- interrupts : interrupt number to the cpu.
--- samsung,syscon-phandle : reference to syscon node (This property required only
--	in case of compatible being "samsung,exynos5250-wdt" or "samsung,exynos5420-wdt".
--	In case of Exynos5250 and 5420 this property points to syscon node holding the PMU
--	base address)
+-- compatible : should be one of following:
+-    samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
+-    samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
+-    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
+-    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
+-			  Exynos4210 rev0 SoCs
+-    samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
+-                          Exynos4x12, Exynos5250 and Exynos5420 SoCs
+-- reg: base address and size of register area
+-- interrupts: list of timer interrupts (one interrupt per timer, starting at
+-  timer 0)
+-- clock-names: should contain all following required clock names:
+-    - "timers" - PWM base clock used to generate PWM signals,
+-  and any subset of following optional clock names:
+-    - "pwm-tclk0" - first external PWM clock source,
+-    - "pwm-tclk1" - second external PWM clock source.
+-  Note that not all IP variants allow using all external clock sources.
+-  Refer to SoC documentation to learn which clock source configurations
+-  are available.
+-- clocks: should contain clock specifiers of all clocks, which input names
+-  have been specified in clock-names property, in same order.
+-- #pwm-cells: should be 3. See pwm.txt in this directory for a description of
+-  the cells format. The only third cell flag supported by this binding is
+-  PWM_POLARITY_INVERTED.
 -
 -Optional properties:
--- timeout-sec : contains the watchdog timeout in seconds.
+-- samsung,pwm-outputs: list of PWM channels used as PWM outputs on particular
+-    platform - an array of up to 5 elements being indices of PWM channels
+-    (from 0 to 4), the order does not matter.
 -
 -Example:
--
--watchdog@101d0000 {
--	compatible = "samsung,exynos5250-wdt";
--	reg = <0x101D0000 0x100>;
--	interrupts = <0 42 0>;
--	clocks = <&clock 336>;
--	clock-names = "watchdog";
--	samsung,syscon-phandle = <&pmu_syscon>;
--};
-diff --git a/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
+-	pwm@7f006000 {
+-		compatible = "samsung,s3c6400-pwm";
+-		reg = <0x7f006000 0x1000>;
+-		interrupt-parent = <&vic0>;
+-		interrupts = <23>, <24>, <25>, <27>, <28>;
+-		clocks = <&clock 67>;
+-		clock-names = "timers";
+-		samsung,pwm-outputs = <0>, <1>;
+-		#pwm-cells = <3>;
+-	}
+diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
 new file mode 100644
-index 000000000000..3ea3c9fe8390
+index 000000000000..06d11faabff6
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/watchdog/samsung-wdt.yaml
-@@ -0,0 +1,67 @@
++++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+@@ -0,0 +1,107 @@
 +# SPDX-License-Identifier: GPL-2.0
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/watchdog/samsung-wdt.yaml#
++$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Samsung SoC Watchdog Timer Controller
++title: Samsung SoC PWM timers
 +
 +maintainers:
++  - Thierry Reding <thierry.reding@gmail.com>
 +  - Krzysztof Kozlowski <krzk@kernel.org>
 +
 +description: |+
-+  The Samsung's Watchdog controller is used for resuming system operation
-+  after a preset amount of time during which the WDT reset event has not
-+  occurred.
++  Samsung SoCs contain PWM timer blocks which can be used for system clock source
++  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
++  PWM timer block provides 5 PWM channels (not all of them can drive physical
++  outputs - see SoC and board manual).
++
++  Be aware that the clocksource driver supports only uniprocessor systems.
++
++allOf:
++  - $ref: pwm.yaml#
 +
 +properties:
 +  compatible:
 +    enum:
-+      - samsung,s3c2410-wdt                   # for S3C2410
-+      - samsung,s3c6410-wdt                   # for S3C6410, S5PV210 and Exynos4
-+      - samsung,exynos5250-wdt                # for Exynos5250
-+      - samsung,exynos5420-wdt                # for Exynos5420
-+      - samsung,exynos7-wdt                   # for Exynos7
++      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
++      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
++      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
++      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
++      - samsung,exynos4210-pwm          # 32-bit, Exynos
 +
 +  reg:
 +    maxItems: 1
 +
++  clocks:
++    minItems: 1
++    maxItems: 3
++
++  clock-names:
++    description: |
++      Should contain all following required clock names:
++      - "timers" - PWM base clock used to generate PWM signals,
++      and any subset of following optional clock names:
++      - "pwm-tclk0" - first external PWM clock source,
++      - "pwm-tclk1" - second external PWM clock source.
++      Note that not all IP variants allow using all external clock sources.
++      Refer to SoC documentation to learn which clock source configurations
++      are available.
++    oneOf:
++      - items:
++        - const: timers
++      - items:
++        - const: timers
++        - const: pwm-tclk0
++      - items:
++        - const: timers
++        - const: pwm-tclk1
++      - items:
++        - const: timers
++        - const: pwm-tclk0
++        - const: pwm-tclk1
++
 +  interrupts:
-+    maxItems: 1
-+
-+  samsung,syscon-phandle:
-+    $ref: /schemas/types.yaml#/definitions/phandle
 +    description:
-+      Phandle to the PMU system controller node (in case of Exynos5250
-+      and Exynos5420).
++      One interrupt per timer, starting at timer 0.
++    minItems: 1
++    maxItems: 5
 +
-+  timeout-sec:
-+    $ref: /schemas/types.yaml#/definitions/uint32
++  "#pwm-cells":
++    description:
++      The only third cell flag supported by this binding
++      is PWM_POLARITY_INVERTED.
++    const: 3
++
++  samsung,pwm-outputs:
++    description:
++      A list of PWM channels used as PWM outputs on particular platform.
++      It is an array of up to 5 elements being indices of PWM channels
++      (from 0 to 4), the order does not matter.
++    allOf:
++      - $ref: /schemas/types.yaml#/definitions/uint32-array
++      - uniqueItems: true
++      - items:
++          minimum: 0
++          maximum: 4
 +
 +required:
++  - clocks
++  - clock-names
 +  - compatible
 +  - interrupts
++  - "#pwm-cells"
 +  - reg
-+
-+allOf:
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            enum:
-+              - samsung,exynos5250-wdt
-+              - samsung,exynos5420-wdt
-+    then:
-+      required:
-+        - samsung,syscon-phandle
 +
 +examples:
 +  - |
-+    watchdog@101d0000 {
-+        compatible = "samsung,exynos5250-wdt";
-+        reg = <0x101D0000 0x100>;
-+        interrupts = <0 42 0>;
-+        clocks = <&clock 336>;
-+        clock-names = "watchdog";
-+        samsung,syscon-phandle = <&pmu_syscon>;
++    pwm@7f006000 {
++        compatible = "samsung,s3c6400-pwm";
++        reg = <0x7f006000 0x1000>;
++        interrupt-parent = <&vic0>;
++        interrupts = <23>, <24>, <25>, <27>, <28>;
++        clocks = <&clock 67>;
++        clock-names = "timers";
++        samsung,pwm-outputs = <0>, <1>;
++        #pwm-cells = <3>;
 +    };
 -- 
 2.17.1
