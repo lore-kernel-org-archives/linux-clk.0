@@ -1,110 +1,176 @@
-Return-Path: <SRS0=xl4E=XM=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=9teh=XN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78312C4CECD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 20:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 706A0C4CECD
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 01:35:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 402BE214AF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Sep 2019 20:42:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WR7W/y/V"
+	by mail.kernel.org (Postfix) with ESMTP id 42599218AE
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Sep 2019 01:35:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568770513;
+	bh=CNhStEcQFuEdq1pfDCCSBIHt0K/zHVFSCw08issNtG8=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=OOs91bx2/IO/CDHKL28Xe7nl+kJZBjYSdFFUH7cH8EmO0GqL1fPvPmx3Ar9Bwiq83
+	 /UzgjeZZFS3Gw6+EF48Iq0laqnx6/moqQKqBf/BeHD46qS2D8hQUqVIFz2wEH9/Z0v
+	 LhmM00hqohmfjsOl2b9dKxftPZYydaLStX9KhfS8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729808AbfIQUmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Sep 2019 16:42:46 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:41696 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728821AbfIQUmq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Sep 2019 16:42:46 -0400
-Received: by mail-pg1-f194.google.com with SMTP id x15so2611113pgg.8
-        for <linux-clk@vger.kernel.org>; Tue, 17 Sep 2019 13:42:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YFdHh2t2oGEv2BeyA21GE0G/WyCi2XemObkdcdHKmyU=;
-        b=WR7W/y/Vd3KVexCUb7hWKcXKdGo9sUyUYVu2m0c5AY8jg79ByRv3GU7hHtb9LbDWYB
-         mZw5PChdZK7E/Dh+ouP8eUL030tx59XaE0u6AYcloT9aT1UpB8uiEb0gpUb9/mrtBw2y
-         xASL8xfI9EMEr5x2EGq6/2aIOlrsPqBG7vmspnrVu6CYSlOr8SFjDbeKr/iVCCAS/L6U
-         x/mza+bV99BHofVppiVRCy1wRLZG4JfkSSsRW2PBO9nil6mRs65aZ7RVwcUd7G0YWR/M
-         WiwVBjcZZlk1zcITfQ60FVLP2fh0SZayUZR983vRsdU5j75DidPYRsV9JVkDbHh5WJC6
-         WiYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YFdHh2t2oGEv2BeyA21GE0G/WyCi2XemObkdcdHKmyU=;
-        b=dRQ43rnkbbcJqostA+4QAjlwbIjTIn8GQG9xLvd1WfxBHhknISUGmViMc23PStUyeE
-         C9BOQTH0/VAyEWw4+8263WCzA9GIL760tOo2sdyvn5ryNVxsTh3Y+TyijdDKT+YryjPc
-         CgG4LR3V8vRZRnRLpXWAX+tSgMja2UQxWPu9F/w7zbApQeNFgPst5T0zGM+AP8amH/l4
-         Fp+9/6ISQh9C3dwtLk4hfrhL2/vNFgPPVIojle5/r1s+yqkng3ZPrSAAYCc7LGO3LDmy
-         oGdDiodSlFioI8TNxCcmVCa4fjgqL/WYSTF6zf0kFCJ1/n3leETScw6HEXkiZNr+43Ms
-         leqQ==
-X-Gm-Message-State: APjAAAU2En8k8O2Bou0VARUmE0cXJU55DC75POGvMuk4/yZ5D4zXMH5N
-        2xstQ1z6FHt/6yrcgpoFZ0KgVg==
-X-Google-Smtp-Source: APXvYqwiZx8dQNbqg0BmyaATr5iobMO3ZNDI3QuNtw/DOBStKSp3I8AmEvwYrUDxTWiIFPZukQRJgg==
-X-Received: by 2002:a63:ca06:: with SMTP id n6mr673892pgi.17.1568752965572;
-        Tue, 17 Sep 2019 13:42:45 -0700 (PDT)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id e192sm5960215pfh.83.2019.09.17.13.42.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Sep 2019 13:42:44 -0700 (PDT)
-Date:   Tue, 17 Sep 2019 13:42:42 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>
-Subject: Re: [PATCH] clk: Make clk_bulk_get_all() return a valid "id"
-Message-ID: <20190917204242.GB6167@minitux>
-References: <20190913024029.2640-1-bjorn.andersson@linaro.org>
- <20190917203347.04BE32054F@mail.kernel.org>
+        id S1727333AbfIRBfM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Sep 2019 21:35:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbfIRBfM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Sep 2019 21:35:12 -0400
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C950D20665;
+        Wed, 18 Sep 2019 01:35:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568770511;
+        bh=CNhStEcQFuEdq1pfDCCSBIHt0K/zHVFSCw08issNtG8=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LxBaIkKgi9m6jiryV1r+1o60TVpkfr54kg+eSfrlMP7RRkywU+v7t9AJPCYLXe4Em
+         h8O5QGaCku+S8y5J/CD7Z2b737LGuowQ8E8YdapNJufKbapEaZ6mXy67UNWgAurpOJ
+         D3bukvgkFgn0NHZbscOaHOsgA7/GNjuxXEvlMxHs=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     linux-clk@vger.kernel.org
+Cc:     dinguyen@kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
+        Dinh Nguyen <dinh.nguyen@intel.com>
+Subject: [PATCH 1/2] dt-bindings: documentation: add clock bindings information for Agilex
+Date:   Tue, 17 Sep 2019 20:34:58 -0500
+Message-Id: <20190918013459.15966-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190917203347.04BE32054F@mail.kernel.org>
-User-Agent: Mutt/1.12.0 (2019-05-25)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 17 Sep 13:33 PDT 2019, Stephen Boyd wrote:
+From: Dinh Nguyen <dinh.nguyen@intel.com>
 
-> Quoting Bjorn Andersson (2019-09-12 19:40:29)
-> > The adreno driver expects the "id" field of the returned clk_bulk_data
-> > to be filled in with strings from the clock-names property.
-> > 
-> > But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
-> > receives a list of bogus pointers instead.
-> > 
-> > Zero-initialize the "id" field and attempt to populate with strings from
-> > the clock-names property to resolve both these issues.
-> > 
-> > Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
-> > Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
-> > Cc: Dong Aisheng <aisheng.dong@nxp.com>
-> > Cc: Jordan Crouse <jcrouse@codeaurora.org>
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> 
-> Applied to clk-next
-> 
+Document the Agilex clock bindings, and add the clock header file. The
+clock header is an enumeration of all the different clocks on the Agilex
+platform.
 
-Thanks
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+---
+ .../devicetree/bindings/clock/intc_agilex.txt | 20 ++++++
+ include/dt-bindings/clock/agilex-clock.h      | 70 +++++++++++++++++++
+ 2 files changed, 90 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intc_agilex.txt
+ create mode 100644 include/dt-bindings/clock/agilex-clock.h
 
-> And now I see that this whole thing needs to be inlined to the one call
-> site and should use the struct device instead of calling of_clk_get()...
-> I'll have to fix it later.
-> 
+diff --git a/Documentation/devicetree/bindings/clock/intc_agilex.txt b/Documentation/devicetree/bindings/clock/intc_agilex.txt
+new file mode 100644
+index 000000000000..bfec71420511
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/intc_agilex.txt
+@@ -0,0 +1,20 @@
++Device Tree Clock bindings for Intel's SoCFPGA Agilex platform
++
++This binding uses the common clock binding[1].
++
++[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
++
++Required properties:
++- compatible : shall be
++	"intel,agilex-clkmgr"
++
++- reg : shall be the control register offset from CLOCK_MANAGER's base for the clock.
++
++- #clock-cells : from common clock binding, shall be set to 1.
++
++Example:
++	clkmgr: clock-controller@ffd10000 {
++		compatible = "intel,agilex-clkmgr";
++		reg = <0xffd10000 0x1000>;
++		#clock-cells = <1>;
++	};
+diff --git a/include/dt-bindings/clock/agilex-clock.h b/include/dt-bindings/clock/agilex-clock.h
+new file mode 100644
+index 000000000000..f19cf8ccbdd2
+--- /dev/null
++++ b/include/dt-bindings/clock/agilex-clock.h
+@@ -0,0 +1,70 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (C) 2019, Intel Corporation
++ */
++
++#ifndef __AGILEX_CLOCK_H
++#define __AGILEX_CLOCK_H
++
++/* fixed rate clocks */
++#define AGILEX_OSC1			0
++#define AGILEX_CB_INTOSC_HS_DIV2_CLK	1
++#define AGILEX_CB_INTOSC_LS_CLK		2
++#define AGILEX_L4_SYS_FREE_CLK		3
++#define AGILEX_F2S_FREE_CLK		4
++
++/* PLL clocks */
++#define AGILEX_MAIN_PLL_CLK		5
++#define AGILEX_MAIN_PLL_C0_CLK		6
++#define AGILEX_MAIN_PLL_C1_CLK		7
++#define AGILEX_MAIN_PLL_C2_CLK		8
++#define AGILEX_MAIN_PLL_C3_CLK		9
++#define AGILEX_PERIPH_PLL_CLK		10
++#define AGILEX_PERIPH_PLL_C0_CLK	11
++#define AGILEX_PERIPH_PLL_C1_CLK	12
++#define AGILEX_PERIPH_PLL_C2_CLK	13
++#define AGILEX_PERIPH_PLL_C3_CLK	14
++#define AGILEX_MPU_FREE_CLK		15
++#define AGILEX_MPU_CCU_CLK		16
++#define AGILEX_BOOT_CLK			17
++
++/* fixed factor clocks */
++#define AGILEX_L3_MAIN_FREE_CLK		18
++#define AGILEX_NOC_FREE_CLK		19
++#define AGILEX_S2F_USR0_CLK		20
++#define AGILEX_NOC_CLK			21
++#define AGILEX_EMAC_A_FREE_CLK		22
++#define AGILEX_EMAC_B_FREE_CLK		23
++#define AGILEX_EMAC_PTP_FREE_CLK	24
++#define AGILEX_GPIO_DB_FREE_CLK		25
++#define AGILEX_SDMMC_FREE_CLK		26
++#define AGILEX_S2F_USER0_FREE_CLK	27
++#define AGILEX_S2F_USER1_FREE_CLK	28
++#define AGILEX_PSI_REF_FREE_CLK		29
++
++/* Gate clocks */
++#define AGILEX_MPU_CLK			30
++#define AGILEX_MPU_L2RAM_CLK		31
++#define AGILEX_MPU_PERIPH_CLK		32
++#define AGILEX_L4_MAIN_CLK		33
++#define AGILEX_L4_MP_CLK		34
++#define AGILEX_L4_SP_CLK		35
++#define AGILEX_CS_AT_CLK		36
++#define AGILEX_CS_TRACE_CLK		37
++#define AGILEX_CS_PDBG_CLK		38
++#define AGILEX_CS_TIMER_CLK		39
++#define AGILEX_S2F_USER0_CLK		40
++#define AGILEX_EMAC0_CLK		41
++#define AGILEX_EMAC1_CLK		43
++#define AGILEX_EMAC2_CLK		44
++#define AGILEX_EMAC_PTP_CLK		45
++#define AGILEX_GPIO_DB_CLK		46
++#define AGILEX_NAND_CLK			47
++#define AGILEX_PSI_REF_CLK		48
++#define AGILEX_S2F_USER1_CLK		49
++#define AGILEX_SDMMC_CLK		50
++#define AGILEX_SPI_M_CLK		51
++#define AGILEX_USB_CLK			52
++#define AGILEX_NUM_CLKS			53
++
++#endif	/* __AGILEX_CLOCK_H */
+-- 
+2.20.0
 
-I concluded the same, sorry for not mentioning it.
-
-Regards,
-Bjorn
