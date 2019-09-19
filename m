@@ -2,91 +2,91 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C13EC4CECE
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 08:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B0F8C3A5A6
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 08:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 135EE21907
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 08:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5237621907
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 08:17:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730958AbfISIR1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 04:17:27 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:61768 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727273AbfISIR0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 04:17:26 -0400
+        id S1731621AbfISIRi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 04:17:38 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:30251 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731373AbfISIRh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 04:17:37 -0400
 X-IronPort-AV: E=Sophos;i="5.64,522,1559487600"; 
-   d="scan'208";a="26760282"
+   d="scan'208";a="26979428"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 19 Sep 2019 17:17:24 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 19 Sep 2019 17:17:36 +0900
 Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 0B0B741F812D;
-        Thu, 19 Sep 2019 17:17:20 +0900 (JST)
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 7B7CD41F812C;
+        Thu, 19 Sep 2019 17:17:33 +0900 (JST)
 From:   Biju Das <biju.das@bp.renesas.com>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
         Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Biju Das <biju.das@bp.renesas.com>, devicetree@vger.kernel.org,
         Simon Horman <horms@verge.net.au>,
         Chris Paterson <Chris.Paterson2@renesas.com>,
         Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org
-Subject: [PATCH v2 0/8] Add RZ/G2N SYSC/RST/Clock/PFC support
-Date:   Thu, 19 Sep 2019 09:17:08 +0100
-Message-Id: <1568881036-4404-1-git-send-email-biju.das@bp.renesas.com>
+Subject: [PATCH v2 5/8] dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1 binding
+Date:   Thu, 19 Sep 2019 09:17:13 +0100
+Message-Id: <1568881036-4404-6-git-send-email-biju.das@bp.renesas.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1568881036-4404-1-git-send-email-biju.das@bp.renesas.com>
+References: <1568881036-4404-1-git-send-email-biju.das@bp.renesas.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series add SYSC/RST/Clock/PFC driver support for RZ/G2N SoC.
+Add binding documentation for the RZ/G2N (R8A774b1) Clock Pulse
+Generator driver.
 
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
 V1-->V2
- * Fixed "r8a774b1_cpg_mssr_init" function
- * cosmetic changes to align RZ/G2N clock driver with other R-Car Gen3/RZ-G2 clock drivers.
+ * No Change
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-Biju Das (8):
-  dt-bindings: power: rcar-sysc: Document r8a774b1 sysc
-  soc: renesas: rcar-sysc: Add r8a774b1 support
-  dt-bindings: reset: rcar-rst: Document r8a774b1 reset module
-  soc: renesas: rcar-rst: Add support for RZ/G2N
-  dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1 binding
-  clk: renesas: cpg-mssr: Add r8a774b1 support
-  dt-bindings: pinctrl: sh-pfc: Document r8a774b1 PFC support
-  pinctrl: sh-pfc: r8a77965: Add R8A774B1 PFC support
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
- .../bindings/pinctrl/renesas,pfc-pinctrl.txt       |   1 +
- .../bindings/power/renesas,rcar-sysc.txt           |   1 +
- .../devicetree/bindings/reset/renesas,rst.txt      |   1 +
- drivers/clk/renesas/Kconfig                        |   5 +
- drivers/clk/renesas/Makefile                       |   1 +
- drivers/clk/renesas/r8a774b1-cpg-mssr.c            | 322 ++++++++
- drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
- drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
- drivers/pinctrl/sh-pfc/Kconfig                     |   4 +
- drivers/pinctrl/sh-pfc/Makefile                    |   1 +
- drivers/pinctrl/sh-pfc/core.c                      |   6 +
- drivers/pinctrl/sh-pfc/pfc-r8a77965.c              | 861 +++++++++++----------
- drivers/pinctrl/sh-pfc/sh_pfc.h                    |   1 +
- drivers/soc/renesas/Kconfig                        |   5 +
- drivers/soc/renesas/Makefile                       |   1 +
- drivers/soc/renesas/r8a774b1-sysc.c                |  35 +
- drivers/soc/renesas/rcar-rst.c                     |   1 +
- drivers/soc/renesas/rcar-sysc.c                    |   3 +
- drivers/soc/renesas/rcar-sysc.h                    |   1 +
- 20 files changed, 854 insertions(+), 413 deletions(-)
- create mode 100644 drivers/clk/renesas/r8a774b1-cpg-mssr.c
- create mode 100644 drivers/soc/renesas/r8a774b1-sysc.c
-
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index 916a601..b5edebe 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -19,6 +19,7 @@ Required Properties:
+       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
+       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
++      - "renesas,r8a774b1-cpg-mssr" for the r8a774a1 SoC (RZ/G2N)
+       - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
+       - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
+       - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
+@@ -40,10 +41,11 @@ Required Properties:
+     clock-names
+   - clock-names: List of external parent clock names. Valid names are:
+       - "extal" (r7s9210, r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1,
+-		 r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793, r8a7794,
+-		 r8a7795, r8a7796, r8a77965, r8a77970, r8a77980, r8a77990,
+-		 r8a77995)
+-      - "extalr" (r8a774a1, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980)
++		 r8a774b1, r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793,
++		 r8a7794, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980,
++		 r8a77990, r8a77995)
++      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a7796, r8a77965, r8a77970,
++		  r8a77980)
+       - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
+ 		     r8a7793, r8a7794)
+ 
 -- 
 2.7.4
 
