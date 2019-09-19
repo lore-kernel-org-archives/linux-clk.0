@@ -2,134 +2,197 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C175C3A5A6
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 17:06:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D008C3A5A6
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 18:18:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB6320644
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 17:06:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D6E21A49
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 18:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1568917122;
+	bh=TCa764fDVm0BUS6jXDj8jA5f2AYG6d9jG3RP2yK6Qgg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=cvsXlJ4XrBNVP1ug3S0B9L7edVV2YgDUlxn4WKjFKGDh8BcG7d6J5C5FtuTGN9r9n
+	 9wnSzilZXDAiSz+hT8aeLRq+lYX6anA1HH6Qg1h7oiK09+SEUCalxcJkAbi9u+4Qyg
+	 0yHhFwi5TRZC//v//yPUgnLYosWPiBLOWOP92FGQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391775AbfISRGo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 13:06:44 -0400
-Received: from muru.com ([72.249.23.125]:33898 "EHLO muru.com"
+        id S1732612AbfISSSl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 14:18:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:54956 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391432AbfISRGo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Sep 2019 13:06:44 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 0CA418171;
-        Thu, 19 Sep 2019 17:07:14 +0000 (UTC)
-Date:   Thu, 19 Sep 2019 10:06:40 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name
- with reg-names
-Message-ID: <20190919170640.GI5610@atomide.com>
-References: <20190905215532.8357-1-tony@atomide.com>
- <256788c4-ae09-3c72-b563-b9707c4751b4@ti.com>
- <20190919141224.GH5610@atomide.com>
- <20190919165055.43CEB21928@mail.kernel.org>
+        id S1732583AbfISSSl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Sep 2019 14:18:41 -0400
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6CEEA21928;
+        Thu, 19 Sep 2019 18:18:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1568917119;
+        bh=TCa764fDVm0BUS6jXDj8jA5f2AYG6d9jG3RP2yK6Qgg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=K8lPzaOs5uyswM5REgjEu/RUFpspu42cKGkuvs/ihehMn4NjIoqOcdyAN505ZZ700
+         PWs5ixGmCLcsweiD7ajKJO52oDKH9L5Eq01aWAC9Ey/nF8LA3e2OK3oBU1W6LB7NwD
+         N4xHYVc6nA5ef4YDOdpicOZD/WNqJfleo5hkvsKo=
+Date:   Thu, 19 Sep 2019 20:18:37 +0200
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Subject: Re: [linux-sunxi] [PATCH] clk: sunxi-ng: h6: Use sigma-delta
+ modulation for audio PLL
+Message-ID: <20190919181837.yuhmqnojxpoqp35a@gilmour>
+References: <20190914135100.327412-1-jernej.skrabec@siol.net>
+ <CAGb2v640R7edA3EJvC=aJQZXGcfqot50O3-PFyrYj767pUEYrQ@mail.gmail.com>
+ <8129141.yvSaxnLE4m@jernej-laptop>
+ <CAGb2v65KQf_OX1sX9+4DAKKMKHP464cCZKjCRsn3LzTKRGLTcQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="pfkcvjqh5wmcwf4x"
 Content-Disposition: inline
-In-Reply-To: <20190919165055.43CEB21928@mail.kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+In-Reply-To: <CAGb2v65KQf_OX1sX9+4DAKKMKHP464cCZKjCRsn3LzTKRGLTcQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Stephen Boyd <sboyd@kernel.org> [190919 16:51]:
-> Quoting Tony Lindgren (2019-09-19 07:12:24)
-> > Hi,
-> > 
-> > * Tero Kristo <t-kristo@ti.com> [190919 06:46]:
-> > > On 06/09/2019 00:55, Tony Lindgren wrote:
-> > > > diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> > > > --- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> > > > +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> > > > @@ -20,15 +20,19 @@ Required properties :
-> > > >   - #clock-cells : shall contain 2 with the first entry being the instance
-> > > >              offset from the clock domain base and the second being the
-> > > >              clock index
-> > > > +- reg : clock registers
-> > > > +- reg-names : clock register names for the clock, should be same as the
-> > > > +         domain name
-> > > 
-> > > Hmm, I think using the reg-names property like this is kind of wrong.
-> > > Basically, reg and reg-names have pretty much nothing in common. Shouldn't
-> > > you instead use something like ti,clkdm-name? This also breaks with SoCs
-> > > like am3, which have mutant clkctrl entries like the one here:
-> > > 
-> > >                 l4ls_clkctrl: l4ls-clkctrl@38 {
-> > >                         compatible = "ti,clkctrl";
-> > >                         reg = <0x38 0x2c>, <0x6c 0x28>, <0xac 0xc>, <0xc0
-> > > 0x1c>, <0xec 0xc>, <0x10c 0x8>, <0x130 0x4>;
-> > >                         #clock-cells = <2>;
-> > >                 };
-> > > 
-> > > What would you think single entry in reg-names would mean in this case?
-> > 
-> > Oh right, I forgot about the mixed register case again.
-> > These are all in l4ls domain..
-> > 
-> > So sounds like the best option is just to allow adding more
-> > specific compatible values like this for the omap4 rng case:
-> > 
-> >         l4_secure_clkctrl: clock@1a0 {
-> >                 compatible = "ti,clkctrl-omap4-l4-secure", "ti,clkctrl";
-> >                 reg = <0x1a0 0x28>;
-> >                 #clock-cells = <2>;
-> >         };
-> > 
-> > And then use match data to get the domain name on init.
-> > 
-> 
-> The existing ti,clkctrl binding is pretty weird. I still believe that
-> the CM container node should be the only node and it should be logic in
-> the driver that describes the clks provided by the CM node. I guess I
-> have to just ignore this stuff because it's all working! 
 
-There can be multiple clockdomains within a single CM. So again using
-the l4_secure_clkctrl as an example, the l4_per CM instance with finer
-grained compatible properites becomes:
+--pfkcvjqh5wmcwf4x
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-	l4_per_cm: l4_per_cm@1400 {
-		compatible = "ti,omap4-cm";
-		reg = <0x1400 0x200>;
-		#address-cells = <1>;
-		#size-cells = <1>;
-		ranges = <0 0x1400 0x200>;
+On Wed, Sep 18, 2019 at 01:46:34PM +0800, Chen-Yu Tsai wrote:
+> On Wed, Sep 18, 2019 at 1:21 PM Jernej =C5=A0krabec <jernej.skrabec@siol.=
+net> wrote:
+> >
+> > Dne torek, 17. september 2019 ob 08:54:08 CEST je Chen-Yu Tsai napisal(=
+a):
+> > > On Sat, Sep 14, 2019 at 9:51 PM Jernej Skrabec <jernej.skrabec@siol.n=
+et>
+> > wrote:
+> > > > Audio devices needs exact clock rates in order to correctly reprodu=
+ce
+> > > > the sound. Until now, only integer factors were used to configure H6
+> > > > audio PLL which resulted in inexact rates. Fix that by adding suppo=
+rt
+> > > > for fractional factors using sigma-delta modulation look-up table. =
+It
+> > > > contains values for two most commonly used audio base frequencies.
+> > > >
+> > > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+> > > > ---
+> > > >
+> > > >  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 21 +++++++++++++++------
+> > > >  1 file changed, 15 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > > > b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c index d89353a3cdec..ed6338d7=
+4474
+> > > > 100644
+> > > > --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > > > +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+> > > > @@ -203,12 +203,21 @@ static struct ccu_nkmp pll_hsic_clk =3D {
+> > > >
+> > > >   * hardcode it to match with the clock names.
+> > > >   */
+> > > >
+> > > >  #define SUN50I_H6_PLL_AUDIO_REG                0x078
+> > > >
+> > > > +
+> > > > +static struct ccu_sdm_setting pll_audio_sdm_table[] =3D {
+> > > > +       { .rate =3D 541900800, .pattern =3D 0xc001288d, .m =3D 1, .=
+n =3D 22 },
+> > > > +       { .rate =3D 589824000, .pattern =3D 0xc00126e9, .m =3D 1, .=
+n =3D 24 },
+> > > > +};
+> > > > +
+> > > >
+> > > >  static struct ccu_nm pll_audio_base_clk =3D {
+> > > >
+> > > >         .enable         =3D BIT(31),
+> > > >         .lock           =3D BIT(28),
+> > > >         .n              =3D _SUNXI_CCU_MULT_MIN(8, 8, 12),
+> > > >         .m              =3D _SUNXI_CCU_DIV(1, 1), /* input divider =
+*/
+> > > >
+> > > > +       .sdm            =3D _SUNXI_CCU_SDM(pll_audio_sdm_table,
+> > > > +                                        BIT(24), 0x178, BIT(31)),
+> > > >
+> > > >         .common         =3D {
+> > > >
+> > > > +               .features       =3D CCU_FEATURE_SIGMA_DELTA_MOD,
+> > > >
+> > > >                 .reg            =3D 0x078,
+> > > >                 .hw.init        =3D CLK_HW_INIT("pll-audio-base", "=
+osc24M",
+> > > >
+> > > >                                               &ccu_nm_ops,
+> > > >
+> > > > @@ -753,12 +762,12 @@ static const struct clk_hw *clk_parent_pll_au=
+dio[] =3D
+> > > > {>
+> > > >  };
+> > > >
+> > > >  /*
+> > > >
+> > > > - * The divider of pll-audio is fixed to 8 now, as pll-audio-4x has=
+ a
+> > > > - * fixed post-divider 2.
+> > > > + * The divider of pll-audio is fixed to 24 for now, so 24576000 and
+> > > > 22579200 + * rates can be set exactly in conjunction with sigma-del=
+ta
+> > > > modulation.>
+> > > >   */
+> > > >
+> > > >  static CLK_FIXED_FACTOR_HWS(pll_audio_clk, "pll-audio",
+> > > >
+> > > >                             clk_parent_pll_audio,
+> > > >
+> > > > -                           8, 1, CLK_SET_RATE_PARENT);
+> > > > +                           24, 1, CLK_SET_RATE_PARENT);
+> > > >
+> > > >  static CLK_FIXED_FACTOR_HWS(pll_audio_2x_clk, "pll-audio-2x",
+> > > >
+> > > >                             clk_parent_pll_audio,
+> > > >                             4, 1, CLK_SET_RATE_PARENT);
+> > >
+> > > You need to fix the factors for the other two outputs as well, since =
+all
+> > > three are derived from pll-audio-base.
+> >
+> > Fix how? pll-audio-2x and pll-audio-4x clocks have fixed divider in reg=
+ards to
+> > pll-audio-base, while pll-audio has not. Unless you mean changing their=
+ name?
+>
+> Argh... I got it wrong. It looks good actually.
+>
+> Acked-by: Chen-Yu Tsai <wens@csie.org>
 
-		l4_per_clkctrl: clk@20 {
-			compatible = "ti,clkctrl";
-			reg = <0x20 0x144>;
-			#clock-cells = <2>;
-		};
+Queued for 5.5, thanks
 
-		l4_secure_clkctrl: clock@1a0 {
-			compatible = "ti,clkctrl-omap4-l4-secure", "ti,clkctrl";
-			reg = <0x1a0 0x28>;
-			#clock-cells = <2>;
-		};
-	};
+Maxime
 
-And then later on as clean-up, we could also update l4_per_clkctrl:
+--pfkcvjqh5wmcwf4x
+Content-Type: application/pgp-signature; name="signature.asc"
 
-		l4_per_clkctrl: clock@20 {
-			compatible = "ti,clkctrl-omap4-l4-per", "ti,clkctrl";
-			reg = <0x20 0x144>;
-			#clock-cells = <2>;
-		};
+-----BEGIN PGP SIGNATURE-----
 
-Regards,
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXYPGfQAKCRDj7w1vZxhR
+xfhxAQCQlPrCxV4nnEbqZUIhSmWlxP/HXHmMx5Kk4J83e7xUfgEAsQrTGvWtLAcb
+3mTnYeJg0Ko41ya+QDycztsT65ffCAA=
+=NCZi
+-----END PGP SIGNATURE-----
 
-Tony
-
+--pfkcvjqh5wmcwf4x--
