@@ -2,226 +2,188 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49946C4CEC4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21D19C4CEC4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 11:08:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1476A21A49
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EABE821929
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 11:08:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Zgf+CpZx"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VlWFQna5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FeJksmbv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389225AbfISKZg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 06:25:36 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35478 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389206AbfISKZ1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 06:25:27 -0400
-Received: by mail-wr1-f68.google.com with SMTP id v8so2526186wrt.2
-        for <linux-clk@vger.kernel.org>; Thu, 19 Sep 2019 03:25:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OfVN9sS5ICyBISD9/bSWhyU3cvwrbDco1DEGdifcoMw=;
-        b=Zgf+CpZxtIoGz/4c7gSJv4YQIT/AIZGYY5ONX3aWeXVn+UltgLZQP7rUIMGKJGcA/5
-         3hAwcCcqR4JO27SBuv0gUBe+2soEpC0+Ywl6RVlxx9GS6D2SX88/urlqxokJhMh2ypHP
-         vaa5wjrtEgY+NUGLyaq8920OPXWIYrzhavXJoRIv7FNwEKbeCk6ZHpybUNoUwdCI2OgO
-         gALZrQmDYTi/6bwt+K9Safk+8yqSpole+FRyuciLFFYW0nnK+voIq0J1HQIk0tw7lLmq
-         BVOsYEg28zw1zKZoI/0S2JRXFho5o79D97lrKXJziR7O480vfv89VmD/AptN9cuFXywH
-         GTbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OfVN9sS5ICyBISD9/bSWhyU3cvwrbDco1DEGdifcoMw=;
-        b=RKldM68RYR7dFX5cAyQ6LkWlStkLBZLJe4wESTWPbNUsqMppJkPQUdrg972zGMdSZL
-         mtsXO8PBPNj34uGhonZGIgbObMla3Kf765xeOXWn6iCn1xi/MYQUTgKkxxqdxixUpWin
-         TNdAKSrRKFvmjs4xd+D8qXjVlt9gTrEpdiBBelQQiJbtBmp7iwrT15Wfkvx8YFEk3zw7
-         gd0XRytPwYqvurSycu6zGshEgXMzDXysTQsrfTZkaFdLHCniBh8YrLlTuiMWA1MN9IzL
-         7PCcG1DiSxw6ZbrRo/zc1koR7P3gDzBYITRQrjQ/K9qc30UvszKvWIKRYf5lF3S66c//
-         B98Q==
-X-Gm-Message-State: APjAAAWFLN6WaK24ZOCzdtC52mETg+itBkbuMxmNqx6RN+azTZLzftYx
-        FCPnZZBpLfW9vSMA5cvp1skY0w==
-X-Google-Smtp-Source: APXvYqz5GUMlGa0iJ43OkLkqJuHmVrUcsQGvNUSJgX9WQP+bvNX6a0EK/ak4iYRlIe/z7cwDlrDXeg==
-X-Received: by 2002:a5d:62c6:: with SMTP id o6mr6940968wrv.243.1568888724854;
-        Thu, 19 Sep 2019 03:25:24 -0700 (PDT)
-Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id a18sm19542000wrh.25.2019.09.19.03.25.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 03:25:24 -0700 (PDT)
-From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     sboyd@kernel.org, jbrunet@baylibre.com, mturquette@baylibre.com
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 2/2] clk: meson: g12a: add suspend-resume hooks
-Date:   Thu, 19 Sep 2019 12:25:18 +0200
-Message-Id: <20190919102518.25126-3-narmstrong@baylibre.com>
-X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190919102518.25126-1-narmstrong@baylibre.com>
-References: <20190919102518.25126-1-narmstrong@baylibre.com>
+        id S2388994AbfISLId (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 07:08:33 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:56778 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388924AbfISLIc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 07:08:32 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id ACBB560736; Thu, 19 Sep 2019 11:08:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568891310;
+        bh=K9ke7ozlRukiKpFPzOB06YIaFObZUHMF5JsQi3muFHI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=VlWFQna5g8zHvZ20t/fP2hnMbTUuQQk0HPFdoM0RPra0OXd/0bDPuPul+zJ8PZs6P
+         Kqdx7d6K3OwVRDDCvMuyyBVnjLFQT2H2jm7KEBlRkuSksAwySiFaq+EKeyQ2wSqOnU
+         sl/r5nx7i+AUwHw+7du9HmgsZlBPt5Xtg4vAEFp0=
+Received: from [192.168.0.103] (unknown [49.207.53.137])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: rnayak@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id E459E60736;
+        Thu, 19 Sep 2019 11:08:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1568891307;
+        bh=K9ke7ozlRukiKpFPzOB06YIaFObZUHMF5JsQi3muFHI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FeJksmbvaaiudlu+lpWCm/Vwk/sZ308XFKnIVSMGYA98VvX8Nq9AcFXYCEpTzSWDl
+         k1m4aIdM545LgyrKGUD3DMPYTVFermJtdTky1HawKyLuTZf50+nEEdSnTtbVri6Eg/
+         LTKqU6Fji/3Mbtfpp4zhb2+5dKSMmoFTWrSqCxd8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E459E60736
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rnayak@codeaurora.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190918095018.17979-1-tdas@codeaurora.org>
+ <20190918095018.17979-4-tdas@codeaurora.org>
+From:   Rajendra Nayak <rnayak@codeaurora.org>
+Message-ID: <74643831-1a58-e279-aca3-8753f5fcbe04@codeaurora.org>
+Date:   Thu, 19 Sep 2019 16:38:19 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
+In-Reply-To: <20190918095018.17979-4-tdas@codeaurora.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add suspend and resume hooks used to refresh the CPU clock tree
-when resuming from suspend, in the case where the PSCI firmware
-alters the clock tree.
+[]..
 
-In the Amlogic G12A suspend/resume case, the PSCI firmware will
-alter the Fixed PLL dyn tree when entering with the CPU clock from
-this same tree, but using a different path to achieve the same rate.
+> +static struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s5_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk_src),
+> +	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s5_clk_src),
+> +};
 
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/g12a.c | 71 +++++++++++++++++++++++++++++++++++-----
- 1 file changed, 63 insertions(+), 8 deletions(-)
+this fails to build..
 
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index b3af61cc6fb9..9f6f634225b7 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -4992,6 +4992,19 @@ static int meson_g12b_dvfs_setup(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int meson_g12b_resume(struct device *dev)
-+{
-+	u32 ret;
-+
-+	ret = clk_invalidate_rate(
-+			__clk_lookup(clk_hw_get_name(&g12b_cpu_clk.hw)));
-+	if (ret)
-+		return ret;
-+
-+	return clk_invalidate_rate(
-+			__clk_lookup(clk_hw_get_name(&g12b_cpub_clk.hw)));
-+}
-+
- static int meson_g12a_dvfs_setup(struct platform_device *pdev)
- {
- 	struct clk_hw **hws = g12a_hw_onecell_data.hws;
-@@ -5024,34 +5037,68 @@ static int meson_g12a_dvfs_setup(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int meson_g12a_resume(struct device *dev)
-+{
-+	return clk_invalidate_rate(
-+			__clk_lookup(clk_hw_get_name(&g12a_cpu_clk.hw)));
-+}
-+
- struct meson_g12a_data {
- 	const struct meson_eeclkc_data eeclkc_data;
- 	int (*dvfs_setup)(struct platform_device *pdev);
-+	int (*resume)(struct device *dev);
- };
- 
-+static const struct
-+meson_g12a_data *meson_g12a_get_data(struct device *dev)
-+{
-+	const struct meson_eeclkc_data *eeclkc_data =
-+			of_device_get_match_data(dev);
-+
-+	if (!eeclkc_data)
-+		return ERR_PTR(-EINVAL);
-+
-+	return container_of(eeclkc_data, struct meson_g12a_data,
-+			    eeclkc_data);
-+}
-+
- static int meson_g12a_probe(struct platform_device *pdev)
- {
--	const struct meson_eeclkc_data *eeclkc_data;
--	const struct meson_g12a_data *g12a_data;
- 	int ret;
-+	const struct meson_g12a_data *g12a_data =
-+			meson_g12a_get_data(&pdev->dev);
- 
--	eeclkc_data = of_device_get_match_data(&pdev->dev);
--	if (!eeclkc_data)
--		return -EINVAL;
-+	if (IS_ERR(g12a_data))
-+		return PTR_ERR(g12a_data);
- 
- 	ret = meson_eeclkc_probe(pdev);
- 	if (ret)
- 		return ret;
- 
--	g12a_data = container_of(eeclkc_data, struct meson_g12a_data,
--				 eeclkc_data);
--
- 	if (g12a_data->dvfs_setup)
- 		return g12a_data->dvfs_setup(pdev);
- 
- 	return 0;
- }
- 
-+static int __maybe_unused g12a_clkc_suspend(struct device *dev)
-+{
-+	return 0;
-+}
-+
-+static int __maybe_unused g12a_clkc_resume(struct device *dev)
-+{
-+	const struct meson_g12a_data *g12a_data = meson_g12a_get_data(dev);
-+
-+	if (IS_ERR(g12a_data))
-+		return PTR_ERR(g12a_data);
-+
-+	if (g12a_data->resume)
-+		return g12a_data->resume(dev);
-+
-+	return 0;
-+}
-+
- static const struct meson_g12a_data g12a_clkc_data = {
- 	.eeclkc_data = {
- 		.regmap_clks = g12a_clk_regmaps,
-@@ -5061,6 +5108,7 @@ static const struct meson_g12a_data g12a_clkc_data = {
- 		.init_count = ARRAY_SIZE(g12a_init_regs),
- 	},
- 	.dvfs_setup = meson_g12a_dvfs_setup,
-+	.resume = meson_g12a_resume,
- };
- 
- static const struct meson_g12a_data g12b_clkc_data = {
-@@ -5070,6 +5118,7 @@ static const struct meson_g12a_data g12b_clkc_data = {
- 		.hw_onecell_data = &g12b_hw_onecell_data,
- 	},
- 	.dvfs_setup = meson_g12b_dvfs_setup,
-+	.resume = meson_g12b_resume,
- };
- 
- static const struct meson_g12a_data sm1_clkc_data = {
-@@ -5079,6 +5128,11 @@ static const struct meson_g12a_data sm1_clkc_data = {
- 		.hw_onecell_data = &sm1_hw_onecell_data,
- 	},
- 	.dvfs_setup = meson_g12a_dvfs_setup,
-+	.resume = meson_g12a_resume,
-+};
-+
-+static const struct dev_pm_ops g12a_clkc_dev_pm_ops = {
-+	SET_SYSTEM_SLEEP_PM_OPS(g12a_clkc_suspend, g12a_clkc_resume)
- };
- 
- static const struct of_device_id clkc_match_table[] = {
-@@ -5102,6 +5156,7 @@ static struct platform_driver g12a_driver = {
- 	.driver		= {
- 		.name	= "g12a-clkc",
- 		.of_match_table = clkc_match_table,
-+		.pm	= &g12a_clkc_dev_pm_ops,
- 	},
- };
- 
+In file included from drivers/clk/qcom/gcc-sc7180.c:17:0:
+drivers/clk/qcom/gcc-sc7180.c:2429:17: error: ‘gcc_qupv3_wrap0_s0_clk_src_src’ undeclared here (not in a function)
+   DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk_src),
+                  ^
+drivers/clk/qcom/clk-rcg.h:171:12: note: in definition of macro ‘DEFINE_RCG_DFS’
+   { .rcg = &r##_src, .init = &r##_init }
+             ^
+drivers/clk/qcom/gcc-sc7180.c:2430:17: error: ‘gcc_qupv3_wrap0_s1_clk_src_src’ undeclared here (not in a function)
+   DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk_src),
+                  ^
+drivers/clk/qcom/clk-rcg.h:171:12: note: in definition of macro ‘DEFINE_RCG_DFS’
+   { .rcg = &r##_src, .init = &r##_init }
+             ^
+Perhaps you should drop _src here and in the clk_init_data names.
+
+> +
+> +static const struct regmap_config gcc_sc7180_regmap_config = {
+> +	.reg_bits = 32,
+> +	.reg_stride = 4,
+> +	.val_bits = 32,
+> +	.max_register = 0x18208c,
+> +	.fast_io = true,
+> +};
+> +
+> +static const struct qcom_cc_desc gcc_sc7180_desc = {
+> +	.config = &gcc_sc7180_regmap_config,
+> +	.clk_hws = gcc_sc7180_hws,
+> +	.num_clk_hws = ARRAY_SIZE(gcc_sc7180_hws),
+> +	.clks = gcc_sc7180_clocks,
+> +	.num_clks = ARRAY_SIZE(gcc_sc7180_clocks),
+> +	.resets = gcc_sc7180_resets,
+> +	.num_resets = ARRAY_SIZE(gcc_sc7180_resets),
+> +	.gdscs = gcc_sc7180_gdscs,
+> +	.num_gdscs = ARRAY_SIZE(gcc_sc7180_gdscs),
+> +};
+> +
+> +static const struct of_device_id gcc_sc7180_match_table[] = {
+> +	{ .compatible = "qcom,gcc-sc7180" },
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(of, gcc_sc7180_match_table);
+> +
+> +static int gcc_sc7180_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = qcom_cc_map(pdev, &gcc_sc7180_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	/*
+> +	 * Disable the GPLL0 active input to MM blocks, NPU
+> +	 * and GPU via MISC registers.
+> +	 */
+> +	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
+> +	regmap_update_bits(regmap, GCC_NPU_MISC, 0x3, 0x3);
+> +	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
+> +
+> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> +					ARRAY_SIZE(gcc_dfs_clocks));
+> +	if (ret)
+> +		return ret;
+> +
+> +	return qcom_cc_really_probe(pdev, &gcc_sc7180_desc, regmap);
+> +}
+> +
+> +static struct platform_driver gcc_sc7180_driver = {
+> +	.probe = gcc_sc7180_probe,
+> +	.driver = {
+> +		.name = "gcc-sc7180",
+> +		.of_match_table = gcc_sc7180_match_table,
+> +	},
+> +};
+> +
+> +static int __init gcc_sc7180_init(void)
+> +{
+> +	return platform_driver_register(&gcc_sc7180_driver);
+> +}
+> +subsys_initcall(gcc_sc7180_init);
+> +
+> +static void __exit gcc_sc7180_exit(void)
+> +{
+> +	platform_driver_unregister(&gcc_sc7180_driver);
+> +}
+> +module_exit(gcc_sc7180_exit);
+> +
+> +MODULE_DESCRIPTION("QTI GCC SC7180 Driver");
+> +MODULE_LICENSE("GPL v2");
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
+
 -- 
-2.22.0
-
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
