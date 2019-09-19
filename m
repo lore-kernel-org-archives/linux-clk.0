@@ -2,114 +2,123 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E28C3A5A6
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 16:50:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEE3C3A5A6
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 17:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B3921929
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 16:50:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B129B20644
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 17:06:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568911856;
-	bh=ot8wbjfWT9q2gjJdJL4MxeqVbJLsG2eM1RpCwH8Urco=;
+	s=default; t=1568912779;
+	bh=FRD3cLqXl21dfjVTSUUFS+CztYthOlCax3P4tSmWNxo=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=mjkrwbloX+cVEni1or/ajhph2Aj2gSbyVyUucKXFpwRFCMPUuY8YDwoslyo2CO+MR
-	 XEAWmDSvSNW/b2IH90/degjVVj31nQaUgwBwa5CJPlGys9fDjAp0njx5n3BBMEdne+
-	 lSnuCZbG8CHPXKerHT9PibNNULPLMfQ4QEwYDl34=
+	b=a0fbLf9/aMC0nC8Tu3LImSkLLiUI1+3i7UWmL9sLdZOHUykfB8H4vvRGHuW4iYTQy
+	 jQfwN2IxZAoNsOiB5Quo5IG72chPbdEn+vYxJydRdpIpxLDyoW6XHUleoURb9e3ayL
+	 KZUO818zcFoL+hbAHEH2cPxt/HnIzqY/OPRIfPXA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732800AbfISQu4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 12:50:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:55930 "EHLO mail.kernel.org"
+        id S2391444AbfISRGM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 13:06:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:36534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726007AbfISQuz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Sep 2019 12:50:55 -0400
+        id S2391343AbfISRGL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Sep 2019 13:06:11 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43CEB21928;
-        Thu, 19 Sep 2019 16:50:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 541D620644;
+        Thu, 19 Sep 2019 17:06:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568911855;
-        bh=ot8wbjfWT9q2gjJdJL4MxeqVbJLsG2eM1RpCwH8Urco=;
+        s=default; t=1568912770;
+        bh=FRD3cLqXl21dfjVTSUUFS+CztYthOlCax3P4tSmWNxo=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=mmkyfNBjsXIMuPQSXxbGqeYy5E8JDmsoy2rXCd5XnGogeV5yPBdB7sZO9Fevb04GZ
-         gj3KE01iHDIv8DA+Jh5PsEJagtuRYTDy42jJ4EGheXKmXu5zKgGCDrws8eTkN/GIw+
-         Ik+SoCVQL/v8OxwUeswE7qcaBD/P4o+UaB2mV6zk=
+        b=U6NcaTMNde1Oip6/3oJe2Rq3emdMiuBNKMTvl9ioWGPXRl0567TcrCjB/dvM+62er
+         jUqNJLjhOvXukdqRUlbxxk+kS1rPQujQehuR0aGc7kYpxrkx4R0z3jQZwNaBbyDI6H
+         BzVl2I+9DajPMLvWU9n4Taf829gZ04Hr9RLjV5FU=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190919141224.GH5610@atomide.com>
-References: <20190905215532.8357-1-tony@atomide.com> <256788c4-ae09-3c72-b563-b9707c4751b4@ti.com> <20190919141224.GH5610@atomide.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-To:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+In-Reply-To: <1j1rwce8yf.fsf@starbuckisacylon.baylibre.com>
+References: <20190919093627.21245-1-narmstrong@baylibre.com> <20190919093809.21364-1-narmstrong@baylibre.com> <1j1rwce8yf.fsf@starbuckisacylon.baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name with reg-names
+Subject: Re: [PATCH 3/3] clk: meson: clk-pll: always enable a critical PLL when setting the rate
 User-Agent: alot/0.8.1
-Date:   Thu, 19 Sep 2019 09:50:54 -0700
-Message-Id: <20190919165055.43CEB21928@mail.kernel.org>
+Date:   Thu, 19 Sep 2019 10:06:09 -0700
+Message-Id: <20190919170610.541D620644@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2019-09-19 07:12:24)
-> Hi,
+Quoting Jerome Brunet (2019-09-19 06:01:28)
+> On Thu 19 Sep 2019 at 11:38, Neil Armstrong <narmstrong@baylibre.com> wro=
+te:
 >=20
-> * Tero Kristo <t-kristo@ti.com> [190919 06:46]:
-> > On 06/09/2019 00:55, Tony Lindgren wrote:
-> > > diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b=
-/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> > > --- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> > > +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> > > @@ -20,15 +20,19 @@ Required properties :
-> > >   - #clock-cells : shall contain 2 with the first entry being the ins=
-tance
-> > >              offset from the clock domain base and the second being t=
-he
-> > >              clock index
-> > > +- reg : clock registers
-> > > +- reg-names : clock register names for the clock, should be same as =
-the
-> > > +         domain name
-> >=20
-> > Hmm, I think using the reg-names property like this is kind of wrong.
-> > Basically, reg and reg-names have pretty much nothing in common. Should=
-n't
-> > you instead use something like ti,clkdm-name? This also breaks with SoCs
-> > like am3, which have mutant clkctrl entries like the one here:
-> >=20
-> >                 l4ls_clkctrl: l4ls-clkctrl@38 {
-> >                         compatible =3D "ti,clkctrl";
-> >                         reg =3D <0x38 0x2c>, <0x6c 0x28>, <0xac 0xc>, <=
-0xc0
-> > 0x1c>, <0xec 0xc>, <0x10c 0x8>, <0x130 0x4>;
-> >                         #clock-cells =3D <2>;
-> >                 };
-> >=20
-> > What would you think single entry in reg-names would mean in this case?
+> > Make sure we always enable a PLL on a set_rate() when the PLL is
+> > flagged as critical.
+> >
+> > This fixes the case when the Amlogic G12A SYS_PLL gets disabled by the
+> > PSCI firmware when resuming from suspend-to-memory, in the case
+> > where the CPU was not clocked by the SYS_PLL, but by the fixed PLL
+> > fixed divisors.
+> > In this particular case, when changing the PLL rate, CCF doesn't handle
+> > the fact the PLL could have been disabled in the meantime and set_rate()
+> > only changes the rate and never enables it again.
+> >
+> > Fixes: d6e81845b7d9 ("clk: meson: clk-pll: check if the clock is alread=
+y enabled')
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> > ---
+> >  drivers/clk/meson/clk-pll.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> > index ddb1e5634739..8c5adccb7959 100644
+> > --- a/drivers/clk/meson/clk-pll.c
+> > +++ b/drivers/clk/meson/clk-pll.c
+> > @@ -379,7 +379,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw=
+, unsigned long rate,
+> >       }
+> > =20
+> >       /* If the pll is stopped, bail out now */
+> > -     if (!enabled)
+> > +     if (!(hw->init->flags & CLK_IS_CRITICAL) && !enabled)
 >=20
-> Oh right, I forgot about the mixed register case again.
-> These are all in l4ls domain..
+> This is surely a work around to the issue at hand but:
 >=20
-> So sounds like the best option is just to allow adding more
-> specific compatible values like this for the omap4 rng case:
+> * Enabling the clock, critical or not, should not be done but the
+> set_rate() callback. This is not the purpose of this callback.
 >=20
->         l4_secure_clkctrl: clock@1a0 {
->                 compatible =3D "ti,clkctrl-omap4-l4-secure", "ti,clkctrl";
->                 reg =3D <0x1a0 0x28>;
->                 #clock-cells =3D <2>;
->         };
->=20
-> And then use match data to get the domain name on init.
->=20
+> * Enabling the clock in such way does not walk the tree. So, if there is
+> ever another PSCI Fw which disable we would get into the same issue
+> again. IOW, This is not specific to the PLL driver so it should not have
+> to deal with this.
 
-The existing ti,clkctrl binding is pretty weird. I still believe that
-the CM container node should be the only node and it should be logic in
-the driver that describes the clks provided by the CM node. I guess I
-have to just ignore this stuff because it's all working!=20
+Exactly.
+
+>=20
+> Since this clock can change out of CCF maybe it should be marked with
+> CLK_GET_RATE_NOCACHE ?
+
+Yes, or figure out a way to make the clk state match what PSCI leaves it
+in on resume from suspend.
+
+
+>=20
+> When CCF hits a clock with CLK_GET_RATE_NOCACHE while walking the tree,
+> in addition to to calling get_rate(), CCF could also call is_enabled()
+> if the clock has CLK_IS_CRITICAL and possibly .enable() ?
+
+This logic should go under a new flag. The CLK_GET_RATE_NOCACHE flag
+specifically means get rate shouldn't be a cached operation. It doesn't
+relate to the enable state. I hope that you can implement some sort of
+resume hook that synchronizes the state though so that you don't need to
+rely on clk_set_rate() or clk_get_rate() to trigger a sync.
 
