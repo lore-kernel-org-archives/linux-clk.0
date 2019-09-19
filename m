@@ -2,69 +2,66 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37D50C3A5A6
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 09:38:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5E26C3A5A6
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08CFF21907
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 09:38:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 884432196E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="DR+/dAJA"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ARPIhl8y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388617AbfISJiQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 05:38:16 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38932 "EHLO
+        id S2389203AbfISKZZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 06:25:25 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35473 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388502AbfISJiQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 05:38:16 -0400
-Received: by mail-wr1-f68.google.com with SMTP id r3so2333373wrj.6
-        for <linux-clk@vger.kernel.org>; Thu, 19 Sep 2019 02:38:14 -0700 (PDT)
+        with ESMTP id S2389171AbfISKZY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 06:25:24 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v8so2526090wrt.2
+        for <linux-clk@vger.kernel.org>; Thu, 19 Sep 2019 03:25:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=6nXme50vIoJjH0UMqXkc64d0qIp6gNTAIlH2LyUHGog=;
-        b=DR+/dAJA+mXD4C0wvuRVF9pzBcCVjEtQwJPyj0zCVNJOEg401UobN787J4oOZpXKrQ
-         +f+BOYs73Nv0gtvuItI0CcFXErrIwgD2tJK62f1i45wv9RCUbJmyu/eb7r2oltv8xoxs
-         nkGKCv3Puy4/NxyG4dLBQeY4XnsgQ30JObE1PptvfkK6g34hPZXoNiPdoOJNj2H+SAqT
-         6q0qi8f070u2KK0YPBra8fiv3oI+NdT7gqUlXmRETx79C5sYCfTTqOJ8bWKaOZNXTIYN
-         bHzvNGiElGTzjKowEdl3Rl+vLF0xVSu+pqjb0xnqAyVEA9nXcnbgcV37IhBK19wOjXq1
-         ku6w==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2A0oosZIpjBMenE6Tjm33BxMZdklQECEBVCtAhWMYQs=;
+        b=ARPIhl8y30FO/F6oN6rrJzhE+e4JFkdGSwgjSFtfDZWZcWA/5EH5LBr4L6b0SKWglH
+         UbVGQsTdPnHYSTM0FLHAvMtgmlZahzJaO25HwC8vbQ12W7cm3h9dFlL3FkstMUbU3S28
+         4fm6Vth4wRpsGNZHNR6meJZD//S5QE3E6NFqQnYecq2YfXug/zatNdwqIm9lhAAKb9hY
+         Mk7OrUEA6satXsZqIOlyBR39Nioo4KQgA4VYIhCnVz9Y91y2ppbs4ap7veYd6uCv2lOI
+         pjhQdI9L7aOmQq/5zwbXHxCW9UhgyjR6TRmw74BMHQyWnyMsXrvAs6P17sdEuZdTqPji
+         QWxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=6nXme50vIoJjH0UMqXkc64d0qIp6gNTAIlH2LyUHGog=;
-        b=HNQ7D222rvtHtm0RiAs3T8JRmUxeVDJmazaAMvRtCu9XhxSOIZeFqCracClF3glbn8
-         QEwYEJ2Y1oWwjpTd6WrApW7au95szKhMszWRP2KL/bUlkWyIYChnFHJ6AjcDa8RaHM1r
-         olijsVMst7G4Q0Jp8lkoR3XTP0CTTCXLuyrs6d8N7WtPIiLjzlpvatNJA9fbHPGIplon
-         Ovn8aP7kYUJVbnmR7SSuiXcL30kPASzjpNm+URTdk0THO+J5cm5UXjZOIGH79XuQz0jb
-         OKj0uPvM7itL6cH4v6rHtyIXMZmOgeKnPPa6OagdNxbNZ41xhvJjp+I3yorr7NHxcO3Y
-         ByGQ==
-X-Gm-Message-State: APjAAAXAZ642FbPtanhTrHiDA83TM1WNoeF/4RGCzSpWO37PGLaDPM+v
-        u2XLJYERPFb/1Quys1yuvFVqlQ==
-X-Google-Smtp-Source: APXvYqzosaotPCD9Wry9JaxxWXkNUfADDM/jre6SiXpPoSFtALqDV+2F8/XxHOyItGVvmyF72/tECA==
-X-Received: by 2002:adf:e443:: with SMTP id t3mr6338044wrm.181.1568885893871;
-        Thu, 19 Sep 2019 02:38:13 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=2A0oosZIpjBMenE6Tjm33BxMZdklQECEBVCtAhWMYQs=;
+        b=aoUz3rsa6GEbTaC9k4qGaOIAV4Hp5RtQ1t6u7FOtu4DLDmupbyXLvKGDfLpF1b46Mc
+         y93a21jVFKY+91grABtZYYbSbvHE0GDo4c/ZXBILpIy1MN5zJOMDlZuMXjQVOYzIwKud
+         wELAF8KMj1oT8AvJg+0y1paRK8AY56KHSe7BvDc+fAHGbVa6LZTQgQPQMEtM+ENiV6pH
+         EgqMDr/0NPNAnXxe1i6cTJzl2EqdouH3l83/Ra1sfYHVZdh34aGBiEvgxAWv+/CPzJ39
+         t8OFUMpmC2Au5JLZC8YCN2UGKaTb7v5mVe4rKH026Ma16g94gHYSnObAXx5aC6Q6V3vZ
+         rXrA==
+X-Gm-Message-State: APjAAAU3wLS93az5zbQ58tsmPWa8zKj1Rd6rJ5Tab0otBEvkmfHvDkxm
+        WUnxd+lvqyiw8efxwlWbB4TvOQ==
+X-Google-Smtp-Source: APXvYqzpnu2phlLQMoNEuMIncosAx77n7gxWTvOlJbGfGU75RyLU3YIELaLuaI5zdmBNdg+SLbrCIA==
+X-Received: by 2002:adf:cc0a:: with SMTP id x10mr6471942wrh.195.1568888722613;
+        Thu, 19 Sep 2019 03:25:22 -0700 (PDT)
 Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id a10sm9997797wrv.64.2019.09.19.02.38.13
+        by smtp.gmail.com with ESMTPSA id a18sm19542000wrh.25.2019.09.19.03.25.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 02:38:13 -0700 (PDT)
+        Thu, 19 Sep 2019 03:25:21 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
-To:     jbrunet@baylibre.com
+To:     sboyd@kernel.org, jbrunet@baylibre.com, mturquette@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] clk: meson: clk-pll: always enable a critical PLL when setting the rate
-Date:   Thu, 19 Sep 2019 11:38:09 +0200
-Message-Id: <20190919093809.21364-1-narmstrong@baylibre.com>
+Subject: [PATCH RFC 0/2] clk: meson: g12a: handle clock hw changes while in suspend
+Date:   Thu, 19 Sep 2019 12:25:16 +0200
+Message-Id: <20190919102518.25126-1-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
-In-Reply-To: <20190919093627.21245-1-narmstrong@baylibre.com>
-References: <20190919093627.21245-1-narmstrong@baylibre.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -72,36 +69,32 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Make sure we always enable a PLL on a set_rate() when the PLL is
-flagged as critical.
+This serie aime to support when the suspend/resume firmware alters the
+clock tree, leading to an incorrect representation of the clock tree
+after a resume from suspend-to-mem.
 
-This fixes the case when the Amlogic G12A SYS_PLL gets disabled by the
-PSCI firmware when resuming from suspend-to-memory, in the case
-where the CPU was not clocked by the SYS_PLL, but by the fixed PLL
-fixed divisors.
-In this particular case, when changing the PLL rate, CCF doesn't handle
-the fact the PLL could have been disabled in the meantime and set_rate()
-only changes the rate and never enables it again.
+For the Amlogic G12A/G12B/SM1 case, the SCPI firmware handling suspend
+alters the CPU clock tree in various ways.
 
-Fixes: d6e81845b7d9 ("clk: meson: clk-pll: check if the clock is already enabled')
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
----
- drivers/clk/meson/clk-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Since we know which part of the tree is possibly altered, we introduce here
+the clk_invalidate_rate() function that will rebuild the tree from the
+hardware registers in case parents and dividers have changed.
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index ddb1e5634739..8c5adccb7959 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -379,7 +379,7 @@ static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	}
- 
- 	/* If the pll is stopped, bail out now */
--	if (!enabled)
-+	if (!(hw->init->flags & CLK_IS_CRITICAL) && !enabled)
- 		return 0;
- 
- 	if (meson_clk_pll_enable(hw)) {
+Finally we call clk_invalidate_rate() from a new resume callback to refresh
+the CPU clock tree after a resume.
+
+With the clock tree refreshed, CCF can now handle the new clock tree
+configuration and avoid crashing the system on further DVFS set_rates.
+
+Neil Armstrong (2):
+  clk: introduce clk_invalidate_rate()
+  clk: meson: g12a: add suspend-resume hooks
+
+ drivers/clk/clk.c        | 70 +++++++++++++++++++++++++++++++++++++++
+ drivers/clk/meson/g12a.c | 71 +++++++++++++++++++++++++++++++++++-----
+ include/linux/clk.h      | 13 ++++++++
+ 3 files changed, 146 insertions(+), 8 deletions(-)
+
 -- 
 2.22.0
 
