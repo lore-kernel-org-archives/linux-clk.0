@@ -2,183 +2,109 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C950BC49ED7
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 06:46:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2BF9C3A5A6
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 08:13:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95A3320882
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 06:46:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qlRJ2Sb1"
+	by mail.kernel.org (Postfix) with ESMTP id B5DAD21848
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 08:13:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388491AbfISGqM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 02:46:12 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33010 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387824AbfISGqM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 02:46:12 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x8J6k6EM071396;
-        Thu, 19 Sep 2019 01:46:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1568875566;
-        bh=uBl5JIJLGiUHEpU8n2kGovFFQZIZ9dJYmqd6XAX2V2k=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=qlRJ2Sb16aSht2UbIeZJsbHbkJUfyYA6J+/+wIoE/ZlNs+yI06NpqGznG6zitb0NY
-         9qLomxg39sTdUmfbdZ/NoaqibuB65/rWhZV4IG1SzWP1zrzTSTdTiRy2hapHsxsXU9
-         u0v2xrWE2dMnw80Cw/AlE7V381xrh+P+PgaRWW1U=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x8J6k6aj002224
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 19 Sep 2019 01:46:06 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 19
- Sep 2019 01:46:02 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 19 Sep 2019 01:46:02 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x8J6k3VO004101;
-        Thu, 19 Sep 2019 01:46:03 -0500
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name with
- reg-names
-To:     Tony Lindgren <tony@atomide.com>,
+        id S1731332AbfISING (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 04:13:06 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:57458 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730886AbfISING (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Sep 2019 04:13:06 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 8B4F11A03BF;
+        Thu, 19 Sep 2019 10:13:03 +0200 (CEST)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0EFDA1A01E1;
+        Thu, 19 Sep 2019 10:12:58 +0200 (CEST)
+Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 1601D402D0;
+        Thu, 19 Sep 2019 16:12:51 +0800 (SGT)
+From:   Wen He <wen.he_1@nxp.com>
+To:     linux-devel@linux.nxdi.nxp.com,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>
-CC:     <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>
-References: <20190905215532.8357-1-tony@atomide.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <256788c4-ae09-3c72-b563-b9707c4751b4@ti.com>
-Date:   Thu, 19 Sep 2019 09:46:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190905215532.8357-1-tony@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     leoyang.li@nxp.com, liviu.dudau@arm.com, Wen He <wen.he_1@nxp.com>
+Subject: [v5 1/2] dt/bindings: clk: Add YAML schemas for LS1028A Display Clock bindings
+Date:   Thu, 19 Sep 2019 16:01:45 +0800
+Message-Id: <20190919080146.4993-1-wen.he_1@nxp.com>
+X-Mailer: git-send-email 2.9.5
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 06/09/2019 00:55, Tony Lindgren wrote:
-> We currently have a hidden dependency to the device tree node name for
-> the clkctrl clocks. Instead of using standard node name like "clock", we
-> must use "l4-per-clkctrl" naming so the clock driver can find the
-> associated clock domain. Further, if "clk" is specified for a clock node
-> name, the driver sets TI_CLK_CLKCTRL_COMPAT flag that uses different
-> logic with earlier naming for the clock node name.
-> 
-> If the clock node naming dependency is not understood, the related
-> clockdomain is not found, or a wrong one can get used if a clock manager
-> instance has multiple domains.
-> 
-> As each clkctrl instance represents a single clock domain with it's
-> reg property describing the clocks available in that clock domain,
-> we can simply use "reg-names" property for the clock domain.
-> 
-> This simplifies things and removes the hidden dependency to the node
-> name. And then later on, we should be able to drop the related code
-> for parsing the node names.
-> 
-> Let's also update the binding to use standard "clock" node naming
-> instead of "clk".
-> 
-> Cc: devicetree@vger.kernel.org
-> Cc: Rob Herring <robh+dt@kernel.org>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
->   Documentation/devicetree/bindings/clock/ti-clkctrl.txt |  6 +++++-
->   drivers/clk/ti/clkctrl.c                               | 10 ++++++++--
->   2 files changed, 13 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> --- a/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> +++ b/Documentation/devicetree/bindings/clock/ti-clkctrl.txt
-> @@ -20,15 +20,19 @@ Required properties :
->   - #clock-cells : shall contain 2 with the first entry being the instance
->   		 offset from the clock domain base and the second being the
->   		 clock index
-> +- reg : clock registers
-> +- reg-names : clock register names for the clock, should be same as the
-> +	      domain name
+LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
+output interface. Add a YAML schema for this.
 
-Hmm, I think using the reg-names property like this is kind of wrong. 
-Basically, reg and reg-names have pretty much nothing in common. 
-Shouldn't you instead use something like ti,clkdm-name? This also breaks 
-with SoCs like am3, which have mutant clkctrl entries like the one here:
+Signed-off-by: Wen He <wen.he_1@nxp.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/fsl,plldig.yaml | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
 
-                 l4ls_clkctrl: l4ls-clkctrl@38 {
-                         compatible = "ti,clkctrl";
-                         reg = <0x38 0x2c>, <0x6c 0x28>, <0xac 0xc>, 
-<0xc0 0x1c>, <0xec 0xc>, <0x10c 0x8>, <0x130 0x4>;
-                         #clock-cells = <2>;
-                 };
+diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+new file mode 100644
+index 000000000000..32274e94aafc
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+@@ -0,0 +1,43 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
++
++maintainers:
++  - Wen He <wen.he_1@nxp.com>
++
++description: |
++  NXP LS1028A has a clock domain PXLCLK0 used for the Display output
++  interface in the display core, as implemented in TSMC CLN28HPM PLL.
++  which generate and offers pixel clocks to Display.
++
++properties:
++  compatible:
++    const: fsl,ls1028a-plldig
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 0
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++
++examples:
++  # Display PIXEL Clock node:
++  - |
++    dpclk: clock-display@f1f0000 {
++        compatible = "fsl,ls1028a-plldig";
++        reg = <0x0 0xf1f0000 0x0 0xffff>;
++        #clock-cells = <0>;
++        clocks = <&osc_27m>;
++    };
++
++...
+-- 
+2.17.1
 
-What would you think single entry in reg-names would mean in this case?
-
-Other than that, I think the approach taken in this patch looks fine.
-
--Tero
-
->   
->   Example: Clock controller node on omap 4430:
->   
->   &cm2 {
->   	l4per: cm@1400 {
->   		cm_l4per@0 {
-> -			cm_l4per_clkctrl: clk@20 {
-> +			cm_l4per_clkctrl: clock@20 {
->   				compatible = "ti,clkctrl";
->   				reg = <0x20 0x1b0>;
-> +				reg-names = "l4_per";
->   				#clock-cells = <2>;
->   			};
->   		};
-> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
-> --- a/drivers/clk/ti/clkctrl.c
-> +++ b/drivers/clk/ti/clkctrl.c
-> @@ -446,6 +446,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->   	struct clk_hw_omap *hw;
->   	struct clk *clk;
->   	struct omap_clkctrl_clk *clkctrl_clk;
-> +	const char *clkdm_name;
->   	const __be32 *addrp;
->   	u32 addr;
->   	int ret;
-> @@ -534,7 +535,12 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->   
->   	provider->base = of_iomap(node, 0);
->   
-> -	if (ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) {
-> +	ret = of_property_read_string_index(node, "reg-names", 0, &clkdm_name);
-> +	if (!ret) {
-> +		provider->clkdm_name = kasprintf(GFP_KERNEL, "%s_clkdm",
-> +						 clkdm_name);
-> +		goto clkdm_found;
-> +	} else if (ti_clk_get_features()->flags & TI_CLK_CLKCTRL_COMPAT) {
->   		provider->clkdm_name = kasprintf(GFP_KERNEL, "%pOFnxxx", node->parent);
->   		if (!provider->clkdm_name) {
->   			kfree(provider);
-> @@ -570,7 +576,7 @@ static void __init _ti_omap4_clkctrl_setup(struct device_node *node)
->   			*c = '_';
->   		c++;
->   	}
-> -
-> +clkdm_found:
->   	INIT_LIST_HEAD(&provider->clocks);
->   
->   	/* Generate clocks */
-> 
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
