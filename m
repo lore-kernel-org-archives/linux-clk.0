@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A73C1C4CEC4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49946C4CEC4
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E46C21929
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1476A21A49
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 10:25:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="E+UHiJSG"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Zgf+CpZx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389216AbfISKZ0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Sep 2019 06:25:26 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37889 "EHLO
+        id S2389225AbfISKZg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Sep 2019 06:25:36 -0400
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35478 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389199AbfISKZ0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 06:25:26 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l11so2505069wrx.5
-        for <linux-clk@vger.kernel.org>; Thu, 19 Sep 2019 03:25:24 -0700 (PDT)
+        with ESMTP id S2389206AbfISKZ1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Sep 2019 06:25:27 -0400
+Received: by mail-wr1-f68.google.com with SMTP id v8so2526186wrt.2
+        for <linux-clk@vger.kernel.org>; Thu, 19 Sep 2019 03:25:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=RQH3sxdCSDhIfGdbCjdRoLM/sLLm5iODyAbQ5C/Ltw0=;
-        b=E+UHiJSGEVWW51Mla00YaqY1xV4mU3Y+5rJsa4CDkZOUugcHeGYU8NUsvjyGdh1Y9W
-         6ARRrK0ebicbUwvDp1hlZN1n7QfctXKyAu4DzKH5+41QbuAvDnrH33FdTGNAFkSJvfLy
-         QM3+A4NxjDFI/AEFwzPmTTBsJZuL/7hvlJu+Vf8r89v9tYTyaECETWLTqQFVOI9fDTz6
-         jp3aKuYmkkDyi97/DKgrXUPLbOji6zSqzZFO5bhxbSC7m+BZtVgnQ7VgA2ecK075aFiW
-         fC7vMa1LtUIZ2tLG8H1NDl9Y2sjMBKz05YG90pNkgwuuimMWh0mQX+blFA/9c8gYS99O
-         ce4w==
+        bh=OfVN9sS5ICyBISD9/bSWhyU3cvwrbDco1DEGdifcoMw=;
+        b=Zgf+CpZxtIoGz/4c7gSJv4YQIT/AIZGYY5ONX3aWeXVn+UltgLZQP7rUIMGKJGcA/5
+         3hAwcCcqR4JO27SBuv0gUBe+2soEpC0+Ywl6RVlxx9GS6D2SX88/urlqxokJhMh2ypHP
+         vaa5wjrtEgY+NUGLyaq8920OPXWIYrzhavXJoRIv7FNwEKbeCk6ZHpybUNoUwdCI2OgO
+         gALZrQmDYTi/6bwt+K9Safk+8yqSpole+FRyuciLFFYW0nnK+voIq0J1HQIk0tw7lLmq
+         BVOsYEg28zw1zKZoI/0S2JRXFho5o79D97lrKXJziR7O480vfv89VmD/AptN9cuFXywH
+         GTbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=RQH3sxdCSDhIfGdbCjdRoLM/sLLm5iODyAbQ5C/Ltw0=;
-        b=kv/NdY9OkNvdPLK0XaFSfUUYHCNBgXBr/Qwk2pAmZWTxCbq0hwLRaPhoxrnT553hLb
-         hlTefSSFBnVKMiY4RVeP5ScRv0hWLehOSnIzpibuW48MMTZbsjtnkv/c0+2Bvy2m/0Nc
-         DXcwSwZvlEvsJ5jnIn4pFVL7yhjbi7SNGepcht5RUqqJjcOBnz+jo9dXLzt+IPSaqePa
-         0iJy94pHnbPCNeHTT3S8A8Wo5eLfD96ZiYT3SvfbgjkdUkB7c53oI9tBvxHMF34URujS
-         PEI3fORi3DSvv0NEKWjqyA+4DeM2exp/1XOmYCCQukRot0v2B3E5ihP8eOtS+kHnPXf/
-         wt6Q==
-X-Gm-Message-State: APjAAAVuHIL72VfHa7bANM/+Te8MMGLsB2LGtTACqF1uLu/LtdNcRIpu
-        GzSx9+kyfQtUCXmARXoYzkUw7A==
-X-Google-Smtp-Source: APXvYqzSCZ+aZ9oAmix9jsUH1YYSrCs7/6e+ESB8ntGfVta/Je5txD9GnmfCeBCpuCV6nDG/Eavdjg==
-X-Received: by 2002:adf:eccd:: with SMTP id s13mr6749982wro.288.1568888723655;
-        Thu, 19 Sep 2019 03:25:23 -0700 (PDT)
+        bh=OfVN9sS5ICyBISD9/bSWhyU3cvwrbDco1DEGdifcoMw=;
+        b=RKldM68RYR7dFX5cAyQ6LkWlStkLBZLJe4wESTWPbNUsqMppJkPQUdrg972zGMdSZL
+         mtsXO8PBPNj34uGhonZGIgbObMla3Kf765xeOXWn6iCn1xi/MYQUTgKkxxqdxixUpWin
+         TNdAKSrRKFvmjs4xd+D8qXjVlt9gTrEpdiBBelQQiJbtBmp7iwrT15Wfkvx8YFEk3zw7
+         gd0XRytPwYqvurSycu6zGshEgXMzDXysTQsrfTZkaFdLHCniBh8YrLlTuiMWA1MN9IzL
+         7PCcG1DiSxw6ZbrRo/zc1koR7P3gDzBYITRQrjQ/K9qc30UvszKvWIKRYf5lF3S66c//
+         B98Q==
+X-Gm-Message-State: APjAAAWFLN6WaK24ZOCzdtC52mETg+itBkbuMxmNqx6RN+azTZLzftYx
+        FCPnZZBpLfW9vSMA5cvp1skY0w==
+X-Google-Smtp-Source: APXvYqz5GUMlGa0iJ43OkLkqJuHmVrUcsQGvNUSJgX9WQP+bvNX6a0EK/ak4iYRlIe/z7cwDlrDXeg==
+X-Received: by 2002:a5d:62c6:: with SMTP id o6mr6940968wrv.243.1568888724854;
+        Thu, 19 Sep 2019 03:25:24 -0700 (PDT)
 Received: from bender.baylibre.local (wal59-h01-176-150-251-154.dsl.sta.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id a18sm19542000wrh.25.2019.09.19.03.25.22
+        by smtp.gmail.com with ESMTPSA id a18sm19542000wrh.25.2019.09.19.03.25.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Sep 2019 03:25:23 -0700 (PDT)
+        Thu, 19 Sep 2019 03:25:24 -0700 (PDT)
 From:   Neil Armstrong <narmstrong@baylibre.com>
 To:     sboyd@kernel.org, jbrunet@baylibre.com, mturquette@baylibre.com
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 1/2] clk: introduce clk_invalidate_rate()
-Date:   Thu, 19 Sep 2019 12:25:17 +0200
-Message-Id: <20190919102518.25126-2-narmstrong@baylibre.com>
+Subject: [PATCH RFC 2/2] clk: meson: g12a: add suspend-resume hooks
+Date:   Thu, 19 Sep 2019 12:25:18 +0200
+Message-Id: <20190919102518.25126-3-narmstrong@baylibre.com>
 X-Mailer: git-send-email 2.22.0
 In-Reply-To: <20190919102518.25126-1-narmstrong@baylibre.com>
 References: <20190919102518.25126-1-narmstrong@baylibre.com>
@@ -72,127 +72,156 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This introduces the clk_invalidate_rate() call used to recalculate the
-rate and parent tree of a particular clock if it's known that the
-underlying registers set has been altered by the firmware, like from
-a suspend/resume handler running in trusted cpu mode.
+Add suspend and resume hooks used to refresh the CPU clock tree
+when resuming from suspend, in the case where the PSCI firmware
+alters the clock tree.
 
-The call refreshes the actual parent and when changed, instructs CCF
-the parent has changed. Finally the call will recalculate the rate of
-each part of the tree to make sure the CCF cached tree is in sync with
-the hardware.
+In the Amlogic G12A suspend/resume case, the PSCI firmware will
+alter the Fixed PLL dyn tree when entering with the CPU clock from
+this same tree, but using a different path to achieve the same rate.
 
 Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 ---
- drivers/clk/clk.c   | 70 +++++++++++++++++++++++++++++++++++++++++++++
- include/linux/clk.h | 13 +++++++++
- 2 files changed, 83 insertions(+)
+ drivers/clk/meson/g12a.c | 71 +++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 63 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ca99e9db6575..8acf38ce3cc4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2557,6 +2557,76 @@ int clk_set_parent(struct clk *clk, struct clk *parent)
+diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
+index b3af61cc6fb9..9f6f634225b7 100644
+--- a/drivers/clk/meson/g12a.c
++++ b/drivers/clk/meson/g12a.c
+@@ -4992,6 +4992,19 @@ static int meson_g12b_dvfs_setup(struct platform_device *pdev)
+ 	return 0;
  }
- EXPORT_SYMBOL_GPL(clk_set_parent);
  
-+/**
-+ * __clk_invalidate_tree
-+ * @core: first clk in the subtree
-+ *
-+ * Walks the subtree of clks starting with clk and recalculates the parents,
-+ * then accuracies and rates as it goes.
-+ */
-+static int __clk_invalidate_tree(struct clk_core *core)
++static int meson_g12b_resume(struct device *dev)
 +{
-+	struct clk_core *parent, *old_parent;
-+	int ret, i, num_parents;
++	u32 ret;
 +
-+	num_parents = core->num_parents;
++	ret = clk_invalidate_rate(
++			__clk_lookup(clk_hw_get_name(&g12b_cpu_clk.hw)));
++	if (ret)
++		return ret;
 +
-+	for (i = 0; i < num_parents; i++) {
-+		parent = clk_core_get_parent_by_index(core, i);
-+		if (!parent)
-+			continue;
++	return clk_invalidate_rate(
++			__clk_lookup(clk_hw_get_name(&g12b_cpub_clk.hw)));
++}
 +
-+		ret = __clk_invalidate_tree(parent);
-+		if (ret)
-+			return ret;
-+	}
+ static int meson_g12a_dvfs_setup(struct platform_device *pdev)
+ {
+ 	struct clk_hw **hws = g12a_hw_onecell_data.hws;
+@@ -5024,34 +5037,68 @@ static int meson_g12a_dvfs_setup(struct platform_device *pdev)
+ 	return 0;
+ }
+ 
++static int meson_g12a_resume(struct device *dev)
++{
++	return clk_invalidate_rate(
++			__clk_lookup(clk_hw_get_name(&g12a_cpu_clk.hw)));
++}
 +
-+	parent = __clk_init_parent(core);
+ struct meson_g12a_data {
+ 	const struct meson_eeclkc_data eeclkc_data;
+ 	int (*dvfs_setup)(struct platform_device *pdev);
++	int (*resume)(struct device *dev);
+ };
+ 
++static const struct
++meson_g12a_data *meson_g12a_get_data(struct device *dev)
++{
++	const struct meson_eeclkc_data *eeclkc_data =
++			of_device_get_match_data(dev);
 +
-+	if (parent != core->parent) {
-+		old_parent = __clk_set_parent_before(core, parent);
-+		__clk_set_parent_after(core, parent, old_parent);
-+	}
++	if (!eeclkc_data)
++		return ERR_PTR(-EINVAL);
 +
-+	__clk_recalc_accuracies(core);
-+	__clk_recalc_rates(core, 0);
++	return container_of(eeclkc_data, struct meson_g12a_data,
++			    eeclkc_data);
++}
++
+ static int meson_g12a_probe(struct platform_device *pdev)
+ {
+-	const struct meson_eeclkc_data *eeclkc_data;
+-	const struct meson_g12a_data *g12a_data;
+ 	int ret;
++	const struct meson_g12a_data *g12a_data =
++			meson_g12a_get_data(&pdev->dev);
+ 
+-	eeclkc_data = of_device_get_match_data(&pdev->dev);
+-	if (!eeclkc_data)
+-		return -EINVAL;
++	if (IS_ERR(g12a_data))
++		return PTR_ERR(g12a_data);
+ 
+ 	ret = meson_eeclkc_probe(pdev);
+ 	if (ret)
+ 		return ret;
+ 
+-	g12a_data = container_of(eeclkc_data, struct meson_g12a_data,
+-				 eeclkc_data);
+-
+ 	if (g12a_data->dvfs_setup)
+ 		return g12a_data->dvfs_setup(pdev);
+ 
+ 	return 0;
+ }
+ 
++static int __maybe_unused g12a_clkc_suspend(struct device *dev)
++{
++	return 0;
++}
++
++static int __maybe_unused g12a_clkc_resume(struct device *dev)
++{
++	const struct meson_g12a_data *g12a_data = meson_g12a_get_data(dev);
++
++	if (IS_ERR(g12a_data))
++		return PTR_ERR(g12a_data);
++
++	if (g12a_data->resume)
++		return g12a_data->resume(dev);
 +
 +	return 0;
 +}
 +
-+static int clk_core_invalidate_rate(struct clk_core *core)
-+{
-+	int ret;
-+
-+	clk_prepare_lock();
-+
-+	ret = __clk_invalidate_tree(core);
-+
-+	clk_prepare_unlock();
-+
-+	return ret;
-+}
-+
-+/**
-+ * clk_invalidate_rate - invalidate and recalc rate of the clock and it's tree
-+ * @clk: the clk whose rate is too be invalidated
-+ *
-+ * If it's known the actual hardware state of a clock tree has changed,
-+ * this call will invalidate the cached rate of the clk and it's possible
-+ * parents tree to permit recalculation of the actual rate.
-+ *
-+ * Returns 0 on success, -EERROR otherwise.
-+ * If clk is NULL then returns 0.
-+ */
-+int clk_invalidate_rate(struct clk *clk)
-+{
-+	if (!clk)
-+		return 0;
-+
-+	return clk_core_invalidate_rate(clk->core);
-+}
-+EXPORT_SYMBOL_GPL(clk_invalidate_rate);
-+
- static int clk_core_set_phase_nolock(struct clk_core *core, int degrees)
- {
- 	int ret = -EINVAL;
-diff --git a/include/linux/clk.h b/include/linux/clk.h
-index 853a8f181394..46db47ffb7b2 100644
---- a/include/linux/clk.h
-+++ b/include/linux/clk.h
-@@ -629,6 +629,19 @@ long clk_round_rate(struct clk *clk, unsigned long rate);
-  */
- int clk_set_rate(struct clk *clk, unsigned long rate);
+ static const struct meson_g12a_data g12a_clkc_data = {
+ 	.eeclkc_data = {
+ 		.regmap_clks = g12a_clk_regmaps,
+@@ -5061,6 +5108,7 @@ static const struct meson_g12a_data g12a_clkc_data = {
+ 		.init_count = ARRAY_SIZE(g12a_init_regs),
+ 	},
+ 	.dvfs_setup = meson_g12a_dvfs_setup,
++	.resume = meson_g12a_resume,
+ };
  
-+/**
-+ * clk_invalidate_rate - invalidate and recalc rate of the clock and it's tree
-+ * @clk: the clk whose rate is too be invalidated
-+ *
-+ * If it's known the actual hardware state of a clock tree has changed,
-+ * this call will invalidate the cached rate of the clk and it's possible
-+ * parents tree to permit recalculation of the actual rate.
-+ *
-+ * Returns 0 on success, -EERROR otherwise.
-+ * If clk is NULL then returns 0.
-+ */
-+int clk_invalidate_rate(struct clk *clk);
+ static const struct meson_g12a_data g12b_clkc_data = {
+@@ -5070,6 +5118,7 @@ static const struct meson_g12a_data g12b_clkc_data = {
+ 		.hw_onecell_data = &g12b_hw_onecell_data,
+ 	},
+ 	.dvfs_setup = meson_g12b_dvfs_setup,
++	.resume = meson_g12b_resume,
+ };
+ 
+ static const struct meson_g12a_data sm1_clkc_data = {
+@@ -5079,6 +5128,11 @@ static const struct meson_g12a_data sm1_clkc_data = {
+ 		.hw_onecell_data = &sm1_hw_onecell_data,
+ 	},
+ 	.dvfs_setup = meson_g12a_dvfs_setup,
++	.resume = meson_g12a_resume,
++};
 +
- /**
-  * clk_set_rate_exclusive- set the clock rate and claim exclusivity over
-  *                         clock source
++static const struct dev_pm_ops g12a_clkc_dev_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(g12a_clkc_suspend, g12a_clkc_resume)
+ };
+ 
+ static const struct of_device_id clkc_match_table[] = {
+@@ -5102,6 +5156,7 @@ static struct platform_driver g12a_driver = {
+ 	.driver		= {
+ 		.name	= "g12a-clkc",
+ 		.of_match_table = clkc_match_table,
++		.pm	= &g12a_clkc_dev_pm_ops,
+ 	},
+ };
+ 
 -- 
 2.22.0
 
