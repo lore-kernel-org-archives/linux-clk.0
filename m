@@ -2,239 +2,182 @@ Return-Path: <SRS0=QqMK=XO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A77C4CEC4
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 00:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A13DC4CEC9
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 03:10:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C8E621925
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 00:01:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C3F3218AF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Sep 2019 03:10:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="DXbjND3V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729122AbfISABO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Sep 2019 20:01:14 -0400
-Received: from muru.com ([72.249.23.125]:33814 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727273AbfISABO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Sep 2019 20:01:14 -0400
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id C1C6D806C;
-        Thu, 19 Sep 2019 00:01:43 +0000 (UTC)
-Date:   Wed, 18 Sep 2019 17:01:09 -0700
-From:   Tony Lindgren <tony@atomide.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix hidden dependency to node name
- with reg-names
-Message-ID: <20190919000109.GG5610@atomide.com>
-References: <20190905215532.8357-1-tony@atomide.com>
- <20190907035518.EB40C208C3@mail.kernel.org>
- <20190908194241.GL52127@atomide.com>
- <20190918180729.C2BB521907@mail.kernel.org>
- <20190918205344.GE5610@atomide.com>
- <20190918232842.E2CBB21907@mail.kernel.org>
+        id S1728442AbfISDKs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Sep 2019 23:10:48 -0400
+Received: from mail-eopbgr150051.outbound.protection.outlook.com ([40.107.15.51]:1347
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728423AbfISDKs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Sep 2019 23:10:48 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Xhz/EcSPUknWs0Jc5ynriyrJpoW+Cgy0vyNNFwxkVlrhyiGhsJod3LLjXeUalULlVAmt4UfJ4sEEUiRVDJGSL/TgBMv+l2S8yr8Wx2SSNCN5AynVFSN2ZO+C51DTnM+8eCWoTKP0tSmLIq5x3VWcRe+5e4uA+8RzdogYnPyVmgDLUyC2ROB9g5XS82QQ9BYMKLXrxkIkaB3cyPqmRvTzNIlej5FNQBGkD+DkOHceWp7NQp8zeNy5qo0xXB5hpPi/AmDfJQf0ljOK5KJxh5MKHQrhM6hnmMGx90HhPUVHWYf8sxY058w8v467aG9UWc9JvzJQXHubYw4c7y9R0yVVeQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eOGt3H3vBAfiZrsFDseE/JdGtm+1S4KWNhXyHFTMbuk=;
+ b=Ei1hJe8ixQr3nmhorfado/SwB3iIHf+4XJqmao5H/+KJJZnpOY4N0hs1v7n1JSQWr7ONO98Gl5zNXup6renWTGY9QPc4zPROd2rlY0SNpwwH8oCVNbgVJHFxt7aSUi/PzA1Ts/3KFEx+yb5ln06litbLijADN/NaJBaJlUv8rhu8YwexCVdFr3QuKF5gXB3piQoV8G9QrsHl65WXalI2bwIMRuCTWWYCXw5edUHu27/LcB8uMTSkv5S7tQHq/7BhIyrICH++4OSbmo5lyijNmWWBEl5f2Is4f7Bz/ualnaoxQ79ld8gIt9yctJUchsENFYh48muyQsxscgysOxUryg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eOGt3H3vBAfiZrsFDseE/JdGtm+1S4KWNhXyHFTMbuk=;
+ b=DXbjND3VPfKDM9/WVUp3rBRPrdzXbHs5mXvgg+XLplPXnA8MnRyNqGc387+FPBeaHYp3g9yjM2frQrMP3bbnFvQMPeUc6H4fp3Bc/Mk4bzxfOgdY99g+2dit97lrpWLbIA3LbfUMf0lukgvz2DM+Q7hMI2X1QQutzvrcj+ErY6s=
+Received: from AM6PR04MB4936.eurprd04.prod.outlook.com (20.177.34.20) by
+ AM6PR04MB3992.eurprd04.prod.outlook.com (52.135.169.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2263.17; Thu, 19 Sep 2019 03:10:44 +0000
+Received: from AM6PR04MB4936.eurprd04.prod.outlook.com
+ ([fe80::3069:86de:e199:8abe]) by AM6PR04MB4936.eurprd04.prod.outlook.com
+ ([fe80::3069:86de:e199:8abe%7]) with mapi id 15.20.2263.023; Thu, 19 Sep 2019
+ 03:10:44 +0000
+From:   Fancy Fang <chen.fang@nxp.com>
+To:     "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: [PATCH v2] clk: imx7ulp: remove IMX7ULP_CLK_MIPI_PLL clock
+Thread-Topic: [PATCH v2] clk: imx7ulp: remove IMX7ULP_CLK_MIPI_PLL clock
+Thread-Index: AQHVbpfTBWkVGhuNzkmN4Sgwz3kphA==
+Date:   Thu, 19 Sep 2019 03:10:44 +0000
+Message-ID: <20190919030912.16957-1-chen.fang@nxp.com>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.17.1
+x-clientproxiedby: HK2PR02CA0178.apcprd02.prod.outlook.com
+ (2603:1096:201:21::14) To AM6PR04MB4936.eurprd04.prod.outlook.com
+ (2603:10a6:20b:8::20)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=chen.fang@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: e1d2c498-d3e9-4d83-cab7-08d73caef60f
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600167)(711020)(4605104)(1401327)(4618075)(2017052603328)(7193020);SRVR:AM6PR04MB3992;
+x-ms-traffictypediagnostic: AM6PR04MB3992:|AM6PR04MB3992:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM6PR04MB399227AF633B36F5D56C9A3DF3890@AM6PR04MB3992.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 016572D96D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(136003)(366004)(346002)(396003)(39860400002)(199004)(189003)(54534003)(8936002)(186003)(50226002)(1730700003)(8676002)(81156014)(81166006)(14454004)(66556008)(66446008)(64756008)(66476007)(66946007)(1076003)(4326008)(102836004)(52116002)(25786009)(386003)(3846002)(2351001)(2906002)(6506007)(6116002)(6916009)(26005)(316002)(478600001)(5640700003)(2501003)(6486002)(476003)(6436002)(86362001)(54906003)(486006)(7736002)(5660300002)(36756003)(2616005)(305945005)(99286004)(256004)(6512007)(71190400001)(71200400001)(66066001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB3992;H:AM6PR04MB4936.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: Si118vHcMuzFWwfS3xY/gLGeqUGe0WzoKxCUmhTTUAgdY426kK2TAsD2OSm0B89PdN2rSFUXKjOH1JS2zjj1aDD/nbYqeycwfuMDegyBbfPRWDK1YpdnFM5F3IGF4qrONAMsDiWDxCRD1EwRuFN2buLCDW3Uc6IpHnJbBq2pzdihTm2HNLCuAERoIZ1XZSuHAR1xG23jOAxfPlqgBoi7rlwmuqakAYNU4Pf9lAJ14wpMypKBkFS2T4GokvIkCa4Kfa/vXgX8FFuDbml6tg1GfziFUd+LSMEJuJZuXQAiWRa9FlubAIQMu1w6Tzf5GeQ/Yw892UcBUWSRI8LcaiAm7mAkxus1ctQPuwFjnUtItAf8RLTUvF1GCfWWDigoHZuKGbaf5JogeYgZ2dA2mwo0dKuyinV+XkZ57P4nbDs9+i0=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918232842.E2CBB21907@mail.kernel.org>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e1d2c498-d3e9-4d83-cab7-08d73caef60f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Sep 2019 03:10:44.7909
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: BAcDs2qcKUpykHxXkkCBqdMjwgi46D9zETJn3oyP1dL+EE441lPhl2hFyuYG+wa0CR8mVCWQnh4JbJmeoDhrOg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB3992
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Stephen Boyd <sboyd@kernel.org> [190918 23:29]:
-> Quoting Tony Lindgren (2019-09-18 13:53:44)
-> > Hi,
-> > 
-> > * Stephen Boyd <sboyd@kernel.org> [190918 18:08]:
-> > > Quoting Tony Lindgren (2019-09-08 12:42:41)
-> > > > Or do you have some better ideas on how to name a clock controller
-> > > > in the device tree?
-> > > > 
-> > > 
-> > > Why does the name of the clock controller or clkdm_name matter? Using a
-> > > string from reg-names smells like a workaround to describe some sort of
-> > > linkage between things that isn't being described in DT today.
-> > 
-> > Correct. This problem will eventually disappear with genpd
-> > handling the clockdomains.
-> > 
-> > But currently the clockdomain name is parsed from the dt node
-> > name, which is not standard practise. Using reg-names
-> > is a standard binding, and it's usage follows the standand
-> > here to describe the reg range.
-> > 
-> > Then eventually with genpd, the reg-names will just become
-> > optinoal. But until that happens the $subject patch fixes
-> > issues as described in the patch.
-> > 
-> 
-> Is anything broken? It looks like the hidden dependency on the node name
-> is being changed to be a slightly less hidden dependency on reg-names.
+The mipi pll clock comes from the MIPI PHY PLL output, so
+it should not be a fixed clock.
 
-Yes I agree. This is still way better than relying on dts node names :)
+MIPI PHY PLL is in the MIPI DSI space, and it is used as
+the bit clock for transferring the pixel data out and its
+output clock is configured according to the display mode.
 
-> reg-names is supposed to be an optional property, so we're trading one
-> thing for another. I still don't understand the reasoning here, but if
-> Tero is happy to ack/review this change then I'm not too worried about
-> it assuming the reg-names property eventually becomes optional. Just
-> seems like more work and DT churn for no to little gain?
+So it should be used only for MIPI DSI and not be exported
+out for other usages.
 
-Yeah with genpd the reg-names becomes optional.
+Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+---
+ChangeLog v1->v2:
+ * Keep other clock indexes unchanged as Shawn suggested.
 
-What is currently broken is we can get a wrong clockdomain or no
-clockdomain for a clock if the clock controller has multiple
-domains.
+ Documentation/devicetree/bindings/clock/imx7ulp-clock.txt | 1 -
+ drivers/clk/imx/clk-imx7ulp.c                             | 3 +--
+ include/dt-bindings/clock/imx7ulp-clock.h                 | 1 -
+ 3 files changed, 1 insertion(+), 4 deletions(-)
 
-This happens at least with rng for omap4 and 5 where l4_per has two
-clock domains (l4_per and l4_sec). I'll be posting rng dts patches
-for all the SoCs after -rc1, but below is what's needed for rng on
-omap4 for example after the $subject patch for reference. See the
-addition of "l4_secure_clkctrl: clock@1a0" node below.
+diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Do=
+cumentation/devicetree/bindings/clock/imx7ulp-clock.txt
+index a4f8cd478f92..93d89adb7afe 100644
+--- a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
++++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+@@ -82,7 +82,6 @@ pcc2: pcc2@403f0000 {
+ 		 <&scg1 IMX7ULP_CLK_APLL_PFD0>,
+ 		 <&scg1 IMX7ULP_CLK_UPLL>,
+ 		 <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>,
+-		 <&scg1 IMX7ULP_CLK_MIPI_PLL>,
+ 		 <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>,
+ 		 <&scg1 IMX7ULP_CLK_ROSC>,
+ 		 <&scg1 IMX7ULP_CLK_SPLL_BUS_CLK>;
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index 995a4ad10904..936c39f767df 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -28,7 +28,7 @@ static const char * const scs_sels[]		=3D { "dummy", "sos=
+c", "sirc", "firc", "dumm
+ static const char * const ddr_sels[]		=3D { "apll_pfd_sel", "upll", };
+ static const char * const nic_sels[]		=3D { "firc", "ddr_clk", };
+ static const char * const periph_plat_sels[]	=3D { "dummy", "nic1_bus_clk"=
+, "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
+-static const char * const periph_bus_sels[]	=3D { "dummy", "sosc_bus_clk",=
+ "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk"=
+, };
++static const char * const periph_bus_sels[]	=3D { "dummy", "sosc_bus_clk",=
+ "dummy", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk=
+", };
+ static const char * const arm_sels[]		=3D { "divcore", "dummy", "dummy", "=
+hsrun_divcore", };
+=20
+ /* used by sosc/sirc/firc/ddr/spll/apll dividers */
+@@ -75,7 +75,6 @@ static void __init imx7ulp_clk_scg1_init(struct device_no=
+de *np)
+ 	clks[IMX7ULP_CLK_SOSC]		=3D imx_obtain_fixed_clk_hw(np, "sosc");
+ 	clks[IMX7ULP_CLK_SIRC]		=3D imx_obtain_fixed_clk_hw(np, "sirc");
+ 	clks[IMX7ULP_CLK_FIRC]		=3D imx_obtain_fixed_clk_hw(np, "firc");
+-	clks[IMX7ULP_CLK_MIPI_PLL]	=3D imx_obtain_fixed_clk_hw(np, "mpll");
+ 	clks[IMX7ULP_CLK_UPLL]		=3D imx_obtain_fixed_clk_hw(np, "upll");
+=20
+ 	/* SCG1 */
+diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-binding=
+s/clock/imx7ulp-clock.h
+index 6f66f9005c81..a39b0c40cb41 100644
+--- a/include/dt-bindings/clock/imx7ulp-clock.h
++++ b/include/dt-bindings/clock/imx7ulp-clock.h
+@@ -49,7 +49,6 @@
+ #define IMX7ULP_CLK_NIC1_DIV		36
+ #define IMX7ULP_CLK_NIC1_BUS_DIV	37
+ #define IMX7ULP_CLK_NIC1_EXT_DIV	38
+-#define IMX7ULP_CLK_MIPI_PLL		39
+ #define IMX7ULP_CLK_SIRC		40
+ #define IMX7ULP_CLK_SOSC_BUS_CLK	41
+ #define IMX7ULP_CLK_FIRC_BUS_CLK	42
+--=20
+2.17.1
 
-The other option would be to search and replace the "clk@" domains
-with "foo@" type domains with more churn. See for example the
-changes from "clk@" to "foo@" for dra7 done in b5f8ffbb6fad:
-
-$ git show b5f8ffbb6fad | grep -C1 "clk@"
-
--               mpu_clkctrl: clk@20 {
-+               mpu_clkctrl: mpu-clkctrl@20 {
---
-
--               ipu_clkctrl: clk@40 {
-+               ipu1_clkctrl: ipu1-clkctrl@20 {
-...
-
-And we cannot mix "clk@" naming and "foo@" naming as a flag for all
-instances is set by "clk@" naming during clkctrl clock init. So all
-the clock domain nodes would need to be renamed just to add l4_sec
-domain for omap4 and 5.
-
-Anyways, if acceptable, an immutable branch against v5.3 or v5.4-rc1
-with just the $subject patch would be great so I can merge it in too
-for the related rng changes for v5.5.
-
-I'm not yet sure if the $subject patch is needed for some SoC as a
-fix together with a dts change to add the reg-names, but it is
-possible.
-
-Regards,
-
-Tony
-
-8< -----------------------
-diff --git a/arch/arm/boot/dts/omap4-droid4-xt894.dts b/arch/arm/boot/dts/omap4-droid4-xt894.dts
---- a/arch/arm/boot/dts/omap4-droid4-xt894.dts
-+++ b/arch/arm/boot/dts/omap4-droid4-xt894.dts
-@@ -653,6 +653,11 @@
- 	};
- };
- 
-+/* RNG is used by secure mode and not accessible */
-+&rng_target {
-+	status = "disabled";
-+};
-+
- /* Configure pwm clock source for timers 8 & 9 */
- &timer8 {
- 	assigned-clocks = <&abe_clkctrl OMAP4_TIMER8_CLKCTRL 24>;
-diff --git a/arch/arm/boot/dts/omap4-l4.dtsi b/arch/arm/boot/dts/omap4-l4.dtsi
---- a/arch/arm/boot/dts/omap4-l4.dtsi
-+++ b/arch/arm/boot/dts/omap4-l4.dtsi
-@@ -2010,12 +2010,26 @@
- 			};
- 		};
- 
--		target-module@90000 {			/* 0x48090000, ap 57 2a.0 */
--			compatible = "ti,sysc";
--			status = "disabled";
-+		rng_target: target-module@90000 {	/* 0x48090000, ap 57 2a.0 */
-+			compatible = "ti,sysc-omap2", "ti,sysc";
-+			reg = <0x91fe0 0x4>,
-+			      <0x91fe4 0x4>;
-+			reg-names = "rev", "sysc";
-+			ti,sysc-mask = <(SYSC_OMAP2_AUTOIDLE)>;
-+			ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-+					<SYSC_IDLE_NO>;
-+			/* Domains (P, C): l4per_pwrdm, l4_secure_clkdm */
-+			clocks = <&l4_secure_clkctrl OMAP4_RNG_CLKCTRL 0>;
-+			clock-names = "fck";
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges = <0x0 0x90000 0x2000>;
-+
-+			rng: rng@0 {
-+				compatible = "ti,omap4-rng";
-+				reg = <0x0 0x2000>;
-+				interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+			};
- 		};
- 
- 		target-module@96000 {			/* 0x48096000, ap 37 26.0 */
-diff --git a/arch/arm/boot/dts/omap44xx-clocks.dtsi b/arch/arm/boot/dts/omap44xx-clocks.dtsi
---- a/arch/arm/boot/dts/omap44xx-clocks.dtsi
-+++ b/arch/arm/boot/dts/omap44xx-clocks.dtsi
-@@ -1284,8 +1284,14 @@
- 			reg = <0x20 0x144>;
- 			#clock-cells = <2>;
- 		};
--	};
- 
-+		l4_secure_clkctrl: clock@1a0 {
-+			compatible = "ti,clkctrl";
-+			reg = <0x1a0 0x28>;
-+			reg-names = "l4_secure";
-+			#clock-cells = <2>;
-+		};
-+	};
- };
- 
- &prm {
-diff --git a/drivers/clk/ti/clk-44xx.c b/drivers/clk/ti/clk-44xx.c
---- a/drivers/clk/ti/clk-44xx.c
-+++ b/drivers/clk/ti/clk-44xx.c
-@@ -604,6 +604,12 @@ static const struct omap_clkctrl_reg_data omap4_l4_per_clkctrl_regs[] __initcons
- 	{ 0 },
- };
- 
-+static const struct
-+omap_clkctrl_reg_data omap4_l4_secure_clkctrl_regs[] __initconst = {
-+	{ OMAP4_RNG_CLKCTRL, NULL, CLKF_HW_SUP | CLKF_SOC_NONSEC, "" },
-+	{ 0 },
-+};
-+
- static const struct omap_clkctrl_bit_data omap4_gpio1_bit_data[] __initconst = {
- 	{ 8, TI_CLK_GATE, omap4_gpio2_dbclk_parents, NULL },
- 	{ 0 },
-@@ -691,6 +697,7 @@ const struct omap_clkctrl_data omap4_clkctrl_data[] __initconst = {
- 	{ 0x4a009220, omap4_l3_gfx_clkctrl_regs },
- 	{ 0x4a009320, omap4_l3_init_clkctrl_regs },
- 	{ 0x4a009420, omap4_l4_per_clkctrl_regs },
-+	{ 0x4a0095a0, omap4_l4_secure_clkctrl_regs },
- 	{ 0x4a307820, omap4_l4_wkup_clkctrl_regs },
- 	{ 0x4a307a20, omap4_emu_sys_clkctrl_regs },
- 	{ 0 },
-diff --git a/include/dt-bindings/clock/omap4.h b/include/dt-bindings/clock/omap4.h
---- a/include/dt-bindings/clock/omap4.h
-+++ b/include/dt-bindings/clock/omap4.h
-@@ -124,6 +124,11 @@
- #define OMAP4_UART4_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x158)
- #define OMAP4_MMC5_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x160)
- 
-+/* l4_secure clocks */
-+#define OMAP4_L4_SECURE_CLKCTRL_OFFSET	0x1a0
-+#define OMAP4_L4_SECURE_CLKCTRL_INDEX(offset)	((offset) - OMAP4_L4_SECURE_CLKCTRL_OFFSET)
-+#define OMAP4_RNG_CLKCTRL	OMAP4_L4_SECURE_CLKCTRL_INDEX(0x1c0)
-+
- /* l4_wkup clocks */
- #define OMAP4_L4_WKUP_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x20)
- #define OMAP4_WD_TIMER2_CLKCTRL	OMAP4_CLKCTRL_INDEX(0x30)
--- 
-2.23.0
