@@ -6,111 +6,75 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9474C49ED7
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 16:54:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFECC3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 16:55:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B000E208C3
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 16:54:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8801208C0
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 16:55:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568998443;
-	bh=sLOES0dJNNhN/FCJjlLywq5/50hm54xCZ0l0xpS2B5w=;
+	s=default; t=1568998526;
+	bh=Bab7SDLgjUNFsw/GfqlNFONf2I9Lxrh9DUg39cNE7Hg=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=f6x57eAWuKLXQInBP/aJ7ilDlpl1TUFYF2oc8EoZ7R3JOKX7wST1W6IR8J6l9xw5x
-	 dPpJO4ToUscpoXkb1UgtXp53yHM1oJqr5sVyAWSDlKn0Q/k137UM8bPoWMkL8OyNiG
-	 0qyARd3h+7O+8O7M6lnuDoAcqbySDmelvjDHIBfU=
+	b=r8Kvgl7XeDkM+3d8ueA8qb56ZSLlyWyLRHSpXEXUJ7gtofOPpYf/A/mNIQqdu+9/q
+	 //2SFU9+wrL0dGCtzUgfKL6O8rf3xlkwtxaS16+42LWsa//YQ6GdEM2zJN9B3Qgg+7
+	 DtBzRqCfH2gGvSDiY2EprOF/pH4X7xOHG8M4glGQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405463AbfITQyD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Sep 2019 12:54:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58652 "EHLO mail.kernel.org"
+        id S2405466AbfITQzZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Sep 2019 12:55:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59188 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405360AbfITQyC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:54:02 -0400
+        id S2405360AbfITQzZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Sep 2019 12:55:25 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4B5DB207FC;
-        Fri, 20 Sep 2019 16:54:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC00C207FC;
+        Fri, 20 Sep 2019 16:55:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568998442;
-        bh=sLOES0dJNNhN/FCJjlLywq5/50hm54xCZ0l0xpS2B5w=;
+        s=default; t=1568998524;
+        bh=Bab7SDLgjUNFsw/GfqlNFONf2I9Lxrh9DUg39cNE7Hg=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=cyXCU3VghdUV0JG6NWEgRtcEAqgrtLyVbvntG/u8Qkrni50iNAw3mlEsuRAygnpMf
-         qSNge/z+pOIZFkga6St28xLlcKVkklBXJfIBb0vwLF4rlyZxpi7gtRzdD0cH0p+80J
-         hy7EzuyppwYRx5klrV5IYJvj89lLRR0PV5OulyFQ=
+        b=wFeBQOwWWr0Wic30e3/48RMpGfbohsWOdum7aaw4cEJjAt3r1vAVdSpydG5JKOG78
+         /WBBfm0nVV5yc2Id3VdV36q89tGKozJUMtto+xGt078XAP58Nku/eRJRb9xEphtKbh
+         8cp8xbrM2ce43QREPcf2OKyno/shbIO4MVImSiu0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190920100301.0674a5b6@xps13>
-References: <20190627125245.26788-1-miquel.raynal@bootlin.com> <20190917173154.722CB2171F@mail.kernel.org> <20190920100301.0674a5b6@xps13>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
-        <marek.behun@nic.cz>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
+In-Reply-To: <AM6PR0402MB39110BCD655C354F8A295621F5880@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+References: <1567776846-6373-1-git-send-email-Anson.Huang@nxp.com> <AM6PR0402MB39110BCD655C354F8A295621F5880@AM6PR0402MB3911.eurprd04.prod.outlook.com>
+Cc:     dl-linux-imx <linux-imx@nxp.com>
+To:     "S.j. Wang" <shengjiu.wang@nxp.com>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fancy Fang <chen.fang@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 0/4] Prepare Armada 3700 PCIe suspend to RAM support
+Subject: RE: [PATCH V2 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure to common place
 User-Agent: alot/0.8.1
-Date:   Fri, 20 Sep 2019 09:54:01 -0700
-Message-Id: <20190920165402.4B5DB207FC@mail.kernel.org>
+Date:   Fri, 20 Sep 2019 09:55:23 -0700
+Message-Id: <20190920165524.CC00C207FC@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Miquel Raynal (2019-09-20 01:03:01)
-> Hi Stephen,
->=20
-> Stephen Boyd <sboyd@kernel.org> wrote on Tue, 17 Sep 2019 10:31:53
-> -0700:
->=20
-> > Quoting Miquel Raynal (2019-06-27 05:52:41)
-> > > Hello,
-> > >=20
-> > > As part of an effort to bring suspend to RAM support to the Armada
-> > > 3700 SoC (main target: ESPRESSObin board), there are small things to
-> > > do in the Armada 3700 peripherals clock driver:
-> > >=20
-> > > * On this SoC, the PCIe controller gets fed by a gated clock in the
-> > >   south bridge. This clock is missing in the current driver, patch 1
-> > >   adds it.
-> > >=20
-> > > * Because of a constraint in the PCI core, the resume function of a
-> > >   PCIe controller driver must be run at an early stage
-> > >   (->suspend/resume_noirq()), before the core tries to ->read/write()
-> > >   in the PCIe registers to do more configuration. Hence, the PCIe
-> > >   clock must be resumed before. This is enforced thanks to two
-> > >   changes:
-> > >   1/ Add device links to the clock framework. This enforce order in
-> > >      the PM core: the clocks are resumed before the consumers. Series
-> > >      has been posted, see [1].
-> > >   2/ Even with the above feature, the clock's resume() callback is
-> > >      called after the PCI controller's resume_noirq() callback. The
-> > >      only way to fix this is to change the "priority" of the clock
-> > >      suspend/resume callbacks. This is done in patch 2.
-> > >=20
-> > > * The bindings are updated with the PCI clock in patch 4 while patch 3
-> > >   is just a typo correction in the same file.
-> > >=20
-> > > If there is anything unclear please feel free to ask.
-> > >  =20
-> >=20
-> > Should I drop this patch series?
-> >=20
->=20
-> No, if it is right for you I would really prefer to have it merged
-> (sorry for the delay in answering though) because it will be still
-> needed, no matter how clock dependencies are handled.
->=20
+Quoting Anson Huang (2019-09-19 18:27:39)
+> Gentle ping...
 >=20
 
-Ok. I'll apply it after the merge window. Let me know if it's more
-urgent than that.
+Merge window is open. I expect Shawn to pick this up for v5.5 in a week
+or two.
 
