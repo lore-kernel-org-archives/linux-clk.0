@@ -2,79 +2,137 @@ Return-Path: <SRS0=v4u2=XP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AFECC3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 16:55:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4DCC3A5A2
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 20:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8801208C0
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 16:55:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1568998526;
-	bh=Bab7SDLgjUNFsw/GfqlNFONf2I9Lxrh9DUg39cNE7Hg=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=r8Kvgl7XeDkM+3d8ueA8qb56ZSLlyWyLRHSpXEXUJ7gtofOPpYf/A/mNIQqdu+9/q
-	 //2SFU9+wrL0dGCtzUgfKL6O8rf3xlkwtxaS16+42LWsa//YQ6GdEM2zJN9B3Qgg+7
-	 DtBzRqCfH2gGvSDiY2EprOF/pH4X7xOHG8M4glGQ=
+	by mail.kernel.org (Postfix) with ESMTP id 7255621835
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 20:12:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YUxS8rzK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405466AbfITQzZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Sep 2019 12:55:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59188 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405360AbfITQzZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Sep 2019 12:55:25 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC00C207FC;
-        Fri, 20 Sep 2019 16:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1568998524;
-        bh=Bab7SDLgjUNFsw/GfqlNFONf2I9Lxrh9DUg39cNE7Hg=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=wFeBQOwWWr0Wic30e3/48RMpGfbohsWOdum7aaw4cEJjAt3r1vAVdSpydG5JKOG78
-         /WBBfm0nVV5yc2Id3VdV36q89tGKozJUMtto+xGt078XAP58Nku/eRJRb9xEphtKbh
-         8cp8xbrM2ce43QREPcf2OKyno/shbIO4MVImSiu0=
-Content-Type: text/plain; charset="utf-8"
+        id S1728098AbfITUMW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Sep 2019 16:12:22 -0400
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43779 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727737AbfITUMV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Sep 2019 16:12:21 -0400
+Received: by mail-qt1-f195.google.com with SMTP id c3so10078234qtv.10
+        for <linux-clk@vger.kernel.org>; Fri, 20 Sep 2019 13:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=t1DVA3vKOlm/AZ8L4zulEE1hMXuljgOJAsGAyVpUvUI=;
+        b=YUxS8rzK+f0gbi1Cu0GWV0MhZV0YpDvHEnfJ4R8mcMrXdyvN91fGs0GZgDxvaGqP/m
+         KpoMUYs+uf0bq4QbaK9tVHYnq16V1te91foBq4Qnk6EdJi9dXmaVjil+q5LdeIdWgppR
+         UujYQE/f8DTiORI37BMmMNemWvW1tl3Vf5qTRc/feiWdPr1yMbJkG8AwT+fjyt4M67jL
+         7btY37HOE/cfp8/BA1Rjf11cLr9Yv1P76R2jUQNTph0AdSUCDPBvn+Ncs33PCrsiqGEf
+         Zdm0/Ik8AUEMg9tShfWSUnr6VwNcKH3rC/IuxqZ9okbs7uRHiOAzAMrjb5HDyAekYvOl
+         SmFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t1DVA3vKOlm/AZ8L4zulEE1hMXuljgOJAsGAyVpUvUI=;
+        b=V3HLEYsMazOf4n70yaI72QkWAaX5MDpKVutVwDnXr3m8h8K7LFV3QzgC3pwd2CL8SY
+         qZPIxV26Ua3lnKwxtKJEWcH6losxZP0uPcURPv+6B/89fFVgBACoxpfVDAGvsOymZ/1O
+         4x8y8yFzNLu3XuiV/Z8OiuFKFKFGKkcLScXtrrZv81tuy7qBT9hWL05/U4seXsjqIjLa
+         uX9K/E2AW7ohwEIvjAtQvqZwlL1dGq/JtkvtPSru5bXP3+1kI/X9z/WT38za2xPAGuDl
+         7YwvwcJOdYuQTE86HGoUPsw4pgBwzAJG1WvGvxYoqEvws1PdkxgZXkC2qPklOQkS1ulj
+         dMDQ==
+X-Gm-Message-State: APjAAAVD+wNod6OrjlppM8hwuWj2936iZUK9xiGSebNSgZUi+PqwQjGK
+        G66KifXH1QmwngTCpzxrxed1tNaoM1EXTCMyUdAG1g==
+X-Google-Smtp-Source: APXvYqz/pNz6cRXqH8bTMfzVNZ+nlOMnGpp+f52AX7IwmjRsndWr0wWX0fLW2Hnxw2cuDZB95eiTwEgdZSrpMiawh30=
+X-Received: by 2002:ad4:44e2:: with SMTP id p2mr14478831qvt.126.1569010340743;
+ Fri, 20 Sep 2019 13:12:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <AM6PR0402MB39110BCD655C354F8A295621F5880@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-References: <1567776846-6373-1-git-send-email-Anson.Huang@nxp.com> <AM6PR0402MB39110BCD655C354F8A295621F5880@AM6PR0402MB3911.eurprd04.prod.outlook.com>
-Cc:     dl-linux-imx <linux-imx@nxp.com>
-To:     "S.j. Wang" <shengjiu.wang@nxp.com>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "sfr@canb.auug.org.au" <sfr@canb.auug.org.au>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fancy Fang <chen.fang@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH V2 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure to common place
-User-Agent: alot/0.8.1
-Date:   Fri, 20 Sep 2019 09:55:23 -0700
-Message-Id: <20190920165524.CC00C207FC@mail.kernel.org>
+References: <cover.1568239378.git.amit.kucheria@linaro.org>
+ <8f539b28c25d22b8f515c131cd6b24c309f7ca90.1568239378.git.amit.kucheria@linaro.org>
+ <20190913101239.GB2559@bogus>
+In-Reply-To: <20190913101239.GB2559@bogus>
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+Date:   Fri, 20 Sep 2019 13:12:09 -0700
+Message-ID: <CAP245DUykhQ0OCs=BvM6nYD63NoBndn=vGUFEJ=DK7tEXp_=KQ@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: Kconfig: Fix VEXPRESS driver dependencies
+To:     Sudeep Holla <sudeep.holla@arm.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Lists LAKML <linux-arm-kernel@lists.infradead.org>,
+        arm-soc <arm@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>, Will Deacon <will@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Anson Huang (2019-09-19 18:27:39)
-> Gentle ping...
->=20
+On Fri, Sep 13, 2019 at 3:12 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
+>
+> On Thu, Sep 12, 2019 at 03:48:47AM +0530, Amit Kucheria wrote:
+> > Push various VEXPRESS drivers behind ARCH_VEXPRESS dependency so that it
+> > doesn't get enabled by default on other platforms.
+> >
+>
+> I couldn't understand the motivation for these changes from the cover letter.
 
-Merge window is open. I expect Shawn to pick this up for v5.5 in a week
-or two.
+Yes, the cover letter for this series needs to be a lot better. Sorry.
+In summary, I found a bunch of drivers in defconfig that were getting
+called in early_initcall and core_initcall even when the platform or
+COMPILE_TEST was not enabled. So I was just trying to ring fence some
+of those drivers as a proof of concept to see if these changes were
+acceptable upstream.
 
+Let me try again with a better cover letter and using the pattern Arnd
+suggested elsewhere.
+
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > ---
+> >  drivers/bus/Kconfig           | 2 +-
+> >  drivers/clk/versatile/Kconfig | 4 ++--
+> >  2 files changed, 3 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/drivers/bus/Kconfig b/drivers/bus/Kconfig
+> > index d80e8d70bf10..b2b1beee9953 100644
+> > --- a/drivers/bus/Kconfig
+> > +++ b/drivers/bus/Kconfig
+> > @@ -166,7 +166,7 @@ config UNIPHIER_SYSTEM_BUS
+> >
+> >  config VEXPRESS_CONFIG
+> >       bool "Versatile Express configuration bus"
+> > -     default y if ARCH_VEXPRESS
+> > +     depends on ARCH_VEXPRESS
+> >       depends on ARM || ARM64
+> >       depends on OF
+> >       select REGMAP
+> > diff --git a/drivers/clk/versatile/Kconfig b/drivers/clk/versatile/Kconfig
+> > index ac766855ba16..826750292c1e 100644
+> > --- a/drivers/clk/versatile/Kconfig
+> > +++ b/drivers/clk/versatile/Kconfig
+> > @@ -5,8 +5,8 @@ config ICST
+> >  config COMMON_CLK_VERSATILE
+> >       bool "Clock driver for ARM Reference designs"
+> >       depends on ARCH_INTEGRATOR || ARCH_REALVIEW || \
+> > -             ARCH_VERSATILE || ARCH_VEXPRESS || ARM64 || \
+> > -             COMPILE_TEST
+> > +             ARCH_VERSATILE || ARCH_VEXPRESS || COMPILE_TEST
+> > +     depends on ARM64
+>
+> This will break 32-bit platforms.
+>
+> --
+> Regards,
+> Sudeep
