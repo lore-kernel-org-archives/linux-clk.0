@@ -2,138 +2,83 @@ Return-Path: <SRS0=v4u2=XP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B2AC3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 15:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83F7FC4CEC9
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 15:40:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F4720882
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 15:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B330208C3
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 15:40:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391565AbfITPjQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Sep 2019 11:39:16 -0400
-Received: from relay9-d.mail.gandi.net ([217.70.183.199]:34933 "EHLO
-        relay9-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391054AbfITPjQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Sep 2019 11:39:16 -0400
-X-Originating-IP: 86.207.98.53
-Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay9-d.mail.gandi.net (Postfix) with ESMTPSA id AE20FFF811;
-        Fri, 20 Sep 2019 15:39:12 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-Subject: [PATCH] clk: at91: avoid sleeping early
-Date:   Fri, 20 Sep 2019 17:39:06 +0200
-Message-Id: <20190920153906.20887-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.21.0
+        id S2392898AbfITPkt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Sep 2019 11:40:49 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34749 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392871AbfITPkt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Sep 2019 11:40:49 -0400
+Received: by mail-ot1-f66.google.com with SMTP id m19so4720633otp.1;
+        Fri, 20 Sep 2019 08:40:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zsScXEUmySG43NT07756HjHrKgcNIGYVrWMRIGTV/8g=;
+        b=Jx8gZpjCBJaLrRQSsTUm/D+s8N2uo59p10VBkUN9OdYDOpoWtdPGywfkeT7vA6EtcC
+         U+RFxI5YKgQhFMQnYxajY04v4ocGbNpEVK32/sN+PrujRdkUoi7RuU4qYZLXhNyq/TgR
+         rBcDeI9qdnRwC1TQtRk5XoB7qBy8LisbogIZfFp8RSNT47BZs1RGL02U39gOFchCixXs
+         vOuvTvoQj2N8fOop6B1AKldZKvPcHUci6oU1B3A+DQ/TIzUsTRNEx6PQjl7jEaQitKkQ
+         4vD++mkzG9i0vquPbR17eWFZWxlGVGbzZFGlMCfLjKdSv+Sk83TLWiflvB5iEKRkkTeL
+         krnw==
+X-Gm-Message-State: APjAAAUZTKBK6CkSR3XtbJJc0MfncpBVuPHQlXIGz9awSEWc6I4vpYIZ
+        KOj9iYa2k/f7mo7DxiMB07YwmOETlWCCtzjHPlw=
+X-Google-Smtp-Source: APXvYqztlaVsSbLvtVRamy1dDXJlCc3f3+817Lddei2383DYieWZ5Xt43wiUPdm+rFAcIFDYxauVygBSoLjU2mJfd+s=
+X-Received: by 2002:a9d:730d:: with SMTP id e13mr7750691otk.145.1568994048908;
+ Fri, 20 Sep 2019 08:40:48 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <1568881036-4404-1-git-send-email-biju.das@bp.renesas.com> <1568881036-4404-6-git-send-email-biju.das@bp.renesas.com>
+In-Reply-To: <1568881036-4404-6-git-send-email-biju.das@bp.renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 Sep 2019 17:40:37 +0200
+Message-ID: <CAMuHMdXHx=Dbbk39ufdM-+byBHTjWByxcshcj1j2-fNn1LfnOw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/8] dt-bindings: clock: renesas: cpg-mssr: Document
+ r8a774b1 binding
+To:     Biju Das <biju.das@bp.renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It is not allowed to sleep to early in the boot process and this may lead
-to kernel issues if the bootloader didn't prepare the slow clock and main
-clock.
+On Thu, Sep 19, 2019 at 10:17 AM Biju Das <biju.das@bp.renesas.com> wrote:
+> Add binding documentation for the RZ/G2N (R8A774b1) Clock Pulse
+> Generator driver.
+>
+> Signed-off-by: Biju Das <biju.das@bp.renesas.com>
 
-This results in the following error and dump stack on the AriettaG25:
-   bad: scheduling from the idle thread!
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in clk-renesas-for-v5.5.
 
-Ensure it is possible to sleep, else simply have a delay.
+Gr{oetje,eeting}s,
 
-Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
+                        Geert
 
-Note that this was already discussed a while ago and Arnd said this approach was
-reasonable:
-  https://lore.kernel.org/lkml/6120818.MyeJZ74hYa@wuerfel/
-
- drivers/clk/at91/clk-main.c |  5 ++++-
- drivers/clk/at91/sckc.c     | 20 ++++++++++++++++----
- 2 files changed, 20 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index f607ee702c83..ccd48e7a3d74 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -293,7 +293,10 @@ static int clk_main_probe_frequency(struct regmap *regmap)
- 		regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
- 		if (mcfr & AT91_PMC_MAINRDY)
- 			return 0;
--		usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
-+		if (system_state < SYSTEM_RUNNING)
-+			udelay(MAINF_LOOP_MIN_WAIT);
-+		else
-+			usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
- 	} while (time_before(prep_time, timeout));
- 
- 	return -ETIMEDOUT;
-diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
-index 9bfe9a28294a..fac0ca56d42d 100644
---- a/drivers/clk/at91/sckc.c
-+++ b/drivers/clk/at91/sckc.c
-@@ -76,7 +76,10 @@ static int clk_slow_osc_prepare(struct clk_hw *hw)
- 
- 	writel(tmp | osc->bits->cr_osc32en, sckcr);
- 
--	usleep_range(osc->startup_usec, osc->startup_usec + 1);
-+	if (system_state < SYSTEM_RUNNING)
-+		udelay(osc->startup_usec);
-+	else
-+		usleep_range(osc->startup_usec, osc->startup_usec + 1);
- 
- 	return 0;
- }
-@@ -187,7 +190,10 @@ static int clk_slow_rc_osc_prepare(struct clk_hw *hw)
- 
- 	writel(readl(sckcr) | osc->bits->cr_rcen, sckcr);
- 
--	usleep_range(osc->startup_usec, osc->startup_usec + 1);
-+	if (system_state < SYSTEM_RUNNING)
-+		udelay(osc->startup_usec);
-+	else
-+		usleep_range(osc->startup_usec, osc->startup_usec + 1);
- 
- 	return 0;
- }
-@@ -288,7 +294,10 @@ static int clk_sam9x5_slow_set_parent(struct clk_hw *hw, u8 index)
- 
- 	writel(tmp, sckcr);
- 
--	usleep_range(SLOWCK_SW_TIME_USEC, SLOWCK_SW_TIME_USEC + 1);
-+	if (system_state < SYSTEM_RUNNING)
-+		udelay(SLOWCK_SW_TIME_USEC);
-+	else
-+		usleep_range(SLOWCK_SW_TIME_USEC, SLOWCK_SW_TIME_USEC + 1);
- 
- 	return 0;
- }
-@@ -533,7 +542,10 @@ static int clk_sama5d4_slow_osc_prepare(struct clk_hw *hw)
- 		return 0;
- 	}
- 
--	usleep_range(osc->startup_usec, osc->startup_usec + 1);
-+	if (system_state < SYSTEM_RUNNING)
-+		udelay(osc->startup_usec);
-+	else
-+		usleep_range(osc->startup_usec, osc->startup_usec + 1);
- 	osc->prepared = true;
- 
- 	return 0;
 -- 
-2.21.0
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
