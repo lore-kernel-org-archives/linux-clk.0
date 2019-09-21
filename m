@@ -1,69 +1,118 @@
-Return-Path: <SRS0=v4u2=XP=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Utv+=XQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3A2C3A5A2
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 23:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5687FC49ED7
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 09:23:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8B7E2086A
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Sep 2019 23:00:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569020433;
-	bh=zMRR4T7A7gCoeONvPDtUNTpxmIuYHH/9EVmvQZmZIbU=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=ARb/WQiDmcVuU2leTutRBcff7LtPoSqsUw4iVQ+xsZT65w4oApWhCcrpv27X9nTX/
-	 MkFEq996MgZCc8WZ1RHDMcvCPBt+mFyjc1CXkSFGNmVydweW8nXNoTShmvgjBRxQ7y
-	 6hCjdf1sSGRnlMaO/yIQfRH21ar9jaVdmREvMBqc=
+	by mail.kernel.org (Postfix) with ESMTP id 2589F20673
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 09:23:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406183AbfITXA3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Sep 2019 19:00:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36612 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404690AbfITXA2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Sep 2019 19:00:28 -0400
-Subject: Re: [GIT PULL] clk changes for the merge window
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569020428;
-        bh=zMRR4T7A7gCoeONvPDtUNTpxmIuYHH/9EVmvQZmZIbU=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=arGTReYPfyVN/rsaJb1AcAW3Lp2cy43GnbLB4Ntu1OinfWSljOaJrwdsfhh2dUwru
-         3tJsBYSMGeeT8xbtLKXtNr+HJs4faDHK9FvfR/ibaltN16Cw6hfyyYGuBzXOYBouUW
-         SXWJBr0+DbAODz8AbxBdXBysaR7JyvR+5DeH2M4Y=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190920214042.261378-1-sboyd@kernel.org>
-References: <20190920214042.261378-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190920214042.261378-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
- tags/clk-for-linus
-X-PR-Tracked-Commit-Id: ebd47c8434064687ab6641e837144e0a3ea3872d
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: a703d279c57e1bfe2b6536c3a17c1c498b416d24
-Message-Id: <156902042837.31413.4918553714894313165.pr-tracker-bot@kernel.org>
-Date:   Fri, 20 Sep 2019 23:00:28 +0000
+        id S2392352AbfIUJXY convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Sep 2019 05:23:24 -0400
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:34957 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391840AbfIUJXY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Sep 2019 05:23:24 -0400
+X-Originating-IP: 91.224.148.103
+Received: from xps13 (unknown [91.224.148.103])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id ABD2B240003;
+        Sat, 21 Sep 2019 09:23:19 +0000 (UTC)
+Date:   Sat, 21 Sep 2019 11:23:18 +0200
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J . Wysocki" <rjw@rjwysocki.net>, linux-pm@vger.kernel.org,
+        <marek.behun@nic.cz>
+Subject: Re: [PATCH v3 0/4] Prepare Armada 3700 PCIe suspend to RAM support
+Message-ID: <20190921112318.46d0372c@xps13>
+In-Reply-To: <20190920165402.4B5DB207FC@mail.kernel.org>
+References: <20190627125245.26788-1-miquel.raynal@bootlin.com>
+        <20190917173154.722CB2171F@mail.kernel.org>
+        <20190920100301.0674a5b6@xps13>
+        <20190920165402.4B5DB207FC@mail.kernel.org>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Fri, 20 Sep 2019 14:40:42 -0700:
+Hi Stephen,
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+Stephen Boyd <sboyd@kernel.org> wrote on Fri, 20 Sep 2019 09:54:01
+-0700:
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/a703d279c57e1bfe2b6536c3a17c1c498b416d24
+> Quoting Miquel Raynal (2019-09-20 01:03:01)
+> > Hi Stephen,
+> > 
+> > Stephen Boyd <sboyd@kernel.org> wrote on Tue, 17 Sep 2019 10:31:53
+> > -0700:
+> >   
+> > > Quoting Miquel Raynal (2019-06-27 05:52:41)  
+> > > > Hello,
+> > > > 
+> > > > As part of an effort to bring suspend to RAM support to the Armada
+> > > > 3700 SoC (main target: ESPRESSObin board), there are small things to
+> > > > do in the Armada 3700 peripherals clock driver:
+> > > > 
+> > > > * On this SoC, the PCIe controller gets fed by a gated clock in the
+> > > >   south bridge. This clock is missing in the current driver, patch 1
+> > > >   adds it.
+> > > > 
+> > > > * Because of a constraint in the PCI core, the resume function of a
+> > > >   PCIe controller driver must be run at an early stage
+> > > >   (->suspend/resume_noirq()), before the core tries to ->read/write()
+> > > >   in the PCIe registers to do more configuration. Hence, the PCIe
+> > > >   clock must be resumed before. This is enforced thanks to two
+> > > >   changes:
+> > > >   1/ Add device links to the clock framework. This enforce order in
+> > > >      the PM core: the clocks are resumed before the consumers. Series
+> > > >      has been posted, see [1].
+> > > >   2/ Even with the above feature, the clock's resume() callback is
+> > > >      called after the PCI controller's resume_noirq() callback. The
+> > > >      only way to fix this is to change the "priority" of the clock
+> > > >      suspend/resume callbacks. This is done in patch 2.
+> > > > 
+> > > > * The bindings are updated with the PCI clock in patch 4 while patch 3
+> > > >   is just a typo correction in the same file.
+> > > > 
+> > > > If there is anything unclear please feel free to ask.
+> > > >     
+> > > 
+> > > Should I drop this patch series?
+> > >   
+> > 
+> > No, if it is right for you I would really prefer to have it merged
+> > (sorry for the delay in answering though) because it will be still
+> > needed, no matter how clock dependencies are handled.
+> > 
+> >   
+> 
+> Ok. I'll apply it after the merge window. Let me know if it's more
+> urgent than that.
+> 
 
-Thank you!
+No it's not, 5.5 is fine.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+
+Thanks,
+Miquèl
