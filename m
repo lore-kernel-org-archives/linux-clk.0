@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03287C4740C
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7FB9C4CEC4
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:19:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE96121835
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:18:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E83D218AE
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:19:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CcvR8pSU"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="jbSHNaXE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394295AbfIUPSx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Sep 2019 11:18:53 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54061 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2438051AbfIUPSx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Sep 2019 11:18:53 -0400
-Received: by mail-wm1-f68.google.com with SMTP id i16so5390282wmd.3;
-        Sat, 21 Sep 2019 08:18:51 -0700 (PDT)
+        id S2438199AbfIUPS5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Sep 2019 11:18:57 -0400
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33621 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438182AbfIUPS5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Sep 2019 11:18:57 -0400
+Received: by mail-wm1-f66.google.com with SMTP id r17so11623708wme.0;
+        Sat, 21 Sep 2019 08:18:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=sYgvwAlg3z2NoNGVW6A6jmGOMPpzZ3tKhXpaeUm/O6Q=;
-        b=CcvR8pSUPE/CqoIlscC6HHjjbhJBRA6cR9rHqe2tXclN/aDu6ORrc9GbOHt2shnNDw
-         X8o92SZ279Ko7roD9VfxYfLnfiCRmnOclYH1rCYuz74nLUNWoJoLp05p1mNvOxcPzDus
-         nUThR2EC83Mg0L2YYSGgRhE9T9JUP9ck2uOXjklXYVCi7I3WbJ+gr7bFDkYk5DZ9Am6M
-         tHm/tBRkGjF5twCXQrVrrROqe0gSvW7V5JGfUnBQZGe8qW4DIID7y6NoLFBifg3U8wHh
-         GjW5SsOvTiB4h7M4mds6WpQcuhvm1Yro3evPpjFzRh+/rY2Ja3XXIW19MiBtB46s2PIv
-         UJYQ==
+        bh=ryY1C6V/Fnndw45BEkZbgWqU1CO6K4z5Y17d3HMNBz4=;
+        b=jbSHNaXEeYn6hTwnob4r0cFK1tawMR7cK74NLvuSDg9K1Q+i9UN9MDMzyPNum1rg3u
+         3+Zlha3bTktCHxytNPYwWn53kVqaCHTgDo1L0cjl3wRSBAjIgHQkbY/BPedgCdfd+m9m
+         JA6TQEeNuoNw7bN0LVMoBnGgKOo5DmAPmrUPyP62jHCdLV+yumcWomD7WbfFLICNTIMl
+         wOB/n0k8in4sKU/Ftefui+uGHNdWEvAMHFdPXAUmYacmj0L6jE0PslD3GpFqk++rcNG6
+         8ykti5lqNIIgp4jx0YLk0usYFU/nzwdGlTbqK72AnwmeBGV/FbdcGgiN58hjVeP3yfjM
+         XSnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=sYgvwAlg3z2NoNGVW6A6jmGOMPpzZ3tKhXpaeUm/O6Q=;
-        b=hY5fHDowI/mk8Ov1G1x0fEyKId42qvYxwAXT6HGEARSR1MViJ05gPUhOeJqO0ZLf3t
-         G+kcOycLwPR8i0QCAMyR18jL4ZRkG6zEeBs0buWfvwmdrxbb/Mf/y0E3fy0isY023Mx/
-         E4R0icxH94xdajyN29uUvPArGqpNP1qLHVQIgGN4SIHBdluyDp5bXpRyaFHOfkUtIYaa
-         AdEGbtc5f/c5PaHggMMvRYLE9EriXv9xlejbvkulP1aKu9VtVRuISpHiKXuOR0T0YLkd
-         IrB354wZcoxY7J2X+c3gRU0jrA6mx/PYu2Kzoj70WOkzvxnx5BZXc8TErK90tHBzjd1E
-         dctQ==
-X-Gm-Message-State: APjAAAUTQDtSB2rmssSrE+UBFLbM72HVAvL29Tqo45mJyWZr/ioKAQWN
-        qy5hOeRAlVL2Hx+NGYmxZdc=
-X-Google-Smtp-Source: APXvYqy+KMsgdqfL9HstYrcK547RRLoZc2AyZT4uPxQ821/58EolgipnHxjUr/qst/LC5Kh4PrlJzg==
-X-Received: by 2002:a7b:cb4e:: with SMTP id v14mr7303964wmj.159.1569079131119;
-        Sat, 21 Sep 2019 08:18:51 -0700 (PDT)
+        bh=ryY1C6V/Fnndw45BEkZbgWqU1CO6K4z5Y17d3HMNBz4=;
+        b=o2dAXi0lZ2SbqSq9U5qnP3uRVuFwPHMmjHL43wzVfpNrnGe4NIqZod1FY6FH/v/kPh
+         /zzGpxwokbe+boXQfzIfr099Y+sHvQ6HjzF9Bc/kZgVPbPaeYdT/5cv2nloQ8w5s5h/p
+         +9Ql+PGAcbaHpuCW+rFandoZO470g7phaUbMvHm8nMW2nqYNPEV/2C19woyG1wAcv7gO
+         gt+7TVkAb8HX3u8r/us72MgdwE/FA/NhWD95aajOfA6IdOPdDb4PDpfGNbab1tFSxCtb
+         OR3F7BMqw4P5zr2slwZTeQ8aelUzG/96GpHvVFtwHzpKl3ty0+nNnPLfCywZulQQIbdl
+         CmLw==
+X-Gm-Message-State: APjAAAUuXXZkQCzNIstXrQf2Gnl3wEBQWqmmELW8iyiX9Sp9VCmi9bLE
+        Auznc1RkMZ/vgfQMn49DkZM=
+X-Google-Smtp-Source: APXvYqzBWlO/a1o7buEzHL4fJp72XmAnFcohUCZlv806SiF/cVfQ3RUOZrNiEOVvXdyUtLEN+b6d2A==
+X-Received: by 2002:a05:600c:217:: with SMTP id 23mr7868145wmi.76.1569079134900;
+        Sat, 21 Sep 2019 08:18:54 -0700 (PDT)
 Received: from blackbox.darklights.net (p200300F133CE0B0028BAA8C744A6F562.dip0.t-ipconnect.de. [2003:f1:33ce:b00:28ba:a8c7:44a6:f562])
-        by smtp.googlemail.com with ESMTPSA id c6sm6003120wrb.60.2019.09.21.08.18.49
+        by smtp.googlemail.com with ESMTPSA id c6sm6003120wrb.60.2019.09.21.08.18.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2019 08:18:50 -0700 (PDT)
+        Sat, 21 Sep 2019 08:18:54 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     narmstrong@baylibre.com, jbrunet@baylibre.com, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-amlogic@lists.infradead.org,
@@ -62,9 +62,9 @@ To:     narmstrong@baylibre.com, jbrunet@baylibre.com, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 3/6] clk: meson: meson8b: use of_clk_hw_register to register the clocks
-Date:   Sat, 21 Sep 2019 17:18:32 +0200
-Message-Id: <20190921151835.770263-4-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 6/6] ARM: dts: meson8b: add the DDR clock controller
+Date:   Sat, 21 Sep 2019 17:18:35 +0200
+Message-Id: <20190921151835.770263-7-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20190921151835.770263-1-martin.blumenstingl@googlemail.com>
 References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com>
@@ -75,28 +75,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch from clk_hw_register to of_clk_hw_register so we can use
-clk_parent_data.fw_name. This will be used to get the "xtal", "ddr_pll"
-and possibly others from the .dtb.
+Add the DDR clock controller and pass it's DDR_CLKID_DDR_PLL to the main
+(HHI) clock controller as "ddr_clk". The "ddr_clk" is used as one of the
+inputs for the audio clock muxes.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- drivers/clk/meson/meson8b.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/meson8b.dtsi | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 15ec14fde2a0..fefb4b7185d0 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -3696,7 +3696,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
- 		if (!clk_hw_onecell_data->hws[i])
- 			continue;
+diff --git a/arch/arm/boot/dts/meson8b.dtsi b/arch/arm/boot/dts/meson8b.dtsi
+index 1934666ff60f..8ac8bdfaf58f 100644
+--- a/arch/arm/boot/dts/meson8b.dtsi
++++ b/arch/arm/boot/dts/meson8b.dtsi
+@@ -4,6 +4,7 @@
+  * Author: Carlo Caione <carlo@endlessm.com>
+  */
  
--		ret = clk_hw_register(NULL, clk_hw_onecell_data->hws[i]);
-+		ret = of_clk_hw_register(np, clk_hw_onecell_data->hws[i]);
- 		if (ret)
- 			return;
- 	}
++#include <dt-bindings/clock/meson8-ddr-clkc.h>
+ #include <dt-bindings/clock/meson8b-clkc.h>
+ #include <dt-bindings/gpio/meson8b-gpio.h>
+ #include <dt-bindings/reset/amlogic,meson8b-reset.h>
+@@ -172,6 +173,14 @@
+ 		#size-cells = <1>;
+ 		ranges = <0x0 0xc8000000 0x8000>;
+ 
++		ddr_clkc: clock-controller@400 {
++			compatible = "amlogic,meson8b-ddr-clkc";
++			reg = <0x400 0x20>;
++			clocks = <&xtal>;
++			clock-names = "xtal";
++			#clock-cells = <1>;
++		};
++
+ 		dmcbus: bus@6000 {
+ 			compatible = "simple-bus";
+ 			reg = <0x6000 0x400>;
+@@ -434,8 +443,8 @@
+ &hhi {
+ 	clkc: clock-controller {
+ 		compatible = "amlogic,meson8-clkc";
+-		clocks = <&xtal>;
+-		clock-names = "xtal";
++		clocks = <&xtal>, <&ddr_clkc DDR_CLKID_DDR_PLL>;
++		clock-names = "xtal", "ddr_pll";
+ 		#clock-cells = <1>;
+ 		#reset-cells = <1>;
+ 	};
 -- 
 2.23.0
 
