@@ -2,58 +2,59 @@ Return-Path: <SRS0=Utv+=XQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D698C4360D
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:18:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03287C4740C
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:18:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BC60208C0
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE96121835
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Sep 2019 15:18:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JoExe4w0"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="CcvR8pSU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2394261AbfIUPSt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Sep 2019 11:18:49 -0400
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40395 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389472AbfIUPSt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Sep 2019 11:18:49 -0400
-Received: by mail-wr1-f68.google.com with SMTP id l3so9591623wru.7;
-        Sat, 21 Sep 2019 08:18:47 -0700 (PDT)
+        id S2394295AbfIUPSx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 21 Sep 2019 11:18:53 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54061 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2438051AbfIUPSx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Sep 2019 11:18:53 -0400
+Received: by mail-wm1-f68.google.com with SMTP id i16so5390282wmd.3;
+        Sat, 21 Sep 2019 08:18:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5OzBxZ0+t9wPFf+C2nN8hPMeCG+6RrzJB994YNsSPow=;
-        b=JoExe4w00+RQX07OVlrkNWAZ+jqPrWWMn48DHOqgsVcWwFyn0HG3+LxNK4j4btrwPb
-         RwcxKjLaRQyOsW5QhswDb6Bua+1o4gIWqvofch6Tp+fsdMQF4kjKlZXeBj3u8YOcmcZQ
-         k0YRb5NKvPR8ybhIJHwFv12zoFj8fy2YhJ0FhE+9MtZtlx+cyIGitCSJmCoq78jpIad/
-         hCfaP2kjMobcXwN0ahzom+Lj95/Qi9JhGblOIpeDpOEhCkMEQl96Pv2AhXIONST7t+J9
-         nlpvKVRjN+CHd6JY+Kaba4pnncYqmYASPyfMAnR5Uk11K73r4mKWqeqD2otLsbzGsq9B
-         i73w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=sYgvwAlg3z2NoNGVW6A6jmGOMPpzZ3tKhXpaeUm/O6Q=;
+        b=CcvR8pSUPE/CqoIlscC6HHjjbhJBRA6cR9rHqe2tXclN/aDu6ORrc9GbOHt2shnNDw
+         X8o92SZ279Ko7roD9VfxYfLnfiCRmnOclYH1rCYuz74nLUNWoJoLp05p1mNvOxcPzDus
+         nUThR2EC83Mg0L2YYSGgRhE9T9JUP9ck2uOXjklXYVCi7I3WbJ+gr7bFDkYk5DZ9Am6M
+         tHm/tBRkGjF5twCXQrVrrROqe0gSvW7V5JGfUnBQZGe8qW4DIID7y6NoLFBifg3U8wHh
+         GjW5SsOvTiB4h7M4mds6WpQcuhvm1Yro3evPpjFzRh+/rY2Ja3XXIW19MiBtB46s2PIv
+         UJYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=5OzBxZ0+t9wPFf+C2nN8hPMeCG+6RrzJB994YNsSPow=;
-        b=WFfckQNlKKgjfKwEmL9QXzL6rVwo38YAZDgw3s5MzQQaraie8U90m9kCnRbMvxzrhd
-         jYAjjCLNLsRhx5NV5IfUrOlACRIwcRaCGa3aLGcCb0L8b2FeCAgcUu5K/CnH9ZYYXm3Y
-         sf3jHYelDTVNc/rXg693hNzUSXwX/eofgeb8CdGarK+f9PF41Jp3opMGccewT/X1k7MR
-         JxYU+CT8DhdzwQyjiOMJEsxxJRbEKBQTKqmbRf3fbzGSf7T0IrNPXGDSU9GC0bQ1Zxns
-         lVy0AQnhzI+jnS6J3OuJ+wu7ZQgBKHOqehrls+P+RvaXPak88DRryfty0EBfxl2sf4Ya
-         RvLg==
-X-Gm-Message-State: APjAAAWvwsadKUfWpylpM2r9c7ORaBdOy4ERSEBtE45B4qJYHNWv+Tw9
-        Y4Nb+DkY9PZ5CANIDKzWRGc=
-X-Google-Smtp-Source: APXvYqx5rx1KF5E+8Mnl8pYNnX5dBt83NmBM6M4uxpyja5jdFKCCDRdrsXVrRIOaK1Jc/1Qk47lG9w==
-X-Received: by 2002:a5d:4fcf:: with SMTP id h15mr15997165wrw.237.1569079127155;
-        Sat, 21 Sep 2019 08:18:47 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=sYgvwAlg3z2NoNGVW6A6jmGOMPpzZ3tKhXpaeUm/O6Q=;
+        b=hY5fHDowI/mk8Ov1G1x0fEyKId42qvYxwAXT6HGEARSR1MViJ05gPUhOeJqO0ZLf3t
+         G+kcOycLwPR8i0QCAMyR18jL4ZRkG6zEeBs0buWfvwmdrxbb/Mf/y0E3fy0isY023Mx/
+         E4R0icxH94xdajyN29uUvPArGqpNP1qLHVQIgGN4SIHBdluyDp5bXpRyaFHOfkUtIYaa
+         AdEGbtc5f/c5PaHggMMvRYLE9EriXv9xlejbvkulP1aKu9VtVRuISpHiKXuOR0T0YLkd
+         IrB354wZcoxY7J2X+c3gRU0jrA6mx/PYu2Kzoj70WOkzvxnx5BZXc8TErK90tHBzjd1E
+         dctQ==
+X-Gm-Message-State: APjAAAUTQDtSB2rmssSrE+UBFLbM72HVAvL29Tqo45mJyWZr/ioKAQWN
+        qy5hOeRAlVL2Hx+NGYmxZdc=
+X-Google-Smtp-Source: APXvYqy+KMsgdqfL9HstYrcK547RRLoZc2AyZT4uPxQ821/58EolgipnHxjUr/qst/LC5Kh4PrlJzg==
+X-Received: by 2002:a7b:cb4e:: with SMTP id v14mr7303964wmj.159.1569079131119;
+        Sat, 21 Sep 2019 08:18:51 -0700 (PDT)
 Received: from blackbox.darklights.net (p200300F133CE0B0028BAA8C744A6F562.dip0.t-ipconnect.de. [2003:f1:33ce:b00:28ba:a8c7:44a6:f562])
-        by smtp.googlemail.com with ESMTPSA id c6sm6003120wrb.60.2019.09.21.08.18.45
+        by smtp.googlemail.com with ESMTPSA id c6sm6003120wrb.60.2019.09.21.08.18.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 21 Sep 2019 08:18:46 -0700 (PDT)
+        Sat, 21 Sep 2019 08:18:50 -0700 (PDT)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     narmstrong@baylibre.com, jbrunet@baylibre.com, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-amlogic@lists.infradead.org,
@@ -61,10 +62,12 @@ To:     narmstrong@baylibre.com, jbrunet@baylibre.com, robh+dt@kernel.org,
 Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 0/6] add the DDR clock controller on Meson8 and Meson8b
-Date:   Sat, 21 Sep 2019 17:18:29 +0200
-Message-Id: <20190921151835.770263-1-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 3/6] clk: meson: meson8b: use of_clk_hw_register to register the clocks
+Date:   Sat, 21 Sep 2019 17:18:32 +0200
+Message-Id: <20190921151835.770263-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20190921151835.770263-1-martin.blumenstingl@googlemail.com>
+References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -72,44 +75,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Meson8 and Meson8b SoCs embed a DDR clock controller in their MMCBUS
-registers. This series:
-- adds support for this DDR clock controller (patches 0 and 1)
-- wires up the DDR PLL as input for two audio clocks (patches 2 and 3)
-- adds the DDR clock controller to meson8.dtsi and meson8b.dtsi
+Switch from clk_hw_register to of_clk_hw_register so we can use
+clk_parent_data.fw_name. This will be used to get the "xtal", "ddr_pll"
+and possibly others from the .dtb.
 
-Special thanks go out to Alexandre Mergnat for switching the Amlogic
-clock drivers over to parent_hws and parent_data. That made this series
-a lot easier for me!
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+---
+ drivers/clk/meson/meson8b.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-This series depends on my other series from [0]:
-"provide the XTAL clock via OF on Meson8/8b/8m2"
-
-
-[0] https://patchwork.kernel.org/cover/11155515/
-
-
-Martin Blumenstingl (6):
-  dt-bindings: clock: add the Amlogic Meson8 DDR clock controller
-    binding
-  clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller
-  clk: meson: meson8b: use of_clk_hw_register to register the clocks
-  clk: meson: meson8b: add the ddr_pll input for the audio clocks
-  ARM: dts: meson8: add the DDR clock controller
-  ARM: dts: meson8b: add the DDR clock controller
-
- .../clock/amlogic,meson8-ddr-clkc.yaml        |  50 ++++++
- arch/arm/boot/dts/meson8.dtsi                 |  13 +-
- arch/arm/boot/dts/meson8b.dtsi                |  13 +-
- drivers/clk/meson/Makefile                    |   2 +-
- drivers/clk/meson/meson8-ddr.c                | 153 ++++++++++++++++++
- drivers/clk/meson/meson8b.c                   |  36 ++---
- include/dt-bindings/clock/meson8-ddr-clkc.h   |   4 +
- 7 files changed, 245 insertions(+), 26 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,meson8-ddr-clkc.yaml
- create mode 100644 drivers/clk/meson/meson8-ddr.c
- create mode 100644 include/dt-bindings/clock/meson8-ddr-clkc.h
-
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index 15ec14fde2a0..fefb4b7185d0 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -3696,7 +3696,7 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 		if (!clk_hw_onecell_data->hws[i])
+ 			continue;
+ 
+-		ret = clk_hw_register(NULL, clk_hw_onecell_data->hws[i]);
++		ret = of_clk_hw_register(np, clk_hw_onecell_data->hws[i]);
+ 		if (ret)
+ 			return;
+ 	}
 -- 
 2.23.0
 
