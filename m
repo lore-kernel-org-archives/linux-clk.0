@@ -2,175 +2,125 @@ Return-Path: <SRS0=NukQ=XR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BE98C3A5A6
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Sep 2019 22:16:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BE0C3A5A6
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Sep 2019 22:34:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6F3120882
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Sep 2019 22:16:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6169F206B6
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Sep 2019 22:34:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MCNItgjh"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAZlux2H"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725787AbfIVWQl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Sep 2019 18:16:41 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42757 "EHLO
+        id S2388835AbfIVWeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Sep 2019 18:34:19 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45429 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725208AbfIVWQk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Sep 2019 18:16:40 -0400
-Received: by mail-lf1-f65.google.com with SMTP id c195so8596823lfg.9;
-        Sun, 22 Sep 2019 15:16:37 -0700 (PDT)
+        with ESMTP id S2388488AbfIVWeS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Sep 2019 18:34:18 -0400
+Received: by mail-lf1-f65.google.com with SMTP id r134so8603466lff.12;
+        Sun, 22 Sep 2019 15:34:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=rFYD+fwmoSXyFmKBXVRXyEsrw6rBXAJ+UIU1iw4pKzQ=;
-        b=MCNItgjhLhk8mYA+AOoQ7mP3woaPOSlkJnIUVWGkUasSlp4iivPfIGV85YMTEN8nZt
-         brB57fJtVWUsS42btjoZVs/kbIvViAf3IpOKUfnmfn9IY6II1vsOlkk7WGx53cRYRsP+
-         wTx1m1k6zSvNwAeCAs5WmlKy8lub+Q8KnWVPyZlKgBgKnbxb6Ns25UoMEn9TxRtshCPH
-         iMgrYfrsrc04vjYiG/kI6qZ6NrNo82+f3aMnPCTJarAXvXyhFboxio7Wz2l3Peals6An
-         xdYHKrtCnDE4Um4WPxp0BTi1c5taTAStfSH+KRGZo4XhK6aElBnJK70LuiNlryiy8upH
-         rLPQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=4f2RiUEyYcYFcBgFz1k/UjSfnNL+xowf1XmECwoKC/g=;
+        b=jAZlux2Hoov1RqCJlqmmKxwXdFHaETUdjVWCvrTUJKfUh7+paUI6OOEL1lgtjm+JIL
+         PUo6LZEbQzjG00Tai8rqwzLIfnYE60LtT6hICVHY6Qdbn5JpZGpxmtKUvrT2oveXCa3n
+         rdGFNoK0VKKXUq9RB2uFCQOXCRfFYx1pglz0YCbZHErkS+MgcOkSMhHmfrdh5u5BRDkh
+         ujMcz7en92dWnFc2NTnAQpwAGEQOskUY9zr0qRMPoL9av0Wkp2pL+dNpgGtiE0OCIMWj
+         X8Q1NMgBYK3j5wPkeGcZ8KiJNsEtOjkOKqSCTuliZekdA98/r0T7SWueV0BdabtYQVaS
+         O1tg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=rFYD+fwmoSXyFmKBXVRXyEsrw6rBXAJ+UIU1iw4pKzQ=;
-        b=TqyEWLJMtHirAvSpvm7cD4M9Jo/9JxfzC5n1JHq/sc7BuhcQyxBZrnq2G9YkmErOLQ
-         F32JqwadTsUb6cZ/hamqDEDtOfuTlhTQ3cN68dePjPH3d5lmi54F4xlz79Rk85TVnBw3
-         PB0e194Fx7v6t9k8/O6VkFt1m7iy7AjJshokOLJ7LpOlDFAkBr7mvkx1qAKwJvzwU5Kz
-         EJaxYGnlNWmUoKDuFUYQqFKDoypr6JzdL2ciUCIrta8dfQz/IgUCuQSgROXvVkoo/ByB
-         60PW19947axkhzRVfroH6z8QEmp7zENI1zzqflwTF7CMFQRapBxiaaDSwTjfA82FLkfM
-         2mqA==
-X-Gm-Message-State: APjAAAV7NqwlMN9OfxebkaLuqwnpXYTMPKoAJCabEHtU1A9QTORoo2Nz
-        pRf4pzFkYCUbeQXphLu79WE=
-X-Google-Smtp-Source: APXvYqwAK2TAL/PtM5Cs3y25z0RHYQu9TSu6qftq1slRlj05KUFVL0zKYx4YxQksn7N8uqOr+30eQg==
-X-Received: by 2002:ac2:5445:: with SMTP id d5mr14558180lfn.43.1569189204261;
-        Sun, 22 Sep 2019 14:53:24 -0700 (PDT)
-Received: from localhost.localdomain (ppp94-29-32-67.pppoe.spdop.ru. [94.29.32.67])
-        by smtp.gmail.com with ESMTPSA id k8sm2071373ljg.9.2019.09.22.14.53.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 22 Sep 2019 14:53:23 -0700 (PDT)
+        bh=4f2RiUEyYcYFcBgFz1k/UjSfnNL+xowf1XmECwoKC/g=;
+        b=B7qU0rRsgPZYRztzxdN+71UKRUpQicEZZduHp/T8b+FG223Rbc4fdJskQ6kPbG8MUF
+         HMFTjxX6fgVZuVhKVF69qcb/qxxW3vaZjcNrkWrMF8x2ihx7BCBRmuhKPOBmA/Lrw2Ex
+         FKThCLNG1c9o/ob7TEaMxNoZo+vgZxEpPMgXiMNyLXQc2rChWmPkxKgxWHvciu//6hj/
+         zSq2U1a8XXFTCO6rEvvd9z6GY/7ZJSshcEezpr/Xmh8Vin3072b/4mBem6frD3rS1Rsf
+         rx4PSPUKdxhIbPZu4f6vtdxngf/uImIty2GuwUXxRlMoRXPotk20hgShibyWf1w+H6w9
+         wukg==
+X-Gm-Message-State: APjAAAUS1CM/A5FwhoAk3wC4Mu1cUprLECfwvAXEB0CUNdVmZsqOUtwC
+        W4Ku2v2LAcdnM6UYzYxbKZUWhNfz
+X-Google-Smtp-Source: APXvYqxlv/fN1SmtNQdjOMr9+/0vIXBnud7NxJw3/5p3jHE3sHP0gedjudM2e9Kj2tEoRt3WJyuCtw==
+X-Received: by 2002:a19:6455:: with SMTP id b21mr15210702lfj.167.1569188842740;
+        Sun, 22 Sep 2019 14:47:22 -0700 (PDT)
+Received: from [192.168.2.145] (ppp94-29-32-67.pppoe.spdop.ru. [94.29.32.67])
+        by smtp.googlemail.com with ESMTPSA id e7sm1798725lfn.12.2019.09.22.14.47.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 22 Sep 2019 14:47:22 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
+ enable-bit on rate's recalculation
 From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: tegra20/30: Optimize PLLX configuration restoring
-Date:   Mon, 23 Sep 2019 00:52:03 +0300
-Message-Id: <20190922215203.32103-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.23.0
+References: <20190723025245.27754-1-digetx@gmail.com>
+Message-ID: <4f2695ce-f683-2e4b-34b9-8937feee5e1b@gmail.com>
+Date:   Mon, 23 Sep 2019 00:47:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
+In-Reply-To: <20190723025245.27754-1-digetx@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-There is no need to re-configure PLLX if its configuration in unchanged
-on return from suspend / cpuidle, this saves 300us if PLLX is already
-enabled (common case for cpuidle).
+23.07.2019 5:52, Dmitry Osipenko пишет:
+> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
+> have any effect in that case. Please note that there are no known bugs
+> caused by the missing check.
+> 
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2: Changed the commit's description from 'Fix' to 'Add' in response to the
+>     Stephen's Boyd question about the need to backport the patch into stable
+>     kernels. The backporting is not really needed.
+> 
+>  drivers/clk/tegra/clk-divider.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index e76731fb7d69..f33c19045386 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+>  	int div, mul;
+>  	u64 rate = parent_rate;
+>  
+> -	reg = readl_relaxed(divider->reg) >> divider->shift;
+> -	div = reg & div_mask(divider);
+> +	reg = readl_relaxed(divider->reg);
+> +
+> +	if ((divider->flags & TEGRA_DIVIDER_UART) &&
+> +	    !(reg & PERIPH_CLK_UART_DIV_ENB))
+> +		return rate;
+> +
+> +	div = (reg >> divider->shift) & div_mask(divider);
+>  
+>  	mul = get_mul(divider);
+>  	div += mul;
+> 
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 25 ++++++++++++++++---------
- drivers/clk/tegra/clk-tegra30.c | 25 ++++++++++++++++---------
- 2 files changed, 32 insertions(+), 18 deletions(-)
+Hello Peter,
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index cceefbd67a3b..4d8222f5c638 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -955,6 +955,7 @@ static void tegra20_cpu_clock_suspend(void)
- static void tegra20_cpu_clock_resume(void)
- {
- 	unsigned int reg, policy;
-+	u32 misc, base;
- 
- 	/* Is CPU complex already running on PLLX? */
- 	reg = readl(clk_base + CCLK_BURST_POLICY);
-@@ -968,15 +969,21 @@ static void tegra20_cpu_clock_resume(void)
- 		BUG();
- 
- 	if (reg != CCLK_BURST_POLICY_PLLX) {
--		/* restore PLLX settings if CPU is on different PLL */
--		writel(tegra20_cpu_clk_sctx.pllx_misc,
--					clk_base + PLLX_MISC);
--		writel(tegra20_cpu_clk_sctx.pllx_base,
--					clk_base + PLLX_BASE);
--
--		/* wait for PLL stabilization if PLLX was enabled */
--		if (tegra20_cpu_clk_sctx.pllx_base & (1 << 30))
--			udelay(300);
-+		misc = readl_relaxed(clk_base + PLLX_MISC);
-+		base = readl_relaxed(clk_base + PLLX_BASE);
-+
-+		if (misc != tegra20_cpu_clk_sctx.pllx_misc ||
-+		    base != tegra20_cpu_clk_sctx.pllx_base) {
-+			/* restore PLLX settings if CPU is on different PLL */
-+			writel(tegra20_cpu_clk_sctx.pllx_misc,
-+						clk_base + PLLX_MISC);
-+			writel(tegra20_cpu_clk_sctx.pllx_base,
-+						clk_base + PLLX_BASE);
-+
-+			/* wait for PLL stabilization if PLLX was enabled */
-+			if (tegra20_cpu_clk_sctx.pllx_base & (1 << 30))
-+				udelay(300);
-+		}
- 	}
- 
- 	/*
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index a19840fac716..3b5bca44b7aa 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1135,6 +1135,7 @@ static void tegra30_cpu_clock_suspend(void)
- static void tegra30_cpu_clock_resume(void)
- {
- 	unsigned int reg, policy;
-+	u32 misc, base;
- 
- 	/* Is CPU complex already running on PLLX? */
- 	reg = readl(clk_base + CLK_RESET_CCLK_BURST);
-@@ -1148,15 +1149,21 @@ static void tegra30_cpu_clock_resume(void)
- 		BUG();
- 
- 	if (reg != CLK_RESET_CCLK_BURST_POLICY_PLLX) {
--		/* restore PLLX settings if CPU is on different PLL */
--		writel(tegra30_cpu_clk_sctx.pllx_misc,
--					clk_base + CLK_RESET_PLLX_MISC);
--		writel(tegra30_cpu_clk_sctx.pllx_base,
--					clk_base + CLK_RESET_PLLX_BASE);
--
--		/* wait for PLL stabilization if PLLX was enabled */
--		if (tegra30_cpu_clk_sctx.pllx_base & (1 << 30))
--			udelay(300);
-+		misc = readl_relaxed(clk_base + CLK_RESET_PLLX_MISC);
-+		base = readl_relaxed(clk_base + CLK_RESET_PLLX_BASE);
-+
-+		if (misc != tegra30_cpu_clk_sctx.pllx_misc ||
-+		    base != tegra30_cpu_clk_sctx.pllx_base) {
-+			/* restore PLLX settings if CPU is on different PLL */
-+			writel(tegra30_cpu_clk_sctx.pllx_misc,
-+						clk_base + CLK_RESET_PLLX_MISC);
-+			writel(tegra30_cpu_clk_sctx.pllx_base,
-+						clk_base + CLK_RESET_PLLX_BASE);
-+
-+			/* wait for PLL stabilization if PLLX was enabled */
-+			if (tegra30_cpu_clk_sctx.pllx_base & (1 << 30))
-+				udelay(300);
-+		}
- 	}
- 
- 	/*
--- 
-2.23.0
-
+ACK?
