@@ -1,126 +1,547 @@
-Return-Path: <SRS0=NukQ=XR=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=NsDS=XS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94BE0C3A5A6
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Sep 2019 22:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07E3AC3A5A6
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 06:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6169F206B6
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Sep 2019 22:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CE3320820
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 06:33:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jAZlux2H"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="S2OtDcSF";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b2FEZCYM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388835AbfIVWeT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Sep 2019 18:34:19 -0400
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:45429 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388488AbfIVWeS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Sep 2019 18:34:18 -0400
-Received: by mail-lf1-f65.google.com with SMTP id r134so8603466lff.12;
-        Sun, 22 Sep 2019 15:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=4f2RiUEyYcYFcBgFz1k/UjSfnNL+xowf1XmECwoKC/g=;
-        b=jAZlux2Hoov1RqCJlqmmKxwXdFHaETUdjVWCvrTUJKfUh7+paUI6OOEL1lgtjm+JIL
-         PUo6LZEbQzjG00Tai8rqwzLIfnYE60LtT6hICVHY6Qdbn5JpZGpxmtKUvrT2oveXCa3n
-         rdGFNoK0VKKXUq9RB2uFCQOXCRfFYx1pglz0YCbZHErkS+MgcOkSMhHmfrdh5u5BRDkh
-         ujMcz7en92dWnFc2NTnAQpwAGEQOskUY9zr0qRMPoL9av0Wkp2pL+dNpgGtiE0OCIMWj
-         X8Q1NMgBYK3j5wPkeGcZ8KiJNsEtOjkOKqSCTuliZekdA98/r0T7SWueV0BdabtYQVaS
-         O1tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=4f2RiUEyYcYFcBgFz1k/UjSfnNL+xowf1XmECwoKC/g=;
-        b=B7qU0rRsgPZYRztzxdN+71UKRUpQicEZZduHp/T8b+FG223Rbc4fdJskQ6kPbG8MUF
-         HMFTjxX6fgVZuVhKVF69qcb/qxxW3vaZjcNrkWrMF8x2ihx7BCBRmuhKPOBmA/Lrw2Ex
-         FKThCLNG1c9o/ob7TEaMxNoZo+vgZxEpPMgXiMNyLXQc2rChWmPkxKgxWHvciu//6hj/
-         zSq2U1a8XXFTCO6rEvvd9z6GY/7ZJSshcEezpr/Xmh8Vin3072b/4mBem6frD3rS1Rsf
-         rx4PSPUKdxhIbPZu4f6vtdxngf/uImIty2GuwUXxRlMoRXPotk20hgShibyWf1w+H6w9
-         wukg==
-X-Gm-Message-State: APjAAAUS1CM/A5FwhoAk3wC4Mu1cUprLECfwvAXEB0CUNdVmZsqOUtwC
-        W4Ku2v2LAcdnM6UYzYxbKZUWhNfz
-X-Google-Smtp-Source: APXvYqxlv/fN1SmtNQdjOMr9+/0vIXBnud7NxJw3/5p3jHE3sHP0gedjudM2e9Kj2tEoRt3WJyuCtw==
-X-Received: by 2002:a19:6455:: with SMTP id b21mr15210702lfj.167.1569188842740;
-        Sun, 22 Sep 2019 14:47:22 -0700 (PDT)
-Received: from [192.168.2.145] (ppp94-29-32-67.pppoe.spdop.ru. [94.29.32.67])
-        by smtp.googlemail.com with ESMTPSA id e7sm1798725lfn.12.2019.09.22.14.47.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 22 Sep 2019 14:47:22 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
- enable-bit on rate's recalculation
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20190723025245.27754-1-digetx@gmail.com>
-Message-ID: <4f2695ce-f683-2e4b-34b9-8937feee5e1b@gmail.com>
-Date:   Mon, 23 Sep 2019 00:47:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2403912AbfIWGd5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Sep 2019 02:33:57 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:57978 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387519AbfIWGd5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Sep 2019 02:33:57 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 0ECC761156; Mon, 23 Sep 2019 06:33:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569220434;
+        bh=gCDP4x0WmDDZ8J9QqMTj2P4lzNlHWdelSBUVwLwt2U8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=S2OtDcSFH1znjAnrlHsIq2GFRR0R+snAiYgucphQOBDltOJSDIozuV9zVCVC8sl3z
+         loIOSZbBdtaOy+ZiAszQxsjxm1sYJgQd6PV5GxCp1WWZPMkAgG4kADGAy1GB3hiRuX
+         tWU3tO++rX+yGwcg9mCcbU2EC+W/w3UMokiroyxU=
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5605C60A97;
+        Mon, 23 Sep 2019 06:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569220432;
+        bh=gCDP4x0WmDDZ8J9QqMTj2P4lzNlHWdelSBUVwLwt2U8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=b2FEZCYMy196WUtVqM7sbGxLYcH4gMxeOyc5dKg8Wt722+7bXQp2E1AgNG8/tLmYV
+         k2+hMt02IoLxmgO6+w1ZByoPKM+HeqUGwFiqBgpLHEpELuJgTUhVamNCQI7flvY5ws
+         2rXmC5bEUwJebAafOhax+kY5tycMu6hAqWi7I7UU=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5605C60A97
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: clk: qcom: Add YAML schemas for the
+ GCC clock bindings
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        robh+dt@kernel.org, David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190918095018.17979-1-tdas@codeaurora.org>
+ <20190918095018.17979-3-tdas@codeaurora.org>
+ <20190918175256.GM133864@google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <b952c871-ae01-f29e-27a0-ca75dc8aaeb2@codeaurora.org>
+Date:   Mon, 23 Sep 2019 12:03:45 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20190723025245.27754-1-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <20190918175256.GM133864@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-23.07.2019 5:52, Dmitry Osipenko пишет:
-> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
-> have any effect in that case. Please note that there are no known bugs
-> caused by the missing check.
+Hi Matthias,
+
+Thank you for your review.
+
+On 9/18/2019 11:22 PM, Matthias Kaehlcke wrote:
+> Hi Taniya,
 > 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
+> not a full review, just a couple of things I noticed, comments inline.
 > 
-> Changelog:
+> On Wed, Sep 18, 2019 at 03:20:17PM +0530, Taniya Das wrote:
+>> The GCC clock provider have a bunch of generic properties that
+>> are needed in a device tree. Add a YAML schemas for those. Also update
+>> the compatible for SC7180 along with example for clocks & clock-names.
 > 
-> v2: Changed the commit's description from 'Fix' to 'Add' in response to the
->     Stephen's Boyd question about the need to backport the patch into stable
->     kernels. The backporting is not really needed.
+> I would suggest to split this in two:
 > 
->  drivers/clk/tegra/clk-divider.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index e76731fb7d69..f33c19045386 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
->  	int div, mul;
->  	u64 rate = parent_rate;
->  
-> -	reg = readl_relaxed(divider->reg) >> divider->shift;
-> -	div = reg & div_mask(divider);
-> +	reg = readl_relaxed(divider->reg);
-> +
-> +	if ((divider->flags & TEGRA_DIVIDER_UART) &&
-> +	    !(reg & PERIPH_CLK_UART_DIV_ENB))
-> +		return rate;
-> +
-> +	div = (reg >> divider->shift) & div_mask(divider);
->  
->  	mul = get_mul(divider);
->  	div += mul;
+> 1. conversion to YAML
+> 2. add SC7180 header and example
 > 
 
-Hello Peter,
+I will split the patch.
 
-ACK?
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,gcc.txt    |  94 -----------
+>>   .../devicetree/bindings/clock/qcom,gcc.yaml   | 157 ++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,gcc-sc7180.h   | 155 +++++++++++++++++
+>>   3 files changed, 312 insertions(+), 94 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>>   create mode 100644 include/dt-bindings/clock/qcom,gcc-sc7180.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>> deleted file mode 100644
+>> index d14362ad4132..000000000000
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>> +++ /dev/null
+>> @@ -1,94 +0,0 @@
+>> -Qualcomm Global Clock & Reset Controller Binding
+>> -------------------------------------------------
+>> -
+>> -Required properties :
+>> -- compatible : shall contain only one of the following:
+>> -
+>> -			"qcom,gcc-apq8064"
+>> -			"qcom,gcc-apq8084"
+>> -			"qcom,gcc-ipq8064"
+>> -			"qcom,gcc-ipq4019"
+>> -			"qcom,gcc-ipq8074"
+>> -			"qcom,gcc-msm8660"
+>> -			"qcom,gcc-msm8916"
+>> -			"qcom,gcc-msm8960"
+>> -			"qcom,gcc-msm8974"
+>> -			"qcom,gcc-msm8974pro"
+>> -			"qcom,gcc-msm8974pro-ac"
+>> -			"qcom,gcc-msm8994"
+>> -			"qcom,gcc-msm8996"
+>> -			"qcom,gcc-msm8998"
+>> -			"qcom,gcc-mdm9615"
+>> -			"qcom,gcc-qcs404"
+>> -			"qcom,gcc-sdm630"
+>> -			"qcom,gcc-sdm660"
+>> -			"qcom,gcc-sdm845"
+>> -			"qcom,gcc-sm8150"
+>> -
+>> -- reg : shall contain base register location and length
+>> -- #clock-cells : shall contain 1
+>> -- #reset-cells : shall contain 1
+>> -
+>> -Optional properties :
+>> -- #power-domain-cells : shall contain 1
+>> -- Qualcomm TSENS (thermal sensor device) on some devices can
+>> -be part of GCC and hence the TSENS properties can also be
+>> -part of the GCC/clock-controller node.
+>> -For more details on the TSENS properties please refer
+>> -Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+>> -- protected-clocks : Protected clock specifier list as per common clock
+>> - binding.
+>> -
+>> -For SM8150 only:
+>> -       - clocks: a list of phandles and clock-specifier pairs,
+>> -                 one for each entry in clock-names.
+>> -       - clock-names: "bi_tcxo" (required)
+>> -                      "sleep_clk" (optional)
+>> -                      "aud_ref_clock" (optional)
+>> -
+>> -Example:
+>> -	clock-controller@900000 {
+>> -		compatible = "qcom,gcc-msm8960";
+>> -		reg = <0x900000 0x4000>;
+>> -		#clock-cells = <1>;
+>> -		#reset-cells = <1>;
+>> -		#power-domain-cells = <1>;
+>> -	};
+>> -
+>> -Example of GCC with TSENS properties:
+>> -	clock-controller@900000 {
+>> -		compatible = "qcom,gcc-apq8064";
+>> -		reg = <0x00900000 0x4000>;
+>> -		nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+>> -		nvmem-cell-names = "calib", "calib_backup";
+>> -		#clock-cells = <1>;
+>> -		#reset-cells = <1>;
+>> -		#thermal-sensor-cells = <1>;
+>> -	};
+>> -
+>> -Example of GCC with protected-clocks properties:
+>> -	clock-controller@100000 {
+>> -		compatible = "qcom,gcc-sdm845";
+>> -		reg = <0x100000 0x1f0000>;
+>> -		#clock-cells = <1>;
+>> -		#reset-cells = <1>;
+>> -		#power-domain-cells = <1>;
+>> -		protected-clocks = <GCC_QSPI_CORE_CLK>,
+>> -				   <GCC_QSPI_CORE_CLK_SRC>,
+>> -				   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
+>> -				   <GCC_LPASS_Q6_AXI_CLK>,
+>> -				   <GCC_LPASS_SWAY_CLK>;
+>> -	};
+>> -
+>> -Example of GCC with clocks
+>> -	gcc: clock-controller@100000 {
+>> -		compatible = "qcom,gcc-sm8150";
+>> -		reg = <0x00100000 0x1f0000>;
+>> -		#clock-cells = <1>;
+>> -		#reset-cells = <1>;
+>> -		#power-domain-cells = <1>;
+>> -		clock-names = "bi_tcxo",
+>> -		              "sleep_clk";
+>> -		clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+>> -			 <&sleep_clk>;
+>> -	};
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> new file mode 100644
+>> index 000000000000..056a7977c458
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> @@ -0,0 +1,157 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Global Clock & Reset Controller Binding
+>> +
+>> +maintainers:
+>> +  - Stephen Boyd <sboyd@kernel.org>
+>> +
+>> +properties:
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  "#reset-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  compatible :
+>> +     enum:
+>> +       - qcom,gcc-apq8064
+>> +       - qcom,gcc-apq8084
+>> +       - qcom,gcc-ipq8064
+>> +       - qcom,gcc-ipq4019
+>> +       - qcom,gcc-ipq8074
+>> +       - qcom,gcc-msm8660
+>> +       - qcom,gcc-msm8916
+>> +       - qcom,gcc-msm8960
+>> +       - qcom,gcc-msm8974
+>> +       - qcom,gcc-msm8974pro
+>> +       - qcom,gcc-msm8974pro-ac
+>> +       - qcom,gcc-msm8994
+>> +       - qcom,gcc-msm8996
+>> +       - qcom,gcc-msm8998
+>> +       - qcom,gcc-mdm9615
+>> +       - qcom,gcc-qcs404
+>> +       - qcom,gcc-sdm630
+>> +       - qcom,gcc-sdm660
+>> +       - qcom,gcc-sdm845
+>> +       - qcom,gcc-sm8150
+>> +       - qcom,gcc-sc7180
+>> +
+>> +  clocks:
+>> +    minItems: 1
+>> +    maxItems: 3
+>> +    items:
+>> +      - description: Board XO source
+>> +      - description: Board active XO source
+>> +      - description: Sleep clock source(optional)
+>> +
+>> +  clock-names:
+>> +    minItems: 1
+>> +    maxItems: 3
+>> +    items:
+>> +      - const: bi_tcxo
+>> +      - const: bi_tcxo_ao
+>> +      - const: sleep_clk
+>> +
+>> +  nvmem-cells:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    description:
+>> +      Qualcomm TSENS (thermal sensor device) on some devices can
+>> +      be part of GCC and hence the TSENS properties can also be part
+>> +      of the GCC/clock-controller node.
+>> +      For more details on the TSENS properties please refer
+>> +      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+>> +
+>> +  nvmem-cell-names:
+>> +    minItems: 1
+>> +    maxItems: 2
+>> +    description:
+>> +      Names for each nvmem-cells specified.
+>> +    items:
+>> +      - const: calib
+>> +      - const: calib_backup
+>> +
+>> +  "#thermal-sensor-cells":
+>> +    const: 1
+>> +
+>> +  "#power-domain-cells":
+>> +    const: 1
+>> +
+>> +  protected-clocks:
+>> +    description:
+>> +       Protected clock specifier list as per common clock binding
+>> +
+>> +required:
+>> +  - "#clock-cells"
+>> +  - "#reset-cells"
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +examples:
+>> +  - |
+>> +    // Example:
+>> +    clock-controller@900000 {
+>> +      compatible = "qcom,gcc-msm8960";
+>> +      reg = <0x900000 0x4000>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +    };
+>> +
+>> +
+>> +  - |
+>> +    // Example of GCC with TSENS properties:
+>> +    clock-controller@900000 {
+>> +      compatible = "qcom,gcc-apq8064";
+>> +      reg = <0x00900000 0x4000>;
+>> +      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+>> +      nvmem-cell-names = "calib", "calib_backup";
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #thermal-sensor-cells = <1>;
+>> +    };
+>> +
+>> +  - |
+>> +    //Example of GCC with protected-clocks properties:
+>> +    clock-controller@100000 {
+>> +      compatible = "qcom,gcc-sdm845";
+>> +      reg = <0x100000 0x1f0000>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +      protected-clocks = <187>, <188>, <189>, <190>, <191>;
+>> +    };
+>> +
+>> +  - |
+>> +    //Example of GCC with clock node properties for SM8150:
+>> +    clock-controller@100000 {
+>> +      compatible = "qcom,gcc-sm8150";
+>> +      reg = <0x00100000 0x1f0000>;
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <&sleep_clk>;
+>> +      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
+>> +     };
+>> +
+>> +  - |
+>> +    //Example of GCC with clock nodes properties:
+> 
+> add "for SC7180"
+> 
+>> +    clock-controller@100000 {
+>> +      compatible = "qcom,gcc-sc7180";
+>> +      reg = <0x100000 0x1f0000>;
+>> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
+> 
+> IIUC the ids correspond to GCC_GPLL0_MAIN_DIV_CDIV and GPLL0. If
+> that is correct I guess the intention is to use the constants in the
+> DT?
+> 
+>> +      clock-names = "bi_tcxo", "bi_tcxo_ao";
+>> +      #clock-cells = <1>;
+>> +      #reset-cells = <1>;
+>> +      #power-domain-cells = <1>;
+>> +    };
+>> +...
+>> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+>> new file mode 100644
+>> index 000000000000..d76b061f6a4e
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+>> @@ -0,0 +1,155 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +/*
+>> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+>> +#define _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+>> +
+>> +/* GCC clocks */
+>> +#define GCC_GPLL0_MAIN_DIV_CDIV					0
+>> +#define GPLL0							1
+>> +#define GPLL0_OUT_EVEN						2
+>> +#define GPLL1							3
+>> +#define GPLL4							4
+>> +#define GPLL6							5
+>> +#define GPLL7							6
+>> +#define GCC_AGGRE_UFS_PHY_AXI_CLK				7
+>> +#define GCC_AGGRE_USB3_PRIM_AXI_CLK				8
+>> +#define GCC_BOOT_ROM_AHB_CLK					9
+>> +#define GCC_CAMERA_AHB_CLK					10
+>> +#define GCC_CAMERA_HF_AXI_CLK					11
+>> +#define GCC_CAMERA_THROTTLE_HF_AXI_CLK				12
+>> +#define GCC_CAMERA_XO_CLK					13
+>> +#define GCC_CE1_AHB_CLK						14
+>> +#define GCC_CE1_AXI_CLK						15
+>> +#define GCC_CE1_CLK						16
+>> +#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				17
+>> +#define GCC_CPUSS_AHB_CLK					18
+>> +#define GCC_CPUSS_AHB_CLK_SRC					19
+>> +#define GCC_CPUSS_GNOC_CLK					20
+>> +#define GCC_CPUSS_RBCPR_CLK					21
+>> +#define GCC_DDRSS_GPU_AXI_CLK					22
+>> +#define GCC_DISP_AHB_CLK					23
+>> +#define GCC_DISP_GPLL0_CLK_SRC					24
+>> +#define GCC_DISP_GPLL0_DIV_CLK_SRC				25
+>> +#define GCC_DISP_HF_AXI_CLK					26
+>> +#define GCC_DISP_THROTTLE_HF_AXI_CLK				27
+>> +#define GCC_DISP_XO_CLK						28
+>> +#define GCC_GP1_CLK						29
+>> +#define GCC_GP1_CLK_SRC						30
+>> +#define GCC_GP2_CLK						31
+>> +#define GCC_GP2_CLK_SRC						32
+>> +#define GCC_GP3_CLK						33
+>> +#define GCC_GP3_CLK_SRC						34
+>> +#define GCC_GPU_CFG_AHB_CLK					35
+>> +#define GCC_GPU_GPLL0_CLK_SRC					36
+>> +#define GCC_GPU_GPLL0_DIV_CLK_SRC				37
+>> +#define GCC_GPU_MEMNOC_GFX_CLK					38
+>> +#define GCC_GPU_SNOC_DVM_GFX_CLK				39
+>> +#define GCC_NPU_AXI_CLK						40
+>> +#define GCC_NPU_BWMON_AXI_CLK					41
+>> +#define GCC_NPU_BWMON_DMA_CFG_AHB_CLK				42
+>> +#define GCC_NPU_BWMON_DSP_CFG_AHB_CLK				43
+>> +#define GCC_NPU_CFG_AHB_CLK					44
+>> +#define GCC_NPU_DMA_CLK						45
+>> +#define GCC_NPU_GPLL0_CLK_SRC					46
+>> +#define GCC_NPU_GPLL0_DIV_CLK_SRC				47
+>> +#define GCC_PDM2_CLK						48
+>> +#define GCC_PDM2_CLK_SRC					49
+>> +#define GCC_PDM_AHB_CLK						50
+>> +#define GCC_PDM_XO4_CLK						51
+>> +#define GCC_PRNG_AHB_CLK					52
+>> +#define GCC_QSPI_CNOC_PERIPH_AHB_CLK				53
+>> +#define GCC_QSPI_CORE_CLK					54
+>> +#define GCC_QSPI_CORE_CLK_SRC					55
+>> +#define GCC_QUPV3_WRAP0_CORE_2X_CLK				56
+>> +#define GCC_QUPV3_WRAP0_CORE_CLK				57
+>> +#define GCC_QUPV3_WRAP0_S0_CLK					58
+>> +#define GCC_QUPV3_WRAP0_S0_CLK_SRC				59
+>> +#define GCC_QUPV3_WRAP0_S1_CLK					60
+>> +#define GCC_QUPV3_WRAP0_S1_CLK_SRC				61
+>> +#define GCC_QUPV3_WRAP0_S2_CLK					62
+>> +#define GCC_QUPV3_WRAP0_S2_CLK_SRC				63
+>> +#define GCC_QUPV3_WRAP0_S3_CLK					64
+>> +#define GCC_QUPV3_WRAP0_S3_CLK_SRC				65
+>> +#define GCC_QUPV3_WRAP0_S4_CLK					66
+>> +#define GCC_QUPV3_WRAP0_S4_CLK_SRC				67
+>> +#define GCC_QUPV3_WRAP0_S5_CLK					68
+>> +#define GCC_QUPV3_WRAP0_S5_CLK_SRC				69
+>> +#define GCC_QUPV3_WRAP1_CORE_2X_CLK				70
+>> +#define GCC_QUPV3_WRAP1_CORE_CLK				71
+>> +#define GCC_QUPV3_WRAP1_S0_CLK					72
+>> +#define GCC_QUPV3_WRAP1_S0_CLK_SRC				73
+>> +#define GCC_QUPV3_WRAP1_S1_CLK					74
+>> +#define GCC_QUPV3_WRAP1_S1_CLK_SRC				75
+>> +#define GCC_QUPV3_WRAP1_S2_CLK					76
+>> +#define GCC_QUPV3_WRAP1_S2_CLK_SRC				77
+>> +#define GCC_QUPV3_WRAP1_S3_CLK					78
+>> +#define GCC_QUPV3_WRAP1_S3_CLK_SRC				79
+>> +#define GCC_QUPV3_WRAP1_S4_CLK					80
+>> +#define GCC_QUPV3_WRAP1_S4_CLK_SRC				81
+>> +#define GCC_QUPV3_WRAP1_S5_CLK					82
+>> +#define GCC_QUPV3_WRAP1_S5_CLK_SRC				83
+>> +#define GCC_QUPV3_WRAP_0_M_AHB_CLK				84
+>> +#define GCC_QUPV3_WRAP_0_S_AHB_CLK				85
+>> +#define GCC_QUPV3_WRAP_1_M_AHB_CLK				86
+>> +#define GCC_QUPV3_WRAP_1_S_AHB_CLK				87
+>> +#define GCC_SDCC1_AHB_CLK					88
+>> +#define GCC_SDCC1_APPS_CLK					89
+>> +#define GCC_SDCC1_APPS_CLK_SRC					90
+>> +#define GCC_SDCC1_ICE_CORE_CLK					91
+>> +#define GCC_SDCC1_ICE_CORE_CLK_SRC				92
+>> +#define GCC_SDCC2_AHB_CLK					93
+>> +#define GCC_SDCC2_APPS_CLK					94
+>> +#define GCC_SDCC2_APPS_CLK_SRC					95
+>> +#define GCC_SYS_NOC_CPUSS_AHB_CLK				96
+>> +#define GCC_UFS_MEM_CLKREF_CLK					97
+>> +#define GCC_UFS_PHY_AHB_CLK					98
+>> +#define GCC_UFS_PHY_AXI_CLK					99
+>> +#define GCC_UFS_PHY_AXI_CLK_SRC					100
+>> +#define GCC_UFS_PHY_ICE_CORE_CLK				101
+>> +#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				102
+>> +#define GCC_UFS_PHY_PHY_AUX_CLK					103
+>> +#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				104
+>> +#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				105
+>> +#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				106
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK				107
+>> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				108
+>> +#define GCC_USB30_PRIM_MASTER_CLK				109
+>> +#define GCC_USB30_PRIM_MASTER_CLK_SRC				110
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK				111
+>> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			112
+>> +#define GCC_USB30_PRIM_SLEEP_CLK				113
+>> +#define GCC_USB3_PRIM_CLKREF_CLK				114
+>> +#define GCC_USB3_PRIM_PHY_AUX_CLK				115
+>> +#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				116
+>> +#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				117
+>> +#define GCC_USB3_PRIM_PHY_PIPE_CLK				118
+>> +#define GCC_USB_PHY_CFG_AHB2PHY_CLK				119
+>> +#define GCC_VIDEO_AHB_CLK					120
+>> +#define GCC_VIDEO_AXI_CLK					121
+>> +#define GCC_VIDEO_GPLL0_DIV_CLK_SRC				122
+>> +#define GCC_VIDEO_THROTTLE_AXI_CLK				123
+>> +#define GCC_VIDEO_XO_CLK					124
+>> +
+>> +/* GCC resets */
+>> +#define GCC_QUSB2PHY_PRIM_BCR					0
+>> +#define GCC_QUSB2PHY_SEC_BCR					1
+>> +#define GCC_UFS_PHY_BCR						2
+>> +#define GCC_USB30_PRIM_BCR					3
+>> +#define GCC_USB3_DP_PHY_PRIM_BCR				4
+>> +#define GCC_USB3_DP_PHY_SEC_BCR					5
+>> +#define GCC_USB3_PHY_PRIM_BCR					6
+>> +#define GCC_USB3_PHY_SEC_BCR					7
+>> +#define GCC_USB3PHY_PHY_PRIM_BCR				8
+>> +#define GCC_USB3PHY_PHY_SEC_BCR					9
+>> +#define GCC_USB_PHY_CFG_AHB2PHY_BCR				10
+>> +
+>> +/* GCC GDSCRs */
+>> +#define UFS_PHY_GDSC						0
+>> +#define USB30_PRIM_GDSC						1
+>> +#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			2
+>> +#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC			3
+>> +
+>> +#endif
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
