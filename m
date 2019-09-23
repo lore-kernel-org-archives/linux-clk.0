@@ -2,88 +2,88 @@ Return-Path: <SRS0=NsDS=XS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DDD5C4740C
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 08:39:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39612C49ED7
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 09:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FE5A2064A
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 08:39:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="IghFe3Y9"
+	by mail.kernel.org (Postfix) with ESMTP id 0D6F12089F
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 09:18:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729399AbfIWIjA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Sep 2019 04:39:00 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39493 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729394AbfIWIi7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Sep 2019 04:38:59 -0400
-Received: by mail-wr1-f67.google.com with SMTP id r3so12903239wrj.6
-        for <linux-clk@vger.kernel.org>; Mon, 23 Sep 2019 01:38:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=nwiGQiE38HtZcmw6CWeBg4qfY5GYbo0p333nLt6wTfk=;
-        b=IghFe3Y9bi1OIf+T0BVbUqifsHRXMu4xWRUWvzexMuhJ4MorveaatsE5c2GnCI+84a
-         Bqx0FzIXkolcI77UhylFeOKxmtwpKe9AUMcjHExUAVS+hF6+GX11MENc6c6CKLisbkhU
-         b9Ts9JV5TR8s7v3h7HczUFMlV75yIvoSso+xPxb2dWoJGiNJCOVjR0+SvNXGapK7ocsa
-         HGGW4pVQf7UAT44HCNRvqfwXb1IWJyD1YzR9fLdLsLMHoEzNFWJy5uxlqyzsmbeJ7NPI
-         foBJjIBuJRCnK//2IKw8qaIOokqj5JUovfoGEVLI+AkqSB2yHohlwvIpAIpd4546nJUR
-         Q80Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=nwiGQiE38HtZcmw6CWeBg4qfY5GYbo0p333nLt6wTfk=;
-        b=mko0VPJlV4PGh0Pf+gkyF6n4O9J2L3r4Utg3jWbIG2aTk69eTOyKKiclWL2bUC5v2A
-         0UVdK0InB7cDLU0yRHN7QAmQSEqcuah67qp0ZUOXZLdc4DnbVwsxgbYY5ZTpImRHoZHH
-         Smbq1bFrqncfaxATVTWyOXA1J9iOr033CblhRhERTyAPaU/FNXpLT8hUgCE69DOw7MR4
-         uvQI8Pu+7ewRzwURUx/5uK4lq5e0G/xbWU3beVwiWCG4Wzm/zR2R8Z2tYx3CfuWLxhuk
-         A6imMhEr+kcBRIv7uUh32JcBD0Xaatgt/K66PfQjvNfzuPHpxpdyThMMQm6my8++wMRv
-         8Hdg==
-X-Gm-Message-State: APjAAAUeR7Gu29ffNThOWUHf+dyzzH3YZSxAszNVBQ/ROehd/k022Eje
-        4Pr6RgDODSIh5l46EMrsmvdOx6c/OY072g==
-X-Google-Smtp-Source: APXvYqw3ZqNhDs1DwDmXDjeQ+UCFX7R57TXtgHP+2m5w6ijcpVvYw+PpPwVSLBebaiNyvUoQipm8bA==
-X-Received: by 2002:a05:6000:45:: with SMTP id k5mr20259104wrx.259.1569227937789;
-        Mon, 23 Sep 2019 01:38:57 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id n7sm10988940wrt.59.2019.09.23.01.38.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 23 Sep 2019 01:38:57 -0700 (PDT)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: Re: [PATCH 1/1] clk: meson: gxbb: let sar_adc_clk_div set the parent clock rate
-In-Reply-To: <20190921150411.767290-1-martin.blumenstingl@googlemail.com>
-References: <20190921150411.767290-1-martin.blumenstingl@googlemail.com>
-Date:   Mon, 23 Sep 2019 10:38:56 +0200
-Message-ID: <1j4l13tnj3.fsf@starbuckisacylon.baylibre.com>
+        id S1727358AbfIWJSK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Sep 2019 05:18:10 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36631 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2406273AbfIWJSJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Sep 2019 05:18:09 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iCKTc-0005wP-Px; Mon, 23 Sep 2019 11:17:48 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iCKTZ-0001wK-TP; Mon, 23 Sep 2019 11:17:45 +0200
+Date:   Mon, 23 Sep 2019 11:17:45 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        Russell King <linux@armlinux.org.uk>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 1/4] pwm: mxs: implement ->apply
+Message-ID: <20190923091745.ehvz4zi2riyanmug@pengutronix.de>
+References: <20190923081348.6843-1-linux@rasmusvillemoes.dk>
+ <20190923081348.6843-2-linux@rasmusvillemoes.dk>
+ <20190923082459.huqpbz5eseonkscv@pengutronix.de>
+ <a6407644-0b5b-ba46-9435-0d14be9066a5@rasmusvillemoes.dk>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <a6407644-0b5b-ba46-9435-0d14be9066a5@rasmusvillemoes.dk>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat 21 Sep 2019 at 17:04, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+Hello,
 
-> The meson-saradc driver manually sets the input clock for
-> sar_adc_clk_sel. Update the GXBB clock driver (which is used on GXBB,
-> GXL and GXM) so the rate settings on sar_adc_clk_div are propagated up
-> to sar_adc_clk_sel which will let the common clock framework select the
-> best matching parent clock if we want that.
->
-> This makes sar_adc_clk_div consistent with the axg-aoclk and g12a-aoclk
-> drivers, which both also specify CLK_SET_RATE_PARENT.
->
-> Fixes: 33d0fcdfe0e870 ("clk: gxbb: add the SAR ADC clocks and expose them")
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+[expanded the recipents to include RMK and the clk list]
 
-Looks good. I'll apply it once rc1 is tagged
-Thanks
+On Mon, Sep 23, 2019 at 11:04:39AM +0200, Rasmus Villemoes wrote:
+> On 23/09/2019 10.24, Uwe Kleine-König wrote:
+> > Also there is a bug already in .config: You are not supposed to call
+> > clk_get_rate if the clk might be off.
+> 
+> Interesting, I didn't know that. So the prepare_enable logic needs to be
+> moved before we start computing the period/duty cycles. Do you know why
+> it has apparently worked so far? I would have thought such a rule would
+> be enforced by the clock framework, or at least produced a warning.
+
+FTR: This is documented in the kerneldoc code comment to clk_get_rate in
+include/linux/clk.h.
+
+Assuming this is relevant, it might indeed make sense to add a
+WARN_ONCE for this.
+
+Best regards
+Uwe
+
+-- 
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
