@@ -2,61 +2,61 @@ Return-Path: <SRS0=NsDS=XS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6632C88CA8
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 20:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74646C28E84
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 20:56:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6A1A20B7C
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 20:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4401020856
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Sep 2019 20:56:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Uc1rJg9E"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="J6iZz4W8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2502570AbfIWUtu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Sep 2019 16:49:50 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:44648 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2502482AbfIWUtu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Sep 2019 16:49:50 -0400
-Received: by mail-ot1-f68.google.com with SMTP id 21so13364579otj.11;
-        Mon, 23 Sep 2019 13:49:49 -0700 (PDT)
+        id S2388151AbfIWU4k (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Sep 2019 16:56:40 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:39190 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388120AbfIWU4k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Sep 2019 16:56:40 -0400
+Received: by mail-ot1-f67.google.com with SMTP id s22so13423702otr.6;
+        Mon, 23 Sep 2019 13:56:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=MAD3Xg1lcz/vWNfKOXbNQkNK8JcAqagoLevWw8c1H8w=;
-        b=Uc1rJg9EHlGwJNJeN6soMEoo/3M+ZsjMSxAMCVEA+f9rOyJvTLPXhHKYXJwgIcEzBr
-         e+3CndfndOMezv1Ptw3MLfFegfdCU9l142+6xMNb6yc4r537qDyguMUGRJy+2tVBa8tR
-         F3znac2BBuFbLhadIwE1d+eNekHVycr0brsa51/cTtZc6+gj6CyZzfwmL64hoJreYrbK
-         BNsn+vt4zqHzlSpK9FPzf9skcHsynz8YunjI1ogBbKbkLYBspiO7cYeF+/GORadBkgQs
-         BoXGJUuzpml3+FLUCkphSuXEpIZ0v82lo8jO+mArHKkjDH3EoiOUfBwEJn5ZHqf0JXAZ
-         jGjg==
+        bh=NCBVHzoVPJRdaVAQ/V0UNMxjnGUzoZBL++du/W+XNNU=;
+        b=J6iZz4W8Ac0KBesx6BZtBfbxR7BQScJgoudoCWm4eqelCxtbb8CRR1OpkUlLJgnKMy
+         uiw/NRW+0NW3vCN7M2fC1JsmjKmnH2LxLFkq7Vb68H/dFCwMXbRBJWQgo2oJFOHy9sx+
+         +7OrBps8hEGSVo1mM/yqiENDR15b/8qkGabDROQaiYpnBOfnd7u9YAD9boIvjV9Bk67+
+         Wo12mduo9QhmGcu39rq+MSbbfYh4YAVsQVzrQQx5d0Oehe2ivPKTcPC0CXJEus6t62pV
+         5BhF1i61A7KsfXX4on3Vt/2KVsZREtoSJxwo5hZBPL/VNEIx3v6ifpCPFVmdVbj3MwXI
+         Fwqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=MAD3Xg1lcz/vWNfKOXbNQkNK8JcAqagoLevWw8c1H8w=;
-        b=PLmrPInu5OXnrGrF8J7C3YZJPgTC4PA3T1SG+S5f9yInUquXSo3wMwL19gp1IopejS
-         pGudY5gqp4/noo/VMd6QHJk3hCnCc7wTcIA3gUuNmrG6lJmCPHdVOupDwH4kaaWH4oGq
-         xHypUMEO+YGQTs36GXsUYDHlw+uqTiKCzf4BmYruJSvAi/etUv82cpkIZ2X9dvmupfCy
-         djI+IfRoa9LjU9FDw+PnbmQT5Yg892pEGwSIRJ3TFfUaKxkhjVnkqftpT2Jvt2Wd6u5P
-         6cL/VMB4JbsQ7+B2nl/DkDCieb0eAddFrU9Psr9xC2DeAmyP4yaBE+Y3kd6t+IyTIpnx
-         MAJw==
-X-Gm-Message-State: APjAAAUzh5pabybEZajfMJt/lIO+Kp/ge+ets2T0xHoMXIJgbF3cbPcz
-        KW3pt01wV7waswd0CmEmVC6ndQIkW6IUEVBHCqI=
-X-Google-Smtp-Source: APXvYqxg9tfZ17T4nhNMMZMbP5FnSoEzZH0Yj/hpHqWL0Dt5cVhCyLOpWwrFdj59nZDuupSIBtRiMaKO4g+TxYTiSnw=
-X-Received: by 2002:a9d:7d17:: with SMTP id v23mr161527otn.81.1569271789175;
- Mon, 23 Sep 2019 13:49:49 -0700 (PDT)
+        bh=NCBVHzoVPJRdaVAQ/V0UNMxjnGUzoZBL++du/W+XNNU=;
+        b=SpMSPIZ5QxT5AXZ2eDFZjSrEfxeuP2x/IEl3cTfuQXAja9kWt/CWfGBc/eZZVSWKvM
+         J76smjD5+IMiT2liCIzfwNqrW1IWK/G/XuXC+JDd2x15JOlT8lKC+2TPQ7WGDl0b+QEi
+         jdhtzoA7Hk/hkdMgy8m6KwTdUeKTQVWdeUPjBh4EdQnxmI2J9oYcUzPY09zyDEpeA0vS
+         hZVbOhyG+eE81azwcfj0Paa4bzoCx9p/p84Fdk/nanbE92H7rwGmswun9I2BXXaNT/e8
+         jNxXBFMKaq+UKGD2v/eZM4AJBprwWI7BzihXF6GseBAUna2S54Dtm+tdqHe0M8s7WcEz
+         JobQ==
+X-Gm-Message-State: APjAAAXX83Jv3XnFiknuGUUmFCgaBp4pZ6KpBnjPa59Hh66p3YB/QYih
+        DGiQO5LRkjgkFpfsZo0DQ5YvxV+9UaJc5KZWyow=
+X-Google-Smtp-Source: APXvYqyFuoyRlSXDjYvUjGpC3v15Fq1MINoED6Nm8UI7SCewQGRK7t4EFd08t605KjoTnJyFeyLibLTPt+LwwMFBvsY=
+X-Received: by 2002:a9d:6084:: with SMTP id m4mr197808otj.6.1569272199532;
+ Mon, 23 Sep 2019 13:56:39 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com> <1jsgons4wy.fsf@starbuckisacylon.baylibre.com>
-In-Reply-To: <1jsgons4wy.fsf@starbuckisacylon.baylibre.com>
+References: <20190921151223.768842-1-martin.blumenstingl@googlemail.com> <1jzhivs6n6.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jzhivs6n6.fsf@starbuckisacylon.baylibre.com>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Mon, 23 Sep 2019 22:49:37 +0200
-Message-ID: <CAFBinCAHD+D=a2mHeHMGq12MvoksHBr308jSrdcH+UYsUmwd8w@mail.gmail.com>
-Subject: Re: [PATCH 0/6] add the DDR clock controller on Meson8 and Meson8b
+Date:   Mon, 23 Sep 2019 22:56:28 +0200
+Message-ID: <CAFBinCA0NaCJEDfNEg+LRfW3wxfNFGbXmGS+z7D5792TsupVAA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] provide the XTAL clock via OF on Meson8/8b/8m2
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Neil Armstrong <narmstrong@baylibre.com>, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-amlogic@lists.infradead.org,
@@ -71,44 +71,55 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Jerome,
 
-On Mon, Sep 23, 2019 at 12:06 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+On Mon, Sep 23, 2019 at 11:29 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
 >
-> On Sat 21 Sep 2019 at 17:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+> On Sat 21 Sep 2019 at 17:12, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 >
-> > Meson8 and Meson8b SoCs embed a DDR clock controller in their MMCBUS
-> > registers. This series:
-> > - adds support for this DDR clock controller (patches 0 and 1)
-> > - wires up the DDR PLL as input for two audio clocks (patches 2 and 3)
->
-> Have you been able to validate somehow that DDR rate calculated by CCF
-> is the actual rate that gets to the audio clocks ?
-no, I haven't been able to validate this (yet)
-
-> While I understand the interest for completeness, I suspect the having
-> the DDR clock as an audio parent was just for debugging purpose. IOW,
-> I'm not sure if adding this parent is useful to an actual audio use
-> case. As far as audio would be concerned, I think we are better of
-> without this parent.
-there at least three other (potential) consumers of the ddr_pll clocks
-on the 32-bit SoCs:
-- CPU clock mux [0]
-- clk81 mux [1]
-- USB PHY [2]
-
-I have not validated any of these either
-
-> > - adds the DDR clock controller to meson8.dtsi and meson8b.dtsi
+> > So far the HHI clock controller has been providing the XTAL clock on
+> > Amlogic Meson8/Meson8b/Meson8m2 SoCs.
+> > This is not correct because the XTAL is actually a crystal on the
+> > boards and the SoC has a dedicated input for it.
 > >
+> > This updates the dt-bindings of the HHI clock controller and defines
+> > a fixed-clock in meson.dtsi (along with switching everything over to
+> > use this clock).
+> > The clock driver needs three updates to use this:
+> > - patch #2 uses clk_hw_set_parent in the CPU clock notifier. This drops
+> >   the explicit reference to CLKID_XTAL while at the same time making
+> >   the code much easier (thanks to Neil for providing this new method
+> >   as part of the G12A CPU clock bringup!)
+> > - patch #3 ensures that the clock driver doesn't rely on it's internal
+> >   XTAL clock while not losing support for older .dtbs that don't have
+> >   the XTAL clock input yet
+> > - with patch #4 the clock controller's own XTAL clock is not registered
+> >   anymore when a clock input is provided via OF
+> >
+> > This series is a functional no-op. It's main goal is to better represent
+> > how the actual hardware looks like.
 >
-> Could you please separate the driver and DT series in the future ? Those
-> take different paths and are meant for different maintainers.
-sure - so far Kevin has been doing a great job of still tracking these
-but I'm happy to split this into two patchsets
+> I'm a bit unsure about this series.
+>
+> On one hand, I totally agree with you ... having the xtal in DT is the
+> right way to do it ... when done from the start
+yep
+
+> On the other hand, things have been this way for years, they are working
+> and going for xtal in DT does not solve any pending issue. Doing this
+> means adding complexity in the driver to support both methods. It is
+> also quite a significant change in DT :/
+my two main motivations were:
+- keeping the 32-bit SoCs as similar as possible to the 64-bit ones in
+terms of "how are the [clock] drivers implemented"
+- with the DDR clock controller the .dts looked weird: &ddr_clkc took
+CLKID_XTAL from &clkc as input and &clkc took DDR_CLKID_DDR_PLL as
+input from &ddr_clkc
+
+RE complexity in the driver to support both:
+I still have a cleanup of the meson8b.c init code on my TODO-list
+because we're still supporting .dtbs without parent syscon
+my plan is to drop that code-path along with the newly added fallback
+for "skip CLKID_XTAL" (assuming this is accepted) together for v5.6 or
+v5.7
 
 
 Martin
-
-
-[0] https://github.com/endlessm/u-boot-meson/blob/345ee7eb02903f5ecb1173ffb2cd36666e44ebed/board/amlogic/m8b_m201_v1/firmware/timming.c#L441
-[1] https://github.com/endlessm/u-boot-meson/blob/345ee7eb02903f5ecb1173ffb2cd36666e44ebed/board/amlogic/m8b_m201_v1/firmware/timming.c#L452
-[2] https://github.com/endlessm/u-boot-meson/blob/f1ee03e3f7547d03e1478cc1fc967a9e5a121d92/arch/arm/cpu/aml_meson/m8/firmware/usb_boot/platform.c#L22
