@@ -2,50 +2,52 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD7DBC432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:54:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17010C4360C
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:54:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B42A1217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:54:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5506222C2
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:54:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344080;
-	bh=TkRXmpHdZvwNp4jqEj1dbBI2v217kXfJTlu2W7Axhqk=;
+	s=default; t=1569344083;
+	bh=yz1l+mX2kWTBNqWz5GwY4gYJsIc9SZG72FUV/512H3c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0+XeulV2YjbQJdh9XEkYDkZNLuIGjqJ5LTSBb9KP4GN3Yl0aTAVzJVaD9on3qJCxx
-	 Nr7Gea9BNmxJmDe088THoUhTkxd2dDTeOG16qXtWsuMvNt6sL4ZmcaMy3kzUBR6EVl
-	 eI5s4xmPQXqIxxZJjcjhsYZ1bAsJm1Zi9sCG2+ek=
+	b=UD4ivfeaaY0bmMGP+ugCb6S+L70byfv+FNvl+sP5OAGLwufN5hqwP+EBgjWUF3TfB
+	 TkSlafnNTBCwVBExxUWL1UFfI0MaT9sOUvBm5gKZ0sUGqxzctcevMZHZN9ZJfFGvTF
+	 MKself5yqt6PSPVIBM+3MiwI/aYZtSu1IuVqqr9w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441551AbfIXQvq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:51:46 -0400
-Received: from mail.kernel.org ([198.145.29.99]:45172 "EHLO mail.kernel.org"
+        id S2406742AbfIXQym (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:54:42 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45086 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2438166AbfIXQvp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:51:45 -0400
+        id S2411167AbfIXQvl (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:51:41 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 67F1D21906;
-        Tue, 24 Sep 2019 16:51:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6898A21D7A;
+        Tue, 24 Sep 2019 16:51:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343905;
-        bh=TkRXmpHdZvwNp4jqEj1dbBI2v217kXfJTlu2W7Axhqk=;
+        s=default; t=1569343901;
+        bh=yz1l+mX2kWTBNqWz5GwY4gYJsIc9SZG72FUV/512H3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2Cse0CpeMKRcreK/UgVrD4HFbbW8ImPAHnjE90L+pqEJbJMWP4do62RGdj9bWuYwy
-         SMkdqdtGPIpdV7eaEY4GeBug9uuUCOzGgG2kPBbgC6lHuoCrIy1io/N3mPbuAOB2Br
-         VX9xNJlddh/WlQc7a+SXNwRVqzGlSYVSUF1mlXBk=
+        b=W1MP71Yx00/nH2MjDKvqhPrxYEl4yCTJMcjEDgZEcc8dyw5cSFDsXqb6g5GDLBO5z
+         zYi4wIoCdb6UP30eFD6doefioXv42DSJycpSwPv3fBvTKnY1Be2x0LfFln242u5dGj
+         4zbRYkfwHatU/1fuWVWEHgsscN8V+fEao3oBFtSs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>, Guo Zeng <Guo.Zeng@csr.com>,
-        Barry Song <Baohua.Song@csr.com>,
+Cc:     Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 08/19] clk: sirf: Don't reference clk_init_data after registration
-Date:   Tue, 24 Sep 2019 12:51:19 -0400
-Message-Id: <20190924165130.28625-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 06/19] clk: qoriq: Fix -Wunused-const-variable
+Date:   Tue, 24 Sep 2019 12:51:17 -0400
+Message-Id: <20190924165130.28625-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165130.28625-1-sashal@kernel.org>
 References: <20190924165130.28625-1-sashal@kernel.org>
@@ -58,72 +60,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Nathan Huckleberry <nhuck@google.com>
 
-[ Upstream commit af55dadfbce35b4f4c6247244ce3e44b2e242b84 ]
+[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+drivers/clk/clk-qoriq.c:138:38: warning: unused variable
+'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp1
 
-Cc: Guo Zeng <Guo.Zeng@csr.com>
-Cc: Barry Song <Baohua.Song@csr.com>
+drivers/clk/clk-qoriq.c:146:38: warning: unused variable
+'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp2
+
+In the definition of the p5020 chip, the p2041 chip's info was used
+instead.  The p5020 and p2041 chips have different info. This is most
+likely a typo.
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/525
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Scott Wood <oss@buserror.net>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-6-sboyd@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sirf/clk-common.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/clk/clk-qoriq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sirf/clk-common.c b/drivers/clk/sirf/clk-common.c
-index 77e1e2491689b..edb7197cc4b4d 100644
---- a/drivers/clk/sirf/clk-common.c
-+++ b/drivers/clk/sirf/clk-common.c
-@@ -298,9 +298,10 @@ static u8 dmn_clk_get_parent(struct clk_hw *hw)
- {
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	u32 cfg = clkc_readl(clk->regofs);
-+	const char *name = clk_hw_get_name(hw);
- 
- 	/* parent of io domain can only be pll3 */
--	if (strcmp(hw->init->name, "io") == 0)
-+	if (strcmp(name, "io") == 0)
- 		return 4;
- 
- 	WARN_ON((cfg & (BIT(3) - 1)) > 4);
-@@ -312,9 +313,10 @@ static int dmn_clk_set_parent(struct clk_hw *hw, u8 parent)
- {
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	u32 cfg = clkc_readl(clk->regofs);
-+	const char *name = clk_hw_get_name(hw);
- 
- 	/* parent of io domain can only be pll3 */
--	if (strcmp(hw->init->name, "io") == 0)
-+	if (strcmp(name, "io") == 0)
- 		return -EINVAL;
- 
- 	cfg &= ~(BIT(3) - 1);
-@@ -354,7 +356,8 @@ static long dmn_clk_round_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	unsigned long fin;
- 	unsigned ratio, wait, hold;
--	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
-+	const char *name = clk_hw_get_name(hw);
-+	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
- 
- 	fin = *parent_rate;
- 	ratio = fin / rate;
-@@ -376,7 +379,8 @@ static int dmn_clk_set_rate(struct clk_hw *hw, unsigned long rate,
- 	struct clk_dmn *clk = to_dmnclk(hw);
- 	unsigned long fin;
- 	unsigned ratio, wait, hold, reg;
--	unsigned bits = (strcmp(hw->init->name, "mem") == 0) ? 3 : 4;
-+	const char *name = clk_hw_get_name(hw);
-+	unsigned bits = (strcmp(name, "mem") == 0) ? 3 : 4;
- 
- 	fin = parent_rate;
- 	ratio = fin / rate;
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 80ae2a51452d7..cdce49f6476aa 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -540,7 +540,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p5020_init_periph,
+ 		.cmux_groups = {
+-			&p2041_cmux_grp1, &p2041_cmux_grp2
++			&p5020_cmux_grp1, &p5020_cmux_grp2
+ 		},
+ 		.cmux_to_group = {
+ 			0, 1, -1
 -- 
 2.20.1
 
