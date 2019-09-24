@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69B85C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 813F1C432C2
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32DC6217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D79C2054F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344197;
-	bh=VZnmPg5IckIkj42+lltGSiTdBTdV0VvKLXMECgyNU+E=;
+	s=default; t=1569344218;
+	bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0e0tIfpjMuc11ZjqcA1oG2FPSMB77txeFvAqLNpu0pfSorerbeR7S4ZoT/duWZwaY
-	 NFnZKubrW3mRZElV8rjRj1SpJyT1KCfGmst6cTuKkIAX7RhTAFe9qRMVhqGEpoFWgx
-	 l6EjWLojVlJvzValy38WigICtLAZJltKieNH18s0=
+	b=U+Ca2Jd14lcgJaDuU8rTOUVf4h9GSsk805/7GqJr5fmTEe327D4+vnouST81gJLLc
+	 cM4vDbtXXvvXZVTJonY1V5bK1jimFFjh4+wLkrrh5x44OaMnidlT/1hm6F7loXQ4oC
+	 Uf2TwTIcEd/wC6QXi0FWBZYLwCTqSEcJryAf2oLc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfIXQ4g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:56:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41692 "EHLO mail.kernel.org"
+        id S1729488AbfIXQ45 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:56:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441469AbfIXQtZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:25 -0400
+        id S1730678AbfIXQtJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:09 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A10A221D7E;
-        Tue, 24 Sep 2019 16:49:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66D7221906;
+        Tue, 24 Sep 2019 16:49:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343764;
-        bh=VZnmPg5IckIkj42+lltGSiTdBTdV0VvKLXMECgyNU+E=;
+        s=default; t=1569343749;
+        bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p4vUa/Zgt5IJQSJ95Pp00Zf9t6ztsjDXatCPe7YtojWCNvsbHoRbnVFWP9INr3hDL
-         JSJq7l8qm6xA2Cq+TXGR9vEiYeVeAxZxZjml8o50qkqWT44JDIDqCEvwbSiKnLkOdV
-         Od/ZsfIU3OMEBm0cKW2LjNItglwJb0llSRbEEQ10=
+        b=JiG4kkP+CMBu3Z1irJUc6Zt2HgHxuCiF+9FME2jK3ysMRVgQhqJpPm4sujHLXwRbb
+         Q7EFdtByTwVnIXvCGiZj+xoTbdH3ts2ZDhlLbbsAEUEyIXSWnAkZlAZ0pTd07uSGJI
+         Fkh61Z6Oe0X74p/ypJ4MEAzc6wOCW3QJaVVsdHlw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 19/50] clk: actions: Don't reference clk_init_data after registration
-Date:   Tue, 24 Sep 2019 12:48:16 -0400
-Message-Id: <20190924164847.27780-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 14/50] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
+Date:   Tue, 24 Sep 2019 12:48:11 -0400
+Message-Id: <20190924164847.27780-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -58,49 +58,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit cf9ec1fc6d7cceb73e7f1efd079d2eae173fdf57 ]
+[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+The MMC2 clock slices are currently not defined in V3s CCU driver, which
+makes MMC2 not working.
 
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-2-sboyd@kernel.org
-[sboyd@kernel.org: Move name to after checking for error or NULL hw]
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Fix this issue.
+
+Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/actions/owl-common.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 61c1071b5180a..e9be34b17f3f5 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -67,16 +67,17 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
- 	struct clk_hw *hw;
- 
- 	for (i = 0; i < hw_clks->num; i++) {
-+		const char *name;
- 
- 		hw = hw_clks->hws[i];
--
- 		if (IS_ERR_OR_NULL(hw))
- 			continue;
- 
-+		name = hw->init->name;
- 		ret = devm_clk_hw_register(dev, hw);
- 		if (ret) {
- 			dev_err(dev, "Couldn't register clock %d - %s\n",
--				i, hw->init->name);
-+				i, name);
- 			return ret;
- 		}
- 	}
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index ac12f261f8caa..9e3f4088724b4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -499,6 +499,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+ 		[CLK_MMC1]		= &mmc1_clk.common.hw,
+ 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
+ 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
++		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
+ 		[CLK_CE]		= &ce_clk.common.hw,
+ 		[CLK_SPI0]		= &spi0_clk.common.hw,
+ 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
 -- 
 2.20.1
 
