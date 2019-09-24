@@ -6,108 +6,231 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6A5C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 20:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 302ACC432C2
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 23:12:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D3FA2168B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 20:20:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1568214DA
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 23:12:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569356417;
-	bh=1CorAmS8XtFV4yXtNftl8NnpMjYiQ/U6EHGYysnVmmQ=;
+	s=default; t=1569366746;
+	bh=+j5AnNwQqbgf/RjmaOj47PhlrItx9j7FWIaZz17xSJk=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=onkVHRIaIYsxbzmnGIFefo6z7OfyTqI/0oiAkXoH3lwRDupPl0Cml9k7fbTR34Lrp
-	 1cm4zqEsQGcgTF9h+V20O9da7AZXNRU3cbnP0xMQvrihDRDw5hsWuXXj11tlFMJ3YD
-	 3xkFKGZ+Qm+0kTQlCwt3H19tdNjslP282+C0Fj0s=
+	b=g/sj1hOIDG8y3TW9MiymoO3y+PIVbcPpe95GeXYv+5HMr1VrunwlrhKza7f16IVXw
+	 gt7UmG5JlOjNxQ9Dv4JEzRVMklXnB2IWDifYJ75/MSR2QxmyXEDW0ONm/3jDe4kH1u
+	 /jF/O5Q19z5GzumZeDdzKoUjvmDjoV9xNAzcz6HM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727891AbfIXUUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 16:20:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51848 "EHLO mail.kernel.org"
+        id S2406763AbfIXXMZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 19:12:25 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727264AbfIXUUQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 16:20:16 -0400
+        id S2389437AbfIXXMZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 19:12:25 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EFEBF20640;
-        Tue, 24 Sep 2019 20:20:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9012C207FD;
+        Tue, 24 Sep 2019 23:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569356416;
-        bh=1CorAmS8XtFV4yXtNftl8NnpMjYiQ/U6EHGYysnVmmQ=;
+        s=default; t=1569366743;
+        bh=+j5AnNwQqbgf/RjmaOj47PhlrItx9j7FWIaZz17xSJk=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=T3Vd7fmkABMggKs4QJTa2QS19/Mp7JeXBuGWJlrfj3AFrKdWzVDNxkS27ltN080+7
-         PForK+42VCuwL8nN5QWwd2rPhWVhehGEznqoSpWz83fT9hZnFIx4GKMAy5tJp/gpMe
-         MuKGeKUfk4UUuysJNCgXkDzyWtCaFhrUZebjkbOI=
+        b=gH92DrEndcCCHU6/4MPa6jo3NtGaa0u6iNz3U6tb/8zo5SH7Nob3dwlKOkhSyzZzi
+         xl0loW0SfMexj9nNqeKL+9BK7JyvK9IaxjatCtf5c1xUm492fCGe6H2XwmlhxrCJg3
+         Y1ea2aiR/GKHMN9nu5jHURN4wlEJGNE6G/RBOQho=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190924122147.fojcu5u44letrele@pengutronix.de>
-References: <20190920153906.20887-1-alexandre.belloni@bootlin.com> <20190924122147.fojcu5u44letrele@pengutronix.de>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <u.kleine-koenig@pengutronix.de>
+In-Reply-To: <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
+References: <20190918095018.17979-1-tdas@codeaurora.org> <20190918095018.17979-4-tdas@codeaurora.org> <20190918213946.DC03521924@mail.kernel.org> <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: at91: avoid sleeping early
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
 User-Agent: alot/0.8.1
-Date:   Tue, 24 Sep 2019 13:20:15 -0700
-Message-Id: <20190924202015.EFEBF20640@mail.kernel.org>
+Date:   Tue, 24 Sep 2019 16:12:22 -0700
+Message-Id: <20190924231223.9012C207FD@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Uwe  (2019-09-24 05:21:47)
-> On Fri, Sep 20, 2019 at 05:39:06PM +0200, Alexandre Belloni wrote:
-> > Note that this was already discussed a while ago and Arnd said this app=
-roach was
-> > reasonable:
-> >   https://lore.kernel.org/lkml/6120818.MyeJZ74hYa@wuerfel/
+Quoting Taniya Das (2019-09-23 01:01:11)
+> Hi Stephen,
+>=20
+> Thanks for your comments.
+>=20
+> On 9/19/2019 3:09 AM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2019-09-18 02:50:18)
+> >> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc71=
+80.c
+> >> new file mode 100644
+> >> index 000000000000..d47865d5408f
+> >> --- /dev/null
+> >> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> >> @@ -0,0 +1,2515 @@
+> >> +// SPDX-License-Identifier: GPL-2.0
+> >> +/*
+> >> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> >> + */
+> >> +
+> >> +#include <linux/err.h>
+> >> +#include <linux/kernel.h>
+> >> +#include <linux/module.h>
+> >> +#include <linux/of.h>
+> >> +#include <linux/of_device.h>
+> >> +#include <linux/regmap.h>
 > >=20
-> >  drivers/clk/at91/clk-main.c |  5 ++++-
-> >  drivers/clk/at91/sckc.c     | 20 ++++++++++++++++----
-> >  2 files changed, 20 insertions(+), 5 deletions(-)
+> > include clk-provider.h
 > >=20
-> > diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-> > index f607ee702c83..ccd48e7a3d74 100644
-> > --- a/drivers/clk/at91/clk-main.c
-> > +++ b/drivers/clk/at91/clk-main.c
-> > @@ -293,7 +293,10 @@ static int clk_main_probe_frequency(struct regmap =
-*regmap)
-> >               regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
-> >               if (mcfr & AT91_PMC_MAINRDY)
-> >                       return 0;
-> > -             usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
-> > +             if (system_state < SYSTEM_RUNNING)
-> > +                     udelay(MAINF_LOOP_MIN_WAIT);
-> > +             else
-> > +                     usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_=
-WAIT);
 >=20
-> Given that this construct is introduced several times, I wonder if we
-> want something like:
->=20
->         static inline void early_usleep_range(unsigned long min, unsigned=
- long max)
->         {
->                 if (system_state < SYSTEM_RUNNING)
->                         udelay(min);
->                 else
->                         usleep_range(min, max);
->         }
->=20
+> will add this header.
+> Currently the <drivers/clk/qcom/clk-regmap.h> already includes it.
 
-Maybe, but I think the intent is to not encourage this behavior? So
-providing a wrapper will make it "easy" and then we'll have to tell
-users to stop calling it. Another idea would be to make usleep_range()
-"do the right thing" and call udelay if the system isn't running. And
-another idea from tlgx[1] is to pull the delay logic into another clk op
-that we can call to see when the enable or prepare is done. That may be
-possible by introducing another clk_ops callback that when present
-indicates we should sleep or delay for so much time while waiting for
-the prepare or enable to complete.
+Yes but it should be included in any clk-provider drivers too.
 
-[1] https://lkml.kernel.org/r/alpine.DEB.2.11.1606061448010.28031@nanos
+> >> +
+> >> +/* Leave the clock ON for parent config_noc_clk to be kept enabled */
+> >> +static struct clk_branch gcc_disp_ahb_clk =3D {
+> >> +       .halt_reg =3D 0xb00c,
+> >> +       .halt_check =3D BRANCH_HALT,
+> >> +       .hwcg_reg =3D 0xb00c,
+> >> +       .hwcg_bit =3D 1,
+> >> +       .clkr =3D {
+> >> +               .enable_reg =3D 0xb00c,
+> >> +               .enable_mask =3D BIT(0),
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "gcc_disp_ahb_clk",
+> >> +                       .flags =3D CLK_IS_CRITICAL,
+> >=20
+> > Does this assume the display is left enabled out of the bootloader? Why
+> > is this critical to system operation? Maybe it is really
+> > CLK_IGNORE_UNUSED?
+> >=20
+>=20
+> This clock is not kept enabled by bootloader. But leaving this ON for=20
+> clients on config noc.
+
+Please see below comment for the other critical clk with no parent.
+
+>=20
+> >> +                       .ops =3D &clk_branch2_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+[...]
+> >> +static struct clk_branch gcc_ufs_phy_phy_aux_clk =3D {
+> >> +       .halt_reg =3D 0x77094,
+> >> +       .halt_check =3D BRANCH_HALT,
+> >> +       .hwcg_reg =3D 0x77094,
+> >> +       .hwcg_bit =3D 1,
+> >> +       .clkr =3D {
+> >> +               .enable_reg =3D 0x77094,
+> >> +               .enable_mask =3D BIT(0),
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "gcc_ufs_phy_phy_aux_clk",
+> >> +                       .parent_data =3D &(const struct clk_parent_dat=
+a){
+> >> +                               .hw =3D &gcc_ufs_phy_phy_aux_clk_src.c=
+lkr.hw,
+> >> +                       },
+> >> +                       .num_parents =3D 1,
+> >> +                       .flags =3D CLK_SET_RATE_PARENT,
+> >> +                       .ops =3D &clk_branch2_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+> >> +static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk =3D {
+> >> +       .halt_reg =3D 0x7701c,
+> >> +       .halt_check =3D BRANCH_HALT_SKIP,
+> >=20
+> > Again, nobody has fixed the UFS driver to not need to do this halt skip
+> > check for these clks? It's been over a year.
+> >=20
+>=20
+> The UFS_PHY_RX/TX clocks could be left enabled due to certain HW boot=20
+> configuration and thus during the late initcall of clk_disable there=20
+> could be warnings of "clock stuck ON" in the dmesg. That is the reason=20
+> also to use the BRANCH_HALT_SKIP flag.
+
+Oh that's bad. Why do the clks stay on when we try to turn them off?
+
+>=20
+> I would also check internally for the UFS driver fix you are referring he=
+re.
+
+Sure. I keep asking but nothing is done :(
+
+>=20
+> >> +       .clkr =3D {
+> >> +               .enable_reg =3D 0x7701c,
+> >> +               .enable_mask =3D BIT(0),
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "gcc_ufs_phy_rx_symbol_0_clk",
+> >> +                       .ops =3D &clk_branch2_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+[...]
+> >> +
+> >> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk =3D {
+> >> +       .halt_reg =3D 0xf058,
+> >> +       .halt_check =3D BRANCH_HALT_SKIP,
+> >=20
+> > Why does this need halt_skip?
+>=20
+> This is required as the source is external PHY, so we want to not check=20
+> for HALT.
+
+This doesn't really answer my question. If the source is an external phy
+then it should be listed as a clock in the DT binding and the parent
+should be specified here. Unless something doesn't work because of that?
+
+>=20
+> >=20
+> >> +       .clkr =3D {
+> >> +               .enable_reg =3D 0xf058,
+> >> +               .enable_mask =3D BIT(0),
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "gcc_usb3_prim_phy_pipe_clk",
+> >> +                       .ops =3D &clk_branch2_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+> >> +static struct clk_branch gcc_usb_phy_cfg_ahb2phy_clk =3D {
+> >> +       .halt_reg =3D 0x6a004,
+> >> +       .halt_check =3D BRANCH_HALT,
+> >> +       .hwcg_reg =3D 0x6a004,
+> >> +       .hwcg_bit =3D 1,
+> >> +       .clkr =3D {
+> >> +               .enable_reg =3D 0x6a004,
+> >> +               .enable_mask =3D BIT(0),
+> >> +               .hw.init =3D &(struct clk_init_data){
+> >> +                       .name =3D "gcc_usb_phy_cfg_ahb2phy_clk",
+> >> +                       .ops =3D &clk_branch2_ops,
+> >> +               },
+> >> +       },
+> >> +};
+> >> +
+> >> +/* Leave the clock ON for parent config_noc_clk to be kept enabled */
+> >=20
+> > There's no parent though... So I guess this means it keeps it enabled
+> > implicitly in hardware?
+> >=20
+>=20
+> These are not left enabled, but want to leave them enabled for clients=20
+> on config NOC.
+
+Sure. It just doesn't make sense to create clk structures and expose
+them in the kernel when we just want to turn the bits on and leave them
+on forever. Why not just do some register writes in probe for this
+driver? Doesn't that work just as well and use less memory?
 
