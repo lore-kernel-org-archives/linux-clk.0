@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 411C2C4320D
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B5E1C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1013A2190F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 517782054F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344511;
-	bh=xXqTTNREpLdYn6bT7Dacf3FS8rp75G+TLfM3oBVMFtk=;
+	s=default; t=1569344526;
+	bh=UAfTYj9dSSWlNwqhJHR1m9xmDES6sax0XfOL7/szap8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SzNzdjbZ7cejBsOWt2VSyTAXhq9Vu5YYTxDKnP8sfY4JYvm9L0Byi7BQKTcqIBLlE
-	 95zD7SKhUDeLUGSk+WRhpXSunu/294V/gC+rWkPWwUzGmgp7R8fDyVDUyKijK8Wgiy
-	 Lui/UDUAZWn2xXqWNoLY2jpEjZAYnfKJfVT8SNZo=
+	b=tz6RwD/8wf9qbBOsft6teTt8Fs+GmoQABAKXBfWKG6TjBR4X/wRpdYgho4aa4F8re
+	 chkUrMIevp2EzxU2dt5n4Uu87exY2F6/+e35JBNFjwHZSC4j466kv6QLQC570mGhIk
+	 rPYCpI7ctKXj8Kf71QIdyDA7PfAJzNrVUFiCVncI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393674AbfIXRBm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 13:01:42 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60280 "EHLO mail.kernel.org"
+        id S2632865AbfIXQnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:43:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632926AbfIXQn0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:43:26 -0400
+        id S2632858AbfIXQnA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:43:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 289EA21783;
-        Tue, 24 Sep 2019 16:43:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8C22217F4;
+        Tue, 24 Sep 2019 16:42:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343405;
-        bh=xXqTTNREpLdYn6bT7Dacf3FS8rp75G+TLfM3oBVMFtk=;
+        s=default; t=1569343379;
+        bh=UAfTYj9dSSWlNwqhJHR1m9xmDES6sax0XfOL7/szap8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aZwyQtXfJc3jldUllK5ex0GdFIq936XfR8XeQSRI2383aYRhv6hX3Haotc3z29HoQ
-         GPkYCtK6pCXIxuJYgnMOaKUsFtkAgDfgxEu/Zwu+Y1sLG+bElhYF4flr1RkUwmkhoy
-         VC6avXwOYdURJFwa70FOiMZHAZEe6boxP1tYFiO0=
+        b=Rz8+Cy1l3KFTmxEVra0N74tNBOIF52eryfCGmlyuczNKcCrad866ILHWJJ3HR+8ca
+         Rd5RJsm0ikNs2XLQmZzl7Lzn9cRXX7kmixtoErKDMYPLgcF/S/dutEOjGVgMyCb4oL
+         4vCf9/x5BBB2U5enwugwrSAAx4upu9OtFRWVKVv8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 36/87] clk: actions: Don't reference clk_init_data after registration
-Date:   Tue, 24 Sep 2019 12:40:52 -0400
-Message-Id: <20190924164144.25591-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 28/87] clk: ingenic/jz4740: Fix "pll half" divider not read/written properly
+Date:   Tue, 24 Sep 2019 12:40:44 -0400
+Message-Id: <20190924164144.25591-28-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -58,49 +58,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit cf9ec1fc6d7cceb73e7f1efd079d2eae173fdf57 ]
+[ Upstream commit 568b9de48d80bcf1a92e2c4fa67651abbb8ebfe2 ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+The code was setting the bit 21 of the CPCCR register to use a divider
+of 2 for the "pll half" clock, and clearing the bit to use a divider
+of 1.
 
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+This is the opposite of how this register field works: a cleared bit
+means that the /2 divider is used, and a set bit means that the divider
+is 1.
+
+Restore the correct behaviour using the newly introduced .div_table
+field.
+
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Link: https://lkml.kernel.org/r/20190701113606.4130-1-paul@crapouillou.net
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-2-sboyd@kernel.org
-[sboyd@kernel.org: Move name to after checking for error or NULL hw]
-Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/actions/owl-common.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/ingenic/jz4740-cgu.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
-index 32dd29e0a37e1..4de97cc7cb54d 100644
---- a/drivers/clk/actions/owl-common.c
-+++ b/drivers/clk/actions/owl-common.c
-@@ -68,16 +68,17 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
- 	struct clk_hw *hw;
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 4c0a20949c2c2..9b27d75d9485c 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -53,6 +53,10 @@ static const u8 jz4740_cgu_cpccr_div_table[] = {
+ 	1, 2, 3, 4, 6, 8, 12, 16, 24, 32,
+ };
  
- 	for (i = 0; i < hw_clks->num; i++) {
-+		const char *name;
++static const u8 jz4740_cgu_pll_half_div_table[] = {
++	2, 1,
++};
++
+ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
  
- 		hw = hw_clks->hws[i];
--
- 		if (IS_ERR_OR_NULL(hw))
- 			continue;
+ 	/* External clocks */
+@@ -86,7 +90,10 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 	[JZ4740_CLK_PLL_HALF] = {
+ 		"pll half", CGU_CLK_DIV,
+ 		.parents = { JZ4740_CLK_PLL, -1, -1, -1 },
+-		.div = { CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1 },
++		.div = {
++			CGU_REG_CPCCR, 21, 1, 1, -1, -1, -1,
++			jz4740_cgu_pll_half_div_table,
++		},
+ 	},
  
-+		name = hw->init->name;
- 		ret = devm_clk_hw_register(dev, hw);
- 		if (ret) {
- 			dev_err(dev, "Couldn't register clock %d - %s\n",
--				i, hw->init->name);
-+				i, name);
- 			return ret;
- 		}
- 	}
+ 	[JZ4740_CLK_CCLK] = {
 -- 
 2.20.1
 
