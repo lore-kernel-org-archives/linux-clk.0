@@ -2,55 +2,55 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EADEC432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:48:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EEFC432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:49:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47D94217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:48:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3DC621971
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:49:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343714;
-	bh=2w4J4EU+vkn9b/OZxn8whPVPfDR0AZ6c1hgoTTdibcM=;
+	s=default; t=1569343750;
+	bh=9EMZoMlOTp277FGr1ArlagX6CsLtls8Fgtekm+PH48w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xTsCT++PuNYQ+x2+UIerBNZFwo5QFvWoHQYDkCgDaJtNTd0nyuKv7z+LqaiRq9TJG
-	 NQXqxV4k8qJ8D/2SWrTeCaOSLNJLtQoLqiHiMX/5hQ5QVrIN8jCUvoeaLHS90fOk5q
-	 y/LQdVdH+4cGY64GXH3fM0ojwO1mwdtArO4TKI/k=
+	b=R1SZJ6q0idn3dRcg0e+ZuFMRimZZNy0SCnjWTc8hgyZJftpiaACXtRDbCCzJHg6NJ
+	 GcQIqmwmd6CFhBeihwUzO0q9xyGFH+i/+YG7jlu4dfc6upDxvmka5v6JNGs+P6yxhH
+	 yYyrrwEclLxsCZ2J8aURmZQFiJfhM0I1UIedw5A0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410517AbfIXQsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:48:33 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40218 "EHLO mail.kernel.org"
+        id S2410246AbfIXQtJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:49:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41310 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410512AbfIXQsc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:32 -0400
+        id S2410240AbfIXQtI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:08 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FD2121971;
-        Tue, 24 Sep 2019 16:48:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24769217D9;
+        Tue, 24 Sep 2019 16:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343712;
-        bh=2w4J4EU+vkn9b/OZxn8whPVPfDR0AZ6c1hgoTTdibcM=;
+        s=default; t=1569343748;
+        bh=9EMZoMlOTp277FGr1ArlagX6CsLtls8Fgtekm+PH48w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MckfMuyK1T+OOoJm58AK6bNGd7WHzLzvJwXCd7TB0jLw5EEcdADvc2YbAh0qAKOkN
-         ATEw99YD8F3LA2k5Abmr2QyCMAN2MFpeA1oJkjKtFtLwjjALNBsbLNhUjc3tx2R/CK
-         K291nWbGHkiqWQVDW5DYygZZaOt/TAnodmvOZak8=
+        b=nu3vvE6JL3r2onHKea7bb5ioswXFCHfWpe6Dn8RsjU8DRaCJx0tOLrhsdgph3lT3L
+         4XfNERemyRh+2o8PueNtiWTdn6Q+erAQ0c60IU1J3mTE5CsMgX4heljGwunKLK+APC
+         9MxgQmL6zpvoTh77dXyUN3Nw+XyeA5LESONw6S5s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Nathan Huckleberry <nhuck@google.com>,
+        clang-built-linux@googlegroups.com,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 62/70] clk: Make clk_bulk_get_all() return a valid "id"
-Date:   Tue, 24 Sep 2019 12:45:41 -0400
-Message-Id: <20190924164549.27058-62-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 13/50] clk: qoriq: Fix -Wunused-const-variable
+Date:   Tue, 24 Sep 2019 12:48:10 -0400
+Message-Id: <20190924164847.27780-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
-References: <20190924164549.27058-1-sashal@kernel.org>
+In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
+References: <20190924164847.27780-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,51 +60,47 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Nathan Huckleberry <nhuck@google.com>
 
-[ Upstream commit 7f81c2426587b34bf73e643c1a6d080dfa14cf8a ]
+[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
 
-The adreno driver expects the "id" field of the returned clk_bulk_data
-to be filled in with strings from the clock-names property.
+drivers/clk/clk-qoriq.c:138:38: warning: unused variable
+'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp1
 
-But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
-receives a list of bogus pointers instead.
+drivers/clk/clk-qoriq.c:146:38: warning: unused variable
+'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
+clockgen_muxinfo p5020_cmux_grp2
 
-Zero-initialize the "id" field and attempt to populate with strings from
-the clock-names property to resolve both these issues.
+In the definition of the p5020 chip, the p2041 chip's info was used
+instead.  The p5020 and p2041 chips have different info. This is most
+likely a typo.
 
-Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
-Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
-Cc: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lkml.kernel.org/r/20190913024029.2640-1-bjorn.andersson@linaro.org
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Link: https://github.com/ClangBuiltLinux/linux/issues/525
+Cc: clang-built-linux@googlegroups.com
+Signed-off-by: Nathan Huckleberry <nhuck@google.com>
+Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Acked-by: Scott Wood <oss@buserror.net>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-bulk.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/clk-qoriq.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 06499568cf076..db5096fa9a170 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -18,10 +18,13 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	int ret;
- 	int i;
- 
--	for (i = 0; i < num_clks; i++)
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].id = NULL;
- 		clks[i].clk = NULL;
-+	}
- 
- 	for (i = 0; i < num_clks; i++) {
-+		of_property_read_string_index(np, "clock-names", i, &clks[i].id);
- 		clks[i].clk = of_clk_get(np, i);
- 		if (IS_ERR(clks[i].clk)) {
- 			ret = PTR_ERR(clks[i].clk);
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 3a1812f65e5d8..8abc5c8cb8b8c 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -610,7 +610,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.guts_compat = "fsl,qoriq-device-config-1.0",
+ 		.init_periph = p5020_init_periph,
+ 		.cmux_groups = {
+-			&p2041_cmux_grp1, &p2041_cmux_grp2
++			&p5020_cmux_grp1, &p5020_cmux_grp2
+ 		},
+ 		.cmux_to_group = {
+ 			0, 1, -1
 -- 
 2.20.1
 
