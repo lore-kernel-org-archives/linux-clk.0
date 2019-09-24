@@ -2,51 +2,51 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F2FC43630
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C06DC432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D9ED2054F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B8CC2054F
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 17:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344539;
-	bh=2q6xEFHuaBCJckqpbWV8+FPNL6zSQ5+BT+Wwq/4urfg=;
+	s=default; t=1569344561;
+	bh=ghPfPE3Dv9KM5BihfJgp2aHVM6ja4supiXXbg586G2g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NK//FYkZ9j8qu0YuxxlhyAJansTT5msVMCmTgE0HlG5spCWs1N40Gktl32BhN4VVu
-	 kbD9wJfumYDqA9KWcA054VwCHrdJB1WrXBDcTN5lyhfmRg5RcbQ/3+ImRbVZBgJ4on
-	 XSC4CAvhEOAywzdzzc6AcbZJ5sR61TiZXH2FsHBM=
+	b=vSuqvUCwLfWvbc2KLM3tNHEbg/Z1TXuKVlV82Vrvj+eo9yXWQlRjBXIFvjy/EMzTb
+	 ib+sJsV9WodOQh+8MByC9BUhFiikb2P+mKNCLCPDzNH2S1wnRx5BB9g18uMfCxEQt0
+	 Tng9snXerjASw6N+dKpicEC6uGVDvIy3yXIGVQ6Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633007AbfIXQnc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:43:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60420 "EHLO mail.kernel.org"
+        id S2411063AbfIXRCS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 13:02:18 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60468 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2403816AbfIXQnb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:43:31 -0400
+        id S2633015AbfIXQnd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:43:33 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E06B421906;
-        Tue, 24 Sep 2019 16:43:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C08621928;
+        Tue, 24 Sep 2019 16:43:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343410;
-        bh=2q6xEFHuaBCJckqpbWV8+FPNL6zSQ5+BT+Wwq/4urfg=;
+        s=default; t=1569343412;
+        bh=ghPfPE3Dv9KM5BihfJgp2aHVM6ja4supiXXbg586G2g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sWlJRHpkvomPIUZj+c9+liP56e3Vpf6Z34PehT29hIB4B1hLJTgAXq9qNgGIBHo5D
-         dgoXe4pEaUf83ejedkq9OHp5h7uYwi0S6cVYgUjND+EQW5bGDVUViO8oZz1govkx0D
-         3LvLq7m45b2PJjM+/yh/3tWQDW7E0jDmmb2q4ni0=
+        b=Fn9qKZVgVqQsHe8ut5F/IUcQl9ApKfoIUg7DWF7iqIbLlsfO4Q6GXY3SIQGwhQRUg
+         j4fZIqOCOAGRtNE6rKtfaTcLSJrvTNtkVv3wqcjBp6TOxzsrVJlR4PdBxe5Tzvv0pz
+         xMqq8YfkZoN7+vREIiiXJnnNsH+MUQ5fSZAlwlgE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Chunyan Zhang <zhang.chunyan@linaro.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 39/87] clk: sprd: Don't reference clk_init_data after registration
-Date:   Tue, 24 Sep 2019 12:40:55 -0400
-Message-Id: <20190924164144.25591-39-sashal@kernel.org>
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 41/87] clk: sunxi: Don't call clk_hw_get_name() on a hw that isn't registered
+Date:   Tue, 24 Sep 2019 12:40:57 -0400
+Message-Id: <20190924164144.25591-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -61,46 +61,42 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit f6c90df8e7e33c3dc33d4d7471bc42c232b0510e ]
+[ Upstream commit a7b85ad25a97cf897b4819a121655c483d86156f ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+The implementation of clk_hw_get_name() relies on the clk_core
+associated with the clk_hw pointer existing. If of_clk_hw_register()
+fails, there isn't a clk_core created yet, so calling clk_hw_get_name()
+here fails. Extract the name first so we can print it later.
 
-Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
-Cc: Baolin Wang <baolin.wang@linaro.org>
+Fixes: 1d80c14248d6 ("clk: sunxi-ng: Add common infrastructure")
+Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+Cc: Chen-Yu Tsai <wens@csie.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-8-sboyd@kernel.org
-Acked-by: Baolin Wang <baolin.wang@linaro.org>
-Acked-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/common.c | 5 +++--
+ drivers/clk/sunxi-ng/ccu_common.c | 5 +++--
  1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
-index a5bdca1de5d07..9d56eac43832a 100644
---- a/drivers/clk/sprd/common.c
-+++ b/drivers/clk/sprd/common.c
-@@ -76,16 +76,17 @@ int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
- 	struct clk_hw *hw;
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index 7fe3ac980e5f9..2e20e650b6c01 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -97,14 +97,15 @@ int sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
  
- 	for (i = 0; i < clkhw->num; i++) {
+ 	for (i = 0; i < desc->hw_clks->num ; i++) {
+ 		struct clk_hw *hw = desc->hw_clks->hws[i];
 +		const char *name;
  
- 		hw = clkhw->hws[i];
--
  		if (!hw)
  			continue;
  
 +		name = hw->init->name;
- 		ret = devm_clk_hw_register(dev, hw);
+ 		ret = of_clk_hw_register(node, hw);
  		if (ret) {
- 			dev_err(dev, "Couldn't register clock %d - %s\n",
--				i, hw->init->name);
-+				i, name);
- 			return ret;
+-			pr_err("Couldn't register clock %d - %s\n",
+-			       i, clk_hw_get_name(hw));
++			pr_err("Couldn't register clock %d - %s\n", i, name);
+ 			goto err_clk_unreg;
  		}
  	}
 -- 
