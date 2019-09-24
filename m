@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51177C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:48:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EADEC432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:48:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2884D21906
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:48:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47D94217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:48:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343702;
-	bh=BlKSi1Xq4EuPHJSs1tQuJ38g3c84qR75o+FZ4x/DhnU=;
+	s=default; t=1569343714;
+	bh=2w4J4EU+vkn9b/OZxn8whPVPfDR0AZ6c1hgoTTdibcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=K9gQpRSc8ZXibr8Yvp9tHK6WEh2/yDW9F37bE7pg9ydtQIeeHDRG7aSNSUnqhbN+C
-	 ba4nsqLFT0MfilW1AtRv5OFXmkh+7OW/1wJ07V3+CSg1mEHSmMgL2xZH7YKMCBiv2/
-	 zXbNbWO5cnk3x+kXJgS0lZOVxZ0VkueU5VbMm4CU=
+	b=xTsCT++PuNYQ+x2+UIerBNZFwo5QFvWoHQYDkCgDaJtNTd0nyuKv7z+LqaiRq9TJG
+	 NQXqxV4k8qJ8D/2SWrTeCaOSLNJLtQoLqiHiMX/5hQ5QVrIN8jCUvoeaLHS90fOk5q
+	 y/LQdVdH+4cGY64GXH3fM0ojwO1mwdtArO4TKI/k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730195AbfIXQsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:48:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39972 "EHLO mail.kernel.org"
+        id S2410517AbfIXQsd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:48:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410480AbfIXQsU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:20 -0400
+        id S2410512AbfIXQsc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:48:32 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 590C720673;
-        Tue, 24 Sep 2019 16:48:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FD2121971;
+        Tue, 24 Sep 2019 16:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343699;
-        bh=BlKSi1Xq4EuPHJSs1tQuJ38g3c84qR75o+FZ4x/DhnU=;
+        s=default; t=1569343712;
+        bh=2w4J4EU+vkn9b/OZxn8whPVPfDR0AZ6c1hgoTTdibcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EQoTQ3rDlc478PoonJXScutqgo0JIQ0GKsy+EPh//K15c75Ww8jU4kx61gxlAeNQD
-         ma697svQCNEtu2qTN2bMcsZl0Swim4FvO7Gw2MV7UGabPQymgEnbkgjkqLxH44IjfF
-         3GD6tKL282It9Mnt53K5lXZaddnogBKczOZxcUEo=
+        b=MckfMuyK1T+OOoJm58AK6bNGd7WHzLzvJwXCd7TB0jLw5EEcdADvc2YbAh0qAKOkN
+         ATEw99YD8F3LA2k5Abmr2QyCMAN2MFpeA1oJkjKtFtLwjjALNBsbLNhUjc3tx2R/CK
+         K291nWbGHkiqWQVDW5DYygZZaOt/TAnodmvOZak8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 59/70] clk: at91: select parent if main oscillator or bypass is enabled
-Date:   Tue, 24 Sep 2019 12:45:38 -0400
-Message-Id: <20190924164549.27058-59-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 62/70] clk: Make clk_bulk_get_all() return a valid "id"
+Date:   Tue, 24 Sep 2019 12:45:41 -0400
+Message-Id: <20190924164549.27058-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -60,71 +60,51 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Eugen Hristev <eugen.hristev@microchip.com>
+From: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-[ Upstream commit 69a6bcde7fd3fe6f3268ce26f31d9d9378384c98 ]
+[ Upstream commit 7f81c2426587b34bf73e643c1a6d080dfa14cf8a ]
 
-Selecting the right parent for the main clock is done using only
-main oscillator enabled bit.
-In case we have this oscillator bypassed by an external signal (no driving
-on the XOUT line), we still use external clock, but with BYPASS bit set.
-So, in this case we must select the same parent as before.
-Create a macro that will select the right parent considering both bits from
-the MOR register.
-Use this macro when looking for the right parent.
+The adreno driver expects the "id" field of the returned clk_bulk_data
+to be filled in with strings from the clock-names property.
 
-Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Link: https://lkml.kernel.org/r/1568042692-11784-2-git-send-email-eugen.hristev@microchip.com
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
+receives a list of bogus pointers instead.
+
+Zero-initialize the "id" field and attempt to populate with strings from
+the clock-names property to resolve both these issues.
+
+Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
+Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
+Cc: Dong Aisheng <aisheng.dong@nxp.com>
+Cc: Jordan Crouse <jcrouse@codeaurora.org>
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Link: https://lkml.kernel.org/r/20190913024029.2640-1-bjorn.andersson@linaro.org
+Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/clk-main.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/clk/clk-bulk.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-index f607ee702c838..311cea0c3ae2b 100644
---- a/drivers/clk/at91/clk-main.c
-+++ b/drivers/clk/at91/clk-main.c
-@@ -21,6 +21,10 @@
+diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
+index 06499568cf076..db5096fa9a170 100644
+--- a/drivers/clk/clk-bulk.c
++++ b/drivers/clk/clk-bulk.c
+@@ -18,10 +18,13 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
+ 	int ret;
+ 	int i;
  
- #define MOR_KEY_MASK		(0xff << 16)
+-	for (i = 0; i < num_clks; i++)
++	for (i = 0; i < num_clks; i++) {
++		clks[i].id = NULL;
+ 		clks[i].clk = NULL;
++	}
  
-+#define clk_main_parent_select(s)	(((s) & \
-+					(AT91_PMC_MOSCEN | \
-+					AT91_PMC_OSCBYPASS)) ? 1 : 0)
-+
- struct clk_main_osc {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
-@@ -113,7 +117,7 @@ static int clk_main_osc_is_prepared(struct clk_hw *hw)
- 
- 	regmap_read(regmap, AT91_PMC_SR, &status);
- 
--	return (status & AT91_PMC_MOSCS) && (tmp & AT91_PMC_MOSCEN);
-+	return (status & AT91_PMC_MOSCS) && clk_main_parent_select(tmp);
- }
- 
- static const struct clk_ops main_osc_ops = {
-@@ -450,7 +454,7 @@ static u8 clk_sam9x5_main_get_parent(struct clk_hw *hw)
- 
- 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
- 
--	return status & AT91_PMC_MOSCEN ? 1 : 0;
-+	return clk_main_parent_select(status);
- }
- 
- static const struct clk_ops sam9x5_main_ops = {
-@@ -492,7 +496,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
- 	clkmain->hw.init = &init;
- 	clkmain->regmap = regmap;
- 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
--	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
-+	clkmain->parent = clk_main_parent_select(status);
- 
- 	hw = &clkmain->hw;
- 	ret = clk_hw_register(NULL, &clkmain->hw);
+ 	for (i = 0; i < num_clks; i++) {
++		of_property_read_string_index(np, "clock-names", i, &clks[i].id);
+ 		clks[i].clk = of_clk_get(np, i);
+ 		if (IS_ERR(clks[i].clk)) {
+ 			ret = PTR_ERR(clks[i].clk);
 -- 
 2.20.1
 
