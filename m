@@ -4,77 +4,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD63C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:00:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03513C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:22:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20DD72168B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:00:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D1CF6214AF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:21:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2395395AbfIXMAV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 08:00:21 -0400
-Received: from relay7-d.mail.gandi.net ([217.70.183.200]:47041 "EHLO
-        relay7-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388614AbfIXMAV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Sep 2019 08:00:21 -0400
-X-Originating-IP: 90.65.161.137
-Received: from localhost (lfbn-1-1545-137.w90-65.abo.wanadoo.fr [90.65.161.137])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay7-d.mail.gandi.net (Postfix) with ESMTPSA id 5909A20018;
-        Tue, 24 Sep 2019 12:00:19 +0000 (UTC)
-Date:   Tue, 24 Sep 2019 14:00:18 +0200
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Eugen.Hristev@microchip.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        id S1730372AbfIXMV7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 08:21:59 -0400
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55093 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726851AbfIXMV7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Sep 2019 08:21:59 -0400
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iCjpI-0006IT-GQ; Tue, 24 Sep 2019 14:21:52 +0200
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iCjpD-00085A-Ku; Tue, 24 Sep 2019 14:21:47 +0200
+Date:   Tue, 24 Sep 2019 14:21:47 +0200
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, Nicolas.Ferre@microchip.com
-Subject: Re: [PATCH] clk: at91: sam9x60: fix programmable clock
-Message-ID: <20190924120018.GA4757@piout.net>
-References: <1569321191-27606-1-git-send-email-eugen.hristev@microchip.com>
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: at91: avoid sleeping early
+Message-ID: <20190924122147.fojcu5u44letrele@pengutronix.de>
+References: <20190920153906.20887-1-alexandre.belloni@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <1569321191-27606-1-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190920153906.20887-1-alexandre.belloni@bootlin.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/09/2019 10:39:09+0000, Eugen.Hristev@microchip.com wrote:
-> From: Eugen Hristev <eugen.hristev@microchip.com>
+On Fri, Sep 20, 2019 at 05:39:06PM +0200, Alexandre Belloni wrote:
+> It is not allowed to sleep to early in the boot process and this may lead
+> to kernel issues if the bootloader didn't prepare the slow clock and main
+> clock.
 > 
-> The prescaler mask for sam9x60 must be 0xff (8 bits).
-> Being set to 0, means that we cannot set any prescaler, thus the
-> programmable clocks do not work (except the case with prescaler 0)
-> Set the mask accordingly in layout struct.
+> This results in the following error and dump stack on the AriettaG25:
+>    bad: scheduling from the idle thread!
 > 
-> Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Ensure it is possible to sleep, else simply have a delay.
+> 
+> Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-> ---
->  drivers/clk/at91/sam9x60.c | 1 +
->  1 file changed, 1 insertion(+)
+Tested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+
+See below for a comment.
+
+> Note that this was already discussed a while ago and Arnd said this approach was
+> reasonable:
+>   https://lore.kernel.org/lkml/6120818.MyeJZ74hYa@wuerfel/
 > 
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index 9790ddf..86238d5 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -43,6 +43,7 @@ static const struct clk_pll_characteristics upll_characteristics = {
->  };
->  
->  static const struct clk_programmable_layout sam9x60_programmable_layout = {
-> +	.pres_mask = 0xff,
->  	.pres_shift = 8,
->  	.css_mask = 0x1f,
->  	.have_slck_mck = 0,
-> -- 
-> 2.7.4
+>  drivers/clk/at91/clk-main.c |  5 ++++-
+>  drivers/clk/at91/sckc.c     | 20 ++++++++++++++++----
+>  2 files changed, 20 insertions(+), 5 deletions(-)
 > 
+> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+> index f607ee702c83..ccd48e7a3d74 100644
+> --- a/drivers/clk/at91/clk-main.c
+> +++ b/drivers/clk/at91/clk-main.c
+> @@ -293,7 +293,10 @@ static int clk_main_probe_frequency(struct regmap *regmap)
+>  		regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
+>  		if (mcfr & AT91_PMC_MAINRDY)
+>  			return 0;
+> -		usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
+> +		if (system_state < SYSTEM_RUNNING)
+> +			udelay(MAINF_LOOP_MIN_WAIT);
+> +		else
+> +			usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
+
+Given that this construct is introduced several times, I wonder if we
+want something like:
+
+	static inline void early_usleep_range(unsigned long min, unsigned long max)
+	{
+		if (system_state < SYSTEM_RUNNING)
+			udelay(min);
+		else
+			usleep_range(min, max);
+	}
+
+Best regards
+Uwe
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
