@@ -2,126 +2,102 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A63C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 14:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D6E1C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 15:34:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF83D21655
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 14:10:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 495D5207FD
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 15:34:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zBxpjFaP"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NEnONSEs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409713AbfIXOK3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 10:10:29 -0400
-Received: from mail-wr1-f41.google.com ([209.85.221.41]:38718 "EHLO
-        mail-wr1-f41.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406459AbfIXOK3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Sep 2019 10:10:29 -0400
-Received: by mail-wr1-f41.google.com with SMTP id l11so2133632wrx.5
-        for <linux-clk@vger.kernel.org>; Tue, 24 Sep 2019 07:10:28 -0700 (PDT)
+        id S2389877AbfIXPeC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 11:34:02 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:40045 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728702AbfIXPeC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Sep 2019 11:34:02 -0400
+Received: by mail-wm1-f65.google.com with SMTP id b24so533965wmj.5
+        for <linux-clk@vger.kernel.org>; Tue, 24 Sep 2019 08:34:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:in-reply-to:references:date:message-id
-         :mime-version;
-        bh=CD8NXjWHXI1PHdT+Yt5q2iCIoHrQv0Ncx4K7iwz1VKY=;
-        b=zBxpjFaP7l2EinUCWp0CpW2Sg1KTXXAkWldWE1wejALSHl3jp0sFDuHfH9Gi2HC2Au
-         kzQ8eNjBepwuBE+WbnhNaJeaA2YgNuzXB5kwhQzzLXinKPvQCT716XwpcJ0OQwEW4Q1k
-         mYBZVNfAVOI9FS3MUBcZFqmEz8BMf5scqsMrQSYS7a0Jda+62JkKZCi45L2ODbr/7ITr
-         EoZCg4hKA2dNdppOt/WLSZcVso9BHBuKo+dAoQSrK79NYYuSijPjb9/ZAnfpmak9bhlW
-         Khimacswau6lOgHXL5Nurct25X6UOV0+d8wHpX6mo9I/A7DTGUsuFceEWn1DJa/iOWon
-         b9dw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BVrzY1NA5Ch72acoAjxkDHVhN4/WGgUil5qUxNRRH7o=;
+        b=NEnONSEsVbr/P7iWXVn1NB30VoyNPibfxL6JPNvs+Wa+FQKgX+BO3sG/7Pa8Tj/kDN
+         EWbfbmLeDMMldOVcGmotYrPvIhzOHm4WDIRcdKZZFY3pajkZuTNdja+qvr2Y7608OBwG
+         uXD8s/aUhfMn1bX6+ciSPn5LtHzQV3067gUDCO7V0Ycx0Mj5KJX9p3mK14eVv7G96rT7
+         di/GeqkqnhNB/Nh6UFrsb5LA6XwcWZd/Rs4k+/YiQ9j/SzWlyqVSEUcGqVO2tOEDuWIa
+         BAdKgEis7K5HslkRrMeXS6m4z7L8UjepywyoKpol17FoAXFe1c5zMYVeG1NG5e31Obh4
+         sTQA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
-         :message-id:mime-version;
-        bh=CD8NXjWHXI1PHdT+Yt5q2iCIoHrQv0Ncx4K7iwz1VKY=;
-        b=haDAhdv98UeMMCWNH3X0U6b5ghLlAyBCHrR5tS1gDKKDK8Cc01E3Zv3DgsVwqsYL2a
-         sXMIZSHwgbc2NAPWJZqeuK8lqY4N8U23htwtlZfQf6gQjsurXMnww+wEGXM08aNZKPMq
-         5TMnPZKxxVHSUCKmYlzL2qQgE4O2Ebo95WXlGA8H4+mm6ipUX/EZdhbPHgNCT/m0t/Ai
-         2/onBcijQ45XxAunjlYhEuoeVTwplUsTY35/rZ6b6aSgwRT7jqtazARXZoALQjQlNjAf
-         /FiXcEzBm8LRX9OchH9GUoTnL04uhA6sjZzh7bJ4NeNmrpdcNS9Q4ppEixybrZ9PHYGC
-         0kXw==
-X-Gm-Message-State: APjAAAWLAN5ZAeKdypD/CY9DNDQ1QCPa77AuTb2+IbQ0IHWfrQp6rqL8
-        gR/Uua43m5dR5W5HtZbUwvVfmg==
-X-Google-Smtp-Source: APXvYqyxcFFWxlfEByHp+UI2Ozbsm+7ZlCpzeuoY03TS06zxKMIrzCq38xzQB0qK8eF54jJ/spcLAg==
-X-Received: by 2002:adf:e7ca:: with SMTP id e10mr2442564wrn.234.1569334227683;
-        Tue, 24 Sep 2019 07:10:27 -0700 (PDT)
-Received: from localhost (uluru.liltaz.com. [163.172.81.188])
-        by smtp.gmail.com with ESMTPSA id f83sm61195wmf.43.2019.09.24.07.10.25
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=BVrzY1NA5Ch72acoAjxkDHVhN4/WGgUil5qUxNRRH7o=;
+        b=d0OwZWUP6H7vLUkH3x+HTQ6Cp6fOKZf/2XTyLgpOoM9Gnvi/NnaU4Px65qeB/z/453
+         HcxdrGNEXktAhbTbc5SFL7KyeQTYlkR2cexJJLNqx+/ayXidvST0bPSyjcAAMKoS1Yj4
+         yVaCmSV/VFjva1pUjIWp96i6BSXX7dTd3B6fYx+CeJN+5UTmJg+pFHe/fl6lQNw+QJaJ
+         TfxFHTNaZ4AVJxgjAXWt6+FY6jtnPHwveHFnHEkrY2FJEH5ulcdBkK+FuLq0muDAaf2l
+         XtL14/HlvpsQTnj4OFv3V6TrGGaq7zCCeScK01ad8kwfMJSyvI6zE8q6l9qhGX52gxE5
+         jWtw==
+X-Gm-Message-State: APjAAAU2RJGWjGXGxsQ+5XP+z6T9sELzkxvtQBR4+bCDApHOtnRKE4t8
+        N8WghRPC++zoUtiJasc22wsyT20rdfVnPQ==
+X-Google-Smtp-Source: APXvYqyg/jaDIFG3IyGsgXjUNtj7JsiTHUa9FnEaXGDBkdZpMfihQgExMr7nYHu57aDRvaYl8zLFLg==
+X-Received: by 2002:a1c:f30b:: with SMTP id q11mr711033wmq.57.1569339240364;
+        Tue, 24 Sep 2019 08:34:00 -0700 (PDT)
+Received: from starbuck.baylibre.local (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id d10sm144240wma.42.2019.09.24.08.33.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 24 Sep 2019 07:10:26 -0700 (PDT)
+        Tue, 24 Sep 2019 08:33:59 -0700 (PDT)
 From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Ankur Tyagi <Ankur.Tyagi@gallagher.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     "linux-clk\@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Tero Kristo <t-kristo@ti.com>, Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        "netdev\@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-amlogic\@lists.infradead.org" 
-        <linux-amlogic@lists.infradead.org>,
-        "linux-arm-msm\@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-        "linux-rockchip\@lists.infradead.org" 
-        <linux-rockchip@lists.infradead.org>,
-        "linux-omap\@vger.kernel.org" <linux-omap@vger.kernel.org>
-Subject: RE: [PATCH 2/3] clk: let init callback return an error code
-In-Reply-To: <ME2PR01MB4738B127557AE20F6315AA7FE5840@ME2PR01MB4738.ausprd01.prod.outlook.com>
-References: <20190924123954.31561-1-jbrunet@baylibre.com> <20190924123954.31561-3-jbrunet@baylibre.com> <ME2PR01MB4738B127557AE20F6315AA7FE5840@ME2PR01MB4738.ausprd01.prod.outlook.com>
-Date:   Tue, 24 Sep 2019 16:10:25 +0200
-Message-ID: <1jv9thlr8u.fsf@starbuckisacylon.baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] clk: meson: axg-audio: add sm1 support
+Date:   Tue, 24 Sep 2019 17:33:49 +0200
+Message-Id: <20190924153356.24103-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue 24 Sep 2019 at 13:38, Ankur Tyagi <Ankur.Tyagi@gallagher.com> wrote:
+The purpose of this patchset is to add the sm1 support to the amlogic audio
+clock controller. The line count is lot higher than what I hoped for. Even
+if extremely similar, there is a shift in the register address on the sm1
+which makes a bit of a mess.
 
-> Hi,
->
-> I am no expert here but just looked at the patch and found few
-> discrepancy that I have mentioned inline.
->
+I could have patched the address on the fly if running on sm1 but the end
+result did not save much lines and would have been a pain to maintain and
+scale in the future
 
-[...]
+Instead I choose to re-arrange the driver to share the macros and declare
+separate clocks for the clock which have changed.
 
->
-> Aren't all functions returning 0 always?
->
+Jerome Brunet (7):
+  dt-bindings: clk: axg-audio: add sm1 bindings
+  dt-bindings: clock: meson: add sm1 resets to the axg-audio controller
+  clk: meson: axg-audio: remove useless defines
+  clk: meson: axg-audio: fix regmap last register
+  clk: meson: axg-audio: prepare sm1 addition
+  clk: meson: axg-audio: provide clk top signal name
+  clk: meson: axg_audio: add sm1 support
 
-Yes, on purpose. This patch is an API conversion to let the init()
-callback of the clock ops return an error code or 0.
+ .../bindings/clock/amlogic,axg-audio-clkc.txt |    3 +-
+ drivers/clk/meson/axg-audio.c                 | 2021 +++++++++++------
+ drivers/clk/meson/axg-audio.h                 |   21 +-
+ include/dt-bindings/clock/axg-audio-clkc.h    |   10 +
+ .../reset/amlogic,meson-g12a-audio-reset.h    |   15 +
+ 5 files changed, 1373 insertions(+), 697 deletions(-)
 
-The patch is not meant to change anything in the prior behavior of the
-clock drivers which is why every exit path return 0 with this change.
+-- 
+2.21.0
 
-IOW, yes there are all returning 0 for now, but it will eventually
-change.
-
-
->>   *
->>   * @debug_init:Set up type-specific debugfs entries for this clock.  This
->>   *is called once, after the debugfs directory entry for this
->> @@ -243,7 +247,7 @@ struct clk_ops {
->>    struct clk_duty *duty);
->>  int(*set_duty_cycle)(struct clk_hw *hw,
->>    struct clk_duty *duty);
->> -void(*init)(struct clk_hw *hw);
->> +int(*init)(struct clk_hw *hw);
->>  void(*debug_init)(struct clk_hw *hw, struct dentry *dentry);
->>  };
->>
->> --
->> 2.21.0
->
-> ________________________________
->  This email is confidential and may contain information subject to legal privilege. If you are not the intended recipient please advise us of our error by return e-mail then delete this email and any attached files. You may not copy, disclose or use the contents in any way. The views expressed in this email may not be those of Gallagher Group Ltd or subsidiary companies thereof.
-> ________________________________
