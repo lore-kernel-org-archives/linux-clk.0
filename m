@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 186F0C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:43:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CD13C432C2
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9D4A21783
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D649C21783
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343410;
-	bh=ZFiPp8ngyxu+/Da+Enw9S3iTkIS4pdRuux3QPVR7nWQ=;
+	s=default; t=1569343516;
+	bh=BlKSi1Xq4EuPHJSs1tQuJ38g3c84qR75o+FZ4x/DhnU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PXEEg0Qfno/mRvxnzrK+u+1gEynogyfoaBAQqUMH+aL+dIS1snrWakkRl87WO9Tas
-	 7wZhTJW/nK4PJASccs9B5bkhQ7/cEhB3lOZw+kd7qrmgD08/C6fGPi3FVQyadNI5T3
-	 ilaqAOfIkwwpOLV4/GVUCyn7Y4c+vPRqms7gRiqg=
+	b=nuZ6QqLacqWXEyJUCXSyoU9oxqI0DV6khWHtXuiRgqrtncDSb9jElAJ6lWa0zEnbv
+	 VLW84ZilSBVQ7Ay6hzal6393BygfmL4C3F16+NUYrdATRsET+nFhuxC20uPVE97lxD
+	 fsByaNufuYDftuRnOm9OG2sZH2IywmD/Jpld8+Ig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632989AbfIXQn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:43:29 -0400
-Received: from mail.kernel.org ([198.145.29.99]:60336 "EHLO mail.kernel.org"
+        id S2409949AbfIXQpP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:45:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632981AbfIXQn2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:43:28 -0400
+        id S2409946AbfIXQpO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:45:14 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 53CC2217F4;
-        Tue, 24 Sep 2019 16:43:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A20720872;
+        Tue, 24 Sep 2019 16:45:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343408;
-        bh=ZFiPp8ngyxu+/Da+Enw9S3iTkIS4pdRuux3QPVR7nWQ=;
+        s=default; t=1569343514;
+        bh=BlKSi1Xq4EuPHJSs1tQuJ38g3c84qR75o+FZ4x/DhnU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XNoYce4gehytFm3/Joptif/p5WYh9Lvp1aIUhGrDRQZskIdT5+exBgoEUljr23QEw
-         GC56UHnmoRyOszpHbpfea76DYxeKtKOx4HFFuzU6JjbbSMmxUENri1tyl6QfyWzzYE
-         YuFHJJ3DeT7JKCJ/2WD4mZvEjGtBBMZJXKY9oXDU=
+        b=dm0GCZo1a1do93xajId6+ilzW1NVHbJm6rmU+KEtaLHuol4Xrauez8zKzABxaaEBs
+         KVGj4iEhh4PoCvvQ0nmkCmWT3x/F4oBa5x1zMGk27GzQjGIi9l82RY38yQXSQi25yi
+         cNhoiDS5+e9GURGK5RrPqJHaumZAqHQJSGbRrXvY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 38/87] clk: meson: axg-audio: Don't reference clk_init_data after registration
-Date:   Tue, 24 Sep 2019 12:40:54 -0400
-Message-Id: <20190924164144.25591-38-sashal@kernel.org>
+Cc:     Eugen Hristev <eugen.hristev@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 76/87] clk: at91: select parent if main oscillator or bypass is enabled
+Date:   Tue, 24 Sep 2019 12:41:32 -0400
+Message-Id: <20190924164144.25591-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -60,50 +60,71 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Stephen Boyd <sboyd@kernel.org>
+From: Eugen Hristev <eugen.hristev@microchip.com>
 
-[ Upstream commit 1610dd79d0f6202c5c1a91122255fa598679c13a ]
+[ Upstream commit 69a6bcde7fd3fe6f3268ce26f31d9d9378384c98 ]
 
-A future patch is going to change semantics of clk_register() so that
-clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
-referencing this member here so that we don't run into NULL pointer
-exceptions.
+Selecting the right parent for the main clock is done using only
+main oscillator enabled bit.
+In case we have this oscillator bypassed by an external signal (no driving
+on the XOUT line), we still use external clock, but with BYPASS bit set.
+So, in this case we must select the same parent as before.
+Create a macro that will select the right parent considering both bits from
+the MOR register.
+Use this macro when looking for the right parent.
 
-Cc: Neil Armstrong <narmstrong@baylibre.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
+Link: https://lkml.kernel.org/r/1568042692-11784-2-git-send-email-eugen.hristev@microchip.com
+Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Reviewed-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190731193517.237136-4-sboyd@kernel.org
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/axg-audio.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/clk/at91/clk-main.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 8028ff6f66107..db0b73d53551d 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -992,15 +992,18 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
+index f607ee702c838..311cea0c3ae2b 100644
+--- a/drivers/clk/at91/clk-main.c
++++ b/drivers/clk/at91/clk-main.c
+@@ -21,6 +21,10 @@
  
- 	/* Take care to skip the registered input clocks */
- 	for (i = AUD_CLKID_DDR_ARB; i < data->hw_onecell_data->num; i++) {
-+		const char *name;
-+
- 		hw = data->hw_onecell_data->hws[i];
- 		/* array might be sparse */
- 		if (!hw)
- 			continue;
+ #define MOR_KEY_MASK		(0xff << 16)
  
-+		name = hw->init->name;
++#define clk_main_parent_select(s)	(((s) & \
++					(AT91_PMC_MOSCEN | \
++					AT91_PMC_OSCBYPASS)) ? 1 : 0)
 +
- 		ret = devm_clk_hw_register(dev, hw);
- 		if (ret) {
--			dev_err(dev, "failed to register clock %s\n",
--				hw->init->name);
-+			dev_err(dev, "failed to register clock %s\n", name);
- 			return ret;
- 		}
- 	}
+ struct clk_main_osc {
+ 	struct clk_hw hw;
+ 	struct regmap *regmap;
+@@ -113,7 +117,7 @@ static int clk_main_osc_is_prepared(struct clk_hw *hw)
+ 
+ 	regmap_read(regmap, AT91_PMC_SR, &status);
+ 
+-	return (status & AT91_PMC_MOSCS) && (tmp & AT91_PMC_MOSCEN);
++	return (status & AT91_PMC_MOSCS) && clk_main_parent_select(tmp);
+ }
+ 
+ static const struct clk_ops main_osc_ops = {
+@@ -450,7 +454,7 @@ static u8 clk_sam9x5_main_get_parent(struct clk_hw *hw)
+ 
+ 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
+ 
+-	return status & AT91_PMC_MOSCEN ? 1 : 0;
++	return clk_main_parent_select(status);
+ }
+ 
+ static const struct clk_ops sam9x5_main_ops = {
+@@ -492,7 +496,7 @@ at91_clk_register_sam9x5_main(struct regmap *regmap,
+ 	clkmain->hw.init = &init;
+ 	clkmain->regmap = regmap;
+ 	regmap_read(clkmain->regmap, AT91_CKGR_MOR, &status);
+-	clkmain->parent = status & AT91_PMC_MOSCEN ? 1 : 0;
++	clkmain->parent = clk_main_parent_select(status);
+ 
+ 	hw = &clkmain->hw;
+ 	ret = clk_hw_register(NULL, &clkmain->hw);
 -- 
 2.20.1
 
