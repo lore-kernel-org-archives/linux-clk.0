@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F972C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0EF0C432C2
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB6D21D7E
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A97E421906
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:46:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343546;
-	bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
+	s=default; t=1569343619;
+	bh=xXqTTNREpLdYn6bT7Dacf3FS8rp75G+TLfM3oBVMFtk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xf7XYxSySQFbdxR/Y4rIz2D0C/wUk7EZe2hX7DqfW1qG8U9jY4jzwBU2Z2UUWSEIZ
-	 zY2dhaOjGLU1aL5cFpZSYDa+qx6/NtXJKJkUpZY67YDrLr795YRsqWfw5n/ODsR4MI
-	 OtFsH+dEPxvOieHYicjZRZRd0svznKShoeDGEZjo=
+	b=AOlikk5GFOTyGmgyh5gVcNQTO1QdjZOLdF8nwjTcQXuZ1a3UqApOJEGPoxodMl727
+	 7oyzLNriP8ycwMh678ElbzOsc1PErM3cTMgR7l9enf1vWs+gZmATo8RArl+XOIvPKW
+	 +QNGQX5W6vbj3mfOH6jOi87pKdNMIFS3/1i7Rrc0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410008AbfIXQpj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:45:39 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35556 "EHLO mail.kernel.org"
+        id S2410185AbfIXQq5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:46:57 -0400
+Received: from mail.kernel.org ([198.145.29.99]:37848 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410005AbfIXQpi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:45:38 -0400
+        id S2410161AbfIXQq4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:46:56 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 021D720872;
-        Tue, 24 Sep 2019 16:45:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0CE5920673;
+        Tue, 24 Sep 2019 16:46:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343537;
-        bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
+        s=default; t=1569343615;
+        bh=xXqTTNREpLdYn6bT7Dacf3FS8rp75G+TLfM3oBVMFtk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2DAFcJ4Ueo4qqfiWr4z0gN5q40kSnzw4hJ/V+Kt0VJYGyYJI/YKeZjOjGxfACLwiS
-         TIW31K2muFSEzl8QSXUn+RrdxsFFxU9yR7oSow/GTRREXfuLY+mWXJdBpWn+ksCFj6
-         +wqwJwdtG7QWl9mRm6m5ZKISYz1sxitrWH+7Vf5Y=
+        b=b672iV96DKkTxOPTObFUMtarmE9kwTEmKSD3CYdKwZZtsE2+QlNWiL1nwtDkKDAin
+         4eGD2xVRfAr788rT+YogaXwc2QB1kkbob9TlaWFUTkUm0TDOwW0Ki+JEQdQaggA32o
+         XAVIjlFF+4LGLdnsbCfie0jbDWEGbUktnlbD1MBQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 82/87] clk: sprd: add missing kfree
-Date:   Tue, 24 Sep 2019 12:41:38 -0400
-Message-Id: <20190924164144.25591-82-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 27/70] clk: actions: Don't reference clk_init_data after registration
+Date:   Tue, 24 Sep 2019 12:45:06 -0400
+Message-Id: <20190924164549.27058-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
-References: <20190924164144.25591-1-sashal@kernel.org>
+In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
+References: <20190924164549.27058-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,43 +58,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit 5e75ea9c67433a065b0e8595ad3c91c7c0ca0d2d ]
+[ Upstream commit cf9ec1fc6d7cceb73e7f1efd079d2eae173fdf57 ]
 
-The number of config registers for different pll clocks probably are not
-same, so we have to use malloc, and should free the memory before return.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Link: https://lkml.kernel.org/r/20190905103009.27166-1-zhang.lyra@gmail.com
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-2-sboyd@kernel.org
+[sboyd@kernel.org: Move name to after checking for error or NULL hw]
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/pll.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/actions/owl-common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-index 36b4402bf09e3..640270f51aa56 100644
---- a/drivers/clk/sprd/pll.c
-+++ b/drivers/clk/sprd/pll.c
-@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
- 					 k2 + refin * nint * CLK_PLL_1M;
+diff --git a/drivers/clk/actions/owl-common.c b/drivers/clk/actions/owl-common.c
+index 32dd29e0a37e1..4de97cc7cb54d 100644
+--- a/drivers/clk/actions/owl-common.c
++++ b/drivers/clk/actions/owl-common.c
+@@ -68,16 +68,17 @@ int owl_clk_probe(struct device *dev, struct clk_hw_onecell_data *hw_clks)
+ 	struct clk_hw *hw;
+ 
+ 	for (i = 0; i < hw_clks->num; i++) {
++		const char *name;
+ 
+ 		hw = hw_clks->hws[i];
+-
+ 		if (IS_ERR_OR_NULL(hw))
+ 			continue;
+ 
++		name = hw->init->name;
+ 		ret = devm_clk_hw_register(dev, hw);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't register clock %d - %s\n",
+-				i, hw->init->name);
++				i, name);
+ 			return ret;
+ 		}
  	}
- 
-+	kfree(cfg);
- 	return rate;
- }
- 
-@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
- 	if (!ret)
- 		udelay(pll->udelay);
- 
-+	kfree(cfg);
- 	return ret;
- }
- 
 -- 
 2.20.1
 
