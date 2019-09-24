@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63050C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD3BC432C2
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D98721D80
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9771521BE5
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344119;
-	bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
+	s=default; t=1569344144;
+	bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xFic3AIg/iZp2OKWH4RQhB4zTvPaTiITjNNZwXT7SwZF/DI5x4uiuj1dW1Mt+TNGc
-	 mom3BqGHxg5olCPpmnEjumNcjR8mr5hffw5AJ3ojNtiy2NjQ1LCn0pcNljd3KIz/wd
-	 VDEZ791MDWPQ5qDt2KeGVRfW2HZxr4qp822bD/v4=
+	b=NeFarGbId2X7CarPNfP9ZKcNrieFE+CWuCaopz08ofEXdyTujoTrvwyhmzdThNyLJ
+	 a+oKRNZ2SPfkpQNr5vUunD8cb84UTeTTFj4/KhYt2wuIDX9JN+UI5azZdGB3QikIbZ
+	 Z7D7PG/HKkk68lfyPYM6EMEeLCybX2xOKTD9CxNY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406681AbfIXQzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:55:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43834 "EHLO mail.kernel.org"
+        id S2410716AbfIXQua (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:50:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441493AbfIXQur (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:47 -0400
+        id S2410756AbfIXQu1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:27 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4596A217D9;
-        Tue, 24 Sep 2019 16:50:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C86D6222C0;
+        Tue, 24 Sep 2019 16:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343847;
-        bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
+        s=default; t=1569343826;
+        bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Le0mQ9Y+q6js8FmCsDZwhB5QvUewtOe10ANyTZajFDC1mbw6TdKGixuT9Vdf1FdDV
-         8FDKGCQvz4KLJ++cw6Odv2SOdHZQxrRr1AVo9vG7hE/WdVBQGdvQYfpG9mHXrovXUh
-         LK5i/ad91iyq0LeTft71zDo20uZhVJds8LY2MSx0=
+        b=WdYsNjXB8cxfseintxqC7ZxjZWwQzyPd+V5ziXpYLYd/L1mQ/ztTpE6/bptggsEQw
+         Ep4M9kdr/RTGAAuoTXPrTBkiXz3ENm3/U/ux4wDVDqTbe7Iu1VA3cBiL86B34lBSJg
+         p24uMLffYH5Gqg6Q6VlVxy3NEpdAgnT606Cr53w0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 10/28] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
-Date:   Tue, 24 Sep 2019 12:50:13 -0400
-Message-Id: <20190924165031.28292-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 47/50] clk: sprd: add missing kfree
+Date:   Tue, 24 Sep 2019 12:48:44 -0400
+Message-Id: <20190924164847.27780-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190924165031.28292-1-sashal@kernel.org>
-References: <20190924165031.28292-1-sashal@kernel.org>
+In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
+References: <20190924164847.27780-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,37 +59,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
+[ Upstream commit 5e75ea9c67433a065b0e8595ad3c91c7c0ca0d2d ]
 
-The MMC2 clock slices are currently not defined in V3s CCU driver, which
-makes MMC2 not working.
+The number of config registers for different pll clocks probably are not
+same, so we have to use malloc, and should free the memory before return.
 
-Fix this issue.
-
-Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Link: https://lkml.kernel.org/r/20190905103009.27166-1-zhang.lyra@gmail.com
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/sprd/pll.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index ac12f261f8caa..9e3f4088724b4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -499,6 +499,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
- 		[CLK_MMC1]		= &mmc1_clk.common.hw,
- 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
- 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
-+		[CLK_MMC2]		= &mmc2_clk.common.hw,
-+		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
-+		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
- 		[CLK_CE]		= &ce_clk.common.hw,
- 		[CLK_SPI0]		= &spi0_clk.common.hw,
- 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
+diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
+index 36b4402bf09e3..640270f51aa56 100644
+--- a/drivers/clk/sprd/pll.c
++++ b/drivers/clk/sprd/pll.c
+@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
+ 					 k2 + refin * nint * CLK_PLL_1M;
+ 	}
+ 
++	kfree(cfg);
+ 	return rate;
+ }
+ 
+@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
+ 	if (!ret)
+ 		udelay(pll->udelay);
+ 
++	kfree(cfg);
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
