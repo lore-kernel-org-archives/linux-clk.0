@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0FEC4320D
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F972C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E00DA222C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBB6D21D7E
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:45:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343531;
-	bh=NpxL+WCCtdslumQX2yqO+h1199gm+NJi3hIXzXiutNM=;
+	s=default; t=1569343546;
+	bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Lvi1x6HhrIM+66jykc3bLS4mT1sfI2oYAbG83ilGmZkSz5sq6Bl405Kb1sIgbkLI4
-	 Ge/TPAxpihMkO+EjV+0lRQl5F5mayHMhw4Upv3J8RuVpTXeAXQwmKf+VvVsyP3+Qu7
-	 TtPbZV0SlUhjGxtK+bQOolq2OcOZP/1Ph+0EJq8g=
+	b=xf7XYxSySQFbdxR/Y4rIz2D0C/wUk7EZe2hX7DqfW1qG8U9jY4jzwBU2Z2UUWSEIZ
+	 zY2dhaOjGLU1aL5cFpZSYDa+qx6/NtXJKJkUpZY67YDrLr795YRsqWfw5n/ODsR4MI
+	 OtFsH+dEPxvOieHYicjZRZRd0svznKShoeDGEZjo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409977AbfIXQpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:45:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35278 "EHLO mail.kernel.org"
+        id S2410008AbfIXQpj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:45:39 -0400
+Received: from mail.kernel.org ([198.145.29.99]:35556 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2409970AbfIXQp3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:45:29 -0400
+        id S2410005AbfIXQpi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:45:38 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3944C217D9;
-        Tue, 24 Sep 2019 16:45:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 021D720872;
+        Tue, 24 Sep 2019 16:45:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343529;
-        bh=NpxL+WCCtdslumQX2yqO+h1199gm+NJi3hIXzXiutNM=;
+        s=default; t=1569343537;
+        bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=D8x2zMMT4qONdrRNXxbwYpkOTPbS5gugIEQMRdAkvxNZmYJ37FfIyvqDf6U5aLMPY
-         fTSgl3qtyD0B4JwXaxXjBYHmacD/OVLTMKiTV2WGd6GbeDTbMEOo06jbi3JJskLYS8
-         /YZ3QAOIgS04ATUl+I0nOM2/AOTAYye3Ek218G/o=
+        b=2DAFcJ4Ueo4qqfiWr4z0gN5q40kSnzw4hJ/V+Kt0VJYGyYJI/YKeZjOjGxfACLwiS
+         TIW31K2muFSEzl8QSXUn+RrdxsFFxU9yR7oSow/GTRREXfuLY+mWXJdBpWn+ksCFj6
+         +wqwJwdtG7QWl9mRm6m5ZKISYz1sxitrWH+7Vf5Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 79/87] clk: Make clk_bulk_get_all() return a valid "id"
-Date:   Tue, 24 Sep 2019 12:41:35 -0400
-Message-Id: <20190924164144.25591-79-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.3 82/87] clk: sprd: add missing kfree
+Date:   Tue, 24 Sep 2019 12:41:38 -0400
+Message-Id: <20190924164144.25591-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -60,51 +59,43 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Chunyan Zhang <chunyan.zhang@unisoc.com>
 
-[ Upstream commit 7f81c2426587b34bf73e643c1a6d080dfa14cf8a ]
+[ Upstream commit 5e75ea9c67433a065b0e8595ad3c91c7c0ca0d2d ]
 
-The adreno driver expects the "id" field of the returned clk_bulk_data
-to be filled in with strings from the clock-names property.
+The number of config registers for different pll clocks probably are not
+same, so we have to use malloc, and should free the memory before return.
 
-But due to the use of kmalloc_array() in of_clk_bulk_get_all() it
-receives a list of bogus pointers instead.
-
-Zero-initialize the "id" field and attempt to populate with strings from
-the clock-names property to resolve both these issues.
-
-Fixes: 616e45df7c4a ("clk: add new APIs to operate on all available clocks")
-Fixes: 8e3e791d20d2 ("drm/msm: Use generic bulk clock function")
-Cc: Dong Aisheng <aisheng.dong@nxp.com>
-Cc: Jordan Crouse <jcrouse@codeaurora.org>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Link: https://lkml.kernel.org/r/20190913024029.2640-1-bjorn.andersson@linaro.org
-Reviewed-by: Jordan Crouse <jcrouse@codeaurora.org>
+Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
+Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
+Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
+Link: https://lkml.kernel.org/r/20190905103009.27166-1-zhang.lyra@gmail.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-bulk.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/clk/sprd/pll.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-bulk.c b/drivers/clk/clk-bulk.c
-index 524bf9a530985..e9e16425c739c 100644
---- a/drivers/clk/clk-bulk.c
-+++ b/drivers/clk/clk-bulk.c
-@@ -18,10 +18,13 @@ static int __must_check of_clk_bulk_get(struct device_node *np, int num_clks,
- 	int ret;
- 	int i;
+diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
+index 36b4402bf09e3..640270f51aa56 100644
+--- a/drivers/clk/sprd/pll.c
++++ b/drivers/clk/sprd/pll.c
+@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
+ 					 k2 + refin * nint * CLK_PLL_1M;
+ 	}
  
--	for (i = 0; i < num_clks; i++)
-+	for (i = 0; i < num_clks; i++) {
-+		clks[i].id = NULL;
- 		clks[i].clk = NULL;
-+	}
++	kfree(cfg);
+ 	return rate;
+ }
  
- 	for (i = 0; i < num_clks; i++) {
-+		of_property_read_string_index(np, "clock-names", i, &clks[i].id);
- 		clks[i].clk = of_clk_get(np, i);
- 		if (IS_ERR(clks[i].clk)) {
- 			ret = PTR_ERR(clks[i].clk);
+@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
+ 	if (!ret)
+ 		udelay(pll->udelay);
+ 
++	kfree(cfg);
+ 	return ret;
+ }
+ 
 -- 
 2.20.1
 
