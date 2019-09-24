@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B02C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:57:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9087BC432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C263E20673
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:57:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50FFC217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:57:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344256;
-	bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
+	s=default; t=1569344273;
+	bh=vNJVuAcZSGd4JfMJeT1HcCWqm+jXlfUf9xrhXZuLZQE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A5SUBqYNbbbLRvOxI0kRfvoQpXUq8Ia4oNYZ0IcbxSIpN7yl8rG8lNtJTXGKcg3+N
-	 hGDVUPXK0djV8PI+yoW/O24K60bjwJrpnw9f+gT0FJvagpOwRPtD4+kS+IKVSWiV/+
-	 dNTUsfm2RHA7XsGHviZ7mpxMz4Zh0mcWm3rENr0Y=
+	b=BnM0adgTU+OEpYV5Ad9l+c4/d36X8eBAFJd+4qrlXd8+VjouRqif7QOQDhDEWtgVB
+	 5HURcR2wy+WhvOm4NScw/NrnUq2MuQHV2juo3byDhYmsUpNdV8FBuTc45s7s5tewr7
+	 OniBCWDOEmlCH+OWtiy9lAzoNBhyzcd/IcEWITeE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729738AbfIXQ5g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:57:36 -0400
-Received: from mail.kernel.org ([198.145.29.99]:40378 "EHLO mail.kernel.org"
+        id S2410510AbfIXQsc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:48:32 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730534AbfIXQsj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:48:39 -0400
+        id S2633352AbfIXQsb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:48:31 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07D1921906;
-        Tue, 24 Sep 2019 16:48:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 18A0F20673;
+        Tue, 24 Sep 2019 16:48:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343718;
-        bh=RWaQefVK8ASVG6pbqzbUIqMWiTGMpl6fvlxtzPjJeq0=;
+        s=default; t=1569343710;
+        bh=vNJVuAcZSGd4JfMJeT1HcCWqm+jXlfUf9xrhXZuLZQE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qJyM9dlizzdeHcpXDziW2bNnh3ZhrqPlZZ2sNOo4OXpl6ZnqetLfXwak0VxXLo2tp
-         iNBsRi/YwWaf4OS9HOrP3YghgkJ97q7modAPZaCjljpbxejupSD3mk87TEeSYBiv8J
-         EayYa+2+ai8K8Crpn2ne6vQoi/agJaL7GOIKCdBY=
+        b=gDt38CT6kPxXO9+AZZSifAGhBvD3CxMKHoE7wu9IGvaFswLdyqCUKl2DmuGTiwUnX
+         mFxQBG7fP/HY0qYDPlUNgY6Oxy1Cob0G86rly1idOIxygdSlfl9pZLQ6BgAjbY7AF+
+         YN4KzHRN9Eg/7LCAWZtBYFAeAY+rsplCPEaudDFI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 65/70] clk: sprd: add missing kfree
-Date:   Tue, 24 Sep 2019 12:45:44 -0400
-Message-Id: <20190924164549.27058-65-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 61/70] clk: imx: clk-pll14xx: unbypass PLL by default
+Date:   Tue, 24 Sep 2019 12:45:40 -0400
+Message-Id: <20190924164549.27058-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -59,43 +59,53 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chunyan Zhang <chunyan.zhang@unisoc.com>
+From: Peng Fan <peng.fan@nxp.com>
 
-[ Upstream commit 5e75ea9c67433a065b0e8595ad3c91c7c0ca0d2d ]
+[ Upstream commit a9aa8306074d9519dd6e5fdf07240b01bac72e04 ]
 
-The number of config registers for different pll clocks probably are not
-same, so we have to use malloc, and should free the memory before return.
+When registering the PLL, unbypass the PLL.
+The PLL has two bypass control bit, BYPASS and EXT_BYPASS.
+we will expose EXT_BYPASS to clk driver for mux usage, and keep
+BYPASS inside pll14xx usage. The PLL has a restriction that
+when M/P change, need to RESET/BYPASS pll to avoid glitch, so
+we could not expose BYPASS.
 
-Fixes: 3e37b005580b ("clk: sprd: add adjustable pll support")
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-Signed-off-by: Chunyan Zhang <zhang.lyra@gmail.com>
-Link: https://lkml.kernel.org/r/20190905103009.27166-1-zhang.lyra@gmail.com
+To make it easy for clk driver usage, unbypass PLL which does
+not hurt current function.
+
+Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
+Reviewed-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+Link: https://lkml.kernel.org/r/1568043491-20680-3-git-send-email-peng.fan@nxp.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sprd/pll.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/imx/clk-pll14xx.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/clk/sprd/pll.c b/drivers/clk/sprd/pll.c
-index 36b4402bf09e3..640270f51aa56 100644
---- a/drivers/clk/sprd/pll.c
-+++ b/drivers/clk/sprd/pll.c
-@@ -136,6 +136,7 @@ static unsigned long _sprd_pll_recalc_rate(const struct sprd_pll *pll,
- 					 k2 + refin * nint * CLK_PLL_1M;
- 	}
+diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+index 656f48b002dd3..7a815ec76aa5c 100644
+--- a/drivers/clk/imx/clk-pll14xx.c
++++ b/drivers/clk/imx/clk-pll14xx.c
+@@ -368,6 +368,7 @@ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+ 	struct clk_pll14xx *pll;
+ 	struct clk *clk;
+ 	struct clk_init_data init;
++	u32 val;
  
-+	kfree(cfg);
- 	return rate;
- }
+ 	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+ 	if (!pll)
+@@ -399,6 +400,10 @@ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+ 	pll->rate_table = pll_clk->rate_table;
+ 	pll->rate_count = pll_clk->rate_count;
  
-@@ -222,6 +223,7 @@ static int _sprd_pll_set_rate(const struct sprd_pll *pll,
- 	if (!ret)
- 		udelay(pll->udelay);
- 
-+	kfree(cfg);
- 	return ret;
- }
- 
++	val = readl_relaxed(pll->base + GNRL_CTL);
++	val &= ~BYPASS_MASK;
++	writel_relaxed(val, pll->base + GNRL_CTL);
++
+ 	clk = clk_register(NULL, &pll->hw);
+ 	if (IS_ERR(clk)) {
+ 		pr_err("%s: failed to register pll %s %lu\n",
 -- 
 2.20.1
 
