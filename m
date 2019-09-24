@@ -2,111 +2,110 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03513C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F437C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:40:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1CF6214AF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:21:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 22D7221655
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 12:40:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ymqnFpv6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730372AbfIXMV7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 08:21:59 -0400
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:55093 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726851AbfIXMV7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Sep 2019 08:21:59 -0400
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iCjpI-0006IT-GQ; Tue, 24 Sep 2019 14:21:52 +0200
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iCjpD-00085A-Ku; Tue, 24 Sep 2019 14:21:47 +0200
-Date:   Tue, 24 Sep 2019 14:21:47 +0200
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        id S1730547AbfIXMkE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 08:40:04 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35028 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729798AbfIXMkE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Sep 2019 08:40:04 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v8so1774708wrt.2
+        for <linux-clk@vger.kernel.org>; Tue, 24 Sep 2019 05:40:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QU+WJPa29FF69lyvwdW7u6JWpBW55BMoTe9rf+CDynM=;
+        b=ymqnFpv6sdmg2AHOFDMfgBUEl/uhL6+1gJWML2dumV5y+DSIrdvovrWnCyFsVmjLeH
+         c4W5aXhFsJ6fi9CrysPrTB8OcGDOqtNtj9mZgtFSJoYYZqDFkXpmX11dVt+HmH+W1lvJ
+         /3oGRiD8TuPVevnGrJF868H0SFQ6Fm+yv5rfsp2RPomxtTcGI7qykiuoKyuCKUgUHh2S
+         zrDiVpwCWZoeeMRLBqltNCB+BQr346ohttuSuzk69X1+T4MMepd40Ld8wVfLYKJ2Waxi
+         XBX31J9fBGXamo1MHbd2fXczWi7STEBb2NAh6J5d/eB4ClmDUUBh9mrb+glfMA6TPJ+l
+         CNSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=QU+WJPa29FF69lyvwdW7u6JWpBW55BMoTe9rf+CDynM=;
+        b=FXsxdBnXnU9/Gwpqmdc7xKwrfa7EjmzhkXlfJDYcORPsV1ds8nMarr7srHh8dfZ7bo
+         01hPBAlC/NhcQm9fNwydA4fbETAEKuVAor3DVd2SjUQjp4eEmlYJtcbkaAts1zKl50vA
+         +1jXrNbUVloiyfOVnTCEjgyt3ZfqM92c2F44Se7iu/101my5KCxMLsb5lm5kz/kKfGr4
+         kZCeVfwN3WAzRhE3vN4gpYB4vC3mfqg88xruEDAWdpVKToRHnkvOH3tW9WWMvMQNpAQn
+         DYzjFdsxHWLhXd2qDP39axO3kvaAZ9n6GyBYJ0HWS+sgE8S0o1zn1B7UabrHEgZF3CA5
+         Qbsw==
+X-Gm-Message-State: APjAAAUnhaL/Pmm6rLIorYEo4neyNdKUn6ooyI45z2+1ehZTgCb1WeOd
+        X0nxKixTRPYxp/kAYY8GcnObwA==
+X-Google-Smtp-Source: APXvYqyT3jEDbsQBqF7Qoip2EVij2ZnwT27ENzhCAlSalWomhd55OVwwkoJ1V6lTueXmII1ZZAnpRA==
+X-Received: by 2002:adf:ea12:: with SMTP id q18mr2216892wrm.378.1569328802720;
+        Tue, 24 Sep 2019 05:40:02 -0700 (PDT)
+Received: from starbuck.baylibre.local (uluru.liltaz.com. [163.172.81.188])
+        by smtp.googlemail.com with ESMTPSA id u83sm2888165wme.0.2019.09.24.05.40.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 24 Sep 2019 05:40:02 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: avoid sleeping early
-Message-ID: <20190924122147.fojcu5u44letrele@pengutronix.de>
-References: <20190920153906.20887-1-alexandre.belloni@bootlin.com>
+Subject: [PATCH 0/3] clk: let clock perform allocation in init
+Date:   Tue, 24 Sep 2019 14:39:51 +0200
+Message-Id: <20190924123954.31561-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190920153906.20887-1-alexandre.belloni@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Sep 20, 2019 at 05:39:06PM +0200, Alexandre Belloni wrote:
-> It is not allowed to sleep to early in the boot process and this may lead
-> to kernel issues if the bootloader didn't prepare the slow clock and main
-> clock.
-> 
-> This results in the following error and dump stack on the AriettaG25:
->    bad: scheduling from the idle thread!
-> 
-> Ensure it is possible to sleep, else simply have a delay.
-> 
-> Reported-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+This patchset is a follow up on this pinky swear [0].
+Its purpose is:
+ * Clarify the acceptable use of clk_ops init() callback
+ * Let the init() callback return an error code in case anything
+   fail.
+ * Add the terminate() counter part of of init() to release the
+   resources which may have been claimed in init()
 
-Tested-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+After discussing with Stephen at LPC, I decided to drop the 2 last patches
+of the RFC [1]. I can live without it for now and nobody expressed a
+critical need to get the proposed placeholder.
 
-See below for a comment.
+[0]: https://lkml.kernel.org/r/CAEG3pNB-143Pr_xCTPj=tURhpiTiJqi61xfDGDVdU7zG5H-2tA@mail.gmail.com
+[1]: https://lkml.kernel.org/r/20190828102012.4493-1-jbrunet@baylibre.com
 
-> Note that this was already discussed a while ago and Arnd said this approach was
-> reasonable:
->   https://lore.kernel.org/lkml/6120818.MyeJZ74hYa@wuerfel/
-> 
->  drivers/clk/at91/clk-main.c |  5 ++++-
->  drivers/clk/at91/sckc.c     | 20 ++++++++++++++++----
->  2 files changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-main.c
-> index f607ee702c83..ccd48e7a3d74 100644
-> --- a/drivers/clk/at91/clk-main.c
-> +++ b/drivers/clk/at91/clk-main.c
-> @@ -293,7 +293,10 @@ static int clk_main_probe_frequency(struct regmap *regmap)
->  		regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
->  		if (mcfr & AT91_PMC_MAINRDY)
->  			return 0;
-> -		usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
-> +		if (system_state < SYSTEM_RUNNING)
-> +			udelay(MAINF_LOOP_MIN_WAIT);
-> +		else
-> +			usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT);
+Jerome Brunet (3):
+  clk: actually call the clock init before any other callback of the
+    clock
+  clk: let init callback return an error code
+  clk: add terminate callback to clk_ops
 
-Given that this construct is introduced several times, I wonder if we
-want something like:
-
-	static inline void early_usleep_range(unsigned long min, unsigned long max)
-	{
-		if (system_state < SYSTEM_RUNNING)
-			udelay(min);
-		else
-			usleep_range(min, max);
-	}
-
-Best regards
-Uwe
+ drivers/clk/clk.c                     | 38 ++++++++++++++++++---------
+ drivers/clk/meson/clk-mpll.c          |  4 ++-
+ drivers/clk/meson/clk-phase.c         |  4 ++-
+ drivers/clk/meson/clk-pll.c           |  4 ++-
+ drivers/clk/meson/sclk-div.c          |  4 ++-
+ drivers/clk/microchip/clk-core.c      |  8 ++++--
+ drivers/clk/mmp/clk-frac.c            |  4 ++-
+ drivers/clk/mmp/clk-mix.c             |  4 ++-
+ drivers/clk/qcom/clk-hfpll.c          |  6 +++--
+ drivers/clk/rockchip/clk-pll.c        | 28 ++++++++++++--------
+ drivers/clk/ti/clock.h                |  2 +-
+ drivers/clk/ti/clockdomain.c          |  8 +++---
+ drivers/net/phy/mdio-mux-meson-g12a.c |  4 ++-
+ include/linux/clk-provider.h          | 13 ++++++---
+ 14 files changed, 90 insertions(+), 41 deletions(-)
 
 -- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+2.21.0
+
