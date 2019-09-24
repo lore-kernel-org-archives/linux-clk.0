@@ -7,37 +7,37 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E9FC4320D
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61AFEC4320D
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:58:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B76BC217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:58:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E852217D9
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:58:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344334;
-	bh=Z1FXg++vbpg9xKSA6xmGTikQgX/VXgM9vHZDwXnfifc=;
+	s=default; t=1569344336;
+	bh=7yTV10pYVwJps/ArPOnO0ZAl1jLzy7XzX1J4ZuIe5xs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ACC2TEuX7oFV2DFcrf+seUMNGM19bEx3Lh3yb4LnqjlqrOOJcrKDtuzGnprlzPHju
-	 BYD2MdsvvnWVi/LNvrDSXMFGvTS+uH9j5BmPH1rTI8vckJXlSpD49y+kM4kcjcgixz
-	 DHdOecfsJ545OLRGxS9c+h2Bf/756vxY3ZaLcUkQ=
+	b=C4XcSUhtxLD6DV36vUsQb/fUKtbZEqEIAqw7qG4alBvvH7QdIYkQCWK8YgLRg/v5u
+	 wG5YFirnDdhy9LAiho/bX5OixvCinmbYgCuUd2A6+AsHdhMPAFxTVGA3eS6KYRdYQ8
+	 zRm8gM3ifhSxwKWK2q7pbv+Rrf9ACoaLK+UKw1hU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728431AbfIXQ6t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:58:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:39040 "EHLO mail.kernel.org"
+        id S2391035AbfIXQrl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:47:41 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2633288AbfIXQrm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:47:42 -0400
+        id S2389135AbfIXQrk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:47:40 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CFBE217D9;
-        Tue, 24 Sep 2019 16:47:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4C86520673;
+        Tue, 24 Sep 2019 16:47:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343661;
-        bh=Z1FXg++vbpg9xKSA6xmGTikQgX/VXgM9vHZDwXnfifc=;
+        s=default; t=1569343660;
+        bh=7yTV10pYVwJps/ArPOnO0ZAl1jLzy7XzX1J4ZuIe5xs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XjzcB8Wv8BrT5i/7uxMaYwNvczot2GT0b7f5RuPEorScljIz4rRbKvO2KnMDklaKG
-         WM+g+x73uUd1mTLEAU5dpKkP/P1auFt0Rdb/f30JIZ5JszbAEas0cU9a3FqNkuUQlx
-         lOHyr/Wvm7V+DsBHbEMw1DnuJWIoc2s+kAVn7Ckk=
+        b=KsQ/bjC9P7+4cMPx+NKd6ITkBLYQAkEVKYU6enyBtQkJmiV0JwrUdaTlvXnFXsY4h
+         ZrXxtGU8qmzKo0hvCaUuATDvRNHpOqTpeSQT6s1LOFkxviu78ND17oedFZhlvaHTLy
+         OjNb56z11kyxYmwrwW+ZdMq6i49Qoj2gnrB2+ezs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -45,9 +45,9 @@ Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
         Ulf Hansson <ulf.hansson@linaro.org>,
         Sasha Levin <sashal@kernel.org>,
         linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.2 46/70] clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain
-Date:   Tue, 24 Sep 2019 12:45:25 -0400
-Message-Id: <20190924164549.27058-46-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.2 45/70] clk: renesas: mstp: Set GENPD_FLAG_ALWAYS_ON for clock domain
+Date:   Tue, 24 Sep 2019 12:45:24 -0400
+Message-Id: <20190924164549.27058-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164549.27058-1-sashal@kernel.org>
 References: <20190924164549.27058-1-sashal@kernel.org>
@@ -62,40 +62,41 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 
-[ Upstream commit f787216f33ce5b5a2567766398f44ab62157114c ]
+[ Upstream commit a459a184c978ca9ad538aab93aafdde873953f30 ]
 
-The CPG/MSSR Clock Domain driver does not implement the
+The CPG/MSTP Clock Domain driver does not implement the
 generic_pm_domain.power_{on,off}() callbacks, as the domain itself
 cannot be powered down.  Hence the domain should be marked as always-on
 by setting the GENPD_FLAG_ALWAYS_ON flag, to prevent the core PM Domain
 code from considering it for power-off, and doing unnessary processing.
 
-Note that this only affects RZ/A2 SoCs.  On R-Car Gen2 and Gen3 SoCs,
-the R-Car SYSC driver handles Clock Domain creation, and offloads only
-device attachment/detachment to the CPG/MSSR driver.
+This also gets rid of a boot warning when the Clock Domain contains an
+IRQ-safe device, e.g. on RZ/A1:
+
+    sh_mtu2 fcff0000.timer: PM domain cpg_clocks will not be powered off
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
+ drivers/clk/renesas/clk-mstp.c | 3 ++-
  1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 9dfa28d6fd9f9..cbe5fb468b7f9 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -555,7 +555,8 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 92ece221b0d44..7f156cf1d7a64 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -338,7 +338,8 @@ void __init cpg_mstp_add_clk_domain(struct device_node *np)
+ 		return;
  
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
--	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
-+	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
-+		       GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+ 	pd->name = np->name;
+-	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	pd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
++		    GENPD_FLAG_ACTIVE_WAKEUP;
+ 	pd->attach_dev = cpg_mstp_attach_dev;
+ 	pd->detach_dev = cpg_mstp_detach_dev;
+ 	pm_genpd_init(pd, &pm_domain_always_on_gov, false);
 -- 
 2.20.1
 
