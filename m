@@ -2,52 +2,50 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BF6BC432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63050C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9C43217D9
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D98721D80
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:55:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344115;
-	bh=rrI29aVED5YRGj5/zZGCVu7KrelVkMFejMQpJYStOqc=;
+	s=default; t=1569344119;
+	bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NuDqHt+Wlbfon/vvHYnVw2RDF7v+ZdJHDeicvuCFdXrf3gStj6HdKJ9aqTWxhMHL9
-	 HYBM8DFIF/aee4hAquFqSY5aadpne2X/FA1DS3oeJGR5cFMSrscZHxUNp98K7mXA+E
-	 LF199zf9ScgrRQiST3Psuh3C2h9YxMpippLBDyew=
+	b=xFic3AIg/iZp2OKWH4RQhB4zTvPaTiITjNNZwXT7SwZF/DI5x4uiuj1dW1Mt+TNGc
+	 mom3BqGHxg5olCPpmnEjumNcjR8mr5hffw5AJ3ojNtiy2NjQ1LCn0pcNljd3KIz/wd
+	 VDEZ791MDWPQ5qDt2KeGVRfW2HZxr4qp822bD/v4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441495AbfIXQur (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:50:47 -0400
-Received: from mail.kernel.org ([198.145.29.99]:43810 "EHLO mail.kernel.org"
+        id S2406681AbfIXQzO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:55:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441489AbfIXQuq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:50:46 -0400
+        id S2441493AbfIXQur (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:50:47 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E423721D6C;
-        Tue, 24 Sep 2019 16:50:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4596A217D9;
+        Tue, 24 Sep 2019 16:50:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343845;
-        bh=rrI29aVED5YRGj5/zZGCVu7KrelVkMFejMQpJYStOqc=;
+        s=default; t=1569343847;
+        bh=zL1w5syTRE29MPGD3HK6k4a/25ozxavpM0xkeCziFPM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z9cx33M0ZQgiiy/jpG4EhC7mGYLF+yijfJUvje6mS/f2dJlnGfmAoxOgRBdL08MSj
-         CFG+28+Rt4i7LO/z7qLE538x9BGwz5qR/tHdlOVk25pR95VJ71j5SYbXx35Dz4UZfo
-         DoAhIggX4LhlMR3OOma0bj+Jnpz4geqVxfm3O0ac=
+        b=Le0mQ9Y+q6js8FmCsDZwhB5QvUewtOe10ANyTZajFDC1mbw6TdKGixuT9Vdf1FdDV
+         8FDKGCQvz4KLJ++cw6Odv2SOdHZQxrRr1AVo9vG7hE/WdVBQGdvQYfpG9mHXrovXUh
+         LK5i/ad91iyq0LeTft71zDo20uZhVJds8LY2MSx0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 09/28] clk: qoriq: Fix -Wunused-const-variable
-Date:   Tue, 24 Sep 2019 12:50:12 -0400
-Message-Id: <20190924165031.28292-9-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 10/28] clk: sunxi-ng: v3s: add missing clock slices for MMC2 module clocks
+Date:   Tue, 24 Sep 2019 12:50:13 -0400
+Message-Id: <20190924165031.28292-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924165031.28292-1-sashal@kernel.org>
 References: <20190924165031.28292-1-sashal@kernel.org>
@@ -60,47 +58,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Nathan Huckleberry <nhuck@google.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
+[ Upstream commit 720099603d1f62e37b789366d7e89824b009ca28 ]
 
-drivers/clk/clk-qoriq.c:138:38: warning: unused variable
-'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
-clockgen_muxinfo p5020_cmux_grp1
+The MMC2 clock slices are currently not defined in V3s CCU driver, which
+makes MMC2 not working.
 
-drivers/clk/clk-qoriq.c:146:38: warning: unused variable
-'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
-clockgen_muxinfo p5020_cmux_grp2
+Fix this issue.
 
-In the definition of the p5020 chip, the p2041 chip's info was used
-instead.  The p5020 and p2041 chips have different info. This is most
-likely a typo.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/525
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Scott Wood <oss@buserror.net>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: d0f11d14b0bc ("clk: sunxi-ng: add support for V3s CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-qoriq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index b0ea753b8709d..1a292519d84f2 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -610,7 +610,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p5020_init_periph,
- 		.cmux_groups = {
--			&p2041_cmux_grp1, &p2041_cmux_grp2
-+			&p5020_cmux_grp1, &p5020_cmux_grp2
- 		},
- 		.cmux_to_group = {
- 			0, 1, -1
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+index ac12f261f8caa..9e3f4088724b4 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+@@ -499,6 +499,9 @@ static struct clk_hw_onecell_data sun8i_v3s_hw_clks = {
+ 		[CLK_MMC1]		= &mmc1_clk.common.hw,
+ 		[CLK_MMC1_SAMPLE]	= &mmc1_sample_clk.common.hw,
+ 		[CLK_MMC1_OUTPUT]	= &mmc1_output_clk.common.hw,
++		[CLK_MMC2]		= &mmc2_clk.common.hw,
++		[CLK_MMC2_SAMPLE]	= &mmc2_sample_clk.common.hw,
++		[CLK_MMC2_OUTPUT]	= &mmc2_output_clk.common.hw,
+ 		[CLK_CE]		= &ce_clk.common.hw,
+ 		[CLK_SPI0]		= &spi0_clk.common.hw,
+ 		[CLK_USB_PHY0]		= &usb_phy0_clk.common.hw,
 -- 
 2.20.1
 
