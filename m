@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C947C432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E21AAC432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3C32054F
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A867F20673
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569344170;
-	bh=6vFK/QNNqrF4iFB8pKoHfYXMILTJC1iEO49zGfm7bnU=;
+	s=default; t=1569344193;
+	bh=OuQyraHRTcW5Pfr4GQOsgbTEdxokYCLV74EwXmY0TbY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y2goD2BFBnPD1CKrlRReZT4yQ37Ppv4tIXhmY1zFPcAhrCDVIrro6uzcT+Vy9FXU3
-	 BuHSGVUluVEIfSDRVP7q+hvyaxRZi6xYLe+/TQPpGUtIHA0svWPO4X6lx1sG+EKyGW
-	 QcWtZh0qdVliXEQlMz3SZSam0UJ6oYuHY0+Kfkhg=
+	b=MTom27DZ6vJCR+HZdOZ0XTnOD671ngLSpaduPNtfXIVK/DaHWyrLCS8LPMlApcVLM
+	 0BCZb11xa78GbrOWxJXLi7IGNUvmTOy/9KhK0gfVghhDRwF8GJkQ/WOfrM3Qy8uT9h
+	 2FzbUMgCVlVKU2FKouoaX3TfVD/7AQLmiPrQsERc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410652AbfIXQt4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:49:56 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42426 "EHLO mail.kernel.org"
+        id S2410566AbfIXQta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:49:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410645AbfIXQt4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:56 -0400
+        id S2410111AbfIXQta (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:30 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C44B921D6C;
-        Tue, 24 Sep 2019 16:49:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACF1A20673;
+        Tue, 24 Sep 2019 16:49:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343795;
-        bh=6vFK/QNNqrF4iFB8pKoHfYXMILTJC1iEO49zGfm7bnU=;
+        s=default; t=1569343769;
+        bh=OuQyraHRTcW5Pfr4GQOsgbTEdxokYCLV74EwXmY0TbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vXZFqo6juUgHz+FTNK1YREZApAl1UxFmn+0fu/GCfs6OebB69jIgMi5SUBUBDakxB
-         6JPBZXWfWLUQnL0JO+nMo/ARY7YXA6SVpel5CUunUPJXq0y9Eo04RdwFIpVnH8rjQi
-         g4kM1MeWkrIz9lVI6sbb/AAp+n4RsdCN4bPxcKvM=
+        b=eHqRQVXEzuTTz1OEvIZ8CcaxLNxtvmOzTHr8AiHuSd1Zl+D9bHqtn3YTwO7oN4s2g
+         gMv7Eb1X6KIqmdIYqb/jjvsBKTYFuPR6aKeHq/3hp2GpnkzKlgkSqlDla3bcY39gLU
+         rqvGBpUxWk0zWJzvcAFCuTmKy/A6K7dIL/ND5Uhw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 34/50] clk: renesas: cpg-mssr: Set GENPD_FLAG_ALWAYS_ON for clock domain
-Date:   Tue, 24 Sep 2019 12:48:31 -0400
-Message-Id: <20190924164847.27780-34-sashal@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Jun Nie <jun.nie@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 22/50] clk: zx296718: Don't reference clk_init_data after registration
+Date:   Tue, 24 Sep 2019 12:48:19 -0400
+Message-Id: <20190924164847.27780-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -60,42 +58,285 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Geert Uytterhoeven <geert+renesas@glider.be>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit f787216f33ce5b5a2567766398f44ab62157114c ]
+[ Upstream commit 1a4549c150e27dbc3aea762e879a88209df6d1a5 ]
 
-The CPG/MSSR Clock Domain driver does not implement the
-generic_pm_domain.power_{on,off}() callbacks, as the domain itself
-cannot be powered down.  Hence the domain should be marked as always-on
-by setting the GENPD_FLAG_ALWAYS_ON flag, to prevent the core PM Domain
-code from considering it for power-off, and doing unnessary processing.
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-Note that this only affects RZ/A2 SoCs.  On R-Car Gen2 and Gen3 SoCs,
-the R-Car SYSC driver handles Clock Domain creation, and offloads only
-device attachment/detachment to the CPG/MSSR driver.
-
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Jun Nie <jun.nie@linaro.org>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190815160020.183334-3-sboyd@kernel.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/renesas-cpg-mssr.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/zte/clk-zx296718.c | 109 +++++++++++++++------------------
+ 1 file changed, 49 insertions(+), 60 deletions(-)
 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index 24485bee9b49e..d7a2ad6173694 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -514,7 +514,8 @@ static int __init cpg_mssr_add_clk_domain(struct device *dev,
+diff --git a/drivers/clk/zte/clk-zx296718.c b/drivers/clk/zte/clk-zx296718.c
+index 354dd508c5169..8dfb8523b79db 100644
+--- a/drivers/clk/zte/clk-zx296718.c
++++ b/drivers/clk/zte/clk-zx296718.c
+@@ -567,6 +567,7 @@ static int __init top_clocks_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 	int i, ret;
++	const char *name;
  
- 	genpd = &pd->genpd;
- 	genpd->name = np->name;
--	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
-+	genpd->flags = GENPD_FLAG_PM_CLK | GENPD_FLAG_ALWAYS_ON |
-+		       GENPD_FLAG_ACTIVE_WAKEUP;
- 	genpd->attach_dev = cpg_mssr_attach_dev;
- 	genpd->detach_dev = cpg_mssr_detach_dev;
- 	pm_genpd_init(genpd, &pm_domain_always_on_gov, false);
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -576,11 +577,10 @@ static int __init top_clocks_init(struct device_node *np)
+ 
+ 	for (i = 0; i < ARRAY_SIZE(zx296718_pll_clk); i++) {
+ 		zx296718_pll_clk[i].reg_base += (uintptr_t)reg_base;
++		name = zx296718_pll_clk[i].hw.init->name;
+ 		ret = clk_hw_register(NULL, &zx296718_pll_clk[i].hw);
+-		if (ret) {
+-			pr_warn("top clk %s init error!\n",
+-				zx296718_pll_clk[i].hw.init->name);
+-		}
++		if (ret)
++			pr_warn("top clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(top_ffactor_clk); i++) {
+@@ -588,11 +588,10 @@ static int __init top_clocks_init(struct device_node *np)
+ 			top_hw_onecell_data.hws[top_ffactor_clk[i].id] =
+ 					&top_ffactor_clk[i].factor.hw;
+ 
++		name = top_ffactor_clk[i].factor.hw.init->name;
+ 		ret = clk_hw_register(NULL, &top_ffactor_clk[i].factor.hw);
+-		if (ret) {
+-			pr_warn("top clk %s init error!\n",
+-				top_ffactor_clk[i].factor.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("top clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(top_mux_clk); i++) {
+@@ -601,11 +600,10 @@ static int __init top_clocks_init(struct device_node *np)
+ 					&top_mux_clk[i].mux.hw;
+ 
+ 		top_mux_clk[i].mux.reg += (uintptr_t)reg_base;
++		name = top_mux_clk[i].mux.hw.init->name;
+ 		ret = clk_hw_register(NULL, &top_mux_clk[i].mux.hw);
+-		if (ret) {
+-			pr_warn("top clk %s init error!\n",
+-				top_mux_clk[i].mux.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("top clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(top_gate_clk); i++) {
+@@ -614,11 +612,10 @@ static int __init top_clocks_init(struct device_node *np)
+ 					&top_gate_clk[i].gate.hw;
+ 
+ 		top_gate_clk[i].gate.reg += (uintptr_t)reg_base;
++		name = top_gate_clk[i].gate.hw.init->name;
+ 		ret = clk_hw_register(NULL, &top_gate_clk[i].gate.hw);
+-		if (ret) {
+-			pr_warn("top clk %s init error!\n",
+-				top_gate_clk[i].gate.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("top clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(top_div_clk); i++) {
+@@ -627,11 +624,10 @@ static int __init top_clocks_init(struct device_node *np)
+ 					&top_div_clk[i].div.hw;
+ 
+ 		top_div_clk[i].div.reg += (uintptr_t)reg_base;
++		name = top_div_clk[i].div.hw.init->name;
+ 		ret = clk_hw_register(NULL, &top_div_clk[i].div.hw);
+-		if (ret) {
+-			pr_warn("top clk %s init error!\n",
+-				top_div_clk[i].div.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("top clk %s init error!\n", name);
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+@@ -757,6 +753,7 @@ static int __init lsp0_clocks_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 	int i, ret;
++	const char *name;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -770,11 +767,10 @@ static int __init lsp0_clocks_init(struct device_node *np)
+ 					&lsp0_mux_clk[i].mux.hw;
+ 
+ 		lsp0_mux_clk[i].mux.reg += (uintptr_t)reg_base;
++		name = lsp0_mux_clk[i].mux.hw.init->name;
+ 		ret = clk_hw_register(NULL, &lsp0_mux_clk[i].mux.hw);
+-		if (ret) {
+-			pr_warn("lsp0 clk %s init error!\n",
+-				lsp0_mux_clk[i].mux.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("lsp0 clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lsp0_gate_clk); i++) {
+@@ -783,11 +779,10 @@ static int __init lsp0_clocks_init(struct device_node *np)
+ 					&lsp0_gate_clk[i].gate.hw;
+ 
+ 		lsp0_gate_clk[i].gate.reg += (uintptr_t)reg_base;
++		name = lsp0_gate_clk[i].gate.hw.init->name;
+ 		ret = clk_hw_register(NULL, &lsp0_gate_clk[i].gate.hw);
+-		if (ret) {
+-			pr_warn("lsp0 clk %s init error!\n",
+-				lsp0_gate_clk[i].gate.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("lsp0 clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lsp0_div_clk); i++) {
+@@ -796,11 +791,10 @@ static int __init lsp0_clocks_init(struct device_node *np)
+ 					&lsp0_div_clk[i].div.hw;
+ 
+ 		lsp0_div_clk[i].div.reg += (uintptr_t)reg_base;
++		name = lsp0_div_clk[i].div.hw.init->name;
+ 		ret = clk_hw_register(NULL, &lsp0_div_clk[i].div.hw);
+-		if (ret) {
+-			pr_warn("lsp0 clk %s init error!\n",
+-				lsp0_div_clk[i].div.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("lsp0 clk %s init error!\n", name);
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+@@ -865,6 +859,7 @@ static int __init lsp1_clocks_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 	int i, ret;
++	const char *name;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -878,11 +873,10 @@ static int __init lsp1_clocks_init(struct device_node *np)
+ 					&lsp0_mux_clk[i].mux.hw;
+ 
+ 		lsp1_mux_clk[i].mux.reg += (uintptr_t)reg_base;
++		name = lsp1_mux_clk[i].mux.hw.init->name;
+ 		ret = clk_hw_register(NULL, &lsp1_mux_clk[i].mux.hw);
+-		if (ret) {
+-			pr_warn("lsp1 clk %s init error!\n",
+-				lsp1_mux_clk[i].mux.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("lsp1 clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lsp1_gate_clk); i++) {
+@@ -891,11 +885,10 @@ static int __init lsp1_clocks_init(struct device_node *np)
+ 					&lsp1_gate_clk[i].gate.hw;
+ 
+ 		lsp1_gate_clk[i].gate.reg += (uintptr_t)reg_base;
++		name = lsp1_gate_clk[i].gate.hw.init->name;
+ 		ret = clk_hw_register(NULL, &lsp1_gate_clk[i].gate.hw);
+-		if (ret) {
+-			pr_warn("lsp1 clk %s init error!\n",
+-				lsp1_gate_clk[i].gate.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("lsp1 clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(lsp1_div_clk); i++) {
+@@ -904,11 +897,10 @@ static int __init lsp1_clocks_init(struct device_node *np)
+ 					&lsp1_div_clk[i].div.hw;
+ 
+ 		lsp1_div_clk[i].div.reg += (uintptr_t)reg_base;
++		name = lsp1_div_clk[i].div.hw.init->name;
+ 		ret = clk_hw_register(NULL, &lsp1_div_clk[i].div.hw);
+-		if (ret) {
+-			pr_warn("lsp1 clk %s init error!\n",
+-				lsp1_div_clk[i].div.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("lsp1 clk %s init error!\n", name);
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
+@@ -982,6 +974,7 @@ static int __init audio_clocks_init(struct device_node *np)
+ {
+ 	void __iomem *reg_base;
+ 	int i, ret;
++	const char *name;
+ 
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+@@ -995,11 +988,10 @@ static int __init audio_clocks_init(struct device_node *np)
+ 					&audio_mux_clk[i].mux.hw;
+ 
+ 		audio_mux_clk[i].mux.reg += (uintptr_t)reg_base;
++		name = audio_mux_clk[i].mux.hw.init->name;
+ 		ret = clk_hw_register(NULL, &audio_mux_clk[i].mux.hw);
+-		if (ret) {
+-			pr_warn("audio clk %s init error!\n",
+-				audio_mux_clk[i].mux.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("audio clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(audio_adiv_clk); i++) {
+@@ -1008,11 +1000,10 @@ static int __init audio_clocks_init(struct device_node *np)
+ 					&audio_adiv_clk[i].hw;
+ 
+ 		audio_adiv_clk[i].reg_base += (uintptr_t)reg_base;
++		name = audio_adiv_clk[i].hw.init->name;
+ 		ret = clk_hw_register(NULL, &audio_adiv_clk[i].hw);
+-		if (ret) {
+-			pr_warn("audio clk %s init error!\n",
+-				audio_adiv_clk[i].hw.init->name);
+-		}
++		if (ret)
++			pr_warn("audio clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(audio_div_clk); i++) {
+@@ -1021,11 +1012,10 @@ static int __init audio_clocks_init(struct device_node *np)
+ 					&audio_div_clk[i].div.hw;
+ 
+ 		audio_div_clk[i].div.reg += (uintptr_t)reg_base;
++		name = audio_div_clk[i].div.hw.init->name;
+ 		ret = clk_hw_register(NULL, &audio_div_clk[i].div.hw);
+-		if (ret) {
+-			pr_warn("audio clk %s init error!\n",
+-				audio_div_clk[i].div.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("audio clk %s init error!\n", name);
+ 	}
+ 
+ 	for (i = 0; i < ARRAY_SIZE(audio_gate_clk); i++) {
+@@ -1034,11 +1024,10 @@ static int __init audio_clocks_init(struct device_node *np)
+ 					&audio_gate_clk[i].gate.hw;
+ 
+ 		audio_gate_clk[i].gate.reg += (uintptr_t)reg_base;
++		name = audio_gate_clk[i].gate.hw.init->name;
+ 		ret = clk_hw_register(NULL, &audio_gate_clk[i].gate.hw);
+-		if (ret) {
+-			pr_warn("audio clk %s init error!\n",
+-				audio_gate_clk[i].gate.hw.init->name);
+-		}
++		if (ret)
++			pr_warn("audio clk %s init error!\n", name);
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
 -- 
 2.20.1
 
