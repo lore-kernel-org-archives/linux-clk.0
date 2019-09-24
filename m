@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2089BC4320D
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 186F0C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:43:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDFB4222BD
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9D4A21783
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:43:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343376;
-	bh=WluHTX10qG7RAA57oEeBHSjMqLz0IzntlDMWX8RpLdQ=;
+	s=default; t=1569343410;
+	bh=ZFiPp8ngyxu+/Da+Enw9S3iTkIS4pdRuux3QPVR7nWQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1lWXGIaC+WlVQhRUokWZzbKqZ/zsZDxeWsD1cqxV8GPF3qPa+dXFI5PJ3LVnZCVPB
-	 0MlkwhkresFxKHX7EUQcDrg/c9pMy+P66uBmFDskhZehPA3EcyINb+qsyJi8pZJ4SZ
-	 7iuLEvXDSImo7XGB1wFo1hk5tm0hUq+hJoubCVU8=
+	b=PXEEg0Qfno/mRvxnzrK+u+1gEynogyfoaBAQqUMH+aL+dIS1snrWakkRl87WO9Tas
+	 7wZhTJW/nK4PJASccs9B5bkhQ7/cEhB3lOZw+kd7qrmgD08/C6fGPi3FVQyadNI5T3
+	 ilaqAOfIkwwpOLV4/GVUCyn7Y4c+vPRqms7gRiqg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2632835AbfIXQmy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:42:54 -0400
-Received: from mail.kernel.org ([198.145.29.99]:59452 "EHLO mail.kernel.org"
+        id S2632989AbfIXQn3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:43:29 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2632832AbfIXQmx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:42:53 -0400
+        id S2632981AbfIXQn2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:43:28 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6EAB8217F4;
-        Tue, 24 Sep 2019 16:42:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 53CC2217F4;
+        Tue, 24 Sep 2019 16:43:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343373;
-        bh=WluHTX10qG7RAA57oEeBHSjMqLz0IzntlDMWX8RpLdQ=;
+        s=default; t=1569343408;
+        bh=ZFiPp8ngyxu+/Da+Enw9S3iTkIS4pdRuux3QPVR7nWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bOyujpE5OlSTGdyyGZIPNx9trc16i4cXk4EptUmrKwLqXpGCVwPWZhdMTa+MONZwz
-         kkQ50GLBHNkJ9SNYFTDUmECMw7BEJYbEz4v4o1jWiwkOReDPIBqSWhyInV5CvLuLIi
-         hRrBuwzvpYbhJ12vPtSTC+RyWY7JVTNqiUcrlgNs=
+        b=XNoYce4gehytFm3/Joptif/p5WYh9Lvp1aIUhGrDRQZskIdT5+exBgoEUljr23QEw
+         GC56UHnmoRyOszpHbpfea76DYxeKtKOx4HFFuzU6JjbbSMmxUENri1tyl6QfyWzzYE
+         YuFHJJ3DeT7JKCJ/2WD4mZvEjGtBBMZJXKY9oXDU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Abel Vesa <abel.vesa@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 23/87] clk: imx8mq: Mark AHB clock as critical
-Date:   Tue, 24 Sep 2019 12:40:39 -0400
-Message-Id: <20190924164144.25591-23-sashal@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.3 38/87] clk: meson: axg-audio: Don't reference clk_init_data after registration
+Date:   Tue, 24 Sep 2019 12:40:54 -0400
+Message-Id: <20190924164144.25591-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164144.25591-1-sashal@kernel.org>
 References: <20190924164144.25591-1-sashal@kernel.org>
@@ -59,46 +60,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Abel Vesa <abel.vesa@nxp.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit 9b9c60bed562c3718ae324a86f3f30a4ff983cf8 ]
+[ Upstream commit 1610dd79d0f6202c5c1a91122255fa598679c13a ]
 
-Initially, the TMU_ROOT clock was marked as critical, which automatically
-made the AHB clock to stay always on. Since the TMU_ROOT clock is not
-marked as critical anymore, following commit:
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-"clk: imx8mq: Remove CLK_IS_CRITICAL flag for IMX8MQ_CLK_TMU_ROOT"
-
-all the clocks that derive from ipg_root clock (and implicitly ahb clock)
-would also have to enable, along with their own gate, the AHB clock.
-
-But considering that AHB is actually a bus that has to be always on, we mark
-it as critical in the clock provider driver and then all the clocks that
-derive from it can be controlled through the dedicated per IP gate which
-follows after the ipg_root clock.
-
-Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Tested-by: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Cc: Neil Armstrong <narmstrong@baylibre.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-4-sboyd@kernel.org
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx8mq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/meson/axg-audio.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index d407a07e7e6dd..e07c69afc3594 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -406,7 +406,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clks[IMX8MQ_CLK_NOC_APB] = imx8m_clk_composite_critical("noc_apb", imx8mq_noc_apb_sels, base + 0x8d80);
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index 8028ff6f66107..db0b73d53551d 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -992,15 +992,18 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
  
- 	/* AHB */
--	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite("ahb", imx8mq_ahb_sels, base + 0x9000);
-+	/* AHB clock is used by the AHB bus therefore marked as critical */
-+	clks[IMX8MQ_CLK_AHB] = imx8m_clk_composite_critical("ahb", imx8mq_ahb_sels, base + 0x9000);
- 	clks[IMX8MQ_CLK_AUDIO_AHB] = imx8m_clk_composite("audio_ahb", imx8mq_audio_ahb_sels, base + 0x9100);
+ 	/* Take care to skip the registered input clocks */
+ 	for (i = AUD_CLKID_DDR_ARB; i < data->hw_onecell_data->num; i++) {
++		const char *name;
++
+ 		hw = data->hw_onecell_data->hws[i];
+ 		/* array might be sparse */
+ 		if (!hw)
+ 			continue;
  
- 	/* IPG */
++		name = hw->init->name;
++
+ 		ret = devm_clk_hw_register(dev, hw);
+ 		if (ret) {
+-			dev_err(dev, "failed to register clock %s\n",
+-				hw->init->name);
++			dev_err(dev, "failed to register clock %s\n", name);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.20.1
 
