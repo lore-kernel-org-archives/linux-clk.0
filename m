@@ -2,52 +2,51 @@ Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23EEFC432C1
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:49:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F769C432C1
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:49:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3DC621971
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:49:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35903222BF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 16:49:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569343750;
-	bh=9EMZoMlOTp277FGr1ArlagX6CsLtls8Fgtekm+PH48w=;
+	s=default; t=1569343771;
+	bh=imc0Q0pspsvYgj/52o+N72nnGePu1STZj1a8QPV/zXc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R1SZJ6q0idn3dRcg0e+ZuFMRimZZNy0SCnjWTc8hgyZJftpiaACXtRDbCCzJHg6NJ
-	 GcQIqmwmd6CFhBeihwUzO0q9xyGFH+i/+YG7jlu4dfc6upDxvmka5v6JNGs+P6yxhH
-	 yYyrrwEclLxsCZ2J8aURmZQFiJfhM0I1UIedw5A0=
+	b=BJ1/KQ0yWK5PqdYpLyUQg2B5QsoHQkUMrdo9/0IFZivYyFoQ0ZyoWfRZ0N+pr1EqS
+	 tXp1Is8KTac+8xzJYvLe8kStJNRgxP2h6qaIRy4kren5IXa7ikZoOL1w44WcblTa+7
+	 WAzIqdMBRnYF92cTubApB8m7mdFhBVge0rBrp720=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2410246AbfIXQtJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 12:49:09 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41310 "EHLO mail.kernel.org"
+        id S2410560AbfIXQta (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Sep 2019 12:49:30 -0400
+Received: from mail.kernel.org ([198.145.29.99]:41784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2410240AbfIXQtI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 12:49:08 -0400
+        id S2410550AbfIXQt3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Sep 2019 12:49:29 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24769217D9;
-        Tue, 24 Sep 2019 16:49:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A6DC21971;
+        Tue, 24 Sep 2019 16:49:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569343748;
-        bh=9EMZoMlOTp277FGr1ArlagX6CsLtls8Fgtekm+PH48w=;
+        s=default; t=1569343768;
+        bh=imc0Q0pspsvYgj/52o+N72nnGePu1STZj1a8QPV/zXc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nu3vvE6JL3r2onHKea7bb5ioswXFCHfWpe6Dn8RsjU8DRaCJx0tOLrhsdgph3lT3L
-         4XfNERemyRh+2o8PueNtiWTdn6Q+erAQ0c60IU1J3mTE5CsMgX4heljGwunKLK+APC
-         9MxgQmL6zpvoTh77dXyUN3Nw+XyeA5LESONw6S5s=
+        b=KinAgMK22nU5WJ97LqGsjDjtAXZEhsqoBKrTd62ZReqNNHFfZsijDIMbMO26aGfcA
+         bP/IeeCFXI0I52ddEZ4FjJQsag0yy9nriu9aEyaaiaUWU3NTAdZPNhPOcI7gdNC5RP
+         iQoeOjat6uD0cLkQ3ZRMmRv4vwz96zqPI3vR4j/g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Scott Wood <oss@buserror.net>, Stephen Boyd <sboyd@kernel.org>,
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Chunyan Zhang <zhang.chunyan@linaro.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 13/50] clk: qoriq: Fix -Wunused-const-variable
-Date:   Tue, 24 Sep 2019 12:48:10 -0400
-Message-Id: <20190924164847.27780-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 21/50] clk: sprd: Don't reference clk_init_data after registration
+Date:   Tue, 24 Sep 2019 12:48:18 -0400
+Message-Id: <20190924164847.27780-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190924164847.27780-1-sashal@kernel.org>
 References: <20190924164847.27780-1-sashal@kernel.org>
@@ -60,47 +59,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Nathan Huckleberry <nhuck@google.com>
+From: Stephen Boyd <sboyd@kernel.org>
 
-[ Upstream commit a95fb581b144b5e73da382eaedb2e32027610597 ]
+[ Upstream commit f6c90df8e7e33c3dc33d4d7471bc42c232b0510e ]
 
-drivers/clk/clk-qoriq.c:138:38: warning: unused variable
-'p5020_cmux_grp1' [-Wunused-const-variable] static const struct
-clockgen_muxinfo p5020_cmux_grp1
+A future patch is going to change semantics of clk_register() so that
+clk_hw::init is guaranteed to be NULL after a clk is registered. Avoid
+referencing this member here so that we don't run into NULL pointer
+exceptions.
 
-drivers/clk/clk-qoriq.c:146:38: warning: unused variable
-'p5020_cmux_grp2' [-Wunused-const-variable] static const struct
-clockgen_muxinfo p5020_cmux_grp2
-
-In the definition of the p5020 chip, the p2041 chip's info was used
-instead.  The p5020 and p2041 chips have different info. This is most
-likely a typo.
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/525
-Cc: clang-built-linux@googlegroups.com
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-Link: https://lkml.kernel.org/r/20190627220642.78575-1-nhuck@google.com
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Acked-by: Scott Wood <oss@buserror.net>
+Cc: Chunyan Zhang <zhang.chunyan@linaro.org>
+Cc: Baolin Wang <baolin.wang@linaro.org>
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lkml.kernel.org/r/20190731193517.237136-8-sboyd@kernel.org
+Acked-by: Baolin Wang <baolin.wang@linaro.org>
+Acked-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-qoriq.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sprd/common.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 3a1812f65e5d8..8abc5c8cb8b8c 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -610,7 +610,7 @@ static const struct clockgen_chipinfo chipinfo[] = {
- 		.guts_compat = "fsl,qoriq-device-config-1.0",
- 		.init_periph = p5020_init_periph,
- 		.cmux_groups = {
--			&p2041_cmux_grp1, &p2041_cmux_grp2
-+			&p5020_cmux_grp1, &p5020_cmux_grp2
- 		},
- 		.cmux_to_group = {
- 			0, 1, -1
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+index e038b04472061..8bdab1c3013b8 100644
+--- a/drivers/clk/sprd/common.c
++++ b/drivers/clk/sprd/common.c
+@@ -71,16 +71,17 @@ int sprd_clk_probe(struct device *dev, struct clk_hw_onecell_data *clkhw)
+ 	struct clk_hw *hw;
+ 
+ 	for (i = 0; i < clkhw->num; i++) {
++		const char *name;
+ 
+ 		hw = clkhw->hws[i];
+-
+ 		if (!hw)
+ 			continue;
+ 
++		name = hw->init->name;
+ 		ret = devm_clk_hw_register(dev, hw);
+ 		if (ret) {
+ 			dev_err(dev, "Couldn't register clock %d - %s\n",
+-				i, hw->init->name);
++				i, name);
+ 			return ret;
+ 		}
+ 	}
 -- 
 2.20.1
 
