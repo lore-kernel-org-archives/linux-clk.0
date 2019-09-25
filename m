@@ -2,223 +2,268 @@ Return-Path: <SRS0=5BEl=XU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D04C432C2
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 13:03:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED17BC432C2
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 13:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3660217F4
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 13:03:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B66A1214D9
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 13:12:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569416631;
-	bh=AVgTSuNTDJc7iXNeTqA0sXqLJXLcLZYIhEIn009zdq0=;
+	s=default; t=1569417153;
+	bh=AaD74a0PCviH3ASjVa4uhtW3hNJxUotze4MI2kShMJ8=;
 	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=GGG/RPT1IT+6/ZE9K+9K9zL2UGQCvj5caT5tMlAwdmeHC9sFGRmsOxylCMEUj8/gv
-	 UC7RoFEGBZAcafgYu06YSXC+lLsfppOIokM007p1chn+zcmS0C8rZi228vcic3s7wx
-	 RyjU4sbUu0OysZ5Auzn8+Rf7sVP+lCf2CacAbF4o=
+	b=TlXI3UONq+zZg2tGcCvrDurB6XuBwBe56+NQtrq+DtTn9TLuFmKYBQlRfAjTJ1t/d
+	 AzbwWjOfhSuhwkWxW6mIKMAjQfM9FeIOIsqd/OaH/+YV4aHg5GJcS+1e2ClXl41VDJ
+	 D/ecflgF1u1MJddo9wojcmnyUItAduZ07wVvILNA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405943AbfIYNDs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Sep 2019 09:03:48 -0400
-Received: from mail.kernel.org ([198.145.29.99]:58994 "EHLO mail.kernel.org"
+        id S2406103AbfIYNMd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Sep 2019 09:12:33 -0400
+Received: from mail.kernel.org ([198.145.29.99]:34612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405791AbfIYNDr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 25 Sep 2019 09:03:47 -0400
+        id S2405921AbfIYNMd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 25 Sep 2019 09:12:33 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42E0820640;
-        Wed, 25 Sep 2019 13:03:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4751020640;
+        Wed, 25 Sep 2019 13:12:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569416626;
-        bh=AVgTSuNTDJc7iXNeTqA0sXqLJXLcLZYIhEIn009zdq0=;
+        s=default; t=1569417152;
+        bh=AaD74a0PCviH3ASjVa4uhtW3hNJxUotze4MI2kShMJ8=;
         h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=qKGGvw1i1ai+L0FxHSH9DhoTp180KS8i9qwzLXy6SuWTXZZ6Z5GUr031DfDTbQeRU
-         PSKONg0CEkMQHH5j9cMCka3B/6QY4wwaZCzriz0uisOB9AjjzvxgyWXyvjVAoAM7sn
-         GbCemJGObzn1+qfw//0DEiSBtF/V2Nqmf6WroFpU=
+        b=tsOpwJ5S9fDmc4Pig1XjNj6oLCGe0M4hVsW7WQl+PPUlaPGYjFsdvDpJGyLSCkYXl
+         RwoiYlq1n4QdPzXJR0cX4hpiE3clNqWYqt4fHMwGiMMHQFCwQh9F3LlMVFCxX4YDLV
+         n9hY1eXpcN13X/mM4pOEay05xt499/QddSCpAgX4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org>
-References: <20190918095018.17979-1-tdas@codeaurora.org> <20190918095018.17979-4-tdas@codeaurora.org> <20190918213946.DC03521924@mail.kernel.org> <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org> <20190924231223.9012C207FD@mail.kernel.org> <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org
+In-Reply-To: <1569411888-98116-3-git-send-email-jian.hu@amlogic.com>
+References: <1569411888-98116-1-git-send-email-jian.hu@amlogic.com> <1569411888-98116-3-git-send-email-jian.hu@amlogic.com>
+Cc:     Rob Herring <robh@kernel.org>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        devicetree@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
+Subject: Re: [PATCH 2/2] clk: meson: a1: add support for Amlogic A1 clock driver
 User-Agent: alot/0.8.1
-Date:   Wed, 25 Sep 2019 06:03:45 -0700
-Message-Id: <20190925130346.42E0820640@mail.kernel.org>
+Date:   Wed, 25 Sep 2019 06:12:31 -0700
+Message-Id: <20190925131232.4751020640@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-09-25 04:20:07)
-> Hi Stephen,
+Quoting Jian Hu (2019-09-25 04:44:48)
+> The Amlogic A1 clock includes three parts:
+> peripheral clocks, pll clocks, CPU clocks.
+> sys pll and CPU clocks will be sent in next patch.
 >=20
-> Please find my comments.
+> Unlike the previous series, there is no EE/AO domain
+> in A1 CLK controllers.
 >=20
-> On 9/25/2019 4:42 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-09-23 01:01:11)
-> >> Hi Stephen,
-> >>
-> >> Thanks for your comments.
-> >>
-> >> On 9/19/2019 3:09 AM, Stephen Boyd wrote:
-> >>> Quoting Taniya Das (2019-09-18 02:50:18)
-> >>>> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc=
-7180.c
-> >>>> new file mode 100644
-> >>>> index 000000000000..d47865d5408f
-> >>>> --- /dev/null
-> >>>> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> >>>> +                       .ops =3D &clk_branch2_ops,
-> >>>> +               },
-> >>>> +       },
-> >>>> +};
-> >>>> +
-> > [...]
-> >>>> +static struct clk_branch gcc_ufs_phy_phy_aux_clk =3D {
-> >>>> +       .halt_reg =3D 0x77094,
-> >>>> +       .halt_check =3D BRANCH_HALT,
-> >>>> +       .hwcg_reg =3D 0x77094,
-> >>>> +       .hwcg_bit =3D 1,
-> >>>> +       .clkr =3D {
-> >>>> +               .enable_reg =3D 0x77094,
-> >>>> +               .enable_mask =3D BIT(0),
-> >>>> +               .hw.init =3D &(struct clk_init_data){
-> >>>> +                       .name =3D "gcc_ufs_phy_phy_aux_clk",
-> >>>> +                       .parent_data =3D &(const struct clk_parent_d=
-ata){
-> >>>> +                               .hw =3D &gcc_ufs_phy_phy_aux_clk_src=
-.clkr.hw,
-> >>>> +                       },
-> >>>> +                       .num_parents =3D 1,
-> >>>> +                       .flags =3D CLK_SET_RATE_PARENT,
-> >>>> +                       .ops =3D &clk_branch2_ops,
-> >>>> +               },
-> >>>> +       },
-> >>>> +};
-> >>>> +
-> >>>> +static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk =3D {
-> >>>> +       .halt_reg =3D 0x7701c,
-> >>>> +       .halt_check =3D BRANCH_HALT_SKIP,
-> >>>
-> >>> Again, nobody has fixed the UFS driver to not need to do this halt sk=
-ip
-> >>> check for these clks? It's been over a year.
-> >>>
-> >>
-> >> The UFS_PHY_RX/TX clocks could be left enabled due to certain HW boot
-> >> configuration and thus during the late initcall of clk_disable there
-> >> could be warnings of "clock stuck ON" in the dmesg. That is the reason
-> >> also to use the BRANCH_HALT_SKIP flag.
-> >=20
-> > Oh that's bad. Why do the clks stay on when we try to turn them off?
-> >
->=20
-> Those could be due to the configuration selected by HW and SW cannot=20
-> override them, so traditionally we have never polled for CLK_OFF for=20
-> these clocks.
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
 
-Is that the case or just a guess?
+This second name didn't send the patch. Please follow the signoff
+procedures documented in Documentation/process/submitting-patches.rst
 
->=20
-> >>
-> >> I would also check internally for the UFS driver fix you are referring=
- here.
-> >=20
-> > Sure. I keep asking but nothing is done :(
-> >=20
-> >>
-> >>>> +       .clkr =3D {
-> >>>> +               .enable_reg =3D 0x7701c,
-> >>>> +               .enable_mask =3D BIT(0),
-> >>>> +               .hw.init =3D &(struct clk_init_data){
-> >>>> +                       .name =3D "gcc_ufs_phy_rx_symbol_0_clk",
-> >>>> +                       .ops =3D &clk_branch2_ops,
-> >>>> +               },
-> >>>> +       },
-> >>>> +};
-> >>>> +
-> > [...]
-> >>>> +
-> >>>> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk =3D {
-> >>>> +       .halt_reg =3D 0xf058,
-> >>>> +       .halt_check =3D BRANCH_HALT_SKIP,
-> >>>
-> >>> Why does this need halt_skip?
-> >>
-> >> This is required as the source is external PHY, so we want to not check
-> >> for HALT.
-> >=20
-> > This doesn't really answer my question. If the source is an external phy
-> > then it should be listed as a clock in the DT binding and the parent
-> > should be specified here. Unless something doesn't work because of that?
-> >=20
->=20
-> The USB phy is managed by the USB driver and clock driver is not aware=20
-> if USB driver models the phy as a clock. Thus we do want to keep a=20
-> dependency on the parent and not poll for CLK_ENABLE.
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 16d7614..a48f67d 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -138,6 +138,7 @@ config ARCH_MESON
+>         select COMMON_CLK_AXG
+>         select COMMON_CLK_G12A
+>         select MESON_IRQ_GPIO
+> +       select COMMON_CLK_A1
 
-The clk driver should be aware of the USB driver modeling the phy as a
-clk. We do that for other phys so what is the difference here?
+Sort?
 
->=20
-> >>
-> >>>
-> >>>> +       .clkr =3D {
-> >>>> +               .enable_reg =3D 0xf058,
-> >>>> +               .enable_mask =3D BIT(0),
-> >>>> +               .hw.init =3D &(struct clk_init_data){
-> >>>> +                       .name =3D "gcc_usb3_prim_phy_pipe_clk",
-> >>>> +                       .ops =3D &clk_branch2_ops,
-> >>>> +               },
-> >>>> +       },
-> >>>> +};
-> >>>> +
-> >>>> +static struct clk_branch gcc_usb_phy_cfg_ahb2phy_clk =3D {
-> >>>> +       .halt_reg =3D 0x6a004,
-> >>>> +       .halt_check =3D BRANCH_HALT,
-> >>>> +       .hwcg_reg =3D 0x6a004,
-> >>>> +       .hwcg_bit =3D 1,
-> >>>> +       .clkr =3D {
-> >>>> +               .enable_reg =3D 0x6a004,
-> >>>> +               .enable_mask =3D BIT(0),
-> >>>> +               .hw.init =3D &(struct clk_init_data){
-> >>>> +                       .name =3D "gcc_usb_phy_cfg_ahb2phy_clk",
-> >>>> +                       .ops =3D &clk_branch2_ops,
-> >>>> +               },
-> >>>> +       },
-> >>>> +};
-> >>>> +
-> >>>> +/* Leave the clock ON for parent config_noc_clk to be kept enabled =
-*/
-> >>>
-> >>> There's no parent though... So I guess this means it keeps it enabled
-> >>> implicitly in hardware?
-> >>>
-> >>
-> >> These are not left enabled, but want to leave them enabled for clients
-> >> on config NOC.
-> >=20
-> > Sure. It just doesn't make sense to create clk structures and expose
-> > them in the kernel when we just want to turn the bits on and leave them
-> > on forever. Why not just do some register writes in probe for this
-> > driver? Doesn't that work just as well and use less memory?
-> >=20
->=20
-> Even if I write these registers during probe, the late init check=20
-> 'clk_core_is_enabled' would return true and would be turned OFF, that is =
+>         help
+>           This enables support for the arm64 based Amlogic SoCs
+>           such as the s905, S905X/D, S912, A113X/D or S905X/D2
+> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+> index dabeb43..e6cb4c3 100644
+> --- a/drivers/clk/meson/Kconfig
+> +++ b/drivers/clk/meson/Kconfig
+> @@ -107,3 +107,13 @@ config COMMON_CLK_G12A
+>         help
+>           Support for the clock controller on Amlogic S905D2, S905X2 and =
+S905Y2
+>           devices, aka g12a. Say Y if you want peripherals to work.
+> +
+> +config COMMON_CLK_A1
 
-> the reason for marking them CRITICAL.
->=20
+Probably should be placed somewhere alphabetically in this file?
 
-That wouldn't happen if the clks weren't registered though, no?
+> +       bool
+> +       depends on ARCH_MESON
+> +       select COMMON_CLK_MESON_REGMAP
+> +       select COMMON_CLK_MESON_DUALDIV
+> +       select COMMON_CLK_MESON_PLL
+> +       help
+> +         Support for the clock controller on Amlogic A113L device,
+> +         aka a1. Say Y if you want peripherals to work.
+> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+> index 3939f21..6be3a8f 100644
+> --- a/drivers/clk/meson/Makefile
+> +++ b/drivers/clk/meson/Makefile
+> @@ -19,3 +19,4 @@ obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) +=3D axg-audio.o
+>  obj-$(CONFIG_COMMON_CLK_GXBB) +=3D gxbb.o gxbb-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_G12A) +=3D g12a.o g12a-aoclk.o
+>  obj-$(CONFIG_COMMON_CLK_MESON8B) +=3D meson8b.o
+> +obj-$(CONFIG_COMMON_CLK_A1) +=3D a1.o
 
+I would guess this should be sorted on Kconfig name in this file?
+
+> diff --git a/drivers/clk/meson/a1.c b/drivers/clk/meson/a1.c
+> new file mode 100644
+> index 0000000..26edae0f
+> --- /dev/null
+> +++ b/drivers/clk/meson/a1.c
+> @@ -0,0 +1,2617 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/init.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/of_address.h>
+> +#include "clk-mpll.h"
+> +#include "clk-pll.h"
+> +#include "clk-regmap.h"
+> +#include "vid-pll-div.h"
+> +#include "clk-dualdiv.h"
+> +#include "meson-eeclk.h"
+> +#include "a1.h"
+> +
+[...]
+> +
+> +/*
+> + * The Meson A1 HIFI PLL is 614.4M, it requires
+> + * a strict register sequence to enable the PLL.
+> + * set meson_clk_pcie_pll_ops as its ops
+
+Please remove this last line as it's obvious from the code what ops are
+used.
+
+> + */
+> +static struct clk_regmap a1_hifi_pll =3D {
+> +       .data =3D &(struct meson_clk_pll_data){
+> +               .en =3D {
+> +                       .reg_off =3D ANACTRL_HIFIPLL_CTRL0,
+> +                       .shift   =3D 28,
+> +                       .width   =3D 1,
+> +               },
+> +               .m =3D {
+> +                       .reg_off =3D ANACTRL_HIFIPLL_CTRL0,
+> +                       .shift   =3D 0,
+> +                       .width   =3D 8,
+> +               },
+> +               .n =3D {
+> +                       .reg_off =3D ANACTRL_HIFIPLL_CTRL0,
+> +                       .shift   =3D 10,
+> +                       .width   =3D 5,
+> +               },
+> +               .frac =3D {
+> +                       .reg_off =3D ANACTRL_HIFIPLL_CTRL1,
+> +                       .shift   =3D 0,
+> +                       .width   =3D 19,
+> +               },
+> +               .l =3D {
+> +                       .reg_off =3D ANACTRL_HIFIPLL_STS,
+> +                       .shift   =3D 31,
+> +                       .width   =3D 1,
+> +               },
+> +               .table =3D a1_hifi_pll_params_table,
+> +               .init_regs =3D a1_hifi_init_regs,
+> +               .init_count =3D ARRAY_SIZE(a1_hifi_init_regs),
+> +       },
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "hifi_pll",
+> +               .ops =3D &meson_clk_pcie_pll_ops,
+> +               .parent_hws =3D (const struct clk_hw *[]) {
+> +                       &a1_xtal_hifipll.hw
+> +               },
+> +               .num_parents =3D 1,
+> +       },
+> +};
+> +
+[..]
+> +
+> +static struct clk_regmap a1_fclk_div2 =3D {
+> +       .data =3D &(struct clk_regmap_gate_data){
+> +               .offset =3D ANACTRL_FIXPLL_CTRL0,
+> +               .bit_idx =3D 21,
+> +       },
+> +       .hw.init =3D &(struct clk_init_data){
+> +               .name =3D "fclk_div2",
+> +               .ops =3D &clk_regmap_gate_ops,
+> +               .parent_hws =3D (const struct clk_hw *[]) {
+> +                       &a1_fclk_div2_div.hw
+> +               },
+> +               .num_parents =3D 1,
+> +               /*
+> +                * add CLK_IS_CRITICAL flag to avoid being disabled by cl=
+k core
+> +                * or its children clocks.
+
+This comment is useless. Please replace it with an actual reason for
+keeping the clk on instead of describing what the flag does.
+
+> +                */
+> +               .flags =3D CLK_IS_CRITICAL,
+> +       },
+> +};
+> +
+[..]
+> +static struct clk_regmap a1_dmc =3D {
+> +       .data =3D &(struct clk_regmap_gate_data){
+> +               .offset =3D DMC_CLK_CTRL,
+> +               .bit_idx =3D 8,
+> +       },
+> +       .hw.init =3D &(struct clk_init_data) {
+> +               .name =3D "dmc",
+> +               .ops =3D &clk_regmap_gate_ops,
+> +               .parent_hws =3D (const struct clk_hw *[]) {
+> +                       &a1_dmc_sel2.hw
+> +               },
+> +               .num_parents =3D 1,
+> +               /*
+> +                * add CLK_IGNORE_UNUSED to avoid hangup
+> +                * DDR clock should not change at runtime
+> +                */
+> +               .flags =3D CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+
+So not CLK_IS_CRITICAL?
+
+> +       },
+> +};
+> +
+[...]
+> +
+> +/*
+> + * cpu clock register base address is 0xfd000080
+> + */
+> +static struct clk_regmap *const a1_cpu_clk_regmaps[] =3D {
+> +       /* TODO */
+
+Can it be done?
+
+> +};
