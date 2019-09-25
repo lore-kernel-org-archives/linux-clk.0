@@ -2,212 +2,173 @@ Return-Path: <SRS0=5BEl=XU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 128A9C432C2
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 13:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11F5C432C2
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 14:29:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8BFD2146E
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 13:44:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B232721D7E
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 14:29:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="TqcyhXTe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406583AbfIYNoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Sep 2019 09:44:20 -0400
-Received: from imap1.codethink.co.uk ([176.9.8.82]:49590 "EHLO
-        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2406357AbfIYNoU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Sep 2019 09:44:20 -0400
-Received: from [78.40.148.177] (helo=localhost)
-        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
-        id 1iD7aa-0007gd-TH; Wed, 25 Sep 2019 14:44:17 +0100
+        id S2407277AbfIYO3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Sep 2019 10:29:47 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35310 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727775AbfIYO3r (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Sep 2019 10:29:47 -0400
+Received: by mail-wr1-f66.google.com with SMTP id v8so7217610wrt.2
+        for <linux-clk@vger.kernel.org>; Wed, 25 Sep 2019 07:29:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=01Kh5AUUblqFWi3ZNkHBI22OYBLpt/UY9FlNGz+JAZo=;
+        b=TqcyhXTeBpjPbXHmATEWSbSMssHKlceadH9bNBK2rEENOV8S59lTjB19hASMn9u81X
+         Uy53gHROuQETn6BSE3uKBX6Cc2RA0fAdrZx5yXDdezp2nLFGbasbMavfwf7uHfWF7j6G
+         0cvSzxdT58fjITWfyWuC2b8+l6b0lt4N3OMerdFAbiWKZa+NjbD9T3kKONiLTpNnNIWl
+         fLlOG5d9ez5gNmTciSj0ziVc3cr7T/pZh2Vv/fOd4E8DREYe7DDPddyw2hzLHKNWrafD
+         nQva2H+kPP1F+lSYq5sQfjH+uHcxz0TfCRYNQH4UhPQ0AE81x2sJLZom1dCejyBfP0j/
+         2yDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=01Kh5AUUblqFWi3ZNkHBI22OYBLpt/UY9FlNGz+JAZo=;
+        b=Pjx3Ech/vx/ZlWnN0IohzC0P3uUsuvVO1r/Q5kyK2Sz/rPqvWKXtU3Aa85iTOGMMxk
+         PHG3YRWYWD173xzu+3HBSzGNYlaQgZqFAkLE0KlZg2y3ZYTW+giqyXjZZvWU77rYwYiO
+         xRtDuoLTvDFAKq/vIQZYQ+YJJPj6qt+pCZUCy42KejKTvSRRuywLGKEr4b/y5iTbQZCU
+         Ta+5KDZb/qAaai75Far9R/nT1KkjePalBPwq6SCgDmv3hS9rT4JJ+SuTrjPMzq8r7J/i
+         K+JIG/Kpsle9oiT6NXHpOuPa2mzQAFpq99pmnOX2hlazbGy4FftP/DgsSa07rC9JKETk
+         XdLg==
+X-Gm-Message-State: APjAAAV2p0vjSyQ7deuJbPHMOAifdud5qoD+TqOFfPmdfyXjJlCsVvpp
+        71Z9ZtKyH8zBVoBCLa9ehkqncA==
+X-Google-Smtp-Source: APXvYqw6ta3lyXW5QXoDceAQYURMJqtEe8XE0Kee6BcYwayFrIM0iklE0ITqg8crPV7uy5OUMdOb5Q==
+X-Received: by 2002:a5d:6812:: with SMTP id w18mr9321474wru.250.1569421784891;
+        Wed, 25 Sep 2019 07:29:44 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id i5sm3814592wmd.21.2019.09.25.07.29.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 25 Sep 2019 07:29:44 -0700 (PDT)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jian Hu <jian.hu@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: meson: add A1 clock controller bindings
+In-Reply-To: <1569411888-98116-2-git-send-email-jian.hu@amlogic.com>
+References: <1569411888-98116-1-git-send-email-jian.hu@amlogic.com> <1569411888-98116-2-git-send-email-jian.hu@amlogic.com>
+Date:   Wed, 25 Sep 2019 16:29:43 +0200
+Message-ID: <1j4l10motk.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Wed, 25 Sep 2019 14:44:16 +0100
-From:   Ben Dooks <ben.dooks@codethink.co.uk>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH 1/2] clk: hisilicon: fix sparse warnings in clk-hi3670.c
-In-Reply-To: <20190925131443.0B1A520640@mail.kernel.org>
-References: <20190925112347.14141-1-ben.dooks@codethink.co.uk>
- <20190925131443.0B1A520640@mail.kernel.org>
-Message-ID: <20c08a1299306c5f58449c21118a306a@codethink.co.uk>
-X-Sender: ben.dooks@codethink.co.uk
-User-Agent: Roundcube Webmail/1.3.10
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed 25 Sep 2019 at 19:44, Jian Hu <jian.hu@amlogic.com> wrote:
 
+In addition to the comment expressed by Stephen on patch 2
 
-On 2019-09-25 14:14, Stephen Boyd wrote:
-> Quoting Ben Dooks (2019-09-25 04:23:46)
->> Fix the following warnings from sparse by removing the 0 initialiser
->> that is actually a pointer.
->> 
->> drivers/clk/hisilicon/clk-hi3670.c:298:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:300:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:302:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:304:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:306:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:308:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:310:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:312:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:314:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:316:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:318:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:320:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:322:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:324:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:326:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:328:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:330:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:332:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:334:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:336:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:338:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:340:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:342:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:344:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:346:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:348:65: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:350:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:352:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:488:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:490:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:492:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:494:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:496:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:498:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:500:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:502:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:504:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:506:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:508:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:510:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:512:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:514:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:516:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:518:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:520:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:522:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:524:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:526:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:528:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:530:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:532:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:534:71: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:536:71: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:538:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:611:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:614:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:616:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:653:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:655:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:657:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:659:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:661:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:663:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:665:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:735:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:737:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:739:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:741:63: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:743:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:745:64: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:802:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:804:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:806:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:808:69: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:810:70: warning: Using plain 
->> integer as NULL pointer
->> drivers/clk/hisilicon/clk-hi3670.c:812:69: warning: Using plain 
->> integer as NULL pointer
->> 
->> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
-> 
-> Did you compile and confirm that the binary is the same before and
-> after? It would give me more confidence if that was stated in the 
-> commit
-> text, otherwise I'll have to build the code before and after to make
-> sure myself.
+> Add the documentation to support Amlogic A1 clock driver,
+> and add A1 clock controller bindings.
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+> ---
+>  .../devicetree/bindings/clock/amlogic,a1-clkc.yaml |  65 +++++++++++++
+>  include/dt-bindings/clock/a1-clkc.h                | 102 +++++++++++++++++++++
+>  2 files changed, 167 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/a1-clkc.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+> new file mode 100644
+> index 0000000..f012eb2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+> @@ -0,0 +1,65 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + */
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/amlogic,a1-clkc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Amlogic Meson A1 Clock Control Unit Device Tree Bindings
+> +
+> +maintainers:
+> +  - Neil Armstrong <narmstrong@baylibre.com>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Jian Hu <jian.hu@jian.hu.com>
+> +
+> +properties:
+> +  compatible:
+> +    - enum:
+> +        - amlogic,a1-clkc
+> +
+> +  reg:
+> +    minItems: 1
+> +    maxItems: 3
+> +    items:
+> +      - description: peripheral registers
+> +      - description: cpu registers
+> +      - description: pll registers
+> +
+> +  reg-names:
+> +    items:
+> +      - const: peripheral
+> +      - const: pll
+> +      - const: cpu
+> +
+> +  clocks:
+> +    maxItems: 1
+> +    items:
+> +      - description: Input Oscillator (usually at 24MHz)
+> +
+> +  clock-names:
+> +    maxItems: 1
+> +    items:
+> +      - const: xtal
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - reg-names
+> +  - clocks
+> +  - clock-names
+> +  - "#clock-cells"
+> +
+> +examples:
+> +  - |
+> +    clkc: clock-controller {
+> +        compatible = "amlogic,a1-clkc";
+> +        reg = <0x0 0xfe000800 0x0 0x100>,
+> +              <0x0 0xfe007c00 0x0 0x21c>,
+> +              <0x0 0xfd000080 0x0 0x20>;
+> +        reg-names = "peripheral", "pll", "cpu";
 
-yes, get the same binary output pre and post patching.
+I'm sorry but I don't agree with this. You are trying to regroup several
+controllers into one with this, and it is not OK
+
+By the looks of it there are 3 different controllers, including one you
+did not implement in the driver.
+
+> +        clocks = <&xtal;
+> +        clock-names = "xtal";
+> +        #clock-cells = <1>;
