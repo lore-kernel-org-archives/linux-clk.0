@@ -1,236 +1,274 @@
-Return-Path: <SRS0=sOJR=XT=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=5BEl=XU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 302ACC432C2
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 23:12:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B526C432C1
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 11:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1568214DA
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Sep 2019 23:12:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569366746;
-	bh=+j5AnNwQqbgf/RjmaOj47PhlrItx9j7FWIaZz17xSJk=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=g/sj1hOIDG8y3TW9MiymoO3y+PIVbcPpe95GeXYv+5HMr1VrunwlrhKza7f16IVXw
-	 gt7UmG5JlOjNxQ9Dv4JEzRVMklXnB2IWDifYJ75/MSR2QxmyXEDW0ONm/3jDe4kH1u
-	 /jF/O5Q19z5GzumZeDdzKoUjvmDjoV9xNAzcz6HM=
+	by mail.kernel.org (Postfix) with ESMTP id E9F2421D7C
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Sep 2019 11:20:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UAMxgepS";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iPmNa2BX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406763AbfIXXMZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Sep 2019 19:12:25 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50906 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389437AbfIXXMZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Sep 2019 19:12:25 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2391100AbfIYLUW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Sep 2019 07:20:22 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:38344 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391030AbfIYLUV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Sep 2019 07:20:21 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 3E945611FA; Wed, 25 Sep 2019 11:20:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569410420;
+        bh=wK9KEmFipLDrDnWaH/q2ovLeKhYmmFwPCcdeTWnZ16o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=UAMxgepSGhANJbuEu7nCuBZqSwJ4vG7uKWf2e3oPWDH7fz6Wh3MPJexXu8P9B2H8y
+         EvJpLz1fI7LN2OYdGaL83FJE/eX+ktMGbYstxfzXMrPBEF1WVVN+A+tVwEcxnMZ7h1
+         AunO/hWAK+UVuFZjQLMP39/5jWtKI4bF3m6fDtSo=
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9012C207FD;
-        Tue, 24 Sep 2019 23:12:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569366743;
-        bh=+j5AnNwQqbgf/RjmaOj47PhlrItx9j7FWIaZz17xSJk=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=gH92DrEndcCCHU6/4MPa6jo3NtGaa0u6iNz3U6tb/8zo5SH7Nob3dwlKOkhSyzZzi
-         xl0loW0SfMexj9nNqeKL+9BK7JyvK9IaxjatCtf5c1xUm492fCGe6H2XwmlhxrCJg3
-         Y1ea2aiR/GKHMN9nu5jHURN4wlEJGNE6G/RBOQho=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
-References: <20190918095018.17979-1-tdas@codeaurora.org> <20190918095018.17979-4-tdas@codeaurora.org> <20190918213946.DC03521924@mail.kernel.org> <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BD52D611FA;
+        Wed, 25 Sep 2019 11:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1569410419;
+        bh=wK9KEmFipLDrDnWaH/q2ovLeKhYmmFwPCcdeTWnZ16o=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=iPmNa2BXOz0bqIjQsZhaRQNxtPDxOLKPfTpU5u98qQLDk4TzdXpDVfzmBnvaZVR9P
+         5ey7Om4mqp9lJOCvEqDcY1Vwwx4UtoR6UnvzDpGS73fLz+DzEeIefOrz0B82BoQwXO
+         Kkz9eI5P8sJWSmVMgxKGVurNFPFstub+PaPUMpn4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD52D611FA
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
-User-Agent: alot/0.8.1
-Date:   Tue, 24 Sep 2019 16:12:22 -0700
-Message-Id: <20190924231223.9012C207FD@mail.kernel.org>
+References: <20190918095018.17979-1-tdas@codeaurora.org>
+ <20190918095018.17979-4-tdas@codeaurora.org>
+ <20190918213946.DC03521924@mail.kernel.org>
+ <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
+ <20190924231223.9012C207FD@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org>
+Date:   Wed, 25 Sep 2019 16:50:07 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+In-Reply-To: <20190924231223.9012C207FD@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-09-23 01:01:11)
-> Hi Stephen,
->=20
-> Thanks for your comments.
->=20
-> On 9/19/2019 3:09 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-09-18 02:50:18)
-> >> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc71=
-80.c
-> >> new file mode 100644
-> >> index 000000000000..d47865d5408f
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> >> @@ -0,0 +1,2515 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-> >> + */
-> >> +
-> >> +#include <linux/err.h>
-> >> +#include <linux/kernel.h>
-> >> +#include <linux/module.h>
-> >> +#include <linux/of.h>
-> >> +#include <linux/of_device.h>
-> >> +#include <linux/regmap.h>
-> >=20
-> > include clk-provider.h
-> >=20
->=20
-> will add this header.
-> Currently the <drivers/clk/qcom/clk-regmap.h> already includes it.
+Hi Stephen,
 
-Yes but it should be included in any clk-provider drivers too.
+Please find my comments.
 
-> >> +
-> >> +/* Leave the clock ON for parent config_noc_clk to be kept enabled */
-> >> +static struct clk_branch gcc_disp_ahb_clk =3D {
-> >> +       .halt_reg =3D 0xb00c,
-> >> +       .halt_check =3D BRANCH_HALT,
-> >> +       .hwcg_reg =3D 0xb00c,
-> >> +       .hwcg_bit =3D 1,
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0xb00c,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "gcc_disp_ahb_clk",
-> >> +                       .flags =3D CLK_IS_CRITICAL,
-> >=20
-> > Does this assume the display is left enabled out of the bootloader? Why
-> > is this critical to system operation? Maybe it is really
-> > CLK_IGNORE_UNUSED?
-> >=20
->=20
-> This clock is not kept enabled by bootloader. But leaving this ON for=20
-> clients on config noc.
+On 9/25/2019 4:42 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-09-23 01:01:11)
+>> Hi Stephen,
+>>
+>> Thanks for your comments.
+>>
+>> On 9/19/2019 3:09 AM, Stephen Boyd wrote:
+>>> Quoting Taniya Das (2019-09-18 02:50:18)
+>>>> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+>>>> new file mode 100644
+>>>> index 000000000000..d47865d5408f
+>>>> --- /dev/null
+>>>> +++ b/drivers/clk/qcom/gcc-sc7180.c
+>>>> @@ -0,0 +1,2515 @@
+>>>> +// SPDX-License-Identifier: GPL-2.0
+>>>> +/*
+>>>> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+>>>> + */
+>>>> +
+>>>> +#include <linux/err.h>
+>>>> +#include <linux/kernel.h>
+>>>> +#include <linux/module.h>
+>>>> +#include <linux/of.h>
+>>>> +#include <linux/of_device.h>
+>>>> +#include <linux/regmap.h>
+>>>
+>>> include clk-provider.h
+>>>
+>>
+>> will add this header.
+>> Currently the <drivers/clk/qcom/clk-regmap.h> already includes it.
+> 
+> Yes but it should be included in any clk-provider drivers too.
+> 
+>>>> +
+>>>> +/* Leave the clock ON for parent config_noc_clk to be kept enabled */
+>>>> +static struct clk_branch gcc_disp_ahb_clk = {
+>>>> +       .halt_reg = 0xb00c,
+>>>> +       .halt_check = BRANCH_HALT,
+>>>> +       .hwcg_reg = 0xb00c,
+>>>> +       .hwcg_bit = 1,
+>>>> +       .clkr = {
+>>>> +               .enable_reg = 0xb00c,
+>>>> +               .enable_mask = BIT(0),
+>>>> +               .hw.init = &(struct clk_init_data){
+>>>> +                       .name = "gcc_disp_ahb_clk",
+>>>> +                       .flags = CLK_IS_CRITICAL,
+>>>
+>>> Does this assume the display is left enabled out of the bootloader? Why
+>>> is this critical to system operation? Maybe it is really
+>>> CLK_IGNORE_UNUSED?
+>>>
+>>
+>> This clock is not kept enabled by bootloader. But leaving this ON for
+>> clients on config noc.
+> 
+> Please see below comment for the other critical clk with no parent.
+> 
+>>
+>>>> +                       .ops = &clk_branch2_ops,
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+> [...]
+>>>> +static struct clk_branch gcc_ufs_phy_phy_aux_clk = {
+>>>> +       .halt_reg = 0x77094,
+>>>> +       .halt_check = BRANCH_HALT,
+>>>> +       .hwcg_reg = 0x77094,
+>>>> +       .hwcg_bit = 1,
+>>>> +       .clkr = {
+>>>> +               .enable_reg = 0x77094,
+>>>> +               .enable_mask = BIT(0),
+>>>> +               .hw.init = &(struct clk_init_data){
+>>>> +                       .name = "gcc_ufs_phy_phy_aux_clk",
+>>>> +                       .parent_data = &(const struct clk_parent_data){
+>>>> +                               .hw = &gcc_ufs_phy_phy_aux_clk_src.clkr.hw,
+>>>> +                       },
+>>>> +                       .num_parents = 1,
+>>>> +                       .flags = CLK_SET_RATE_PARENT,
+>>>> +                       .ops = &clk_branch2_ops,
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk = {
+>>>> +       .halt_reg = 0x7701c,
+>>>> +       .halt_check = BRANCH_HALT_SKIP,
+>>>
+>>> Again, nobody has fixed the UFS driver to not need to do this halt skip
+>>> check for these clks? It's been over a year.
+>>>
+>>
+>> The UFS_PHY_RX/TX clocks could be left enabled due to certain HW boot
+>> configuration and thus during the late initcall of clk_disable there
+>> could be warnings of "clock stuck ON" in the dmesg. That is the reason
+>> also to use the BRANCH_HALT_SKIP flag.
+> 
+> Oh that's bad. Why do the clks stay on when we try to turn them off?
+>
 
-Please see below comment for the other critical clk with no parent.
+Those could be due to the configuration selected by HW and SW cannot 
+override them, so traditionally we have never polled for CLK_OFF for 
+these clocks.
 
->=20
-> >> +                       .ops =3D &clk_branch2_ops,
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-[...]
-> >> +static struct clk_branch gcc_ufs_phy_phy_aux_clk =3D {
-> >> +       .halt_reg =3D 0x77094,
-> >> +       .halt_check =3D BRANCH_HALT,
-> >> +       .hwcg_reg =3D 0x77094,
-> >> +       .hwcg_bit =3D 1,
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0x77094,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "gcc_ufs_phy_phy_aux_clk",
-> >> +                       .parent_data =3D &(const struct clk_parent_dat=
-a){
-> >> +                               .hw =3D &gcc_ufs_phy_phy_aux_clk_src.c=
-lkr.hw,
-> >> +                       },
-> >> +                       .num_parents =3D 1,
-> >> +                       .flags =3D CLK_SET_RATE_PARENT,
-> >> +                       .ops =3D &clk_branch2_ops,
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-> >> +static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk =3D {
-> >> +       .halt_reg =3D 0x7701c,
-> >> +       .halt_check =3D BRANCH_HALT_SKIP,
-> >=20
-> > Again, nobody has fixed the UFS driver to not need to do this halt skip
-> > check for these clks? It's been over a year.
-> >=20
->=20
-> The UFS_PHY_RX/TX clocks could be left enabled due to certain HW boot=20
-> configuration and thus during the late initcall of clk_disable there=20
-> could be warnings of "clock stuck ON" in the dmesg. That is the reason=20
-> also to use the BRANCH_HALT_SKIP flag.
+>>
+>> I would also check internally for the UFS driver fix you are referring here.
+> 
+> Sure. I keep asking but nothing is done :(
+> 
+>>
+>>>> +       .clkr = {
+>>>> +               .enable_reg = 0x7701c,
+>>>> +               .enable_mask = BIT(0),
+>>>> +               .hw.init = &(struct clk_init_data){
+>>>> +                       .name = "gcc_ufs_phy_rx_symbol_0_clk",
+>>>> +                       .ops = &clk_branch2_ops,
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+> [...]
+>>>> +
+>>>> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
+>>>> +       .halt_reg = 0xf058,
+>>>> +       .halt_check = BRANCH_HALT_SKIP,
+>>>
+>>> Why does this need halt_skip?
+>>
+>> This is required as the source is external PHY, so we want to not check
+>> for HALT.
+> 
+> This doesn't really answer my question. If the source is an external phy
+> then it should be listed as a clock in the DT binding and the parent
+> should be specified here. Unless something doesn't work because of that?
+> 
 
-Oh that's bad. Why do the clks stay on when we try to turn them off?
+The USB phy is managed by the USB driver and clock driver is not aware 
+if USB driver models the phy as a clock. Thus we do want to keep a 
+dependency on the parent and not poll for CLK_ENABLE.
 
->=20
-> I would also check internally for the UFS driver fix you are referring he=
-re.
+>>
+>>>
+>>>> +       .clkr = {
+>>>> +               .enable_reg = 0xf058,
+>>>> +               .enable_mask = BIT(0),
+>>>> +               .hw.init = &(struct clk_init_data){
+>>>> +                       .name = "gcc_usb3_prim_phy_pipe_clk",
+>>>> +                       .ops = &clk_branch2_ops,
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +static struct clk_branch gcc_usb_phy_cfg_ahb2phy_clk = {
+>>>> +       .halt_reg = 0x6a004,
+>>>> +       .halt_check = BRANCH_HALT,
+>>>> +       .hwcg_reg = 0x6a004,
+>>>> +       .hwcg_bit = 1,
+>>>> +       .clkr = {
+>>>> +               .enable_reg = 0x6a004,
+>>>> +               .enable_mask = BIT(0),
+>>>> +               .hw.init = &(struct clk_init_data){
+>>>> +                       .name = "gcc_usb_phy_cfg_ahb2phy_clk",
+>>>> +                       .ops = &clk_branch2_ops,
+>>>> +               },
+>>>> +       },
+>>>> +};
+>>>> +
+>>>> +/* Leave the clock ON for parent config_noc_clk to be kept enabled */
+>>>
+>>> There's no parent though... So I guess this means it keeps it enabled
+>>> implicitly in hardware?
+>>>
+>>
+>> These are not left enabled, but want to leave them enabled for clients
+>> on config NOC.
+> 
+> Sure. It just doesn't make sense to create clk structures and expose
+> them in the kernel when we just want to turn the bits on and leave them
+> on forever. Why not just do some register writes in probe for this
+> driver? Doesn't that work just as well and use less memory?
+> 
 
-Sure. I keep asking but nothing is done :(
+Even if I write these registers during probe, the late init check 
+'clk_core_is_enabled' would return true and would be turned OFF, that is 
+the reason for marking them CRITICAL.
 
->=20
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0x7701c,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "gcc_ufs_phy_rx_symbol_0_clk",
-> >> +                       .ops =3D &clk_branch2_ops,
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-[...]
-> >> +
-> >> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk =3D {
-> >> +       .halt_reg =3D 0xf058,
-> >> +       .halt_check =3D BRANCH_HALT_SKIP,
-> >=20
-> > Why does this need halt_skip?
->=20
-> This is required as the source is external PHY, so we want to not check=20
-> for HALT.
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-This doesn't really answer my question. If the source is an external phy
-then it should be listed as a clock in the DT binding and the parent
-should be specified here. Unless something doesn't work because of that?
-
->=20
-> >=20
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0xf058,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "gcc_usb3_prim_phy_pipe_clk",
-> >> +                       .ops =3D &clk_branch2_ops,
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-> >> +static struct clk_branch gcc_usb_phy_cfg_ahb2phy_clk =3D {
-> >> +       .halt_reg =3D 0x6a004,
-> >> +       .halt_check =3D BRANCH_HALT,
-> >> +       .hwcg_reg =3D 0x6a004,
-> >> +       .hwcg_bit =3D 1,
-> >> +       .clkr =3D {
-> >> +               .enable_reg =3D 0x6a004,
-> >> +               .enable_mask =3D BIT(0),
-> >> +               .hw.init =3D &(struct clk_init_data){
-> >> +                       .name =3D "gcc_usb_phy_cfg_ahb2phy_clk",
-> >> +                       .ops =3D &clk_branch2_ops,
-> >> +               },
-> >> +       },
-> >> +};
-> >> +
-> >> +/* Leave the clock ON for parent config_noc_clk to be kept enabled */
-> >=20
-> > There's no parent though... So I guess this means it keeps it enabled
-> > implicitly in hardware?
-> >=20
->=20
-> These are not left enabled, but want to leave them enabled for clients=20
-> on config NOC.
-
-Sure. It just doesn't make sense to create clk structures and expose
-them in the kernel when we just want to turn the bits on and leave them
-on forever. Why not just do some register writes in probe for this
-driver? Doesn't that work just as well and use less memory?
-
+--
