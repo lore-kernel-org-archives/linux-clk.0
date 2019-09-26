@@ -2,142 +2,97 @@ Return-Path: <SRS0=UI5N=XV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D1CC4360C
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Sep 2019 18:34:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C0D6C4360C
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Sep 2019 20:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97BE82245B
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Sep 2019 18:34:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D812217F4
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Sep 2019 20:46:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="UgV7Uh+B"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="JD7JeQsA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbfIZSel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Sep 2019 14:34:41 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42122 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726029AbfIZSel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Sep 2019 14:34:41 -0400
-Received: by mail-oi1-f195.google.com with SMTP id i185so2969930oif.9;
-        Thu, 26 Sep 2019 11:34:40 -0700 (PDT)
+        id S1728873AbfIZUqb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Sep 2019 16:46:31 -0400
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:37385 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728872AbfIZUqb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Sep 2019 16:46:31 -0400
+Received: by mail-pg1-f195.google.com with SMTP id c17so2183630pgg.4
+        for <linux-clk@vger.kernel.org>; Thu, 26 Sep 2019 13:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NGmse8tCqZQZ4pc5Rd9nycCZrtTO2C0KKH3W2gH74ZQ=;
-        b=UgV7Uh+BjMLCWW04clvdJpCdRfDq+LPqUWtOYblF8YWz4YKYeXATM5GBrymb/Sk+uQ
-         S81PNoDJWIh2MnYlFgrJJyqp4nJIPSEnWcQcU9diyD7BzDBQk15Xq03a2s9hdNP2x0Gv
-         LycDh6FqujeKrx/3oAaZ1qrF9pDZklAuacpqB1EbUABmeQEyCF3XqGsYD7ya6ukjJAek
-         DEZHtXpSpDRBRERpBikNPBMDwlpHgQgE9z6uGXS/Ge9WNOrjEdT4a86+wC0dfksXnAB5
-         6wACcrdJIdl5YFIKME8vJ7Blt1qGTY/vzSMBgtbkwKLvPS3zxgplPCWYOS0jKRSfbq/p
-         diGw==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=5A93QbhcJ9OxEL8d529nmFDwwgHPcXf7jnflqd7ri+Q=;
+        b=JD7JeQsALzOQnI/4qgjCyDszf1kSiggpL1jpjmpP0ZrOIuc+rH3npuK/vS6qQ+APdk
+         DOxSlr0vPjLBh+8bgundu2vrbnLYxdK8cJ9A6n+FIHz1xHDLi0z+VJdL82dvLTGdo8zF
+         HduM+63/IdGaaCFE3qZPWGsNkoTiLLi6WDvI4TVwW4s2I2xZ5uUu+xDZXrPM1SCBrSno
+         243VhgJkvY50yMHStaZPEVf1H+Otom59J+UCdTgAuVfnoDnn2+GtT1dZFqBM3z7sWZnu
+         I935JuXgwOAV/a1Cyl2iPYd9RP8KwljZunUy8mZqpja4Q9GsaO0IKxZjvyjVaxIis/71
+         qQ2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NGmse8tCqZQZ4pc5Rd9nycCZrtTO2C0KKH3W2gH74ZQ=;
-        b=bqsppv18mbOx6v6HCdH5jZMSKonigt/iB2p+lvyZ7edfUAM9fEEAXcL41SIvcHrcQy
-         ZOewdHbPXOehHO1MPWsT3AkQx6CQ7n+Ir3wIwOAgmU2Df218FbuT+hiqj10tbgm9lvVM
-         WfkHuSgIEGVfTuZOSe+V5LAMeD9hi0HMavbKvGcLt0WBppBqgM7dslv0rmjSjJk0gcvn
-         oDlTNMAJk0oJZo4f2kLThxjmnCWDmd9z/Ya5t+0RLVv16vyLXQthARAjn1mDtQVUR+Qs
-         ZpjYdCP6oeW3qDTNX/XDzY1BsmA4IJDKHdXAJ/dZ/6OzVnAmSFjLVnXQDKENQm9nP8wT
-         dTsQ==
-X-Gm-Message-State: APjAAAXEOkGvc1fKag8Ksp0J8v4GZJ2p1nVHOA5Low2rgZuPzdplfNza
-        7FAk/5j5savrn3MS6GFuzc4RBuFWcwfLZcU9Wgnt2g==
-X-Google-Smtp-Source: APXvYqxuPwoB6TKSeyJqIwODjZis0k+ZmHBg9WFAB8/8pKYdueaEYWwk2+HM7MX9vjrMpv/LByMTiav/h+fuf+x5A5g=
-X-Received: by 2002:aca:4d08:: with SMTP id a8mr3946038oib.39.1569522879867;
- Thu, 26 Sep 2019 11:34:39 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=5A93QbhcJ9OxEL8d529nmFDwwgHPcXf7jnflqd7ri+Q=;
+        b=b0I94bFgpGvNfcYG0Z7u0hEbp2axs0AxQYDoFJbosp3xB91u50oYupNH4Pt/MAsA1N
+         Bch+LfIjmGNnkVh6vNmybEfxlYWEns/8eM+MOTtLSZ+ciVynSwDk8hEhZVFQ8aysWHgD
+         4Nvu4p/dYP0UrgfKp4Iih6sWRO+ZjGryVDmIT0iZXMYhZ67j+wOVCPxgWEsqK0ehA/kt
+         dn+ALGcKk3wkkFrTrVW60B7xkNw+kM9PY9zr90lfP+UpYDtpb1AA/3m6pgqy7O5O6RCH
+         XiE7PCqRUNWAa0hy4ZIkpBLCg3FWHjz4R8svsXxBFQ9Ltsr8r0tyVBu1i8kPVNyE+vo1
+         lBSA==
+X-Gm-Message-State: APjAAAWpNubV17AIkSVpIBZT322OZjYQM9L0rC1FtGTP3Gpa7mhUr+LD
+        ajV/y+C6osn32VQQU8EcWfXcDA==
+X-Google-Smtp-Source: APXvYqzG2OOdfG5XCHclCet9YXaUJwXijZtrIpDdndqleeF+PAsM0A80TkkzpTkrpdeInKpWjGPpIg==
+X-Received: by 2002:aa7:9a48:: with SMTP id x8mr415038pfj.201.1569530790856;
+        Thu, 26 Sep 2019 13:46:30 -0700 (PDT)
+Received: from localhost (c-71-197-186-152.hsd1.wa.comcast.net. [71.197.186.152])
+        by smtp.gmail.com with ESMTPSA id 195sm169718pfz.103.2019.09.26.13.46.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Sep 2019 13:46:30 -0700 (PDT)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, sboyd@kernel.org,
+        jbrunet@baylibre.com, mturquette@baylibre.com
+Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Neil Armstrong <narmstrong@baylibre.com>
+Subject: Re: [PATCH RFC 0/2] clk: meson: g12a: handle clock hw changes while in suspend
+In-Reply-To: <20190919102518.25126-1-narmstrong@baylibre.com>
+References: <20190919102518.25126-1-narmstrong@baylibre.com>
+Date:   Thu, 26 Sep 2019 13:46:29 -0700
+Message-ID: <7htv8ykcpm.fsf@baylibre.com>
 MIME-Version: 1.0
-References: <20190921151223.768842-1-martin.blumenstingl@googlemail.com>
- <1jzhivs6n6.fsf@starbuckisacylon.baylibre.com> <CAFBinCA0NaCJEDfNEg+LRfW3wxfNFGbXmGS+z7D5792TsupVAA@mail.gmail.com>
- <7h7e5wt2m1.fsf@baylibre.com>
-In-Reply-To: <7h7e5wt2m1.fsf@baylibre.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu, 26 Sep 2019 20:34:28 +0200
-Message-ID: <CAFBinCAv=_3vWSanQg1S5EXBVzdgTu2Ub3Hyad_ajF3v6PcbGQ@mail.gmail.com>
-Subject: Re: [PATCH 0/5] provide the XTAL clock via OF on Meson8/8b/8m2
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-amlogic@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Kevin,
+Neil Armstrong <narmstrong@baylibre.com> writes:
 
-On Thu, Sep 26, 2019 at 12:47 AM Kevin Hilman <khilman@baylibre.com> wrote:
+> This serie aime to support when the suspend/resume firmware alters the
+> clock tree, leading to an incorrect representation of the clock tree
+> after a resume from suspend-to-mem.
 >
-> Martin Blumenstingl <martin.blumenstingl@googlemail.com> writes:
+> For the Amlogic G12A/G12B/SM1 case, the SCPI firmware handling suspend
+> alters the CPU clock tree in various ways.
 >
-> > Hi Jerome,
-> >
-> > On Mon, Sep 23, 2019 at 11:29 AM Jerome Brunet <jbrunet@baylibre.com> wrote:
-> >>
-> >> On Sat 21 Sep 2019 at 17:12, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
-> >>
-> >> > So far the HHI clock controller has been providing the XTAL clock on
-> >> > Amlogic Meson8/Meson8b/Meson8m2 SoCs.
-> >> > This is not correct because the XTAL is actually a crystal on the
-> >> > boards and the SoC has a dedicated input for it.
-> >> >
-> >> > This updates the dt-bindings of the HHI clock controller and defines
-> >> > a fixed-clock in meson.dtsi (along with switching everything over to
-> >> > use this clock).
-> >> > The clock driver needs three updates to use this:
-> >> > - patch #2 uses clk_hw_set_parent in the CPU clock notifier. This drops
-> >> >   the explicit reference to CLKID_XTAL while at the same time making
-> >> >   the code much easier (thanks to Neil for providing this new method
-> >> >   as part of the G12A CPU clock bringup!)
-> >> > - patch #3 ensures that the clock driver doesn't rely on it's internal
-> >> >   XTAL clock while not losing support for older .dtbs that don't have
-> >> >   the XTAL clock input yet
-> >> > - with patch #4 the clock controller's own XTAL clock is not registered
-> >> >   anymore when a clock input is provided via OF
-> >> >
-> >> > This series is a functional no-op. It's main goal is to better represent
-> >> > how the actual hardware looks like.
-> >>
-> >> I'm a bit unsure about this series.
-> >>
-> >> On one hand, I totally agree with you ... having the xtal in DT is the
-> >> right way to do it ... when done from the start
-> > yep
-> >
-> >> On the other hand, things have been this way for years, they are working
-> >> and going for xtal in DT does not solve any pending issue. Doing this
-> >> means adding complexity in the driver to support both methods. It is
-> >> also quite a significant change in DT :/
-> > my two main motivations were:
-> > - keeping the 32-bit SoCs as similar as possible to the 64-bit ones in
-> > terms of "how are the [clock] drivers implemented"
-> > - with the DDR clock controller the .dts looked weird: &ddr_clkc took
-> > CLKID_XTAL from &clkc as input and &clkc took DDR_CLKID_DDR_PLL as
-> > input from &ddr_clkc
-> >
-> > RE complexity in the driver to support both:
-> > I still have a cleanup of the meson8b.c init code on my TODO-list
-> > because we're still supporting .dtbs without parent syscon
-> > my plan is to drop that code-path along with the newly added fallback
-> > for "skip CLKID_XTAL" (assuming this is accepted) together for v5.6 or
-> > v5.7
+> Since we know which part of the tree is possibly altered, we introduce here
+> the clk_invalidate_rate() function that will rebuild the tree from the
+> hardware registers in case parents and dividers have changed.
 >
-> TBH, I'm big(ish) "functional no-op" changes like this are not things I
-> get super exicted about, especially for SoCs that have been working well
-> for awhile, and are do not have a large (upstream) userbase.
+> Finally we call clk_invalidate_rate() from a new resume callback to refresh
+> the CPU clock tree after a resume.
 >
-> OTOH, since Martin is doing most of the heavy lifting for keeping this
-> platform working upstream, I'm happy to take the changes, as long as
-> Martin is willing to deal with any fallout.
-I agree: it has to work and if it doesn't then I will have to fix it so it is
-so I will be taking care of any fallout
+> With the clock tree refreshed, CCF can now handle the new clock tree
+> configuration and avoid crashing the system on further DVFS set_rates.
 
+For clarification, does this series work without the other proposed
+fixes[1]?  or is this dependent on that?
 
-Martin
+Kevin
+
+[1] https://lore.kernel.org/linux-amlogic/20190919093627.21245-1-narmstrong@baylibre.com/
