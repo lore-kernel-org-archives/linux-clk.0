@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C29BBC4360C
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 09:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9307C32774
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 09:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B05221848
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 09:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A85D20863
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 09:11:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="p20iWOiy"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="NOFEJ5yP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726080AbfI0JKp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Sep 2019 05:10:45 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:35691 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725992AbfI0JKo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 05:10:44 -0400
-Received: by mail-wm1-f66.google.com with SMTP id y21so5368906wmi.0
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 02:10:43 -0700 (PDT)
+        id S1726645AbfI0JLO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Sep 2019 05:11:14 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:38985 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbfI0JLN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 05:11:13 -0400
+Received: by mail-wr1-f66.google.com with SMTP id r3so1836660wrj.6
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 02:11:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:openpgp:autocrypt:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=9JDXSZfO3QSzLOKM13WUrHPFbh8gtWNxXZ5DE6hIJbM=;
-        b=p20iWOiyVHHW7ceDNPTmqJBElKRd+6hRMNGA10VGdtObZJaJ3AC5a3vH4kuTxwF0GM
-         LCgoWZ6HxbGfPXzhnVW+TFe6UVh7zZONrhh+clEcQiiyPQqRd8yj+5Ydf2ethYc5gPJ6
-         ZykEFdcz3OBCdGyEas8AtB0/a/QgF8+tAkDpoE1XOtuAmnzwj/2Z/j99HUYpnx4N6u5M
-         BxG/b+15VPUbReSaA1i6AFsNC4U25Bkb7pCuhs9293YpXxrcYzx5U0k1e1U7aCpqngtJ
-         NG05aQ3NNjFqosBnIxVOGS1SahFMU80JQjACGSJ2+RuOWcM0yjvyx337rU8m2CvMlNX0
-         QVTg==
+        bh=XhZeJVcBOJ2xCWrGGYvmOiCOlizQIuhT2Abx6vL8JTU=;
+        b=NOFEJ5yPnxxtKtI7EcImx1vallPgQkoP4HLjMtIE//PWX9m62QD8LAEfzemkhmmDbY
+         4FkQHCuFLQwkMk2QbsBOHRMajcIQsBhY1urp6FWTvsPis8pUCkN8ZT4Ypfvg1eGF2Fll
+         UtFhYJRqXowfohTn9ygNRNVsOvWaqDgvmpSPGFynQRIOLJ+OOa+VAktdOrhf7AwS1G+R
+         SlC2jOGrxSaD5FAypI2pMPaoJ2Ts7JhrDvtjo9XtMbJKa+ar2xVs5EF4rsCAka9HmIX9
+         e2PvxjRqehAG8h6wepeDUn2f0kpDZqPnlb/CJpYbDjduTQUpj+Wsr486qGdGebfTqLOi
+         jPHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :organization:message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=9JDXSZfO3QSzLOKM13WUrHPFbh8gtWNxXZ5DE6hIJbM=;
-        b=k4AtdLF8sMeabxMlDOC4hFA8LGRvXhWmJ7RiFrEZC62ePtLrLisRmBijpeo0d5VHw1
-         GaKmdJLI5tz+M9tb79XnwkGJo/tzWKLfWNISSUYpBJ5nPJrDG0Yzx0Aor5wWZa89ElvQ
-         pkeggeibgeJsn8YMslfuTl/GM0/Cxx0zGwMggYF4FMSJ0QDUrFCooIpKGRbcrFVee8hG
-         6h1eOBWvgqdQqYD8vL8GJoXKPMXoPI2nLRPlw/SSaQpNrNmF/XHx5+3OKrI/+v9gzGNB
-         2gveln7IdcUOE9omz2CHNxJ2+HxOJ7lqpmbRuX4bDDObILAR1Vs2kKHrdgnQ6YaFuIhH
-         i/KQ==
-X-Gm-Message-State: APjAAAWkokjLMdhvDQybOMF5ZhlkoOLixn0bjB2Thl1J7TonHfcXQ8Pt
-        LwqH54aoS512YWcpTSlUVDwHGEVuD5QbKg==
-X-Google-Smtp-Source: APXvYqwJmyvJuQ3C5mzoVzAe4tLN/ZVjMLytQqz95VDUtQpNpmgZs/XT05X8JPl6P+cwVL9YLkm5Hg==
-X-Received: by 2002:a1c:4085:: with SMTP id n127mr6641515wma.68.1569575442169;
-        Fri, 27 Sep 2019 02:10:42 -0700 (PDT)
+        bh=XhZeJVcBOJ2xCWrGGYvmOiCOlizQIuhT2Abx6vL8JTU=;
+        b=MfLuy2NPsuxjR/CbF8wsKYORNBFOLn1N4PsLCeePd+9bcI9LC4tDsyHMey9cFooX4y
+         Wjy072daxTydOTys+dNO3XhyBI4NC7WxKS5wakTI67HU8PjS8iOqsCAQpuxqin+mUiQV
+         o/CUFBND+sHQFNbDdwu2WTTjkHJ2XnPyY03AvlCk8eGXfckJasuRCdMNM6KTpszntrzQ
+         J6gzzOlVWGl75niqk42++vaqKF/ajJEYlOOmCaHhwiSRpLyZJXorSYXlouI9RqHaLp04
+         VPJW6yJiQbuBB6hlZtKWFH/ozCfMMybMcktVHMxs/alT3x/QYOoqzW/SJdnSunWK4kUG
+         ju0A==
+X-Gm-Message-State: APjAAAWZ2NqcGRHxTynboL3RUBrSx31CfOasRQNyxojYq/bPUmF7dugZ
+        vaaRVB5E3v1iYrC+06FM+Lxwew==
+X-Google-Smtp-Source: APXvYqyaoCErvBoRFreCO0ImrjaX+o3au5aiA3oIYK/6IRYud0tL/RgYgiG2Y8sOSoFtME4PQerQgA==
+X-Received: by 2002:adf:f303:: with SMTP id i3mr2032723wro.242.1569575470537;
+        Fri, 27 Sep 2019 02:11:10 -0700 (PDT)
 Received: from [192.168.1.62] (176-150-251-154.abo.bbox.fr. [176.150.251.154])
-        by smtp.gmail.com with ESMTPSA id n1sm4095115wrg.67.2019.09.27.02.10.41
+        by smtp.gmail.com with ESMTPSA id j1sm4406161wrg.24.2019.09.27.02.11.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 27 Sep 2019 02:10:41 -0700 (PDT)
-Subject: Re: [PATCH 3/7] clk: meson: axg-audio: remove useless defines
+        Fri, 27 Sep 2019 02:11:10 -0700 (PDT)
+Subject: Re: [PATCH 4/7] clk: meson: axg-audio: fix regmap last register
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
 References: <20190924153356.24103-1-jbrunet@baylibre.com>
- <20190924153356.24103-4-jbrunet@baylibre.com>
+ <20190924153356.24103-5-jbrunet@baylibre.com>
 From:   Neil Armstrong <narmstrong@baylibre.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
@@ -115,12 +115,12 @@ Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
  VsbXrP9BZ6snXyHfebPnno/te5XRqZTL9aJOytB/1iUna+1MAwBxGFPvqeEUUyT+gx1l3Acl
  ZaTUOEkgIor5losDrePdPgE=
 Organization: Baylibre
-Message-ID: <cbad7e7c-34aa-f276-c541-b5e96ea4d4bb@baylibre.com>
-Date:   Fri, 27 Sep 2019 11:10:41 +0200
+Message-ID: <de874598-ee2c-46e7-3b42-87517c9bae25@baylibre.com>
+Date:   Fri, 27 Sep 2019 11:11:09 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20190924153356.24103-4-jbrunet@baylibre.com>
+In-Reply-To: <20190924153356.24103-5-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -130,30 +130,28 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 24/09/2019 17:33, Jerome Brunet wrote:
-> Defining the number of each input type is no longer necessary since
-> we are not using the clk-input hack anymore
+> Since the addition of the g12a, the last register is
+> AUDIO_CLK_SPDIFOUT_B_CTRL.
 > 
-> Fixes: 282420eed23f ("clk: meson: axg-audio: migrate to the new parent description method")
+> Fixes: 075001385c66 ("clk: meson: axg-audio: add g12a support")
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  drivers/clk/meson/axg-audio.c | 4 ----
->  1 file changed, 4 deletions(-)
+>  drivers/clk/meson/axg-audio.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-> index 18b23cdf679c..60ac71856e5e 100644
+> index 60ac71856e5e..4b34601342bb 100644
 > --- a/drivers/clk/meson/axg-audio.c
 > +++ b/drivers/clk/meson/axg-audio.c
-> @@ -20,10 +20,6 @@
->  #include "clk-phase.h"
->  #include "sclk-div.h"
+> @@ -997,7 +997,7 @@ static const struct regmap_config axg_audio_regmap_cfg = {
+>  	.reg_bits	= 32,
+>  	.val_bits	= 32,
+>  	.reg_stride	= 4,
+> -	.max_register	= AUDIO_CLK_PDMIN_CTRL1,
+> +	.max_register	= AUDIO_CLK_SPDIFOUT_B_CTRL,
+>  };
 >  
-> -#define AUD_MST_IN_COUNT	8
-> -#define AUD_SLV_SCLK_COUNT	10
-> -#define AUD_SLV_LRCLK_COUNT	10
-> -
->  #define AUD_GATE(_name, _reg, _bit, _phws, _iflags)			\
->  struct clk_regmap aud_##_name = {					\
->  	.data = &(struct clk_regmap_gate_data){				\
+>  struct audioclk_data {
 > 
 
 Acked-by: Neil Armstrong <narmstrong@baylibre.com>
