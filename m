@@ -2,140 +2,531 @@ Return-Path: <SRS0=fPJi=XW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CBEC388F4
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 16:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04F63C388F3
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 17:27:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F226421D71
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 16:38:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vlJH88ij"
+	by mail.kernel.org (Postfix) with ESMTP id BFA65207FF
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 17:27:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569605270;
+	bh=SkHqTzXGsRlSow+wU9dxrj6bWUmF0ImcbN5Wq09CJPA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=POhUY9mUqPQPzd7iPCm2BvBXaL29sP/5Yr8M4DIgLdVo1tzK2Yw7Fx/G2ak297n64
+	 Osqo4JthMh8E5NZWwc9VQWQsaJX3e512tto5eI2bKES8EgPz7TBBMWPpEBjluUWjfF
+	 oz8q0Reb1mMcs8vih4u5wiH/oRrVymTPz+jJQO4Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727447AbfI0Qiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Sep 2019 12:38:50 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46579 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726251AbfI0Qit (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 12:38:49 -0400
-Received: by mail-wr1-f65.google.com with SMTP id o18so3853840wrv.13
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 09:38:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=H9qpcAXROEOSHATHIODGl5R6XLJmU3Nit6aFPlUl9PY=;
-        b=vlJH88ijYnpukf4ZiGFC3tgXvxD1NRCykGaXRu7yCbSTKpcKP3ety0gptHFmz1x+9A
-         R/Zij0mk9nhPfjOY+LKUIwqed8VuCJy6QuPiI87ofhmDeo6H6oLRNVsZ5zE71JbcpYs7
-         uc7+vzjvAFtQ712pTxhRUUUTQcZwPb4HlY/iTEal88bUJii40H23wDmbW1J9zCSWVHGO
-         4dLbPL+BvvZoXBrCGsugMVLtvI/uFbz+gafElcBGJnTW7LkFpuxjK4NBrzMpXkDvwg/i
-         zRdsMSnPa1NibDmYOg/w0WIKy76RjgF1OahTmnNR5MoE/6qCzo8Gl5LJSwGSRso85PN5
-         DL2A==
+        id S1727072AbfI0R1r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Sep 2019 13:27:47 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:44186 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726033AbfI0R1q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 13:27:46 -0400
+Received: by mail-oi1-f194.google.com with SMTP id w6so5833464oie.11;
+        Fri, 27 Sep 2019 10:27:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=H9qpcAXROEOSHATHIODGl5R6XLJmU3Nit6aFPlUl9PY=;
-        b=EG9+5+jI34v/1JLgr7Yz+WYAKcBUEgcqhrwrF4DQOEJCvlsT6HvFIdRZf4BvM1cECy
-         5mfu//XpVrbhM6rfwq3fU8YD9mpDBi1RXsW4GGhMhHD+aeVT5jOcDK8KGTYg3xGgd/hk
-         iV5nwiB87eCBmG+lrBRkMc26VPaxqsewxwh9R0OOzr8yDLnXw5AXITPTFgLV3Z6UxEIM
-         +Sfo3P9748Ewy9H3JZBlQAaC5qP9SX0rUvXDg9ifQEG9x1WGuwE3DCshbc9xOwUaQeOa
-         AJ2YcGabyYtweKlVjKTBYkkWY4QsCV1xWM54ZsuUUfXzaIvs1v26fLfaD6acpPUZ7spm
-         Rmrg==
-X-Gm-Message-State: APjAAAXHpCKuQBfbcPl0MxG7jS7t8rx6nnPCp81zsm9k7Xxz9Tabzjg5
-        qyB7hZuAgQWj1HDqsnFESs0qQQ==
-X-Google-Smtp-Source: APXvYqyOToIhXgMB3p4wq1eYwswK4+ABcMmXeNT+QmoldWbGpxe9NmpO0SA2ZuMkhyc8J4VZ7vGPAw==
-X-Received: by 2002:adf:f547:: with SMTP id j7mr3872939wrp.119.1569602327457;
-        Fri, 27 Sep 2019 09:38:47 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id j1sm6587771wrg.24.2019.09.27.09.38.46
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FDFY0W6odU72zZw9MVVAMK2juEgcWWFg++SSqWPH+10=;
+        b=KK8hzXOQAelx+M3vNbnYWBBvCzLHtZwmtU7CAwXLG2nU+Ni6pK3VGcgaX0iRReebd5
+         8nGdOOYn8Wj8tPc91QrDjggopHpZnFPOoUOQJTKEq3Bw/GyQ0wSostvafukku87jzEkr
+         6Jf109z8FJuQxlkNq2CrV3r0vw5RAldTuqxloy+xHUSmkQO83OGS5FxTVQVOm+QXF4wl
+         b+xtEAKQjuXKfphm2kabAhAadBQRkS8yhhboc7m6CcoU6dw1Pufg2fqf1J/+c2/uJT0i
+         ipBnubllpRd8RAr9kQHEH/fgI3XoZ++EIAJfUmmE+W/8iFzIA8B+AQcnMd6aGgjnjgME
+         iryQ==
+X-Gm-Message-State: APjAAAVdEnjU3QY1LVboWVxm3kwT8+bfKl99GT409jZpWP9ofHPb/CIf
+        4bry/kY30oMpWkVVRyXrbg==
+X-Google-Smtp-Source: APXvYqy6uPbiioItb+7HD1lowpwFqXh9sELvOQmKjU213kDt/SBI8P8JpbLkZF4IKHMvG7sTcZdeGQ==
+X-Received: by 2002:aca:484:: with SMTP id 126mr7873603oie.68.1569605265038;
+        Fri, 27 Sep 2019 10:27:45 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id i13sm1175738otj.58.2019.09.27.10.27.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 27 Sep 2019 09:38:46 -0700 (PDT)
-References: <20190919102518.25126-1-narmstrong@baylibre.com> <20190919102518.25126-2-narmstrong@baylibre.com> <20190927001425.DFDC7207FF@mail.kernel.org> <8486dec0-8aea-ea39-2a52-7347a01c5c40@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] clk: introduce clk_invalidate_rate()
-In-reply-to: <8486dec0-8aea-ea39-2a52-7347a01c5c40@baylibre.com>
-Date:   Fri, 27 Sep 2019 18:38:45 +0200
-Message-ID: <1jef011yp6.fsf@starbuckisacylon.baylibre.com>
+        Fri, 27 Sep 2019 10:27:44 -0700 (PDT)
+Date:   Fri, 27 Sep 2019 12:27:43 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?iso-8859-1?Q?=A0?= 
+        <mturquette@baylibre.com>, David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] dt-bindings: clk: qcom: Add YAML schemas for the
+ GCC clock bindings
+Message-ID: <20190927172743.GA12132@bogus>
+References: <20190918095018.17979-1-tdas@codeaurora.org>
+ <20190918095018.17979-3-tdas@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918095018.17979-3-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Sep 18, 2019 at 03:20:17PM +0530, Taniya Das wrote:
+> The GCC clock provider have a bunch of generic properties that
+> are needed in a device tree. Add a YAML schemas for those. Also update
+> the compatible for SC7180 along with example for clocks & clock-names.
 
-On Fri 27 Sep 2019 at 08:40, Neil Armstrong <narmstrong@baylibre.com> wrote:
+I'm fine fixing errors in the conversion, but adding a new chip should 
+be separate patch.
 
-> On 27/09/2019 02:14, Stephen Boyd wrote:
->> Quoting Neil Armstrong (2019-09-19 03:25:17)
->>> This introduces the clk_invalidate_rate() call used to recalculate the
->>> rate and parent tree of a particular clock if it's known that the
->>> underlying registers set has been altered by the firmware, like from
->>> a suspend/resume handler running in trusted cpu mode.
->>>
->>> The call refreshes the actual parent and when changed, instructs CCF
->>> the parent has changed. Finally the call will recalculate the rate of
->>> each part of the tree to make sure the CCF cached tree is in sync with
->>> the hardware.
->>>
->>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
->>> ---
->> 
->> The knee-jerk reaction to these patches is that it shouldn't be a
->> consumer API (i.e. taking a struct clk) but a provider API (i.e. taking
->> a struct clk_hw). I haven't looked in any more detail but just know that
->> it's a non-starter to be a consumer based API because we don't want
->> random consumers out there to be telling the CCF or provider drivers
->> that some clk has lost state and needs to be "refreshed".
->> 
->
-> Totally agree, I hesitated and obviously did the wrong choice, but
-> this is a nit, the main algorithm is not tied to the API level.
->
-> Should I resend it with clk_hw ? the difference will be small and
-> the main subject is the resync algorithm.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,gcc.txt    |  94 -----------
+>  .../devicetree/bindings/clock/qcom,gcc.yaml   | 157 ++++++++++++++++++
+>  include/dt-bindings/clock/qcom,gcc-sc7180.h   | 155 +++++++++++++++++
+>  3 files changed, 312 insertions(+), 94 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>  create mode 100644 include/dt-bindings/clock/qcom,gcc-sc7180.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> deleted file mode 100644
+> index d14362ad4132..000000000000
+> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
+> +++ /dev/null
+> @@ -1,94 +0,0 @@
+> -Qualcomm Global Clock & Reset Controller Binding
+> -------------------------------------------------
+> -
+> -Required properties :
+> -- compatible : shall contain only one of the following:
+> -
+> -			"qcom,gcc-apq8064"
+> -			"qcom,gcc-apq8084"
+> -			"qcom,gcc-ipq8064"
+> -			"qcom,gcc-ipq4019"
+> -			"qcom,gcc-ipq8074"
+> -			"qcom,gcc-msm8660"
+> -			"qcom,gcc-msm8916"
+> -			"qcom,gcc-msm8960"
+> -			"qcom,gcc-msm8974"
+> -			"qcom,gcc-msm8974pro"
+> -			"qcom,gcc-msm8974pro-ac"
+> -			"qcom,gcc-msm8994"
+> -			"qcom,gcc-msm8996"
+> -			"qcom,gcc-msm8998"
+> -			"qcom,gcc-mdm9615"
+> -			"qcom,gcc-qcs404"
+> -			"qcom,gcc-sdm630"
+> -			"qcom,gcc-sdm660"
+> -			"qcom,gcc-sdm845"
+> -			"qcom,gcc-sm8150"
+> -
+> -- reg : shall contain base register location and length
+> -- #clock-cells : shall contain 1
+> -- #reset-cells : shall contain 1
+> -
+> -Optional properties :
+> -- #power-domain-cells : shall contain 1
+> -- Qualcomm TSENS (thermal sensor device) on some devices can
+> -be part of GCC and hence the TSENS properties can also be
+> -part of the GCC/clock-controller node.
+> -For more details on the TSENS properties please refer
+> -Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> -- protected-clocks : Protected clock specifier list as per common clock
+> - binding.
+> -
+> -For SM8150 only:
+> -       - clocks: a list of phandles and clock-specifier pairs,
+> -                 one for each entry in clock-names.
+> -       - clock-names: "bi_tcxo" (required)
+> -                      "sleep_clk" (optional)
+> -                      "aud_ref_clock" (optional)
+> -
+> -Example:
+> -	clock-controller@900000 {
+> -		compatible = "qcom,gcc-msm8960";
+> -		reg = <0x900000 0x4000>;
+> -		#clock-cells = <1>;
+> -		#reset-cells = <1>;
+> -		#power-domain-cells = <1>;
+> -	};
+> -
+> -Example of GCC with TSENS properties:
+> -	clock-controller@900000 {
+> -		compatible = "qcom,gcc-apq8064";
+> -		reg = <0x00900000 0x4000>;
+> -		nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+> -		nvmem-cell-names = "calib", "calib_backup";
+> -		#clock-cells = <1>;
+> -		#reset-cells = <1>;
+> -		#thermal-sensor-cells = <1>;
+> -	};
+> -
+> -Example of GCC with protected-clocks properties:
+> -	clock-controller@100000 {
+> -		compatible = "qcom,gcc-sdm845";
+> -		reg = <0x100000 0x1f0000>;
+> -		#clock-cells = <1>;
+> -		#reset-cells = <1>;
+> -		#power-domain-cells = <1>;
+> -		protected-clocks = <GCC_QSPI_CORE_CLK>,
+> -				   <GCC_QSPI_CORE_CLK_SRC>,
+> -				   <GCC_QSPI_CNOC_PERIPH_AHB_CLK>,
+> -				   <GCC_LPASS_Q6_AXI_CLK>,
+> -				   <GCC_LPASS_SWAY_CLK>;
+> -	};
+> -
+> -Example of GCC with clocks
+> -	gcc: clock-controller@100000 {
+> -		compatible = "qcom,gcc-sm8150";
+> -		reg = <0x00100000 0x1f0000>;
+> -		#clock-cells = <1>;
+> -		#reset-cells = <1>;
+> -		#power-domain-cells = <1>;
+> -		clock-names = "bi_tcxo",
+> -		              "sleep_clk";
+> -		clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+> -			 <&sleep_clk>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> new file mode 100644
+> index 000000000000..056a7977c458
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+> @@ -0,0 +1,157 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
-Independent of the point above (partly a least), I wonder what will
-happen in some particular use cases
+As all the authors where QCom on the old file, can you relicense to 
+(GPL-2.0-only OR BSD-2-Clause)?
 
-* If clock is changed while in suspend. This clock can be a parent of
-  the clock invalidated but currently is not. What happen, if later,
-  it becomes the parent ?
+And please, can all of Qcom and the Linaro QCom landing team get aligned 
+on this.
 
-  Since it is not parent on resume it won't be invalidated. CCF might
-  still take a decision based on an invalid cached value.
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/qcom,gcc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Global Clock & Reset Controller Binding
+> +
+> +maintainers:
+> +  - Stephen Boyd <sboyd@kernel.org>
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  compatible :
+> +     enum:
+> +       - qcom,gcc-apq8064
+> +       - qcom,gcc-apq8084
+> +       - qcom,gcc-ipq8064
+> +       - qcom,gcc-ipq4019
+> +       - qcom,gcc-ipq8074
+> +       - qcom,gcc-msm8660
+> +       - qcom,gcc-msm8916
+> +       - qcom,gcc-msm8960
+> +       - qcom,gcc-msm8974
+> +       - qcom,gcc-msm8974pro
+> +       - qcom,gcc-msm8974pro-ac
+> +       - qcom,gcc-msm8994
+> +       - qcom,gcc-msm8996
+> +       - qcom,gcc-msm8998
+> +       - qcom,gcc-mdm9615
+> +       - qcom,gcc-qcs404
+> +       - qcom,gcc-sdm630
+> +       - qcom,gcc-sdm660
+> +       - qcom,gcc-sdm845
+> +       - qcom,gcc-sm8150
+> +       - qcom,gcc-sc7180
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +    items:
+> +      - description: Board XO source
+> +      - description: Board active XO source
+> +      - description: Sleep clock source(optional)
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +    items:
+> +      - const: bi_tcxo
+> +      - const: bi_tcxo_ao
+> +      - const: sleep_clk
+> +
+> +  nvmem-cells:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description:
+> +      Qualcomm TSENS (thermal sensor device) on some devices can
+> +      be part of GCC and hence the TSENS properties can also be part
+> +      of the GCC/clock-controller node.
+> +      For more details on the TSENS properties please refer
+> +      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+> +
+> +  nvmem-cell-names:
+> +    minItems: 1
+> +    maxItems: 2
+> +    description:
+> +      Names for each nvmem-cells specified.
+> +    items:
+> +      - const: calib
+> +      - const: calib_backup
+> +
+> +  "#thermal-sensor-cells":
+> +    const: 1
+> 
+> +  "#power-domain-cells":
+> +    const: 1
+> +
+> +  protected-clocks:
+> +    description:
+> +       Protected clock specifier list as per common clock binding
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +examples:
+> +  - |
+> +    // Example:
+> +    clock-controller@900000 {
+> +      compatible = "qcom,gcc-msm8960";
+> +      reg = <0x900000 0x4000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
 
-* If a mux is changed while in suspend, the parent is not correct
-  anymore. The proposed patch recurse through the parents, it might
-  not invalidate what we need/expect ... things are getting a bit
-  unpredictable
+Does this pass 'make dt_binding_check' as 'clocks' is required.
 
-IOW, this change take a leaf clock and tries to tell CCF that any parent
-of this clock should not be trusted, but it might get it wrong in some
-cases.
-
-I think we should do it in the opposite way:
- * Mark the "rogue" clock with a flag (CLK_REFRESH ?)
- * Let CCF update the children of these clocks based on the new status
-
-Back to Stephen point, I don't know which API it should be, but I
-think the platform (fw driver or power stuff - not only clock provider)
-should be able somehow to trigger the mechanism to let CCF know
-something sketchy may have happened.
-
-For the parameter, maybe there should not be any (no struct clk or
-clk_hw) ? Maybe it would better if we let CCF refresh all the "rogue"
-clocks ?
-
->
-> Neil
-
+> +    };
+> +
+> +
+> +  - |
+> +    // Example of GCC with TSENS properties:
+> +    clock-controller@900000 {
+> +      compatible = "qcom,gcc-apq8064";
+> +      reg = <0x00900000 0x4000>;
+> +      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+> +      nvmem-cell-names = "calib", "calib_backup";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #thermal-sensor-cells = <1>;
+> +    };
+> +
+> +  - |
+> +    //Example of GCC with protected-clocks properties:
+> +    clock-controller@100000 {
+> +      compatible = "qcom,gcc-sdm845";
+> +      reg = <0x100000 0x1f0000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +      protected-clocks = <187>, <188>, <189>, <190>, <191>;
+> +    };
+> +
+> +  - |
+> +    //Example of GCC with clock node properties for SM8150:
+> +    clock-controller@100000 {
+> +      compatible = "qcom,gcc-sm8150";
+> +      reg = <0x00100000 0x1f0000>;
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <&sleep_clk>;
+> +      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
+> +     };
+> +
+> +  - |
+> +    //Example of GCC with clock nodes properties:
+> +    clock-controller@100000 {
+> +      compatible = "qcom,gcc-sc7180";
+> +      reg = <0x100000 0x1f0000>;
+> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
+> +      clock-names = "bi_tcxo", "bi_tcxo_ao";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sc7180.h b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> new file mode 100644
+> index 000000000000..d76b061f6a4e
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,gcc-sc7180.h
+> @@ -0,0 +1,155 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+> +#define _DT_BINDINGS_CLK_QCOM_GCC_SC7180_H
+> +
+> +/* GCC clocks */
+> +#define GCC_GPLL0_MAIN_DIV_CDIV					0
+> +#define GPLL0							1
+> +#define GPLL0_OUT_EVEN						2
+> +#define GPLL1							3
+> +#define GPLL4							4
+> +#define GPLL6							5
+> +#define GPLL7							6
+> +#define GCC_AGGRE_UFS_PHY_AXI_CLK				7
+> +#define GCC_AGGRE_USB3_PRIM_AXI_CLK				8
+> +#define GCC_BOOT_ROM_AHB_CLK					9
+> +#define GCC_CAMERA_AHB_CLK					10
+> +#define GCC_CAMERA_HF_AXI_CLK					11
+> +#define GCC_CAMERA_THROTTLE_HF_AXI_CLK				12
+> +#define GCC_CAMERA_XO_CLK					13
+> +#define GCC_CE1_AHB_CLK						14
+> +#define GCC_CE1_AXI_CLK						15
+> +#define GCC_CE1_CLK						16
+> +#define GCC_CFG_NOC_USB3_PRIM_AXI_CLK				17
+> +#define GCC_CPUSS_AHB_CLK					18
+> +#define GCC_CPUSS_AHB_CLK_SRC					19
+> +#define GCC_CPUSS_GNOC_CLK					20
+> +#define GCC_CPUSS_RBCPR_CLK					21
+> +#define GCC_DDRSS_GPU_AXI_CLK					22
+> +#define GCC_DISP_AHB_CLK					23
+> +#define GCC_DISP_GPLL0_CLK_SRC					24
+> +#define GCC_DISP_GPLL0_DIV_CLK_SRC				25
+> +#define GCC_DISP_HF_AXI_CLK					26
+> +#define GCC_DISP_THROTTLE_HF_AXI_CLK				27
+> +#define GCC_DISP_XO_CLK						28
+> +#define GCC_GP1_CLK						29
+> +#define GCC_GP1_CLK_SRC						30
+> +#define GCC_GP2_CLK						31
+> +#define GCC_GP2_CLK_SRC						32
+> +#define GCC_GP3_CLK						33
+> +#define GCC_GP3_CLK_SRC						34
+> +#define GCC_GPU_CFG_AHB_CLK					35
+> +#define GCC_GPU_GPLL0_CLK_SRC					36
+> +#define GCC_GPU_GPLL0_DIV_CLK_SRC				37
+> +#define GCC_GPU_MEMNOC_GFX_CLK					38
+> +#define GCC_GPU_SNOC_DVM_GFX_CLK				39
+> +#define GCC_NPU_AXI_CLK						40
+> +#define GCC_NPU_BWMON_AXI_CLK					41
+> +#define GCC_NPU_BWMON_DMA_CFG_AHB_CLK				42
+> +#define GCC_NPU_BWMON_DSP_CFG_AHB_CLK				43
+> +#define GCC_NPU_CFG_AHB_CLK					44
+> +#define GCC_NPU_DMA_CLK						45
+> +#define GCC_NPU_GPLL0_CLK_SRC					46
+> +#define GCC_NPU_GPLL0_DIV_CLK_SRC				47
+> +#define GCC_PDM2_CLK						48
+> +#define GCC_PDM2_CLK_SRC					49
+> +#define GCC_PDM_AHB_CLK						50
+> +#define GCC_PDM_XO4_CLK						51
+> +#define GCC_PRNG_AHB_CLK					52
+> +#define GCC_QSPI_CNOC_PERIPH_AHB_CLK				53
+> +#define GCC_QSPI_CORE_CLK					54
+> +#define GCC_QSPI_CORE_CLK_SRC					55
+> +#define GCC_QUPV3_WRAP0_CORE_2X_CLK				56
+> +#define GCC_QUPV3_WRAP0_CORE_CLK				57
+> +#define GCC_QUPV3_WRAP0_S0_CLK					58
+> +#define GCC_QUPV3_WRAP0_S0_CLK_SRC				59
+> +#define GCC_QUPV3_WRAP0_S1_CLK					60
+> +#define GCC_QUPV3_WRAP0_S1_CLK_SRC				61
+> +#define GCC_QUPV3_WRAP0_S2_CLK					62
+> +#define GCC_QUPV3_WRAP0_S2_CLK_SRC				63
+> +#define GCC_QUPV3_WRAP0_S3_CLK					64
+> +#define GCC_QUPV3_WRAP0_S3_CLK_SRC				65
+> +#define GCC_QUPV3_WRAP0_S4_CLK					66
+> +#define GCC_QUPV3_WRAP0_S4_CLK_SRC				67
+> +#define GCC_QUPV3_WRAP0_S5_CLK					68
+> +#define GCC_QUPV3_WRAP0_S5_CLK_SRC				69
+> +#define GCC_QUPV3_WRAP1_CORE_2X_CLK				70
+> +#define GCC_QUPV3_WRAP1_CORE_CLK				71
+> +#define GCC_QUPV3_WRAP1_S0_CLK					72
+> +#define GCC_QUPV3_WRAP1_S0_CLK_SRC				73
+> +#define GCC_QUPV3_WRAP1_S1_CLK					74
+> +#define GCC_QUPV3_WRAP1_S1_CLK_SRC				75
+> +#define GCC_QUPV3_WRAP1_S2_CLK					76
+> +#define GCC_QUPV3_WRAP1_S2_CLK_SRC				77
+> +#define GCC_QUPV3_WRAP1_S3_CLK					78
+> +#define GCC_QUPV3_WRAP1_S3_CLK_SRC				79
+> +#define GCC_QUPV3_WRAP1_S4_CLK					80
+> +#define GCC_QUPV3_WRAP1_S4_CLK_SRC				81
+> +#define GCC_QUPV3_WRAP1_S5_CLK					82
+> +#define GCC_QUPV3_WRAP1_S5_CLK_SRC				83
+> +#define GCC_QUPV3_WRAP_0_M_AHB_CLK				84
+> +#define GCC_QUPV3_WRAP_0_S_AHB_CLK				85
+> +#define GCC_QUPV3_WRAP_1_M_AHB_CLK				86
+> +#define GCC_QUPV3_WRAP_1_S_AHB_CLK				87
+> +#define GCC_SDCC1_AHB_CLK					88
+> +#define GCC_SDCC1_APPS_CLK					89
+> +#define GCC_SDCC1_APPS_CLK_SRC					90
+> +#define GCC_SDCC1_ICE_CORE_CLK					91
+> +#define GCC_SDCC1_ICE_CORE_CLK_SRC				92
+> +#define GCC_SDCC2_AHB_CLK					93
+> +#define GCC_SDCC2_APPS_CLK					94
+> +#define GCC_SDCC2_APPS_CLK_SRC					95
+> +#define GCC_SYS_NOC_CPUSS_AHB_CLK				96
+> +#define GCC_UFS_MEM_CLKREF_CLK					97
+> +#define GCC_UFS_PHY_AHB_CLK					98
+> +#define GCC_UFS_PHY_AXI_CLK					99
+> +#define GCC_UFS_PHY_AXI_CLK_SRC					100
+> +#define GCC_UFS_PHY_ICE_CORE_CLK				101
+> +#define GCC_UFS_PHY_ICE_CORE_CLK_SRC				102
+> +#define GCC_UFS_PHY_PHY_AUX_CLK					103
+> +#define GCC_UFS_PHY_PHY_AUX_CLK_SRC				104
+> +#define GCC_UFS_PHY_RX_SYMBOL_0_CLK				105
+> +#define GCC_UFS_PHY_TX_SYMBOL_0_CLK				106
+> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK				107
+> +#define GCC_UFS_PHY_UNIPRO_CORE_CLK_SRC				108
+> +#define GCC_USB30_PRIM_MASTER_CLK				109
+> +#define GCC_USB30_PRIM_MASTER_CLK_SRC				110
+> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK				111
+> +#define GCC_USB30_PRIM_MOCK_UTMI_CLK_SRC			112
+> +#define GCC_USB30_PRIM_SLEEP_CLK				113
+> +#define GCC_USB3_PRIM_CLKREF_CLK				114
+> +#define GCC_USB3_PRIM_PHY_AUX_CLK				115
+> +#define GCC_USB3_PRIM_PHY_AUX_CLK_SRC				116
+> +#define GCC_USB3_PRIM_PHY_COM_AUX_CLK				117
+> +#define GCC_USB3_PRIM_PHY_PIPE_CLK				118
+> +#define GCC_USB_PHY_CFG_AHB2PHY_CLK				119
+> +#define GCC_VIDEO_AHB_CLK					120
+> +#define GCC_VIDEO_AXI_CLK					121
+> +#define GCC_VIDEO_GPLL0_DIV_CLK_SRC				122
+> +#define GCC_VIDEO_THROTTLE_AXI_CLK				123
+> +#define GCC_VIDEO_XO_CLK					124
+> +
+> +/* GCC resets */
+> +#define GCC_QUSB2PHY_PRIM_BCR					0
+> +#define GCC_QUSB2PHY_SEC_BCR					1
+> +#define GCC_UFS_PHY_BCR						2
+> +#define GCC_USB30_PRIM_BCR					3
+> +#define GCC_USB3_DP_PHY_PRIM_BCR				4
+> +#define GCC_USB3_DP_PHY_SEC_BCR					5
+> +#define GCC_USB3_PHY_PRIM_BCR					6
+> +#define GCC_USB3_PHY_SEC_BCR					7
+> +#define GCC_USB3PHY_PHY_PRIM_BCR				8
+> +#define GCC_USB3PHY_PHY_SEC_BCR					9
+> +#define GCC_USB_PHY_CFG_AHB2PHY_BCR				10
+> +
+> +/* GCC GDSCRs */
+> +#define UFS_PHY_GDSC						0
+> +#define USB30_PRIM_GDSC						1
+> +#define HLOS1_VOTE_MMNOC_MMU_TBU_HF0_GDSC			2
+> +#define HLOS1_VOTE_MMNOC_MMU_TBU_SF_GDSC			3
+> +
+> +#endif
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> 
