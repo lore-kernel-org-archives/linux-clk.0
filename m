@@ -2,67 +2,169 @@ Return-Path: <SRS0=fPJi=XW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9566C4360C
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 18:45:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A81C4360C
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 18:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B2302075D
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 18:45:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569609953;
-	bh=2abY4RvzDrV7ZdSCeY547gsiUtUpdWNapfjq46d9c7Q=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=2ihWHd2tQoI+0FOzGsZ6vLDy18TDkVi5q9H9QSPRBLX/UKEIUVhKyTbHk4GPWCU3V
-	 7yfx4LOBfcTtMsGl5ZqZr2x0ADsdtbpILkvFvwtgZvvbWoR5SH1sxkBbvf0sVJTGcL
-	 w5HETPLIBvCsWaaD5m8ei6sHqp2AcJNFDtN4LVjI=
+	by mail.kernel.org (Postfix) with ESMTP id F0B2A20872
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 18:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728084AbfI0Spt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Sep 2019 14:45:49 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48308 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726294AbfI0Sps (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Sep 2019 14:45:48 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 312AA20872;
-        Fri, 27 Sep 2019 18:45:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569609948;
-        bh=2abY4RvzDrV7ZdSCeY547gsiUtUpdWNapfjq46d9c7Q=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=Og+/hr+fuIIOHhez7V7VPkBCoxZr4ITEX2BxG9MRmuniM2cx3yEsZsqBLv5Dhz6zE
-         46WzEkQRmPRYcDeFhLvYNDluemYdAfSlpVGU8Wt3b0qSvENOf3AFyj8hixS13h7We8
-         6m6I1ZlfILLt5xs6LB9Soh7Bj0Etq1lOJfpPdXE0=
-Content-Type: text/plain; charset="utf-8"
+        id S1725980AbfI0Svs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Sep 2019 14:51:48 -0400
+Received: from 7.mo3.mail-out.ovh.net ([46.105.57.200]:35367 "EHLO
+        7.mo3.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfI0Svs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 14:51:48 -0400
+X-Greylist: delayed 1980 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Sep 2019 14:51:46 EDT
+Received: from player716.ha.ovh.net (unknown [10.108.42.170])
+        by mo3.mail-out.ovh.net (Postfix) with ESMTP id 96922229406
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 20:51:45 +0200 (CEST)
+Received: from sk2.org (unknown [109.190.253.11])
+        (Authenticated sender: steve@sk2.org)
+        by player716.ha.ovh.net (Postfix) with ESMTPSA id 19D0DA43D52B;
+        Fri, 27 Sep 2019 18:51:34 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Kitt <steve@sk2.org>
+Subject: [PATCH] drivers/clk: convert VL struct to struct_size
+Date:   Fri, 27 Sep 2019 20:51:10 +0200
+Message-Id: <20190927185110.29897-1-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b7fbe8776703b9d637ab82ad4724353b359f1d04.1569555841.git.baolin.wang@linaro.org>
-References: <b7fbe8776703b9d637ab82ad4724353b359f1d04.1569555841.git.baolin.wang@linaro.org>
-Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To:     Baolin Wang <baolin.wang@linaro.org>, mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 1/2] clk: sprd: Use IS_ERR() to validate the return value of syscon_regmap_lookup_by_phandle()
-User-Agent: alot/0.8.1
-Date:   Fri, 27 Sep 2019 11:45:47 -0700
-Message-Id: <20190927184548.312AA20872@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 6503479337963834743
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeigdduvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Baolin Wang (2019-09-26 20:50:53)
-> The syscon_regmap_lookup_by_phandle() will never return NULL, thus use
-> IS_ERR() to validate the return value instead of IS_ERR_OR_NULL().
->=20
-> Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-> ---
->  drivers/clk/sprd/common.c |    2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+There are a few manually-calculated variable-length struct allocations
+left, this converts them to use struct_size.
 
-Fixes tag?
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+ drivers/clk/at91/sckc.c                     | 3 +--
+ drivers/clk/imgtec/clk-boston.c             | 3 +--
+ drivers/clk/ingenic/tcu.c                   | 3 +--
+ drivers/clk/mvebu/ap-cpu-clk.c              | 4 ++--
+ drivers/clk/mvebu/cp110-system-controller.c | 4 ++--
+ drivers/clk/samsung/clk.c                   | 3 +--
+ drivers/clk/uniphier/clk-uniphier-core.c    | 3 +--
+ 7 files changed, 9 insertions(+), 14 deletions(-)
+
+diff --git a/drivers/clk/at91/sckc.c b/drivers/clk/at91/sckc.c
+index 9bfe9a28294a..5ad6180449cb 100644
+--- a/drivers/clk/at91/sckc.c
++++ b/drivers/clk/at91/sckc.c
+@@ -478,8 +478,7 @@ static void __init of_sam9x60_sckc_setup(struct device_node *np)
+ 	if (IS_ERR(slow_osc))
+ 		goto unregister_slow_rc;
+ 
+-	clk_data = kzalloc(sizeof(*clk_data) + (2 * sizeof(struct clk_hw *)),
+-			   GFP_KERNEL);
++	clk_data = kzalloc(struct_size(clk_data, hws, 2), GFP_KERNEL);
+ 	if (!clk_data)
+ 		goto unregister_slow_osc;
+ 
+diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
+index 33ab4ff61165..b00cbd045af5 100644
+--- a/drivers/clk/imgtec/clk-boston.c
++++ b/drivers/clk/imgtec/clk-boston.c
+@@ -58,8 +58,7 @@ static void __init clk_boston_setup(struct device_node *np)
+ 	cpu_div = ext_field(mmcmdiv, BOSTON_PLAT_MMCMDIV_CLK1DIV);
+ 	cpu_freq = mult_frac(in_freq, mul, cpu_div);
+ 
+-	onecell = kzalloc(sizeof(*onecell) +
+-			  (BOSTON_CLK_COUNT * sizeof(struct clk_hw *)),
++	onecell = kzalloc(struct_size(onecell, hws, BOSTON_CLK_COUNT),
+ 			  GFP_KERNEL);
+ 	if (!onecell)
+ 		return;
+diff --git a/drivers/clk/ingenic/tcu.c b/drivers/clk/ingenic/tcu.c
+index a1a5f9cb439e..ad7daa494fd4 100644
+--- a/drivers/clk/ingenic/tcu.c
++++ b/drivers/clk/ingenic/tcu.c
+@@ -358,8 +358,7 @@ static int __init ingenic_tcu_probe(struct device_node *np)
+ 		}
+ 	}
+ 
+-	tcu->clocks = kzalloc(sizeof(*tcu->clocks) +
+-			      sizeof(*tcu->clocks->hws) * TCU_CLK_COUNT,
++	tcu->clocks = kzalloc(struct_size(tcu->clocks, hws, TCU_CLK_COUNT),
+ 			      GFP_KERNEL);
+ 	if (!tcu->clocks) {
+ 		ret = -ENOMEM;
+diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
+index af5e5acad370..6b394302c76a 100644
+--- a/drivers/clk/mvebu/ap-cpu-clk.c
++++ b/drivers/clk/mvebu/ap-cpu-clk.c
+@@ -274,8 +274,8 @@ static int ap_cpu_clock_probe(struct platform_device *pdev)
+ 	if (!ap_cpu_clk)
+ 		return -ENOMEM;
+ 
+-	ap_cpu_data = devm_kzalloc(dev, sizeof(*ap_cpu_data) +
+-				sizeof(struct clk_hw *) * nclusters,
++	ap_cpu_data = devm_kzalloc(dev, struct_size(ap_cpu_data, hws,
++						    nclusters),
+ 				GFP_KERNEL);
+ 	if (!ap_cpu_data)
+ 		return -ENOMEM;
+diff --git a/drivers/clk/mvebu/cp110-system-controller.c b/drivers/clk/mvebu/cp110-system-controller.c
+index 808463276145..84c8900542e4 100644
+--- a/drivers/clk/mvebu/cp110-system-controller.c
++++ b/drivers/clk/mvebu/cp110-system-controller.c
+@@ -235,8 +235,8 @@ static int cp110_syscon_common_probe(struct platform_device *pdev,
+ 	if (ret)
+ 		return ret;
+ 
+-	cp110_clk_data = devm_kzalloc(dev, sizeof(*cp110_clk_data) +
+-				      sizeof(struct clk_hw *) * CP110_CLK_NUM,
++	cp110_clk_data = devm_kzalloc(dev, struct_size(cp110_clk_data, hws,
++						       CP110_CLK_NUM),
+ 				      GFP_KERNEL);
+ 	if (!cp110_clk_data)
+ 		return -ENOMEM;
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index e544a38106dd..dad31308c071 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -60,8 +60,7 @@ struct samsung_clk_provider *__init samsung_clk_init(struct device_node *np,
+ 	struct samsung_clk_provider *ctx;
+ 	int i;
+ 
+-	ctx = kzalloc(sizeof(struct samsung_clk_provider) +
+-		      sizeof(*ctx->clk_data.hws) * nr_clks, GFP_KERNEL);
++	ctx = kzalloc(struct_size(ctx, clk_data.hws, nr_clks), GFP_KERNEL);
+ 	if (!ctx)
+ 		panic("could not allocate clock provider context.\n");
+ 
+diff --git a/drivers/clk/uniphier/clk-uniphier-core.c b/drivers/clk/uniphier/clk-uniphier-core.c
+index c6aaca73cf86..12380236d7ab 100644
+--- a/drivers/clk/uniphier/clk-uniphier-core.c
++++ b/drivers/clk/uniphier/clk-uniphier-core.c
+@@ -64,8 +64,7 @@ static int uniphier_clk_probe(struct platform_device *pdev)
+ 	for (p = data; p->name; p++)
+ 		clk_num = max(clk_num, p->idx + 1);
+ 
+-	hw_data = devm_kzalloc(dev,
+-			sizeof(*hw_data) + clk_num * sizeof(struct clk_hw *),
++	hw_data = devm_kzalloc(dev, struct_size(hw_data, hws, clk_num),
+ 			GFP_KERNEL);
+ 	if (!hw_data)
+ 		return -ENOMEM;
+-- 
+2.20.1
 
