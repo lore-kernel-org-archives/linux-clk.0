@@ -2,79 +2,330 @@ Return-Path: <SRS0=fPJi=XW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B20DC4360C
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 00:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF0DEC352A9
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 03:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9B320872
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 00:14:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569543267;
-	bh=ouc/ZGlpophw+opTwcJn7DhMFr0Pb1HOOZEWpUUYSk0=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=wstr+zgUdLpc0saJoN1E+8QYbIJk9HfRY8HuJsJeHw0VVXsIHWlCcTGNAbFd17/SC
-	 FIuClAUv3E1fAYogcrgWRQunybFN7zmeR+VyNUjaouiDO1mcNUwP8TdZKGDXt2Zd1b
-	 qhHxmMudKDVJm/Z+avhS5RMIA2XuEzQx3OmETCbA=
+	by mail.kernel.org (Postfix) with ESMTP id 958CD214D9
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 03:08:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726229AbfI0AO0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Sep 2019 20:14:26 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46162 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726411AbfI0AO0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Sep 2019 20:14:26 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFDC7207FF;
-        Fri, 27 Sep 2019 00:14:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569543266;
-        bh=ouc/ZGlpophw+opTwcJn7DhMFr0Pb1HOOZEWpUUYSk0=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=DRdMZW5AJXatJs4G1JlQTfOfltYGKHwfQVF23ynDzZJFds1pYvAYEyx/JxesVC+dt
-         gxTeolLgLZudoqnLbTi5VsZObkLPTtiZuRqz6glzq0r8YrmSg+SB3xzeUcyj+Io4oN
-         pqH6gowGJ0wJFBxhDSeWYNE4X7xhF2Ev/zt3+X18=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190919102518.25126-2-narmstrong@baylibre.com>
-References: <20190919102518.25126-1-narmstrong@baylibre.com> <20190919102518.25126-2-narmstrong@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To:     Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com,
-        mturquette@baylibre.com
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH RFC 1/2] clk: introduce clk_invalidate_rate()
-User-Agent: alot/0.8.1
-Date:   Thu, 26 Sep 2019 17:14:25 -0700
-Message-Id: <20190927001425.DFDC7207FF@mail.kernel.org>
+        id S1728988AbfI0DIG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Sep 2019 23:08:06 -0400
+Received: from lucky1.263xmail.com ([211.157.147.132]:41158 "EHLO
+        lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728552AbfI0DIG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Sep 2019 23:08:06 -0400
+Received: from localhost (unknown [192.168.167.138])
+        by lucky1.263xmail.com (Postfix) with ESMTP id 876FA5CF59;
+        Fri, 27 Sep 2019 11:01:17 +0800 (CST)
+X-MAIL-GRAY: 0
+X-MAIL-DELIVERY: 1
+X-ADDR-CHECKED4: 1
+X-ANTISPAM-LEVEL: 2
+X-ABS-CHECKED: 0
+Received: from localhost.localdomain (unknown [58.22.7.114])
+        by smtp.263.net (postfix) whith ESMTP id P20920T140646948005632S1569553274502940_;
+        Fri, 27 Sep 2019 11:01:16 +0800 (CST)
+X-IP-DOMAINF: 1
+X-UNIQUE-TAG: <b623b4ff587c8a9c03bc708a4945eab9>
+X-RL-SENDER: zhangqing@rock-chips.com
+X-SENDER: zhangqing@rock-chips.com
+X-LOGIN-NAME: zhangqing@rock-chips.com
+X-FST-TO: heiko@sntech.de
+X-SENDER-IP: 58.22.7.114
+X-ATTACHMENT-NUM: 0
+X-DNS-TYPE: 0
+From:   Elaine Zhang <zhangqing@rock-chips.com>
+To:     heiko@sntech.de
+Cc:     mturquette@baylibre.com, sboyd@kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
+        Elaine Zhang <zhangqing@rock-chips.com>
+Subject: [PATCH v3 5/5] clk: rockchip: support pll setting by auto
+Date:   Fri, 27 Sep 2019 11:01:24 +0800
+Message-Id: <1569553284-3232-1-git-send-email-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1569553244-3165-1-git-send-email-zhangqing@rock-chips.com>
+References: <1569553244-3165-1-git-send-email-zhangqing@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Neil Armstrong (2019-09-19 03:25:17)
-> This introduces the clk_invalidate_rate() call used to recalculate the
-> rate and parent tree of a particular clock if it's known that the
-> underlying registers set has been altered by the firmware, like from
-> a suspend/resume handler running in trusted cpu mode.
->=20
-> The call refreshes the actual parent and when changed, instructs CCF
-> the parent has changed. Finally the call will recalculate the rate of
-> each part of the tree to make sure the CCF cached tree is in sync with
-> the hardware.
->=20
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> ---
+If setting freq is not support in rockchip_pll_rate_table,
+It can calculate and set pll params by auto.
 
-The knee-jerk reaction to these patches is that it shouldn't be a
-consumer API (i.e. taking a struct clk) but a provider API (i.e. taking
-a struct clk_hw). I haven't looked in any more detail but just know that
-it's a non-starter to be a consumer based API because we don't want
-random consumers out there to be telling the CCF or provider drivers
-that some clk has lost state and needs to be "refreshed".
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 215 ++++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 200 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 390e9473807a..ac8c62c531f0 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -14,6 +14,7 @@
+ #include <linux/clk-provider.h>
+ #include <linux/regmap.h>
+ #include <linux/clk.h>
++#include <linux/gcd.h>
+ #include "clk.h"
+ 
+ #define PLL_MODE_MASK		0x3
+@@ -46,6 +47,198 @@ struct rockchip_clk_pll {
+ #define to_rockchip_clk_pll_nb(nb) \
+ 			container_of(nb, struct rockchip_clk_pll, clk_nb)
+ 
++#define MHZ			(1000UL * 1000UL)
++#define KHZ			(1000UL)
++
++/* CLK_PLL_TYPE_RK3066_AUTO type ops */
++#define PLL_FREF_MIN		(269 * KHZ)
++#define PLL_FREF_MAX		(2200 * MHZ)
++
++#define PLL_FVCO_MIN		(440 * MHZ)
++#define PLL_FVCO_MAX		(2200 * MHZ)
++
++#define PLL_FOUT_MIN		(27500 * KHZ)
++#define PLL_FOUT_MAX		(2200 * MHZ)
++
++#define PLL_NF_MAX		(4096)
++#define PLL_NR_MAX		(64)
++#define PLL_NO_MAX		(16)
++
++/* CLK_PLL_TYPE_RK3036/3366/3399_AUTO type ops */
++#define MIN_FOUTVCO_FREQ	(800 * MHZ)
++#define MAX_FOUTVCO_FREQ	(2000 * MHZ)
++
++static struct rockchip_pll_rate_table auto_table;
++
++static struct rockchip_pll_rate_table *rk_pll_rate_table_get(void)
++{
++	return &auto_table;
++}
++
++static int rockchip_pll_clk_set_postdiv(unsigned long fout_hz,
++					u32 *postdiv1,
++					u32 *postdiv2,
++					u32 *foutvco)
++{
++	unsigned long freq;
++
++	if (fout_hz < MIN_FOUTVCO_FREQ) {
++		for (*postdiv1 = 1; *postdiv1 <= 7; (*postdiv1)++) {
++			for (*postdiv2 = 1; *postdiv2 <= 7; (*postdiv2)++) {
++				freq = fout_hz * (*postdiv1) * (*postdiv2);
++				if (freq >= MIN_FOUTVCO_FREQ &&
++				    freq <= MAX_FOUTVCO_FREQ) {
++					*foutvco = freq;
++					return 0;
++				}
++			}
++		}
++		pr_err("CANNOT FIND postdiv1/2 to make fout in range from 800M to 2000M,fout = %lu\n",
++		       fout_hz);
++	} else {
++		*postdiv1 = 1;
++		*postdiv2 = 1;
++	}
++	return 0;
++}
++
++static struct rockchip_pll_rate_table *
++rockchip_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
++			     unsigned long fin_hz,
++			     unsigned long fout_hz)
++{
++	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
++	/* FIXME set postdiv1/2 always 1*/
++	u32 foutvco = fout_hz;
++	u64 fin_64, frac_64;
++	u32 f_frac, postdiv1, postdiv2;
++	unsigned long clk_gcd = 0;
++
++	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
++		return NULL;
++
++	rockchip_pll_clk_set_postdiv(fout_hz, &postdiv1, &postdiv2, &foutvco);
++	rate_table->postdiv1 = postdiv1;
++	rate_table->postdiv2 = postdiv2;
++	rate_table->dsmpd = 1;
++
++	if (fin_hz / MHZ * MHZ == fin_hz && fout_hz / MHZ * MHZ == fout_hz) {
++		fin_hz /= MHZ;
++		foutvco /= MHZ;
++		clk_gcd = gcd(fin_hz, foutvco);
++		rate_table->refdiv = fin_hz / clk_gcd;
++		rate_table->fbdiv = foutvco / clk_gcd;
++
++		rate_table->frac = 0;
++
++		pr_debug("fin = %lu, fout = %lu, clk_gcd = %lu, refdiv = %u, fbdiv = %u, postdiv1 = %u, postdiv2 = %u, frac = %u\n",
++			 fin_hz, fout_hz, clk_gcd, rate_table->refdiv,
++			 rate_table->fbdiv, rate_table->postdiv1,
++			 rate_table->postdiv2, rate_table->frac);
++	} else {
++		pr_debug("frac div running, fin_hz = %lu, fout_hz = %lu, fin_INT_mhz = %lu, fout_INT_mhz = %lu\n",
++			 fin_hz, fout_hz,
++			 fin_hz / MHZ * MHZ,
++			 fout_hz / MHZ * MHZ);
++		pr_debug("frac get postdiv1 = %u,  postdiv2 = %u, foutvco = %u\n",
++			 rate_table->postdiv1, rate_table->postdiv2, foutvco);
++		clk_gcd = gcd(fin_hz / MHZ, foutvco / MHZ);
++		rate_table->refdiv = fin_hz / MHZ / clk_gcd;
++		rate_table->fbdiv = foutvco / MHZ / clk_gcd;
++		pr_debug("frac get refdiv = %u,  fbdiv = %u\n",
++			 rate_table->refdiv, rate_table->fbdiv);
++
++		rate_table->frac = 0;
++
++		f_frac = (foutvco % MHZ);
++		fin_64 = fin_hz;
++		do_div(fin_64, (u64)rate_table->refdiv);
++		frac_64 = (u64)f_frac << 24;
++		do_div(frac_64, fin_64);
++		rate_table->frac = (u32)frac_64;
++		if (rate_table->frac > 0)
++			rate_table->dsmpd = 0;
++		pr_debug("frac = %x\n", rate_table->frac);
++	}
++	return rate_table;
++}
++
++static struct rockchip_pll_rate_table *
++rockchip_rk3066_pll_clk_set_by_auto(struct rockchip_clk_pll *pll,
++				    unsigned long fin_hz,
++				    unsigned long fout_hz)
++{
++	struct rockchip_pll_rate_table *rate_table = rk_pll_rate_table_get();
++	u32 nr, nf, no, nonr;
++	u32 nr_out, nf_out, no_out;
++	u32 n;
++	u32 numerator, denominator;
++	u64 fref, fvco, fout;
++	unsigned long clk_gcd = 0;
++
++	nr_out = PLL_NR_MAX + 1;
++	no_out = 0;
++	nf_out = 0;
++
++	if (fin_hz == 0 || fout_hz == 0 || fout_hz == fin_hz)
++		return NULL;
++
++	clk_gcd = gcd(fin_hz, fout_hz);
++
++	numerator = fout_hz / clk_gcd;
++	denominator = fin_hz / clk_gcd;
++
++	for (n = 1;; n++) {
++		nf = numerator * n;
++		nonr = denominator * n;
++		if (nf > PLL_NF_MAX || nonr > (PLL_NO_MAX * PLL_NR_MAX))
++			break;
++
++		for (no = 1; no <= PLL_NO_MAX; no++) {
++			if (!(no == 1 || !(no % 2)))
++				continue;
++
++			if (nonr % no)
++				continue;
++			nr = nonr / no;
++
++			if (nr > PLL_NR_MAX)
++				continue;
++
++			fref = fin_hz / nr;
++			if (fref < PLL_FREF_MIN || fref > PLL_FREF_MAX)
++				continue;
++
++			fvco = fref * nf;
++			if (fvco < PLL_FVCO_MIN || fvco > PLL_FVCO_MAX)
++				continue;
++
++			fout = fvco / no;
++			if (fout < PLL_FOUT_MIN || fout > PLL_FOUT_MAX)
++				continue;
++
++			/* select the best from all available PLL settings */
++			if ((no > no_out) ||
++			    ((no == no_out) && (nr < nr_out))) {
++				nr_out = nr;
++				nf_out = nf;
++				no_out = no;
++			}
++		}
++	}
++
++	/* output the best PLL setting */
++	if ((nr_out <= PLL_NR_MAX) && (no_out > 0)) {
++		rate_table->nr = nr_out;
++		rate_table->nf = nf_out;
++		rate_table->no = no_out;
++	} else {
++		return NULL;
++	}
++
++	return rate_table;
++}
++
+ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
+ 			    struct rockchip_clk_pll *pll, unsigned long rate)
+ {
+@@ -57,24 +250,16 @@ static const struct rockchip_pll_rate_table *rockchip_get_pll_settings(
+ 			return &rate_table[i];
+ 	}
+ 
+-	return NULL;
++	if (pll->type == pll_rk3066)
++		return rockchip_rk3066_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
++	else
++		return rockchip_pll_clk_set_by_auto(pll, 24 * MHZ, rate);
+ }
+ 
+ static long rockchip_pll_round_rate(struct clk_hw *hw,
+ 			    unsigned long drate, unsigned long *prate)
+ {
+-	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+-	const struct rockchip_pll_rate_table *rate_table = pll->rate_table;
+-	int i;
+-
+-	/* Assumming rate_table is in descending order */
+-	for (i = 0; i < pll->rate_count; i++) {
+-		if (drate >= rate_table[i].rate)
+-			return rate_table[i].rate;
+-	}
+-
+-	/* return minimum supported value */
+-	return rate_table[i - 1].rate;
++	return drate;
+ }
+ 
+ /*
+@@ -154,7 +339,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
+ {
+ 	struct rockchip_clk_pll *pll = to_rockchip_clk_pll(hw);
+ 	struct rockchip_pll_rate_table cur;
+-	u64 rate64 = prate;
++	u64 rate64 = prate, frac_rate64 = prate;
+ 
+ 	rockchip_rk3036_pll_get_params(pll, &cur);
+ 
+@@ -163,7 +348,7 @@ static unsigned long rockchip_rk3036_pll_recalc_rate(struct clk_hw *hw,
+ 
+ 	if (cur.dsmpd == 0) {
+ 		/* fractional mode */
+-		u64 frac_rate64 = prate * cur.frac;
++		frac_rate64 *= cur.frac;
+ 
+ 		do_div(frac_rate64, cur.refdiv);
+ 		rate64 += frac_rate64 >> 24;
+-- 
+1.9.1
+
+
 
