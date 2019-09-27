@@ -2,82 +2,140 @@ Return-Path: <SRS0=fPJi=XW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42802C4360C
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 16:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25CBEC388F4
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 16:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 158BA217D9
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 16:14:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F226421D71
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 16:38:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vlJH88ij"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727207AbfI0QOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Sep 2019 12:14:22 -0400
-Received: from 5.mo2.mail-out.ovh.net ([87.98.181.248]:36556 "EHLO
-        5.mo2.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727349AbfI0QOW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 12:14:22 -0400
-X-Greylist: delayed 3598 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Sep 2019 12:14:21 EDT
-Received: from player758.ha.ovh.net (unknown [10.109.159.248])
-        by mo2.mail-out.ovh.net (Postfix) with ESMTP id 729A91AE47C
-        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 16:57:55 +0200 (CEST)
-Received: from sk2.org (unknown [65.39.69.237])
-        (Authenticated sender: steve@sk2.org)
-        by player758.ha.ovh.net (Postfix) with ESMTPSA id 032C7A59A1F3;
-        Fri, 27 Sep 2019 14:57:47 +0000 (UTC)
-From:   Stephen Kitt <steve@sk2.org>
-To:     Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, Stephen Kitt <steve@sk2.org>
-Subject: [PATCH] clk/ti/adpll: allocate room for terminating null
-Date:   Fri, 27 Sep 2019 16:57:37 +0200
-Message-Id: <20190927145737.7832-1-steve@sk2.org>
-X-Mailer: git-send-email 2.20.1
+        id S1727447AbfI0Qiu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Sep 2019 12:38:50 -0400
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46579 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfI0Qit (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 12:38:49 -0400
+Received: by mail-wr1-f65.google.com with SMTP id o18so3853840wrv.13
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 09:38:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=H9qpcAXROEOSHATHIODGl5R6XLJmU3Nit6aFPlUl9PY=;
+        b=vlJH88ijYnpukf4ZiGFC3tgXvxD1NRCykGaXRu7yCbSTKpcKP3ety0gptHFmz1x+9A
+         R/Zij0mk9nhPfjOY+LKUIwqed8VuCJy6QuPiI87ofhmDeo6H6oLRNVsZ5zE71JbcpYs7
+         uc7+vzjvAFtQ712pTxhRUUUTQcZwPb4HlY/iTEal88bUJii40H23wDmbW1J9zCSWVHGO
+         4dLbPL+BvvZoXBrCGsugMVLtvI/uFbz+gafElcBGJnTW7LkFpuxjK4NBrzMpXkDvwg/i
+         zRdsMSnPa1NibDmYOg/w0WIKy76RjgF1OahTmnNR5MoE/6qCzo8Gl5LJSwGSRso85PN5
+         DL2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=H9qpcAXROEOSHATHIODGl5R6XLJmU3Nit6aFPlUl9PY=;
+        b=EG9+5+jI34v/1JLgr7Yz+WYAKcBUEgcqhrwrF4DQOEJCvlsT6HvFIdRZf4BvM1cECy
+         5mfu//XpVrbhM6rfwq3fU8YD9mpDBi1RXsW4GGhMhHD+aeVT5jOcDK8KGTYg3xGgd/hk
+         iV5nwiB87eCBmG+lrBRkMc26VPaxqsewxwh9R0OOzr8yDLnXw5AXITPTFgLV3Z6UxEIM
+         +Sfo3P9748Ewy9H3JZBlQAaC5qP9SX0rUvXDg9ifQEG9x1WGuwE3DCshbc9xOwUaQeOa
+         AJ2YcGabyYtweKlVjKTBYkkWY4QsCV1xWM54ZsuUUfXzaIvs1v26fLfaD6acpPUZ7spm
+         Rmrg==
+X-Gm-Message-State: APjAAAXHpCKuQBfbcPl0MxG7jS7t8rx6nnPCp81zsm9k7Xxz9Tabzjg5
+        qyB7hZuAgQWj1HDqsnFESs0qQQ==
+X-Google-Smtp-Source: APXvYqyOToIhXgMB3p4wq1eYwswK4+ABcMmXeNT+QmoldWbGpxe9NmpO0SA2ZuMkhyc8J4VZ7vGPAw==
+X-Received: by 2002:adf:f547:: with SMTP id j7mr3872939wrp.119.1569602327457;
+        Fri, 27 Sep 2019 09:38:47 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id j1sm6587771wrg.24.2019.09.27.09.38.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 27 Sep 2019 09:38:46 -0700 (PDT)
+References: <20190919102518.25126-1-narmstrong@baylibre.com> <20190919102518.25126-2-narmstrong@baylibre.com> <20190927001425.DFDC7207FF@mail.kernel.org> <8486dec0-8aea-ea39-2a52-7347a01c5c40@baylibre.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] clk: introduce clk_invalidate_rate()
+In-reply-to: <8486dec0-8aea-ea39-2a52-7347a01c5c40@baylibre.com>
+Date:   Fri, 27 Sep 2019 18:38:45 +0200
+Message-ID: <1jef011yp6.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 2554385417407385031
-X-VR-SPAMSTATE: OK
-X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeigdektdcutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The buffer allocated in ti_adpll_clk_get_name doesn't account for the
-terminating null. This patch adds the extra byte, and switches to
-snprintf to avoid overflowing.
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
- drivers/clk/ti/adpll.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+On Fri 27 Sep 2019 at 08:40, Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index fdfb90058504..27933c4e8a27 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -196,12 +196,13 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
- 	} else {
- 		const char *base_name = "adpll";
- 		char *buf;
-+		size_t size = 8 + 1 + strlen(base_name) + 1 +
-+			      strlen(postfix) + 1;
- 
--		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
--				    strlen(postfix), GFP_KERNEL);
-+		buf = devm_kzalloc(d->dev, size, GFP_KERNEL);
- 		if (!buf)
- 			return NULL;
--		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
-+		snprintf(buf, size, "%08lx.%s.%s", d->pa, base_name, postfix);
- 		name = buf;
- 	}
- 
--- 
-2.20.1
+> On 27/09/2019 02:14, Stephen Boyd wrote:
+>> Quoting Neil Armstrong (2019-09-19 03:25:17)
+>>> This introduces the clk_invalidate_rate() call used to recalculate the
+>>> rate and parent tree of a particular clock if it's known that the
+>>> underlying registers set has been altered by the firmware, like from
+>>> a suspend/resume handler running in trusted cpu mode.
+>>>
+>>> The call refreshes the actual parent and when changed, instructs CCF
+>>> the parent has changed. Finally the call will recalculate the rate of
+>>> each part of the tree to make sure the CCF cached tree is in sync with
+>>> the hardware.
+>>>
+>>> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>>> ---
+>> 
+>> The knee-jerk reaction to these patches is that it shouldn't be a
+>> consumer API (i.e. taking a struct clk) but a provider API (i.e. taking
+>> a struct clk_hw). I haven't looked in any more detail but just know that
+>> it's a non-starter to be a consumer based API because we don't want
+>> random consumers out there to be telling the CCF or provider drivers
+>> that some clk has lost state and needs to be "refreshed".
+>> 
+>
+> Totally agree, I hesitated and obviously did the wrong choice, but
+> this is a nit, the main algorithm is not tied to the API level.
+>
+> Should I resend it with clk_hw ? the difference will be small and
+> the main subject is the resync algorithm.
+
+Independent of the point above (partly a least), I wonder what will
+happen in some particular use cases
+
+* If clock is changed while in suspend. This clock can be a parent of
+  the clock invalidated but currently is not. What happen, if later,
+  it becomes the parent ?
+
+  Since it is not parent on resume it won't be invalidated. CCF might
+  still take a decision based on an invalid cached value.
+
+* If a mux is changed while in suspend, the parent is not correct
+  anymore. The proposed patch recurse through the parents, it might
+  not invalidate what we need/expect ... things are getting a bit
+  unpredictable
+
+IOW, this change take a leaf clock and tries to tell CCF that any parent
+of this clock should not be trusted, but it might get it wrong in some
+cases.
+
+I think we should do it in the opposite way:
+ * Mark the "rogue" clock with a flag (CLK_REFRESH ?)
+ * Let CCF update the children of these clocks based on the new status
+
+Back to Stephen point, I don't know which API it should be, but I
+think the platform (fw driver or power stuff - not only clock provider)
+should be able somehow to trigger the mechanism to let CCF know
+something sketchy may have happened.
+
+For the parameter, maybe there should not be any (no struct clk or
+clk_hw) ? Maybe it would better if we let CCF refresh all the "rogue"
+clocks ?
+
+>
+> Neil
 
