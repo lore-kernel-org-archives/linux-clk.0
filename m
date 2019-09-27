@@ -2,99 +2,91 @@ Return-Path: <SRS0=fPJi=XW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_SBL,URIBL_SBL_A autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6F3DC4360C
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 20:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9EEC4360C
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 23:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B430221655
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 20:10:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569615053;
-	bh=b7udfW27kUSAKzBz/klbWlqHmts0w2AZWPzY+ISPsnU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=TMXhe1inhov+P6pIxZR2BC5QMz3Lla6Hx5UdNHx0jKl9LNRhbUtgKfKm4lK/wwWnH
-	 31Yv+JpMZ9QquX35wrPbcyHGeqd9NmgAn3Bm8Smjka87XBweX0aTWr4TbpOtJvWDOd
-	 qaN5M+TPpXzRGaHM5V0oF2xAUAbyQhmMyhkB1A9o=
+	by mail.kernel.org (Postfix) with ESMTP id 87E752075D
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Sep 2019 23:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbfI0UKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Sep 2019 16:10:53 -0400
-Received: from mail.kernel.org ([198.145.29.99]:37586 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725815AbfI0UKx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Sep 2019 16:10:53 -0400
-Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B693321655;
-        Fri, 27 Sep 2019 20:10:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569615048;
-        bh=b7udfW27kUSAKzBz/klbWlqHmts0w2AZWPzY+ISPsnU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=CHnc0vRGRCkhh6nfZRCObkOauHnm908L8O4k82Ewh33NujxymLEmDc2uRZj1FOI+O
-         br/tBVj0/IipUySKwpM0V2oHoaP+UU9KGRbNaeEFxDhY+wRlQSxdmYXYxrA6vSqpt+
-         FtBQtbLt5MFvnEY6w7vnWSi0OAGQ+5DJaO3QnBtk=
-Received: by mail-qk1-f172.google.com with SMTP id p10so2997286qkg.8;
-        Fri, 27 Sep 2019 13:10:48 -0700 (PDT)
-X-Gm-Message-State: APjAAAW96wR6EZ7lMBCYQS93AXAryHqxgQ9COITAdwAeHDJA3CB+GNNG
-        HzMCKemnB62YRZN4Wwj4rYoLscaJy6fgflvbSA==
-X-Google-Smtp-Source: APXvYqxKy/HEii2/OoHYOAb41fJRQion1dSlPGS5FdM1aP8Lr6iCqSO+cRGGzikOzCqBYhvNXRHDJuLbTpEBmBQ5OGI=
-X-Received: by 2002:a05:620a:7da:: with SMTP id 26mr6292676qkb.119.1569615047714;
- Fri, 27 Sep 2019 13:10:47 -0700 (PDT)
+        id S1727273AbfI0XFS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Sep 2019 19:05:18 -0400
+Received: from 5.mo4.mail-out.ovh.net ([188.165.44.50]:37563 "EHLO
+        5.mo4.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725990AbfI0XFR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Sep 2019 19:05:17 -0400
+X-Greylist: delayed 12600 seconds by postgrey-1.27 at vger.kernel.org; Fri, 27 Sep 2019 19:05:17 EDT
+Received: from player718.ha.ovh.net (unknown [10.109.159.132])
+        by mo4.mail-out.ovh.net (Postfix) with ESMTP id 45E8A208D72
+        for <linux-clk@vger.kernel.org>; Fri, 27 Sep 2019 20:18:45 +0200 (CEST)
+Received: from RCM-web9.webmail.mail.ovh.net (unknown [109.190.253.11])
+        (Authenticated sender: steve@sk2.org)
+        by player718.ha.ovh.net (Postfix) with ESMTPSA id DAB08A401549;
+        Fri, 27 Sep 2019 18:18:37 +0000 (UTC)
 MIME-Version: 1.0
-References: <1569411888-98116-1-git-send-email-jian.hu@amlogic.com> <1569411888-98116-2-git-send-email-jian.hu@amlogic.com>
-In-Reply-To: <1569411888-98116-2-git-send-email-jian.hu@amlogic.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Fri, 27 Sep 2019 15:10:36 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqL8r-8J_bSaQax3cJkOUL8D7P+6_PcCqaC1k8=zS18moQ@mail.gmail.com>
-Message-ID: <CAL_JsqL8r-8J_bSaQax3cJkOUL8D7P+6_PcCqaC1k8=zS18moQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: meson: add A1 clock controller bindings
-To:     Jian Hu <jian.hu@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        devicetree@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Fri, 27 Sep 2019 20:18:37 +0200
+From:   Stephen Kitt <steve@sk2.org>
+To:     Tero Kristo <t-kristo@ti.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org, Tony Lindgren <tony@atomide.com>
+Cc:     linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk/ti/adpll: allocate room for terminating null
+In-Reply-To: <20190927180559.18162-1-steve@sk2.org>
+References: <cec235b3e2e4e3b206fa9444b643fa56@sk2.org>
+ <20190927180559.18162-1-steve@sk2.org>
+Message-ID: <8e45c174b787a26eb60762b8ca2e4747@sk2.org>
+X-Sender: steve@sk2.org
+User-Agent: Roundcube Webmail/1.3.10
+X-Originating-IP: 109.190.253.11
+X-Webmail-UserID: steve@sk2.org
+X-Ovh-Tracer-Id: 5946158883481472455
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrfeeigdduvdduucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddm
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 25, 2019 at 6:45 AM Jian Hu <jian.hu@amlogic.com> wrote:
->
-> Add the documentation to support Amlogic A1 clock driver,
-> and add A1 clock controller bindings.
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-> Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
+Le 27/09/2019 20:05, Stephen Kitt a écrit :
+> The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+> terminating null. This patch switches to ka_sprintf to avoid
+
+Aargh, devm_kasprintf of course...
+
+> overflowing.
+> 
+> Signed-off-by: Stephen Kitt <steve@sk2.org>
 > ---
->  .../devicetree/bindings/clock/amlogic,a1-clkc.yaml |  65 +++++++++++++
->  include/dt-bindings/clock/a1-clkc.h                | 102 +++++++++++++++++++++
->  2 files changed, 167 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
->  create mode 100644 include/dt-bindings/clock/a1-clkc.h
->
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> new file mode 100644
-> index 0000000..f012eb2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-> @@ -0,0 +1,65 @@
-> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-
-(GPL-2.0-only OR BSD-2-Clause) please.
-
-Rob
+>  drivers/clk/ti/adpll.c | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+> index fdfb90058504..021cf9e2b4db 100644
+> --- a/drivers/clk/ti/adpll.c
+> +++ b/drivers/clk/ti/adpll.c
+> @@ -195,14 +195,8 @@ static const char *ti_adpll_clk_get_name(struct
+> ti_adpll_data *d,
+>  			return NULL;
+>  	} else {
+>  		const char *base_name = "adpll";
+> -		char *buf;
+> -
+> -		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
+> -				    strlen(postfix), GFP_KERNEL);
+> -		if (!buf)
+> -			return NULL;
+> -		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
+> -		name = buf;
+> +		name = devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.%s.%s",
+> +				      d->pa, base_name, postfix);
+>  	}
+> 
+>  	return name;
