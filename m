@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FD50C4360C
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Sep 2019 17:31:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 103DDC47404
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Sep 2019 17:37:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61F5E2086A
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Sep 2019 17:31:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF15921928
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Sep 2019 17:37:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569778266;
-	bh=+MMQDdfDZRYfEA9WTqoj7O66pjR+UGqGUMel+eWVUrA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OGIdsCF1MyVfroc7TqTxXL/aUtesWMemWGkbl6otUwScGa4sEBcXG0tyraNOL8X1x
-	 YNnVT2XeqvC5kqMAW/X/JuJbdhUg40wJ3Lx7wsP6tfAxtASxFEYsVGZmPr5vaLXYMN
-	 xVja8NFMDE8a3JxQmH0G60ZT1/WyMbzkyhFuuVdg=
+	s=default; t=1569778665;
+	bh=PYnztwhNqQMmqSmLLY+GbEr8E79+RaN7u/dLYiZhWPM=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=Kjf7JAB7wYbeHDeGuDf6BVtBhpAxNVuwKsWaZrp4RQ4YxP077f0OA0elL+wPiojme
+	 NARvoojziXojqgWdExWkeQNvneL5311y10IWK23h8XHL+eeA28xkkGWm98sTldq5WB
+	 M4OMtgtGuFwpaztGGkRCz+7zRptSXSgJhCJ29zlQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729035AbfI2RbD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Sep 2019 13:31:03 -0400
-Received: from mail.kernel.org ([198.145.29.99]:41322 "EHLO mail.kernel.org"
+        id S1730097AbfI2RhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Sep 2019 13:37:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:49878 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbfI2RbC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 29 Sep 2019 13:31:02 -0400
+        id S1729652AbfI2RhA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 29 Sep 2019 13:37:00 -0400
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D22721835;
-        Sun, 29 Sep 2019 17:30:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E862C21925;
+        Sun, 29 Sep 2019 17:36:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569778261;
-        bh=+MMQDdfDZRYfEA9WTqoj7O66pjR+UGqGUMel+eWVUrA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qyVAwCFbEuA4keIUrNRS2lBRhbJyvm9KB5EG04uzkBAvDMTmikPR6UF2P/Y3zsfMs
-         o9q41nxRS/3k+J1zpW7ntmGpeXyfdTDSABggHogLd3NmkWMciQQC8BQNqH8qlSq2jk
-         i/K9cFYJG3whYGo9mNxw//d6Nk/Wtfa4MQq944W4=
+        s=default; t=1569778619;
+        bh=PYnztwhNqQMmqSmLLY+GbEr8E79+RaN7u/dLYiZhWPM=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fef6pEQlxhyQ11NB1IOneALhZv1pYdzN/WW6SQP1asCLGFXlXUhGZVEEocViRhePV
+         GXhw/0/I9SWbDJc23jdpDbP424O/niwDU6VBMGbV3+GTtwy5GoO8/fxUkZbTL+LaT/
+         S+OUUF7ZyUpAEd+4KTPThOO6yHQBGDs8FUxRaHNM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Paul Cercueil <paul@crapouillou.net>,
@@ -60,12 +60,10 @@ Cc:     Paul Cercueil <paul@crapouillou.net>,
         devicetree@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-mips@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 5.3 02/49] clk: jz4740: Add TCU clock
-Date:   Sun, 29 Sep 2019 13:30:02 -0400
-Message-Id: <20190929173053.8400-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 1/9] clk: jz4740: Add TCU clock
+Date:   Sun, 29 Sep 2019 13:36:46 -0400
+Message-Id: <20190929173655.10178-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190929173053.8400-1-sashal@kernel.org>
-References: <20190929173053.8400-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -113,10 +111,10 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 7 insertions(+)
 
 diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
-index 4c0a20949c2c2..67f8a0e142845 100644
+index 305a26c2a800e..01b5b8b103888 100644
 --- a/drivers/clk/ingenic/jz4740-cgu.c
 +++ b/drivers/clk/ingenic/jz4740-cgu.c
-@@ -222,6 +222,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+@@ -211,6 +211,12 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
  		.parents = { JZ4740_CLK_EXT, -1, -1, -1 },
  		.gate = { CGU_REG_CLKGR, 5 },
  	},
@@ -130,10 +128,10 @@ index 4c0a20949c2c2..67f8a0e142845 100644
  
  static void __init jz4740_cgu_init(struct device_node *np)
 diff --git a/include/dt-bindings/clock/jz4740-cgu.h b/include/dt-bindings/clock/jz4740-cgu.h
-index 6ed83f926ae71..e82d77028581a 100644
+index 43153d3e9bd26..ff7c27bc98e37 100644
 --- a/include/dt-bindings/clock/jz4740-cgu.h
 +++ b/include/dt-bindings/clock/jz4740-cgu.h
-@@ -34,5 +34,6 @@
+@@ -33,5 +33,6 @@
  #define JZ4740_CLK_ADC		19
  #define JZ4740_CLK_I2C		20
  #define JZ4740_CLK_AIC		21
