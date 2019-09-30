@@ -7,75 +7,63 @@ X-Spam-Status: No, score=-10.0 required=3.0
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AB22C35280
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Sep 2019 15:40:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF8B5C388F3
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Sep 2019 20:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B0EA206BB
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Sep 2019 15:40:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 97CBD22519
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Sep 2019 20:43:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731127AbfI3PkF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Sep 2019 11:40:05 -0400
-Received: from muru.com ([72.249.23.125]:34922 "EHLO muru.com"
+        id S1729870AbfI3Unh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Sep 2019 16:43:37 -0400
+Received: from honk.sigxcpu.org ([24.134.29.49]:41306 "EHLO honk.sigxcpu.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732092AbfI3PkE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Sep 2019 11:40:04 -0400
-Received: from hillo.muru.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTP id 5F09580FA;
-        Mon, 30 Sep 2019 15:40:36 +0000 (UTC)
-From:   Tony Lindgren <tony@atomide.com>
+        id S1729179AbfI3Ung (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Sep 2019 16:43:36 -0400
+Received: from localhost (localhost [127.0.0.1])
+        by honk.sigxcpu.org (Postfix) with ESMTP id 8F9A1FB02;
+        Mon, 30 Sep 2019 22:26:04 +0200 (CEST)
+X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
+Received: from honk.sigxcpu.org ([127.0.0.1])
+        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id YmdQpU_p0ZnW; Mon, 30 Sep 2019 22:26:03 +0200 (CEST)
+Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
+        id DCDC348868; Mon, 30 Sep 2019 22:26:01 +0200 (CEST)
+From:   =?UTF-8?q?Guido=20G=C3=BCnther?= <agx@sigxcpu.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Keerthy <j-keerthy@ti.com>
-Subject: [PATCH] clk: ti: clkctrl: Fix failed to enable error with double udelay timeout
-Date:   Mon, 30 Sep 2019 08:40:01 -0700
-Message-Id: <20190930154001.46581-1-tony@atomide.com>
-X-Mailer: git-send-email 2.23.0
+        Stephen Boyd <sboyd@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/2] clk: bd718x7: Add MODULE_ALIAS()
+Date:   Mon, 30 Sep 2019 22:26:01 +0200
+Message-Id: <e1d01b68cdf7dbff9bdd03bab953f828431ad292.1569875042.git.agx@sigxcpu.org>
+X-Mailer: git-send-email 2.23.0.rc1
+In-Reply-To: <cover.1569875042.git.agx@sigxcpu.org>
+References: <cover.1569875042.git.agx@sigxcpu.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Commit 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if
-timekeeping is suspended") added handling for cases when timekeeping is
-suspended. But looks like we can still get occasional "failed to enable"
-errors on the PM runtime resume path with udelay() returning faster than
-expected.
+This fixes device probing when built as a module.
 
-With ti-sysc interconnect target module driver this leads into device
-failure with PM runtime failing with "failed to enable" clkctrl error.
-
-Let's fix the issue with a delay of two times the desired delay as in
-often done for udelay() to account for the inaccuracy.
-
-Fixes: 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if timekeeping is suspended")
-Cc: Keerthy <j-keerthy@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Guido Günther <agx@sigxcpu.org>
 ---
- drivers/clk/ti/clkctrl.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/clk/clk-bd718x7.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
---- a/drivers/clk/ti/clkctrl.c
-+++ b/drivers/clk/ti/clkctrl.c
-@@ -100,11 +100,12 @@ static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
- 	 * can be from a timer that requires pm_runtime access, which
- 	 * will eventually bring us here with timekeeping_suspended,
- 	 * during both suspend entry and resume paths. This happens
--	 * at least on am43xx platform.
-+	 * at least on am43xx platform. Account for flakeyness
-+	 * with udelay() by multiplying the timeout value by 2.
- 	 */
- 	if (unlikely(_early_timeout || timekeeping_suspended)) {
- 		if (time->cycles++ < timeout) {
--			udelay(1);
-+			udelay(1 * 2);
- 			return false;
- 		}
- 	} else {
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index ae6e5baee330..00926c587390 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -133,3 +133,4 @@ module_platform_driver(bd71837_clk);
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+ MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
+ MODULE_LICENSE("GPL");
++MODULE_ALIAS("platform:bd718xx-clk");
 -- 
-2.23.0
+2.23.0.rc1
+
