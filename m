@@ -2,274 +2,257 @@ Return-Path: <SRS0=E8mG=X2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9429ECE587
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 14:00:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB7A9C352AA
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 14:38:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A46A821855
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 14:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA6FD2054F
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 14:38:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569938407;
-	bh=gTf72zjW4aJJth44ueFQ6LVk67ouN20Al3yXqpe4rfs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=eZi7FK5OUDGiB9LA1dZJGHpdYulvbnCvk1b+ojXUqEkuZBWIVCRc11cSn8RnJkVpT
-	 PYJXQtRUPJv5GzDxy3EC1NxUNSS6XeE3CyDV+lk0MDgGupoSu9/+/SAvJ930CKDNpt
-	 KR4HYiRs9nICxptv86eSZcYRo1urE7jOddwH8dKc=
+	s=default; t=1569940707;
+	bh=BC6OroHcKot4AxHRsLzrj3gVVxqz2wKqdFSlgTuptpw=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=DDmSP1rgF0bCjDh5qskRmUslJZ7+6yEtXf7DiovgoONOAdxRclxOq0CEtU7depIvb
+	 Yjji3kYEV1PhpVTHkvDdho1nD1H5ML42almP4poy1xusERAyjJ4pGyyGLGLKAfbMiK
+	 ubXAc0lDiht/iipMe0reLeQvgemNOqd89Hl5XvLQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731547AbfJAOAH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Oct 2019 10:00:07 -0400
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:40773 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726710AbfJAOAH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 10:00:07 -0400
-Received: by mail-ot1-f68.google.com with SMTP id y39so11610424ota.7;
-        Tue, 01 Oct 2019 07:00:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JZBM1FPFDAl5uESgEP9tPsFTn7qdNx8IBtQzRJpA2CU=;
-        b=JJ6Ba9U260hPNMjV33RcZ4y4AOaBtHnjOByo9zSyjfHN3eAatyKNOkOgmyd1ru0Sm9
-         Sh0ucXuvXH5gHibOXGHWFPbLnOMTyrqAVMT+4gthL0YteSJyxpstoaO4V9iyLtOIV4mk
-         vqs8y3GDEj61emJcbuf5VrBAYuRm+ZTKiyod7zaSjSik06RgNP9A3j8T17P47IoGyOd6
-         hg7mtUlOXdAodyFCsBiBvJ1HgXnwIQ45nshjfu+Bodd+rOJRidpOPndCoCGsjgyVobpd
-         bwR8ycm8zR0dF61jo6a2FP57u6Jg3T6gS22+G+vOhySqKsyDZ1gbdxnZ8PwUalSEfshh
-         KkmA==
-X-Gm-Message-State: APjAAAVr+PRHwQCvMAYY+PNPx5D0/RCQsKzdEgbERn2PSzCOE2hbsup5
-        HznEYzRjx+2O9BlmLHiUOw==
-X-Google-Smtp-Source: APXvYqyny3jSQCJcTq07B8NFgeh+CqrPZ/jllExOJcitfcVJnCPPhlC7KQB0zTngJlFTUtwdcVIBqg==
-X-Received: by 2002:a9d:4041:: with SMTP id o1mr4924805oti.61.1569938405253;
-        Tue, 01 Oct 2019 07:00:05 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m25sm5045457oie.39.2019.10.01.07.00.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 07:00:04 -0700 (PDT)
-Date:   Tue, 1 Oct 2019 09:00:03 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Matt Mackall <mpm@selenic.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>,
-        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH v2 2/8] dt-bindings: sram: Convert SRAM bindings to
- json-schema
-Message-ID: <20191001140003.GA31344@bogus>
-References: <20190918173141.4314-1-krzk@kernel.org>
- <20190918173141.4314-2-krzk@kernel.org>
+        id S2388949AbfJAOi1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Oct 2019 10:38:27 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727143AbfJAOi1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 1 Oct 2019 10:38:27 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD3212054F;
+        Tue,  1 Oct 2019 14:38:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1569940705;
+        bh=BC6OroHcKot4AxHRsLzrj3gVVxqz2wKqdFSlgTuptpw=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=BYHEm8XyvTeCxQXNCByi8u5BlrT28BYw6+dYsZfyegW+qvnaE0V30GvfVl5LKhTVR
+         TbYCnlYyFno04qwhsbnta3Rc7FW7ECti0aE8lfZe5rdZapEbFkOtfAk/Vt2o9Mr7WJ
+         a93ez7ZSk3JUOhccqgPm8UbUZZ39MSaylIylYKNw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190918173141.4314-2-krzk@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
+References: <20190918095018.17979-1-tdas@codeaurora.org> <20190918095018.17979-4-tdas@codeaurora.org> <20190918213946.DC03521924@mail.kernel.org> <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org> <20190924231223.9012C207FD@mail.kernel.org> <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org> <20190925130346.42E0820640@mail.kernel.org> <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
+User-Agent: alot/0.8.1
+Date:   Tue, 01 Oct 2019 07:38:25 -0700
+Message-Id: <20191001143825.CD3212054F@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 18, 2019 at 07:31:35PM +0200, Krzysztof Kozlowski wrote:
-> Convert generic mmio-sram bindings to DT schema format using
-> json-schema.
+Quoting Taniya Das (2019-09-27 00:37:57)
+> Hi Stephen,
+>=20
+> On 9/25/2019 6:33 PM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2019-09-25 04:20:07)
+> >> Hi Stephen,
+> >>
+> >> Please find my comments.
+> >>
+> >> On 9/25/2019 4:42 AM, Stephen Boyd wrote:
+> >>> Quoting Taniya Das (2019-09-23 01:01:11)
+> >>>> Hi Stephen,
+> >>>>
+> >>>> Thanks for your comments.
+> >>>>
+> >>>> On 9/19/2019 3:09 AM, Stephen Boyd wrote:
+> >>>>> Quoting Taniya Das (2019-09-18 02:50:18)
+> >>>>>> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-=
+sc7180.c
+> >>>>>> new file mode 100644
+> >>>>>> index 000000000000..d47865d5408f
+> >>>>>> --- /dev/null
+> >>>>>> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>> [...]
+> >>>>>> +static struct clk_branch gcc_ufs_phy_phy_aux_clk =3D {
+> >>>>>> +       .halt_reg =3D 0x77094,
+> >>>>>> +       .halt_check =3D BRANCH_HALT,
+> >>>>>> +       .hwcg_reg =3D 0x77094,
+> >>>>>> +       .hwcg_bit =3D 1,
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0x77094,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_ufs_phy_phy_aux_clk",
+> >>>>>> +                       .parent_data =3D &(const struct clk_parent=
+_data){
+> >>>>>> +                               .hw =3D &gcc_ufs_phy_phy_aux_clk_s=
+rc.clkr.hw,
+> >>>>>> +                       },
+> >>>>>> +                       .num_parents =3D 1,
+> >>>>>> +                       .flags =3D CLK_SET_RATE_PARENT,
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static struct clk_branch gcc_ufs_phy_rx_symbol_0_clk =3D {
+> >>>>>> +       .halt_reg =3D 0x7701c,
+> >>>>>> +       .halt_check =3D BRANCH_HALT_SKIP,
+> >>>>>
+> >>>>> Again, nobody has fixed the UFS driver to not need to do this halt =
+skip
+> >>>>> check for these clks? It's been over a year.
+> >>>>>
+> >>>>
+> >>>> The UFS_PHY_RX/TX clocks could be left enabled due to certain HW boot
+> >>>> configuration and thus during the late initcall of clk_disable there
+> >>>> could be warnings of "clock stuck ON" in the dmesg. That is the reas=
+on
+> >>>> also to use the BRANCH_HALT_SKIP flag.
+> >>>
+> >>> Oh that's bad. Why do the clks stay on when we try to turn them off?
+> >>>
+> >>
+> >> Those could be due to the configuration selected by HW and SW cannot
+> >> override them, so traditionally we have never polled for CLK_OFF for
+> >> these clocks.
+> >=20
+> > Is that the case or just a guess?
+> >=20
+>=20
+> This is the behavior :).
 
-I've been slow getting to this because I started on the same thing...
+Ok. It's the same as sdm845 so I guess it's OK.
 
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v1:
-> 1. Indent example with four spaces (more readable).
-> ---
->  .../devicetree/bindings/sram/sram.txt         |  80 ----------
->  .../devicetree/bindings/sram/sram.yaml        | 138 ++++++++++++++++++
->  2 files changed, 138 insertions(+), 80 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sram/sram.txt
->  create mode 100644 Documentation/devicetree/bindings/sram/sram.yaml
+>=20
+> >>
+> >>>>
+> >>>> I would also check internally for the UFS driver fix you are referri=
+ng here.
+> >>>
+> >>> Sure. I keep asking but nothing is done :(
+> >>>
+> >>>>
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0x7701c,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_ufs_phy_rx_symbol_0_clk",
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>> [...]
+> >>>>>> +
+> >>>>>> +static struct clk_branch gcc_usb3_prim_phy_pipe_clk =3D {
+> >>>>>> +       .halt_reg =3D 0xf058,
+> >>>>>> +       .halt_check =3D BRANCH_HALT_SKIP,
+> >>>>>
+> >>>>> Why does this need halt_skip?
+> >>>>
+> >>>> This is required as the source is external PHY, so we want to not ch=
+eck
+> >>>> for HALT.
+> >>>
+> >>> This doesn't really answer my question. If the source is an external =
+phy
+> >>> then it should be listed as a clock in the DT binding and the parent
+> >>> should be specified here. Unless something doesn't work because of th=
+at?
+> >>>
+> >>
+> >> The USB phy is managed by the USB driver and clock driver is not aware
+> >> if USB driver models the phy as a clock. Thus we do want to keep a
+> >> dependency on the parent and not poll for CLK_ENABLE.
+> >=20
+> > The clk driver should be aware of the USB driver modeling the phy as a
+> > clk. We do that for other phys so what is the difference here?
+> >=20
+>=20
+> Let me check with the USB team, but could we keep them for now?
 
-> diff --git a/Documentation/devicetree/bindings/sram/sram.yaml b/Documentation/devicetree/bindings/sram/sram.yaml
-> new file mode 100644
-> index 000000000000..8d9d6ce494b2
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sram/sram.yaml
-> @@ -0,0 +1,138 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sram/sram.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Generic on-chip SRAM
-> +
-> +maintainers:
-> +  - FIXME <who@should.it.be>
+Ok. It's also the same as sdm845 so I guess it's OK. Would be nice to
+properly model it though so we can be certain the clk is actually
+enabled.
 
-You can put me.
+>=20
+> >>
+> >>>>
+> >>>>>
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0xf058,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_usb3_prim_phy_pipe_clk",
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +static struct clk_branch gcc_usb_phy_cfg_ahb2phy_clk =3D {
+> >>>>>> +       .halt_reg =3D 0x6a004,
+> >>>>>> +       .halt_check =3D BRANCH_HALT,
+> >>>>>> +       .hwcg_reg =3D 0x6a004,
+> >>>>>> +       .hwcg_bit =3D 1,
+> >>>>>> +       .clkr =3D {
+> >>>>>> +               .enable_reg =3D 0x6a004,
+> >>>>>> +               .enable_mask =3D BIT(0),
+> >>>>>> +               .hw.init =3D &(struct clk_init_data){
+> >>>>>> +                       .name =3D "gcc_usb_phy_cfg_ahb2phy_clk",
+> >>>>>> +                       .ops =3D &clk_branch2_ops,
+> >>>>>> +               },
+> >>>>>> +       },
+> >>>>>> +};
+> >>>>>> +
+> >>>>>> +/* Leave the clock ON for parent config_noc_clk to be kept enable=
+d */
+> >>>>>
+> >>>>> There's no parent though... So I guess this means it keeps it enabl=
+ed
+> >>>>> implicitly in hardware?
+> >>>>>
+> >>>>
+> >>>> These are not left enabled, but want to leave them enabled for clien=
+ts
+> >>>> on config NOC.
+> >>>
+> >>> Sure. It just doesn't make sense to create clk structures and expose
+> >>> them in the kernel when we just want to turn the bits on and leave th=
+em
+> >>> on forever. Why not just do some register writes in probe for this
+> >>> driver? Doesn't that work just as well and use less memory?
+> >>>
+> >>
+> >> Even if I write these registers during probe, the late init check
+> >> 'clk_core_is_enabled' would return true and would be turned OFF, that =
+is
+> >> the reason for marking them CRITICAL.
+> >>
+> >=20
+> > That wouldn't happen if the clks weren't registered though, no?
+> >=20
+>=20
+> I want to keep these clock CRITICAL and registered for now, but we=20
+> should be able to revisit/clean them up later.
+>=20
 
-> +
-> +description: |+
-> +  Simple IO memory regions to be managed by the genalloc API.
-> +
-> +  Each child of the sram node specifies a region of reserved memory. Each
-> +  child node should use a 'reg' property to specify a specific range of
-> +  reserved memory.
-> +
-> +  Following the generic-names recommended practice, node names should
-> +  reflect the purpose of the node. Unit address (@<address>) should be
-> +  appended to the name.
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: "^sram(@.*)?"
-> +
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - mmio-sram
-> +          - atmel,sama5d2-securam
+Why do you want to keep them critical and registered? I'm suggesting
+that any clk that is marked critical and doesn't have a parent should
+instead become a register write in probe to turn the clk on.
 
-I was trying to go down the path of putting all the compatibles for 
-various SRAM bindings here, but I ran into some issues. I need to 
-revisit as I've forgotten the exact issue.
-
-This would need to be a 'contains' if this is going to work for others.
-
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  "#address-cells":
-> +    description: Should use the same values as the root node.
-> +
-> +  "#size-cells":
-> +    description: Should use the same values as the root node.
-
-I defined both of these to be 1 as 4GB of SRAM should be enough for a 
-while. We can debate 1 or 2 cells vs. 1, but there's no reason it has to 
-be the same as the root (unless we're failing to do address 
-translation).
-
-> +
-> +  ranges:
-> +    description:
-> +      Should translate from local addresses within the sram to bus addresses.
-> +
-> +  no-memory-wc:
-> +    description:
-> +      The flag indicating, that SRAM memory region has not to be remapped
-> +      as write combining. WC is used by default.
-> +    type: boolean
-> +
-> +  # TODO: additionalProperties: false
-> +
-> +patternProperties:
-> +  "^([a-z]*-)?sram@[a-f0-9]$":
-> +    type: object
-> +    description:
-> +      Each child of the sram node specifies a region of reserved memory.
-> +    properties:
-> +      reg:
-> +        description:
-> +          IO mem address range, relative to the SRAM range.
-
-maxItems: 1
-
-> +
-> +      compatible:
-> +        $ref: /schemas/types.yaml#/definitions/string
-> +        description:
-> +          Should contain a vendor specific string in the form
-> +          <vendor>,[<device>-]<usage>
-> +
-> +      pool:
-> +        description:
-> +          Indicates that the particular reserved SRAM area is addressable
-> +          and in use by another device or devices.
-> +        type: boolean
-> +
-> +      export:
-> +        description:
-> +          Indicates that the reserved SRAM area may be accessed outside
-> +          of the kernel, e.g. by bootloader or userspace.
-> +        type: boolean
-> +
-> +      protect-exec:
-> +        description: |
-> +          Same as 'pool' above but with the additional constraint that code
-> +          will be run from the region and that the memory is maintained as
-> +          read-only, executable during code execution. NOTE: This region must
-> +          be page aligned on start and end in order to properly allow
-> +          manipulation of the page attributes.
-> +        type: boolean
-> +
-> +      label:
-> +        $ref: /schemas/types.yaml#/definitions/string
-
-Already has a type definition.
-
-> +        description:
-> +          The name for the reserved partition, if omitted, the label is taken
-> +          from the node name excluding the unit address.
-> +
-> +      clocks:
-> +        description:
-> +          A list of phandle and clock specifier pair that controls the
-> +          single SRAM clock.
-> +
-> +      # TODO: additionalProperties: false
-> +
-> +    required:
-> +      - reg
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - "#address-cells"
-> +  - "#size-cells"
-> +  - ranges
-> +
-> +examples:
-> +  - |
-> +    sram: sram@5c000000 {
-> +        compatible = "mmio-sram";
-> +        reg = <0x5c000000 0x40000>; /* 256 KiB SRAM at address 0x5c000000 */
-> +
-> +        #address-cells = <1>;
-> +        #size-cells = <1>;
-> +        ranges = <0 0x5c000000 0x40000>;
-> +
-> +        smp-sram@100 {
-> +            compatible = "socvendor,smp-sram";
-> +            reg = <0x100 0x50>;
-> +        };
-> +
-> +        device-sram@1000 {
-> +            reg = <0x1000 0x1000>;
-> +            pool;
-> +        };
-> +
-> +        exported@20000 {
-> +            reg = <0x20000 0x20000>;
-> +            export;
-> +        };
-> +    };
-> -- 
-> 2.17.1
-> 
