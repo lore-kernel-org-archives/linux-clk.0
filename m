@@ -2,69 +2,69 @@ Return-Path: <SRS0=E8mG=X2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 489C3ECE587
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:29:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 806F5C352AA
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:33:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DAAB21D82
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:29:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 542FA21906
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:33:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="VLGvSD3H"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WPpYuDJw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388362AbfJAN3a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Oct 2019 09:29:30 -0400
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:55954 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727003AbfJAN3a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 09:29:30 -0400
-Received: by mail-wm1-f67.google.com with SMTP id a6so3376675wma.5
-        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2019 06:29:27 -0700 (PDT)
+        id S1726764AbfJANdI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Oct 2019 09:33:08 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:38324 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725821AbfJANdI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 09:33:08 -0400
+Received: by mail-wr1-f67.google.com with SMTP id w12so15555915wro.5
+        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2019 06:33:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=references:user-agent:from:to:cc:subject:in-reply-to:date
          :message-id:mime-version;
-        bh=6fmOtDG9wumNq7oSBw0ZDgWws+Bwcs6uGBqlMQq6e/Y=;
-        b=VLGvSD3HdHOl274TXhBufAAB7EaOvXyErfrOZwEHDuM3CyvO44yMZS0moonj89GV0u
-         Fa4ykiXGEIwKRqQhxGr5QTMOirhM59XWeIzXccsS3qdPmIcoOg5cPCGKyh3+YZj8CImP
-         qDQulK4Bd03h0htA0xUhd/2lmbInaM/iEImz5LB7543+X3hpJ5302eMZU2nt5gAPZSzH
-         RX+WC5wfx+0uCPoJj8gnHQw/HAR+YIHf15+HboOc/ZK3/p+8wbpafdLFj44Q8cTw6B2W
-         zEXd4qrV9iM6nayjhufcdbfVZ0R3AsbCfP6k7C7l6IAQEKnxgtWoO9/8y8LHtrFCzNT6
-         /J/w==
+        bh=q8MDE5plyoRNJmUuOBtTSfs834j7Iqw1FfFcyxYnumg=;
+        b=WPpYuDJwCz9iNVKgfF0rxipBxqDz6nlIWJyQIYTX2tjmWW31ckS60u4AMpswyn2LXa
+         t/z/KbgIpMw0jeuBWup6RQaWXmzgbkMuviyWh7pu/BS7MFjCd5YodsekhVnLC2jJbeM5
+         v1Xlo9Ye4EKeKfKyubaQzvhchUSVrEKefUqWTNWKoD+agXHS2Lj4h/Nwmk+haJiKOpad
+         +6zU2nJo+igVlwYj/14q/YChadBZJmS+2yMEomfmzDXPJZsF994+SqMSkXntC1anNA/L
+         0SMsHeTkXHiS5IZ5boMwcT5i8VVU2Aev2dTD23LStWXuQi8qaFI7OmkknTiLH5NWqaCm
+         13kw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:references:user-agent:from:to:cc:subject
          :in-reply-to:date:message-id:mime-version;
-        bh=6fmOtDG9wumNq7oSBw0ZDgWws+Bwcs6uGBqlMQq6e/Y=;
-        b=sYOIRSQIevpenRRw0/V9/JisxTiX5c/Z2pSGdDcZSYyqcYHx2ipKTLNTo98SM0AMpQ
-         r384ms7C7DjqGEZelYVTCyhsafLdDMMm4GSOyuNMwcgvix4WSwkwf6LO9LPIzDIzkEYq
-         YCO/KGzRKMHE5+CP0xpq94RnmVFU5CzOnfbTTDeV+Nv4QNo1cIIWlEI0hxU1o3I+dKNZ
-         AqcuINLFutzf7z+qGY1VVZNsB5JYiUEMU5SZN1MnEDpOYOzVVAJn/sF0xwSMO3uYRlwI
-         QP1fm7BNDetCB9wLe6YgTHrXgXccVYKZK0bS5gJSb/662NWq+F0nzIKvXu6qs2pdbfdh
-         mBuQ==
-X-Gm-Message-State: APjAAAU1v0dMYf4gIrOz5gsAKOxJWxOskk5/x0lDKnY4sbTNhq1Z0lzY
-        XJCj+SBsDUf7miGzKyXY2/RPtg==
-X-Google-Smtp-Source: APXvYqxSLkwV0MKrrWya7m1Pkes7Ud2Q1y6aupZF7eGvustmfQWfRlRYy+rx/1UwwS1GGFGqHPuzKQ==
-X-Received: by 2002:a7b:c92b:: with SMTP id h11mr3860964wml.10.1569936567007;
-        Tue, 01 Oct 2019 06:29:27 -0700 (PDT)
+        bh=q8MDE5plyoRNJmUuOBtTSfs834j7Iqw1FfFcyxYnumg=;
+        b=egrgnlkdn3vdIi8Atn3UoskduH0aE4sE05WCY3kg2HTQHGqH4FDm7qzP+ttmrNUzul
+         VNhZB36eWANoVipzkt+Ho3kkFWwsG731gvu0cQm/FtajOzp5V6blXA8PT7C15EpRL1YK
+         xF5p4PKe7LASfcgRBuUBHdjpZ8m4j3tjVgK7s/5ugn7Y6uu0+H/7M/AAsDM0Svh5b7Sx
+         rQDvM+P0OdE2IuSutFLN+g8tRriPuz8+PDTVUKApGA/b/UMVXJO1d6yaoDiwXkwfF1fb
+         3oSzQdaXOvXmpL98PGsCXDgvO1qNLQqEeo7tLk4NMCLIJLnVCFP2UR44EV1Yopp6XYmv
+         Qsmw==
+X-Gm-Message-State: APjAAAUGU7bSmVK68w4rjCLY5WgKvqqlQCrMdlRm2acIJnE+Yxn3NpNO
+        9fnxCMIVJBSiyBfYLiNd649Ucg==
+X-Google-Smtp-Source: APXvYqx5UTPwgHB49ZkRR24PRLoPJyqRoXoDTxxZ9PbUtFADeW5Y7oQDqDrFvTZvadHS8fHEj1cltA==
+X-Received: by 2002:adf:ee05:: with SMTP id y5mr17074158wrn.291.1569936786513;
+        Tue, 01 Oct 2019 06:33:06 -0700 (PDT)
 Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l13sm2806895wmj.25.2019.10.01.06.29.25
+        by smtp.gmail.com with ESMTPSA id a18sm24360812wrh.25.2019.10.01.06.33.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 06:29:26 -0700 (PDT)
-References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com> <20190921151835.770263-3-martin.blumenstingl@googlemail.com>
+        Tue, 01 Oct 2019 06:33:05 -0700 (PDT)
+References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com> <1jsgons4wy.fsf@starbuckisacylon.baylibre.com> <CAFBinCAHD+D=a2mHeHMGq12MvoksHBr308jSrdcH+UYsUmwd8w@mail.gmail.com>
 User-agent: mu4e 1.3.3; emacs 26.2
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
-        devicetree@vger.kernel.org, khilman@baylibre.com,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller
-In-reply-to: <20190921151835.770263-3-martin.blumenstingl@googlemail.com>
-Date:   Tue, 01 Oct 2019 15:29:25 +0200
-Message-ID: <1jftkcr3uy.fsf@starbuckisacylon.baylibre.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        khilman@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/6] add the DDR clock controller on Meson8 and Meson8b
+In-reply-to: <CAFBinCAHD+D=a2mHeHMGq12MvoksHBr308jSrdcH+UYsUmwd8w@mail.gmail.com>
+Date:   Tue, 01 Oct 2019 15:33:04 +0200
+Message-ID: <1jeezwr3ov.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -73,230 +73,46 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sat 21 Sep 2019 at 17:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+On Mon 23 Sep 2019 at 22:49, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-> The Meson8/Meson8b/Meson8m2 SoCs embed a DDR clock controller in the
-> MMCBUS registers. There is no public documentation, but the u-boot GPL
-> sources from the Amlogic BSP show that the DDR clock controller is
-> identical on all three SoCs:
->   #define CFG_DDR_CLK 792
->   #define CFG_PLL_M (((CFG_DDR_CLK/12)*12)/24)
->   #define CFG_PLL_N 1
->   #define CFG_PLL_OD 1
+> Hi Jerome,
 >
->   // from set_ddr_clock:
->   t_ddr_pll_cntl= (CFG_PLL_OD << 16)|(CFG_PLL_N<<9)|(CFG_PLL_M<<0)
->   writel(timing_reg->t_ddr_pll_cntl|(1<<29),AM_DDR_PLL_CNTL);
->   writel(readl(AM_DDR_PLL_CNTL) & (~(1<<29)),AM_DDR_PLL_CNTL);
+> On Mon, Sep 23, 2019 at 12:06 PM Jerome Brunet <jbrunet@baylibre.com> wrote:
+>>
+>> On Sat 21 Sep 2019 at 17:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>>
+>> > Meson8 and Meson8b SoCs embed a DDR clock controller in their MMCBUS
+>> > registers. This series:
+>> > - adds support for this DDR clock controller (patches 0 and 1)
+>> > - wires up the DDR PLL as input for two audio clocks (patches 2 and 3)
+>>
+>> Have you been able to validate somehow that DDR rate calculated by CCF
+>> is the actual rate that gets to the audio clocks ?
+> no, I haven't been able to validate this (yet)
 >
->   // from hx_ddr_power_down_enter: shut down DDR PLL
->   writel(readl(AM_DDR_PLL_CNTL)|(1<<30),AM_DDR_PLL_CNTL);
+>> While I understand the interest for completeness, I suspect the having
+>> the DDR clock as an audio parent was just for debugging purpose. IOW,
+>> I'm not sure if adding this parent is useful to an actual audio use
+>> case. As far as audio would be concerned, I think we are better of
+>> without this parent.
+> there at least three other (potential) consumers of the ddr_pll clocks
+> on the 32-bit SoCs:
+> - CPU clock mux [0]
+> - clk81 mux [1]
+> - USB PHY [2]
 >
->   do { ... } while((readl(AM_DDR_PLL_CNTL)&(1<<31))==0)
+> I have not validated any of these either
 >
-> This translates to:
-> - AM_DDR_PLL_CNTL[29] is the reset bit
-> - AM_DDR_PLL_CNTL[30] is the enable bit
-> - AM_DDR_PLL_CNTL[31] is the lock bit
-> - AM_DDR_PLL_CNTL[8:0] is the m value (assuming the width is 9 bits
->   based on the start of the n value)
-> - AM_DDR_PLL_CNTL[13:9] is the n value (assuming the width is 5 bits
->   based on the start of the od)
-> - AM_DDR_PLL_CNTL[17:16] is the od (assuming the width is 2 bits based
->   on other PLLs on this SoC)
+
+Then I would suggest to leave patch 4 out until we can somehow validate
+this. 
+
 >
-> Add a driver for this PLL setup because it's used as one of the inputs
-> of the audio clocks. There may be more clocks inside that clock
-> controller - those can be added in subsequent patches.
 >
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/Makefile     |   2 +-
->  drivers/clk/meson/meson8-ddr.c | 153 +++++++++++++++++++++++++++++++++
->  2 files changed, 154 insertions(+), 1 deletion(-)
->  create mode 100644 drivers/clk/meson/meson8-ddr.c
+> Martin
 >
-> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> index 3939f218587a..6eca2a406ee3 100644
-> --- a/drivers/clk/meson/Makefile
-> +++ b/drivers/clk/meson/Makefile
-> @@ -18,4 +18,4 @@ obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
->  obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
->  obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
-> -obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
-> +obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o meson8-ddr.o
-> diff --git a/drivers/clk/meson/meson8-ddr.c b/drivers/clk/meson/meson8-ddr.c
-> new file mode 100644
-> index 000000000000..64ab4c27cce0
-> --- /dev/null
-> +++ b/drivers/clk/meson/meson8-ddr.c
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * Amlogic Meson8 DDR clock controller
-> + *
-> + * Copyright (C) 2019 Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> + */
-> +
-> +#include <dt-bindings/clock/meson8-ddr-clkc.h>
-> +
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/syscon.h>
-
-syscon is not used in the driver
-
-> +#include <linux/of_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include "clk-regmap.h"
-> +#include "clk-pll.h"
-> +
-> +#define AM_DDR_PLL_CNTL			0x00
-> +#define AM_DDR_PLL_CNTL1		0x04
-> +#define AM_DDR_PLL_CNTL2		0x08
-> +#define AM_DDR_PLL_CNTL3		0x0c
-> +#define AM_DDR_PLL_CNTL4		0x10
-> +#define AM_DDR_PLL_STS			0x14
-> +#define DDR_CLK_CNTL			0x18
-> +#define DDR_CLK_STS			0x1c
-> +
-> +static struct clk_regmap meson8_ddr_pll_dco = {
-> +	.data = &(struct meson_clk_pll_data){
-> +		.en = {
-> +			.reg_off = AM_DDR_PLL_CNTL,
-> +			.shift   = 30,
-> +			.width   = 1,
-> +		},
-> +		.m = {
-> +			.reg_off = AM_DDR_PLL_CNTL,
-> +			.shift   = 0,
-> +			.width   = 9,
-> +		},
-> +		.n = {
-> +			.reg_off = AM_DDR_PLL_CNTL,
-> +			.shift   = 9,
-> +			.width   = 5,
-> +		},
-> +		.l = {
-> +			.reg_off = AM_DDR_PLL_CNTL,
-> +			.shift   = 31,
-> +			.width   = 1,
-> +		},
-> +		.rst = {
-> +			.reg_off = AM_DDR_PLL_CNTL,
-> +			.shift   = 29,
-> +			.width   = 1,
-> +		},
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "ddr_pll_dco",
-> +		.ops = &meson_clk_pll_ro_ops,
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.fw_name = "xtal",
-> +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_regmap meson8_ddr_pll = {
-> +	.data = &(struct clk_regmap_div_data){
-> +		.offset = AM_DDR_PLL_CNTL,
-> +		.shift = 16,
-> +		.width = 2,
-> +		.flags = CLK_DIVIDER_POWER_OF_TWO,
-> +	},
-> +	.hw.init = &(struct clk_init_data){
-> +		.name = "ddr_pll",
-> +		.ops = &clk_regmap_divider_ro_ops,
-> +		.parent_hws = (const struct clk_hw *[]) {
-> +			&meson8_ddr_pll_dco.hw
-> +		},
-> +		.num_parents = 1,
-> +	},
-> +};
-> +
-> +static struct clk_hw_onecell_data meson8_ddr_clk_hw_onecell_data = {
-> +	.hws = {
-> +		[DDR_CLKID_DDR_PLL_DCO]		= &meson8_ddr_pll_dco.hw,
-> +		[DDR_CLKID_DDR_PLL]		= &meson8_ddr_pll.hw,
-
-I wonder if onecell is not overkill for this driver. We won't expose the
-DCO, so only the post divider remains
-
-Do you expect this provider to have more than one leaf clock ?
-If not, maybe you could use of_clk_hw_simple_get() instead ?
-
-> +	},
-> +	.num = 2,
-> +};
-> +
-> +static struct clk_regmap *const meson8_ddr_clk_regmaps[] = {
-> +	&meson8_ddr_pll_dco,
-> +	&meson8_ddr_pll,
-> +};
-> +
-> +static const struct regmap_config meson8_ddr_clkc_regmap_config = {
-> +	.reg_bits = 8,
-> +	.val_bits = 32,
-> +	.reg_stride = 4,
-> +	.fast_io = true,
-
-I think fast_io will default to true with memory based register.
-Setting the max_register would be nice
-
-> +};
-> +
-> +static int meson8_ddr_clkc_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	struct resource *res;
-> +	void __iomem *base;
-> +	struct clk_hw *hw;
-> +	int ret, i;
-> +
-> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> +	base = devm_ioremap_resource(&pdev->dev, res);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
-> +
-> +	regmap = devm_regmap_init_mmio(&pdev->dev, base,
-> +				       &meson8_ddr_clkc_regmap_config);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	/* Populate regmap */
-> +	for (i = 0; i < ARRAY_SIZE(meson8_ddr_clk_regmaps); i++)
-> +		meson8_ddr_clk_regmaps[i]->map = regmap;
-> +
-> +	/* Register all clks */
-> +	for (i = 0; i < meson8_ddr_clk_hw_onecell_data.num; i++) {
-> +		hw = meson8_ddr_clk_hw_onecell_data.hws[i];
-> +
-> +		ret = devm_clk_hw_register(&pdev->dev, hw);
-> +		if (ret) {
-> +			dev_err(&pdev->dev, "Clock registration failed\n");
-> +			return ret;
-> +		}
-> +	}
-> +
-> +	return devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get,
-> +					   &meson8_ddr_clk_hw_onecell_data);
-> +}
-> +
-> +static const struct of_device_id meson8_ddr_clkc_match_table[] = {
-> +	{ .compatible = "amlogic,meson8-ddr-clkc" },
-> +	{ .compatible = "amlogic,meson8b-ddr-clkc" },
-> +	{ /* sentinel */ },
-> +};
-> +
-> +static struct platform_driver meson8_ddr_clkc_driver = {
-> +	.probe		= meson8_ddr_clkc_probe,
-> +	.driver		= {
-> +		.name	= "meson8-ddr-clkc",
-> +		.of_match_table = meson8_ddr_clkc_match_table,
-> +	},
-> +};
-> +
-> +builtin_platform_driver(meson8_ddr_clkc_driver);
+>
+> [0] https://github.com/endlessm/u-boot-meson/blob/345ee7eb02903f5ecb1173ffb2cd36666e44ebed/board/amlogic/m8b_m201_v1/firmware/timming.c#L441
+> [1] https://github.com/endlessm/u-boot-meson/blob/345ee7eb02903f5ecb1173ffb2cd36666e44ebed/board/amlogic/m8b_m201_v1/firmware/timming.c#L452
+> [2] https://github.com/endlessm/u-boot-meson/blob/f1ee03e3f7547d03e1478cc1fc967a9e5a121d92/arch/arm/cpu/aml_meson/m8/firmware/usb_boot/platform.c#L22
 
