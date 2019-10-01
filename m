@@ -2,92 +2,105 @@ Return-Path: <SRS0=E8mG=X2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2454ECE587
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:15:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AE0C352AA
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:16:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7628F2190F
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:15:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Onu3VeWm"
+	by mail.kernel.org (Postfix) with ESMTP id D0B3A21906
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 13:16:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1569935807;
+	bh=z+eyey56KSLZeXplpzQcoLYndVQmTfc7B1a82fMdTvc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=e0zcmOHCdVTFAkcLbsvORBIaLabQfx3im7t/9MvWNEwPIOkuQkzxs39JE5Z9tysHm
+	 MxxmHXz61xiqJFKJ9JcYgBfh6StHzAagP2uWTpKj51nnA7i0jsW9fFRZwIHCM1NNmU
+	 u65bacHbH94r4TZopSN6ZRmcqa4bQxas40yVt338=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388241AbfJANP6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Oct 2019 09:15:58 -0400
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:47074 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388264AbfJANP6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 09:15:58 -0400
-Received: by mail-wr1-f65.google.com with SMTP id o18so15442029wrv.13
-        for <linux-clk@vger.kernel.org>; Tue, 01 Oct 2019 06:15:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=cXF4bVzNL4mZ2sHi864OWjqQClm3/0ygqJ8rSRmtP5k=;
-        b=Onu3VeWm380M/EcHG3V4up0pacX5N7qyK+GcKh4RVDpsXjhG8iF1hVGSqVEDuTNHBr
-         igv8Mp9D47/2O7KwJhOV05NOxTruiNNqh84p16oV0Tx3luG3ngEGsUbST7CbdzlaSvY8
-         9jbAlopFmI4zkpOeVaypIcG9P3cnoQzkd1vALhD4aR6Lv+PFXfgfuPfXqNSoICsSsnee
-         jDG+/79iaUkjy+lVUtSZ9UhDeF+i37n1GE1Hr3ih0F1nJtU76vwbCx/FVp+ivkyAfuHd
-         uXFGB1AuXv5rMimvOiA0qlImpHbeviLnzF/aQU2N4UOkB/ABQQpWAWhtew0KVL3vygAL
-         EU8w==
+        id S2387933AbfJANQr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Oct 2019 09:16:47 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:36095 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387798AbfJANQr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 09:16:47 -0400
+Received: by mail-wm1-f65.google.com with SMTP id m18so3221765wmc.1;
+        Tue, 01 Oct 2019 06:16:45 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=cXF4bVzNL4mZ2sHi864OWjqQClm3/0ygqJ8rSRmtP5k=;
-        b=rzC/9WtR7P4FQIZ/NYtfIT+pxnM6eVwbgcIBULeiwlNN2UZ2wt3h2OZiLvPCf8n6m2
-         B7SWjZvOYmwoRVQbwNX7cdwWLmculfHduMaCf1JDlbgwRnNiXwxFXvUlpU3Qmgtto1h6
-         PhyobNA7x9XjtPR+BFnhKQBCN75qna9SqBaiCPcOxVxrvDCeFtlz8KFlPTcpVqoRkrlV
-         gjZMOLdtbCeuSejHtCR+vv4aUFSBxcuBYvJwSKAjLoQEPTDenS0Q/dXjuokmCqKneFUi
-         f0EUI5QwG/umapTFgReNPEG54GXllygALJeX41tJiskMmscSm96Do1fXPqfoeOzHT/0O
-         oW6A==
-X-Gm-Message-State: APjAAAU6Bqdkts404VhKX1hLyRrreXHTgyPOUlwwk2Y0Bwe/bOV0ZYJo
-        4Sc+z5ElacLLTcgnGxnNdjzwoOox+aY=
-X-Google-Smtp-Source: APXvYqw3udqS1Bk2K1srDEo4MExMVnaFf4vYT26GxKPArptG/M5yBwGjHsl5CLADaxkzRiOToYR2dA==
-X-Received: by 2002:adf:f708:: with SMTP id r8mr17219949wrp.187.1569935756509;
-        Tue, 01 Oct 2019 06:15:56 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y14sm31335535wrd.84.2019.10.01.06.15.55
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=nE5vvE/4hrLzMVRha4pDXEEtrjSh639w28W7bdxxyf4=;
+        b=ZFIfvfAFQX8VdPFhhtSgtdl4UAtcfDM0iCpVFyw6PNLGca2kMMWxTuWigE5uJ6C6p4
+         bDtpsDlNZRrmN/grP9rWpgWOjnC1Su2hOTH6rWq+o6fQVzHQE+X0reJ7sPlJ608qYLe7
+         s7I8lcJb5+Q8V1lA6472caRG9gWD0yAwn9Vtj90PcbT3R/ulXLx4Iu/axKS1IeIOa2i7
+         xIZJ+wTQ/AfAi9ZuKgLd62z5xg2CC8kIud56kDMHr+c8X8rYw1QClC3Abw6k2xAVXGfY
+         wmlCRFLbDNkTjEDia0ESqJMSdguRR4F4qJINiuR4ICRmbcNoVHa2yDJiLJdhLhGiqmxZ
+         Lfog==
+X-Gm-Message-State: APjAAAWiqX/5c2V8mRa1OW7BliLEVKbLR9sNfPdsgdUr0YxRFWi1B07P
+        sWRZ+Me9OjwrFT8ugiK+iNtjARBF
+X-Google-Smtp-Source: APXvYqxuS96rqeAQvs2PdjsuLrQgfZJsdlA7bjOoFyG5WVsDOOMBlREaTEjmGYAGZqEjcHB/p2lwVQ==
+X-Received: by 2002:a05:600c:2193:: with SMTP id e19mr3596765wme.2.1569935804473;
+        Tue, 01 Oct 2019 06:16:44 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id w18sm3562313wmc.9.2019.10.01.06.16.43
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 01 Oct 2019 06:15:55 -0700 (PDT)
-References: <20190919093627.21245-1-narmstrong@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] clk: meson: g12a: fixes for DVFS
-In-reply-to: <20190919093627.21245-1-narmstrong@baylibre.com>
-Date:   Tue, 01 Oct 2019 15:15:54 +0200
-Message-ID: <1jh84sr4hh.fsf@starbuckisacylon.baylibre.com>
+        Tue, 01 Oct 2019 06:16:43 -0700 (PDT)
+Date:   Tue, 1 Oct 2019 15:16:41 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: Fix potential NULL pointer
+ dereference
+Message-ID: <20191001131641.GA30129@pi3>
+References: <CGME20191001130929eucas1p114d229f779680122c629396a4fc040c0@eucas1p1.samsung.com>
+ <20191001130921.24571-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191001130921.24571-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Tue, Oct 01, 2019 at 03:09:21PM +0200, Marek Szyprowski wrote:
+> devm_kcalloc might fail, so avoid accessing the allocated object in such
+> case.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+> index 7824c2ba3d8e..6afbcd0ae96f 100644
+> --- a/drivers/clk/samsung/clk-exynos5433.c
+> +++ b/drivers/clk/samsung/clk-exynos5433.c
+> @@ -5592,7 +5592,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+>  	if (data->nr_pclks > 0) {
+>  		data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
+>  					   data->nr_pclks, GFP_KERNEL);
+> -
+> +		if (!data->pclks)
+> +			return -ENOMEM;
 
-On Thu 19 Sep 2019 at 11:36, Neil Armstrong <narmstrong@baylibre.com> wrote:
+You leak the memory from the samsung_clk_alloc_reg_dump() call.
 
-> This is the first serie of fixes for DVFS support on G12a:
-> - Patch 1 fixes a rebase issue where a CLK_SET_RATE_NO_REPARENT
->   appeared on the wrong clock and a SET_RATE_PARENT went missing
-> - Patch 2 helps CCF use the right clock tree for the sub 1GHz clock range
-> - Patch 3 fixes an issue when we enter suspend with a non-SYS_PLL CPU clock,
->   leading to a SYS_PLL never enabled again
->
-> Neil Armstrong (3):
->   clk: meson: g12a: fix cpu clock rate setting
->   clk: meson: g12a: set CLK_MUX_ROUND_CLOSEST on the cpu clock muxes
->   clk: meson: clk-pll: always enable a critical PLL when setting the
->     rate
->
->  drivers/clk/meson/clk-pll.c |  2 +-
->  drivers/clk/meson/g12a.c    | 13 +++++++++++--
->  2 files changed, 12 insertions(+), 3 deletions(-)
+The error path few lines later (from of_clk_get()) leaks it as well.
 
-Applied the 2 first fixes. Thx
+Best regards,
+Krzysztof
+
+>  		for (i = 0; i < data->nr_pclks; i++) {
+>  			struct clk *clk = of_clk_get(dev->of_node, i);
+>  
+> -- 
+> 2.17.1
+> 
