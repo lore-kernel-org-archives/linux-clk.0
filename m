@@ -2,58 +2,57 @@ Return-Path: <SRS0=E8mG=X2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF04C352AA
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 09:02:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB62C388F3
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 09:02:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4591321906
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 09:02:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F256021927
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 09:02:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZzPGefN4"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tnvp5I27"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729787AbfJAJCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Oct 2019 05:02:17 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:41696 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733127AbfJAJCQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 05:02:16 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9192F4k053846;
-        Tue, 1 Oct 2019 04:02:15 -0500
+        id S1733228AbfJAJCS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Oct 2019 05:02:18 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:34350 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733127AbfJAJCS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 05:02:18 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9192GEO062263;
+        Tue, 1 Oct 2019 04:02:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1569920535;
-        bh=OSpD6Z2wdlHG3EnRLjFKGmXz6KYhmI40Pfo2js+5Ad0=;
+        s=ti-com-17Q1; t=1569920536;
+        bh=r1ENYMRLgVUpW/RmGm9KhNJH01/oep4AIMwLVQcLhxc=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=ZzPGefN4g73n156KLZrsHxNfNl1g1xoKjQup36SXryg6xzdB6tilP9WQzVvhzttS0
-         j33JiXGZYqKSoi6yPKDkdT9WY4WHG22J0E4Wq4DB9t4Mt9/iDL2YIO8VAxHoTGn4zY
-         t+9LARuPFlCr3lgNzIyzAjr9Dtp8ONLgOU4N7UPs=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9192Foc122212
+        b=tnvp5I27XwX3UtkjpYt44OzuSzD3fZ/rXwVBZYTSykXJnp41j0ilHRI9+7QF/DHCN
+         ljmAtjp2eHPSiOGlUVK+YbuPEx3COeckXWTfhuNF4tBTeLYiMjdu9F17XGeiJ73Wog
+         Na/ZgMYJDZAsyPte4CM5gF9caw3IMu8vqYc8WQ8g=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9192GsQ107618
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 1 Oct 2019 04:02:15 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+        Tue, 1 Oct 2019 04:02:16 -0500
+Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 1 Oct
- 2019 04:02:04 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ 2019 04:02:16 -0500
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 1 Oct 2019 04:02:04 -0500
+ Frontend Transport; Tue, 1 Oct 2019 04:02:06 -0500
 Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x919290K032920;
-        Tue, 1 Oct 2019 04:02:13 -0500
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x919290L032920;
+        Tue, 1 Oct 2019 04:02:15 -0500
 From:   Tero Kristo <t-kristo@ti.com>
 To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
         <mturquette@baylibre.com>
 CC:     <tomi.valkeinen@ti.com>
-Subject: [PATCH 2/4] clk: debug: add support for enable/disable/prep/un-prep from debugfs
-Date:   Tue, 1 Oct 2019 12:02:00 +0300
-Message-ID: <20191001090202.26346-3-t-kristo@ti.com>
+Subject: [PATCH 3/4] clk: ti: mux: add debugfs support for read/write of parent ID
+Date:   Tue, 1 Oct 2019 12:02:01 +0300
+Message-ID: <20191001090202.26346-4-t-kristo@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191001090202.26346-1-t-kristo@ti.com>
 References: <20191001090202.26346-1-t-kristo@ti.com>
@@ -65,96 +64,77 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The enable/prepare count variables can now be used to enable/disable/
-prepare and un-prepare specific clocks. This is very useful for
-debugging purposes, but can be considered dangerous. Thus, it is
-protected by the same Kconfig option as the clk_rate modification
-option.
+Add parent_id node under debugfs for mux clocks, that allow both
+read/write operations. This can be used to read the current
+parent ID, or force a change of current parent of a mux clock.
 
 Signed-off-by: Tero Kristo <t-kristo@ti.com>
 ---
- drivers/clk/clk.c | 59 +++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 59 insertions(+)
+ drivers/clk/ti/mux.c | 46 ++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index b0e82193a63d..e0ceecf727c5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3113,6 +3113,58 @@ static int clk_dbg_rate_set(void *data, u64 val)
+diff --git a/drivers/clk/ti/mux.c b/drivers/clk/ti/mux.c
+index 0069e7cf3ebc..f036ecc78034 100644
+--- a/drivers/clk/ti/mux.c
++++ b/drivers/clk/ti/mux.c
+@@ -21,6 +21,8 @@
+ #include <linux/of.h>
+ #include <linux/of_address.h>
+ #include <linux/clk/ti.h>
++#include <linux/debugfs.h>
++
+ #include "clock.h"
+ 
+ #undef pr_fmt
+@@ -118,12 +120,48 @@ static void clk_mux_restore_context(struct clk_hw *hw)
+ 	ti_clk_mux_set_parent(hw, mux->saved_parent);
  }
  
- DEFINE_SIMPLE_ATTRIBUTE(clk_dbg_option_rate, clk_dbg_rate_get, clk_dbg_rate_set, "%llu\n");
-+
-+static int clk_dbg_prepare_get(void *data, u64 *val)
-+{
-+	struct clk_core *core = data;
-+
-+	*val = core->prepare_count;
-+
-+	return 0;
-+}
-+
-+static int clk_dbg_prepare_set(void *data, u64 val)
-+{
-+	struct clk_core *core = data;
-+
-+	if (val == 1)
-+		return clk_core_prepare(core);
-+
-+	if (val == -1) {
-+		clk_core_unprepare(core);
-+		return 0;
-+	}
-+
-+	pr_err("1: prepare, -1: unprepare\n");
-+	return -EINVAL;
-+}
-+DEFINE_SIMPLE_ATTRIBUTE(clk_dbg_option_prepare, clk_dbg_prepare_get, clk_dbg_prepare_set, "%llu\n");
-+
-+static int clk_dbg_enable_get(void *data, u64 *val)
-+{
-+	struct clk_core *core = data;
-+
-+	*val = core->enable_count;
-+
-+	return 0;
-+}
-+
-+static int clk_dbg_enable_set(void *data, u64 val)
-+{
-+	struct clk_core *core = data;
-+
-+	if (val == 1)
-+		return clk_core_enable(core);
-+
-+	if (val == -1) {
-+		clk_core_disable(core);
-+		return 0;
-+	}
-+
-+	pr_err("1: enable, -1: disable\n");
-+	return -EINVAL;
-+}
-+DEFINE_SIMPLE_ATTRIBUTE(clk_dbg_option_enable, clk_dbg_enable_get, clk_dbg_enable_set, "%llu\n");
- #endif
- 
- static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
-@@ -3134,8 +3186,15 @@ static void clk_debug_create_one(struct clk_core *core, struct dentry *pdentry)
- 	debugfs_create_ulong("clk_accuracy", 0444, root, &core->accuracy);
- 	debugfs_create_u32("clk_phase", 0444, root, &core->phase);
- 	debugfs_create_file("clk_flags", 0444, root, core, &clk_flags_fops);
 +#ifdef CONFIG_COMMON_CLK_DEBUGFS_WRITE_ACCESS
-+	debugfs_create_file("clk_prepare_count", 0644,
-+			    root, core, &clk_dbg_option_prepare);
-+	debugfs_create_file("clk_enable_count", 0644,
-+			    core->dentry, core, &clk_dbg_option_enable);
++static int dbg_pid_get(void *data, u64 *val)
++{
++	struct clk_hw *hw = data;
++
++	*val = ti_clk_mux_get_parent(hw);
++
++	return 0;
++}
++
++static int dbg_pid_set(void *data, u64 val)
++{
++	struct clk_hw *hw = data;
++	struct clk_hw *parent = clk_hw_get_parent_by_index(hw, val);
++
++	if (!parent)
++		return -EINVAL;
++
++	clk_hw_reparent(hw, parent);
++
++	return ti_clk_mux_set_parent(hw, val);
++}
++
++DEFINE_SIMPLE_ATTRIBUTE(mux_parent_id_fops, dbg_pid_get, dbg_pid_set, "%llu\n");
++
++static void clk_mux_debug_init(struct clk_hw *hw, struct dentry *dentry)
++{
++	debugfs_create_file("parent_id", 0644, dentry, hw, &mux_parent_id_fops);
++}
 +#else
- 	debugfs_create_u32("clk_prepare_count", 0444, root, &core->prepare_count);
- 	debugfs_create_u32("clk_enable_count", 0444, root, &core->enable_count);
++static void clk_mux_debug_init(struct clk_hw *hw, struct dentry *dentry)
++{
++}
 +#endif
- 	debugfs_create_u32("clk_protect_count", 0444, root, &core->protect_count);
- 	debugfs_create_u32("clk_notifier_count", 0444, root, &core->notifier_count);
- 	debugfs_create_file("clk_duty_cycle", 0444, root, core,
++
+ const struct clk_ops ti_clk_mux_ops = {
+ 	.get_parent = ti_clk_mux_get_parent,
+ 	.set_parent = ti_clk_mux_set_parent,
+ 	.determine_rate = __clk_mux_determine_rate,
+ 	.save_context = clk_mux_save_context,
+ 	.restore_context = clk_mux_restore_context,
++	.debug_init = clk_mux_debug_init,
+ };
+ 
+ static struct clk *_register_mux(struct device *dev, const char *name,
 -- 
 2.17.1
 
