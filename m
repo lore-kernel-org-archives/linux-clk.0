@@ -4,25 +4,25 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97848ECE587
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 21:21:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04617ECE58B
+	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 21:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78CED21906
+	by mail.kernel.org (Postfix) with ESMTP id C591421906
 	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 21:21:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfJAVVv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1727677AbfJAVVv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Tue, 1 Oct 2019 17:21:51 -0400
-Received: from avon.wwwdotorg.org ([104.237.132.123]:40810 "EHLO
+Received: from avon.wwwdotorg.org ([104.237.132.123]:40814 "EHLO
         avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727724AbfJAVVu (ORCPT
+        with ESMTP id S1727761AbfJAVVu (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 17:21:50 -0400
 Received: from swarren-lx1.nvidia.com (unknown [216.228.112.24])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 4BBCC1C0B2F;
-        Tue,  1 Oct 2019 15:14:03 -0600 (MDT)
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 554FC1C0CBE;
+        Tue,  1 Oct 2019 15:14:04 -0600 (MDT)
 X-Virus-Status: Clean
 X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
 From:   Stephen Warren <swarren@wwwdotorg.org>
@@ -34,9 +34,9 @@ Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 2/4] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-Date:   Tue,  1 Oct 2019 15:13:44 -0600
-Message-Id: <20191001211346.104400-2-swarren@wwwdotorg.org>
+Subject: [PATCH 3/4] ARM: tegra: modify reshift divider during LP1
+Date:   Tue,  1 Oct 2019 15:13:45 -0600
+Message-Id: <20191001211346.104400-3-swarren@wwwdotorg.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191001211346.104400-1-swarren@wwwdotorg.org>
 References: <20191001211346.104400-1-swarren@wwwdotorg.org>
@@ -50,66 +50,60 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Stephen Warren <swarren@nvidia.com>
 
-For a little over a year, U-Boot has configured the flow controller to
-perform automatic RAM re-repair on off->on power transitions of the CPU
-rail1]. This is mandatory for correct operation of Tegra124. However, RAM
-re-repair relies on certain clocks, which the kernel must enable and
-leave running. PLLP is one of those clocks. This clock is shut down
-during LP1 in order to save power. Enable bypass (which I believe routes
-osc_div_clk, essentially the crystal clock, to the PLL output) so that
-this clock signal toggles even though the PLL is not active. This is
-required so that LP1 power mode (system suspend) operates correctly.
-
-The bypass configuration must then be undone when resuming from LP1, so
-that all peripheral clocks run at the expected rate. Without this, many
-peripherals won't work correctly; for example, the UART baud rate would
-be incorrect.
+The reshift hardware module implements the RAM re-repair process. This
+module uses PLLP as an input clock during LP1 resume. The input divider
+for this clock is typically set for PLLP's normal rate. During LP1
+resume, PLLP is bypassed and so runs at the crystal rate, which is much
+slower. Consequently, decrease the divider so that the reshift module
+runs at a reasonable rate during LP1 resume.
 
 NVIDIA's downstream kernel code only does this if not compiled for
-Tegra30, so the added code is made conditional upon the chip ID. NVIDIA's
-downstream code makes this change conditional upon the active CPU
-cluster. The upstream kernel currently doesn't support cluster switching,
-so this patch doesn't test the active CPU cluster ID.
+Tegra30, so the added code is made conditional upon the chip ID.
 
-[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
-
-Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-Cc: stable@vger.kernel.org
 Signed-off-by: Stephen Warren <swarren@nvidia.com>
 ---
  arch/arm/mach-tegra/sleep-tegra30.S | 11 +++++++++++
  1 file changed, 11 insertions(+)
 
 diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index b408fa56eb89..6922dd8d3e2d 100644
+index 6922dd8d3e2d..6191f9456288 100644
 --- a/arch/arm/mach-tegra/sleep-tegra30.S
 +++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -370,6 +370,14 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
+@@ -59,6 +59,9 @@
+ #define CLK_RESET_PLLX_MISC3_IDDQ	3
+ #define CLK_RESET_PLLM_MISC_IDDQ	5
+ #define CLK_RESET_PLLC_MISC_IDDQ	26
++#define CLK_RESET_PLLP_RESHIFT		0x528
++#define CLK_RESET_PLLP_RESHIFT_DEFAULT	0x3b
++#define CLK_RESET_PLLP_RESHIFT_ENABLE	0x3
  
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
-+	beq	1f
-+	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
-+	bic	r1, r1, #(1<<31)	@ disable PllP bypass
-+	str	r1, [r0, #CLK_RESET_PLLP_BASE]
-+1:
+ #define CLK_RESET_CLK_SOURCE_MSELECT	0x3b4
+ 
+@@ -373,9 +376,13 @@ _pll_m_c_x_done:
+ 	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
+ 	cmp	r1, #TEGRA30
+ 	beq	1f
 +
- 	mov32	r7, TEGRA_TMRUS_BASE
- 	ldr	r1, [r7]
- 	add	r1, r1, #LOCK_DELAY
-@@ -630,7 +638,10 @@ tegra30_switch_cpu_to_clk32k:
- 	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
+ 	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
+ 	bic	r1, r1, #(1<<31)	@ disable PllP bypass
+ 	str	r1, [r0, #CLK_RESET_PLLP_BASE]
++
++	mov	r1, #CLK_RESET_PLLP_RESHIFT_DEFAULT
++	str	r1, [r0, #CLK_RESET_PLLP_RESHIFT]
+ 1:
  
- 	/* disable PLLP, PLLA, PLLC and PLLX */
-+	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
-+	cmp	r1, #TEGRA30
- 	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
-+	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
+ 	mov32	r7, TEGRA_TMRUS_BASE
+@@ -644,6 +651,10 @@ tegra30_switch_cpu_to_clk32k:
+ 	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
  	bic	r0, r0, #(1 << 30)
  	str	r0, [r5, #CLK_RESET_PLLP_BASE]
++	beq	1f
++	mov	r0, #CLK_RESET_PLLP_RESHIFT_ENABLE
++	str	r0, [r5, #CLK_RESET_PLLP_RESHIFT]
++1:
  	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
+ 	bic	r0, r0, #(1 << 30)
+ 	str	r0, [r5, #CLK_RESET_PLLA_BASE]
 -- 
 2.23.0
 
