@@ -2,263 +2,89 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D380C352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 16:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECCFAC10F14
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 17:19:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15594222C2
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 16:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB59C21848
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 17:19:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570034482;
-	bh=sTdcUmQnTJMo/eGaxv0uopEjwcptgep/O3PJEVo0xyI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Mg3MCAcAdwh88dyu3AIhlyMK+2E8OR++rqlj4gQsxhnR1qk/N3lp572fBMuzLAWcM
-	 hnMlHTPSPP+WAmx1y/rd64rL0fE70D+MJo6VhUTf2HWWOANVXB2aVeo0Ga6PYQz+3/
-	 sBrBnPywaLvl/Vz6DE6ZnZcazpQ7m2FtcQEshjS4=
+	s=default; t=1570036753;
+	bh=SzMBednxOeur9TowNPougkDQHQmhYAAdQ89j3E/TUoQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fOqQsoMeMKCCriRO+ofZ3aSK29lw8nMZqQ4Ic7rYEFk6XEkhpOTkzB6l4L2l5xYuc
+	 CG6asAPf7cRlRU8dDY4Y5FPZl/JnzK1hyWzq5T0z5TUMUfVO+QjZxqZuBq9OQnQ4LM
+	 D8XpQfv/jKl0kI5rmwYNz5k7JH8yDzF9wd6HpvDs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727404AbfJBQlV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 12:41:21 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47434 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726101AbfJBQlV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Oct 2019 12:41:21 -0400
-Received: from localhost.localdomain (unknown [194.230.155.145])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2495F21848;
-        Wed,  2 Oct 2019 16:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570034480;
-        bh=sTdcUmQnTJMo/eGaxv0uopEjwcptgep/O3PJEVo0xyI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N5PdC8DvoCbOh3O5NRy0lVGuQbT9DgJt2yYsR8eLbXzVRfINqyFK6QQb0KTbPNKUN
-         Gx/4NhZOOnF1nCxGx8Fe7KG0NGum83wbi7+B5G/IZpaGbUBbk+o81b3JK49Dq7szBF
-         jYLh0cfAB8oH11+a9WfvFfi7Xac1pnWR9qN8DHu4=
+        id S1727766AbfJBRTN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 13:19:13 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:53217 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726798AbfJBRTN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 13:19:13 -0400
+Received: by mail-wm1-f67.google.com with SMTP id r19so8057212wmh.2;
+        Wed, 02 Oct 2019 10:19:12 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=no+pVuOU4/2ncxfp2PCuYfXSUaMyBiG5X4wKsXpzwTQ=;
+        b=swTaXDKnnqPuZhOZEC0b1nEBZKPcDoYossUaqP6nArs1SrMiCc9O0xfNteBkU1W2cV
+         yuosn9JUdoDtmeoN5pvijQiBKTSrxST1KMXEnFLj/lsXNcoyULoGMOm5zBXC43rJtq27
+         saVjgcYqTjMiQ5x5+ITKbWQyo7l+4Dqk0gHD9dI0acHavGF34dvVvAOQ1ADfHaa3AFRO
+         SCiDmnoKhRlR5LFyuvVdDdjqBZQtQI4FpJatbgtuJ7nqa6lmDAmiV6vO6wNY9dXkrCsx
+         IPhj8r8mo5CrBGlKctOo8vbXPn2/eUaTcU2enNnmKJZPNSr6r1h3jnw6b1D8T2xYUtaC
+         NguA==
+X-Gm-Message-State: APjAAAXvPoGIt5sCH2EPMjpKCdte/WD6refVmHO0xkjzGsS3kEj4/AkO
+        7VuDtqUzFY+roUh3XZHeH3c=
+X-Google-Smtp-Source: APXvYqw/Sxw1D9QQ1ZzdqSb5BBqVgBbTwx0GfHLbZdDtnNnd+IxSlJStKyhtgTNKeqQVDgJz09jEbQ==
+X-Received: by 2002:a7b:c764:: with SMTP id x4mr3662517wmk.62.1570036751382;
+        Wed, 02 Oct 2019 10:19:11 -0700 (PDT)
+Received: from kozik-lap ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id z142sm12591475wmc.24.2019.10.02.10.19.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 02 Oct 2019 10:19:10 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 19:19:07 +0200
 From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 2/2] dt-bindings: pwm: Convert Samsung PWM bindings to json-schema
-Date:   Wed,  2 Oct 2019 18:40:47 +0200
-Message-Id: <20191002164047.14499-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191002164047.14499-1-krzk@kernel.org>
-References: <20191002164047.14499-1-krzk@kernel.org>
+To:     Lukasz Luba <l.luba@partner.samsung.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+Subject: Re: [PATCH v13 8/8] ARM: exynos_defconfig: enable DMC driver
+Message-ID: <20191002171907.GA21463@kozik-lap>
+References: <20190821104303.32079-1-l.luba@partner.samsung.com>
+ <CGME20190821104326eucas1p1f22b49095a17f0b303910c391ff1e906@eucas1p1.samsung.com>
+ <20190821104303.32079-9-l.luba@partner.samsung.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190821104303.32079-9-l.luba@partner.samsung.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
-format using json-schema.
+On Wed, Aug 21, 2019 at 12:43:03PM +0200, Lukasz Luba wrote:
+> Enable driver for Exynos5422 Dynamic Memory Controller supporting
+> dynamic frequency and voltage scaling in Exynos5422 SoCs.
+> 
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm/configs/exynos_defconfig | 1 +
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Thanks, applied.
 
----
-
-Changes since v2:
-1. Add additionalProperties: false.
-
-Changes since v1:
-1. Indent example with four spaces (more readable),
-2. Fix samsung,pwm-outputs after review,
-3. Remove double-quotes from clock names.
----
- .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 --------
- .../devicetree/bindings/pwm/pwm-samsung.yaml  | 109 ++++++++++++++++++
- 2 files changed, 109 insertions(+), 51 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
- create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt b/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-deleted file mode 100644
-index 5538de9c2007..000000000000
---- a/Documentation/devicetree/bindings/pwm/pwm-samsung.txt
-+++ /dev/null
-@@ -1,51 +0,0 @@
--* Samsung PWM timers
--
--Samsung SoCs contain PWM timer blocks which can be used for system clock source
--and clock event timers, as well as to drive SoC outputs with PWM signal. Each
--PWM timer block provides 5 PWM channels (not all of them can drive physical
--outputs - see SoC and board manual).
--
--Be aware that the clocksource driver supports only uniprocessor systems.
--
--Required properties:
--- compatible : should be one of following:
--    samsung,s3c2410-pwm - for 16-bit timers present on S3C24xx SoCs
--    samsung,s3c6400-pwm - for 32-bit timers present on S3C64xx SoCs
--    samsung,s5p6440-pwm - for 32-bit timers present on S5P64x0 SoCs
--    samsung,s5pc100-pwm - for 32-bit timers present on S5PC100, S5PV210,
--			  Exynos4210 rev0 SoCs
--    samsung,exynos4210-pwm - for 32-bit timers present on Exynos4210,
--                          Exynos4x12, Exynos5250 and Exynos5420 SoCs
--- reg: base address and size of register area
--- interrupts: list of timer interrupts (one interrupt per timer, starting at
--  timer 0)
--- clock-names: should contain all following required clock names:
--    - "timers" - PWM base clock used to generate PWM signals,
--  and any subset of following optional clock names:
--    - "pwm-tclk0" - first external PWM clock source,
--    - "pwm-tclk1" - second external PWM clock source.
--  Note that not all IP variants allow using all external clock sources.
--  Refer to SoC documentation to learn which clock source configurations
--  are available.
--- clocks: should contain clock specifiers of all clocks, which input names
--  have been specified in clock-names property, in same order.
--- #pwm-cells: should be 3. See pwm.txt in this directory for a description of
--  the cells format. The only third cell flag supported by this binding is
--  PWM_POLARITY_INVERTED.
--
--Optional properties:
--- samsung,pwm-outputs: list of PWM channels used as PWM outputs on particular
--    platform - an array of up to 5 elements being indices of PWM channels
--    (from 0 to 4), the order does not matter.
--
--Example:
--	pwm@7f006000 {
--		compatible = "samsung,s3c6400-pwm";
--		reg = <0x7f006000 0x1000>;
--		interrupt-parent = <&vic0>;
--		interrupts = <23>, <24>, <25>, <27>, <28>;
--		clocks = <&clock 67>;
--		clock-names = "timers";
--		samsung,pwm-outputs = <0>, <1>;
--		#pwm-cells = <3>;
--	}
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-new file mode 100644
-index 000000000000..ea7f32905172
---- /dev/null
-+++ b/Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
-@@ -0,0 +1,109 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/pwm/pwm-samsung.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung SoC PWM timers
-+
-+maintainers:
-+  - Thierry Reding <thierry.reding@gmail.com>
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+description: |+
-+  Samsung SoCs contain PWM timer blocks which can be used for system clock source
-+  and clock event timers, as well as to drive SoC outputs with PWM signal. Each
-+  PWM timer block provides 5 PWM channels (not all of them can drive physical
-+  outputs - see SoC and board manual).
-+
-+  Be aware that the clocksource driver supports only uniprocessor systems.
-+
-+allOf:
-+  - $ref: pwm.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,s3c2410-pwm             # 16-bit, S3C24xx
-+      - samsung,s3c6400-pwm             # 32-bit, S3C64xx
-+      - samsung,s5p6440-pwm             # 32-bit, S5P64x0
-+      - samsung,s5pc100-pwm             # 32-bit, S5PC100, S5PV210, Exynos4210 rev0 SoCs
-+      - samsung,exynos4210-pwm          # 32-bit, Exynos
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 1
-+    maxItems: 3
-+
-+  clock-names:
-+    description: |
-+      Should contain all following required clock names:
-+      - "timers" - PWM base clock used to generate PWM signals,
-+      and any subset of following optional clock names:
-+      - "pwm-tclk0" - first external PWM clock source,
-+      - "pwm-tclk1" - second external PWM clock source.
-+      Note that not all IP variants allow using all external clock sources.
-+      Refer to SoC documentation to learn which clock source configurations
-+      are available.
-+    oneOf:
-+      - items:
-+        - const: timers
-+      - items:
-+        - const: timers
-+        - const: pwm-tclk0
-+      - items:
-+        - const: timers
-+        - const: pwm-tclk1
-+      - items:
-+        - const: timers
-+        - const: pwm-tclk0
-+        - const: pwm-tclk1
-+
-+  interrupts:
-+    description:
-+      One interrupt per timer, starting at timer 0.
-+    minItems: 1
-+    maxItems: 5
-+
-+  "#pwm-cells":
-+    description:
-+      The only third cell flag supported by this binding
-+      is PWM_POLARITY_INVERTED.
-+    const: 3
-+
-+  samsung,pwm-outputs:
-+    description:
-+      A list of PWM channels used as PWM outputs on particular platform.
-+      It is an array of up to 5 elements being indices of PWM channels
-+      (from 0 to 4), the order does not matter.
-+    allOf:
-+      - $ref: /schemas/types.yaml#/definitions/uint32-array
-+      - uniqueItems: true
-+      - items:
-+          minimum: 0
-+          maximum: 4
-+
-+required:
-+  - clocks
-+  - clock-names
-+  - compatible
-+  - interrupts
-+  - "#pwm-cells"
-+  - reg
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    pwm@7f006000 {
-+        compatible = "samsung,s3c6400-pwm";
-+        reg = <0x7f006000 0x1000>;
-+        interrupt-parent = <&vic0>;
-+        interrupts = <23>, <24>, <25>, <27>, <28>;
-+        clocks = <&clock 67>;
-+        clock-names = "timers";
-+        samsung,pwm-outputs = <0>, <1>;
-+        #pwm-cells = <3>;
-+    };
--- 
-2.17.1
+Best regards,
+Krzysztof
 
