@@ -2,98 +2,83 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4D0C352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 09:04:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C20BBC352AA
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 09:07:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48F462190F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 09:04:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nGMwtOVq"
+	by mail.kernel.org (Postfix) with ESMTP id 96B362190F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 09:07:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570007259;
+	bh=HrhzSLp9ttreuBStr3Ki9oHQCWUVlmw2FTDtT3omnHs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=c3LPXjgMpr6K0yGQiYUwhDfUYrlMLDrH+qLkok/nlod+9eddBwhQu7gxxl7xBQKok
+	 AiU3XlehX6YInunGNVWt8/RpnGVAkzf8xP3S74wTGSaRVh2J9kwINqmW5dwhUD1p2p
+	 9YYleJayC5o5lSPSqqPzJP2yZ3RTDByYJQ8zVraQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726002AbfJBJEs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 05:04:48 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:40906 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfJBJEs (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 05:04:48 -0400
-Received: by mail-wm1-f68.google.com with SMTP id b24so6053243wmj.5
-        for <linux-clk@vger.kernel.org>; Wed, 02 Oct 2019 02:04:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=NUl5H/X55FwqiGWpQnEfkahJrpZC2qJ4sf7YHZbx+Mo=;
-        b=nGMwtOVq6c+feMh+KqdhlBh7+TRijtwX5wnIuxZmPu8W540zZ1Nu8EGAU0zrua3PbJ
-         uN5mrg0k9pe+ELk0VqDhYVlgKP+ftu2SC3CkuZJgqKmeswDdzIpbz5yZYBwcgEvuwoUP
-         TJoAyKXu6IVDGKAM3Ae5ENk9zZRqM/culu8SSruFe+JvgJmwuJmilpxk/bpxABGzF+5Z
-         WmOkRac2WtJwWKiAhV/qo74PCxN5yj1Bg4SP1cl1RACQpYkfu6HDPGoBLx+MZNWfLZoh
-         1zhU5jlyLsS+xVJMg8K2RthVgC/QfavM1mv5cPB2XmoDzjtPtGLKWOuxACh8syRH/0nZ
-         v2XQ==
+        id S1726080AbfJBJHj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 05:07:39 -0400
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:37518 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfJBJHj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 05:07:39 -0400
+Received: by mail-wr1-f66.google.com with SMTP id i1so18716542wro.4;
+        Wed, 02 Oct 2019 02:07:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=NUl5H/X55FwqiGWpQnEfkahJrpZC2qJ4sf7YHZbx+Mo=;
-        b=LhswFubl06AKbQmEJ+tO0agCAdGlXjJqzvFrnPUM3WjZCUMSSXekF76eQOryyYdg4m
-         rI3pp3Luphmf5AvCH6cUZZxJSNJ5UbbNNbyVZ/EGNLFkFcmFcaCv75R3AjVzfNaMpOuM
-         ZN5Knc9vMNVtw5Qe7IqKRrcqhS6jC9zqPvuzAy3TYJnUJWrvGFTEibn1nCqAO9j09nBX
-         aMwQHizBVZ9eec+axSG7vNimsMoqhCGM+d2Y/FbKxTM7cvglTFzn7G/v6KQApPUdlFkH
-         Zk6KVs/1fFbZJcinx1dh9EZSoYe8SEowY1LE94TONup06d38uzbNOqzN0msQynYnBD4Y
-         +k8g==
-X-Gm-Message-State: APjAAAUSh6z794mmqWlyXAjJR52fGj/Pqff7JV1unfBhUuBHOEZV2Dnj
-        5gIDURCzZdZuEsCmi8qYHTCY2g==
-X-Google-Smtp-Source: APXvYqxt+M7/70wLUwWopsHlywqqp7CNL3Dj65++dXEA9VyT5aKdfM9l9wqePVfd0PRNaGcjORzcnw==
-X-Received: by 2002:a1c:4d0d:: with SMTP id o13mr2017915wmh.19.1570007084692;
-        Wed, 02 Oct 2019 02:04:44 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id f186sm5961453wmg.21.2019.10.02.02.04.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Wmpz5RuQl4+LkrdtaeVCi0SsOnoazimWPFchI6DG7mU=;
+        b=JZmEiBJK2NWf9rGliDRwaa4aUx6g42eceTCBlUDmvH34ikh0524jqr5jaPJtGaCZnk
+         uo4zSJOSqmvCE0O6W2SvgsSZLMx11JsYieVVZFJq/m3YWZIBlAKO8HCi5Ucd5iIrijOf
+         o+YW7DlWHxmnpOQK8QaNTmLkvnCK7a7pIJWRpKBpRiUPuUnFH6yVzMHj5F8Z0rn5Meb+
+         6LEf35cKgfsuLcDIOrRXOLLsqDo7UKQw5Y/2TLG3yOZGiWHW12nSkolqXFH3Ok3bk3xC
+         r5UFifaOOHWdpsLGlmKx1AeW3bc+WRP2dmcPzP/rb73RdY6e1xRC/shnEsx7fqDrurnp
+         agBA==
+X-Gm-Message-State: APjAAAXXHPBuoIIZxfn41ErCdxE3XRcOzxhk4pdIgC+MVpOfviwsgqu6
+        kQsXMsKuMN0B6VdM9m+0MSg=
+X-Google-Smtp-Source: APXvYqz7bLFVQ1qA2cArCniNLhwbQ7R9EIAx3/zD+qRuSS8toxAEEk99hekD0gQOG5RvcOx0esBCrA==
+X-Received: by 2002:adf:9dd1:: with SMTP id q17mr1839530wre.176.1570007256626;
+        Wed, 02 Oct 2019 02:07:36 -0700 (PDT)
+Received: from pi3 ([194.230.155.145])
+        by smtp.googlemail.com with ESMTPSA id o188sm12431377wma.14.2019.10.02.02.07.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 02 Oct 2019 02:04:43 -0700 (PDT)
-References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com> <20190921151835.770263-3-martin.blumenstingl@googlemail.com> <1jftkcr3uy.fsf@starbuckisacylon.baylibre.com> <CAFBinCCED4YWYkdtrfrC80C8WLE=fyMJdjTa3wFNMJgC1OsoOA@mail.gmail.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
-        khilman@baylibre.com, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/6] clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller
-In-reply-to: <CAFBinCCED4YWYkdtrfrC80C8WLE=fyMJdjTa3wFNMJgC1OsoOA@mail.gmail.com>
-Date:   Wed, 02 Oct 2019 11:04:42 +0200
-Message-ID: <1jbluzr00l.fsf@starbuckisacylon.baylibre.com>
+        Wed, 02 Oct 2019 02:07:35 -0700 (PDT)
+Date:   Wed, 2 Oct 2019 11:07:33 +0200
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Marek Szyprowski <m.szyprowski@samsung.com>
+Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: Re: [PATCH] clk: samsung: exynos5433: Fix error paths
+Message-ID: <20191002090733.GA9610@pi3>
+References: <CGME20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234@eucas1p2.samsung.com>
+ <20191002085309.9473-1-m.szyprowski@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191002085309.9473-1-m.szyprowski@samsung.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Wed, Oct 02, 2019 at 10:53:09AM +0200, Marek Szyprowski wrote:
+> Add checking the value returned by samsung_clk_alloc_reg_dump() and
+> devm_kcalloc(). While fixing this, also release all gathered clocks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/clk/samsung/clk-exynos5433.c | 13 +++++++++++--
+>  1 file changed, 11 insertions(+), 2 deletions(-)
 
-On Tue 01 Oct 2019 at 20:53, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 
->
-> [...]
->> > +static struct clk_hw_onecell_data meson8_ddr_clk_hw_onecell_data = {
->> > +     .hws = {
->> > +             [DDR_CLKID_DDR_PLL_DCO]         = &meson8_ddr_pll_dco.hw,
->> > +             [DDR_CLKID_DDR_PLL]             = &meson8_ddr_pll.hw,
->>
->> I wonder if onecell is not overkill for this driver. We won't expose the
->> DCO, so only the post divider remains
->>
->> Do you expect this provider to have more than one leaf clock ?
->> If not, maybe you could use of_clk_hw_simple_get() instead ?
-> there's some more clock bits in DDR_CLK_CNTL - the public A311D
-> datasheet has a description for these bits but I'm not sure they do
-> the same on Meson8/Meson8b/Meson8m2
-> all I know is that some magic bytes are written to DDR_CLK_CNTL in the
-> old u-boot code
->
-> that's why I don't want to make any assumptions and play safe here (by
-> using a onecell clock provider)
+Best regards,
+Krzysztof
 
-Understood. Let's keep onecell then.
