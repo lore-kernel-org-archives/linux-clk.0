@@ -2,114 +2,185 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B99CECE587
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 01:17:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A693FC352AA
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 06:01:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C43920818
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 01:17:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72CD0218DE
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 06:01:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pth6mtN/"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="vX+QAqJR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729567AbfJBBRH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Oct 2019 21:17:07 -0400
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36894 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725908AbfJBBRH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 21:17:07 -0400
-Received: by mail-pg1-f194.google.com with SMTP id c17so10961134pgg.4;
-        Tue, 01 Oct 2019 18:17:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=cCPpIXwTTzCl7iuvpAsaiH8IIiFwQFVgIh4mGvjHgKc=;
-        b=pth6mtN/O1kCQWnaDAc9gJ8Yz53fBmFaBBj+KGMPaI7AZfqcqivi9TJtUn9u1tfb+d
-         EUx6cO3izmZ1HNma4mewv6WsyCt+c0TJk15Tmufh1n28wfzgqdPFc4ARj0GxBPCJhCBS
-         NTeIdVLo2RmfGAgh9OiNJDS3u8PUi3QIzUi9B8AycxhbfZeXwPjv311gMPDI9a1/+WYu
-         LEPtWz2HeRP0CI6+Do72iKaW4Yyik6QD+kB4/MP+zbYtGWanjIur7GqXwmiPjJIwCRmr
-         c+wfiCwOe2UHVAhMLa1+ZPcIF39IhH37jzxp9b15yR5IgA447n3pK6Cys41fa0rgHqVR
-         Mcrg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=cCPpIXwTTzCl7iuvpAsaiH8IIiFwQFVgIh4mGvjHgKc=;
-        b=kkSom4qfngqL+mAq+SL8Ki//WDK7BBGHfcpI3DLeNtVJs+46PKwEHGKQY/QgB7sJuK
-         2vS+UgyFsNoxBGWp+iTz2JdRvSO11xlmRpM1KA6celW1X4As1k2o+zbJlMoBnEjwKQfJ
-         D/a8zjqn8tPI6e0+Oplx7CjuuLUCOKc4KLcMdY2Jvj2MsCugcvB1cKqBJG8s07WTE1Tv
-         ix0tm1HR3jF0lsTujo4uNM5Yz1wN7n+JrMG1HQoGmEMDftMaL81BHjghQMIfHeM+XLW3
-         JNBCqLJnf1HSRBPn4r+lx+8yuXrHXuQ8MmZGJ1WCmlBImQA3+L2N13rHMdUbjfwUa1yI
-         RP7Q==
-X-Gm-Message-State: APjAAAWh4z8nq/Q9nCje09noi0FS26QvD1ntfbsKaQnn0XpVFcs7beSr
-        w5v53JVibN7m+EotKUB1ldw=
-X-Google-Smtp-Source: APXvYqxqkdoby+o+sRr/vfblT8sSWmSv4tglKRjcJExnFD3acGUtjxZzxR6SBSbaL/7zpGhphwwXug==
-X-Received: by 2002:a17:90a:3209:: with SMTP id k9mr1329341pjb.14.1569979026485;
-        Tue, 01 Oct 2019 18:17:06 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id a13sm20414018pfg.10.2019.10.01.18.17.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 01 Oct 2019 18:17:06 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     bjorn.andersson@linaro.org
-Cc:     agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        marc.w.gonzalez@free.fr, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v4 2/2] arm64: dts: qcom: msm8998: Add gpucc node
-Date:   Tue,  1 Oct 2019 18:17:02 -0700
-Message-Id: <20191002011702.36678-1-jeffrey.l.hugo@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191002011555.36571-1-jeffrey.l.hugo@gmail.com>
-References: <20191002011555.36571-1-jeffrey.l.hugo@gmail.com>
+        id S1727326AbfJBGBL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 02:01:11 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44390 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727296AbfJBGBL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 02:01:11 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191002060109euoutp010334f4de872132c3bc7d3903f4c0e0ec~JvxtMtpTd1175211752euoutp01F
+        for <linux-clk@vger.kernel.org>; Wed,  2 Oct 2019 06:01:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191002060109euoutp010334f4de872132c3bc7d3903f4c0e0ec~JvxtMtpTd1175211752euoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1569996069;
+        bh=yuCGV1S0VKd0ozUAZTYAj1RajvjGsX0dFbmBxV1nsmE=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=vX+QAqJREI2wKkvCNcWtJyTqrz47z1+t0Eg7rwPVmIXi9iXuUlSp/tAWwLYv+8bL4
+         6W8YkM1mj0pKGT1kC9ZKJcUN4fLk4Lgeqh+VDSAZhSS2RaQQHT1UdUHdeD98pjA1+2
+         pCZTSZG1lJcL5B42fftzDAOmC1Fsb8ei2wp9abU4=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191002060108eucas1p2c7469fb69a002592edafe342a25b0c6b~Jvxsuj-771635816358eucas1p2H;
+        Wed,  2 Oct 2019 06:01:08 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id F7.F1.04374.42D349D5; Wed,  2
+        Oct 2019 07:01:08 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191002060108eucas1p27be49c6cd819bc9de2d59a0eb90ee605~JvxsQWqH20364903649eucas1p24;
+        Wed,  2 Oct 2019 06:01:08 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191002060108eusmtrp2fad6b8ae641b232663d9bd2af670d292~JvxsPVBN73010930109eusmtrp27;
+        Wed,  2 Oct 2019 06:01:08 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-70-5d943d2411d0
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id C3.B3.04166.32D349D5; Wed,  2
+        Oct 2019 07:01:08 +0100 (BST)
+Received: from [106.120.51.20] (unknown [106.120.51.20]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191002060106eusmtip245037d0e21126944c7edac27833fa4ed~JvxrFiL5l2679726797eusmtip2T;
+        Wed,  2 Oct 2019 06:01:06 +0000 (GMT)
+Subject: Re: [PATCH v13 0/8] Exynos5 Dynamic Memory Controller driver
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, mturquette@baylibre.com,
+        sboyd@kernel.org, b.zolnierkie@samsung.com, kgene@kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, cw00.choi@samsung.com,
+        kyungmin.park@samsung.com, m.szyprowski@samsung.com,
+        s.nawrocki@samsung.com, myungjoo.ham@samsung.com,
+        keescook@chromium.org, tony@atomide.com, jroedel@suse.de,
+        treding@nvidia.com, digetx@gmail.com, gregkh@linuxfoundation.org,
+        willy.mh.wolff.ml@gmail.com
+From:   Lukasz Luba <l.luba@partner.samsung.com>
+Message-ID: <7c8cd09c-aa6b-29e4-1208-2476027d9c85@partner.samsung.com>
+Date:   Wed, 2 Oct 2019 08:01:05 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.8.0
+MIME-Version: 1.0
+In-Reply-To: <20191001192947.GA1815@kozik-lap>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0yNYRzHPe+9cvJ2XM7Pfc5iriFmj8SYy97ZhIYZCy+9i+kcnLdQzA5J
+        pByrkKOUmWmncpSmhOgyRaUO6RyXY1FuUUZIi+j0Zvrv8/s+3+f3+32fPRypPs0M47bpwySD
+        XgzVMu7U9XsdD6d4z00Kmua8MhLnJFtpbP/2jsZpZQ9pnPmlEeGoi1YGJz5IJXDVcR02NX4k
+        cU3NVRZXH/rE4i9xL2n8uDCFwW3xZQgn1xQROLvMyeJLdhuBbQ8W4+cHMxgcfbuMxaWfYmjc
+        VZ9D4Tt1S/HzTk/8o+I1mg9C1vksJPz4nkAJnx3RrHDOaKOEG2YnK+RajjHCndQsVoiPamWE
+        E3kWJFyr3Ce05Y5a4bHO3T9YCt22WzJMnbfJfevPqvfUzlr13nf12YQRRQ+IRW4c8DPBejOG
+        iEXunJrPQHA3pQQpxTcEpXVvKKVoQ1D9uI2NRVzPlboWSdEvI2g/3EQqRQuCF/mttKvvQH4x
+        RHd+YFw8iJ8A9t/tPTrJ36LAmDDU1YjhfaDAssslq/glcLvibo+d4r0hvvYVcvFgfi18bSil
+        FY8X3D/bRLnYrftqotPIKi018KwpjVB4NOS3pPTsA7yDgyv2TkLJuQg6cjIphQdCc3keq/AI
+        +HMjrdcjgzH+AlJ4PzSaUns9c6C03Ea7dia7s1gLpyryAmiuiEHKm3iCo8VLWcETEq6fIRVZ
+        BUePqBX3eMiLq+0dNAQuZ51mTyKtuU8wc58w5j5hzP/npiPKgjRSuKwLkeQZemmPjyzq5HB9
+        iM+WHbpc1P1bK7vKvxegol+bSxDPIW1/lWNVYpCaFnfLEboSBBypHaTy/5UQpFYFixGRkmHH
+        RkN4qCSXoOEcpdWo9vVrWK/mQ8Qwabsk7ZQM/04Jzm2YEQU8fTKm2ozrIj6/MbVaq2ZP9rcE
+        Np8zn/Ulxekr7b7BGQF+85Z5iqcig3QB414QS+M8Fm0vlxZMGj9KOH5+wwmvt4H4SWCKn3Ps
+        GqfNUDyLSn76qMO4vN4/0ux3LSmsvdAjrTi9kjOtLvLWPNNkX1341U9fkD6r+MBP0zjHhfzM
+        VVpK3ipOn0gaZPEvwTLsJKkDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrFKsWRmVeSWpSXmKPExsVy+t/xe7oqtlNiDR5kW2ycsZ7V4vqX56wW
+        84+cY7VY/fExo0Xz4vVsFpNPzWWyONOda9H/+DWzxfnzG9gtzja9Ybf42HOP1eLyrjlsFp97
+        jzBazDi/j8li7ZG77BZLr19ksrh4ytXiduMKNovWvUfYLQ6/aWe1+HdtI4vF/iteFrd/81l8
+        O/GI0UHCY828NYwe375OYvF4f6OV3WN2w0UWj52z7rJ7bFrVyeaxf+4ado/e5ndsHn1bVjF6
+        bD5d7fF5k1wAd5SeTVF+aUmqQkZ+cYmtUrShhZGeoaWFnpGJpZ6hsXmslZGpkr6dTUpqTmZZ
+        apG+XYJexo8zL1gKLghVPL+2lqmBsZW/i5GDQ0LAROLK29QuRi4OIYGljBK/HnawdDFyAsXF
+        JCbt284OYQtL/LnWxQZR9JpRYt2k3YwgCWEBV4nW3y/ZQGwRAU2J63+/s4IUMQvsYZF4tfQK
+        E0THdkaJWffvMYGsYxPQk9ixqhCkgVfATWLviQNgzSwCKhK9Fx6CDRUViJA4vGMWI0SNoMTJ
+        mU/ALuIEap18twHsImYBM4l5mx8yQ9jiEreezGeCsOUltr+dwzyBUWgWkvZZSFpmIWmZhaRl
+        ASPLKkaR1NLi3PTcYkO94sTc4tK8dL3k/NxNjMB0su3Yz807GC9tDD7EKMDBqMTD2xA0OVaI
+        NbGsuDL3EKMEB7OSCK/Nn0mxQrwpiZVVqUX58UWlOanFhxhNgZ6byCwlmpwPTHV5JfGGpobm
+        FpaG5sbmxmYWSuK8HQIHY4QE0hNLUrNTUwtSi2D6mDg4pRoYOS7czPr6LCtJuuDYqphOpgbH
+        Gue/C0VK1jzz4fohes1QI2t/2SvXOUxKkrlTliUvbeLnmq+YcYTv/+8uhtJ0fkW9m9XnFr+Z
+        eKmtTJn5hGJOdJelqdlGpksti8xu8YY9/n3lhLEOV/WO38cl1xzZf/Ok0ruMrfOtdBSETCRK
+        FBbve3jNgOukEktxRqKhFnNRcSIAAooCoz0DAAA=
+X-CMS-MailID: 20191002060108eucas1p27be49c6cd819bc9de2d59a0eb90ee605
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8
+References: <CGME20190821104316eucas1p2ecd715f3105921ec83e0acf1291201f8@eucas1p2.samsung.com>
+        <20190821104303.32079-1-l.luba@partner.samsung.com>
+        <20191001192947.GA1815@kozik-lap>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 GPU Clock Controller DT node.
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+On 10/1/19 9:29 PM, Krzysztof Kozlowski wrote:
+> On Wed, Aug 21, 2019 at 12:42:55PM +0200, Lukasz Luba wrote:
+>> Hi all,
+>>
+>> This is v13 which makes cosmetic changes. It is based on current mainline
+>> (v5.3-rc5) with with devfreq/for-next where there is a PPMU patch [1].
+>>
+>> The patch set adds support of Dynamic Memory Controller for Exynos5422 SoC.
+>> The driver supports Dynamic Voltage and Frequency Scaling
+>> for the DMC and DRAM. It also provides needed timings for different
+>> speed operations of the DRAM memory.
+>> There is also new generic code in of_memory and headers which allows to parse
+>> LPDDR3 memories defined in device-tree.
+>>
+>> Here are the last changes suggested by Krzysztof during his review.
+>> For the previous changes in older revisions please refer to [2], there is
+>> more detailed change log.
+>>
+>> changes:
+>> v13:
+>> - skipped patch with chipID changes in DT, since it is not used anymore,
+>> - removed license comment in of_memory.c since SPDX has been merged,
+>> - aligned comment to the current fields in the structure,
+>> - changed printed warning when timings are not found,
+>>
+>> Regards,
+>> Lukasz Luba
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/mzx/devfreq.git/commit/?h=for-next&id=b617376df8f01c975dee66802f4da16291f92079
+>> [2] https://protect2.fireeye.com/url?k=76a66a31f783ea89.76a7e17e-142fcaf2360aff73&u=https://lkml.org/lkml/2019/7/22/251
+>>
+>>
+>> Lukasz Luba (8):
+>>    dt-bindings: ddr: rename lpddr2 directory
+>>    dt-bindings: ddr: add LPDDR3 memories
+>>    drivers: memory: extend of_memory by LPDDR3 support
+>>    dt-bindings: memory-controllers: add Exynos5422 DMC device description
+>>    drivers: memory: add DMC driver for Exynos5422
+>>    ARM: dts: exynos: add syscon to clock compatible
+>>    ARM: dts: exynos: add DMC device for exynos5422
+>>    ARM: exynos_defconfig: enable DMC driver
+>>
+> 
+> Just to let you know:
+> 
+> I applied the set some days ago but this did not make to merge window.
+> Now, I put it on for-next branch so will appear on linux-next soon. I
+> also applied the fixes sent later.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 5a9efd749fa6..896f37c936ee 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- #include <dt-bindings/clock/qcom,mmcc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
-@@ -951,6 +952,19 @@
- 			#interrupt-cells = <0x2>;
- 		};
- 
-+		gpucc: clock-controller@5065000 {
-+			compatible = "qcom,gpucc-msm8998";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x05065000 0x9000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
- 		spmi_bus: spmi@800f000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg =	<0x0800f000 0x1000>,
--- 
-2.17.1
+Thank you Krzysztof!
 
+> 
+> I'll take also the latest work with interrupt mode for DMC (after minor
+> fix in bindings).
+> 
+
+I will send the latest IRQ mode version with this binding IRQ names
+description in a minute.
+
+Regards,
+Lukasz
