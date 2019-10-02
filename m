@@ -2,108 +2,325 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BC1C352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 12:06:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86E17C35280
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 12:41:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF0DD21A4A
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 12:06:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B49B21D81
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 12:41:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hgzlYenc"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U/pvykx7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726458AbfJBMGg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 08:06:36 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:35132 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbfJBMGg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 08:06:36 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x92C6WKQ081458;
-        Wed, 2 Oct 2019 07:06:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570017992;
-        bh=7RBfSmkQoAYuNy+ndpyRQLl8Mu1h3P64bsoNcfuhnL4=;
-        h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=hgzlYenc7QBQ9F1CPLBNh9ZtgNlgA75bVOQM//Aasomq6motDGQXj9zM4WjEmI6g+
-         FFyfqy3nzSGZ0ieBIPFpnn/pb3gI70S94MHuI/RcThbHJa5wyWK8j1FZELqCUVu0GI
-         2HAMj2gNMS9NifyIaxwtoJuZcnnced3WpBug3Gk4=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92C6WRm078118;
-        Wed, 2 Oct 2019 07:06:32 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 07:06:32 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 07:06:21 -0500
-Received: from sokoban.bb.dnainternet.fi (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x92C6L3l046205;
-        Wed, 2 Oct 2019 07:06:30 -0500
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>
-CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>,
-        <aford173@gmail.com>, <tomi.valkeinen@ti.com>
-Subject: [PATCH 4/4] ARM: dts: omap3: fix DPLL4 M4 divider max value
-Date:   Wed, 2 Oct 2019 15:06:11 +0300
-Message-ID: <20191002120611.26121-5-t-kristo@ti.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191002120611.26121-1-t-kristo@ti.com>
-References: <20191002120611.26121-1-t-kristo@ti.com>
+        id S1726148AbfJBMlX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 08:41:23 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:37061 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725766AbfJBMlW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 08:41:22 -0400
+Received: by mail-io1-f67.google.com with SMTP id b19so28396187iob.4;
+        Wed, 02 Oct 2019 05:41:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=WRefwbE6VF1W44fHwxCyYGRrTz1BonfmO7vvu80JTHA=;
+        b=U/pvykx7ssnIUmelCGQq122oFwGByD8jaKKXblDl+W/xgx2rgx8T/TJlC7hwZrE2/x
+         cYMGhFvxMEY5+C258lxoZ8owHWg5h0IUIBcPiEvh0KpP8oY1Wh8egOnmuWbfoG6fjFqk
+         arpxrggFxZNORTt1cw5dgADLZbag/Cf8DdPDkyrqItEenAjDwQd1xjvw1G/aB+UWX4yE
+         RbpVEjHpQG3NBnrC6whXvNH2b9S0lUpMbearaVOLRokyazjEdkJ8uMSofYZdxSJd2st3
+         DFVE824k0avYb/x5ttNaffVSpRJ7GGt/p57ESZhhJoZpDp22xj/el89kFR8zbn5tmJ/j
+         EKbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=WRefwbE6VF1W44fHwxCyYGRrTz1BonfmO7vvu80JTHA=;
+        b=KSdw+ipo1hEf5ZoxezwwYE5UwxrbW1VZZWqL/IABG6xjCosRuvvYyWSNHpX7HayNeO
+         oiF1Ym3GMf4puIZttgcA1yMfAn6Jl6qWuvtVupqJptkQ8JJjTMlb17oOv+Zx9hy8m2Ps
+         mQR2QcwSyOQ3WyCy59zNYQfrKgoPpI3Jp+N295UrS6i/rtM284aXoAwT6i9DJEfn1G/y
+         8OGNPbgXp/4dWpT0UpGquYxOHI6JJkvtWeRnZCwwRiBCKTGL3mk3U+P9HsfZ6Usr0Lby
+         U4AHcg+AFEExfFlhrhdnkp+tcb1m9k3jfUIH3qEEaU96JcLgIxeSnxBx4Vz3AszlLm6H
+         M+9A==
+X-Gm-Message-State: APjAAAUqnki4A5SS/kXWDLLR+CRg/GuAyXq68GPzQIWWwJN2Rk911V1Q
+        i+VkBTqr7Fk7LaGh7GqWoxxZIj3CPg9qaRM5fNY=
+X-Google-Smtp-Source: APXvYqybDiC7EETNsAAXhJdYVGktlkLkfGVeBZjepH1xMCQI/2K5PEFIoY6u05md/biK0JudFRi0kdrdhDKnYhQrJIQ=
+X-Received: by 2002:a6b:b213:: with SMTP id b19mr2929813iof.58.1570020080446;
+ Wed, 02 Oct 2019 05:41:20 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191002120611.26121-1-t-kristo@ti.com> <20191002120611.26121-2-t-kristo@ti.com>
+In-Reply-To: <20191002120611.26121-2-t-kristo@ti.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 2 Oct 2019 07:41:08 -0500
+Message-ID: <CAHCN7xJCZ6S_KjFwPG21PjgT+OZUf+60McikhZNL8JMHMrcM5g@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: ti: divider: cleanup _register_divider and ti_clk_get_div_table
+To:     Tero Kristo <t-kristo@ti.com>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        Tony Lindgren <tony@atomide.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The maximum divider value for DPLL4 M4 divider appears wrong. For most
-OMAP3 family SoCs this is 16, but it is defined as 32, which is maybe
-only valid for omap36xx. To avoid any overflows in trying to write this
-register, set the max to 16 for all omap3 family, except omap36xx. For
-omap36xx the maximum is set to 31, as it appears value 32 is not working
-properly.
+On Wed, Oct 2, 2019 at 7:06 AM Tero Kristo <t-kristo@ti.com> wrote:
+>
+> Cleanup couple of TI divider clock internal APIs. These currently pass
+> huge amount of parameters, which makes it difficult to track what is
+> going on. Abstract most of these under struct clk_omap_div which gets
+> passed over the APIs.
+>
+For the series:
+This fixes a hanging issue on a DM3730 with a 480x272 screen where the
+pixel clock is set to 9MHz and the clock divider attempts to calculate
+a fclk and hangs.  I have always had to hack the divider to prevent
+the hang.
+If possible, it would be nice to have this applied to 5.4 branch since
+it will be an LTS kernel.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
----
- arch/arm/boot/dts/omap36xx-clocks.dtsi | 4 ++++
- arch/arm/boot/dts/omap3xxx-clocks.dtsi | 2 +-
- 2 files changed, 5 insertions(+), 1 deletion(-)
+Tested-by: Adam Ford <aford173@gmail.com>
 
-diff --git a/arch/arm/boot/dts/omap36xx-clocks.dtsi b/arch/arm/boot/dts/omap36xx-clocks.dtsi
-index e66fc57ec35d..4e9cc9003594 100644
---- a/arch/arm/boot/dts/omap36xx-clocks.dtsi
-+++ b/arch/arm/boot/dts/omap36xx-clocks.dtsi
-@@ -105,3 +105,7 @@
- 			 <&mcbsp4_ick>, <&uart4_fck>;
- 	};
- };
-+
-+&dpll4_m4_ck {
-+	ti,max-div = <31>;
-+};
-diff --git a/arch/arm/boot/dts/omap3xxx-clocks.dtsi b/arch/arm/boot/dts/omap3xxx-clocks.dtsi
-index 685c82a9d03e..0656c32439d2 100644
---- a/arch/arm/boot/dts/omap3xxx-clocks.dtsi
-+++ b/arch/arm/boot/dts/omap3xxx-clocks.dtsi
-@@ -416,7 +416,7 @@
- 		#clock-cells = <0>;
- 		compatible = "ti,divider-clock";
- 		clocks = <&dpll4_ck>;
--		ti,max-div = <32>;
-+		ti,max-div = <16>;
- 		reg = <0x0e40>;
- 		ti,index-starts-at-one;
- 	};
--- 
-2.17.1
-
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+> Signed-off-by: Tero Kristo <t-kristo@ti.com>
+> ---
+>  drivers/clk/ti/divider.c | 113 ++++++++++++++-------------------------
+>  1 file changed, 41 insertions(+), 72 deletions(-)
+>
+> diff --git a/drivers/clk/ti/divider.c b/drivers/clk/ti/divider.c
+> index 6cb863c13648..1b181f89ddc6 100644
+> --- a/drivers/clk/ti/divider.c
+> +++ b/drivers/clk/ti/divider.c
+> @@ -310,47 +310,26 @@ const struct clk_ops ti_clk_divider_ops = {
+>         .restore_context = clk_divider_restore_context,
+>  };
+>
+> -static struct clk *_register_divider(struct device *dev, const char *name,
+> -                                    const char *parent_name,
+> -                                    unsigned long flags,
+> -                                    struct clk_omap_reg *reg,
+> -                                    u8 shift, u8 width, s8 latch,
+> -                                    u8 clk_divider_flags,
+> -                                    const struct clk_div_table *table)
+> +static struct clk *_register_divider(struct device_node *node,
+> +                                    u32 flags,
+> +                                    struct clk_omap_divider *div)
+>  {
+> -       struct clk_omap_divider *div;
+>         struct clk *clk;
+>         struct clk_init_data init;
+> +       const char *parent_name;
+>
+> -       if (clk_divider_flags & CLK_DIVIDER_HIWORD_MASK) {
+> -               if (width + shift > 16) {
+> -                       pr_warn("divider value exceeds LOWORD field\n");
+> -                       return ERR_PTR(-EINVAL);
+> -               }
+> -       }
+> -
+> -       /* allocate the divider */
+> -       div = kzalloc(sizeof(*div), GFP_KERNEL);
+> -       if (!div)
+> -               return ERR_PTR(-ENOMEM);
+> +       parent_name = of_clk_get_parent_name(node, 0);
+>
+> -       init.name = name;
+> +       init.name = node->name;
+>         init.ops = &ti_clk_divider_ops;
+>         init.flags = flags;
+>         init.parent_names = (parent_name ? &parent_name : NULL);
+>         init.num_parents = (parent_name ? 1 : 0);
+>
+> -       /* struct clk_divider assignments */
+> -       memcpy(&div->reg, reg, sizeof(*reg));
+> -       div->shift = shift;
+> -       div->width = width;
+> -       div->latch = latch;
+> -       div->flags = clk_divider_flags;
+>         div->hw.init = &init;
+> -       div->table = table;
+>
+>         /* register the clock */
+> -       clk = ti_clk_register(dev, &div->hw, name);
+> +       clk = ti_clk_register(NULL, &div->hw, node->name);
+>
+>         if (IS_ERR(clk))
+>                 kfree(div);
+> @@ -425,8 +404,8 @@ int ti_clk_parse_divider_data(int *div_table, int num_dividers, int max_div,
+>         return 0;
+>  }
+>
+> -static struct clk_div_table *
+> -__init ti_clk_get_div_table(struct device_node *node)
+> +static int __init ti_clk_get_div_table(struct device_node *node,
+> +                                      struct clk_omap_divider *div)
+>  {
+>         struct clk_div_table *table;
+>         const __be32 *divspec;
+> @@ -438,7 +417,7 @@ __init ti_clk_get_div_table(struct device_node *node)
+>         divspec = of_get_property(node, "ti,dividers", &num_div);
+>
+>         if (!divspec)
+> -               return NULL;
+> +               return 0;
+>
+>         num_div /= 4;
+>
+> @@ -453,13 +432,12 @@ __init ti_clk_get_div_table(struct device_node *node)
+>
+>         if (!valid_div) {
+>                 pr_err("no valid dividers for %pOFn table\n", node);
+> -               return ERR_PTR(-EINVAL);
+> +               return -EINVAL;
+>         }
+>
+>         table = kcalloc(valid_div + 1, sizeof(*table), GFP_KERNEL);
+> -
+>         if (!table)
+> -               return ERR_PTR(-ENOMEM);
+> +               return -ENOMEM;
+>
+>         valid_div = 0;
+>
+> @@ -472,7 +450,9 @@ __init ti_clk_get_div_table(struct device_node *node)
+>                 }
+>         }
+>
+> -       return table;
+> +       div->table = table;
+> +
+> +       return 0;
+>  }
+>
+>  static int _get_divider_width(struct device_node *node,
+> @@ -520,46 +500,43 @@ static int _get_divider_width(struct device_node *node,
+>  }
+>
+>  static int __init ti_clk_divider_populate(struct device_node *node,
+> -       struct clk_omap_reg *reg, const struct clk_div_table **table,
+> -       u32 *flags, u8 *div_flags, u8 *width, u8 *shift, s8 *latch)
+> +                                         struct clk_omap_divider *div,
+> +                                         u32 *flags)
+>  {
+>         u32 val;
+>         int ret;
+>
+> -       ret = ti_clk_get_reg_addr(node, 0, reg);
+> +       ret = ti_clk_get_reg_addr(node, 0, &div->reg);
+>         if (ret)
+>                 return ret;
+>
+>         if (!of_property_read_u32(node, "ti,bit-shift", &val))
+> -               *shift = val;
+> +               div->shift = val;
+>         else
+> -               *shift = 0;
+> +               div->shift = 0;
+>
+> -       if (latch) {
+> -               if (!of_property_read_u32(node, "ti,latch-bit", &val))
+> -                       *latch = val;
+> -               else
+> -                       *latch = -EINVAL;
+> -       }
+> +       if (!of_property_read_u32(node, "ti,latch-bit", &val))
+> +               div->latch = val;
+> +       else
+> +               div->latch = -EINVAL;
+>
+>         *flags = 0;
+> -       *div_flags = 0;
+> +       div->flags = 0;
+>
+>         if (of_property_read_bool(node, "ti,index-starts-at-one"))
+> -               *div_flags |= CLK_DIVIDER_ONE_BASED;
+> +               div->flags |= CLK_DIVIDER_ONE_BASED;
+>
+>         if (of_property_read_bool(node, "ti,index-power-of-two"))
+> -               *div_flags |= CLK_DIVIDER_POWER_OF_TWO;
+> +               div->flags |= CLK_DIVIDER_POWER_OF_TWO;
+>
+>         if (of_property_read_bool(node, "ti,set-rate-parent"))
+>                 *flags |= CLK_SET_RATE_PARENT;
+>
+> -       *table = ti_clk_get_div_table(node);
+> -
+> -       if (IS_ERR(*table))
+> -               return PTR_ERR(*table);
+> +       ret = ti_clk_get_div_table(node, div);
+> +       if (ret)
+> +               return ret;
+>
+> -       *width = _get_divider_width(node, *table, *div_flags);
+> +       div->width = _get_divider_width(node, div->table, div->flags);
+>
+>         return 0;
+>  }
+> @@ -573,24 +550,17 @@ static int __init ti_clk_divider_populate(struct device_node *node,
+>  static void __init of_ti_divider_clk_setup(struct device_node *node)
+>  {
+>         struct clk *clk;
+> -       const char *parent_name;
+> -       struct clk_omap_reg reg;
+> -       u8 clk_divider_flags = 0;
+> -       u8 width = 0;
+> -       u8 shift = 0;
+> -       s8 latch = -EINVAL;
+> -       const struct clk_div_table *table = NULL;
+>         u32 flags = 0;
+> +       struct clk_omap_divider *div;
+>
+> -       parent_name = of_clk_get_parent_name(node, 0);
+> +       div = kzalloc(sizeof(*div), GFP_KERNEL);
+> +       if (!div)
+> +               return;
+>
+> -       if (ti_clk_divider_populate(node, &reg, &table, &flags,
+> -                                   &clk_divider_flags, &width, &shift, &latch))
+> +       if (ti_clk_divider_populate(node, div, &flags))
+>                 goto cleanup;
+>
+> -       clk = _register_divider(NULL, node->name, parent_name, flags, &reg,
+> -                               shift, width, latch, clk_divider_flags, table);
+> -
+> +       clk = _register_divider(node, flags, div);
+>         if (!IS_ERR(clk)) {
+>                 of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>                 of_ti_clk_autoidle_setup(node);
+> @@ -598,22 +568,21 @@ static void __init of_ti_divider_clk_setup(struct device_node *node)
+>         }
+>
+>  cleanup:
+> -       kfree(table);
+> +       kfree(div->table);
+> +       kfree(div);
+>  }
+>  CLK_OF_DECLARE(divider_clk, "ti,divider-clock", of_ti_divider_clk_setup);
+>
+>  static void __init of_ti_composite_divider_clk_setup(struct device_node *node)
+>  {
+>         struct clk_omap_divider *div;
+> -       u32 val;
+> +       u32 tmp;
+>
+>         div = kzalloc(sizeof(*div), GFP_KERNEL);
+>         if (!div)
+>                 return;
+>
+> -       if (ti_clk_divider_populate(node, &div->reg, &div->table, &val,
+> -                                   &div->flags, &div->width, &div->shift,
+> -                                   NULL) < 0)
+> +       if (ti_clk_divider_populate(node, div, &tmp))
+>                 goto cleanup;
+>
+>         if (!ti_clk_add_component(node, &div->hw, CLK_COMPONENT_TYPE_DIVIDER))
+> --
+> 2.17.1
+>
+> --
+> Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
