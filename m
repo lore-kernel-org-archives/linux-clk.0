@@ -1,154 +1,100 @@
-Return-Path: <SRS0=E8mG=X2=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE5DC352AA
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 21:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87C49ECE587
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 01:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE7021A4A
-	for <linux-clk@archiver.kernel.org>; Tue,  1 Oct 2019 21:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E13A206BB
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 01:16:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="g0so+B7C"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dzJ3fS3X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726614AbfJAV6o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 1 Oct 2019 17:58:44 -0400
-Received: from mailout3.samsung.com ([203.254.224.33]:51685 "EHLO
-        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725865AbfJAV6o (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 17:58:44 -0400
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20191001215842epoutp030e983fa937e6545c3a783781b41f48cf~JpMef_awX1909219092epoutp034
-        for <linux-clk@vger.kernel.org>; Tue,  1 Oct 2019 21:58:42 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20191001215842epoutp030e983fa937e6545c3a783781b41f48cf~JpMef_awX1909219092epoutp034
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1569967122;
-        bh=H/0dSSjQJh50vWIB+t6HbKYzbJxNvuzWkwr+dDXz20Y=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=g0so+B7CxHlRpy7IbWWbttU620mM7YKVG+imDiSGIrGd49MDf3mmt737ZeirQbnu8
-         7TeRVYffjeDRXAChSlBej5VJBpvuFZzKNEP1uIbwzMJB15LiGp3Nuzk409CwUlsf4t
-         wi2PDwib1yir+j+YrBGVNdqnAJvBnmN96KgT9OeY=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191001215842epcas1p113b96a8b43fcfd930b43aa62b1bbc992~JpMeMXho52865128651epcas1p1W;
-        Tue,  1 Oct 2019 21:58:42 +0000 (GMT)
-Received: from epsmges1p1.samsung.com (unknown [182.195.40.157]) by
-        epsnrtp1.localdomain (Postfix) with ESMTP id 46jY7N525mzMqYll; Tue,  1 Oct
-        2019 21:58:40 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-        E9.31.04144.01CC39D5; Wed,  2 Oct 2019 06:58:40 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-        20191001215839epcas1p3923451e15fe6ca2b4bbf683ae952a447~JpMcEI0Nm2397523975epcas1p3m;
-        Tue,  1 Oct 2019 21:58:39 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191001215839epsmtrp10ed6b14c794967dd2a14749a0176afec~JpMcDdPUM1192611926epsmtrp1D;
-        Tue,  1 Oct 2019 21:58:39 +0000 (GMT)
-X-AuditID: b6c32a35-2c7ff70000001030-f8-5d93cc108e5d
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        53.40.04081.F0CC39D5; Wed,  2 Oct 2019 06:58:39 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191001215839epsmtip162057a0488cfcf942d14f18a844f1c2d~JpMb4utbb0288002880epsmtip1H;
-        Tue,  1 Oct 2019 21:58:39 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: exynos5433: Fix potential NULL pointer
- dereference
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <3c3d500a-d2ef-8606-f549-eb82d7f877be@samsung.com>
-Date:   Wed, 2 Oct 2019 07:03:27 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.8.0
-MIME-Version: 1.0
-In-Reply-To: <20191001130921.24571-1-m.szyprowski@samsung.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0hTcRTH+e3uXq/h6tfSPC6oeRXChY/rWk5TCbIQEpGSDHHYxV2nuVe7
-        s5om2NNHo5cFNrF3RKJoptHLnI9eFK4HilSWWFEG9rAHRg/adpP873N+53vO4Xt+hybkRykF
-        XWy28zYzZ2SoWdLLfVHR0fhBnS7O0xepvVjfSmo9nrYA7WfnC1Jb77kp0bb0jwRoq96MEyuo
-        9PamGip9f0cTSv/SvjCLyC1JLuI5PW9T8uYCi77YbEhh1qzLX5mvWRbHRrOJ2gRGaeZMfAqT
-        lpEVvbrY6J3LKLdwxlLvUxYnCExsarLNUmrnlUUWwZ7C8Fa90ZpojRE4k1BqNsQUWExJbFxc
-        vMYr3FhStGP3J9I6SG9rvFkvrUR7A2pRIA14KQzsu+3lWbQcX0Ew0NBHiMEkgu9dPaQYfEdw
-        unUITZc0OsckYqILQc/odUoMPiK4MTHhzdD0PJwDtSO0D4OxBVwT2b5aAjsRtDWn+ZjCKuh+
-        N0z5eA4Oh8GpV/7+MpwKl666SB9LcSS0jE35OQRvgMnRPlLUzIV7x15LfRzo1Z/v9EjF/qHw
-        9PUJiciLYFdng98N4GcU1Jx9T4gG0uCr+4dU5Hnw/k7Hv10oYPzA9F7K4cK9fkosrkbQ0f2Q
-        FBNq6D5X5/dI4ChovRYrPofD1Z+NSBw8Gz58c5I+CWAZVO+Vi5IIeDI6IhE5DM5U1VAHEeOa
-        Ycc1w4JrhgXX/2EnkbQJzeetgsnAC6yVnfnZ7ch/kirNFXRkIKMXYRoxQbLh7DqdnOS2CA5T
-        LwKaYIJlyb8O6+QyPeco422WfFupkRd6kca77UOEIqTA4j1wsz2f1cSr1WrtUnaZhmWZUFm6
-        oVInxwbOzpfwvJW3TddJ6EBFJXKbYrvX4rfjFb2/cbgn6dBxp1DQoFeX3Nn6PGj70OPmxR8+
-        7+t56s7M1h81BN89/VGxvjAvXmIqH13c8uhPZGqhmtnUeCtsST+lO3W/835W0k7H5syqPTkn
-        Xnocgf1l11qW535LULnzlLctYZO6VRXxqz3UApxRtRWdMkdQhSG7GalQxLEqwiZwfwF0ZPgf
-        qAMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpkkeLIzCtJLcpLzFFi42LZdlhJTpf/zORYg++rtSw2zljPanH+/AZ2
-        i48991gtZpzfx2Sx9shddov2py+ZHdg8Nq3qZPPo27KK0ePzJrkA5igum5TUnMyy1CJ9uwSu
-        jMaWD6wFVzkq5u6bwdLA2MbexcjJISFgIjG35xFTFyMXh5DAbkaJKdf2sUIkJCWmXTzK3MXI
-        AWQLSxw+XAxR85ZR4uDV8ywgcWGBcImuuxwg5SIC+RIz7vQygtQwC/QxShzoWcUO0TCRUeL8
-        pMNg29gEtCT2v7jBBmLzCyhKXP3xmBHE5hWwk9i8cxbYYhYBFYm1j36A2aICERKHd8yCqhGU
-        ODnzCQuIzQlUv3zreTCbWUBd4s+8S8wQtrjErSfzmSBseYnmrbOZJzAKz0LSPgtJyywkLbOQ
-        tCxgZFnFKJlaUJybnltsWGCYl1quV5yYW1yal66XnJ+7iREcMVqaOxgvL4k/xCjAwajEw9sQ
-        NDlWiDWxrLgy9xCjBAezkgivzZ9JsUK8KYmVValF+fFFpTmpxYcYpTlYlMR5n+YdixQSSE8s
-        Sc1OTS1ILYLJMnFwSjUwckpfvexp7PbxfMJD4YSH2+NTJTX/f+muYkiPeLoiqeX8J98UkV0l
-        j74HMZ1P7LlX4bz4sNOxD296yo22dYhkPr2wQjw4Om4hd++V/1s++3M1/l3bHsaT8+xgnp9w
-        9KHfyp/KJTuXvp391jNdsevrLoHyrkgHsWSTjybXlmzcU/Ne6NeukMoSJZbijERDLeai4kQA
-        tVBd95QCAAA=
-X-CMS-MailID: 20191001215839epcas1p3923451e15fe6ca2b4bbf683ae952a447
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191001130929eucas1p114d229f779680122c629396a4fc040c0
-References: <CGME20191001130929eucas1p114d229f779680122c629396a4fc040c0@eucas1p1.samsung.com>
-        <20191001130921.24571-1-m.szyprowski@samsung.com>
+        id S1725935AbfJBBQC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 1 Oct 2019 21:16:02 -0400
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43958 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725908AbfJBBQB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 1 Oct 2019 21:16:01 -0400
+Received: by mail-pg1-f194.google.com with SMTP id v27so10928072pgk.10;
+        Tue, 01 Oct 2019 18:16:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=kpRlZJBA/zoGmo3ahdlz4aLv85G9pOPiIxFk3v2Drnw=;
+        b=dzJ3fS3XY+Lo0Yt3AmKzq5v+c90mPwAqD369It+GKDkjh3g6k1a0PZvbpSwdJCDT+w
+         pOfL/Mq3ArboPWQyspp2ilSbItGF3xoHMT4NOtL6J8RO70ThKkI5NuCstY3M0th4/5g3
+         3MG/u/zBbCiKvmEygYB2SPix9nlf+za8/eDNiTXcAm3qAvNbq41b0HcPHqDjyNqj7JMY
+         JqHP2wBLFAQ3CnpKAe/FfkwGUySTjYUo6/NyFmihnlc+qf2T3p8w99oErDfDRGFNowAk
+         n2ks1mc+u8jmE0+vYJAwP4XdMZFFs6Yb04mIn6ooY68iKsTpuLdUHyJZozD51vws0Urw
+         7T8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kpRlZJBA/zoGmo3ahdlz4aLv85G9pOPiIxFk3v2Drnw=;
+        b=UV+w4XNN/MPCwrM88OfVm9hSUR5fKh1pP8r7B9do8b2/4EH5uWzmZLKH+YZB+Wu+Iu
+         gy5j3c4tfKPy72GCF/b2muBqiX3aCNsiyGUu3sYSktggSCQ+3kfcGzhzi6jzzdOcOxTx
+         Jq2bW8sc6QqImlM4hPpHY3lLlDPNzymp4FmWgRrCTNVo6UjdANGMrGVkGBmeCkt55li3
+         BmG4PrXsGSDah6p79cfvN+lwJQxTrA4JK1TsmhtOql1KQHhpeugq8BD3dSIxSrC/eJyU
+         +EStwTE7DFaMa/JNrwtrnISrOCw+n7jZixA9p4NfQ+694MoQaiKSHSVRf5cmS4YAPm3e
+         fdLw==
+X-Gm-Message-State: APjAAAW820wNbAXwG+NokJGnH3jtoSSEbdis8aTPyMXPpdEispWV1Hkq
+        VRSEthKwhg+kUNDii+Fw4I81dwjO
+X-Google-Smtp-Source: APXvYqwOMQ76Sp+Q7cYoRWqg9aMZKHhxOoK76ukFP5Xwp+3whA/aNOeDqcGTCle7wLS7+ZKGBOb/eQ==
+X-Received: by 2002:a17:90a:a78d:: with SMTP id f13mr1281793pjq.18.1569978960936;
+        Tue, 01 Oct 2019 18:16:00 -0700 (PDT)
+Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
+        by smtp.gmail.com with ESMTPSA id z4sm3723828pjt.17.2019.10.01.18.15.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 01 Oct 2019 18:16:00 -0700 (PDT)
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, marc.w.gonzalez@free.fr,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Subject: [PATCH v4 0/2] MSM8998 GPUCC Support
+Date:   Tue,  1 Oct 2019 18:15:55 -0700
+Message-Id: <20191002011555.36571-1-jeffrey.l.hugo@gmail.com>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+The Adreno GPU on MSM8998 has its own clock controller, which is a
+dependency for bringing up the GPU.  This series gets the gpucc all in
+place as another step on the road to getting the GPU enabled.
 
-On 19. 10. 1. 오후 10:09, Marek Szyprowski wrote:
-> devm_kcalloc might fail, so avoid accessing the allocated object in such
-> case.
-> 
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5433.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-> index 7824c2ba3d8e..6afbcd0ae96f 100644
-> --- a/drivers/clk/samsung/clk-exynos5433.c
-> +++ b/drivers/clk/samsung/clk-exynos5433.c
-> @@ -5592,7 +5592,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
->  	if (data->nr_pclks > 0) {
->  		data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
->  					   data->nr_pclks, GFP_KERNEL);
-> -
-> +		if (!data->pclks)
-> +			return -ENOMEM;
->  		for (i = 0; i < data->nr_pclks; i++) {
->  			struct clk *clk = of_clk_get(dev->of_node, i);
->  
-> 
+v4:
+-rebase onto mmcc series
+-remove clk_get from the clock provider
 
-I think it is needed when 'data->pclks' memory allocation failed.
-Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+v3:
+-drop accepted DT patch
+-correct "avoid" typo
+-expand comment on why XO is required
+
+v2:
+-drop dead code
+
+Jeffrey Hugo (2):
+  clk: qcom: Add MSM8998 GPU Clock Controller (GPUCC) driver
+  arm64: dts: qcom: msm8998: Add gpucc node
+
+ arch/arm64/boot/dts/qcom/msm8998.dtsi |  14 ++
+ drivers/clk/qcom/Kconfig              |   9 +
+ drivers/clk/qcom/Makefile             |   1 +
+ drivers/clk/qcom/gpucc-msm8998.c      | 346 ++++++++++++++++++++++++++
+ 4 files changed, 370 insertions(+)
+ create mode 100644 drivers/clk/qcom/gpucc-msm8998.c
 
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+2.17.1
+
