@@ -2,103 +2,208 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C54C352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F0E8C35280
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:31:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7557921783
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:21:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E7CE921920
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:31:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Epb4N85u"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="W7fvN+Ky"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727690AbfJBIVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 04:21:12 -0400
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:56986 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726478AbfJBIVM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 04:21:12 -0400
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x928L9lT078479;
-        Wed, 2 Oct 2019 03:21:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570004469;
-        bh=q+RZ32osXQbS1Fp5eKtb7L/Lst0he1B/SFe77H778ro=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=Epb4N85u7RKv72gHS6tM48s7RQsjuyObBIhzDF3vTVRujm9ZFMCsyfU/Wyq6V3YM8
-         wxnGnEU57MjRF76aOztck/yq5En3rZOnvSwC3NO7smIEeXaArn1Lqc70Cq2Ey88frQ
-         /8rOsmkEbI2s12lVvZcjJXF6rJ8F/In6ClrpOUdc=
-Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x928L9Fa064900;
-        Wed, 2 Oct 2019 03:21:09 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 03:21:08 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 03:20:58 -0500
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x928L6fA075440;
-        Wed, 2 Oct 2019 03:21:07 -0500
-Subject: Re: [PATCH] clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <t-kristo@ti.com>, <mturquette@baylibre.com>
-CC:     <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190926104556.28716-1-peter.ujfalusi@ti.com>
-Message-ID: <71d281e9-e834-6fb7-b16c-57500770aa54@ti.com>
-Date:   Wed, 2 Oct 2019 11:21:55 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725935AbfJBIbx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 04:31:53 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:35502 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727477AbfJBIbw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 04:31:52 -0400
+Received: by mail-wr1-f67.google.com with SMTP id v8so18596393wrt.2
+        for <linux-clk@vger.kernel.org>; Wed, 02 Oct 2019 01:31:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=L6SP0vqjKrW+FVAFxIiwO3RwzJwaNXeSjRExagYIpuM=;
+        b=W7fvN+Ky7UHVSbFx5n/tY6kfReYFnLnduYisWrWwJA2GBuuzWHwkROiiXrlun1H0SK
+         gaZJr7lTz5GZo/5RGO8r3724zPUgRBXSCCrtQRFUKCkAqRkkgQ9pQ0F+0zUuqMqvq/ct
+         AmXFvE/Lpgzx1JXJOaoNaffMGigI1hn4jaaQP0kHrbHhf848QcJJqdodYU4gKO3Zkpu+
+         5gtj2jdwV0iupHfuvqIJFFfecH+HH/v4cbEUf1M1owI2rEHrpQokiiO71pD/RO/nmGPK
+         o16hBWwnzbMLtx0g27ezvij4khkt+20EJBoayMXKTaILfLEvPxklyCkLZB6vfQHhdbmR
+         81Uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=L6SP0vqjKrW+FVAFxIiwO3RwzJwaNXeSjRExagYIpuM=;
+        b=gsEXn69JIEeKyGDJBKKl8FSm28EYX1vejzgrkHILCrD7T4eLWLbuIuaQMIKMP61Ip6
+         Wz3S5MvSbPs0v520txy59S8L0RLcLMIQjLl+1k3MY5X6GZPkK8FKZR0LMe8stwW6y7J7
+         cingA+amF4O+3zmOEZJregwTuPfuqY9wgyx7Xjnt6f+rZpAJJAggCLyIPFj+/w+BfOaf
+         /OZfxk7zOStodhSf9A6EztV9Dyue3CcUeBMk8AYLd5f9vTY0I7MXAIPIxPgFgQS+mdxn
+         l7QVoIi0vHrqPfhZ0HcAqy8MDjWQmc431rerzyzW75/LLo0/09NRL/M2CL0HPKo/3N3p
+         F9Hg==
+X-Gm-Message-State: APjAAAU74nvofchq69khs66mW1YXZYOpPP1eNiOMMar/zs4faN9H3zrq
+        UpcS8pWifiC7/qqYR6Jmbaa5pA==
+X-Google-Smtp-Source: APXvYqyeMcDgVfoQfkR6WdR0dH8rFRK/tUkB6hVm0yjtMO3SLWPRdnVVBKHJOSSLNw0AwxMLvfDVug==
+X-Received: by 2002:adf:eb42:: with SMTP id u2mr1635257wrn.307.1570005108065;
+        Wed, 02 Oct 2019 01:31:48 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id e6sm16712621wrp.91.2019.10.02.01.31.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 01:31:47 -0700 (PDT)
+References: <20191001174439.182435-1-sboyd@kernel.org>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Heiko Stuebner <heiko@sntech.de>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: Re: [PATCH] clk: Don't cache errors from clk_ops::get_phase()
+In-reply-to: <20191001174439.182435-1-sboyd@kernel.org>
+Date:   Wed, 02 Oct 2019 10:31:46 +0200
+Message-ID: <1jd0ffr1jh.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20190926104556.28716-1-peter.ujfalusi@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
+On Tue 01 Oct 2019 at 19:44, Stephen Boyd <sboyd@kernel.org> wrote:
 
-On 26/09/2019 13.45, Peter Ujfalusi wrote:
-> ti_clk_register() calls it already so the driver should not create
-> duplicated alias.
+> We don't check for errors from clk_ops::get_phase() before storing away
+> the result into the clk_core::phase member. This can lead to some fairly
+> confusing debugfs information if these ops do return an error. Let's
+> skip the store when this op fails to fix this. While we're here, move
+> the locking outside of clk_core_get_phase() to simplify callers from
+> the debugfs side.
 
-This patch will leave 'ret' as unused in of_dra7_atl_clock_setup(), I'll
-send v2 in a minute or so.
+Function already under the lock seem to be marked with  "_nolock"
+Maybe one should added for get_phase() ?
 
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Also the debugfs side calls clk_core_get_rate() and
+clk_core_get_accuracy(). Both are taking the prepare_lock.
+
+So I don't get why clk_get_phase() should do thing differently from the
+others, and not take the lock ?
+
+>
+> Cc: Douglas Anderson <dianders@chromium.org>
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> Cc: Jerome Brunet <jbrunet@baylibre.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  drivers/clk/ti/clk-dra7-atl.c | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-> index a01ca9395179..c0e0ee974151 100644
-> --- a/drivers/clk/ti/clk-dra7-atl.c
-> +++ b/drivers/clk/ti/clk-dra7-atl.c
-> @@ -207,11 +207,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
->  	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+>
+> Resending because I couldn't find this anywhere.
+>
+>  drivers/clk/clk.c | 44 +++++++++++++++++++++++++++++---------------
+>  1 file changed, 29 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 1c677d7f7f53..16add5626dfa 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -2640,14 +2640,14 @@ EXPORT_SYMBOL_GPL(clk_set_phase);
 >  
->  	if (!IS_ERR(clk)) {
-> -		ret = ti_clk_add_alias(NULL, clk, node->name);
-> -		if (ret) {
-> -			clk_unregister(clk);
-> -			goto cleanup;
-> -		}
->  		of_clk_add_provider(node, of_clk_src_simple_get, clk);
->  		kfree(parent_names);
->  		return;
-> 
+>  static int clk_core_get_phase(struct clk_core *core)
+>  {
+> -	int ret;
+> +	int ret = 0;
+>  
+> -	clk_prepare_lock();
+> +	lockdep_assert_held(&prepare_lock);
+>  	/* Always try to update cached phase if possible */
+>  	if (core->ops->get_phase)
+> -		core->phase = core->ops->get_phase(core->hw);
+> -	ret = core->phase;
+> -	clk_prepare_unlock();
+> +		ret = core->ops->get_phase(core->hw);
+> +	if (ret >= 0)
+> +		core->phase = ret;
+>  
+>  	return ret;
+>  }
+> @@ -2661,10 +2661,16 @@ static int clk_core_get_phase(struct clk_core *core)
+>   */
+>  int clk_get_phase(struct clk *clk)
+>  {
+> +	int ret;
+> +
+>  	if (!clk)
+>  		return 0;
+>  
+> -	return clk_core_get_phase(clk->core);
+> +	clk_prepare_unlock();
+> +	ret = clk_core_get_phase(clk->core);
+> +	clk_prepare_unlock();
+> +
+> +	return ret;
+>  }
+>  EXPORT_SYMBOL_GPL(clk_get_phase);
+>  
+> @@ -2878,13 +2884,21 @@ static struct hlist_head *orphan_list[] = {
+>  static void clk_summary_show_one(struct seq_file *s, struct clk_core *c,
+>  				 int level)
+>  {
+> -	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu %5d %6d\n",
+> +	int phase;
+> +
+> +	seq_printf(s, "%*s%-*s %7d %8d %8d %11lu %10lu ",
+>  		   level * 3 + 1, "",
+>  		   30 - level * 3, c->name,
+>  		   c->enable_count, c->prepare_count, c->protect_count,
+> -		   clk_core_get_rate(c), clk_core_get_accuracy(c),
+> -		   clk_core_get_phase(c),
+> -		   clk_core_get_scaled_duty_cycle(c, 100000));
+> +		   clk_core_get_rate(c), clk_core_get_accuracy(c));
+> +
+> +	phase = clk_core_get_phase(c);
+> +	if (phase >= 0)
+> +		seq_printf(s, "%5d", phase);
+> +	else
+> +		seq_puts(s, "-----");
+> +
+> +	seq_printf(s, " %6d\n", clk_core_get_scaled_duty_cycle(c, 100000));
+>  }
+>  
+>  static void clk_summary_show_subtree(struct seq_file *s, struct clk_core *c,
+> @@ -2921,6 +2935,7 @@ DEFINE_SHOW_ATTRIBUTE(clk_summary);
+>  
+>  static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+>  {
+> +	int phase;
+>  	unsigned long min_rate, max_rate;
+>  
+>  	clk_core_get_boundaries(c, &min_rate, &max_rate);
+> @@ -2934,7 +2949,9 @@ static void clk_dump_one(struct seq_file *s, struct clk_core *c, int level)
+>  	seq_printf(s, "\"min_rate\": %lu,", min_rate);
+>  	seq_printf(s, "\"max_rate\": %lu,", max_rate);
+>  	seq_printf(s, "\"accuracy\": %lu,", clk_core_get_accuracy(c));
+> -	seq_printf(s, "\"phase\": %d,", clk_core_get_phase(c));
+> +	phase = clk_core_get_phase(c);
+> +	if (phase >= 0)
+> +		seq_printf(s, "\"phase\": %d,", phase);
+>  	seq_printf(s, "\"duty_cycle\": %u",
+>  		   clk_core_get_scaled_duty_cycle(c, 100000));
+>  }
+> @@ -3349,10 +3366,7 @@ static int __clk_core_init(struct clk_core *core)
+>  	 * Since a phase is by definition relative to its parent, just
+>  	 * query the current clock phase, or just assume it's in phase.
+>  	 */
+> -	if (core->ops->get_phase)
+> -		core->phase = core->ops->get_phase(core->hw);
+> -	else
+> -		core->phase = 0;
+> +	clk_core_get_phase(core);
 
-- Péter
+Should the error be checked here as well ?
 
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+>  
+>  	/*
+>  	 * Set clk's duty cycle.
+
