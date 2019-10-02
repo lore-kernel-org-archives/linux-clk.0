@@ -5,107 +5,147 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9834C352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E30C352AA
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:53:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E8D206C0
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 576A62190F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:53:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ig5Wa0bH"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BVs5qQa4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726393AbfJBIdx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 04:33:53 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44090 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725919AbfJBIdx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 04:33:53 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x928XoTr028711;
-        Wed, 2 Oct 2019 03:33:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570005231;
-        bh=Lx0PqOkFZnRlGG1vEvlWMVTGc+q6HEDxj3c2tzG4bLs=;
-        h=From:To:CC:Subject:Date;
-        b=ig5Wa0bHgog0DDzmgvazjkSpYC2YGavFl4c7/gUGUm+KvhGYzcBkRcLAjsdv7QT3s
-         XarlGThelfpXo8AAGr5LNBimXDeqrh4mAysaOSmyybopAY2dOSZqnvLoOlsZ/tALI1
-         VJIi7fZSXLFVFT2NRXblKigV84Z6QvOiKpGQxdlk=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x928Xohi093820
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 2 Oct 2019 03:33:50 -0500
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
- 2019 03:33:50 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 2 Oct 2019 03:33:50 -0500
-Received: from feketebors.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x928Xlts014195;
-        Wed, 2 Oct 2019 03:33:48 -0500
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-To:     <t-kristo@ti.com>, <mturquette@baylibre.com>
-CC:     <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2] clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
-Date:   Wed, 2 Oct 2019 11:34:36 +0300
-Message-ID: <20191002083436.10194-1-peter.ujfalusi@ti.com>
-X-Mailer: git-send-email 2.23.0
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S1726399AbfJBIxY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 04:53:24 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:59693 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfJBIxX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 04:53:23 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191002085321euoutp027074e3b78efe04e53ea4c601856e1649~JyIEMwIu_1540315403euoutp02H
+        for <linux-clk@vger.kernel.org>; Wed,  2 Oct 2019 08:53:21 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191002085321euoutp027074e3b78efe04e53ea4c601856e1649~JyIEMwIu_1540315403euoutp02H
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1570006401;
+        bh=MnXaUYuEAohAtC2FHsIuzLDXlz81hjmPhN4i/nld/kc=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=BVs5qQa4NvplCV3bsy+zlzoJjQMzjgXppXQqGXt4XiWRYMttv8TYqhbUHZwSFe6Bm
+         uAo4ohHI5kuLYIn9yGU4h3tGilPvfHD6aZdvN28hBKG1N0PMDhWgEvSVaN/UTRuaxx
+         x3I0EjsfY1A84Gm1vFL8qTpEj4NZLv4Tk3y/CGcs=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191002085321eucas1p1add21893275cb5c088f68cea28a53b46~JyID8DAaq3021030210eucas1p1k;
+        Wed,  2 Oct 2019 08:53:21 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5B.AB.04374.185649D5; Wed,  2
+        Oct 2019 09:53:21 +0100 (BST)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234~JyIDhpCrq3164031640eucas1p2M;
+        Wed,  2 Oct 2019 08:53:20 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191002085320eusmtrp1b29df999c4aff39ebc3d455bdaad1fbe~JyIDg--2q2399823998eusmtrp1T;
+        Wed,  2 Oct 2019 08:53:20 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-50-5d9465815cfe
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5D.53.04117.085649D5; Wed,  2
+        Oct 2019 09:53:20 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191002085320eusmtip2dc968cf2ef2f25c29e6d19e5412542c5~JyIDHytO72990529905eusmtip21;
+        Wed,  2 Oct 2019 08:53:20 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] clk: samsung: exynos5433: Fix error paths
+Date:   Wed,  2 Oct 2019 10:53:09 +0200
+Message-Id: <20191002085309.9473-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsWy7djP87qNqVNiDW6sFbfYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbtH+9CWzA7vHplWdbB59W1YxenzeJBfAHMVlk5Kak1mW
+        WqRvl8CVcftbE2PBR+6Ks91bmBoYr3F2MXJySAiYSNzZspUFxBYSWMEocfhZbhcjF5D9hVFi
+        z5ddTBDOZ0aJ8/9Ps8B0rPs+lQUisZxRYnHvXna4ljs/b4FVsQkYSnS97WIDsUUEHCQ+f3rN
+        CFLELPCYUWLrya/MIAlhASuJtilfwRpYBFQlPr17zApi8wrYSFx438AKsU5eYvWGA8wgzRIC
+        R9gkDk6ZBZVwkXjz+DcbhC0s8er4FnYIW0bi9OQeFoiGZkaJh+fWskM4PYwSl5tmMEJUWUsc
+        Pn4RaBIH0E2aEut36UOEHSW2v/jEAhKWEOCTuPFWECTMDGRO2jadGSLMK9HRJgRRrSYx6/g6
+        uLUHL1xihrA9JJbPWscKCdRYiT+H21knMMrNQti1gJFxFaN4amlxbnpqsXFearlecWJucWle
+        ul5yfu4mRmDsn/53/OsOxn1/kg4xCnAwKvHw3giZHCvEmlhWXJl7iFGCg1lJhNfmz6RYId6U
+        xMqq1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYwCvSte8q5SPMcu
+        svvhHS63F90/cx+xRMxmSj3vf+vD5QfPjYSUn/1mD73awhnplmkh3WbKdSJaT2CvYUXFq4XW
+        pQePf59ya6JIrNuOT3P9uNw3TMydKX+6/Xz0Md44x5DgT2WyBU8WXFvUrXljvWmdAseCbZKf
+        hR8nF66d+7vkgUNG8yKPtItKLMUZiYZazEXFiQBmJ4uI+QIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xe7oNqVNiDY4fNrfYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbtH+9CWzA7vHplWdbB59W1YxenzeJBfAHKVnU5RfWpKq
+        kJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXcftbE2PBR+6Ks91b
+        mBoYr3F2MXJySAiYSKz7PpWli5GLQ0hgKaPEyelfmCASMhInpzWwQtjCEn+udbGB2EICnxgl
+        znaLg9hsAoYSXW8h4iICThIP1r1hBxnELPCUUeL6hkawZmEBK4m2KV9ZQGwWAVWJT+8eg8V5
+        BWwkLryHWSAvsXrDAeYJjDwLGBlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBAbctmM/t+xg
+        7HoXfIhRgINRiYe3IWhyrBBrYllxZe4hRgkOZiURXps/k2KFeFMSK6tSi/Lji0pzUosPMZoC
+        LZ/ILCWanA+MhrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYxb
+        PXJ+M6xucE/+3vHh2ml56adrbQv3pITy/NOzenZH5dBlLrF9AXaWihJ/lOJ2aLp+epY+d1Xv
+        1EXX9R4efFYiHbW+4+tvnXe3XGYpf16g/+u8+P9PZxtjWsRWnVMoalWNVTD7efLUo1XyD6WV
+        v2n2qE2x/rhnk2HSjFKe410tklNj5aTmVMkqsRRnJBpqMRcVJwIA2prboE4CAAA=
+X-CMS-MailID: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+References: <CGME20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ti_clk_register() calls it already so the driver should not create
-duplicated alias.
+Add checking the value returned by samsung_clk_alloc_reg_dump() and
+devm_kcalloc(). While fixing this, also release all gathered clocks.
 
-Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 ---
-Hi,
+ drivers/clk/samsung/clk-exynos5433.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
-changes since v1:
-- removed unused ret variable
-
-Regards,
-Peter
-
- drivers/clk/ti/clk-dra7-atl.c | 6 ------
- 1 file changed, 6 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index a01ca9395179..f65e16c4f3c4 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -174,7 +174,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 	struct clk_init_data init = { NULL };
- 	const char **parent_names = NULL;
- 	struct clk *clk;
--	int ret;
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 7824c2ba3d8e..0b60316331a0 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -5584,6 +5584,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
  
- 	clk_hw = kzalloc(sizeof(*clk_hw), GFP_KERNEL);
- 	if (!clk_hw) {
-@@ -207,11 +206,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
- 	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+ 	data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
+ 						    info->nr_clk_regs);
++	if (!data->clk_save)
++		return -ENOMEM;
+ 	data->nr_clk_save = info->nr_clk_regs;
+ 	data->clk_suspend = info->suspend_regs;
+ 	data->nr_clk_suspend = info->nr_suspend_regs;
+@@ -5592,12 +5594,19 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
+ 	if (data->nr_pclks > 0) {
+ 		data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
+ 					   data->nr_pclks, GFP_KERNEL);
+-
++		if (!data->pclks) {
++			kfree(data->clk_save);
++			return -ENOMEM;
++		}
+ 		for (i = 0; i < data->nr_pclks; i++) {
+ 			struct clk *clk = of_clk_get(dev->of_node, i);
  
- 	if (!IS_ERR(clk)) {
--		ret = ti_clk_add_alias(NULL, clk, node->name);
--		if (ret) {
--			clk_unregister(clk);
--			goto cleanup;
--		}
- 		of_clk_add_provider(node, of_clk_src_simple_get, clk);
- 		kfree(parent_names);
- 		return;
+-			if (IS_ERR(clk))
++			if (IS_ERR(clk)) {
++				kfree(data->clk_save);
++				while (--i >= 0)
++					clk_put(data->pclks[i]);
+ 				return PTR_ERR(clk);
++			}
+ 			data->pclks[i] = clk;
+ 		}
+ 	}
 -- 
-Peter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+2.17.1
 
