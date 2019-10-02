@@ -2,105 +2,90 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0816CC352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 14:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 543FBC35280
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 14:19:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE5D222BE
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 14:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 277CE21920
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 14:19:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570025955;
+	bh=YO5/ci08pbNc+U68W/o9vXyIVvCkSLO3nliD2CjKVFE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=g5MAR1Xm5kuiy9ErY9XDvpp2lsWUvAOdpL7UfFqygGVglddiXRuCq3QIVUWnadPqv
+	 P1YivAVkNboio9nwliBvrEnZekqYB/7GUDJ5sEtFsr4TNc70i25vdSP0g75ylh94Wh
+	 xa9IlMNW8XMZo9Krd1la6j2sE4PCjRfO4BDaMrPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727884AbfJBOFp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 10:05:45 -0400
-Received: from inva020.nxp.com ([92.121.34.13]:50364 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726373AbfJBOFo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Oct 2019 10:05:44 -0400
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A8D741A02D1;
-        Wed,  2 Oct 2019 16:05:41 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9B3E01A0048;
-        Wed,  2 Oct 2019 16:05:41 +0200 (CEST)
-Received: from fsr-ub1664-121.ea.freescale.net (fsr-ub1664-121.ea.freescale.net [10.171.82.171])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0FE102060C;
-        Wed,  2 Oct 2019 16:05:41 +0200 (CEST)
-From:   Laurentiu Palcu <laurentiu.palcu@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>
-Cc:     agx@sigxcpu.org, l.stach@pengutronix.de,
-        Laurentiu Palcu <laurentiu.palcu@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 1/5] clk: imx8mq: Add VIDEO2_PLL clock
-Date:   Wed,  2 Oct 2019 17:04:53 +0300
-Message-Id: <1570025100-5634-2-git-send-email-laurentiu.palcu@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
-References: <1570025100-5634-1-git-send-email-laurentiu.palcu@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1727264AbfJBOTO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 10:19:14 -0400
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:32927 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfJBOTO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 10:19:14 -0400
+Received: by mail-qt1-f194.google.com with SMTP id r5so26586502qtd.0;
+        Wed, 02 Oct 2019 07:19:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:from:to:cc:subject:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=kP7vzKS5Q2upGPJNgGMib8DMfY3IAcXtVKuvJsiJTIs=;
+        b=DFM+9xRdnR+HNmOVM+UrHsZOHOXMzBKY88h0SXBAe9f3pEArG8o4WfiJIMz3W0v5cP
+         AaDl29MyWEc1mIPPEnQS47MpilVyNtNIjLLWvAdJvSbW67mDlxkvoXkJYEmKnNhCBV17
+         d9iK6M+G56NvRs6Ix22Qo9S4TobcAObUQb8wYOONb1y93TeN/z42+ItExzoKi0MvCrgR
+         bpHH769+ecaPHxKVXOiKYuJzhGo+VisCWBwaWmumVb8kv5rpM7TXb7ZENhFlSua6H7VB
+         akReegfTC2Af6EJCWt/9aJwFfTHPIxNnt8AVdNXmiM6IwcL47aNmGFLtzH4JAcJ/tGOt
+         hhWw==
+X-Gm-Message-State: APjAAAVayxUGsL3TnNTLIAqYEcCuGeYRMaY2fuLbHk7/CeU3IVZSCaWZ
+        T0j2GYgdI+fdomdxa9uaBw==
+X-Google-Smtp-Source: APXvYqzPfzSmp7xskhCIvKOVtYhxyh8HfoSES/y1fgUMOyF0qc0thkfrFz5NQmijtp/ZM7tIotE0PQ==
+X-Received: by 2002:ac8:7b97:: with SMTP id p23mr4209487qtu.292.1570025953392;
+        Wed, 02 Oct 2019 07:19:13 -0700 (PDT)
+Received: from localhost ([132.205.230.8])
+        by smtp.gmail.com with ESMTPSA id h9sm10006638qke.12.2019.10.02.07.19.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 07:19:12 -0700 (PDT)
+Message-ID: <5d94b1e0.1c69fb81.4e2f9.3e79@mx.google.com>
+Date:   Wed, 02 Oct 2019 09:19:09 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     narmstrong@baylibre.com, jbrunet@baylibre.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-amlogic@lists.infradead.org,
+        devicetree@vger.kernel.org, khilman@baylibre.com,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: clock: meson8b: add the clock inputs
+References: <20190921151223.768842-1-martin.blumenstingl@googlemail.com>
+ <20190921151223.768842-2-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190921151223.768842-2-martin.blumenstingl@googlemail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This clock is needed by DCSS when high resolutions are used.
+On Sat, 21 Sep 2019 17:12:19 +0200, Martin Blumenstingl wrote:
+> The clock controller on Meson8/Meson8b/Meson8m2 has three (known)
+> inputs:
+> - "xtal": the main 24MHz crystal
+> - "ddr_pll": some of the audio clocks use the output of the DDR PLL as
+>   input
+> - "clk_32k": an optional clock signal which can be connected to GPIOAO_6
+>   (which then has to be switched to the CLK_32K_IN function)
+> 
+> Add the inputs to the documentation so we can wire up these inputs in a
+> follow-up patch.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  .../devicetree/bindings/clock/amlogic,meson8b-clkc.txt       | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
 
-Signed-off-by: Laurentiu Palcu <laurentiu.palcu@nxp.com>
-CC: Abel Vesa <abel.vesa@nxp.com>
----
- drivers/clk/imx/clk-imx8mq.c             | 4 ++++
- include/dt-bindings/clock/imx8mq-clock.h | 4 +++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
-index 41fc9c6..05ece7b 100644
---- a/drivers/clk/imx/clk-imx8mq.c
-+++ b/drivers/clk/imx/clk-imx8mq.c
-@@ -38,6 +38,7 @@ static const char * const sys1_pll_out_sels[] = {"sys1_pll1_ref_sel", };
- static const char * const sys2_pll_out_sels[] = {"sys1_pll1_ref_sel", "sys2_pll1_ref_sel", };
- static const char * const sys3_pll_out_sels[] = {"sys3_pll1_ref_sel", "sys2_pll1_ref_sel", };
- static const char * const dram_pll_out_sels[] = {"dram_pll1_ref_sel", };
-+static const char * const video2_pll_out_sels[] = {"video2_pll1_ref_sel", };
- 
- /* CCM ROOT */
- static const char * const imx8mq_a53_sels[] = {"osc_25m", "arm_pll_out", "sys2_pll_500m", "sys2_pll_1000m",
-@@ -311,6 +312,7 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clks[IMX8MQ_SYS2_PLL1_REF_SEL]	= imx_clk_mux("sys2_pll1_ref_sel", base + 0x3c, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
- 	clks[IMX8MQ_SYS3_PLL1_REF_SEL]	= imx_clk_mux("sys3_pll1_ref_sel", base + 0x48, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
- 	clks[IMX8MQ_DRAM_PLL1_REF_SEL]	= imx_clk_mux("dram_pll1_ref_sel", base + 0x60, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-+	clks[IMX8MQ_VIDEO2_PLL1_REF_SEL] = imx_clk_mux("video2_pll1_ref_sel", base + 0x54, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
- 
- 	clks[IMX8MQ_ARM_PLL_REF_DIV]	= imx_clk_divider("arm_pll_ref_div", "arm_pll_ref_sel", base + 0x28, 5, 6);
- 	clks[IMX8MQ_GPU_PLL_REF_DIV]	= imx_clk_divider("gpu_pll_ref_div", "gpu_pll_ref_sel", base + 0x18, 5, 6);
-@@ -346,6 +348,8 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
- 	clks[IMX8MQ_SYS2_PLL_OUT] = imx_clk_sccg_pll("sys2_pll_out", sys2_pll_out_sels, ARRAY_SIZE(sys2_pll_out_sels), 0, 0, 1, base + 0x3c, CLK_IS_CRITICAL);
- 	clks[IMX8MQ_SYS3_PLL_OUT] = imx_clk_sccg_pll("sys3_pll_out", sys3_pll_out_sels, ARRAY_SIZE(sys3_pll_out_sels), 0, 0, 1, base + 0x48, CLK_IS_CRITICAL);
- 	clks[IMX8MQ_DRAM_PLL_OUT] = imx_clk_sccg_pll("dram_pll_out", dram_pll_out_sels, ARRAY_SIZE(dram_pll_out_sels), 0, 0, 0, base + 0x60, CLK_IS_CRITICAL);
-+	clks[IMX8MQ_VIDEO2_PLL_OUT] = imx_clk_sccg_pll("video2_pll_out", video2_pll_out_sels, ARRAY_SIZE(video2_pll_out_sels), 0, 0, 0, base + 0x54, 0);
-+
- 	/* SYS PLL fixed output */
- 	clks[IMX8MQ_SYS1_PLL_40M] = imx_clk_fixed_factor("sys1_pll_40m", "sys1_pll_out", 1, 20);
- 	clks[IMX8MQ_SYS1_PLL_80M] = imx_clk_fixed_factor("sys1_pll_80m", "sys1_pll_out", 1, 10);
-diff --git a/include/dt-bindings/clock/imx8mq-clock.h b/include/dt-bindings/clock/imx8mq-clock.h
-index 6546367..35b9ed9 100644
---- a/include/dt-bindings/clock/imx8mq-clock.h
-+++ b/include/dt-bindings/clock/imx8mq-clock.h
-@@ -403,5 +403,7 @@
- #define IMX8MQ_CLK_SNVS_ROOT			264
- #define IMX8MQ_CLK_GIC				265
- 
--#define IMX8MQ_CLK_END				266
-+#define IMX8MQ_VIDEO2_PLL1_REF_SEL		266
-+
-+#define IMX8MQ_CLK_END				267
- #endif /* __DT_BINDINGS_CLOCK_IMX8MQ_H */
--- 
-2.7.4
+Reviewed-by: Rob Herring <robh@kernel.org>
 
