@@ -2,150 +2,98 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9E30C352AA
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A4D0C352AA
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 09:04:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 576A62190F
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:53:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48F462190F
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 09:04:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="BVs5qQa4"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nGMwtOVq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfJBIxY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 04:53:24 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:59693 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725852AbfJBIxX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 04:53:23 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191002085321euoutp027074e3b78efe04e53ea4c601856e1649~JyIEMwIu_1540315403euoutp02H
-        for <linux-clk@vger.kernel.org>; Wed,  2 Oct 2019 08:53:21 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191002085321euoutp027074e3b78efe04e53ea4c601856e1649~JyIEMwIu_1540315403euoutp02H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1570006401;
-        bh=MnXaUYuEAohAtC2FHsIuzLDXlz81hjmPhN4i/nld/kc=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=BVs5qQa4NvplCV3bsy+zlzoJjQMzjgXppXQqGXt4XiWRYMttv8TYqhbUHZwSFe6Bm
-         uAo4ohHI5kuLYIn9yGU4h3tGilPvfHD6aZdvN28hBKG1N0PMDhWgEvSVaN/UTRuaxx
-         x3I0EjsfY1A84Gm1vFL8qTpEj4NZLv4Tk3y/CGcs=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191002085321eucas1p1add21893275cb5c088f68cea28a53b46~JyID8DAaq3021030210eucas1p1k;
-        Wed,  2 Oct 2019 08:53:21 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 5B.AB.04374.185649D5; Wed,  2
-        Oct 2019 09:53:21 +0100 (BST)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234~JyIDhpCrq3164031640eucas1p2M;
-        Wed,  2 Oct 2019 08:53:20 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191002085320eusmtrp1b29df999c4aff39ebc3d455bdaad1fbe~JyIDg--2q2399823998eusmtrp1T;
-        Wed,  2 Oct 2019 08:53:20 +0000 (GMT)
-X-AuditID: cbfec7f5-4ddff70000001116-50-5d9465815cfe
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 5D.53.04117.085649D5; Wed,  2
-        Oct 2019 09:53:20 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191002085320eusmtip2dc968cf2ef2f25c29e6d19e5412542c5~JyIDHytO72990529905eusmtip21;
-        Wed,  2 Oct 2019 08:53:20 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] clk: samsung: exynos5433: Fix error paths
-Date:   Wed,  2 Oct 2019 10:53:09 +0200
-Message-Id: <20191002085309.9473-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGIsWRmVeSWpSXmKPExsWy7djP87qNqVNiDW6sFbfYOGM9q8X1L89Z
-        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbtH+9CWzA7vHplWdbB59W1YxenzeJBfAHMVlk5Kak1mW
-        WqRvl8CVcftbE2PBR+6Ks91bmBoYr3F2MXJySAiYSNzZspUFxBYSWMEocfhZbhcjF5D9hVFi
-        z5ddTBDOZ0aJ8/9Ps8B0rPs+lQUisZxRYnHvXna4ljs/b4FVsQkYSnS97WIDsUUEHCQ+f3rN
-        CFLELPCYUWLrya/MIAlhASuJtilfwRpYBFQlPr17zApi8wrYSFx438AKsU5eYvWGA8wgzRIC
-        R9gkDk6ZBZVwkXjz+DcbhC0s8er4FnYIW0bi9OQeFoiGZkaJh+fWskM4PYwSl5tmMEJUWUsc
-        Pn4RaBIH0E2aEut36UOEHSW2v/jEAhKWEOCTuPFWECTMDGRO2jadGSLMK9HRJgRRrSYx6/g6
-        uLUHL1xihrA9JJbPWscKCdRYiT+H21knMMrNQti1gJFxFaN4amlxbnpqsXFearlecWJucWle
-        ul5yfu4mRmDsn/53/OsOxn1/kg4xCnAwKvHw3giZHCvEmlhWXJl7iFGCg1lJhNfmz6RYId6U
-        xMqq1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYwCvSte8q5SPMcu
-        svvhHS63F90/cx+xRMxmSj3vf+vD5QfPjYSUn/1mD73awhnplmkh3WbKdSJaT2CvYUXFq4XW
-        pQePf59ya6JIrNuOT3P9uNw3TMydKX+6/Xz0Md44x5DgT2WyBU8WXFvUrXljvWmdAseCbZKf
-        hR8nF66d+7vkgUNG8yKPtItKLMUZiYZazEXFiQBmJ4uI+QIAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNLMWRmVeSWpSXmKPExsVy+t/xe7oNqVNiDY4fNrfYOGM9q8X1L89Z
-        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbtH+9CWzA7vHplWdbB59W1YxenzeJBfAHKVnU5RfWpKq
-        kJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXcftbE2PBR+6Ks91b
-        mBoYr3F2MXJySAiYSKz7PpWli5GLQ0hgKaPEyelfmCASMhInpzWwQtjCEn+udbGB2EICnxgl
-        znaLg9hsAoYSXW8h4iICThIP1r1hBxnELPCUUeL6hkawZmEBK4m2KV9ZQGwWAVWJT+8eg8V5
-        BWwkLryHWSAvsXrDAeYJjDwLGBlWMYqklhbnpucWG+kVJ+YWl+al6yXn525iBAbctmM/t+xg
-        7HoXfIhRgINRiYe3IWhyrBBrYllxZe4hRgkOZiURXps/k2KFeFMSK6tSi/Lji0pzUosPMZoC
-        LZ/ILCWanA+MhrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYxb
-        PXJ+M6xucE/+3vHh2ml56adrbQv3pITy/NOzenZH5dBlLrF9AXaWihJ/lOJ2aLp+epY+d1Xv
-        1EXX9R4efFYiHbW+4+tvnXe3XGYpf16g/+u8+P9PZxtjWsRWnVMoalWNVTD7efLUo1XyD6WV
-        v2n2qE2x/rhnk2HSjFKe410tklNj5aTmVMkqsRRnJBpqMRcVJwIA2prboE4CAAA=
-X-CMS-MailID: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
-References: <CGME20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234@eucas1p2.samsung.com>
+        id S1726002AbfJBJEs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 05:04:48 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:40906 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726038AbfJBJEs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 05:04:48 -0400
+Received: by mail-wm1-f68.google.com with SMTP id b24so6053243wmj.5
+        for <linux-clk@vger.kernel.org>; Wed, 02 Oct 2019 02:04:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=NUl5H/X55FwqiGWpQnEfkahJrpZC2qJ4sf7YHZbx+Mo=;
+        b=nGMwtOVq6c+feMh+KqdhlBh7+TRijtwX5wnIuxZmPu8W540zZ1Nu8EGAU0zrua3PbJ
+         uN5mrg0k9pe+ELk0VqDhYVlgKP+ftu2SC3CkuZJgqKmeswDdzIpbz5yZYBwcgEvuwoUP
+         TJoAyKXu6IVDGKAM3Ae5ENk9zZRqM/culu8SSruFe+JvgJmwuJmilpxk/bpxABGzF+5Z
+         WmOkRac2WtJwWKiAhV/qo74PCxN5yj1Bg4SP1cl1RACQpYkfu6HDPGoBLx+MZNWfLZoh
+         1zhU5jlyLsS+xVJMg8K2RthVgC/QfavM1mv5cPB2XmoDzjtPtGLKWOuxACh8syRH/0nZ
+         v2XQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=NUl5H/X55FwqiGWpQnEfkahJrpZC2qJ4sf7YHZbx+Mo=;
+        b=LhswFubl06AKbQmEJ+tO0agCAdGlXjJqzvFrnPUM3WjZCUMSSXekF76eQOryyYdg4m
+         rI3pp3Luphmf5AvCH6cUZZxJSNJ5UbbNNbyVZ/EGNLFkFcmFcaCv75R3AjVzfNaMpOuM
+         ZN5Knc9vMNVtw5Qe7IqKRrcqhS6jC9zqPvuzAy3TYJnUJWrvGFTEibn1nCqAO9j09nBX
+         aMwQHizBVZ9eec+axSG7vNimsMoqhCGM+d2Y/FbKxTM7cvglTFzn7G/v6KQApPUdlFkH
+         Zk6KVs/1fFbZJcinx1dh9EZSoYe8SEowY1LE94TONup06d38uzbNOqzN0msQynYnBD4Y
+         +k8g==
+X-Gm-Message-State: APjAAAUSh6z794mmqWlyXAjJR52fGj/Pqff7JV1unfBhUuBHOEZV2Dnj
+        5gIDURCzZdZuEsCmi8qYHTCY2g==
+X-Google-Smtp-Source: APXvYqxt+M7/70wLUwWopsHlywqqp7CNL3Dj65++dXEA9VyT5aKdfM9l9wqePVfd0PRNaGcjORzcnw==
+X-Received: by 2002:a1c:4d0d:: with SMTP id o13mr2017915wmh.19.1570007084692;
+        Wed, 02 Oct 2019 02:04:44 -0700 (PDT)
+Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id f186sm5961453wmg.21.2019.10.02.02.04.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 02 Oct 2019 02:04:43 -0700 (PDT)
+References: <20190921151835.770263-1-martin.blumenstingl@googlemail.com> <20190921151835.770263-3-martin.blumenstingl@googlemail.com> <1jftkcr3uy.fsf@starbuckisacylon.baylibre.com> <CAFBinCCED4YWYkdtrfrC80C8WLE=fyMJdjTa3wFNMJgC1OsoOA@mail.gmail.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        khilman@baylibre.com, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/6] clk: meson: add a driver for the Meson8/8b/8m2 DDR clock controller
+In-reply-to: <CAFBinCCED4YWYkdtrfrC80C8WLE=fyMJdjTa3wFNMJgC1OsoOA@mail.gmail.com>
+Date:   Wed, 02 Oct 2019 11:04:42 +0200
+Message-ID: <1jbluzr00l.fsf@starbuckisacylon.baylibre.com>
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add checking the value returned by samsung_clk_alloc_reg_dump() and
-devm_kcalloc(). While fixing this, also release all gathered clocks.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5433.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+On Tue 01 Oct 2019 at 20:53, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
-diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
-index 7824c2ba3d8e..0b60316331a0 100644
---- a/drivers/clk/samsung/clk-exynos5433.c
-+++ b/drivers/clk/samsung/clk-exynos5433.c
-@@ -5584,6 +5584,8 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
- 
- 	data->clk_save = samsung_clk_alloc_reg_dump(info->clk_regs,
- 						    info->nr_clk_regs);
-+	if (!data->clk_save)
-+		return -ENOMEM;
- 	data->nr_clk_save = info->nr_clk_regs;
- 	data->clk_suspend = info->suspend_regs;
- 	data->nr_clk_suspend = info->nr_suspend_regs;
-@@ -5592,12 +5594,19 @@ static int __init exynos5433_cmu_probe(struct platform_device *pdev)
- 	if (data->nr_pclks > 0) {
- 		data->pclks = devm_kcalloc(dev, sizeof(struct clk *),
- 					   data->nr_pclks, GFP_KERNEL);
--
-+		if (!data->pclks) {
-+			kfree(data->clk_save);
-+			return -ENOMEM;
-+		}
- 		for (i = 0; i < data->nr_pclks; i++) {
- 			struct clk *clk = of_clk_get(dev->of_node, i);
- 
--			if (IS_ERR(clk))
-+			if (IS_ERR(clk)) {
-+				kfree(data->clk_save);
-+				while (--i >= 0)
-+					clk_put(data->pclks[i]);
- 				return PTR_ERR(clk);
-+			}
- 			data->pclks[i] = clk;
- 		}
- 	}
--- 
-2.17.1
+>
+> [...]
+>> > +static struct clk_hw_onecell_data meson8_ddr_clk_hw_onecell_data = {
+>> > +     .hws = {
+>> > +             [DDR_CLKID_DDR_PLL_DCO]         = &meson8_ddr_pll_dco.hw,
+>> > +             [DDR_CLKID_DDR_PLL]             = &meson8_ddr_pll.hw,
+>>
+>> I wonder if onecell is not overkill for this driver. We won't expose the
+>> DCO, so only the post divider remains
+>>
+>> Do you expect this provider to have more than one leaf clock ?
+>> If not, maybe you could use of_clk_hw_simple_get() instead ?
+> there's some more clock bits in DDR_CLK_CNTL - the public A311D
+> datasheet has a description for these bits but I'm not sure they do
+> the same on Meson8/Meson8b/Meson8m2
+> all I know is that some magic bytes are written to DDR_CLK_CNTL in the
+> old u-boot code
+>
+> that's why I don't want to make any assumptions and play safe here (by
+> using a onecell clock provider)
 
+Understood. Let's keep onecell then.
