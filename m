@@ -2,107 +2,103 @@ Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F5EAC35280
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 06:06:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C54C352AA
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:21:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74E0321906
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 06:06:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1569996390;
-	bh=mrR8xebiuz9rTlfAOEfd7Sbt87fGTQ7Pn9IgS0HFSyY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JZzz01Bbs3APHhl5h1rzszIjT7fqiAO5YYLcHsJ+WVTZWT0PtISdzEVec3r01Dv6b
-	 VGUgi0XZ2vBgHXhudgIskm7rNV2P6aW55/HlMc2/NOplbFcHGB9T1++HrIpQnkm1pX
-	 9CxxFa/GvVt3QlljuPZxjyVtfO+GlEAwRTgSdZvU=
+	by mail.kernel.org (Postfix) with ESMTP id 7557921783
+	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 08:21:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Epb4N85u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727368AbfJBGGa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 02:06:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:48444 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbfJBGG3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 2 Oct 2019 02:06:29 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D285A215EA;
-        Wed,  2 Oct 2019 06:06:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1569996389;
-        bh=mrR8xebiuz9rTlfAOEfd7Sbt87fGTQ7Pn9IgS0HFSyY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=lFv7h78FZn9gJtdttxlXUBjMRibrhHSjJTUoCcx5i5lnY6MujyHv60z8JWd2Ipyge
-         LtDT7l64DdHrmIJIBMjbDrEodTxOgzKERcvSRicmE0PdFlNVlHxbvpW0/P0e2hBSwM
-         iXBac1sHKS53V4ln39KE9rT2lkVn7dugShF1I43Q=
-Date:   Wed, 2 Oct 2019 08:06:26 +0200
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Jernej Skrabec <jernej.skrabec@siol.net>
-Cc:     wens@csie.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: h6: Allow GPU to change parent rate
-Message-ID: <20191002060626.kd37juvhu3jlbxrp@gilmour>
-References: <20191001200656.730198-1-jernej.skrabec@siol.net>
+        id S1727690AbfJBIVM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 2 Oct 2019 04:21:12 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:56986 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726478AbfJBIVM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 04:21:12 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x928L9lT078479;
+        Wed, 2 Oct 2019 03:21:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570004469;
+        bh=q+RZ32osXQbS1Fp5eKtb7L/Lst0he1B/SFe77H778ro=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=Epb4N85u7RKv72gHS6tM48s7RQsjuyObBIhzDF3vTVRujm9ZFMCsyfU/Wyq6V3YM8
+         wxnGnEU57MjRF76aOztck/yq5En3rZOnvSwC3NO7smIEeXaArn1Lqc70Cq2Ey88frQ
+         /8rOsmkEbI2s12lVvZcjJXF6rJ8F/In6ClrpOUdc=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x928L9Fa064900;
+        Wed, 2 Oct 2019 03:21:09 -0500
+Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 2 Oct
+ 2019 03:21:08 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 2 Oct 2019 03:20:58 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x928L6fA075440;
+        Wed, 2 Oct 2019 03:21:07 -0500
+Subject: Re: [PATCH] clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+To:     <t-kristo@ti.com>, <mturquette@baylibre.com>
+CC:     <sboyd@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190926104556.28716-1-peter.ujfalusi@ti.com>
+Message-ID: <71d281e9-e834-6fb7-b16c-57500770aa54@ti.com>
+Date:   Wed, 2 Oct 2019 11:21:55 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="koys76tdgwpzy4oy"
-Content-Disposition: inline
-In-Reply-To: <20191001200656.730198-1-jernej.skrabec@siol.net>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190926104556.28716-1-peter.ujfalusi@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---koys76tdgwpzy4oy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 
-Hi,
+On 26/09/2019 13.45, Peter Ujfalusi wrote:
+> ti_clk_register() calls it already so the driver should not create
+> duplicated alias.
 
-On Tue, Oct 01, 2019 at 10:06:56PM +0200, Jernej Skrabec wrote:
-> GPU PLL was designed with dynamic frequency switching in mind so driver
-> can adjust rate based on the GPU load.
->
-> Allow GPU clock to change parent rate (GPU PLL is the only possible
-> parent of GPU clock).
->
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
+This patch will leave 'ret' as unused in of_dra7_atl_clock_setup(), I'll
+send v2 in a minute or so.
+
+> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 > ---
->  drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> index d89353a3cdec..e254c06c8621 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-> @@ -290,7 +290,7 @@ static SUNXI_CCU_M_WITH_MUX_GATE(gpu_clk, "gpu", gpu_parents, 0x670,
->  				       0, 3,	/* M */
->  				       24, 1,	/* mux */
->  				       BIT(31),	/* gate */
-> -				       0);
-> +				       CLK_SET_RATE_PARENT);
->
->  static SUNXI_CCU_GATE(bus_gpu_clk, "bus-gpu", "psi-ahb1-ahb2",
->  		      0x67c, BIT(0), 0);
+>  drivers/clk/ti/clk-dra7-atl.c | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
+> index a01ca9395179..c0e0ee974151 100644
+> --- a/drivers/clk/ti/clk-dra7-atl.c
+> +++ b/drivers/clk/ti/clk-dra7-atl.c
+> @@ -207,11 +207,6 @@ static void __init of_dra7_atl_clock_setup(struct device_node *node)
+>  	clk = ti_clk_register(NULL, &clk_hw->hw, node->name);
+>  
+>  	if (!IS_ERR(clk)) {
+> -		ret = ti_clk_add_alias(NULL, clk, node->name);
+> -		if (ret) {
+> -			clk_unregister(clk);
+> -			goto cleanup;
+> -		}
+>  		of_clk_add_provider(node, of_clk_src_simple_get, clk);
+>  		kfree(parent_names);
+>  		return;
+> 
 
-Applied, thanks!
-Maxime
+- Péter
 
---koys76tdgwpzy4oy
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXZQ+YgAKCRDj7w1vZxhR
-xWXAAQCx7lXrCQV8wI7Ez5oXy+i4MIWGIqE/gik3AIuhe8Yy6gEAjojC/6WxQno2
-IjkWiZ4VGFrkyIK8BuYE1IuDsPHSpQ8=
-=k/gb
------END PGP SIGNATURE-----
-
---koys76tdgwpzy4oy--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
