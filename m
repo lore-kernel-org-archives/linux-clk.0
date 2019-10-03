@@ -1,111 +1,164 @@
-Return-Path: <SRS0=ekiN=X3=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=L6e3=X4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73415C4360C
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 20:59:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE5FEC10F14
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 10:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E4C42070B
-	for <linux-clk@archiver.kernel.org>; Wed,  2 Oct 2019 20:59:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C2DDF2133F
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 10:01:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hq/EKDlV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbfJBU7G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 2 Oct 2019 16:59:06 -0400
-Received: from avon.wwwdotorg.org ([104.237.132.123]:44250 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728495AbfJBU7G (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 2 Oct 2019 16:59:06 -0400
-Received: from [10.20.204.51] (unknown [216.228.112.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id D9A9C1C00ED;
-        Wed,  2 Oct 2019 14:59:03 -0600 (MDT)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
-Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20191001211346.104400-1-swarren@wwwdotorg.org>
- <20191002110454.GJ3716706@ulmo>
-From:   Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <6a48d716-2312-4623-f47a-a53ac2ece83c@wwwdotorg.org>
-Date:   Wed, 2 Oct 2019 14:59:03 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1729606AbfJCKBl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Oct 2019 06:01:41 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:45764 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729553AbfJCKBk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Oct 2019 06:01:40 -0400
+Received: by mail-vs1-f65.google.com with SMTP id d204so1258389vsc.12
+        for <linux-clk@vger.kernel.org>; Thu, 03 Oct 2019 03:01:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6B+E5RivcC5owz7oFA9AYi1iwjoiCE7P7xcMi6UgLa0=;
+        b=hq/EKDlVT66/mmZ8X58aU7DGkBtQoN38XbVyMTmedpHFhNBWSXRua2vJ8cs7mp0mXW
+         TuFkXknq5YLy2qnKHYeEUDrqQg4f9De83VAASuIknveh1oV7kMa+kUGD6Pjh5Mf+l3ai
+         0yG+gbXTjTu+xTj2AHaNQ54Ga5TBXI9v7l4CGR0xH23+KFgFwUzqN3EopiOH0ws4wrge
+         lfigp/bs/NBuqwTWgcnwhrmB2VydJvzv9MXxC7OzhNL0JEdwf241/HE7pusy+9qgoWQP
+         zOgNV8kWFOmDsqTzeSHfQkTbZ/B0NkUO/ywFMB0Lwoi3daYmW1bZGkXDEMJ3lm7jLZZ0
+         vIpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6B+E5RivcC5owz7oFA9AYi1iwjoiCE7P7xcMi6UgLa0=;
+        b=UlZjXTRmVmxkaRICAjEFkdd2nKlWl5REqYOcmZ2d2s/RRBnfaEqAl6bZDXayFIf41G
+         BaFFspYrnXnQcl6QQGEy9jQ/pFMpGwmlMwK+vx8YlswlPtVVxkTu5wGCQ3VHWzREwuP7
+         eRx7j0+MHBfoiBF6g/rvWioiA0hiVTzVZB+Bz7uZhk2mjRTp4EEzX5e8Assso9ftw6kM
+         zMU2t25RGnoQJI12l9urp/yQAA3OTqPxMxE8o0BzBxFQxHrWOx7G05+08okSdzkegQjr
+         GVV144BmCHsWJXlGK5RpYjN1p3sJthlZqstmieyCv8P1OFhFbqpqBrddQBN3tbLioqZi
+         114w==
+X-Gm-Message-State: APjAAAVJuY8Qm6rizazbHZJ6XM6BMd8wUn3YkRVJEqFqqkaa3+Sl4K/6
+        zpFswzqYhdokJZ+8i1RyWoQYzC0c67n7CDyFLo43jw==
+X-Google-Smtp-Source: APXvYqzlwi4amB7UdX5f2PKpwQatyFRQoBhnTFgxEQxEattFx/iQqKHcqAKAacBmYgLaUplhc/Bvnw0AfD5cC3bxSNI=
+X-Received: by 2002:a67:eb84:: with SMTP id e4mr4472823vso.165.1570096899417;
+ Thu, 03 Oct 2019 03:01:39 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191002110454.GJ3716706@ulmo>
-Content-Type: text/plain; charset=windows-1252; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org> <20190916154546.24982-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190916154546.24982-3-manivannan.sadhasivam@linaro.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Thu, 3 Oct 2019 12:01:03 +0200
+Message-ID: <CAPDyKFo3+uAYr-j_qmBMeqO9TsY8PFv2J0kzAi56LYWe+E-o9w@mail.gmail.com>
+Subject: Re: [PATCH v4 2/7] dt-bindings: mmc: Add Actions Semi SD/MMC/SDIO
+ controller binding
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, thomas.liau@actions-semi.com,
+        linux-actions@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/2/19 5:04 AM, Thierry Reding wrote:
-> On Tue, Oct 01, 2019 at 03:13:43PM -0600, Stephen Warren wrote:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> For a little over a year, U-Boot has configured the flow controller to
->> perform automatic RAM re-repair on off->on power transitions of the CPU
->> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
->> re-repair relies on certain clocks, which the kernel must enable and
->> leave running. The fuse clock is one of those clocks. Enable this clock
->> so that LP1 power mode (system suspend) operates correctly.
->>
->> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
->>
->> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-tegra124.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
->> index 0224fdc4766f..f53f6315c646 100644
->> --- a/drivers/clk/tegra/clk-tegra124.c
->> +++ b/drivers/clk/tegra/clk-tegra124.c
->> @@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
->>   };
->>   
->>   static struct tegra_clk_init_table tegra124_init_table[] __initdata = {
->> +	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
-> 
-> I think the correct way to do this these days is to mark the clock as
-> CRITICAL. Not sure if there's an easy way to do that given that the
-> clock init table doesn't allow storing flags.
-> 
-> Do you have any good ideas on how to achieve this with the critical flag
-> instead of forcing the refcount to 1?
-> 
-> Perhaps something like the below would work?
- > ...
+On Mon, 16 Sep 2019 at 17:46, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Add devicetree YAML binding for Actions Semi Owl SoC's SD/MMC/SDIO
+> controller.
+>
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-The following works for me; does this seem like a reasonable approach? 
-It does set the critical flag for all SoCs, including any that don't 
-require RAM re-repair. I'm not sure which do; I know it's more than just 
-Tegra124, but I'm not sure how far back/forward the requirement goes.
+Applied for next, thanks!
 
-> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
-> index 1ed85f120a1b..76dd91eebd13 100644
-> --- a/drivers/clk/tegra/clk-tegra-periph.c
-> +++ b/drivers/clk/tegra/clk-tegra-periph.c
-> @@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
->         GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
->         GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
->         GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
-> -       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
-> +       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
->         GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
->         GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
->         GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
+Kind regards
+Uffe
+
+
+> ---
+>  .../devicetree/bindings/mmc/owl-mmc.yaml      | 59 +++++++++++++++++++
+>  1 file changed, 59 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mmc/owl-mmc.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/mmc/owl-mmc.yaml b/Documentation/devicetree/bindings/mmc/owl-mmc.yaml
+> new file mode 100644
+> index 000000000000..12b40213426d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mmc/owl-mmc.yaml
+> @@ -0,0 +1,59 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mmc/owl-mmc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Actions Semi Owl SoCs SD/MMC/SDIO controller
+> +
+> +allOf:
+> +  - $ref: "mmc-controller.yaml"
+> +
+> +maintainers:
+> +  - Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> +
+> +properties:
+> +  compatible:
+> +    const: actions,owl-mmc
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 1
+> +
+> +  resets:
+> +    maxItems: 1
+> +
+> +  dmas:
+> +    maxItems: 1
+> +
+> +  dma-names:
+> +    const: mmc
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - resets
+> +  - dmas
+> +  - dma-names
+> +
+> +examples:
+> +  - |
+> +    mmc0: mmc@e0330000 {
+> +        compatible = "actions,owl-mmc";
+> +        reg = <0x0 0xe0330000 0x0 0x4000>;
+> +        interrupts = <0 42 4>;
+> +        clocks = <&cmu 56>;
+> +        resets = <&cmu 23>;
+> +        dmas = <&dma 2>;
+> +        dma-names = "mmc";
+> +        bus-width = <4>;
+> +    };
+> +
+> +...
+> --
+> 2.17.1
+>
