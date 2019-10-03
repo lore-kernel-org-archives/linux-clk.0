@@ -8,55 +8,55 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A94C10F14
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 11:23:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC70C10F14
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 11:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A28420673
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 11:23:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D62D2070B
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 11:28:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CqfXBRSa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pfqPTuJm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729936AbfJCLXV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Oct 2019 07:23:21 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40265 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729870AbfJCLXV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Oct 2019 07:23:21 -0400
-Received: by mail-lf1-f68.google.com with SMTP id d17so1525799lfa.7;
-        Thu, 03 Oct 2019 04:23:19 -0700 (PDT)
+        id S1730031AbfJCL2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Oct 2019 07:28:01 -0400
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40714 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729891AbfJCL2B (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Oct 2019 07:28:01 -0400
+Received: by mail-lf1-f65.google.com with SMTP id d17so1536604lfa.7;
+        Thu, 03 Oct 2019 04:27:59 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=YxgRbJvKRqdXZCKgx4otJFPYIVJvaWckk0e2/WgsOjc=;
-        b=CqfXBRSaXxDre5rZG+6MS/6NUrFKX9khISEfHKxI88YJTBTJ/TvtsaqiLoMZgumVAz
-         OxQlmshzwIaKNwT8+5FbKkC5gIu7SsHVKRfq6/dkfekwJQBh8El1hoNHBAJCSJBeIh4Y
-         xv9hKgT6iV26BXMXtB75+y5ajZWur6BVq5fPhRXINVmubHjAgEO7IYCJfJdTqmKybwP0
-         INTyYsBxGvJmNSWsfleI75jgX7XThcHfI97oDgA2XxemthrvvsVHpf0TJRhERkKX97ia
-         AbR5iGbrvfwlI7quiE64pMUQkMBlCjov3ka/UNwh5yX9krYouzbE2sXni8horOEQtdoM
-         uhUw==
+        bh=DX8a7Wlt/Jyh2iSwaP1Iud+IQGHxDyI7SdlcgZ9JV7Y=;
+        b=pfqPTuJmFynvCqEI3kn+T5pWyCZffPTOYirFNHFp0FbLKRR+DK3QmmtLKlMpDrUPPd
+         xDHTetajrPgm4b4CMV68RYsM8qSAC49VSKGhj1fydy3VhTMYDaVVOBfLgAg3wuEA6gfZ
+         K0UD09GaX5UFcOr2cWAmRqirvAgq2N2mVTtby678jD4Hp9E8bSshqX2zEnBoIfL/bdPg
+         xPV2gDDNbCOE8FVjwq/1rhKsa5fsGsbL/Vb9JQ0H4xtvy3oEX1d/cKvHUv0NF2SAUZiZ
+         j4SvyvLd/8+fve1rVEtIW5nvsZesjmZi9KeYZdSRLx3nn6z0tnm1O7H+ElwoA+C/se4l
+         4cUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=YxgRbJvKRqdXZCKgx4otJFPYIVJvaWckk0e2/WgsOjc=;
-        b=K+8lLo1s8+X6B+oXm/PHw6ImiW/dszCXhZeZDPy5ShNZr+1GEO0hyWLzKGI3s2TUy7
-         dXAghrnqegiaQMZU8i2lJruvoaG21NHdQqmfRBSXknopCm0Rj0wyYqit+gGl6uckS5vS
-         KsFThk52ZwQ0IR83Sh4K1EhIZhY10JnseDTbPQDd8MkQxZFL6zbps4huzLgyh5uBe9R8
-         wdqhq4kwAYV5gIYzu0mhNj0YIVfrMSsIck4zWDF6QzPd9rlCfBzW+AQ9Sb8TDvgJQE0k
-         enejBWsvfNDS8uBWj48G08jVUkcvkPlH9Kk9ns2yJRDuQwZCHqit2LbaiUWCmHWtCCal
-         J+5w==
-X-Gm-Message-State: APjAAAXX7gux11caFuljMWfNNho+XbW0PyrOVvmo+muXOj/JrYoW2VgB
-        u7R1SUQVqNBjw7q58Ubgs4z4fi4/
-X-Google-Smtp-Source: APXvYqxw9T8acyhKN7toM+boOABCJRsj3U33cLAZP8AUTXsQQBL5YfgkbLNN1I8BxY63Q0K8D8uz9w==
-X-Received: by 2002:ac2:51ce:: with SMTP id u14mr5022429lfm.72.1570101799169;
-        Thu, 03 Oct 2019 04:23:19 -0700 (PDT)
+        bh=DX8a7Wlt/Jyh2iSwaP1Iud+IQGHxDyI7SdlcgZ9JV7Y=;
+        b=OZOGJ6jnAlTHGR7pKVofjxt+K6rHuta0yrKgWAol/rAp3VhDFzvxjoQjHjkwjEO9DO
+         K8uhq6Vsi787TuiaTLubqP/mE9/a2O4EYSEBHLRv3b41I+LEjmie6V0qw7bbUTdDcbAl
+         k/tlNpzUw2mU/6R6GXfbZeNSdmFaShr2N3r0q76FTjH7QPbCy5s5XaYJKoXzb62s5nr9
+         PSNY9AHv17z+nxCNocFM5YPIgfXXH97MUKmTgrKw5lhPocTozaznqSIj1YlLvsZmG/bG
+         7/2lgExbhluAEbt2/WgeYa3DeWl8TqZw9nVRcMck1gzNxc9ECS6mxp9yrRpk7ruildqC
+         yGew==
+X-Gm-Message-State: APjAAAVib4MBsGzB5Q9jFCtDV9FJDAqg4CUocoLmHRHf4NXfy0WmES5q
+        to4XtxpQayRNrIcZ3orNtO4=
+X-Google-Smtp-Source: APXvYqxCzTx3UVy7LuF2MGP2yfgdzHfJL60X+llcTt9cRqi0W6LnmbkFaXU0eI545HYjmvDNlGYALQ==
+X-Received: by 2002:ac2:43b8:: with SMTP id t24mr3801098lfl.24.1570102079035;
+        Thu, 03 Oct 2019 04:27:59 -0700 (PDT)
 Received: from [192.168.2.145] ([94.29.34.231])
-        by smtp.googlemail.com with ESMTPSA id h3sm484353ljf.12.2019.10.03.04.23.17
+        by smtp.googlemail.com with ESMTPSA id q19sm466598ljj.73.2019.10.03.04.27.57
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 03 Oct 2019 04:23:18 -0700 (PDT)
-Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
+        Thu, 03 Oct 2019 04:27:58 -0700 (PDT)
+Subject: Re: [PATCH 2/4] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
 To:     Stephen Warren <swarren@wwwdotorg.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -66,13 +66,14 @@ Cc:     Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
 References: <20191001211346.104400-1-swarren@wwwdotorg.org>
+ <20191001211346.104400-2-swarren@wwwdotorg.org>
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <7f8934d9-8192-f88e-a329-630209d42a85@gmail.com>
-Date:   Thu, 3 Oct 2019 14:23:17 +0300
+Message-ID: <437f030b-9e20-43e5-42ce-f98430d2149b@gmail.com>
+Date:   Thu, 3 Oct 2019 14:27:57 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <20191001211346.104400-1-swarren@wwwdotorg.org>
+In-Reply-To: <20191001211346.104400-2-swarren@wwwdotorg.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -88,8 +89,22 @@ X-Mailing-List: linux-clk@vger.kernel.org
 > perform automatic RAM re-repair on off->on power transitions of the CPU
 > rail1]. This is mandatory for correct operation of Tegra124. However, RAM
 > re-repair relies on certain clocks, which the kernel must enable and
-> leave running. The fuse clock is one of those clocks. Enable this clock
-> so that LP1 power mode (system suspend) operates correctly.
+> leave running. PLLP is one of those clocks. This clock is shut down
+> during LP1 in order to save power. Enable bypass (which I believe routes
+> osc_div_clk, essentially the crystal clock, to the PLL output) so that
+> this clock signal toggles even though the PLL is not active. This is
+> required so that LP1 power mode (system suspend) operates correctly.
+> 
+> The bypass configuration must then be undone when resuming from LP1, so
+> that all peripheral clocks run at the expected rate. Without this, many
+> peripherals won't work correctly; for example, the UART baud rate would
+> be incorrect.
+> 
+> NVIDIA's downstream kernel code only does this if not compiled for
+> Tegra30, so the added code is made conditional upon the chip ID. NVIDIA's
+> downstream code makes this change conditional upon the active CPU
+> cluster. The upstream kernel currently doesn't support cluster switching,
+> so this patch doesn't test the active CPU cluster ID.
 > 
 > [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
 > 
@@ -97,27 +112,41 @@ X-Mailing-List: linux-clk@vger.kernel.org
 > Cc: stable@vger.kernel.org
 > Signed-off-by: Stephen Warren <swarren@nvidia.com>
 > ---
->  drivers/clk/tegra/clk-tegra124.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm/mach-tegra/sleep-tegra30.S | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
 > 
-> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
-> index 0224fdc4766f..f53f6315c646 100644
-> --- a/drivers/clk/tegra/clk-tegra124.c
-> +++ b/drivers/clk/tegra/clk-tegra124.c
-> @@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
->  };
+> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
+> index b408fa56eb89..6922dd8d3e2d 100644
+> --- a/arch/arm/mach-tegra/sleep-tegra30.S
+> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
+> @@ -370,6 +370,14 @@ _pll_m_c_x_done:
+>  	pll_locked r1, r0, CLK_RESET_PLLC_BASE
+>  	pll_locked r1, r0, CLK_RESET_PLLX_BASE
 >  
->  static struct tegra_clk_init_table tegra124_init_table[] __initdata = {
-> +	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
->  	{ TEGRA124_CLK_SOC_THERM, TEGRA124_CLK_PLL_P, 51000000, 0 },
->  	{ TEGRA124_CLK_CCLK_G, TEGRA124_CLK_CLK_MAX, 0, 1 },
->  	{ TEGRA124_CLK_HDA, TEGRA124_CLK_PLL_P, 102000000, 0 },
+> +	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
+> +	cmp	r1, #TEGRA30
+> +	beq	1f
+
+What about T114, or does it need enabled PLLP as well?
+
+> +	ldr	r1, [r0, #CLK_RESET_PLLP_BASE]
+> +	bic	r1, r1, #(1<<31)	@ disable PllP bypass
+> +	str	r1, [r0, #CLK_RESET_PLLP_BASE]
+> +1:
+> +
+>  	mov32	r7, TEGRA_TMRUS_BASE
+>  	ldr	r1, [r7]
+>  	add	r1, r1, #LOCK_DELAY
+> @@ -630,7 +638,10 @@ tegra30_switch_cpu_to_clk32k:
+>  	str	r0, [r4, #PMC_PLLP_WB0_OVERRIDE]
+>  
+>  	/* disable PLLP, PLLA, PLLC and PLLX */
+> +	tegra_get_soc_id TEGRA_APB_MISC_BASE, r1
+> +	cmp	r1, #TEGRA30
+>  	ldr	r0, [r5, #CLK_RESET_PLLP_BASE]
+> +	orrne	r0, r0, #(1 << 31)	@ enable PllP bypass on fast cluster
+>  	bic	r0, r0, #(1 << 30)
+>  	str	r0, [r5, #CLK_RESET_PLLP_BASE]
+>  	ldr	r0, [r5, #CLK_RESET_PLLA_BASE]
 > 
 
-Hello Stephen,
-
-Does this mean that devices which are using older U-Boot version were always in a trouble?
-It sounds to me that the RAM re-repair should be also enabled by the kernel's flow
-controller driver in a case if bootloader did not enable it.
-If enabling RAM re-repair is a change that won't be easily backportable to stable kernels,
-then may be it's worth to simply force-disable LP1 on T124 for the older kernels.
