@@ -2,79 +2,85 @@ Return-Path: <SRS0=L6e3=X4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A820EC10F14
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 18:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA5FEC4CED1
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 20:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8137E2133F
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 18:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570126435;
-	bh=OEFcG8Srhv/ZYjCll5MhUaVrXvpLIbrBCRSqjpiiIA8=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=jD9jCqPbBtUU92rvozlDcblcgr/u6TMw/yZxFZqmQWNGbI0587MiE+PbWTcgCAdAT
-	 3wxeVaZZyeTN+JyJhg12V5ghdFKqbT03Hm9CbUT5rwpmOLrFHTCOxA9KKFldo6hFvB
-	 N8gDDHE615Wl9DXZju2ngjGUV0FPprvCkNFmq20w=
+	by mail.kernel.org (Postfix) with ESMTP id C61CE20862
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 20:18:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732841AbfJCSNz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Oct 2019 14:13:55 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36386 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732618AbfJCSNy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 3 Oct 2019 14:13:54 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2388503AbfJCUSp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Oct 2019 16:18:45 -0400
+Received: from avon.wwwdotorg.org ([104.237.132.123]:50252 "EHLO
+        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388499AbfJCUSp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Oct 2019 16:18:45 -0400
+Received: from swarren-lx1.nvidia.com (unknown [216.228.112.24])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 304B520862;
-        Thu,  3 Oct 2019 18:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570126434;
-        bh=OEFcG8Srhv/ZYjCll5MhUaVrXvpLIbrBCRSqjpiiIA8=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=sUPn/ARNFZqfClXLICHZK6NPr0REdXEB476kJ0611ANUQHt9gL40z9v8L14djPWn+
-         izGkbv1jIE8yRn8xIzhu7FDNm+RXop7VmOFFBOFSZDFQNrj2tNykzR6ZueyWoR3+/O
-         4xS6sxAYfdZJYGfydjpeOhAQcPHkDi9YExTXxzY4=
-Content-Type: text/plain; charset="utf-8"
+        by avon.wwwdotorg.org (Postfix) with ESMTPSA id DD6FB1C0728;
+        Thu,  3 Oct 2019 14:18:43 -0600 (MDT)
+X-Virus-Status: Clean
+X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
+From:   Stephen Warren <swarren@wwwdotorg.org>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH V2 1/4] clk: tegra: mark fuse clock as critical
+Date:   Thu,  3 Oct 2019 14:18:34 -0600
+Message-Id: <20191003201837.86824-1-swarren@wwwdotorg.org>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1569553244-3165-5-git-send-email-zhangqing@rock-chips.com>
-References: <1569553244-3165-1-git-send-email-zhangqing@rock-chips.com> <1569553244-3165-5-git-send-email-zhangqing@rock-chips.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Elaine Zhang <zhangqing@rock-chips.com>, heiko@sntech.de
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-        xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
-        Elaine Zhang <zhangqing@rock-chips.com>
-Subject: Re: [PATCH v3 4/5] clk: rockchip: add pll up and down when change pll freq
-User-Agent: alot/0.8.1
-Date:   Thu, 03 Oct 2019 11:13:53 -0700
-Message-Id: <20191003181354.304B520862@mail.kernel.org>
+X-NVConfidentiality: public
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Elaine Zhang (2019-09-26 20:00:43)
-> set pll sequence:
->         ->set pll to slow mode or other plls
->         ->set pll down
->         ->set pll params
->         ->set pll up
->         ->wait pll lock status
->         ->set pll to normal mode
->=20
-> To slove the system error:
+From: Stephen Warren <swarren@nvidia.com>
 
-solve?
+For a little over a year, U-Boot on Tegra124 has configured the flow
+controller to perform automatic RAM re-repair on off->on power transitions
+of the CPU rail1]. This is mandatory for correct operation of Tegra124.
+However, RAM re-repair relies on certain clocks, which the kernel must
+enable and leave running. The fuse clock is one of those clocks. Mark this
+clock as critical so that LP1 power mode (system suspend) operates
+correctly.
 
-> wait_pll_lock: timeout waiting for pll to lock
-> pll_set_params: pll update unsucessful,
->                 trying to restore old params
->=20
+[1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
 
-This commit text needs help. It looks like pseudo-code.
+Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Stephen Warren <swarren@nvidia.com>
+---
+v2: Set CRITICAL flag on the clock, rather than enabling it in
+tegra124_init_table[].
+---
+ drivers/clk/tegra/clk-tegra-periph.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
+index 1ed85f120a1b..76dd91eebd13 100644
+--- a/drivers/clk/tegra/clk-tegra-periph.c
++++ b/drivers/clk/tegra/clk-tegra-periph.c
+@@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
+ 	GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
+ 	GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
+ 	GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
+-	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
++	GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
+ 	GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
+ 	GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
+ 	GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
+-- 
+2.23.0
 
