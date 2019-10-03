@@ -2,105 +2,164 @@ Return-Path: <SRS0=L6e3=X4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBFBDC32792
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 17:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AAD1C10F14
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 17:21:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC36020673
-	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 17:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF78420830
+	for <linux-clk@archiver.kernel.org>; Thu,  3 Oct 2019 17:21:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HQAEmXF/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389804AbfJCRNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 3 Oct 2019 13:13:25 -0400
-Received: from avon.wwwdotorg.org ([104.237.132.123]:47840 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390424AbfJCQ2v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Oct 2019 12:28:51 -0400
-Received: from [10.20.204.51] (unknown [216.228.112.24])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 2E1E51C0162;
-        Thu,  3 Oct 2019 10:28:50 -0600 (MDT)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
-Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-References: <20191001211346.104400-1-swarren@wwwdotorg.org>
- <7f8934d9-8192-f88e-a329-630209d42a85@gmail.com>
-From:   Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <9e192a8a-8129-0fd7-9041-047b436ef848@wwwdotorg.org>
-Date:   Thu, 3 Oct 2019 10:28:49 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S2388393AbfJCQRX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 3 Oct 2019 12:17:23 -0400
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44688 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389205AbfJCQRW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 3 Oct 2019 12:17:22 -0400
+Received: by mail-pl1-f195.google.com with SMTP id q15so1732352pll.11
+        for <linux-clk@vger.kernel.org>; Thu, 03 Oct 2019 09:17:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=woKsN5Nvj3edIiL1mnog+HJwItqLGqoGggibhx+prXM=;
+        b=HQAEmXF/vteXHA3wUvUvKzh5HoSg9S0QmvBoKuxVYXBOPyOwnLQNu0ojnI9ENc9Ztm
+         oAl2oYSCkpNYvvNGLiZ2CYkYN5JmMbMcg+/63PFwNIF4bZyDwf6qxUrYGJNtUBybwSNp
+         GW3/LiHFDHlufv8dYKPbMAMdI1yvxWVf3wRmh57d6KmDrIYklelTyqc/FXK8gWpNo48M
+         LAeTZUhlIXsKmJvsB5HRZNWQlHNJhDRI6YWtz4h/sAsWEoxf+qlTTJju8gMlCGXsvaE2
+         DMi6SjUq8ATeVYXTguDhgGT4uyKK5Zs4PaJxHJEEZjGGdfC31jAxrE7uSuyt41Ey7mJ5
+         PR3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=woKsN5Nvj3edIiL1mnog+HJwItqLGqoGggibhx+prXM=;
+        b=sUv8fkLrp2KILaXn13AxzOTGZsZORuHUe9oeu4Zgxs6Xw99gYcFDHxb+5KPdWKzp0U
+         Ixw9nrz+YHYX5OEkOsCNhb3axmXYZo+jenLlTF38Q6Kf5mPbxt+GbVboAwB8XEdE9tns
+         1ntg/oqqJB6zn3i8E5BTb3ByWkSiJhfOQFi7wrrgr5+hvcZ4GUI8x7455cYIyFSkn18W
+         3yw8iFKfikT2988/VicpZ7OmpeEl5B4DfhuBZHmSb+O/qolR/jkZriJ1Mzn/W8T+kYSz
+         guZ0H8KURJcE4M7MazRdddlbuI1wsUR4Zucv6g2Zd7XiJA4gmE37zdGZzAYrVhOsV6to
+         Sw8A==
+X-Gm-Message-State: APjAAAUWaxtr9bwIqP/WJcVNJEIxZ8AMSNutrkqqNyDqxYA29pC6iJyS
+        p1Hpe9xYDtcONvF6hMoGqMxOxNXijg==
+X-Google-Smtp-Source: APXvYqwcF1Q6beDBQTdeoxkdICiYiMYrEpiV3RDw2oLfKtKRdUOjZccajdXgDjR+VWUVYjV6gLKSZQ==
+X-Received: by 2002:a17:902:a986:: with SMTP id bh6mr10472391plb.197.1570119441739;
+        Thu, 03 Oct 2019 09:17:21 -0700 (PDT)
+Received: from Mani-XPS-13-9360 ([2405:204:71cf:7b8f:fca3:6f38:70fb:67fc])
+        by smtp.gmail.com with ESMTPSA id f18sm3004698pgf.58.2019.10.03.09.17.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 03 Oct 2019 09:17:20 -0700 (PDT)
+Date:   Thu, 3 Oct 2019 21:47:14 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     Ulf Hansson <ulf.hansson@linaro.org>
+Cc:     Andreas =?iso-8859-1?Q?F=E4rber?= <afaerber@suse.de>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>, thomas.liau@actions-semi.com,
+        linux-actions@lists.infradead.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH v4 0/7] Add SD/MMC driver for Actions Semi S900 SoC
+Message-ID: <20191003161714.GA14774@Mani-XPS-13-9360>
+References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
+ <CAPDyKFqsZ1mZ53b9wLruATzi+ymFrUCLhxzx7NFUq48p5w0Gtw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <7f8934d9-8192-f88e-a329-630209d42a85@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFqsZ1mZ53b9wLruATzi+ymFrUCLhxzx7NFUq48p5w0Gtw@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/3/19 5:23 AM, Dmitry Osipenko wrote:
-> 02.10.2019 00:13, Stephen Warren пишет:
->> From: Stephen Warren <swarren@nvidia.com>
->>
->> For a little over a year, U-Boot has configured the flow controller to
->> perform automatic RAM re-repair on off->on power transitions of the CPU
->> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
->> re-repair relies on certain clocks, which the kernel must enable and
->> leave running. The fuse clock is one of those clocks. Enable this clock
->> so that LP1 power mode (system suspend) operates correctly.
->>
->> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
->>
->> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-tegra124.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
->> index 0224fdc4766f..f53f6315c646 100644
->> --- a/drivers/clk/tegra/clk-tegra124.c
->> +++ b/drivers/clk/tegra/clk-tegra124.c
->> @@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
->>   };
->>   
->>   static struct tegra_clk_init_table tegra124_init_table[] __initdata = {
->> +	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
->>   	{ TEGRA124_CLK_SOC_THERM, TEGRA124_CLK_PLL_P, 51000000, 0 },
->>   	{ TEGRA124_CLK_CCLK_G, TEGRA124_CLK_CLK_MAX, 0, 1 },
->>   	{ TEGRA124_CLK_HDA, TEGRA124_CLK_PLL_P, 102000000, 0 },
->>
+Hi Ulf,
+
+On Thu, Oct 03, 2019 at 12:01:18PM +0200, Ulf Hansson wrote:
+> On Mon, 16 Sep 2019 at 17:46, Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> >
+> > Hello,
+> >
+> > This patchset adds SD/MMC driver for Actions Semi S900 SoC from Owl
+> > family SoCs. There are 4 SD/MMC controller present in this SoC but
+> > only 2 are enabled currently for Bubblegum96 board to access uSD and
+> > onboard eMMC. SDIO support for this driver is not currently implemented.
+> >
+> > Note: Currently, driver uses 2 completion mechanisms for maintaining
+> > the coherency between SDC and DMA interrupts and I know that it is not
+> > efficient. Hence, I'd like to hear any suggestions for reimplementing
+> > the logic if anyone has.
+> >
+> > With this driver, this patchset also fixes one clk driver issue and enables
+> > the Actions Semi platform in ARM64 defconfig.
+> >
+> > Thanks,
+> > Mani
+> >
+> > Changes in v4:
+> >
+> > * Incorporated review comments from Rob on dt binding
+> >
+> > Changes in v3:
+> >
+> > * Incorporated a review comment from Andreas on board dts patch
+> > * Modified the MAINTAINERS entry for devicetree YAML binding
+> >
+> > Changes in v2:
+> >
+> > * Converted the devicetree bindings to YAML
+> > * Misc changes to bubblegum devicetree as per the review from Andreas
+> > * Dropped the read/write wrappers and renamed all functions to use owl-
+> >   prefix as per the review from Ulf
+> > * Renamed clk_val_best to owl_clk_val_best and added Reviewed-by tag
+> >   from Stephen
+> >
+> > Manivannan Sadhasivam (7):
+> >   clk: actions: Fix factor clk struct member access
+> >   dt-bindings: mmc: Add Actions Semi SD/MMC/SDIO controller binding
+> >   arm64: dts: actions: Add MMC controller support for S900
+> >   arm64: dts: actions: Add uSD and eMMC support for Bubblegum96
+> >   mmc: Add Actions Semi Owl SoCs SD/MMC driver
+> >   MAINTAINERS: Add entry for Actions Semi SD/MMC driver and binding
+> >   arm64: configs: Enable Actions Semi platform in defconfig
+> >
+> >  .../devicetree/bindings/mmc/owl-mmc.yaml      |  59 ++
+> >  MAINTAINERS                                   |   2 +
+> >  .../boot/dts/actions/s900-bubblegum-96.dts    |  62 ++
+> >  arch/arm64/boot/dts/actions/s900.dtsi         |  45 ++
+> >  arch/arm64/configs/defconfig                  |   1 +
+> >  drivers/clk/actions/owl-factor.c              |   7 +-
+> >  drivers/mmc/host/Kconfig                      |   8 +
+> >  drivers/mmc/host/Makefile                     |   1 +
+> >  drivers/mmc/host/owl-mmc.c                    | 696 ++++++++++++++++++
+> >  9 files changed, 877 insertions(+), 4 deletions(-)
+> >  create mode 100644 Documentation/devicetree/bindings/mmc/owl-mmc.yaml
+> >  create mode 100644 drivers/mmc/host/owl-mmc.c
+> >
+> > --
+> > 2.17.1
+> >
 > 
-> Hello Stephen,
+> I have picked up the mmc patches for next
+
+Thanks :)
+
+> and as Stephen picked the
+> clock patch, the rest are now for arm-soc, I guess!?
 > 
-> Does this mean that devices which are using older U-Boot version were always in a trouble?
 
-Yes. RAM re-repair wouldn't have been enabled, so in theory any device 
-could fail after an LP1 resume, or indeed anything that caused the CPU 
-complex rail to be gated.
+Yes, I'll queue them through actions tree (unless Andreas wants to do the PR).
 
-> It sounds to me that the RAM re-repair should be also enabled by the kernel's flow
-> controller driver in a case if bootloader did not enable it.
+Regards,
+Mani
 
-Yes, that might be a good idea too.
-
-> If enabling RAM re-repair is a change that won't be easily backportable to stable kernels,
-> then may be it's worth to simply force-disable LP1 on T124 for the older kernels.
-
-The first two patches in this series are all that's strictly required, 
-and the change are pretty small and isolated, so it should be easy to 
-back-port.
+> Kind regards
+> Uffe
