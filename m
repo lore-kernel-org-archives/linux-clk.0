@@ -2,50 +2,78 @@ Return-Path: <SRS0=AOYt=X5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876C4C47404
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 16:07:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45487C4360C
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 17:39:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 639F220873
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 16:07:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1FF30222C0
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 17:39:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GRiT1kNt";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GkeyLHMc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390242AbfJDQHn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Oct 2019 12:07:43 -0400
-Received: from avon.wwwdotorg.org ([104.237.132.123]:53430 "EHLO
-        avon.wwwdotorg.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389910AbfJDQHn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Oct 2019 12:07:43 -0400
-Received: from [10.20.204.51] (unknown [216.228.112.24])
+        id S2387948AbfJDRjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Oct 2019 13:39:42 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:60824 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387428AbfJDRjm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Oct 2019 13:39:42 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 342A86081E; Fri,  4 Oct 2019 17:39:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570210781;
+        bh=Xy3fQzgklWWmrTL56KOs57tZvRR4HJiCwiXK2LW/+2U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GRiT1kNtfbftNap7rnqSoOhcBvBJvKr7cMBwB7AFi8SRsPiaB6deP5LDpezqpQB9i
+         FBenvrQ62ecA0vh5D+Axpcwh3xwiQ7+qo/VJb28dqSA0LgnPOu/rzmAIj/OZTAE8G4
+         YvUxsHs1CNNAecUcr3KalDF9oCiNImgBohfMsMCk=
+Received: from [10.79.165.229] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by avon.wwwdotorg.org (Postfix) with ESMTPSA id 79E431C0728;
-        Fri,  4 Oct 2019 10:07:41 -0600 (MDT)
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.100.3 at avon.wwwdotorg.org
-Subject: Re: [PATCH 1/4] clk: tegra: Enable fuse clock on Tegra124
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-References: <20191001211346.104400-1-swarren@wwwdotorg.org>
- <20191002110454.GJ3716706@ulmo>
- <6a48d716-2312-4623-f47a-a53ac2ece83c@wwwdotorg.org>
- <20191004121812.GB227112@ulmo>
-From:   Stephen Warren <swarren@wwwdotorg.org>
-Message-ID: <0fa7829b-ec05-8b57-138e-694155385d26@wwwdotorg.org>
-Date:   Fri, 4 Oct 2019 10:07:39 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DD9E6016D;
+        Fri,  4 Oct 2019 17:39:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570210780;
+        bh=Xy3fQzgklWWmrTL56KOs57tZvRR4HJiCwiXK2LW/+2U=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=GkeyLHMcqKS10Cha3XKBd3VfPjuyAA9vxaCy5r2w0HAuxTM4WOJ9VlHTQ9tiVOnG6
+         IZFf11s10EMq5BMykHNoFBXR67hSc9YFTFEzqsFFpMXXQx+dkj7a1L9xnsavUjfbZN
+         uv0IylCjnT0vfx5PHqVuu0vGzmH7VQWTL99uvbpg=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DD9E6016D
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20190918095018.17979-1-tdas@codeaurora.org>
+ <20190918095018.17979-4-tdas@codeaurora.org>
+ <20190918213946.DC03521924@mail.kernel.org>
+ <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
+ <20190924231223.9012C207FD@mail.kernel.org>
+ <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org>
+ <20190925130346.42E0820640@mail.kernel.org>
+ <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
+ <20191001143825.CD3212054F@mail.kernel.org>
+ <7ac5f6bf-33c5-580e-bd40-e82f3052d460@codeaurora.org>
+ <20191003160130.5A19B222D0@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <81a2fa46-a7e6-66a2-9649-009f22813c81@codeaurora.org>
+Date:   Fri, 4 Oct 2019 23:09:31 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191004121812.GB227112@ulmo>
-Content-Type: text/plain; charset=windows-1252; format=flowed
+In-Reply-To: <20191003160130.5A19B222D0@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -53,75 +81,46 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/4/19 6:18 AM, Thierry Reding wrote:
-> On Wed, Oct 02, 2019 at 02:59:03PM -0600, Stephen Warren wrote:
->> On 10/2/19 5:04 AM, Thierry Reding wrote:
->>> On Tue, Oct 01, 2019 at 03:13:43PM -0600, Stephen Warren wrote:
->>>> From: Stephen Warren <swarren@nvidia.com>
->>>>
->>>> For a little over a year, U-Boot has configured the flow controller to
->>>> perform automatic RAM re-repair on off->on power transitions of the CPU
->>>> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
->>>> re-repair relies on certain clocks, which the kernel must enable and
->>>> leave running. The fuse clock is one of those clocks. Enable this clock
->>>> so that LP1 power mode (system suspend) operates correctly.
->>>>
->>>> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
->>>>
->>>> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
->>>> Cc: stable@vger.kernel.org
->>>> Signed-off-by: Stephen Warren <swarren@nvidia.com>
->>>> ---
->>>>    drivers/clk/tegra/clk-tegra124.c | 1 +
->>>>    1 file changed, 1 insertion(+)
->>>>
->>>> diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra124.c
->>>> index 0224fdc4766f..f53f6315c646 100644
->>>> --- a/drivers/clk/tegra/clk-tegra124.c
->>>> +++ b/drivers/clk/tegra/clk-tegra124.c
->>>> @@ -1291,6 +1291,7 @@ static struct tegra_clk_init_table common_init_table[] __initdata = {
->>>>    };
->>>>    static struct tegra_clk_init_table tegra124_init_table[] __initdata = {
->>>> +	{ TEGRA124_CLK_FUSE, -1, 0, 1 },
->>>
->>> I think the correct way to do this these days is to mark the clock as
->>> CRITICAL. Not sure if there's an easy way to do that given that the
->>> clock init table doesn't allow storing flags.
->>>
->>> Do you have any good ideas on how to achieve this with the critical flag
->>> instead of forcing the refcount to 1?
->>>
->>> Perhaps something like the below would work?
->>> ...
->>
->> The following works for me; does this seem like a reasonable approach? It
->> does set the critical flag for all SoCs, including any that don't require
->> RAM re-repair. I'm not sure which do; I know it's more than just Tegra124,
->> but I'm not sure how far back/forward the requirement goes.
->>
->>> diff --git a/drivers/clk/tegra/clk-tegra-periph.c b/drivers/clk/tegra/clk-tegra-periph.c
->>> index 1ed85f120a1b..76dd91eebd13 100644
->>> --- a/drivers/clk/tegra/clk-tegra-periph.c
->>> +++ b/drivers/clk/tegra/clk-tegra-periph.c
->>> @@ -785,7 +785,7 @@ static struct tegra_periph_init_data gate_clks[] = {
->>>          GATE("ahbdma", "hclk", 33, 0, tegra_clk_ahbdma, 0),
->>>          GATE("apbdma", "pclk", 34, 0, tegra_clk_apbdma, 0),
->>>          GATE("kbc", "clk_32k", 36, TEGRA_PERIPH_ON_APB | TEGRA_PERIPH_NO_RESET, tegra_clk_kbc, 0),
->>> -       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, 0),
->>> +       GATE("fuse", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse, CLK_IS_CRITICAL),
->>>          GATE("fuse_burn", "clk_m", 39, TEGRA_PERIPH_ON_APB, tegra_clk_fuse_burn, 0),
->>>          GATE("kfuse", "clk_m", 40, TEGRA_PERIPH_ON_APB, tegra_clk_kfuse, 0),
->>>          GATE("apbif", "clk_m", 107, TEGRA_PERIPH_ON_APB, tegra_clk_apbif, 0),
-> 
-> It's probably fine to do this. The patch I proposed would've restricted
-> the change to just Tegra124. But if we need this on other generations, I
-> don't think the extra complexity is justified, especially since I can't
-> imagine that the FUSE clock remaining always on would consume a lot of
-> extra power.
+Hi Stephen,
 
-T114/T124/T132/T210 all require it. T20/T30 I'm not sure since the TRM 
-doesn't mention RAM repair, but that could just be missing 
-documentation. I think it was introduced in T114 though. The T186 and 
-T194s TRM mention RAM repair, but so much changed in those SoCs I'm not 
-certain if it works in the same way and hence relies on fuse clock; 
-probably though.
+On 10/3/2019 9:31 PM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-10-03 03:31:15)
+>> Hi Stephen,
+>>
+>> On 10/1/2019 8:08 PM, Stephen Boyd wrote:
+>>>
+>>> Why do you want to keep them critical and registered? I'm suggesting
+>>> that any clk that is marked critical and doesn't have a parent should
+>>> instead become a register write in probe to turn the clk on.
+>>>
+>> Sure, let me do a one-time enable from probe for the clocks which
+>> doesn't have a parent.
+>> But I would now have to educate the clients of these clocks to remove
+>> using them.
+>>
+> 
+> If anyone is using these clks we can return NULL from the provider for
+> the specifier so that we indicate there isn't support for them in the
+> kernel. At least I hope that code path still works given all the recent
+> changes to clk_get().
+> 
+
+Could you please confirm if you are referring to update the below?
+
+--- a/drivers/clk/qcom/common.c
++++ b/drivers/clk/qcom/common.c
+@@ -218,7 +218,7 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct 
+of_phandle_args *clkspec,
+                 return ERR_PTR(-EINVAL);
+         }
+
+-       return cc->rclks[idx] ? &cc->rclks[idx]->hw : ERR_PTR(-ENOENT);
++       return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
+  }
+
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
