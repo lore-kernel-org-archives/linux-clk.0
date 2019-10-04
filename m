@@ -2,125 +2,97 @@ Return-Path: <SRS0=AOYt=X5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45487C4360C
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 17:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F47EC4360C
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 21:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FF30222C0
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 17:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 637AE21D81
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 21:17:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GRiT1kNt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GkeyLHMc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lK2gFZ1q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387948AbfJDRjm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Oct 2019 13:39:42 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:60824 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387428AbfJDRjm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Oct 2019 13:39:42 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 342A86081E; Fri,  4 Oct 2019 17:39:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570210781;
-        bh=Xy3fQzgklWWmrTL56KOs57tZvRR4HJiCwiXK2LW/+2U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GRiT1kNtfbftNap7rnqSoOhcBvBJvKr7cMBwB7AFi8SRsPiaB6deP5LDpezqpQB9i
-         FBenvrQ62ecA0vh5D+Axpcwh3xwiQ7+qo/VJb28dqSA0LgnPOu/rzmAIj/OZTAE8G4
-         YvUxsHs1CNNAecUcr3KalDF9oCiNImgBohfMsMCk=
-Received: from [10.79.165.229] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6DD9E6016D;
-        Fri,  4 Oct 2019 17:39:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570210780;
-        bh=Xy3fQzgklWWmrTL56KOs57tZvRR4HJiCwiXK2LW/+2U=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=GkeyLHMcqKS10Cha3XKBd3VfPjuyAA9vxaCy5r2w0HAuxTM4WOJ9VlHTQ9tiVOnG6
-         IZFf11s10EMq5BMykHNoFBXR67hSc9YFTFEzqsFFpMXXQx+dkj7a1L9xnsavUjfbZN
-         uv0IylCjnT0vfx5PHqVuu0vGzmH7VQWTL99uvbpg=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6DD9E6016D
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
- driver for SC7180
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20190918095018.17979-1-tdas@codeaurora.org>
- <20190918095018.17979-4-tdas@codeaurora.org>
- <20190918213946.DC03521924@mail.kernel.org>
- <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org>
- <20190924231223.9012C207FD@mail.kernel.org>
- <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org>
- <20190925130346.42E0820640@mail.kernel.org>
- <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
- <20191001143825.CD3212054F@mail.kernel.org>
- <7ac5f6bf-33c5-580e-bd40-e82f3052d460@codeaurora.org>
- <20191003160130.5A19B222D0@mail.kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <81a2fa46-a7e6-66a2-9649-009f22813c81@codeaurora.org>
-Date:   Fri, 4 Oct 2019 23:09:31 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730882AbfJDVRC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Oct 2019 17:17:02 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:37146 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725826AbfJDVRB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Oct 2019 17:17:01 -0400
+Received: by mail-lj1-f196.google.com with SMTP id l21so7883451lje.4
+        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2019 14:16:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Mitmi3lOMqSpYTCDDP4OehKdhas886p4UDP9S7yQMAs=;
+        b=lK2gFZ1qa+irwSUDd4m5G0GGGVDwSqXGEGwE9XSPDVK9mkW5D5pX8lir0ilN0Wl9Ww
+         tTa7IohtNwD7QWPSsI/kieHPMvZNDLQLySmZ5WTBTPlHo6cge7H4hKRpXAqZToukjHwK
+         BvIDHYzaLPxqn3yqyv5w7FTZbCI3FkhQkHXHGtdDlYffqKNKqCEbjeL6QEPfHYaAWiZ5
+         1DUmkNepBkT1xVg9q4MWBde5ANLw1r5w/FuUm09/5z9MkdeGleQ0APAeNcWqoDXK454w
+         QE9A9NA8qgdzVNbZirmmQuKsoTvhBWF8vkHdLqs2BIUh6rxxErtCPe1p7KM9FvB/oO4H
+         0G8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Mitmi3lOMqSpYTCDDP4OehKdhas886p4UDP9S7yQMAs=;
+        b=RUcyLVgDIw/+xVQONIvj9Wzqmmf261NMz8J63FgU25QR3ilrJxRlhEXknWHHkkHwAW
+         lRSR0ak3w2uuOGLuBMaQGSVwqttHESIMUPiFlzTSPpzk012dI/f1OC8wky22jlrqhWb0
+         J6/Lexpsqi1dAtnhdG/IR++x1yrHcuGYs731oYEdlzFj+tfdSts0hB35PVgYDna3aNaw
+         AykDdNOIUkhJGafE2f2xH6DRueuB30KD2aUezQdeC0cPTG7lAoDO3qRVxbieHxaut3Ep
+         uGVMbkog6bfRbRebj43H6noFWQJffrGNicqW1IXC8wYWfEQYxl8erswzn0U8MqQl7qYY
+         3EMQ==
+X-Gm-Message-State: APjAAAXVf/XGxzR3jNnQG4yKHTM4hiWhiZVsrQgcobsZM+d/mzcVfMGK
+        f3bDNlL/IfybQZ3gGC4paYlMB+6CvsOzLdZWkU311g==
+X-Google-Smtp-Source: APXvYqyvx1ZJVx3BdlEwVPKWVbrlnWhYW68EF/q5bhSKJMO+egyDnB8hTFcsfD4uKHWflQL5bAmuc673rey06t4k4d8=
+X-Received: by 2002:a2e:80d3:: with SMTP id r19mr10497466ljg.41.1570223818492;
+ Fri, 04 Oct 2019 14:16:58 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191003160130.5A19B222D0@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190921101207.65042-1-kholk11@gmail.com> <20190921101207.65042-2-kholk11@gmail.com>
+In-Reply-To: <20190921101207.65042-2-kholk11@gmail.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 4 Oct 2019 23:16:46 +0200
+Message-ID: <CACRpkdZH9VxYHh5c7r405nKHo8vq8PWZZnncP4yzTyJe_Zvnng@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: qcom: Add a pinctrl driver for MSM8976 and 8956
+To:     kholk11@gmail.com
+Cc:     MSM <linux-arm-msm@vger.kernel.org>, marijns95@gmail.com,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+Hi Angelo!
 
-On 10/3/2019 9:31 PM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-10-03 03:31:15)
->> Hi Stephen,
->>
->> On 10/1/2019 8:08 PM, Stephen Boyd wrote:
->>>
->>> Why do you want to keep them critical and registered? I'm suggesting
->>> that any clk that is marked critical and doesn't have a parent should
->>> instead become a register write in probe to turn the clk on.
->>>
->> Sure, let me do a one-time enable from probe for the clocks which
->> doesn't have a parent.
->> But I would now have to educate the clients of these clocks to remove
->> using them.
->>
-> 
-> If anyone is using these clks we can return NULL from the provider for
-> the specifier so that we indicate there isn't support for them in the
-> kernel. At least I hope that code path still works given all the recent
-> changes to clk_get().
-> 
+Thanks for your patch!
 
-Could you please confirm if you are referring to update the below?
+On Sat, Sep 21, 2019 at 12:12 PM <kholk11@gmail.com> wrote:
 
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -218,7 +218,7 @@ static struct clk_hw *qcom_cc_clk_hw_get(struct 
-of_phandle_args *clkspec,
-                 return ERR_PTR(-EINVAL);
-         }
+> From: "Angelo G. Del Regno" <kholk11@gmail.com>
+>
+> Add the pinctrl driver to support pin configuration with the
+> pinctrl framework on MSM8976, MSM8956, APQ8056, APQ8076.
+>
+> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
 
--       return cc->rclks[idx] ? &cc->rclks[idx]->hw : ERR_PTR(-ENOENT);
-+       return cc->rclks[idx] ? &cc->rclks[idx]->hw : NULL;
-  }
+This changes device tree bindings so you need to Cc devicetree@vger.kernel.org.
 
+Usually they want the device tree changes in a separate patch.
 
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+It'd be great if I can apply the pinctrl patches separately from the rest of
+the series.
 
---
+Also I need Bjorn's review on it first.
+
+Yours,
+Linus Walleij
