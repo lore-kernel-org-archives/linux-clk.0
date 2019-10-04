@@ -2,69 +2,91 @@ Return-Path: <SRS0=AOYt=X5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E89ECC47404
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 21:45:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A138C4360C
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 23:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98B9222BE
-	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 21:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E8E4222BE
+	for <linux-clk@archiver.kernel.org>; Fri,  4 Oct 2019 23:20:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570225511;
-	bh=y1e+tgSp7e0tgbR/cUxYS8CTGmt1MsrrM3rPNUmbNm8=;
+	s=default; t=1570231226;
+	bh=A5i8cqapG27X5CHR55uoln6f4Z8Ed6VwY+A+u+ziJww=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=ZlI/t4aCgHvc1E3806CEmyjtM7jR7YyR5IPNeGptbk1AvQf1KYh+ny2m2k72mUATe
-	 mYIeqwK2mE7siGIC/nwD8Y6c2Mb8AqWq1bsH/U24Ji31XQPB1FrSeHuZPNzcPdGCNV
-	 nZ/09nBWJ01H6A1J9iQopRwVWbuF+w7ra/DYHPSI=
+	b=uqQnYc3Eq7vm9Ybz4CktUmHwg61lnh52m0OMauhjLroq9GjlYV1AbWtir6tsfYHrE
+	 852ru1f4nRNTggyqrwFHqP4wdC5t67AXABrxELpkUtlzKbA6l7E6mPzOOLD1WukcuT
+	 8eOzMyOeUsFA08xohVHtI5TRqPiIcTRiMa277HB0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728812AbfJDVpL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Oct 2019 17:45:11 -0400
-Received: from mail.kernel.org ([198.145.29.99]:36368 "EHLO mail.kernel.org"
+        id S1731606AbfJDXUX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 4 Oct 2019 19:20:23 -0400
+Received: from mail.kernel.org ([198.145.29.99]:59404 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727548AbfJDVpL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 4 Oct 2019 17:45:11 -0400
+        id S1729968AbfJDXUW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 4 Oct 2019 19:20:22 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFDCB2133F;
-        Fri,  4 Oct 2019 21:45:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 062A1215EA;
+        Fri,  4 Oct 2019 23:20:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570225510;
-        bh=y1e+tgSp7e0tgbR/cUxYS8CTGmt1MsrrM3rPNUmbNm8=;
+        s=default; t=1570231222;
+        bh=A5i8cqapG27X5CHR55uoln6f4Z8Ed6VwY+A+u+ziJww=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=fvXMaHqwDe3inbL8LyDHoURJ/iLsvAZOaQgbKORH23nqBTlQutm9X8iavArIDK8o0
-         OuXAShRE2AiGAyWCCgIQ2Lvv1eU6CHck4qWRbjNZofku9nZx4SW25vhEZs0rmE52sf
-         1KBgPw2cO0RX0udKVfdHSgys5Dm0dNQR+7ybt1gw=
+        b=givZ0GXYjhduIcQxPjQTRzJcSnxBRYpsC/B5MkadCkE1HVWkvQxfiOIxTdzVvHC3D
+         8Bu2sVKod2Oz2nj6WjjNHVNSHUlnP5qmyCtfckh9yyb2qRWGfsBVox6FXxHw5UlDBF
+         XDVSkcKstVMokIOdRZgg9aE3ouqiDQecDJOkTMF4=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191002085309.9473-1-m.szyprowski@samsung.com>
-References: <CGME20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234@eucas1p2.samsung.com> <20191002085309.9473-1-m.szyprowski@samsung.com>
+In-Reply-To: <81a2fa46-a7e6-66a2-9649-009f22813c81@codeaurora.org>
+References: <20190918095018.17979-1-tdas@codeaurora.org> <a3cd82c9-8bfa-f4a3-ab1f-2e397fbd9d16@codeaurora.org> <20190924231223.9012C207FD@mail.kernel.org> <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org> <20190925130346.42E0820640@mail.kernel.org> <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org> <20191001143825.CD3212054F@mail.kernel.org> <7ac5f6bf-33c5-580e-bd40-e82f3052d460@codeaurora.org> <20191003160130.5A19B222D0@mail.kernel.org> <81a2fa46-a7e6-66a2-9649-009f22813c81@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: Re: [PATCH] clk: samsung: exynos5433: Fix error paths
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
 User-Agent: alot/0.8.1
-Date:   Fri, 04 Oct 2019 14:45:09 -0700
-Message-Id: <20191004214510.AFDCB2133F@mail.kernel.org>
+Date:   Fri, 04 Oct 2019 16:20:21 -0700
+Message-Id: <20191004232022.062A1215EA@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Marek Szyprowski (2019-10-02 01:53:09)
-> Add checking the value returned by samsung_clk_alloc_reg_dump() and
-> devm_kcalloc(). While fixing this, also release all gathered clocks.
+Quoting Taniya Das (2019-10-04 10:39:31)
+> Hi Stephen,
 >=20
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
+> On 10/3/2019 9:31 PM, Stephen Boyd wrote:
+> > Quoting Taniya Das (2019-10-03 03:31:15)
+> >> Hi Stephen,
+> >>
+> >> On 10/1/2019 8:08 PM, Stephen Boyd wrote:
+> >>>
+> >>> Why do you want to keep them critical and registered? I'm suggesting
+> >>> that any clk that is marked critical and doesn't have a parent should
+> >>> instead become a register write in probe to turn the clk on.
+> >>>
+> >> Sure, let me do a one-time enable from probe for the clocks which
+> >> doesn't have a parent.
+> >> But I would now have to educate the clients of these clocks to remove
+> >> using them.
+> >>
+> >=20
+> > If anyone is using these clks we can return NULL from the provider for
+> > the specifier so that we indicate there isn't support for them in the
+> > kernel. At least I hope that code path still works given all the recent
+> > changes to clk_get().
+> >=20
+>=20
+> Could you please confirm if you are referring to update the below?
 
-Any fixes tag?
+I wasn't suggesting that explicitly but sure. Something like this would
+be necessary to make clk_get() pass back a NULL pointer to the caller.
+Does everything keep working with this change?
 
