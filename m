@@ -2,110 +2,162 @@ Return-Path: <SRS0=JWDe=X6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D2E8C32792
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E401C4740A
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 09:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F1120862
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B99C222C8
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 09:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SVuYV+9J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SD25cdX2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726511AbfJEE1a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Oct 2019 00:27:30 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:41985 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfJEE1a (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 00:27:30 -0400
-Received: by mail-pl1-f196.google.com with SMTP id e5so4064223pls.9
-        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2019 21:27:30 -0700 (PDT)
+        id S1727280AbfJEJTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Oct 2019 05:19:50 -0400
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:55545 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725862AbfJEJTu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 05:19:50 -0400
+Received: by mail-wm1-f67.google.com with SMTP id a6so7948327wma.5;
+        Sat, 05 Oct 2019 02:19:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Lg58HAHY4pPo3EF07hH6j9uSPPM6NKr+O9ZhOhiR1Sc=;
-        b=SVuYV+9Jx7yaGbD3ZALLujnHJtVENFBC5r9F3okLQBJtsEydssKGEFw1h5T0j5zTxX
-         OtIuW0uShIie6dDJ34udvfZnQsabT1iZKdn/XlqI0njTl1CojbnQKQXJ8gV/iTjzyOLe
-         Clp7f/aGCX4x4lBogG6sU3cIsijT9Xb8y5Os5l0obpLDlunsuhFiQhzkga46mFQP2E7C
-         JFL6O/o8q2bsau/ptWg5X6QdQtlV9RpeGkDWzqIP735lOFM/JAsrfcudAqDBRUMcf9uS
-         Ct0KOj8m/4HWTNR+yRgqkGA3Ny541MdQItXdjOvfBlY5u+aZC5LnkXgf8VSRyHsOlG21
-         /FLw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yvIRA62tf+Id/1C1Iw9pWjY61unNIlcfEnBQ+FsDC9I=;
+        b=SD25cdX2nkZyVjKM8hZcX4l8pxfctJxVJUlwVM6fCHB1wE/QVLmtgKna86JVgJZMyZ
+         WnBh16+K76LYEvhvUlMq1Ggs1kdW8NMa1ut4WIBHMHQSvUfb0FCUGiHdpxzvzuBvWJYf
+         PclPLw8+r84uWQEpjxr4d5QXEZqxBMEHn9q0Zusng9QBo6C7lWLvuFWbwgZZlCVAhY8k
+         4+nxUPtUOm1jPqQTqXISY024InaI+hfTsI7u0vdAlcFkFgzY79UGhsCI2aOpTCgizKqv
+         TBs+HE9koR92+aQU4xrdAB7pUY1uMCYQ1aPu3UfQERzOLdEWIO0tN3Dzjxb3S4UD+ZCv
+         Uqmg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Lg58HAHY4pPo3EF07hH6j9uSPPM6NKr+O9ZhOhiR1Sc=;
-        b=PthBfxnhfdjND/fGGa55rtC4CwXzUVoYHSTTbmJJIcYF+2Ie0oZTCoEWcWkCHhugxK
-         xjoCbSSZlLPferYfrkCGRC/qnoaXFQ4xPhl6cP3zNwl1TEEbFzZgDpkZPXOLketxKsxC
-         RlzfVluic8sUy3a0N8Lr5LtdDhc3QLl9C3Fa1JjWbVzer37PwHeJ8A9cb6mrejWBYLdL
-         hoQLE6u624HEkuN5YgaGrOeKixP4tV/c9eVcc4rVU0Do8yvgSZ0VUwrJ1J7++5FdWpS5
-         51cdiZ00rRHtZ7/Qk/v+GjND9ruL19l1rHjXkiEaI3FyMdzLa7Pt3gruBBOFgS1xHO2B
-         nS2g==
-X-Gm-Message-State: APjAAAU53rfK98net/yPOuHWJHouWZni/P1h7Y4Zeb1KWdD3sH1qBn/c
-        /MmkxABQYtBc2dBdCoEokva0Hg==
-X-Google-Smtp-Source: APXvYqwMl1iPfwc8TZczlbHrZtDKgg6pILpq54WPvhm9S+t+4oc3TPuvql6AEedE7WbaVO5OJabs8w==
-X-Received: by 2002:a17:902:8d8e:: with SMTP id v14mr18641562plo.287.1570249649824;
-        Fri, 04 Oct 2019 21:27:29 -0700 (PDT)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l72sm7992929pjb.7.2019.10.04.21.27.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 21:27:29 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 21:27:26 -0700
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     kholk11@gmail.com
-Cc:     linux-arm-msm@vger.kernel.org, marijns95@gmail.com,
-        agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 4/5] dt-bindings: power: Add missing rpmpd smd
- performance level
-Message-ID: <20191005042726.GC6390@tuxbook-pro>
-References: <20190921101207.65042-1-kholk11@gmail.com>
- <20190921101207.65042-5-kholk11@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yvIRA62tf+Id/1C1Iw9pWjY61unNIlcfEnBQ+FsDC9I=;
+        b=JgMagZcd3ITyrCkIx0Xirh3l2qO4hUQ7vLlgEd+sf84i6jtnF+rinh631htuKVSgwk
+         PBj3SrBGdHTLEzqh2hEg4okKahEr2Z3HK/guJpcPh2r3AYhRJggQ9dZyHvCAcSPTHq61
+         0Wt+Cc1u6eYGpnR2/RmyqS6hb/dwmiIfjnmkU3oi3d3ZvSzODe9F1O9oZDx2MCYi5ETN
+         i6yhMfyL6bzIByAY7eMR5xk8V+FNWq3evWMJD2is41qitRccVbiEhYwCE4E+2ZSux6Mn
+         6ldVMGvbLGXwj90xPoEHqJs//PljBBPVdBE34K5ZbwnX4uPAiI9A5YuaaFDgKMKpr59K
+         BNaw==
+X-Gm-Message-State: APjAAAVZ073iD5OruiOIobvnRI89Zd5geTnf0DDgZq0cUZVlRpU4myaX
+        vzdDaN02DeKcZp+NVVnTkCiMur8OKtq/8ScfK8E/GKa6
+X-Google-Smtp-Source: APXvYqxwf0KpXaoAxvxmIrDNxz0S67HAfxmjTzqx3HTl7NVvv2rZQ2gyQQddzFjQ1DrQ/Qfyy81p8G7dTKbi3ub7iF4=
+X-Received: by 2002:a1c:4108:: with SMTP id o8mr14550830wma.129.1570267187819;
+ Sat, 05 Oct 2019 02:19:47 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190921101207.65042-5-kholk11@gmail.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20190921101207.65042-1-kholk11@gmail.com> <20190921101207.65042-2-kholk11@gmail.com>
+ <20191005035931.GC2999@tuxbook-pro>
+In-Reply-To: <20191005035931.GC2999@tuxbook-pro>
+From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
+Date:   Sat, 5 Oct 2019 11:19:35 +0200
+Message-ID: <CAK7fi1ahvqbT_EtZTV=nzjMdF-xOr6DBciry56z9L065xLoGhg@mail.gmail.com>
+Subject: Re: [PATCH 1/5] pinctrl: qcom: Add a pinctrl driver for MSM8976 and 8956
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     MSM <linux-arm-msm@vger.kernel.org>, marijns95@gmail.com,
+        agross@kernel.org, Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat 21 Sep 03:12 PDT 2019, kholk11@gmail.com wrote:
+Il giorno sab 5 ott 2019 alle ore 05:59 Bjorn Andersson
+<bjorn.andersson@linaro.org> ha scritto:
+>
+> On Sat 21 Sep 03:12 PDT 2019, kholk11@gmail.com wrote:
+>
+> > From: "Angelo G. Del Regno" <kholk11@gmail.com>
+> >
+> > Add the pinctrl driver to support pin configuration with the
+> > pinctrl framework on MSM8976, MSM8956, APQ8056, APQ8076.
+> >
+> > Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+> > ---
+> >  .../bindings/pinctrl/qcom,msm8976-pinctrl.txt |  183 +++
+> >  drivers/pinctrl/qcom/Kconfig                  |   10 +
+> >  drivers/pinctrl/qcom/Makefile                 |    1 +
+> >  drivers/pinctrl/qcom/pinctrl-msm8976.c        | 1128 +++++++++++++++++
+> >  4 files changed, 1322 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt
+> >  create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8976.c
+> >
+> > diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt
+> > new file mode 100644
+> > index 000000000000..4e944f84b7d7
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt
+> > @@ -0,0 +1,183 @@
+> > +Qualcomm MSM8976 TLMM block
+>
+> As Linus indicated, please send your the DT bindings in separate
+> patches.
+>
+> > +
+> [..]
+> > +Example:
+> > +
+> > +     tlmm: pinctrl@1000000 {
+> > +             compatible = "qcom,msm8976-pinctrl";
+> > +             reg = <0x1000000 0x300000>;
+> > +             interrupts = <0 208 0>;
+>
+> <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>
+>
+> > +             gpio-controller;
+> > +             #gpio-cells = <2>;
+> > +             gpio-ranges = <&tlmm 0 0 145>;
+> > +             interrupt-controller;
+> > +             #interrupt-cells = <2>;
+> > +
+> > +             blsp1_uart2_active: blsp1_uart2_active {
+> > +                     mux {
+> > +                             pins = "gpio4", "gpio5", "gpio6", "gpio7";
+> > +                             function = "blsp_uart2";
+> > +                     };
+> > +
+> > +                     config {
+> > +                             pins = "gpio4", "gpio5", "gpio6", "gpio7";
+> > +                             drive-strength = <2>;
+> > +                             bias-disable;
+> > +                     };
+> > +             };
+> > +     };
+> > diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
+> [..]
+> > +static struct platform_driver msm8976_pinctrl_driver = {
+> > +     .driver = {
+> > +             .name = "msm8976-pinctrl",
+> > +             .owner = THIS_MODULE,
+>
+> No need to specify .onwer on platform_drivers anymore.
+>
+>
+> Apart from that, I think this patch looks good.
+>
+> Regards,
+> Bjorn
 
-> From: "Angelo G. Del Regno" <kholk11@gmail.com>
-> 
-> The RPM_SMD_LEVEL_TURBO_HIGH is used by MSM8956/8976 and APQ variants:
-> add the definition.
-> 
-> Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
+Thanks guys for the review.
 
-Applied
+Well, I did it in one patch after seeing this practice on other
+patches, so I thought to replicate,
+despite the well known rule... but yeah, of course, there's absolutely
+no problem, I'll send the
+two separate patches in a separate series and I'll do the same for the
+GCC driver as well,
+which doesn't seem that it got sent to the list for some obscure reason.
 
-Thanks,
-Bjorn
+About the requested changes... sure, I will apply them and resend ASAP.
 
-> ---
->  include/dt-bindings/power/qcom-rpmpd.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
-> index 93e36d011527..30a0aee0df57 100644
-> --- a/include/dt-bindings/power/qcom-rpmpd.h
-> +++ b/include/dt-bindings/power/qcom-rpmpd.h
-> @@ -68,6 +68,7 @@
->  #define RPM_SMD_LEVEL_NOM_PLUS        320
->  #define RPM_SMD_LEVEL_TURBO           384
->  #define RPM_SMD_LEVEL_TURBO_NO_CPR    416
-> +#define RPM_SMD_LEVEL_TURBO_HIGH      448
->  #define RPM_SMD_LEVEL_BINNING         512
->  
->  #endif
-> -- 
-> 2.21.0
-> 
+Thanks again!
