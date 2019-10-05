@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F165C32792
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81509C32792
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0BAC20862
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:23:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4092720862
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:26:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NyeSwcZp"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HbataOo9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726285AbfJEEXE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Oct 2019 00:23:04 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:45042 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726237AbfJEEXE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 00:23:04 -0400
-Received: by mail-pg1-f196.google.com with SMTP id i14so4848028pgt.11
-        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2019 21:23:03 -0700 (PDT)
+        id S1726044AbfJEE0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Oct 2019 00:26:03 -0400
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36310 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfJEE0D (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 00:26:03 -0400
+Received: by mail-pl1-f193.google.com with SMTP id j11so4076805plk.3
+        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2019 21:26:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4B9eHmi0DL0E1YSAJ4344KORqouD+llln3LfV3vaWvA=;
-        b=NyeSwcZp8hS7e0XhB6WwIswMbkQgX1zj+c+MNXctVIyP+Q9cG33Q8GoAVxT8PBVdox
-         glh3qsv6a6Ij1XPcNqJD+J6icYBjuYRBsrFQMiPye26mTuWMbpsdBeFEWRzIrK1vUzhw
-         O3UfMGR4DvcBgVfrWfFVy14qMXFOpPis+h52Eam9YvnOZYuzXjYXWYMmMLg1pptRWi+J
-         YmpolJyDbETZSZP3PAc++7XMiHihv7vvmCK6L3daOFq/jFgFrl4YBNhGe9gVx4O1ch73
-         hKzwJmWna2nWcGOVCqnl0wYc8Mr+4YbFkSiKzoj5Ht+irXLDB/0vKM2JJJ8nxvQjcRde
-         ZeBw==
+        bh=sobyjg0LEWIOIfIDQwzBofiEnYt7JRmx1Uywz+kzECU=;
+        b=HbataOo9Vzbos1Rzc5V4Jdnssaz2Tm5fWWPqo3+rBucM98zghiPOgJoq007pYW+8vP
+         z7SK4M1yFjTiCfeU2fLeLnXseq8YWpN6Cf86+fVvrCvEDgrPgHaf6055Ez4w/zyckdkO
+         vn3eEQ8xWyOLahS00qtxBFfICguIRpsjjWkd9ldEHWEwIAwVG0ED9yqGrNnV7jATYqgh
+         ZvjIPQ2i3neXL8x/X/DD9CeNJzJYKPGLQtA3Dj2+7slh7n71eG1zXiQz4VrrNOJSqOJk
+         fwu62gJt2l12pBQLgCCGVLIbcH2GKlQyXfjxaru/sWGFvpob+tiwz1Ebw0EkLQHwyrpc
+         8uAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4B9eHmi0DL0E1YSAJ4344KORqouD+llln3LfV3vaWvA=;
-        b=KeK0cr9PCH+iAgwopNicm9kPLdBo8nYVZJCKMHLB30rd1788aI+3XK7047hUwX1NwA
-         AaYrVXZQHh2eDN91g6RYR4MMvXLIjbn23h+NJr4wSQzyPaVfCayRoX20YTZk1XjC6Guj
-         reNJPMInX9OP4vtS/n0PrWtBkcA4Q2LOWFcf8YLORTcoMZneQYhUm0V1WuYE79pPeoWu
-         SeqIj88zyL3pT4gH0iMVSjee9WUbzoKBZpxB8fCv2KDNpmvjUajdHavZuCplTFpKM42g
-         U7JGOFEePOBpY/bOZJXtkUlb1kkZIlgxbI8y3ISie2h9Y4z+ZyD+iOrsh9pFpHyIu3Sk
-         NY5A==
-X-Gm-Message-State: APjAAAWdlFzYnGG6ulxua73FM+zo3HjU5YuHLZ3mHJUijhv+ZliAd9l5
-        OYYXcQaq+7Ig+rXLWSrAp2mlpw==
-X-Google-Smtp-Source: APXvYqxgK8xmcb8cmqLsORJZ7TTthNvSR38Gu5AhhulxNuWGRWRRZdbxrIuJPiYnKHNvKZ2NG/bVbw==
-X-Received: by 2002:a17:90a:a47:: with SMTP id o65mr20625084pjo.90.1570249383344;
-        Fri, 04 Oct 2019 21:23:03 -0700 (PDT)
+        bh=sobyjg0LEWIOIfIDQwzBofiEnYt7JRmx1Uywz+kzECU=;
+        b=hwH+4Z1WaiDHv+SqA4ss7nTz4gaB/ZVXJh7B4YOwJ54kM1hy9kHJF6++3MC114NOGW
+         TwIIiSuXv3MDzbMyURcoxjQfprT5aE5kDJCih9KpCaLBJdl3nQq07fT5ZwKy/Uwb4Zg9
+         XryaeLsru/dX1R6zVdNs1Jm5d6QxYm+Lcq6UrLJ5oaMHtjaBJbjB1v5/kxPQfFiGNd6+
+         JCJkB+4lDzbmruQKhjwNw7hJefQP8jpolXA2bsOUB0sBmBBH31CcKhPlRJblY18dByCL
+         fgO6A89NKGVG6dje7Lq9S6212sBrtMTwOXnkV2RUI0kMJVzSkX1SJh5Zp1+sjj5IJUpw
+         rrhg==
+X-Gm-Message-State: APjAAAWvQoQSqPlHsP8h0RbXhVJwX2TagCVadtK8Yfo3qteim1H5LTNV
+        IkPYD+80OYOgatDAh2I/TnI8xA==
+X-Google-Smtp-Source: APXvYqz571X26hj2dwQYjnk6tgNF45rgLRkLOWL6qR1fqXkZZdrrGWB/YGdfU4UeE1x0sNaT75iReQ==
+X-Received: by 2002:a17:902:b08b:: with SMTP id p11mr19061907plr.320.1570249562546;
+        Fri, 04 Oct 2019 21:26:02 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id b14sm7900427pfi.95.2019.10.04.21.23.02
+        by smtp.gmail.com with ESMTPSA id q76sm13472797pfc.86.2019.10.04.21.26.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 21:23:02 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 21:23:00 -0700
+        Fri, 04 Oct 2019 21:26:01 -0700 (PDT)
+Date:   Fri, 4 Oct 2019 21:25:59 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     kholk11@gmail.com
 Cc:     linux-arm-msm@vger.kernel.org, marijns95@gmail.com,
         agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 3/5] soc: qcom: smd-rpm: Add MSM8976 compatible
-Message-ID: <20191005042300.GA6390@tuxbook-pro>
+Subject: Re: [PATCH 5/5] soc: qcom: rpmpd: Add rpm power domains for msm8956
+Message-ID: <20191005042559.GB6390@tuxbook-pro>
 References: <20190921101207.65042-1-kholk11@gmail.com>
- <20190921101207.65042-4-kholk11@gmail.com>
+ <20190921101207.65042-6-kholk11@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190921101207.65042-4-kholk11@gmail.com>
+In-Reply-To: <20190921101207.65042-6-kholk11@gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -79,45 +79,100 @@ On Sat 21 Sep 03:12 PDT 2019, kholk11@gmail.com wrote:
 
 > From: "Angelo G. Del Regno" <kholk11@gmail.com>
 > 
-> Add a compatible for the RPM on the Qualcomm MSM8976 platform:
-> this is also valid for MSM8956 and their APQ variants.
+> The MSM8956 SoC has two main voltage-level power domains, VDD_CX
+> and VDD_MX, which also have their own voltage-floor-level (VFL)
+> corner.
 > 
 > Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
 
-Applied
+I was under the impression that 8956/76 can be used interchangeably, if
+so I would prefer if you pick one (8976 as that seems to be your common
+choice) and stick with that.
 
-Thanks,
+If not, I think it would be nice if all bindings came with both
+compatibles.
+
+Regards,
 Bjorn
 
 > ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt | 1 +
->  drivers/soc/qcom/smd-rpm.c                                  | 1 +
->  2 files changed, 2 insertions(+)
+>  .../devicetree/bindings/power/qcom,rpmpd.txt  |  1 +
+>  drivers/soc/qcom/rpmpd.c                      | 23 +++++++++++++++++++
+>  include/dt-bindings/power/qcom-rpmpd.h        |  8 +++++++
+>  3 files changed, 32 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-> index f3fa313963d5..616fddcd09fd 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
-> @@ -22,6 +22,7 @@ resources.
->  		    "qcom,rpm-apq8084"
->  		    "qcom,rpm-msm8916"
->  		    "qcom,rpm-msm8974"
-> +		    "qcom,rpm-msm8976"
->  		    "qcom,rpm-msm8998"
->  		    "qcom,rpm-sdm660"
->  		    "qcom,rpm-qcs404"
-> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
-> index fa9dd12b5e39..fe2199f6ce8f 100644
-> --- a/drivers/soc/qcom/smd-rpm.c
-> +++ b/drivers/soc/qcom/smd-rpm.c
-> @@ -217,6 +217,7 @@ static const struct of_device_id qcom_smd_rpm_of_match[] = {
->  	{ .compatible = "qcom,rpm-apq8084" },
->  	{ .compatible = "qcom,rpm-msm8916" },
->  	{ .compatible = "qcom,rpm-msm8974" },
-> +	{ .compatible = "qcom,rpm-msm8976" },
->  	{ .compatible = "qcom,rpm-msm8996" },
->  	{ .compatible = "qcom,rpm-msm8998" },
->  	{ .compatible = "qcom,rpm-sdm660" },
+> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> index eb35b22f9e23..30176b1e595a 100644
+> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> @@ -5,6 +5,7 @@ which then translates it into a corresponding voltage on a rail
+>  
+>  Required Properties:
+>   - compatible: Should be one of the following
+> +	* qcom,msm8956-rpmpd: RPM Power domain for the msm8956 family of SoC
+>  	* qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
+>  	* qcom,msm8998-rpmpd: RPM Power domain for the msm8998 family of SoC
+>  	* qcom,qcs404-rpmpd: RPM Power domain for the qcs404 family of SoC
+> diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
+> index 3c1a55cf25d6..b50f62851461 100644
+> --- a/drivers/soc/qcom/rpmpd.c
+> +++ b/drivers/soc/qcom/rpmpd.c
+> @@ -115,6 +115,28 @@ struct rpmpd_desc {
+>  
+>  static DEFINE_MUTEX(rpmpd_lock);
+>  
+> +/* msm8956 RPM Power Domains */
+> +DEFINE_RPMPD_PAIR(msm8956, vddcx, vddcx_ao, SMPA, LEVEL, 2);
+> +DEFINE_RPMPD_PAIR(msm8956, vddmx, vddmx_ao, SMPA, LEVEL, 6);
+> +
+> +DEFINE_RPMPD_VFL(msm8956, vddcx_vfl, RWSC, 2);
+> +DEFINE_RPMPD_VFL(msm8956, vddmx_vfl, RWSM, 6);
+> +
+> +static struct rpmpd *msm8956_rpmpds[] = {
+> +	[MSM8956_VDDCX] =	&msm8956_vddcx,
+> +	[MSM8956_VDDCX_AO] =	&msm8956_vddcx_ao,
+> +	[MSM8956_VDDCX_VFL] =	&msm8956_vddcx_vfl,
+> +	[MSM8956_VDDMX] =	&msm8956_vddmx,
+> +	[MSM8956_VDDMX_AO] =	&msm8956_vddmx_ao,
+> +	[MSM8956_VDDMX_VFL] =	&msm8956_vddmx_vfl,
+> +};
+> +
+> +static const struct rpmpd_desc msm8956_desc = {
+> +	.rpmpds = msm8956_rpmpds,
+> +	.num_pds = ARRAY_SIZE(msm8956_rpmpds),
+> +	.max_state = RPM_SMD_LEVEL_TURBO_HIGH,
+> +};
+> +
+>  /* msm8996 RPM Power domains */
+>  DEFINE_RPMPD_PAIR(msm8996, vddcx, vddcx_ao, SMPA, CORNER, 1);
+>  DEFINE_RPMPD_PAIR(msm8996, vddmx, vddmx_ao, SMPA, CORNER, 2);
+> @@ -198,6 +220,7 @@ static const struct rpmpd_desc qcs404_desc = {
+>  };
+>  
+>  static const struct of_device_id rpmpd_match_table[] = {
+> +	{ .compatible = "qcom,msm8956-rpmpd", .data = &msm8956_desc },
+>  	{ .compatible = "qcom,msm8996-rpmpd", .data = &msm8996_desc },
+>  	{ .compatible = "qcom,msm8998-rpmpd", .data = &msm8998_desc },
+>  	{ .compatible = "qcom,qcs404-rpmpd", .data = &qcs404_desc },
+> diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
+> index 30a0aee0df57..3423f964c233 100644
+> --- a/include/dt-bindings/power/qcom-rpmpd.h
+> +++ b/include/dt-bindings/power/qcom-rpmpd.h
+> @@ -27,6 +27,14 @@
+>  #define RPMH_REGULATOR_LEVEL_TURBO	384
+>  #define RPMH_REGULATOR_LEVEL_TURBO_L1	416
+>  
+> +/* MSM8956 Power Domain Indexes */
+> +#define MSM8956_VDDCX		0
+> +#define MSM8956_VDDCX_AO	1
+> +#define MSM8956_VDDCX_VFL	2
+> +#define MSM8956_VDDMX		3
+> +#define MSM8956_VDDMX_AO	4
+> +#define MSM8956_VDDMX_VFL	5
+> +
+>  /* MSM8996 Power Domain Indexes */
+>  #define MSM8996_VDDCX		0
+>  #define MSM8996_VDDCX_AO	1
 > -- 
 > 2.21.0
 > 
