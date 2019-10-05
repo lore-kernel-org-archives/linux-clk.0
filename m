@@ -7,69 +7,68 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D271C32792
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 03:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F165C32792
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:23:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF993222BE
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 03:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0BAC20862
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 04:23:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uK++wzGo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NyeSwcZp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfJED7f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 4 Oct 2019 23:59:35 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35473 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfJED7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 4 Oct 2019 23:59:35 -0400
-Received: by mail-pg1-f195.google.com with SMTP id p30so2777417pgl.2
-        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2019 20:59:34 -0700 (PDT)
+        id S1726285AbfJEEXE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Oct 2019 00:23:04 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:45042 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726237AbfJEEXE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 00:23:04 -0400
+Received: by mail-pg1-f196.google.com with SMTP id i14so4848028pgt.11
+        for <linux-clk@vger.kernel.org>; Fri, 04 Oct 2019 21:23:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=gpGqz6qLsuq0UsH1+84/WmkwPkrLAGN7fBYEexcSldM=;
-        b=uK++wzGosptpGduXlSUxTUHmlRO1XWli+xCI7im3pB0zG8jAFV2/Qb2ASfjQpbv3OP
-         hhX5dlNkKgV8w7EVNVVbAshg+Ep8TLo6MDHeflph1ILzI6HTyk+JVqxsCbrYeUUX8rbk
-         p4VF5L7SGVWmZO3N1gNqRBw6n70jg8S7KhWjlxNLhz6LP1reXQGjaPvlyCdUk7kXZp8e
-         cYc6XYG8mrLCun653UUFiHKWRnwj9SHtbbc2AzEwJ3UkHTVHssAS8uvTE73JqyByuyo0
-         GDFYYaAHekIUKdVLufze88m8V5f4+FKVbOXyEALvi2EGhyOlnKXBaTDYVsZPXezylaOO
-         165Q==
+        bh=4B9eHmi0DL0E1YSAJ4344KORqouD+llln3LfV3vaWvA=;
+        b=NyeSwcZp8hS7e0XhB6WwIswMbkQgX1zj+c+MNXctVIyP+Q9cG33Q8GoAVxT8PBVdox
+         glh3qsv6a6Ij1XPcNqJD+J6icYBjuYRBsrFQMiPye26mTuWMbpsdBeFEWRzIrK1vUzhw
+         O3UfMGR4DvcBgVfrWfFVy14qMXFOpPis+h52Eam9YvnOZYuzXjYXWYMmMLg1pptRWi+J
+         YmpolJyDbETZSZP3PAc++7XMiHihv7vvmCK6L3daOFq/jFgFrl4YBNhGe9gVx4O1ch73
+         hKzwJmWna2nWcGOVCqnl0wYc8Mr+4YbFkSiKzoj5Ht+irXLDB/0vKM2JJJ8nxvQjcRde
+         ZeBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=gpGqz6qLsuq0UsH1+84/WmkwPkrLAGN7fBYEexcSldM=;
-        b=iU8AJHczx2ZR4Y5kZNm8q6n7sGw5MyU7uUSwmDvuZ5cpthEFNZstDPHF8Cz0GxBUWR
-         SuPlx6MhIaygnXRuleTNfYO2hiGseKIlnc7X6wE6HwWuz3xCHh7zTWlg9wuBB0vopNe2
-         3quqGLvWZrP5v6UAucVmfPwdJnSjiUScBh2Aaf9xzTl7Rj7Da+1/Ptx75HdDcHl9ERQP
-         Y+XKPF/yYhZt89CQtD8TtFWjfXmYbhiQwXJLYF8V+b2lhBBsnbp5sVZd3uSj6O/M+Vjr
-         u1rQLfeTLzncEh6Zt4bbwfsAwT0nAxSJor7nRyOz/sJJPOUuTNbzL2jgNX2dodWZNsW5
-         ZrIA==
-X-Gm-Message-State: APjAAAXfTle3gt9klGHTfQOqd/BIHltZcJOlWghUt8Dl5HtDTq6olGb2
-        1x0B57DivElUUahZuBn1vckL/PIMbvw=
-X-Google-Smtp-Source: APXvYqxupw1jvo2pAKkclaXYZJvV74UNrF9j5Q4wH5Pb4D0Yq8va+heTNSZw6zDzEa07ocHUbUr/pA==
-X-Received: by 2002:aa7:9216:: with SMTP id 22mr21381031pfo.214.1570247974353;
-        Fri, 04 Oct 2019 20:59:34 -0700 (PDT)
+        bh=4B9eHmi0DL0E1YSAJ4344KORqouD+llln3LfV3vaWvA=;
+        b=KeK0cr9PCH+iAgwopNicm9kPLdBo8nYVZJCKMHLB30rd1788aI+3XK7047hUwX1NwA
+         AaYrVXZQHh2eDN91g6RYR4MMvXLIjbn23h+NJr4wSQzyPaVfCayRoX20YTZk1XjC6Guj
+         reNJPMInX9OP4vtS/n0PrWtBkcA4Q2LOWFcf8YLORTcoMZneQYhUm0V1WuYE79pPeoWu
+         SeqIj88zyL3pT4gH0iMVSjee9WUbzoKBZpxB8fCv2KDNpmvjUajdHavZuCplTFpKM42g
+         U7JGOFEePOBpY/bOZJXtkUlb1kkZIlgxbI8y3ISie2h9Y4z+ZyD+iOrsh9pFpHyIu3Sk
+         NY5A==
+X-Gm-Message-State: APjAAAWdlFzYnGG6ulxua73FM+zo3HjU5YuHLZ3mHJUijhv+ZliAd9l5
+        OYYXcQaq+7Ig+rXLWSrAp2mlpw==
+X-Google-Smtp-Source: APXvYqxgK8xmcb8cmqLsORJZ7TTthNvSR38Gu5AhhulxNuWGRWRRZdbxrIuJPiYnKHNvKZ2NG/bVbw==
+X-Received: by 2002:a17:90a:a47:: with SMTP id o65mr20625084pjo.90.1570249383344;
+        Fri, 04 Oct 2019 21:23:03 -0700 (PDT)
 Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id f15sm7808398pfd.141.2019.10.04.20.59.32
+        by smtp.gmail.com with ESMTPSA id b14sm7900427pfi.95.2019.10.04.21.23.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 04 Oct 2019 20:59:33 -0700 (PDT)
-Date:   Fri, 4 Oct 2019 20:59:31 -0700
+        Fri, 04 Oct 2019 21:23:02 -0700 (PDT)
+Date:   Fri, 4 Oct 2019 21:23:00 -0700
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     kholk11@gmail.com
 Cc:     linux-arm-msm@vger.kernel.org, marijns95@gmail.com,
         agross@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
         robh+dt@kernel.org, mark.rutland@arm.com, linus.walleij@linaro.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Subject: Re: [PATCH 1/5] pinctrl: qcom: Add a pinctrl driver for MSM8976 and
- 8956
-Message-ID: <20191005035931.GC2999@tuxbook-pro>
+Subject: Re: [PATCH 3/5] soc: qcom: smd-rpm: Add MSM8976 compatible
+Message-ID: <20191005042300.GA6390@tuxbook-pro>
 References: <20190921101207.65042-1-kholk11@gmail.com>
- <20190921101207.65042-2-kholk11@gmail.com>
+ <20190921101207.65042-4-kholk11@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190921101207.65042-2-kholk11@gmail.com>
+In-Reply-To: <20190921101207.65042-4-kholk11@gmail.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -80,71 +79,45 @@ On Sat 21 Sep 03:12 PDT 2019, kholk11@gmail.com wrote:
 
 > From: "Angelo G. Del Regno" <kholk11@gmail.com>
 > 
-> Add the pinctrl driver to support pin configuration with the
-> pinctrl framework on MSM8976, MSM8956, APQ8056, APQ8076.
+> Add a compatible for the RPM on the Qualcomm MSM8976 platform:
+> this is also valid for MSM8956 and their APQ variants.
 > 
 > Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
-> ---
->  .../bindings/pinctrl/qcom,msm8976-pinctrl.txt |  183 +++
->  drivers/pinctrl/qcom/Kconfig                  |   10 +
->  drivers/pinctrl/qcom/Makefile                 |    1 +
->  drivers/pinctrl/qcom/pinctrl-msm8976.c        | 1128 +++++++++++++++++
->  4 files changed, 1322 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt
->  create mode 100644 drivers/pinctrl/qcom/pinctrl-msm8976.c
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt
-> new file mode 100644
-> index 000000000000..4e944f84b7d7
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,msm8976-pinctrl.txt
-> @@ -0,0 +1,183 @@
-> +Qualcomm MSM8976 TLMM block
 
-As Linus indicated, please send your the DT bindings in separate
-patches.
+Applied
 
-> +
-[..]
-> +Example:
-> +
-> +	tlmm: pinctrl@1000000 {
-> +		compatible = "qcom,msm8976-pinctrl";
-> +		reg = <0x1000000 0x300000>;
-> +		interrupts = <0 208 0>;
-
-<GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>
-
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +		gpio-ranges = <&tlmm 0 0 145>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +
-> +		blsp1_uart2_active: blsp1_uart2_active {
-> +			mux {
-> +				pins = "gpio4", "gpio5", "gpio6", "gpio7";
-> +				function = "blsp_uart2";
-> +			};
-> +
-> +			config {
-> +				pins = "gpio4", "gpio5", "gpio6", "gpio7";
-> +				drive-strength = <2>;
-> +				bias-disable;
-> +			};
-> +		};
-> +	};
-> diff --git a/drivers/pinctrl/qcom/Kconfig b/drivers/pinctrl/qcom/Kconfig
-[..]
-> +static struct platform_driver msm8976_pinctrl_driver = {
-> +	.driver = {
-> +		.name = "msm8976-pinctrl",
-> +		.owner = THIS_MODULE,
-
-No need to specify .onwer on platform_drivers anymore.
-
-
-Apart from that, I think this patch looks good.
-
-Regards,
+Thanks,
 Bjorn
+
+> ---
+>  Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt | 1 +
+>  drivers/soc/qcom/smd-rpm.c                                  | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
+> index f3fa313963d5..616fddcd09fd 100644
+> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
+> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,smd-rpm.txt
+> @@ -22,6 +22,7 @@ resources.
+>  		    "qcom,rpm-apq8084"
+>  		    "qcom,rpm-msm8916"
+>  		    "qcom,rpm-msm8974"
+> +		    "qcom,rpm-msm8976"
+>  		    "qcom,rpm-msm8998"
+>  		    "qcom,rpm-sdm660"
+>  		    "qcom,rpm-qcs404"
+> diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+> index fa9dd12b5e39..fe2199f6ce8f 100644
+> --- a/drivers/soc/qcom/smd-rpm.c
+> +++ b/drivers/soc/qcom/smd-rpm.c
+> @@ -217,6 +217,7 @@ static const struct of_device_id qcom_smd_rpm_of_match[] = {
+>  	{ .compatible = "qcom,rpm-apq8084" },
+>  	{ .compatible = "qcom,rpm-msm8916" },
+>  	{ .compatible = "qcom,rpm-msm8974" },
+> +	{ .compatible = "qcom,rpm-msm8976" },
+>  	{ .compatible = "qcom,rpm-msm8996" },
+>  	{ .compatible = "qcom,rpm-msm8998" },
+>  	{ .compatible = "qcom,rpm-sdm660" },
+> -- 
+> 2.21.0
+> 
