@@ -2,183 +2,136 @@ Return-Path: <SRS0=JWDe=X6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D45AC3E8AB
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 09:23:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1D76C4740A
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 16:20:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4F18222C0
-	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 09:23:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A818620862
+	for <linux-clk@archiver.kernel.org>; Sat,  5 Oct 2019 16:20:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EJ0T65b2"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="qHHii3Ta"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726918AbfJEJXc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Oct 2019 05:23:32 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:34478 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725862AbfJEJXc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 05:23:32 -0400
-Received: by mail-wm1-f65.google.com with SMTP id y135so11220172wmc.1;
-        Sat, 05 Oct 2019 02:23:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=hjzyggOz9U/yn8evnsKwr6dIVzKr7dCckaek808/z2g=;
-        b=EJ0T65b2yF5ELwKmMgkJNTG+J47ImouATVjqm2hVHsVw0xGo+gG8mZcw9QC8wXSU4t
-         0r+FKBtQb0kVp0JqNpX87Uw3PuL6wpY9MAU0TFF90qgeEe7WJW1xexxZuW3Giy9KWV6B
-         pLYmkHJNXGOFT9KwkS37cyp43p4TGPVOQV+qeKjnKoJTmKm4pIFyhc/xtOtMhqySBiza
-         pqY419wuCCG5aE9w7ra5NLmr2OWnSV6yjDoowLk5VaHh3hqXKjrJYp53kQWlQ+pIjsVH
-         IuhPR47+faUZI0GD5iju7iVf4z/BfcbRw2NgYaB+Rj0iCfuhX8frwck7HG1wEO64sFCg
-         YHzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hjzyggOz9U/yn8evnsKwr6dIVzKr7dCckaek808/z2g=;
-        b=f/H8usVs9mF2V/QBvhyYowERoeYkjX4uuVON8zFYueSwAwtWY3ULvWagmJ2Uf+ycQL
-         bMedSQ1mNlvjZPIMSRxJCHsUFITZwOtbkbXglXWxZ/qtcgONT43IQFsG+5v9lJ/SbUv4
-         h/BiTKIF8EC9lQVphYSjyygIG7i6Sep+3YTXP9eXlZP0qvDMezIZp0jLzzRoStdxJYEZ
-         mM0wivnuh6JBuG0UVUtOYXjdJZS7qCey3lQck2k6CQwsZPI0qqw6uSFrN9NT7iIfO/CO
-         0yJlh+oAViyL8KEu+jHhYTlhfsPofd5E158eZI9gsNV3l2LOTJe5mC7OhB+9uDrlOie0
-         mesA==
-X-Gm-Message-State: APjAAAU18Fbs9Erw+vx+3niGmmrwmEpFGaj6c+9KsEp6bVoaflOB8ZzC
-        Qo57r963RfBInjqitSJ4ZynJ2nhYO5I2zG+iO/sBeC9p1V0=
-X-Google-Smtp-Source: APXvYqzdjuti+4Bh0M6nr+3a67DRXE95QOoL5hlBGjUvhD538JgZ2Mm+5XvQ5ajCq26jlPE6zUI/zatYUFSvWudS9lY=
-X-Received: by 2002:a1c:8097:: with SMTP id b145mr5266595wmd.29.1570267408889;
- Sat, 05 Oct 2019 02:23:28 -0700 (PDT)
-MIME-Version: 1.0
-References: <20190921101207.65042-1-kholk11@gmail.com> <20190921101207.65042-6-kholk11@gmail.com>
- <20191005042559.GB6390@tuxbook-pro>
-In-Reply-To: <20191005042559.GB6390@tuxbook-pro>
-From:   AngeloGioacchino Del Regno <kholk11@gmail.com>
-Date:   Sat, 5 Oct 2019 11:23:17 +0200
-Message-ID: <CAK7fi1a8YK-P+ZdcDQBFFR=4rL2jW+XPPTD=WUYYdi=Oyk0u=Q@mail.gmail.com>
-Subject: Re: [PATCH 5/5] soc: qcom: rpmpd: Add rpm power domains for msm8956
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     MSM <linux-arm-msm@vger.kernel.org>, marijns95@gmail.com,
-        agross@kernel.org, Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1727466AbfJEQUt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Oct 2019 12:20:49 -0400
+Received: from mo4-p01-ob.smtp.rzone.de ([81.169.146.165]:13561 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726114AbfJEQUt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 5 Oct 2019 12:20:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1570292446;
+        s=strato-dkim-0002; d=goldelico.com;
+        h=To:References:Message-Id:Cc:Date:In-Reply-To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=rUueBqAEeewEqXL83wlhxWPHm4ysz6LdEd5xrKZsuN8=;
+        b=qHHii3TascOf/pxum1dV6L4qqhr/UILgWIDZrNV90++B/ZffWqE3shVCZGZk5voMXW
+        8GlhQltG8mukdkzXpwCKM15PxK8hpPmizRRB1Q/PWBf38KKW8g2NK9rVSrjoLLM0SP2e
+        /U7qVpVaB4KaNs1d+m3XulufD3KmrhV0D1fswS7DTXECHC5hVApynLCf6OLaluw3ov6h
+        niFlUJDio3v2yNFSWCMSWGGdBWcZvdsFxkU7Lo0e1J7e3uQEqxnM62sz0HGXhEJlutCt
+        QUuUl+F/9lHE3FTVs9GR6bm2inuH/yyYPFlmzR9Qywoz9z2rthiygXbqfxrZyRqs6SJO
+        OqLw==
+X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMgPgp8VKxflSZ1P34KBj4Qpw9iZeHmAlw47tvfA="
+X-RZG-CLASS-ID: mo00
+Received: from imac.fritz.box
+        by smtp.strato.de (RZmta 44.28.0 DYNA|AUTH)
+        with ESMTPSA id v00409v95GKPju2
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sat, 5 Oct 2019 18:20:25 +0200 (CEST)
+Content-Type: text/plain; charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 9.3 \(3124\))
+Subject: Re: [PATCH 4/6] ARM: dts: Configure sgx for omap5
+From:   "H. Nikolaus Schaller" <hns@goldelico.com>
+In-Reply-To: <20190826145530.GT52127@atomide.com>
+Date:   Sat, 5 Oct 2019 18:20:25 +0200
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        =?utf-8?Q?Beno=C3=AEt_Cousson?= <bcousson@baylibre.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        Adam Ford <aford173@gmail.com>,
+        =?utf-8?Q?Filip_Matijevi=C4=87?= <filip.matijevic.pz@gmail.com>,
+        Ivaylo Dimitrov <ivo.g.dimitrov.75@gmail.com>,
+        moaz korena <moaz@korena.xyz>,
+        Merlijn Wajer <merlijn@wizzup.org>,
+        =?utf-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Philipp Rossak <embed3d@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Discussions about the Letux Kernel 
+        <letux-kernel@openphoenux.org>, kernel@pyra-handheld.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <45A3C28C-69DE-4056-9786-3257B129D060@goldelico.com>
+References: <20190814131408.57162-1-tony@atomide.com> <20190814131408.57162-5-tony@atomide.com> <20190815182348.8A1BA2063F@mail.kernel.org> <20190817065615.GI52127@atomide.com> <20190826145530.GT52127@atomide.com>
+To:     Tony Lindgren <tony@atomide.com>
+X-Mailer: Apple Mail (2.3124)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Il giorno sab 5 ott 2019 alle ore 06:26 Bjorn Andersson
-<bjorn.andersson@linaro.org> ha scritto:
->
-> On Sat 21 Sep 03:12 PDT 2019, kholk11@gmail.com wrote:
->
-> > From: "Angelo G. Del Regno" <kholk11@gmail.com>
-> >
-> > The MSM8956 SoC has two main voltage-level power domains, VDD_CX
-> > and VDD_MX, which also have their own voltage-floor-level (VFL)
-> > corner.
-> >
-> > Signed-off-by: Angelo G. Del Regno <kholk11@gmail.com>
->
-> I was under the impression that 8956/76 can be used interchangeably, if
-> so I would prefer if you pick one (8976 as that seems to be your common
-> choice) and stick with that.
->
-> If not, I think it would be nice if all bindings came with both
-> compatibles.
->
-> Regards,
-> Bjorn
->
-> > ---
-> >  .../devicetree/bindings/power/qcom,rpmpd.txt  |  1 +
-> >  drivers/soc/qcom/rpmpd.c                      | 23 +++++++++++++++++++
-> >  include/dt-bindings/power/qcom-rpmpd.h        |  8 +++++++
-> >  3 files changed, 32 insertions(+)
-> >
-> > diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> > index eb35b22f9e23..30176b1e595a 100644
-> > --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> > +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
-> > @@ -5,6 +5,7 @@ which then translates it into a corresponding voltage on a rail
-> >
-> >  Required Properties:
-> >   - compatible: Should be one of the following
-> > +     * qcom,msm8956-rpmpd: RPM Power domain for the msm8956 family of SoC
-> >       * qcom,msm8996-rpmpd: RPM Power domain for the msm8996 family of SoC
-> >       * qcom,msm8998-rpmpd: RPM Power domain for the msm8998 family of SoC
-> >       * qcom,qcs404-rpmpd: RPM Power domain for the qcs404 family of SoC
-> > diff --git a/drivers/soc/qcom/rpmpd.c b/drivers/soc/qcom/rpmpd.c
-> > index 3c1a55cf25d6..b50f62851461 100644
-> > --- a/drivers/soc/qcom/rpmpd.c
-> > +++ b/drivers/soc/qcom/rpmpd.c
-> > @@ -115,6 +115,28 @@ struct rpmpd_desc {
-> >
-> >  static DEFINE_MUTEX(rpmpd_lock);
-> >
-> > +/* msm8956 RPM Power Domains */
-> > +DEFINE_RPMPD_PAIR(msm8956, vddcx, vddcx_ao, SMPA, LEVEL, 2);
-> > +DEFINE_RPMPD_PAIR(msm8956, vddmx, vddmx_ao, SMPA, LEVEL, 6);
-> > +
-> > +DEFINE_RPMPD_VFL(msm8956, vddcx_vfl, RWSC, 2);
-> > +DEFINE_RPMPD_VFL(msm8956, vddmx_vfl, RWSM, 6);
-> > +
-> > +static struct rpmpd *msm8956_rpmpds[] = {
-> > +     [MSM8956_VDDCX] =       &msm8956_vddcx,
-> > +     [MSM8956_VDDCX_AO] =    &msm8956_vddcx_ao,
-> > +     [MSM8956_VDDCX_VFL] =   &msm8956_vddcx_vfl,
-> > +     [MSM8956_VDDMX] =       &msm8956_vddmx,
-> > +     [MSM8956_VDDMX_AO] =    &msm8956_vddmx_ao,
-> > +     [MSM8956_VDDMX_VFL] =   &msm8956_vddmx_vfl,
-> > +};
-> > +
-> > +static const struct rpmpd_desc msm8956_desc = {
-> > +     .rpmpds = msm8956_rpmpds,
-> > +     .num_pds = ARRAY_SIZE(msm8956_rpmpds),
-> > +     .max_state = RPM_SMD_LEVEL_TURBO_HIGH,
-> > +};
-> > +
-> >  /* msm8996 RPM Power domains */
-> >  DEFINE_RPMPD_PAIR(msm8996, vddcx, vddcx_ao, SMPA, CORNER, 1);
-> >  DEFINE_RPMPD_PAIR(msm8996, vddmx, vddmx_ao, SMPA, CORNER, 2);
-> > @@ -198,6 +220,7 @@ static const struct rpmpd_desc qcs404_desc = {
-> >  };
-> >
-> >  static const struct of_device_id rpmpd_match_table[] = {
-> > +     { .compatible = "qcom,msm8956-rpmpd", .data = &msm8956_desc },
-> >       { .compatible = "qcom,msm8996-rpmpd", .data = &msm8996_desc },
-> >       { .compatible = "qcom,msm8998-rpmpd", .data = &msm8998_desc },
-> >       { .compatible = "qcom,qcs404-rpmpd", .data = &qcs404_desc },
-> > diff --git a/include/dt-bindings/power/qcom-rpmpd.h b/include/dt-bindings/power/qcom-rpmpd.h
-> > index 30a0aee0df57..3423f964c233 100644
-> > --- a/include/dt-bindings/power/qcom-rpmpd.h
-> > +++ b/include/dt-bindings/power/qcom-rpmpd.h
-> > @@ -27,6 +27,14 @@
-> >  #define RPMH_REGULATOR_LEVEL_TURBO   384
-> >  #define RPMH_REGULATOR_LEVEL_TURBO_L1        416
-> >
-> > +/* MSM8956 Power Domain Indexes */
-> > +#define MSM8956_VDDCX                0
-> > +#define MSM8956_VDDCX_AO     1
-> > +#define MSM8956_VDDCX_VFL    2
-> > +#define MSM8956_VDDMX                3
-> > +#define MSM8956_VDDMX_AO     4
-> > +#define MSM8956_VDDMX_VFL    5
-> > +
-> >  /* MSM8996 Power Domain Indexes */
-> >  #define MSM8996_VDDCX                0
-> >  #define MSM8996_VDDCX_AO     1
-> > --
-> > 2.21.0
-> >
+Hi Tony,
 
-Yup. My brain stopped working for a minute on that patch :)))
-This is applicable to both MSM8956 and MSM8976... and the other drivers that
-I've sent are actually reporting a 8976 compatible, so, yes I'll
-resend that one as
-8976 instead.
+> Am 26.08.2019 um 16:55 schrieb Tony Lindgren <tony@atomide.com>:
+>=20
+> * Tony Lindgren <tony@atomide.com> [190817 06:56]:
+>> * Stephen Boyd <sboyd@kernel.org> [190815 18:24]:
+>>> Quoting Tony Lindgren (2019-08-14 06:14:06)
+>>>> diff --git a/arch/arm/boot/dts/omap54xx-clocks.dtsi =
+b/arch/arm/boot/dts/omap54xx-clocks.dtsi
+>>>> --- a/arch/arm/boot/dts/omap54xx-clocks.dtsi
+>>>> +++ b/arch/arm/boot/dts/omap54xx-clocks.dtsi
+>>>> @@ -1146,6 +1146,20 @@
+>>>>                };
+>>>>        };
+>>>>=20
+>>>> +       gpu_cm: gpu_cm@1500 {
+>>>=20
+>>> Node names shouldn't have underscores. Maybe clock-controller?
+>>=20
+>> OK yeah clock-controller sounds good to me.
+>=20
+> Below is this one updated to use clock-controller naming.
+>=20
+> Regards,
+>=20
+> Tony
+>=20
+> 8< ---------------------------
+> =46rom tony Mon Sep 17 00:00:00 2001
+> From: Tony Lindgren <tony@atomide.com>
+> Date: Wed, 14 Aug 2019 05:18:16 -0700
+> Subject: [PATCH] ARM: dts: Configure sgx for omap5
+> MIME-Version: 1.0
+> Content-Type: text/plain; charset=3DUTF-8
+> Content-Transfer-Encoding: 8bit
+>=20
+> I've tested that the interconnect target module enables and idles
+> just fine when probed with ti-sysc with PM runtime control via sys:
+>=20
+> # echo on > $(find /sys -name control | grep \/5600)
+
+Patch has arrived in v5.4-rc1 but does not work in that environment for =
+me:
+
+root@letux:~# echo on > $(find /sys -name control | grep \/5600)
+[  213.490926] clock-controller:clk:0000:0: failed to enable
+root@letux:~# uname -a
+Linux letux 5.4.0-rc1+ #1083 SMP Sat Oct 5 17:47:13 CEST 2019 armv7l =
+GNU/Linux
+root@letux:~# find /sys -name control | grep \/5600
+/sys/devices/platform/44000000.ocp/5600fe00.target-module/power/control
+root@letux:~#
+
+I have tested our own tree but also mainline (plus some minimal
+patch set to run the Pyra) using omap2plus_defconfig.
+
+Does it work on omap5uevm?
+
+Is there some related patch needed that did not yet arrive in v5.4-rc1?
+
+BR and thanks,
+Nikolaus
+
