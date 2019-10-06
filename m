@@ -6,70 +6,72 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C0DC47404
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 01:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4FE9C4740A
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 02:17:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C46B3222CB
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 01:05:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D484222C8
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 02:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570323915;
-	bh=Pf9/d5vVjnlPKk6M1od3ctC5DpBEelEq+hMSLuWLdo0=;
+	s=default; t=1570328223;
+	bh=08IWgsYtfYEQoxuJKerHwdwPvgltMNLMDmtbgmWVK1E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=W9HIbqheBHTE7FVeUwugRjr2nUv6u7oTSYHhRpAxs3WVgj3MNCvmyq1i3tRo+hLmh
-	 ZatpAOB0U7exYMEA+RtMQ/gHlivI1o95TSkcbRT+81dhX5M/noJKR6IjzBIMLV/rpa
-	 8yo7glZZOk7s+0rK9UXSrMIe19Ow+bztET9WiJng=
+	b=HH+ShNbI9jA8nBc2o3huSaS4tLW/7bu8EzqDSVo0J+M6cDJ0NfsC58T+Abp4OanVz
+	 aYuKL4x4VFKYpo/nHyyukezi4+oXxImU3gZuy7mu3Zb+WHIc9oRu3+bk1kqFNYUlKP
+	 RQ6AHeOOU2VfVpmJGCojugmfdcozUXC+hR2hq8zk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfJFBFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Oct 2019 21:05:15 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50476 "EHLO mail.kernel.org"
+        id S1725919AbfJFCRD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Oct 2019 22:17:03 -0400
+Received: from mail.kernel.org ([198.145.29.99]:40856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726986AbfJFBFP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 5 Oct 2019 21:05:15 -0400
+        id S1725917AbfJFCRC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 5 Oct 2019 22:17:02 -0400
 Received: from dragon (li937-157.members.linode.com [45.56.119.157])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C714A222C8;
-        Sun,  6 Oct 2019 01:05:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3727222C5;
+        Sun,  6 Oct 2019 02:16:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570323914;
-        bh=Pf9/d5vVjnlPKk6M1od3ctC5DpBEelEq+hMSLuWLdo0=;
+        s=default; t=1570328222;
+        bh=08IWgsYtfYEQoxuJKerHwdwPvgltMNLMDmtbgmWVK1E=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=D++bcTh4Glu+CeOeynzWo+wszaZBx85Jj7nV1Ao4qOPw6b3eHywudNpI8d4YvXA1/
-         BjFcBhPuIoMo2iKwG0l9zxHQfksHelul20GxBhJljPPWIBpyyqiknUM50dzAgQWcRF
-         xWYK5P21Olnl4Atk09kJhpv05/G5hgeGyLp5sTxA=
-Date:   Sun, 6 Oct 2019 09:04:57 +0800
+        b=IPpRYsJjzqd4LI8VNtqPHCqhhWF0MhM+wSbYfyvzxudK2sz+pwQsuZGizutKVDKHy
+         BBbis6GY9iz7IWs6e79EW3rfUP4pEy6Lh5jkw7Nnk9YJk6Y78+v4EgseYblCQA6QH0
+         aEJmeXKgO77mBDEu9gTLIif5z0Ar0WZrTAQfuNsQ=
+Date:   Sun, 6 Oct 2019 10:16:33 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Daniel Baluta <daniel.baluta@nxp.com>,
-        Viorel Suman <viorel.suman@nxp.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: imx: pll14xx: Fix quick switch of S/K parameter
-Message-ID: <20191006010456.GG7150@dragon>
-References: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, leonard.crestez@nxp.com,
+        abel.vesa@nxp.com, peng.fan@nxp.com, ping.bai@nxp.com,
+        chen.fang@nxp.com, shengjiu.wang@nxp.com, aisheng.dong@nxp.com,
+        sfr@canb.auug.org.au, l.stach@pengutronix.de,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Linux-imx@nxp.com
+Subject: Re: [PATCH V2 1/2] clk: imx8mm: Move 1443X/1416X PLL clock structure
+ to common place
+Message-ID: <20191006021632.GM7150@dragon>
+References: <1567776846-6373-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
+In-Reply-To: <1567776846-6373-1-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Sep 04, 2019 at 12:49:18PM +0300, Leonard Crestez wrote:
-> The PLL14xx on imx8m can change the S and K parameter without requiring
-> a reset and relock of the whole PLL.
+On Fri, Sep 06, 2019 at 09:34:05AM -0400, Anson Huang wrote:
+> Many i.MX8M SoCs use same 1443X/1416X PLL, such as i.MX8MM,
+> i.MX8MN and later i.MX8M SoCs, moving these PLL definitions
+> to pll14xx driver can save a lot of duplicated code on each
+> platform.
 > 
-> Fix clk_pll144xx_mp_change register reading and use it for pll1443 as
-> well since no reset+relock is required on K changes either.
+> Meanwhile, no need to define PLL clock structure for every
+> module which uses same type of PLL, e.g., audio/video/dram use
+> 1443X PLL, arm/gpu/vpu/sys use 1416X PLL, define 2 PLL clock
+> structure for each group is enough.
 > 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Applied, thanks.
+Applied both, thanks.
