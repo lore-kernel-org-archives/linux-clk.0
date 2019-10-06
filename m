@@ -2,87 +2,74 @@ Return-Path: <SRS0=K8QK=X7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3CAC47404
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 01:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0C0DC47404
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 01:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545C5222CC
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 01:01:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="qdwSrEig"
+	by mail.kernel.org (Postfix) with ESMTP id C46B3222CB
+	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 01:05:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570323915;
+	bh=Pf9/d5vVjnlPKk6M1od3ctC5DpBEelEq+hMSLuWLdo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=W9HIbqheBHTE7FVeUwugRjr2nUv6u7oTSYHhRpAxs3WVgj3MNCvmyq1i3tRo+hLmh
+	 ZatpAOB0U7exYMEA+RtMQ/gHlivI1o95TSkcbRT+81dhX5M/noJKR6IjzBIMLV/rpa
+	 8yo7glZZOk7s+0rK9UXSrMIe19Ow+bztET9WiJng=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727018AbfJFBBM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 5 Oct 2019 21:01:12 -0400
-Received: from onstation.org ([52.200.56.107]:55388 "EHLO onstation.org"
+        id S1727058AbfJFBFP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 5 Oct 2019 21:05:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:50476 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726981AbfJFBBM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 5 Oct 2019 21:01:12 -0400
-Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        id S1726986AbfJFBFP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 5 Oct 2019 21:05:15 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 7315B3E914;
-        Sun,  6 Oct 2019 01:01:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1570323671;
-        bh=KxTHzhHN/s8lLwxnhweVAc//HzBq5AJHQfq/SjOa9p0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qdwSrEigktdWIq2zAqwlkMI7cYO0z/n/qiIU7xCv72tBppNH7AjMFU1SwwXx4iT0j
-         wHvRsZMlarwN9GY3vSHlDjL7devsDNyOkh8gsguBjbNpSrziKK/mJG5befo1uQMDGy
-         zvYyE9rRZMI0fMy/2JMhhfqvp5SgWlK/YmFK9V6E=
-From:   Brian Masney <masneyb@onstation.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com
-Cc:     agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        jonathan@marek.ca
-Subject: [PATCH] clk: qcom: mmcc8974: add frequency table for gfx3d
-Date:   Sat,  5 Oct 2019 21:01:00 -0400
-Message-Id: <20191006010100.32053-1-masneyb@onstation.org>
-X-Mailer: git-send-email 2.21.0
+        by mail.kernel.org (Postfix) with ESMTPSA id C714A222C8;
+        Sun,  6 Oct 2019 01:05:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570323914;
+        bh=Pf9/d5vVjnlPKk6M1od3ctC5DpBEelEq+hMSLuWLdo0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=D++bcTh4Glu+CeOeynzWo+wszaZBx85Jj7nV1Ao4qOPw6b3eHywudNpI8d4YvXA1/
+         BjFcBhPuIoMo2iKwG0l9zxHQfksHelul20GxBhJljPPWIBpyyqiknUM50dzAgQWcRF
+         xWYK5P21Olnl4Atk09kJhpv05/G5hgeGyLp5sTxA=
+Date:   Sun, 6 Oct 2019 09:04:57 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Daniel Baluta <daniel.baluta@nxp.com>,
+        Viorel Suman <viorel.suman@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>, kernel@pengutronix.de,
+        linux-imx@nxp.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] clk: imx: pll14xx: Fix quick switch of S/K parameter
+Message-ID: <20191006010456.GG7150@dragon>
+References: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c3e86b5a832a14278e8ba670d51defc70ee78d84.1567590349.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jonathan Marek <jonathan@marek.ca>
+On Wed, Sep 04, 2019 at 12:49:18PM +0300, Leonard Crestez wrote:
+> The PLL14xx on imx8m can change the S and K parameter without requiring
+> a reset and relock of the whole PLL.
+> 
+> Fix clk_pll144xx_mp_change register reading and use it for pll1443 as
+> well since no reset+relock is required on K changes either.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 
-Add frequency table for the gfx3d clock that's needed in order to
-support the GPU upstream on msm8974-based systems.
-
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
- drivers/clk/qcom/mmcc-msm8974.c | 7 +++++++
- 1 file changed, 7 insertions(+)
-
-diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
-index bcb0a397ef91..e70abfe2a792 100644
---- a/drivers/clk/qcom/mmcc-msm8974.c
-+++ b/drivers/clk/qcom/mmcc-msm8974.c
-@@ -452,10 +452,17 @@ static struct clk_rcg2 mdp_clk_src = {
- 	},
- };
- 
-+static struct freq_tbl ftbl_gfx3d_clk_src[] = {
-+	F(37500000, P_GPLL0, 16, 0, 0),
-+	F(533000000, P_MMPLL0, 1.5, 0, 0),
-+	{ }
-+};
-+
- static struct clk_rcg2 gfx3d_clk_src = {
- 	.cmd_rcgr = 0x4000,
- 	.hid_width = 5,
- 	.parent_map = mmcc_xo_mmpll0_1_2_gpll0_map,
-+	.freq_tbl = ftbl_gfx3d_clk_src,
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gfx3d_clk_src",
- 		.parent_names = mmcc_xo_mmpll0_1_2_gpll0,
--- 
-2.21.0
-
+Applied, thanks.
