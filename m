@@ -1,99 +1,120 @@
-Return-Path: <SRS0=K8QK=X7=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ZgeQ=YA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84D16C10F14
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 15:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048D5C4360C
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Oct 2019 00:57:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C43B21479
-	for <linux-clk@archiver.kernel.org>; Sun,  6 Oct 2019 15:47:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570376863;
-	bh=DryS73MwEqYaEHfjk9sJrp4eJu/HbUNbnmzbPpUq0gc=;
-	h=Date:From:To:Subject:References:In-Reply-To:List-ID:From;
-	b=fq56BvlFsQp18TeMbIH5JPE+OEWrzwo670cmeIZTGLVqIRGI5yY9n2edJ21DO0T56
-	 UdQW/3q3REKmBShJOcPTYsK8vO01FkmSVZoNfI1lCg0WrJzlFz71Ipo0JoVCqw+eMX
-	 OKf7KlH5vBT4wCy6CvB0k92t6J4laYk2mB5otKSY=
+	by mail.kernel.org (Postfix) with ESMTP id C4CF72084B
+	for <linux-clk@archiver.kernel.org>; Mon,  7 Oct 2019 00:57:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s1j6LSdx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726420AbfJFPrm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 6 Oct 2019 11:47:42 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55716 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725905AbfJFPrm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Oct 2019 11:47:42 -0400
-Received: by mail-wm1-f65.google.com with SMTP id a6so10044625wma.5;
-        Sun, 06 Oct 2019 08:47:39 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SBpRb6qd+48zQK5uPLn0YvEluIoUY9o3FhFhGA6TXtY=;
-        b=Z37+ICp7Y2QDT49t+AdNnVTJVt76pPZFd6B69eHRoUoNZlsdtFkBCYnSdEyhWhNbuK
-         XyETKrUDNSnLU0N40QS4exLwpNzCn3/7e6RprNKgM+Qgr2l5BRucGBLAeRfUBtKOQMJ/
-         5E9krxQL8OOHlalnke9FA7tibZzAe6GFB/E4Tjd1T8SsglrBwPlPGPzr8Yl+7Mdbg35j
-         IFXYmMzgkgcDjGXuUelcoGSjezWAQjoj/QavICNDeyyyRPhrYYOc89Nr353qflFxSsn4
-         1BvgZwAEXST7N03PUH5ali/fZNJcdatPFLpTHv6qfPMQra3BvYtNieDoXbXlpO+z1NTI
-         sjXw==
-X-Gm-Message-State: APjAAAUxUmMz14TPUm0Zi7j50psy10b7VPGg5JHEvkXkDaeqENUPDqXP
-        tPZ/Wxzu3jmyhFXsDcYOxAA=
-X-Google-Smtp-Source: APXvYqwiD5w33vuIYv9624AWG0k3vsCYtE8uO59mkpTJi1G/TZQDv7OS1UJvxH3zuwZ0w6XxIwuUIQ==
-X-Received: by 2002:a1c:9988:: with SMTP id b130mr18139392wme.164.1570376858781;
-        Sun, 06 Oct 2019 08:47:38 -0700 (PDT)
-Received: from kozik-lap ([194.230.155.145])
-        by smtp.googlemail.com with ESMTPSA id o22sm31539882wra.96.2019.10.06.08.47.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 06 Oct 2019 08:47:38 -0700 (PDT)
-Date:   Sun, 6 Oct 2019 17:47:34 +0200
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1726739AbfJGA5I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 6 Oct 2019 20:57:08 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:52726 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfJGA5I (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 6 Oct 2019 20:57:08 -0400
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x970v1Th104895;
+        Sun, 6 Oct 2019 19:57:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570409821;
+        bh=y1PP9ltrxnowjAkMcLF1tzTezdMwJrZBzBpXFZIAsDU=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=s1j6LSdxWXh1k2aIaVOCPbuvP0zSKvG35A7Gk8QtC90iWgvTx7iCE3RpIuK8jSIsL
+         S0oQf6WlAEPrxzGDUKfQKbMCYpK4CTiQ0HT6bkT5YdDXtSswOOWXjVrMq3QhSVICFs
+         xKyVHhgdg9K8KkxGR5ixDPNrsi01n5UGFTRFOYTQ=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x970v1Ij088111
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 6 Oct 2019 19:57:01 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Sun, 6 Oct
+ 2019 19:56:59 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Sun, 6 Oct 2019 19:56:59 -0500
+Received: from [172.24.191.45] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x970uwtd085060;
+        Sun, 6 Oct 2019 19:56:59 -0500
+Subject: Re: [PATCH] clk: ti: clkctrl: Fix failed to enable error with double
+ udelay timeout
+To:     Tony Lindgren <tony@atomide.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org, etnaviv@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-tegra@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org, linux-usb@vger.kernel.org,
-        linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] ARM: dts: exynos: Rename power domain nodes to
- "power-domain" in Exynos4
-Message-ID: <20191006154734.GA29365@kozik-lap>
-References: <20191002160632.11140-1-krzk@kernel.org>
- <20191002160632.11140-3-krzk@kernel.org>
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20190930154001.46581-1-tony@atomide.com>
+From:   Keerthy <j-keerthy@ti.com>
+Message-ID: <93a6448d-cece-a903-5c7e-ade793d62063@ti.com>
+Date:   Mon, 7 Oct 2019 06:27:32 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191002160632.11140-3-krzk@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190930154001.46581-1-tony@atomide.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 02, 2019 at 06:06:32PM +0200, Krzysztof Kozlowski wrote:
-> The device node name should reflect generic class of a device so rename
-> power domain nodes to "power-domain".  No functional change.
+
+
+On 30/09/19 9:10 PM, Tony Lindgren wrote:
+> Commit 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if
+> timekeeping is suspended") added handling for cases when timekeeping is
+> suspended. But looks like we can still get occasional "failed to enable"
+> errors on the PM runtime resume path with udelay() returning faster than
+> expected.
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> With ti-sysc interconnect target module driver this leads into device
+> failure with PM runtime failing with "failed to enable" clkctrl error.
+> 
+> Let's fix the issue with a delay of two times the desired delay as in
+> often done for udelay() to account for the inaccuracy.
+
+Tested for DS0 and rtc+ddr modes on am43 and ds0 on am33.
+
+Tested-by: Keerthy <j-keerthy@ti.com>
+
+> 
+> Fixes: 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if timekeeping is suspended")
+> Cc: Keerthy <j-keerthy@ti.com>
+> Cc: Tero Kristo <t-kristo@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
 > ---
->  arch/arm/boot/dts/exynos4.dtsi    | 14 +++++++-------
->  arch/arm/boot/dts/exynos4210.dtsi |  2 +-
->  arch/arm/boot/dts/exynos4412.dtsi |  2 +-
->  3 files changed, 9 insertions(+), 9 deletions(-)
-
-Applied.
-
-Best regards,
-Krzysztof
+>   drivers/clk/ti/clkctrl.c | 5 +++--
+>   1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -100,11 +100,12 @@ static bool _omap4_is_timeout(union omap4_timeout *time, u32 timeout)
+>   	 * can be from a timer that requires pm_runtime access, which
+>   	 * will eventually bring us here with timekeeping_suspended,
+>   	 * during both suspend entry and resume paths. This happens
+> -	 * at least on am43xx platform.
+> +	 * at least on am43xx platform. Account for flakeyness
+> +	 * with udelay() by multiplying the timeout value by 2.
+>   	 */
+>   	if (unlikely(_early_timeout || timekeeping_suspended)) {
+>   		if (time->cycles++ < timeout) {
+> -			udelay(1);
+> +			udelay(1 * 2);
+>   			return false;
+>   		}
+>   	} else {
+> 
