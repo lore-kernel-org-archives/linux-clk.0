@@ -2,103 +2,95 @@ Return-Path: <SRS0=oEB3=YB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02E35C10F14
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 12:45:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFEDC35280
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 16:46:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB3B2173B
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 12:45:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="QXFzeHuf"
+	by mail.kernel.org (Postfix) with ESMTP id 114882070B
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 16:46:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbfJHMpa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Oct 2019 08:45:30 -0400
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:39381 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730249AbfJHMpa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Oct 2019 08:45:30 -0400
-Received: by mail-qk1-f195.google.com with SMTP id 4so16557992qki.6;
-        Tue, 08 Oct 2019 05:45:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=v98zF1OGy1a9xdf1tcg4rO9aTmICS20KeVZPXiAVZ6g=;
-        b=QXFzeHuf81gSpH57PDwEHoXnUMf8/WnURr1eH6LbCgjtzvlECfhgrOaugs8bUyVTa5
-         IN2earqrMs23m6T89TNg+NgWHJq+QvdQoc0ufRkTf0lkD8UnzdxXKWXEoHutopPYOV24
-         JDbyyAq7Mfk3JRcyLzr7IuC1s9MNUFNiLWH94=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=v98zF1OGy1a9xdf1tcg4rO9aTmICS20KeVZPXiAVZ6g=;
-        b=KDqfgIiXzeizQR2yni5h2PkAkZEEjYT/XaBCkvUklRD5+vXmIjHBORZJ0NfyLZfu4E
-         J4jDyF1XgzOZz0E25NyB72IMD7ucUmAZnAj6XWQjYvlviUBTcUzfUCgJhfp38+QlM/Eq
-         VnP9K08e61ZEPI22Vq2OAUM9FvmyWljadB9w7MSvMvEPenssISti23/3M+N5SqlEDjTe
-         btVgQlvVk98M7d1TlTZ/MN6UdxoECz4AsKm8D9h1t/gZwf5307a1oAtaGN7+OkNEVTyU
-         M44YjAvifU1ZU28fHuq8XC5GySTgUMZRk7fkb5MHg2Vy3RmcRgOGWExa+wgYvyb1hwhi
-         2uBg==
-X-Gm-Message-State: APjAAAVo80a6MJ4QrGlcQopcx+WAK/bvwGDRUDtrkoF53SEpMIxO+Iz+
-        2+IWlUGXl1wd/RbRL/zONKdxGYi5pTWqVibryUU=
-X-Google-Smtp-Source: APXvYqwbDrpR/sws3f6gujWo90eWmFtcR1qTkid+2DQ9qP9pCJc95MfjkQRPPxEaORjJBbxZSD9h/vhA8oS6KXrRLvY=
-X-Received: by 2002:a37:4a54:: with SMTP id x81mr28662696qka.292.1570538729054;
- Tue, 08 Oct 2019 05:45:29 -0700 (PDT)
+        id S1727753AbfJHQqf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Oct 2019 12:46:35 -0400
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:36738 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725966AbfJHQqf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Oct 2019 12:46:35 -0400
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com a:mx1.microchip.iphmx.com
+  a:mx2.microchip.iphmx.com include:servers.mcsv.net
+  include:mktomail.com include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: H6KlVa765s741gCHQkH5nrUQwU0gRzARZmFvBKiVRr9iErEDF6tXqekI06w/5/pujwWljhgBdQ
+ pwWGWhAufg4Unc+2nOYndpBuvPpctRxDVyk0xd3Ptpp5PtDJceyqrl9o5jkt/0y/nGx7sfpzY2
+ JWcIdEyiZwEIgn7vqlzZwawmgTciGGvOSp0dchFrMetUYCq0TLO3vMgivv8pkGy44+vwmgIqT0
+ L2L2dSHcjiv8QzudN4JwfZ1qoR3k7t4pKAcXfQuky+WU+2H9bunkFwjulZUgdMaWLC+/YCbMQu
+ vt4=
+X-IronPort-AV: E=Sophos;i="5.67,270,1566889200"; 
+   d="scan'208";a="50663840"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 08 Oct 2019 09:46:34 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Tue, 8 Oct 2019 09:46:32 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Tue, 8 Oct 2019 09:46:31 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH] clk: at91: add compatible for sam9x60
+Date:   Tue, 8 Oct 2019 19:46:26 +0300
+Message-ID: <1570553186-24691-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20191008113553.13662-1-andrew@aj.id.au> <20191008113553.13662-2-andrew@aj.id.au>
-In-Reply-To: <20191008113553.13662-2-andrew@aj.id.au>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 8 Oct 2019 12:45:17 +0000
-Message-ID: <CACPK8XcGAN6AF_GqUpCjFL3CEDeY42n0Zsgt5DX1ssOu+GhbDg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: Add AST2600 RMII RCLK gate definitions
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 8 Oct 2019 at 11:34, Andrew Jeffery <andrew@aj.id.au> wrote:
->
-> The AST2600 has an explicit gate for the RMII RCLK for each of the four
-> MACs.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> ---
->  include/dt-bindings/clock/ast2600-clock.h | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/include/dt-bindings/clock/ast2600-clock.h b/include/dt-bindings/clock/ast2600-clock.h
-> index 38074a5f7296..ac567fc84a87 100644
-> --- a/include/dt-bindings/clock/ast2600-clock.h
-> +++ b/include/dt-bindings/clock/ast2600-clock.h
-> @@ -84,6 +84,11 @@
->  #define ASPEED_CLK_MAC34               65
->  #define ASPEED_CLK_USBPHY_40M          66
->
-> +#define ASPEED_CLK_GATE_MAC1RCLK       67
-> +#define ASPEED_CLK_GATE_MAC2RCLK       68
-> +#define ASPEED_CLK_GATE_MAC3RCLK       69
-> +#define ASPEED_CLK_GATE_MAC4RCLK       70
+Add compatible for SAM9X60's PMC.
 
-My comments on the other patch about GATEs should have been on this patch.
+Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
+---
+ drivers/clk/at91/pmc.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> +
->  /* Only list resets here that are not part of a gate */
->  #define ASPEED_RESET_ADC               55
->  #define ASPEED_RESET_JTAG_MASTER2      54
-> --
-> 2.20.1
->
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index db24539d5740..24975bca608e 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -271,6 +271,7 @@ static struct syscore_ops pmc_syscore_ops = {
+ 
+ static const struct of_device_id sama5d2_pmc_dt_ids[] = {
+ 	{ .compatible = "atmel,sama5d2-pmc" },
++	{ .compatible = "microchip,sam9x60-pmc" },
+ 	{ /* sentinel */ }
+ };
+ 
+-- 
+2.7.4
+
