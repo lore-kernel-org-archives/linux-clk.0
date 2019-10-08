@@ -2,116 +2,94 @@ Return-Path: <SRS0=oEB3=YB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AE4CECE58E
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 07:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 137CDC4360C
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 07:41:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 036F2218AC
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 07:35:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D90FA21721
+	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 07:41:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="tXD04oUo"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kkseK9Vv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730378AbfJHHfg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Oct 2019 03:35:36 -0400
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40359 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730171AbfJHHfg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Oct 2019 03:35:36 -0400
-Received: by mail-wm1-f65.google.com with SMTP id b24so1943228wmj.5
-        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2019 00:35:33 -0700 (PDT)
+        id S1730177AbfJHHl4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 8 Oct 2019 03:41:56 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:45261 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729740AbfJHHl4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Oct 2019 03:41:56 -0400
+Received: by mail-pf1-f196.google.com with SMTP id y72so10265257pfb.12
+        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2019 00:41:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=IAmY8wSJYHaq63xMZva0VKaV5IVa+dPtYZ22qWpusgQ=;
-        b=tXD04oUorVrs0Qr7NDaaV+exszVTijzDCYUoP9Ms1NDNT3RP+sGbtWKme17UL9nLDM
-         wfleeOhDMFndnn6Ibt/NC7858hF0bYBMuPuN43nKNUdSQ0rxVWEUfr9taI867ECAMoDh
-         vavOEblsWJ07b32QMbyfz+dnz9hauio5xvvL/YARcRjQv3WK+wjZ5UUR//3CSGviWPHJ
-         3HgxkZGnXuA3zA+h8HdU3UtRPKGgynNXG1cTO3OiLyXgRllUroAMqG+34CXAn2UBUh1u
-         e7bh4EeY19LMEbLBNluvbmvPU6bPxHRsnUYGCkgNMaaD0q3AiSQQE+5knOH7nWTIp0uc
-         ZQSA==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=WTWm04ar4+VkLYYNXw2JS14xdDugNow5AHMpBwOh98U=;
+        b=kkseK9Vv/63Pcw3Emd7eqBn53F3b4We5nz6/fDgoQNdiN3fgUkxvOKFHoT2YFXZ4tq
+         yloarZHbOjJV0z8lMzK2iJYo/2s27a19LC/k1SZEAuz6JeeHWY7cXtGGH268aqlI96Cd
+         GPZ9Qp8MBZhZbPHx2EaaIQSLcO52SfdzquSdT67ZUgsfbxg0Y3uMQvG8jCAcPkrqis69
+         ET6BfuZJl1+S8Z8YxMfqE6TcltUE50uZqna8+CBaJx7a7QCw4Sw1sQi89JfO9fo7YKsq
+         D95B/g8SkqPm8/Fpl+hpPui8bm141HHbMtC5fjXxHsu+w5eYB8X/6k2AMpsPRsu9GrdX
+         aEkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=IAmY8wSJYHaq63xMZva0VKaV5IVa+dPtYZ22qWpusgQ=;
-        b=c6oDdCBDyE32j2eatzilvCYxBjNnZ6bQPQUli50Y74SNEiWMdoCoKhL93u5CBD5f9o
-         gc8A31Hw9IH4lk4Ks0Rs96XIPLSGDLFqgOotxel85xbSg1+3xTFspOxojV/z21+4aV/q
-         mH6RDUudXuvxALhgPzmNjtjuFfNgUYylKSUtQShByJPiM3a2srGsyyPD+6FV0T9oxi+Q
-         t+2ZE7EI6GPZ5dYKYwIsyP8bdc23trA4yXtjyyXveRsUnmZTV42z/TFLfA+NFuyIqSJa
-         GYjD+lYA8DyhdgH9PY5l1zS7obGwuw/V71Xyv85rH6K9a2+DUqrzfNKXZ2FdSD6ACPFH
-         YzPQ==
-X-Gm-Message-State: APjAAAVGPvPXIrMAjtBi1gWYKsxqAw1xeW0I1PKHRTA0hr3fAHI/KUOv
-        +TS52KGAc4OEbFCwUWUzH9k+XA==
-X-Google-Smtp-Source: APXvYqwRMSviP1Knn31C1pXBRZyBjj63INxAWbiTXlW4xrXz3uzxk1cbGwFf4t+dOfZyyQ6CJw5kcw==
-X-Received: by 2002:a1c:444:: with SMTP id 65mr2563758wme.73.1570520132541;
-        Tue, 08 Oct 2019 00:35:32 -0700 (PDT)
-Received: from localhost (lmontsouris-657-1-212-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id y18sm44366082wro.36.2019.10.08.00.35.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 00:35:31 -0700 (PDT)
-References: <20191002091529.17112-1-jbrunet@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/7] clk: meson: axg-audio: add sm1 support
-In-reply-to: <20191002091529.17112-1-jbrunet@baylibre.com>
-Date:   Tue, 08 Oct 2019 09:35:30 +0200
-Message-ID: <1jy2xvadvh.fsf@starbuckisacylon.baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WTWm04ar4+VkLYYNXw2JS14xdDugNow5AHMpBwOh98U=;
+        b=UWeRUBIZfYZ8PmDh6FAc89HXSQsBDdRjlbCKMpIs9X8NB3pki+mRIg917lqagVV+Om
+         bJP/uSwhI6QsE78yuc7OHIN2MHN6NpCi3LbarJS+Z+jQPaMq2RwC6FlLmRN+fywdGmSm
+         AW5Q1aWIbOW9mutIFvHt2OHJXbxPS3wke3uppirg71onfjfOh5HNijsfXiiZ7gh7pP+J
+         85OOpKNHkpCrIWc/Z0/JVTKCknqw6ywiDjUPZ/xHL7Evs8tZlXDGNpkCirc35phK6oVw
+         RBoSyKp6DMI84wcU/0bgfKSvTZdl+aPdoOcV66XFENVYLbJUJHVn3Xma3oI+v5BkpWpy
+         56lQ==
+X-Gm-Message-State: APjAAAV6C+IvLxuN/yeeboyUfkcCsUaUBO7VfVp2/+1XazcgA/ZfSCcX
+        N0+hft64MDdOm23pfdd76b/mBA==
+X-Google-Smtp-Source: APXvYqwASYWwYOQfFYehr5RojrWBRZDWtlku7FUHwl7oUX0ZGAYD7Q1pRY66aoJa85L8+Ww750zZPg==
+X-Received: by 2002:a63:e54b:: with SMTP id z11mr34734641pgj.226.1570520515806;
+        Tue, 08 Oct 2019 00:41:55 -0700 (PDT)
+Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id y8sm18231363pge.21.2019.10.08.00.41.52
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 08 Oct 2019 00:41:54 -0700 (PDT)
+From:   Baolin Wang <baolin.wang@linaro.org>
+To:     mturquette@baylibre.com, sboyd@kernel.org
+Cc:     orsonzhai@gmail.com, baolin.wang@linaro.org, zhang.lyra@gmail.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/2] clk: sprd: Use IS_ERR() to validate the return value of syscon_regmap_lookup_by_phandle()
+Date:   Tue,  8 Oct 2019 15:41:38 +0800
+Message-Id: <1995139bee5248ff3e9d46dc715968f212cfc4cc.1570520268.git.baolin.wang@linaro.org>
+X-Mailer: git-send-email 1.7.9.5
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The syscon_regmap_lookup_by_phandle() will never return NULL, thus use
+IS_ERR() to validate the return value instead of IS_ERR_OR_NULL().
 
-On Wed 02 Oct 2019 at 11:15, Jerome Brunet <jbrunet@baylibre.com> wrote:
+Fixes: d41f59fd92f2 ("clk: sprd: Add common infrastructure")
+Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
+---
+Changes from v1:
+ - Add fixes tag.
+---
+ drivers/clk/sprd/common.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> The purpose of this patchset is to add the sm1 support to the amlogic audio
-> clock controller. The line count is lot higher than what I hoped for. Even
-> if extremely similar, there is a shift in the register address on the sm1
-> which makes a bit of a mess.
->
-> I could have patched the address on the fly if running on sm1 but the end
-> result did not save much lines and would have been a pain to maintain and
-> scale in the future
->
-> Instead I choose to re-arrange the driver to share the macros and declare
-> separate clocks for the clock which have changed.
->
-> Changes since v2 [1]:
->  - Add missing gate ops for
->   * sm1_clk81_en
->   * sm1_sysclk_a_en
->   * sm1_sysclk_b_en
->
-> Changes since v1 [0]:
->  - Fix newline in the last patch
->
-> [0]: https://lkml.kernel.org/r/20190924153356.24103-1-jbrunet@baylibre.com
-> [1]: https://lkml.kernel.org/r/20191001115511.17357-1-jbrunet@baylibre.com>
->
-> Jerome Brunet (7):
->   dt-bindings: clk: axg-audio: add sm1 bindings
->   dt-bindings: clock: meson: add sm1 resets to the axg-audio controller
->   clk: meson: axg-audio: remove useless defines
->   clk: meson: axg-audio: fix regmap last register
->   clk: meson: axg-audio: prepare sm1 addition
->   clk: meson: axg-audio: provide clk top signal name
->   clk: meson: axg_audio: add sm1 support
->
->  .../bindings/clock/amlogic,axg-audio-clkc.txt |    3 +-
->  drivers/clk/meson/axg-audio.c                 | 2021 +++++++++++------
->  drivers/clk/meson/axg-audio.h                 |   21 +-
->  include/dt-bindings/clock/axg-audio-clkc.h    |   10 +
->  .../reset/amlogic,meson-g12a-audio-reset.h    |   15 +
->  5 files changed, 1373 insertions(+), 697 deletions(-)
+diff --git a/drivers/clk/sprd/common.c b/drivers/clk/sprd/common.c
+index 9d56eac..7ad5ba2 100644
+--- a/drivers/clk/sprd/common.c
++++ b/drivers/clk/sprd/common.c
+@@ -46,7 +46,7 @@ int sprd_clk_regmap_init(struct platform_device *pdev,
+ 
+ 	if (of_find_property(node, "sprd,syscon", NULL)) {
+ 		regmap = syscon_regmap_lookup_by_phandle(node, "sprd,syscon");
+-		if (IS_ERR_OR_NULL(regmap)) {
++		if (IS_ERR(regmap)) {
+ 			pr_err("%s: failed to get syscon regmap\n", __func__);
+ 			return PTR_ERR(regmap);
+ 		}
+-- 
+1.7.9.5
 
-Applied
