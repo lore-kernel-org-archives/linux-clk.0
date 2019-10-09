@@ -1,119 +1,141 @@
-Return-Path: <SRS0=oEB3=YB=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=09kp=YC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81563C4360C
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 23:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1629EC47404
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 08:31:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53FEF218DE
-	for <linux-clk@archiver.kernel.org>; Tue,  8 Oct 2019 23:46:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFF9521721
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 08:31:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="I+N5hkvP"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I31PsMy5";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Wjb29zwT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729937AbfJHXqP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 8 Oct 2019 19:46:15 -0400
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36755 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729789AbfJHXqP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 8 Oct 2019 19:46:15 -0400
-Received: by mail-io1-f65.google.com with SMTP id b136so928103iof.3
-        for <linux-clk@vger.kernel.org>; Tue, 08 Oct 2019 16:46:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=date:from:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=SPl3L4+4Zy9QlJN3K7IuqOc2JedlA0ldY7i+AP0Siqo=;
-        b=I+N5hkvPCF8K1LY460NnH3Bs+ppv36e7pHAAko5cPGtVK7Q1xpMFtMk1sbwX3EL9Ae
-         UX5ufwjfjE2WsQxxVvaJrkkGtrrD1A1swJroeZ6oWYFiFUD/gbGKkY6710T0F0X5S5Xo
-         BF95rAFQKdDZy+9dBrgr05QKn2VguSytZtPaHPhpxauj1vAvK0o8UX1wBJzBZa1yl7EV
-         jLHoqHF7Hse1l/Ohr1dGC6ATYWRzE6EftbRk42hoGB79bBRXmsmPeyS2gmRpO97jk05b
-         X+CS58w6j5DGF3spjHV4AncNibrgaK8A9wTUdRqszmiSN3PwPwqQA/IsTfJ60gtOiuUB
-         4Xrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=SPl3L4+4Zy9QlJN3K7IuqOc2JedlA0ldY7i+AP0Siqo=;
-        b=HAlPfbkv1EXwdrXH4nNWtW+Rt8AQTsasSl1XnSYcaWNtJfLDwe4i5V8+H2qwE0h8QU
-         WeWFy4xdiUORj+2tBCR72QN/Ql1kWjg0r42t5SSKHuJoLH/p8a/9TNVuNSOXWiLHpCF+
-         iLyry3fjnGak7fDOZpgFN908FZqfEy7NNZCA38WQrUhO5com8GmWU1na03ohaPvEzh4y
-         gyqVu02XT9q9KmCZ+8F4Dg7FZedwA0KQQCr3hULiibyqZU4JHhxTr1fr5aBenIm/Rata
-         y2+evzieOBY2FTAPzkV5EmG4fuzsgRgO884Vkb/U6Hn9vL4uNBGuE5LVedfgQyjyXgOM
-         HmBg==
-X-Gm-Message-State: APjAAAW+uVpaz2BZx3uPOqenQv8Br3VquzZzbOoYiJKakszUqqxlIOcF
-        JZw6quDDHVK5JiuQsYyXaVBeOA==
-X-Google-Smtp-Source: APXvYqz97nlCIt/+/P4PPfxa3nO+CVIeqE66+NVgtpZhnKj/IpAG2fhUxvCWOIqX/CoRt6DSjpBBFw==
-X-Received: by 2002:a92:d084:: with SMTP id h4mr287013ilh.223.1570578372595;
-        Tue, 08 Oct 2019 16:46:12 -0700 (PDT)
-Received: from localhost ([64.62.168.194])
-        by smtp.gmail.com with ESMTPSA id m11sm250603ioq.5.2019.10.08.16.46.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 08 Oct 2019 16:46:12 -0700 (PDT)
-Date:   Tue, 8 Oct 2019 16:46:06 -0700 (PDT)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-X-Sender: paulw@viisi.sifive.com
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?ISO-8859-15?Q?Uwe_Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
-        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
-        linux-rpi-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH v3 1/2] dt-bindings: pwm: Convert PWM bindings to
- json-schema
-In-Reply-To: <20191002164047.14499-1-krzk@kernel.org>
-Message-ID: <alpine.DEB.2.21.9999.1910081643220.11044@viisi.sifive.com>
-References: <20191002164047.14499-1-krzk@kernel.org>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        id S1725914AbfJIIbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Oct 2019 04:31:19 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:41696 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725848AbfJIIbT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 04:31:19 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2303861B1F; Wed,  9 Oct 2019 08:31:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570609878;
+        bh=xNdG/PEd6lxfFGBRpF8UpZJDQ26jHWDZuE+vCRYdQT4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=I31PsMy5PIospB1rUaDVk7BT9k2J6OtsP8iIQ0G76916sX3wILlURMJR1yS2Jl3/s
+         lc+YS7n1lq+eLUnRNMm46vxwBfGN7M4a+bBnIAAWKqmeXmD0xp6TF7T5Zi5JLSXOgl
+         zU4FtxD/MjEaracw008ap0Xy0kYVcZs2rrq/xb6s=
+Received: from [10.206.24.216] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 61DF761B1F;
+        Wed,  9 Oct 2019 08:31:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570609875;
+        bh=xNdG/PEd6lxfFGBRpF8UpZJDQ26jHWDZuE+vCRYdQT4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Wjb29zwTjF/9toY6E3SJkx1mO0v8Xc3hW1V8jFmAzARoMkVyzac5rBMJBANzsOa6y
+         IU4E3YhCdkR3OxQQye07Q9mXZyZzr52HviYbJWgS8CcvBt1AijUq+hIgHJA7E03khR
+         tHenAQcNdtgwQt+1A5ppeQFwGjc+eCtG160ppI/I=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 61DF761B1F
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
+ 8998
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>
+References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
+ <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr>
+ <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
+From:   Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
+Date:   Wed, 9 Oct 2019 14:01:09 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 2 Oct 2019, Krzysztof Kozlowski wrote:
+Hi Steve,
 
-> Convert generic PWM bindings to DT schema format using json-schema.  The
-> consumer bindings are split to separate file.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
+On 3/30/2019 4:02 AM, Stephen Boyd wrote:
+> Quoting Marc Gonzalez (2019-03-28 09:26:59)
+>> On 25/03/2019 14:49, Marc Gonzalez wrote:
+>>
+>>> See similar issue solved by commit 5f2420ed2189
+>>> ("clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998")
+>>>
+>>> Without this patch, PCIe PHY init fails:
+>>>
+>>> qcom-qmp-phy 1c06000.phy: pipe_clk enable failed err=-16
+>>> phy phy-1c06000.phy.0: phy init failed --> -16
+>>>
+>>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
+>>> ---
+>>>  drivers/clk/qcom/gcc-msm8998.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
+>>> index c240fba794c7..033688264c7b 100644
+>>> --- a/drivers/clk/qcom/gcc-msm8998.c
+>>> +++ b/drivers/clk/qcom/gcc-msm8998.c
+>>> @@ -2161,7 +2161,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
+>>>  
+>>>  static struct clk_branch gcc_pcie_0_pipe_clk = {
+>>>       .halt_reg = 0x6b018,
+>>> -     .halt_check = BRANCH_HALT,
+>>> +     .halt_check = BRANCH_HALT_SKIP,
+>>>       .clkr = {
+>>>               .enable_reg = 0x6b018,
+>>>               .enable_mask = BIT(0),
+>> Actually, 5f2420ed2189 is not the only similar instance.
+>>
+>> $ git log --oneline -G BRANCH_HALT_SKIP drivers/clk/qcom | grep -v controller
+>> 924a86bf9793 clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
+>> 5f2420ed2189 clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
+>> 2abf856202fd clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
+>> 5f75b78d3d67 clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
+>> 12d807cd34b8 clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
+>> 096abdc296f1 clk: msm8996-gcc: Mark halt check as no-op for USB/PCIE pipe_clk
+>> 7d99ced8f4c6 clk: qcom: Add support for BRANCH_HALT_SKIP flag for branch clocks
+>>
+> I keep asking Qualcomm engineers everytime this comes up why they can't
+> fix their phy initialization sequence.
+>
+> Too bad they don't care anymore!
 
-[ ... ]
 
-> diff --git a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> index 36447e3c9378..3d1dd7b06efc 100644
-> --- a/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> +++ b/Documentation/devicetree/bindings/pwm/pwm-sifive.txt
-> @@ -17,7 +17,7 @@ Required properties:
->    Please refer to sifive-blocks-ip-versioning.txt for details.
->  - reg: physical base address and length of the controller's registers
->  - clocks: Should contain a clock identifier for the PWM's parent clock.
-> -- #pwm-cells: Should be 3. See pwm.txt in this directory
-> +- #pwm-cells: Should be 3. See pwm.yaml in this directory
->    for a description of the cell format.
->  - interrupts: one interrupt per PWM channel
+I have followed this up with QMP PHY hardware designers and they have
+confirmed that QMP PHY must have pipe clock enabled at the beginning
+of initialization sequence i.e. before bringing it out of reset and starting it.
 
-For the SiFive PWM driver documentation:
+Otherwise there is possibility of incorrect locking of pipe_interface/
+retime buffers in PHY.
+Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
 
-Acked-by: Paul Walmsley <paul.walmsley@sifive.com>
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
-
-- Paul
