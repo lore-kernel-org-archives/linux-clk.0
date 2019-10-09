@@ -2,140 +2,107 @@ Return-Path: <SRS0=09kp=YC=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1629EC47404
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 08:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6F22ECE58E
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 08:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFF9521721
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 08:31:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FB4F21BE5
+	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 08:52:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I31PsMy5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Wjb29zwT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vPBVAl//"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725914AbfJIIbT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Oct 2019 04:31:19 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:41696 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725848AbfJIIbT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 04:31:19 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2303861B1F; Wed,  9 Oct 2019 08:31:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570609878;
-        bh=xNdG/PEd6lxfFGBRpF8UpZJDQ26jHWDZuE+vCRYdQT4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=I31PsMy5PIospB1rUaDVk7BT9k2J6OtsP8iIQ0G76916sX3wILlURMJR1yS2Jl3/s
-         lc+YS7n1lq+eLUnRNMm46vxwBfGN7M4a+bBnIAAWKqmeXmD0xp6TF7T5Zi5JLSXOgl
-         zU4FtxD/MjEaracw008ap0Xy0kYVcZs2rrq/xb6s=
-Received: from [10.206.24.216] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mgautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 61DF761B1F;
-        Wed,  9 Oct 2019 08:31:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570609875;
-        bh=xNdG/PEd6lxfFGBRpF8UpZJDQ26jHWDZuE+vCRYdQT4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Wjb29zwTjF/9toY6E3SJkx1mO0v8Xc3hW1V8jFmAzARoMkVyzac5rBMJBANzsOa6y
-         IU4E3YhCdkR3OxQQye07Q9mXZyZzr52HviYbJWgS8CcvBt1AijUq+hIgHJA7E03khR
-         tHenAQcNdtgwQt+1A5ppeQFwGjc+eCtG160ppI/I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 61DF761B1F
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
- 8998
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Amit Nischal <anischal@codeaurora.org>
-References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
- <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr>
- <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
-From:   Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
-Date:   Wed, 9 Oct 2019 14:01:09 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1730212AbfJIIwW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Oct 2019 04:52:22 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41184 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730406AbfJIIwV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 04:52:21 -0400
+Received: by mail-lj1-f195.google.com with SMTP id f5so1620931ljg.8;
+        Wed, 09 Oct 2019 01:52:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=f04OdU6Fyk3m2zdZCMUEKpGzg4pA3Tu5ccwXrcxWMa0=;
+        b=vPBVAl//lPkqDRQlLMjKuZdWOSz95s6yp3C/B+ltHKl8GcNV8r85ugL9sN1QgKnIrU
+         WnnXRA7G04rnxLe+J5vCllC5fLr1Mi4gYBgtT0ADwWN4zyIQu/Uedr2oXwUop/WKaaMg
+         WWNXqZi6W/tPcxxG7zwAs4AnS0hbOQvJUembAd9dX+kYzmm7fBdYuNfHfOUj+5eeHZvt
+         4Iw1N+d1vBD14mJ4GozTAWfJvtDfE7MifSUkNKNFEtiKYxKX9AmQGk8NWgzpr2P89QtX
+         HN7a1jiU9KLxzBiBkOxEepeWZwa/zwALjN4PsUIzJgWpR4VA+A566hrTqgdf+3s7uh6k
+         bH1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=f04OdU6Fyk3m2zdZCMUEKpGzg4pA3Tu5ccwXrcxWMa0=;
+        b=E1MGvBlMdWW5CwUCwhPLdUc4Dgw5RnJaQCCXQFSWGBsQd3MkRWlQxPtQI8vPxNBpLr
+         Y36hihQJzMFuhhEDfasqwY/sqhb6Uf/qKlhVUBG/tRpyDnYjcvBIbjTqCytKtNY9WvsR
+         CF9GmQT11jUMNOYVOMkC7hv5r6f9VF4fVknKJhKk9OQojj+LPq5PoiHFYaSgzgCPa+10
+         aKtlXjgydRgZtNQ7SjgtA0Z73+9kE+ToKivCzLP9clnYk4FN95E9vKDcALdlrl4YngBH
+         5+77sPYIw7YFHp7u9sOV2Fj1O5n2iYUmJi/Zcj6HkiX8u1QzAUXQ/Cu1YxDFaw4DuxpY
+         t21Q==
+X-Gm-Message-State: APjAAAVETSDkOBSWcznpfupuDcBr4HJBSwco/HpAnPrzSJtfnvl0rPKv
+        wIQk+l4lRdAvgAazQZly8rhd2BI/
+X-Google-Smtp-Source: APXvYqx5wbfdt6yNdn2U6rc1m53le8zF3t+PqSJO6cvPIxeB8MW6r9epDp1r+XLEuOcFdRv3aRzjVg==
+X-Received: by 2002:a2e:880e:: with SMTP id x14mr1584844ljh.42.1570611138277;
+        Wed, 09 Oct 2019 01:52:18 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.34.231])
+        by smtp.googlemail.com with ESMTPSA id v1sm325809lfa.87.2019.10.09.01.52.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 09 Oct 2019 01:52:17 -0700 (PDT)
+Subject: Re: [PATCH v10 12/15] memory: tegra: Introduce Tegra30 EMC driver
+To:     Peter Geis <pgwipeout@gmail.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Joseph Lo <josephl@nvidia.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20190811210043.20122-1-digetx@gmail.com>
+ <20190811210043.20122-13-digetx@gmail.com>
+ <CAMdYzYqNL_KAYwsnWYuz9wf2xT_RM0cWA8jkKATWMX7yuVq7Hw@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ebd9b2df-e4dd-1207-ad38-fc52cf4e86d4@gmail.com>
+Date:   Wed, 9 Oct 2019 11:52:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-In-Reply-To: <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
+In-Reply-To: <CAMdYzYqNL_KAYwsnWYuz9wf2xT_RM0cWA8jkKATWMX7yuVq7Hw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
 Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Steve,
-
-On 3/30/2019 4:02 AM, Stephen Boyd wrote:
-> Quoting Marc Gonzalez (2019-03-28 09:26:59)
->> On 25/03/2019 14:49, Marc Gonzalez wrote:
+05.10.2019 19:28, Peter Geis пишет:
+> Tested on the Ouya (tegra30).
+> 
+> Tested-by: Peter Geis <pgwipeout@gmail.com>
+> 
+> On Sun, Aug 11, 2019 at 5:02 PM Dmitry Osipenko <digetx@gmail.com> wrote:
 >>
->>> See similar issue solved by commit 5f2420ed2189
->>> ("clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998")
->>>
->>> Without this patch, PCIe PHY init fails:
->>>
->>> qcom-qmp-phy 1c06000.phy: pipe_clk enable failed err=-16
->>> phy phy-1c06000.phy.0: phy init failed --> -16
->>>
->>> Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
->>> ---
->>>  drivers/clk/qcom/gcc-msm8998.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
->>> index c240fba794c7..033688264c7b 100644
->>> --- a/drivers/clk/qcom/gcc-msm8998.c
->>> +++ b/drivers/clk/qcom/gcc-msm8998.c
->>> @@ -2161,7 +2161,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
->>>  
->>>  static struct clk_branch gcc_pcie_0_pipe_clk = {
->>>       .halt_reg = 0x6b018,
->>> -     .halt_check = BRANCH_HALT,
->>> +     .halt_check = BRANCH_HALT_SKIP,
->>>       .clkr = {
->>>               .enable_reg = 0x6b018,
->>>               .enable_mask = BIT(0),
->> Actually, 5f2420ed2189 is not the only similar instance.
+>> Introduce driver for the External Memory Controller (EMC) found on Tegra30
+>> chips, it controls the external DRAM on the board. The purpose of this
+>> driver is to program memory timing for external memory on the EMC clock
+>> rate change.
 >>
->> $ git log --oneline -G BRANCH_HALT_SKIP drivers/clk/qcom | grep -v controller
->> 924a86bf9793 clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
->> 5f2420ed2189 clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998
->> 2abf856202fd clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
->> 5f75b78d3d67 clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
->> 12d807cd34b8 clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
->> 096abdc296f1 clk: msm8996-gcc: Mark halt check as no-op for USB/PCIE pipe_clk
->> 7d99ced8f4c6 clk: qcom: Add support for BRANCH_HALT_SKIP flag for branch clocks
->>
-> I keep asking Qualcomm engineers everytime this comes up why they can't
-> fix their phy initialization sequence.
->
-> Too bad they don't care anymore!
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>> ---
 
+Peter, thank you very much for the testing!
 
-I have followed this up with QMP PHY hardware designers and they have
-confirmed that QMP PHY must have pipe clock enabled at the beginning
-of initialization sequence i.e. before bringing it out of reset and starting it.
-
-Otherwise there is possibility of incorrect locking of pipe_interface/
-retime buffers in PHY.
-Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+Thierry, could you please pick up this series and other relevant patches
+for 5.5? Thanks in advance!
