@@ -2,101 +2,158 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E1CC4360C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 15:32:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDD0AC4360C
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 18:54:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62AE0208C3
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 15:32:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="I/e/eGnZ"
+	by mail.kernel.org (Postfix) with ESMTP id BABCF214E0
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 18:54:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570733677;
+	bh=Vp90z7NiCC7zCRxWA5jqpdJwl0eM/UnV+JScJcMH/OM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=XOgtHzLeRHfDM/P0gL+Nu8vKb/ZIQ+wGhLIbnpwy/eLRC/8owS3K5DaU3puw4HbZh
+	 b3YLrQjq8tx+ntI+O9YVtLtvRUa5IFVEsV00sLDsWaZYp2F3QAAb2m4o3RF3bHiffN
+	 L2vMeSgqEFLwaYSxfs+GkXocwQ/Hja1NCL1r9wyQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725909AbfJJPcv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Oct 2019 11:32:51 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:58592 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725901AbfJJPcu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 11:32:50 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9AFWkJq098313;
-        Thu, 10 Oct 2019 10:32:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1570721566;
-        bh=RUWS7sx9oE5/v76QHiiPQhgGba9CbGW84cJd7KySne4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=I/e/eGnZFBmizck/Nz50IcrfGKcG4zQUh2f/BvgFuvGohdTHsTBCsUPWhKLRy0bBd
-         8Y97+SSjzv9Qu5k3XkZThyCBtHsLHn49tu0unT2AS4YdgZLn0rJ8hAVZQLA8mMAlI4
-         kxX/fD6IIKGsObOaU7mb4W1HZDZdtf7I0zO+mlEc=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9AFWkhJ127205
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 10 Oct 2019 10:32:46 -0500
-Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 10
- Oct 2019 10:32:42 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 10 Oct 2019 10:32:42 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9AFWiNY083856;
-        Thu, 10 Oct 2019 10:32:44 -0500
-Subject: Re: [PATCHv3 00/10] clk: ti: remoteproc / iommu support patches
-To:     Tony Lindgren <tony@atomide.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>, <s-anna@ti.com>
-References: <20190912132613.28093-1-t-kristo@ti.com>
- <ef764d1c-8ebc-4b64-4543-7b296327e197@ti.com>
- <20191010143521.GX5610@atomide.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <e37f9a2f-c554-300f-0866-8c8651941585@ti.com>
-Date:   Thu, 10 Oct 2019 18:32:43 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+        id S1726424AbfJJSyh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 14:54:37 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41812 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfJJSyh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 14:54:37 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g13so5810790otp.8;
+        Thu, 10 Oct 2019 11:54:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=o+zin2bL1A/EltcDjtt8OSEY4VLYK08n8Dj1hQ6Wf2k=;
+        b=NK80gRkKNwDHsBMg0GSP1e/bG/pYjwQZzjy3vZyMSsay1NN3FQ3YnrTF4bNz6+HKeg
+         aYvQPqsSIvhPPRpEj0bk0phRBT1Jnl9xoKTx39tlTM3vqrXGLNrJUkCUoIB0z5xsSYb7
+         A6v+gL4GrW2lCYvNVSUVDrqDAIYUam92A0FacTSuD8R0p3DK49Yot3owk3nDgYpkbZ9B
+         aPwlnHEhuT4IK5ablxSTCoiFLqhhMAHHeRNsJi3Uf9sq1g8S7lPFV9uJAxFuF4mX7Sl6
+         FD4DN3F6DvwYygZT/HEinr0QCbg93tKWwoHOaxXiKKAUPBj2Im5bkwUmGAQVoYotT+Jt
+         8big==
+X-Gm-Message-State: APjAAAV2Ci4ZiTprfbwQ4kK9Koc7wkjQEUv7w0/p+j8So0hGa4Qi4L7j
+        FYH7YuujYOaPx0k7MKy7Jg==
+X-Google-Smtp-Source: APXvYqxQEXGO9Uc01zKUGpeB8t0R+xv3eN1jyvC9TPfe47vyIsyRP58qHhRhPLQG1SNW3RGl2mO7pw==
+X-Received: by 2002:a9d:73d8:: with SMTP id m24mr8810042otk.227.1570733674052;
+        Thu, 10 Oct 2019 11:54:34 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r19sm1846829ota.79.2019.10.10.11.54.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 11:54:33 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 13:54:32 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        linux-pwm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v3 1/2] dt-bindings: pwm: Convert PWM bindings to
+ json-schema
+Message-ID: <20191010185432.GA17457@bogus>
+References: <20191002164047.14499-1-krzk@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191010143521.GX5610@atomide.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191002164047.14499-1-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/10/2019 17:35, Tony Lindgren wrote:
-> * Tero Kristo <t-kristo@ti.com> [191010 08:34]:
->> On 12/09/2019 16:26, Tero Kristo wrote:
->>> Hi,
->>>
->>> V3 of this series sort of reverted back to pretty much V1 which expects
->>> strict sequencing of events from the bus driver. This one doesn't have
->>> any dependency towards the reset driver either, and the controversial
->>> reset handling APIs have been removed.
->>>
->>> -Tero
->>
->> Stephen, any comments on this one or shall I just craft a pull-request for
->> this and rest of the TI clock driver changes towards 5.5? There seems to be
->> a pile of them coming this time over...
+On Wed, Oct 02, 2019 at 06:40:46PM +0200, Krzysztof Kozlowski wrote:
+> Convert generic PWM bindings to DT schema format using json-schema.  The
+> consumer bindings are split to separate file.
 > 
-> Sounds like we need an immutable branch for the clkctrl related
-> changes against v5.4-rc1 that I can also merge into omap-for-v5.5/prm
-> branch in addition to the immutable prm reset driver branch.
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 > 
-> Otherwise I can't apply any of the consumer device related dts
-> changes into that branch AFAIK.
+> ---
+> 
+> Changes since v2:
+> 1. Change also pwm-sprd.txt
+> 
+> Changes since v1:
+> 1. Indent example with four spaces (more readable),
+> 2. Change pattern for pwm nodes,
+> 3. Remove $ref from #cells.
+> ---
 
-Well, the sgx patch you can probably merge, as it will fail silently and 
-only cause issues if you actually try to enable the device.
 
-However, yes I agree, we should probably setup an immutable branch here.
+> diff --git a/Documentation/devicetree/bindings/pwm/pwm-consumers.yaml b/Documentation/devicetree/bindings/pwm/pwm-consumers.yaml
+> new file mode 100644
+> index 000000000000..39c844fe6338
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/pwm/pwm-consumers.yaml
+> @@ -0,0 +1,76 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/pwm/pwm-consumers.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Specifying PWM information for devices
+> +
+> +maintainers:
+> +  - Thierry Reding <thierry.reding@gmail.com>
+> +
+> +description: |
+> +  PWM properties should be named "pwms". The exact meaning of each pwms
+> +  property must be documented in the device tree binding for each device.
+> +  An optional property "pwm-names" may contain a list of strings to label
+> +  each of the PWM devices listed in the "pwms" property. If no "pwm-names"
+> +  property is given, the name of the user node will be used as fallback.
+> +
+> +  Drivers for devices that use more than a single PWM device can use the
+> +  "pwm-names" property to map the name of the PWM device requested by the
+> +  pwm_get() call to an index into the list given by the "pwms" property.
+> +
+> +properties:
+> +  pwms:
+> +    $ref: /schemas/types.yaml#/definitions/phandle-array
+> +    description: |
+> +      Phandle to PWM controller node and pwm-specifier (controller specific).
+> +      pwm-specifier typically encodes the chip-relative PWM number and the PWM
+> +      period in nanoseconds.
+> +      Optionally, the pwm-specifier can encode a number of flags (defined in
+> +      <dt-bindings/pwm/pwm.h>) in a third cell:
+> +        - PWM_POLARITY_INVERTED: invert the PWM signal polarity
+> +
+> +  pwm-names:
+> +    $ref: /schemas/types.yaml#/definitions/string-array
+> +    description:
+> +      A list of strings to label each of the PWM devices listed in the "pwms"
+> +      property. If no "pwm-names" property is given, the name of the user node
+> +      will be used as fallback.
+> +
+> +required:
+> +  - pwms
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+This schema is never applied because it has no 'select' which is only 
+automatic for $nodename or compatible. You could include this from other 
+schemas, but why? Any consumer still has to list these properties to 
+define their specific constraints.
+
+We already have a schema in dtschema for consumer side. It's just 
+missing descriptions which needs relicensing from this.
+
+> +
+> +dependencies:
+> +  pwm-names: [ pwms ]
