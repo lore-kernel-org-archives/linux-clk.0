@@ -2,108 +2,108 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87E2BC47404
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 01:31:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D54C47404
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 02:07:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C23206C0
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 01:31:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC88721924
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 02:07:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BpVYwvBL"
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="Grg3rMCD";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GvX3d3NO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731553AbfJJBbO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Oct 2019 21:31:14 -0400
-Received: from mail-io1-f66.google.com ([209.85.166.66]:35609 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731155AbfJJBbN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 21:31:13 -0400
-Received: by mail-io1-f66.google.com with SMTP id q10so10119931iop.2;
-        Wed, 09 Oct 2019 18:31:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=EECY3Fn7ERfSk3kaNkDc4LWe0Wk5Us4HkrIqZXFVQYs=;
-        b=BpVYwvBLiXdK9jnurSGzV8/RWT0CoEeQztHt9l/+nWHXkVlZMtnKykxW74MRuVw3Qm
-         w0FBKi91ib1bV2MBNW8Ghp3keTncEJbdHL2XHKDYD4rInuLrz8DGLlYMsg6yZdK+D8Im
-         ABs2VErgJuArZbu7KqVjGekm/kUn11Lj6S5nzjct+nmHbWf4w2eEm5ZkkH0e2jSIFWKa
-         4rdv9s6iqF7TS5Q+v1fxVX5SQ2wxfvlr2NIliNlm8Wt4JLjKOHxCVUKpHHdhBLw100j2
-         TaA69t0VZmKgSmIdiUjHQHVGDNadAgpKfTR5qvBLhTAH93Lbfao/71w7BY35Xutfa3ym
-         57YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=EECY3Fn7ERfSk3kaNkDc4LWe0Wk5Us4HkrIqZXFVQYs=;
-        b=lGiVR5Z/a2gRzWJKIA2Lek+iPGOKu8xYjrzRuPIXqQSlrKZeI4e1tATZTJB575xG8E
-         oKnYBwbCQhKd7jHxt1BrF0Jd4ciiAtchhMliyXG4mWkz7/JjDJHD/3KRFQiRQK1aloLz
-         TX/4zwmpskBuQSoDV5MSKQZxigveL1WJByCsDmKLCKR+LaUubs0DAThzklvvgaUhXuV1
-         t9lL5T2frPqgCcDbM+XCUad7tGk4JtIGhjd4piVIbWpRcIla6qsIhCDlGFPXUsJ6jUhp
-         zgYCNcSj5dq6Av7uHCSvigKWpqzmYd9spisk/56+HHS2fUeFDVtDYLJaRyPdWavODsPe
-         vN3A==
-X-Gm-Message-State: APjAAAW8PDZZlOeMXqcgb5y6JsXiAHeee1vxfCGHdjmvJ7YfuygioLkq
-        tCaSAuwMxmdUVjVZx5ekCOE=
-X-Google-Smtp-Source: APXvYqxEHzLMBGtscrLT6MKlC333wTgfQcvHlzq59OkQTbwmLZj2u36d3Rm/smtUBm5BON7GESKAPQ==
-X-Received: by 2002:a02:3081:: with SMTP id q123mr6874353jaq.24.1570671073004;
-        Wed, 09 Oct 2019 18:31:13 -0700 (PDT)
-Received: from cs-dulles.cs.umn.edu (cs-dulles.cs.umn.edu. [128.101.35.54])
-        by smtp.googlemail.com with ESMTPSA id z1sm2300510ioe.8.2019.10.09.18.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 09 Oct 2019 18:31:12 -0700 (PDT)
-From:   Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Navid Emamdoost <navid.emamdoost@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: bcm2835: Fix memory leak in bcm2835_register_pll
-Date:   Wed,  9 Oct 2019 20:30:58 -0500
-Message-Id: <20191010013101.5364-1-navid.emamdoost@gmail.com>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        id S1732252AbfJJCHz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Oct 2019 22:07:55 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:60611 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726197AbfJJCFy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 22:05:54 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 7C66B21E29;
+        Wed,  9 Oct 2019 22:05:53 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Wed, 09 Oct 2019 22:05:53 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
+        :to:cc:subject:date:message-id:mime-version
+        :content-transfer-encoding; s=fm3; bh=j0nJ6T39mBn7jdktZT6Zi6X9sd
+        fIshRqVoX28oscb1o=; b=Grg3rMCD3oBEZNUMpdLMPocNMItAkpBFGgUsksSuhr
+        ur9gtvrXrNA5jSZrwrqaZOdUnenU8g6XcXo2YPeeH2FWM7uhkf7BTK+EAbLo+DbF
+        RNIBDr7kZJl58FEd5i6gl9wLDBztZY+mwP/MHZgZ53S30kalDB6HKKvkDljeoGu0
+        ESzuUX0F8Ihxg3L/NnwfCshobLMTVw0CnQWmtBIFsBWCtKPhlYxSBCk4N7Kj7/42
+        Zjqsa41Tzsk6McYk5pCOo5Dbl17LmHGpXAirYM5WpfYorShOcwtQgrw7Jk7gBcza
+        pqHwWLx0lxGzbgaF7+RHPFonEsv8bjCrGs3GRYkpm0Bw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:date:from
+        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
+        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=j0nJ6T39mBn7jdktZ
+        T6Zi6X9sdfIshRqVoX28oscb1o=; b=GvX3d3NO4LpcMPH3fnKpwpu3sSnikOWpy
+        BSzMdsbTXEu33S9MIV0RGsTRxod01XuiuhQeUq0BsfbDJLLfs2bjKRnFc+tro2zP
+        sLelAZj6Yx+UdwZ53vLrqAhatmrs96aRJk+AfJ36dAmujrQtHvFJoUIRrM9v7Y+W
+        O/bS0EQOgcyXBT9ut+RPX+aIkyyFm4hOao+NXmNJF64mS8+hUT1gJ13q09VwY24w
+        Yzo/Q4N7VA6e7Q4g3HcPJZTb+3oi07Cc5KOqJWpuAXLd6ouk0uMJajtc4n66pr/0
+        12hJs9kJ4hzPrGDe03TTe/P0ME16pQ25MKRHslaWImKWtySuFMlIw==
+X-ME-Sender: <xms:AJKeXcSdWl408cda4MuK2rbaRDqUfONrCFbRzETcpJeSj_ugEoDBxg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedriedvgdehjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghjrdhi
+    ugdrrghuqeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecukfhppedvtddvrdekud
+    drudekrdeftdenucfrrghrrghmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgu
+    rdgruhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:AJKeXVTPykFqBY-AgGPxHXqScOD15duqhBzxy9PXbKuiJuzXMqd7pg>
+    <xmx:AJKeXe4NMpZ-dEwnkcFg2ywhVq3IHJX9IHQZYKF3hkTkg7crb-6WNg>
+    <xmx:AJKeXe-OzahKpL4FaXG1Bcerml1DFJIDGn2jgwpQNwIMZvME9VeVpQ>
+    <xmx:AZKeXf3y_VHgP-2UDPJ4b6BjJT2PW7Y2KcYOOKZS3ydLJS83kuDiKw>
+Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 07A12D6005E;
+        Wed,  9 Oct 2019 22:05:48 -0400 (EDT)
+From:   Andrew Jeffery <andrew@aj.id.au>
+To:     linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, joel@jms.id.au,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: aspeed: Expose RMII RCLK gate for MACs 1-2 on AST2500
+Date:   Thu, 10 Oct 2019 12:36:53 +1030
+Message-Id: <20191010020655.3776-1-andrew@aj.id.au>
+X-Mailer: git-send-email 2.20.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the implementation of bcm2835_register_pll(), the allocated memory
-for pll should be released if devm_clk_hw_register() fails.
+Hello,
 
-Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
-Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
----
- drivers/clk/bcm/clk-bcm2835.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+This series is two small changes enable kernel support for controlling the RMII
+RCLK gate on AST2500-based systems. Previously the kernel has assumed u-boot
+has ungated RCLK for networking to function.
 
-diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-index 802e488fd3c3..99549642110a 100644
---- a/drivers/clk/bcm/clk-bcm2835.c
-+++ b/drivers/clk/bcm/clk-bcm2835.c
-@@ -1320,8 +1320,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
- 	pll->hw.init = &init;
- 
- 	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
--	if (ret)
-+	if (ret) {
-+		kfree(pll);
- 		return NULL;
-+	}
- 	return &pll->hw;
- }
- 
+RMII is commonly used for NCSI, which itself is commonly used for BMC-based
+designs to reduce cabling requirements for the platform.
+
+v2:
+* Rename macros and clock names based on Joel's feedback.
+
+v1 can be found here: https://lore.kernel.org/linux-clk/20191008113523.13601-1-andrew@aj.id.au/
+
+Please review!
+
+Andrew
+
+Andrew Jeffery (2):
+  dt-bindings: clock: Add AST2500 RMII RCLK definitions
+  clk: aspeed: Add RMII RCLK gates for both AST2500 MACs
+
+ drivers/clk/clk-aspeed.c                 | 27 +++++++++++++++++++++++-
+ include/dt-bindings/clock/aspeed-clock.h |  2 ++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
+
 -- 
-2.17.1
+2.20.1
 
