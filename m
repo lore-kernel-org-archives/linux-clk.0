@@ -2,107 +2,103 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEF1DC10F14
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 18:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF736C4360C
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 19:48:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95DFD206A1
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 18:58:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F6BE214E0
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 19:48:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570733923;
-	bh=C3qJQMyjD9A/GMvJ52P6U8GDKE7BNVgB4aq0nJUK3Tc=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=yUIUrR0vo+abAyQyxWjHop6LBl+fDBw/kLezTxutWYMB7n259Xr9edCLslUPOjtzv
-	 lXXxacqXeYNZ5s6GztkSXAjcSOgIWXPGZa1fVD9HaF3zoF2RqOI2G132tnSBAK6cwc
-	 WfJBNAvA4HKsaLZyKD7IDLD/ftPmgMSob+XzbfMY=
+	s=default; t=1570736891;
+	bh=jXIkbRU0oflIoHOMtUU/jK4XJNqOCPlVs8pWEr3VRsI=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=iqTCtUaoHd7n6KVoU1dwGAUPdE4P2Z+8hc4hoHPdARs79sfTwoV4bx8Vdg1YGVTTa
+	 yBUb9UoTzqCjXITbtJNGqxpChcQem6MhgEXfv/CRxEnZj0DygHmfZ2WYvq48LiUIss
+	 Y5HuLTfehHCHXp174sll7mzcdecB8sWLyl6vVtZ8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726706AbfJJS6n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Oct 2019 14:58:43 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35054 "EHLO mail.kernel.org"
+        id S1726205AbfJJTsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 15:48:11 -0400
+Received: from mail.kernel.org ([198.145.29.99]:45818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726387AbfJJS6n (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Oct 2019 14:58:43 -0400
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726184AbfJJTsL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Oct 2019 15:48:11 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1707921A4C;
-        Thu, 10 Oct 2019 18:58:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47D062067B;
+        Thu, 10 Oct 2019 19:48:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570733922;
-        bh=C3qJQMyjD9A/GMvJ52P6U8GDKE7BNVgB4aq0nJUK3Tc=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=x9hnp5Xo4bB1M1JWF8/BAZab4UX1ziPUvnFgk/cPG/ZALiC2ezbfWSIK9WfrWnqxU
-         Be8N6AeS7oihMOahkrPHOI0whlDuASFXutW+vuKo6b1R/NAzZ/WsV5JfutdIEk6dPX
-         j9KYoQjQg6HQBC03nBIRN41NzOebPx9rSvB/Ja9M=
-Received: by mail-qt1-f177.google.com with SMTP id u22so10191384qtq.13;
-        Thu, 10 Oct 2019 11:58:42 -0700 (PDT)
-X-Gm-Message-State: APjAAAVqRBt4bt3+kUUFtpO7U2m7AMN1L0HkGkkkM4yfZujz4GH8b8vE
-        pXK4jAaS5sqRVIm8Lxj0dZZrXCyZyApkQHIG2w==
-X-Google-Smtp-Source: APXvYqzB5TzRKwoOcFcNVQukkGMmMU2iFIhyKCekwRBNJHWn3GTHP/CmHznLTqw+AnmCr8x0PiE1VBXV/9mGgldc2YU=
-X-Received: by 2002:ad4:5044:: with SMTP id m4mr12009044qvq.85.1570733921147;
- Thu, 10 Oct 2019 11:58:41 -0700 (PDT)
+        s=default; t=1570736890;
+        bh=jXIkbRU0oflIoHOMtUU/jK4XJNqOCPlVs8pWEr3VRsI=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=vga664TttFPejM4kjwOinqCsK/1/++6qmPAcZZa1ChrrfmrHfr8ITRlubo4Y5hEnO
+         XYpklj3YM84bgLoIjvDot7SY7qV1bqZruOmWsNIjlLOT4187ZAdTW3yVXirOZd8Pxc
+         qsAySe5ju+EirakXvUXYBmQ8nUmX/CSTTywBuBlU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-References: <20191002164047.14499-1-krzk@kernel.org> <20191002164047.14499-2-krzk@kernel.org>
-In-Reply-To: <20191002164047.14499-2-krzk@kernel.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 10 Oct 2019 13:58:30 -0500
-X-Gmail-Original-Message-ID: <CAL_Jsq+Fa1+epSvDpSx4NdzOUohoJR+qR3-xyMTTw4LaOK7AbQ@mail.gmail.com>
-Message-ID: <CAL_Jsq+Fa1+epSvDpSx4NdzOUohoJR+qR3-xyMTTw4LaOK7AbQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] dt-bindings: pwm: Convert Samsung PWM bindings to json-schema
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a8540fe3-9500-4998-ca25-a06269541383@codeaurora.org>
+References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr> <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr> <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com> <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org> <20191010041551.6D7E0208C3@mail.kernel.org> <a8540fe3-9500-4998-ca25-a06269541383@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Manu Gautam <mgautam@codeaurora.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-tegra@vger.kernel.org,
-        "maintainer:BROADCOM BCM7XXX ARM ARCHITECTURE" 
-        <bcm-kernel-feedback-list@broadcom.com>,
-        "moderated list:BROADCOM BCM2835 ARM ARCHITECTURE" 
-        <linux-rpi-kernel@lists.infradead.org>,
-        linux-amlogic@lists.infradead.org,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        linux-riscv@lists.infradead.org,
-        linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>
+Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
+User-Agent: alot/0.8.1
+Date:   Thu, 10 Oct 2019 12:48:09 -0700
+Message-Id: <20191010194810.47D062067B@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 2, 2019 at 11:41 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> Convert Samsung PWM (S3C, S5P and Exynos SoCs) bindings to DT schema
-> format using json-schema.
->
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
->
-> ---
->
-> Changes since v2:
-> 1. Add additionalProperties: false.
->
-> Changes since v1:
-> 1. Indent example with four spaces (more readable),
-> 2. Fix samsung,pwm-outputs after review,
-> 3. Remove double-quotes from clock names.
-> ---
->  .../devicetree/bindings/pwm/pwm-samsung.txt   |  51 --------
->  .../devicetree/bindings/pwm/pwm-samsung.yaml  | 109 ++++++++++++++++++
->  2 files changed, 109 insertions(+), 51 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.txt
->  create mode 100644 Documentation/devicetree/bindings/pwm/pwm-samsung.yaml
+Quoting Manu Gautam (2019-10-10 00:33:32)
+> Hi,
+>=20
+> On 10/10/2019 9:45 AM, Stephen Boyd wrote:
+> > Quoting Manu Gautam (2019-10-09 01:31:09)
+> >>
+> [snip]
+> >> I have followed this up with QMP PHY hardware designers and they have
+> >> confirmed that QMP PHY must have pipe clock enabled at the beginning
+> >> of initialization sequence i.e. before bringing it out of reset and st=
+arting it.
+> > Awesome, thanks for following up.
+> >
+> >> Otherwise there is possibility of incorrect locking of pipe_interface/
+> >> retime buffers in PHY.
+> >> Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
+> > Does anything go wrong if we just leave these clks enabled forever out
+> > of boot? I'm inclined to rip the clks out and just slam the branch
+> > enable bit on all the time in gcc driver probe and return NULL to the
+> > callers of clk_get() for these clks. I don't see how this would be a
+> > problem because when the upstream phy is disabled this clk is disabled
+> > and so we aren't wasting power. It should also save us time and memory
+> > because now we don't have to call into the clk framework to turn it on
+> > and sequence that just right in the phy driver.
+>=20
+> That might work, however on some platforms gcc_pipe_clk parent is changed=
+ to
+> XO and back to phy_pipe_clk across low power mode.
+> It requires PHY driver to use clk_set_parent().
+>=20
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Hm ok. Where is the call to clk_set_parent()? I don't see this in the
+kernel.
+
+ $ git grep clk_set_parent -- drivers/usb/phy drivers/phy | wc -l
+ 0
+
+What platforms do this? Are they upstream?
+
