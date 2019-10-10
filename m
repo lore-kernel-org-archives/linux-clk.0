@@ -2,180 +2,113 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8313ECE58C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 02:09:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFF9C10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 04:15:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CA720B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 02:09:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="PcALcLoS";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OADQjVjK"
+	by mail.kernel.org (Postfix) with ESMTP id 74657218AC
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 04:15:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570680952;
+	bh=7PY8feDlXkVWW2KYFarN3ehYZj6sWp1UyoI9DgEgCys=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=QNcRZsNqeyQsNqe67KtAL6Wt0+u67Fv4qaH/0yIvdgjduC0lqFU3Ug/iVqr871Vdy
+	 ycrBpFq95MX8ZY0TEWpyNEa2ogy6U/PzgGLk8sJhUxYyZ4yvYCZrIdkUTKiTbNQr8v
+	 WPQ2cONp6qP/sgmO/P6+hoItZHl0bpIZsZz8jp/U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732616AbfJJCJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Oct 2019 22:09:56 -0400
-Received: from out2-smtp.messagingengine.com ([66.111.4.26]:46333 "EHLO
-        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1732219AbfJJCHz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 22:07:55 -0400
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-        by mailout.nyi.internal (Postfix) with ESMTP id E78A120B51;
-        Wed,  9 Oct 2019 22:06:28 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute4.internal (MEProxy); Wed, 09 Oct 2019 22:06:28 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=from
-        :to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=fm3; bh=gXUmnVUli/y3V
-        yBEI1euJF3NoxsH2wWbrvVYjkbZXEc=; b=PcALcLoSErFFMgcGP3yoKmL5V9SR2
-        Aq5Xd4l476/HxSLI+yD27EJ6md1PgnZHryesUb8rpM6nAGyFh28WVnRZa0LWwFZh
-        KOtCOydKJe5hJuwDZjyoH2EsAK80M90iaYX93mVNFfi2aPCZWm4p9CZzWNDIP2s4
-        WPzFJ8tlKz22qY5NyMO4I4v1CImj8YuRXzkNGFijAKxu7SoI+3kkm2uzX46TU0AY
-        tZ/CC2ItEhNavB9ZVpoS1OlBqGzzI6gMp0Jg/zxjG4p0oETbFBl7AQ/AqBgz4Gk6
-        e6xCHNlZ7Cc839QkbXAGhNASiN7Hq/FVdWiZLRUwv/ibqO8RiC+vSH78Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :in-reply-to:message-id:mime-version:references:subject:to
-        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=gXUmnVUli/y3VyBEI1euJF3NoxsH2wWbrvVYjkbZXEc=; b=OADQjVjK
-        8QHHZgsoAIicXVU7HvxV8g9SfcvScREj+avAdguj54fEc5jb0yDPPUnk/+Hls98t
-        hOIybqyEiRw95fVOpQ8pYfqiTlicvtLo24uGc+LC179XrozvDOf1UHfTIP00qMJJ
-        6jgPYxmceyMSxhsPX3K3nG1ieuTfDlFEnpDQZaG+6DfmpiSoQigkr5hC0MxjiMN0
-        oxEb6eitUwqLipp1bEr682gP5lbubawTIzmpC1cpFQUjfyOg8EsBT5AJD+rjIvYw
-        A3Dy1Zcdqldj4+Yu24SNHW1w6TbAkY6dKTtr+lBk3DozitTURhVjgvyaiVhIdeCV
-        72NyBGJXpUBZyQ==
-X-ME-Sender: <xms:JJKeXTx1g7CIjuMVtqLDktx2bbUcFz9tA0WJcTJCNgNewOVzag5PdA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedriedvgdehjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecunecujfgurhephffvufffkffojghfggfgsedtkeertd
-    ertddtnecuhfhrohhmpeetnhgurhgvficulfgvfhhfvghrhicuoegrnhgurhgvfiesrghj
-    rdhiugdrrghuqeenucfkphepvddtvddrkedurddukedrfedtnecurfgrrhgrmhepmhgrih
-    hlfhhrohhmpegrnhgurhgvfiesrghjrdhiugdrrghunecuvehluhhsthgvrhfuihiivgep
-    vd
-X-ME-Proxy: <xmx:JJKeXe-MO_XqAvPbUVol9xOSbV3gt0s1wGp4V1acWt7vPeW2Z4D0OQ>
-    <xmx:JJKeXYbJnw-D09bRU5ROZpXO_yMa_z88GdPn55mVmxgMrYKxlKR1XQ>
-    <xmx:JJKeXa8RGO0C0KVNB9AnsEaBKy123ptoMlIPTPpHkS5lA5rcdgeYMg>
-    <xmx:JJKeXXHWJNjxUJvz0ZZBJOdC4h51Q6dpz5TsczpHK6uuxDliBn9p4w>
-Received: from mistburn.au.ibm.com (bh02i525f01.au.ibm.com [202.81.18.30])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 7F6F98005C;
-        Wed,  9 Oct 2019 22:06:25 -0400 (EDT)
-From:   Andrew Jeffery <andrew@aj.id.au>
-To:     linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, joel@jms.id.au,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH v2 2/2] clk: ast2600: Add RMII RCLK gates for all four MACs
-Date:   Thu, 10 Oct 2019 12:37:25 +1030
-Message-Id: <20191010020725.3990-3-andrew@aj.id.au>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191010020725.3990-1-andrew@aj.id.au>
-References: <20191010020725.3990-1-andrew@aj.id.au>
+        id S1728388AbfJJEPw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 00:15:52 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725774AbfJJEPw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 10 Oct 2019 00:15:52 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D7E0208C3;
+        Thu, 10 Oct 2019 04:15:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1570680951;
+        bh=7PY8feDlXkVWW2KYFarN3ehYZj6sWp1UyoI9DgEgCys=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=xmVp7TcRnycdRPLvxC2NqH2qj2fFayaLt8zo2n+Ue4voXI+miBM/1/iRcw8zqOFqo
+         DDkomvqz4wOxakoWArZIIpY4Wp/EVuY8sJ9zuKpUA2n1oMy5ZX6WN/j/V18ZWD6nqG
+         RJiH4KaJYx42Ym80geAwBFPRNHbP9XJ0SLNpSQ+c=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
+References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr> <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr> <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com> <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Manu Gautam <mgautam@codeaurora.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>
+Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
+User-Agent: alot/0.8.1
+Date:   Wed, 09 Oct 2019 21:15:50 -0700
+Message-Id: <20191010041551.6D7E0208C3@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-RCLK is a fixed 50MHz clock derived from HPLL/HCLK that is described by a
-single gate for each MAC.
+Quoting Manu Gautam (2019-10-09 01:31:09)
+> On 3/30/2019 4:02 AM, Stephen Boyd wrote:
+> > Quoting Marc Gonzalez (2019-03-28 09:26:59)
+> >> On 25/03/2019 14:49, Marc Gonzalez wrote:
+> >>
+> >>>               .enable_mask =3D BIT(0),
+> >> Actually, 5f2420ed2189 is not the only similar instance.
+> >>
+> >> $ git log --oneline -G BRANCH_HALT_SKIP drivers/clk/qcom | grep -v con=
+troller
+> >> 924a86bf9793 clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 89=
+98
+> >> 5f2420ed2189 clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for =
+8998
+> >> 2abf856202fd clk: qcom: gcc-msm8998: Disable halt check of UFS clocks
+> >> 5f75b78d3d67 clk: qcom: gcc-msm8996: Disable halt check on UFS tx clock
+> >> 12d807cd34b8 clk: qcom: gcc-msm8996: Disable halt check on UFS clocks
+> >> 096abdc296f1 clk: msm8996-gcc: Mark halt check as no-op for USB/PCIE p=
+ipe_clk
+> >> 7d99ced8f4c6 clk: qcom: Add support for BRANCH_HALT_SKIP flag for bran=
+ch clocks
+> >>
+> > I keep asking Qualcomm engineers everytime this comes up why they can't
+> > fix their phy initialization sequence.
+> >
+> > Too bad they don't care anymore!
+>=20
+>=20
+> I have followed this up with QMP PHY hardware designers and they have
+> confirmed that QMP PHY must have pipe clock enabled at the beginning
+> of initialization sequence i.e. before bringing it out of reset and start=
+ing it.
 
-Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
----
- drivers/clk/clk-ast2600.c | 47 ++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 46 insertions(+), 1 deletion(-)
+Awesome, thanks for following up.
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 1c1bb39bb04e..85acc7cdc83c 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -15,7 +15,7 @@
- 
- #include "clk-aspeed.h"
- 
--#define ASPEED_G6_NUM_CLKS		67
-+#define ASPEED_G6_NUM_CLKS		71
- 
- #define ASPEED_G6_SILICON_REV		0x004
- 
-@@ -40,6 +40,9 @@
- 
- #define ASPEED_G6_STRAP1		0x500
- 
-+#define ASPEED_MAC12_CLK_DLY		0x340
-+#define ASPEED_MAC34_CLK_DLY		0x350
-+
- /* Globally visible clocks */
- static DEFINE_SPINLOCK(aspeed_g6_clk_lock);
- 
-@@ -485,6 +488,11 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_g6_clk_data->hws[ASPEED_CLK_SDIO] = hw;
- 
-+	/* MAC1/2 RMII 50MHz RCLK */
-+	hw = clk_hw_register_fixed_rate(dev, "mac12rclk", "hpll", 0, 50000000);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
- 	/* MAC1/2 AHB bus clock divider */
- 	hw = clk_hw_register_divider_table(dev, "mac12", "hpll", 0,
- 			scu_g6_base + ASPEED_G6_CLK_SELECTION1, 16, 3, 0,
-@@ -494,6 +502,27 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_g6_clk_data->hws[ASPEED_CLK_MAC12] = hw;
- 
-+	/* RMII1 50MHz (RCLK) output enable */
-+	hw = clk_hw_register_gate(dev, "mac1rclk", "mac12rclk", 0,
-+			scu_g6_base + ASPEED_MAC12_CLK_DLY, 29, 0,
-+			&aspeed_g6_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_g6_clk_data->hws[ASPEED_CLK_MAC1RCLK] = hw;
-+
-+	/* RMII2 50MHz (RCLK) output enable */
-+	hw = clk_hw_register_gate(dev, "mac2rclk", "mac12rclk", 0,
-+			scu_g6_base + ASPEED_MAC12_CLK_DLY, 30, 0,
-+			&aspeed_g6_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_g6_clk_data->hws[ASPEED_CLK_MAC2RCLK] = hw;
-+
-+	/* MAC1/2 RMII 50MHz RCLK */
-+	hw = clk_hw_register_fixed_rate(dev, "mac34rclk", "hclk", 0, 50000000);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+
- 	/* MAC3/4 AHB bus clock divider */
- 	hw = clk_hw_register_divider_table(dev, "mac34", "hpll", 0,
- 			scu_g6_base + 0x310, 24, 3, 0,
-@@ -503,6 +532,22 @@ static int aspeed_g6_clk_probe(struct platform_device *pdev)
- 		return PTR_ERR(hw);
- 	aspeed_g6_clk_data->hws[ASPEED_CLK_MAC34] = hw;
- 
-+	/* RMII3 50MHz (RCLK) output enable */
-+	hw = clk_hw_register_gate(dev, "mac3rclk", "mac34rclk", 0,
-+			scu_g6_base + ASPEED_MAC34_CLK_DLY, 29, 0,
-+			&aspeed_g6_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_g6_clk_data->hws[ASPEED_CLK_MAC3RCLK] = hw;
-+
-+	/* RMII4 50MHz (RCLK) output enable */
-+	hw = clk_hw_register_gate(dev, "mac4rclk", "mac34rclk", 0,
-+			scu_g6_base + ASPEED_MAC34_CLK_DLY, 30, 0,
-+			&aspeed_g6_clk_lock);
-+	if (IS_ERR(hw))
-+		return PTR_ERR(hw);
-+	aspeed_g6_clk_data->hws[ASPEED_CLK_MAC4RCLK] = hw;
-+
- 	/* LPC Host (LHCLK) clock divider */
- 	hw = clk_hw_register_divider_table(dev, "lhclk", "hpll", 0,
- 			scu_g6_base + ASPEED_G6_CLK_SELECTION1, 20, 3, 0,
--- 
-2.20.1
+>=20
+> Otherwise there is possibility of incorrect locking of pipe_interface/
+> retime buffers in PHY.
+> Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
+
+Does anything go wrong if we just leave these clks enabled forever out
+of boot? I'm inclined to rip the clks out and just slam the branch
+enable bit on all the time in gcc driver probe and return NULL to the
+callers of clk_get() for these clks. I don't see how this would be a
+problem because when the upstream phy is disabled this clk is disabled
+and so we aren't wasting power. It should also save us time and memory
+because now we don't have to call into the clk framework to turn it on
+and sequence that just right in the phy driver.
 
