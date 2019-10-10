@@ -1,110 +1,124 @@
-Return-Path: <SRS0=09kp=YC=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A29FECE58C
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 17:32:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC098ECE58C
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 00:51:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 347E22190F
-	for <linux-clk@archiver.kernel.org>; Wed,  9 Oct 2019 17:32:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1570642375;
-	bh=KfIBcyEnuRceF3vKSjN16F7+m+qFJm3bdbFB9alfQcw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=c2dSoD/YiZZNVHCqiyTLJKOwgL2xqv+/lNXjhJEFHxGxEoKG36kzR45T1eV49hak/
-	 TNcB7uVKymKVFInAycaIlG01p6TyKCCBtME7sbn2XlagZ7PgKfYtLBRTIYn0itTuec
-	 vOysyvSAZUDqW2kED4OjOcOmmYE5aohtgNl7ZFaA=
+	by mail.kernel.org (Postfix) with ESMTP id A1635206C0
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 00:51:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aj.id.au header.i=@aj.id.au header.b="MYi2/m18";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bM3KysDs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731965AbfJIRcf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 9 Oct 2019 13:32:35 -0400
-Received: from mail.kernel.org ([198.145.29.99]:47988 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731973AbfJIRXz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 9 Oct 2019 13:23:55 -0400
-Received: from sasha-vm.mshome.net (unknown [167.220.2.234])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58DC521924;
-        Wed,  9 Oct 2019 17:23:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1570641834;
-        bh=KfIBcyEnuRceF3vKSjN16F7+m+qFJm3bdbFB9alfQcw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xc6xD5fto+m6fkpJsNkNSYrywQhsSHUDrej8sYLjT7EJ0Su9yVlGjKIUNtCmsu2zO
-         PXlqdlfYZwG/ZFpJK/xWzYZGq7WG3z5jIKC6UZIt6UZ+Fh+nLPShuuR48DKLTx1T/M
-         s7OFm2zRdjNB9/FM8/dwjDfqUpOqi+YWB6MDFSB0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Sasha Levin <sashal@kernel.org>,
-        linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.3 04/68] clk: ti: dra7: Fix mcasp8 clock bits
-Date:   Wed,  9 Oct 2019 13:04:43 -0400
-Message-Id: <20191009170547.32204-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191009170547.32204-1-sashal@kernel.org>
-References: <20191009170547.32204-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+        id S1731834AbfJJAv2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 9 Oct 2019 20:51:28 -0400
+Received: from out2-smtp.messagingengine.com ([66.111.4.26]:43253 "EHLO
+        out2-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731166AbfJJAv2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 9 Oct 2019 20:51:28 -0400
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+        by mailout.nyi.internal (Postfix) with ESMTP id 2CAB221FAD;
+        Wed,  9 Oct 2019 20:51:27 -0400 (EDT)
+Received: from imap2 ([10.202.2.52])
+  by compute4.internal (MEProxy); Wed, 09 Oct 2019 20:51:27 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aj.id.au; h=
+        mime-version:message-id:in-reply-to:references:date:from:to:cc
+        :subject:content-type; s=fm3; bh=UBrk70WdLG+JMj8YlDV4YajtdEG1xvL
+        hcNqIGJ2cU8M=; b=MYi2/m18XdE1IFiJ483sVOzoqKIuhhhEDG0ZJjF8vk8hT1K
+        b3eMQqpoJeEGSOvYsq8ndGbjaTeZmJwJ6S5rolWplxp/l7IXjyOQbpeyBHGD17kn
+        ps9cs7ABl+sz+pqgMNR10cl4w2eGuVaCD2Wi+AUxGlyfblfAFOizIlwrJtqwLHru
+        r/h54Mjd4AfYQ2luKjUPMfE7GljihTw9opQnvgRXWck5nW7bD3U51zjRVur/SIMt
+        Dcl9Ggd1PGb20DE201wgncIjv1VlDeKaKbzI4PU67ltqQf+nedcHp56r/QWzXFW3
+        uJIzsrfJL4VtFokPiyTLBpwOIhW7gB1zbT3Vy3g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=UBrk70
+        WdLG+JMj8YlDV4YajtdEG1xvLhcNqIGJ2cU8M=; b=bM3KysDsqBtVG/t5opV5qx
+        Tku4sVJM6oQMimYpCGEZtegj+ccBY0/bqS3UAKZB5cI7cc9ygRfvuf2a7jPKdtF7
+        eKDbutSMjDuPIXT/Mjt0IVcaoj2fnoo86YyZWPEFMdzZx3KCRJIiWf6bivKFFN0I
+        wgQc9fz0tkv+fjOkkSNo5kq+LeTztKM4WHR4UeF7Ni9CxeMH/5O5RdLxhHt8Msik
+        /CU1IM6Y0rdVlswupIp+DtlzCEyVqj/L3VAeVqaFIsEj0H0AREvV1hfi/1UiRlp4
+        7HiWrhEBwzHDtGVG0DUtc+jP5yBOTzIMwqCKP2e667mXkAKSc0ZmGr24j0r45vuw
+        ==
+X-ME-Sender: <xms:ioCeXTfMK69pJcqR31UQBEg9o0azGJNd_7TiiDeOybGWAhpF7oeyhQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedriedvgdegudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpefofgggkfgjfhffhffvufgtsehttdertderredtnecuhfhrohhmpedftehnughr
+    vgifucflvghffhgvrhihfdcuoegrnhgurhgvfiesrghjrdhiugdrrghuqeenucfrrghrrg
+    hmpehmrghilhhfrhhomheprghnughrvgifsegrjhdrihgurdgruhenucevlhhushhtvghr
+    ufhiiigvpedt
+X-ME-Proxy: <xmx:ioCeXQR9hntBcHDqRh5_K13d9TkiKroTP8DF9AFq4pX9oU9xNOrOng>
+    <xmx:ioCeXU-y__TtOOsuh1-wa24vDLnyi3z2FdA0P90dx8ATi_VzWgnHpg>
+    <xmx:ioCeXQHpF9k3An-OzTrTTg-0k1iTmoCX6-CMkOU9uMdDfALE2DFjQQ>
+    <xmx:j4CeXTzSNEw__hM1x0fDSms-_4K20lFN8xyD0Dix1UptTfTj_5YhdA>
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+        id 9F2D1E00A5; Wed,  9 Oct 2019 20:51:22 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.1.7-360-g7dda896-fmstable-20191004v2
+Mime-Version: 1.0
+Message-Id: <18ac98e1-82b6-4782-bdfb-56765653e6df@www.fastmail.com>
+In-Reply-To: <CACPK8Xf-f-r4S02GoxYdBYOJi5NGYMCOr6XGVza4vEGAsqzR9w@mail.gmail.com>
+References: <20191008113523.13601-1-andrew@aj.id.au>
+ <20191008113523.13601-2-andrew@aj.id.au>
+ <CACPK8Xf-f-r4S02GoxYdBYOJi5NGYMCOr6XGVza4vEGAsqzR9w@mail.gmail.com>
+Date:   Thu, 10 Oct 2019 11:22:17 +1030
+From:   "Andrew Jeffery" <andrew@aj.id.au>
+To:     "Joel Stanley" <joel@jms.id.au>
+Cc:     linux-clk@vger.kernel.org,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        "Stephen Boyd" <sboyd@kernel.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: Add AST2500 RMII RCLK definitions
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
 
-[ Upstream commit dd8882a255388ba66175098b1560d4f81c100d30 ]
 
-There's a typo for dra7 mcasp clkctrl bit, it should be 22 like the other
-macasp instances, and not 24. And in dra7xx_clks[] we have the bits wrong
-way around.
+On Tue, 8 Oct 2019, at 23:07, Joel Stanley wrote:
+> On Tue, 8 Oct 2019 at 11:34, Andrew Jeffery <andrew@aj.id.au> wrote:
+> >
+> > The AST2500 has an explicit gate for the RMII RCLK for each of the two
+> > MACs.
+> >
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> > ---
+> >  include/dt-bindings/clock/aspeed-clock.h | 2 ++
+> >  1 file changed, 2 insertions(+)
+> >
+> > diff --git a/include/dt-bindings/clock/aspeed-clock.h b/include/dt-bindings/clock/aspeed-clock.h
+> > index f43738607d77..64e245fb113f 100644
+> > --- a/include/dt-bindings/clock/aspeed-clock.h
+> > +++ b/include/dt-bindings/clock/aspeed-clock.h
+> > @@ -39,6 +39,8 @@
+> >  #define ASPEED_CLK_BCLK                        33
+> >  #define ASPEED_CLK_MPLL                        34
+> >  #define ASPEED_CLK_24M                 35
+> > +#define ASPEED_CLK_GATE_MAC1RCLK       36
+> > +#define ASPEED_CLK_GATE_MAC2RCLK       37
+> 
+> Calling these ASPEED_CLK_GATE breaks the pattern the rest of the
+> driver has in using that name for the clocks that are registered as
+> struct aspeed_clk_gate clocks.
+> 
+> Do you think we should drop the GATE_ to match the existing clocks?
 
-Fixes: dffa9051d546 ("clk: ti: dra7: add new clkctrl data")
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Suman Anna <s-anna@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/ti/clk-7xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+I named them that way because the bits in question do just gate the
+clocks, but I've renamed them to keep the pattern. Will send a v2.
 
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index b57fe09b428be..9dd6185a4b4e2 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -683,7 +683,7 @@ static const struct omap_clkctrl_reg_data dra7_l4per2_clkctrl_regs[] __initconst
- 	{ DRA7_L4PER2_MCASP2_CLKCTRL, dra7_mcasp2_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:0154:22" },
- 	{ DRA7_L4PER2_MCASP3_CLKCTRL, dra7_mcasp3_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:015c:22" },
- 	{ DRA7_L4PER2_MCASP5_CLKCTRL, dra7_mcasp5_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:016c:22" },
--	{ DRA7_L4PER2_MCASP8_CLKCTRL, dra7_mcasp8_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:0184:24" },
-+	{ DRA7_L4PER2_MCASP8_CLKCTRL, dra7_mcasp8_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:0184:22" },
- 	{ DRA7_L4PER2_MCASP4_CLKCTRL, dra7_mcasp4_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:018c:22" },
- 	{ DRA7_L4PER2_UART7_CLKCTRL, dra7_uart7_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:01c4:24" },
- 	{ DRA7_L4PER2_UART8_CLKCTRL, dra7_uart8_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:01d4:24" },
-@@ -828,8 +828,8 @@ static struct ti_dt_clk dra7xx_clks[] = {
- 	DT_CLK(NULL, "mcasp6_aux_gfclk_mux", "l4per2-clkctrl:01f8:22"),
- 	DT_CLK(NULL, "mcasp7_ahclkx_mux", "l4per2-clkctrl:01fc:24"),
- 	DT_CLK(NULL, "mcasp7_aux_gfclk_mux", "l4per2-clkctrl:01fc:22"),
--	DT_CLK(NULL, "mcasp8_ahclkx_mux", "l4per2-clkctrl:0184:22"),
--	DT_CLK(NULL, "mcasp8_aux_gfclk_mux", "l4per2-clkctrl:0184:24"),
-+	DT_CLK(NULL, "mcasp8_ahclkx_mux", "l4per2-clkctrl:0184:24"),
-+	DT_CLK(NULL, "mcasp8_aux_gfclk_mux", "l4per2-clkctrl:0184:22"),
- 	DT_CLK(NULL, "mmc1_clk32k", "l3init-clkctrl:0008:8"),
- 	DT_CLK(NULL, "mmc1_fclk_div", "l3init-clkctrl:0008:25"),
- 	DT_CLK(NULL, "mmc1_fclk_mux", "l3init-clkctrl:0008:24"),
--- 
-2.20.1
-
+Andrew
