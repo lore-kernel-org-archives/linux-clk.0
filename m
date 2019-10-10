@@ -2,112 +2,86 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8817AECE596
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 07:39:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CE5C10F14
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 08:34:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F38C218AC
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 07:39:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0559221929
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 08:34:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oZV627CK";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oZV627CK"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="lXhnj768"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733141AbfJJHiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Oct 2019 03:38:10 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:48392 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733072AbfJJHdk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 03:33:40 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E3D5E60E5D; Thu, 10 Oct 2019 07:33:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570692818;
-        bh=W6+NL+DXHTLF8zDU7lHpKteWUSg2nqdC5NVtTEOnVA8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oZV627CKNJaQXCXinZ0mv5wXbDSxC8xGkTGvgm0JcPtgxAcx4TZnYyj7Sq83o2crT
-         SA22sRETeDufgGeY3gmigO4xvCBbDawUNvET84ChMTxhqwShrqVeqlhbIEg0N9rGEf
-         9yenMD0WhuxueOQT91ogdFTsyniNXeUxn2xiWpEo=
-Received: from [10.206.24.216] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: mgautam@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE6C760EA5;
-        Thu, 10 Oct 2019 07:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570692818;
-        bh=W6+NL+DXHTLF8zDU7lHpKteWUSg2nqdC5NVtTEOnVA8=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=oZV627CKNJaQXCXinZ0mv5wXbDSxC8xGkTGvgm0JcPtgxAcx4TZnYyj7Sq83o2crT
-         SA22sRETeDufgGeY3gmigO4xvCBbDawUNvET84ChMTxhqwShrqVeqlhbIEg0N9rGEf
-         9yenMD0WhuxueOQT91ogdFTsyniNXeUxn2xiWpEo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE6C760EA5
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
-Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
- 8998
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MSM <linux-arm-msm@vger.kernel.org>,
-        Evan Green <evgreen@chromium.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        Vinod Koul <vkoul@kernel.org>,
-        Amit Nischal <anischal@codeaurora.org>
-References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
- <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr>
- <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
- <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
- <20191010041551.6D7E0208C3@mail.kernel.org>
-From:   Manu Gautam <mgautam@codeaurora.org>
-Message-ID: <a8540fe3-9500-4998-ca25-a06269541383@codeaurora.org>
-Date:   Thu, 10 Oct 2019 13:03:32 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1733192AbfJJIeZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 04:34:25 -0400
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:40814 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728388AbfJJIeZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 04:34:25 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9A8YLtM104967;
+        Thu, 10 Oct 2019 03:34:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1570696461;
+        bh=J8lFpRpTZt0UWrpkSdB7wZlOFZyeC3GH86jdS3JymcA=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=lXhnj768xcp1mqlfcDwQNunW8F6a08sXPjJEW4pB1qpqVm7O8h3EBMa5XYZFEv9oL
+         mc4LsUbpw9S4dGhqVszofz3LzhIIR9yo3sKxfsh7WjnT9xRDMDj1Z5a7mM1Hj0ua+A
+         BMEfW30fs1VFOqlWh9RxoZ3DvevW9m6AneG7J+dQ=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9A8YLAo023613
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 10 Oct 2019 03:34:21 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 10
+ Oct 2019 03:34:17 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 10 Oct 2019 03:34:21 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9A8YJYO023196;
+        Thu, 10 Oct 2019 03:34:19 -0500
+Subject: Re: [PATCHv3 00/10] clk: ti: remoteproc / iommu support patches
+From:   Tero Kristo <t-kristo@ti.com>
+To:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>
+CC:     <tony@atomide.com>, <s-anna@ti.com>
+References: <20190912132613.28093-1-t-kristo@ti.com>
+Message-ID: <ef764d1c-8ebc-4b64-4543-7b296327e197@ti.com>
+Date:   Thu, 10 Oct 2019 11:34:18 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-In-Reply-To: <20191010041551.6D7E0208C3@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20190912132613.28093-1-t-kristo@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On 12/09/2019 16:26, Tero Kristo wrote:
+> Hi,
+> 
+> V3 of this series sort of reverted back to pretty much V1 which expects
+> strict sequencing of events from the bus driver. This one doesn't have
+> any dependency towards the reset driver either, and the controversial
+> reset handling APIs have been removed.
+> 
+> -Tero
 
-On 10/10/2019 9:45 AM, Stephen Boyd wrote:
-> Quoting Manu Gautam (2019-10-09 01:31:09)
->>
-[snip]
->> I have followed this up with QMP PHY hardware designers and they have
->> confirmed that QMP PHY must have pipe clock enabled at the beginning
->> of initialization sequence i.e. before bringing it out of reset and starting it.
-> Awesome, thanks for following up.
->
->> Otherwise there is possibility of incorrect locking of pipe_interface/
->> retime buffers in PHY.
->> Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
-> Does anything go wrong if we just leave these clks enabled forever out
-> of boot? I'm inclined to rip the clks out and just slam the branch
-> enable bit on all the time in gcc driver probe and return NULL to the
-> callers of clk_get() for these clks. I don't see how this would be a
-> problem because when the upstream phy is disabled this clk is disabled
-> and so we aren't wasting power. It should also save us time and memory
-> because now we don't have to call into the clk framework to turn it on
-> and sequence that just right in the phy driver.
+Stephen, any comments on this one or shall I just craft a pull-request 
+for this and rest of the TI clock driver changes towards 5.5? There 
+seems to be a pile of them coming this time over...
 
-That might work, however on some platforms gcc_pipe_clk parent is changed to
-XO and back to phy_pipe_clk across low power mode.
-It requires PHY driver to use clk_set_parent().
+-Tero
 
-
--- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
-
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
