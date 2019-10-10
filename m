@@ -2,121 +2,112 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC70C4360C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 07:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8817AECE596
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 07:39:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36D3821929
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 07:07:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F38C218AC
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 07:39:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="G1HPELi2";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="umPFSm/5"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oZV627CK";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oZV627CK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727130AbfJJHHm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Oct 2019 03:07:42 -0400
-Received: from mx2a.mailbox.org ([80.241.60.219]:22231 "EHLO mx2a.mailbox.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727080AbfJJHHm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 10 Oct 2019 03:07:42 -0400
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [80.241.60.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        id S1733141AbfJJHiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 03:38:10 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48392 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733072AbfJJHdk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 03:33:40 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id E3D5E60E5D; Thu, 10 Oct 2019 07:33:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570692818;
+        bh=W6+NL+DXHTLF8zDU7lHpKteWUSg2nqdC5NVtTEOnVA8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oZV627CKNJaQXCXinZ0mv5wXbDSxC8xGkTGvgm0JcPtgxAcx4TZnYyj7Sq83o2crT
+         SA22sRETeDufgGeY3gmigO4xvCBbDawUNvET84ChMTxhqwShrqVeqlhbIEg0N9rGEf
+         9yenMD0WhuxueOQT91ogdFTsyniNXeUxn2xiWpEo=
+Received: from [10.206.24.216] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx2a.mailbox.org (Postfix) with ESMTPS id E9C2BA39BF;
-        Thu, 10 Oct 2019 09:07:38 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=mailbox.org; h=
-        content-type:content-type:content-transfer-encoding:mime-version
-        :references:in-reply-to:message-id:date:date:subject:subject
-        :from:from:received; s=mail20150812; t=1570691255; bh=qtVeTLRbBe
-        26U1OQjCON8/pEtKrsW3vc60rQbDWzF+E=; b=G1HPELi2LZJv6oCg4v18nkAytH
-        W+jy+/CJEqHg3ekHNNSnKjPyLu2Dc30ugQEWd5Nelj9bs5o0kAX/ty/YA6pvazg7
-        l/VKwb1Td7qZqBK/NjG6l73mgrg99k3SOrsS7LxTjc8bi4Fv970ANd7xM14dML2I
-        pwNifh9J4JqWZFCkxRWOaKAW0AuOxTimXCGMGlpLUa2emh6XGP1ByGaCGHZQrlpq
-        ARrB6xTrAUwiFYTztjmoL/3jW3wirlSsBzRTMxrYNxE4MdqKPH4QMtjpMyTA8rIL
-        xxS9UmUWaUbfcwAplNQxHCFuTUlu3o6JrbVHiQdiiN7yPvHsB+quSn6gxL7A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-        t=1570691256;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Zhn3q5nsgiRVkwwWOxv7smEUbI7j7vJ/K26dTBn8bx0=;
-        b=umPFSm/5o458SA7f8HtkFII4KW14fZeelrGoO/mMNzF89yL2Ukys/O5lgR5y7IS9qWlVO1
-        AvWAVUTNeN4uzAJuUGTAFZEGLDs4QN/vbLqnvkfzYtIvj59GIjYYbtCLAyxMZb15EjQSIS
-        5A/HO0wOkWSrQEjv6RbDl55ZwzROVVstUKffvLcOu/oYDHVkquQ1LEo/QwUPjcon+ZWVNz
-        QHWWS3C4aYv/hd/WRnWh4cuTjv5HarAUvzbqaI1azKoP9BfS9ZpRYb0nPoGRw3ErRbqU0B
-        bBTIugpfWBk0LhiclBLZLnQr8NpB3JMOb1ZhzjZOq7qmDWM1EyEhczG54+0GiQ==
-X-Virus-Scanned: amavisd-new at heinlein-support.de
-Received: from smtp2.mailbox.org ([80.241.60.241])
-        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
-        with ESMTP id KEmneR8j36iB; Thu, 10 Oct 2019 09:07:35 +0200 (CEST)
-From:   Alexander Stein <alexander.stein@mailbox.org>
-To:     Navid Emamdoost <navid.emamdoost@gmail.com>
-Cc:     emamd001@umn.edu, kjlu@umn.edu, smccaman@umn.edu,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        bcm-kernel-feedback-list@broadcom.com,
-        Eric Anholt <eric@anholt.net>,
-        Stefan Wahren <wahrenst@gmx.net>,
-        Matthias Brugger <mbrugger@suse.com>,
-        Max Filippov <jcmvbkbc@gmail.com>,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: bcm2835: Fix memory leak in bcm2835_register_pll
-Date:   Thu, 10 Oct 2019 09:07:31 +0200
-Message-ID: <1693637.czecojBbq0@ws-140106>
-In-Reply-To: <20191010013101.5364-1-navid.emamdoost@gmail.com>
-References: <20191010013101.5364-1-navid.emamdoost@gmail.com>
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id AE6C760EA5;
+        Thu, 10 Oct 2019 07:33:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570692818;
+        bh=W6+NL+DXHTLF8zDU7lHpKteWUSg2nqdC5NVtTEOnVA8=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=oZV627CKNJaQXCXinZ0mv5wXbDSxC8xGkTGvgm0JcPtgxAcx4TZnYyj7Sq83o2crT
+         SA22sRETeDufgGeY3gmigO4xvCBbDawUNvET84ChMTxhqwShrqVeqlhbIEg0N9rGEf
+         9yenMD0WhuxueOQT91ogdFTsyniNXeUxn2xiWpEo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org AE6C760EA5
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
+ 8998
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>
+References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
+ <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr>
+ <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
+ <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
+ <20191010041551.6D7E0208C3@mail.kernel.org>
+From:   Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <a8540fe3-9500-4998-ca25-a06269541383@codeaurora.org>
+Date:   Thu, 10 Oct 2019 13:03:32 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+In-Reply-To: <20191010041551.6D7E0208C3@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+Hi,
 
-On Thursday, October 10, 2019, 3:30:58 AM CEST Navid Emamdoost wrote:
-> In the implementation of bcm2835_register_pll(), the allocated memory
-> for pll should be released if devm_clk_hw_register() fails.
-> 
-> Fixes: b19f009d4510 ("clk: bcm2835: Migrate to clk_hw based registration and OF APIs")
-> Signed-off-by: Navid Emamdoost <navid.emamdoost@gmail.com>
-> ---
->  drivers/clk/bcm/clk-bcm2835.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/bcm/clk-bcm2835.c b/drivers/clk/bcm/clk-bcm2835.c
-> index 802e488fd3c3..99549642110a 100644
-> --- a/drivers/clk/bcm/clk-bcm2835.c
-> +++ b/drivers/clk/bcm/clk-bcm2835.c
-> @@ -1320,8 +1320,10 @@ static struct clk_hw *bcm2835_register_pll(struct bcm2835_cprman *cprman,
->  	pll->hw.init = &init;
->  
->  	ret = devm_clk_hw_register(cprman->dev, &pll->hw);
-> -	if (ret)
-> +	if (ret) {
-> +		kfree(pll);
->  		return NULL;
-> +	}
->  	return &pll->hw;
->  }
+On 10/10/2019 9:45 AM, Stephen Boyd wrote:
+> Quoting Manu Gautam (2019-10-09 01:31:09)
+>>
+[snip]
+>> I have followed this up with QMP PHY hardware designers and they have
+>> confirmed that QMP PHY must have pipe clock enabled at the beginning
+>> of initialization sequence i.e. before bringing it out of reset and starting it.
+> Awesome, thanks for following up.
+>
+>> Otherwise there is possibility of incorrect locking of pipe_interface/
+>> retime buffers in PHY.
+>> Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
+> Does anything go wrong if we just leave these clks enabled forever out
+> of boot? I'm inclined to rip the clks out and just slam the branch
+> enable bit on all the time in gcc driver probe and return NULL to the
+> callers of clk_get() for these clks. I don't see how this would be a
+> problem because when the upstream phy is disabled this clk is disabled
+> and so we aren't wasting power. It should also save us time and memory
+> because now we don't have to call into the clk framework to turn it on
+> and sequence that just right in the phy driver.
 
-Eh, is pll freed at all, even in successful case? I failed to find a corresponding kfree().
-The pointer itself is lost once the function returns.
-The solution would rather be to use devm_kzalloc instead of kzalloc, like the other clocks
-in e.g. bcm2835_register_pll()
-
-Best regards,
-Alexander
+That might work, however on some platforms gcc_pipe_clk parent is changed to
+XO and back to phy_pipe_clk across low power mode.
+It requires PHY driver to use clk_set_parent().
 
 
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
 
