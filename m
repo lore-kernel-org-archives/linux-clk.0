@@ -2,145 +2,112 @@ Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63D61C4360C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 20:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80247ECE58D
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 21:23:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D29A2054F
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 20:30:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BBAD206B6
+	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 21:23:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1570742629;
+	bh=3IW8PpnNpOw4Rqw6xxZGMFfB4t6X4qC/PCfFusKx8e4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ngBGs5CceuyA1BScwSIRrG4DY4I8q6Pjt6iM5tqNofSLv2fCivabt8Xlk1zKdRKvK
+	 Ff1EGwjKV3PvlnG67bmhswOZ4b5j2q7Bo/hvcSB1giZGEwhYex4vTeldX0sTrehy92
+	 uccYwDfX2znYW8fXX4A2GJqf2ldTIdMMkmM1Zx0Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726863AbfJJUa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Oct 2019 16:30:58 -0400
-Received: from mout.kundenserver.de ([212.227.126.135]:40223 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726900AbfJJUa5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 16:30:57 -0400
-Received: from threadripper.lan ([149.172.19.189]) by mrelayeu.kundenserver.de
- (mreue012 [212.227.15.129]) with ESMTPA (Nemesis) id
- 1M76jv-1iA7xr2etz-008WlZ; Thu, 10 Oct 2019 22:30:44 +0200
-From:   Arnd Bergmann <arnd@arndb.de>
-To:     Kukjin Kim <kgene@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>
-Cc:     linux-samsung-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linus.walleij@linaro.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH 01/36] ARM: samsung: make S3C24XX_MISCCR access indirect
-Date:   Thu, 10 Oct 2019 22:29:45 +0200
-Message-Id: <20191010203043.1241612-1-arnd@arndb.de>
-X-Mailer: git-send-email 2.20.0
-In-Reply-To: <20191010202802.1132272-1-arnd@arndb.de>
-References: <20191010202802.1132272-1-arnd@arndb.de>
+        id S1726986AbfJJVXs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 17:23:48 -0400
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36811 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725867AbfJJVXs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 17:23:48 -0400
+Received: by mail-ot1-f68.google.com with SMTP id 67so6196697oto.3;
+        Thu, 10 Oct 2019 14:23:47 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=8fsaLFcYDAROH9HBoKC5Vafqp1MCH4HA/pJSglSZ4co=;
+        b=bKjELxGNAZN7UBGTFrZEAnN7TuoetlHlelmVWf9GsyR5amJTLlVS5UmG4om4QBlfoc
+         uZ7XzRvahamKbuTFPmhWzLU7vIPRpfFPqStqvLBY1D3CmnMztcUhcx7I+QUlJU8I+k2D
+         EMAUiHjg0tfdNM9GuQq1c/HawnH9s/2bOYZ8q2gJ++E0fBI/QpKIJ/2aFwhkkUel1kXG
+         V2O2TJLIhHwjwmm4czN8yNjLFoPXpIB3hFE81KHMTYstsW9Es6cLx1+CaN8Hr41uSP7T
+         O5/5AdyHOn+2540VlVk+KBQHidUyrcYKPAosq9dnhgi9B8aK9GxYZZQucHtX8EHHPUl9
+         7NVg==
+X-Gm-Message-State: APjAAAWE4pp2C/Gyu/UbUgqwLHAdIXjVNL2ivp/Z3RmJEaQ78dy6yT2e
+        nFhOVvTEcgLL7otfuWRw4w==
+X-Google-Smtp-Source: APXvYqyIyxVe/QML8xBJW19srjEWY1fzMm01BIPfEyxogOHEBtnRrO0q0z3M7piA63qkH2laitZG7g==
+X-Received: by 2002:a05:6830:13d8:: with SMTP id e24mr9348918otq.42.1570742627232;
+        Thu, 10 Oct 2019 14:23:47 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v132sm2027358oif.34.2019.10.10.14.23.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2019 14:23:46 -0700 (PDT)
+Date:   Thu, 10 Oct 2019 16:23:46 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Matt Mackall <mpm@selenic.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-pwm@vger.kernel.org,
+        linux-tegra@vger.kernel.org, bcm-kernel-feedback-list@broadcom.com,
+        linux-rpi-kernel@lists.infradead.org,
+        linux-amlogic@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        linux-rockchip@lists.infradead.org,
+        linux-riscv@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-crypto@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 4/8] dt-bindings: memory-controllers: Convert Samsung
+ Exynos SROM bindings to json-schema
+Message-ID: <20191010212346.GA7896@bogus>
+References: <20190918173141.4314-1-krzk@kernel.org>
+ <20190918173141.4314-4-krzk@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:ePLzvj7/CcvBZWd9/hVzvTOtmqd1jBEPawLsZLAlTOvjHU9Blp0
- tvxX+UeVAWK0nrC7dGI+hFjF8ptcLrjrkZNrN1/uNRe+uaNHpuu2BxrAFpK9lILdg4Kj5GH
- JUyKX7A09rEBq4diiC18Z0WoqEb+HshWV0vBBd3lWJmlI9+0Kf3EIUQ1g4JogJyATj7uv+x
- eMo6Lt9LmrEqY9ZyRGCZA==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:p+vtab0Sm4g=:GZ7JjxHd28lp/BUZHy55/p
- b9I5JvBFzQsD16r9zrfKLjJ5zalwgRAiq/aD/2IFvOdvFT72F5T/lS/DlazeTamoLZsSS/X04
- mKee0zxPCOxG1iYddhlMCoHPUsmBSRePPJIvvWvLhieiH9YW0+BlgMGVG/6Wr+IceowcHuRxZ
- yQHylOXnOnpDglBkIRt6/qpzw39wUuLc1zI6hrFH420KpQzYVrB5lJsaE/ojDI9RnzIky8U9G
- 4fvej/0S799sglaZhKk1G0PSEKgYy8GJSBwrO1/urLdKdj/hxgOUaesBjta4gi7AFk3XNzxnK
- c6evzMifq7jGzWo48d+THy66ClEQuqbFZhxZEoQQLoYNka0K5pdwhgdMVevI4Zs4v5Pg04LlK
- X0MvJQ5fy8ogANXieli/NIJH15cHvdR4YuAT2hSdW+wCjNbJNQzO1CVSkPpxRQvxgXwQvNpaU
- TuOz6XyrB8bqiOdKiIWgi94Uc4Ts07dgo8znCybeGKJgKpJ75gfhCCrSR+xKs8DbJyopza9um
- Hv6aI1VN1XK1MJ06/ESbj+wrKSh9THAhq2P098AbLclaTHFYy4enQZQ9T5Te0tl+q+6/DueLe
- 8CY4X3pswccFQeZtOtRqOLZ/AekCpg0LiFMi6TBAZYP1yz2lkYTmigk1LOKDqPApclK+8PoQ3
- 87kIeHnio6OFfq5FCtr/hN4bwvr3ttcBvyd1tJdYKGk99bLPLRWK8cRwAmdbVCYlnNbslk9kw
- 8u4vrXdL8NT3UWlX90wxJSbcUoKF9+lTxFan3Cuv4EVvPVlUsnYW/ckcLtE/FrNPVbHEORV+7
- 3yoOX40qgdQvdqA4yek9OrFe07/3c1B0m5RpVzCb6JjARIHKrdj/tB7SbtKinMz6keJyuwGMl
- nMMhZ3QF99zmHauGWf8A==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190918173141.4314-4-krzk@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The clk driver uses both a function call into an exported
-platform file and a direct register access to a hardcoded
-virtual address for accessing the MISCCR register, both
-become are a problem for a multiplatform kernel because
-of the header file dependency.
+On Wed, 18 Sep 2019 19:31:37 +0200, Krzysztof Kozlowski wrote:
+> Convert Samsung Exynos SROM controller bindings to DT schema format
+> using json-schema.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> 
+> ---
+> 
+> Changes since v1:
+> 1. Indent example with four spaces (more readable),
+> 2. Split examples into two,
+> 3. Fix pattern for subnode name,
+> 4. Remove checks for #address-cells-ranges-#size-cells,
+> 5. Add "additionalProperties" so the wrongly named subnodes would be
+>    matched.
+> ---
+>  .../memory-controllers/exynos-srom.txt        |  79 -----------
+>  .../memory-controllers/exynos-srom.yaml       | 128 ++++++++++++++++++
+>  2 files changed, 128 insertions(+), 79 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.txt
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/exynos-srom.yaml
+> 
 
-Make this an indirect function call through platform data
-instead.
+Applied, thanks.
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- arch/arm/mach-s3c24xx/common.c         |  3 +++
- drivers/clk/samsung/clk-s3c2410-dclk.c | 10 ++++------
- 2 files changed, 7 insertions(+), 6 deletions(-)
-
-diff --git a/arch/arm/mach-s3c24xx/common.c b/arch/arm/mach-s3c24xx/common.c
-index 3dc029c2d2cb..ebf6bde67816 100644
---- a/arch/arm/mach-s3c24xx/common.c
-+++ b/arch/arm/mach-s3c24xx/common.c
-@@ -667,5 +667,8 @@ struct platform_device s3c2410_device_dclk = {
- 	.id		= 0,
- 	.num_resources	= ARRAY_SIZE(s3c2410_dclk_resource),
- 	.resource	= s3c2410_dclk_resource,
-+	.dev		= {
-+		.platform_data = s3c2410_modify_misccr,
-+	},
- };
- #endif
-diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
-index 1281672cb00e..fbcec0252c45 100644
---- a/drivers/clk/samsung/clk-s3c2410-dclk.c
-+++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
-@@ -14,10 +14,6 @@
- #include <linux/module.h>
- #include "clk.h"
- 
--/* legacy access to misccr, until dt conversion is finished */
--#include <mach/hardware.h>
--#include <mach/regs-gpio.h>
--
- #define MUX_DCLK0	0
- #define MUX_DCLK1	1
- #define DIV_DCLK0	2
-@@ -52,6 +48,7 @@ struct s3c24xx_clkout {
- 	struct clk_hw		hw;
- 	u32			mask;
- 	u8			shift;
-+	unsigned int (*modify_misccr)(unsigned int clr, unsigned int chg);
- };
- 
- #define to_s3c24xx_clkout(_hw) container_of(_hw, struct s3c24xx_clkout, hw)
-@@ -62,7 +59,7 @@ static u8 s3c24xx_clkout_get_parent(struct clk_hw *hw)
- 	int num_parents = clk_hw_get_num_parents(hw);
- 	u32 val;
- 
--	val = readl_relaxed(S3C24XX_MISCCR) >> clkout->shift;
-+	val = clkout->modify_misccr(0, 0) >> clkout->shift;
- 	val >>= clkout->shift;
- 	val &= clkout->mask;
- 
-@@ -76,7 +73,7 @@ static int s3c24xx_clkout_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct s3c24xx_clkout *clkout = to_s3c24xx_clkout(hw);
- 
--	s3c2410_modify_misccr((clkout->mask << clkout->shift),
-+	clkout->modify_misccr((clkout->mask << clkout->shift),
- 			      (index << clkout->shift));
- 
- 	return 0;
-@@ -110,6 +107,7 @@ static struct clk_hw *s3c24xx_register_clkout(struct device *dev,
- 	clkout->shift = shift;
- 	clkout->mask = mask;
- 	clkout->hw.init = &init;
-+	clkout->modify_misccr = dev->platform_data;
- 
- 	ret = clk_hw_register(dev, &clkout->hw);
- 	if (ret)
--- 
-2.20.0
-
+Rob
