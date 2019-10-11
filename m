@@ -2,87 +2,369 @@ Return-Path: <SRS0=qrfj=YE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F0E1C47404
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 11:20:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E5CC47404
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 13:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 746F9214E0
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 11:20:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B90642053B
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 13:30:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D2OqE7Pn"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CCkMcqzI";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="GY3ngWEE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727549AbfJKLUz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Oct 2019 07:20:55 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39409 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727198AbfJKLUz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Oct 2019 07:20:55 -0400
-Received: by mail-lj1-f196.google.com with SMTP id y3so9446408ljj.6;
-        Fri, 11 Oct 2019 04:20:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=EtNnfZSNIM+FE/Ouxm1KBXCTSzFBGzlbFpsvpsa6fzI=;
-        b=D2OqE7PnNRoUmWNbgTg4s/KS8g6W7Ej8Lz/BB12Px1dRFIkn9T/mePVU+H/hIHV56J
-         64v5oYuvA2yBVwR0KjYpdXT/oXajCzphVepm43ADpOGt2tkvfG7g+ZFrAf7vUYqBiwfu
-         EjGV7zGmT3Co3lrzt/KGm2dHBVc8id1bTLHciUJIAOh8xvd9figVUKdPFEFHeguDB88M
-         MtLMtaaxHw6QUzwR1PJNwwgfViWo4DK6326sFZVy7QzQuw4tbK0TeUnOf345R0Q4EuZa
-         CAzVC4ECxAv5aVbB5KLueckmLSFulPvJYY6CEPwIjImSvxfmQszWMcLYYEHWMSGewiS8
-         AtEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=EtNnfZSNIM+FE/Ouxm1KBXCTSzFBGzlbFpsvpsa6fzI=;
-        b=gvq9R9vyMHd5xIHJO9sVkhc4ZHKQeCSaRWUZ2xA3jBiJUgBc+YYvBlczanXf/YAu+s
-         dobcfRPRkdoHOEt3psHklGU1OMO1SneU1tlqQOEcvndWs4XO8g+myWz+vkfQMunBYay9
-         0NwjHVDQrdlK9UkvJuafIYBl1kbURhmCjK5QDg7i3P8l+FBKFCc0wWTRW8XOtSS5DPEc
-         B2qyrDZV4IN54K7APTcrPTZ1Cw8N/7tip4TOys8nSep3Ea41gNhr9rpVHoNffZxmi78p
-         KwW7YNsPFscGy8urQcVs9kr3EJ0hx40CErLjM36zlSgYcd0u4xrMTlNXgWbUEVooVl4y
-         CxTA==
-X-Gm-Message-State: APjAAAWXJs2vlbMg+eBjL4QkIgFeVVUDz8urHFYzMXJKjCa6WhMcgDt6
-        TxGfG3U+kxKWePQnb5fkOSbzVrcPF6bDiYCFuNBhmlYZ
-X-Google-Smtp-Source: APXvYqzE/zVDPjPyTom42qRHj6q37hTnXXPuz3aalIoov7655nQZiN5T5dR7/JP1C+tRL0z2N/CI/hjBxsug7ERVx48=
-X-Received: by 2002:a2e:42d6:: with SMTP id h83mr8801587ljf.21.1570792852255;
- Fri, 11 Oct 2019 04:20:52 -0700 (PDT)
+        id S1728608AbfJKN34 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Oct 2019 09:29:56 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:40044 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbfJKN34 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Oct 2019 09:29:56 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 4345A60159; Fri, 11 Oct 2019 13:29:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570800594;
+        bh=02tvWempx51mtBj0cxQVk1Vc3Q+r7kCTjrt1bQNNRXE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=CCkMcqzIfp5KTPxvnm6IwOB0RVf26rYC7q3r9ZiWASpJcjvG5k6LuySSQ4avmY0vq
+         h3/N/rLRFMdurH3Ve2fNyJKbHs4VnU5NW8gqPG5OP7gLjo5YbIaZlwcoTAGpN4uD34
+         7XSx8lk3cRyT4VrcS1nlA3R7Jijo7bZj6vvIyPU8=
+Received: from govinds-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: govinds@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B239A61156;
+        Fri, 11 Oct 2019 13:29:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570800591;
+        bh=02tvWempx51mtBj0cxQVk1Vc3Q+r7kCTjrt1bQNNRXE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=GY3ngWEEGC/s/vDGoN6u7BkSIBMZmwABeUjW/o7aDewgvgzQkKw4cOxseXi+IIjry
+         cesXrIvM+H/gSBeqjqV+kMPWad4HIfgW7P+82iEKLAR0eTg/qs3U5tPx7EpxPuxCfu
+         MwNP3o8fbrZ06WPM1NMGD2etgnteQy6UD+bqD5W0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B239A61156
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=govinds@codeaurora.org
+From:   Govind Singh <govinds@codeaurora.org>
+To:     robh@kernel.org, sboyd@kernel.org
+Cc:     bjorn.andersson@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-soc@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+        Govind Singh <govinds@codeaurora.org>
+Subject: [PATCH v4 2/2] clk: qcom: Add Q6SSTOP clock controller for QCS404
+Date:   Fri, 11 Oct 2019 18:59:28 +0530
+Message-Id: <20191011132928.9388-3-govinds@codeaurora.org>
+X-Mailer: git-send-email 2.22.0
+In-Reply-To: <20191011132928.9388-1-govinds@codeaurora.org>
+References: <20191011132928.9388-1-govinds@codeaurora.org>
 MIME-Version: 1.0
-References: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
-In-Reply-To: <1570784940-5965-1-git-send-email-Anson.Huang@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Fri, 11 Oct 2019 08:20:43 -0300
-Message-ID: <CAOMZO5D_Yxzq83zKGM=qUbBjP3c4UB9_GRBAAcMDEvzTYMuyfA@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx7ulp: Correct DDR clock mux options
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        NXP Linux Team <Linux-imx@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 11, 2019 at 6:11 AM Anson Huang <Anson.Huang@nxp.com> wrote:
->
-> In the latest reference manual Rev.0,06/2019, the DDR clock mux
-> is extended to 2 bits, and the clock options are also changed,
-> correct them accordingly.
->
-> Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Add support for the Q6SSTOP clock control used on qcs404
+based devices. This would allow wcss remoteproc driver to
+control the required WCSS Q6SSTOP clock/reset controls to
+bring the subsystem out of reset and shutdown the WCSS Q6DSP.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Govind Singh <govinds@codeaurora.org>
+---
+ drivers/clk/qcom/Kconfig                      |   8 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/q6sstop-qcs404.c             | 223 ++++++++++++++++++
+ .../dt-bindings/clock/qcom,q6sstopcc-qcs404.h |  18 ++
+ 4 files changed, 250 insertions(+)
+ create mode 100644 drivers/clk/qcom/q6sstop-qcs404.c
+ create mode 100644 include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index e1ff83cc361e..1b3c87a97521 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -250,6 +250,14 @@ config QCS_TURING_404
+ 	  Support for the Turing Clock Controller on QCS404, provides clocks
+ 	  and resets for the Turing subsystem.
+ 
++config QCS_Q6SSTOP_404
++	tristate "QCS404 Q6SSTOP Clock Controller"
++	select QCS_GCC_404
++	help
++	  Support for the Q6SSTOP clock controller on QCS404 devices.
++	  Say Y if you want to use the Q6SSTOP branch clocks of the WCSS clock
++	  controller to reset the Q6SSTOP subsystem.
++
+ config SDM_GCC_845
+ 	tristate "SDM845 Global Clock Controller"
+ 	select QCOM_GDSC
+diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+index f0768fb1f037..086c053e0e03 100644
+--- a/drivers/clk/qcom/Makefile
++++ b/drivers/clk/qcom/Makefile
+@@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+ obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+ obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
+ obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
++obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
+ obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+ obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+ obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+diff --git a/drivers/clk/qcom/q6sstop-qcs404.c b/drivers/clk/qcom/q6sstop-qcs404.c
+new file mode 100644
+index 000000000000..723f932fbf7d
+--- /dev/null
++++ b/drivers/clk/qcom/q6sstop-qcs404.c
+@@ -0,0 +1,223 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#include <linux/bitops.h>
++#include <linux/err.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/pm_clock.h>
++#include <linux/pm_runtime.h>
++#include <linux/regmap.h>
++
++#include <dt-bindings/clock/qcom,q6sstopcc-qcs404.h>
++
++#include "clk-regmap.h"
++#include "clk-branch.h"
++#include "common.h"
++#include "reset.h"
++
++static struct clk_branch lcc_ahbfabric_cbc_clk = {
++	.halt_reg = 0x1b004,
++	.halt_check = BRANCH_HALT,
++	.clkr = {
++		.enable_reg = 0x1b004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_ahbfabric_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_ahbs_cbc_clk = {
++	.halt_reg = 0x22000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x22000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_ahbs_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_tcm_slave_cbc_clk = {
++	.halt_reg = 0x1c000,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x1c000,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_tcm_slave_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_ahbm_cbc_clk = {
++	.halt_reg = 0x22004,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x22004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_ahbm_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_axim_cbc_clk = {
++	.halt_reg = 0x1c004,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x1c004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_axim_cbc_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct clk_branch lcc_q6ss_bcr_sleep_clk = {
++	.halt_reg = 0x6004,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x6004,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "lcc_q6ss_bcr_sleep_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++/* TCSR clock */
++static struct clk_branch tcsr_lcc_csr_cbcr_clk = {
++	.halt_reg = 0x8008,
++	.halt_check = BRANCH_VOTED,
++	.clkr = {
++		.enable_reg = 0x8008,
++		.enable_mask = BIT(0),
++		.hw.init = &(struct clk_init_data){
++			.name = "tcsr_lcc_csr_cbcr_clk",
++			.ops = &clk_branch2_ops,
++		},
++	},
++};
++
++static struct regmap_config q6sstop_regmap_config = {
++	.reg_bits	= 32,
++	.reg_stride	= 4,
++	.val_bits	= 32,
++	.fast_io	= true,
++};
++
++static struct clk_regmap *q6sstop_qcs404_clocks[] = {
++	[LCC_AHBFABRIC_CBC_CLK] = &lcc_ahbfabric_cbc_clk.clkr,
++	[LCC_Q6SS_AHBS_CBC_CLK] = &lcc_q6ss_ahbs_cbc_clk.clkr,
++	[LCC_Q6SS_TCM_SLAVE_CBC_CLK] = &lcc_q6ss_tcm_slave_cbc_clk.clkr,
++	[LCC_Q6SS_AHBM_CBC_CLK] = &lcc_q6ss_ahbm_cbc_clk.clkr,
++	[LCC_Q6SS_AXIM_CBC_CLK] = &lcc_q6ss_axim_cbc_clk.clkr,
++	[LCC_Q6SS_BCR_SLEEP_CLK] = &lcc_q6ss_bcr_sleep_clk.clkr,
++};
++
++static const struct qcom_reset_map q6sstop_qcs404_resets[] = {
++	[Q6SSTOP_BCR_RESET] = { 0x6000 },
++};
++
++static const struct qcom_cc_desc q6sstop_qcs404_desc = {
++	.config = &q6sstop_regmap_config,
++	.clks = q6sstop_qcs404_clocks,
++	.num_clks = ARRAY_SIZE(q6sstop_qcs404_clocks),
++	.resets = q6sstop_qcs404_resets,
++	.num_resets = ARRAY_SIZE(q6sstop_qcs404_resets),
++};
++
++static struct clk_regmap *tcsr_qcs404_clocks[] = {
++	[TCSR_Q6SS_LCC_CBCR_CLK] = &tcsr_lcc_csr_cbcr_clk.clkr,
++};
++
++static const struct qcom_cc_desc tcsr_qcs404_desc = {
++	.config = &q6sstop_regmap_config,
++	.clks = tcsr_qcs404_clocks,
++	.num_clks = ARRAY_SIZE(tcsr_qcs404_clocks),
++};
++
++static const struct of_device_id q6sstopcc_qcs404_match_table[] = {
++	{ .compatible = "qcom,qcs404-q6sstopcc" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, q6sstopcc_qcs404_match_table);
++
++static int q6sstopcc_qcs404_probe(struct platform_device *pdev)
++{
++	const struct qcom_cc_desc *desc;
++	int ret;
++
++	pm_runtime_enable(&pdev->dev);
++	ret = pm_clk_create(&pdev->dev);
++	if (ret)
++		goto disable_pm_runtime;
++
++	ret = pm_clk_add(&pdev->dev, NULL);
++	if (ret < 0) {
++		dev_err(&pdev->dev, "failed to acquire iface clock\n");
++		goto destroy_pm_clk;
++	}
++
++	q6sstop_regmap_config.name = "q6sstop_tcsr";
++	desc = &tcsr_qcs404_desc;
++
++	ret = qcom_cc_probe_by_index(pdev, 1, desc);
++	if (ret)
++		goto destroy_pm_clk;
++
++	q6sstop_regmap_config.name = "q6sstop_cc";
++	desc = &q6sstop_qcs404_desc;
++
++	ret = qcom_cc_probe_by_index(pdev, 0, desc);
++	if (ret)
++		goto destroy_pm_clk;
++
++	return 0;
++
++destroy_pm_clk:
++	pm_clk_destroy(&pdev->dev);
++
++disable_pm_runtime:
++	pm_runtime_disable(&pdev->dev);
++
++	return ret;
++}
++
++static int q6sstopcc_qcs404_remove(struct platform_device *pdev)
++{
++	pm_clk_destroy(&pdev->dev);
++	pm_runtime_disable(&pdev->dev);
++
++	return 0;
++}
++
++static const struct dev_pm_ops q6sstopcc_pm_ops = {
++	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
++};
++
++static struct platform_driver q6sstopcc_qcs404_driver = {
++	.probe		= q6sstopcc_qcs404_probe,
++	.remove		= q6sstopcc_qcs404_remove,
++	.driver		= {
++		.name	= "qcs404-q6sstopcc",
++		.of_match_table = q6sstopcc_qcs404_match_table,
++		.pm = &q6sstopcc_pm_ops,
++	},
++};
++
++module_platform_driver(q6sstopcc_qcs404_driver);
++
++MODULE_DESCRIPTION("QTI QCS404 Q6SSTOP Clock Controller Driver");
++MODULE_LICENSE("GPL v2");
+diff --git a/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+new file mode 100644
+index 000000000000..c6f5290f0914
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,q6sstopcc-qcs404.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/*
++ * Copyright (c) 2018, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
++#define _DT_BINDINGS_CLK_Q6SSTOP_QCS404_H
++
++#define LCC_AHBFABRIC_CBC_CLK			0
++#define LCC_Q6SS_AHBS_CBC_CLK			1
++#define LCC_Q6SS_TCM_SLAVE_CBC_CLK		2
++#define LCC_Q6SS_AHBM_CBC_CLK			3
++#define LCC_Q6SS_AXIM_CBC_CLK			4
++#define LCC_Q6SS_BCR_SLEEP_CLK			5
++#define TCSR_Q6SS_LCC_CBCR_CLK			6
++
++#define Q6SSTOP_BCR_RESET			1
++#endif
+-- 
+2.22.0
+
