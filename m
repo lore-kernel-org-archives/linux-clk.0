@@ -1,80 +1,125 @@
-Return-Path: <SRS0=IP4j=YD=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=qrfj=YE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57A62C4360C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 23:43:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F25D1ECE58D
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 03:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 26AD920B7C
-	for <linux-clk@archiver.kernel.org>; Thu, 10 Oct 2019 23:43:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69E0222BD
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 03:47:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="g27litSg"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IDbf2WAV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NEjcSWMv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725951AbfJJXn2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 10 Oct 2019 19:43:28 -0400
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:36534 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725845AbfJJXn2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 19:43:28 -0400
-Received: by mail-qt1-f194.google.com with SMTP id o12so11335237qtf.3;
-        Thu, 10 Oct 2019 16:43:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+99LfkE0Ayp8m1IDOU4Gz0njgEWkjVrScr5OXbe0ExY=;
-        b=g27litSgnBG1fH5c8FdwvHHIU8jfoU7WkY4210zjf7prULOHqvPkg0y/kFCN8MqBrk
-         eur+7x4q+axYsgRyrUBbB0PxrTYmKzpr6/MYZgdhNheCn4BlgugL5Xhr3XOqMfgGTvf+
-         eqBcOiU1wVTRLrXdkllD4uDaYSWfaFJN1F7WQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+99LfkE0Ayp8m1IDOU4Gz0njgEWkjVrScr5OXbe0ExY=;
-        b=tEOQqAL5hPOY+c9ez0BQQPesLdEa2xpZEqGRoydv3N4R/Q76Zn9RaCLxH/I33ZoHQN
-         gGCfIEi2xsZSrx2nv/bJOHClB6lXaRffXRfgwWFFPZguPG/6B3XWmgKWFyeDzSvc4bQn
-         PVJWibFn56MNCwmZE8Vq1ThCVTt7c3bYyCZK/oDUIMGziPw+nMCyVnkO7c20BG8hete6
-         RMV3F/Bk8zDei6V752OJcJQ7h3rXxH5A4ZC5vx5YsdZ4sK+JN8zVEcNXTaUMrBbS/Y3z
-         /NsJbbW5j2ZYciIysBXo7RnirMS3/WRW91GbFMsTj3vRMZCGRwIT5W15iamd4MiJ0iTJ
-         0MOQ==
-X-Gm-Message-State: APjAAAVE3LbUdJ9mJbq4qYV9TErhxiLSB7Su3iNltMB6xvLz/g3ZuruZ
-        BVXNVSv1xd6OjXj80oPNycE9BY5g4sI5tyWOknw=
-X-Google-Smtp-Source: APXvYqyKAUsDXXorfPQ38wIFUSbSjZKAetsJg1J3PqJn6MQDhqsbpGCV86yHgGv+eMYgGt6cxc2ZBkuC/GpIyIcn7pc=
-X-Received: by 2002:a0c:f702:: with SMTP id w2mr12680741qvn.111.1570751007441;
- Thu, 10 Oct 2019 16:43:27 -0700 (PDT)
+        id S1726671AbfJKDrU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 10 Oct 2019 23:47:20 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:51188 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726508AbfJKDrU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 10 Oct 2019 23:47:20 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 22B4260C5F; Fri, 11 Oct 2019 03:47:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570765639;
+        bh=IcUPMuNTrltLQ0KBJgnpjTRfjOFERXvrHqQN6jYAs3A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IDbf2WAV37ipB5tDkif0qRsvGShPlfOJORwpNEyI/v6CtE11LpZLf8vWEz+n6BKC2
+         XKHmRnY0NiHL6nKRw0gPyYkp+GsT/DVeYYeBSiaU/fCnzXoToSwzTj1NuKlVWFrXXR
+         vKly/juTtuXygVM3tW6rSHFNtfk/YfENJxWN7V5A=
+Received: from [10.206.24.216] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: mgautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 0CAFB6076A;
+        Fri, 11 Oct 2019 03:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1570765638;
+        bh=IcUPMuNTrltLQ0KBJgnpjTRfjOFERXvrHqQN6jYAs3A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=NEjcSWMvTNp0ox0avfVXB97p3vqDcUnSjU2F61fyfpF/us0zNuIaK/b9FnnWNw49v
+         W8QxyisVWzE0cUZHo13zoXQbPMApzlfGy4bdeHV+VRmQLWS79xrrkgYieCahUaO3bI
+         y+bh6cjzDjryCIy8a5emJHeVs/lcVxxqjMEaYZiE=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 0CAFB6076A
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=mgautam@codeaurora.org
+Subject: Re: [PATCH v1] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for
+ 8998
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        Evan Green <evgreen@chromium.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Amit Nischal <anischal@codeaurora.org>
+References: <a7e27415-02d9-bfe9-c0ea-59dc236a7f91@free.fr>
+ <c1762201-a1fa-8ed1-24ff-f30916ee45dd@free.fr>
+ <155389876377.20095.15037552865160559827@swboyd.mtv.corp.google.com>
+ <eba920f5-f5a2-53d5-2227-529b5ea99d32@codeaurora.org>
+ <20191010041551.6D7E0208C3@mail.kernel.org>
+ <a8540fe3-9500-4998-ca25-a06269541383@codeaurora.org>
+ <20191010194810.47D062067B@mail.kernel.org>
+From:   Manu Gautam <mgautam@codeaurora.org>
+Message-ID: <df6cae85-f5f6-cd93-0dd3-17f0f28fe376@codeaurora.org>
+Date:   Fri, 11 Oct 2019 09:17:12 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20191010020725.3990-1-andrew@aj.id.au> <20191010020725.3990-3-andrew@aj.id.au>
-In-Reply-To: <20191010020725.3990-3-andrew@aj.id.au>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Thu, 10 Oct 2019 23:43:15 +0000
-Message-ID: <CACPK8XcfNWkv+iiR8xFfDV6puvRpJUAsSMeX0rPe15+N_X75Bg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: ast2600: Add RMII RCLK gates for all four MACs
-To:     Andrew Jeffery <andrew@aj.id.au>
-Cc:     linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20191010194810.47D062067B@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 10 Oct 2019 at 02:06, Andrew Jeffery <andrew@aj.id.au> wrote:
->
-> RCLK is a fixed 50MHz clock derived from HPLL/HCLK that is described by a
-> single gate for each MAC.
->
-> Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 
-Reviewed-by: Joel Stanley <joel@jms.id.au>
+On 10/11/2019 1:18 AM, Stephen Boyd wrote:
+> Quoting Manu Gautam (2019-10-10 00:33:32)
+>> Hi,
+>>
+>> On 10/10/2019 9:45 AM, Stephen Boyd wrote:
+>>> Quoting Manu Gautam (2019-10-09 01:31:09)
+>> [snip]
+>>>> I have followed this up with QMP PHY hardware designers and they have
+>>>> confirmed that QMP PHY must have pipe clock enabled at the beginning
+>>>> of initialization sequence i.e. before bringing it out of reset and starting it.
+>>> Awesome, thanks for following up.
+>>>
+>>>> Otherwise there is possibility of incorrect locking of pipe_interface/
+>>>> retime buffers in PHY.
+>>>> Hence, for both USB and PCIe we have to continue to use HALT_SKIP flag.
+>>> Does anything go wrong if we just leave these clks enabled forever out
+>>> of boot? I'm inclined to rip the clks out and just slam the branch
+>>> enable bit on all the time in gcc driver probe and return NULL to the
+>>> callers of clk_get() for these clks. I don't see how this would be a
+>>> problem because when the upstream phy is disabled this clk is disabled
+>>> and so we aren't wasting power. It should also save us time and memory
+>>> because now we don't have to call into the clk framework to turn it on
+>>> and sequence that just right in the phy driver.
+>> That might work, however on some platforms gcc_pipe_clk parent is changed to
+>> XO and back to phy_pipe_clk across low power mode.
+>> It requires PHY driver to use clk_set_parent().
+>>
+> Hm ok. Where is the call to clk_set_parent()? I don't see this in the
+> kernel.
+>
+>  $ git grep clk_set_parent -- drivers/usb/phy drivers/phy | wc -l
+>  0
+>
+> What platforms do this? Are they upstream?
+
+They are some recent platforms and not on upstream yet.
+
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
+
