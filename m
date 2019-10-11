@@ -2,115 +2,90 @@ Return-Path: <SRS0=qrfj=YE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31E3EECE58C
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 10:28:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E215AECE58C
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 11:14:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09FCB21D71
-	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 10:28:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3ADB206CD
+	for <linux-clk@archiver.kernel.org>; Fri, 11 Oct 2019 11:14:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ffak985F";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="WElkEaJm"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DECCbZCr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727512AbfJKK2Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 11 Oct 2019 06:28:24 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:49134 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbfJKK2X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Oct 2019 06:28:23 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 0487060F37; Fri, 11 Oct 2019 10:28:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570789702;
-        bh=o7sRI5k365dR5XmrQKMQ1PnIHDR0knJ4nKOksc1JaTA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ffak985Fp7BSbad9dg/e+6GlJrzkNiqq+q8avsY5/jkZ/u5jAc0ZExRui/hJHON8P
-         RmDFnTRHq5RPMVhBjp7Zn5FKUJxQ0YhokXNBfXuQRIIMLbDY+hHfKmNbYD8+JD4VFn
-         ctiZkdGvgr+vHdD6pKnVjWXeFwi5AigcYrCz24LE=
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id BC27760F37;
-        Fri, 11 Oct 2019 10:28:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1570789700;
-        bh=o7sRI5k365dR5XmrQKMQ1PnIHDR0knJ4nKOksc1JaTA=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=WElkEaJmeNpCsqzDOa4da/turGp2HNilPBu5PM8bJGNaFlNb0KmC6pAvYRK2HDzUl
-         X64O6IR8InOWhqhB7xTFzAiejDHuK0nSi1KSCQ8mHsLvT+2+BP9ZkdUuuGy/XUTz64
-         GkQAcvTM9osdVIR1Thz6J4Jru6mT18n8gizg2vGs=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BC27760F37
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v3 3/3] clk: qcom: Add Global Clock controller (GCC)
- driver for SC7180
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>, robh+dt@kernel.org
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <20190918095018.17979-1-tdas@codeaurora.org>
- <347780b9-c66b-01c4-b547-b03de2cf3078@codeaurora.org>
- <20190925130346.42E0820640@mail.kernel.org>
- <35f8b699-6ff7-9104-5e3d-ef4ee8635832@codeaurora.org>
- <20191001143825.CD3212054F@mail.kernel.org>
- <7ac5f6bf-33c5-580e-bd40-e82f3052d460@codeaurora.org>
- <20191003160130.5A19B222D0@mail.kernel.org>
- <81a2fa46-a7e6-66a2-9649-009f22813c81@codeaurora.org>
- <20191004232022.062A1215EA@mail.kernel.org>
- <d17dad3d-d32c-b71c-0e56-d15cb246f742@codeaurora.org>
- <20191010041629.6E771208C3@mail.kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <9fef7f3d-984e-9011-b207-c7f287691000@codeaurora.org>
-Date:   Fri, 11 Oct 2019 15:58:13 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727198AbfJKLOp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 11 Oct 2019 07:14:45 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46220 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726935AbfJKLOp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 11 Oct 2019 07:14:45 -0400
+Received: by mail-lf1-f66.google.com with SMTP id t8so6716950lfc.13;
+        Fri, 11 Oct 2019 04:14:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=6XRPBHy88G3xNbXeVwV2n/tikjG8xG4XiQm2Q6YAxdE=;
+        b=DECCbZCrPys8WgUmo5NZZ/FL3X6q4Z5+ZpwOXV54DB3G5hd/25jr47OrIkjJcANpST
+         BG8NJmQ7IMuptLOapxCuYAI8VX9tsRTkPq/cXcXwi8fkg5mpmMpzWg7ohb2/k3apksqM
+         rd00NENTAa56ZoMa7BmK4MizGGqkyF7RaZ867Mb1Y3MQbAgmXKQYbvnjDsZYijLpe0IN
+         L78X5rzLMRfeMHP2dpPD+M6fGeToVIlEUpfRcsXe2VohjsEnsowXoZ0BGBcSw2O8FuR4
+         SmT6IB3o5ncGJMV+bswtra2cdQMzlDd61uuU4nBwKZ73wb4YY3iqhcNQe+hHXfrgIeWQ
+         RKqw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=6XRPBHy88G3xNbXeVwV2n/tikjG8xG4XiQm2Q6YAxdE=;
+        b=jYbCoznkByg2dyEgIHDhK2IPVeUmYAnzvgq1ONvLPLHS02emZxsMlQwlMbdPrw3OTm
+         BjySIpX8M7PUw1V+amHhkh7buhTVqrjDRnfq39Ma7wd+EV/+6D+39aojwX3PiY+8mPLy
+         YRHjMtJg56oyflkoUFKDKis4fIyHubWrhMHSWwE2O78MmelnUQf6t2avIz+3K3ts/CEM
+         ZEYpar38vIvFKOcAUO4xdj9KnAuikZH3TgX7XVoaCIrs9X2S6ixhCGJSmJd2bhiDVgxr
+         GITW7sJLRuNqyjbam4ushE9g16mMkyI5RFhmuroqOwvOvYwLpBfzsGr7eFc5oc8KMMbg
+         ji9A==
+X-Gm-Message-State: APjAAAWoncLhe6ag+8j9yrqL8NrJ2LWwmyBiaOxIb7/1RpTj84QGHeje
+        9PSrnprBuMONZz8GqngOLDHrPgkbCQIVHnc7XlOO7/EC
+X-Google-Smtp-Source: APXvYqzwJzXOjPEkwfUFJfsMRUF053ml+64En13k0ziyab36K6XmeWqmRmcPA8CPnGkIkrbLsecdf4oj7wNXaGr4c9A=
+X-Received: by 2002:ac2:4c13:: with SMTP id t19mr8718845lfq.20.1570792482568;
+ Fri, 11 Oct 2019 04:14:42 -0700 (PDT)
 MIME-Version: 1.0
-In-Reply-To: <20191010041629.6E771208C3@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1570783006-28099-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1570783006-28099-1-git-send-email-Anson.Huang@nxp.com>
+From:   Fabio Estevam <festevam@gmail.com>
+Date:   Fri, 11 Oct 2019 08:14:33 -0300
+Message-ID: <CAOMZO5DUVv_cT59pTBmfa60TM0E9=6rFdpDw71g_6cQidOPW+A@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx7ulp: Correct system clock source option #7
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <Linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Fri, Oct 11, 2019 at 5:39 AM Anson Huang <Anson.Huang@nxp.com> wrote:
+>
+> In the latest reference manual Rev.0,06/2019, the SCG1's system
 
-On 10/10/2019 9:46 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-10-09 02:19:39)
->> Hi Stephen,
->>
->> On 10/5/2019 4:50 AM, Stephen Boyd wrote:
->>> Quoting Taniya Das (2019-10-04 10:39:31)
->>>>
->>>> Could you please confirm if you are referring to update the below?
->>>
->>> I wasn't suggesting that explicitly but sure. Something like this would
->>> be necessary to make clk_get() pass back a NULL pointer to the caller.
->>> Does everything keep working with this change?
->>>
->>
->> Even if I pass back NULL, I don't see it working. Please suggest how to
->> take it forward.
->>
-> 
-> Why doesn't it work?
-> 
+This should be SCS instead of SCG1.
 
-My bad, I messed up with the kernel and my testing was showing failures. 
-Have tested it on SC7180 & Cheza and it works as expected.
+> clock source option #7 is no longer from upll, it is reserved,
+> update clock driver accordingly.
+>
+> Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-I will submit the changes in common.c to return NULL.
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
