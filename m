@@ -5,42 +5,43 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D81C4360C
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Oct 2019 13:56:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ABCDC4360C
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Oct 2019 14:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 373592190F
-	for <linux-clk@archiver.kernel.org>; Sat, 12 Oct 2019 13:56:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 53A8821850
+	for <linux-clk@archiver.kernel.org>; Sat, 12 Oct 2019 14:17:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="UerOCV7u"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="INPuC9/a"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729069AbfJLN4J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 12 Oct 2019 09:56:09 -0400
-Received: from mout.web.de ([212.227.15.4]:60579 "EHLO mout.web.de"
+        id S1729034AbfJLORU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 12 Oct 2019 10:17:20 -0400
+Received: from mout.web.de ([212.227.15.14]:44155 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726751AbfJLN4J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 12 Oct 2019 09:56:09 -0400
+        id S1728902AbfJLORU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 12 Oct 2019 10:17:20 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1570888555;
-        bh=YdsuZrSP+jJJMluIACwENlwHKGfUwYpdRS9znBsqOH8=;
+        s=dbaedf251592; t=1570889826;
+        bh=43EzPAmHAZ0Dtzuyzozgs7lVBnutIVoFvCod4h9g4DI=;
         h=X-UI-Sender-Class:To:From:Subject:Cc:Date;
-        b=UerOCV7unbMXupz5/JZ7ZHjLBGOSySWDAstzIbEciWvdUk45/iifgUfy2VQizQiUN
-         VSifMEWLXQnOoFpVv3rtGt35qOdYI4T9gb/rXn5Y5dkNhR/ZyyV7ps1ewXq9pPIgFm
-         cWmjB4R1F4CIiob1+5FmhSesFt0CP4T9VjP8TMhQ=
+        b=INPuC9/axowOIc6GGevS1MQrMVQJJYWG25HY+7PhLMDqLQ3VowxAnBz0p4xtxm/xU
+         MhxLouVzsJ2Xgjn1JlfOB836IYQV/I13lO2VaeEFlxblKz8cBUCKkArOqWWPqNPQ0Y
+         cBPse+6wpqBvZ8hGWdT8shXv7bmIVzX1kXDq539c=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.132.155.250]) by smtp.web.de (mrweb001
- [213.165.67.108]) with ESMTPSA (Nemesis) id 0Lsy7e-1hvSLo3MNO-012bFA; Sat, 12
- Oct 2019 15:55:54 +0200
-To:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org,
-        =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
+Received: from [192.168.1.2] ([93.132.155.250]) by smtp.web.de (mrweb004
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 0MYq7X-1iWgS238ct-00VkAy; Sat, 12
+ Oct 2019 16:17:05 +0200
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+        Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>
 From:   Markus Elfring <Markus.Elfring@web.de>
-Subject: clk: rockchip: Checking a kmemdup() call in
- rockchip_clk_register_pll()
+Subject: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
  +v43YoGpDNyhgA0w9CEhuwfZrE91GocMtjLO67TAc2i2nxMc/FJRDI0OemO4VJ9RwID6ltwt
@@ -88,37 +89,41 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         kernel-janitors@vger.kernel.org, Aditya Pakki <pakki001@umn.edu>,
         Kangjie Lu <kjlu@umn.edu>, Navid Emamdoost <emamd001@umn.edu>,
         Stephen McCamant <smccaman@umn.edu>
-Message-ID: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de>
-Date:   Sat, 12 Oct 2019 15:55:44 +0200
+Message-ID: <c1bc5e4d-0802-4485-2c07-248bab2a3330@web.de>
+Date:   Sat, 12 Oct 2019 16:17:03 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.1
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:lfuKZ77lF7iOIkLERuu8Fipch5A0vXrXLcCnxR+nhPRJzXd1O5n
- LxtG8xETpSQLuwurZpMMSk18/YBSZFblP0REDBZ1L8B8W+J1enbIClSuRXZM2U636EPlAdU
- S3YQIZEHCfo17jED1mBt9bw8l4iqtJbPm5M/y1b/ZwljtvrU9fXxrTkWfVmPiKECb279KRI
- 4ooFcnZez1ZBL+Ob666AQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pQ0RpfS4Wdw=:uaTSn9e6mWPRfwImIcKNNn
- gbKBjD+IcCl0LnR+GI7YbPxI9NHXx2bC3TJZBIOoyS5GzmoBlMO//dYkNo2uLZXnUjH200Jpt
- 8zERy+C+52/xfGQ3X4d4fNqX5ajvNqqsg2K+C5hzZucy1Nev3vKwFOszsefvn0NPqvwqmpDTX
- Rx1BfUG0cWG+8phexbs2k79CrpUXXsONZ2BVo/EMlto3a4ShKDN+XCCGbg7sViK9yXbF0L8dI
- 149SfMdzlDEOHol+dP9+Mybwzb7zghMlvp5uM7bOaOds0NpXcvgKJkU4ZpX45qZg9+bNTRXMV
- eaJXLuO3y3BWuWPVcoVQOPfL7ofA/WkioRgI7FAQMVDmgjhgx6Ca3oJVAZtxizEWL3jFYxoY+
- XSRx+41uAh7MWnRcmSLrn1vcPuC4jZDYpr2OPMt5Lpbk8YNkLlAqCbPvM/P/A3GRmlG3wT31I
- fFIWjRJkQlq7BOgEsXEtiutjoS7l1z4pIz9w0bP9VmdzRseH8X9bBecWfTnJ8cTwKrvPqixHr
- UMwf7NxUmPxqlrW3m20aU6iLz7S4iDm+gvU2ODtQ8hAoRj5izjE5yqVOrGobrbYJ9ihoQlvYB
- SV6Eqys8nJJ/Hp5E45wco1FZd6ag3U47owsGUgw2OtvC6et+X2vGy8o4z6daIxLvviQE4PVxB
- 1i0vRfAjrBDKGQu7U4g4tT5eMoK9b+qKSVW+gw8nu9byLJ1zS3ylLB9Pj5U8f8YCmeSACyGGO
- aJQ+J88lB0Ds325YCHmASepaOrdrZ49Y2knScabV8LxY+TBYPSoTASpTeaQxKFCpu3aVOBcVW
- vnkDZh57/z6H3MBE/B4oNwRbtzg0cd0guB1KjdEx2zKI5Kf4iwr6apo+tuor6n/swAmhY1Mtc
- wZFz1xYsLwM69g89dS48Ovy1CK6xDuBBr/uUDVNlV3LDqYL2DtY4R0wUF1zDym3PAB5PmyRrC
- HKadU2KCVlpaSklYdrTdRKKt2tHNAyir0sX5e046sSwVIZFbijkerbEOf641xVdjijCbW1VAY
- AouQ4cZ5de/BHvsRfVPQ/JN1IE5dPXFNJO0OiFm/gZ/1U6zvm9LyUaz6j2oWpG1gl3WPPPgjB
- Y2c4halA+RbF8KESIRFoRe0+8bzeWI8RqCVbHw95cw4HHF4N7SQrUCq0/E8VzmdCSKhe7S78V
- Ci0ZHZ3WHYbXhNmEHwAC/fyEVigjVGvbpI1HqlS0XMM7Xby6upoc1+wk7xlFsuPQ3ugnAdNyB
- zZhdSqycu8dIa4Ue408mD2tIttdm7Uai71Zpu9lZyiU4MRA4VQ9KwZ0pM4Vs=
+X-Provags-ID: V03:K1:G2bv8oeKax2HH/1XfolAAS1D2TtebLZwMejICub51iwxjMjnVqt
+ 7VamjB7aPuVAAYLJPA5ToSF6MCdKzKtYk2qBmQ/qZ1MaUHCP9ndYxLAISIcHBpKywdXwlM+
+ aiERtSko4Zf6YJAAbrpYCTbLtg/ESAPipEi2utrrcrKid2Dym8WYT90B0lNT2+2oE30JEpH
+ LRn4TRQHHLnQjHybqzqNQ==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:wkgT89VAqtc=:PrPkYXSvVukE1o8idxlWN8
+ 0KFrtuxZ5WlMwlXIMqRrNF/2s53vxDCp0Ag6jSjKHBqKCCkZoAa0gVQbsLTtB/Zng0p0jtPfc
+ oZYe536/fTA6LuBqDjsgull8clA4jU+Uf9UaVk8MslHKBD9SECGwFPsLXrL4ALvXn4ji9CRk6
+ imJyIot14AI1eP2zSWH0KF19pwfIDyNUaYJ1URlmwmfkOzlx5/wALriiQiUEyDFndyLF8wbXq
+ jmEaC5wmCwdSdOEDxmGZxzmhJHlP40SLfwPZT5a/aa+baxyOLX9jOz19u0oLfH96dgheL0fVI
+ KurD8EdluZDc2Yc48HF51OpoNXoZMchi398dLg2CnfgfnMiT13QR52c5HemrtudhC4vId5DYr
+ j4WQFFCKdGn/hO6NOC+dZTICqn3otbwv7McdbB3h3hSb7RgzSCy0T3tCfiLYfPzcFix7MQaF3
+ vnyXY2EoF7zL2YU8qwSQ1dCz7kAncgWsc/x1+8eBZkO0toHSLH4D0CrAtFOExgSBH5vnll81M
+ GDP1BwJpmuT61Tsk1/vZB5+4oho3R0EqKXYe5VJD2RCOxVDYsZvJMRMZbSZfQmHQvx41LvUBs
+ 5AHnFDBUq1FsEj3r0eea/g2KM4Qhyy1UiePkjYzdoXNd6JCs67zrY9/5PR+Ede4uLVoIOmNlN
+ 1jWJtPMc0kAIWUKXVB1oiu6e1Wop7bkLzzCe6giNEH/sjDts2THtSFHWqIvn9HmOXYRekC9Lc
+ Y9EAnN0on/6onYRd+SWrLrNryL+DBJ+su7v6CuIuEj8zd5yvcE29RXZCmvzGVGDCZtCHMXAFL
+ cNnQ7TW2kJaFV9MzLNNNlqBp+mo3B+YLf1VYoF5m/P7FMVHw0vbhRpT+LfdxIh+AoSE69CANm
+ RvdBt0buusfoYzZsPtBkO4ajkUk5fEzkVdLLGyyCT1g6EAMlPPKgl6ulqMFkuBg0nJf4x+0YL
+ wOlce7avyHEELFONrvnbb0A0/ZxlL6ZOXKE5bV7seoy4RAzt5rbUsH85BcnDz67FWs35WmCaE
+ rl9x3hqvASvZVuzRwhWqY2YxnOTWtiBKIBJq+BPpo5gNFkofq8gBr/bIQb+O2oMEEfWNL2Gnf
+ /nnuN+UmfYIcv7yvj+uZFPEYn4eShOMn4dE5MQG3qqGnuiSLlyrESFjG7n/muBYQNPjsGE2kr
+ egPaOwiH5u8pQbIKtNsIO/0ZvHDS8zaK7haijOUbrziCluIkJ/yTaUrb/iopSFuk11oohu1E3
+ O6gZRl97mbcJMuiFwrXkgrLj5XBp0vPB7+GZKNf6uh/ep5btA4+025/oh42TTitCj3gErkVH/
+ lJTnq9hN7hh2EOxqJ8uJDloJ/+Pnkg+qcbV5asGTy5lmuhIoxn/3phwwtyz+B7iEea4sNg9Ux
+ adz1ttlECu35VR0aUt4ZNkdhU/KCFtcPs9yzItF0YmxELn1k2+5H0XZWNYjc7VU9eSK/pjtbQ
+ I0NBZb/kVFEwelT2K0bVsJKzNZOhTYQnwAtxcy6WDtzgBuffGWRD9pjY8NZymASTHPhv/GGiJ
+ ozA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -128,14 +133,14 @@ Hello,
 
 I tried another script for the semantic patch language out.
 This source code analysis approach points out that the implementation
-of the function =E2=80=9Crockchip_clk_register_pll=E2=80=9D contains also =
+of the function =E2=80=9C_samsung_clk_register_pll=E2=80=9D contains also =
 a call
 of the function =E2=80=9Ckmemdup=E2=80=9D.
 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dr=
-ivers/clk/rockchip/clk-pll.c?id=3D1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a=
-#n913
-https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/rockchip/clk-=
-pll.c#L913
+ivers/clk/samsung/clk-pll.c?id=3D1c0cc5f1ae5ee5a6913704c0d75a6e99604ee30a#=
+n1275
+https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/samsung/clk-p=
+ll.c#L1275
 
 * Do you find the usage of the format string =E2=80=9C%s: could not alloca=
 te
