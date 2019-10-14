@@ -2,100 +2,158 @@ Return-Path: <SRS0=L9C4=YH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F304ECE587
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Oct 2019 14:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2463DC4CECE
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Oct 2019 14:44:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5521121835
-	for <linux-clk@archiver.kernel.org>; Mon, 14 Oct 2019 14:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F2317222C1
+	for <linux-clk@archiver.kernel.org>; Mon, 14 Oct 2019 14:44:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EwxHdjjN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732362AbfJNOo1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 14 Oct 2019 10:44:27 -0400
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52994 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731121AbfJNOo1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 14 Oct 2019 10:44:27 -0400
-Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D67D9D4202FBC3E5A885;
-        Mon, 14 Oct 2019 22:44:25 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS408-HUB.china.huawei.com
- (10.3.19.208) with Microsoft SMTP Server id 14.3.439.0; Mon, 14 Oct 2019
- 22:44:16 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <david@lechnology.com>, <nsekhar@ti.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] clk: davinci: use devm_platform_ioremap_resource() to simplify code
-Date:   Mon, 14 Oct 2019 22:44:07 +0800
-Message-ID: <20191014144407.23264-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1731121AbfJNOop (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 14 Oct 2019 10:44:45 -0400
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40359 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732960AbfJNOoo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 14 Oct 2019 10:44:44 -0400
+Received: by mail-pf1-f194.google.com with SMTP id x127so10524234pfb.7
+        for <linux-clk@vger.kernel.org>; Mon, 14 Oct 2019 07:44:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bNRsloUe1+m4c9HwAHy8LRzIsaF4TY0K3ozGxhA8oJE=;
+        b=EwxHdjjNsqta9UkaQIFxIfnG0B6BAXf96vujfejhhkvHxVRBeQJgGrK9iYGgytgIEp
+         9jm7sveUEd3k0Of2wyL6yDBybU1TWyg5lKWEjTIIelCia+RL1q6CrR0ZTmYBbAFRr46R
+         82EZYjy6E2P2VFQAk+sZ0NkdG4Bmy1z3VzmSgaBqAhbMIPSgFUXiwirEu2ePF5hq8scJ
+         bR47FX/znhoRxEHlW6LjlbtkjQD/8jKZwFjqomoa+4FY973w7sHWCxRFpMhxD67LbH9U
+         0dZibsYhA/CwgcIkSqFv/IQIkeFjp6PDfUZcseqBC+qIr+hmerTNNTaFbRj27GitbON7
+         0DUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bNRsloUe1+m4c9HwAHy8LRzIsaF4TY0K3ozGxhA8oJE=;
+        b=FFF4nCkvXSRSlxU3CZEgXzVShxcHkrC9xdFv8Lsq+sSHhr1xPjg22DZ9Yhv9KrN8AT
+         Ki5j8+L38RVYReIFXsBLi+661B5mGccFB8Z8diQHTXzRMRkT1Yz7IK8Mgm6dpSEu5I8s
+         Hf+wdtcjSwpUKADRk0VgSE5YKIRG9ps/UDq/AMmBzFJXRa7FCNg1HrKUbVch4bHyF3mz
+         f076ACVGF80Z7GiBAippJMrI+05YSDITvF7oZbjAPtzvK8SmfVQdxtqFfc9N5yGfQP2P
+         8hxStEyhSSC7z7YH/GvBb7q1Haxk1GZ1bN99IApZ4x/K+J+zvro2FzLEwGzZdYfA+glx
+         Lpwg==
+X-Gm-Message-State: APjAAAUPtqEuLPzUsIljUbZthwsWQFiN/XDg8hP54sU4TtZSwXVSh4fV
+        3H90thfmd+aH/OUVAPHV5aX6
+X-Google-Smtp-Source: APXvYqyaDf+8FJSPKt0DRGHMoHpd4vlbdM2vJwLkBbOx/vnNENq1hbKjckJw85Fgl07ugMHoEKf38Q==
+X-Received: by 2002:a63:5423:: with SMTP id i35mr34670105pgb.128.1571064281958;
+        Mon, 14 Oct 2019 07:44:41 -0700 (PDT)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id y8sm14852113pgs.34.2019.10.14.07.44.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 14 Oct 2019 07:44:41 -0700 (PDT)
+Date:   Mon, 14 Oct 2019 20:14:32 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     ulf.hansson@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
+        sboyd@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-mmc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        thomas.liau@actions-semi.com, linux-actions@lists.infradead.org,
+        linus.walleij@linaro.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 3/7] arm64: dts: actions: Add MMC controller support
+ for S900
+Message-ID: <20191014144432.GA8583@mani>
+References: <20190916154546.24982-1-manivannan.sadhasivam@linaro.org>
+ <20190916154546.24982-4-manivannan.sadhasivam@linaro.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190916154546.24982-4-manivannan.sadhasivam@linaro.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Use devm_platform_ioremap_resource() to simplify the code a bit.
-This is detected by coccinelle.
+On Mon, Sep 16, 2019 at 09:15:42PM +0530, Manivannan Sadhasivam wrote:
+> Add MMC controller support for Actions Semi S900 SoC. There are 4 MMC
+> controllers in this SoC which can be used for accessing SD/MMC/SDIO cards.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/clk/davinci/pll.c | 4 +---
- drivers/clk/davinci/psc.c | 4 +---
- 2 files changed, 2 insertions(+), 6 deletions(-)
+Applied for v5.5.
 
-diff --git a/drivers/clk/davinci/pll.c b/drivers/clk/davinci/pll.c
-index 1ac11b6..8a23d5d 100644
---- a/drivers/clk/davinci/pll.c
-+++ b/drivers/clk/davinci/pll.c
-@@ -910,7 +910,6 @@ static int davinci_pll_probe(struct platform_device *pdev)
- 	struct davinci_pll_platform_data *pdata;
- 	const struct of_device_id *of_id;
- 	davinci_pll_init pll_init = NULL;
--	struct resource *res;
- 	void __iomem *base;
- 
- 	of_id = of_match_device(davinci_pll_of_match, dev);
-@@ -930,8 +929,7 @@ static int davinci_pll_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
-diff --git a/drivers/clk/davinci/psc.c b/drivers/clk/davinci/psc.c
-index 5b69e24..7387e7f 100644
---- a/drivers/clk/davinci/psc.c
-+++ b/drivers/clk/davinci/psc.c
-@@ -531,7 +531,6 @@ static int davinci_psc_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	const struct of_device_id *of_id;
- 	const struct davinci_psc_init_data *init_data = NULL;
--	struct resource *res;
- 	void __iomem *base;
- 	int ret;
- 
-@@ -546,8 +545,7 @@ static int davinci_psc_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	base = devm_ioremap_resource(dev, res);
-+	base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(base))
- 		return PTR_ERR(base);
- 
--- 
-2.7.4
+Thanks,
+Mani
 
-
+> ---
+>  arch/arm64/boot/dts/actions/s900.dtsi | 45 +++++++++++++++++++++++++++
+>  1 file changed, 45 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/actions/s900.dtsi b/arch/arm64/boot/dts/actions/s900.dtsi
+> index df3a68a3ac97..eb35cf78ab73 100644
+> --- a/arch/arm64/boot/dts/actions/s900.dtsi
+> +++ b/arch/arm64/boot/dts/actions/s900.dtsi
+> @@ -4,6 +4,7 @@
+>   */
+>  
+>  #include <dt-bindings/clock/actions,s900-cmu.h>
+> +#include <dt-bindings/gpio/gpio.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+>  #include <dt-bindings/reset/actions,s900-reset.h>
+>  
+> @@ -284,5 +285,49 @@
+>  			dma-requests = <46>;
+>  			clocks = <&cmu CLK_DMAC>;
+>  		};
+> +
+> +		mmc0: mmc@e0330000 {
+> +			compatible = "actions,owl-mmc";
+> +			reg = <0x0 0xe0330000 0x0 0x4000>;
+> +			interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cmu CLK_SD0>;
+> +			resets = <&cmu RESET_SD0>;
+> +			dmas = <&dma 2>;
+> +			dma-names = "mmc";
+> +			status = "disabled";
+> +		};
+> +
+> +		mmc1: mmc@e0334000 {
+> +			compatible = "actions,owl-mmc";
+> +			reg = <0x0 0xe0334000 0x0 0x4000>;
+> +			interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cmu CLK_SD1>;
+> +			resets = <&cmu RESET_SD1>;
+> +			dmas = <&dma 3>;
+> +			dma-names = "mmc";
+> +			status = "disabled";
+> +		};
+> +
+> +		mmc2: mmc@e0338000 {
+> +			compatible = "actions,owl-mmc";
+> +			reg = <0x0 0xe0338000 0x0 0x4000>;
+> +			interrupts = <GIC_SPI 44 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cmu CLK_SD2>;
+> +			resets = <&cmu RESET_SD2>;
+> +			dmas = <&dma 4>;
+> +			dma-names = "mmc";
+> +			status = "disabled";
+> +		};
+> +
+> +		mmc3: mmc@e033c000 {
+> +			compatible = "actions,owl-mmc";
+> +			reg = <0x0 0xe033c000 0x0 0x4000>;
+> +			interrupts = <GIC_SPI 62 IRQ_TYPE_LEVEL_HIGH>;
+> +			clocks = <&cmu CLK_SD3>;
+> +			resets = <&cmu RESET_SD3>;
+> +			dmas = <&dma 46>;
+> +			dma-names = "mmc";
+> +			status = "disabled";
+> +		};
+>  	};
+>  };
+> -- 
+> 2.17.1
+> 
