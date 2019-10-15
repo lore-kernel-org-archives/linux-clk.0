@@ -4,34 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FA7C10F14
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Oct 2019 14:23:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548C7C10F14
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Oct 2019 14:25:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E53F72064A
-	for <linux-clk@archiver.kernel.org>; Tue, 15 Oct 2019 14:23:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A1692064A
+	for <linux-clk@archiver.kernel.org>; Tue, 15 Oct 2019 14:25:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732457AbfJOOXR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 15 Oct 2019 10:23:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:42118 "EHLO huawei.com"
+        id S1732087AbfJOOZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 15 Oct 2019 10:25:09 -0400
+Received: from szxga06-in.huawei.com ([45.249.212.32]:44084 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732050AbfJOOXR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 15 Oct 2019 10:23:17 -0400
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 86C819DAF3342081BB63;
-        Tue, 15 Oct 2019 22:23:13 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
- 22:23:04 +0800
+        id S1732050AbfJOOZJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 15 Oct 2019 10:25:09 -0400
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 8F4A91629CC662650C3C;
+        Tue, 15 Oct 2019 22:25:07 +0800 (CST)
+Received: from localhost (10.133.213.239) by DGGEMS411-HUB.china.huawei.com
+ (10.3.19.211) with Microsoft SMTP Server id 14.3.439.0; Tue, 15 Oct 2019
+ 22:24:56 +0800
 From:   YueHaibing <yuehaibing@huawei.com>
-To:     <Eugeniy.Paltsev@synopsys.com>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] clk: axs10x: use devm_platform_ioremap_resource() to simplify code
-Date:   Tue, 15 Oct 2019 22:22:59 +0800
-Message-ID: <20191015142259.17216-1-yuehaibing@huawei.com>
+To:     <kgene@kernel.org>, <krzk@kernel.org>, <s.nawrocki@samsung.com>,
+        <tomasz.figa@gmail.com>, <cw00.choi@samsung.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>
+CC:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
+Subject: [PATCH -next] clk: s3c2410: use devm_platform_ioremap_resource() to simplify code
+Date:   Tue, 15 Oct 2019 22:24:24 +0800
+Message-ID: <20191015142424.25944-1-yuehaibing@huawei.com>
 X-Mailer: git-send-email 2.10.2.windows.1
 MIME-Version: 1.0
 Content-Type: text/plain
@@ -47,57 +50,30 @@ This is detected by coccinelle.
 
 Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 ---
- drivers/clk/axs10x/i2s_pll_clock.c | 4 +---
- drivers/clk/axs10x/pll_clock.c     | 7 ++-----
- 2 files changed, 3 insertions(+), 8 deletions(-)
+ drivers/clk/samsung/clk-s3c2410-dclk.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/axs10x/i2s_pll_clock.c b/drivers/clk/axs10x/i2s_pll_clock.c
-index 71c2e95..e9da0e6 100644
---- a/drivers/clk/axs10x/i2s_pll_clock.c
-+++ b/drivers/clk/axs10x/i2s_pll_clock.c
-@@ -172,14 +172,12 @@ static int i2s_pll_clk_probe(struct platform_device *pdev)
- 	struct clk *clk;
- 	struct i2s_pll_clk *pll_clk;
- 	struct clk_init_data init;
+diff --git a/drivers/clk/samsung/clk-s3c2410-dclk.c b/drivers/clk/samsung/clk-s3c2410-dclk.c
+index 1281672..7dad909 100644
+--- a/drivers/clk/samsung/clk-s3c2410-dclk.c
++++ b/drivers/clk/samsung/clk-s3c2410-dclk.c
+@@ -238,7 +238,6 @@ static SIMPLE_DEV_PM_OPS(s3c24xx_dclk_pm_ops,
+ static int s3c24xx_dclk_probe(struct platform_device *pdev)
+ {
+ 	struct s3c24xx_dclk *s3c24xx_dclk;
 -	struct resource *mem;
- 
- 	pll_clk = devm_kzalloc(dev, sizeof(*pll_clk), GFP_KERNEL);
- 	if (!pll_clk)
- 		return -ENOMEM;
+ 	struct s3c24xx_dclk_drv_data *dclk_variant;
+ 	struct clk_hw **clk_table;
+ 	int ret, i;
+@@ -257,8 +256,7 @@ static int s3c24xx_dclk_probe(struct platform_device *pdev)
+ 	platform_set_drvdata(pdev, s3c24xx_dclk);
+ 	spin_lock_init(&s3c24xx_dclk->dclk_lock);
  
 -	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pll_clk->base = devm_ioremap_resource(dev, mem);
-+	pll_clk->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pll_clk->base))
- 		return PTR_ERR(pll_clk->base);
- 
-diff --git a/drivers/clk/axs10x/pll_clock.c b/drivers/clk/axs10x/pll_clock.c
-index aba787b..500345d 100644
---- a/drivers/clk/axs10x/pll_clock.c
-+++ b/drivers/clk/axs10x/pll_clock.c
-@@ -221,7 +221,6 @@ static int axs10x_pll_clk_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	const char *parent_name;
- 	struct axs10x_pll_clk *pll_clk;
--	struct resource *mem;
- 	struct clk_init_data init = { };
- 	int ret;
- 
-@@ -229,13 +228,11 @@ static int axs10x_pll_clk_probe(struct platform_device *pdev)
- 	if (!pll_clk)
- 		return -ENOMEM;
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pll_clk->base = devm_ioremap_resource(dev, mem);
-+	pll_clk->base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pll_clk->base))
- 		return PTR_ERR(pll_clk->base);
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	pll_clk->lock = devm_ioremap_resource(dev, mem);
-+	pll_clk->lock = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(pll_clk->lock))
- 		return PTR_ERR(pll_clk->lock);
+-	s3c24xx_dclk->base = devm_ioremap_resource(&pdev->dev, mem);
++	s3c24xx_dclk->base = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(s3c24xx_dclk->base))
+ 		return PTR_ERR(s3c24xx_dclk->base);
  
 -- 
 2.7.4
