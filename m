@@ -2,72 +2,67 @@ Return-Path: <SRS0=uqeP=YJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63E83FA372A
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 12:59:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C014FA3728
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 338F9218DE
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 12:59:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F8AB21848
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:13:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ukiaQEu0"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbZlVSMX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393393AbfJPM7g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 08:59:36 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34298 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391299AbfJPM7f (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 08:59:35 -0400
-Received: by mail-wr1-f67.google.com with SMTP id j11so27969109wrp.1;
-        Wed, 16 Oct 2019 05:59:33 -0700 (PDT)
+        id S2393538AbfJPNNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 09:13:34 -0400
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:35738 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728176AbfJPNNe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 09:13:34 -0400
+Received: by mail-pg1-f196.google.com with SMTP id p30so14294208pgl.2;
+        Wed, 16 Oct 2019 06:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=GiGVlT3amUluWFhV5mgXhFbiuGIjTDqdR+S/p6Vc5yg=;
-        b=ukiaQEu0d3ygaSoUACTY+wIVVPm7IBS2wB00kP8lhkJhk74+b7bJ2BTiZIrZC9ELBA
-         RNhweyb1lXHZt4nOjRkv5PvjPjy8r9sz1PNMGmNTpDOzWU4WAcd0ISSxkLuekjfqrMKh
-         P5nGV45Zu9wfwqe8EzP9dt30310E/4CwwI+uFnZiKsn02rJY0jqRii4uiEu5pDJncEdp
-         840yGTWt3WOhYT7zdsRLPR6dgJ5UA8XoszW5SII4I1vERdCMvgmtnVHXLF84hSZl6N7q
-         jGIkP03QXUErKj1/F+2ZWInIAAT1UFTFTSb2sStlvdr5Q/kbnDFQYkyAxjL40co+mfjD
-         CDmQ==
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=C3WMejLIjX/sN4h8RDr6kyJEZVhRO/kXeqFDRFF6Id8=;
+        b=lbZlVSMXAaG45YMMWa8UqrZlE3mNsCasc5BFMYhZcETMQqmJCvgmOTLr7gfz8HrKHu
+         eEdTYOcFOGto7xSuq4Ubox4D2RUcQXEtZbmkFSB/I/JDek6+CuHQ+WWMPQTHIs/Mk/mP
+         qXFlhQxgDQQMvILeKOUlNYmP7iCbES0YFtXHKZGxxvUTQcFZypFfH5dHUzdQLJ/Qpv+d
+         h3HtGKJHsCkcxMoKujCuTiPiTt1JRu3lR+jbO/Crwj7/pGNEX6sXJOJnk2P+T2/Xnan8
+         5l9QrDaWaeEXuS7aPnU4jZq+Km9U5QgJJgLrtR+qcC4JIka0Vh6UmV871gOHIJrimT6I
+         uJHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=GiGVlT3amUluWFhV5mgXhFbiuGIjTDqdR+S/p6Vc5yg=;
-        b=Jk/x/wZIIsv1EPbjx4PqeVPZlU0JVJL0XipiDH6BmwN8FLljZgPc/t/5WmHpnJ35dD
-         W+w1xSoR7ZdNGc4WGznt4ulbQFXARVkCYTGQU3EU0yyGHlQ1QyMcoasgzYjwRN6lGUGn
-         NN8gL/knRMESvTeXNfY4skorjUvVs7aV0Ebf1BgUQ6dicg/cgTzsohFn5hegRrifXMqV
-         dXQNpvBDnJ9fgu0NE0SPGJDREI3djtvjNm2nmbZy+svVcPLVAx6UpvJxdj9nY86hUx8d
-         7y42+ShgSyVTQFiJwih/6Qf7LBlwPi+ABeDRD5rzpYOST7EIrUM/s4BacYIGClaAKH0W
-         SXfg==
-X-Gm-Message-State: APjAAAVfI2Y7cqKCFJtai0lMQZc3ecoCEAAqllybR917PQIfhHs4QsYx
-        RXMy1QEiQYpk99G9AN5ay4g=
-X-Google-Smtp-Source: APXvYqzM+KaAZ4Yd5YYXEfe30CDtx86KuAifJcpbaDqwpZCg//FMrO8vwAc6EuUx2CVl0KeshIuJgQ==
-X-Received: by 2002:a5d:52c4:: with SMTP id r4mr2499708wrv.168.1571230772563;
-        Wed, 16 Oct 2019 05:59:32 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id z1sm7210859wrn.57.2019.10.16.05.59.31
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=C3WMejLIjX/sN4h8RDr6kyJEZVhRO/kXeqFDRFF6Id8=;
+        b=eW84I/8sIG+AvtGCvbkQObt50qlegioBy+Tf38GwAK3SBjtM1yaJqL3jmYtzXmJILV
+         VYltFYkEJ5E3bLPq5/e4YdMuyZ2blNgb71d1CY8WbwbWKO23AXDbRZGH3FwlD/j+etaW
+         24nIbhE28qEyNvV/XmEkZVudWf3xhHDxGIYdHaCqMZ64rXMEU2Ms0q1bPZlq4Zx7FJZ7
+         iZytYiIRMpjalOvarSvPGE0ad9amjCddd+zp+GkAfLpnIQs2ga2vJGV7v9oVVYKF2yTJ
+         CwB7sQ8O6fY5Zx8IEXbxaPzvt4mytqqj0dt2LVJq2NDb5W43TIaaNCGXIdTko7+Z/DA0
+         4lYw==
+X-Gm-Message-State: APjAAAUjs10LPHmhjyg9AV62H9cL45KSSNQIISkgoXeSg9cO84AtJaxi
+        xrK4i56Xd4vDX2WmHXUn89o=
+X-Google-Smtp-Source: APXvYqyqahV9zVwQW3dqjD79x3+FqITP01LbOa2/B5n0zWhcO1UPkVNuw7hURrivflb7cequRdvdPQ==
+X-Received: by 2002:a17:90a:a781:: with SMTP id f1mr5116963pjq.29.1571231613537;
+        Wed, 16 Oct 2019 06:13:33 -0700 (PDT)
+Received: from localhost.localdomain ([45.124.203.14])
+        by smtp.gmail.com with ESMTPSA id n3sm28433569pff.102.2019.10.16.06.13.30
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 05:59:31 -0700 (PDT)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 5/5] clk: tegra: Reimplement SOR clocks on Tegra210
-Date:   Wed, 16 Oct 2019 14:59:19 +0200
-Message-Id: <20191016125919.1773898-6-thierry.reding@gmail.com>
+        Wed, 16 Oct 2019 06:13:32 -0700 (PDT)
+From:   Joel Stanley <joel@jms.id.au>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc:     linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>
+Subject: [PATCH] clk: ast2600: Fix enabling of clocks
+Date:   Wed, 16 Oct 2019 23:43:19 +1030
+Message-Id: <20191016131319.31318-1-joel@jms.id.au>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191016125919.1773898-1-thierry.reding@gmail.com>
-References: <20191016125919.1773898-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -75,162 +70,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+The struct clk_ops enable callback for the aspeed gates mixes up the set
+to clear and write to set registers.
 
-In order to allow the display driver to deal uniformly with all SOR
-generations, implement the SOR clocks in a way that is compatible with
-Tegra186 and later.
-
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
+Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
+Signed-off-by: Joel Stanley <joel@jms.id.au>
 ---
- drivers/clk/tegra/clk-tegra210.c         | 71 ++++++++++++++++++------
- include/dt-bindings/clock/tegra210-car.h |  4 +-
- 2 files changed, 57 insertions(+), 18 deletions(-)
+ drivers/clk/clk-ast2600.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 0f0f14781b43..d55f3da4287a 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -33,6 +33,7 @@
- #define CLK_SOURCE_CSITE 0x1d4
- #define CLK_SOURCE_EMC 0x19c
- #define CLK_SOURCE_SOR1 0x410
-+#define CLK_SOURCE_SOR0 0x414
- #define CLK_SOURCE_LA 0x1f8
- #define CLK_SOURCE_SDMMC2 0x154
- #define CLK_SOURCE_SDMMC4 0x164
-@@ -298,6 +299,7 @@ static DEFINE_SPINLOCK(pll_d_lock);
- static DEFINE_SPINLOCK(pll_e_lock);
- static DEFINE_SPINLOCK(pll_re_lock);
- static DEFINE_SPINLOCK(pll_u_lock);
-+static DEFINE_SPINLOCK(sor0_lock);
- static DEFINE_SPINLOCK(sor1_lock);
- static DEFINE_SPINLOCK(emc_lock);
- static DEFINE_MUTEX(lvl2_ovr_lock);
-@@ -2551,7 +2553,6 @@ static struct tegra_devclk devclks[] __initdata = {
- 	{ .con_id = "pll_c4_out2", .dt_id = TEGRA210_CLK_PLL_C4_OUT2 },
- 	{ .con_id = "pll_c4_out3", .dt_id = TEGRA210_CLK_PLL_C4_OUT3 },
- 	{ .con_id = "dpaux", .dt_id = TEGRA210_CLK_DPAUX },
--	{ .con_id = "sor0", .dt_id = TEGRA210_CLK_SOR0 },
- };
+diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
+index 1c1bb39bb04e..b1318e6b655b 100644
+--- a/drivers/clk/clk-ast2600.c
++++ b/drivers/clk/clk-ast2600.c
+@@ -266,10 +266,11 @@ static int aspeed_g6_clk_enable(struct clk_hw *hw)
  
- static struct tegra_audio_clk_info tegra210_audio_plls[] = {
-@@ -2915,6 +2916,39 @@ static int tegra210_init_pllu(void)
- 	return 0;
- }
+ 	/* Enable clock */
+ 	if (gate->flags & CLK_GATE_SET_TO_DISABLE) {
+-		regmap_write(gate->map, get_clock_reg(gate), clk);
+-	} else {
+-		/* Use set to clear register */
++		/* Clock is clear to enable, so use set to clear register */
+ 		regmap_write(gate->map, get_clock_reg(gate) + 0x04, clk);
++	} else {
++		/* Clock is set to enable, so use write to set register */
++		regmap_write(gate->map, get_clock_reg(gate), clk);
+ 	}
  
-+/*
-+ * The SOR hardware blocks are driven by two clocks: a module clock that is
-+ * used to access registers and a pixel clock that is sourced from the same
-+ * pixel clock that also drives the head attached to the SOR. The module
-+ * clock is typically called sorX (with X being the SOR instance) and the
-+ * pixel clock is called sorX_out. The source for the SOR pixel clock is
-+ * referred to as the "parent" clock.
-+ *
-+ * On Tegra186 and newer, clocks are provided by the BPMP. Unfortunately the
-+ * BPMP implementation for the SOR clocks doesn't exactly match the above in
-+ * some aspects. For example, the SOR module is really clocked by the pad or
-+ * sor_safe clocks, but BPMP models the sorX clock as being sourced by the
-+ * pixel clocks. Conversely the sorX_out clock is sourced by the sor_safe or
-+ * pad clocks on BPMP.
-+ *
-+ * In order to allow the display driver to deal with all SoC generations in
-+ * a unified way, implement the BPMP semantics in this driver.
-+ */
-+
-+static const char * const sor0_parents[] = {
-+	"pll_d_out0",
-+};
-+
-+static const char * const sor0_out_parents[] = {
-+	"sor_safe", "sor0_pad_clkout",
-+};
-+
-+static const char * const sor1_parents[] = {
-+	"pll_p", "pll_d_out0", "pll_d2_out0", "clk_m",
-+};
-+
-+static u32 sor1_parents_idx[] = { 0, 2, 5, 6 };
-+
- static const char * const sor1_out_parents[] = {
- 	/*
- 	 * Bit 0 of the mux selects sor1_pad_clkout, irrespective of bit 1, so
-@@ -2923,20 +2957,31 @@ static const char * const sor1_out_parents[] = {
- 	 * these bits to 0b11. While not an invalid setting, code should
- 	 * always set the bits to 0b01 to select sor1_pad_clkout.
- 	 */
--	"sor_safe", "sor1_pad_clkout", "sor1", "sor1_pad_clkout",
--};
--
--static const char * const sor1_parents[] = {
--	"pll_p", "pll_d_out0", "pll_d2_out0", "clk_m",
-+	"sor_safe", "sor1_pad_clkout", "sor1_out", "sor1_pad_clkout",
- };
- 
--static u32 sor1_parents_idx[] = { 0, 2, 5, 6 };
--
- static struct tegra_periph_init_data tegra210_periph[] = {
-+	/*
-+	 * On Tegra210, the sor0 clock doesn't have a mux it bitfield 31:29,
-+	 * but it is hardwired to the pll_d_out0 clock.
-+	 */
-+	TEGRA_INIT_DATA_TABLE("sor0", NULL, NULL, sor0_parents,
-+			      CLK_SOURCE_SOR0, 29, 0x0, 0, 0, 0, 0,
-+			      0, 182, 0, tegra_clk_sor0, NULL, 0,
-+			      &sor0_lock),
-+	TEGRA_INIT_DATA_TABLE("sor0_out", NULL, NULL, sor0_out_parents,
-+			      CLK_SOURCE_SOR0, 14, 0x1, 0, 0, 0, 0,
-+			      0, 0, TEGRA_PERIPH_NO_GATE, tegra_clk_sor0_out,
-+			      NULL, 0, &sor0_lock),
- 	TEGRA_INIT_DATA_TABLE("sor1", NULL, NULL, sor1_parents,
- 			      CLK_SOURCE_SOR1, 29, 0x7, 0, 0, 8, 1,
--			      TEGRA_DIVIDER_ROUND_UP, 183, 0, tegra_clk_sor1,
--			      sor1_parents_idx, 0, &sor1_lock),
-+			      TEGRA_DIVIDER_ROUND_UP, 183, 0,
-+			      tegra_clk_sor1, sor1_parents_idx, 0,
-+			      &sor1_lock),
-+	TEGRA_INIT_DATA_TABLE("sor1_out", NULL, NULL, sor1_out_parents,
-+			      CLK_SOURCE_SOR1, 14, 0x3, 0, 0, 0, 0,
-+			      0, 0, TEGRA_PERIPH_NO_GATE,
-+			      tegra_clk_sor1_out, NULL, 0, &sor1_lock),
- };
- 
- static const char * const la_parents[] = {
-@@ -2969,12 +3014,6 @@ static __init void tegra210_periph_clk_init(void __iomem *clk_base,
- 					      1, 17, 207);
- 	clks[TEGRA210_CLK_DPAUX1] = clk;
- 
--	clk = clk_register_mux_table(NULL, "sor1_out", sor1_out_parents,
--				     ARRAY_SIZE(sor1_out_parents), 0,
--				     clk_base + CLK_SOURCE_SOR1, 14, 0x3,
--				     0, NULL, &sor1_lock);
--	clks[TEGRA210_CLK_SOR1_OUT] = clk;
--
- 	/* pll_d_dsi_out */
- 	clk = clk_register_gate(NULL, "pll_d_dsi_out", "pll_d_out0", 0,
- 				clk_base + PLLD_MISC0, 21, 0, &pll_d_lock);
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 70308a568c6c..be9e649c1e90 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -308,7 +308,7 @@
- #define TEGRA210_CLK_CLK_OUT_2 278
- #define TEGRA210_CLK_CLK_OUT_3 279
- #define TEGRA210_CLK_BLINK 280
--/* 281 */
-+#define TEGRA210_CLK_SOR0_OUT 281
- #define TEGRA210_CLK_SOR1_OUT 282
- /* 283 */
- #define TEGRA210_CLK_XUSB_HOST_SRC 284
-@@ -390,7 +390,7 @@
- #define TEGRA210_CLK_CLK_OUT_3_MUX 358
- #define TEGRA210_CLK_DSIA_MUX 359
- #define TEGRA210_CLK_DSIB_MUX 360
--#define TEGRA210_CLK_SOR0_OUT 361
-+/* 361 */
- #define TEGRA210_CLK_XUSB_SS_DIV2 362
- 
- #define TEGRA210_CLK_PLL_M_UD 363
+ 	if (gate->reset_idx >= 0) {
 -- 
 2.23.0
 
