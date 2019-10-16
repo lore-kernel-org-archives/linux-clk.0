@@ -2,128 +2,136 @@ Return-Path: <SRS0=uqeP=YJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB81FA372B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C67B9FA372B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:52:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20EA21928
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:20:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sBh6QYKg"
+	by mail.kernel.org (Postfix) with ESMTP id A95FD21D7C
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:52:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393950AbfJPOUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 10:20:08 -0400
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40846 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393943AbfJPOUH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 10:20:07 -0400
-Received: by mail-lf1-f68.google.com with SMTP id f23so2142479lfk.7;
-        Wed, 16 Oct 2019 07:20:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=+5GVeXUsNTKRD7nI80WxY7NGPp8wxmIdfIuqXlentqk=;
-        b=sBh6QYKgOgCu4gMfkvOftsEMGSteOjetdyaAI1OsXKNFyHllDHwkEPyOP/YI7MzDFS
-         i9XUsdtl5lJ2avwDtXmahDALdD6jKGKFn76Bl0AfISFgvTYxidpJMRZIEDoAbx0g8mTW
-         6cqNbqTHEG/7635IgoQyzRdRWE3zhdGK2q2iLO6oPrfEt+7lfjK9OQxWLYIdMRDpB09t
-         uQU3Wj3VfXAuotv/V54LRQMtvNlve9U8l7aHgTXJN3H1/uWKtJTtpmrLHXZC4soU7mpP
-         f2YPytDFjxsDqa6v2I/dMSppH05wrW2i5H7piRr35zKdyKP9yBR2/d7/oyhiuBQugmYE
-         2e8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=+5GVeXUsNTKRD7nI80WxY7NGPp8wxmIdfIuqXlentqk=;
-        b=aZpddXhm4o8f3KejeYTsulOKZouOj1UN3zyNUmsgmSqmHF1Yey7lTl8m12AsUWiZgm
-         R5Zv2ouGd1NKUb0jinnIh8WqGv/2xWq/pWWrCpjRx19fuNZoPL5Vjt601+BXdHnvfqaF
-         4l6qvKTtpcFvwJ5+NvxVj1XRsNxSiwGMHUvj6LYi29bsKubCjxF10qnGsPKXsulYgvcZ
-         VFRcWMm//4sMlRS6WRAW6iUjZ3SK9pldgmd50sRtV4yOdTaH+jf5anU8ZLvzyZnsv4xY
-         Dj7UszM93LZvJfBwmHea5kvcZHC5JtMMOc7/MAquYAEKbKoNj1Y/sB2YmfPqaJgvurTP
-         Ai6g==
-X-Gm-Message-State: APjAAAUXZy2Tf3piUZKA3CRx+ofaDMOj9nKvHHQX0M624bSEihaMiQp6
-        +uFj+j6hoGZYgPbpabSTqcYd6W8t
-X-Google-Smtp-Source: APXvYqycvQtQ48h3Trd2F44847GlKWuh2TeLS/AO5nfxSjr3wgNCA7+XnvoMdGiGkUg6rDTL3w9aYQ==
-X-Received: by 2002:ac2:4650:: with SMTP id s16mr1212030lfo.32.1571235603749;
-        Wed, 16 Oct 2019 07:20:03 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.10.250])
-        by smtp.googlemail.com with ESMTPSA id c21sm6429120lff.61.2019.10.16.07.20.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 07:20:03 -0700 (PDT)
-Subject: Re: [PATCH v1 00/17] NVIDIA Tegra20 CPUFreq driver major update
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S2393956AbfJPOwN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 10:52:13 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:44026 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388751AbfJPOwM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 10:52:12 -0400
+Received: from ramsan ([84.194.98.4])
+        by albert.telenet-ops.be with bizsmtp
+        id EEsA2100Z05gfCL06EsALn; Wed, 16 Oct 2019 16:52:10 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iKkeo-0003ry-Bc; Wed, 16 Oct 2019 16:52:10 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iKkeo-0007l2-9Q; Wed, 16 Oct 2019 16:52:10 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191015211618.20758-1-digetx@gmail.com>
- <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
- <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
- <20191016140121.GA1862769@ulmo>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <d0cf9fca-eb95-1986-4c2d-ae3cded324b0@gmail.com>
-Date:   Wed, 16 Oct 2019 17:20:02 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
-MIME-Version: 1.0
-In-Reply-To: <20191016140121.GA1862769@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] dt-bindings: clock: renesas: Remove R-Car Gen2 legacy DT bindings
+Date:   Wed, 16 Oct 2019 16:52:07 +0200
+Message-Id: <20191016145207.29779-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-16.10.2019 17:01, Thierry Reding пишет:
-> On Wed, Oct 16, 2019 at 04:16:27PM +0300, Dmitry Osipenko wrote:
->> 16.10.2019 08:27, Viresh Kumar пишет:
->>> On 16-10-19, 00:16, Dmitry Osipenko wrote:
->>>> Hello,
->>>>
->>>> This series moves intermediate-clk handling from tegra20-cpufreq into
->>>> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
->>>> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
->>>> of the box. All boards need to adopt CPU OPPs in their device-trees in
->>>> order to get cpufreq support. This series adds OPPs only to selective
->>>> boards because there is assumption in a current device-trees that CPU
->>>> voltage is set for 1GHz freq and this won't work for those CPUs that
->>>> can go over 1GHz and thus require voltage regulators to be set up for
->>>> voltage scaling support (CC'ed Marcel for Toradex boards). We could
->>>> probably add delete-node for OPPs over 1GHz if there are not actively
->>>> maintained boards.
->>>
->>> How do you want to get these patches merged ? Can I just pick the cpufreq bits
->>> alone ?
->>>
->>
->> The cpufreq bits strictly depend on the clk patches and the regulators
->> coupler/balancer series. Hence all patches in this series should collect
->> acks from relevant maintainers and then Thierry will pick up the
->> patchsets in a correct order via tegra tree, at least that's my vision.
->>
->> Thierry, are you okay with that approach?
-> 
-> Works for me. I already have a set of clock patches that I'd like to
-> merge via the Tegra tree because of a runtime dependency, so it'd be
-> easy to apply these on top of that.
+As of commit 362b334b17943d84 ("ARM: dts: r8a7791: Convert to new
+CPG/MSSR bindings"), all upstream R-Car Gen2 device tree source files
+use the unified "Renesas Clock Pulse Generator / Module Standby and
+Software Reset" DT bindings.
 
-Awesome, thank you very much!
+Hence remove the old R-Car Gen2 DT bindings describing a hierarchical
+representation of the various CPG and MSTP clocks.
 
-Viresh, then only acks to the patches related to cpufreq driver are
-needed from you for this series.
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v5.5.
+
+The abovementioned commit was part of the v4.15 release.
+The conversion was backported to v4.14.75-ltsi, and included in any
+R-Car BSP based on v4.14 (rcar-3.6.0 and later).
+---
+ .../clock/renesas,rcar-gen2-cpg-clocks.txt    | 60 -------------------
+ 1 file changed, 60 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+
+diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+deleted file mode 100644
+index f8c05bb4116eae54..0000000000000000
+--- a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
++++ /dev/null
+@@ -1,60 +0,0 @@
+-* Renesas R-Car Gen2 Clock Pulse Generator (CPG)
+-
+-The CPG generates core clocks for the R-Car Gen2 SoCs. It includes three PLLs
+-and several fixed ratio dividers.
+-The CPG also provides a Clock Domain for SoC devices, in combination with the
+-CPG Module Stop (MSTP) Clocks.
+-
+-Required Properties:
+-
+-  - compatible: Must be one of
+-    - "renesas,r8a7790-cpg-clocks" for the r8a7790 CPG
+-    - "renesas,r8a7791-cpg-clocks" for the r8a7791 CPG
+-    - "renesas,r8a7792-cpg-clocks" for the r8a7792 CPG
+-    - "renesas,r8a7793-cpg-clocks" for the r8a7793 CPG
+-    - "renesas,r8a7794-cpg-clocks" for the r8a7794 CPG
+-    and "renesas,rcar-gen2-cpg-clocks" as a fallback.
+-
+-  - reg: Base address and length of the memory resource used by the CPG
+-
+-  - clocks: References to the parent clocks: first to the EXTAL clock, second
+-    to the USB_EXTAL clock
+-  - #clock-cells: Must be 1
+-  - clock-output-names: The names of the clocks. Supported clocks are "main",
+-    "pll0", "pll1", "pll3", "lb", "qspi", "sdh", "sd0", "sd1", "z", "rcan", and
+-    "adsp"
+-  - #power-domain-cells: Must be 0
+-
+-SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+-through an MSTP clock should refer to the CPG device node in their
+-"power-domains" property, as documented by the generic PM domain bindings in
+-Documentation/devicetree/bindings/power/power_domain.txt.
+-
+-
+-Examples
+---------
+-
+-  - CPG device node:
+-
+-	cpg_clocks: cpg_clocks@e6150000 {
+-		compatible = "renesas,r8a7790-cpg-clocks",
+-			     "renesas,rcar-gen2-cpg-clocks";
+-		reg = <0 0xe6150000 0 0x1000>;
+-		clocks = <&extal_clk &usb_extal_clk>;
+-		#clock-cells = <1>;
+-		clock-output-names = "main", "pll0, "pll1", "pll3",
+-				     "lb", "qspi", "sdh", "sd0", "sd1", "z",
+-				     "rcan", "adsp";
+-		#power-domain-cells = <0>;
+-	};
+-
+-
+-  - CPG/MSTP Clock Domain member device node:
+-
+-	thermal@e61f0000 {
+-		compatible = "renesas,thermal-r8a7790", "renesas,rcar-thermal";
+-		reg = <0 0xe61f0000 0 0x14>, <0 0xe61f0100 0 0x38>;
+-		interrupts = <0 69 IRQ_TYPE_LEVEL_HIGH>;
+-		clocks = <&mstp5_clks R8A7790_CLK_THERMAL>;
+-		power-domains = <&cpg_clocks>;
+-	};
+-- 
+2.17.1
+
