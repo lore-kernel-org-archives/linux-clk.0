@@ -2,103 +2,115 @@ Return-Path: <SRS0=uqeP=YJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C014FA3728
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32796FA3728
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:16:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8AB21848
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09FF32067B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:16:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lbZlVSMX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5HWQ7i7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393538AbfJPNNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 09:13:34 -0400
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:35738 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728176AbfJPNNe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 09:13:34 -0400
-Received: by mail-pg1-f196.google.com with SMTP id p30so14294208pgl.2;
-        Wed, 16 Oct 2019 06:13:34 -0700 (PDT)
+        id S1732954AbfJPNQe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 09:16:34 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:38868 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727397AbfJPNQe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 09:16:34 -0400
+Received: by mail-lj1-f194.google.com with SMTP id b20so24007436ljj.5;
+        Wed, 16 Oct 2019 06:16:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=C3WMejLIjX/sN4h8RDr6kyJEZVhRO/kXeqFDRFF6Id8=;
-        b=lbZlVSMXAaG45YMMWa8UqrZlE3mNsCasc5BFMYhZcETMQqmJCvgmOTLr7gfz8HrKHu
-         eEdTYOcFOGto7xSuq4Ubox4D2RUcQXEtZbmkFSB/I/JDek6+CuHQ+WWMPQTHIs/Mk/mP
-         qXFlhQxgDQQMvILeKOUlNYmP7iCbES0YFtXHKZGxxvUTQcFZypFfH5dHUzdQLJ/Qpv+d
-         h3HtGKJHsCkcxMoKujCuTiPiTt1JRu3lR+jbO/Crwj7/pGNEX6sXJOJnk2P+T2/Xnan8
-         5l9QrDaWaeEXuS7aPnU4jZq+Km9U5QgJJgLrtR+qcC4JIka0Vh6UmV871gOHIJrimT6I
-         uJHw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=2eaJx/OyqQZZTAm5CsVFp16VmzPO10Nk4o0s0ZEsAbE=;
+        b=L5HWQ7i77HCMSkrt+9MBCEIdM82oyxiO56FPQ4V3yuINQD7Bb0RPXG52TTouiLOMxW
+         1SbxmWqaWiXG2jPJB0ZOZ/lXqPBmk3ybN0zcrvyRcDxZg35c4UuPA9mBfaTDL+WxtW2V
+         PqxIhB2Z9tjHnD+Yj/pOvGBl46PUNlhH77QoTB2LG6z6u2Ro1Uq8qWly+wGjKSYpkvdu
+         A3DITIXXAswEdW3GgsF4+ZG6hPQaOgxMhr4SFIbbCIDy64ZObuIypKVTGQPPImIeMI3S
+         X4rdl/yRlhDMjY9MUNwhpeBWde3RHKyElIZ4RLPeSr4zfVc+Epr5eAdvkNmg5W2ALqii
+         FPew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :mime-version:content-transfer-encoding;
-        bh=C3WMejLIjX/sN4h8RDr6kyJEZVhRO/kXeqFDRFF6Id8=;
-        b=eW84I/8sIG+AvtGCvbkQObt50qlegioBy+Tf38GwAK3SBjtM1yaJqL3jmYtzXmJILV
-         VYltFYkEJ5E3bLPq5/e4YdMuyZ2blNgb71d1CY8WbwbWKO23AXDbRZGH3FwlD/j+etaW
-         24nIbhE28qEyNvV/XmEkZVudWf3xhHDxGIYdHaCqMZ64rXMEU2Ms0q1bPZlq4Zx7FJZ7
-         iZytYiIRMpjalOvarSvPGE0ad9amjCddd+zp+GkAfLpnIQs2ga2vJGV7v9oVVYKF2yTJ
-         CwB7sQ8O6fY5Zx8IEXbxaPzvt4mytqqj0dt2LVJq2NDb5W43TIaaNCGXIdTko7+Z/DA0
-         4lYw==
-X-Gm-Message-State: APjAAAUjs10LPHmhjyg9AV62H9cL45KSSNQIISkgoXeSg9cO84AtJaxi
-        xrK4i56Xd4vDX2WmHXUn89o=
-X-Google-Smtp-Source: APXvYqyqahV9zVwQW3dqjD79x3+FqITP01LbOa2/B5n0zWhcO1UPkVNuw7hURrivflb7cequRdvdPQ==
-X-Received: by 2002:a17:90a:a781:: with SMTP id f1mr5116963pjq.29.1571231613537;
-        Wed, 16 Oct 2019 06:13:33 -0700 (PDT)
-Received: from localhost.localdomain ([45.124.203.14])
-        by smtp.gmail.com with ESMTPSA id n3sm28433569pff.102.2019.10.16.06.13.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 06:13:32 -0700 (PDT)
-From:   Joel Stanley <joel@jms.id.au>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=2eaJx/OyqQZZTAm5CsVFp16VmzPO10Nk4o0s0ZEsAbE=;
+        b=GpPws1sP2kra8nWWf7r9aKq6bLseC0pgOZK28zfwdbWPWXgQXneniUMyishwIb82VA
+         LDeyghuq+WWPJCPJvU8Sc5wp5ZLCgO7Oi8rN2ZuJObtP0pSnpk895GbrhlDwgY3mUWPI
+         fmsCsGi5BCLFnNEILq+EeNwQeNyfNR8mIM1hTOu2crP7ZapVzGeddO1MKZ6s5YCgwJpW
+         NkZuoprJiimeV1piIAo3hES9Ymi3PO2K14lYYzPR56oCIKTi3AbrQxBkcTELwqCdm56v
+         YpwAnabqJh4y+bmP/fuMevPe0PZkQeHmiP2CDOjQzl6Ju6YUKIcSZNDbbXkGdj9/201Q
+         HWqg==
+X-Gm-Message-State: APjAAAWXyYB4hAoVJZZ9ghXIKOy1MCLFU/2f5nB4yuU8NDA0mzgtRvCm
+        EOyIqJZhiYwK7hR1sGlO9uqo9KuI
+X-Google-Smtp-Source: APXvYqwLPxmgwfFTEd8ELrVAVxO3Sr1h1NF0s2EVJlAjvaMb778NDDAG/JFViNEb+c3Tu7tEFOTw2w==
+X-Received: by 2002:a2e:8593:: with SMTP id b19mr26008676lji.34.1571231789792;
+        Wed, 16 Oct 2019 06:16:29 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id m17sm9866003lje.0.2019.10.16.06.16.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2019 06:16:29 -0700 (PDT)
+Subject: Re: [PATCH v1 00/17] NVIDIA Tegra20 CPUFreq driver major update
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Cc:     linux-aspeed@lists.ozlabs.org, Andrew Jeffery <andrew@aj.id.au>
-Subject: [PATCH] clk: ast2600: Fix enabling of clocks
-Date:   Wed, 16 Oct 2019 23:43:19 +1030
-Message-Id: <20191016131319.31318-1-joel@jms.id.au>
-X-Mailer: git-send-email 2.23.0
+References: <20191015211618.20758-1-digetx@gmail.com>
+ <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
+Date:   Wed, 16 Oct 2019 16:16:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
+In-Reply-To: <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The struct clk_ops enable callback for the aspeed gates mixes up the set
-to clear and write to set registers.
+16.10.2019 08:27, Viresh Kumar пишет:
+> On 16-10-19, 00:16, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This series moves intermediate-clk handling from tegra20-cpufreq into
+>> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
+>> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+>> of the box. All boards need to adopt CPU OPPs in their device-trees in
+>> order to get cpufreq support. This series adds OPPs only to selective
+>> boards because there is assumption in a current device-trees that CPU
+>> voltage is set for 1GHz freq and this won't work for those CPUs that
+>> can go over 1GHz and thus require voltage regulators to be set up for
+>> voltage scaling support (CC'ed Marcel for Toradex boards). We could
+>> probably add delete-node for OPPs over 1GHz if there are not actively
+>> maintained boards.
+> 
+> How do you want to get these patches merged ? Can I just pick the cpufreq bits
+> alone ?
+> 
 
-Fixes: d3d04f6c330a ("clk: Add support for AST2600 SoC")
-Reviewed-by: Andrew Jeffery <andrew@aj.id.au>
-Signed-off-by: Joel Stanley <joel@jms.id.au>
----
- drivers/clk/clk-ast2600.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+The cpufreq bits strictly depend on the clk patches and the regulators
+coupler/balancer series. Hence all patches in this series should collect
+acks from relevant maintainers and then Thierry will pick up the
+patchsets in a correct order via tegra tree, at least that's my vision.
 
-diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-index 1c1bb39bb04e..b1318e6b655b 100644
---- a/drivers/clk/clk-ast2600.c
-+++ b/drivers/clk/clk-ast2600.c
-@@ -266,10 +266,11 @@ static int aspeed_g6_clk_enable(struct clk_hw *hw)
- 
- 	/* Enable clock */
- 	if (gate->flags & CLK_GATE_SET_TO_DISABLE) {
--		regmap_write(gate->map, get_clock_reg(gate), clk);
--	} else {
--		/* Use set to clear register */
-+		/* Clock is clear to enable, so use set to clear register */
- 		regmap_write(gate->map, get_clock_reg(gate) + 0x04, clk);
-+	} else {
-+		/* Clock is set to enable, so use write to set register */
-+		regmap_write(gate->map, get_clock_reg(gate), clk);
- 	}
- 
- 	if (gate->reset_idx >= 0) {
--- 
-2.23.0
-
+Thierry, are you okay with that approach?
