@@ -2,145 +2,67 @@ Return-Path: <SRS0=uqeP=YJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9ADFA3728
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 18:19:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D801FA3728
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 20:05:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9860521D7A
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 18:19:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PRiX8SNu"
+	by mail.kernel.org (Postfix) with ESMTP id 747E221925
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 20:05:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571256338;
+	bh=FN+ZamWTUnc6HSPt9j58oZCw6bGnwKkYgoL4iYSplAU=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=DhLtbWKoa8wSjO6veO0flfiUOix9mLRF2nUX7EGU7JhK42W1B7UGMKHi/I9zZjfCp
+	 NR2o2Vt1PH9Y1vJfvQrqr0oOZO14zuVVszuMXiL8D+dJ3EjV2bl/5FAWqrR/CAfV1v
+	 zjkJ29eUH++chdbSDp/bLiIt0fmvzYKXcTF+LyqQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390637AbfJPSTo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 14:19:44 -0400
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34063 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732498AbfJPSTn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 14:19:43 -0400
-Received: by mail-lj1-f194.google.com with SMTP id j19so25048057lja.1;
-        Wed, 16 Oct 2019 11:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=wPowFu6H3nOXwpA2SAGf8+Ty4xoSESLjQljnj6+VTvY=;
-        b=PRiX8SNuyKlCxJxEtvTHgnt3YZN5FzALlfYjrf3LzguNTrX6Hx1Bc6k3/r7hM84h60
-         swXGAi7Wefb/K+/7reCOQ313MhBK/vYVjvJjbVPWC4nVvcVu7/+E+KO5sbgSnI9hZvoN
-         CxSYNmtOJ4b0zTRj9j0Cx/dM66UBF3O5+BhnwXNePiUk+Q77zSovIU8q2L+h+oJrI3hb
-         rhj9lGNCpUYmfWXLPZXW/ppFQg4B/rIWR/hNU+C7+hwcDOcZfIHvzquehGGG2zKH7BDC
-         CDxhmzjrZn86xruVmB5e9JAg3Poz1R4ukjgcZ4aAoWJcNTc0z+F2J5Ky2z14dyol0Koz
-         ppbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=wPowFu6H3nOXwpA2SAGf8+Ty4xoSESLjQljnj6+VTvY=;
-        b=FUWvTUIJLC6RnnJCj74Furh0UozixeocIB3I1VstObuzs8oPQQfyda/74nLuctj46Q
-         vepFQmQi46pPW4wi+owFmtXUwTfAQSvtoW8BRKYreoOvWsVi1gAPn9uisF5WS9YbnNSM
-         yfE96u9z8O6ykyPFKDOqXpKKlyzOH67hMwYG9+rdi9YB54NbWXXkLQr1L2rY7cbIiImO
-         Bjm8i3xDpgauGw6ntGiaAWWe4oI7UG+k7JMbgVuHZtSPWPmR7t3HPo9Ys6R5YkhTWwzp
-         uPw+r+A8EQOqqExSMQ19vZmg/SA2ez+H0K2Ht9YqUxOI77sI5hqju4DHfVyJGSnKLeAf
-         8uXQ==
-X-Gm-Message-State: APjAAAWOqD6VX/JQmB9WPd9ZXs52AiS8RDgVpD7NA2xwS8Kfx1b7iHSU
-        LaPcLAnQn5uXs+/2CkpPe7bL8tq4
-X-Google-Smtp-Source: APXvYqxoJ/NW8A7QBs/GSZGE2wRbJU36T6N4cFKKZYlqR1WkN283xHFFSDChw09XU4/z7SP1mxVjfA==
-X-Received: by 2002:a2e:9e85:: with SMTP id f5mr23834443ljk.235.1571249980609;
-        Wed, 16 Oct 2019 11:19:40 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.10.250])
-        by smtp.googlemail.com with ESMTPSA id x25sm6846332ljb.60.2019.10.16.11.19.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 11:19:39 -0700 (PDT)
-Subject: Re: [PATCH v1 07/17] cpufreq: tegra20: Use generic cpufreq-dt driver
- (Tegra30 supported now)
-To:     Peter Geis <pgwipeout@gmail.com>
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191015211618.20758-1-digetx@gmail.com>
- <20191015211618.20758-8-digetx@gmail.com>
- <20191016051802.rrxv56vtvxfm6qqe@vireshk-i7>
- <13a9ebd6-8dce-0217-d306-defb8eb6fb96@gmail.com>
- <CAMdYzYoasuEobJLC4RLW_5WCNGnaKtTth0xKov0tUQuDhkX3EA@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <b4eca03d-f86c-8e07-e04a-612e02820bd0@gmail.com>
-Date:   Wed, 16 Oct 2019 21:19:38 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S1726686AbfJPUFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 16:05:38 -0400
+Received: from mail.kernel.org ([198.145.29.99]:51704 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726421AbfJPUFi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Oct 2019 16:05:38 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B77D20663;
+        Wed, 16 Oct 2019 20:05:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571256337;
+        bh=FN+ZamWTUnc6HSPt9j58oZCw6bGnwKkYgoL4iYSplAU=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=0rA7ffKhnxt/EjgJ1fY00YU6PumarD5o7xVJ+qTmu1gba9obggVGW+z0Ake7rhKJD
+         gzBhI1OrniSpJ9flX5spS2eNgGldu4R36k9xcUblhpvWVF8fla9lux7bFIT0R2rcuA
+         31h3XrrzIBwVpJYP4l0IL2ZvYA7i6fyC9DBiFMKU=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CAMdYzYoasuEobJLC4RLW_5WCNGnaKtTth0xKov0tUQuDhkX3EA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191015115117.23504-1-yuehaibing@huawei.com>
+References: <20191015115117.23504-1-yuehaibing@huawei.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     YueHaibing <yuehaibing@huawei.com>, mturquette@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>
+Subject: Re: [PATCH -next] clk: ast2600: remove unused variable 'eclk_parent_names'
+User-Agent: alot/0.8.1
+Date:   Wed, 16 Oct 2019 13:05:36 -0700
+Message-Id: <20191016200537.6B77D20663@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-16.10.2019 17:58, Peter Geis пишет:
-> On Wed, Oct 16, 2019 at 9:29 AM Dmitry Osipenko <digetx@gmail.com> wrote:
->>
->> 16.10.2019 08:18, Viresh Kumar пишет:
->>> On 16-10-19, 00:16, Dmitry Osipenko wrote:
->>>> Re-parenting to intermediate clock is supported now by the clock driver
->>>> and thus there is no need in a customized CPUFreq driver, all that code
->>>> is common for both Tegra20 and Tegra30. The available CPU freqs are now
->>>> specified in device-tree in a form of OPPs, all users should update their
->>>> device-trees.
->>>>
->>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>>> ---
->>>>  drivers/cpufreq/Kconfig.arm          |   4 +-
->>>>  drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
->>>>  drivers/cpufreq/tegra20-cpufreq.c    | 236 ++++++---------------------
->>>>  3 files changed, 55 insertions(+), 187 deletions(-)
->>>>
->>>> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->>>> index a905796f7f85..2118c45d0acd 100644
->>>> --- a/drivers/cpufreq/Kconfig.arm
->>>> +++ b/drivers/cpufreq/Kconfig.arm
->>>> @@ -301,8 +301,8 @@ config ARM_TANGO_CPUFREQ
->>>>      default y
->>>>
->>>>  config ARM_TEGRA20_CPUFREQ
->>>> -    tristate "Tegra20 CPUFreq support"
->>>> -    depends on ARCH_TEGRA
->>>> +    bool "Tegra20 CPUFreq support"
->>>
->>> Google is currently working on the GKI (generic kernel image) project where they
->>> want to use a single kernel image with modules for all kind of android devices.
->>> And for that they need all such drivers to be built as module. Since this is
->>> already an module, I would ask you to keep it as is instead of moving it to bool
->>> here. Else some google guy will switch it back as module later on.
->>>
->>> LGTM otherwise. Nice work. Thanks.
->>>
->>
->> Okay, I'll keep the modularity in v2.
->>
->> Although, tegra20-cpufreq isn't a driver anymore because now it merely
->> prepares OPP table for the cpufreq-dt driver, which is really a one-shot
->> action that is enough to do during boot and thus modularity is a bit
->> redundant here.
-> 
-> I doubt Google will care much, since Android has moved on to aarch64.
-> Do they even support arm32 any more?
+Quoting YueHaibing (2019-10-15 04:51:17)
+> drivers/clk/clk-ast2600.c:119:27: warning:
+>  eclk_parent_names defined but not used [-Wunused-const-variable=3D]
+>=20
+> It is never used, so can be removed.
+>=20
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
 
-Yes, I don't think there is a real need to care about Google. They won't
-use pure upstream and won't care about older hardware any ways.
+Applied to clk-next
+
