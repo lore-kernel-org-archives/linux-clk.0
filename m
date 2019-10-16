@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18013C4360C
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 06:24:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6FB7FA372A
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 10:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56C22168B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 06:24:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBE1421D7A
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 10:55:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="KLCmiSQd"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="qLxpUWf/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388043AbfJPGYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 02:24:53 -0400
-Received: from mout.web.de ([217.72.192.78]:59159 "EHLO mout.web.de"
+        id S1731665AbfJPKzk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 06:55:40 -0400
+Received: from mout.web.de ([217.72.192.78]:56909 "EHLO mout.web.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387646AbfJPGYx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Oct 2019 02:24:53 -0400
+        id S1726083AbfJPKzk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Oct 2019 06:55:40 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
-        s=dbaedf251592; t=1571207070;
-        bh=0p6dSM6PENsJyEfXE4U7vsSYM0mBFd/NXBg3mvut6gg=;
+        s=dbaedf251592; t=1571223325;
+        bh=9hGM7QZW7K6FCP5fR5zNGHHeyiwHfphf+QDUF2oHu0U=;
         h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
-        b=KLCmiSQdxe9okohtHqmP9HHG4ERukQSBUHkfzQvn6bfTgPb2Amf5AmLPAtprXU7/L
-         px4a3EpH1/7qbJOJTQTSw1LOMcaF5rAsQw1GoRiuSmcVkEApi0hh8Hy1aYEV/jKjrH
-         AEruZxD4kKJcgBpAf0DVu846s3FK387oUvAwcD3U=
+        b=qLxpUWf/xVzEmb/ZVbuuRxdebcjcqLsHloMG67CqAc+2iRdZJ/oBl6ZGWKxzENt8h
+         Oxpj0LV0RXcyE0szB/8vzQpVk1XGKf9L1oS9j4kSt/DLL3v8b0CeolWReXJCqbBP9X
+         WMeIF3Ob+xNUZ2UfupD1EWbKPGYS8hYE9yLsp2RI=
 X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
-Received: from [192.168.1.2] ([93.135.85.206]) by smtp.web.de (mrweb103
- [213.165.67.124]) with ESMTPSA (Nemesis) id 0MLgQp-1iKLU52WN1-000r1q; Wed, 16
- Oct 2019 08:24:30 +0200
-Subject: Re: clk: rockchip: Checking a kmemdup() call in
- rockchip_clk_register_pll()
-To:     =?UTF-8?Q?Heiko_St=c3=bcbner?= <heiko@sntech.de>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org,
+Received: from [192.168.1.2] ([93.135.85.206]) by smtp.web.de (mrweb101
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0Lrs70-1hubdS48as-013eaG; Wed, 16
+ Oct 2019 12:55:25 +0200
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+To:     Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
         Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
         Navid Emamdoost <emamd001@umn.edu>,
         Stephen McCamant <smccaman@umn.edu>,
         LKML <linux-kernel@vger.kernel.org>
-References: <e96505a8-b554-f61e-3940-0b9e9c7850ff@web.de>
- <2588953.0pqkEXWxhN@phil> <45588ab8-2a6c-3f29-61ff-bccf8d6fb291@web.de>
- <5173392.uhhkXBHGmO@phil>
+References: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
+ <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
 From:   Markus Elfring <Markus.Elfring@web.de>
 Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  mQINBFg2+xABEADBJW2hoUoFXVFWTeKbqqif8VjszdMkriilx90WB5c0ddWQX14h6w5bT/A8
@@ -91,67 +90,52 @@ Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
  Z/wsLiWTgKlih2QYULvW61XU+mWsK8+ZlYUrRMpkauN4CJ5yTpvp+Orcz5KixHQmc5tbkLWf
  x0n1QFc1xxJhbzN+r9djSGGN/5IBDfUqSANC8cWzHpWaHmSuU3JSAMB/N+yQjIad2ztTckZY
  pwT6oxng29LzZspTYUEzMz3wK2jQHw+U66qBFk8whA7B2uAU1QdGyPgahLYSOa4XAEGb6wbI FEE=
-Message-ID: <e4540cb0-7fcc-ce1e-f687-c725f5e8b209@web.de>
-Date:   Wed, 16 Oct 2019 08:24:10 +0200
+Message-ID: <285fab33-0513-8a6b-f30d-f602c4e5108e@web.de>
+Date:   Wed, 16 Oct 2019 12:55:22 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.1.2
 MIME-Version: 1.0
-In-Reply-To: <5173392.uhhkXBHGmO@phil>
+In-Reply-To: <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:i+Z1+vuuVeMv0jTbPGmTYTQ7in95qy9wdCmNE9Qjmm19nTEhAhG
- 8uzMHUg0b5Lkx0DtpREcdxWvKzErJ5Rf0mVKBXOtYx556scFVkNYU6jj+C581nQfA0jvX8g
- v5fCSja7D5O2mXL6QgARY9Je5FGwjNYmQcoNglnmWzarjKflkTQ062BH7ifApZYM4gtuUFi
- 9xhxvYNzLX+wYqdtlPTfw==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:YDX/EkHvGXc=:o2jLrnfPJ5YRyb2d0eDp6n
- V8v9536ArQwkb77EFMR86TTl1kmHENcCXRjcDhyBCSFwwzpuUBioBlkWMVU9V8m9IayNj797G
- jigyvRKl3rSUHPA5cyhqKAXgZ7H3eq2pXTLA4gELrv3HKhfF5pJkiPb56VitwNJWgFMFX6zzw
- nOP/OEX6Llo3xU5PGd/Eha14VEjgH1bmrW5YoB7AvGC3XN03sdHygii+CAZ2p4zS3aGDcbPgZ
- mtbSevU7+vkCfP2tc9bgAu1Ra5R55WHFqLyFKnVWCfwcYFzO/IgFT+JC6wyA+VGZ+En3yw6tB
- HUrR3p9v8g8bp3iSA2O7NOvZ4GxoKxFNCxRM6Ze3O18ujD7V9z8bg9uBoEpuuFSkfYK94Qgg3
- FKWe3sBxxen0nrICa+LLyX0fwq6zdv+1H4qNiP3J7ORq3lF06t60o45wFx3JioMX9cBAwgZqe
- v4Z9v6Qnc9Wong3eiBQQ6BN0/f8h9uypeOLGmBV/JwxbAYJ/LZbgYBwbed8L5UDWQQaFs7Vc0
- 3OHAs+Z0BIdUKg8rjEKzG4iwjXWzkwS//b1OW4Gj1L0z/r+vBPrg2az0nQduOWqQtcj7APFf4
- C9ZwE7Vr9T++U3oU7mUSi2ohLYPYG8n75VA6MbvOBsTvYjUl7Ss2XTnT9QCKEzDeFzqr1b2lX
- jf+R0SdjakoEzxZg7ZUQMHyKof+k9tJxjlqT414gP64oVK7bHgSPQdoOFas5Jjsfe6oFIgmoK
- s4EvJTF+4xJVfKjyS+z5xIGsNbTfTqeFQ2nvSXY2McB3dTnbVvg6Yv+jiVQw0r+hSbbWU/Ud7
- y+/Hh74jVWcubUyOPbIykusLAdSkq2aZUSraBB1jMYpzh8JmNeJkUykJ7tX3s3+tbUSJKEqwc
- ppIW3XH69bwSi9W2ILsUEC3wB4uJT3XH5UMVdwiU6aw8tPD7mL/RmPPCtn05X5ewsVL3jloN4
- tjbJAF/bDuboVkB2imzaMqePdHBDVcnJy8tAkGExDu95zUtbneATS8JPSHfTxSxeuZGVgEsN/
- wtZcwutSv6OmhKMugxs1MNHnkyAjdWfvzPB88Sf53Y+AE7SdB2cWOlqEzWWVxKWjleDBrIzjS
- OPRofIOdPIRj2Uo3QSyYHkDgBLT18fckbRnVIy01TpZpGbsdhU0u53vlXZeL/gv03Yj+j/MNk
- 4q4sZVuAyDcK4SlcJumO0ANHs+wtgqk1zAwSLvmG5bHXYrv7N3Uo5zUr+lmGr/n0JXb7qKegC
- auvHsmsP/ZfRxh2fCSum5nPUfSxCGMtoj1wIrnYwfMEPMPfEO4ixGmpn42MI=
+X-Provags-ID: V03:K1:QY8HeRQ0+MtB9b2AjBwt9dbFhwe/aom547qm3b5oPTH1B4G+uDZ
+ Qb1zzRWWF3yHilOPpYvKtNKVhDxOmyI/8+8AM5AvSw9U9n4QIFW/W8B+sr1Auew7CCn+bEW
+ NDLU7PpuBwMSWmgUfCt5CFJOyTvhC7Js6Rt9f/5ONtIN2XBLQ4xKO2dpAp8xTTzLeLibx+0
+ gVwn/vUYTEt19mqXT+iTw==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:1QfOLYj7ivM=:CPU/xSDv17hkDhgeHtm1DD
+ 3CsE2JpFO06UPgn90VOPn3ChJKgN9MCFDxPCOJnuWoOdzNa3dnZbFB0PHXh1o0pXiMLT0ycf/
+ GN50AUdYRglNSg/W+ngcS+BmQOGZ9uFFFa8LwfyX7P1exz4ajj7r59I1nQG1ZdUyKoawuzu1k
+ cjKurP/J+vCmY74r8OIZ4wK1nNKNZ2h6HbmCTXF1XFC1l4ZJXgt5496AXQIOPHld2WDScs4cJ
+ WnpchhljDvfP6MlJKmhotF5pq/Go2DjpRQD29IN32jaGqWF/u0AhB4eWPu1tZRVCijASapaM2
+ 1U9N/JKSSksV/O/KQYbGHRIdhEQg7aeLZI62d7nmiZJEm+1hRAlXmLeOj39FfJwZxuZVLYnAW
+ 53n/0IuMQKTW3I9lnoqdUk02Oi7K3i6JZZOM/9d4z+RDdYtxgn/Oz1gF3h2gn+NfHBzu488Uo
+ XxkViVPSLaNL2rWB61rmJeLKGHifC9CyoJdFdT42llAfT6XJk6l7wQ5eSMoFwK41MnuLeN2Gj
+ HpHhAwnpyL+UNJ1CIsrC7Eb3GpD1ztvtiw34mvpBpZ5qA5Km/itbylKbaQe+dl9yVoP5LKFv4
+ hauLD34/LSZ1e8bArwrCTYQdFLVyvuJKfryamZVS0xWNmhQwDQ7l83/gjxnmuuyF3GYqvrYm0
+ IJluEpDBW2fu+LqZnDS3RvekragfigKtz7K0RuQN5YYBw6dboe/p3K2U9EUQ2R15RtYCt663x
+ 16nNWPPtEeWcQ9AGrgCYy3IE3WCVGCpyxwv6bmDLKWWjTYEZA72o2f9kxkDCTzMm4S2S0idTL
+ wo1a665Q0vYL1e721FcXCW6CU6n+suN0/vPFEk5QS0EyhH0HmRxjUcxijU/IQTODJqFPPztZM
+ kOk99W7q7xM54XBK/deMd+KEogXdfSfF9pXUKE5Jg8+oWamb6MLtAcovhd0amhDeenerON8ky
+ Lly8VJPzzy9yC3+/mp23Xl7Nj4/WvUotQZCYK79jkBxPWuZ3dyAUma6e7OvR1zF5LvLAYX4/+
+ fV7u0oKumeIlzGdj++QQMaNu98yvua9JAQoM2cbMDvDgSHlh5H9QiOwM55fTYhfx0DIhNCRV+
+ ANrDyVgEVjy3SdTY8wOuyzBg9MnZM6HjBhSDva3lOWdPbKQLsk0lFSCq2mup8/3LYN6fQR0AL
+ 3lefzwrG+8Wuzai/vO2zFwyLjwM9zd97XGf5/D/rcjTQG8bfSyBD2mt+8ud1c2d8Kkw8Kpp4d
+ DjzgmGvu2y4OpvrY7exSsSYKFEd/mShvN8cYBoKXQLIFhMNexm8qQhuVSpgY=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
->> Would you like to adjust such exception handling another bit?
+>> * Is there a need to adjust the error handling here?
 >
-> Nope.
->
-> The big difference is that clocks rely heavily on their names to establi=
-sh
-> the clock tree parentship. So the PLL cannot work without the name
+> No, there isn't much that can be done if we fail the allocation at
+> such an early stage.
 
-This error situation got a specific reaction.
-
-
-> but can provide some means of functionality without the rate-table
-> especially as bootloaders do generally initialize a PLL to some form of
-> sane frequency.
-
-I imagine that a choice is available here for the error handling strategy.
-
-* Return =E2=80=9CERR_PTR(-ENOMEM)=E2=80=9D as a strict response like in t=
-he other error case.
-
-* Fix the setting =E2=80=9Cpll->rate_count=E2=80=9D at least (to be a bit =
-more tolerant).
-  Would any system users wonder then about the availability of only
-  a single frequency (instead of possibly expected alternatives)?
+Can it matter to perform the setting =E2=80=9Cpll->rate_count=E2=80=9D onl=
+y according
+to a null pointer check for the variable =E2=80=9Cpll->rate_table=E2=80=9D
+because of the function call =E2=80=9Ckmemdup=E2=80=9D?
 
 Regards,
 Markus
