@@ -2,64 +2,62 @@ Return-Path: <SRS0=uqeP=YJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39787FA372A
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:29:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C578EFA3728
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13B6621848
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 13:29:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BB252067B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:01:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ip5/2yuI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0NeTObn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405333AbfJPN3Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 09:29:25 -0400
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34309 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730142AbfJPN3Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 09:29:25 -0400
-Received: by mail-lj1-f195.google.com with SMTP id j19so24061140lja.1;
-        Wed, 16 Oct 2019 06:29:23 -0700 (PDT)
+        id S2405681AbfJPOB2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 10:01:28 -0400
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50273 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393750AbfJPOB2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 10:01:28 -0400
+Received: by mail-wm1-f68.google.com with SMTP id 5so3071951wmg.0;
+        Wed, 16 Oct 2019 07:01:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0zuQ6WlphP3GLKAO64VehzUGUxpcevfofxKNJyniNKY=;
-        b=ip5/2yuI67JEFe/mVoBmH4WWKAZPlmVUJvh65wnYuCA4EcZZqWNujbRa5T6z94wnTo
-         dt47qXlThCanJRW+YOoy6SjpIpmhBBEhi37X3zRWN5HuqH6QUbFskNiYOROl/7ikk+H4
-         X7PoIsY0uWEOF8Bzv8Qt11UX99eQ2yQf3ioZ5LaTo4Kdt25bp5eD+zitb7Owk6sfXwwA
-         YGCBwAvbT3EZvrjAT79dYkGM1UZ10cbYafDAKa0byZXEtWYUGsfCetcPdRDEDTK5VCai
-         H4XZaX/y00MKZ2pd3r233U2qf659JVx0m1MhIQnBupPPaYFRZKbhTw6z/I671OL2D+MC
-         fJxQ==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5tkwolCFpRKx5qnqNxGR6We20ScAxiOW+QzsdK04jT4=;
+        b=K0NeTObnG71lXifvS94m4TId7eL58ETa2T/GnPUYyqbCUBGXmDXHSPOKY6IYR/bF91
+         Qq0KQsRo1HOV6JDWiRhUmxITUnexlMjNH07gFq0AL6852pAnsw5tpRrms2uMDw1aH3AY
+         gnA0dvo9MujjDYxmytQ0G0TuVQdobcSzybGhJ2J8YhGLdjL9lMCDEjvKECmBsjzl6tx7
+         ry8aZs38gaX4lcix+cNWHPx3fMNr4ufNCh1YSMsrjOgWufpA7saBAxcc6FfA/VSYdYKP
+         eRyVSGWBU5v/qSMPJzXeUuljW5QEi18nRpENWRIwRRn/ixwH+WoVyEkMA2Ww2R99p26q
+         Grbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0zuQ6WlphP3GLKAO64VehzUGUxpcevfofxKNJyniNKY=;
-        b=qymmdYDuonH82hJiHtzTApSA++brwN6do1GyfL+3oxNwBATN9Pnd7t3Vh70BDKaUwh
-         DvF/Y0kDOq6hZ1cl3+wWWVd866b3PSu9CsYUY0do1Cn4N5WV9xxC8wJT1C8K+xdFj5/m
-         8aT6b+GjSITuX4z9i0mQYcesLs3r6MazR9l6czpUtPDkNjHOCkHZzsGfTjqmi10jsT6t
-         56ijsylOSzgB/LNLTzd5pxUYWjPdH5NWdJ2E0+duwW1tnxSidYZD92SG0o3fzQJ/rEV7
-         VI21LqcC2XEKl4Fi2LDx17vwkmmpoyPT0ixLc984IJvLndQL1iuPlAoPWXLKr9h9szgN
-         eHsw==
-X-Gm-Message-State: APjAAAVZBQt3boC/T5vxb81GXEyLBqDgSC4BBlWZGcGVG7CXW6YOS5GS
-        NypOJhy4FoIRnL5+qouHe5Gsa6MX
-X-Google-Smtp-Source: APXvYqwlcIVCIDajACVzs0yXeLGMk4o/kTl6pSqxAdmgs6AzOAeh0m77uNfrHbodavkF4OBPNTAHzQ==
-X-Received: by 2002:a2e:569a:: with SMTP id k26mr26062243lje.256.1571232562125;
-        Wed, 16 Oct 2019 06:29:22 -0700 (PDT)
-Received: from [192.168.2.145] ([94.29.10.250])
-        by smtp.googlemail.com with ESMTPSA id z8sm7740724lfg.18.2019.10.16.06.29.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 16 Oct 2019 06:29:21 -0700 (PDT)
-Subject: Re: [PATCH v1 07/17] cpufreq: tegra20: Use generic cpufreq-dt driver
- (Tegra30 supported now)
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5tkwolCFpRKx5qnqNxGR6We20ScAxiOW+QzsdK04jT4=;
+        b=SeI2DOQxOvO89orNryvKpub1yF9ubLRmJ4g9pQMKDV87cy4/8wj2U3roqwY4gvCjRM
+         XHxeuwl1M1cuGv5f2No5EY6LMFxVGVdNI7J1wn7nPdG3JWUSqEo8JwN4w59jmzcG6nFj
+         QKlLhyKbUPbKR9xObWRF3RmtWRnxaOCHaJwiGdYUrBvQ/+Pxji8t27X4gw3F03LLd7vE
+         Dz43t+D8SKuUOzSzF6qNjqTqlS/+Shz5ji6P78nD3SZEVh1fAgj7UoTRetRYRYE3p+2w
+         blNZRH8LB704BoVCaATRNl3jGOPdikcJnjDn7aTu9sXBRaYLwKuqT10KjOnW2A0OrWsb
+         ytdw==
+X-Gm-Message-State: APjAAAUZ3fwdnUaNOfur4/O7H/KpkXPgFLcxCY1M1Mf6meQafzUbO1mg
+        4v0YcQ+85dVmUilCB3NvmoI=
+X-Google-Smtp-Source: APXvYqz3fMJ3QIVHe9ejYBeq2FoKIVagsDUuq0HAJ3lgCd2RE2GNj2OiV2pOouE2sFRNYWoY0LhsSg==
+X-Received: by 2002:a05:600c:1088:: with SMTP id e8mr3633948wmd.27.1571234485934;
+        Wed, 16 Oct 2019 07:01:25 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id p85sm2930949wme.23.2019.10.16.07.01.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 16 Oct 2019 07:01:22 -0700 (PDT)
+Date:   Wed, 16 Oct 2019 16:01:21 +0200
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
@@ -73,63 +71,81 @@ Cc:     Thierry Reding <thierry.reding@gmail.com>,
         linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 00/17] NVIDIA Tegra20 CPUFreq driver major update
+Message-ID: <20191016140121.GA1862769@ulmo>
 References: <20191015211618.20758-1-digetx@gmail.com>
- <20191015211618.20758-8-digetx@gmail.com>
- <20191016051802.rrxv56vtvxfm6qqe@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <13a9ebd6-8dce-0217-d306-defb8eb6fb96@gmail.com>
-Date:   Wed, 16 Oct 2019 16:29:20 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+ <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
+ <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20191016051802.rrxv56vtvxfm6qqe@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Disposition: inline
+In-Reply-To: <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-16.10.2019 08:18, Viresh Kumar пишет:
-> On 16-10-19, 00:16, Dmitry Osipenko wrote:
->> Re-parenting to intermediate clock is supported now by the clock driver
->> and thus there is no need in a customized CPUFreq driver, all that code
->> is common for both Tegra20 and Tegra30. The available CPU freqs are now
->> specified in device-tree in a form of OPPs, all users should update their
->> device-trees.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/cpufreq/Kconfig.arm          |   4 +-
->>  drivers/cpufreq/cpufreq-dt-platdev.c |   2 +
->>  drivers/cpufreq/tegra20-cpufreq.c    | 236 ++++++---------------------
->>  3 files changed, 55 insertions(+), 187 deletions(-)
->>
->> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
->> index a905796f7f85..2118c45d0acd 100644
->> --- a/drivers/cpufreq/Kconfig.arm
->> +++ b/drivers/cpufreq/Kconfig.arm
->> @@ -301,8 +301,8 @@ config ARM_TANGO_CPUFREQ
->>  	default y
->>  
->>  config ARM_TEGRA20_CPUFREQ
->> -	tristate "Tegra20 CPUFreq support"
->> -	depends on ARCH_TEGRA
->> +	bool "Tegra20 CPUFreq support"
-> 
-> Google is currently working on the GKI (generic kernel image) project where they
-> want to use a single kernel image with modules for all kind of android devices.
-> And for that they need all such drivers to be built as module. Since this is
-> already an module, I would ask you to keep it as is instead of moving it to bool
-> here. Else some google guy will switch it back as module later on.
-> 
-> LGTM otherwise. Nice work. Thanks.
-> 
 
-Okay, I'll keep the modularity in v2.
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Although, tegra20-cpufreq isn't a driver anymore because now it merely
-prepares OPP table for the cpufreq-dt driver, which is really a one-shot
-action that is enough to do during boot and thus modularity is a bit
-redundant here.
+On Wed, Oct 16, 2019 at 04:16:27PM +0300, Dmitry Osipenko wrote:
+> 16.10.2019 08:27, Viresh Kumar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > On 16-10-19, 00:16, Dmitry Osipenko wrote:
+> >> Hello,
+> >>
+> >> This series moves intermediate-clk handling from tegra20-cpufreq into
+> >> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
+> >> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+> >> of the box. All boards need to adopt CPU OPPs in their device-trees in
+> >> order to get cpufreq support. This series adds OPPs only to selective
+> >> boards because there is assumption in a current device-trees that CPU
+> >> voltage is set for 1GHz freq and this won't work for those CPUs that
+> >> can go over 1GHz and thus require voltage regulators to be set up for
+> >> voltage scaling support (CC'ed Marcel for Toradex boards). We could
+> >> probably add delete-node for OPPs over 1GHz if there are not actively
+> >> maintained boards.
+> >=20
+> > How do you want to get these patches merged ? Can I just pick the cpufr=
+eq bits
+> > alone ?
+> >=20
+>=20
+> The cpufreq bits strictly depend on the clk patches and the regulators
+> coupler/balancer series. Hence all patches in this series should collect
+> acks from relevant maintainers and then Thierry will pick up the
+> patchsets in a correct order via tegra tree, at least that's my vision.
+>=20
+> Thierry, are you okay with that approach?
+
+Works for me. I already have a set of clock patches that I'd like to
+merge via the Tegra tree because of a runtime dependency, so it'd be
+easy to apply these on top of that.
+
+Thierry
+
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2nIq8ACgkQ3SOs138+
+s6GKPg//XbFKPZrgCH3A4swB3MFOPVjalYqN2cVsMYZH/R73AJYSjqvMPnj44UM1
+ecM/LKBu0RC/xZ9C6mU2DDKEbRDDLDSVIrNLhjh9tulMl267gWIqyCE5tqrkVnjy
+3S50icwwg+Sxs4mgdnox6ZoPPWiCQrfq4bvv+03OMMZqgXISEKzegvOETGziIhaL
+FANIUKkpZ8Kv+9+egwIcjCM32611IfpNAub/KuRpmZghvib1SV/SxgpLZ1hc3jND
+ZkpzmUmAuwZbB/sco/f17FlfZ16+cIRE5D0NSlWH1cTt9YHfhuD1Rv/o4C9HLHly
+rpXCJC/WHmevNz7RqheqKwXMc8ixqTcWeNoRpKFDiYfscGB0rR73uzmTMlRXdbch
+JDD+Xa5BYBZrneP6GfIVHdouiDD3DhPkHoDvXdmyWmnrpZwQG6465b4+TAgEpR/o
+uXmaYn4HtjGic6mYpbPUopYCg5awM7u4Of4PQdJLZcDI45UJzlpNVTXMS+pRpbkZ
+YHPbcvPDL+jRE9Jnbl/rxHu+KQV/UmmKV5JPIEyoQKSaVkw/cFnXSyqARqaWds56
+QJ2vZ7kZ2O08MkWzMamVcVqbdx8U1FX//09377bHHFbWhRsrAMcAX6keNq7hz7ZM
+/a2zZszFLhQnisBXpX9RMUW37jiFYFn4rZYFM1feQZ/E+rtvIJ8=
+=td2z
+-----END PGP SIGNATURE-----
+
+--fdj2RfSjLxBAspz7--
