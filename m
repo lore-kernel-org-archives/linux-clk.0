@@ -6,63 +6,76 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D801FA3728
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 20:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F159ECE599
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 20:06:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 747E221925
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 20:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF6D420663
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 20:06:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571256338;
-	bh=FN+ZamWTUnc6HSPt9j58oZCw6bGnwKkYgoL4iYSplAU=;
+	s=default; t=1571256407;
+	bh=ZOsiycWlcu+SnL6IZ3oaAxvxPo3wW8QAyUj/9tKCtvo=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=DhLtbWKoa8wSjO6veO0flfiUOix9mLRF2nUX7EGU7JhK42W1B7UGMKHi/I9zZjfCp
-	 NR2o2Vt1PH9Y1vJfvQrqr0oOZO14zuVVszuMXiL8D+dJ3EjV2bl/5FAWqrR/CAfV1v
-	 zjkJ29eUH++chdbSDp/bLiIt0fmvzYKXcTF+LyqQ=
+	b=MPah1DismkslhP9nAIndE5kkIluLVUkOnXkLqv/tkiJ0ooBEogpwbuByKOpMvBDFq
+	 HrgfkCPEAysgnN1nWHMQnzKRZ5FLI1dRI/aRcmNySWdzYnB5wpD7u+wbOh3XRASp0e
+	 36riPHbCiZEHyc0eyFZWo9fhVo3E2L/coQBUMU3Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726686AbfJPUFi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 16:05:38 -0400
-Received: from mail.kernel.org ([198.145.29.99]:51704 "EHLO mail.kernel.org"
+        id S1726421AbfJPUGr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 16:06:47 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52122 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726421AbfJPUFi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Oct 2019 16:05:38 -0400
+        id S1725965AbfJPUGr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Oct 2019 16:06:47 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B77D20663;
-        Wed, 16 Oct 2019 20:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CF8032064B;
+        Wed, 16 Oct 2019 20:06:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571256337;
-        bh=FN+ZamWTUnc6HSPt9j58oZCw6bGnwKkYgoL4iYSplAU=;
+        s=default; t=1571256406;
+        bh=ZOsiycWlcu+SnL6IZ3oaAxvxPo3wW8QAyUj/9tKCtvo=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=0rA7ffKhnxt/EjgJ1fY00YU6PumarD5o7xVJ+qTmu1gba9obggVGW+z0Ake7rhKJD
-         gzBhI1OrniSpJ9flX5spS2eNgGldu4R36k9xcUblhpvWVF8fla9lux7bFIT0R2rcuA
-         31h3XrrzIBwVpJYP4l0IL2ZvYA7i6fyC9DBiFMKU=
+        b=B9NUNTRP+CR61Zxnndl+/V3ZoFYybuIX36+wPHeBqad6DqY92dc/6Nt/sq9pzmylP
+         liwk3NROPaBBFnZ9NXpDxuYoPC30nEwnxl1crMQZ+yK69LELdd9mdaoMM9oVjtkM1e
+         9Tk/EGuK17KAHY9D1yfSgN6NTJIKF7hldDACe0Zw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191015115117.23504-1-yuehaibing@huawei.com>
-References: <20191015115117.23504-1-yuehaibing@huawei.com>
+In-Reply-To: <1571122989-29361-1-git-send-email-peng.fan@nxp.com>
+References: <1571122989-29361-1-git-send-email-peng.fan@nxp.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>, mturquette@baylibre.com
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] clk: ast2600: remove unused variable 'eclk_parent_names'
+To:     "festevam@gmail.com" <festevam@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Cc:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] clk: imx: imx8mn: drop unused pll enum
 User-Agent: alot/0.8.1
-Date:   Wed, 16 Oct 2019 13:05:36 -0700
-Message-Id: <20191016200537.6B77D20663@mail.kernel.org>
+Date:   Wed, 16 Oct 2019 13:06:46 -0700
+Message-Id: <20191016200646.CF8032064B@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting YueHaibing (2019-10-15 04:51:17)
-> drivers/clk/clk-ast2600.c:119:27: warning:
->  eclk_parent_names defined but not used [-Wunused-const-variable=3D]
+Quoting Peng Fan (2019-10-15 00:05:53)
+> From: Peng Fan <peng.fan@nxp.com>
 >=20
-> It is never used, so can be removed.
+> The PLL enum definition is not used, so drop it.
 >=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
+
+Was it ever used?
 
 Applied to clk-next
 
