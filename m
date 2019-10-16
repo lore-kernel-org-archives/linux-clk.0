@@ -2,295 +2,138 @@ Return-Path: <SRS0=uqeP=YJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 075C3FA3728
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 11:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88E6EFA3728
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 11:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C536F20854
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 11:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CDFB21848
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 11:58:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="o6Yr5clq"
+	dkim=pass (1024-bit key) header.d=web.de header.i=@web.de header.b="pc5Jrb43"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729859AbfJPL5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 07:57:52 -0400
-Received: from mail-eopbgr10044.outbound.protection.outlook.com ([40.107.1.44]:62173
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726372AbfJPL5w (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 16 Oct 2019 07:57:52 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oc8BdZHeTjMEeFK8vC7J6pORYk840cR9UOSi22jCLGJeuu42Mue4q9R2LbreL9I/duHO68cIcYAKWNKSGknM7qPPLnmvVE9u+vXn0r15dyxVgnpxAeOymIXtH5f6oR1aGm4P/VnAchRJ6ojfq0JIQ+bOCnp3yW6SkIJnEjbCnDodPXxt78x2V3n2DZv3Ict2NjqR3oeH6lJS1y8Pptooi3soZl5w4Kqj8taHAqT/5CLuHHmiOudh19eyrShADkISZGKcFeRd0HPSDNeeKMPl0dwEEzmPUUkvbsFrEzqxL/0eBmMZVCczqqxTQskB6BqomSwGRUqxXqH1nJlNlGxSnA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4C0R3WtOZUHiFz3Bh7My67/MBdlwP8wbad84gjQdTTk=;
- b=Eyq0G0yTV+1/7+OioWoPa0bt2RCYllSJGJm6vFDAe+xfPFsHQ8odpUe17h/hPLBUIjXNjkrtfhx3zX10VpF3XzACP+Q4S+xF16ujXrP/mJYdFHdXTy29O21G63Ub8UzdoZOFKIEgnzmgXXKs0/UnK/59vZXI7tFvED+QuHlx+lQVzG9PzU8+X6RxxAazfFGnGuYiK5Y0kJO8DNLm4WzsxODd9HZeBfKHneN1cWg22pNbtQuENwkas4Su2C0P0BKSW7Y1hcV44x3BtbjyhIPddAPHvzJ0ry0DFpqxZJgxuqvb/gVdWGYQAOoqL5Bqt2xbXHQ9EsGdCHx3cQK02IM5zg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4C0R3WtOZUHiFz3Bh7My67/MBdlwP8wbad84gjQdTTk=;
- b=o6Yr5clqZt0b3t14ipPQS2cpjzRn4PX27eDBfsqFbrqej4iZBjYL6fzZFnRPHn+NIbXSo2EpngQ/BI9rf51Aaw1luCzJJkTSaFa1dUvVgEsD7ZP/MHbafuii2ttQZdKvEDJh+M3l+AFFnQdn7x5nXBOTOnFUzOkMvaFPVFi7LT4=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB7136.eurprd04.prod.outlook.com (10.186.156.83) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.23; Wed, 16 Oct 2019 11:57:41 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58d9:b0f7:b31:c05a]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58d9:b0f7:b31:c05a%7]) with mapi id 15.20.2347.023; Wed, 16 Oct 2019
- 11:57:40 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-CC:     Jacky Bai <ping.bai@nxp.com>, Anson Huang <anson.huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
+        id S1731326AbfJPL6X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 07:58:23 -0400
+Received: from mout.web.de ([212.227.17.11]:44107 "EHLO mout.web.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726372AbfJPL6W (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 16 Oct 2019 07:58:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=web.de;
+        s=dbaedf251592; t=1571227087;
+        bh=a+1GVviXwdLUCjJJtDMUOawEAo2G33VYxdEtE7DBm8Q=;
+        h=X-UI-Sender-Class:Subject:To:Cc:References:From:Date:In-Reply-To;
+        b=pc5Jrb43rsiHse/tfUegDS+Ew3+Fzh5DhUizXyYf8JPXX77NGZk9EASNDuMu8GKOF
+         tnVWHtSgfZktZ5r1tKqSWV2eOXpjYGE+3S45CCS+F37tP1jgtXAkZr4D8b+23nLQTN
+         hoJRHRzfUIHkM4mpVubevJP3gz7S/IN/biIsuF0I=
+X-UI-Sender-Class: c548c8c5-30a9-4db5-a2e7-cb6cb037b8f9
+Received: from [192.168.1.2] ([93.135.85.206]) by smtp.web.de (mrweb102
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 0MLPNm-1iK9yW46rq-000eYE; Wed, 16
+ Oct 2019 13:58:07 +0200
+Subject: Re: clk: samsung: Checking a kmemdup() call in
+ _samsung_clk_register_pll()
+To:     Tomasz Figa <tomasz.figa@gmail.com>, linux-clk@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org, kernel-janitors@vger.kernel.org
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: [PATCH v3 3/3] clk: imx8mn: Define gates for pll1/2 fixed dividers
-Thread-Topic: [PATCH v3 3/3] clk: imx8mn: Define gates for pll1/2 fixed
- dividers
-Thread-Index: AQHVhBjp8zFdMQwlRUmF0eMseGBh/A==
-Date:   Wed, 16 Oct 2019 11:57:40 +0000
-Message-ID: <5e5bff7c60977d9be092c9aa3ec11a903cfc0f64.1571226979.git.leonard.crestez@nxp.com>
-References: <cover.1571226979.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1571226979.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [89.37.124.34]
-x-mailer: git-send-email 2.17.1
-x-clientproxiedby: LNXP265CA0007.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:5e::19) To VI1PR04MB7023.eurprd04.prod.outlook.com
- (2603:10a6:800:12f::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: 01dede26-4723-4d95-14cc-08d752300b92
-x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: VI1PR04MB7136:|VI1PR04MB7136:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB71367A0F67CF515A60971C3CEE920@VI1PR04MB7136.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4125;
-x-forefront-prvs: 0192E812EC
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(366004)(39860400002)(136003)(396003)(376002)(199004)(189003)(66946007)(66476007)(6436002)(4326008)(81166006)(81156014)(118296001)(2906002)(66556008)(64756008)(66446008)(6512007)(256004)(6486002)(14454004)(71190400001)(71200400001)(186003)(3846002)(11346002)(8936002)(25786009)(2616005)(305945005)(50226002)(476003)(446003)(110136005)(66066001)(26005)(478600001)(52116002)(7736002)(76176011)(36756003)(102836004)(8676002)(486006)(54906003)(386003)(6506007)(6116002)(5660300002)(86362001)(316002)(99286004)(44832011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB7136;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: FnPdc2tCYQL+//djHnBT7lOKmAZqtuuiV30qXYGrqVV8r9iPvr5EI+AdeH4U4NQb84ChX2EBKmll71MWs6TR5Ot4D8B9f1fJHJEHg/ayHT3bXxhkAVRjsVtrTWt0WKP/KzW3wopX5u+cbSyF1xdxRuv9W+N59TJvRE6bGOTBnsUtI5l1rK8HRec1vnrJiQCEHy3+at5BQu68auHRMPxMyXD/fkhw2Lc1BWfGIOx4DGMV+tEyJA8uOY5EMqptlxPVkjoX4UNJQFoXt1XPKDQJZSCr8NGNQcy7x2BhfxKj63cJhdGRKJO73qb56YKs4fp5y347Rp8Rs1WP3X1y77UrZcqTlPkzVJolrOvDj6EN4W9+F7BHxdYpsGI+eeT2XdEuKR68E5sAdK9nhkiQL62LGJJeoUkbIGKNjCjAvLkVFLo=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1787010991ECE14D8F6377DDC8CAABE9@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        Stephen Boyd <sboyd@kernel.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Aditya Pakki <pakki001@umn.edu>, Kangjie Lu <kjlu@umn.edu>,
+        Navid Emamdoost <emamd001@umn.edu>,
+        Stephen McCamant <smccaman@umn.edu>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <7933ce8f-ca1b-6ed8-14b9-59679130dc47@web.de>
+ <CA+Ln22GpcMF5e8wjwoRH0wExyoGfta4n3YuaOBNDE+rfqhSZjg@mail.gmail.com>
+ <39a142ae-e0a1-0683-d68c-128b388f480e@web.de>
+ <CA+Ln22FCH-q-joG6i=K2u=3vZTwwytkk0Q48oKekGkVb+VtL3Q@mail.gmail.com>
+From:   Markus Elfring <Markus.Elfring@web.de>
+Autocrypt: addr=Markus.Elfring@web.de; prefer-encrypt=mutual; keydata=
+ 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 FEE=
+Message-ID: <43617d6a-c778-629b-81b0-aa0accf09d80@web.de>
+Date:   Wed, 16 Oct 2019 13:58:04 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.2
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 01dede26-4723-4d95-14cc-08d752300b92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Oct 2019 11:57:40.3927
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: h+2NdiBt+IsnKuJTbCflHuBcMiFyd/79IW9If/WNkIaqNjSNDMxot9H8I2iAmPDjgnJofSwyjAcUEQ041dA3Xg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB7136
+In-Reply-To: <CA+Ln22FCH-q-joG6i=K2u=3vZTwwytkk0Q48oKekGkVb+VtL3Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+X-Provags-ID: V03:K1:54pWJEpaiZs1qxWmTa/OWZ9tXGNN4h0kEg9bN1x0P0xYr2S2ugO
+ 0QY6Iq5wsPy6azs/F09/Ide4O+p7A94gw244waY2OsWUVaS/AoMq4metO2pYXgUJo1CDWSE
+ 03dP5yYhvC5ET5FyF/MILYTkRrvUvTiPwA8k9KaRVCangwXljvtXXZtsYy0zQf9MQ7Tq1gI
+ wmpYD5VR1rH2dDU3pu2Cg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:8AAAHjxk6lk=:XKAMOU9Pa5g9aYKvsgrVAX
+ r9jxuUOV0PNXWSZrdmy0IYMopWeQHKFu2M8D6kqCv3iubxOBML3/vJ7NUuNZRarLwP2bvmK7k
+ zeDGaQeZKE864m03SvVvM4iYlkcCldNVRvXTHb2cg9+aqMcPT/Qw4fgDojfNMfEPhL4C0fpq7
+ R0k0GvLEFz8sN7Xr1GGen+AlnFcRx1AvV/3TDv7JskBXn7kfGkRNNVv6jOQiIgettkQ+GMGUN
+ MPe1AoFnKZ1E3aRpxwXyOyPXhBML9GmFHXdW2OxQ50VcfGjRRwhYwcgBMzCkmfc3UyQ3dBe3R
+ v+WZ2jStn/JDbylwXzTz9ith0uT9nOojE7Rm/3QS765tHdK0OdMv6GdS5TW6KqoyXRTxteHs0
+ t76NOrwPHwP1Ex4Z35ufnxQeUkm016o44Q71UCWOKbD5pNcf6nhJ8jRuPM+JjbGIB7KKh70+V
+ KCmxogN3ILfJc5K6r8oFubv5HsNnxj605St3HwyRlP40HbDWYZ4iGWBICT+5AA32k7UJwJk7J
+ rPpxRp3ASANzSkp3b5ySNZje50d1g98DbzO7k04kVNNlE7fjHviRXekExe3Vi3qmMaUhHweZO
+ p5C3GbmnyKirAowHBb059e+GIh31BivMA1yqlKi1bnyH72euGcmUjS1HVXJPnfI6J7mnGoIKl
+ FNWL6280mNWQSwxalW+UEMJMNQE0+mGeWkPcUs92h0Hm1T5PQYR990O2lkU7RwoF2ni1ru77M
+ UXlNlqJunlikeuIH8ZnG0LfKujI60mqG6LILFoE+o+c9Ai1XSM2PZbWogSIhhlsOKLULK6cU5
+ HzMHoTqX6lxfbHtdn9oXRj42IpQzb8/+o4f+/mSKk/11upS/EOvgOosiunMoVMpj6YbRet3zY
+ HCRpygu66tDg4mVFJnrZYCz0JvQFdg6+qDbB9LEMZSjhWZK4xh8T5TJhj3TEc/iqDdDGG8djz
+ ASwGFs7GS4QTOI8WQi342mwjJcXtxNTFB8rz3oJ80mnUexfujJLp72dQariZ9eo4JTy6Lrwuk
+ vsvOwhl/FyfM1tPVQyHHmpPdHjnOTNXHD7CYcCE2B6VRqgeW1Df+5Sk84isuxtuG4VdoX87Lh
+ MZ7PduWwA3ule6e7vLGqfl3PXeTpKt2mQZ1gJP/RsU4s2g3ANJWl7KxaGFJmouNPC3IrRyIzh
+ fnZShSI7kVY7l1d8Fk3dfo6btLPRiaa2W+pYRgV2l3jynga6boJKE2nHp9+FZkjj++pm1p25c
+ +pzq6nWOOXqye7wCZ9midQQlMixJFkevMA5kLF9lWl5kYgPj5TguiL5cqtYs=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On imx8mn there are 9 fixed-factor dividers for SYS_PLL1 and SYS_PLL2
-each with their own gate. Only one of these gates (the one "dividing" by
-one) is currently defined and it's incorrectly set as the parent of all
-the fixed-factor dividers.
+> A backtrace should be enough for this kind of a failure that shouldn't
+> normally happen and if happens, then the rest of the system must be in
+> a state already about to fail anyway.
 
-Add the other 8 gates to the clock tree between sys_pll1/2_bypass and
-the fixed dividers.
+Does this feedback mean that you would like to omit two extra
+error messages from this function implementation?
 
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
----
- drivers/clk/imx/clk-imx8mn.c             | 57 ++++++++++++++++--------
- include/dt-bindings/clock/imx8mn-clock.h | 19 +++++++-
- 2 files changed, 56 insertions(+), 20 deletions(-)
-
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index 7a5590b967d5..edc9c35669e6 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -369,33 +369,52 @@ static int imx8mn_clocks_probe(struct platform_device=
- *pdev)
- 	clks[IMX8MN_VIDEO_PLL1_OUT] =3D imx_clk_gate("video_pll1_out", "video_pll=
-1_bypass", base + 0x28, 13);
- 	clks[IMX8MN_DRAM_PLL_OUT] =3D imx_clk_gate("dram_pll_out", "dram_pll_bypa=
-ss", base + 0x50, 13);
- 	clks[IMX8MN_GPU_PLL_OUT] =3D imx_clk_gate("gpu_pll_out", "gpu_pll_bypass"=
-, base + 0x64, 11);
- 	clks[IMX8MN_VPU_PLL_OUT] =3D imx_clk_gate("vpu_pll_out", "vpu_pll_bypass"=
-, base + 0x74, 11);
- 	clks[IMX8MN_ARM_PLL_OUT] =3D imx_clk_gate("arm_pll_out", "arm_pll_bypass"=
-, base + 0x84, 11);
--	clks[IMX8MN_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_pll1_bypa=
-ss", base + 0x94, 11);
--	clks[IMX8MN_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_pll2_bypa=
-ss", base + 0x104, 11);
- 	clks[IMX8MN_SYS_PLL3_OUT] =3D imx_clk_gate("sys_pll3_out", "sys_pll3_bypa=
-ss", base + 0x114, 11);
-=20
--	/* SYS PLL fixed output */
--	clks[IMX8MN_SYS_PLL1_40M] =3D imx_clk_fixed_factor("sys_pll1_40m", "sys_p=
-ll1_out", 1, 20);
--	clks[IMX8MN_SYS_PLL1_80M] =3D imx_clk_fixed_factor("sys_pll1_80m", "sys_p=
-ll1_out", 1, 10);
--	clks[IMX8MN_SYS_PLL1_100M] =3D imx_clk_fixed_factor("sys_pll1_100m", "sys=
-_pll1_out", 1, 8);
--	clks[IMX8MN_SYS_PLL1_133M] =3D imx_clk_fixed_factor("sys_pll1_133m", "sys=
-_pll1_out", 1, 6);
--	clks[IMX8MN_SYS_PLL1_160M] =3D imx_clk_fixed_factor("sys_pll1_160m", "sys=
-_pll1_out", 1, 5);
--	clks[IMX8MN_SYS_PLL1_200M] =3D imx_clk_fixed_factor("sys_pll1_200m", "sys=
-_pll1_out", 1, 4);
--	clks[IMX8MN_SYS_PLL1_266M] =3D imx_clk_fixed_factor("sys_pll1_266m", "sys=
-_pll1_out", 1, 3);
--	clks[IMX8MN_SYS_PLL1_400M] =3D imx_clk_fixed_factor("sys_pll1_400m", "sys=
-_pll1_out", 1, 2);
-+	/* SYS PLL1 fixed output */
-+	clks[IMX8MN_SYS_PLL1_40M_CG] =3D imx_clk_gate("sys_pll1_40m_cg", "sys_pll=
-1_bypass", base + 0x94, 27);
-+	clks[IMX8MN_SYS_PLL1_80M_CG] =3D imx_clk_gate("sys_pll1_80m_cg", "sys_pll=
-1_bypass", base + 0x94, 25);
-+	clks[IMX8MN_SYS_PLL1_100M_CG] =3D imx_clk_gate("sys_pll1_100m_cg", "sys_p=
-ll1_bypass", base + 0x94, 23);
-+	clks[IMX8MN_SYS_PLL1_133M_CG] =3D imx_clk_gate("sys_pll1_133m_cg", "sys_p=
-ll1_bypass", base + 0x94, 21);
-+	clks[IMX8MN_SYS_PLL1_160M_CG] =3D imx_clk_gate("sys_pll1_160m_cg", "sys_p=
-ll1_bypass", base + 0x94, 19);
-+	clks[IMX8MN_SYS_PLL1_200M_CG] =3D imx_clk_gate("sys_pll1_200m_cg", "sys_p=
-ll1_bypass", base + 0x94, 17);
-+	clks[IMX8MN_SYS_PLL1_266M_CG] =3D imx_clk_gate("sys_pll1_266m_cg", "sys_p=
-ll1_bypass", base + 0x94, 15);
-+	clks[IMX8MN_SYS_PLL1_400M_CG] =3D imx_clk_gate("sys_pll1_400m_cg", "sys_p=
-ll1_bypass", base + 0x94, 13);
-+	clks[IMX8MN_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_pll1_bypa=
-ss", base + 0x94, 11);
-+
-+	clks[IMX8MN_SYS_PLL1_40M] =3D imx_clk_fixed_factor("sys_pll1_40m", "sys_p=
-ll1_40m_cg", 1, 20);
-+	clks[IMX8MN_SYS_PLL1_80M] =3D imx_clk_fixed_factor("sys_pll1_80m", "sys_p=
-ll1_80m_cg", 1, 10);
-+	clks[IMX8MN_SYS_PLL1_100M] =3D imx_clk_fixed_factor("sys_pll1_100m", "sys=
-_pll1_100m_cg", 1, 8);
-+	clks[IMX8MN_SYS_PLL1_133M] =3D imx_clk_fixed_factor("sys_pll1_133m", "sys=
-_pll1_133m_cg", 1, 6);
-+	clks[IMX8MN_SYS_PLL1_160M] =3D imx_clk_fixed_factor("sys_pll1_160m", "sys=
-_pll1_160m_cg", 1, 5);
-+	clks[IMX8MN_SYS_PLL1_200M] =3D imx_clk_fixed_factor("sys_pll1_200m", "sys=
-_pll1_200m_cg", 1, 4);
-+	clks[IMX8MN_SYS_PLL1_266M] =3D imx_clk_fixed_factor("sys_pll1_266m", "sys=
-_pll1_266m_cg", 1, 3);
-+	clks[IMX8MN_SYS_PLL1_400M] =3D imx_clk_fixed_factor("sys_pll1_400m", "sys=
-_pll1_400m_cg", 1, 2);
- 	clks[IMX8MN_SYS_PLL1_800M] =3D imx_clk_fixed_factor("sys_pll1_800m", "sys=
-_pll1_out", 1, 1);
-=20
--	clks[IMX8MN_SYS_PLL2_50M] =3D imx_clk_fixed_factor("sys_pll2_50m", "sys_p=
-ll2_out", 1, 20);
--	clks[IMX8MN_SYS_PLL2_100M] =3D imx_clk_fixed_factor("sys_pll2_100m", "sys=
-_pll2_out", 1, 10);
--	clks[IMX8MN_SYS_PLL2_125M] =3D imx_clk_fixed_factor("sys_pll2_125m", "sys=
-_pll2_out", 1, 8);
--	clks[IMX8MN_SYS_PLL2_166M] =3D imx_clk_fixed_factor("sys_pll2_166m", "sys=
-_pll2_out", 1, 6);
--	clks[IMX8MN_SYS_PLL2_200M] =3D imx_clk_fixed_factor("sys_pll2_200m", "sys=
-_pll2_out", 1, 5);
--	clks[IMX8MN_SYS_PLL2_250M] =3D imx_clk_fixed_factor("sys_pll2_250m", "sys=
-_pll2_out", 1, 4);
--	clks[IMX8MN_SYS_PLL2_333M] =3D imx_clk_fixed_factor("sys_pll2_333m", "sys=
-_pll2_out", 1, 3);
--	clks[IMX8MN_SYS_PLL2_500M] =3D imx_clk_fixed_factor("sys_pll2_500m", "sys=
-_pll2_out", 1, 2);
-+	/* SYS PLL2 fixed output */
-+	clks[IMX8MN_SYS_PLL2_50M_CG] =3D imx_clk_gate("sys_pll2_50m_cg", "sys_pll=
-2_bypass", base + 0x104, 27);
-+	clks[IMX8MN_SYS_PLL2_100M_CG] =3D imx_clk_gate("sys_pll2_100m_cg", "sys_p=
-ll2_bypass", base + 0x104, 25);
-+	clks[IMX8MN_SYS_PLL2_125M_CG] =3D imx_clk_gate("sys_pll2_125m_cg", "sys_p=
-ll2_bypass", base + 0x104, 23);
-+	clks[IMX8MN_SYS_PLL2_166M_CG] =3D imx_clk_gate("sys_pll2_166m_cg", "sys_p=
-ll2_bypass", base + 0x104, 21);
-+	clks[IMX8MN_SYS_PLL2_200M_CG] =3D imx_clk_gate("sys_pll2_200m_cg", "sys_p=
-ll2_bypass", base + 0x104, 19);
-+	clks[IMX8MN_SYS_PLL2_250M_CG] =3D imx_clk_gate("sys_pll2_250m_cg", "sys_p=
-ll2_bypass", base + 0x104, 17);
-+	clks[IMX8MN_SYS_PLL2_333M_CG] =3D imx_clk_gate("sys_pll2_333m_cg", "sys_p=
-ll2_bypass", base + 0x104, 15);
-+	clks[IMX8MN_SYS_PLL2_500M_CG] =3D imx_clk_gate("sys_pll2_500m_cg", "sys_p=
-ll2_bypass", base + 0x104, 13);
-+	clks[IMX8MN_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_pll2_bypa=
-ss", base + 0x104, 11);
-+
-+	clks[IMX8MN_SYS_PLL2_50M] =3D imx_clk_fixed_factor("sys_pll2_50m", "sys_p=
-ll2_50m_cg", 1, 20);
-+	clks[IMX8MN_SYS_PLL2_100M] =3D imx_clk_fixed_factor("sys_pll2_100m", "sys=
-_pll2_100m_cg", 1, 10);
-+	clks[IMX8MN_SYS_PLL2_125M] =3D imx_clk_fixed_factor("sys_pll2_125m", "sys=
-_pll2_125m_cg", 1, 8);
-+	clks[IMX8MN_SYS_PLL2_166M] =3D imx_clk_fixed_factor("sys_pll2_166m", "sys=
-_pll2_166m_cg", 1, 6);
-+	clks[IMX8MN_SYS_PLL2_200M] =3D imx_clk_fixed_factor("sys_pll2_200m", "sys=
-_pll2_200m_cg", 1, 5);
-+	clks[IMX8MN_SYS_PLL2_250M] =3D imx_clk_fixed_factor("sys_pll2_250m", "sys=
-_pll2_250m_cg", 1, 4);
-+	clks[IMX8MN_SYS_PLL2_333M] =3D imx_clk_fixed_factor("sys_pll2_333m", "sys=
-_pll2_333m_cg", 1, 3);
-+	clks[IMX8MN_SYS_PLL2_500M] =3D imx_clk_fixed_factor("sys_pll2_500m", "sys=
-_pll2_500m_cg", 1, 2);
- 	clks[IMX8MN_SYS_PLL2_1000M] =3D imx_clk_fixed_factor("sys_pll2_1000m", "s=
-ys_pll2_out", 1, 1);
-=20
- 	np =3D dev->of_node;
- 	base =3D devm_platform_ioremap_resource(pdev, 0);
- 	if (WARN_ON(IS_ERR(base))) {
-diff --git a/include/dt-bindings/clock/imx8mn-clock.h b/include/dt-bindings=
-/clock/imx8mn-clock.h
-index d7b201652f4c..0f2b8423ce1d 100644
---- a/include/dt-bindings/clock/imx8mn-clock.h
-+++ b/include/dt-bindings/clock/imx8mn-clock.h
-@@ -209,8 +209,25 @@
- #define IMX8MN_CLK_ARM				191
- #define IMX8MN_CLK_NAND_USDHC_BUS_RAWNAND_CLK	192
- #define IMX8MN_CLK_GPU_CORE_ROOT		193
- #define IMX8MN_CLK_GIC				194
-=20
--#define IMX8MN_CLK_END				195
-+#define IMX8MN_SYS_PLL1_40M_CG			195
-+#define IMX8MN_SYS_PLL1_80M_CG			196
-+#define IMX8MN_SYS_PLL1_100M_CG			197
-+#define IMX8MN_SYS_PLL1_133M_CG			198
-+#define IMX8MN_SYS_PLL1_160M_CG			199
-+#define IMX8MN_SYS_PLL1_200M_CG			200
-+#define IMX8MN_SYS_PLL1_266M_CG			201
-+#define IMX8MN_SYS_PLL1_400M_CG			202
-+#define IMX8MN_SYS_PLL2_50M_CG			203
-+#define IMX8MN_SYS_PLL2_100M_CG			204
-+#define IMX8MN_SYS_PLL2_125M_CG			205
-+#define IMX8MN_SYS_PLL2_166M_CG			206
-+#define IMX8MN_SYS_PLL2_200M_CG			207
-+#define IMX8MN_SYS_PLL2_250M_CG			208
-+#define IMX8MN_SYS_PLL2_333M_CG			209
-+#define IMX8MN_SYS_PLL2_500M_CG			210
-+
-+#define IMX8MN_CLK_END				211
-=20
- #endif
---=20
-2.17.1
-
+Regards,
+Markus
