@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C578EFA3728
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAB81FA372B
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:20:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BB252067B
-	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A20EA21928
+	for <linux-clk@archiver.kernel.org>; Wed, 16 Oct 2019 14:20:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K0NeTObn"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sBh6QYKg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405681AbfJPOB2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 16 Oct 2019 10:01:28 -0400
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50273 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2393750AbfJPOB2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 10:01:28 -0400
-Received: by mail-wm1-f68.google.com with SMTP id 5so3071951wmg.0;
-        Wed, 16 Oct 2019 07:01:26 -0700 (PDT)
+        id S2393950AbfJPOUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 16 Oct 2019 10:20:08 -0400
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40846 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2393943AbfJPOUH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 16 Oct 2019 10:20:07 -0400
+Received: by mail-lf1-f68.google.com with SMTP id f23so2142479lfk.7;
+        Wed, 16 Oct 2019 07:20:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5tkwolCFpRKx5qnqNxGR6We20ScAxiOW+QzsdK04jT4=;
-        b=K0NeTObnG71lXifvS94m4TId7eL58ETa2T/GnPUYyqbCUBGXmDXHSPOKY6IYR/bF91
-         Qq0KQsRo1HOV6JDWiRhUmxITUnexlMjNH07gFq0AL6852pAnsw5tpRrms2uMDw1aH3AY
-         gnA0dvo9MujjDYxmytQ0G0TuVQdobcSzybGhJ2J8YhGLdjL9lMCDEjvKECmBsjzl6tx7
-         ry8aZs38gaX4lcix+cNWHPx3fMNr4ufNCh1YSMsrjOgWufpA7saBAxcc6FfA/VSYdYKP
-         eRyVSGWBU5v/qSMPJzXeUuljW5QEi18nRpENWRIwRRn/ixwH+WoVyEkMA2Ww2R99p26q
-         Grbg==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+5GVeXUsNTKRD7nI80WxY7NGPp8wxmIdfIuqXlentqk=;
+        b=sBh6QYKgOgCu4gMfkvOftsEMGSteOjetdyaAI1OsXKNFyHllDHwkEPyOP/YI7MzDFS
+         i9XUsdtl5lJ2avwDtXmahDALdD6jKGKFn76Bl0AfISFgvTYxidpJMRZIEDoAbx0g8mTW
+         6cqNbqTHEG/7635IgoQyzRdRWE3zhdGK2q2iLO6oPrfEt+7lfjK9OQxWLYIdMRDpB09t
+         uQU3Wj3VfXAuotv/V54LRQMtvNlve9U8l7aHgTXJN3H1/uWKtJTtpmrLHXZC4soU7mpP
+         f2YPytDFjxsDqa6v2I/dMSppH05wrW2i5H7piRr35zKdyKP9yBR2/d7/oyhiuBQugmYE
+         2e8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5tkwolCFpRKx5qnqNxGR6We20ScAxiOW+QzsdK04jT4=;
-        b=SeI2DOQxOvO89orNryvKpub1yF9ubLRmJ4g9pQMKDV87cy4/8wj2U3roqwY4gvCjRM
-         XHxeuwl1M1cuGv5f2No5EY6LMFxVGVdNI7J1wn7nPdG3JWUSqEo8JwN4w59jmzcG6nFj
-         QKlLhyKbUPbKR9xObWRF3RmtWRnxaOCHaJwiGdYUrBvQ/+Pxji8t27X4gw3F03LLd7vE
-         Dz43t+D8SKuUOzSzF6qNjqTqlS/+Shz5ji6P78nD3SZEVh1fAgj7UoTRetRYRYE3p+2w
-         blNZRH8LB704BoVCaATRNl3jGOPdikcJnjDn7aTu9sXBRaYLwKuqT10KjOnW2A0OrWsb
-         ytdw==
-X-Gm-Message-State: APjAAAUZ3fwdnUaNOfur4/O7H/KpkXPgFLcxCY1M1Mf6meQafzUbO1mg
-        4v0YcQ+85dVmUilCB3NvmoI=
-X-Google-Smtp-Source: APXvYqz3fMJ3QIVHe9ejYBeq2FoKIVagsDUuq0HAJ3lgCd2RE2GNj2OiV2pOouE2sFRNYWoY0LhsSg==
-X-Received: by 2002:a05:600c:1088:: with SMTP id e8mr3633948wmd.27.1571234485934;
-        Wed, 16 Oct 2019 07:01:25 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id p85sm2930949wme.23.2019.10.16.07.01.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 16 Oct 2019 07:01:22 -0700 (PDT)
-Date:   Wed, 16 Oct 2019 16:01:21 +0200
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+5GVeXUsNTKRD7nI80WxY7NGPp8wxmIdfIuqXlentqk=;
+        b=aZpddXhm4o8f3KejeYTsulOKZouOj1UN3zyNUmsgmSqmHF1Yey7lTl8m12AsUWiZgm
+         R5Zv2ouGd1NKUb0jinnIh8WqGv/2xWq/pWWrCpjRx19fuNZoPL5Vjt601+BXdHnvfqaF
+         4l6qvKTtpcFvwJ5+NvxVj1XRsNxSiwGMHUvj6LYi29bsKubCjxF10qnGsPKXsulYgvcZ
+         VFRcWMm//4sMlRS6WRAW6iUjZ3SK9pldgmd50sRtV4yOdTaH+jf5anU8ZLvzyZnsv4xY
+         Dj7UszM93LZvJfBwmHea5kvcZHC5JtMMOc7/MAquYAEKbKoNj1Y/sB2YmfPqaJgvurTP
+         Ai6g==
+X-Gm-Message-State: APjAAAUXZy2Tf3piUZKA3CRx+ofaDMOj9nKvHHQX0M624bSEihaMiQp6
+        +uFj+j6hoGZYgPbpabSTqcYd6W8t
+X-Google-Smtp-Source: APXvYqycvQtQ48h3Trd2F44847GlKWuh2TeLS/AO5nfxSjr3wgNCA7+XnvoMdGiGkUg6rDTL3w9aYQ==
+X-Received: by 2002:ac2:4650:: with SMTP id s16mr1212030lfo.32.1571235603749;
+        Wed, 16 Oct 2019 07:20:03 -0700 (PDT)
+Received: from [192.168.2.145] ([94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id c21sm6429120lff.61.2019.10.16.07.20.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 16 Oct 2019 07:20:03 -0700 (PDT)
+Subject: Re: [PATCH v1 00/17] NVIDIA Tegra20 CPUFreq driver major update
+To:     Thierry Reding <thierry.reding@gmail.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         Jonathan Hunter <jonathanh@nvidia.com>,
         Peter De Schrijver <pdeschrijver@nvidia.com>,
@@ -71,81 +71,59 @@ Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
         linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/17] NVIDIA Tegra20 CPUFreq driver major update
-Message-ID: <20191016140121.GA1862769@ulmo>
 References: <20191015211618.20758-1-digetx@gmail.com>
  <20191016052716.yipztnpg7bcuzhfn@vireshk-i7>
  <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
+ <20191016140121.GA1862769@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <d0cf9fca-eb95-1986-4c2d-ae3cded324b0@gmail.com>
+Date:   Wed, 16 Oct 2019 17:20:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
-Content-Disposition: inline
-In-Reply-To: <8cf055a3-57fd-c275-9e74-a9fb5d284866@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <20191016140121.GA1862769@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+16.10.2019 17:01, Thierry Reding пишет:
+> On Wed, Oct 16, 2019 at 04:16:27PM +0300, Dmitry Osipenko wrote:
+>> 16.10.2019 08:27, Viresh Kumar пишет:
+>>> On 16-10-19, 00:16, Dmitry Osipenko wrote:
+>>>> Hello,
+>>>>
+>>>> This series moves intermediate-clk handling from tegra20-cpufreq into
+>>>> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
+>>>> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+>>>> of the box. All boards need to adopt CPU OPPs in their device-trees in
+>>>> order to get cpufreq support. This series adds OPPs only to selective
+>>>> boards because there is assumption in a current device-trees that CPU
+>>>> voltage is set for 1GHz freq and this won't work for those CPUs that
+>>>> can go over 1GHz and thus require voltage regulators to be set up for
+>>>> voltage scaling support (CC'ed Marcel for Toradex boards). We could
+>>>> probably add delete-node for OPPs over 1GHz if there are not actively
+>>>> maintained boards.
+>>>
+>>> How do you want to get these patches merged ? Can I just pick the cpufreq bits
+>>> alone ?
+>>>
+>>
+>> The cpufreq bits strictly depend on the clk patches and the regulators
+>> coupler/balancer series. Hence all patches in this series should collect
+>> acks from relevant maintainers and then Thierry will pick up the
+>> patchsets in a correct order via tegra tree, at least that's my vision.
+>>
+>> Thierry, are you okay with that approach?
+> 
+> Works for me. I already have a set of clock patches that I'd like to
+> merge via the Tegra tree because of a runtime dependency, so it'd be
+> easy to apply these on top of that.
 
---fdj2RfSjLxBAspz7
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Awesome, thank you very much!
 
-On Wed, Oct 16, 2019 at 04:16:27PM +0300, Dmitry Osipenko wrote:
-> 16.10.2019 08:27, Viresh Kumar =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > On 16-10-19, 00:16, Dmitry Osipenko wrote:
-> >> Hello,
-> >>
-> >> This series moves intermediate-clk handling from tegra20-cpufreq into
-> >> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
-> >> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
-> >> of the box. All boards need to adopt CPU OPPs in their device-trees in
-> >> order to get cpufreq support. This series adds OPPs only to selective
-> >> boards because there is assumption in a current device-trees that CPU
-> >> voltage is set for 1GHz freq and this won't work for those CPUs that
-> >> can go over 1GHz and thus require voltage regulators to be set up for
-> >> voltage scaling support (CC'ed Marcel for Toradex boards). We could
-> >> probably add delete-node for OPPs over 1GHz if there are not actively
-> >> maintained boards.
-> >=20
-> > How do you want to get these patches merged ? Can I just pick the cpufr=
-eq bits
-> > alone ?
-> >=20
->=20
-> The cpufreq bits strictly depend on the clk patches and the regulators
-> coupler/balancer series. Hence all patches in this series should collect
-> acks from relevant maintainers and then Thierry will pick up the
-> patchsets in a correct order via tegra tree, at least that's my vision.
->=20
-> Thierry, are you okay with that approach?
-
-Works for me. I already have a set of clock patches that I'd like to
-merge via the Tegra tree because of a runtime dependency, so it'd be
-easy to apply these on top of that.
-
-Thierry
-
---fdj2RfSjLxBAspz7
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl2nIq8ACgkQ3SOs138+
-s6GKPg//XbFKPZrgCH3A4swB3MFOPVjalYqN2cVsMYZH/R73AJYSjqvMPnj44UM1
-ecM/LKBu0RC/xZ9C6mU2DDKEbRDDLDSVIrNLhjh9tulMl267gWIqyCE5tqrkVnjy
-3S50icwwg+Sxs4mgdnox6ZoPPWiCQrfq4bvv+03OMMZqgXISEKzegvOETGziIhaL
-FANIUKkpZ8Kv+9+egwIcjCM32611IfpNAub/KuRpmZghvib1SV/SxgpLZ1hc3jND
-ZkpzmUmAuwZbB/sco/f17FlfZ16+cIRE5D0NSlWH1cTt9YHfhuD1Rv/o4C9HLHly
-rpXCJC/WHmevNz7RqheqKwXMc8ixqTcWeNoRpKFDiYfscGB0rR73uzmTMlRXdbch
-JDD+Xa5BYBZrneP6GfIVHdouiDD3DhPkHoDvXdmyWmnrpZwQG6465b4+TAgEpR/o
-uXmaYn4HtjGic6mYpbPUopYCg5awM7u4Of4PQdJLZcDI45UJzlpNVTXMS+pRpbkZ
-YHPbcvPDL+jRE9Jnbl/rxHu+KQV/UmmKV5JPIEyoQKSaVkw/cFnXSyqARqaWds56
-QJ2vZ7kZ2O08MkWzMamVcVqbdx8U1FX//09377bHHFbWhRsrAMcAX6keNq7hz7ZM
-/a2zZszFLhQnisBXpX9RMUW37jiFYFn4rZYFM1feQZ/E+rtvIJ8=
-=td2z
------END PGP SIGNATURE-----
-
---fdj2RfSjLxBAspz7--
+Viresh, then only acks to the patches related to cpufreq driver are
+needed from you for this series.
