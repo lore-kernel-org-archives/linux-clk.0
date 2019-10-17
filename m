@@ -2,113 +2,83 @@ Return-Path: <SRS0=WJPE=YK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EED55ECE58E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA7F3FA372A
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D146521835
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACBE220869
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:53:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409134AbfJQKvz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Oct 2019 06:51:55 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:42446 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730498AbfJQKvz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Oct 2019 06:51:55 -0400
-X-Greylist: delayed 902 seconds by postgrey-1.27 at vger.kernel.org; Thu, 17 Oct 2019 06:51:53 EDT
-X-AuditID: c0a8fbf4-199ff70000001fa6-ab-5da844423d90
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 3C.E8.08102.24448AD5; Thu, 17 Oct 2019 12:36:50 +0200 (CEST)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Thu, 17 Oct 2019 12:36:45 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>
-CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
- BD70528 driver
-Thread-Topic: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
- BD70528 driver
-Thread-Index: AQHVhNCZAuXq65juYU207wWeSYVtU6dee5aAgAAGywA=
-Date:   Thu, 17 Oct 2019 10:36:44 +0000
-Message-ID: <a1aa91f74b41033fed4a7106247f48f9b9f78bd9.camel@fi.rohmeurope.com>
-References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <9ccc83f3dfd0fd0dc8178adf41b52115f960c45a.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191017101225.GB3125@piout.net>
-In-Reply-To: <20191017101225.GB3125@piout.net>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D169F61A87AB4D42B380287D302510DF@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S2405959AbfJQKxz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Oct 2019 06:53:55 -0400
+Received: from imap1.codethink.co.uk ([176.9.8.82]:52131 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389929AbfJQKxz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Oct 2019 06:53:55 -0400
+Received: from [167.98.27.226] (helo=rainbowdash.codethink.co.uk)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1iL3Pi-0002GS-6V; Thu, 17 Oct 2019 11:53:50 +0100
+Received: from ben by rainbowdash.codethink.co.uk with local (Exim 4.92.2)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1iL3Ph-00026m-KM; Thu, 17 Oct 2019 11:53:49 +0100
+From:   "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>
+To:     linux-kernel@lists.codethink.co.uk
+Cc:     "Ben Dooks (Codethink)" <ben.dooks@codethink.co.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
+Subject: [PATCH] clk: rockchip: make clk_half_divider_ops static
+Date:   Thu, 17 Oct 2019 11:53:48 +0100
+Message-Id: <20191017105348.8061-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrAJsWRmVeSWpSXmKPExsVyYMXvTbpOLitiDaZ+07JYcvEqu0X7u2Xs
-        Fl/mnmKxmPrwCZvF/CPnWC26T29htbi9dQOLxf2vRxktvl3pYLKY8mc5k8XHnnusFpvn/2G0
-        uLxrDpvF1jfrGC2Orb7CZrH0+kUmizlLT7BYXDzlanH31FE2i9a9R9gt/l3byOIg6rFm3hpG
-        j/c3Wtk95q2p9tg56y67x6ZVnWwed67tYfM4fmM7k8f0eT+ZPFas/s7u8XmTXABXFLdNUmJJ
-        WXBmep6+XQJ3xpd5K1kLXvFW9N5oZG5g3MPbxcjJISFgItG58SpbFyMXh5DANUaJ5c8fs4Ik
-        hAROMEocvq7fxcjBwSZgI9F1kx0kLCLgLDHvfBsLSD2zwCQOiSuzzjCDJIQFoiT6mp8wQxRF
-        S9ycMokVwraSOLLuFhuIzSKgKrH6Ux8TiM0r4CfRcmsyK8RioF2LZjYygyzjFNCTWL0gGaSG
-        UUBWorPhHVg9s4C4xKZn31khjhaQWLLnPDOELSrx8vE/qLiSxN6fD1lAxjALaEqs36UP0eog
-        0dt1jQXCVpSY0v2QHeIEQYmTM5+wTGAUm4VkwyyE7llIumch6Z6FpHsBI+sqRoncxMyc9MSS
-        VEO9otRSvaL8jFwglZyfu4kRkmK+7GD8f8jzECMTB+MhRkkOJiVR3s/rlscK8SXlp1RmJBZn
-        xBeV5qQWH2KU4GBWEuGd37IkVog3JbGyKrUoHyYlzcGiJM6r/nBirJAAyK7s1NSC1CKYrAwH
-        h5IE7yqHFbFCgkWp6akVaZk5JQhpJg5OkOFcUiLFqXkpqUWJpSUZ8aDkEV8MTB8gKR6gveLO
-        QO28xQWJuUBRiNZTjNocE17OXcTMcWTu0kXMQix5+XmpUuK8RxyBSgVASjNK8+AWvWIU52BU
-        EuZtBBnEA8w2cHNeAa1gAlrxXnk5yIqSRISUVANjW+PKQJcf8kf3mcZt3Ddj3V6GnXfPOHJ2
-        xXOVFB+W+fSgU2kG8/m4A7cml3W67m+pcFZ818jDsZbb2Kc4QsDY6fS+H8X1BdrB3kIGnrZn
-        WA/Ypuk8uNt48jvHuiuu/S4qF5bL3Bd+75e0NPplwpttES189+sMtd1qow9W70vOYiuLXnDv
-        5FQlluKMREMt5qLiRADrac888wMAAA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gQWxleGFuZHJlLA0KDQpUaGFua3MgZm9yIHF1aWNrIGNoZWNrISBJJ2xsIGJlIG9mZiBm
-b3IgdGhlIHJlc3Qgb2YgdGhlIHdlZWsgYnV0IEkgd2lsbA0KcmUtd29yayB0aGlzIHBhdGNoIGF0
-IG5leHQgd2VlayA6KSBJIGFncmVlIHdpdGggeW91IHJlZ2FyZGluZyBtb3N0IG9mDQp0aGUgY29t
-bWVudHMuDQoNCj4gPiArDQo+ID4gKw0KPiA+ICsvKg0KPiA+ICsgKiBSVEMgZGVmaW5pdGlvbnMg
-c2hhcmVkIGJldHdlZW4NCj4gPiArICoNCj4gPiArICogQkQ3MDUyOA0KPiA+ICsgKiBhbmQgQkQ3
-MTgyOA0KPiA+ICsgKi8NCj4gPiArDQo+ID4gKyNkZWZpbmUgUk9ITV9CRDFfTUFTS19SVENfU0VD
-CQkweDdmDQo+ID4gKyNkZWZpbmUgUk9ITV9CRDFfTUFTS19SVENfTUlOVVRFCTB4N2YNCj4gPiAr
-I2RlZmluZSBST0hNX0JEMV9NQVNLX1JUQ19IT1VSXzI0SAkweDgwDQo+ID4gKyNkZWZpbmUgUk9I
-TV9CRDFfTUFTS19SVENfSE9VUl9QTQkweDIwDQo+ID4gKyNkZWZpbmUgUk9ITV9CRDFfTUFTS19S
-VENfSE9VUgkJMHgzZg0KPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX0RBWQkJMHgzZg0K
-PiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tfUlRDX1dFRUsJCTB4MDcNCj4gPiArI2RlZmluZSBS
-T0hNX0JEMV9NQVNLX1JUQ19NT05USAkJMHgxZg0KPiA+ICsjZGVmaW5lIFJPSE1fQkQxX01BU0tf
-UlRDX1lFQVIJCTB4ZmYNCj4gPiArI2RlZmluZSBST0hNX0JEMV9NQVNLX0FMTV9FTgkJMHg3DQo+
-ID4gKw0KPiANCj4gQWxsIHRoYXQgcmVuYW1pbmcgaXMgZGlzdHJhY3RpbmcgYW5kIHVzZWxlc3Mu
-IFBsZWFzZSByZXN1Ym1pdCB3aXRob3V0DQo+IHJlbmFtaW5nIGRlZmluZXMsIHN0cnVjdHMgYW5k
-IGZ1bmN0aW9ucyB0byBtYWtlIGl0IGVhc2llciB0byByZXZpZXcuDQoNCkkgd291bGQgcHJlZmVy
-IHJlbmFtaW5nIGJlY2F1c2UgaXQgbWFrZXMgaXQgY2xlYXJseSB2aXNpYmxlIHdoaWNoDQpkZWZp
-bmVzL3N0cnVjdHMvZnVuY3Rpb25zIGFyZSBjb21tb24gZm9yIGJvdGggUE1JQ3MgYW5kIHdoaWNo
-IGFyZSBQTUlDDQpzcGVjaWZpYy4gQnV0IEkgcmVhbGx5IHVuZGVyc3RhbmQgdGhlIHByb2JsZW0g
-b2Ygc3BvdHRpbmcgcmVhbCBjaGFuZ2VzLg0KV291bGQgaXQgYmUgT2sgaWYgSSBkaWQgcmVuYW1p
-bmcgaW4gc2VwYXJhdGUgcGF0Y2ggd2hpY2ggZG9lcyBub3QgYnJpbmcNCmluIGFueSBvdGhlciBj
-aGFuZ2VzIC0gYW5kIHRoZW4gdGhlIGZ1bmN0aW9uYWwgY2hhbmdlcyBpbiBzZXBhcmF0ZQ0KcGF0
-Y2g/DQoNCkJlc3QgUmVnYXJkcw0KCU1hdHRpIFZhaXR0aW5lbg0K
+The clk_half_divider_ops is not used outside or declared
+outside of drivers/clk/rockchip/clk-half-divider.c so make
+it static to avoid the following warning:
+
+drivers/clk/rockchip/clk-half-divider.c:142:22: warning: symbol 'clk_half_divider_ops' was not declared. Should it be static?
+
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: Heiko Stuebner <heiko@sntech.de>
+Cc: linux-clk@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: linux-rockchip@lists.infradead.org
+---
+ drivers/clk/rockchip/clk-half-divider.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/clk/rockchip/clk-half-divider.c b/drivers/clk/rockchip/clk-half-divider.c
+index ba9f00dc9740..b333fc28c94b 100644
+--- a/drivers/clk/rockchip/clk-half-divider.c
++++ b/drivers/clk/rockchip/clk-half-divider.c
+@@ -139,12 +139,11 @@ static int clk_half_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return 0;
+ }
+ 
+-const struct clk_ops clk_half_divider_ops = {
++static const struct clk_ops clk_half_divider_ops = {
+ 	.recalc_rate = clk_half_divider_recalc_rate,
+ 	.round_rate = clk_half_divider_round_rate,
+ 	.set_rate = clk_half_divider_set_rate,
+ };
+-EXPORT_SYMBOL_GPL(clk_half_divider_ops);
+ 
+ /**
+  * Register a clock branch.
+-- 
+2.23.0
+
