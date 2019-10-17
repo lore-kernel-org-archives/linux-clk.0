@@ -2,73 +2,124 @@ Return-Path: <SRS0=WJPE=YK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EC63ECE58E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 17:47:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8385CECE58E
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 17:48:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D4721A49
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 17:47:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60FA221835
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 17:48:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571334445;
-	bh=8r2YwG+DenZby2ZUvPTts7WqqdZOYQmD4o4TPljS79I=;
+	s=default; t=1571334507;
+	bh=v34jWqxmNeAMOoNfEOFlbq2+WSKHjXcMGhvRy6ZMeig=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=EYULlMUV0//cYGM8/D+/aU1/Mm9sr27ppSNLe9dmMtOj25xGvtPpXUQMXpEGZ9IXC
-	 Gc7w1pRVCT/bv4pnlpbS1aRZbrJaALLmIsNmOxKiYMA08HjG75cu+CmEAYotFnN8Zz
-	 Y2x4STTWSKeaINWbCtX960bzXolnwc9yPfZlySv8=
+	b=Fx9I1HCDf8/F38IRyEx5P1AVMhW1fBt53XKFAmgpkEj6EbrH9Cl6CB8PbDz+ALyrN
+	 e4/rchuZaiA4Ak2SolgyzO+3/sLlhULiQ5Cku07kdkYhPKPkRP+9tPdwwgcbZ4OqqJ
+	 zoQVPkzKAhXt1raNulT4Dl9BZxowHZcxreRDnflY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2441117AbfJQRrY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Oct 2019 13:47:24 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46122 "EHLO mail.kernel.org"
+        id S2437176AbfJQRsW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Oct 2019 13:48:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47148 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2441112AbfJQRrY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 17 Oct 2019 13:47:24 -0400
+        id S2437169AbfJQRsV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 17 Oct 2019 13:48:21 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8024521D7A;
-        Thu, 17 Oct 2019 17:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F08422089C;
+        Thu, 17 Oct 2019 17:48:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571334443;
-        bh=8r2YwG+DenZby2ZUvPTts7WqqdZOYQmD4o4TPljS79I=;
+        s=default; t=1571334501;
+        bh=v34jWqxmNeAMOoNfEOFlbq2+WSKHjXcMGhvRy6ZMeig=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=oLaaEaM5fGQf2+URdUFblo2vhSbAVaESNQ1f/mmfid8b8DIkMqM/x3x/tmgTxUy+9
-         ezOMijxmHrTo+wmkZlYPN85fWgLo3kTe7k30PTiESJVklTLXLJE0hVpmmoA9yYjSY9
-         zobaaM8ygU1Fvh+DDsHl4JqcAWs+FXd/i0cdErLk=
+        b=M262+xKAyWHA0QeAIq39nDeoMvMpkBRJ6TbbsDN/MDmB4cd9yD90JsNNrxuEY5arz
+         uXHFuLaJGR2Sfw3uBWNd775l1T0L5DfcHX2dKE0HQnIB+FRr8bsvdWlkd5jSlZNEqM
+         AuZS6lW8VkEDJWWEBWlqhsbkz8rROA031xEABvQo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5f1ca3bfc45e268f7f9f6e091ba13b8103fb4304.1571314830.git.amit.kucheria@linaro.org>
-References: <cover.1571314830.git.amit.kucheria@linaro.org> <5f1ca3bfc45e268f7f9f6e091ba13b8103fb4304.1571314830.git.amit.kucheria@linaro.org>
+In-Reply-To: <20191016122343.GM2654@vkoul-mobl>
+References: <20190917091623.3453-1-vkoul@kernel.org> <20190917161000.DAFF3206C2@mail.kernel.org> <20191016122343.GM2654@vkoul-mobl>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Zhang Rui <rui.zhang@intel.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, daniel.lezcano@linaro.org,
-        edubezval@gmail.com, ilina@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sudeep.holla@arm.com, tdas@codeaurora.org, viresh.kumar@linaro.org
-Cc:     linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] clk: qcom: Initialise clock drivers earlier
+To:     Vinod Koul <vkoul@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
 User-Agent: alot/0.8.1
-Date:   Thu, 17 Oct 2019 10:47:22 -0700
-Message-Id: <20191017174723.8024521D7A@mail.kernel.org>
+Date:   Thu, 17 Oct 2019 10:48:20 -0700
+Message-Id: <20191017174820.F08422089C@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Amit Kucheria (2019-10-17 05:27:37)
-> Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-> can have earlier access to cpufreq during booting.
+Quoting Vinod Koul (2019-10-16 05:23:43)
+> Hi Steve,
 >=20
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> ---
+> Looks like I missed replying to this one, apologies!
+>=20
+> On 17-09-19, 09:09, Stephen Boyd wrote:
+> > Quoting Vinod Koul (2019-09-17 02:16:23)
+> > > The initial upstreaming of SM8150 GCC driver missed few clock so add
+> > > them up now.
+> > >=20
+> > > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > > ---
+> >=20
+> > Should have some sort of fixes tag?
+>=20
+> Not really, the drivers to use these clks are not upstream so we dont
+> miss it yet
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Ok.
 
-Makes me sad again.
+>=20
+> >=20
+> > >  drivers/clk/qcom/gcc-sm8150.c | 172 ++++++++++++++++++++++++++++++++=
+++
+> > >  1 file changed, 172 insertions(+)
+> > >=20
+> > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8=
+150.c
+> > > index 12ca2d14797f..13d4d14a5744 100644
+> > > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk =
+=3D {
+> > >         },
+> > >  };
+> > > =20
+> > > +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
+> > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> >=20
+> > Why skip?
+>=20
+> I will explore and add comments for that
+>=20
+> > > +       .clkr =3D {
+> > > +               .enable_reg =3D 0x52004,
+> > > +               .enable_mask =3D BIT(15),
+> > > +               .hw.init =3D &(struct clk_init_data){
+> > > +                       .name =3D "gcc_gpu_gpll0_clk_src",
+> > > +                       .parent_hws =3D (const struct clk_hw *[]){
+> > > +                               &gpll0.clkr.hw },
+> > > +                       .num_parents =3D 1,
+> > > +                       .flags =3D CLK_SET_RATE_PARENT,
+> > > +                       .ops =3D &clk_branch2_ops,
+> > > +               },
+> > > +       },
+> > > +};
+> > > +
+> > > +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
+> > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> >=20
+> > Why skip?
+> >=20
+
+Any answer from the explorations?
 
