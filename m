@@ -2,130 +2,110 @@ Return-Path: <SRS0=WJPE=YK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A844ECE58E
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:31:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CAB9ECE58E
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239FA21D7A
-	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:31:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iC2Af2Y4"
+	by mail.kernel.org (Postfix) with ESMTP id 4964021848
+	for <linux-clk@archiver.kernel.org>; Thu, 17 Oct 2019 10:49:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501993AbfJQKbQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 17 Oct 2019 06:31:16 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45546 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2501989AbfJQKbQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Oct 2019 06:31:16 -0400
-Received: by mail-pl1-f196.google.com with SMTP id u12so907822pls.12
-        for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2019 03:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=yAYxsDoF1xODxjQtRc8reB4aVCGjGyEgdApmFBnl6Wc=;
-        b=iC2Af2Y46Q48FdvGdaNCTJQWCORwnw78D049tRe8+wBCpljt9U7Qn95yg0fi6nJ24v
-         HRH1hHOymiUJtnG/81nWV1WdomOj9Vb5eo+tknLXOXhbCPWwSJ1O85eOb6ZLWBfxZx73
-         nm6axiRp9TDykYVuVJT1+hVIe9CWVmg4T2pn7qlImdrTFS/00QfgYALSKkffpn3OebN4
-         lRBjq1HBr7CvUfdKaUTJnsEwJwCkZtDjPSpUt6I5Qclgo2OoGIEqD83dOUQDpiI2KEtm
-         Gpo34FDCc4VGpwC73SzpFoFB3PgrToTo5wPbgo2tW7x4MD9ZE0RrD9GMRN+ad20Tg1gR
-         sA5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=yAYxsDoF1xODxjQtRc8reB4aVCGjGyEgdApmFBnl6Wc=;
-        b=Z7mI00KXX1zENDeAfYwAcFwZo2sycYw2AggZaYxHwCUe6GVlB2JxvM4D15SrsqJsON
-         J3URwP7+X0DxUfFyvmui6QV/OYN55ak2RAF1FDjk8MuDyopWKO2SmPIdngSJm8VT7z8Y
-         WMC0pPJSzTRDWUdPXiSLCzLc+yucXcT3TpxEdojj4pCYgvU6Ob6h7EnmU2e7PbzH92su
-         Ul56HQ2KlwA6/4xxPB8WgoOliGT8mDn4EuR2I4Ewt8WYpVge/+jjxD+PiYz+4Fuf2/UL
-         eNkemRemRL4LyUqLhhAgALcjhnWrV32KIGMcdXRSOBumx4wu1wXUIhvAfmCh0goL6vtb
-         Ax3w==
-X-Gm-Message-State: APjAAAW8BSNWQVgcEZlBdPvtyM4/Mf+eIqedDPWwKdDwbK1fnC4U6dA7
-        4YDnYrKf7znm0ecg+qrgwi5Kqw==
-X-Google-Smtp-Source: APXvYqyNIoDQlqqbRpfGllvxFaO8itQeEnNEO04t0hj2VGtP81j+uZneDao+xFrh7G83yp4YDjih9g==
-X-Received: by 2002:a17:902:222:: with SMTP id 31mr3300158plc.169.1571308274634;
-        Thu, 17 Oct 2019 03:31:14 -0700 (PDT)
-Received: from localhost ([49.248.54.231])
-        by smtp.gmail.com with ESMTPSA id ep10sm14892051pjb.2.2019.10.17.03.31.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 17 Oct 2019 03:31:14 -0700 (PDT)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
-        sudeep.holla@arm.com, bjorn.andersson@linaro.org,
-        edubezval@gmail.com, agross@kernel.org, tdas@codeaurora.org,
-        swboyd@chromium.org, ilina@codeaurora.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Zhang Rui <rui.zhang@intel.com>
-Cc:     linux-clk@vger.kernel.org
-Subject: [PATCH v2 4/5] clk: qcom: Initialise clock drivers earlier
-Date:   Thu, 17 Oct 2019 16:00:53 +0530
-Message-Id: <5f1ca3bfc45e268f7f9f6e091ba13b8103fb4304.1571307382.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1571307382.git.amit.kucheria@linaro.org>
-References: <cover.1571307382.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1571307382.git.amit.kucheria@linaro.org>
-References: <cover.1571307382.git.amit.kucheria@linaro.org>
+        id S2405189AbfJQKtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 17 Oct 2019 06:49:03 -0400
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40285 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2404935AbfJQKtD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 17 Oct 2019 06:49:03 -0400
+X-Originating-IP: 86.207.98.53
+Received: from localhost (aclermont-ferrand-651-1-259-53.w86-207.abo.wanadoo.fr [86.207.98.53])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 57C6360007;
+        Thu, 17 Oct 2019 10:49:00 +0000 (UTC)
+Date:   Thu, 17 Oct 2019 12:48:59 +0200
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+Subject: Re: [RFC PATCH 09/13] mfd: rtc: support RTC on ROHM BD71828 with
+ BD70528 driver
+Message-ID: <20191017104859.GC3125@piout.net>
+References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
+ <9ccc83f3dfd0fd0dc8178adf41b52115f960c45a.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191017101225.GB3125@piout.net>
+ <a1aa91f74b41033fed4a7106247f48f9b9f78bd9.camel@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a1aa91f74b41033fed4a7106247f48f9b9f78bd9.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-can have earlier access to cpufreq during booting.
+On 17/10/2019 10:36:44+0000, Vaittinen, Matti wrote:
+> Hello Alexandre,
+> 
+> Thanks for quick check! I'll be off for the rest of the week but I will
+> re-work this patch at next week :) I agree with you regarding most of
+> the comments.
+> 
+> > > +
+> > > +
+> > > +/*
+> > > + * RTC definitions shared between
+> > > + *
+> > > + * BD70528
+> > > + * and BD71828
+> > > + */
+> > > +
+> > > +#define ROHM_BD1_MASK_RTC_SEC		0x7f
+> > > +#define ROHM_BD1_MASK_RTC_MINUTE	0x7f
+> > > +#define ROHM_BD1_MASK_RTC_HOUR_24H	0x80
+> > > +#define ROHM_BD1_MASK_RTC_HOUR_PM	0x20
+> > > +#define ROHM_BD1_MASK_RTC_HOUR		0x3f
+> > > +#define ROHM_BD1_MASK_RTC_DAY		0x3f
+> > > +#define ROHM_BD1_MASK_RTC_WEEK		0x07
+> > > +#define ROHM_BD1_MASK_RTC_MONTH		0x1f
+> > > +#define ROHM_BD1_MASK_RTC_YEAR		0xff
+> > > +#define ROHM_BD1_MASK_ALM_EN		0x7
+> > > +
+> > 
+> > All that renaming is distracting and useless. Please resubmit without
+> > renaming defines, structs and functions to make it easier to review.
+> 
+> I would prefer renaming because it makes it clearly visible which
+> defines/structs/functions are common for both PMICs and which are PMIC
+> specific. But I really understand the problem of spotting real changes.
+> Would it be Ok if I did renaming in separate patch which does not bring
+> in any other changes - and then the functional changes in separate
+> patch?
+> 
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
----
- drivers/clk/qcom/clk-rpmh.c   | 2 +-
- drivers/clk/qcom/gcc-qcs404.c | 2 +-
- drivers/clk/qcom/gcc-sdm845.c | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+No, unless you can guarantee that all future PMICs from rohm matching
+the wildcard will use this driver.
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 96a36f6ff667..20d4258f125b 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -487,7 +487,7 @@ static int __init clk_rpmh_init(void)
- {
- 	return platform_driver_register(&clk_rpmh_driver);
- }
--subsys_initcall(clk_rpmh_init);
-+core_initcall(clk_rpmh_init);
- 
- static void __exit clk_rpmh_exit(void)
- {
-diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
-index bd32212f37e6..9b0c4ce2ef4e 100644
---- a/drivers/clk/qcom/gcc-qcs404.c
-+++ b/drivers/clk/qcom/gcc-qcs404.c
-@@ -2855,7 +2855,7 @@ static int __init gcc_qcs404_init(void)
- {
- 	return platform_driver_register(&gcc_qcs404_driver);
- }
--subsys_initcall(gcc_qcs404_init);
-+core_initcall(gcc_qcs404_init);
- 
- static void __exit gcc_qcs404_exit(void)
- {
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 95be125c3bdd..49dcff1af2db 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3628,7 +3628,7 @@ static int __init gcc_sdm845_init(void)
- {
- 	return platform_driver_register(&gcc_sdm845_driver);
- }
--subsys_initcall(gcc_sdm845_init);
-+core_initcall(gcc_sdm845_init);
- 
- static void __exit gcc_sdm845_exit(void)
- {
 -- 
-2.17.1
-
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
