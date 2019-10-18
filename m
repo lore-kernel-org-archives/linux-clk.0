@@ -2,98 +2,92 @@ Return-Path: <SRS0=xutx=YL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D46D5CA9EA2
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 06:03:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F810CA9EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 07:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A75A3222C5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 06:03:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VKMuvXcv"
+	by mail.kernel.org (Postfix) with ESMTP id 641B0222BD
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 07:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2407027AbfJRGDt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Oct 2019 02:03:49 -0400
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:36205 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392090AbfJRGDt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 02:03:49 -0400
-Received: by mail-pl1-f196.google.com with SMTP id j11so2328889plk.3
-        for <linux-clk@vger.kernel.org>; Thu, 17 Oct 2019 23:03:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=BSveiQwGviuEcR4ypuqkpKzuxRmA0+9+mStZkF3vzJg=;
-        b=VKMuvXcvvGP/FnfbPGGafDTQqvKt58hQ9JwZCL1mJZYoO07SWVM8V0Ao+3xvwMFVC0
-         z1szGW4AdBK1zXzKQzlZbjQoBRZaBONjgZQimxNr41BG9T6IeKw/9hkmO9Sqta1bGlzT
-         Q5XB32NRXux2YSw9RcXoriHC/Vjhn0qOZ/ISgp0wWDGqbKienY0ipkB7LDONW5/T+jrE
-         4dDadRRatqlloFFaGg1WkY05ct4gjFWBfmecZUPSM/VFh7F775hKspvL+1fr7c+1BDyX
-         65nI2n4AtKgw8neyAPTA5SpITv6wQmqQqH4QW2Ln9qa/tgsBr895fpJSiQd2CDvuAKdx
-         7Hzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=BSveiQwGviuEcR4ypuqkpKzuxRmA0+9+mStZkF3vzJg=;
-        b=tiRjbTnAC9xCpPcMrVDMARgu0KUZhPsdGF/83IZpxb8bDRD91sHLzq/HUQXgdadiZs
-         6QnKXXYeUbySy9aph1sz0o67enoRrv6ivpY6drsRUJNR9kooC9b7ARkrplhmROWSP1id
-         Ss3u14ube4PnD2EXji5p35+sjAqkWMRUwaT1s4tC5fYS7SnrqWaJ6flOn9WsramWD3lU
-         2flPhjsyU8k5TdavGp8tpAYLjq+X9WwS2dUdB+1u0F4E+zHW3z2ZwLeBAfyVN59MSIRP
-         G8ShRjGirQ3fSbiNwaGzSOn4um74DkqRlZJiQqRdI6aOQqNYfTwLUo6chL+C+IfmwwJi
-         /5CQ==
-X-Gm-Message-State: APjAAAVS+nZVCU/HJYSJJGUO0epUie3kUluNtQlBnG/3/H1STLcnVvFR
-        ogCxP2kVhP88A/WgGUGG6P3gMQ==
-X-Google-Smtp-Source: APXvYqwbsGOB5qsGmti/XnQXORN6qlEqa1yTSNYtvcSbP0L/Gu/byaAudi/utDrAhgQkCMHVo3tdpA==
-X-Received: by 2002:a17:902:b08f:: with SMTP id p15mr7786915plr.229.1571378628231;
-        Thu, 17 Oct 2019 23:03:48 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id 199sm5541685pfv.152.2019.10.17.23.03.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 17 Oct 2019 23:03:47 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 11:33:45 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Zhang Rui <rui.zhang@intel.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, daniel.lezcano@linaro.org,
-        edubezval@gmail.com, ilina@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        sudeep.holla@arm.com, tdas@codeaurora.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] clk: qcom: Initialise clock drivers earlier
-Message-ID: <20191018060345.wjflngfdnqa3gbsu@vireshk-i7>
-References: <cover.1571314830.git.amit.kucheria@linaro.org>
- <5f1ca3bfc45e268f7f9f6e091ba13b8103fb4304.1571314830.git.amit.kucheria@linaro.org>
- <20191017174723.8024521D7A@mail.kernel.org>
+        id S2442084AbfJRHOb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Oct 2019 03:14:31 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:43763 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728008AbfJRHOb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 03:14:31 -0400
+Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 18 Oct 2019
+ 15:14:38 +0800
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 0/3] add Amlogic A1 clock controller driver
+Date:   Fri, 18 Oct 2019 15:14:22 +0800
+Message-ID: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191017174723.8024521D7A@mail.kernel.org>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain
+X-Originating-IP: [10.28.8.25]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 17-10-19, 10:47, Stephen Boyd wrote:
-> Quoting Amit Kucheria (2019-10-17 05:27:37)
-> > Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-> > can have earlier access to cpufreq during booting.
-> > 
-> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > ---
-> 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> 
-> Makes me sad again.
+add support for Amlogic A1 clock driver, the clock includes 
+three parts: peripheral clocks, pll clocks, CPU clocks.
+sys pll and CPU clocks will be sent in next patch.
 
-I am wondering why it makes you sad ? :)
+Changes since v1 at [1]:
+-place A1 config alphabetically
+-add actual reason for RO ops, CLK_IS_CRITICAL, CLK_IGNORE_UNUSED
+-separate the driver into two driver: peripheral and pll driver
+-delete CLK_IGNORE_UNUSED flag for pwm b/c/d/e/f clock, dsp clock
+-delete the change in Kconfig.platforms, address to Kevin alone
+-remove the useless comments
+-modify the meson pll driver to support A1 PLLs
+
+[1] https://lkml.kernel.org/r/1569411888-98116-1-git-send-email-jian.hu@amlogic.com
+
+Jian Hu (3):
+  dt-bindings: clock: meson: add A1 clock controller bindings
+  clk: meson: add support for A1 PLL clock ops
+  clk: meson: a1: add support for Amlogic A1 clock driver
+
+ .../devicetree/bindings/clock/amlogic,a1-clkc.yaml |  143 ++
+ drivers/clk/meson/Kconfig                          |   10 +
+ drivers/clk/meson/Makefile                         |    1 +
+ drivers/clk/meson/a1-pll.c                         |  345 +++
+ drivers/clk/meson/a1-pll.h                         |   56 +
+ drivers/clk/meson/a1.c                             | 2264 ++++++++++++++++++++
+ drivers/clk/meson/a1.h                             |  120 ++
+ drivers/clk/meson/clk-pll.c                        |   66 +-
+ drivers/clk/meson/clk-pll.h                        |    1 +
+ include/dt-bindings/clock/a1-clkc.h                |   98 +
+ include/dt-bindings/clock/a1-pll-clkc.h            |   16 +
+ 11 files changed, 3114 insertions(+), 6 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+ create mode 100644 drivers/clk/meson/a1-pll.c
+ create mode 100644 drivers/clk/meson/a1-pll.h
+ create mode 100644 drivers/clk/meson/a1.c
+ create mode 100644 drivers/clk/meson/a1.h
+ create mode 100644 include/dt-bindings/clock/a1-clkc.h
+ create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
 
 -- 
-viresh
+1.9.1
+
