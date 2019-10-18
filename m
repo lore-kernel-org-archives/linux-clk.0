@@ -2,118 +2,125 @@ Return-Path: <SRS0=xutx=YL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B441CA9EA0
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 10:12:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32CC0CA9EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F71C222C5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 10:12:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CIsGHCGt";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CIsGHCGt"
+	by mail.kernel.org (Postfix) with ESMTP id 15EF3222C5
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 11:01:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633285AbfJRKMr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Oct 2019 06:12:47 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:43986 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2633218AbfJRKMq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 06:12:46 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id B9D6C61136; Fri, 18 Oct 2019 10:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571393565;
-        bh=qQyWt4N0PfQUuGUcmF8g2Od8g0wOfG0DWFA70BBTCvo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CIsGHCGtt4S1ecanP4P6hDIBg+YH8NvjI30y/CUS8vOnTnkcQAZBglme1aes6Xsv3
-         Am4W4oMUe61fHqvjDyGrZ1WmRBcQXNVHOUleW78iuzm/ZHhlUHTgTB6M+TmvXLZnao
-         2JZKrM1zgn4qn2GDMcbmbOLLSYet61oCltoqzYuM=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2521361019;
-        Fri, 18 Oct 2019 10:12:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1571393565;
-        bh=qQyWt4N0PfQUuGUcmF8g2Od8g0wOfG0DWFA70BBTCvo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CIsGHCGtt4S1ecanP4P6hDIBg+YH8NvjI30y/CUS8vOnTnkcQAZBglme1aes6Xsv3
-         Am4W4oMUe61fHqvjDyGrZ1WmRBcQXNVHOUleW78iuzm/ZHhlUHTgTB6M+TmvXLZnao
-         2JZKrM1zgn4qn2GDMcbmbOLLSYet61oCltoqzYuM=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2521361019
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 3/3] clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
-Date:   Fri, 18 Oct 2019 15:39:24 +0530
-Message-Id: <1571393364-32697-4-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
-References: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
+        id S2633621AbfJRLBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Oct 2019 07:01:10 -0400
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:60122 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2633618AbfJRLBH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 07:01:07 -0400
+Received: from ramsan ([84.194.98.4])
+        by baptiste.telenet-ops.be with bizsmtp
+        id Ez142100H05gfCL01z14uo; Fri, 18 Oct 2019 13:01:04 +0200
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iLQ0G-0005q3-IE; Fri, 18 Oct 2019 13:01:04 +0200
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iLPF3-0006t5-Kd; Fri, 18 Oct 2019 12:12:17 +0200
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.5
+Date:   Fri, 18 Oct 2019 12:12:12 +0200
+Message-Id: <20191018101212.26432-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for clock RPMh driver to vote for ARC and VRM managed
-clock resources.
+	Hi Mike, Stephen,
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 96a36f6..7301c77 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -391,6 +391,24 @@ static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
- 	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
- };
+  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
 
-+static struct clk_hw *sc7180_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-+	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
-+	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
-+	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-+	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-+	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-+	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
-+	.clks = sc7180_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sc7180_rpmh_clocks),
-+};
-+
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -471,6 +489,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
- 	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
-+	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.5-tag1
+
+for you to fetch changes up to 56278c8fcb71874d591907d654272d511ce3597c:
+
+  clk: renesas: r8a774b1: Add TMU clock (2019-10-07 14:29:53 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.5
+
+  - Add support for the new RZ/G2N (r8a774b1) SoC,
+  - Remove R-Car Gen2 legacy DT clock support,
+  - Improve arithmetic divisions on R-Car Gen2 and Gen3,
+  - Improve R-Car Gen3 SD clock handling,
+  - Minor cleanups.
+
+Note that the new Renesas RZ/G2N DT Binding Definitions are shared by
+driver and DT source files, and thus included in 3 pull requests:
+  - "[GIT PULL] clk: renesas: Updates for v5.5] (for clk),
+  - "[GIT PULL 3/5] Renesas ARM64 DT updates for v5.5" (for arm-soc),
+  - "[GIT PULL 4/5] Renesas driver updates for v5.5" (for arm-soc).
+
+If you prefer to merge this dependency explicitly, please pull tag
+renesas-r8a774b1-dt-binding-defs-tag first.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (5):
+      dt-bindings: power: Add r8a774b1 SYSC power domain definitions
+      dt-bindings: clk: Add r8a774b1 CPG Core Clock Definitions
+      dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1 binding
+      clk: renesas: cpg-mssr: Add r8a774b1 support
+      clk: renesas: r8a774b1: Add TMU clock
+
+Geert Uytterhoeven (6):
+      clk: renesas: Remove R-Car Gen2 legacy DT clock support
+      clk: renesas: rcar-gen2: Improve arithmetic divisions
+      clk: renesas: rcar-gen3: Improve arithmetic divisions
+      clk: renesas: rcar-gen3: Avoid double table iteration in SD .set_rate()
+      clk: renesas: rcar-gen3: Absorb cpg_sd_clock_calc_div()
+      clk: renesas: rcar-gen3: Loop to find best rate in cpg_sd_clock_round_rate()
+
+Markus Elfring (1):
+      clk: renesas: mstp: Delete unnecessary kfree() in cpg_mstp_clocks_init()
+
+ .../devicetree/bindings/clock/renesas,cpg-mssr.txt |  10 +-
+ drivers/clk/renesas/Kconfig                        |  25 +-
+ drivers/clk/renesas/Makefile                       |   2 +-
+ drivers/clk/renesas/clk-mstp.c                     |   4 +-
+ drivers/clk/renesas/clk-rcar-gen2.c                | 457 ---------------------
+ drivers/clk/renesas/r8a774b1-cpg-mssr.c            | 327 +++++++++++++++
+ drivers/clk/renesas/rcar-gen2-cpg.c                |   6 +-
+ drivers/clk/renesas/rcar-gen3-cpg.c                |  37 +-
+ drivers/clk/renesas/renesas-cpg-mssr.c             |   6 +
+ drivers/clk/renesas/renesas-cpg-mssr.h             |   1 +
+ include/dt-bindings/clock/r8a774b1-cpg-mssr.h      |  57 +++
+ include/dt-bindings/power/r8a774b1-sysc.h          |  26 ++
+ 12 files changed, 449 insertions(+), 509 deletions(-)
+ delete mode 100644 drivers/clk/renesas/clk-rcar-gen2.c
+ create mode 100644 drivers/clk/renesas/r8a774b1-cpg-mssr.c
+ create mode 100644 include/dt-bindings/clock/r8a774b1-cpg-mssr.h
+ create mode 100644 include/dt-bindings/power/r8a774b1-sysc.h
+
+Gr{oetje,eeting}s,
+
+						Geert
+
 --
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
