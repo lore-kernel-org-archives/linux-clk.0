@@ -2,343 +2,132 @@ Return-Path: <SRS0=xutx=YL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E4ECCA9EA0
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 07:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDA1CA9EA3
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 08:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA852089C
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 07:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74BBE222D4
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 08:52:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i0VuWL93"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393754AbfJRHRh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Oct 2019 03:17:37 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:43763 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2504551AbfJRHRh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 03:17:37 -0400
-Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 18 Oct 2019
- 15:14:38 +0800
-From:   Jian Hu <jian.hu@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH v2 1/3] dt-bindings: clock: meson: add A1 clock controller bindings
-Date:   Fri, 18 Oct 2019 15:14:23 +0800
-Message-ID: <1571382865-41978-2-git-send-email-jian.hu@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
-References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.28.8.25]
+        id S2442225AbfJRIwL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Oct 2019 04:52:11 -0400
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32930 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2442218AbfJRIwL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 04:52:11 -0400
+Received: by mail-pf1-f195.google.com with SMTP id q10so3470296pfl.0
+        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2019 01:52:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=8Twp36GSbpZi8uCaMU+5CBUJfogrOLDIK7KeRjSvPeo=;
+        b=i0VuWL93/QAsy39njpz8hRgcLisEdpr+3KDPnSKzQ/awFW4pHcUg0UjlGu+xlAklGX
+         //w7RDxTTEbHiCZlDWhV8fb2xW0/nKfpvZFQEz4XoqB3WFvF2FB6oUjasGQAbwH6uuC7
+         wfiPJkAgPr3nTCPj0QhLnvy1e5YyA5e5r8alBv0c8CFRU3tb4JYL9W1sSMGL3gKa5tto
+         M+9LCFG2NwFaMw4SZt7mfiJZbqHXDmvybREgVDtVUsQMo1py7X4RVn9D4AgVNnfCuo42
+         KCPQ7glVcGEcJRD3uZfsOtnkXZR+Z8o3tP9Y2D6jmwnX9QJMpc28t0Pi8FdyhfamqMzl
+         zNFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=8Twp36GSbpZi8uCaMU+5CBUJfogrOLDIK7KeRjSvPeo=;
+        b=jjqxS/Hyf9bBc1WCKBkwlS6R9gw/u8tEsdlBq+8c9TYtXweSiMRWzeoSphbJfjE5Dr
+         5ujgsms8cf70vUGihzhfJFE5FuocqBiqOj8FXWIJrcPN004lV9Y0wH6f8IcJxcmJ9uDp
+         UoI+7XEW37Xi/OI8SPMRr299r5VuoCD9/ulbYXnqCD40s/4nirTOFHQq8BXSyyNEgHyY
+         vc0E38blomDKfw+Ov6OM/ZghkS+aTj42JPTg8gFQiQA4NTHb8ok9z/QzmuAQDKqzp25a
+         QXH119QP6lpp0oAXBCnkIcsoezHz3vQ093UuOfklVO/q8aESDtuMrnY5Vt/gqsl9a+cO
+         ZBTA==
+X-Gm-Message-State: APjAAAWQq7nb2512aprSDWoKpTORiaVjsM4kFSKDNxHEs0pV0IlLmNZo
+        PRZ+HqAncBO32VdRRiPy61ZDgw==
+X-Google-Smtp-Source: APXvYqwdiN3EAKBoUU6BThGO5LVz4hi1jwIiB7pRL30zoDY6vs7gW8L2LmbVKtj6UUm9OUN0OCFjsg==
+X-Received: by 2002:aa7:86c2:: with SMTP id h2mr5445157pfo.0.1571388730332;
+        Fri, 18 Oct 2019 01:52:10 -0700 (PDT)
+Received: from localhost ([49.248.178.134])
+        by smtp.gmail.com with ESMTPSA id y7sm5886971pfn.142.2019.10.18.01.52.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 18 Oct 2019 01:52:09 -0700 (PDT)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        daniel.lezcano@linaro.org, viresh.kumar@linaro.org,
+        sudeep.holla@arm.com, bjorn.andersson@linaro.org,
+        edubezval@gmail.com, agross@kernel.org, tdas@codeaurora.org,
+        swboyd@chromium.org, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Amit Kucheria <amit.kucheria@verdurent.com>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Zhang Rui <rui.zhang@intel.com>
+Cc:     linux-clk@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-pm@vger.kernel.org
+Subject: [PATCH v4 0/6] Initialise thermal framework and cpufreq earlier during boot
+Date:   Fri, 18 Oct 2019 14:21:57 +0530
+Message-Id: <cover.1571387352.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the documentation to support Amlogic A1 clock driver,
-and add A1 clock controller bindings.
+Changes since v3:
+- Init schedutil governor earlier too
+- Simplified changes to thermal_init() error path
+- Collects Acks
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- .../devicetree/bindings/clock/amlogic,a1-clkc.yaml | 143 +++++++++++++++++++++
- include/dt-bindings/clock/a1-clkc.h                |  98 ++++++++++++++
- include/dt-bindings/clock/a1-pll-clkc.h            |  16 +++
- 3 files changed, 257 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
- create mode 100644 include/dt-bindings/clock/a1-clkc.h
- create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+Changes since v2:
+- Missed one patch when posting v2. Respinning.
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-new file mode 100644
-index 0000000..b382eebe
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
-@@ -0,0 +1,143 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+%YAML 1.2
-+---
-+$id: "http://devicetree.org/schemas/clock/amlogic,a1-clkc.yaml#"
-+$schema: "http://devicetree.org/meta-schemas/core.yaml#"
-+
-+title: Amlogic Meson A/C serials Clock Control Unit Device Tree Bindings
-+
-+maintainers:
-+  - Neil Armstrong <narmstrong@baylibre.com>
-+  - Jerome Brunet <jbrunet@baylibre.com>
-+  - Jian Hu <jian.hu@jian.hu.com>
-+
-+description: |+
-+  The clock controller node should be the child of a syscon node with the
-+  required property:
-+
-+  - compatible:         Should be one of the following:
-+                        "amlogic,meson-a-analog-sysctrl", "syscon", "simple-mfd"
-+                        "amlogic,meson-a-periphs-sysctrl", "syscon", "simple-mfd"
-+
-+  Refer to the the bindings described in
-+  Documentation/devicetree/bindings/mfd/syscon.txt
-+
-+properties:
-+  "#clock-cells":
-+    const: 1
-+  compatible:
-+    - enum:
-+        - amlogic,a1-periphs-clkc
-+        - amlogic,a1-pll-clkc
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    minItems: 2
-+    maxItems: 6
-+
-+  clock-names:
-+    minItems: 2
-+    maxItems: 6
-+
-+required:
-+  - "#clock-cells"
-+  - compatible
-+  - reg
-+  - clocks
-+  - clock-names
-+
-+if:
-+  properties:
-+    compatible:
-+      enum:
-+        - amlogic,a1-periphs-clkc
-+
-+then:
-+  properties:
-+    clocks:
-+      minItems: 2
-+      maxItems: 2
-+    items:
-+     - description: fixed pll gate clock
-+     - description: hifi pll gate clock
-+
-+    clock-names:
-+      minItems: 2
-+      maxItems: 2
-+      items:
-+        - const: xtal_fixpll
-+        - const: xtal_hifipll
-+
-+else:
-+  if:
-+    properties:
-+      compatible:
-+        const: amlogic,a1-pll-clkc
-+
-+  then:
-+    properties:
-+      clocks:
-+        minItems: 6
-+        maxItems: 6
-+        items:
-+         - description: Input fixed pll div2
-+         - description: Input fixed pll div3
-+         - description: Input fixed pll div5
-+         - description: Input fixed pll div7
-+         - description: Periph Hifi pll
-+         - description: Input Oscillator (usually at 24MHz)
-+
-+      clock-names:
-+        minItems: 6
-+        maxItems: 6
-+        items:
-+         - const: fclk_div2
-+         - const: fclk_div3
-+         - const: fclk_div5
-+         - const: fclk_div7
-+         - const: hifi_pll
-+         - const: xtal
-+
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    analog: system-controller@0 {
-+        compatible = "amlogic,meson-a-analog-sysctrl",
-+                     "simple-mfd", "syscon";
-+        reg = <0 0x7c00 0 0x21c>;
-+
-+        clkc_pll: pll-clock-controller {
-+                compatible = "amlogic,a1-pll-clkc";
-+                #clock-cells = <1>;
-+                clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
-+                         <&clkc_periphs CLKID_XTAL_HIFIPLL>;
-+                clock-names = "xtal_fixpll", "xtal_hifipll";
-+        };
-+    };
-+
-+  - |
-+    periphs: system-controller@1 {
-+        compatible = "amlogic,meson-a-periphs-sysctrl",
-+                     "simple-mfd", "syscon";
-+        reg = <0 0x800 0 0x104>;
-+
-+        clkc_periphs: periphs-clock-controller {
-+                compatible = "amlogic,a1-periphs-clkc";
-+                #clock-cells = <1>;
-+                clocks = <&clkc_pll CLKID_FCLK_DIV2>,
-+                        <&clkc_pll CLKID_FCLK_DIV3>,
-+                        <&clkc_pll CLKID_FCLK_DIV5>,
-+                        <&clkc_pll CLKID_FCLK_DIV7>,
-+                        <&clkc_pll CLKID_HIFI_PLL>,
-+                        <&xtal>;
-+                clock-names = "fclk_div2", "fclk_div3", "fclk_div5",
-+                              "fclk_div7", "hifi_pll", "xtal";
-+        };
-+    };
-diff --git a/include/dt-bindings/clock/a1-clkc.h b/include/dt-bindings/clock/a1-clkc.h
-new file mode 100644
-index 0000000..1ba0112
---- /dev/null
-+++ b/include/dt-bindings/clock/a1-clkc.h
-@@ -0,0 +1,98 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __A1_CLKC_H
-+#define __A1_CLKC_H
-+
-+#define CLKID_XTAL_FIXPLL			1
-+#define CLKID_XTAL_USB_PHY			2
-+#define CLKID_XTAL_USB_CTRL			3
-+#define CLKID_XTAL_HIFIPLL			4
-+#define CLKID_XTAL_SYSPLL			5
-+#define CLKID_XTAL_DDS				6
-+#define CLKID_SYS_CLK				7
-+#define CLKID_CLKTREE				8
-+#define CLKID_RESET_CTRL			9
-+#define CLKID_ANALOG_CTRL			10
-+#define CLKID_PWR_CTRL				11
-+#define CLKID_PAD_CTRL				12
-+#define CLKID_SYS_CTRL				13
-+#define CLKID_TEMP_SENSOR			14
-+#define CLKID_AM2AXI_DIV			15
-+#define CLKID_SPICC_B				16
-+#define CLKID_SPICC_A				17
-+#define CLKID_CLK_MSR				18
-+#define CLKID_AUDIO				19
-+#define CLKID_JTAG_CTRL				20
-+#define CLKID_SARADC				21
-+#define CLKID_PWM_EF				22
-+#define CLKID_PWM_CD				23
-+#define CLKID_PWM_AB				24
-+#define CLKID_CEC				25
-+#define CLKID_I2C_S				26
-+#define CLKID_IR_CTRL				27
-+#define CLKID_I2C_M_D				28
-+#define CLKID_I2C_M_C				29
-+#define CLKID_I2C_M_B				30
-+#define CLKID_I2C_M_A				31
-+#define CLKID_ACODEC				32
-+#define CLKID_OTP				33
-+#define CLKID_SD_EMMC_A				34
-+#define CLKID_USB_PHY				35
-+#define CLKID_USB_CTRL				36
-+#define CLKID_SYS_DSPB				37
-+#define CLKID_SYS_DSPA				38
-+#define CLKID_DMA				39
-+#define CLKID_IRQ_CTRL				40
-+#define CLKID_NIC				41
-+#define CLKID_GIC				42
-+#define CLKID_UART_C				43
-+#define CLKID_UART_B				44
-+#define CLKID_UART_A				45
-+#define CLKID_SYS_PSRAM				46
-+#define CLKID_RSA				47
-+#define CLKID_CORESIGHT				48
-+#define CLKID_AM2AXI_VAD			49
-+#define CLKID_AUDIO_VAD				50
-+#define CLKID_AXI_DMC				51
-+#define CLKID_AXI_PSRAM				52
-+#define CLKID_RAMB				53
-+#define CLKID_RAMA				54
-+#define CLKID_AXI_SPIFC				55
-+#define CLKID_AXI_NIC				56
-+#define CLKID_AXI_DMA				57
-+#define CLKID_CPU_CTRL				58
-+#define CLKID_ROM				59
-+#define CLKID_PROC_I2C				60
-+#define CLKID_DSPA_SEL				61
-+#define CLKID_DSPB_SEL				62
-+#define CLKID_DSPA_EN_DSPA			63
-+#define CLKID_DSPA_EN_NIC			64
-+#define CLKID_DSPB_EN_DSPB			65
-+#define CLKID_DSPB_EN_NIC			66
-+#define CLKID_RTC_CLK				67
-+#define CLKID_CECA_32K				68
-+#define CLKID_CECB_32K				69
-+#define CLKID_24M				70
-+#define CLKID_12M				71
-+#define CLKID_FCLK_DIV2_DIVN			72
-+#define CLKID_GEN				73
-+#define CLKID_SARADC_SEL			74
-+#define CLKID_SARADC_CLK			75
-+#define CLKID_PWM_A				76
-+#define CLKID_PWM_B				77
-+#define CLKID_PWM_C				78
-+#define CLKID_PWM_D				79
-+#define CLKID_PWM_E				80
-+#define CLKID_PWM_F				81
-+#define CLKID_SPICC				82
-+#define CLKID_TS				83
-+#define CLKID_SPIFC				84
-+#define CLKID_USB_BUS				85
-+#define CLKID_SD_EMMC				86
-+#define CLKID_PSRAM				87
-+#define CLKID_DMC				88
-+
-+#endif /* __A1_CLKC_H */
-diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
-new file mode 100644
-index 0000000..58eae23
---- /dev/null
-+++ b/include/dt-bindings/clock/a1-pll-clkc.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
-+/*
-+ * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
-+ */
-+
-+#ifndef __A1_PLL_CLKC_H
-+#define __A1_PLL_CLKC_H
-+
-+#define CLKID_FIXED_PLL				1
-+#define CLKID_FCLK_DIV2				6
-+#define CLKID_FCLK_DIV3				7
-+#define CLKID_FCLK_DIV5				8
-+#define CLKID_FCLK_DIV7				9
-+#define CLKID_HIFI_PLL				10
-+
-+#endif /* __A1_PLL_CLKC_H */
+Changes since v1:
+- Completely get rid of netlink support in the thermal framework.
+- This changes the early init patch to a single line - change to
+  core_initcall. Changed authorship of patch since it is nothing like the
+  original. Lina, let me know if you feel otherwise.
+- I've tested to make sure that the qcom-cpufreq-hw driver continues to
+  work correctly as a module so this won't impact Android's GKI plans.
+- Collected Acks
+
+Device boot needs to be as fast as possible while keeping under the thermal
+envelope. Now that thermal framework is built-in to the kernel, we can
+initialize it earlier to enable thermal mitigation during boot.
+
+We also need the cpufreq HW drivers to be initialised earlier to act as the
+cooling devices. This series only converts over the qcom-hw driver to
+initialize earlier but can be extended to other platforms as well.
+
+Amit Kucheria (6):
+  thermal: Remove netlink support
+  thermal: Initialize thermal subsystem earlier
+  cpufreq: Initialise the governors in core_initcall
+  cpufreq: Initialize cpufreq-dt driver earlier
+  clk: qcom: Initialise clock drivers earlier
+  cpufreq: qcom-hw: Move driver initialisation earlier
+
+ .../driver-api/thermal/sysfs-api.rst          |  26 +----
+ drivers/clk/qcom/clk-rpmh.c                   |   2 +-
+ drivers/clk/qcom/gcc-qcs404.c                 |   2 +-
+ drivers/clk/qcom/gcc-sdm845.c                 |   2 +-
+ drivers/cpufreq/cpufreq-dt-platdev.c          |   2 +-
+ drivers/cpufreq/cpufreq_conservative.c        |   2 +-
+ drivers/cpufreq/cpufreq_ondemand.c            |   2 +-
+ drivers/cpufreq/cpufreq_performance.c         |   2 +-
+ drivers/cpufreq/cpufreq_powersave.c           |   2 +-
+ drivers/cpufreq/cpufreq_userspace.c           |   2 +-
+ drivers/cpufreq/qcom-cpufreq-hw.c             |   2 +-
+ drivers/thermal/thermal_core.c                | 103 +-----------------
+ include/linux/thermal.h                       |  11 --
+ kernel/sched/cpufreq_schedutil.c              |   2 +-
+ 14 files changed, 19 insertions(+), 143 deletions(-)
+
 -- 
-1.9.1
+2.17.1
 
