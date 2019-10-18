@@ -2,103 +2,86 @@ Return-Path: <SRS0=xutx=YL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DDECA9EA1
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 09:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D472CA9EA1
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 10:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5658B222C5
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 09:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0434121D7C
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 10:09:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wltgfp1p"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="OhEGjNNA";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QZ/4Si57"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2633096AbfJRJwQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Oct 2019 05:52:16 -0400
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45057 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2632961AbfJRJwP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 05:52:15 -0400
-Received: by mail-pg1-f195.google.com with SMTP id r1so3061910pgj.12
-        for <linux-clk@vger.kernel.org>; Fri, 18 Oct 2019 02:52:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=wtCCjDsxUW2f7hUMgiF/lhUDNP+eblATwyQXoaxQPFk=;
-        b=Wltgfp1pRzOmQKZFcjNgOouPgbf2eUSJYhtjDuyyXGv7vJSSTSu0vasW7MlUVNQTD4
-         DeUcGwnAuqncGmxTmK2pKrlyRmn2SaKZluwJgIsstd4tmo4Vk9DMmBentAt5U5YDtAd5
-         8oL6KTKrp/xc3aYZktEd41bBr+uDOfEerZcF3muup6By6oAx6YybLI67W1ItqWsSww9N
-         JapikXnjK6jl1K6iIoAOJzvXJd1g2oWH4ut503hPMwgdAQF5b0aBq+7ZJBshy/ve1bNu
-         +/UBnOGIqMlUwL4p5rKeanvouZNG7xCoAjlhqPru9+xZG+VJ8deIr1WsqcJval7/LoQq
-         jKPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wtCCjDsxUW2f7hUMgiF/lhUDNP+eblATwyQXoaxQPFk=;
-        b=mGjGNde1q823i7N4uEAITK0VPP2G6D0pDAQIxha1yDDEygz3zgNXgCQ/12Z/QEW/gc
-         Q4AtThegZ5fYyjnaAge9+8ZognKCIjUrvwGIuOzKzeQfTziBfQawrdzBk3SxqDKPvZjl
-         Uje0M7eh8ZgeAbejg4waZkNug3suzS/stt8ofh+WJ91gwU0IdQl1QCYxz+D1nRM9eDgG
-         3OxOwgNfxSSC5SCl4pBGk9YzMGxtOrAHx77WK5byEhS4arsPKKydGfN1aQJokynspED2
-         tboZgpYpt21L+qnIkNdCWF7wcl3WGiKasx2jWEUsoX2PdRV29S5xGxgRivvdJn3p3xn1
-         B+mA==
-X-Gm-Message-State: APjAAAU3uK6IbsjV8Lojc9RKPoT/HsXnwPQOzZRaHAXla0HPY/Rf7Ne7
-        vjwGE4ySo2yeiXjcW6pB0WOJ7Q==
-X-Google-Smtp-Source: APXvYqwrm9QohNHq0++rIl5Gykt4pMddHMa4LN9dNpYpqce8aMlV5KSJv4ChUb7fQ5cVJlnArIAL1A==
-X-Received: by 2002:a17:90a:fd8d:: with SMTP id cx13mr9965664pjb.66.1571392334920;
-        Fri, 18 Oct 2019 02:52:14 -0700 (PDT)
-Received: from localhost ([122.172.151.112])
-        by smtp.gmail.com with ESMTPSA id l184sm5575252pfl.76.2019.10.18.02.52.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 18 Oct 2019 02:52:14 -0700 (PDT)
-Date:   Fri, 18 Oct 2019 15:22:12 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Amit Kucheria <amit.kucheria@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        daniel.lezcano@linaro.org, sudeep.holla@arm.com,
-        bjorn.andersson@linaro.org, edubezval@gmail.com, agross@kernel.org,
-        tdas@codeaurora.org, swboyd@chromium.org, ilina@codeaurora.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Ben Segall <bsegall@google.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Mel Gorman <mgorman@suse.de>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 5/6] clk: qcom: Initialise clock drivers earlier
-Message-ID: <20191018095212.7hpherdgzxhqzqjz@vireshk-i7>
-References: <cover.1571387352.git.amit.kucheria@linaro.org>
- <a59321a1016de3f08098739b6db5d5190ac1c85c.1571387352.git.amit.kucheria@linaro.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a59321a1016de3f08098739b6db5d5190ac1c85c.1571387352.git.amit.kucheria@linaro.org>
-User-Agent: NeoMutt/20180716-391-311a52
+        id S2407948AbfJRKJi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Oct 2019 06:09:38 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:42746 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2407945AbfJRKJi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 06:09:38 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7856160DCF; Fri, 18 Oct 2019 10:09:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571393377;
+        bh=GnyW+zZ5E9Qp6Unvs/fu9z+p34r4HvU9EpUGbP/UdtY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=OhEGjNNA8KUNTP77pBgZROYPIHrD+HrzE1DdLr4J/aFRzB3TDaOKjPMGwAtugY3Xd
+         +oUuNK1lhuj1cdb/7rxhFGyx0VpsLi75EVhfaQnsElHroGQ0r3bpOEi/XHE6is56Py
+         PW0oSJJqpmjUKIdNuV/uqHnE5VaFBWlT52xRZ8Ro=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9679860AD1;
+        Fri, 18 Oct 2019 10:09:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1571393376;
+        bh=GnyW+zZ5E9Qp6Unvs/fu9z+p34r4HvU9EpUGbP/UdtY=;
+        h=From:To:Cc:Subject:Date:From;
+        b=QZ/4Si57vvVV2Y9EKddzQeHoS3sFeoYUMM5rsYfi2GV0QXyZ20V3BKG7pb+2cpKYu
+         5jZJbfF4H7gB5nIDx8aZfa5G1rjr8AIaQmSQIqJ+Jo1aZvITV+8vuwfMm69dYUZlwY
+         BcjIBs+8MYANUfZW9oqyl1l4di99zgHCQ14ssQC8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9679860AD1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/3] Add support for RPMHCC for SC7180
+Date:   Fri, 18 Oct 2019 15:39:21 +0530
+Message-Id: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-10-19, 14:22, Amit Kucheria wrote:
-> Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-> can have earlier access to cpufreq during booting.
-> 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> ---
->  drivers/clk/qcom/clk-rpmh.c   | 2 +-
->  drivers/clk/qcom/gcc-qcs404.c | 2 +-
->  drivers/clk/qcom/gcc-sdm845.c | 2 +-
->  3 files changed, 3 insertions(+), 3 deletions(-)
+Update the Documentation binding of RPMHCC to YAML schemas.
+Add RPMH clocks required to be supported on SC7180.
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Taniya Das (3):
+  dt-bindings: clock: Add YAML schemas for the QCOM RPMHCC clock
+    bindings
+  dt-bindings: clock: Introduce RPMHCC bindings for SC7180
+  clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
 
--- 
-viresh
+ .../devicetree/bindings/clock/qcom,rpmh-clk.txt    | 27 ------------
+ .../devicetree/bindings/clock/qcom,rpmhcc.yaml     | 50 ++++++++++++++++++++
+ drivers/clk/qcom/clk-rpmh.c                        | 19 ++++++++
+ 3 files changed, 69 insertions(+), 27 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmh-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
