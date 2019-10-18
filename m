@@ -2,93 +2,69 @@ Return-Path: <SRS0=rIjt=YM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DATE_IN_PAST_12_24,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A834DCA9EAC
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 10:09:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E79F3CA9EAC
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 10:24:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 837E1222C2
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 10:09:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B28642082F
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 10:24:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="tLNICXL2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726144AbfJSKJz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Oct 2019 06:09:55 -0400
-Received: from mout.kundenserver.de ([212.227.17.10]:57501 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725283AbfJSKJy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Oct 2019 06:09:54 -0400
-Received: from mail-qk1-f175.google.com ([209.85.222.175]) by
- mrelayeu.kundenserver.de (mreue107 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Md66H-1hmA0q38lP-00aBTh; Sat, 19 Oct 2019 12:09:52 +0200
-Received: by mail-qk1-f175.google.com with SMTP id u184so7726616qkd.4;
-        Sat, 19 Oct 2019 03:09:50 -0700 (PDT)
-X-Gm-Message-State: APjAAAV6BC7+dJNdNnbp0uBhqhWjVJbpXA0P+NWDqHRQrLjjeNPea+9O
-        UsfK6mxzuQugSbt2MHqE8UxQN6gKkEIDC4IrnOw=
-X-Google-Smtp-Source: APXvYqxDnkD1LGxVOqOKBA1bv73+2FIM7aUPofN3DdgTjR6MZneEs/uqd6EIDns9KMja9p9yGzmHvgB/h9FVcJa5zrw=
-X-Received: by 2002:a37:a614:: with SMTP id p20mr4599817qke.352.1571479789607;
- Sat, 19 Oct 2019 03:09:49 -0700 (PDT)
-MIME-Version: 1.0
-References: <20191018154052.1276506-1-arnd@arndb.de> <803f6fa5-b929-007c-5302-4a2d5042241c@roeck-us.net>
-In-Reply-To: <803f6fa5-b929-007c-5302-4a2d5042241c@roeck-us.net>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Sat, 19 Oct 2019 12:09:33 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0t-P_w705z0BSXxzj8MmmKVCagLtidiP+NX51zGce0ag@mail.gmail.com>
-Message-ID: <CAK8P3a0t-P_w705z0BSXxzj8MmmKVCagLtidiP+NX51zGce0ag@mail.gmail.com>
-Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:JoUK9zIsRwlckwxRsQPyrjTR+CJ+e1NzjrnywlpJZpvLQsrki/O
- 6oqUixG3wGmHbC1gSpDeC2OejM6V4LXMb9u1x0OmYrMxGcagKms+P8T/tjhy15NahnZvLsx
- 1gNVUhsGYzHMtoVbEaqcMjalLGwbYPFfNThqwVnR8BgbXGDhRMK7Adn2Vavriz2ulAIvmZU
- H5PZHrbqDUGaqIhXvsl4Q==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:pA8x/njXmAI=:U9yaOvxfltjLDDMpfRuSsq
- 3HS+Uk5OMnTj7jXsSqT09WlnY5kJE4lyndiUAbmRhkwH8a1mpWaZtSeNW5l9XHblbovqqlFen
- I2hdy64SanS7+hdxQClxrj9MOTCMH+jQ/guAzqyyIS+ZJghWWRA96XK07WeYTSksO3Z3wi4PL
- oeUQfeMOmonDkSFZQJSU0pUDf5ibRuBWvHgYEqc4ZFCtQoMh4HxHg4DcDHz0GcvNIW8zWcUi+
- kGvUwPLgDOL+yFjxr4/A3kz9Dyp14ontGslHGkjqxAOAVjxv5J33fiBooNoR5GvtvGscuR2lq
- suA01emt1k4nZL14WT/4N/ifAN322ft1kJa84NI7AHbBVjq+Ty7vVxQJynTFU9qV2TtVeePTh
- z6LuoYpDlFdSQRZE9ZHsyb7Zbahb2icMEExmeS1b+ZHYjPQQSvKmuopKiOnFdVjBzVpbAs7Sq
- OWKgo9HdQ3faFXmP1ql0IgKuQZAqcUuGMxzZ3qQRC6iZ+w6Fjnw74/gf6IBz3WfI6QsztRmxr
- IChwQdXXDBnXtNhHmN5s+cYfz3SB5+3akBzydwjYiFDmkVYlrVsdsXPNkFi5WLrKvEs+jRXnT
- 7x949r2gXzMwOU6maKqn9s+IqzNassNQF5qaczd5/st4LlH7WfivxkcQH4ofJColsHPGPKZh8
- iktcGfmOnhb78/0TpIR8Pj7ulZJkGfkCzLvPJIWmyicG65izSidWtbu0o4peBVdS3AWBMLVL+
- RO1hs5zPp4BOBWIHL0DmrFqHNsNyUF9ne462ySkT6FJvnaVrgtoV5lzoQCIgWh5yfmbR3zfdh
- +cJJ58BOZyJDYKmZfk9jV62B7juGiiPu74mnB7POA41ONooMvzSSBTNUZFPGnif+VoMzuLyEz
- 8oK7rdh0sSaKcju6RlWA==
+        id S1725777AbfJSKYX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Oct 2019 06:24:23 -0400
+Received: from sender4-pp-o94.zoho.com ([136.143.188.94]:25470 "EHLO
+        sender4-pp-o94.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725616AbfJSKYW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Oct 2019 06:24:22 -0400
+X-Greylist: delayed 904 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Oct 2019 06:24:22 EDT
+ARC-Seal: i=1; a=rsa-sha256; t=1571479746; cv=none; 
+        d=zohomail.com; s=zohoarc; 
+        b=VYWEkVUxzQsMvEpvVJp6tvF1x3aj4gwASVCAIC1y9BSAduwHCOgufuaJmdAmxOAtsExv3XemkuC1dEBOnRU+zwfcPCgl861K2YEk7gyokcTqzZB/SWIvG/XHux8Fk0E9hMTQlgYqNV7ivzaGZMq3nlQfFaBQTizDgKBOp7zBdcw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+        t=1571479746; h=Cc:Date:From:Message-ID:Subject:To; 
+        bh=dvfTK6kVeJKRxeJGL61f1+aGjYpZxdw1hrHuyx+0Vcs=; 
+        b=GMvKYpo5rvJJg70Et6aU5X1aBDT24Q3h9HGyNhBMBcpBf+1rx2azJtg0mgLtAo8kddxX0XWu72e8VPDhG47gFmfdlxbWTR6a4iE2eiQX30OUdBq77Q5vmwkZrxGmDVbcUGwL3H9kh34wW2MRRCGy2Uzfpoqm+mol3TyfJ7wzIkM=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+        dkim=pass  header.i=zoho.com;
+        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
+        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
+DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
+  s=zapps768; d=zoho.com; 
+  h=from:to:cc:subject:date:message-id; 
+  b=TKWoavtXZ8e7ugaswr75mdJSrk8Rv7fFczhyYV8chR7WjhDOKD6lQHLIaFeAf9jRNRVtfzACj0QO
+    +qwghgRI2DNqA8iBVaZ5/nJrBqr5hMIFCG2E8ROeQrsjbaczHhdy  
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1571479746;
+        s=zm2019; d=zoho.com; i=zhouyanjie@zoho.com;
+        h=From:To:Cc:Subject:Date:Message-Id; l=128;
+        bh=dvfTK6kVeJKRxeJGL61f1+aGjYpZxdw1hrHuyx+0Vcs=;
+        b=tLNICXL2wdI88TP2i8QjwRS9WNFl9aLUcYWrmryrO/0V9MtgHFExfwbOEoaeglBl
+        md/XjmLYafs9nyFl7xgwtiWFhGAYkCs8gclRkfIPlVQ+fQYY3Qi/xH7R/EMmCAcj6lk
+        1X7OKWwzeTi7sd/ZVy4Zs3DqoN35qxz2axsivewg=
+Received: from localhost.localdomain (171.221.113.199 [171.221.113.199]) by mx.zohomail.com
+        with SMTPS id 1571479745260262.45412969470283; Sat, 19 Oct 2019 03:09:05 -0700 (PDT)
+From:   Zhou Yanjie <zhouyanjie@zoho.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, sboyd@kernel.org, mark.rutland@arm.com,
+        syq@debian.org, mturquette@baylibre.com, paul@crapouillou.net
+Subject: clk: X1000: Add support for the X1000.
+Date:   Sat, 19 Oct 2019 01:50:04 +0800
+Message-Id: <1571421006-12771-1-git-send-email-zhouyanjie@zoho.com>
+X-Mailer: git-send-email 2.7.4
+X-ZohoMailClient: External
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Oct 19, 2019 at 3:03 AM Guenter Roeck <linux@roeck-us.net> wrote:
-> On 10/18/19 8:40 AM, Arnd Bergmann wrote:
->
-> I don't get very far.
->
-> $ make-arm pxa_defconfig
-> arch/arm/Kconfig:677: can't open file "arch/arm/plat-pxa/Kconfig"
-> scripts/kconfig/Makefile:90: recipe for target 'pxa_defconfig' failed
+1.Add the clock bindings for X1000 from Ingenic.
+2.Add support for the clocks provided by the CGU in the
+  Ingenic X1000 SoC.
 
->
-> Did I pick the wrong tree ?
 
-It seems that one line got lost in a rebase and ended up in a different patch
-that was not part of the series. I updated the git tree now.
-
-        Arnd
