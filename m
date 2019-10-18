@@ -2,110 +2,142 @@ Return-Path: <SRS0=xutx=YL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2578ECA9EA9
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 19:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D015CCA9EA9
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 21:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00D7A222C3
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 19:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6370222C9
+	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 21:11:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RlF581TM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2437517AbfJRTc6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Oct 2019 15:32:58 -0400
-Received: from mout.kundenserver.de ([212.227.126.134]:37369 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2394807AbfJRTc6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 15:32:58 -0400
-Received: from mail-qk1-f179.google.com ([209.85.222.179]) by
- mrelayeu.kundenserver.de (mreue012 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1N5UoU-1hx1rB0p0k-016tR7; Fri, 18 Oct 2019 21:32:55 +0200
-Received: by mail-qk1-f179.google.com with SMTP id u184so6377750qkd.4;
-        Fri, 18 Oct 2019 12:32:54 -0700 (PDT)
-X-Gm-Message-State: APjAAAWOMUseeQAnmf5ePLjWA4QTqPmO0TGTh8vzYVIg+mSZ45wpLuT4
-        58u8s2senhYMMa3qH1GwOLEUY2VGgyDQeT6vYe0=
-X-Google-Smtp-Source: APXvYqzndIi4+lrEFsQAJTvDSAykrBEjXYWBlihPsFokm/QiIqztK3NntxmM4iVAVoSe7PNdrIRvDpgwbQhfLS5cKrs=
-X-Received: by 2002:a37:db0a:: with SMTP id e10mr10369877qki.3.1571427173049;
- Fri, 18 Oct 2019 12:32:53 -0700 (PDT)
+        id S2506037AbfJRVLV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Oct 2019 17:11:21 -0400
+Received: from mail-io1-f67.google.com ([209.85.166.67]:41487 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2394095AbfJRVLV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 17:11:21 -0400
+Received: by mail-io1-f67.google.com with SMTP id n26so9055005ioj.8;
+        Fri, 18 Oct 2019 14:11:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bGIyf3yxo3LRG94gRvIwmnxNQ7kmsQTq6lhNdbNTksU=;
+        b=RlF581TMVuSypUhdR9KBRHuSgFE4LuHPdJDRdMq6Lpl6+u/75/26IC5KVYzdactZl+
+         6UozJkiZebDcKTHxdW62cxkDcaaMX+GJDxtxVqM7ejHRJ+uecTMRZ0BVCRBjEbDG4uyR
+         Nh9CJQ7tOpqkheFJWejr6ei8Doi5MEeOx9zmuK1un8YMsIpMkmfWM2Kt/yCIPZQ6LKzO
+         MxahpDv9b7IKldl64YomtJ8QTyjDFJMmcuTyv709n6oTTmDNYLcVLFRv+SUD1HBa4Mpl
+         QzKOO6p1+bIKFPfpY2XtQ7U249B5cnmoQDv394Adh17nyfKR1B59uwuhh6tINCLbg/4S
+         N46A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bGIyf3yxo3LRG94gRvIwmnxNQ7kmsQTq6lhNdbNTksU=;
+        b=G0o7hZVAREOcRYCqluJMnnSUd99iRUJ3xhczkmxouruCAxiFWPEWuO3DHFkI0qkhrx
+         vtHUtjxAjQLSxB0g4LLPnPj+E02vZXxDQmT6zohSNBmO6FpJc5TavphkGxMZTHVB5Opm
+         oSuNbsu0iassMUaHBpuctCRO3c0PejxE1LPXsyUoJMHgaAf4YG0z9lTm2/Hwk6Y5kpxI
+         CunF8HeK/T/JAqbIjIfitUCY7sRc99Ohc3cAU2NtCO/Uhk3z/6Z2m3xPIxRqtsd6T61s
+         zhztMjVYBMASTT6+VxLAZOJ4Q4qbRbU34DHHXKSFVkCNpEJeqQ4pcBRf15mF7CsHZ8yF
+         8MtQ==
+X-Gm-Message-State: APjAAAVp2OpmryrZ0k5j0tjaexVGehqEtqM5QZHSrCGMXb7196TZod2x
+        rM4F4pH55bTCuUym1fNP3xnXwzJtMtPa2wz03+8=
+X-Google-Smtp-Source: APXvYqw/RCsXzWZg7GzS3W3NqHBIFj5rays6TK9CdtjOsqfggufHRrdgPtmJdry4m1p91SGVPZtGsLw4U1YT398zTkY=
+X-Received: by 2002:a6b:1504:: with SMTP id 4mr10908214iov.166.1571433080425;
+ Fri, 18 Oct 2019 14:11:20 -0700 (PDT)
 MIME-Version: 1.0
-References: <20191018154052.1276506-1-arnd@arndb.de> <87v9slg9k5.fsf@belgarion.home>
- <CAK8P3a1JDtHsOW=iaxEycbJ4TBkR9MHUyDMeJnwxCtb=tefnBQ@mail.gmail.com>
-In-Reply-To: <CAK8P3a1JDtHsOW=iaxEycbJ4TBkR9MHUyDMeJnwxCtb=tefnBQ@mail.gmail.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 18 Oct 2019 21:32:36 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
-Message-ID: <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
-Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+References: <20191002011555.36571-1-jeffrey.l.hugo@gmail.com>
+ <20191002011640.36624-1-jeffrey.l.hugo@gmail.com> <20191017215023.2BFEC20872@mail.kernel.org>
+ <CAOCk7NqgWkt6BwY75eGS2dbJ7GGk3DqH5NC0VLHUq4fc6WuYog@mail.gmail.com>
+In-Reply-To: <CAOCk7NqgWkt6BwY75eGS2dbJ7GGk3DqH5NC0VLHUq4fc6WuYog@mail.gmail.com>
+From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+Date:   Fri, 18 Oct 2019 15:11:09 -0600
+Message-ID: <CAOCk7Np_Wn9JZ8JQCiDg1w+xcTVW9fhvtCA-k5ysc2juHZuvUw@mail.gmail.com>
+Subject: Re: [PATCH v4 1/2] clk: qcom: Add MSM8998 GPU Clock Controller
+ (GPUCC) driver
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
+        lkml <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:x6rjh/SYhkhVXFY7sn38XpS2jNl7mZ+ZSAgBlTmeuBIEAqo8moQ
- ZloY0yHOr0VObCTuKLP4a+2rBvJkW653ZyzZa/eWVN3/Ovj/BNRg9Ewp1Qf7rCBMO8Hhk1D
- iwosZq0hvegBArF9MtuUzikr1dATmDPGh2GE3ojjjAh3L/xbOPWehNtgUykguhtLo25ub3e
- Gh9uYlRVvIqPMYEpjyOxg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:xqW7pTXOCNI=:B+AiqXxm34TeJktaofJfOW
- XqUjplt4t0CUZ2O55g6B1bgZZacd+rT+JuPTFvuaVx1dQM1GrEbNii30aJz0qTY/9r2GHRVUi
- OvSlVnq3juFgtcY+5TmDRWP+EjFL1/t5QgjdUXDpsAc1iUjtxFwuDKrEFw+SMqJFj+Evb4M8L
- 7wbYHomgQQY+uoWcF9O5DLciqMHlDIzbauOi8Lb8bts8RuWV8MWXNKV6pySMZBfkvYKfVY6Id
- dRjDuhZDsgP5jWCbtzO12OqzKnxMnZUkvtuNqE907owCD6DW0lhUjJdXJhyg1DtnUR53aLxXm
- uyT/qud2H90oWDD31hBeJ6MHXUOHppefVXVH9rJMm26ZRkgxdiioxTD1OTJ3EFcBSYEbMiSdD
- m5KrdOruT25lSFB4y/FukEE5zBpl7S+BgJvHFF6Lpzaci4tD8YF/Hro/LlSi2jylbMPpLzp0o
- KFXy7N7zXVPStE+nf8LQ+jE3PgkeG0V+cB2bFyTkuUjr3n3f0q/2MDNhY0CG1kmgrpZlzzT3C
- nFqWmIbnG7sOILmVeWRjrQKFkoHeOzeRBURJlkJHZ3Gutmq6dZJlxibBGXhwRR/y/DLzj1lOO
- nJSr90gM3rzdbOXgkUqkX6zqSQRolgGoHmR78xCiWTiTij+CXnBDpAbXF7ph7vNR8G4br9z3F
- 7GSqCWBHVQSTXQR8mPCBUBGRHGWz00P0gLcFNQnu04PqT8bERSnbgL6kj6jQEO2gPIvxVswEo
- KaV2YTmOgsEA8o5SRMsZ1yI0YtaDQ+9tFZs7P8kssy4pBkyQoodTbi6OXh3O/ve4sCf1oXpS0
- hLIQTF7A215Fx0yevnxC4Wa+lLYgROb6ZPDKBCkqsk9/rn4KMZ6nxOo4JptuWrj4WMJY71M9w
- TgvMufS3940rCabHvzVQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Oct 18, 2019 at 9:17 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> On Fri, Oct 18, 2019 at 9:04 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> > Arnd Bergmann <arnd@arndb.de> writes:
-> >
-> > > Hi PXA maintainers,
-> > >
-> > > I'm in the process of getting the old ARM platforms to all build
-> > > in a single kernel. The largest part of that work is changing all
-> > > the device drivers to no longer require mach/*.h header files.
-> > >
-> > > This series does it for arch/pxa/.
-> > >
-> > > As with the omap1 and s3c24xx series I sent before, I don't
-> > > expect this all to be correct in the first version, though
-> > > a lot of the patches are fairly simple and I did exhaustive
-> > > compile-time testing on them.
-> > >
-> > > Please test if you have the hardware, or review!
-> >
-> > Hi Arnd,
-> >
-> > Would you have a git tree I can pull from ?
-> > That would make my life easier than applying manually 46 patches...
+On Thu, Oct 17, 2019 at 5:16 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
 >
-> I've now pushed it to
+> On Thu, Oct 17, 2019 at 3:50 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Jeffrey Hugo (2019-10-01 18:16:40)
+> > > +static const struct freq_tbl ftbl_gfx3d_clk_src[] = {
+> > > +       F(180000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(257000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(342000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(414000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(515000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(596000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(670000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       F(710000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
+> > > +       { }
+> >
+> > I guess this one doesn't do PLL ping pong? Instead we just reprogram the
+> > PLL all the time? Can we have rcg2 clk ops that set the rate on the
+> > parent to be exactly twice as much as the incoming frequency? I thought
+> > we already had this support in the code. Indeed, it is part of
+> > _freq_tbl_determine_rate() in clk-rcg.c, but not yet implemented in the
+> > same function name in clk-rcg2.c! Can you implement it? That way we
+> > don't need this long frequency table, just this weird one where it looks
+> > like:
+> >
+> >         { .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 }
+> >         { }
+> >
+> > And then some more logic in the rcg2 ops to allow this possibility for a
+> > frequency table when CLK_SET_RATE_PARENT is set.
 >
-> git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
-> pxa-multiplatform
+> Does not do PLL ping pong.  I'll look at extending the rcg2 ops like
+> you describe.
 
-Sorry for the duplication, I had some problems with email configuration
-so my reply got rejected, let's see if it goes through this time.
+Am I missing something?  From what I can tell, what you describe is
+not implemented.
 
-       Arnd
+The only in-tree example of a freq_tbl with only a src and a pre_div
+defined for rcg ops is for the tv_src clk in mmcc-msm8960 [1]
+However, that uses a variant of rcg ops, clk_rcg_bypass_ops, not clk_rcg_ops.
+
+clk_rcg_bypass_ops has its own determine_rate implementation which
+does not utilize _freq_tbl_determine_rate(), and can only do a 1:1
+input rate to output ratio (we want a 1:2).
+
+_freq_tbl_determine_rate() in either rcg_ops or rcg2_ops won't work,
+because they both use qcom_find_freq() which doesn't work when your
+table doesn't specify any frequencies (f->freq is 0).
+qcom_find_freq() won't iterate through the table, therefore f in
+qcom_find_freq() won't be pointing at the end of the table (the null
+entry), so when qcom_find_freq decrements f in the return, it actually
+goes off the beginning of the array in an array out of bounds
+violation.
+
+Please advise how you would like to proceed.
+
+I can still extend rcg2_ops to do what you want, but it won't be based
+on what rcg_ops is doing.
+
+I can spin a rcg2_ops variant to do what you want, with a custom
+determine_rate, but it doesn't seem like I'll really be saving any
+lines of code.  Whatever I eliminate by minimizing the gfx3d
+freq_table I will surely be putting into clk-rcg2.c
+
+Or, I can just drop this idea and keep the freq_tbl as it is.  Seems
+like just a one off scenario.
+
+[1] - https://elixir.bootlin.com/linux/v5.4-rc2/source/drivers/clk/qcom/mmcc-msm8960.c#L1416
