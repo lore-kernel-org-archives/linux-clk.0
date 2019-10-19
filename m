@@ -2,93 +2,126 @@ Return-Path: <SRS0=rIjt=YM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91173CA9EAD
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 14:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 830D1CA9EAB
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 15:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D71A2082F
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 14:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54ACE222D3
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 15:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbfJSOXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Oct 2019 10:23:46 -0400
-Received: from 20.mo5.mail-out.ovh.net ([91.121.55.239]:53595 "EHLO
-        20.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725911AbfJSOXq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Oct 2019 10:23:46 -0400
-X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Oct 2019 10:23:45 EDT
-Received: from player714.ha.ovh.net (unknown [10.109.160.253])
-        by mo5.mail-out.ovh.net (Postfix) with ESMTP id DCDA12527E5
-        for <linux-clk@vger.kernel.org>; Sat, 19 Oct 2019 16:07:01 +0200 (CEST)
+        id S1725924AbfJSPNZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Oct 2019 11:13:25 -0400
+Received: from 6.mo68.mail-out.ovh.net ([46.105.63.100]:36814 "EHLO
+        6.mo68.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725810AbfJSPNZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Oct 2019 11:13:25 -0400
+X-Greylist: delayed 4720 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Oct 2019 11:13:24 EDT
+Received: from player786.ha.ovh.net (unknown [10.109.146.211])
+        by mo68.mail-out.ovh.net (Postfix) with ESMTP id AADCA1454D3
+        for <linux-clk@vger.kernel.org>; Sat, 19 Oct 2019 15:54:42 +0200 (CEST)
 Received: from sk2.org (gw.sk2.org [88.186.243.14])
         (Authenticated sender: steve@sk2.org)
-        by player714.ha.ovh.net (Postfix) with ESMTPSA id BA673B1A3FB1;
-        Sat, 19 Oct 2019 14:06:51 +0000 (UTC)
+        by player786.ha.ovh.net (Postfix) with ESMTPSA id 6ABA5B3DBA76;
+        Sat, 19 Oct 2019 13:54:32 +0000 (UTC)
+Date:   Sat, 19 Oct 2019 15:54:41 +0200
 From:   Stephen Kitt <steve@sk2.org>
 To:     Stephen Boyd <sboyd@kernel.org>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Tero Kristo <t-kristo@ti.com>,
         Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Kitt <steve@sk2.org>
-Subject: [PATCH v3] clk/ti/adpll: allocate room for terminating null
-Date:   Sat, 19 Oct 2019 16:06:34 +0200
-Message-Id: <20191019140634.15596-1-steve@sk2.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191019155441.2b1b349f@heffalump.sk2.org>
-References: <20191019155441.2b1b349f@heffalump.sk2.org>
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk/ti/adpll: allocate room for terminating null
+Message-ID: <20191019155441.2b1b349f@heffalump.sk2.org>
+In-Reply-To: <20191017154854.5285220869@mail.kernel.org>
+References: <cec235b3e2e4e3b206fa9444b643fa56@sk2.org>
+        <20190927180559.18162-1-steve@sk2.org>
+        <20191017154854.5285220869@mail.kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Ovh-Tracer-Id: 1766818431945362904
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/84fHvmaca2L9PPmq15CP2ZV"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 1558808425264532952
 X-VR-SPAMSTATE: OK
 X-VR-SPAMSCORE: -100
-X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrkedugddtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrkedugddtfecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The buffer allocated in ti_adpll_clk_get_name doesn't account for the
-terminating null. This patch switches to devm_kasprintf to avoid
-overflowing.
+--Sig_/84fHvmaca2L9PPmq15CP2ZV
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Stephen Kitt <steve@sk2.org>
----
-Changes since v2:
-  - Move "adpll" into the format string and drop base_name entirely.
+On Thu, 17 Oct 2019 08:48:53 -0700, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Stephen Kitt (2019-09-27 11:05:59)
+> > The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+> > terminating null. This patch switches to ka_sprintf to avoid
+> > overflowing.
+> >=20
+> > Signed-off-by: Stephen Kitt <steve@sk2.org>
+> > ---
+> >  drivers/clk/ti/adpll.c | 10 ++--------
+> >  1 file changed, 2 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+> > index fdfb90058504..021cf9e2b4db 100644
+> > --- a/drivers/clk/ti/adpll.c
+> > +++ b/drivers/clk/ti/adpll.c
+> > @@ -195,14 +195,8 @@ static const char *ti_adpll_clk_get_name(struct
+> > ti_adpll_data *d, return NULL;
+> >         } else {
+> >                 const char *base_name =3D "adpll"; =20
+>=20
+> This is used once.
+>=20
+> > -               char *buf;
+> > -
+> > -               buf =3D devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) =
++ 1 +
+> > -                                   strlen(postfix), GFP_KERNEL);
+> > -               if (!buf)
+> > -                       return NULL;
+> > -               sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
+> > -               name =3D buf;
+> > +               name =3D devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.%s.%=
+s", =20
+>=20
+> So why not make this "%08lx.adpll.%s"?
 
-Changes since v1:
-  - Use devm_kasprintf instead of manually allocating the target
-    buffer.
----
- drivers/clk/ti/adpll.c | 11 ++---------
- 1 file changed, 2 insertions(+), 9 deletions(-)
+Thanks for the review! I hesitated to do this because I thought the purely
+formatting string "%08lx.%s.%s" made the resulting code easier to understand
+than a combined "%08lx.adpll.%s". I=E2=80=99ll follow up with a v3 which me=
+rges the
+"adpll" string into the format string.
 
-diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
-index fdfb90058504..bb2f2836dab2 100644
---- a/drivers/clk/ti/adpll.c
-+++ b/drivers/clk/ti/adpll.c
-@@ -194,15 +194,8 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
- 		if (err)
- 			return NULL;
- 	} else {
--		const char *base_name = "adpll";
--		char *buf;
--
--		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
--				    strlen(postfix), GFP_KERNEL);
--		if (!buf)
--			return NULL;
--		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
--		name = buf;
-+		name = devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.adpll.%s",
-+				      d->pa, postfix);
- 	}
- 
- 	return name;
--- 
-2.20.1
+Regards,
 
+Stephen
+
+--Sig_/84fHvmaca2L9PPmq15CP2ZV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl2rFaEACgkQgNMC9Yht
+g5ym2Q//TWIp7cVUWt4XkcfWI1ktVARFG1AgDkdOnpJNGVc72ic18oi7MCF301eI
+Df0TWiciOshRpUTbTNtqbHkA9NKAIacHSqdJfdxBfUrZYHCPWBv/6qxWAom3Zd89
+1Ri99eugCJfYTOYNEyZLelHgUvQIijKjAezWozlIe4p8gfSqzP+Ee+oY7s4dh+BY
+ttmyWvl3YZ4X8K8Fzb1P7aeAg9Qz8CSuDuJVmzztx0cvBG/36PHf/b1jcqukeRoo
+kNN/iyjKAD+ctdEh84soEexF5x5S9Ecu+ilxODTiyUlyz9gdmg4xL31lI+Q+R6kf
+uY+5Mz1/cWx3+2lzC7u1go0Wm9kjDZhtkHG4b2tZ/xcRhx9jk7OGf+u4SVKf5/Cb
+ho0XEEpZXryhXwELygOjajGIqsxuEhfCpr1oT6vr8uiiPQaxoD7gf1AlUgow2Ql0
+lgSvJAmuRxRu+C0Cm5Si+6wHTk3J8dVFa7lutk5puGTplveq6EoB7eHOo8RvUVz4
+IXf8exJti705Uy3YhybvcX+NAMmJkNWbiLHJSwS2ZtZh0U/auodKKxBVhJaVOeIJ
+jBBGSpzVMehXPWmY8J+RTHfpH0Fkrv93BcPX0izX463eIHdZezDbLl6+erVjLxtd
+H6stqVeqrHusfTKLb8XP295y+n0LekTk9sadeJeNhGKPh4YVOuQ=
+=zhZj
+-----END PGP SIGNATURE-----
+
+--Sig_/84fHvmaca2L9PPmq15CP2ZV--
