@@ -1,126 +1,127 @@
-Return-Path: <SRS0=xutx=YL=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=rIjt=YM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FC8FCA9EAB
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 22:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BC3DCA9EAD
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 01:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59D0B205C9
-	for <linux-clk@archiver.kernel.org>; Fri, 18 Oct 2019 22:21:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571437313;
-	bh=E1aoj9R79rabJbJBVwCZX4iH1w2YJ9tDbCCLe60+T58=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yyhBCTlRZHIcSwrwKM9zMg5QLUksm6vFsFhq/GKIrAx4wlCLndSPRys09SqYTf50C
-	 tZ+2/t5H88btIBxiMOVdHV+G20QTnTXefCzesyvKspKoOd29JESri2Jo+bQsAHqNQQ
-	 KCcZCrbtzGJJIRDtFEf0Arx6FAFLo4xcZRgDJgVQ=
+	by mail.kernel.org (Postfix) with ESMTP id E2127222C2
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 01:03:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFvZMeNd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730878AbfJRWGK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 18 Oct 2019 18:06:10 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38086 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730835AbfJRWGJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 18 Oct 2019 18:06:09 -0400
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAC70222D4;
-        Fri, 18 Oct 2019 22:06:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571436368;
-        bh=E1aoj9R79rabJbJBVwCZX4iH1w2YJ9tDbCCLe60+T58=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ghrQZnmx+aNRZDb3mP/yc6dmMirRrC55BmCcagRTM5jS4oN3mE/Zox5X7vesZCe/t
-         kTZkSfGhcI3lOIVup69wv1HCvTcraYHhQomLIyPNN0MkLwyhJyndwebjp0A0SQvqRx
-         SCZod9ujvfh09FXcwrKJzE7nrf08tEgryWQs/6Ec=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yi Wang <wang.yi59@zte.com.cn>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mips@linux-mips.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 023/100] clk: boston: unregister clks on failure in clk_boston_setup()
-Date:   Fri, 18 Oct 2019 18:04:08 -0400
-Message-Id: <20191018220525.9042-23-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191018220525.9042-1-sashal@kernel.org>
-References: <20191018220525.9042-1-sashal@kernel.org>
+        id S1727299AbfJSBDD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 18 Oct 2019 21:03:03 -0400
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44573 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726743AbfJSBDC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 18 Oct 2019 21:03:02 -0400
+Received: by mail-pg1-f193.google.com with SMTP id e10so4236408pgd.11;
+        Fri, 18 Oct 2019 18:03:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=O2vDP5dhX90+NEeZF4xwy/6nZiyy5Chs2FfT8NPVR7E=;
+        b=ZFvZMeNde3XSQbCX5z+A8LC9qIkMj77Zzi+EgKADvigb12CI/Atx5eiO423UuVNTZ4
+         FMRj0TTh5vYpzBJFf3onEv/NHctJbLDMvw72Wm/UAs/vKZecv2U7aiKsK5O98DMCY3LN
+         6P8SWWQFoi0WW7dNj9CrT+uf0KK0LjF+3+/cSfQNkEYtvDykIjEQuh6qD2TVjSbIXoLH
+         0NoyZAo/m7sgpGHXCa5h6dWvnJlDsRbI4TfaO4uSF0QgVAzYFE5KMcLQFbvw7OGqrAEI
+         4v0uNLLBBCk7L6lzLHiVmoKSbmmeLfyP8LnUo6lczAWEEIGT7byS+WfZ7fYM1pCa1V6t
+         b94w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=O2vDP5dhX90+NEeZF4xwy/6nZiyy5Chs2FfT8NPVR7E=;
+        b=Cs6svu5TBVneapfDeF1cl88fLEO4eJMVjiW0eRMaVqngna/yQfIeyXNksrhczPppab
+         F9DZFufQuoMgQVF4AqjK1BB3/Pijc1wl2THZzorzyf5HS0LJC4vKw+JkCjKmF5YB6YTa
+         HH3dpKVCjMepemN8nl7VMuFmukJfZ7Ym3dsCGY+1v0YM97fb0niWl+nJaX1//pwcpeim
+         hC60cnZJPN8ST8ZrqWO6oA/aB00BmQGj4Ox7MALU1LQFzC7j3PkouKievz5lHO/6Cap9
+         uyrWE9s23t2gFWYpHLtTjSXmsoZmNKfATgBiJ4OkoFtRO/QhffUzValM1xCtjF0s8EKC
+         1VPw==
+X-Gm-Message-State: APjAAAVgsokVXL/etNlbNK/7y3eQxkJvFNsnT7BEvWNrAdzDaHrp2Paj
+        50g0IEeTefgzQ7e1OFoc9qexMMNU
+X-Google-Smtp-Source: APXvYqyfRaTHhsimbDLjYp5YZtM7EeE6UsAbtJraEIbyzdK0a87RqNrOa51iK+zxPIPUiG8is3MEFw==
+X-Received: by 2002:a63:f5a:: with SMTP id 26mr13333625pgp.63.1571446981132;
+        Fri, 18 Oct 2019 18:03:01 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id h14sm7304535pfo.15.2019.10.18.18.02.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 18 Oct 2019 18:03:00 -0700 (PDT)
+Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
+To:     Arnd Bergmann <arnd@arndb.de>, Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-fbdev@vger.kernel.org,
+        linux-ide@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-usb@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+References: <20191018154052.1276506-1-arnd@arndb.de>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <803f6fa5-b929-007c-5302-4a2d5042241c@roeck-us.net>
+Date:   Fri, 18 Oct 2019 18:02:57 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191018154052.1276506-1-arnd@arndb.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yi Wang <wang.yi59@zte.com.cn>
+On 10/18/19 8:40 AM, Arnd Bergmann wrote:
+> 
+> Hi PXA maintainers,
+> 
+> I'm in the process of getting the old ARM platforms to all build
+> in a single kernel. The largest part of that work is changing all
+> the device drivers to no longer require mach/*.h header files.
+> 
+> This series does it for arch/pxa/.
+> 
+> As with the omap1 and s3c24xx series I sent before, I don't
+> expect this all to be correct in the first version, though
+> a lot of the patches are fairly simple and I did exhaustive
+> compile-time testing on them.
+> 
+> Please test if you have the hardware, or review!
+> 
 
-[ Upstream commit 8b627f616ed63dcaf922369fc14a5daf8ad03038 ]
+I don't get very far.
 
-The registered clks should unregister when something wrong happens
-before going out in function clk_boston_setup().
+$ make-arm pxa_defconfig
+arch/arm/Kconfig:677: can't open file "arch/arm/plat-pxa/Kconfig"
+scripts/kconfig/Makefile:90: recipe for target 'pxa_defconfig' failed
+make[1]: *** [pxa_defconfig] Error 1
+Makefile:567: recipe for target 'pxa_defconfig' failed
+make: *** [pxa_defconfig] Error 2
+$ git describe
+v5.4-rc3-52-gfcc4181cd625
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/imgtec/clk-boston.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Also:
 
-diff --git a/drivers/clk/imgtec/clk-boston.c b/drivers/clk/imgtec/clk-boston.c
-index f5d54a64d33c5..dddda45127a80 100644
---- a/drivers/clk/imgtec/clk-boston.c
-+++ b/drivers/clk/imgtec/clk-boston.c
-@@ -73,31 +73,39 @@ static void __init clk_boston_setup(struct device_node *np)
- 	hw = clk_hw_register_fixed_rate(NULL, "input", NULL, 0, in_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register input clock: %ld\n", PTR_ERR(hw));
--		goto error;
-+		goto fail_input;
- 	}
- 	onecell->hws[BOSTON_CLK_INPUT] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "sys", "input", 0, sys_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register sys clock: %ld\n", PTR_ERR(hw));
--		goto error;
-+		goto fail_sys;
- 	}
- 	onecell->hws[BOSTON_CLK_SYS] = hw;
- 
- 	hw = clk_hw_register_fixed_rate(NULL, "cpu", "input", 0, cpu_freq);
- 	if (IS_ERR(hw)) {
- 		pr_err("failed to register cpu clock: %ld\n", PTR_ERR(hw));
--		goto error;
-+		goto fail_cpu;
- 	}
- 	onecell->hws[BOSTON_CLK_CPU] = hw;
- 
- 	err = of_clk_add_hw_provider(np, of_clk_hw_onecell_get, onecell);
--	if (err)
-+	if (err) {
- 		pr_err("failed to add DT provider: %d\n", err);
-+		goto fail_clk_add;
-+	}
- 
- 	return;
- 
--error:
-+fail_clk_add:
-+	clk_hw_unregister_fixed_rate(onecell->hws[BOSTON_CLK_CPU]);
-+fail_cpu:
-+	clk_hw_unregister_fixed_rate(onecell->hws[BOSTON_CLK_SYS]);
-+fail_sys:
-+	clk_hw_unregister_fixed_rate(onecell->hws[BOSTON_CLK_INPUT]);
-+fail_input:
- 	kfree(onecell);
- }
- 
--- 
-2.20.1
+$ git grep plat-pxa
+Documentation/arm/marvel.rst:   arch/arm/plat-pxa
+Documentation/arm/marvel.rst:   arch/arm/plat-pxa
+Documentation/arm/marvel.rst:   directory. The plat-pxa/ would therefore disappear.
+arch/arm/Kconfig:source "arch/arm/plat-pxa/Kconfig"
+arch/arm/mach-mmp/Makefile:ccflags-$(CONFIG_ARCH_MULTIPLATFORM) := -I$(srctree)/arch/arm/plat-pxa/include
+drivers/gpio/gpio-pxa.c: *  linux/arch/arm/plat-pxa/gpio.c
+drivers/soc/pxa/mfp.c: * linux/arch/arm/plat-pxa/mfp.c
 
+Did I pick the wrong tree ?
+
+Guenter
