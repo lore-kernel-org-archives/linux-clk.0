@@ -2,100 +2,93 @@ Return-Path: <SRS0=rIjt=YM=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02C1ACA9EAD
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 10:35:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91173CA9EAD
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 14:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE54E222D2
-	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 10:35:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D71A2082F
+	for <linux-clk@archiver.kernel.org>; Sat, 19 Oct 2019 14:23:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725938AbfJSKfN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 19 Oct 2019 06:35:13 -0400
-Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:47018 "EHLO
-        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfJSKfM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Oct 2019 06:35:12 -0400
-Received: from belgarion ([90.76.41.223])
-        by mwinf5d17 with ME
-        id FNb42100B4otT8A03Nb44m; Sat, 19 Oct 2019 12:35:10 +0200
-X-ME-Helo: belgarion
-X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
-X-ME-Date: Sat, 19 Oct 2019 12:35:10 +0200
-X-ME-IP: 90.76.41.223
-From:   Robert Jarzmik <robert.jarzmik@free.fr>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel\@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        "open list\:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
-References: <20191018154052.1276506-1-arnd@arndb.de>
-        <87v9slg9k5.fsf@belgarion.home>
-        <CAK8P3a1JDtHsOW=iaxEycbJ4TBkR9MHUyDMeJnwxCtb=tefnBQ@mail.gmail.com>
-        <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
-X-URL:  http://belgarath.falguerolles.org/
-Date:   Sat, 19 Oct 2019 12:35:03 +0200
-In-Reply-To: <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
-        (Arnd Bergmann's message of "Fri, 18 Oct 2019 21:32:36 +0200")
-Message-ID: <87r239f2g8.fsf@belgarion.home>
-User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
+        id S1725980AbfJSOXq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 19 Oct 2019 10:23:46 -0400
+Received: from 20.mo5.mail-out.ovh.net ([91.121.55.239]:53595 "EHLO
+        20.mo5.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725911AbfJSOXq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 19 Oct 2019 10:23:46 -0400
+X-Greylist: delayed 600 seconds by postgrey-1.27 at vger.kernel.org; Sat, 19 Oct 2019 10:23:45 EDT
+Received: from player714.ha.ovh.net (unknown [10.109.160.253])
+        by mo5.mail-out.ovh.net (Postfix) with ESMTP id DCDA12527E5
+        for <linux-clk@vger.kernel.org>; Sat, 19 Oct 2019 16:07:01 +0200 (CEST)
+Received: from sk2.org (gw.sk2.org [88.186.243.14])
+        (Authenticated sender: steve@sk2.org)
+        by player714.ha.ovh.net (Postfix) with ESMTPSA id BA673B1A3FB1;
+        Sat, 19 Oct 2019 14:06:51 +0000 (UTC)
+From:   Stephen Kitt <steve@sk2.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stephen Kitt <steve@sk2.org>
+Subject: [PATCH v3] clk/ti/adpll: allocate room for terminating null
+Date:   Sat, 19 Oct 2019 16:06:34 +0200
+Message-Id: <20191019140634.15596-1-steve@sk2.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191019155441.2b1b349f@heffalump.sk2.org>
+References: <20191019155441.2b1b349f@heffalump.sk2.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
+X-Ovh-Tracer-Id: 1766818431945362904
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedrkedugddtiecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjpdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Arnd Bergmann <arnd@arndb.de> writes:
+The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+terminating null. This patch switches to devm_kasprintf to avoid
+overflowing.
 
-> On Fri, Oct 18, 2019 at 9:17 PM Arnd Bergmann <arnd@arndb.de> wrote:
->> On Fri, Oct 18, 2019 at 9:04 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
->> > Arnd Bergmann <arnd@arndb.de> writes:
->> >
->> > > Hi PXA maintainers,
->> > >
->> > > I'm in the process of getting the old ARM platforms to all build
->> > > in a single kernel. The largest part of that work is changing all
->> > > the device drivers to no longer require mach/*.h header files.
->> > >
->> > > This series does it for arch/pxa/.
->> > >
->> > > As with the omap1 and s3c24xx series I sent before, I don't
->> > > expect this all to be correct in the first version, though
->> > > a lot of the patches are fairly simple and I did exhaustive
->> > > compile-time testing on them.
->> > >
->> > > Please test if you have the hardware, or review!
->> >
->> > Hi Arnd,
->> >
->> > Would you have a git tree I can pull from ?
->> > That would make my life easier than applying manually 46 patches...
->>
->> I've now pushed it to
->>
->> git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
->> pxa-multiplatform
->
-> Sorry for the duplication, I had some problems with email configuration
-> so my reply got rejected, let's see if it goes through this time.
-I have it now, thanks, I'll test and review as soon as I can.
+Signed-off-by: Stephen Kitt <steve@sk2.org>
+---
+Changes since v2:
+  - Move "adpll" into the format string and drop base_name entirely.
 
-Cheers.
+Changes since v1:
+  - Use devm_kasprintf instead of manually allocating the target
+    buffer.
+---
+ drivers/clk/ti/adpll.c | 11 ++---------
+ 1 file changed, 2 insertions(+), 9 deletions(-)
 
+diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+index fdfb90058504..bb2f2836dab2 100644
+--- a/drivers/clk/ti/adpll.c
++++ b/drivers/clk/ti/adpll.c
+@@ -194,15 +194,8 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
+ 		if (err)
+ 			return NULL;
+ 	} else {
+-		const char *base_name = "adpll";
+-		char *buf;
+-
+-		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
+-				    strlen(postfix), GFP_KERNEL);
+-		if (!buf)
+-			return NULL;
+-		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
+-		name = buf;
++		name = devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.adpll.%s",
++				      d->pa, postfix);
+ 	}
+ 
+ 	return name;
 -- 
-Robert
+2.20.1
+
