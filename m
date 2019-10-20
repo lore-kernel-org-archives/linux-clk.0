@@ -2,228 +2,159 @@ Return-Path: <SRS0=aIWE=YN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA69CA9EA0
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Oct 2019 14:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 123F4CA9EAD
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Oct 2019 14:41:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527ED21929
-	for <linux-clk@archiver.kernel.org>; Sun, 20 Oct 2019 14:24:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C75642190F
+	for <linux-clk@archiver.kernel.org>; Sun, 20 Oct 2019 14:41:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="SO7qycVi"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Ea0eO3cn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726327AbfJTOYi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 20 Oct 2019 10:24:38 -0400
-Received: from mail-eopbgr10040.outbound.protection.outlook.com ([40.107.1.40]:52864
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        id S1726372AbfJTOlo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 20 Oct 2019 10:41:44 -0400
+Received: from mail-eopbgr150071.outbound.protection.outlook.com ([40.107.15.71]:56194
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726299AbfJTOYi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 20 Oct 2019 10:24:38 -0400
+        id S1726349AbfJTOlo (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 20 Oct 2019 10:41:44 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TpVf9BTRjoskvxEc5j58WbltWIC+3s8qilONwx+hSBwzkdzUqsjFIWSqt+huept/5dbs5MKbsoIYgPSIVGUXYGcCT8koCEBCmlSU1AYXD8Q/X4I6jTLF33+oFJdrPZocGcNS9EdnIggrb9AZX3D9seH9DakT7l3uCIOmCpc8h8NQRrB1r/6ojPNQgBJ0jW8MpPq2SObWIefVVQBJsTif9ALitNArXE2N5a47UBdouBCpqOGfqpCqMPhm/YO9GJFEDxsP/OIO1N8MAhbWyeZSfsM6lSlnr94cnvYaD633IBAQSQempdLRJwMpRfStwFpDCu8xjMwzW+KVIqQHzlhJSQ==
+ b=MxUuiKzxv4E0SaQ+cyPx8cEYgkHZoPuzphnBGd0ng1wMVP1kLV9QS0N/11KEr1QE37N/A0B5C/BFmqIvZJPxAyj596esfLBL+RyOXEb12tW9QEBmmQoFW5VukfMScBe9qvU0R+BrvyYgHVNmx0gxn5umgnMHrTPL2Tmwmn5yHgV7Kuu2xLvuDJrTAL49wE63Z6JrHyDc00qBU8fMA6lwj2VILOGb4Tq8UdVXLnvkEAqKTLjBgmFNRHsahfpa2ToDouDU8hFFa73yYlOPHi9KllCh+oC0dKoQBV3cGlc0YEscZW5Z/dlXBVzpCNe7//0kMrOFdcWyalwUgmLt6TFEsg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kxHkV/5Hlhgkc2c9pKbRzP3cQaWUTLXCFFifDeFuShA=;
- b=U9v8p1/MnJXh90s0gTg6LdsAu6Udc5bU8qnTmUQr2qXK9sZl6nPoX4i+UIOkW5t3dpIFtVxDvNTh/tsj7bsxnr3JWLzYNN6g/ZZnIX4lQSG080ebXxoawKsJOYmZEyLuRSbIHkgWvIkQPWTNFem9Ese6BRkIuIb37C8Uj7xqB3tkrLTFZVPxjin/Yh/MJYUqWVEkf0fkkG1ByHBKD3Ww/9kN4LVmRqa9EyJCChUzx+FrUQP+gqsM0fzP/4lSdhk5w8/ZxiLloOdKWHauevKK4O0sVuokiURx2sl7JEkAXezvCxX+KR1/8o7YtojxRdVAQrslYNccsNDL3YWMsVxBWQ==
+ bh=7qhDzeIgKgdCBzWf+SP0Y2TcJVhah/h+4Ks8vmqjX4s=;
+ b=RlgomnBEdEkJ7FFwRdKUf47dom0KFR9Duovp+5D+/WHvIjPh44cKApqOyRkW7Q2GBOlN8/EHjMKfI2H6LS9sLN9Jk5CW4ULRAH8px18B6flQ5DrkM6JQScNmFGRD6DrEB6Bm5+uywOduzziPuSnna0UpZi+rvmtndp7K5+Ma5vglojBq1PRDfwK+2C4d9HNt5BjxD169iKlI6celmp4Fs0oR51h79GmNrIGYlTAFz+AQ6K7vFTocMQF0KRJDRk143Rtaac+L0OnN1qt74c+zyX+tH3MA0APqm7ZbPkLn4SA33HhPWE9BQG6ThpzO4o+wqtX1Ypsw/gQm+aHoXDh/hg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kxHkV/5Hlhgkc2c9pKbRzP3cQaWUTLXCFFifDeFuShA=;
- b=SO7qycVikloy+yLOyGBRq73aGQKQfdZNOBueCIYS8f5riOnbW1QYa4DcmtM6oLwuc+u7wbY+wyOGDCcLdNysTE368x+Es0C5yHAzt6FG3dK+BtMTjDzzRlkv8OktIPCyOtGRXK591JYbfrbToObl547L9OSN7CsXyJvDpDmxvas=
+ bh=7qhDzeIgKgdCBzWf+SP0Y2TcJVhah/h+4Ks8vmqjX4s=;
+ b=Ea0eO3cn/deP883FNipV71ysezUXTHiMDyTHV3904M6+m/FLYxoLgrgkG79RDgGLQPLKYUuaQE2mgmsXVMkX5qzx2MEb3IIfk8cPKhYOZIBMACVXtOM+gdU+m4Kvgsdt9DW1uQq1zicskotm4UeU6aDyVhZgXFq+RK4B/EyFAMw=
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB4017.eurprd04.prod.outlook.com (52.134.92.159) with Microsoft SMTP
+ AM0PR04MB4644.eurprd04.prod.outlook.com (52.135.149.138) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.18; Sun, 20 Oct 2019 14:24:32 +0000
+ 15.20.2347.16; Sun, 20 Oct 2019 14:41:37 +0000
 Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::4122:fda5:e903:8c02]) by AM0PR04MB5779.eurprd04.prod.outlook.com
  ([fe80::4122:fda5:e903:8c02%3]) with mapi id 15.20.2347.028; Sun, 20 Oct 2019
- 14:24:32 +0000
+ 14:41:37 +0000
 From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>
-CC:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+CC:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "kernel@pengutronix.de" <kernel@pengutronix.de>,
         dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
-Thread-Topic: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
-Thread-Index: AQHVfogREXMSqkErfE+B9jsiOEYyjqdjpxsA
-Date:   Sun, 20 Oct 2019 14:24:32 +0000
-Message-ID: <20191020141355.px6o3ifnjy45hli4@fsr-ub1664-175>
-References: <1570614940-17239-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1570614940-17239-1-git-send-email-peng.fan@nxp.com>
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/3] clk: imx8m: Define gates for pll1/2 dividers
+Thread-Topic: [PATCH v3 0/3] clk: imx8m: Define gates for pll1/2 dividers
+Thread-Index: AQHVhBjm9h4luDsJQEWJmMzVqbMlUadjoMAA
+Date:   Sun, 20 Oct 2019 14:41:37 +0000
+Message-ID: <20191020144136.7gavqzcrldwi2ff3@fsr-ub1664-175>
+References: <cover.1571226979.git.leonard.crestez@nxp.com>
+In-Reply-To: <cover.1571226979.git.leonard.crestez@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0601CA0028.eurprd06.prod.outlook.com
- (2603:10a6:203:68::14) To AM0PR04MB5779.eurprd04.prod.outlook.com
+x-clientproxiedby: AM7PR02CA0007.eurprd02.prod.outlook.com
+ (2603:10a6:20b:100::17) To AM0PR04MB5779.eurprd04.prod.outlook.com
  (2603:10a6:208:131::23)
 x-originating-ip: [89.37.124.34]
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=abel.vesa@nxp.com; 
 x-ms-exchange-messagesentrepresentingtype: 1
 x-ms-publictraffictype: Email
-x-ms-office365-filtering-correlation-id: ed3f786e-eec7-4cc2-16a9-08d755693974
+x-ms-office365-filtering-correlation-id: caeb289b-6fd7-4f01-483f-08d7556b9c96
 x-ms-office365-filtering-ht: Tenant
-x-ms-traffictypediagnostic: AM0PR04MB4017:|AM0PR04MB4017:
+x-ms-traffictypediagnostic: AM0PR04MB4644:|AM0PR04MB4644:
+x-ms-exchange-purlcount: 2
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB4017CF00E0B0A69D99814FD1F66E0@AM0PR04MB4017.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2399;
+x-microsoft-antispam-prvs: <AM0PR04MB4644927467EB596DA170D534F66E0@AM0PR04MB4644.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
 x-forefront-prvs: 0196A226D1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(366004)(376002)(136003)(346002)(39860400002)(396003)(199004)(189003)(3846002)(446003)(1076003)(316002)(11346002)(102836004)(44832011)(99286004)(66476007)(66556008)(64756008)(66446008)(476003)(53546011)(486006)(66946007)(71190400001)(71200400001)(54906003)(8676002)(76176011)(52116002)(8936002)(186003)(6506007)(26005)(5660300002)(81166006)(81156014)(66066001)(6116002)(25786009)(386003)(9686003)(6512007)(6636002)(86362001)(2906002)(4326008)(305945005)(7736002)(6246003)(6862004)(478600001)(229853002)(256004)(14454004)(33716001)(6486002)(6436002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4017;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(39860400002)(376002)(396003)(136003)(346002)(366004)(189003)(199004)(54906003)(14454004)(5024004)(256004)(486006)(6636002)(44832011)(2906002)(446003)(8676002)(305945005)(966005)(81166006)(81156014)(7736002)(11346002)(316002)(1076003)(478600001)(8936002)(99286004)(6116002)(3846002)(102836004)(86362001)(26005)(71190400001)(66446008)(64756008)(66556008)(66476007)(386003)(53546011)(6506007)(6486002)(6862004)(6436002)(66946007)(6246003)(25786009)(76176011)(5660300002)(71200400001)(52116002)(33716001)(66066001)(476003)(229853002)(6306002)(6512007)(186003)(9686003)(4326008)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4644;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: kUG079oKzexEOP4s/pAI3GvP/q8LM+qBk8PsoeREX4K6661tRhT+b0ETz/xG0t5rCt/iZo3hFMzHmNDQogQaC/Y+ruUaoiamr//dhPhK2BmZen8Im+CsdH+QQNwv/o1KnDROsH5AYTvAfUiIHSvg7L1hFZf6+Yrv5BjL38h5zaAdBtxh3MzjQcufxZ7KDl+l6CI6uQgkIDEsy1bdz0m/HBbKIDKAHE2gJ2JbarllWVQos3krA6JTDOkNJBeT+J92tT0R3DtbjbKpwiIqZy6+moyWkwC2Zg1JkvGuftC2lmTlEvPYuMeHeKfbTnOE7iy3jvYIrCst/qXm53/WbhtN61V3nW70PLOLMKeXXbQMFc4gGB9iMfaMBUuIhJBRuzGDqTatUgw5ZscK17Wx2N2jYdfx57ESK+M8zgIQo+P0ijg=
+x-microsoft-antispam-message-info: Dehk5V2vDgRtfMREtuIdsMbT5Ue1L6HWiG4l55R2xijgCmEiBPKLWGQ9sO9ggoAiEDtGvF5b9PGuJf7+BdNa+yGijf1KjB4iAi5qKvnEX/SXg5B65OLMHx2SGvj0k17BflLAPdvZShpEdQ4nJDTlfJq2YNEp95V3/vdFxSr3Kcd3YQiJSKZuJv+dMMaSFWs+7ydQhWzcvHZFgU2aJFJsdI1UDyEub/i4tx3YMtt17uImJR5hn4rHCkRjnpcwwRsnTlStRTHLLjc8ISODlOK2fQ9LYEwpgQ3rvgnz7clMf1YxLuHFJbPaBWGtxsooS8wq1En3mKK+CSVcPyTz1KBUNX1jC6aHQ48auuOQOJH6+X90x1TMa+Za2fIH4migD75r/oxY27PZQYNgSRP4D4S4byH3sCBrue7y2OBk8N6/JzK8amjxfmCDG54lugYnQRXiPzDIzsiFMmXvHoiVJFz3UQ==
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <1D7E3E0C12D6B14B809F90044067B5F6@eurprd04.prod.outlook.com>
+Content-ID: <41E43CCBFEAFDC4DBB349E3F56F5310E@eurprd04.prod.outlook.com>
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed3f786e-eec7-4cc2-16a9-08d755693974
-X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2019 14:24:32.1989
+X-MS-Exchange-CrossTenant-Network-Message-Id: caeb289b-6fd7-4f01-483f-08d7556b9c96
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Oct 2019 14:41:37.4759
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: c0Z9ZqCowJLvO0x0rHUh8+usw5DYfnoktaswke1nF1vGAETP9FpaBB++nbZDAqcSsz9IT2fRzx3I/pSiK3C99w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4017
+X-MS-Exchange-CrossTenant-userprincipalname: MvNPlJ9f8KNLXS18bTXq3HtJT/yLvfmJNiZUvhmrLCBAY95ELeKQME9X1uM3qIWElwwe1QA7mZrkRXg89PYo2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4644
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-10-09 09:58:14, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On 19-10-16 11:57:36, Leonard Crestez wrote:
+> The fixed dividers for sys_pll1 and sys_pll2 on imx8m each have a gate
+> attached but they're currently unused so they default to "always on".
 >=20
-> According Architecture definition guide, SYS_PLL1 is fixed at
-> 800MHz, SYS_PLL2 is fixed at 1000MHz, so let's use imx_clk_fixed
-> to register the clocks and drop code that could change the rate.
+> Add them to the clk tree for the sake of corectness. This could expose
+> bugs where parent clocks were not correctly enabled.
 >=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> The new gates are added between the PLL and fixed dividers and new gates
+> are enumerated at the end in dt-bindings. This should ensure
+> compatibility, even though none of these fixed dividers are directly
+> referenced by peripherals anyway.
+>=20
+> There are small differences on imx8mq because the PLL physical
+> implementation is also different.
+>=20
+> Changes since v2:
+> * Rebased on top of next-20191015 which includes recent changes in
+> shawnguo/clk/imx, solving conflict with commit f0b1d7f2e7c2 ("clk:
+> imx8mq: Add VIDEO2_PLL clock")
+> Link to v2: https://patchwork.kernel.org/cover/11177851/
+>=20
+> This was send with a different "email workaround", hopefully the patches
+> look correct on your send. If they don't please let me know and I'll
+> resend through another method
+>=20
+> Changes since v1:
+> * Renumber 8mq 8mm clocks to avoid introducing gaps
+> * Improve imx8mq commit message
+> Link to v1: https://patchwork.kernel.org/cover/11141027/
+>=20
 
 For the entire series:
 
 Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
 
-> ---
->  drivers/clk/imx/clk-imx8mm.c | 14 ++++----------
->  1 file changed, 4 insertions(+), 10 deletions(-)
+> Leonard Crestez (3):
+>   clk: imx8mq: Define gates for pll1/2 fixed dividers
+>   clk: imx8mm: Define gates for pll1/2 fixed dividers
+>   clk: imx8mn: Define gates for pll1/2 fixed dividers
 >=20
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 04876ec66127..ae7321ab7837 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -34,8 +34,6 @@ static const char *dram_pll_bypass_sels[] =3D {"dram_pl=
-l", "dram_pll_ref_sel", };
->  static const char *gpu_pll_bypass_sels[] =3D {"gpu_pll", "gpu_pll_ref_se=
-l", };
->  static const char *vpu_pll_bypass_sels[] =3D {"vpu_pll", "vpu_pll_ref_se=
-l", };
->  static const char *arm_pll_bypass_sels[] =3D {"arm_pll", "arm_pll_ref_se=
-l", };
-> -static const char *sys_pll1_bypass_sels[] =3D {"sys_pll1", "sys_pll1_ref=
-_sel", };
-> -static const char *sys_pll2_bypass_sels[] =3D {"sys_pll2", "sys_pll2_ref=
-_sel", };
->  static const char *sys_pll3_bypass_sels[] =3D {"sys_pll3", "sys_pll3_ref=
-_sel", };
-> =20
->  /* CCM ROOT */
-> @@ -325,8 +323,6 @@ static int imx8mm_clocks_probe(struct platform_device=
- *pdev)
->  	clks[IMX8MM_GPU_PLL_REF_SEL] =3D imx_clk_mux("gpu_pll_ref_sel", base + =
-0x64, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
->  	clks[IMX8MM_VPU_PLL_REF_SEL] =3D imx_clk_mux("vpu_pll_ref_sel", base + =
-0x74, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
->  	clks[IMX8MM_ARM_PLL_REF_SEL] =3D imx_clk_mux("arm_pll_ref_sel", base + =
-0x84, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> -	clks[IMX8MM_SYS_PLL1_REF_SEL] =3D imx_clk_mux("sys_pll1_ref_sel", base =
-+ 0x94, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> -	clks[IMX8MM_SYS_PLL2_REF_SEL] =3D imx_clk_mux("sys_pll2_ref_sel", base =
-+ 0x104, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
->  	clks[IMX8MM_SYS_PLL3_REF_SEL] =3D imx_clk_mux("sys_pll3_ref_sel", base =
-+ 0x114, 0, 2, pll_ref_sels, ARRAY_SIZE(pll_ref_sels));
-> =20
->  	clks[IMX8MM_AUDIO_PLL1] =3D imx_clk_pll14xx("audio_pll1", "audio_pll1_r=
-ef_sel", base, &imx_1443x_pll);
-> @@ -336,8 +332,8 @@ static int imx8mm_clocks_probe(struct platform_device=
- *pdev)
->  	clks[IMX8MM_GPU_PLL] =3D imx_clk_pll14xx("gpu_pll", "gpu_pll_ref_sel", =
-base + 0x64, &imx_1416x_pll);
->  	clks[IMX8MM_VPU_PLL] =3D imx_clk_pll14xx("vpu_pll", "vpu_pll_ref_sel", =
-base + 0x74, &imx_1416x_pll);
->  	clks[IMX8MM_ARM_PLL] =3D imx_clk_pll14xx("arm_pll", "arm_pll_ref_sel", =
-base + 0x84, &imx_1416x_pll);
-> -	clks[IMX8MM_SYS_PLL1] =3D imx_clk_pll14xx("sys_pll1", "sys_pll1_ref_sel=
-", base + 0x94, &imx_1416x_pll);
-> -	clks[IMX8MM_SYS_PLL2] =3D imx_clk_pll14xx("sys_pll2", "sys_pll2_ref_sel=
-", base + 0x104, &imx_1416x_pll);
-> +	clks[IMX8MM_SYS_PLL1] =3D imx_clk_fixed("sys_pll1", 800000000);
-> +	clks[IMX8MM_SYS_PLL2] =3D imx_clk_fixed("sys_pll2", 1000000000);
->  	clks[IMX8MM_SYS_PLL3] =3D imx_clk_pll14xx("sys_pll3", "sys_pll3_ref_sel=
-", base + 0x114, &imx_1416x_pll);
-> =20
->  	/* PLL bypass out */
-> @@ -348,8 +344,6 @@ static int imx8mm_clocks_probe(struct platform_device=
- *pdev)
->  	clks[IMX8MM_GPU_PLL_BYPASS] =3D imx_clk_mux_flags("gpu_pll_bypass", bas=
-e + 0x64, 28, 1, gpu_pll_bypass_sels, ARRAY_SIZE(gpu_pll_bypass_sels), CLK_=
-SET_RATE_PARENT);
->  	clks[IMX8MM_VPU_PLL_BYPASS] =3D imx_clk_mux_flags("vpu_pll_bypass", bas=
-e + 0x74, 28, 1, vpu_pll_bypass_sels, ARRAY_SIZE(vpu_pll_bypass_sels), CLK_=
-SET_RATE_PARENT);
->  	clks[IMX8MM_ARM_PLL_BYPASS] =3D imx_clk_mux_flags("arm_pll_bypass", bas=
-e + 0x84, 28, 1, arm_pll_bypass_sels, ARRAY_SIZE(arm_pll_bypass_sels), CLK_=
-SET_RATE_PARENT);
-> -	clks[IMX8MM_SYS_PLL1_BYPASS] =3D imx_clk_mux_flags("sys_pll1_bypass", b=
-ase + 0x94, 28, 1, sys_pll1_bypass_sels, ARRAY_SIZE(sys_pll1_bypass_sels), =
-CLK_SET_RATE_PARENT);
-> -	clks[IMX8MM_SYS_PLL2_BYPASS] =3D imx_clk_mux_flags("sys_pll2_bypass", b=
-ase + 0x104, 28, 1, sys_pll2_bypass_sels, ARRAY_SIZE(sys_pll2_bypass_sels),=
- CLK_SET_RATE_PARENT);
->  	clks[IMX8MM_SYS_PLL3_BYPASS] =3D imx_clk_mux_flags("sys_pll3_bypass", b=
-ase + 0x114, 28, 1, sys_pll3_bypass_sels, ARRAY_SIZE(sys_pll3_bypass_sels),=
- CLK_SET_RATE_PARENT);
-> =20
->  	/* PLL out gate */
-> @@ -360,8 +354,8 @@ static int imx8mm_clocks_probe(struct platform_device=
- *pdev)
->  	clks[IMX8MM_GPU_PLL_OUT] =3D imx_clk_gate("gpu_pll_out", "gpu_pll_bypas=
-s", base + 0x64, 11);
->  	clks[IMX8MM_VPU_PLL_OUT] =3D imx_clk_gate("vpu_pll_out", "vpu_pll_bypas=
-s", base + 0x74, 11);
->  	clks[IMX8MM_ARM_PLL_OUT] =3D imx_clk_gate("arm_pll_out", "arm_pll_bypas=
-s", base + 0x84, 11);
-> -	clks[IMX8MM_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_pll1_by=
-pass", base + 0x94, 11);
-> -	clks[IMX8MM_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_pll2_by=
-pass", base + 0x104, 11);
-> +	clks[IMX8MM_SYS_PLL1_OUT] =3D imx_clk_gate("sys_pll1_out", "sys_pll1", =
-base + 0x94, 11);
-> +	clks[IMX8MM_SYS_PLL2_OUT] =3D imx_clk_gate("sys_pll2_out", "sys_pll2", =
-base + 0x104, 11);
->  	clks[IMX8MM_SYS_PLL3_OUT] =3D imx_clk_gate("sys_pll3_out", "sys_pll3_by=
-pass", base + 0x114, 11);
-> =20
->  	/* SYS PLL fixed output */
+>  drivers/clk/imx/clk-imx8mm.c             | 57 ++++++++++++++--------
+>  drivers/clk/imx/clk-imx8mn.c             | 57 ++++++++++++++--------
+>  drivers/clk/imx/clk-imx8mq.c             | 61 ++++++++++++++++--------
+>  include/dt-bindings/clock/imx8mm-clock.h | 19 +++++++-
+>  include/dt-bindings/clock/imx8mn-clock.h | 19 +++++++-
+>  include/dt-bindings/clock/imx8mq-clock.h | 22 ++++++++-
+>  6 files changed, 174 insertions(+), 61 deletions(-)
+>=20
 > --=20
-> 2.16.4
+> 2.17.1
 >=20
