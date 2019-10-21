@@ -3,98 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260AECA9EB5
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 08:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D384FCA9EB9
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 08:35:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF37F20B7C
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 08:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3EA721744
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 08:35:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbfJUIS5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Oct 2019 04:18:57 -0400
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:61500 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfJUIS5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Oct 2019 04:18:57 -0400
-X-Greylist: delayed 901 seconds by postgrey-1.27 at vger.kernel.org; Mon, 21 Oct 2019 04:18:55 EDT
-X-AuditID: c0a8fbf4-183ff70000001fa6-9f-5dad66691d4b
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id B0.5E.08102.9666DAD5; Mon, 21 Oct 2019 10:03:53 +0200 (CEST)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Mon, 21 Oct 2019 10:03:42 +0200
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>
-Subject: Re: [RFC PATCH 12/13] dt-bindings: mfd: Document ROHM BD71282
- bindings
-Thread-Topic: [RFC PATCH 12/13] dt-bindings: mfd: Document ROHM BD71282
- bindings
-Thread-Index: AQHVhNEGlzssJjrQoU6zmYO2K0h2bqdewESAgAXgtIA=
-Date:   Mon, 21 Oct 2019 08:03:42 +0000
-Message-ID: <b8914c554e09c92b5a4602435fd60e314922a9c5.camel@fi.rohmeurope.com>
-References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <05841ff33ea166bc6934456a492adc3c67a90670.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
-         <1d2bc596-0329-d090-2e8d-037c8cad0585@ti.com>
-In-Reply-To: <1d2bc596-0329-d090-2e8d-037c8cad0585@ti.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <60A86E1DF0440C4BA4E5F28A4D53E8FA@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726725AbfJUIfR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Oct 2019 04:35:17 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41775 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfJUIfR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Oct 2019 04:35:17 -0400
+Received: by mail-ot1-f66.google.com with SMTP id g13so10250798otp.8;
+        Mon, 21 Oct 2019 01:35:16 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=47SSiwR+Xxy2it4PXYteDhm2ayO8B+8rs50qRRDrcBQ=;
+        b=JR2SemYpoINWzapOBxJPdsWz2pjKBvJlDErwVFpvXiONKdsBbveon4jw5Asg5OkDmf
+         hE7DJeBaUXOVlZxe+mY6cHapbo2hZ8bu/DJ0wdcsqJKxXCGMQ3TgmbdKlWhFOHnqaeel
+         NHWsFIEui648ZxMafEnqAaOku4go2XWXb1hGtHJ8EDvQRT4UxxOtSRNY8aHLRhZgoF09
+         MKodwJPMejMUXSJRLr4KhnsExSc2CpUqYXZ8njcgs5ZSKU9gIcj8NWnjGyX9/Pvzf/Ca
+         cF+USoGsySgxjHZeF219/7y54g/tUYBXiLQAUhTWYNdyS4z+piQwACqVHDhIkSwY4JHY
+         D0sw==
+X-Gm-Message-State: APjAAAWkowWq0ivjBEG7to5Kd+p/lMG3SMcUiLBnHXRX8YhLJeVcVQB3
+        FMka6P5z0UbMEynjYXE1HXYLJHkdRCOt5RhDv5Y=
+X-Google-Smtp-Source: APXvYqwpm0zKxftgprHIrxznPCX8WUaH3MTx/C5legL3pGDYZW4sLskL4PuHLhDupuEHvGf43JI3Q0SeRz8uEgqnXNg=
+X-Received: by 2002:a9d:7345:: with SMTP id l5mr17929115otk.39.1571646915982;
+ Mon, 21 Oct 2019 01:35:15 -0700 (PDT)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0gUURiGOXN3a2LatD3ahdroftnsxqnsRgRjP0INEgLTMafdLd2V2VW0
-        /hhhpXYx6IJDuiLaxUvapmSmWKZmWyRL6hZpthVFkkZoiRnVjGPpr/Oe837v93w/vsPg+l4q
-        hLHanKJkExKNlI54cGPUvdJ6qCJmdeHbFajY20mjUwPXaDSU7yHQJf8HCrman5Mo52k1iV7X
-        VBGo93sLQD86TmPo4q/rGPp25g2J7rh+AfSi7iqFar7cAqi1rINCJT4vhq6WtBHI69mFejwt
-        FMpsaKbR767bxPYgvrygHPBfX2bSfEH5Mf6e3EPz7tIsiu/uqqf4xy/vYvyVghGMv1E2TPOD
-        7rkRuv1TwuIFZ+peq9lm2ho3xVLUfZJOlsm0U+26DHCazAYBDOTWwXNnvYrWMXquC8DW6x6g
-        XdoAfNc3iGUDhqG4MJj9ilYDgdwBeM37kFJrcG6Yhn1yzpgxg4uEraPtpFYUBYff5FKa3gRL
-        z/8hVE1wC+HH6stA1Sy3B57z5Y3DOgAc8vaPGQFK4HKna6wR4ObArIwBTNU4Z4Duj8PjY3Ow
-        uL4d13QQ/Pz+9/i7ETaM+Al1aJxbCivrTJrcDluHDmtd5sOLOX5aG2E6fJL3gcgFM+VJAHki
-        LE+E5UlheVK4EJClACYJ1kSz4BRDV0liyirJbklSjoP2JDfQFmaoFvxpCm8CGAOaQDCDGYNY
-        m6k8Rj8t3p6QbhEcllgpJVF0NAHI4MZAtnt1RYyeTRDSj4qS/Z81iyGMBnax/0KMnlNZR0Qx
-        WZT+ubMZxgjZgINKcLokmsW0Q9ZE54SNMQFqc11IoEO0JYiSkOK0xKrbEetQ1kO1pircx6LK
-        dSQLScqrFvWA5Uzu5/winGnOLynC9YTNbhNDDKwrTinl1FJLiu0/qA8YGGCcwfYmKO5U5df8
-        79OnIDAFURZcpiKcwoQVkgGC49IPx204O1qT2b8biRu3rDRHkFVVC5JPFIeFGr4W765nuVeG
-        zX5n447IJSa7IPSYukR6IG0kevDn2+WGqNDB6HbvvJuf8NQ2Pq9zT38Gueb50eMHZFOqr3JW
-        QaR3p6/wkePdttpn4Wtbsr4t2tVI4EeKXOt95poL4WtK9lXfNxIOixC6DJccwl/439tc8gMA
-        AA==
+References: <20190830134515.11925-1-geert+renesas@glider.be>
+ <20190903220954.7753320882@mail.kernel.org> <CAMuHMdVxktbMUn-JCO6Oz8zgG5V+dLv=3cMompErU33DkBG=0w@mail.gmail.com>
+ <20190911162445.F377E2085B@mail.kernel.org>
+In-Reply-To: <20190911162445.F377E2085B@mail.kernel.org>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 21 Oct 2019 10:35:04 +0200
+Message-ID: <CAMuHMdWgwmjsixF4WePC3Jc2OZKCcVaXOZ8Q6A_C3GrYTGTFUw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/8] clk: renesas: rcar-gen2/gen3: Switch to .determine_rate()
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-VGhhbmtzIERhbiwNCg0KT24gVGh1LCAyMDE5LTEwLTE3IGF0IDA5OjE4IC0wNTAwLCBEYW4gTXVy
-cGh5IHdyb3RlOg0KPiBNYXR0DQoNCkJ5IHRoZSB3YXksIGl0cyBNYXR0aSA7KQ0KDQo+IE9uIDEw
-LzE3LzE5IDQ6NTUgQU0sIE1hdHRpIFZhaXR0aW5lbiB3cm90ZToNCj4gPiBST0hNIEJENzE4Mjgg
-UG93ZXIgbWFuYWdlbWVudCBJQyBpbnRlZ3JhdGVzIDcgYnVjayBjb252ZXJ0ZXJzLCA3DQo+ID4g
-TERPcywNCj4gPiBhIHJlYWwtdGltZSBjbG9jayAoUlRDKSwgMyBHUE8vcmVndWxhdG9yIGNvbnRy
-b2wgcGlucywgSEFMTCBpbnB1dA0KPiA+IHBpbg0KPiA+IGFuZCBhIDMyLjc2OCBrSHogY2xvY2sg
-Z2F0ZS4NCj4gPiANCj4gPiBEb2N1bWVudCB0aGUgZHQgYmluZGluZ3MgZHJpdmVycyBhcmUgdXNp
-bmcuDQo+IA0KPiBUaGlzIHNob3VsZCBiZSBwYXRjaCAxIG9mIFgNCg0KSSB3aWxsIHJlYmFzZSA6
-KQ0KDQpCciwNCglNYXR0aSBWYWl0dGluZW4NCg==
+Hi Stephen,
+
+On Wed, Sep 11, 2019 at 6:24 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Geert Uytterhoeven (2019-09-03 23:51:10)
+> > On Wed, Sep 4, 2019 at 12:09 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > Quoting Geert Uytterhoeven (2019-08-30 06:45:07)
+> > > > As the .round_rate() callback returns a long clock rate, it cannot
+> > > > return clock rates that do not fit in signed long, but do fit in
+> > > > unsigned long.  The newer .determine_rate() callback does not suffer
+> > > > from this limitation.  In addition, .determine_rate() provides the
+> > > > ability to specify a rate range.
+> > > >
+> > > > This patch series performs the customary preparatory cleanups, and
+> > > > switches the Z (CPU) and SD clocks in the R-Car Gen2 and Gen3 clock
+> > > > drivers from the .round_rate() to the .determine_rate() callback.
+> > > > Note that the "div6" clock driver hasn't been converted yet, so div6
+> > > > clocks still use .round_rate().
+> > > >
+> > > > Changes compared to v1[1]:
+> > > >   - Add preparatory arithmetic division improvements
+> > > >   - Split off cpg_sd_clock_calc_div() absorption and SD clock best rate
+> > > >     calculation,
+> > > >   - Use div_u64() for division by unsigned long,
+> > > >
+> > > > This has been tested on R-Car M2-W and various R-Car Gen3, and should
+> > > > have no behavioral impact.
+> > >
+> > > From what I recall the rate range code is broken but I can't remember
+> > > how. Anyway, I was just curious if you ran into any issues with that
+> > > code.
+> >
+> > I didn't ran into any issues.  But please note that in all tested cases, the
+> > limits were 0 and ULONG_MAX anyway, so probably it didn't trigger the
+> > broken cases in the rate range code.
+> >
+> > So, is it good to have .determine_rate() support in individual clock drivers
+> > now, or do you want me to postpone the last 3 patches of my series until the
+> > rate range code is fixed?
+> >
+>
+> It's fine to use .determine_rate() because we'll fix the problems in the
+> clk framework. So no concern from me here. Just curious if you ran into
+> any problems.
+
+Thanks, queued in clk-renesas-for-v5.5.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
