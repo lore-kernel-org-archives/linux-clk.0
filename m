@@ -2,121 +2,88 @@ Return-Path: <SRS0=PJ2H=YO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4D0DCA9EAF
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 12:53:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A22DACA9EAF
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 14:31:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D68F214B2
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 12:53:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571662396;
-	bh=uxGrhZDbF2L+yKtpe/kGnfAuBpoA1iG6MrGYbfiPYMY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=sH+pLmNy6RTFmrtKk0PdRXI0BD7Oa1t6lsQQ3O8Qt884o1PfSPN3s1YhwZKwCfDYs
-	 4cU6IAKMqsYpLSXQoVXaddMcHMsyh/L7JS6lOla05Z+duXuMGGntx9EhUREW4VU9RO
-	 fha5Gl5xxNcLrvwaadIJvLxwk67PQgy9NyWgoOOs=
+	by mail.kernel.org (Postfix) with ESMTP id 7420420656
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 14:31:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728076AbfJUMxM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Oct 2019 08:53:12 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52308 "EHLO mail.kernel.org"
+        id S1727101AbfJUObO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Oct 2019 10:31:14 -0400
+Received: from muru.com ([72.249.23.125]:38392 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727256AbfJUMxM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 21 Oct 2019 08:53:12 -0400
-Received: from localhost (unknown [122.167.89.206])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B670620679;
-        Mon, 21 Oct 2019 12:53:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571662391;
-        bh=uxGrhZDbF2L+yKtpe/kGnfAuBpoA1iG6MrGYbfiPYMY=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=r4RWmmBtxaaFlwYYdg07Nv47t0QfQGlkcWuDFsx6GsS0CtyZEscBs7zvcW94wE2ML
-         BNBUeJJjg8osPhmy2fXtxoHyXLMXEyHRJZqzRrhO1JJ5un+YrSWsDexBCaz+UPxZh+
-         hxu8etsF5EOf8X+0KJ6IXR8K5+0b/UgnABbLKzQI=
-Date:   Mon, 21 Oct 2019 18:23:07 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
+        id S1726977AbfJUObO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 21 Oct 2019 10:31:14 -0400
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 2A172810A;
+        Mon, 21 Oct 2019 14:31:48 +0000 (UTC)
+Date:   Mon, 21 Oct 2019 07:31:10 -0700
+From:   Tony Lindgren <tony@atomide.com>
+To:     Stephen Kitt <steve@sk2.org>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v1 3/3] clk: qcom: clk-rpmh: Add support for RPMHCC for
- SC7180
-Message-ID: <20191021125307.GF2654@vkoul-mobl>
-References: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
- <1571393364-32697-4-git-send-email-tdas@codeaurora.org>
+        Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk/ti/adpll: allocate room for terminating null
+Message-ID: <20191021143110.GT5610@atomide.com>
+References: <20191019155441.2b1b349f@heffalump.sk2.org>
+ <20191019140634.15596-1-steve@sk2.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571393364-32697-4-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <20191019140634.15596-1-steve@sk2.org>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 18-10-19, 15:39, Taniya Das wrote:
-> Add support for clock RPMh driver to vote for ARC and VRM managed
-> clock resources.
+* Stephen Kitt <steve@sk2.org> [191019 14:07]:
+> The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+> terminating null. This patch switches to devm_kasprintf to avoid
+> overflowing.
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> Signed-off-by: Stephen Kitt <steve@sk2.org>
 > ---
->  drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+> Changes since v2:
+>   - Move "adpll" into the format string and drop base_name entirely.
 > 
-> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-> index 96a36f6..7301c77 100644
-> --- a/drivers/clk/qcom/clk-rpmh.c
-> +++ b/drivers/clk/qcom/clk-rpmh.c
-> @@ -391,6 +391,24 @@ static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
->  	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
->  };
+> Changes since v1:
+>   - Use devm_kasprintf instead of manually allocating the target
+>     buffer.
+
+Acked-by: Tony Lindgren <tony@atomide.com>
+
+> ---
+>  drivers/clk/ti/adpll.c | 11 ++---------
+>  1 file changed, 2 insertions(+), 9 deletions(-)
 > 
-> +static struct clk_hw *sc7180_rpmh_clocks[] = {
-> +	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-> +	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-> +	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-> +	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-> +	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
-> +	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
-> +	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-> +	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-> +	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-> +	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-> +};
-> +
-> +static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
-> +	.clks = sc7180_rpmh_clocks,
-> +	.num_clks = ARRAY_SIZE(sc7180_rpmh_clocks),
-> +};
-> +
->  static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
->  					 void *data)
->  {
-> @@ -471,6 +489,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
->  static const struct of_device_id clk_rpmh_match_table[] = {
->  	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
->  	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
-> +	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
-
-Is the table above not same as sm8150, if so cant we reuse that for
-sc7180?
-
->  	{ }
->  };
->  MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
-
--- 
-~Vinod
+> diff --git a/drivers/clk/ti/adpll.c b/drivers/clk/ti/adpll.c
+> index fdfb90058504..bb2f2836dab2 100644
+> --- a/drivers/clk/ti/adpll.c
+> +++ b/drivers/clk/ti/adpll.c
+> @@ -194,15 +194,8 @@ static const char *ti_adpll_clk_get_name(struct ti_adpll_data *d,
+>  		if (err)
+>  			return NULL;
+>  	} else {
+> -		const char *base_name = "adpll";
+> -		char *buf;
+> -
+> -		buf = devm_kzalloc(d->dev, 8 + 1 + strlen(base_name) + 1 +
+> -				    strlen(postfix), GFP_KERNEL);
+> -		if (!buf)
+> -			return NULL;
+> -		sprintf(buf, "%08lx.%s.%s", d->pa, base_name, postfix);
+> -		name = buf;
+> +		name = devm_kasprintf(d->dev, GFP_KERNEL, "%08lx.adpll.%s",
+> +				      d->pa, postfix);
+>  	}
+>  
+>  	return name;
+> -- 
+> 2.20.1
+> 
