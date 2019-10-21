@@ -2,113 +2,142 @@ Return-Path: <SRS0=PJ2H=YO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D384FCA9EB9
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 08:35:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A2BCCA9EB7
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 09:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3EA721744
-	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 08:35:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB3DE20830
+	for <linux-clk@archiver.kernel.org>; Mon, 21 Oct 2019 09:59:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A+lOYOm+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726725AbfJUIfR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 21 Oct 2019 04:35:17 -0400
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:41775 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfJUIfR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Oct 2019 04:35:17 -0400
-Received: by mail-ot1-f66.google.com with SMTP id g13so10250798otp.8;
-        Mon, 21 Oct 2019 01:35:16 -0700 (PDT)
+        id S1727944AbfJUJ7P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 21 Oct 2019 05:59:15 -0400
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:37472 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727323AbfJUJ7O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 21 Oct 2019 05:59:14 -0400
+Received: by mail-ua1-f67.google.com with SMTP id w7so3616628uag.4
+        for <linux-clk@vger.kernel.org>; Mon, 21 Oct 2019 02:59:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pdHS5iTjhH216W3OQmstavgIx2TJJX3EShTQ+j4ScZ4=;
+        b=A+lOYOm+Xr9/QoAPbGmRqhJkdtF0Lqe8WUL4ACj5RU0nNNF8swHXxJ1znB4G8Os5Ny
+         GFNaGZ/ejdu+ewHfdHOPCmruyouYE59ddCzoE/xVdTrwx+9jDUvHxy7BDp9wIDVdNxfI
+         /6ZVUUwI4YOYuKQGiiojp4zvyT6amzLfph0exWZKznf04jiM3DxdRAExfvqYeyeqcqdD
+         +jHYiIvYbVFtFjJ+6C1ZbvLjFHV0Oba7w+6LuMl93+fW5xmlBomtFj1iieYNFONPPx+n
+         GuW5fPipC9llariB4WKqkEzYSA5LiCXyADKzbRoQItF2MbOokfHyNH6+nW64EQTg2+/Q
+         SDPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=47SSiwR+Xxy2it4PXYteDhm2ayO8B+8rs50qRRDrcBQ=;
-        b=JR2SemYpoINWzapOBxJPdsWz2pjKBvJlDErwVFpvXiONKdsBbveon4jw5Asg5OkDmf
-         hE7DJeBaUXOVlZxe+mY6cHapbo2hZ8bu/DJ0wdcsqJKxXCGMQ3TgmbdKlWhFOHnqaeel
-         NHWsFIEui648ZxMafEnqAaOku4go2XWXb1hGtHJ8EDvQRT4UxxOtSRNY8aHLRhZgoF09
-         MKodwJPMejMUXSJRLr4KhnsExSc2CpUqYXZ8njcgs5ZSKU9gIcj8NWnjGyX9/Pvzf/Ca
-         cF+USoGsySgxjHZeF219/7y54g/tUYBXiLQAUhTWYNdyS4z+piQwACqVHDhIkSwY4JHY
-         D0sw==
-X-Gm-Message-State: APjAAAWkowWq0ivjBEG7to5Kd+p/lMG3SMcUiLBnHXRX8YhLJeVcVQB3
-        FMka6P5z0UbMEynjYXE1HXYLJHkdRCOt5RhDv5Y=
-X-Google-Smtp-Source: APXvYqwpm0zKxftgprHIrxznPCX8WUaH3MTx/C5legL3pGDYZW4sLskL4PuHLhDupuEHvGf43JI3Q0SeRz8uEgqnXNg=
-X-Received: by 2002:a9d:7345:: with SMTP id l5mr17929115otk.39.1571646915982;
- Mon, 21 Oct 2019 01:35:15 -0700 (PDT)
+        bh=pdHS5iTjhH216W3OQmstavgIx2TJJX3EShTQ+j4ScZ4=;
+        b=nx0NZNG18fty3IEfdfb7nLiZVSuS+v0stTkJvMgaqOqjGYvwmMqbyy0wO3+foASLSf
+         w5y+JQJgM0WlVP6VaCbkXpOzLGXaVzpvN0DqFrpWu5cEag7u7q/fTfcn41+YTLAkcJ+r
+         3zA1aOhR1Tutv9ei2T6kQ0uVwB9MGO3aWFMofNWdBmq4ACcoKu2aU6AUQ8yVpBeDm2H6
+         rKhnqvuKmChsBfg3WiA83GjhsQopIyW0jZeeStEZk0SpkhQWIr4ZL5yW+Qg67L65nBED
+         DH795TAWTijQSdaUzhUENWntBdXHS16wNcU1CER1d/l4vttnPJBR/vd9t/1WxnhTv3Z0
+         XJsA==
+X-Gm-Message-State: APjAAAXeYrLdWxaUItY1WFsLr0LWzeDbzE0dvNPL45ReN/AOKlqQZiw4
+        oxOMMPZbpnnCj5cYLQXW3t+ijOfdZV0vktuirmASuA==
+X-Google-Smtp-Source: APXvYqyX35z25w9uC+afBeqWkMX+7aKojU6riMDxod1s9TtFAaRTKL1Dky4gIujxC0cprlM32BbtJAeRhAkOs/Lhxl0=
+X-Received: by 2002:ab0:5a97:: with SMTP id w23mr2075364uae.129.1571651953620;
+ Mon, 21 Oct 2019 02:59:13 -0700 (PDT)
 MIME-Version: 1.0
-References: <20190830134515.11925-1-geert+renesas@glider.be>
- <20190903220954.7753320882@mail.kernel.org> <CAMuHMdVxktbMUn-JCO6Oz8zgG5V+dLv=3cMompErU33DkBG=0w@mail.gmail.com>
- <20190911162445.F377E2085B@mail.kernel.org>
-In-Reply-To: <20190911162445.F377E2085B@mail.kernel.org>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 21 Oct 2019 10:35:04 +0200
-Message-ID: <CAMuHMdWgwmjsixF4WePC3Jc2OZKCcVaXOZ8Q6A_C3GrYTGTFUw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/8] clk: renesas: rcar-gen2/gen3: Switch to .determine_rate()
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+References: <20191018154052.1276506-1-arnd@arndb.de> <20191018154201.1276638-5-arnd@arndb.de>
+In-Reply-To: <20191018154201.1276638-5-arnd@arndb.de>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Mon, 21 Oct 2019 11:58:37 +0200
+Message-ID: <CAPDyKFqHoPOPAA_0WpxQUjBTXJ-5BfMbcNXhFNr7rv3RObsgow@mail.gmail.com>
+Subject: Re: [PATCH 05/46] ARM: pxa: split up mach/hardware.h
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+        Linux PM <linux-pm@vger.kernel.org>,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        linux-watchdog@vger.kernel.org, alsa-devel@alsa-project.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
-
-On Wed, Sep 11, 2019 at 6:24 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> Quoting Geert Uytterhoeven (2019-09-03 23:51:10)
-> > On Wed, Sep 4, 2019 at 12:09 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > Quoting Geert Uytterhoeven (2019-08-30 06:45:07)
-> > > > As the .round_rate() callback returns a long clock rate, it cannot
-> > > > return clock rates that do not fit in signed long, but do fit in
-> > > > unsigned long.  The newer .determine_rate() callback does not suffer
-> > > > from this limitation.  In addition, .determine_rate() provides the
-> > > > ability to specify a rate range.
-> > > >
-> > > > This patch series performs the customary preparatory cleanups, and
-> > > > switches the Z (CPU) and SD clocks in the R-Car Gen2 and Gen3 clock
-> > > > drivers from the .round_rate() to the .determine_rate() callback.
-> > > > Note that the "div6" clock driver hasn't been converted yet, so div6
-> > > > clocks still use .round_rate().
-> > > >
-> > > > Changes compared to v1[1]:
-> > > >   - Add preparatory arithmetic division improvements
-> > > >   - Split off cpg_sd_clock_calc_div() absorption and SD clock best rate
-> > > >     calculation,
-> > > >   - Use div_u64() for division by unsigned long,
-> > > >
-> > > > This has been tested on R-Car M2-W and various R-Car Gen3, and should
-> > > > have no behavioral impact.
-> > >
-> > > From what I recall the rate range code is broken but I can't remember
-> > > how. Anyway, I was just curious if you ran into any issues with that
-> > > code.
-> >
-> > I didn't ran into any issues.  But please note that in all tested cases, the
-> > limits were 0 and ULONG_MAX anyway, so probably it didn't trigger the
-> > broken cases in the rate range code.
-> >
-> > So, is it good to have .determine_rate() support in individual clock drivers
-> > now, or do you want me to postpone the last 3 patches of my series until the
-> > rate range code is fixed?
-> >
+On Fri, 18 Oct 2019 at 17:43, Arnd Bergmann <arnd@arndb.de> wrote:
 >
-> It's fine to use .determine_rate() because we'll fix the problems in the
-> clk framework. So no concern from me here. Just curious if you ran into
-> any problems.
+> The mach/hardware.h is included in lots of places, and it provides
+> three different things on pxa:
+>
+> - the cpu_is_pxa* macros
+> - an indirect inclusion of mach/addr-map.h
+> - the __REG() and io_pv2() helper macros
+>
+> Split it up into separate <linux/soc/pxa/cpu.h> and mach/pxa-regs.h
+> headers, then change all the files that use mach/hardware.h to
+> include the exact set of those three headers that they actually
+> need, allowing for further more targeted cleanup.
+>
+> linux/soc/pxa/cpu.h can remain permanently exported and is now in
+> a global location along with similar headers. pxa-regs.h and
+> addr-map.h are only used in a very small number of drivers now
+> and can be moved to arch/arm/mach-pxa/ directly when those drivers
+> are to pass the necessary data as resources.
+>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Viresh Kumar <viresh.kumar@linaro.org>
+> Cc: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Cc: Jacek Anaszewski <jacek.anaszewski@gmail.com>
+> Cc: Pavel Machek <pavel@ucw.cz>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Cc: Mark Brown <broonie@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Cc: linux-pm@vger.kernel.org
+> Cc: linux-input@vger.kernel.org
+> Cc: linux-leds@vger.kernel.org
+> Cc: linux-mmc@vger.kernel.org
+> Cc: linux-mtd@lists.infradead.org
+> Cc: linux-rtc@vger.kernel.org
+> Cc: linux-usb@vger.kernel.org
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: linux-fbdev@vger.kernel.org
+> Cc: linux-watchdog@vger.kernel.org
+> Cc: alsa-devel@alsa-project.org
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Thanks, queued in clk-renesas-for-v5.5.
+[...]
 
-Gr{oetje,eeting}s,
+For the mmc part:
 
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Acked-by: Ulf Hansson <ulf.hansson@linaro.org>
