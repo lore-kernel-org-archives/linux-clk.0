@@ -2,364 +2,113 @@ Return-Path: <SRS0=2r8j=YP=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2292CA9EA0
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Oct 2019 05:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4E7CA9EA0
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Oct 2019 07:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C6F2075A
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Oct 2019 05:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE0BF20B7C
+	for <linux-clk@archiver.kernel.org>; Tue, 22 Oct 2019 07:13:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="smgeuRIM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfJVFaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Oct 2019 01:30:24 -0400
-Received: from mail-sz.amlogic.com ([211.162.65.117]:56667 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725788AbfJVFaY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Oct 2019 01:30:24 -0400
-Received: from [10.28.19.114] (10.28.19.114) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 22 Oct
- 2019 13:30:31 +0800
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: meson: add A1 clock controller
- bindings
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
- <1571382865-41978-2-git-send-email-jian.hu@amlogic.com>
- <1jv9sibcpg.fsf@starbuckisacylon.baylibre.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <32cba835-5336-a787-c750-473125420e97@amlogic.com>
-Date:   Tue, 22 Oct 2019 13:30:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2387647AbfJVHNR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 22 Oct 2019 03:13:17 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47952 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387575AbfJVHNR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 22 Oct 2019 03:13:17 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9M7DEsd063127;
+        Tue, 22 Oct 2019 02:13:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571728394;
+        bh=U91+Wq5szJ4SPTYWfkBe0dU0xl7L3riATq2QqoUXpBs=;
+        h=From:To:CC:Subject:Date;
+        b=smgeuRIM7SBm6m966SNKfCMQhCm3dbGDRd9bBc9PmU3oCuHGa1j2L2QdvwRSQLMP1
+         eOUHhluhSRYXG3f6L6kyO1l8i301ykmqkRu1/BAN4JztxTCYuewaV/Xq2nNn6+jEfc
+         Rg6jArXwDrY9cz23oKLp0NIyWQwWno69EMxQ+ydc=
+Received: from DLEE106.ent.ti.com (dlee106.ent.ti.com [157.170.170.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9M7DDIa072313
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 22 Oct 2019 02:13:14 -0500
+Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE106.ent.ti.com
+ (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 22
+ Oct 2019 02:13:13 -0500
+Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
+ (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 22 Oct 2019 02:13:03 -0500
+Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9M7CP6H022795;
+        Tue, 22 Oct 2019 02:12:26 -0500
+From:   Kishon Vijay Abraham I <kishon@ti.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tero Kristo <t-kristo@ti.com>
+Subject: [PATCH] clk: Fix memory leak in clk_unregister()
+Date:   Tue, 22 Oct 2019 12:41:53 +0530
+Message-ID: <20191022071153.21118-1-kishon@ti.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-In-Reply-To: <1jv9sibcpg.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.19.114]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi, Jerome
+Memory allocated in alloc_clk() for 'struct clk' and
+'const char *con_id' while invoking clk_register() is never freed
+in clk_unregister(), resulting in kmemleak showing the following
+backtrace.
 
-Thanks for your review.
+  backtrace:
+    [<00000000546f5dd0>] kmem_cache_alloc+0x18c/0x270
+    [<0000000073a32862>] alloc_clk+0x30/0x70
+    [<0000000082942480>] __clk_register+0xc8/0x760
+    [<000000005c859fca>] devm_clk_register+0x54/0xb0
+    [<00000000868834a8>] 0xffff800008c60950
+    [<00000000d5a80534>] platform_drv_probe+0x50/0xa0
+    [<000000001b3889fc>] really_probe+0x108/0x348
+    [<00000000953fa60a>] driver_probe_device+0x58/0x100
+    [<0000000008acc17c>] device_driver_attach+0x6c/0x90
+    [<0000000022813df3>] __driver_attach+0x84/0xc8
+    [<00000000448d5443>] bus_for_each_dev+0x74/0xc8
+    [<00000000294aa93f>] driver_attach+0x20/0x28
+    [<00000000e5e52626>] bus_add_driver+0x148/0x1f0
+    [<000000001de21efc>] driver_register+0x60/0x110
+    [<00000000af07c068>] __platform_driver_register+0x40/0x48
+    [<0000000060fa80ee>] 0xffff800008c66020
 
-On 2019/10/21 18:43, Jerome Brunet wrote:
-> 
-> On Fri 18 Oct 2019 at 09:14, Jian Hu <jian.hu@amlogic.com> wrote:
-> 
->> Add the documentation to support Amlogic A1 clock driver,
->> and add A1 clock controller bindings.
->>
->> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
->> ---
->>   .../devicetree/bindings/clock/amlogic,a1-clkc.yaml | 143
->> +++++++++++++++++++++
-> 
-> Those are 2 different controllers, not variants.
-> One description (one file) per controller please
-OK, I will describe for periphs and PLLs controller separately.
-> 
->>   include/dt-bindings/clock/a1-clkc.h                |  98 ++++++++++++++
->>   include/dt-bindings/clock/a1-pll-clkc.h            |  16 +++
->>   3 files changed, 257 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
->>   create mode 100644 include/dt-bindings/clock/a1-clkc.h
->>   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
->>
->> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
->> new file mode 100644
->> index 0000000..b382eebe
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
->> @@ -0,0 +1,143 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> + */
->> +%YAML 1.2
->> +---
->> +$id: "http://devicetree.org/schemas/clock/amlogic,a1-clkc.yaml#"
->> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
->> +
->> +title: Amlogic Meson A/C serials Clock Control Unit Device Tree Bindings
->> +
->> +maintainers:
->> +  - Neil Armstrong <narmstrong@baylibre.com>
->> +  - Jerome Brunet <jbrunet@baylibre.com>
->> +  - Jian Hu <jian.hu@jian.hu.com>
->> +
->> +description: |+
->> +  The clock controller node should be the child of a syscon node with the
->> +  required property:
->> +
->> +  - compatible:         Should be one of the following:
->> +                        "amlogic,meson-a-analog-sysctrl", "syscon", "simple-mfd"
->> +                        "amlogic,meson-a-periphs-sysctrl", "syscon", "simple-mfd"
->> +
->> +  Refer to the the bindings described in
->> +  Documentation/devicetree/bindings/mfd/syscon.txt
->> +
->> +properties:
->> +  "#clock-cells":
->> +    const: 1
->> +  compatible:
->> +    - enum:
->> +        - amlogic,a1-periphs-clkc
->> +        - amlogic,a1-pll-clkc
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    minItems: 2
->> +    maxItems: 6
->> +
->> +  clock-names:
->> +    minItems: 2
->> +    maxItems: 6
->> +
->> +required:
->> +  - "#clock-cells"
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - clock-names
->> +
->> +if:
->> +  properties:
->> +    compatible:
->> +      enum:
->> +        - amlogic,a1-periphs-clkc
->> +
->> +then:
->> +  properties:
->> +    clocks:
->> +      minItems: 2
->> +      maxItems: 2
->> +    items:
->> +     - description: fixed pll gate clock
->> +     - description: hifi pll gate clock
->> +
->> +    clock-names:
->> +      minItems: 2
->> +      maxItems: 2
->> +      items:
->> +        - const: xtal_fixpll
->> +        - const: xtal_hifipll
->> +
->> +else:
->> +  if:
->> +    properties:
->> +      compatible:
->> +        const: amlogic,a1-pll-clkc
->> +
->> +  then:
->> +    properties:
->> +      clocks:
->> +        minItems: 6
->> +        maxItems: 6
->> +        items:
->> +         - description: Input fixed pll div2
->> +         - description: Input fixed pll div3
->> +         - description: Input fixed pll div5
->> +         - description: Input fixed pll div7
->> +         - description: Periph Hifi pll
->> +         - description: Input Oscillator (usually at 24MHz)
->> +
->> +      clock-names:
->> +        minItems: 6
->> +        maxItems: 6
->> +        items:
->> +         - const: fclk_div2
->> +         - const: fclk_div3
->> +         - const: fclk_div5
->> +         - const: fclk_div7
->> +         - const: hifi_pll
->> +         - const: xtal
->> +
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    analog: system-controller@0 {
->> +        compatible = "amlogic,meson-a-analog-sysctrl",
->> +                     "simple-mfd", "syscon";
->> +        reg = <0 0x7c00 0 0x21c>;
->> +
->> +        clkc_pll: pll-clock-controller {
->> +                compatible = "amlogic,a1-pll-clkc";
->> +                #clock-cells = <1>;
->> +                clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
->> +                         <&clkc_periphs CLKID_XTAL_HIFIPLL>;
->> +                clock-names = "xtal_fixpll", "xtal_hifipll";
->> +        };
->> +    };
->> +
->> +  - |
->> +    periphs: system-controller@1 {
->> +        compatible = "amlogic,meson-a-periphs-sysctrl",
->> +                     "simple-mfd", "syscon";
->> +        reg = <0 0x800 0 0x104>;
->> +
->> +        clkc_periphs: periphs-clock-controller {
->> +                compatible = "amlogic,a1-periphs-clkc";
->> +                #clock-cells = <1>;
->> +                clocks = <&clkc_pll CLKID_FCLK_DIV2>,
->> +                        <&clkc_pll CLKID_FCLK_DIV3>,
->> +                        <&clkc_pll CLKID_FCLK_DIV5>,
->> +                        <&clkc_pll CLKID_FCLK_DIV7>,
->> +                        <&clkc_pll CLKID_HIFI_PLL>,
->> +                        <&xtal>;
->> +                clock-names = "fclk_div2", "fclk_div3", "fclk_div5",
->> +                              "fclk_div7", "hifi_pll", "xtal";
->> +        };
->> +    };
->> diff --git a/include/dt-bindings/clock/a1-clkc.h b/include/dt-bindings/clock/a1-clkc.h
->> new file mode 100644
->> index 0000000..1ba0112
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/a1-clkc.h
->> @@ -0,0 +1,98 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> + */
->> +
->> +#ifndef __A1_CLKC_H
->> +#define __A1_CLKC_H
->> +
->> +#define CLKID_XTAL_FIXPLL			1
->> +#define CLKID_XTAL_USB_PHY			2
->> +#define CLKID_XTAL_USB_CTRL			3
->> +#define CLKID_XTAL_HIFIPLL			4
->> +#define CLKID_XTAL_SYSPLL			5
->> +#define CLKID_XTAL_DDS				6
->> +#define CLKID_SYS_CLK				7
->> +#define CLKID_CLKTREE				8
->> +#define CLKID_RESET_CTRL			9
->> +#define CLKID_ANALOG_CTRL			10
->> +#define CLKID_PWR_CTRL				11
->> +#define CLKID_PAD_CTRL				12
->> +#define CLKID_SYS_CTRL				13
->> +#define CLKID_TEMP_SENSOR			14
->> +#define CLKID_AM2AXI_DIV			15
->> +#define CLKID_SPICC_B				16
->> +#define CLKID_SPICC_A				17
->> +#define CLKID_CLK_MSR				18
->> +#define CLKID_AUDIO				19
->> +#define CLKID_JTAG_CTRL				20
->> +#define CLKID_SARADC				21
->> +#define CLKID_PWM_EF				22
->> +#define CLKID_PWM_CD				23
->> +#define CLKID_PWM_AB				24
->> +#define CLKID_CEC				25
->> +#define CLKID_I2C_S				26
->> +#define CLKID_IR_CTRL				27
->> +#define CLKID_I2C_M_D				28
->> +#define CLKID_I2C_M_C				29
->> +#define CLKID_I2C_M_B				30
->> +#define CLKID_I2C_M_A				31
->> +#define CLKID_ACODEC				32
->> +#define CLKID_OTP				33
->> +#define CLKID_SD_EMMC_A				34
->> +#define CLKID_USB_PHY				35
->> +#define CLKID_USB_CTRL				36
->> +#define CLKID_SYS_DSPB				37
->> +#define CLKID_SYS_DSPA				38
->> +#define CLKID_DMA				39
->> +#define CLKID_IRQ_CTRL				40
->> +#define CLKID_NIC				41
->> +#define CLKID_GIC				42
->> +#define CLKID_UART_C				43
->> +#define CLKID_UART_B				44
->> +#define CLKID_UART_A				45
->> +#define CLKID_SYS_PSRAM				46
->> +#define CLKID_RSA				47
->> +#define CLKID_CORESIGHT				48
->> +#define CLKID_AM2AXI_VAD			49
->> +#define CLKID_AUDIO_VAD				50
->> +#define CLKID_AXI_DMC				51
->> +#define CLKID_AXI_PSRAM				52
->> +#define CLKID_RAMB				53
->> +#define CLKID_RAMA				54
->> +#define CLKID_AXI_SPIFC				55
->> +#define CLKID_AXI_NIC				56
->> +#define CLKID_AXI_DMA				57
->> +#define CLKID_CPU_CTRL				58
->> +#define CLKID_ROM				59
->> +#define CLKID_PROC_I2C				60
->> +#define CLKID_DSPA_SEL				61
->> +#define CLKID_DSPB_SEL				62
->> +#define CLKID_DSPA_EN_DSPA			63
->> +#define CLKID_DSPA_EN_NIC			64
->> +#define CLKID_DSPB_EN_DSPB			65
->> +#define CLKID_DSPB_EN_NIC			66
->> +#define CLKID_RTC_CLK				67
->> +#define CLKID_CECA_32K				68
->> +#define CLKID_CECB_32K				69
->> +#define CLKID_24M				70
->> +#define CLKID_12M				71
->> +#define CLKID_FCLK_DIV2_DIVN			72
->> +#define CLKID_GEN				73
->> +#define CLKID_SARADC_SEL			74
->> +#define CLKID_SARADC_CLK			75
->> +#define CLKID_PWM_A				76
->> +#define CLKID_PWM_B				77
->> +#define CLKID_PWM_C				78
->> +#define CLKID_PWM_D				79
->> +#define CLKID_PWM_E				80
->> +#define CLKID_PWM_F				81
->> +#define CLKID_SPICC				82
->> +#define CLKID_TS				83
->> +#define CLKID_SPIFC				84
->> +#define CLKID_USB_BUS				85
->> +#define CLKID_SD_EMMC				86
->> +#define CLKID_PSRAM				87
->> +#define CLKID_DMC				88
->> +
->> +#endif /* __A1_CLKC_H */
->> diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
->> new file mode 100644
->> index 0000000..58eae23
->> --- /dev/null
->> +++ b/include/dt-bindings/clock/a1-pll-clkc.h
->> @@ -0,0 +1,16 @@
->> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
->> +/*
->> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
->> + */
->> +
->> +#ifndef __A1_PLL_CLKC_H
->> +#define __A1_PLL_CLKC_H
->> +
->> +#define CLKID_FIXED_PLL				1
->> +#define CLKID_FCLK_DIV2				6
->> +#define CLKID_FCLK_DIV3				7
->> +#define CLKID_FCLK_DIV5				8
->> +#define CLKID_FCLK_DIV7				9
->> +#define CLKID_HIFI_PLL				10
->> +
->> +#endif /* __A1_PLL_CLKC_H */
-> 
-> .
-> 
+Fix it here.
+
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+---
+ drivers/clk/clk.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1c677d7f7f53..2f2eea26c375 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3879,6 +3879,7 @@ void clk_unregister(struct clk *clk)
+ 					__func__, clk->core->name);
+ 
+ 	kref_put(&clk->core->ref, __clk_release);
++	free_clk(clk);
+ unlock:
+ 	clk_prepare_unlock();
+ }
+-- 
+2.17.1
+
