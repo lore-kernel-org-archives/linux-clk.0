@@ -2,33 +2,32 @@ Return-Path: <SRS0=4NbY=YQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0446DCA9EB7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85B42CA9EBC
 	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D65692086D
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CDBE21D71
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391330AbfJWM3r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:29:47 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:39172 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391316AbfJWM3r (ORCPT
+        id S1732293AbfJWM3s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 08:29:48 -0400
+Received: from albert.telenet-ops.be ([195.130.137.90]:36696 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2391323AbfJWM3r (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 08:29:47 -0400
 Received: from ramsan ([84.194.98.4])
-        by xavier.telenet-ops.be with bizsmtp
-        id H0Vl2100V05gfCL010VlWv; Wed, 23 Oct 2019 14:29:46 +0200
+        by albert.telenet-ops.be with bizsmtp
+        id H0Vl2100b05gfCL060Vl6w; Wed, 23 Oct 2019 14:29:46 +0200
 Received: from rox.of.borg ([192.168.97.57])
         by ramsan with esmtp (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlp-0000eP-Qu; Wed, 23 Oct 2019 14:29:45 +0200
+        id 1iNFlp-0000eH-QF; Wed, 23 Oct 2019 14:29:45 +0200
 Received: from geert by rox.of.borg with local (Exim 4.90_1)
         (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlp-0003Dw-Pv; Wed, 23 Oct 2019 14:29:45 +0200
+        id 1iNFlp-0003Du-Of; Wed, 23 Oct 2019 14:29:45 +0200
 From:   Geert Uytterhoeven <geert+renesas@glider.be>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
@@ -38,63 +37,65 @@ Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>, linux-clk@vger.kernel.org,
         devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
         Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document r8a77961 support
-Date:   Wed, 23 Oct 2019 14:29:38 +0200
-Message-Id: <20191023122941.12342-2-geert+renesas@glider.be>
+Subject: [PATCH v2 0/4] clk: renesas: Add r8a77961 support
+Date:   Wed, 23 Oct 2019 14:29:37 +0200
+Message-Id: <20191023122941.12342-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023122941.12342-1-geert+renesas@glider.be>
-References: <20191023122941.12342-1-geert+renesas@glider.be>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add DT binding documentation for the Clock Pulse Generator / Module
+	Hi all,
+
+This patch series adds support for the Clock Pulse Generator / Module
 Standby and Software Reset block in the Renesas R-Car M3-W+ (R8A77961)
-SoC.
+SoC.  As R-Car M3-W+ is very similar to R-Car M3-W (R8A77960), the
+existing driver for R-Car M3-W is updated to handle both.
 
-Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
-avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
+To avoid confusion between R-Car M3-W and M3-W+, the existing config
+symbol for M3-W is renamed to CLK_R8A77960 in a dependency-free way, and
+references to r8a7796 are updated.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-v2:
-  - Add Reviewed-by,
-  - Update R-Car M3-W references.
----
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt    | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+Changes compared to v1[1]:
+  - Split in per-subsystem series,
+  - Add Reviewed-by, Tested-by,
+  - Rename CLK_R8A7796,
+  - Update r8a7796 references,
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index b5edebeb12b40638..d67f57e0dfd22fbe 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -27,7 +27,8 @@ Required Properties:
-       - "renesas,r8a7793-cpg-mssr" for the r8a7793 SoC (R-Car M2-N)
-       - "renesas,r8a7794-cpg-mssr" for the r8a7794 SoC (R-Car E2)
-       - "renesas,r8a7795-cpg-mssr" for the r8a7795 SoC (R-Car H3)
--      - "renesas,r8a7796-cpg-mssr" for the r8a7796 SoC (R-Car M3-W)
-+      - "renesas,r8a7796-cpg-mssr" for the r8a77960 SoC (R-Car M3-W)
-+      - "renesas,r8a77961-cpg-mssr" for the r8a77961 SoC (R-Car M3-W+)
-       - "renesas,r8a77965-cpg-mssr" for the r8a77965 SoC (R-Car M3-N)
-       - "renesas,r8a77970-cpg-mssr" for the r8a77970 SoC (R-Car V3M)
-       - "renesas,r8a77980-cpg-mssr" for the r8a77980 SoC (R-Car V3H)
-@@ -42,10 +43,10 @@ Required Properties:
-   - clock-names: List of external parent clock names. Valid names are:
-       - "extal" (r7s9210, r8a7743, r8a7744, r8a7745, r8a77470, r8a774a1,
- 		 r8a774b1, r8a774c0, r8a7790, r8a7791, r8a7792, r8a7793,
--		 r8a7794, r8a7795, r8a7796, r8a77965, r8a77970, r8a77980,
--		 r8a77990, r8a77995)
--      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a7796, r8a77965, r8a77970,
--		  r8a77980)
-+		 r8a7794, r8a7795, r8a77960, r8a77961, r8a77965, r8a77970,
-+		 r8a77980, r8a77990, r8a77995)
-+      - "extalr" (r8a774a1, r8a774b1, r8a7795, r8a77960, r8a77961, r8a77965,
-+		  r8a77970, r8a77980)
-       - "usb_extal" (r8a7743, r8a7744, r8a7745, r8a77470, r8a7790, r8a7791,
- 		     r8a7793, r8a7794)
- 
+I intend to queue this series in clk-renesas-for-v5.5.
+The second patch will be put on a branch shared between driver and DTS.
+
+Thanks for your comments!
+
+[1] "[PATCH/RFC 00/19] arm64: dts: renesas: Initial support for R-Car M3-W+"
+    https://lore.kernel.org/linux-renesas-soc/20191007102332.12196-1-geert+renesas@glider.be/
+
+Geert Uytterhoeven (4):
+  dt-bindings: clock: renesas: cpg-mssr: Document r8a77961 support
+  dt-bindings: clock: Add r8a77961 CPG Core Clock Definitions
+  clk: renesas: Rename CLK_R8A7796 to CLK_R8A77960
+  clk: renesas: r8a7796: Add R8A77961 CPG/MSSR support
+
+ .../bindings/clock/renesas,cpg-mssr.txt       | 11 ++--
+ drivers/clk/renesas/Kconfig                   |  9 ++-
+ drivers/clk/renesas/Makefile                  |  3 +-
+ drivers/clk/renesas/r8a7796-cpg-mssr.c        | 24 +++++--
+ drivers/clk/renesas/renesas-cpg-mssr.c        |  8 ++-
+ include/dt-bindings/clock/r8a77961-cpg-mssr.h | 65 +++++++++++++++++++
+ 6 files changed, 107 insertions(+), 13 deletions(-)
+ create mode 100644 include/dt-bindings/clock/r8a77961-cpg-mssr.h
+
 -- 
 2.17.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
