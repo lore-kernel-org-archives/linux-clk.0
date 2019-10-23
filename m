@@ -2,114 +2,88 @@ Return-Path: <SRS0=4NbY=YQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 761C6CA9EB7
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 13:39:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C08CA9EB6
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 16:00:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57B5421872
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 13:39:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4153321928
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 16:00:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571846425;
+	bh=9unFG5jOth/SLmbsma9VXKmXB1glCuVYpFM25V1tJhc=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=aZnahCBzS9wGBlzt5EN3PlIXWWBvrpUb7sEcpvuvQ9s6AV4jB3Dc3Gi+C/L9D/0Es
+	 rJ+Y8XdnOKT91ZQpr9kHHh6PzFAx/b9oOi96CmTetP/PEUKvgap1MhseL4bbN0VNVL
+	 QINDijlOiIlOiTnWcohqoYXF8GdQBS6mD58kr8Ec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405890AbfJWNjy convert rfc822-to-8bit (ORCPT
-        <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Oct 2019 09:39:54 -0400
-Received: from mout.kundenserver.de ([212.227.126.133]:43825 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392089AbfJWNjy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 09:39:54 -0400
-Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
- mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
- id 1Mf0Nm-1hmXPR1EIE-00gboz; Wed, 23 Oct 2019 15:39:51 +0200
-Received: by mail-qt1-f177.google.com with SMTP id o49so24470171qta.7;
-        Wed, 23 Oct 2019 06:39:49 -0700 (PDT)
-X-Gm-Message-State: APjAAAU6rjuILI+dBSQWkepJeZcFXjrhStzYWyvwa71wsCNVgYufVnZt
-        iHt9MtJEPLOwsEVZaopkvY4n9SDmIlf2VoWvAbc=
-X-Google-Smtp-Source: APXvYqyt7m8OnGbGOfKvN6UapNf8Y0PixnD+b/5MFVO15QeK4AzpoE5xCHBxjuJT4OWklHgs4L5FWsrmt4sucJ53v+g=
-X-Received: by 2002:ac8:18eb:: with SMTP id o40mr9289234qtk.304.1571837989082;
- Wed, 23 Oct 2019 06:39:49 -0700 (PDT)
+        id S2391083AbfJWQAY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 12:00:24 -0400
+Received: from mail.kernel.org ([198.145.29.99]:48642 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390259AbfJWQAY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 23 Oct 2019 12:00:24 -0400
+Received: from localhost.localdomain (unknown [194.230.155.217])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C54020640;
+        Wed, 23 Oct 2019 16:00:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571846424;
+        bh=9unFG5jOth/SLmbsma9VXKmXB1glCuVYpFM25V1tJhc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=bPqudU3bKvdvVC6f9Fca0bV2hsZ6QP68bieoJIzFLkljzYGj9nSOZrWDk/O/7kwZN
+         KyC/Wl1UcDsjSVfBbMAekLhPO1QPblE6CB/x/9wbusmIWsKbK7p4AAQnkJkrArIJFY
+         MZdFPKWP4zcmSp8OZE2h/Hr3PQsHzXCmvjYk/dwM=
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     kbuild test robot <lkp@intel.com>
+Subject: [PATCH] clk: samsung: exynos5433: Add missing slab.h header for kfree()
+Date:   Wed, 23 Oct 2019 18:00:00 +0200
+Message-Id: <20191023160000.409-1-krzk@kernel.org>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20191010202802.1132272-1-arnd@arndb.de> <20191023131049.GG11048@pi3>
-In-Reply-To: <20191023131049.GG11048@pi3>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Wed, 23 Oct 2019 15:39:32 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a1v2-+geD+JbNP-t418ZjntQNSte4rt8c7N6sJdpb3+DQ@mail.gmail.com>
-Message-ID: <CAK8P3a1v2-+geD+JbNP-t418ZjntQNSte4rt8c7N6sJdpb3+DQ@mail.gmail.com>
-Subject: Re: [PATCH 00/36] ARM: samsung platform cleanup
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-leds@vger.kernel.org,
-        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Lihua Yao <ylhuajnu@outlook.com>,
-        Kukjin Kim <kgene@kernel.org>, linux-serial@vger.kernel.org,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
-        Linux PWM List <linux-pwm@vger.kernel.org>,
-        Sergio Prado <sergio.prado@e-labworks.com>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        Lihua Yao <ylhuajnu@163.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com,
-        USB list <linux-usb@vger.kernel.org>,
-        linux-mmc <linux-mmc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-Provags-ID: V03:K1:NLof35stNYTGVLCCiBOj5shE8fEwjZaac7cdAu2nrrmym/kOcjv
- Qnfa/3i0a5qyJkyMXctYodBV7VP0bHQaFrXIBjwV/gpmENyzPTQE7+sVihuV4liYROCT33b
- 9WO8+gy5V2fG2DuQgIo6thaPwkDMewwBExepC4yasYMIPkDiS0zr+8kJODaOpU4HPFc7gMV
- MPShUYeuOvxdtdljHgfJg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:DaQc5ZGaJsY=:F603/POvpKLPXWa0X1lFEH
- aQjxfOCxGD/pIMHmKlHcbcFD80Nc+ewErQWmvj+Qgp6xaAE5MxfbNNNrin9LMgRKve0v8GrHu
- BPPYcLBIJd/tRGzy7EoHKzi1xCTWBRKPuZW+NRo5Q3c4o6tNWGjXzPGUI9xyOYPIzGuB4sxow
- ECbUMNeq+vtLAQSVxvpHOttzchCbbhPJcjfvA+bQAYJp52FgAuxb7i+4FvHbE4PKIBUfZrfn7
- RTWpJntJNT2FyPouWE44kX34NjZBTj4rpIcCKzq/vJGEBiexW1JIi5IKVdXZvOH5f6ayOyfG4
- N5aMRdit65bReN0guN1SsKJ7uFbD0kzxYt0bE1Mf25djeRlbjBl6eNdESrSyRRUYp5EHOfQ/A
- Sa10vMW4Ena5av/pF9Ivtanmnx43oe8gg/n1e283kgsPXqMvxru3WC5Nzl6w8FtOo8cSrKeIA
- 4cwYy4vh4ukZW7IvGkXi8VTyHR5QO0uX/EIi41POGGpNZfuz2RZFE3OQuaZ2ZAWDyKIDIkMiS
- w6MOzO71LwFlzMud8Juwt083ioitXDvT/9TIYbAIAmfnUtb8NIa87LZjq9LnymQfMT/771jDX
- Pv0pU2J8yDYscI2Ar/9iY65bLYD1odSzwo1yupcBRkEYBk2LtDP2ofqM/FtIHQxHEgUCSL8BF
- +DQWO4nbj5c/D8V8Rcbk6xIsj3dpX/eZmDwcjBHzixCuvxTtC6bkTqxwxXemSc09w9sXO96BH
- 8wrLVBqppvA4u9/3mwzDk1TPdUl264mBZECZMuP2bwYmiOyo6CZ+bMP0dYsot7zDsLQZk6JM2
- zgDILD/0tZiVRCT1r1eA1ueLWwCTN+MFNjGnfX1TAxma6wIGEoHuP9Uzto3sTth328X/tkiaT
- tiL3D4xHp9lUaPHnTz2w==
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 23, 2019 at 3:11 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On Thu, Oct 10, 2019 at 10:28:02PM +0200, Arnd Bergmann wrote:
-> > The contents are available for testing in
-> >
-> > git://kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git s3c-multiplatform
->
-> When sending v2, can you Cc:
->
-> Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-> Lihua Yao <ylhuajnu@outlook.com>
-> (or Lihua Yao <ylhuajnu@163.com> if outlook.com bounces)
-> Sergio Prado <sergio.prado@e-labworks.com>
-> Sylwester Nawrocki <s.nawrocki@samsung.com>
->
-> These are folks which to my knowledge had working S3C and S5P boards
-> so maybe they could provide testing.
+Usage of kfree() requires slab.h header.  Otherwise building on x86_64
+with COMPILE_TEST fails with:
 
-Ok, will do. I've uploaded the modified version based on your comments to
-the above URL for now.
+    drivers/clk/samsung/clk-exynos5433.c: In function ‘exynos5433_cmu_probe’:
+    drivers/clk/samsung/clk-exynos5433.c:5598:4: error: implicit declaration of function ‘kfree’; did you mean ‘vfree’? [-Werror=implicit-function-declaration]
 
-I'll probably give it a little more time before resending, but they
-could already
-start testing that version.
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+ drivers/clk/samsung/clk-exynos5433.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks a lot for the review!
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 0b60316331a0..4b1aa9382ad2 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -13,6 +13,7 @@
+ #include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
++#include <linux/slab.h>
+ 
+ #include <dt-bindings/clock/exynos5433.h>
+ 
+-- 
+2.17.1
 
-      Arnd
