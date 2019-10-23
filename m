@@ -2,121 +2,121 @@ Return-Path: <SRS0=4NbY=YQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6400ACA9EB9
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:35:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 150ADCA9EB6
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38BFE214B2
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:35:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6A0B20640
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:57:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fjB02Gl5"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Kk3iXlB8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390077AbfJWMfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:35:06 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:48818 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390039AbfJWMfF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 08:35:05 -0400
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9NCZ3r4112103;
-        Wed, 23 Oct 2019 07:35:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571834104;
-        bh=dTVCATdc6pJt52c1RbShuYo6eulnkbgK4qRYqMp9s4A=;
-        h=To:CC:From:Subject:Date;
-        b=fjB02Gl5hTw6WbXOmKbsr6s+X4w8FXWuD0alG1FFPN/MhAIrPGx4dvL8wjofa0yBe
-         E1By8yE5cokiCugvTEwqHPt/pHBgnEYgQHQTq1pJ8Kr0RnZDVHDTBhb2LtQeNmZVj8
-         qR/ZQA2qo5Ae/dMdDpOR+1plYqnmViUPuuN9d5/k=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9NCZ3h9010118
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Oct 2019 07:35:03 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
- Oct 2019 07:34:53 -0500
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 23 Oct 2019 07:34:53 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9NCZ1pS044602;
-        Wed, 23 Oct 2019 07:35:02 -0500
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     linux-clk <linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-From:   Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] clk: ti: fixes for v5.4
-Message-ID: <fc8fa6fe-5050-ec41-6fdc-c8b726255860@ti.com>
-Date:   Wed, 23 Oct 2019 15:35:01 +0300
+        id S2390600AbfJWM57 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 08:57:59 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:44304 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390405AbfJWM57 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 08:57:59 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191023125757euoutp014e14917a305109470a23e5d93b10ab48~QSAoHR1nZ2957029570euoutp01j
+        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2019 12:57:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191023125757euoutp014e14917a305109470a23e5d93b10ab48~QSAoHR1nZ2957029570euoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1571835477;
+        bh=ioPuJgiHc3Vhz3Tnq4uZBWM1dDcn+P8zwQM5nxQ68ok=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Kk3iXlB8gjETbFBZRM39ms/sJDOPYWHuIPXL6BevMGFp7JthXhEngqt5AvHT2x8RB
+         I7QLWMYHH52+kYB5O4JEiX46DG4Oza4j5COS5kE4Ldc7sBDHPXQvenp0oNA4FGEWMP
+         T5Kfa12vGZHnwh1TowKd2hDrvspLCcOed46xr350=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20191023125757eucas1p17d2d38e101aff475099171ded99369c8~QSAnxXBbL2259122591eucas1p1T;
+        Wed, 23 Oct 2019 12:57:57 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id EF.3A.04374.55E40BD5; Wed, 23
+        Oct 2019 13:57:57 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191023125756eucas1p2f2fa89f7c972227e34310603ab3d6af3~QSAnT6ObC2345223452eucas1p2J;
+        Wed, 23 Oct 2019 12:57:56 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191023125756eusmtrp2369bfa1e0656559555c141ba81b80d05~QSAnTRlri2299822998eusmtrp23;
+        Wed, 23 Oct 2019 12:57:56 +0000 (GMT)
+X-AuditID: cbfec7f5-4ddff70000001116-bd-5db04e555b8e
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 68.2C.04117.45E40BD5; Wed, 23
+        Oct 2019 13:57:56 +0100 (BST)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191023125756eusmtip25bbcf5f8fab8d87af580d2ad8ff0714c~QSAm7rAA71532715327eusmtip2X;
+        Wed, 23 Oct 2019 12:57:56 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: exynos5433: Fix error paths
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <d5e30096-3337-ffd6-43ed-8fa3f29ba374@samsung.com>
+Date:   Wed, 23 Oct 2019 14:57:56 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
+In-Reply-To: <20191002085309.9473-1-m.szyprowski@samsung.com>
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPKsWRmVeSWpSXmKPExsWy7djPc7qhfhtiDbZOkrTYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbtH+9CWzA7vHplWdbB59W1YxenzeJBfAHMVlk5Kak1mW
+        WqRvl8CVsfPjU6aCCUwVr1dvYmtgfMbYxcjBISFgInFlf1YXIxeHkMAKRok7PyezQDhfGCWe
+        nX7IBuF8ZpRonPIIqIMTrKOxcz1U1XJGiSm7LjBDOG8ZJX4u72cBqRIWsJN48vcCWIeIgJfE
+        p8afrCBFzAI3GSXubXzDBpJgEzCU6D3aB1bEC9SwcmYP2FEsAqoSfatYQUxRgQiJ018TISoE
+        JU7OfAI2nlPAVuJZ53EmEJtZQFyi6ctKVghbXmL72zlg90gILGOXaLu0AepPF4mn6ysgHhCW
+        eHV8CzuELSPxf+d8Joj6ZkaJnt232SGcCYwS948vgHrZWuLw8YtgBzELaEqs36UPEXaU2P7i
+        EwvEfD6JG28FIW7gk5i0bTozRJhXoqNNCKJaReL3qulMELaURPeT/ywTGJVmIflsFpJvZiH5
+        ZhbC3gWMLKsYxVNLi3PTU4uN81LL9YoTc4tL89L1kvNzNzECk83pf8e/7mDc9yfpEKMAB6MS
+        D2+Fz4ZYIdbEsuLK3EOMEhzMSiK8dwzWxgrxpiRWVqUW5ccXleakFh9ilOZgURLnrWZ4EC0k
+        kJ5YkpqdmlqQWgSTZeLglGpgvGu5I918m6dp1cHEa7qVxZ1HNKepbnfW1orUSRFiVA/pmDFp
+        O7NUounyZ8ZLtFZzyTydumH33Q0aWka29SfXb9CqPxantqxH2kPMz4vnyESbLbkpZ5T7v7CF
+        LD99W9E3o+jWd78cEVWWD46BZy51pPr9VGq7dTjw+J3FE3TX7NpZsTsr5ZiHEktxRqKhFnNR
+        cSIAb/gb7zIDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMIsWRmVeSWpSXmKPExsVy+t/xe7ohfhtiDW59sLLYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbtH+9CWzA7vHplWdbB59W1YxenzeJBfAHKVnU5RfWpKq
+        kJFfXGKrFG1oYaRnaGmhZ2RiqWdobB5rZWSqpG9nk5Kak1mWWqRvl6CXsfPjU6aCCUwVr1dv
+        YmtgfMbYxcjJISFgItHYuZ6li5GLQ0hgKaPEhO5FbF2MHEAJKYn5LUoQNcISf651sUHUvGaU
+        aF+4gh0kISxgJ/Hk7wWwQSICXhKfGn+yghQxC9xklPjbu5UJomMCo8TJp0fAqtgEDCV6j/aB
+        2bxA3Stn9jCCbGMRUJXoW8UKEhYViJB4vv0GVImgxMmZT1hAbE4BW4lnnceZQGxmAXWJP/Mu
+        MUPY4hJNX1ayQtjyEtvfzmGewCg0C0n7LCQts5C0zELSsoCRZRWjSGppcW56brGRXnFibnFp
+        Xrpecn7uJkZghG079nPLDsaud8GHGAU4GJV4eCt8NsQKsSaWFVfmHmKU4GBWEuG9Y7A2Vog3
+        JbGyKrUoP76oNCe1+BCjKdBvE5mlRJPzgdGfVxJvaGpobmFpaG5sbmxmoSTO2yFwMEZIID2x
+        JDU7NbUgtQimj4mDU6qBsfRo8Av9qdbzrDfLTmnovWhyUeRuypMFn3iVztmc2L9JVzlrkdF5
+        5b8/jv2co83JJ8Io4c/bvPpLtXD4jlj+gmOJCaFf/x9delr9sG78XnGBuc/MrB+wMRue2J+Y
+        5WvU+fnfyV9C7Np8dzfyO69mrXB7pDcjJWadB1f/o4xH1hP6bPZsU924QYmlOCPRUIu5qDgR
+        APAVlNDGAgAA
+X-CMS-MailID: 20191023125756eucas1p2f2fa89f7c972227e34310603ab3d6af3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234
+References: <CGME20191002085320eucas1p2e4c35fe7783deb38fbd2e9f87f4f1234@eucas1p2.samsung.com>
+        <20191002085309.9473-1-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On 10/2/19 10:53, Marek Szyprowski wrote:
+> Add checking the value returned by samsung_clk_alloc_reg_dump() and
+> devm_kcalloc(). While fixing this, also release all gathered clocks.
+> 
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 
-Please pull these fixes for 5.4.
-
-Thanks,
-Tero
-
----
-
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-
-   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
-tags/ti-clk-fixes-for-5.4
-
-for you to fetch changes up to 1c7630688a0fa0738688f987c48b6be412e200dd:
-
-   clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call (2019-10-23 
-12:14:06 +0300)
-
-----------------------------------------------------------------
-TI clock driver fixes for 5.4
-
-- Divider clock fixes to accommodate max divider values properly
-- Fix for certain clkctrl clocks failing to enable due to timeout
-- Remove duplicate clock aliases for dra7-atl-clocks
-
-----------------------------------------------------------------
-Peter Ujfalusi (1):
-       clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
-
-Tero Kristo (4):
-       clk: ti: divider: cleanup _register_divider and ti_clk_get_div_table
-       clk: ti: divider: cleanup ti_clk_parse_divider_data API
-       clk: ti: divider: convert to use min,max,mask instead of width
-       ARM: dts: omap3: fix DPLL4 M4 divider max value
-
-Tony Lindgren (1):
-       clk: ti: clkctrl: Fix failed to enable error with double udelay 
-timeout
-
-  arch/arm/boot/dts/omap36xx-clocks.dtsi |   4 +
-  arch/arm/boot/dts/omap3xxx-clocks.dtsi |   2 +-
-  drivers/clk/ti/clk-dra7-atl.c          |   6 -
-  drivers/clk/ti/clkctrl.c               |   7 +-
-  drivers/clk/ti/clock.h                 |   7 +-
-  drivers/clk/ti/divider.c               | 282 
-+++++++++++++--------------------
-  6 files changed, 127 insertions(+), 181 deletions(-)
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+Applied, thanks.
