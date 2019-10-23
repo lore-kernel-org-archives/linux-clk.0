@@ -1,114 +1,189 @@
-Return-Path: <SRS0=2r8j=YP=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4NbY=YQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F6FCA9EA0
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Oct 2019 19:21:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBC3CA9EB9
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 07:41:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA2D52184C
-	for <linux-clk@archiver.kernel.org>; Tue, 22 Oct 2019 19:21:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 543AB2173B
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 07:41:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lQoysMkv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732911AbfJVTVe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 22 Oct 2019 15:21:34 -0400
-Received: from inva021.nxp.com ([92.121.34.21]:54056 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730186AbfJVTVe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 22 Oct 2019 15:21:34 -0400
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 26B362001B9;
-        Tue, 22 Oct 2019 21:21:32 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 181192000AC;
-        Tue, 22 Oct 2019 21:21:32 +0200 (CEST)
-Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 92BC42060F;
-        Tue, 22 Oct 2019 21:21:31 +0200 (CEST)
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] clk: imx8m: Use SYS_PLL1_800M as intermediate parent of CLK_ARM
-Date:   Tue, 22 Oct 2019 22:21:28 +0300
-Message-Id: <f5d2b9c53f1ed5ccb1dd3c6624f56759d92e1689.1571771777.git.leonard.crestez@nxp.com>
+        id S2389484AbfJWHlo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 03:41:44 -0400
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:58562 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727574AbfJWHlo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 03:41:44 -0400
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191023074141euoutp01b58d7176a00b76f29b87187c8a87fecf~QNsfKeZT81819818198euoutp01L
+        for <linux-clk@vger.kernel.org>; Wed, 23 Oct 2019 07:41:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191023074141euoutp01b58d7176a00b76f29b87187c8a87fecf~QNsfKeZT81819818198euoutp01L
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1571816501;
+        bh=iE5kVB5Of0jxC8Vo7qHZ39FklcEMsMNsY+5+nrQZITE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=lQoysMkvVwyrQZlkRMQ3+kGvLg7IQlG9/WNAK5djTtbdcXTx+lMFMWuv3cCVHAs4b
+         vt10d7Kl6i6upYPwvtXufh2imcNNXlbYn2GwfvL9GM4Xa49AQ4V0J8aoDtnsuqYY5q
+         gudMOBm9b5t1z2QUG7AhMFnGJS/qvh6Isqjznvh0=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191023074141eucas1p2c736db6af2458a57fd2c444f0e3e16de~QNse8EtYv1509315093eucas1p24;
+        Wed, 23 Oct 2019 07:41:41 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 3D.FB.04309.53400BD5; Wed, 23
+        Oct 2019 08:41:41 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191023074140eucas1p2c236bde672f33d4fe32ed61545515cc3~QNsefTxNT2439624396eucas1p2b;
+        Wed, 23 Oct 2019 07:41:40 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191023074140eusmtrp220543a2fc1b70a37b0fe6e36a6e291bd~QNseejUW01871118711eusmtrp2f;
+        Wed, 23 Oct 2019 07:41:40 +0000 (GMT)
+X-AuditID: cbfec7f4-ae1ff700000010d5-f5-5db004355bb1
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 97.09.04166.43400BD5; Wed, 23
+        Oct 2019 08:41:40 +0100 (BST)
+Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191023074140eusmtip208d505d4659fd85f38dc408fb7d5efef~QNseBZUHx0550505505eusmtip2L;
+        Wed, 23 Oct 2019 07:41:40 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+Subject: [PATCH] clk: samsung: exynos542x: Move G3D subsystem clocks to its
+ sub-CMU
+Date:   Wed, 23 Oct 2019 09:41:18 +0200
+Message-Id: <20191023074118.3012-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPIsWRmVeSWpSXmKPExsWy7djPc7qmLBtiDeYfFbPYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbrF+2k9Wi/anL5kdODx2zrrL7rFpVSebR9+WVYwenzfJ
+        BbBEcdmkpOZklqUW6dslcGUsPXyMteCIVMWlq7PYGhjPiHUxcnJICJhI/O+Yx9jFyMUhJLCC
+        UeLk3HNMEM4XRonNx3eyQTifGSUa7j9mh2lp29LCDGILCSxnlLg1RwKu48qjmSwgCTYBQ4mu
+        t11sILaIgIPE50+vwXYwC/QzSfT1XQXrFhYIlVhwdB9YEYuAqsSbrXeBijg4eAVsJGatYoJY
+        Ji+xesMBZpBeCYHbbBJnp35ihUi4SHw58JENwhaWeHV8C9R1MhL/d85ngmhoZpR4eG4tO4TT
+        wyhxuWkGI0SVtcTh4xdZQbYxC2hKrN+lDxF2lDh75D0LSFhCgE/ixltBkDAzkDlp23RmiDCv
+        REebEES1msSs4+vg1h68cIkZwvaQeH7jJiskgGIlPs9fxzKBUW4Wwq4FjIyrGMVTS4tz01OL
+        jfJSy/WKE3OLS/PS9ZLzczcxApPB6X/Hv+xg3PUn6RCjAAejEg+vw/t1sUKsiWXFlbmHGCU4
+        mJVEeO8YrI0V4k1JrKxKLcqPLyrNSS0+xCjNwaIkzlvN8CBaSCA9sSQ1OzW1ILUIJsvEwSnV
+        wCjfPf3CBObgNr8PDJZNy3zUstd9yOO5WH4j1E7xTNeLpwnufg8Npaoca16+L/554Zq/7JSS
+        71/PV6rxMX7S/fO+3GTJeYtyd3XtT6Y6v54z1965bzrtkzzXdEVZ9obwlgXtn6dqe5z/96Tx
+        vccd/tvuG4KTEgUdD1zIrUlW75ho/dstWf5kuxJLcUaioRZzUXEiAIG/z+UCAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xe7omLBtiDeYcMbbYOGM9q8X1L89Z
+        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbrF+2k9Wi/anL5kdODx2zrrL7rFpVSebR9+WVYwenzfJ
+        BbBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GUs
+        PXyMteCIVMWlq7PYGhjPiHUxcnJICJhItG1pYe5i5OIQEljKKNH/6hQjREJG4uS0BlYIW1ji
+        z7UuNoiiT4wShw6uYAFJsAkYSnS9BUlwcogIOEk8WPeGHaSIWWAyk8T2pqVgRcICwRLXH79m
+        BrFZBFQl3my9C7SBg4NXwEZi1iomiAXyEqs3HGCewMizgJFhFaNIamlxbnpusaFecWJucWle
+        ul5yfu4mRmAQbjv2c/MOxksbgw8xCnAwKvHwzvi4LlaINbGsuDL3EKMEB7OSCO8dg7WxQrwp
+        iZVVqUX58UWlOanFhxhNgXZPZJYSTc4HRkheSbyhqaG5haWhubG5sZmFkjhvh8DBGCGB9MSS
+        1OzU1ILUIpg+Jg5OqQZG/l1Hr6QpSyQblLcvmdXNu0dp7fJVIS/2L77i9i7w2xP1aTMreOyO
+        Fis2n0qxs1jGZHIzjm21hI+J3JJvy0JcYssP3V4lvK1v90J553lZPM137K5OXHv7Q6jinYSy
+        I1q26btXS32RSTxhOuPNo6igw9Gn7/4vfH4q+ddHsZAWhlan3wx6BeJPlFiKMxINtZiLihMB
+        Adc7AlgCAAA=
+X-CMS-MailID: 20191023074140eucas1p2c236bde672f33d4fe32ed61545515cc3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191023074140eucas1p2c236bde672f33d4fe32ed61545515cc3
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191023074140eucas1p2c236bde672f33d4fe32ed61545515cc3
+References: <CGME20191023074140eucas1p2c236bde672f33d4fe32ed61545515cc3@eucas1p2.samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-During cpu frequency switching the main "CLK_ARM" is reparented to an
-intermediate "step" clock. On imx8mm and imx8mn the 24M oscillator is
-used for this purpose but it is extremely slow, increasing wakeup
-latencies to the point that i2c transactions can timeout and system
-becomes unresponsive.
+G3D clocks require special handling of their parent bus clock during power
+domain on/off sequences. Those clocks were not initially added to the
+sub-CMU handler, because that time there was no open-source driver for the
+G3D (MALI Panfrost) hardware module and it was not possible to test it.
 
-Fix by switching the "step" clk to SYS_PLL1_800M, matching the behavior
-of imx8m cpufreq drivers in imx vendor tree.
+This patch fixes this issue. Parent clock for G3D hardware block is now
+properly preserved during G3D power domain on/off sequence. This restores
+proper MALI Panfrost performance broken by commit 8686764fc071
+("ARM: dts: exynos: Add G3D power domain to Exynos542x").
 
-This bug was not immediately apparent because upstream arm64 defconfig
-uses the "performance" governor by default so no cpufreq transitions
-happen.
-
-Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
-Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Fixes: b06a532bf1fa ("clk: samsung: Add Exynos5 sub-CMU clock driver")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Tested-by: Marian Mihailescu <mihailescu2m@gmail.com>
 ---
- drivers/clk/imx/clk-imx8mm.c | 2 +-
- drivers/clk/imx/clk-imx8mn.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 21 +++++++++++++++++++--
+ 1 file changed, 19 insertions(+), 2 deletions(-)
 
-This is marked as "cc: stable" because it has a large impact on common
-usecases and it's difficult to debug.
-
-This was sent with a different email workaround so hope it arrives OK.
-
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index bbd212eb904e..a92942ea2045 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -588,11 +588,11 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 7670cc596c74..dfa862d55246 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -1172,8 +1172,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
+ 	GATE(CLK_SCLK_ISP_SENSOR2, "sclk_isp_sensor2", "dout_isp_sensor2",
+ 			GATE_TOP_SCLK_ISP, 12, CLK_SET_RATE_PARENT, 0),
  
- 	clks[IMX8MM_CLK_ARM] = imx_clk_cpu("arm", "arm_a53_div",
- 					   clks[IMX8MM_CLK_A53_DIV],
- 					   clks[IMX8MM_CLK_A53_SRC],
- 					   clks[IMX8MM_ARM_PLL_OUT],
--					   clks[IMX8MM_CLK_24M]);
-+					   clks[IMX8MM_SYS_PLL1_800M]);
+-	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
+-
+ 	/* CDREX */
+ 	GATE(CLK_CLKM_PHY0, "clkm_phy0", "dout_sclk_cdrex",
+ 			GATE_BUS_CDREX0, 0, 0, 0),
+@@ -1248,6 +1246,15 @@ static struct exynos5_subcmu_reg_dump exynos5x_gsc_suspend_regs[] = {
+ 	{ DIV2_RATIO0, 0, 0x30 },	/* DIV dout_gscl_blk_300 */
+ };
  
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
++static const struct samsung_gate_clock exynos5x_g3d_gate_clks[] __initconst = {
++	GATE(CLK_G3D, "g3d", "mout_user_aclk_g3d", GATE_IP_G3D, 9, 0, 0),
++};
++
++static struct exynos5_subcmu_reg_dump exynos5x_g3d_suspend_regs[] = {
++	{ GATE_IP_G3D, 0x3ff, 0x3ff },	/* G3D gates */
++	{ SRC_TOP5, 0, BIT(16) },	/* MUX mout_user_aclk_g3d */
++};
++
+ static const struct samsung_div_clock exynos5x_mfc_div_clks[] __initconst = {
+ 	DIV(0, "dout_mfc_blk", "mout_user_aclk333", DIV4_RATIO, 0, 2),
+ };
+@@ -1320,6 +1327,14 @@ static const struct exynos5_subcmu_info exynos5x_gsc_subcmu = {
+ 	.pd_name	= "GSC",
+ };
  
- 	clk_data.clks = clks;
- 	clk_data.clk_num = ARRAY_SIZE(clks);
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index ad7f2e527c70..3cd38eba58df 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -544,11 +544,11 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 
- 	clks[IMX8MN_CLK_ARM] = imx_clk_cpu("arm", "arm_a53_div",
- 					   clks[IMX8MN_CLK_A53_DIV],
- 					   clks[IMX8MN_CLK_A53_SRC],
- 					   clks[IMX8MN_ARM_PLL_OUT],
--					   clks[IMX8MN_CLK_24M]);
-+					   clks[IMX8MN_SYS_PLL1_800M]);
- 
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
- 
- 	clk_data.clks = clks;
- 	clk_data.clk_num = ARRAY_SIZE(clks);
++static const struct exynos5_subcmu_info exynos5x_g3d_subcmu = {
++	.gate_clks	= exynos5x_g3d_gate_clks,
++	.nr_gate_clks	= ARRAY_SIZE(exynos5x_g3d_gate_clks),
++	.suspend_regs	= exynos5x_g3d_suspend_regs,
++	.nr_suspend_regs = ARRAY_SIZE(exynos5x_g3d_suspend_regs),
++	.pd_name	= "G3D",
++};
++
+ static const struct exynos5_subcmu_info exynos5x_mfc_subcmu = {
+ 	.div_clks	= exynos5x_mfc_div_clks,
+ 	.nr_div_clks	= ARRAY_SIZE(exynos5x_mfc_div_clks),
+@@ -1351,6 +1366,7 @@ static const struct exynos5_subcmu_info exynos5800_mau_subcmu = {
+ static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
++	&exynos5x_g3d_subcmu,
+ 	&exynos5x_mfc_subcmu,
+ 	&exynos5x_mscl_subcmu,
+ };
+@@ -1358,6 +1374,7 @@ static const struct exynos5_subcmu_info *exynos5x_subcmus[] = {
+ static const struct exynos5_subcmu_info *exynos5800_subcmus[] = {
+ 	&exynos5x_disp_subcmu,
+ 	&exynos5x_gsc_subcmu,
++	&exynos5x_g3d_subcmu,
+ 	&exynos5x_mfc_subcmu,
+ 	&exynos5x_mscl_subcmu,
+ 	&exynos5800_mau_subcmu,
 -- 
 2.17.1
 
