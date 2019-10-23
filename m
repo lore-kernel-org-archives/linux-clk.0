@@ -2,137 +2,114 @@ Return-Path: <SRS0=4NbY=YQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0B6CA9EB6
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 13:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 761C6CA9EB7
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 13:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F6E821872
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 13:12:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZfhNcZI2"
+	by mail.kernel.org (Postfix) with ESMTP id 57B5421872
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 13:39:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405681AbfJWNMB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Oct 2019 09:12:01 -0400
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:33002 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2405679AbfJWNMA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 09:12:00 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9NDBuwF055095;
-        Wed, 23 Oct 2019 08:11:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571836316;
-        bh=/CXU45E9pT9yRzmSUQtX052zpmzcRXJ6M+Xeiie17tA=;
-        h=To:CC:From:Subject:Date;
-        b=ZfhNcZI2LZu8bZ8IZE55G6XP2h6ShWJX5p/+GP0uCEfq91YJr53r8uqskZLBb8ywY
-         FDz8YLeN6KeARxHFdKZYUunv/XO0i6kYK+Fqs5e3scPOrsoI9rNVZskH0m3UBsiiY5
-         UyYwZcAMYDNJWZCYc0Jd8ZpXNfOB5BFzDDREpSsc=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9NDBusD089875
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 23 Oct 2019 08:11:56 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
- Oct 2019 08:11:56 -0500
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Wed, 23 Oct 2019 08:11:46 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9NDBs80020117;
-        Wed, 23 Oct 2019 08:11:54 -0500
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "tony@atomide.com" <tony@atomide.com>
-CC:     linux-clk <linux-clk@vger.kernel.org>,
-        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
-From:   Tero Kristo <t-kristo@ti.com>
-Subject: [GIT PULL] clk: ti: changes for 5.5
-Message-ID: <e9e6d829-10f8-81d8-c87f-6a12edbe7358@ti.com>
-Date:   Wed, 23 Oct 2019 16:11:53 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2405890AbfJWNjy convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 09:39:54 -0400
+Received: from mout.kundenserver.de ([212.227.126.133]:43825 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2392089AbfJWNjy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 09:39:54 -0400
+Received: from mail-qt1-f177.google.com ([209.85.160.177]) by
+ mrelayeu.kundenserver.de (mreue010 [212.227.15.129]) with ESMTPSA (Nemesis)
+ id 1Mf0Nm-1hmXPR1EIE-00gboz; Wed, 23 Oct 2019 15:39:51 +0200
+Received: by mail-qt1-f177.google.com with SMTP id o49so24470171qta.7;
+        Wed, 23 Oct 2019 06:39:49 -0700 (PDT)
+X-Gm-Message-State: APjAAAU6rjuILI+dBSQWkepJeZcFXjrhStzYWyvwa71wsCNVgYufVnZt
+        iHt9MtJEPLOwsEVZaopkvY4n9SDmIlf2VoWvAbc=
+X-Google-Smtp-Source: APXvYqyt7m8OnGbGOfKvN6UapNf8Y0PixnD+b/5MFVO15QeK4AzpoE5xCHBxjuJT4OWklHgs4L5FWsrmt4sucJ53v+g=
+X-Received: by 2002:ac8:18eb:: with SMTP id o40mr9289234qtk.304.1571837989082;
+ Wed, 23 Oct 2019 06:39:49 -0700 (PDT)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191010202802.1132272-1-arnd@arndb.de> <20191023131049.GG11048@pi3>
+In-Reply-To: <20191023131049.GG11048@pi3>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Wed, 23 Oct 2019 15:39:32 +0200
+X-Gmail-Original-Message-ID: <CAK8P3a1v2-+geD+JbNP-t418ZjntQNSte4rt8c7N6sJdpb3+DQ@mail.gmail.com>
+Message-ID: <CAK8P3a1v2-+geD+JbNP-t418ZjntQNSte4rt8c7N6sJdpb3+DQ@mail.gmail.com>
+Subject: Re: [PATCH 00/36] ARM: samsung platform cleanup
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-leds@vger.kernel.org,
+        "moderated list:ARM/SAMSUNG EXYNOS ARM ARCHITECTURES" 
+        <linux-samsung-soc@vger.kernel.org>,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Lihua Yao <ylhuajnu@outlook.com>,
+        Kukjin Kim <kgene@kernel.org>, linux-serial@vger.kernel.org,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        =?UTF-8?Q?Pawe=C5=82_Chmiel?= <pawel.mikolaj.chmiel@gmail.com>,
+        Linux PWM List <linux-pwm@vger.kernel.org>,
+        Sergio Prado <sergio.prado@e-labworks.com>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        Lihua Yao <ylhuajnu@163.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-hwmon@vger.kernel.org, patches@opensource.cirrus.com,
+        USB list <linux-usb@vger.kernel.org>,
+        linux-mmc <linux-mmc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-Provags-ID: V03:K1:NLof35stNYTGVLCCiBOj5shE8fEwjZaac7cdAu2nrrmym/kOcjv
+ Qnfa/3i0a5qyJkyMXctYodBV7VP0bHQaFrXIBjwV/gpmENyzPTQE7+sVihuV4liYROCT33b
+ 9WO8+gy5V2fG2DuQgIo6thaPwkDMewwBExepC4yasYMIPkDiS0zr+8kJODaOpU4HPFc7gMV
+ MPShUYeuOvxdtdljHgfJg==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:DaQc5ZGaJsY=:F603/POvpKLPXWa0X1lFEH
+ aQjxfOCxGD/pIMHmKlHcbcFD80Nc+ewErQWmvj+Qgp6xaAE5MxfbNNNrin9LMgRKve0v8GrHu
+ BPPYcLBIJd/tRGzy7EoHKzi1xCTWBRKPuZW+NRo5Q3c4o6tNWGjXzPGUI9xyOYPIzGuB4sxow
+ ECbUMNeq+vtLAQSVxvpHOttzchCbbhPJcjfvA+bQAYJp52FgAuxb7i+4FvHbE4PKIBUfZrfn7
+ RTWpJntJNT2FyPouWE44kX34NjZBTj4rpIcCKzq/vJGEBiexW1JIi5IKVdXZvOH5f6ayOyfG4
+ N5aMRdit65bReN0guN1SsKJ7uFbD0kzxYt0bE1Mf25djeRlbjBl6eNdESrSyRRUYp5EHOfQ/A
+ Sa10vMW4Ena5av/pF9Ivtanmnx43oe8gg/n1e283kgsPXqMvxru3WC5Nzl6w8FtOo8cSrKeIA
+ 4cwYy4vh4ukZW7IvGkXi8VTyHR5QO0uX/EIi41POGGpNZfuz2RZFE3OQuaZ2ZAWDyKIDIkMiS
+ w6MOzO71LwFlzMud8Juwt083ioitXDvT/9TIYbAIAmfnUtb8NIa87LZjq9LnymQfMT/771jDX
+ Pv0pU2J8yDYscI2Ar/9iY65bLYD1odSzwo1yupcBRkEYBk2LtDP2ofqM/FtIHQxHEgUCSL8BF
+ +DQWO4nbj5c/D8V8Rcbk6xIsj3dpX/eZmDwcjBHzixCuvxTtC6bkTqxwxXemSc09w9sXO96BH
+ 8wrLVBqppvA4u9/3mwzDk1TPdUl264mBZECZMuP2bwYmiOyo6CZ+bMP0dYsot7zDsLQZk6JM2
+ zgDILD/0tZiVRCT1r1eA1ueLWwCTN+MFNjGnfX1TAxma6wIGEoHuP9Uzto3sTth328X/tkiaT
+ tiL3D4xHp9lUaPHnTz2w==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On Wed, Oct 23, 2019 at 3:11 PM Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> On Thu, Oct 10, 2019 at 10:28:02PM +0200, Arnd Bergmann wrote:
+> > The contents are available for testing in
+> >
+> > git://kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git s3c-multiplatform
+>
+> When sending v2, can you Cc:
+>
+> Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> Lihua Yao <ylhuajnu@outlook.com>
+> (or Lihua Yao <ylhuajnu@163.com> if outlook.com bounces)
+> Sergio Prado <sergio.prado@e-labworks.com>
+> Sylwester Nawrocki <s.nawrocki@samsung.com>
+>
+> These are folks which to my knowledge had working S3C and S5P boards
+> so maybe they could provide testing.
 
-Please pull these changes towards 5.5. Mostly needed for the reset 
-handling support with the upcoming PRM driver, but contains a couple of 
-other changes also.
+Ok, will do. I've uploaded the modified version based on your comments to
+the above URL for now.
 
-Tony, I have also pushed a branch along with this to the git repository, 
-under for-5.5-ti-clk. Assuming this pull gets accepted, that branch can 
-be considered immutable.
+I'll probably give it a little more time before resending, but they
+could already
+start testing that version.
 
--Tero
+Thanks a lot for the review!
 
----
-
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-
-   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the Git repository at:
-
-   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
-tags/ti-clk-for-5.5
-
-for you to fetch changes up to e120b9bf798585f30ecbbd568c819f3672105124:
-
-   clk: ti: am43xx: drop idlest polling from gfx clock (2019-10-23 
-12:19:30 +0300)
-
-----------------------------------------------------------------
-TI clock driver changes for 5.5
-
-As the clock and reset handling is tightly coupled on the hardware level
-on OMAP SoCs, we must ensure the events are sequenced properly. This
-series makes sure that the clock side is behaving properly, and the
-sequencing of the events is left for the bus driver (ti-sysc.)
-
-Additionally, a couple of smaller changes needed by remoteproc support
-are added; checking of the standby status and some missing clkctrl data
-for omap5/dra7.
-
-----------------------------------------------------------------
-Suman Anna (2):
-       clk: ti: omap4: Drop idlest polling from IPU & DSP clkctrl clocks
-       clk: ti: omap5: Drop idlest polling from IPU & DSP clkctrl clocks
-
-Tero Kristo (10):
-       clk: ti: clkctrl: fix setting up clkctrl clocks
-       clk: ti: clkctrl: convert to use bit helper macros instead of bitops
-       clk: ti: clkctrl: add new exported API for checking standby info
-       dt-bindings: clk: add omap5 iva clkctrl definitions
-       clk: ti: omap5: add IVA subsystem clkctrl data
-       clk: ti: dra7xx: Drop idlest polling from IPU & DSP clkctrl clocks
-       clk: ti: am43xx: drop idlest polling from pruss clkctrl clock
-       clk: ti: am33xx: drop idlest polling from pruss clkctrl clock
-       clk: ti: am33xx: drop idlest polling from gfx clock
-       clk: ti: am43xx: drop idlest polling from gfx clock
-
-  drivers/clk/ti/clk-33xx.c         |  4 ++--
-  drivers/clk/ti/clk-43xx.c         |  4 ++--
-  drivers/clk/ti/clk-44xx.c         |  4 ++--
-  drivers/clk/ti/clk-54xx.c         | 11 ++++++++--
-  drivers/clk/ti/clk-7xx.c          |  8 ++++----
-  drivers/clk/ti/clkctrl.c          | 43 
-++++++++++++++++++++++++++++++++++-----
-  include/dt-bindings/clock/omap5.h |  4 ++++
-  include/linux/clk/ti.h            |  3 ++-
-  8 files changed, 63 insertions(+), 18 deletions(-)
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+      Arnd
