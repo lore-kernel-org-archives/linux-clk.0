@@ -2,192 +2,121 @@ Return-Path: <SRS0=4NbY=YQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80338CA9EC3
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6400ACA9EB9
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56490214B2
-	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:29:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38BFE214B2
+	for <linux-clk@archiver.kernel.org>; Wed, 23 Oct 2019 12:35:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="fjB02Gl5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2391323AbfJWM3t (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Oct 2019 08:29:49 -0400
-Received: from michel.telenet-ops.be ([195.130.137.88]:37370 "EHLO
-        michel.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2391318AbfJWM3r (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 08:29:47 -0400
-Received: from ramsan ([84.194.98.4])
-        by michel.telenet-ops.be with bizsmtp
-        id H0Vm2100605gfCL060VmqV; Wed, 23 Oct 2019 14:29:46 +0200
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlp-0000ed-Up; Wed, 23 Oct 2019 14:29:45 +0200
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iNFlp-0003E5-Sm; Wed, 23 Oct 2019 14:29:45 +0200
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Eugeniu Rosca <erosca@de.adit-jv.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2 4/4] clk: renesas: r8a7796: Add R8A77961 CPG/MSSR support
-Date:   Wed, 23 Oct 2019 14:29:41 +0200
-Message-Id: <20191023122941.12342-5-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191023122941.12342-1-geert+renesas@glider.be>
-References: <20191023122941.12342-1-geert+renesas@glider.be>
+        id S2390077AbfJWMfG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 08:35:06 -0400
+Received: from lelv0143.ext.ti.com ([198.47.23.248]:48818 "EHLO
+        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390039AbfJWMfF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 23 Oct 2019 08:35:05 -0400
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9NCZ3r4112103;
+        Wed, 23 Oct 2019 07:35:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571834104;
+        bh=dTVCATdc6pJt52c1RbShuYo6eulnkbgK4qRYqMp9s4A=;
+        h=To:CC:From:Subject:Date;
+        b=fjB02Gl5hTw6WbXOmKbsr6s+X4w8FXWuD0alG1FFPN/MhAIrPGx4dvL8wjofa0yBe
+         E1By8yE5cokiCugvTEwqHPt/pHBgnEYgQHQTq1pJ8Kr0RnZDVHDTBhb2LtQeNmZVj8
+         qR/ZQA2qo5Ae/dMdDpOR+1plYqnmViUPuuN9d5/k=
+Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9NCZ3h9010118
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 23 Oct 2019 07:35:03 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Wed, 23
+ Oct 2019 07:34:53 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Wed, 23 Oct 2019 07:34:53 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9NCZ1pS044602;
+        Wed, 23 Oct 2019 07:35:02 -0500
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+CC:     linux-clk <linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+From:   Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] clk: ti: fixes for v5.4
+Message-ID: <fc8fa6fe-5050-ec41-6fdc-c8b726255860@ti.com>
+Date:   Wed, 23 Oct 2019 15:35:01 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the R-Car M3-W+ (R8A77961) SoC to the Renesas Clock
-Pulse Generator / Module Standby and Software Reset driver.
+Hi Stephen,
 
-R-Car M3-W+ is very similar to R-Car M3-W (R8A77960), which allows for
-both SoCs to share a driver.  R-Car M3-W+ lacks a few modules, so their
-clocks must be nullified.
+Please pull these fixes for 5.4.
 
-Based on a patch in the BSP by Takeshi Kihara
-<takeshi.kihara.df@renesas.com>.
+Thanks,
+Tero
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Tested-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 ---
-v2:
-  - Add Reviewed-by, Tested-by,
-  - Add "R-Car M3-W/W+" comment at the top of r8a7796-cpg-mssr.c.
----
- drivers/clk/renesas/Kconfig            |  5 +++++
- drivers/clk/renesas/Makefile           |  1 +
- drivers/clk/renesas/r8a7796-cpg-mssr.c | 24 ++++++++++++++++++++----
- drivers/clk/renesas/renesas-cpg-mssr.c |  6 ++++++
- 4 files changed, 32 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
-index a48f75ec1400c090..4cd846bc98cc2ec0 100644
---- a/drivers/clk/renesas/Kconfig
-+++ b/drivers/clk/renesas/Kconfig
-@@ -22,6 +22,7 @@ config CLK_RENESAS
- 	select CLK_R8A7794 if ARCH_R8A7794
- 	select CLK_R8A7795 if ARCH_R8A7795
- 	select CLK_R8A77960 if ARCH_R8A77960 || ARCH_R8A7796
-+	select CLK_R8A77961 if ARCH_R8A77961
- 	select CLK_R8A77965 if ARCH_R8A77965
- 	select CLK_R8A77970 if ARCH_R8A77970
- 	select CLK_R8A77980 if ARCH_R8A77980
-@@ -113,6 +114,10 @@ config CLK_R8A77960
- 	bool "R-Car M3-W clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN3_CPG
- 
-+config CLK_R8A77961
-+	bool "R-Car M3-W+ clock support" if COMPILE_TEST
-+	select CLK_RCAR_GEN3_CPG
-+
- config CLK_R8A77965
- 	bool "R-Car M3-N clock support" if COMPILE_TEST
- 	select CLK_RCAR_GEN3_CPG
-diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefile
-index 58211d0f04bf4d4b..4a722bc5aac755c8 100644
---- a/drivers/clk/renesas/Makefile
-+++ b/drivers/clk/renesas/Makefile
-@@ -19,6 +19,7 @@ obj-$(CONFIG_CLK_R8A7792)		+= r8a7792-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7794)		+= r8a7794-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A7795)		+= r8a7795-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A77960)		+= r8a7796-cpg-mssr.o
-+obj-$(CONFIG_CLK_R8A77961)		+= r8a7796-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A77965)		+= r8a77965-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A77970)		+= r8a77970-cpg-mssr.o
- obj-$(CONFIG_CLK_R8A77980)		+= r8a77980-cpg-mssr.o
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index 90cc6a1026028fa8..e8420d3ada94ca45 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -1,9 +1,10 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-- * r8a7796 Clock Pulse Generator / Module Standby and Software Reset
-+ * r8a7796 (R-Car M3-W/W+) Clock Pulse Generator / Module Standby and Software
-+ * Reset
-  *
-- * Copyright (C) 2016 Glider bvba
-- * Copyright (C) 2018 Renesas Electronics Corp.
-+ * Copyright (C) 2016-2019 Glider bvba
-+ * Copyright (C) 2018-2019 Renesas Electronics Corp.
-  *
-  * Based on r8a7795-cpg-mssr.c
-  *
-@@ -14,6 +15,7 @@
- #include <linux/device.h>
- #include <linux/init.h>
- #include <linux/kernel.h>
-+#include <linux/of.h>
- #include <linux/soc/renesas/rcar-rst.h>
- 
- #include <dt-bindings/clock/r8a7796-cpg-mssr.h>
-@@ -116,7 +118,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_BASE("r",           R8A7796_CLK_R,     CLK_TYPE_GEN3_R, CLK_RINT),
- };
- 
--static const struct mssr_mod_clk r8a7796_mod_clks[] __initconst = {
-+static struct mssr_mod_clk r8a7796_mod_clks[] __initdata = {
- 	DEF_MOD("fdp1-0",		 119,	R8A7796_CLK_S0D1),
- 	DEF_MOD("scif5",		 202,	R8A7796_CLK_S3D4),
- 	DEF_MOD("scif4",		 203,	R8A7796_CLK_S3D4),
-@@ -304,6 +306,14 @@ static const struct rcar_gen3_cpg_pll_config cpg_pll_configs[16] __initconst = {
- 	{ 2,		192,	1,	192,	1,	32,	},
- };
- 
-+	/*
-+	 * Fixups for R-Car M3-W+
-+	 */
-+
-+static const unsigned int r8a77961_mod_nullify[] __initconst = {
-+	MOD_CLK_ID(617),			/* FCPCI0  */
-+};
-+
- static int __init r8a7796_cpg_mssr_init(struct device *dev)
- {
- 	const struct rcar_gen3_cpg_pll_config *cpg_pll_config;
-@@ -320,6 +330,12 @@ static int __init r8a7796_cpg_mssr_init(struct device *dev)
- 		return -EINVAL;
- 	}
- 
-+	if (of_device_is_compatible(dev->of_node, "renesas,r8a77961-cpg-mssr"))
-+		mssr_mod_nullify(r8a7796_mod_clks,
-+				 ARRAY_SIZE(r8a7796_mod_clks),
-+				 r8a77961_mod_nullify,
-+				 ARRAY_SIZE(r8a77961_mod_nullify));
-+
- 	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
- }
- 
-diff --git a/drivers/clk/renesas/renesas-cpg-mssr.c b/drivers/clk/renesas/renesas-cpg-mssr.c
-index c2f96e63498e14cc..a2663fbbd7a51067 100644
---- a/drivers/clk/renesas/renesas-cpg-mssr.c
-+++ b/drivers/clk/renesas/renesas-cpg-mssr.c
-@@ -755,6 +755,12 @@ static const struct of_device_id cpg_mssr_match[] = {
- 		.data = &r8a7796_cpg_mssr_info,
- 	},
- #endif
-+#ifdef CONFIG_CLK_R8A77961
-+	{
-+		.compatible = "renesas,r8a77961-cpg-mssr",
-+		.data = &r8a7796_cpg_mssr_info,
-+	},
-+#endif
- #ifdef CONFIG_CLK_R8A77965
- 	{
- 		.compatible = "renesas,r8a77965-cpg-mssr",
--- 
-2.17.1
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
 
+   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
+tags/ti-clk-fixes-for-5.4
+
+for you to fetch changes up to 1c7630688a0fa0738688f987c48b6be412e200dd:
+
+   clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call (2019-10-23 
+12:14:06 +0300)
+
+----------------------------------------------------------------
+TI clock driver fixes for 5.4
+
+- Divider clock fixes to accommodate max divider values properly
+- Fix for certain clkctrl clocks failing to enable due to timeout
+- Remove duplicate clock aliases for dra7-atl-clocks
+
+----------------------------------------------------------------
+Peter Ujfalusi (1):
+       clk: ti: dra7-atl-clock: Remove ti_clk_add_alias call
+
+Tero Kristo (4):
+       clk: ti: divider: cleanup _register_divider and ti_clk_get_div_table
+       clk: ti: divider: cleanup ti_clk_parse_divider_data API
+       clk: ti: divider: convert to use min,max,mask instead of width
+       ARM: dts: omap3: fix DPLL4 M4 divider max value
+
+Tony Lindgren (1):
+       clk: ti: clkctrl: Fix failed to enable error with double udelay 
+timeout
+
+  arch/arm/boot/dts/omap36xx-clocks.dtsi |   4 +
+  arch/arm/boot/dts/omap3xxx-clocks.dtsi |   2 +-
+  drivers/clk/ti/clk-dra7-atl.c          |   6 -
+  drivers/clk/ti/clkctrl.c               |   7 +-
+  drivers/clk/ti/clock.h                 |   7 +-
+  drivers/clk/ti/divider.c               | 282 
++++++++++++++--------------------
+  6 files changed, 127 insertions(+), 181 deletions(-)
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
