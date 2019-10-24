@@ -2,132 +2,106 @@ Return-Path: <SRS0=IOJl=YR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64BDCCA9EBC
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 12:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71B7DCA9EAF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 12:28:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CDFD2166E
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 12:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 444A32166E
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 12:28:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFJf8rPV"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gGOM9d1B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2409246AbfJXL75 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Oct 2019 07:59:57 -0400
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41047 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2409271AbfJXL74 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Oct 2019 07:59:56 -0400
-Received: by mail-ua1-f67.google.com with SMTP id l13so7050278uap.8
-        for <linux-clk@vger.kernel.org>; Thu, 24 Oct 2019 04:59:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HQknb1r4LbQcuicy72xSu/tgsIIaO3/jaqndS1RuQsc=;
-        b=VFJf8rPVcfBhCVGRiyWkFLZVnbUFpTifhzTj5iKAGigKUYb2mx6ocPrzDzt6IJChrs
-         oOOO15Q/mhQIUzQPhtxvo0TNjytFVHYbU7kRUIRJ9vEQB3hX1ULsEXYVSfyrc3EpN7hf
-         Cw1B4hyYPGiCX+Bqb+qgxl3inKrOU8PJRNFNQSNXyp/nBjSq0ew9NnWXz5IocrCkXRwB
-         hA4KZF1HTMR2ym6jT85fQiHJ5AgYmgXz7ELPcVkznCESu75Xrol0sfEGsse5mdY1+LaR
-         MHx7VEOcg9hUEPRqPuC7CXOjt/MOtoiaAjdLsFOHYcr33rEJl1usNxI1z5roeADziwwk
-         dH/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HQknb1r4LbQcuicy72xSu/tgsIIaO3/jaqndS1RuQsc=;
-        b=XmRCCRw4LEIPwK39kYk7I1ic+2n+wvMsd+vGB/F72mkSVVMh4zQmzc0aWa5dkPEuKk
-         yybO9GMUNqvfcXmSmydMXr0VI06bnKJ66GyezRXuoNa/VJqyS8CcGBJQmxCfYgb/YN7R
-         llJpliPnZn1nVK3vqluLDXaZYF15FGwH1t3fsyTU1Omvz6l+FPs6KU4xyLPxTxaNDlye
-         q5SuQs9E4ak1eXZ0XE6qM6Fdnb4uSO7qfnfYFK4ClCxrAS8/7DDjIVVMM3bIDwHS0vyW
-         w4MBiImevzqjtPjXagdiPOhetxTYecbvyiE/r/a9pMGBvmXwh0eGqX1V21JCzl7LG9lA
-         jefw==
-X-Gm-Message-State: APjAAAX0LDbyI57Kr5fN7Hkn3S9ynQ/kNsKyNJlLnTFnYdrC74OeQqaA
-        QcKpHgk2DrhPCl/PjSIQ5lEdw9Loc6a1CS+cwT1G3Q==
-X-Google-Smtp-Source: APXvYqx8rjUk6KPqTIkjXHT1x3MUAIDpq7Im00SmJqvx96HxmfrRAzRMzoQEKZ+wnRhBT8VyGXo59Y1YR0OaexZHsWY=
-X-Received: by 2002:ab0:7043:: with SMTP id v3mr8397635ual.84.1571918395846;
- Thu, 24 Oct 2019 04:59:55 -0700 (PDT)
+        id S2501933AbfJXM2d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Oct 2019 08:28:33 -0400
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:56270 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2501931AbfJXM2d (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Oct 2019 08:28:33 -0400
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9OCSSqQ038775;
+        Thu, 24 Oct 2019 07:28:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1571920108;
+        bh=hfPqO/klBgDMRmYwPflNbrIJlYYCwQVsEnyhBzWarfw=;
+        h=Subject:From:To:CC:References:Date:In-Reply-To;
+        b=gGOM9d1BsZVd5RL0mEfO/mVPJcQdTOu+CNKe61mY/ED5JarPB94yhSqKv5JWS/9ci
+         Mp2cdh6a18UrQVQ02RzINoG7e9xiWR3kP62g1gKJn1JilZ8z1msnmHhooUaILFJAF2
+         PfI1vYoBA7lSJt5ci3HrWpsrrLVJpu1cxflIcHjg=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9OCSSl2055911;
+        Thu, 24 Oct 2019 07:28:28 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 24
+ Oct 2019 07:28:16 -0500
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Thu, 24 Oct 2019 07:28:16 -0500
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9OCSOaQ000878;
+        Thu, 24 Oct 2019 07:28:25 -0500
+Subject: Re: [PATCHv3 00/10] clk: ti: remoteproc / iommu support patches
+From:   Tero Kristo <t-kristo@ti.com>
+To:     Tony Lindgren <tony@atomide.com>
+CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <sboyd@kernel.org>, <mturquette@baylibre.com>, <s-anna@ti.com>
+References: <20190912132613.28093-1-t-kristo@ti.com>
+ <ef764d1c-8ebc-4b64-4543-7b296327e197@ti.com>
+ <20191010143521.GX5610@atomide.com>
+ <e37f9a2f-c554-300f-0866-8c8651941585@ti.com>
+Message-ID: <a88261a3-4012-1497-dd82-e41c0f328afd@ti.com>
+Date:   Thu, 24 Oct 2019 15:28:23 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com> <9b53139b7043572b3846a214694dbf8fe1f56f50.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <9b53139b7043572b3846a214694dbf8fe1f56f50.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 24 Oct 2019 13:59:44 +0200
-Message-ID: <CACRpkdZ5CC4mtNYrurx_2M_3BN6Tu7rQ=d4-y-HOsDbRteKjjA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 12/13] gpio: bd71828: Initial support for ROHM
- BD71828 PMIC GPIOs
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <e37f9a2f-c554-300f-0866-8c8651941585@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Matti,
+On 10/10/2019 18:32, Tero Kristo wrote:
+> On 10/10/2019 17:35, Tony Lindgren wrote:
+>> * Tero Kristo <t-kristo@ti.com> [191010 08:34]:
+>>> On 12/09/2019 16:26, Tero Kristo wrote:
+>>>> Hi,
+>>>>
+>>>> V3 of this series sort of reverted back to pretty much V1 which expects
+>>>> strict sequencing of events from the bus driver. This one doesn't have
+>>>> any dependency towards the reset driver either, and the controversial
+>>>> reset handling APIs have been removed.
+>>>>
+>>>> -Tero
+>>>
+>>> Stephen, any comments on this one or shall I just craft a 
+>>> pull-request for
+>>> this and rest of the TI clock driver changes towards 5.5? There seems 
+>>> to be
+>>> a pile of them coming this time over...
+>>
+>> Sounds like we need an immutable branch for the clkctrl related
+>> changes against v5.4-rc1 that I can also merge into omap-for-v5.5/prm
+>> branch in addition to the immutable prm reset driver branch.
+>>
+>> Otherwise I can't apply any of the consumer device related dts
+>> changes into that branch AFAIK.
+> 
+> Well, the sgx patch you can probably merge, as it will fail silently and 
+> only cause issues if you actually try to enable the device.
+> 
+> However, yes I agree, we should probably setup an immutable branch here.
 
-Thanks for your patch!
+Queued this series towards 5.5, thanks.
 
-On Thu, Oct 24, 2019 at 1:51 PM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
-
-> ROHM BD71828 PMIC contains 4 pins which can be configured by OTP
-> to be used for general purposes. First 3 can be used as outputs
-> and 4.th pin can be used as input. Allow them to be controlled
-> via GPIO framework.
->
-> The driver assumes all of the pins are configured as GPIOs and
-> trusts that the reserved pins in other OTP configurations are
-> excluded from control using "gpio-reserved-ranges" device tree
-> property (or left untouched by GPIO users).
->
-> Typical use for 4.th pin (input) is to use it as HALL sensor
-> input so that this pin state is toggled when HALL sensor detects
-> LID position change (from close to open or open to close). PMIC
-> HW implements some extra logic which allows PMIC to power-up the
-> system when this pin is toggled. Please see the data sheet for
-> details of GPIO options which can be selcted by OTP settings.
-
-spelling of selected
-
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-
-Overall looks very good.
-
-> +// SPDX-License-Identifier: GPL-2.0
-
-I think they want you to use GPL-2.0-only these days.
-
-> +#define BD71828_OUT 0
-> +#define BD71828_IN 1
-
-These have nothing to do with BD71828, just skip these defines
-and hardcode 0/1 in the code called from gpiolib. If we want defines
-for this they should be generically named and put in
-<linux/gpio/driver.h>
-
-Nice use of the config API!
-
-Yours,
-Linus Walleij
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
