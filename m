@@ -2,80 +2,155 @@ Return-Path: <SRS0=IOJl=YR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74061CA9EAF
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 12:28:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60692CA9EAF
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 13:34:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C55A2166E
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 12:28:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ED+AWRoD"
+	by mail.kernel.org (Postfix) with ESMTP id 37DD021BE5
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 13:34:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2501931AbfJXM2y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 24 Oct 2019 08:28:54 -0400
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:42644 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726360AbfJXM2x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Oct 2019 08:28:53 -0400
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9OCSnYe027831;
-        Thu, 24 Oct 2019 07:28:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1571920129;
-        bh=XKDzS588QHzU3lfZbz48kFp9v3KywTRpsctwZodHCxs=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=ED+AWRoDrSB5HeYTGbEjBUHCaDz0cR+fnPHz8WQo61aGMQFLBXYz2NtjSBPsgu5Kt
-         M90Xw7bfrMWx0wrdj+J/NBct73iAHx5xzfS9MpoJ6gAuPcQIpU4oI3r6x9cNbN+h9w
-         lCGk7tk+25oMcxHRnYVxMu8Qcze7VBir5o0oG7o8=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9OCSns4002006
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Oct 2019 07:28:49 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Thu, 24
- Oct 2019 07:28:39 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Thu, 24 Oct 2019 07:28:39 -0500
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9OCSlS0127335;
-        Thu, 24 Oct 2019 07:28:47 -0500
-Subject: Re: [PATCH 0/2] clk: ti: fix GFX clocks for reset support
-From:   Tero Kristo <t-kristo@ti.com>
-To:     <linux-clk@vger.kernel.org>, <sboyd@kernel.org>,
-        <mturquette@baylibre.com>
-CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>
-References: <20191007122604.18508-1-t-kristo@ti.com>
-Message-ID: <313e46e3-b9e1-19c8-5580-9770176a3549@ti.com>
-Date:   Thu, 24 Oct 2019 15:28:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2502537AbfJXNeg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 24 Oct 2019 09:34:36 -0400
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:60428 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2502516AbfJXNeg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 24 Oct 2019 09:34:36 -0400
+X-AuditID: c0a8fbf4-183ff70000001fa6-d3-5db1a8699e44
+Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 55.D3.08102.968A1BD5; Thu, 24 Oct 2019 15:34:33 +0200 (CEST)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
+ 14.03.0439.000; Thu, 24 Oct 2019 15:34:27 +0200
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+Subject: Re: [RFC PATCH v2 12/13] gpio: bd71828: Initial support for ROHM
+ BD71828 PMIC GPIOs
+Thread-Topic: [RFC PATCH v2 12/13] gpio: bd71828: Initial support for ROHM
+ BD71828 PMIC GPIOs
+Thread-Index: AQHVimFPtrmWvD61tkGGPiRCcHSxDqdpjsIAgAAad4A=
+Date:   Thu, 24 Oct 2019 13:34:27 +0000
+Message-ID: <588fccc0cafd01de7cb35b696a953f8a6e6937f6.camel@fi.rohmeurope.com>
+References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+         <9b53139b7043572b3846a214694dbf8fe1f56f50.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+         <CACRpkdZ5CC4mtNYrurx_2M_3BN6Tu7rQ=d4-y-HOsDbRteKjjA@mail.gmail.com>
+In-Reply-To: <CACRpkdZ5CC4mtNYrurx_2M_3BN6Tu7rQ=d4-y-HOsDbRteKjjA@mail.gmail.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A3AD059EE561F74FB995D7AE6B6648E4@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191007122604.18508-1-t-kristo@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TWUwTURSGc2emMxd0dChgrxVcmghBo6jR5LrE+KIZH0TRBxMTrKMMbRVa
+        nBb3B3xApajBiFst4MJSEcFWjbIlBkGwGpXFigoqwRhxgYhVYlR0hlHh6f73fuc//3k4F5La
+        17QeWqwOUbIKqQY6lLrt+eGbZfF4k+Z0npyHi1qeMPhgXwmDg/l+Cp/ofkPjwoaHGpxz/7oG
+        v7hxlcKvvjYC/K39EIHzfpYS+PPhlxp8rfAnwG3Vbhrf+FgB8N3L7TQuftpCYHdxM4Vb/Mtx
+        l7+Rxll1DQweCnipZZF8eUE54Ps7shi+oHwvX+XqYnhfWTbNdwZqab6p4ybBnyr4TvCey4MM
+        /8U3eU3ohjFLNguOHessJmv80k1jzH2ld0H669hdR9qyqUzQGeMEIRBx89GdozWME4RCLRcA
+        6MSzVlK9NANU1ZcnXyCkuSXI+YxRDBHcQnSn2U0pNSTnhqiirYJQQDi3EbmzSim1yIi8Xx5q
+        VL0I3brSOKwpbjoarC2iFc1yCaipN0CrYR8AqmwoBAoI4RKR339suCngolF2Zt+wJjkd8r0d
+        1Khjc6io9hGp6kjU2zP0992A6r53U8rQJBeHKqvjVbkMBT6tU7tMQ3k53Yw6Qhi6d+YNlQsm
+        uEYFuEbMrhGza5TZNcp8DmjKAEoTLKkmwSHOnS2JGbMlmzlNPrbY0nxA3ZjgLfC7fmU9ICCo
+        BxMhYYhkw896k7TjNtuSd5sFu9koZaSK9nqAIGmIYGtiZMYmC7v3iJLtH5oEKYOOje0+lqTl
+        lKxtopguSv9oFIQGxKaUyMYwSTSJu1IsqY4RTMAQpXmoPsIuWpNFSchwmI3Kehjt8n4oaKyc
+        u0axs/Z0IU1+Va1+MBPm9uZfIGFDfvEFUktZbVZRr2MfK6WcUmrOsP4Peg90EBjC2fmlMh0r
+        f5v/fd7LEYQcMXl8pRLhEEaQPhM492mIs9MT9E0n419N/bpvywpxZ0x/TFTs9kszViV2RW9d
+        FLX/9MqLvcF3hcESXVk6sYDJXHq/2RMX7T1+bcBx890ZZ9LODybzo+DA3rXVPl/Pg6ML1o7r
+        bO0xJjzf+nIjNTihPey8KwiG+oORwQNxv6xTsm2muFw+Z2CxZ31e7epDBspuFubOICW78Ac6
+        bWGa8wMAAA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/10/2019 15:26, Tero Kristo wrote:
-> Hi,
-> 
-> These two patches are on top of [1] to support GFX module reset
-> properly for am3/am4 SoCs.
-> 
-
-Queued towards 5.5, thanks.
-
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+SGVsbG8gTGludXMsDQoNClRoYW5rcyBhZ2FpbiBmb3IgdGhlIHJldmlldyA6KSBIaWdobHkgYXBw
+cmVjaWF0ZWQhDQoNCk9uIFRodSwgMjAxOS0xMC0yNCBhdCAxMzo1OSArMDIwMCwgTGludXMgV2Fs
+bGVpaiB3cm90ZToNCj4gT24gVGh1LCBPY3QgMjQsIDIwMTkgYXQgMTo1MSBQTSBNYXR0aSBWYWl0
+dGluZW4NCj4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+IA0K
+PiA+IFJPSE0gQkQ3MTgyOCBQTUlDIGNvbnRhaW5zIDQgcGlucyB3aGljaCBjYW4gYmUgY29uZmln
+dXJlZCBieSBPVFANCj4gPiB0byBiZSB1c2VkIGZvciBnZW5lcmFsIHB1cnBvc2VzLiBGaXJzdCAz
+IGNhbiBiZSB1c2VkIGFzIG91dHB1dHMNCj4gPiBhbmQgNC50aCBwaW4gY2FuIGJlIHVzZWQgYXMg
+aW5wdXQuIEFsbG93IHRoZW0gdG8gYmUgY29udHJvbGxlZA0KPiA+IHZpYSBHUElPIGZyYW1ld29y
+ay4NCj4gPiANCj4gPiBUaGUgZHJpdmVyIGFzc3VtZXMgYWxsIG9mIHRoZSBwaW5zIGFyZSBjb25m
+aWd1cmVkIGFzIEdQSU9zIGFuZA0KPiA+IHRydXN0cyB0aGF0IHRoZSByZXNlcnZlZCBwaW5zIGlu
+IG90aGVyIE9UUCBjb25maWd1cmF0aW9ucyBhcmUNCj4gPiBleGNsdWRlZCBmcm9tIGNvbnRyb2wg
+dXNpbmcgImdwaW8tcmVzZXJ2ZWQtcmFuZ2VzIiBkZXZpY2UgdHJlZQ0KPiA+IHByb3BlcnR5IChv
+ciBsZWZ0IHVudG91Y2hlZCBieSBHUElPIHVzZXJzKS4NCj4gPiANCj4gPiBUeXBpY2FsIHVzZSBm
+b3IgNC50aCBwaW4gKGlucHV0KSBpcyB0byB1c2UgaXQgYXMgSEFMTCBzZW5zb3INCj4gPiBpbnB1
+dCBzbyB0aGF0IHRoaXMgcGluIHN0YXRlIGlzIHRvZ2dsZWQgd2hlbiBIQUxMIHNlbnNvciBkZXRl
+Y3RzDQo+ID4gTElEIHBvc2l0aW9uIGNoYW5nZSAoZnJvbSBjbG9zZSB0byBvcGVuIG9yIG9wZW4g
+dG8gY2xvc2UpLiBQTUlDDQo+ID4gSFcgaW1wbGVtZW50cyBzb21lIGV4dHJhIGxvZ2ljIHdoaWNo
+IGFsbG93cyBQTUlDIHRvIHBvd2VyLXVwIHRoZQ0KPiA+IHN5c3RlbSB3aGVuIHRoaXMgcGluIGlz
+IHRvZ2dsZWQuIFBsZWFzZSBzZWUgdGhlIGRhdGEgc2hlZXQgZm9yDQo+ID4gZGV0YWlscyBvZiBH
+UElPIG9wdGlvbnMgd2hpY2ggY2FuIGJlIHNlbGN0ZWQgYnkgT1RQIHNldHRpbmdzLg0KPiANCj4g
+c3BlbGxpbmcgb2Ygc2VsZWN0ZWQNCg0KUmlnaHQsIHRoYW5rcy4NCg0KPiA+IFNpZ25lZC1vZmYt
+Ynk6IE1hdHRpIFZhaXR0aW5lbiA8bWF0dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPg0K
+PiANCj4gT3ZlcmFsbCBsb29rcyB2ZXJ5IGdvb2QuDQo+IA0KPiA+ICsvLyBTUERYLUxpY2Vuc2Ut
+SWRlbnRpZmllcjogR1BMLTIuMA0KPiANCj4gSSB0aGluayB0aGV5IHdhbnQgeW91IHRvIHVzZSBH
+UEwtMi4wLW9ubHkgdGhlc2UgZGF5cy4NCg0KSG1tLiBJcyB0aGlzIGRvY3VtZW50ZWQgc29tZXdo
+ZXJlPyBUaGUgTElDRU5TRVMvcHJlZmVycmVkL0dQTC0yLjANCnN0aWxsIHN0YXRlczoNClZhbGlk
+LUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMA0KVmFsaWQtTGljZW5zZS1JZGVudGlmaWVyOiBH
+UEwtMi4wLW9ubHkNClZhbGlkLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMCsNClZhbGlkLUxp
+Y2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vci1sYXRlcg0KU1BEWC1VUkw6IGh0dHBzOi8vc3Bk
+eC5vcmcvbGljZW5zZXMvR1BMLTIuMC5odG1sDQpVc2FnZS1HdWlkZToNCiAgVG8gdXNlIHRoaXMg
+bGljZW5zZSBpbiBzb3VyY2UgY29kZSwgcHV0IG9uZSBvZiB0aGUgZm9sbG93aW5nIFNQRFgNCiAg
+dGFnL3ZhbHVlIHBhaXJzIGludG8gYSBjb21tZW50IGFjY29yZGluZyB0byB0aGUgcGxhY2VtZW50
+DQogIGd1aWRlbGluZXMgaW4gdGhlIGxpY2Vuc2luZyBydWxlcyBkb2N1bWVudGF0aW9uLg0KICBG
+b3IgJ0dOVSBHZW5lcmFsIFB1YmxpYyBMaWNlbnNlIChHUEwpIHZlcnNpb24gMiBvbmx5JyB1c2U6
+DQogICAgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjANCiAgb3INCiAgICBTUERYLUxp
+Y2Vuc2UtSWRlbnRpZmllcjogR1BMLTIuMC1vbmx5DQogIEZvciAnR05VIEdlbmVyYWwgUHVibGlj
+IExpY2Vuc2UgKEdQTCkgdmVyc2lvbiAyIG9yIGFueSBsYXRlciB2ZXJzaW9uJw0KdXNlOg0KICAg
+IFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wKw0KICBvcg0KICAgIFNQRFgtTGljZW5z
+ZS1JZGVudGlmaWVyOiBHUEwtMi4wLW9yLWxhdGVyDQoNCihhdCBsZWFzdCBmb3IgNS40LXJjMikN
+Cg0KVGhpcyBsb29rcyBsaWtlICJHUEwtMi4wIiBzaG91bGQgc3RpbGwgYmUgdmFsaWQuIE5vdCB0
+aGF0IEkgaGF2ZQ0KYW55dGhpbmcgYWdhaW5zdCB0aGUgIkdQTC0yLjAtb25seSIgLSBJIGFtIGp1
+c3QgYSB0aW55IGJpdCBmcnVzdHJhdGVkDQp3aGF0IGNvbWVzIHRvIHBvbGlzaGluZyB0aGUgU1BE
+WCBmb3JtYXQgOi8NCg0KPiA+ICsjZGVmaW5lIEJENzE4MjhfT1VUIDANCj4gPiArI2RlZmluZSBC
+RDcxODI4X0lOIDENCj4gDQo+IFRoZXNlIGhhdmUgbm90aGluZyB0byBkbyB3aXRoIEJENzE4Mjgs
+IGp1c3Qgc2tpcCB0aGVzZSBkZWZpbmVzDQo+IGFuZCBoYXJkY29kZSAwLzEgaW4gdGhlIGNvZGUg
+Y2FsbGVkIGZyb20gZ3Bpb2xpYi4NCg0KSSBwZXJzb25hbGx5IGRvbid0IGxpa2UgdXNpbmcgMC8x
+IGFzIEkgX2Fsd2F5c18gbmVlZCB0byBjaGVjayB3aGljaCBpcw0KSU4gYW5kIHdoaWNoIGlzIE9V
+VC4gSXQgbXVzdCBiZSBzb21laG93IHJlbGF0ZWQgdG8gbXkgYnJhaW4gY2hlbWlzdHJ5DQpidXQg
+dGhpcyBqdXN0IGRvZXMgbm90IHN0YXkgaW4gbXkgbWluZCBvdmVyIGEgd2Vla2VuZC4uLiBCdXQg
+eW91IGFyZQ0KcmlnaHQgLSBoYXZpbmcgdGhlc2UgZGVmaW5lcyBpbiBiZDcxODI4IGRyaXZlciBk
+b2VzIG5vdCBoZWxwIG11Y2guIFdoZW4NCkkgc3RhcnQgd2l0aCBuZXh0IEdQSU8gY2hpcCBJIG11
+c3Qgb25jZSBhZ2FpbiBkaWcgdGhlIHZhbHVlcyBmcm9tIHRoZXNlDQpkZWZpbmVzIG9yIGZyb20g
+c29tZXdoZXJlIGVsc2UuIFRodXMuLi4NCg0KPiAgSWYgd2Ugd2FudCBkZWZpbmVzDQo+IGZvciB0
+aGlzIHRoZXkgc2hvdWxkIGJlIGdlbmVyaWNhbGx5IG5hbWVkIGFuZCBwdXQgaW4NCj4gPGxpbnV4
+L2dwaW8vZHJpdmVyLmg+DQoNCi4uLnBsYWNpbmcgdGhlIGRlZmluZXMgaW4gdGhpcyBoZWFkZXIg
+d2hpY2ggaXMgdmlzaWJsZSBhbHNvIGluIG5leHQNCmRyaXZlciB3b3VsZCBiZSAidGhlIHJpZ2h0
+IHRoaW5nIHRvIGRvIih0bSkuDQoNCkRvIHlvdSB0aGluayB3ZSBzaG91bGQgYWRkIHRoZSBkZWZp
+bmVzIHRoZXJlIHRoZW4/IEkgd2FzIG5vdCB0cnlpbmcgdG8NCmRvIHRoYXQgYXMgSSB0aG91Z2h0
+IHRoYXQgc29tZW9uZSByZWFsbHkgbG92ZXMgdGhlIHJhdyBudW1iZXJzIGFuZA0KZGlzbGlrZXMg
+ZGVmaW5lcyAtIGFzIHRoZXNlIGhhcmQtY29kZWQgdmFsdWVzIDEgYW5kIDAgc2VlbSB0byBiZSB1
+c2VkDQpldmVyeXdoZXJlLi4uIDpdIE1heWJlIHRoZSBwbGFpbiBudW1iZXJzIGFyZSBvbmx5IGRp
+ZmZpY3VsdCBmb3IgbWU/DQoNCj4gTmljZSB1c2Ugb2YgdGhlIGNvbmZpZyBBUEkhDQoNClRoYW5r
+cyA9KSBJIGFkbWl0IEkgaGF2ZSBzdG9sZW4gdGhhdCBmcm9tIHNvbWUgb3RoZXIgZHJpdmVyLiBT
+byBJIGRvbid0DQpyZWFsbHkgZGVzZXJ2ZSB0aGUgY3JlZGl0cyA9KSBJdCdzIGVhc3kgdG8gYnVp
+bGQgd2hlbiB0aGUgZm91bmRhdGlvbnMNCmFyZSBkb25lIHdlbGwgOykNCg0KQnIsDQoJTWF0dGkg
+VmFpdHRpbmVuDQo=
