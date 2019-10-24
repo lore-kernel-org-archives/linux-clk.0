@@ -2,48 +2,47 @@ Return-Path: <SRS0=IOJl=YR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3F16CA9EB9
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 02:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80094CA9EB9
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 02:57:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C441A2086D
-	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 02:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5240E2084B
+	for <linux-clk@archiver.kernel.org>; Thu, 24 Oct 2019 02:57:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Oqo4lcdq"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ARWIyfCN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2406551AbfJXCi0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 23 Oct 2019 22:38:26 -0400
-Received: from mail-eopbgr10040.outbound.protection.outlook.com ([40.107.1.40]:12801
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        id S2437189AbfJXC5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 23 Oct 2019 22:57:43 -0400
+Received: from mail-eopbgr40072.outbound.protection.outlook.com ([40.107.4.72]:3332
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2406545AbfJXCi0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 23 Oct 2019 22:38:26 -0400
+        id S2437113AbfJXC5m (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 23 Oct 2019 22:57:42 -0400
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ecaiCWJpCK7IbUxcbMTXWs/2jajixTf6JjulitG8BuScshCP6679ypu4/ixbj++m7N8DrjnIVWri0WkCRKX5NJ1/funsIM6qcxiy3pIRD2qAJONlqTO5Dxpy3y+f6YxL3J+00PMGQo5Dc+Tz+8JONhkrCxlfP5o+lRDByCyKAxUMYV12itAAkBhTR0n7AjhCAzLx0spIhxOPXqVmxF91cAc1NSFxgi1FuGFAulIBFdrHk5bjNm1mdMyKmM9sZGIiDQfPGgejOn2Nnftty4Ebe4eqgG5Ij9i63UQcOLvFKdOSj86tPdsNZgt98JH0DOCE6JysVyA2MolGo56W+tklkQ==
+ b=Y+2PMbsYoa2PaQ4tjm3oIYf5wp3CyyFDDDS4Y3wAxf8WcJkb7yy9W29PqAmD4mBWwp+RELd49cCAROpYVToKJ0gDBMvkMvonfa9LUXfU/VO3UdMtbcQ1j+DOXhqKq2mqiVkiZ31IC16o0WsKqTh+3bqiVnUFVA6THG6WNhW6v5gBsCSBK7F5wr3DSD7z5CeZxGW2O9HigTbWgzPZT5E2th+rxcHYWNMYfvTxJrwmTBRbu/A4qN7w/vReKd86KtUlQuNue384NcaAmWIkeRnHUev5bYjGfqWWmqWq352iMS9C46EWoNRia7/Uaj70L9n2pBdVj6EhVs5TZzIIgYvxHg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DboEOpm25KIvAGHf58YaY0IM1XFgOv8fiCylXk8YWRE=;
- b=K2TYZE8434702yIDSLzO5hWIHkWM+9yJMQ4f/2ox8uuT399R2u7m5941z0OHsRdtZEK0yPj8Pq9ZJmdbhFKge3inARZxvAFfKt8SvbpyUoJo7SSpgh4dAncNKoZen9Z4m8+2PMj0bcfQs5dL3vgy2RzIIxffYbTeEal29q5LrVZ9g/Q+Q6vHJBNDl+Wi/d7sRv5NbDOBC3Q8uVAXFMoza+SzHYu+JZtNxfN8yUthn2rmB5p21F0xPKqCeByhlPUrWq8ITy/0XDsvf6eIMqsCPTroQRyYIgD3g2mO39fIxBcdujzGknWMGjtlq62rNI+ijzyjR+4PNJwbiSKUfexgMg==
+ bh=8s/3rRA6QxN2yzgRix40R1LkLzzlsXwcMY7YwLaVTgU=;
+ b=IE240OiFl6HavstcYnuC5gTN4GbQPsy1ozRSU0o3ol0vPbnu2GF8re6IJu7UoZOlHXmCbObyLMsVVnhAluep0Sm9wuy/l9Xk2Z1P4mrU4BbHf1zl84eU67TIlZfWuCbzND26tICzED2OskS7g0YtO+nFqUh7TOMYFiBMr5yqx9I08Y8xTrjPib6mkS87EtqPYt59We1DNF6oSxKmGib4CVzH7zH51GHTr4Ol3yG6GGCOkm+NHw566ZovYVI6zOq5BO3YrY0n2py+98kvfeaD5FOv5i98wAlhZPlqs8dBzagEx+XNV7jD2zB3dbzZL2M99y0toqOgxS4USFzPGuQ4DA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DboEOpm25KIvAGHf58YaY0IM1XFgOv8fiCylXk8YWRE=;
- b=Oqo4lcdqUWiRfc0cM3SyPZxRi3zegzeeO5+dOMqtKIjEHDVM+fvFhzGQQZeOOwdAdY2QxZoEIGVBaSnIAqQFVNNpATLkAPY+Uls01LyWbjuxcGorRDUIDt8k88gbFsbA8wzVjWnxKS9jZIKrEXPsvLtBFH4W97vnQlRit6oaOGM=
+ bh=8s/3rRA6QxN2yzgRix40R1LkLzzlsXwcMY7YwLaVTgU=;
+ b=ARWIyfCNeiAv68gCyAzkEP38HMm7IMyD/5bBSWFNQ9rIt2LvPw/iOkmd6IYV4pfWUxv6UXepDv+fUtHOinp2os2czCRxidK31YgSJpFS0atVeN793CCNz7x3818MiZOAU9aE64h+1MbvQpF3VVs5b8C/Pb3MtPVYVI8k4PxGTXE=
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB5315.eurprd04.prod.outlook.com (20.176.215.97) with Microsoft SMTP
+ AM0PR04MB4372.eurprd04.prod.outlook.com (52.135.149.21) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2347.21; Thu, 24 Oct 2019 02:38:22 +0000
+ 15.20.2387.22; Thu, 24 Oct 2019 02:57:38 +0000
 Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
  ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2347.030; Thu, 24 Oct 2019
- 02:38:22 +0000
+ 02:57:38 +0000
 From:   Peng Fan <peng.fan@nxp.com>
 To:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         "sboyd@kernel.org" <sboyd@kernel.org>,
@@ -58,84 +57,75 @@ CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH] clk: imx: imx7d: use imx_obtain_fixed_clk_hw to simplify code
-Thread-Topic: [PATCH] clk: imx: imx7d: use imx_obtain_fixed_clk_hw to simplify
- code
-Thread-Index: AQHVihQanyLud71oXkiy01GBJE3P/g==
-Date:   Thu, 24 Oct 2019 02:38:22 +0000
-Message-ID: <1571884513-19892-1-git-send-email-peng.fan@nxp.com>
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: RE: [PATCH 0/3] clk: imx: imx6x: use imx_obtain_fixed_clk_hw
+Thread-Topic: [PATCH 0/3] clk: imx: imx6x: use imx_obtain_fixed_clk_hw
+Thread-Index: AQHVihMHWm1jS7cCrE+ghlbtE9L0L6dpGVLg
+Date:   Thu, 24 Oct 2019 02:57:38 +0000
+Message-ID: <AM0PR04MB4481226E209D2851DA1FCFA0886A0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1571884049-29263-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1571884049-29263-1-git-send-email-peng.fan@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0051.apcprd03.prod.outlook.com
- (2603:1096:203:52::15) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
 authentication-results: spf=none (sender IP is )
  smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
+x-originating-ip: [119.31.174.71]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7e3c5c47-50dd-44b2-a890-08d7582b3c76
-x-ms-traffictypediagnostic: AM0PR04MB5315:|AM0PR04MB5315:
+x-ms-office365-filtering-correlation-id: 2f7ca6b2-029b-43fc-7f67-08d7582dee10
+x-ms-traffictypediagnostic: AM0PR04MB4372:|AM0PR04MB4372:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB5315A8B8FB2FD92DB98D0E94886A0@AM0PR04MB5315.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:669;
+x-microsoft-antispam-prvs: <AM0PR04MB43729DD765FFF33C8BADF183886A0@AM0PR04MB4372.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
 x-forefront-prvs: 0200DDA8BE
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(39860400002)(346002)(396003)(366004)(136003)(199004)(189003)(478600001)(2616005)(54906003)(6486002)(102836004)(66066001)(2201001)(8676002)(110136005)(26005)(36756003)(14454004)(66446008)(316002)(66946007)(186003)(25786009)(66476007)(66556008)(2501003)(44832011)(64756008)(3846002)(52116002)(4326008)(6512007)(99286004)(256004)(7736002)(486006)(71190400001)(305945005)(386003)(71200400001)(6506007)(86362001)(81156014)(81166006)(4744005)(6116002)(2906002)(476003)(8936002)(6436002)(50226002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5315;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(376002)(136003)(39860400002)(346002)(199004)(189003)(64756008)(66946007)(66476007)(66556008)(52536014)(66446008)(4744005)(8676002)(8936002)(81156014)(76116006)(305945005)(74316002)(66066001)(7736002)(2501003)(2201001)(81166006)(54906003)(99286004)(86362001)(186003)(33656002)(5660300002)(14454004)(76176011)(316002)(7696005)(6506007)(26005)(102836004)(256004)(9686003)(6436002)(71190400001)(71200400001)(110136005)(446003)(11346002)(229853002)(25786009)(55016002)(486006)(44832011)(4326008)(476003)(2906002)(6246003)(478600001)(6116002)(3846002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4372;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +yE3Y7dTAmJ7jmPVMVSgdgmjFFOmGkBKxcYtY5MTGgmpZlwVlN1CnyNR2q2BI67MsqaFsb6zJ0YZG2o32G+/JHDqGMg+xk5xKC6qPxDrAylzy4nwtuv0P2/IKSGbCQmeWbDE5isnA/gyg1rypydO2mCGdnlDY2c+V2lSa/Six5b1geBtdYKMRvb5cm3780ojDhbucHu6jGAiuza0Pzib5eu0XLEXBkf5NfXAkJyTM1FcFXQh7w4v+OGFiZSqJvL0mOFpVV74vZ1far8SJI+E6wiqAci0r+TTwXsiHvBhCYr5WKesqEOiTo/PvC5MJiOJh90wI4sHL2Y14JzgUGJxeCa7of0X1/9NJXA8WBLq7wULgl7etJMF59Pu6TgOjR/1J30/yHSzvkjDGdcrUJ0NPGrBkiWyUY/k0AF+fdIU02k0I+b46Y01QB3AS5iDMVkr
-Content-Type: text/plain; charset="iso-8859-1"
+x-microsoft-antispam-message-info: XWpTfRKmVDUbgb/fD242/K103awrfTf1KFnA2YW7WpHUfU9kgpEN9/Fv2BdhVKJIQ/q4bOVp2N57DoXLFIczlEy5sWIhcFLU6wQmH9C5TcdS6py3XsSSd1o1cgJ5qVIzBQU9mr2bw2f3WngBstLkG71iIQxHP1+Y+Bh74n9q3v6DlLijm57ekLsadlxE560pwtSIzlkJ1Gmw/yM+jZZpbGW82Gzd1nwJIO38RdQgFi8jmY6DUuqY5uq5cTTZMHabXz5VjzWQqTwOUQ3BbsLaI6P/CK6Vnt8efCKba7LC00kUMGN00apIIk3H+Fk+B5WAVQVtTmIYCpyPdL0WuB/ggQNnhz7NVPj+Sh+ruEHy2Fc2IN2tGa+ucSJJ8PkP1Jt6salgu6c0su5i0TRYDrW8AvWshq/He2vqygo2qqfGbx5JuFzqcYQAdOfV9RwLDbu/
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7e3c5c47-50dd-44b2-a890-08d7582b3c76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2019 02:38:22.1179
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f7ca6b2-029b-43fc-7f67-08d7582dee10
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2019 02:57:38.6336
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6ymiU5JAVjc1Ol3D54ZuiPk+Jtf3BBG0LqNVWYFbmQLq5VJ7pKky6C7NIl0wzmlU1d01KcbuAHl8SNBxYuHtAA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5315
+X-MS-Exchange-CrossTenant-userprincipalname: jo9v8yhWANwy/ohM6zboSvfaKVZcuqDhhXhy0oiZzq9N6z8Unc7P3l2iXint6EZCkkPYC3egrF7Cu1bD9bPX7w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4372
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+> Subject: [PATCH 0/3] clk: imx: imx6x: use imx_obtain_fixed_clk_hw
 
-imx_obtain_fixed_clk_hw could be used to simplify code to replace
-__clk_get_hw(of_clk_get_by_name(node, "name"))
+Drop this v1, push button early, need a fix for 6ul.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks,
+Peng.
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index fbea774ef687..0c9f7adb41ae 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -403,8 +403,8 @@ static void __init imx7d_clocks_init(struct device_node=
- *ccm_node)
- 	hws =3D clk_hw_data->hws;
-=20
- 	hws[IMX7D_CLK_DUMMY] =3D imx_clk_hw_fixed("dummy", 0);
--	hws[IMX7D_OSC_24M_CLK] =3D __clk_get_hw(of_clk_get_by_name(ccm_node, "osc=
-"));
--	hws[IMX7D_CKIL] =3D __clk_get_hw(of_clk_get_by_name(ccm_node, "ckil"));
-+	hws[IMX7D_OSC_24M_CLK] =3D imx_obtain_fixed_clk_hw(ccm_node, "osc");
-+	hws[IMX7D_CKIL] =3D imx_obtain_fixed_clk_hw(ccm_node, "ckil");
-=20
- 	np =3D of_find_compatible_node(NULL, NULL, "fsl,imx7d-anatop");
- 	base =3D of_iomap(np, 0);
---=20
-2.16.4
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> This is to use imx_obtain_fixed_clk_hw to replace
+> __clk_get_hw(of_clk_get_by_name(node, "name")) to simplify code.
+>=20
+> Peng Fan (3):
+>   clk: imx: imx6sll: use imx_obtain_fixed_clk_hw to simplify code
+>   clk: imx: imx6sx: use imx_obtain_fixed_clk_hw to simplify code
+>   clk: imx: imx6ul: use imx_obtain_fixed_clk_hw to simplify code
+>=20
+>  drivers/clk/imx/clk-imx6sll.c |  8 ++++----  drivers/clk/imx/clk-imx6sx.=
+c
+> | 12 ++++++------  drivers/clk/imx/clk-imx6ul.c  |  8 ++++----
+>  3 files changed, 14 insertions(+), 14 deletions(-)
+>=20
+> --
+> 2.16.4
 
