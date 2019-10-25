@@ -2,107 +2,87 @@ Return-Path: <SRS0=BavY=YS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEFA5CA9EA0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 10:51:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ABD6CA9EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 11:14:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD13021929
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 10:51:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3706320867
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 11:14:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725852AbfJYKvJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Oct 2019 06:51:09 -0400
-Received: from mout.kundenserver.de ([217.72.192.74]:45981 "EHLO
-        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2392198AbfJYKvJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 06:51:09 -0400
-Received: from mail-qk1-f181.google.com ([209.85.222.181]) by
- mrelayeu.kundenserver.de (mreue106 [212.227.15.145]) with ESMTPSA (Nemesis)
- id 1Mj831-1hlZxU1VH3-00fEqI; Fri, 25 Oct 2019 12:51:05 +0200
-Received: by mail-qk1-f181.google.com with SMTP id q70so1261022qke.12;
-        Fri, 25 Oct 2019 03:51:04 -0700 (PDT)
-X-Gm-Message-State: APjAAAWA6fFViRcJqREnWWJ4XnLSnh9uc5TR3f3XkJRs4iop43nFUxmc
-        NGQ8ccT6lVNGOrvmjR3QEB2RQ+274bWdUrVtGAM=
-X-Google-Smtp-Source: APXvYqx2Oor6PcLHOX4Sy8TtHwX6a9dti7RuLVSJPm8RZ72aJo7WkeFnANJ7SePVIoWyJuP+ht+PknNC97FPJwMamtQ=
-X-Received: by 2002:a37:58d:: with SMTP id 135mr2252602qkf.394.1572000663226;
- Fri, 25 Oct 2019 03:51:03 -0700 (PDT)
+        id S2439152AbfJYLOY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Oct 2019 07:14:24 -0400
+Received: from mx1.unisoc.com ([222.66.158.135]:38588 "EHLO
+        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S2439123AbfJYLOX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 07:14:23 -0400
+Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
+        by SHSQR01.spreadtrum.com with ESMTPS id x9PBDrCR066405
+        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
+        Fri, 25 Oct 2019 19:13:53 +0800 (CST)
+        (envelope-from Chunyan.Zhang@unisoc.com)
+Received: from localhost (10.0.74.79) by BJMBX01.spreadtrum.com (10.0.64.7)
+ with Microsoft SMTP Server (TLS) id 15.0.847.32; Fri, 25 Oct 2019 19:13:53
+ +0800
+From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: [PATCH 0/5] Add clocks for Unisoc's SC9863A
+Date:   Fri, 25 Oct 2019 19:13:33 +0800
+Message-ID: <20191025111338.27324-1-chunyan.zhang@unisoc.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191018154052.1276506-1-arnd@arndb.de> <87v9slg9k5.fsf@belgarion.home>
- <CAK8P3a1JDtHsOW=iaxEycbJ4TBkR9MHUyDMeJnwxCtb=tefnBQ@mail.gmail.com>
- <CAK8P3a0376Anmoc8VWXcEBg+z2B+1vcxJoywYYROBQNxpVmZuA@mail.gmail.com>
- <87r239f2g8.fsf@belgarion.home> <87eez1rhqo.fsf@belgarion.home>
-In-Reply-To: <87eez1rhqo.fsf@belgarion.home>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 25 Oct 2019 12:50:46 +0200
-X-Gmail-Original-Message-ID: <CAK8P3a0L3_Hs48X5bh0UD2L_AaxLcUOQ_YS7ZpSd5W-8xcgAog@mail.gmail.com>
-Message-ID: <CAK8P3a0L3_Hs48X5bh0UD2L_AaxLcUOQ_YS7ZpSd5W-8xcgAog@mail.gmail.com>
-Subject: Re: [PATCH 00/46] ARM: pxa: towards multiplatform support
-To:     Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Fbdev development list <linux-fbdev@vger.kernel.org>,
-        IDE-ML <linux-ide@vger.kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-leds@vger.kernel.org, linux-mmc <linux-mmc@vger.kernel.org>,
-        linux-mtd <linux-mtd@lists.infradead.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-rtc@vger.kernel.org, USB list <linux-usb@vger.kernel.org>,
-        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Provags-ID: V03:K1:bBFl5bX9BqXoDP8OrdvcfGlrYLRY5B1GUhWZJswEMUsHfqL7ZPS
- wNKiBQqI9J4lWaKwMKWpeuRP8Q7gNW1Huux28MpdQbLQHsG8keYqULuxokAyz8cXvUuDQNr
- Y4OmkYoxdwxMOhV/OoYmkmbTVaeZ1jGsBbuhOyjPDaixMEDPYwwWYKYrS8WnrToePTYktVe
- isgPlih4bJp7b5na0cbDg==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:+amIHTsvEsM=:wxrSdcXp8fCl0WvOtbji8T
- eiMYbEG4cst6pRKOmo34ky4eqFrbI9L+1xHjnaiY+H7o5c4AvretiveY6HsD/8Q4GCTo+d4EF
- 6KHQlLX/3bCOUITQRQRqZXMcO8+d/5yBWQ4PLvO/++od9zW+FSeEXlBspQqZItGbvkewyaSgM
- V2RuqHgZsRHubh1xP1lsxIE2YLtSonVpvh2iNYDMLLKocefeURCWHULZHpLKqb637/1ILOFmh
- oY55eIQP5dCvyMde+02h4Sc41A/coK0VSMYnmjZbIdabokN8wJmd5BpuqN52whvBKMyQB7Drx
- +rJNk043np+L19CHym/KU1GD0+Jh/hYMmdbAesunIc/XFNfshrJppNPggA2jYuD+WHt0GoW0h
- vIRvBMeg6dWxtHSt5iN2OWe8YRwmJozAghx6eaxs/+mtKjhlwdb8pg8wgjMJTT4UVZPNck6ai
- ETIxAKLIg48ERY2PKPCwjHZWIF59mr9ihwrIm7/PoRVzhB2DgY1bXT+r0Xf1ifNLX95PYOB5M
- zAGClTyzoyjzTzKwNgwcV4nTh4Je81xIc8FEG8D5S5n2odlouWYtMUHvQkobX+2UgP+dk+Rdq
- Yf9piYlNy1SKL1OHQdycWsLTFQ3jMWeWKCJRb5PSzWdnYIqeBZU1jM0z+jjUqPYhNrA/3/oIY
- 6RHI26+ovszi6E37l9e4YOUqQLgkyayuNJDsaLxUKkKdzoog8Z1n6LZPKD/u4+MRIXZCKCrGx
- pWVDvdMh6MitMHpzAZXm52z3k1A8T63a1CoAVUlqw1z/kLR1+hrsr4BnhFtpR4HNXe8FSWIge
- SE0Vg8VrS1FRrUX3m8HXrRagLwmAmfEk5PCq5WPOx/NjbgPEUnw5nqQ9HVCS9jOGnKIZvBw5Z
- /NMhJY+Zi7eyYSpPjOOA==
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.0.74.79]
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX01.spreadtrum.com (10.0.64.7)
+X-MAIL: SHSQR01.spreadtrum.com x9PBDrCR066405
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 10:50 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
-> Robert Jarzmik <robert.jarzmik@free.fr> writes:
-> >>> I've now pushed it to
-> >>>
-> >>> git://git.kernel.org:/pub/scm/linux/kernel/git/arnd/playground.git
-> >>> pxa-multiplatform
-> >>
-> >> Sorry for the duplication, I had some problems with email configuration
-> >> so my reply got rejected, let's see if it goes through this time.
-> > I have it now, thanks, I'll test and review as soon as I can.
-> >
-> > Cheers.
->
-> Ok Arnd, I have a preliminary test report.
->
-> I tested only the pxa27x (mioa701), which happens to have a lot of drivers, and
-> only the platform_data flavor (ie. no device-tree test yet). Apart a panic in
-> the regulator framework (which is a known issue [1]), your version seems
-> equivalent so far in terms of runtime to Linux 5.4-rc3).
->
-> The sound and RTC seem broken, but not by you ...
->
-> I'll continue the test onwards for pxa3xx and pxa2xx when I'll gather a bit of
-> time, and try to review as well the mach-pxa part.
 
-Awesome, thanks for testing so far and for the report!
+Add SC9863A specific clock driver and devicetree bindings for it.
 
-        Arnd
+Also this patchset added support gate clock for pll which need to
+wait a certain time for stable after being switched on.
+
+Chunyan Zhang (4):
+  dt-bindings: clk: sprd: rename the common file name sprd.txt to SoC
+    specific
+  dt-bindings: clk: sprd: add bindings for sc9863a clock controller
+  clk: sprd: Add dt-bindings include file for SC9863A
+  clk: sprd: add clocks support for SC9863A
+
+Xiaolong Zhang (1):
+  clk: sprd: add gate for pll clocks
+
+ .../clock/{sprd.txt => sprd,sc9860-clk.txt}   |    2 +-
+ .../bindings/clock/sprd,sc9863a-clk.txt       |   59 +
+ drivers/clk/sprd/Kconfig                      |    8 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/gate.c                       |   19 +
+ drivers/clk/sprd/gate.h                       |   21 +-
+ drivers/clk/sprd/sc9863a-clk.c                | 1711 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9863a-clk.h  |  353 ++++
+ 8 files changed, 2171 insertions(+), 3 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.txt
+ create mode 100644 drivers/clk/sprd/sc9863a-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
+
+-- 
+2.20.1
+
+
