@@ -2,1815 +2,1678 @@ Return-Path: <SRS0=BavY=YS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0032CA9EA0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 11:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED16CA9EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 11:33:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51D6E21D7F
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 11:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15EDF2070B
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 11:33:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728576AbfJYLPA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Oct 2019 07:15:00 -0400
-Received: from mx1.unisoc.com ([222.66.158.135]:50090 "EHLO
-        SHSQR01.spreadtrum.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727874AbfJYLPA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 07:15:00 -0400
-Received: from ig2.spreadtrum.com (bjmbx01.spreadtrum.com [10.0.64.7])
-        by SHSQR01.spreadtrum.com with ESMTPS id x9PBEKF9067360
-        (version=TLSv1 cipher=AES256-SHA bits=256 verify=NO);
-        Fri, 25 Oct 2019 19:14:20 +0800 (CST)
-        (envelope-from Chunyan.Zhang@unisoc.com)
-Received: from localhost (10.0.74.79) by BJMBX01.spreadtrum.com (10.0.64.7)
- with Microsoft SMTP Server (TLS) id 15.0.847.32; Fri, 25 Oct 2019 19:14:20
- +0800
-From:   Chunyan Zhang <chunyan.zhang@unisoc.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
+        id S1727154AbfJYLdG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Oct 2019 07:33:06 -0400
+Received: from mail-sz.amlogic.com ([211.162.65.117]:7993 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfJYLdG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 07:33:06 -0400
+Received: from [10.28.19.114] (10.28.19.114) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 25 Oct
+ 2019 19:32:07 +0800
+Subject: Re: [PATCH v2 3/3] clk: meson: a1: add support for Amlogic A1 clock
+ driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-CC:     <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: [PATCH 5/5] clk: sprd: add clocks support for SC9863A
-Date:   Fri, 25 Oct 2019 19:13:38 +0800
-Message-ID: <20191025111338.27324-6-chunyan.zhang@unisoc.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191025111338.27324-1-chunyan.zhang@unisoc.com>
-References: <20191025111338.27324-1-chunyan.zhang@unisoc.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
+ <1571382865-41978-4-git-send-email-jian.hu@amlogic.com>
+ <1jsgnmba1a.fsf@starbuckisacylon.baylibre.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <49b33e94-910b-3fd9-4da1-050742d07e93@amlogic.com>
+Date:   Fri, 25 Oct 2019 19:32:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.0.74.79]
-X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
- BJMBX01.spreadtrum.com (10.0.64.7)
-X-MAIL: SHSQR01.spreadtrum.com x9PBEKF9067360
+In-Reply-To: <1jsgnmba1a.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.19.114]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi, Jerome
 
-Add the list of clocks for the Unisoc SC9863A, alone with clock
-initialization.
+Thanks for your review
 
-Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
----
- drivers/clk/sprd/Kconfig       |    8 +
- drivers/clk/sprd/Makefile      |    1 +
- drivers/clk/sprd/sc9863a-clk.c | 1711 ++++++++++++++++++++++++++++++++
- 3 files changed, 1720 insertions(+)
- create mode 100644 drivers/clk/sprd/sc9863a-clk.c
+On 2019/10/21 19:41, Jerome Brunet wrote:
+> 
+> On Fri 18 Oct 2019 at 09:14, Jian Hu <jian.hu@amlogic.com> wrote:
+> 
+>> The Amlogic A1 clock includes three drivers:
+>> peripheral clocks, pll clocks, CPU clocks.
+>> sys pll and CPU clocks will be sent in next patch.
+>>
+>> Unlike the previous series, there is no EE/AO domain
+>> in A1 CLK controllers.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   drivers/clk/meson/Kconfig  |   10 +
+>>   drivers/clk/meson/Makefile |    1 +
+>>   drivers/clk/meson/a1-pll.c |  345 +++++++
+>>   drivers/clk/meson/a1-pll.h |   56 ++
+>>   drivers/clk/meson/a1.c     | 2264 ++++++++++++++++++++++++++++++++++++++++++++
+>>   drivers/clk/meson/a1.h     |  120 +++
+>>   6 files changed, 2796 insertions(+)
+>>   create mode 100644 drivers/clk/meson/a1-pll.c
+>>   create mode 100644 drivers/clk/meson/a1-pll.h
+>>   create mode 100644 drivers/clk/meson/a1.c
+>>   create mode 100644 drivers/clk/meson/a1.h
+> 
+> In the next version, one
+OK, I will send a1 peripheral and pll driver in two patch.
+> 
+>>
+>> diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
+>> index dabeb43..c2809b2 100644
+>> --- a/drivers/clk/meson/Kconfig
+>> +++ b/drivers/clk/meson/Kconfig
+>> @@ -93,6 +93,16 @@ config COMMON_CLK_AXG_AUDIO
+>>   	  Support for the audio clock controller on AmLogic A113D devices,
+>>   	  aka axg, Say Y if you want audio subsystem to work.
+>>   
+>> +config COMMON_CLK_A1
+>> +	bool
+>> +	depends on ARCH_MESON
+>> +	select COMMON_CLK_MESON_REGMAP
+>> +	select COMMON_CLK_MESON_DUALDIV
+>> +	select COMMON_CLK_MESON_PLL
+>> +	help
+>> +	  Support for the clock controller on Amlogic A113L device,
+>> +	  aka a1. Say Y if you want peripherals to work.
+>> +
+>>   config COMMON_CLK_G12A
+>>   	bool
+>>   	depends on ARCH_MESON
+>> diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
+>> index 3939f21..28cbae1 100644
+>> --- a/drivers/clk/meson/Makefile
+>> +++ b/drivers/clk/meson/Makefile
+>> @@ -16,6 +16,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_VID_PLL_DIV) += vid-pll-div.o
+>>   
+>>   obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
+>>   obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
+>> +obj-$(CONFIG_COMMON_CLK_A1) += a1-pll.o a1.o
+> 
+> So far, all the controller had there own option, I don't see why it
+> should be different here.
+> 
+OK, I will add the other option CONFIG_COMMON_CLK_A1_PLL for pll driver
+>>   obj-$(CONFIG_COMMON_CLK_GXBB) += gxbb.o gxbb-aoclk.o
+>>   obj-$(CONFIG_COMMON_CLK_G12A) += g12a.o g12a-aoclk.o
+>>   obj-$(CONFIG_COMMON_CLK_MESON8B) += meson8b.o
+>> diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+>> new file mode 100644
+>> index 0000000..486d964
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/a1-pll.c
+>> @@ -0,0 +1,345 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + * Author: Jian Hu <jian.hu@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/platform_device.h>
+> 
+> Hum ... looks like some things are missing here
+> 
+> #include <linux/of_device.h>
+> #include <linux/clk-provider.h>
+> 
+> ?
+#1
+There is <linux/clk-provider.h> in meson-eeclk.h file,
 
-diff --git a/drivers/clk/sprd/Kconfig b/drivers/clk/sprd/Kconfig
-index 3c219af25100..e18c80fbe804 100644
---- a/drivers/clk/sprd/Kconfig
-+++ b/drivers/clk/sprd/Kconfig
-@@ -13,4 +13,12 @@ config SPRD_SC9860_CLK
- 	tristate "Support for the Spreadtrum SC9860 clocks"
- 	depends on (ARM64 && ARCH_SPRD) || COMPILE_TEST
- 	default ARM64 && ARCH_SPRD
-+
-+config SPRD_SC9863A_CLK
-+	tristate "Support for the Spreadtrum SC9863A clocks"
-+	depends on (ARM64 && ARCH_SPRD) || COMPILE_TEST
-+	default ARM64 && ARCH_SPRD
-+	help
-+	  Support for the global clock controller on sc9863a devices.
-+	  Say Y if you want to use peripheral devices on sc9863a SoC.
- endif
-diff --git a/drivers/clk/sprd/Makefile b/drivers/clk/sprd/Makefile
-index d4c00788d53c..41d90e0d7863 100644
---- a/drivers/clk/sprd/Makefile
-+++ b/drivers/clk/sprd/Makefile
-@@ -10,3 +10,4 @@ clk-sprd-y	+= pll.o
- 
- ## SoC support
- obj-$(CONFIG_SPRD_SC9860_CLK)	+= sc9860-clk.o
-+obj-$(CONFIG_SPRD_SC9863A_CLK)	+= sc9863a-clk.o
-diff --git a/drivers/clk/sprd/sc9863a-clk.c b/drivers/clk/sprd/sc9863a-clk.c
-new file mode 100644
-index 000000000000..5369db1090f0
---- /dev/null
-+++ b/drivers/clk/sprd/sc9863a-clk.c
-@@ -0,0 +1,1711 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Unisoc SC9863A clock driver
-+ *
-+ * Copyright (C) 2019 Unisoc, Inc.
-+ * Author: Chunyan Zhang <chunyan.zhang@unisoc.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/sprd,sc9863a-clk.h>
-+
-+#include "common.h"
-+#include "composite.h"
-+#include "div.h"
-+#include "gate.h"
-+#include "mux.h"
-+#include "pll.h"
-+
-+SPRD_PLL_SC_GATE_CLK(mpll0_gate, "mpll0-gate", "ext-26m", 0x94,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(dpll0_gate, "dpll0-gate", "ext-26m", 0x98,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(lpll_gate, "lpll-gate", "ext-26m", 0x9c,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(gpll_gate, "gpll-gate", "ext-26m", 0xa8,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(dpll1_gate, "dpll1-gate", "ext-26m", 0x1dc,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(mpll1_gate, "mpll1-gate", "ext-26m", 0x1e0,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(mpll2_gate, "mpll2-gate", "ext-26m", 0x1e4,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+SPRD_PLL_SC_GATE_CLK(isppll_gate, "isppll-gate", "ext-26m", 0x1e8,
-+				0x1000, BIT(0), CLK_IGNORE_UNUSED, 0, 240);
-+
-+static struct sprd_clk_common *sc9863a_pmu_gate_clks[] = {
-+	/* address base is 0x402b0000 */
-+	&mpll0_gate.common,
-+	&dpll0_gate.common,
-+	&lpll_gate.common,
-+	&gpll_gate.common,
-+	&dpll1_gate.common,
-+	&mpll1_gate.common,
-+	&mpll2_gate.common,
-+	&isppll_gate.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_pmu_gate_hws = {
-+	.hws	= {
-+		[CLK_MPLL0_GATE]	= &mpll0_gate.common.hw,
-+		[CLK_DPLL0_GATE]	= &dpll0_gate.common.hw,
-+		[CLK_LPLL_GATE]		= &lpll_gate.common.hw,
-+		[CLK_GPLL_GATE]		= &gpll_gate.common.hw,
-+		[CLK_DPLL1_GATE]	= &dpll1_gate.common.hw,
-+		[CLK_MPLL1_GATE]	= &mpll1_gate.common.hw,
-+		[CLK_MPLL2_GATE]	= &mpll2_gate.common.hw,
-+		[CLK_ISPPLL_GATE]	= &isppll_gate.common.hw,
-+	},
-+	.num	= CLK_PMU_APB_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_pmu_gate_desc = {
-+	.clk_clks	= sc9863a_pmu_gate_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_pmu_gate_clks),
-+	.hw_clks        = &sc9863a_pmu_gate_hws,
-+};
-+
-+static const u64 itable[5] = {4, 1000000000, 1200000000,
-+			      1400000000, 1600000000};
-+
-+static const struct clk_bit_field f_twpll[PLL_FACT_MAX] = {
-+	{ .shift = 95,	.width = 1 },	/* lock_done	*/
-+	{ .shift = 0,	.width = 1 },	/* div_s	*/
-+	{ .shift = 1,	.width = 1 },	/* mod_en	*/
-+	{ .shift = 2,	.width = 1 },	/* sdm_en	*/
-+	{ .shift = 0,	.width = 0 },	/* refin	*/
-+	{ .shift = 3,	.width = 3 },	/* ibias	*/
-+	{ .shift = 8,	.width = 11 },	/* n		*/
-+	{ .shift = 55,	.width = 7 },	/* nint		*/
-+	{ .shift = 32,	.width = 23},	/* kint		*/
-+	{ .shift = 0,	.width = 0 },	/* prediv	*/
-+	{ .shift = 0,	.width = 0 },	/* postdiv	*/
-+};
-+static SPRD_PLL_WITH_ITABLE_1K(twpll_clk, "twpll", "ext-26m", 0x4,
-+				   3, itable, f_twpll, 240);
-+static CLK_FIXED_FACTOR(twpll_768m, "twpll-768m", "twpll", 2, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_384m, "twpll-384m", "twpll", 4, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_192m, "twpll-192m", "twpll", 8, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_96m, "twpll-96m", "twpll", 16, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_48m, "twpll-48m", "twpll", 32, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_24m, "twpll-24m", "twpll", 64, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_12m, "twpll-12m", "twpll", 128, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_512m, "twpll-512m", "twpll", 3, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_256m, "twpll-256m", "twpll", 6, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_128m, "twpll-128m", "twpll", 12, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_64m, "twpll-64m", "twpll", 24, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_307m2, "twpll-307m2", "twpll", 5, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_219m4, "twpll-219m4", "twpll", 7, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_170m6, "twpll-170m6", "twpll", 9, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_153m6, "twpll-153m6", "twpll", 10, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_76m8, "twpll-76m8", "twpll", 20, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_51m2, "twpll-51m2", "twpll", 30, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_38m4, "twpll-38m4", "twpll", 40, 1, 0);
-+static CLK_FIXED_FACTOR(twpll_19m2, "twpll-19m2", "twpll", 80, 1, 0);
-+
-+static const struct clk_bit_field f_lpll[PLL_FACT_MAX] = {
-+	{ .shift = 95,	.width = 1 },	/* lock_done	*/
-+	{ .shift = 0,	.width = 1 },	/* div_s	*/
-+	{ .shift = 1,	.width = 1 },	/* mod_en	*/
-+	{ .shift = 2,	.width = 1 },	/* sdm_en	*/
-+	{ .shift = 0,	.width = 0 },	/* refin	*/
-+	{ .shift = 6,	.width = 2 },	/* ibias	*/
-+	{ .shift = 8,	.width = 11 },	/* n		*/
-+	{ .shift = 55,	.width = 7 },	/* nint		*/
-+	{ .shift = 32,	.width = 23},	/* kint		*/
-+	{ .shift = 0,	.width = 0 },	/* prediv	*/
-+	{ .shift = 0,	.width = 0 },	/* postdiv	*/
-+};
-+static SPRD_PLL_WITH_ITABLE_1K(lpll_clk, "lpll", "lpll-gate", 0x20,
-+				   3, itable, f_lpll, 240);
-+static CLK_FIXED_FACTOR(lpll_409m6, "lpll-409m6", "lpll", 3, 1, 0);
-+static CLK_FIXED_FACTOR(lpll_245m76, "lpll-245m76", "lpll", 5, 1, 0);
-+
-+static const struct clk_bit_field f_gpll[PLL_FACT_MAX] = {
-+	{ .shift = 95,	.width = 1 },	/* lock_done	*/
-+	{ .shift = 0,	.width = 1 },	/* div_s	*/
-+	{ .shift = 1,	.width = 1 },	/* mod_en	*/
-+	{ .shift = 2,	.width = 1 },	/* sdm_en	*/
-+	{ .shift = 0,	.width = 0 },	/* refin	*/
-+	{ .shift = 6,	.width = 2 },	/* ibias	*/
-+	{ .shift = 8,	.width = 11 },	/* n		*/
-+	{ .shift = 55,	.width = 7 },	/* nint		*/
-+	{ .shift = 32,	.width = 23},	/* kint		*/
-+	{ .shift = 0,	.width = 0 },	/* prediv	*/
-+	{ .shift = 80,	.width = 1 },	/* postdiv	*/
-+};
-+static SPRD_PLL_WITH_ITABLE_K_FVCO(gpll_clk, "gpll", "gpll-gate", 0x38,
-+				   3, itable, f_gpll, 240,
-+				   1000, 1000, 1, 400000000);
-+
-+#define f_isppll f_gpll
-+static SPRD_PLL_WITH_ITABLE_1K(isppll_clk, "isppll", "isppll-gate", 0x50,
-+				   3, itable, f_isppll, 240);
-+static CLK_FIXED_FACTOR(isppll_468m, "isppll-468m", "isppll", 2, 1, 0);
-+
-+static struct sprd_clk_common *sc9863a_pll_clks[] = {
-+	/* address base is 0x40353000 */
-+	&twpll_clk.common,
-+	&lpll_clk.common,
-+	&gpll_clk.common,
-+	&isppll_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_pll_hws = {
-+	.hws	= {
-+		[CLK_TWPLL]		= &twpll_clk.common.hw,
-+		[CLK_TWPLL_768M]	= &twpll_768m.hw,
-+		[CLK_TWPLL_384M]	= &twpll_384m.hw,
-+		[CLK_TWPLL_192M]	= &twpll_192m.hw,
-+		[CLK_TWPLL_96M]		= &twpll_96m.hw,
-+		[CLK_TWPLL_48M]		= &twpll_48m.hw,
-+		[CLK_TWPLL_24M]		= &twpll_24m.hw,
-+		[CLK_TWPLL_12M]		= &twpll_12m.hw,
-+		[CLK_TWPLL_512M]	= &twpll_512m.hw,
-+		[CLK_TWPLL_256M]	= &twpll_256m.hw,
-+		[CLK_TWPLL_128M]	= &twpll_128m.hw,
-+		[CLK_TWPLL_64M]		= &twpll_64m.hw,
-+		[CLK_TWPLL_307M2]	= &twpll_307m2.hw,
-+		[CLK_TWPLL_219M4]	= &twpll_219m4.hw,
-+		[CLK_TWPLL_170M6]	= &twpll_170m6.hw,
-+		[CLK_TWPLL_153M6]	= &twpll_153m6.hw,
-+		[CLK_TWPLL_76M8]	= &twpll_76m8.hw,
-+		[CLK_TWPLL_51M2]	= &twpll_51m2.hw,
-+		[CLK_TWPLL_38M4]	= &twpll_38m4.hw,
-+		[CLK_TWPLL_19M2]	= &twpll_19m2.hw,
-+		[CLK_LPLL]		= &lpll_clk.common.hw,
-+		[CLK_LPLL_409M6]	= &lpll_409m6.hw,
-+		[CLK_LPLL_245M76]	= &lpll_245m76.hw,
-+		[CLK_GPLL]		= &gpll_clk.common.hw,
-+		[CLK_ISPPLL]		= &isppll_clk.common.hw,
-+		[CLK_ISPPLL_468M]	= &isppll_468m.hw,
-+
-+	},
-+	.num	= CLK_ANLG_PHY_G1_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_pll_desc = {
-+	.clk_clks	= sc9863a_pll_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_pll_clks),
-+	.hw_clks        = &sc9863a_pll_hws,
-+};
-+
-+#define f_mpll f_gpll
-+static const u64 itable_mpll[6] = {5, 1000000000, 1200000000, 1400000000,
-+				   1600000000, 1800000000};
-+static SPRD_PLL_WITH_ITABLE_K_FVCO(mpll0_clk, "mpll0", "mpll0-gate", 0x0,
-+				   3, itable_mpll, f_mpll, 240,
-+				   1000, 1000, 1, 1000000000);
-+static SPRD_PLL_WITH_ITABLE_K_FVCO(mpll1_clk, "mpll1", "mpll1-gate", 0x18,
-+				   3, itable_mpll, f_mpll, 240,
-+				   1000, 1000, 1, 1000000000);
-+static SPRD_PLL_WITH_ITABLE_K_FVCO(mpll2_clk, "mpll2", "mpll2-gate", 0x30,
-+				   3, itable_mpll, f_mpll, 240,
-+				   1000, 1000, 1, 1000000000);
-+static CLK_FIXED_FACTOR(mpll2_675m, "mpll2-675m", "mpll2", 2, 1, 0);
-+
-+static struct sprd_clk_common *sc9863a_mpll_clks[] = {
-+	/* address base is 0x40359000 */
-+	&mpll0_clk.common,
-+	&mpll1_clk.common,
-+	&mpll2_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_mpll_hws = {
-+	.hws	= {
-+		[CLK_MPLL0]		= &mpll0_clk.common.hw,
-+		[CLK_MPLL1]		= &mpll1_clk.common.hw,
-+		[CLK_MPLL2]		= &mpll2_clk.common.hw,
-+		[CLK_MPLL2_675M]	= &mpll2_675m.hw,
-+
-+	},
-+	.num	= CLK_ANLG_PHY_G4_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_mpll_desc = {
-+	.clk_clks	= sc9863a_mpll_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_mpll_clks),
-+	.hw_clks        = &sc9863a_mpll_hws,
-+};
-+
-+static SPRD_SC_GATE_CLK(audio_gate,	"audio-gate",	"ext-26m", 0x4,
-+		     0x1000, BIT(8), CLK_IGNORE_UNUSED, 0);
-+
-+#define f_rpll f_lpll
-+static SPRD_PLL_WITH_ITABLE_1K(rpll_clk, "rpll", "ext-26m", 0x10,
-+				   3, itable, f_rpll, 240);
-+
-+static CLK_FIXED_FACTOR(rpll_390m, "rpll-390m", "rpll", 2, 1, 0);
-+static CLK_FIXED_FACTOR(rpll_260m, "rpll-260m", "rpll", 3, 1, 0);
-+static CLK_FIXED_FACTOR(rpll_195m, "rpll-195m", "rpll", 4, 1, 0);
-+static CLK_FIXED_FACTOR(rpll_26m, "rpll-26m", "rpll", 30, 1, 0);
-+
-+static struct sprd_clk_common *sc9863a_rpll_clks[] = {
-+	/* address base is 0x4035c000 */
-+	&audio_gate.common,
-+	&rpll_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_rpll_hws = {
-+	.hws	= {
-+		[CLK_AUDIO_GATE]	= &audio_gate.common.hw,
-+		[CLK_RPLL]		= &rpll_clk.common.hw,
-+		[CLK_RPLL_390M]		= &rpll_390m.hw,
-+		[CLK_RPLL_260M]		= &rpll_260m.hw,
-+		[CLK_RPLL_195M]		= &rpll_195m.hw,
-+		[CLK_RPLL_26M]		= &rpll_26m.hw,
-+	},
-+	.num	= CLK_ANLG_PHY_G5_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_rpll_desc = {
-+	.clk_clks	= sc9863a_rpll_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_rpll_clks),
-+	.hw_clks        = &sc9863a_rpll_hws,
-+};
-+
-+#define f_dpll f_lpll
-+static const u64 itable_dpll[5] = {4, 1211000000, 1320000000, 1570000000,
-+				   1866000000};
-+static SPRD_PLL_WITH_ITABLE_1K(dpll0_clk, "dpll0", "dpll0-gate", 0x0,
-+				   3, itable_dpll, f_dpll, 240);
-+static SPRD_PLL_WITH_ITABLE_1K(dpll1_clk, "dpll1", "dpll1-gate", 0x18,
-+				   3, itable_dpll, f_dpll, 240);
-+
-+static CLK_FIXED_FACTOR(dpll0_933m, "dpll0-933m", "dpll0", 2, 1, 0);
-+static CLK_FIXED_FACTOR(dpll0_622m3, "dpll0-622m3", "dpll0", 3, 1, 0);
-+static CLK_FIXED_FACTOR(dpll1_400m, "dpll1-400m", "dpll1", 4, 1, 0);
-+static CLK_FIXED_FACTOR(dpll1_266m7, "dpll1-266m7", "dpll1", 6, 1, 0);
-+static CLK_FIXED_FACTOR(dpll1_123m1, "dpll1-123m1", "dpll1", 13, 1, 0);
-+static CLK_FIXED_FACTOR(dpll1_50m, "dpll1-50m", "dpll1", 32, 1, 0);
-+
-+static struct sprd_clk_common *sc9863a_dpll_clks[] = {
-+	/* address base is 0x40363000 */
-+	&dpll0_clk.common,
-+	&dpll1_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_dpll_hws = {
-+	.hws	= {
-+		[CLK_DPLL0]		= &dpll0_clk.common.hw,
-+		[CLK_DPLL1]		= &dpll1_clk.common.hw,
-+		[CLK_DPLL0_933M]	= &dpll0_933m.hw,
-+		[CLK_DPLL0_622M3]	= &dpll0_622m3.hw,
-+		[CLK_DPLL0_400M]	= &dpll1_400m.hw,
-+		[CLK_DPLL0_266M7]	= &dpll1_266m7.hw,
-+		[CLK_DPLL0_123M1]	= &dpll1_123m1.hw,
-+		[CLK_DPLL0_50M]		= &dpll1_50m.hw,
-+
-+	},
-+	.num	= CLK_ANLG_PHY_G7_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_dpll_desc = {
-+	.clk_clks	= sc9863a_dpll_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_dpll_clks),
-+	.hw_clks        = &sc9863a_dpll_hws,
-+};
-+
-+#define SC9863A_MUX_FLAG	\
-+	(CLK_GET_RATE_NOCACHE | CLK_SET_RATE_NO_REPARENT)
-+
-+/* ap clocks */
-+static const char * const ap_apb_parents[] = { "ext-26m", "twpll-64m",
-+					       "twpll-96m", "twpll-128m" };
-+static SPRD_MUX_CLK(ap_apb_clk, "ap-apb-clk", ap_apb_parents, 0x20,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const ap_ce_parents[] = { "ext-26m", "twpll-256m"};
-+static SPRD_COMP_CLK(ap_ce, "ap-ce", ap_ce_parents, 0x24,
-+		     0, 1, 8, 3, 0);
-+
-+static const char * const nandc_ecc_parents[] = { "ext-26m", "twpll-256m",
-+						"twpll-307m2" };
-+static SPRD_COMP_CLK(nandc_ecc_clk, "nandc-ecc-clk", nandc_ecc_parents, 0x28,
-+		     0, 2, 8, 3, 0);
-+
-+static const char * const nandc_26m_parents[] = { "ext-32k", "ext-26m" };
-+static SPRD_MUX_CLK(nandc_26m_clk, "nandc-26m-clk", nandc_26m_parents, 0x2c,
-+			0, 1, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(emmc_32k_clk, "emmc-32k-clk", nandc_26m_parents, 0x30,
-+			0, 1, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(sdio0_32k_clk, "sdio0-32k-clk", nandc_26m_parents, 0x34,
-+			0, 1, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(sdio1_32k_clk, "sdio1-32k-clk", nandc_26m_parents, 0x38,
-+			0, 1, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(sdio2_32k_clk, "sdio2-32k-clk", nandc_26m_parents, 0x3c,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static SPRD_GATE_CLK(otg_utmi, "otg-utmi", "aon-apb-clk", 0x40,
-+		     BIT(16), CLK_IGNORE_UNUSED, 0);
-+
-+static const char * const ap_uart_parents[] = { "ext-26m", "twpll-48m",
-+					"twpll-51m2", "twpll-96m" };
-+static SPRD_COMP_CLK(ap_uart0_clk,	"ap-uart0-clk",	ap_uart_parents, 0x44,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_uart1_clk,	"ap-uart1-clk",	ap_uart_parents, 0x48,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_uart2_clk,	"ap-uart2-clk",	ap_uart_parents, 0x4c,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_uart3_clk,	"ap-uart3-clk",	ap_uart_parents, 0x50,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_uart4_clk,	"ap-uart4-clk",	ap_uart_parents, 0x54,
-+		     0, 2, 8, 3, 0);
-+
-+static const char * const i2c_parents[] = { "ext-26m", "twpll-48m",
-+					    "twpll-51m2", "twpll-153m6" };
-+static SPRD_COMP_CLK(ap_i2c0_clk, "ap-i2c0-clk", i2c_parents, 0x58,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_i2c1_clk, "ap-i2c1-clk", i2c_parents, 0x5c,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_i2c2_clk, "ap-i2c2-clk", i2c_parents, 0x60,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_i2c3_clk, "ap-i2c3-clk", i2c_parents, 0x64,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_i2c4_clk, "ap-i2c4-clk", i2c_parents, 0x68,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_i2c5_clk, "ap-i2c5-clk", i2c_parents, 0x6c,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_i2c6_clk, "ap-i2c6-clk", i2c_parents, 0x70,
-+		     0, 2, 8, 3, 0);
-+
-+static const char * const spi_parents[] = { "ext-26m", "twpll-128m",
-+					"twpll-153m6", "twpll-192m" };
-+static SPRD_COMP_CLK(ap_spi0_clk, "ap-spi0-clk", spi_parents, 0x74,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_spi1_clk, "ap-spi1-clk", spi_parents, 0x78,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_spi2_clk, "ap-spi2-clk", spi_parents, 0x7c,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_spi3_clk, "ap-spi3-clk", spi_parents, 0x80,
-+		     0, 2, 8, 3, 0);
-+
-+static const char * const iis_parents[] = { "ext-26m",
-+					    "twpll-128m",
-+					    "twpll-153m6" };
-+static SPRD_COMP_CLK(ap_iis0_clk, "ap-iis0-clk", iis_parents, 0x84,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_iis1_clk, "ap-iis1-clk", iis_parents, 0x88,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(ap_iis2_clk, "ap-iis2-clk", iis_parents, 0x8c,
-+		     0, 2, 8, 3, 0);
-+
-+static const char * const sim0_parents[] = { "ext-26m", "twpll-51m2",
-+					"twpll-64m", "twpll-96m",
-+					"twpll-128m" };
-+static SPRD_COMP_CLK(sim0_clk, "sim0-clk", sim0_parents, 0x90,
-+		     0, 3, 8, 3, 0);
-+
-+static const char * const sim0_32k_parents[] = { "ext-32k", "ext-26m" };
-+static SPRD_MUX_CLK(sim0_32k_clk, "sim0-32k-clk", sim0_32k_parents, 0x94,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static struct sprd_clk_common *sc9863a_ap_clks[] = {
-+	/* address base is 0x21500000 */
-+	&ap_apb_clk.common,
-+	&ap_ce.common,
-+	&nandc_ecc_clk.common,
-+	&nandc_26m_clk.common,
-+	&emmc_32k_clk.common,
-+	&sdio0_32k_clk.common,
-+	&sdio1_32k_clk.common,
-+	&sdio2_32k_clk.common,
-+	&otg_utmi.common,
-+	&ap_uart0_clk.common,
-+	&ap_uart1_clk.common,
-+	&ap_uart2_clk.common,
-+	&ap_uart3_clk.common,
-+	&ap_uart4_clk.common,
-+	&ap_i2c0_clk.common,
-+	&ap_i2c1_clk.common,
-+	&ap_i2c2_clk.common,
-+	&ap_i2c3_clk.common,
-+	&ap_i2c4_clk.common,
-+	&ap_i2c5_clk.common,
-+	&ap_i2c6_clk.common,
-+	&ap_spi0_clk.common,
-+	&ap_spi1_clk.common,
-+	&ap_spi2_clk.common,
-+	&ap_spi3_clk.common,
-+	&ap_iis0_clk.common,
-+	&ap_iis1_clk.common,
-+	&ap_iis2_clk.common,
-+	&sim0_clk.common,
-+	&sim0_32k_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_ap_clk_hws = {
-+	.hws	= {
-+		[CLK_AP_APB]	= &ap_apb_clk.common.hw,
-+		[CLK_AP_CE]	= &ap_ce.common.hw,
-+		[CLK_NANDC_ECC]	= &nandc_ecc_clk.common.hw,
-+		[CLK_NANDC_26M]	= &nandc_26m_clk.common.hw,
-+		[CLK_EMMC_32K]	= &emmc_32k_clk.common.hw,
-+		[CLK_SDIO0_32K]	= &sdio0_32k_clk.common.hw,
-+		[CLK_SDIO1_32K]	= &sdio1_32k_clk.common.hw,
-+		[CLK_SDIO2_32K]	= &sdio2_32k_clk.common.hw,
-+		[CLK_OTG_UTMI]	= &otg_utmi.common.hw,
-+		[CLK_AP_UART0]	= &ap_uart0_clk.common.hw,
-+		[CLK_AP_UART1]	= &ap_uart1_clk.common.hw,
-+		[CLK_AP_UART2]	= &ap_uart2_clk.common.hw,
-+		[CLK_AP_UART3]	= &ap_uart3_clk.common.hw,
-+		[CLK_AP_UART4]	= &ap_uart4_clk.common.hw,
-+		[CLK_AP_I2C0]	= &ap_i2c0_clk.common.hw,
-+		[CLK_AP_I2C1]	= &ap_i2c1_clk.common.hw,
-+		[CLK_AP_I2C2]	= &ap_i2c2_clk.common.hw,
-+		[CLK_AP_I2C3]	= &ap_i2c3_clk.common.hw,
-+		[CLK_AP_I2C4]	= &ap_i2c4_clk.common.hw,
-+		[CLK_AP_I2C5]	= &ap_i2c5_clk.common.hw,
-+		[CLK_AP_I2C6]	= &ap_i2c6_clk.common.hw,
-+		[CLK_AP_SPI0]	= &ap_spi0_clk.common.hw,
-+		[CLK_AP_SPI1]	= &ap_spi1_clk.common.hw,
-+		[CLK_AP_SPI2]	= &ap_spi2_clk.common.hw,
-+		[CLK_AP_SPI3]	= &ap_spi3_clk.common.hw,
-+		[CLK_AP_IIS0]	= &ap_iis0_clk.common.hw,
-+		[CLK_AP_IIS1]	= &ap_iis1_clk.common.hw,
-+		[CLK_AP_IIS2]	= &ap_iis2_clk.common.hw,
-+		[CLK_SIM0]	= &sim0_clk.common.hw,
-+		[CLK_SIM0_32K]	= &sim0_32k_clk.common.hw,
-+	},
-+	.num	= CLK_AP_CLK_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_ap_clk_desc = {
-+	.clk_clks	= sc9863a_ap_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_ap_clks),
-+	.hw_clks	= &sc9863a_ap_clk_hws,
-+};
-+
-+/* aon clocks */
-+static CLK_FIXED_FACTOR(clk_13m,	"clk-13m",	"ext-26m",
-+			2, 1, 0);
-+static CLK_FIXED_FACTOR(clk_6m5,	"clk-6m5",	"ext-26m",
-+			4, 1, 0);
-+static CLK_FIXED_FACTOR(clk_4m3,	"clk-4m3",	"ext-26m",
-+			6, 1, 0);
-+static CLK_FIXED_FACTOR(clk_2m,		"clk-2m",	"ext-26m",
-+			13, 1, 0);
-+static CLK_FIXED_FACTOR(clk_250k,	"clk-250k",	"ext-26m",
-+			104, 1, 0);
-+
-+static CLK_FIXED_FACTOR(rco_25m,	"rco-25m",	"rco-100m",
-+			4, 1, 0);
-+static CLK_FIXED_FACTOR(rco_4m,		"rco-4m",	"rco-100m",
-+			25, 1, 0);
-+static CLK_FIXED_FACTOR(rco_2m,		"rco-2m",	"rco-100m",
-+			50, 1, 0);
-+
-+static const char * const emc_clk_parents[] = { "ext-26m", "twpll-384m",
-+						 "twpll-512m", "twpll-768m",
-+						 "twpll" };
-+static SPRD_MUX_CLK(emc_clk, "emc-clk", emc_clk_parents, 0x220,
-+			0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const aon_apb_parents[] = { "rco-4m",	"rco-25m",
-+						"ext-26m",	"twpll-96m",
-+						"rco-100m",	"twpll-128m" };
-+static SPRD_COMP_CLK(aon_apb, "aon-apb", aon_apb_parents, 0x224,
-+		     0, 3, 8, 2, 0);
-+
-+static const char * const adi_parents[] = { "rco-4m", "rco-25m", "ext-26m",
-+					    "twpll-38m4", "twpll-51m2" };
-+static SPRD_MUX_CLK(adi_clk, "adi-clk", adi_parents, 0x228,
-+			0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const aux_parents[] = { "ext-32k", "rpll-26m", "ext-26m" };
-+static SPRD_COMP_CLK(aux0_clk, "aux0-clk", aux_parents, 0x22c,
-+		     0, 5, 8, 4, 0);
-+static SPRD_COMP_CLK(aux1_clk, "aux1-clk", aux_parents, 0x230,
-+		     0, 5, 8, 4, 0);
-+static SPRD_COMP_CLK(aux2_clk, "aux2-clk", aux_parents, 0x234,
-+		     0, 5, 8, 4, 0);
-+static SPRD_COMP_CLK(probe_clk, "probe-clk", aux_parents, 0x238,
-+		     0, 5, 8, 4, 0);
-+
-+static const char * const pwm_parents[] = { "ext-32k", "rpll-26m",
-+					"ext-26m", "twpll-48m" };
-+static SPRD_MUX_CLK(pwm0_clk, "pwm0-clk", pwm_parents, 0x23c,
-+			0, 2, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(pwm1_clk, "pwm1-clk", pwm_parents, 0x240,
-+			0, 2, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(pwm2_clk, "pwm2-clk", pwm_parents, 0x244,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const aon_thm_parents[] = { "ext-32k", "clk-250k" };
-+static SPRD_MUX_CLK(aon_thm_clk, "aon-thm-clk", aon_thm_parents, 0x25c,
-+		    0, 1, SC9863A_MUX_FLAG);
-+
-+static const char * const audif_parents[] = { "ext-26m", "twpll-38m4",
-+					      "twpll-51m2" };
-+static SPRD_MUX_CLK(audif_clk, "audif-clk", audif_parents, 0x264,
-+		    0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const cpu_dap_parents[] = { "rco-4m", "rco-25m", "ext-26m",
-+						"twpll-76m8", "rco-100m",
-+						"twpll-128m", "twpll-153m6" };
-+static SPRD_MUX_CLK(cpu_dap_clk, "cpu-dap-clk", cpu_dap_parents, 0x26c,
-+		    0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const cpu_ts_parents[] = { "ext-32k", "ext-26m",
-+					       "twpll-128m", "twpll-153m6" };
-+static SPRD_MUX_CLK(cpu_ts_clk, "cpu-ts-clk", cpu_ts_parents, 0x274,
-+		    0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const djtag_tck_parents[] = { "rco-4m", "ext-26m" };
-+static SPRD_MUX_CLK(djtag_tck_clk, "djtag-tck-clk", djtag_tck_parents, 0x28c,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static const char * const emc_ref_parents[] = { "clk-6m5", "clk-13m",
-+						"ext-26m" };
-+static SPRD_MUX_CLK(emc_ref_clk, "emc-ref-clk", emc_ref_parents, 0x29c,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const cssys_parents[] = { "rco-4m", "ext-26m", "twpll-96m",
-+					      "rco-100m", "twpll-128m",
-+					      "twpll-153m6", "twpll-384m",
-+					      "twpll-512m", "mpll2-675m" };
-+static SPRD_COMP_CLK(cssys_clk,	"cssys-clk", cssys_parents, 0x2a0,
-+		     0, 4, 8, 2, 0);
-+
-+static const char * const aon_pmu_parents[] = { "ext-32k", "rco-4m", "ext-4m" };
-+static SPRD_MUX_CLK(aon_pmu_clk, "aon-pmu-clk", aon_pmu_parents, 0x2a8,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const pmu_26m_parents[] = { "rco-4m", "rco-25m",
-+						"ext-26m" };
-+static SPRD_MUX_CLK(pmu_26m_clk, "26m-pmu-clk", pmu_26m_parents, 0x2ac,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const aon_tmr_parents[] = { "rco-4m", "ext-26m" };
-+static SPRD_MUX_CLK(aon_tmr_clk, "aon-tmr-clk", aon_tmr_parents, 0x2b0,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static const char * const power_cpu_parents[] = { "ext-26m", "rco-25m",
-+						  "rco-100m", "twpll-128m" };
-+static SPRD_MUX_CLK(power_cpu_clk, "power-cpu-clk", power_cpu_parents, 0x2c4,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const ap_axi_parents[] = { "ext-26m", "twpll-76m8",
-+					       "twpll-128m", "twpll-256m" };
-+static SPRD_MUX_CLK(ap_axi, "ap-axi", ap_axi_parents, 0x2c8,
-+		    0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const sdio_parents[] = { "ext-26m", "twpll-307m2",
-+					     "twpll-384m", "rpll-390m",
-+					     "dpll1-400m", "lpll-409m6" };
-+static SPRD_MUX_CLK(sdio0_2x, "sdio0-2x", sdio_parents, 0x2cc,
-+			0, 3, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(sdio1_2x, "sdio1-2x", sdio_parents, 0x2d4,
-+			0, 3, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(sdio2_2x, "sdio2-2x", sdio_parents, 0x2dc,
-+			0, 3, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(emmc_2x, "emmc-2x", sdio_parents, 0x2e4,
-+			0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const dpu_parents[] = { "twpll-153m6", "twpll-192m",
-+					    "twpll-256m", "twpll-384m"};
-+static SPRD_MUX_CLK(dpu_clk, "dpu", dpu_parents, 0x2f4,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const dpu_dpi_parents[] = { "twpll-128m", "twpll-153m6",
-+					    "twpll-192m" };
-+static SPRD_COMP_CLK(dpu_dpi,	"dpu-dpi", dpu_dpi_parents, 0x2f8,
-+		     0, 2, 8, 4, 0);
-+
-+static const char * const otg_ref_parents[] = { "twpll-12m", "ext-26m" };
-+static SPRD_MUX_CLK(otg_ref_clk, "otg-ref-clk", otg_ref_parents, 0x308,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static const char * const sdphy_apb_parents[] = { "ext-26m", "twpll-48m" };
-+static SPRD_MUX_CLK(sdphy_apb_clk, "sdphy-apb-clk", sdphy_apb_parents, 0x330,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static const char * const alg_io_apb_parents[] = { "rco-4m", "ext-26m",
-+						   "twpll-48m", "twpll-96m" };
-+static SPRD_MUX_CLK(alg_io_apb_clk, "alg-io-apb-clk", alg_io_apb_parents, 0x33c,
-+			0, 1, SC9863A_MUX_FLAG);
-+
-+static const char * const gpu_parents[] = { "twpll-153m6", "twpll-192m",
-+						 "twpll-256m", "twpll-307m2",
-+						 "twpll-384m", "twpll-512m",
-+						 "gpll" };
-+static SPRD_COMP_CLK(gpu_core, "gpu-core", gpu_parents, 0x344,
-+		     0, 3, 8, 2, 0);
-+static SPRD_COMP_CLK(gpu_soc, "gpu-soc", gpu_parents, 0x348,
-+		     0, 3, 8, 2, 0);
-+
-+static const char * const mm_emc_parents[] = { "ext-26m", "twpll-384m",
-+					    "isppll-468m", "twpll-512m"};
-+static SPRD_MUX_CLK(mm_emc, "mm-emc", mm_emc_parents, 0x350,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const mm_ahb_parents[] = { "ext-26m", "twpll-96m",
-+					    "twpll-128m", "twpll-153m6"};
-+static SPRD_MUX_CLK(mm_ahb, "mm-ahb", mm_ahb_parents, 0x354,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const bpc_clk_parents[] = { "twpll-192m", "twpll-307m2",
-+					    "twpll-384m", "isppll-468m",
-+					    "dpll0-622m3" };
-+static SPRD_MUX_CLK(bpc_clk, "bpc-clk", bpc_clk_parents, 0x358,
-+			0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const dcam_if_parents[] = { "twpll-192m", "twpll-256m",
-+						"twpll-307m2", "twpll-384m" };
-+static SPRD_MUX_CLK(dcam_if_clk, "dcam-if-clk", dcam_if_parents, 0x35c,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const isp_parents[] = { "twpll-128m", "twpll-256m",
-+					    "twpll-307m2", "twpll-384m",
-+					    "isppll-468m" };
-+static SPRD_MUX_CLK(isp_clk, "isp-clk", isp_parents, 0x360,
-+			0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const jpg_parents[] = { "twpll-76m8", "twpll-128m",
-+					    "twpll-256m", "twpll-307m2" };
-+static SPRD_MUX_CLK(jpg_clk, "jpg-clk", jpg_parents, 0x364,
-+			0, 2, SC9863A_MUX_FLAG);
-+static SPRD_MUX_CLK(cpp_clk, "cpp-clk", jpg_parents, 0x368,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const sensor_parents[] = { "ext-26m", "twpll-48m",
-+					"twpll-76m8", "twpll-96m" };
-+static SPRD_COMP_CLK(sensor0_clk, "sensor0-clk", sensor_parents, 0x36c,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(sensor1_clk, "sensor1-clk", sensor_parents, 0x370,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(sensor2_clk, "sensor2-clk", sensor_parents, 0x374,
-+		     0, 2, 8, 3, 0);
-+
-+static const char * const mm_vemc_parents[] = { "ext-26m", "twpll-307m2",
-+					    "twpll-384m", "isppll-468m"};
-+static SPRD_MUX_CLK(mm_vemc, "mm-vemc", mm_vemc_parents, 0x378,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static SPRD_MUX_CLK(mm_vahb, "mm-vahb", mm_ahb_parents, 0x37c,
-+			0, 2, SC9863A_MUX_FLAG);
-+
-+static const char * const vsp_parents[] = { "twpll-76m8", "twpll-128m",
-+					    "twpll-256m", "twpll-307m2",
-+					    "twpll-384m"};
-+static SPRD_MUX_CLK(clk_vsp, "vsp-clk", vsp_parents, 0x380,
-+			0, 3, SC9863A_MUX_FLAG);
-+
-+static const char * const core_parents[] = { "ext-26m", "twpll-512m",
-+					     "twpll-768m", "lpll", "dpll0",
-+					     "mpll2", "mpll0", "mpll1" };
-+static SPRD_COMP_CLK(core0_clk, "core0-clk", core_parents, 0xa20,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core1_clk, "core1-clk", core_parents, 0xa24,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core2_clk, "core2-clk", core_parents, 0xa28,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core3_clk, "core3-clk", core_parents, 0xa2c,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core4_clk, "core4-clk", core_parents, 0xa30,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core5_clk, "core5-clk", core_parents, 0xa34,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core6_clk, "core6-clk", core_parents, 0xa38,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(core7_clk, "core7-clk", core_parents, 0xa3c,
-+		     0, 3, 8, 3, 0);
-+static SPRD_COMP_CLK(scu_clk, "scu-clk", core_parents, 0xa40,
-+		     0, 3, 8, 3, 0);
-+static SPRD_DIV_CLK(ace_clk, "ace-clk", "scu-clk", 0xa44,
-+		    8, 3, 0);
-+static SPRD_DIV_CLK(axi_periph_clk, "axi-periph-clk", "scu-clk", 0xa48,
-+		    8, 3, 0);
-+static SPRD_DIV_CLK(axi_acp_clk, "axi-acp-clk", "scu-clk", 0xa4c,
-+		    8, 3, 0);
-+
-+static const char * const atb_parents[] = { "ext-26m", "twpll-384m",
-+					    "twpll-512m", "mpll2" };
-+static SPRD_COMP_CLK(atb_clk, "atb-clk", atb_parents, 0xa50,
-+		     0, 2, 8, 3, 0);
-+static SPRD_DIV_CLK(debug_apb_clk, "debug-apb-clk", "atb-clk", 0xa54,
-+		    8, 3, 0);
-+
-+static const char * const gic_parents[] = { "ext-26m", "twpll-153m6",
-+					    "twpll-384m", "twpll-512m" };
-+static SPRD_COMP_CLK(gic_clk, "gic-clk", gic_parents, 0xa58,
-+		     0, 2, 8, 3, 0);
-+static SPRD_COMP_CLK(periph_clk, "periph-clk", gic_parents, 0xa5c,
-+		     0, 2, 8, 3, 0);
-+
-+static struct sprd_clk_common *sc9863a_aon_clks[] = {
-+	/* address base is 0x402d0000 */
-+	&emc_clk.common,
-+	&aon_apb.common,
-+	&adi_clk.common,
-+	&aux0_clk.common,
-+	&aux1_clk.common,
-+	&aux2_clk.common,
-+	&probe_clk.common,
-+	&pwm0_clk.common,
-+	&pwm1_clk.common,
-+	&pwm2_clk.common,
-+	&aon_thm_clk.common,
-+	&audif_clk.common,
-+	&cpu_dap_clk.common,
-+	&cpu_ts_clk.common,
-+	&djtag_tck_clk.common,
-+	&emc_ref_clk.common,
-+	&cssys_clk.common,
-+	&aon_pmu_clk.common,
-+	&pmu_26m_clk.common,
-+	&aon_tmr_clk.common,
-+	&power_cpu_clk.common,
-+	&ap_axi.common,
-+	&sdio0_2x.common,
-+	&sdio1_2x.common,
-+	&sdio2_2x.common,
-+	&emmc_2x.common,
-+	&dpu_clk.common,
-+	&dpu_dpi.common,
-+	&otg_ref_clk.common,
-+	&sdphy_apb_clk.common,
-+	&alg_io_apb_clk.common,
-+	&gpu_core.common,
-+	&gpu_soc.common,
-+	&mm_emc.common,
-+	&mm_ahb.common,
-+	&bpc_clk.common,
-+	&dcam_if_clk.common,
-+	&isp_clk.common,
-+	&jpg_clk.common,
-+	&cpp_clk.common,
-+	&sensor0_clk.common,
-+	&sensor1_clk.common,
-+	&sensor2_clk.common,
-+	&mm_vemc.common,
-+	&mm_vahb.common,
-+	&clk_vsp.common,
-+	&core0_clk.common,
-+	&core1_clk.common,
-+	&core2_clk.common,
-+	&core3_clk.common,
-+	&core4_clk.common,
-+	&core5_clk.common,
-+	&core6_clk.common,
-+	&core7_clk.common,
-+	&scu_clk.common,
-+	&ace_clk.common,
-+	&axi_periph_clk.common,
-+	&axi_acp_clk.common,
-+	&atb_clk.common,
-+	&debug_apb_clk.common,
-+	&gic_clk.common,
-+	&periph_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_aon_clk_hws = {
-+	.hws	= {
-+		[CLK_13M]		= &clk_13m.hw,
-+		[CLK_6M5]		= &clk_6m5.hw,
-+		[CLK_4M3]		= &clk_4m3.hw,
-+		[CLK_2M]		= &clk_2m.hw,
-+		[CLK_250K]		= &clk_250k.hw,
-+		[CLK_RCO_25M]		= &rco_25m.hw,
-+		[CLK_RCO_4M]		= &rco_4m.hw,
-+		[CLK_RCO_2M]		= &rco_2m.hw,
-+		[CLK_EMC]		= &emc_clk.common.hw,
-+		[CLK_AON_APB]		= &aon_apb.common.hw,
-+		[CLK_ADI]		= &adi_clk.common.hw,
-+		[CLK_AUX0]		= &aux0_clk.common.hw,
-+		[CLK_AUX1]		= &aux1_clk.common.hw,
-+		[CLK_AUX2]		= &aux2_clk.common.hw,
-+		[CLK_PROBE]		= &probe_clk.common.hw,
-+		[CLK_PWM0]		= &pwm0_clk.common.hw,
-+		[CLK_PWM1]		= &pwm1_clk.common.hw,
-+		[CLK_PWM2]		= &pwm2_clk.common.hw,
-+		[CLK_AON_THM]		= &aon_thm_clk.common.hw,
-+		[CLK_AUDIF]		= &audif_clk.common.hw,
-+		[CLK_CPU_DAP]		= &cpu_dap_clk.common.hw,
-+		[CLK_CPU_TS]		= &cpu_ts_clk.common.hw,
-+		[CLK_DJTAG_TCK]		= &djtag_tck_clk.common.hw,
-+		[CLK_EMC_REF]		= &emc_ref_clk.common.hw,
-+		[CLK_CSSYS]		= &cssys_clk.common.hw,
-+		[CLK_AON_PMU]		= &aon_pmu_clk.common.hw,
-+		[CLK_PMU_26M]		= &pmu_26m_clk.common.hw,
-+		[CLK_AON_TMR]		= &aon_tmr_clk.common.hw,
-+		[CLK_POWER_CPU]		= &power_cpu_clk.common.hw,
-+		[CLK_AP_AXI]		= &ap_axi.common.hw,
-+		[CLK_SDIO0_2X]		= &sdio0_2x.common.hw,
-+		[CLK_SDIO1_2X]		= &sdio1_2x.common.hw,
-+		[CLK_SDIO2_2X]		= &sdio2_2x.common.hw,
-+		[CLK_EMMC_2X]		= &emmc_2x.common.hw,
-+		[CLK_DPU]		= &dpu_clk.common.hw,
-+		[CLK_DPU_DPI]		= &dpu_dpi.common.hw,
-+		[CLK_OTG_REF]		= &otg_ref_clk.common.hw,
-+		[CLK_SDPHY_APB]		= &sdphy_apb_clk.common.hw,
-+		[CLK_ALG_IO_APB]	= &alg_io_apb_clk.common.hw,
-+		[CLK_GPU_CORE]		= &gpu_core.common.hw,
-+		[CLK_GPU_SOC]		= &gpu_soc.common.hw,
-+		[CLK_MM_EMC]		= &mm_emc.common.hw,
-+		[CLK_MM_AHB]		= &mm_ahb.common.hw,
-+		[CLK_BPC]		= &bpc_clk.common.hw,
-+		[CLK_DCAM_IF]		= &dcam_if_clk.common.hw,
-+		[CLK_ISP]		= &isp_clk.common.hw,
-+		[CLK_JPG]		= &jpg_clk.common.hw,
-+		[CLK_CPP]		= &cpp_clk.common.hw,
-+		[CLK_SENSOR0]		= &sensor0_clk.common.hw,
-+		[CLK_SENSOR1]		= &sensor1_clk.common.hw,
-+		[CLK_SENSOR2]		= &sensor2_clk.common.hw,
-+		[CLK_MM_VEMC]		= &mm_vemc.common.hw,
-+		[CLK_MM_VAHB]		= &mm_vahb.common.hw,
-+		[CLK_VSP]		= &clk_vsp.common.hw,
-+		[CLK_CORE0]		= &core0_clk.common.hw,
-+		[CLK_CORE1]		= &core1_clk.common.hw,
-+		[CLK_CORE2]		= &core2_clk.common.hw,
-+		[CLK_CORE3]		= &core3_clk.common.hw,
-+		[CLK_CORE4]		= &core4_clk.common.hw,
-+		[CLK_CORE5]		= &core5_clk.common.hw,
-+		[CLK_CORE6]		= &core6_clk.common.hw,
-+		[CLK_CORE7]		= &core7_clk.common.hw,
-+		[CLK_SCU]		= &scu_clk.common.hw,
-+		[CLK_ACE]		= &ace_clk.common.hw,
-+		[CLK_AXI_PERIPH]	= &axi_periph_clk.common.hw,
-+		[CLK_AXI_ACP]		= &axi_acp_clk.common.hw,
-+		[CLK_ATB]		= &atb_clk.common.hw,
-+		[CLK_DEBUG_APB]		= &debug_apb_clk.common.hw,
-+		[CLK_GIC]		= &gic_clk.common.hw,
-+		[CLK_PERIPH]		= &periph_clk.common.hw,
-+	},
-+	.num	= CLK_AON_CLK_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_aon_clk_desc = {
-+	.clk_clks	= sc9863a_aon_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_aon_clks),
-+	.hw_clks	= &sc9863a_aon_clk_hws,
-+};
-+
-+static SPRD_SC_GATE_CLK(otg_eb, "otg-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dma_eb, "dma-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ce_eb, "ce-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(6), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(nandc_eb, "nandc-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sdio0_eb, "sdio0-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(8), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sdio1_eb, "sdio1-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sdio2_eb, "sdio2-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(emmc_eb, "emmc-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(emmc_32k_eb, "emmc-32k-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(27), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sdio0_32k_eb, "sdio0-32k-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(28), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sdio1_32k_eb, "sdio1-32k-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(29), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sdio2_32k_eb, "sdio2-32k-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(30), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(nandc_26m_eb, "nandc-26m-eb", "ap-axi", 0x0, 0x1000,
-+			BIT(31), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dma_eb2, "dma-eb2", "ap-axi", 0x18, 0x1000,
-+			BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ce_eb2, "ce-eb2", "ap-axi", 0x18, 0x1000,
-+			BIT(1), CLK_IGNORE_UNUSED, 0);
-+
-+static struct sprd_clk_common *sc9863a_apahb_gate_clks[] = {
-+	/* address base is 0x20e00000 */
-+	&otg_eb.common,
-+	&dma_eb.common,
-+	&ce_eb.common,
-+	&nandc_eb.common,
-+	&sdio0_eb.common,
-+	&sdio1_eb.common,
-+	&sdio2_eb.common,
-+	&emmc_eb.common,
-+	&emmc_32k_eb.common,
-+	&sdio0_32k_eb.common,
-+	&sdio1_32k_eb.common,
-+	&sdio2_32k_eb.common,
-+	&nandc_26m_eb.common,
-+	&dma_eb2.common,
-+	&ce_eb2.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_apahb_gate_hws = {
-+	.hws	= {
-+		[CLK_OTG_EB]		= &otg_eb.common.hw,
-+		[CLK_DMA_EB]		= &dma_eb.common.hw,
-+		[CLK_CE_EB]		= &ce_eb.common.hw,
-+		[CLK_NANDC_EB]		= &nandc_eb.common.hw,
-+		[CLK_SDIO0_EB]		= &sdio0_eb.common.hw,
-+		[CLK_SDIO1_EB]		= &sdio1_eb.common.hw,
-+		[CLK_SDIO2_EB]		= &sdio2_eb.common.hw,
-+		[CLK_EMMC_EB]		= &emmc_eb.common.hw,
-+		[CLK_EMMC_32K_EB]	= &emmc_32k_eb.common.hw,
-+		[CLK_SDIO0_32K_EB]	= &sdio0_32k_eb.common.hw,
-+		[CLK_SDIO1_32K_EB]	= &sdio1_32k_eb.common.hw,
-+		[CLK_SDIO2_32K_EB]	= &sdio2_32k_eb.common.hw,
-+		[CLK_NANDC_26M_EB]	= &nandc_26m_eb.common.hw,
-+		[CLK_DMA_EB2]		= &dma_eb2.common.hw,
-+		[CLK_CE_EB2]		= &ce_eb2.common.hw,
-+	},
-+	.num	= CLK_AP_AHB_GATE_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_apahb_gate_desc = {
-+	.clk_clks	= sc9863a_apahb_gate_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_apahb_gate_clks),
-+	.hw_clks	= &sc9863a_apahb_gate_hws,
-+};
-+
-+/* aon gate clocks */
-+static SPRD_SC_GATE_CLK(adc_eb,	"adc-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(fm_eb,	"fm-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(tpc_eb,	"tpc-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(gpio_eb, "gpio-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(pwm0_eb,	"pwm0-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(pwm1_eb,	"pwm1-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(pwm2_eb,	"pwm2-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(6), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(pwm3_eb,	"pwm3-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(kpd_eb,		"kpd-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(8), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_syst_eb,	"aon-syst-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_syst_eb,	"ap-syst-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_tmr_eb,	"aon-tmr-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr0_eb,	"ap-tmr0-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(12), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(efuse_eb,	"efuse-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(13), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(eic_eb,		"eic-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(intc_eb,	"intc-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(15), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(adi_eb,		"adi-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(audif_eb,	"audif-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aud_eb,		"aud-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(18), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(vbc_eb,		"vbc-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(19), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(pin_eb,		"pin-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(20), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ipi_eb,		"ipi-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(21), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(splk_eb,	"splk-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(22), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mspi_eb,	"mspi-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(23), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_wdg_eb,	"ap-wdg-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(24), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mm_eb,		"mm-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(25), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_apb_ckg_eb,	"aon-apb-ckg-eb", "aon-apb", 0x0,
-+		     0x1000, BIT(26), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ca53_ts0_eb, "ca53-ts0-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(28), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ca53_ts1_eb, "ca53-ts1-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(29), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ca53_dap_eb, "ca53-dap-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(30), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c_eb,		"i2c-eb",	"aon-apb", 0x0,
-+		     0x1000, BIT(31), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(pmu_eb,		"pmu-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(thm_eb,		"thm-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aux0_eb,	"aux0-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aux1_eb,	"aux1-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aux2_eb,	"aux2-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(probe_eb,	"probe-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(emc_ref_eb,	"emc-ref-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ca53_wdg_eb,	"ca53-wdg-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(8), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr1_eb,	"ap-tmr1-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr2_eb,	"ap-tmr2-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(disp_emc_eb,	"disp-emc-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(zip_emc_eb,	"zip-emc-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(12), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(gsp_emc_eb,	"gsp-emc-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(13), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mm_vsp_eb,	"mm-vsp-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mdar_eb,	"mdar-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(rtc4m0_cal_eb,	"rtc4m0-cal-eb",	"aon-apb",
-+			0x4, 0x1000, BIT(18), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(rtc4m1_cal_eb,	"rtc4m1-cal-eb",	"aon-apb",
-+			0x4, 0x1000, BIT(19), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(djtag_eb,	"djtag-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(20), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mbox_eb,	"mbox-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(21), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_dma_eb,	"aon-dma-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(22), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_apb_def_eb,	"aon-apb-def-eb",	"aon-apb",
-+			0x4, 0x1000, BIT(25), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(orp_jtag_eb,	"orp-jtag-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(27), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dbg_eb,		"dbg-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(28), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dbg_emc_eb,	"dbg-emc-eb",		"aon-apb",
-+			0x4, 0x1000, BIT(29), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(cross_trig_eb,	"cross-trig-eb",	"aon-apb",
-+			0x4, 0x1000, BIT(30), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(serdes_dphy_eb,	"serdes-dphy-eb",	"aon-apb",
-+			0x4, 0x1000, BIT(31), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(arch_rtc_eb,	"arch-rtc-eb",	"aon-apb",
-+			0x10, 0x1000, BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(kpd_rtc_eb,	"kpd-rtc-eb",	"aon-apb",
-+			0x10, 0x1000, BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_syst_rtc_eb, "aon-syst-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_syst_rtc_eb,	"ap-syst-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_tmr_rtc_eb,	"aon-tmr-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr0_rtc_eb,	"ap-tmr0-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(eic_rtc_eb, "eic-rtc-eb",	"aon-apb",
-+			0x10, 0x1000, BIT(6), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(eic_rtcdv5_eb,	"eic-rtcdv5-eb", "aon-apb",
-+			0x10, 0x1000, BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_wdg_rtc_eb,	"ap-wdg-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(8), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ca53_wdg_rtc_eb, "ca53-wdg-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(thm_rtc_eb, "thm-rtc-eb",	"aon-apb",
-+			0x10, 0x1000, BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(athma_rtc_eb, "athma-rtc-eb",	"aon-apb",
-+			0x10, 0x1000, BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(gthma_rtc_eb,	"gthma-rtc-eb",	"aon-apb",
-+			0x10, 0x1000, BIT(12), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(athma_rtc_a_eb,	"athma-rtc-a-eb", "aon-apb",
-+			0x10, 0x1000, BIT(13), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(gthma_rtc_a_eb, "gthma-rtc-a-eb", "aon-apb",
-+			0x10, 0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr1_rtc_eb, "ap-tmr1-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(15), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_tmr2_rtc_eb,	"ap-tmr2-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dxco_lc_rtc_eb, "dxco-lc-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(bb_cal_rtc_eb, "bb-cal-rtc-eb", "aon-apb",
-+			0x10, 0x1000, BIT(18), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(gpu_eb,		"gpu-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(disp_eb,	"disp-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mm_emc_eb,		"mm-emc-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(power_cpu_eb,	"power-cpu-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(hw_i2c_eb,		"hw-i2c-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mm_vsp_emc_eb, "mm-vsp-emc-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(vsp_eb,		"vsp-eb",	"aon-apb", 0x50,
-+		     0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(cssys_eb, "cssys-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dmc_eb, "dmc-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(rosc_eb, "rosc-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(s_d_cfg_eb, "s-d-cfg-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(8), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(s_d_ref_eb, "s-d-ref-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(b_dma_eb, "b-dma-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(anlg_eb, "anlg-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(anlg_apb_eb, "anlg-apb-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(13), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(bsmtmr_eb, "bsmtmr-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_axi_eb, "ap-axi-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(15), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_intc0_eb, "ap-intc0-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_intc1_eb, "ap-intc1-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_intc2_eb, "ap-intc2-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(18), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_intc3_eb, "ap-intc3-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(19), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_intc4_eb, "ap-intc4-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(20), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(ap_intc5_eb, "ap-intc5-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(21), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(scc_eb, "scc-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(22), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dphy_cfg_eb, "dphy-cfg-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(23), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(dphy_ref_eb, "dphy-ref-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(24), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(cphy_cfg_eb, "cphy-cfg-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(25), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(otg_ref_eb, "otg-ref-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(26), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(serdes_eb, "serdes-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(27), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(aon_ap_emc_eb, "aon-ap-emc-eb", "aon-apb", 0xb0,
-+		     0x1000, BIT(28), CLK_IGNORE_UNUSED, 0);
-+static struct sprd_clk_common *sc9863a_aonapb_gate_clks[] = {
-+	/* address base is 0x402e0000 */
-+	&adc_eb.common,
-+	&fm_eb.common,
-+	&tpc_eb.common,
-+	&gpio_eb.common,
-+	&pwm0_eb.common,
-+	&pwm1_eb.common,
-+	&pwm2_eb.common,
-+	&pwm3_eb.common,
-+	&kpd_eb.common,
-+	&aon_syst_eb.common,
-+	&ap_syst_eb.common,
-+	&aon_tmr_eb.common,
-+	&ap_tmr0_eb.common,
-+	&efuse_eb.common,
-+	&eic_eb.common,
-+	&intc_eb.common,
-+	&adi_eb.common,
-+	&audif_eb.common,
-+	&aud_eb.common,
-+	&vbc_eb.common,
-+	&pin_eb.common,
-+	&ipi_eb.common,
-+	&splk_eb.common,
-+	&mspi_eb.common,
-+	&ap_wdg_eb.common,
-+	&mm_eb.common,
-+	&aon_apb_ckg_eb.common,
-+	&ca53_ts0_eb.common,
-+	&ca53_ts1_eb.common,
-+	&ca53_dap_eb.common,
-+	&i2c_eb.common,
-+	&pmu_eb.common,
-+	&thm_eb.common,
-+	&aux0_eb.common,
-+	&aux1_eb.common,
-+	&aux2_eb.common,
-+	&probe_eb.common,
-+	&emc_ref_eb.common,
-+	&ca53_wdg_eb.common,
-+	&ap_tmr1_eb.common,
-+	&ap_tmr2_eb.common,
-+	&disp_emc_eb.common,
-+	&zip_emc_eb.common,
-+	&gsp_emc_eb.common,
-+	&mm_vsp_eb.common,
-+	&mdar_eb.common,
-+	&rtc4m0_cal_eb.common,
-+	&rtc4m1_cal_eb.common,
-+	&djtag_eb.common,
-+	&mbox_eb.common,
-+	&aon_dma_eb.common,
-+	&aon_apb_def_eb.common,
-+	&orp_jtag_eb.common,
-+	&dbg_eb.common,
-+	&dbg_emc_eb.common,
-+	&cross_trig_eb.common,
-+	&serdes_dphy_eb.common,
-+	&arch_rtc_eb.common,
-+	&kpd_rtc_eb.common,
-+	&aon_syst_rtc_eb.common,
-+	&ap_syst_rtc_eb.common,
-+	&aon_tmr_rtc_eb.common,
-+	&ap_tmr0_rtc_eb.common,
-+	&eic_rtc_eb.common,
-+	&eic_rtcdv5_eb.common,
-+	&ap_wdg_rtc_eb.common,
-+	&ca53_wdg_rtc_eb.common,
-+	&thm_rtc_eb.common,
-+	&athma_rtc_eb.common,
-+	&gthma_rtc_eb.common,
-+	&athma_rtc_a_eb.common,
-+	&gthma_rtc_a_eb.common,
-+	&ap_tmr1_rtc_eb.common,
-+	&ap_tmr2_rtc_eb.common,
-+	&dxco_lc_rtc_eb.common,
-+	&bb_cal_rtc_eb.common,
-+	&gpu_eb.common,
-+	&disp_eb.common,
-+	&mm_emc_eb.common,
-+	&power_cpu_eb.common,
-+	&hw_i2c_eb.common,
-+	&mm_vsp_emc_eb.common,
-+	&vsp_eb.common,
-+	&cssys_eb.common,
-+	&dmc_eb.common,
-+	&rosc_eb.common,
-+	&s_d_cfg_eb.common,
-+	&s_d_ref_eb.common,
-+	&b_dma_eb.common,
-+	&anlg_eb.common,
-+	&anlg_apb_eb.common,
-+	&bsmtmr_eb.common,
-+	&ap_axi_eb.common,
-+	&ap_intc0_eb.common,
-+	&ap_intc1_eb.common,
-+	&ap_intc2_eb.common,
-+	&ap_intc3_eb.common,
-+	&ap_intc4_eb.common,
-+	&ap_intc5_eb.common,
-+	&scc_eb.common,
-+	&dphy_cfg_eb.common,
-+	&dphy_ref_eb.common,
-+	&cphy_cfg_eb.common,
-+	&otg_ref_eb.common,
-+	&serdes_eb.common,
-+	&aon_ap_emc_eb.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_aonapb_gate_hws = {
-+	.hws	= {
-+		[CLK_ADC_EB]		= &adc_eb.common.hw,
-+		[CLK_FM_EB]		= &fm_eb.common.hw,
-+		[CLK_TPC_EB]		= &tpc_eb.common.hw,
-+		[CLK_GPIO_EB]		= &gpio_eb.common.hw,
-+		[CLK_PWM0_EB]		= &pwm0_eb.common.hw,
-+		[CLK_PWM1_EB]		= &pwm1_eb.common.hw,
-+		[CLK_PWM2_EB]		= &pwm2_eb.common.hw,
-+		[CLK_PWM3_EB]		= &pwm3_eb.common.hw,
-+		[CLK_KPD_EB]		= &kpd_eb.common.hw,
-+		[CLK_AON_SYST_EB]	= &aon_syst_eb.common.hw,
-+		[CLK_AP_SYST_EB]	= &ap_syst_eb.common.hw,
-+		[CLK_AON_TMR_EB]	= &aon_tmr_eb.common.hw,
-+		[CLK_AP_TMR0_EB]	= &ap_tmr0_eb.common.hw,
-+		[CLK_EFUSE_EB]		= &efuse_eb.common.hw,
-+		[CLK_EIC_EB]		= &eic_eb.common.hw,
-+		[CLK_INTC_EB]		= &intc_eb.common.hw,
-+		[CLK_ADI_EB]		= &adi_eb.common.hw,
-+		[CLK_AUDIF_EB]		= &audif_eb.common.hw,
-+		[CLK_AUD_EB]		= &aud_eb.common.hw,
-+		[CLK_VBC_EB]		= &vbc_eb.common.hw,
-+		[CLK_PIN_EB]		= &pin_eb.common.hw,
-+		[CLK_IPI_EB]		= &ipi_eb.common.hw,
-+		[CLK_SPLK_EB]		= &splk_eb.common.hw,
-+		[CLK_MSPI_EB]		= &mspi_eb.common.hw,
-+		[CLK_AP_WDG_EB]		= &ap_wdg_eb.common.hw,
-+		[CLK_MM_EB]		= &mm_eb.common.hw,
-+		[CLK_AON_APB_CKG_EB]	= &aon_apb_ckg_eb.common.hw,
-+		[CLK_CA53_TS0_EB]	= &ca53_ts0_eb.common.hw,
-+		[CLK_CA53_TS1_EB]	= &ca53_ts1_eb.common.hw,
-+		[CLK_CS53_DAP_EB]	= &ca53_dap_eb.common.hw,
-+		[CLK_I2C_EB]		= &i2c_eb.common.hw,
-+		[CLK_PMU_EB]		= &pmu_eb.common.hw,
-+		[CLK_THM_EB]		= &thm_eb.common.hw,
-+		[CLK_AUX0_EB]		= &aux0_eb.common.hw,
-+		[CLK_AUX1_EB]		= &aux1_eb.common.hw,
-+		[CLK_AUX2_EB]		= &aux2_eb.common.hw,
-+		[CLK_PROBE_EB]		= &probe_eb.common.hw,
-+		[CLK_EMC_REF_EB]	= &emc_ref_eb.common.hw,
-+		[CLK_CA53_WDG_EB]	= &ca53_wdg_eb.common.hw,
-+		[CLK_AP_TMR1_EB]	= &ap_tmr1_eb.common.hw,
-+		[CLK_AP_TMR2_EB]	= &ap_tmr2_eb.common.hw,
-+		[CLK_DISP_EMC_EB]	= &disp_emc_eb.common.hw,
-+		[CLK_ZIP_EMC_EB]	= &zip_emc_eb.common.hw,
-+		[CLK_GSP_EMC_EB]	= &gsp_emc_eb.common.hw,
-+		[CLK_MM_VSP_EB]		= &mm_vsp_eb.common.hw,
-+		[CLK_MDAR_EB]		= &mdar_eb.common.hw,
-+		[CLK_RTC4M0_CAL_EB]	= &rtc4m0_cal_eb.common.hw,
-+		[CLK_RTC4M1_CAL_EB]	= &rtc4m1_cal_eb.common.hw,
-+		[CLK_DJTAG_EB]		= &djtag_eb.common.hw,
-+		[CLK_MBOX_EB]		= &mbox_eb.common.hw,
-+		[CLK_AON_DMA_EB]	= &aon_dma_eb.common.hw,
-+		[CLK_AON_APB_DEF_EB]	= &aon_apb_def_eb.common.hw,
-+		[CLK_ORP_JTAG_EB]	= &orp_jtag_eb.common.hw,
-+		[CLK_DBG_EB]		= &dbg_eb.common.hw,
-+		[CLK_DBG_EMC_EB]	= &dbg_emc_eb.common.hw,
-+		[CLK_CROSS_TRIG_EB]	= &cross_trig_eb.common.hw,
-+		[CLK_SERDES_DPHY_EB]	= &serdes_dphy_eb.common.hw,
-+		[CLK_ARCH_RTC_EB]	= &arch_rtc_eb.common.hw,
-+		[CLK_KPD_RTC_EB]	= &kpd_rtc_eb.common.hw,
-+		[CLK_AON_SYST_RTC_EB]	= &aon_syst_rtc_eb.common.hw,
-+		[CLK_AP_SYST_RTC_EB]	= &ap_syst_rtc_eb.common.hw,
-+		[CLK_AON_TMR_RTC_EB]	= &aon_tmr_rtc_eb.common.hw,
-+		[CLK_AP_TMR0_RTC_EB]	= &ap_tmr0_rtc_eb.common.hw,
-+		[CLK_EIC_RTC_EB]	= &eic_rtc_eb.common.hw,
-+		[CLK_EIC_RTCDV5_EB]	= &eic_rtcdv5_eb.common.hw,
-+		[CLK_AP_WDG_RTC_EB]	= &ap_wdg_rtc_eb.common.hw,
-+		[CLK_CA53_WDG_RTC_EB]	= &ca53_wdg_rtc_eb.common.hw,
-+		[CLK_THM_RTC_EB]	= &thm_rtc_eb.common.hw,
-+		[CLK_ATHMA_RTC_EB]	= &athma_rtc_eb.common.hw,
-+		[CLK_GTHMA_RTC_EB]	= &gthma_rtc_eb.common.hw,
-+		[CLK_ATHMA_RTC_A_EB]	= &athma_rtc_a_eb.common.hw,
-+		[CLK_GTHMA_RTC_A_EB]	= &gthma_rtc_a_eb.common.hw,
-+		[CLK_AP_TMR1_RTC_EB]	= &ap_tmr1_rtc_eb.common.hw,
-+		[CLK_AP_TMR2_RTC_EB]	= &ap_tmr2_rtc_eb.common.hw,
-+		[CLK_DXCO_LC_RTC_EB]	= &dxco_lc_rtc_eb.common.hw,
-+		[CLK_BB_CAL_RTC_EB]	= &bb_cal_rtc_eb.common.hw,
-+		[CLK_GNU_EB]		= &gpu_eb.common.hw,
-+		[CLK_DISP_EB]		= &disp_eb.common.hw,
-+		[CLK_MM_EMC_EB]		= &mm_emc_eb.common.hw,
-+		[CLK_POWER_CPU_EB]	= &power_cpu_eb.common.hw,
-+		[CLK_HW_I2C_EB]		= &hw_i2c_eb.common.hw,
-+		[CLK_MM_VSP_EMC_EB]	= &mm_vsp_emc_eb.common.hw,
-+		[CLK_VSP_EB]		= &vsp_eb.common.hw,
-+		[CLK_CSSYS_EB]		= &cssys_eb.common.hw,
-+		[CLK_DMC_EB]		= &dmc_eb.common.hw,
-+		[CLK_ROSC_EB]		= &rosc_eb.common.hw,
-+		[CLK_S_D_CFG_EB]	= &s_d_cfg_eb.common.hw,
-+		[CLK_S_D_REF_EB]	= &s_d_ref_eb.common.hw,
-+		[CLK_B_DMA_EB]		= &b_dma_eb.common.hw,
-+		[CLK_ANLG_EB]		= &anlg_eb.common.hw,
-+		[CLK_ANLG_APB_EB]	= &anlg_apb_eb.common.hw,
-+		[CLK_BSMTMR_EB]		= &bsmtmr_eb.common.hw,
-+		[CLK_AP_AXI_EB]		= &ap_axi_eb.common.hw,
-+		[CLK_AP_INTC0_EB]	= &ap_intc0_eb.common.hw,
-+		[CLK_AP_INTC1_EB]	= &ap_intc1_eb.common.hw,
-+		[CLK_AP_INTC2_EB]	= &ap_intc2_eb.common.hw,
-+		[CLK_AP_INTC3_EB]	= &ap_intc3_eb.common.hw,
-+		[CLK_AP_INTC4_EB]	= &ap_intc4_eb.common.hw,
-+		[CLK_AP_INTC5_EB]	= &ap_intc5_eb.common.hw,
-+		[CLK_SCC_EB]		= &scc_eb.common.hw,
-+		[CLK_DPHY_CFG_EB]	= &dphy_cfg_eb.common.hw,
-+		[CLK_DPHY_REF_EB]	= &dphy_ref_eb.common.hw,
-+		[CLK_CPHY_CFG_EB]	= &cphy_cfg_eb.common.hw,
-+		[CLK_OTG_REF_EB]	= &otg_ref_eb.common.hw,
-+		[CLK_SERDES_EB]		= &serdes_eb.common.hw,
-+		[CLK_AON_AP_EMC_EB]	= &aon_ap_emc_eb.common.hw,
-+	},
-+	.num	= CLK_AON_APB_GATE_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_aonapb_gate_desc = {
-+	.clk_clks	= sc9863a_aonapb_gate_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_aonapb_gate_clks),
-+	.hw_clks	= &sc9863a_aonapb_gate_hws,
-+};
-+
-+/* mm gate clocks */
-+static SPRD_SC_GATE_CLK(mahb_ckg_eb, "mahb-ckg-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mdcam_eb, "mdcam-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(misp_eb, "misp-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mahbcsi_eb, "mahbcsi-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mcsi_s_eb, "mcsi-s-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(mcsi_t_eb, "mcsi-t-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(dcam_axi_eb, "dcam-axi-eb", "mm-ahb", 0x8,
-+		     BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(isp_axi_eb, "isp-axi-eb", "mm-ahb", 0x8,
-+		     BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(mcsi_eb,	"mcsi-eb", "mm-ahb", 0x8,
-+		     BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(mcsi_s_ckg_eb, "mcsi-s-ckg-eb", "mm-ahb", 0x8,
-+		     BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(mcsi_t_ckg_eb, "mcsi-t-ckg-eb", "mm-ahb", 0x8,
-+		     BIT(4), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(sensor0_eb, "sensor0-eb", "mm-ahb", 0x8,
-+		     BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(sensor1_eb, "sensor1-eb", "mm-ahb", 0x8,
-+		     BIT(6), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(sensor2_eb, "sensor2-eb", "mm-ahb", 0x8,
-+		     BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(mcphy_cfg_eb, "mcphy-cfg-eb", "mm-ahb", 0x8,
-+		     BIT(8), CLK_IGNORE_UNUSED, 0);
-+
-+static struct sprd_clk_common *sc9863a_mm_gate_clks[] = {
-+	/* address base is 0x60800000 */
-+	&mahb_ckg_eb.common,
-+	&mdcam_eb.common,
-+	&misp_eb.common,
-+	&mahbcsi_eb.common,
-+	&mcsi_s_eb.common,
-+	&mcsi_t_eb.common,
-+	&dcam_axi_eb.common,
-+	&isp_axi_eb.common,
-+	&mcsi_eb.common,
-+	&mcsi_s_ckg_eb.common,
-+	&mcsi_t_ckg_eb.common,
-+	&sensor0_eb.common,
-+	&sensor1_eb.common,
-+	&sensor2_eb.common,
-+	&mcphy_cfg_eb.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_mm_gate_hws = {
-+	.hws	= {
-+		[CLK_MAHB_CKG_EB]	= &mahb_ckg_eb.common.hw,
-+		[CLK_MDCAM_EB]		= &mdcam_eb.common.hw,
-+		[CLK_MISP_EB]		= &misp_eb.common.hw,
-+		[CLK_MAHBCSI_EB]	= &mahbcsi_eb.common.hw,
-+		[CLK_MCSI_S_EB]		= &mcsi_s_eb.common.hw,
-+		[CLK_MCSI_T_EB]		= &mcsi_t_eb.common.hw,
-+		[CLK_DCAM_AXI_EB]	= &dcam_axi_eb.common.hw,
-+		[CLK_ISP_AXI_EB]	= &isp_axi_eb.common.hw,
-+		[CLK_MCSI_EB]		= &mcsi_eb.common.hw,
-+		[CLK_MCSI_S_CKG_EB]	= &mcsi_s_ckg_eb.common.hw,
-+		[CLK_MCSI_T_CKG_EB]	= &mcsi_t_ckg_eb.common.hw,
-+		[CLK_SENSOR0_EB]	= &sensor0_eb.common.hw,
-+		[CLK_SENSOR1_EB]	= &sensor1_eb.common.hw,
-+		[CLK_SENSOR2_EB]	= &sensor2_eb.common.hw,
-+		[CLK_MCPHY_CFG_EB]	= &mcphy_cfg_eb.common.hw,
-+	},
-+	.num	= CLK_MM_GATE_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_mm_gate_desc = {
-+	.clk_clks	= sc9863a_mm_gate_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_mm_gate_clks),
-+	.hw_clks	= &sc9863a_mm_gate_hws,
-+};
-+
-+/* mm clocks */
-+static SPRD_GATE_CLK(mipi_csi_clk, "mipi-csi-clk", "mm-ahb", 0x20,
-+		     BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(mipi_csi_s_clk, "mipi-csi-s-clk", "mm-ahb", 0x24,
-+		     BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_GATE_CLK(mipi_csi_m_clk, "mipi-csi-m-clk", "mm-ahb", 0x28,
-+		     BIT(16), CLK_IGNORE_UNUSED, 0);
-+
-+static struct sprd_clk_common *sc9863a_mm_clk_clks[] = {
-+	/* address base is 0x60900000 */
-+	&mipi_csi_clk.common,
-+	&mipi_csi_s_clk.common,
-+	&mipi_csi_m_clk.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_mm_clk_hws = {
-+	.hws	= {
-+		[CLK_MIPI_CSI]		= &mipi_csi_clk.common.hw,
-+		[CLK_MIPI_CSI_S]	= &mipi_csi_s_clk.common.hw,
-+		[CLK_MIPI_CSI_M]	= &mipi_csi_m_clk.common.hw,
-+	},
-+	.num	= CLK_MM_CLK_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_mm_clk_desc = {
-+	.clk_clks	= sc9863a_mm_clk_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_mm_clk_clks),
-+	.hw_clks	= &sc9863a_mm_clk_hws,
-+};
-+
-+/* vsp gate clocks */
-+static SPRD_SC_GATE_CLK(vckg_eb, "vckg-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(vvsp_eb, "vvsp-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(vjpg_eb, "vjpg-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(vcpp_eb, "vcpp-eb", "mm-ahb", 0x0, 0x1000,
-+			BIT(3), CLK_IGNORE_UNUSED, 0);
-+
-+static struct sprd_clk_common *sc9863a_vspahb_gate_clks[] = {
-+	/* address base is 0x62000000 */
-+	&vckg_eb.common,
-+	&vvsp_eb.common,
-+	&vjpg_eb.common,
-+	&vcpp_eb.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_vspahb_gate_hws = {
-+	.hws	= {
-+		[CLK_VCKG_EB]		= &vckg_eb.common.hw,
-+		[CLK_VVSP_EB]		= &vvsp_eb.common.hw,
-+		[CLK_VJPG_EB]		= &vjpg_eb.common.hw,
-+		[CLK_VCPP_EB]		= &vcpp_eb.common.hw,
-+	},
-+	.num	= CLK_VSP_AHB_GATE_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_vspahb_gate_desc = {
-+	.clk_clks	= sc9863a_vspahb_gate_clks,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_vspahb_gate_clks),
-+	.hw_clks	= &sc9863a_vspahb_gate_hws,
-+};
-+
-+static SPRD_SC_GATE_CLK(sim0_eb,	"sim0-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(0), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(iis0_eb,	"iis0-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(1), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(iis1_eb,	"iis1-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(2), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(iis2_eb,	"iis2-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(3), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(spi0_eb,	"spi0-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(5), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(spi1_eb,	"spi1-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(6), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(spi2_eb,	"spi2-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(7), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c0_eb,	"i2c0-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(8), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c1_eb,	"i2c1-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(9), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c2_eb,	"i2c2-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(10), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c3_eb,	"i2c3-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(11), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c4_eb,	"i2c4-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(12), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(uart0_eb,	"uart0-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(13), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(uart1_eb,	"uart1-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(uart2_eb,	"uart2-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(15), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(uart3_eb,	"uart3-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(uart4_eb,	"uart4-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(sim0_32k_eb,	"sim0_32k-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(18), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(spi3_eb,	"spi3-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(19), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c5_eb,	"i2c5-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(20), CLK_IGNORE_UNUSED, 0);
-+static SPRD_SC_GATE_CLK(i2c6_eb,	"i2c6-eb",	"ext-26m", 0x0,
-+		     0x1000, BIT(21), CLK_IGNORE_UNUSED, 0);
-+
-+static struct sprd_clk_common *sc9863a_apapb_gate[] = {
-+	/* address base is 0x71300000 */
-+	&sim0_eb.common,
-+	&iis0_eb.common,
-+	&iis1_eb.common,
-+	&iis2_eb.common,
-+	&spi0_eb.common,
-+	&spi1_eb.common,
-+	&spi2_eb.common,
-+	&i2c0_eb.common,
-+	&i2c1_eb.common,
-+	&i2c2_eb.common,
-+	&i2c3_eb.common,
-+	&i2c4_eb.common,
-+	&uart0_eb.common,
-+	&uart1_eb.common,
-+	&uart2_eb.common,
-+	&uart3_eb.common,
-+	&uart4_eb.common,
-+	&sim0_32k_eb.common,
-+	&spi3_eb.common,
-+	&i2c5_eb.common,
-+	&i2c6_eb.common,
-+};
-+
-+static struct clk_hw_onecell_data sc9863a_apapb_gate_hws = {
-+	.hws	= {
-+		[CLK_SIM0_EB]		= &sim0_eb.common.hw,
-+		[CLK_IIS0_EB]		= &iis0_eb.common.hw,
-+		[CLK_IIS1_EB]		= &iis1_eb.common.hw,
-+		[CLK_IIS2_EB]		= &iis2_eb.common.hw,
-+		[CLK_SPI0_EB]		= &spi0_eb.common.hw,
-+		[CLK_SPI1_EB]		= &spi1_eb.common.hw,
-+		[CLK_SPI2_EB]		= &spi2_eb.common.hw,
-+		[CLK_I2C0_EB]		= &i2c0_eb.common.hw,
-+		[CLK_I2C1_EB]		= &i2c1_eb.common.hw,
-+		[CLK_I2C2_EB]		= &i2c2_eb.common.hw,
-+		[CLK_I2C3_EB]		= &i2c3_eb.common.hw,
-+		[CLK_I2C4_EB]		= &i2c4_eb.common.hw,
-+		[CLK_UART0_EB]		= &uart0_eb.common.hw,
-+		[CLK_UART1_EB]		= &uart1_eb.common.hw,
-+		[CLK_UART2_EB]		= &uart2_eb.common.hw,
-+		[CLK_UART3_EB]		= &uart3_eb.common.hw,
-+		[CLK_UART4_EB]		= &uart4_eb.common.hw,
-+		[CLK_SIM0_32K_EB]	= &sim0_32k_eb.common.hw,
-+		[CLK_SPI3_EB]		= &spi3_eb.common.hw,
-+		[CLK_I2C5_EB]		= &i2c5_eb.common.hw,
-+		[CLK_I2C6_EB]		= &i2c6_eb.common.hw,
-+	},
-+	.num	= CLK_AP_APB_GATE_NUM,
-+};
-+
-+static const struct sprd_clk_desc sc9863a_apapb_gate_desc = {
-+	.clk_clks	= sc9863a_apapb_gate,
-+	.num_clk_clks	= ARRAY_SIZE(sc9863a_apapb_gate),
-+	.hw_clks	= &sc9863a_apapb_gate_hws,
-+};
-+
-+static const struct of_device_id sprd_sc9863a_clk_ids[] = {
-+	{ .compatible = "sprd,sc9863a-ap-clk",	/* 0x21500000 */
-+	  .data = &sc9863a_ap_clk_desc },
-+	{ .compatible = "sprd,sc9863a-pmu-gate",	/* 0x402b0000 */
-+	  .data = &sc9863a_pmu_gate_desc },
-+	{ .compatible = "sprd,sc9863a-pll",	/* 0x40353000 */
-+	  .data = &sc9863a_pll_desc },
-+	{ .compatible = "sprd,sc9863a-mpll",	/* 0x40359000 */
-+	  .data = &sc9863a_mpll_desc },
-+	{ .compatible = "sprd,sc9863a-rpll",	/* 0x4035c000 */
-+	  .data = &sc9863a_rpll_desc },
-+	{ .compatible = "sprd,sc9863a-dpll",	/* 0x40363000 */
-+	  .data = &sc9863a_dpll_desc },
-+	{ .compatible = "sprd,sc9863a-aon-clk",	/* 0x402d0000 */
-+	  .data = &sc9863a_aon_clk_desc },
-+	{ .compatible = "sprd,sc9863a-apahb-gate",	/* 0x20e00000 */
-+	  .data = &sc9863a_apahb_gate_desc },
-+	{ .compatible = "sprd,sc9863a-aonapb-gate",	/* 0x402e0000 */
-+	  .data = &sc9863a_aonapb_gate_desc },
-+	{ .compatible = "sprd,sc9863a-mm-gate",	/* 0x60800000 */
-+	  .data = &sc9863a_mm_gate_desc },
-+	{ .compatible = "sprd,sc9863a-mm-clk",	/* 0x60900000 */
-+	  .data = &sc9863a_mm_clk_desc },
-+	{ .compatible = "sprd,sc9863a-vspahb-gate",	/* 0x62000000 */
-+	  .data = &sc9863a_vspahb_gate_desc },
-+	{ .compatible = "sprd,sc9863a-apapb-gate",	/* 0x71300000 */
-+	  .data = &sc9863a_apapb_gate_desc },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sprd_sc9863a_clk_ids);
-+
-+static int sc9863a_clk_probe(struct platform_device *pdev)
-+{
-+	const struct of_device_id *match;
-+	const struct sprd_clk_desc *desc;
-+
-+	match = of_match_node(sprd_sc9863a_clk_ids, pdev->dev.of_node);
-+	if (!match) {
-+		pr_err("%s: of_match_node() failed", __func__);
-+		return -ENODEV;
-+	}
-+
-+	desc = match->data;
-+	sprd_clk_regmap_init(pdev, desc);
-+
-+	return sprd_clk_probe(&pdev->dev, desc->hw_clks);
-+}
-+
-+static struct platform_driver sc9863a_clk_driver = {
-+	.probe	= sc9863a_clk_probe,
-+	.driver	= {
-+		.name	= "sc9863a-clk",
-+		.of_match_table	= sprd_sc9863a_clk_ids,
-+	},
-+};
-+module_platform_driver(sc9863a_clk_driver);
-+
-+MODULE_DESCRIPTION("Spreadtrum SC9863A Clock Driver");
-+MODULE_LICENSE("GPL v2");
-+MODULE_ALIAS("platform:sc9863a-clk");
--- 
-2.20.1
+and for A1 driver(a1.c/a1-pll.c) the head file is not requied.
 
+#2
+For A1 driver, the file "linux/of_device.h" is not required.
+It is required by meson-eeclk.c in fact.
+> 
+>> +#include "clk-pll.h"
+>> +#include "meson-eeclk.h"
+>> +#include "a1-pll.h"
+> 
+> Alphanumeric order please
+>
+OK, I will change it in the next version.
 
+>> +
+>> +static struct clk_regmap a1_fixed_pll_dco = {
+>> +	.data = &(struct meson_clk_pll_data){
+>> +		.en = {
+>> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+>> +			.shift   = 28,
+>> +			.width   = 1,
+>> +		},
+>> +		.m = {
+>> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+>> +			.shift   = 0,
+>> +			.width   = 8,
+>> +		},
+>> +		.n = {
+>> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+>> +			.shift   = 10,
+>> +			.width   = 5,
+>> +		},
+>> +		.frac = {
+>> +			.reg_off = ANACTRL_FIXPLL_CTRL1,
+>> +			.shift   = 0,
+>> +			.width   = 19,
+>> +		},
+>> +		.l = {
+>> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+>> +			.shift   = 31,
+>> +			.width   = 1,
+>> +		},
+>> +		.rst = {
+>> +			.reg_off = ANACTRL_FIXPLL_CTRL0,
+>> +			.shift   = 29,
+>> +			.width   = 1,
+>> +		},
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fixed_pll_dco",
+>> +		.ops = &meson_clk_pll_ro_ops,
+>> +		.parent_data = &(const struct clk_parent_data){
+>> +			.fw_name = "xtal_fixpll",
+>> +			.name = "xtal_fixpll",
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_fixed_pll = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = ANACTRL_FIXPLL_CTRL0,
+>> +		.bit_idx = 20,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "fixed_pll",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fixed_pll_dco.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * This clock is fclk_div2/3/4's parent,
+>> +		 * However, fclk_div2/3/5 feeds AXI/APB/DDR.
+> 
+> is it fclk_div2/3/4 or fclk_div2/3/5 ?
+> 
+>> +		 * It is required by the platform to operate correctly.
+>> +		 * Until the following condition are met, we need this clock to
+>> +		 * be marked as critical:
+>> +		 * a) Mark the clock used by a firmware resource, if possible
+>> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+>> +		 *    clock stays on until the proper driver comes along
+>> +		 */
+> 
+> Don't blindly copy/paste comments from other drivers. There is no driver
+> for the devices you are mentionning so the end of the comment is
+> confusing. The 3 first lines were enough
+> 
+OK, I will remove the confusing comments
+
+>> +		.flags = CLK_IS_CRITICAL,
+> 
+>>From your comment, I understand that some child are critical, not this
+> particular (or at least, not directly). So this can be removed AFAICT
+> 
+> You should even need CLK_IGNORE_UNUSED for this one since the clock will
+> already be enabled before the late_init() kicks in
+> 
+OK, I will replace it as CLK_IGNORE_UNUSED.
+>> +	},
+>> +};
+>> +
+>> +static const struct pll_mult_range a1_hifi_pll_mult_range = {
+>> +	.min = 32,
+>> +	.max = 64,
+>> +};
+>> +
+>> +static const struct reg_sequence a1_hifi_init_regs[] = {
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL1, .def = 0x01800000 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00001100 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL3, .def = 0x100a1100 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL4, .def = 0x00302000 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0x01f18440 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0x11f18440, .delay_us = 10 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL0, .def = 0x15f18440, .delay_us = 40 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00001140 },
+>> +	{ .reg = ANACTRL_HIFIPLL_CTRL2, .def = 0x00001100 },
+>> +};
+>> +
+>> +static struct clk_regmap a1_hifi_pll = {
+>> +	.data = &(struct meson_clk_pll_data){
+>> +		.en = {
+>> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+>> +			.shift   = 28,
+>> +			.width   = 1,
+>> +		},
+>> +		.m = {
+>> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+>> +			.shift   = 0,
+>> +			.width   = 8,
+>> +		},
+>> +		.n = {
+>> +			.reg_off = ANACTRL_HIFIPLL_CTRL0,
+>> +			.shift   = 10,
+>> +			.width   = 5,
+>> +		},
+>> +		.frac = {
+>> +			.reg_off = ANACTRL_HIFIPLL_CTRL1,
+>> +			.shift   = 0,
+>> +			.width   = 19,
+>> +		},
+>> +		.l = {
+>> +			.reg_off = ANACTRL_HIFIPLL_STS,
+>> +			.shift   = 31,
+>> +			.width   = 1,
+>> +		},
+>> +		.range = &a1_hifi_pll_mult_range,
+>> +		.init_regs = a1_hifi_init_regs,
+>> +		.init_count = ARRAY_SIZE(a1_hifi_init_regs),
+>> +		.strict_sequence = true,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "hifi_pll",
+>> +		.ops = &meson_clk_pll_ops,
+>> +		.parent_data = &(const struct clk_parent_data){
+>> +			.fw_name = "xtal_fixpll",
+>> +			.name = "xtal_fixpll",
+> 
+> Both should provided when a controller transition from the old way of
+> describing parent to the new way. This is a new controller so it does
+> not apply.
+I do not understand why it does not apply, could you explain more?
+
+The xtal_fixpll clock is registered in another peripheral driver, If do 
+not desribe the "name" member in parent_data, "fw_name" does not work 
+because it has not been registered. the hifi_pll parent will be null in 
+/sys/kernel/debug/clk/hifi_pll/clk_parent.
+
+HIFI PLL will be a orphan clock, but its parent should be xtal_fixpll.
+
+So both of "fw_name" of "name" should be described.
+
+> 
+> Same for the other occurences.
+> 
+> Also, I think you meant xtal_hifipll
+Yes,I will correct it.
+> 
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor a1_fclk_div2_div = {
+>> +	.mult = 1,
+>> +	.div = 2,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div2_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fixed_pll.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_fclk_div2 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = ANACTRL_FIXPLL_CTRL0,
+>> +		.bit_idx = 21,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div2",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fclk_div2_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * This clock is used by DDR clock in BL2 firmware
+>> +		 * and is required by the platform to operate correctly.
+>> +		 * Until the following condition are met, we need this clock to
+>> +		 * be marked as critical:
+>> +		 * a) Mark the clock used by a firmware resource, if possible
+>> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+>> +		 *    clock stays on until the proper driver comes along
+>> +		 */
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor a1_fclk_div3_div = {
+>> +	.mult = 1,
+>> +	.div = 3,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div3_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fixed_pll.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_fclk_div3 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = ANACTRL_FIXPLL_CTRL0,
+>> +		.bit_idx = 22,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div3",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fclk_div3_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * This clock is used by APB bus which setted in Romcode
+>> +		 * and is required by the platform to operate correctly.
+>> +		 * Until the following condition are met, we need this clock to
+>> +		 * be marked as critical:
+>> +		 * a) Mark the clock used by a firmware resource, if possible
+>> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+>> +		 *    clock stays on until the proper driver comes along
+>> +		 */
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor a1_fclk_div5_div = {
+>> +	.mult = 1,
+>> +	.div = 5,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div5_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fixed_pll.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_fclk_div5 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = ANACTRL_FIXPLL_CTRL0,
+>> +		.bit_idx = 23,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div5",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fclk_div5_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * This clock is used by AXI bus which setted in Romcode
+>> +		 * and is required by the platform to operate correctly.
+>> +		 * Until the following condition are met, we need this clock to
+>> +		 * be marked as critical:
+>> +		 * a) Mark the clock used by a firmware resource, if possible
+>> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+>> +		 *    clock stays on until the proper driver comes along
+>> +		 */
+>> +		.flags = CLK_IS_CRITICAL,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_fixed_factor a1_fclk_div7_div = {
+>> +	.mult = 1,
+>> +	.div = 7,
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div7_div",
+>> +		.ops = &clk_fixed_factor_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fixed_pll.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_fclk_div7 = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = ANACTRL_FIXPLL_CTRL0,
+>> +		.bit_idx = 24,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "fclk_div7",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_fclk_div7_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+>> +/* Array of all clocks provided by this provider */
+>> +static struct clk_hw_onecell_data a1_pll_hw_onecell_data = {
+>> +	.hws = {
+>> +		[CLKID_FIXED_PLL_DCO]		= &a1_fixed_pll_dco.hw,
+>> +		[CLKID_FIXED_PLL]		= &a1_fixed_pll.hw,
+>> +		[CLKID_HIFI_PLL]		= &a1_hifi_pll.hw,
+>> +		[CLKID_FCLK_DIV2]		= &a1_fclk_div2.hw,
+>> +		[CLKID_FCLK_DIV3]		= &a1_fclk_div3.hw,
+>> +		[CLKID_FCLK_DIV5]		= &a1_fclk_div5.hw,
+>> +		[CLKID_FCLK_DIV7]		= &a1_fclk_div7.hw,
+>> +		[CLKID_FCLK_DIV2_DIV]		= &a1_fclk_div2_div.hw,
+>> +		[CLKID_FCLK_DIV3_DIV]		= &a1_fclk_div3_div.hw,
+>> +		[CLKID_FCLK_DIV5_DIV]		= &a1_fclk_div5_div.hw,
+>> +		[CLKID_FCLK_DIV7_DIV]		= &a1_fclk_div7_div.hw,
+>> +		[NR_PLL_CLKS]			= NULL,
+>> +	},
+>> +	.num = NR_PLL_CLKS,
+>> +};
+>> +
+>> +static struct clk_regmap *const a1_pll_regmaps[] = {
+>> +	&a1_fixed_pll_dco,
+>> +	&a1_fixed_pll,
+>> +	&a1_hifi_pll,
+>> +	&a1_fclk_div2,
+>> +	&a1_fclk_div3,
+>> +	&a1_fclk_div5,
+>> +	&a1_fclk_div7,
+>> +};
+>> +
+>> +static int meson_a1_pll_probe(struct platform_device *pdev)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = meson_eeclkc_probe(pdev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+>> +}
+> 
+> This function is useless.
+> 
+OK, I will use meson_eeclkc_probe derectly.
+>> +
+>> +static const struct meson_eeclkc_data a1_pll_data = {
+>> +		.regmap_clks = a1_pll_regmaps,
+>> +		.regmap_clk_num = ARRAY_SIZE(a1_pll_regmaps),
+>> +		.hw_onecell_data = &a1_pll_hw_onecell_data,
+>> +};
+>> +static const struct of_device_id clkc_match_table[] = {
+>> +	{
+>> +		.compatible = "amlogic,a1-pll-clkc",
+>> +		.data = &a1_pll_data
+>> +	},
+>> +	{ /* sentinel */ }
+> 
+> Nitpick: don't need to write this, just write the line like this
+> 
+OK, remove it.
+> ' }, {}'
+> 
+>> +};
+>> +
+>> +static struct platform_driver a1_driver = {
+>> +	.probe		= meson_a1_pll_probe,
+>> +	.driver		= {
+>> +		.name	= "a1-pll-clkc",
+>> +		.of_match_table = clkc_match_table,
+>> +	},
+>> +};
+>> +
+>> +builtin_platform_driver(a1_driver);
+>> diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
+>> new file mode 100644
+>> index 0000000..99ee2a9
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/a1-pll.h
+>> @@ -0,0 +1,56 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __A1_PLL_H
+>> +#define __A1_PLL_H
+>> +
+>> +/* PLL register offset */
+>> +#define ANACTRL_FIXPLL_CTRL0		0x80
+>> +#define ANACTRL_FIXPLL_CTRL1		0x84
+>> +#define ANACTRL_FIXPLL_CTRL2		0x88
+>> +#define ANACTRL_FIXPLL_CTRL3		0x8c
+>> +#define ANACTRL_FIXPLL_CTRL4		0x90
+>> +#define ANACTRL_FIXPLL_STS		0x94
+>> +#define ANACTRL_SYSPLL_CTRL0		0x100
+>> +#define ANACTRL_SYSPLL_CTRL1		0x104
+>> +#define ANACTRL_SYSPLL_CTRL2		0x108
+>> +#define ANACTRL_SYSPLL_CTRL3		0x10c
+>> +#define ANACTRL_SYSPLL_CTRL4		0x110
+>> +#define ANACTRL_SYSPLL_STS		0x114
+>> +#define ANACTRL_HIFIPLL_CTRL0		0x140
+>> +#define ANACTRL_HIFIPLL_CTRL1		0x144
+>> +#define ANACTRL_HIFIPLL_CTRL2		0x148
+>> +#define ANACTRL_HIFIPLL_CTRL3		0x14c
+>> +#define ANACTRL_HIFIPLL_CTRL4		0x150
+>> +#define ANACTRL_HIFIPLL_STS		0x154
+>> +#define ANACTRL_AUDDDS_CTRL0		0x180
+>> +#define ANACTRL_AUDDDS_CTRL1		0x184
+>> +#define ANACTRL_AUDDDS_CTRL2		0x188
+>> +#define ANACTRL_AUDDDS_CTRL3		0x18c
+>> +#define ANACTRL_AUDDDS_CTRL4		0x190
+>> +#define ANACTRL_AUDDDS_STS		0x194
+>> +#define ANACTRL_MISCTOP_CTRL0		0x1c0
+>> +#define ANACTRL_POR_CNTL		0x208
+>> +
+>> +/*
+>> + * CLKID index values
+>> + *
+>> + * These indices are entirely contrived and do not map onto the hardware.
+>> + * It has now been decided to expose everything by default in the DT header:
+>> + * include/dt-bindings/clock/a1-pll-clkc.h. Only the clocks ids we don't want
+>> + * to expose, such as the internal muxes and dividers of composite clocks,
+>> + * will remain defined here.
+>> + */
+>> +#define CLKID_FIXED_PLL_DCO		0
+>> +#define CLKID_FCLK_DIV2_DIV		2
+>> +#define CLKID_FCLK_DIV3_DIV		3
+>> +#define CLKID_FCLK_DIV5_DIV		4
+>> +#define CLKID_FCLK_DIV7_DIV		5
+>> +#define NR_PLL_CLKS			11
+>> +
+>> +/* include the CLKIDs that have been made part of the DT binding */
+>> +#include <dt-bindings/clock/a1-pll-clkc.h>
+>> +
+>> +#endif /* __A1_PLL_H */
+>> diff --git a/drivers/clk/meson/a1.c b/drivers/clk/meson/a1.c
+>> new file mode 100644
+>> index 0000000..86a4733
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/a1.c
+>> @@ -0,0 +1,2264 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + * Author: Jian Hu <jian.hu@amlogic.com>
+>> + */
+>> +
+>> +#include <linux/platform_device.h>
+>> +#include "clk-pll.h"
+>> +#include "clk-dualdiv.h"
+>> +#include "meson-eeclk.h"
+>> +#include "a1.h"
+> 
+> Same as above
+OK, I will change the order.
+In fact, the clk-pll.h is not used in the current driver.
+I will remove it.
+> 
+>> +
+>> +/* PLLs clock in gates, its parent is xtal */
+>> +static struct clk_regmap a1_xtal_clktree = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = SYS_OSCIN_CTRL,
+>> +		.bit_idx = 0,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "xtal_clktree",
+>> +		.ops = &clk_regmap_gate_ro_ops,
+>> +		.parent_data = &(const struct clk_parent_data) {
+>> +			.fw_name = "xtal",
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * switch for xtal clock
+>> +		 * Linux should not change it at runtime
+>> +		 */
+> 
+> Comment not useful: it uses the Ro ops
+> 
+OK,  remove the comments
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_xtal_fixpll = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = SYS_OSCIN_CTRL,
+>> +		.bit_idx = 1,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "xtal_fixpll",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_data = &(const struct clk_parent_data) {
+>> +			.fw_name = "xtal",
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_IS_CRITICAL,
+>> +		/*
+>> +		 * it feeds DDR,AXI,APB bus
+>> +		 * Linux should not change it at runtime
+>> +		 */
+> 
+> Again, the child are critical, not directly this clock from your
+> comment.
+> 
+> Remove CRITICAL, put RO is linux is not supposed to touch it.
+> 
+repace as clk_regmap_gate_ro_ops
+>> +	},
+>> +};
+>> +
+
+[ ... ]
+
+>> +
+>> +/* dsp a clk */
+>> +static u32 mux_table_dsp_ab[] = { 0, 1, 2, 3, 4, 7 };
+>> +static const struct clk_parent_data dsp_ab_clk_parent_data[] = {
+>> +	{ .fw_name = "xtal", },
+>> +	{ .fw_name = "fclk_div2", },
+>> +	{ .fw_name = "fclk_div3", },
+>> +	{ .fw_name = "fclk_div5", },
+>> +	{ .fw_name = "hifi_pll", },
+>> +	{ .hw = &a1_rtc_clk.hw },
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_a_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.mask = 0x7,
+>> +		.shift = 10,
+>> +		.table = mux_table_dsp_ab,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspa_a_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = dsp_ab_clk_parent_data,
+>> +		.num_parents = ARRAY_SIZE(dsp_ab_clk_parent_data),
+> 
+> .flags = CLK_SET_RATE_PARENT ?
+Yes, I miss the flag.
+> 
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_a_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.shift = 0,
+>> +		.width = 10,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspa_a_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspa_a_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_a = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.bit_idx = 13,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspa_a",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspa_a_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_b_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.mask = 0x7,
+>> +		.shift = 26,
+>> +		.table = mux_table_dsp_ab,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspa_b_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = dsp_ab_clk_parent_data,
+>> +		.num_parents = ARRAY_SIZE(dsp_ab_clk_parent_data),
+> 
+> .flags = CLK_SET_RATE_PARENT ?
+> 
+Yes, I will add it.
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_b_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.shift = 16,
+>> +		.width = 10,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspa_b_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspa_b_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_b = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.bit_idx = 29,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspa_b",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspa_b_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DSPA_CLK_CTRL0,
+>> +		.mask = 0x1,
+>> +		.shift = 15,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspa_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = (const struct clk_parent_data []) {
+>> +			{ .hw = &a1_dspa_a.hw },
+>> +			{ .hw = &a1_dspa_b.hw },
+>> +		},
+>> +		.num_parents = 2,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_en_dspa = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPA_CLK_EN,
+>> +		.bit_idx = 1,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspa_en_dspa",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspa_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> 
+> Why do you need CLK_IGNORE_UNUSED ?
+> 
+I should remove it
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspa_en_nic = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPA_CLK_EN,
+>> +		.bit_idx = 0,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspa_en_nic",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspa_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> 
+> Why do you need CLK_IGNORE_UNUSED ?
+> 
+I should remove it
+>> +	},
+>> +};
+>> +
+> 
+> Same question and remarks applies to DSP B
+> 
+got it
+>> +/* dsp b clk */
+>> +static struct clk_regmap a1_dspb_a_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.mask = 0x7,
+>> +		.shift = 10,
+>> +		.table = mux_table_dsp_ab,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspb_a_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = dsp_ab_clk_parent_data,
+>> +		.num_parents = ARRAY_SIZE(dsp_ab_clk_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_a_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.shift = 0,
+>> +		.width = 10,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspb_a_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_a_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_a = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.bit_idx = 13,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspb_a",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_a_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_b_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.mask = 0x7,
+>> +		.shift = 26,
+>> +		.table = mux_table_dsp_ab,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspb_b_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = dsp_ab_clk_parent_data,
+>> +		.num_parents = ARRAY_SIZE(dsp_ab_clk_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_b_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.shift = 16,
+>> +		.width = 10,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspb_b_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_b_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_b = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.bit_idx = 29,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspb_b",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_b_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DSPB_CLK_CTRL0,
+>> +		.mask = 0x1,
+>> +		.shift = 15,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dspb_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_a.hw, &a1_dspb_b.hw,
+>> +		},
+>> +		.num_parents = 2,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_en_dspb = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPB_CLK_EN,
+>> +		.bit_idx = 1,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspb_en_dspb",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dspb_en_nic = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DSPB_CLK_EN,
+>> +		.bit_idx = 0,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dspb_en_nic",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dspb_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+>> +	},
+>> +};
+>> +
+>> +/* 12M/24M clock */
+>> +static struct clk_regmap a1_24m = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = CLK12_24_CTRL,
+>> +		.bit_idx = 11,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "24m",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_data = &(const struct clk_parent_data) {
+>> +			.fw_name = "xtal",
+>> +		},
+>> +		.num_parents = 1,
+>> +	},
+>> +};
+>> +
+
+[ ... ]
+
+>> +static struct clk_regmap a1_saradc_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = SAR_ADC_CLK_CTRL,
+>> +		.mask = 0x1,
+>> +		.shift = 9,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "saradc_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = (const struct clk_parent_data []) {
+>> +			{ .fw_name = "xtal", },
+>> +			{ .hw = &a1_sys_clk.hw, },
+>> +		},
+>> +		.num_parents = 2,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_saradc_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = SAR_ADC_CLK_CTRL,
+>> +		.shift = 0,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "saradc_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_saradc_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_saradc_clk = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = SAR_ADC_CLK_CTRL,
+>> +		.bit_idx = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "saradc_clk",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_saradc_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +/* pwm a/b/c/d parent data */
+>> +static const struct clk_parent_data pwm_parent_data[] = {
+>> +	{ .fw_name = "xtal", },
+>> +	{ .hw = &a1_sys_clk.hw },
+>> +};
+> 
+> Looks like the same as SAR ADC
+> 
+OK, I will describe it like SAR ADC for pwm a/b/c/d
+>> +
+>> +/* pwm a clk */
+>> +static struct clk_regmap a1_pwm_a_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = PWM_CLK_AB_CTRL,
+>> +		.mask = 0x1,
+>> +		.shift = 9,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_a_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = pwm_parent_data,
+>> +		.num_parents = ARRAY_SIZE(pwm_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_a_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = PWM_CLK_AB_CTRL,
+>> +		.shift = 0,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_a_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_a_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_a = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = PWM_CLK_AB_CTRL,
+>> +		.bit_idx = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "pwm_a",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_a_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * The CPU working voltage is controlled by pwm_a
+>> +		 * in BL2 firmware. add the CLK_IGNORE_UNUSED flag
+>> +		 * to avoid changing at runtime.
+>                                      ^ it
+> 
+>> +		 * and is required by the platform to operate correctly.
+>                     "blabla. And" is strange
+> 
+>> +		 * Until the following condition are met, we need this clock to
+>> +		 * be marked as critical:
+>> +		 * a) Mark the clock used by a firmware resource, if possible
+>> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+>> +		 *    clock stays on until the proper driver comes along
+>> +		 */
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IGNORE_UNUSED,
+> 
+> This only skips the late_init() disable of unused clocks
+> 
+> Be aware that this is not fool-proof. If at any time a driver enable
+> then disable the clock, the clock will be disable and I guess your
+> platform will die if this provides the CPU voltage.
+OK, CLK_IS_CRITICAL is better.
+> 
+>> +	},
+>> +};
+>> +
+>> +/* pwm b clk */
+>> +static struct clk_regmap a1_pwm_b_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = PWM_CLK_AB_CTRL,
+>> +		.mask = 0x1,
+>> +		.shift = 25,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_b_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = pwm_parent_data,
+>> +		.num_parents = ARRAY_SIZE(pwm_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_b_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = PWM_CLK_AB_CTRL,
+>> +		.shift = 16,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_b_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_b_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_b = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = PWM_CLK_AB_CTRL,
+>> +		.bit_idx = 24,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "pwm_b",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_b_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +/* pwm c clk */
+>> +static struct clk_regmap a1_pwm_c_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = PWM_CLK_CD_CTRL,
+>> +		.mask = 0x1,
+>> +		.shift = 9,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_c_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = pwm_parent_data,
+>> +		.num_parents = ARRAY_SIZE(pwm_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_c_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = PWM_CLK_CD_CTRL,
+>> +		.shift = 0,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_c_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_c_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_c = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = PWM_CLK_CD_CTRL,
+>> +		.bit_idx = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "pwm_c",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_c_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +/* pwm d clk */
+>> +static struct clk_regmap a1_pwm_d_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = PWM_CLK_CD_CTRL,
+>> +		.mask = 0x1,
+>> +		.shift = 25,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_d_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = pwm_parent_data,
+>> +		.num_parents = ARRAY_SIZE(pwm_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_d_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = PWM_CLK_CD_CTRL,
+>> +		.shift = 16,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_d_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_d_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_d = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = PWM_CLK_CD_CTRL,
+>> +		.bit_idx = 24,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "pwm_d",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_d_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static const struct clk_parent_data pwm_ef_parent_data[] = {
+>> +	{ .fw_name = "xtal", },
+>> +	{ .hw = &a1_sys_clk.hw },
+>> +	{ .fw_name = "fclk_div5", },
+>> +	{ .hw = &a1_rtc_clk.hw },
+>> +};
+>> +
+>> +/* pwm e clk */
+>> +static struct clk_regmap a1_pwm_e_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = PWM_CLK_EF_CTRL,
+>> +		.mask = 0x3,
+>> +		.shift = 9,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_e_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = pwm_ef_parent_data,
+>> +		.num_parents = ARRAY_SIZE(pwm_ef_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_e_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = PWM_CLK_EF_CTRL,
+>> +		.shift = 0,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_e_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_e_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_e = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = PWM_CLK_EF_CTRL,
+>> +		.bit_idx = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "pwm_e",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_e_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +/* pwm f clk */
+>> +static struct clk_regmap a1_pwm_f_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = PWM_CLK_EF_CTRL,
+>> +		.mask = 0x3,
+>> +		.shift = 25,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_f_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = pwm_ef_parent_data,
+>> +		.num_parents = ARRAY_SIZE(pwm_ef_parent_data),
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_f_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = PWM_CLK_EF_CTRL,
+>> +		.shift = 16,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "pwm_f_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_f_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_pwm_f = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = PWM_CLK_EF_CTRL,
+>> +		.bit_idx = 24,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "pwm_f",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_pwm_f_div.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+
+[ ... ]
+
+>> +
+>> +/* dmc clk */
+>> +static struct clk_regmap a1_dmc_sel = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DMC_CLK_CTRL,
+>> +		.mask = 0x3,
+>> +		.shift = 9,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dmc_sel",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = sd_emmc_parents,
+>> +		.num_parents = 4,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dmc_div = {
+>> +	.data = &(struct clk_regmap_div_data){
+>> +		.offset = DMC_CLK_CTRL,
+>> +		.shift = 0,
+>> +		.width = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dmc_div",
+>> +		.ops = &clk_regmap_divider_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dmc_sel.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dmc_sel2 = {
+>> +	.data = &(struct clk_regmap_mux_data){
+>> +		.offset = DMC_CLK_CTRL,
+>> +		.mask = 0x1,
+>> +		.shift = 15,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data){
+>> +		.name = "dmc_sel2",
+>> +		.ops = &clk_regmap_mux_ops,
+>> +		.parent_data = (const struct clk_parent_data []) {
+>> +			{ .hw = &a1_dmc_div.hw },
+>> +			{ .fw_name = "xtal", },
+>> +		},
+>> +		.num_parents = 2,
+>> +		.flags = CLK_SET_RATE_PARENT,
+>> +	},
+>> +};
+>> +
+>> +static struct clk_regmap a1_dmc = {
+>> +	.data = &(struct clk_regmap_gate_data){
+>> +		.offset = DMC_CLK_CTRL,
+>> +		.bit_idx = 8,
+>> +	},
+>> +	.hw.init = &(struct clk_init_data) {
+>> +		.name = "dmc",
+>> +		.ops = &clk_regmap_gate_ops,
+>> +		.parent_hws = (const struct clk_hw *[]) {
+>> +			&a1_dmc_sel2.hw
+>> +		},
+>> +		.num_parents = 1,
+>> +		/*
+>> +		 * This clock is used by DDR clock which setted in BL2
+>> +		 * and is required by the platform to operate correctly.
+>> +		 * Until the following condition are met, we need this clock to
+>> +		 * be marked as critical:
+>> +		 * a) Mark the clock used by a firmware resource, if possible
+>> +		 * b) CCF has a clock hand-off mechanism to make the sure the
+>> +		 *    clock stays on until the proper driver comes along
+>> +		 */
+>> +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>> +	},
+>> +};
+> 
+> Should you put all this DMC stuff in RO until you got a driver for it ?
+OK, replace as clk_regmap_gate_ro_ops
+> 
+[ ... ]
+>> +
+>> +static int meson_a1_periphs_probe(struct platform_device *pdev)
+>> +{
+>> +	int ret;
+>> +
+>> +	ret = meson_eeclkc_probe(pdev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	return 0;
+>> +}
+> 
+> Again this function is function is useless and it makes me wonder if you
+> should really be using meson_eeclkc_probe()
+> 
+> This makes you use syscon which is not correct unless you have a good
+> reason ?
+> 
+If it can not use the meson_eeclkc_probe(), I will realize a probe 
+function which is mostly duplicate with meson_eeclkc_probe() except 
+"syscon_node_to_regmap"
+
+Maybe another common probe function and a new file are required for A1 
+three drivers? （include the CPU clock driver）
+
+Or using meson_eeclkc_probe is more easier?
+
+> Is there anything but clocks and resets in these register region ?
+No, there is only clocks in the register region.
+the same does the PLL register region.
+> 
+>> +
+>> +static const struct meson_eeclkc_data a1_periphs_data = {
+>> +		.regmap_clks = a1_periphs_regmaps,
+>> +		.regmap_clk_num = ARRAY_SIZE(a1_periphs_regmaps),
+>> +		.hw_onecell_data = &a1_periphs_hw_onecell_data,
+>> +};
+>> +static const struct of_device_id clkc_match_table[] = {
+>> +	{
+>> +		.compatible = "amlogic,a1-periphs-clkc",
+>> +		.data = &a1_periphs_data
+>> +	},
+>> +	{ /* sentinel */ }
+>> +};
+>> +
+>> +static struct platform_driver a1_driver = {
+>> +	.probe		= meson_a1_periphs_probe,
+>> +	.driver		= {
+>> +		.name	= "a1-periphs-clkc",
+>> +		.of_match_table = clkc_match_table,
+>> +	},
+>> +};
+>> +
+>> +builtin_platform_driver(a1_driver);
+>> diff --git a/drivers/clk/meson/a1.h b/drivers/clk/meson/a1.h
+>> new file mode 100644
+>> index 0000000..1ae5e04
+>> --- /dev/null
+>> +++ b/drivers/clk/meson/a1.h
+>> @@ -0,0 +1,120 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __A1_H
+>> +#define __A1_H
+>> +
+>> +/* peripheral clock controller register offset */
+>> +#define SYS_OSCIN_CTRL			0x0
+>> +#define RTC_BY_OSCIN_CTRL0		0x4
+>> +#define RTC_BY_OSCIN_CTRL1		0x8
+>> +#define RTC_CTRL			0xc
+>> +#define SYS_CLK_CTRL0			0x10
+>> +#define AXI_CLK_CTRL0			0x14
+>> +#define SYS_CLK_EN0			0x1c
+>> +#define SYS_CLK_EN1			0x20
+>> +#define AXI_CLK_EN			0x24
+>> +#define DSPA_CLK_EN			0x28
+>> +#define DSPB_CLK_EN			0x2c
+>> +#define DSPA_CLK_CTRL0			0x30
+>> +#define DSPB_CLK_CTRL0			0x34
+>> +#define CLK12_24_CTRL			0x38
+>> +#define GEN_CLK_CTRL			0x3c
+>> +#define TIMESTAMP_CTRL0			0x40
+>> +#define TIMESTAMP_CTRL1			0x44
+>> +#define TIMESTAMP_CTRL2			0x48
+>> +#define TIMESTAMP_VAL0			0x4c
+>> +#define TIMESTAMP_VAL1			0x50
+>> +#define TIMEBASE_CTRL0			0x54
+>> +#define TIMEBASE_CTRL1			0x58
+>> +#define SAR_ADC_CLK_CTRL		0xc0
+>> +#define PWM_CLK_AB_CTRL			0xc4
+>> +#define PWM_CLK_CD_CTRL			0xc8
+>> +#define PWM_CLK_EF_CTRL			0xcc
+>> +#define SPICC_CLK_CTRL			0xd0
+>> +#define TS_CLK_CTRL			0xd4
+>> +#define SPIFC_CLK_CTRL			0xd8
+>> +#define USB_BUSCLK_CTRL			0xdc
+>> +#define SD_EMMC_CLK_CTRL		0xe0
+>> +#define CECA_CLK_CTRL0			0xe4
+>> +#define CECA_CLK_CTRL1			0xe8
+>> +#define CECB_CLK_CTRL0			0xec
+>> +#define CECB_CLK_CTRL1			0xf0
+>> +#define PSRAM_CLK_CTRL			0xf4
+>> +#define DMC_CLK_CTRL			0xf8
+>> +#define FCLK_DIV1_SEL			0xfc
+>> +#define TST_CTRL			0x100
+>> +
+>> +#define CLKID_XTAL_CLKTREE		0
+>> +#define CLKID_SYS_A_SEL			89
+>> +#define CLKID_SYS_A_DIV			90
+>> +#define CLKID_SYS_A			91
+>> +#define CLKID_SYS_B_SEL			92
+>> +#define CLKID_SYS_B_DIV			93
+>> +#define CLKID_SYS_B			94
+>> +#define CLKID_DSPA_A_SEL		95
+>> +#define CLKID_DSPA_A_DIV		96
+>> +#define CLKID_DSPA_A			97
+>> +#define CLKID_DSPA_B_SEL		98
+>> +#define CLKID_DSPA_B_DIV		99
+>> +#define CLKID_DSPA_B			100
+>> +#define CLKID_DSPB_A_SEL		101
+>> +#define CLKID_DSPB_A_DIV		102
+>> +#define CLKID_DSPB_A			103
+>> +#define CLKID_DSPB_B_SEL		104
+>> +#define CLKID_DSPB_B_DIV		105
+>> +#define CLKID_DSPB_B			106
+>> +#define CLKID_RTC_32K_CLKIN		107
+>> +#define CLKID_RTC_32K_DIV		108
+>> +#define CLKID_RTC_32K_XTAL		109
+>> +#define CLKID_RTC_32K_SEL		110
+>> +#define CLKID_CECB_32K_CLKIN		111
+>> +#define CLKID_CECB_32K_DIV		112
+>> +#define CLKID_CECB_32K_SEL_PRE		113
+>> +#define CLKID_CECB_32K_SEL		114
+>> +#define CLKID_CECA_32K_CLKIN		115
+>> +#define CLKID_CECA_32K_DIV		116
+>> +#define CLKID_CECA_32K_SEL_PRE		117
+>> +#define CLKID_CECA_32K_SEL		118
+>> +#define CLKID_DIV2_PRE			119
+>> +#define CLKID_24M_DIV2			120
+>> +#define CLKID_GEN_SEL			121
+>> +#define CLKID_GEN_DIV			122
+>> +#define CLKID_SARADC_DIV		123
+>> +#define CLKID_PWM_A_SEL			124
+>> +#define CLKID_PWM_A_DIV			125
+>> +#define CLKID_PWM_B_SEL			126
+>> +#define CLKID_PWM_B_DIV			127
+>> +#define CLKID_PWM_C_SEL			128
+>> +#define CLKID_PWM_C_DIV			129
+>> +#define CLKID_PWM_D_SEL			130
+>> +#define CLKID_PWM_D_DIV			131
+>> +#define CLKID_PWM_E_SEL			132
+>> +#define CLKID_PWM_E_DIV			133
+>> +#define CLKID_PWM_F_SEL			134
+>> +#define CLKID_PWM_F_DIV			135
+>> +#define CLKID_SPICC_SEL			136
+>> +#define CLKID_SPICC_DIV			137
+>> +#define CLKID_SPICC_SEL2		138
+>> +#define CLKID_TS_DIV			139
+>> +#define CLKID_SPIFC_SEL			140
+>> +#define CLKID_SPIFC_DIV			141
+>> +#define CLKID_SPIFC_SEL2		142
+>> +#define CLKID_USB_BUS_SEL		143
+>> +#define CLKID_USB_BUS_DIV		144
+>> +#define CLKID_SD_EMMC_SEL		145
+>> +#define CLKID_SD_EMMC_DIV		146
+>> +#define CLKID_SD_EMMC_SEL2		147
+>> +#define CLKID_PSRAM_SEL			148
+>> +#define CLKID_PSRAM_DIV			149
+>> +#define CLKID_PSRAM_SEL2		150
+>> +#define CLKID_DMC_SEL			151
+>> +#define CLKID_DMC_DIV			152
+>> +#define CLKID_DMC_SEL2			153
+>> +#define NR_CLKS				154
+>> +
+>> +#include <dt-bindings/clock/a1-clkc.h>
+>> +
+>> +#endif /* __A1_H */
+> 
+> .
+> 
