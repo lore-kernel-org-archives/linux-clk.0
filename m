@@ -2,146 +2,72 @@ Return-Path: <SRS0=BavY=YS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31F62CA9EBD
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 949EBCA9EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:04:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BFA21929
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:02:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="gPk3Tl1j"
+	by mail.kernel.org (Postfix) with ESMTP id 6C88E21D7B
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:04:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1571994280;
+	bh=hPfHiyhDFvSWyPkt6mjIwA99+K5iOA9vRiU4uEr+ikA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Htzf1nHoiP56sL35psb9fJEMEO9PXzD/5laB6RGGnK1LY8yfif/Xvk4AG3rotPhms
+	 mTI4mmuekaPtDMZJZLR78SPvF2wKVuritgb8ec+nV5o9NG/7iWFj8YiNMKXOntRGgc
+	 kyIPIf8d/iMcTe1CtpTczMgytswSv8eSzHgW5sJM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408064AbfJYJCP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Oct 2019 05:02:15 -0400
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:36696 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2407258AbfJYJCP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 05:02:15 -0400
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191025090212euoutp012bf1e77626ff1e6b6ca4e4b0abccf0fe~Q2FW7Hh400413304133euoutp01K
-        for <linux-clk@vger.kernel.org>; Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191025090212euoutp012bf1e77626ff1e6b6ca4e4b0abccf0fe~Q2FW7Hh400413304133euoutp01K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1571994132;
-        bh=FYT2QZtALNZsHIRM0dwYVe/iO/f0eMf0dbLJRE5epa8=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=gPk3Tl1jvPxfO6OWNTbow3q2SUFsYDv/xD7JBSQBdSbEjKcmBh40O3qWnW7wWzSR8
-         T+EnPUZsqBjSUegyPxC20crjEf+1sNtsq13B72Uh/l2ogWeFV93sXodRBoKDa3dJwu
-         U4rKixnTtUY2DPfgzM8wHKAYNo7ureU0lZBi8w+U=
-Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191025090212eucas1p1a8b8295706f9eb158685ddf0bc27bdac~Q2FWreziq0790207902eucas1p1i;
-        Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges1new.samsung.com (EUCPMTA) with SMTP id 87.95.04469.41AB2BD5; Fri, 25
-        Oct 2019 10:02:12 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6~Q2FWasBZZ1933219332eucas1p1H;
-        Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191025090212eusmtrp2cdfe7cf3fdbd973d89658b0f08c2f31d~Q2FWaBXM_0078000780eusmtrp2G;
-        Fri, 25 Oct 2019 09:02:12 +0000 (GMT)
-X-AuditID: cbfec7f2-569ff70000001175-36-5db2ba14b0a4
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id C1.76.04117.41AB2BD5; Fri, 25
-        Oct 2019 10:02:12 +0100 (BST)
-Received: from AMDC2765.digital.local (unknown [106.120.51.73]) by
-        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-        20191025090211eusmtip1b623e75260a2589aad1c657a84124369~Q2FWDD8Si0234802348eusmtip1L;
-        Fri, 25 Oct 2019 09:02:11 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>
-Subject: [PATCH] clk: samsung: exynos5420: Preserve PLL configuration during
- suspend/resume
-Date:   Fri, 25 Oct 2019 11:02:01 +0200
-Message-Id: <20191025090201.30246-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrHIsWRmVeSWpSXmKPExsWy7djP87oiuzbFGlz5L26xccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFu1PXzI7cHjsnHWX3WPTqk42j74tqxg9Pm+S
-        C2CJ4rJJSc3JLEst0rdL4MpoXP2FpeAmZ8WPe0+YGhgncXQxcnJICJhILLy2jb2LkYtDSGAF
-        o8Sldb2sIAkhgS+MEm/XhUEkPjNKzDvYzAbT8fbUblaIxHJGiTVntrBAOEAd3d/bwKrYBAwl
-        ut52gdkiAg4Snz+9ZgQpYhboZ5Lo67vKDJIQFoiVmHv9Ntg+FgFViRtn3wM1cHDwCthK3NiS
-        ALFNXmL1hgPMEPZ1NokXdyogbBeJd1+3sEPYwhKvjsPYMhL/d85nAtklIdDMKPHw3Fp2CKeH
-        UeJy0wxGiCpricPHL7KCLGMW0JRYv0sfIuwose35DRaQsIQAn8SNt4IgYWYgc9K26cwQYV6J
-        jjYhiGo1iVnH18GtPXjhEtSZHhKdN9pYIKEYKzH94EbGCYxysxB2LWBkXMUonlpanJueWmyY
-        l1quV5yYW1yal66XnJ+7iRGYCk7/O/5pB+PXS0mHGAU4GJV4eF/0b4wVYk0sK67MPcQowcGs
-        JMK7Ww0oxJuSWFmVWpQfX1Sak1p8iFGag0VJnLea4UG0kEB6YklqdmpqQWoRTJaJg1OqgXFV
-        Tktl8JT5hzfWtpxTWLLRhlHnVOOtCpfVhm9uTrmyK03RepHdY0XhKU9yjjbH9M/fUHVCRPDj
-        nN7vSTN4OZxlfs+zbrizJufdkfUzihSunJgUExtu12pcm67b+8tnxSaR92JXmn4pFhVWPgnr
-        LfyyYJOBZdlGIaOnftJ2LnnrPlcrVNbP+qXEUpyRaKjFXFScCACw2FJTAQMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrKLMWRmVeSWpSXmKPExsVy+t/xu7oiuzbFGjSsZrPYOGM9q8X1L89Z
-        Lc6f38Bu8bHnHqvFjPP7mCzWHrnLbrF+2k9Wi/anL5kdODx2zrrL7rFpVSebR9+WVYwenzfJ
-        BbBE6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp29mkpOZklqUW6dsl6GU0
-        rv7CUnCTs+LHvSdMDYyTOLoYOTkkBEwk3p7azdrFyMUhJLCUUWLJs/tsEAkZiZPTGlghbGGJ
-        P9e62CCKPjFKfLz6FizBJmAo0fW2C6xBRMBJ4sG6N+wgRcwCk5kktjctZQFJCAtES2y/MgGs
-        iEVAVeLG2fdANgcHr4CtxI0tCRAL5CVWbzjAPIGRZwEjwypGkdTS4tz03GIjveLE3OLSvHS9
-        5PzcTYzAINx27OeWHYxd74IPMQpwMCrx8DpM2hgrxJpYVlyZe4hRgoNZSYR3txpQiDclsbIq
-        tSg/vqg0J7X4EKMp0O6JzFKiyfnACMkriTc0NTS3sDQ0NzY3NrNQEuftEDgYIySQnliSmp2a
-        WpBaBNPHxMEp1cA4M2GWs4SxEMfnWqUX7xzVYxJnfyrIO63nxC7yL/xIz5I/ieyrf7l/Clja
-        8mLbGQFTtoYNWTd3PC765HLoatqVFdN7RKc8/cOkc7F43s3vUoblBUm1VVMjHmc+E+rdHPJw
-        DV+kYMRx0fB16zQjzixsMUyQ81wX28nNVimpdv74i+Mt+teeRjYosRRnJBpqMRcVJwIAiuiP
-        DlgCAAA=
-X-CMS-MailID: 20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6
-References: <CGME20191025090212eucas1p10ef782af07e01470b185e4fb190d3ce6@eucas1p1.samsung.com>
+        id S2438041AbfJYJEk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Oct 2019 05:04:40 -0400
+Received: from mail.kernel.org ([198.145.29.99]:60944 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2437447AbfJYJEk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:04:40 -0400
+Received: from dragon (li937-157.members.linode.com [45.56.119.157])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 423B321929;
+        Fri, 25 Oct 2019 09:04:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1571994279;
+        bh=hPfHiyhDFvSWyPkt6mjIwA99+K5iOA9vRiU4uEr+ikA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=j+mwx55MltOSh7EfnAsUgdCHR0Lx5SXp+xhjkQUjZi2chaUFgkJazoRvb6r99YaDq
+         zEZWYdBddetZrpyDK1kwFx+DfPEmWpJrFcFY5h/EIFzmQ8Ktz0jCxzS8IiHoSB9VxQ
+         7bSZGjlVOdWq1exVBVNCjxkrHwXzrXNb9KJZpEfs=
+Date:   Fri, 25 Oct 2019 17:04:24 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 0/3] clk: imx8m: Define gates for pll1/2 dividers
+Message-ID: <20191025090422.GI3208@dragon>
+References: <cover.1571226979.git.leonard.crestez@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1571226979.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Properly save and restore all top PLL related configuration registers
-during suspend/resume cycle. So far driver only handled EPLL and RPLL
-clocks, all other were reset to default values after suspend/resume cycle.
-This caused for example lower G3D (MALI Panfrost) performance after system
-resume, even if performance governor has been selected.
+On Wed, Oct 16, 2019 at 11:57:36AM +0000, Leonard Crestez wrote:
+> Leonard Crestez (3):
+>   clk: imx8mq: Define gates for pll1/2 fixed dividers
+>   clk: imx8mm: Define gates for pll1/2 fixed dividers
+>   clk: imx8mn: Define gates for pll1/2 fixed dividers
 
-Reported-by: Reported-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/clk/samsung/clk-exynos5420.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index d2e06ce58fb5..0aca98492029 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -165,12 +165,18 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	CPLL_CON0,
-+	DPLL_CON0,
- 	EPLL_CON0,
- 	EPLL_CON1,
- 	EPLL_CON2,
- 	RPLL_CON0,
- 	RPLL_CON1,
- 	RPLL_CON2,
-+	IPLL_CON0,
-+	SPLL_CON0,
-+	VPLL_CON0,
-+	MPLL_CON0,
- 	SRC_TOP0,
- 	SRC_TOP1,
- 	SRC_TOP2,
--- 
-2.17.1
-
+Applied, thanks.
