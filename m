@@ -2,42 +2,43 @@ Return-Path: <SRS0=BavY=YS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7D6CA9EBC
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:08:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C380CA9EA0
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:09:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A932A21929
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:08:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9EEC21D81
+	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 09:09:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1571994492;
-	bh=R/P729SiifhEPHPwNjYueBD2Eat4ZHTqfGZhGk1kjnY=;
+	s=default; t=1571994550;
+	bh=uFG1cMRD5Tz8/465n9rsEA7W+2TvFw3woGFuCUmq66c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2JVgZsrl8ucyRN22pVzYJLnk9Op7A3yUUO/Wnpo/anTI90KhUUBRQ/5p+2QiG43vK
-	 mHIMtlYXhzOh5RKV8mqsmnan2hXBFwXOp/Sb/w3/6z8zdYvF16RYTvBixxvXbkTfG8
-	 04ThWeMW2Q4lIb7+UtSLMqb23EfFD4T1B1tfqaP0=
+	b=ixoa8vLLg0e/qQlY5dk+UnX22Ihs9Rt0U+fg+468xHZdEmulFkAwLBdJKw21oDq3e
+	 Jwy/aEdnHbXMUItWFN5ubSXsedA/LHyPDgMHeB5iMbwt/GtNzl0Wiekspw66GsB0BH
+	 xTrLM5+OxcqCeA36G50gjXUIHCMetnISOUi5sYdE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2408694AbfJYJIF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Oct 2019 05:08:05 -0400
-Received: from mail.kernel.org ([198.145.29.99]:33570 "EHLO mail.kernel.org"
+        id S2391380AbfJYJJJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Oct 2019 05:09:09 -0400
+Received: from mail.kernel.org ([198.145.29.99]:33980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2408685AbfJYJIE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 25 Oct 2019 05:08:04 -0400
+        id S2391119AbfJYJJJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 25 Oct 2019 05:09:09 -0400
 Received: from dragon (li937-157.members.linode.com [45.56.119.157])
         (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDB0521929;
-        Fri, 25 Oct 2019 09:07:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68E1E21929;
+        Fri, 25 Oct 2019 09:09:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1571994484;
-        bh=R/P729SiifhEPHPwNjYueBD2Eat4ZHTqfGZhGk1kjnY=;
+        s=default; t=1571994549;
+        bh=uFG1cMRD5Tz8/465n9rsEA7W+2TvFw3woGFuCUmq66c=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=vLM3g00uIIFEtP6j/jdHeLB/IBQdUskDL0Bb6XndB15dSDJSU+GUuYWJloLXdQSK6
-         lepwHgh/RsOMIcwf4IJGNQmVbNv4RWv3wSRqvgoR8ixl1UEfKHWJCZB4e0qn4uFPjW
-         w55aEjyzPUGur99ww/0cFxodiq+W3fpyooXZapRo=
-Date:   Fri, 25 Oct 2019 17:07:47 +0800
+        b=sS4E7jSY86V/QEQRf2wcBiJnK740L0brYSrWpZYZfwXbiStuc+EE/veFVPSj5vqWW
+         hI5yIV06HrfwU9JKBs4BhFpwG/76VnGpAt2wycyZiUWOUxfjk1fUc+NSJ9HqWN1RNL
+         8nrpiNxTSa47S8GZoUDtcQzD3mYQj0Q+98sHgfGU=
+Date:   Fri, 25 Oct 2019 17:08:52 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
 To:     Peng Fan <peng.fan@nxp.com>
 Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
@@ -53,23 +54,42 @@ Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
         <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH V2 0/3] clk: imx: imx8m: mark sys pll1/2 as fixed clock
-Message-ID: <20191025090746.GJ3208@dragon>
-References: <1571882110-10191-1-git-send-email-peng.fan@nxp.com>
+Subject: Re: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
+Message-ID: <20191025090850.GK3208@dragon>
+References: <1570614940-17239-1-git-send-email-peng.fan@nxp.com>
+ <20191025060847.GD3208@dragon>
+ <AM0PR04MB4481FA56EFA3C34193241D3D88650@AM0PR04MB4481.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571882110-10191-1-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <AM0PR04MB4481FA56EFA3C34193241D3D88650@AM0PR04MB4481.eurprd04.prod.outlook.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 24, 2019 at 01:58:32AM +0000, Peng Fan wrote:
-> Peng Fan (3):
->   clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
->   clk: imx: imx8mn: mark sys_pll1/2 as fixed clock
->   clk: imx: imx8mq: mark sys1/2_pll as fixed clock
+On Fri, Oct 25, 2019 at 06:14:21AM +0000, Peng Fan wrote:
+> Hi Shawn,
+> 
+> > Subject: Re: [PATCH 1/3] clk: imx: imx8mm: mark sys_pll1/2 as fixed clock
+> > 
+> > On Wed, Oct 09, 2019 at 09:58:14AM +0000, Peng Fan wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > According Architecture definition guide, SYS_PLL1 is fixed at 800MHz,
+> > > SYS_PLL2 is fixed at 1000MHz, so let's use imx_clk_fixed to register
+> > > the clocks and drop code that could change the rate.
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > 
+> > Applied all, thanks.
+> 
+> I have a v2 https://patchwork.kernel.org/cover/11208131/ patch 
+> based on Lenoard's v3 
+> https://patchwork.kernel.org/patch/11193189/ to avoid conflicts
+> when you apply Lenoard's v3 patch.
 
-Applied all, thanks.
+Okay, I replaced it with your v2 series.  Thanks!
+
+Shawn
