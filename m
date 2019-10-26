@@ -2,97 +2,130 @@ Return-Path: <SRS0=ESC1=YT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD98CCA9EBC
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 11:03:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A85CA9EB9
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 11:34:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90A982070B
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 11:03:55 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LqU7fQxX"
+	by mail.kernel.org (Postfix) with ESMTP id 5CED1214DA
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 11:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572089656;
+	bh=/ZgfzByLCwOTe4PepmJqOGeav5FVx+wp6pJk4rlUrY4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=WbXMPsva3l05f92fGigogZhNOkYm5+CgSll41iz3X2OQZbD1mclXenxrZgqxSBgAe
+	 127eMQkrQg9M4XHqCKKjdxkMxD/2/05RTtb8+fGaRowGhrorV5BzDKd0dABYot1w3f
+	 RiLU9w1A8pTKN1ln47GsnKL6PPWwBYn745JhJKuk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726466AbfJZLDz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Oct 2019 07:03:55 -0400
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:32828 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726168AbfJZLDz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Oct 2019 07:03:55 -0400
-Received: by mail-pl1-f194.google.com with SMTP id y8so2802419plk.0
-        for <linux-clk@vger.kernel.org>; Sat, 26 Oct 2019 04:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=vyxQq6l0DnXXPlNTL9PGBy7Itz+G0TwXgp9Tr10w+hM=;
-        b=LqU7fQxXADEoJo1iJRWCPMjKjlbLvMNCiGX6jTfiWYZG0EJ6J4XceuUuxTOMdSYt1W
-         K23z+LYN8oSwZmG+kVX6OtzON2AIffTwVtY0imNKXzg9E4km7NgE/39FzqOPcOf+Rb17
-         RGuZm9KUni1rKnG+YGQx7wBVyUbMsINQC0jQqgx0MXdswzY5Q9iSiykkynJ4GU305JFw
-         N79jss3RB06juP8aMGcumOnPNsDXAgMcEtN7KgJAAoGRR1T4pvSbF5sS5U4qt+W+YL5P
-         ee7gJBk15XQLz7oJWmkMyktlpO6guN+uL/ZyxqXLKCgiSbMKXWODkeX3I66TI3CYAumg
-         93aA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=vyxQq6l0DnXXPlNTL9PGBy7Itz+G0TwXgp9Tr10w+hM=;
-        b=oxTwIMr4BpU2SxTjcDHpiQuBMYWkMI2M4GDpXDhJEawk9HhZ0iz8lqJyHcDuYzRpVZ
-         zF1oy0KyvWfss1a/oybn6jZZRDnOYn7JqsZqEjqQCZ/TyyKAZcYoG5lWMDo8FebOw5vW
-         ReuOpEoO5dkVcskGjHdzPtPidR4KF7eQ1EU90zyyVFXfTiDHi4k0OUCOFkKBWg4PCZUT
-         DN5mk++ya9WKD/AvQAXp5LNgjzYu9fJqpwdK+ICYK6We+uU4vsXKG942SzPlmg5jW9zX
-         mVXL8Ljvcz4+vR2rKxAInAkb8FNMg1T5EJ8cClBWbWr2Na5oSZHK6edPMR69LgyXAxaO
-         lPxw==
-X-Gm-Message-State: APjAAAV20orUh2Ymp3LarfFufGGucud3dw8KPpdO9sjkio/U9uIswWPy
-        GERfunQqxUQOqHgTg1hsp4R1
-X-Google-Smtp-Source: APXvYqyK9jvXbwURhpAqztJP3EnJdLxxvieDfHWxplIGYVviYZPsHLpbr0LXqo0jJlnLgVYJsK1XsQ==
-X-Received: by 2002:a17:902:d913:: with SMTP id c19mr8912095plz.48.1572087834354;
-        Sat, 26 Oct 2019 04:03:54 -0700 (PDT)
-Received: from localhost.localdomain ([2409:4072:6214:69c4:49ad:ba3c:6f9:2d8a])
-        by smtp.gmail.com with ESMTPSA id x129sm5543379pfx.14.2019.10.26.04.03.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 26 Oct 2019 04:03:53 -0700 (PDT)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH v6 7/7] MAINTAINERS: Add entry for BM1880 SoC clock driver
-Date:   Sat, 26 Oct 2019 16:32:53 +0530
-Message-Id: <20191026110253.18426-8-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191026110253.18426-1-manivannan.sadhasivam@linaro.org>
-References: <20191026110253.18426-1-manivannan.sadhasivam@linaro.org>
+        id S1726270AbfJZLeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Oct 2019 07:34:16 -0400
+Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726262AbfJZLeP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 26 Oct 2019 07:34:15 -0400
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4399120863;
+        Sat, 26 Oct 2019 11:34:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572089655;
+        bh=/ZgfzByLCwOTe4PepmJqOGeav5FVx+wp6pJk4rlUrY4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=SFZ++fOBoaobWkYaC1HW+9PAkgg7FGHkb3r4nQwrAYZfY1BGE/j8F91wljhS1VAfK
+         DukWFoYMMDHj5NJrGkeUG+LthKqiRlSV5iJjoUh+SCAwjXyhKYxZJVimlGjASN6DBw
+         IkavLbHLo6UoMmt157zDge/joFQWLhsxaywxp9MY=
+Date:   Sat, 26 Oct 2019 19:34:00 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Fancy Fang <chen.fang@nxp.com>
+Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>
+Subject: Re: [PATCH v3] clk: imx7ulp: do not export out IMX7ULP_CLK_MIPI_PLL
+ clock
+Message-ID: <20191026113357.GH14401@dragon>
+References: <20191015031501.2703-1-chen.fang@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191015031501.2703-1-chen.fang@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MAINTAINERS entry for Bitmain BM1880 SoC clock driver.
+On Tue, Oct 15, 2019 at 03:17:23AM +0000, Fancy Fang wrote:
+> The mipi pll clock comes from the MIPI PHY PLL output, so
+> it should not be a fixed clock.
+> 
+> MIPI PHY PLL is in the MIPI DSI space, and it is used as
+> the bit clock for transferring the pixel data out and its
+> output clock is configured according to the display mode.
+> 
+> So it should be used only for MIPI DSI and not be exported
+> out for other usages.
+> 
+> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
+> ---
+> ChangeLog v2->v3:
+>  * Keep 'IMX7ULP_CLK_MIPI_PLL' macro definition.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+Please follow Stephen's suggestion to add a comment for
+IMX7ULP_CLK_MIPI_PLL telling the clock shouldn't be used.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 52f3ac28b69e..40e9ba15ad2a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1529,8 +1529,10 @@ M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
- S:	Maintained
- F:	arch/arm64/boot/dts/bitmain/
-+F:	drivers/clk/clk-bm1880.c
- F:	drivers/pinctrl/pinctrl-bm1880.c
- F:	Documentation/devicetree/bindings/arm/bitmain.yaml
-+F:	Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
- F:	Documentation/devicetree/bindings/pinctrl/bitmain,bm1880-pinctrl.txt
- 
- ARM/CALXEDA HIGHBANK ARCHITECTURE
--- 
-2.17.1
+Shawn
 
+> 
+> ChangeLog v1->v2:
+>  * Keep other clock indexes unchanged as Shawn suggested.
+> 
+>  Documentation/devicetree/bindings/clock/imx7ulp-clock.txt | 1 -
+>  drivers/clk/imx/clk-imx7ulp.c                             | 3 +--
+>  2 files changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> index a4f8cd478f92..93d89adb7afe 100644
+> --- a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
+> @@ -82,7 +82,6 @@ pcc2: pcc2@403f0000 {
+>  		 <&scg1 IMX7ULP_CLK_APLL_PFD0>,
+>  		 <&scg1 IMX7ULP_CLK_UPLL>,
+>  		 <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>,
+> -		 <&scg1 IMX7ULP_CLK_MIPI_PLL>,
+>  		 <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>,
+>  		 <&scg1 IMX7ULP_CLK_ROSC>,
+>  		 <&scg1 IMX7ULP_CLK_SPLL_BUS_CLK>;
+> diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+> index 2022d9bead91..459b120b71d5 100644
+> --- a/drivers/clk/imx/clk-imx7ulp.c
+> +++ b/drivers/clk/imx/clk-imx7ulp.c
+> @@ -28,7 +28,7 @@ static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dumm
+>  static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
+>  static const char * const nic_sels[]		= { "firc", "ddr_clk", };
+>  static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
+> -static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
+> +static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "dummy", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
+>  static const char * const arm_sels[]		= { "divcore", "dummy", "dummy", "hsrun_divcore", };
+>  
+>  /* used by sosc/sirc/firc/ddr/spll/apll dividers */
+> @@ -75,7 +75,6 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
+>  	clks[IMX7ULP_CLK_SOSC]		= imx_obtain_fixed_clk_hw(np, "sosc");
+>  	clks[IMX7ULP_CLK_SIRC]		= imx_obtain_fixed_clk_hw(np, "sirc");
+>  	clks[IMX7ULP_CLK_FIRC]		= imx_obtain_fixed_clk_hw(np, "firc");
+> -	clks[IMX7ULP_CLK_MIPI_PLL]	= imx_obtain_fixed_clk_hw(np, "mpll");
+>  	clks[IMX7ULP_CLK_UPLL]		= imx_obtain_fixed_clk_hw(np, "upll");
+>  
+>  	/* SCG1 */
+> -- 
+> 2.17.1
+> 
