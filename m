@@ -2,130 +2,70 @@ Return-Path: <SRS0=ESC1=YT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-9.5 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A85CA9EB9
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 11:34:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3AC8CA9EB9
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 19:44:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5CED1214DA
-	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 11:34:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572089656;
-	bh=/ZgfzByLCwOTe4PepmJqOGeav5FVx+wp6pJk4rlUrY4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=WbXMPsva3l05f92fGigogZhNOkYm5+CgSll41iz3X2OQZbD1mclXenxrZgqxSBgAe
-	 127eMQkrQg9M4XHqCKKjdxkMxD/2/05RTtb8+fGaRowGhrorV5BzDKd0dABYot1w3f
-	 RiLU9w1A8pTKN1ln47GsnKL6PPWwBYn745JhJKuk=
+	by mail.kernel.org (Postfix) with ESMTP id D1BAF21655
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 19:44:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726270AbfJZLeQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 26 Oct 2019 07:34:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:53662 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726262AbfJZLeP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 26 Oct 2019 07:34:15 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4399120863;
-        Sat, 26 Oct 2019 11:34:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572089655;
-        bh=/ZgfzByLCwOTe4PepmJqOGeav5FVx+wp6pJk4rlUrY4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=SFZ++fOBoaobWkYaC1HW+9PAkgg7FGHkb3r4nQwrAYZfY1BGE/j8F91wljhS1VAfK
-         DukWFoYMMDHj5NJrGkeUG+LthKqiRlSV5iJjoUh+SCAwjXyhKYxZJVimlGjASN6DBw
-         IkavLbHLo6UoMmt157zDge/joFQWLhsxaywxp9MY=
-Date:   Sat, 26 Oct 2019 19:34:00 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Fancy Fang <chen.fang@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v3] clk: imx7ulp: do not export out IMX7ULP_CLK_MIPI_PLL
- clock
-Message-ID: <20191026113357.GH14401@dragon>
-References: <20191015031501.2703-1-chen.fang@nxp.com>
+        id S1726434AbfJZTo6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 26 Oct 2019 15:44:58 -0400
+Received: from smtp10.smtpout.orange.fr ([80.12.242.132]:19658 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726342AbfJZTo6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 26 Oct 2019 15:44:58 -0400
+Received: from belgarion.home ([90.76.41.223])
+        by mwinf5d19 with ME
+        id JKkR210034otT8A03Kkr95; Sat, 26 Oct 2019 21:44:54 +0200
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Sat, 26 Oct 2019 21:44:54 +0200
+X-ME-IP: 90.76.41.223
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Subject: [PATCH] clk: pxa: fix one of the pxa RTC clocks
+Date:   Sat, 26 Oct 2019 21:44:20 +0200
+Message-Id: <20191026194420.11918-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191015031501.2703-1-chen.fang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Oct 15, 2019 at 03:17:23AM +0000, Fancy Fang wrote:
-> The mipi pll clock comes from the MIPI PHY PLL output, so
-> it should not be a fixed clock.
-> 
-> MIPI PHY PLL is in the MIPI DSI space, and it is used as
-> the bit clock for transferring the pixel data out and its
-> output clock is configured according to the display mode.
-> 
-> So it should be used only for MIPI DSI and not be exported
-> out for other usages.
-> 
-> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
-> ---
-> ChangeLog v2->v3:
->  * Keep 'IMX7ULP_CLK_MIPI_PLL' macro definition.
+The pxa27x platforms have a single IP with 2 drivers, sa1100-rtc and
+rtc-pxa drivers.
 
-Please follow Stephen's suggestion to add a comment for
-IMX7ULP_CLK_MIPI_PLL telling the clock shouldn't be used.
+A previous patch fixed the sa1100-rtc case, but the pxa-rtc wasn't
+fixed. This patch completes the previous one.
 
-Shawn
+Fixes: 8b6d10345e16 ("clk: pxa: add missing pxa27x clocks for Irda and sa1100-rtc")
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/clk/pxa/clk-pxa27x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
-> ChangeLog v1->v2:
->  * Keep other clock indexes unchanged as Shawn suggested.
-> 
->  Documentation/devicetree/bindings/clock/imx7ulp-clock.txt | 1 -
->  drivers/clk/imx/clk-imx7ulp.c                             | 3 +--
->  2 files changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> index a4f8cd478f92..93d89adb7afe 100644
-> --- a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> @@ -82,7 +82,6 @@ pcc2: pcc2@403f0000 {
->  		 <&scg1 IMX7ULP_CLK_APLL_PFD0>,
->  		 <&scg1 IMX7ULP_CLK_UPLL>,
->  		 <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>,
-> -		 <&scg1 IMX7ULP_CLK_MIPI_PLL>,
->  		 <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>,
->  		 <&scg1 IMX7ULP_CLK_ROSC>,
->  		 <&scg1 IMX7ULP_CLK_SPLL_BUS_CLK>;
-> diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-> index 2022d9bead91..459b120b71d5 100644
-> --- a/drivers/clk/imx/clk-imx7ulp.c
-> +++ b/drivers/clk/imx/clk-imx7ulp.c
-> @@ -28,7 +28,7 @@ static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dumm
->  static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
->  static const char * const nic_sels[]		= { "firc", "ddr_clk", };
->  static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
-> -static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
-> +static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "dummy", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
->  static const char * const arm_sels[]		= { "divcore", "dummy", "dummy", "hsrun_divcore", };
->  
->  /* used by sosc/sirc/firc/ddr/spll/apll dividers */
-> @@ -75,7 +75,6 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
->  	clks[IMX7ULP_CLK_SOSC]		= imx_obtain_fixed_clk_hw(np, "sosc");
->  	clks[IMX7ULP_CLK_SIRC]		= imx_obtain_fixed_clk_hw(np, "sirc");
->  	clks[IMX7ULP_CLK_FIRC]		= imx_obtain_fixed_clk_hw(np, "firc");
-> -	clks[IMX7ULP_CLK_MIPI_PLL]	= imx_obtain_fixed_clk_hw(np, "mpll");
->  	clks[IMX7ULP_CLK_UPLL]		= imx_obtain_fixed_clk_hw(np, "upll");
->  
->  	/* SCG1 */
-> -- 
-> 2.17.1
-> 
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index 4517ee28e7c5..e442970f7e79 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -436,6 +436,7 @@ struct dummy_clk {
+ };
+ static struct dummy_clk dummy_clks[] __initdata = {
+ 	DUMMY_CLK(NULL, "pxa27x-gpio", "osc_32_768khz"),
++	DUMMY_CLK(NULL, "pxa-rtc", "osc_32_768khz"),
+ 	DUMMY_CLK(NULL, "sa1100-rtc", "osc_32_768khz"),
+ 	DUMMY_CLK("UARTCLK", "pxa2xx-ir", "STUART"),
+ };
+-- 
+2.20.1
+
