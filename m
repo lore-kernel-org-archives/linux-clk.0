@@ -1,84 +1,96 @@
-Return-Path: <SRS0=BavY=YS=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=ESC1=YT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75AD9CA9EA0
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 21:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78D42CA9EBD
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 00:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38B8D21D7B
-	for <linux-clk@archiver.kernel.org>; Fri, 25 Oct 2019 21:49:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4017A21D82
+	for <linux-clk@archiver.kernel.org>; Sat, 26 Oct 2019 00:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572040146;
-	bh=9OocIlW3MdTggjKr6xrZoWrr6c8j+hbrcGG725i/W60=;
+	s=default; t=1572049167;
+	bh=FNww23nOHGHToy8OsKb98PNOQOu0itXHlF641+HvFnU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1ox2QoQP+uTYjWXmjYc2Qw2qwwR89siMcE2zFFU6hf25+sveT/X5TNQ4QhL+oA2qs
-	 2WdxZswJUIwTh9Oy27MZMq/XOz4sNauL75ahZ37mQemJ8FA3pJA1MPfr+hl1g4k4Mb
-	 /nZUXYF6OW9veeJMAaHvfFaEfsFbQQLEaLJEWlRg=
+	b=jROC8rJRqx9aOJB+KLeTR85KkQh22ELWdnxs0wdsJucEcRgKn2Dh3rRUn7ukR8ixh
+	 8GEVzQyNK42K0jCLPyN3Hgmr/FrGG61RPO5eaKQhdXX9ngE0MypC4IXS7RU07+6aLc
+	 lKmpb5ga0aF0fCbhXITB+ZJtb9BpO4qpwQaXfbVY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725899AbfJYVtG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 25 Oct 2019 17:49:06 -0400
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:38913 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725811AbfJYVtF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 17:49:05 -0400
-Received: by mail-oi1-f196.google.com with SMTP id v138so2577503oif.6;
-        Fri, 25 Oct 2019 14:49:05 -0700 (PDT)
+        id S1725926AbfJZAT0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 25 Oct 2019 20:19:26 -0400
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:43150 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725887AbfJZAT0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 25 Oct 2019 20:19:26 -0400
+Received: by mail-ot1-f67.google.com with SMTP id b19so892657otq.10;
+        Fri, 25 Oct 2019 17:19:26 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=wGm3OSExE/97BmM29xjH36/abWZ9nPYDMo8RkVIn7DU=;
-        b=ISKp1hthhRab8G1/BzjmgcJCtX2BtVilxMqR/GAIdLmwh8PuNwXtbk5XC5KwSZWhO6
-         a0pU3jvTPSFQCBKO8Fsz+R8oqem9R4JsvriLiO1abdJ9xO7pl5/2te7H6vEmiQ5dV4iU
-         32/eu0DWGnl7JMvtUD4JnE5ZsUAcGOvGSDqI5uw+eqWedniSEMgIpEHZUzvljwuYaxL8
-         U4f21bXknCiJr0aocYIxj8x+sbU9TYqXfCo+9O11Yi56tBIJSRgFo/1T5EwXeSFqScps
-         cwoPB44//bZ7u5+/4I9FBfMUBbbAlkRx4aursLyRMfUfWlZwy0xKFhGbcJns6Ovs5Pr0
-         dTZQ==
-X-Gm-Message-State: APjAAAVKPO7Yy1y6MrZ7iSO9mjF1GE0nIY3vcJxgUgfHiufiM8mxh6ys
-        yAl6l3/SQb6roQikEQDjmA==
-X-Google-Smtp-Source: APXvYqwLbnmVyTEOV9qgJJFVyWAeKISdHnloLOn/3BypbMbjV29PEr1S6ftViDUyEbH+5o61CqsHSw==
-X-Received: by 2002:a05:6808:7d9:: with SMTP id f25mr4933670oij.69.1572040144629;
-        Fri, 25 Oct 2019 14:49:04 -0700 (PDT)
+        bh=rP2TVgM7TJak8rqWj56HIs9Gk8TmKpgszEpCk0Rsvd8=;
+        b=d+7eh7cwKzAbSIJzYTZF1zgWnXPDeecHL7jyRvCW++yVkFCZuKkmtdPZXC2mX0COQZ
+         sj+vMqmICdNsTrcCoHdkH3iy94LUga6a7SRbKXV3suE+okG6+FLmw1FJ/s/AOaTkIxWi
+         8llyvYSAPzHATfR2sDyRZcUU+2fHc1ByY83595YmAVrGnMenHxqSIEh0xNOQEcw5QXnc
+         0PoNSkbDk+RtS+0BIDODIQyccGMVUxMnzgX14T+wXS5NanwmNAtL7UrqeGGEHIDWNVS/
+         kDbPhOUosqfAFSKVieuxnyujlr5drktwpmXg6RfscrL+CRVnFueThdoBuLyb6XvjX9Ae
+         cUvw==
+X-Gm-Message-State: APjAAAVjhcMMh2tYngsgM8718yD4FwRNCPsCgu/uQSyk9JFBJh2p0+PO
+        6AiWM5zGoqAE8StOaF8l3Q==
+X-Google-Smtp-Source: APXvYqwqfU7/GBmiPwwQ/BnOKaxy9p8TG5uzY6dUbAc7nUscEJgAgUBAvMUN35q8Al2UNWi3aqk0LA==
+X-Received: by 2002:a05:6830:1b67:: with SMTP id d7mr4770218ote.181.1572049165901;
+        Fri, 25 Oct 2019 17:19:25 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 34sm1139469otf.55.2019.10.25.14.49.03
+        by smtp.gmail.com with ESMTPSA id x16sm1032217oic.40.2019.10.25.17.19.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 25 Oct 2019 14:49:03 -0700 (PDT)
-Date:   Fri, 25 Oct 2019 16:49:03 -0500
+        Fri, 25 Oct 2019 17:19:25 -0700 (PDT)
+Date:   Fri, 25 Oct 2019 19:19:24 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eugeniu Rosca <erosca@de.adit-jv.com>,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, mturquette@baylibre.com,
-        sboyd@kernel.org, mark.rutland@arm.com, paul@crapouillou.net
-Subject: Re: [PATCH 1/2 v2] dt-bindings: clock: Add X1000 bindings.
-Message-ID: <20191025214903.GA14052@bogus>
-References: <1571421006-12771-1-git-send-email-zhouyanjie@zoho.com>
- <1571763389-43443-1-git-send-email-zhouyanjie@zoho.com>
- <1571763389-43443-2-git-send-email-zhouyanjie@zoho.com>
+        linux-renesas-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: renesas: cpg-mssr: Document
+ r8a77961 support
+Message-ID: <20191026001924.GA10102@bogus>
+References: <20191023122941.12342-1-geert+renesas@glider.be>
+ <20191023122941.12342-2-geert+renesas@glider.be>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1571763389-43443-2-git-send-email-zhouyanjie@zoho.com>
+In-Reply-To: <20191023122941.12342-2-geert+renesas@glider.be>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 23 Oct 2019 00:56:28 +0800, Zhou Yanjie wrote:
-> Add the clock bindings for the X1000 Soc from Ingenic.
+On Wed, 23 Oct 2019 14:29:38 +0200, Geert Uytterhoeven wrote:
+> Add DT binding documentation for the Clock Pulse Generator / Module
+> Standby and Software Reset block in the Renesas R-Car M3-W+ (R8A77961)
+> SoC.
 > 
-> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+> Update all references to R-Car M3-W from "r8a7796" to "r8a77960", to
+> avoid confusion between R-Car M3-W (R8A77960) and M3-W+.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 > ---
->  .../devicetree/bindings/clock/ingenic,cgu.txt      |  1 +
->  include/dt-bindings/clock/x1000-cgu.h              | 41 ++++++++++++++++++++++
->  2 files changed, 42 insertions(+)
->  create mode 100644 include/dt-bindings/clock/x1000-cgu.h
+> v2:
+>   - Add Reviewed-by,
+>   - Update R-Car M3-W references.
+> ---
+>  .../devicetree/bindings/clock/renesas,cpg-mssr.txt    | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
