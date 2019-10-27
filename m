@@ -2,113 +2,108 @@ Return-Path: <SRS0=L8UR=YU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C60A9CA9EAF
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Oct 2019 21:18:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55B94C47E49
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Oct 2019 21:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9625B214E0
-	for <linux-clk@archiver.kernel.org>; Sun, 27 Oct 2019 21:18:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 289FF2245C
+	for <linux-clk@archiver.kernel.org>; Sun, 27 Oct 2019 21:27:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572211099;
-	bh=KfIBcyEnuRceF3vKSjN16F7+m+qFJm3bdbFB9alfQcw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s0izaP374Nfs4DhVztUT2LlFJ7APS0WRIqmIzsvhKdPbw+TQ4xCWHQV158W50vgZ7
-	 hCtpIvKGcxpr28GS53WrG/h//S6xoVpTZxkNnWqAdTGEfIKXMUHfZDg2RTkX+O7mLs
-	 dMVjTVf4U9eTOCrsu0M5IO56y4vRn6T4cmiGeYzs=
+	s=default; t=1572211637;
+	bh=bNaiTRs73b3nU2uDAXq1nlYBMsWSUeirR2Lzw+CNp3Q=;
+	h=In-Reply-To:References:To:From:Cc:Subject:Date:List-ID:From;
+	b=ORvk5YZv/ygmWjNP9NcNreezGyxaaqBoBIyZSW3Tpm3zzbObtieTbU2VwHFsSjA6p
+	 KY9a/MbiIUD4fT+mGpRIFQXBMd8Y69kbzSnqa3CNXNztt4Yxcc6Ej3D6VQlkGc/LYY
+	 08DSlZoTqiUcfOzzNenCAYa7FwzKRa6/ZiuyZzOo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731247AbfJ0VSQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 27 Oct 2019 17:18:16 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38380 "EHLO mail.kernel.org"
+        id S1731951AbfJ0V1M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 27 Oct 2019 17:27:12 -0400
+Received: from mail.kernel.org ([198.145.29.99]:47378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731224AbfJ0VSO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 27 Oct 2019 17:18:14 -0400
-Received: from localhost (100.50.158.77.rev.sfr.net [77.158.50.100])
+        id S1732737AbfJ0VZ2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 27 Oct 2019 17:25:28 -0400
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F26DD20717;
-        Sun, 27 Oct 2019 21:18:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE3D021783;
+        Sun, 27 Oct 2019 21:25:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572211094;
-        bh=KfIBcyEnuRceF3vKSjN16F7+m+qFJm3bdbFB9alfQcw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3I9Q4NpD0grjadVLmYkKMlx/5RXW8eUA4E0Fw1S2Owjw6inF+FN0qLmjo3QKLZe5
-         5UupRs3XmSHEL39pEOUf+WuA5Hf4mjqh6JpjPPl3dDkwaf3LvdQn5C01w8BKLdFxrH
-         SS1iFBYIC6i8bdMVkVc1Xi1kl6xAHEgmk+6nSOjg=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Suman Anna <s-anna@ti.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 5.3 003/197] clk: ti: dra7: Fix mcasp8 clock bits
-Date:   Sun, 27 Oct 2019 21:58:41 +0100
-Message-Id: <20191027203351.876536314@linuxfoundation.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191027203351.684916567@linuxfoundation.org>
-References: <20191027203351.684916567@linuxfoundation.org>
-User-Agent: quilt/0.66
+        s=default; t=1572211527;
+        bh=bNaiTRs73b3nU2uDAXq1nlYBMsWSUeirR2Lzw+CNp3Q=;
+        h=In-Reply-To:References:To:From:Cc:Subject:Date:From;
+        b=AeRJJyAS6E+Ckbdk493mYAqTKhYG3sE+ZcY+jlmLsAUKb2o76OzLczJKA5UCyla9V
+         DiMwR80R0JXxIj5ucU0KUOM3HzUzhvEhvmfZ50CPKAADp5+zzr74SL3oG4Y0R5DAB5
+         IreC2Z4HcHYZqrH9W+pkbCb1tFjXOK8U6KJwH7TA=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191021105435.GE2654@vkoul-mobl>
+References: <20190917091623.3453-1-vkoul@kernel.org> <20190917161000.DAFF3206C2@mail.kernel.org> <20191016122343.GM2654@vkoul-mobl> <20191017174820.F08422089C@mail.kernel.org> <20191021105435.GE2654@vkoul-mobl>
+To:     Vinod Koul <vkoul@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
+User-Agent: alot/0.8.1
+Date:   Sun, 27 Oct 2019 14:25:26 -0700
+Message-Id: <20191027212527.AE3D021783@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Tony Lindgren <tony@atomide.com>
+Quoting Vinod Koul (2019-10-21 03:54:35)
+> On 17-10-19, 10:48, Stephen Boyd wrote:
+> > > > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc=
+-sm8150.c
+> > > > > index 12ca2d14797f..13d4d14a5744 100644
+> > > > > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > > > > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > > > > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_c=
+lk =3D {
+> > > > >         },
+> > > > >  };
+> > > > > =20
+> > > > > +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
+> > > > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> > > >=20
+> > > > Why skip?
+> > >=20
+> > > I will explore and add comments for that
+> > >=20
+> > > > > +       .clkr =3D {
+> > > > > +               .enable_reg =3D 0x52004,
+> > > > > +               .enable_mask =3D BIT(15),
+> > > > > +               .hw.init =3D &(struct clk_init_data){
+> > > > > +                       .name =3D "gcc_gpu_gpll0_clk_src",
+> > > > > +                       .parent_hws =3D (const struct clk_hw *[]){
+> > > > > +                               &gpll0.clkr.hw },
+> > > > > +                       .num_parents =3D 1,
+> > > > > +                       .flags =3D CLK_SET_RATE_PARENT,
+> > > > > +                       .ops =3D &clk_branch2_ops,
+> > > > > +               },
+> > > > > +       },
+> > > > > +};
+> > > > > +
+> > > > > +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
+> > > > > +       .halt_check =3D BRANCH_HALT_SKIP,
+> > > >=20
+> > > > Why skip?
+> > > >=20
+> >=20
+> > Any answer from the explorations?
+>=20
+> Yeah so asking around the answer I got is that these are external
+> clocks and we need cannot rely on CLK_OFF bit for these clocks
+>=20
 
-[ Upstream commit dd8882a255388ba66175098b1560d4f81c100d30 ]
-
-There's a typo for dra7 mcasp clkctrl bit, it should be 22 like the other
-macasp instances, and not 24. And in dra7xx_clks[] we have the bits wrong
-way around.
-
-Fixes: dffa9051d546 ("clk: ti: dra7: add new clkctrl data")
-Cc: linux-clk@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: Suman Anna <s-anna@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/ti/clk-7xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-index b57fe09b428be..9dd6185a4b4e2 100644
---- a/drivers/clk/ti/clk-7xx.c
-+++ b/drivers/clk/ti/clk-7xx.c
-@@ -683,7 +683,7 @@ static const struct omap_clkctrl_reg_data dra7_l4per2_clkctrl_regs[] __initconst
- 	{ DRA7_L4PER2_MCASP2_CLKCTRL, dra7_mcasp2_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:0154:22" },
- 	{ DRA7_L4PER2_MCASP3_CLKCTRL, dra7_mcasp3_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:015c:22" },
- 	{ DRA7_L4PER2_MCASP5_CLKCTRL, dra7_mcasp5_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:016c:22" },
--	{ DRA7_L4PER2_MCASP8_CLKCTRL, dra7_mcasp8_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:0184:24" },
-+	{ DRA7_L4PER2_MCASP8_CLKCTRL, dra7_mcasp8_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:0184:22" },
- 	{ DRA7_L4PER2_MCASP4_CLKCTRL, dra7_mcasp4_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:018c:22" },
- 	{ DRA7_L4PER2_UART7_CLKCTRL, dra7_uart7_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:01c4:24" },
- 	{ DRA7_L4PER2_UART8_CLKCTRL, dra7_uart8_bit_data, CLKF_SW_SUP, "l4per2-clkctrl:01d4:24" },
-@@ -828,8 +828,8 @@ static struct ti_dt_clk dra7xx_clks[] = {
- 	DT_CLK(NULL, "mcasp6_aux_gfclk_mux", "l4per2-clkctrl:01f8:22"),
- 	DT_CLK(NULL, "mcasp7_ahclkx_mux", "l4per2-clkctrl:01fc:24"),
- 	DT_CLK(NULL, "mcasp7_aux_gfclk_mux", "l4per2-clkctrl:01fc:22"),
--	DT_CLK(NULL, "mcasp8_ahclkx_mux", "l4per2-clkctrl:0184:22"),
--	DT_CLK(NULL, "mcasp8_aux_gfclk_mux", "l4per2-clkctrl:0184:24"),
-+	DT_CLK(NULL, "mcasp8_ahclkx_mux", "l4per2-clkctrl:0184:24"),
-+	DT_CLK(NULL, "mcasp8_aux_gfclk_mux", "l4per2-clkctrl:0184:22"),
- 	DT_CLK(NULL, "mmc1_clk32k", "l3init-clkctrl:0008:8"),
- 	DT_CLK(NULL, "mmc1_fclk_div", "l3init-clkctrl:0008:25"),
- 	DT_CLK(NULL, "mmc1_fclk_mux", "l3init-clkctrl:0008:24"),
--- 
-2.20.1
-
-
+The parents are from some other clk controller? Not external to the
+chip, right? If so, I still don't get it. Please add some sort of
+comment here in the code.
 
