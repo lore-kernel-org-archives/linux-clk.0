@@ -6,195 +6,102 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EFACA9EC0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 156ECCA9EC0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CCF921721
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:37:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAFF5218BA
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:41:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572273440;
-	bh=QLJ4Cj4VSPodXcRky8pTS+gbLyjrVxJZQ3CDH6ARyOM=;
+	s=default; t=1572273661;
+	bh=axoSaH+/ag7KHoYEGacTwTyxDf1dMkOkdtPW/9pcPzE=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=J6uWx3j4dT2D/ep+5kuS/7eUx7g9C9+lExT3lLHiBWN8LcDnfmn+8G7u4zWBraiJv
-	 DhiGN1spKyETjqJEzKlRgpQI0s+ATHai0lOoJ15STI1jA5zWWEkaO9wU/ycUklQT2l
-	 Mfd8lGUKF68pdvSQlNsC+0rVgAcX0NSm5GSYzPnI=
+	b=h4cgZOOEyrz0gcjdgo4E8gLC63S6VqMhwMP0ZHVpZb1pxUELXbm0MU+FdY9YXP72G
+	 vsGNU3uozRr+iKoMwCQ6g3OuqRY/6euuQudRiOMS1FdGBvy0wyJRd6A2+FCoiTc5xB
+	 Y8DOmCvXBEChN3phan2Gbtylt5U7Fu69dHVjQtOg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730373AbfJ1OhR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 10:37:17 -0400
-Received: from mail.kernel.org ([198.145.29.99]:38244 "EHLO mail.kernel.org"
+        id S2390249AbfJ1OlB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 10:41:01 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39236 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbfJ1OhR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:37:17 -0400
+        id S2390235AbfJ1OlB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Oct 2019 10:41:01 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B64B7208C0;
-        Mon, 28 Oct 2019 14:37:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 16AB321783;
+        Mon, 28 Oct 2019 14:41:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572273435;
-        bh=QLJ4Cj4VSPodXcRky8pTS+gbLyjrVxJZQ3CDH6ARyOM=;
+        s=default; t=1572273660;
+        bh=axoSaH+/ag7KHoYEGacTwTyxDf1dMkOkdtPW/9pcPzE=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=rlagd81iaVSZv9mJE3IZ5lTRVl7B1yTcyqV+DLl/Jfilprtc+skJLFbbOJ+RFCXZX
-         54pRqx7bFY9c1sgnePMByPlbCzEghwJ3T2O8yuEP/DlLKL4/5rJIQYwxYKGhTUeQIA
-         QVoDX7Gr4ShTVIGAMSMg3xH30XalXgzOo/oXiATQ=
+        b=tHm10/pItpS9JLcwM2Gidig8ScpFMHVidlghWROUuf3GEnkPCoG0uVlPL9r908Ywx
+         QubfCZpmP+wJC/nGkzjPl6Zi+bSW6Nfi0RWIfaGeVp7E28Lgan3QW4dtLaY8VzLQ1E
+         wfBVTOZSwfZN7ZW2BioTEn/UdFQFv4tw55PAlFQo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191024141344.7023-1-vkoul@kernel.org>
-References: <20191024141344.7023-1-vkoul@kernel.org>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Andy Gross <agross@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20190912132613.28093-4-t-kristo@ti.com>
+References: <20190912132613.28093-1-t-kristo@ti.com> <20190912132613.28093-4-t-kristo@ti.com>
+Cc:     tony@atomide.com, s-anna@ti.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: qcom: gcc: Add missing clocks in SM8150
-To:     Vinod Koul <vkoul@kernel.org>
+Subject: Re: [PATCHv3 03/10] clk: ti: clkctrl: add new exported API for checking standby info
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, mturquette@baylibre.com
 User-Agent: alot/0.8.1
-Date:   Mon, 28 Oct 2019 07:37:14 -0700
-Message-Id: <20191028143715.B64B7208C0@mail.kernel.org>
+Date:   Mon, 28 Oct 2019 07:40:59 -0700
+Message-Id: <20191028144100.16AB321783@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Vinod Koul (2019-10-24 07:13:44)
-> diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-> index 20877214acff..0334b2be5fca 100644
-> --- a/drivers/clk/qcom/gcc-sm8150.c
-> +++ b/drivers/clk/qcom/gcc-sm8150.c
-> @@ -1616,6 +1616,40 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk =3D {
->         },
->  };
-> =20
-> +/* external clocks so add BRANCH_HALT_SKIP */
-
-Ok. The comment is sort of worthless though. Which clk is external? The
-parent of this clk?
-
-And it seems very weird that we need this one to be halt skip because
-the parent isn't external and I don't know why this is marked with
-CLK_SET_RATE_PARENT. Are we going to allow gpll0 to be modified? gpll0
-looks to be a fixed rate PLL or something so probably we don't want the
-branch to allow consumers to change the main PLL frequency and it should
-be turned on before this clk is enabled.
-
-> +static struct clk_branch gcc_gpu_gpll0_clk_src =3D {
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x52004,
-> +               .enable_mask =3D BIT(15),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_gpu_gpll0_clk_src",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &gpll0.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
+Quoting Tero Kristo (2019-09-12 06:26:06)
+> diff --git a/drivers/clk/ti/clkctrl.c b/drivers/clk/ti/clkctrl.c
+> index d904a9a7626a..e3e0a66a6ce2 100644
+> --- a/drivers/clk/ti/clkctrl.c
+> +++ b/drivers/clk/ti/clkctrl.c
+> @@ -647,3 +650,33 @@ static void __init _ti_omap4_clkctrl_setup(struct de=
+vice_node *node)
+>  }
+>  CLK_OF_DECLARE(ti_omap4_clkctrl_clock, "ti,clkctrl",
+>                _ti_omap4_clkctrl_setup);
 > +
-> +/* these are external clocks so add BRANCH_HALT_SKIP */
-> +static struct clk_branch gcc_gpu_gpll0_div_clk_src =3D {
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x52004,
-> +               .enable_mask =3D BIT(16),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_gpu_gpll0_div_clk_src",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &gcc_gpu_gpll0_clk_src.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
+> +/**
+> + * ti_clk_is_in_standby - Check if clkctrl clock is in standby or not
+> + * @clk: clock to check standby status for
+> + *
+> + * Finds whether the provided clock is in standby mode or not. Returns
+> + * true if the provided clock is a clkctrl type clock and it is in stand=
+by,
+> + * false otherwise.
+> + */
+> +u32 ti_clk_is_in_standby(struct clk *clk)
+> +{
+> +       struct clk_hw *hw;
+> +       struct clk_hw_omap *hwclk;
+> +       u32 val;
 > +
->  static struct clk_branch gcc_gpu_iref_clk =3D {
->         .halt_reg =3D 0x8c010,
->         .halt_check =3D BRANCH_HALT,
-> @@ -1698,6 +1732,40 @@ static struct clk_branch gcc_npu_cfg_ahb_clk =3D {
->         },
->  };
-> =20
-> +/* external clocks so add BRANCH_HALT_SKIP */
-> +static struct clk_branch gcc_npu_gpll0_clk_src =3D {
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x52004,
-> +               .enable_mask =3D BIT(18),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_npu_gpll0_clk_src",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &gpll0.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
+> +       hw =3D __clk_get_hw(clk);
 > +
-> +/* external clocks so add BRANCH_HALT_SKIP */
-> +static struct clk_branch gcc_npu_gpll0_div_clk_src =3D {
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x52004,
-> +               .enable_mask =3D BIT(19),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_npu_gpll0_div_clk_src",
-> +                       .parent_hws =3D (const struct clk_hw *[]){
-> +                               &gcc_npu_gpll0_clk_src.clkr.hw },
-> +                       .num_parents =3D 1,
-> +                       .flags =3D CLK_SET_RATE_PARENT,
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
+> +       if (!omap2_clk_is_hw_omap(hw))
+> +               return false;
 > +
->  static struct clk_branch gcc_npu_trig_clk =3D {
->         .halt_reg =3D 0x4d00c,
->         .halt_check =3D BRANCH_VOTED,
-> @@ -2812,6 +2880,45 @@ static struct clk_branch gcc_ufs_card_phy_aux_hw_c=
-tl_clk =3D {
->         },
->  };
-> =20
-> +/* external clocks so add BRANCH_HALT_SKIP */
-
-The UFS ones have always been this way. My understanding is that UFS phy
-is the parent clk and it's not one when the driver enables it. I think
-Manu has clarified these and I still hope we can just turn them on by
-default and not model them in clk framework.
-
-> +static struct clk_branch gcc_ufs_card_rx_symbol_0_clk =3D {
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x7501c,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_ufs_card_rx_symbol_0_clk",
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
-[...]
-> +static struct clk_branch gcc_usb3_sec_phy_pipe_clk =3D {
-
-Same comment for USB as for UFS.
-
-> +       .halt_check =3D BRANCH_HALT_SKIP,
-> +       .clkr =3D {
-> +               .enable_reg =3D 0x10058,
-> +               .enable_mask =3D BIT(0),
-> +               .hw.init =3D &(struct clk_init_data){
-> +                       .name =3D "gcc_usb3_sec_phy_pipe_clk",
-> +                       .ops =3D &clk_branch2_ops,
-> +               },
-> +       },
-> +};
+> +       hwclk =3D to_clk_hw_omap(hw);
 > +
->  static struct clk_branch gcc_usb3_sec_phy_com_aux_clk =3D {
->         .halt_reg =3D 0x10054,
->         .halt_check =3D BRANCH_HALT,
+> +       val =3D ti_clk_ll_ops->clk_readl(&hwclk->enable_reg);
+> +
+> +       if (val & OMAP4_STBYST_MASK)
+> +               return true;
+> +
+> +       return false;
+
+This is returning true and false for a function that is returning u32...
+Why? Maybe just
+
+	return val & OMAP4_STBYST_MASK;
+
+and then it will be a u32 for the bit if it's set or 0 if it's not set?
+Otherwise, change the return type to bool instead of u32?
+
+> +}
+> +EXPORT_SYMBOL_GPL(ti_clk_is_in_standby);
