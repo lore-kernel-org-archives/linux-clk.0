@@ -4,26 +4,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FFE0CA9EBC
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59949CA9EBE
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5A1222BE
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26B7621850
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731784AbfJ1GHc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 02:07:32 -0400
-Received: from relmlor2.renesas.com ([210.160.252.172]:6876 "EHLO
-        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731716AbfJ1GHc (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 02:07:32 -0400
+        id S1731800AbfJ1GHd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 02:07:33 -0400
+Received: from relmlor1.renesas.com ([210.160.252.171]:6759 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731781AbfJ1GHd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 02:07:33 -0400
 X-IronPort-AV: E=Sophos;i="5.68,238,1569250800"; 
-   d="scan'208";a="29966529"
+   d="scan'208";a="30181606"
 Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 28 Oct 2019 15:07:31 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 28 Oct 2019 15:07:30 +0900
 Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id F31DC41717D7;
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id E043B4128CD7;
         Mon, 28 Oct 2019 15:07:30 +0900 (JST)
 From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
@@ -31,9 +31,9 @@ To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org,
         Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 2/4] dt-bindings: clock: renesas: rcar-usb2-clock-sel: Add power-domains and resets properties
-Date:   Mon, 28 Oct 2019 15:07:28 +0900
-Message-Id: <1572242850-9073-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+Subject: [PATCH v2 1/4] dt-bindings: clock: renesas: rcar-usb2-clock-sel: Fix clock[-name]s properties
+Date:   Mon, 28 Oct 2019 15:07:27 +0900
+Message-Id: <1572242850-9073-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 References: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
@@ -42,36 +42,42 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch adds missing required properties of power-domains and resets.
+Since the hardware requires to enable both USB 2.0 host and peripheral
+functional clock, this patch fixes the documentation.
 Fortunately, no one has this device node for now, so that we don't
 need to think of backward compatibility.
 
 Fixes: 311accb64570 ("clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0 clock selector PHY")
 Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- .../devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt        | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt     | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
 diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-index 5c1903f..bad876f 100644
+index 83f6c6a..5c1903f 100644
 --- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
 +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
-@@ -43,6 +43,9 @@ Required properties:
+@@ -38,7 +38,8 @@ Required properties:
+ - reg: offset and length of the USB 2.0 clock selector register block.
+ - clocks: A list of phandles and specifier pairs.
+ - clock-names: Name of the clocks.
+- - The functional clock must be "ehci_ohci"
++ - The functional clock of USB 2.0 host side must be "ehci_ohci"
++ - The functional clock of HS-USB side must be "hs-usb-if"
   - The USB_EXTAL clock pin must be "usb_extal"
   - The USB_XTAL clock pin must be "usb_xtal"
  - #clock-cells: Must be 0
-+- power-domains: A phandle and symbolic PM domain specifier.
-+                 See power/renesas,rcar-sysc.txt.
-+- resets: A list of phandles and specifier pairs.
- 
- Example (R-Car H3):
- 
-@@ -54,4 +57,6 @@ Example (R-Car H3):
- 			 <&usb_extal>, <&usb_xtal>;
- 		clock-names = "ehci_ohci", "hs-usb-if", "usb_extal", "usb_xtal";
+@@ -49,7 +50,8 @@ Example (R-Car H3):
+ 		compatible = "renesas,r8a7795-rcar-usb2-clock-sel",
+ 			     "renesas,rcar-gen3-usb2-clock-sel";
+ 		reg = <0 0xe6590630 0 0x02>;
+-		clocks = <&cpg CPG_MOD 703>, <&usb_extal>, <&usb_xtal>;
+-		clock-names = "ehci_ohci", "usb_extal", "usb_xtal";
++		clocks = <&cpg CPG_MOD 703>, <&cpg CPG_MOD 704>,
++			 <&usb_extal>, <&usb_xtal>;
++		clock-names = "ehci_ohci", "hs-usb-if", "usb_extal", "usb_xtal";
  		#clock-cells = <0>;
-+		power-domains = <&sysc R8A7795_PD_ALWAYS_ON>>;
-+		resets = <&cpg 703>, <&cpg 704>;
  	};
 -- 
 2.7.4
