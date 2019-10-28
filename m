@@ -2,149 +2,94 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AF1CA9EC2
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DB3CA9EC0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 15:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F95222C5
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:57:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ltTYQgdf"
+	by mail.kernel.org (Postfix) with ESMTP id DCE1721479
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 15:07:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572275235;
+	bh=BxVgZAO9kEGOyZ/yQx8KCBKdXlmj3GYDK/1L7KJc+oo=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=i5w/krbFfAOdT2kuFc/+Sseskrd3i1d7BVjHGqsjRYRZRM9zaCkaLiKxoD3F8rtyY
+	 xFAEZp/KIxhJatBEd+C4qEu7fcpS7j+2kf59cOYPTYYC1PuxKIpD1gIgevr1ohj4ZQ
+	 GXo9np+qODVOU/bsOPKVtFZbRsoVDxNpbZrDVNjk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390517AbfJ1O5K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 10:57:10 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:16617 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390461AbfJ1O5K (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 10:57:10 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5db701cd0001>; Mon, 28 Oct 2019 07:57:17 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 28 Oct 2019 07:57:09 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 28 Oct 2019 07:57:09 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 28 Oct
- 2019 14:57:08 +0000
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Mon, 28 Oct 2019 14:57:08 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id C8DA543032; Mon, 28 Oct 2019 16:57:06 +0200 (EET)
-Date:   Mon, 28 Oct 2019 16:57:06 +0200
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "Rob Herring" <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        "Nicolas Chauvet" <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 01/17] clk: tegra: Add custom CCLK implementation
-Message-ID: <20191028145706.GF27141@pdeschrijver-desktop.Nvidia.com>
-References: <20191015211618.20758-1-digetx@gmail.com>
- <20191015211618.20758-2-digetx@gmail.com>
+        id S1728695AbfJ1PHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 11:07:14 -0400
+Received: from mail.kernel.org ([198.145.29.99]:46054 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726945AbfJ1PHO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Oct 2019 11:07:14 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B76620873;
+        Mon, 28 Oct 2019 15:07:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572275233;
+        bh=BxVgZAO9kEGOyZ/yQx8KCBKdXlmj3GYDK/1L7KJc+oo=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=rNrXSAfNy4S2Yef4+ylitkwJDt4rdyQOFkiMRZiHv3ot72TsTITl6Shanpey+MgnH
+         DvLHux9P7aWdAuHLCE+cLuK7XxVOrz6kP3oyugKUHh+02yXquB/RGT6FOxXciGbROj
+         bZkRsVCTKK/845IJlrO87rsf2duVdQz3P0O3uf1M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20191015211618.20758-2-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572274637; bh=a3iQGGwz0Ivg7sfs0KItL4POFuee26IhkUhjou3eb4M=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=ltTYQgdfMjWQKG2jN1sK+ylYqIivDrD90MVQgPlGFVpj2Sp27DCwSzppeJbib+j0j
-         CLEn+3hwOL3Fvb3JPx5nmrIeLBJuGCOGjdGnF196NJippTqXGkyD45hQ3XydK2WOZ5
-         w3afkvcQ2jUpA188B3DIQoik5OX2/feYlEqZdf68hVJ0iu4IbVBq4t+pArmqjBeCxH
-         UctsgV6EGdwyyuaaQJSo4clSL9PAzOHwIW16j96+H21FqJGnv4J8JcSDkmNQO4zH+n
-         toCpLsBLEgVUD3to458/C7zcPfhcz9Xu/xwUfqsIYqWMlPkP1Vsn27NJTdzaVxmVAV
-         Rbi+wn2KM9YWg==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191001182546.70090-1-john.stultz@linaro.org>
+References: <20191001182546.70090-1-john.stultz@linaro.org>
+Cc:     Peter Griffin <peter.griffin@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Allison Randal <allison@lohutok.net>,
+        linux-clk@vger.kernel.org, John Stultz <john.stultz@linaro.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER
+To:     John Stultz <john.stultz@linaro.org>,
+        lkml <linux-kernel@vger.kernel.org>
+User-Agent: alot/0.8.1
+Date:   Mon, 28 Oct 2019 08:07:12 -0700
+Message-Id: <20191028150713.5B76620873@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Oct 16, 2019 at 12:16:02AM +0300, Dmitry Osipenko wrote:
-> CCLK stands for "CPU Clock", CPU core is running off CCLK. CCLK supports
-> multiple parents and it has internal clock divider which uses clock
-> skipping technique, meaning that CPU's voltage should correspond to the
-> parent clock rate and not CCLK. PLLX is the main CCLK parent that provides
-> clock rates above 1GHz and it has special property such that the CCLK's
-> internal divider is set into bypass mode when PLLX is set as a parent for
-> CCLK.
-> 
-> This patch forks generic Super Clock into CCLK implementation which takes
-> into account all CCLK specifics. The proper CCLK implementation is needed
-> by the upcoming Tegra20 CPUFreq driver update that will allow to utilize
-> the generic cpufreq-dt driver by moving intermediate clock handling into
-> the clock driver. Note that technically this all could be squashed into
-> clk-super, but result will be messier.
-> 
-> Note that currently all CCLKLP bits are left in the clk-super.c and only
-> CCLKG is supported by clk-tegra-super-cclk. It shouldn't be difficult
-> to move the CCLKLP bits, but CCLKLP is not used by anything in kernel
-> and thus better not to touch it for now.
+Quoting John Stultz (2019-10-01 11:25:46)
+> From: Peter Griffin <peter.griffin@linaro.org>
+>=20
+> As now we also need to probe in the reset driver as well.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: Allison Randal <allison@lohutok.net>
+> Cc: Peter Griffin <peter.griffin@linaro.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Signed-off-by: John Stultz <john.stultz@linaro.org>
+> ---
+>  drivers/clk/hisilicon/clk-hi6220.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/c=
+lk-hi6220.c
+> index b2c5b6bbb1c1..63a94e1b6785 100644
+> --- a/drivers/clk/hisilicon/clk-hi6220.c
+> +++ b/drivers/clk/hisilicon/clk-hi6220.c
+> @@ -86,7 +86,7 @@ static void __init hi6220_clk_ao_init(struct device_nod=
+e *np)
+>         hisi_clk_register_gate_sep(hi6220_separated_gate_clks_ao,
+>                                 ARRAY_SIZE(hi6220_separated_gate_clks_ao)=
+, clk_data_ao);
+>  }
+> -CLK_OF_DECLARE(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_i=
+nit);
+> +CLK_OF_DECLARE_DRIVER(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_c=
+lk_ao_init);
+> =20
 
-..
-
-> +	super->reg = reg;
-> +	super->lock = lock;
-> +	super->width = 4;
-> +	super->flags = clk_super_flags;
-> +	super->frac_div.reg = reg + 4;
-> +	super->frac_div.shift = 16;
-> +	super->frac_div.width = 8;
-> +	super->frac_div.frac_width = 1;
-> +	super->frac_div.lock = lock;
-> +	super->frac_div.flags = TEGRA_DIVIDER_SUPER;
-> +	super->div_ops = &tegra_clk_frac_div_ops;
-> +
-
-This is not right. The super clock divider is not a divider, it's a
-pulse skipper.
-
-> +	/* Data in .init is copied by clk_register(), so stack variable OK */
-> +	super->hw.init = &init;
-> +
-> +	clk = clk_register(NULL, &super->hw);
-> +	if (IS_ERR(clk))
-> +		kfree(super);
-> +
-> +	return clk;
-> +}
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index f81c10654aa9..095595a5b8a8 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -699,6 +699,10 @@ struct clk *tegra_clk_register_super_clk(const char *name,
->  		const char * const *parent_names, u8 num_parents,
->  		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
->  		spinlock_t *lock);
-> +struct clk *tegra_clk_register_super_cclk(const char *name,
-> +		const char * const *parent_names, u8 num_parents,
-> +		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
-> +		spinlock_t *lock);
->  
->  /**
->   * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
-> -- 
-> 2.23.0
-> 
+I'll add a comment about the reset driver to the code. Otherwise,
+applied to clk-next.
