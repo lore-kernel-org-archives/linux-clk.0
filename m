@@ -2,86 +2,78 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79505CA9EA0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 09:45:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E3D7CA9EA0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 09:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4154720B7C
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 09:45:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F9662184C
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 09:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572255950;
-	bh=NpA9WFAdCxizCJxZSvAxIdo/i5JN5nJYOoDLmsKAt/I=;
+	s=default; t=1572256747;
+	bh=ZwCgdPO2OUFOVEtZ6oM47tcFLWltuu8H2EOv4DYqqIo=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=ArQaWeLHrEWbnO6zGHkJ4LdHkVctKnTyAEYgVjd3I5RTcsWnNqXWezRCYOy/WEnmO
-	 CCJcnG/jFC+e3dxV8zrl2ZdxtS6V9iXLn2fztfDplDfP+12P3qnfwZyX2YUJTirI0q
-	 BQNRUkHvrN+4ueBe+30lToOPFrqZplTfkO4CV8yA=
+	b=nxC1wsrqIWCKy5gNxH21wX1yTY2USI2QmlPKhSZ+sq+sRAWX8Fpsfk3OeAlqVirpS
+	 h6zBel1sPbvBaxR/3YrLwZzYwD0hh68I09oT9D7bJVwv9owuwgI40FOGFNm2kkrQhL
+	 4mBqv53iqzvnnmG3tYTOAqMBkllnTEkvIQa70SSM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388051AbfJ1Jpu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 05:45:50 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42910 "EHLO mail.kernel.org"
+        id S1732724AbfJ1J7H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 05:59:07 -0400
+Received: from mail.kernel.org ([198.145.29.99]:44522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730486AbfJ1Jpt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Oct 2019 05:45:49 -0400
+        id S1728915AbfJ1J7G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Oct 2019 05:59:06 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4920E208C0;
-        Mon, 28 Oct 2019 09:45:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 27043208C0;
+        Mon, 28 Oct 2019 09:59:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572255949;
-        bh=NpA9WFAdCxizCJxZSvAxIdo/i5JN5nJYOoDLmsKAt/I=;
+        s=default; t=1572256746;
+        bh=ZwCgdPO2OUFOVEtZ6oM47tcFLWltuu8H2EOv4DYqqIo=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=DTkHA3nnwVaScqXjtw8VkSDfOUDg9xr+lg/z6q4znfjZND4muFY2zzmZ96N83EeeJ
-         XiH1eVY/3HLy0okTR/I1fcJKgbFJPsAX13l4O/S00GfCf2BY1BqJ2G3tAo6iHD0azG
-         nuhItMbAsrSz4rk88+dvjYNBJN2EJ1xLQWJy9r6A=
+        b=E9zqCHxMnovZc/WH0DVrG0OvJlApNtVho8JJ5HyCFjFottSnAMeLCOuFbh0MjG8sk
+         FfOvvan3GJXiabCvwPhDoPObSQjDrBoC+Gzq4nHniDPe0rAjSqYYFkMM8KZcsZB0P1
+         t4PB/RNlwtfYyfN4eaQsUs9VH9vQ2DvdMw7pMRVg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <f5d2b9c53f1ed5ccb1dd3c6624f56759d92e1689.1571771777.git.leonard.crestez@nxp.com>
-References: <f5d2b9c53f1ed5ccb1dd3c6624f56759d92e1689.1571771777.git.leonard.crestez@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-arm-kernel@lists.infradead.org
+In-Reply-To: <1115e221-1523-1a60-02a3-1f1939170e64@ti.com>
+References: <20191002120611.26121-1-t-kristo@ti.com> <1115e221-1523-1a60-02a3-1f1939170e64@ti.com>
+Cc:     linux-omap@vger.kernel.org, tony@atomide.com, aford173@gmail.com,
+        tomi.valkeinen@ti.com
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: imx8m: Use SYS_PLL1_800M as intermediate parent of CLK_ARM
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [PATCH 0/4] clk: ti: re-work divider clock support
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
 User-Agent: alot/0.8.1
-Date:   Mon, 28 Oct 2019 02:45:48 -0700
-Message-Id: <20191028094549.4920E208C0@mail.kernel.org>
+Date:   Mon, 28 Oct 2019 02:59:05 -0700
+Message-Id: <20191028095906.27043208C0@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Leonard Crestez (2019-10-22 12:21:28)
-> During cpu frequency switching the main "CLK_ARM" is reparented to an
-> intermediate "step" clock. On imx8mm and imx8mn the 24M oscillator is
-> used for this purpose but it is extremely slow, increasing wakeup
-> latencies to the point that i2c transactions can timeout and system
-> becomes unresponsive.
+Quoting Tero Kristo (2019-10-24 01:03:20)
+> On 02/10/2019 15:06, Tero Kristo wrote:
+> > Hi,
+> >=20
+> > The existing divider clock support appears to have an inherent bug
+> > because of the bit field width implementation and limitation of divider
+> > values based on this. The limitation by bit field only is not enough,
+> > as we can have divider settings which accept only certain range of
+> > dividers within the full range of the bit-field.
+> >=20
+> > Because of this, the divider clock is re-implemented to use min,max,mask
+> > values instead of just the bit-field.
 >=20
-> Fix by switching the "step" clk to SYS_PLL1_800M, matching the behavior
-> of imx8m cpufreq drivers in imx vendor tree.
->=20
-> This bug was not immediately apparent because upstream arm64 defconfig
-> uses the "performance" governor by default so no cpufreq transitions
-> happen.
->=20
-> Fixes: ba5625c3e272 ("clk: imx: Add clock driver support for imx8mm")
-> Fixes: 96d6392b54db ("clk: imx: Add support for i.MX8MN clock driver")
->=20
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
+> Queued this up for 5.4 fixes, thanks.
 
-Applied to clk-fixes
+Is this a regression in 5.4-rc series? Please only send fixes for code
+that is broken by code that went into the merge window, or is super
+annoying and broken but we somehow didn't notice. If not, just let it
+sit in -next until the next merge window and it may still be backported
+to stable trees anyway.
 
