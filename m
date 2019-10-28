@@ -2,94 +2,130 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20DB3CA9EC0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 15:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97734CA9EC3
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 19:14:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCE1721479
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 15:07:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572275235;
-	bh=BxVgZAO9kEGOyZ/yQx8KCBKdXlmj3GYDK/1L7KJc+oo=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=i5w/krbFfAOdT2kuFc/+Sseskrd3i1d7BVjHGqsjRYRZRM9zaCkaLiKxoD3F8rtyY
-	 xFAEZp/KIxhJatBEd+C4qEu7fcpS7j+2kf59cOYPTYYC1PuxKIpD1gIgevr1ohj4ZQ
-	 GXo9np+qODVOU/bsOPKVtFZbRsoVDxNpbZrDVNjk=
+	by mail.kernel.org (Postfix) with ESMTP id 7AFE921835
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 19:14:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728695AbfJ1PHO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 11:07:14 -0400
-Received: from mail.kernel.org ([198.145.29.99]:46054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726945AbfJ1PHO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Oct 2019 11:07:14 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B76620873;
-        Mon, 28 Oct 2019 15:07:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572275233;
-        bh=BxVgZAO9kEGOyZ/yQx8KCBKdXlmj3GYDK/1L7KJc+oo=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=rNrXSAfNy4S2Yef4+ylitkwJDt4rdyQOFkiMRZiHv3ot72TsTITl6Shanpey+MgnH
-         DvLHux9P7aWdAuHLCE+cLuK7XxVOrz6kP3oyugKUHh+02yXquB/RGT6FOxXciGbROj
-         bZkRsVCTKK/845IJlrO87rsf2duVdQz3P0O3uf1M=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191001182546.70090-1-john.stultz@linaro.org>
-References: <20191001182546.70090-1-john.stultz@linaro.org>
-Cc:     Peter Griffin <peter.griffin@linaro.org>,
+        id S1730159AbfJ1TOb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 15:14:31 -0400
+Received: from smtp09.smtpout.orange.fr ([80.12.242.131]:59522 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729995AbfJ1TO0 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 15:14:26 -0400
+Received: from belgarion ([90.55.204.252])
+        by mwinf5d17 with ME
+        id K7EJ2100B5TFNlm037EJ4o; Mon, 28 Oct 2019 20:14:24 +0100
+X-ME-Helo: belgarion
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Mon, 28 Oct 2019 20:14:24 +0100
+X-ME-IP: 90.55.204.252
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Arnd Bergmann <arnd@arndb.de>,
+        Russell King <linux@arm.linux.org.uk>
+Cc:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Allison Randal <allison@lohutok.net>,
-        linux-clk@vger.kernel.org, John Stultz <john.stultz@linaro.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: hi6220: use CLK_OF_DECLARE_DRIVER
-To:     John Stultz <john.stultz@linaro.org>,
-        lkml <linux-kernel@vger.kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 28 Oct 2019 08:07:12 -0700
-Message-Id: <20191028150713.5B76620873@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Mark Brown <broonie@kernel.org>, linux-clk@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-leds@vger.kernel.org, linux-mmc@vger.kernel.org,
+        linux-mtd@lists.infradead.org, linux-rtc@vger.kernel.org,
+        linux-usb@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-fbdev@vger.kernel.org, linux-watchdog@vger.kernel.org,
+        alsa-devel@alsa-project.org
+Subject: Re: [PATCH 05/46] ARM: pxa: split up mach/hardware.h
+References: <20191018154052.1276506-1-arnd@arndb.de>
+        <20191018154201.1276638-5-arnd@arndb.de>
+X-URL:  http://belgarath.falguerolles.org/
+Date:   Mon, 28 Oct 2019 20:14:18 +0100
+In-Reply-To: <20191018154201.1276638-5-arnd@arndb.de> (Arnd Bergmann's message
+        of "Fri, 18 Oct 2019 17:41:20 +0200")
+Message-ID: <87d0egof79.fsf@belgarion.home>
+User-Agent: Gnus/5.130008 (Ma Gnus v0.8) Emacs/26 (gnu/linux)
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting John Stultz (2019-10-01 11:25:46)
-> From: Peter Griffin <peter.griffin@linaro.org>
->=20
-> As now we also need to probe in the reset driver as well.
->=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Allison Randal <allison@lohutok.net>
-> Cc: Peter Griffin <peter.griffin@linaro.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
-> Signed-off-by: John Stultz <john.stultz@linaro.org>
-> ---
->  drivers/clk/hisilicon/clk-hi6220.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/hisilicon/clk-hi6220.c b/drivers/clk/hisilicon/c=
-lk-hi6220.c
-> index b2c5b6bbb1c1..63a94e1b6785 100644
-> --- a/drivers/clk/hisilicon/clk-hi6220.c
-> +++ b/drivers/clk/hisilicon/clk-hi6220.c
-> @@ -86,7 +86,7 @@ static void __init hi6220_clk_ao_init(struct device_nod=
-e *np)
->         hisi_clk_register_gate_sep(hi6220_separated_gate_clks_ao,
->                                 ARRAY_SIZE(hi6220_separated_gate_clks_ao)=
-, clk_data_ao);
->  }
-> -CLK_OF_DECLARE(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_clk_ao_i=
-nit);
-> +CLK_OF_DECLARE_DRIVER(hi6220_clk_ao, "hisilicon,hi6220-aoctrl", hi6220_c=
-lk_ao_init);
-> =20
+Arnd Bergmann <arnd@arndb.de> writes:
 
-I'll add a comment about the reset driver to the code. Otherwise,
-applied to clk-next.
+> The mach/hardware.h is included in lots of places, and it provides
+> three different things on pxa:
+>
+> - the cpu_is_pxa* macros
+> - an indirect inclusion of mach/addr-map.h
+> - the __REG() and io_pv2() helper macros
+>
+> Split it up into separate <linux/soc/pxa/cpu.h> and mach/pxa-regs.h
+> headers, then change all the files that use mach/hardware.h to
+> include the exact set of those three headers that they actually
+> need, allowing for further more targeted cleanup.
+>
+> linux/soc/pxa/cpu.h can remain permanently exported and is now in
+> a global location along with similar headers. pxa-regs.h and
+> addr-map.h are only used in a very small number of drivers now
+> and can be moved to arch/arm/mach-pxa/ directly when those drivers
+> are to pass the necessary data as resources.
+
+For the pxa part, that looks fine to me.
+I'd like to focus a bit of Russell's attention to the sa11xx part (reminder in
+[1]), and more specifically :
+
+ - the change to drivers/pcmcia/soc_common.c
+ - the change to drivers/pcmcia/sa1111_generic.c
+
+I must admit my knowledge of PCMCIA is relatively poor, and even if the patch
+looks harmless, one never knows if Assebet will ever by same after ...
+
+Cheers.
+
+--
+Robert
+
+[1] Extract of the patch for Russell's scrutiny
+> diff --git a/drivers/pcmcia/sa1111_generic.c b/drivers/pcmcia/sa1111_generic.c
+> index 11783410223b..2f556fa37c43 100644
+> --- a/drivers/pcmcia/sa1111_generic.c
+> +++ b/drivers/pcmcia/sa1111_generic.c
+> @@ -17,7 +17,6 @@
+>  
+>  #include <pcmcia/ss.h>
+>  
+> -#include <mach/hardware.h>
+>  #include <asm/hardware/sa1111.h>
+>  #include <asm/mach-types.h>
+>  #include <asm/irq.h>
+... zip ...
+
+> diff --git a/drivers/pcmcia/soc_common.c b/drivers/pcmcia/soc_common.c
+> index 3a8c84bb174d..9276a628473d 100644
+> --- a/drivers/pcmcia/soc_common.c
+> +++ b/drivers/pcmcia/soc_common.c
+> @@ -47,8 +47,6 @@
+>  #include <linux/spinlock.h>
+>  #include <linux/timer.h>
+>  
+> -#include <mach/hardware.h>
+> -
+>  #include "soc_common.h"
+>  
+>  static irqreturn_t soc_common_pcmcia_interrupt(int irq, void *dev);
