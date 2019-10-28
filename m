@@ -2,149 +2,106 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC060CA9EBC
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 10:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DA74CA9EC1
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 11:37:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1E7B21734
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 10:51:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572259865;
-	bh=9OhlQBQfGJwsaiYR0zQLkgRNjoR5DNpZiAm81WHbbLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gO5k2v2V6vB3a2ooFw4KhO3i1SyjZ5PqgJOkhhMy1CUDR6Xt/A4Eo8fHfud32/vAd
-	 PU2E1X3wqL+4+2FtrzBOeqNfkn7NtMG1uUZlcJVc3TTP+b9HmDSxQuIlZLGBxryULT
-	 PdpdwzYcjZUUpeoPjJxO9AAabWbebnP1Oahn/ZSg=
+	by mail.kernel.org (Postfix) with ESMTP id 64A62204FD
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 11:37:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yqAyD27Z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388322AbfJ1KvC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 06:51:02 -0400
-Received: from mail.kernel.org ([198.145.29.99]:50860 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388297AbfJ1KvC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Oct 2019 06:51:02 -0400
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B62B820873;
-        Mon, 28 Oct 2019 10:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572259860;
-        bh=9OhlQBQfGJwsaiYR0zQLkgRNjoR5DNpZiAm81WHbbLs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=p0+JkOhaq96U+qp1FtMCnoQh25qovOzVvaK0XbvsxNlL6o/ivlM38FyDig2PM5jPw
-         ix1nl7s6ElT53Ah3vTvvkjhPLi9FzNMvMjPVh4h1C68GZlmlPOj5bBz1lt639hBz6U
-         972wNv6KP7fM88gg8bUFRslUrGRjhchW6LOPUhFg=
-Date:   Mon, 28 Oct 2019 18:50:39 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Fancy Fang <chen.fang@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: Re: [PATCH v4] clk: imx7ulp: do not export out IMX7ULP_CLK_MIPI_PLL
- clock
-Message-ID: <20191028105038.GB16985@dragon>
-References: <20191028080545.28275-1-chen.fang@nxp.com>
+        id S1731080AbfJ1LhH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 07:37:07 -0400
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:55836 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726463AbfJ1LhG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 07:37:06 -0400
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9SBb2Ar009056;
+        Mon, 28 Oct 2019 06:37:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572262622;
+        bh=UPbLgtY+TrqdzraEtAlRQOylIe52OKafaKR8yNPIM0g=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=yqAyD27ZAYDq+bdJ4E0rsz3nkf4ovzF+aBlahfxnTBZQRt2CUq+L9dPdCnlQmE1hU
+         /edla9jHm0oFSYtwp/uO2jKeq60e/o0hq6yzfU699HT4VqGbPGMhdWMxo7Yon3E7PQ
+         thwOuCUQj1+ZKo60fHCtTNoiC3n0NNKMUhzN4S0U=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9SBb2B1063414
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Oct 2019 06:37:02 -0500
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Mon, 28
+ Oct 2019 06:36:50 -0500
+Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Mon, 28 Oct 2019 06:36:50 -0500
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9SBaxnY018416;
+        Mon, 28 Oct 2019 06:37:00 -0500
+Subject: Re: [PATCH 0/4] clk: ti: re-work divider clock support
+To:     Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <mturquette@baylibre.com>
+CC:     <linux-omap@vger.kernel.org>, <tony@atomide.com>,
+        <aford173@gmail.com>
+References: <20191002120611.26121-1-t-kristo@ti.com>
+ <1115e221-1523-1a60-02a3-1f1939170e64@ti.com>
+ <20191028095906.27043208C0@mail.kernel.org>
+ <9361d516-a92a-39cd-dbc8-10de10fe6295@ti.com>
+From:   Tomi Valkeinen <tomi.valkeinen@ti.com>
+Message-ID: <13533ed2-1a91-2255-5f69-a28e81fba0aa@ti.com>
+Date:   Mon, 28 Oct 2019 13:36:59 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191028080545.28275-1-chen.fang@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <9361d516-a92a-39cd-dbc8-10de10fe6295@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 28, 2019 at 08:07:59AM +0000, Fancy Fang wrote:
-> The mipi pll clock comes from the MIPI PHY PLL output, so
-> it should not be a fixed clock.
+On 28/10/2019 12:23, Tero Kristo wrote:
+> On 28/10/2019 11:59, Stephen Boyd wrote:
+>> Quoting Tero Kristo (2019-10-24 01:03:20)
+>>> On 02/10/2019 15:06, Tero Kristo wrote:
+>>>> Hi,
+>>>>
+>>>> The existing divider clock support appears to have an inherent bug
+>>>> because of the bit field width implementation and limitation of divider
+>>>> values based on this. The limitation by bit field only is not enough,
+>>>> as we can have divider settings which accept only certain range of
+>>>> dividers within the full range of the bit-field.
+>>>>
+>>>> Because of this, the divider clock is re-implemented to use 
+>>>> min,max,mask
+>>>> values instead of just the bit-field.
+>>>
+>>> Queued this up for 5.4 fixes, thanks.
+>>
+>> Is this a regression in 5.4-rc series? Please only send fixes for code
+>> that is broken by code that went into the merge window, or is super
+>> annoying and broken but we somehow didn't notice. If not, just let it
+>> sit in -next until the next merge window and it may still be backported
+>> to stable trees anyway.
 > 
-> MIPI PHY PLL is in the MIPI DSI space, and it is used as
-> the bit clock for transferring the pixel data out and its
-> output clock is configured according to the display mode.
-> 
-> So it should be used only for MIPI DSI and not be exported
-> out for other usages.
-> 
-> Signed-off-by: Fancy Fang <chen.fang@nxp.com>
-> ---
-> ChangeLog v3->v4:
->  * Add some comments to 'IMX7ULP_CLK_MIPI_PLL'
->    clock.
-> 
->  Documentation/devicetree/bindings/clock/imx7ulp-clock.txt | 1 -
->  drivers/clk/imx/clk-imx7ulp.c                             | 3 +--
->  include/dt-bindings/clock/imx7ulp-clock.h                 | 6 ++++++
->  3 files changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> index a4f8cd478f92..93d89adb7afe 100644
-> --- a/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> +++ b/Documentation/devicetree/bindings/clock/imx7ulp-clock.txt
-> @@ -82,7 +82,6 @@ pcc2: pcc2@403f0000 {
->  		 <&scg1 IMX7ULP_CLK_APLL_PFD0>,
->  		 <&scg1 IMX7ULP_CLK_UPLL>,
->  		 <&scg1 IMX7ULP_CLK_SOSC_BUS_CLK>,
-> -		 <&scg1 IMX7ULP_CLK_MIPI_PLL>,
->  		 <&scg1 IMX7ULP_CLK_FIRC_BUS_CLK>,
->  		 <&scg1 IMX7ULP_CLK_ROSC>,
->  		 <&scg1 IMX7ULP_CLK_SPLL_BUS_CLK>;
-> diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
-> index 2022d9bead91..459b120b71d5 100644
-> --- a/drivers/clk/imx/clk-imx7ulp.c
-> +++ b/drivers/clk/imx/clk-imx7ulp.c
-> @@ -28,7 +28,7 @@ static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dumm
->  static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
->  static const char * const nic_sels[]		= { "firc", "ddr_clk", };
->  static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
-> -static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "mpll", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
-> +static const char * const periph_bus_sels[]	= { "dummy", "sosc_bus_clk", "dummy", "firc_bus_clk", "rosc", "nic1_bus_clk", "nic1_clk", "spll_bus_clk", };
->  static const char * const arm_sels[]		= { "divcore", "dummy", "dummy", "hsrun_divcore", };
->  
->  /* used by sosc/sirc/firc/ddr/spll/apll dividers */
-> @@ -75,7 +75,6 @@ static void __init imx7ulp_clk_scg1_init(struct device_node *np)
->  	clks[IMX7ULP_CLK_SOSC]		= imx_obtain_fixed_clk_hw(np, "sosc");
->  	clks[IMX7ULP_CLK_SIRC]		= imx_obtain_fixed_clk_hw(np, "sirc");
->  	clks[IMX7ULP_CLK_FIRC]		= imx_obtain_fixed_clk_hw(np, "firc");
-> -	clks[IMX7ULP_CLK_MIPI_PLL]	= imx_obtain_fixed_clk_hw(np, "mpll");
->  	clks[IMX7ULP_CLK_UPLL]		= imx_obtain_fixed_clk_hw(np, "upll");
->  
->  	/* SCG1 */
-> diff --git a/include/dt-bindings/clock/imx7ulp-clock.h b/include/dt-bindings/clock/imx7ulp-clock.h
-> index 6f66f9005c81..e9ef62f211fe 100644
-> --- a/include/dt-bindings/clock/imx7ulp-clock.h
-> +++ b/include/dt-bindings/clock/imx7ulp-clock.h
-> @@ -49,7 +49,13 @@
->  #define IMX7ULP_CLK_NIC1_DIV		36
->  #define IMX7ULP_CLK_NIC1_BUS_DIV	37
->  #define IMX7ULP_CLK_NIC1_EXT_DIV	38
-> +
-> +/* mpll clock is a special clock comes from
-> + * mipi DPHY PLL and should be used only for
-> + * mipi dsi instead of any other peripheral.
-> + */
->  #define IMX7ULP_CLK_MIPI_PLL		39
-> +
+> Tony/Tomi, how much do you care which one this hits into?
 
-The point of comment is to tell that the clock ID is unsupported and
-shouldn't be used in DT.
+Probably no hurry with this one, as the DSS side patch is enough to 
+avoid the bad divider.
 
-I reworded the comment and applied the patch.
+  Tomi
 
-Shawn
-
->  #define IMX7ULP_CLK_SIRC		40
->  #define IMX7ULP_CLK_SOSC_BUS_CLK	41
->  #define IMX7ULP_CLK_FIRC_BUS_CLK	42
-> -- 
-> 2.17.1
-> 
+-- 
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
