@@ -2,127 +2,149 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C27CA9EC0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:54:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AF1CA9EC2
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 679EF21744
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572274497;
-	bh=bDAkpnmPbY0ZEBQT9bdhKA6sZJqE13qWHCAXPLM5+Zc=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=RsHwPQ92uzi7rgH+BAUxCfO61XxJn46R89GbB175KBoDkyvAtDvB/Td64ZIz0WnC5
-	 WPfe+26DD9Drhii5h8XADzJkc7Z2RV4xNA8tTj/qBIuGyhstnwisoqTMezVwZwe6sN
-	 7Hrv3MbWRqJnrBXggFZlCPjkbRElIc9JBsm3H7bs=
+	by mail.kernel.org (Postfix) with ESMTP id B9F95222C5
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:57:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ltTYQgdf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390380AbfJ1Oy5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 10:54:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42266 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727227AbfJ1Oy4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Oct 2019 10:54:56 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ECD1C208C0;
-        Mon, 28 Oct 2019 14:54:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572274496;
-        bh=bDAkpnmPbY0ZEBQT9bdhKA6sZJqE13qWHCAXPLM5+Zc=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=G8qf+aG5E6ldgTjwdWHE20INP+M/SELSiDe4GvmI/hK2p3D/89WvwEef/IijeN5oi
-         QaAYABonL9IlTYVfWZVrAadRdr5eCdUOrhy7wUz8/ewOxgBxrSZDa73NnLaA7zvoH9
-         jKCjw+Rq1/nQDzxl8EpspAyAIZICYMWdE1LURhAk=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191005200521.GB4254@piout.net>
-References: <20190920153906.20887-1-alexandre.belloni@bootlin.com> <20190924122147.fojcu5u44letrele@pengutronix.de> <20190924202015.EFEBF20640@mail.kernel.org> <20191005200521.GB4254@piout.net>
-Cc:     u.kleine-koenig@pengutronix.de,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>,
+        id S2390517AbfJ1O5K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 10:57:10 -0400
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:16617 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390461AbfJ1O5K (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 10:57:10 -0400
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5db701cd0001>; Mon, 28 Oct 2019 07:57:17 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Mon, 28 Oct 2019 07:57:09 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Mon, 28 Oct 2019 07:57:09 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 28 Oct
+ 2019 14:57:08 +0000
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Mon, 28 Oct 2019 14:57:08 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id C8DA543032; Mon, 28 Oct 2019 16:57:06 +0200 (EET)
+Date:   Mon, 28 Oct 2019 16:57:06 +0200
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "Rob Herring" <robh+dt@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: at91: avoid sleeping early
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-User-Agent: alot/0.8.1
-Date:   Mon, 28 Oct 2019 07:54:55 -0700
-Message-Id: <20191028145455.ECD1C208C0@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        "Nicolas Chauvet" <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 01/17] clk: tegra: Add custom CCLK implementation
+Message-ID: <20191028145706.GF27141@pdeschrijver-desktop.Nvidia.com>
+References: <20191015211618.20758-1-digetx@gmail.com>
+ <20191015211618.20758-2-digetx@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191015211618.20758-2-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572274637; bh=a3iQGGwz0Ivg7sfs0KItL4POFuee26IhkUhjou3eb4M=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=ltTYQgdfMjWQKG2jN1sK+ylYqIivDrD90MVQgPlGFVpj2Sp27DCwSzppeJbib+j0j
+         CLEn+3hwOL3Fvb3JPx5nmrIeLBJuGCOGjdGnF196NJippTqXGkyD45hQ3XydK2WOZ5
+         w3afkvcQ2jUpA188B3DIQoik5OX2/feYlEqZdf68hVJ0iu4IbVBq4t+pArmqjBeCxH
+         UctsgV6EGdwyyuaaQJSo4clSL9PAzOHwIW16j96+H21FqJGnv4J8JcSDkmNQO4zH+n
+         toCpLsBLEgVUD3to458/C7zcPfhcz9Xu/xwUfqsIYqWMlPkP1Vsn27NJTdzaVxmVAV
+         Rbi+wn2KM9YWg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexandre Belloni (2019-10-05 13:05:21)
-> On 24/09/2019 13:20:15-0700, Stephen Boyd wrote:
-> > Quoting Uwe  (2019-09-24 05:21:47)
-> > > On Fri, Sep 20, 2019 at 05:39:06PM +0200, Alexandre Belloni wrote:
-> > > > Note that this was already discussed a while ago and Arnd said this=
- approach was
-> > > > reasonable:
-> > > >   https://lore.kernel.org/lkml/6120818.MyeJZ74hYa@wuerfel/
-> > > >=20
-> > > >  drivers/clk/at91/clk-main.c |  5 ++++-
-> > > >  drivers/clk/at91/sckc.c     | 20 ++++++++++++++++----
-> > > >  2 files changed, 20 insertions(+), 5 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/clk/at91/clk-main.c b/drivers/clk/at91/clk-mai=
-n.c
-> > > > index f607ee702c83..ccd48e7a3d74 100644
-> > > > --- a/drivers/clk/at91/clk-main.c
-> > > > +++ b/drivers/clk/at91/clk-main.c
-> > > > @@ -293,7 +293,10 @@ static int clk_main_probe_frequency(struct reg=
-map *regmap)
-> > > >               regmap_read(regmap, AT91_CKGR_MCFR, &mcfr);
-> > > >               if (mcfr & AT91_PMC_MAINRDY)
-> > > >                       return 0;
-> > > > -             usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_MAX_WAIT=
-);
-> > > > +             if (system_state < SYSTEM_RUNNING)
-> > > > +                     udelay(MAINF_LOOP_MIN_WAIT);
-> > > > +             else
-> > > > +                     usleep_range(MAINF_LOOP_MIN_WAIT, MAINF_LOOP_=
-MAX_WAIT);
-> > >=20
-> > > Given that this construct is introduced several times, I wonder if we
-> > > want something like:
-> > >=20
-> > >         static inline void early_usleep_range(unsigned long min, unsi=
-gned long max)
-> > >         {
-> > >                 if (system_state < SYSTEM_RUNNING)
-> > >                         udelay(min);
-> > >                 else
-> > >                         usleep_range(min, max);
-> > >         }
-> > >=20
-> >=20
-> > Maybe, but I think the intent is to not encourage this behavior? So
-> > providing a wrapper will make it "easy" and then we'll have to tell
-> > users to stop calling it. Another idea would be to make usleep_range()
-> > "do the right thing" and call udelay if the system isn't running. And
-> > another idea from tlgx[1] is to pull the delay logic into another clk op
-> > that we can call to see when the enable or prepare is done. That may be
-> > possible by introducing another clk_ops callback that when present
-> > indicates we should sleep or delay for so much time while waiting for
-> > the prepare or enable to complete.
-> >=20
-> > [1] https://lkml.kernel.org/r/alpine.DEB.2.11.1606061448010.28031@nanos
-> >=20
->=20
-> Do you want me to implement that now or are you planning to apply the
-> patch in the meantime ?
->=20
->=20
-=20
-I'll just apply this for now to clk-fixes and merge it up next week. It
-would be great to do the other idea though, as a long term effort to
-reduce all the busy loop code we have in clk drivers. No worries, I'll
-put it on the todo list.
+On Wed, Oct 16, 2019 at 12:16:02AM +0300, Dmitry Osipenko wrote:
+> CCLK stands for "CPU Clock", CPU core is running off CCLK. CCLK supports
+> multiple parents and it has internal clock divider which uses clock
+> skipping technique, meaning that CPU's voltage should correspond to the
+> parent clock rate and not CCLK. PLLX is the main CCLK parent that provides
+> clock rates above 1GHz and it has special property such that the CCLK's
+> internal divider is set into bypass mode when PLLX is set as a parent for
+> CCLK.
+> 
+> This patch forks generic Super Clock into CCLK implementation which takes
+> into account all CCLK specifics. The proper CCLK implementation is needed
+> by the upcoming Tegra20 CPUFreq driver update that will allow to utilize
+> the generic cpufreq-dt driver by moving intermediate clock handling into
+> the clock driver. Note that technically this all could be squashed into
+> clk-super, but result will be messier.
+> 
+> Note that currently all CCLKLP bits are left in the clk-super.c and only
+> CCLKG is supported by clk-tegra-super-cclk. It shouldn't be difficult
+> to move the CCLKLP bits, but CCLKLP is not used by anything in kernel
+> and thus better not to touch it for now.
 
+..
+
+> +	super->reg = reg;
+> +	super->lock = lock;
+> +	super->width = 4;
+> +	super->flags = clk_super_flags;
+> +	super->frac_div.reg = reg + 4;
+> +	super->frac_div.shift = 16;
+> +	super->frac_div.width = 8;
+> +	super->frac_div.frac_width = 1;
+> +	super->frac_div.lock = lock;
+> +	super->frac_div.flags = TEGRA_DIVIDER_SUPER;
+> +	super->div_ops = &tegra_clk_frac_div_ops;
+> +
+
+This is not right. The super clock divider is not a divider, it's a
+pulse skipper.
+
+> +	/* Data in .init is copied by clk_register(), so stack variable OK */
+> +	super->hw.init = &init;
+> +
+> +	clk = clk_register(NULL, &super->hw);
+> +	if (IS_ERR(clk))
+> +		kfree(super);
+> +
+> +	return clk;
+> +}
+> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
+> index f81c10654aa9..095595a5b8a8 100644
+> --- a/drivers/clk/tegra/clk.h
+> +++ b/drivers/clk/tegra/clk.h
+> @@ -699,6 +699,10 @@ struct clk *tegra_clk_register_super_clk(const char *name,
+>  		const char * const *parent_names, u8 num_parents,
+>  		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+>  		spinlock_t *lock);
+> +struct clk *tegra_clk_register_super_cclk(const char *name,
+> +		const char * const *parent_names, u8 num_parents,
+> +		unsigned long flags, void __iomem *reg, u8 clk_super_flags,
+> +		spinlock_t *lock);
+>  
+>  /**
+>   * struct tegra_sdmmc_mux - switch divider with Low Jitter inputs for SDMMC
+> -- 
+> 2.23.0
+> 
