@@ -2,118 +2,118 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1FF6CA9EBD
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4ADCA9EA0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 07:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEADC21850
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 06:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6FF1A21783
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 07:23:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572247431;
+	bh=MnY9sr8I3bfHyxgfhK6PlMUwTFXVF6KB9th48q+55hU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=hY88UMyCvLxLx3IOplkVW7pnQlqtA63qrqPjCLImK6tqlZvab7+LMPGnf1BZS51uY
+	 cOiO6HsvxCIVl3GkGIVy24C5z5Glsgp+e6Mu/OZJsptCsMb0II7oHhZGkGy1ZujMEz
+	 TN62gHEH5+idZXy8gIDXO9WdlbaIlI/t0N3T2Vdg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731814AbfJ1GHe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 02:07:34 -0400
-Received: from relmlor1.renesas.com ([210.160.252.171]:28066 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1731716AbfJ1GHd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 02:07:33 -0400
-X-IronPort-AV: E=Sophos;i="5.68,238,1569250800"; 
-   d="scan'208";a="30181609"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 28 Oct 2019 15:07:31 +0900
-Received: from localhost.localdomain (unknown [10.166.17.210])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 11EC44128CD7;
-        Mon, 28 Oct 2019 15:07:31 +0900 (JST)
-From:   Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, geert+renesas@glider.be
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 3/4] clk: renesas: rcar-usb2-clock-sel: Add multiple clocks management
-Date:   Mon, 28 Oct 2019 15:07:29 +0900
-Message-Id: <1572242850-9073-4-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
-References: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+        id S1730711AbfJ1HXv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 03:23:51 -0400
+Received: from mail.kernel.org ([198.145.29.99]:38812 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730346AbfJ1HXv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Oct 2019 03:23:51 -0400
+Received: from localhost (unknown [106.51.111.166])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 55C0520862;
+        Mon, 28 Oct 2019 07:23:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572247430;
+        bh=MnY9sr8I3bfHyxgfhK6PlMUwTFXVF6KB9th48q+55hU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=b4ogPxgTJgDpixpNUnqTsRoNGC1DZ7c+avhWfncU8E7wECw5hkNIAKMpPMhrCCMYb
+         lUHpbcv1h1zW2biieeveCL6fPYhgTgiv0XyEp7CJV55DkWxcFgLRfvNe8gZVxZO9Si
+         053upwrbsrLLsx12wMUyp4VJ4LTEP3dOVNRIxbsY=
+Date:   Mon, 28 Oct 2019 12:53:47 +0530
+From:   Vinod Koul <vkoul@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Andy Gross <agross@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc: Add missing clocks in SM8150
+Message-ID: <20191028072347.GJ2620@vkoul-mobl>
+References: <20190917091623.3453-1-vkoul@kernel.org>
+ <20190917161000.DAFF3206C2@mail.kernel.org>
+ <20191016122343.GM2654@vkoul-mobl>
+ <20191017174820.F08422089C@mail.kernel.org>
+ <20191021105435.GE2654@vkoul-mobl>
+ <20191027212527.AE3D021783@mail.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191027212527.AE3D021783@mail.kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This hardware needs to enable clocks of both host and peripheral.
-So, this patch adds multiple clocks management.
+On 27-10-19, 14:25, Stephen Boyd wrote:
+> Quoting Vinod Koul (2019-10-21 03:54:35)
+> > On 17-10-19, 10:48, Stephen Boyd wrote:
+> > > > > > diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+> > > > > > index 12ca2d14797f..13d4d14a5744 100644
+> > > > > > --- a/drivers/clk/qcom/gcc-sm8150.c
+> > > > > > +++ b/drivers/clk/qcom/gcc-sm8150.c
+> > > > > > @@ -1616,6 +1616,38 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
+> > > > > >         },
+> > > > > >  };
+> > > > > >  
+> > > > > > +static struct clk_branch gcc_gpu_gpll0_clk_src = {
+> > > > > > +       .halt_check = BRANCH_HALT_SKIP,
+> > > > > 
+> > > > > Why skip?
+> > > > 
+> > > > I will explore and add comments for that
+> > > > 
+> > > > > > +       .clkr = {
+> > > > > > +               .enable_reg = 0x52004,
+> > > > > > +               .enable_mask = BIT(15),
+> > > > > > +               .hw.init = &(struct clk_init_data){
+> > > > > > +                       .name = "gcc_gpu_gpll0_clk_src",
+> > > > > > +                       .parent_hws = (const struct clk_hw *[]){
+> > > > > > +                               &gpll0.clkr.hw },
+> > > > > > +                       .num_parents = 1,
+> > > > > > +                       .flags = CLK_SET_RATE_PARENT,
+> > > > > > +                       .ops = &clk_branch2_ops,
+> > > > > > +               },
+> > > > > > +       },
+> > > > > > +};
+> > > > > > +
+> > > > > > +static struct clk_branch gcc_gpu_gpll0_div_clk_src = {
+> > > > > > +       .halt_check = BRANCH_HALT_SKIP,
+> > > > > 
+> > > > > Why skip?
+> > > > > 
+> > > 
+> > > Any answer from the explorations?
+> > 
+> > Yeah so asking around the answer I got is that these are external
+> > clocks and we need cannot rely on CLK_OFF bit for these clocks
+> > 
+> 
+> The parents are from some other clk controller? Not external to the
+> chip, right? If so, I still don't get it. Please add some sort of
+> comment here in the code.
 
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
- drivers/clk/renesas/rcar-usb2-clock-sel.c | 30 ++++++++++++++++++++++++++++--
- 1 file changed, 28 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-usb2-clock-sel.c b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-index b97f5f9..4096506 100644
---- a/drivers/clk/renesas/rcar-usb2-clock-sel.c
-+++ b/drivers/clk/renesas/rcar-usb2-clock-sel.c
-@@ -26,9 +26,16 @@
- #define CLKSET0_PRIVATE		BIT(0)
- #define CLKSET0_EXTAL_ONLY	(CLKSET0_INTCLK_EN | CLKSET0_PRIVATE)
- 
-+enum {
-+	CLK_INDEX_EHCI_OHCI,
-+	CLK_INDEX_HS_USB,
-+	CLK_NUM
-+};
-+
- struct usb2_clock_sel_priv {
- 	void __iomem *base;
- 	struct clk_hw hw;
-+	struct clk_bulk_data clks[CLK_NUM];
- 	bool extal;
- 	bool xtal;
- };
-@@ -53,14 +60,25 @@ static void usb2_clock_sel_disable_extal_only(struct usb2_clock_sel_priv *priv)
- 
- static int usb2_clock_sel_enable(struct clk_hw *hw)
- {
--	usb2_clock_sel_enable_extal_only(to_priv(hw));
-+	struct usb2_clock_sel_priv *priv = to_priv(hw);
-+	int ret;
-+
-+	ret = clk_bulk_prepare_enable(CLK_NUM, priv->clks);
-+	if (ret)
-+		return ret;
-+
-+	usb2_clock_sel_enable_extal_only(priv);
- 
- 	return 0;
- }
- 
- static void usb2_clock_sel_disable(struct clk_hw *hw)
- {
--	usb2_clock_sel_disable_extal_only(to_priv(hw));
-+	struct usb2_clock_sel_priv *priv = to_priv(hw);
-+
-+	usb2_clock_sel_disable_extal_only(priv);
-+
-+	clk_bulk_disable_unprepare(CLK_NUM, priv->clks);
- }
- 
- /*
-@@ -128,6 +146,14 @@ static int rcar_usb2_clock_sel_probe(struct platform_device *pdev)
- 	if (IS_ERR(priv->base))
- 		return PTR_ERR(priv->base);
- 
-+	priv->clks[CLK_INDEX_EHCI_OHCI].clk = devm_clk_get(dev, "ehci_ohci");
-+	if (IS_ERR(priv->clks[CLK_INDEX_EHCI_OHCI].clk))
-+		return PTR_ERR(priv->clks[CLK_INDEX_EHCI_OHCI].clk);
-+
-+	priv->clks[CLK_INDEX_HS_USB].clk = devm_clk_get(dev, "hs-usb-if");
-+	if (IS_ERR(priv->clks[CLK_INDEX_HS_USB].clk))
-+		return PTR_ERR(priv->clks[CLK_INDEX_HS_USB].clk);
-+
- 	pm_runtime_enable(dev);
- 	pm_runtime_get_sync(dev);
- 
+Yeah I have added a comment and posted v2 few days back.
+
+Thanks
 -- 
-2.7.4
-
+~Vinod
