@@ -2,186 +2,128 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46F9FCA9EC0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:17:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D1CDCA9EC0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086E221721
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:17:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D81920659
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:27:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i7knxtPb"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="WHVplwL/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390020AbfJ1ORq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 10:17:46 -0400
-Received: from mail-il1-f194.google.com ([209.85.166.194]:40913 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730033AbfJ1ORq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 10:17:46 -0400
-Received: by mail-il1-f194.google.com with SMTP id d83so8308625ilk.7;
-        Mon, 28 Oct 2019 07:17:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=dyrpC3p6vL18b1O3dLqA/KgcilibjGWnZgSsfyy6puw=;
-        b=i7knxtPbtmf3aegRshvbyPqat9NZGgNvYw9ZueFZpr89A9061oAXpfFiQMQcx/eMI8
-         wFnFrpqTvWp/BVUd9YtJkOFPM1QRobOFKIm6jpxHH+FqbGRkWdZnecyVJoCtDT7aj/B4
-         2L5wqaS4cG5DtyhyE/oSfY+n+y6Gxbw46l66/hc/qbXyjW4FgkGhDvJ+tb3w5Scy6RHs
-         p5dOEzHl/aaT8SNc/0o4hHInX60YvP7lm5SMaXIsc3FP9ogz42MAsm1vPKGv4yEni8zn
-         D67ZqKK5imsvCpSAgdnv5xOUb9TBnmXjYzH6V+d2Uemuoc/nzkMZb3zjFGfH8tQZH+QU
-         tCug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=dyrpC3p6vL18b1O3dLqA/KgcilibjGWnZgSsfyy6puw=;
-        b=VujhB107jXp/9pRiW316rfRGOU4hrQpofk8vgC1TfSlATts8ZV5AreUCLgnV3EK6UC
-         i7YfAxoiPcQwebkb/JwzBHbwcWkXmG98xT2c4zxgM8YyuwUYcFgoW1YuwZMjFrhyXV3y
-         NAlT3611rxzd80yLMKcDxRYg8xcziGtSovFt8Vh+AqG32vcExYRfdk5HPzUNYI5tyt2/
-         wnY7Ke6BdDb7zSEcoEXqrcLSAbDdZo+DeWCFg7KwdptIdD88rO3f6OY0tVoyMoDsNhV1
-         pfGM7OFoE3690d++iYmie9K3ZkqzlDuhJr9mYZ6giQv0YScemT8dCnDYYP52hpJnUF+R
-         zruQ==
-X-Gm-Message-State: APjAAAVDn5Q9g+x3EjfIxnbq219GkxvNkBdnjDTt1weAE7jstbgG0M2w
-        HGchNQa317L1zoO/TuwtMoNOJf2ky7CChS2f0B8=
-X-Google-Smtp-Source: APXvYqzHYbHOSKaCMZZO31hIKXhuEOFg1chEObrthPUI9TcC7sp9A2sOKkiHceAldWYi+nqT25hPdcnbdX4dT+oFbbo=
-X-Received: by 2002:a92:17c8:: with SMTP id 69mr21100233ilx.42.1572272264815;
- Mon, 28 Oct 2019 07:17:44 -0700 (PDT)
+        id S1728939AbfJ1O16 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 10:27:58 -0400
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:9916 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727148AbfJ1O15 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 10:27:57 -0400
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5db6faf20003>; Mon, 28 Oct 2019 07:28:02 -0700
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 28 Oct 2019 07:27:57 -0700
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 28 Oct 2019 07:27:57 -0700
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 28 Oct
+ 2019 14:27:56 +0000
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Mon, 28 Oct 2019 14:27:56 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id F352D42C6C; Mon, 28 Oct 2019 16:27:53 +0200 (EET)
+Date:   Mon, 28 Oct 2019 16:27:53 +0200
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
+ enable-bit on rate's recalculation
+Message-ID: <20191028142753.GC27141@pdeschrijver-desktop.Nvidia.com>
+References: <20190723025245.27754-1-digetx@gmail.com>
 MIME-Version: 1.0
-References: <20191002011555.36571-1-jeffrey.l.hugo@gmail.com>
- <20191002011640.36624-1-jeffrey.l.hugo@gmail.com> <20191017215023.2BFEC20872@mail.kernel.org>
- <CAOCk7NqgWkt6BwY75eGS2dbJ7GGk3DqH5NC0VLHUq4fc6WuYog@mail.gmail.com>
- <CAOCk7Np_Wn9JZ8JQCiDg1w+xcTVW9fhvtCA-k5ysc2juHZuvUw@mail.gmail.com> <20191027213659.23423205F4@mail.kernel.org>
-In-Reply-To: <20191027213659.23423205F4@mail.kernel.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Mon, 28 Oct 2019 08:17:33 -0600
-Message-ID: <CAOCk7Npk1zdL2Y3nMxYCXeUj5deJKyoJSSbYCw1V+9ZNvxspdw@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] clk: qcom: Add MSM8998 GPU Clock Controller
- (GPUCC) driver
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20190723025245.27754-1-digetx@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1572272882; bh=Mhj1wiVJEDOxWkpi52krED0OLh0170NOhW7y0wpgFsw=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=WHVplwL/GMMzf/na6Bvwo0v0+JgbD2dh9H+LllDesfjqN4EteMwr78RimXvb3zjtx
+         IEgSBjCYy1lYxVAVteR2yiSj3hDzte4yZwLClVvCbXs+OelGQQU9Ef1ZOp/eaCEXua
+         HE5m5W2MGU2FYXGOKVRlwJ3fTnD645wLV0q8p3EFpKwy4sJpThzeGdU5d7S0NlHGWM
+         TNyTQ8BZF9LRxxgbu35T2vmIL3OYdBj0XIDf8WiHg5x6HtGjEGrauJ+RGbbT0lPnVB
+         3kjZBOgGZzE5alwY82cAt5+aOn0xjlBjP00aJ6YPj2xz1O+XhQ2p3TzO7nIPkj+phM
+         sG1OnMeOOAWiQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Oct 27, 2019 at 3:36 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Jeffrey Hugo (2019-10-18 14:11:09)
-> > On Thu, Oct 17, 2019 at 5:16 PM Jeffrey Hugo <jeffrey.l.hugo@gmail.com> wrote:
-> > >
-> > > On Thu, Oct 17, 2019 at 3:50 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Jeffrey Hugo (2019-10-01 18:16:40)
-> > > > > +static const struct freq_tbl ftbl_gfx3d_clk_src[] = {
-> > > > > +       F(180000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(257000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(342000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(414000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(515000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(596000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(670000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       F(710000000, P_GPUPLL0_OUT_EVEN, 2, 0, 0),
-> > > > > +       { }
-> > > >
-> > > > I guess this one doesn't do PLL ping pong? Instead we just reprogram the
-> > > > PLL all the time? Can we have rcg2 clk ops that set the rate on the
-> > > > parent to be exactly twice as much as the incoming frequency? I thought
-> > > > we already had this support in the code. Indeed, it is part of
-> > > > _freq_tbl_determine_rate() in clk-rcg.c, but not yet implemented in the
-> > > > same function name in clk-rcg2.c! Can you implement it? That way we
-> > > > don't need this long frequency table, just this weird one where it looks
-> > > > like:
-> > > >
-> > > >         { .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 }
-> > > >         { }
-> > > >
-> > > > And then some more logic in the rcg2 ops to allow this possibility for a
-> > > > frequency table when CLK_SET_RATE_PARENT is set.
-> > >
-> > > Does not do PLL ping pong.  I'll look at extending the rcg2 ops like
-> > > you describe.
-> >
-> > Am I missing something?  From what I can tell, what you describe is
-> > not implemented.
-> >
-> > The only in-tree example of a freq_tbl with only a src and a pre_div
-> > defined for rcg ops is for the tv_src clk in mmcc-msm8960 [1]
-> > However, that uses a variant of rcg ops, clk_rcg_bypass_ops, not clk_rcg_ops.
-> >
-> > clk_rcg_bypass_ops has its own determine_rate implementation which
-> > does not utilize _freq_tbl_determine_rate(), and can only do a 1:1
-> > input rate to output ratio (we want a 1:2).
-> >
-> > _freq_tbl_determine_rate() in either rcg_ops or rcg2_ops won't work,
-> > because they both use qcom_find_freq() which doesn't work when your
-> > table doesn't specify any frequencies (f->freq is 0).
->
-> Yes. You have to have some sort of frequency table to tell us what the
-> source and predivider to use.
->
-> > qcom_find_freq() won't iterate through the table, therefore f in
-> > qcom_find_freq() won't be pointing at the end of the table (the null
-> > entry), so when qcom_find_freq decrements f in the return, it actually
-> > goes off the beginning of the array in an array out of bounds
-> > violation.
->
-> Ouch!
->
-> >
-> > Please advise how you would like to proceed.
->
-> Please have a frequency table like
->
->  { .src = SOME_PLL, .div = 4 }
->
->
-> >
-> > I can still extend rcg2_ops to do what you want, but it won't be based
-> > on what rcg_ops is doing.
->
-> Why isn't rcg_ops doing it? The idea is to copy whatever is happening
-> with this snippet in the _freq_tbl_determine_rate() in rcg.c to rcg2.c
+On Tue, Jul 23, 2019 at 05:52:44AM +0300, Dmitry Osipenko wrote:
+> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
+> have any effect in that case. Please note that there are no known bugs
+> caused by the missing check.
+> 
 
-That more or less exists in both cases, although rcg2_ops may need a
-bit of additional work.  The problem is that in both cases, before
-this snippet, we've already called qcom_find_freq(), and in both cases
-(rcg_ops and rcg2_ops), f will be an invalid entry and we won't have
-the proper pre_div value.
+Technically this is not quite true, but for the purposes of CCF you can
+treat it that way. This bits defines if the value in the lower 16 bits
+of the divider register is used to configure the divider or if the
+contents of the UART DLM/DLL registers is used. So the divider isn't
+actually bypassed, it's just configured differently.
+In practice this bit is only set when the divider is non-zero when doing
+set rate. So the extra test isn't strictly needed as long as the sw
+running before the kernel also ensures the bit is only set when the
+divider is non-zero.
 
->
->         clk_flags = clk_hw_get_flags(hw);
->         p = clk_hw_get_parent_by_index(hw, index);
->         if (clk_flags & CLK_SET_RATE_PARENT) {
->                 rate = rate * f->pre_div;
->
-> We have checked for CLK_SET_RATE_PARENT from the beginning. Maybe it was
-> always broken! If the frequency table pointer can return us the pre div
-> and source then we can do math to ask the parent PLL for something.
->
-> >
-> > I can spin a rcg2_ops variant to do what you want, with a custom
-> > determine_rate, but it doesn't seem like I'll really be saving any
-> > lines of code.  Whatever I eliminate by minimizing the gfx3d
-> > freq_table I will surely be putting into clk-rcg2.c
-> >
-> > Or, I can just drop this idea and keep the freq_tbl as it is.  Seems
-> > like just a one off scenario.
->
-> Please make rcg2 clk ops "do the right thing" when the flag
-> CLK_SET_RATE_PARENT is set and the frequency table is just a
-> source/divider sort of thing. That way we don't have to have different
-> clk ops or even put anything in the frequency table besides the source
-> PLL we want to use and the predivider we want to configure.
->
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 
-Got it.  Will do.
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+> 
+> Changelog:
+> 
+> v2: Changed the commit's description from 'Fix' to 'Add' in response to the
+>     Stephen's Boyd question about the need to backport the patch into stable
+>     kernels. The backporting is not really needed.
+> 
+>  drivers/clk/tegra/clk-divider.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+> index e76731fb7d69..f33c19045386 100644
+> --- a/drivers/clk/tegra/clk-divider.c
+> +++ b/drivers/clk/tegra/clk-divider.c
+> @@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+>  	int div, mul;
+>  	u64 rate = parent_rate;
+>  
+> -	reg = readl_relaxed(divider->reg) >> divider->shift;
+> -	div = reg & div_mask(divider);
+> +	reg = readl_relaxed(divider->reg);
+> +
+> +	if ((divider->flags & TEGRA_DIVIDER_UART) &&
+> +	    !(reg & PERIPH_CLK_UART_DIV_ENB))
+> +		return rate;
+> +
+> +	div = (reg >> divider->shift) & div_mask(divider);
+>  
+>  	mul = get_mul(divider);
+>  	div += mul;
+> -- 
+> 2.22.0
+> 
