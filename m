@@ -2,184 +2,85 @@ Return-Path: <SRS0=ANa5=YV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DCADCA9EC0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:42:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D005CA9EC0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:43:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEA9821721
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:42:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="bvQwmEjc"
+	by mail.kernel.org (Postfix) with ESMTP id 1519921744
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 14:43:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572273796;
+	bh=BOflCilYti2drkMcOH9FYOtU0uFs1ARO5iv4EuX7X8U=;
+	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
+	b=TOTfu4yEsUdqIVmgCm8mdvKb8ydqunTPKUouYw2JPuu6k82RVWV0oBh/VfqigEy4P
+	 1e+fQ8FXOumD0b+O7pR9D5Cr5HCWWXfTFItGpt5bL1f80AYdX+f4A818n+q1+OTSVs
+	 fy5sd4Hu2kaTxtWpwj0WVUDjocVfpOfTNs56t+QU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfJ1OmC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 10:42:02 -0400
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:15113 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbfJ1OmC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 28 Oct 2019 10:42:02 -0400
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5db6fe400000>; Mon, 28 Oct 2019 07:42:08 -0700
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Mon, 28 Oct 2019 07:42:00 -0700
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Mon, 28 Oct 2019 07:42:00 -0700
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 28 Oct
- 2019 14:42:00 +0000
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
- DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
- 15.0.1473.3; Mon, 28 Oct 2019 14:41:59 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 7902243032; Mon, 28 Oct 2019 16:41:57 +0200 (EET)
-Date:   Mon, 28 Oct 2019 16:41:57 +0200
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        "Prashant Gaikwad" <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] clk: tegra: divider: Support enable-bit for Super
- clocks
-Message-ID: <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
-References: <20190723025245.27754-1-digetx@gmail.com>
- <20190723025245.27754-2-digetx@gmail.com>
+        id S2390271AbfJ1OnP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 10:43:15 -0400
+Received: from mail.kernel.org ([198.145.29.99]:39666 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727982AbfJ1OnP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Oct 2019 10:43:15 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11CFA21721;
+        Mon, 28 Oct 2019 14:43:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572273795;
+        bh=BOflCilYti2drkMcOH9FYOtU0uFs1ARO5iv4EuX7X8U=;
+        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
+        b=aWUWE+ZkmBGGqlagft8TjjyV1Ue2OaQYoQFsMPRtsmQA3qh7KxBv59imY/yXHuOKS
+         qp3RptX/qo4IAJ6eqzLV9oijkmQ0qdl9wI79gbueXEGTi3rUvb6xmZwKGPV2c31v3k
+         Zqolx7JJAo9Ou48tQ6tLNkJ8OMWEW7tCQdqvmW04=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20190723025245.27754-2-digetx@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1572273728; bh=06nnWkX/y2hBb/UJENOgGV/3SZIw81i3749bZO7gUGg=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=bvQwmEjcBJGTgHHPkQCfdBxKvgc4KtOOSQ6K6A6J2mBqC5wA7qZOIvgQW4reP1rlp
-         5G9pBGCEBL1hWz6kV0Z/j1b1gpFEQ5MSXXgQvJ7nCk8u/siM6GE/4Mb0t8s5Z9ET2e
-         9mB2MP991+31ePo9SdJ5XS2T86thlnvT0QE8JK/S1jVFB+FpGbYdh1VAaxXMe2lMuv
-         1fZ+cL/Zyg6/u9sxgGa81R/ooiXhk7XrVOuw8MfCaB4zK9Rr5WroXSeF3zo9aqGeOs
-         KiHwf+QGSN8n6AhYyZea4T7Qexqof4E5C37NMdMqtTl7/ffEUFYQycnUr+bnFDdfnh
-         AflViycU0wQLg==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a88261a3-4012-1497-dd82-e41c0f328afd@ti.com>
+References: <20190912132613.28093-1-t-kristo@ti.com> <ef764d1c-8ebc-4b64-4543-7b296327e197@ti.com> <20191010143521.GX5610@atomide.com> <e37f9a2f-c554-300f-0866-8c8651941585@ti.com> <a88261a3-4012-1497-dd82-e41c0f328afd@ti.com>
+Cc:     linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, s-anna@ti.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCHv3 00/10] clk: ti: remoteproc / iommu support patches
+To:     Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+User-Agent: alot/0.8.1
+Date:   Mon, 28 Oct 2019 07:43:14 -0700
+Message-Id: <20191028144315.11CFA21721@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Jul 23, 2019 at 05:52:45AM +0300, Dmitry Osipenko wrote:
-> All Super clocks have a divider that has the enable bit.
-> 
+Quoting Tero Kristo (2019-10-24 05:28:23)
+> On 10/10/2019 18:32, Tero Kristo wrote:
+> > On 10/10/2019 17:35, Tony Lindgren wrote:
+> >> * Tero Kristo <t-kristo@ti.com> [191010 08:34]:
+> >>> Stephen, any comments on this one or shall I just craft a=20
+> >>> pull-request for
+> >>> this and rest of the TI clock driver changes towards 5.5? There seems=
+=20
+> >>> to be
+> >>> a pile of them coming this time over...
+> >>
+> >> Sounds like we need an immutable branch for the clkctrl related
+> >> changes against v5.4-rc1 that I can also merge into omap-for-v5.5/prm
+> >> branch in addition to the immutable prm reset driver branch.
+> >>
+> >> Otherwise I can't apply any of the consumer device related dts
+> >> changes into that branch AFAIK.
+> >=20
+> > Well, the sgx patch you can probably merge, as it will fail silently an=
+d=20
+> > only cause issues if you actually try to enable the device.
+> >=20
+> > However, yes I agree, we should probably setup an immutable branch here.
+>=20
+> Queued this series towards 5.5, thanks.
+>=20
 
-This is broken to begin with. The only clock of this type in upstream is SCLK
-I think. However, this clock is not a normal divider, it's a skipper, so
-the normal divider logic doesn't work for it. In practice this clock is
-only used when scaling SCLK, which is not (yet) done in the upstream
-kernel due to the complex DVFS relationship between sclk, hclk and pclk.
-A driver for it can be found here:
-https://nv-tegra.nvidia.com/gitweb/?p=linux-4.9.git;a=blob;f=drivers/clk/tegra/clk-skipper.c;h=f5da4f6ca44fe194c87f66be70c708e9791db74d;hb=eb8dd21affa2be45fc29be8c082194ac4032393a
-As you can see in that tree, we eventually splitted sclk into three
-clocks:
+One minor comment. Otherwise looks fine. Thanks.
 
-sclk_mux (controls SCLK_BURST_POLICY register)
-sclk (controls SOURCE_SYS register which is like a normal peripheral
-clock but without the mux)
-sclk_skipper (controls SCLK_DIVIDER)
-
-Peter.
-
-
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
-> 
-> Changelog:
-> 
-> v2: Improved commit's message.
-> 
->  drivers/clk/tegra/clk-divider.c | 12 ++++++++++++
->  drivers/clk/tegra/clk-super.c   |  1 +
->  drivers/clk/tegra/clk.h         |  4 ++++
->  3 files changed, 17 insertions(+)
-> 
-> diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
-> index f33c19045386..a980b9bddecd 100644
-> --- a/drivers/clk/tegra/clk-divider.c
-> +++ b/drivers/clk/tegra/clk-divider.c
-> @@ -17,6 +17,7 @@
->  #define get_max_div(d) div_mask(d)
->  
->  #define PERIPH_CLK_UART_DIV_ENB BIT(24)
-> +#define SUPER_CLK_DIV_ENB BIT(31)
->  
->  static int get_div(struct tegra_clk_frac_div *divider, unsigned long rate,
->  		   unsigned long parent_rate)
-> @@ -46,6 +47,10 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
->  	    !(reg & PERIPH_CLK_UART_DIV_ENB))
->  		return rate;
->  
-> +	if ((divider->flags & TEGRA_DIVIDER_SUPER) &&
-> +	    !(reg & SUPER_CLK_DIV_ENB))
-> +		return rate;
-> +
->  	div = (reg >> divider->shift) & div_mask(divider);
->  
->  	mul = get_mul(divider);
-> @@ -96,6 +101,13 @@ static int clk_frac_div_set_rate(struct clk_hw *hw, unsigned long rate,
->  	val &= ~(div_mask(divider) << divider->shift);
->  	val |= div << divider->shift;
->  
-> +	if (divider->flags & TEGRA_DIVIDER_SUPER) {
-> +		if (div)
-> +			val |= SUPER_CLK_DIV_ENB;
-> +		else
-> +			val &= ~SUPER_CLK_DIV_ENB;
-> +	}
-> +
->  	if (divider->flags & TEGRA_DIVIDER_UART) {
->  		if (div)
->  			val |= PERIPH_CLK_UART_DIV_ENB;
-> diff --git a/drivers/clk/tegra/clk-super.c b/drivers/clk/tegra/clk-super.c
-> index 39ef31b46df5..4d8e36b04f03 100644
-> --- a/drivers/clk/tegra/clk-super.c
-> +++ b/drivers/clk/tegra/clk-super.c
-> @@ -220,6 +220,7 @@ struct clk *tegra_clk_register_super_clk(const char *name,
->  	super->frac_div.width = 8;
->  	super->frac_div.frac_width = 1;
->  	super->frac_div.lock = lock;
-> +	super->frac_div.flags = TEGRA_DIVIDER_SUPER;
->  	super->div_ops = &tegra_clk_frac_div_ops;
->  
->  	/* Data in .init is copied by clk_register(), so stack variable OK */
-> diff --git a/drivers/clk/tegra/clk.h b/drivers/clk/tegra/clk.h
-> index 905bf1096558..a4fbf55930aa 100644
-> --- a/drivers/clk/tegra/clk.h
-> +++ b/drivers/clk/tegra/clk.h
-> @@ -53,6 +53,9 @@ struct clk *tegra_clk_register_sync_source(const char *name,
->   * TEGRA_DIVIDER_UART - UART module divider has additional enable bit which is
->   *      set when divider value is not 0. This flags indicates that the divider
->   *      is for UART module.
-> + * TEGRA_DIVIDER_SUPER - Super clock divider has additional enable bit which
-> + *      is set when divider value is not 0. This flags indicates that the
-> + *      divider is for super clock.
->   */
->  struct tegra_clk_frac_div {
->  	struct clk_hw	hw;
-> @@ -70,6 +73,7 @@ struct tegra_clk_frac_div {
->  #define TEGRA_DIVIDER_FIXED BIT(1)
->  #define TEGRA_DIVIDER_INT BIT(2)
->  #define TEGRA_DIVIDER_UART BIT(3)
-> +#define TEGRA_DIVIDER_SUPER BIT(4)
->  
->  extern const struct clk_ops tegra_clk_frac_div_ops;
->  struct clk *tegra_clk_register_divider(const char *name,
-> -- 
-> 2.22.0
-> 
