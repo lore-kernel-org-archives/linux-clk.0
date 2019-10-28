@@ -3,128 +3,72 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4651FCA9EC0
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 23:32:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04BC4CA9EC0
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 23:38:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AE3021835
-	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 23:32:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C641C217D6
+	for <linux-clk@archiver.kernel.org>; Mon, 28 Oct 2019 23:38:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572305578;
-	bh=A8fQbfzf/xn3KTHLUrgLxT6h14rtw3yrGoE4tKSOE1o=;
+	s=default; t=1572305929;
+	bh=xBmvXJr+GIY5paJ2Zoq8AFBSZGqlYt1dcC4tldS/uxI=;
 	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=ZDgqb7rfDeIhXUOLDNqk+bfSxRjETQZ57APyU0PW0wb+HKOvsNmIOPyz+oSN9lQxt
-	 eeGoGdta+DzCuV3ViM5jo/8mdOKlR9fSPheAwPoFzU9sYJbvBxdvztPz8cs0yqQVaz
-	 V2hVWmGJVY8aw1jWwbC4vI5oaDWw156rSXRhAveI=
+	b=BkcEmSdjkYwJzpfZYLSMxjiOCIUI6LfKAbqpithFOkoU5trME3bWQqaaCehYqJEzw
+	 WGcbt7CcbpohbDJaWaTBhKeh+zkOJHAdjoZQZLP67J2t2yGGma0djMz3YPtlEUbP7H
+	 AgDqcJFvxDZ16MrTHAtyqPAx4m0h0WvzcCobiUnQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730549AbfJ1Xc5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 28 Oct 2019 19:32:57 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42126 "EHLO mail.kernel.org"
+        id S1727230AbfJ1Xit (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 28 Oct 2019 19:38:49 -0400
+Received: from mail.kernel.org ([198.145.29.99]:43428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725951AbfJ1Xc5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 28 Oct 2019 19:32:57 -0400
+        id S1726834AbfJ1Xit (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 28 Oct 2019 19:38:49 -0400
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 798AD21479;
-        Mon, 28 Oct 2019 23:32:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C8214214E0;
+        Mon, 28 Oct 2019 23:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572305576;
-        bh=A8fQbfzf/xn3KTHLUrgLxT6h14rtw3yrGoE4tKSOE1o=;
+        s=default; t=1572305928;
+        bh=xBmvXJr+GIY5paJ2Zoq8AFBSZGqlYt1dcC4tldS/uxI=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=njFeY8jNMr17taXW5n7D7B1TbGRLyNZ1WuddS1sYMF3NHzWMDVtqgydnxwj9HK2hN
-         h8D27nclgyaTCLpKiEsFtPOmT9TaRaE7lmEvAUh4Fz3xRavU/zAoVCYfICBqqa/wvF
-         z75fwRjEAFXlQn3DQY9/k5yiROqOKhHaxttIpfFc=
+        b=xwNccI+pAe6iGmxgbtPjJ4jPQY+okL5rN+zBjDAavgqBlBFw1sJThSfvC53I+zSPm
+         Jmq5YcUoSX1chBtU61LDo+QGlqtshQinDmO/az6p9LQdXsVBsmH8RO5LWF5mJCpv5J
+         Vjhs1ZKtCxjk9EEjMQQup3E1y76BnoDms8jCeJDc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <5c66ac7d43ae1f57c335b6e565553fe1df703a83.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com> <5c66ac7d43ae1f57c335b6e565553fe1df703a83.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <20191017105348.8061-1-ben.dooks@codethink.co.uk>
+References: <20191017105348.8061-1-ben.dooks@codethink.co.uk>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [RFC PATCH v2 05/13] clk: bd718x7: Support ROHM BD71828 clk block
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+Subject: Re: [PATCH] clk: rockchip: make clk_half_divider_ops static
+To:     Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>,
+        linux-kernel@lists.codethink.co.uk
+Cc:     Ben Dooks (Codethink) <ben.dooks@codethink.co.uk>,
         Michael Turquette <mturquette@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-leds@vger.kernel.org, linux-rtc@vger.kernel.org
+        Heiko Stuebner <heiko@sntech.de>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org
 User-Agent: alot/0.8.1
-Date:   Mon, 28 Oct 2019 16:32:55 -0700
-Message-Id: <20191028233256.798AD21479@mail.kernel.org>
+Date:   Mon, 28 Oct 2019 16:38:48 -0700
+Message-Id: <20191028233848.C8214214E0@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Matti Vaittinen (2019-10-24 04:44:40)
-> diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
-> index ae6e5baee330..d17a19e04592 100644
-> --- a/drivers/clk/clk-bd718x7.c
-> +++ b/drivers/clk/clk-bd718x7.c
-> @@ -8,6 +8,7 @@
->  #include <linux/platform_device.h>
->  #include <linux/slab.h>
->  #include <linux/mfd/rohm-bd718x7.h>
-> +#include <linux/mfd/rohm-bd71828.h>
->  #include <linux/mfd/rohm-bd70528.h>
+Quoting Ben Dooks (Codethink) (2019-10-17 03:53:48)
+> The clk_half_divider_ops is not used outside or declared
+> outside of drivers/clk/rockchip/clk-half-divider.c so make
+> it static to avoid the following warning:
+>=20
+> drivers/clk/rockchip/clk-half-divider.c:142:22: warning: symbol 'clk_half=
+_divider_ops' was not declared. Should it be static?
+>=20
+> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> ---
 
-It would be really great to not need to include these random header
-files in this driver and just use raw numbers somehow. Looks like maybe
-it can be done by populating a different device name from the mfd driver
-depending on the version of the clk controller desired? Then that can be
-matched in this clk driver and we can just put the register info in this
-file?
-
->  #include <linux/clk-provider.h>
->  #include <linux/clkdev.h>
-> @@ -21,10 +22,8 @@ struct bd718xx_clk {
->         struct rohm_regmap_dev *mfd;
->  };
-> =20
-> -static int bd71837_clk_set(struct clk_hw *hw, int status)
-> +static int bd71837_clk_set(struct bd718xx_clk *c, int status)
-
-should it be unsigned int status? Or maybe u32?
-
->  {
-> -       struct bd718xx_clk *c =3D container_of(hw, struct bd718xx_clk, hw=
-);
-> -
->         return regmap_update_bits(c->mfd->regmap, c->reg, c->mask, status=
-);
->  }
-> =20
-> @@ -33,14 +32,16 @@ static void bd71837_clk_disable(struct clk_hw *hw)
->         int rv;
->         struct bd718xx_clk *c =3D container_of(hw, struct bd718xx_clk, hw=
-);
-> =20
-> -       rv =3D bd71837_clk_set(hw, 0);
-> +       rv =3D bd71837_clk_set(c, 0);
->         if (rv)
->                 dev_dbg(&c->pdev->dev, "Failed to disable 32K clk (%d)\n"=
-, rv);
->  }
-> =20
->  static int bd71837_clk_enable(struct clk_hw *hw)
->  {
-> -       return bd71837_clk_set(hw, 1);
-> +       struct bd718xx_clk *c =3D container_of(hw, struct bd718xx_clk, hw=
-);
-> +
-> +       return bd71837_clk_set(c, 0xffffffff);
-
-Because now this is passing -1 to unsigned int taking
-regmap_update_bits()?
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
 
