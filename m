@@ -7,87 +7,83 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3C10CA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 21:43:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0314ECA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 21:46:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6FC621479
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 21:43:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B7F21721
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 21:46:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572385383;
-	bh=HGgOwB8zn7hGRq98QTvXr1XyvnOKco7gk0eRzvX9g5k=;
+	s=default; t=1572385618;
+	bh=gL4NEtXW6OnPlvHTWbM/6H8yMDB9+iEQYh+1Cy64Pkw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=SMywqk8UMFDHSRJCZQipfJwrOZ2n6zWxBiTwN97shkno4PbMJq+Iy9Tu28sFgItwn
-	 M2BNUleEgtNg+O0cMJ9wc4iQdeypukz5t+EU+ZBVIjDL0rAsdePfO0OwHzBY4LLQF2
-	 4M6vOVL+ZvQW4CpRLZYDUFXPN9DJrOtVXtl4qRIo=
+	b=KIQOzZ4vCGZ+svrebSTdan1o1StX0ooFnBMS5JJQsBz1rXrjIXucjmhGbDK4tSfE+
+	 J2opQEp+j7J0RThKP2kYW0eoq7qtahaZ52XXbjPhiVTR4/up+MazK9atqLBBgPxn1v
+	 KS+ha2wUOh35ZvVLhZMAavOeyRZV7bX9w31nf8Qs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729412AbfJ2VnB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 17:43:01 -0400
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:36179 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727706AbfJ2VnB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 17:43:01 -0400
-Received: by mail-oi1-f195.google.com with SMTP id j7so194284oib.3;
-        Tue, 29 Oct 2019 14:43:00 -0700 (PDT)
+        id S1728437AbfJ2Vqz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 17:46:55 -0400
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:46392 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726364AbfJ2Vqz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 17:46:55 -0400
+Received: by mail-oi1-f194.google.com with SMTP id c2so152845oic.13;
+        Tue, 29 Oct 2019 14:46:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=UOz2jnU2NvuGE+cTHFffFFLe2zlC54aXD8we4ZSsAAs=;
-        b=c2sA/rPfXLSsZDYwCfe2AhNDdPK0WFwJrwI9xFmgS2JINVTTFgyPLDk1Mm7T0jOS0k
-         QEqjOIJ+yoaAP016uEwRwHG/8FIVdpAV8yRVY7bwFgtnQBrdKWkESxS2DC2IrK1EJxbc
-         CAyGTYItlKdzrpzJ8shs38aEdrW2h6J9C0TYDdKkUub2IuunQaANmZ/BrrpXzLS7LHUU
-         6iM/C/14pczjk/fy2PWYfr6DUOh1Zue48kNDGLOmfsTiUn4hairSZH09iStM4NvCfR+4
-         r8i7uapkS1tynWqigZ8yd70nJyMdxwNW8DbwEd8Ss0agj5EOuAkzhaVKEy8NpDXjCrtQ
-         b4fg==
-X-Gm-Message-State: APjAAAVubExfWVeJP6TgAUPzDeZRltfoCftMtxnm8Z86DDVaJm83oES5
-        0P5mtv8scCTIcARSnMb14Q==
-X-Google-Smtp-Source: APXvYqwsMsBNTiZmW+ZkqE+oq5oUJPEMfBdYaW4zQbwv7qbMVuBJGTKLiIKce1gwB0sh9qEJnwUcvw==
-X-Received: by 2002:aca:bf54:: with SMTP id p81mr3946023oif.81.1572385380085;
-        Tue, 29 Oct 2019 14:43:00 -0700 (PDT)
+        bh=ALIui8Hqesjcnb55YwwhQynmeSYlJfu7htCUAfgtTpE=;
+        b=cLC4K6k3GvFxOT9/Ib+ZU1v+EvvKCGjsLI086h3e6sa2ih2YSw5XLflMCiu8i80+jV
+         zZ6aAcgIq0hh4SMhlsGPcWUOcL7lbhbLmUHulnPbdx3jlFgsxd5GEjuCrbPIFyjB8sUB
+         kBMUiavyJb5mmP5ToP34qrEadN8gDYDL9bokNwEC9cp9+eoelr8QYzMqgCM/vZqp30Hh
+         gnp8rFj4JLbN7+1aAbqCpLlgP/7Wohf5JGYzlReqD9SLNjUNPSzYsCB/fuV9p69mF2bA
+         fH8pThZnSi5UaityPz+hDlY44zWhLfqt8C/UwTJ31igd1YqveXu5BjmIXmExJW/y69jT
+         9BfQ==
+X-Gm-Message-State: APjAAAUgHtktq5FJrbaaWHdRZJ3wEnVRnkQaUH6To0WA4ESxlcyAgtty
+        CozGFn36dvBLvbeHkBARoA==
+X-Google-Smtp-Source: APXvYqzc/YNEjvH6prxzTLekXclhqdSh0nu5g1IFxo9X/gD0M/yx5Elmq/qLutCsqQeE6OHCqyHlyA==
+X-Received: by 2002:aca:281a:: with SMTP id 26mr5820203oix.130.1572385612773;
+        Tue, 29 Oct 2019 14:46:52 -0700 (PDT)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id h79sm14247oib.3.2019.10.29.14.42.58
+        by smtp.gmail.com with ESMTPSA id c23sm12158oiy.20.2019.10.29.14.46.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 14:42:58 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 16:42:58 -0500
+        Tue, 29 Oct 2019 14:46:52 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 16:46:51 -0500
 From:   Rob Herring <robh@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 06/17] dt-bindings: cpufreq: Add binding for NVIDIA
- Tegra20/30
-Message-ID: <20191029214258.GA18586@bogus>
-References: <20191024221416.14197-1-digetx@gmail.com>
- <20191024221416.14197-7-digetx@gmail.com>
+To:     Chunyan Zhang <chunyan.zhang@unisoc.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>,
+        Chunyan Zhang <chunyan.zhang@unisoc.com>
+Subject: Re: [PATCH 2/5] dt-bindings: clk: sprd: rename the common file name
+ sprd.txt to SoC specific
+Message-ID: <20191029214651.GA24044@bogus>
+References: <20191025111338.27324-1-chunyan.zhang@unisoc.com>
+ <20191025111338.27324-3-chunyan.zhang@unisoc.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191024221416.14197-7-digetx@gmail.com>
+In-Reply-To: <20191025111338.27324-3-chunyan.zhang@unisoc.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 25 Oct 2019 01:14:05 +0300, Dmitry Osipenko wrote:
-> Add device-tree binding that describes CPU frequency-scaling hardware
-> found on NVIDIA Tegra20/30 SoCs.
+On Fri, 25 Oct 2019 19:13:35 +0800, Chunyan Zhang wrote:
 > 
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> Only SC9860 clocks were described in sprd.txt, rename it with a SoC
+> specific name, so that we can add more SoC support.
+> 
+> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
 > ---
->  .../cpufreq/nvidia,tegra20-cpufreq.txt        | 56 +++++++++++++++++++
->  1 file changed, 56 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>  .../devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>  rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Rob Herring <robh@kernel.org>
