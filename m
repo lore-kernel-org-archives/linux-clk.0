@@ -2,118 +2,153 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49442CA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 14:13:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67258CA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 14:41:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 165832087F
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 14:13:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39AC22087E
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 14:41:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qdbylPBM"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pdfvkdU0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728306AbfJ2ONP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 10:13:15 -0400
-Received: from mail-wm1-f45.google.com ([209.85.128.45]:40644 "EHLO
-        mail-wm1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388274AbfJ2ONP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 10:13:15 -0400
-Received: by mail-wm1-f45.google.com with SMTP id w9so2578466wmm.5
-        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 07:13:14 -0700 (PDT)
+        id S2389245AbfJ2Ol3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 10:41:29 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:43643 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388712AbfJ2Ol2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 10:41:28 -0400
+Received: by mail-lj1-f196.google.com with SMTP id s4so14669842ljj.10;
+        Tue, 29 Oct 2019 07:41:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=user-agent:from:to:cc:subject:date:message-id:mime-version;
-        bh=FFSlQWpI7UYBhGJZmYafwOetjRk3Pi2G+CPwDCZIHmk=;
-        b=qdbylPBMd1wiIcELFTDTOf1UntxHVkifMPuvGD2tFgeXoXWvxRR0hp8kmcyJnQaaki
-         z7LaKmVCcU+M9IfswnizRiX8kVDl5bhhKGsxom+0rVpq1w2VQpfaeLEK0JyhP8UyrIad
-         49aMB56iQGf1ixij6VE8Ggk7UaIUXZheAq3Fpj9HhcaV47oRyQb0TN97FsUMl9rE/UM8
-         xAloxhFrTrxbAui4CkHuGEqg80SHGB/2C81LEOqgbo+BS68b8vYQOKK2WG6DBCeNqrrY
-         XJ2z7or15l7F0xLUj7FXgpSZXswbSNHS24lKUcjIWe6BaAKBCXwpO1QflS1mM0/69wC0
-         4VfA==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Mq0rcck4YENtZgkBoH2X5LqHkGf3xXbIuvoCt8jLIbs=;
+        b=pdfvkdU03R2UCabpac0Z9HYX/Lrlc+6UwP8tVqkXXQdh3l15LiQM652yORNcqIC8LQ
+         MU6WTI/00Ys2RVA2iuo6Bz/kYShtftbxNO62WNrWXoVegTDPOJS+0lpJmXkHMMnoZhPb
+         N2zhAVtj5JEMr3Szbu25Usgysbb746vJo2WVvXcpfVdxBNzzO4OeWsx6dSSoSmzm2rjA
+         KWU+x97k6QYkkuFQyBXERxOv8Q3sQ3RhfiwmwF3sAyVJGfa1AwiTMFw776O7OnMMipXR
+         4tQ2Wpg+9MP0MmLOx2sUhgih5EZ7YOd13d34BMnDoXtBU0QC3wf2tf52YQ1ctAeh/15W
+         G17w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:user-agent:from:to:cc:subject:date:message-id
-         :mime-version;
-        bh=FFSlQWpI7UYBhGJZmYafwOetjRk3Pi2G+CPwDCZIHmk=;
-        b=FnLuIhAaTunKUdPhxVyoZjIYmTlTpWoEWT9iz89yj+th0a4tv8i+ltk2Woa6EMFh9z
-         wZDvXdbLvgCeariICr7AibNhoDBqZMxNvE4kBLGEbjF9FQQPzx5Ue0XD5gHaXonE/7dE
-         oi2Rc2VaXX2OzZqDaFPTD5wKauxkB4x8FwpyIttMi60xFDAQ/buiUqnkgAZnuTudVcN8
-         I9FOxdKMPeWeaPFaOULFyGZpVF374bfjUqfGFAuMxJiVTn50Y4suC5N0/IMTltQwxJ1l
-         hua8so0ARFTlYWnshUILm57i6zZndOW2WTTgmuMihQn9/4wC03/oRiWiTDtS03IHIom1
-         H8DA==
-X-Gm-Message-State: APjAAAW/C+CEbGiyaUTsowWqUuxeeCMKo8PLfL/FxcSstvGWIkKTGCj0
-        0yx6cDkYd6oBZUFBt3k1jBWDgEZhjaM=
-X-Google-Smtp-Source: APXvYqyB45wTMPlw7B5AIHR/+zcb1QJV0BIuol4jBgYN1VBZzXNW8RGW0TvGK2DCsMW7t4r4pLQelg==
-X-Received: by 2002:a1c:1b07:: with SMTP id b7mr4325462wmb.111.1572358393542;
-        Tue, 29 Oct 2019 07:13:13 -0700 (PDT)
-Received: from localhost (uluru.liltaz.com. [163.172.81.188])
-        by smtp.gmail.com with ESMTPSA id t16sm16546074wrq.52.2019.10.29.07.13.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 07:13:13 -0700 (PDT)
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [GIT PULL]: Amlogic clock updates for v5.5
-Date:   Tue, 29 Oct 2019 15:13:12 +0100
-Message-ID: <1jftjbljwn.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Mq0rcck4YENtZgkBoH2X5LqHkGf3xXbIuvoCt8jLIbs=;
+        b=R935XsEY0XWodX7pRCE9Fs5Y9LqQFyIM2a//5qOMPho3mmE/wV3PyEK9ka6cWN92OW
+         Zxh14QTqftufacVtbfaiUXVuIdRWpMrs0BKUEd4DFb/c0me4VScyPwAKLFQgpTJkyvdS
+         ydNa6o0S+e+W1DP5F+idmp0NYmkT9nmQ3tAybDpPqLoolr7uGz+B+ar9eoMq89mBye1d
+         vsoz98r5nIbgMiP/3Je1DXPKro9XKtOaBmTML8ilzm7+tsszp6izilw7V9PFEIQN2Rze
+         tKxKbzVrXdDmRDNVX11E61J7iK0D+Hp9X4ZxfZlwl1kAs/UTYW+oiv1Y1QQKdO2cbQ6s
+         q+PA==
+X-Gm-Message-State: APjAAAVaDoZ3lnvsNyEcLtH9P6FUQlMCaGatyiKOjW98n03+XHbmHYQE
+        tzF5MLHrcrcigxBQP2WQ8DgTMPkP
+X-Google-Smtp-Source: APXvYqzq3B/MhcDmK3EWG9bARkLKloL5JDnxFGy/C6uKmIvGY6mrnKiQQ3Gl9ED5nEcGmUWKWlGxhw==
+X-Received: by 2002:a2e:9b9a:: with SMTP id z26mr2981322lji.59.1572360085051;
+        Tue, 29 Oct 2019 07:41:25 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id q14sm7223768ljc.7.2019.10.29.07.41.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2019 07:41:24 -0700 (PDT)
+Subject: Re: [PATCH v2 00/17] NVIDIA Tegra20 CPUFreq driver major update
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20191024221416.14197-1-digetx@gmail.com>
+ <20191029140959.GL508460@ulmo>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <374c3916-7c25-d684-0506-4c3992fa5241@gmail.com>
+Date:   Tue, 29 Oct 2019 17:41:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191029140959.GL508460@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+29.10.2019 17:09, Thierry Reding пишет:
+> On Fri, Oct 25, 2019 at 01:13:59AM +0300, Dmitry Osipenko wrote:
+>> Hello,
+>>
+>> This series moves intermediate-clk handling from tegra20-cpufreq into
+>> tegra-clk driver, this allows us to switch to generic cpufreq-dt driver
+>> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+>> of the box. All boards need to adopt CPU OPPs in their device-trees in
+>> order to get cpufreq support. This series adds OPPs only to selective
+>> boards because there is assumption in a current device-trees that CPU
+>> voltage is set for 1GHz freq and this won't work for those CPUs that
+>> can go over 1GHz and thus require voltage regulators to be set up for
+>> voltage scaling support (CC'ed Marcel for Toradex boards). We could
+>> probably add delete-node for OPPs over 1GHz if there are not actively
+>> maintained boards.
+>>
+>> NOTE(!): the voltage scaling functionality depends on a reviewed and yet
+>> unapplied series [0], thus [0] needs to be applied first.
+>>
+>> [0] https://lkml.org/lkml/2019/7/25/892
+>>
+>> Changelog:
+>>
+>> v2: - Kept modularity of the tegra20-cpufreq as was requested by Viresh Kumar
+>>       in a review comment to v1.
+>>
+>>     - Added acks from Viresh Kumar.
+>>
+>>     - Added tested-by from Nicolas Chauvet to the "trimslice" patch.
+>>       Nicolas told me on IRC that it works fine.
+>>
+>>     - Fixed compilation of the "Add custom CCLK implementation" patch. The
+>>       error happened because v1 was based on top of yet unreviewed/unapplied
+>>       patch "clk: tegra: divider: Support enable-bit for Super clocks". Thanks
+>>       to Peter Geis for reporting the problem.
+>>
+>>     - Replaced Tegra30 "beaver" board with "cardhu-a04" because turned out
+>>       that's what NVIDIA uses in the testing farm.
+>>
+>> Dmitry Osipenko (17):
+>>   clk: tegra: Add custom CCLK implementation
+>>   clk: tegra: pll: Add pre/post rate-change hooks
+>>   clk: tegra: cclk: Add helpers for handling PLLX rate changes
+>>   clk: tegra20: Support custom CCLK implementation
+>>   clk: tegra30: Support custom CCLK implementation
+>>   dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
+>>   cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported
+>>     now)
+>>   ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+>>   ARM: dts: tegra20: Add CPU clock
+>>   ARM: dts: tegra30: Add CPU clock
+>>   ARM: dts: tegra20: Add CPU Operating Performance Points
+>>   ARM: dts: tegra30: Add CPU Operating Performance Points
+>>   ARM: dts: tegra20: paz00: Set up voltage regulators for DVFS
+>>   ARM: dts: tegra20: paz00: Add CPU Operating Performance Points
+>>   ARM: dts: tegra20: trimslice: Add CPU Operating Performance Points
+>>   ARM: dts: tegra30: cardhu-a04: Set up voltage regulators for DVFS
+>>   ARM: dts: tegra30: cardhu-a04: Add CPU Operating Performance Points
+> 
+> I've applied patches 9-17 (the DT bits) to for-5.5/arm/dt. I'll hold
+> back on applying the others until Peter is happy with them.
 
-Hi Stephen,
-
-Here are our updates for Amlogic clock for this cycle.
-The main topic is sm1 soc family support in the audio
-clock controller
-Please pull.
-
-Thanks
-Jerome
-
-The following changes since commit 90b171f6035688236a3f09117a683020be45603a:
-
-  clk: meson: g12a: set CLK_MUX_ROUND_CLOSEST on the cpu clock muxes (2019-10-01 14:51:15 +0200)
-
-are available in the Git repository at:
-
-  git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.5-1
-
-for you to fetch changes up to 50bf025b75902d326fdb8078be3d278e1b693576:
-
-  clk: meson: axg-audio: use devm_platform_ioremap_resource() to simplify code (2019-10-14 17:06:27 +0200)
-
-----------------------------------------------------------------
-First round of amlogic clock update for v5.5:
-Add sm1 support in the audio clock controller
-
-----------------------------------------------------------------
-Jerome Brunet (8):
-      dt-bindings: clk: axg-audio: add sm1 bindings
-      dt-bindings: clock: meson: add sm1 resets to the axg-audio controller
-      Merge branch 'v5.5/dt' into v5.5/drivers
-      clk: meson: axg-audio: remove useless defines
-      clk: meson: axg-audio: fix regmap last register
-      clk: meson: axg-audio: prepare sm1 addition
-      clk: meson: axg-audio: provide clk top signal name
-      clk: meson: axg_audio: add sm1 support
-
-YueHaibing (1):
-      clk: meson: axg-audio: use devm_platform_ioremap_resource() to simplify code
-
- .../bindings/clock/amlogic,axg-audio-clkc.txt      |    3 +-
- drivers/clk/meson/axg-audio.c                      | 2025 +++++++++++++-------
- drivers/clk/meson/axg-audio.h                      |   21 +-
- include/dt-bindings/clock/axg-audio-clkc.h         |   10 +
- .../reset/amlogic,meson-g12a-audio-reset.h         |   15 +
- 5 files changed, 1374 insertions(+), 700 deletions(-)
+Thanks, I'll update the patches and re-add OPPs for the Beaver board
+since you have it.
