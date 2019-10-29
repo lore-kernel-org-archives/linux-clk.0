@@ -2,117 +2,218 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22589CA9EC4
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 17:48:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5243DCA9EC5
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 17:59:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EABD021D7C
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 17:48:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B0A02086A
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 17:59:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="CfqlIoo8";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="MD/4wgbe"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gwt98Ew4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730391AbfJ2Rsw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 13:48:52 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:58992 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfJ2Rsv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 13:48:51 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id E737E60F7B; Tue, 29 Oct 2019 17:48:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572371330;
-        bh=Bv52zoG1yUwsLTDP8YRJdB1oLS50hHY8teFP3i3xLWA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CfqlIoo8MCPeOosSy3t9vIocxSHAFYNWyFshjOIwT/c/VYcCw6efpA5+GXLKv6m+8
-         3LLCr9+H9hpTY002UErvvN9U0XSP/AUXLHSkPO+T0LpaWG1VhQ4Vw0QoOOujnA0QsU
-         YRuxoYUM9AUK2qfgvQBGIS7d34saiLhM3lpkA0uc=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id CCE2960F7B;
-        Tue, 29 Oct 2019 17:48:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572371329;
-        bh=Bv52zoG1yUwsLTDP8YRJdB1oLS50hHY8teFP3i3xLWA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MD/4wgbedBgyoJrDGC84uH15rjYR4ONCJc1ET1Zz/CtynPGHWHDbG13ov4BrHABxV
-         r3MwZ8XmS+8FHPx2xy+ZV4THKyTfBQxpnvWXOpdhihn5513qmvswISlFOaylRDtyVM
-         tax0AVeeE1K6nST4lIGwsTc7hfcdoxtqmxvF5yv8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org CCE2960F7B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
+        id S1730170AbfJ2R7q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 13:59:46 -0400
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40365 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726104AbfJ2R7p (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 13:59:45 -0400
+Received: by mail-pf1-f196.google.com with SMTP id r4so4436997pfl.7
+        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 10:59:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=AsoiGZKW+OqSEUM2BahaMp4C8ROBZZo7pbBqc7c5IoY=;
+        b=gwt98Ew45lXCW2YV2/I3bWQ4zvrHu0m+IZ7O0JEwsd9HVb1kAdSGa+x5T7K1JYImBj
+         QsMUpABd4v2TcLRFRF2K7J+DLPvjigzE+Kd1r8BgkwR9X9lFlQasXgm1UFjd4+UtbYev
+         nClhV0y6tVY3X3ye12q/ST2pm5gTtrn3c3zCk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=AsoiGZKW+OqSEUM2BahaMp4C8ROBZZo7pbBqc7c5IoY=;
+        b=kexsVeCZ5/6lHs3r1s8cb2Dob+wWwD05u75tfMU6OAE2bAXDMbuIFgEaUq47WsU7Sr
+         7LSaxmBHm1zvmfZkpRVe1zhU1pVtAOE+Xnh4nWFwEI5CUieCe+ZqwY1yRrQzWmPQHftl
+         BgONI5jZc2EcG/HUzzBYIsgoUTVbH5s3G7yM6r2xtQ3wOLHsqqjX+oZC9XolUuO68nlS
+         2nokshneJGBGehhAv8GtN2IqiPbmpqxmlce7FyVVrST85x0VCWqkiZFEhs8qPd1YsQgr
+         Kvl6Dbk03W4cdD3FCUPn2oQ9eA3oLnO0eOYjfKFxhNXZ79Gy8i6FobTuwxj01iN+hUPI
+         +5aA==
+X-Gm-Message-State: APjAAAVW8XvfN8hDvObP06VoGTC/2vRaqqyyG6TU+GYHBii5BM+rD0/z
+        CK78PG/0t1PF7HowP+ithnos5w==
+X-Google-Smtp-Source: APXvYqyhd6lfJcwRB3IVS+q7cVKEl2P/kuaUowk2m+KybBeCZJsxB5Kxqnys7De0gpcM+C0S4Qy8Qg==
+X-Received: by 2002:a63:1f09:: with SMTP id f9mr17384729pgf.89.1572371984790;
+        Tue, 29 Oct 2019 10:59:44 -0700 (PDT)
+Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
+        by smtp.gmail.com with ESMTPSA id h25sm2097696pfn.47.2019.10.29.10.59.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2019 10:59:43 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 10:59:41 -0700
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?utf-8?B?wqA=?= <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 3/3] clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
-Date:   Tue, 29 Oct 2019 23:18:19 +0530
-Message-Id: <1572371299-16774-4-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572371299-16774-1-git-send-email-tdas@codeaurora.org>
-References: <1572371299-16774-1-git-send-email-tdas@codeaurora.org>
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
+Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+Message-ID: <20191029175941.GA27773@google.com>
+References: <20191014102308.27441-1-tdas@codeaurora.org>
+ <20191014102308.27441-6-tdas@codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20191014102308.27441-6-tdas@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for clock RPMh driver to vote for ARC and VRM managed
-clock resources.
+Hi Taniya,
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/clk-rpmh.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
+> Add support for the global clock controller found on SC7180
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
+> 
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/Kconfig      |    9 +
+>  drivers/clk/qcom/Makefile     |    1 +
+>  drivers/clk/qcom/gcc-sc7180.c | 2450 +++++++++++++++++++++++++++++++++
+>  3 files changed, 2460 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-sc7180.c
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 32dbb4f09492..91706d88eeeb 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -227,6 +227,15 @@ config QCS_GCC_404
+>  	  Say Y if you want to use multimedia devices or peripheral
+>  	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+> 
+> +config SC_GCC_7180
+> +	tristate "SC7180 Global Clock Controller"
+> +	select QCOM_GDSC
+> +	depends on COMMON_CLK_QCOM
+> +	help
+> +	  Support for the global clock controller on SC7180 devices.
+> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+> +	  I2C, USB, UFS, SDCC, etc.
+> +
+>  config SDM_CAMCC_845
+>  	tristate "SDM845 Camera Clock Controller"
+>  	select SDM_GCC_845
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 4a813b4055d0..6fb356a0bbf5 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+>  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+>  obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
+>  obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+> +obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
+>  obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+>  obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+>  obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+> new file mode 100644
+> index 000000000000..38424e63bcae
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sc7180.c
+>
+> +static struct clk_hw *gcc_sc7180_hws[] = {
+> +	[GCC_GPLL0_MAIN_DIV_CDIV] = &gcc_pll0_main_div_cdiv.hw,
+> +};
+> +
+> +static struct clk_regmap *gcc_sc7180_clocks[] = {
+> +	[GCC_AGGRE_UFS_PHY_AXI_CLK] = &gcc_aggre_ufs_phy_axi_clk.clkr,
+> +	[GCC_AGGRE_USB3_PRIM_AXI_CLK] = &gcc_aggre_usb3_prim_axi_clk.clkr,
+> +	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
+> +	[GCC_CAMERA_AHB_CLK] = &gcc_camera_ahb_clk.clkr,
+> +	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
+> +	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
+> +	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
+> +	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
+> +	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
+> +	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
+> +	[GCC_CFG_NOC_USB3_PRIM_AXI_CLK] = &gcc_cfg_noc_usb3_prim_axi_clk.clkr,
+> +	[GCC_CPUSS_AHB_CLK] = &gcc_cpuss_ahb_clk.clkr,
+> +	[GCC_CPUSS_AHB_CLK_SRC] = &gcc_cpuss_ahb_clk_src.clkr,
+> +	[GCC_CPUSS_RBCPR_CLK] = &gcc_cpuss_rbcpr_clk.clkr,
+> +	[GCC_DDRSS_GPU_AXI_CLK] = &gcc_ddrss_gpu_axi_clk.clkr,
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index 20d4258..3f3e08b 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -391,6 +391,24 @@ static const struct clk_rpmh_desc clk_rpmh_sm8150 = {
- 	.num_clks = ARRAY_SIZE(sm8150_rpmh_clocks),
- };
+v3 also had
 
-+static struct clk_hw *sc7180_rpmh_clocks[] = {
-+	[RPMH_CXO_CLK]		= &sdm845_bi_tcxo.hw,
-+	[RPMH_CXO_CLK_A]	= &sdm845_bi_tcxo_ao.hw,
-+	[RPMH_LN_BB_CLK2]	= &sdm845_ln_bb_clk2.hw,
-+	[RPMH_LN_BB_CLK2_A]	= &sdm845_ln_bb_clk2_ao.hw,
-+	[RPMH_LN_BB_CLK3]	= &sdm845_ln_bb_clk3.hw,
-+	[RPMH_LN_BB_CLK3_A]	= &sdm845_ln_bb_clk3_ao.hw,
-+	[RPMH_RF_CLK1]		= &sdm845_rf_clk1.hw,
-+	[RPMH_RF_CLK1_A]	= &sdm845_rf_clk1_ao.hw,
-+	[RPMH_RF_CLK2]		= &sdm845_rf_clk2.hw,
-+	[RPMH_RF_CLK2_A]	= &sdm845_rf_clk2_ao.hw,
-+};
-+
-+static const struct clk_rpmh_desc clk_rpmh_sc7180 = {
-+	.clks = sc7180_rpmh_clocks,
-+	.num_clks = ARRAY_SIZE(sc7180_rpmh_clocks),
-+};
-+
- static struct clk_hw *of_clk_rpmh_hw_get(struct of_phandle_args *clkspec,
- 					 void *data)
- {
-@@ -471,6 +489,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- static const struct of_device_id clk_rpmh_match_table[] = {
- 	{ .compatible = "qcom,sdm845-rpmh-clk", .data = &clk_rpmh_sdm845},
- 	{ .compatible = "qcom,sm8150-rpmh-clk", .data = &clk_rpmh_sm8150},
-+	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, clk_rpmh_match_table);
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
++	[GCC_DISP_AHB_CLK] = &gcc_disp_ahb_clk.clkr,
 
+Removing it makes the dpu_mdss driver unhappy:
+
+[    2.999855] dpu_mdss_enable+0x2c/0x58->msm_dss_enable_clk: 'iface' is not available
+
+because:
+
+        mdss: mdss@ae00000 {
+    	        ...
+
+ =>             clocks = <&gcc GCC_DISP_AHB_CLK>,
+                         <&gcc GCC_DISP_HF_AXI_CLK>,
+                         <&dispcc DISP_CC_MDSS_MDP_CLK>;
+                clock-names = "iface", "gcc_bus", "core";
+	};
+
+More clocks were removed in v4:
+
+-       [GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+-       [GCC_GPU_CFG_AHB_CLK] = &gcc_gpu_cfg_ahb_clk.clkr,
+-       [GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
+
+I guess this part of "remove registering the CRITICAL clocks to clock provider
+and leave them always ON from the GCC probe." (change log entry), but are you
+sure nobody is going to reference these clocks?
+
+> +static int gcc_sc7180_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = qcom_cc_map(pdev, &gcc_sc7180_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	/*
+> +	 * Disable the GPLL0 active input to MM blocks, NPU
+> +	 * and GPU via MISC registers.
+> +	 */
+> +	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+> +	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+> +	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+
+In v3 this was:
+
+	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
+	regmap_update_bits(regmap, GCC_NPU_MISC, 0x3, 0x3);
+	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
+
+IMO register names seem preferable, why switch to literal addresses
+instead?
+
+> +
+> +	/*
+> +	 * Keep the clocks always-ON
+> +	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_DISP_AHB_CLK
+> +	 * GCC_GPU_CFG_AHB_CLK
+> +	 */
+> +	regmap_update_bits(regmap, 0x48004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+
+ditto, register names seem preferable.
