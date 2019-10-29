@@ -2,135 +2,133 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D7C1CA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 11:08:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FEBCA9EC3
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 11:37:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7026A214B2
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 11:08:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 272B7214D9
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 11:37:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="NEqX9Fpn"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YCyJN6qQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728370AbfJ2LIy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 07:08:54 -0400
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:52636 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727791AbfJ2LIx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 07:08:53 -0400
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x9TB8pch043834;
-        Tue, 29 Oct 2019 06:08:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572347331;
-        bh=QzQe5kMCGczzhiNNF19B3lB3MNU4kTEvNCBCj+c52Cw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=NEqX9FpnIMUF3554gQ0qCXtODGq6pVzBi9C+aytmEjm4c1nLXrlpepmBeMtapXOpl
-         6Mq1W/gDejo3zoLTGaTR9i060L9IMU+TbrYP2BtLsGBz5M2qxtUeX+zO5xsrJLvQMj
-         RgoMp4XIecys4hGAMDfucjXX4ZXtH0MZ/jCr953A=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x9TB8pcv055386
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 29 Oct 2019 06:08:51 -0500
-Received: from DFLE101.ent.ti.com (10.64.6.22) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 29
- Oct 2019 06:08:38 -0500
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
- Frontend Transport; Tue, 29 Oct 2019 06:08:38 -0500
-Received: from [172.24.190.233] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id x9TB8kn5074904;
-        Tue, 29 Oct 2019 06:08:48 -0500
-Subject: Re: [PATCH v2] clk: Fix memory leak in clk_unregister()
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tero Kristo <t-kristo@ti.com>
-References: <20191022185150.9B09B20B7C@mail.kernel.org>
- <20191029110618.7451-1-kishon@ti.com>
-From:   Kishon Vijay Abraham I <kishon@ti.com>
-Message-ID: <62547be1-18e0-90e5-f3bd-1bbd33d5172f@ti.com>
-Date:   Tue, 29 Oct 2019 16:38:13 +0530
+        id S1731497AbfJ2Lh2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 07:37:28 -0400
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:37233 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730471AbfJ2Lh1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 07:37:27 -0400
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191029113725euoutp02c1ee187e50f6f0b3010a34d472478a80~SGyBZanjU3057030570euoutp02U
+        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191029113725euoutp02c1ee187e50f6f0b3010a34d472478a80~SGyBZanjU3057030570euoutp02U
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1572349045;
+        bh=MV9FXID7nThRVDKuFUHFACJIlbCzkHrjaJu5Zhz/fsY=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=YCyJN6qQEllQY1S8GqZsldUqkJIBv3clfupk3Ug2kvQVpQUi8UBE/50zejCjMc4o8
+         8L44j9Sw5WBiNRLpJQiyQSDlf0KsmTyXtNUqlIEm9v8hCXCCGtyjo7/Hfv73N1sRe8
+         EUinASYPq77FHo5zOAcxuVgtM1DbymYCtVWKDLPA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191029113725eucas1p26abe0e7d7dda56b3e7bbdfdce3434288~SGyBJlTFm2560525605eucas1p25;
+        Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BC.28.04309.57428BD5; Tue, 29
+        Oct 2019 11:37:25 +0000 (GMT)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191029113725eucas1p1a6e7ba2329ed3d4fdd16cf39fdb286b7~SGyA4Ow142425024250eucas1p1c;
+        Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+        20191029113725eusmtrp23541ca0c5609b89b6c685a7655433515~SGyA3jjIp2216522165eusmtrp2N;
+        Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
+X-AuditID: cbfec7f4-afbff700000010d5-f7-5db824752e33
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id CE.37.04117.47428BD5; Tue, 29
+        Oct 2019 11:37:25 +0000 (GMT)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191029113724eusmtip28f08b0bb87ec7ba1856511b3ee5baead~SGyAU99Wh1898918989eusmtip2K;
+        Tue, 29 Oct 2019 11:37:24 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: exynos5433: Add missing slab.h header for
+ kfree()
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kbuild test robot <lkp@intel.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <448c0770-24a2-6227-24e8-9bd5ad926f5e@samsung.com>
+Date:   Tue, 29 Oct 2019 12:37:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-In-Reply-To: <20191029110618.7451-1-kishon@ti.com>
+In-Reply-To: <20191023160000.409-1-krzk@kernel.org>
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SaUhUURjtvmXmqY1cR80P22AwzEAnrR+vBclImD9BEJQUYk99qOTGPJdM
+        Sk3N3BcCc1RSDM0RXCY190CrsdyQKRWlMhVMw9QcEfd0npL/zjnfOdxz4DKkvJu2Z4JCI3h1
+        KBeskJhTjR9X+50jHZq8zzZ32bLDxmmazZ78TbIDA7VSVjc5RLOLGd9p1tBSJGFfDHQQ7Gzi
+        hIQd/OzJbg3VUay2ZQNdsVDNjyRLVc2ab1JVWdsModJpUyWqN6/iVFn1WqRa0p24Ib1jftmf
+        Dw6K4tVK93vmgcXlP6XhufSD3MoUFI8qqDRkxgA+DwvjSWQaMmfk+DWC9j4jEokRQcNsPCGS
+        JQQ1a8VoP9LeUU2JhwoEjfljtEjmEKS+LSd2Xdb4FvQu9JsSNtgJhjdXTCYSzxDwV59O7x4k
+        2BUyP2SZTDLsDoWzXaYwhU/B+1rDjs4wttgLepY50WIFnwqmTMXN8DlYn04wRUlsB0+MlbSI
+        T0JiQ6FpEOBRKbSlLe/VvgbPSzdoEVvDrL5eKuJjsN38khADiQgyWsekIslB8ENfspe+BF36
+        QXq3Ebkzp6ZFKcoesJC5KNmVAVvCyJyVWMIS8hrzSVGWwbOnctHtAOvafELE9pA+tU3lIIXm
+        wDTNgTmaA3M0/98tQZQW2fGRQkgAL7iF8tEuAhciRIYGuPiFhejQzv/q2dIbm1DLhm8nwgxS
+        HJb9+troLae5KCEmpBMBQypsZIO9O5LMn4t5yKvDfNSRwbzQiY4ylMJOFnto/K4cB3AR/H2e
+        D+fV+1eCMbOPR48cLYr63AxXi/Nmln09ozkLbx+v4LRkXNVvkHnQpQldf7xWlF+q1zq3PJM2
+        312vDntMR6Tks91xZUom1a+ntfLiba95/WnDSGrmEb/kuOPCBYJpK2hQdrzKscyrumnXVmfM
+        K/TOxoRjTEPQcmu5p9Oom2+uYiJWt004O67SCkoI5FzPkGqB+wdPjvHIWwMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xe7qlKjtiDR4vY7K4/uU5q0X/49fM
+        FufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxavmR2wWF0+5Wvy7tpHFYtWuP4wO3B7vb7Sy
+        e+ycdZfdY/Gel0wem1Z1snlsXlLv0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaW
+        FnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlzlz1kL5jIWjFxZTtjA+Nyli5GTg4JAROJ
+        vfvWAdlcHEICSxklvmw4ydTFyAGUkJKY36IEUSMs8edaFxtEzWtGiYvr5oE1CwuESZz5cI4R
+        xBYR0JS4/vc7K0gRs8BLJomPe85DdbQxStzrmMIEUsUmYCjRe7QPrINXwE5i9qvDYHEWAVWJ
+        Ixsug8VFBSIknm+/AVUjKHFy5hOwbZwCxhK/nzeCxZkF1CX+zLvEDGGLSzR9WckKYctLNG+d
+        zTyBUWgWkvZZSFpmIWmZhaRlASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMB43Xbs55Yd
+        jF3vgg8xCnAwKvHwvri6LVaINbGsuDL3EKMEB7OSCO/FM0Ah3pTEyqrUovz4otKc1OJDjKZA
+        z01klhJNzgemkrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYwm
+        JxJDN8z953N2ppSt0FaGZ+uzGe8873geZHvvroTouuu/r0481uF4R+PB//M3Zyid1b8umLZH
+        slTEa2vXOqV/VsHPBLmPzlaZriEYfWErN1s00175+cd0368TEA8sNeSpqtw5e39npsz0CUnl
+        nAcWTPtx1Tdzx9faI/vu7bD89/Nvqc0Hxcz9SizFGYmGWsxFxYkApz0MaO0CAAA=
+X-CMS-MailID: 20191029113725eucas1p1a6e7ba2329ed3d4fdd16cf39fdb286b7
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-RootMTR: 20191023160027epcas4p15be9c72d575fa4c3b022551c32cfc59a
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191023160027epcas4p15be9c72d575fa4c3b022551c32cfc59a
+References: <CGME20191023160027epcas4p15be9c72d575fa4c3b022551c32cfc59a@epcas4p1.samsung.com>
+        <20191023160000.409-1-krzk@kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+On 10/23/19 18:00, Krzysztof Kozlowski wrote:
+> Usage of kfree() requires slab.h header.  Otherwise building on x86_64
+> with COMPILE_TEST fails with:
+> 
+>     drivers/clk/samsung/clk-exynos5433.c: In function ‘exynos5433_cmu_probe’:
+>     drivers/clk/samsung/clk-exynos5433.c:5598:4: error: implicit declaration 
+> of function ‘kfree’; did you mean ‘vfree’? [-Werror=implicit-function-declaration]
+> 
+> Reported-by: kbuild test robot <lkp@intel.com>
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-On 29/10/19 4:36 PM, Kishon Vijay Abraham I wrote:
-> Memory allocated in alloc_clk() for 'struct clk' and
-> 'const char *con_id' while invoking clk_register() is never freed
-> in clk_unregister(), resulting in kmemleak showing the following
-> backtrace.
-> 
->   backtrace:
->     [<00000000546f5dd0>] kmem_cache_alloc+0x18c/0x270
->     [<0000000073a32862>] alloc_clk+0x30/0x70
->     [<0000000082942480>] __clk_register+0xc8/0x760
->     [<000000005c859fca>] devm_clk_register+0x54/0xb0
->     [<00000000868834a8>] 0xffff800008c60950
->     [<00000000d5a80534>] platform_drv_probe+0x50/0xa0
->     [<000000001b3889fc>] really_probe+0x108/0x348
->     [<00000000953fa60a>] driver_probe_device+0x58/0x100
->     [<0000000008acc17c>] device_driver_attach+0x6c/0x90
->     [<0000000022813df3>] __driver_attach+0x84/0xc8
->     [<00000000448d5443>] bus_for_each_dev+0x74/0xc8
->     [<00000000294aa93f>] driver_attach+0x20/0x28
->     [<00000000e5e52626>] bus_add_driver+0x148/0x1f0
->     [<000000001de21efc>] driver_register+0x60/0x110
->     [<00000000af07c068>] __platform_driver_register+0x40/0x48
->     [<0000000060fa80ee>] 0xffff800008c66020
-> 
-> Fix it here.
-> 
-> Fixes: fcb0ee6a3d331fb ("clk: Implement clk_unregister")
-> Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Thanks, I applied it and squashed with the fix patch from Marek that
+introduced the above issue.
 
-Ignore the v2 of this patch. Sent this patch a bit early. Sorry for the noise.
-
-Thanks
-Kishon
-> ---
->  drivers/clk/clk.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 1c677d7f7f53..ecd647258c8f 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3835,6 +3835,7 @@ static void clk_core_evict_parent_cache(struct clk_core *core)
->  void clk_unregister(struct clk *clk)
->  {
->  	unsigned long flags;
-> +	struct clk_hw *hw;
->  
->  	if (!clk || WARN_ON_ONCE(IS_ERR(clk)))
->  		return;
-> @@ -3879,6 +3880,9 @@ void clk_unregister(struct clk *clk)
->  					__func__, clk->core->name);
->  
->  	kref_put(&clk->core->ref, __clk_release);
-> +	hw = clk->core->hw;
-> +	free_clk(clk);
-> +	hw->clk = NULL;
->  unlock:
->  	clk_prepare_unlock();
->  }
-> 
+-- 
+Regards,
+Sylwester
