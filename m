@@ -2,218 +2,256 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5243DCA9EC5
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 17:59:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E18CA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 19:34:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B0A02086A
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 17:59:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="gwt98Ew4"
+	by mail.kernel.org (Postfix) with ESMTP id 8A24520862
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 19:34:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572377684;
+	bh=SFlvZK5tIpKQjCtQUjTJm9kbh8GUgzVnYMlqQz8hXsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=pcicX3EDTWxNIMSf2l2DsYjW4LnJO5bKKS1Vk2N2PtJdCtRbnilTLKwb+AS0Ml6kJ
+	 IfMA5FrgB3Tb+PqedB4h7UZZe2e6rWtExYqZbrAIZjxcUCj5WtON0ZPtq2bScGtuB0
+	 sBBLdha8JCCSL8Akoy2pD/heP89e2QMmcs2ErfFY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730170AbfJ2R7q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 13:59:46 -0400
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40365 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726104AbfJ2R7p (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 13:59:45 -0400
-Received: by mail-pf1-f196.google.com with SMTP id r4so4436997pfl.7
-        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 10:59:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=AsoiGZKW+OqSEUM2BahaMp4C8ROBZZo7pbBqc7c5IoY=;
-        b=gwt98Ew45lXCW2YV2/I3bWQ4zvrHu0m+IZ7O0JEwsd9HVb1kAdSGa+x5T7K1JYImBj
-         QsMUpABd4v2TcLRFRF2K7J+DLPvjigzE+Kd1r8BgkwR9X9lFlQasXgm1UFjd4+UtbYev
-         nClhV0y6tVY3X3ye12q/ST2pm5gTtrn3c3zCk=
+        id S1730890AbfJ2Teo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 15:34:44 -0400
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44555 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbfJ2Teo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 15:34:44 -0400
+Received: by mail-oi1-f193.google.com with SMTP id s71so9963593oih.11;
+        Tue, 29 Oct 2019 12:34:42 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=AsoiGZKW+OqSEUM2BahaMp4C8ROBZZo7pbBqc7c5IoY=;
-        b=kexsVeCZ5/6lHs3r1s8cb2Dob+wWwD05u75tfMU6OAE2bAXDMbuIFgEaUq47WsU7Sr
-         7LSaxmBHm1zvmfZkpRVe1zhU1pVtAOE+Xnh4nWFwEI5CUieCe+ZqwY1yRrQzWmPQHftl
-         BgONI5jZc2EcG/HUzzBYIsgoUTVbH5s3G7yM6r2xtQ3wOLHsqqjX+oZC9XolUuO68nlS
-         2nokshneJGBGehhAv8GtN2IqiPbmpqxmlce7FyVVrST85x0VCWqkiZFEhs8qPd1YsQgr
-         Kvl6Dbk03W4cdD3FCUPn2oQ9eA3oLnO0eOYjfKFxhNXZ79Gy8i6FobTuwxj01iN+hUPI
-         +5aA==
-X-Gm-Message-State: APjAAAVW8XvfN8hDvObP06VoGTC/2vRaqqyyG6TU+GYHBii5BM+rD0/z
-        CK78PG/0t1PF7HowP+ithnos5w==
-X-Google-Smtp-Source: APXvYqyhd6lfJcwRB3IVS+q7cVKEl2P/kuaUowk2m+KybBeCZJsxB5Kxqnys7De0gpcM+C0S4Qy8Qg==
-X-Received: by 2002:a63:1f09:: with SMTP id f9mr17384729pgf.89.1572371984790;
-        Tue, 29 Oct 2019 10:59:44 -0700 (PDT)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id h25sm2097696pfn.47.2019.10.29.10.59.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2019 10:59:43 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 10:59:41 -0700
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?utf-8?B?wqA=?= <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
- driver for SC7180
-Message-ID: <20191029175941.GA27773@google.com>
-References: <20191014102308.27441-1-tdas@codeaurora.org>
- <20191014102308.27441-6-tdas@codeaurora.org>
+        bh=xxBSHOJOiVx9xUjgJDjdIRv3ddP3A9uo0gsTNXhupls=;
+        b=TxFPOzwXufLJT2JVXpgiFMpFXCkkfCTUaTnwj1F5pmQ/Jd155uxRE46edl3UOLXR8Y
+         DYSwzfnmgdBypfMDTCZiyO2yyx8G7kHNBr7owVC/hSrWNzXLK+WIOmrsL78NlUJbDJu9
+         iLOIGu3LPHXmu72nVRBgb8HN4QIu3rYMOFGTz/6R8aY0DMv+bSM2PVCqhlHxlOWYAloF
+         DVS69U5Occ5WzMnWVgu2euhZLVE8bbm5hQWvgXYd/6HCujYgp85kOm30wiMnptkbfM74
+         olX1c4jg9UM9WivzWXx4xXtB3JhgK7qcxBHDenISaH056ZNEr5RKBeoM6+dbr8ergara
+         IDEw==
+X-Gm-Message-State: APjAAAVyJV1zPcXdI3gyoez2JCip/xWefFsa/S0/hEMKDjcCOa7CKbOW
+        1TZ9TYYXDmVZRdPwrzr4Jpa6fyU=
+X-Google-Smtp-Source: APXvYqzS5ffkFMfaYBYQyvW5I894+RhkZnJR4QlEUSJUdJKrrGrJLgRQjPJ+xByV/MfE6+1fE/0Kyw==
+X-Received: by 2002:aca:55d3:: with SMTP id j202mr3472769oib.152.1572377682389;
+        Tue, 29 Oct 2019 12:34:42 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t32sm5047216otb.28.2019.10.29.12.34.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 12:34:40 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 14:34:40 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+Subject: Re: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Message-ID: <20191029193440.GA1812@bogus>
+References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+ <0182df3c49c6c804ee20ef32fc4b85b50ff45fca.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+ <ed0b2aa8-8a70-0341-4ecf-8959f37c53bd@ti.com>
+ <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191014102308.27441-6-tdas@codeaurora.org>
+In-Reply-To: <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Taniya,
-
-On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
-> Add support for the global clock controller found on SC7180
-> based devices. This should allow most non-multimedia device
-> drivers to probe and control their clocks.
+On Fri, Oct 25, 2019 at 05:49:17AM +0000, Vaittinen, Matti wrote:
+> Hello Dan,
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/Kconfig      |    9 +
->  drivers/clk/qcom/Makefile     |    1 +
->  drivers/clk/qcom/gcc-sc7180.c | 2450 +++++++++++++++++++++++++++++++++
->  3 files changed, 2460 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-sc7180.c
+> Thanks again for checking this :)
 > 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 32dbb4f09492..91706d88eeeb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -227,6 +227,15 @@ config QCS_GCC_404
->  	  Say Y if you want to use multimedia devices or peripheral
->  	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+> On Thu, 2019-10-24 at 14:35 -0500, Dan Murphy wrote:
+> > Matti
+> > 
+> > On 10/24/19 6:41 AM, Matti Vaittinen wrote:
+> > > ROHM BD71828 Power management IC integrates 7 buck converters, 7
+> > > LDOs,
+> > > a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
+> > > and a 32.768 kHz clock gate.
+> > > 
+> > > Document the dt bindings drivers are using.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > > 
+> > > No changes since v1
+> > > 
+> > >   .../bindings/mfd/rohm,bd71828-pmic.txt        | 180
+> > > ++++++++++++++++++
+> > >   1 file changed, 180 insertions(+)
+> > >   create mode 100644
+> > > Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.txt
+> > 
+> > I will let maintainers weigh in here but if this is new this should 
+> > probably be in the yaml format to avoid conversion in the future
 > 
-> +config SC_GCC_7180
-> +	tristate "SC7180 Global Clock Controller"
-> +	select QCOM_GDSC
-> +	depends on COMMON_CLK_QCOM
-> +	help
-> +	  Support for the global clock controller on SC7180 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  I2C, USB, UFS, SDCC, etc.
-> +
->  config SDM_CAMCC_845
->  	tristate "SDM845 Camera Clock Controller"
->  	select SDM_GCC_845
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 4a813b4055d0..6fb356a0bbf5 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
->  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
->  obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
->  obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
-> +obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
->  obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
->  obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
->  obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> new file mode 100644
-> index 000000000000..38424e63bcae
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
->
-> +static struct clk_hw *gcc_sc7180_hws[] = {
-> +	[GCC_GPLL0_MAIN_DIV_CDIV] = &gcc_pll0_main_div_cdiv.hw,
-> +};
-> +
-> +static struct clk_regmap *gcc_sc7180_clocks[] = {
-> +	[GCC_AGGRE_UFS_PHY_AXI_CLK] = &gcc_aggre_ufs_phy_axi_clk.clkr,
-> +	[GCC_AGGRE_USB3_PRIM_AXI_CLK] = &gcc_aggre_usb3_prim_axi_clk.clkr,
-> +	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
-> +	[GCC_CAMERA_AHB_CLK] = &gcc_camera_ahb_clk.clkr,
-> +	[GCC_CAMERA_HF_AXI_CLK] = &gcc_camera_hf_axi_clk.clkr,
-> +	[GCC_CAMERA_THROTTLE_HF_AXI_CLK] = &gcc_camera_throttle_hf_axi_clk.clkr,
-> +	[GCC_CAMERA_XO_CLK] = &gcc_camera_xo_clk.clkr,
-> +	[GCC_CE1_AHB_CLK] = &gcc_ce1_ahb_clk.clkr,
-> +	[GCC_CE1_AXI_CLK] = &gcc_ce1_axi_clk.clkr,
-> +	[GCC_CE1_CLK] = &gcc_ce1_clk.clkr,
-> +	[GCC_CFG_NOC_USB3_PRIM_AXI_CLK] = &gcc_cfg_noc_usb3_prim_axi_clk.clkr,
-> +	[GCC_CPUSS_AHB_CLK] = &gcc_cpuss_ahb_clk.clkr,
-> +	[GCC_CPUSS_AHB_CLK_SRC] = &gcc_cpuss_ahb_clk_src.clkr,
-> +	[GCC_CPUSS_RBCPR_CLK] = &gcc_cpuss_rbcpr_clk.clkr,
-> +	[GCC_DDRSS_GPU_AXI_CLK] = &gcc_ddrss_gpu_axi_clk.clkr,
+> Oh... This is new to me. I guess there are reasons for this - but I
+> must say I am not excited as I have never used yaml for anything. I'll
+> do as you suggest and wait for what others have to say :) Thanks for
+> pointing this out though.
 
-v3 also had
+Sorry for your lack of excitement. It could be XML...
 
-+	[GCC_DISP_AHB_CLK] = &gcc_disp_ahb_clk.clkr,
+There aren't many MFD examples yet, but there is max77650 in my tree and 
+linux-next.
 
-Removing it makes the dpu_mdss driver unhappy:
+> > > diff --git a/Documentation/devicetree/bindings/mfd/rohm,bd71828-
+> > > pmic.txt b/Documentation/devicetree/bindings/mfd/rohm,bd71828-
+> > > pmic.txt
+> > > new file mode 100644
+> > > index 000000000000..125efa9f3de0
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.txt
+> > > @@ -0,0 +1,180 @@
+> > > +* ROHM BD71828 Power Management Integrated Circuit bindings
+> > > +
+> > > +BD71828GW is a single-chip power management IC for battery-powered 
+> > > portable
+> > > +devices. The IC integrates 7 buck converters, 7 LDOs, and a 1500
+> > > mA single-cell
+> > > +linear charger. Also included is a Coulomb counter, a real-time
+> > > clock (RTC),
+> > > +and a 32.768 kHz clock gate.
+> > > +
+> > > +Required properties:
+> > > + - compatible			: Should be "rohm,bd71828".
+> > > + - reg				: I2C slave address.
+> > > + - interrupt-parent		: Phandle to the parent
+> > > interrupt controller.
+> > > + - interrupts			: The interrupt line the device
+> > > is connected to.
+> > > + - clocks			: The parent clock connected to PMIC.
+> > > + - #clock-cells			: Should be 0.
+> > > + - regulators			: List of child nodes that
+> > > specify the
+> > > +				  regulators. Please see
+> > > +				  ../regulator/rohm,bd71828-
+> > > regulator.txt
+> > > + - gpio-controller		: To indicate BD71828 acts as a GPIO
+> > > controller.
+> > > + - #gpio-cells			: Should be 2. The first cell
+> > > is the pin number
+> > > +				  and the second cell is used to
+> > > specify flags.
+> > > +				  See ../gpio/gpio.txt for more
+> > > information.
+> > > +
+> > > +The BD71828 RUN state is divided into 4 configurable run-levels
+> > > named RUN0,
+> > > +RUN1, RUN2 and RUN3. Bucks 1, 2, 6 and 7 can be either controlled
+> > > individually
+> > > +via I2C, or some/all of them can be bound to run-levels and
+> > > controlled as a
+> > > +group. If bucks are controlled individually these run-levels are
+> > > ignored. See
+> > > +../regulator/rohm,bd71828-regulator.txt for how to define
+> > > regulator voltages
+> 
+> > The rohm,bd71828-regulator.txt should be yaml if the maintainers want
+> > it 
+> > that way.
+> 
+> Let's see if this should be changed then :)
+> 
+> > > +for run-levels. Run-levels can be changed by I2C or GPIO depending
+> > > on PMIC's OTP
+> > > +configuration.
+> > > +
+> > > +Optional properties:
+> > > +- clock-output-names		: Should contain name for
+> > > output clock.
+> > > +- rohm,dvs-vsel-gpios		: GPIOs used to control PMIC
+> > > run-levels. Should
+> > > +				  describe two GPIOs. (See run-level
+> > > control in
+> > > +				  data-sheet). If this property is
+> > > omitted but
+> > > +				  some bucks are marked to be
+> > > controlled by
+> > > +				  run-levels - then OTP option allowing
+> > > +				  run-level control via I2C is assumed.
+> > > +- gpio-reserved-ranges		: Usage of GPIO pins can be
+> > > changed via OTP.
+> > > +				  This property can be used to mark the
+> > > pins
+> > > +				  which should not be configured for
+> > > GPIO.
+> > > +				  Please see the ../gpio/gpio.txt for
+> > > more
+> > > +				  information.
+> > > +
+> > > +Example:
+> > > +
+> > 
+> > This example does not look right.
+> > 
+> > I see that I2C is referenced above so the example could look like
+> > this
+> > 
+> > osc: oscillator {
+> >                  compatible = "fixed-clock";
+> >                  #clock-cells = <1>;
+> >                  clock-frequency  = <32768>;
+> >                  clock-output-names = "osc";
+> >          };
+> > 
+> > This is an external oscillator and is not really part of the pmic 
+> > itself.  I am not sure you even need to define that since it is not
+> > part 
+> > of the pmic.
+> 
+> I think you are correct. I'll drop this oscillator for next patch.
+> 
+> > 
+> > i2c {
+> > 
+> >          pmic@4b {
+> > 
+> >                  [...]
+> > 
+> >          };
+> > 
+> > };
+> 
+> I don't think the I2C node is needed in example. It is not part of the
+> PMIC - and I don't see the containing bus in other examples I just
+> opened. (the two other rohm,xxx PMIC docs - well, biased as I wrote
+> them), da9150.txt, lp3943.txt, max77686.txt, tps6507x.txt, tps65910.txt
 
-[    2.999855] dpu_mdss_enable+0x2c/0x58->msm_dss_enable_clk: 'iface' is not available
+It will be needed for the schema because the examples are compiled and 
+validated.
 
-because:
-
-        mdss: mdss@ae00000 {
-    	        ...
-
- =>             clocks = <&gcc GCC_DISP_AHB_CLK>,
-                         <&gcc GCC_DISP_HF_AXI_CLK>,
-                         <&dispcc DISP_CC_MDSS_MDP_CLK>;
-                clock-names = "iface", "gcc_bus", "core";
-	};
-
-More clocks were removed in v4:
-
--       [GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
--       [GCC_GPU_CFG_AHB_CLK] = &gcc_gpu_cfg_ahb_clk.clkr,
--       [GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
-
-I guess this part of "remove registering the CRITICAL clocks to clock provider
-and leave them always ON from the GCC probe." (change log entry), but are you
-sure nobody is going to reference these clocks?
-
-> +static int gcc_sc7180_probe(struct platform_device *pdev)
-> +{
-> +	struct regmap *regmap;
-> +	int ret;
-> +
-> +	regmap = qcom_cc_map(pdev, &gcc_sc7180_desc);
-> +	if (IS_ERR(regmap))
-> +		return PTR_ERR(regmap);
-> +
-> +	/*
-> +	 * Disable the GPLL0 active input to MM blocks, NPU
-> +	 * and GPU via MISC registers.
-> +	 */
-> +	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
-> +	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
-> +	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
-
-In v3 this was:
-
-	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
-	regmap_update_bits(regmap, GCC_NPU_MISC, 0x3, 0x3);
-	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
-
-IMO register names seem preferable, why switch to literal addresses
-instead?
-
-> +
-> +	/*
-> +	 * Keep the clocks always-ON
-> +	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_DISP_AHB_CLK
-> +	 * GCC_GPU_CFG_AHB_CLK
-> +	 */
-> +	regmap_update_bits(regmap, 0x48004, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
-> +	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
-
-ditto, register names seem preferable.
+Rob
