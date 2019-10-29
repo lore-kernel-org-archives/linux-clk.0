@@ -2,104 +2,156 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8970CCA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 13:20:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6103CCA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 13:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A30221479
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 13:20:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GBYMwvi1"
+	by mail.kernel.org (Postfix) with ESMTP id 365EF20578
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 13:29:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388119AbfJ2NUl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 09:20:41 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36384 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728735AbfJ2NUk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 09:20:40 -0400
-Received: by mail-lf1-f67.google.com with SMTP id u16so10506793lfq.3;
-        Tue, 29 Oct 2019 06:20:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ycp40O6pq7oAPfIa/Ey3geraavSMokBe/2ZuTNhAq48=;
-        b=GBYMwvi1AAjVv9WA8DE6sfQWAApsDUxppNZiU7BA4qAHmdpjh5eHmqHjIJVGeTQyMu
-         sBYua5PI1jpbKW7gk6C2b1wzabgczcqqFkCXuMku9iAQP+ds9AUw9nfcxZuepeB0DiR6
-         GM9/+5c+iTjz8/SXStWWPTsMJGvECmp91y78oZjKibNH/gWYMOx1n5aRucp44RmkGDZb
-         bkSWSyKfXKlniDQ62h+SJQuhEsKBOeLvu9iGjpKsrZWOLX7VKv9H9C2UasGFFqhNasMK
-         aUBHEJHzcKPM4yZ3kcZD6j4WK4BBNMXxYRNtumlCz8+Nx/D8CQjyGludgJCo/knj/XBv
-         OHgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ycp40O6pq7oAPfIa/Ey3geraavSMokBe/2ZuTNhAq48=;
-        b=CBUphTg8BRZYKgfumnA37/VPQJu3S7MSQsz6x6hPH6+APFA+zxNm5AyDoq5SiHPUef
-         uCNh6E5lF8tZzuwh+IjKSNQOIVUTtuQTOFeNwddDXGBw4hP1Vj2FqL/awg0ouC1Lcsn0
-         zH7MfRG0RebDblyIdiI7d4oDmxcwWKVVpfc4S8UsXh7HHYPs31iWh0y2t7UqyeofaRvO
-         vk5+JUHVJ13tNLFcY7Yp/gouE3SaEPSX4qGO5EGsje++YQma+orM6iSw7XNhMVL91YfR
-         x7wuIApVnWV99NGPB/IDQa0u+nAFnxypO9rgqCZyVca5f4AkqZrREGXUKS/NRt1RDQE0
-         jYYg==
-X-Gm-Message-State: APjAAAWtweVNyHmkswBOGzyt9uqnPrxUdAr6jjKg3M/a6fYW0C2Z06PV
-        ct9LUIwGjTELZC7UR3/SARaewrjw
-X-Google-Smtp-Source: APXvYqw2jGg9y5zxjv7afcepJps1o1UY+IMIRxfhjR3+8ctUUYRocgcNcnwvmYQhdSSlRIHBtKMlgw==
-X-Received: by 2002:a19:cc07:: with SMTP id c7mr2512443lfg.107.1572355238190;
-        Tue, 29 Oct 2019 06:20:38 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
-        by smtp.googlemail.com with ESMTPSA id w20sm9203418lff.46.2019.10.29.06.20.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2019 06:20:37 -0700 (PDT)
-Subject: Re: [PATCH v2 2/2] clk: tegra: divider: Support enable-bit for Super
- clocks
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190723025245.27754-1-digetx@gmail.com>
- <20190723025245.27754-2-digetx@gmail.com>
- <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <74ee0e7f-c257-8fdf-bf3f-eefab3281dfa@gmail.com>
-Date:   Tue, 29 Oct 2019 16:20:36 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        id S2388464AbfJ2N3X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 09:29:23 -0400
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:63942 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728735AbfJ2N3W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 09:29:22 -0400
+X-AuditID: c0a8fbf4-199ff70000001fa6-b7-5db83eafca71
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id C5.1D.08102.FAE38BD5; Tue, 29 Oct 2019 14:29:19 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Tue, 29 Oct 2019 14:29:13 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "broonie@kernel.org" <broonie@kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: [RFC PATCH 11/13] led: bd71828: Support LED outputs on ROHM
+ BD71828 PMIC
+Thread-Topic: [RFC PATCH 11/13] led: bd71828: Support LED outputs on ROHM
+ BD71828 PMIC
+Thread-Index: AQHVhNDGb/Fi3H2tI0CugiKcGY+PyKdevIMAgAXjkICAALrQAIABJcIAgABTx4CAAPqlgIAA3/yAgACsP4CAAOdsAIAAl9oAgABpOACAABSIgIAAE6mAgAYzUwA=
+Date:   Tue, 29 Oct 2019 13:29:13 +0000
+Message-ID: <81291f685a52002352b68bfc3749e2ed09c03ca0.camel@fi.rohmeurope.com>
+References: <cover.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
+         <af1fb3e010d5f34502d354369b88fa28639f587d.1571302099.git.matti.vaittinen@fi.rohmeurope.com>
+         <c1e41315-42ad-fb9b-c9db-8b07d4293166@ti.com>
+         <fbd4960b219099b7a48ef24019ba829f866edb3b.camel@fi.rohmeurope.com>
+         <4570db9c-7bc8-f131-269a-248b87e25e38@gmail.com>
+         <201df0f7319b94eb581a040a2b1b07dbfed12e94.camel@fi.rohmeurope.com>
+         <c5761d78-3334-adaa-b871-cb6da356483b@gmail.com>
+         <8974a3974377d0623ed968563b035e701191440e.camel@fi.rohmeurope.com>
+         <e9d1c529-90ef-34bf-d893-02a109ba19ba@gmail.com>
+         <c35a2bca83c711bd7b19c8a99798374388705bfc.camel@fi.rohmeurope.com>
+         <06b3909a-b3ff-2c0e-d1df-a475a69951ed@gmail.com>
+         <d43d06dbaa0df204fff0194be57d6cd3b832addd.camel@fi.rohmeurope.com>
+         <CAL_JsqK7fYYdobOrgxFaMOy+uONCV-i0aOiBQ9oOc4OOPLR8cw@mail.gmail.com>
+         <4fcea7213ae9b3c0de775d1854f8e160ea0b178a.camel@fi.rohmeurope.com>
+         <CAL_Jsq+_4SaVHqZFXhF_J+yqqcjuzEZpxFvxJfzsNpL1xBQijw@mail.gmail.com>
+In-Reply-To: <CAL_Jsq+_4SaVHqZFXhF_J+yqqcjuzEZpxFvxJfzsNpL1xBQijw@mail.gmail.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <B85D79C2B076E5449EBF988F361BF65A@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20191028144157.GD27141@pdeschrijver-desktop.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TW0xTWRTNuc8DevVaYXqoiHATY9QBNOHjaMDHh3pNUDFqNCZNvciFEukj
+        t2Wi8iHzYRyqMWAwaoFiFJgGGYH6AAn4QEDoGJXIo4poGhknOIwEAQkzDE4vReHrrLPXWnvt
+        k+wDSY2f0cFMs11WzFKWwIRSD93/1sZWb6rXr/syiHBZZzeLz3yqYPFYiZfCF/0DDC5teUbj
+        s7/fpnHfnRoKvxtvBfhL1y8ELpz6lcAj597S+FbpFMAvG4oZfGfoJsBtN7oYXN7bSeDi8nYK
+        d3q34X5vK4NPN7WweLqnltoSLla5qoA47DvNiq6qHPGes58VPZV5jPimp5ERn/jqCPGSa5IQ
+        3TcmWHHUE5USenhBYqpk/2lfZoY5ftORBUb3byOMtTLmeFPRQzoXNEY7AISIT0BFdYkOEAo1
+        fDdAHXnDZPDSDtD9fBehihg+ETlesQ4QAsP4WPTg8QChYpJ3Q+QpilDxUv4gGnUOz2oOobaa
+        8zN9wngHQOMdPTMGil+Jelt9lIo5fjdqKviDCYb5WFT8+sWMKITfi26OTTMqBvxylJf7aTZN
+        izwfJmgVI55HZY3PySAOR4Pvp2frAmqa9FPq0CS/GlU3xAetW1DJeDsVxDGo8KyfDc6wBHVc
+        GaDywQ/OeQnOObdznts5z+2c574K6EqATFJmVoZkl9fHKXJ2nGIxmgLHUYvJA4IrM1YPvjbv
+        bAYEBM0gAhJCODfVVqfXLEq1pJ0wSjajQcnOkm3NAEFSCOM6n97Va7g06cRJWbF8o5ZBStBy
+        q/wFeg2vZh2TZausfGMjIRQQ9zWpXq9ZosgZ8vH0zCz7HE3AELV5qC7MJpvTZEXKthsN6n4Y
+        bIEFUamFgdynqp2zWSVToBq0esFamD9Yco2ELSXl10gNZbaYZZ2Wq1alvCo1Zpu/B30EWgiE
+        pdw/Krsw8G++9/kYiCACET9Oqk+z2aU5SpcLNvw52d9euHvFOY35SsPfdPT+1BxjdfIE7nC9
+        j5StPRUJ9FH6r6hT735eB5MKkt1TOZ/TbxeduXiqK8R7feNIa69hFesuHbPu8wkR6ckflg1G
+        nIzuM21OitRHOXZt3zsydECX8nhP7AXt4svRo+XaNxkJKff/2/HIsDVm6+eygpQhi0DZjNL6
+        NaRik/4HP72LO/QDAAA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-28.10.2019 17:41, Peter De Schrijver пишет:
-> On Tue, Jul 23, 2019 at 05:52:45AM +0300, Dmitry Osipenko wrote:
->> All Super clocks have a divider that has the enable bit.
->>
-> 
-> This is broken to begin with. The only clock of this type in upstream is SCLK
-> I think. However, this clock is not a normal divider, it's a skipper, so
-> the normal divider logic doesn't work for it. In practice this clock is
-> only used when scaling SCLK, which is not (yet) done in the upstream
-> kernel due to the complex DVFS relationship between sclk, hclk and pclk.
-> A driver for it can be found here:
-> https://nv-tegra.nvidia.com/gitweb/?p=linux-4.9.git;a=blob;f=drivers/clk/tegra/clk-skipper.c;h=f5da4f6ca44fe194c87f66be70c708e9791db74d;hb=eb8dd21affa2be45fc29be8c082194ac4032393a
-> As you can see in that tree, we eventually splitted sclk into three
-> clocks:
-> 
-> sclk_mux (controls SCLK_BURST_POLICY register)
-> sclk (controls SOURCE_SYS register which is like a normal peripheral
-> clock but without the mux)
-> sclk_skipper (controls SCLK_DIVIDER)
-
-I'll drop this patch, thanks again for the clarification.
+SGVsbG8gUm9iLA0KT24gRnJpLCAyMDE5LTEwLTI1IGF0IDEwOjQ3IC0wNTAwLCBSb2IgSGVycmlu
+ZyB3cm90ZToNCj4gT24gRnJpLCBPY3QgMjUsIDIwMTkgYXQgOTozNyBBTSBWYWl0dGluZW4sIE1h
+dHRpDQo+IDxNYXR0aS5WYWl0dGluZW5AZmkucm9obWV1cm9wZS5jb20+IHdyb3RlOg0KPiA+IEhl
+bGxvIFBlZXBzLA0KPiA+IA0KPiA+IE9uIEZyaSwgMjAxOS0xMC0yNSBhdCAwODoyNCAtMDUwMCwg
+Um9iIEhlcnJpbmcgd3JvdGU6DQo+ID4gPiBPbiBGcmksIE9jdCAyNSwgMjAxOSBhdCAyOjA3IEFN
+IFZhaXR0aW5lbiwgTWF0dGkNCj4gPiA+IDxNYXR0aS5WYWl0dGluZW5AZmkucm9obWV1cm9wZS5j
+b20+IHdyb3RlOg0KPiA+ID4gVGhlIGNhc2VzIGZvciBub3QgaGF2aW5nIGNoaWxkIG5vZGVzIGFy
+ZSB3aGVuIHlvdSBoYXZlIGNoaWxkDQo+ID4gPiBub2Rlcw0KPiA+ID4gd2l0aCBub3RoaW5nIG1v
+cmUgdGhhbiBhIGNvbXBhdGlibGUgYW5kIHBvc3NpYmx5IHByb3ZpZGVyDQo+ID4gPiBwcm9wZXJ0
+aWVzDQo+ID4gPiAoZS5nLiAjZ3Bpby1jZWxscyBmb3IgZ3BpbyBwcm92aWRlcnMpLiBJZiB5b3Ug
+aGF2ZSBvdGhlciByZXNvdXJjZQ0KPiA+ID4gZGVwZW5kZW5jaWVzIChlLmcuIGNsb2Nrcykgb3Ig
+ZGF0YSB0byBkZWZpbmUgKGUuZy4gdm9sdGFnZXMgZm9yDQo+ID4gPiByZWd1bGF0b3JzKSwgdGhl
+biBjaGlsZCBub2RlcyBhYnNvbHV0ZWx5IG1ha2Ugc2Vuc2UuDQo+ID4gDQo+ID4gVGhhbmtzIGZv
+ciB0ZWxsaW5nIHRoZSByZWFzb25pbmcgYmVoaW5kLiBNYWtlcyBzZW5zZS4NCj4gPiANCj4gPiA+
+IE9uY2Ugd2UgaGF2ZQ0KPiA+ID4gY2hpbGQgbm9kZXMsIHRoZW4gZ2VuZXJhbGx5IGl0IGlzIGVh
+c2llciBmb3IgZXZlcnkgZnVuY3Rpb24gdG8gYmUNCj4gPiA+IGENCj4gPiA+IGNoaWxkIG5vZGUg
+YW5kIG5vdCBtaXggdGhlIHR3by4gSSdtIHN1cmUgSSBoYXZlIHRvbGQgcGVvcGxlDQo+ID4gPiBp
+bmNvcnJlY3RseSB0byBub3QgZG8gY2hpbGQgbm9kZXMgYmVjYXVzZSB0aGV5IGRlZmluZSBpbmNv
+bXBsZXRlDQo+ID4gPiBiaW5kaW5ncy4NCj4gPiANCj4gPiBEb2VzIHRoaXMgbWVhbiB0aGF0IGlm
+IEkgYWRkIExFRCBjb250cm9sbGVkIG5vZGUgd2l0aCBMRUQgbm9kZXMNCj4gPiBpbnNpZGUNCj4g
+PiAtIHRoZW4gSSBzaG91bGQgYWN0dWFsbHkgYWRkIHN1YiBub2RlcyBmb3IgY2xrIGFuZCBHUElP
+IHRvbz8gSQ0KPiA+IHdvdWxkDQo+ID4gcHJlZmVyIHN0aWxsIGhhdmluZyB0aGUgY2xrIHByb3Zp
+ZGVyIGluZm9ybWF0aW9uIGluIE1GRCBub2RlIGFzDQo+ID4gYWRkaW5nDQo+ID4gYSBzdWItbm9k
+ZSBmb3IgY2xrIHdvdWxkIHByb2JhYmx5IHJlcXVpcmUgY2hhbmdlcyBpbiB0aGUNCj4gPiBiZDcx
+OHg3X2Nsaw0KPiA+IGRyaXZlci4gKE5vdCBiaWcgb25lcyBidXQgYXZvaWRhYmxlIGlmIGNsayBw
+cm92aWRlciBpbmZvcm1hdGlvbiBjYW4NCj4gPiBzdGlsbCBkd2VsbCBpbiBNRkQgbm9kZSkuDQo+
+IA0KPiBQcm9iYWJseSBub3QsIGlmIHRoZXJlJ3MgYW4gZXhpc3Rpbmcgc3RydWN0dXJlIHRvIGZv
+bGxvdywgdGhlbg0KPiBjb250aW51ZSBkb2luZyB0aGF0Lg0KDQpPaywgdGhhbmtzLg0KDQo+IA0K
+PiA+ID4gSSB3b3VsZCBncm91cCB0aGUgbGVkIG5vZGVzIHVuZGVyIGFuIGxlZC1jb250cm9sbGVy
+IG5vZGUgKHdpdGggYQ0KPiA+ID4gY29tcGF0aWJsZSkuIFRoZSBzaW1wbGUgcmVhc29uIGlzIGVh
+Y2ggbGV2ZWwgb25seSBoYXMgb25lDQo+ID4gPiBudW1iZXIvYWRkcmVzcyBzcGFjZSBhbmQgeW91
+IGNhbid0IG1peCBkaWZmZXJlbnQgb25lcy4gWW91J3JlIG5vdA0KPiA+ID4gbnVtYmVyaW5nIHRo
+ZSBsZWRzIGhlcmUsIGJ1dCBjb3VsZCB5b3UgKHdpdGggbnVtYmVycyB0aGF0DQo+ID4gPiBjb3Jy
+ZXNwb25kDQo+ID4gPiB0byBzb21ldGhpbmcgaW4gdGhlIGgvdywgbm90IGp1c3QgMC4uTik/DQo+
+ID4gDQo+ID4gSSBkb24ndCBrbm93IHdoYXQgdGhhdCB3b3VsZCBiZS4gVGhlIExFRCBjb250cm9s
+bGVyIHJlc2lkZXMgaW4gTUZEDQo+ID4gZGV2aWNlIGluIEkyQyBidXMgYW5kIGhhcyBubyBtZWFu
+aW5nZnVsIG51bWJlcnMgSSBjYW4gdGhpbmsgb2YuIFRoZQ0KPiA+IGFjdHVhbCBMRURzIChvbiBt
+eSBib2FyZCkgYXJlIGR1bW15IGRldmljZXMgYW5kIEkgcmVhbGx5IGRvbid0IGtub3cNCj4gPiBo
+b3cNCj4gPiB0byBpbnZlbnQgbWVhbmluZ2Z1bGwgbnVtYmVycyBmb3IgdGhlbSBlaXRoZXIuDQo+
+IA0KPiBJZiB5b3UgaGF2ZSBzb21ldGhpbmcgbGlrZSAibGVkIGNvbnRyb2wgcmVnaXN0ZXJzIDEs
+IDIsIDMiIHdoZXJlDQo+IDEsMiwzDQo+IGlzIGVhY2ggTEVEIGNoYW5uZWwsIHRoZW4gdXNlIHRo
+YXQuDQoNClVuZm9ydHVuYXRlbHksIG5vLiBMRUQgY29udHJvbHMgYXJlIGluIHNhbWUgcmVnaXN0
+ZXIuDQoNCj4gIE9yIGlmIHRoZSBMRUQgc3VwcGxpZXMgKG9yIHN1cHBseQ0KPiBwaW5zKSBoYXZl
+IHNvbWUgbnVtYmVyaW5nLCB1c2UgdGhhdC4NCg0KSSBkb24ndCBrbm93IGhvdyB0byBmb3JtYXQg
+dGhlIG51bWJlcmluZyBlaXRoZXIuIEN1cnJlbnRseSBwbGFubmVkIFBNSUMNCnBhY2thZ2UgaXMg
+c28gY2FsbGVkICJVQ1NQNTVNM0MiIG1lYW5pbmcgdGhlIHBpbnMgYXJlIGluIGEgbWF0cml4IC0N
+CmNvbHVtbnMgaGF2aW5nIG51bWJlcnMgZnJvbSAxIHRvIDggYW5kIHJvd3MgaGF2aW5nIGxldHRl
+cnMgZnJvbSBBIHRvIEouDQpJbiB0aGlzIGNhc2UgdGhlIExFRCBvdXRwdXRzIGFyZSBGNiBhbmQg
+SDYuIEkgZG9uJ3Qga25vdyBpZiBkaWZmZXJlbnQNCnBhY2thZ2luZyBpcyBwbGFubmVkLiBPbmx5
+ICdjb25zdGFudCcgSSBjYW4gZmluZCBpcyB0aGUgb3V0cHV0IHBpbg0KbmFtaW5nICdHUk5MRUQn
+IGFuZCAnQU1CTEVEJyA6Lw0KDQo+IElmIHRoZXJlJ3Mgbm9uZSBvZiB0aGF0LCB0aGVuDQo+IGZv
+bGxvd2luZyBzdGFuZGFyZCBub2RlIG5hbWVzIGtpbmQgb2YgZmFsbHMgYXBhcnQuICc8Z2VuZXJp
+YyBuYW1lPi1OJw0KPiBpcyB3aGF0IEkndmUgYmVlbiBkZWZpbmluZyBmb3Igc29tZSBzY2hlbWEu
+DQoNClNvIEkgY291bGQgdXNlIG5vZGUgbmFtZXMgbGVkLTEgYW5kIGxlZC0yIGluIHRoZSBleGFt
+cGxlLCByaWdodD8NCg0KQnIsDQoJTWF0dGkgVmFpdHRpbmVuDQo=
