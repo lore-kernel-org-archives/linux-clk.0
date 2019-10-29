@@ -2,227 +2,156 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F968CA9EB9
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 05:10:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FB76CA9EC4
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 06:29:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFF320862
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 05:10:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="zKKLohZq"
+	by mail.kernel.org (Postfix) with ESMTP id 500B321924
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 06:29:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730271AbfJ2FK5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 01:10:57 -0400
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39883 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726166AbfJ2FK5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 01:10:57 -0400
-Received: by mail-wr1-f67.google.com with SMTP id a11so12140963wra.6
-        for <linux-clk@vger.kernel.org>; Mon, 28 Oct 2019 22:10:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=b1LVw1i492IKoNYo8KXLm+bZ3dkK0vQqyiVvn/U4gVk=;
-        b=zKKLohZq0CcBoAjOWY5QRe7BEUFk0gkSxHu3m637kxlB8Sp190GrQZo/rHSt9ErT8v
-         qAvm7dslCBPnsYnCCEQfeJw3RKpjbP6pEz1RQAN9wKO8bsaXun0c38C5Pr1JC/sVsMRX
-         tlcJZD1drS+rqu1NMdcQab2UNOhR35z4wdc7uXIYlJ4luAQyu5VYsbJ2cb+6F9v6k0Jl
-         Q7IEUomGwpSraqHjWxtYEt2jdPLsyuIPZPB20xyPrvnBar++8SMMAap2mFjAPaVtktG6
-         7NwC2YKRf4z+5NCnTJR6Hg5cEwfIDWsdJAoh+cWtTyR0hWg4Hc0P7J6xociECbczgikU
-         JguA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=b1LVw1i492IKoNYo8KXLm+bZ3dkK0vQqyiVvn/U4gVk=;
-        b=sJLwgNI3N/foVvgBslZgca3qp6v1CSrpjNBdqh+eXJkztLANhhtAayAqJbHeG2LrTv
-         NLKTp38zdQc4x6cd7Oc/sMTu2vkk+x7JNEdU/ElLkofoFRe++U9g0XNgy/tEEYWGl8Ja
-         os3rSSdy1t7y+JtLVaQbjEZ4aTJyB0BY1nppSqFdVioAKmYkMxcB9HX96PE4e5efWzYX
-         FHj+FpuuqbsNJUOYdQKfa+/y84U5xad8Vg+XfFD8lY/O2fluhtlQdeHYxxq30bfHMm3R
-         qdw2Wb7s27TvWVOm2hgE3BDdyyWHvqHcOnwfAP+ZDw7G/L+z4QP7nr3zJ2Q7fGI2Oaie
-         Cr/A==
-X-Gm-Message-State: APjAAAUVEQ+vPQi8EQHlNE5oMnRM7rPH94TmTQGKMnVxe7GZHChCqgEV
-        mAMpSDUeD7Nq9ScmHeoMaLDs/g==
-X-Google-Smtp-Source: APXvYqxqzjm2s6EfnuipxXg4t4ULKlfyYgyw4xvDzuLzhYcf5stB679VI/VFszN3hrXA71B8mIDMiQ==
-X-Received: by 2002:adf:ec90:: with SMTP id z16mr16990269wrn.110.1572325854801;
-        Mon, 28 Oct 2019 22:10:54 -0700 (PDT)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id f14sm1795746wmc.22.2019.10.28.22.10.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 28 Oct 2019 22:10:54 -0700 (PDT)
-Message-ID: <5db7c9de.1c69fb81.84d61.99dc@mx.google.com>
-Date:   Mon, 28 Oct 2019 22:10:54 -0700 (PDT)
+        id S1730873AbfJ2G26 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 02:28:58 -0400
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:50556 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732549AbfJ2G26 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 02:28:58 -0400
+X-AuditID: c0a8fbf4-183ff70000001fa6-f5-5db7dc27a4dc
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 70.9A.08102.72CD7BD5; Tue, 29 Oct 2019 07:28:55 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Tue, 29 Oct 2019 07:28:51 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [RFC PATCH v2 05/13] clk: bd718x7: Support ROHM BD71828 clk
+ block
+Thread-Topic: [RFC PATCH v2 05/13] clk: bd718x7: Support ROHM BD71828 clk
+ block
+Thread-Index: AQHVimBwjNMwf0EEZEiGH5vTJctNV6dwqoeAgAB0NIA=
+Date:   Tue, 29 Oct 2019 06:28:51 +0000
+Message-ID: <95b21eeaee8025dc430623429273116c35c1b769.camel@fi.rohmeurope.com>
+References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+         <5c66ac7d43ae1f57c335b6e565553fe1df703a83.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+         <20191028233256.798AD21479@mail.kernel.org>
+In-Reply-To: <20191028233256.798AD21479@mail.kernel.org>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
 Content-Type: text/plain; charset="utf-8"
+Content-ID: <BA1237DA9BAD5540B994689D32145663@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Lab-Name: lab-collabora
-X-Kernelci-Branch: for-next
-X-Kernelci-Tree: tegra
-X-Kernelci-Kernel: v5.4-rc1-43-g564c032098ad
-X-Kernelci-Report-Type: bisect
-Subject: tegra/for-next boot bisection: v5.4-rc1-43-g564c032098ad on
- tegra124-nyan-big
-To:     tomeu.vizoso@collabora.com, Thierry Reding <treding@nvidia.com>,
-        guillaume.tucker@collabora.com, mgalka@collabora.com,
-        broonie@kernel.org, matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TWUwTQRh2dre7S3HNUoqMqEQbTb0Fo2aiRnkxWYzxfDEaxAUW2tCDbIvn
+        C4lHpZB4gUflUAQkQFQQRYk1iFC0arEeiHhRr1BD8EINEcVdVoWn+TLf9U/yD41rAmQUbbTY
+        BdHCm3Skmmis+FkzW/+8PiHmYVc0KvU/ppCjt5xCfYVeAuUH3pKouNmnQjl36lTo2aULBHr1
+        rQWg74/2Yyhv4CyGPue+VKGLxQMAPWwoINGlnnMAeaoekajsiR9DBWW3COT3LkcvvC0k2utu
+        ptDv9hoiLoKrLqoG3MeOvRRXVL2Lu+p6QXG1ldkk97z9Gsm1dtRj3LGifoyrqPpBcV9ro9eo
+        N4YuSeLtW9cb0yxzl24JNew78FmV0TBt+9GqfCIL1OmdIISG7HzYcf0XKWMN+xjAntY4J1BL
+        +BaAlS31wAlommSXQOdTStZo2SR48UsOIWtw9hsF7w+6CZkIZ9fArKAPU0Rroev4e5WCF8Hd
+        3/uGMMFOhVdfN+IyZthV8HpeDVDKHgD4wF8NZCKERTDXs2dIBNiJMDurdygUZyNh7fsfKmVq
+        FpZea8MVHAGDb37/vddBd3+AkIfG2enwfMNcxRoH8+87CAVPhnk5AUqZIQzePvGWOAjGukY0
+        uIbdrhFu1wi3a4T7FFBVAmjmjaY03i7EzhGFzDmi1WCWjmSruRYoK9N3BQw2xTcBjAZNYByN
+        6SKYAU99gmZMkjVlh4G3GRLFTJNgawKQxnVaxn/3coKGSeF37BRE6z9qPE3oIhl94FCChpW7
+        0gUhQxD/sRNoWgeZqc+k0DBRSBO2pxpN9mEao0PkcHWU1iZYUgSRz7QbEuX9SLRJCyJTo6Ve
+        lWxnbBm8WbpVrF4wkz4YLCzB6ebCshJcQ1isFiEqktHKUlaWGjIt/4s+gEga6MKZkk6JHS39
+        m/85H6QKTKqY1S8/zWbnh6moLBDW9sS0wid0m7M94T3qXmN6c9/JI+M6F/Z0nYxddvtwzDxf
+        zQazd6Vzt/7eFMeGmOkv09eN6g9aqAPR2woWuO/uXFt+/kbvhNW/rOmb4gfbikvjGxen+vSB
+        Y4mbHV0omOS42Zlsqvv07ijo3h+R64kO9bYnT8LGpGmmrTytdZ/prtQRNgMfOwMXbfwfGu26
+        MfQDAAA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-*                                                               *
-* If you do send a fix, please include this trailer:            *
-*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-*                                                               *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
-tegra/for-next boot bisection: v5.4-rc1-43-g564c032098ad on tegra124-nyan-b=
-ig
-
-Summary:
-  Start:      564c032098ad Merge branch for-5.5/clk into for-next
-  Details:    https://kernelci.org/boot/id/5db73d0459b514ce1360ee73
-  Plain log:  https://storage.kernelci.org//tegra/for-next/v5.4-rc1-43-g564=
-c032098ad/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/boot-te=
-gra124-nyan-big.txt
-  HTML log:   https://storage.kernelci.org//tegra/for-next/v5.4-rc1-43-g564=
-c032098ad/arm/multi_v7_defconfig+CONFIG_SMP=3Dn/gcc-8/lab-collabora/boot-te=
-gra124-nyan-big.html
-  Result:     03fcfdabb05e clk: tegra: Reimplement SOR clock on Tegra124
-
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       tegra
-  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/tegra/linux.g=
-it
-  Branch:     for-next
-  Target:     tegra124-nyan-big
-  CPU arch:   arm
-  Lab:        lab-collabora
-  Compiler:   gcc-8
-  Config:     multi_v7_defconfig+CONFIG_SMP=3Dn
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit 03fcfdabb05ea8d63f571649c4f8fc6840750c69
-Author: Thierry Reding <treding@nvidia.com>
-Date:   Thu Jul 25 18:19:00 2019 +0200
-
-    clk: tegra: Reimplement SOR clock on Tegra124
-    =
-
-    In order to allow the display driver to deal uniformly with all SOR
-    generations, implement the SOR clocks in a way that is compatible with
-    Tegra186 and later.
-    =
-
-    Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra=
-124.c
-index 7d231529c3a5..b3110d5b5a6c 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1005,20 +1005,24 @@ static struct tegra_devclk devclks[] __initdata =3D=
- {
- 	{ .con_id =3D "hda2hdmi", .dt_id =3D TEGRA124_CLK_HDA2HDMI },
- };
- =
-
--static const char *mux_pllp_pllm_plld_plla_pllc_plld2_clkm[] =3D {
--	"pll_p", "pll_m", "pll_d_out0", "pll_a_out0", "pll_c",
--	"pll_d2_out0", "clk_m"
-+static const char * const sor0_parents[] =3D {
-+	"pll_p_out0", "pll_m_out0", "pll_d_out0", "pll_a_out0", "pll_c_out0",
-+	"pll_d2_out0", "clk_m",
- };
--#define mux_pllp_pllm_plld_plla_pllc_plld2_clkm_idx NULL
- =
-
--static const char *mux_clkm_plldp_sor0out[] =3D {
--	"clk_m", "pll_dp", "sor0_out",
-+static const char * const sor0_out_parents[] =3D {
-+	"clk_m", "sor0_pad_clkout",
- };
--#define mux_clkm_plldp_sor0out_idx NULL
- =
-
- static struct tegra_periph_init_data tegra124_periph[] =3D {
--	MUX8_NOGATE_LOCK("sor0_out", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK=
-_SOURCE_SOR0, tegra_clk_sor0_out, &sor0_lock),
--	NODIV("sor0", mux_clkm_plldp_sor0out, CLK_SOURCE_SOR0, 14, 3, 182, 0, teg=
-ra_clk_sor0, &sor0_lock),
-+	TEGRA_INIT_DATA_TABLE("sor0", NULL, NULL, sor0_parents,
-+			      CLK_SOURCE_SOR0, 29, 0x7, 0, 0, 0, 0,
-+			      0, 182, 0, tegra_clk_sor0, NULL, 0,
-+			      &sor0_lock),
-+	TEGRA_INIT_DATA_TABLE("sor0_out", NULL, NULL, sor0_out_parents,
-+			      CLK_SOURCE_SOR0, 14, 0x1, 0, 0, 0, 0,
-+			      0, 0, TEGRA_PERIPH_NO_GATE, tegra_clk_sor0_out,
-+			      NULL, 0, &sor0_lock),
- };
- =
-
- static struct clk **clks;
----------------------------------------------------------------------------=
-----
-
-
-Git bisection log:
-
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c] Linux 5.4-rc1
-git bisect good 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c
-# bad: [564c032098ad56372b69ad19d9c92167d8e0e0f4] Merge branch for-5.5/clk =
-into for-next
-git bisect bad 564c032098ad56372b69ad19d9c92167d8e0e0f4
-# good: [23939968c9d885c4b467f49b84deadf96bd3cadf] arm64: tegra: Enable Dis=
-playPort on Jetson AGX Xavier
-git bisect good 23939968c9d885c4b467f49b84deadf96bd3cadf
-# good: [811ec063dc042065bc0fad83c374202c436f660f] Merge branch for-5.5/soc=
- into for-next
-git bisect good 811ec063dc042065bc0fad83c374202c436f660f
-# bad: [c7dd92281a822e3d1072cd6c0a2e5d4e90cf1e38] clk: tegra: Reimplement S=
-OR clocks on Tegra210
-git bisect bad c7dd92281a822e3d1072cd6c0a2e5d4e90cf1e38
-# good: [bbcaaf40ed81b4f9326f57dddd4b4a86dc763493] clk: tegra: Move SOR0 im=
-plementation to Tegra124
-git bisect good bbcaaf40ed81b4f9326f57dddd4b4a86dc763493
-# bad: [03fcfdabb05ea8d63f571649c4f8fc6840750c69] clk: tegra: Reimplement S=
-OR clock on Tegra124
-git bisect bad 03fcfdabb05ea8d63f571649c4f8fc6840750c69
-# good: [b761e39ee45cd51f2f0d506ee998c1d9cc03d8cd] clk: tegra: Rename sor0_=
-lvds to sor0_out
-git bisect good b761e39ee45cd51f2f0d506ee998c1d9cc03d8cd
-# first bad commit: [03fcfdabb05ea8d63f571649c4f8fc6840750c69] clk: tegra: =
-Reimplement SOR clock on Tegra124
----------------------------------------------------------------------------=
-----
+SGVsbG8gU3RlcGhlbiwNCg0KVGhhbmtzIGZvciB0aGUgY29tbWVudHMgb25jZSBhZ2FpbiA6KQ0K
+DQpPbiBNb24sIDIwMTktMTAtMjggYXQgMTY6MzIgLTA3MDAsIFN0ZXBoZW4gQm95ZCB3cm90ZToN
+Cj4gUXVvdGluZyBNYXR0aSBWYWl0dGluZW4gKDIwMTktMTAtMjQgMDQ6NDQ6NDApDQo+ID4gZGlm
+ZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2Nsay1iZDcxOHg3LmMgYi9kcml2ZXJzL2Nsay9jbGstYmQ3
+MTh4Ny5jDQo+ID4gaW5kZXggYWU2ZTViYWVlMzMwLi5kMTdhMTllMDQ1OTIgMTAwNjQ0DQo+ID4g
+LS0tIGEvZHJpdmVycy9jbGsvY2xrLWJkNzE4eDcuYw0KPiA+ICsrKyBiL2RyaXZlcnMvY2xrL2Ns
+ay1iZDcxOHg3LmMNCj4gPiBAQCAtOCw2ICs4LDcgQEANCj4gPiAgI2luY2x1ZGUgPGxpbnV4L3Bs
+YXRmb3JtX2RldmljZS5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvc2xhYi5oPg0KPiA+ICAjaW5j
+bHVkZSA8bGludXgvbWZkL3JvaG0tYmQ3MTh4Ny5oPg0KPiA+ICsjaW5jbHVkZSA8bGludXgvbWZk
+L3JvaG0tYmQ3MTgyOC5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvbWZkL3JvaG0tYmQ3MDUyOC5o
+Pg0KPiANCj4gSXQgd291bGQgYmUgcmVhbGx5IGdyZWF0IHRvIG5vdCBuZWVkIHRvIGluY2x1ZGUg
+dGhlc2UgcmFuZG9tIGhlYWRlcg0KPiBmaWxlcyBpbiB0aGlzIGRyaXZlciBhbmQganVzdCB1c2Ug
+cmF3IG51bWJlcnMgc29tZWhvdy4gTG9va3MgbGlrZQ0KPiBtYXliZQ0KPiBpdCBjYW4gYmUgZG9u
+ZSBieSBwb3B1bGF0aW5nIGEgZGlmZmVyZW50IGRldmljZSBuYW1lIGZyb20gdGhlIG1mZA0KPiBk
+cml2ZXINCj4gZGVwZW5kaW5nIG9uIHRoZSB2ZXJzaW9uIG9mIHRoZSBjbGsgY29udHJvbGxlciBk
+ZXNpcmVkPyBUaGVuIHRoYXQgY2FuDQo+IGJlDQo+IG1hdGNoZWQgaW4gdGhpcyBjbGsgZHJpdmVy
+IGFuZCB3ZSBjYW4ganVzdCBwdXQgdGhlIHJlZ2lzdGVyIGluZm8gaW4NCj4gdGhpcw0KPiBmaWxl
+Pw0KDQpJIHN0aWxsIGxpa2Uga2VlcGluZyB0aGUgY2hpcCB0eXBlIGluZm9ybWF0aW9uIG9uIG9u
+ZSBoZWFkZXIgLSBubw0KbWF0dGVyIHdoYXQtZXZlciBmb3JtYXQgdGhlIGNsay1jb250cm9sbGVy
+IHR5cGUvdmVyc2lvbiBpbmZvcm1hdGlvbiBpcy4NClJhdGlvbmFsZSBpcyB0aGF0IE1GRCBhbmQg
+YWxzbyBmZXcgb3RoZXIgc3ViLWRldmljZXMgKG5vdCBvbmx5IHRoZSBjbGspDQpuZWVkIHRvIHVz
+ZSBpdC4gQ3VycmVudGx5IGF0IGxlYXN0IHRoZSBSVEMuDQoNCkJ1dCBpZiB3ZSBkZWZpbmUgY2xr
+IHJlZ2lzdGVyIGluZm9ybWF0aW9uIGZvciBhbGwgUE1JQ3MgaW4gdGhpcyBjLWZpbGUsIA0KdGhl
+biAoSSB0aGluaykgd2UgY2FuIG9ubHkgaW5jbHVkZSB0aGUgPGxpbnV4L21mZC9yb2htLWdlbmVy
+aWMuaD4gLQ0Kd2hpY2ggY29udGFpbnMgdGhlIFBNSUMgdHlwZSBkZWZpbmVzIGFuZCB0aGUgZ2Vu
+ZXJpYyBNRkQgZGF0YQ0Kc3RydWN0dXJlLiBUaGF0IHdvdWxkOg0KDQotI2luY2x1ZGUgPGxpbnV4
+L21mZC9yb2htLWJkNzE4eDcuaD4NCi0jaW5jbHVkZSA8bGludXgvbWZkL3JvaG0tYmQ3MTgyOC5o
+Pg0KLSNpbmNsdWRlIDxsaW51eC9tZmQvcm9obS1iZDcwNTI4Lmg+DQorI2luY2x1ZGUgPGxpbnV4
+L21mZC9yb2htLWdlbmVyaWMuaD4NCg0KVGhhdCB3YXkgdGhlIGNoaXAtdHlwZSBpbmZvcm1hdGlv
+biBjb3VsZCBzdGlsbCBiZSBzYW1lIGZvciBNRkQgYW5kIGFsbA0Kc3ViLWRldmljZXMgYnV0IGNs
+ayBkcml2ZXIgd291bGQgbm90IG5lZWQgdG8gaW5jbHVkZSBhbGwgdGhlIGRldGFpbHMNCmZvciBh
+bGwgdGhlIFBNSUNzLiBJIHVuZGVyc3RhbmQgeW91ciBwb2ludCB3ZWxsIGFzIGNsayByZWdpc3Rl
+cnMgZm9yDQp0aGVzZSBQTUlDcyBhcmUgcmVhbGx5ICpsaW1pdGVkKi4NCg0KPiANCj4gPiAgI2lu
+Y2x1ZGUgPGxpbnV4L2Nsay1wcm92aWRlci5oPg0KPiA+ICAjaW5jbHVkZSA8bGludXgvY2xrZGV2
+Lmg+DQo+ID4gQEAgLTIxLDEwICsyMiw4IEBAIHN0cnVjdCBiZDcxOHh4X2NsayB7DQo+ID4gICAg
+ICAgICBzdHJ1Y3Qgcm9obV9yZWdtYXBfZGV2ICptZmQ7DQo+ID4gIH07DQo+ID4gIA0KPiA+IC1z
+dGF0aWMgaW50IGJkNzE4MzdfY2xrX3NldChzdHJ1Y3QgY2xrX2h3ICpodywgaW50IHN0YXR1cykN
+Cj4gPiArc3RhdGljIGludCBiZDcxODM3X2Nsa19zZXQoc3RydWN0IGJkNzE4eHhfY2xrICpjLCBp
+bnQgc3RhdHVzKQ0KPiANCj4gc2hvdWxkIGl0IGJlIHVuc2lnbmVkIGludCBzdGF0dXM/IE9yIG1h
+eWJlIHUzMj8NCj4gDQo+ID4gIHsNCj4gPiAtICAgICAgIHN0cnVjdCBiZDcxOHh4X2NsayAqYyA9
+IGNvbnRhaW5lcl9vZihodywgc3RydWN0DQo+ID4gYmQ3MTh4eF9jbGssIGh3KTsNCj4gPiAtDQo+
+ID4gICAgICAgICByZXR1cm4gcmVnbWFwX3VwZGF0ZV9iaXRzKGMtPm1mZC0+cmVnbWFwLCBjLT5y
+ZWcsIGMtPm1hc2ssDQo+ID4gc3RhdHVzKTsNCj4gPiAgfQ0KPiA+ICANCj4gPiBAQCAtMzMsMTQg
+KzMyLDE2IEBAIHN0YXRpYyB2b2lkIGJkNzE4MzdfY2xrX2Rpc2FibGUoc3RydWN0IGNsa19odw0K
+PiA+ICpodykNCj4gPiAgICAgICAgIGludCBydjsNCj4gPiAgICAgICAgIHN0cnVjdCBiZDcxOHh4
+X2NsayAqYyA9IGNvbnRhaW5lcl9vZihodywgc3RydWN0DQo+ID4gYmQ3MTh4eF9jbGssIGh3KTsN
+Cj4gPiAgDQo+ID4gLSAgICAgICBydiA9IGJkNzE4MzdfY2xrX3NldChodywgMCk7DQo+ID4gKyAg
+ICAgICBydiA9IGJkNzE4MzdfY2xrX3NldChjLCAwKTsNCj4gPiAgICAgICAgIGlmIChydikNCj4g
+PiAgICAgICAgICAgICAgICAgZGV2X2RiZygmYy0+cGRldi0+ZGV2LCAiRmFpbGVkIHRvIGRpc2Fi
+bGUgMzJLIGNsaw0KPiA+ICglZClcbiIsIHJ2KTsNCj4gPiAgfQ0KPiA+ICANCj4gPiAgc3RhdGlj
+IGludCBiZDcxODM3X2Nsa19lbmFibGUoc3RydWN0IGNsa19odyAqaHcpDQo+ID4gIHsNCj4gPiAt
+ICAgICAgIHJldHVybiBiZDcxODM3X2Nsa19zZXQoaHcsIDEpOw0KPiA+ICsgICAgICAgc3RydWN0
+IGJkNzE4eHhfY2xrICpjID0gY29udGFpbmVyX29mKGh3LCBzdHJ1Y3QNCj4gPiBiZDcxOHh4X2Ns
+aywgaHcpOw0KPiA+ICsNCj4gPiArICAgICAgIHJldHVybiBiZDcxODM3X2Nsa19zZXQoYywgMHhm
+ZmZmZmZmZik7DQo+IA0KPiBCZWNhdXNlIG5vdyB0aGlzIGlzIHBhc3NpbmcgLTEgdG8gdW5zaWdu
+ZWQgaW50IHRha2luZw0KPiByZWdtYXBfdXBkYXRlX2JpdHMoKT8NCg0KSSB0aGluayB0aGF0IGJp
+dC13aXNlIGl0IGlzIGFsbCB0aGUgc2FtZS4gQ3VycmVudGx5IHJlZ2lzdGVycyBhcmUgb25seQ0K
+OGJpdHMgd2lkZSBzbyBpdCBpcyBlbm91Z2ggdGhhdCBsb3dlc3QgOCBiaXRzIGFyZSBzZXQuIEFu
+ZCAweGZmZmZmZmZmDQpzaG91bGQgd29yayBuaWNlbHkgdXAtdG8gMzJiaXQgcmVnaXN0ZXJzIGFz
+IGxvbmcgYXMgaW50IGlzIDMyIGJpdCBvcg0KbW9yZS4NCg0KQnV0IHlvdSBhcmUgY29ycmVjdCB0
+aGF0IHRoaXMgaXMgbm90IGxvb2tpbmcgZ29vZC4gQXQgZmlyc3Qgc2lnaHQNCnVuc2lnbmVkIGlu
+dCBpcyBtdWNoIG5pY2VyLiBJIHByZWZlciB1bnNpZ25lZCBpbnQgb3ZlciBmb3JjZWQgdTMyIHRv
+DQpndWFyYW50ZWUgbmF0dXJhbCBhbGlnbm1lbnQgLSB3aGljaCBkb2VzIG5vdCByZWFsbHkgbWF0
+dGVyIGluIHRoaXMgY2FzZQ0KZWl0aGVyLiB1bnNpZ25lZCBpbnQgbWF0Y2hlcyByZWdtYXAgdGhv
+dWdoIHNvIEknbGwgc3dpdGNoIHRvIGl0LiBUaGFua3MNCmZvciBwb2ludGluZyB0aGlzIG91dCA6
+KQ0KDQpJJ2xsIHRyeSB0byBpbmNsdWRlIHRoZXNlIGNsayBjaGFuZ2VzIGluIHYzLg0KDQoNCkJy
+LA0KCU1hdHRpIFZhaXR0aW5lbg0K
