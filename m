@@ -2,86 +2,111 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDF02CA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:27:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BEACA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BAFA214B2
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:27:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572352030;
-	bh=Oh1zur1Wys3Pk3V0EI55gAnV+WZ45LU3ZNxZzkP/20Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=lc2Tri7i4sTQinz+CUhxARwLoO2v7zgbwc8/YRk1+MiVAdv2WjrGDGcrnVCXAYq8x
-	 Jj4SF2eJsoU7BRMcJ6cZmeDpvN8vUj9oglPPhfmq9haYqPluG5BQxT6Pp2e1b66So+
-	 HK1pCZXRWJXOvvAZj72TSB9gUFC0Aff+HxHwhTOM=
+	by mail.kernel.org (Postfix) with ESMTP id EBE6A21479
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:50:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ari5oMPX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728409AbfJ2M1H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 08:27:07 -0400
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43068 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726290AbfJ2M1H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 08:27:07 -0400
-Received: by mail-ot1-f67.google.com with SMTP id b19so7206716otq.10;
-        Tue, 29 Oct 2019 05:27:06 -0700 (PDT)
+        id S2387849AbfJ2Mu1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 08:50:27 -0400
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:35572 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729253AbfJ2Mu1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 08:50:27 -0400
+Received: by mail-lj1-f196.google.com with SMTP id m7so15136936lji.2;
+        Tue, 29 Oct 2019 05:50:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=H+1+E1Mkw61uNWs7GIpUIl/WGmE8S7qBe+e6s/cPqZw=;
+        b=ari5oMPXp859DXdO+xnn+iL7LJAYqB1R/5IEpRjP0GyPrkUR+OXWZeDWb0mwdybwQZ
+         1odHGNN7BvobQHpJnR/IOu2q09pKaCtoa3r7g6V38Lag8Dzi5V6d83LYNyLYlN3Xl8wl
+         1PlZX8Fu5WOWKaLTTIb/AF0iuNGZDQRLLA2tuEAM7THXX+59A58mzGy6HARPryO0QIQ+
+         FmcbzYCktyZdZx6CPUou2NWAb5CwBRxwPl654n2QBzlgoaVi2BxJ2AbBGcR7ogkN0lfj
+         lT+g5wVHsWxBbCQJHqEjYgKE7GkZLyiLDjdgwiIGLFmfjeqQGYSQjLsAObdGlESu5zyJ
+         RlIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LE4PO0l8sU/LMs15ntY9NP1K54bi7Rn7T6Rvaa70k0c=;
-        b=jatZl43+T1OAL+mtytfjxt5ONLw4ptfpIwjE/JagPLOYGBYq/xH8KNU31Q2e8/OUfk
-         KdwfOk/JyAyhm66p+WV02Wjne4coodHaH62OzyGp+SM5zRYdtvFY+n+DPmn053NASUJw
-         /XKETfGQ89DTKXBzDNbBuN0hntOJjAikGZ4OhLMx804Z92xHgXjN4k3udfRuCNDYu0X6
-         zug7YnivB7sronBUKD7tGI8IS/goFzrvd/zQzJQn8Rs1qauC3TW60o57visQ0X+9KREY
-         jFd8lug7DZFU/vTqqn5ZewOhWWmevmEY2MxEF0k8YQnDB7kmJLohL96bDxSgZ2+qjDSJ
-         y7pw==
-X-Gm-Message-State: APjAAAV83eqM4xEgaS1L/Pbj3QLLXwwUIBNi0zzP0/JyaJKUpilSIzOU
-        NQADShGSmTq2BkP2CHlQfg==
-X-Google-Smtp-Source: APXvYqz/kSbsYZbjOtemCxn0+8PVX7DGw9O5oetqGXvmK6OEFhe1CXtflAPDXmoOIX77jKZU/YDcDg==
-X-Received: by 2002:a9d:7a90:: with SMTP id l16mr7208693otn.295.1572352026208;
-        Tue, 29 Oct 2019 05:27:06 -0700 (PDT)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l7sm1629839otf.39.2019.10.29.05.27.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 29 Oct 2019 05:27:05 -0700 (PDT)
-Date:   Tue, 29 Oct 2019 07:27:04 -0500
-From:   Rob Herring <robh@kernel.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?iso-8859-1?Q?=A0?= 
-        <mturquette@baylibre.com>, Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 2/3] dt-bindings: clock: Introduce RPMHCC bindings for
- SC7180
-Message-ID: <20191029122704.GA8251@bogus>
-References: <1571393364-32697-1-git-send-email-tdas@codeaurora.org>
- <1571393364-32697-3-git-send-email-tdas@codeaurora.org>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=H+1+E1Mkw61uNWs7GIpUIl/WGmE8S7qBe+e6s/cPqZw=;
+        b=ZHZ5nAfLdKKrVUF83Xfk0BMSqp5u4+sHXpDswrH2JJI81817gvyPxTk8VD+xj651oV
+         BJkICXmGlNRbXGP3UUJ5dOFBz3+IPmBSeT1SmcYXX51Sp5/osn2j6CVkaYFNzrkdBjmz
+         cqc+H5bDePFOXlzFUZoyDDZCWel3g3iyiSs7nDMEilYkNjevGLXLRfezVGMujJkv50tu
+         RLYyeJP5bpoBY49iSVBvRxzlxLejZTBI1yxPcjNUgb8HqfjO25MYGkXKI3m52dIlAJhU
+         LtBrCjBTG4RY3jhmtC1XHIb8tObxSpzBBJuCnfDU80u6Qz7CekdzVKTrbd4PjWtvE6yA
+         Jk+g==
+X-Gm-Message-State: APjAAAWkYnO9oAUrEy43Z4z8G/vEdmqxydL3iWKUAt4U2emsGA8qgrAl
+        g43W47ZOAGImk2VXhkm8ssjVmiE6
+X-Google-Smtp-Source: APXvYqwT5xHzW80AdFTkNUJFyTUogFJ15bZtdQv5kxzSKhGfDa1Ig7x39l929QbapLvn7aSlJFZ3DQ==
+X-Received: by 2002:a2e:8604:: with SMTP id a4mr2623578lji.89.1572353424838;
+        Tue, 29 Oct 2019 05:50:24 -0700 (PDT)
+Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.googlemail.com with ESMTPSA id q27sm6080287lfn.96.2019.10.29.05.50.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 29 Oct 2019 05:50:23 -0700 (PDT)
+Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
+ enable-bit on rate's recalculation
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190723025245.27754-1-digetx@gmail.com>
+ <20191028142753.GC27141@pdeschrijver-desktop.Nvidia.com>
+ <62c375bd-09ae-e09f-6ca2-c1395eebc5fa@gmail.com>
+Message-ID: <1dfd0270-b8d7-da22-46dd-7efc907d5655@gmail.com>
+Date:   Tue, 29 Oct 2019 15:50:22 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1571393364-32697-3-git-send-email-tdas@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <62c375bd-09ae-e09f-6ca2-c1395eebc5fa@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 18 Oct 2019 15:39:23 +0530, Taniya Das wrote:
-> Add compatible for SC7180 RPMHCC.
+29.10.2019 03:14, Dmitry Osipenko пишет:
+> 28.10.2019 17:27, Peter De Schrijver пишет:
+>> On Tue, Jul 23, 2019 at 05:52:44AM +0300, Dmitry Osipenko wrote:
+>>> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
+>>> have any effect in that case. Please note that there are no known bugs
+>>> caused by the missing check.
+>>>
+>>
+>> Technically this is not quite true, but for the purposes of CCF you can
+>> treat it that way. This bits defines if the value in the lower 16 bits
+>> of the divider register is used to configure the divider or if the
+>> contents of the UART DLM/DLL registers is used. So the divider isn't
+>> actually bypassed, it's just configured differently.
+>> In practice this bit is only set when the divider is non-zero when doing
+>> set rate. So the extra test isn't strictly needed as long as the sw
+>> running before the kernel also ensures the bit is only set when the
+>> divider is non-zero.
+>>
+>> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+> Thank you for the clarification. I hope that bootloader doesn't enable
+> the divider because it looks like standard 8250 driver won't be ready
+> for that. But serial-tegra driver seems should be good.
 
-Acked-by: Rob Herring <robh@kernel.org>
+Actually, it should be good because I missed that UART clocks are
+per-initialized in the clk driver init table.
+
+I'll update commit's message and send a new version of this patch.
