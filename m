@@ -2,111 +2,120 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BEACA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BDDECA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 13:17:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBE6A21479
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DF8C2086A
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 13:17:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ari5oMPX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="uCnj9IQK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387849AbfJ2Mu1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 08:50:27 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35572 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729253AbfJ2Mu1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 08:50:27 -0400
-Received: by mail-lj1-f196.google.com with SMTP id m7so15136936lji.2;
-        Tue, 29 Oct 2019 05:50:25 -0700 (PDT)
+        id S2388119AbfJ2NRS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 09:17:18 -0400
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:35912 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732534AbfJ2NRS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 09:17:18 -0400
+Received: by mail-wm1-f65.google.com with SMTP id c22so2384208wmd.1;
+        Tue, 29 Oct 2019 06:17:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=H+1+E1Mkw61uNWs7GIpUIl/WGmE8S7qBe+e6s/cPqZw=;
-        b=ari5oMPXp859DXdO+xnn+iL7LJAYqB1R/5IEpRjP0GyPrkUR+OXWZeDWb0mwdybwQZ
-         1odHGNN7BvobQHpJnR/IOu2q09pKaCtoa3r7g6V38Lag8Dzi5V6d83LYNyLYlN3Xl8wl
-         1PlZX8Fu5WOWKaLTTIb/AF0iuNGZDQRLLA2tuEAM7THXX+59A58mzGy6HARPryO0QIQ+
-         FmcbzYCktyZdZx6CPUou2NWAb5CwBRxwPl654n2QBzlgoaVi2BxJ2AbBGcR7ogkN0lfj
-         lT+g5wVHsWxBbCQJHqEjYgKE7GkZLyiLDjdgwiIGLFmfjeqQGYSQjLsAObdGlESu5zyJ
-         RlIg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=CuEYBnVldm0xxstpEXocoTVVeQepXqnFEfpZ5yvIc74=;
+        b=uCnj9IQKetzW2xxLmfz0mvOzpJ3P5znjnoemHD+FPkbR+UlNxHkda98IAlQeivOb1T
+         IjlL//t09B6J3vkIpfDg4RAfo3f6Tf96rQWMKHkhCvBmp3+0IxC/fFADUYbzpWBEL9Ij
+         7oL9RPhK6Hsyj8FZ3Ix566bxM57jffiBQQ2A9S5Bu4t2AG8WWp1rWqMXQiPYHs6RnqtN
+         JwooYazXMZZKWsnRKojFbpyiaa1DXkYxpEG+0zhWfd8Z9uqObNRLKh3cSkNZtmx/VmuS
+         mGrqrxUA7Tzj+ecr61BiiFKwlWLLBvZJ3aI9NALpTOL0isuiRI857rlBArWuJ8mrBUjb
+         vxGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=H+1+E1Mkw61uNWs7GIpUIl/WGmE8S7qBe+e6s/cPqZw=;
-        b=ZHZ5nAfLdKKrVUF83Xfk0BMSqp5u4+sHXpDswrH2JJI81817gvyPxTk8VD+xj651oV
-         BJkICXmGlNRbXGP3UUJ5dOFBz3+IPmBSeT1SmcYXX51Sp5/osn2j6CVkaYFNzrkdBjmz
-         cqc+H5bDePFOXlzFUZoyDDZCWel3g3iyiSs7nDMEilYkNjevGLXLRfezVGMujJkv50tu
-         RLYyeJP5bpoBY49iSVBvRxzlxLejZTBI1yxPcjNUgb8HqfjO25MYGkXKI3m52dIlAJhU
-         LtBrCjBTG4RY3jhmtC1XHIb8tObxSpzBBJuCnfDU80u6Qz7CekdzVKTrbd4PjWtvE6yA
-         Jk+g==
-X-Gm-Message-State: APjAAAWkYnO9oAUrEy43Z4z8G/vEdmqxydL3iWKUAt4U2emsGA8qgrAl
-        g43W47ZOAGImk2VXhkm8ssjVmiE6
-X-Google-Smtp-Source: APXvYqwT5xHzW80AdFTkNUJFyTUogFJ15bZtdQv5kxzSKhGfDa1Ig7x39l929QbapLvn7aSlJFZ3DQ==
-X-Received: by 2002:a2e:8604:: with SMTP id a4mr2623578lji.89.1572353424838;
-        Tue, 29 Oct 2019 05:50:24 -0700 (PDT)
-Received: from [192.168.2.145] (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
-        by smtp.googlemail.com with ESMTPSA id q27sm6080287lfn.96.2019.10.29.05.50.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 29 Oct 2019 05:50:23 -0700 (PDT)
-Subject: Re: [PATCH v2 1/2] clk: tegra: divider: Add missing check for
- enable-bit on rate's recalculation
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=CuEYBnVldm0xxstpEXocoTVVeQepXqnFEfpZ5yvIc74=;
+        b=oZ6FBmV52JWefAj26YdykJZ0iH8nIXpH4oz+6sbR56O24/rP1TSr9y7Fzo4HD1o6op
+         3BZ8eLZLHWuSa3RFPAbvmCgLYgqKKui7SQoDAzSo93lyuCgzDIZ+jYzLzAbh+Vl0w74C
+         o/WMeNls/UmpuqWKk1cHm/AWtk8XgQSkCYOGhE+Qv3kgVrQP2cieyT46C9tclv3C8SrZ
+         05pCHSYZ6iuNmV+8rhCOnNzi2fv4Cofq7tSif8z53kXGr/ooVdK9LcCbsz3p4f1yuPax
+         VTTWpaOPDvkhZ2jcJ6Pjd1oM2sf9RcnClCwuGmryBhXW/qaFPDByg5aTeeaCRvgim20K
+         0ajw==
+X-Gm-Message-State: APjAAAVz8ck5RQWSmfeNF8YHs3l0D2beklLmiQUDdMcCpR9eAzIV1dQp
+        sBIEN2BxRy8Pv/6xpzdWqcg=
+X-Google-Smtp-Source: APXvYqyQqKMqEj+7UPIGpfNmaSyAprcDG1EIjtAC+9qSZHNrW+TO51/52vOD74YphF5VSCHTy5IHQA==
+X-Received: by 2002:a1c:f60d:: with SMTP id w13mr4421382wmc.150.1572355036046;
+        Tue, 29 Oct 2019 06:17:16 -0700 (PDT)
+Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
+        by smtp.gmail.com with ESMTPSA id t133sm3067226wmb.1.2019.10.29.06.17.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 06:17:15 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 14:17:14 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
         Prashant Gaikwad <pgaikwad@nvidia.com>,
         Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190723025245.27754-1-digetx@gmail.com>
- <20191028142753.GC27141@pdeschrijver-desktop.Nvidia.com>
- <62c375bd-09ae-e09f-6ca2-c1395eebc5fa@gmail.com>
-Message-ID: <1dfd0270-b8d7-da22-46dd-7efc907d5655@gmail.com>
-Date:   Tue, 29 Oct 2019 15:50:22 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+Subject: Re: [PATCH v1] clk: tegra20/30: Optimize PLLX configuration restoring
+Message-ID: <20191029131714.GD508460@ulmo>
+References: <20190922215203.32103-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <62c375bd-09ae-e09f-6ca2-c1395eebc5fa@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="C1iGAkRnbeBonpVg"
+Content-Disposition: inline
+In-Reply-To: <20190922215203.32103-1-digetx@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-29.10.2019 03:14, Dmitry Osipenko пишет:
-> 28.10.2019 17:27, Peter De Schrijver пишет:
->> On Tue, Jul 23, 2019 at 05:52:44AM +0300, Dmitry Osipenko wrote:
->>> Unset "enable" bit means that divider is in bypass mode, hence it doesn't
->>> have any effect in that case. Please note that there are no known bugs
->>> caused by the missing check.
->>>
->>
->> Technically this is not quite true, but for the purposes of CCF you can
->> treat it that way. This bits defines if the value in the lower 16 bits
->> of the divider register is used to configure the divider or if the
->> contents of the UART DLM/DLL registers is used. So the divider isn't
->> actually bypassed, it's just configured differently.
->> In practice this bit is only set when the divider is non-zero when doing
->> set rate. So the extra test isn't strictly needed as long as the sw
->> running before the kernel also ensures the bit is only set when the
->> divider is non-zero.
->>
->> Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-> 
-> Thank you for the clarification. I hope that bootloader doesn't enable
-> the divider because it looks like standard 8250 driver won't be ready
-> for that. But serial-tegra driver seems should be good.
 
-Actually, it should be good because I missed that UART clocks are
-per-initialized in the clk driver init table.
+--C1iGAkRnbeBonpVg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'll update commit's message and send a new version of this patch.
+On Mon, Sep 23, 2019 at 12:52:03AM +0300, Dmitry Osipenko wrote:
+> There is no need to re-configure PLLX if its configuration in unchanged
+> on return from suspend / cpuidle, this saves 300us if PLLX is already
+> enabled (common case for cpuidle).
+>=20
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk-tegra20.c | 25 ++++++++++++++++---------
+>  drivers/clk/tegra/clk-tegra30.c | 25 ++++++++++++++++---------
+>  2 files changed, 32 insertions(+), 18 deletions(-)
+
+Applied to for-5.5/clk, thanks.
+
+Thierry
+
+--C1iGAkRnbeBonpVg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl24O9kACgkQ3SOs138+
+s6GMDw/9GSfkmhdfZL9cfuprPRnzlzsiv7vNiAunAYdVGTo+4P1Z2dPgJLS0dvpp
+ZIHYnGem1kSVNGMMG460niQbkyXSB4+xLrCVdIjyVHX13uEMOWItkB1bLKBR/8qQ
+vTCCMfmJaOeir4eVpNTh3+5H2CKN8lkv4IT+YqCEsAhDZjVSLLcHf4a663WZkrHP
+MFpYJCyp5/lSE1XiQfPb3FVPuLl/cU2vFquqO1zarkE4g5PnzQEmZpSUfCHM92+c
+3RakZe+tsuAVOusNC38q4Hec4MTOgSu9aK+u9yjfuHokyDlo1UKoouruRZ6PvMm1
+IfR/6zIJWUhDv9bQfID70rJuhHzI9VntNl8stLbcb//aPJk7xeySDKEeZkGw1MQQ
+I6cxgareAOir2XcSqXxuDTRx2bsBgRj7FYODXvUaQjEL5mZ8p7hOLvmrn31ZM/Q0
+sx1hZ/0lJTZd4qg+nUffxojUETrVTCOSc2K2r7dl8J1o2XJ2kxswePLBSHTimFq2
+4uQEtYycToltWXl8c/Xjls87NDsypY7NAmY3Zc/8AKcUhNqfpTxiVqJ0V72y4Ic4
++i3bxOLUE6Tp9FBHbFLs4hEGJIw+gfc/JrthBFMsd2/vJzjcApOQLPIPaAiqf4a2
+LSYvYetgeLoIU5SufwYnLKAOSVgj/O+AqEhdC/+rW6SS+RZhK7Y=
+=wjdE
+-----END PGP SIGNATURE-----
+
+--C1iGAkRnbeBonpVg--
