@@ -2,133 +2,141 @@ Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FEBCA9EC3
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 11:37:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13C88CA9EAE
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:08:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 272B7214D9
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 11:37:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D9352208E3
+	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 12:08:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YCyJN6qQ"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5lX77UJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731497AbfJ2Lh2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 07:37:28 -0400
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:37233 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730471AbfJ2Lh1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 07:37:27 -0400
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20191029113725euoutp02c1ee187e50f6f0b3010a34d472478a80~SGyBZanjU3057030570euoutp02U
-        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20191029113725euoutp02c1ee187e50f6f0b3010a34d472478a80~SGyBZanjU3057030570euoutp02U
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1572349045;
-        bh=MV9FXID7nThRVDKuFUHFACJIlbCzkHrjaJu5Zhz/fsY=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=YCyJN6qQEllQY1S8GqZsldUqkJIBv3clfupk3Ug2kvQVpQUi8UBE/50zejCjMc4o8
-         8L44j9Sw5WBiNRLpJQiyQSDlf0KsmTyXtNUqlIEm9v8hCXCCGtyjo7/Hfv73N1sRe8
-         EUinASYPq77FHo5zOAcxuVgtM1DbymYCtVWKDLPA=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20191029113725eucas1p26abe0e7d7dda56b3e7bbdfdce3434288~SGyBJlTFm2560525605eucas1p25;
-        Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BC.28.04309.57428BD5; Tue, 29
-        Oct 2019 11:37:25 +0000 (GMT)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-        20191029113725eucas1p1a6e7ba2329ed3d4fdd16cf39fdb286b7~SGyA4Ow142425024250eucas1p1c;
-        Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-        20191029113725eusmtrp23541ca0c5609b89b6c685a7655433515~SGyA3jjIp2216522165eusmtrp2N;
-        Tue, 29 Oct 2019 11:37:25 +0000 (GMT)
-X-AuditID: cbfec7f4-afbff700000010d5-f7-5db824752e33
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id CE.37.04117.47428BD5; Tue, 29
-        Oct 2019 11:37:25 +0000 (GMT)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191029113724eusmtip28f08b0bb87ec7ba1856511b3ee5baead~SGyAU99Wh1898918989eusmtip2K;
-        Tue, 29 Oct 2019 11:37:24 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: exynos5433: Add missing slab.h header for
- kfree()
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Tomasz Figa <tomasz.figa@gmail.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Kukjin Kim <kgene@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kbuild test robot <lkp@intel.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <448c0770-24a2-6227-24e8-9bd5ad926f5e@samsung.com>
-Date:   Tue, 29 Oct 2019 12:37:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
+        id S1731409AbfJ2MIZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 08:08:25 -0400
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41146 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730303AbfJ2MIZ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 08:08:25 -0400
+Received: by mail-wr1-f67.google.com with SMTP id p4so13351554wrm.8
+        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 05:08:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=AThmdWLvoHXRd+gCJ7Rc/MdmxHKDL94oX7/2fySCtI4=;
+        b=P5lX77UJ1HJtxK6+w+SrHuDYaDtyieTnHZhqXpqYQooiSH5Kll8AXspDAhkEL4wIlw
+         hBQYFRsjp/fhhGLvnGTbxW6Cyas8J5lT2DcgCgvszMF1npFF0o8wt1J4os797vV6KthD
+         nch41e/zHWkALfLf1XQs2qEjEnQM6Z9jR0kMq9jvNfBVQj50Ghnb0ZLGlD58WAS85xzH
+         TTGyIn5cfIa7QmPPxEX7tFIwsMjItnnJ5oIxUu8Tvlmktoq1n6/IUWv/sEjQKzxXF3B1
+         rsdKdUZQNLGLRGmFYe1SoMSneOkEPEKsXkC4N3S2QAEX/dSXn/h+46Mutakba5iRRMUf
+         9RuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=AThmdWLvoHXRd+gCJ7Rc/MdmxHKDL94oX7/2fySCtI4=;
+        b=FDvv91zEMxCyMr4oiej/mueB7xHE+1JojXVNROxtBY20OoEw1bpeTvEroYHFNbP+cL
+         McYX2VebdMXqdEYhvxPTejFXxKtOBV9enbe2GAKJUVUrDumpDcRyaoaGng6nFX5oA78M
+         wNHBS+h2rn6hFkzK1U3vC64ChfBxGXlaLkNZ/LT20ZZuWkZ3C3GKVE7Kbr5PlphBQI6T
+         Euov23QLv8AgUHlW1nDk6/ZyjtrqYWM6IPs07bmF1GPZT9UiW+kYXdEemu0/fz1PkAnW
+         9mUMu5ELTAQtSIRtl7wVw52BtFnnek9nPre5Jj9twt0S9amiTRJOkepj3BqW4kgbQVAD
+         tAQw==
+X-Gm-Message-State: APjAAAVoRomK0uPHVjHXJb9Jd7n0al5L0PEAehxaZ9XMYPdu0PzaPoXc
+        7O0yaEsZPtyFnLwlNT3UKuw4oA==
+X-Google-Smtp-Source: APXvYqzgTN+N15xxbnf2G3a5OZaR/6UqN35YmkJy8Yi15GIpGWNYrXR0LpTtgteSgBb/D3JIn1j0jQ==
+X-Received: by 2002:adf:e488:: with SMTP id i8mr19406966wrm.302.1572350903096;
+        Tue, 29 Oct 2019 05:08:23 -0700 (PDT)
+Received: from dell ([2.31.163.64])
+        by smtp.gmail.com with ESMTPSA id g5sm2893643wmg.12.2019.10.29.05.08.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 29 Oct 2019 05:08:22 -0700 (PDT)
+Date:   Tue, 29 Oct 2019 12:08:20 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Message-ID: <20191029120820.GA4484@dell>
+References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+ <0182df3c49c6c804ee20ef32fc4b85b50ff45fca.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+ <ed0b2aa8-8a70-0341-4ecf-8959f37c53bd@ti.com>
+ <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20191023160000.409-1-krzk@kernel.org>
-Content-Language: en-GB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SaUhUURjtvmXmqY1cR80P22AwzEAnrR+vBclImD9BEJQUYk99qOTGPJdM
-        Sk3N3BcCc1RSDM0RXCY190CrsdyQKRWlMhVMw9QcEfd0npL/zjnfOdxz4DKkvJu2Z4JCI3h1
-        KBeskJhTjR9X+50jHZq8zzZ32bLDxmmazZ78TbIDA7VSVjc5RLOLGd9p1tBSJGFfDHQQ7Gzi
-        hIQd/OzJbg3VUay2ZQNdsVDNjyRLVc2ab1JVWdsModJpUyWqN6/iVFn1WqRa0p24Ib1jftmf
-        Dw6K4tVK93vmgcXlP6XhufSD3MoUFI8qqDRkxgA+DwvjSWQaMmfk+DWC9j4jEokRQcNsPCGS
-        JQQ1a8VoP9LeUU2JhwoEjfljtEjmEKS+LSd2Xdb4FvQu9JsSNtgJhjdXTCYSzxDwV59O7x4k
-        2BUyP2SZTDLsDoWzXaYwhU/B+1rDjs4wttgLepY50WIFnwqmTMXN8DlYn04wRUlsB0+MlbSI
-        T0JiQ6FpEOBRKbSlLe/VvgbPSzdoEVvDrL5eKuJjsN38khADiQgyWsekIslB8ENfspe+BF36
-        QXq3Ebkzp6ZFKcoesJC5KNmVAVvCyJyVWMIS8hrzSVGWwbOnctHtAOvafELE9pA+tU3lIIXm
-        wDTNgTmaA3M0/98tQZQW2fGRQkgAL7iF8tEuAhciRIYGuPiFhejQzv/q2dIbm1DLhm8nwgxS
-        HJb9+troLae5KCEmpBMBQypsZIO9O5LMn4t5yKvDfNSRwbzQiY4ylMJOFnto/K4cB3AR/H2e
-        D+fV+1eCMbOPR48cLYr63AxXi/Nmln09ozkLbx+v4LRkXNVvkHnQpQldf7xWlF+q1zq3PJM2
-        312vDntMR6Tks91xZUom1a+ntfLiba95/WnDSGrmEb/kuOPCBYJpK2hQdrzKscyrumnXVmfM
-        K/TOxoRjTEPQcmu5p9Oom2+uYiJWt004O67SCkoI5FzPkGqB+wdPjvHIWwMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrFIsWRmVeSWpSXmKPExsVy+t/xe7qlKjtiDR4vY7K4/uU5q0X/49fM
-        FufPb2C32PT4GqvFx557rBaXd81hs5hxfh+TxavmR2wWF0+5Wvy7tpHFYtWuP4wO3B7vb7Sy
-        e+ycdZfdY/Gel0wem1Z1snlsXlLv0bdlFaPH501yAexRejZF+aUlqQoZ+cUltkrRhhZGeoaW
-        FnpGJpZ6hsbmsVZGpkr6djYpqTmZZalF+nYJehlzlz1kL5jIWjFxZTtjA+Nyli5GTg4JAROJ
-        vfvWAdlcHEICSxklvmw4ydTFyAGUkJKY36IEUSMs8edaFxtEzWtGiYvr5oE1CwuESZz5cI4R
-        xBYR0JS4/vc7K0gRs8BLJomPe85DdbQxStzrmMIEUsUmYCjRe7QPrINXwE5i9qvDYHEWAVWJ
-        Ixsug8VFBSIknm+/AVUjKHFy5hOwbZwCxhK/nzeCxZkF1CX+zLvEDGGLSzR9WckKYctLNG+d
-        zTyBUWgWkvZZSFpmIWmZhaRlASPLKkaR1NLi3PTcYiO94sTc4tK8dL3k/NxNjMB43Xbs55Yd
-        jF3vgg8xCnAwKvHwvri6LVaINbGsuDL3EKMEB7OSCO/FM0Ah3pTEyqrUovz4otKc1OJDjKZA
-        z01klhJNzgemkrySeENTQ3MLS0NzY3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYwm
-        JxJDN8z953N2ppSt0FaGZ+uzGe8873geZHvvroTouuu/r0481uF4R+PB//M3Zyid1b8umLZH
-        slTEa2vXOqV/VsHPBLmPzlaZriEYfWErN1s00175+cd0368TEA8sNeSpqtw5e39npsz0CUnl
-        nAcWTPtx1Tdzx9faI/vu7bD89/Nvqc0Hxcz9SizFGYmGWsxFxYkApz0MaO0CAAA=
-X-CMS-MailID: 20191029113725eucas1p1a6e7ba2329ed3d4fdd16cf39fdb286b7
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191023160027epcas4p15be9c72d575fa4c3b022551c32cfc59a
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191023160027epcas4p15be9c72d575fa4c3b022551c32cfc59a
-References: <CGME20191023160027epcas4p15be9c72d575fa4c3b022551c32cfc59a@epcas4p1.samsung.com>
-        <20191023160000.409-1-krzk@kernel.org>
+In-Reply-To: <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 10/23/19 18:00, Krzysztof Kozlowski wrote:
-> Usage of kfree() requires slab.h header.  Otherwise building on x86_64
-> with COMPILE_TEST fails with:
-> 
->     drivers/clk/samsung/clk-exynos5433.c: In function ‘exynos5433_cmu_probe’:
->     drivers/clk/samsung/clk-exynos5433.c:5598:4: error: implicit declaration 
-> of function ‘kfree’; did you mean ‘vfree’? [-Werror=implicit-function-declaration]
-> 
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+On Fri, 25 Oct 2019, Vaittinen, Matti wrote:
 
-Thanks, I applied it and squashed with the fix patch from Marek that
-introduced the above issue.
+> Hello Dan,
+> 
+> Thanks again for checking this :)
+> 
+> On Thu, 2019-10-24 at 14:35 -0500, Dan Murphy wrote:
+> > Matti
+> > 
+> > On 10/24/19 6:41 AM, Matti Vaittinen wrote:
+> > > ROHM BD71828 Power management IC integrates 7 buck converters, 7
+> > > LDOs,
+> > > a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
+> > > and a 32.768 kHz clock gate.
+> > > 
+> > > Document the dt bindings drivers are using.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > > 
+> > > No changes since v1
+> > > 
+> > >   .../bindings/mfd/rohm,bd71828-pmic.txt        | 180
+> > > ++++++++++++++++++
+> > >   1 file changed, 180 insertions(+)
+> > >   create mode 100644
+> > > Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.txt
+> > 
+> > I will let maintainers weigh in here but if this is new this should 
+> > probably be in the yaml format to avoid conversion in the future
+
+Yes please.
+
+> Oh... This is new to me. I guess there are reasons for this - but I
+> must say I am not excited as I have never used yaml for anything. I'll
+> do as you suggest and wait for what others have to say :) Thanks for
+> pointing this out though.
 
 -- 
-Regards,
-Sylwester
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
