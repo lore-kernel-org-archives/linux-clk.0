@@ -1,93 +1,118 @@
-Return-Path: <SRS0=tn1a=YW=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=/c7M=YX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1765CA9EAE
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 22:20:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C141FCA9EAE
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 00:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A654220679
-	for <linux-clk@archiver.kernel.org>; Tue, 29 Oct 2019 22:20:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FCF52083E
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 00:49:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="csZSXMal"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M0QnTm66"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726009AbfJ2WU0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 29 Oct 2019 18:20:26 -0400
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:36250 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725830AbfJ2WU0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 18:20:26 -0400
-Received: by mail-wm1-f66.google.com with SMTP id c22so37515wmd.1
-        for <linux-clk@vger.kernel.org>; Tue, 29 Oct 2019 15:20:24 -0700 (PDT)
+        id S1726244AbfJ3AtQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 29 Oct 2019 20:49:16 -0400
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:44615 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfJ3AtQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 29 Oct 2019 20:49:16 -0400
+Received: by mail-lj1-f194.google.com with SMTP id c4so624155lja.11;
+        Tue, 29 Oct 2019 17:49:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=razW+Flqe0osf5dKak/H2XuFxr228C/l2kIAAwUTuGk=;
-        b=csZSXMalom5E5HgQVJhg4cX8a87qqS9Xo9MfkzoMevMI1ZQIOw8PfH5I9pM4vIBaVi
-         /8kXDbH0jx+HV/G3F4AMdzZ6sEwEjolgZUxXOsnRT7/a4nipe+arkXjyBtlcia6C3ryY
-         jCT4M+oVg3U2c0zUF8QAMdMHVbri9rsjSdpMI=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=69bZQy5CYKyEvBEYx4SZC8ZoPl/aYUUYCjOjLOlQ/ps=;
+        b=M0QnTm66RRRurE++l9qmcU19UXJ1Z01aIb8nt+p2hfCNe8SMGGuF2wHu/t58DIjYLD
+         7Af2EBU2okKDxW/Kr+4ZcYisRHyELZEPOU/WUGp/rD1b5yH3RirFXFzvN3NVElPvoGCi
+         F0DdQo53YYCTgRImYLTw7fdMG7PimSpbbQcberIho8Ys3PJ8et7ZywDA0hsai+phwbIh
+         +6r4GYo5sG/jzO5CjDpuRZyEEEngu2H25ce0SCqwru30hqFcB6EWPOBDLAfy4JI0cxQa
+         rQkhpdOO0vlT3LkrbaNXtNOPGOdmRJjS7hoCUZ/TWKSwt+FFrizfvwnkEGX01jS+ap6m
+         ZCUQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=razW+Flqe0osf5dKak/H2XuFxr228C/l2kIAAwUTuGk=;
-        b=jRCKTgeQ0P6g4z+tb6vf6rMWhxkaTY6Gd80wEbGDbc5WSJDvsXOqGBIcqjeQXVIrBl
-         nTmQMFfvlUn2leNfI9HFjuDGm1DGnWJpq2iCMiD+ICoREkxfFxZzT6JDk9sRHa626hcK
-         b0JRBRK/vO8JwiqqylSVMH9DexQOiu/gTFq5HaRPNO2UHsChtG8sFeXBPXrdSWF3V0m4
-         tsF70oCsluLCk732y2OxAlMpNEk/sefkMTqqnHIaAM2L+rPI+7Jyj7xk7Mq+7C1Bxn5H
-         ndBzztQwJ3qg4ccC0T3ML9HDiZkvzSKDT28CYCqoIrQUD1c3M/1dAanuDB+2M0dB6wcX
-         c1Yg==
-X-Gm-Message-State: APjAAAWGFrvNSDhRqOlPyyz6u6U/D/5oa5/eEP6n9C/Dr9YWAmVOgfMq
-        IdJ0BsKI0hc0GNdLO0p1RR3BWg==
-X-Google-Smtp-Source: APXvYqwp+t/1Tr3f8FhaYd6lfEekG3CNML5zp1y+zNpsVeTjQFAZa2t7Nptm1VRwDBMlHFBkEpnDkQ==
-X-Received: by 2002:a7b:c05a:: with SMTP id u26mr6142666wmc.128.1572387624169;
-        Tue, 29 Oct 2019 15:20:24 -0700 (PDT)
-Received: from [192.168.1.149] (ip-5-186-115-54.cgn.fibianet.dk. [5.186.115.54])
-        by smtp.gmail.com with ESMTPSA id i3sm263717wrw.69.2019.10.29.15.20.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 29 Oct 2019 15:20:23 -0700 (PDT)
-Subject: Re: [PATCH] clk: mark clk_disable_unused() as __init
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20191004094826.8320-1-linux@rasmusvillemoes.dk>
- <CAMuHMdXSb0mgsqJgNFWqJXywQJLsqvasj7P_bUj4MBvyrAUgVw@mail.gmail.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <97cb0b95-72e9-7aff-28de-637310d66caa@rasmusvillemoes.dk>
-Date:   Tue, 29 Oct 2019 23:20:22 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        bh=69bZQy5CYKyEvBEYx4SZC8ZoPl/aYUUYCjOjLOlQ/ps=;
+        b=tl6jRAYYylirKHvtjiYD0x7KLWIsBlbuc9si6f6jz552tXO54Syjoxozl3u0gWsVts
+         kp7R39mKLb2+bpfFcGkDrNXBWk3m43JRDXOCA8kTjQsIqPaeODlK5qfZ9Ho0UaOXGuxM
+         MxAJwH0jv37XAALVNsRGuB2Q4vt2U7vnCck+cyyY7wphO81hPc8ScP6bJR/593K0qqd7
+         YW/uDFN0O5ZIp7Xlh27Uu4YFZ+cjnkAvtVDAesZCGBEniDjDFdk5qUAMTUk+g+2x/bLH
+         0LrpNNUMJlgXbvOBJTNre5a+59OgQEJ8eYJgNthQeFl3wEu3MY+MP0vttJYJOQq+LciV
+         UIvg==
+X-Gm-Message-State: APjAAAVa1SaSZ5eF/jeXRgPGTTteVXDnpyeNljs3zPEo/YeH3+AfsLX8
+        aTTEyTyiU4cp4/TSXa0EgYw=
+X-Google-Smtp-Source: APXvYqzxAOLYj4gBBl4CsGTQZOUlu+bzkhdLijeRNR8yohhWU9qLb/0DexNtoSR3EZBFHUs0vqcS4A==
+X-Received: by 2002:a2e:9799:: with SMTP id y25mr4680644lji.228.1572396553396;
+        Tue, 29 Oct 2019 17:49:13 -0700 (PDT)
+Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
+        by smtp.gmail.com with ESMTPSA id 87sm202308ljs.23.2019.10.29.17.49.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 29 Oct 2019 17:49:12 -0700 (PDT)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] clk: tegra: divider: Check UART's divider enable-bit state on rate's recalculation
+Date:   Wed, 30 Oct 2019 03:48:13 +0300
+Message-Id: <20191030004813.9187-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXSb0mgsqJgNFWqJXywQJLsqvasj7P_bUj4MBvyrAUgVw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 07/10/2019 14.02, Geert Uytterhoeven wrote:
-> On Fri, Oct 4, 2019 at 12:30 PM Rasmus Villemoes
-> <linux@rasmusvillemoes.dk> wrote:
->> clk_disable_unused is only called once, as a late_initcall, so reclaim
->> a bit of memory by marking it (and the functions and data it is the
->> sole user of) as __init/__initdata. This moves ~1900 bytes from .text
->> to .init.text for a imx_v6_v7_defconfig.
->>
->> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+UART clock is divided using divisor values from DLM/DLL registers when
+enable-bit is unset in clk register and clk's divider configuration isn't
+taken onto account in this case. This doesn't cause any problems, but
+let's add a check for the divider's enable-bit state, for consistency.
 
-Friendly ping. Will this be picked up?
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
 
-Thanks,
-Rasmus
+Changelog:
+
+v2: In the comment to v1 Peter De Schrijver pointed out that UART's DLM/DLL
+    registers configuration is used when enable bit is unset, thus the
+    commit's title and message are changed accordingly.
+
+ drivers/clk/tegra/clk-divider.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index e76731fb7d69..f33c19045386 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+ 	int div, mul;
+ 	u64 rate = parent_rate;
+ 
+-	reg = readl_relaxed(divider->reg) >> divider->shift;
+-	div = reg & div_mask(divider);
++	reg = readl_relaxed(divider->reg);
++
++	if ((divider->flags & TEGRA_DIVIDER_UART) &&
++	    !(reg & PERIPH_CLK_UART_DIV_ENB))
++		return rate;
++
++	div = (reg >> divider->shift) & div_mask(divider);
+ 
+ 	mul = get_mul(divider);
+ 	div += mul;
+-- 
+2.23.0
+
