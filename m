@@ -2,84 +2,76 @@ Return-Path: <SRS0=/c7M=YX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DADD8CA9EC5
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 12:57:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6E3CA9EC6
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 14:24:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9F412087F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 12:57:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BDC52087F
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 14:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572445462;
+	bh=Kz0IT5UaT8gLAAfRWmhaV6j3O6NdS/ROd/IujVWkGVE=;
+	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
+	b=xw8p7XifsYn0ZkHdc3Vge4XvW8gt+YtTdaYrxddK2NkyksI9mOz//bDwQhr22tVbe
+	 z1n/swx+hlRrRfPX6k+obNbP+xhDtmc/NvN2U9nixHLzvyQV4YsaiPXQqCAsNNaSBx
+	 j1/hQaJtgi/KkkCg1YNTso3Xkn5HQQsvwOIWcOx8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726273AbfJ3M5R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Oct 2019 08:57:17 -0400
-Received: from szxga07-in.huawei.com ([45.249.212.35]:45386 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726097AbfJ3M5R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Oct 2019 08:57:17 -0400
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id D58B047779B32F6F8190;
-        Wed, 30 Oct 2019 20:57:12 +0800 (CST)
-Received: from localhost (10.133.213.239) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.439.0; Wed, 30 Oct 2019
- 20:57:02 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <treding@nvidia.com>, <jonathanh@nvidia.com>,
-        <skomatineni@nvidia.com>, <digetx@gmail.com>
-CC:     <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH -next] clk: tegra: Fix build error without CONFIG_PM_SLEEP
-Date:   Wed, 30 Oct 2019 20:56:50 +0800
-Message-ID: <20191030125650.36776-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        id S1726377AbfJ3OYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Oct 2019 10:24:22 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52094 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726562AbfJ3OYW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Oct 2019 10:24:22 -0400
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7372920656;
+        Wed, 30 Oct 2019 14:24:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572445461;
+        bh=Kz0IT5UaT8gLAAfRWmhaV6j3O6NdS/ROd/IujVWkGVE=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=Z13SX6ZjaZruwkFG9gPRQOnp0DYWXrLzo722ret5nAfOi4ywm2QPXrTL8Iqn1b0OQ
+         HG9p406cNxZ2wU+lrcTprSrTDE/3zfgdda4AUxlXEZsZ3BjhWchx6zwFsHtAXnjhdC
+         upQvfFWx3jgixJub/DrHTlwj+WMPpju63SGMK7Ys=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.133.213.239]
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <97cb0b95-72e9-7aff-28de-637310d66caa@rasmusvillemoes.dk>
+References: <20191004094826.8320-1-linux@rasmusvillemoes.dk> <CAMuHMdXSb0mgsqJgNFWqJXywQJLsqvasj7P_bUj4MBvyrAUgVw@mail.gmail.com> <97cb0b95-72e9-7aff-28de-637310d66caa@rasmusvillemoes.dk>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: mark clk_disable_unused() as __init
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+User-Agent: alot/0.8.1
+Date:   Wed, 30 Oct 2019 07:24:20 -0700
+Message-Id: <20191030142421.7372920656@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If CONFIG_PM_SLEEP is n, build fails:
+Quoting Rasmus Villemoes (2019-10-29 15:20:22)
+> On 07/10/2019 14.02, Geert Uytterhoeven wrote:
+> > On Fri, Oct 4, 2019 at 12:30 PM Rasmus Villemoes
+> > <linux@rasmusvillemoes.dk> wrote:
+> >> clk_disable_unused is only called once, as a late_initcall, so reclaim
+> >> a bit of memory by marking it (and the functions and data it is the
+> >> sole user of) as __init/__initdata. This moves ~1900 bytes from .text
+> >> to .init.text for a imx_v6_v7_defconfig.
+> >>
+> >> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
+> >=20
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>=20
+> Friendly ping. Will this be picked up?
+>=20
 
-drivers/clk/tegra/clk-tegra210.c:3426:13: error:
- tegra210_clk_suspend undeclared here (not in a function); did you mean tegra_clk_ndspeed?
-  .suspend = tegra210_clk_suspend,
-             ^~~~~~~~~~~~~~~~~~~~
-             tegra_clk_ndspeed
-drivers/clk/tegra/clk-tegra210.c:3427:12: error:
- tegra210_clk_resume undeclared here (not in a function); did you mean tegra210_clk_suspend?
-  .resume = tegra210_clk_resume,
-
-Use ifdef to guard this.
-
-Reported-by: Hulk Robot <hulkci@huawei.com>
-Fixes: 27d10d548c04 ("clk: tegra: Add suspend and resume support on Tegra210")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/clk/tegra/clk-tegra210.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index d038fed..762cd18 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -3423,8 +3423,10 @@ static void tegra210_cpu_clock_resume(void)
- #endif
- 
- static struct syscore_ops tegra_clk_syscore_ops = {
-+#ifdef CONFIG_PM_SLEEP
- 	.suspend = tegra210_clk_suspend,
- 	.resume = tegra210_clk_resume,
-+#endif
- };
- 
- static struct tegra_cpu_car_ops tegra210_cpu_car_ops = {
--- 
-2.7.4
-
+Friendly reply. Yes.
 
