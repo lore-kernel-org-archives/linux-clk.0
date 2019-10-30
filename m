@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB858CA9EC7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:54:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC0E4CA9EC7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:59:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8DC420874
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:54:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 812BA20873
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:59:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YbchFVgC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jfYF08e0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727327AbfJ3Vx6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Oct 2019 17:53:58 -0400
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:43461 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfJ3Vx5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Oct 2019 17:53:57 -0400
-Received: by mail-lj1-f196.google.com with SMTP id s4so4354637ljj.10;
-        Wed, 30 Oct 2019 14:53:55 -0700 (PDT)
+        id S1727207AbfJ3V7A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Oct 2019 17:59:00 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45732 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726864AbfJ3V67 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Oct 2019 17:58:59 -0400
+Received: by mail-lf1-f66.google.com with SMTP id v8so2789766lfa.12;
+        Wed, 30 Oct 2019 14:58:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=LrhIzqAOKcThSWpXVPxHX0ADaa3rzHyxkRuOfbx8IPw=;
-        b=YbchFVgC3wpZUXEOaMjzcmtOkpjJhy86/i2w94hoelj0CeW162PV5eSTZQkTAhGhlB
-         JqQjSktlo0xAfY5Kt+dXooEoFGxXdN7bbDFGq9ez3f8ENcl2vlNjMkRL4rL3Shsq/WlC
-         5pIWipHRmxfwKr/TicnFRPNmV+plo7Ni6fS0m0nLvx09gkNOMg6qMYoddymOgI4NvYmt
-         SZE3O/muI+uHvUNRQk+MD/Nds/hvXJa5zzcMhi//I/k/4LwIkg8h9/b0lHZnrOSAkCX1
-         kMw7Sj+cMJJVZhZj5IW/GmIytVR6CEHXEcWxzLtdGsFzX2Sf0LBiKJTlq58aHyV1Ahyq
-         HOcA==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/D2IZ9aCfy9I24RPB3SSOachEcmLjtwKim1mzoRC2zU=;
+        b=jfYF08e02pu9RPv9FZfl8uObu2QvjBi+U9XrFdOBHhqUO5LuWR216QtFJaC0Illx2b
+         cUjtBPPl6GWu9SMypVcQLl3r558Q8fM1o4dimiEw2XpniFvKwC3GEhFHKPOallicSaNz
+         WYtp7MOwDY6BeftraeMsvXDtosDcG93jg1KRczYbrow4pMdFy+0BCK/VwpzqGicA0DcQ
+         URu2bdhBidphbb3MqD36bpyX/eQXc2f0Zq3fcMeBkD1EZwidOcEgC87cxHWhf5AUIPBZ
+         JSGsNNv4WM7fLU09U9HU4z/QPHmFHBq271l35c6IXMLNo4tC7noN/DOBv8ICScxxE2gR
+         fhpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=LrhIzqAOKcThSWpXVPxHX0ADaa3rzHyxkRuOfbx8IPw=;
-        b=L0BhTtmSO7QWlJre6jwQWav7WhExZZKFZoLum5/hwErTKR5Z58XNYy22074u8E5C0F
-         uOL2gnertT62OQAx6z1b2QDw7QIvn31m0HCyKwU/GJwo2weTow4o8JsalxLGlSOZHXJN
-         YczeK1vOlido3X8fsHSVZ8qieCBSmLwgoFJz0fe8FJdqclhmT95UMaOeDzC/wLQo9wJf
-         o99by3y9cwNcZoNRfBCgQYnRBNEfjcIEsQYPrg1XR32Zm5kIyPtjCHcNbmrZHbgaljCc
-         StTi3iNXCWo0eeQaftebdmAlbzvQbc8cqSqKeBRfqROuv2tGGaLWZLZYN5CtZGKRCiLA
-         6aLg==
-X-Gm-Message-State: APjAAAX0Wwp1etrrzFp/zqL8aVskqL4a8w0jXW2bRczJdBlK3XW0vcrl
-        yXUB0gKuWS+2gT8z6N4QYLc=
-X-Google-Smtp-Source: APXvYqyh+MeH0kSO9RSqv+LxrHF2Z40UZrsRQJdqxel0BvA8mn/9z5tEY/vzT7dQzNkNeMQ3yU6k6g==
-X-Received: by 2002:a05:651c:1b0:: with SMTP id c16mr1286453ljn.192.1572472434371;
-        Wed, 30 Oct 2019 14:53:54 -0700 (PDT)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=/D2IZ9aCfy9I24RPB3SSOachEcmLjtwKim1mzoRC2zU=;
+        b=e6isHwN9xL71BAqew81IoryCwdlYnWl4bqGCc2eFgCLG93aBf3Y3ud9NmTW2RdFYbb
+         qB3ZOz+qkKv2M7tUQCYmjHdjx7St06va36VtCGJZBWwCikm2Jsbmg6GlbkGz53UBTQLz
+         Xc8xu4rECBq5oizEdmSyz6lFKyRgXDT7/xa3E9b1JJ1VUxePk5hsEawuXP/r7z7ey4WB
+         r2Dy0MYnAhMwuFd9z8fz3AiPzY42hNrEycwRCQAJPopDhq/q3P8wRQgfyGkAkZtCjcYM
+         WTZ6MtpgC1/ub5Q/9Bm7gP7NMZ9/uaxGO4zTilBGnrsifxxuEHGMl8tJv9iWWpC8oSj+
+         c+tQ==
+X-Gm-Message-State: APjAAAUfrb1mQ3vycZroDfzsNGP5l8W1cI7hpjJLJYaNad5rTI7G94zV
+        qCTLRitHsi50V3qYcwWK06U=
+X-Google-Smtp-Source: APXvYqyczW6OTna3YA3BhTHp8GcvXJ6hktP+iWoMc+jsZfsKO+XysuuVObH8VHpaGC7dtGRDZvavkg==
+X-Received: by 2002:a19:dc4c:: with SMTP id f12mr302650lfj.86.1572472737719;
+        Wed, 30 Oct 2019 14:58:57 -0700 (PDT)
 Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
-        by smtp.gmail.com with ESMTPSA id a2sm520316lfh.73.2019.10.30.14.53.53
+        by smtp.gmail.com with ESMTPSA id 9sm429988ljf.21.2019.10.30.14.58.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 14:53:53 -0700 (PDT)
+        Wed, 30 Oct 2019 14:58:57 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,12 +64,10 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1 2/2] ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
-Date:   Thu, 31 Oct 2019 00:53:42 +0300
-Message-Id: <20191030215342.14948-2-digetx@gmail.com>
+Subject: [PATCH v2 1/2] clk: tegra20/30: Don't pre-initialize displays parent clock
+Date:   Thu, 31 Oct 2019 00:58:26 +0300
+Message-Id: <20191030215827.15533-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191030215342.14948-1-digetx@gmail.com>
-References: <20191030215342.14948-1-digetx@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -77,48 +75,49 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-PLLX may be kept disabled if cpufreq driver selects some other clock for
-CPU. In that case PLLX will be disabled later in the resume path by the
-CLK driver, which also can enable PLLX if necessary by itself. Thus there
-is no need to enable PLLX early during resume. Tegra114/124 CLK drivers do
-not manage PLLX on resume and thus they are left untouched by this patch.
+Both Tegra20 and Tegra30 are initializing display's parent clock
+incorrectly because PLLP is running at 216/408MHz while display rate is
+set to 600MHz, but pre-setting the parent isn't needed at all because
+display driver selects proper parent anyways.
 
 Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
 ---
- arch/arm/mach-tegra/sleep-tegra30.S | 11 ++++++++++-
- 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-tegra/sleep-tegra30.S
-index 2f9e5076d201..3caae60a75a0 100644
---- a/arch/arm/mach-tegra/sleep-tegra30.S
-+++ b/arch/arm/mach-tegra/sleep-tegra30.S
-@@ -358,7 +358,6 @@ _no_pll_iddq_exit:
- 
- 	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
- 	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
--	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
- 
- _pll_m_c_x_done:
- 	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
-@@ -368,8 +367,18 @@ _pll_m_c_x_done:
- 	pll_locked r1, r0, CLK_RESET_PLLP_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLA_BASE
- 	pll_locked r1, r0, CLK_RESET_PLLC_BASE
-+
-+	/*
-+	 * CPUFreq driver could select other PLL for CPU. PLLX will be
-+	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
-+	 * tegra30_cpu_clock_resume().
-+	 */
-+	cmp	r10, #TEGRA30
-+	beq	_pll_m_c_x_locked
-+
- 	pll_locked r1, r0, CLK_RESET_PLLX_BASE
- 
-+_pll_m_c_x_locked:
- 	mov32	r7, TEGRA_TMRUS_BASE
- 	ldr	r1, [r7]
- 	add	r1, r1, #LOCK_DELAY
+Changelog:
+
+v2: I accidentally didn't include the second "VDE" patch into the patchset
+    in v1.
+
+ drivers/clk/tegra/clk-tegra20.c | 2 --
+ drivers/clk/tegra/clk-tegra30.c | 2 --
+ 2 files changed, 4 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index eb821666ca61..0d6441621989 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -1049,8 +1049,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA20_CLK_SBC4, TEGRA20_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
+-	{ TEGRA20_CLK_DISP1, TEGRA20_CLK_PLL_P, 600000000, 0 },
+-	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
+diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
+index 0fe03d69fe1a..8146cc49ca3b 100644
+--- a/drivers/clk/tegra/clk-tegra30.c
++++ b/drivers/clk/tegra/clk-tegra30.c
+@@ -1253,8 +1253,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
+ 	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
+ 	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
+ 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
+-	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
+-	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
+ 	{ TEGRA30_CLK_TWD, TEGRA30_CLK_CLK_MAX, 0, 1 },
+ 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
+ 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
 -- 
 2.23.0
 
