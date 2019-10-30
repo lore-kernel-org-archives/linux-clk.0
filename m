@@ -5,56 +5,56 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0785FCA9EC7
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:50:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE921CA9EC7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:53:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF3F420862
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:50:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F96D20856
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 21:53:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="irgkbFd6"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QCHCfMc6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727240AbfJ3Vu3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Oct 2019 17:50:29 -0400
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:45998 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727099AbfJ3Vu3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Oct 2019 17:50:29 -0400
-Received: by mail-lf1-f67.google.com with SMTP id v8so2772357lfa.12;
-        Wed, 30 Oct 2019 14:50:27 -0700 (PDT)
+        id S1727127AbfJ3Vxz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Oct 2019 17:53:55 -0400
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39021 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727015AbfJ3Vxz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Oct 2019 17:53:55 -0400
+Received: by mail-lj1-f195.google.com with SMTP id y3so4380097ljj.6;
+        Wed, 30 Oct 2019 14:53:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=+iIhirnFklLn1OL2q/K6q4x2b2P+v7Ve0tVmAkHn4AI=;
-        b=irgkbFd6a3srova/l+xljO/RpVvu+yEQNZWWcWhWcPT0GW4R97Namyzs4zcJWjddGN
-         wdqSoIVmv2JsXf19ghZ1Caqod39AEWEdcvw6CUjQFEE7FrPYiYy8e61nZNASPP9bn3xY
-         AtO8uN8KFvQiGjhKAaJ3uQa3P/qGAieQ6mfChb/em0u3z9arXsSv9pqS3n2j1vuk6q7K
-         a+CHFx7VAcp1hlUcJgXWSZixom4YTu38P9nqhF/TjNk3D27c25NO2hvC8L2umZtwt03G
-         8RNDh394AS4D6mZPi1kL+/IECcNBNL06l6aBXjQ52FfiqTAyMBOvkm/dkP0EV1lJWSFk
-         Dfsg==
+        b=QCHCfMc6kANijIVQw1KJuxfSKSmH+jkHIRDJOlHmoBRlkPXBTBfa4uzzbYnldhoSS6
+         7rH5rBWT5/0N8HBf4oeFpzsoo2e2AdUIwDiu93pt8xCNgNybwwwm9Hzdp9bUtCIPUFtN
+         tzUFcxMosKRjlV6139fQUAU1EK8E1JQNy5Ay4kmuuvQE+p7F1sk4Xv3VmTeURhYUjwOw
+         FnM1tJg6LXG3mjM9C7w6eOdO5y8Vqcno8rMvnGPJfKx7gsI26rLaLfpZQL77sP7q+qOl
+         7p4BwOtOdebtkhNb21g1NCY8AiaUFQvI/vJHCc4IjAZmkS36UK4bOksU9uS98E2N9chj
+         U1fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
         bh=+iIhirnFklLn1OL2q/K6q4x2b2P+v7Ve0tVmAkHn4AI=;
-        b=dCxhMPEniMWcBeYN7xiBJGzg4VKsNX2+ay8w0aWpbXn8uyLnemGdcsGofO2m7cNCgg
-         buy+7CMC40Bo78vKEhTEyM6jemWwmuS2+82RbWfUAG/Z21HF/f5CS/iQbn4IjkR03Yd/
-         F+wGI9aqRHQ5R+1bD41ZicrMs7tEMjZK/1T3KhWYi0sjv8FP5ldHPATiDVl0eyDTc/gl
-         /roj7YnIsbj3JVofNp0Z05xbcznP0e2gzhOxJV9AwxqwCeYblzxIhHaTYDyjZQebyDGA
-         ypuOLg95KfCWcqwvtCPQ/yyMgC94B3njvnny/bqVtW55j8LqD7yJqvpcBEEHFz6UI9FC
-         GM/w==
-X-Gm-Message-State: APjAAAWSP0termHepWIqnaUrVt4zgJ/kFpAv2JwftFDLKrtWYjuwUeHu
-        k6DQnuT8nvGF5OL/xHznmcs=
-X-Google-Smtp-Source: APXvYqx9Aj+bzPhP4SKA2/HHi5OdNq9ABaLv2/gSl6t5CRNf4lWt1yfDa/aq+s1MgvaefcoeceuYBQ==
-X-Received: by 2002:a19:fc1e:: with SMTP id a30mr259921lfi.167.1572472227114;
-        Wed, 30 Oct 2019 14:50:27 -0700 (PDT)
+        b=jFHreicbMneDVXPDEtYHXEVvetX+qT2xg8BkDAI9AN5Rbm6HRkNzx4aBq5/TNnyxzr
+         9USU49RfUiiB7T8KR6zyR13O8Jyx7gIoDQfJKcA/iNe27Q5dL1FP/CZs5vmbqZ+BaLIF
+         9zhrHHbwPUTGkC6Ch6zrhNmh2XjhNqUOs0/8FzlPlDb9ahBqWP3Y0plMWtkClDSumqKB
+         0XStyUIOOTInm3Js5qw3MwuWhF7T0HKHPabo1jGTPJ9rX5+dbrkBa8YlsRHo6BJ6ogK2
+         KR3SDWCnVwhM6g7OcD0gVANKKGzuimuyHOxY+6uw0g+Ur9mllHMfZ+xqn8MnuUXJngof
+         vLXQ==
+X-Gm-Message-State: APjAAAX+WzwFzv8+QsEEm0kFy9qsZGZSyF1rkIHiG0n8WMfR9gNrPhfq
+        vrJXfgTj09YKTsBLlY1/A1E=
+X-Google-Smtp-Source: APXvYqwpmKfbKgKXmoJ7VfD8jQr0W8/TDCuxscJdav/6f6yiLUtGDuMrdaXy306YXDn9OgGLsExE0A==
+X-Received: by 2002:a2e:87c3:: with SMTP id v3mr1316353ljj.61.1572472433046;
+        Wed, 30 Oct 2019 14:53:53 -0700 (PDT)
 Received: from localhost.localdomain (94-29-10-250.dynamic.spd-mgts.ru. [94.29.10.250])
-        by smtp.gmail.com with ESMTPSA id f5sm466493ljn.24.2019.10.30.14.50.26
+        by smtp.gmail.com with ESMTPSA id a2sm520316lfh.73.2019.10.30.14.53.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Oct 2019 14:50:26 -0700 (PDT)
+        Wed, 30 Oct 2019 14:53:52 -0700 (PDT)
 From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Thierry Reding <thierry.reding@gmail.com>,
         Jonathan Hunter <jonathanh@nvidia.com>,
@@ -64,9 +64,9 @@ To:     Thierry Reding <thierry.reding@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v1] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
-Date:   Thu, 31 Oct 2019 00:50:17 +0300
-Message-Id: <20191030215017.14303-1-digetx@gmail.com>
+Subject: [PATCH v1 1/2] ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+Date:   Thu, 31 Oct 2019 00:53:41 +0300
+Message-Id: <20191030215342.14948-1-digetx@gmail.com>
 X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
