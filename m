@@ -2,76 +2,87 @@ Return-Path: <SRS0=/c7M=YX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6E3CA9EC6
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 14:24:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C55CCA9EC7
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 14:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BDC52087F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 14:24:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 476B420663
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 14:33:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572445462;
-	bh=Kz0IT5UaT8gLAAfRWmhaV6j3O6NdS/ROd/IujVWkGVE=;
-	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=xw8p7XifsYn0ZkHdc3Vge4XvW8gt+YtTdaYrxddK2NkyksI9mOz//bDwQhr22tVbe
-	 z1n/swx+hlRrRfPX6k+obNbP+xhDtmc/NvN2U9nixHLzvyQV4YsaiPXQqCAsNNaSBx
-	 j1/hQaJtgi/KkkCg1YNTso3Xkn5HQQsvwOIWcOx8=
+	s=default; t=1572445986;
+	bh=Fv2yRJrcUoyk8QeLnGsP/rNu0PTRxKv8PkEoXLXYiY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=kUIOhW+nlEeJDu+euzQOb8H+k+P0NOSVQI8Q+cQa/3npMc2gPSxolk5vvzp0oxn4L
+	 POB95Xg96oWOqtiAz1RcYhQuCN/GyCm2QDTZkG0k0BiRGMyT/si+md8muZTRy4KfB/
+	 6hwjGXlPkmmWmIeh3O9LxwM9C7ADhAdqw1VUBs7k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726377AbfJ3OYW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Oct 2019 10:24:22 -0400
-Received: from mail.kernel.org ([198.145.29.99]:52094 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726562AbfJ3OYW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Oct 2019 10:24:22 -0400
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7372920656;
-        Wed, 30 Oct 2019 14:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572445461;
-        bh=Kz0IT5UaT8gLAAfRWmhaV6j3O6NdS/ROd/IujVWkGVE=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=Z13SX6ZjaZruwkFG9gPRQOnp0DYWXrLzo722ret5nAfOi4ywm2QPXrTL8Iqn1b0OQ
-         HG9p406cNxZ2wU+lrcTprSrTDE/3zfgdda4AUxlXEZsZ3BjhWchx6zwFsHtAXnjhdC
-         upQvfFWx3jgixJub/DrHTlwj+WMPpju63SGMK7Ys=
-Content-Type: text/plain; charset="utf-8"
+        id S1726479AbfJ3OdF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Oct 2019 10:33:05 -0400
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:41714 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726377AbfJ3OdF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 30 Oct 2019 10:33:05 -0400
+Received: by mail-ot1-f66.google.com with SMTP id 94so2260741oty.8;
+        Wed, 30 Oct 2019 07:33:04 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=JfzaI+5/WnJ1mGrlzlCMhTtSMu8cacfMya2nBVqocXA=;
+        b=HTfQrMwH9rp+a6byEeMGBss51x4L4RqO/2oXBLCd31qM+/nAmZkF3q7fhtXMhGSDZV
+         MpCiOd2ZLjWkmoXWBq34eGA2hEm7lL4bs6kEhf3EHh4zRxdl5SMb6EV/lX+VqJMzyCvV
+         EZ1ZmRSJ+LPK8nzY5CVnF/Lk36O84hJhk7l1MPLgtcIT+mP56tzqTYP91/QdZz/JDK/K
+         KXWJ7/F3+R2gM5WOg3n4DBLqk0kiRtFSbJDw+XAk/Wlu5q9D/SQXsrLmwKZJki5v93Kj
+         k4S6HjDYj0YvinSx9giI71hKSD9oOUbqMO+1fxF+V3moJsHTaVp6ZTbVoFAhB9/1uf2b
+         +oqg==
+X-Gm-Message-State: APjAAAWq5pPosWN3hJI/d1K3orre1gA1BvR1c17wvjVuYOqG1qNQiStl
+        ihgD0qCqt3c4DXpRfoPfFA==
+X-Google-Smtp-Source: APXvYqwSl565DVcvOv5ryhMotFAeFTMieJr2P0U0v/KWVc89Kggyts3Mx1ORwVYFTHFRmOBFuHyjsg==
+X-Received: by 2002:a05:6830:1399:: with SMTP id d25mr140641otq.113.1572445984277;
+        Wed, 30 Oct 2019 07:33:04 -0700 (PDT)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id e102sm76404ote.78.2019.10.30.07.33.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Oct 2019 07:33:02 -0700 (PDT)
+Date:   Wed, 30 Oct 2019 09:33:01 -0500
+From:   Rob Herring <robh@kernel.org>
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, geert+renesas@glider.be,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: renesas: rcar-usb2-clock-sel:
+ Fix clock[-name]s properties
+Message-ID: <20191030143301.GA10942@bogus>
+References: <1572242850-9073-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1572242850-9073-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <97cb0b95-72e9-7aff-28de-637310d66caa@rasmusvillemoes.dk>
-References: <20191004094826.8320-1-linux@rasmusvillemoes.dk> <CAMuHMdXSb0mgsqJgNFWqJXywQJLsqvasj7P_bUj4MBvyrAUgVw@mail.gmail.com> <97cb0b95-72e9-7aff-28de-637310d66caa@rasmusvillemoes.dk>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: mark clk_disable_unused() as __init
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-User-Agent: alot/0.8.1
-Date:   Wed, 30 Oct 2019 07:24:20 -0700
-Message-Id: <20191030142421.7372920656@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572242850-9073-2-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rasmus Villemoes (2019-10-29 15:20:22)
-> On 07/10/2019 14.02, Geert Uytterhoeven wrote:
-> > On Fri, Oct 4, 2019 at 12:30 PM Rasmus Villemoes
-> > <linux@rasmusvillemoes.dk> wrote:
-> >> clk_disable_unused is only called once, as a late_initcall, so reclaim
-> >> a bit of memory by marking it (and the functions and data it is the
-> >> sole user of) as __init/__initdata. This moves ~1900 bytes from .text
-> >> to .init.text for a imx_v6_v7_defconfig.
-> >>
-> >> Signed-off-by: Rasmus Villemoes <linux@rasmusvillemoes.dk>
-> >=20
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->=20
-> Friendly ping. Will this be picked up?
->=20
+On Mon, 28 Oct 2019 15:07:27 +0900, Yoshihiro Shimoda wrote:
+> Since the hardware requires to enable both USB 2.0 host and peripheral
+> functional clock, this patch fixes the documentation.
+> Fortunately, no one has this device node for now, so that we don't
+> need to think of backward compatibility.
+> 
+> Fixes: 311accb64570 ("clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0 clock selector PHY")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>  .../devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt     | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
 
-Friendly reply. Yes.
-
+Reviewed-by: Rob Herring <robh@kernel.org>
