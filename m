@@ -2,234 +2,204 @@ Return-Path: <SRS0=/c7M=YX=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 937A8CA9ECB
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 17:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B26FCA9EC9
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 19:23:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6679F2054F
-	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 17:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2204B20717
+	for <linux-clk@archiver.kernel.org>; Wed, 30 Oct 2019 19:23:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572456756;
-	bh=7YttjPf25uaH/HJ9LjN93gAC67M6cLBWLgKLTrTSIEI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BOw2yL6w3Wtxg66wErVb3KyaenkevJb7DYdMjUImJLFp4xIgfpjGqR85nhSARLdXA
-	 TvAqXe3+8i8/U2sw+RRm0j6T1jVZg3CWojkxkasFDDZ+Sruz1GQFR5iA8mvtT9JL6k
-	 Q6aR+pCw0l9ReGNwMUU4Oy8lXhLLJtNqCDbLcpY0=
+	s=default; t=1572463390;
+	bh=3WRdeiCcdfBEmx67tyODlRo3e+fKiyYtZaygD2WUis0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=NGhQ0s0L9bV1BCeadjcDa1vFkXJAP/NahkTfYP0klFYkxuCGRpacECLqHEMojt6Ds
+	 Q3N2OUzj9A84yr/jeyxQrf/j9YNXV5Sz5pxkCTCbduIWdLWhyiqohnhJ36TNF9ZcB6
+	 MSn716qP7KsjPMe+3yFvnMA+Y5vaIlJJuTkJxRvs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727438AbfJ3Rcc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 30 Oct 2019 13:32:32 -0400
-Received: from mail.kernel.org ([198.145.29.99]:35528 "EHLO mail.kernel.org"
+        id S1726530AbfJ3TXG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 30 Oct 2019 15:23:06 -0400
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727093AbfJ3Rcb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 30 Oct 2019 13:32:31 -0400
-Received: from localhost.localdomain (unknown [194.230.155.180])
+        id S1726268AbfJ3TXG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 30 Oct 2019 15:23:06 -0400
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC06D208C0;
-        Wed, 30 Oct 2019 17:32:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBF7920717;
+        Wed, 30 Oct 2019 19:23:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572456750;
-        bh=7YttjPf25uaH/HJ9LjN93gAC67M6cLBWLgKLTrTSIEI=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jdyAXwcuImbI5Dnlq9yhye6rNZ1vtiYHuRiN2L8gbUdOGL5amFQAfRXBN/oNUIDXQ
-         Rr0GeyLu7xuKScUnY6gDOVragLGpAe8+i4iaUEgigkqGy5LKaadTlTVr65c6J3b4FR
-         waArH0hxloCLG3ahcBQ+cvtPM2pe2sJdvzWb5/4M=
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>
-Subject: [PATCH v3 2/2] dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema
-Date:   Wed, 30 Oct 2019 18:32:16 +0100
-Message-Id: <20191030173216.5993-2-krzk@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191030173216.5993-1-krzk@kernel.org>
-References: <20191030173216.5993-1-krzk@kernel.org>
+        s=default; t=1572463384;
+        bh=3WRdeiCcdfBEmx67tyODlRo3e+fKiyYtZaygD2WUis0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PuXZamAdL9mn1R6N0GRMg7D8L81skP3COiCXcHjjmvhAHyJsR6XxrvxUgnl6HvYqE
+         syF5m1wa6/UyZFG6kUTbFdAAuFGKB0z44xaHMNGvlgwWfBqu+XyqQzc1lj6v9CzmLb
+         HTSpjk6pvc3UnD355m/bVbsDEBX+XmUCKluSZvwg=
+Received: by mail-qt1-f172.google.com with SMTP id u22so4773711qtq.13;
+        Wed, 30 Oct 2019 12:23:04 -0700 (PDT)
+X-Gm-Message-State: APjAAAWcjldIlvWHfpxFL0bkoM4TLCeJq2o6Xy5OiZ8ur3FQ2R5oibOj
+        g/EHKrUxjRHDaeMW3vprnUyGibG/zDRcAWfXKQ==
+X-Google-Smtp-Source: APXvYqx54IxM1TwLGqZyjBl3C0NL1bTbORjQfhO/0scZK3ajveG/FOedjTVq2/EVa6f6Wdngzmvh6f2uKQuw21LJqXI=
+X-Received: by 2002:a0c:eed0:: with SMTP id h16mr728589qvs.85.1572463383841;
+ Wed, 30 Oct 2019 12:23:03 -0700 (PDT)
+MIME-Version: 1.0
+References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+ <0182df3c49c6c804ee20ef32fc4b85b50ff45fca.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+ <ed0b2aa8-8a70-0341-4ecf-8959f37c53bd@ti.com> <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
+ <20191029193440.GA1812@bogus> <3e0f0943cd599cae544bd7a7a49dded46d57a604.camel@fi.rohmeurope.com>
+In-Reply-To: <3e0f0943cd599cae544bd7a7a49dded46d57a604.camel@fi.rohmeurope.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 30 Oct 2019 14:22:47 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJgnYqv1q=wf++5FOX-niRWQ=H9wWYgUKy+z=H933Qraw@mail.gmail.com>
+Message-ID: <CAL_JsqJgnYqv1q=wf++5FOX-niRWQ=H9wWYgUKy+z=H933Qraw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828 bindings
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Convert Samsung Exynos Soc Power Domain bindings to DT schema format using
-json-schema.
+On Wed, Oct 30, 2019 at 3:27 AM Vaittinen, Matti
+<Matti.Vaittinen@fi.rohmeurope.com> wrote:
+>
+>
+> On Tue, 2019-10-29 at 14:34 -0500, Rob Herring wrote:
+> > On Fri, Oct 25, 2019 at 05:49:17AM +0000, Vaittinen, Matti wrote:
+> > > Hello Dan,
+> > >
+> > > Thanks again for checking this :)
+> > >
+> > > On Thu, 2019-10-24 at 14:35 -0500, Dan Murphy wrote:
+> > > > Matti
+> > > >
+> > > > On 10/24/19 6:41 AM, Matti Vaittinen wrote:
+> > > > > ROHM BD71828 Power management IC integrates 7 buck converters,
+> > > > > 7
+> > > > > LDOs,
+> > > > > a real-time clock (RTC), 3 GPO/regulator control pins, HALL
+> > > > > input
+> > > > > and a 32.768 kHz clock gate.
+> > > > >
+> > > > > Document the dt bindings drivers are using.
+> > > > >
+> > > > > Signed-off-by: Matti Vaittinen <
+> > > > > matti.vaittinen@fi.rohmeurope.com>
+> > > > > ---
+> > > > >
+> > > > > No changes since v1
+> > > > >
+> > > > >   .../bindings/mfd/rohm,bd71828-pmic.txt        | 180
+> > > > > ++++++++++++++++++
+> > > > >   1 file changed, 180 insertions(+)
+> > > > >   create mode 100644
+> > > > > Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.txt
+> > > >
+> > > > I will let maintainers weigh in here but if this is new this
+> > > > should
+> > > > probably be in the yaml format to avoid conversion in the future
+> > >
+> > > Oh... This is new to me. I guess there are reasons for this - but I
+> > > must say I am not excited as I have never used yaml for anything.
+> > > I'll
+> > > do as you suggest and wait for what others have to say :) Thanks
+> > > for
+> > > pointing this out though.
+> >
+> > Sorry for your lack of excitement. It could be XML...
+>
+> Thanks, I appreciate that, apology accepted X-D
+>
+> > There aren't many MFD examples yet, but there is max77650 in my tree
+> > and
+> > linux-next.
+>
+> I looked at the max77650 MFD binding from linux-next. After that I also
+> looked some of the generic documents for DT bindings (I know - I should
+> have done that earlier and your job had been easier). But all that left
+> me "slightly" puzzled. After some further wandering in the virtual
+> world I spotted this:
+> https://elinux.org/images/6/6b/LPC2018_json-schema_for_Devicetree.pdf
+>
+> I think this link in some dt-yaml-binding-readme might be helpful.
 
-Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+Presentations bit rot, so I'd rather not. I'd hope that
+writing-schema.rst and example-schema.yaml capture what's in the
+presentation. What do you think is missing?
 
----
+> So if I understand this correctly, idea is to convert the dts sources
+> to use yaml (right?). This is seen better because more people know
+> JSON/YAML than dts format(?) Fair enough. Although some of us know dts
+> format decently well but have never used JSON or yaml. I guess dts
+> support is not going away though and yaml examples do not seem terribly
+> hard at first sight.
 
-Changes since v2:
-1. Use new name of file in samsung,sysmmu.yaml and MAINTAINERS.
+No, nothing is changing for .dts files (other than fixing errors the
+schemas find). The free form, human readable only prose called binding
+documentation is changing to YAML formatted, json-schema vocabulary
+binding schema which can be used to validate dts files.
 
-Changes since v1:
-1. Indent example with four spaces (more readable),
-2. Remove unneeded types,
-3. Add missing address in example and fix the name.
----
- .../bindings/iommu/samsung,sysmmu.yaml        |  2 +-
- .../devicetree/bindings/power/pd-samsung.txt  | 45 -------------
- .../devicetree/bindings/power/pd-samsung.yaml | 66 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 4 files changed, 68 insertions(+), 47 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/power/pd-samsung.txt
- create mode 100644 Documentation/devicetree/bindings/power/pd-samsung.yaml
+> What comes to binding docs - well, in my eyes (which may be biased)
+> writing documentation in anything intended to be interpreted by a
+> machine is still a step backwards for a human document reader. Sure
+> syntax validation or reviewing is easier if format is machine readable
+> - but free text info is more, well, informative (form me at least). I
+> for example wouldn't like reading a book written in any script or
+> markup language. Nor writing one. It is difficult for me to understand
+> the documentation change to yaml, maybe because I am more often using
+> the binding docs for composing DT for a device than reviewing them ;)
 
-diff --git a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-index ecde98da5b72..7cdd3aaa2ba4 100644
---- a/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-+++ b/Documentation/devicetree/bindings/iommu/samsung,sysmmu.yaml
-@@ -69,7 +69,7 @@ properties:
-     description: |
-       Required if the System MMU is needed to gate its power.
-       Please refer to the following document:
--      Documentation/devicetree/bindings/power/pd-samsung.txt
-+      Documentation/devicetree/bindings/power/pd-samsung.yaml
-     maxItems: 1
- 
- required:
-diff --git a/Documentation/devicetree/bindings/power/pd-samsung.txt b/Documentation/devicetree/bindings/power/pd-samsung.txt
-deleted file mode 100644
-index 92ef355e8f64..000000000000
---- a/Documentation/devicetree/bindings/power/pd-samsung.txt
-+++ /dev/null
-@@ -1,45 +0,0 @@
--* Samsung Exynos Power Domains
--
--Exynos processors include support for multiple power domains which are used
--to gate power to one or more peripherals on the processor.
--
--Required Properties:
--- compatible: should be one of the following.
--    * samsung,exynos4210-pd - for exynos4210 type power domain.
--    * samsung,exynos5433-pd - for exynos5433 type power domain.
--- reg: physical base address of the controller and length of memory mapped
--    region.
--- #power-domain-cells: number of cells in power domain specifier;
--    must be 0.
--
--Optional Properties:
--- label: Human readable string with domain name. Will be visible in userspace
--	to let user to distinguish between multiple domains in SoC.
--- power-domains: phandle pointing to the parent power domain, for more details
--		 see Documentation/devicetree/bindings/power/power_domain.txt
--
--Deprecated Properties:
--- clocks
--- clock-names
--
--Node of a device using power domains must have a power-domains property
--defined with a phandle to respective power domain.
--
--Example:
--
--	lcd0: power-domain-lcd0 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10023C00 0x10>;
--		#power-domain-cells = <0>;
--		label = "LCD0";
--	};
--
--	mfc_pd: power-domain@10044060 {
--		compatible = "samsung,exynos4210-pd";
--		reg = <0x10044060 0x20>;
--		#power-domain-cells = <0>;
--		label = "MFC";
--	};
--
--See Documentation/devicetree/bindings/power/power_domain.txt for description
--of consumer-side bindings.
-diff --git a/Documentation/devicetree/bindings/power/pd-samsung.yaml b/Documentation/devicetree/bindings/power/pd-samsung.yaml
-new file mode 100644
-index 000000000000..09bdd96c1ec1
---- /dev/null
-+++ b/Documentation/devicetree/bindings/power/pd-samsung.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: GPL-2.0
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/power/pd-samsung.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Samsung Exynos SoC Power Domains
-+
-+maintainers:
-+  - Krzysztof Kozlowski <krzk@kernel.org>
-+
-+description: |+
-+  Exynos processors include support for multiple power domains which are used
-+  to gate power to one or more peripherals on the processor.
-+
-+allOf:
-+  - $ref: power-domain.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - samsung,exynos4210-pd
-+      - samsung,exynos5433-pd
-+
-+  reg:
-+    maxItems: 1
-+
-+  clocks:
-+    deprecated: true
-+    maxItems: 1
-+
-+  clock-names:
-+    deprecated: true
-+    maxItems: 1
-+
-+  label:
-+    description:
-+      Human readable string with domain name. Will be visible in userspace
-+      to let user to distinguish between multiple domains in SoC.
-+
-+  "#power-domain-cells":
-+    const: 0
-+
-+  power-domains:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - "#power-domain-cells"
-+  - reg
-+
-+examples:
-+  - |
-+    lcd0_pd: power-domain@10023c80 {
-+        compatible = "samsung,exynos4210-pd";
-+        reg = <0x10023c80 0x20>;
-+        #power-domain-cells = <0>;
-+        label = "LCD0";
-+    };
-+
-+    mfc_pd: power-domain@10044060 {
-+        compatible = "samsung,exynos4210-pd";
-+        reg = <0x10044060 0x20>;
-+        #power-domain-cells = <0>;
-+        label = "MFC";
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8fde5aa64bda..7126d3e079a4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2258,7 +2258,7 @@ F:	drivers/soc/samsung/
- F:	include/linux/soc/samsung/
- F:	Documentation/arm/samsung/
- F:	Documentation/devicetree/bindings/arm/samsung/
--F:	Documentation/devicetree/bindings/power/pd-samsung.txt
-+F:	Documentation/devicetree/bindings/power/pd-samsung.yaml
- N:	exynos
- 
- ARM/SAMSUNG MOBILE MACHINE SUPPORT
--- 
-2.17.1
+ICYMI, all the kernel docs are in a markup language now...
 
+Free form descriptions are easier to use because you can put in dts
+whatever you want. Nothing is going to check. There's been no shortage
+of errors and inconsistencies that we've already found.
+
+You can have as much description and comments as you like (though I'm
+trying to cut down on the copy-n-paste genericish 'clock for the
+module' type comments).
+
+> Anyways, I guess I'd better either try learning the yaml, figure out
+> what are schemas and see how to convert yaml docs to text for nicer
+> reading (I assume this is doable) and how to verify yaml binding docs
+> are Ok - or quit contributing. No one is forcing me to do this.
+> Continuing complaining on this is probably not getting us anywhere so I
+> might as well shut up now :/
+
+There is some notion to convert the DT spec to schema and then
+generate the spec from the schema. Take properties, their type, and
+descriptions and put that back into tables for example. Would love to
+have someone work on that. :)
+
+> And Sorry Rob. I am seeing you have been really close to this yaml/JSON
+> change so my wondering may be frustrating. I don't intend to be
+> disrespectful - I see that you have done huge work with this. I am
+> just... ...Slightly set in my ways. Little bit pig-headed and somewhat
+> a smart-arse - so I couldn't just let it go without giving out an
+> opinion.
+
+Everyone is welcome to their opinion.
+
+Rob
