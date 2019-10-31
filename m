@@ -2,103 +2,167 @@ Return-Path: <SRS0=Iazp=YY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C01CA9ECF
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 04:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB783CA9EC3
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 04:44:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17A7E2086D
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 04:18:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2523208C0
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 04:44:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dDi7VJOV"
+	dkim=pass (2048-bit key) header.d=verdurent-com.20150623.gappssmtp.com header.i=@verdurent-com.20150623.gappssmtp.com header.b="uLXw2V90"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726789AbfJaESY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Oct 2019 00:18:24 -0400
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:37991 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725816AbfJaESY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 00:18:24 -0400
-Received: by mail-qt1-f195.google.com with SMTP id t26so6752848qtr.5
-        for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2019 21:18:21 -0700 (PDT)
+        id S1726607AbfJaEoI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Oct 2019 00:44:08 -0400
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:37068 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726246AbfJaEoI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 00:44:08 -0400
+Received: by mail-vs1-f65.google.com with SMTP id w25so3246633vso.4
+        for <linux-clk@vger.kernel.org>; Wed, 30 Oct 2019 21:44:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=verdurent-com.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=nSHy1cjR1xkgmuZz3ish/LYbJAeXr+2guwTMfaEp/2Q=;
-        b=dDi7VJOVxKs0r/d6rOSHZNa49pPy/2qkN3lVs78MtSJYQcuETyVvpU20XKacQl03rP
-         Z5Oh4DMuEqvQYoqhlQhRSROYoKiONHSAtvDClYuFK9nQ3xXEyHTBNWnRVRAXAdw0UBBm
-         kW+F0NYA3db0/9JquvnCHen6w5K8C2EOkgyrE=
+        bh=SSmWUE5CWichZhorX+55ZMLpjQalQ+giQWwoK8E5DBs=;
+        b=uLXw2V904nlYKDyGs7+03vpTybp9imp69onWRxi5LnYo/gQ/0tRaV30wNRVWnbqzkR
+         yi2cBc2+H/thF2p6ll4zVGL4SoWukUqJblmt0/6l56k0FqNASTUyqnEgAA1yeDlegI7o
+         ep1Ph1/xVKjDP2yDo1I69libARWuTwjYkSv5iSkUfc0aEMTO/rcr4fRpLG8CUHjK8nob
+         KNFueQNCpG7agYHiUD1f0qA7GEP/wfqr1+8DHEq8zwSzHbbpWh/CTpOAoLba1HYN0F8H
+         2M9m94Qbhc6R/TzTKRgI9GkyayueiV+hwZmbpmQjFhCNZYpSgjFMhoWA+d5IilChshgK
+         rj7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=nSHy1cjR1xkgmuZz3ish/LYbJAeXr+2guwTMfaEp/2Q=;
-        b=ce27gfWEzNbZpKmhhcmiP+Jh50INIQQUPFNrTnMcfF0X+V27H13fmNKhfh+RfjzpkK
-         6+ylvvU8eeK3sC9VDohSEd6s/0lGsnoj7LuT2FzfMMqU/x92aEb3EKXi7r1vXmdQEIn4
-         qteTU/HlcqJBB4zOI+oVqLhTZoFC8bDyIkGJEYvIU5v7nsFqX/CH9WCAvT1zR6ZqhSqY
-         HPFtd2FG+TdiCG0X3Z/zUJDzsQqUEuPtbpZ/Gfsgt+aaktA2qP0isnlP7YijctULbejY
-         X0gfjfa69uZvlrui/qcha3FzEDPIBX5P6Rx7oXD6ylPTIExtmaneo7JDNAXqELLb8BUh
-         basQ==
-X-Gm-Message-State: APjAAAW5tfsaTqAP87xFR5VZ0tqWgk8DNwcZjD0hnqRLg4CvMWgToErn
-        xKeGY97J27SWcP/cpDJv99lvTAIs/UwRj4j5jbMWSQ==
-X-Google-Smtp-Source: APXvYqzvctBznLa1zRorcFn3nFNYxiVwCfSbZqxRisaWDLUronf8jK6QlXFzZaxUI1E4SGi5OziDzFPEZJ9JxHay74A=
-X-Received: by 2002:a0c:b35c:: with SMTP id a28mr2755168qvf.238.1572495501348;
- Wed, 30 Oct 2019 21:18:21 -0700 (PDT)
+        bh=SSmWUE5CWichZhorX+55ZMLpjQalQ+giQWwoK8E5DBs=;
+        b=ghYzChrq/8MsbBYV/Ah/LSQCzuIQx0Rwq18Q1CBlDfhpfG/IbQrKszcMEitvC3LdCk
+         YS7iBXPmHK+6Kt+SQQ7+SlXA+aufxfqoHIGDB4jvHcc92ob0gAuQfgIR0in8oCmCLisJ
+         iYtBmkr/eUYdWsW1JWHg+qvinGVfPHndUTJvALL8HjWJhw2Cw5pMjahMIwrON7Abl+lP
+         l+rTAgbvcFyiD9GWOPHnbEDGsKZKVUfNFMx0JxxXw4P5aOB1rrosncUJhg7MOyoxakGh
+         ppqU761azgr89fZOz5Lc3z/23jTK1vg1391+GDG8rJ4sVSMWxMdGrYjJa12IG4A8Et1D
+         gXqw==
+X-Gm-Message-State: APjAAAUgpX+6SpYDjXHXh93PPsG5jkKTziCSS5OtIebFt1QJYwSqGANT
+        Cvz6P1RSjeeNO+T0NE2nWs14kKdEi+TblGATZ+HnOQ==
+X-Google-Smtp-Source: APXvYqymGEbluLxhfYWqSz8igslfm5GCyFzNh+plgN1+M3mEWoUW2BmZ6Kvloy7vw2iDYKUG+MxHDSQGtVOBQzvkTpU=
+X-Received: by 2002:a67:b60c:: with SMTP id d12mr1611322vsm.159.1572497046919;
+ Wed, 30 Oct 2019 21:44:06 -0700 (PDT)
 MIME-Version: 1.0
-References: <20181116125449.23581-1-matthias.bgg@kernel.org> <20181116125449.23581-4-matthias.bgg@kernel.org>
-In-Reply-To: <20181116125449.23581-4-matthias.bgg@kernel.org>
-From:   Hsin-Yi Wang <hsinyi@chromium.org>
-Date:   Thu, 31 Oct 2019 12:17:55 +0800
-Message-ID: <CAJMQK-jHHAsBoL6Zcv8ZW1nRAD9NRjEbH1hnf9q418zGka8Vxg@mail.gmail.com>
-Subject: Re: [PATCH v5 03/12] clk: mediatek: mt8173: switch mmsys to platform
- device probing
-To:     matthias.bgg@kernel.org
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        CK Hu <ck.hu@mediatek.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>, mturquette@baylibre.com,
-        sboyd@codeaurora.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Devicetree List <devicetree@vger.kernel.org>,
-        rdunlap@infradead.org, sean.wang@mediatek.com,
-        lkml <linux-kernel@vger.kernel.org>,
-        dri-devel@lists.freedesktop.org, sean.wang@kernel.org,
-        wens@csie.org, Matthias Brugger <mbrugger@suse.com>,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
+References: <cover.1571656014.git.amit.kucheria@linaro.org> <4efc55ad929dbb3432e72b96cb27876efa496242.camel@intel.com>
+In-Reply-To: <4efc55ad929dbb3432e72b96cb27876efa496242.camel@intel.com>
+From:   Amit Kucheria <amit.kucheria@verdurent.com>
+Date:   Thu, 31 Oct 2019 10:13:55 +0530
+Message-ID: <CAHLCerPNDJCjaUakCu-0woqy+kJM0LK9vieYKqncnNbAsH83qw@mail.gmail.com>
+Subject: Re: [PATCH v5 0/6] Initialise thermal framework and cpufreq earlier
+ during boot
+To:     Zhang Rui <rui.zhang@intel.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Andy Gross <agross@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>, ilina@codeaurora.org,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Ben Segall <bsegall@google.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Mel Gorman <mgorman@suse.de>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        linux-clk <linux-clk@vger.kernel.org>, linux-doc@vger.kernel.org,
+        Linux PM list <linux-pm@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 12:54 PM <matthias.bgg@kernel.org> wrote:
->
-> From: Matthias Brugger <mbrugger@suse.com>
->
-> Switch probing for the MMSYS to support invocation to a
-> plain paltform device. The driver will be probed by the DRM subsystem.
->
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
+Hi Rui,
 
-> +
-> +static struct platform_driver clk_mt8173_mm_drv = {
-> +       .probe = mtk_mmsys_probe,
-> +       .probe = mtk_mmsys_remove,
-Should be .remove?
+I'm assuming that since Rafael acked it, he is ok with this going thru
+the thermal tree.
 
-> +       .driver = {
-> +               .name = "clk-mt8173-mm",
-> +       },
-> +};
-> +module_platform_driver(clk_mt8173_mm_drv);
+Regards,
+Amit
+
+On Thu, Oct 31, 2019 at 8:12 AM Zhang Rui <rui.zhang@intel.com> wrote:
 >
->  static void __init mtk_vdecsys_init(struct device_node *node)
->  {
+> Hi,
+>
+> Given that all the patches in this series have got the ACK from the
+> subsystem maintainers, I suppose we can take all the patches through
+> thermal tree, right?
+>
+> thanks,
+> rui
+>
+> On Mon, 2019-10-21 at 17:45 +0530, Amit Kucheria wrote:
+> > Changes since v4:
+> > - Collect Acks
+> > - Pick the US spelling for 'initialis^Hze' consistently.
+> >
+> > Changes since v3:
+> > - Init schedutil governor earlier too
+> > - Simplified changes to thermal_init() error path
+> > - Collects Acks
+> >
+> > Changes since v2:
+> > - Missed one patch when posting v2. Respinning.
+> >
+> > Changes since v1:
+> > - Completely get rid of netlink support in the thermal framework.
+> > - This changes the early init patch to a single line - change to
+> >   core_initcall. Changed authorship of patch since it is nothing like
+> > the
+> >   original. Lina, let me know if you feel otherwise.
+> > - I've tested to make sure that the qcom-cpufreq-hw driver continues
+> > to
+> >   work correctly as a module so this won't impact Android's GKI
+> > plans.
+> > - Collected Acks
+> >
+> > Device boot needs to be as fast as possible while keeping under the
+> > thermal
+> > envelope. Now that thermal framework is built-in to the kernel, we
+> > can
+> > initialize it earlier to enable thermal mitigation during boot.
+> >
+> > We also need the cpufreq HW drivers to be initialised earlier to act
+> > as the
+> > cooling devices. This series only converts over the qcom-hw driver to
+> > initialize earlier but can be extended to other platforms as well.
+> >
+> > Amit Kucheria (6):
+> >   thermal: Remove netlink support
+> >   thermal: Initialize thermal subsystem earlier
+> >   cpufreq: Initialize the governors in core_initcall
+> >   cpufreq: Initialize cpufreq-dt driver earlier
+> >   clk: qcom: Initialize clock drivers earlier
+> >   cpufreq: qcom-hw: Move driver initialization earlier
+> >
+> >  .../driver-api/thermal/sysfs-api.rst          |  26 +----
+> >  drivers/clk/qcom/clk-rpmh.c                   |   2 +-
+> >  drivers/clk/qcom/gcc-qcs404.c                 |   2 +-
+> >  drivers/clk/qcom/gcc-sdm845.c                 |   2 +-
+> >  drivers/cpufreq/cpufreq-dt-platdev.c          |   2 +-
+> >  drivers/cpufreq/cpufreq_conservative.c        |   2 +-
+> >  drivers/cpufreq/cpufreq_ondemand.c            |   2 +-
+> >  drivers/cpufreq/cpufreq_performance.c         |   2 +-
+> >  drivers/cpufreq/cpufreq_powersave.c           |   2 +-
+> >  drivers/cpufreq/cpufreq_userspace.c           |   2 +-
+> >  drivers/cpufreq/qcom-cpufreq-hw.c             |   2 +-
+> >  drivers/thermal/thermal_core.c                | 103 +---------------
+> > --
+> >  include/linux/thermal.h                       |  11 --
+> >  kernel/sched/cpufreq_schedutil.c              |   2 +-
+> >  14 files changed, 19 insertions(+), 143 deletions(-)
+> >
+>
