@@ -2,159 +2,185 @@ Return-Path: <SRS0=Iazp=YY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2F6CA9EC3
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 10:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F19EECA9EC3
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 11:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5021820862
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 10:02:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCA512086D
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 11:29:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="kd81AX2H"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="njw1kSrw";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="YW2gQkq7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbfJaKCI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Oct 2019 06:02:08 -0400
-Received: from mail-eopbgr150054.outbound.protection.outlook.com ([40.107.15.54]:39300
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727337AbfJaKCF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 31 Oct 2019 06:02:05 -0400
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=XS0CP8K/y7heaeGaoOx4PBSUCTmpmcYEFBl+LH6cgf5Hjf4XKyHmetAzjXhOgAD++E90AcyhcdiZfdWSemL6NdVEZVDN2G7Zs8+DeeBc3pN3s3YFf3wc3VbF7AUUcHaBI/FPmRC/b2vm3AteROJy8h4WDb87CsyEGusmGbI9saJm8acl+xt6/RY1ofxCrjjThztseCE6qqt5LCMEtbvrmFiquRFkspsewqnirH2N9wL1lrRY3BWkY7xQExWCsMtwCYbTkj/MHsr02Jfk1xpvw1rnQP4SRQ8C9G1ZeqSs7n0C0E+19BvsrW/RWENa5CgIuh/CAXTQ//q0HoPPnMhVuA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9jCLTDb36RC2va2i/w6VXlYE81gCHs04E2EgyMcrgU=;
- b=XIkWtR3PtHjoDk+O5DAnvkU1c79v9ilxgOLAXBWWrqzdssFsUPaeDFl6z9DTVuh3KSkBNTPD1Jl38n1tInXWdA+moEnvXPfViEwpEMeKnMsQlQIhmrl1pqBx2uFKg8usx9UAWFOp7mynR8ypGhlGC1zSkNZtj9TTNSTZNioHCblhTep+OiQxa6VlsxpBoGt3zqIOMUYSB1ZQ2j2MkMQOqat8Z6l0aYJ9D082XACMn1VaK7Tj4Zxfejm5tnnUc29/yWSui2ConacPfdkQiYvxYMvTHzHe/Z3O2J9bY33B74qu303mz+MVivuHqsIToVBUGZ25WMlnrKEX6ZtiQY895g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u9jCLTDb36RC2va2i/w6VXlYE81gCHs04E2EgyMcrgU=;
- b=kd81AX2H31DA1uE/8B4uTVamRfoUI3hRROy1NTSzwxKdk0Tsy4gyKB4Kznli+/+09yEg5I9A1Myels3zRJ15simvrh7/ClKasG1G6I2R3DkeXjPZrYP9lodXKPqzO+Z7WvdVECDin5KyxIKUL7lVe/4YvPw/YxD2rUIalppP1zo=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6722.eurprd04.prod.outlook.com (20.179.252.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2387.28; Thu, 31 Oct 2019 10:02:01 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2387.028; Thu, 31 Oct 2019
- 10:02:01 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 2/2] clk: imx: imx7d: remove clk_set_parent
-Thread-Topic: [PATCH 2/2] clk: imx: imx7d: remove clk_set_parent
-Thread-Index: AQHVj9I92AhYNbamKEyejI7asTmq+g==
-Date:   Thu, 31 Oct 2019 10:02:00 +0000
-Message-ID: <1572515888-3385-3-git-send-email-peng.fan@nxp.com>
-References: <1572515888-3385-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1572515888-3385-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR03CA0118.apcprd03.prod.outlook.com
- (2603:1096:203:b0::34) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 21cb476b-2e59-47b5-4457-08d75de95f76
-x-ms-traffictypediagnostic: AM0PR04MB6722:|AM0PR04MB6722:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB672214016F5FAC8A7A10494E88630@AM0PR04MB6722.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02070414A1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(346002)(136003)(396003)(376002)(189003)(199004)(446003)(2501003)(71190400001)(71200400001)(6436002)(11346002)(8936002)(2616005)(99286004)(316002)(6636002)(66946007)(476003)(478600001)(50226002)(256004)(14454004)(110136005)(54906003)(305945005)(7736002)(2906002)(2201001)(102836004)(76176011)(44832011)(66446008)(64756008)(66476007)(6486002)(66556008)(486006)(3846002)(66066001)(26005)(386003)(86362001)(52116002)(81166006)(81156014)(186003)(5660300002)(8676002)(25786009)(36756003)(6512007)(4326008)(6116002)(6506007);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6722;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +jiVyIFCxwe9q6jRDi14gGyuxiVfOyGQPDr6jI7YzR+6CPgJdKRzTmYTtYZ9oVor0rmRyKdCbmxkyIjmKWXFYb+85KJjxf2iBocCrId4Mjsv9IECk/9+BuB4wF1nnGITczSwgSpxtn0Q1vim2tVvKQR5oQvbCFEy3VC12v3nPy60K4pdU9v+tDd1qF6T7SYc8cbz6d4azKHtiCIkpCqE1plx50nrKB/ewk5TLBW/z1jX0xFPgTyhc3zdmiVF4BRnatBAHIcDE587b9MKcrboMdI7siAK+SiDBOlvdORDhoFh8ZcQZ0sVeW6uP6gVkNqLg3OiOs3gvSttLIBnREe1vXxHGbnhf36kj0EflPRvXDzhEYlMk5Vy48TIAVM0oMfZZhsbSu/Z4IMej9S67xbmofZiwqZ9lWzeVamk/SyLelmTYfJAyx0hfAcpoaOJC9ti
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726513AbfJaL3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Oct 2019 07:29:35 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:48166 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfJaL3e (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 07:29:34 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 7EAB6602F0; Thu, 31 Oct 2019 11:29:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572521373;
+        bh=Iul483ITYeU4QpQX+AZgtpLy91D+aok94WxB8TGMZNg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=njw1kSrw4HVbchpOemPSJCP0zLob2TWYLMquBb3IjyGY3ONYQUvMh10IFsfW3MLq1
+         +CP9DToxkyWQ4TFReh8TfQAE6pQ3H7WiTCyXY273FW2GdLshdOCrWKIaPJrprseew1
+         8VPS82JN0CAqstE+dXLlQABMILHuo7yi1vZ1pawE=
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id C4648602F0;
+        Thu, 31 Oct 2019 11:29:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572521372;
+        bh=Iul483ITYeU4QpQX+AZgtpLy91D+aok94WxB8TGMZNg=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=YW2gQkq7CymRgVr5CmA4gAmZs0XcVkxASl7eZ0O+M7hgSftcDWfjeVC8k+E7HKy4Z
+         vPEqe19nFxzjvT2UmdGEcaAS/v2rpTacQJ7wbxZ/CTOKZIoUI9OH8PBOPXIJ+haPRQ
+         ZiA5TJyjeJyIYKadSEX/aJUw00MZaXsudOSRdtHc=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C4648602F0
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
+References: <20191014102308.27441-1-tdas@codeaurora.org>
+ <20191014102308.27441-6-tdas@codeaurora.org>
+ <20191029175941.GA27773@google.com>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <fa17b97d-bfc4-4e9c-78b5-c225e5b38946@codeaurora.org>
+Date:   Thu, 31 Oct 2019 16:59:26 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21cb476b-2e59-47b5-4457-08d75de95f76
-X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Oct 2019 10:02:00.8532
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: p5S7N/1rqRPIB3RfyseygYpuV6MirRESLRlVqO8Gjy3AkEN9zTZ4DuaIVX1jslH+hjMwtEGrmmN9xw7E4cuBiw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6722
+In-Reply-To: <20191029175941.GA27773@google.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Hi Matthias,
 
-Since the set parent could be done by assigned-clock-parents in
-dts, so no need clk_set_parent in driver.
+Thanks for your comments.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx7d.c | 12 ------------
- 1 file changed, 12 deletions(-)
+On 10/29/2019 11:29 PM, Matthias Kaehlcke wrote:
+> Hi Taniya,
+> 
+> On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
+>> Add support for the global clock controller found on SC7180
+>> based devices. This should allow most non-multimedia device
+>> drivers to probe and control their clocks.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index 0c9f7adb41ae..b73e3e148497 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -878,18 +878,6 @@ static void __init imx7d_clocks_init(struct device_nod=
-e *ccm_node)
-=20
- 	of_clk_add_hw_provider(np, of_clk_hw_onecell_get, clk_hw_data);
-=20
--	clk_set_parent(hws[IMX7D_PLL_ARM_MAIN_BYPASS]->clk, hws[IMX7D_PLL_ARM_MAI=
-N]->clk);
--	clk_set_parent(hws[IMX7D_PLL_DRAM_MAIN_BYPASS]->clk, hws[IMX7D_PLL_DRAM_M=
-AIN]->clk);
--	clk_set_parent(hws[IMX7D_PLL_SYS_MAIN_BYPASS]->clk, hws[IMX7D_PLL_SYS_MAI=
-N]->clk);
--	clk_set_parent(hws[IMX7D_PLL_ENET_MAIN_BYPASS]->clk, hws[IMX7D_PLL_ENET_M=
-AIN]->clk);
--	clk_set_parent(hws[IMX7D_PLL_AUDIO_MAIN_BYPASS]->clk, hws[IMX7D_PLL_AUDIO=
-_MAIN]->clk);
--	clk_set_parent(hws[IMX7D_PLL_VIDEO_MAIN_BYPASS]->clk, hws[IMX7D_PLL_VIDEO=
-_MAIN]->clk);
--
--	clk_set_parent(hws[IMX7D_MIPI_CSI_ROOT_SRC]->clk, hws[IMX7D_PLL_SYS_PFD3_=
-CLK]->clk);
--
--	/* use old gpt clk setting, gpt1 root clk must be twice as gpt counter fr=
-eq */
--	clk_set_parent(hws[IMX7D_GPT1_ROOT_SRC]->clk, hws[IMX7D_OSC_24M_CLK]->clk=
-);
--
- 	/* Set clock rate for USBPHY, the USB_PLL at CCM is from USBOTG2 */
- 	hws[IMX7D_USB1_MAIN_480M_CLK] =3D imx_clk_hw_fixed_factor("pll_usb1_main_=
-clk", "osc", 20, 1);
- 	hws[IMX7D_USB_MAIN_480M_CLK] =3D imx_clk_hw_fixed_factor("pll_usb_main_cl=
-k", "osc", 20, 1);
---=20
-2.16.4
+> 
+> v3 also had
+> 
+> +	[GCC_DISP_AHB_CLK] = &gcc_disp_ahb_clk.clkr,
+> 
+> Removing it makes the dpu_mdss driver unhappy:
+> 
+> [    2.999855] dpu_mdss_enable+0x2c/0x58->msm_dss_enable_clk: 'iface' is not available
+> 
+> because:
+> 
+>          mdss: mdss@ae00000 {
+>      	        ...
+> 
+>   =>             clocks = <&gcc GCC_DISP_AHB_CLK>,
+>                           <&gcc GCC_DISP_HF_AXI_CLK>,
+>                           <&dispcc DISP_CC_MDSS_MDP_CLK>;
+>                  clock-names = "iface", "gcc_bus", "core";
+> 	};
+> 
 
+The basic idea as you mentioned below was to move the CRITICAL clocks to 
+probe. The clock provider to return NULL in case the clocks are not 
+registered.
+This was discussed with Stephen on v3. Thus I submitted the below patch.
+clk: qcom: common: Return NULL from clk_hw OF provider.
+
+Yes it would throw these warnings, but no functional issue is observed 
+from display. I have tested it on the cheza board.
+I guess we could fix the DRM driver to use the "devm_clk_get_optional()" 
+instead?
+
+> More clocks were removed in v4:
+> 
+> -       [GCC_CPUSS_GNOC_CLK] = &gcc_cpuss_gnoc_clk.clkr,
+> -       [GCC_GPU_CFG_AHB_CLK] = &gcc_gpu_cfg_ahb_clk.clkr,
+> -       [GCC_VIDEO_AHB_CLK] = &gcc_video_ahb_clk.clkr,
+> 
+> I guess this part of "remove registering the CRITICAL clocks to clock provider
+> and leave them always ON from the GCC probe." (change log entry), but are you
+> sure nobody is going to reference these clocks?
+> 
+
+Even if they are referenced clk provider would return NULL.
+
+>> +static int gcc_sc7180_probe(struct platform_device *pdev)
+>> +{
+>> +	struct regmap *regmap;
+>> +	int ret;
+>> +
+>> +	regmap = qcom_cc_map(pdev, &gcc_sc7180_desc);
+>> +	if (IS_ERR(regmap))
+>> +		return PTR_ERR(regmap);
+>> +
+>> +	/*
+>> +	 * Disable the GPLL0 active input to MM blocks, NPU
+>> +	 * and GPU via MISC registers.
+>> +	 */
+>> +	regmap_update_bits(regmap, 0x09ffc, 0x3, 0x3);
+>> +	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+>> +	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+> 
+> In v3 this was:
+> 
+> 	regmap_update_bits(regmap, GCC_MMSS_MISC, 0x3, 0x3);
+> 	regmap_update_bits(regmap, GCC_NPU_MISC, 0x3, 0x3);
+> 	regmap_update_bits(regmap, GCC_GPU_MISC, 0x3, 0x3);
+> 
+> IMO register names seem preferable, why switch to literal addresses
+> instead?
+> 
+
+:). These cleanups where done based on the comments I had received 
+during SDM845 review. If Stephen is fine moving them to names, I could 
+submit them in the next patch series.
+
+>> +
+>> +	/*
+>> +	 * Keep the clocks always-ON
+>> +	 * GCC_CPUSS_GNOC_CLK, GCC_VIDEO_AHB_CLK, GCC_DISP_AHB_CLK
+>> +	 * GCC_GPU_CFG_AHB_CLK
+>> +	 */
+>> +	regmap_update_bits(regmap, 0x48004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x0b004, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x0b00c, BIT(0), BIT(0));
+>> +	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+> 
+> ditto, register names seem preferable.
+> 
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
