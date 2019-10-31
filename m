@@ -2,115 +2,165 @@ Return-Path: <SRS0=Iazp=YY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD512CA9ECB
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 18:58:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE2E2CA9ECB
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 21:50:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CD8E2086D
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 18:58:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITWE8t9W"
+	by mail.kernel.org (Postfix) with ESMTP id 85037208C0
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 21:50:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729527AbfJaS6M (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Oct 2019 14:58:12 -0400
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42136 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729317AbfJaS6M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 14:58:12 -0400
-Received: by mail-pl1-f195.google.com with SMTP id j12so1143957plt.9;
-        Thu, 31 Oct 2019 11:58:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=g44ZD74TUZ7KzjCPRGfZgsLxhbY0OttrjL0keUiMuBU=;
-        b=ITWE8t9WxqmLqjli294CA1/i0ioCxLI9TD6JyHcThxGeIR0Ea3+rFoeB0qRn1uzN98
-         gXvCPGv+o9il3+EgajJ394+gUpjY2DMu7Zn1Cbcs0yZnndSObR5hVVKWPc6itscTVwMz
-         TkiufB9Nd4iDR+II7N0AdNBEVH2CE7F+2EcD1Kv7Dki2rnAmXAQhZyvHDMfcaq3XnB+Y
-         JFAROMTMwV1nVwCDlJ1BHSBHggwqD1h/sjiQb7CkSTpqfKA6+FKg6miLZffD7d4PGjps
-         WFKi6XyAOw5d5gEw5S6Fx3aoVL4Gav+siCMo27+Othb4smtAsfg6ArzUz9H988NeSaRl
-         /JLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=g44ZD74TUZ7KzjCPRGfZgsLxhbY0OttrjL0keUiMuBU=;
-        b=I5nEXsS8mQvDK4yHs++JyaKQvp5ucVnVXnlbtfkzjEziKEQg2sDMWKW0QONC8JKuJm
-         MMPwxz6o4fYqEqi8lys/rGs6EGOz/g3eWDYLx2MBbrNZ0CdAfOYN/cf+g76cG8TxqCAQ
-         K1VnnC4lsNFV8rMQoOzWRsYz4AdJ303tmnRQOqa2tsazFcwECK+vzozX4rlw2sEBmaIr
-         0biMozX5uDAZtA+dZm9DBazyTBr0BvMuhP4/N/7Uq5+pImaTB+4nVDsI9MbpjbtVpvTH
-         mDEg3CaWmydpqlwNrj9zwuoAfA/I5O4lCRJF3knsDSSVFWJkvKm/ORbr6+dGeaBhHQSC
-         tDzA==
-X-Gm-Message-State: APjAAAW4LC3BTIT1l91/h1tf3c/z2yEslM3oLIJMVxX1iFnRissWdk3D
-        vLvfkEdah+gS7TXaC/BqVds=
-X-Google-Smtp-Source: APXvYqzSTeVFCOXIhq/1Bm0UwakTN0YmPqM+wdFeWRnm9mET9r+56fPshH4KYjlvYcoJgzl+ZMEGiA==
-X-Received: by 2002:a17:902:14f:: with SMTP id 73mr8133684plb.87.1572548291257;
-        Thu, 31 Oct 2019 11:58:11 -0700 (PDT)
-Received: from aw-bldr-10.qualcomm.com (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id 127sm4902942pfw.6.2019.10.31.11.58.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Oct 2019 11:58:10 -0700 (PDT)
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-To:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        sboyd@kernel.org
-Cc:     agross@kernel.org, marc.w.gonzalez@free.fr,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Subject: [PATCH v5 3/3] arm64: dts: qcom: msm8998: Add gpucc node
-Date:   Thu, 31 Oct 2019 11:58:06 -0700
-Message-Id: <20191031185806.15602-1-jeffrey.l.hugo@gmail.com>
+        id S1729103AbfJaVuf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Oct 2019 17:50:35 -0400
+Received: from inva020.nxp.com ([92.121.34.13]:42258 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728561AbfJaVuf (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 31 Oct 2019 17:50:35 -0400
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1D7391A057E;
+        Thu, 31 Oct 2019 22:50:32 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0549F1A00B6;
+        Thu, 31 Oct 2019 22:50:32 +0100 (CET)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id E3827205E9;
+        Thu, 31 Oct 2019 22:50:30 +0100 (CET)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v3 0/6] PM / devfreq: Add dynamic scaling for imx ddr controller
+Date:   Thu, 31 Oct 2019 23:50:21 +0200
+Message-Id: <cover.1572558427.git.leonard.crestez@nxp.com>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191031185538.15402-1-jeffrey.l.hugo@gmail.com>
-References: <20191031185538.15402-1-jeffrey.l.hugo@gmail.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add MSM8998 GPU Clock Controller DT node.
+This adds support for dynamic scaling of the DDR Controller (ddrc) present in
+imx8m series. Actual frequency switching is implemented inside TF-A, this
+driver wraps the SMC calls and synchronizes the clk tree.
 
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
----
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+DRAM frequency switching requires clock manipulation but during this operation
+DRAM itself is briefly inaccessible so this operation is performed a SMC call
+to by TF-A which runs from a SRAM area. Upon returning to linux the clock tree
+is updated to correspond to hardware configuration.
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 6e7bddd1e0fc..a4d9b792eb6e 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -3,6 +3,7 @@
- 
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/clock/qcom,gcc-msm8998.h>
-+#include <dt-bindings/clock/qcom,gpucc-msm8998.h>
- #include <dt-bindings/clock/qcom,rpmcc.h>
- #include <dt-bindings/power/qcom-rpmpd.h>
- #include <dt-bindings/gpio/gpio.h>
-@@ -1000,6 +1001,19 @@
- 			#interrupt-cells = <0x2>;
- 		};
- 
-+		gpucc: clock-controller@5065000 {
-+			compatible = "qcom,msm8998-gpucc";
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+			reg = <0x05065000 0x9000>;
-+
-+			clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
-+				 <&gcc GPLL0_OUT_MAIN>;
-+			clock-names = "xo",
-+				      "gpll0";
-+		};
-+
- 		stm@6002000 {
- 			compatible = "arm,coresight-stm", "arm,primecell";
- 			reg = <0x06002000 0x1000>,
+This is handled via CLK_GET_RATE_NO_CACHE for dividers but muxes are handled
+manually: the driver will prepare/enable the new parents ahead of switching (so
+that the expected roots are enabled) and afterwards it will call clk_set_parent
+to ensure the parents in clock framework are up-to-date.
+
+This series is atomically useful and roughly similar to devfreq drivers for
+tegra and rockchip.
+
+Running at lower dram rates saves power but can affect the functionality of
+other blocks in the chip (display, vpu etc). Support for in-kernel constraints
+will some separately.
+
+Angus/Martin: You previously attempted to test on purism boards, this updated
+version should work without hacks and has no dependencies.
+
+Changes since v2:
+* Add support for entire imx8m family including imx8mq B0.
+* Also mark dram PLLs as CLK_GET_RATE_NO_CACHE (required for imx8mq b0 low OPP)
+* Explicitly update dram pll rate at the end of imx_ddrc_set_freq.
+* Use do_div in imx-ddrc (kbuild robot)
+* Improve explanations around adding CLK_GET_RATE_NO_CACHE to dram clks.
+(Stephen Boyd)
+* Handle ddrc devfreq-events earlier for fewer probe defers.
+* Validate DDRC opp tables versus firmware: supported OPPs depend on board and
+SOC revision.
+* Move DDRC opp tables to board dts because they can vary based on ram type on
+board.
+* Verify DDRC rate is changed in clk tree and otherwise report an error.
+* Change imx_ddrc_freq.rate to be measure in MT/s and round down from HZ in
+imx_ddrc_find_freq instead.
+* Split NOC scaling away.
+Link to v2: https://patchwork.kernel.org/cover/11104113/
+
+Changes since v1:
+* bindings: Stop using "contains" for "compatible"
+* bindings: Set "additionalProperties: false" and document missing stuff.
+* Remove (c) from NXP copyright notice
+* Fix various checkpatch issues
+* Remove unused dram_alt_root clk from imx-ddrc
+Link to v1: https://patchwork.kernel.org/cover/11090649/
+
+Changes since RFC v3:
+* Implement passive support and set NOC's parent to DDRC
+* Drop scaling AHB/AXI for now (NOC/DDRC use most power anyway)
+* Stop relying on clk_min_rate
+* Split into two devreq drivers (and bindings) because the ddrc is
+really a distinct piece of hardware.
+* Perform DRAM frequency inside devfreq instead of clk, mostly due to
+objections to earlier RFCs for imx8m-dram-clk.
+* Fetch info about dram clk parents from firmware instead of
+hardcoding in driver. This can more easily support additional rates.
+* Link: https://patchwork.kernel.org/cover/11056779/
+* Link: https://patchwork.kernel.org/patch/11049429/
+
+Scaling buses can cause problems for devices with realtime bandwith
+requirements such as display, the intention is to use the interconnect
+framework to make DEV_PM_QOS_MIN_FREQUENCY to devfreq. There are
+separate patches for that:
+
+* https://patchwork.kernel.org/cover/11104055/
+* https://patchwork.kernel.org/cover/11078671/
+
+
+Leonard Crestez (6):
+  clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram clocks
+  clk: imx: Mark dram pll on 8mm and 8mn with CLK_GET_RATE_NOCACHE
+  dt-bindings: devfreq: Add bindings for imx ddr controller
+  PM / devfreq: Add dynamic scaling for imx ddr controller
+  PM / devfreq: imx-ddrc: Measure bandwidth with perf
+  arm64: dts: imx8m: Add ddr controller nodes
+
+ .../devicetree/bindings/devfreq/imx-ddrc.yaml |  60 ++
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dts  |  18 +
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi     |  17 +-
+ .../boot/dts/freescale/imx8mn-ddr4-evk.dts    |  18 +
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi     |  16 +-
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts  |  24 +
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi     |  16 +-
+ drivers/clk/imx/clk-imx8mm.c                  |  13 +-
+ drivers/clk/imx/clk-imx8mn.c                  |  14 +-
+ drivers/clk/imx/clk-imx8mq.c                  |  15 +-
+ drivers/clk/imx/clk-pll14xx.c                 |   7 +
+ drivers/clk/imx/clk.h                         |   1 +
+ drivers/devfreq/Makefile                      |   1 +
+ drivers/devfreq/imx-ddrc.c                    | 570 ++++++++++++++++++
+ 14 files changed, 777 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/devfreq/imx-ddrc.yaml
+ create mode 100644 drivers/devfreq/imx-ddrc.c
+
 -- 
 2.17.1
 
