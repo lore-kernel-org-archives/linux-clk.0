@@ -7,56 +7,56 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A45CA9EC3
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 538F9CA9ECB
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:09:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B64F208C0
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D71208E3
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:09:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sWvZD90G"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPCqsC6V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726524AbfJaMHQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Oct 2019 08:07:16 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35388 "EHLO
+        id S1726772AbfJaMJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Oct 2019 08:09:13 -0400
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:33579 "EHLO
         mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfJaMHP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 08:07:15 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y6so4458537lfj.2;
-        Thu, 31 Oct 2019 05:07:14 -0700 (PDT)
+        with ESMTP id S1726462AbfJaMJN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 08:09:13 -0400
+Received: by mail-lf1-f66.google.com with SMTP id y127so4460946lfc.0;
+        Thu, 31 Oct 2019 05:09:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yLdb6BKKsBwdTyCqC3oQr2+bLOSWyaoFNjx8aaET/HU=;
-        b=sWvZD90G57wEHYe8Pgdv+Opt8LMv8QJ47fYyZyYAqKyVohLypEc/k5xmxMYQrtVhtg
-         c4+Gv2vRm4USOBpQChSEyz9IopS/XX8Nl1yar4DVdPV/s63tDtR0oHYJXqRA6DA/S5Ti
-         5QJLHveP0STTYEV8W4SiS2rMZRRbomLtlf3r3x7hKsrL8J5fXJ5yPcKx4qSkYCnygOao
-         PYBgSFir3lDNXeZ4NFHEwNj6yQMg1E4ihqoD2GKV5gFuNBcwxomAEOl1gqaw8ejkLIAu
-         VgzS0eFF6O9yCe6NhWxr1UoK1QHd182uEFLpuvx7FW1l55L/61MnXJIF7FzMvumAECoz
-         7D4A==
+        bh=MM8p4D9tb2q7mG4877MY6R6xnh9uakrw6zADFmTTks4=;
+        b=OPCqsC6VoU5JERR4Cw0CfReLN6eQqnM9iRJ8CH+KWnBn0jcB4gCsE49jFqANG9ZrFm
+         Gg8B+QwvYfXHEPUHLleelZfQxiiZlTgjHgozQOBxZlgqNFXrUDA1VYpr3UvWhKkuSFs4
+         wtslteQ3K0G+y8JgTmVNm7he27ntG62voXmO7Fl8z5l0d0zvRcvqcGciMjVeyBIrS5ZP
+         MV+aGcCFg88yhnXL2BGiWjacFOQCb/BXgrf4X+CuYOWn1Av8//Y2CAINO1DwfuAIWZIl
+         y8K8RyxzwZ+wdaEW6IlYMMy/pZ78EQteNAV5pEOfrq9YIovzMVoY2AgHeU1Tz4Ih6S5p
+         tGAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yLdb6BKKsBwdTyCqC3oQr2+bLOSWyaoFNjx8aaET/HU=;
-        b=tuZei9Ej0whXIYZFMNL1Reo5T3TnoTWEUjXE71W+71juRHowwrVEpAM1tcqruWxjL9
-         VswSkXXCgYlbruRdXsuAiqmJ3JLIn3H5h5YUla+Lu136dK2IfEt8jM1U5NVmylLSLQdS
-         EBvfRIDWOlUMMbJVuaEdWBLJRBoeLS7pUMiMXey9INLj3wSMJsJjiWL41+3ngt8NGXXX
-         U7GCOPIMf9UWue2+FSVGhh0oHfW+SOZCt0G+U8litx9mZYb8IaHYmNOKPxj/tgmEWVYT
-         slO7in9Bsuncuj9NVq5jLfjY6gW90jxUsEzjltPaePmbWyskx5K6GOemZtXxC/Azr5eh
-         f/LQ==
-X-Gm-Message-State: APjAAAWSfxbXf9WfON9S9FNGNhl3mhazPNtj0tA7BOjfAZR3Hk7qVpjd
-        mSOOmwZI8plVID75rbRtKtpyUIqc0Mj1yf+GsPc=
-X-Google-Smtp-Source: APXvYqzouS1Q1he9V4ma5fFVHYkpzWmxxcN5v9/+VSFY+GMtwPnz/Rhj664y3z7SNUmnvg/zabQ+BfeH/1fUBA55JkM=
-X-Received: by 2002:ac2:4564:: with SMTP id k4mr3360446lfm.20.1572523633629;
- Thu, 31 Oct 2019 05:07:13 -0700 (PDT)
+        bh=MM8p4D9tb2q7mG4877MY6R6xnh9uakrw6zADFmTTks4=;
+        b=gfZIKXvEWTeMDk1yjY2ne2pp5rZhGga2gbB4Lus1fhDhz1LoWYsCDB4wrSfqCj3SDI
+         lGdz6bF8FzNjxOeSEDOjX+BRw2vPs7812s08ZG9IqwWcyetaXMyrHvpRPfmvLN2cuZxo
+         K41bJ+onQA+51PodNC+QrDriUfbU1bb3v2QvUM4UcCSskksXwSQfYD0RDPIf8T+OPi5I
+         eV65+VKp5oioW+xBV2vNA4P2bk7SyXfdEseUHRAwF+uo+03+ST3fFO4co7DM7+C+9TI9
+         I6knGWQHdqLU8RnlZRCYcTY6pTR2mzCtdvsGg2unDO8z8rEF3l5WMNw5b1aocEb8M887
+         MdYg==
+X-Gm-Message-State: APjAAAWqWhBXP7FuadLWyd+GhKGNZgjKtwMfqGU1hmEnRdtYTd4P3MqT
+        IIMzrAtNnY+wtv5PVmCLrCWgSXLvgzxs+Fvb9E0=
+X-Google-Smtp-Source: APXvYqwkYSRy9WIGL9SPdl9jeCJJ+BOIZ4Zza5PJfCxqy+TrdFNJETJc7MR5x1D+zSUZe3bjDByCvJLy8a/43ChjJu8=
+X-Received: by 2002:a19:6759:: with SMTP id e25mr3136789lfj.80.1572523751272;
+ Thu, 31 Oct 2019 05:09:11 -0700 (PDT)
 MIME-Version: 1.0
-References: <1572515888-3385-1-git-send-email-peng.fan@nxp.com> <1572515888-3385-3-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1572515888-3385-3-git-send-email-peng.fan@nxp.com>
+References: <1572515888-3385-1-git-send-email-peng.fan@nxp.com> <1572515888-3385-2-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1572515888-3385-2-git-send-email-peng.fan@nxp.com>
 From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 31 Oct 2019 09:07:22 -0300
-Message-ID: <CAOMZO5DWphRs_ZdDiNPLo0MPo45vBTEojWhYnZyWYF6+t12jxw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] clk: imx: imx7d: remove clk_set_parent
+Date:   Thu, 31 Oct 2019 09:09:20 -0300
+Message-ID: <CAOMZO5C6kRvsGv_vR=r+5WesGDdLRUab4ri2P1V97-=juXcLQQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm: dts: imx7s: ccm: add assigned-clocks
 To:     Peng Fan <peng.fan@nxp.com>
 Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
@@ -79,13 +79,14 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Peng,
 
-On Thu, Oct 31, 2019 at 7:02 AM Peng Fan <peng.fan@nxp.com> wrote:
+On Thu, Oct 31, 2019 at 7:01 AM Peng Fan <peng.fan@nxp.com> wrote:
 >
 > From: Peng Fan <peng.fan@nxp.com>
 >
-> Since the set parent could be done by assigned-clock-parents in
-> dts, so no need clk_set_parent in driver.
+> Add assigned-clocks and assigned-clock-parents, then
+> we could remove the clk_set_parent code in clk-imx7d.c.
 
-It looks like this will cause breakage if someone is using an old dtb, right?
+Change itself looks good, but please do not mention the clock driver
+in the commit log.
 
-We try not to break existing dtbs.
+Devicetree should be OS agnostic.
