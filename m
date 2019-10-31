@@ -2,91 +2,117 @@ Return-Path: <SRS0=Iazp=YY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 538F9CA9ECB
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:09:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF0DCA9EC3
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28D71208E3
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:09:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ACC82080F
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:21:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPCqsC6V"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LhIKUufu";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VkO8QGUg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfJaMJN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Oct 2019 08:09:13 -0400
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33579 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfJaMJN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 08:09:13 -0400
-Received: by mail-lf1-f66.google.com with SMTP id y127so4460946lfc.0;
-        Thu, 31 Oct 2019 05:09:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=MM8p4D9tb2q7mG4877MY6R6xnh9uakrw6zADFmTTks4=;
-        b=OPCqsC6VoU5JERR4Cw0CfReLN6eQqnM9iRJ8CH+KWnBn0jcB4gCsE49jFqANG9ZrFm
-         Gg8B+QwvYfXHEPUHLleelZfQxiiZlTgjHgozQOBxZlgqNFXrUDA1VYpr3UvWhKkuSFs4
-         wtslteQ3K0G+y8JgTmVNm7he27ntG62voXmO7Fl8z5l0d0zvRcvqcGciMjVeyBIrS5ZP
-         MV+aGcCFg88yhnXL2BGiWjacFOQCb/BXgrf4X+CuYOWn1Av8//Y2CAINO1DwfuAIWZIl
-         y8K8RyxzwZ+wdaEW6IlYMMy/pZ78EQteNAV5pEOfrq9YIovzMVoY2AgHeU1Tz4Ih6S5p
-         tGAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MM8p4D9tb2q7mG4877MY6R6xnh9uakrw6zADFmTTks4=;
-        b=gfZIKXvEWTeMDk1yjY2ne2pp5rZhGga2gbB4Lus1fhDhz1LoWYsCDB4wrSfqCj3SDI
-         lGdz6bF8FzNjxOeSEDOjX+BRw2vPs7812s08ZG9IqwWcyetaXMyrHvpRPfmvLN2cuZxo
-         K41bJ+onQA+51PodNC+QrDriUfbU1bb3v2QvUM4UcCSskksXwSQfYD0RDPIf8T+OPi5I
-         eV65+VKp5oioW+xBV2vNA4P2bk7SyXfdEseUHRAwF+uo+03+ST3fFO4co7DM7+C+9TI9
-         I6knGWQHdqLU8RnlZRCYcTY6pTR2mzCtdvsGg2unDO8z8rEF3l5WMNw5b1aocEb8M887
-         MdYg==
-X-Gm-Message-State: APjAAAWqWhBXP7FuadLWyd+GhKGNZgjKtwMfqGU1hmEnRdtYTd4P3MqT
-        IIMzrAtNnY+wtv5PVmCLrCWgSXLvgzxs+Fvb9E0=
-X-Google-Smtp-Source: APXvYqwkYSRy9WIGL9SPdl9jeCJJ+BOIZ4Zza5PJfCxqy+TrdFNJETJc7MR5x1D+zSUZe3bjDByCvJLy8a/43ChjJu8=
-X-Received: by 2002:a19:6759:: with SMTP id e25mr3136789lfj.80.1572523751272;
- Thu, 31 Oct 2019 05:09:11 -0700 (PDT)
-MIME-Version: 1.0
-References: <1572515888-3385-1-git-send-email-peng.fan@nxp.com> <1572515888-3385-2-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1572515888-3385-2-git-send-email-peng.fan@nxp.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Thu, 31 Oct 2019 09:09:20 -0300
-Message-ID: <CAOMZO5C6kRvsGv_vR=r+5WesGDdLRUab4ri2P1V97-=juXcLQQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] arm: dts: imx7s: ccm: add assigned-clocks
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726506AbfJaMVa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Oct 2019 08:21:30 -0400
+Received: from smtp.codeaurora.org ([198.145.29.96]:37806 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726462AbfJaMV3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 08:21:29 -0400
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 6658E607EF; Thu, 31 Oct 2019 12:21:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572524488;
+        bh=Ki3aKynv1XZjEovrcTD2QZluVpFd7CgUvfnjPmWeN48=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LhIKUufug+7s5Ssxfd7WneQNi6y0sHEAYTPCqle0BpIhE1wH6a+Lm//qCSVGgY5Ji
+         hEg6bSKnskj8orFVhZcIcj/v9cD1mlTpGUaCqsAA44IZUI6+DLyQAOTDZmRPV98/jQ
+         AtnHZUFYnG9pav9y5qLKEUHH971x35nJbxkvwHXQ=
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 297F4601C4;
+        Thu, 31 Oct 2019 12:21:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1572524487;
+        bh=Ki3aKynv1XZjEovrcTD2QZluVpFd7CgUvfnjPmWeN48=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VkO8QGUgWqrJeE5jMb3geNEIOw/9IeeledGAJosS5+ELY4zaeDSXgwotPQ8PDoW17
+         /yTQ0kAq2aJw69fk2NeMFgdn4TH/eetDZoYPFhCluUvwuSnxqfkMQdwBOgoppvqu0z
+         wlR9b8cRUk2Zhdlel2oEa2L2rZLRoCI3R6JdvOPo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 297F4601C4
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/7] Add GPU & Video Clock controller driver for SC7180
+Date:   Thu, 31 Oct 2019 17:51:06 +0530
+Message-Id: <1572524473-19344-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Peng,
+[v1]
+ * Fabia PLLs could fail latching in the case where the PLL is not
+   calibrated, so add support to calibrate in prepare clock ops.
 
-On Thu, Oct 31, 2019 at 7:01 AM Peng Fan <peng.fan@nxp.com> wrote:
->
-> From: Peng Fan <peng.fan@nxp.com>
->
-> Add assigned-clocks and assigned-clock-parents, then
-> we could remove the clk_set_parent code in clk-imx7d.c.
+ * Add driver support for Graphics clock controller for SC7180 and also
+   update device tree bindings for the various clocks supported in the
+   clock controller.
 
-Change itself looks good, but please do not mention the clock driver
-in the commit log.
+ * Add driver support for Video clock controller for SC7180 and also
+   update device tree bindings for the various clocks supported in the
+   clock controller.
 
-Devicetree should be OS agnostic.
+This change depends on below GCC clock driver series
+https://patchwork.kernel.org/project/linux-clk/list/?series=187089
+
+Taniya Das (7):
+  clk: qcom: clk-alpha-pll: Add support for Fabia PLL calibration
+  dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings
+  dt-bindings: clock: Introduce QCOM Graphics clock bindings
+  clk: qcom: Add graphics clock controller driver for SC7180
+  dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock
+    bindings
+  dt-bindings: clock: Introduce QCOM Video clock bindings
+  clk: qcom: Add video clock controller driver for SC7180
+
+ .../devicetree/bindings/clock/qcom,gpucc.txt       |  24 --
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |  70 ++++++
+ .../devicetree/bindings/clock/qcom,videocc.txt     |  18 --
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  62 +++++
+ drivers/clk/qcom/Kconfig                           |  16 ++
+ drivers/clk/qcom/Makefile                          |   2 +
+ drivers/clk/qcom/clk-alpha-pll.c                   |  84 ++++++-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   4 +
+ drivers/clk/qcom/gpucc-sc7180.c                    | 274 +++++++++++++++++++++
+ drivers/clk/qcom/videocc-sc7180.c                  | 263 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gpucc-sc7180.h      |  21 ++
+ include/dt-bindings/clock/qcom,videocc-sc7180.h    |  23 ++
+ 12 files changed, 814 insertions(+), 47 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+ create mode 100644 drivers/clk/qcom/gpucc-sc7180.c
+ create mode 100644 drivers/clk/qcom/videocc-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,gpucc-sc7180.h
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sc7180.h
+
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
+
