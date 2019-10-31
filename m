@@ -2,385 +2,271 @@ Return-Path: <SRS0=Iazp=YY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54002CA9EC3
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:22:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07BC1C47E49
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FEDF20862
-	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:22:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lMJ13lc1";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UmdTO7qk"
+	by mail.kernel.org (Postfix) with ESMTP id DBBD1208E3
+	for <linux-clk@archiver.kernel.org>; Thu, 31 Oct 2019 12:54:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727164AbfJaMWW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 31 Oct 2019 08:22:22 -0400
-Received: from smtp.codeaurora.org ([198.145.29.96]:39102 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726462AbfJaMWW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 08:22:22 -0400
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id DFF6160D96; Thu, 31 Oct 2019 12:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572524541;
-        bh=0U2ZlZO6ATz2y9QCjSup28RXf2H2pQaz7sEgkSb+PFU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lMJ13lc1gwIU5L/mOQSC9GX+164VwpzE73G6LTyIT6k7Bi55d+1zdOVY2naV/8zun
-         EZiVFXFwWqbm3vPbzQnz4p0p7nHb9+9g/2KnYp84sdKRjTYsdPSLZLqOCsaFPTJhXJ
-         s+1A1CJGFE0cINGVGG2WABCFQx6PUil/OxtrHIS4=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3065060A71;
-        Thu, 31 Oct 2019 12:22:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1572524537;
-        bh=0U2ZlZO6ATz2y9QCjSup28RXf2H2pQaz7sEgkSb+PFU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UmdTO7qkY6jxCrM4rw+iVMC4Cn0Yvg+Va9Ceh5iV/JA2L4IEXrpjJRszQZcnicSIe
-         HL0Rudo+qZZOPip4hizjf+3S5TGAxZZIsgLNDTS2k6v5LEmclHRAUtlyOJ7neqSFsr
-         mku2c2lgZuNqaSjFUqAkywAgcwq3bAbRhHo/4j40=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3065060A71
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v1 7/7] clk: qcom: Add video clock controller driver for SC7180
-Date:   Thu, 31 Oct 2019 17:51:13 +0530
-Message-Id: <1572524473-19344-8-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1572524473-19344-1-git-send-email-tdas@codeaurora.org>
-References: <1572524473-19344-1-git-send-email-tdas@codeaurora.org>
+        id S1726540AbfJaMyt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 31 Oct 2019 08:54:49 -0400
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:55822 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726506AbfJaMyt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 31 Oct 2019 08:54:49 -0400
+X-AuditID: c0a8fbf4-183ff70000001fa6-47-5dbad995b219
+Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 20.3B.08102.599DABD5; Thu, 31 Oct 2019 13:54:45 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
+ 14.03.0439.000; Thu, 31 Oct 2019 13:54:39 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "robh@kernel.org" <robh@kernel.org>
+CC:     "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Thread-Topic: [RFC PATCH v2 02/13] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Thread-Index: AQHVimAFYId2ZTjVIEaonX+EqNqiYKdqDi6AgACrYYCAB0C9AIAA18IAgAC3QYCAASXjgA==
+Date:   Thu, 31 Oct 2019 12:54:39 +0000
+Message-ID: <1e3901d1c7c26f4dbbc1de78b607b92bf9ddc098.camel@fi.rohmeurope.com>
+References: <cover.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+         <0182df3c49c6c804ee20ef32fc4b85b50ff45fca.1571915550.git.matti.vaittinen@fi.rohmeurope.com>
+         <ed0b2aa8-8a70-0341-4ecf-8959f37c53bd@ti.com>
+         <5c793f1308ccc6e787260b64fe6a875a8d0eb9d0.camel@fi.rohmeurope.com>
+         <20191029193440.GA1812@bogus>
+         <3e0f0943cd599cae544bd7a7a49dded46d57a604.camel@fi.rohmeurope.com>
+         <CAL_JsqJgnYqv1q=wf++5FOX-niRWQ=H9wWYgUKy+z=H933Qraw@mail.gmail.com>
+In-Reply-To: <CAL_JsqJgnYqv1q=wf++5FOX-niRWQ=H9wWYgUKy+z=H933Qraw@mail.gmail.com>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <3CFB0389BB09AD44896C56CA02909240@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0wTWRiGc2amM4fi6FDAHvESHeMSbyjJbvZkQ4w/1IzG20a8bUJwlJE2
+        lhanraLrjxrjrRiDEVQqFxeLEiCC9QYEL2kKShWVeAMVpZF4Y0U3qyKI4AyDwp8z33zved73
+        +/EdSBpe0THQbHVIslW08LSeulby1Tczp6Umafa34GTsbXrA4L2dpxj8MT9I4ZxQO40LA7d1
+        OPPmeR1+cqGSws8/1QH8+f4+Amf3nibwfwee6fC5wl6A79Xk0fjCv2cAri+7T+PiR00Eziu+
+        QeGm4HzcGqyjcX9tFYP7Hp6l5kYL5QXlQHjfvJsRCsr/Fqo9rYzgK91PC08f1tLC9eZLhHC0
+        oJsQSsq6GOF/34Tl+r/CE9aLji0rzKnWWXPWhZsq+keluywZ7dddjAvkmd0gDCLuV9Rz7Qjj
+        Bnpo4B4AtNtTotN+bgB0q/Ik5QYQ0lwCcrcwKhDFxaJ/ykKkeofkSiAK9Z4iVSGSS0SBiiNA
+        u7QSXTl4YLBehVpyPwzUFDcFfejcSak1yy1FL4N3gBbWQKJ3j7sIVQjj/kS1nssDpoAbj/a7
+        Ogf6JGdEvpddOm1sDnlr75BaHY3evOgb7PPocndoYGiSm4oqamZp6FzU6Do3aDMJZWeGGG2G
+        CNSQ205lgdGeYQmeIdozjPYMoz3D6BNAVwpQmmi2pIoOKT5Olpxxss2Upnw22NJ8QFuZj1Wg
+        37/QDwgI/GAMJPhoNr2oJskwcr0tZZtJtJuSZadFsvsBgiQfxX5OqE4ysCnitu2SbPshjYUU
+        b2RjQ4eSDJyatUmS0iX5hzoOQh6xXx8pphGylCplbDRbHEMyAcNUc31MlF2ypkiy6HSYktX9
+        SLYrC6JKI5TcP5oVnLWni2lKV0ODIB5mvckvImFDqVc5A/nFRaSBstqsUoyRXakCnAqYnNaf
+        cW+BEQI+kt2sqiOU1/PT7a0SRChBM7ovqkEOcUiKcQHXU/eZuhdxazJZZ6U+u/Fi23bhddTh
+        Kfp7vjHHWhfFBbzzMq52GNt++2XxkmV9h3qOM9MjF3+BEb9XjT1bPXHrqLaJ5sb6nsRNG525
+        XkFfH010y5MFvvDu6o4FzealueFb9uRvji112aZmje5Y9ykw/VXrztWETJt3LSlbO35Hjv8S
+        T9lNYvw0UraL3wHiWWDN+gMAAA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the video clock controller found on SC7180
-based devices. This would allow video drivers to probe
-and control their clocks.
-
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
----
- drivers/clk/qcom/Kconfig          |   8 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sc7180.c | 263 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 272 insertions(+)
- create mode 100644 drivers/clk/qcom/videocc-sc7180.c
-
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index c898e62..c5ad2cc 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -244,6 +244,14 @@ config SC_GPUCC_7180
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
-
-+config SC_VIDEOCC_7180
-+	tristate "SC7180 Video Clock Controller"
-+	select SC_GCC_7180
-+	help
-+	  Support for the video clock controller on SC7180 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SDM_CAMCC_845
- 	tristate "SDM845 Camera Clock Controller"
- 	select SDM_GCC_845
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index b89a292..0906e5d 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
- obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
- obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
-+obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-new file mode 100644
-index 0000000..bef034b
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -0,0 +1,263 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,videocc-sc7180.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "common.h"
-+#include "gdsc.h"
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CHIP_SLEEP_CLK,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_VIDEO_PLL0_OUT_EVEN,
-+	P_VIDEO_PLL0_OUT_MAIN,
-+	P_VIDEO_PLL0_OUT_ODD,
-+};
-+
-+static struct pll_vco fabia_vco[] = {
-+	{ 249600000, 2000000000, 0 },
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x42c,
-+	.vco_table = fabia_vco,
-+	.num_vco = ARRAY_SIZE(fabia_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll0",
-+			.parent_data = &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo",
-+				.name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .hw = &video_pll0.clkr.hw },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-+	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
-+	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_venus_clk_src = {
-+	.cmd_rcgr = 0x7f0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_venus_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_venus_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = 3,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_axi_clk = {
-+	.halt_reg = 0x9ec,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9ec,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_core_clk = {
-+	.halt_reg = 0x890,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x890,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ahb_clk = {
-+	.halt_reg = 0xa4c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xa4c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_axi_clk = {
-+	.halt_reg = 0x9cc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9cc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_core_clk = {
-+	.halt_reg = 0x850,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x850,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc venus_gdsc = {
-+	.gdscr = 0x814,
-+	.pd = {
-+		.name = "venus_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc vcodec0_gdsc = {
-+	.gdscr = 0x874,
-+	.pd = {
-+		.name = "vcodec0_gdsc",
-+	},
-+	.flags = HW_CTRL,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct clk_regmap *video_cc_sc7180_clocks[] = {
-+	[VIDEO_CC_VCODEC0_AXI_CLK] = &video_cc_vcodec0_axi_clk.clkr,
-+	[VIDEO_CC_VCODEC0_CORE_CLK] = &video_cc_vcodec0_core_clk.clkr,
-+	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
-+	[VIDEO_CC_VENUS_CLK_SRC] = &video_cc_venus_clk_src.clkr,
-+	[VIDEO_CC_VENUS_CTL_AXI_CLK] = &video_cc_venus_ctl_axi_clk.clkr,
-+	[VIDEO_CC_VENUS_CTL_CORE_CLK] = &video_cc_venus_ctl_core_clk.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+};
-+
-+static struct gdsc *video_cc_sc7180_gdscs[] = {
-+	[VENUS_GDSC] = &venus_gdsc,
-+	[VCODEC0_GDSC] = &vcodec0_gdsc,
-+};
-+
-+static const struct regmap_config video_cc_sc7180_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0xb94,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc video_cc_sc7180_desc = {
-+	.config = &video_cc_sc7180_regmap_config,
-+	.clks = video_cc_sc7180_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sc7180_clocks),
-+	.gdscs = video_cc_sc7180_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sc7180_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sc7180_match_table[] = {
-+	{ .compatible = "qcom,sc7180-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sc7180_match_table);
-+
-+static int video_cc_sc7180_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	struct alpha_pll_config video_pll0_config = {};
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sc7180_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	video_pll0_config.l = 0x1F;
-+	video_pll0_config.alpha = 0x4000;
-+	video_pll0_config.user_ctl_val = 0x00000001;
-+	video_pll0_config.user_ctl_hi_val = 0x00004805;
-+
-+	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+
-+	/* video_cc_xo_clk */
-+	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
-+
-+	return qcom_cc_really_probe(pdev, &video_cc_sc7180_desc, regmap);
-+}
-+
-+static struct platform_driver video_cc_sc7180_driver = {
-+	.probe = video_cc_sc7180_probe,
-+	.driver = {
-+		.name = "sc7180-videocc",
-+		.of_match_table = video_cc_sc7180_match_table,
-+	},
-+};
-+
-+static int __init video_cc_sc7180_init(void)
-+{
-+	return platform_driver_register(&video_cc_sc7180_driver);
-+}
-+core_initcall(video_cc_sc7180_init);
-+
-+static void __exit video_cc_sc7180_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sc7180_driver);
-+}
-+module_exit(video_cc_sc7180_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI VIDEOCC SC7180 Driver");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
-
+DQpPbiBXZWQsIDIwMTktMTAtMzAgYXQgMTQ6MjIgLTA1MDAsIFJvYiBIZXJyaW5nIHdyb3RlOg0K
+PiBPbiBXZWQsIE9jdCAzMCwgMjAxOSBhdCAzOjI3IEFNIFZhaXR0aW5lbiwgTWF0dGkNCj4gPE1h
+dHRpLlZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+ID4gDQo+ID4gT24gVHVl
+LCAyMDE5LTEwLTI5IGF0IDE0OjM0IC0wNTAwLCBSb2IgSGVycmluZyB3cm90ZToNCj4gPiA+IE9u
+IEZyaSwgT2N0IDI1LCAyMDE5IGF0IDA1OjQ5OjE3QU0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0dGkg
+d3JvdGU6DQo+ID4gPiA+IEhlbGxvIERhbiwNCj4gPiA+ID4gDQo+ID4gPiA+IFRoYW5rcyBhZ2Fp
+biBmb3IgY2hlY2tpbmcgdGhpcyA6KQ0KPiA+ID4gPiANCj4gPiA+ID4gT24gVGh1LCAyMDE5LTEw
+LTI0IGF0IDE0OjM1IC0wNTAwLCBEYW4gTXVycGh5IHdyb3RlOg0KPiA+ID4gPiA+IE1hdHRpDQo+
+ID4gPiA+ID4gDQo+ID4gPiA+ID4gT24gMTAvMjQvMTkgNjo0MSBBTSwgTWF0dGkgVmFpdHRpbmVu
+IHdyb3RlOg0KPiA+ID4gPiA+ID4gUk9ITSBCRDcxODI4IFBvd2VyIG1hbmFnZW1lbnQgSUMgaW50
+ZWdyYXRlcyA3IGJ1Y2sNCj4gPiA+ID4gPiA+IGNvbnZlcnRlcnMsDQo+ID4gPiA+ID4gPiA3DQo+
+ID4gPiA+ID4gPiBMRE9zLA0KPiA+ID4gPiA+ID4gYSByZWFsLXRpbWUgY2xvY2sgKFJUQyksIDMg
+R1BPL3JlZ3VsYXRvciBjb250cm9sIHBpbnMsIEhBTEwNCj4gPiA+ID4gPiA+IGlucHV0DQo+ID4g
+PiA+ID4gPiBhbmQgYSAzMi43Njgga0h6IGNsb2NrIGdhdGUuDQo+ID4gPiA+ID4gPiANCj4gPiA+
+ID4gPiA+IERvY3VtZW50IHRoZSBkdCBiaW5kaW5ncyBkcml2ZXJzIGFyZSB1c2luZy4NCj4gPiA+
+ID4gPiA+IA0KPiA+ID4gPiA+ID4gU2lnbmVkLW9mZi1ieTogTWF0dGkgVmFpdHRpbmVuIDwNCj4g
+PiA+ID4gPiA+IG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4NCj4gPiA+ID4gPiA+
+IC0tLQ0KPiA+ID4gPiA+ID4gDQo+ID4gPiA+ID4gPiBObyBjaGFuZ2VzIHNpbmNlIHYxDQo+ID4g
+PiA+ID4gPiANCj4gPiA+ID4gPiA+ICAgLi4uL2JpbmRpbmdzL21mZC9yb2htLGJkNzE4MjgtcG1p
+Yy50eHQgICAgICAgIHwgMTgwDQo+ID4gPiA+ID4gPiArKysrKysrKysrKysrKysrKysNCj4gPiA+
+ID4gPiA+ICAgMSBmaWxlIGNoYW5nZWQsIDE4MCBpbnNlcnRpb25zKCspDQo+ID4gPiA+ID4gPiAg
+IGNyZWF0ZSBtb2RlIDEwMDY0NA0KPiA+ID4gPiA+ID4gRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVl
+L2JpbmRpbmdzL21mZC9yb2htLGJkNzE4MjgtcG1pYy50eHQNCj4gPiA+ID4gPiANCj4gPiA+ID4g
+PiBJIHdpbGwgbGV0IG1haW50YWluZXJzIHdlaWdoIGluIGhlcmUgYnV0IGlmIHRoaXMgaXMgbmV3
+IHRoaXMNCj4gPiA+ID4gPiBzaG91bGQNCj4gPiA+ID4gPiBwcm9iYWJseSBiZSBpbiB0aGUgeWFt
+bCBmb3JtYXQgdG8gYXZvaWQgY29udmVyc2lvbiBpbiB0aGUNCj4gPiA+ID4gPiBmdXR1cmUNCj4g
+PiA+ID4gDQo+ID4gPiA+IE9oLi4uIFRoaXMgaXMgbmV3IHRvIG1lLiBJIGd1ZXNzIHRoZXJlIGFy
+ZSByZWFzb25zIGZvciB0aGlzIC0NCj4gPiA+ID4gYnV0IEkNCj4gPiA+ID4gbXVzdCBzYXkgSSBh
+bSBub3QgZXhjaXRlZCBhcyBJIGhhdmUgbmV2ZXIgdXNlZCB5YW1sIGZvcg0KPiA+ID4gPiBhbnl0
+aGluZy4NCj4gPiA+ID4gSSdsbA0KPiA+ID4gPiBkbyBhcyB5b3Ugc3VnZ2VzdCBhbmQgd2FpdCBm
+b3Igd2hhdCBvdGhlcnMgaGF2ZSB0byBzYXkgOikNCj4gPiA+ID4gVGhhbmtzDQo+ID4gPiA+IGZv
+cg0KPiA+ID4gPiBwb2ludGluZyB0aGlzIG91dCB0aG91Z2guDQo+ID4gPiANCj4gPiA+IFNvcnJ5
+IGZvciB5b3VyIGxhY2sgb2YgZXhjaXRlbWVudC4gSXQgY291bGQgYmUgWE1MLi4uDQo+ID4gDQo+
+ID4gVGhhbmtzLCBJIGFwcHJlY2lhdGUgdGhhdCwgYXBvbG9neSBhY2NlcHRlZCBYLUQNCj4gPiAN
+Cj4gPiA+IFRoZXJlIGFyZW4ndCBtYW55IE1GRCBleGFtcGxlcyB5ZXQsIGJ1dCB0aGVyZSBpcyBt
+YXg3NzY1MCBpbiBteQ0KPiA+ID4gdHJlZQ0KPiA+ID4gYW5kDQo+ID4gPiBsaW51eC1uZXh0Lg0K
+PiA+IA0KPiA+IEkgbG9va2VkIGF0IHRoZSBtYXg3NzY1MCBNRkQgYmluZGluZyBmcm9tIGxpbnV4
+LW5leHQuIEFmdGVyIHRoYXQgSQ0KPiA+IGFsc28NCj4gPiBsb29rZWQgc29tZSBvZiB0aGUgZ2Vu
+ZXJpYyBkb2N1bWVudHMgZm9yIERUIGJpbmRpbmdzIChJIGtub3cgLSBJDQo+ID4gc2hvdWxkDQo+
+ID4gaGF2ZSBkb25lIHRoYXQgZWFybGllciBhbmQgeW91ciBqb2IgaGFkIGJlZW4gZWFzaWVyKS4g
+QnV0IGFsbCB0aGF0DQo+ID4gbGVmdA0KPiA+IG1lICJzbGlnaHRseSIgcHV6emxlZC4gQWZ0ZXIg
+c29tZSBmdXJ0aGVyIHdhbmRlcmluZyBpbiB0aGUgdmlydHVhbA0KPiA+IHdvcmxkIEkgc3BvdHRl
+ZCB0aGlzOg0KPiA+IGh0dHBzOi8vZWxpbnV4Lm9yZy9pbWFnZXMvNi82Yi9MUEMyMDE4X2pzb24t
+c2NoZW1hX2Zvcl9EZXZpY2V0cmVlLnBkZg0KPiA+IA0KPiA+IEkgdGhpbmsgdGhpcyBsaW5rIGlu
+IHNvbWUgZHQteWFtbC1iaW5kaW5nLXJlYWRtZSBtaWdodCBiZSBoZWxwZnVsLg0KPiANCj4gUHJl
+c2VudGF0aW9ucyBiaXQgcm90LCBzbyBJJ2QgcmF0aGVyIG5vdC4gSSdkIGhvcGUgdGhhdA0KPiB3
+cml0aW5nLXNjaGVtYS5yc3QgYW5kIGV4YW1wbGUtc2NoZW1hLnlhbWwgY2FwdHVyZSB3aGF0J3Mg
+aW4gdGhlDQo+IHByZXNlbnRhdGlvbi4gV2hhdCBkbyB5b3UgdGhpbmsgaXMgbWlzc2luZz8NCg0K
+SSBwZXJzb25hbGx5IHdhbnRlZCB0byB1bmRlcnN0YW5kICJ3aHk/Ii4gV2h5IG5vdCB0ZXh0IGRv
+Yy4gV2hhdCBpcyB0aGUNCnlhbWwgdGhpbmcgYWltaW5nIGF0PyBXaGF0IGFyZSB0aGUgcHJvYmxl
+bXMgd2UgYXJlIHNvbHZpbmcgaGVyZS4gQW5kDQptYXliZSBtb3N0IGNydWNpYWxseSAtIEkgaGFk
+IG5vIGlkZWEgd2hhdCBpcyBzY2hlbWE/IEl0IHN1cmUgc291bmRlZA0KbGlrZSBzb21lIHRvb2xj
+aGFpbiB0aGluZ3kgb3IgcGVyaGFwcyBwaWVjZSBvZiBuZXcgeWFtbCByZXByZXNlbnRhdGlvbg0K
+b2YgZHRzIChwbGVhc2Ugbm90ZSwgSSBzb21laG93IHRob3VnaHQgdGhhdCBkdHMgZmlsZXMgd2Vy
+ZSBnb2luZyB0byBiZQ0KY29udmVydGVkIHRvIHlhbWwgLSBtYXliZSBkdWUgdG8gc29tZSByZWFk
+aW5nIGFib3V0IERUQyBnZXR0aW5nIHlhbWwNCnN1cHBvcnQpIHdoaWNoIEkgdGhvdWdodCB3b3Vs
+ZCBub3QgbmVlZCB0byBiZSB0b3VjaGVkIGJ5IG1lIDopIEl0IHRvb2sNCm1lIHF1aXRlIGEgd2hp
+bGUgdG8gdW5kZXJzdGFuZCB0aGF0IHRoZSBvbGQgYmluZGluZyBkb2MgaXMgYWN0dWFsbHkgYQ0K
+c2NoZW1hLiBXaXRob3V0IHRoYXQgcGllY2UgZmluZGluZyBvdXQgdGhlIG5ldyBmb3JtYXQgb2Yg
+YmluZGluZyBkb2NzDQp3YXMgcGFpbmZ1bC4NCg0KQWxzbywgYmluZGluZyBhbmQgYmluZGluZyBk
+b2N1bWVudCB3ZXJlIG5vdCBjb21wbGV0ZWx5IHNhbWUgdGhpbmcgaW4gbXkNCm1pbmQuIEkgdGhv
+dWdodCB0aGF0IGJpbmRpbmcgaXMgYWN0dWFsIHBpZWNlIG9mIGR0IC0gcHJvYmFibHkgbGl2aW5n
+DQp1bmRlciBhcmNoL3gvYm9vdC9kdHMgLSBiaW5kaW5nIGRvY3VtZW50IGlzIHdoYXQgZXhwbGFp
+bnMgaG93IHRoYXQNCnNob3VsZCBiZSBjb25zdHJ1Y3QgYW5kIGlzIHVuZGVyIERvY3VtZW50YXRp
+b24vZGV2aWNldHJlZS9iaW5kaW5ncy8uDQpUaGlzIGlzIHByb2JhYmx5IGxhcmdlbHkgZHVlIHRv
+IG15IGlnbm9yYW5jZSBhbmQgaGFiaXQgb2ggc2tpcHBpbmcgbXVjaA0Kb2YgcmVhZGluZyBhbmQg
+anVzdCB0cnlpbmcgb3V0IHRoaW5ncy4gQnV0IEkgaG9wZWQgSSBoYWQgdGhlc2UgY2xlYXJlZA0K
+aW4gZmlyc3QgZG9jdW1lbnRzIEkgdHJpZWQgcmVhZGluZyBmb3IgY3JlYXRpb24gYmluZGluZyBk
+b2NzLi4NCg0KLi4ud2hpY2ggYnJpbmdzIG1lIGhlcmUuIEkgbG9va2VkIGF0IHRoZQ0KRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzIGZvbGRlciBhbmQgZGlkIHJlYWQgdGhlICd3cml0
+aW5nLQ0KYmluZGluZ3MudHh0JyBhbmQgJ3N1Ym1pdHRpbmctcGF0Y2hlcy50eHQnIGZyb20gdGhl
+cmUuIFRoZW4gSSBhbHNvDQpjaGVja2VkIHRoZSBEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvdXNh
+Z2UtbW9kZWwudHh0IE5vbmUgb2Ygd2hpY2gNCmhlbHBlZCBtZSBvdXQuIEkgZGlkIGFsc28gb3Bl
+biB0aGUgJ3dyaXRpbmctc2NoZW1hLnJzdCcgYnV0IEkgZGlkbid0DQpyZWFkIGl0IGNhcmVmdWxs
+eSBlbm91Z2guIFByb2JhYmx5IGJlY2F1c2UgSSB0aG91Z2h0IGFmdGVyIHJlYWRpbmcgdGhlDQpv
+cGVuaW5nIGNoYXB0ZXIgdGhhdCB0aGlzIGRlc2NyaWJlZCBob3cgdG8gZG8gYWN0dWFsIGR0cyBp
+biB5YW1sLg0KDQpBbnl3YXlzLCBJIG1pZ2h0IGFkZCBzb21lIG5vdGVzIGFib3V0IHVzaW5nIHlh
+bWwgZm9ybWF0IChhbmQgcGVyaGFwcw0Kc2hvcnRseSBub3RlIHRoYXQgdGhlIHlhbWwgZHQgYmlu
+ZGluZyBkb2MgaXMgY2FsbGVkIHNjaGVtYSkgaW4NCkRvY3VtZW50YXRpb24vZGV2aWNldHJlZS9i
+aW5kaW5ncy93cml0aW5nLWJpbmRpbmdzLnR4dCBhbmQNCkRvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9zdWJtaXR0aW5nLXBhdGNoZXMudHh0DQoNCkkgY291bGQgYWxzbyBhcHByZWNp
+YXRlIHNvbWUgbm90ZSBhYm91dCBiZW5lZml0cy9nb2FscyBvZiB1c2luZyB5YW1sDQppbnN0ZWFk
+IG9mIHRleHQgZG9jcyBpbiB3cml0aW5nLXNjaGVtYS5yc3QgLSBhbHRob3VnaCBJIHVuZGVyc3Rh
+bmQgdGhhdA0KdGhpcyBtYXkgbm90IGJlIHJlbGV2YW50IGZvciBhbGwgcmVhZGVycy4NCg0KPiA+
+IFNvIGlmIEkgdW5kZXJzdGFuZCB0aGlzIGNvcnJlY3RseSwgaWRlYSBpcyB0byBjb252ZXJ0IHRo
+ZSBkdHMNCj4gPiBzb3VyY2VzDQo+ID4gdG8gdXNlIHlhbWwgKHJpZ2h0PykuIFRoaXMgaXMgc2Vl
+biBiZXR0ZXIgYmVjYXVzZSBtb3JlIHBlb3BsZQ0KPiA+IGtub3dzdWJtaXR0aW5nLXBhdGNoZXMu
+dHh0DQo+ID4gSlNPTi9ZQU1MIHRoYW4gZHRzIGZvcm1hdCg/KSBGYWlyIGVub3VnaC4gQWx0aG91
+Z2ggc29tZSBvZiB1cyBrbm93DQo+ID4gZHRzDQo+ID4gZm9ybWF0IGRlY2VudGx5IHdlbGwgYnV0
+IGhhdmUgbmV2ZXIgdXNlZCBKU09OIG9yIHlhbWwuIEkgZ3Vlc3MgZHRzDQo+ID4gc3VwcG9ydCBp
+cyBub3QgZ29pbmcgYXdheSB0aG91Z2ggYW5kIHlhbWwgZXhhbXBsZXMgZG8gbm90IHNlZW0NCj4g
+PiB0ZXJyaWJseQ0KPiA+IGhhcmQgYXQgZmlyc3Qgc2lnaHQuDQo+IA0KPiBObywgbm90aGluZyBp
+cyBjaGFuZ2luZyBmb3IgLmR0cyBmaWxlcyAob3RoZXIgdGhhbiBmaXhpbmcgZXJyb3JzIHRoZQ0K
+PiBzY2hlbWFzIGZpbmQpLiBUaGUgZnJlZSBmb3JtLCBodW1hbiByZWFkYWJsZSBvbmx5IHByb3Nl
+IGNhbGxlZA0KPiBiaW5kaW5nDQo+IGRvY3VtZW50YXRpb24gaXMgY2hhbmdpbmcgdG8gWUFNTCBm
+b3JtYXR0ZWQsIGpzb24tc2NoZW1hIHZvY2FidWxhcnkNCj4gYmluZGluZyBzY2hlbWEgd2hpY2gg
+Y2FuIGJlIHVzZWQgdG8gdmFsaWRhdGUgZHRzIGZpbGVzLg0KDQpUaGFua3MgZm9yIHNvcnRpbmcg
+dGhpcyBvdXQuIEl0IGFsbCBtYWtlcyBtb3JlIHNlbnNlIG5vdy4NCg0KPiA+IFdoYXQgY29tZXMg
+dG8gYmluZGluZyBkb2NzIC0gd2VsbCwgaW4gbXkgZXllcyAod2hpY2ggbWF5IGJlIGJpYXNlZCkN
+Cj4gPiB3cml0aW5nIGRvY3VtZW50YXRpb24gaW4gYW55dGhpbmcgaW50ZW5kZWQgdG8gYmUgaW50
+ZXJwcmV0ZWQgYnkgYQ0KPiA+IG1hY2hpbmUgaXMgc3RpbGwgYSBzdGVwIGJhY2t3YXJkcyBmb3Ig
+YSBodW1hbiBkb2N1bWVudCByZWFkZXIuIFN1cmUNCj4gPiBzeW50YXggdmFsaWRhdGlvbiBvciBy
+ZXZpZXdpbmcgaXMgZWFzaWVyIGlmIGZvcm1hdCBpcyBtYWNoaW5lDQo+ID4gcmVhZGFibGUNCj4g
+PiAtIGJ1dCBmcmVlIHRleHQgaW5mbyBpcyBtb3JlLCB3ZWxsLCBpbmZvcm1hdGl2ZSAoZm9ybSBt
+ZSBhdCBsZWFzdCkuDQo+ID4gSQ0KPiA+IGZvciBleGFtcGxlIHdvdWxkbid0IGxpa2UgcmVhZGlu
+ZyBhIGJvb2sgd3JpdHRlbiBpbiBhbnkgc2NyaXB0IG9yDQo+ID4gbWFya3VwIGxhbmd1YWdlLiBO
+b3Igd3JpdGluZyBvbmUuIEl0IGlzIGRpZmZpY3VsdCBmb3IgbWUgdG8NCj4gPiB1bmRlcnN0YW5k
+DQo+ID4gdGhlIGRvY3VtZW50YXRpb24gY2hhbmdlIHRvIHlhbWwsIG1heWJlIGJlY2F1c2UgSSBh
+bSBtb3JlIG9mdGVuDQo+ID4gdXNpbmcNCj4gPiB0aGUgYmluZGluZyBkb2NzIGZvciBjb21wb3Np
+bmcgRFQgZm9yIGEgZGV2aWNlIHRoYW4gcmV2aWV3aW5nIHRoZW0NCj4gPiA7KQ0KPiANCj4gSUNZ
+TUksIGFsbCB0aGUga2VybmVsIGRvY3MgYXJlIGluIGEgbWFya3VwIGxhbmd1YWdlIG5vdy4uLg0K
+PiANCj4gRnJlZSBmb3JtIGRlc2NyaXB0aW9ucyBhcmUgZWFzaWVyIHRvIHVzZSBiZWNhdXNlIHlv
+dSBjYW4gcHV0IGluIGR0cw0KPiB3aGF0ZXZlciB5b3Ugd2FudC4gTm90aGluZyBpcyBnb2luZyB0
+byBjaGVjay4gVGhlcmUncyBiZWVuIG5vDQo+IHNob3J0YWdlDQo+IG9mIGVycm9ycyBhbmQgaW5j
+b25zaXN0ZW5jaWVzIHRoYXQgd2UndmUgYWxyZWFkeSBmb3VuZC4NCg0KSSB3b24ndCBzdGFydCBh
+cmd1aW5nIG9uIHRoaXMgOikNCg0KPiBZb3UgY2FuIGhhdmUgYXMgbXVjaCBkZXNjcmlwdGlvbiBh
+bmQgY29tbWVudHMgYXMgeW91IGxpa2UgKHRob3VnaCBJJ20NCj4gdHJ5aW5nIHRvIGN1dCBkb3du
+IG9uIHRoZSBjb3B5LW4tcGFzdGUgZ2VuZXJpY2lzaCAnY2xvY2sgZm9yIHRoZQ0KPiBtb2R1bGUn
+IHR5cGUgY29tbWVudHMpLg0KDQpUaGlzIGlzIGdvb2QgdG8gbm90ZS4gVGhhbmtzLg0KDQo+ID4g
+QW55d2F5cywgSSBndWVzcyBJJ2QgYmV0dGVyIGVpdGhlciB0cnkgbGVhcm5pbmcgdGhlIHlhbWws
+IGZpZ3VyZQ0KPiA+IG91dA0KPiA+IHdoYXQgYXJlIHNjaGVtYXMgYW5kIHNlZSBob3cgdG8gY29u
+dmVydCB5YW1sIGRvY3MgdG8gdGV4dCBmb3IgbmljZXINCj4gPiByZWFkaW5nIChJIGFzc3VtZSB0
+aGlzIGlzIGRvYWJsZSkgYW5kIGhvdyB0byB2ZXJpZnkgeWFtbCBiaW5kaW5nDQo+ID4gZG9jcw0K
+PiA+IGFyZSBPayAtIG9yIHF1aXQgY29udHJpYnV0aW5nLiBObyBvbmUgaXMgZm9yY2luZyBtZSB0
+byBkbyB0aGlzLg0KPiA+IENvbnRpbnVpbmcgY29tcGxhaW5pbmcgb24gdGhpcyBpcyBwcm9iYWJs
+eSBub3QgZ2V0dGluZyB1cyBhbnl3aGVyZQ0KPiA+IHNvIEkNCj4gPiBtaWdodCBhcyB3ZWxsIHNo
+dXQgdXAgbm93IDovDQo+IA0KPiBUaGVyZSBpcyBzb21lIG5vdGlvbiB0byBjb252ZXJ0IHRoZSBE
+VCBzcGVjIHRvIHNjaGVtYSBhbmQgdGhlbg0KPiBnZW5lcmF0ZSB0aGUgc3BlYyBmcm9tIHRoZSBz
+Y2hlbWEuIFRha2UgcHJvcGVydGllcywgdGhlaXIgdHlwZSwgYW5kDQo+IGRlc2NyaXB0aW9ucyBh
+bmQgcHV0IHRoYXQgYmFjayBpbnRvIHRhYmxlcyBmb3IgZXhhbXBsZS4gV291bGQgbG92ZSB0bw0K
+PiBoYXZlIHNvbWVvbmUgd29yayBvbiB0aGF0LiA6KQ0KDQpJIGFtIGdsYWQgdG8gaGVhciB5b3Ug
+aGF2ZSBkZXZlbG9wZWQgLyBhcmUgZGV2ZWxvcGluZyBzdWNoIHRvb2xpbmcuIEkNCnJlYWxseSBh
+cHByZWNpYXRlIGl0LiBXaGF0IGNvbWVzIHRvIGdpdmluZyBhIGhlbHBpbmcgaGFuZCAtIEknZCBi
+ZXR0ZXINCnRvIHN0aWNrIHRoZSBzaW1wbGUgQyBkcml2ZXJzIGZvciBub3cgOykgQnV0IGlmIEkg
+ZXZlciBnZXQgdGhlIGZlZWxpbmcNCnRoYXQgSSBkb24ndCBrbm93IHdoYXQgdG8gZG8gSSdsbCBr
+ZWVwIHRoaXMgaW4gbWluZCA6XSBMZXQgbWUgZG8gc29tZQ0KY2FsY3VsdXMuLi4gT25seSAxMSB5
+ZWFycyBhbmQgbXkgeW91bmdlc3Qgc29uIHdpbGwgcHJvYmFibHkgbGVhdmUgb3VyDQpob3VzZSAt
+IGRvIHlvdSB0aGluayAyMDMwIGlzIGEgYml0IHRvbyBsYXRlPyBKdXN0IGxldCBtZSBrbm93IGlm
+IHRoaXMNCmlzIHN0aWxsIHJlbGV2YW50IHRoZW4gLSBhbmQgSSdsbCBidXkgeW91IGEgYmVlciBv
+ciB3cml0ZSBhIHRvb2wgKG9mDQpzb21lIGtpbmQpIHhEDQoNCk1lYW53aGlsZS4uLiBJIGhhdmUg
+dHJpZWQgdG8gY29udmVydCB0aGUgQkQ3MTgyOCBEVCBkb2MgZnJvbSB0aGUgUkZDDQpwYXRjaCB0
+byB5YW1sIC0gYW5kIEkgYW0gaGF2aW5nIGhhcmQgdGltZS4gRXNwZWNpYWxseSB3aXRoIHRoZQ0K
+cmVndWxhdG9ycyBub2RlIC0gd2hpY2ggSSB3b3VsZCBsaWtlIHRvIHBsYWNlIGluDQpEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVndWxhdG9yL3JvaG0sYmQ3MTgyOC1yZWd1bGF0
+b3IueWFtbA0KDQpNeSBwcm9ibGVtIGlzIHRoZQ0KcmVndWxhdG9ycyB7DQpidWNrMTogQlVDSzEg
+eyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIA0KICAg
+ICAgICAgICAgICAgICAgICByZWd1bGF0b3ItbmFtZSA9ICJidWNrMSI7ICAgICAgIA0KICAgICAg
+ICAgICAgICAgICAgICByZWd1bGF0b3ItbWluLW1pY3Jvdm9sdCA9IDw1MDAwMDA+Ow0KICAgICAg
+ICAgICAgICAgICAgICByZWd1bGF0b3ItbWF4LW1pY3Jvdm9sdCA9IDwyMDAwMDAwPjsNCiAgICAg
+ICAgICAgICAgICAgICAgcmVndWxhdG9yLXJhbXAtZGVsYXkgPSA8MjUwMD47DQogICAgICAgICAg
+ICAgICAgICAgIHJvaG0sZHZzLXJ1bmx2bC1jdHJsOw0KICAgICAgICAgICAgICAgICAgICByb2ht
+LGR2cy1ydW5sZXZlbDAtdm9sdGFnZSA9IDw1MDAwMDA+Ow0KICAgICAgICAgICAgICAgICAgICBy
+b2htLGR2cy1ydW5sZXZlbDEtdm9sdGFnZSA9IDw1MDYyNTA+Ow0KICAgICAgICAgICAgICAgICAg
+ICByb2htLGR2cy1ydW5sZXZlbDItdm9sdGFnZSA9IDw1MTI1MDA+Ow0KICAgICAgICAgICAgICAg
+ICAgICByb2htLGR2cy1ydW5sZXZlbDMtdm9sdGFnZSA9IDw1MTg3NTA+Ow0KICAgICAgICAgICAg
+ICAgICAgICByZWd1bGF0b3ItYm9vdC1vbjsNCiAgICB9OyANCiAgICAuLi4NCn07DQpub2RlIHdo
+aWNoIG9ubHkgY29udGFpbnMgQlVDS1ggYW5kIExET1ggc3ViLW5vZGVzLiBJdCBoYXMgbm8gb3du
+DQpwcm9wZXJ0aWVzLg0KDQpGcm9tIE1GRCB5YW1sIEkgZGlkIHRyeToNCg0KICByZWd1bGF0b3Jz
+OiAgICAgICAgDQogICAgJHJlZjogLi4vcmVndWxhdG9yL3JvaG0sYmQ3MTgyOC1yZWd1bGF0b3Iu
+eWFtbA0KICAgIGRlc2NyaXB0aW9uOiAgICAgICAgICANCiAgICAgIExpc3Qgb2YgY2hpbGQgbm9k
+ZXMgdGhhdCBzcGVjaWZ5IHRoZSByZWd1bGF0b3JzLg0KDQphbmQgaW4gcm9obSxiZDcxODI4LXJl
+Z3VsYXRvci55YW1sDQoNCkkgdHJpZWQgZG9pbmc6DQoNCnBhdHRlcm5Qcm9wZXJ0aWVzOg0KICAi
+XkJVQ0tbMS03XSQiOg0KICAgIHR5cGU6IG9iamVjdA0KICAgIGRlc2NyaXB0aW9uOg0KICAgICAg
+UHJvcGVydGllcyBmb3Igc2luZ2xlIHJlZ3VsYXRvci4NCiAgICBwcm9wZXJ0aWVzOg0KICAgICAg
+ICAuLi4NCg0KYnV0IHRoaXMgZmFpbHMgdmFsaWRhdGlvbiBhcyBwcm9wZXJ0aWVzOiBpcyBub3Qg
+Z2l2ZW4uDQoNClttdmFpdHRpbkBsb2NhbGhvc3QgbGludXhdJCBkdC1kb2MtdmFsaWRhdGUNCkRv
+Y3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9yZWd1bGF0b3Ivcm9obSxiZDcxODI4LQ0K
+cmVndWxhdG9yLnlhbWwgDQovaG9tZS9tdmFpdHRpbi90b3J2YWxkcy9saW51eC9Eb2N1bWVudGF0
+aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcmVndWxhdA0Kb3Ivcm9obSxiZDcxODI4LXJlZ3VsYXRv
+ci55YW1sOiAncHJvcGVydGllcycgaXMgYSByZXF1aXJlZCBwcm9wZXJ0eQ0KDQpJZiBJIHRyeSBh
+bmQgYWRkOg0KDQpwcm9wZXJ0aWVzOiAgICAgICAgICANCiAgZm9vOiB0cnVlDQoNCnBhdHRlcm5Q
+cm9wZXJ0aWVzOg0KICAgICJeQlVDS1sxLTddJCI6DQogICAgICB0eXBlOiBvYmplY3QNCiAgICAg
+IGRlc2NyaXB0aW9uOg0KICAgICAgICBQcm9wZXJ0aWVzIGZvciBzaW5nbGUgcmVndWxhdG9yLg0K
+ICAgICAgcHJvcGVydGllczoNCiAgICAgICAgLi4uDQoNCg0KdGhlbiB0aGUgdmFsaWRhdGlvbiBn
+b2VzIChzZWVtaW5nbHkpIHNtb290aGx5Lg0KDQpJIGRpZCBub3QgZmluZCBhbnkgZXhhbXBsZXMg
+YWJvdXQgaGFuZGlsaW5nIHRoZSBlbXB0eSByZWd1bGF0b3JzIHN1Yi0NCm5vZGUgaW4gZXhhbXBs
+ZXMgZm9yIHJlZ3VsYXRvcnMuIEFueSBwb2ludGVycz8NCg0KQnIsDQoJTWF0dGkgVmFpdHRpbmVu
+DQoNCg0KDQoNCg==
