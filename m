@@ -2,120 +2,158 @@ Return-Path: <SRS0=AcBv=YZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A1DEC47E49
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 15:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B2F9CA9ECF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 16:27:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AA0221855
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 15:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068FA20656
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 16:27:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfKAP7N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Nov 2019 11:59:13 -0400
-Received: from xavier.telenet-ops.be ([195.130.132.52]:45780 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbfKAP7N (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Nov 2019 11:59:13 -0400
-Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id Lfz82100F5USYZQ01fz8ck; Fri, 01 Nov 2019 16:59:08 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iQZKO-0002rp-CD; Fri, 01 Nov 2019 16:59:08 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iQZKO-0008Du-Ap; Fri, 01 Nov 2019 16:59:08 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
+        id S1727183AbfKAQ1Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Nov 2019 12:27:25 -0400
+Received: from muru.com ([72.249.23.125]:40408 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726701AbfKAQ1Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 Nov 2019 12:27:25 -0400
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id 294398140;
+        Fri,  1 Nov 2019 16:27:58 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [GIT PULL] clk: renesas: Updates for v5.5 (take two)
-Date:   Fri,  1 Nov 2019 16:59:07 +0100
-Message-Id: <20191101155907.31569-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, Benoit Parrot <bparrot@ti.com>,
+        "H. Nikolaus Schaller" <hns@goldelico.com>,
+        Robert Nelson <robertcnelson@gmail.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>
+Subject: [PATCH] clk: ti: add clkctrl data dra7 sgx
+Date:   Fri,  1 Nov 2019 09:27:19 -0700
+Message-Id: <20191101162719.49781-1-tony@atomide.com>
+X-Mailer: git-send-email 2.23.0
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-	Hi Mike, Stephen,
+This is similar to what we have for omap5 except the gpu_cm address is
+different, the mux clocks have one more source option, and there's no
+divider clock.
 
-The following changes since commit 56278c8fcb71874d591907d654272d511ce3597c:
+Note that because of the current dts node name dependency for mapping to
+clock domain, we must still use "gpu-clkctrl@" naming instead of generic
+"clock@" naming for the node. And because of this, it's probably best to
+apply the dts node addition together along with the other clock changes.
 
-  clk: renesas: r8a774b1: Add TMU clock (2019-10-07 14:29:53 +0200)
+For accessing the GPU, we also need to configure the interconnect target
+module for GPU similar to what we have for omap5, I'll send that change
+separately.
 
-are available in the Git repository at:
+Cc: Benoit Parrot <bparrot@ti.com>
+Cc: "H. Nikolaus Schaller" <hns@goldelico.com>
+Cc: Robert Nelson <robertcnelson@gmail.com>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+---
+ arch/arm/boot/dts/dra7xx-clocks.dtsi | 14 +++++++++++
+ drivers/clk/ti/clk-7xx.c             | 35 ++++++++++++++++++++++++++++
+ include/dt-bindings/clock/dra7.h     |  3 +++
+ 3 files changed, 52 insertions(+)
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.5-tag2
-
-for you to fetch changes up to 2ba738d56db4ddb1c17e418cb501d303a8b481d2:
-
-  clk: renesas: r8a7796: Add R8A77961 CPG/MSSR support (2019-11-01 13:36:39 +0100)
-
-----------------------------------------------------------------
-clk: renesas: Updates for v5.5 (take two)
-
-  - Switch some clocks on R-Car Gen2/3 to .determine_rate(),
-  - Add support for the new R-Car M3-W+ (r8a77961) SoC,
-  - Minor fixes and cleanups.
-
-Note that the new Renesas R-Car M3-W+ DT Binding Definitions are shared
-by driver and DT source files, and thus included in 3 pull requests:
-  - "[GIT PULL] clk: renesas: Updates for v5.5 (take two)" (for clk),
-  - "[GIT PULL 4/6] Renesas ARM64 DT updates for v5.5 (take two)" (for
-    arm-soc),
-  - "[GIT PULL 5/6] Renesas driver updates for v5.5 (take two)" (for
-    arm-soc).
-
-If you prefer to merge this dependency explicitly, please pull tag
-renesas-r8a77961-dt-binding-defs-tag first.
-
-Thanks for pulling!
-
-----------------------------------------------------------------
-Geert Uytterhoeven (12):
-      clk: renesas: rcar-gen2: Switch Z clock to .determine_rate()
-      clk: renesas: rcar-gen3: Switch Z clocks to .determine_rate()
-      clk: renesas: rcar-gen3: Switch SD clocks to .determine_rate()
-      dt-bindings: power: Add r8a77961 SYSC power domain definitions
-      dt-bindings: clock: Add r8a77961 CPG Core Clock Definitions
-      dt-bindings: clock: renesas: Remove R-Car Gen2 legacy DT bindings
-      dt-bindings: clock: renesas: rcar-usb2-clock-sel: Fix typo in example
-      clk: renesas: r8a77965: Remove superfluous semicolon
-      Merge tag 'renesas-r8a77961-dt-binding-defs-tag' into clk-renesas-for-v5.5
-      dt-bindings: clock: renesas: cpg-mssr: Document r8a77961 support
-      clk: renesas: Rename CLK_R8A7796 to CLK_R8A77960
-      clk: renesas: r8a7796: Add R8A77961 CPG/MSSR support
-
- .../devicetree/bindings/clock/renesas,cpg-mssr.txt | 11 ++--
- .../clock/renesas,rcar-gen2-cpg-clocks.txt         | 60 --------------------
- .../bindings/clock/renesas,rcar-usb2-clock-sel.txt |  2 +-
- drivers/clk/renesas/Kconfig                        |  9 ++-
- drivers/clk/renesas/Makefile                       |  3 +-
- drivers/clk/renesas/r8a7796-cpg-mssr.c             | 24 ++++++--
- drivers/clk/renesas/r8a77965-cpg-mssr.c            |  2 +-
- drivers/clk/renesas/rcar-gen2-cpg.c                | 23 ++++----
- drivers/clk/renesas/rcar-gen3-cpg.c                | 41 +++++++++-----
- drivers/clk/renesas/renesas-cpg-mssr.c             |  8 ++-
- include/dt-bindings/clock/r8a77961-cpg-mssr.h      | 65 ++++++++++++++++++++++
- include/dt-bindings/power/r8a77961-sysc.h          | 32 +++++++++++
- 12 files changed, 180 insertions(+), 100 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
- create mode 100644 include/dt-bindings/clock/r8a77961-cpg-mssr.h
- create mode 100644 include/dt-bindings/power/r8a77961-sysc.h
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/arch/arm/boot/dts/dra7xx-clocks.dtsi b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+--- a/arch/arm/boot/dts/dra7xx-clocks.dtsi
++++ b/arch/arm/boot/dts/dra7xx-clocks.dtsi
+@@ -1734,6 +1734,20 @@
+ 		};
+ 	};
+ 
++	gpu_cm: gpu-cm@1200 {
++		compatible = "ti,omap4-cm";
++		reg = <0x1200 0x100>;
++		#address-cells = <1>;
++		#size-cells = <1>;
++		ranges = <0 0x1200 0x100>;
++
++		gpu_clkctrl: gpu-clkctrl@20 {
++			compatible = "ti,clkctrl";
++			reg = <0x20 0x4>;
++			#clock-cells = <2>;
++		};
++	};
++
+ 	l3init_cm: l3init-cm@1300 {
+ 		compatible = "ti,omap4-cm";
+ 		reg = <0x1300 0x100>;
+diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+--- a/drivers/clk/ti/clk-7xx.c
++++ b/drivers/clk/ti/clk-7xx.c
+@@ -275,6 +275,40 @@ static const struct omap_clkctrl_reg_data dra7_dss_clkctrl_regs[] __initconst =
+ 	{ 0 },
+ };
+ 
++static const char * const dra7_gpu_core_mux_parents[] __initconst = {
++	"dpll_core_h14x2_ck",
++	"dpll_per_h14x2_ck",
++	"dpll_gpu_m2_ck",
++	NULL,
++};
++
++static const char * const dra7_gpu_hyd_mux_parents[] __initconst = {
++	"dpll_core_h14x2_ck",
++	"dpll_per_h14x2_ck",
++	"dpll_gpu_m2_ck",
++	NULL,
++};
++
++static const char * const dra7_gpu_sys_clk_parents[] __initconst = {
++	"sys_clkin",
++	NULL,
++};
++
++static const struct omap_clkctrl_div_data dra7_gpu_sys_clk_data __initconst = {
++	.max_div = 2,
++};
++
++static const struct omap_clkctrl_bit_data dra7_gpu_core_bit_data[] __initconst = {
++	{ 24, TI_CLK_MUX, dra7_gpu_core_mux_parents, NULL, },
++	{ 26, TI_CLK_MUX, dra7_gpu_hyd_mux_parents, NULL, },
++	{ 0 },
++};
++
++static const struct omap_clkctrl_reg_data dra7_gpu_clkctrl_regs[] __initconst = {
++	{ DRA7_GPU_CLKCTRL, dra7_gpu_core_bit_data, CLKF_SW_SUP, "gpu_cm:clk:0000:24", },
++	{ 0 },
++};
++
+ static const char * const dra7_mmc1_fclk_mux_parents[] __initconst = {
+ 	"func_128m_clk",
+ 	"dpll_per_m2x2_ck",
+@@ -778,6 +812,7 @@ const struct omap_clkctrl_data dra7_clkctrl_data[] __initconst = {
+ 	{ 0x4a008d20, dra7_l4cfg_clkctrl_regs },
+ 	{ 0x4a008e20, dra7_l3instr_clkctrl_regs },
+ 	{ 0x4a009120, dra7_dss_clkctrl_regs },
++	{ 0x4a009220, dra7_gpu_clkctrl_regs },
+ 	{ 0x4a009320, dra7_l3init_clkctrl_regs },
+ 	{ 0x4a0093b0, dra7_pcie_clkctrl_regs },
+ 	{ 0x4a0093d0, dra7_gmac_clkctrl_regs },
+diff --git a/include/dt-bindings/clock/dra7.h b/include/dt-bindings/clock/dra7.h
+--- a/include/dt-bindings/clock/dra7.h
++++ b/include/dt-bindings/clock/dra7.h
+@@ -78,6 +78,9 @@
+ #define DRA7_DSS_CORE_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
+ #define DRA7_BB2D_CLKCTRL	DRA7_CLKCTRL_INDEX(0x30)
+ 
++/* gpu clocks */
++#define DRA7_GPU_CLKCTRL	DRA7_CLKCTRL_INDEX(0x20)
++
+ /* l3init clocks */
+ #define DRA7_MMC1_CLKCTRL	DRA7_CLKCTRL_INDEX(0x28)
+ #define DRA7_MMC2_CLKCTRL	DRA7_CLKCTRL_INDEX(0x30)
+-- 
+2.23.0
