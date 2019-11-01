@@ -2,132 +2,147 @@ Return-Path: <SRS0=AcBv=YZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94FD8CA9ECF
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 09:50:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A094FCA9ECF
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 10:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6830720862
-	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 09:50:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69951217D9
+	for <linux-clk@archiver.kernel.org>; Fri,  1 Nov 2019 10:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PYuZS4nN"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="T36Tr2PF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727645AbfKAJuN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 1 Nov 2019 05:50:13 -0400
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:42702 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726957AbfKAJuN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 1 Nov 2019 05:50:13 -0400
-Received: by mail-wr1-f66.google.com with SMTP id a15so9079263wrf.9;
-        Fri, 01 Nov 2019 02:50:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=zYnFFUu/yRKOCTeyRORXYMNFN+XI69i8FjjNc/RJUws=;
-        b=PYuZS4nNyDdvjg4Ecjx/3hPCOKoauW6EfoMWScbZ1HlB5XGz5m6Hj3Du+SbfzURmqi
-         MTRMO/mMOzvlLrsB6mWKF1wHPybc0CbMaC+J8P8kawz/+xwYJJflGkmszxfNk2XnjNdP
-         2dbSUOfLYyhvxSaJPpbO2aAJ2uWVWsjIe/YkgAsESVXWo8PSFZkkedVZXBz8FtCDNLIg
-         b9V7r2MD3zdWKs6FQ5n+9B4EM+7tw7YOWbTwojPvex3/b7bBYxBE2WVu8TC8vJaeb5WE
-         xrQuaFCkYRHZSESr69iUOLZ5sSi4PPStRBHCwFMZbxC+dQi+DtpOGPFAxZ8ZtL1mrruI
-         Z3Ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=zYnFFUu/yRKOCTeyRORXYMNFN+XI69i8FjjNc/RJUws=;
-        b=TjwFrfgnzlkHwcWzD6MamavPu89BeThvaCmjZeyHijFNgJBJmJktHcK0PxWQXDkesl
-         ZoclclL1GxNpvQctL3S82kfp62UgJDMPKCdm9sqiGqHNGBI9c699XIAn27A0ogRuNFQn
-         T5R2j1AUs6zuEURvQj8/n0nnd5CCKxXGDFu+7JdXCAa60NXpgbrDopOcYunmFXYTqDMZ
-         tYWt3/Nje+TjkXN6qEwok8Ah6tJaWLGVDGepQU2iwjRot+ssB2luB2dCFlQAOh2gJM5L
-         B/Rk+wC39WA0SVwhoKippQfU5L+Gw4R7ip4pZbVlQYjKlmXXhTMPbcp8KifLTvS2Kii8
-         TQEg==
-X-Gm-Message-State: APjAAAVPVhZHsxCgs1+7z6ICm44p/vAXSv+UMWoroHa/I1bmbTVF3DYK
-        mhWjkE1VQxtAEE6jux8NkaU=
-X-Google-Smtp-Source: APXvYqwodVDJz0hKCBc4Cmn9OUpC5RGzuKKGRx9FqsNyzqMOfMwuJTjL7+To/u/BEv+k7Jar9A3iLg==
-X-Received: by 2002:adf:f048:: with SMTP id t8mr6179803wro.237.1572601810817;
-        Fri, 01 Nov 2019 02:50:10 -0700 (PDT)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id r13sm12172283wra.74.2019.11.01.02.50.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Nov 2019 02:50:09 -0700 (PDT)
-Date:   Fri, 1 Nov 2019 10:50:08 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, sboyd@kernel.org, treding@nvidia.com,
-        jonathanh@nvidia.com, skomatineni@nvidia.com, digetx@gmail.com,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] clk: tegra: Fix build error without CONFIG_PM_SLEEP
-Message-ID: <20191101095008.GB1167505@ulmo>
-References: <20191030125650.36776-1-yuehaibing@huawei.com>
+        id S1729553AbfKAKQX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 1 Nov 2019 06:16:23 -0400
+Received: from mail-eopbgr00089.outbound.protection.outlook.com ([40.107.0.89]:21678
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729471AbfKAKQX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 1 Nov 2019 06:16:23 -0400
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=FxrgGCcMQ3NubkTGH+5MrqYMaiL+i9wwoAurbTE8ehJOJBOFyU+zh0HMpWwtNWCPxE+9xznE1Ew3xqn6IsygmWZ9pHxsQPpWt8nJQaX4cEIDZhkbbVSnG58LB873cygMKhCV1eDcqVCs3WNchhV5MfRMrBnn2EDbjGugNMWktDiw2K3kYYCpYSvlXPOdnuBI5RvBLCF0hFlBZ/i0OrhhaeWv/eldtB3P/tqidRATlHphmdRVmT6xtOhbVl3x8gj53c8oClyVlnyJymR7zuI/2wMHZ6Zndg/+Hl3KBxzDEJdndkINXYIAVbIiMumAoLZmE6HttdFTT/obM88dApDbEg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GEjNv2BDjI1G7k63M4Yk3OLuJc/sRKSE2ecyOSgvLrs=;
+ b=e/LVTWXw9mbC6DejKeciNTuKJL4UMZc9qJBe36FLSMwTjKSCdyOgtwsw9Prx7bVcCPJL9TLK4i0pVvULN1KH9E5ZsNxardeDQKov+/cCzU6JxISXOoFYDEx9DbRIQRDn2U36Ph9G3vPldzApRWBwfi5iheNjbed0qqH+QoLdkAq1kP6BN77Zr9LAskCF0o8XhtSlFxR5IE5VFn2hgJ81xvqNEVYx2/8d5DDlOO6fWNiec2nRKM3D3LVNxEIGpBFKZRIueDlp5PGDztMpG4Z9I1EaQRbRzj+SXC5wcLenC3OgRYEjjn9ck5Ngq4hjaUHqeMKMqcEde+82HtavRqdznw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=GEjNv2BDjI1G7k63M4Yk3OLuJc/sRKSE2ecyOSgvLrs=;
+ b=T36Tr2PFpJsYkpVkU+8P5gj2VQOTOAE7LlsDIL68Fu5KJEyyqH3S6nIVda2KPWKc7U1C9mtnRmCDMMkJD3gjZjdqSWfoamRCyTkQP8fSv9+fqQPw+CRYzl9bEVkkvmu8Kg4TXUKRIvIF88mphEduSvOYuC4PxOtrlEcKkOfncjg=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5188.eurprd04.prod.outlook.com (20.177.42.17) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2387.30; Fri, 1 Nov 2019 10:16:19 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::843c:e722:27cb:74e1]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::843c:e722:27cb:74e1%5]) with mapi id 15.20.2387.028; Fri, 1 Nov 2019
+ 10:16:19 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: clk-composite-8m: add lock to gate/mux
+Thread-Topic: [PATCH] clk: imx: clk-composite-8m: add lock to gate/mux
+Thread-Index: AQHVkJ1nitbWRrQWUkuauMi+K6eGNQ==
+Date:   Fri, 1 Nov 2019 10:16:19 +0000
+Message-ID: <1572603166-24594-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR02CA0209.apcprd02.prod.outlook.com
+ (2603:1096:201:20::21) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: d7c51b07-d29a-4498-29f7-08d75eb489a0
+x-ms-traffictypediagnostic: AM0PR04MB5188:|AM0PR04MB5188:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5188D29497A9CD1C23A72C1F88620@AM0PR04MB5188.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-forefront-prvs: 020877E0CB
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(346002)(396003)(136003)(366004)(39860400002)(376002)(199004)(189003)(486006)(316002)(66946007)(110136005)(66476007)(66556008)(386003)(6506007)(99286004)(14444005)(256004)(52116002)(86362001)(66066001)(64756008)(66446008)(2201001)(50226002)(2906002)(54906003)(3846002)(4326008)(6116002)(6512007)(36756003)(8936002)(25786009)(5660300002)(2501003)(305945005)(81166006)(71190400001)(71200400001)(8676002)(81156014)(7736002)(44832011)(26005)(14454004)(476003)(2616005)(102836004)(186003)(6636002)(478600001)(6436002)(6486002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5188;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dRwXf712rwIjCkCaIQL+wqyvGDSRW7jJP3cu1xR8BWCPFwrhSovRCTtyvM8R+jQtNicbGdO2oltd4O2fclzhhMPCIPHc5pYGHC2ZP7bA+L81CbsIQMAz9dyI7jksVEApJS2OcY7pi3D/FY5Op6SkwIcVAoDsAas77L+1P2MIlm2lTJeZfJamXeaiyVI6iDJ74AN0ryKgM0km38onvjV/iIJfdhugzV3q4EhUboTInQGHSbnOxlUSY4bZ8BbqY80ZO7NTV957lwXIBBR+n6Zoyte5KJScNVSzRU6zKv16BbUgKnEtmPRwRTche9WO/mSTIMPqgGH9/rPz7FGUQAf/YLChnppkdVvQiPPNB5bZE8bmp+NLWsy2EONjupujDr2iUHwAfJyngFQF5X1qzrITgZygyyO1AhxRCEZZDMW4WIu9E5KYA3Dezrv0Oh2ADAnC
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="E39vaYmALEf/7YXx"
-Content-Disposition: inline
-In-Reply-To: <20191030125650.36776-1-yuehaibing@huawei.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7c51b07-d29a-4498-29f7-08d75eb489a0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Nov 2019 10:16:19.7670
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: gGkErQ3LI8HX/PRzUbsiPr0hzYRyAxCR//GrM7Vyog7GqEbD851oGsiF7gVWzMbcAMJ64iHpQCVkB6O1nQ+IZg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5188
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
---E39vaYmALEf/7YXx
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is a lock to diviver in the composite driver, but that's not
+enought. lock to gate/mux are also needed to provide exclusive access
+to the register.
 
-On Wed, Oct 30, 2019 at 08:56:50PM +0800, YueHaibing wrote:
-> If CONFIG_PM_SLEEP is n, build fails:
->=20
-> drivers/clk/tegra/clk-tegra210.c:3426:13: error:
->  tegra210_clk_suspend undeclared here (not in a function); did you mean t=
-egra_clk_ndspeed?
->   .suspend =3D tegra210_clk_suspend,
->              ^~~~~~~~~~~~~~~~~~~~
->              tegra_clk_ndspeed
-> drivers/clk/tegra/clk-tegra210.c:3427:12: error:
->  tegra210_clk_resume undeclared here (not in a function); did you mean te=
-gra210_clk_suspend?
->   .resume =3D tegra210_clk_resume,
->=20
-> Use ifdef to guard this.
->=20
-> Reported-by: Hulk Robot <hulkci@huawei.com>
-> Fixes: 27d10d548c04 ("clk: tegra: Add suspend and resume support on Tegra=
-210")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/clk/tegra/clk-tegra210.c | 2 ++
->  1 file changed, 2 insertions(+)
+Fixes: d3ff9728134e ("clk: imx: Add imx composite clock")
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-composite-8m.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Applied to for-5.5/clk, thanks.
+diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-compo=
+site-8m.c
+index e0f25983e80f..20f7c91c03d2 100644
+--- a/drivers/clk/imx/clk-composite-8m.c
++++ b/drivers/clk/imx/clk-composite-8m.c
+@@ -142,6 +142,7 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char =
+*name,
+ 	mux->reg =3D reg;
+ 	mux->shift =3D PCG_PCS_SHIFT;
+ 	mux->mask =3D PCG_PCS_MASK;
++	mux->lock =3D &imx_ccm_lock;
+=20
+ 	div =3D kzalloc(sizeof(*div), GFP_KERNEL);
+ 	if (!div)
+@@ -161,6 +162,7 @@ struct clk_hw *imx8m_clk_hw_composite_flags(const char =
+*name,
+ 	gate_hw =3D &gate->hw;
+ 	gate->reg =3D reg;
+ 	gate->bit_idx =3D PCG_CGC_SHIFT;
++	gate->lock =3D &imx_ccm_lock;
+=20
+ 	hw =3D clk_hw_register_composite(NULL, name, parent_names, num_parents,
+ 			mux_hw, &clk_mux_ops, div_hw,
+--=20
+2.16.4
 
-Thierry
-
---E39vaYmALEf/7YXx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIyBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl27/9AACgkQ3SOs138+
-s6HHBA/49ZPYvqC1AKre9jJzUfxicONkluYmQwjpNsbuJn44O6tNsj4YK+eiDbBc
-jKoCC81MV+Z1IgKUWNjMgcV8GtD4huXCpuoBbnNrKkWQsyk4ZHp3O1HPkM+hqPDJ
-ypjG89Nohev4Nig6gFzFM735nFSC45VvL0MYz/Q/wHqmtDXpaoZ/kFm7QEJWchlm
-p2VGxJOonjG3+ClxEAiFPL2tt6E/uM7IChPCUo/XxcG4pnmAJ+g5dABeVD0R+CyT
-+INdCpJMwOWJWWe5LN1TMEX1zuhhntxYDmhl4STl3fQ9ItEDqENlKTjXqw1RNzes
-/Cvq7KPrYv/cfu2EDivbXHll60oxKIscML4rgTTbDBg/Rg7uYG3GudYnj95cSjt5
-hP3ZjK1VG4hnl3g2tyu/5AdKjqAV8S1W26oAAiUi0w6ktZQch1iynlJ8/C+udwci
-r4v7d4RaTjQ2LMz5cQMGrIj7arc1cPOcny4CIcSn/cfvJFz1TANT/c2pxf60CUiA
-jIc0g7XjI7ErTYJFFR4zzHB7sp4Wf/Prw+z+im70ZKVt9aDBSZHNC1Ugc1NXeLLy
-m8JV+YwKiHV9ZVRHMmYq2C7qk0n34TS50EcFo6goU4Ezc9qGPmCBhBM2HJ9Vog8N
-sAwZ0t0zDBY0mmj8xW+1MykeqbgSk+BTyk5kx/KhaY+cLPYSkQ==
-=XFPw
------END PGP SIGNATURE-----
-
---E39vaYmALEf/7YXx--
