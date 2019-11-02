@@ -2,108 +2,377 @@ Return-Path: <SRS0=2Ghr=Y2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A76AFCA9EC7
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Nov 2019 15:50:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D5D8CA9ED1
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Nov 2019 21:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72FD621855
-	for <linux-clk@archiver.kernel.org>; Sat,  2 Nov 2019 15:50:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572709830;
-	bh=CpgvGaylEu3otIutzfhkjA+p+SD/JsZ1LIgNdivpSS8=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=zVogIHYL5WbzwGbD2wKLodxyat63s6aAcN5YcwPTsyDwSOqAo5Kim1mqSe0apKjTg
-	 l7nQzEN1d+MkFD1RzM/e9IIQJ/5wyQnb1s2xL2eBbwi38347c8sPJgPhYEsS+yO72W
-	 umSKbzJUa/yLxaMjw5WsXlKK2/fSh8uFlBJra668=
+	by mail.kernel.org (Postfix) with ESMTP id 44C5F217D9
+	for <linux-clk@archiver.kernel.org>; Sat,  2 Nov 2019 21:27:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="WpvxY9ZC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726675AbfKBPua (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 2 Nov 2019 11:50:30 -0400
-Received: from mail.kernel.org ([198.145.29.99]:42536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726477AbfKBPu3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 2 Nov 2019 11:50:29 -0400
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CCFCC21726;
-        Sat,  2 Nov 2019 15:50:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572709829;
-        bh=CpgvGaylEu3otIutzfhkjA+p+SD/JsZ1LIgNdivpSS8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=GomVhvbJrPCBdr+ylrXMySXaLoTHDbmvdoPzHqA5Tq3/bTqjIDeHAs1ibnQWlg7D6
-         X9F6CxlE6RgRn3aAdniUL9wITl8IucmmMzi04goVpTnTX6P2Chg0HOC+NZvbQ3K5+W
-         pPkRMRRTZECSTUIiNHZHz5Qw4xwsZbATxhCAzl+o=
-Date:   Sat, 2 Nov 2019 16:50:26 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [GIT PULL] Allwinner Clock Fixes for 5.4
-Message-ID: <eb232b2b-ff54-48d5-bbd0-f628d4650b25.lettre@localhost>
+        id S1727165AbfKBV1a (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 2 Nov 2019 17:27:30 -0400
+Received: from outils.crapouillou.net ([89.234.176.41]:44474 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbfKBV1a (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 2 Nov 2019 17:27:30 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1572730046; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=u54XkrvRKJNZXoy73GiQjd3mobd5iNvW6poY7+kpWRc=;
+        b=WpvxY9ZCajE1l/ZEcjkxwfnX1LZLGyzOd88xlrh10qVLsvjoGPdtXj1caGOIHTzMEkqf5u
+        IXDg/jxedi5Xr3Op2fthoY2R2c8XV7tp1qRLTau4Mb/TaMVed3SUtdiidu8NBv8xbREa+t
+        MvP8W6BFR8C9NgC7H8a3QpN+eJL0Dto=
+Date:   Sat, 02 Nov 2019 22:27:19 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 2/2 v2] clk: Ingenic: Add CGU driver for X1000.
+To:     Zhou Yanjie <zhouyanjie@zoho.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, mturquette@baylibre.com,
+        sboyd@kernel.org, mark.rutland@arm.com
+Message-Id: <1572730039.3.0@crapouillou.net>
+In-Reply-To: <1571763389-43443-3-git-send-email-zhouyanjie@zoho.com>
+References: <1571421006-12771-1-git-send-email-zhouyanjie@zoho.com>
+        <1571763389-43443-1-git-send-email-zhouyanjie@zoho.com>
+        <1571763389-43443-3-git-send-email-zhouyanjie@zoho.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="br5xgx2nbqlesq7w"
-Content-Disposition: inline
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---br5xgx2nbqlesq7w
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
 Hi,
 
-Please pull the following changes for the current release.
 
-Thanks!
-Maxime
+Le mer., oct. 23, 2019 at 00:56, Zhou Yanjie <zhouyanjie@zoho.com> a=20
+=E9crit :
+> Add support for the clocks provided by the CGU in the Ingenic X1000
+> SoC, making use of the cgu code to do the heavy lifting.
+>=20
+> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
 
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+Acked-by: Paul Cercueil <paul@crapouillou.net>
 
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-fixes-for-5.4-1
-
-for you to fetch changes up to cdfc2e2086bf9c465f44e2db25561373b084a113:
-
-  clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18 (2019-10-29 08:42:52 +0100)
-
-----------------------------------------------------------------
-Two patches that fix some operator precedence and zeroing of bits
-
-----------------------------------------------------------------
-Colin Ian King (1):
-      clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18
-
-Nathan Chancellor (1):
-      clk: sunxi: Fix operator precedence in sunxi_divs_clk_setup
+Cheers,
+-Paul
 
 
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c | 2 +-
- drivers/clk/sunxi/clk-sunxi.c        | 4 ++--
- 2 files changed, 3 insertions(+), 3 deletions(-)
+> ---
+>  drivers/clk/ingenic/Kconfig     |  10 ++
+>  drivers/clk/ingenic/Makefile    |   1 +
+>  drivers/clk/ingenic/x1000-cgu.c | 256=20
+> ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 267 insertions(+)
+>  create mode 100644 drivers/clk/ingenic/x1000-cgu.c
+>=20
+> diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+> index fe8db93..2aebf0d 100644
+> --- a/drivers/clk/ingenic/Kconfig
+> +++ b/drivers/clk/ingenic/Kconfig
+> @@ -45,4 +45,14 @@ config INGENIC_CGU_JZ4780
+>=20
+>  	  If building for a JZ4780 SoC, you want to say Y here.
+>=20
+> +config INGENIC_CGU_X1000
+> +	bool "Ingenic X1000 CGU driver"
+> +	default MACH_X1000
+> +	select INGENIC_CGU_COMMON
+> +	help
+> +	  Support the clocks provided by the CGU hardware on Ingenic X1000
+> +	  and compatible SoCs.
+> +
+> +	  If building for a X1000 SoC, you want to say Y here.
+> +
+>  endmenu
+> diff --git a/drivers/clk/ingenic/Makefile=20
+> b/drivers/clk/ingenic/Makefile
+> index 250570a..0f0e784 100644
+> --- a/drivers/clk/ingenic/Makefile
+> +++ b/drivers/clk/ingenic/Makefile
+> @@ -4,3 +4,4 @@ obj-$(CONFIG_INGENIC_CGU_JZ4740)	+=3D jz4740-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_JZ4725B)	+=3D jz4725b-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_JZ4770)	+=3D jz4770-cgu.o
+>  obj-$(CONFIG_INGENIC_CGU_JZ4780)	+=3D jz4780-cgu.o
+> +obj-$(CONFIG_INGENIC_CGU_X1000)		+=3D x1000-cgu.o
+> diff --git a/drivers/clk/ingenic/x1000-cgu.c=20
+> b/drivers/clk/ingenic/x1000-cgu.c
+> new file mode 100644
+> index 00000000..a964911
+> --- /dev/null
+> +++ b/drivers/clk/ingenic/x1000-cgu.c
+> @@ -0,0 +1,256 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * X1000 SoC CGU driver
+> + * Copyright (c) 2019 Zhou Yanjie <zhouyanjie@zoho.com>
+> + */
+> +
+> +#include <linux/clk-provider.h>
+> +#include <linux/delay.h>
+> +#include <linux/of.h>
+> +#include <dt-bindings/clock/x1000-cgu.h>
+> +#include "cgu.h"
+> +#include "pm.h"
+> +
+> +/* CGU register offsets */
+> +#define CGU_REG_CPCCR		0x00
+> +#define CGU_REG_APLL		0x10
+> +#define CGU_REG_MPLL		0x14
+> +#define CGU_REG_CLKGR		0x20
+> +#define CGU_REG_OPCR		0x24
+> +#define CGU_REG_DDRCDR		0x2c
+> +#define CGU_REG_MACPHYCDR	0x54
+> +#define CGU_REG_I2SCDR		0x60
+> +#define CGU_REG_LPCDR		0x64
+> +#define CGU_REG_MSC0CDR		0x68
+> +#define CGU_REG_I2SCDR1		0x70
+> +#define CGU_REG_SSICDR		0x74
+> +#define CGU_REG_CIMCDR		0x7c
+> +#define CGU_REG_PCMCDR		0x84
+> +#define CGU_REG_MSC1CDR		0xa4
+> +#define CGU_REG_CMP_INTR	0xb0
+> +#define CGU_REG_CMP_INTRE	0xb4
+> +#define CGU_REG_DRCG		0xd0
+> +#define CGU_REG_CLOCKSTATUS	0xd4
+> +#define CGU_REG_PCMCDR1		0xe0
+> +#define CGU_REG_MACPHYC		0xe8
+> +
+> +/* bits within the OPCR register */
+> +#define OPCR_SPENDN0		BIT(7)
+> +#define OPCR_SPENDN1		BIT(6)
+> +
+> +static struct ingenic_cgu *cgu;
+> +
+> +static const s8 pll_od_encoding[8] =3D {
+> +	0x0, 0x1, -1, 0x2, -1, -1, -1, 0x3,
+> +};
+> +
+> +static const struct ingenic_cgu_clk_info x1000_cgu_clocks[] =3D {
+> +
+> +	/* External clocks */
+> +
+> +	[X1000_CLK_EXCLK] =3D { "ext", CGU_CLK_EXT },
+> +	[X1000_CLK_RTCLK] =3D { "rtc", CGU_CLK_EXT },
+> +
+> +	/* PLLs */
+> +
+> +	[X1000_CLK_APLL] =3D {
+> +		"apll", CGU_CLK_PLL,
+> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+> +		.pll =3D {
+> +			.reg =3D CGU_REG_APLL,
+> +			.m_shift =3D 24,
+> +			.m_bits =3D 7,
+> +			.m_offset =3D 1,
+> +			.n_shift =3D 18,
+> +			.n_bits =3D 5,
+> +			.n_offset =3D 1,
+> +			.od_shift =3D 16,
+> +			.od_bits =3D 2,
+> +			.od_max =3D 8,
+> +			.od_encoding =3D pll_od_encoding,
+> +			.bypass_bit =3D 9,
+> +			.enable_bit =3D 8,
+> +			.stable_bit =3D 10,
+> +		},
+> +	},
+> +
+> +	[X1000_CLK_MPLL] =3D {
+> +		"mpll", CGU_CLK_PLL,
+> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+> +		.pll =3D {
+> +			.reg =3D CGU_REG_MPLL,
+> +			.m_shift =3D 24,
+> +			.m_bits =3D 7,
+> +			.m_offset =3D 1,
+> +			.n_shift =3D 18,
+> +			.n_bits =3D 5,
+> +			.n_offset =3D 1,
+> +			.od_shift =3D 16,
+> +			.od_bits =3D 2,
+> +			.od_max =3D 8,
+> +			.od_encoding =3D pll_od_encoding,
+> +			.bypass_bit =3D 6,
+> +			.enable_bit =3D 7,
+> +			.stable_bit =3D 0,
+> +		},
+> +	},
+> +
+> +	/* Muxes & dividers */
+> +
+> +	[X1000_CLK_SCLKA] =3D {
+> +		"sclk_a", CGU_CLK_MUX,
+> +		.parents =3D { -1, X1000_CLK_EXCLK, X1000_CLK_APLL, -1 },
+> +		.mux =3D { CGU_REG_CPCCR, 30, 2 },
+> +	},
+> +
+> +	[X1000_CLK_CPUMUX] =3D {
+> +		"cpu_mux", CGU_CLK_MUX,
+> +		.parents =3D { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL, -1 },
+> +		.mux =3D { CGU_REG_CPCCR, 28, 2 },
+> +	},
+> +
+> +	[X1000_CLK_CPU] =3D {
+> +		"cpu", CGU_CLK_DIV,
+> +		.parents =3D { X1000_CLK_CPUMUX, -1, -1, -1 },
+> +		.div =3D { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
+> +	},
+> +
+> +	[X1000_CLK_L2CACHE] =3D {
+> +		"l2cache", CGU_CLK_DIV,
+> +		.parents =3D { X1000_CLK_CPUMUX, -1, -1, -1 },
+> +		.div =3D { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
+> +	},
+> +
+> +	[X1000_CLK_AHB0] =3D {
+> +		"ahb0", CGU_CLK_MUX | CGU_CLK_DIV,
+> +		.parents =3D { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL, -1 },
+> +		.mux =3D { CGU_REG_CPCCR, 26, 2 },
+> +		.div =3D { CGU_REG_CPCCR, 8, 1, 4, 21, -1, -1 },
+> +	},
+> +
+> +	[X1000_CLK_AHB2PMUX] =3D {
+> +		"ahb2_apb_mux", CGU_CLK_MUX,
+> +		.parents =3D { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL, -1 },
+> +		.mux =3D { CGU_REG_CPCCR, 24, 2 },
+> +	},
+> +
+> +	[X1000_CLK_AHB2] =3D {
+> +		"ahb2", CGU_CLK_DIV,
+> +		.parents =3D { X1000_CLK_AHB2PMUX, -1, -1, -1 },
+> +		.div =3D { CGU_REG_CPCCR, 12, 1, 4, 20, -1, -1 },
+> +	},
+> +
+> +	[X1000_CLK_PCLK] =3D {
+> +		"pclk", CGU_CLK_DIV,
+> +		.parents =3D { X1000_CLK_AHB2PMUX, -1, -1, -1 },
+> +		.div =3D { CGU_REG_CPCCR, 16, 1, 4, 20, -1, -1 },
+> +	},
+> +
+> +	[X1000_CLK_DDR] =3D {
+> +		"ddr", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+> +		.parents =3D { -1, X1000_CLK_SCLKA, X1000_CLK_MPLL, -1 },
+> +		.mux =3D { CGU_REG_DDRCDR, 30, 2 },
+> +		.div =3D { CGU_REG_DDRCDR, 0, 1, 4, 29, 28, 27 },
+> +		.gate =3D { CGU_REG_CLKGR, 31 },
+> +	},
+> +
+> +	[X1000_CLK_MAC] =3D {
+> +		"mac", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL},
+> +		.mux =3D { CGU_REG_MACPHYCDR, 31, 1 },
+> +		.div =3D { CGU_REG_DDRCDR, 0, 1, 8, 29, 28, 27 },
+> +		.gate =3D { CGU_REG_CLKGR, 25 },
+> +	},
+> +
+> +	[X1000_CLK_MSCMUX] =3D {
+> +		"msc_mux", CGU_CLK_MUX,
+> +		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL},
+> +		.mux =3D { CGU_REG_MSC0CDR, 31, 1 },
+> +	},
+> +
+> +	[X1000_CLK_MSC0] =3D {
+> +		"msc0", CGU_CLK_DIV | CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_MSCMUX, -1, -1, -1 },
+> +		.div =3D { CGU_REG_MSC0CDR, 0, 2, 8, 29, 28, 27 },
+> +		.gate =3D { CGU_REG_CLKGR, 4 },
+> +	},
+> +
+> +	[X1000_CLK_MSC1] =3D {
+> +		"msc1", CGU_CLK_DIV | CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_MSCMUX, -1, -1, -1 },
+> +		.div =3D { CGU_REG_MSC1CDR, 0, 2, 8, 29, 28, 27 },
+> +		.gate =3D { CGU_REG_CLKGR, 5 },
+> +	},
+> +
+> +	[X1000_CLK_SSIPLL] =3D {
+> +		"ssi_pll", CGU_CLK_MUX | CGU_CLK_DIV,
+> +		.parents =3D { X1000_CLK_SCLKA, X1000_CLK_MPLL, -1, -1 },
+> +		.mux =3D { CGU_REG_SSICDR, 31, 1 },
+> +		.div =3D { CGU_REG_SSICDR, 0, 1, 8, 29, 28, 27 },
+> +	},
+> +
+> +	[X1000_CLK_SSIMUX] =3D {
+> +		"ssi_mux", CGU_CLK_MUX,
+> +		.parents =3D { X1000_CLK_EXCLK, X1000_CLK_SSIPLL, -1, -1 },
+> +		.mux =3D { CGU_REG_SSICDR, 30, 1 },
+> +	},
+> +
+> +	/* Gate-only clocks */
+> +
+> +	[X1000_CLK_SFC] =3D {
+> +		"sfc", CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_SSIPLL, -1, -1, -1 },
+> +		.gate =3D { CGU_REG_CLKGR, 2 },
+> +	},
+> +
+> +	[X1000_CLK_UART0] =3D {
+> +		"uart0", CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+> +		.gate =3D { CGU_REG_CLKGR, 14 },
+> +	},
+> +
+> +	[X1000_CLK_UART1] =3D {
+> +		"uart1", CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+> +		.gate =3D { CGU_REG_CLKGR, 15 },
+> +	},
+> +
+> +	[X1000_CLK_UART2] =3D {
+> +		"uart2", CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+> +		.gate =3D { CGU_REG_CLKGR, 16 },
+> +	},
+> +
+> +	[X1000_CLK_SSI] =3D {
+> +		"ssi", CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_SSIMUX, -1, -1, -1 },
+> +		.gate =3D { CGU_REG_CLKGR, 19 },
+> +	},
+> +
+> +	[X1000_CLK_PDMA] =3D {
+> +		"pdma", CGU_CLK_GATE,
+> +		.parents =3D { X1000_CLK_EXCLK, -1, -1, -1 },
+> +		.gate =3D { CGU_REG_CLKGR, 21 },
+> +	},
+> +};
+> +
+> +static void __init x1000_cgu_init(struct device_node *np)
+> +{
+> +	int retval;
+> +
+> +	cgu =3D ingenic_cgu_new(x1000_cgu_clocks,
+> +			      ARRAY_SIZE(x1000_cgu_clocks), np);
+> +	if (!cgu) {
+> +		pr_err("%s: failed to initialise CGU\n", __func__);
+> +		return;
+> +	}
+> +
+> +	retval =3D ingenic_cgu_register_clocks(cgu);
+> +	if (retval) {
+> +		pr_err("%s: failed to register CGU Clocks\n", __func__);
+> +		return;
+> +	}
+> +
+> +	ingenic_cgu_register_syscore_ops(cgu);
+> +}
+> +CLK_OF_DECLARE_DRIVER(x1000_cgu, "ingenic,x1000-cgu",=20
+> x1000_cgu_init);
+> --
+> 2.7.4
+>=20
+>=20
 
---br5xgx2nbqlesq7w
-Content-Type: application/pgp-signature; name="signature.asc"
+=
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXb2lwgAKCRDj7w1vZxhR
-xadmAQD6qoJLFv0cNuvsrcIJCkGltYHCIdt6CA0dK1K5T6aqhgD+IZFmscdTupjL
-fQ27DTFj06PULCGdLzmoiCUIQCebVQM=
-=v5Ga
------END PGP SIGNATURE-----
-
---br5xgx2nbqlesq7w--
