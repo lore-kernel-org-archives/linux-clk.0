@@ -6,57 +6,56 @@ X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80DCFCA9EB0
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Nov 2019 22:27:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70963CA9ED3
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Nov 2019 22:30:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 504BC21A4A
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Nov 2019 22:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44A2C21D7C
+	for <linux-clk@archiver.kernel.org>; Sun,  3 Nov 2019 22:30:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TuHGE1F1"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xv61OMy7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728064AbfKCW1Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Nov 2019 17:27:16 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46649 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727602AbfKCW1P (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Nov 2019 17:27:15 -0500
-Received: by mail-lf1-f65.google.com with SMTP id 19so5630434lft.13
-        for <linux-clk@vger.kernel.org>; Sun, 03 Nov 2019 14:27:14 -0800 (PST)
+        id S1727705AbfKCWaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Nov 2019 17:30:24 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45201 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727891AbfKCWaY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Nov 2019 17:30:24 -0500
+Received: by mail-lj1-f195.google.com with SMTP id n21so1891502ljg.12
+        for <linux-clk@vger.kernel.org>; Sun, 03 Nov 2019 14:30:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=IzPJeK2cpUMQjH/975cPTUdiwrvG/dQ6KV42xRB7wAA=;
-        b=TuHGE1F1+ZfQMWfZYOEceMUBeLUnTeKK5wwL276Sz2hY+xKk8yxeRPuxVCLI4K8K1b
-         xc/+Bs3KENTr75oENU5Oij2awZZ1CEWkkAhr9YxWRcPvSoAZ0jwnjIPdTOs9KHH+bkjA
-         gFA/bMn9usVK1w4Rsab/nFcqIguaiTrbPF90x6B7U0CPqlgL7IVMYuqCg0LkJ7UmqPtp
-         nbt7syLDUloMjZ2JaJ7lBtj1V/QwAg3ng3c13tJGYyVP8U5en7JxXggkdqBp6at+kXvj
-         ITQxqRfoZDCgVCzD0WsGKF7ftP+d2VB9+BO8PhPn6vdBZfC19rjv4tRamOHUEGXgKOd+
-         5IUg==
+        bh=37IsC1QYGxBYfZW5BvnzIGLjijvofWTFPrPML1ai3TE=;
+        b=xv61OMy7HnCmcLqpeBquckd87P7nJi4UAXS/fJ/Hz2DjA48u2x5qTPs7j5L82y6mwa
+         JAwShxCoFU+50UNj/SpQHFCppQGWfqSYKXE+bk8Xd1pSRK7EnDQYJWgRemQnZXFEbs8i
+         mb++LMai+QyfBrih9AvQD3H0IsvwTFSgXi1Qo1K5ji0736ZNaAIji3RgI6ftuDGDE2kH
+         I1grzgb2TSw1jbxE8k/AjXadIJcx7yGtyb3pm6j0zVyEdzgOTRRa8p1iYlyzWwVLCmzT
+         dlShVoOreqcZANoVltSLTeiC0cHzt7yiJfI92HQ2x4Lj10gvjmJYw8gMMknPHGJTEmG0
+         cz8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=IzPJeK2cpUMQjH/975cPTUdiwrvG/dQ6KV42xRB7wAA=;
-        b=ZrwnjgYummxcWNyP3PK3Fxk4a1OoVguXBmev9WTa6lgfWpvWd2Uo1MXhh4jz+MscPs
-         01fjLHBseiMs4y0ukTVlnOBg0RihWBv0eANnqGGNpstiutwnE6EcJZ5MUZtGE4atMvvk
-         saGJD7pheLimtHQYNqCEYDjSqin0eg0JNlVXWAFaHu75ssJUcyVEAbys/3+89qmXy/nl
-         tMOecEGyyft//9GFWHqI19yzHsLrvWNGWDrKNFc808hv8XWTBffkJZD0W0vAZLsNHtYv
-         eoQN/nARTzh+j+j4dydz5p7Rh9W2dx9AEipbAikd37YGrvkbCEea9ZBCNuheie+Tt8mU
-         ercQ==
-X-Gm-Message-State: APjAAAW32Ey+zJepW1ZiUNqVpq5gB1BHOuPs3lpgD/MC4nrxVX2h1hVq
-        BAEFrCAldREAf0dupDLcEueTTXubZH/N+OwYF3e9Cg==
-X-Google-Smtp-Source: APXvYqyjdYFNN9CDPrBMD1LL8+RPj9zGpSDVydNpsun9Cd81xB4a7KEsrKrdBFbr3NcThDQn/dcVLwc/glAw4mUAc7w=
-X-Received: by 2002:a19:6a0d:: with SMTP id u13mr5835609lfu.86.1572820033814;
- Sun, 03 Nov 2019 14:27:13 -0800 (PST)
+        bh=37IsC1QYGxBYfZW5BvnzIGLjijvofWTFPrPML1ai3TE=;
+        b=KsgXyMpLE56XRHMpjm+EkurIWW3tfjjchceMaqXNyStE5cfJVLpYpcUvYmXUdy4M3s
+         T0nKhwdnRWF7+fV5M0L6igJ8HFzCHcP4r1c5MyqImvKyVPoaeajzq8alY4zbKGwc8T5f
+         XmboHThP28WKNT70BkrdQt2LKTgbqla688Uz76j151OH2c1zqyZAzWNAIwpamHOtYItx
+         xQ7tBZDj+Lstyo/ZBydkeUzPIdrK+FC3uIUylJtiNrJBQEng5boeNGVRv7JMIrz+7I8g
+         mG1sQ/+i2fqckoTwjbxsHrm1wiJHUdNXLQfDn+RPEOZTBhta+aK+5kJ4Uw/F4qzXni+M
+         +hNA==
+X-Gm-Message-State: APjAAAVsUcPDGUTp8PZShHT3rV92vHGBeKxUk0ktO/ORROXtmJKsjgXU
+        fUyqzqImJKGOlXkYXvivVraZbi5WrAw2xxaJurSuJQ==
+X-Google-Smtp-Source: APXvYqwVg9mCs8V+YbBxGYd5H+o7zjgzBRtm+eVs9wqZnKUeUHaI8SATdFAn61fPpaWBK++YT2y7RJlFoFraFdF5Uus=
+X-Received: by 2002:a2e:9a55:: with SMTP id k21mr2882628ljj.251.1572820221912;
+ Sun, 03 Nov 2019 14:30:21 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com> <2a8fa03308b08b2a15019d9b457d9bff7aafce94.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <2a8fa03308b08b2a15019d9b457d9bff7aafce94.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com> <f08d265c12ebf185c0e1dbbfe0a3f86de4907194.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <f08d265c12ebf185c0e1dbbfe0a3f86de4907194.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 3 Nov 2019 23:27:02 +0100
-Message-ID: <CACRpkdZYw3QQcQ4h5y_C0UD6+4Wz9AdmQ0qSrrjfUweuJj8hyQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 10/15] regulator: bd71828: Add GPIO based run-level
- control for regulators
+Date:   Sun, 3 Nov 2019 23:30:10 +0100
+Message-ID: <CACRpkdYhasTEQq2btQ_3GSo=hMJetp128jFo-6hE=JMeX4MJSA@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 14/15] gpio: Add definition for GPIO direction
 To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -84,29 +83,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 1, 2019 at 12:43 PM Matti Vaittinen
+Hi Matti!
+
+Good initiative (and I will see a ton of janitorial patches as a
+result of this...)
+
+On Fri, Nov 1, 2019 at 12:50 PM Matti Vaittinen
 <matti.vaittinen@fi.rohmeurope.com> wrote:
 
-> Bucks 1,2,6 and 7 on ROHM BD71828 can be either controlled as
-> individual regulartors - or they can be grouped to a group of
-> regulators that are controlled by 'run levels'. This can be
-> done via I2C. Each regulator can be assigned a voltage and
-> enable/disable status for each run-level. These statuses are
-> also changeable via I2C.
->
-> Run-levels can then be changed either by I2C or GPIO. This
-> control mechanism is selected by data in one time programmable
-> area (during production) and can't be changed later.
->
-> Allow regulators to be controlled via run-levels and allow
-> getting/setting the current run-level also via GPIO.
+> At least for me it is difficult to remember the meaning of GPIO
+> direction values. Define GPIO_IN and GPIO_OUT so that occasional
+> GPIO contributors would not need to always check the meaning of
+> hard coded values 1 and 0.
 >
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+(...)
+> +#define GPIO_IN                1
+> +#define GPIO_OUT       0
 
-I like the way you use the gpio API so FWIW:
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Please spell it out or people will be confused:
 
-I do not understand the regulator parts of the patch.
+GPIO_LINE_DIRECTION_IN
+GPIO_LINE_DIRECTION_OUT
 
 Yours,
 Linus Walleij
