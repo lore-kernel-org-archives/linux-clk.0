@@ -1,110 +1,85 @@
-Return-Path: <SRS0=4rqs=Y3=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=14qQ=Y4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70963CA9ED3
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Nov 2019 22:30:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E8D4CA9EBB
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 01:11:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44A2C21D7C
-	for <linux-clk@archiver.kernel.org>; Sun,  3 Nov 2019 22:30:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xv61OMy7"
+	by mail.kernel.org (Postfix) with ESMTP id EFD42222D2
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 01:11:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1572829895;
+	bh=9Oa/sZWPuyk4aTCFfeZkZBXLeIf0WxdXMrii3wBcuv8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=D5JkC4bOejl6SdGmietZ7zftS/wCEIPm17H3/KHo1WDJMnIZGIvqKaISO+pT9ZALY
+	 uFQDOmip2ouap48zVOd0pLwG0zjXIbFZn8cwe7TOr7m5uk2keunlWZccQcO9jOYMEz
+	 kfF7kYyG3Yv/SR944OC44qpLJPotmshf4/6NGtUI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727705AbfKCWaY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 3 Nov 2019 17:30:24 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:45201 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727891AbfKCWaY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 3 Nov 2019 17:30:24 -0500
-Received: by mail-lj1-f195.google.com with SMTP id n21so1891502ljg.12
-        for <linux-clk@vger.kernel.org>; Sun, 03 Nov 2019 14:30:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=37IsC1QYGxBYfZW5BvnzIGLjijvofWTFPrPML1ai3TE=;
-        b=xv61OMy7HnCmcLqpeBquckd87P7nJi4UAXS/fJ/Hz2DjA48u2x5qTPs7j5L82y6mwa
-         JAwShxCoFU+50UNj/SpQHFCppQGWfqSYKXE+bk8Xd1pSRK7EnDQYJWgRemQnZXFEbs8i
-         mb++LMai+QyfBrih9AvQD3H0IsvwTFSgXi1Qo1K5ji0736ZNaAIji3RgI6ftuDGDE2kH
-         I1grzgb2TSw1jbxE8k/AjXadIJcx7yGtyb3pm6j0zVyEdzgOTRRa8p1iYlyzWwVLCmzT
-         dlShVoOreqcZANoVltSLTeiC0cHzt7yiJfI92HQ2x4Lj10gvjmJYw8gMMknPHGJTEmG0
-         cz8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=37IsC1QYGxBYfZW5BvnzIGLjijvofWTFPrPML1ai3TE=;
-        b=KsgXyMpLE56XRHMpjm+EkurIWW3tfjjchceMaqXNyStE5cfJVLpYpcUvYmXUdy4M3s
-         T0nKhwdnRWF7+fV5M0L6igJ8HFzCHcP4r1c5MyqImvKyVPoaeajzq8alY4zbKGwc8T5f
-         XmboHThP28WKNT70BkrdQt2LKTgbqla688Uz76j151OH2c1zqyZAzWNAIwpamHOtYItx
-         xQ7tBZDj+Lstyo/ZBydkeUzPIdrK+FC3uIUylJtiNrJBQEng5boeNGVRv7JMIrz+7I8g
-         mG1sQ/+i2fqckoTwjbxsHrm1wiJHUdNXLQfDn+RPEOZTBhta+aK+5kJ4Uw/F4qzXni+M
-         +hNA==
-X-Gm-Message-State: APjAAAVsUcPDGUTp8PZShHT3rV92vHGBeKxUk0ktO/ORROXtmJKsjgXU
-        fUyqzqImJKGOlXkYXvivVraZbi5WrAw2xxaJurSuJQ==
-X-Google-Smtp-Source: APXvYqwVg9mCs8V+YbBxGYd5H+o7zjgzBRtm+eVs9wqZnKUeUHaI8SATdFAn61fPpaWBK++YT2y7RJlFoFraFdF5Uus=
-X-Received: by 2002:a2e:9a55:: with SMTP id k21mr2882628ljj.251.1572820221912;
- Sun, 03 Nov 2019 14:30:21 -0800 (PST)
-MIME-Version: 1.0
-References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com> <f08d265c12ebf185c0e1dbbfe0a3f86de4907194.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <f08d265c12ebf185c0e1dbbfe0a3f86de4907194.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sun, 3 Nov 2019 23:30:10 +0100
-Message-ID: <CACRpkdYhasTEQq2btQ_3GSo=hMJetp128jFo-6hE=JMeX4MJSA@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 14/15] gpio: Add definition for GPIO direction
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
+        id S1728683AbfKDBLe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 3 Nov 2019 20:11:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56004 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726310AbfKDBLe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 3 Nov 2019 20:11:34 -0500
+Received: from dragon (li1038-30.members.linode.com [45.33.96.30])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D51B4222D1;
+        Mon,  4 Nov 2019 01:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1572829894;
+        bh=9Oa/sZWPuyk4aTCFfeZkZBXLeIf0WxdXMrii3wBcuv8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=g7ux+1p7dJ82AZDTQVQlwRtgWpqrw6zDT2JfOLcqVufbOeo7EcafI7G1Yd2N651e2
+         R6fNuCO8+xM69qoefI+G8iWvOdQ4wsml+wVh3rmyqeuGq0HPqI5QLldccnDyzUY5xZ
+         Os8xd3Ps+7tAydS7p90yPjgiK1k2yQKf39cD+R4M=
+Date:   Mon, 4 Nov 2019 09:11:07 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH V2] clk: imx: imx8mq: fix sys3_pll_out_sels
+Message-ID: <20191104011106.GD24620@dragon>
+References: <1572231902-30230-1-git-send-email-peng.fan@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1572231902-30230-1-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Matti!
+On Mon, Oct 28, 2019 at 03:08:34AM +0000, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> It is not correct that sys3_pll_out use sys2_pll1_ref_sel as parent.
+> 
+> According to the current imx_clk_sccg_pll design, it uses both
+> bypass1/2, however set bypass2 as 1 is not correct, because it will
+> make sys[x]_pll_out use wrong parent and might access wrong registers.
+> 
+> So correct bypass2 to 0 and fix sys3_pll_out_sels.
+> 
+> Fixes: e9dda4af685f ("clk: imx: Refactor entire sccg pll clk")
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Good initiative (and I will see a ton of janitorial patches as a
-result of this...)
-
-On Fri, Nov 1, 2019 at 12:50 PM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
-
-> At least for me it is difficult to remember the meaning of GPIO
-> direction values. Define GPIO_IN and GPIO_OUT so that occasional
-> GPIO contributors would not need to always check the meaning of
-> hard coded values 1 and 0.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-(...)
-> +#define GPIO_IN                1
-> +#define GPIO_OUT       0
-
-Please spell it out or people will be confused:
-
-GPIO_LINE_DIRECTION_IN
-GPIO_LINE_DIRECTION_OUT
-
-Yours,
-Linus Walleij
+Applied, thanks.
