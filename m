@@ -2,80 +2,85 @@ Return-Path: <SRS0=14qQ=Y4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA4F7CA9EB5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 17:57:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFEC7CA9EB5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 17:58:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8C26214D9
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 17:57:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A93F214E0
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 17:58:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572890245;
-	bh=x/tE30ugL9cXun8Vkc8mfGersrd/y4ViPXvLjtWqPIE=;
+	s=default; t=1572890328;
+	bh=k+9S09XcQRmCiolkBiQbRZQaiXmWCScIZjPdHuaY8kM=;
 	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=Zku5pp1GZTIk2lYd3ct/+ujrVHBIK+N4tPsIeWezPrGctLYfuxIjiB36Kge7kf5po
-	 cow62xBT9VkArVS4yw0KKh5VD7ZImccSHg+CpRfUiy1IWntkvXykzdtaQ8Rgx7x1Z5
-	 oe9Sxcw1twqmK7HWFeoShrWn6Gne/BgG/CRe1wNg=
+	b=Y969543QqQ+ZeUwGZYIZ01PvV+cKK6cZjDX7fz3k73GXJXnEI+yRs0LG99fc1++gS
+	 A56VAF0zCzgUoAXK37vz0lCHtDwfweerW/NyPyP8APclU9pM3KTj6b+QuoqSmAIhdF
+	 sJ4v/0+7rQ2UNlK3Z9jAp6U5GkjHXX3YzqgwRAu4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728876AbfKDR5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Nov 2019 12:57:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36220 "EHLO mail.kernel.org"
+        id S1728216AbfKDR6s (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Nov 2019 12:58:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36534 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727469AbfKDR5Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 4 Nov 2019 12:57:25 -0500
+        id S1728174AbfKDR6s (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 4 Nov 2019 12:58:48 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95B78214E0;
-        Mon,  4 Nov 2019 17:57:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6356920B7C;
+        Mon,  4 Nov 2019 17:58:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572890244;
-        bh=x/tE30ugL9cXun8Vkc8mfGersrd/y4ViPXvLjtWqPIE=;
+        s=default; t=1572890327;
+        bh=k+9S09XcQRmCiolkBiQbRZQaiXmWCScIZjPdHuaY8kM=;
         h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=u9PaCoyMjipKxw2s8DiLg3QdCQySeWQ5NdUENpbKmMuaMn5aUVhne1wZu2hxOAXPh
-         ImGhQM2qyDw6GnmCOwpqx4N97HP8dpHptCpeEaAwKeQJey7mg9Jeizqnyq7izlsvx3
-         r88ZU/g3fH/kqx7CtZe5o5jWnbe6B5rKzA9deWsk=
+        b=xqUwvb2x/GydLedPuvMXOxkCKIt8AbXFJgMmlbIEHT2ggOFDg9gvVqEb+Q9jPpBW9
+         05KovoI3p1rSTvh9yd8eAYVKYeQX99wPMbbqPQz7U8FGsPVrF9FZvC9/9EF2WepqIW
+         vV8CqW8tARhqvVQBnyjB3J/xa28Ux4vYpoX4GNGY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190930154001.46581-1-tony@atomide.com>
-References: <20190930154001.46581-1-tony@atomide.com>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, Keerthy <j-keerthy@ti.com>
+In-Reply-To: <eb232b2b-ff54-48d5-bbd0-f628d4650b25.lettre@localhost>
+References: <eb232b2b-ff54-48d5-bbd0-f628d4650b25.lettre@localhost>
+Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clk: ti: clkctrl: Fix failed to enable error with double udelay timeout
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Tero Kristo <t-kristo@ti.com>, Tony Lindgren <tony@atomide.com>
+Subject: Re: [GIT PULL] Allwinner Clock Fixes for 5.4
+To:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>
 User-Agent: alot/0.8.1
-Date:   Mon, 04 Nov 2019 09:57:23 -0800
-Message-Id: <20191104175724.95B78214E0@mail.kernel.org>
+Date:   Mon, 04 Nov 2019 09:58:46 -0800
+Message-Id: <20191104175847.6356920B7C@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Tony Lindgren (2019-09-30 08:40:01)
-> Commit 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if
-> timekeeping is suspended") added handling for cases when timekeeping is
-> suspended. But looks like we can still get occasional "failed to enable"
-> errors on the PM runtime resume path with udelay() returning faster than
-> expected.
+Quoting Maxime Ripard (2019-11-02 08:50:26)
+> Hi,
 >=20
-> With ti-sysc interconnect target module driver this leads into device
-> failure with PM runtime failing with "failed to enable" clkctrl error.
+> Please pull the following changes for the current release.
 >=20
-> Let's fix the issue with a delay of two times the desired delay as in
-> often done for udelay() to account for the inaccuracy.
+> Thanks!
+> Maxime
 >=20
-> Fixes: 3d8598fb9c5a ("clk: ti: clkctrl: use fallback udelay approach if t=
-imekeeping is suspended")
-> Cc: Keerthy <j-keerthy@ti.com>
-> Cc: Tero Kristo <t-kristo@ti.com>
-> Signed-off-by: Tony Lindgren <tony@atomide.com>
-> ---
+> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c=
+5c:
+>=20
+>   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/ta=
+gs/sunxi-clk-fixes-for-5.4-1
+>=20
+> for you to fetch changes up to cdfc2e2086bf9c465f44e2db25561373b084a113:
+>=20
+>   clk: sunxi-ng: a80: fix the zero'ing of bits 16 and 18 (2019-10-29 08:4=
+2:52 +0100)
+>=20
+> ----------------------------------------------------------------
 
-Applied to clk-fixes
+Thanks. Pulled into clk-fixes.
 
