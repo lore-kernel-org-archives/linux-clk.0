@@ -2,82 +2,87 @@ Return-Path: <SRS0=14qQ=Y4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31044CA9EB5
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 18:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0BC8CA9EB5
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 18:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BB9221655
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 18:00:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572890417;
-	bh=gXrJj408R+3JEAaui6yuBsw4emXJCh8v5eUygTDK8TI=;
-	h=In-Reply-To:References:Cc:From:Subject:To:Date:List-ID:From;
-	b=JG0wG9eM4Hqf9O//6pdd10bTzmi4v6ifQW5K4DymoSoQfm5ZoNUklf3d1ksLa53TK
-	 yWhanFqlUo5/8+l70Sqxu7b05A4FixrjA1yQO98ZHEASIJUEkqN2kZ7THmTf75g+Xc
-	 zSOfSnoBRuGE4FuukxTeAFRySKgDAGDiwlJFLwGU=
+	by mail.kernel.org (Postfix) with ESMTP id B2A832084D
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 18:12:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728012AbfKDSAQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Nov 2019 13:00:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37070 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727998AbfKDSAQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 4 Nov 2019 13:00:16 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E89C420B7C;
-        Mon,  4 Nov 2019 18:00:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1572890416;
-        bh=gXrJj408R+3JEAaui6yuBsw4emXJCh8v5eUygTDK8TI=;
-        h=In-Reply-To:References:Cc:From:Subject:To:Date:From;
-        b=MNvsJMkNlrXLPK4QrUbUIg5cFxSNvwEEm3060UzNGTET1p7ltlN3U5OSTH1FaWAv9
-         v/+PkK8y1tORPbkiU/I2bEOSefma/D2by/oj1U3feqy/omfkMohH862GYdElCuhYCc
-         UVkz450797IRo806d99nRM9kEEhcvy+BO+fzp4NY=
-Content-Type: text/plain; charset="utf-8"
+        id S1728174AbfKDSMm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Nov 2019 13:12:42 -0500
+Received: from smtprelay0076.hostedemail.com ([216.40.44.76]:56688 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727998AbfKDSMm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Nov 2019 13:12:42 -0500
+X-Greylist: delayed 494 seconds by postgrey-1.27 at vger.kernel.org; Mon, 04 Nov 2019 13:12:41 EST
+Received: from smtprelay.hostedemail.com (10.5.19.251.rfc1918.com [10.5.19.251])
+        by smtpgrave04.hostedemail.com (Postfix) with ESMTP id 2787218020B00;
+        Mon,  4 Nov 2019 18:04:28 +0000 (UTC)
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 35FEA8384368;
+        Mon,  4 Nov 2019 18:04:26 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: hour56_60b9b720d6924
+X-Filterd-Recvd-Size: 1844
+Received: from XPS-9350.home (unknown [47.151.135.224])
+        (Authenticated sender: joe@perches.com)
+        by omf16.hostedemail.com (Postfix) with ESMTPA;
+        Mon,  4 Nov 2019 18:04:24 +0000 (UTC)
+Message-ID: <d3626d96b7fb9e0b1b25159a85d337f8882ceca1.camel@perches.com>
+Subject: Re: [PATCH v5 1/3] clk: qcom: Allow constant ratio freq tables for
+ rcg
+From:   Joe Perches <joe@perches.com>
+To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        sboyd@kernel.org
+Cc:     agross@kernel.org, marc.w.gonzalez@free.fr,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Mon, 04 Nov 2019 10:04:14 -0800
+In-Reply-To: <20191031185715.15504-1-jeffrey.l.hugo@gmail.com>
+References: <20191031185538.15402-1-jeffrey.l.hugo@gmail.com>
+         <20191031185715.15504-1-jeffrey.l.hugo@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.34.1-2 
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com>
-References: <CGME20191025153902eucas1p174c36ab6b80d297290181456bebacca2@eucas1p1.samsung.com> <7647a10d-8e37-f086-a014-77f8ddcdd006@samsung.com>
-Cc:     linux-clk <linux-clk@vger.kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [GIT PULL] clk/samsung fixes for v5.4
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>
-User-Agent: alot/0.8.1
-Date:   Mon, 04 Nov 2019 10:00:15 -0800
-Message-Id: <20191104180015.E89C420B7C@mail.kernel.org>
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sylwester Nawrocki (2019-10-25 08:39:01)
-> Hi Stephen, Mike,
->=20
-> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c=
-5c:
->=20
->   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/snawrocki/clk.git tags/=
-clk-v5.4-samsung-fixes
->=20
-> for you to fetch changes up to e9323b664ce29547d996195e8a6129a351c39108:
->=20
->   clk: samsung: exynos5420: Preserve PLL configuration during suspend/res=
-ume (2019-10-25 11:20:00 +0200)
->=20
-> ----------------------------------------------------------------
+On Thu, 2019-10-31 at 11:57 -0700, Jeffrey Hugo wrote:
+> Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
+> some constant ratio from the input across the entire frequency range.  It
+> would be great if we could specify the frequency table as a single entry
+> constant ratio instead of a long list, ie:
+> 
+> 	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
+>         { }
+> 
+> So, lets support that.
+[]
+> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
+[]
+> @@ -29,6 +29,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
+>  	if (!f)
+>  		return NULL;
+>  
+> +	if(!f->freq)
+> +		return f;
+> +
 
-Thanks. Pulled into clk-fixes.
+trivia:
+
+Space after if before open parenthesis please.
+
+Can you please make sure to style check your
+code with checkpatch before submission?
+
+Thanks.
+
 
