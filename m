@@ -2,124 +2,254 @@ Return-Path: <SRS0=14qQ=Y4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6680FCA9ED3
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 07:05:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFD8CA9ECF
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 08:08:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476882245D
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 07:05:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 217D821744
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 08:08:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kewSJ4AF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727267AbfKDHFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Nov 2019 02:05:20 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:55086 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfKDHFU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Nov 2019 02:05:20 -0500
-X-AuditID: c0a8fbf4-183ff70000001fa6-c3-5dbfcdad7647
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id E7.DB.08102.DADCFBD5; Mon,  4 Nov 2019 08:05:17 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Mon, 4 Nov 2019 08:05:07 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>
-Subject: Re: [RFC PATCH v3 10/15] regulator: bd71828: Add GPIO based
- run-level control for regulators
-Thread-Topic: [RFC PATCH v3 10/15] regulator: bd71828: Add GPIO based
- run-level control for regulators
-Thread-Index: AQHVkKmUb1A5TsbkA0WleApZHP5SaKd5+YkAgACQyoA=
-Date:   Mon, 4 Nov 2019 07:05:06 +0000
-Message-ID: <1550472ac1e105bd38da25803358cfbc0404bf38.camel@fi.rohmeurope.com>
-References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-         <2a8fa03308b08b2a15019d9b457d9bff7aafce94.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-         <CACRpkdZYw3QQcQ4h5y_C0UD6+4Wz9AdmQ0qSrrjfUweuJj8hyQ@mail.gmail.com>
-In-Reply-To: <CACRpkdZYw3QQcQ4h5y_C0UD6+4Wz9AdmQ0qSrrjfUweuJj8hyQ@mail.gmail.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <E431E9F5DA350547A5D0E307336A633F@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1727322AbfKDIIT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Nov 2019 03:08:19 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54835 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726633AbfKDIIT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Nov 2019 03:08:19 -0500
+Received: by mail-wm1-f68.google.com with SMTP id z26so2316844wmi.4
+        for <linux-clk@vger.kernel.org>; Mon, 04 Nov 2019 00:08:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=MCuKFJgt4493oVJusvtutFHlaoTvavsZO8OJ49Du7VQ=;
+        b=kewSJ4AFdAdRg/ZA6mLKuKRCk4bKbhlSTcqaSp7a2ryiUk2AlUFfTYKXidGLLGFfHk
+         TxgM6dvj+/h7nA2J857CUctnbap52/xArAt7DGAtBzT8GkAGsfvbFAlpEvP80USUKUMN
+         4DhnSx0sx1T9AJraMBE71iz1o9d7Wq1lf6rrjkGXRt0LGrgWDGoSndUdxXcorFdI9yRl
+         udZnNZuP0hbTGXHdBQRkdWoasWX7vtkG1beb4HPz2bEBbLaR52Lt/UMndlo/m+iuFnrR
+         n5pCuFobN/w0Gx6VTFfepZY99s1w7xH2eVqhYGBReLAKcwRoFiacjAiLDSX+yxVOSsD0
+         x5Xw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=MCuKFJgt4493oVJusvtutFHlaoTvavsZO8OJ49Du7VQ=;
+        b=NukaZrY6z7zp0vS54xUwKwR7JzPhHpTlaR7x9gwh/KY5dO4CKnuwCABpIhU1RFkqar
+         elZCACyNwmg6hz8/Hbz053YBlfoqKfi6Vkt0f3pJroASjZRd/eJlfeoBhFdzADatXur6
+         8wkOSklv2Al9jhPCVEab8grqu6lgM0UZvtiPdS2x9+XgytYBolgMxvoJL09DiVUDdUny
+         kIpRau3rgOmqq0SzUonlkN8dGXeUaDmIYVjM6l+i73POp15Iv0kn934QVApRrpqre48T
+         48JY6YuDoMtr2aaRQxm7n6h5RZfRSjsVZWfpPzrerlpzhoHw4H8fveuWmIkp0FQ6Q27r
+         /teg==
+X-Gm-Message-State: APjAAAWfLGugV3s1FQosSkZYedyFrop9SS3AiJ4gyzXAwlr0XbFjGtJk
+        7hdpNroLqL63dwBI+orFLFOXfw==
+X-Google-Smtp-Source: APXvYqy1R3nOCfQIXOAHxdlReFUWyMsMXJ1hvWq6zkqkU2Wqn4kMxDTTJDjub+A3plJqlpINWy3O3Q==
+X-Received: by 2002:a1c:7905:: with SMTP id l5mr17673710wme.76.1572854896300;
+        Mon, 04 Nov 2019 00:08:16 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t12sm14949737wrx.93.2019.11.04.00.08.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Nov 2019 00:08:15 -0800 (PST)
+References: <20191027161805.1176321-1-martin.blumenstingl@googlemail.com> <20191027161805.1176321-4-martin.blumenstingl@googlemail.com>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
+        khilman@baylibre.com
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 3/5] clk: meson: meson8b: change references to the XTAL clock to use the name
+In-reply-to: <20191027161805.1176321-4-martin.blumenstingl@googlemail.com>
+Date:   Mon, 04 Nov 2019 09:08:14 +0100
+Message-ID: <1jd0e83vyp.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TXUwcVRjNnd+7244MwyJXqiauJgZFamM1t6YxfbBxqkSrPDRp3OCsjAxh
-        f8jMYsDWlgerlmpCG8S6XagS2NYCLT+tKELRlT8pYNaWdhssZEOjgdIaWihiN+Bcpy083XPP
-        +c459+G7kJbGuXRY4Auouk/xODk789PxOy3PNA13u54NlT+P66KjPP7kRpjHc9WDDP4ifpXD
-        R3tGWHzg3GkWj51pZvDEfC/Aty98SuHKxDEKz342zuK2owmAz3eEOHxm5iTAfQ0XOFx/KUrh
-        UP0Ag6ODW/GVwV4O7+vq4fHSxRZmS6rcWNMI5L9j+3i5pnGX/EPwCi+3ntjPyX9c7OTk/lg7
-        JX9Zs0jJxxsWePlW66Pb7TvXbHYrgfdzCvJ96196Z422PNFCF910lNya6WTLQKOjHNggEjei
-        lsU+thzYoSSOAjTbMMxZl36AmiILpgIhJ25G5Zd5YnCIm9AvAyGGzNBiCKJvx0dYIqSI+ajq
-        o4OcNaSh+f7P7xpeRP9W/cyTHEZ8AtWGPyS0IL6O2r85TxMsidcAiiVUgm3imyg8Fv6fB+Ij
-        aH/ZDYpgWkxDrX8usNajRVTX+Rtt4VQ0Nbl0l3eirsU4Q6poMQOd6lhvwS2o/fcdVspjqPJA
-        nLdekIx+/eoqUwEeDK4qCK6Ygyvm4CpzcJX5a8CeAMirFHjylYC6IUtXi7N0v+Y1j3f93lZg
-        7cvc92A5si0CKAgi4CFIOVOF2ktnXdIDbn9eqaYYWq5e7FGNCECQdjqE6OEulyTkKaUfqLr/
-        nrQOMs404cn4QZckkq5CVS1S9XvqwxA6kZA41+2SknU1Xy15r8ATWJEpaCPh9nSHofryVF0p
-        Dmi5ZDlyDXM7iLTW7G0bMu2CUaR4TdayDoKnYcVUdS0Ne6rra2mJ8fl9anqasIeMimRUK/bd
-        L5oGaRA4U4TbRF1rfpr7OdNmBWVWZE+eJRUBZUVKLwM9iVfdGUZSfN3yx6evpxzaNFJzBNwc
-        n5MrS2KvJScVJoWnMp472Zzz8uFJ98JS804h8xWbu+uFY3tnLu94S/ird3F6I3vqzmzd0Nbp
-        Cmk053HvkfneKiMp274rdu3HzGyjdDkHJjfb/uloKHvDU9T09rZqh9aR6Ti0fWziu8K23VHO
-        yRiasuEpWjeU/wDZVjMd8QMAAA==
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gTGludXMsDQoNCk9uIFN1biwgMjAxOS0xMS0wMyBhdCAyMzoyNyArMDEwMCwgTGludXMg
-V2FsbGVpaiB3cm90ZToNCj4gT24gRnJpLCBOb3YgMSwgMjAxOSBhdCAxMjo0MyBQTSBNYXR0aSBW
-YWl0dGluZW4NCj4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4gd3JvdGU6DQo+
-IA0KPiA+IEJ1Y2tzIDEsMiw2IGFuZCA3IG9uIFJPSE0gQkQ3MTgyOCBjYW4gYmUgZWl0aGVyIGNv
-bnRyb2xsZWQgYXMNCj4gPiBpbmRpdmlkdWFsIHJlZ3VsYXJ0b3JzIC0gb3IgdGhleSBjYW4gYmUg
-Z3JvdXBlZCB0byBhIGdyb3VwIG9mDQo+ID4gcmVndWxhdG9ycyB0aGF0IGFyZSBjb250cm9sbGVk
-IGJ5ICdydW4gbGV2ZWxzJy4gVGhpcyBjYW4gYmUNCj4gPiBkb25lIHZpYSBJMkMuIEVhY2ggcmVn
-dWxhdG9yIGNhbiBiZSBhc3NpZ25lZCBhIHZvbHRhZ2UgYW5kDQo+ID4gZW5hYmxlL2Rpc2FibGUg
-c3RhdHVzIGZvciBlYWNoIHJ1bi1sZXZlbC4gVGhlc2Ugc3RhdHVzZXMgYXJlDQo+ID4gYWxzbyBj
-aGFuZ2VhYmxlIHZpYSBJMkMuDQo+ID4gDQo+ID4gUnVuLWxldmVscyBjYW4gdGhlbiBiZSBjaGFu
-Z2VkIGVpdGhlciBieSBJMkMgb3IgR1BJTy4gVGhpcw0KPiA+IGNvbnRyb2wgbWVjaGFuaXNtIGlz
-IHNlbGVjdGVkIGJ5IGRhdGEgaW4gb25lIHRpbWUgcHJvZ3JhbW1hYmxlDQo+ID4gYXJlYSAoZHVy
-aW5nIHByb2R1Y3Rpb24pIGFuZCBjYW4ndCBiZSBjaGFuZ2VkIGxhdGVyLg0KPiA+IA0KPiA+IEFs
-bG93IHJlZ3VsYXRvcnMgdG8gYmUgY29udHJvbGxlZCB2aWEgcnVuLWxldmVscyBhbmQgYWxsb3cN
-Cj4gPiBnZXR0aW5nL3NldHRpbmcgdGhlIGN1cnJlbnQgcnVuLWxldmVsIGFsc28gdmlhIEdQSU8u
-DQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogTWF0dGkgVmFpdHRpbmVuIDxtYXR0aS52YWl0dGlu
-ZW5AZmkucm9obWV1cm9wZS5jb20+DQo+IA0KPiBJIGxpa2UgdGhlIHdheSB5b3UgdXNlIHRoZSBn
-cGlvIEFQSSBzbyBGV0lXOg0KPiBSZXZpZXdlZC1ieTogTGludXMgV2FsbGVpaiA8bGludXMud2Fs
-bGVpakBsaW5hcm8ub3JnPg0KDQpUaGFua3MuIEFuZCBJIGxpa2UgdGhlIEdQSU8gc2V0IG11bHRp
-cGxlIC0gdGhhdCdzIHJlcXVpcmVkIGluIG9yZGVyIHRvDQpkbyBzb21lIG9mIHRoZSBydW4tbGV2
-ZWwgY2hhbmdlcyB3aXRob3V0IGludGVybWVkaWF0ZSBzdGF0ZXMuIChFZy4gYm90aA0KRFZTIEdQ
-SU9zIG5lZWQgdG8gYmUgdG9nZ2xlZCB2aWEgc2luZ2xlIHJlZ2lzdGVyIHdyaXRlKS4NCg0KPiBJ
-IGRvIG5vdCB1bmRlcnN0YW5kIHRoZSByZWd1bGF0b3IgcGFydHMgb2YgdGhlIHBhdGNoLg0KDQpJ
-J20gc29ycnkuIFRoZSBwYXRjaCBpcyBub3QgY2xlYXJlc3Qgb25lIHdoYXQgY29tZXMgdG8gdGhl
-IHJlZ3VsYXRvcg0Kc3R1ZmYuIEkgY2FuIHRyeSBzcGxpdHRpbmcgaXQgdG8gc21hbGxlciBhbmQg
-bW9yZSBsb2dpY2FsIGNoYW5nZXMgaWYNCnlvdSwgTWFyayBvciBvdGhlciBpbnRlcmVzdGVkIHBl
-b3BsZSBob3BlIHRvIGdldCBpdCBzcGxpdHRlZC4gT3INCnBlcmhhcHMgaXQgd291bGQgYmUgc2lt
-cGxlc3QgdG8gcmV2aWV3IGlmIGl0IHdhcyBhbGwgaW4gb25lIHBhdGNoPyANCg0KUmF0aW9uYWxl
-IGZvciBzcGxpdHRpbmcgaXQgaW4gZmlyc3QgcGxhY2Ugd2FzIHRoYXQgSSBob3BlZCB0aGUgYmFz
-aWMNCnN1cHBvcnQgKGZpcnN0IHR3byByZWd1bGF0b3IgcGF0Y2hlcykgdG8gYmUgYWNjZXB0YWJs
-ZSB3aXRob3V0IGh1Z2UNCmNoYW5nZXMgLSB3aGVyZWFzIHRoZSBmb2xsb3cgdXAgcGF0Y2hlcyBh
-cmUgbW9yZSBsaWtlIHF1ZXN0aW9uIHRoYXQgaG93DQp0aGUgaGVjayBzaG91bGQgSSBpbXBsZW1l
-bnQgdGhpcyA6XSBJJ3ZlIG5vdCBoaXQgc2ltaWxhciAnY2hhbmdlIGJ1bmNoDQpvZiByZWd1bGF0
-b3Igc3RhdGVzIGF0IG9uZSBnbycgZHJpdmVycy9oYXJkd2FyZSBiZWZvcmUuDQoNCkJyLA0KCU1h
-dHRpIFZhaXR0aW5lbg0K
+
+On Sun 27 Oct 2019 at 17:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+
+> The XTAL clock is an actual crystal which is mounted on the PCB. Thus
+> the meson8b clock controller driver should not provide the XTAL clock.
+>
+> The meson8b clock controller driver must not use references to
+> the meson8b_xtal clock anymore before we can provide the XTAL clock
+> via OF. Replace the references to the meson8b_xtal.hw by using
+> clk_parent_data.name = "xtal" (along with index = -1) because this works
+> regardless how the XTAL clock is registered (either as fixed-clock in
+> the .dtb or - if missing - when registered in the meson8b clock
+> controller driver).
+>
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/meson8b.c | 73 ++++++++++++++++++++-----------------
+>  1 file changed, 39 insertions(+), 34 deletions(-)
+>
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index d376f80e806d..b785b67baf2b 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -97,8 +97,9 @@ static struct clk_regmap meson8b_fixed_pll_dco = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "fixed_pll_dco",
+>  		.ops = &meson_clk_pll_ro_ops,
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.name = "xtal",
+> +			.index = -1,
+
+if I got correctly, when transitioning to DT, you can specify both
+"fw_name" and "name". CCF should try to get the clock through DT and
+fallback to global name matching if not available
+
+>  		},
+>  		.num_parents = 1,
+>  	},
+> @@ -162,8 +163,9 @@ static struct clk_regmap meson8b_hdmi_pll_dco = {
+>  		/* sometimes also called "HPLL" or "HPLL PLL" */
+>  		.name = "hdmi_pll_dco",
+>  		.ops = &meson_clk_pll_ro_ops,
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.name = "xtal",
+> +			.index = -1,
+>  		},
+>  		.num_parents = 1,
+>  	},
+> @@ -237,8 +239,9 @@ static struct clk_regmap meson8b_sys_pll_dco = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "sys_pll_dco",
+>  		.ops = &meson_clk_pll_ops,
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.name = "xtal",
+> +			.index = -1,
+>  		},
+>  		.num_parents = 1,
+>  	},
+> @@ -631,9 +634,9 @@ static struct clk_regmap meson8b_cpu_in_sel = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_in_sel",
+>  		.ops = &clk_regmap_mux_ops,
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw,
+> -			&meson8b_sys_pll.hw,
+> +		.parent_data = (const struct clk_parent_data[]) {
+> +			{ .name = "xtal", .index = -1, },
+> +			{ .hw = &meson8b_sys_pll.hw, },
+>  		},
+>  		.num_parents = 2,
+>  		.flags = (CLK_SET_RATE_PARENT |
+> @@ -736,9 +739,9 @@ static struct clk_regmap meson8b_cpu_clk = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "cpu_clk",
+>  		.ops = &clk_regmap_mux_ops,
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw,
+> -			&meson8b_cpu_scale_out_sel.hw,
+> +		.parent_data = (const struct clk_parent_data[]) {
+> +			{ .name = "xtal", .index = -1, },
+> +			{ .hw = &meson8b_cpu_scale_out_sel.hw, },
+>  		},
+>  		.num_parents = 2,
+>  		.flags = (CLK_SET_RATE_PARENT |
+> @@ -758,12 +761,12 @@ static struct clk_regmap meson8b_nand_clk_sel = {
+>  		.name = "nand_clk_sel",
+>  		.ops = &clk_regmap_mux_ops,
+>  		/* FIXME all other parents are unknown: */
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_fclk_div4.hw,
+> -			&meson8b_fclk_div3.hw,
+> -			&meson8b_fclk_div5.hw,
+> -			&meson8b_fclk_div7.hw,
+> -			&meson8b_xtal.hw,
+> +		.parent_data = (const struct clk_parent_data[]) {
+> +			{ .hw = &meson8b_fclk_div4.hw, },
+> +			{ .hw = &meson8b_fclk_div3.hw, },
+> +			{ .hw = &meson8b_fclk_div5.hw, },
+> +			{ .hw = &meson8b_fclk_div7.hw, },
+> +			{ .name = "xtal", .index = -1, },
+>  		},
+>  		.num_parents = 5,
+>  		.flags = CLK_SET_RATE_PARENT,
+> @@ -1721,8 +1724,9 @@ static struct clk_regmap meson8b_hdmi_sys_sel = {
+>  		.name = "hdmi_sys_sel",
+>  		.ops = &clk_regmap_mux_ro_ops,
+>  		/* FIXME: all other parents are unknown */
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.name = "xtal",
+> +			.index = -1,
+>  		},
+>  		.num_parents = 1,
+>  		.flags = CLK_SET_RATE_NO_REPARENT,
+> @@ -1767,14 +1771,14 @@ static struct clk_regmap meson8b_hdmi_sys = {
+>   * muxed by a glitch-free switch on Meson8b and Meson8m2. Meson8 only
+>   * has mali_0 and no glitch-free mux.
+>   */
+> -static const struct clk_hw *meson8b_mali_0_1_parent_hws[] = {
+> -	&meson8b_xtal.hw,
+> -	&meson8b_mpll2.hw,
+> -	&meson8b_mpll1.hw,
+> -	&meson8b_fclk_div7.hw,
+> -	&meson8b_fclk_div4.hw,
+> -	&meson8b_fclk_div3.hw,
+> -	&meson8b_fclk_div5.hw,
+> +static const struct clk_parent_data meson8b_mali_0_1_parent_data[] = {
+> +	{ .name = "xtal", .index = -1, },
+> +	{ .hw = &meson8b_mpll2.hw, },
+> +	{ .hw = &meson8b_mpll1.hw, },
+> +	{ .hw = &meson8b_fclk_div7.hw, },
+> +	{ .hw = &meson8b_fclk_div4.hw, },
+> +	{ .hw = &meson8b_fclk_div3.hw, },
+> +	{ .hw = &meson8b_fclk_div5.hw, },
+>  };
+>  
+>  static u32 meson8b_mali_0_1_mux_table[] = { 0, 2, 3, 4, 5, 6, 7 };
+> @@ -1789,8 +1793,8 @@ static struct clk_regmap meson8b_mali_0_sel = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mali_0_sel",
+>  		.ops = &clk_regmap_mux_ops,
+> -		.parent_hws = meson8b_mali_0_1_parent_hws,
+> -		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_hws),
+> +		.parent_data = meson8b_mali_0_1_parent_data,
+> +		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_data),
+>  		/*
+>  		 * Don't propagate rate changes up because the only changeable
+>  		 * parents are mpll1 and mpll2 but we need those for audio and
+> @@ -1844,8 +1848,8 @@ static struct clk_regmap meson8b_mali_1_sel = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "mali_1_sel",
+>  		.ops = &clk_regmap_mux_ops,
+> -		.parent_hws = meson8b_mali_0_1_parent_hws,
+> -		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_hws),
+> +		.parent_data = meson8b_mali_0_1_parent_data,
+> +		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_data),
+>  		/*
+>  		 * Don't propagate rate changes up because the only changeable
+>  		 * parents are mpll1 and mpll2 but we need those for audio and
+> @@ -1944,8 +1948,9 @@ static struct clk_regmap meson8m2_gp_pll_dco = {
+>  	.hw.init = &(struct clk_init_data){
+>  		.name = "gp_pll_dco",
+>  		.ops = &meson_clk_pll_ops,
+> -		.parent_hws = (const struct clk_hw *[]) {
+> -			&meson8b_xtal.hw
+> +		.parent_data = &(const struct clk_parent_data) {
+> +			.name = "xtal",
+> +			.index = -1,
+>  		},
+>  		.num_parents = 1,
+>  	},
+
