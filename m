@@ -2,254 +2,141 @@ Return-Path: <SRS0=14qQ=Y4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AFD8CA9ECF
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 08:08:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83E6CA9ECF
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 08:19:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 217D821744
-	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 08:08:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA9D2222C6
+	for <linux-clk@archiver.kernel.org>; Mon,  4 Nov 2019 08:19:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="kewSJ4AF"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KdoI2/vv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727322AbfKDIIT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 4 Nov 2019 03:08:19 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54835 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726633AbfKDIIT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 4 Nov 2019 03:08:19 -0500
-Received: by mail-wm1-f68.google.com with SMTP id z26so2316844wmi.4
-        for <linux-clk@vger.kernel.org>; Mon, 04 Nov 2019 00:08:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=MCuKFJgt4493oVJusvtutFHlaoTvavsZO8OJ49Du7VQ=;
-        b=kewSJ4AFdAdRg/ZA6mLKuKRCk4bKbhlSTcqaSp7a2ryiUk2AlUFfTYKXidGLLGFfHk
-         TxgM6dvj+/h7nA2J857CUctnbap52/xArAt7DGAtBzT8GkAGsfvbFAlpEvP80USUKUMN
-         4DhnSx0sx1T9AJraMBE71iz1o9d7Wq1lf6rrjkGXRt0LGrgWDGoSndUdxXcorFdI9yRl
-         udZnNZuP0hbTGXHdBQRkdWoasWX7vtkG1beb4HPz2bEBbLaR52Lt/UMndlo/m+iuFnrR
-         n5pCuFobN/w0Gx6VTFfepZY99s1w7xH2eVqhYGBReLAKcwRoFiacjAiLDSX+yxVOSsD0
-         x5Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=MCuKFJgt4493oVJusvtutFHlaoTvavsZO8OJ49Du7VQ=;
-        b=NukaZrY6z7zp0vS54xUwKwR7JzPhHpTlaR7x9gwh/KY5dO4CKnuwCABpIhU1RFkqar
-         elZCACyNwmg6hz8/Hbz053YBlfoqKfi6Vkt0f3pJroASjZRd/eJlfeoBhFdzADatXur6
-         8wkOSklv2Al9jhPCVEab8grqu6lgM0UZvtiPdS2x9+XgytYBolgMxvoJL09DiVUDdUny
-         kIpRau3rgOmqq0SzUonlkN8dGXeUaDmIYVjM6l+i73POp15Iv0kn934QVApRrpqre48T
-         48JY6YuDoMtr2aaRQxm7n6h5RZfRSjsVZWfpPzrerlpzhoHw4H8fveuWmIkp0FQ6Q27r
-         /teg==
-X-Gm-Message-State: APjAAAWfLGugV3s1FQosSkZYedyFrop9SS3AiJ4gyzXAwlr0XbFjGtJk
-        7hdpNroLqL63dwBI+orFLFOXfw==
-X-Google-Smtp-Source: APXvYqy1R3nOCfQIXOAHxdlReFUWyMsMXJ1hvWq6zkqkU2Wqn4kMxDTTJDjub+A3plJqlpINWy3O3Q==
-X-Received: by 2002:a1c:7905:: with SMTP id l5mr17673710wme.76.1572854896300;
-        Mon, 04 Nov 2019 00:08:16 -0800 (PST)
-Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id t12sm14949737wrx.93.2019.11.04.00.08.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Nov 2019 00:08:15 -0800 (PST)
-References: <20191027161805.1176321-1-martin.blumenstingl@googlemail.com> <20191027161805.1176321-4-martin.blumenstingl@googlemail.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        narmstrong@baylibre.com, linux-amlogic@lists.infradead.org,
-        khilman@baylibre.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] clk: meson: meson8b: change references to the XTAL clock to use the name
-In-reply-to: <20191027161805.1176321-4-martin.blumenstingl@googlemail.com>
-Date:   Mon, 04 Nov 2019 09:08:14 +0100
-Message-ID: <1jd0e83vyp.fsf@starbuckisacylon.baylibre.com>
+        id S1727332AbfKDITk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 4 Nov 2019 03:19:40 -0500
+Received: from mail-eopbgr10065.outbound.protection.outlook.com ([40.107.1.65]:21895
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726441AbfKDITk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 4 Nov 2019 03:19:40 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WBIFOptkWEk2amk+Ss5fJG34/X5+bgfY5zIA+KV4/Ep4ZStUvusbENrtmPrp/XYUQC2ZmF7+nJkb6ctx3LFlESRTAXEH8UcEiJjQ87Uep1TWUnU1ymLJpoB1ELKCzgUPyScROsFJGZRJDKMW3ndVFlgRhxt60VoUwo4eSozQRRFQW5BteNSQ8RTwA5MF/rqle9NF7c8LnOlnxrkwsysAyJjnb53zW5rekbdYP5ZIERQUMOkgj4dNbnmFDhSSf3Q3bsPD1EdcU5Cfhg74TUrxvb4P9D/ziai2bP7gYm933yDG60cdOIbTlPXKEx15R+ySvrssOnGf8QmtavN5qFmlAw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=woOEwPZT9X/FUZEnx3QG6yv093CcOEuSuT8J51eubZA=;
+ b=YEtOjZwcEANp021oH4biBdjOtFYUMUd9u5bvrPFjp20sg1qqS8oIn2ryv474TJ7kaA6SakzRBO8VI117zh9E8k3jv0q0X+8CxLVzfpEuRJ6RlJM84ogVUf5PqedVU1aZkmYylMAEipZgEtxeBCFx3+GTH6+9sGRbPbIjoK6UdAefJ6IWOGjvMdsHO8LngzqYpqO4vgRJ5qCp4AxH4WpueXcmZv4WQ8RNDkyOx1NV7hCaSTjUNhFc5SZxmynSZcMOVyFF98awySBGCQiE8+6nhZnR7mm9cj8hnGU7wP/Pioew4T4+Q0EHTEeUNHkNnoQjK2tea9Q3kuAHipK+vts1Fw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=woOEwPZT9X/FUZEnx3QG6yv093CcOEuSuT8J51eubZA=;
+ b=KdoI2/vv4EBiY/JSWxsybNicRHnIrto1znyhyp9dSPyDYUY404K7CEeq/ZJq3+cpQnMuLAYKHXR0l8fEiJOseDuX+WEXw32vfOtLJCandXBEQbkdUdaIX179/TZG+/R8xzOOumojh61c9j04u/38xjX+AobxxBoPCHhNQUNHc9k=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6212.eurprd04.prod.outlook.com (20.179.36.86) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Mon, 4 Nov 2019 08:19:33 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2408.024; Mon, 4 Nov 2019
+ 08:19:33 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: imx8mn: add IMX8MN_CLK_SAI7_IPG clk
+Thread-Topic: [PATCH] clk: imx: imx8mn: add IMX8MN_CLK_SAI7_IPG clk
+Thread-Index: AQHVkuiWYOV+kg2wl0yC3cmY9ucIdQ==
+Date:   Mon, 4 Nov 2019 08:19:33 +0000
+Message-ID: <1572855483-10624-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0036.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:3e::24) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: cc3181e7-fcc3-478e-3d9d-08d760ffb8ff
+x-ms-traffictypediagnostic: AM0PR04MB6212:|AM0PR04MB6212:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB62120C95DE6C68860D63ED83887F0@AM0PR04MB6212.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2803;
+x-forefront-prvs: 0211965D06
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(396003)(346002)(366004)(136003)(376002)(199004)(189003)(2906002)(305945005)(7736002)(66066001)(256004)(25786009)(3846002)(6116002)(81166006)(2616005)(186003)(476003)(26005)(2201001)(52116002)(6486002)(316002)(81156014)(86362001)(54906003)(44832011)(50226002)(99286004)(8936002)(110136005)(66556008)(66476007)(6636002)(5660300002)(102836004)(4326008)(8676002)(486006)(6512007)(6436002)(14454004)(36756003)(478600001)(71200400001)(6506007)(71190400001)(386003)(64756008)(66446008)(2501003)(66946007)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6212;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: SoUjoZNrZYSM42Oh0Xgca1xIFLRn1+dfQGHYpCaGXtN2EYMuILbAPgvMlLDUQlBr6i/ars2fkgXJSGzqSTp2ZbcT7f13vb/KP7j/74EERpdLo4sSOrEXOUeUq+H4t821mYOA/8/HRhzi5WQJyLil6fOdmDlLQOg27gAJMxFk/MBkACYY3QMjW7A95hahXOwAk+E2U7/u1DTX+1EUefORF82fyJ32UqwER1F+BhRiG2GzKpcqVEUPrxd/L9Vbv95xo3JR/2B1KKnDh6wBh7sBIegAxwHbU4ZCWY4xVNJIL+dBroN/7Zal9TT2bv6oRkJ1augMrb3/4/ZMkpdfsqP6sfdDOFC0fTU8BuZo31PqvFaPDyzdd0xSlKxxX0dyX7yRJMbYORssjB+gE7t9Ki3YlxDTNsBHjjGvPFaJ2j5fgwMU+5yQoCMjarBWgTf2OkeD
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cc3181e7-fcc3-478e-3d9d-08d760ffb8ff
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Nov 2019 08:19:33.6954
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zokdg3ow+NFgmQrVm2x/+1tu95CPVUI6pme2n9ADzPyJdRLa6PUZftLoCDJ5GOCV49xtL9jPulqbC+jVujx0sg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6212
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-On Sun 27 Oct 2019 at 17:18, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+It does not make sense to use shared count for IMX8MN_CLK_SAI7_ROOT
+without ipg clk. Actually there are ipg clks for other sai clks,
+let's add IMX8MN_CLK_SAI7_IPG clk.
 
-> The XTAL clock is an actual crystal which is mounted on the PCB. Thus
-> the meson8b clock controller driver should not provide the XTAL clock.
->
-> The meson8b clock controller driver must not use references to
-> the meson8b_xtal clock anymore before we can provide the XTAL clock
-> via OF. Replace the references to the meson8b_xtal.hw by using
-> clk_parent_data.name = "xtal" (along with index = -1) because this works
-> regardless how the XTAL clock is registered (either as fixed-clock in
-> the .dtb or - if missing - when registered in the meson8b clock
-> controller driver).
->
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/meson8b.c | 73 ++++++++++++++++++++-----------------
->  1 file changed, 39 insertions(+), 34 deletions(-)
->
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index d376f80e806d..b785b67baf2b 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -97,8 +97,9 @@ static struct clk_regmap meson8b_fixed_pll_dco = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "fixed_pll_dco",
->  		.ops = &meson_clk_pll_ro_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "xtal",
-> +			.index = -1,
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mn.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-if I got correctly, when transitioning to DT, you can specify both
-"fw_name" and "name". CCF should try to get the clock through DT and
-fallback to global name matching if not available
-
->  		},
->  		.num_parents = 1,
->  	},
-> @@ -162,8 +163,9 @@ static struct clk_regmap meson8b_hdmi_pll_dco = {
->  		/* sometimes also called "HPLL" or "HPLL PLL" */
->  		.name = "hdmi_pll_dco",
->  		.ops = &meson_clk_pll_ro_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "xtal",
-> +			.index = -1,
->  		},
->  		.num_parents = 1,
->  	},
-> @@ -237,8 +239,9 @@ static struct clk_regmap meson8b_sys_pll_dco = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "sys_pll_dco",
->  		.ops = &meson_clk_pll_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "xtal",
-> +			.index = -1,
->  		},
->  		.num_parents = 1,
->  	},
-> @@ -631,9 +634,9 @@ static struct clk_regmap meson8b_cpu_in_sel = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_in_sel",
->  		.ops = &clk_regmap_mux_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw,
-> -			&meson8b_sys_pll.hw,
-> +		.parent_data = (const struct clk_parent_data[]) {
-> +			{ .name = "xtal", .index = -1, },
-> +			{ .hw = &meson8b_sys_pll.hw, },
->  		},
->  		.num_parents = 2,
->  		.flags = (CLK_SET_RATE_PARENT |
-> @@ -736,9 +739,9 @@ static struct clk_regmap meson8b_cpu_clk = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_clk",
->  		.ops = &clk_regmap_mux_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw,
-> -			&meson8b_cpu_scale_out_sel.hw,
-> +		.parent_data = (const struct clk_parent_data[]) {
-> +			{ .name = "xtal", .index = -1, },
-> +			{ .hw = &meson8b_cpu_scale_out_sel.hw, },
->  		},
->  		.num_parents = 2,
->  		.flags = (CLK_SET_RATE_PARENT |
-> @@ -758,12 +761,12 @@ static struct clk_regmap meson8b_nand_clk_sel = {
->  		.name = "nand_clk_sel",
->  		.ops = &clk_regmap_mux_ops,
->  		/* FIXME all other parents are unknown: */
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_fclk_div4.hw,
-> -			&meson8b_fclk_div3.hw,
-> -			&meson8b_fclk_div5.hw,
-> -			&meson8b_fclk_div7.hw,
-> -			&meson8b_xtal.hw,
-> +		.parent_data = (const struct clk_parent_data[]) {
-> +			{ .hw = &meson8b_fclk_div4.hw, },
-> +			{ .hw = &meson8b_fclk_div3.hw, },
-> +			{ .hw = &meson8b_fclk_div5.hw, },
-> +			{ .hw = &meson8b_fclk_div7.hw, },
-> +			{ .name = "xtal", .index = -1, },
->  		},
->  		.num_parents = 5,
->  		.flags = CLK_SET_RATE_PARENT,
-> @@ -1721,8 +1724,9 @@ static struct clk_regmap meson8b_hdmi_sys_sel = {
->  		.name = "hdmi_sys_sel",
->  		.ops = &clk_regmap_mux_ro_ops,
->  		/* FIXME: all other parents are unknown */
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "xtal",
-> +			.index = -1,
->  		},
->  		.num_parents = 1,
->  		.flags = CLK_SET_RATE_NO_REPARENT,
-> @@ -1767,14 +1771,14 @@ static struct clk_regmap meson8b_hdmi_sys = {
->   * muxed by a glitch-free switch on Meson8b and Meson8m2. Meson8 only
->   * has mali_0 and no glitch-free mux.
->   */
-> -static const struct clk_hw *meson8b_mali_0_1_parent_hws[] = {
-> -	&meson8b_xtal.hw,
-> -	&meson8b_mpll2.hw,
-> -	&meson8b_mpll1.hw,
-> -	&meson8b_fclk_div7.hw,
-> -	&meson8b_fclk_div4.hw,
-> -	&meson8b_fclk_div3.hw,
-> -	&meson8b_fclk_div5.hw,
-> +static const struct clk_parent_data meson8b_mali_0_1_parent_data[] = {
-> +	{ .name = "xtal", .index = -1, },
-> +	{ .hw = &meson8b_mpll2.hw, },
-> +	{ .hw = &meson8b_mpll1.hw, },
-> +	{ .hw = &meson8b_fclk_div7.hw, },
-> +	{ .hw = &meson8b_fclk_div4.hw, },
-> +	{ .hw = &meson8b_fclk_div3.hw, },
-> +	{ .hw = &meson8b_fclk_div5.hw, },
->  };
->  
->  static u32 meson8b_mali_0_1_mux_table[] = { 0, 2, 3, 4, 5, 6, 7 };
-> @@ -1789,8 +1793,8 @@ static struct clk_regmap meson8b_mali_0_sel = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "mali_0_sel",
->  		.ops = &clk_regmap_mux_ops,
-> -		.parent_hws = meson8b_mali_0_1_parent_hws,
-> -		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_hws),
-> +		.parent_data = meson8b_mali_0_1_parent_data,
-> +		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_data),
->  		/*
->  		 * Don't propagate rate changes up because the only changeable
->  		 * parents are mpll1 and mpll2 but we need those for audio and
-> @@ -1844,8 +1848,8 @@ static struct clk_regmap meson8b_mali_1_sel = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "mali_1_sel",
->  		.ops = &clk_regmap_mux_ops,
-> -		.parent_hws = meson8b_mali_0_1_parent_hws,
-> -		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_hws),
-> +		.parent_data = meson8b_mali_0_1_parent_data,
-> +		.num_parents = ARRAY_SIZE(meson8b_mali_0_1_parent_data),
->  		/*
->  		 * Don't propagate rate changes up because the only changeable
->  		 * parents are mpll1 and mpll2 but we need those for audio and
-> @@ -1944,8 +1948,9 @@ static struct clk_regmap meson8m2_gp_pll_dco = {
->  	.hw.init = &(struct clk_init_data){
->  		.name = "gp_pll_dco",
->  		.ops = &meson_clk_pll_ops,
-> -		.parent_hws = (const struct clk_hw *[]) {
-> -			&meson8b_xtal.hw
-> +		.parent_data = &(const struct clk_parent_data) {
-> +			.name = "xtal",
-> +			.index = -1,
->  		},
->  		.num_parents = 1,
->  	},
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 838f6e2347f1..5e801892c631 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -556,6 +556,7 @@ static int imx8mn_clocks_probe(struct platform_device *=
+pdev)
+ 	clks[IMX8MN_CLK_SDMA2_ROOT] =3D imx_clk_hw_gate4("sdma2_clk", "ipg_audio_=
+root", base + 0x43b0, 0);
+ 	clks[IMX8MN_CLK_SDMA3_ROOT] =3D imx_clk_hw_gate4("sdma3_clk", "ipg_audio_=
+root", base + 0x45f0, 0);
+ 	clks[IMX8MN_CLK_SAI7_ROOT] =3D imx_clk_hw_gate2_shared2("sai7_root_clk", =
+"sai7", base + 0x4650, 0, &share_count_sai7);
++	clks[IMX8MN_CLK_SAI7_IPG] =3D imx_clk_hw_gate2_shared2("sai7_ipg_clk", "i=
+pg_audio_root", base + 0x4650, 0, &share_count_sai7);
+=20
+ 	clks[IMX8MN_CLK_DRAM_ALT_ROOT] =3D imx_clk_hw_fixed_factor("dram_alt_root=
+", "dram_alt", 1, 4);
+=20
+--=20
+2.16.4
 
