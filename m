@@ -2,172 +2,248 @@ Return-Path: <SRS0=Glxp=Y5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3697FC5DF61
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 19:16:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D17DC5DF61
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 19:26:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE37F206BA
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 19:16:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D20521928
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 19:26:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="hiQv1SCT"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="TiRRiiKd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390894AbfKETQC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Nov 2019 14:16:02 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:60696 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390526AbfKETQB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 14:16:01 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA5JFQhd056692;
-        Tue, 5 Nov 2019 13:15:26 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1572981326;
-        bh=EcoGS6j0s8IWE01lKKx9TXLRSHW8gbHmupnZYacNFWg=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=hiQv1SCTJvcMHBzAopoD1ytQNtPv60OtKZshyfH/29z8ioz2LfWvN1b6r1jvxX/mB
-         4gfSiu8zMV3JsJtVr7SuiOmlbSRr5eM6ayTtFaTHNdIp7aBtbX3gkajdTkAaBJyJDz
-         Kuu5/s09dJ9Njpx1TrveXVrZ/3+olbhatO4LjHEI=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA5JFQK7069157
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 5 Nov 2019 13:15:26 -0600
-Received: from DLEE100.ent.ti.com (157.170.170.30) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 5 Nov
- 2019 13:15:11 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 5 Nov 2019 13:15:11 -0600
-Received: from [10.250.33.226] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA5JFPs1030118;
-        Tue, 5 Nov 2019 13:15:25 -0600
-Subject: Re: [RFC PATCH v3 04/15] dt-bindings: leds: ROHM BD71282 PMIC LED
- driver
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        <mazziesaccount@gmail.com>
-CC:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Rob Herring <robh+dt@kernel.org>,
+        id S2390819AbfKET0H (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Nov 2019 14:26:07 -0500
+Received: from mail-eopbgr130054.outbound.protection.outlook.com ([40.107.13.54]:59700
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S2390943AbfKET0H (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 5 Nov 2019 14:26:07 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=G8GJcIbZ0JLnP3fHrgMIQhYTTaOukFilNoKhbPYmZkFe0ynm+Nse/AHh1UE+x/Vv3zVw61XAEVrb0zOpYT5QbkGmaFk10RpWn96cG4332qDpHzQ6k/ALD8XDoxV7ssal+G3QHCHcO9Bm9sWnWkIk64I9jQ4K8i0s+Gc2DIk5A4vZDI5AS2tVuMnDR+ivjnqC35T7zAgQvofXFZSxFepNRFcoOpdvKIkVFxX/ILE+u5CeyBsPg/vsuqyLlysbPOgQBXehcNuLMLMy9YKPyuSVF02wVV2UCaxIIYfpkEmXO64aFBZZ+oN6toK4ujavqvhU948Kzq+8tXy5/EhoPOueDw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ddzith1KCgIQvGUdk2FllzeY1o8XmIkimAvZ7eZbiYs=;
+ b=COAAhHsclhEZuBQzouJ0PXBlvbbzqQakeqDC9TmimKaXFSx9Zx+dLesIrsAt+mqVeQRdkGPMgKO99v3DHG36cByPtAHs9AeRibYTWwB+U+bhmZAKbQUb5AsvH1SLOfnxPqefXh0/HpizoivvD+PcIYnyB8mcwAYlWepqEIqHqWaOjaerl+v7GPqt+cCEqEKuJKrpGvcR4O3M2DL9cRi8SE8kgfptrIMxi4VAK0Js3EGcvJp66JadcsBRxROlkyVxPTnTNvLdmTJQgM9N+nR6qU/7HP//Q80T33D1lnDW2i91powk8GORqMqE7Ky2PtF+qX0bjMlAEGVqfPCXeC8Irw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Ddzith1KCgIQvGUdk2FllzeY1o8XmIkimAvZ7eZbiYs=;
+ b=TiRRiiKd3PMgcKZa8aTGsNLsH1rEnm8rKWzx36QC0XlBJAq80e3nRDeUuSZfUmMeDBzCp2QOYkeRzja5xR3T1/o6fpBBIWkRi5A5dyk/HQW7/QGTYYefHVmzftqVOfmYvgwT/PFNnAlJwpfwMrHA4QdMXAyzckr5+e4QEZneZPE=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB5759.eurprd04.prod.outlook.com (20.178.125.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2408.24; Tue, 5 Nov 2019 19:25:57 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::dd0c:72dc:e462:16b3]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::dd0c:72dc:e462:16b3%5]) with mapi id 15.20.2408.024; Tue, 5 Nov 2019
+ 19:25:57 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Rob Herring <robh@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>
+CC:     Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Shawn Guo <shawnguo@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        <linux-leds@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-gpio@vger.kernel.org>, <linux-rtc@vger.kernel.org>
-References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
- <f9178204ea3925b454ecbe58df4c297fec346a4f.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Dan Murphy <dmurphy@ti.com>
-Message-ID: <37d85b2d-8fca-a998-95ae-61f0c049054d@ti.com>
-Date:   Tue, 5 Nov 2019 13:14:33 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <f9178204ea3925b454ecbe58df4c297fec346a4f.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+        =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: devfreq: Add bindings for imx ddr
+ controller
+Thread-Topic: [PATCH v3 3/6] dt-bindings: devfreq: Add bindings for imx ddr
+ controller
+Thread-Index: AQHVkDU6emQ0aN+uuUOlCrShp6WAog==
+Date:   Tue, 5 Nov 2019 19:25:57 +0000
+Message-ID: <VI1PR04MB7023F375AEDC4549FA12247FEE7E0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <cover.1572558427.git.leonard.crestez@nxp.com>
+ <b9a87c69eb603622303add4f0c02dd4c1262462a.1572558427.git.leonard.crestez@nxp.com>
+ <20191104222126.GB5218@bogus>
+Accept-Language: en-US
 Content-Language: en-US
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7825f8c0-8c2c-4ef3-babd-08d76225fc19
+x-ms-traffictypediagnostic: VI1PR04MB5759:|VI1PR04MB5759:
+x-ms-exchange-purlcount: 2
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB5759EF7E2A85C3636D71C34CEE7E0@VI1PR04MB5759.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0212BDE3BE
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(366004)(136003)(346002)(396003)(189003)(199004)(476003)(6246003)(9686003)(256004)(102836004)(81156014)(8676002)(76176011)(446003)(66556008)(25786009)(3846002)(71200400001)(6116002)(66476007)(6306002)(6436002)(71190400001)(14454004)(66946007)(45080400002)(76116006)(66446008)(316002)(4326008)(478600001)(966005)(7696005)(2906002)(186003)(6506007)(110136005)(86362001)(26005)(7736002)(8936002)(305945005)(64756008)(55016002)(7416002)(91956017)(486006)(99286004)(66066001)(5660300002)(44832011)(33656002)(229853002)(52536014)(74316002)(81166006)(54906003)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5759;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: xOa7ZzTL1I5s6UPvJLkyJ9akHpwqlqN4jM8FQgWliUnzpUJo5UaZ1eQ4ftkyq/7Vrm5+8YCLdEY6kEcnm0Khr6du5HDqMWKWwLwFPf1GoqDEiGkBeGyvsGlMyG6Jes4ta/ggAQqyMvRZ4gg7N7BjhA6Mj25Fl43cNibbJG/7CD1KMZNKUYWdd4aUaJfpTLrVbrPTrVnjOrwlu84T3N0n1sV2lqzjqoXPStTkJTw52sQ1AT8X/0Gjwqzqlon0V+FTmSTfE5+NTQTLP3HdEtsRXzFEoMGkfA5T52DuiWahwAp2eGhEhWJk4Uyg6nwEZgR88FTGPnRytcFHe61MWA+pae/F0yVTwAWJIFoiS9mP7m/Eqhiv3EfoLp9Y9KuiZf55BYaywtNGeO0nrL53xm9lA2uK2ulh5AAmNeE85n0eUVWMVIperKlprNPzcAF9bDHcNblRfKjS2VtoSJ7IQBtY49h7l2UcWX579SEN2F2drxM=
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7825f8c0-8c2c-4ef3-babd-08d76225fc19
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Nov 2019 19:25:57.7010
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: YXe8EaZx92W5tqBZ1CuAbY9i5q0W5GALgOEt4d1n23gxr0hJlzHlYXUrfN1tDkhAqVTMYFzjODj5vW2X+I0AjA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5759
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Matti
-
-On 11/1/19 6:32 AM, Matti Vaittinen wrote:
-> Document ROHM BD71828 PMIC LED driver device tree bindings.
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
->
-> Changes from v2 - new patch
->
->   .../bindings/leds/rohm,leds-bd71828.yaml      | 46 +++++++++++++++++++
->   1 file changed, 46 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/leds/rohm,leds-bd71828.yaml
->
-> diff --git a/Documentation/devicetree/bindings/leds/rohm,leds-bd71828.yaml b/Documentation/devicetree/bindings/leds/rohm,leds-bd71828.yaml
-> new file mode 100644
-> index 000000000000..d8aeac9911ef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/leds/rohm,leds-bd71828.yaml
-> @@ -0,0 +1,46 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/leds/rohm,leds-bd71828.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ROHM BD71828 Power Management Integrated Circuit LED driver
-> +
-> +maintainers:
-> +  - Jacek Anaszewski <jacek.anaszewski@gmail.com>
-> +  - Pavel Machek <pavel@ucw.cz>
-> +  - Dan Murphy <dmurphy@ti.com>
-> +  - Rob Herring <robh+dt@kernel.org>
-> +  - Mark Rutland <mark.rutland@arm.com>
-I believe you are the maintainer of this driver not the maintainers
-> +
-> +description: |
-> +  This module is part of the ROHM BD71828 MFD device. For more details
-> +  see Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml.
-> +
-> +  The LED controller is represented as a sub-node of the PMIC node on the device
-> +  tree.
-> +
-> +  The device has two LED outputs referred as GRNLED and AMBLED in data-sheet.
-> +
-> +properties:
-> +  compatible:
-> +    const: rohm,bd71828-led
-> +
-> +patternProperties:
-> +  "^led-[1-2]$":
-> +    type: object
-> +    description:
-> +      Properties for a single LED. Nodes must be named as led-1 and led-2.
-
-Why is this required?  Can't we use the reg as the number and then we 
-can use standard node labels
-
-like led@<reg value>.  Then we can check in the code to make sure that 
-the output is not out of bounds.
-
-> +    properties:
-> +      #$ref: "common.yaml#"
-> +      function:
-> +        description:
-> +          Purpose of LED as defined in dt-bindings/leds/common.h
-> +        $ref: "/schemas/types.yaml#/definitions/string"
-> +      color:
-> +        description:
-> +          LED colour as defined in dt-bindings/leds/common.h
-
-s/colour/color
-
-But again I believe it is indicated above that the LEDs are either going 
-to be green or amber.  Unless they can be any color.
-
-Are there plans to make sure that the color is either green or amber in 
-the code?  I don't see a patch for the code in this series
-
-> +        $ref: "/schemas/types.yaml#/definitions/uint32"
-> +
-> +required:
-> +  - compatible
-
-Is there an example of the node and properties?
-
-Dan
-
+On 05.11.2019 00:21, Rob Herring wrote:=0A=
+> On Thu, Oct 31, 2019 at 11:50:24PM +0200, Leonard Crestez wrote:=0A=
+>> Add devicetree bindings for the i.MX DDR Controller on imx8m series=0A=
+>> chips. It supports dynamic frequency switching between multiple data=0A=
+>> rates and this is exposed to Linux via the devfreq subsystem.=0A=
+>>=0A=
+>> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
+>> ---=0A=
+>>   .../devicetree/bindings/devfreq/imx-ddrc.yaml | 60 +++++++++++++++++++=
+=0A=
+> =0A=
+> .../bindings/memory-controllers/=0A=
+=0A=
+Okay, but I'm not sure about the rules here. Usually there is a 1:1 =0A=
+mapping between subsystems and bindings directory but I guess devfreq is =
+=0A=
+odd since it's not really a physical class of device.=0A=
+=0A=
+I saw there is also a drivers/memory and there is already a =0A=
+devfreq-using driver in there (EXYNOS5422_DMC).=0A=
+=0A=
+It's not clear if my driver fits in there; as far as I can see the only =0A=
+"core" functionality in drivers/memory is parsing DDR timings from DTS =0A=
+but for imx8m this is all controlled in firmware.=0A=
+=0A=
+>>   1 file changed, 60 insertions(+)=0A=
+>>   create mode 100644 Documentation/devicetree/bindings/devfreq/imx-ddrc.=
+yaml=0A=
+>>=0A=
+>> diff --git a/Documentation/devicetree/bindings/devfreq/imx-ddrc.yaml b/D=
+ocumentation/devicetree/bindings/devfreq/imx-ddrc.yaml=0A=
+>> new file mode 100644=0A=
+>> index 000000000000..31db204e6845=0A=
+>> --- /dev/null=0A=
+>> +++ b/Documentation/devicetree/bindings/devfreq/imx-ddrc.yaml=0A=
+>> @@ -0,0 +1,60 @@=0A=
+>> +# SPDX-License-Identifier: GPL-2.0=0A=
+> =0A=
+> For new bindings:=0A=
+> =0A=
+> # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)=0A=
+> =0A=
+>> +%YAML 1.2=0A=
+>> +---=0A=
+>> +$id: https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2=
+Fdevicetree.org%2Fschemas%2Fdevfreq%2Fimx-devfreq.yaml%23&amp;data=3D02%7C0=
+1%7Cleonard.crestez%40nxp.com%7Cba47e72161764d5a969a08d761755736%7C686ea1d3=
+bc2b4c6fa92cd99c5c301635%7C0%7C1%7C637085028918247356&amp;sdata=3D2DjKgyATO=
+Pu7qhzpOCfRrmUM0%2FSAQrV9R7AxZxib8gk%3D&amp;reserved=3D0=0A=
+> =0A=
+> Run 'make dt_binding_check'. This will fail as the filename doesn't=0A=
+> match.=0A=
+> =0A=
+>> +$schema: https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%=
+2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=3D02%7C01%7Cleon=
+ard.crestez%40nxp.com%7Cba47e72161764d5a969a08d761755736%7C686ea1d3bc2b4c6f=
+a92cd99c5c301635%7C0%7C1%7C637085028918247356&amp;sdata=3DEbyVK2ZF6Z22vE%2F=
+4LfIVv0S1LoMe7%2BxhM43H1i8nxtE%3D&amp;reserved=3D0=0A=
+>> +=0A=
+>> +title: i.MX DDR Controller=0A=
+> =0A=
+> Perhaps i.MX8x as it's not all i.MX chips. And the filename too?=0A=
+=0A=
+Ok, will rename to imx8m-ddrc since it's not even for all imx8.=0A=
+=0A=
+>> +=0A=
+>> +maintainers:=0A=
+>> +  - Leonard Crestez <leonard.crestez@nxp.com>=0A=
+>> +=0A=
+>> +properties:=0A=
+>> +  compatible:=0A=
+>> +    items:=0A=
+>> +      - enum:=0A=
+>> +        - fsl,imx8mn-ddrc=0A=
+>> +        - fsl,imx8mm-ddrc=0A=
+>> +        - fsl,imx8mq-ddrc=0A=
+>> +      - const: fsl,imx8m-ddrc=0A=
+>> +=0A=
+>> +  reg:=0A=
+>> +    maxItems: 1=0A=
+>> +=0A=
+>> +  clocks:=0A=
+>> +    maxItems: 4=0A=
+>> +=0A=
+>> +  clock-names:=0A=
+>> +    items:=0A=
+>> +      - const: dram_core=0A=
+>> +      - const: dram_pll=0A=
+>> +      - const: dram_alt=0A=
+>> +      - const: dram_apb=0A=
+> =0A=
+> Drop 'dram_'=0A=
+=0A=
+OK=0A=
+=0A=
+>> +=0A=
+>> +  operating-points-v2: true=0A=
+>> +=0A=
+>> +  devfreq-events:=0A=
+>> +    description: Phandle of PMU node=0A=
+>> +    $ref: "/schemas/types.yaml#/definitions/phandle"=0A=
+>> +=0A=
+>> +required:=0A=
+>> +  - reg=0A=
+>> +  - compatible=0A=
+>> +  - clocks=0A=
+>> +  - clock-names=0A=
+>> +=0A=
+>> +additionalProperties: false=0A=
+>> +=0A=
+>> +examples:=0A=
+>> +  - |=0A=
+>> +    #include <dt-bindings/clock/imx8mm-clock.h>=0A=
+>> +    ddrc: dram-controller@3d400000 {=0A=
+>> +        compatible =3D "fsl,imx8mm-ddrc", "fsl,imx8m-ddrc";=0A=
+>> +        reg =3D <0x3d400000 0x400000>;=0A=
+>> +        clock-names =3D "dram_core", "dram_pll", "dram_alt", "dram_apb"=
+;=0A=
+>> +        clocks =3D <&clk IMX8MM_CLK_DRAM_CORE>,=0A=
+>> +                 <&clk IMX8MM_DRAM_PLL>,=0A=
+>> +                 <&clk IMX8MM_CLK_DRAM_ALT>,=0A=
+>> +                 <&clk IMX8MM_CLK_DRAM_APB>;=0A=
+>> +        operating-points-v2 =3D <&ddrc_opp_table>;=0A=
+>> +    };=0A=
