@@ -6,95 +6,128 @@ X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0C21C5DF60
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 19:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEE82C5DF60
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 20:13:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74F8421A49
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 19:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B466217F5
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 20:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1572982997;
-	bh=t9iIhp7YCBy/rgI8OMzs2tbzJ18GgG2J9895nKvt2nQ=;
+	s=default; t=1572984785;
+	bh=2QBblLpKCvzCWyBYMNf7InpwQgKLfDh8gTCdbys05h0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=FKBg4Bfyr7lx0iaPFL9BtBQn9YZ5sT+SqOcZBDj94gzwwhWQtPJDcv5dE55ZoiZTn
-	 8Kj46woycxvwSVVkxuMBDy5nDfzFisa88X0Y30AQ8IPuRT+vyht5UabtNRwg3SooMt
-	 p64mfJNSTxG8IIbRvq//iUvimtx0LuGlmWyLuu+k=
+	b=WY5F6zKN3zhRiQuuKw03NAu8ZZFbfh/4+T6WE0sjaWs+FvYsUuJwrABRcsupJX1Xk
+	 aUbTgHgK4oymMeNne4QloRY5wGsa+ESPTVvrSkg1rzzXERQ2YEBXaFJamZSficeHDQ
+	 Np/7VDTYs7t0GPt2ZG+4iw22jSgNqp8BwzikbArQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390893AbfKETnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Nov 2019 14:43:17 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41269 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390391AbfKETnR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 14:43:17 -0500
-Received: by mail-ot1-f65.google.com with SMTP id 94so18671450oty.8;
-        Tue, 05 Nov 2019 11:43:16 -0800 (PST)
+        id S1727095AbfKEUNF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Nov 2019 15:13:05 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:45623 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726368AbfKEUNF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 15:13:05 -0500
+Received: by mail-oi1-f196.google.com with SMTP id k2so18737385oij.12;
+        Tue, 05 Nov 2019 12:13:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DxJeph9SMIl2HaoxiyZwlewIG04Tl4irjIR+yBHGfk8=;
-        b=IGpOAQVZ+QGn1cGuOdDbjjL0UxZ+FwcOV3TAMq4Jm5woJGyb7Q2KdIl/ajnY8gUve/
-         D6VqGvWS50MmLcJ4vm57T3qXy0fZKNkPtKJyoDpq1PCLyDtW8D6fFb76mLmDhXiKsl8Y
-         CvfQuh74kS5DnlXbv43YuZYNWuKAKC7SDJZiltLx5N0vhVeOoQQKHivzVVeZsGI7U2vt
-         NOC9SKXFytnq6HTxVGkBeKoNLShWai2HsVyXBE6H6RtzwiQJmh22nO6kibIvrIuOQPOC
-         lo6AwhqzAcPc3w1ZeqI1xYLxtAdVZ9El0K+/sATN9Ebkq2M2NMHxhKsLescklpbElJob
-         86FA==
-X-Gm-Message-State: APjAAAUMi5TOK+MIqg1tKc6ZpOFioqxGFo6gy5FLMiNIgOkyxM3cKN7K
-        nSUURQdgypqRsApCmrCBz+Ka/nE=
-X-Google-Smtp-Source: APXvYqzGqoQJX7yypT0mKyxtD5PEOEBFSFjqnv7Ri+Z9HkmNdS3Js06cTZGsq26M5OG0tvHPTq6Gxw==
-X-Received: by 2002:a9d:7846:: with SMTP id c6mr4364877otm.338.1572982996049;
-        Tue, 05 Nov 2019 11:43:16 -0800 (PST)
+        bh=mU9UcOU7sHcf7HCmRIHXhWHMA1uoQHabE8Uv8Jt+A7E=;
+        b=deYGSv8p6GIzQ3anqm/7VuAyUdkL8f4vSLJd//erntmjUeSYr369cjy2nWUkkDX8BX
+         1T6PqCjcVp8lm3GY5LohQhIQEVqUjZXpAZ8LxMs0d5GaO599TdUR3E2umG8fppna7E/K
+         pn12fGx312nfP23kG7KaPJeUd+QzOi77BifVXHYjMuKy6g2fZqLu+J20/UpJSMONwzLH
+         1k+JRJ9nrTd3Fo0mhO7ZmWsHoWNOYMk7qVcM1pZAYiwbqyTQyCyKo7kEhtyu47DVDi9h
+         sxnJAHPK8SfuYH5nCCzv5+QwLWUssw2vxAp0gAEuTlCW1QHFKGPhnHYvmXhANpkywSKE
+         5qFA==
+X-Gm-Message-State: APjAAAWET6wphwNAdWYbdfGmT6cssUm9sQwmXeUNShouijm4e9DSXMgp
+        T6/aEYB2bu61bbrtu2bt6Q==
+X-Google-Smtp-Source: APXvYqzy0m98tPqHlFSqTVQuTPMUjEJDLNZe7DOwoduqbUy3ipM2+KtNECfZLQnN0fel0V++XN/OPg==
+X-Received: by 2002:aca:dd0a:: with SMTP id u10mr740393oig.130.1572984783628;
+        Tue, 05 Nov 2019 12:13:03 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o203sm377657oia.4.2019.11.05.11.43.15
+        by smtp.gmail.com with ESMTPSA id v13sm1077013ota.53.2019.11.05.12.13.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 05 Nov 2019 11:43:15 -0800 (PST)
-Date:   Tue, 5 Nov 2019 13:43:14 -0600
+        Tue, 05 Nov 2019 12:13:03 -0800 (PST)
+Date:   Tue, 5 Nov 2019 14:13:02 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Kevin Hilman <khilman@baylibre.com>,
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org,
-        Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v3 2/2] dt-bindings: power: Convert Samsung Exynos Power
- Domain bindings to json-schema
-Message-ID: <20191105194314.GA16556@bogus>
-References: <20191030173216.5993-1-krzk@kernel.org>
- <20191030173216.5993-2-krzk@kernel.org>
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v3 3/6] dt-bindings: devfreq: Add bindings for imx ddr
+ controller
+Message-ID: <20191105201302.GA4772@bogus>
+References: <cover.1572558427.git.leonard.crestez@nxp.com>
+ <b9a87c69eb603622303add4f0c02dd4c1262462a.1572558427.git.leonard.crestez@nxp.com>
+ <20191104222126.GB5218@bogus>
+ <VI1PR04MB7023F375AEDC4549FA12247FEE7E0@VI1PR04MB7023.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191030173216.5993-2-krzk@kernel.org>
+In-Reply-To: <VI1PR04MB7023F375AEDC4549FA12247FEE7E0@VI1PR04MB7023.eurprd04.prod.outlook.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 30 Oct 2019 18:32:16 +0100, Krzysztof Kozlowski wrote:
-> Convert Samsung Exynos Soc Power Domain bindings to DT schema format using
-> json-schema.
+On Tue, Nov 05, 2019 at 07:25:57PM +0000, Leonard Crestez wrote:
+> On 05.11.2019 00:21, Rob Herring wrote:
+> > On Thu, Oct 31, 2019 at 11:50:24PM +0200, Leonard Crestez wrote:
+> >> Add devicetree bindings for the i.MX DDR Controller on imx8m series
+> >> chips. It supports dynamic frequency switching between multiple data
+> >> rates and this is exposed to Linux via the devfreq subsystem.
+> >>
+> >> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> >> ---
+> >>   .../devicetree/bindings/devfreq/imx-ddrc.yaml | 60 +++++++++++++++++++
+> > 
+> > .../bindings/memory-controllers/
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
-> 
-> ---
-> 
-> Changes since v2:
-> 1. Use new name of file in samsung,sysmmu.yaml and MAINTAINERS.
-> 
-> Changes since v1:
-> 1. Indent example with four spaces (more readable),
-> 2. Remove unneeded types,
-> 3. Add missing address in example and fix the name.
-> ---
->  .../bindings/iommu/samsung,sysmmu.yaml        |  2 +-
->  .../devicetree/bindings/power/pd-samsung.txt  | 45 -------------
->  .../devicetree/bindings/power/pd-samsung.yaml | 66 +++++++++++++++++++
->  MAINTAINERS                                   |  2 +-
->  4 files changed, 68 insertions(+), 47 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/power/pd-samsung.txt
->  create mode 100644 Documentation/devicetree/bindings/power/pd-samsung.yaml
-> 
+> Okay, but I'm not sure about the rules here. Usually there is a 1:1 
+> mapping between subsystems and bindings directory but I guess devfreq is 
+> odd since it's not really a physical class of device.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Mostly true, but it's not completely 1:1.
+
+
+> I saw there is also a drivers/memory and there is already a 
+> devfreq-using driver in there (EXYNOS5422_DMC).
+
+Yeah, well it's been a while since I last tried to clean up locations of 
+things. DDR controller bindings are not in the best shape.
+
+
+> It's not clear if my driver fits in there; as far as I can see the only 
+> "core" functionality in drivers/memory is parsing DDR timings from DTS 
+> but for imx8m this is all controlled in firmware.
+
+You shouldn't have to think about that. Bindings should be for DDR 
+controllers regardless of whether there's a driver for devfreq, EDAC, 
+perf, or ??? or all of those.
+
+Rob
