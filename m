@@ -2,113 +2,103 @@ Return-Path: <SRS0=Glxp=Y5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84102C17461
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 12:59:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1E2BC17475
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 13:24:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A3D21D7D
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 12:59:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99CF621D7C
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 13:24:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mmSF+IAU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388835AbfKEM7R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Nov 2019 07:59:17 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:60071 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388678AbfKEM7R (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 07:59:17 -0500
-Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=[IPv6:::1])
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <a.fatoum@pengutronix.de>)
-        id 1iRyQW-0002wH-Ga; Tue, 05 Nov 2019 13:59:16 +0100
-Subject: Re: [PATCH] clk: imx: pll14xx: initialize flags to 0
-To:     Peng Fan <peng.fan@nxp.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <1572938372-7006-1-git-send-email-peng.fan@nxp.com>
-From:   Ahmad Fatoum <a.fatoum@pengutronix.de>
-Message-ID: <7966140a-7fec-0a8f-6ced-e4fbccef51da@pengutronix.de>
-Date:   Tue, 5 Nov 2019 13:59:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S2389078AbfKENYc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Nov 2019 08:24:32 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33478 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389080AbfKENYb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 08:24:31 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y127so15108918lfc.0
+        for <linux-clk@vger.kernel.org>; Tue, 05 Nov 2019 05:24:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OriTvqKjGZz26vq3sX+0nz0hNVWCQx915SM+y16L4zI=;
+        b=mmSF+IAUX1udzNA10gxQDs4IVguwwokEurVOW3StfXUANAJNYQv4/+zWORcXWFMJz6
+         m8BMOmIIg6IdlyXqx/JOil3Nbe1GQJOjv3TKF4sU9Y8IhkaCAxvvuN9OIs6XmIOXlhaV
+         3yDCu8ShhTKAlUTHth4u2KT53qkmJ5SC02XPDZHD1F7NmyWDtGHSU+gmVOKet8p9J0tg
+         tOUcealyAZisw9u0YxSTwLwJi9mNZL5v3AiyePab1IAJp9k9ulTtGJUtUmXfCzS/M3vK
+         ttjdpKUqRtjmkL88v5AmTh1EY7ErppJQbMgbmt1rENGRy7NzGgSd1ie29VbCA1Ll9hDA
+         riGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OriTvqKjGZz26vq3sX+0nz0hNVWCQx915SM+y16L4zI=;
+        b=oTYzNPnx+RD+YUeUpWW3wEWd+KEgYwMefRx4Z1V+HTIYH/ZYSUZ2STUzlg4ASArDQy
+         +wIfMN6IH093MSJFHUMeRBfMJpUfstC+CqABeTMcIZ2oELk9S0XhP3RS7BK9t9t43y5W
+         gdRSPEag4RL5cxkN9t3yFgdDhJQB1r0jbyH3KBkFGGY4h2AskaU6y21MJb4OmPqsf97H
+         UcUiA+1xJ0PW3fQBkf+bODcycfRYXq8r7FmOp0W7Wc1ntQI4kPqwdnbvlRYx1lsOBH0h
+         CYRgGQtB1mCZlwW+T3ml8FzRv2wvMfqT5iNaCk38DbAefULx1CaYmD221iWApCi4wDjO
+         ZxKw==
+X-Gm-Message-State: APjAAAX0EDaTTP3qySUGDJrKvxlptgN/kYXMudYMfbhVeXuFCJBA9TAX
+        a+y8xetmMSjMXVh70bddWZi6Ap+LLJcCL+pgYrFNiw==
+X-Google-Smtp-Source: APXvYqzoypaV1FwIebV/f2TxtU2nRgrE/Ebq2efFlxTgxI/d4F0Qe39na0QD1eDLDWhk898Dgs+NBvY32AC34gSuqMc=
+X-Received: by 2002:ac2:5295:: with SMTP id q21mr20306882lfm.93.1572960267714;
+ Tue, 05 Nov 2019 05:24:27 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1572938372-7006-1-git-send-email-peng.fan@nxp.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:201:5054:ff:fe8d:eefb
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <cover.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+ <2a8fa03308b08b2a15019d9b457d9bff7aafce94.1572606437.git.matti.vaittinen@fi.rohmeurope.com>
+ <CACRpkdZYw3QQcQ4h5y_C0UD6+4Wz9AdmQ0qSrrjfUweuJj8hyQ@mail.gmail.com> <1550472ac1e105bd38da25803358cfbc0404bf38.camel@fi.rohmeurope.com>
+In-Reply-To: <1550472ac1e105bd38da25803358cfbc0404bf38.camel@fi.rohmeurope.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Tue, 5 Nov 2019 14:24:15 +0100
+Message-ID: <CACRpkdYkgEg=4H9tQQrVcvx1xtETYD_cHxhqd-BW6g67jpEeEg@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 10/15] regulator: bd71828: Add GPIO based run-level
+ control for regulators
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Peng,
+On Mon, Nov 4, 2019 at 8:05 AM Vaittinen, Matti
+<Matti.Vaittinen@fi.rohmeurope.com> wrote:
+> On Sun, 2019-11-03 at 23:27 +0100, Linus Walleij wrote:
 
-On 11/5/19 8:21 AM, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
-> 
-> init.flags is initialized with value from pll_clk->flags, however
-> imx_1443x_pll and imx_1416x_pll are not static structure,
+> > I do not understand the regulator parts of the patch.
+>
+> I'm sorry. The patch is not clearest one what comes to the regulator
+> stuff. I can try splitting it to smaller and more logical changes if
+> you, Mark or other interested people hope to get it splitted. Or
+> perhaps it would be simplest to review if it was all in one patch?
 
-They don't have a static in front of them, but they still have static
-storage duration.
+As long as the regulator experts are happy with the format,
+stay with that. I am just a drive-by coder when it comes to regulators.
 
-> so flags
-> might be random value. So let's initialize flags as 0 now.
-
-I fail to see how. Members not listed in the { initializer-list } are
-implicitly initialized as if they were static objects, so flags should
-already be zero.
-
-(I assumed this patch is based on Shawn's imx-clk-5.5 tag)                                     
-
-Cheers
-Ahmad
-
-
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-pll14xx.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index fa76e04251c4..a7f1c1abe664 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -65,12 +65,14 @@ struct imx_pll14xx_clk imx_1443x_pll = {
->  	.type = PLL_1443X,
->  	.rate_table = imx_pll1443x_tbl,
->  	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
-> +	.flags = 0,
->  };
->  
->  struct imx_pll14xx_clk imx_1416x_pll = {
->  	.type = PLL_1416X,
->  	.rate_table = imx_pll1416x_tbl,
->  	.rate_count = ARRAY_SIZE(imx_pll1416x_tbl),
-> +	.flags = 0,
->  };
->  
->  static const struct imx_pll14xx_rate_table *imx_get_pll_settings(
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
-Peiner Str. 6-8, 31137 Hildesheim, Germany | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Yours,
+Linus Walleij
