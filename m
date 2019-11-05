@@ -2,119 +2,149 @@ Return-Path: <SRS0=Glxp=Y5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19593CA9EC7
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 06:51:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3075BCA9EDB
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 07:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5E720663
-	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 06:51:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068A4222C2
+	for <linux-clk@archiver.kernel.org>; Tue,  5 Nov 2019 07:20:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ovFzPiyu"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RTbcbA7R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbfKEGvG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Nov 2019 01:51:06 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42426 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726033AbfKEGvG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 01:51:06 -0500
-Received: by mail-pl1-f193.google.com with SMTP id j12so6927810plt.9
-        for <linux-clk@vger.kernel.org>; Mon, 04 Nov 2019 22:51:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=MLZvtTZXNfvRWFvhu+xZrbhbWxZa6520w7xc3DnxMfk=;
-        b=ovFzPiyueyG5Yh6NS3lam6dcbSJjihEjm+M4xFDqkGmjUXjx//55rawC9WZoTAjUsu
-         A2Xy1v2lrnDeGPeUC3k+4sEuLT7/yKwKfiYk7xxItUg8cYGd1fI4ySLpzzPY+vmrqM5l
-         JjI20g8GwXjM0iQlF0516Cs1zx7PREOSiY5GOCJGmNAIZ3UXdF50ntGkynitHmrg4Ns2
-         StTckSIMgd0t9xWKYktljntLr2DHLTVnGbeyDo6pVMh7Xve2n4Jz9ODdatcMI3zFZU6g
-         /Lk+U4N0JDLfXsHuBZl3dAPUcPkKNQrv+9kSj9KRdQECaeSsuKbIb7jhX3RYakGm4+df
-         v3rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=MLZvtTZXNfvRWFvhu+xZrbhbWxZa6520w7xc3DnxMfk=;
-        b=aw+k2+ZbFan3IxnZ3kFth1CiFciYirsePdfsV3O4jB1+YuU5d+lalCTB0fbxkvCKNu
-         fhMh23+PAbhEm/zRRfv2a2AeA+wKVj3vLKG6SS1x+G62xFx3YuktcwqRc56nVhWxvnWO
-         yD3Da5lH+czPvF4w9/CrwJOlXtx/8di9751Ft1k5lcDZfr/WZh5blxo3KljNbLAYd7Vu
-         BHsN26Zp0UKf7shBj9yJK5m6Q27n4ayIrjLIPaGpXG50zUsBJvYwI973WE+Zk7hMcy1A
-         4cnPKMvenxbgqoaHbUapBXsNkLCY3kaEBhVoZOLtFB7hvU8teA8ayT03/ZBMACdmpw+f
-         rG7w==
-X-Gm-Message-State: APjAAAUCpwIJJ+gucNtf6Rk42bhGAnK1SMplzScopusmoE+bmT9aEeEB
-        7XM74V66y+esIOUcj/Z9pELN9g==
-X-Google-Smtp-Source: APXvYqygTQR1HLlTaiQfWLrNs7Ep8bXeQMuApptnCYjO/5t+FBUMcOI0Th7332U5KHVlcuUUK4d/pA==
-X-Received: by 2002:a17:902:9a03:: with SMTP id v3mr7331351plp.61.1572936665309;
-        Mon, 04 Nov 2019 22:51:05 -0800 (PST)
-Received: from localhost ([122.171.110.253])
-        by smtp.gmail.com with ESMTPSA id s69sm7227648pgs.65.2019.11.04.22.51.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Nov 2019 22:51:04 -0800 (PST)
-Date:   Tue, 5 Nov 2019 12:20:58 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Amit Kucheria <amit.kucheria@linaro.org>,
-        Amit Kucheria <amit.kucheria@verdurent.com>,
-        Zhang Rui <rui.zhang@intel.com>, agross@kernel.org,
-        bjorn.andersson@linaro.org, daniel.lezcano@linaro.org,
-        edubezval@gmail.com, ilina@codeaurora.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        tdas@codeaurora.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 5/6] clk: qcom: Initialise clock drivers earlier
-Message-ID: <20191105065058.yhqgvilti6cdzph2@vireshk-i7>
-References: <cover.1571314830.git.amit.kucheria@linaro.org>
- <5f1ca3bfc45e268f7f9f6e091ba13b8103fb4304.1571314830.git.amit.kucheria@linaro.org>
- <20191017174723.8024521D7A@mail.kernel.org>
- <20191018060345.wjflngfdnqa3gbsu@vireshk-i7>
- <20191028172225.1B1CF20862@mail.kernel.org>
- <20191029010605.GB27884@e107533-lin.cambridge.arm.com>
+        id S2387567AbfKEHUj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Nov 2019 02:20:39 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:47840 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387484AbfKEHUj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 02:20:39 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA57KYq9124809;
+        Tue, 5 Nov 2019 01:20:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1572938434;
+        bh=4hR507F9d9RQok/WuN1OZB6tXcsHF2sZDCLwM6d2xbs=;
+        h=To:CC:From:Subject:Date;
+        b=RTbcbA7RrYL1r24Lt3Ht1Ge4Q4uSqj7mxq+3vdMMHStWkB1Gr6Xrxwm5x+l+FMaQ6
+         IOVCpzMMmKepi0XQ5EQ8tO1nrJoBkEu9+dEVr9rETyWlBD90xsjzjsH2NXW331ymwR
+         +jamUZBvn1VaxrH3pJXDrs9Sp6lzk5YbUw1Nrjec=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA57KYUO099171
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 5 Nov 2019 01:20:34 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5; Tue, 5 Nov
+ 2019 01:20:19 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1713.5 via
+ Frontend Transport; Tue, 5 Nov 2019 01:20:19 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA57KWTW000999;
+        Tue, 5 Nov 2019 01:20:32 -0600
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "tony@atomide.com" <tony@atomide.com>
+CC:     linux-clk <linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+From:   Tero Kristo <t-kristo@ti.com>
+Subject: [GIT PULL] clk: ti: changes for 5.5 (take 2)
+Message-ID: <2e823d30-ce52-1275-c958-6b82666dc46f@ti.com>
+Date:   Tue, 5 Nov 2019 09:20:31 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191029010605.GB27884@e107533-lin.cambridge.arm.com>
-User-Agent: NeoMutt/20180716-391-311a52
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 29-10-19, 09:06, Sudeep Holla wrote:
-> On Mon, Oct 28, 2019 at 10:22:24AM -0700, Stephen Boyd wrote:
-> > Quoting Viresh Kumar (2019-10-17 23:03:45)
-> > > On 17-10-19, 10:47, Stephen Boyd wrote:
-> > > > Quoting Amit Kucheria (2019-10-17 05:27:37)
-> > > > > Initialise the clock drivers on sdm845 and qcs404 in core_initcall so we
-> > > > > can have earlier access to cpufreq during booting.
-> > > > >
-> > > > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> > > > > ---
-> > > >
-> > > > Acked-by: Stephen Boyd <sboyd@kernel.org>
-> > > >
-> > > > Makes me sad again.
-> > >
-> > > I am wondering why it makes you sad ? :)
-> > >
-> >
-> > We're playing games with initcall levels :(
-> >
-> 
-> +1, which will come back and bite us hard soon :)
+Hi Stephen,
 
-:)
+This is a 2nd try of the TI clock changes towards 5.5. I added the 
+divider clock revamp into this pull, and also fixed the one commend you 
+had on the remoteproc support series.
 
-I don't like reordering init calls as well, but only when they are
-used to avoid issues and probe things in a particular order. While the
-only thing we are doing here is to get things to probe earlier, which
-isn't wrong IMO :)
+Tony, this is also available as a branch as for-5.5-ti-clk-v2.
 
-Lets see if it bites us anytime soon, I would be surprised really :)
+-Tero
 
--- 
-viresh
+---
+
+The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
+
+   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+
+are available in the Git repository at:
+
+   git://git.kernel.org/pub/scm/linux/kernel/git/kristo/linux 
+tags/ti-clk-for-5.5-v2
+
+for you to fetch changes up to f5869190667951720f8c1ec4638bff4c682a3a4e:
+
+   ARM: dts: omap3: fix DPLL4 M4 divider max value (2019-10-31 15:33:26 
++0200)
+
+----------------------------------------------------------------
+TI clock driver changes for 5.5
+
+As the clock and reset handling is tightly coupled on the hardware level
+on OMAP SoCs, we must ensure the events are sequenced properly. This
+series makes sure that the clock side is behaving properly, and the
+sequencing of the events is left for the bus driver (ti-sysc.)
+
+The series also includes revamp of the TI divider clock implementation
+to handle max divider values properly in cases where the max value is
+not limited by the bitfield of the IO register but instead limited to
+some arbitrary value. Previously this resulted in too high divider
+values to be used in some cases causing HW malfunction.
+
+Additionally, a couple of smaller changes needed by remoteproc support
+are added; checking of the standby status and some missing clkctrl data
+for omap5/dra7.
+
+----------------------------------------------------------------
+Suman Anna (2):
+       clk: ti: omap4: Drop idlest polling from IPU & DSP clkctrl clocks
+       clk: ti: omap5: Drop idlest polling from IPU & DSP clkctrl clocks
+
+Tero Kristo (14):
+       clk: ti: clkctrl: fix setting up clkctrl clocks
+       clk: ti: clkctrl: convert to use bit helper macros instead of bitops
+       clk: ti: clkctrl: add new exported API for checking standby info
+       dt-bindings: clk: add omap5 iva clkctrl definitions
+       clk: ti: omap5: add IVA subsystem clkctrl data
+       clk: ti: dra7xx: Drop idlest polling from IPU & DSP clkctrl clocks
+       clk: ti: am43xx: drop idlest polling from pruss clkctrl clock
+       clk: ti: am33xx: drop idlest polling from pruss clkctrl clock
+       clk: ti: am33xx: drop idlest polling from gfx clock
+       clk: ti: am43xx: drop idlest polling from gfx clock
+       clk: ti: divider: cleanup _register_divider and ti_clk_get_div_table
+       clk: ti: divider: cleanup ti_clk_parse_divider_data API
+       clk: ti: divider: convert to use min,max,mask instead of width
+       ARM: dts: omap3: fix DPLL4 M4 divider max value
+
+  arch/arm/boot/dts/omap36xx-clocks.dtsi |   4 +
+  arch/arm/boot/dts/omap3xxx-clocks.dtsi |   2 +-
+  drivers/clk/ti/clk-33xx.c              |   4 +-
+  drivers/clk/ti/clk-43xx.c              |   4 +-
+  drivers/clk/ti/clk-44xx.c              |   4 +-
+  drivers/clk/ti/clk-54xx.c              |  11 +-
+  drivers/clk/ti/clk-7xx.c               |   8 +-
+  drivers/clk/ti/clkctrl.c               |  45 +++++-
+  drivers/clk/ti/clock.h                 |   7 +-
+  drivers/clk/ti/divider.c               | 282 
++++++++++++++--------------------
+  include/dt-bindings/clock/omap5.h      |   4 +
+  include/linux/clk/ti.h                 |   3 +-
+  12 files changed, 187 insertions(+), 191 deletions(-)
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
