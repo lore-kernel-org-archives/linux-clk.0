@@ -2,115 +2,84 @@ Return-Path: <SRS0=SbWe=Y6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6938AC5DF62
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 03:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E62C5DF62
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 03:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25C742053B
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 03:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B98E92087E
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 03:57:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573010319;
-	bh=794v0ru8pfalS+8Pyn18QoBVERGFnv+vgCcy8vjcww4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=ABzME1WibghWl5u+wbgWqGVZ96YtSE/Bl3FqIbKK/L+Sb0MUCBRZF0ltKo9MPIqyf
-	 2znzxyec+HsnciPrf3n7hvJb7Z6HQ92I5xRgPrDejfvlpoJ1FIA0J+YPOO1HYLhzUg
-	 bEVclx7yOI3dVKscrvbQedPdYh4cGiVtblZFMDXo=
+	s=default; t=1573012645;
+	bh=M2pgwK+egtTvkr7ezrvS7aFy5jGfigJQpMvbCZ5o7Q4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=nH/D3VVLQoer4ABBw58rCTju15YVLmsX0+TZUKhbUpSUiS2LsjahdwX10vq+lIt+H
+	 uASwu2l2Xgr65WoOz0nsrMsrK+j8dn26eWvmWql4i8IEzKrXUTdUH2ibnQv2WOb4MP
+	 qcDozMWVr8QJrNSOTdeLWUcT2PafwQjte8GUXdMY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730722AbfKFDSj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 5 Nov 2019 22:18:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51890 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730576AbfKFDSi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 5 Nov 2019 22:18:38 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C18C2053B;
-        Wed,  6 Nov 2019 03:18:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573010317;
-        bh=794v0ru8pfalS+8Pyn18QoBVERGFnv+vgCcy8vjcww4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=h4+X6NnESnFUg7hSGbT1qji0fnzSSyx2iXJY2mCnwfnAuYQe1ssCMb3PYIL+aPRy4
-         r42LTaTdD0fNUJoKCRiky6GIjL9rbgUsGCoPn5bQFbtCo0qQ9mG5pf/A2RK6+M51E3
-         C/4a+yVOEYe4PXxvHTOqR6XEHcFq4n7Ww72WFhVo=
-Received: by mail-qt1-f178.google.com with SMTP id p20so13910367qtq.5;
-        Tue, 05 Nov 2019 19:18:37 -0800 (PST)
-X-Gm-Message-State: APjAAAVWmKHdvEaFgZLRdy2IeAQp2ehY1U6pIXJJ7wycsTmxnVK8/u3d
-        My+2Z1u8quJN3g6EEzrDsta8zoVuWDIwLP3QgA==
-X-Google-Smtp-Source: APXvYqx/MDqiFs4boZftGQ4Sm3LD1j9ie9A1PR+9tSRnYrAzeyJ63l67XS86a0hZ+oVQ8PeNFdWmOuEziMGHCusZdFg=
-X-Received: by 2002:ac8:458c:: with SMTP id l12mr483091qtn.300.1573010316820;
- Tue, 05 Nov 2019 19:18:36 -0800 (PST)
-MIME-Version: 1.0
-References: <1572524473-19344-1-git-send-email-tdas@codeaurora.org>
- <1572524473-19344-3-git-send-email-tdas@codeaurora.org> <20191106002604.A1BC72087E@mail.kernel.org>
-In-Reply-To: <20191106002604.A1BC72087E@mail.kernel.org>
+        id S1727266AbfKFD5Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 5 Nov 2019 22:57:25 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:44194 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725768AbfKFD5Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 5 Nov 2019 22:57:25 -0500
+Received: by mail-ot1-f68.google.com with SMTP id c19so3557396otr.11;
+        Tue, 05 Nov 2019 19:57:23 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=py0k6EUYYeSmHaWf8b61DJPhzhB9zPo4JBbzAH5bbDA=;
+        b=pZ7HPLBHSSugSXNvvGOUPwA10eC+wvu8JIZkRy903gyQ4ds4po/8xSKmrKaTL9lh19
+         DAX6LZcQLrBEdCF66L+fmWpTwu6zLJ5vd0SjKNifp7+GvHqiFU3cL0kwkYHQMlzviQ92
+         m/0OT2rCYRkC4naAVl9Auapf6MOIjPyY/VD8qn2/pl/2qu3epZUwzc6Dde2rPs1qNEsq
+         wueT3qZpuvrNtsw/QK5t+v0aI0lyIbezLLNkxKZhn5fos25oio73r9c3ffAzl2wmrx+K
+         3YTV0cP94ETQIlFmSYZkmA5fGe3+O5g40NY5LTCP8XMoDbFcGxO0fKivpjCCeECUza3J
+         YvpA==
+X-Gm-Message-State: APjAAAU0QnLO4TjdGUZc/E8qDzT2CzRdpeL32a3vnwZyl99xjbZ+fMkx
+        OEGodj0LGTYFT+pkCUsMiQ==
+X-Google-Smtp-Source: APXvYqxhoUkUh4/ocp0Q+Ei5bNgYCZy9+LoviHrciti8k+fdcmqucLXu88Zxso3APp73Fi7zfaWQ7g==
+X-Received: by 2002:a05:6830:2335:: with SMTP id q21mr200742otg.237.1573012642730;
+        Tue, 05 Nov 2019 19:57:22 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r129sm2284230oih.49.2019.11.05.19.57.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 05 Nov 2019 19:57:21 -0800 (PST)
+Date:   Tue, 5 Nov 2019 21:57:21 -0600
 From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 5 Nov 2019 21:18:24 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+dihzR7Wy+9kbz+A8tJ8LCpUcci6w0oW7SxBML4jX_Fw@mail.gmail.com>
-Message-ID: <CAL_Jsq+dihzR7Wy+9kbz+A8tJ8LCpUcci6w0oW7SxBML4jX_Fw@mail.gmail.com>
-Subject: Re: [PATCH v1 2/7] dt-bindings: clock: Add YAML schemas for the QCOM
- GPUCC clock bindings
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+To:     kholk11@gmail.com
+Cc:     linux-arm-msm@vger.kernel.org, kholk11@gmail.com,
+        marijns95@gmail.com, agross@kernel.org, mturquette@baylibre.com,
+        bjorn.andersson@linaro.org, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] dt-bindings: clock: rpmcc: Document msm8976
+ compatible
+Message-ID: <20191106035721.GA32273@bogus>
+References: <20191031112951.35850-1-kholk11@gmail.com>
+ <20191031112951.35850-3-kholk11@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191031112951.35850-3-kholk11@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 5, 2019 at 6:26 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Taniya Das (2019-10-31 05:21:08)
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > new file mode 100644
-> > index 0000000..96aaf36
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > @@ -0,0 +1,69 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
->
-> Can it be GPL2 or BSD? I think Rob is asking for that sort of license on
-> these files.
+On Thu, 31 Oct 2019 12:29:51 +0100, kholk11@gmail.com wrote:
+> From: AngeloGioacchino Del Regno <kholk11@gmail.com>
+> 
+> Support for MSM8976 was added to the clk-smd-rpm driver: let's
+> document here the newly added compatible string.
+> 
+> Signed-off-by: AngeloGioacchino Del Regno <kholk11@gmail.com>
+> ---
+>  Documentation/devicetree/bindings/clock/qcom,rpmcc.txt | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-I do, but only on new bindings unless we determine relicensing is
-okay. Though here it doesn't look like much is copied over.
-
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/bindings/clock/qcom,gpucc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Graphics Clock & Reset Controller Binding
-> > +
-> > +maintainers:
-> > +  - Taniya Das <tdas@codeaurora.org>
-> > +
-> > +description: |
-> > +  Qualcomm grpahics clock control module which supports the clocks, resets and
-> > +  power domains.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - qcom,sdm845-gpucc
-> > +      - qcom,msm8998-gpucc
->
-> Sort please.
-
-When you get tired of telling people to do this we can make the
-tooling do it. :) Shouldn't be too hard. The majority of the work is
-probably fixing the existing cases that aren't sorted.
-
-Rob
+Acked-by: Rob Herring <robh@kernel.org>
