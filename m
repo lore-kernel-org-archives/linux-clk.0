@@ -2,84 +2,104 @@ Return-Path: <SRS0=SbWe=Y6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5056C43331
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 22:31:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7FDC43331
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 22:43:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90D8C2187F
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 22:31:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE7FF217D7
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 22:43:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573079483;
-	bh=nhqYQAY0HyjKKivJMXMUOGnLcPSbGb288dmnM/Goz+A=;
+	s=default; t=1573080188;
+	bh=sIJIhyS0MXsdS5o5wl8jxauoavtoO6HaIcCyLg5qR2A=;
 	h=In-Reply-To:References:Subject:From:To:Cc:Date:List-ID:From;
-	b=u5C+BP+ufOfZgJh+jhYeto0oxKAv3WuHdJ/L+j4JCorzpzZ6vhYZQpSdDUdBufQDX
-	 xtZ66Ed+lMmewlNZHw7thygNJLnljUMX+JYBADd/vI0XmoUWuvqiKvHRyKeBlhfF4K
-	 u2oU/j/71LlwQ5SlrXjDeUN4lPfW44yMrPGI67co=
+	b=ymfaHJbBbZgXQPThZy3eNiltYh5cdpog0SGv/Qc/wPkzlAmxuPhCgRSd12i7w0vdy
+	 QISEYevA8tgIWKuuTino8QLn6Ixt+uYRMmztXcEHUkALS7Rf8C3voBuVSd1URgyXKD
+	 z0NTEN7YfD7uefsOWcRpnrvXeu6fbVAcH2Bifurk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727654AbfKFWbX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Nov 2019 17:31:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45268 "EHLO mail.kernel.org"
+        id S1727328AbfKFWnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Nov 2019 17:43:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726817AbfKFWbX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:31:23 -0500
+        id S1727295AbfKFWnH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 6 Nov 2019 17:43:07 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 867E4214D8;
-        Wed,  6 Nov 2019 22:31:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A85342173E;
+        Wed,  6 Nov 2019 22:43:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573079482;
-        bh=nhqYQAY0HyjKKivJMXMUOGnLcPSbGb288dmnM/Goz+A=;
+        s=default; t=1573080186;
+        bh=sIJIhyS0MXsdS5o5wl8jxauoavtoO6HaIcCyLg5qR2A=;
         h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-        b=yt0nfIWs1JHwzEGk0V9pJExUD7PlnjFZ7T04bRiGyQOwLc7nNxtEH3jZR3ZeOTb0c
-         40unPB2R9VskjX/r6kbebrdMH0say0UguPCHdHRki9CSSbsat6EOS11tUW7jpDuMOF
-         LvUX8+3FuqB9avL4LqTmg/73ssePf4K+2W/w1bN8=
+        b=OD88XhMD/Q/B3vEuWJ+r36+i67KZcYpPXGr9PLTb0wb+AoHAYEudOiF6ZgX1F2uBT
+         6ltkC+OsIobNsreQFPLQuhrXgvcZvUAklfQ++ovnM1P/yaAHZQcLluFFGakhbrHAih
+         VUQWs8glJ4k5gV5c1kO8RHLrZPwGpX6hj4ScnIz8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b7e68c7f-50d9-4d35-bb8b-649b6a8269f7.lettre@localhost>
-References: <b7e68c7f-50d9-4d35-bb8b-649b6a8269f7.lettre@localhost>
-Subject: Re: [GIT PULL] Allwinner Clock Changes for 5.5
+In-Reply-To: <20191106113551.5557-1-alexandru.ardelean@analog.com>
+References: <20191106113551.5557-1-alexandru.ardelean@analog.com>
+Subject: Re: [PATCH] clk: clk-gpio: Add dt option to propagate rate change to parent
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     mturquette@baylibre.com, jsarha@ti.com, ce3a@gmx.de,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
 User-Agent: alot/0.8.1
-Date:   Wed, 06 Nov 2019 14:31:21 -0800
-Message-Id: <20191106223122.867E4214D8@mail.kernel.org>
+Date:   Wed, 06 Nov 2019 14:43:05 -0800
+Message-Id: <20191106224306.A85342173E@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2019-11-06 04:20:37)
-> Hi,
+Quoting Alexandru Ardelean (2019-11-06 03:35:51)
+> From: Michael Hennerich <michael.hennerich@analog.com>
 >=20
-> Please pull the following changes for the next release.
+> For certain setups/boards it's useful to propagate the rate change of the
+> clock up one level to the parent clock.
 >=20
-> Thanks!
-> Maxime
+> This change implements this by defining a `clk-set-rate-parent` device-tr=
+ee
+> property which sets the `CLK_SET_RATE_PARENT` flag to the clock (when set=
+).
 >=20
-> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c=
-5c:
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+> ---
+>  drivers/clk/clk-gpio.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
 >=20
->   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/ta=
-gs/sunxi-clk-for-5.5-1
->=20
-> for you to fetch changes up to 4441b57ec27e35a86337b3197c62b3d6be9695b2:
->=20
->   clk: sunxi-ng: h3: Export MBUS clock (2019-11-05 11:34:41 +0100)
->=20
-> ----------------------------------------------------------------
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index 9d930edd6516..6dfbc4b952fe 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -241,6 +241,7 @@ static int gpio_clk_driver_probe(struct platform_devi=
+ce *pdev)
+>         struct device_node *node =3D pdev->dev.of_node;
+>         const char **parent_names, *gpio_name;
+>         unsigned int num_parents;
+> +       unsigned long clk_flags;
+>         struct gpio_desc *gpiod;
+>         struct clk *clk;
+>         bool is_mux;
+> @@ -274,13 +275,16 @@ static int gpio_clk_driver_probe(struct platform_de=
+vice *pdev)
+>                 return ret;
+>         }
+> =20
+> +       clk_flags =3D of_property_read_bool(node, "clk-set-rate-parent") ?
+> +                       CLK_SET_RATE_PARENT : 0;
 
-Thanks. Pulled into clk-next
+Is there a DT binding update somewhere? It looks like a linux-ism from
+the DT perspective. I wonder if we can somehow figure out that it's OK
+to call clk_set_rate() on the parent here? Or is it safe to assume that
+we can just always call set rate on the parent? I think for a gate it's
+good and we can just do so, but for a mux maybe not. Care to describe
+your scenario a little more so we can understand why you want to set
+this flag? Is it for a mux or a gate type gpio?
 
