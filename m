@@ -2,148 +2,162 @@ Return-Path: <SRS0=SbWe=Y6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F058C5DF62
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 07:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E516DC5DF62
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 11:36:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A51218AE
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 07:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A69AA2077C
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 11:36:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="abpYqtWB"
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="C0R75jjm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbfKFHpH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Nov 2019 02:45:07 -0500
-Received: from mail-eopbgr70085.outbound.protection.outlook.com ([40.107.7.85]:18985
-        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729986AbfKFHpH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Nov 2019 02:45:07 -0500
+        id S1726101AbfKFLgM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Nov 2019 06:36:12 -0500
+Received: from mx0b-00128a01.pphosted.com ([148.163.139.77]:49968 "EHLO
+        mx0b-00128a01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725856AbfKFLgM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Nov 2019 06:36:12 -0500
+Received: from pps.filterd (m0167091.ppops.net [127.0.0.1])
+        by mx0b-00128a01.pphosted.com (8.16.0.42/8.16.0.42) with SMTP id xA6BXPeg028181;
+        Wed, 6 Nov 2019 06:36:06 -0500
+Received: from nam02-cy1-obe.outbound.protection.outlook.com (mail-cys01nam02lp2050.outbound.protection.outlook.com [104.47.37.50])
+        by mx0b-00128a01.pphosted.com with ESMTP id 2w2a9yqx0b-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 06 Nov 2019 06:36:05 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Jlakg06RjDkIE1KDSVYBM9NXNvTX0Fwk1Z88Xi3zq1CHUAjRilzyKBNy2bnMQJ3kSnkCGaIW/rMABA3Go/ylobXqnvF9LE6pgbaj+S6yzJwhYhzKeiHHifoqF54s2Qdi3TSo0ecTD2GwwEZ3tbj+hhckjkITg1Na5G+LMqY0e4LId+on47IC/v05NUzfmvMiTH7w0mpaWBQlWN+Z1tBA9q+8tCVseuZnp+314mueJfpJhwbtrffWxaayK86B479iuE6tgr1QcznDUqYLcm55O535RfhOGBOdDQdszHyLsDDJRe8xt1lof4hR7xA43xQfJaPrpgxzoEZh5q6yHKL23A==
+ b=CHS1Ah4GmvEOGHvBTojnfyiUk7vbwfNtfdB1n+p7CKhvumpYgRly6oZ7EqtviE4iOafW4iLDsZTsXshOFtuDtPkzqmK6qSmhEB2Gt3vfBuubuU3PttYJvr98p7YjQfheHiyIE8URVfyrUglq8LPRZdyI3Qlk1GEw3yBICOfQNa0xrrvbqFDApXeyd28/CogOXXodI5VXoWs1vb4ZwSSE4syx5uruVMzQePV6RWobibOsp1A8yq6U6Sjl/odXrg9buyjSCEEfUL4KM6bVC/sExAYyZ8PL1sst2Bsmu0ZkfDj7B+fOLyHLV+Ue43gRV14SZgcLmTR+RSlGF8VG03IxwA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DEp+4k3DsabS3lPCUEm6IwDjGzuiraozcekKoU0utuw=;
- b=a6u6xnCj7MA/vxhM8vYYLo1qOVqJvsfxbPN/Fsn/EvTqbbBmyiy2UcwY6I/e6mgLv2MH6lfciWepne0rfeuWKRIu8mzLJEhK7cuJ2zCO/tJx10Z5Yi4iQKc9RmFgBLQUQhWTYOXspIHJoXZr1AAExIuXdUbLBy7lnjc6kR4X2u/Bgi8eZwCdjo+XEGlVc4dP9KSpjUNtNQvbpHU/84NXZUGltrHDsbbOWebmjUXta4yjr+e+E4Mkcm1E40JpY7lP7FR20ATe5CAuI6K0Ed9zzlx+UHRR2h1yaU1iRGBUwdRuZP+L0ehQotPFJK2U8mjiVklRjgyHnYsqjldBhb16ZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ bh=8BEP0//ASSydsEG74/YfBU6cIfTc41NJyeeJ+zaoHB0=;
+ b=AiAb6Mang1cB1UAyVnr1RBgcOjbnocmiwvPJzrBNqg1Kq5F0YhOpue4ue78MgvF7hh9zsaVWJCnT3aJjo7Vrg/+RsZ/a+V08/5Br8o04PH/Fg6EtTbZZL+wFjgnpmLUS1gXyRpyBd6ALmuI0XlDa5m5et0Kv2aRcrTGeL6aN/oYGrT0L5ZFy1aDdyEmssic5iFkdkUcB42M4PNDfKL8R6yXXYbbzaf4zc7vgQ1mCVC7ICtvyW85xCJo99OKO/LoGreTqRrlxW8BnDY+6R1WY4FO0MxpM241n8d5Bk5YDwztPTrcTxhZypQZA/iwnNkq+LY3MmPri5yeEkANplpjLBQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 137.71.25.55) smtp.rcpttodomain=kernel.org smtp.mailfrom=analog.com;
+ dmarc=bestguesspass action=none header.from=analog.com; dkim=none (message
+ not signed); arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=analog.onmicrosoft.com; s=selector2-analog-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DEp+4k3DsabS3lPCUEm6IwDjGzuiraozcekKoU0utuw=;
- b=abpYqtWBQQZdnl6Tt/aXybxHaHaUSxz0YNcM5CNNXun7e2xRLoTI5r3uI/HCTT/JDfecU6kHF4Sq0DIAgzAtpKgVJHND/C8L8lQBmizu3igZJadwyyQD/l9nBqriK9BXkQcYpsqZYug1H8cPb+glISo7H/V16sgDon9RSSCcRT8=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB3956.eurprd04.prod.outlook.com (52.134.93.159) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2408.24; Wed, 6 Nov 2019 07:45:02 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2430.020; Wed, 6 Nov 2019
- 07:45:01 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Subject: Re: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
-Thread-Topic: [PATCH] clk: imx: pll14xx: fix clk_pll14xx_wait_lock
-Thread-Index: AQHVlGNoepC2TDBj7kaCYRyt+h3yD6d9w2gA
-Date:   Wed, 6 Nov 2019 07:45:01 +0000
-Message-ID: <20191106074500.vwihbt6s4dwqyun7@fsr-ub1664-175>
-References: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1573018178-14939-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM4PR0101CA0057.eurprd01.prod.exchangelabs.com
- (2603:10a6:200:41::25) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 44bb08a1-bf45-4b4a-f4ef-08d7628d3b01
-x-ms-traffictypediagnostic: AM0PR04MB3956:|AM0PR04MB3956:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB395665F85B4C56349A243B5CF6790@AM0PR04MB3956.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5797;
-x-forefront-prvs: 02135EB356
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(7916004)(4636009)(376002)(346002)(136003)(396003)(366004)(39860400002)(199004)(189003)(6512007)(316002)(64756008)(6636002)(5660300002)(66446008)(2906002)(26005)(305945005)(102836004)(7736002)(86362001)(6116002)(76176011)(14444005)(8936002)(8676002)(66476007)(44832011)(66556008)(6506007)(3846002)(66066001)(71200400001)(6436002)(71190400001)(6486002)(478600001)(81166006)(6246003)(99286004)(476003)(9686003)(229853002)(52116002)(386003)(256004)(54906003)(81156014)(446003)(486006)(1076003)(6862004)(4744005)(25786009)(14454004)(66946007)(4326008)(53546011)(33716001)(11346002)(186003)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB3956;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: PoAT/lwDNarbS17vfheekcGmymmENkNYSI+U1qLmqUpBZ2BgO4xBagbMGTLRBW+FWidooLGz4kBjEuH+YgYG8ImGvv5k8czCvwZvggNCQ+8yzD4Yxt4LRG5mDk8RT6eVwwoeq/yJOyEAHnWG5xzZ8wo5GzycKGv+0TaUMuVTfcf1dv7qpjJOhm1/JdF6YsCtCk2Tk0grUY76em95RMnhXkPy/KcExX1XzyGJsvKTE+dWUtrf/7fLpeMxSG08pCED4dR00g5J9gKrK95umpdkajl0cx9cEThmSkaz8RPqiTaehpV9N8y0YGetRRkXTyGxwFG3uRbNhi1eTaLAzToMSVRwtyFPuH4avgsZ0ZyXf0AIZxT8c5aEAg/fo3tDkwAsE+J5eifzHUdSX5JpulyY8S/inmQfE4JUS/1DgK1NLvwHVv5vqhEuvirno9WSdPu7
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3C2A340762855A46862663A22A7574CA@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+ bh=8BEP0//ASSydsEG74/YfBU6cIfTc41NJyeeJ+zaoHB0=;
+ b=C0R75jjmS5m837IJvvsYbzy8ZL9ahxaivqdrSxcfzY1XGief22DIHUWj/vtqZ3iLcM304C4PKEA9nG7U58pA2FZP6E4XIsjuN3y8eaZwD2DgnxJZX39TNCy8fuDPxuNtCE7Cp7DxXIKbYbrOQtDT4USY1/Yn2HKf/cF3IyqnLaQ=
+Received: from MWHPR03CA0006.namprd03.prod.outlook.com (2603:10b6:300:117::16)
+ by BN7PR03MB3585.namprd03.prod.outlook.com (2603:10b6:406:c3::29) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2408.24; Wed, 6 Nov
+ 2019 11:36:04 +0000
+Received: from SN1NAM02FT063.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e44::201) by MWHPR03CA0006.outlook.office365.com
+ (2603:10b6:300:117::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2430.20 via Frontend
+ Transport; Wed, 6 Nov 2019 11:36:03 +0000
+Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
+ 137.71.25.55 as permitted sender) receiver=protection.outlook.com;
+ client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
+Received: from nwd2mta1.analog.com (137.71.25.55) by
+ SN1NAM02FT063.mail.protection.outlook.com (10.152.72.213) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.2367.14
+ via Frontend Transport; Wed, 6 Nov 2019 11:36:03 +0000
+Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id xA6Ba1vW003535
+        (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=OK);
+        Wed, 6 Nov 2019 03:36:01 -0800
+Received: from saturn.ad.analog.com (10.48.65.117) by
+ NWD2HUBCAS7.ad.analog.com (10.64.69.107) with Microsoft SMTP Server id
+ 14.3.408.0; Wed, 6 Nov 2019 06:36:01 -0500
+From:   Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC:     <sboyd@kernel.org>, <mturquette@baylibre.com>, <jsarha@ti.com>,
+        <ce3a@gmx.de>, Michael Hennerich <michael.hennerich@analog.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: [PATCH] clk: clk-gpio: Add dt option to propagate rate change to parent
+Date:   Wed, 6 Nov 2019 13:35:51 +0200
+Message-ID: <20191106113551.5557-1-alexandru.ardelean@analog.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 44bb08a1-bf45-4b4a-f4ef-08d7628d3b01
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Nov 2019 07:45:01.8697
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRoutedOnPrem: True
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(39860400002)(346002)(189003)(199004)(8676002)(8936002)(86362001)(476003)(126002)(70206006)(2616005)(426003)(36756003)(305945005)(26005)(186003)(356004)(336012)(50466002)(486006)(246002)(6666004)(106002)(110136005)(54906003)(48376002)(316002)(2870700001)(7636002)(2906002)(50226002)(47776003)(44832011)(51416003)(7696005)(1076003)(5660300002)(4326008)(107886003)(478600001)(70586007);DIR:OUT;SFP:1101;SCL:1;SRVR:BN7PR03MB3585;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;MX:1;A:1;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 45082c29-c45b-4e2c-941a-08d762ad8178
+X-MS-TrafficTypeDiagnostic: BN7PR03MB3585:
+X-Microsoft-Antispam-PRVS: <BN7PR03MB358565D6FE5A01739EE5D627F9790@BN7PR03MB3585.namprd03.prod.outlook.com>
+X-MS-Oob-TLC-OOBClassifiers: OLM:1186;
+X-Forefront-PRVS: 02135EB356
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info: fp3LJ7gCbajcWXWROLp1sszCKnnAT9HwcxGNzWFhjY4+zykjj54/c3tPJghsD1VVUQ3mKXvWYryeD1zeumc/GLYH6kWi9sjRZBGugHcdsEzhQx6LJW2HxPH5HxD6QKL6l3wGxgVwarvCGZ4CnfIo+jY+jT2lA+q5wQNLNbat1bND3w0+yq9IZPxynkEPLVC5yBLk2v5kFBQ/BymX2Cs9i5jJwg07t/tcQOV3C4p3giu4Ps36PSPqcrtVA+okP4sbrSwplhMhwtsTzOfTnXIUqm8pNv74diJTTJsQSpU8FjCUavHsb4Ks8Cq8k8RsJW0RpRlbxjyIkPk7TsLxHbOTtUvHQjy9ifQ7vCFQ4u2/D0WuR9buGYAazAb7jNpc88u36ymS8eC7/R3ptR25BYTssnKNGZI0pk7iaSm9e+qqjLPP6AucGVrbdJ6QJIccczOE
+X-OriginatorOrg: analog.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Nov 2019 11:36:03.5970
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6qHDHv/EU/5rIHVd3bzy4CWxTEnN0HJAlOu8krcC3jnaS+FNLxw5URS1aRaWjAZbTx3kW3dZR5rEA1p/kI2wQg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB3956
+X-MS-Exchange-CrossTenant-Network-Message-Id: 45082c29-c45b-4e2c-941a-08d762ad8178
+X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN7PR03MB3585
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:6.0.95,18.0.572
+ definitions=2019-11-06_03:2019-11-06,2019-11-06 signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=892
+ mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 spamscore=0
+ impostorscore=0 lowpriorityscore=0 clxscore=1011 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.12.0-1908290000 definitions=main-1911060118
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-11-06 05:31:15, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> The usage of readl_poll_timeout is wrong, the cond should be
-> "val & LOCK_STATUS" not "val & LOCK_TIMEOUT_US".
->=20
-> Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+From: Michael Hennerich <michael.hennerich@analog.com>
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+For certain setups/boards it's useful to propagate the rate change of the
+clock up one level to the parent clock.
 
-> ---
->=20
-> V1:
->  Hi Shawn,
->    This patch is made based on 5.4-rc6, not your for-next branch,
->    not sure whether this patch could catch 5.4 release.
->=20
->  drivers/clk/imx/clk-pll14xx.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.=
-c
-> index 7a815ec76aa5..d43b4a3c0de8 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -153,7 +153,7 @@ static int clk_pll14xx_wait_lock(struct clk_pll14xx *=
-pll)
->  {
->  	u32 val;
-> =20
-> -	return readl_poll_timeout(pll->base, val, val & LOCK_TIMEOUT_US, 0,
-> +	return readl_poll_timeout(pll->base, val, val & LOCK_STATUS, 0,
->  			LOCK_TIMEOUT_US);
->  }
-> =20
-> --=20
-> 2.16.4
->=20
+This change implements this by defining a `clk-set-rate-parent` device-tree
+property which sets the `CLK_SET_RATE_PARENT` flag to the clock (when set).
+
+Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+---
+ drivers/clk/clk-gpio.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+index 9d930edd6516..6dfbc4b952fe 100644
+--- a/drivers/clk/clk-gpio.c
++++ b/drivers/clk/clk-gpio.c
+@@ -241,6 +241,7 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 	struct device_node *node = pdev->dev.of_node;
+ 	const char **parent_names, *gpio_name;
+ 	unsigned int num_parents;
++	unsigned long clk_flags;
+ 	struct gpio_desc *gpiod;
+ 	struct clk *clk;
+ 	bool is_mux;
+@@ -274,13 +275,16 @@ static int gpio_clk_driver_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	clk_flags = of_property_read_bool(node, "clk-set-rate-parent") ?
++			CLK_SET_RATE_PARENT : 0;
++
+ 	if (is_mux)
+ 		clk = clk_register_gpio_mux(&pdev->dev, node->name,
+-				parent_names, num_parents, gpiod, 0);
++				parent_names, num_parents, gpiod, clk_flags);
+ 	else
+ 		clk = clk_register_gpio_gate(&pdev->dev, node->name,
+ 				parent_names ?  parent_names[0] : NULL, gpiod,
+-				0);
++				clk_flags);
+ 	if (IS_ERR(clk))
+ 		return PTR_ERR(clk);
+ 
+-- 
+2.20.1
+
