@@ -2,102 +2,80 @@ Return-Path: <SRS0=SbWe=Y6=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6508C5DF65
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 20:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDC9C5DF65
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 20:46:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77A3A21848
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 20:24:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="W1LAcRBr"
+	by mail.kernel.org (Postfix) with ESMTP id E32942187F
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 20:46:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573073161;
+	bh=8EobBLdg79BFoLW8z+BryoGeSM6L13OfS+/VN6yROKM=;
+	h=In-Reply-To:References:Subject:From:To:Cc:Date:List-ID:From;
+	b=Z4Y9CGKwZwz1rPtU3wQ3lCJw6gF7tgfDieX4h135x+bHkfNav/m6wFhplRxAU3ESo
+	 us4FBOKlZmlvv8PaRzSeOiEpUQ86qFxiJFBXW7GXy91YugB3KK48ED3nYmzDi2MPxG
+	 4oZxXFEjeaFQkTBcveMDkc8/ySFfunkdJn8rQHDQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732655AbfKFUY3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Nov 2019 15:24:29 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:53120 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732208AbfKFUYF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 6 Nov 2019 15:24:05 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xA6KNswV047032;
-        Wed, 6 Nov 2019 14:23:54 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1573071834;
-        bh=h17DwjMjACihpzGQQpzvviAQl9+USvbZ27dLSxqFdPs=;
-        h=From:To:CC:Subject:Date;
-        b=W1LAcRBrtCFpAhaaLQgLT4su0gm1EBaij3r6tRYP9yVxogPlimA23AVNA7h7I5YoX
-         YBq6VWF58nlFf4+CHgpGlACRk1ys+UtYyPPGq6wAZjgO72ALHbm/ROcvFn1KpKG79N
-         gVCAdnGFqpAUBzsn1OtIqlkpRCgKeDFYiDBgbuJM=
-Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xA6KNsTR015435
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 6 Nov 2019 14:23:54 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 6 Nov
- 2019 14:23:39 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 6 Nov 2019 14:23:39 -0600
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id xA6KNsir119124;
-        Wed, 6 Nov 2019 14:23:54 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-media@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v3 0/5] ARM: dts: dra7: add vpe nodes 
-Date:   Wed, 6 Nov 2019 14:26:17 -0600
-Message-ID: <20191106202622.2648-1-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
+        id S1727587AbfKFUqA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Nov 2019 15:46:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33426 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727376AbfKFUqA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 6 Nov 2019 15:46:00 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B14A120869;
+        Wed,  6 Nov 2019 20:45:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573073159;
+        bh=8EobBLdg79BFoLW8z+BryoGeSM6L13OfS+/VN6yROKM=;
+        h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
+        b=oY84uH53kicG5g/Aec/DaE31sE1u7PRypCK2hfInsLsk49g4rcGFVwm/mTzTp2qxR
+         W3w0jwu/xCvpsDorwK83rau4PwqFn9J0ISe4eXPbJzCIX1E21PuCc45j0Guls4slmO
+         gSRCBY4GHRSQfb5/m0Mp+4JkYIf4UAAd8aOMr170=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191018101212.26432-1-geert+renesas@glider.be>
+References: <20191018101212.26432-1-geert+renesas@glider.be>
+Subject: Re: [GIT PULL] clk: renesas: Updates for v5.5
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+User-Agent: alot/0.8.1
+Date:   Wed, 06 Nov 2019 12:45:58 -0800
+Message-Id: <20191106204559.B14A120869@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series adds the needed clkctrl and ty-sysc nodes for VPE module.
-We also document the VPE DT bindings.
+Quoting Geert Uytterhoeven (2019-10-18 03:12:12)
+>         Hi Mike, Stephen,
+>=20
+> The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c=
+5c:
+>=20
+>   Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
+ tags/clk-renesas-for-v5.5-tag1
+>=20
+> for you to fetch changes up to 56278c8fcb71874d591907d654272d511ce3597c:
+>=20
+>   clk: renesas: r8a774b1: Add TMU clock (2019-10-07 14:29:53 +0200)
+>=20
+> ----------------------------------------------------------------
 
-Changes since v2:
-- Fix binding spdx license
-- Added Rob's ack 
+Thanks. Picked this description from here too.
 
-Changes since v1:
-- Added a patch to update the compatible in the driver
-- Removed unnededed #cell #size properties
-- Updated the compatible in dtsi to match binding
-- Split off the clk code into its own patch
-- Added device specific prefix
-- Converted binding to dt schema
-
-Benoit Parrot (5):
-  dt-bindings: media: ti-vpe: Document VPE driver
-  clk: ti: dra7: add vpe clkctrl data
-  ARM: dts: dra7: add vpe clkctrl node
-  ARM: dts: dra7: Add ti-sysc node for VPE
-  media: ti-vpe: vpe: fix compatible to match bindings
-
- .../devicetree/bindings/media/ti,vpe.yaml     | 64 +++++++++++++++++++
- MAINTAINERS                                   |  1 +
- arch/arm/boot/dts/dra7-l4.dtsi                | 28 +++++++-
- arch/arm/boot/dts/dra7xx-clocks.dtsi          | 18 +++++-
- drivers/clk/ti/clk-7xx.c                      |  6 ++
- drivers/media/platform/ti-vpe/vpe.c           |  2 +-
- include/dt-bindings/clock/dra7.h              | 10 +++
- 7 files changed, 123 insertions(+), 6 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/media/ti,vpe.yaml
-
--- 
-2.17.1
 
