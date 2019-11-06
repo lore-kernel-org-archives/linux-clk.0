@@ -4,102 +4,113 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E7FDC43331
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 22:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E99B4FC6194
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 23:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7FF217D7
-	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 22:43:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F75217F4
+	for <linux-clk@archiver.kernel.org>; Wed,  6 Nov 2019 23:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573080188;
-	bh=sIJIhyS0MXsdS5o5wl8jxauoavtoO6HaIcCyLg5qR2A=;
+	s=default; t=1573081807;
+	bh=phPqrB8jdcQhMXpI7PNcLtByNjzRwAfdzJcKYVWr13E=;
 	h=In-Reply-To:References:Subject:From:To:Cc:Date:List-ID:From;
-	b=ymfaHJbBbZgXQPThZy3eNiltYh5cdpog0SGv/Qc/wPkzlAmxuPhCgRSd12i7w0vdy
-	 QISEYevA8tgIWKuuTino8QLn6Ixt+uYRMmztXcEHUkALS7Rf8C3voBuVSd1URgyXKD
-	 z0NTEN7YfD7uefsOWcRpnrvXeu6fbVAcH2Bifurk=
+	b=TUd9JzCsstYN1Y959XaZXnFN7qqHseIHnQhVU1NcgEzhgaFwfsY+yui+ojjTw5Kf6
+	 Fp2cM45/NI4swlL1nwNV6NfcsNrFtaNe9XM9S6Vf8rQlqXTE1VJyjrjPzHJWg3nLWg
+	 d7Hb1EhZ1oWhvZb0Fa5ZhlORuId9OyvvzFqn/xN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727328AbfKFWnH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 6 Nov 2019 17:43:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52576 "EHLO mail.kernel.org"
+        id S1727409AbfKFXKH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 6 Nov 2019 18:10:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34466 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbfKFWnH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 6 Nov 2019 17:43:07 -0500
+        id S1727228AbfKFXKH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 6 Nov 2019 18:10:07 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A85342173E;
-        Wed,  6 Nov 2019 22:43:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2CD820869;
+        Wed,  6 Nov 2019 23:10:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573080186;
-        bh=sIJIhyS0MXsdS5o5wl8jxauoavtoO6HaIcCyLg5qR2A=;
+        s=default; t=1573081806;
+        bh=phPqrB8jdcQhMXpI7PNcLtByNjzRwAfdzJcKYVWr13E=;
         h=In-Reply-To:References:Subject:From:To:Cc:Date:From;
-        b=OD88XhMD/Q/B3vEuWJ+r36+i67KZcYpPXGr9PLTb0wb+AoHAYEudOiF6ZgX1F2uBT
-         6ltkC+OsIobNsreQFPLQuhrXgvcZvUAklfQ++ovnM1P/yaAHZQcLluFFGakhbrHAih
-         VUQWs8glJ4k5gV5c1kO8RHLrZPwGpX6hj4ScnIz8=
+        b=Ujuxe6X1kCsRkxtdQYgSWiR0mYrSc9nQP1ygJUr45CCctRkVEX2Jf9Wnp4kkOvTVm
+         GBOqu/HNFeA6cJMT7QS6PMnl2OKfLo3pUAUZ0MAZ1yEG1+KPhxkjhqPb0cTze2UIjW
+         qce2kBf6A/GX0fvsfQmdvN+ylBBREGi5gRasWjRE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191106113551.5557-1-alexandru.ardelean@analog.com>
-References: <20191106113551.5557-1-alexandru.ardelean@analog.com>
-Subject: Re: [PATCH] clk: clk-gpio: Add dt option to propagate rate change to parent
+In-Reply-To: <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
+References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com> <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
+Subject: Re: [PATCH v9 07/22] clk: Add API to get index of the clock parent
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     mturquette@baylibre.com, jsarha@ti.com, ce3a@gmx.de,
-        Michael Hennerich <michael.hennerich@analog.com>,
-        Alexandru Ardelean <alexandru.ardelean@analog.com>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
+        jonathanh@nvidia.com, linus.walleij@linaro.org,
+        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
+        tglx@linutronix.de, thierry.reding@gmail.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
+        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
+        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
+        devicetree@vger.kernel.org, rjw@rjwysocki.net,
+        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
 User-Agent: alot/0.8.1
-Date:   Wed, 06 Nov 2019 14:43:05 -0800
-Message-Id: <20191106224306.A85342173E@mail.kernel.org>
+Date:   Wed, 06 Nov 2019 15:10:05 -0800
+Message-Id: <20191106231005.F2CD820869@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Alexandru Ardelean (2019-11-06 03:35:51)
-> From: Michael Hennerich <michael.hennerich@analog.com>
+Quoting Sowjanya Komatineni (2019-08-16 12:41:52)
+> This patch adds an API clk_hw_get_parent_index to get index of the
+> clock parent to use during the clock restore operations on system
+> resume.
+
+Is there a reason we can't save the clk hw index at suspend time by
+reading the hardware to understand the current parent? The parent index
+typically doesn't matter unless we're trying to communicate something
+from the framework to the provider driver. Put another way, I would
+think the provider driver can figure out the index itself without having
+to go through the framework to do so.
+
 >=20
-> For certain setups/boards it's useful to propagate the rate change of the
-> clock up one level to the parent clock.
->=20
-> This change implements this by defining a `clk-set-rate-parent` device-tr=
-ee
-> property which sets the `CLK_SET_RATE_PARENT` flag to the clock (when set=
-).
->=20
-> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
-> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-> ---
->  drivers/clk/clk-gpio.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-> index 9d930edd6516..6dfbc4b952fe 100644
-> --- a/drivers/clk/clk-gpio.c
-> +++ b/drivers/clk/clk-gpio.c
-> @@ -241,6 +241,7 @@ static int gpio_clk_driver_probe(struct platform_devi=
-ce *pdev)
->         struct device_node *node =3D pdev->dev.of_node;
->         const char **parent_names, *gpio_name;
->         unsigned int num_parents;
-> +       unsigned long clk_flags;
->         struct gpio_desc *gpiod;
->         struct clk *clk;
->         bool is_mux;
-> @@ -274,13 +275,16 @@ static int gpio_clk_driver_probe(struct platform_de=
-vice *pdev)
->                 return ret;
->         }
+> Reviewed-by: Thierry Reding <treding@nvidia.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index cbcc333aec84..12ad0e9b8591 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -1645,6 +1645,23 @@ static int clk_fetch_parent_index(struct clk_core =
+*core,
+>         return i;
+>  }
 > =20
-> +       clk_flags =3D of_property_read_bool(node, "clk-set-rate-parent") ?
-> +                       CLK_SET_RATE_PARENT : 0;
+> +/**
+> + * clk_hw_get_parent_index - return the index of parent clock
+> + * @hw: clk_hw associated with the clk being consumed
+> + * @parent_hw: clk_hw associated with the parent of clk
+> + *
+> + * Fetches and returns the index of parent clock.
+> + * If hw or parent_hw is NULL, returns -EINVAL.
+> + */
+> +int clk_hw_get_parent_index(struct clk_hw *hw, struct clk_hw *parent_hw)
+> +{
+> +       if (!hw || !parent_hw)
+> +               return -EINVAL;
 
-Is there a DT binding update somewhere? It looks like a linux-ism from
-the DT perspective. I wonder if we can somehow figure out that it's OK
-to call clk_set_rate() on the parent here? Or is it safe to assume that
-we can just always call set rate on the parent? I think for a gate it's
-good and we can just do so, but for a mux maybe not. Care to describe
-your scenario a little more so we can understand why you want to set
-this flag? Is it for a mux or a gate type gpio?
+The caller should be ashamed if they call this with NULL arguments.
+I'd prefer we skip this check and we get an oops.
 
+> +
+> +       return clk_fetch_parent_index(hw->core, parent_hw->core);
+> +}
+> +EXPORT_SYMBOL_GPL(clk_hw_get_parent_index);
+> +
+>  /*
+>   * Update the orphan status of @core and all its children.
+>   */
