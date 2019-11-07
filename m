@@ -2,150 +2,166 @@ Return-Path: <SRS0=fLRh=Y7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353BCC43331
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 22:35:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29730C43331
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 22:55:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDEE22077C
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 22:35:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PtcZKf+I";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DTwZZgdX"
+	by mail.kernel.org (Postfix) with ESMTP id E562B21D7F
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 22:55:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573167311;
+	bh=jExGSxODnj6qW8jJKoeORibxwrOMTybXfuDaiSWa98s=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=RGlFT5gfAxpXOXPdOUHtk1d/0X/wxBlvDHiZK95kQHgvvkfRAvVO25YhEp/HM2Fvk
+	 3I8mm97ftH9uxKay3hefQ5qsjj58c1CqSMEcSpH64FaN91W7EwWzqpGijH01Uf4q0D
+	 T8aj5IbPwk3p0VNaydCKR9McISze2YW+MKLbtxug=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725945AbfKGWfZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Nov 2019 17:35:25 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:54762 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725870AbfKGWfZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Nov 2019 17:35:25 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2233660D84; Thu,  7 Nov 2019 22:35:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573166124;
-        bh=Q2G6160efqVb5qVyhoWW92xY36mZ64vNPwsbgT5/UE0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=PtcZKf+ImPi9b7/IEeCW5PC1sMgJs0tayIdJU7odKLCIQW5qSdh9JYWx/GS0LMZ/A
-         +wfuQ4IWq7q3ab3AwXG7Fi+qLZkTh52g6RyZT/jORds/ILyXnDmmPmlha/22jhS0Nw
-         ztqI2jjDqPJYa26YvjHkVrHpQCjaMhvn/FvoN3K4=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725940AbfKGWzK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Nov 2019 17:55:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725882AbfKGWzK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Nov 2019 17:55:10 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6EC2260AD9;
-        Thu,  7 Nov 2019 22:35:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573166123;
-        bh=Q2G6160efqVb5qVyhoWW92xY36mZ64vNPwsbgT5/UE0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=DTwZZgdX2gyXbuubR1oBlne3TXog4s/aJUuw6fx3yjpqEItoi3QiqqYRalQ0tRYuR
-         0WDjzPPRqPCpNZWdiFV9EgjiBD8BbwVz+yBSqWkhBBVUqj5lAethZR0oETcXnt/GbP
-         CvThii+QifpN4FMQ6t25unnKHN6x+ntyUHNDk7Tk=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6EC2260AD9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v6 4/6] dt-bindings: clock: Add support for the MSM8998
- mmcc
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        marc.w.gonzalez@free.fr, mturquette@baylibre.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1569959656-5202-1-git-send-email-jhugo@codeaurora.org>
- <1569959842-8399-1-git-send-email-jhugo@codeaurora.org>
- <20191107215506.8FBFA2084D@mail.kernel.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <7f3697ae-2e12-f306-b288-4dec19544275@codeaurora.org>
-Date:   Thu, 7 Nov 2019 15:35:21 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C3732085B;
+        Thu,  7 Nov 2019 22:55:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573167309;
+        bh=jExGSxODnj6qW8jJKoeORibxwrOMTybXfuDaiSWa98s=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=CoYtf+xLGfDiQfquE2zCW0O1/SA4w1+/M3OThuKGMHV++4ZFRd6kg/yDEDY6ACVnf
+         zWTq4MY7EGiGMrRQElaTliKuFz7ml3CGC40OfboKtZEAOA1bialhhSgwlrz4MbJikR
+         x8CZmnN5FnxlQLarGfonSlGiXRYosy1u01MJFdlw=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191107215506.8FBFA2084D@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1573111012-29095-1-git-send-email-rajan.vaja@xilinx.com>
+References: <1573111012-29095-1-git-send-email-rajan.vaja@xilinx.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Rajan Vaja <rajan.vaja@xilinx.com>, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Rajan Vaja <rajan.vaja@xilinx.com>,
+        Jolly Shah <jolly.shah@xilinx.com>,
+        Michal Simek <michal.simek@xilinx.com>
+Subject: Re: [PATCH] dt-bindings: clock: Add bindings for versal clock driver
+User-Agent: alot/0.8.1
+Date:   Thu, 07 Nov 2019 14:55:08 -0800
+Message-Id: <20191107225509.5C3732085B@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/7/2019 2:55 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-10-01 12:57:22)
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt b/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
->> index 8b0f7841af8d..a92f3cbc9736 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
->> +++ b/Documentation/devicetree/bindings/clock/qcom,mmcc.txt
->> @@ -10,11 +10,32 @@ Required properties :
->>                          "qcom,mmcc-msm8960"
->>                          "qcom,mmcc-msm8974"
->>                          "qcom,mmcc-msm8996"
->> +                       "qcom,mmcc-msm8998"
-> 
-> Can you convert this binding to YAML? Makes it easier to validate it
-> against the dts files.
+Quoting Rajan Vaja (2019-11-06 23:16:52)
+> Add documentation to describe Xilinx Versal clock driver
+> bindings.
+>=20
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 
-I'll look at this since I'm already resending due to the merge conflict.
+Signoff chain is all wrong. The sender should come last. Please read up
+on how to submit patches to the kernel with proper SoB chains in kernel
+docs. I can dig it up if you can't find it.
 
-> 
->>   
->>   - reg : shall contain base register location and length
->>   - #clock-cells : shall contain 1
->>   - #reset-cells : shall contain 1
->>   
->> +For MSM8998 only:
->> +       - clocks: a list of phandles and clock-specifier pairs,
->> +                 one for each entry in clock-names.
->> +       - clock-names: "xo" for the xo clock.
->> +                      "gpll0" for the global pll 0 clock.
->> +                      "dsi0dsi" for the dsi0 pll dsi clock (required if dsi is
->> +                               enabled, optional otherwise).
->> +                      "dsi0byte" for the dsi0 pll byte clock (required if dsi
->> +                               is enabled, optional otherwise).
->> +                      "dsi1dsi" for the dsi1 pll dsi clock (required if dsi is
->> +                               enabled, optional otherwise).
->> +                      "dsi1byte" for the dsi1 pll byte clock (required if dsi
->> +                               is enabled, optional otherwise).
->> +                      "hdmipll" for the hdmi pll clock (required if hdmi is
->> +                               enabled, optional otherwise).
->> +                      "dpvco" for the displayport pll vco clock (required if
->> +                               dp is enabled, optional otherwise).
->> +                      "dplink" for the displayport pll link clock (required if
->> +                               dp is enabled, optional otherwise).
-> 
-> I'm not sure why it's optional. The hardware is "fixed" in the sense
-> that the dp phy is always there and connected to this hardware block.
->  From a driver perspective I agree it's optional to be used, but from a
-> DT perspective it's always there so it should be required.
-> 
+> ---
+>  .../devicetree/bindings/clock/xlnx,versal-clk.txt  |  48 ++++++++
+>  include/dt-bindings/clock/xlnx-versal-clk.h        | 123 +++++++++++++++=
+++++++
+>  2 files changed, 171 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,versal-c=
+lk.txt
+>  create mode 100644 include/dt-bindings/clock/xlnx-versal-clk.h
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.txt =
+b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.txt
+> new file mode 100644
+> index 0000000..398e751
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.txt
 
-Sure, the DP phy is technically always there, but does a particular 
-platform have an actual DP output connected to the phy?  If not, why 
-bother describing something that isn't even used?
+Can you write this in YAML so we can validate it?
 
- From a more practical sense its undefined how to actually get the DP 
-clocks - the DP binding is implicitly a clock provider since it has 
-#clock-cells, but it doesn't specify how to actually get the clocks. 
-The DSI binding tells you which index is the dsi clock, and which is the 
-byte clock.
+> @@ -0,0 +1,48 @@
+> +------------------------------------------------------------------------=
+--
+> +Device Tree Clock bindings for the Xilinx Versal
+> +------------------------------------------------------------------------=
+--
+> +The clock controller is a h/w block of Xilinx versal clock tree. It reads
+> +required input clock frequencies from the devicetree and acts as clock p=
+rovider
+> +for all clock consumers of PS clocks.
+> +
+> +See clock_bindings.txt for more information on the generic clock binding=
+s.
+> +
+> +Required properties:
+> + - #clock-cells:       Must be 1
+> + - compatible:         Must contain:   "xlnx,versal-clk"
+> + - clocks:             List of clock specifiers which are external input
+> +                       clocks to the given clock controller. Please refer
+> +                       the next section to find the input clocks for a
+> +                       given controller.
+> + - clock-names:                List of clock names which are exteral inp=
+ut clocks
+> +                       to the given clock controller. Please refer to the
+> +                       clock bindings for more details.
+> +
+> +Input clocks for Xilinx Versal clock controller:
+> +
+> +The Xilinx Versal has one primary and two alternative reference clock in=
+puts.
+> +These required clock inputs are:
+> + - ref_clk
+> + - alt_ref_clk
+> + - pl_alt_ref_clk
+> +
+> +Output clocks are registered based on clock information received
+> +from firmware. Output clocks indexes are mentioned in
+> +include/dt-bindings/clock/xlnx-versal-clk.h.
+> +
+> +-------
+> +Example
+> +-------
+> +
+> +firmware {
+> +       versal_firmware: versal-firmware {
+> +               compatible =3D "xlnx,versal-firmware";
+> +               method =3D "smc";
+> +               versal_clk: clock-controller {
+> +                       #clock-cells =3D <1>;
+> +                       compatible =3D "xlnx,versal-clk";
+> +                       clocks =3D <&ref_clk>, <&alt_ref_clk>, <&pl_alt_r=
+ef_clk>;
+> +                       clock-names =3D "ref_clk", "alt_ref_clk", "pl_alt=
+_ref_clk";
+> +               };
+> +       };
+> +};
+> diff --git a/include/dt-bindings/clock/xlnx-versal-clk.h b/include/dt-bin=
+dings/clock/xlnx-versal-clk.h
+> new file mode 100644
+> index 0000000..264d634
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/xlnx-versal-clk.h
+> @@ -0,0 +1,123 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + *  Copyright (C) 2019 Xilinx Inc.
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_VERSAL_H
+> +#define _DT_BINDINGS_CLK_VERSAL_H
+> +
+> +#define PMC_PLL                                        1
 
-The HDMI binding is not a clock provider at all.  Needs to be revised, 
-which didn't appear trivial when I took a quick look while working on mmcc.
+Why not start with 0?
 
-I want to do the right thing here by specifying all the external clocks 
-up front, and not have to worry about backwards compatibility with 
-pre-existing DTs later on, but I also would like to focus on one problem 
-at a time, and not go dig into all the problems with DP/HDMI before 
-landing this, particularly as those components also rely on the mmcc.
-
-Is that justification enough for you?  If not, how would you like to 
-proceed?  Make them required in the binding, and just have an invalid 
-(per the binding) DT until all the problems get sorted out?
-
--- 
-Jeffrey Hugo
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
