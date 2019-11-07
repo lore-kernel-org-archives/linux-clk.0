@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80E37C43331
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 21:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0521C43331
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 21:24:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5352C222C5
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 21:24:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91BE121D79
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 21:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573161854;
-	bh=2MmroB04zpXo62z6bb7yuOe+M23UIVWKuBZY4t/a88s=;
+	s=default; t=1573161856;
+	bh=45sNdPkokm1R1pjpXzO08JXhp7yfUyI3aBoGP/qPwik=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=eTaIkiS97f85Wdc3+zVAJi+zjxDQ3vqAczHD+Yg5XJXt/0xGdxYR3KVh/i8rgq/cB
-	 CoJ5FJw0W4fyCHzKRRTvbybPiyNOU5vabwynUgK0ws3LoTXsaTQ02pvCwSOCVho0i3
-	 qd9WXdqq7zxzR3JfoBlFNbP5qEGo+0ABnSk6+a5E=
+	b=2oFze0XZHCBGoil3rAPyjkj5YwDWBtpgcF6Ddcy09p0Jl+BEEOiW5IthP//0fbXVF
+	 Mk+nJEHFFUbeNBMeyaWig/pqd3fN4xfzwhg0L5m5DoW1dNk5of49Mer4dU4VUoyBNA
+	 GqUdSfC72n4HoRwzcRQW8kBAbi10PuLkD/aIseBI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726267AbfKGVYK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Nov 2019 16:24:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49194 "EHLO mail.kernel.org"
+        id S1725945AbfKGVYQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Nov 2019 16:24:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49316 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725882AbfKGVYK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Nov 2019 16:24:10 -0500
+        id S1725882AbfKGVYQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Nov 2019 16:24:16 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58CA82087E;
-        Thu,  7 Nov 2019 21:24:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6178821D79;
+        Thu,  7 Nov 2019 21:24:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573161849;
-        bh=2MmroB04zpXo62z6bb7yuOe+M23UIVWKuBZY4t/a88s=;
+        s=default; t=1573161855;
+        bh=45sNdPkokm1R1pjpXzO08JXhp7yfUyI3aBoGP/qPwik=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=aRotv79uKIzWDg6R4j280WHwnO9rJ7BC0Bzgod2V6p0zanOzac/ItzkXS4Ov9Y6TT
-         iMFQ72NolHkj0wVQlMfCYJk6qV+jKifShbUSA1t6E8dN6Ux8KhTbC94vmRVN5yOLNA
-         dzem+BHh6ubb+9cNhvrffB3LGGtDOjjdrC/A/1aU=
+        b=a/ywuNrl3KYfPm8lVDmMsKraDzTjUyrx/3QMh04JZUndVRyo4fQk9zmVx8Tu1O+2l
+         OdnT7kSLFj37s7JJMBQiblM6sPNPVz4C+wN80ZhDtqfNDVfqSYBBOjuRHNFNBR1e4A
+         bSBRjZLHbHp9veu5zqPZ6HgdPNjmrAReuqIv7cnw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1572371299-16774-3-git-send-email-tdas@codeaurora.org>
-References: <1572371299-16774-1-git-send-email-tdas@codeaurora.org> <1572371299-16774-3-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1572371299-16774-4-git-send-email-tdas@codeaurora.org>
+References: <1572371299-16774-1-git-send-email-tdas@codeaurora.org> <1572371299-16774-4-git-send-email-tdas@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
@@ -51,21 +51,21 @@ Cc:     David Brown <david.brown@linaro.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v2 2/3] dt-bindings: clock: Introduce RPMHCC bindings for SC7180
+Subject: Re: [PATCH v2 3/3] clk: qcom: clk-rpmh: Add support for RPMHCC for SC7180
 User-Agent: alot/0.8.1
-Date:   Thu, 07 Nov 2019 13:24:08 -0800
-Message-Id: <20191107212409.58CA82087E@mail.kernel.org>
+Date:   Thu, 07 Nov 2019 13:24:14 -0800
+Message-Id: <20191107212415.6178821D79@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-10-29 10:48:18)
-> Add compatible for SC7180 RPMHCC.
+Quoting Taniya Das (2019-10-29 10:48:19)
+> Add support for clock RPMh driver to vote for ARC and VRM managed
+> clock resources.
 >=20
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Acked-by: Rob Herring <robh@kernel.org>
 > ---
 
-Applied to clk-next + fixed the sort.
+Applied to clk-next
 
