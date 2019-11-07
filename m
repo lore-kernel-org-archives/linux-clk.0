@@ -4,63 +4,128 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 762E3C43331
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 19:33:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E07D1C5DF60
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 21:06:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D69B2075C
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 19:33:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B44EB21D7F
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 21:06:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573155187;
-	bh=t2V/SkooUIaoThHxE9uqbgqy1lEM+6lfOL5vMVPMZJM=;
+	s=default; t=1573160772;
+	bh=P+gx8Y/MLONswYmjEe2LF/E5o+K8Co2kGUVThgIx6LM=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=EXC37JaAarF80PNKrQr/zCWPtu/BUmWC70c+vF/tB9z52FO3Bhic6O76DTDn9xNyZ
-	 8Uv7uIXp6rJ/HLNB8KqK+D0auXogR8aln8Y9gxKkSM2/YeBFqcu7egx55oeXMxc2gG
-	 lbS7PHU0AU1L2EtMm5POX0n/i8y4gKQEFz4SQkng=
+	b=SJMYOeIxTbsOUuBK+C03cwfQ7D2id/ItdgRahHLs4ONC8U0VToSba0GtuhuKiRrqt
+	 IXrNPYWkZ/iwBtnwzppnoVl/M6k0vTZrOKxXpFEboEOST//hIelz4rxNAOKV+I9hJf
+	 owxXauuEbQNRrQrmQAUTdtGb/jGTLs7giT9HoKKQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbfKGTdD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Nov 2019 14:33:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39158 "EHLO mail.kernel.org"
+        id S1726292AbfKGVGI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Nov 2019 16:06:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43832 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbfKGTdD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Nov 2019 14:33:03 -0500
+        id S1725870AbfKGVGI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Nov 2019 16:06:08 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E50692087E;
-        Thu,  7 Nov 2019 19:33:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E536F21D79;
+        Thu,  7 Nov 2019 21:06:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573155183;
-        bh=t2V/SkooUIaoThHxE9uqbgqy1lEM+6lfOL5vMVPMZJM=;
+        s=default; t=1573160767;
+        bh=P+gx8Y/MLONswYmjEe2LF/E5o+K8Co2kGUVThgIx6LM=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=LKPsJcDboGx1XgGIUZtS67K6nX26WfDByCzENkH+K1O+fy0EzycCepEk+ri68Gqkf
-         fKkFbOMwkJJjQTEbBQ29UsYr0nlZR5rv0wOQxd2hvBTAC0+bzH8dwaPaV1EWGqsSVY
-         38Ji59oGFf1lBfYQJeoYVO4t2+MVrAtCbT/j5VsM=
+        b=jIKB5C2x+SJZOlNufX08NfzFtDu9aVv23suQ4ls9Rloi1ALvkEhRVGcYNncwfIycj
+         jFg0hk8QdtOYiTIg92DIRf4FzqaB8ZyIk0vliOFuHOiMLpglU1rB6m81J/ce9FYDfd
+         zNcCVL4thHL7MIMliT6h24Gj8v9uPLz8XKLnu/bo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191025093332.27592-1-yuehaibing@huawei.com>
-References: <20191025093332.27592-1-yuehaibing@huawei.com>
+In-Reply-To: <20191031174149.GD27773@google.com>
+References: <20191014102308.27441-1-tdas@codeaurora.org> <20191014102308.27441-6-tdas@codeaurora.org> <20191029175941.GA27773@google.com> <fa17b97d-bfc4-4e9c-78b5-c225e5b38946@codeaurora.org> <20191031174149.GD27773@google.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>, agross@kernel.org,
-        mturquette@baylibre.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, YueHaibing <yuehaibing@huawei.com>
-Subject: Re: [PATCH -next] clk: qcom: remove unneeded semicolon
+To:     Matthias Kaehlcke <mka@chromium.org>,
+        Taniya Das <tdas@codeaurora.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@chromium.org>
+Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC) driver for SC7180
 User-Agent: alot/0.8.1
-Date:   Thu, 07 Nov 2019 11:33:02 -0800
-Message-Id: <20191107193302.E50692087E@mail.kernel.org>
+Date:   Thu, 07 Nov 2019 13:06:06 -0800
+Message-Id: <20191107210606.E536F21D79@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting YueHaibing (2019-10-25 02:33:32)
-> remove unneeded semicolon.
+Quoting Matthias Kaehlcke (2019-10-31 10:41:49)
+> Hi Taniya,
 >=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
+> On Thu, Oct 31, 2019 at 04:59:26PM +0530, Taniya Das wrote:
+> > Hi Matthias,
+> >=20
+> > Thanks for your comments.
+> >=20
+> > On 10/29/2019 11:29 PM, Matthias Kaehlcke wrote:
+> > > Hi Taniya,
+> > >=20
+> > > On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
+> > > > Add support for the global clock controller found on SC7180
+> > > > based devices. This should allow most non-multimedia device
+> > > > drivers to probe and control their clocks.
+> > > >=20
+> > > > Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> >=20
+> > >=20
+> > > v3 also had
+> > >=20
+> > > +   [GCC_DISP_AHB_CLK] =3D &gcc_disp_ahb_clk.clkr,
+> > >=20
+> > > Removing it makes the dpu_mdss driver unhappy:
+> > >=20
+> > > [    2.999855] dpu_mdss_enable+0x2c/0x58->msm_dss_enable_clk: 'iface'=
+ is not available
+> > >=20
+> > > because:
+> > >=20
+> > >          mdss: mdss@ae00000 {
+> > >                     ...
+> > >=20
+> > >   =3D>             clocks =3D <&gcc GCC_DISP_AHB_CLK>,
+> > >                           <&gcc GCC_DISP_HF_AXI_CLK>,
+> > >                           <&dispcc DISP_CC_MDSS_MDP_CLK>;
+> > >                  clock-names =3D "iface", "gcc_bus", "core";
+> > >     };
+> > >=20
+> >=20
+> > The basic idea as you mentioned below was to move the CRITICAL clocks to
+> > probe. The clock provider to return NULL in case the clocks are not
+> > registered.
+> > This was discussed with Stephen on v3. Thus I submitted the below patch.
+> > clk: qcom: common: Return NULL from clk_hw OF provider.
+>=20
+> I see. My assumption was that the entire clock hierarchy should be regist=
+ered,
+> but Stephen almost certainly knows better :)
+>=20
+> > Yes it would throw these warnings, but no functional issue is observed =
+from
+> > display. I have tested it on the cheza board.
+>=20
+> The driver considers it an error (uses DEV_ERR to log the message) and do=
+esn't
+> handle other clocks when one is found missing. I'm not really famililar w=
+ith
+> the dpu_mdss driver, but I imagine this can have some side effects. Added=
+ some
+> of the authors/contributors to cc.
 
-Applied to clk-next
+NULL is a valid clk pointer returned by clk_get(). What is the display
+driver doing that makes it consider NULL an error?
 
