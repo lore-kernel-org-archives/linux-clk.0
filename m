@@ -2,94 +2,85 @@ Return-Path: <SRS0=fLRh=Y7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDBD7C43331
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 22:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD068C43331
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 23:00:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E6C621882
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 22:57:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81C6121882
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 23:00:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573167466;
-	bh=hEGb+zDEusUB1QbYTDvDDRK18XwzYMPr2cgYlxDaRV8=;
-	h=In-Reply-To:References:From:To:Subject:Date:List-ID:From;
-	b=GE/B++rpn/9thF0SE46vVKWRy5TyD2kmFvHCMMSpjOekw3J8DEg3U0PKQixrOgXip
-	 4WNy+lRnQSB3f8WvrIm+gzIJFsp+Uuhj1ehM7xbvuto95jSPXP4Hg91pIGLa+LfpbN
-	 GlSVvpFNlDBwIhJdXwldDPqFvwxukKvO1R5HOmFE=
+	s=default; t=1573167630;
+	bh=iatOuGVaEBWa1WK3FQpf+kZSEyjOgjCvm+7pE6XkBpk=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=ZVUdlTJj50ZQdtqkoKkbIX5fmvR8Tc5dUx40iBcUrGE2HBkHzHzfvPfpjxc7qbQ51
+	 X76ExvciOlcGZ+HHAzCNiDizFZ3GmiQA/Vnx/sp8nAWfLOEpAZtZmKxL0lM2koox0j
+	 Du6wMwa/vmYKycBaaB7603+C3o7KTakjSB7FSjHk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725906AbfKGW5q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Nov 2019 17:57:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51722 "EHLO mail.kernel.org"
+        id S1726556AbfKGXAa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Nov 2019 18:00:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725893AbfKGW5q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 7 Nov 2019 17:57:46 -0500
+        id S1726094AbfKGXAa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 7 Nov 2019 18:00:30 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A01C2178F;
-        Thu,  7 Nov 2019 22:57:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75ED72178F;
+        Thu,  7 Nov 2019 23:00:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573167465;
-        bh=hEGb+zDEusUB1QbYTDvDDRK18XwzYMPr2cgYlxDaRV8=;
-        h=In-Reply-To:References:From:To:Subject:Date:From;
-        b=G+3Vb4HLoXCXyCcFfYGzyoG9QhxGXWHVRMhts2uUN4SVicYLrgFPR1DUDqmFhK7u4
-         9xwPvtVYYK3pNtcENZJiuu9LScaNNK1LnA8vDoYbbAINdvui7Z1d49zN/1Axb8DU/v
-         E17bLWOHdT8nbqvrz3H6exkTIUIf26CRSPsS9GQ4=
+        s=default; t=1573167629;
+        bh=iatOuGVaEBWa1WK3FQpf+kZSEyjOgjCvm+7pE6XkBpk=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=1hXIx7ueKCiIl4/GZvb4LCtwk8iz7ngEhRfQVBOl9SE0cO9c9DTTq0EFqJtapuQOy
+         x8mRVVS2KkW6Q4mKiNNJLW6CwNyJdykzvXflx8hrVjKLNJ1ifhEpuRn+1YKSYmpRi+
+         ZUWc0UrSbrFnHVDbdSxmUXmiwfLu/K4shvzyLyaM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <DB7PR04MB51956205E7FE92C9EB00A882E2780@DB7PR04MB5195.eurprd04.prod.outlook.com>
-References: <20191105090221.45381-1-wen.he_1@nxp.com> <20191105090221.45381-2-wen.he_1@nxp.com> <VE1PR04MB66879681CE5231F5C80F85148F7E0@VE1PR04MB6687.eurprd04.prod.outlook.com> <DB7PR04MB51956205E7FE92C9EB00A882E2780@DB7PR04MB5195.eurprd04.prod.outlook.com>
+In-Reply-To: <CACPK8XcGgGsoLNpCccKPb-5bojQS4c5BePewwocc-z29On7Rjg@mail.gmail.com>
+References: <20191010020725.3990-1-andrew@aj.id.au> <20191010020725.3990-2-andrew@aj.id.au> <CACPK8XcGgGsoLNpCccKPb-5bojQS4c5BePewwocc-z29On7Rjg@mail.gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Leo Li <leoyang.li@nxp.com>, Mark Rutland <mark.rutland@arm.com>,
+To:     Joel Stanley <joel@jms.id.au>,
         Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>, Wen He <wen.he_1@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-devel@linux.nxdi.nxp.com, linux-kernel@vger.kernel.org
-Subject: RE: [v6 2/2] clk: ls1028a: Add clock driver for Display output interface
+        linux-clk@vger.kernel.org
+Cc:     Andrew Jeffery <andrew@aj.id.au>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: Add AST2600 RMII RCLK gate definitions
 User-Agent: alot/0.8.1
-Date:   Thu, 07 Nov 2019 14:57:44 -0800
-Message-Id: <20191107225745.1A01C2178F@mail.kernel.org>
+Date:   Thu, 07 Nov 2019 15:00:28 -0800
+Message-Id: <20191107230029.75ED72178F@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Wen He (2019-11-06 19:13:48)
+Quoting Joel Stanley (2019-10-31 21:50:42)
+> Hi clock maintainers,
 >=20
-> > > diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile index
-> > > 0138fb14e6f8..d23b7464aba8 100644
-> > > --- a/drivers/clk/Makefile
-> > > +++ b/drivers/clk/Makefile
-> > > @@ -45,6 +45,7 @@ obj-$(CONFIG_COMMON_CLK_OXNAS)            +=3D
-> > > clk-oxnas.o
-> > >  obj-$(CONFIG_COMMON_CLK_PALMAS)            +=3D clk-palmas.o
-> > >  obj-$(CONFIG_COMMON_CLK_PWM)               +=3D clk-pwm.o
-> > >  obj-$(CONFIG_CLK_QORIQ)                    +=3D clk-qoriq.o
-> > > +obj-$(CONFIG_CLK_LS1028A_PLLDIG)   +=3D clk-plldig.o
-> >=20
-> > Wrong ordering.  This section of Makefile requires ordering by driver f=
-ile
-> > name:
-> >=20
-> > # hardware specific clock types
-> > # please keep this section sorted lexicographically by file path name
-> >=20
+> On Thu, 10 Oct 2019 at 02:06, Andrew Jeffery <andrew@aj.id.au> wrote:
+> >
+> > The AST2600 has an explicit gate for the RMII RCLK for each of the four
+> > MACs.
+> >
+> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
 >=20
-> Hi Leo,
+> I needed this patch and the aspeed-clock.h one for the aspeed dts
+> tree, so I've put them in a branch called "aspeed-clk-for-v5.5" and
+> merged that into the aspeed tree. Could you merge that into the clock
+> tree when you get to merging these ones?
 >=20
-> Stephen once suggest the Kconfig variable name should be given a more
-> specific name like CLK_LS1028A_PLLDIG, so I have to changed it.
->=20
-> Hi Stephen,
->=20
-> How do you think?
+> https://git.kernel.org/pub/scm/linux/kernel/git/joel/aspeed.git/log/?h=3D=
+aspeed-clk-for-v5.5
 >=20
 
-
-Config name looks fine to me, but you haven't sorted this based on the
-file name, i.e. clk-plldig.o, so please insert this in the right place
-in this file.
+Can you send a pull request please?
 
