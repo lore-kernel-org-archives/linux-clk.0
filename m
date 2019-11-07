@@ -2,146 +2,134 @@ Return-Path: <SRS0=fLRh=Y7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF97C43331
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 15:21:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F07C43331
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 16:49:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ABD921882
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 15:21:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tnfOQCfK"
+	by mail.kernel.org (Postfix) with ESMTP id A17BE2085B
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 16:49:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729954AbfKGPVZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Nov 2019 10:21:25 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40959 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726640AbfKGPVZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Nov 2019 10:21:25 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f3so2853899wmc.5;
-        Thu, 07 Nov 2019 07:21:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=tUz9lo/9z4UAAly/Z67v9gZOTHnCyevqoBRgRavRjsw=;
-        b=tnfOQCfKS48H+K7xacz5HFV2JFSpKKz9GqPzCKBy4p/x5x2hN8mOivcNoFPSfFBM8B
-         CimxXeTk/32+Cxx0NZ9r1V0ya08lTNBBFMhqXNbG0ILKJIKQA+jUpvNMFPKgIdtZTcnE
-         cWK30MRynSSxLEL/sPdHLsBNy8upE4KmkeAojnzxT+Uk4MMbvzbOjIRhCra9pkWDQR2m
-         mcfgFtIewpyqCt/Uw83QZgnK/8Ds49b+alrIlEtpk2BUDSAjyF1gsFXe17Z6EUhrgVN+
-         SiTWmyEqilyngUf+KeU7WDSm7WhhlYaX2Q1X457k6GXKc5zdpqBv+8TGzPElAJUKClTz
-         iD4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=tUz9lo/9z4UAAly/Z67v9gZOTHnCyevqoBRgRavRjsw=;
-        b=TIGJTSAzd8+BvslOO2wOZ+AnEoWuhCp4fHqWfyxNr3rc8PNOP0seTVREk7zcxPdjHc
-         QpbNCMrR6NuWlQRg3pkljB44uAK2aSk2FDlhtPQ+dGQGEZIxLy+9BtpZf8oHfD7Sz8E4
-         OlmxzVrypD627F1GqVzOAe7FyRexRH+bREClVsKxuQIBIdI1TCjDVgZ0B7cej2D8zTw3
-         MvXwO/JS3GCgMrB6Bs1sEzzxl3NPL7ao+fUkguIkw3uZcBZ0lSum9uvNvEfEFF/luFHm
-         yKsQf9pLU6COGWcATInSaZ2KU0nmKfPBOK6GyC9HnPVNF06YLIkjrZ+yeH1nq3c41BaS
-         Y7UQ==
-X-Gm-Message-State: APjAAAUJZOOBIKOMjsZxVOCVTFL2dMreb885X1uXdzSy+WrfPXKwolZS
-        /jMwbQ/VlNFizwF00NX4tl4=
-X-Google-Smtp-Source: APXvYqzUoO54SjCKN5o/wY+n0JSUgqyAlyIDjV70oqVl5A7OH+1xnZNUrJJ3e8+hC0nkaF/X9fycDg==
-X-Received: by 2002:a1c:1d41:: with SMTP id d62mr3402052wmd.32.1573140082266;
-        Thu, 07 Nov 2019 07:21:22 -0800 (PST)
-Received: from localhost (p2E5BE2CE.dip0.t-ipconnect.de. [46.91.226.206])
-        by smtp.gmail.com with ESMTPSA id x8sm2459912wrm.7.2019.11.07.07.21.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 07 Nov 2019 07:21:17 -0800 (PST)
-Date:   Thu, 7 Nov 2019 16:21:15 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        jason@lakedaemon.net, jonathanh@nvidia.com,
-        linus.walleij@linaro.org, marc.zyngier@arm.com,
-        mark.rutland@arm.com, stefan@agner.ch, tglx@linutronix.de,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        mperttunen@nvidia.com, spatra@nvidia.com, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v9 07/22] clk: Add API to get index of the clock parent
-Message-ID: <20191107152115.GA2580600@ulmo>
-References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com>
- <1565984527-5272-8-git-send-email-skomatineni@nvidia.com>
- <20191106231005.F2CD820869@mail.kernel.org>
- <fcc43ccb-8c6e-d518-4c70-503501706ffd@gmail.com>
+        id S1728965AbfKGQts (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Nov 2019 11:49:48 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:42661 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726810AbfKGQts (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Nov 2019 11:49:48 -0500
+Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <m.tretter@pengutronix.de>)
+        id 1iSkyR-0001OE-Fq; Thu, 07 Nov 2019 17:49:31 +0100
+Date:   Thu, 7 Nov 2019 17:49:28 +0100
+From:   Michael Tretter <m.tretter@pengutronix.de>
+To:     Rajan Vaja <rajan.vaja@xilinx.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
+        jolly.shah@xilinx.com, dan.carpenter@oracle.com,
+        gustavo@embeddedor.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        kernel@pengutronix.de
+Subject: Re: [PATCH] clk: zynqmp: Add support for custom type flags
+Message-ID: <20191107174928.71a921f0@litschi.hi.pengutronix.de>
+In-Reply-To: <1573117086-7405-1-git-send-email-rajan.vaja@xilinx.com>
+References: <1573117086-7405-1-git-send-email-rajan.vaja@xilinx.com>
+Organization: Pengutronix
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
-Content-Disposition: inline
-In-Reply-To: <fcc43ccb-8c6e-d518-4c70-503501706ffd@gmail.com>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:feaa:14ff:fe6a:8db5
+X-SA-Exim-Mail-From: m.tretter@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Thu, 07 Nov 2019 00:58:06 -0800, Rajan Vaja wrote:
+> Store extra custom type flags received from firmware.
+> 
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
+> ---
+>  drivers/clk/zynqmp/clkc.c    | 8 +++++++-
+>  drivers/clk/zynqmp/divider.c | 4 ++--
+>  2 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
+> index a11f93e..0dea55e 100644
+> --- a/drivers/clk/zynqmp/clkc.c
+> +++ b/drivers/clk/zynqmp/clkc.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * Zynq UltraScale+ MPSoC clock controller
+>   *
+> - *  Copyright (C) 2016-2018 Xilinx
+> + *  Copyright (C) 2016-2019 Xilinx
+>   *
+>   * Based on drivers/clk/zynq/clkc.c
+>   */
+> @@ -86,6 +86,8 @@ struct topology_resp {
+>  #define CLK_TOPOLOGY_TYPE		GENMASK(3, 0)
+>  #define CLK_TOPOLOGY_FLAGS		GENMASK(23, 8)
+>  #define CLK_TOPOLOGY_TYPE_FLAGS		GENMASK(31, 24)
+> +#define CLK_TOPOLOGY_TYPE_FLAG2		GENMASK(7, 4)
 
---XsQoSWH+UP9D9v3l
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What kind of function do these flags indicate? The name is really not
+obvious to me.
 
-On Thu, Nov 07, 2019 at 03:54:03AM +0300, Dmitry Osipenko wrote:
-> 07.11.2019 02:10, Stephen Boyd =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Quoting Sowjanya Komatineni (2019-08-16 12:41:52)
-> >> This patch adds an API clk_hw_get_parent_index to get index of the
-> >> clock parent to use during the clock restore operations on system
-> >> resume.
-> > =20
-> > Is there a reason we can't save the clk hw index at suspend time by
-> > reading the hardware to understand the current parent? The parent index
-> > typically doesn't matter unless we're trying to communicate something
-> > from the framework to the provider driver. Put another way, I would
-> > think the provider driver can figure out the index itself without having
-> > to go through the framework to do so.
->=20
-> Isn't it a bit wasteful to duplicate information about the parent within
-> a provider if framework already has that info? The whole point of this
-> new API is to allow providers to avoid that unnecessary duplication.
->=20
-> Please note that clk_hw_get_parent_index is getting used only at the
-> resume time and not at suspend.
+I would prefer if the defines are kept in the order of the bits in the
+field, i.e., the new define should go between CLK_TOPOLOGY_TYPE and
+CLK_TOPOLOGY_FLAGS.
 
-I agree with this. All of the information that we need is already cached
-in the framework. Doing this in the driver would mean essentially adding
-a "saved parent" field along with code to read the value at suspend time
-to the three types of clocks that currently use this core helper.
+> +#define CLK_TOPOLOGY_TYPE_FLAG_BITS	8
+>  	u32 topology[CLK_GET_TOPOLOGY_RESP_WORDS];
+>  };
+>  
+> @@ -396,6 +398,10 @@ static int __zynqmp_clock_get_topology(struct clock_topology *topology,
+>  		topology[*nnodes].type_flag =
+>  				FIELD_GET(CLK_TOPOLOGY_TYPE_FLAGS,
+>  					  response->topology[i]);
+> +		topology[*nnodes].type_flag |=
+> +			FIELD_GET(CLK_TOPOLOGY_TYPE_FLAG2,
+> +				  response->topology[i]) <<
+> +			CLK_TOPOLOGY_TYPE_FLAG_BITS;
 
-That's certainly something that we *can* do, but it doesn't sound like a
-better option than simply querying the framework for the value that we
-need.
+Shifting the new flags into the existing type_flag field seems like a
+source for code that is really difficult to read. Maybe use a new field
+in the topology for the new flags with a proper name?
 
-Thierry
+>  		(*nnodes)++;
+>  	}
+>  
+> diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
+> index d8f5b70d..d376529 100644
+> --- a/drivers/clk/zynqmp/divider.c
+> +++ b/drivers/clk/zynqmp/divider.c
+> @@ -2,7 +2,7 @@
+>  /*
+>   * Zynq UltraScale+ MPSoC Divider support
+>   *
+> - *  Copyright (C) 2016-2018 Xilinx
+> + *  Copyright (C) 2016-2019 Xilinx
+>   *
+>   * Adjustable divider clock implementation
+>   */
+> @@ -37,7 +37,7 @@
+>   */
+>  struct zynqmp_clk_divider {
+>  	struct clk_hw hw;
+> -	u8 flags;
+> +	u16 flags;
 
---XsQoSWH+UP9D9v3l
-Content-Type: application/pgp-signature; name="signature.asc"
+This change looks unrelated to the remaining patch.
 
------BEGIN PGP SIGNATURE-----
+Michael
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3ENmgACgkQ3SOs138+
-s6HBehAAoWy2oqQjgS7Lk2yJnxhX9j8cHmxS30B66WKwZ/Enod8p3/tHOIreOs7Q
-na8sE7nhvDP6ULJjCNNjrBtZ+rm9EfK9n4jUV6Y10wH8PVpFyN8Xnobp5yipT4uD
-V65DF1MPG1xYfG7ksHXFJRpXlWPuVWQzaxTKSVpQuzbqRtpyoXCYTy50u68TUz5X
-Qs8XOQAmrcG2DqflYdDdra1OVqjPlL6gShB9nrzkIoCg41mqnQ/j6iqC9yPa0rXv
-k765USRxiD9gdYPksBVf5WJx7Bf3oECYEkhxP6XalKDp/b/USIEOElTqwe7uFSW6
-oL5MhWWlM/aOGvtR5lt8cawc2Z9oGzg7Ts2Z6Ot1iDV8Un+NPobcGBXFIw5y6zP2
-pEKbHMCxSBx8X86zlMxhIg2g0NGZu3xkKWTa+9KnANa8MRGDCfacHPoRy/XA2qGh
-ufM4+hfz8fFJk1ODxS/f4RbMp6XwXfL3X5UvVVhiKNBm44H3ZpD8398RolwT6yQS
-rFMpF8SC00/t5f34ZPU2gZkBDZheqFfX/d94EVUXUxcJ7xndVVqXgGrWlFjKnYVw
-hovXum6/3HTiMjyVQW3HfgaU8fa+Oazny1okGE0rXkrV5Ii/XFtAQyVv2Q7oGNOK
-TrfKd5/oJr6Eu1zqpToS+HmUhTZGQp0NL1QF9BrUd4+WvLNmsWs=
-=PNuJ
------END PGP SIGNATURE-----
-
---XsQoSWH+UP9D9v3l--
+>  	bool is_frac;
+>  	u32 clk_id;
+>  	u32 div_type;
