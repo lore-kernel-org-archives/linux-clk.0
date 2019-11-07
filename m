@@ -6,34 +6,37 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_2 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E76AC43331
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 17:01:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A77FC43331
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 17:57:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E7632077C
-	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 17:01:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56E5B21882
+	for <linux-clk@archiver.kernel.org>; Thu,  7 Nov 2019 17:57:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfKGRBi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 7 Nov 2019 12:01:38 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:33375 "EHLO
+        id S1730811AbfKGR57 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 7 Nov 2019 12:57:59 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56325 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726810AbfKGRBh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Nov 2019 12:01:37 -0500
+        with ESMTP id S1730722AbfKGR56 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 7 Nov 2019 12:57:58 -0500
 Received: from litschi.hi.pengutronix.de ([2001:67c:670:100:feaa:14ff:fe6a:8db5])
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.92)
         (envelope-from <m.tretter@pengutronix.de>)
-        id 1iSlA4-0002mw-1W; Thu, 07 Nov 2019 18:01:32 +0100
-Date:   Thu, 7 Nov 2019 18:01:31 +0100
+        id 1iSm2b-00008c-Ap; Thu, 07 Nov 2019 18:57:53 +0100
+Date:   Thu, 7 Nov 2019 18:57:51 +0100
 From:   Michael Tretter <m.tretter@pengutronix.de>
 To:     Rajan Vaja <rajan.vaja@xilinx.com>
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, michal.simek@xilinx.com,
         jollys@xilinx.com, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Jolly Shah <jolly.shah@xilinx.com>, kernel@pengutronix.de
-Subject: Re: [PATCH] clk: zynqmp: Correct bit index for divider flag
-Message-ID: <20191107180131.63960cf1@litschi.hi.pengutronix.de>
-In-Reply-To: <1573117290-7990-1-git-send-email-rajan.vaja@xilinx.com>
-References: <1573117290-7990-1-git-send-email-rajan.vaja@xilinx.com>
+        Tejas Patel <tejas.patel@xilinx.com>,
+        Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>,
+        kernel@pengutronix.de
+Subject: Re: [PATCH] clk: zynqmp: Add support for clock with
+ CLK_DIVIDER_POWER_OF_TWO flag
+Message-ID: <20191107185751.4bb873d9@litschi.hi.pengutronix.de>
+In-Reply-To: <1573116902-7240-1-git-send-email-rajan.vaja@xilinx.com>
+References: <1573116902-7240-1-git-send-email-rajan.vaja@xilinx.com>
 Organization: Pengutronix
 X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
@@ -48,18 +51,25 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 07 Nov 2019 01:01:30 -0800, Rajan Vaja wrote:
-> Update divider flag bit index to match with firmware.
+On Thu, 07 Nov 2019 00:55:02 -0800, Rajan Vaja wrote:
+> From: Tejas Patel <tejas.patel@xilinx.com>
 > 
+> Existing clock divider functions is not checking for
+> base of divider. So, if any clock divider is power of 2
+> then clock rate calculation will be wrong.
+> 
+> Add support to calculate divider value for the clocks
+> with CLK_DIVIDER_POWER_OF_TWO flag.
+> 
+> Signed-off-by: Tejas Patel <tejas.patel@xilinx.com>
+> Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
 > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
-> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > ---
->  drivers/clk/zynqmp/divider.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+>  drivers/clk/zynqmp/divider.c | 36 +++++++++++++++++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 5 deletions(-)
 > 
 > diff --git a/drivers/clk/zynqmp/divider.c b/drivers/clk/zynqmp/divider.c
-> index d8f5b70d..9e60834 100644
+> index d8f5b70d..ce63cf5 100644
 > --- a/drivers/clk/zynqmp/divider.c
 > +++ b/drivers/clk/zynqmp/divider.c
 > @@ -2,7 +2,7 @@
@@ -71,19 +81,90 @@ On Thu, 07 Nov 2019 01:01:30 -0800, Rajan Vaja wrote:
 >   *
 >   * Adjustable divider clock implementation
 >   */
-> @@ -25,7 +25,7 @@
->  #define to_zynqmp_clk_divider(_hw)		\
->  	container_of(_hw, struct zynqmp_clk_divider, hw)
+> @@ -44,9 +44,26 @@ struct zynqmp_clk_divider {
+>  };
 >  
-> -#define CLK_FRAC	BIT(13) /* has a fractional parent */
-> +#define CLK_FRAC	BIT(8) /* has a fractional parent */
+>  static inline int zynqmp_divider_get_val(unsigned long parent_rate,
+> -					 unsigned long rate)
+> +					 unsigned long rate, u16 flags)
+>  {
+> -	return DIV_ROUND_CLOSEST(parent_rate, rate);
+> +	int up, down;
+> +	unsigned long up_rate, down_rate;
+> +
+> +	if (flags & CLK_DIVIDER_POWER_OF_TWO) {
+> +		up = DIV_ROUND_UP_ULL((u64)parent_rate, rate);
+> +		down = parent_rate / rate;
 
-NACK.
+Maybe use DIV_ROUND_DOWN_ULL()?
 
-This breaks the compatibility with the older/upstream versions of the
-TF-A. You have to at least make this dependent on the used version of
-the TF-A.
+> +
+> +		up = __roundup_pow_of_two(up);
+> +		down = __rounddown_pow_of_two(down);
+> +
+> +		up_rate = DIV_ROUND_UP_ULL((u64)parent_rate, up);
+> +		down_rate = DIV_ROUND_UP_ULL((u64)parent_rate, down);
+> +
+> +		return (rate - up_rate) <= (down_rate - rate) ? up : down;
 
+The calculation looks correct. Maybe there could be a common helper
+with the _div_round_closest() function?
+
+> +
+> +	} else {
+> +		return DIV_ROUND_CLOSEST(parent_rate, rate);
+> +	}
+>  }
 >  
 >  /**
->   * struct zynqmp_clk_divider - adjustable divider clock
+> @@ -78,6 +95,9 @@ static unsigned long zynqmp_clk_divider_recalc_rate(struct clk_hw *hw,
+>  	else
+>  		value = div >> 16;
+>  
+> +	if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
+> +		value = 1 << value;
+
+Not sure, but I think a small helper similar to _get_div() would help
+with the readability. Just hide the difference between the normal and
+power of two divisors behind some helper functions.
+
+Michael
+
+> +
+>  	if (!value) {
+>  		WARN(!(divider->flags & CLK_DIVIDER_ALLOW_ZERO),
+>  		     "%s: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not set\n",
+> @@ -120,10 +140,13 @@ static long zynqmp_clk_divider_round_rate(struct clk_hw *hw,
+>  		else
+>  			bestdiv  = bestdiv >> 16;
+>  
+> +		if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
+> +			bestdiv = 1 << bestdiv;
+> +
+>  		return DIV_ROUND_UP_ULL((u64)*prate, bestdiv);
+>  	}
+>  
+> -	bestdiv = zynqmp_divider_get_val(*prate, rate);
+> +	bestdiv = zynqmp_divider_get_val(*prate, rate, divider->flags);
+>  
+>  	if ((clk_hw_get_flags(hw) & CLK_SET_RATE_PARENT) && divider->is_frac)
+>  		bestdiv = rate % *prate ? 1 : bestdiv;
+> @@ -151,7 +174,7 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	int ret;
+>  	const struct zynqmp_eemi_ops *eemi_ops = zynqmp_pm_get_eemi_ops();
+>  
+> -	value = zynqmp_divider_get_val(parent_rate, rate);
+> +	value = zynqmp_divider_get_val(parent_rate, rate, divider->flags);
+>  	if (div_type == TYPE_DIV1) {
+>  		div = value & 0xFFFF;
+>  		div |= 0xffff << 16;
+> @@ -160,6 +183,9 @@ static int zynqmp_clk_divider_set_rate(struct clk_hw *hw, unsigned long rate,
+>  		div |= value << 16;
+>  	}
+>  
+> +	if (divider->flags & CLK_DIVIDER_POWER_OF_TWO)
+> +		div = __ffs(div);
+> +
+>  	ret = eemi_ops->clock_setdivider(clk_id, div);
+>  
+>  	if (ret)
