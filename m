@@ -6,66 +6,85 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6331FC6196
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:07:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6602EFC6198
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88A3F2178F
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:07:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FDA121D7B
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:09:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573247228;
-	bh=yw3Wks3+OuBGI/aNPSNar3tbWKS3qQGk9xnPEixJja4=;
+	s=default; t=1573247340;
+	bh=JHqRS3uSKLO7yNAzjFw7Q1nOi5AO9AvovI8DqhUNkqQ=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=EvyK32fqWtZh2Ars5NWbzLlqtq9I6qPOzyN5QD5tkKOXBfV2aZTnYxKmXXBLObW1+
-	 6BDD5kMzWLt9dC76T2OpNZOumsr7SdhIv6ZSOj6G6ywEACw46oMyB6VDP6Wn4fSWt7
-	 Wm85kWSI9RYdxp/p4cp7UDF5AjcjYu4f6hKsc/uk=
+	b=1sWZTZb+bopaWvJmvWSk9Koos47Rn+47naYhSoD/TGxJW4UANQ6Mi+nyH3chfj31f
+	 DbIbnd55VszbrYPNfonzVMOobnRucS3GHOonuGYSzpYYGBafYVJVYJCXOXYh5z5Xho
+	 gBCmbLqWmy1ED3J7e+/PmnQZavGEHLP83+jC3u/Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfKHVHI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 16:07:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54482 "EHLO mail.kernel.org"
+        id S1732348AbfKHVIz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 16:08:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54898 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729973AbfKHVHI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:07:08 -0500
+        id S1732305AbfKHVIz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 16:08:55 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8220420865;
-        Fri,  8 Nov 2019 21:07:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 95C8C20869;
+        Fri,  8 Nov 2019 21:08:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573247227;
-        bh=yw3Wks3+OuBGI/aNPSNar3tbWKS3qQGk9xnPEixJja4=;
+        s=default; t=1573247334;
+        bh=JHqRS3uSKLO7yNAzjFw7Q1nOi5AO9AvovI8DqhUNkqQ=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=BY5QsDaODsF9hk1DYyI3IArhHOnTu8UKKbwE0QtpYAF3T/b9VPB5nQU9xTSeJgGV/
-         5licrcxzE9BGmKxkW8wiXtSw0YAevku1DP8m/wHcbuyCvm+LFgfNo2KnlzPXyTD2Qd
-         +5CfFYvCbxSp3bEXgbpMJtVAUZm2Tyzk6Zd6E0cU=
+        b=LIEyKga2iyXN5fFNmksNgPPGuuAoe7udgxU7uuYQRwcthQLdQkQpEOx62ACht245V
+         JR8r5BgmMHaeOU7WpybnQSm78GwxSrqBCcCTr29Rt3dE0g3+EswURrQH4vOgL9IE/M
+         FEmOsrn0YtW1KaB+o607/aQRtq65Cixnwyb4LzXs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191107214018.184105-1-sboyd@kernel.org>
-References: <20191107214018.184105-1-sboyd@kernel.org>
+In-Reply-To: <20191108071718.17985-1-alexandru.ardelean@analog.com>
+References: <20191106113551.5557-1-alexandru.ardelean@analog.com> <20191108071718.17985-1-alexandru.ardelean@analog.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>, Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH] clk: qcom: rpmh: Reuse sdm845 clks for sm8150
+To:     Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org
+Cc:     mturquette@baylibre.com, jsarha@ti.com, ce3a@gmx.de,
+        geert+renesas@glider.be, horms@verge.net.au, magnus.damm@gmail.com,
+        wsa+renesas@sang-engineering.com,
+        Michael Hennerich <michael.hennerich@analog.com>,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>
+Subject: Re: [PATCH v3] clk: clk-gpio: propagate rate change to parent
 User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 13:07:06 -0800
-Message-Id: <20191108210707.8220420865@mail.kernel.org>
+Date:   Fri, 08 Nov 2019 13:08:53 -0800
+Message-Id: <20191108210854.95C8C20869@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Boyd (2019-11-07 13:40:18)
-> The SM8150 list of clks is almost the same as the list for SDM845,
-> except there isn't an IPA clk. Just point to the SDM845 clks from the
-> SM8150 list for now so we can reduce the amount of struct bloat in this
-> driver.
+Quoting Alexandru Ardelean (2019-11-07 23:17:18)
+> From: Michael Hennerich <michael.hennerich@analog.com>
 >=20
-> Suggested-by: Vinod Koul <vkoul@kernel.org>
-> Cc: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> For an external clock source, which is gated via a GPIO, the
+> rate change should typically be propagated to the parent clock.
+>=20
+> The situation where we are requiring this propagation, is when an
+> external clock is connected to override an internal clock (which typically
+> has a fixed rate). The external clock can have a different rate than the
+> internal one, and may also be variable, thus requiring the rate
+> propagation.
+>=20
+> This rate change wasn't propagated until now, and it's unclear about cases
+> where this shouldn't be propagated. Thus, it's unclear whether this is
+> fixing a bug, or extending the current driver behavior. Also, it's unsure
+> about whether this may break any existing setups; in the case that it doe=
+s,
+> a device-tree property may be added to disable this flag.
+>=20
+> Signed-off-by: Michael Hennerich <michael.hennerich@analog.com>
+> Signed-off-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
 > ---
 
 Applied to clk-next
+
+Next time please send as a new topic instead of a reply to the original
+patch. Makes it easier for me to apply the patch.
 
