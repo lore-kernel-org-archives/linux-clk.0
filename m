@@ -2,71 +2,93 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6979FA372C
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD771FA372C
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:01:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B34221882
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:00:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573232432;
-	bh=Cn0SmJXbgc0O8vZqS7fq3T6tHgeTq6RIfCuQnwEt5/A=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=ryeQYVDK7xRVwykjcj2W8Wi/9AKsjzB1/vC5rMcFXGVXTkExC/m8LsXRU6ne7vmwz
-	 DWyhJCnvbekr+zQUyX5oHH6AMwBboi61vkGWuW7XdOpksM3Ditkl6JDNNEnt1TM/eo
-	 fAa8CGG166WOulEzHTGQFeTsqRNNDs2bF2tNxSHs=
+	by mail.kernel.org (Postfix) with ESMTP id ADEE221848
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:01:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfKHRA1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 12:00:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45002 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726819AbfKHRA1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:00:27 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 55DA52178F;
-        Fri,  8 Nov 2019 17:00:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573232426;
-        bh=Cn0SmJXbgc0O8vZqS7fq3T6tHgeTq6RIfCuQnwEt5/A=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=opcnFkYy/TUicFZuuXCRLbIev+ccxBEJ9FoPspQa0NOUSwFnhxT5ukL1or43P21L5
-         lFBjXqUg+xRn8Z8nXgEeclIfBAv5yc6qdCzRnJcCtF9Uzg2SUyHhvoxbM1OtyTjitV
-         /aAvThDttcesn5UxQUvjmGiriHcsShHIReKlx8nk=
-Content-Type: text/plain; charset="utf-8"
+        id S1729647AbfKHRBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 12:01:48 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:37304 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727654AbfKHRBq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 12:01:46 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 040D3291340
+Received: by jupiter.universe (Postfix, from userid 1000)
+        id AAFFC48009C; Fri,  8 Nov 2019 18:01:42 +0100 (CET)
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel@collabora.com,
+        Sebastian Reichel <sebastian.reichel@collabora.com>
+Subject: [RFCv1] rtc: m41t80: disable clock provider support
+Date:   Fri,  8 Nov 2019 18:01:35 +0100
+Message-Id: <20191108170135.9053-1-sebastian.reichel@collabora.com>
+X-Mailer: git-send-email 2.24.0.rc1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191019140634.15596-1-steve@sk2.org>
-References: <20191019155441.2b1b349f@heffalump.sk2.org> <20191019140634.15596-1-steve@sk2.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Kitt <steve@sk2.org>
-Subject: Re: [PATCH v3] clk/ti/adpll: allocate room for terminating null
-User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 09:00:25 -0800
-Message-Id: <20191108170026.55DA52178F@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Kitt (2019-10-19 07:06:34)
-> The buffer allocated in ti_adpll_clk_get_name doesn't account for the
-> terminating null. This patch switches to devm_kasprintf to avoid
-> overflowing.
->=20
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> ---
+Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
+modules SQW clock output defaults to 32768 Hz. This behaviour is
+used to provide the i.MX6 CKIL clock. Once the RTC driver is probed,
+the clock is disabled and all i.MX6 functionality depending on
+the 32 KHz clock have undefined behaviour (e.g. the hardware watchdog
+run to fast or slow).
 
-Please don't send as replies to existing threads. It screws up my
-tooling and makes it more manual to apply the patch. I guess I'll have
-to go fix my scripts to ignore certain emails.
+The normal solution would be to properly describe the clock tree
+in DT, but from the kernel's perspective this is a chicken-and-egg
+problem: CKIL is required very early, but the clock is only provided
+after the I2C RTC has been probed.
+
+Technically everything is fine by not touching anything, so this
+works around the issue by disabling the clock handling from the
+RTC driver. I guess the proper solution would be to simply mark the
+clock as always-enabled, but this does not seem to be supported by
+the clock framework.
+
+Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+---
+Hi,
+
+This is a downstream workaround/hack for the issue described in the
+commit message. I would like to upstream a board based on Congatec's
+QMX6, which requires a proper solution for this. Do you think it
+would be ok to have an always-on flag for clocks similar to regulators?
+
+-- Sebastian
+---
+ drivers/rtc/rtc-m41t80.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
+index 5f46f85f814b..81743d93d03e 100644
+--- a/drivers/rtc/rtc-m41t80.c
++++ b/drivers/rtc/rtc-m41t80.c
+@@ -973,7 +973,7 @@ static int m41t80_probe(struct i2c_client *client,
+ 		}
+ 	}
+ #endif
+-#ifdef CONFIG_COMMON_CLK
++#if 0
+ 	if (m41t80_data->features & M41T80_FEATURE_SQ)
+ 		m41t80_sqw_register_clk(m41t80_data);
+ #endif
+-- 
+2.24.0.rc1
 
