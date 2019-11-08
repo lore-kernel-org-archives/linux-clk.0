@@ -2,94 +2,115 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE8F0FA372C
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 12:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D80ECC5DF60
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 13:48:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2AF821848
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 12:15:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573215305;
-	bh=BPACXaFVQTm9exWl0MhTgT5qlYmiPd+LkRsxeBV1D1Y=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=cs4ZYzJdUlwjPkckxvUTfHSeaKhBKLpNDQ9lyPqJInjnaBU8Y9mYs7T5ILnLOgstq
-	 nOrEJ0TnR9ul77WIdF9tu0cE/Cdje3kjtDAjSiaCXr7R8BLKHWNKhh54j+OgIRaFSn
-	 IkEzPotWM/OVmJI9tfcP5QvLqHt4SKF5GhCDdAH0=
+	by mail.kernel.org (Postfix) with ESMTP id B2313214DB
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 13:48:47 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732085AbfKHMPB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 07:15:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729896AbfKHLh7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 06:37:59 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9D6D21924;
-        Fri,  8 Nov 2019 11:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573213078;
-        bh=BPACXaFVQTm9exWl0MhTgT5qlYmiPd+LkRsxeBV1D1Y=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CUPoGTdUxvL47YUQFNQrMK3YIv+syYW9n+f3cgytlTNVsrBefMPIIFxZgC+k73GLl
-         hH3BIfjV38ZwFN3hAwTxIwdv/4YTWB8IqsaZbTW9nsmdgQbfINEinal0xzPdHbh5G9
-         r5SB7/nA75f8LJCT64p5+BoHcL8/lqQdxsYuP0Mk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rongyi Chen <chenyi@tt-cool.com>, Icenowy Zheng <icenowy@aosc.io>,
-        Chen-Yu Tsai <wens@csie.org>, Sasha Levin <sashal@kernel.org>,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 005/205] clk: sunxi-ng: h6: fix PWM gate/reset offset
-Date:   Fri,  8 Nov 2019 06:34:32 -0500
-Message-Id: <20191108113752.12502-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191108113752.12502-1-sashal@kernel.org>
-References: <20191108113752.12502-1-sashal@kernel.org>
+        id S1726101AbfKHNsr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 08:48:47 -0500
+Received: from 19.mo7.mail-out.ovh.net ([178.33.251.118]:51934 "EHLO
+        19.mo7.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726005AbfKHNsr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 08:48:47 -0500
+X-Greylist: delayed 2402 seconds by postgrey-1.27 at vger.kernel.org; Fri, 08 Nov 2019 08:48:46 EST
+Received: from player737.ha.ovh.net (unknown [10.109.160.230])
+        by mo7.mail-out.ovh.net (Postfix) with ESMTP id 373E213DC4A
+        for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2019 13:32:47 +0100 (CET)
+Received: from sk2.org (gw.sk2.org [88.186.243.14])
+        (Authenticated sender: steve@sk2.org)
+        by player737.ha.ovh.net (Postfix) with ESMTPSA id BB328277AF29;
+        Fri,  8 Nov 2019 12:32:35 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 13:34:14 +0100
+From:   Stephen Kitt <steve@sk2.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paul Burton <paul.burton@mips.com>,
+        Paul Cercueil <paul@crapouillou.net>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drivers/clk: convert VL struct to struct_size
+Message-ID: <20191108133414.72981353@heffalump.sk2.org>
+In-Reply-To: <20191107225002.1520821D7F@mail.kernel.org>
+References: <20190927185110.29897-1-steve@sk2.org>
+        <24c5e42f-cb56-f57a-163b-c35392bbf887@embeddedor.com>
+        <20191107225002.1520821D7F@mail.kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/smeQGoduYW09bF10J89sbv6"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 6948772751797865944
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedruddvuddggeefucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuqfggjfdqfffguegfifdpvefjgfevmfevgfenuceurghilhhouhhtmecuhedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujfgurhepfffhvffukfgjfhfogggtsehgtdefreertdejnecuhfhrohhmpefuthgvphhhvghnucfmihhtthcuoehsthgvvhgvsehskhdvrdhorhhgqeenucfkpheptddrtddrtddrtddpkeekrddukeeirddvgeefrddugeenucfrrghrrghmpehmohguvgepshhmthhpqdhouhhtpdhhvghlohepphhlrgihvghrjeefjedrhhgrrdhovhhhrdhnvghtpdhinhgvtheptddrtddrtddrtddpmhgrihhlfhhrohhmpehsthgvvhgvsehskhdvrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghlkhesvhhgvghrrdhkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedt
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Rongyi Chen <chenyi@tt-cool.com>
+--Sig_/smeQGoduYW09bF10J89sbv6
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit 58c0f79887d5e425fe6a9fd542778e50df69e9c6 ]
+On Thu, 07 Nov 2019 14:50:01 -0800, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Gustavo A. R. Silva (2019-10-02 12:20:28)
+> > On 9/27/19 13:51, Stephen Kitt wrote: =20
+> > > There are a few manually-calculated variable-length struct allocations
+> > > left, this converts them to use struct_size.
+> >=20
+> > How did you find this?
+> >=20
+> > Please, mention the tool you used to find this in the commit log. With
+> > that you can add my
+> >=20
+> > Acked-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+>=20
+> Any answer? I'm tempted to just apply the patch anyway.
 
-Currently the register offset of the PWM bus gate in Allwinner H6 clock
-driver is wrong.
+Sorry, I hadn=E2=80=99t seen Gustavo=E2=80=99s email!
 
-Fix this issue.
+I didn=E2=80=99t use anything particularly fancy to find these, my history =
+says
 
-Fixes: 542353ea ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-Signed-off-by: Rongyi Chen <chenyi@tt-cool.com>
-[Icenowy: refactor commit message]
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+	git grep -A1 'kzalloc.*sizeof[^_].*+'
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 0f7a0ffd3f706..d425b47cef179 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -352,7 +352,7 @@ static SUNXI_CCU_GATE(bus_dbg_clk, "bus-dbg", "psi-ahb1-ahb2",
- static SUNXI_CCU_GATE(bus_psi_clk, "bus-psi", "psi-ahb1-ahb2",
- 		      0x79c, BIT(0), 0);
- 
--static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x79c, BIT(0), 0);
-+static SUNXI_CCU_GATE(bus_pwm_clk, "bus-pwm", "apb1", 0x7ac, BIT(0), 0);
- 
- static SUNXI_CCU_GATE(bus_iommu_clk, "bus-iommu", "apb1", 0x7bc, BIT(0), 0);
- 
--- 
-2.20.1
+and manual review. I noticed that clk/ had a number of hits, but also commi=
+ts
+to switch to struct_size so I reckoned it was worth pursuing the exercise
+there.
 
+Is it worth adding that to the commit message?
+
+Regards,
+
+Stephen
+
+--Sig_/smeQGoduYW09bF10J89sbv6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl3FYMYACgkQgNMC9Yht
+g5w5zw/8DCOKSiYpV+FQsKtEi89KSPghyiUhXmTrE9xaqVQBtKZRpIGa5fiSQw8K
+4HQ0dwWP3osgh1bEJrxctOajTlkFf/vvdg83eaLHkjSNlJlsKc4yIG2TBzD944w4
+vTDkzIiJuksPv511XQN1CHTBJ59hWTQEUrGBRYmKQGZf1GgwLsQlyAXbQyJ/GIts
+wjjG4ppZ8pQ3BsG1cGINMfXN4IAzHmMhTrQcIKfAcuiX5uWrJlIr+oNS/2G29ens
+mFFqjRxTPetzXTUvbnyqH834CJ8Kt8sPGSX/nnr2XKn+l2ZwDauh6TIEtqCO3TFt
+VWxuTKdXT4jHLeeHLWYmnruUw6K0GUz7TOiPrZh42pzub0SUR8DOwNPYTYgkVCBE
+xOAF0HWmYuSeXlkS+ZxPrlqrRhboFVR5nCkYn378YBOCGyp3Unz3dn+Z8sdD1UzT
+M1PeS0LZOgB5Nvi6b6Z18f/2wlkaB2/DF+1WY6JUy1T+qqism7SCRK/14lSs5XF7
+LJ/EtPj99+5R99KWMyQh7pQVUV2Du/eItx3HI98mYC6JJ05DV4j5Sm4TyJ1BdWkZ
+T5kAE1C0C1aAnR7bfLNomqEB7T5Sve69nV2eGN8iWdr+yyEPYsi6NdYgxUCLG2qE
+Sumfib9j8gTV6xHqcqEHO7uhzNdjBZ/QcFGqo6K1R7WNtttZmow=
+=AIuF
+-----END PGP SIGNATURE-----
+
+--Sig_/smeQGoduYW09bF10J89sbv6--
