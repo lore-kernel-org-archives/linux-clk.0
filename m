@@ -2,75 +2,68 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BA4FC6195
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:53:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1916FA372C
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:55:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFE8B218AE
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:53:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95880206C3
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573235725;
+	bh=Mmnodf7nLStd8Rs0/fjIXThGRNujRBCWPsLoXfr81FM=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=Tm1DB/FJ8CBVHACzK1Y0stG0kAJLAHsAT1CABJ8iQxaQ/J4LIVwcBtaUQMkQApj5U
+	 SRbaBdYzFOhcE/xE2bSxHDrkMb/QcyYQC3WxtnmrP9a+8nlloiIsEXiiotr80JQZ7Z
+	 fL45xRmpjFhravgiG7U4YxviUF/32e+5/HJtxASI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729973AbfKHRxd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 12:53:33 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:59851 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726349AbfKHRxd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 12:53:33 -0500
-X-Originating-IP: 92.137.17.54
-Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 9FDA56000B;
-        Fri,  8 Nov 2019 17:53:29 +0000 (UTC)
-Date:   Fri, 8 Nov 2019 18:53:29 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Russell King <linux@armlinux.org.uk>,
+        id S1730525AbfKHRzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 12:55:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730463AbfKHRzG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:55:06 -0500
+Subject: Re: [GIT PULL] clk fixes for v5.4-rc6
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573235705;
+        bh=Mmnodf7nLStd8Rs0/fjIXThGRNujRBCWPsLoXfr81FM=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=g32PE88O5AY3rbMZChMr2Js7WMpDMwKaPd8V68xBZYQANiqWXYmk8jrF9ff3vL3Y9
+         6Oi8YIUoypsr0uSXRaRRusNT5Fu6VDQVXWC0fT4wScQOCASLU/xB1Iw14cTvg5MMXz
+         k3ittv9jyAPLgf7FSskvc4WooUkK+zwvHtFs6NTY=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20191108064803.9977-1-sboyd@kernel.org>
+References: <20191108064803.9977-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20191108064803.9977-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+ tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 5a60b5aa96e8619baf02865e3002704fc2897731
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d988f8877b79ef8ea695df8c126ddcbb09f5a5ba
+Message-Id: <157323570566.12598.1049587995028711420.pr-tracker-bot@kernel.org>
+Date:   Fri, 08 Nov 2019 17:55:05 +0000
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel@collabora.com
-Subject: Re: [RFCv1] rtc: m41t80: disable clock provider support
-Message-ID: <20191108175329.GH216543@piout.net>
-References: <20191108170135.9053-1-sebastian.reichel@collabora.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191108170135.9053-1-sebastian.reichel@collabora.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 08/11/2019 18:01:35+0100, Sebastian Reichel wrote:
-> Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
-> modules SQW clock output defaults to 32768 Hz. This behaviour is
-> used to provide the i.MX6 CKIL clock. Once the RTC driver is probed,
-> the clock is disabled and all i.MX6 functionality depending on
-> the 32 KHz clock have undefined behaviour (e.g. the hardware watchdog
-> run to fast or slow).
-> 
-> The normal solution would be to properly describe the clock tree
-> in DT, but from the kernel's perspective this is a chicken-and-egg
-> problem: CKIL is required very early, but the clock is only provided
-> after the I2C RTC has been probed.
-> 
-> Technically everything is fine by not touching anything, so this
-> works around the issue by disabling the clock handling from the
-> RTC driver. I guess the proper solution would be to simply mark the
-> clock as always-enabled, but this does not seem to be supported by
-> the clock framework.
-> 
+The pull request you sent on Thu,  7 Nov 2019 22:48:03 -0800:
 
-You need to have a consumer so this clock is not disabled by the CCF
-after seeing nobody uses it. If you need it early, you can have a look
-at rtc-sun6i.c but I would like that to not become a recurrent pattern,
-especially for discrete RTCs.
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d988f8877b79ef8ea695df8c126ddcbb09f5a5ba
+
+Thank you!
 
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
