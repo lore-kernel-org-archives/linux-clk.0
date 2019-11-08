@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E81BFC6197
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 22:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1478EFC6197
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 22:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 234BE2084D
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 22:07:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B6A2178F
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 22:07:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573250841;
-	bh=F9598YJ7umblSSscgKD6bsQHkgKqFEeeQhpYqMVujj0=;
+	s=default; t=1573250848;
+	bh=gLwm52RY9G/9492fo3p2MflMQXw59u4hMZtGnCihRjI=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=Bvz92GxRJS6lTLCME8olPEjJXqaxmW6dqZ1/ERc2iSJR7LxrnD3vdYNr8pR8KeXbG
-	 kiV4eSsn8vWsk3CGT+CfxhQZp2qslLIyG6PWl1PRnxpGAZx98L1g2n+XSnl6gmXHx+
-	 J89HXgf26/XHSo9nczGNPZac9nA7Esyg1RH9NnI0=
+	b=eGSMKw31C7Sj8zaBaYNOhk4WP4XI68ebRz7XEJYNE+IcE2L+iMFxR7toC1EEeXx37
+	 bkEhcfK/zORJEcPgA9AVTexCICjTBlPh629OgNrmQwfJGgfrcM09xQY7ZpQAfadZ8W
+	 1IE9lSGRPcFh3MfhvCbP4X+ncum3SW8p9Kh91ZSg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729623AbfKHWHS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 17:07:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41156 "EHLO mail.kernel.org"
+        id S1730379AbfKHWH2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 17:07:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41348 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729443AbfKHWHR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 17:07:17 -0500
+        id S1730308AbfKHWH2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 17:07:28 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 150422084D;
-        Fri,  8 Nov 2019 22:07:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DA7F321848;
+        Fri,  8 Nov 2019 22:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573250837;
-        bh=F9598YJ7umblSSscgKD6bsQHkgKqFEeeQhpYqMVujj0=;
+        s=default; t=1573250848;
+        bh=gLwm52RY9G/9492fo3p2MflMQXw59u4hMZtGnCihRjI=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=qmmxDqIczTRF6/bWq+R0BzxMQqujVYIpWuBVIn4pclepcyJjht82PY/zGNpM0nanz
-         5aTU5BjMKzw1wakefOXN5VOhuvdNk+hHjnUMq6g6sYWZPfVEoq0pxJ5aK6ccWo4sGr
-         R0J5rqpNkhSakh/X8E9tTnOwlwYQPaYhRN1B6tp0=
+        b=nX5Fa3AXOotSVNgz+B4jYyonyO9RE9BQ3kFBxu0zn8Q18WcuTvegmFPzPBt4AW4CJ
+         EfRdNBOoGtyKd3Ry7sXe2l1NJGVMvJNNVFu2CjeLACYvPiXqeKhadRBcYuAF0k/+qF
+         yZ3gj8Or59VrVJqO3VE5/YX41ow5SrsYAYpopDOE=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191027162328.1177402-2-martin.blumenstingl@googlemail.com>
-References: <20191027162328.1177402-1-martin.blumenstingl@googlemail.com> <20191027162328.1177402-2-martin.blumenstingl@googlemail.com>
+In-Reply-To: <20191027162328.1177402-4-martin.blumenstingl@googlemail.com>
+References: <20191027162328.1177402-1-martin.blumenstingl@googlemail.com> <20191027162328.1177402-4-martin.blumenstingl@googlemail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         jbrunet@baylibre.com, khilman@baylibre.com,
@@ -49,29 +49,21 @@ To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Rob Herring <robh@kernel.org>
-Subject: Re: [PATCH v2 1/5] dt-bindings: clock: add the Amlogic Meson8 DDR clock controller binding
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: Re: [PATCH v2 3/5] clk: meson: meson8b: use of_clk_hw_register to register the clocks
 User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 14:07:16 -0800
-Message-Id: <20191108220717.150422084D@mail.kernel.org>
+Date:   Fri, 08 Nov 2019 14:07:27 -0800
+Message-Id: <20191108220727.DA7F321848@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Martin Blumenstingl (2019-10-27 09:23:24)
-> Amlogic Meson8, Meson8b and Meson8m2 SoCs have a DDR clock controller in
-> the MMCBUS registers. There is no public documentation on this, but the
-> GPL u-boot sources from the Amlogic BSP show that:
-> - it uses the same XTAL input as the main clock controller
-> - it contains a PLL which seems to be implemented just like the other
->   PLLs in this SoC
-> - there is a power-of-two PLL post-divider
+Quoting Martin Blumenstingl (2019-10-27 09:23:26)
+> Switch from clk_hw_register to of_clk_hw_register so we can use
+> clk_parent_data.fw_name. This will be used to get the "xtal", "ddr_pll"
+> and possibly others from the .dtb.
 >=20
-> Add the documentation and header file for this DDR clock controller.
->=20
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 > ---
 
