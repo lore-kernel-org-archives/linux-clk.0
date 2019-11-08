@@ -6,72 +6,71 @@ X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E83A3FC6195
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:06:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9BA4FC6195
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:53:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF4F218AE
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:06:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFE8B218AE
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:53:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726537AbfKHRGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 12:06:45 -0500
-Received: from muru.com ([72.249.23.125]:40934 "EHLO muru.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726095AbfKHRGp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:06:45 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id BBC8480D4;
-        Fri,  8 Nov 2019 17:07:20 +0000 (UTC)
-Date:   Fri, 8 Nov 2019 09:06:41 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Benoit Parrot <bparrot@ti.com>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>, Tero Kristo <t-kristo@ti.com>,
-        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [Patch v2 3/5] ARM: dts: dra7: add vpe clkctrl node
-Message-ID: <20191108170641.GI5610@atomide.com>
-References: <20191104203841.3628-1-bparrot@ti.com>
- <20191104203841.3628-4-bparrot@ti.com>
- <20191108165554.GF5610@atomide.com>
- <20191108170231.ubwfu2nvcwjfabas@ti.com>
+        id S1729973AbfKHRxd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 12:53:33 -0500
+Received: from relay3-d.mail.gandi.net ([217.70.183.195]:59851 "EHLO
+        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726349AbfKHRxd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 12:53:33 -0500
+X-Originating-IP: 92.137.17.54
+Received: from localhost (alyon-657-1-975-54.w92-137.abo.wanadoo.fr [92.137.17.54])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id 9FDA56000B;
+        Fri,  8 Nov 2019 17:53:29 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 18:53:29 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+        kernel@collabora.com
+Subject: Re: [RFCv1] rtc: m41t80: disable clock provider support
+Message-ID: <20191108175329.GH216543@piout.net>
+References: <20191108170135.9053-1-sebastian.reichel@collabora.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191108170231.ubwfu2nvcwjfabas@ti.com>
+In-Reply-To: <20191108170135.9053-1-sebastian.reichel@collabora.com>
 User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* Benoit Parrot <bparrot@ti.com> [191108 17:00]:
-> Tony Lindgren <tony@atomide.com> wrote on Fri [2019-Nov-08 08:55:54 -0800]:
-> > Hi,
-> > 
-> > * Benoit Parrot <bparrot@ti.com> [191104 20:39]:
-> > > Add clkctrl nodes for VPE module.
-> > 
-> > Can you please add a comment describing that we currently need to
-> > use custom node names here instead of the standard naming?
+On 08/11/2019 18:01:35+0100, Sebastian Reichel wrote:
+> Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
+> modules SQW clock output defaults to 32768 Hz. This behaviour is
+> used to provide the i.MX6 CKIL clock. Once the RTC driver is probed,
+> the clock is disabled and all i.MX6 functionality depending on
+> the 32 KHz clock have undefined behaviour (e.g. the hardware watchdog
+> run to fast or slow).
 > 
-> Tony, what do you mean "custom node name" here?
-> I followed the exact same syntax that was already there... confused..
+> The normal solution would be to properly describe the clock tree
+> in DT, but from the kernel's perspective this is a chicken-and-egg
+> problem: CKIL is required very early, but the clock is only provided
+> after the I2C RTC has been probed.
+> 
+> Technically everything is fine by not touching anything, so this
+> works around the issue by disabling the clock handling from the
+> RTC driver. I guess the proper solution would be to simply mark the
+> clock as always-enabled, but this does not seem to be supported by
+> the clock framework.
+> 
 
-Oh sorry for being unclear. Yeah so the conclusion of the discussion was
-that we still need custom node names for now.
+You need to have a consumer so this clock is not disabled by the CCF
+after seeing nobody uses it. If you need it early, you can have a look
+at rtc-sun6i.c but I would like that to not become a recurrent pattern,
+especially for discrete RTCs.
 
-And for patch "[PATCH] clk: ti: add clkctrl data dra7 sgx" I added you to
-Cc, and it has this in the patch description:
-
-"Note that because of the current dts node name dependency for mapping to
- clock domain, we must still use "gpu-clkctrl@" naming instead of generic
- "clock@" naming for the node. And because of this, it's probably best to
- apply the dts node addition together along with the other clock changes."
-
-So can you please add something similar to your clock node patches too
-to explain why we cannot use standard node names there?
-
-Regards,
-
-Tony
+-- 
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
