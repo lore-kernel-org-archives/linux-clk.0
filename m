@@ -2,130 +2,98 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A387FC6197
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:20:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2A9EFC6199
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:41:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50007207FA
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:20:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573248016;
-	bh=W/41aRz8a8e9Jzva0r1YTdxOVETPDBmfjwIJpNNiqTo=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=iwVAPLb6xJc+o+VXdnwFGyJQ9cr0kfEJ4QFwMcMiTohTCxKZsyyAjzTRwgzWau3je
-	 27O+O8ypoJe8DPoC/pPuZw32hYrwR8tjthp/Ou3i9Poj/AZG9U9Bfmp3cSj72knzNx
-	 IGK4vjm3Li0bFO92BXbXtS2gN0QRyYo7w3UynItw=
+	by mail.kernel.org (Postfix) with ESMTP id C0CC5215EA
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 21:41:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730159AbfKHVUQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 16:20:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58872 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbfKHVUP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 16:20:15 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07BC720869;
-        Fri,  8 Nov 2019 21:20:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573248015;
-        bh=W/41aRz8a8e9Jzva0r1YTdxOVETPDBmfjwIJpNNiqTo=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=Me4X4kOP6rnHyQzvR7U+RS3BdTpdzXkCGMlKfLEKkPOQQTryEtc5EnICH4UTyxRxe
-         L8e3Hx/hWXqBzqJyYQIQV5lINo5swzsVWD3rGH7cP5RgO++f4s6unqKLhuHSGdzE/M
-         iEsMjCqCROMDMaZLuXWIkRGnFffYUdUeITafEutM=
-Content-Type: text/plain; charset="utf-8"
+        id S1732170AbfKHVlS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 16:41:18 -0500
+Received: from 3.mo179.mail-out.ovh.net ([178.33.251.175]:48664 "EHLO
+        3.mo179.mail-out.ovh.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732435AbfKHVlR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 16:41:17 -0500
+Received: from player763.ha.ovh.net (unknown [10.108.57.76])
+        by mo179.mail-out.ovh.net (Postfix) with ESMTP id BF757145874
+        for <linux-clk@vger.kernel.org>; Fri,  8 Nov 2019 21:16:22 +0100 (CET)
+Received: from sk2.org (gw.sk2.org [88.186.243.14])
+        (Authenticated sender: steve@sk2.org)
+        by player763.ha.ovh.net (Postfix) with ESMTPSA id 0C47DBED04EE;
+        Fri,  8 Nov 2019 20:16:13 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 21:17:54 +0100
+From:   Stephen Kitt <steve@sk2.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
+        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] clk/ti/adpll: allocate room for terminating null
+Message-ID: <20191108211754.430d4c52@heffalump.sk2.org>
+In-Reply-To: <20191108170026.55DA52178F@mail.kernel.org>
+References: <20191019155441.2b1b349f@heffalump.sk2.org>
+        <20191019140634.15596-1-steve@sk2.org>
+        <20191108170026.55DA52178F@mail.kernel.org>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1565984527-5272-12-git-send-email-skomatineni@nvidia.com>
-References: <1565984527-5272-1-git-send-email-skomatineni@nvidia.com> <1565984527-5272-12-git-send-email-skomatineni@nvidia.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jason@lakedaemon.net,
-        jonathanh@nvidia.com, linus.walleij@linaro.org,
-        marc.zyngier@arm.com, mark.rutland@arm.com, stefan@agner.ch,
-        tglx@linutronix.de, thierry.reding@gmail.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        jckuo@nvidia.com, josephl@nvidia.com, talho@nvidia.com,
-        skomatineni@nvidia.com, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, mperttunen@nvidia.com,
-        spatra@nvidia.com, robh+dt@kernel.org, digetx@gmail.com,
-        devicetree@vger.kernel.org, rjw@rjwysocki.net,
-        viresh.kumar@linaro.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v9 11/22] clk: tegra: clk-dfll: Add suspend and resume support
-User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 13:20:14 -0800
-Message-Id: <20191108212015.07BC720869@mail.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/urfJBMy9eUwjFd6M5Ta2c=G"; protocol="application/pgp-signature"
+X-Ovh-Tracer-Id: 14777999228607679960
+X-VR-SPAMSTATE: OK
+X-VR-SPAMSCORE: -100
+X-VR-SPAMCAUSE: gggruggvucftvghtrhhoucdtuddrgedufedruddvuddgudefkecutefuodetggdotefrodftvfcurfhrohhfihhlvgemucfqggfjqdffgfeufgfipdevjffgvefmvefgnecuuegrihhlohhuthemucehtddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvuffkjghfofggtgesghdtreerredtvdenucfhrhhomhepufhtvghphhgvnhcumfhithhtuceoshhtvghvvgesshhkvddrohhrgheqnecukfhppedtrddtrddtrddtpdekkedrudekiedrvdegfedrudegnecurfgrrhgrmhepmhhouggvpehsmhhtphdqohhuthdphhgvlhhopehplhgrhigvrhejieefrdhhrgdrohhvhhdrnhgvthdpihhnvghtpedtrddtrddtrddtpdhmrghilhhfrhhomhepshhtvghvvgesshhkvddrohhrghdprhgtphhtthhopehlihhnuhigqdgtlhhksehvghgvrhdrkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sowjanya Komatineni (2019-08-16 12:41:56)
-> diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-> index f8688c2ddf1a..c051d92c2bbf 100644
-> --- a/drivers/clk/tegra/clk-dfll.c
-> +++ b/drivers/clk/tegra/clk-dfll.c
-> @@ -1487,6 +1487,7 @@ static int dfll_init(struct tegra_dfll *td)
->         td->last_unrounded_rate =3D 0;
-> =20
->         pm_runtime_enable(td->dev);
-> +       pm_runtime_irq_safe(td->dev);
+--Sig_/urfJBMy9eUwjFd6M5Ta2c=G
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Why irq_safe? It would be good to mention it in the commit text or
-something.
+On Fri, 08 Nov 2019 09:00:25 -0800, Stephen Boyd <sboyd@kernel.org> wrote:
+> Quoting Stephen Kitt (2019-10-19 07:06:34)
+> > The buffer allocated in ti_adpll_clk_get_name doesn't account for the
+> > terminating null. This patch switches to devm_kasprintf to avoid
+> > overflowing.
+> >=20
+> > Signed-off-by: Stephen Kitt <steve@sk2.org>
+> > --- =20
+>=20
+> Please don't send as replies to existing threads. It screws up my
+> tooling and makes it more manual to apply the patch. I guess I'll have
+> to go fix my scripts to ignore certain emails.
 
->         pm_runtime_get_sync(td->dev);
-> =20
->         dfll_set_mode(td, DFLL_DISABLED);
-> @@ -1513,6 +1514,61 @@ static int dfll_init(struct tegra_dfll *td)
->         return ret;
->  }
-> =20
-> +/**
-> + * tegra_dfll_suspend - check DFLL is disabled
-> + * @dev: DFLL device *
-> + *
-> + * DFLL clock should be disabled by the CPUFreq driver. So, make
-> + * sure it is disabled and disable all clocks needed by the DFLL.
-> + */
-> +int tegra_dfll_suspend(struct device *dev)
-> +{
-> +       struct tegra_dfll *td =3D dev_get_drvdata(dev);
-> +
-> +       if (dfll_is_running(td)) {
-> +               dev_err(td->dev, "DFLL still enabled while suspending\n");
-> +               return -EBUSY;
-> +       }
-> +
-> +       reset_control_assert(td->dvco_rst);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL(tegra_dfll_suspend);
-> +
-> +/**
-> + * tegra_dfll_resume - reinitialize DFLL on resume
-> + * @dev: DFLL instance
+My bad, sorry about that, I misread the In-Reply-To section of
+submitting-patches :-(.
 
-I prefer this description for tegra_dfll_suspend's 'dev' argument.
+Regards,
 
-> + *
-> + * DFLL is disabled and reset during suspend and resume.
-> + * So, reinitialize the DFLL IP block back for use.
-> + * DFLL clock is enabled later in closed loop mode by CPUFreq
-> + * driver before switching its clock source to DFLL output.
-> + */
-> +int tegra_dfll_resume(struct device *dev)
-> +{
-> +       struct tegra_dfll *td =3D dev_get_drvdata(dev);
-> +
-> +       reset_control_deassert(td->dvco_rst);
-> +
-> +       pm_runtime_get_sync(td->dev);
-> +
-> +       dfll_set_mode(td, DFLL_DISABLED);
-> +       dfll_set_default_params(td);
+Stephen
+
+--Sig_/urfJBMy9eUwjFd6M5Ta2c=G
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEnPVX/hPLkMoq7x0ggNMC9Yhtg5wFAl3FzXIACgkQgNMC9Yht
+g5yOAhAAnGdI2emqN4a/GrokLIb57cKV63Y80R0avBz7ROKWLNIDr4LaZ9cB64Yw
+7cZCVIuMbrQHY/nPkVMZEi9Ay3d/BwxDeNOEpstOd5sgPcw89uJbQ7q/+INR6lt7
+REXx/NP4DTgkL+XIymdUPY0D5W7NvszWJy5XRE/UKCQZB/aPxolR+rFH23+wESdg
+P0NfyarVlcSfdjBBh5f+/BzWTpYvokzQEbq1CrIMgHKZrXKy4+Up7uXyiMNrlXUG
+uBcc1XrJFH80f/tRcldSsoaNBjnqtBljCfoXstvpEMs/sG6NCvOcxPH/fHfu4JLi
+9B0/C32B4vOdIzL+yHdXFBYZHq33eRjc3j9+Yj7gGKpRqHji3sDL+XDjbSvZxbf9
+adQ40ZQJvj/e1VDmjqT18pl8RSZnVGqGzXvVQ5WVkKvdIsHEHSlYKHmqmRwvwIMT
+jD5B2zH8lkKQwQMMT0URBSVw9uKyE0QzOWfIKvO+ZpDuE+LptBl7G5KGT0019oh3
+3pGYYype7J5XIs5dF0I7xVTsogwFR7X/fMK2N7yLefJbthPo1bbCx4akl5kIaXG7
+/aVU0RcZzX9ta5dJ6sE+KlWP9OaRo2MoTQmSfxfnWgLP9Bk99UgltFQk+FILXiHG
++1JRD4bnI5BKUmshBpJ9Rk9h7QTYrJBmn6ed7FRxlwP0piEkFgQ=
+=ZIn8
+-----END PGP SIGNATURE-----
+
+--Sig_/urfJBMy9eUwjFd6M5Ta2c=G--
