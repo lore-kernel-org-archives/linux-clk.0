@@ -2,93 +2,65 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD771FA372C
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:01:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA7DAFC6196
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:01:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADEE221848
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:01:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9BDAF2245C
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:01:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729647AbfKHRBs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 12:01:48 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:37304 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727654AbfKHRBq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 12:01:46 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: sre)
-        with ESMTPSA id 040D3291340
-Received: by jupiter.universe (Postfix, from userid 1000)
-        id AAFFC48009C; Fri,  8 Nov 2019 18:01:42 +0100 (CET)
-From:   Sebastian Reichel <sebastian.reichel@collabora.com>
-To:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org
-Cc:     Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-        kernel@collabora.com,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Subject: [RFCv1] rtc: m41t80: disable clock provider support
-Date:   Fri,  8 Nov 2019 18:01:35 +0100
-Message-Id: <20191108170135.9053-1-sebastian.reichel@collabora.com>
-X-Mailer: git-send-email 2.24.0.rc1
+        id S1730733AbfKHRBv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 12:01:51 -0500
+Received: from muru.com ([72.249.23.125]:40924 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727654AbfKHRBu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:01:50 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 95C9780D4;
+        Fri,  8 Nov 2019 17:02:26 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 09:01:47 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "linux-omap@vger.kernel.org" <linux-omap@vger.kernel.org>
+Subject: Re: [GIT PULL] clk: ti: changes for 5.5 (take 2)
+Message-ID: <20191108170147.GH5610@atomide.com>
+References: <2e823d30-ce52-1275-c958-6b82666dc46f@ti.com>
+ <20191106223026.BFE86214D8@mail.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191106223026.BFE86214D8@mail.kernel.org>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
-modules SQW clock output defaults to 32768 Hz. This behaviour is
-used to provide the i.MX6 CKIL clock. Once the RTC driver is probed,
-the clock is disabled and all i.MX6 functionality depending on
-the 32 KHz clock have undefined behaviour (e.g. the hardware watchdog
-run to fast or slow).
+* Stephen Boyd <sboyd@kernel.org> [191106 22:31]:
+> Quoting Tero Kristo (2019-11-04 23:20:31)
+> > Hi Stephen,
+> > 
+> > This is a 2nd try of the TI clock changes towards 5.5. I added the 
+> > divider clock revamp into this pull, and also fixed the one commend you 
+> > had on the remoteproc support series.
+> > 
+> > Tony, this is also available as a branch as for-5.5-ti-clk-v2.
+> > 
+> > -Tero
+> > 
+> > ---
+> 
+> Thanks. Pulled into clk-next
 
-The normal solution would be to properly describe the clock tree
-in DT, but from the kernel's perspective this is a chicken-and-egg
-problem: CKIL is required very early, but the clock is only provided
-after the I2C RTC has been probed.
+Thanks. Tero, as we're already at -rc6, I'll wait on the device dts
+patches that depend on this and the reset control until after v5.5-rc1.
 
-Technically everything is fine by not touching anything, so this
-works around the issue by disabling the clock handling from the
-RTC driver. I guess the proper solution would be to simply mark the
-clock as always-enabled, but this does not seem to be supported by
-the clock framework.
+Regards,
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
-Hi,
-
-This is a downstream workaround/hack for the issue described in the
-commit message. I would like to upstream a board based on Congatec's
-QMX6, which requires a proper solution for this. Do you think it
-would be ok to have an always-on flag for clocks similar to regulators?
-
--- Sebastian
----
- drivers/rtc/rtc-m41t80.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/rtc/rtc-m41t80.c b/drivers/rtc/rtc-m41t80.c
-index 5f46f85f814b..81743d93d03e 100644
---- a/drivers/rtc/rtc-m41t80.c
-+++ b/drivers/rtc/rtc-m41t80.c
-@@ -973,7 +973,7 @@ static int m41t80_probe(struct i2c_client *client,
- 		}
- 	}
- #endif
--#ifdef CONFIG_COMMON_CLK
-+#if 0
- 	if (m41t80_data->features & M41T80_FEATURE_SQ)
- 		m41t80_sqw_register_clk(m41t80_data);
- #endif
--- 
-2.24.0.rc1
-
+Tony
