@@ -2,96 +2,152 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDD78C17441
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 22:56:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9F45C17441
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 23:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1358214DB
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 22:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9024E20674
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 23:17:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XbYk7+Pd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="F3Y107ts"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PDRzujUU";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PDRzujUU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726121AbfKHW4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 17:56:43 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:50582 "EHLO
+        id S1728080AbfKHXR2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 18:17:28 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:60424 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfKHW4n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 17:56:43 -0500
+        with ESMTP id S1726349AbfKHXR2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 8 Nov 2019 18:17:28 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A980760D88; Fri,  8 Nov 2019 22:56:42 +0000 (UTC)
+        id B48C66130A; Fri,  8 Nov 2019 23:17:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573253802;
-        bh=bpzQIR/rtrIUydYIqqjWT+9eSVprmONvp/FnuZUE9h0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=XbYk7+Pd79sU4LsT8zhN7fAymmLTG/oB8VMfGkYsWCpHlWUz787gQtqjBnRtr4GLZ
-         XGWY9+UcvF857Qxy54RW5ntndPnD/u2YU4qtIgE7tZGWc/yhIOYi5m1cqvjBDgBVi2
-         ztDBB5XoUpOmNsVjfRnLyOLDevRgWV95USyOPwWw=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        s=default; t=1573255046;
+        bh=HAIEAB/0z5LSdKmtLEEK40eFMVSuSI3HP9POVYE8JS0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PDRzujUUE/zGgdHh/gUbMDpeHN1xAdYe0XDpFJK8oPxGbh2kTdCyz74TurYcuUF29
+         /Msvg+/kyILUKouVi4/J8IuZhvWKmNIaxRC7c3AXBpHYRYSOe/oI4kVXTjW2elM+I4
+         aEU4qv3D4OCrTo9HWYCw/8IXR4jSpwmsIIQh4iu0=
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7375F601B4;
-        Fri,  8 Nov 2019 22:56:40 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 60A78612C4;
+        Fri,  8 Nov 2019 23:17:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573253801;
-        bh=bpzQIR/rtrIUydYIqqjWT+9eSVprmONvp/FnuZUE9h0=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=F3Y107tsHPpi9QBssxvMlOvNuAWnVXPT8uhP3DfzfiOze6GDJRqMxv/r1lm2gPmty
-         w4oZALc+YUMBo+xKHjxMifNNnHNGfZnFZPLofmn4UVQKimjEulVjgQpLq3OTKHF3rJ
-         lB1m9m6XWaK/qaPdOth3EeFB9cwHGg4lN/rZiJME=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7375F601B4
+        s=default; t=1573255046;
+        bh=HAIEAB/0z5LSdKmtLEEK40eFMVSuSI3HP9POVYE8JS0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PDRzujUUE/zGgdHh/gUbMDpeHN1xAdYe0XDpFJK8oPxGbh2kTdCyz74TurYcuUF29
+         /Msvg+/kyILUKouVi4/J8IuZhvWKmNIaxRC7c3AXBpHYRYSOe/oI4kVXTjW2elM+I4
+         aEU4qv3D4OCrTo9HWYCw/8IXR4jSpwmsIIQh4iu0=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 60A78612C4
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v7 5/6] clk: qcom: Add MSM8998 Multimedia Clock Controller
- (MMCC) driver
-To:     Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        marc.w.gonzalez@free.fr, robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1573247450-19738-1-git-send-email-jhugo@codeaurora.org>
- <1573247677-20965-1-git-send-email-jhugo@codeaurora.org>
- <20191108224446.3A84A214DA@mail.kernel.org>
 From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <21ed58f1-cad3-2a19-5cd0-d162a5dc7332@codeaurora.org>
-Date:   Fri, 8 Nov 2019 15:56:39 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191108224446.3A84A214DA@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v8 1/4] dt-bindings: clock: Document external clocks for MSM8998 gcc
+Date:   Fri,  8 Nov 2019 16:17:16 -0700
+Message-Id: <1573255036-10302-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1573254987-10241-1-git-send-email-jhugo@codeaurora.org>
+References: <1573254987-10241-1-git-send-email-jhugo@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/8/2019 3:44 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-11-08 13:14:37)
->> Add a driver for the multimedia clock controller found on MSM8998
->> based devices. This should allow most multimedia device drivers
->> to probe and control their clocks.
->>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
->> ---
-> 
-> Driver looks good.
-> 
-> Can you resend with minor fixes to binding and not include dts changes
-> in the series? I can then apply the whole series once Rob acks/reviews
-> the binding updates.
-> 
+The global clock controller on MSM8998 can consume a number of external
+clocks.  Document them.
 
-Sounds good.  Will do.
+Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+---
+ .../devicetree/bindings/clock/qcom,gcc.yaml        | 47 +++++++++++++++-------
+ 1 file changed, 33 insertions(+), 14 deletions(-)
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+index e73a56f..2f3512b 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+@@ -40,20 +40,38 @@ properties:
+        - qcom,gcc-sm8150
+ 
+   clocks:
+-    minItems: 1
+-    maxItems: 3
+-    items:
+-      - description: Board XO source
+-      - description: Board active XO source
+-      - description: Sleep clock source
++    oneOf:
++      #qcom,gcc-sm8150
++      #qcom,gcc-sc7180
++      - items:
++        - description: Board XO source
++        - description: Board active XO source
++        - description: Sleep clock source
++      #qcom,gcc-msm8998
++      - items:
++        - description: Board XO source
++        - description: USB 3.0 phy pipe clock
++        - description: UFS phy rx symbol clock for pipe 0
++        - description: UFS phy rx symbol clock for pipe 1
++        - description: UFS phy tx symbol clock
++        - description: PCIE phy pipe clock
+ 
+   clock-names:
+-    minItems: 1
+-    maxItems: 3
+-    items:
+-      - const: bi_tcxo
+-      - const: bi_tcxo_ao
+-      - const: sleep_clk
++    oneOf:
++      #qcom,gcc-sm8150
++      #qcom,gcc-sc7180
++      - items:
++        - const: bi_tcxo
++        - const: bi_tcxo_ao
++        - const: sleep_clk
++      #qcom,gcc-msm8998
++      - items:
++        - const: xo
++        - const: usb3_pipe
++        - const: ufs_rx_symbol0
++        - const: ufs_rx_symbol1
++        - const: ufs_tx_symbol0
++        - const: pcie0_pipe
+ 
+   '#clock-cells':
+     const: 1
+@@ -118,6 +136,7 @@ else:
+       compatible:
+         contains:
+           enum:
++            - qcom,gcc-msm8998
+             - qcom,gcc-sm8150
+             - qcom,gcc-sc7180
+   then:
+@@ -179,8 +198,8 @@ examples:
+     clock-controller@100000 {
+       compatible = "qcom,gcc-sc7180";
+       reg = <0x100000 0x1f0000>;
+-      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
+-      clock-names = "bi_tcxo", "bi_tcxo_ao";
++      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <0>;
++      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
+       #clock-cells = <1>;
+       #reset-cells = <1>;
+       #power-domain-cells = <1>;
 -- 
-Jeffrey Hugo
 Qualcomm Technologies, Inc. is a member of the
 Code Aurora Forum, a Linux Foundation Collaborative Project.
+
