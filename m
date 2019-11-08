@@ -2,69 +2,76 @@ Return-Path: <SRS0=YnN3=ZA=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01EBFFC6195
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E83A3FC6195
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:06:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCF3F21924
-	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:02:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573232522;
-	bh=XUv432m0Znz8Tr0WKMLOSWDGM5ojIEJrYckBBJUmOCc=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=2h/6CBDMiVD74rMK4QHvcaZ74n9h79ULG7MBhEsYJdSFeldWgKdCURLZaZUyfnSNc
-	 Ov5R23xALQm4T9dWnDJV08k53XX4M7ykChgfxWsnL1QH64DUnrxUlgaLkJepz2ros0
-	 tKqGpWBRcT8noG2opEvNlAEfMX67jeRaqCz6GRDs=
+	by mail.kernel.org (Postfix) with ESMTP id BFF4F218AE
+	for <linux-clk@archiver.kernel.org>; Fri,  8 Nov 2019 17:06:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727659AbfKHRCC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 12:02:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45928 "EHLO mail.kernel.org"
+        id S1726537AbfKHRGp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 12:06:45 -0500
+Received: from muru.com ([72.249.23.125]:40934 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726121AbfKHRBz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 12:01:55 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B830E222C4;
-        Fri,  8 Nov 2019 17:01:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573232514;
-        bh=XUv432m0Znz8Tr0WKMLOSWDGM5ojIEJrYckBBJUmOCc=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=ZC/uj8XMuX0P88rPmFq5P0z0qVqoHGgrw+HnS81WAVaD0ui6qyeu79eOUuCSDVNf+
-         u9Qmjy/sEanGQ+pn0A6sYeHCLm+2lY8hodVluZK5aLY2vUVMezwYvIfwwtYDR1EHCZ
-         KlR32ri4/fXghBUcO8WHmVZXpg7MAOPtnAsx7ADk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726095AbfKHRGp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 12:06:45 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id BBC8480D4;
+        Fri,  8 Nov 2019 17:07:20 +0000 (UTC)
+Date:   Fri, 8 Nov 2019 09:06:41 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Benoit Parrot <bparrot@ti.com>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, Tero Kristo <t-kristo@ti.com>,
+        linux-omap@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [Patch v2 3/5] ARM: dts: dra7: add vpe clkctrl node
+Message-ID: <20191108170641.GI5610@atomide.com>
+References: <20191104203841.3628-1-bparrot@ti.com>
+ <20191104203841.3628-4-bparrot@ti.com>
+ <20191108165554.GF5610@atomide.com>
+ <20191108170231.ubwfu2nvcwjfabas@ti.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191019140634.15596-1-steve@sk2.org>
-References: <20191019155441.2b1b349f@heffalump.sk2.org> <20191019140634.15596-1-steve@sk2.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Stephen Kitt <steve@sk2.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>, linux-clk@vger.kernel.org,
-        linux-omap@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stephen Kitt <steve@sk2.org>
-Subject: Re: [PATCH v3] clk/ti/adpll: allocate room for terminating null
-User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 09:01:54 -0800
-Message-Id: <20191108170154.B830E222C4@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191108170231.ubwfu2nvcwjfabas@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Stephen Kitt (2019-10-19 07:06:34)
-> The buffer allocated in ti_adpll_clk_get_name doesn't account for the
-> terminating null. This patch switches to devm_kasprintf to avoid
-> overflowing.
->=20
-> Signed-off-by: Stephen Kitt <steve@sk2.org>
-> ---
+* Benoit Parrot <bparrot@ti.com> [191108 17:00]:
+> Tony Lindgren <tony@atomide.com> wrote on Fri [2019-Nov-08 08:55:54 -0800]:
+> > Hi,
+> > 
+> > * Benoit Parrot <bparrot@ti.com> [191104 20:39]:
+> > > Add clkctrl nodes for VPE module.
+> > 
+> > Can you please add a comment describing that we currently need to
+> > use custom node names here instead of the standard naming?
+> 
+> Tony, what do you mean "custom node name" here?
+> I followed the exact same syntax that was already there... confused..
 
-Applied to clk-next
+Oh sorry for being unclear. Yeah so the conclusion of the discussion was
+that we still need custom node names for now.
 
+And for patch "[PATCH] clk: ti: add clkctrl data dra7 sgx" I added you to
+Cc, and it has this in the patch description:
+
+"Note that because of the current dts node name dependency for mapping to
+ clock domain, we must still use "gpu-clkctrl@" naming instead of generic
+ "clock@" naming for the node. And because of this, it's probably best to
+ apply the dts node addition together along with the other clock changes."
+
+So can you please add something similar to your clock node patches too
+to explain why we cannot use standard node names there?
+
+Regards,
+
+Tony
