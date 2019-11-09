@@ -6,64 +6,68 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4459BC17440
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:39:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB71CC17440
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:39:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16361215EA
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:39:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 766A9215EA
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:39:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573259964;
-	bh=a4IHuZ61Ijn02rgp1IVvNjlu4o9WcpWH0qgKMKOhXEs=;
+	s=default; t=1573259968;
+	bh=Zoy+Jor0H6I7/s2IE2TARJT4+Ubh8LGgJ+gtSJ+8LbY=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=Js7uxkeVJrspXDoEc1GOb5xPs3/cVnnuJyK3T1x3fejBCQFFBMKZVsb7tY4FZY5mw
-	 kdF/q1AESky8MXuFisTD2gZOxL2w9J2bCIuKc7r9G2G1z58eGr0dne5F3VQJQkOstO
-	 WXq3dDqMvrjVbJZAGpe8MBYQ7w/L3SpueGjV6tR0=
+	b=Nf924FoZm0kCgVfgYgRjwJAjSqe6bR4ruqov5dHlfgYUqnC+EtgfxvOA9TnHz506k
+	 kkfL7XcyzQBEwALwkZ7cmg+psc2PVi4QbDL7mBTLpWEonMySdeLq/EIm9/l0NWMdtH
+	 EboKIwdzaJ0Ez8BePDXPxvop03XQWtAQsXJyIhzo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727497AbfKIAjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 19:39:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55516 "EHLO mail.kernel.org"
+        id S1727559AbfKIAj2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 19:39:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfKIAjX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 19:39:23 -0500
+        id S1726227AbfKIAj2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 19:39:28 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD2502084D;
-        Sat,  9 Nov 2019 00:39:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6B2522084D;
+        Sat,  9 Nov 2019 00:39:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573259962;
-        bh=a4IHuZ61Ijn02rgp1IVvNjlu4o9WcpWH0qgKMKOhXEs=;
+        s=default; t=1573259967;
+        bh=Zoy+Jor0H6I7/s2IE2TARJT4+Ubh8LGgJ+gtSJ+8LbY=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=F+QVh3FPu2f6iuZdfwfen7v/CoZqm37zXzLStBKSRV46FSCwCO6wf8KtP4g/c3Ik2
-         9vFJtd8UhMVNg5ZwXUZkWUS1UX40mLJdRkYrhZs+83BwnWYPkskIsC/U+0T26iHmYw
-         xclolNxKAcwP9hbjblTV1/xFhlpMrYv2JqedjsJc=
+        b=nyup2dHU9/Ot1e1cVH2wGG5dNaYe8A0krkENP84atRDzdP7txwC85ZNonphd7QlPN
+         Ya3tHHs3tYbSjre7QAiDCt+PFvoAz+MtT+JJTPIPVQXMu1EdJODEvOUfVTWQ+HqAM8
+         FBcCFv1Iu1LYQHLFfac3wa4rfPewn7sGfKHnlTlg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191016125919.1773898-3-thierry.reding@gmail.com>
-References: <20191016125919.1773898-1-thierry.reding@gmail.com> <20191016125919.1773898-3-thierry.reding@gmail.com>
+In-Reply-To: <20191016125919.1773898-2-thierry.reding@gmail.com>
+References: <20191016125919.1773898-1-thierry.reding@gmail.com> <20191016125919.1773898-2-thierry.reding@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Michael Turquette <mturquette@baylibre.com>,
         Thierry Reding <thierry.reding@gmail.com>
 Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
         Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/5] clk: tegra: Move SOR0 implementation to Tegra124
+Subject: Re: [PATCH 1/5] clk: tegra: Remove last remains of TEGRA210_CLK_SOR1_SRC
 User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 16:39:22 -0800
-Message-Id: <20191109003922.CD2502084D@mail.kernel.org>
+Date:   Fri, 08 Nov 2019 16:39:26 -0800
+Message-Id: <20191109003927.6B2522084D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Thierry Reding (2019-10-16 05:59:16)
+Quoting Thierry Reding (2019-10-16 05:59:15)
 > From: Thierry Reding <treding@nvidia.com>
 >=20
-> The SOR0 clock on Tegra210 is very different from the SOR0 clock found
-> on Tegra124. Move the Tegra124 implementation to the Tegra124 driver so
-> that a custom implementation can be provided on Tegra210 without
-> clashing with the existing clock.
+> Later SoC generations implement this clock as SOR1_OUT. For consistency,
+> the Tegra210 implementation was adapted to match the same name in commit
+> 4d1dc4018573 ("dt-bindings: clock: tegra: Add sor1_out clock").
+>=20
+> Clean up the remaining pieces by adopting the new name for the internal
+> identifiers and remove the old alias. Note that since both SOR1_SRC and
+> SOR1_OUT were referring to the same device tree clock ID, this does not
+> break device tree ABI.
 >=20
 > Signed-off-by: Thierry Reding <treding@nvidia.com>
 > ---
