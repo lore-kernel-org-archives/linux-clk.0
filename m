@@ -2,107 +2,71 @@ Return-Path: <SRS0=Qq+g=ZB=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47872C17440
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:24:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4459BC17440
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:39:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D7E0215EA
-	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:24:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16361215EA
+	for <linux-clk@archiver.kernel.org>; Sat,  9 Nov 2019 00:39:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573259091;
-	bh=klckC3nMZu9Tgu8dkxJR6JAVXobhhbXuXfjC0v42SQM=;
+	s=default; t=1573259964;
+	bh=a4IHuZ61Ijn02rgp1IVvNjlu4o9WcpWH0qgKMKOhXEs=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=hl4IjrM0wA1LQwTUbLCkMgCYKegaE7OrfpzDuenDk8v9Ew9V81NqENGlgBOAG+/Qt
-	 dGodxFVOcTxvdgH11DEPIk3+Kbylvs0rwJg4ai/fXeQ8dAiVYFp+2/BKs8k+zi3HXK
-	 BbhrF0HNQhUfE2dp10b32Xa/QRAy41HCJgr3ABL0=
+	b=Js7uxkeVJrspXDoEc1GOb5xPs3/cVnnuJyK3T1x3fejBCQFFBMKZVsb7tY4FZY5mw
+	 kdF/q1AESky8MXuFisTD2gZOxL2w9J2bCIuKc7r9G2G1z58eGr0dne5F3VQJQkOstO
+	 WXq3dDqMvrjVbJZAGpe8MBYQ7w/L3SpueGjV6tR0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727233AbfKIAYu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 8 Nov 2019 19:24:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52862 "EHLO mail.kernel.org"
+        id S1727497AbfKIAjX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 8 Nov 2019 19:39:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55516 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727468AbfKIAYu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 8 Nov 2019 19:24:50 -0500
+        id S1726227AbfKIAjX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 8 Nov 2019 19:39:23 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 534B6207FA;
-        Sat,  9 Nov 2019 00:24:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD2502084D;
+        Sat,  9 Nov 2019 00:39:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573259089;
-        bh=klckC3nMZu9Tgu8dkxJR6JAVXobhhbXuXfjC0v42SQM=;
+        s=default; t=1573259962;
+        bh=a4IHuZ61Ijn02rgp1IVvNjlu4o9WcpWH0qgKMKOhXEs=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=tkfqe502Z4S3cKlPYgNn80a0C9Y3eGvoHu0su3zzRnQX2ZEX5+w05wCgctS60/oAX
-         alLQtaKpWH/TYxjyuVjlrQ6W2rMNnVUNc34HLcpDqIjq/ReRc0HFwGAEMy8KLYrJvR
-         yet1BKT3Kh4WJONmgPjEzWbdasgGn7z8Xtl072yQ=
+        b=F+QVh3FPu2f6iuZdfwfen7v/CoZqm37zXzLStBKSRV46FSCwCO6wf8KtP4g/c3Ik2
+         9vFJtd8UhMVNg5ZwXUZkWUS1UX40mLJdRkYrhZs+83BwnWYPkskIsC/U+0T26iHmYw
+         xclolNxKAcwP9hbjblTV1/xFhlpMrYv2JqedjsJc=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191108223415.dio3pwkf24jfs5o4@earth.universe>
-References: <20191108170135.9053-1-sebastian.reichel@collabora.com> <20191108175329.GH216543@piout.net> <20191108223415.dio3pwkf24jfs5o4@earth.universe>
+In-Reply-To: <20191016125919.1773898-3-thierry.reding@gmail.com>
+References: <20191016125919.1773898-1-thierry.reding@gmail.com> <20191016125919.1773898-3-thierry.reding@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [RFCv1] rtc: m41t80: disable clock provider support
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+Cc:     Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Jon Hunter <jonathanh@nvidia.com>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/5] clk: tegra: Move SOR0 implementation to Tegra124
 User-Agent: alot/0.8.1
-Date:   Fri, 08 Nov 2019 16:24:48 -0800
-Message-Id: <20191109002449.534B6207FA@mail.kernel.org>
+Date:   Fri, 08 Nov 2019 16:39:22 -0800
+Message-Id: <20191109003922.CD2502084D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sebastian Reichel (2019-11-08 14:34:15)
-> Hi,
+Quoting Thierry Reding (2019-10-16 05:59:16)
+> From: Thierry Reding <treding@nvidia.com>
 >=20
-> On Fri, Nov 08, 2019 at 06:53:29PM +0100, Alexandre Belloni wrote:
-> > On 08/11/2019 18:01:35+0100, Sebastian Reichel wrote:
-> > > Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
-> > > modules SQW clock output defaults to 32768 Hz. This behaviour is
-> > > used to provide the i.MX6 CKIL clock. Once the RTC driver is probed,
-> > > the clock is disabled and all i.MX6 functionality depending on
-> > > the 32 KHz clock have undefined behaviour (e.g. the hardware watchdog
-> > > run to fast or slow).
-> > >=20
-> > > The normal solution would be to properly describe the clock tree
-> > > in DT, but from the kernel's perspective this is a chicken-and-egg
-> > > problem: CKIL is required very early, but the clock is only provided
-> > > after the I2C RTC has been probed.
-> > >=20
-> > > Technically everything is fine by not touching anything, so this
-> > > works around the issue by disabling the clock handling from the
-> > > RTC driver. I guess the proper solution would be to simply mark the
-> > > clock as always-enabled, but this does not seem to be supported by
-> > > the clock framework.
-> > >=20
-> >=20
-> > You need to have a consumer so this clock is not disabled by the CCF
-> > after seeing nobody uses it.
+> The SOR0 clock on Tegra210 is very different from the SOR0 clock found
+> on Tegra124. Move the Tegra124 implementation to the Tegra124 driver so
+> that a custom implementation can be provided on Tegra210 without
+> clashing with the existing clock.
 >=20
-> That's why I was wondering if we can have something like regulator's
-> always-enabled for clocks.
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
 
-There's a flag CLK_IS_CRITICAL that providers can set.
-
->=20
-> > If you need it early, you can have a look at rtc-sun6i.c but I
-> > would like that to not become a recurrent pattern, especially for
-> > discrete RTCs.
->=20
-> I don't just need it early. The issue is, that CKIL is the 32khz
-> low frequency clock fed into the i.MX6. It is initialized by the
-> clock manager, so I need it before any of the SoC clocks are
-> registered. Without the SoC clocks, the I2C bus cannot be probed
-> and thus the RTC driver cannot be probed.
->=20
-
-Is this the chicken-egg scenario? I read this thread but I can't follow
-along with what the problem is. Sorry.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
