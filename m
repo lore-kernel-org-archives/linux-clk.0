@@ -2,84 +2,150 @@ Return-Path: <SRS0=ilwl=ZD=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.8 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7F68C43331
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Nov 2019 00:45:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12970C43331
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Nov 2019 01:14:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4332206DF
-	for <linux-clk@archiver.kernel.org>; Mon, 11 Nov 2019 00:45:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CE7A020818
+	for <linux-clk@archiver.kernel.org>; Mon, 11 Nov 2019 01:14:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="QheMlhNY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726743AbfKKApI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 10 Nov 2019 19:45:08 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:36516 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726710AbfKKApI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 10 Nov 2019 19:45:08 -0500
-Received: from ip5f5a6266.dynamic.kabel-deutschland.de ([95.90.98.102] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1iTxpJ-00062S-QQ; Mon, 11 Nov 2019 01:45:05 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: [GIT PULL] Rockchip clock updates for 5.4
-Date:   Mon, 11 Nov 2019 01:45:05 +0100
-Message-ID: <2139639.gTPWsosUxc@phil>
+        id S1726622AbfKKBOD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 10 Nov 2019 20:14:03 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:51682 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726275AbfKKBOD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 10 Nov 2019 20:14:03 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1573434838; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=RkvKZSkNZr28wpzu05MKt1aQUXGxsl91Pokk2fWN4Qw=;
+        b=QheMlhNY8AlqAU877HUpnGMawf1WXJKYU/RvJoWDclx03zy/8IqWxEsXQVcxAdythEXz0H
+        QHbKHuHyPKbUjY28RI+l8fT6knUGnK8gOuKjZPMpgV2SzZAaw6jFUH7zrcgHpIZ5U3r5F+
+        +1NUYctE4KovooPncb6Q+XGFaxtsAsM=
+Date:   Mon, 11 Nov 2019 02:13:52 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH 1/2 v3] dt-bindings: clock: Add X1000 bindings.
+To:     Zhou Yanjie <zhouyanjie@zoho.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        mturquette@baylibre.com, paul.burton@mips.com, sboyd@kernel.org,
+        robh+dt@kernel.org, syq@debian.org, mark.rutland@arm.com
+Message-Id: <1573434832.3.1@crapouillou.net>
+In-Reply-To: <1573378102-72380-2-git-send-email-zhouyanjie@zoho.com>
+References: <1571421006-12771-1-git-send-email-zhouyanjie@zoho.com>
+        <1573378102-72380-1-git-send-email-zhouyanjie@zoho.com>
+        <1573378102-72380-2-git-send-email-zhouyanjie@zoho.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mike, Stephen,
-
-please find below rockchip clock changes for 5.5
-Please pull
-
-Thanks
-Heiko
-
-The following changes since commit 54ecb8f7028c5eb3d740bb82b0f1d90f2df63c5c:
-
-  Linux 5.4-rc1 (2019-09-30 10:35:40 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git v5.5-rockchip-clk-1
-
-for you to fetch changes up to 3b0b4ebfd761943179fe03b107f66c72c3b5c8d4:
-
-  clk: rockchip: protect the pclk_usb_grf as critical on px30 (2019-11-05 20:53:42 +0100)
-
-----------------------------------------------------------------
-Adding a missing static declaration for clk_half_divider_ops
-and a number of improvements for the px30 clock tree.
-
-----------------------------------------------------------------
-Ben Dooks (Codethink) (1):
-      clk: rockchip: make clk_half_divider_ops static
-
-Finley Xiao (2):
-      clk: rockchip: Add div50 clock-ids for sdmmc on px30 and nandc
-      clk: rockchip: Add div50 clocks for px30 sdmmc, emmc, sdio and nandc
-
-Heiko Stuebner (3):
-      clk: rockchip: move px30 critical clocks to correct clock controller
-      clk: rockchip: add video-related niu clocks as critical on px30
-      clk: rockchip: protect the pclk_usb_grf as critical on px30
-
- drivers/clk/rockchip/clk-half-divider.c |  3 +-
- drivers/clk/rockchip/clk-px30.c         | 70 ++++++++++++++++++++++++++-------
- include/dt-bindings/clock/px30-cru.h    |  2 +
- 3 files changed, 59 insertions(+), 16 deletions(-)
+Hi Zhou,
 
 
+Le dim., nov. 10, 2019 at 17:28, Zhou Yanjie <zhouyanjie@zoho.com> a=20
+=E9crit :
+> Add the clock bindings for the X1000 Soc from Ingenic.
+>=20
+> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
 
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
+
+> ---
+>  .../devicetree/bindings/clock/ingenic,cgu.txt      |  1 +
+>  include/dt-bindings/clock/x1000-cgu.h              | 44=20
+> ++++++++++++++++++++++
+>  2 files changed, 45 insertions(+)
+>  create mode 100644 include/dt-bindings/clock/x1000-cgu.h
+
+When you send a revised version of a patchset, it's common practice to=20
+have a per-patch changelog right here. Then a cover letter is only=20
+really needed for big patchsets that need extra information.
+
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt=20
+> b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
+> index ba5a442..75598e6 100644
+> --- a/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
+> +++ b/Documentation/devicetree/bindings/clock/ingenic,cgu.txt
+> @@ -11,6 +11,7 @@ Required properties:
+>    * ingenic,jz4725b-cgu
+>    * ingenic,jz4770-cgu
+>    * ingenic,jz4780-cgu
+> +  * ingenic,x1000-cgu
+>  - reg : The address & length of the CGU registers.
+>  - clocks : List of phandle & clock specifiers for clocks external to=20
+> the CGU.
+>    Two such external clocks should be specified - first the external=20
+> crystal
+> diff --git a/include/dt-bindings/clock/x1000-cgu.h=20
+> b/include/dt-bindings/clock/x1000-cgu.h
+> new file mode 100644
+> index 00000000..bbaebaf
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/x1000-cgu.h
+> @@ -0,0 +1,44 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * This header provides clock numbers for the ingenic,x1000-cgu DT=20
+> binding.
+> + *
+> + * They are roughly ordered as:
+> + *   - external clocks
+> + *   - PLLs
+> + *   - muxes/dividers in the order they appear in the x1000=20
+> programmers manual
+> + *   - gates in order of their bit in the CLKGR* registers
+> + */
+> +
+> +#ifndef __DT_BINDINGS_CLOCK_X1000_CGU_H__
+> +#define __DT_BINDINGS_CLOCK_X1000_CGU_H__
+> +
+> +#define X1000_CLK_EXCLK		0
+> +#define X1000_CLK_RTCLK		1
+> +#define X1000_CLK_APLL		2
+> +#define X1000_CLK_MPLL		3
+> +#define X1000_CLK_SCLKA		4
+> +#define X1000_CLK_CPUMUX	5
+> +#define X1000_CLK_CPU		6
+> +#define X1000_CLK_L2CACHE	7
+> +#define X1000_CLK_AHB0		8
+> +#define X1000_CLK_AHB2PMUX	9
+> +#define X1000_CLK_AHB2		10
+> +#define X1000_CLK_PCLK		11
+> +#define X1000_CLK_DDR		12
+> +#define X1000_CLK_MAC		13
+> +#define X1000_CLK_MSCMUX	14
+> +#define X1000_CLK_MSC0		15
+> +#define X1000_CLK_MSC1		16
+> +#define X1000_CLK_SSIPLL	17
+> +#define X1000_CLK_SSIMUX	18
+> +#define X1000_CLK_SFC		19
+> +#define X1000_CLK_I2C0		20
+> +#define X1000_CLK_I2C1		21
+> +#define X1000_CLK_I2C2		22
+> +#define X1000_CLK_UART0		23
+> +#define X1000_CLK_UART1		24
+> +#define X1000_CLK_UART2		25
+> +#define X1000_CLK_SSI		26
+> +#define X1000_CLK_PDMA		27
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_X1000_CGU_H__ */
+> --
+> 2.7.4
+>=20
+>=20
+
+=
 
