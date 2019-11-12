@@ -2,186 +2,153 @@ Return-Path: <SRS0=KYfG=ZE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCFCC43331
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:48:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8677C17440
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:51:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D890B21783
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:48:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B12C82196E
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:51:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573598908;
-	bh=+en04kJbGD/4Q5Lx1nthQ15q2am7O5vjhEjhXQRVEkw=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=k/6HmsHmuClD9Mo1p7MUlJZUjxbV0gmwjWpiyG3vIAKNIAoom3ivkQXK5XiVi6fHS
-	 wdiqBJc5Cgwy2zndeh7FoNUFOJs4MciOaDMtqZegF7x0jF7NpPbc6LJoyusq4ZnfFh
-	 bBZHNP1SCAVRPvagarR5rH6Q1bQL6FJPWHn7wIoc=
+	s=default; t=1573599112;
+	bh=Fvb/mXVl+l35yVh6GFoxh8HIEXMeuT21yKS6scDEvuE=;
+	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
+	b=lZc6bMQrkGKN5HNwkK0zOJwt8Ula2gtWTaS4bXDj7HXrTATiAz2FeC3U3D54eUlyQ
+	 vc+ZigWrhpWihMT1N9lVRyZLJaSBr+xa6QzNgb3W6wG+OiwDk93E5pHwRi5uT7WRpY
+	 0/YAdmyZP/dg5+yiEb3Goa7SrvntDB30m/imnk/8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfKLWs2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 17:48:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60954 "EHLO mail.kernel.org"
+        id S1726912AbfKLWvt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 17:51:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbfKLWs2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:48:28 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726906AbfKLWvt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 17:51:49 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 920D721925;
-        Tue, 12 Nov 2019 22:48:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E59D21783;
+        Tue, 12 Nov 2019 22:51:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573598906;
-        bh=+en04kJbGD/4Q5Lx1nthQ15q2am7O5vjhEjhXQRVEkw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=si7/fFccCgJlHzEqui8TK1eFk7EYdzN5sEaeOtun7E3uxlED8T408EA6NDzYB25c3
-         xrPYMEtrIlPliubRC6AvgLae0L5G8gOhmz0rjLXsB1yiSBjlzYH4GMZJnJeWfzkBG9
-         hzGOdA2Lvsz7bFOb2pOF7ptuFk+iX4LWyR8UgmSg=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Vinod Koul <vkoul@kernel.org>, Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH] clk: qcom: gcc-sm8150: Drop non-DT fallback parent names
-Date:   Tue, 12 Nov 2019 14:48:26 -0800
-Message-Id: <20191112224826.177413-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+        s=default; t=1573599107;
+        bh=Fvb/mXVl+l35yVh6GFoxh8HIEXMeuT21yKS6scDEvuE=;
+        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
+        b=wutODIcyfTnTRJBX9L/1YSqE+K/nXW/S5xy8DlXaib2Uh8FHE9K0vxgEFR/AKAGVC
+         YGgb6J7Od/oj3v9K44i5Q7SS4bHPVCTfvH7NhmO9PujmMoNOEm9C1DsclPQjSPdFnE
+         2pivyDLHR97BdOIO0aLfJ1XD4Wr/LIyLhjpHQ3OQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1573564580-9006-2-git-send-email-rajan.vaja@xilinx.com>
+References: <1573564580-9006-1-git-send-email-rajan.vaja@xilinx.com> <1573564580-9006-2-git-send-email-rajan.vaja@xilinx.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Rajan Vaja <rajan.vaja@xilinx.com>, dan.carpenter@oracle.com,
+        gustavo@embeddedor.com, jolly.shah@xilinx.com,
+        m.tretter@pengutronix.de, mark.rutland@arm.com,
+        michal.simek@xilinx.com, mturquette@baylibre.com,
+        nava.manne@xilinx.com, ravi.patel@xilinx.com, robh+dt@kernel.org,
+        tejas.patel@xilinx.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Rajan Vaja <rajan.vaja@xilinx.com>
+Subject: Re: [PATCH 1/7] dt-bindings: clock: Add bindings for versal clock driver
+User-Agent: alot/0.8.1
+Date:   Tue, 12 Nov 2019 14:51:46 -0800
+Message-Id: <20191112225147.7E59D21783@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The .name field of clk_parent_data should only be specified if the DT
-node doesn't have the proper 'clocks' and 'clock-names' properties. For
-this driver the DT has always had the correct properties so these fields
-have been unnecessary.
+Quoting Rajan Vaja (2019-11-12 05:16:14)
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml=
+ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> new file mode 100644
+> index 0000000..da82f6a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> @@ -0,0 +1,67 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/xlnx,versal-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx Versal clock controller
+> +
+> +maintainers:
+> +  - Michal Simek <michal.simek@xilinx.com>
+> +  - Jolly Shah <jolly.shah@xilinx.com>
+> +  - Rajan Vaja <rajan.vaja@xilinx.com>
+> +
+> +description: |
+> +  The clock controller is a h/w block of Xilinx versal clock tree. It re=
+ads
 
-Cc: Vinod Koul <vkoul@kernel.org>
-Cc: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/qcom/gcc-sm8150.c | 26 +++++++++++---------------
- 1 file changed, 11 insertions(+), 15 deletions(-)
+hardware instead of h/w
 
-diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
-index 20877214acff..5165f4d0f004 100644
---- a/drivers/clk/qcom/gcc-sm8150.c
-+++ b/drivers/clk/qcom/gcc-sm8150.c
-@@ -49,7 +49,6 @@ static struct clk_alpha_pll gpll0 = {
- 			.name = "gpll0",
- 			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
--				.name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_trion_fixed_pll_ops,
-@@ -76,7 +75,6 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
- 		.name = "gpll0_out_even",
- 		.parent_data = &(const struct clk_parent_data){
- 			.fw_name = "bi_tcxo",
--			.name = "bi_tcxo",
- 		},
- 		.num_parents = 1,
- 		.ops = &clk_trion_pll_postdiv_ops,
-@@ -95,7 +93,6 @@ static struct clk_alpha_pll gpll7 = {
- 			.name = "gpll7",
- 			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
--				.name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_trion_fixed_pll_ops,
-@@ -115,7 +112,6 @@ static struct clk_alpha_pll gpll9 = {
- 			.name = "gpll9",
- 			.parent_data = &(const struct clk_parent_data){
- 				.fw_name = "bi_tcxo",
--				.name = "bi_tcxo",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_trion_fixed_pll_ops,
-@@ -131,7 +127,7 @@ static const struct parent_map gcc_parent_map_0[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_0[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll0_out_even.clkr.hw },
- 	{ .fw_name = "core_bi_pll_test_se" },
-@@ -146,9 +142,9 @@ static const struct parent_map gcc_parent_map_1[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_1[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
--	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
-+	{ .fw_name = "sleep_clk" },
- 	{ .hw = &gpll0_out_even.clkr.hw },
- 	{ .fw_name = "core_bi_pll_test_se" },
- };
-@@ -160,8 +156,8 @@ static const struct parent_map gcc_parent_map_2[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_2[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
--	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
-+	{ .fw_name = "bi_tcxo" },
-+	{ .fw_name = "sleep_clk" },
- 	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
-@@ -172,7 +168,7 @@ static const struct parent_map gcc_parent_map_3[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_3[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .fw_name = "core_bi_pll_test_se"},
- };
-@@ -183,7 +179,7 @@ static const struct parent_map gcc_parent_map_4[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_4[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
-@@ -196,7 +192,7 @@ static const struct parent_map gcc_parent_map_5[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_5[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll7.clkr.hw },
- 	{ .hw = &gpll0_out_even.clkr.hw },
-@@ -212,7 +208,7 @@ static const struct parent_map gcc_parent_map_6[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_6[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
- 	{ .hw = &gpll9.clkr.hw },
- 	{ .hw = &gpll0_out_even.clkr.hw },
-@@ -228,9 +224,9 @@ static const struct parent_map gcc_parent_map_7[] = {
- };
- 
- static const struct clk_parent_data gcc_parents_7[] = {
--	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
-+	{ .fw_name = "bi_tcxo" },
- 	{ .hw = &gpll0.clkr.hw },
--	{ .fw_name = "aud_ref_clk", .name = "aud_ref_clk" },
-+	{ .fw_name = "aud_ref_clk" },
- 	{ .hw = &gpll0_out_even.clkr.hw },
- 	{ .fw_name = "core_bi_pll_test_se" },
- };
--- 
-Sent by a computer through tubes
+> +  required input clock frequencies from the devicetree and acts as clock
+> +  provider for all clock consumers of PS clocks. See clock_bindings.txt
+> +  for more information on the generic clock bindings.
+
+Please drop this last sentence about clock_bindings.txt
+
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,versal-clk
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    description: List of clock specifiers which are external input
+> +      clocks to the given clock controller.
+> +    minItems: 3
+> +    maxItems: 3
+> +    items:
+> +      - description: ref clk
+> +      - description: alternate ref clk
+> +      - description: pl alternate ref clk
+
+What is "pl"? Can you clarify?
+
+> +
+> +  clock-names:
+> +    minItems: 3
+> +    maxItems: 3
+> +    items:
+> +      - const: ref_clk
+> +      - const: alt_ref_clk
+> +      - const: pl_alt_ref_clk
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    firmware {
+> +      zynqmp_firmware: zynqmp-firmware {
+> +        compatible =3D "xlnx,zynqmp-firmware";
+> +        method =3D "smc";
+
+Is there a way to say in the binding that this must be a child of a
+xlnx,zynqmp-firmware node? That would be ideal so we can constrain this
+to that location somehow.
+
+> +        versal_clk: clock-controller {
+> +          #clock-cells =3D <1>;
+> +          compatible =3D "xlnx,versal-clk";
+> +          clocks =3D <&ref_clk>, <&alt_ref_clk>, <&pl_alt_ref_clk>;
+> +          clock-names =3D "ref_clk", "alt_ref_clk", "pl_alt_ref_clk";
+> +        };
+> +      };
+> +    };
+> +...
 
