@@ -2,80 +2,186 @@ Return-Path: <SRS0=KYfG=ZE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7259CC43331
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:46:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FCFCC43331
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C0ED21925
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:46:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D890B21783
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573598808;
-	bh=n2+P0RB97vUctcmCrSIYeykZT7to1k5WHK/8kT+mhZc=;
-	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=QeKK9v+LoL1jIeCqWpKASf/XKm2XDmo3VZe4x8FNcRvcMg75Sc4iEaEJytnmbVi+I
-	 Ks5+LF5hRSf/FHIUV6RYjxpsXmgzGrF8G1YtnN9VozMmQP8LbWaGasFP+X8UOtJlYL
-	 7UZSNyTdCAaRjEf1S2tlt578ewkQPfzXaYB7cM7k=
+	s=default; t=1573598908;
+	bh=+en04kJbGD/4Q5Lx1nthQ15q2am7O5vjhEjhXQRVEkw=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=k/6HmsHmuClD9Mo1p7MUlJZUjxbV0gmwjWpiyG3vIAKNIAoom3ivkQXK5XiVi6fHS
+	 wdiqBJc5Cgwy2zndeh7FoNUFOJs4MciOaDMtqZegF7x0jF7NpPbc6LJoyusq4ZnfFh
+	 bBZHNP1SCAVRPvagarR5rH6Q1bQL6FJPWHn7wIoc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfKLWqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 17:46:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60622 "EHLO mail.kernel.org"
+        id S1727022AbfKLWs2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 17:48:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60954 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726932AbfKLWqr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:46:47 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726906AbfKLWs2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 17:48:28 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 39F572084E;
-        Tue, 12 Nov 2019 22:46:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 920D721925;
+        Tue, 12 Nov 2019 22:48:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573598807;
-        bh=n2+P0RB97vUctcmCrSIYeykZT7to1k5WHK/8kT+mhZc=;
-        h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=sZN8+Ym9wOg8pNvgoBPuTIhuBFjeav2JNG9mlOUcce7ahPlg6OYnPZs+lZPg/HoIF
-         qVZecwsMnZomnMIICndZomznsGEz8v/bSWT7RiKNw6QGYJPMRvsY8beijj7a4Cw6qU
-         q7tcNkqU51p8cvsVRlc+6sa6wOCv4Zp19hxBAYk0=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
-References: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
+        s=default; t=1573598906;
+        bh=+en04kJbGD/4Q5Lx1nthQ15q2am7O5vjhEjhXQRVEkw=;
+        h=From:To:Cc:Subject:Date:From;
+        b=si7/fFccCgJlHzEqui8TK1eFk7EYdzN5sEaeOtun7E3uxlED8T408EA6NDzYB25c3
+         xrPYMEtrIlPliubRC6AvgLae0L5G8gOhmz0rjLXsB1yiSBjlzYH4GMZJnJeWfzkBG9
+         hzGOdA2Lvsz7bFOb2pOF7ptuFk+iX4LWyR8UgmSg=
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        mturquette@baylibre.com, pgaikwad@nvidia.com,
-        thierry.reding@gmail.com
-Cc:     digetx@gmail.com, pdeschrijver@nvidia.com,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] clk: tegra: clk-dfll: Fix to remove pm_runtime_irq_safe
-User-Agent: alot/0.8.1
-Date:   Tue, 12 Nov 2019 14:46:46 -0800
-Message-Id: <20191112224647.39F572084E@mail.kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Vinod Koul <vkoul@kernel.org>, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH] clk: qcom: gcc-sm8150: Drop non-DT fallback parent names
+Date:   Tue, 12 Nov 2019 14:48:26 -0800
+Message-Id: <20191112224826.177413-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sowjanya Komatineni (2019-11-12 08:17:05)
-> This patch includes fix to remove pm_runtime_irq_safe which was added
-> mistakenly during dfll suspend and resume implementation as a part of
-> Tegra210 SC7 suspend and resume patch series.
->=20
-> This patch removes pm_runtime_irq_safe and also has minor description
-> update for argument of dfll_suspend in comments.
->=20
-> Some of the patch series are applied so sending this fix as incremental
-> fix to latest linux-next.
+The .name field of clk_parent_data should only be specified if the DT
+node doesn't have the proper 'clocks' and 'clock-names' properties. For
+this driver the DT has always had the correct properties so these fields
+have been unnecessary.
 
-Please don't send cover letters for single patches. The value add is
-minimal vs. just putting extra text next to the diffstat in the single
-patch.
+Cc: Vinod Koul <vkoul@kernel.org>
+Cc: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/gcc-sm8150.c | 26 +++++++++++---------------
+ 1 file changed, 11 insertions(+), 15 deletions(-)
 
->=20
-> Sowjanya Komatineni (1):
->   clk: tegra: clk-dfll: Fix to remove pm_runtime_irq_safe
->=20
->  drivers/clk/tegra/clk-dfll.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
+diff --git a/drivers/clk/qcom/gcc-sm8150.c b/drivers/clk/qcom/gcc-sm8150.c
+index 20877214acff..5165f4d0f004 100644
+--- a/drivers/clk/qcom/gcc-sm8150.c
++++ b/drivers/clk/qcom/gcc-sm8150.c
+@@ -49,7 +49,6 @@ static struct clk_alpha_pll gpll0 = {
+ 			.name = "gpll0",
+ 			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+-				.name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_trion_fixed_pll_ops,
+@@ -76,7 +75,6 @@ static struct clk_alpha_pll_postdiv gpll0_out_even = {
+ 		.name = "gpll0_out_even",
+ 		.parent_data = &(const struct clk_parent_data){
+ 			.fw_name = "bi_tcxo",
+-			.name = "bi_tcxo",
+ 		},
+ 		.num_parents = 1,
+ 		.ops = &clk_trion_pll_postdiv_ops,
+@@ -95,7 +93,6 @@ static struct clk_alpha_pll gpll7 = {
+ 			.name = "gpll7",
+ 			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+-				.name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_trion_fixed_pll_ops,
+@@ -115,7 +112,6 @@ static struct clk_alpha_pll gpll9 = {
+ 			.name = "gpll9",
+ 			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+-				.name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+ 			.ops = &clk_trion_fixed_pll_ops,
+@@ -131,7 +127,7 @@ static const struct parent_map gcc_parent_map_0[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_0[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll0_out_even.clkr.hw },
+ 	{ .fw_name = "core_bi_pll_test_se" },
+@@ -146,9 +142,9 @@ static const struct parent_map gcc_parent_map_1[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_1[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpll0.clkr.hw },
+-	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
++	{ .fw_name = "sleep_clk" },
+ 	{ .hw = &gpll0_out_even.clkr.hw },
+ 	{ .fw_name = "core_bi_pll_test_se" },
+ };
+@@ -160,8 +156,8 @@ static const struct parent_map gcc_parent_map_2[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_2[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
+-	{ .fw_name = "sleep_clk", .name = "sleep_clk" },
++	{ .fw_name = "bi_tcxo" },
++	{ .fw_name = "sleep_clk" },
+ 	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+@@ -172,7 +168,7 @@ static const struct parent_map gcc_parent_map_3[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_3[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .fw_name = "core_bi_pll_test_se"},
+ };
+@@ -183,7 +179,7 @@ static const struct parent_map gcc_parent_map_4[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_4[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+@@ -196,7 +192,7 @@ static const struct parent_map gcc_parent_map_5[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_5[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll7.clkr.hw },
+ 	{ .hw = &gpll0_out_even.clkr.hw },
+@@ -212,7 +208,7 @@ static const struct parent_map gcc_parent_map_6[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_6[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpll0.clkr.hw },
+ 	{ .hw = &gpll9.clkr.hw },
+ 	{ .hw = &gpll0_out_even.clkr.hw },
+@@ -228,9 +224,9 @@ static const struct parent_map gcc_parent_map_7[] = {
+ };
+ 
+ static const struct clk_parent_data gcc_parents_7[] = {
+-	{ .fw_name = "bi_tcxo", .name = "bi_tcxo" },
++	{ .fw_name = "bi_tcxo" },
+ 	{ .hw = &gpll0.clkr.hw },
+-	{ .fw_name = "aud_ref_clk", .name = "aud_ref_clk" },
++	{ .fw_name = "aud_ref_clk" },
+ 	{ .hw = &gpll0_out_even.clkr.hw },
+ 	{ .fw_name = "core_bi_pll_test_se" },
+ };
+-- 
+Sent by a computer through tubes
+
