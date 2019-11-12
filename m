@@ -2,199 +2,217 @@ Return-Path: <SRS0=KYfG=ZE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A67CC43331
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 15:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA12DC17441
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 15:15:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 558FE2067B
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 15:10:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ClSeF6DQ"
+	by mail.kernel.org (Postfix) with ESMTP id CB9E821872
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 15:15:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726960AbfKLPKS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 10:10:18 -0500
-Received: from mail-eopbgr80082.outbound.protection.outlook.com ([40.107.8.82]:39680
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726982AbfKLPKR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 10:10:17 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Kl4D4rV+tTYigdBoP0LJ44rNhicb6sBhvg6LYgWEoL4dHpf5c1nPm2nB2BqMGViTmI6WfSUxrd5dBWiQcF9pbZnYQMnowYbn51Kzs45iH2wX82+F0D5UlMT3HXWLSsKHFg0ZqntvOkW3KUcjbMgc4KnIfJgcXPpijKmGqLTdOrfD9kEUyXxVNuXO9yDc34+yam37fmN8sKNFQVuL+b19JMFtIFkYRZyvNJgTi/k72KbDkTpFdpZsXOCCCxkJ/MvEeclE32KZeNxCQm+CBsmoC9VLVzYEvWIovHg1Hj9iJGvFo6FqLwDi+JvWAg/ZW+7uPw/ojKreP4bsj9SWqOJHgA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dztztVnatxYEo7Do6v5rCP3ACyhW8HFSEMDdISM9eoo=;
- b=W5OflWjEenlwd6hmlHfMqRgdN06kIczLrHJpHw9E305f3/QKSC6ady8GP6u3IaG61WPpj7LENeAojJXIMBkcjaqsDv2FQLWeO3/Ygxx7snNhIV7v05YJBlT2KeyCVXDnYpQvqu+Yc7QllpuSr0MD2FshK2bmdr/Qs8eE5YIqAUF9VQQl5M2GTy+vcX5NrTbk1c6yct/EHG0c9Ts7kQusn/NmfXCmY60Mp8bhaIsp5jx2JqX5Uz2eWIkL3QDtR2FF3v3C5gKt02iQH2bGs/J3vAQ4BxN8Pedx9CyC2ItoqXLh/xNDF3bnsD/IDc9tY1m1n+c/7403t1VbqNJtUfJRNA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dztztVnatxYEo7Do6v5rCP3ACyhW8HFSEMDdISM9eoo=;
- b=ClSeF6DQz3SQmHX78jdeqPDIvRZ5Jx2yXDb0jZNNLrDsc64M+Tb77Bx0a1vsCY7r9I0lonJ8zi2fpY+3ed++lGJd1Q4KR+n4JZPubNTmdFVGYFmjS3aEreO9UZKc2HTi3QTUi5iESo4dKdP6+B48e56oAhY73mnTmbGsRLcDYmA=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB5457.eurprd04.prod.outlook.com (20.178.113.147) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2430.25; Tue, 12 Nov 2019 15:10:10 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::fd44:1b14:587c:9fde%7]) with mapi id 15.20.2430.027; Tue, 12 Nov 2019
- 15:10:10 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1727036AbfKLPPb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 10:15:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:50614 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726986AbfKLPPb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Nov 2019 10:15:31 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 6AE2A284D18
+Received: by earth.universe (Postfix, from userid 1000)
+        id F03273C0C78; Tue, 12 Nov 2019 16:15:26 +0100 (CET)
+Date:   Tue, 12 Nov 2019 16:15:26 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Russell King <linux@armlinux.org.uk>,
         Michael Turquette <mturquette@baylibre.com>,
-        =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Martin Kepplinger <martink@posteo.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v4 1/6] clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram
- clocks
-Thread-Topic: [PATCH v4 1/6] clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram
- clocks
-Thread-Index: AQHVloV7VZOJz0hWAkeO+G3807P1dqeHqX8A
-Date:   Tue, 12 Nov 2019 15:10:09 +0000
-Message-ID: <20191112151008.5spfh7y5xzppk4s5@fsr-ub1664-175>
-References: <cover.1573252696.git.leonard.crestez@nxp.com>
- <0e0eeeee546a3bb664935184d66866f1c66458ce.1573252696.git.leonard.crestez@nxp.com>
- <20191112111803.c5624in2masqipqf@fsr-ub1664-175>
- <VI1PR04MB702387DCA9DB5A0A3F6288EDEE770@VI1PR04MB7023.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB702387DCA9DB5A0A3F6288EDEE770@VI1PR04MB7023.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM3PR04CA0147.eurprd04.prod.outlook.com (2603:10a6:207::31)
- To AM0PR04MB5779.eurprd04.prod.outlook.com (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: e617868e-1576-4286-50b5-08d76782689d
-x-ms-traffictypediagnostic: AM0PR04MB5457:|AM0PR04MB5457:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB5457057E559698CA92B00EEBF6770@AM0PR04MB5457.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 021975AE46
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(7916004)(4636009)(366004)(346002)(136003)(396003)(376002)(39860400002)(199004)(189003)(6246003)(5660300002)(6486002)(14454004)(478600001)(6436002)(4326008)(6862004)(229853002)(25786009)(66476007)(3846002)(6512007)(9686003)(66946007)(66556008)(64756008)(66446008)(1076003)(6116002)(14444005)(486006)(446003)(256004)(71190400001)(81156014)(7416002)(99286004)(11346002)(81166006)(44832011)(54906003)(52116002)(66066001)(476003)(8676002)(8936002)(6636002)(186003)(76176011)(71200400001)(386003)(6506007)(53546011)(86362001)(33716001)(2906002)(7736002)(305945005)(316002)(102836004)(26005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5457;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: T9fQXSzCQFmpUb97+BdguccGjsric9igcMnkcYHDTMMuWFbTTaOW0CzmAga7mhvVaU34pDeKaYiQiQk4zFX3wV4pFKc/nZkE2b9TjqomJV3rxHIDvWPqDzxTpv2aSzH56t5hlMTmswc50zhdzsltKGBAlMR+IG9vg/XDpwfONyUERhYtFqZwWQQVCzoFF8UT9dcfR4Rci9HA6jv/DNvbWdUePIrvbRAlldQoMN3gxNkqs+YHnoEqI7hcjgQqGy4bBy93JF/HKmm0HnegeQIzp2l0osxeVcbXvPPuHZ2YXYrFCYdtdWBuOYNH2lX4OiWVHP0rJ2SHQcmD3UlojYmLuHsyUMpmEqHZhV+2rVqgBx+JhFYZF47em4GlWlAn/mtKV3E/MxE3yKI12MmFJy/xqQObMHFiRkrxvwACY5TGj/gaRO8/KluXkj7KLHnOeQgz
-Content-Type: text/plain; charset="iso-8859-2"
-Content-ID: <CEBC11D2F4C3804D8B849B3252B2D1CF@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [RFCv1] rtc: m41t80: disable clock provider support
+Message-ID: <20191112151526.txl5rwpuiwjpopzx@earth.universe>
+References: <20191108170135.9053-1-sebastian.reichel@collabora.com>
+ <20191108175329.GH216543@piout.net>
+ <20191108223415.dio3pwkf24jfs5o4@earth.universe>
+ <20191109002449.534B6207FA@mail.kernel.org>
+ <20191109014151.yd2untpgnuinermj@earth.universe>
+ <20191109065334.64A03214E0@mail.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e617868e-1576-4286-50b5-08d76782689d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2019 15:10:09.7862
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: txkS3UEo/uv0zvf5u/GtkwcT/2VejBnUUpum6BVpkUuJboWqFjGM7N5JJHmdmTKy1JeFX8l8dvWwSDUU3s7U9w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5457
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="e3yf5i2neyiii5um"
+Content-Disposition: inline
+In-Reply-To: <20191109065334.64A03214E0@mail.kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 19-11-12 13:43:35, Leonard Crestez wrote:
-> On 12.11.2019 13:18, Abel Vesa wrote:
-> > On 19-11-09 00:39:51, Leonard Crestez wrote:
-> >> These clocks are only modified as part of DRAM frequency switches duri=
-ng
-> >> which DRAM itself is briefly inaccessible. The switch is performed wit=
-h
-> >> a SMC call to by TF-A which runs from a SRAM area; upon returning to
-> >> linux several clocks bits are modified and we need to update them.
-> >>
-> >> For rate bits an easy solution is to just mark with
-> >> CLK_GET_RATE_NOCACHE so that new rates are always read back from
-> >> registers.
-> >>
-> >> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> >> ---
-> >>   drivers/clk/imx/clk-imx8mm.c | 11 +++++++++--
-> >>   drivers/clk/imx/clk-imx8mn.c | 12 ++++++++++--
-> >>   drivers/clk/imx/clk-imx8mq.c | 15 +++++++++++----
-> >>   3 files changed, 30 insertions(+), 8 deletions(-)
->=20
-> >> --- a/drivers/clk/imx/clk-imx8mn.c
-> >> +++ b/drivers/clk/imx/clk-imx8mn.c
-> >> @@ -428,12 +428,20 @@ static int imx8mn_clocks_probe(struct platform_d=
-evice *pdev)
-> >>   	clks[IMX8MN_CLK_AHB] =3D imx8m_clk_composite_critical("ahb", imx8mn=
-_ahb_sels, base + 0x9000);
-> >>   	clks[IMX8MN_CLK_AUDIO_AHB] =3D imx8m_clk_composite("audio_ahb", imx=
-8mn_audio_ahb_sels, base + 0x9100);
-> >>   	clks[IMX8MN_CLK_IPG_ROOT] =3D imx_clk_divider2("ipg_root", "ahb", b=
-ase + 0x9080, 0, 1);
-> >>   	clks[IMX8MN_CLK_IPG_AUDIO_ROOT] =3D imx_clk_divider2("ipg_audio_roo=
-t", "audio_ahb", base + 0x9180, 0, 1);
-> >>   	clks[IMX8MN_CLK_DRAM_CORE] =3D imx_clk_mux2_flags("dram_core_clk", =
-base + 0x9800, 24, 1, imx8mn_dram_core_sels, ARRAY_SIZE(imx8mn_dram_core_se=
-ls), CLK_IS_CRITICAL);
-> >> -	clks[IMX8MN_CLK_DRAM_ALT] =3D imx8m_clk_composite("dram_alt", imx8mn=
-_dram_alt_sels, base + 0xa000);
-> >> -	clks[IMX8MN_CLK_DRAM_APB] =3D imx8m_clk_composite_critical("dram_apb=
-", imx8mn_dram_apb_sels, base + 0xa080);
-> >> +
-> >> +	/*
-> >> +	 * DRAM clocks are manipulated from TF-A outside clock framework.
-> >> +	 * Mark with GET_RATE_NOCACHE to always read div value from hardware
-> >> +	 */
-> >> +	clks[IMX8MN_CLK_DRAM_ALT] =3D __imx8m_clk_composite("dram_alt", imx8=
-mn_dram_alt_sels, base + 0xa000,
-> >> +			CLK_GET_RATE_NOCACHE);
-> >> +	clks[IMX8MN_CLK_DRAM_APB] =3D __imx8m_clk_composite("dram_apb", imx8=
-mn_dram_apb_sels, base + 0xa080,
-> >> +			CLK_IS_CRITICAL | CLK_GET_RATE_NOCACHE);
+
+--e3yf5i2neyiii5um
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Hi,
+
+On Fri, Nov 08, 2019 at 10:53:33PM -0800, Stephen Boyd wrote:
+> Quoting Sebastian Reichel (2019-11-08 17:41:51)
+> > On Fri, Nov 08, 2019 at 04:24:48PM -0800, Stephen Boyd wrote:
+> > > Quoting Sebastian Reichel (2019-11-08 14:34:15)
+> > > > On Fri, Nov 08, 2019 at 06:53:29PM +0100, Alexandre Belloni wrote:
+> > > > > On 08/11/2019 18:01:35+0100, Sebastian Reichel wrote:
+> > > > > > Congatec's QMX6 system on module (SoM) uses a m41t62 as RTC. The
+> > > > > > modules SQW clock output defaults to 32768 Hz. This behaviour is
+> > > > > > used to provide the i.MX6 CKIL clock. Once the RTC driver is pr=
+obed,
+> > > > > > the clock is disabled and all i.MX6 functionality depending on
+> > > > > > the 32 KHz clock have undefined behaviour (e.g. the hardware wa=
+tchdog
+> > > > > > run to fast or slow).
+> > > > > >=20
+> > > > > > The normal solution would be to properly describe the clock tree
+> > > > > > in DT, but from the kernel's perspective this is a chicken-and-=
+egg
+> > > > > > problem: CKIL is required very early, but the clock is only pro=
+vided
+> > > > > > after the I2C RTC has been probed.
+> > > > > >=20
+> > > > > > Technically everything is fine by not touching anything, so this
+> > > > > > works around the issue by disabling the clock handling from the
+> > > > > > RTC driver. I guess the proper solution would be to simply mark=
+ the
+> > > > > > clock as always-enabled, but this does not seem to be supported=
+ by
+> > > > > > the clock framework.
+> > > > > >=20
+> > > > >=20
+> > > > > You need to have a consumer so this clock is not disabled by the =
+CCF
+> > > > > after seeing nobody uses it.
+> > > >=20
+> > > > That's why I was wondering if we can have something like regulator's
+> > > > always-enabled for clocks.
+> > >=20
+> > > There's a flag CLK_IS_CRITICAL that providers can set.
 > >=20
-> > nitpick: I think it looks better if we stick to one line each clock.
-> > I know it's against the 80 chars rule, but at least is consistent.
+> > Thanks, that is what I was looking for.
+> > Is there a DT binding to set that flag for a clock?
+> >=20
 >=20
-> Yes, there are longer lines in the imx8m* files anyway.
+> No.
+
+:(
+
+> > > > > If you need it early, you can have a look at rtc-sun6i.c but I
+> > > > > would like that to not become a recurrent pattern, especially for
+> > > > > discrete RTCs.
+> > > >=20
+> > > > I don't just need it early. The issue is, that CKIL is the 32khz
+> > > > low frequency clock fed into the i.MX6. It is initialized by the
+> > > > clock manager, so I need it before any of the SoC clocks are
+> > > > registered. Without the SoC clocks, the I2C bus cannot be probed
+> > > > and thus the RTC driver cannot be probed.
+> > > >=20
+> > >=20
+> > > Is this the chicken-egg scenario? I read this thread but I can't foll=
+ow
+> > > along with what the problem is. Sorry.
+> >=20
+> > Yes. The board has an I2C based RTC (m41t62), which provides a programm=
+able 1
+> > Hz to 32 kHz square wave (SQW) output defaulting to 32 kHz. The board d=
+esigners
+> > connected the RTC's SQW output to the i.MX6 CKIL clock input instead of=
+ adding
+> > another oscillator. The i.MX6 CCM acquires that clock in imx6q_clocks_i=
+nit()
+> > (and assumes it is a fixed clock):
+> >=20
+> > hws[IMX6QDL_CLK_CKIL] =3D imx6q_obtain_fixed_clk_hw(ccm_node, "ckil", 0=
+);
 >=20
-> If I fix this (in all instances) can I also add a "reviewed-by"?
+> Who uses the IMX6QDL_CLK_CKIL though? Grep on kernel sources shows me
+> nothing.
+
+The manual specifies, that CKIL is synchronized with the main system
+clock. The resulting clock is used by all kind of IP cores inside
+the i.MX6, for example the SNVS RTC and watchdog. I couldn't find
+any registers to configure the CKIL pipeline and CKIL input is
+usually a fixed clock, so current implementation might be "broken"
+without anyone noticing. Checking a running i.MX6 system, that
+actually seems to be the case :(
+
+$ cat /sys/kernel/debug/clk/ckil/clk_rate        =20
+32768
+$ cat /sys/kernel/debug/clk/ckil/clk_enable_count=20
+0
+$ cat /sys/kernel/debug/clk/ckil/clk_prepare_count=20
+0
+$ cat /sys/kernel/debug/clk/ckil/clk_flags        =20
+CLK_IS_BASIC
+
+I suppose an easy fix would be to mark that clock as critical and
+that would also keep the parent clocks enabled?
+
+> > Changing this to reference the RTC SQW results in the chicken-egg scena=
+rio. It
+> > would mean, that imx6q_clocks_init() cannot complete without the RTC dr=
+iver, but
+> > the RTC cannot probe without the I2C bus driver and the I2C bus driver =
+needs some
+> > clocks from the i.MX6.
+> >=20
+> > I think adding the clock-is-critical flag is the best solution for
+> > this setup, but on most boards the RTC SQW clock is not critical and
+> > should be disabled. Did I miss a DT flag, that can be added on the
+> > specific board?
+> >=20
 >=20
+> The clk framework can unwind this problem for you. It lazily evaluates
+> parents so that clk controllers can probe without needing all their
+> parent clks to exist yet.
+>
+> The clocks in i.MX6 can be registered first and some of those can be
+> left "orphaned". Then the i2c driver can probe and get the i2c clks it
+> needs from the i.MX6 driver and use them because their path to the root
+> is registered. The i2c driver can then probe the RTC which provides the
+> CLK_CKIL parent.
 
-Sorry, I forgot to add the line.
+That's nice, I wasn't aware of this feature. Thanks for the
+explanation.
 
-For all the clock related changes:
+> Does something go wrong, or you're just concerned that it might not
+> work?
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+I did not try it after noticing the dependencies. The only thing
+known to be broken is the current situation in mainline ("unused"
+RTC clock is turned off), but right now there is no QMX6 based board
+in mainline.
 
-> --
-> Regards,
-> Leonard
+-- Sebastian
+
+--e3yf5i2neyiii5um
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl3KzIAACgkQ2O7X88g7
++pq/Dw/+MNnoZQkld4s6A7pG6KJpDNy+G1JwsMUchnJmSIz3ML0eT+pV5ob9oLT+
+DYctPVZlSFabpPC0977RnLyA4dsWmDCNCZwjqgpOFltdTehy+PtD8bFgsLsShtis
+9xW8oQZPEfynhRcB65mSbQx1j/XDhxagK0v1sIbyapXkHBOnU2axO8UCuBaKP4J9
+53bEzS3h2jw+8lbTPZIuCQipsrSDeIvrz7EvFPB6dWqQROXDJ3ahYkTjpTPDqBJ4
+cOLtjnO3gYoL5spvQ1swNbgntdOg+k/WQGKutTIvM3umyv23vba5jiBuZOGefeUI
+T98InRSuJ2S66X3LZHYhLVqKLNM3P2ljI/qXC7cxYYQpLijjCCINs7665oJEBMy8
+lWjk81fD0Bco9LiG1kQXbuOmxFUjhCBAg1cFruHtWh8GqERQem0GpEK29gNET5w+
+MhxKu0Fv78/TIXcphr/UZCxAW9a0EPKFpIDxg+3Ddn/faiCvUEh+Fp/+KImixQ+0
+SeINPEWTnhSCLHnrxtv6gPZ1JF8HgGtBnAf3hvyu0gASejexpBgiGaEfnixhcsii
+7XNdS4TOKdS9zif+PWF9Si9hjfcXXG4dPcTBbCDIXYc8YRB+ixBUqe7lFnzGHOyW
+BvdiSRgcTlOEM4SNvrwlfSJjtSkcBGBzvrCxnuUQwkPGdCJOp2o=
+=BPZB
+-----END PGP SIGNATURE-----
+
+--e3yf5i2neyiii5um--
