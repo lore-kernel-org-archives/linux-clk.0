@@ -2,158 +2,142 @@ Return-Path: <SRS0=KYfG=ZE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EC79C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 18:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B5ABC17440
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 19:16:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66F1E222C1
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 18:37:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4505121E6F
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 19:16:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573583845;
-	bh=ClsBijm+tV2ywGmWiMMRKvlFiYq/cLBsl5lNg89WwmM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=X74aXQfKiLX8lkQ4lHXPAXQU6WJY+PCeXYdnXMBMqPsdQErA5i7xhyNRrGbwAriVY
-	 PAc0DrnrqSRit4Z30SAnitILheUpwSCxe3i7ndo3rktSIzgv/s7ZitG6Q2LNdZkYnM
-	 +uBKQZ7mjbYSN7mgsrHyaLN7BjSmEMk9EMLdrYhI=
+	s=default; t=1573586186;
+	bh=1IW8UUMmQ1aplMh8cmJEkKKNsjASki0Ab44VZOslaPk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BDidEmNyEw4iQV5K66jh4rFLBAblWMPtNUFnxv2LHJxuFhh5Cx4QH3ZB3NfLhWbUA
+	 Pfmj+LssDWmNzHwMMuWbVG8MX+11prt1zeNDpP44wC1RJ7xDqUvDyi5Xi3twOJqWS0
+	 8+GobuO7OzXcSBOvsap5Wy6Xah1pXksKIsutxBXs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726965AbfKLShS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 13:37:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55880 "EHLO mail.kernel.org"
+        id S1727063AbfKLTQW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 14:16:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726952AbfKLShS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 13:37:18 -0500
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1725997AbfKLTQW (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 14:16:22 -0500
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B7B721D7F;
-        Tue, 12 Nov 2019 18:37:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E189D20818;
+        Tue, 12 Nov 2019 19:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573583837;
-        bh=ClsBijm+tV2ywGmWiMMRKvlFiYq/cLBsl5lNg89WwmM=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=vruLFu7ENpBlykbdo/Y+H4Y3SP/8xiOwkSOXipue5AFlMZwYISAABQGOsHRNX+597
-         +BUbMZ7NOeZabQG+6KyrNEOUdKZ7Wu2bXUIFXcHZn326+LfItqW7K6t+9Vi1JBZKfo
-         1p9mW8cdtnPZCRvc3FliDt5E/x7ikMvQHP0WuySQ=
-Received: by mail-qk1-f182.google.com with SMTP id e187so15389481qkf.4;
-        Tue, 12 Nov 2019 10:37:17 -0800 (PST)
-X-Gm-Message-State: APjAAAVSB2Uq+isYQHCsx8iS6wzu0kY0j1YD8fnye0BEWD6M6FctY/qi
-        LVOVpcIN81pWn1lpTUNmZLo1nTcB5TKu8/NWzA==
-X-Google-Smtp-Source: APXvYqy4jjbxFKDPV7vSCOnen2eNnt02ZnVZpXB+MPur6jIpEK2TUR0oOqnkMSo4LuntV0L3+UCZlhm9vRywGKUM/gM=
-X-Received: by 2002:ae9:dd83:: with SMTP id r125mr8603172qkf.223.1573583836697;
- Tue, 12 Nov 2019 10:37:16 -0800 (PST)
-MIME-Version: 1.0
-References: <1573254987-10241-1-git-send-email-jhugo@codeaurora.org>
- <1573255036-10302-1-git-send-email-jhugo@codeaurora.org> <20191112004417.GA16664@bogus>
- <3e4b1342-7965-2d80-e28d-0cb728037abd@codeaurora.org>
-In-Reply-To: <3e4b1342-7965-2d80-e28d-0cb728037abd@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Tue, 12 Nov 2019 12:37:04 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJ3R0Y-KPKaknVT=+RTAskGhqmarb=i9ZDyX5-LzoFOjg@mail.gmail.com>
-Message-ID: <CAL_JsqJ3R0Y-KPKaknVT=+RTAskGhqmarb=i9ZDyX5-LzoFOjg@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] dt-bindings: clock: Document external clocks for
- MSM8998 gcc
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        s=default; t=1573586181;
+        bh=1IW8UUMmQ1aplMh8cmJEkKKNsjASki0Ab44VZOslaPk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=rL470w9j47ztbIN8itCRbCXBV+CYT0FjVIdVe/g+CYnW8SJ7yi+ynGw67CJ03Cpw8
+         bQ66XQbLq/LZeMR2BxY9RH4v1Kq7cZUA0MvpkY+Z42A9VldZK/dVOsE6koLlvTlDWm
+         IOinDXU7oult1Vdrdk+foCXekQfEG2ybYOTuUEoM=
+Date:   Tue, 12 Nov 2019 20:16:18 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     linux-arm-kernel@lists.infradead.org,
+        Tian Yunhao <t123yh@outlook.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Chen-Yu Tsai <wens@csie.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH] clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
+Message-ID: <20191112191618.GC4345@gilmour.lan>
+References: <BN8PR08MB57792366D78997180A698AF8897A0@BN8PR08MB5779.namprd08.prod.outlook.com>
+ <20191111123936.GM4345@gilmour.lan>
+ <1FA73EE3-CED2-4241-839D-51C8C02531F5@aosc.io>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="alCHniwhwUTljuKz"
+Content-Disposition: inline
+In-Reply-To: <1FA73EE3-CED2-4241-839D-51C8C02531F5@aosc.io>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 10:25 AM Jeffrey Hugo <jhugo@codeaurora.org> wrote:
+
+--alCHniwhwUTljuKz
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Nov 12, 2019 at 08:59:56PM +0800, Icenowy Zheng wrote:
 >
-> On 11/11/2019 5:44 PM, Rob Herring wrote:
-> > On Fri, Nov 08, 2019 at 04:17:16PM -0700, Jeffrey Hugo wrote:
-> >> The global clock controller on MSM8998 can consume a number of external
-> >> clocks.  Document them.
-> >>
-> >> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> >> ---
-> >>   .../devicetree/bindings/clock/qcom,gcc.yaml        | 47 +++++++++++++++-------
-> >>   1 file changed, 33 insertions(+), 14 deletions(-)
-> >>
-> >> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> >> index e73a56f..2f3512b 100644
-> >> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> >> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
-> >> @@ -40,20 +40,38 @@ properties:
-> >>          - qcom,gcc-sm8150
-> >>
-> >>     clocks:
-> >> -    minItems: 1
+>
+> =E4=BA=8E 2019=E5=B9=B411=E6=9C=8811=E6=97=A5 GMT+08:00 =E4=B8=8B=E5=8D=
+=888:39:36, Maxime Ripard <mripard@kernel.org> =E5=86=99=E5=88=B0:
+> >Hi,
 > >
-> > 1 or 2 clocks are no longer allowed?
+> >Thanks for your patch
+> >
+> >On Sat, Nov 09, 2019 at 03:19:09PM +0000, Tian Yunhao wrote:
+> >> The hws field of sun8i_v3s_hw_clks has only 74
+> >> members. However, the number specified by CLK_NUMBER
+> >> is 77 (=3D CLK_I2S0 + 1). This leads to runtime segmentation
+> >> fault that is not always reproducible.
+> >>
+> >> This patch adds a protective field [CLK_NUMBER] which ensures
+> >> ARRAY_SIZE(.hws) is always greater than .num, thus eliminates
+> >> this error.
+> >>
+> >> Signed-off-by: Yunhao Tian <t123yh@outlook.com>
+> >> ---
+> >>  drivers/clk/sunxi-ng/ccu-sun8i-v3s.c | 2 ++
+> >>  1 file changed, 2 insertions(+)
+> >>
+> >> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> >b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> >> index 5c779eec454b..de7fce7f32e6 100644
+> >> --- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> >> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
+> >> @@ -617,6 +617,7 @@ static struct clk_hw_onecell_data
+> >sun8i_v3s_hw_clks =3D {
+> >>  		[CLK_AVS]		=3D &avs_clk.common.hw,
+> >>  		[CLK_MBUS]		=3D &mbus_clk.common.hw,
+> >>  		[CLK_MIPI_CSI]		=3D &mipi_csi_clk.common.hw,
+> >> +		[CLK_NUMBER]    =3D NULL,
+> >>  	},
+> >>  	.num	=3D CLK_NUMBER,
+> >>  };
+> >> @@ -699,6 +700,7 @@ static struct clk_hw_onecell_data
+> >sun8i_v3_hw_clks =3D {
+> >>  		[CLK_AVS]		=3D &avs_clk.common.hw,
+> >>  		[CLK_MBUS]		=3D &mbus_clk.common.hw,
+> >>  		[CLK_MIPI_CSI]		=3D &mipi_csi_clk.common.hw,
+> >> +		[CLK_NUMBER]    =3D NULL,
+> >>  	},
+> >>  	.num	=3D CLK_NUMBER,
+> >
+> >I'd rather have the number of clocks (.num) being properly set.
 >
-> Correct.
+> However the maximum clock indices number is different on V3s and V3, beca=
+use
+> on V3s the last clock is missing.
 >
-> The primary reason is that Stephen indicated in previous discussions
-> that if the hardware exists, it should be indicated in DT, regardless if
-> the driver uses it.  In the 7180 and 8150 case, the hardware exists, so
-> these should not be optional.
+> Should we define CLK_NUMBER_V3S here?
 
-Agreed. The commit message should mention this though.
+That, or we can just reference the last clock, we're not using
+CLK_NUMBER anywhere else.
 
->
-> The secondary reason is I found that the schema was broken anyways.  In
-> the way it was written, if you implemented sleep, you could not skip
-> xo_ao, however there is a dts that did exactly that.
+Maxime
+--alCHniwhwUTljuKz
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If a dts can be updated in a compatible way, we should do that rather
-than carry inconsistencies into the schema.
+-----BEGIN PGP SIGNATURE-----
 
-> The third reason was that I couldn't find a way to write valid yaml to
-> preserve the original meaning.  when you have an "items" as a subnode of
-> "oneOf", you no longer have control over the minItems/maxItems, so all 3
-> became required anyways.
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXcsFAgAKCRDj7w1vZxhR
+xRGMAQCLdf1+S5MiugOG811D1O+TID2K8oHSTiGL0ebwb1WnzQD/RoJSiEPXRiwL
+00DWv7QWDbWvFN/sZUAK3pqmsgjjZwA=
+=jeP6
+-----END PGP SIGNATURE-----
 
-That would be a bug. You're saying something like this doesn't work?:
-
-oneOf:
-  - minItems: 1
-    maxItems: 3
-    items:
-      - const: a
-      - const: b
-      - const: c
-
->  I find it disappointing that the "version" of
-> Yaml used for DT bindings is not documented,
-
-Not sure which part you mean? json-schema is the vocabulary which has
-a spec. The meta-schema then constrains what the json-schema structure
-should look like. That's still evolving a bit as I try to improve it
-based on mistakes people make. Then there's the intermediate .dt.yaml
-format used internally. That's supposed to stay internal and may go
-away when/if we integrate the validation into dtc.
-
-> so after several hours of
-> trial and error, I just gave up since I found this to work (failed cases
-> just gave me an error with no indication of what was wrong, not even a
-> line number).
-
-Schema failures or dts failures? It is possible to get line numbers
-for either, but that makes validation much slower. In the latter case,
-the line numbers aren't too useful either given they are for the
-.dt.yaml file and not the .dts source file (dtc integration would
-solve that). Adding '-n' to dt-doc-validate or dt-validate will turn
-them on though.
-
-Yes, error messages need work. I have some idea how to improve them,
-but haven't had time to implement. Too many binding reviews... You can
-get more detail with '-v' option. It's *way* more verbose, but not
-necessarily more useful.
-
-Rob
+--alCHniwhwUTljuKz--
