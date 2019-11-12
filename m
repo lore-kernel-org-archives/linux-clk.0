@@ -2,106 +2,208 @@ Return-Path: <SRS0=KYfG=ZE=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E11BC43331
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 16:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6394FC43331
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 16:25:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A6C20679
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 16:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3290A214E0
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 16:25:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="T45iDQWr"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HbwnJAn1";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Yz+J/1Vy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfKLQRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 11:17:12 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:3594 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727171AbfKLQRL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Nov 2019 11:17:11 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcadacf0000>; Tue, 12 Nov 2019 08:16:15 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 08:17:11 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 12 Nov 2019 08:17:11 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 12 Nov
- 2019 16:17:11 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 12 Nov 2019 16:17:10 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.175.80]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dcadb050001>; Tue, 12 Nov 2019 08:17:10 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <sboyd@kernel.org>, <mturquette@baylibre.com>,
-        <pgaikwad@nvidia.com>
-CC:     <digetx@gmail.com>, <pdeschrijver@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1] clk: tegra: clk-dfll: Fix to remove pm_runtime_irq_safe
-Date:   Tue, 12 Nov 2019 08:17:06 -0800
-Message-ID: <1573575426-31314-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
-References: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1727183AbfKLQZt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 11:25:49 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36096 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726936AbfKLQZt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 12 Nov 2019 11:25:49 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id EB4E660909; Tue, 12 Nov 2019 16:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573575947;
+        bh=DXkWV66VkppVyJ+i/rYBmYzA5hXfIYYXNPGMHx1zrQc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=HbwnJAn1ILUq/icq4thw2EebaC0DSTP96B2LFVOovATYTih09MkDUkTMc998SutWt
+         kkH/4TcQLpAtxo0btcpPmhTZUs6kOX2Zf/qivSXVnkbB0m1nDlOUEmyBqMTW8YSY6j
+         UWsvqRb0faQMvklkTYtl0a3/IOh251BPNFoGlgQ0=
+Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DDB0A6053B;
+        Tue, 12 Nov 2019 16:25:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1573575944;
+        bh=DXkWV66VkppVyJ+i/rYBmYzA5hXfIYYXNPGMHx1zrQc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=Yz+J/1VyCQQpVfU0+a3O5kA5mGybn8BMb+BYrndOIVQ6h8vy9iy089MlUHCu1yKtH
+         I6d1dbaD43ebM3Qu7Y2D7kSwEyMCdUWUrQRMySQYqZMSMDXGF1PeqUZSG+hTLXbbZw
+         RGkxPMxv9zRgAxMlB7rPv6qrIGahfSt/sYt6couA=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDB0A6053B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [PATCH v8 1/4] dt-bindings: clock: Document external clocks for
+ MSM8998 gcc
+To:     Rob Herring <robh@kernel.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <1573254987-10241-1-git-send-email-jhugo@codeaurora.org>
+ <1573255036-10302-1-git-send-email-jhugo@codeaurora.org>
+ <20191112004417.GA16664@bogus>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <3e4b1342-7965-2d80-e28d-0cb728037abd@codeaurora.org>
+Date:   Tue, 12 Nov 2019 09:25:41 -0700
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573575375; bh=1kImHFAkv5/eZtu8j/MuHOjPRhis0bCK9BPWFGyzm9I=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=T45iDQWr39w7/FtEhbbXD/9RXM5zy1kb7D8SZOrDrzdSj8/UJzjvcqMLSS2Epch5B
-         NfPLAjuDfkvdhwNAC9yH0rFT3N7NrbOkqQXzhhchCsLtWA6Lj4u4znN/wDqVV1Y3QB
-         u3ErnpreNqvLzqGHEn9nIx9b7k8cyx8iGAMt2xrz1Jq0JvUwuLFYfncPjLy/Gbtgxq
-         bJRAPqFOEDBSi4cgSsQYhDvEfbYFzSJxgNdrxxJKI61k2aCZyyG5CHfA3cXWsgdaNF
-         H2Th+uXfGvj2BdiIX3iuVdwLolW/kbGoz+MYO4+hs7C9YuLpYzwAnHGZ36VZsq+2vi
-         S8bMBIX85/xTA==
+In-Reply-To: <20191112004417.GA16664@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-pm_runtime_irq_safe is not needed as interrupts are allowed during
-suspend and resume. This was added mistakenly during dfll suspend
-and resume support patch.
+On 11/11/2019 5:44 PM, Rob Herring wrote:
+> On Fri, Nov 08, 2019 at 04:17:16PM -0700, Jeffrey Hugo wrote:
+>> The global clock controller on MSM8998 can consume a number of external
+>> clocks.  Document them.
+>>
+>> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,gcc.yaml        | 47 +++++++++++++++-------
+>>   1 file changed, 33 insertions(+), 14 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> index e73a56f..2f3512b 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+>> @@ -40,20 +40,38 @@ properties:
+>>          - qcom,gcc-sm8150
+>>   
+>>     clocks:
+>> -    minItems: 1
+> 
+> 1 or 2 clocks are no longer allowed?
 
-This patch includes fix to remove pm_runtime_irq_safe.
+Correct.
 
-Also updated description of dfll_suspend argument.
+The primary reason is that Stephen indicated in previous discussions 
+that if the hardware exists, it should be indicated in DT, regardless if 
+the driver uses it.  In the 7180 and 8150 case, the hardware exists, so 
+these should not be optional.
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- drivers/clk/tegra/clk-dfll.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+The secondary reason is I found that the schema was broken anyways.  In 
+the way it was written, if you implemented sleep, you could not skip 
+xo_ao, however there is a dts that did exactly that.
 
-diff --git a/drivers/clk/tegra/clk-dfll.c b/drivers/clk/tegra/clk-dfll.c
-index c051d92c2bbf..cfbaa90c7adb 100644
---- a/drivers/clk/tegra/clk-dfll.c
-+++ b/drivers/clk/tegra/clk-dfll.c
-@@ -1487,7 +1487,6 @@ static int dfll_init(struct tegra_dfll *td)
- 	td->last_unrounded_rate = 0;
- 
- 	pm_runtime_enable(td->dev);
--	pm_runtime_irq_safe(td->dev);
- 	pm_runtime_get_sync(td->dev);
- 
- 	dfll_set_mode(td, DFLL_DISABLED);
-@@ -1516,7 +1515,7 @@ static int dfll_init(struct tegra_dfll *td)
- 
- /**
-  * tegra_dfll_suspend - check DFLL is disabled
-- * @dev: DFLL device *
-+ * @dev: DFLL instance
-  *
-  * DFLL clock should be disabled by the CPUFreq driver. So, make
-  * sure it is disabled and disable all clocks needed by the DFLL.
+The third reason was that I couldn't find a way to write valid yaml to 
+preserve the original meaning.  when you have an "items" as a subnode of 
+"oneOf", you no longer have control over the minItems/maxItems, so all 3 
+became required anyways.  I find it disappointing that the "version" of 
+Yaml used for DT bindings is not documented, so after several hours of 
+trial and error, I just gave up since I found this to work (failed cases 
+just gave me an error with no indication of what was wrong, not even a 
+line number).
+
+> 
+>> -    maxItems: 3
+>> -    items:
+>> -      - description: Board XO source
+>> -      - description: Board active XO source
+>> -      - description: Sleep clock source
+>> +    oneOf:
+>> +      #qcom,gcc-sm8150
+>> +      #qcom,gcc-sc7180
+> 
+> Typically, this would be an if/then schema, but I'm okay with leaving it
+> like this. Depends whether you want to check the clocks match the
+> compatible.
+
+Is there an example somewhere?  The only thing I found was 
+example-schema.yaml which seemed to suggest this way.
+
+> 
+>> +      - items:
+>> +        - description: Board XO source
+>> +        - description: Board active XO source
+>> +        - description: Sleep clock source
+>> +      #qcom,gcc-msm8998
+>> +      - items:
+>> +        - description: Board XO source
+>> +        - description: USB 3.0 phy pipe clock
+>> +        - description: UFS phy rx symbol clock for pipe 0
+>> +        - description: UFS phy rx symbol clock for pipe 1
+>> +        - description: UFS phy tx symbol clock
+>> +        - description: PCIE phy pipe clock
+>>   
+>>     clock-names:
+>> -    minItems: 1
+>> -    maxItems: 3
+>> -    items:
+>> -      - const: bi_tcxo
+>> -      - const: bi_tcxo_ao
+>> -      - const: sleep_clk
+>> +    oneOf:
+>> +      #qcom,gcc-sm8150
+>> +      #qcom,gcc-sc7180
+>> +      - items:
+>> +        - const: bi_tcxo
+>> +        - const: bi_tcxo_ao
+>> +        - const: sleep_clk
+>> +      #qcom,gcc-msm8998
+>> +      - items:
+>> +        - const: xo
+>> +        - const: usb3_pipe
+>> +        - const: ufs_rx_symbol0
+>> +        - const: ufs_rx_symbol1
+>> +        - const: ufs_tx_symbol0
+>> +        - const: pcie0_pipe
+>>   
+>>     '#clock-cells':
+>>       const: 1
+>> @@ -118,6 +136,7 @@ else:
+>>         compatible:
+>>           contains:
+>>             enum:
+>> +            - qcom,gcc-msm8998
+>>               - qcom,gcc-sm8150
+>>               - qcom,gcc-sc7180
+>>     then:
+>> @@ -179,8 +198,8 @@ examples:
+>>       clock-controller@100000 {
+>>         compatible = "qcom,gcc-sc7180";
+>>         reg = <0x100000 0x1f0000>;
+>> -      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
+>> -      clock-names = "bi_tcxo", "bi_tcxo_ao";
+>> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <0>;
+>> +      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
+> 
+> The patch subject says 8998, but this is changing sc7180.
+
+I'm fixing up the example so that it no longer fails checks.  See the 
+above comment.
+
+> 
+>>         #clock-cells = <1>;
+>>         #reset-cells = <1>;
+>>         #power-domain-cells = <1>;
+>> -- 
+>> Qualcomm Technologies, Inc. is a member of the
+>> Code Aurora Forum, a Linux Foundation Collaborative Project.
+>>
+
+
 -- 
-2.7.4
-
+Jeffrey Hugo
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
