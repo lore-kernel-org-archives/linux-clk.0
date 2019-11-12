@@ -6,106 +6,76 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9F1C43331
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:20:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7259CC43331
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:46:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1E7321925
-	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:20:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C0ED21925
+	for <linux-clk@archiver.kernel.org>; Tue, 12 Nov 2019 22:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573597216;
-	bh=b1dnES5jgk7yk1lCvITSroRU4oC3E0VLXE/Pf6QOSIg=;
+	s=default; t=1573598808;
+	bh=n2+P0RB97vUctcmCrSIYeykZT7to1k5WHK/8kT+mhZc=;
 	h=In-Reply-To:References:From:To:Cc:Subject:Date:List-ID:From;
-	b=qHioDiaJMXm33vO9Kk47Rr/IeqsCDw3947AzBzJERDtTGVhreChDvjmTpWPVu3eJr
-	 rhoub7vSyzxKRiHJbPjF53dTslLkVccLV0+5mLNrdBjgsRnaZzy1BMAHp2dncY19VD
-	 XKn92OudeEUv02DcYGv/VHeze/uiehtwjnHV1AqY=
+	b=QeKK9v+LoL1jIeCqWpKASf/XKm2XDmo3VZe4x8FNcRvcMg75Sc4iEaEJytnmbVi+I
+	 Ks5+LF5hRSf/FHIUV6RYjxpsXmgzGrF8G1YtnN9VozMmQP8LbWaGasFP+X8UOtJlYL
+	 7UZSNyTdCAaRjEf1S2tlt578ewkQPfzXaYB7cM7k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726912AbfKLWUN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 17:20:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53060 "EHLO mail.kernel.org"
+        id S1726954AbfKLWqs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 17:46:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60622 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726896AbfKLWUN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 17:20:13 -0500
+        id S1726932AbfKLWqr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 17:46:47 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 157CC20674;
-        Tue, 12 Nov 2019 22:20:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39F572084E;
+        Tue, 12 Nov 2019 22:46:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573597212;
-        bh=b1dnES5jgk7yk1lCvITSroRU4oC3E0VLXE/Pf6QOSIg=;
+        s=default; t=1573598807;
+        bh=n2+P0RB97vUctcmCrSIYeykZT7to1k5WHK/8kT+mhZc=;
         h=In-Reply-To:References:From:To:Cc:Subject:Date:From;
-        b=biolw4qTw3IGUYY/x72iCkR6o7cUXTdm1dZ1W5261DfUErbGMW8NzaVlZnLwbgNxT
-         g9dI9yML7RoVbl2JSa2i+akWfdqpgUyh+osRqCR5NqHvKmiCnFlWZiyEuXzEBTW0b5
-         4si4rFOEMWlRBga2uBLGTiHsHEb+zaledkIahE1c=
+        b=sZN8+Ym9wOg8pNvgoBPuTIhuBFjeav2JNG9mlOUcce7ahPlg6OYnPZs+lZPg/HoIF
+         qVZecwsMnZomnMIICndZomznsGEz8v/bSWT7RiKNw6QGYJPMRvsY8beijj7a4Cw6qU
+         q7tcNkqU51p8cvsVRlc+6sa6wOCv4Zp19hxBAYk0=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191112151526.txl5rwpuiwjpopzx@earth.universe>
-References: <20191108170135.9053-1-sebastian.reichel@collabora.com> <20191108175329.GH216543@piout.net> <20191108223415.dio3pwkf24jfs5o4@earth.universe> <20191109002449.534B6207FA@mail.kernel.org> <20191109014151.yd2untpgnuinermj@earth.universe> <20191109065334.64A03214E0@mail.kernel.org> <20191112151526.txl5rwpuiwjpopzx@earth.universe>
+In-Reply-To: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
+References: <1573575426-31314-1-git-send-email-skomatineni@nvidia.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Russell King <linux@armlinux.org.uk>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, kernel@collabora.com
-Subject: Re: [RFCv1] rtc: m41t80: disable clock provider support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        mturquette@baylibre.com, pgaikwad@nvidia.com,
+        thierry.reding@gmail.com
+Cc:     digetx@gmail.com, pdeschrijver@nvidia.com,
+        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: tegra: clk-dfll: Fix to remove pm_runtime_irq_safe
 User-Agent: alot/0.8.1
-Date:   Tue, 12 Nov 2019 14:20:11 -0800
-Message-Id: <20191112222012.157CC20674@mail.kernel.org>
+Date:   Tue, 12 Nov 2019 14:46:46 -0800
+Message-Id: <20191112224647.39F572084E@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sebastian Reichel (2019-11-12 07:15:26)
-> Hi,
+Quoting Sowjanya Komatineni (2019-11-12 08:17:05)
+> This patch includes fix to remove pm_runtime_irq_safe which was added
+> mistakenly during dfll suspend and resume implementation as a part of
+> Tegra210 SC7 suspend and resume patch series.
 >=20
-> On Fri, Nov 08, 2019 at 10:53:33PM -0800, Stephen Boyd wrote:
-> > Quoting Sebastian Reichel (2019-11-08 17:41:51)
-> > > On Fri, Nov 08, 2019 at 04:24:48PM -0800, Stephen Boyd wrote:
-> > > >=20
-> > > > Is this the chicken-egg scenario? I read this thread but I can't fo=
-llow
-> > > > along with what the problem is. Sorry.
-> > >=20
-> > > Yes. The board has an I2C based RTC (m41t62), which provides a progra=
-mmable 1
-> > > Hz to 32 kHz square wave (SQW) output defaulting to 32 kHz. The board=
- designers
-> > > connected the RTC's SQW output to the i.MX6 CKIL clock input instead =
-of adding
-> > > another oscillator. The i.MX6 CCM acquires that clock in imx6q_clocks=
-_init()
-> > > (and assumes it is a fixed clock):
-> > >=20
-> > > hws[IMX6QDL_CLK_CKIL] =3D imx6q_obtain_fixed_clk_hw(ccm_node, "ckil",=
- 0);
-> >=20
-> > Who uses the IMX6QDL_CLK_CKIL though? Grep on kernel sources shows me
-> > nothing.
+> This patch removes pm_runtime_irq_safe and also has minor description
+> update for argument of dfll_suspend in comments.
 >=20
-> The manual specifies, that CKIL is synchronized with the main system
-> clock. The resulting clock is used by all kind of IP cores inside
-> the i.MX6, for example the SNVS RTC and watchdog. I couldn't find
-> any registers to configure the CKIL pipeline and CKIL input is
-> usually a fixed clock, so current implementation might be "broken"
-> without anyone noticing. Checking a running i.MX6 system, that
-> actually seems to be the case :(
->=20
-> $ cat /sys/kernel/debug/clk/ckil/clk_rate        =20
-> 32768
-> $ cat /sys/kernel/debug/clk/ckil/clk_enable_count=20
-> 0
-> $ cat /sys/kernel/debug/clk/ckil/clk_prepare_count=20
-> 0
-> $ cat /sys/kernel/debug/clk/ckil/clk_flags        =20
-> CLK_IS_BASIC
->=20
-> I suppose an easy fix would be to mark that clock as critical and
-> that would also keep the parent clocks enabled?
+> Some of the patch series are applied so sending this fix as incremental
+> fix to latest linux-next.
 
-Yes. It sounds like some sort of low frequency timer clk. It probably
-should always be left enabled with CLK_IS_CRITICAL then.
+Please don't send cover letters for single patches. The value add is
+minimal vs. just putting extra text next to the diffstat in the single
+patch.
 
+>=20
+> Sowjanya Komatineni (1):
+>   clk: tegra: clk-dfll: Fix to remove pm_runtime_irq_safe
+>=20
+>  drivers/clk/tegra/clk-dfll.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
