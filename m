@@ -2,193 +2,87 @@ Return-Path: <SRS0=K/Jc=ZF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1D8C43331
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 15:02:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B55BDC43331
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 15:23:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC1B2245B
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 15:02:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UJgGktfG";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="BgDcsSh1"
+	by mail.kernel.org (Postfix) with ESMTP id 901A02245C
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 15:23:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727911AbfKMPCl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 10:02:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48544 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbfKMPCl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Nov 2019 10:02:41 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 297D760BF4; Wed, 13 Nov 2019 15:02:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573657359;
-        bh=PmuIPtzDsG95Mlbe4TmoFaii3H10pp3Kzpy+eC3cS6Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UJgGktfGNeIBaLx2B5ouDR6rjhH1Z8copT+1dAq/AOwgRAUHUf8xeh6IDWReJ3P5J
-         roP06JekYZhkh2LgDn5DG20cw3buccx0G9NSA5ynqJy2l9rtN/BuQUYn1kPNEHEj1j
-         U0wjyWSdDL4I171Pb44QvrOo3TvFw16tTq5QUN7w=
-Received: from [10.226.58.28] (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6F2CE60AD9;
-        Wed, 13 Nov 2019 15:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573657354;
-        bh=PmuIPtzDsG95Mlbe4TmoFaii3H10pp3Kzpy+eC3cS6Y=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=BgDcsSh15qyyt0yE5G6jvzXvt94FTYXH+2Z2OwJFq+bUrpSBFQAys2hx+ZWgKlcl+
-         WGQpzjH51+9a3OFRmVP8QbXo+UkK2oVSVkXq+XaMJTtvr7WbHO0IKayDBX4mxxYVe9
-         knce6RHLvvKUCCwUw5Y1mCDGBqSO5sOVCVXjemHw=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6F2CE60AD9
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
-Subject: Re: [PATCH v9 1/4] dt-bindings: clock: Document external clocks for
- MSM8998 gcc
-To:     Taniya Das <tdas@codeaurora.org>, mturquette@baylibre.com,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        marc.w.gonzalez@free.fr, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-References: <1573591382-14225-1-git-send-email-jhugo@codeaurora.org>
- <1573591466-14296-1-git-send-email-jhugo@codeaurora.org>
- <63e2cdd2-919d-9ec2-9fe8-48bbe34f732c@codeaurora.org>
-From:   Jeffrey Hugo <jhugo@codeaurora.org>
-Message-ID: <4dcd5e10-817e-0a12-6922-5e3f8dcf09bf@codeaurora.org>
-Date:   Wed, 13 Nov 2019 08:02:32 -0700
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1727880AbfKMPX4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Nov 2019 10:23:56 -0500
+Received: from muru.com ([72.249.23.125]:41998 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726812AbfKMPX4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Nov 2019 10:23:56 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id CE3A180E2;
+        Wed, 13 Nov 2019 15:24:31 +0000 (UTC)
+Date:   Wed, 13 Nov 2019 07:23:52 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Tero Kristo <t-kristo@ti.com>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: ti: dra7: fix parent for gmac_clkctrl
+Message-ID: <20191113152352.GM5610@atomide.com>
+References: <20191109142017.10851-1-grygorii.strashko@ti.com>
+ <20191111171255.GU5610@atomide.com>
+ <d22abbd3-518d-3f2b-a1d7-50601e89e9e1@ti.com>
 MIME-Version: 1.0
-In-Reply-To: <63e2cdd2-919d-9ec2-9fe8-48bbe34f732c@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d22abbd3-518d-3f2b-a1d7-50601e89e9e1@ti.com>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/13/2019 4:20 AM, Taniya Das wrote:
-> Hi Jeffrey,
+* Grygorii Strashko <grygorii.strashko@ti.com> [191113 10:02]:
 > 
-> On 11/13/2019 2:14 AM, Jeffrey Hugo wrote:
->> The global clock controller on MSM8998 can consume a number of external
->> clocks.  Document them.
->>
->> For 7180 and 8150, the hardware always exists, so no clocks are truly
->> optional.  Therefore, simplify the binding by removing the min/max
->> qualifiers to clocks.  Also, fixup an example so that dt_binding_check
->> passes.
->>
->> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
->> ---
->>   .../devicetree/bindings/clock/qcom,gcc.yaml        | 47 
->> +++++++++++++++-------
->>   1 file changed, 33 insertions(+), 14 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml 
->> b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
->> index e73a56f..2f3512b 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
->> @@ -40,20 +40,38 @@ properties:
->>          - qcom,gcc-sm8150
->>     clocks:
->> -    minItems: 1
->> -    maxItems: 3
->> -    items:
->> -      - description: Board XO source
->> -      - description: Board active XO source
->> -      - description: Sleep clock source
->> +    oneOf:
->> +      #qcom,gcc-sm8150
->> +      #qcom,gcc-sc7180
->> +      - items:
->> +        - description: Board XO source
->> +        - description: Board active XO source
->> +        - description: Sleep clock source
->> +      #qcom,gcc-msm8998
->> +      - items:
->> +        - description: Board XO source
->> +        - description: USB 3.0 phy pipe clock
->> +        - description: UFS phy rx symbol clock for pipe 0
->> +        - description: UFS phy rx symbol clock for pipe 1
->> +        - description: UFS phy tx symbol clock
->> +        - description: PCIE phy pipe clock
 > 
-> Would it be possible to add an example for MSM8998?
+> On 11/11/2019 19:12, Tony Lindgren wrote:
+> > * Grygorii Strashko <grygorii.strashko@ti.com> [191109 14:21]:
+> > > The parent clk for gmac clk ctrl has to be gmac_main_clk (125MHz) instead
+> > > of dpll_gmac_ck (1GHz). This is caused incorrect CPSW MDIO operation.
+> > > Hence, fix it.
+> > > 
+> > > Fixes: commit dffa9051d546 ('clk: ti: dra7: add new clkctrl data')
+> > > Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> > 
+> > Hmm is there a mux for the source though?
+> 
+> Not sure what do you mean here :(
+> 
+> fck clock for CPSW and MDIO is "gmac_main_clk" which is 125MHz and
+> that what need to be passed to drivers and enabled through the clock tree.
+> The TI specific PM is handled by gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0
+> which required sysc programming and child modules dosn't need to even know that.
 
-It doesn't seem to be materially different that the existing examples, 
-but sure, that's something that can be done.
+OK
 
-> 
->>     clock-names:
->> -    minItems: 1
->> -    maxItems: 3
->> -    items:
->> -      - const: bi_tcxo
->> -      - const: bi_tcxo_ao
->> -      - const: sleep_clk
->> +    oneOf:
->> +      #qcom,gcc-sm8150
->> +      #qcom,gcc-sc7180
->> +      - items:
->> +        - const: bi_tcxo
->> +        - const: bi_tcxo_ao
->> +        - const: sleep_clk
-> 
-> Not required for SC7180.
+> So, this patch is simply correct clock tree for dra7:
+> dpll_gmac_ck -> .... -> gmac_main_clk -> gmac_clkctrl DRA7_GMAC_GMAC_CLKCTRL 0
 
-How are you determining this?
+So I guess there's no mux clock for DRA7_GMAC_GMAC_CLKCTRL 0.
 
-Per the earlier discussion with Stephen, if the hardware exists, it 
-should be represented in DT.  According to the documentation I see, the 
-sleep clock is routed to the GCC on SC7180.  The driver is not required 
-to make use of it.  Thus its required from the DT perspective.
+What I meant is maybe check also that no top level mux is needed
+similar to what we have for these configured with assigned-clocks:
 
-> 
->> +      #qcom,gcc-msm8998
->> +      - items:
->> +        - const: xo
->> +        - const: usb3_pipe
->> +        - const: ufs_rx_symbol0
->> +        - const: ufs_rx_symbol1
->> +        - const: ufs_tx_symbol0
->> +        - const: pcie0_pipe
->>     '#clock-cells':
->>       const: 1
->> @@ -118,6 +136,7 @@ else:
->>         compatible:
->>           contains:
->>             enum:
->> +            - qcom,gcc-msm8998
->>               - qcom,gcc-sm8150
->>               - qcom,gcc-sc7180
->>     then:
->> @@ -179,8 +198,8 @@ examples:
->>       clock-controller@100000 {
->>         compatible = "qcom,gcc-sc7180";
->>         reg = <0x100000 0x1f0000>;
->> -      clocks = <&rpmhcc 0>, <&rpmhcc 1>;
->> -      clock-names = "bi_tcxo", "bi_tcxo_ao";
->> +      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <0>;
->> +      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
-> 
-> SC7180 does not require a sleep clock.
-> 
->>         #clock-cells = <1>;
->>         #reset-cells = <1>;
->>         #power-domain-cells = <1>;
->>
-> 
+$ git grep -C3 assigned-clock arch/arm/boot/dts/dra7*
 
+> Seems MDIO dt also need to be fixed to use:
+> gmac_main_clk as "fck". I'll try and send patch.
 
--- 
-Jeffrey Hugo
-Qualcomm Technologies, Inc. is a member of the
-Code Aurora Forum, a Linux Foundation Collaborative Project.
+OK
+
+> By the way, the patch follows am3/am4 (am4_cpsw_125mhz_clkctrl_regs,
+>  am3_cpsw_125mhz_clkctrl_regs)
+
+OK
+
+Tony
