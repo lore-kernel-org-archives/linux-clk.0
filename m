@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 826F9C17448
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F73C17449
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:22:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50FD921D7F
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 904232067B
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:22:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573611762;
-	bh=221mBZOSqyC1aa3HHmVpBQpmE2Dgo0l8iN1fqn2XFIo=;
+	s=default; t=1573611763;
+	bh=t/kBS8ZyburwAEd/tWcHp44RfmpPV30AzLZAShq5ZZk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=NfuY+UisioSflogeY3JqadqNcVvbUktTdBmzyex/OHdGlfNfpTBksUesrZU/Rsuna
-	 IsXe2UwPSXbVJHPsUJhiABzaNzQbJno8MBXgLJRB5QSjUHMMuBEOCfQKKeJFrarPZK
-	 uaKiawCU4OFXsqhrHvcJ48pvYQQKALEbTdoqOE9A=
+	b=CsBUiPlIZb4Frryk5x4YERFqjSG3QtetLW+fDeGKdmVQqbQC3Ot5W9Ubc7SZnmfiS
+	 Adzb7V+yCFutwFRAbK74EoQV1YhgP1w3oCiNYU/jISm1kiNmfIDv6gEr9nTXagwBiT
+	 yYbWp+twp876YI62j/LwdkcCvQrP+qcFzZ0KHt/E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728540AbfKMBxU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 20:53:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42862 "EHLO mail.kernel.org"
+        id S1728527AbfKMBxS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 20:53:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42838 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728534AbfKMBxT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:53:19 -0500
+        id S1728520AbfKMBxS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:53:18 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C37C2245D;
-        Wed, 13 Nov 2019 01:53:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0524F222CD;
+        Wed, 13 Nov 2019 01:53:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573609999;
-        bh=221mBZOSqyC1aa3HHmVpBQpmE2Dgo0l8iN1fqn2XFIo=;
+        s=default; t=1573609997;
+        bh=t/kBS8ZyburwAEd/tWcHp44RfmpPV30AzLZAShq5ZZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L87KbC2cxxs/S8v9MNNbEdvJJXbaGHbWx5k0yZo7/a/tf8kDuCp+e2x5Fvay1OEq/
-         /YAf4kuSSUCU+gcg7UCH7u5xeu13czmYEF0h5hh+O1fDS8+AgnwSAfnZbdThZRi+82
-         O87gBSk08Ez+RebG9ib4oWjFXp64ZC/Hq8PaPtjg=
+        b=Ckoux5DLtGj81GLTtHgJg79eDwDZDUjiIRdlKDcwYDTwG8QIuBwZXnw2ZU2gObCmO
+         OvIDPwlCZwgWEH09k1W1SEir/mBrqevNUSqGsj4QoLlyGhv4AEFSQzWpanIgW0oUj5
+         FZV1hxAjfNnzCRu5MZT5oZ/83ekYeUO9WUFbWYvg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Joonyoung Shim <jy0922.shim@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 107/209] clk: samsung: exynos5420: Define CLK_SECKEY gate clock only or Exynos5420
-Date:   Tue, 12 Nov 2019 20:48:43 -0500
-Message-Id: <20191113015025.9685-107-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 106/209] clk: samsung: Use NOIRQ stage for Exynos5433 clocks suspend/resume
+Date:   Tue, 12 Nov 2019 20:48:42 -0500
+Message-Id: <20191113015025.9685-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191113015025.9685-1-sashal@kernel.org>
 References: <20191113015025.9685-1-sashal@kernel.org>
@@ -59,44 +60,40 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Joonyoung Shim <jy0922.shim@samsung.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit d32dd2a1a0f80edad158c9a1ba5f47650d9504a0 ]
+[ Upstream commit 70da9ee80228e6d98fd68e3c1db124c4461d283c ]
 
-The bit of GATE_BUS_PERIS1 for CLK_SECKEY is just reserved on
-exynos5422/5800, not exynos5420. Define gate clk for exynos5420 to
-handle the bit only on exynos5420.
+SoC clock drivers should suspend after every other drivers in the system,
+which are using clocks and resume before them. The last stage for calling
+suspend device callbacks is NOIRQ stage and there exists driver, which use
+that state (dwmmc-exynos), so Exynos5433 clocks driver should also use it.
+During the same stage, clocks driver will be always suspended after its
+clients as a direct result of proper device probe order (deferred probe
+reorders the suspend call sequence).
 
-Signed-off-by: Joonyoung Shim <jy0922.shim@samsung.com>
-[m.szyprow: rewrote commit subject]
 Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/clk/samsung/clk-exynos5433.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index d4f77c4eb277a..ce30862617a6e 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -634,6 +634,7 @@ static const struct samsung_div_clock exynos5420_div_clks[] __initconst = {
+diff --git a/drivers/clk/samsung/clk-exynos5433.c b/drivers/clk/samsung/clk-exynos5433.c
+index 162de44df099b..426980514e679 100644
+--- a/drivers/clk/samsung/clk-exynos5433.c
++++ b/drivers/clk/samsung/clk-exynos5433.c
+@@ -5630,7 +5630,7 @@ static const struct of_device_id exynos5433_cmu_of_match[] = {
+ static const struct dev_pm_ops exynos5433_cmu_pm_ops = {
+ 	SET_RUNTIME_PM_OPS(exynos5433_cmu_suspend, exynos5433_cmu_resume,
+ 			   NULL)
+-	SET_LATE_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
++	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(pm_runtime_force_suspend,
+ 				     pm_runtime_force_resume)
  };
  
- static const struct samsung_gate_clock exynos5420_gate_clks[] __initconst = {
-+	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
- 	GATE(CLK_MAU_EPLL, "mau_epll", "mout_mau_epll_clk",
- 			SRC_MASK_TOP7, 20, CLK_SET_RATE_PARENT, 0),
- };
-@@ -1163,8 +1164,6 @@ static const struct samsung_gate_clock exynos5x_gate_clks[] __initconst = {
- 	GATE(CLK_TMU, "tmu", "aclk66_psgen", GATE_IP_PERIS, 21, 0, 0),
- 	GATE(CLK_TMU_GPU, "tmu_gpu", "aclk66_psgen", GATE_IP_PERIS, 22, 0, 0),
- 
--	GATE(CLK_SECKEY, "seckey", "aclk66_psgen", GATE_BUS_PERIS1, 1, 0, 0),
--
- 	/* GEN Block */
- 	GATE(CLK_ROTATOR, "rotator", "mout_user_aclk266", GATE_IP_GEN, 1, 0, 0),
- 	GATE(CLK_JPEG, "jpeg", "aclk300_jpeg", GATE_IP_GEN, 2, 0, 0),
 -- 
 2.20.1
 
