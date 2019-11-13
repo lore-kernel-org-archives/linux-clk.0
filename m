@@ -2,179 +2,124 @@ Return-Path: <SRS0=K/Jc=ZF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D409FC43331
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 06:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E13C43331
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 07:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 887C4222D3
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 06:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5D45207FC
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 07:24:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="fhiVEHHu"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="nA/5i5+C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726074AbfKMGwf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 01:52:35 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:6574 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725866AbfKMGwf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Nov 2019 01:52:35 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dcba8330000>; Tue, 12 Nov 2019 22:52:35 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Tue, 12 Nov 2019 22:52:32 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Tue, 12 Nov 2019 22:52:32 -0800
-Received: from [10.26.11.32] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 13 Nov
- 2019 06:52:28 +0000
-Subject: Re: [PATCH v2 17/17] ARM: dts: tegra30: cardhu-a04: Add CPU Operating
- Performance Points
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen Boyd" <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>
-CC:     <linux-pm@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191024221416.14197-1-digetx@gmail.com>
- <20191024221416.14197-18-digetx@gmail.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <be6deeff-4294-c945-1539-57ec28b4c895@nvidia.com>
-Date:   Wed, 13 Nov 2019 06:52:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <20191024221416.14197-18-digetx@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"
+        id S1726138AbfKMHYs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Nov 2019 02:24:48 -0500
+Received: from mail-eopbgr00049.outbound.protection.outlook.com ([40.107.0.49]:62033
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725908AbfKMHYs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Nov 2019 02:24:48 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=A+O256r6jvLNiLQERd6oPH3MWy98Vve+hIItwUU81XBO93qiEjU14F7O/c3o6FQTqzAM4+fIFN3xqhuz/UXYGRcmALTrUaV3rkaepKQtNadlEQnbn6mtAx/eLZH2eFNrB20UPW4pwH33Savv+MrTfukkQZzJcNXlU/V2aRpHDpHuPk9YpRVt6xfr+LwsOPCbOZBiR6KnsF4HVBrq4zWy5iYENH2NAKH5hJaylmO8SRFl2QOr0a/R3XeulI6dtmY/thk7j6i86bVkqxLikNHwjIy1M3OhOCO3fSR9iqpon1/bPMvd/tTwnaOXxlJM+EGlwnxTcQIZhO8oj63aUljG/g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=df8qoSTm6Yxz5RdMiYoqAqGjfmaDv+qoblnoInHn9qY=;
+ b=MpnrG/EGfWRoSM0wBwb5ot8rRr5jrHllambC6Qijz4uBWURFaUdw+/GVhxOqlHB0YqGQm76WYlsyobZjPbWgI/ErJHmT6Fq0MXfeBGtuPNQYwENidWSBaZ6/cryF0TdFmkj+pziObZ4ZpK7FPVLaBCcejd5rnpXJKShA8MDhlr6FZlAD8Mep4UuBoGyKPHB0sBr56BnHM7BoYgAkcbraUL4Yon5ZOnLwWr7CYf0q7e61WNo2UPvPC6NRBxOiR+4K3BaSS3QJdtFIoWUfnS6gTm/U2/hRCnd0ez1tzb/BMUpqU8Et3Q4/X/MUwhz4lrKFQWj5Uem1O+4Futii0SDRmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=df8qoSTm6Yxz5RdMiYoqAqGjfmaDv+qoblnoInHn9qY=;
+ b=nA/5i5+CdbEi6k6XINEWlfKIdEnAjsIWzPGTuLgS4VNtlqE/thADOOHch+riEv7hqW37pQKRktKid8qzGpkD5QBfOoO3wnBCytPHsm1Kg6O3agCrFBWbN8D/pnhliu+8xNmGK06ol8DjotbSidR6DZISp6PnkV9jsKt1mXI2oJo=
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com (52.135.138.150) by
+ DB7PR04MB4651.eurprd04.prod.outlook.com (52.135.138.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2430.22; Wed, 13 Nov 2019 07:24:43 +0000
+Received: from DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::115f:1e4f:9ceb:2a2c]) by DB7PR04MB4490.eurprd04.prod.outlook.com
+ ([fe80::115f:1e4f:9ceb:2a2c%7]) with mapi id 15.20.2430.028; Wed, 13 Nov 2019
+ 07:24:43 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Alice Guo <alice.guo@nxp.com>, Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/2] clk: imx: pll14xx: io relaxed fix
+Thread-Topic: [PATCH 0/2] clk: imx: pll14xx: io relaxed fix
+Thread-Index: AQHVmfNrs+So0yeRFkOsHVVUwKE7Ow==
+Date:   Wed, 13 Nov 2019 07:24:42 +0000
+Message-ID: <1573629763-18389-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1573627955; bh=hAPd6vZThQ+ICA6jEK3O0xPM/BMVXTDWmnPp5G7Fimo=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=fhiVEHHuUlKQKh/SUp1f/FV3Xb5BTTUjeEXDPAVhN/qeRYd9N9K/67RobSEmkLjz5
-         XkO7RqKkw7Hs0jhpoUR+HveNbzjc1n6pWq5+5LTpB7wEc0ACXmmvggfrLr3Pg/ylaM
-         mjzHneb86evOmfocAm5KFSznU7P4cqdRLzmlbSaDUbG84jESguezC91jfdOdYpjcpz
-         3ncYu1EIDrooxG64vcK5c0HJLSuuBf0v2Ij8gtdvkUym9PxEw4dwOy4B1qaRGw4Iul
-         fdtk9lPqpLKuTFFfDqJkZS4dmLbdEXRQKQTM87y2o9s3u2rGUiIs0IgYizDwCFbGM7
-         8VgFqu2OvT3rQ==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK2PR02CA0169.apcprd02.prod.outlook.com
+ (2603:1096:201:1f::29) To DB7PR04MB4490.eurprd04.prod.outlook.com
+ (2603:10a6:5:36::22)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 60a0233e-a66e-46b7-494e-08d7680a8d40
+x-ms-traffictypediagnostic: DB7PR04MB4651:|DB7PR04MB4651:
+x-ms-exchange-purlcount: 2
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB465111118375B8ED12F28FE488760@DB7PR04MB4651.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:849;
+x-forefront-prvs: 0220D4B98D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(366004)(136003)(396003)(39860400002)(346002)(199004)(189003)(54906003)(81156014)(81166006)(44832011)(8676002)(966005)(50226002)(14444005)(256004)(186003)(52116002)(6636002)(6486002)(66066001)(486006)(110136005)(2906002)(6306002)(8936002)(36756003)(6436002)(316002)(478600001)(6512007)(7736002)(305945005)(71200400001)(2616005)(386003)(102836004)(71190400001)(2501003)(6506007)(26005)(14454004)(476003)(4744005)(5660300002)(66476007)(66556008)(64756008)(66446008)(86362001)(25786009)(6116002)(66946007)(3846002)(99286004)(2201001)(4326008);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4651;H:DB7PR04MB4490.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 85QN5tMcgT7eU8K9Fw+il4vr5usyHBPQkNQ5F9aqIw6TUtJspOL73UbMDy2XE0yFjWdsuEzYQUyDM7hDTx8CbmTCnrYe+7btnqAvvnPo8k5YVAgUqEFIiatrM6Gu8aT2H/VmxLWixBbKgFqwlOyPCr8Bl3L+NusvH4AR/xwDQZ2xdeJiA9zNpX6k5wiRErM67Awqr71HmA+/Z8veFEoeN4PSH+oWyp2qtR+a09O/8+PR17KMvL8Poo8LwnEYFqTATS3/cQ4HDGv3cWfhBxl6UJoA+Z7YExJiE8hySb/p3zDDQfZJZQWSVHGF9iGMztrrm0XOfAQlDsxs3F43z9UIHk1kbA0wknaORyuExyFpEqjHfOxirlleKfjHvS6etRIwQ1H+cOt5+tzaNEvXqzE8c0gaI+IZCWJ71kXCnVmNgzz9Rc9nGEn8e82v96Ys/XvtIhMVIJNVkOdq/aDKm5GoHtlnZViTUg0LcOTuZHgUVWc=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60a0233e-a66e-46b7-494e-08d7680a8d40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 07:24:42.9573
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: A9c8hykDixRsaQks2gbEiVXdqRLxcHpZ7Yt4L8McSyiQzcFHyYviyo9NABKhAd6jWAJBkt+BeurvSoYw8f72nw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4651
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Peng Fan <peng.fan@nxp.com>
 
-On 24/10/2019 23:14, Dmitry Osipenko wrote:
-> Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on
-> cardhu-a04.
-> 
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  arch/arm/boot/dts/tegra30-cardhu-a04.dts | 24 ++++++++++++++++++++++++
->  1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/arm/boot/dts/tegra30-cardhu-a04.dts b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-> index 0d71925d4f0b..9234988624ec 100644
-> --- a/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-> +++ b/arch/arm/boot/dts/tegra30-cardhu-a04.dts
-> @@ -2,6 +2,8 @@
->  /dts-v1/;
->  
->  #include "tegra30-cardhu.dtsi"
-> +#include "tegra30-cpu-opp.dtsi"
-> +#include "tegra30-cpu-opp-microvolt.dtsi"
->  
->  /* This dts file support the cardhu A04 and later versions of board */
->  
-> @@ -127,4 +129,26 @@
->  			nvidia,tegra-core-regulator;
->  		};
->  	};
-> +
-> +	cpus {
-> +		cpu0: cpu@0 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +
-> +		cpu@1 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +
-> +		cpu@2 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +
-> +		cpu@3 {
-> +			cpu-supply = <&vddctrl_reg>;
-> +			operating-points-v2 = <&cpu0_opp_table>;
-> +		};
-> +	};
->  };
+This patchset is insipred from Will Deacon's slide/video:
+https://elinux.org/images/a/a8/Uh-oh-Its-IO-Ordering-Will-Deacon-Arm.pdf
+https://www.youtube.com/watch?v=3Di6DayghhA8Q
 
-Sorry for not testing this sooner, but this is generating the
-following WARNING on boot ...
+Peng Fan (2):
+  clk: imx: pll14xx: use writel_relaxed
+  clk: imx: pll14xx: use readl to force write completed
 
-[    2.916019] ------------[ cut here ]------------
-[    2.920669] WARNING: CPU: 2 PID: 1 at /dvs/git/dirty/git-master_l4t-upstream/kernel/drivers/opp/of.c:688 _of_add_opp_table_v2.part.2+0x45c/0x4d4
-[    2.933713] Modules linked in:
-[    2.936785] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc7-next-20191112-gfc6d6db1df2c #1
-[    2.945403] Hardware name: NVIDIA Tegra SoC (Flattened Device Tree)
-[    2.951706] [<c0112924>] (unwind_backtrace) from [<c010c9d0>] (show_stack+0x10/0x14)
-[    2.959467] [<c010c9d0>] (show_stack) from [<c0aa4494>] (dump_stack+0xc0/0xd4)
-[    2.966707] [<c0aa4494>] (dump_stack) from [<c0124750>] (__warn+0xe0/0xf8)
-[    2.973593] [<c0124750>] (__warn) from [<c0124818>] (warn_slowpath_fmt+0xb0/0xb8)
-[    2.981090] [<c0124818>] (warn_slowpath_fmt) from [<c0754be0>] (_of_add_opp_table_v2.part.2+0x45c/0x4d4)
-[    2.990583] [<c0754be0>] (_of_add_opp_table_v2.part.2) from [<c0754c98>] (dev_pm_opp_of_add_table+0x40/0x15c)
-[    3.000508] [<c0754c98>] (dev_pm_opp_of_add_table) from [<c0754de8>] (dev_pm_opp_of_cpumask_add_table+0x34/0xb4)
-[    3.010704] [<c0754de8>] (dev_pm_opp_of_cpumask_add_table) from [<c075b058>] (cpufreq_init+0xf8/0x2cc)
-[    3.020024] [<c075b058>] (cpufreq_init) from [<c0758758>] (cpufreq_online+0x260/0x824)
-[    3.027953] [<c0758758>] (cpufreq_online) from [<c0758d98>] (cpufreq_add_dev+0x6c/0x78)
-[    3.035976] [<c0758d98>] (cpufreq_add_dev) from [<c05b3188>] (subsys_interface_register+0xa0/0xec)
-[    3.044951] [<c05b3188>] (subsys_interface_register) from [<c07574d4>] (cpufreq_register_driver+0x14c/0x20c)
-[    3.054792] [<c07574d4>] (cpufreq_register_driver) from [<c075aee0>] (dt_cpufreq_probe+0x94/0x114)
-[    3.063771] [<c075aee0>] (dt_cpufreq_probe) from [<c05b6a88>] (platform_drv_probe+0x48/0x98)
-[    3.072225] [<c05b6a88>] (platform_drv_probe) from [<c05b4a38>] (really_probe+0x234/0x34c)
-[    3.080502] [<c05b4a38>] (really_probe) from [<c05b4cc8>] (driver_probe_device+0x60/0x168)
-[    3.088780] [<c05b4cc8>] (driver_probe_device) from [<c05b4f78>] (device_driver_attach+0x58/0x60)
-[    3.097664] [<c05b4f78>] (device_driver_attach) from [<c05b5000>] (__driver_attach+0x80/0xbc)
-[    3.106200] [<c05b5000>] (__driver_attach) from [<c05b2db0>] (bus_for_each_dev+0x74/0xb4)
-[    3.114389] [<c05b2db0>] (bus_for_each_dev) from [<c05b3da4>] (bus_add_driver+0x164/0x1e8)
-[    3.122666] [<c05b3da4>] (bus_add_driver) from [<c05b5b54>] (driver_register+0x7c/0x114)
-[    3.130774] [<c05b5b54>] (driver_register) from [<c010306c>] (do_one_initcall+0x54/0x2a8)
-[    3.138974] [<c010306c>] (do_one_initcall) from [<c0f01040>] (kernel_init_freeable+0x14c/0x1e8)
-[    3.147695] [<c0f01040>] (kernel_init_freeable) from [<c0abbe88>] (kernel_init+0x8/0x10c)
-[    3.155887] [<c0abbe88>] (kernel_init) from [<c01010e8>] (ret_from_fork+0x14/0x2c)
-[    3.163462] Exception stack(0xef0c9fb0 to 0xef0c9ff8)
-[    3.168519] 9fa0:                                     00000000 00000000 00000000 00000000
-[    3.176706] 9fc0: 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
-[    3.184893] 9fe0: 00000000 00000000 00000000 00000000 00000013 00000000
-[    3.191695] ---[ end trace a7dc36f7a4ddbdb2 ]---
-[    3.197855] ------------[ cut here ]------------
+ drivers/clk/imx/clk-pll14xx.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-Let me know if you can take a look at this.
+--=20
+2.16.4
 
-Thanks
-Jon
-
--- 
-nvpublic
