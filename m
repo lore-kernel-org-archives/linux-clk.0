@@ -2,76 +2,157 @@ Return-Path: <SRS0=K/Jc=ZF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_1
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0683DC432C3
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 22:21:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45973C43141
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 22:27:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081D2206E5
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 22:21:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573683678;
-	bh=5JhH5wXUGl6ui3+sVP/PrMjxe2XX9RlIT1LO4ZQTbhI=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=PqWeET1zbMljexP+QH6ied+u0fUWmeC8WiuM2WdRAs8pA8Pt+l/ZEi3YtGowJeTiw
-	 IWMXBC0aHRtwVwb5ipdFKoXT5CflZqmzdor5R5PJv1cLxxS+uQLNCAqX4Qz15GW30O
-	 UeUpanFvLjxKcg5acykUm3qhqtzDXD1YF29lVPzI=
+	by mail.kernel.org (Postfix) with ESMTP id 57A49206F2
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 22:27:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726303AbfKMWVQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 17:21:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726251AbfKMWVQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Nov 2019 17:21:16 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E5E9B206E3;
-        Wed, 13 Nov 2019 22:21:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573683677;
-        bh=5JhH5wXUGl6ui3+sVP/PrMjxe2XX9RlIT1LO4ZQTbhI=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=e4e/6PYgxzaeEkTSAv029ucwYwUw/0EEl8yZ8uNtOFVbE2t/k1MvtzH9WiH/ztLoW
-         RI0ArGrKfXTgi9YEU4FBYzitlv7tk6GNtsCb4xaSOTqKmKg9CgK1QTIdu+2xt90jFD
-         OP3uy7xn/r1aBdS0+UcD6mBL/2QhslNKNaYpz8Wo=
-Content-Type: text/plain; charset="utf-8"
+        id S1726428AbfKMW1b (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Nov 2019 17:27:31 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:40556 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfKMW1b (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Nov 2019 17:27:31 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: sre)
+        with ESMTPSA id 5C0F42911AD
+Received: by earth.universe (Postfix, from userid 1000)
+        id BF57C3C0C78; Wed, 13 Nov 2019 23:27:26 +0100 (CET)
+Date:   Wed, 13 Nov 2019 23:27:26 +0100
+From:   Sebastian Reichel <sebastian.reichel@collabora.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-clk@vger.kernel.org, linux-rtc@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Russell King <linux@armlinux.org.uk>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, kernel@collabora.com
+Subject: Re: [RFCv1] rtc: m41t80: disable clock provider support
+Message-ID: <20191113222726.ifjp2bhwmplm5r7z@earth.universe>
+References: <20191108170135.9053-1-sebastian.reichel@collabora.com>
+ <20191108175329.GH216543@piout.net>
+ <20191108223415.dio3pwkf24jfs5o4@earth.universe>
+ <20191109002449.534B6207FA@mail.kernel.org>
+ <20191109014151.yd2untpgnuinermj@earth.universe>
+ <20191109065334.64A03214E0@mail.kernel.org>
+ <20191112151526.txl5rwpuiwjpopzx@earth.universe>
+ <20191112222012.157CC20674@mail.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191026110253.18426-1-manivannan.sadhasivam@linaro.org>
-References: <20191026110253.18426-1-manivannan.sadhasivam@linaro.org>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        mturquette@baylibre.com, robh+dt@kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v6 0/7] Add Bitmain BM1880 clock driver
-User-Agent: alot/0.8.1
-Date:   Wed, 13 Nov 2019 14:21:15 -0800
-Message-Id: <20191113222116.E5E9B206E3@mail.kernel.org>
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="c27ca4y5vep6oudt"
+Content-Disposition: inline
+In-Reply-To: <20191112222012.157CC20674@mail.kernel.org>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Manivannan Sadhasivam (2019-10-26 04:02:46)
-> Hello,
->=20
-> This patchset adds common clock driver for Bitmain BM1880 SoC clock
-> controller. The clock controller consists of gate, divider, mux
-> and pll clocks with different compositions. Hence, the driver uses
-> composite clock structure in place where multiple clocking units are
-> combined together.
->=20
-> This patchset also removes UART fixed clock and sources clocks from clock
-> controller for Sophon Edge board where the driver has been validated.
->=20
 
-Are you waiting for review here? I see some kbuild reports so I assumed
-you would fix and resend.
+--c27ca4y5vep6oudt
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+Hi Stephen,
+
+On Tue, Nov 12, 2019 at 02:20:11PM -0800, Stephen Boyd wrote:
+> Quoting Sebastian Reichel (2019-11-12 07:15:26)
+> > On Fri, Nov 08, 2019 at 10:53:33PM -0800, Stephen Boyd wrote:
+> > > Quoting Sebastian Reichel (2019-11-08 17:41:51)
+> > > > On Fri, Nov 08, 2019 at 04:24:48PM -0800, Stephen Boyd wrote:
+> > > > >=20
+> > > > > Is this the chicken-egg scenario? I read this thread but I can't =
+follow
+> > > > > along with what the problem is. Sorry.
+> > > >=20
+> > > > Yes. The board has an I2C based RTC (m41t62), which provides a prog=
+rammable 1
+> > > > Hz to 32 kHz square wave (SQW) output defaulting to 32 kHz. The boa=
+rd designers
+> > > > connected the RTC's SQW output to the i.MX6 CKIL clock input instea=
+d of adding
+> > > > another oscillator. The i.MX6 CCM acquires that clock in imx6q_cloc=
+ks_init()
+> > > > (and assumes it is a fixed clock):
+> > > >=20
+> > > > hws[IMX6QDL_CLK_CKIL] =3D imx6q_obtain_fixed_clk_hw(ccm_node, "ckil=
+", 0);
+> > >=20
+> > > Who uses the IMX6QDL_CLK_CKIL though? Grep on kernel sources shows me
+> > > nothing.
+> >=20
+> > The manual specifies, that CKIL is synchronized with the main system
+> > clock. The resulting clock is used by all kind of IP cores inside
+> > the i.MX6, for example the SNVS RTC and watchdog. I couldn't find
+> > any registers to configure the CKIL pipeline and CKIL input is
+> > usually a fixed clock, so current implementation might be "broken"
+> > without anyone noticing. Checking a running i.MX6 system, that
+> > actually seems to be the case :(
+> >=20
+> > $ cat /sys/kernel/debug/clk/ckil/clk_rate        =20
+> > 32768
+> > $ cat /sys/kernel/debug/clk/ckil/clk_enable_count=20
+> > 0
+> > $ cat /sys/kernel/debug/clk/ckil/clk_prepare_count=20
+> > 0
+> > $ cat /sys/kernel/debug/clk/ckil/clk_flags        =20
+> > CLK_IS_BASIC
+> >=20
+> > I suppose an easy fix would be to mark that clock as critical and
+> > that would also keep the parent clocks enabled?
+>=20
+> Yes. It sounds like some sort of low frequency timer clk. It probably
+> should always be left enabled with CLK_IS_CRITICAL then.
+
+Right, system expects that clock to be always available including
+low power states. This is supposed not to be turned off at all.
+
+I gave it a try today (I defined ckil clock in DT as fixed
+rate clock with divider and multiplier set to 1 and used
+the RTC as parent clock) and it happened exactly what I
+expected: I received -EPROBE_DEFER. This results in
+the problem, that I pointed out.
+
+Actually imx6 clock manager driver registers a fixed clock, when
+the DT part fails (incl. a -EPROBE_DEFER error), so it still boots.
+But then the reference to the parent clock is obviously missing,
+so RTC clock is not enabled and CKIL is effectivly missing.
+
+If the error code is handled properly the boot does not finish,
+since the i2c bus driver probe defers without the clock manager's
+clocks being available. Without the i2c bus driver, the RTC driver
+is not probed, so the clock never appears.
+
+The simplest fix would be to export of_clk_detect_critical()
+and call it in the RTC driver. Reading the comment above the
+function I suppose this is not an acceptable solution?
+
+-- Sebastian
+
+--c27ca4y5vep6oudt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAl3Mg0gACgkQ2O7X88g7
++prbuA/9H7pQ9y3BOKoO+N4g6YrlW3p4gZJ8BlNNtICeD5ZSYj3782tWJo5DKl2+
+myLZhch30TFObkni/Xl6ZZKbj3GH0d12Jy+sogyffS3S2DKvbhj5mZ78xcEVHqJB
+u/4VyRnqOl9Sadb55S+Zti/8CPgAsoz9MOh72H/kfT4INXsRBeEPAiv4/y4K6QNW
+ysmPG7ZjSgByJQkFNEFk/ULcJViE47IRaY4rNHmpAYQwz+xe1kHIAXKYDJMUEMbO
+Pwtqh/XtxA2XqgFOlRh7SGq10R5NKbXoX9ApHuFtSjZsxMdfcEu1BENF8Xen5AZ1
+5RZN4dfgl1ue10z7qMW/vVZ8RsJmm75zzIFVImFBO+VPmQjNYrqh7aSyQgQJJsgR
+Y2vARKQ/OM7TY4q9UT4Q2yCgHiC50IsRqTpRaqUWXLywBfmhQjSoPDHsJC9hIMB1
+i+7BqFUv5hzFA3sKB0MVjZSZiPtNbGT06YaSeFWRgH75rgWiLZaZ0jQC82SQZyhx
+5wN/3+PnWAdN2MfmltX5qQ6jtKERDTMF69qOIR5iny4pA8whiXnoZVxjWH7a1CNO
+wN4Q2aB70a+7o3d8efRU7Pvj/raYIogB/4fqNbDIKXRei33cQZkXIiAgKvGECEmk
+do7GBKKi0srxWYh2N82gn3qdk8dSdGsUUn411GFeiYaxkHOe3dM=
+=yJyD
+-----END PGP SIGNATURE-----
+
+--c27ca4y5vep6oudt--
