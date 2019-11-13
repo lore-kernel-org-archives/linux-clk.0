@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40FAAC43331
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 01:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0040C17441
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:07:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F20C2053B
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 01:57:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A94B6206B6
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:07:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573610222;
-	bh=aFpAA8wU35EfuFHr6Frbd4f3Et0ExszuYiPWOtiTJRg=;
+	s=default; t=1573610867;
+	bh=Zgkwqrff4/iY33NyPBf0FfOVn1J4uPqkRyaGWhNjPxM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fpj8XGNQDFLtawrcxD1FHKXKiaW/Gw6iEGQyepn6d4ueqwa+UMvwb4oXgtWux6hLk
-	 dErqzF8AxxYfRrxBW4Wxmtnvk520X+h3G1TaLdhnUbbyPstBFXIN2ak5ON7mhdP/zG
-	 yHt+7QcD90jF9Usvy2x6olBSr3NNgL4uNnSAmBr4=
+	b=0qPCbcyjT8PyUPR3j3JAk0q5eIyyqt+Y2XsiXZn+4ppU+kJfDmed/933LKNYvSfS2
+	 gDOwZcnM6NBGs/7+XmdSSCbDhRS7GzFsgi+Ke8hnNF/maumCMlDZ0qsIeFIKZva4K0
+	 XaKEZFyaDmr/TRuWzIFC2V1RnCBc1OEs1Frs3YMc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729652AbfKMB5B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 20:57:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49850 "EHLO mail.kernel.org"
+        id S1728471AbfKMCHn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 21:07:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729646AbfKMB5B (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 20:57:01 -0500
+        id S1730512AbfKMCAe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 21:00:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0059122467;
-        Wed, 13 Nov 2019 01:56:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DDDE922467;
+        Wed, 13 Nov 2019 02:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610219;
-        bh=aFpAA8wU35EfuFHr6Frbd4f3Et0ExszuYiPWOtiTJRg=;
+        s=default; t=1573610433;
+        bh=Zgkwqrff4/iY33NyPBf0FfOVn1J4uPqkRyaGWhNjPxM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CwLWuOuROMSDsnkEVvVu0msXpCxG721LyiIdXnIHXElHIrwLnXwRD1QdUZ9hX65AV
-         iauc9Rb0MmW53CegKzoqjhtdTd2lCtjIZypa6CyGPFAKDtOxnltkq/Ue/WHa6rvYEE
-         9XBAoV+uNUXJEKGSXZP/TO2JxHQ/f3vYaA7Geekw=
+        b=Ovz5ZaFhDZH21SEeqCmayfYg5MFUMQ3HNzaJQ1B+aKklzyC2MAT8Yrm/e0+3UfVEX
+         No6A9yBJLLqqfmOo2CMuIzXRvKsUjXzWcIB1aJOogtVirlj8+BLCXo1AseRWPWfEwG
+         RTgLWw06+4vp/A+p59c/3BGufD/1O4Ta1lqsxHBY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 026/115] clk: keystone: Enable TISCI clocks if K3_ARCH
-Date:   Tue, 12 Nov 2019 20:54:53 -0500
-Message-Id: <20191113015622.11592-26-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 35/68] clk: samsung: Use clk_hw API for calling clk framework from clk notifiers
+Date:   Tue, 12 Nov 2019 20:58:59 -0500
+Message-Id: <20191113015932.12655-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
-References: <20191113015622.11592-1-sashal@kernel.org>
+In-Reply-To: <20191113015932.12655-1-sashal@kernel.org>
+References: <20191113015932.12655-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,47 +58,68 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Nishanth Menon <nm@ti.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 2f149e6e14bcb5e581e49307b54aafcd6f74a74f ]
+[ Upstream commit 1da220e3a5d22fccda0bc8542997abc1d1741268 ]
 
-K3_ARCH uses TISCI for clocks as well. Enable the same
-for the driver support.
+clk_notifier_register() documentation states, that the provided notifier
+callbacks associated with the notifier must not re-enter into the clk
+framework by calling any top-level clk APIs. Fix this by replacing
+clk_get_rate() calls with clk_hw_get_rate(), which is safe in this
+context.
 
-Signed-off-by: Nishanth Menon <nm@ti.com>
-Acked-by: Santosh Shilimkar <ssantosh@kernel.org>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/Makefile         | 1 +
- drivers/clk/keystone/Kconfig | 2 +-
- 2 files changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/samsung/clk-cpu.c | 6 +++---
+ drivers/clk/samsung/clk-cpu.h | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index f7f761b02beda..8ca03d9d693b0 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -65,6 +65,7 @@ obj-$(CONFIG_ARCH_HISI)			+= hisilicon/
- obj-y					+= imgtec/
- obj-$(CONFIG_ARCH_MXC)			+= imx/
- obj-$(CONFIG_MACH_INGENIC)		+= ingenic/
-+obj-$(CONFIG_ARCH_K3)			+= keystone/
- obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
- obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
- obj-$(CONFIG_ARCH_MEDIATEK)		+= mediatek/
-diff --git a/drivers/clk/keystone/Kconfig b/drivers/clk/keystone/Kconfig
-index 7e9f0176578a6..b04927d06cd10 100644
---- a/drivers/clk/keystone/Kconfig
-+++ b/drivers/clk/keystone/Kconfig
-@@ -7,7 +7,7 @@ config COMMON_CLK_KEYSTONE
+diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
+index 8bf7e805fd349..1271315b0c25b 100644
+--- a/drivers/clk/samsung/clk-cpu.c
++++ b/drivers/clk/samsung/clk-cpu.c
+@@ -152,7 +152,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 			struct exynos_cpuclk *cpuclk, void __iomem *base)
+ {
+ 	const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
+-	unsigned long alt_prate = clk_get_rate(cpuclk->alt_parent);
++	unsigned long alt_prate = clk_hw_get_rate(cpuclk->alt_parent);
+ 	unsigned long alt_div = 0, alt_div_mask = DIV_MASK;
+ 	unsigned long div0, div1 = 0, mux_reg;
+ 	unsigned long flags;
+@@ -280,7 +280,7 @@ static int exynos5433_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
+ 			struct exynos_cpuclk *cpuclk, void __iomem *base)
+ {
+ 	const struct exynos_cpuclk_cfg_data *cfg_data = cpuclk->cfg;
+-	unsigned long alt_prate = clk_get_rate(cpuclk->alt_parent);
++	unsigned long alt_prate = clk_hw_get_rate(cpuclk->alt_parent);
+ 	unsigned long alt_div = 0, alt_div_mask = DIV_MASK;
+ 	unsigned long div0, div1 = 0, mux_reg;
+ 	unsigned long flags;
+@@ -432,7 +432,7 @@ int __init exynos_register_cpu_clock(struct samsung_clk_provider *ctx,
+ 	else
+ 		cpuclk->clk_nb.notifier_call = exynos_cpuclk_notifier_cb;
  
- config TI_SCI_CLK
- 	tristate "TI System Control Interface clock drivers"
--	depends on (ARCH_KEYSTONE || COMPILE_TEST) && OF
-+	depends on (ARCH_KEYSTONE || ARCH_K3 || COMPILE_TEST) && OF
- 	depends on TI_SCI_PROTOCOL
- 	default ARCH_KEYSTONE
- 	---help---
+-	cpuclk->alt_parent = __clk_lookup(alt_parent);
++	cpuclk->alt_parent = __clk_get_hw(__clk_lookup(alt_parent));
+ 	if (!cpuclk->alt_parent) {
+ 		pr_err("%s: could not lookup alternate parent %s\n",
+ 				__func__, alt_parent);
+diff --git a/drivers/clk/samsung/clk-cpu.h b/drivers/clk/samsung/clk-cpu.h
+index d4b6b517fe1b4..bd38c6aa38970 100644
+--- a/drivers/clk/samsung/clk-cpu.h
++++ b/drivers/clk/samsung/clk-cpu.h
+@@ -49,7 +49,7 @@ struct exynos_cpuclk_cfg_data {
+  */
+ struct exynos_cpuclk {
+ 	struct clk_hw				hw;
+-	struct clk				*alt_parent;
++	struct clk_hw				*alt_parent;
+ 	void __iomem				*ctrl_base;
+ 	spinlock_t				*lock;
+ 	const struct exynos_cpuclk_cfg_data	*cfg;
 -- 
 2.20.1
 
