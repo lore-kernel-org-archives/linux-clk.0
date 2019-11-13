@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0040C17441
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 133FEC17441
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:12:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A94B6206B6
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0312222C9
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 02:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573610867;
-	bh=Zgkwqrff4/iY33NyPBf0FfOVn1J4uPqkRyaGWhNjPxM=;
+	s=default; t=1573611173;
+	bh=mBWSYqzntZrRXyv64akBAkmmXnttEMUiQhS1mPu6nLE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0qPCbcyjT8PyUPR3j3JAk0q5eIyyqt+Y2XsiXZn+4ppU+kJfDmed/933LKNYvSfS2
-	 gDOwZcnM6NBGs/7+XmdSSCbDhRS7GzFsgi+Ke8hnNF/maumCMlDZ0qsIeFIKZva4K0
-	 XaKEZFyaDmr/TRuWzIFC2V1RnCBc1OEs1Frs3YMc=
+	b=pNJWkraGxYVB+WhH8IsMfK+Z7YqHHQ3ka5L9mtnpZto7/4QtXedS6pQE3Ja5ueDzJ
+	 ldEphAZl0IgTNJbQCE2S96+3lT1UpaSFLKflSYMSYe6Ej09jVe935KDlJ7No22H6pl
+	 Uc9+2xWcnEqPTfa579fjXcvRy2hfuR55MgYMESmo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbfKMCHn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 12 Nov 2019 21:07:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55856 "EHLO mail.kernel.org"
+        id S1729536AbfKMCMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 12 Nov 2019 21:12:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51668 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730512AbfKMCAe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 12 Nov 2019 21:00:34 -0500
+        id S1729877AbfKMB6I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 12 Nov 2019 20:58:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DDDE922467;
-        Wed, 13 Nov 2019 02:00:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7ED222469;
+        Wed, 13 Nov 2019 01:58:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573610433;
-        bh=Zgkwqrff4/iY33NyPBf0FfOVn1J4uPqkRyaGWhNjPxM=;
+        s=default; t=1573610287;
+        bh=mBWSYqzntZrRXyv64akBAkmmXnttEMUiQhS1mPu6nLE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ovz5ZaFhDZH21SEeqCmayfYg5MFUMQ3HNzaJQ1B+aKklzyC2MAT8Yrm/e0+3UfVEX
-         No6A9yBJLLqqfmOo2CMuIzXRvKsUjXzWcIB1aJOogtVirlj8+BLCXo1AseRWPWfEwG
-         RTgLWw06+4vp/A+p59c/3BGufD/1O4Ta1lqsxHBY=
+        b=MHQFd/rtLLZEnub21a//nLXqjNIG72/YNTOsCzvKcEaFJSR8Fpeu+BlcvBp0A0Bsi
+         U97cdimEFj+tQFRrrmebOfZCo1QCjaIcqVEcu9+VSMuTf1KBblCGWT2mj8gBuF6GEo
+         aa5O/hhhAlDbxwtx98lJf8xs5LmJ2y/pey28M5ZM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
         Sylwester Nawrocki <snawrocki@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 35/68] clk: samsung: Use clk_hw API for calling clk framework from clk notifiers
-Date:   Tue, 12 Nov 2019 20:58:59 -0500
-Message-Id: <20191113015932.12655-35-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 064/115] clk: samsung: Use clk_hw API for calling clk framework from clk notifiers
+Date:   Tue, 12 Nov 2019 20:55:31 -0500
+Message-Id: <20191113015622.11592-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191113015932.12655-1-sashal@kernel.org>
-References: <20191113015932.12655-1-sashal@kernel.org>
+In-Reply-To: <20191113015622.11592-1-sashal@kernel.org>
+References: <20191113015622.11592-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -77,7 +77,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/clk/samsung/clk-cpu.c b/drivers/clk/samsung/clk-cpu.c
-index 8bf7e805fd349..1271315b0c25b 100644
+index 6686e8ba61f9f..82f023f29a61f 100644
 --- a/drivers/clk/samsung/clk-cpu.c
 +++ b/drivers/clk/samsung/clk-cpu.c
 @@ -152,7 +152,7 @@ static int exynos_cpuclk_pre_rate_change(struct clk_notifier_data *ndata,
