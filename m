@@ -2,230 +2,123 @@ Return-Path: <SRS0=K/Jc=ZF=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_2 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 415F1C1744A
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 12:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBCA4C43331
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 12:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B50622478
-	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 12:35:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 90A3B2084E
+	for <linux-clk@archiver.kernel.org>; Wed, 13 Nov 2019 12:36:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bk5UGVMq"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="eP8L/6sj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726087AbfKMMfo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 07:35:44 -0500
-Received: from mail-eopbgr00073.outbound.protection.outlook.com ([40.107.0.73]:20704
-        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        id S1726105AbfKMMgC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Nov 2019 07:36:02 -0500
+Received: from mail-eopbgr70048.outbound.protection.outlook.com ([40.107.7.48]:56801
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726066AbfKMMfn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Nov 2019 07:35:43 -0500
+        id S1726066AbfKMMgC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Nov 2019 07:36:02 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Sikx7iF3SmyS8HSgLrvowGZOZOLEyLdqn90StQOqek1ryVwDGRb18+VfLm8XrhWXmGej/3FHAT+RyF0nAP+U6xJHuDfxrpuw79vu+ZjOKED2sh9Zq5GIg183JYd8ieUSu/QV/QU6O1cbSASZ+fb/4YF2/FzZCcxQOTGNzBIyTnVAp/q6OwiyXOl3dw9wprFvXtWWv9ArPneYj/Hv3nuUcrOyfLh6MrZ44q9cvbGAdKAgfZtE3e8eGvS4qcT42Sy0ezGpXCz2C62Hxk2iL3hQlogHbQToDJLGgicW2aRk/ZeXzkA1i1sZETbatcY4TCeUjkKkyeoMzzt8kKwjXKtdcw==
+ b=NDbZeR8hbtdRkKql6oMwiwgqWXvDd8xkoh5f9gHqYOJJmgrdUBKbpEmCqEGgod/bpFmA18teYkwIVtc8s+SBTVxUuYddy5ulvBkFOhC2YzWk1URQ7SpphU3u6hnRz1Ww90fKCRmPA/LJEvkmf0zlckBp9bK0nRRi/Td1Xa61TYXbbxETzeX/V2lw66bwd2Pu5j2/uO3EGXHmoRA9L2tmZqOJL1IauqLCtH2YBatVB2qtqTCT5dAbow7g3f/JOkB9vbUV2anBp/81xCeHmTX+Aga6RfiUKJJ7UOmats4DOcyNs4fhvxas+2HCNaTnXTRlTOodES4BkunS6+TSKDQc4g==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IB+XF+6Gne40W/itLQd8Aj6w0yJfmY850cj+E7Lx+ow=;
- b=MYkuyMDEuDaTG8fY5KQ+Q32o5QuhF+jcItcsABY1hBTarnqMMvbTtAX1jqu05GVk5UaaFMaNJkHRnT/qXSEANf4P2Scjkur0mJ35OZNciAMnT1r4sDZOEpcyVJs8uKhIligux9E11l4PugSraQU0JLtgwu32h6BrGEixafxyqkON7PPoD+IJq3rjoO3KfElHr/839s0lY3XTr/L9RwnmgHZRlOiWZZ6FRAKyIc+cRIhjr86Jpvm10riBvVmNGpoH6WPMuSfB/9dpBi0V89XHuxc2s0WysALJhyX+A4rVxVFIbAWnkDV+/fXAm8S1A68SzfGnZ4lnwRcKumvr7u6oyw==
+ bh=JzyCOArGt4A0Ph0m6l4ceE7jupZQRscXXOAjKBbgJ+U=;
+ b=HMSzjm7ZCcpo3HG6ul1INqwJ9+onv/ZEGVHFGY9TCTR36bOT1TffgED0XR7iaLGmXMGz83McQpiKsXogi+cZeGV1LApgPPBg+NdGkf+CXx9U5F1G1hnFPIPTK+Hrudpwj7JillpWo7vjA5+RztG2CBk4I5UX1jGp2edDw5L/PumjI8ybVwC1Uy3viZuX3aYBAz8gboBCKFHCflQxI+SIXBfeybbjExADqoNhnLarnOdU+Js2zXMSSWm7El6Ij3uOK44xHyuqdLzEB1+tpw/9FuTrepj7xQlSgrDMNtajtOpwo8itViR2I7/a1M2OAEKBabAVsLpKlr3v2w/t+OBKzg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=IB+XF+6Gne40W/itLQd8Aj6w0yJfmY850cj+E7Lx+ow=;
- b=bk5UGVMqMhbDff25cA1o4e94tvvRqsSamp2lSogSkypxb9LLbNeIu5hZf6FDR6acM55yl7lJmACbCRiKZaOUVauYTnQtrom/eg7fiBDgYoIK444lsqxoae3lk2S3Vp22uocSwZbezkfDzJeGK7Ycp+xoTXCrJbkKQ75aLnVJWbQ=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB6928.eurprd04.prod.outlook.com (52.133.246.14) with Microsoft SMTP
+ bh=JzyCOArGt4A0Ph0m6l4ceE7jupZQRscXXOAjKBbgJ+U=;
+ b=eP8L/6sjmKOxXT6i4lxJfBaUn6AUu6NF7e5hRW7QjPTEXVFBwADqciKapNemKmmiWMn2EpRXd5/LsaoiwH7N8z2XX8GiwbTamghjMmRjwU9W0SDLDAliuJxTut/iaTJcan54hBhElQ5NdgNmKQG2bixz0zDhtnkTiyQYQ0N7jV0=
+Received: from DB3PR0402MB3835.eurprd04.prod.outlook.com (52.134.65.158) by
+ DB3PR0402MB3769.eurprd04.prod.outlook.com (52.134.71.140) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.23; Wed, 13 Nov 2019 12:35:38 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::dd0c:72dc:e462:16b3]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::dd0c:72dc:e462:16b3%5]) with mapi id 15.20.2451.023; Wed, 13 Nov 2019
- 12:35:38 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Martin Kepplinger <martink@posteo.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
+ 15.20.2430.20; Wed, 13 Nov 2019 12:35:58 +0000
+Received: from DB3PR0402MB3835.eurprd04.prod.outlook.com
+ ([fe80::3846:d70b:d3ae:8e8]) by DB3PR0402MB3835.eurprd04.prod.outlook.com
+ ([fe80::3846:d70b:d3ae:8e8%4]) with mapi id 15.20.2430.027; Wed, 13 Nov 2019
+ 12:35:57 +0000
+From:   Daniel Baluta <daniel.baluta@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         Aisheng Dong <aisheng.dong@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Alice Guo <alice.guo@nxp.com>,
         "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v5 3/5] dt-bindings: memory: Add bindings for imx8m ddr
- controller
-Thread-Topic: [PATCH v5 3/5] dt-bindings: memory: Add bindings for imx8m ddr
- controller
-Thread-Index: AQHVmaNN8+lTgarJx0yj+3LD9AtsMg==
-Date:   Wed, 13 Nov 2019 12:35:38 +0000
-Message-ID: <VI1PR04MB702328B4F8744FBF42E0D537EE760@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <cover.1573595318.git.leonard.crestez@nxp.com>
- <CGME20191112215123epcas5p13e9eec7f2209a73bb1a6f09434ec91ba@epcas5p1.samsung.com>
- <872fb6e3117955b679678280483f82b3d73dd376.1573595319.git.leonard.crestez@nxp.com>
- <296a7e8a-78e5-62bb-e4e1-8f5a9095cb6d@samsung.com>
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "will@kernel.org" <will@kernel.org>
+Subject: Re: [PATCH 1/2] clk: imx: pll14xx: use writel_relaxed
+Thread-Topic: [PATCH 1/2] clk: imx: pll14xx: use writel_relaxed
+Thread-Index: AQHVmfNueqAnKxSTgEmcfZ1/aON4uqeI8eAAgAASX4CAAAWlgA==
+Date:   Wed, 13 Nov 2019 12:35:57 +0000
+Message-ID: <e4fb1c1506c5a5566ed20b564970a97eb6b6c94d.camel@nxp.com>
+References: <1573629763-18389-1-git-send-email-peng.fan@nxp.com>
+         <1573629763-18389-2-git-send-email-peng.fan@nxp.com>
+         <83bed3382379b465494af6b55881e8d05e21c634.camel@nxp.com>
+         <AM0PR04MB44817EBFF8CF1BB6E2CE369D88760@AM0PR04MB4481.eurprd04.prod.outlook.com>
+In-Reply-To: <AM0PR04MB44817EBFF8CF1BB6E2CE369D88760@AM0PR04MB4481.eurprd04.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
+x-mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
 authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
+ smtp.mailfrom=daniel.baluta@nxp.com; 
 x-originating-ip: [89.37.124.34]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: bd5aa2c7-5031-4aed-0490-08d76835fd31
-x-ms-traffictypediagnostic: VI1PR04MB6928:|VI1PR04MB6928:
+x-ms-office365-filtering-correlation-id: 78ba2a28-ada9-4957-e76f-08d7683608b1
+x-ms-traffictypediagnostic: DB3PR0402MB3769:|DB3PR0402MB3769:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB6928E262B6635815F573262DEE760@VI1PR04MB6928.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:5516;
+x-microsoft-antispam-prvs: <DB3PR0402MB37692A93F52E79174D920BB9F9760@DB3PR0402MB3769.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2201;
 x-forefront-prvs: 0220D4B98D
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(396003)(136003)(376002)(346002)(199004)(189003)(102836004)(55016002)(8936002)(86362001)(74316002)(305945005)(7736002)(6116002)(3846002)(486006)(81156014)(81166006)(8676002)(52536014)(476003)(66946007)(7696005)(66476007)(66556008)(7416002)(64756008)(66446008)(5660300002)(6506007)(44832011)(76176011)(2906002)(53546011)(6306002)(9686003)(99286004)(6436002)(33656002)(6246003)(26005)(71190400001)(446003)(966005)(14454004)(4326008)(229853002)(256004)(91956017)(76116006)(45080400002)(478600001)(316002)(25786009)(54906003)(186003)(71200400001)(66066001)(110136005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6928;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(136003)(39860400002)(346002)(396003)(189003)(199004)(66066001)(44832011)(486006)(2501003)(102836004)(99286004)(11346002)(7736002)(26005)(76176011)(446003)(3846002)(71200400001)(2616005)(476003)(2201001)(25786009)(36756003)(4326008)(2906002)(4001150100001)(305945005)(86362001)(6436002)(6116002)(66476007)(66556008)(64756008)(6506007)(71190400001)(229853002)(66446008)(186003)(478600001)(8936002)(8676002)(316002)(118296001)(6246003)(14454004)(256004)(81156014)(5660300002)(66946007)(6486002)(91956017)(76116006)(110136005)(6512007)(50226002)(54906003)(4744005)(14444005)(81166006)(99106002);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3769;H:DB3PR0402MB3835.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: MnyMAQLDXtldXg5WwAVI9Jy3BmPZ1Su/w4LP92enb+RqvyfgXHyXncCWDhxnFy9nQGIs0ZmNA5kjaMHqWYLts3p15Bv9SLx3tKdQJ40Db+ij0RjeXXLdutiBV/BtR8td3whTvFVI7F9wqz2DNONzRPLL3lLDX5fMJw0L07VK+5dkjOeYqxnZFs7sw90qeefwawdKy2ypkHX58jDmzKpZYTJDR9Jbdtc+2K0UO1+sqYRW17iTFsI0DZYzfeqoWfhR7ShOEYab3ef6Z09zOR4by7oOwpYkK2U+DOHIo/HEyDS2MEVNljovlCuvdfX71z6WVG/u5fryhtAEoCe9l3LTzuLHb5X7cdkpDcZXy/PIxYeAnTUMgDXI5CUHgKuc6Fckq6pGLqfIOH+1JKzC73RCYRgx9+LVDnPvSX5MwokKF0ls5YA9CJKZXGqcGtDI1x7y
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+x-microsoft-antispam-message-info: Xaqmwdu+LAmJPkGTSLuQIhyTYoOteaWOCwEYKrlaWRYdxGXzD3Ed73mxw6wNNqq36Vv65Z7Ekui14tXawumaZ6GlH1mZaLNqBgTtiKiHW81JESs/RDsAvZFiId04yriHVP25zVvecUj9cQ5cV9+4+QMBn5aONAIdjFLzcWmZXXLopwJX4y/Pp39zBZB3LffXQFU8KWaZSMl0bMb0d/QcYA/HFUhljYI7q0toaLGgaQeqbttSl9gW16r7RNFaJKJ2vO2WOhx6nvEGbxVXxTxwTQVt+Hw+cqzXvQzEtf3huoTPZ4rDQitvA+ubjOHz4Stpei2smwCW0FdM8XRQEUarbStdiDVyb+/UmQFRl6dW7DqqRKSGIx64bLeXzUftKRuEHh9VjSlXVRUERx96q2sLI6LUtzq9HLFDWw4OTgg7VaDc95pwp7hwNwwxK+vM1DGS
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <FEF3A002E7DE124AB9ED3C0AF6B3C38B@eurprd04.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: bd5aa2c7-5031-4aed-0490-08d76835fd31
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 12:35:38.4467
+X-MS-Exchange-CrossTenant-Network-Message-Id: 78ba2a28-ada9-4957-e76f-08d7683608b1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2019 12:35:57.8534
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: HUZSr8CtgGMVTirejB/pimcC9XFoidmUJKj/aKmVLNxO87GewSdp5KEIkeum3W4YWsNqo4YEAUjPzKxgcV2TAw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6928
+X-MS-Exchange-CrossTenant-userprincipalname: pRczFzCVCPrvEPrgW766ENOlHdYB2NE7ARjxYlJr6jy0gq4RMPsgwoavODNgQ5oiYQRpvo1S9Xem3e+vU+FTzQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3769
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 13.11.2019 04:32, Chanwoo Choi wrote:=0A=
-> On 11/13/19 6:50 AM, Leonard Crestez wrote:=0A=
->> Add devicetree bindings for the i.MX DDR Controller on imx8m series=0A=
->> chips. It supports dynamic frequency switching between multiple data=0A=
->> rates and this is exposed to Linux via the devfreq subsystem.=0A=
->>=0A=
->> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
->> ---=0A=
->>   .../memory-controllers/fsl/imx8m-ddrc.yaml    | 57 +++++++++++++++++++=
-=0A=
->>   1 file changed, 57 insertions(+)=0A=
->>   create mode 100644 Documentation/devicetree/bindings/memory-controller=
-s/fsl/imx8m-ddrc.yaml=0A=
->>=0A=
->> diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/im=
-x8m-ddrc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/im=
-x8m-ddrc.yaml=0A=
->> new file mode 100644=0A=
->> index 000000000000..7c98e3509f75=0A=
->> --- /dev/null=0A=
->> +++ b/Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddr=
-c.yaml=0A=
->> @@ -0,0 +1,57 @@=0A=
->> +# SPDX-License-Identifier: GPL-2.0=0A=
->> +%YAML 1.2=0A=
->> +---=0A=
->> +$id: https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%2F%2=
-Fdevicetree.org%2Fschemas%2Fmemory-controllers%2Ffsl%2Fimx8m-ddrc.yaml%23&a=
-mp;data=3D02%7C01%7Cleonard.crestez%40nxp.com%7C23e819d42b664965975808d767e=
-1c084%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C637092091602846215&amp;s=
-data=3DfrWd1MENZm%2FsPjQp%2FWbphMgkkCMtwsgV8hLQyIhC3%2BI%3D&amp;reserved=3D=
-0=0A=
->> +$schema: https://eur01.safelinks.protection.outlook.com/?url=3Dhttp%3A%=
-2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23&amp;data=3D02%7C01%7Cleon=
-ard.crestez%40nxp.com%7C23e819d42b664965975808d767e1c084%7C686ea1d3bc2b4c6f=
-a92cd99c5c301635%7C0%7C0%7C637092091602846215&amp;sdata=3D4IweKQJO9ZsB%2B9Q=
-xixSQjfYOFm3%2FY7iMHFBSsquK1B0%3D&amp;reserved=3D0=0A=
->> +=0A=
->> +title: i.MX8M DDR Controller=0A=
->> +=0A=
->> +maintainers:=0A=
->> +  - Leonard Crestez <leonard.crestez@nxp.com>=0A=
->> +=0A=
->> +properties:=0A=
->> +  compatible:=0A=
->> +    items:=0A=
->> +      - enum:=0A=
->> +        - fsl,imx8mn-ddrc=0A=
->> +        - fsl,imx8mm-ddrc=0A=
->> +        - fsl,imx8mq-ddrc=0A=
->> +      - const: fsl,imx8m-ddrc=0A=
->> +=0A=
->> +  reg:=0A=
->> +    maxItems: 1=0A=
->> +=0A=
->> +  clocks:=0A=
->> +    maxItems: 4=0A=
->> +=0A=
->> +  clock-names:=0A=
->> +    items:=0A=
->> +      - const: core=0A=
->> +      - const: pll=0A=
->> +      - const: alt=0A=
->> +      - const: apb=0A=
->> +=0A=
->> +  operating-points-v2: true=0A=
->> +  opp-table: true=0A=
->> +=0A=
->> +required:=0A=
->> +  - reg=0A=
->> +  - compatible=0A=
->> +  - clocks=0A=
->> +  - clock-names=0A=
->> +=0A=
->> +additionalProperties: false=0A=
->> +=0A=
->> +examples:=0A=
->> +  - |=0A=
->> +    #include <dt-bindings/clock/imx8mm-clock.h>=0A=
->> +    ddrc: memory-controller@3d400000 {=0A=
->> +        compatible =3D "fsl,imx8mm-ddrc", "fsl,imx8m-ddrc";=0A=
->> +        reg =3D <0x3d400000 0x400000>;=0A=
-> =0A=
-> The probe() function doesn't get the IORESOURCE_MEM from dt?=0A=
-> Is it needed?=0A=
-=0A=
-This area is not currently mapped by the driver. As far as I understand =0A=
-it's acceptable to "describe hardware" even if you don't use the full =0A=
-description in driver code.=0A=
-=0A=
-If I were to remove the "reg" area wouldn't I also have to move the node =
-=0A=
-outside of the bus to keep DT validation? It's better to keep the address.=
-=0A=
-=0A=
-Maybe it will be mapped in the future or maybe firmware will start to =0A=
-parse linux DT instead of hardcoding SOC-specific addresses (this =0A=
-already happens in some cases).=0A=
-=0A=
->> +        clock-names =3D "core", "pll", "alt", "apb";=0A=
->> +        clocks =3D <&clk IMX8MM_CLK_DRAM_CORE>,=0A=
->> +                 <&clk IMX8MM_DRAM_PLL>,=0A=
->> +                 <&clk IMX8MM_CLK_DRAM_ALT>,=0A=
->> +                 <&clk IMX8MM_CLK_DRAM_APB>;=0A=
->> +        operating-points-v2 =3D <&ddrc_opp_table>;=0A=
->> +    };=0A=
+T24gV2VkLCAyMDE5LTExLTEzIGF0IDEyOjE1ICswMDAwLCBQZW5nIEZhbiB3cm90ZToNCj4gSGkg
+RGFuaWVsLA0KPiANCj4gPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gY2xrOiBpbXg6IHBsbDE0
+eHg6IHVzZSB3cml0ZWxfcmVsYXhlZA0KPiA+IA0KPiA+IA0KPiA+IE9uIFdlZCwgMjAxOS0xMS0x
+MyBhdCAwNzoyNCArMDAwMCwgUGVuZyBGYW4gd3JvdGU6DQo+ID4gPiBGcm9tOiBQZW5nIEZhbiA8
+cGVuZy5mYW5AbnhwLmNvbT4NCj4gPiA+IA0KPiA+ID4gSXQgbm90IG1ha2Ugc2Vuc2UgdG8gdXNl
+IHdyaXRlbCwgdXNlIHJlbGF4ZWQgdmFyaWFudC4NCj4gPiA+IA0KPiA+IA0KPiA+IEhpIFBlbmcs
+DQo+ID4gDQo+ID4gUGxlYXNlIGV4cGxhaW4gd2h5IHRoaXMgY2hhbmdlIGlzIG5lZWRlZC4NCj4g
+DQo+IHdyaXRlbCBoYXMgYSBiYXJyaWVyLCBob3dldmVyIHRoYXQgYmFycmllciBpcyBub3QgbmVl
+ZGVkLA0KPiBiZWNhdXNlIGRldmljZSBtZW1vcnkgYWNjZXNzIGlzIGluIG9yZGVyIGFuZCBjbGsg
+ZHJpdmVyDQo+IGhhcyBzcGluX2xvY2sgb3Igb3RoZXIgbG9jayB0byBtYWtlIHN1cmUgd3JpdGUg
+ZmluaXNoZWQuDQo+IA0KDQpNYWtlIHN1cmUgeW91IGFkZCB0aGlzIGluIHRoZSBjb21taXQgbWVz
+c2FnZSBmb3IgdjIgOikuDQo=
