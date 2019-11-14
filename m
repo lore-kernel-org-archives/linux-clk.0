@@ -2,67 +2,81 @@ Return-Path: <SRS0=Db4S=ZG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0DFC43215
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 00:00:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95379C432C3
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 00:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F2CC20702
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 00:00:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1097206F3
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 00:19:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573689617;
-	bh=SMoH6WwYPt/ixZvrWX0yET7Q++IwXKfiGaXl8elanxg=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=IiPHRqZqwy+8/482gQmOnIGrred28yude+Iq5AEezNExz6q2vpbiQaE9zdSA5I3he
-	 rVyipYt9fnR8r3NpCRmBDAgNKxGRNzMJxdO6c1VFo/FF1btTRVL9q1d3WxoPU8CiGH
-	 adaAZEKF84wYWGQLhjMUMCUTn9dUx/Y+FFEtU66s=
+	s=default; t=1573690767;
+	bh=tGvFGDEK2oZKkTKzOKFp8OpdDoQrzJYalEyDYSTMIVg=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=V9oapXwn8kRZ/r2XVgqzCZhxgD6jtWrE73R3N4cR66yRDo3eQmLctVN7btKIEdypx
+	 DW5VirDDL60tABlcXJzVBfm8Ww2bOUlkutNNRCpwPWThyX7DJEqwkm5wGxs4yUpyct
+	 6rqp5gmzgdecmKtlC67sGGM50yutWSe7ZaH0xeF4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726986AbfKNAAN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 19:00:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44052 "EHLO mail.kernel.org"
+        id S1726418AbfKNAT1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Nov 2019 19:19:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726628AbfKNAAN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Nov 2019 19:00:13 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726363AbfKNAT1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 13 Nov 2019 19:19:27 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 01505206F0;
-        Thu, 14 Nov 2019 00:00:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9142D206F2;
+        Thu, 14 Nov 2019 00:19:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573689613;
-        bh=SMoH6WwYPt/ixZvrWX0yET7Q++IwXKfiGaXl8elanxg=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=v6azWa7aLlXLxpMwHARRMmnvE9HBxwA8StGNNm56uYbBgTbSRdNUbj08rc7id5EMe
-         vgK/P8D++PHM9JUtGuOeLOZiYdc3SJ2s5vufdHshIrxuoGRY223prQn1WxZPCzjZsk
-         Q8AsYO8hXW+smxrAEll4s0RCSXXLqIqpZOs6qjZE=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1573378102-72380-3-git-send-email-zhouyanjie@zoho.com>
-References: <1571421006-12771-1-git-send-email-zhouyanjie@zoho.com> <1573378102-72380-1-git-send-email-zhouyanjie@zoho.com> <1573378102-72380-3-git-send-email-zhouyanjie@zoho.com>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, mturquette@baylibre.com,
-        paul.burton@mips.com, robh+dt@kernel.org, syq@debian.org,
-        mark.rutland@arm.com, paul@crapouillou.net
-To:     Zhou Yanjie <zhouyanjie@zoho.com>, linux-mips@vger.kernel.org
+        s=default; t=1573690766;
+        bh=tGvFGDEK2oZKkTKzOKFp8OpdDoQrzJYalEyDYSTMIVg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=f/aDnd9PUbLsbmDBSL4DfUkvccnDESjrH7AtRU+zGXDtwB6YkS4lRSEQ/06/z3bUZ
+         Mc7tUphoZznPcIBp6UkxdNQT0wULRKsmkns5EEPsYon/IbcDOhHDwk6XQocEEO3YV2
+         EHcQv9hIJSJha9hletYo9KRaGoRyZ/ZtQKk+prYo=
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH 2/2 v3] clk: Ingenic: Add CGU driver for X1000.
-User-Agent: alot/0.8.1
-Date:   Wed, 13 Nov 2019 16:00:11 -0800
-Message-Id: <20191114000013.01505206F0@mail.kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH] clk: ingenic: Allow drivers to be built with COMPILE_TEST
+Date:   Wed, 13 Nov 2019 16:19:25 -0800
+Message-Id: <20191114001925.159276-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.24.0.rc1.363.gb1bccd3e3d-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Zhou Yanjie (2019-11-10 01:28:22)
-> Add support for the clocks provided by the CGU in the Ingenic X1000
-> SoC, making use of the cgu code to do the heavy lifting.
->=20
-> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
-> ---
+We don't need the MIPS architecture or even a MIPS compiler to compile
+test these drivers. Let's add a COMPILE_TEST possibility on the
+menuconfig here so that we can build these drivers on more
+configurations.
 
-Applied to clk-next
+Cc: Paul Cercueil <paul@crapouillou.net>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/ingenic/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+index fb7b39961703..b4555b465ea6 100644
+--- a/drivers/clk/ingenic/Kconfig
++++ b/drivers/clk/ingenic/Kconfig
+@@ -1,6 +1,6 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ menu "Ingenic SoCs drivers"
+-	depends on MIPS
++	depends on MIPS || COMPILE_TEST
+ 
+ config INGENIC_CGU_COMMON
+ 	bool
+-- 
+Sent by a computer through tubes
 
