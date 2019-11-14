@@ -2,168 +2,191 @@ Return-Path: <SRS0=Db4S=ZG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0616C432C3
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:04:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBA3C432C3
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:34:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99CDA206CC
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2528C206CC
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:34:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ikXpotm3"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IHhR/l4r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726755AbfKNREx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Nov 2019 12:04:53 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45038 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726214AbfKNREx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Nov 2019 12:04:53 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q26so4628109pfn.11
-        for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2019 09:04:52 -0800 (PST)
+        id S1726766AbfKNRes (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Nov 2019 12:34:48 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:40875 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726674AbfKNRer (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Nov 2019 12:34:47 -0500
+Received: by mail-pg1-f195.google.com with SMTP id 15so4203842pgt.7
+        for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2019 09:34:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=7XNWyfRdpr24EDRK/YG4453Ghr8ygX346m8X217SNQk=;
-        b=ikXpotm3ypGRzwDkA+uphqKs6Dhwb2Qw18UsqiRmq5sPAqVh5d81UujkZgsBcLbYUs
-         orLk0ElMmQFW/QZL09vIzyTKMmHONg1T0QWhix83z2rnzzjahD+5pHvanSmFGJ+I1kdu
-         QlH5lcyADhMoPjdHiZHucRDMNKQSgpv5cLQ5g=
+        bh=13YyYJplXDTAtMUUmDzUuXFByJXSlwAOaXK8MijQBjA=;
+        b=IHhR/l4rvRJ0l/zyGknGjc+hj7WtgujeTGkVuOR8ZYP2h+9Eq8NAThS6eQcYtaCFmv
+         oqHRrBCkabBVnxzi78L824pjAw2Zsv+IU+1Rx6mPaVaxr5LG0uB3ysBwfwQuVzlcplaX
+         Xc5beo8VaCPOV1bRsAT0OODgBzq1GVga963JU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=7XNWyfRdpr24EDRK/YG4453Ghr8ygX346m8X217SNQk=;
-        b=Z1RRC6Ro3Tfs5IKWAIveKh4timzgwUfoNFwOpy3D1T4tZgMSF7ioX3TyHFBmRUULo+
-         aUbFtz5qK5xVoB5T7ZvvA+yPUwVGjCrwI8TIS+ZDHcAF+Bx09oEqCkY/tw4SwF82xYg/
-         tVF1WHCr657n2q7V8vy63uf9S494yaAkBIqO7ohirSYEkHC2muGMWX9wdU25hvl8nZJZ
-         z0W/IJHqZCSZIQ36y6TZ5vgGM8/iYW/o9suSjuyq7Gf8sYZbAoCX++s+UCW5BgxiOBkV
-         2Mlr/zMvwl4Yqq47vqMAWK1qchhtxHOS8D4nlp6COZ8qXq9VoOSbYuzcSKFc6QqueIYQ
-         hLfQ==
-X-Gm-Message-State: APjAAAWLbJbjIRAisLwerunmDMIBJOuUBdWNdIo/CNY+HmXSqyGHaHY0
-        5SyH/B2VcBZNf6E5pgZj89WYVA==
-X-Google-Smtp-Source: APXvYqxD2nMjn0cIqRXmT160OiBVgzqRoINItXt56fZxYK5ysqshErWGVdbKL+cNJ7zKy9hD6znPkg==
-X-Received: by 2002:a17:90a:4d8f:: with SMTP id m15mr3627528pjh.71.1573751092047;
-        Thu, 14 Nov 2019 09:04:52 -0800 (PST)
+        bh=13YyYJplXDTAtMUUmDzUuXFByJXSlwAOaXK8MijQBjA=;
+        b=cksNYuOWzU+9T8qa3M69HEESyTFqelHvQBUqbDm2v/ag9awV/urec8k3J2W7QhjRit
+         GeY5s4bmRB1HfQdUIyb7hEaqSpCSYrkf+ccfWULPdStQxcPMDFx7gsHijuqgu3zwowc4
+         0o7KI3G4gFeIGElyt4sbyaIEtwDyTcP7S7sNhbf89jymwBjzCOxeJf6TtC+sQKb9eeBu
+         6REtBQml8KEqW0xsqUyHDGg1fQ++tO94NfyCO55zEwAGj0uo3Ck9nrJ/739jUQn8aAov
+         iE73dlAWqOrs4E7aFZlwsXIApj+hZZFUowCBSPFX2/eCZNaHZyTmUp1MKunl170yv2qj
+         1jvg==
+X-Gm-Message-State: APjAAAUd/3BHeKOOCpM41H3nhgYZEIwGE2+LGRp6qPnauNjKTBcOsaAw
+        qaWy1xT9ZoefbLvL9LynLv0bow==
+X-Google-Smtp-Source: APXvYqyfkE4JxZAkCvYnlFt7nUUsEc9loLQqh9js6N5l8TKtBmrUj5YvYfL0kFOvLKUbKPwrNoqr5Q==
+X-Received: by 2002:a63:20f:: with SMTP id 15mr8862443pgc.3.1573752885246;
+        Thu, 14 Nov 2019 09:34:45 -0800 (PST)
 Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id a6sm8558346pja.30.2019.11.14.09.04.50
+        by smtp.gmail.com with ESMTPSA id c1sm7275308pjc.23.2019.11.14.09.34.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 09:04:51 -0800 (PST)
-Date:   Thu, 14 Nov 2019 09:04:49 -0800
+        Thu, 14 Nov 2019 09:34:44 -0800 (PST)
+Date:   Thu, 14 Nov 2019 09:34:42 -0800
 From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Rob Clark <robdclark@gmail.com>
-Cc:     Rob Clark <robdclark@chromium.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette =?utf-8?B?wqA=?= <mturquette@baylibre.com>,
         David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Jordan Crouse <jcrouse@codeaurora.org>,
-        Jeykumar Sankaran <jsanka@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
 Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
  driver for SC7180
-Message-ID: <20191114170449.GG27773@google.com>
-References: <fa17b97d-bfc4-4e9c-78b5-c225e5b38946@codeaurora.org>
- <20191031174149.GD27773@google.com>
- <20191107210606.E536F21D79@mail.kernel.org>
- <CAJs_Fx60uEdGFjJXAjvVy5LLBXXmergRi8diWxhgGqde1wiXXQ@mail.gmail.com>
- <20191108063543.0262921882@mail.kernel.org>
- <CAJs_Fx5trp2B7uOMTFZNUsYoKrO1-MWsNECKp-hz+1qCOCeU8A@mail.gmail.com>
- <20191108184207.334DD21848@mail.kernel.org>
- <CAJs_Fx6KCirGMtQxE=xA-A=bd5LeuYWviee0+KqO5OtGT9GKEw@mail.gmail.com>
- <20191114010210.GF27773@google.com>
- <CAF6AEGv9+Ow=RCXGKmaANfmA2NtR32E07CKwGFKJbeeOJRP9=Q@mail.gmail.com>
+Message-ID: <20191114173442.GH27773@google.com>
+References: <20191014102308.27441-1-tdas@codeaurora.org>
+ <20191014102308.27441-6-tdas@codeaurora.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAF6AEGv9+Ow=RCXGKmaANfmA2NtR32E07CKwGFKJbeeOJRP9=Q@mail.gmail.com>
+In-Reply-To: <20191014102308.27441-6-tdas@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Nov 13, 2019 at 09:30:57PM -0800, Rob Clark wrote:
-> On Wed, Nov 13, 2019 at 5:03 PM Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > On Fri, Nov 08, 2019 at 11:40:53AM -0800, Rob Clark wrote:
-> > > On Fri, Nov 8, 2019 at 10:42 AM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > >
-> > > > Quoting Rob Clark (2019-11-08 08:54:23)
-> > > > > On Thu, Nov 7, 2019 at 10:35 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > > >
-> > > > > > Quoting Rob Clark (2019-11-07 18:06:19)
-> > > > > > > On Thu, Nov 7, 2019 at 1:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > NULL is a valid clk pointer returned by clk_get(). What is the display
-> > > > > > > > driver doing that makes it consider NULL an error?
-> > > > > > > >
-> > > > > > >
-> > > > > > > do we not have an iface clk?  I think the driver assumes we should
-> > > > > > > have one, rather than it being an optional thing.. we could ofc change
-> > > > > > > that
-> > > > > >
-> > > > > > I think some sort of AHB clk is always enabled so the plan is to just
-> > > > > > hand back NULL to the caller when they call clk_get() on it and nobody
-> > > > > > should be the wiser when calling clk APIs with a NULL iface clk. The
-> > > > > > common clk APIs typically just return 0 and move along. Of course, we'll
-> > > > > > also turn the clk on in the clk driver so that hardware can function
-> > > > > > properly, but we don't need to expose it as a clk object and all that
-> > > > > > stuff if we're literally just slamming a bit somewhere and never looking
-> > > > > > back.
-> > > > > >
-> > > > > > But it sounds like we can't return NULL for this clk for some reason? I
-> > > > > > haven't tried to track it down yet but I think Matthias has found it
-> > > > > > causes some sort of problem in the display driver.
-> > > > > >
-> > > > >
-> > > > > ok, I guess we can change the dpu code to allow NULL..  but what would
-> > > > > the return be, for example on a different SoC where we do have an
-> > > > > iface clk, but the clk driver isn't enabled?  Would that also return
-> > > > > NULL?  I guess it would be nice to differentiate between those cases..
-> > > > >
-> > > >
-> > > > So the scenario is DT describes the clk
-> > > >
-> > > >  dpu_node {
-> > > >      clocks = <&cc AHB_CLK>;
-> > > >      clock-names = "iface";
-> > > >  }
-> > > >
-> > > > but the &cc node has a driver that doesn't probe?
-> > > >
-> > > > I believe in this scenario we return -EPROBE_DEFER because we assume we
-> > > > should wait for the clk driver to probe and provide the iface clk. See
-> > > > of_clk_get_hw_from_clkspec() and how it looks through a list of clk
-> > > > providers and tries to match the &cc phandle to some provider.
-> > > >
-> > > > Once the driver probes, the match will happen and we'll be able to look
-> > > > up the clk in the provider with __of_clk_get_hw_from_provider(). If
-> > > > the clk provider decides that there isn't a clk object, it will return
-> > > > NULL and then eventually clk_hw_create_clk() will turn the NULL return
-> > > > value into a NULL pointer to return from clk_get().
-> > > >
-> > >
-> > > ok, that was the scenario I was worried about (since unclk'd register
-> > > access tends to be insta-reboot and hard to debug)..  so I think it
-> > > should be ok to make dpu just ignore NULL clks.
-> > >
-> > > From a quick look, I think something like the attached (untested).
-> >
-> > The driver appears to be happy with it, at least at probe() time.
+On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
+> Add support for the global clock controller found on SC7180
+> based devices. This should allow most non-multimedia device
+> drivers to probe and control their clocks.
 > 
-> Ok, I suppose I should re-send the dpu patch to the appropriate
-> lists.. does that count as a Tested-by?
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/Kconfig      |    9 +
+>  drivers/clk/qcom/Makefile     |    1 +
+>  drivers/clk/qcom/gcc-sc7180.c | 2450 +++++++++++++++++++++++++++++++++
+>  3 files changed, 2460 insertions(+)
+>  create mode 100644 drivers/clk/qcom/gcc-sc7180.c
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 32dbb4f09492..91706d88eeeb 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -227,6 +227,15 @@ config QCS_GCC_404
+>  	  Say Y if you want to use multimedia devices or peripheral
+>  	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
+> 
+> +config SC_GCC_7180
+> +	tristate "SC7180 Global Clock Controller"
+> +	select QCOM_GDSC
+> +	depends on COMMON_CLK_QCOM
+> +	help
+> +	  Support for the global clock controller on SC7180 devices.
+> +	  Say Y if you want to use peripheral devices such as UART, SPI,
+> +	  I2C, USB, UFS, SDCC, etc.
+> +
+>  config SDM_CAMCC_845
+>  	tristate "SDM845 Camera Clock Controller"
+>  	select SDM_GCC_845
+> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
+> index 4a813b4055d0..6fb356a0bbf5 100644
+> --- a/drivers/clk/qcom/Makefile
+> +++ b/drivers/clk/qcom/Makefile
+> @@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
+>  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
+>  obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
+>  obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
+> +obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
+>  obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
+>  obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
+>  obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
+> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
+> new file mode 100644
+> index 000000000000..38424e63bcae
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-sc7180.c
+> ...
+> +static int __init gcc_sc7180_init(void)
+> +{
+> +	return platform_driver_register(&gcc_sc7180_driver);
+> +}
+> +core_initcall(gcc_sc7180_init);
 
-Ack
+This was a subsys_initcall in v3. In combination with the MSS clock driver
+for SC7180 (not posted yet) the change 'causes' an abort:
+
+[    4.892250] DBG: clk_is_enabled_regmap: mss_axi_nav_clk
+
+[    4.586124] Internal error: synchronous external abort: 96000010 [#1] PREEMPT SMP
+[    4.593817] Modules linked in:
+[    4.596976] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G S      W         5.4.0-rc6 #27
+[    4.604843] Hardware name: Qualcomm Technologies, Inc. SC7180 IDP (DT)
+[    4.611550] pstate: 20c00089 (nzCv daIf +PAN +UAO)
+[    4.616484] pc : regmap_mmio_read32le+0x20/0x40
+[    4.621140] lr : regmap_mmio_read+0x44/0x6c
+[    4.625443] sp : ffffffc01005bb10
+[    4.628863] x29: ffffffc01005bb20 x28: 0000000000000000
+[    4.634331] x27: 0000000000000000 x26: 0000000000000000
+[    4.639787] x25: 0000000000000000 x24: ffffffd9a8ae1018
+[    4.645244] x23: ffffffd9a8e12148 x22: ffffff8177292800
+[    4.650712] x21: 00000000000000bc x20: ffffff8177342d80
+[    4.656168] x19: 00000000000000bc x18: 0000000059d6eecd
+[    4.661635] x17: 00000000765f46d1 x16: 00000000bbaf844b
+[    4.667103] x15: 0000000098366c8e x14: 4000000000000000
+[    4.672559] x13: ffffff8174b43b30 x12: 0000000000000000
+[    4.678015] x11: 0000000000000000 x10: 0000000000000000
+[    4.683482] x9 : 0000000000000001 x8 : ffffffc0100250bc
+[    4.688949] x7 : 0000000000000008 x6 : 0000000000000000
+[    4.694416] x5 : 0000000000000000 x4 : 0000000000000000
+[    4.699873] x3 : 0000000000000000 x2 : ffffffc01005bc04
+[    4.705340] x1 : 00000000000000bc x0 : ffffff8177342d80
+[    4.710807] Call trace:
+[    4.713330]  regmap_mmio_read32le+0x20/0x40
+[    4.717634]  regmap_mmio_read+0x44/0x6c
+[    4.721591]  _regmap_bus_reg_read+0x34/0x44
+[    4.725895]  _regmap_read+0x88/0x16c
+[    4.729580]  regmap_read+0x54/0x78
+[    4.733088]  clk_is_enabled_regmap+0x34/0x84
+[    4.737478]  clk_core_is_enabled+0x68/0xac
+[    4.741699]  clk_disable_unused_subtree+0x90/0x23c
+[    4.746621]  clk_disable_unused+0x44/0x108
+[    4.750844]  do_one_initcall+0x120/0x2bc
+[    4.754886]  do_initcall_level+0x14c/0x174
+[    4.759105]  do_basic_setup+0x30/0x48
+[    4.762876]  kernel_init_freeable+0xc4/0x144
+[    4.767266]  kernel_init+0x14/0x100
+[    4.770855]  ret_from_fork+0x10/0x18
+[    4.774546] Code: aa0003f4 d503201f f9400288 8b334108 (b9400100)
+[    4.780813] ---[ end trace e75cb36fe5e38dd3 ]---
+[    4.791327] Kernel panic - not syncing: Fatal exception
+[    4.796710] SMP: stopping secondary CPUs
+[    4.801330] Kernel Offset: 0x1997c00000 from 0xffffffc010000000
+[    4.807414] PHYS_OFFSET: 0xfffffff180000000
+[    4.811718] CPU features: 0x0006,2a80aa18
+[    4.815841] Memory Limit: none
+[    4.824753] ---[ end Kernel panic - not syncing: Fatal exception ]---
+
+I understand that we don't care too much about the MSS clock driver at this
+point since it is out of tree, just wanted to mention it, maybe it helps saving
+a bit of time debugging later on.
