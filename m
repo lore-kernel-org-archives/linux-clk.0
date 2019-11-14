@@ -2,167 +2,226 @@ Return-Path: <SRS0=Db4S=ZG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C88F0C432C3
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 03:38:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C189C432C3
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 04:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAFD0206EF
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 03:38:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BD28206F4
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 04:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cfPILI8w"
+	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="X7vgQihN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727089AbfKNDic (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 22:38:32 -0500
-Received: from mail-eopbgr20088.outbound.protection.outlook.com ([40.107.2.88]:35749
-        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726393AbfKNDib (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 13 Nov 2019 22:38:31 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=nzyV/bBUlt3nHHqFJH2evpQZpTBORRLvSf275keXtMvEP8uA0MGG5dXXJ2SyI/lt27PGhaGwFd7XcxC4AouGl8Sfblpqah2eNi+oPfHKz/WicU2FZ7miSECszqihqF5DcEmB1h1JYpGJ2qfTCVSUx1+Rs2nmKnN33OLxBGXWlNunygTDMdJ7aZbU7C2lXoCO+NSbKBBV9C1cmGBiNCd2+skr2xRQIWW70AMCrQxWG/4MmmVF42366BGhjA9x/DRchJONfCJtez6LFJ/z+XAHt0Pzlacy7aTSJr4sNotvgWqFMEXoOWL2/aPpeV3zVQJ1v6Dl14mPsA5vFRQ5h6Vn/g==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=byRtdbqMPgct8GxQZExa0Mdbbx5IfxCCr8i2HW0+U0Q=;
- b=n4Wor90lciGUKogp4zkxwA7UUpQ0psHNjxmMVKaD2mWaHsjwSL+XSi54UGWXX/5/yKKaH9fanNTXL1irIpVEi2Xd7k8jJyyyEsINeOcrz7NqoUAZY4BGJS1aplobZPb2VRA9q065bMV7NE4NLzzWjd7bURKKnjN4NLNgCAKX08RXbOJb8qgegxQjc+fCZ3yoqCIjrD2k9DlKCCpc9tfToBXOEegyXyo6lPeJZgbI/S4M6ewZN9TdiNdM5vYqj4M3R6D3mzaDFdv6812pfozesiwAXFeOmt+nSTSl20hABF9Zwo1jnHvOBumbf6h9sFekO61JxVE15N6HCRD3y2VErA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=byRtdbqMPgct8GxQZExa0Mdbbx5IfxCCr8i2HW0+U0Q=;
- b=cfPILI8w7MC8qM1vX0b3fbDG7kXiW/+urQI1TdIetx5IbAHt2l48aYFn7wnbvnUYbAd3Wfy3KHVgZEiv9AHnGdiQs5ZIgzTnrcWb1vlZgAtfQAYmkB/KrLtdDTEyrYcmol4IO8OkHjDU8pqMRpj3DqkAU7PBgFwUugaddaHCcvY=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB4994.eurprd04.prod.outlook.com (20.176.215.215) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.26; Thu, 14 Nov 2019 03:38:28 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.024; Thu, 14 Nov 2019
- 03:38:28 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Alice Guo <alice.guo@nxp.com>,
-        "will@kernel.org" <will@kernel.org>, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH V2 4/4] clk: imx: composite-8m: use relaxed io api
-Thread-Topic: [PATCH V2 4/4] clk: imx: composite-8m: use relaxed io api
-Thread-Index: AQHVmpz6hEyooanfW0qGgPGksZc+HA==
-Date:   Thu, 14 Nov 2019 03:38:28 +0000
-Message-ID: <1573702559-2744-5-git-send-email-peng.fan@nxp.com>
-References: <1573702559-2744-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1573702559-2744-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK0PR01CA0033.apcprd01.prod.exchangelabs.com
- (2603:1096:203:3e::21) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.66]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: da549bda-804d-468b-620c-08d768b41cc1
-x-ms-traffictypediagnostic: AM0PR04MB4994:|AM0PR04MB4994:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB4994577BA82E7FDAB36E523788710@AM0PR04MB4994.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:3276;
-x-forefront-prvs: 02213C82F8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(346002)(376002)(39860400002)(136003)(199004)(189003)(66066001)(305945005)(14454004)(36756003)(71200400001)(71190400001)(7736002)(2501003)(99286004)(4326008)(486006)(81156014)(81166006)(25786009)(86362001)(44832011)(2616005)(476003)(50226002)(446003)(11346002)(8676002)(8936002)(52116002)(76176011)(186003)(478600001)(6506007)(386003)(6486002)(6512007)(6436002)(2201001)(102836004)(26005)(316002)(5660300002)(54906003)(110136005)(256004)(14444005)(3846002)(6116002)(66556008)(6636002)(66446008)(66946007)(64756008)(66476007)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4994;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 2lPMtvP9KTUnySnwLQ76TxhyIiYsrpxK4r//pmQB6Mx1G11Mx/QJQue9ZJIsS0UMCSzEvZZbsM2IwBWeAOsaFHcCjJMwWFOdeBbNy9HC3ifaYghiHlHK0DytnGft/X7fNjRFBUi+FeQ6d2xpfqd0tO24NnDDJGMRGT7hUpSYnyHKoxRQSQQih/FDTkgj3/urn2kvYRkg/Xl7nY15KwCYrYTii6R3WTx9JgiedqKhiYjznFZ163WwPVKSDfl5s12hOjWBwAumGYFMWrCRsyxpeepD7jfYr3YEg2pGBqUXJXYBLt2AqbKMakG76qCqC08R3acmKVSzEpQWj1L7Km8nk5o+KRMRErYC22dRUVdqT7Y82QeS+XBvfZOJLTBD9SBbFY1dpCYRe74lazAiH33iYi4XAkzpOCVzc1STqYGFfPzDucCwT5W9340PwMF1mx+x
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1726952AbfKNE7Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 13 Nov 2019 23:59:16 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:34491 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726812AbfKNE7Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Nov 2019 23:59:16 -0500
+Received: by mail-wm1-f67.google.com with SMTP id j18so6495511wmk.1
+        for <linux-clk@vger.kernel.org>; Wed, 13 Nov 2019 20:59:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
+        h=message-id:date:mime-version:content-transfer-encoding:subject:to
+         :from:cc;
+        bh=egiNHn53AxF6dtodPHEQPaH0Kx6MPPdA1nRSwplfmdU=;
+        b=X7vgQihNK7OSrrcHcaz9+b2+bK7wqeYB9vc0qPG2/bx9hdq4oaTaZ8S0BNafadfgxj
+         LMqbCga0loCpVfJB/QE5XCJQdoaC7Mb9y0cfw6lu+sD+91Dm7ZvUwnAnHqUHgmsQkp68
+         Cr00+t95D+Tfc9iQgpuJOQBBJ0yEwu3d+KB4GefamYCNBzOca2poqjFfk6IHtpvKr9pk
+         33CndrErlGHFjZOJYYk6x7e86siMNXHL8UzSEwji+kXCPXhRuiHRYs7MEqH3KdfpUq14
+         fZdmYa0/Jut8XF9BNjV7XOyW6j2RyLkkYvSWLh55pRXO5zBun9HKQgkkCkNUbku8OzUh
+         sL3w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:date:mime-version
+         :content-transfer-encoding:subject:to:from:cc;
+        bh=egiNHn53AxF6dtodPHEQPaH0Kx6MPPdA1nRSwplfmdU=;
+        b=apsHYArREopSXsbI5Yl5eJ2EDVLIOs9aC++AHfeIGK0/5+O0NGaOGZymfbw3ZoSyXD
+         KR5Xd+Z+33EpTH8U0Bq47pMOh824v68r1TRmc53SheKJd2ljeI4gREV/95cfBQRtS1Oy
+         BzgDjF46JflQlludhtp05jkFTR/pbMA6SYpQCQ22zayeLUcTwS+0kp+gYABr5gIVBu/h
+         T9JRPt7IlPorX82GqqHjKie6J9W/980Q4Qv2mlv/FUpaQt0nOucsj/ttgywdL+jcXTXM
+         OmLbWD7h3cFI9gTm9D0D8LWBlBQalOdlB7KxqP6aPw/Rdu0WgOaf6brB1PC/A5xGbm+i
+         UTJw==
+X-Gm-Message-State: APjAAAWhbV9WOkob9QmoQ7hZkskL+jp7wvXkyuf0/fwgD4J29n4jjZnT
+        UPJGhauLdwUWFYLlwgVFW/53Vw==
+X-Google-Smtp-Source: APXvYqwDd17kaAOiy5f8H9/6NTgbBYv3WS9x9qLa6e/LvfH38s2SwUw/DMzODEO6qsytv3+v4p0fjA==
+X-Received: by 2002:a7b:c445:: with SMTP id l5mr5682751wmi.140.1573707553634;
+        Wed, 13 Nov 2019 20:59:13 -0800 (PST)
+Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
+        by smtp.gmail.com with ESMTPSA id r2sm5620386wrp.64.2019.11.13.20.59.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 13 Nov 2019 20:59:12 -0800 (PST)
+Message-ID: <5dccdf20.1c69fb81.418aa.a71c@mx.google.com>
+Date:   Wed, 13 Nov 2019 20:59:12 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da549bda-804d-468b-620c-08d768b41cc1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2019 03:38:28.3601
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UmiA5ztVMKze12N/dUmnQA4a7HHfUsNqbDuYfrBqZPvuJUOPBBkfgsOvtzQVe6zb5WA7pkh3i3l/8+LhXSym9Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4994
+Content-Transfer-Encoding: quoted-printable
+X-Kernelci-Branch: clk-next
+X-Kernelci-Lab-Name: lab-collabora
+X-Kernelci-Tree: clk
+X-Kernelci-Report-Type: bisect
+X-Kernelci-Kernel: v5.4-rc1-201-ga228ae437aa5
+Subject: clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on
+ tegra124-nyan-big
+To:     tomeu.vizoso@collabora.com, Stephen Boyd <sboyd@kernel.org>,
+        guillaume.tucker@collabora.com, mgalka@collabora.com,
+        Thierry Reding <treding@nvidia.com>, broonie@kernel.org,
+        matthew.hart@linaro.org, khilman@baylibre.com,
+        enric.balletbo@collabora.com
+From:   "kernelci.org bot" <bot@kernelci.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-kernel@vger.kernel.org,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        linux-tegra@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+* This automated bisection report was sent to you on the basis  *
+* that you may be involved with the breaking commit it has      *
+* found.  No manual investigation has been done to verify it,   *
+* and the root cause of the problem may be somewhere else.      *
+*                                                               *
+* If you do send a fix, please include this trailer:            *
+*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
+*                                                               *
+* Hope this helps!                                              *
+* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
-writel/readl has a barrier, however that barrier is not needed,
-because device memory mapping is nGnRE mapping and access is
-in order and clk driver has spin lock or other lock to make
-sure write finished. It is ok to use relaxed api here, no need
-to use stronger readl/writel
+clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on tegra124-nyan-big
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-composite-8m.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Summary:
+  Start:      a228ae437aa5 Merge branch 'clk-unused' into clk-next
+  Details:    https://kernelci.org/boot/id/5dcc99e959b514100f138e14
+  Plain log:  https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228=
+ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.txt
+  HTML log:   https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228=
+ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.html
+  Result:     25175c806a68 clk: tegra: Reimplement SOR clock on Tegra124
 
-diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-compo=
-site-8m.c
-index 20f7c91c03d2..513dc57483d0 100644
---- a/drivers/clk/imx/clk-composite-8m.c
-+++ b/drivers/clk/imx/clk-composite-8m.c
-@@ -31,14 +31,14 @@ static unsigned long imx8m_clk_composite_divider_recalc=
-_rate(struct clk_hw *hw,
- 	unsigned int prediv_value;
- 	unsigned int div_value;
-=20
--	prediv_value =3D readl(divider->reg) >> divider->shift;
-+	prediv_value =3D readl_relaxed(divider->reg) >> divider->shift;
- 	prediv_value &=3D clk_div_mask(divider->width);
-=20
- 	prediv_rate =3D divider_recalc_rate(hw, parent_rate, prediv_value,
- 						NULL, divider->flags,
- 						divider->width);
-=20
--	div_value =3D readl(divider->reg) >> PCG_DIV_SHIFT;
-+	div_value =3D readl_relaxed(divider->reg) >> PCG_DIV_SHIFT;
- 	div_value &=3D clk_div_mask(PCG_DIV_WIDTH);
-=20
- 	return divider_recalc_rate(hw, prediv_rate, div_value, NULL,
-@@ -104,13 +104,13 @@ static int imx8m_clk_composite_divider_set_rate(struc=
-t clk_hw *hw,
-=20
- 	spin_lock_irqsave(divider->lock, flags);
-=20
--	val =3D readl(divider->reg);
-+	val =3D readl_relaxed(divider->reg);
- 	val &=3D ~((clk_div_mask(divider->width) << divider->shift) |
- 			(clk_div_mask(PCG_DIV_WIDTH) << PCG_DIV_SHIFT));
-=20
- 	val |=3D (u32)(prediv_value  - 1) << divider->shift;
- 	val |=3D (u32)(div_value - 1) << PCG_DIV_SHIFT;
--	writel(val, divider->reg);
-+	writel_relaxed(val, divider->reg);
-=20
- 	spin_unlock_irqrestore(divider->lock, flags);
-=20
---=20
-2.16.4
+Checks:
+  revert:     PASS
+  verify:     PASS
 
+Parameters:
+  Tree:       clk
+  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
+  Branch:     clk-next
+  Target:     tegra124-nyan-big
+  CPU arch:   arm
+  Lab:        lab-collabora
+  Compiler:   gcc-8
+  Config:     tegra_defconfig
+  Test suite: boot
+
+Breaking commit found:
+
+---------------------------------------------------------------------------=
+----
+commit 25175c806a6841149abe46168e0af12593141612
+Author: Thierry Reding <treding@nvidia.com>
+Date:   Thu Jul 25 18:19:00 2019 +0200
+
+    clk: tegra: Reimplement SOR clock on Tegra124
+    =
+
+    In order to allow the display driver to deal uniformly with all SOR
+    generations, implement the SOR clocks in a way that is compatible with
+    Tegra186 and later.
+    =
+
+    Acked-by: Stephen Boyd <sboyd@kernel.org>
+    Signed-off-by: Thierry Reding <treding@nvidia.com>
+
+diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra=
+124.c
+index 7d231529c3a5..b3110d5b5a6c 100644
+--- a/drivers/clk/tegra/clk-tegra124.c
++++ b/drivers/clk/tegra/clk-tegra124.c
+@@ -1005,20 +1005,24 @@ static struct tegra_devclk devclks[] __initdata =3D=
+ {
+ 	{ .con_id =3D "hda2hdmi", .dt_id =3D TEGRA124_CLK_HDA2HDMI },
+ };
+ =
+
+-static const char *mux_pllp_pllm_plld_plla_pllc_plld2_clkm[] =3D {
+-	"pll_p", "pll_m", "pll_d_out0", "pll_a_out0", "pll_c",
+-	"pll_d2_out0", "clk_m"
++static const char * const sor0_parents[] =3D {
++	"pll_p_out0", "pll_m_out0", "pll_d_out0", "pll_a_out0", "pll_c_out0",
++	"pll_d2_out0", "clk_m",
+ };
+-#define mux_pllp_pllm_plld_plla_pllc_plld2_clkm_idx NULL
+ =
+
+-static const char *mux_clkm_plldp_sor0out[] =3D {
+-	"clk_m", "pll_dp", "sor0_out",
++static const char * const sor0_out_parents[] =3D {
++	"clk_m", "sor0_pad_clkout",
+ };
+-#define mux_clkm_plldp_sor0out_idx NULL
+ =
+
+ static struct tegra_periph_init_data tegra124_periph[] =3D {
+-	MUX8_NOGATE_LOCK("sor0_out", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK=
+_SOURCE_SOR0, tegra_clk_sor0_out, &sor0_lock),
+-	NODIV("sor0", mux_clkm_plldp_sor0out, CLK_SOURCE_SOR0, 14, 3, 182, 0, teg=
+ra_clk_sor0, &sor0_lock),
++	TEGRA_INIT_DATA_TABLE("sor0", NULL, NULL, sor0_parents,
++			      CLK_SOURCE_SOR0, 29, 0x7, 0, 0, 0, 0,
++			      0, 182, 0, tegra_clk_sor0, NULL, 0,
++			      &sor0_lock),
++	TEGRA_INIT_DATA_TABLE("sor0_out", NULL, NULL, sor0_out_parents,
++			      CLK_SOURCE_SOR0, 14, 0x1, 0, 0, 0, 0,
++			      0, 0, TEGRA_PERIPH_NO_GATE, tegra_clk_sor0_out,
++			      NULL, 0, &sor0_lock),
+ };
+ =
+
+ static struct clk **clks;
+---------------------------------------------------------------------------=
+----
+
+
+Git bisection log:
+
+---------------------------------------------------------------------------=
+----
+git bisect start
+# good: [dafbb1e6473788cb3068eaeddc58f9d88e9c7a62] Merge branch 'clk-ti' in=
+to clk-next
+git bisect good dafbb1e6473788cb3068eaeddc58f9d88e9c7a62
+# bad: [a228ae437aa553736058cbbd58d2d0e191635cdc] Merge branch 'clk-unused'=
+ into clk-next
+git bisect bad a228ae437aa553736058cbbd58d2d0e191635cdc
+# bad: [3214be6cb1e487b0f8c3bb2eac9b06df07a07e06] clk: tegra: Share clk and=
+ rst register defines with Tegra clock driver
+git bisect bad 3214be6cb1e487b0f8c3bb2eac9b06df07a07e06
+# bad: [05308d7e7bbc932025f1dafc401c73ce83c6f414] clk: tegra: Reimplement S=
+OR clocks on Tegra210
+git bisect bad 05308d7e7bbc932025f1dafc401c73ce83c6f414
+# good: [d1ee3173a139ed2eb8d87e06216f0426b16084d8] Merge branch 'for-5.5/dt=
+-bindings' into for-5.5/clk
+git bisect good d1ee3173a139ed2eb8d87e06216f0426b16084d8
+# good: [e5f8a107d92db30a7ad7d8d95aee59f5ad76206a] clk: tegra: Move SOR0 im=
+plementation to Tegra124
+git bisect good e5f8a107d92db30a7ad7d8d95aee59f5ad76206a
+# bad: [25175c806a6841149abe46168e0af12593141612] clk: tegra: Reimplement S=
+OR clock on Tegra124
+git bisect bad 25175c806a6841149abe46168e0af12593141612
+# good: [da8d1a3555406275650b366460c6235f1696bf8b] clk: tegra: Rename sor0_=
+lvds to sor0_out
+git bisect good da8d1a3555406275650b366460c6235f1696bf8b
+# first bad commit: [25175c806a6841149abe46168e0af12593141612] clk: tegra: =
+Reimplement SOR clock on Tegra124
+---------------------------------------------------------------------------=
+----
