@@ -2,191 +2,87 @@ Return-Path: <SRS0=Db4S=ZG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FBA3C432C3
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:34:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EB9C432C3
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:58:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2528C206CC
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:34:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IHhR/l4r"
+	by mail.kernel.org (Postfix) with ESMTP id 8447A2071F
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:58:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573754339;
+	bh=GtM6KzIGhwuEJ7F6vLqU5s+WENa88lfMaHX+X8kkzGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=r2jLFSpRjlozspjnUgP6IMFyMIWJRX/HmfGyfD3MFdNe1k4wmkRQ+yOHuKeaODFbs
+	 yPfjG5wF41xYpwGJSO4PSRYLY8JmUHlWZDN+McajpncIi3ODAz0Uhnngver2QOg3zU
+	 RJ43trKKvfl1umZCAOtZYe5dT5t0S4sR6YxD4MNM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfKNRes (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Nov 2019 12:34:48 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:40875 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726674AbfKNRer (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Nov 2019 12:34:47 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 15so4203842pgt.7
-        for <linux-clk@vger.kernel.org>; Thu, 14 Nov 2019 09:34:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=13YyYJplXDTAtMUUmDzUuXFByJXSlwAOaXK8MijQBjA=;
-        b=IHhR/l4rvRJ0l/zyGknGjc+hj7WtgujeTGkVuOR8ZYP2h+9Eq8NAThS6eQcYtaCFmv
-         oqHRrBCkabBVnxzi78L824pjAw2Zsv+IU+1Rx6mPaVaxr5LG0uB3ysBwfwQuVzlcplaX
-         Xc5beo8VaCPOV1bRsAT0OODgBzq1GVga963JU=
+        id S1726655AbfKNR6z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Nov 2019 12:58:55 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:36413 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726444AbfKNR6z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Nov 2019 12:58:55 -0500
+Received: by mail-ot1-f65.google.com with SMTP id f10so5645707oto.3;
+        Thu, 14 Nov 2019 09:58:53 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=13YyYJplXDTAtMUUmDzUuXFByJXSlwAOaXK8MijQBjA=;
-        b=cksNYuOWzU+9T8qa3M69HEESyTFqelHvQBUqbDm2v/ag9awV/urec8k3J2W7QhjRit
-         GeY5s4bmRB1HfQdUIyb7hEaqSpCSYrkf+ccfWULPdStQxcPMDFx7gsHijuqgu3zwowc4
-         0o7KI3G4gFeIGElyt4sbyaIEtwDyTcP7S7sNhbf89jymwBjzCOxeJf6TtC+sQKb9eeBu
-         6REtBQml8KEqW0xsqUyHDGg1fQ++tO94NfyCO55zEwAGj0uo3Ck9nrJ/739jUQn8aAov
-         iE73dlAWqOrs4E7aFZlwsXIApj+hZZFUowCBSPFX2/eCZNaHZyTmUp1MKunl170yv2qj
-         1jvg==
-X-Gm-Message-State: APjAAAUd/3BHeKOOCpM41H3nhgYZEIwGE2+LGRp6qPnauNjKTBcOsaAw
-        qaWy1xT9ZoefbLvL9LynLv0bow==
-X-Google-Smtp-Source: APXvYqyfkE4JxZAkCvYnlFt7nUUsEc9loLQqh9js6N5l8TKtBmrUj5YvYfL0kFOvLKUbKPwrNoqr5Q==
-X-Received: by 2002:a63:20f:: with SMTP id 15mr8862443pgc.3.1573752885246;
-        Thu, 14 Nov 2019 09:34:45 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id c1sm7275308pjc.23.2019.11.14.09.34.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 14 Nov 2019 09:34:44 -0800 (PST)
-Date:   Thu, 14 Nov 2019 09:34:42 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette =?utf-8?B?wqA=?= <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        bh=RfR6bpd+7RNBJaz7pO9oQTzcRrr4AZRdzRBMq8/RSDk=;
+        b=qSxEWNXYC5VU43b26rQ1mstkGbF148SIk2hy9l7opcjctrypDp/j0hiiNi3F34jC0a
+         SAH7bDD9MWQNDnjycaGyNmt78SG+ojwZIWBG77oJJ6vXrH9uI1+RYTH6xBP4IgM/JGFr
+         yt4WIv1wnYKGf4g+PMMPANrKHqbsmEVTVBqiwVpqFxR4MReXqMNrsPYpsG2/ZDShDS03
+         fE19Q2GuvDQjll1QD/vMCtGk4O3zmg45AQpHsgojFlskkxxqrrOKQMr54VXhDrLbdNo3
+         2WcIkk/qAXRbyeFI1nK1EEP3a01uhOdHG/MGQNM37VV/rJ3c3UH1tfesOC5f+qwiHaFN
+         OLGw==
+X-Gm-Message-State: APjAAAXxF0VW5ut8vSDdKSvfgJUTz3ws5p+nACR8/9td6d9MOLHpv+0v
+        96lSd4qL5XhSM32CzekP6g==
+X-Google-Smtp-Source: APXvYqxJpMpphl8ic0lq5+iIIiAn1l1PwDcZCMzifYBDwOG3S/JdkFma5EBVUFSSLbo5Dm1Wgp3QqQ==
+X-Received: by 2002:a05:6830:200c:: with SMTP id e12mr8862386otp.127.1573754332574;
+        Thu, 14 Nov 2019 09:58:52 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id o4sm2042587ota.57.2019.11.14.09.58.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 14 Nov 2019 09:58:52 -0800 (PST)
+Date:   Thu, 14 Nov 2019 11:58:51 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, linux-arm-msm@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
- driver for SC7180
-Message-ID: <20191114173442.GH27773@google.com>
-References: <20191014102308.27441-1-tdas@codeaurora.org>
- <20191014102308.27441-6-tdas@codeaurora.org>
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v9 1/4] dt-bindings: clock: Document external clocks for
+ MSM8998 gcc
+Message-ID: <20191114175851.GA11664@bogus>
+References: <1573591382-14225-1-git-send-email-jhugo@codeaurora.org>
+ <1573591466-14296-1-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191014102308.27441-6-tdas@codeaurora.org>
+In-Reply-To: <1573591466-14296-1-git-send-email-jhugo@codeaurora.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Oct 14, 2019 at 03:53:08PM +0530, Taniya Das wrote:
-> Add support for the global clock controller found on SC7180
-> based devices. This should allow most non-multimedia device
-> drivers to probe and control their clocks.
+On Tue, Nov 12, 2019 at 01:44:26PM -0700, Jeffrey Hugo wrote:
+> The global clock controller on MSM8998 can consume a number of external
+> clocks.  Document them.
 > 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> For 7180 and 8150, the hardware always exists, so no clocks are truly
+> optional.  Therefore, simplify the binding by removing the min/max
+> qualifiers to clocks.  Also, fixup an example so that dt_binding_check
+> passes.
+> 
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 > ---
->  drivers/clk/qcom/Kconfig      |    9 +
->  drivers/clk/qcom/Makefile     |    1 +
->  drivers/clk/qcom/gcc-sc7180.c | 2450 +++++++++++++++++++++++++++++++++
->  3 files changed, 2460 insertions(+)
->  create mode 100644 drivers/clk/qcom/gcc-sc7180.c
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index 32dbb4f09492..91706d88eeeb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -227,6 +227,15 @@ config QCS_GCC_404
->  	  Say Y if you want to use multimedia devices or peripheral
->  	  devices such as UART, SPI, I2C, USB, SD/eMMC, PCIe etc.
-> 
-> +config SC_GCC_7180
-> +	tristate "SC7180 Global Clock Controller"
-> +	select QCOM_GDSC
-> +	depends on COMMON_CLK_QCOM
-> +	help
-> +	  Support for the global clock controller on SC7180 devices.
-> +	  Say Y if you want to use peripheral devices such as UART, SPI,
-> +	  I2C, USB, UFS, SDCC, etc.
-> +
->  config SDM_CAMCC_845
->  	tristate "SDM845 Camera Clock Controller"
->  	select SDM_GCC_845
-> diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-> index 4a813b4055d0..6fb356a0bbf5 100644
-> --- a/drivers/clk/qcom/Makefile
-> +++ b/drivers/clk/qcom/Makefile
-> @@ -43,6 +43,7 @@ obj-$(CONFIG_QCOM_CLK_RPMH) += clk-rpmh.o
->  obj-$(CONFIG_QCOM_CLK_SMD_RPM) += clk-smd-rpm.o
->  obj-$(CONFIG_QCS_GCC_404) += gcc-qcs404.o
->  obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
-> +obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
->  obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
->  obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
->  obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-> diff --git a/drivers/clk/qcom/gcc-sc7180.c b/drivers/clk/qcom/gcc-sc7180.c
-> new file mode 100644
-> index 000000000000..38424e63bcae
-> --- /dev/null
-> +++ b/drivers/clk/qcom/gcc-sc7180.c
-> ...
-> +static int __init gcc_sc7180_init(void)
-> +{
-> +	return platform_driver_register(&gcc_sc7180_driver);
-> +}
-> +core_initcall(gcc_sc7180_init);
+>  .../devicetree/bindings/clock/qcom,gcc.yaml        | 47 +++++++++++++++-------
+>  1 file changed, 33 insertions(+), 14 deletions(-)
 
-This was a subsys_initcall in v3. In combination with the MSS clock driver
-for SC7180 (not posted yet) the change 'causes' an abort:
-
-[    4.892250] DBG: clk_is_enabled_regmap: mss_axi_nav_clk
-
-[    4.586124] Internal error: synchronous external abort: 96000010 [#1] PREEMPT SMP
-[    4.593817] Modules linked in:
-[    4.596976] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G S      W         5.4.0-rc6 #27
-[    4.604843] Hardware name: Qualcomm Technologies, Inc. SC7180 IDP (DT)
-[    4.611550] pstate: 20c00089 (nzCv daIf +PAN +UAO)
-[    4.616484] pc : regmap_mmio_read32le+0x20/0x40
-[    4.621140] lr : regmap_mmio_read+0x44/0x6c
-[    4.625443] sp : ffffffc01005bb10
-[    4.628863] x29: ffffffc01005bb20 x28: 0000000000000000
-[    4.634331] x27: 0000000000000000 x26: 0000000000000000
-[    4.639787] x25: 0000000000000000 x24: ffffffd9a8ae1018
-[    4.645244] x23: ffffffd9a8e12148 x22: ffffff8177292800
-[    4.650712] x21: 00000000000000bc x20: ffffff8177342d80
-[    4.656168] x19: 00000000000000bc x18: 0000000059d6eecd
-[    4.661635] x17: 00000000765f46d1 x16: 00000000bbaf844b
-[    4.667103] x15: 0000000098366c8e x14: 4000000000000000
-[    4.672559] x13: ffffff8174b43b30 x12: 0000000000000000
-[    4.678015] x11: 0000000000000000 x10: 0000000000000000
-[    4.683482] x9 : 0000000000000001 x8 : ffffffc0100250bc
-[    4.688949] x7 : 0000000000000008 x6 : 0000000000000000
-[    4.694416] x5 : 0000000000000000 x4 : 0000000000000000
-[    4.699873] x3 : 0000000000000000 x2 : ffffffc01005bc04
-[    4.705340] x1 : 00000000000000bc x0 : ffffff8177342d80
-[    4.710807] Call trace:
-[    4.713330]  regmap_mmio_read32le+0x20/0x40
-[    4.717634]  regmap_mmio_read+0x44/0x6c
-[    4.721591]  _regmap_bus_reg_read+0x34/0x44
-[    4.725895]  _regmap_read+0x88/0x16c
-[    4.729580]  regmap_read+0x54/0x78
-[    4.733088]  clk_is_enabled_regmap+0x34/0x84
-[    4.737478]  clk_core_is_enabled+0x68/0xac
-[    4.741699]  clk_disable_unused_subtree+0x90/0x23c
-[    4.746621]  clk_disable_unused+0x44/0x108
-[    4.750844]  do_one_initcall+0x120/0x2bc
-[    4.754886]  do_initcall_level+0x14c/0x174
-[    4.759105]  do_basic_setup+0x30/0x48
-[    4.762876]  kernel_init_freeable+0xc4/0x144
-[    4.767266]  kernel_init+0x14/0x100
-[    4.770855]  ret_from_fork+0x10/0x18
-[    4.774546] Code: aa0003f4 d503201f f9400288 8b334108 (b9400100)
-[    4.780813] ---[ end trace e75cb36fe5e38dd3 ]---
-[    4.791327] Kernel panic - not syncing: Fatal exception
-[    4.796710] SMP: stopping secondary CPUs
-[    4.801330] Kernel Offset: 0x1997c00000 from 0xffffffc010000000
-[    4.807414] PHYS_OFFSET: 0xfffffff180000000
-[    4.811718] CPU features: 0x0006,2a80aa18
-[    4.815841] Memory Limit: none
-[    4.824753] ---[ end Kernel panic - not syncing: Fatal exception ]---
-
-I understand that we don't care too much about the MSS clock driver at this
-point since it is out of tree, just wanted to mention it, maybe it helps saving
-a bit of time debugging later on.
+Reviewed-by: Rob Herring <robh@kernel.org>
