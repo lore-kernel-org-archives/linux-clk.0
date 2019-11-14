@@ -2,87 +2,179 @@ Return-Path: <SRS0=Db4S=ZG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3EB9C432C3
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B079C43141
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 18:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8447A2071F
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 17:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573754339;
-	bh=GtM6KzIGhwuEJ7F6vLqU5s+WENa88lfMaHX+X8kkzGA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=r2jLFSpRjlozspjnUgP6IMFyMIWJRX/HmfGyfD3MFdNe1k4wmkRQ+yOHuKeaODFbs
-	 yPfjG5wF41xYpwGJSO4PSRYLY8JmUHlWZDN+McajpncIi3ODAz0Uhnngver2QOg3zU
-	 RJ43trKKvfl1umZCAOtZYe5dT5t0S4sR6YxD4MNM=
+	by mail.kernel.org (Postfix) with ESMTP id 312E820709
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 18:33:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726655AbfKNR6z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 14 Nov 2019 12:58:55 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:36413 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726444AbfKNR6z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Nov 2019 12:58:55 -0500
-Received: by mail-ot1-f65.google.com with SMTP id f10so5645707oto.3;
-        Thu, 14 Nov 2019 09:58:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RfR6bpd+7RNBJaz7pO9oQTzcRrr4AZRdzRBMq8/RSDk=;
-        b=qSxEWNXYC5VU43b26rQ1mstkGbF148SIk2hy9l7opcjctrypDp/j0hiiNi3F34jC0a
-         SAH7bDD9MWQNDnjycaGyNmt78SG+ojwZIWBG77oJJ6vXrH9uI1+RYTH6xBP4IgM/JGFr
-         yt4WIv1wnYKGf4g+PMMPANrKHqbsmEVTVBqiwVpqFxR4MReXqMNrsPYpsG2/ZDShDS03
-         fE19Q2GuvDQjll1QD/vMCtGk4O3zmg45AQpHsgojFlskkxxqrrOKQMr54VXhDrLbdNo3
-         2WcIkk/qAXRbyeFI1nK1EEP3a01uhOdHG/MGQNM37VV/rJ3c3UH1tfesOC5f+qwiHaFN
-         OLGw==
-X-Gm-Message-State: APjAAAXxF0VW5ut8vSDdKSvfgJUTz3ws5p+nACR8/9td6d9MOLHpv+0v
-        96lSd4qL5XhSM32CzekP6g==
-X-Google-Smtp-Source: APXvYqxJpMpphl8ic0lq5+iIIiAn1l1PwDcZCMzifYBDwOG3S/JdkFma5EBVUFSSLbo5Dm1Wgp3QqQ==
-X-Received: by 2002:a05:6830:200c:: with SMTP id e12mr8862386otp.127.1573754332574;
-        Thu, 14 Nov 2019 09:58:52 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id o4sm2042587ota.57.2019.11.14.09.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 14 Nov 2019 09:58:52 -0800 (PST)
-Date:   Thu, 14 Nov 2019 11:58:51 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        agross@kernel.org, bjorn.andersson@linaro.org,
-        marc.w.gonzalez@free.fr, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v9 1/4] dt-bindings: clock: Document external clocks for
- MSM8998 gcc
-Message-ID: <20191114175851.GA11664@bogus>
-References: <1573591382-14225-1-git-send-email-jhugo@codeaurora.org>
- <1573591466-14296-1-git-send-email-jhugo@codeaurora.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1573591466-14296-1-git-send-email-jhugo@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726767AbfKNSda (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Nov 2019 13:33:30 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:33848 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726491AbfKNSda (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 14 Nov 2019 13:33:30 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E2D6E1A0AC9;
+        Thu, 14 Nov 2019 19:33:27 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id C92DA1A04A9;
+        Thu, 14 Nov 2019 19:33:27 +0100 (CET)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 608F4205D5;
+        Thu, 14 Nov 2019 19:33:26 +0100 (CET)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?q?Artur=20=C5=9Awigo=C5=84?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Silvano di Ninno <silvano.dininno@nxp.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v6 0/5] PM / devfreq: Add dynamic scaling for imx8m ddr controller
+Date:   Thu, 14 Nov 2019 20:33:17 +0200
+Message-Id: <cover.1573756360.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 12, 2019 at 01:44:26PM -0700, Jeffrey Hugo wrote:
-> The global clock controller on MSM8998 can consume a number of external
-> clocks.  Document them.
-> 
-> For 7180 and 8150, the hardware always exists, so no clocks are truly
-> optional.  Therefore, simplify the binding by removing the min/max
-> qualifiers to clocks.  Also, fixup an example so that dt_binding_check
-> passes.
-> 
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.yaml        | 47 +++++++++++++++-------
->  1 file changed, 33 insertions(+), 14 deletions(-)
+This adds support for dynamic scaling of the DDR Controller (ddrc) present in
+imx8m series. Actual frequency switching is implemented inside TF-A, this
+driver wraps the SMC calls and synchronizes the clk tree.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+DRAM frequency switching requires clock manipulation but during this operation
+DRAM itself is briefly inaccessible so this operation is performed a SMC call
+to by TF-A which runs from a SRAM area. Upon returning to linux the clock tree
+is updated to correspond to hardware configuration.
+
+This is handled via CLK_GET_RATE_NO_CACHE for dividers but muxes are handled
+manually: the driver will prepare/enable the new parents ahead of switching (so
+that the expected roots are enabled) and afterwards it will call clk_set_parent
+to ensure the parents in clock framework are up-to-date.
+
+This series is useful standalone and roughly similar to devfreq drivers for
+tegra and rockchip.
+
+Running at lower dram rates saves power but can affect the functionality of
+other blocks in the chip (display, vpu etc). Support for in-kernel constraints
+will some separately.
+
+This series has no dependencies outside linux-next.
+
+Changes since v5:
+* Fix a dram_apb/dram_alt mixup in imx8m_ddrc_set_freq
+* Make clk_get_parent_by_index static (kbuild robot)
+* Adjust messages in imx8m_ddrc_set_freq
+* Use a for loop inside imx8m_ddrc_check_opps instead of while
+* More elaborate description in dt-bindings file.
+Link to v5: https://patchwork.kernel.org/cover/11240289/
+
+Changes since v4:
+* Restore empty _get_dev_status: testing shows this is *NOT* optional. If
+absent then switching to simple_ondemand governor will trigger an Oops.
+* Keep clk registration on single-line in clk-imx8m* for consistency with rest
+of the file.
+* Drop explicit "select PM_OPP"
+* Check for NULL new_dram_core_parent
+* Rename "out_dis_" labels to out_disable_*
+* Use dev_warn on imx8m_ddrc_set_freq error paths after SMC call (where
+operation is not abandoned).
+* More elaborate error messages in imx8m_ddrc_target
+* More elaborate checks when fetching clks in imx8m_ddrc_set_freq
+* Rename ddrc nodes to memory-controller@* as per devicetree.org "Generic Names
+Recommendation"
+* Defer perf support, it requires perf changes to fetch PMU by DT
+Link to v4: https://patchwork.kernel.org/cover/11235685/
+
+Changes since v3:
+* Rename to imx8m-ddrc. Similar blocks are present on imx7d and imx8qxp/imx8qm
+but soc integration is different.
+* Move dt bindings to /memory-controllers/fsl/
+* Fix dt validation issues
+* Fix imx8mm.dtsi ddrc referencing ddrc_opp_table which is only defined in evk
+* Move opps to child of ddrc device node
+* Only add imx_ddrc_get_dev_status in perf patch.
+* Adjust print messages
+Link to v3: https://patchwork.kernel.org/cover/11221935/
+
+Changes since v2:
+* Add support for entire imx8m family including imx8mq B0.
+* Also mark dram PLLs as CLK_GET_RATE_NO_CACHE (required for imx8mq b0 low OPP)
+* Explicitly update dram pll rate at the end of imx_ddrc_set_freq.
+* Use do_div in imx-ddrc (kbuild robot)
+* Improve explanations around adding CLK_GET_RATE_NO_CACHE to dram clks.
+(Stephen Boyd)
+* Handle ddrc devfreq-events earlier for fewer probe defers.
+* Validate DDRC opp tables versus firmware: supported OPPs depend on board and
+SOC revision.
+* Move DDRC opp tables to board dts because they can vary based on ram type on
+board.
+* Verify DDRC rate is changed in clk tree and otherwise report an error.
+* Change imx_ddrc_freq.rate to be measure in MT/s and round down from HZ in
+imx_ddrc_find_freq instead.
+* Split away from NOC scaling and interconnect support.
+Link to v2: https://patchwork.kernel.org/cover/11104113/
+
+Changes since v1:
+* bindings: Stop using "contains" for "compatible"
+* bindings: Set "additionalProperties: false" and document missing stuff.
+* Remove (c) from NXP copyright notice
+* Fix various checkpatch issues
+* Remove unused dram_alt_root clk from imx-ddrc
+Link to v1: https://patchwork.kernel.org/cover/11090649/
+
+Leonard Crestez (5):
+  clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram clocks
+  clk: imx: Mark dram pll on 8mm and 8mn with CLK_GET_RATE_NOCACHE
+  dt-bindings: memory: Add bindings for imx8m ddr controller
+  PM / devfreq: Add dynamic scaling for imx8m ddr controller
+  arm64: dts: imx8m: Add ddr controller nodes
+
+ .../memory-controllers/fsl/imx8m-ddrc.yaml    |  72 +++
+ arch/arm64/boot/dts/freescale/imx8mm-evk.dts  |  18 +
+ arch/arm64/boot/dts/freescale/imx8mm.dtsi     |  10 +
+ .../boot/dts/freescale/imx8mn-ddr4-evk.dts    |  18 +
+ arch/arm64/boot/dts/freescale/imx8mn.dtsi     |  10 +
+ arch/arm64/boot/dts/freescale/imx8mq-evk.dts  |  24 +
+ arch/arm64/boot/dts/freescale/imx8mq.dtsi     |  10 +
+ drivers/clk/imx/clk-imx8mm.c                  |  11 +-
+ drivers/clk/imx/clk-imx8mn.c                  |  12 +-
+ drivers/clk/imx/clk-imx8mq.c                  |  12 +-
+ drivers/clk/imx/clk-pll14xx.c                 |   7 +
+ drivers/clk/imx/clk.h                         |   1 +
+ drivers/devfreq/Kconfig                       |   9 +
+ drivers/devfreq/Makefile                      |   1 +
+ drivers/devfreq/imx8m-ddrc.c                  | 465 ++++++++++++++++++
+ 15 files changed, 670 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
+ create mode 100644 drivers/devfreq/imx8m-ddrc.c
+
+-- 
+2.17.1
+
