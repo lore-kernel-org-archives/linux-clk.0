@@ -2,226 +2,161 @@ Return-Path: <SRS0=Db4S=ZG=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C189C432C3
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 04:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABEF2C43215
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 05:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BD28206F4
-	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 04:59:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96D4F206F4
+	for <linux-clk@archiver.kernel.org>; Thu, 14 Nov 2019 05:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernelci-org.20150623.gappssmtp.com header.i=@kernelci-org.20150623.gappssmtp.com header.b="X7vgQihN"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VV0JlZag"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726952AbfKNE7Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 13 Nov 2019 23:59:16 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:34491 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726812AbfKNE7Q (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 13 Nov 2019 23:59:16 -0500
-Received: by mail-wm1-f67.google.com with SMTP id j18so6495511wmk.1
-        for <linux-clk@vger.kernel.org>; Wed, 13 Nov 2019 20:59:14 -0800 (PST)
+        id S1726828AbfKNFbM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 14 Nov 2019 00:31:12 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38689 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726002AbfKNFbM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 14 Nov 2019 00:31:12 -0500
+Received: by mail-ed1-f65.google.com with SMTP id s10so3938800edi.5;
+        Wed, 13 Nov 2019 21:31:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernelci-org.20150623.gappssmtp.com; s=20150623;
-        h=message-id:date:mime-version:content-transfer-encoding:subject:to
-         :from:cc;
-        bh=egiNHn53AxF6dtodPHEQPaH0Kx6MPPdA1nRSwplfmdU=;
-        b=X7vgQihNK7OSrrcHcaz9+b2+bK7wqeYB9vc0qPG2/bx9hdq4oaTaZ8S0BNafadfgxj
-         LMqbCga0loCpVfJB/QE5XCJQdoaC7Mb9y0cfw6lu+sD+91Dm7ZvUwnAnHqUHgmsQkp68
-         Cr00+t95D+Tfc9iQgpuJOQBBJ0yEwu3d+KB4GefamYCNBzOca2poqjFfk6IHtpvKr9pk
-         33CndrErlGHFjZOJYYk6x7e86siMNXHL8UzSEwji+kXCPXhRuiHRYs7MEqH3KdfpUq14
-         fZdmYa0/Jut8XF9BNjV7XOyW6j2RyLkkYvSWLh55pRXO5zBun9HKQgkkCkNUbku8OzUh
-         sL3w==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TzmgwadFXzZqxttyAmTgdsuksZq1HRvUtDJR5tFWxuQ=;
+        b=VV0JlZagHNRuPaMn1sjANDQ9gpxP4PposXxyDDWOdRN9Ug5hZqW76uGYAx2eU+2/Ei
+         jKkqh+/st/tBOFGfgr8wCN1cHx8574paDQuD0rJb/2/DjvAs4WjENBTDG7zRtvSuSOYe
+         7cUoNA/3y0KHwWxyoE3xVkx3AOSXN5Ra2fiWzHBmLHCcGnFWdIjv/2ehSnuprAu0gyQE
+         8yt+Bj4v5rIAPKADiEVui/sGy0RKhmysnwSffXlmySh3HhJXv+7zDPCYm/dPaWs/TDKp
+         4jTbNYcHP8kUMlA3ZqsuGvMZVe47zIIJgyhdrk5IGug+2i74zv23cxY9plGzpuFwEAdJ
+         xqxQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:mime-version
-         :content-transfer-encoding:subject:to:from:cc;
-        bh=egiNHn53AxF6dtodPHEQPaH0Kx6MPPdA1nRSwplfmdU=;
-        b=apsHYArREopSXsbI5Yl5eJ2EDVLIOs9aC++AHfeIGK0/5+O0NGaOGZymfbw3ZoSyXD
-         KR5Xd+Z+33EpTH8U0Bq47pMOh824v68r1TRmc53SheKJd2ljeI4gREV/95cfBQRtS1Oy
-         BzgDjF46JflQlludhtp05jkFTR/pbMA6SYpQCQ22zayeLUcTwS+0kp+gYABr5gIVBu/h
-         T9JRPt7IlPorX82GqqHjKie6J9W/980Q4Qv2mlv/FUpaQt0nOucsj/ttgywdL+jcXTXM
-         OmLbWD7h3cFI9gTm9D0D8LWBlBQalOdlB7KxqP6aPw/Rdu0WgOaf6brB1PC/A5xGbm+i
-         UTJw==
-X-Gm-Message-State: APjAAAWhbV9WOkob9QmoQ7hZkskL+jp7wvXkyuf0/fwgD4J29n4jjZnT
-        UPJGhauLdwUWFYLlwgVFW/53Vw==
-X-Google-Smtp-Source: APXvYqwDd17kaAOiy5f8H9/6NTgbBYv3WS9x9qLa6e/LvfH38s2SwUw/DMzODEO6qsytv3+v4p0fjA==
-X-Received: by 2002:a7b:c445:: with SMTP id l5mr5682751wmi.140.1573707553634;
-        Wed, 13 Nov 2019 20:59:13 -0800 (PST)
-Received: from [148.251.42.114] ([2a01:4f8:201:9271::2])
-        by smtp.gmail.com with ESMTPSA id r2sm5620386wrp.64.2019.11.13.20.59.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 13 Nov 2019 20:59:12 -0800 (PST)
-Message-ID: <5dccdf20.1c69fb81.418aa.a71c@mx.google.com>
-Date:   Wed, 13 Nov 2019 20:59:12 -0800 (PST)
-Content-Type: text/plain; charset="utf-8"
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TzmgwadFXzZqxttyAmTgdsuksZq1HRvUtDJR5tFWxuQ=;
+        b=WFO7k7ak0xsoOI5eJzmo8DLCHmaUkyhqfI6OsiMs+w8eCGvLP5gnvaJyMX8T+Tme+Q
+         rDTrJPId/D2Nv9+PtJJUdVGMV1prrmHUIPGA8tC3wbHjY54p3wx9qV5p8clFi18/aHOD
+         2+4jLASk7u3ZPkkMbVll/xy1x4pL443lo9+6uooitcdXASARw6gjH9XKgCEjnKdgvQ4w
+         e+XBhNAi4/LXXA2a1bqy6kcHjVxC1JC0eVWRXHtsTlmQfsgcJKlUc95dWU2s5A7mOqNB
+         CUmqGmyYQmjw190c57tWx/aVQc7h0Pq22m9bJRrOfuasGFAU1o3sl66Fm7Cldgj7fNP8
+         DRKQ==
+X-Gm-Message-State: APjAAAWMAInRqQCW9nl2D6tTFZrSwbj6Rhx674//NMxXDP1rTXxG8T+w
+        Lau/31rZb0UVWYzCovo93fA2aMnOnO2p6k3REMUAZx14
+X-Google-Smtp-Source: APXvYqwDNsw+CPEHfZ6k5bmbg5vzATln7nGrYepvMbZNyvUl0vpAhTIKh7dE4xMDDTS34JhNjAwAWCEYTF3XbMTlrZg=
+X-Received: by 2002:aa7:d3da:: with SMTP id o26mr8077190edr.302.1573709469321;
+ Wed, 13 Nov 2019 21:31:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Kernelci-Branch: clk-next
-X-Kernelci-Lab-Name: lab-collabora
-X-Kernelci-Tree: clk
-X-Kernelci-Report-Type: bisect
-X-Kernelci-Kernel: v5.4-rc1-201-ga228ae437aa5
-Subject: clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on
- tegra124-nyan-big
-To:     tomeu.vizoso@collabora.com, Stephen Boyd <sboyd@kernel.org>,
-        guillaume.tucker@collabora.com, mgalka@collabora.com,
-        Thierry Reding <treding@nvidia.com>, broonie@kernel.org,
-        matthew.hart@linaro.org, khilman@baylibre.com,
-        enric.balletbo@collabora.com
-From:   "kernelci.org bot" <bot@kernelci.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-kernel@vger.kernel.org,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        linux-tegra@vger.kernel.org,
+References: <20191014102308.27441-6-tdas@codeaurora.org> <20191029175941.GA27773@google.com>
+ <fa17b97d-bfc4-4e9c-78b5-c225e5b38946@codeaurora.org> <20191031174149.GD27773@google.com>
+ <20191107210606.E536F21D79@mail.kernel.org> <CAJs_Fx60uEdGFjJXAjvVy5LLBXXmergRi8diWxhgGqde1wiXXQ@mail.gmail.com>
+ <20191108063543.0262921882@mail.kernel.org> <CAJs_Fx5trp2B7uOMTFZNUsYoKrO1-MWsNECKp-hz+1qCOCeU8A@mail.gmail.com>
+ <20191108184207.334DD21848@mail.kernel.org> <CAJs_Fx6KCirGMtQxE=xA-A=bd5LeuYWviee0+KqO5OtGT9GKEw@mail.gmail.com>
+ <20191114010210.GF27773@google.com>
+In-Reply-To: <20191114010210.GF27773@google.com>
+From:   Rob Clark <robdclark@gmail.com>
+Date:   Wed, 13 Nov 2019 21:30:57 -0800
+Message-ID: <CAF6AEGv9+Ow=RCXGKmaANfmA2NtR32E07CKwGFKJbeeOJRP9=Q@mail.gmail.com>
+Subject: Re: [PATCH v4 5/5] clk: qcom: Add Global Clock controller (GCC)
+ driver for SC7180
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Rob Clark <robdclark@chromium.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Taniya Das <tdas@codeaurora.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>,
+        Jeykumar Sankaran <jsanka@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-* This automated bisection report was sent to you on the basis  *
-* that you may be involved with the breaking commit it has      *
-* found.  No manual investigation has been done to verify it,   *
-* and the root cause of the problem may be somewhere else.      *
-*                                                               *
-* If you do send a fix, please include this trailer:            *
-*   Reported-by: "kernelci.org bot" <bot@kernelci.org>          *
-*                                                               *
-* Hope this helps!                                              *
-* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+On Wed, Nov 13, 2019 at 5:03 PM Matthias Kaehlcke <mka@chromium.org> wrote:
+>
+> On Fri, Nov 08, 2019 at 11:40:53AM -0800, Rob Clark wrote:
+> > On Fri, Nov 8, 2019 at 10:42 AM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Rob Clark (2019-11-08 08:54:23)
+> > > > On Thu, Nov 7, 2019 at 10:35 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > >
+> > > > > Quoting Rob Clark (2019-11-07 18:06:19)
+> > > > > > On Thu, Nov 7, 2019 at 1:06 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > > > > > >
+> > > > > > >
+> > > > > > > NULL is a valid clk pointer returned by clk_get(). What is the display
+> > > > > > > driver doing that makes it consider NULL an error?
+> > > > > > >
+> > > > > >
+> > > > > > do we not have an iface clk?  I think the driver assumes we should
+> > > > > > have one, rather than it being an optional thing.. we could ofc change
+> > > > > > that
+> > > > >
+> > > > > I think some sort of AHB clk is always enabled so the plan is to just
+> > > > > hand back NULL to the caller when they call clk_get() on it and nobody
+> > > > > should be the wiser when calling clk APIs with a NULL iface clk. The
+> > > > > common clk APIs typically just return 0 and move along. Of course, we'll
+> > > > > also turn the clk on in the clk driver so that hardware can function
+> > > > > properly, but we don't need to expose it as a clk object and all that
+> > > > > stuff if we're literally just slamming a bit somewhere and never looking
+> > > > > back.
+> > > > >
+> > > > > But it sounds like we can't return NULL for this clk for some reason? I
+> > > > > haven't tried to track it down yet but I think Matthias has found it
+> > > > > causes some sort of problem in the display driver.
+> > > > >
+> > > >
+> > > > ok, I guess we can change the dpu code to allow NULL..  but what would
+> > > > the return be, for example on a different SoC where we do have an
+> > > > iface clk, but the clk driver isn't enabled?  Would that also return
+> > > > NULL?  I guess it would be nice to differentiate between those cases..
+> > > >
+> > >
+> > > So the scenario is DT describes the clk
+> > >
+> > >  dpu_node {
+> > >      clocks = <&cc AHB_CLK>;
+> > >      clock-names = "iface";
+> > >  }
+> > >
+> > > but the &cc node has a driver that doesn't probe?
+> > >
+> > > I believe in this scenario we return -EPROBE_DEFER because we assume we
+> > > should wait for the clk driver to probe and provide the iface clk. See
+> > > of_clk_get_hw_from_clkspec() and how it looks through a list of clk
+> > > providers and tries to match the &cc phandle to some provider.
+> > >
+> > > Once the driver probes, the match will happen and we'll be able to look
+> > > up the clk in the provider with __of_clk_get_hw_from_provider(). If
+> > > the clk provider decides that there isn't a clk object, it will return
+> > > NULL and then eventually clk_hw_create_clk() will turn the NULL return
+> > > value into a NULL pointer to return from clk_get().
+> > >
+> >
+> > ok, that was the scenario I was worried about (since unclk'd register
+> > access tends to be insta-reboot and hard to debug)..  so I think it
+> > should be ok to make dpu just ignore NULL clks.
+> >
+> > From a quick look, I think something like the attached (untested).
+>
+> The driver appears to be happy with it, at least at probe() time.
 
-clk/clk-next boot bisection: v5.4-rc1-201-ga228ae437aa5 on tegra124-nyan-big
+Ok, I suppose I should re-send the dpu patch to the appropriate
+lists.. does that count as a Tested-by?
 
-Summary:
-  Start:      a228ae437aa5 Merge branch 'clk-unused' into clk-next
-  Details:    https://kernelci.org/boot/id/5dcc99e959b514100f138e14
-  Plain log:  https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228=
-ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.txt
-  HTML log:   https://storage.kernelci.org//clk/clk-next/v5.4-rc1-201-ga228=
-ae437aa5/arm/tegra_defconfig/gcc-8/lab-collabora/boot-tegra124-nyan-big.html
-  Result:     25175c806a68 clk: tegra: Reimplement SOR clock on Tegra124
-
-Checks:
-  revert:     PASS
-  verify:     PASS
-
-Parameters:
-  Tree:       clk
-  URL:        https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
-  Branch:     clk-next
-  Target:     tegra124-nyan-big
-  CPU arch:   arm
-  Lab:        lab-collabora
-  Compiler:   gcc-8
-  Config:     tegra_defconfig
-  Test suite: boot
-
-Breaking commit found:
-
----------------------------------------------------------------------------=
-----
-commit 25175c806a6841149abe46168e0af12593141612
-Author: Thierry Reding <treding@nvidia.com>
-Date:   Thu Jul 25 18:19:00 2019 +0200
-
-    clk: tegra: Reimplement SOR clock on Tegra124
-    =
-
-    In order to allow the display driver to deal uniformly with all SOR
-    generations, implement the SOR clocks in a way that is compatible with
-    Tegra186 and later.
-    =
-
-    Acked-by: Stephen Boyd <sboyd@kernel.org>
-    Signed-off-by: Thierry Reding <treding@nvidia.com>
-
-diff --git a/drivers/clk/tegra/clk-tegra124.c b/drivers/clk/tegra/clk-tegra=
-124.c
-index 7d231529c3a5..b3110d5b5a6c 100644
---- a/drivers/clk/tegra/clk-tegra124.c
-+++ b/drivers/clk/tegra/clk-tegra124.c
-@@ -1005,20 +1005,24 @@ static struct tegra_devclk devclks[] __initdata =3D=
- {
- 	{ .con_id =3D "hda2hdmi", .dt_id =3D TEGRA124_CLK_HDA2HDMI },
- };
- =
-
--static const char *mux_pllp_pllm_plld_plla_pllc_plld2_clkm[] =3D {
--	"pll_p", "pll_m", "pll_d_out0", "pll_a_out0", "pll_c",
--	"pll_d2_out0", "clk_m"
-+static const char * const sor0_parents[] =3D {
-+	"pll_p_out0", "pll_m_out0", "pll_d_out0", "pll_a_out0", "pll_c_out0",
-+	"pll_d2_out0", "clk_m",
- };
--#define mux_pllp_pllm_plld_plla_pllc_plld2_clkm_idx NULL
- =
-
--static const char *mux_clkm_plldp_sor0out[] =3D {
--	"clk_m", "pll_dp", "sor0_out",
-+static const char * const sor0_out_parents[] =3D {
-+	"clk_m", "sor0_pad_clkout",
- };
--#define mux_clkm_plldp_sor0out_idx NULL
- =
-
- static struct tegra_periph_init_data tegra124_periph[] =3D {
--	MUX8_NOGATE_LOCK("sor0_out", mux_pllp_pllm_plld_plla_pllc_plld2_clkm, CLK=
-_SOURCE_SOR0, tegra_clk_sor0_out, &sor0_lock),
--	NODIV("sor0", mux_clkm_plldp_sor0out, CLK_SOURCE_SOR0, 14, 3, 182, 0, teg=
-ra_clk_sor0, &sor0_lock),
-+	TEGRA_INIT_DATA_TABLE("sor0", NULL, NULL, sor0_parents,
-+			      CLK_SOURCE_SOR0, 29, 0x7, 0, 0, 0, 0,
-+			      0, 182, 0, tegra_clk_sor0, NULL, 0,
-+			      &sor0_lock),
-+	TEGRA_INIT_DATA_TABLE("sor0_out", NULL, NULL, sor0_out_parents,
-+			      CLK_SOURCE_SOR0, 14, 0x1, 0, 0, 0, 0,
-+			      0, 0, TEGRA_PERIPH_NO_GATE, tegra_clk_sor0_out,
-+			      NULL, 0, &sor0_lock),
- };
- =
-
- static struct clk **clks;
----------------------------------------------------------------------------=
-----
-
-
-Git bisection log:
-
----------------------------------------------------------------------------=
-----
-git bisect start
-# good: [dafbb1e6473788cb3068eaeddc58f9d88e9c7a62] Merge branch 'clk-ti' in=
-to clk-next
-git bisect good dafbb1e6473788cb3068eaeddc58f9d88e9c7a62
-# bad: [a228ae437aa553736058cbbd58d2d0e191635cdc] Merge branch 'clk-unused'=
- into clk-next
-git bisect bad a228ae437aa553736058cbbd58d2d0e191635cdc
-# bad: [3214be6cb1e487b0f8c3bb2eac9b06df07a07e06] clk: tegra: Share clk and=
- rst register defines with Tegra clock driver
-git bisect bad 3214be6cb1e487b0f8c3bb2eac9b06df07a07e06
-# bad: [05308d7e7bbc932025f1dafc401c73ce83c6f414] clk: tegra: Reimplement S=
-OR clocks on Tegra210
-git bisect bad 05308d7e7bbc932025f1dafc401c73ce83c6f414
-# good: [d1ee3173a139ed2eb8d87e06216f0426b16084d8] Merge branch 'for-5.5/dt=
--bindings' into for-5.5/clk
-git bisect good d1ee3173a139ed2eb8d87e06216f0426b16084d8
-# good: [e5f8a107d92db30a7ad7d8d95aee59f5ad76206a] clk: tegra: Move SOR0 im=
-plementation to Tegra124
-git bisect good e5f8a107d92db30a7ad7d8d95aee59f5ad76206a
-# bad: [25175c806a6841149abe46168e0af12593141612] clk: tegra: Reimplement S=
-OR clock on Tegra124
-git bisect bad 25175c806a6841149abe46168e0af12593141612
-# good: [da8d1a3555406275650b366460c6235f1696bf8b] clk: tegra: Rename sor0_=
-lvds to sor0_out
-git bisect good da8d1a3555406275650b366460c6235f1696bf8b
-# first bad commit: [25175c806a6841149abe46168e0af12593141612] clk: tegra: =
-Reimplement SOR clock on Tegra124
----------------------------------------------------------------------------=
-----
+BR,
+-R
