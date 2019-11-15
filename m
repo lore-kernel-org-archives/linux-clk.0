@@ -2,380 +2,137 @@ Return-Path: <SRS0=Adza=ZH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D852C432C3
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:06:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD835C432C3
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 378B0207FC
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:06:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87D752077B
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:18:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e1Tvxezy";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IjRyq8rq"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="UC5CBGGc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727774AbfKOKGR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Nov 2019 05:06:17 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:37918 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727761AbfKOKGQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 05:06:16 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 3203B618E8; Fri, 15 Nov 2019 10:06:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573812375;
-        bh=uNnS8R/EMNiWGr3tJfYbc19MiV5WLgonbPR3WiCYx1A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e1Tvxezyu1q4OA1KBu4/wMpg/cx7WvvywoLl5P6P6RDHSCh6kV/IMBTRu5/LULq3i
-         9E6Rp3DMsnt2PhntNY0O3urOeva0gSRR/vTeUpnFqm/V+vfogYV42hEAaNkJ/gLH9j
-         Rb6r+Kc/S3MW7t3YiW8mkYUPPW7YIaNgQfO/sXoM=
-Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5F019618FD;
-        Fri, 15 Nov 2019 10:06:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573812367;
-        bh=uNnS8R/EMNiWGr3tJfYbc19MiV5WLgonbPR3WiCYx1A=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IjRyq8rqvvQuX7AyJrEhCeVJAPDyjP6N/L0STftaeS+BOG1A+4FHARgMCkD+KkjH3
-         cbJPU7oX73EuogC8EDe4x971NmLQoc4yfqx59pszMSi6dyI3yH/Wut1OvyQ7adAGHI
-         5z/cnrQ2TL7wDgfqdVK6wkIlBu8vZ5ZGzmgugDmo=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F019618FD
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-From:   Taniya Das <tdas@codeaurora.org>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 8/8] clk: qcom: Add video clock controller driver for SC7180
-Date:   Fri, 15 Nov 2019 15:35:04 +0530
-Message-Id: <1573812304-24074-9-git-send-email-tdas@codeaurora.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
+        id S1727135AbfKOKSC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Nov 2019 05:18:02 -0500
+Received: from mail-eopbgr10073.outbound.protection.outlook.com ([40.107.1.73]:60129
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727183AbfKOKR6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 15 Nov 2019 05:17:58 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=fcnZklfBnrpJeaG1O034/vm8J/Zpl2JiVrQeTAPoDJcf9W402QS7lH3ccqlhsqPzjetO0ystHkqnNfU1qQOltUGX7twLwYlbmq1EbjKX3NHiXztQqAJuQxPJKGDImimKlDSF8U9mRtU89IHA8ZkEuhqai3fFsAtXyWPdib1fmiq8OwL7QUisWQapKOdlew4qX1FDA9ipHvk1R2WL3WLMp5622NJK2S2+jDHWpm1fcymeGfKrCgRCRfNLqbB2RAWdipjcbmD1CxT4kR9v8jzCIFK0sTfvD/pDFYDk6XfpCjECsimpqkrpULrcwI6Gx7XICPxWmPHDHqsyt+fLrocFVg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ORHQ659aoEtcRnPnkP0sXH/YF5tOtOqc4+oMh2DDYs8=;
+ b=LEB50cZmVNHpEgN/pV57q4z2cjNkX+2SmHm4Jk6y/7Yq8EgxKV9WlocFHLdmdwJo0syuumog3bEfwOgZfeWyFEWSRrQTYYpMWqKC40XAgPetqaFh2ejwYPcx80qUGLQ6j+BlSA2ToB/Um8Ry7W9GtG0+B167DBJFi5Y2WNnUymzDHkmiyUItX/8g86BC1LdGshCeVWJOBzd3nUeixa+MsUKt0YANT+zxRolRS8/8lTeWu+/fX+DYBuo/SgfKtYWoWBF+oLFqCu80uto3/pPAIHxHS5GJhuanBHiE9FUSNDKlrHK+G98vIF0N1csx3PnjIJ75cKfOUN9IBnJj2TDmog==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ORHQ659aoEtcRnPnkP0sXH/YF5tOtOqc4+oMh2DDYs8=;
+ b=UC5CBGGcJSKT6sOr0W5WuORevxedHRPn0u8HRNZ7bTTuOnOrRKMllhyb+tOVhD9b4Lec0bp0QNGpdTi3lr/sNyxcirBJd4HAe89Bike5l8DCWu484LNdWWv5TnL/rK/uh9LF5wn3w9Czr7UepcaQsckyKBA2t/YzKQRMkyaCGWw=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5395.eurprd04.prod.outlook.com (20.178.113.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.26; Fri, 15 Nov 2019 10:17:54 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.024; Fri, 15 Nov 2019
+ 10:17:54 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linux@armlinux.org.uk" <linux@armlinux.org.uk>
+CC:     dl-linux-imx <linux-imx@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alice Guo <alice.guo@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] clk: clkdev: Replace strlcpy with strscpy
+Thread-Topic: [PATCH] clk: clkdev: Replace strlcpy with strscpy
+Thread-Index: AQHVm53x+DXjeUQoqE+Ge0GGT57azw==
+Date:   Fri, 15 Nov 2019 10:17:53 +0000
+Message-ID: <1573812819-5030-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0031.apcprd03.prod.outlook.com
+ (2603:1096:203:2f::19) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 7f884cdf-06ce-4738-5d4f-08d769b513aa
+x-ms-traffictypediagnostic: AM0PR04MB5395:|AM0PR04MB5395:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5395FCD25E55205FA00C276388700@AM0PR04MB5395.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:3513;
+x-forefront-prvs: 02229A4115
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(39860400002)(376002)(396003)(366004)(346002)(199004)(189003)(66446008)(14454004)(2906002)(86362001)(52116002)(6116002)(3846002)(66066001)(7736002)(305945005)(14444005)(71200400001)(71190400001)(256004)(2501003)(6512007)(99286004)(6436002)(6486002)(478600001)(102836004)(110136005)(54906003)(386003)(6506007)(26005)(316002)(186003)(8936002)(25786009)(486006)(44832011)(36756003)(50226002)(4326008)(8676002)(81156014)(81166006)(66476007)(2616005)(476003)(64756008)(66556008)(5660300002)(66946007)(156123004);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5395;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: kMvi4djVH0GjPZ+Wzlu/K2CD7lMsQBhX6n51JJTh4RByGU6keid38QOu663jTgJHVm6WhwVoevgfGCluRuE8+y7UazMcrHDn01TAF8+KyjUaa5Qx8V8YCfN9trKnijW+RhuaEDzKIXKoQK3obsFKxw09Qigy3AlP3MMjbXTtHOG/PqwwXJXxa6K5eOKY/4pSQnM2/kpgXqhhaLpsCnMugrG9T7vG29F0ymUKQQ5J24lZGYcQA+JBP/8DpWMqKGOW9/UQ+v34p0K3P1nZazbAuY/6icMTKtB2vGTbcS4IgrFv7nZxG5we7ZWmNBFslhJc0pLxpDqGleXpg+9xGS9LKakWStk9MRFPlOvM+6tWzKnoJDiELxRfXWfK98XH567IFL5PmvlAeQVlEgrkBDaov2A9O4MI4fX7jaZgInsCHs5oxdiFd5t7V7Ip0UCkGxVM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7f884cdf-06ce-4738-5d4f-08d769b513aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2019 10:17:54.0191
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: jdJglKf7R/U4zV+fuVmD2OS+As4W3z+4ki+1K8hy5Drhi8cUhQKJaCRbl3gxPdtSzrSyPz6pkoP2UwgHn5iGIA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5395
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the video clock controller found on SC7180
-based devices. This would allow video drivers to probe
-and control their clocks.
+From: Peng Fan <peng.fan@nxp.com>
 
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
+The implementation of strscpy() is more robust and safer.
+
+The strscpy was introduced to fix some API problems around strlcpy.
+strscpy is preferred to strlcpy() since the API doesn't require
+reading memory from the src string beyond the specified "count" bytes,
+and since the return value is easier to error-check than strlcpy()'s.
+In addition, the implementation is robust to the string changing out
+from underneath it, unlike the current strlcpy() implementation.
+
+Cc: Kees Cook <keescook@chromium.org>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/qcom/Kconfig          |   8 ++
- drivers/clk/qcom/Makefile         |   1 +
- drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 268 insertions(+)
- create mode 100644 drivers/clk/qcom/videocc-sc7180.c
+ drivers/clk/clkdev.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index e648a60..cf21d5c 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -253,6 +253,14 @@ config SC_GPUCC_7180
- 	  Say Y if you want to support graphics controller devices and
- 	  functionality such as 3D graphics.
-
-+config SC_VIDEOCC_7180
-+	tristate "SC7180 Video Clock Controller"
-+	select SC_GCC_7180
-+	help
-+	  Support for the video clock controller on SC7180 devices.
-+	  Say Y if you want to support video devices and functionality such as
-+	  video encode and decode.
-+
- config SDM_CAMCC_845
- 	tristate "SDM845 Camera Clock Controller"
- 	select SDM_GCC_845
-diff --git a/drivers/clk/qcom/Makefile b/drivers/clk/qcom/Makefile
-index 5477482..4cdd08f 100644
---- a/drivers/clk/qcom/Makefile
-+++ b/drivers/clk/qcom/Makefile
-@@ -47,6 +47,7 @@ obj-$(CONFIG_QCS_Q6SSTOP_404) += q6sstop-qcs404.o
- obj-$(CONFIG_QCS_TURING_404) += turingcc-qcs404.o
- obj-$(CONFIG_SC_GCC_7180) += gcc-sc7180.o
- obj-$(CONFIG_SC_GPUCC_7180) += gpucc-sc7180.o
-+obj-$(CONFIG_SC_VIDEOCC_7180) += videocc-sc7180.o
- obj-$(CONFIG_SDM_CAMCC_845) += camcc-sdm845.o
- obj-$(CONFIG_SDM_DISPCC_845) += dispcc-sdm845.o
- obj-$(CONFIG_SDM_GCC_660) += gcc-sdm660.o
-diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
-new file mode 100644
-index 0000000..0c60986
---- /dev/null
-+++ b/drivers/clk/qcom/videocc-sc7180.c
-@@ -0,0 +1,259 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+
-+#include <dt-bindings/clock/qcom,videocc-sc7180.h>
-+
-+#include "clk-alpha-pll.h"
-+#include "clk-branch.h"
-+#include "clk-rcg.h"
-+#include "clk-regmap.h"
-+#include "common.h"
-+#include "gdsc.h"
-+
-+enum {
-+	P_BI_TCXO,
-+	P_CHIP_SLEEP_CLK,
-+	P_CORE_BI_PLL_TEST_SE,
-+	P_VIDEO_PLL0_OUT_EVEN,
-+	P_VIDEO_PLL0_OUT_MAIN,
-+	P_VIDEO_PLL0_OUT_ODD,
-+};
-+
-+static const struct pll_vco fabia_vco[] = {
-+	{ 249600000, 2000000000, 0 },
-+};
-+
-+static struct clk_alpha_pll video_pll0 = {
-+	.offset = 0x42c,
-+	.vco_table = fabia_vco,
-+	.num_vco = ARRAY_SIZE(fabia_vco),
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_FABIA],
-+	.clkr = {
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_pll0",
-+			.parent_data = &(const struct clk_parent_data){
-+				.fw_name = "bi_tcxo",
-+			},
-+			.num_parents = 1,
-+			.ops = &clk_alpha_pll_fabia_ops,
-+		},
-+	},
-+};
-+
-+static const struct parent_map video_cc_parent_map_1[] = {
-+	{ P_BI_TCXO, 0 },
-+	{ P_VIDEO_PLL0_OUT_MAIN, 1 },
-+	{ P_CORE_BI_PLL_TEST_SE, 7 },
-+};
-+
-+static const struct clk_parent_data video_cc_parent_data_1[] = {
-+	{ .fw_name = "bi_tcxo" },
-+	{ .hw = &video_pll0.clkr.hw },
-+	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+};
-+
-+static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-+	F(19200000, P_BI_TCXO, 1, 0, 0),
-+	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-+	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
-+	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-+	{ }
-+};
-+
-+static struct clk_rcg2 video_cc_venus_clk_src = {
-+	.cmd_rcgr = 0x7f0,
-+	.mnd_width = 0,
-+	.hid_width = 5,
-+	.parent_map = video_cc_parent_map_1,
-+	.freq_tbl = ftbl_video_cc_venus_clk_src,
-+	.clkr.hw.init = &(struct clk_init_data){
-+		.name = "video_cc_venus_clk_src",
-+		.parent_data = video_cc_parent_data_1,
-+		.num_parents = 3,
-+		.flags = CLK_SET_RATE_PARENT,
-+		.ops = &clk_rcg2_shared_ops,
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_axi_clk = {
-+	.halt_reg = 0x9ec,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9ec,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_vcodec0_core_clk = {
-+	.halt_reg = 0x890,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x890,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_vcodec0_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ahb_clk = {
-+	.halt_reg = 0xa4c,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0xa4c,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ahb_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_axi_clk = {
-+	.halt_reg = 0x9cc,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x9cc,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_axi_clk",
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct clk_branch video_cc_venus_ctl_core_clk = {
-+	.halt_reg = 0x850,
-+	.halt_check = BRANCH_HALT,
-+	.clkr = {
-+		.enable_reg = 0x850,
-+		.enable_mask = BIT(0),
-+		.hw.init = &(struct clk_init_data){
-+			.name = "video_cc_venus_ctl_core_clk",
-+			.parent_data = &(const struct clk_parent_data){
-+				.hw = &video_cc_venus_clk_src.clkr.hw,
-+			},
-+			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
-+			.ops = &clk_branch2_ops,
-+		},
-+	},
-+};
-+
-+static struct gdsc venus_gdsc = {
-+	.gdscr = 0x814,
-+	.pd = {
-+		.name = "venus_gdsc",
-+	},
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct gdsc vcodec0_gdsc = {
-+	.gdscr = 0x874,
-+	.pd = {
-+		.name = "vcodec0_gdsc",
-+	},
-+	.flags = HW_CTRL,
-+	.pwrsts = PWRSTS_OFF_ON,
-+};
-+
-+static struct clk_regmap *video_cc_sc7180_clocks[] = {
-+	[VIDEO_CC_VCODEC0_AXI_CLK] = &video_cc_vcodec0_axi_clk.clkr,
-+	[VIDEO_CC_VCODEC0_CORE_CLK] = &video_cc_vcodec0_core_clk.clkr,
-+	[VIDEO_CC_VENUS_AHB_CLK] = &video_cc_venus_ahb_clk.clkr,
-+	[VIDEO_CC_VENUS_CLK_SRC] = &video_cc_venus_clk_src.clkr,
-+	[VIDEO_CC_VENUS_CTL_AXI_CLK] = &video_cc_venus_ctl_axi_clk.clkr,
-+	[VIDEO_CC_VENUS_CTL_CORE_CLK] = &video_cc_venus_ctl_core_clk.clkr,
-+	[VIDEO_PLL0] = &video_pll0.clkr,
-+};
-+
-+static struct gdsc *video_cc_sc7180_gdscs[] = {
-+	[VENUS_GDSC] = &venus_gdsc,
-+	[VCODEC0_GDSC] = &vcodec0_gdsc,
-+};
-+
-+static const struct regmap_config video_cc_sc7180_regmap_config = {
-+	.reg_bits = 32,
-+	.reg_stride = 4,
-+	.val_bits = 32,
-+	.max_register = 0xb94,
-+	.fast_io = true,
-+};
-+
-+static const struct qcom_cc_desc video_cc_sc7180_desc = {
-+	.config = &video_cc_sc7180_regmap_config,
-+	.clks = video_cc_sc7180_clocks,
-+	.num_clks = ARRAY_SIZE(video_cc_sc7180_clocks),
-+	.gdscs = video_cc_sc7180_gdscs,
-+	.num_gdscs = ARRAY_SIZE(video_cc_sc7180_gdscs),
-+};
-+
-+static const struct of_device_id video_cc_sc7180_match_table[] = {
-+	{ .compatible = "qcom,sc7180-videocc" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, video_cc_sc7180_match_table);
-+
-+static int video_cc_sc7180_probe(struct platform_device *pdev)
-+{
-+	struct regmap *regmap;
-+	struct alpha_pll_config video_pll0_config = {};
-+
-+	regmap = qcom_cc_map(pdev, &video_cc_sc7180_desc);
-+	if (IS_ERR(regmap))
-+		return PTR_ERR(regmap);
-+
-+	video_pll0_config.l = 0x1f;
-+	video_pll0_config.alpha = 0x4000;
-+	video_pll0_config.user_ctl_val = 0x00000001;
-+	video_pll0_config.user_ctl_hi_val = 0x00004805;
-+
-+	clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
-+
-+	/* video_cc_xo_clk */
-+	regmap_update_bits(regmap, 0x984, 0x1, 0x1);
-+
-+	return qcom_cc_really_probe(pdev, &video_cc_sc7180_desc, regmap);
-+}
-+
-+static struct platform_driver video_cc_sc7180_driver = {
-+	.probe = video_cc_sc7180_probe,
-+	.driver = {
-+		.name = "sc7180-videocc",
-+		.of_match_table = video_cc_sc7180_match_table,
-+	},
-+};
-+
-+static int __init video_cc_sc7180_init(void)
-+{
-+	return platform_driver_register(&video_cc_sc7180_driver);
-+}
-+subsys_initcall(video_cc_sc7180_init);
-+
-+static void __exit video_cc_sc7180_exit(void)
-+{
-+	platform_driver_unregister(&video_cc_sc7180_driver);
-+}
-+module_exit(video_cc_sc7180_exit);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI VIDEOCC SC7180 Driver");
---
-Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-of the Code Aurora Forum, hosted by the  Linux Foundation.
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index 0f2e3fcf0f19..ee56109bc0b4 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -165,7 +165,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, co=
+nst char *dev_fmt,
+=20
+ 	cla->cl.clk_hw =3D hw;
+ 	if (con_id) {
+-		strlcpy(cla->con_id, con_id, sizeof(cla->con_id));
++		strscpy(cla->con_id, con_id, sizeof(cla->con_id));
+ 		cla->cl.con_id =3D cla->con_id;
+ 	}
+=20
+--=20
+2.16.4
 
