@@ -2,201 +2,146 @@ Return-Path: <SRS0=Adza=ZH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06348C432C3
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 15:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED5DC432C3
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 16:29:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D124720740
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 15:11:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4066B20740
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 16:29:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vYNdD7nk"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tj5frAAf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727492AbfKOPLO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Nov 2019 10:11:14 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:41225 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbfKOPLO (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 10:11:14 -0500
-Received: by mail-io1-f67.google.com with SMTP id r144so10741520iod.8;
-        Fri, 15 Nov 2019 07:11:13 -0800 (PST)
+        id S1727552AbfKOQ3N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Nov 2019 11:29:13 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:43090 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbfKOQ3M (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 11:29:12 -0500
+Received: by mail-pl1-f193.google.com with SMTP id a18so4986963plm.10
+        for <linux-clk@vger.kernel.org>; Fri, 15 Nov 2019 08:29:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TFzvSShG866Tx0Q9T+Le+8pqUDl0GErr112sEYfvLrA=;
-        b=vYNdD7nkYFmWZZmrsXGQn5WUw2fdx612njgNnf7ZYt6tIh/0DcDFcZHkS62g5ba5wj
-         K+oepbMjd8eh/87t2eQHoB2UWLqdWbLKjDHbJG3Y7zBZB4v4XlqTS6hyp9DL5nDgAQEs
-         MLXPhBYYGqsvtf5M4EsTT4kvQ4nNEMPcXo9MLKfEKN6tlC+Syg+0+lq2cIvZfhSJ+4sj
-         OPMUq44RDCup2w8ay/2lbC/dNYopVcCLX6xm48+ngkO2PRtwO4Wy4Aw46174AdC1gzO8
-         ueoFcrkMln3Jpy+dTSDlKu0vxc893jze4ZxBKhjWO1CG+kCxIFluSKE94mTLtm0Tb5FK
-         urRw==
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=3XT/nLG3xpNr361wlgEfm3508OHRkJv7ggspM9qj6fM=;
+        b=tj5frAAfuA+MTShJ5+0l80OMXjtbw082FDfq/rA8bY1A3dWturu5e1zJmLDWbnvrXJ
+         iGSNJqubAcqELVVZo2SfEw2GnW4MVCEZP5t8bjMdRr3tEgEfyyybafB+MSiK+aRVINq7
+         cgR60rt2GtCGEt/ffaVAEExBI5o0ce/+pVQ0q2dd6q6G/gWkBt9cfQHLlsHMC6Oqkq1F
+         i5r7gP0+yfqLVsI4ssLVVB/9JN4HQ/Kn93r2pNfCeftl4gWIOIxkyo6y/YU04dpu6j7l
+         hICTbb4ORXJF2tZs879Y5IjGD62IZkpDfYhHyTJ1822+CR4O+6xpPmRMpisnAEuK/Mmw
+         GXcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TFzvSShG866Tx0Q9T+Le+8pqUDl0GErr112sEYfvLrA=;
-        b=aqe/yVo0P00/O+Nig8H8AGYoWpveJ1FNBb6OMovGuw/WM3sztPhQ3MbKzkjZplN1fn
-         9l0HzIuOgL7oHHoG+VRWf2EnsXHDzWgtc3JsMcZznLEfsS7OuW/tSLAFTy4bRFSvT6Kd
-         noELcAKBZ9J3ER5T1ZLOldN8zNer7C9T/aRxe/WS7ZkWLfRicZ7rbXymzMsdQMC/xqfR
-         bmA2Lr4NOWnXDdMY8G08CeCK/iId+sGRCrcJCgokIgPbz2vPboLPv/+0NTDzVxT9Hdc+
-         aXlipTlxQXqkQ83HTxxhNqzWQlPuAxxyb2MkaRkQUyT4C3GvcWJk9QezOqzqNKB+om+k
-         4GvA==
-X-Gm-Message-State: APjAAAVXQ0SI4+nzg8VjUUb+/TyQDA3YYL6lsrknK9QJDcIiddAMqlPx
-        SFdQPvqqcvZoSiWTohzlwy7YbmfOPPSvSwUOlqZf2g==
-X-Google-Smtp-Source: APXvYqy8Ml8XdNNu1e1S+drq8SJ03lssUDFd9PATFauKT1En+/MUxAIZp27r7XLHypV0IGX3osYGBdIMvlMNj2od2DI=
-X-Received: by 2002:a02:6a24:: with SMTP id l36mr1120582jac.46.1573830672557;
- Fri, 15 Nov 2019 07:11:12 -0800 (PST)
-MIME-Version: 1.0
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org> <1573812304-24074-4-git-send-email-tdas@codeaurora.org>
-In-Reply-To: <1573812304-24074-4-git-send-email-tdas@codeaurora.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Fri, 15 Nov 2019 08:11:01 -0700
-Message-ID: <CAOCk7NqfHe6jRPmw6o650fyd6EyVfFObHhJ9=21ipuAqJo6oGA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] dt-bindings: clock: Add YAML schemas for the QCOM
- GPUCC clock bindings
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=3XT/nLG3xpNr361wlgEfm3508OHRkJv7ggspM9qj6fM=;
+        b=fDM4UFU9w5qIBDUbc1gtXZS0rSzbM2hWZE/Xb4jMAJKKYy6EHZ0pSn/08bpW3eU4SR
+         B/u9DyhvEdWZA9g7+cQG5Ybhl0GYupFzQxfWA6muAlO2m32mFdgYY1r+hDIL7JBJOmJj
+         VA1N80lNbbtZgOxjZGq6C+l1TXMSPSJtc4YYSXu5wbvArNlWL4A3XIfhTKXxLb6YBMef
+         Ec2XOPkNaVnteSnyPtlYFHAqX6xpuOZiE/ZOHJXKU3+wHYAjMMVojoDedWCBRLQ5Wr7x
+         bGqlc8qxG/RxPKUoq2WZloUGpVBYmLNvvA1YkO8rmrijUX3gkS36e16ogrukH94rylV/
+         KKxA==
+X-Gm-Message-State: APjAAAVIDHCgIpvKY3IUsruEIhGOhX9085IM/VM0cwjLaewUDOc29JM2
+        I1wjtqF/qUJUDeFPjumgQrX+
+X-Google-Smtp-Source: APXvYqwimP7JI1pnz9yCWsM+bKNEZAPTI0UZ1+a3yXspAKR7FXS9hRU58T4IQjJ/o7Dc92EJdHGhbA==
+X-Received: by 2002:a17:902:744b:: with SMTP id e11mr15625825plt.208.1573835351821;
+        Fri, 15 Nov 2019 08:29:11 -0800 (PST)
+Received: from localhost.localdomain ([2409:4072:6183:6d55:8418:2bbc:e6d8:2b4])
+        by smtp.gmail.com with ESMTPSA id y24sm12295288pfr.116.2019.11.15.08.29.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 15 Nov 2019 08:29:11 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     sboyd@kernel.org, mturquette@baylibre.com, robh+dt@kernel.org
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        fisher.cheng@bitmain.com, alec.lin@bitmain.com,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v7 0/7] Add Bitmain BM1880 clock driver
+Date:   Fri, 15 Nov 2019 21:58:54 +0530
+Message-Id: <20191115162901.17456-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 15, 2019 at 3:07 AM Taniya Das <tdas@codeaurora.org> wrote:
->
-> The GPUCC clock provider have a bunch of generic properties that
-> are needed in a device tree. Add a YAML schemas for those.
->
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gpucc.txt       | 24 --------
->  .../devicetree/bindings/clock/qcom,gpucc.yaml      | 69 ++++++++++++++++++++++
->  2 files changed, 69 insertions(+), 24 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt b/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-> deleted file mode 100644
-> index 269afe8a..0000000
-> --- a/Documentation/devicetree/bindings/clock/qcom,gpucc.txt
-> +++ /dev/null
-> @@ -1,24 +0,0 @@
-> -Qualcomm Graphics Clock & Reset Controller Binding
-> ---------------------------------------------------
-> -
-> -Required properties :
-> -- compatible : shall contain "qcom,sdm845-gpucc" or "qcom,msm8998-gpucc"
-> -- reg : shall contain base register location and length
-> -- #clock-cells : from common clock binding, shall contain 1
-> -- #reset-cells : from common reset binding, shall contain 1
-> -- #power-domain-cells : from generic power domain binding, shall contain 1
-> -- clocks : shall contain the XO clock
-> -          shall contain the gpll0 out main clock (msm8998)
-> -- clock-names : shall be "xo"
-> -               shall be "gpll0" (msm8998)
-> -
-> -Example:
-> -       gpucc: clock-controller@5090000 {
-> -               compatible = "qcom,sdm845-gpucc";
-> -               reg = <0x5090000 0x9000>;
-> -               #clock-cells = <1>;
-> -               #reset-cells = <1>;
-> -               #power-domain-cells = <1>;
-> -               clocks = <&rpmhcc RPMH_CXO_CLK>;
-> -               clock-names = "xo";
-> -       };
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> new file mode 100644
-> index 0000000..c2d6243
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> @@ -0,0 +1,69 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/qcom,gpucc.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Graphics Clock & Reset Controller Binding
-> +
-> +maintainers:
-> +  - Taniya Das <tdas@codeaurora.org>
-> +
-> +description: |
-> +  Qualcomm grpahics clock control module which supports the clocks, resets and
-> +  power domains.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - qcom,msm8998-gpucc
-> +      - qcom,sdm845-gpucc
-> +
-> +  clocks:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - description: Board XO source
-> +      - description: GPLL0 source from GCC
+Hello,
 
-This is not an accurate conversion.  GPLL0 was not valid for 845, and
-is required for 8998.
+This patchset adds common clock driver for Bitmain BM1880 SoC clock
+controller. The clock controller consists of gate, divider, mux
+and pll clocks with different compositions. Hence, the driver uses
+composite clock structure in place where multiple clocking units are
+combined together.
 
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    maxItems: 2
-> +    items:
-> +      - const: xo
-> +      - const: gpll0
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  '#reset-cells':
-> +    const: 1
-> +
-> +  '#power-domain-cells':
-> +    const: 1
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - clock-names
-> +  - '#clock-cells'
-> +  - '#reset-cells'
-> +  - '#power-domain-cells'
-> +
-> +examples:
-> +  # Example of GPUCC with clock node properties for SDM845:
-> +  - |
-> +    clock-controller@5090000 {
-> +      compatible = "qcom,sdm845-gpucc";
-> +      reg = <0x5090000 0x9000>;
-> +      clocks = <&rpmhcc 0>, <&gcc 32>;
-> +      clock-names = "xo", "gpll0";
-> +      #clock-cells = <1>;
-> +      #reset-cells = <1>;
-> +      #power-domain-cells = <1>;
-> +     };
-> +...
-> --
-> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
-> of the Code Aurora Forum, hosted by the  Linux Foundation.
->
+This patchset also removes UART fixed clock and sources clocks from clock
+controller for Sophon Edge board where the driver has been validated.
+
+Thanks,
+Mani
+
+Changes in v7:
+
+* Fixed the do_div() issue detected by kbuild test bot
+
+Changes in v6:
+
+* Dropped 'clk: Warn if clk_init_data is not zero initialized' patch
+* Added fixes tag to the patch adding 'clk_hw_unregister_composite'
+  definition
+* Reworked the use of CLK_IS_CTITICAL flag from clk driver
+* Removed the use of CLK_DIVIDER_HIWORD_MASK flag from driver
+* Some misc cleanups to the driver
+* Added Rob's reviewed tag for the binding
+
+Changes in v5:
+
+* Incorporated review comments from Rob on dt binding
+
+Changes in v4:
+
+* Fixed devicetree binding issue
+* Added ARCH_BITMAIN as the default for the clk driver
+
+Changes in v3:
+
+* Switched to clk_hw_{register/unregister} APIs
+* Returned clk_hw from the in-driver registration helpers
+
+Changes in v2:
+
+* Converted the dt binding to YAML
+* Incorporated review comments from Stephen (majority of change is switching
+  to new way of specifying clk parents)
+
+Manivannan Sadhasivam (7):
+  clk: Zero init clk_init_data in helpers
+  clk: Add clk_hw_unregister_composite helper function definition
+  dt-bindings: clock: Add devicetree binding for BM1880 SoC
+  arm64: dts: bitmain: Add clock controller support for BM1880 SoC
+  arm64: dts: bitmain: Source common clock for UART controllers
+  clk: Add common clock driver for BM1880 SoC
+  MAINTAINERS: Add entry for BM1880 SoC clock driver
+
+ .../bindings/clock/bitmain,bm1880-clk.yaml    |  76 ++
+ MAINTAINERS                                   |   2 +
+ .../boot/dts/bitmain/bm1880-sophon-edge.dts   |   9 -
+ arch/arm64/boot/dts/bitmain/bm1880.dtsi       |  28 +
+ drivers/clk/Kconfig                           |   7 +
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-bm1880.c                      | 969 ++++++++++++++++++
+ drivers/clk/clk-composite.c                   |  13 +-
+ drivers/clk/clk-divider.c                     |   2 +-
+ drivers/clk/clk-fixed-rate.c                  |   2 +-
+ drivers/clk/clk-gate.c                        |   2 +-
+ drivers/clk/clk-mux.c                         |   2 +-
+ include/dt-bindings/clock/bm1880-clock.h      |  82 ++
+ 13 files changed, 1181 insertions(+), 14 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/bitmain,bm1880-clk.yaml
+ create mode 100644 drivers/clk/clk-bm1880.c
+ create mode 100644 include/dt-bindings/clock/bm1880-clock.h
+
+-- 
+2.17.1
+
