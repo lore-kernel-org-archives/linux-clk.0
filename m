@@ -2,75 +2,71 @@ Return-Path: <SRS0=Adza=ZH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2D8DC43215
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 08:11:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3A9FC43215
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 08:11:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B4A120729
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 08:11:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 922A52073C
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 08:11:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="cezKxZfD";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="DQHZwmxz"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PzjnM9WD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NDY2inAd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727279AbfKOILd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Nov 2019 03:11:33 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:56388 "EHLO
+        id S1727435AbfKOILl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Nov 2019 03:11:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:56674 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725829AbfKOILd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 03:11:33 -0500
+        with ESMTP id S1725829AbfKOILj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 03:11:39 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 7548360F7A; Fri, 15 Nov 2019 08:11:32 +0000 (UTC)
+        id 04B186119A; Fri, 15 Nov 2019 08:11:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573805492;
-        bh=tkjLr6SlUn+QeQ8qUjDOStzhyxXnXQ0fWPvfLy8QjVQ=;
+        s=default; t=1573805499;
+        bh=VIDJtqVnj1N3O9u4S6EbSKIAqRAJrizRqy/9JUGFLRc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cezKxZfDfOyerLWd8Kk4K5RTqVRcDbcLf3OQPeokcLGWWLFsmNHDQXDuvM3RW/GZ+
-         Srhfkvpz/PlrBRPn+zw3grbK+Z0wgi01FuDLiSmsPnbHD8pzua7aUMyOvMKV3SlKUE
-         N9TENW/DjHu1IHOIDYqHcDio/pGjkJf/5HDRwZog=
+        b=PzjnM9WDniLssIx6+2HtBqscuD+iCc/9RHdk7ThYjLmS9nFLyngm7pyvFIlK1nmui
+         iBAMjqTsY6dlGh33V+x8ieCtaWJO1agGuvMPfes/BBbTcVoy6SL1Fugfeil6+lC9lz
+         zdHA+LzVrrhmgZgAAybbqoAAqecc9GBfQBXOJUZs=
 Received: from [10.206.28.9] (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id C954860AFE;
-        Fri, 15 Nov 2019 08:11:27 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 7064F61160;
+        Fri, 15 Nov 2019 08:11:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573805491;
-        bh=tkjLr6SlUn+QeQ8qUjDOStzhyxXnXQ0fWPvfLy8QjVQ=;
+        s=default; t=1573805498;
+        bh=VIDJtqVnj1N3O9u4S6EbSKIAqRAJrizRqy/9JUGFLRc=;
         h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=DQHZwmxzPDvt9zpcAWw5Vc1WcijjbJhUPbUHqHeL3jL3nuopLlu5PlwMdfo+Scsf8
-         Fr25pb2NfYq5Emdx75wYa6bLpaozLJsvhDW9ynlVZFM2hYnhL+mcckJgROeCht1lUR
-         nvKwp6glWFcDtlsnAJyw58ykX5+qbCZjgRj0P8qc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org C954860AFE
+        b=NDY2inAdO6NUPRxAH9y18ooAP1gU/sawfR3L+7ixSxBSL6llFfG5y/GLfkQs5vV4r
+         I2HjbrkbsiFW/p5K62Dp5raymefeI4Ko9Fn41DwmeXCvC1ljyfTe/OQkKrGfx1C2Nk
+         wPAZ/4Vl9l/FqddKpFF4bs5GU/SqfQ4IOqBSvLTo=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 7064F61160
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v1 1/7] clk: qcom: clk-alpha-pll: Add support for Fabia
- PLL calibration
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
+Subject: Re: [PATCH v1 7/7] clk: qcom: Add video clock controller driver for
+ SC7180
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
 References: <1572524473-19344-1-git-send-email-tdas@codeaurora.org>
- <1572524473-19344-2-git-send-email-tdas@codeaurora.org>
- <CAD=FV=UjwO25HeVtYvzqEdUxyA4ED18ZxcwEaYVzBGRFTa2FTw@mail.gmail.com>
+ <1572524473-19344-8-git-send-email-tdas@codeaurora.org>
+ <20191106003944.1BDAE2178F@mail.kernel.org>
 From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <87f22b35-5239-f128-3267-05a867324afe@codeaurora.org>
-Date:   Fri, 15 Nov 2019 13:41:25 +0530
+Message-ID: <80e79595-0672-1d16-f251-717dbe449c57@codeaurora.org>
+Date:   Fri, 15 Nov 2019 13:41:31 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAD=FV=UjwO25HeVtYvzqEdUxyA4ED18ZxcwEaYVzBGRFTa2FTw@mail.gmail.com>
+In-Reply-To: <20191106003944.1BDAE2178F@mail.kernel.org>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -79,24 +75,128 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Doug,
+Hi Stephen,
 
-On 11/7/2019 9:54 AM, Doug Anderson wrote:
+Thanks for the review.
 
->> -       ret = regmap_read(pll->clkr.regmap, PLL_MODE(pll), &val);
->> -       if (ret)
->> -               return ret;
+On 11/6/2019 6:09 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-10-31 05:21:13)
+>> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/videocc-sc7180.c
+>> new file mode 100644
+>> index 0000000..bef034b
+>> --- /dev/null
+>> +++ b/drivers/clk/qcom/videocc-sc7180.c
+>> @@ -0,0 +1,263 @@
+>> +// SPDX-License-Identifier: GPL-2.0-only
+>> +/*
+>> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
+>> + */
+>> +
+>> +#include <linux/clk-provider.h>
+>> +#include <linux/err.h>
+>> +#include <linux/kernel.h>
+>> +#include <linux/module.h>
+>> +#include <linux/of.h>
+>> +#include <linux/of_device.h>
 > 
-> My compiler happened to notice that with the change to this function:
-> 
-> drivers/clk/qcom/clk-alpha-pll.c:1166:6: error: unused variable 'ret'
-> [-Werror,-Wunused-variable]
->          int ret = 0;
-> 
-> -Doug
+> Are these of includes used?
 > 
 
-Thanks for the review, will remove the unused variable.
+I will clean them up.
+
+>> +#include <linux/regmap.h>
+>> +
+>> +#include <dt-bindings/clock/qcom,videocc-sc7180.h>
+>> +
+>> +#include "clk-alpha-pll.h"
+>> +#include "clk-branch.h"
+>> +#include "clk-rcg.h"
+>> +#include "clk-regmap.h"
+>> +#include "common.h"
+>> +#include "gdsc.h"
+>> +
+>> +enum {
+>> +       P_BI_TCXO,
+>> +       P_CHIP_SLEEP_CLK,
+>> +       P_CORE_BI_PLL_TEST_SE,
+>> +       P_VIDEO_PLL0_OUT_EVEN,
+>> +       P_VIDEO_PLL0_OUT_MAIN,
+>> +       P_VIDEO_PLL0_OUT_ODD,
+>> +};
+>> +
+>> +static struct pll_vco fabia_vco[] = {
+> 
+> const?
+> 
+
+yes, will add it.
+
+>> +       { 249600000, 2000000000, 0 },
+>> +};
+>> +
+> [...]
+>> +
+>> +static int video_cc_sc7180_probe(struct platform_device *pdev)
+>> +{
+>> +       struct regmap *regmap;
+>> +       struct alpha_pll_config video_pll0_config = {};
+>> +
+>> +       regmap = qcom_cc_map(pdev, &video_cc_sc7180_desc);
+>> +       if (IS_ERR(regmap))
+>> +               return PTR_ERR(regmap);
+>> +
+>> +       video_pll0_config.l = 0x1F;
+> 
+> lowercase hex please.
+> 
+>> +       video_pll0_config.alpha = 0x4000;
+>> +       video_pll0_config.user_ctl_val = 0x00000001;
+>> +       video_pll0_config.user_ctl_hi_val = 0x00004805;
+> 
+> Same question, why on stack?
+> 
+
+Will update the same.
+
+>> +
+>> +       clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_config);
+>> +
+>> +       /* video_cc_xo_clk */
+> 
+> What are we doing? Enabling it?
+> 
+
+yes, enabling it. Did not model and mark it CRITICAL.
+
+>> +       regmap_update_bits(regmap, 0x984, 0x1, 0x1);
+>> +
+>> +       return qcom_cc_really_probe(pdev, &video_cc_sc7180_desc, regmap);
+>> +}
+>> +
+>> +static struct platform_driver video_cc_sc7180_driver = {
+>> +       .probe = video_cc_sc7180_probe,
+>> +       .driver = {
+>> +               .name = "sc7180-videocc",
+>> +               .of_match_table = video_cc_sc7180_match_table,
+>> +       },
+>> +};
+>> +
+>> +static int __init video_cc_sc7180_init(void)
+>> +{
+>> +       return platform_driver_register(&video_cc_sc7180_driver);
+>> +}
+>> +core_initcall(video_cc_sc7180_init);
+>> +
+>> +static void __exit video_cc_sc7180_exit(void)
+>> +{
+>> +       platform_driver_unregister(&video_cc_sc7180_driver);
+>> +}
+>> +module_exit(video_cc_sc7180_exit);
+> 
+> Same question, module platform driver perhaps?
+> 
+
+I will move it to subsys_initcall().
 
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
