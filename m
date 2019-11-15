@@ -2,48 +2,49 @@ Return-Path: <SRS0=Adza=ZH=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2AB4C432C3
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:05:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE1A9C43215
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:05:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB7B2073C
-	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:05:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B27DA2075E
+	for <linux-clk@archiver.kernel.org>; Fri, 15 Nov 2019 10:05:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="b9LLCo+V";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kb0HQXBm"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="IdYutA2N";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iTzy0lck"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727607AbfKOKFV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 15 Nov 2019 05:05:21 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:35456 "EHLO
+        id S1727742AbfKOKFy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 15 Nov 2019 05:05:54 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36926 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726984AbfKOKFU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 05:05:20 -0500
+        with ESMTP id S1727729AbfKOKFv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 15 Nov 2019 05:05:51 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 8E4EB617CB; Fri, 15 Nov 2019 10:05:16 +0000 (UTC)
+        id 1C8BA61882; Fri, 15 Nov 2019 10:05:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573812319;
-        bh=XGTVUfdwEfTtaLkWyp7SQUqekT4GERDU54cFO0CncMQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=b9LLCo+VrawPJLr+tHPCLYGr/ZVEeQRRwVjRKad1QwDEZvUh+eVOs8qssHEbGYB3E
-         2C27sQwxUtmOuyk7FNvKvcT5B2jz0cGxPh+8qCrJ2ePRonDo5LdoS3N+gjcFvVZ3W3
-         oMNnjhqMqjSYRBHi/to03jlNtQ5mFC+tzPAbDyzU=
+        s=default; t=1573812350;
+        bh=4SlmhU6WRIr98hQL6poIv27oSnY4aNZwOdyF5gnFHnA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IdYutA2NZO9+wKyN2aLu1yU2pNwztZ9K4m6lkUCpdNTcXKI83f/nvqq7Xquxxh7BY
+         J00mPVTklqwK7DDP0VdWNcwH2R3Z3R9ya3TuuyoQ3XoI+EdUAki/P2gweLVpXR1/Z/
+         J8kA/5cL3XDugN2GRGMPNge0cqGeystBTo2hUZ7U=
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id A50B361802;
-        Fri, 15 Nov 2019 10:05:10 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 02C706187A;
+        Fri, 15 Nov 2019 10:05:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1573812314;
-        bh=XGTVUfdwEfTtaLkWyp7SQUqekT4GERDU54cFO0CncMQ=;
-        h=From:To:Cc:Subject:Date:From;
-        b=kb0HQXBmQJXzlFGSyLLPO387S1w1+YzwuvY1EEM9ffypJV7+Kapppa6x/M4JaR9Ls
-         zecuv1Agl66Cg68l8TnH8lo8zk4KmAREjTbyg+TPgNG2cmHGACkIoIsJfKsr7G70eQ
-         0TsFBnb3+R8TmYeSmJ32ADJ73Qofqc2kO74EsJ6M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org A50B361802
+        s=default; t=1573812342;
+        bh=4SlmhU6WRIr98hQL6poIv27oSnY4aNZwOdyF5gnFHnA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iTzy0lckksD7RlonXwc3/gwB9KU3uZauJmVSjh4IerTt7BgVdPr8FTvH+YDznznYk
+         ktyEjql4kIOdWZKVzWcOxM1Z8sFoWs6n830WPlptrPeSo6QlxiLO82+N9DT1lPPBhK
+         zZDxB9utMTq32Qu5lNoOTKD5QYIwKoeQo0r2YBF8=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 02C706187A
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -55,69 +56,67 @@ Cc:     David Brown <david.brown@linaro.org>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v2 0/8] Add GPU & Video Clock controller driver for SC7180
-Date:   Fri, 15 Nov 2019 15:34:56 +0530
-Message-Id: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v2 4/8] dt-bindings: clock: Introduce QCOM Graphics clock bindings
+Date:   Fri, 15 Nov 2019 15:35:00 +0530
+Message-Id: <1573812304-24074-5-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
+References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-[v2]
- * Split Fabia code cleanup and calibration code.
- * Few cleanups for GPU/Video CC are
-    * header file inclusion, const for pll vco table.
-    * removal of always enabled clock from gpucc.
-    * compatibles added in sorted order.
-    * move from core_initcall to subsys_initcall().
-    * cleanup clk_parent_data for clocks to be provided from DT.
+Add device tree bindings for graphics clock controller for
+Qualcomm Technology Inc's SC7180 SoCs.
 
-[v1]
- * Fabia PLLs could fail latching in the case where the PLL is not
-   calibrated, so add support to calibrate in prepare clock ops.
-
- * Add driver support for Graphics clock controller for SC7180 and also
-   update device tree bindings for the various clocks supported in the
-   clock controller.
-
- * Add driver support for Video clock controller for SC7180 and also
-   update device tree bindings for the various clocks supported in the
-   clock controller.
-
-Taniya Das (8):
-  clk: qcom: alpha-pll: Remove useless read from set rate
-  clk: qcom: clk-alpha-pll: Add support for Fabia PLL calibration
-  dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings
-  dt-bindings: clock: Introduce QCOM Graphics clock bindings
-  clk: qcom: Add graphics clock controller driver for SC7180
-  dt-bindings: clock: Add YAML schemas for the QCOM VIDEOCC clock
-    bindings
-  dt-bindings: clock: Introduce QCOM Video clock bindings
-  clk: qcom: Add video clock controller driver for SC7180
-
- .../devicetree/bindings/clock/qcom,gpucc.txt       |  24 --
- .../devicetree/bindings/clock/qcom,gpucc.yaml      |  70 ++++++
- .../devicetree/bindings/clock/qcom,videocc.txt     |  18 --
- .../devicetree/bindings/clock/qcom,videocc.yaml    |  62 +++++
- drivers/clk/qcom/Kconfig                           |  16 ++
- drivers/clk/qcom/Makefile                          |   2 +
- drivers/clk/qcom/clk-alpha-pll.c                   |  83 ++++++-
- drivers/clk/qcom/clk-alpha-pll.h                   |   4 +
- drivers/clk/qcom/gpucc-sc7180.c                    | 266 +++++++++++++++++++++
- drivers/clk/qcom/videocc-sc7180.c                  | 259 ++++++++++++++++++++
- include/dt-bindings/clock/qcom,gpucc-sc7180.h      |  21 ++
- include/dt-bindings/clock/qcom,videocc-sc7180.h    |  23 ++
- 12 files changed, 800 insertions(+), 48 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.txt
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,videocc.yaml
- create mode 100644 drivers/clk/qcom/gpucc-sc7180.c
- create mode 100644 drivers/clk/qcom/videocc-sc7180.c
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ .../devicetree/bindings/clock/qcom,gpucc.yaml       |  1 +
+ include/dt-bindings/clock/qcom,gpucc-sc7180.h       | 21 +++++++++++++++++++++
+ 2 files changed, 22 insertions(+)
  create mode 100644 include/dt-bindings/clock/qcom,gpucc-sc7180.h
- create mode 100644 include/dt-bindings/clock/qcom,videocc-sc7180.h
 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+index c2d6243..7486368 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+@@ -17,6 +17,7 @@ properties:
+   compatible:
+     enum:
+       - qcom,msm8998-gpucc
++      - qcom,sc7180-gpucc
+       - qcom,sdm845-gpucc
+
+   clocks:
+diff --git a/include/dt-bindings/clock/qcom,gpucc-sc7180.h b/include/dt-bindings/clock/qcom,gpucc-sc7180.h
+new file mode 100644
+index 0000000..0e4643b
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,gpucc-sc7180.h
+@@ -0,0 +1,21 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019, The Linux Foundation. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SC7180_H
++#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SC7180_H
++
++#define GPU_CC_PLL1			0
++#define GPU_CC_AHB_CLK			1
++#define GPU_CC_CRC_AHB_CLK		2
++#define GPU_CC_CX_GMU_CLK		3
++#define GPU_CC_CX_SNOC_DVM_CLK		4
++#define GPU_CC_CXO_AON_CLK		5
++#define GPU_CC_CXO_CLK			6
++#define GPU_CC_GMU_CLK_SRC		7
++
++/* CAM_CC GDSCRs */
++#define CX_GDSC				0
++
++#endif
 --
 Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
 of the Code Aurora Forum, hosted by the  Linux Foundation.
