@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E0ABC43215
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A506CC43215
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:17:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E08D32089D
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:12:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E3B82089D
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:17:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573920780;
-	bh=3wMnnIJXfnWk142yJD3BMJNJy478q2HaJSDSh7be0mA=;
+	s=default; t=1573921022;
+	bh=uCtfQYjOEF+Ola4zzI7wHRjLy+CCdvWIVjXr1R9YjH8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=j2f8TDxOGNsuRSpvq3TWdjH1S2Qo81P+V+uq18zM731UoqMdRVg4GXIpQe0XvCVHM
-	 BK6ChNILCSROF2xYmIK74Dt+fEH4KR95nI7sS7IgbxV1uL00AXmJz+o5i4abvlRsEf
-	 Yst1kJ6g8GSpgg+3sdQ1acLmUFyKJ10KpLr/vdlY=
+	b=sF1MaHyXtQqazX9eFUqj6tI4IVRv94kVIBXuG4GC53+hPFuQ5z8HMpLkMcetU2nvS
+	 Pm4UrHonuA9IYrCIp/HKAMFkJrNZZcMyNtvjexlD6reJyjVvEjcBeCck3SosT/liqb
+	 2a9hE0tdzmqjVwhpWxOla8GhcOioKvNgJUUb7N7Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729049AbfKPQMy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 11:12:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55092 "EHLO mail.kernel.org"
+        id S1730752AbfKPQQ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 11:16:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729942AbfKPPsH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:48:07 -0500
+        id S1728839AbfKPPqy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:46:54 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F8582086A;
-        Sat, 16 Nov 2019 15:48:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56188208A3;
+        Sat, 16 Nov 2019 15:46:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919286;
-        bh=3wMnnIJXfnWk142yJD3BMJNJy478q2HaJSDSh7be0mA=;
+        s=default; t=1573919212;
+        bh=uCtfQYjOEF+Ola4zzI7wHRjLy+CCdvWIVjXr1R9YjH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZNNoQJlSwclmqV8l1fpbYM1yCAnmuDdeaj8aOgxhqSyDPI6J5UzmS0UrRYP/E6mvD
-         mS+lgM5GSg82LMFCQbE2NhQZxID2H4UxUxpGdpNXrQErFgoWBOfqt8myIUyB8rA83f
-         leBrflJzGUcWTqx5xzD3PwepET+DtTnx/Y3be6Gs=
+        b=F8d1gIbpkzESl3HQ+w8FXTwb2oJCKZABcWxD9ehTmmj3/hOAr92B+lcBbdzklrM/v
+         0zamAH64CU5E3LPvIfQSSKex/YR6eAtWg6IfN5aPNg8WoUSfuxOya153+qQXrcPzmh
+         CKHoxg+WZT9mCvdPtXAcHjlH/kLLII4L3lcV279M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 036/150] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
-Date:   Sat, 16 Nov 2019 10:45:34 -0500
-Message-Id: <20191116154729.9573-36-sashal@kernel.org>
+Cc:     Dmitry Osipenko <digetx@gmail.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 219/237] clk: tegra20: Turn EMC clock gate into divider
+Date:   Sat, 16 Nov 2019 10:40:54 -0500
+Message-Id: <20191116154113.7417-219-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116154729.9573-1-sashal@kernel.org>
-References: <20191116154729.9573-1-sashal@kernel.org>
+In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
+References: <20191116154113.7417-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -57,36 +61,85 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Dmitry Osipenko <digetx@gmail.com>
 
-[ Upstream commit 4917fb90eec7c26dac1497ada3bd4a325f670fcc ]
+[ Upstream commit 514fddba845ed3a1b17e01e99cb3a2a52256a88a ]
 
-A typo that makes it impossible to get the correct clocks for
-MMP2_CLK_SDH2 and MMP2_CLK_SDH3.
+Kernel should never gate the EMC clock as it causes immediate lockup, so
+removing clk-gate functionality doesn't affect anything. Turning EMC clk
+gate into divider allows to implement glitch-less EMC scaling, avoiding
+reparenting to a backup clock.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Fixes: 1ec770d92a62 ("clk: mmp: add mmp2 DT support for clock driver")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/tegra/clk-tegra20.c | 36 ++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 0fc75c3959570..d083b860f0833 100644
---- a/drivers/clk/mmp/clk-of-mmp2.c
-+++ b/drivers/clk/mmp/clk-of-mmp2.c
-@@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
- 	/* The gate clocks has mux parent. */
- 	{MMP2_CLK_SDH0, "sdh0_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_SDH1, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
--	{MMP2_CLK_SDH1, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
-+	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
-+	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
- 	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
- 	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DISP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
+diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
+index cc857d4d4a86e..68551effb5ca2 100644
+--- a/drivers/clk/tegra/clk-tegra20.c
++++ b/drivers/clk/tegra/clk-tegra20.c
+@@ -578,7 +578,6 @@ static struct tegra_clk tegra20_clks[tegra_clk_max] __initdata = {
+ 	[tegra_clk_afi] = { .dt_id = TEGRA20_CLK_AFI, .present = true },
+ 	[tegra_clk_fuse] = { .dt_id = TEGRA20_CLK_FUSE, .present = true },
+ 	[tegra_clk_kfuse] = { .dt_id = TEGRA20_CLK_KFUSE, .present = true },
+-	[tegra_clk_emc] = { .dt_id = TEGRA20_CLK_EMC, .present = true },
+ };
+ 
+ static unsigned long tegra20_clk_measure_input_freq(void)
+@@ -799,6 +798,31 @@ static struct tegra_periph_init_data tegra_periph_nodiv_clk_list[] = {
+ 	TEGRA_INIT_DATA_NODIV("disp2",	mux_pllpdc_clkm, CLK_SOURCE_DISP2, 30, 2, 26,  0, TEGRA20_CLK_DISP2),
+ };
+ 
++static void __init tegra20_emc_clk_init(void)
++{
++	struct clk *clk;
++
++	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
++			       ARRAY_SIZE(mux_pllmcp_clkm),
++			       CLK_SET_RATE_NO_REPARENT,
++			       clk_base + CLK_SOURCE_EMC,
++			       30, 2, 0, &emc_lock);
++
++	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
++				    &emc_lock);
++	clks[TEGRA20_CLK_MC] = clk;
++
++	/*
++	 * Note that 'emc_mux' source and 'emc' rate shouldn't be changed at
++	 * the same time due to a HW bug, this won't happen because we're
++	 * defining 'emc_mux' and 'emc' as distinct clocks.
++	 */
++	clk = tegra_clk_register_divider("emc", "emc_mux",
++				clk_base + CLK_SOURCE_EMC, CLK_IS_CRITICAL,
++				TEGRA_DIVIDER_INT, 0, 8, 1, &emc_lock);
++	clks[TEGRA20_CLK_EMC] = clk;
++}
++
+ static void __init tegra20_periph_clk_init(void)
+ {
+ 	struct tegra_periph_init_data *data;
+@@ -812,15 +836,7 @@ static void __init tegra20_periph_clk_init(void)
+ 	clks[TEGRA20_CLK_AC97] = clk;
+ 
+ 	/* emc */
+-	clk = clk_register_mux(NULL, "emc_mux", mux_pllmcp_clkm,
+-			       ARRAY_SIZE(mux_pllmcp_clkm),
+-			       CLK_SET_RATE_NO_REPARENT,
+-			       clk_base + CLK_SOURCE_EMC,
+-			       30, 2, 0, &emc_lock);
+-
+-	clk = tegra_clk_register_mc("mc", "emc_mux", clk_base + CLK_SOURCE_EMC,
+-				    &emc_lock);
+-	clks[TEGRA20_CLK_MC] = clk;
++	tegra20_emc_clk_init();
+ 
+ 	/* dsi */
+ 	clk = tegra_clk_register_periph_gate("dsi", "pll_d", 0, clk_base, 0,
 -- 
 2.20.1
 
