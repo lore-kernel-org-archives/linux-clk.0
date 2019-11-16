@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC7BC432C3
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:51:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4FF68C432C3
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:59:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CDD82184B
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:51:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A8F520815
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:59:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573919493;
-	bh=X93YxrL4e1zQIw8m5y0o6WIOY4hS2G+mT0DqMqffEj4=;
+	s=default; t=1573919955;
+	bh=QCIZeCkQ0r6C4cbohp8AQg8/ULaLDHBUimyrxqpfD38=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QZH2rv8DQVHUmf5biQ9qAJ8MLqFU9VHkLOoXvD64IPm11138Avv3tH9ZzVRiJhMbp
-	 urYuFayv+2IQZ5EXtpJkQbBNN13UF0D68NoxYGIoHfhrZrk+BL5UbdZPJEUimoPVIk
-	 mpUoleYsQY1oNH2/lG7F7ipX8i2YeYEQgmdTMH24=
+	b=shNildwPuDoLmV5LxJj2RQkvevA/06FhphdJWH1vYFHlqS2ftgLRndWoimqNlglXL
+	 K5Yj682kxlweRgECnoxmHAa7oCIx8SB/7uZFk82ap8uK78/8Omd00zpXwemoCSCnyQ
+	 kRW2GNjT6J4LW5d+viCJz8hf52CDVf6LD2lNKieI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730782AbfKPPvc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 10:51:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60222 "EHLO mail.kernel.org"
+        id S1731369AbfKPPyB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 10:54:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729891AbfKPPvc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:51:32 -0500
+        id S1731366AbfKPPyA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:54:00 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 516AF20723;
-        Sat, 16 Nov 2019 15:51:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 133F92184B;
+        Sat, 16 Nov 2019 15:54:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919491;
-        bh=X93YxrL4e1zQIw8m5y0o6WIOY4hS2G+mT0DqMqffEj4=;
+        s=default; t=1573919640;
+        bh=QCIZeCkQ0r6C4cbohp8AQg8/ULaLDHBUimyrxqpfD38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KkSFJtffvbNXq/VkCGmwTq5yL4c2NBNrPvy0o70gruVn8zhhHuGV1Y5VpDRiq0JiZ
-         WHsS1+InTLRJ8Ni2QvXPR85F0Pos+lnkYreL3+Cv6LtakgHz2rNLMHNzaEW+Wb9BlP
-         39/EpbziF6+eDrxl+PzaHwvvAcFoydg7NCV9dbMg=
+        b=u4dhYnPrwm08RwkUc7RiSuhd9xgZcnzUr7jc+6UOuxdQwBAn2r5I/cwd4vdwHlWmI
+         LeEzb3KhXfRqPBCq7yju1RRYr9jjsURm+/v4on+4mtvpSNiP3LztBFmeuAw/S9oEs2
+         MLMafF9BwDxE2wWk8PyCScdXmarFjdpPOAWJz6y8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 21/99] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
-Date:   Sat, 16 Nov 2019 10:49:44 -0500
-Message-Id: <20191116155103.10971-21-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 19/77] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
+Date:   Sat, 16 Nov 2019 10:52:41 -0500
+Message-Id: <20191116155339.11909-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
-References: <20191116155103.10971-1-sashal@kernel.org>
+In-Reply-To: <20191116155339.11909-1-sashal@kernel.org>
+References: <20191116155339.11909-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -73,7 +73,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 9adaf48aea231..061a9f10218b3 100644
+index f261b1d292c74..8b45cb2caed1b 100644
 --- a/drivers/clk/mmp/clk-of-mmp2.c
 +++ b/drivers/clk/mmp/clk-of-mmp2.c
 @@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
