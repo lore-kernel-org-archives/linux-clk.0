@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0FBC432C3
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC1E3C43141
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:25:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563FB21479
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C88021847
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:25:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573921149;
-	bh=MAt0eWtiPJD9sNaSAtGSvl94lDluSFw3dMc0uqRUmEo=;
+	s=default; t=1573921507;
+	bh=3wMnnIJXfnWk142yJD3BMJNJy478q2HaJSDSh7be0mA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T6+Du9ieeICJDxHByec6qBCJOTFm0kEXj/UDDtFyrExhIcoVjjYf+/w+Y45T9BKWe
-	 ewkS9KHv69CHOrIDu0EmokeJxSfdnByuVr3WD0Rcjf9Rg0vUDU3WRnYVau3Gho8K77
-	 q8n0/M1enTnQ5VsKjZBUHDxYoK6NNglLkxxVzRHE=
+	b=no8RhbpUBOcokH7C1dUGwkoqYDQZmGsrxOxPjCflMNKjLtMoH0Is4zbeM/Xhwu7cp
+	 mxe/jkKSXqwpFeAm9tYOKU/DS+wBj186S71kSCesYjpPV7C11LQrntA9xsanc/7Nj3
+	 if92qAaFStE28k9S9rfmFJQCU4ud7DvqRBY9mftg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729885AbfKPQTH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 11:19:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52656 "EHLO mail.kernel.org"
+        id S1728224AbfKPPmP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 10:42:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45784 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729345AbfKPPqT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:46:19 -0500
+        id S1728218AbfKPPmO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:42:14 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 95C222084D;
-        Sat, 16 Nov 2019 15:46:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11E412072D;
+        Sat, 16 Nov 2019 15:42:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573919178;
-        bh=MAt0eWtiPJD9sNaSAtGSvl94lDluSFw3dMc0uqRUmEo=;
+        s=default; t=1573918934;
+        bh=3wMnnIJXfnWk142yJD3BMJNJy478q2HaJSDSh7be0mA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=m1DkgWnIa7qXfUwItLd7VvFD7xTb9yNDxMYr6JsmrDQIshX+pVSoKFIZ8s0oAuC5C
-         D1MXgljrdLWpakZhz1BwxpOuHsEIdYvRLKGMjYGxcjg0QMqumvrwiviHY41L11KQ16
-         zDp7p2FIn5L7D/wlV8dNcjvApuH0uCiEwZwR5iYc=
+        b=KL+74TLXlYthrMCZCzqkisMsSqHpgrpyOahbAAPwOONXjprRWKj54NOSOrCFeIs1Y
+         8GZkXNmZ+Gh7HojAuAJp2Z+eYx/7317Ilk4wgqqbHCQmp0EJpY3g7UTiEGd+BPqO/I
+         Vo227GGOWyWriiJm7lHXwBZJOEWq3QfytNsPQQA8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 188/237] clk: sunxi-ng: enable so-said LDOs for A64 SoC's pll-mipi clock
-Date:   Sat, 16 Nov 2019 10:40:23 -0500
-Message-Id: <20191116154113.7417-188-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 060/237] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
+Date:   Sat, 16 Nov 2019 10:38:15 -0500
+Message-Id: <20191116154113.7417-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
 References: <20191116154113.7417-1-sashal@kernel.org>
@@ -58,46 +57,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 859783d1390035e29ba850963bded2b4ffdf43b5 ]
+[ Upstream commit 4917fb90eec7c26dac1497ada3bd4a325f670fcc ]
 
-In the user manual of A64 SoC, the bit 22 and 23 of pll-mipi control
-register is called "LDO{1,2}_EN", and according to the BSP source code
-from Allwinner , the LDOs are enabled during the clock's enabling
-process.
+A typo that makes it impossible to get the correct clocks for
+MMP2_CLK_SDH2 and MMP2_CLK_SDH3.
 
-The clock failed to generate output if the two LDOs are not enabled.
-
-Add the two bits to the clock's gate bits, so that the LDOs are enabled
-when the PLL is enabled.
-
-Fixes: c6a0637460c2 ("clk: sunxi-ng: Add A64 clocks")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Fixes: 1ec770d92a62 ("clk: mmp: add mmp2 DT support for clock driver")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index ee9c12cf3f08c..2a60981799216 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -158,7 +158,12 @@ static SUNXI_CCU_NM_WITH_FRAC_GATE_LOCK(pll_gpu_clk, "pll-gpu",
- #define SUN50I_A64_PLL_MIPI_REG		0x040
- 
- static struct ccu_nkm pll_mipi_clk = {
--	.enable		= BIT(31),
-+	/*
-+	 * The bit 23 and 22 are called "LDO{1,2}_EN" on the SoC's
-+	 * user manual, and by experiments the PLL doesn't work without
-+	 * these bits toggled.
-+	 */
-+	.enable		= BIT(31) | BIT(23) | BIT(22),
- 	.lock		= BIT(28),
- 	.n		= _SUNXI_CCU_MULT(8, 4),
- 	.k		= _SUNXI_CCU_MULT_MIN(4, 2, 2),
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index 0fc75c3959570..d083b860f0833 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
+ 	/* The gate clocks has mux parent. */
+ 	{MMP2_CLK_SDH0, "sdh0_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+ 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+-	{MMP2_CLK_SDH1, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+-	{MMP2_CLK_SDH1, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
++	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
++	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+ 	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DISP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
 -- 
 2.20.1
 
