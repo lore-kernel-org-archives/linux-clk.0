@@ -2,112 +2,144 @@ Return-Path: <SRS0=9M9U=ZI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0A1AC43215
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:25:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5233EC432C3
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F5072184B
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:25:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573921533;
-	bh=E4lEx/M3dpUWK1f5P4pR88zODDCCQts5gWFfasn091I=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Qi/gkP4IGpRm++ERa0kDVJl6yUqMY/duaS2Npucj15q8Md9PbyOIgmc+Rhtyg656I
-	 U1+Y+/B5VQS67Igsb8HzAtjJZntnDVsj0gYQhwURovLv979pBo4TDSu7L2ivkhH6Mz
-	 nutRCX+qvHRyuK/olEwjJbj8y/ncv9rqI7/bPSG4=
+	by mail.kernel.org (Postfix) with ESMTP id 1F08B2168B
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 16:51:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FWLT9g4U"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728148AbfKPPmF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 10:42:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45522 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728142AbfKPPmF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:42:05 -0500
-Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 228082084B;
-        Sat, 16 Nov 2019 15:42:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918924;
-        bh=E4lEx/M3dpUWK1f5P4pR88zODDCCQts5gWFfasn091I=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aE302id1U8tTECaRS7EwrMQCGFXuD0XaTS1smPL64MD2jtcU+qF4IKREAhBEbJIuP
-         btOcBGt3xq5Pz21imxUowLrHWgUXf6Rj68yD6RHp1j1JgtcC6n2AnOY/au/gznsTx2
-         4uyQUs9JJrTLr1MOdCTOWb74504vldYDzYZ4oEek=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Joseph Lo <josephl@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 050/237] clk: tegra: Fixes for MBIST work around
-Date:   Sat, 16 Nov 2019 10:38:05 -0500
-Message-Id: <20191116154113.7417-50-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
-References: <20191116154113.7417-1-sashal@kernel.org>
+        id S1727955AbfKPQvy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 11:51:54 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40431 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727845AbfKPQvy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Nov 2019 11:51:54 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e3so6887487plt.7
+        for <linux-clk@vger.kernel.org>; Sat, 16 Nov 2019 08:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=qMrORyW5nMBpE9AKOmWgk4rweWdkIqw2wY8VYo1ZNuw=;
+        b=FWLT9g4UFegz5m0n49tzVHJELmdKRgGFBqeSyhH9+FGXPuU/C8e/gyZWv7yn1tANhK
+         VKM2LufO6BnJJJlwaa/d3biZEHAZC6y0q+kz7alcmYmISgt3Z1iG5CVQTS9ZMXR4EQaJ
+         4BUD1Z1B1URfSHVby2nSxdFlqc3D7Wh7d2VMkoLy8h5znZJNtTYN00Hgtqw8/2i5t/rG
+         OXR1OkK+OeH8Jc2DB+8ujlZmyy6XdgGLti2bk5U/wnG890y8edvyIt34wLjl3d3GUkeG
+         bwH5o1LIMSvXqysFyr2A3cLDbYpUGZohilzecher/Mpb/pYMo1Ojuq38aCBUjayT+OQA
+         iFqg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qMrORyW5nMBpE9AKOmWgk4rweWdkIqw2wY8VYo1ZNuw=;
+        b=pjtQNI/DHwvdxDglnHXNfRvewTl+0bRIOAK/Tw+usFiJGsxLVkLH/1toxKnFQVgRPZ
+         eoDVUxPBQMN/OTPfAenhYyGORc1hvWa/E/Lf/4810plCWugPEIe+8PB54KESYZue2nC4
+         M7MKNHVE0VPpQsnvdsRuDgihFF6cvXyOF5qUGHn/n56X9RmPhbdTgGfKJTb6F4VUi8t6
+         3H+nH8E9wekIfDZsWV/JAsc0h++qzCnxZrcG8Y/qWRAPROBnb+GfTsmGwOsApyhpL/7A
+         KsSe/EnBMyNr3wzLYKixOS5AK4rpfl4+M5wVOGVU2KjrmuGXKiNosqcz+b9n/eb4hKUk
+         iGOg==
+X-Gm-Message-State: APjAAAUL77q5+IfZzIbBcM0bMHunAki8R1Q6nKZX6TsFFdGPYdsEF+on
+        Ri1VutTkPwG19NjIMEvROY6ACQ==
+X-Google-Smtp-Source: APXvYqxJB5qRcG+X9uSTKdLLV9ptpXEDL2uxLwsGNWjwy+IdDODv15+CLgU5miYSqIeiizqzRyaSOA==
+X-Received: by 2002:a17:90a:a40f:: with SMTP id y15mr28378509pjp.106.1573923113464;
+        Sat, 16 Nov 2019 08:51:53 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id x12sm14425032pfm.130.2019.11.16.08.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 16 Nov 2019 08:51:52 -0800 (PST)
+Date:   Sat, 16 Nov 2019 08:51:50 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     sboyd@kernel.org, mturquette@baylibre.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, jonathan@marek.ca
+Subject: Re: [PATCH] clk: qcom: mmcc8974: move gfx3d_clk_src from the mmcc to
+ rpm
+Message-ID: <20191116165150.GB25371@yoga>
+References: <20191115123931.18919-1-masneyb@onstation.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191115123931.18919-1-masneyb@onstation.org>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Joseph Lo <josephl@nvidia.com>
+On Fri 15 Nov 04:39 PST 2019, Brian Masney wrote:
 
-[ Upstream commit a4dbbceeee3e0ba670875a147237d6566de78840 ]
+> gfx3d_clk_src for msm8974 was introduced into the MMCC by
+> commit d8b212014e69 ("clk: qcom: Add support for MSM8974's multimedia
+> clock controller (MMCC)") to ensure that all of the clocks for
+> this platform are documented upstream. This clock actually belongs
+> on the RPM. Since then, commit 685dc94b7d8f ("clk: qcom: smd-rpmcc:
+> Add msm8974 clocks") was introduced, which contains the proper
+> definition for gfx3d_clk_src. Let's drop the definition from the
+> mmcc and register the clock with the rpm instead.
+> 
+> This change was tested on a Nexus 5 (hammerhead) phone.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-Fix some incorrect data in LVL2 offset and bit mask.
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
-Fixes: e403d0057343 ("clk: tegra: MBIST work around for Tegra210")
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
-Signed-off-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/tegra/clk-tegra210.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/tegra/clk-tegra210.c b/drivers/clk/tegra/clk-tegra210.c
-index 080bfa24863ee..7264e97310348 100644
---- a/drivers/clk/tegra/clk-tegra210.c
-+++ b/drivers/clk/tegra/clk-tegra210.c
-@@ -2603,7 +2603,7 @@ static struct tegra210_domain_mbist_war tegra210_pg_mbist_war[] = {
- 	[TEGRA_POWERGATE_MPE] = {
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
- 		.lvl2_offset = LVL2_CLK_GATE_OVRE,
--		.lvl2_mask = BIT(2),
-+		.lvl2_mask = BIT(29),
- 	},
- 	[TEGRA_POWERGATE_SOR] = {
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
-@@ -2654,14 +2654,14 @@ static struct tegra210_domain_mbist_war tegra210_pg_mbist_war[] = {
- 		.num_clks = ARRAY_SIZE(nvdec_slcg_clkids),
- 		.clk_init_data = nvdec_slcg_clkids,
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
--		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-+		.lvl2_offset = LVL2_CLK_GATE_OVRE,
- 		.lvl2_mask = BIT(9) | BIT(31),
- 	},
- 	[TEGRA_POWERGATE_NVJPG] = {
- 		.num_clks = ARRAY_SIZE(nvjpg_slcg_clkids),
- 		.clk_init_data = nvjpg_slcg_clkids,
- 		.handle_lvl2_ovr = tegra210_generic_mbist_war,
--		.lvl2_offset = LVL2_CLK_GATE_OVRC,
-+		.lvl2_offset = LVL2_CLK_GATE_OVRE,
- 		.lvl2_mask = BIT(9) | BIT(31),
- 	},
- 	[TEGRA_POWERGATE_AUD] = {
--- 
-2.20.1
-
+> ---
+>  drivers/clk/qcom/clk-smd-rpm.c  |  2 ++
+>  drivers/clk/qcom/mmcc-msm8974.c | 13 -------------
+>  2 files changed, 2 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+> index 60aae7543608..2db31dbe47e9 100644
+> --- a/drivers/clk/qcom/clk-smd-rpm.c
+> +++ b/drivers/clk/qcom/clk-smd-rpm.c
+> @@ -486,6 +486,8 @@ static struct clk_smd_rpm *msm8974_clks[] = {
+>  	[RPM_SMD_MMSSNOC_AHB_CLK]	= &msm8974_mmssnoc_ahb_clk,
+>  	[RPM_SMD_MMSSNOC_AHB_A_CLK]	= &msm8974_mmssnoc_ahb_a_clk,
+>  	[RPM_SMD_BIMC_CLK]		= &msm8974_bimc_clk,
+> +	[RPM_SMD_GFX3D_CLK_SRC]		= &msm8974_gfx3d_clk_src,
+> +	[RPM_SMD_GFX3D_A_CLK_SRC]	= &msm8974_gfx3d_a_clk_src,
+>  	[RPM_SMD_BIMC_A_CLK]		= &msm8974_bimc_a_clk,
+>  	[RPM_SMD_OCMEMGX_CLK]		= &msm8974_ocmemgx_clk,
+>  	[RPM_SMD_OCMEMGX_A_CLK]		= &msm8974_ocmemgx_a_clk,
+> diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-msm8974.c
+> index bcb0a397ef91..015426262d08 100644
+> --- a/drivers/clk/qcom/mmcc-msm8974.c
+> +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> @@ -452,18 +452,6 @@ static struct clk_rcg2 mdp_clk_src = {
+>  	},
+>  };
+>  
+> -static struct clk_rcg2 gfx3d_clk_src = {
+> -	.cmd_rcgr = 0x4000,
+> -	.hid_width = 5,
+> -	.parent_map = mmcc_xo_mmpll0_1_2_gpll0_map,
+> -	.clkr.hw.init = &(struct clk_init_data){
+> -		.name = "gfx3d_clk_src",
+> -		.parent_names = mmcc_xo_mmpll0_1_2_gpll0,
+> -		.num_parents = 5,
+> -		.ops = &clk_rcg2_ops,
+> -	},
+> -};
+> -
+>  static struct freq_tbl ftbl_camss_jpeg_jpeg0_2_clk[] = {
+>  	F(75000000, P_GPLL0, 8, 0, 0),
+>  	F(133330000, P_GPLL0, 4.5, 0, 0),
+> @@ -2411,7 +2399,6 @@ static struct clk_regmap *mmcc_msm8974_clocks[] = {
+>  	[VFE0_CLK_SRC] = &vfe0_clk_src.clkr,
+>  	[VFE1_CLK_SRC] = &vfe1_clk_src.clkr,
+>  	[MDP_CLK_SRC] = &mdp_clk_src.clkr,
+> -	[GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
+>  	[JPEG0_CLK_SRC] = &jpeg0_clk_src.clkr,
+>  	[JPEG1_CLK_SRC] = &jpeg1_clk_src.clkr,
+>  	[JPEG2_CLK_SRC] = &jpeg2_clk_src.clkr,
+> -- 
+> 2.21.0
+> 
