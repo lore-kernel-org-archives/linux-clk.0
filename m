@@ -2,112 +2,91 @@ Return-Path: <SRS0=9M9U=ZI=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E163BC43215
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 05:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11625C432C3
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:42:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B24542075E
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 05:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D51BB20700
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:42:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573883483;
-	bh=3glp16+H5Slzp2YEAa7YPPALJxZr7iGRwioZPJUYpxU=;
-	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=dpczQ3tuDbgq7Q/CxPctw+pQ5/GjQ0g6YmbuptXlW1gUcKi8f1ty2AY+0MYaRALV/
-	 bteabUvaxQdeM0kIK2y5Ql+NqkEsgadXsLKAqkmbgHlQSt5+1NAFAO2ocx7nFDJgMJ
-	 BWsxsywvciDr3mZBrfIp9BT24VuS3OVVGGsZ9a3U=
+	s=default; t=1573918950;
+	bh=oMoPkCwY6kDzGS2Li0xLQGa17DHyFG0V1ZNnzIwiQfU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=T03elYOnOvFdH1W0xwg0nOCn+dgj6iv1yuLgHaYttKHkNZ6psGE0zdnbZk0wfn9Bs
+	 ME6OF/ZIbk9BufWAz574e6sL24Aw+7kthF+y51wLhjCQhkMnWITosfDctb96aX7pv8
+	 zm0h7BeN5F7HtpX+ob/ytJj8qEAh3fJp8xxztL04=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726168AbfKPFvT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 00:51:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59198 "EHLO mail.kernel.org"
+        id S1728279AbfKPPmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 10:42:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45818 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725840AbfKPFvT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Nov 2019 00:51:19 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728250AbfKPPmR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:42:17 -0500
+Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2FCD120729;
-        Sat, 16 Nov 2019 05:51:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CFC742072D;
+        Sat, 16 Nov 2019 15:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573883478;
-        bh=3glp16+H5Slzp2YEAa7YPPALJxZr7iGRwioZPJUYpxU=;
-        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=DyMApAvuBt1DmHYQwaweWiSlfZhcvWyMbqHWlqdlNwXIJ2HO7W04RG0PyEQsW33ot
-         cWIOO+AcvOLWQbrmNJPiu0C6gmrqEteA5EHV4DmpjB7lSMJi6VnY6ywMKh6nnoI/uj
-         5P6bEnCUnP4PSs0pKkO72mJjaKTPiMKRBr5pbgy0=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1573918937;
+        bh=oMoPkCwY6kDzGS2Li0xLQGa17DHyFG0V1ZNnzIwiQfU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Dv83CmN9ldzw9I5s74oxVIDcAs/dPr+o8r18WGlHHiodN5gr3lNWMPz02Fo4wdenY
+         1A95pUWX+q9CW6afd5ptVjP//nVrpJOVb660VZCBps8d5j/Warvidey8WxdapT7Wb8
+         +mHNeUAhgQrAi23EnOCWQZ50I3Ep7pKnulw8odc8=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 061/237] clk: at91: audio-pll: fix audio pmc type
+Date:   Sat, 16 Nov 2019 10:38:16 -0500
+Message-Id: <20191116154113.7417-61-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
+References: <20191116154113.7417-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <80e79595-0672-1d16-f251-717dbe449c57@codeaurora.org>
-References: <1572524473-19344-1-git-send-email-tdas@codeaurora.org> <1572524473-19344-8-git-send-email-tdas@codeaurora.org> <20191106003944.1BDAE2178F@mail.kernel.org> <80e79595-0672-1d16-f251-717dbe449c57@codeaurora.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v1 7/7] clk: qcom: Add video clock controller driver for SC7180
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Fri, 15 Nov 2019 21:51:17 -0800
-Message-Id: <20191116055118.2FCD120729@mail.kernel.org>
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-11-15 00:11:31)
-> Hi Stephen,
->=20
-> Thanks for the review.
->=20
-> On 11/6/2019 6:09 AM, Stephen Boyd wrote:
-> > Quoting Taniya Das (2019-10-31 05:21:13)
-> >> diff --git a/drivers/clk/qcom/videocc-sc7180.c b/drivers/clk/qcom/vide=
-occ-sc7180.c
-> >> new file mode 100644
-> >> index 0000000..bef034b
-> >> --- /dev/null
-> >> +++ b/drivers/clk/qcom/videocc-sc7180.c
-> >> @@ -0,0 +1,263 @@
-> >=20
-> >> +       video_pll0_config.alpha =3D 0x4000;
-> >> +       video_pll0_config.user_ctl_val =3D 0x00000001;
-> >> +       video_pll0_config.user_ctl_hi_val =3D 0x00004805;
-> >=20
-> > Same question, why on stack?
-> >=20
->=20
-> Will update the same.
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-Sounds like nothing to do.
+[ Upstream commit 7fa75007b7d7421aea59ff2b12ab1bd65a5abfa6 ]
 
->=20
-> >> +
-> >> +       clk_fabia_pll_configure(&video_pll0, regmap, &video_pll0_confi=
-g);
-> >> +
-> >> +       /* video_cc_xo_clk */
-> >=20
-> > What are we doing? Enabling it?
-> >=20
->=20
-> yes, enabling it. Did not model and mark it CRITICAL.
+The allocation for the audio pmc is using the size of struct clk_audio_pad
+instead of struct clk_audio_pmc. This works fine because the former is
+larger than the latter but it is safer to be correct.
 
-Ok. Please describe that in the comment.
+Fixes: ("0865805d82d4 clk: at91: add audio pll clock drivers")
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/at91/clk-audio-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> >> +}
-> >> +module_exit(video_cc_sc7180_exit);
-> >=20
-> > Same question, module platform driver perhaps?
-> >=20
->=20
-> I will move it to subsys_initcall().
->=20
-
-Hmm ok.
+diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
+index da7bafcfbe706..b3eaf654fac98 100644
+--- a/drivers/clk/at91/clk-audio-pll.c
++++ b/drivers/clk/at91/clk-audio-pll.c
+@@ -509,7 +509,7 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
+ 
+ static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
+ {
+-	struct clk_audio_pad *apmc_ck;
++	struct clk_audio_pmc *apmc_ck;
+ 	struct clk_init_data init = {};
+ 
+ 	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
+-- 
+2.20.1
 
