@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11625C432C3
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:42:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEC7BC432C3
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:51:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D51BB20700
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:42:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CDD82184B
+	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 15:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1573918950;
-	bh=oMoPkCwY6kDzGS2Li0xLQGa17DHyFG0V1ZNnzIwiQfU=;
+	s=default; t=1573919493;
+	bh=X93YxrL4e1zQIw8m5y0o6WIOY4hS2G+mT0DqMqffEj4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=T03elYOnOvFdH1W0xwg0nOCn+dgj6iv1yuLgHaYttKHkNZ6psGE0zdnbZk0wfn9Bs
-	 ME6OF/ZIbk9BufWAz574e6sL24Aw+7kthF+y51wLhjCQhkMnWITosfDctb96aX7pv8
-	 zm0h7BeN5F7HtpX+ob/ytJj8qEAh3fJp8xxztL04=
+	b=QZH2rv8DQVHUmf5biQ9qAJ8MLqFU9VHkLOoXvD64IPm11138Avv3tH9ZzVRiJhMbp
+	 urYuFayv+2IQZ5EXtpJkQbBNN13UF0D68NoxYGIoHfhrZrk+BL5UbdZPJEUimoPVIk
+	 mpUoleYsQY1oNH2/lG7F7ipX8i2YeYEQgmdTMH24=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728279AbfKPPmZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 10:42:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45818 "EHLO mail.kernel.org"
+        id S1730782AbfKPPvc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 10:51:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60222 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728250AbfKPPmR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 16 Nov 2019 10:42:17 -0500
+        id S1729891AbfKPPvc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Nov 2019 10:51:32 -0500
 Received: from sasha-vm.mshome.net (unknown [50.234.116.4])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CFC742072D;
-        Sat, 16 Nov 2019 15:42:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 516AF20723;
+        Sat, 16 Nov 2019 15:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1573918937;
-        bh=oMoPkCwY6kDzGS2Li0xLQGa17DHyFG0V1ZNnzIwiQfU=;
+        s=default; t=1573919491;
+        bh=X93YxrL4e1zQIw8m5y0o6WIOY4hS2G+mT0DqMqffEj4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dv83CmN9ldzw9I5s74oxVIDcAs/dPr+o8r18WGlHHiodN5gr3lNWMPz02Fo4wdenY
-         1A95pUWX+q9CW6afd5ptVjP//nVrpJOVb660VZCBps8d5j/Warvidey8WxdapT7Wb8
-         +mHNeUAhgQrAi23EnOCWQZ50I3Ep7pKnulw8odc8=
+        b=KkSFJtffvbNXq/VkCGmwTq5yL4c2NBNrPvy0o70gruVn8zhhHuGV1Y5VpDRiq0JiZ
+         WHsS1+InTLRJ8Ni2QvXPR85F0Pos+lnkYreL3+Cv6LtakgHz2rNLMHNzaEW+Wb9BlP
+         39/EpbziF6+eDrxl+PzaHwvvAcFoydg7NCV9dbMg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 061/237] clk: at91: audio-pll: fix audio pmc type
-Date:   Sat, 16 Nov 2019 10:38:16 -0500
-Message-Id: <20191116154113.7417-61-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 21/99] clk: mmp2: fix the clock id for sdh2_clk and sdh3_clk
+Date:   Sat, 16 Nov 2019 10:49:44 -0500
+Message-Id: <20191116155103.10971-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191116154113.7417-1-sashal@kernel.org>
-References: <20191116154113.7417-1-sashal@kernel.org>
+In-Reply-To: <20191116155103.10971-1-sashal@kernel.org>
+References: <20191116155103.10971-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,35 +57,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 7fa75007b7d7421aea59ff2b12ab1bd65a5abfa6 ]
+[ Upstream commit 4917fb90eec7c26dac1497ada3bd4a325f670fcc ]
 
-The allocation for the audio pmc is using the size of struct clk_audio_pad
-instead of struct clk_audio_pmc. This works fine because the former is
-larger than the latter but it is safer to be correct.
+A typo that makes it impossible to get the correct clocks for
+MMP2_CLK_SDH2 and MMP2_CLK_SDH3.
 
-Fixes: ("0865805d82d4 clk: at91: add audio pll clock drivers")
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Fixes: 1ec770d92a62 ("clk: mmp: add mmp2 DT support for clock driver")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/clk-audio-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/at91/clk-audio-pll.c b/drivers/clk/at91/clk-audio-pll.c
-index da7bafcfbe706..b3eaf654fac98 100644
---- a/drivers/clk/at91/clk-audio-pll.c
-+++ b/drivers/clk/at91/clk-audio-pll.c
-@@ -509,7 +509,7 @@ static void __init of_sama5d2_clk_audio_pll_pad_setup(struct device_node *np)
- 
- static void __init of_sama5d2_clk_audio_pll_pmc_setup(struct device_node *np)
- {
--	struct clk_audio_pad *apmc_ck;
-+	struct clk_audio_pmc *apmc_ck;
- 	struct clk_init_data init = {};
- 
- 	apmc_ck = kzalloc(sizeof(*apmc_ck), GFP_KERNEL);
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index 9adaf48aea231..061a9f10218b3 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -227,8 +227,8 @@ static struct mmp_param_gate_clk apmu_gate_clks[] = {
+ 	/* The gate clocks has mux parent. */
+ 	{MMP2_CLK_SDH0, "sdh0_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH0, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+ 	{MMP2_CLK_SDH1, "sdh1_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH1, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+-	{MMP2_CLK_SDH1, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+-	{MMP2_CLK_SDH1, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
++	{MMP2_CLK_SDH2, "sdh2_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH2, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
++	{MMP2_CLK_SDH3, "sdh3_clk", "sdh_mix_clk", CLK_SET_RATE_PARENT, APMU_SDH3, 0x1b, 0x1b, 0x0, 0, &sdh_lock},
+ 	{MMP2_CLK_DISP0, "disp0_clk", "disp0_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1b, 0x1b, 0x0, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP0_SPHY, "disp0_sphy_clk", "disp0_sphy_div", CLK_SET_RATE_PARENT, APMU_DISP0, 0x1024, 0x1024, 0x0, 0, &disp0_lock},
+ 	{MMP2_CLK_DISP1, "disp1_clk", "disp1_div", CLK_SET_RATE_PARENT, APMU_DISP1, 0x1b, 0x1b, 0x0, 0, &disp1_lock},
 -- 
 2.20.1
 
