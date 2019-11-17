@@ -2,112 +2,124 @@ Return-Path: <SRS0=O2Di=ZJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6FBC432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EECF6C432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:46:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A708F206DB
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:42:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GH1RrbLd"
+	by mail.kernel.org (Postfix) with ESMTP id C94212075C
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:46:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726046AbfKQMmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Nov 2019 07:42:46 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:34975 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfKQMmp (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 07:42:45 -0500
-Received: by mail-il1-f193.google.com with SMTP id z12so13434254ilp.2
-        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2019 04:42:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ApUhfkWLXsiE5ipNrOg9nvjZff7lfGHQm/7BE1gXgAk=;
-        b=GH1RrbLdXySK8/BmtcofgBiF1DmolDgC+MZGi6uL+u+jYV3vONIZyRUvdaN8lPFpvR
-         dXTR43GhjRFIG12L4UnWGmcNch7FkXt2aqcE3LjZ8ifYgzQq7MI8RSMgsaUk0GGIFKtg
-         34Qik24fcfbCqXa9DCFl+nEyxrdZvH2T7DV6UiguKk4vm15NAUUluUnDjNmgJhRbKUt9
-         jaEV+3ej9EGcsaSm08CSUbFDa6oY8NOv4pa/W8C13qGOgYoAdrLF9yaj0XiBWo/s2DO9
-         S7kRZI8qLy9lqhSj04ysdB+Lquv2mv1rORiBIu6R5kZP1SVLdCwjQxpjDnkc+pLz+gB7
-         J16A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ApUhfkWLXsiE5ipNrOg9nvjZff7lfGHQm/7BE1gXgAk=;
-        b=p0q1o4bzopsHgvyajJGdKdf87NbOxif2YXih0MWzgEwfaavOVBck/LWttmqywHrImv
-         A2BltLDPoF9xE+shIjnNOd8ECIwQb47J+HRk+cUCBXSTYnfttqkWJpcOeXm9cL8LN8uR
-         kwVXoAKYi1dhOF+ZoBRyn70KOHMXLUp67Qni+lLHPka1sCEw8gS7hYrPw9VkgR9jxwbL
-         lY9zWnR1lbwCp/1Y8kQZF3aXFCi//QttDc3Ff1umpF94vgxfXb0Z4tnMCGgTQ5UHiRrL
-         yxvx26mtU5crLFoc3/ASGysyRxlbKVLJU4x3K1XfWrtxh9ksCmk6U7Yt9OwAMsanP8TG
-         LAcA==
-X-Gm-Message-State: APjAAAXlOcsHuJiwq9kvv+CxfwDtjjpoYTTVARDIlAmplXiT0MpAO788
-        pxwMyyBJ5+7sgv+eCOGuQlXi44sUPRYMZ6+TpsU=
-X-Google-Smtp-Source: APXvYqy3cQ3NGfwe6oEv94KxlSM9RkBL/JPl7Gv9l9OdJ8t8qboi3Dqzr7mEXKrTxXHVcP7jPihKpNT4KzdOe4hpTIE=
-X-Received: by 2002:a92:8b4e:: with SMTP id i75mr10100379ild.5.1573994563780;
- Sun, 17 Nov 2019 04:42:43 -0800 (PST)
-MIME-Version: 1.0
-References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com> <20190918060835.B93D420856@mail.kernel.org>
-In-Reply-To: <20190918060835.B93D420856@mail.kernel.org>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Sun, 17 Nov 2019 20:31:43 +0800
-Message-ID: <CAA+hA=Q+vcN1DQTc_E=ohcEz4b3oxcoYgGFsZYGuGH7h8hfCvQ@mail.gmail.com>
-Subject: Re: [PATCH V5 00/11] clk: imx8: add new clock binding for better pm support
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726046AbfKQMqD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Nov 2019 07:46:03 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:58728 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726037AbfKQMqD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 17 Nov 2019 07:46:03 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1A0F41A0991;
+        Sun, 17 Nov 2019 13:46:00 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 9D2FA1A07F0;
+        Sun, 17 Nov 2019 13:45:55 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 164D14029F;
+        Sun, 17 Nov 2019 20:45:50 +0800 (SGT)
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-arm-kernel@lists.infradead.org
+Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
+        mturquette@baylibre.com, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Subject: [PATCH RESEND v3 00/15] arm64: dts: imx8: architecture improvement and adding imx8qm support
+Date:   Sun, 17 Nov 2019 20:43:40 +0800
+Message-Id: <1573994635-14479-1-git-send-email-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+IMX SCU based platforms (e.g. MX8QM/MX8QXP) are comprised of a number of SS
+(Subsystems), those SS may be shared between different SoCs while most of them
+can be reused like Devices Resources, Clocks, Power domains and etc.
 
-On Wed, Sep 18, 2019 at 2:21 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Dong Aisheng (2019-09-09 19:09:57)
-> > This is a follow up of this patch series.
-> > https://patchwork.kernel.org/cover/10924029/
-> > [V2,0/2] clk: imx: scu: add parsing clocks from device tree support
-> >
-> > This patch series is a preparation for the MX8 Architecture improvement.
-> > As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
-> > of a couple of SS(Subsystems) while most of them within the same SS
-> > can be shared. e.g. Clocks, Devices and etc.
-> >
-> > However, current clock binding is using SW IDs for device tree to use
-> > which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
-> > different SoCs.
-> >
-> > This patch series aims to introduce a new binding which is more close to
-> > hardware and platform independent and can makes us write a more general
-> > drivers for different SCU based SoCs.
-> >
-> > Another important thing is that on MX8, each Clock resource is associated
-> > with a power domain. So we have to attach that clock device to the power
-> > domain in order to make it work properly. Further more, the clock state
-> > will be lost when its power domain is completely off during suspend/resume,
-> > so we also introduce the clock state save&restore mechanism.
->
-> I had some more comments on v4. I'm going to wait for those to be
-> addressed before reviewing this series.
->
+This patch series aims to improve the MX8 architecture to comply with the HW
+design to save a lot of duplicated codes and benefits us a better
+maintainability and scalability in the future.
 
-Yes, i have addressed all your comments and resend v5.
-Could you help have a look at it?
-https://patchwork.kernel.org/cover/11248249/
+This patch series depends on another clk new binding series:
+https://patchwork.kernel.org/cover/11046287/
 
-Regards
-Aisheng
+NOTE: for the missing undocumented compatible strings for the new SoC IMX8QM
+in this patch series. It will be sent in another patch series later.
+
+ChangeLog:
+v2->v3:
+ * use clock-indices property instead of bit-offset property suggested by Shawn Guo
+ * rebase to latest shawn/for-next
+v1->v2:
+ * change to the new two cells scu clock binding, so original adding scu clocks
+   patches were removed.
+ * Move scu pd node above clk node
+
+Dong Aisheng (15):
+  arm64: dts: imx8qxp: add fallback compatible string for scu pd
+  arm64: dts: imx8qxp: move scu pd node before scu clock node
+  arm64: dts: imx8qxp: orginize dts in subsystems
+  arm64: dts: imx8: add lsio lpcg clocks
+  arm64: dts: imx8: add conn lpcg clocks
+  arm64: dts: imx8: add adma lpcg clocks
+  arm64: dts: imx8: switch to two cell scu clock binding
+  arm64: dts: imx8: switch to new lpcg clock binding
+  arm64: dts: imx8qm: add lsio ss support
+  arm64: dts: imx8qm: add conn ss support
+  arm64: dts: imx8: split adma ss into dma and audio ss
+  arm64: dts: imx8qm: add dma ss support
+  arm64: dts: imx: add imx8qm common dts file
+  arm64: dts: imx: add imx8qm mek support
+  arm64: defconfig: add imx8qm mek support
+
+ arch/arm64/boot/dts/freescale/Makefile        |   1 +
+ .../boot/dts/freescale/imx8-ss-adma.dtsi      |   8 +
+ .../boot/dts/freescale/imx8-ss-audio.dtsi     |  68 +++
+ .../boot/dts/freescale/imx8-ss-conn.dtsi      | 187 ++++++++
+ .../arm64/boot/dts/freescale/imx8-ss-ddr.dtsi |  19 +
+ .../arm64/boot/dts/freescale/imx8-ss-dma.dtsi | 210 +++++++++
+ .../boot/dts/freescale/imx8-ss-lsio.dtsi      | 311 +++++++++++++
+ arch/arm64/boot/dts/freescale/imx8qm-mek.dts  | 144 ++++++
+ .../boot/dts/freescale/imx8qm-ss-conn.dtsi    |  21 +
+ .../boot/dts/freescale/imx8qm-ss-dma.dtsi     |  51 +++
+ .../boot/dts/freescale/imx8qm-ss-lsio.dtsi    |  61 +++
+ arch/arm64/boot/dts/freescale/imx8qm.dtsi     | 180 ++++++++
+ .../boot/dts/freescale/imx8qxp-ai_ml.dts      |  20 +-
+ .../freescale/imx8qxp-colibri-eval-v3.dtsi    |   8 +-
+ .../boot/dts/freescale/imx8qxp-colibri.dtsi   |  12 +-
+ arch/arm64/boot/dts/freescale/imx8qxp-mek.dts |  12 +-
+ .../boot/dts/freescale/imx8qxp-ss-adma.dtsi   |  37 ++
+ .../boot/dts/freescale/imx8qxp-ss-conn.dtsi   |  21 +
+ .../boot/dts/freescale/imx8qxp-ss-lsio.dtsi   |  61 +++
+ arch/arm64/boot/dts/freescale/imx8qxp.dtsi    | 425 ++----------------
+ arch/arm64/configs/defconfig                  |   1 +
+ 21 files changed, 1432 insertions(+), 426 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-adma.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-audio.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-conn.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-ddr.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-dma.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8-ss-lsio.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-ss-conn.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-ss-dma.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-ss-lsio.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qm.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-ss-adma.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-ss-conn.dtsi
+ create mode 100644 arch/arm64/boot/dts/freescale/imx8qxp-ss-lsio.dtsi
+
+-- 
+2.23.0
+
