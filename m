@@ -7,115 +7,91 @@ X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01B01C432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:19:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B11EDC432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAEB82071E
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:19:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7ED322075E
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:25:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nHzbIHhq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pTPNBukB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbfKQMT2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Nov 2019 07:19:28 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:38732 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfKQMT2 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 07:19:28 -0500
-Received: by mail-il1-f193.google.com with SMTP id u17so13400296ilq.5
-        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2019 04:19:26 -0800 (PST)
+        id S1726045AbfKQMZb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Nov 2019 07:25:31 -0500
+Received: from mail-il1-f196.google.com ([209.85.166.196]:43589 "EHLO
+        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfKQMZa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 07:25:30 -0500
+Received: by mail-il1-f196.google.com with SMTP id r9so13380771ilq.10
+        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2019 04:25:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=famP/2hJ9uAvuRMVp168RFH84x0OwGqk3aUiNnJd1SM=;
-        b=nHzbIHhqDl8yTZsGSphEaEA+LB4yRqbWmFfO/T0wfs0rpPo5JRdEuDu6aIOzLq5j5M
-         5aTAA444SsBU71RprHfmqnI821VI1kcvoZIVUq3vWHk+s2Y5AjMuHI7Re42XcMteTJrF
-         VcrdwypoR69pAKuX8vWY1KeXn2pBUPjQuqum33eyoM2dLjNSWJQK+x8D993BmfveMjFn
-         o47bRc+U31pd1kx9pnik4pw3sFswTuxz09J8keWJzOgW0Yr9XyZlr9C1EK6ZNLMMKgQn
-         QSSkh4ZCpJOEGaolIc1pNtnubuZ/TQnMnBECuURh2GvL+3bin0cM0j9JJtbIllcngPQm
-         Wbsg==
+        bh=otVcrBVD6kjervULINmD8GBHaxPZhxqsRUnWTrQKkSY=;
+        b=pTPNBukBWYo4Q2L4Zp7zlZrqL66vQNhxLavP6cZ5mBxYiJffto17JjlItsSKXd5XeM
+         4wyzThgCgdvUCLHxVluqUOM0fWUkjY4BrrpG1xcPo9xJ54KCwZP4PnYHJgjOwgzMSBZc
+         BuzUyXtzCfmWvHGFt8tbMxqGs+QSiWgwnPNhy1VO3dWMMYtboz3Uw5x8FTBFhUJnqsKd
+         lYND8CXWbooXe48diEjmnStgwvlBN2crwtlc+kJEmzAF4LlLNhG+d+prtRwl4TKmG/sc
+         IqucQnG0btgeNo8jePb+/SxGrp1wJL70zfDAyTU2cTLgjSYTTELGeCMPY9n2dRicvCnp
+         IcuQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=famP/2hJ9uAvuRMVp168RFH84x0OwGqk3aUiNnJd1SM=;
-        b=r/rgFnGr0KSM3lXXgiltnZqcCZWNJUdX73Ant62taxB8wrQIsl9Q6F6Xn8Yoyaj5zD
-         CsAIisr4GaFU8bRxVnU2+6clIfJpESm2u55HaDz7BHxWeeT9Hk8tozF6UDTOUpI3G6x+
-         3PJRcIcsGwtwVeIV9mxR3Ih4mnkdBBZJ/+2lLH1zBG02KgmzeQUrkw2WCodu02ik1Msx
-         OOzuz9SMKrcqU2prhL8Tcan3pXjEkp3FLoatPI09g+pwNJNl6xILvyRnfBiMigVHVMzG
-         G0fZBlRrRhWUYsD+DqRcc7kMjDZpXZFecHOROCtP8/fMEHz5Hcm0wxAt3ly6jhrcCa/j
-         hS4A==
-X-Gm-Message-State: APjAAAXyew50jObp8axAAqhKcN0MGc0p/m5z0CtNUdBXFzyDWfDIEEiO
-        8Ay0WnTGfPY0vny/2s2aD0Td7y77NWXtOMPUzgo=
-X-Google-Smtp-Source: APXvYqxLm1u0aSA6zD2wVwO+dZwpC6iGKkqETTFeK2Nl5gSCjEZuFkUpQfLDv0+1Ms3fYIONFbGZqestzDAgfwyTSX4=
-X-Received: by 2002:a92:c8c9:: with SMTP id c9mr11184068ilq.197.1573993166254;
- Sun, 17 Nov 2019 04:19:26 -0800 (PST)
+        bh=otVcrBVD6kjervULINmD8GBHaxPZhxqsRUnWTrQKkSY=;
+        b=ohPezT5Fjxt8CU9eQE1dt6PTbRBw+/G1oHGSP+6WCpAQaA1/8hyFhGon6XryKUeh5L
+         S8Xa64bcVuoWU3650LlO94DaL9EpZNaUP4lMWvcW4Axic22w1Pa9WofRfTcYOjnMO46y
+         dSU8bZ0Eg2lYUX7EQHfk8ldhxw+WHDhp+Yacij9ISdVgH/+/4woSlJArTaV313GGDF9X
+         jYj6T9FWEhNvRo8oM4d/35htHhrbJ9PfbOa5KQlqQMd96nSsP97myyL9keNLnlSJ0juO
+         CqSjVamfp8303NTkRxJCFvUdCZqjD6zQmY05kyy9cvhsg3WHflPDsUMNpwHj/jBfefoB
+         DnQg==
+X-Gm-Message-State: APjAAAVOngvXLYka9rab+nZIEc5JSAT84w9KganrobCgIoVGgKPupjFE
+        zcQNS1AZBGjMxiKDq50q5WjAYxHlj34GqANVt5I=
+X-Google-Smtp-Source: APXvYqyM8OwMh+6orHmLf30C/l96ukGK50y0qYYCtd/JnP/de2oemLWGF5bzXkzsmOxp/jVwbDgy0xDzUGeSY3twpkk=
+X-Received: by 2002:a92:35dd:: with SMTP id c90mr9988284ilf.191.1573993529990;
+ Sun, 17 Nov 2019 04:25:29 -0800 (PST)
 MIME-Version: 1.0
-References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
- <1566299605-15641-9-git-send-email-aisheng.dong@nxp.com> <20190906171323.8847820640@mail.kernel.org>
- <CAA+hA=QJwfHsRA+G2oT2awLxx659qXLPsiECV6VYcJ181c6D8w@mail.gmail.com> <20190916184505.256CB20665@mail.kernel.org>
-In-Reply-To: <20190916184505.256CB20665@mail.kernel.org>
+References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com> <20191114122228.GI4147@optiplex>
+In-Reply-To: <20191114122228.GI4147@optiplex>
 From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Sun, 17 Nov 2019 20:08:25 +0800
-Message-ID: <CAA+hA=Rrscs8gSXa8QhbXkf85KkGCP5iB9qPq=RL+nGu5_UAew@mail.gmail.com>
-Subject: Re: [PATCH V4 08/11] clk: imx: imx8qxp-lpcg: add parsing clocks from
- device tree
-To:     Stephen Boyd <sboyd@kernel.org>
+Date:   Sun, 17 Nov 2019 20:14:29 +0800
+Message-ID: <CAA+hA=R3yhO+oupTfc=cy3oNTcv28VhzTs7fg9kGYuE0j4s1vQ@mail.gmail.com>
+Subject: Re: [PATCH V5 00/11] clk: imx8: add new clock binding for better pm support
+To:     Oliver Graute <oliver.graute@gmail.com>
 Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>,
+        Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
         dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Sep 17, 2019 at 2:45 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On Thu, Nov 14, 2019 at 8:22 PM Oliver Graute <oliver.graute@gmail.com> wrote:
 >
-> Quoting Dong Aisheng (2019-09-09 04:23:14)
-> > ]On Sat, Sep 7, 2019 at 5:35 PM Stephen Boyd <sboyd@kernel.org> wrote:
-> > >
-> > > Quoting Dong Aisheng (2019-08-20 04:13:22)
-> > > > Add parsing clocks from device tree.
-> > >
-> > > Please describe some more here.
-> >
-> > Will improve.
-> >
-> > > > +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > > +       base = devm_ioremap_resource(&pdev->dev, res);
-> > > > +       if (IS_ERR(base))
-> > > > +               return PTR_ERR(base);
-> > > > +
-> > > > +       count = of_property_count_u32_elems(np, "clock-indices");
-> > > > +       if (count < 0) {
-> > > > +               dev_err(&pdev->dev, "failed to count clocks\n");
-> > > > +               return -EINVAL;
-> > > > +       }
-> > >
-> > > Is 'count' expected to be equal to IMX_LPCG_MAX_CLKS? Because later on
-> > > in this function we set the num of clks to the MAX instead of the count
-> > > from clock-indices.
-> > >
-> >
-> > No. Here is a tricky to ease the clk getting.
-> > For example, one LPCG supports up to 8 clock outputs which each of them
-> > is fixed to 4 bits. Then we can easily use the bit-offset/clk-indices
-> > parsed from DT
-> > to fetch the corresponding clock by hws[clkspec->args[0] / 4].
-> > And the cost is very limited with only a few pointers.
+> On 09/09/19, Dong Aisheng wrote:
+> > This is a follow up of this patch series.
+> > https://patchwork.kernel.org/cover/10924029/
+> > [V2,0/2] clk: imx: scu: add parsing clocks from device tree support
+> Hello Aisheng,
 >
-> Ok. Can you add a comment into the code to explain this?
+> will there be an updated version of this two patch series for recent
+> linux-next? Then I can test it on my two imx8qm boards.
 >
 
-Yes, added.
-Thanks for the good suggestion.
+Yes, i prepared them already.
+Will send you in private email cause i don't have a public git.
 
 Regards
 Aisheng
+
+> Best regards,
+>
+> Oliver
