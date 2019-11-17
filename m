@@ -2,96 +2,165 @@ Return-Path: <SRS0=O2Di=ZJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B11EDC432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2499C432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:27:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ED322075E
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:25:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pTPNBukB"
+	by mail.kernel.org (Postfix) with ESMTP id 9AB252075E
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:27:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726045AbfKQMZb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Nov 2019 07:25:31 -0500
-Received: from mail-il1-f196.google.com ([209.85.166.196]:43589 "EHLO
-        mail-il1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726037AbfKQMZa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 07:25:30 -0500
-Received: by mail-il1-f196.google.com with SMTP id r9so13380771ilq.10
-        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2019 04:25:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=otVcrBVD6kjervULINmD8GBHaxPZhxqsRUnWTrQKkSY=;
-        b=pTPNBukBWYo4Q2L4Zp7zlZrqL66vQNhxLavP6cZ5mBxYiJffto17JjlItsSKXd5XeM
-         4wyzThgCgdvUCLHxVluqUOM0fWUkjY4BrrpG1xcPo9xJ54KCwZP4PnYHJgjOwgzMSBZc
-         BuzUyXtzCfmWvHGFt8tbMxqGs+QSiWgwnPNhy1VO3dWMMYtboz3Uw5x8FTBFhUJnqsKd
-         lYND8CXWbooXe48diEjmnStgwvlBN2crwtlc+kJEmzAF4LlLNhG+d+prtRwl4TKmG/sc
-         IqucQnG0btgeNo8jePb+/SxGrp1wJL70zfDAyTU2cTLgjSYTTELGeCMPY9n2dRicvCnp
-         IcuQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=otVcrBVD6kjervULINmD8GBHaxPZhxqsRUnWTrQKkSY=;
-        b=ohPezT5Fjxt8CU9eQE1dt6PTbRBw+/G1oHGSP+6WCpAQaA1/8hyFhGon6XryKUeh5L
-         S8Xa64bcVuoWU3650LlO94DaL9EpZNaUP4lMWvcW4Axic22w1Pa9WofRfTcYOjnMO46y
-         dSU8bZ0Eg2lYUX7EQHfk8ldhxw+WHDhp+Yacij9ISdVgH/+/4woSlJArTaV313GGDF9X
-         jYj6T9FWEhNvRo8oM4d/35htHhrbJ9PfbOa5KQlqQMd96nSsP97myyL9keNLnlSJ0juO
-         CqSjVamfp8303NTkRxJCFvUdCZqjD6zQmY05kyy9cvhsg3WHflPDsUMNpwHj/jBfefoB
-         DnQg==
-X-Gm-Message-State: APjAAAVOngvXLYka9rab+nZIEc5JSAT84w9KganrobCgIoVGgKPupjFE
-        zcQNS1AZBGjMxiKDq50q5WjAYxHlj34GqANVt5I=
-X-Google-Smtp-Source: APXvYqyM8OwMh+6orHmLf30C/l96ukGK50y0qYYCtd/JnP/de2oemLWGF5bzXkzsmOxp/jVwbDgy0xDzUGeSY3twpkk=
-X-Received: by 2002:a92:35dd:: with SMTP id c90mr9988284ilf.191.1573993529990;
- Sun, 17 Nov 2019 04:25:29 -0800 (PST)
-MIME-Version: 1.0
-References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com> <20191114122228.GI4147@optiplex>
-In-Reply-To: <20191114122228.GI4147@optiplex>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Sun, 17 Nov 2019 20:14:29 +0800
-Message-ID: <CAA+hA=R3yhO+oupTfc=cy3oNTcv28VhzTs7fg9kGYuE0j4s1vQ@mail.gmail.com>
-Subject: Re: [PATCH V5 00/11] clk: imx8: add new clock binding for better pm support
-To:     Oliver Graute <oliver.graute@gmail.com>
-Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726046AbfKQM13 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Nov 2019 07:27:29 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:60240 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726127AbfKQM13 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 17 Nov 2019 07:27:29 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id CB42B2000BD;
+        Sun, 17 Nov 2019 13:27:27 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E7B2420000A;
+        Sun, 17 Nov 2019 13:27:22 +0100 (CET)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id DE9EB402A7;
+        Sun, 17 Nov 2019 20:27:16 +0800 (SGT)
+From:   Dong Aisheng <aisheng.dong@nxp.com>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
+        mturquette@baylibre.com, shawnguo@kernel.org,
+        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
+        Dong Aisheng <aisheng.dong@nxp.com>, devicetree@vger.kernel.org
+Subject: [PATCH RESEND v5 01/11] dt-bindings: firmware: imx-scu: new binding to parse clocks from device tree
+Date:   Sun, 17 Nov 2019 20:25:09 +0800
+Message-Id: <1573993519-14308-2-git-send-email-aisheng.dong@nxp.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
+References: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 8:22 PM Oliver Graute <oliver.graute@gmail.com> wrote:
->
-> On 09/09/19, Dong Aisheng wrote:
-> > This is a follow up of this patch series.
-> > https://patchwork.kernel.org/cover/10924029/
-> > [V2,0/2] clk: imx: scu: add parsing clocks from device tree support
-> Hello Aisheng,
->
-> will there be an updated version of this two patch series for recent
-> linux-next? Then I can test it on my two imx8qm boards.
->
+There's a few limitations on the original one cell clock binding
+(#clock-cells = <1>) that we have to define some SW clock IDs for device
+tree to reference. This may cause troubles if we want to use common
+clock IDs for multi platforms support when the clock of those platforms
+are mostly the same.
+e.g. Current clock IDs name are defined with SS prefix.
 
-Yes, i prepared them already.
-Will send you in private email cause i don't have a public git.
+However the device may reside in different SS across CPUs, that means the
+SS prefix may not valid anymore for a new SoC. Furthermore, the device
+availability of those clocks may also vary a bit.
 
-Regards
-Aisheng
+For such situation, we want to eliminate the using of SW Clock IDs and
+change to use a more close to HW one instead.
+For SCU clocks usage, only two params required: Resource id + Clock Type.
+Both parameters are platform independent. So we could use two cells binding
+to pass those parameters,
 
-> Best regards,
->
-> Oliver
+Cc: Sascha Hauer <kernel@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: devicetree@vger.kernel.org
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+---
+ChangeLog:
+v4->v5:
+ * no changes
+v3->v4:
+ * add some comments for various clock types
+v2->v3:
+ * Changed to two cells binding and register all clocks in driver
+   instead of parse from device tree.
+v1->v2:
+ * changed to one cell binding inspired by arm,scpi.txt
+   Documentation/devicetree/bindings/arm/arm,scpi.txt
+   Resource ID is encoded in 'reg' property.
+   Clock type is encoded in generic clock-indices property.
+   Then we don't have to search all the DT nodes to fetch
+   those two value to construct clocks which is relatively
+   low efficiency.
+ * Add required power-domain property as well.
+---
+ .../bindings/arm/freescale/fsl,scu.txt        | 12 ++++++----
+ include/dt-bindings/firmware/imx/rsrc.h       | 23 +++++++++++++++++++
+ 2 files changed, 30 insertions(+), 5 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+index c149fadc6f47..be0a8fe134c7 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,scu.txt
+@@ -89,7 +89,10 @@ Required properties:
+ 			  "fsl,imx8qm-clock"
+ 			  "fsl,imx8qxp-clock"
+ 			followed by "fsl,scu-clk"
+-- #clock-cells:		Should be 1. Contains the Clock ID value.
++- #clock-cells:		Should be either
++			2: Contains the Resource and Clock ID value.
++			or
++			1: Contains the Clock ID value. (DEPRECATED)
+ - clocks:		List of clock specifiers, must contain an entry for
+ 			each required entry in clock-names
+ - clock-names:		Should include entries "xtal_32KHz", "xtal_24MHz"
+@@ -186,7 +189,7 @@ firmware {
+ 
+ 		clk: clk {
+ 			compatible = "fsl,imx8qxp-clk", "fsl,scu-clk";
+-			#clock-cells = <1>;
++			#clock-cells = <2>;
+ 		};
+ 
+ 		iomuxc {
+@@ -231,8 +234,7 @@ serial@5a060000 {
+ 	...
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&pinctrl_lpuart0>;
+-	clocks = <&clk IMX8QXP_UART0_CLK>,
+-		 <&clk IMX8QXP_UART0_IPG_CLK>;
+-	clock-names = "per", "ipg";
++	clocks = <&uart0_clk IMX_SC_R_UART_0 IMX_SC_PM_CLK_PER>;
++	clock-names = "ipg";
+ 	power-domains = <&pd IMX_SC_R_UART_0>;
+ };
+diff --git a/include/dt-bindings/firmware/imx/rsrc.h b/include/dt-bindings/firmware/imx/rsrc.h
+index 4e61f6485097..24c153dfaa72 100644
+--- a/include/dt-bindings/firmware/imx/rsrc.h
++++ b/include/dt-bindings/firmware/imx/rsrc.h
+@@ -547,4 +547,27 @@
+ #define IMX_SC_R_ATTESTATION		545
+ #define IMX_SC_R_LAST			546
+ 
++/*
++ * Defines for SC PM CLK
++ */
++
++/* Normal device resource clock */
++#define IMX_SC_PM_CLK_SLV_BUS		0	/* Slave bus clock */
++#define IMX_SC_PM_CLK_MST_BUS		1	/* Master bus clock */
++#define IMX_SC_PM_CLK_PER		2	/* Peripheral clock */
++#define IMX_SC_PM_CLK_PHY		3	/* Phy clock */
++#define IMX_SC_PM_CLK_MISC		4	/* Misc clock */
++
++/* Special clock types which do not belong to above normal clock types */
++#define IMX_SC_PM_CLK_MISC0		0	/* Misc 0 clock */
++#define IMX_SC_PM_CLK_MISC1		1	/* Misc 1 clock */
++#define IMX_SC_PM_CLK_MISC2		2	/* Misc 2 clock */
++#define IMX_SC_PM_CLK_MISC3		3	/* Misc 3 clock */
++#define IMX_SC_PM_CLK_MISC4		4	/* Misc 4 clock */
++
++/* Special clock types for CPU/PLL/BYPASS only */
++#define IMX_SC_PM_CLK_CPU		2	/* CPU clock */
++#define IMX_SC_PM_CLK_PLL		4	/* PLL */
++#define IMX_SC_PM_CLK_BYPASS		4	/* Bypass clock */
++
+ #endif /* __DT_BINDINGS_RSCRC_IMX_H */
+-- 
+2.23.0
+
