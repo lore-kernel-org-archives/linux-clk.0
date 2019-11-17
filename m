@@ -2,241 +2,115 @@ Return-Path: <SRS0=O2Di=ZJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B7EC432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B621C432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 14:00:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92EE7206F4
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:46:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 211E12084D
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 14:00:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="bOVqlywY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726127AbfKQMqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Nov 2019 07:46:20 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:41686 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726063AbfKQMqU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 17 Nov 2019 07:46:20 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id C0EBA2001FF;
-        Sun, 17 Nov 2019 13:46:18 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1DD7320012E;
-        Sun, 17 Nov 2019 13:46:13 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 845E9402E0;
-        Sun, 17 Nov 2019 20:46:06 +0800 (SGT)
-From:   Dong Aisheng <aisheng.dong@nxp.com>
-To:     linux-arm-kernel@lists.infradead.org
-Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH RESEND v3 14/15] arm64: dts: imx: add imx8qm mek support
-Date:   Sun, 17 Nov 2019 20:43:54 +0800
-Message-Id: <1573994635-14479-15-git-send-email-aisheng.dong@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573994635-14479-1-git-send-email-aisheng.dong@nxp.com>
-References: <1573994635-14479-1-git-send-email-aisheng.dong@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726290AbfKQOAD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Nov 2019 09:00:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46890 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfKQOAC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 09:00:02 -0500
+Received: by mail-wr1-f67.google.com with SMTP id b3so16355789wrs.13;
+        Sun, 17 Nov 2019 06:00:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=ALb0D3ZQCosHbu3XTz0Zl3zN169Kwv6XSNmMst3JsiU=;
+        b=bOVqlywY/TN2WcGCQ6kihefkhnThvBvgSgqVpzw1sHaJcCOhgj31mlHerwO7cQ4tDE
+         xEPorDMERAqXbU5AyaDE+rTC8v1wbzAmprTg99RL5u8dtY7wPnA2M+1ChWzbA/WTlR2T
+         tdsgK1XJYDXFnfRcJiqjnjFq2lg9tlf3rReuufmQnWmjrxkYmr5pnFWi21Di7Rr9ShNK
+         lHfiUgTZqGoxlh7P2o6vb9embjtkJzSwIaDd4hZ+g7fCnV4C87Q/N+S+zJBUa4OOXaUN
+         kXJirZOOQzYLMuAUfbclBvw7S7Z5Xu34TSpiVa/+BbsRgosW9FWI3qu1+NDndwtvh6Qn
+         z23g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=ALb0D3ZQCosHbu3XTz0Zl3zN169Kwv6XSNmMst3JsiU=;
+        b=kGn+6LBlTehK7BNw2Od/x1VNkyDdQb+K4tBbOc5psDPkbia3+YtMmmRNKnoQVsX1RE
+         rbWssRsArYjoQywoSuIDNFX1A2Aeg/cT3+NSX7AVFdYxN6myd54wn7+xANARcHjvW4a2
+         RjFYNj2jTezBCWcwNMJ9ojfMFksYi2euP/FS3jrYSSz4KgnjPxYWZLU7IdwXxtbI/Om/
+         +zIJm0CV79hWis1DjbX65Up3zVoNcelYrAgAsydRTqhP42emBiORc+mCuknlpz78JFTK
+         nsWP+oIenxMG/1Vg6R/pK9zp7Z/Hh4yGaowYLsNZp/mSA1KmRoN3lQXiKGeSnCFJM4Pr
+         W53A==
+X-Gm-Message-State: APjAAAXq10VAliDKVMH8xLw80R8/1bY/0pfnJx82EpaqPdMu+6+kZTyZ
+        QP6G5uwG+bmFjOZdjqqExeo=
+X-Google-Smtp-Source: APXvYqxodTdB4qW5P1m2ak/Tvv3QB8ZeIwlDZopM35wEeu5DhwcBl7avlGwHw4rIhIcjP9Ki91UvDg==
+X-Received: by 2002:adf:a119:: with SMTP id o25mr16461312wro.74.1573999200043;
+        Sun, 17 Nov 2019 06:00:00 -0800 (PST)
+Received: from localhost.localdomain (p200300F1371CB100428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:371c:b100:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id n65sm18004803wmf.28.2019.11.17.05.59.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 17 Nov 2019 05:59:59 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     narmstrong@baylibre.com, jbrunet@baylibre.com,
+        linux-amlogic@lists.infradead.org
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v3 4/5] clk: meson: meson8b: don't register the XTAL clock when provided via OF
+Date:   Sun, 17 Nov 2019 14:59:26 +0100
+Message-Id: <20191117135927.135428-5-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191117135927.135428-1-martin.blumenstingl@googlemail.com>
+References: <20191117135927.135428-1-martin.blumenstingl@googlemail.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The i.MX8QuadMax is a Dual (2x) Cortex-A72 and Quad (4x) Cortex-A53
-proccessor with powerful graphic and multimedia features.
-This patch adds i.MX8QuadMax MEK board support.
+The XTAL clock is an actual crystal on the PCB. Thus the meson8b clock
+driver should not register the XTAL clock - instead it should be
+provided via .dts and then passed to the clock controller.
 
-Note that MX8QM needs a special workaround for TLB flush due to a SoC
-errata, otherwise there may be random crash if enable both clusters of
-A72 and A53. As the errata workaround is still not in mainline, so we
-disable A72 cluster first for MX8QM MEK.
+Skip the registration of the XTAL clock if a parent clock is provided
+via OF. Fall back to registering the XTAL clock if this is not the case
+to keep support for old .dtbs.
 
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org
-Cc: Shawn Guo <shawnguo@kernel.org>
-Cc: Sascha Hauer <kernel@pengutronix.de>
-Cc: Fabio Estevam <fabio.estevam@nxp.com>
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
-ChangeLog:
-v2->v3:
- * no changes
-v1->v2:
- * copyright update to 2019, minor node name change
----
- arch/arm64/boot/dts/freescale/Makefile       |   1 +
- arch/arm64/boot/dts/freescale/imx8qm-mek.dts | 144 +++++++++++++++++++
- 2 files changed, 145 insertions(+)
- create mode 100644 arch/arm64/boot/dts/freescale/imx8qm-mek.dts
+ drivers/clk/meson/meson8b.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/Makefile b/arch/arm64/boot/dts/freescale/Makefile
-index 38e344a2f0ff..54508e3059a7 100644
---- a/arch/arm64/boot/dts/freescale/Makefile
-+++ b/arch/arm64/boot/dts/freescale/Makefile
-@@ -31,6 +31,7 @@ dtb-$(CONFIG_ARCH_MXC) += imx8mq-nitrogen.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-pico-pi.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-rmb3.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8mq-zii-ultra-zest.dtb
-+dtb-$(CONFIG_ARCH_MXC) += imx8qm-mek.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-ai_ml.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-colibri-eval-v3.dtb
- dtb-$(CONFIG_ARCH_MXC) += imx8qxp-mek.dtb
-diff --git a/arch/arm64/boot/dts/freescale/imx8qm-mek.dts b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
-new file mode 100644
-index 000000000000..ce9d3f0b98fc
---- /dev/null
-+++ b/arch/arm64/boot/dts/freescale/imx8qm-mek.dts
-@@ -0,0 +1,144 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2018-2019 NXP
-+ *	Dong Aisheng <aisheng.dong@nxp.com>
-+ */
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index f857a2c4d025..44e97bacd628 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -3687,10 +3687,16 @@ static void __init meson8b_clkc_init_common(struct device_node *np,
+ 		meson8b_clk_regmaps[i]->map = map;
+ 
+ 	/*
+-	 * register all clks
+-	 * CLKID_UNUSED = 0, so skip it and start with CLKID_XTAL = 1
++	 * always skip CLKID_UNUSED and also skip XTAL if the .dtb provides the
++	 * XTAL clock as input.
+ 	 */
+-	for (i = CLKID_XTAL; i < CLK_NR_CLKS; i++) {
++	if (!IS_ERR(of_clk_get_by_name(np, "xtal")))
++		i = CLKID_PLL_FIXED;
++	else
++		i = CLKID_XTAL;
 +
-+/dts-v1/;
-+
-+#include "imx8qm.dtsi"
-+
-+/ {
-+	model = "Freescale i.MX8QM MEK";
-+	compatible = "fsl,imx8qm-mek", "fsl,imx8qm";
-+
-+	chosen {
-+		stdout-path = &lpuart0;
-+	};
-+
-+	cpus {
-+		/delete-node/ cpu-map;
-+		/delete-node/ cpu@100;
-+		/delete-node/ cpu@101;
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		reg = <0x00000000 0x80000000 0 0x40000000>;
-+	};
-+
-+	reg_usdhc2_vmmc: usdhc2-vmmc {
-+		compatible = "regulator-fixed";
-+		regulator-name = "SD1_SPWR";
-+		regulator-min-microvolt = <3000000>;
-+		regulator-max-microvolt = <3000000>;
-+		gpio = <&lsio_gpio4 19 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+};
-+
-+&lpuart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_lpuart0>;
-+	status = "okay";
-+};
-+
-+&fec1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_fec1>;
-+	phy-mode = "rgmii-id";
-+	phy-handle = <&ethphy0>;
-+	fsl,magic-packet;
-+	status = "okay";
-+
-+	mdio {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ethphy0: ethernet-phy@0 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <0>;
-+		};
-+
-+		ethphy1: ethernet-phy@1 {
-+			compatible = "ethernet-phy-ieee802.3-c22";
-+			reg = <1>;
-+		};
-+	};
-+};
-+
-+&usdhc1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc1>;
-+	bus-width = <8>;
-+	no-sd;
-+	no-sdio;
-+	non-removable;
-+	status = "okay";
-+};
-+
-+&usdhc2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pinctrl_usdhc2>;
-+	bus-width = <4>;
-+	vmmc-supply = <&reg_usdhc2_vmmc>;
-+	cd-gpios = <&lsio_gpio4 22 GPIO_ACTIVE_LOW>;
-+	wp-gpios = <&lsio_gpio4 21 GPIO_ACTIVE_HIGH>;
-+	status = "okay";
-+};
-+
-+&iomuxc {
-+	pinctrl_fec1: fec1grp {
-+		fsl,pins = <
-+			IMX8QM_ENET0_MDC_CONN_ENET0_MDC				0x06000020
-+			IMX8QM_ENET0_MDIO_CONN_ENET0_MDIO			0x06000020
-+			IMX8QM_ENET0_RGMII_TX_CTL_CONN_ENET0_RGMII_TX_CTL	0x06000020
-+			IMX8QM_ENET0_RGMII_TXC_CONN_ENET0_RGMII_TXC		0x06000020
-+			IMX8QM_ENET0_RGMII_TXD0_CONN_ENET0_RGMII_TXD0		0x06000020
-+			IMX8QM_ENET0_RGMII_TXD1_CONN_ENET0_RGMII_TXD1		0x06000020
-+			IMX8QM_ENET0_RGMII_TXD2_CONN_ENET0_RGMII_TXD2		0x06000020
-+			IMX8QM_ENET0_RGMII_TXD3_CONN_ENET0_RGMII_TXD3		0x06000020
-+			IMX8QM_ENET0_RGMII_RXC_CONN_ENET0_RGMII_RXC		0x06000020
-+			IMX8QM_ENET0_RGMII_RX_CTL_CONN_ENET0_RGMII_RX_CTL	0x06000020
-+			IMX8QM_ENET0_RGMII_RXD0_CONN_ENET0_RGMII_RXD0		0x06000020
-+			IMX8QM_ENET0_RGMII_RXD1_CONN_ENET0_RGMII_RXD1		0x06000020
-+			IMX8QM_ENET0_RGMII_RXD2_CONN_ENET0_RGMII_RXD2		0x06000020
-+			IMX8QM_ENET0_RGMII_RXD3_CONN_ENET0_RGMII_RXD3		0x06000020
-+		>;
-+	};
-+
-+	pinctrl_lpuart0: lpuart0grp {
-+		fsl,pins = <
-+			IMX8QM_UART0_RX_DMA_UART0_RX				0x06000020
-+			IMX8QM_UART0_TX_DMA_UART0_TX				0x06000020
-+		>;
-+	};
-+
-+	pinctrl_usdhc1: usdhc1grp {
-+		fsl,pins = <
-+			IMX8QM_EMMC0_CLK_CONN_EMMC0_CLK				0x06000041
-+			IMX8QM_EMMC0_CMD_CONN_EMMC0_CMD				0x00000021
-+			IMX8QM_EMMC0_DATA0_CONN_EMMC0_DATA0			0x00000021
-+			IMX8QM_EMMC0_DATA1_CONN_EMMC0_DATA1			0x00000021
-+			IMX8QM_EMMC0_DATA2_CONN_EMMC0_DATA2			0x00000021
-+			IMX8QM_EMMC0_DATA3_CONN_EMMC0_DATA3			0x00000021
-+			IMX8QM_EMMC0_DATA4_CONN_EMMC0_DATA4			0x00000021
-+			IMX8QM_EMMC0_DATA5_CONN_EMMC0_DATA5			0x00000021
-+			IMX8QM_EMMC0_DATA6_CONN_EMMC0_DATA6			0x00000021
-+			IMX8QM_EMMC0_DATA7_CONN_EMMC0_DATA7			0x00000021
-+			IMX8QM_EMMC0_STROBE_CONN_EMMC0_STROBE			0x00000041
-+		>;
-+	};
-+
-+	pinctrl_usdhc2: usdhc2grp {
-+		fsl,pins = <
-+			IMX8QM_USDHC1_CLK_CONN_USDHC1_CLK			0x06000041
-+			IMX8QM_USDHC1_CMD_CONN_USDHC1_CMD			0x00000021
-+			IMX8QM_USDHC1_DATA0_CONN_USDHC1_DATA0			0x00000021
-+			IMX8QM_USDHC1_DATA1_CONN_USDHC1_DATA1			0x00000021
-+			IMX8QM_USDHC1_DATA2_CONN_USDHC1_DATA2			0x00000021
-+			IMX8QM_USDHC1_DATA3_CONN_USDHC1_DATA3			0x00000021
-+			IMX8QM_USDHC1_VSELECT_CONN_USDHC1_VSELECT		0x00000021
-+		>;
-+	};
-+};
++	/* register all clks */
++	for (; i < CLK_NR_CLKS; i++) {
+ 		/* array might be sparse */
+ 		if (!clk_hw_onecell_data->hws[i])
+ 			continue;
 -- 
-2.23.0
+2.24.0
 
