@@ -2,150 +2,112 @@ Return-Path: <SRS0=O2Di=ZJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A67F4C432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:27:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6FBC432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A992084C
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:27:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A708F206DB
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:42:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GH1RrbLd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726184AbfKQM1o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Nov 2019 07:27:44 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:49430 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726127AbfKQM1o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 17 Nov 2019 07:27:44 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 055501A06F2;
-        Sun, 17 Nov 2019 13:27:41 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B30DB1A0123;
-        Sun, 17 Nov 2019 13:27:36 +0100 (CET)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 26D274030E;
-        Sun, 17 Nov 2019 20:27:27 +0800 (SGT)
-From:   Dong Aisheng <aisheng.dong@nxp.com>
-To:     linux-clk@vger.kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, sboyd@kernel.org,
-        mturquette@baylibre.com, shawnguo@kernel.org,
-        fabio.estevam@nxp.com, linux-imx@nxp.com, kernel@pengutronix.de,
-        Dong Aisheng <aisheng.dong@nxp.com>
-Subject: [PATCH RESEND v5 11/11] clk: imx: lpcg: add suspend/resume support
-Date:   Sun, 17 Nov 2019 20:25:19 +0800
-Message-Id: <1573993519-14308-12-git-send-email-aisheng.dong@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
-References: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        id S1726046AbfKQMmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Nov 2019 07:42:46 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:34975 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfKQMmp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 07:42:45 -0500
+Received: by mail-il1-f193.google.com with SMTP id z12so13434254ilp.2
+        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2019 04:42:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ApUhfkWLXsiE5ipNrOg9nvjZff7lfGHQm/7BE1gXgAk=;
+        b=GH1RrbLdXySK8/BmtcofgBiF1DmolDgC+MZGi6uL+u+jYV3vONIZyRUvdaN8lPFpvR
+         dXTR43GhjRFIG12L4UnWGmcNch7FkXt2aqcE3LjZ8ifYgzQq7MI8RSMgsaUk0GGIFKtg
+         34Qik24fcfbCqXa9DCFl+nEyxrdZvH2T7DV6UiguKk4vm15NAUUluUnDjNmgJhRbKUt9
+         jaEV+3ej9EGcsaSm08CSUbFDa6oY8NOv4pa/W8C13qGOgYoAdrLF9yaj0XiBWo/s2DO9
+         S7kRZI8qLy9lqhSj04ysdB+Lquv2mv1rORiBIu6R5kZP1SVLdCwjQxpjDnkc+pLz+gB7
+         J16A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ApUhfkWLXsiE5ipNrOg9nvjZff7lfGHQm/7BE1gXgAk=;
+        b=p0q1o4bzopsHgvyajJGdKdf87NbOxif2YXih0MWzgEwfaavOVBck/LWttmqywHrImv
+         A2BltLDPoF9xE+shIjnNOd8ECIwQb47J+HRk+cUCBXSTYnfttqkWJpcOeXm9cL8LN8uR
+         kwVXoAKYi1dhOF+ZoBRyn70KOHMXLUp67Qni+lLHPka1sCEw8gS7hYrPw9VkgR9jxwbL
+         lY9zWnR1lbwCp/1Y8kQZF3aXFCi//QttDc3Ff1umpF94vgxfXb0Z4tnMCGgTQ5UHiRrL
+         yxvx26mtU5crLFoc3/ASGysyRxlbKVLJU4x3K1XfWrtxh9ksCmk6U7Yt9OwAMsanP8TG
+         LAcA==
+X-Gm-Message-State: APjAAAXlOcsHuJiwq9kvv+CxfwDtjjpoYTTVARDIlAmplXiT0MpAO788
+        pxwMyyBJ5+7sgv+eCOGuQlXi44sUPRYMZ6+TpsU=
+X-Google-Smtp-Source: APXvYqy3cQ3NGfwe6oEv94KxlSM9RkBL/JPl7Gv9l9OdJ8t8qboi3Dqzr7mEXKrTxXHVcP7jPihKpNT4KzdOe4hpTIE=
+X-Received: by 2002:a92:8b4e:: with SMTP id i75mr10100379ild.5.1573994563780;
+ Sun, 17 Nov 2019 04:42:43 -0800 (PST)
+MIME-Version: 1.0
+References: <1568081408-26800-1-git-send-email-aisheng.dong@nxp.com> <20190918060835.B93D420856@mail.kernel.org>
+In-Reply-To: <20190918060835.B93D420856@mail.kernel.org>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Sun, 17 Nov 2019 20:31:43 +0800
+Message-ID: <CAA+hA=Q+vcN1DQTc_E=ohcEz4b3oxcoYgGFsZYGuGH7h8hfCvQ@mail.gmail.com>
+Subject: Re: [PATCH V5 00/11] clk: imx8: add new clock binding for better pm support
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-LPCG clock state may be lost when it's power domain is completely
-off during system suspend/resume and we need save and restore the
-state properly.
+Hi Stephen,
 
-Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
----
-ChangeLog:
-v5:
- * make suspend/resume function static
- * improve code comments
-v4: no changes
-v3: new patch
----
- drivers/clk/imx/clk-imx8qxp-lpcg.c |  1 +
- drivers/clk/imx/clk-lpcg-scu.c     | 37 ++++++++++++++++++++++++++++++
- drivers/clk/imx/clk-scu.h          |  1 +
- 3 files changed, 39 insertions(+)
+On Wed, Sep 18, 2019 at 2:21 PM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dong Aisheng (2019-09-09 19:09:57)
+> > This is a follow up of this patch series.
+> > https://patchwork.kernel.org/cover/10924029/
+> > [V2,0/2] clk: imx: scu: add parsing clocks from device tree support
+> >
+> > This patch series is a preparation for the MX8 Architecture improvement.
+> > As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+> > of a couple of SS(Subsystems) while most of them within the same SS
+> > can be shared. e.g. Clocks, Devices and etc.
+> >
+> > However, current clock binding is using SW IDs for device tree to use
+> > which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
+> > different SoCs.
+> >
+> > This patch series aims to introduce a new binding which is more close to
+> > hardware and platform independent and can makes us write a more general
+> > drivers for different SCU based SoCs.
+> >
+> > Another important thing is that on MX8, each Clock resource is associated
+> > with a power domain. So we have to attach that clock device to the power
+> > domain in order to make it work properly. Further more, the clock state
+> > will be lost when its power domain is completely off during suspend/resume,
+> > so we also introduce the clock state save&restore mechanism.
+>
+> I had some more comments on v4. I'm going to wait for those to be
+> addressed before reviewing this series.
+>
 
-diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-index e288ec6d446e..4f0bdf2b9411 100644
---- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-+++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-@@ -353,6 +353,7 @@ static struct platform_driver imx8qxp_lpcg_clk_driver = {
- 	.driver = {
- 		.name = "imx8qxp-lpcg-clk",
- 		.of_match_table = imx8qxp_lpcg_match,
-+		.pm = &imx_clk_lpcg_scu_pm_ops,
- 		.suppress_bind_attrs = true,
- 	},
- 	.probe = imx8qxp_lpcg_clk_probe,
-diff --git a/drivers/clk/imx/clk-lpcg-scu.c b/drivers/clk/imx/clk-lpcg-scu.c
-index 67b506319cc5..c35f9499c30a 100644
---- a/drivers/clk/imx/clk-lpcg-scu.c
-+++ b/drivers/clk/imx/clk-lpcg-scu.c
-@@ -33,6 +33,9 @@ struct clk_lpcg_scu {
- 	void __iomem *reg;
- 	u8 bit_idx;
- 	bool hw_gate;
-+
-+	/* for state save&restore */
-+	u32 state;
- };
- 
- #define to_clk_lpcg_scu(_hw) container_of(_hw, struct clk_lpcg_scu, hw)
-@@ -112,6 +115,9 @@ struct clk_hw *__imx_clk_lpcg_scu(struct device *dev, const char *name,
- 		hw = ERR_PTR(ret);
- 	}
- 
-+	if (dev)
-+		dev_set_drvdata(dev, clk);
-+
- 	return hw;
- }
- 
-@@ -121,3 +127,34 @@ void imx_clk_lpcg_scu_unregister(struct clk_hw *hw)
- 
- 	kfree(clk);
- }
-+
-+static int __maybe_unused imx_clk_lpcg_scu_suspend(struct device *dev)
-+{
-+	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
-+
-+	clk->state = readl_relaxed(clk->reg);
-+	dev_dbg(dev, "save lpcg state 0x%x\n", clk->state);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused imx_clk_lpcg_scu_resume(struct device *dev)
-+{
-+	struct clk_lpcg_scu *clk = dev_get_drvdata(dev);
-+
-+	/*
-+	 * FIXME: Sometimes writes don't work unless the CPU issues
-+	 * them twice
-+	 */
-+
-+	writel(clk->state, clk->reg);
-+	writel(clk->state, clk->reg);
-+	dev_dbg(dev, "restore lpcg state 0x%x\n", clk->state);
-+
-+	return 0;
-+}
-+
-+const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops = {
-+	SET_NOIRQ_SYSTEM_SLEEP_PM_OPS(imx_clk_lpcg_scu_suspend,
-+				      imx_clk_lpcg_scu_resume)
-+};
-diff --git a/drivers/clk/imx/clk-scu.h b/drivers/clk/imx/clk-scu.h
-index 6b29713a71d2..b1dfdaf0734e 100644
---- a/drivers/clk/imx/clk-scu.h
-+++ b/drivers/clk/imx/clk-scu.h
-@@ -11,6 +11,7 @@
- #include <linux/of.h>
- 
- extern struct list_head imx_scu_clks[];
-+extern const struct dev_pm_ops imx_clk_lpcg_scu_pm_ops;
- 
- int imx_clk_scu_init(struct device_node *np);
- struct clk_hw *imx_scu_of_clk_src_get(struct of_phandle_args *clkspec,
--- 
-2.23.0
+Yes, i have addressed all your comments and resend v5.
+Could you help have a look at it?
+https://patchwork.kernel.org/cover/11248249/
 
+Regards
+Aisheng
