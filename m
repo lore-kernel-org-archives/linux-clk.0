@@ -1,265 +1,84 @@
-Return-Path: <SRS0=9M9U=ZI=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=O2Di=ZJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2FBC43215
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 19:02:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24640C432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 01:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A10920815
-	for <linux-clk@archiver.kernel.org>; Sat, 16 Nov 2019 19:02:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6A15207DD
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 01:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1573954059;
+	bh=WMkeJv3q5bUl85sh9gModNvIoSzCz/gQ/694afjwMgs=;
+	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
+	b=HjFBz55By/adfVJhr+ar38EvyuEEhxCt9rehx+ZUza0R50deLhXYAaF0H8jUkHIyA
+	 fN1f9NiLhI/X+cW4CagP7dDPUDK/cJwE6bJfAudEtQLAzmcN/hdkrH6SbQ4pa76bZU
+	 ZD0qhkb+XvfNaaiFRNS6adB7sTnipqSg6EVkxFpw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727943AbfKPTCv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 16 Nov 2019 14:02:51 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39020 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727577AbfKPTCu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 16 Nov 2019 14:02:50 -0500
-Received: by mail-lj1-f196.google.com with SMTP id p18so14269633ljc.6;
-        Sat, 16 Nov 2019 11:02:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=8yRDVjGStTMI+cQKSmF34miodWbRhDTKo4OBr34wkRE=;
-        b=mlAQ8JQtXSbp88F2jrWBk2k4dtrQQxHZ0ggO0VU7jzhShh8FjDYQd5ku87WgJlbVh/
-         Rp/HK57V+cxEBMGeOCkAKYNTN/o/J+V1zAY3yRinCZAho0dJYPVd3qvaXwADb0iX9yxC
-         hIa6avMl1bCun0EmPHoBEK6m6F6+nlhhqJk+6RcB/YcOnt54fdmSyADa9t5SJFkr5EdF
-         K9RI8KD5/o/qg3vGksIhk4btPdhsUwzQqw66ZCHSA8yMcSxbXbLImIzw5a9F55VxNgZV
-         BlKoZkU1QR62PClIcTEbGysWXCPyxkgTarK36KEh8dZiXNzno3zuWb5ZpP2BBAuNe+z5
-         oosw==
-X-Gm-Message-State: APjAAAXtNeXyFkYfGzkfJUNuGswYugobgYb2UrmYHdC5XkduWFEwfrhD
-        9dQivIkjg9ycbN0z2QO9WfM=
-X-Google-Smtp-Source: APXvYqwW0lVMIueM1adUfMlHx56t8bOacrOuAgdO9BnnLdFfrO/JOakzk6ZuxAy7rQ+j4IoSUiTY4Q==
-X-Received: by 2002:a2e:898a:: with SMTP id c10mr15294162lji.177.1573930967147;
-        Sat, 16 Nov 2019 11:02:47 -0800 (PST)
-Received: from localhost.localdomain (dyttqz39y2bkc1ryvyh3t-4.rev.dnainternet.fi. [2001:14bb:420:da5f:a0b0:502a:b811:1af])
-        by smtp.gmail.com with ESMTPSA id o196sm6488842lff.59.2019.11.16.11.02.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 16 Nov 2019 11:02:46 -0800 (PST)
-Date:   Sat, 16 Nov 2019 21:02:38 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: [PATCH v4 16/16] led: bd71828: Support LED outputs on ROHM BD71828
- PMIC
-Message-ID: <eb9db50e4d5f28c535a08f285248371ff536588f.1573928775.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1573928775.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1726067AbfKQB1i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 16 Nov 2019 20:27:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725978AbfKQB1i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 16 Nov 2019 20:27:38 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CED5B20730;
+        Sun, 17 Nov 2019 01:27:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1573954057;
+        bh=WMkeJv3q5bUl85sh9gModNvIoSzCz/gQ/694afjwMgs=;
+        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
+        b=EVcaj6wpCi9unJKKeJODG0e586Le4su7PRPyInDh4YMLIzxP4dOSXMJq9uC9WBeTp
+         6c0HQcn2f9tqiHbsmLdn4TtiWxCyl4c1RpQb1bDdxz/jXHgR37A4Cmw2sIOfDwRpzA
+         /+51AHFxmp7gIKRwnG4N1pwkXd1fmWR9QL+YhZGs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1573928775.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191116185457.GA11601@onstation.org>
+References: <20191115123931.18919-1-masneyb@onstation.org> <20191116185457.GA11601@onstation.org>
+Cc:     mturquette@baylibre.com, agross@kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
+        jonathan@marek.ca
+To:     Brian Masney <masneyb@onstation.org>
+Subject: Re: [PATCH] clk: qcom: mmcc8974: move gfx3d_clk_src from the mmcc to rpm
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Sat, 16 Nov 2019 17:27:36 -0800
+Message-Id: <20191117012737.CED5B20730@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ROHM BD71828 power management IC has two LED outputs for charge status
-and button pressing indications. The LED outputs can also be forced
-by SW so add driver allowing to use these LEDs for other indications
-as well.
+Quoting Brian Masney (2019-11-16 10:54:57)
+> > diff --git a/drivers/clk/qcom/mmcc-msm8974.c b/drivers/clk/qcom/mmcc-ms=
+m8974.c
+> > index bcb0a397ef91..015426262d08 100644
+> > --- a/drivers/clk/qcom/mmcc-msm8974.c
+> > +++ b/drivers/clk/qcom/mmcc-msm8974.c
+> > @@ -2411,7 +2399,6 @@ static struct clk_regmap *mmcc_msm8974_clocks[] =
+=3D {
+> >       [VFE0_CLK_SRC] =3D &vfe0_clk_src.clkr,
+> >       [VFE1_CLK_SRC] =3D &vfe1_clk_src.clkr,
+> >       [MDP_CLK_SRC] =3D &mdp_clk_src.clkr,
+> > -     [GFX3D_CLK_SRC] =3D &gfx3d_clk_src.clkr,
+> >       [JPEG0_CLK_SRC] =3D &jpeg0_clk_src.clkr,
+> >       [JPEG1_CLK_SRC] =3D &jpeg1_clk_src.clkr,
+> >       [JPEG2_CLK_SRC] =3D &jpeg2_clk_src.clkr,
+>=20
+> I just realized that I also need to remove the GFX3D_CLK_SRC #define
+> from include/dt-bindings/clock/qcom,mmcc-msm8974.h. I'll send out a v2
+> tomorrow evening.
+>=20
 
-Leds are controlled by SW using 'Force ON' bits. Please note the
-constrains mentioned in data-sheet:
-    1. If one LED is forced ON - then also the other LED is forced.
-            => You can't use SW control to force ON one LED and allow HW
-               to control the other.
-    2. You can't force both LEDs OFF. If the FORCE bit for both LED's is
-       zero, then LEDs are controlled by HW and indicate button/charger
-       states as explained in data-sheet.
+Please don't change the binding. In reality the define will never be
+used but also in reality the clk exists, so it's fine to leave it in the
+binding.
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
- drivers/leds/Kconfig        |  10 ++++
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-bd71828.c | 104 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 115 insertions(+)
- create mode 100644 drivers/leds/leds-bd71828.c
-
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 1988de1d64c0..cafcbae7c084 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -532,6 +532,16 @@ config LEDS_BD2802
- 	  This option enables support for BD2802GU RGB LED driver chips
- 	  accessed via the I2C bus.
- 
-+config LEDS_BD71828
-+	tristate "LED driver for LEDS on ROHM BD71828 PMIC"
-+	depends on LEDS_CLASS
-+	depends on MFD_ROHM_BD71828
-+	help
-+	  This option enables support for LED outputs located on ROHM
-+	  BD71828 power management IC. ROHM BD71828 has two led output pins
-+	  which can be left to indicate HW states or controlled by SW. Say
-+	  yes here if you want to enable SW control for these LEDs.
-+
- config LEDS_INTEL_SS4200
- 	tristate "LED driver for Intel NAS SS4200 series"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 41fb073a39c1..2a8f6a8e4c7c 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
- obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
- obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
-+obj-$(CONFIG_LEDS_BD71828)		+= leds-bd71828.o
- obj-$(CONFIG_LEDS_CPCAP)		+= leds-cpcap.o
- obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
-diff --git a/drivers/leds/leds-bd71828.c b/drivers/leds/leds-bd71828.c
-new file mode 100644
-index 000000000000..f032e24485e9
---- /dev/null
-+++ b/drivers/leds/leds-bd71828.c
-@@ -0,0 +1,104 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (C) 2019 ROHM Semiconductors
-+
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/mfd/rohm-bd71828.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#define BD71828_LED_TO_DATA(l) ((l)->id == ID_GREEN_LED ? \
-+	container_of((l), struct bd71828_leds, green) : \
-+	container_of((l), struct bd71828_leds, amber))
-+
-+/* Names for led identification - these match the data sheet names */
-+enum {
-+	ID_GREEN_LED,
-+	ID_AMBER_LED,
-+	ID_NMBR_OF,
-+};
-+
-+struct bd71828_led {
-+	struct led_init_data init_data;
-+	int id;
-+	struct led_classdev l;
-+	u8 force_mask;
-+};
-+
-+struct bd71828_leds {
-+	struct rohm_regmap_dev *bd71828;
-+	struct bd71828_led green;
-+	struct bd71828_led amber;
-+};
-+
-+static int bd71828_led_brightness_set(struct led_classdev *led_cdev,
-+				      enum led_brightness value)
-+{
-+	struct bd71828_led *l = container_of(led_cdev, struct bd71828_led, l);
-+	struct bd71828_leds *data;
-+	unsigned int val = BD71828_LED_OFF;
-+
-+	data = BD71828_LED_TO_DATA(l);
-+	if (value != LED_OFF)
-+		val = BD71828_LED_ON;
-+
-+	return regmap_update_bits(data->bd71828->regmap, BD71828_REG_LED_CTRL,
-+			    l->force_mask, val);
-+}
-+
-+static int bd71828_led_probe(struct platform_device *pdev)
-+{
-+	struct rohm_regmap_dev *bd71828;
-+	struct bd71828_leds *l;
-+	struct bd71828_led *g, *a;
-+	int ret;
-+
-+	bd71828 = dev_get_drvdata(pdev->dev.parent);
-+	l = devm_kzalloc(&pdev->dev, sizeof(*l), GFP_KERNEL);
-+	if (!l)
-+		return -ENOMEM;
-+	l->bd71828 = bd71828;
-+	a = &l->amber;
-+	g = &l->green;
-+
-+	/* Fill in details for 'AMBLED' */
-+	a->init_data.match_property.name = "rohm,led-compatible";
-+	a->init_data.match_property.raw_val = "bd71828-ambled";
-+	a->init_data.match_property.size = strlen("bd71828-ambled");
-+	a->id = ID_AMBER_LED;
-+	a->force_mask = BD71828_MASK_LED_AMBER;
-+
-+	/* Fill in details for 'GRNLED' */
-+	g->init_data.match_property.name = "rohm,led-compatible";
-+	g->init_data.match_property.raw_val = "bd71828-grnled";
-+	g->init_data.match_property.size = strlen("bd71828-grnled");
-+	g->id = ID_GREEN_LED;
-+	g->force_mask = BD71828_MASK_LED_GREEN;
-+
-+	a->l.brightness_set_blocking = bd71828_led_brightness_set;
-+	g->l.brightness_set_blocking = bd71828_led_brightness_set;
-+
-+	ret = devm_led_classdev_register_ext(&pdev->dev, &g->l, &g->init_data);
-+	if (ret)
-+		return ret;
-+
-+	return devm_led_classdev_register_ext(&pdev->dev, &a->l, &a->init_data);
-+}
-+
-+static struct platform_driver bd71828_led_driver = {
-+	.driver = {
-+		.name  = "bd71828-led",
-+	},
-+	.probe  = bd71828_led_probe,
-+};
-+
-+module_platform_driver(bd71828_led_driver);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("ROHM BD71828 LED driver");
-+MODULE_LICENSE("GPL");
-+MODULE_ALIAS("platform:bd71828-led");
--- 
-2.21.0
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
