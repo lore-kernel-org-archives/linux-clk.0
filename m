@@ -2,72 +2,73 @@ Return-Path: <SRS0=O2Di=ZJ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2A46C432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 11:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5553C432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:18:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D43720727
-	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 11:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89DED20862
+	for <linux-clk@archiver.kernel.org>; Sun, 17 Nov 2019 12:18:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="slVeQhdy"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8jwgOqA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbfKQL1y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 17 Nov 2019 06:27:54 -0500
-Received: from mail-wr1-f49.google.com ([209.85.221.49]:43146 "EHLO
-        mail-wr1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726027AbfKQL1x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 06:27:53 -0500
-Received: by mail-wr1-f49.google.com with SMTP id n1so16093833wra.10;
-        Sun, 17 Nov 2019 03:27:51 -0800 (PST)
+        id S1726102AbfKQMSN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 17 Nov 2019 07:18:13 -0500
+Received: from mail-il1-f195.google.com ([209.85.166.195]:42954 "EHLO
+        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726037AbfKQMSM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 17 Nov 2019 07:18:12 -0500
+Received: by mail-il1-f195.google.com with SMTP id n18so13380983ilt.9
+        for <linux-clk@vger.kernel.org>; Sun, 17 Nov 2019 04:18:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=yRb4rHk+wMDKet5bHxbNKk76HRcEuXGmjVUHzgEq0xw=;
-        b=slVeQhdyt+sqLBrGn6439IEhrCPW6xHrtN3CTNUYWaCIcBLhfotFK1CU97BPZ9MljW
-         oepHugZNkm0/EG42xxpa46EZjR6hMr1eY1Do/+n1eOpQHfUJ11NRqFbcaWDHkO9IMP6Z
-         i/pRxCfMDmACYsQhBiYTfNmKBskXrh/W3Xb6zjKrE8xKj6w2+16dzuy3serZyBk5gz3H
-         pB6wrqlZdeuHxsN7m7FFKp65M7f8vyv2BE3ZZfmd7jiPAvV0Lb3KD3LCskVb3bx3mrp7
-         3lUTjflfaK3rgA6Ya/M7QZYVQl2tmCn0CFrTseVJNAMdWzB7IJ0BhLgTq2YE8mcCFql8
-         S7Uw==
+        bh=xOmkNME1TnaceMt+tkFudQs07FT2wu+ZDBouJ09Uj1c=;
+        b=X8jwgOqATtJsmEM6D6Mb+YhgxmxDAfq/gtrLXURG39AAv47043tQZba2Kooer5/urp
+         pj4X9rHyaJBZeno7FFGc796K3alQdtYMr0mGe2XoWWrU6gkMQnM6f1CVEIR+JYCgtvyh
+         h0rjzbE3Yp4AwPxigMCQf5Xc3lQW6QVdI+oJE2wLVSD68TwkadP6cU3aQQp2hZTX1usy
+         kkPsAOIW4ZOj16nZi4Nu3dIxbqjphls/kdWGV8NDXyA7rmpd7daygdlCpln2YscJyGuT
+         wpc37RNVG2lPjfQXZ7TniAbh8jnG8sv7nWl/FG/qqzfS0+17WQsw3Q7tsFfzeR1xf7/s
+         zYHw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=yRb4rHk+wMDKet5bHxbNKk76HRcEuXGmjVUHzgEq0xw=;
-        b=uSVQFTRmcK5jEVUytZtTdyi/crOJ9KeRXdIRZ5ZgFxRA5UNxvDNoqTEQFi5FYe32RP
-         K04r2Z/aXryct8iZNJYC3cXhPEAxvNJD7y64q5P2EWrwwd3nsGWMuHav7bqCkrtAG3YZ
-         gUcCucVuRJ0fjb3+FKc0A2t1s0lG7rrxVpu3bRt2c/m2jaN/1DbI9Z1TmAGjCtRKpajt
-         v66aCtF2t6FlpgF9aWEtnGIWerjJMLcSt7ZNy3H8h6RKPZ531Uy8RW+V9pzt1hRRC/Zs
-         9/yeNu7B1MXUnWM4qnuI17Uzhd4JYti+Jpb8lumIfWbgoktC7wn52Z/4K0EgXS1vBJSh
-         FeXg==
-X-Gm-Message-State: APjAAAWhXd1Ba6Nnj8f1zE2JsxsNfhUWkenzse5GslOcHPsb61E75D5s
-        dPP9SMgB+zJ6tP3RsgMHsehGJX7DdC8MpnaAcs4=
-X-Google-Smtp-Source: APXvYqw0TX9o7dA9RxXrRGrFHXGIGskn4cHlshHNQj3aEvQV9CpeXk5m2CJ7PMoYoaPtlL+Ld/CjcxA2R3+scpNQnSk=
-X-Received: by 2002:adf:8b01:: with SMTP id n1mr26544555wra.227.1573990071310;
- Sun, 17 Nov 2019 03:27:51 -0800 (PST)
+        bh=xOmkNME1TnaceMt+tkFudQs07FT2wu+ZDBouJ09Uj1c=;
+        b=nR/xz7EMieQYD18lFfX+h8TxrmEG0JrXM/dimPV7LsFn5cEpyTLeRobTao0nbWmo46
+         KF7VUTH7QOSvuEfTZHxT6KycvAP/cLl2tIQlKfAH6YfnnQA00IA1c8YCKK3irlX8PGFF
+         OkZCy46R1QgHF85EbYHMmmMFYucCzgvwjTm3ZiYAec2Z5HfQpDx0UHA6HY+JAM4QSvM0
+         L1JoM40NCFhIIIS6Ww2AqGmaZIITMClpWTE3iH5QKjX2mKmNurKnhIiDgklM7kB+sKlq
+         EjD4hkozvDygr/TAB+MUhfnJkEc/HUbkROGUTJZn/ebUA8jQB0oi/ZX7gpnuZgStLDbQ
+         4NDA==
+X-Gm-Message-State: APjAAAXu4zhKQ8IEHeCIRaUJbXQ1mOfi2PwE/p29S4KtpISzSFxtcCSn
+        T62ca2DU+TNhCkwJlXFYHAZ8N4ahGdLvu0y/TKQ=
+X-Google-Smtp-Source: APXvYqz1MK2QvIKuUQAqSX873T6Wv8NlMSXbqt3V6crWUTwDLNaKooKPYrX59aCJ5yUUQwQs9iPIB0a70ShCUB3sh6U=
+X-Received: by 2002:a92:3ad4:: with SMTP id i81mr10078405ilf.18.1573993092209;
+ Sun, 17 Nov 2019 04:18:12 -0800 (PST)
 MIME-Version: 1.0
-References: <20191025111338.27324-1-chunyan.zhang@unisoc.com>
- <20191025111338.27324-6-chunyan.zhang@unisoc.com> <20191113221952.AD925206E3@mail.kernel.org>
-In-Reply-To: <20191113221952.AD925206E3@mail.kernel.org>
-From:   Chunyan Zhang <zhang.lyra@gmail.com>
-Date:   Sun, 17 Nov 2019 19:27:15 +0800
-Message-ID: <CAAfSe-twxx4PyERHXuYcoehPoNYiVaOS4hZEK0KndoM2sL_5gQ@mail.gmail.com>
-Subject: Re: [PATCH 5/5] clk: sprd: add clocks support for SC9863A
+References: <1566299605-15641-1-git-send-email-aisheng.dong@nxp.com>
+ <1566299605-15641-4-git-send-email-aisheng.dong@nxp.com> <20190906170643.B310F20578@mail.kernel.org>
+ <CAA+hA=QoZFFb_EVfxcDuJB-9VobVd-1-RyhWeNTSePxW50P8Eg@mail.gmail.com> <20190916184408.8A55720665@mail.kernel.org>
+In-Reply-To: <20190916184408.8A55720665@mail.kernel.org>
+From:   Dong Aisheng <dongas86@gmail.com>
+Date:   Sun, 17 Nov 2019 20:07:11 +0800
+Message-ID: <CAA+hA=SbcophCfF3xGTe1R1awSrFxDRYqESut7uFQPQFOV86eA@mail.gmail.com>
+Subject: Re: [PATCH V4 03/11] clk: imx: scu: add two cells binding support
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
         linux-clk <linux-clk@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -76,74 +77,69 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 Hi Stephen,
 
-On Thu, 14 Nov 2019 at 06:19, Stephen Boyd <sboyd@kernel.org> wrote:
+Sorry for the delay due to a horrible busy months. Just a bit relax now.
+
+On Tue, Sep 17, 2019 at 2:44 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Dong Aisheng (2019-09-09 03:23:25)
+> > Hi Stephen,
+> >
+> > Thanks for the review.
+> >
+> > On Sat, Sep 7, 2019 at 5:29 PM Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Dong Aisheng (2019-08-20 04:13:17)
+> > > > diff --git a/drivers/clk/imx/clk-imx8qxp.c b/drivers/clk/imx/clk-imx8qxp.c
+> > > > index 5e2903e..1ad3f2a 100644
+> > > > --- a/drivers/clk/imx/clk-imx8qxp.c
+> > > > +++ b/drivers/clk/imx/clk-imx8qxp.c
+> > > > @@ -134,7 +134,12 @@ static int imx8qxp_clk_probe(struct platform_device *pdev)
+> > > >                                 i, PTR_ERR(clks[i]));
+> > > >         }
+> > > >
+> > > > -       return of_clk_add_hw_provider(ccm_node, of_clk_hw_onecell_get, clk_data);
+> > > > +       if (clock_cells == 2)
+> > >
+> > > Can you just read this from the DT node again instead of having a global
+> > > variable called "clock_cells" for this?
+> > >
+> >
+> > I tried thinking about it.
+> > One problem is that we also need this information in the exist clk
+> > registration API to
+> > keep the backwards compatibility:
+> > e.g.
+> >  static inline struct clk_hw *imx_clk_scu(const char *name, u32 rsrc_id,
+> >                                          u8 clk_type)
+> >  {
+> > -       return __imx_clk_scu(name, NULL, 0, rsrc_id, clk_type);
+> > +       if (clock_cells == 2)
+> > +               return imx_clk_scu_alloc_dev(name, NULL, 0, rsrc_id, clk_type);
+> > +       else
+> > +               return __imx_clk_scu(name, NULL, 0, rsrc_id, clk_type);
+> >  }
+> >
+> > Parsing it for all clocks seems not good.
+>
+> Can you parse it once for the clock controller and then pass it to the
+> registration function as the number of cells? I dislike the global and
+> the name of the global.
 >
 
-[cut]
+Yes, i can do it.
+Why i didn't do it before is because there're tens of APIs callers already
+and finally we will back to the original API again after removing the
+legacy users.
+So i used a global variable as a temporarily workaround during transition phase.
+But i do agree that make the code look ugly.
 
+Regards
+Aisheng
+
+> >
+> > In the future, i planned to totally remove the legacy binding support which
+> > is a premature one and missing continued support.
+> > Then we will also remove this unneeded clock_cells.
 >
-> > +static const u64 itable_dpll[5] = {4, 1211000000, 1320000000, 1570000000,
-> > +                                  1866000000};
-> > +static SPRD_PLL_WITH_ITABLE_1K(dpll0_clk, "dpll0", "dpll0-gate", 0x0,
-> > +                                  3, itable_dpll, f_dpll, 240);
-> > +static SPRD_PLL_WITH_ITABLE_1K(dpll1_clk, "dpll1", "dpll1-gate", 0x18,
-> > +                                  3, itable_dpll, f_dpll, 240);
-> > +
-> > +static CLK_FIXED_FACTOR(dpll0_933m, "dpll0-933m", "dpll0", 2, 1, 0);
-> > +static CLK_FIXED_FACTOR(dpll0_622m3, "dpll0-622m3", "dpll0", 3, 1, 0);
-> > +static CLK_FIXED_FACTOR(dpll1_400m, "dpll1-400m", "dpll1", 4, 1, 0);
-> > +static CLK_FIXED_FACTOR(dpll1_266m7, "dpll1-266m7", "dpll1", 6, 1, 0);
-> > +static CLK_FIXED_FACTOR(dpll1_123m1, "dpll1-123m1", "dpll1", 13, 1, 0);
-> > +static CLK_FIXED_FACTOR(dpll1_50m, "dpll1-50m", "dpll1", 32, 1, 0);
-> > +
-> > +static struct sprd_clk_common *sc9863a_dpll_clks[] = {
-> [...]
-> > +static SPRD_COMP_CLK(core0_clk, "core0-clk", core_parents, 0xa20,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core1_clk, "core1-clk", core_parents, 0xa24,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core2_clk, "core2-clk", core_parents, 0xa28,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core3_clk, "core3-clk", core_parents, 0xa2c,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core4_clk, "core4-clk", core_parents, 0xa30,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core5_clk, "core5-clk", core_parents, 0xa34,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core6_clk, "core6-clk", core_parents, 0xa38,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(core7_clk, "core7-clk", core_parents, 0xa3c,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_COMP_CLK(scu_clk, "scu-clk", core_parents, 0xa40,
-> > +                    0, 3, 8, 3, 0);
-> > +static SPRD_DIV_CLK(ace_clk, "ace-clk", "scu-clk", 0xa44,
-> > +                   8, 3, 0);
-> > +static SPRD_DIV_CLK(axi_periph_clk, "axi-periph-clk", "scu-clk", 0xa48,
-> > +                   8, 3, 0);
-> > +static SPRD_DIV_CLK(axi_acp_clk, "axi-acp-clk", "scu-clk", 0xa4c,
-> > +                   8, 3, 0);
-> > +
-> > +static const char * const atb_parents[] = { "ext-26m", "twpll-384m",
-> > +                                           "twpll-512m", "mpll2" };
-> > +static SPRD_COMP_CLK(atb_clk, "atb-clk", atb_parents, 0xa50,
-> > +                    0, 2, 8, 3, 0);
-> > +static SPRD_DIV_CLK(debug_apb_clk, "debug-apb-clk", "atb-clk", 0xa54,
-> > +                   8, 3, 0);
-> > +
-> > +static const char * const gic_parents[] = { "ext-26m", "twpll-153m6",
-> > +                                           "twpll-384m", "twpll-512m" };
+> Ok sure.
 >
-> Can you use the new way of specifying clk parents instead of using these
-> big string lists? That will hopefully cut down on the size of this code
-> by reducing all these string lists.
-
-Not sure if I understand correctly - do you mean that switch to use a
-reference to clk_parent_data.hw in the driver instead?
-like:
-https://elixir.bootlin.com/linux/v5.4-rc7/source/drivers/clk/qcom/gcc-sm8150.c#L136
-
-Since if I have to define many clk_parent_data.fw_name strings
-instead, it seems not able to reduce the code size, right?
-
-Thanks,
-Chunyan
