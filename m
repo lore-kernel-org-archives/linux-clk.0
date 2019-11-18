@@ -2,119 +2,111 @@ Return-Path: <SRS0=lcQO=ZK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8897C432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 10:08:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFDECC432C0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 10:12:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BFAD20727
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 10:08:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yCYdfDsT"
+	by mail.kernel.org (Postfix) with ESMTP id B0D4120727
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 10:12:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726690AbfKRKIN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Nov 2019 05:08:13 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34147 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726579AbfKRKIN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 05:08:13 -0500
-Received: by mail-wr1-f65.google.com with SMTP id e6so18707193wrw.1
-        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2019 02:08:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=6FpHepaowUcTwi1m1otI5UX1Bte5ijrSggQqs1TMYnI=;
-        b=yCYdfDsTG7kz2Py4AsxM03TsOto8rVrTnapxd1uM7UzvtALIiyKQn9FPNijF9T6wcI
-         Li/l77ZTfj0rD20BLnqx9iYgVP2iS8yCVrcdra/janvjUTTOhRQ4LR/6hJWfio7x83Ko
-         xSzztJl/+vlV10mIUjKdJ+lZScErMX3+J2xEVYA9Ockr/UPTW1Meqq8FiB8wWuBJvz08
-         OnIw/PR+cc7COBl8z+uNsZiic0BxlENc0k6ldNnmOpMqie/ybEfE+IpYTOJQFh3nu0Co
-         QT/NODRYize+4h4BsUGNvrEsLUMF45RFYhGWeB4YLrIEICQa903Np1PXXIMGVVfT/BAs
-         6r3w==
+        id S1726488AbfKRKMS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Nov 2019 05:12:18 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:39686 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726460AbfKRKMS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 05:12:18 -0500
+Received: by mail-oi1-f196.google.com with SMTP id v138so14787269oif.6;
+        Mon, 18 Nov 2019 02:12:17 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=6FpHepaowUcTwi1m1otI5UX1Bte5ijrSggQqs1TMYnI=;
-        b=HpbhAIcTOifCRro2SG0ysLvqiqOrhBA8DV4gSRUvy6JAmRUi76VM+T5lLCegWKwt25
-         hnWEDhAVab1GJ5ZXHVUqBUd14SWewKmt9wuqbuK/1nhox9oyFnyCobCFKc9qwclHv0jl
-         jVe1B/VSPPnd7d7cPQ8JT/eLtwCxvmXi28N5Mpgr59FzCLqCSHMi1BQD+alYu8X8vfDC
-         A1FYyVJJCB0XTKq1/1WSR//h1F2+PMy6jWwDKRCZ4QDqvZrupDyRqPiOkVly9wtg6lmv
-         +8G/cq1toE4TmZn0ZP9uB5MF5cpE6FXsSPmIl350yb5kjEzeh4xaROMSkXFiTUa3aj3m
-         d7gg==
-X-Gm-Message-State: APjAAAX7oBTOO6/64VuLA2ZOtOVYEi+dsh9XLHyMmUpox84J564U0kUo
-        Mkfw07uO5IUBLm5Ki+8fdho+HKj/aQU=
-X-Google-Smtp-Source: APXvYqxeNQBPkh8HxkOqiVOXmcrv+bpCB6eEbJxM2eki/xYGalEX8LAGcqSAmVhoJmcigiOOMlvhTg==
-X-Received: by 2002:adf:e444:: with SMTP id t4mr5851326wrm.50.1574071690635;
-        Mon, 18 Nov 2019 02:08:10 -0800 (PST)
-Received: from localhost ([2a01:e34:eeb6:4690:ecfa:1144:aa53:4a82])
-        by smtp.gmail.com with ESMTPSA id w17sm23523133wrt.45.2019.11.18.02.08.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 18 Nov 2019 02:08:09 -0800 (PST)
-References: <20190924123954.31561-1-jbrunet@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] clk: let clock perform allocation in init
-In-reply-to: <20190924123954.31561-1-jbrunet@baylibre.com>
-Date:   Mon, 18 Nov 2019 11:08:08 +0100
-Message-ID: <1j4kz1pkdz.fsf@starbuckisacylon.baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Wd/8miQHfG0K/xHeaZKk7Io4Qth+uW7jMmeiQXDJFp4=;
+        b=hKwmeRNB+AQToO+oxyAG09vRjjxGSO96go52bUd9rh+ag4EAU+oCixdYHuPj0BYb1Q
+         EBN/JZIzrJaz/KQIYaYHDd41i54KJDGbkUWDhwUZ8XuZ/zuLanSdGzbt7Z+DBvMZZQSu
+         HjE7fdTVd49PKoe4NfFyEiVZRZS0ZvRR7mFxqAjzz83ktxZcxFSFOX6oysAwdkjlCG4p
+         2v6AZ9tWAz/mh+6MWVJgOvyb+nD8ydpD6r+Dac2wTvBsDq3vqHSZqnlbmSkz8px/QS6F
+         VnyO4vss5R38+Hl7HdvNRemYVmdpIBSy+K8WLrLpNquMAYH4hajHERzuFxaxFhV7toq/
+         7i5g==
+X-Gm-Message-State: APjAAAW6BUsaSzWc+lTa2akNTysccBXDnIWqnPQqvgKnDvn4YmM9orwc
+        3aH+cAAQVJU1F29be7Lyk0ZRw6sBZhMyavdAukXbXBxk
+X-Google-Smtp-Source: APXvYqwQRMtTY9HMTsrPxWAgn9Ws8TAiqUHXp55KhDdFAB1MXZ/e4RD3Nn5oEVsbr+xSw2wom1TwxOiyh3Rt08BFclQ=
+X-Received: by 2002:aca:3a86:: with SMTP id h128mr18882008oia.131.1574071937300;
+ Mon, 18 Nov 2019 02:12:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <1572591791-11280-1-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+ <1572591791-11280-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+In-Reply-To: <1572591791-11280-3-git-send-email-yoshihiro.shimoda.uh@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 18 Nov 2019 11:12:06 +0100
+Message-ID: <CAMuHMdWbcDUThotTriK3mCB90FYODPpqPA0Ns50gQ0y8D7JdKw@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] dt-bindings: clock: renesas: rcar-usb2-clock-sel:
+ Add power-domains and resets properties
+To:     Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Shimoda-san,
 
-On Tue 24 Sep 2019 at 14:39, Jerome Brunet <jbrunet@baylibre.com> wrote:
-
-> This patchset is a follow up on this pinky swear [0].
-> Its purpose is:
->  * Clarify the acceptable use of clk_ops init() callback
->  * Let the init() callback return an error code in case anything
->    fail.
->  * Add the terminate() counter part of of init() to release the
->    resources which may have been claimed in init()
+On Fri, Nov 1, 2019 at 8:03 AM Yoshihiro Shimoda
+<yoshihiro.shimoda.uh@renesas.com> wrote:
+> This patch adds missing required properties of power-domains and resets.
+> Fortunately, no one has this device node for now, so that we don't
+> need to think of backward compatibility.
 >
-> After discussing with Stephen at LPC, I decided to drop the 2 last patches
-> of the RFC [1]. I can live without it for now and nobody expressed a
-> critical need to get the proposed placeholder.
+> Fixes: 311accb64570 ("clk: renesas: rcar-usb2-clock-sel: Add R-Car USB 2.0 clock selector PHY")
+> Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Thanks for your patch!
+
+> --- a/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-usb2-clock-sel.txt
+> @@ -43,6 +43,9 @@ Required properties:
+>   - The USB_EXTAL clock pin must be "usb_extal"
+>   - The USB_XTAL clock pin must be "usb_xtal"
+>  - #clock-cells: Must be 0
+> +- power-domains: A phandle and symbolic PM domain specifier.
+> +                 See power/renesas,rcar-sysc.txt.
+> +- resets: A list of phandles and specifier pairs.
+
+Since there is more than one, I think it would be good to specify
+reset-names, too ("ehci_ohci" and "hs-usb-if").
+
+The rest looks good to me.
+
+>  Example (R-Car H3):
 >
-> [0]: https://lkml.kernel.org/r/CAEG3pNB-143Pr_xCTPj=tURhpiTiJqi61xfDGDVdU7zG5H-2tA@mail.gmail.com
-> [1]: https://lkml.kernel.org/r/20190828102012.4493-1-jbrunet@baylibre.com
->
-> Jerome Brunet (3):
->   clk: actually call the clock init before any other callback of the
->     clock
->   clk: let init callback return an error code
->   clk: add terminate callback to clk_ops
->
->  drivers/clk/clk.c                     | 38 ++++++++++++++++++---------
->  drivers/clk/meson/clk-mpll.c          |  4 ++-
->  drivers/clk/meson/clk-phase.c         |  4 ++-
->  drivers/clk/meson/clk-pll.c           |  4 ++-
->  drivers/clk/meson/sclk-div.c          |  4 ++-
->  drivers/clk/microchip/clk-core.c      |  8 ++++--
->  drivers/clk/mmp/clk-frac.c            |  4 ++-
->  drivers/clk/mmp/clk-mix.c             |  4 ++-
->  drivers/clk/qcom/clk-hfpll.c          |  6 +++--
->  drivers/clk/rockchip/clk-pll.c        | 28 ++++++++++++--------
->  drivers/clk/ti/clock.h                |  2 +-
->  drivers/clk/ti/clockdomain.c          |  8 +++---
->  drivers/net/phy/mdio-mux-meson-g12a.c |  4 ++-
->  include/linux/clk-provider.h          | 13 ++++++---
->  14 files changed, 90 insertions(+), 41 deletions(-)
+> @@ -54,4 +57,6 @@ Example (R-Car H3):
+>                          <&usb_extal>, <&usb_xtal>;
+>                 clock-names = "ehci_ohci", "hs-usb-if", "usb_extal", "usb_xtal";
+>                 #clock-cells = <0>;
+> +               power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+> +               resets = <&cpg 703>, <&cpg 704>;
+>         };
 
-Hi Stephen,
+Gr{oetje,eeting}s,
 
-Is this series Ok with you ?
-Do you think you can take it at the beginning of the next cycle ?
+                        Geert
 
-Thx
-Jerome
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
