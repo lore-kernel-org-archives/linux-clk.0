@@ -2,89 +2,210 @@ Return-Path: <SRS0=lcQO=ZK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3E8CC432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 22:30:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403BAC432C0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 23:42:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 796E022309
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 22:30:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574116215;
-	bh=khxFIvRa0WHBu3BPSpSp4o8e8vlX/Ch1fJFSYdneD1g=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=N86ef+mUwVklukM08WM4K/DNfmrmdsZmPGU9Q348BfaozKaqUUXYYUa4mSzqBwJHe
-	 T4V2Uc4H8g/9ORToKikbMU8m7z1rqBJ0htwht2uSLIR3yZeJLImXesEQtDvOCXlbE5
-	 xq9ixG9txLsx1Z5NcCTuOFUlAuis1wB01y+tvsnY=
+	by mail.kernel.org (Postfix) with ESMTP id 0A714222DE
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 23:42:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eLIHtQ5c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfKRWaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Nov 2019 17:30:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60588 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726272AbfKRWaM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Nov 2019 17:30:12 -0500
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 814DD22312;
-        Mon, 18 Nov 2019 22:30:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574116211;
-        bh=khxFIvRa0WHBu3BPSpSp4o8e8vlX/Ch1fJFSYdneD1g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=B8LWMYXp1+IGaUXr0uhktgBFNAO0EUQPoDl4ZO6KXa4ZuxKz1lc+Klt9zdeMN0Byg
-         A1qBk27AObhn8bnOiT+nmyy4ea74+Q1yhe6THBpSc0wQG2Sn5mcYM39u5I80spCYXR
-         H3MTMAbeFuLriXNtdbEuyRFTN/Yx4Z587oUMbUtc=
-Received: by mail-qv1-f45.google.com with SMTP id cv8so7142352qvb.3;
-        Mon, 18 Nov 2019 14:30:11 -0800 (PST)
-X-Gm-Message-State: APjAAAVADF5dd3czrJ+fG0j2g0SkLnGQV2hZQ+a+5mePJ0RZTNkAIM4g
-        IFQNi2qzgjZigG8f75N8E/0XQtQ3M7C0LOMqLw==
-X-Google-Smtp-Source: APXvYqwTs2co+HBbq2oe5+YXOU23+vJDFGQ7niNbj9Q1SHsVHHK3eLM9UQAJDYzQb4QVp4Z73nckDWhocRD43GBWIEg=
-X-Received: by 2002:a0c:d2b4:: with SMTP id q49mr15752471qvh.135.1574116210565;
- Mon, 18 Nov 2019 14:30:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20191114101817.20831-1-peter.ujfalusi@ti.com>
-In-Reply-To: <20191114101817.20831-1-peter.ujfalusi@ti.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 18 Nov 2019 16:29:59 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLahJZ0TqmgNS_cvwtTUw4kRCjD2bn-vdAN8xYmM7zY0w@mail.gmail.com>
-Message-ID: <CAL_JsqLahJZ0TqmgNS_cvwtTUw4kRCjD2bn-vdAN8xYmM7zY0w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: Move ti-dra7-atl.h to dt-bindigs/clock
-To:     Peter Ujfalusi <peter.ujfalusi@ti.com>
-Cc:     Tero Kristo <t-kristo@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-omap <linux-omap@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Tony Lindgren <tony@atomide.com>, devicetree@vger.kernel.org
+        id S1726830AbfKRXmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Nov 2019 18:42:35 -0500
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:45918 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726809AbfKRXmf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 18:42:35 -0500
+Received: by mail-pl1-f202.google.com with SMTP id f7so11986597plj.12
+        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2019 15:42:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=0HR7354fwzZLoSsix3DSN5/aq9ZZkqFDIdkoEC/pg4Q=;
+        b=eLIHtQ5cGODVB5oUClKGTxOm32S2L3VPlYuuJQy0HOf4Oecy2Eazi3odRqS8f+Gk1m
+         PMOTqKF8xCcNqJysanPyICJC+k0lhf9Br26M+vCXz02RZBBLcMAHM0HJj4cN9vuASDks
+         3IlPLeAMK8tTLiygMX5F3EwDQNu7R4MhLRreq4QJKpRWwE0JrkKcZbw4HicZOUqL33hb
+         RytiyzJvaja2Nni7oyTzsXjdEASIPNRKFRfrMhviC020dLwaaG9TWA5G/dCi6I5keRZU
+         v3aeMDw+rM7eo+pOhNYWXWxsZ1lYe2xkJedMTNkmwXjTD0grPvzxGCZTcdT3uZcthtFd
+         GCfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=0HR7354fwzZLoSsix3DSN5/aq9ZZkqFDIdkoEC/pg4Q=;
+        b=B41/TOJhQm722Lw79TRIHIZblH0I6rTQvMOmUdss+XAWt1xFYYsLohJQCcNJeT50MJ
+         lavJ9QqCyZvLh3mMp5s9kmyM1crj1Zrz/RQ8LqPSu2MOLt2tTyjUZl7uN3Wt+hKMCEv/
+         +RBmvM2nmwZHEPMEdWyLGmSA5Al/Ui4eaow9QAHfLxxFNekNCAEPgK08DPWNKj8THPCf
+         jsHfH97NnZeoBEPA5Gp9RZ6y1h0Sf+fRLtpgXIDMCA/1S5x+H13KLcYW01Jg6oBrdOOH
+         lyOhH4G3x7br+Cehklt6KIeyPJ8pvGmJTXNyO9K9S2ijLQ+IovLfEouiUu61ALXS0lzO
+         Zuhw==
+X-Gm-Message-State: APjAAAV5W6wfDczvUDZ9R3gmktCGyS8l/sGShEt9y/izXuU0Q2krQToO
+        0FrdOBmyu+QMwrt8PE5Ff09FgfGY124L2D4=
+X-Google-Smtp-Source: APXvYqzwIk4iobTLY88s1QZ96OOGkhRDC6hNTVvwik6LaqYqTQYmEX70hUoCsiX+t+O0+E9UMBnv3z1Gnc0eNUo=
+X-Received: by 2002:a63:907:: with SMTP id 7mr2076044pgj.256.1574120554298;
+ Mon, 18 Nov 2019 15:42:34 -0800 (PST)
+Date:   Mon, 18 Nov 2019 15:42:28 -0800
+Message-Id: <20191118234229.54085-1-saravanak@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
+Subject: [PATCH v1] clk: Keep boot clocks on for multiple consumers
+From:   Saravana Kannan <saravanak@google.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 14, 2019 at 4:17 AM Peter Ujfalusi <peter.ujfalusi@ti.com> wrote:
->
+Clocks can turned on (by the hardware, bootloader, etc) upon a
+reset/boot of a hardware platform. These "boot clocks" could be clocking
+devices that are active before the kernel starts running. For example,
+clocks needed for the interconnects, UART console, display, CPUs, DDR,
+etc.
 
-typo in subject.
+When a boot clock is used by more than one consumer or multiple boot
+clocks share a parent clock, the boot clock (or the common parent) can
+be turned off when the first consumer probes. This can potentially crash
+the device or cause poor user experience.
 
-> Most of the clock related dt-binding header files are located in
-> dt-bindings/clock folder. It would be good to keep all the similar
-> header files at a single location.
->
-> Suggested-by: Tony Lindgren <tony@atomide.com>
-> Signed-off-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-> ---
->  Documentation/devicetree/bindings/clock/ti/dra7-atl.txt | 4 ++--
->  arch/arm/boot/dts/dra7-evm-common.dtsi                  | 2 +-
->  arch/arm/boot/dts/dra72-evm-common.dtsi                 | 2 +-
->  include/dt-bindings/{clk => clock}/ti-dra7-atl.h        | 0
->  4 files changed, 4 insertions(+), 4 deletions(-)
->  rename include/dt-bindings/{clk => clock}/ti-dra7-atl.h (100%)
+This patch fixes this by explicitly enabling the boot clocks during
+clock registration and then disabling them at late_initcall_sync(). This
+gives all the consumers until late_initcall() to put their "votes" in to
+keep any of the boot clocks on past late_initcall().
 
-Otherwise,
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
+ drivers/clk/clk.c            | 62 ++++++++++++++++++++++++++++++++++++
+ include/linux/clk-provider.h |  1 +
+ 2 files changed, 63 insertions(+)
 
-Acked-by: Rob Herring <robh@kernel.org>
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1c677d7f7f53..a1b09c9f8845 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -72,6 +72,8 @@ struct clk_core {
+ 	unsigned long		flags;
+ 	bool			orphan;
+ 	bool			rpm_enabled;
++	bool			state_held;
++	bool			boot_enabled;
+ 	unsigned int		enable_count;
+ 	unsigned int		prepare_count;
+ 	unsigned int		protect_count;
+@@ -1300,6 +1302,36 @@ static int clk_disable_unused(void)
+ }
+ late_initcall_sync(clk_disable_unused);
+ 
++static void clk_unprepare_disable_subtree(struct clk_core *core)
++{
++	struct clk_core *child;
++
++	lockdep_assert_held(&prepare_lock);
++
++	hlist_for_each_entry(child, &core->children, child_node)
++		clk_unprepare_disable_subtree(child);
++
++	if (!core->state_held)
++		return;
++
++	clk_core_disable_unprepare(core);
++}
++
++static int clk_release_boot_state(void)
++{
++	struct clk_core *core;
++
++	clk_prepare_lock();
++
++	hlist_for_each_entry(core, &clk_root_list, child_node)
++		clk_unprepare_disable_subtree(core);
++
++	clk_prepare_unlock();
++
++	return 0;
++}
++late_initcall_sync(clk_release_boot_state);
++
+ static int clk_core_determine_round_nolock(struct clk_core *core,
+ 					   struct clk_rate_request *req)
+ {
+@@ -1674,6 +1706,30 @@ static int clk_fetch_parent_index(struct clk_core *core,
+ 	return i;
+ }
+ 
++static void clk_core_hold_state(struct clk_core *core)
++{
++	if (core->state_held || !core->boot_enabled ||
++	    core->flags & CLK_DONT_HOLD_STATE)
++		return;
++
++	WARN(core->orphan, "%s: Can't hold state for orphan clk\n", core->name);
++
++	core->state_held = !clk_core_prepare_enable(core);
++}
++
++static void __clk_core_update_orphan_hold_state(struct clk_core *core)
++{
++	struct clk_core *child;
++
++	if (core->orphan)
++		return;
++
++	clk_core_hold_state(core);
++
++	hlist_for_each_entry(child, &core->children, child_node)
++		__clk_core_update_orphan_hold_state(child);
++}
++
+ /*
+  * Update the orphan status of @core and all its children.
+  */
+@@ -3374,6 +3430,8 @@ static int __clk_core_init(struct clk_core *core)
+ 		rate = 0;
+ 	core->rate = core->req_rate = rate;
+ 
++	core->boot_enabled = clk_core_is_enabled(core);
++
+ 	/*
+ 	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
+ 	 * don't get accidentally disabled when walking the orphan tree and
+@@ -3389,6 +3447,9 @@ static int __clk_core_init(struct clk_core *core)
+ 		clk_enable_unlock(flags);
+ 	}
+ 
++	if (!core->orphan)
++		clk_core_hold_state(core);
++
+ 	/*
+ 	 * walk the list of orphan clocks and reparent any that newly finds a
+ 	 * parent.
+@@ -3408,6 +3469,7 @@ static int __clk_core_init(struct clk_core *core)
+ 			__clk_set_parent_after(orphan, parent, NULL);
+ 			__clk_recalc_accuracies(orphan);
+ 			__clk_recalc_rates(orphan, 0);
++			__clk_core_update_orphan_hold_state(orphan);
+ 		}
+ 	}
+ 
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 2fdfe8061363..f0e522ea793f 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -32,6 +32,7 @@
+ #define CLK_OPS_PARENT_ENABLE	BIT(12)
+ /* duty cycle call may be forwarded to the parent clock */
+ #define CLK_DUTY_CYCLE_PARENT	BIT(13)
++#define CLK_DONT_HOLD_STATE	BIT(14) /* Don't hold state */
+ 
+ struct clk;
+ struct clk_hw;
+-- 
+2.24.0.432.g9d3f5f5b63-goog
+
