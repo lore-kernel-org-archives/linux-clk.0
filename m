@@ -2,124 +2,182 @@ Return-Path: <SRS0=lcQO=ZK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27C0AC432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 16:51:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E25FC432C0
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 17:30:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAFEE20885
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 16:51:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGoCvOct"
+	by mail.kernel.org (Postfix) with ESMTP id BE7F821934
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 17:30:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574098212;
+	bh=AIFMjOG1SMLyN7ph0ofkjADh0HpYilqm2YWZs1PDFLQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ULioSJ9Q3lUlWTaOUBjKR2uqZaivzylhpd33EY6k39BovV1bmeQHO+0v4SosqMxmN
+	 RE0cjCYXbAPi9nDZyX/e+SZuy5mBcWXSdEvItfiMMPrFA4Vw5I+FB0i1A/XADA6DZk
+	 P2Zf8dx8+jp/igZokUFodgAnompz8EZ/KCuNnhNs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726427AbfKRQve (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Nov 2019 11:51:34 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40615 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726068AbfKRQve (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 11:51:34 -0500
-Received: by mail-lj1-f195.google.com with SMTP id q2so19785390ljg.7;
-        Mon, 18 Nov 2019 08:51:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=QIcIAsn2Tf0hkT0Z0sJamAE1Kw/AvLRMcFk9OjqUWjM=;
-        b=KGoCvOctUYzAbf+D8Qeg9cKHfvolwhQwQzRbpilFEQYy0PWqIB4q7E8vSjwj1x0tdj
-         JMK54DnI1f3+q8KTswy9YJHZHjpCiWaEDLPknFKpvOGWjDNF59XAzDqkcTcfoHywy2jJ
-         4+tKZ5b6VuihC+inJ/fEOhGIhevIBrDrSynVNkHrh4Nn05WyAKg3Va7+KsPenv4Am/gW
-         TD1urnxXjcpctCruZZOnlwVfRGoEMzsk/S4azNTQU9uH9eMLRaJS4Ed0+rpgiN5F3U89
-         MagdfaXE4L5EJD2A7gBkYZf6lVcQlv8ex83NCsYKKo5QP00jaCNNd0Aa2w2qnea96AFO
-         CEcA==
+        id S1726813AbfKRRaM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Nov 2019 12:30:12 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:42137 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726336AbfKRRaM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 12:30:12 -0500
+Received: by mail-ot1-f67.google.com with SMTP id b16so15219626otk.9;
+        Mon, 18 Nov 2019 09:30:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=QIcIAsn2Tf0hkT0Z0sJamAE1Kw/AvLRMcFk9OjqUWjM=;
-        b=SRTDu7DgSA4sO+ZimXe2cZc2SGBVshgYnEDVlW6JdNwszzKLnSgNdNZ7O5EPkmQaE5
-         P2OP6aDRqMB8u3nnBKiFNWY4d0VCuLFH5NNPwjUwjO0v2iVwFVVybw3Z/QnQ7QP6NXvn
-         1wAMrLdioiT6P/9No2s9giRFWqMaYSSe99ViwhjcXV5G5leS2vZPERJI9bGsKwrrrvnk
-         T/zzuBYsvBp00OVE6qfLtDvQCdy9ufdNzmoM3DycGfzRVE0Ge/Bz8zde7FwOFvqGsE7Z
-         sy68gfK4VJplx5Q4Eo0z17I82Cn/AuzldqnVXfjLSW2FiONFiH/P7SYYdXz5GuoNiHhX
-         faGg==
-X-Gm-Message-State: APjAAAW36naq8d9fgFEvcAGNlrueuqKF2ZERO3w2A1oSXkmQH0PXO4p2
-        1GV+R60aN4CdT5Y5m8dG9/+Sdyrw
-X-Google-Smtp-Source: APXvYqyIDIyQH+wxnyQ43wMrMEc7zy9I5q6GvixZCd4ZmGs++uwhGKLQq8Lj79Z133rV7pXJmP3mfg==
-X-Received: by 2002:a2e:9985:: with SMTP id w5mr293360lji.162.1574095891151;
-        Mon, 18 Nov 2019 08:51:31 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id t15sm4593889lff.15.2019.11.18.08.51.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 18 Nov 2019 08:51:30 -0800 (PST)
-Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
- and Tegra30 SoCs
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>
-Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191118164512.8676-1-digetx@gmail.com>
- <20191118164512.8676-8-digetx@gmail.com>
-Message-ID: <2776e3c7-999e-5e6f-3a0e-211226dc30e6@gmail.com>
-Date:   Mon, 18 Nov 2019 19:51:29 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.1.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Sc1XalYtAcW8vcap9ciRIDbP58GTDwM0RBx4a9ILBAk=;
+        b=Q24LOerBTVIZ3izhUfNtReKcJahX9OtaXw3DyE6NAO02kUcvip+MbGcsKMraboUVQA
+         9o+nP5GxLHTPasvzKN01VL7YpZIP+FrPDLDuXICHz8hNmJohfMmr2SXEJNEwHb8fXe9d
+         rHm5cjnum4qyNQV9uEIzGa1O+kW7+1XoB1Z676fgAZlnZ2TXYxTU9m1PZz0MYIpZRNSF
+         t/s6jIa8nnfO5AaCV1ISpiI8QZZyexPWg9oTLpy4/68KVOAINKbaQILwHu8LDJe5KSrs
+         Ievcgo3C3WE5LYeXAh450tChTaII0SYtG/xo99sG1KAwqYyJFRmkKMCCxCPxjD4faKzv
+         nIvQ==
+X-Gm-Message-State: APjAAAUKAnOj8blnftvPDzu3DpJbSdCUYN60KYZOF1NDVYr5QbaxyPHC
+        VISKniwuEyVp+QJX1eRUnQ==
+X-Google-Smtp-Source: APXvYqw1OlPnWi/HP4m9zDdcj7/ZWCmt8YCrZHzLncVfpzpiqABUT2k1SS9sfJz3gBNd0ZixL3aXsw==
+X-Received: by 2002:a05:6830:1649:: with SMTP id h9mr288452otr.281.1574098210777;
+        Mon, 18 Nov 2019 09:30:10 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id y23sm6139512oih.17.2019.11.18.09.30.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 09:30:10 -0800 (PST)
+Date:   Mon, 18 Nov 2019 11:30:09 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rajan Vaja <rajan.vaja@xilinx.com>, dan.carpenter@oracle.com,
+        gustavo@embeddedor.com, jolly.shah@xilinx.com,
+        m.tretter@pengutronix.de, mark.rutland@arm.com,
+        michal.simek@xilinx.com, mturquette@baylibre.com,
+        nava.manne@xilinx.com, ravi.patel@xilinx.com,
+        tejas.patel@xilinx.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/7] dt-bindings: clock: Add bindings for versal clock
+ driver
+Message-ID: <20191118173009.GA1865@bogus>
+References: <1573564580-9006-1-git-send-email-rajan.vaja@xilinx.com>
+ <1573564580-9006-2-git-send-email-rajan.vaja@xilinx.com>
+ <20191112225147.7E59D21783@mail.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20191118164512.8676-8-digetx@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191112225147.7E59D21783@mail.kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.11.2019 19:45, Dmitry Osipenko пишет:
-> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
-> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
-> Currently cpufreq-dt driver produces a bit annoying warning splats
-> during boot because valid OPPs are not found, this will be fixed once
-> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
-> will also happen on older stable kernels using newer device-trees, thus
-> this patch should be backported to stable kernels as well.
+On Tue, Nov 12, 2019 at 02:51:46PM -0800, Stephen Boyd wrote:
+> Quoting Rajan Vaja (2019-11-12 05:16:14)
+> > diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> > new file mode 100644
+> > index 0000000..da82f6a
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> > @@ -0,0 +1,67 @@
+> > +# SPDX-License-Identifier: GPL-2.0
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bindings/clock/xlnx,versal-clk.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Xilinx Versal clock controller
+> > +
+> > +maintainers:
+> > +  - Michal Simek <michal.simek@xilinx.com>
+> > +  - Jolly Shah <jolly.shah@xilinx.com>
+> > +  - Rajan Vaja <rajan.vaja@xilinx.com>
+> > +
+> > +description: |
+> > +  The clock controller is a h/w block of Xilinx versal clock tree. It reads
 > 
-> Cc: <stable@vger.kernel.org>
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
-> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> ---
->  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
->  1 file changed, 2 insertions(+)
+> hardware instead of h/w
 > 
-> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
-> index f1d170dcf4d3..aba591d57c67 100644
-> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
-> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
-> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
->  	{ .compatible = "mediatek,mt8176", },
->  	{ .compatible = "mediatek,mt8183", },
->  
-> +	{ .compatible = "nvidia,tegra20", },
-> +	{ .compatible = "nvidia,tegra30", },
->  	{ .compatible = "nvidia,tegra124", },
->  	{ .compatible = "nvidia,tegra210", },
->  
+> > +  required input clock frequencies from the devicetree and acts as clock
+> > +  provider for all clock consumers of PS clocks. See clock_bindings.txt
+> > +  for more information on the generic clock bindings.
 > 
+> Please drop this last sentence about clock_bindings.txt
+> 
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: xlnx,versal-clk
+> > +
+> > +  "#clock-cells":
+> > +    const: 1
+> > +
+> > +  clocks:
+> > +    description: List of clock specifiers which are external input
+> > +      clocks to the given clock controller.
+> > +    minItems: 3
+> > +    maxItems: 3
 
-Hello Viresh,
+Can drop these. Implied by by 'items' list.
 
-Could you please pick up this patch for v5.5 fixes? Thanks in advance!
+> > +    items:
+> > +      - description: ref clk
+> > +      - description: alternate ref clk
+> > +      - description: pl alternate ref clk
+> 
+> What is "pl"? Can you clarify?
+> 
+> > +
+> > +  clock-names:
+> > +    minItems: 3
+> > +    maxItems: 3
+
+Same here.
+
+> > +    items:
+> > +      - const: ref_clk
+> > +      - const: alt_ref_clk
+> > +      - const: pl_alt_ref_clk
+
+'_clk' is redundant.
+
+> > +
+> > +required:
+> > +  - compatible
+> > +  - "#clock-cells"
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    firmware {
+> > +      zynqmp_firmware: zynqmp-firmware {
+> > +        compatible = "xlnx,zynqmp-firmware";
+> > +        method = "smc";
+> 
+> Is there a way to say in the binding that this must be a child of a
+> xlnx,zynqmp-firmware node? That would be ideal so we can constrain this
+> to that location somehow.
+
+Yes. Add the node name as a property to the f/w schema and reference 
+($ref) this file and add 'select: false' to this one. The problem is the 
+firmware binding is probably not yet a schema. Once it is a schema, this 
+example will start failing because it's incomplete. For that reason, I 
+prefer the examples in these cases (inc MFDs) in the base schema and not 
+in the child node schemas.
+
+> > +        versal_clk: clock-controller {
+> > +          #clock-cells = <1>;
+> > +          compatible = "xlnx,versal-clk";
+> > +          clocks = <&ref_clk>, <&alt_ref_clk>, <&pl_alt_ref_clk>;
+> > +          clock-names = "ref_clk", "alt_ref_clk", "pl_alt_ref_clk";
+> > +        };
+> > +      };
+> > +    };
+> > +...
+> 
