@@ -2,144 +2,115 @@ Return-Path: <SRS0=lcQO=ZK=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06B5AC432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 16:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EADEBC432C3
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 16:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D5D218AE
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 16:25:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574094306;
-	bh=oMYkZuMf6WhUQSXdhLctDMiyyOcrJ2SLjyrX8pyDpF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2FbpUxnVajLeotesK6h6NtgjBrocB7vWisrE1potihiUvWoTHMrnSC0Ruu51IjaeC
-	 IHNm8HMd+zzuzJimuaVJzBmSGVDAhm829vUcdellePU7aJkXkw9Z3U3ebqdJ0AvATU
-	 A/3Mw1CMmhjvd+OjjZPWivB/j9kWRohrQ1t5nYhs=
+	by mail.kernel.org (Postfix) with ESMTP id BED8A2186D
+	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 16:46:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSWGNAIs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726322AbfKRQZG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Nov 2019 11:25:06 -0500
-Received: from foss.arm.com ([217.140.110.172]:36762 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfKRQZG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Nov 2019 11:25:06 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D16DEDA7;
-        Mon, 18 Nov 2019 08:25:04 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 12FD93F703;
-        Mon, 18 Nov 2019 08:25:04 -0800 (PST)
-Date:   Mon, 18 Nov 2019 16:25:02 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jonathan Corbet <corbet@lwn.net>,
+        id S1727116AbfKRQq4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Nov 2019 11:46:56 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:41584 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727031AbfKRQqz (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 11:46:55 -0500
+Received: by mail-lj1-f193.google.com with SMTP id m4so14794269ljj.8;
+        Mon, 18 Nov 2019 08:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=vSS5/MmskIAajZTBs7D6Zb0R76xGQBQ4vfEB2g+VhfI=;
+        b=dSWGNAIscxuox8i/f4k9fxJCYXLkOYs8c4V9uuFlA9SegDARfNXm30V+fA26F1Vh9q
+         qMZeV0Q1U5USzxnGztfqFCZtMakgozLP/mjXIEgy6jYUjpMH6LW6TzqXKOUHh5NhUXmv
+         HgnG2O7OmmNmlwXyiBiSoyLCmrKVf1Iz8h+wG2anEr2cxpqitH4NwCVCIjVOheE3arkl
+         BcYen5b28/Q268gKYw4B4Ll0Je8tZfsHTi704q3QVT4e1OfSpBtLzqRGGThP1ww50lIb
+         e38JewaV4w3qTF4zTNxHYIJAWpes+C2QJH3TJwIuoFdaMkMPhoxJJOqFAaXVIWn7q2j5
+         qwhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=vSS5/MmskIAajZTBs7D6Zb0R76xGQBQ4vfEB2g+VhfI=;
+        b=h/EQjYk14X96cJk4i5xO7Z4DR0Fn/OMVdwtaRszIGhsFW5N+QAOvEIdayuWmrAbgTt
+         pAeJDjV93RnvbptCzf0TnuhcOPx4tyRsMfDzVPiU9OjxXRbo4tKhXi37O+udZ192dYtC
+         KY9F4z8JDVegEYMus+rmgQfWlcs5pnbU0+tEyhV+RYw43W/Zu94UbnMFFmNPBip6mR9q
+         atXDUTUIbenSIMJZyihOnT/cujRwMiBXUz7ZEM4clG/70hPa9IE++hdrpO4hiT7lsCgV
+         tXhfaHLi5slziGOO4S9tW4iMqCHhU29pud/gWldJH1M3l9D7r7zCEbr+ZNmm3QPapKYj
+         RAtg==
+X-Gm-Message-State: APjAAAWe3cjoXUDGR8l1MkL3GlJVzcccKWaY7eXY9R0U9PL2daqHOmDO
+        tJ47a1okXFI744gWVjzYn0U=
+X-Google-Smtp-Source: APXvYqxlqLM20mDO2M7+YU85rS6jMfO1OLrV46UKkfkkIY4+zlzsjCzi+zqjYWX3egQxQ401PtG5VQ==
+X-Received: by 2002:a2e:3313:: with SMTP id d19mr279650ljc.240.1574095613216;
+        Mon, 18 Nov 2019 08:46:53 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id d4sm8880307lfi.32.2019.11.18.08.46.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 18 Nov 2019 08:46:52 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Message-ID: <20191118162502.GJ9761@sirena.org.uk>
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20 and Tegra30 SoCs
+Date:   Mon, 18 Nov 2019 19:45:08 +0300
+Message-Id: <20191118164512.8676-8-digetx@gmail.com>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191118164512.8676-1-digetx@gmail.com>
+References: <20191118164512.8676-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="8tZVdKiiYitVG083"
-Content-Disposition: inline
-In-Reply-To: <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-X-Cookie: no maintenance:
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
+OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
+Currently cpufreq-dt driver produces a bit annoying warning splats
+during boot because valid OPPs are not found, this will be fixed once
+tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
+will also happen on older stable kernels using newer device-trees, thus
+this patch should be backported to stable kernels as well.
 
---8tZVdKiiYitVG083
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: <stable@vger.kernel.org>
+Reported-by: Jon Hunter <jonathanh@nvidia.com>
+Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On Mon, Nov 18, 2019 at 08:53:57AM +0200, Matti Vaittinen wrote:
+diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+index f1d170dcf4d3..aba591d57c67 100644
+--- a/drivers/cpufreq/cpufreq-dt-platdev.c
++++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+@@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
+ 	{ .compatible = "mediatek,mt8176", },
+ 	{ .compatible = "mediatek,mt8183", },
+ 
++	{ .compatible = "nvidia,tegra20", },
++	{ .compatible = "nvidia,tegra30", },
+ 	{ .compatible = "nvidia,tegra124", },
+ 	{ .compatible = "nvidia,tegra210", },
+ 
+-- 
+2.23.0
 
-> +#Supported default DVS states:
-> +#buck		| run		| idle		| suspend	| lpsr
-> +#-----------------------------------------------------------------------=
------
-> +#1, 2, 6, and 7	| supported	| supported	| 	supported (*)
-> +#-----------------------------------------------------------------------=
------
-> +#3, 4, and 5	| 			supported (**)
-> +#-----------------------------------------------------------------------=
------
-> +#(*)  LPSR and SUSPEND states use same voltage but both states have own =
-enable /
-> +#     disable settings. Voltage 0 can be specified for a state to make r=
-egulator
-> +#     disabled on that state.
-> +#(**) All states use same voltage but have own enable / disable settings.
-> +#     Voltage 0 can be specified for a state to make regulator disabled =
-on that
-> +#     state.
-> +
-> +      rohm,dvs-runlvl-ctrl:
-> +        description: |
-> +          buck control is done based on run-level. Regulator is not
-> +          individually controllable. See ../mfd/rohm,bd71828-pmic.yaml f=
-or
-> +          how to specify run-level control mechanism. Only bucks 1, 2, 6
-> +          and 7 support this.
-> +        type: boolean
-
-I don't think I saw this having the effect on set_voltage() that I'd
-have expected in the driver? =20
-
-> +      rohm,dvs-runlevel-microvolts:
-> +        minimum: 0
-> +        maximum: 2000000
-> +        maxItems: 4
-> +        description:
-> +          Array of voltages for run-levels. First value is for run-level=
- 0,
-> +          second for run-level 1 etc. Microvolts.
-
-What's the mapping from array indexes to the names used elsewhere to
-support runlevels?
-
---8tZVdKiiYitVG083
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3Sxd0ACgkQJNaLcl1U
-h9CCTwf/XyyhpE5QABB0yoyT4n2JEfyYggDTfnGhWaILUDJBNnJ7inK77EpoLaGL
-ybxABHwiIONAnVzWxn+N2THjqO+fbukf7LO6DvYe8FCfoaIz8A6qgGm+P9IC1CWw
-xeWdZwGwWh63iRZ+fR422SlmmNtykgb4QHUdvwEZ9fqMhqPgRGP6YWl5RSuCnC8R
-oE9SPG2GlA/I4kadkV6O503q496yvB6hLiOgXWZ3yWJY2uYNYJvn0sNpd+k0iZK4
-H4iyzLTOIUiD3RpLgNTPrmYXn1D/wClO+l2FqRjpzgq7tDO4xVyEOY8bTH9MrFoD
-36C7jhTJbW2tecxGFK5eemuG+i4Vxg==
-=mxuN
------END PGP SIGNATURE-----
-
---8tZVdKiiYitVG083--
