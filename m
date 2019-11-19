@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A4A2C432C0
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 16:29:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBB3C432C0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 16:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2149020718
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 16:29:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E166B222F2
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 16:32:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Xy1PLezG"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="S0fK+1Za"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728456AbfKSQ3G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Nov 2019 11:29:06 -0500
-Received: from mail-eopbgr130042.outbound.protection.outlook.com ([40.107.13.42]:17113
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        id S1728435AbfKSQcd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Nov 2019 11:32:33 -0500
+Received: from mail-eopbgr10061.outbound.protection.outlook.com ([40.107.1.61]:57078
+        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728250AbfKSQ3F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 19 Nov 2019 11:29:05 -0500
+        id S1727299AbfKSQcd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 19 Nov 2019 11:32:33 -0500
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RAWKJalX5+9v5fuB6VICg8cs2I46/TT2pgewl3G2zRqUfAVU1Bxd5OUQYj6BVOzo9COnwalhbw04J482o9HuY7J7m9LF0SexanJGVPb129Zz9kqng8sG4/nxXGZZBLDSqBnyJRIrllLFHTzwvrL7Wnejv4hz4WVJ1PQoFuTK8tXpvIkNSjP6F1czkKtqr6HaOQxqk+RfXfQ4ZCPyBV5QNL8STs/LAAlbzUV4bbDc/ysZad+EaLRMX7YodtqN2bfxLL3h3pDLtZuky1/Nl/RkAnn5mjyVrWNjJ4p4zcT4w9ul9L4eHtIF7/HA5iB7/qbZI9P8lifUD5ERJHdpp//5NA==
+ b=BnU7+JqXtGw5TKHrfJ5cebMN6FgpRqT2zrFW2B/ib8b2gqFLvnObhkdyJhk4zlDd19SWKSLkLQbubdSjH0zWsT0marHDeqQSlv/NvZ655Dnfr9OpCF5zJ8xYxG3xuMVRkn2Ov1cqhlFluUSFCBdKJE1Z/phJqliGqT/5wHTmFTH3vi61roOHOuXinlxWEhKrWPBB8t82DmDTzqNze0FM4X4gDOD/CYSmS1k1S6oeC0Iyxs+Ry2UGLzKVnFqmR77mU/QDtm0dIw6bLdr3Mk0cfOSgPhhqhyXQ1CFZNRLoxGmNpyUzSFdlgq4g3e+eojhgJaji0Bq1jN3+3ekci9MzjA==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kQBs1LaZfCthJ3E7oAloF7Vw+1sjRp1XjUD7VP9SO0Y=;
- b=K0Pinm053mQe+h7T4hjIobg+nUyLaDl5N4bubwuq7s+qK9l/jcCOttaGDuzQLPoaV1NklkZ4XQ6amD9x3DSK/Q51ut/8ULHq6wiTeRdxVBd92Mp0Zn3zwHq9cPWtpVtRIbvxg89smardA7ApYfaaTsRz4G42XUfhj43EhoGe0SDDUtNZRFW9eMAF8RoG6LwWmHlOhLw3BHVSukmZ8gWSD+2bvVziiZ7y65VMluTBROAg3MC48VYtWgsjOMadUswymF65o6i3uYmf0m2NuAwYER3I9BW+YHAJF+TDR9Wt+zENhC5SstgfmQJ1pJQxvHtooYGMRpi7vSi/eVO5Uq/SDQ==
+ bh=O8H5EYfKGTwvH5MfYXExnVjcRuozl4n4nEalVrilFxw=;
+ b=MHr+QgAtRqljhr6orJzWNHoxU4JhkftdmjqlMIhfoiNuHQ7/rvw2p3cJgsQYCzmhW30A2GthSZ3cXpw2JkU+m8u8RZFdi65UynFOsyrH1+xahleGYrC7ieErmzgVpc/u2h07Uhw4ZHXmiot2MlSMNkCBTfvnwksIEV3QN6FXQnT8DVNmLhyNIkUGPuSQGvgEM9mXax7HsuJN9dSWhz9H5C5McrZ03vy2tIIIjEwvmOA9JKPLqnccuv9xOBlE1EQTE0JEXd5Wrf+EPmZeyzG83PGU+bLHWRddkY9WQNseLyrDcie+akO/Qa6i9lUo06a01xXKTZT4TKnlVhcVPPjl7Q==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kQBs1LaZfCthJ3E7oAloF7Vw+1sjRp1XjUD7VP9SO0Y=;
- b=Xy1PLezGqpCH6rSThBOTJMKZI0DjCfY2/h2O7t1CaTDMgqH//Sa5A4FIGeAsI+Hy2J109IoqZ0Edz49EJbJs12VVko9J+nAWBtYnSMAa8WavHXo/hJhQIicvPGmvD0BU7Zb7YSiJLLp0QPK+QB7afngjC1XmFbWNXgJ/NEwoIZ0=
+ bh=O8H5EYfKGTwvH5MfYXExnVjcRuozl4n4nEalVrilFxw=;
+ b=S0fK+1ZaUQn2s4Bj4KXIaZt3KjoKXh0P9z8SpfEeGOjB+/xy55rmt47k+abfzYtNVh9z4rLO3lF99Jb5a+c9TXTdBNBdGH0+L4Fmh1q5S4l5hy167IdKoFJIETcYo6CCFr4KAGpq4z6XcEoImHHnYDy5CrdSyQRuQOAgV0xa+cM=
 Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB4816.eurprd04.prod.outlook.com (20.177.50.207) with Microsoft SMTP
+ VI1PR04MB4351.eurprd04.prod.outlook.com (52.134.122.161) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.29; Tue, 19 Nov 2019 16:28:59 +0000
+ 15.20.2474.16; Tue, 19 Nov 2019 16:32:27 +0000
 Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
  ([fe80::dd0c:72dc:e462:16b3]) by VI1PR04MB7023.eurprd04.prod.outlook.com
  ([fe80::dd0c:72dc:e462:16b3%5]) with mapi id 15.20.2451.031; Tue, 19 Nov 2019
- 16:28:59 +0000
+ 16:32:27 +0000
 From:   Leonard Crestez <leonard.crestez@nxp.com>
 To:     Abel Vesa <abel.vesa@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
         Stephen Boyd <sboyd@kernel.org>
@@ -55,15 +55,15 @@ CC:     Aisheng Dong <aisheng.dong@nxp.com>,
         "linux-arm-kernel@lists.infradead.org" 
         <linux-arm-kernel@lists.infradead.org>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/9] clk: imx: Replace all the clk based helpers with
- macros
-Thread-Topic: [PATCH 1/9] clk: imx: Replace all the clk based helpers with
- macros
-Thread-Index: AQHVnuLYvDo4sHCUk06779AiK5l8jQ==
-Date:   Tue, 19 Nov 2019 16:28:59 +0000
-Message-ID: <VI1PR04MB70231C5BC647FE63815C194AEE4C0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Subject: Re: [PATCH 5/9] clk: imx: Rename sccg and frac pll register to
+ suggest clk_hw
+Thread-Topic: [PATCH 5/9] clk: imx: Rename sccg and frac pll register to
+ suggest clk_hw
+Thread-Index: AQHVnuLaLySjs9P8E0eseKYJ9/xfoA==
+Date:   Tue, 19 Nov 2019 16:32:27 +0000
+Message-ID: <VI1PR04MB702360DD60D297B19F346B7FEE4C0@VI1PR04MB7023.eurprd04.prod.outlook.com>
 References: <1574172496-12987-1-git-send-email-abel.vesa@nxp.com>
- <1574172496-12987-2-git-send-email-abel.vesa@nxp.com>
+ <1574172496-12987-6-git-send-email-abel.vesa@nxp.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -73,159 +73,137 @@ authentication-results: spf=none (sender IP is )
 x-originating-ip: [212.146.100.6]
 x-ms-publictraffictype: Email
 x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: db2fbf41-8ea1-409b-a2a8-08d76d0d9503
-x-ms-traffictypediagnostic: VI1PR04MB4816:|VI1PR04MB4816:
+x-ms-office365-filtering-correlation-id: 797010f2-4026-4d44-6531-08d76d0e10eb
+x-ms-traffictypediagnostic: VI1PR04MB4351:|VI1PR04MB4351:
 x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB481639A80D7FE4A628CDB506EE4C0@VI1PR04MB4816.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:6790;
+x-microsoft-antispam-prvs: <VI1PR04MB435193A81862390CF8D4BA83EE4C0@VI1PR04MB4351.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2043;
 x-forefront-prvs: 022649CC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(376002)(346002)(396003)(39860400002)(136003)(189003)(199004)(81156014)(256004)(76176011)(5660300002)(478600001)(6246003)(33656002)(4001150100001)(476003)(229853002)(44832011)(71190400001)(9686003)(2906002)(55016002)(71200400001)(486006)(76116006)(14454004)(6436002)(91956017)(26005)(446003)(4326008)(66476007)(64756008)(66556008)(305945005)(102836004)(7736002)(66946007)(25786009)(66446008)(6116002)(3846002)(6506007)(99286004)(186003)(66066001)(110136005)(8936002)(7696005)(8676002)(81166006)(14444005)(54906003)(52536014)(316002)(86362001)(53546011)(74316002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4816;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(366004)(39860400002)(346002)(136003)(376002)(189003)(199004)(316002)(6436002)(256004)(5660300002)(9686003)(229853002)(52536014)(7696005)(8936002)(55016002)(76176011)(4326008)(54906003)(110136005)(86362001)(8676002)(81156014)(81166006)(99286004)(6246003)(186003)(4001150100001)(478600001)(26005)(66946007)(102836004)(64756008)(91956017)(66446008)(76116006)(53546011)(6506007)(446003)(66556008)(66476007)(71200400001)(71190400001)(305945005)(74316002)(25786009)(486006)(33656002)(7736002)(3846002)(476003)(6116002)(14454004)(66066001)(44832011)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4351;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
 x-ms-exchange-senderadcheck: 1
 x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: UJrYYw1FJ+uV4usqPw83eKlxr5QvMegv9x8KyyGylFHdDjhtnziWCXQ+9fNnvAB9gY1x9HTrHwYXqCTmi24Gxvsb3heZxZeTr++VozJ69uE+6zbEplUCzKh/WTa6KJevav40an8MkoobLA+4E1zgHkVcCGHvZd0mfVF3RLxtMcEEpW+j2nefHFkDi2TZ7a3VUQratE5REaFAMFgMiaFYHGz2T3gTLot8dEyKz+yAxerpffJgvIhVfZjnz3zp8lmIY9B69VWWVSHLGGfn5dbo9AiwU8zqfVmsNsX9oqpYZ31E3JIX4cCXouu7uDncpYEwvESzaJwT5uXMdEz7DFIW+k7wCbDdQvathuJZEOJyoXT5BXbs99zLvBrGJxn3xv+JODnFMa0HGLgXkCkrEUvTZhZvVtfcdrRDfOLfBIDeyXYnh9j2NMCOmmU8VDwQ6+/Z
+x-microsoft-antispam-message-info: NC2YCxtS7C7v2b+qIWCSVVNsvW7DqydGmv50WFswLj8zF/oRXekq9bb6JcMhTTqEBDDekCRwAqHEdcRrTVKSR6Gs9+4knfehTHJaSmwrNCcOhl1mGW2IUgEUSozBze8UzKJIeti/vT6ugscGGiModHgmxET3lWp2mlP40TaL1ZOPpItshO6yFQzkHuC7AT+qX8JPx0T00pqZOsAVyRI6iLN9tauyj2Mx5C6K4bkAi8XPzoU+q+h5w86FEAygOZtmeUteohYTz0Hbq2Jx1GHQT/IguW9RjRpPhIVeGwIS598BYjj8T6/DP8sedJ+l4Zb0g1ioTrx606D7R4y4V83+39l4bs2eZy3CrFgwZNftHjW6zCTIOgA+Bq7NEnL9XQ+dRkg7iOVvozn+j9FNqSTwdmGUe5Be+jP3DpIQkgGOo2tK7xDsmDBu+uhW7h22shEV
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: db2fbf41-8ea1-409b-a2a8-08d76d0d9503
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 16:28:59.7125
+X-MS-Exchange-CrossTenant-Network-Message-Id: 797010f2-4026-4d44-6531-08d76d0e10eb
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 16:32:27.5961
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: akDsXdZ8tnXv5Gt5XJ5Vk+AH6sAxfUH0crXOzpiqWMI+BFGwWXp5v6rYMdnfwhNGluIqcFQ7DO6WGnyZBCh4DA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4816
+X-MS-Exchange-CrossTenant-userprincipalname: JqSLlQ6l68t3C/gD99wBcRL8sjAFsCXLvtdUEEeG+2bv/DG32A8k+6CSDMkRE/x4yVANh3BVdD98ezN2oDyitQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4351
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 On 2019-11-19 4:08 PM, Abel Vesa wrote:=0A=
-> Replacing with macros all the clk based API helpers we reduce the code=0A=
-> duplication. The end goal is to get rid of all these macros when there=0A=
-> will be no more users of the clk based API, that is, when all the i.MX=0A=
-> clock provider drivers will be switched completely to the clk_hw based=0A=
-> API.=0A=
+> Renaming the imx_clk_frac_pll and imx_clk_sccg_pll register functions to=
 =0A=
-I personally prefer inline functions to macros whenever possible (so =0A=
-everything other than for_each and similar).=0A=
+> imx_clk_hw_frac_pll, respectively imx_clk_hw_sccg_pll to be more obvious=
 =0A=
-BTW: All of these macros will crash if the underlying clk_hw =0A=
-registration returns null or error.=0A=
+> that they are clk_hw based=0A=
+On a somewake unrelated note there is no "SCCG", reference manual refers =
 =0A=
-> This is another step in moving away from the non clk_hw based API usage=
+to this as "SSCG": "Spread Sprectum Clock Generator"=0A=
 =0A=
-> throughout the i.MX clock drivers. The reason for doing that is to=0A=
-> have a clear split between the clock provider and the clock consumer API.=
+These wrapping macros don't correctly forward null or error either.=0A=
 =0A=
-> =0A=
 > Signed-off-by: Abel Vesa <abel.vesa@nxp.com>=0A=
 > ---=0A=
->   drivers/clk/imx/clk.h | 39 ++++++++++++---------------------------=0A=
->   1 file changed, 12 insertions(+), 27 deletions(-)=0A=
+>   drivers/clk/imx/clk-frac-pll.c |  7 ++++---=0A=
+>   drivers/clk/imx/clk-sccg-pll.c |  4 ++--=0A=
+>   drivers/clk/imx/clk.h          | 12 ++++++++++--=0A=
+>   3 files changed, 16 insertions(+), 7 deletions(-)=0A=
 > =0A=
+> diff --git a/drivers/clk/imx/clk-frac-pll.c b/drivers/clk/imx/clk-frac-pl=
+l.c=0A=
+> index fece503..101e0a3 100644=0A=
+> --- a/drivers/clk/imx/clk-frac-pll.c=0A=
+> +++ b/drivers/clk/imx/clk-frac-pll.c=0A=
+> @@ -201,8 +201,9 @@ static const struct clk_ops clk_frac_pll_ops =3D {=0A=
+>   	.set_rate	=3D clk_pll_set_rate,=0A=
+>   };=0A=
+>   =0A=
+> -struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,=
+=0A=
+> -			     void __iomem *base)=0A=
+> +struct clk_hw *imx_clk_hw_frac_pll(const char *name,=0A=
+> +				   const char *parent_name,=0A=
+> +				   void __iomem *base)=0A=
+>   {=0A=
+>   	struct clk_init_data init;=0A=
+>   	struct clk_frac_pll *pll;=0A=
+> @@ -230,5 +231,5 @@ struct clk *imx_clk_frac_pll(const char *name, const =
+char *parent_name,=0A=
+>   		return ERR_PTR(ret);=0A=
+>   	}=0A=
+>   =0A=
+> -	return hw->clk;=0A=
+> +	return hw;=0A=
+>   }=0A=
+> diff --git a/drivers/clk/imx/clk-sccg-pll.c b/drivers/clk/imx/clk-sccg-pl=
+l.c=0A=
+> index 5d65f65..2cf8748 100644=0A=
+> --- a/drivers/clk/imx/clk-sccg-pll.c=0A=
+> +++ b/drivers/clk/imx/clk-sccg-pll.c=0A=
+> @@ -506,7 +506,7 @@ static const struct clk_ops clk_sccg_pll_ops =3D {=0A=
+>   	.determine_rate	=3D clk_sccg_pll_determine_rate,=0A=
+>   };=0A=
+>   =0A=
+> -struct clk *imx_clk_sccg_pll(const char *name,=0A=
+> +struct clk_hw *imx_clk_hw_sccg_pll(const char *name,=0A=
+>   				const char * const *parent_names,=0A=
+>   				u8 num_parents,=0A=
+>   				u8 parent, u8 bypass1, u8 bypass2,=0A=
+> @@ -545,5 +545,5 @@ struct clk *imx_clk_sccg_pll(const char *name,=0A=
+>   		return ERR_PTR(ret);=0A=
+>   	}=0A=
+>   =0A=
+> -	return hw->clk;=0A=
+> +	return hw;=0A=
+>   }=0A=
 > diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h=0A=
-> index bc5bb6a..945ce4d 100644=0A=
+> index 71b21ab..15c6f54 100644=0A=
 > --- a/drivers/clk/imx/clk.h=0A=
 > +++ b/drivers/clk/imx/clk.h=0A=
-> @@ -73,9 +73,18 @@ extern struct imx_pll14xx_clk imx_1443x_pll;=0A=
->   #define imx_clk_fixed_factor(name, parent, mult, div) \=0A=
->   	imx_clk_hw_fixed_factor(name, parent, mult, div)->clk=0A=
+> @@ -115,6 +115,14 @@ extern struct imx_pll14xx_clk imx_1443x_pll;=0A=
+>   #define imx_clk_pllv2(name, parent, base) \=0A=
+>   	imx_clk_hw_pllv2(name, parent, base)->clk=0A=
 >   =0A=
-> +#define imx_clk_divider(name, parent, reg, shift, width) \=0A=
-> +	imx_clk_hw_divider(name, parent, reg, shift, width)->clk=0A=
+> +#define imx_clk_frac_pll(name, parent_name, base) \=0A=
+> +	imx_clk_hw_frac_pll(name, parent_name, base)->clk=0A=
 > +=0A=
->   #define imx_clk_divider2(name, parent, reg, shift, width) \=0A=
->   	imx_clk_hw_divider2(name, parent, reg, shift, width)->clk=0A=
->   =0A=
-> +#define imx_clk_divider_flags(name, parent, reg, shift, width, flags) \=
-=0A=
-> +	imx_clk_hw_divider_flags(name, parent, reg, shift, width, flags)->clk=
-=0A=
-> +=0A=
-> +#define imx_clk_gate(name, parent, reg, shift) \=0A=
-> +	imx_clk_hw_gate(name, parent, reg, shift)->clk=0A=
-> +=0A=
->   #define imx_clk_gate_dis(name, parent, reg, shift) \=0A=
->   	imx_clk_hw_gate_dis(name, parent, reg, shift)->clk=0A=
->   =0A=
-> @@ -97,6 +106,9 @@ extern struct imx_pll14xx_clk imx_1443x_pll;=0A=
->   #define imx_clk_mux(name, reg, shift, width, parents, num_parents) \=0A=
->   	imx_clk_hw_mux(name, reg, shift, width, parents, num_parents)->clk=0A=
->   =0A=
-> +#define imx_clk_fixed(name, rate) \=0A=
-> +	imx_clk_hw_fixed(name, rate)->clk=0A=
+> +#define imx_clk_sccg_pll(name, parent_names, num_parents, parent,\=0A=
+> +				bypass1, bypass2, base, flags) \=0A=
+> +	imx_clk_hw_sccg_pll(name, parent_names, num_parents, parent,\=0A=
+> +				bypass1, bypass2, base, flags)->clk \=0A=
 > +=0A=
 >   struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,=
 =0A=
 >   		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);=0A=
 >   =0A=
-> @@ -198,11 +210,6 @@ struct clk_hw *imx_clk_hw_fixup_mux(const char *name=
-, void __iomem *reg,=0A=
->   			      u8 shift, u8 width, const char * const *parents,=0A=
->   			      int num_parents, void (*fixup)(u32 *val));=0A=
->   =0A=
-> -static inline struct clk *imx_clk_fixed(const char *name, int rate)=0A=
-> -{=0A=
-> -	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);=0A=
-> -}=0A=
-> -=0A=
->   static inline struct clk_hw *imx_clk_hw_fixed(const char *name, int rat=
-e)=0A=
->   {=0A=
->   	return clk_hw_register_fixed_rate(NULL, name, NULL, 0, rate);=0A=
-> @@ -224,13 +231,6 @@ static inline struct clk_hw *imx_clk_hw_fixed_factor=
-(const char *name,=0A=
->   			CLK_SET_RATE_PARENT, mult, div);=0A=
->   }=0A=
->   =0A=
-> -static inline struct clk *imx_clk_divider(const char *name, const char *=
-parent,=0A=
-> -		void __iomem *reg, u8 shift, u8 width)=0A=
-> -{=0A=
-> -	return clk_register_divider(NULL, name, parent, CLK_SET_RATE_PARENT,=0A=
-> -			reg, shift, width, 0, &imx_ccm_lock);=0A=
-> -}=0A=
-> -=0A=
->   static inline struct clk_hw *imx_clk_hw_divider(const char *name,=0A=
->   						const char *parent,=0A=
->   						void __iomem *reg, u8 shift,=0A=
-> @@ -240,14 +240,6 @@ static inline struct clk_hw *imx_clk_hw_divider(cons=
-t char *name,=0A=
->   				       reg, shift, width, 0, &imx_ccm_lock);=0A=
->   }=0A=
->   =0A=
-> -static inline struct clk *imx_clk_divider_flags(const char *name,=0A=
-> -		const char *parent, void __iomem *reg, u8 shift, u8 width,=0A=
-> -		unsigned long flags)=0A=
-> -{=0A=
-> -	return clk_register_divider(NULL, name, parent, flags,=0A=
-> -			reg, shift, width, 0, &imx_ccm_lock);=0A=
-> -}=0A=
-> -=0A=
->   static inline struct clk_hw *imx_clk_hw_divider_flags(const char *name,=
+> @@ -124,10 +132,10 @@ struct clk_hw *imx_clk_hw_pllv1(enum imx_pllv1_type=
+ type, const char *name,=0A=
+>   struct clk_hw *imx_clk_hw_pllv2(const char *name, const char *parent,=
 =0A=
->   						   const char *parent,=0A=
->   						   void __iomem *reg, u8 shift,=0A=
-> @@ -274,13 +266,6 @@ static inline struct clk *imx_clk_divider2_flags(con=
-st char *name,=0A=
->   			reg, shift, width, 0, &imx_ccm_lock);=0A=
->   }=0A=
+>   		void __iomem *base);=0A=
 >   =0A=
-> -static inline struct clk *imx_clk_gate(const char *name, const char *par=
-ent,=0A=
-> -		void __iomem *reg, u8 shift)=0A=
-> -{=0A=
-> -	return clk_register_gate(NULL, name, parent, CLK_SET_RATE_PARENT, reg,=
+> -struct clk *imx_clk_frac_pll(const char *name, const char *parent_name,=
 =0A=
-> -			shift, 0, &imx_ccm_lock);=0A=
-> -}=0A=
-> -=0A=
->   static inline struct clk_hw *imx_clk_hw_gate_flags(const char *name, co=
-nst char *parent,=0A=
->   		void __iomem *reg, u8 shift, unsigned long flags)=0A=
->   {=0A=
+> +struct clk_hw *imx_clk_hw_frac_pll(const char *name, const char *parent_=
+name,=0A=
+>   			     void __iomem *base);=0A=
+>   =0A=
+> -struct clk *imx_clk_sccg_pll(const char *name,=0A=
+> +struct clk_hw *imx_clk_hw_sccg_pll(const char *name,=0A=
+>   				const char * const *parent_names,=0A=
+>   				u8 num_parents,=0A=
+>   				u8 parent, u8 bypass1, u8 bypass2,=0A=
 > =0A=
 =0A=
