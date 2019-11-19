@@ -1,211 +1,192 @@
-Return-Path: <SRS0=lcQO=ZK=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=V3Jc=ZL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-17.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 403BAC432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 23:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04293C33C9D
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 01:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A714222DE
-	for <linux-clk@archiver.kernel.org>; Mon, 18 Nov 2019 23:42:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C581420730
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 01:06:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eLIHtQ5c"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rrwNfIkC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726830AbfKRXmf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Nov 2019 18:42:35 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:45918 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726809AbfKRXmf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 18 Nov 2019 18:42:35 -0500
-Received: by mail-pl1-f202.google.com with SMTP id f7so11986597plj.12
-        for <linux-clk@vger.kernel.org>; Mon, 18 Nov 2019 15:42:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:message-id:mime-version:subject:from:to:cc;
-        bh=0HR7354fwzZLoSsix3DSN5/aq9ZZkqFDIdkoEC/pg4Q=;
-        b=eLIHtQ5cGODVB5oUClKGTxOm32S2L3VPlYuuJQy0HOf4Oecy2Eazi3odRqS8f+Gk1m
-         PMOTqKF8xCcNqJysanPyICJC+k0lhf9Br26M+vCXz02RZBBLcMAHM0HJj4cN9vuASDks
-         3IlPLeAMK8tTLiygMX5F3EwDQNu7R4MhLRreq4QJKpRWwE0JrkKcZbw4HicZOUqL33hb
-         RytiyzJvaja2Nni7oyTzsXjdEASIPNRKFRfrMhviC020dLwaaG9TWA5G/dCi6I5keRZU
-         v3aeMDw+rM7eo+pOhNYWXWxsZ1lYe2xkJedMTNkmwXjTD0grPvzxGCZTcdT3uZcthtFd
-         GCfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
-        bh=0HR7354fwzZLoSsix3DSN5/aq9ZZkqFDIdkoEC/pg4Q=;
-        b=B41/TOJhQm722Lw79TRIHIZblH0I6rTQvMOmUdss+XAWt1xFYYsLohJQCcNJeT50MJ
-         lavJ9QqCyZvLh3mMp5s9kmyM1crj1Zrz/RQ8LqPSu2MOLt2tTyjUZl7uN3Wt+hKMCEv/
-         +RBmvM2nmwZHEPMEdWyLGmSA5Al/Ui4eaow9QAHfLxxFNekNCAEPgK08DPWNKj8THPCf
-         jsHfH97NnZeoBEPA5Gp9RZ6y1h0Sf+fRLtpgXIDMCA/1S5x+H13KLcYW01Jg6oBrdOOH
-         lyOhH4G3x7br+Cehklt6KIeyPJ8pvGmJTXNyO9K9S2ijLQ+IovLfEouiUu61ALXS0lzO
-         Zuhw==
-X-Gm-Message-State: APjAAAV5W6wfDczvUDZ9R3gmktCGyS8l/sGShEt9y/izXuU0Q2krQToO
-        0FrdOBmyu+QMwrt8PE5Ff09FgfGY124L2D4=
-X-Google-Smtp-Source: APXvYqzwIk4iobTLY88s1QZ96OOGkhRDC6hNTVvwik6LaqYqTQYmEX70hUoCsiX+t+O0+E9UMBnv3z1Gnc0eNUo=
-X-Received: by 2002:a63:907:: with SMTP id 7mr2076044pgj.256.1574120554298;
- Mon, 18 Nov 2019 15:42:34 -0800 (PST)
-Date:   Mon, 18 Nov 2019 15:42:28 -0800
-Message-Id: <20191118234229.54085-1-saravanak@google.com>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.24.0.432.g9d3f5f5b63-goog
-Subject: [PATCH v1] clk: Keep boot clocks on for multiple consumers
-From:   Saravana Kannan <saravanak@google.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        id S1726962AbfKSBGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 18 Nov 2019 20:06:51 -0500
+Received: from mail-eopbgr30050.outbound.protection.outlook.com ([40.107.3.50]:45708
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726905AbfKSBGv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 18 Nov 2019 20:06:51 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wib4vMtmDY+NFksyOZAyEhwLZxN36lwVIHXGg+PGC2sC1TiUgvqWsvvgfmFHoH8JOIPc+nJoFSBENRoTSNrXKIQrGqdGWLeoYSW63/lp/WAAc+WrCzXzsTMcs/WvHvUbPv8ukadYFdRHxOuYtBXmH0BL0tMT0JAIcGOJVSFKDYVO78P40xlrtMQ5ZJlBN85YKT2lKMf4kMhJ0J+0bvl7ofWThcxxOVVgpJfg5Qx4JyvXKXBg4aYFCrn65+AAq7CbQXQk/5z8GAxOj6xttoL3t32yztTfSU6vVJqS/NzUM7Je6FZDKwc1D6hx9BXAsI7o99Gzp6xnP1RTGBK+SR+jSA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aj8adp4a24dtW/PPvid+IbElHqvksM+7Xnt1TUBwgT8=;
+ b=F66XWzac+IgYAhCzKaOUXyPtu8luD8UnAIF+3+LR8V/myKjE/5ssTJSmTztPOTVPvElBbFjbh/KO70tJVK0gSFA6ukqo1SlaVEd+Wkztb63Hkdn9x7yVBfG+8FmKh3dFb6W/98Lgf076k398UT3Vq3UFPRorTes5FKPtmKBqRUFr1XT50BMTjKxjjIrMGns8uuUFzfBLlTIwuC2s9Zn0knlfRf/6cqSW+ARK8k38Cyu25LMLdlxPKFG1mCH8s7h4i1OYeWGgO855pTOHK3YpxvGBihRcmxV1eVPdAubvDwpqZ37sIPTA2cjLqn1D3d2K1zt2zIWBYXdR0pbBSYzJnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=aj8adp4a24dtW/PPvid+IbElHqvksM+7Xnt1TUBwgT8=;
+ b=rrwNfIkCZgGHIRyA4l14jGuNHxlcCc8sewCQvk7NUPJXKtRwe6wZfkp9E1OsoS/oIYWJpaQUUlKB+mFq2it1wzRX/TD3moGgW4d6OCyrmpA+NuoeMBrMU/ReFyhRb9QWIc0QdIREjEbyXz93sOPmKRPedcd0vvemzTDwycUxdtI=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB7137.eurprd04.prod.outlook.com (10.186.130.213) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2451.28; Tue, 19 Nov 2019 01:06:46 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.029; Tue, 19 Nov 2019
+ 01:06:46 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH V2 2/4] clk: imx: imx8mn: Switch to clk_hw based API
+Thread-Topic: [PATCH V2 2/4] clk: imx: imx8mn: Switch to clk_hw based API
+Thread-Index: AQHVktMqCwK57JvXBUGi+SLZf4ysjKeRxVqg
+Date:   Tue, 19 Nov 2019 01:06:46 +0000
+Message-ID: <AM0PR04MB4481F5F07FF493E75CFD1747884C0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1572846270-24375-1-git-send-email-peng.fan@nxp.com>
+ <1572846270-24375-3-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB7023CC47DC123A66627940E9EE4D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB7023CC47DC123A66627940E9EE4D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.71]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: aed59b44-4cb6-428e-3491-08d76c8cbf92
+x-ms-traffictypediagnostic: AM0PR04MB7137:|AM0PR04MB7137:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB71370900908CB724DC755885884C0@AM0PR04MB7137.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:4714;
+x-forefront-prvs: 022649CC2C
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(136003)(396003)(376002)(346002)(189003)(199004)(186003)(55016002)(6116002)(14454004)(3846002)(4326008)(229853002)(2201001)(6246003)(76176011)(66066001)(2906002)(2501003)(7736002)(74316002)(25786009)(305945005)(86362001)(71200400001)(71190400001)(52536014)(66946007)(66556008)(64756008)(66446008)(66476007)(256004)(478600001)(9686003)(6436002)(5660300002)(99286004)(33656002)(26005)(110136005)(8676002)(486006)(53546011)(8936002)(81166006)(81156014)(44832011)(316002)(11346002)(102836004)(6506007)(76116006)(446003)(7696005)(476003)(54906003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7137;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: HExO8AaHioNVh8mc4ty2QVpaukJA+Wm1qInEzMpSwg7XD2Pi5t1aANL7pBtlzwG59rmwGafMySC5+dMsUAkku71d/zS8Mg8SE7hJsBbDJ/LQUZIqOGLmncT8piPWzW8dhYD3Gvu+6v4MicrRDVg2tsB/A8dsuVHIWWodqxNU/ASJeYz798+mT66qY8u9uCD72UUK/1uobk6GVwpi3tWN7Mn/JgATOnGdjOJo9Om3MQrB/IZXNK+8R1WMADGk3kKZ3BmhWk/D30dl0YIaKLsuqUmIpQHVQTelE9K3rMaoFf7TNXR9BsvPhcqUqMC26rkgPBSyJg4peKO2FpdB9e7WVIlQIHaaPtORWgu+Z5zxH3ow9BlsmC0dJ6YOPrV/tEzQxL3vvSe+E8b+rpYpRUkbtgGkoEPpvwdSuqhCbzLib76+GdGcaOji3/yofQWDY6yt
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: aed59b44-4cb6-428e-3491-08d76c8cbf92
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 01:06:46.0756
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: UlAVNNcmdMs3nrIUcFmFMP3IPqQVR2XDwbFj4B1IOAmd3I6Foi7tokCgHfiGfgo7ko5sY11UiUexO8kxhI7dYA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7137
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Clocks can turned on (by the hardware, bootloader, etc) upon a
-reset/boot of a hardware platform. These "boot clocks" could be clocking
-devices that are active before the kernel starts running. For example,
-clocks needed for the interconnects, UART console, display, CPUs, DDR,
-etc.
+> Subject: Re: [PATCH V2 2/4] clk: imx: imx8mn: Switch to clk_hw based API
+>=20
+> On 2019-11-04 7:46 AM, Peng Fan wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Switch the entire clk-imx8mn driver to clk_hw based API.
+> > This allows us to move closer to a clear split between consumer and
+> > provider clk APIs.
+>=20
+> > -	clks[IMX8MN_AUDIO_PLL1] =3D imx_clk_pll14xx("audio_pll1",
+> "audio_pll1_ref_sel", base, &imx_1443x_pll);
+> > -	clks[IMX8MN_AUDIO_PLL2] =3D imx_clk_pll14xx("audio_pll2",
+> "audio_pll2_ref_sel", base + 0x14, &imx_1443x_pll);
+> > -	clks[IMX8MN_VIDEO_PLL1] =3D imx_clk_pll14xx("video_pll1",
+> "video_pll1_ref_sel", base + 0x28, &imx_1443x_pll);
+> > -	clks[IMX8MN_DRAM_PLL] =3D imx_clk_pll14xx("dram_pll",
+> "dram_pll_ref_sel", base + 0x50, &imx_1443x_pll);
+> > -	clks[IMX8MN_GPU_PLL] =3D imx_clk_pll14xx("gpu_pll", "gpu_pll_ref_sel"=
+,
+> base + 0x64, &imx_1416x_pll);
+> > -	clks[IMX8MN_VPU_PLL] =3D imx_clk_pll14xx("vpu_pll", "vpu_pll_ref_sel"=
+,
+> base + 0x74, &imx_1416x_pll);
+> > -	clks[IMX8MN_ARM_PLL] =3D imx_clk_pll14xx("arm_pll", "arm_pll_ref_sel"=
+,
+> base + 0x84, &imx_1416x_pll);
+> > -	clks[IMX8MN_SYS_PLL1] =3D imx_clk_fixed("sys_pll1", 800000000);
+> > -	clks[IMX8MN_SYS_PLL2] =3D imx_clk_fixed("sys_pll2", 1000000000);
+> > -	clks[IMX8MN_SYS_PLL3] =3D imx_clk_pll14xx("sys_pll3", "sys_pll3_ref_s=
+el",
+> base + 0x114, &imx_1416x_pll);
+> > +	clks[IMX8MN_AUDIO_PLL1] =3D imx_clk_hw_pll14xx("audio_pll1",
+> "audio_pll1_ref_sel", base, &imx_1416x_pll);
+> > +	clks[IMX8MN_AUDIO_PLL2] =3D imx_clk_hw_pll14xx("audio_pll2",
+> "audio_pll2_ref_sel", base + 0x14, &imx_1416x_pll);
+> > +	clks[IMX8MN_VIDEO_PLL1] =3D imx_clk_hw_pll14xx("video_pll1",
+> "video_pll1_ref_sel", base + 0x28, &imx_1416x_pll);
+> > +	clks[IMX8MN_DRAM_PLL] =3D imx_clk_hw_pll14xx("dram_pll",
+> "dram_pll_ref_sel", base + 0x50, &imx_1416x_pll);
+> > +	clks[IMX8MN_GPU_PLL] =3D imx_clk_hw_pll14xx("gpu_pll",
+> "gpu_pll_ref_sel", base + 0x64, &imx_1416x_pll);
+> > +	clks[IMX8MN_VPU_PLL] =3D imx_clk_hw_pll14xx("vpu_pll",
+> "vpu_pll_ref_sel", base + 0x74, &imx_1416x_pll);
+> > +	clks[IMX8MN_ARM_PLL] =3D imx_clk_hw_pll14xx("arm_pll",
+> "arm_pll_ref_sel", base + 0x84, &imx_1416x_pll);
+> > +	clks[IMX8MN_SYS_PLL1] =3D imx_clk_hw_fixed("sys_pll1", 800000000);
+> > +	clks[IMX8MN_SYS_PLL2] =3D imx_clk_hw_fixed("sys_pll2", 1000000000);
+> > +	clks[IMX8MN_SYS_PLL3] =3D imx_clk_hw_pll14xx("sys_pll3",
+> > +"sys_pll3_ref_sel", base + 0x114, &imx_1416x_pll);
+>=20
+> You are switching audio/video/dram PLL from imx_1443x_pll to
+> imx_1416x_pll, are you sure this is correct?
 
-When a boot clock is used by more than one consumer or multiple boot
-clocks share a parent clock, the boot clock (or the common parent) can
-be turned off when the first consumer probes. This can potentially crash
-the device or cause poor user experience.
+That is a mistaken, copy/paste error. I'll fix in V3.
 
-This patch fixes this by explicitly enabling the boot clocks during
-clock registration and then disabling them at late_initcall_sync(). This
-gives all the consumers until late_initcall() to put their "votes" in to
-keep any of the boot clocks on past late_initcall().
+>=20
+> If this is intentional it should be an separate patch.
+>=20
+> > -	clks[IMX8MN_CLK_ARM] =3D imx_clk_cpu("arm", "arm_a53_div",
+> > -					   clks[IMX8MN_CLK_A53_DIV],
+> > -					   clks[IMX8MN_CLK_A53_SRC],
+> > -					   clks[IMX8MN_ARM_PLL_OUT],
+> > -					   clks[IMX8MN_CLK_24M]);
+>=20
+> > +	clks[IMX8MN_CLK_ARM] =3D imx_clk_hw_cpu("arm", "arm_a53_div",
+> > +					      clks[IMX8MN_CLK_A53_DIV]->clk,
+> > +					      clks[IMX8MN_CLK_A53_SRC]->clk,
+> > +					      clks[IMX8MN_ARM_PLL_OUT]->clk,
+> > +					      clks[IMX8MN_CLK_24M]->clk);
+>=20
+> This series seems to be against Shawn's clk/imx but there is an additiona=
+l
+> patch in Stephen's tree which changes this 24M to PLL1_800M.
+> Maybe that should be pulled into clk/imx? Otherwise it might spawn an
+> unreadable merge conflicts since almost the entire file is rewritten.
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/clk/clk.c            | 62 ++++++++++++++++++++++++++++++++++++
- include/linux/clk-provider.h |  1 +
- 2 files changed, 63 insertions(+)
+Yes.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 1c677d7f7f53..a1b09c9f8845 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -72,6 +72,8 @@ struct clk_core {
- 	unsigned long		flags;
- 	bool			orphan;
- 	bool			rpm_enabled;
-+	bool			state_held;
-+	bool			boot_enabled;
- 	unsigned int		enable_count;
- 	unsigned int		prepare_count;
- 	unsigned int		protect_count;
-@@ -1300,6 +1302,36 @@ static int clk_disable_unused(void)
- }
- late_initcall_sync(clk_disable_unused);
- 
-+static void clk_unprepare_disable_subtree(struct clk_core *core)
-+{
-+	struct clk_core *child;
-+
-+	lockdep_assert_held(&prepare_lock);
-+
-+	hlist_for_each_entry(child, &core->children, child_node)
-+		clk_unprepare_disable_subtree(child);
-+
-+	if (!core->state_held)
-+		return;
-+
-+	clk_core_disable_unprepare(core);
-+}
-+
-+static int clk_release_boot_state(void)
-+{
-+	struct clk_core *core;
-+
-+	clk_prepare_lock();
-+
-+	hlist_for_each_entry(core, &clk_root_list, child_node)
-+		clk_unprepare_disable_subtree(core);
-+
-+	clk_prepare_unlock();
-+
-+	return 0;
-+}
-+late_initcall_sync(clk_release_boot_state);
-+
- static int clk_core_determine_round_nolock(struct clk_core *core,
- 					   struct clk_rate_request *req)
- {
-@@ -1674,6 +1706,30 @@ static int clk_fetch_parent_index(struct clk_core *core,
- 	return i;
- }
- 
-+static void clk_core_hold_state(struct clk_core *core)
-+{
-+	if (core->state_held || !core->boot_enabled ||
-+	    core->flags & CLK_DONT_HOLD_STATE)
-+		return;
-+
-+	WARN(core->orphan, "%s: Can't hold state for orphan clk\n", core->name);
-+
-+	core->state_held = !clk_core_prepare_enable(core);
-+}
-+
-+static void __clk_core_update_orphan_hold_state(struct clk_core *core)
-+{
-+	struct clk_core *child;
-+
-+	if (core->orphan)
-+		return;
-+
-+	clk_core_hold_state(core);
-+
-+	hlist_for_each_entry(child, &core->children, child_node)
-+		__clk_core_update_orphan_hold_state(child);
-+}
-+
- /*
-  * Update the orphan status of @core and all its children.
-  */
-@@ -3374,6 +3430,8 @@ static int __clk_core_init(struct clk_core *core)
- 		rate = 0;
- 	core->rate = core->req_rate = rate;
- 
-+	core->boot_enabled = clk_core_is_enabled(core);
-+
- 	/*
- 	 * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
- 	 * don't get accidentally disabled when walking the orphan tree and
-@@ -3389,6 +3447,9 @@ static int __clk_core_init(struct clk_core *core)
- 		clk_enable_unlock(flags);
- 	}
- 
-+	if (!core->orphan)
-+		clk_core_hold_state(core);
-+
- 	/*
- 	 * walk the list of orphan clocks and reparent any that newly finds a
- 	 * parent.
-@@ -3408,6 +3469,7 @@ static int __clk_core_init(struct clk_core *core)
- 			__clk_set_parent_after(orphan, parent, NULL);
- 			__clk_recalc_accuracies(orphan);
- 			__clk_recalc_rates(orphan, 0);
-+			__clk_core_update_orphan_hold_state(orphan);
- 		}
- 	}
- 
-diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index 2fdfe8061363..f0e522ea793f 100644
---- a/include/linux/clk-provider.h
-+++ b/include/linux/clk-provider.h
-@@ -32,6 +32,7 @@
- #define CLK_OPS_PARENT_ENABLE	BIT(12)
- /* duty cycle call may be forwarded to the parent clock */
- #define CLK_DUTY_CYCLE_PARENT	BIT(13)
-+#define CLK_DONT_HOLD_STATE	BIT(14) /* Don't hold state */
- 
- struct clk;
- struct clk_hw;
--- 
-2.24.0.432.g9d3f5f5b63-goog
+Thanks,
+Peng.
 
+>=20
+> --
+> Regards,
+> Leonard
