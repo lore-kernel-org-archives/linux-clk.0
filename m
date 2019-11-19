@@ -2,170 +2,86 @@ Return-Path: <SRS0=V3Jc=ZL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E04B3C33C8C
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 14:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE41C432C0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 14:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72CA222D1
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 14:44:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AEFA21906
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 14:59:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o8/7NQNC"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="E1BdrwRD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728316AbfKSOoC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Nov 2019 09:44:02 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:36172 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728083AbfKSOoC (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 09:44:02 -0500
-Received: by mail-lf1-f67.google.com with SMTP id r14so10640293lff.3
-        for <linux-clk@vger.kernel.org>; Tue, 19 Nov 2019 06:44:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3HGForXYrnzKKwFOiKAr5qSOuuqdU2k4wA1CfbalcbQ=;
-        b=o8/7NQNCdscgcAzoUXE+jNTk/DJagMvuw5Z5JaWY30/Z/muA51WNthzWcG+/MtHPBP
-         ny6dVonMKRnen+it9ngeeXt1nR2rMvm4MxOKRsW5mUt9arjSEhZM4tMEKXJRcjqQx8t8
-         UwAYBSUYodJCrJjJxwSpcnYicu7wJuE+0By/ddHV3P+BQR3Lp7t+G1kjRHchnAx24qMJ
-         SA9vVP9M+gd+aI6o0RnPHJ0b1q0yRooX6UUA86zcAYvWai/ge//6X1NsbP93Bwm+VLIX
-         BqN6l+PH8M5Cw6YFIvmW/Ygb/vNNIT3uU4vu68nKXH9wt785xkMpxaAXLMSC4C3ZTGrO
-         vEUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3HGForXYrnzKKwFOiKAr5qSOuuqdU2k4wA1CfbalcbQ=;
-        b=WAJDf9roTN0I4d648hFwWAXJjWN94u40gVJRsrJ0vWd4ABxFBlih0NalQVM1n8xCNu
-         lF/Rbc1oi233OCdxrpMVQKUtuGBz/lfmdqHAbZqcUF2ewelBYObYuoBREo3zr25YU/hX
-         VOzn+ulwGRYB426hMS68D2A34cGzVlS4R96rPtGnlzRhoWvQlkM673qdb5SNxT0j3i3y
-         m0xYM20lVh/Wy+gzua/P+8Is2Q4ZqVUb5jjEpbhgawd7DKV0N+R32p3ZekqKLKNmSabn
-         BJCuTuE+5oJjBjVuF0q+XIXaLjLg+QkEccA3kF2HOeGT4WPMvb8hYnjg4cAoSevyfBJZ
-         MXag==
-X-Gm-Message-State: APjAAAUHsqDQFnYGxzxPM755kSA1eQkXF4+RUjOAZS/n9U5GdJ9kwzUE
-        XnkK8WrQLEvro5F7sYLZtas7pMZMxovRaXGGNB9m3A==
-X-Google-Smtp-Source: APXvYqxiJDKtjaMparegwwsvRl+fvmQtXcsqSKBMv1kiOZ+otWv/0CzoTQp+omLTRtPr/aKLvkVblynEb9GKo+vyzx0=
-X-Received: by 2002:a19:651b:: with SMTP id z27mr4166813lfb.117.1574174639988;
- Tue, 19 Nov 2019 06:43:59 -0800 (PST)
+        id S1727646AbfKSO7q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Nov 2019 09:59:46 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:60720 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727066AbfKSO7q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 09:59:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1574175580; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=5gzc6iuBgaTr89P05jPP8SxsIn5uFVdeznkj0sQ2nnQ=;
+        b=E1BdrwRDpKN+MwsEYzwHF0kRuB4SbnvU3CXGFguJ+1BmQSQee9EBejmp7LbqV4t2mbyzoW
+        ZMpYQyVzaQxp84UZ05pr8oIDi/B1lKC8nt8WTITMMbW0xfyQ0lFaSZwXqDpj7AzO9wYrXp
+        EdL/hCNERFMtfSSoU072p5vdNb/shlk=
+Date:   Tue, 19 Nov 2019 15:59:31 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH] clk: ingenic: Allow drivers to be built with COMPILE_TEST
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Message-Id: <1574175571.3.0@crapouillou.net>
+In-Reply-To: <20191114001925.159276-1-sboyd@kernel.org>
+References: <20191114001925.159276-1-sboyd@kernel.org>
 MIME-Version: 1.0
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com> <8dd9dad2765d47fd6c6fec20566326d00e48a696.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <8dd9dad2765d47fd6c6fec20566326d00e48a696.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Tue, 19 Nov 2019 15:43:47 +0100
-Message-ID: <CACRpkdY_2WzAnK01bQdMF69KsDvHHu9TXuyRoBcmiQMziux=eQ@mail.gmail.com>
-Subject: Re: [PATCH v5 10/16] gpio: devres: Add devm_gpiod_get_parent_array
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Linux LED Subsystem <linux-leds@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 7:58 AM Matti Vaittinen
-<matti.vaittinen@fi.rohmeurope.com> wrote:
+Hi Stephen,
 
-> Bunch of MFD sub-devices which are instantiated by MFD do not have
-> own device-tree nodes but have (for example) the GPIO consumer
-> information in parent device's DT node. Add resource managed
-> devm_gpiod_get_array() for such devices so that they can get the
-> consumer information from parent DT while still binding the GPIO
-> reservation life-time to this sub-device life time.
->
-> If devm_gpiod_get_array is used as such - then unloading and then
-> re-loading the child device fails as the GPIOs reserved during first
-> load are not freed when driver for sub-device is unload (if parent
-> stays there).
->
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-(...)
-> +static struct gpio_descs *__must_check
-> +__devm_gpiod_get_array(struct device *gpiodev,
-> +                      struct device *managed,
-> +                      const char *con_id,
-> +                      enum gpiod_flags flags)
 
-I'm opposed to functions named __underscore_something()
-so find a proper name for this function.
-devm_gpiod_get_array_common() works if nothing else.
+Le mer., nov. 13, 2019 at 16:19, Stephen Boyd <sboyd@kernel.org> a=20
+=E9crit :
+> We don't need the MIPS architecture or even a MIPS compiler to compile
+> test these drivers. Let's add a COMPILE_TEST possibility on the
+> menuconfig here so that we can build these drivers on more
+> configurations.
+>=20
+> Cc: Paul Cercueil <paul@crapouillou.net>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-> @@ -292,19 +284,62 @@ struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
->         if (!dr)
->                 return ERR_PTR(-ENOMEM);
->
-> -       descs = gpiod_get_array(dev, con_id, flags);
-> +       descs = gpiod_get_array(gpiodev, con_id, flags);
->         if (IS_ERR(descs)) {
->                 devres_free(dr);
->                 return descs;
->         }
->
->         *dr = descs;
-> -       devres_add(dev, dr);
-> +       if (managed)
-> +               devres_add(managed, dr);
-> +       else
-> +               devres_add(gpiodev, dr);
+Reviewed-by: Paul Cercueil <paul@crapouillou.net>
 
-So we only get managed resources if the "managed" device is
-passed in.
+> ---
+>  drivers/clk/ingenic/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
+> index fb7b39961703..b4555b465ea6 100644
+> --- a/drivers/clk/ingenic/Kconfig
+> +++ b/drivers/clk/ingenic/Kconfig
+> @@ -1,6 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  menu "Ingenic SoCs drivers"
+> -	depends on MIPS
+> +	depends on MIPS || COMPILE_TEST
+>=20
+>  config INGENIC_CGU_COMMON
+>  	bool
+> --
+> Sent by a computer through tubes
+>=20
 
-> +/**
-> + * devm_gpiod_get_array - Resource-managed gpiod_get_array()
+=
 
-And this function is supposed to be resource managed for sure.
-
-> + * @dev:       GPIO consumer
-> + * @con_id:    function within the GPIO consumer
-> + * @flags:     optional GPIO initialization flags
-> + *
-> + * Managed gpiod_get_array(). GPIO descriptors returned from this function are
-> + * automatically disposed on driver detach. See gpiod_get_array() for detailed
-> + * information about behavior and return values.
-> + */
-> +struct gpio_descs *__must_check devm_gpiod_get_array(struct device *dev,
-> +                                                    const char *con_id,
-> +                                                    enum gpiod_flags flags)
-> +{
-> +       return __devm_gpiod_get_array(dev, NULL, con_id, flags);
-
-So what is this? NULL?
-
-Doesn't that mean you just removed all resource management for this
-call?
-
-Or am I reading it wrong?
-
-Yours,
-Linus Walleij
