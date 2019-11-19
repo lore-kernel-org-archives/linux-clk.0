@@ -2,114 +2,99 @@ Return-Path: <SRS0=V3Jc=ZL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE337C33C8C
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 06:52:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B72CC432C0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 07:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B669B222EF
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 06:52:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ducezMlC"
+	by mail.kernel.org (Postfix) with ESMTP id D2033222DF
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 07:09:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727505AbfKSGu5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Nov 2019 01:50:57 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:14231 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727435AbfKSGu4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 01:50:56 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dd390cd0000>; Mon, 18 Nov 2019 22:50:53 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 18 Nov 2019 22:50:55 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 22:50:55 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
- 2019 06:50:55 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 19 Nov 2019 06:50:55 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.175.254]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dd390cd0002>; Mon, 18 Nov 2019 22:50:55 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <digetx@gmail.com>,
-        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v1 03/17] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
-Date:   Mon, 18 Nov 2019 22:50:20 -0800
-Message-ID: <1574146234-3871-4-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
-References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1726948AbfKSHJp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Nov 2019 02:09:45 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:36035 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725873AbfKSHJp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 02:09:45 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iWxdt-00041U-2G; Tue, 19 Nov 2019 08:09:41 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1iWxdp-0002Xl-Np; Tue, 19 Nov 2019 08:09:37 +0100
+Date:   Tue, 19 Nov 2019 08:09:37 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>, linux-imx@nxp.com,
+        kernel@pengutronix.de, Fabio Estevam <fabio.estevam@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Abel Vesa <abel.vesa@nxp.com>
+Subject: Re: [PATCH] clk: imx8m: Suppress bind attrs
+Message-ID: <20191119070937.bcvezx5mwkqqymfo@pengutronix.de>
+References: <9f2ac65bab203a943de947465d6534980585e144.1574116045.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574146253; bh=ZiS18JWuxnwX5tG02uam2QHdhq0/3nkgaJJSyay5kRU=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=ducezMlCt4Pq61iIIBvrxIx46nw/2hrY1iLdSp1y6eVJkGVUBiQFzib2vgZduKVom
-         UwbDMFBoHR7aqNW4bwkvlMEak2A4/VDQ5HiKwsQp5q/IL5MamWw65t3Llt0Vko9JJS
-         hEeT/7oqPFPQRdALN6dA1U8CC1+z9XIAm2OKhGr5eKWt9ZcWjADxw8rQITVWaB+S/f
-         bekBuNtqjpqsvF9mlW0Q63iXqXPgqz0JTgvk/EZQ5GSMfRU8w8LVhOR4RhC12thY+B
-         EF1PWhzkIgIb2BFMY708bXb9fvtFugmOwIvAdaKTLN929h8SzXOIWvEk1BNLKEYw+r
-         zxHBTVGsmijKg==
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9f2ac65bab203a943de947465d6534980585e144.1574116045.git.leonard.crestez@nxp.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
-these clocks has mux and a gate as a part of PMC controller.
+On Tue, Nov 19, 2019 at 12:28:16AM +0200, Leonard Crestez wrote:
+> The clock drivers on imx8m series are registered as platform devices and
+> this opens the possibility of reloading the driver at runtime:
+> 
+> This doesn't actually work: clocks are never removed and attempting to
+> bind again results in registration errors and a crash.
+> 
+> Fix this by explicitly suppressing bind attrs like several other
+> drivers.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> 
+> ---
+> No cc: stable because because there are likely many other opportunities
+> to crash the system by echoing random stuff in sysfs as root.
+> 
+>  drivers/clk/imx/clk-imx8mm.c | 1 +
+>  drivers/clk/imx/clk-imx8mn.c | 1 +
+>  drivers/clk/imx/clk-imx8mq.c | 1 +
+>  3 files changed, 3 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+> index 9246e89bb5fd..3cb75ad4270d 100644
+> --- a/drivers/clk/imx/clk-imx8mm.c
+> +++ b/drivers/clk/imx/clk-imx8mm.c
+> @@ -619,9 +619,10 @@ MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
+>  
+>  static struct platform_driver imx8mm_clk_driver = {
+>  	.probe = imx8mm_clocks_probe,
+>  	.driver = {
+>  		.name = "imx8mm-ccm",
+> +		.suppress_bind_attrs = true,
 
-This patch adds ids for each of these PMC clock mux and gates to
-use with the devicetree.
+Maybe add a comment similar to the motivation in the commit log here?
+(And of course in the other files, too.)
 
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- include/dt-bindings/soc/tegra-pmc.h | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+Best regards
+Uwe
 
-diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-new file mode 100644
-index 000000000000..fa1ccfc2514b
---- /dev/null
-+++ b/include/dt-bindings/soc/tegra-pmc.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
-+#define _DT_BINDINGS_SOC_TEGRA_PMC_H
-+
-+#define TEGRA_PMC_CLK_OUT_1_MUX		0
-+#define TEGRA_PMC_CLK_OUT_1		1
-+#define TEGRA_PMC_CLK_OUT_2_MUX		2
-+#define TEGRA_PMC_CLK_OUT_2		3
-+#define TEGRA_PMC_CLK_OUT_3_MUX		4
-+#define TEGRA_PMC_CLK_OUT_3		5
-+
-+#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
-2.7.4
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | https://www.pengutronix.de/ |
