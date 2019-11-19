@@ -2,191 +2,153 @@ Return-Path: <SRS0=V3Jc=ZL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04293C33C9D
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 01:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 513D7C432C0
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 06:50:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C581420730
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 01:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 207C6222DC
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 06:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="rrwNfIkC"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aXFtn85b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726962AbfKSBGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 18 Nov 2019 20:06:51 -0500
-Received: from mail-eopbgr30050.outbound.protection.outlook.com ([40.107.3.50]:45708
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726905AbfKSBGv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 18 Nov 2019 20:06:51 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Wib4vMtmDY+NFksyOZAyEhwLZxN36lwVIHXGg+PGC2sC1TiUgvqWsvvgfmFHoH8JOIPc+nJoFSBENRoTSNrXKIQrGqdGWLeoYSW63/lp/WAAc+WrCzXzsTMcs/WvHvUbPv8ukadYFdRHxOuYtBXmH0BL0tMT0JAIcGOJVSFKDYVO78P40xlrtMQ5ZJlBN85YKT2lKMf4kMhJ0J+0bvl7ofWThcxxOVVgpJfg5Qx4JyvXKXBg4aYFCrn65+AAq7CbQXQk/5z8GAxOj6xttoL3t32yztTfSU6vVJqS/NzUM7Je6FZDKwc1D6hx9BXAsI7o99Gzp6xnP1RTGBK+SR+jSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aj8adp4a24dtW/PPvid+IbElHqvksM+7Xnt1TUBwgT8=;
- b=F66XWzac+IgYAhCzKaOUXyPtu8luD8UnAIF+3+LR8V/myKjE/5ssTJSmTztPOTVPvElBbFjbh/KO70tJVK0gSFA6ukqo1SlaVEd+Wkztb63Hkdn9x7yVBfG+8FmKh3dFb6W/98Lgf076k398UT3Vq3UFPRorTes5FKPtmKBqRUFr1XT50BMTjKxjjIrMGns8uuUFzfBLlTIwuC2s9Zn0knlfRf/6cqSW+ARK8k38Cyu25LMLdlxPKFG1mCH8s7h4i1OYeWGgO855pTOHK3YpxvGBihRcmxV1eVPdAubvDwpqZ37sIPTA2cjLqn1D3d2K1zt2zIWBYXdR0pbBSYzJnw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aj8adp4a24dtW/PPvid+IbElHqvksM+7Xnt1TUBwgT8=;
- b=rrwNfIkCZgGHIRyA4l14jGuNHxlcCc8sewCQvk7NUPJXKtRwe6wZfkp9E1OsoS/oIYWJpaQUUlKB+mFq2it1wzRX/TD3moGgW4d6OCyrmpA+NuoeMBrMU/ReFyhRb9QWIc0QdIREjEbyXz93sOPmKRPedcd0vvemzTDwycUxdtI=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB7137.eurprd04.prod.outlook.com (10.186.130.213) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2451.28; Tue, 19 Nov 2019 01:06:46 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::f16d:a26a:840:f97c%4]) with mapi id 15.20.2451.029; Tue, 19 Nov 2019
- 01:06:46 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>
-CC:     "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH V2 2/4] clk: imx: imx8mn: Switch to clk_hw based API
-Thread-Topic: [PATCH V2 2/4] clk: imx: imx8mn: Switch to clk_hw based API
-Thread-Index: AQHVktMqCwK57JvXBUGi+SLZf4ysjKeRxVqg
-Date:   Tue, 19 Nov 2019 01:06:46 +0000
-Message-ID: <AM0PR04MB4481F5F07FF493E75CFD1747884C0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <1572846270-24375-1-git-send-email-peng.fan@nxp.com>
- <1572846270-24375-3-git-send-email-peng.fan@nxp.com>
- <VI1PR04MB7023CC47DC123A66627940E9EE4D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB7023CC47DC123A66627940E9EE4D0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: aed59b44-4cb6-428e-3491-08d76c8cbf92
-x-ms-traffictypediagnostic: AM0PR04MB7137:|AM0PR04MB7137:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB71370900908CB724DC755885884C0@AM0PR04MB7137.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:4714;
-x-forefront-prvs: 022649CC2C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(39860400002)(136003)(396003)(376002)(346002)(189003)(199004)(186003)(55016002)(6116002)(14454004)(3846002)(4326008)(229853002)(2201001)(6246003)(76176011)(66066001)(2906002)(2501003)(7736002)(74316002)(25786009)(305945005)(86362001)(71200400001)(71190400001)(52536014)(66946007)(66556008)(64756008)(66446008)(66476007)(256004)(478600001)(9686003)(6436002)(5660300002)(99286004)(33656002)(26005)(110136005)(8676002)(486006)(53546011)(8936002)(81166006)(81156014)(44832011)(316002)(11346002)(102836004)(6506007)(76116006)(446003)(7696005)(476003)(54906003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB7137;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: HExO8AaHioNVh8mc4ty2QVpaukJA+Wm1qInEzMpSwg7XD2Pi5t1aANL7pBtlzwG59rmwGafMySC5+dMsUAkku71d/zS8Mg8SE7hJsBbDJ/LQUZIqOGLmncT8piPWzW8dhYD3Gvu+6v4MicrRDVg2tsB/A8dsuVHIWWodqxNU/ASJeYz798+mT66qY8u9uCD72UUK/1uobk6GVwpi3tWN7Mn/JgATOnGdjOJo9Om3MQrB/IZXNK+8R1WMADGk3kKZ3BmhWk/D30dl0YIaKLsuqUmIpQHVQTelE9K3rMaoFf7TNXR9BsvPhcqUqMC26rkgPBSyJg4peKO2FpdB9e7WVIlQIHaaPtORWgu+Z5zxH3ow9BlsmC0dJ6YOPrV/tEzQxL3vvSe+E8b+rpYpRUkbtgGkoEPpvwdSuqhCbzLib76+GdGcaOji3/yofQWDY6yt
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1727191AbfKSGuw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Nov 2019 01:50:52 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:14216 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725784AbfKSGuw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 01:50:52 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dd390c80000>; Mon, 18 Nov 2019 22:50:48 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 18 Nov 2019 22:50:51 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 18 Nov 2019 22:50:51 -0800
+Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 19 Nov
+ 2019 06:50:50 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 19 Nov 2019 06:50:50 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.175.254]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dd390c90000>; Mon, 18 Nov 2019 22:50:50 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 00/17] Remove direct Tegra PMC access in clock driver
+Date:   Mon, 18 Nov 2019 22:50:17 -0800
+Message-ID: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: aed59b44-4cb6-428e-3491-08d76c8cbf92
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Nov 2019 01:06:46.0756
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UlAVNNcmdMs3nrIUcFmFMP3IPqQVR2XDwbFj4B1IOAmd3I6Foi7tokCgHfiGfgo7ko5sY11UiUexO8kxhI7dYA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7137
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574146248; bh=KhvH3a4Cvl4xWtjCv7po3TayPmHArH1qRxX3HoKIC7Y=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=aXFtn85bVVYAl2J+qxAIaHNRqVTk756e0C+wgcPCXERJMZQisoXIERJMvBZRpvy9n
+         zIZ1D8QbKel+spkGXqnwhCETmIfmCGSskehPHeQjYs2y7IKxmltjEoXw8iHrOTSBvC
+         RMOVXivWLt3PSIvK7LvX93Nvs8Mb3VwoRB1NVZ+5AuBFjSXalBRCS2xlsDe1D4cP+Z
+         MgWwB2ZU4WkqNvxrACh/2GWTnamD2wtey9gYYRUgBCe8rUKgjkWhf1l+wJAdx0SK/f
+         GRlPKcKJ2SW+FKHkptMzi6PHRc/zvUm8g8WF2lj4BrGa2Zzgsz7486asr6KzMbhYTu
+         e83lcaf1PTMrg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Subject: Re: [PATCH V2 2/4] clk: imx: imx8mn: Switch to clk_hw based API
->=20
-> On 2019-11-04 7:46 AM, Peng Fan wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Switch the entire clk-imx8mn driver to clk_hw based API.
-> > This allows us to move closer to a clear split between consumer and
-> > provider clk APIs.
->=20
-> > -	clks[IMX8MN_AUDIO_PLL1] =3D imx_clk_pll14xx("audio_pll1",
-> "audio_pll1_ref_sel", base, &imx_1443x_pll);
-> > -	clks[IMX8MN_AUDIO_PLL2] =3D imx_clk_pll14xx("audio_pll2",
-> "audio_pll2_ref_sel", base + 0x14, &imx_1443x_pll);
-> > -	clks[IMX8MN_VIDEO_PLL1] =3D imx_clk_pll14xx("video_pll1",
-> "video_pll1_ref_sel", base + 0x28, &imx_1443x_pll);
-> > -	clks[IMX8MN_DRAM_PLL] =3D imx_clk_pll14xx("dram_pll",
-> "dram_pll_ref_sel", base + 0x50, &imx_1443x_pll);
-> > -	clks[IMX8MN_GPU_PLL] =3D imx_clk_pll14xx("gpu_pll", "gpu_pll_ref_sel"=
-,
-> base + 0x64, &imx_1416x_pll);
-> > -	clks[IMX8MN_VPU_PLL] =3D imx_clk_pll14xx("vpu_pll", "vpu_pll_ref_sel"=
-,
-> base + 0x74, &imx_1416x_pll);
-> > -	clks[IMX8MN_ARM_PLL] =3D imx_clk_pll14xx("arm_pll", "arm_pll_ref_sel"=
-,
-> base + 0x84, &imx_1416x_pll);
-> > -	clks[IMX8MN_SYS_PLL1] =3D imx_clk_fixed("sys_pll1", 800000000);
-> > -	clks[IMX8MN_SYS_PLL2] =3D imx_clk_fixed("sys_pll2", 1000000000);
-> > -	clks[IMX8MN_SYS_PLL3] =3D imx_clk_pll14xx("sys_pll3", "sys_pll3_ref_s=
-el",
-> base + 0x114, &imx_1416x_pll);
-> > +	clks[IMX8MN_AUDIO_PLL1] =3D imx_clk_hw_pll14xx("audio_pll1",
-> "audio_pll1_ref_sel", base, &imx_1416x_pll);
-> > +	clks[IMX8MN_AUDIO_PLL2] =3D imx_clk_hw_pll14xx("audio_pll2",
-> "audio_pll2_ref_sel", base + 0x14, &imx_1416x_pll);
-> > +	clks[IMX8MN_VIDEO_PLL1] =3D imx_clk_hw_pll14xx("video_pll1",
-> "video_pll1_ref_sel", base + 0x28, &imx_1416x_pll);
-> > +	clks[IMX8MN_DRAM_PLL] =3D imx_clk_hw_pll14xx("dram_pll",
-> "dram_pll_ref_sel", base + 0x50, &imx_1416x_pll);
-> > +	clks[IMX8MN_GPU_PLL] =3D imx_clk_hw_pll14xx("gpu_pll",
-> "gpu_pll_ref_sel", base + 0x64, &imx_1416x_pll);
-> > +	clks[IMX8MN_VPU_PLL] =3D imx_clk_hw_pll14xx("vpu_pll",
-> "vpu_pll_ref_sel", base + 0x74, &imx_1416x_pll);
-> > +	clks[IMX8MN_ARM_PLL] =3D imx_clk_hw_pll14xx("arm_pll",
-> "arm_pll_ref_sel", base + 0x84, &imx_1416x_pll);
-> > +	clks[IMX8MN_SYS_PLL1] =3D imx_clk_hw_fixed("sys_pll1", 800000000);
-> > +	clks[IMX8MN_SYS_PLL2] =3D imx_clk_hw_fixed("sys_pll2", 1000000000);
-> > +	clks[IMX8MN_SYS_PLL3] =3D imx_clk_hw_pll14xx("sys_pll3",
-> > +"sys_pll3_ref_sel", base + 0x114, &imx_1416x_pll);
->=20
-> You are switching audio/video/dram PLL from imx_1443x_pll to
-> imx_1416x_pll, are you sure this is correct?
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+are currently registered by Tegra clock driver using clk_regiser_mux and
+clk_register_gate which performs direct Tegra PMC register access.
 
-That is a mistaken, copy/paste error. I'll fix in V3.
+When Tegra PMC is in secure mode, any access from non-secure world will
+not go through.
 
->=20
-> If this is intentional it should be an separate patch.
->=20
-> > -	clks[IMX8MN_CLK_ARM] =3D imx_clk_cpu("arm", "arm_a53_div",
-> > -					   clks[IMX8MN_CLK_A53_DIV],
-> > -					   clks[IMX8MN_CLK_A53_SRC],
-> > -					   clks[IMX8MN_ARM_PLL_OUT],
-> > -					   clks[IMX8MN_CLK_24M]);
->=20
-> > +	clks[IMX8MN_CLK_ARM] =3D imx_clk_hw_cpu("arm", "arm_a53_div",
-> > +					      clks[IMX8MN_CLK_A53_DIV]->clk,
-> > +					      clks[IMX8MN_CLK_A53_SRC]->clk,
-> > +					      clks[IMX8MN_ARM_PLL_OUT]->clk,
-> > +					      clks[IMX8MN_CLK_24M]->clk);
->=20
-> This series seems to be against Shawn's clk/imx but there is an additiona=
-l
-> patch in Stephen's tree which changes this 24M to PLL1_800M.
-> Maybe that should be pulled into clk/imx? Otherwise it might spawn an
-> unreadable merge conflicts since almost the entire file is rewritten.
+This patch series adds these Tegra PMC clocks and blink controls to Tegra
+PMC driver with PMC as clock provider and removed them from Tegra clock
+driver. This also adds PMC specific clock id's to use in device tree and
+removed clock ids of PMC clock from Tegra clock driver.
 
-Yes.
+This series also includes patch to update clock provider from tegra_car
+to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
 
-Thanks,
-Peng.
+Tegra PMC also has WB0 PLLM overrides and PLLE pads IDDQ controls which
+are currently configured by Tegra clock driver using direct PMC access.
 
->=20
-> --
-> Regards,
-> Leonard
+This series also includes patches that adds helper functions in Tegra PMC
+driver to allow programming these from Tegra clock driver and removes
+direct PMC access from the clock driver.
+
+
+Sowjanya Komatineni (17):
+  soc: tegra: pmc: Add helper functions for PLLM overrides
+  soc: tegra: pmc: Add helper function for PLLE IDDQ override
+  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
+  soc: tegra: Add Tegra PMC clock registrations into PMC driver
+  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+  soc: pmc: Add blink output clock registration to Tegra PMC
+  clk: tegra: Use Tegra PMC helper functions for PLLM overrides
+  clk: tegra: Use Tegra PMC helper function for PLLE IDDQ
+  clk: tegra: Remove PMC base references from clock registration
+  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
+  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+  arm: tegra: Add clock-cells property to Tegra pmc
+  arm64: tegra: Add clock-cells property to Tegra pmc
+  dt-bindings: Add Tegra PMC clock configuration bindings
+  dt-bindings: tegra186-pmc: Add Tegra PMC clock bindings
+  arm64: tegra: smaug: Change clk_out_2 provider from tegra_car to pmc
+  ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
+
+ .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     |  44 ++
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  42 ++
+ .../devicetree/bindings/sound/nau8825.txt          |   2 +-
+ arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
+ arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi           |   2 +
+ arch/arm64/boot/dts/nvidia/tegra194.dtsi           |   2 +
+ arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 +
+ drivers/clk/tegra/Makefile                         |   1 -
+ drivers/clk/tegra/clk-id.h                         |   7 -
+ drivers/clk/tegra/clk-pll.c                        | 135 ++---
+ drivers/clk/tegra/clk-tegra-audio.c                |   4 +-
+ drivers/clk/tegra/clk-tegra-periph.c               |   8 +-
+ drivers/clk/tegra/clk-tegra-super-gen4.c           |  11 +-
+ drivers/clk/tegra/clk-tegra114.c                   |  75 +--
+ drivers/clk/tegra/clk-tegra124.c                   |  86 +--
+ drivers/clk/tegra/clk-tegra20.c                    |  30 +-
+ drivers/clk/tegra/clk-tegra210.c                   |  74 +--
+ drivers/clk/tegra/clk-tegra30.c                    |  59 +-
+ drivers/clk/tegra/clk.h                            |  48 +-
+ drivers/soc/tegra/pmc.c                            | 598 ++++++++++++++++++++-
+ include/dt-bindings/clock/tegra114-car.h           |  14 +-
+ include/dt-bindings/clock/tegra124-car-common.h    |  14 +-
+ include/dt-bindings/clock/tegra20-car.h            |   2 +-
+ include/dt-bindings/clock/tegra210-car.h           |  14 +-
+ include/dt-bindings/clock/tegra30-car.h            |  14 +-
+ include/dt-bindings/soc/tegra-pmc.h                |  17 +
+ include/soc/tegra/pmc.h                            |   6 +
+ 31 files changed, 879 insertions(+), 450 deletions(-)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+
+-- 
+2.7.4
+
