@@ -2,123 +2,381 @@ Return-Path: <SRS0=V3Jc=ZL=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E54C0C432C3
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 15:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B006BC43215
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 15:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B9C22313
-	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 15:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79DC1223AB
+	for <linux-clk@archiver.kernel.org>; Tue, 19 Nov 2019 15:26:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="O5QUCmS9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728177AbfKSPGl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 19 Nov 2019 10:06:41 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:42003 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727352AbfKSPGk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 10:06:40 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iX55Q-0006wS-F5; Tue, 19 Nov 2019 16:06:36 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1iX55P-0000cZ-Us; Tue, 19 Nov 2019 16:06:35 +0100
-Date:   Tue, 19 Nov 2019 16:06:35 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Abel Vesa <abel.vesa@nxp.com>
-Subject: Re: [PATCH] clk: imx8m: Suppress bind attrs
-Message-ID: <20191119150635.seuwmnhndo46sz3j@pengutronix.de>
-References: <9f2ac65bab203a943de947465d6534980585e144.1574116045.git.leonard.crestez@nxp.com>
- <20191119070937.bcvezx5mwkqqymfo@pengutronix.de>
- <VI1PR04MB7023B7A97632610366549CA9EE4C0@VI1PR04MB7023.eurprd04.prod.outlook.com>
+        id S1728199AbfKSP05 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 19 Nov 2019 10:26:57 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:45746 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728293AbfKSP04 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 19 Nov 2019 10:26:56 -0500
+Received: by mail-vs1-f65.google.com with SMTP id n9so14444573vsa.12
+        for <linux-clk@vger.kernel.org>; Tue, 19 Nov 2019 07:26:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ruFMyMbG2A0Sl+E2MtwfMZpZ4tIYTvoy03y2qa7f34E=;
+        b=O5QUCmS9kyUfhVz8hhtgitRHPjqoKdUJ/9SwehBHVCZC+F8kPasFctX4bpscUsBdLv
+         Y+hIQFGK/SxaOZbOE0I6BvvLUIOnSwJZr+Y29Yq/1PCJOIEcNGcJLa+CnQSuq+RwypJm
+         HXqNXAzfkJO7ajVrBURHNH2ji48BAtTKXn+EQbTacvsKMKht4Ul8NfjbkxkOvSE4T2D4
+         5Y4fE5RVnfkk24AwtEtzzzd3PGuYGMIZQjQg1nC5yPOi0NVzT31U1Rk6rTU+PjSnfP4J
+         IJV+Ttql+Iy+k7bstBmgq/Q6o81B9vYhb//h7DW5Q6A81X774CaFCbnEpk07zyfLSj3i
+         WMkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ruFMyMbG2A0Sl+E2MtwfMZpZ4tIYTvoy03y2qa7f34E=;
+        b=GcYGzn6iKJui0Upk0XxBJfJZhfzLiPgNCOINibDGzbnHMnJ/gR1ggNg3Iel/DFtKR4
+         PUL+rTDitxIjKp+QpQ7BLMPPthOSzvnohjelIRiGyULSeWPGjrA69b6wkPPeJsslz9wE
+         kjzoWwOCAx/oKX1d5Cprg3dmOZWXO8wKHOJmmDXF7vCb++FjD0b0e28NUXlNhL6Fx5ph
+         cYDeZuU4YynUt4KpsDJ4Mb47SFMcqwAmpOBmf89Bfan7XRGRRF5Lx5h0X5KbRBIoRbbt
+         7qjBkrDFvlr9+uD5mCBcdE8OTjGBQhe700G9ryG6T/7/bIdTo75hI1N1A0r2uBlGIz1V
+         9T3w==
+X-Gm-Message-State: APjAAAUC+euraVHkbc36u5TT/n/SiIP+Ce29E2c6zEMgs5S9bjhWwb/C
+        ysOr3VbVI8W8Zakx0XccmCY8jGx3c2TaAei+P217KQ==
+X-Google-Smtp-Source: APXvYqzjmIgAqo65ZtHlzvLKQIezgt3Yysnx2zSv7S/NVt7hDgT4mebPm7ddIkvQVQ7fZBBshSpGOwXS0HaK1lReOVw=
+X-Received: by 2002:a05:6102:36d:: with SMTP id f13mr23440420vsa.34.1574177213644;
+ Tue, 19 Nov 2019 07:26:53 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <VI1PR04MB7023B7A97632610366549CA9EE4C0@VI1PR04MB7023.eurprd04.prod.outlook.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20191119144315.11261-1-krzk@kernel.org>
+In-Reply-To: <20191119144315.11261-1-krzk@kernel.org>
+From:   Ulf Hansson <ulf.hansson@linaro.org>
+Date:   Tue, 19 Nov 2019 16:26:17 +0100
+Message-ID: <CAPDyKFo7KGCj1WcOomEz_dr_9m67Jps7CJ-pKo22hO9-Bn05Hw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: power: Fix path to power-domain.txt bindings
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kevin Hilman <khilman@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-samsung-soc <linux-samsung-soc@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        etnaviv@lists.freedesktop.org,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        freedreno <freedreno@lists.freedesktop.org>,
+        linux-media@vger.kernel.org, Linux PM <linux-pm@vger.kernel.org>,
+        Linux PCI <linux-pci@vger.kernel.org>,
+        Linux USB List <linux-usb@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Nov 19, 2019 at 02:23:08PM +0000, Leonard Crestez wrote:
-> On 2019-11-19 9:09 AM, Uwe Kleine-König wrote:
-> > On Tue, Nov 19, 2019 at 12:28:16AM +0200, Leonard Crestez wrote:
-> >> The clock drivers on imx8m series are registered as platform devices and
-> >> this opens the possibility of reloading the driver at runtime:
-> >>
-> >> This doesn't actually work: clocks are never removed and attempting to
-> >> bind again results in registration errors and a crash.
-> >>
-> >> Fix this by explicitly suppressing bind attrs like several other
-> >> drivers.
-> >>
-> >> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> >>
-> >> ---
-> >> No cc: stable because because there are likely many other opportunities
-> >> to crash the system by echoing random stuff in sysfs as root.
-> >>
-> >>   drivers/clk/imx/clk-imx8mm.c | 1 +
-> >>   drivers/clk/imx/clk-imx8mn.c | 1 +
-> >>   drivers/clk/imx/clk-imx8mq.c | 1 +
-> >>   3 files changed, 3 insertions(+)
-> >>
-> >> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> >> index 9246e89bb5fd..3cb75ad4270d 100644
-> >> --- a/drivers/clk/imx/clk-imx8mm.c
-> >> +++ b/drivers/clk/imx/clk-imx8mm.c
-> >> @@ -619,9 +619,10 @@ MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
-> >>   
-> >>   static struct platform_driver imx8mm_clk_driver = {
-> >>   	.probe = imx8mm_clocks_probe,
-> >>   	.driver = {
-> >>   		.name = "imx8mm-ccm",
-> >> +		.suppress_bind_attrs = true,
-> > 
-> > Maybe add a comment similar to the motivation in the commit log here?
-> > (And of course in the other files, too.)
-> 
-> Is it really useful to say "disable feature X because it doesn't work" 
-> right before disabling the feature?
+On Tue, 19 Nov 2019 at 15:43, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>
+> With split of power domain controller bindings to power-domain.yaml, the
+> consumer part was renamed to power-domain.txt.  Update the references in
+> other bindings.
+>
+> Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
+> Fixes: abb4805e343a ("dt-bindings: power: Convert Samsung Exynos Power Domain bindings to json-schema")
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
 
-No, but something like:
+Oh, I didn't noticed that the patch for conversion got queued up. From
+what tree?
 
-	/*
-	 * disable bind attributes because clocks are never removed and
-	 * attempting to rebind results in errors and a crash.
-	 */
+And why was the file renamed to power-domain.txt?
 
-would be helpful. This way someone wondering about why this is disabled
-gets at least an idea what to look for when changing something in that
-area or while using the imx driver as a template for the next clock
-driver.
+Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
 
-Best regards
-Uwe
+Kind regards
+Uffe
 
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | https://www.pengutronix.de/ |
+> ---
+>  Documentation/devicetree/bindings/clock/clk-exynos-audss.txt  | 2 +-
+>  Documentation/devicetree/bindings/clock/exynos5433-clock.txt  | 2 +-
+>  .../devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt  | 2 +-
+>  .../devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt  | 2 +-
+>  .../bindings/clock/renesas,rcar-gen2-cpg-clocks.txt           | 2 +-
+>  .../devicetree/bindings/clock/renesas,rz-cpg-clocks.txt       | 2 +-
+>  .../devicetree/bindings/display/etnaviv/etnaviv-drm.txt       | 2 +-
+>  Documentation/devicetree/bindings/display/msm/dpu.txt         | 2 +-
+>  Documentation/devicetree/bindings/display/msm/mdp5.txt        | 2 +-
+>  Documentation/devicetree/bindings/dsp/fsl,dsp.yaml            | 2 +-
+>  Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt    | 2 +-
+>  .../devicetree/bindings/media/mediatek-jpeg-decoder.txt       | 2 +-
+>  Documentation/devicetree/bindings/media/mediatek-mdp.txt      | 2 +-
+>  Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt  | 2 +-
+>  Documentation/devicetree/bindings/pci/pci-keystone.txt        | 2 +-
+>  Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt | 2 +-
+>  Documentation/devicetree/bindings/power/qcom,rpmpd.txt        | 2 +-
+>  Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt | 2 +-
+>  .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++--
+>  19 files changed, 20 insertions(+), 20 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> index 6030afb10b5c..e6c6b43e9770 100644
+> --- a/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> +++ b/Documentation/devicetree/bindings/clock/clk-exynos-audss.txt
+> @@ -36,7 +36,7 @@ Required Properties:
+>  Optional Properties:
+>
+>    - power-domains: a phandle to respective power domain node as described by
+> -    generic PM domain bindings (see power/power_domain.txt for more
+> +    generic PM domain bindings (see power/power-domain.txt for more
+>      information).
+>
+>  The following is the list of clocks generated by the controller. Each clock is
+> diff --git a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> index 183c327a7d6b..972d4e45f8c1 100644
+> --- a/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> +++ b/Documentation/devicetree/bindings/clock/exynos5433-clock.txt
+> @@ -178,7 +178,7 @@ Required Properties:
+>
+>  Optional properties:
+>    - power-domains: a phandle to respective power domain node as described by
+> -       generic PM domain bindings (see power/power_domain.txt for more
+> +       generic PM domain bindings (see power/power-domain.txt for more
+>         information).
+>
+>  Each clock is assigned an identifier and client nodes can use this identifier
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+> index 7cc4c0330b53..46ecbbce277c 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r8a7778-cpg-clocks.txt
+> @@ -17,7 +17,7 @@ Required Properties:
+>  SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+>  through an MSTP clock should refer to the CPG device node in their
+>  "power-domains" property, as documented by the generic PM domain bindings in
+> -Documentation/devicetree/bindings/power/power_domain.txt.
+> +Documentation/devicetree/bindings/power/power-domain.txt.
+>
+>
+>  Examples
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+> index 8c81547c29f5..cb32b4f41046 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,r8a7779-cpg-clocks.txt
+> @@ -19,7 +19,7 @@ Required Properties:
+>  SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+>  through an MSTP clock should refer to the CPG device node in their
+>  "power-domains" property, as documented by the generic PM domain bindings in
+> -Documentation/devicetree/bindings/power/power_domain.txt.
+> +Documentation/devicetree/bindings/power/power-domain.txt.
+>
+>
+>  Examples
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> index f8c05bb4116e..58f9054704c2 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rcar-gen2-cpg-clocks.txt
+> @@ -28,7 +28,7 @@ Required Properties:
+>  SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+>  through an MSTP clock should refer to the CPG device node in their
+>  "power-domains" property, as documented by the generic PM domain bindings in
+> -Documentation/devicetree/bindings/power/power_domain.txt.
+> +Documentation/devicetree/bindings/power/power-domain.txt.
+>
+>
+>  Examples
+> diff --git a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+> index 8ff3e2774ed8..9f32528e7245 100644
+> --- a/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+> +++ b/Documentation/devicetree/bindings/clock/renesas,rz-cpg-clocks.txt
+> @@ -21,7 +21,7 @@ Required Properties:
+>  SoC devices that are part of the CPG/MSTP Clock Domain and can be power-managed
+>  through an MSTP clock should refer to the CPG device node in their
+>  "power-domains" property, as documented by the generic PM domain bindings in
+> -Documentation/devicetree/bindings/power/power_domain.txt.
+> +Documentation/devicetree/bindings/power/power-domain.txt.
+>
+>
+>  Examples
+> diff --git a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> index 640592e8ab2e..76d25d1499f7 100644
+> --- a/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> +++ b/Documentation/devicetree/bindings/display/etnaviv/etnaviv-drm.txt
+> @@ -20,7 +20,7 @@ Required properties:
+>
+>  Optional properties:
+>  - power-domains: a power domain consumer specifier according to
+> -  Documentation/devicetree/bindings/power/power_domain.txt
+> +  Documentation/devicetree/bindings/power/power-domain.txt
+>  - #cooling-cells: : If used as a cooling device, must be <2>
+>
+>  example:
+> diff --git a/Documentation/devicetree/bindings/display/msm/dpu.txt b/Documentation/devicetree/bindings/display/msm/dpu.txt
+> index a61dd40f3792..3ef875e94845 100644
+> --- a/Documentation/devicetree/bindings/display/msm/dpu.txt
+> +++ b/Documentation/devicetree/bindings/display/msm/dpu.txt
+> @@ -13,7 +13,7 @@ Required properties:
+>  - reg-names: register region names. The following region is required:
+>    * "mdss"
+>  - power-domains: a power domain consumer specifier according to
+> -  Documentation/devicetree/bindings/power/power_domain.txt
+> +  Documentation/devicetree/bindings/power/power-domain.txt
+>  - clocks: list of clock specifiers for clocks needed by the device.
+>  - clock-names: device clock names, must be in same order as clocks property.
+>    The following clocks are required:
+> diff --git a/Documentation/devicetree/bindings/display/msm/mdp5.txt b/Documentation/devicetree/bindings/display/msm/mdp5.txt
+> index 4e11338548aa..1cce2a61cb8e 100644
+> --- a/Documentation/devicetree/bindings/display/msm/mdp5.txt
+> +++ b/Documentation/devicetree/bindings/display/msm/mdp5.txt
+> @@ -19,7 +19,7 @@ Required properties:
+>  - #interrupt-cells: specifies the number of cells needed to encode an interrupt
+>    source, should be 1.
+>  - power-domains: a power domain consumer specifier according to
+> -  Documentation/devicetree/bindings/power/power_domain.txt
+> +  Documentation/devicetree/bindings/power/power-domain.txt
+>  - clocks: device clocks. See ../clocks/clock-bindings.txt for details.
+>  - clock-names: the following clocks are required.
+>    * "iface"
+> diff --git a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> index f04870d84542..e71cff583cf0 100644
+> --- a/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> +++ b/Documentation/devicetree/bindings/dsp/fsl,dsp.yaml
+> @@ -36,7 +36,7 @@ properties:
+>    power-domains:
+>      description:
+>        List of phandle and PM domain specifier as documented in
+> -      Documentation/devicetree/bindings/power/power_domain.txt
+> +      Documentation/devicetree/bindings/power/power-domain.txt
+>      maxItems: 4
+>
+>    mboxes:
+> diff --git a/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt b/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+> index 71fd74ed3ec8..0b2bbd64d18b 100644
+> --- a/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+> +++ b/Documentation/devicetree/bindings/media/imx7-mipi-csi2.txt
+> @@ -17,7 +17,7 @@ Required properties:
+>  - clock-names   : must contain "pclk", "wrap" and "phy" entries, matching
+>                    entries in the clock property;
+>  - power-domains : a phandle to the power domain, see
+> -          Documentation/devicetree/bindings/power/power_domain.txt for details.
+> +          Documentation/devicetree/bindings/power/power-domain.txt for details.
+>  - reset-names   : should include following entry "mrst";
+>  - resets        : a list of phandle, should contain reset entry of
+>                    reset-names;
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt b/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt
+> index 044b11913c49..51f890c64004 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt
+> +++ b/Documentation/devicetree/bindings/media/mediatek-jpeg-decoder.txt
+> @@ -14,7 +14,7 @@ Required properties:
+>    Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
+>  - clock-names: must contain "jpgdec-smi" and "jpgdec".
+>  - power-domains: a phandle to the power domain, see
+> -  Documentation/devicetree/bindings/power/power_domain.txt for details.
+> +  Documentation/devicetree/bindings/power/power-domain.txt for details.
+>  - mediatek,larb: must contain the local arbiters in the current Socs, see
+>    Documentation/devicetree/bindings/memory-controllers/mediatek,smi-larb.txt
+>    for details.
+> diff --git a/Documentation/devicetree/bindings/media/mediatek-mdp.txt b/Documentation/devicetree/bindings/media/mediatek-mdp.txt
+> index 0d03e3ae2be2..988898f44bac 100644
+> --- a/Documentation/devicetree/bindings/media/mediatek-mdp.txt
+> +++ b/Documentation/devicetree/bindings/media/mediatek-mdp.txt
+> @@ -17,7 +17,7 @@ Required properties (all function blocks, child node):
+>  - clocks: device clocks, see
+>    Documentation/devicetree/bindings/clock/clock-bindings.txt for details.
+>  - power-domains: a phandle to the power domain, see
+> -  Documentation/devicetree/bindings/power/power_domain.txt for details.
+> +  Documentation/devicetree/bindings/power/power-domain.txt for details.
+>
+>  Required properties (DMA function blocks, child node):
+>  - compatible: Should be one of
+> diff --git a/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+> index 4751029b9b74..de58cbee3dca 100644
+> --- a/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+> +++ b/Documentation/devicetree/bindings/opp/qcom-nvmem-cpufreq.txt
+> @@ -27,7 +27,7 @@ In 'cpu' nodes:
+>  - power-domains: A phandle pointing to the PM domain specifier which provides
+>                 the performance states available for active state management.
+>                 Please refer to the power-domains bindings
+> -               Documentation/devicetree/bindings/power/power_domain.txt
+> +               Documentation/devicetree/bindings/power/power-domain.txt
+>                 and also examples below.
+>  - power-domain-names: Should be
+>         - 'cpr' for qcs404.
+> diff --git a/Documentation/devicetree/bindings/pci/pci-keystone.txt b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+> index 47202a2938f2..4c592504bb69 100644
+> --- a/Documentation/devicetree/bindings/pci/pci-keystone.txt
+> +++ b/Documentation/devicetree/bindings/pci/pci-keystone.txt
+> @@ -88,7 +88,7 @@ num-ob-windows: As specified in
+>  num-lanes: As specified in
+>            Documentation/devicetree/bindings/pci/designware-pcie.txt
+>  power-domains: As documented by the generic PM domain bindings in
+> -              Documentation/devicetree/bindings/power/power_domain.txt.
+> +              Documentation/devicetree/bindings/power/power-domain.txt.
+>  ti,syscon-pcie-mode: phandle to the device control module required to configure
+>                       PCI in either RC mode or EP mode.
+>
+> diff --git a/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt b/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt
+> index 64b286d2d398..3fff2c2e1500 100644
+> --- a/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt
+> +++ b/Documentation/devicetree/bindings/phy/ti,phy-am654-serdes.txt
+> @@ -17,7 +17,7 @@ Required properties:
+>                 1 - PCIe0 Lane1
+>                 2 - ICSS2 SGMII Lane1
+>   - power-domains: As documented by the generic PM domain bindings in
+> -       Documentation/devicetree/bindings/power/power_domain.txt.
+> +       Documentation/devicetree/bindings/power/power-domain.txt.
+>   - clocks: List of clock-specifiers representing the input to the SERDES.
+>         Should have 3 items representing the left input clock, external
+>         reference clock and right input clock in that order.
+> diff --git a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> index bc75bf49cdae..014be1448fab 100644
+> --- a/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> +++ b/Documentation/devicetree/bindings/power/qcom,rpmpd.txt
+> @@ -13,7 +13,7 @@ Required Properties:
+>   - #power-domain-cells: number of cells in Power domain specifier
+>         must be 1.
+>   - operating-points-v2: Phandle to the OPP table for the Power domain.
+> -       Refer to Documentation/devicetree/bindings/power/power_domain.txt
+> +       Refer to Documentation/devicetree/bindings/power/power-domain.txt
+>         and Documentation/devicetree/bindings/opp/opp.txt for more details
+>
+>  Refer to <dt-bindings/power/qcom-rpmpd.h> for the level values for
+> diff --git a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+> index 712caa5726f7..442768f68b49 100644
+> --- a/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+> +++ b/Documentation/devicetree/bindings/power/renesas,rcar-sysc.txt
+> @@ -44,7 +44,7 @@ Example:
+>
+>  Devices residing in a power area must refer to that power area, as documented
+>  by the generic PM domain bindings in
+> -Documentation/devicetree/bindings/power/power_domain.txt.
+> +Documentation/devicetree/bindings/power/power-domain.txt.
+>
+>  Required properties:
+>    - power-domains: A phandle and symbolic PM domain specifier, as defined in
+> diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+> index 5bfcc0b4d6b9..ac6b272c4bbf 100644
+> --- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+> +++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+> @@ -64,12 +64,12 @@ For Tegra210:
+>  For Tegra210 and Tegra186:
+>  - power-domains: A list of PM domain specifiers that reference each power-domain
+>    used by the xHCI controller. This list must comprise of a specifier for the
+> -  XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
+> +  XUSBA and XUSBC power-domains. See ../power/power-domain.txt and
+>    ../arm/tegra/nvidia,tegra20-pmc.txt for details.
+>  - power-domain-names: A list of names that represent each of the specifiers in
+>    the 'power-domains' property. Must include 'xusb_ss' and 'xusb_host' which
+>    represent the power-domains XUSBA and XUSBC, respectively. See
+> -  ../power/power_domain.txt for details.
+> +  ../power/power-domain.txt for details.
+>
+>  Optional properties:
+>  --------------------
+> --
+> 2.17.1
+>
