@@ -4,85 +4,103 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73779C432C0
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 20:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADBDC432C0
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 21:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4452F206CB
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 20:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D06BA20672
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 21:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574367605;
-	bh=tLTI+rrMTmofvOGL7fPngNOUF+n7CrK8+TfuJYXHWWU=;
+	s=default; t=1574370012;
+	bh=M+wfm7N3MWy7KprzonlPHC4GakCtiObI1P/FSauCQIk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=L9MVebJ2JeVykjMWlR/6pTpafzdsLgNNndmaCAI7c2FPSkIDsz9praO/qGDhneSBF
-	 9TWpr9zn10hbzbH/44LGfmrtoQayRiqcE90oZkM9DNxOSGAPKo/cXlk0sdceAMuF3y
-	 c4DtjFGQhKtxaUHYCWGSAxUqptbtx7wH1G3gJFlg=
+	b=2eL04k5WcRYFaMokjKl36WllK23NSFK3cQNYA0goCqRzNnKRoly+Fu114XXSPjY4P
+	 BYDzMTpfBohHThQpnVVNDHhEUypvqiQ2o2gx+D9TqVSYMkrjyCmXJaj5n0SD1RyVOE
+	 E2DHAaD9OAjoccGoncEs7grtiwdOdndrgxgwRl50=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726944AbfKUUUE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Nov 2019 15:20:04 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:32966 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUUUE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Nov 2019 15:20:04 -0500
-Received: by mail-oi1-f195.google.com with SMTP id m193so4459564oig.0;
-        Thu, 21 Nov 2019 12:20:03 -0800 (PST)
+        id S1726762AbfKUVAM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Nov 2019 16:00:12 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:42408 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726293AbfKUVAM (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Nov 2019 16:00:12 -0500
+Received: by mail-oi1-f193.google.com with SMTP id o12so4501193oic.9;
+        Thu, 21 Nov 2019 13:00:11 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ctEbvEF+D3upIcOL5VXM4n468EvW3StUvGyLExGsOyc=;
-        b=TxR6rwohsnIVpmpfmd6k+cMZ7qFf6mPk0C60hSW3OUSw+w992KFwbk0cSKaC8/HcbK
-         UN6f+Ep1zESf9cz2YYEO02j0pCDy1dQaJdw6CU3h7DeFIFvvN28Eiil0t73tGPtPWNNw
-         xxsL1ElQxQwZ7BfJHqhq89lVviYAuRNUlBdZmHUEVT1oKeSV1JxmvFHTR5NVkt7o4gMr
-         ock0g7GUsQxg4spCz8v3DxMvkC0N79vry0Q86ja6D7ygH2nbW5KEAHKn7/GN5TzqCdfw
-         etB8bVgBo/+M/14bY8w3l/O7B5lQobmsE88Ce58NdnMwVDZBJGq7BcVCvzJUoEyDTxir
-         KneA==
-X-Gm-Message-State: APjAAAUJIrzeinkdJH5F9y4DM4q6UEsyuyr71Y4BKmdUrFhyrMoPom7y
-        PKQtZ3a3UqAy/jBcKa4NMA==
-X-Google-Smtp-Source: APXvYqxt9oXGFEJN7MoDV16iEhPuS0xuVhs0yYo1/QRqf/rvK8UqBXM9F42AdY5F2UufMMuGLxwOcw==
-X-Received: by 2002:a05:6808:8ce:: with SMTP id k14mr9093989oij.76.1574367603254;
-        Thu, 21 Nov 2019 12:20:03 -0800 (PST)
+        bh=SxSot6EgZMv6I/ipPn5GJ1W17H/FceWiJqLiGTJUw7A=;
+        b=chBHXB2FeyJYkwYfTeFLaiHGY4B/l8uGUhg7WuP5dPKTzs6PVLl+DWB/sTfD6si5YK
+         NirU/ErKuelKLfDlXzPhj/5NmEAc05btTegaRsx0a2ZEp0l5U0CQk78hWQnAFDqOURVR
+         1BiNQYvyoqqKxrmHSzzKIWaa7btl2L7k/QSxzXXknVA5HVf6HwJLI52LKCwCAMQ2Ytjt
+         uXsoG8dw2ULGQdi1l/6Rp+Z1aD+R/Sb0GCT0y2u+NMPJ6Nji7Tu6r7Dm53FzuHOaYvbj
+         HU8oc1G1eT4P03VAt0i5wiGki/1eyL4Gr14bfnlcvqFpqyioewXbXNL5OxSyVvAV+ZhX
+         Jxxg==
+X-Gm-Message-State: APjAAAWBCfMLlcsJXiU8A0L3Z0RqFmTYEoe3IhBNJTuwvVhKqRIf/ign
+        PXuuC75jJbTz7FT6jcgWjw==
+X-Google-Smtp-Source: APXvYqzZRrFiuYK7K/Obo8SgGAjOF7Ow3hwd08fXejCVDmPvcemJ1lgWEhImSfx8sFpl48Lx+9CNfA==
+X-Received: by 2002:a05:6808:117:: with SMTP id b23mr8902981oie.151.1574370011370;
+        Thu, 21 Nov 2019 13:00:11 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l18sm1341155oti.11.2019.11.21.12.20.02
+        by smtp.gmail.com with ESMTPSA id p3sm1377017oti.22.2019.11.21.13.00.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 12:20:02 -0800 (PST)
-Date:   Thu, 21 Nov 2019 14:20:01 -0600
+        Thu, 21 Nov 2019 13:00:09 -0800 (PST)
+Date:   Thu, 21 Nov 2019 15:00:08 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, marc.w.gonzalez@free.fr,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: Re: [PATCH v10 2/4] dt-bindings: clock: Convert qcom,mmcc to DT
- schema
-Message-ID: <20191121202001.GA19935@bogus>
-References: <1574025887-32667-1-git-send-email-jhugo@codeaurora.org>
- <0101016e7b4311fe-8edd7849-df65-47dd-98fa-1e2063c83178-000000@us-west-2.amazonses.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Silvano di Ninno <silvano.dininno@nxp.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v6 3/5] dt-bindings: memory: Add bindings for imx8m ddr
+ controller
+Message-ID: <20191121210008.GA20656@bogus>
+References: <cover.1573756360.git.leonard.crestez@nxp.com>
+ <58f3aea574bf3a38a42075e313fc2a5592c96ed2.1573756360.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <0101016e7b4311fe-8edd7849-df65-47dd-98fa-1e2063c83178-000000@us-west-2.amazonses.com>
+In-Reply-To: <58f3aea574bf3a38a42075e313fc2a5592c96ed2.1573756360.git.leonard.crestez@nxp.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, 17 Nov 2019 21:27:03 +0000, Jeffrey Hugo wrote:
-> Convert the qcom,mmcc-X clock controller binding to DT schema.  Add the
-> protected-clocks property to the schema to show that is it explicitly
-> allowed, instead of relying on the generic, pre-schema binding.
+On Thu, 14 Nov 2019 20:33:20 +0200, Leonard Crestez wrote:
+> Add devicetree bindings for the i.MX DDR Controller on imx8m series
+> chips. It supports dynamic frequency switching between multiple data
+> rates and this is exposed to Linux via the devfreq subsystem.
 > 
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
 > ---
->  .../devicetree/bindings/clock/qcom,mmcc.txt        | 28 ----------
->  .../devicetree/bindings/clock/qcom,mmcc.yaml       | 60 ++++++++++++++++++++++
->  2 files changed, 60 insertions(+), 28 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+>  .../memory-controllers/fsl/imx8m-ddrc.yaml    | 72 +++++++++++++++++++
+>  1 file changed, 72 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
 > 
 
 Reviewed-by: Rob Herring <robh@kernel.org>
