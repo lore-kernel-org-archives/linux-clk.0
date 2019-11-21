@@ -2,84 +2,137 @@ Return-Path: <SRS0=UbEh=ZN=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE60DC432C0
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 13:26:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B51E7C432C0
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 13:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80EB5208A3
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 13:26:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mI1d4Uv5"
+	by mail.kernel.org (Postfix) with ESMTP id 8876420679
+	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 13:52:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726695AbfKUN0T (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Nov 2019 08:26:19 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:40486 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726593AbfKUN0T (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Nov 2019 08:26:19 -0500
-Received: by mail-lj1-f196.google.com with SMTP id q2so3212179ljg.7
-        for <linux-clk@vger.kernel.org>; Thu, 21 Nov 2019 05:26:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xJRNK0Qg4edNo891F12WcaxFjq+8J+URcTnOpfArGZA=;
-        b=mI1d4Uv5D/Bus8GV84GRYJ2Ncp3cqsWvdXlM91npLZDdJiOCOfyq9LDHai55KaNeVu
-         gYEEej9KWdg8xr6DeyhLdh1n6CHugCzkWjzX2NNNKF7VFunY9zf+LRzqaYQLRcG/FI4k
-         A21SMEQJLpyfTw0biysL+Wvvi0ffrMXablxTW/Po8OeSAsMrADDNfHtq24xwxr5UPiT6
-         UWYgO9L/ji4dNp+OQBpraE62/xsw/ym86DzCGRIvinmM1AVOnOTd50zlNQhsB9UBvHML
-         aRf4/MdbkkvuX2VHuy7gcHRUtWsIRBV8NKyb4DP4WmKmKNEFLjIk9yZeZvHhoOn9d6Cn
-         ADDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xJRNK0Qg4edNo891F12WcaxFjq+8J+URcTnOpfArGZA=;
-        b=hqDdbS6uI+66CSzVCAMEay7U9D4olmwUoDL8qhKmNyxRnQ9TcBROEkse+m90WWPc7x
-         9QPuhcXjAxXWtqgvu2tI9HElNCbCAMMXv2cuMoKWsE1paqmwkzWPfbfUOcBJjSLVaz99
-         JtVHPbwJeKYPwNs6JkFDW7/Kz1ntYnXToK628Vz1Qq1ZuearHw3cUa22vnEFZeyTmJIS
-         Zt80HdHbOlJvwN1tm4YhOKaHr/UanSrvYLvsOxZjfyab3/qmN0CnDMLVJMev8Edj675Q
-         3BUGQhpfB2O6qfnHtM3YlxWvO04NraXkgiWyMphKnLCJ2Aa1/IXhwOl+q1LFi4Is3DZ/
-         YV2Q==
-X-Gm-Message-State: APjAAAXHvsspqg66wB5b56emXidsObTOxAeBIkxvHj+pVV/xFzFg15bL
-        iPRnSdDn6sVh6MoIEz2aJSAyY73hLRAxjn8EdYImyQ==
-X-Google-Smtp-Source: APXvYqyGELuxKmjPuMZto5yMs7olv3FH+bNGkzNsg2SSLxSSkTaD5XBMqmcP5UzRxEveFBkgx0i7iCQUEJV15L3MB30=
-X-Received: by 2002:a2e:8597:: with SMTP id b23mr7487009lji.218.1574342777013;
- Thu, 21 Nov 2019 05:26:17 -0800 (PST)
-MIME-Version: 1.0
-References: <20191121100726.17725-1-ulf.hansson@linaro.org>
-In-Reply-To: <20191121100726.17725-1-ulf.hansson@linaro.org>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 21 Nov 2019 14:26:04 +0100
-Message-ID: <CACRpkdZyP+DdZri1D7WADK=f5Lt6i-xH5FLPuuH8=6hhj2tV8A@mail.gmail.com>
-Subject: Re: [PATCH] MAINTAINERS: Update section for Ux500 clock drivers
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726358AbfKUNwX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Nov 2019 08:52:23 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:39132 "EHLO inva020.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726293AbfKUNwX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 21 Nov 2019 08:52:23 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C05D1A061D;
+        Thu, 21 Nov 2019 14:52:20 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4F6841A0615;
+        Thu, 21 Nov 2019 14:52:20 +0100 (CET)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id B9BF3203C8;
+        Thu, 21 Nov 2019 14:52:19 +0100 (CET)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+Cc:     Jacky Bai <ping.bai@nxp.com>, Anson Huang <Anson.Huang@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Peng Fan <peng.fan@nxp.com>, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: imx8m: Suppress bind attrs
+Date:   Thu, 21 Nov 2019 15:52:17 +0200
+Message-Id: <ce34606bb3876f7506f483db7623fcba6da04810.1574344160.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 21, 2019 at 11:07 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
+The clock drivers on imx8m series are registered as platform devices and
+this opens the possibility of reloading the driver at runtime.
 
-> There's no longer any need host a tree solely to serve changes for the
-> Ux500 clock driver, thus drop this from the corresponding section and use
-> the common clk tree instead.
->
-> Moreover, let's also add the generic linux-clk mailing list and rename the
-> section header.
->
-> Cc: Linus Walleij <linus.walleij@linaro.org>
-> Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+This doesn't actually work: clocks are never removed and attempting to
+bind again results in registration errors and a crash. Almost all
+devices depend on clocks anyway so rebinding is unlikely to ever be
+useful
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Fix this by explicitly suppressing bind attrs like several other
+clock drivers.
 
-Yours,
-Linus Walleij
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Reviewed-by: Peng Fan <peng.fan@nxp.com>
+
+---
+No cc: stable because because there are likely many other opportunities
+to crash the system by echoing random stuff in sysfs as root.
+
+Changes since v1:
+* Add source comments as well
+Link to v1: https://patchwork.kernel.org/patch/11250389/
+
+ drivers/clk/imx/clk-imx8mm.c | 5 +++++
+ drivers/clk/imx/clk-imx8mn.c | 5 +++++
+ drivers/clk/imx/clk-imx8mq.c | 5 +++++
+ 3 files changed, 15 insertions(+)
+
+diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
+index 030b15d7c0ce..ed3ce492151c 100644
+--- a/drivers/clk/imx/clk-imx8mm.c
++++ b/drivers/clk/imx/clk-imx8mm.c
+@@ -614,9 +614,14 @@ MODULE_DEVICE_TABLE(of, imx8mm_clk_of_match);
+ 
+ static struct platform_driver imx8mm_clk_driver = {
+ 	.probe = imx8mm_clocks_probe,
+ 	.driver = {
+ 		.name = "imx8mm-ccm",
++		/*
++		 * Disable bind attributes: clocks are not removed and
++		 * reloading the driver will crash or break devices.
++		 */
++		.suppress_bind_attrs = true,
+ 		.of_match_table = of_match_ptr(imx8mm_clk_of_match),
+ 	},
+ };
+ module_platform_driver(imx8mm_clk_driver);
+diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
+index 9f5a5a56b45e..d95e282ff1fb 100644
+--- a/drivers/clk/imx/clk-imx8mn.c
++++ b/drivers/clk/imx/clk-imx8mn.c
+@@ -570,9 +570,14 @@ MODULE_DEVICE_TABLE(of, imx8mn_clk_of_match);
+ 
+ static struct platform_driver imx8mn_clk_driver = {
+ 	.probe = imx8mn_clocks_probe,
+ 	.driver = {
+ 		.name = "imx8mn-ccm",
++		/*
++		 * Disable bind attributes: clocks are not removed and
++		 * reloading the driver will crash or break devices.
++		 */
++		.suppress_bind_attrs = true,
+ 		.of_match_table = of_match_ptr(imx8mn_clk_of_match),
+ 	},
+ };
+ module_platform_driver(imx8mn_clk_driver);
+diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+index 5f10a606d836..2168fe6cf7e4 100644
+--- a/drivers/clk/imx/clk-imx8mq.c
++++ b/drivers/clk/imx/clk-imx8mq.c
+@@ -607,9 +607,14 @@ MODULE_DEVICE_TABLE(of, imx8mq_clk_of_match);
+ 
+ static struct platform_driver imx8mq_clk_driver = {
+ 	.probe = imx8mq_clocks_probe,
+ 	.driver = {
+ 		.name = "imx8mq-ccm",
++		/*
++		 * Disable bind attributes: clocks are not removed and
++		 * reloading the driver will crash or break devices.
++		 */
++		.suppress_bind_attrs = true,
+ 		.of_match_table = of_match_ptr(imx8mq_clk_of_match),
+ 	},
+ };
+ module_platform_driver(imx8mq_clk_driver);
+-- 
+2.17.1
+
