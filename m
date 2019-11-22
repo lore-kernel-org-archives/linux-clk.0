@@ -1,106 +1,203 @@
-Return-Path: <SRS0=UbEh=ZN=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=tNAh=ZO=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADBDC432C0
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 21:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C292FC432C3
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Nov 2019 01:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D06BA20672
-	for <linux-clk@archiver.kernel.org>; Thu, 21 Nov 2019 21:00:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574370012;
-	bh=M+wfm7N3MWy7KprzonlPHC4GakCtiObI1P/FSauCQIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=2eL04k5WcRYFaMokjKl36WllK23NSFK3cQNYA0goCqRzNnKRoly+Fu114XXSPjY4P
-	 BYDzMTpfBohHThQpnVVNDHhEUypvqiQ2o2gx+D9TqVSYMkrjyCmXJaj5n0SD1RyVOE
-	 E2DHAaD9OAjoccGoncEs7grtiwdOdndrgxgwRl50=
+	by mail.kernel.org (Postfix) with ESMTP id 8E690206CB
+	for <linux-clk@archiver.kernel.org>; Fri, 22 Nov 2019 01:37:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rUU1t1dw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfKUVAM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 21 Nov 2019 16:00:12 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:42408 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726293AbfKUVAM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Nov 2019 16:00:12 -0500
-Received: by mail-oi1-f193.google.com with SMTP id o12so4501193oic.9;
-        Thu, 21 Nov 2019 13:00:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=SxSot6EgZMv6I/ipPn5GJ1W17H/FceWiJqLiGTJUw7A=;
-        b=chBHXB2FeyJYkwYfTeFLaiHGY4B/l8uGUhg7WuP5dPKTzs6PVLl+DWB/sTfD6si5YK
-         NirU/ErKuelKLfDlXzPhj/5NmEAc05btTegaRsx0a2ZEp0l5U0CQk78hWQnAFDqOURVR
-         1BiNQYvyoqqKxrmHSzzKIWaa7btl2L7k/QSxzXXknVA5HVf6HwJLI52LKCwCAMQ2Ytjt
-         uXsoG8dw2ULGQdi1l/6Rp+Z1aD+R/Sb0GCT0y2u+NMPJ6Nji7Tu6r7Dm53FzuHOaYvbj
-         HU8oc1G1eT4P03VAt0i5wiGki/1eyL4Gr14bfnlcvqFpqyioewXbXNL5OxSyVvAV+ZhX
-         Jxxg==
-X-Gm-Message-State: APjAAAWBCfMLlcsJXiU8A0L3Z0RqFmTYEoe3IhBNJTuwvVhKqRIf/ign
-        PXuuC75jJbTz7FT6jcgWjw==
-X-Google-Smtp-Source: APXvYqzZRrFiuYK7K/Obo8SgGAjOF7Ow3hwd08fXejCVDmPvcemJ1lgWEhImSfx8sFpl48Lx+9CNfA==
-X-Received: by 2002:a05:6808:117:: with SMTP id b23mr8902981oie.151.1574370011370;
-        Thu, 21 Nov 2019 13:00:11 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id p3sm1377017oti.22.2019.11.21.13.00.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 21 Nov 2019 13:00:09 -0800 (PST)
-Date:   Thu, 21 Nov 2019 15:00:08 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Chanwoo Choi <cw00.choi@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Martin Kepplinger <martink@posteo.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
+        id S1726265AbfKVBhd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 21 Nov 2019 20:37:33 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:49156 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726495AbfKVBhd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 21 Nov 2019 20:37:33 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20191122013727epoutp01ce54f4c1131a7af045b7a0fbff0db40a~ZWFB7LOo80053400534epoutp01x
+        for <linux-clk@vger.kernel.org>; Fri, 22 Nov 2019 01:37:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20191122013727epoutp01ce54f4c1131a7af045b7a0fbff0db40a~ZWFB7LOo80053400534epoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574386647;
+        bh=ubbA4+Lwdxue490eJSo8gvrwq7CezwOon7VoAkBRihk=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=rUU1t1dw3q1Y9cwstSblgK4nGB9tK1yVneBVIweSvu9HB9j/9fOZWxz19O021yy1X
+         v2xsrondIVdyi6aVXP08DJYpzsFo8dDN9qL1Afi0/cVV9x6mICPZY4bskKD2R7Q0PK
+         Zqa3VAFpAcmImwgcLbtjcj5E9dbg9atc9TiP/AvU=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191122013726epcas1p28e8e6fe40da7a79b3a6e90daa1e30577~ZWFBY6zCy1818318183epcas1p2N;
+        Fri, 22 Nov 2019 01:37:26 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp4.localdomain (Postfix) with ESMTP id 47JzZD3qJnzMqYkZ; Fri, 22 Nov
+        2019 01:37:24 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C3.83.04406.FCB37DD5; Fri, 22 Nov 2019 10:37:19 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191122013718epcas1p1873b01a96ba34168b98790915ceb8e7c~ZWE57hCuT2493424934epcas1p1e;
+        Fri, 22 Nov 2019 01:37:18 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191122013718epsmtrp12b2208d7c048f901ea9f0c07dbf6150e~ZWE56ybX51073710737epsmtrp1j;
+        Fri, 22 Nov 2019 01:37:18 +0000 (GMT)
+X-AuditID: b6c32a38-95fff70000001136-33-5dd73bcf55f6
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        95.B1.03814.ECB37DD5; Fri, 22 Nov 2019 10:37:18 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191122013718epsmtip10a40f018970715c8027ab2117d4c95aa~ZWE5vKtd52083820838epsmtip1V;
+        Fri, 22 Nov 2019 01:37:18 +0000 (GMT)
+Subject: Re: [PATCH] clk: samsung: exynos5420: Keep top G3D clocks enabled
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
         Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Silvano di Ninno <silvano.dininno@nxp.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v6 3/5] dt-bindings: memory: Add bindings for imx8m ddr
- controller
-Message-ID: <20191121210008.GA20656@bogus>
-References: <cover.1573756360.git.leonard.crestez@nxp.com>
- <58f3aea574bf3a38a42075e313fc2a5592c96ed2.1573756360.git.leonard.crestez@nxp.com>
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <97dff6d2-08d8-ce28-6eaf-aa15ab778f5f@samsung.com>
+Date:   Fri, 22 Nov 2019 10:43:06 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <58f3aea574bf3a38a42075e313fc2a5592c96ed2.1573756360.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191121101145.15899-1-m.szyprowski@samsung.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURT1ddrpgFbHgnKticAQE8EAHUtxVFASiamACYkmLgnWEcaCdEun
+        VdEf44cCIYBKXBoERQyxakBElgbFAIbgVlQURVE2F3CLIIoaox0GIn/nvnvOO/e8dwlMWYKr
+        iAyznbOZWSOF+0prW0Ijwj2rulLUZa1+zNVTlTLG46mSM1/zXsmYU56bEuZKa4+cqTzxU8Yc
+        eTOExcl1Dc4eua7alYPr8mtcSDdavShZui0zJp1j0zhbEGdOtaRlmA2xVOJG/Vq9NlpNh9Mr
+        mOVUkJk1cbFUfFJy+LoMo3cCKmgPa3R4j5JZnqciV8fYLA47F5Ru4e2xFGdNM1pXWCN41sQ7
+        zIaIVItpJa1WL9N6iTsy08faejDrUOC+mhuWg6hoYS7yIYCMgo8/bklzkS+hJOsR3Ov7KROL
+        EQTXWwqRWHxH8Lb3MjYlKXHX42Ljhpf1uE8iFl8Q9Lu6pQLLj0yAy0Wd3rsIwp+0gPPTJoGD
+        kW4E5V0uucDByTBoev8MF/AcMhiejA8gASvI1eAZe40ErZRcDI2NnADnkVvg7hgrMuZC++nB
+        CScfgX38g0TAGBkA3YOlkzgQ6j4VY4ItkAM43K4qlooB4uHlo9LJMH4w3FYjF7EKhgoOT+ID
+        cLG9FRfF2QhqmjpkYkMDTReOS4SBMDIUKt2R4nEwNPw+g0Tj2fB5LG8iOpAKyD6sFCkh8Li3
+        RyLiBXD+SA5eiCjntDjOaRGc0yI4/5udRVIXms9ZeZOB42lr1PS/rkYTuxnG1KPGB0nNiCQQ
+        NUtRuPdpilLG7uGzTM0ICIzyVzR2daYoFWls1n7OZtHbHEaOb0Za71sfxVTzUi3eTTfb9bR2
+        mUajYaLoaC1NUwEKYvxhipI0sHYuk+OsnG1KJyF8VAdRVXS/O+GceuM1ozGxW/656Jtm/fZV
+        hrx3a3uv+m5OOFSxrrxjhNqdPZp1zJatXbSmJKZlf9zJv+U74gMddZca3Je2utyRwwN/QpXF
+        PrtmG07H5wfm/xro3BmNL6lt/X3/zouyDXxBL+s+4akYn1XCmPvQmZA+z4zn+plLE3Q3ixvi
+        KCmfztJhmI1n/wH13nQ2sQMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkkeLIzCtJLcpLzFFi42LZdlhJTvec9fVYg6ub9Sw2zljPanH+/AZ2
+        i48991gtZpzfx2Sx9shddov1036yWrQ/fcnswO6xc9Zddo9NqzrZPPq2rGL0+LxJLoAlissm
+        JTUnsyy1SN8ugSvj6/G7zAUv5Su27M1vYJwi3cXIySEhYCIxb9cOti5GLg4hgd2MEvunrGCH
+        SEhKTLt4lLmLkQPIFpY4fLgYouYto8TRvjlgNcICXhJrplxhBbFFBPIlZtzpZQSxmQX2MEq0
+        H5KDaJjIKPHwfQ9YEZuAlsT+FzfYQGx+AUWJqz8egzXwCthJnP96nxFkGYuAqsSePakgYVGB
+        CInn229AlQhKnJz5hAXE5gQpn/yaCWKXusSfeZeYIWxxiVtP5kPF5SW2v53DPIFReBaS9llI
+        WmYhaZmFpGUBI8sqRsnUguLc9NxiwwKjvNRyveLE3OLSvHS95PzcTYzgCNLS2sF44kT8IUYB
+        DkYlHt4J5ddihVgTy4orcw8xSnAwK4nw7rl+JVaINyWxsiq1KD++qDQntfgQozQHi5I4r3z+
+        sUghgfTEktTs1NSC1CKYLBMHp1QDY/fqQk+vZXadkn88hRvtZAtrmYtZJ0u+ODYn6X/eP6fD
+        LMt3nqnkXH6a47xe1KafRx6GvVjps3n++u/7Lk38l7XhEkto2SIunhW+DYuiCzY1zQq91zT3
+        wpn+lNr5djJLRU78XhLeEaC26PJJlZcPhR9tS1dn9+tqzptU9vfr3lwX42UmG+pbGJVYijMS
+        DbWYi4oTAdTSjA+cAgAA
+X-CMS-MailID: 20191122013718epcas1p1873b01a96ba34168b98790915ceb8e7c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8
+References: <CGME20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8@eucas1p2.samsung.com>
+        <20191121101145.15899-1-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 14 Nov 2019 20:33:20 +0200, Leonard Crestez wrote:
-> Add devicetree bindings for the i.MX DDR Controller on imx8m series
-> chips. It supports dynamic frequency switching between multiple data
-> rates and this is exposed to Linux via the devfreq subsystem.
+Hi Marek,
+
+On 11/21/19 7:11 PM, Marek Szyprowski wrote:
+> All top clocks on G3D path has to be enabled all the time to allow proper
+> G3D power domain operation. This is achieved by adding CRITICAL flag to
+> "mout_sw_aclk_g3d" clock, what keeps this clock and all its parents
+> enabled.
 > 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> This fixes following imprecise abort issue observed on Odroid XU3/XU4
+> after enabling Panfrost driver by commit 1a5a85c56402 "ARM: dts: exynos:
+> Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4"):
+> 
+> panfrost 11800000.gpu: clock rate = 400000000
+> panfrost 11800000.gpu: failed to get regulator: -517
+> panfrost 11800000.gpu: regulator init failed -517
+> Power domain G3D disable failed
+> ...
+> panfrost 11800000.gpu: clock rate = 400000000
+> 8<--- cut here ---
+> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
+> pgd = (ptrval)
+> [00000000] *pgd=00000000
+> Internal error: : 1406 [#1] PREEMPT SMP ARM
+> Modules linked in:
+> CPU: 7 PID: 53 Comm: kworker/7:1 Not tainted 5.4.0-rc8-next-20191119-00032-g56f1001191a6 #6923
+> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
+> Workqueue: events deferred_probe_work_func
+> PC is at panfrost_gpu_soft_reset+0x94/0x110
+> LR is at ___might_sleep+0x128/0x2dc
+> ...
+> [<c05c231c>] (panfrost_gpu_soft_reset) from [<c05c2704>] (panfrost_gpu_init+0x10/0x67c)
+> [<c05c2704>] (panfrost_gpu_init) from [<c05c15d0>] (panfrost_device_init+0x158/0x2cc)
+> [<c05c15d0>] (panfrost_device_init) from [<c05c0cb0>] (panfrost_probe+0x80/0x178)
+> [<c05c0cb0>] (panfrost_probe) from [<c05cfaa0>] (platform_drv_probe+0x48/0x9c)
+> [<c05cfaa0>] (platform_drv_probe) from [<c05cd20c>] (really_probe+0x1c4/0x474)
+> [<c05cd20c>] (really_probe) from [<c05cd694>] (driver_probe_device+0x78/0x1bc)
+> [<c05cd694>] (driver_probe_device) from [<c05cb374>] (bus_for_each_drv+0x74/0xb8)
+> [<c05cb374>] (bus_for_each_drv) from [<c05ccfa8>] (__device_attach+0xd4/0x16c)
+> [<c05ccfa8>] (__device_attach) from [<c05cc110>] (bus_probe_device+0x88/0x90)
+> [<c05cc110>] (bus_probe_device) from [<c05cc634>] (deferred_probe_work_func+0x4c/0xd0)
+> [<c05cc634>] (deferred_probe_work_func) from [<c0149df0>] (process_one_work+0x300/0x864)
+> [<c0149df0>] (process_one_work) from [<c014a3ac>] (worker_thread+0x58/0x5a0)
+> [<c014a3ac>] (worker_thread) from [<c0151174>] (kthread+0x12c/0x160)
+> [<c0151174>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
+> Exception stack(0xee03dfb0 to 0xee03dff8)
+> ...
+> Code: e594300c e5933020 e3130c01 1a00000f (ebefff50).
+> ---[ end trace badde2b74a65a540 ]---
+> 
+> In the above case, the Panfrost driver disables G3D clocks after failure
+> of getting the needed regulator and return with -EPROVE_DEFER code. This
+> causes G3D power domain disable failure and then, during second probe
+> an imprecise abort is triggered due to undefined power domain state.
+> 
+> Fixes: 45f10dabb56b ("clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D path")
+> Fixes: c9f7567aff31 ("clk: samsung: exynos542x: Move G3D subsystem clocks to its sub-CMU")
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
 > ---
->  .../memory-controllers/fsl/imx8m-ddrc.yaml    | 72 +++++++++++++++++++
->  1 file changed, 72 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
+>  drivers/clk/samsung/clk-exynos5420.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 3a991ca1ee36..89126ba66995 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+> @@ -712,7 +712,7 @@ static const struct samsung_mux_clock exynos5x_mux_clks[] __initconst = {
+>  	MUX(0, "mout_sw_aclk266_g2d", mout_sw_aclk266_g2d_p,
+>  			SRC_TOP12, 12, 1),
+>  	MUX_F(0, "mout_sw_aclk_g3d", mout_sw_aclk_g3d_p, SRC_TOP12, 16, 1,
+> -	      CLK_SET_RATE_PARENT, 0),
+> +	      CLK_IS_CRITICAL | CLK_SET_RATE_PARENT, 0),
+>  	MUX(0, "mout_sw_aclk300_jpeg", mout_sw_aclk300_jpeg_p,
+>  			SRC_TOP12, 20, 1),
+>  	MUX(CLK_MOUT_SW_ACLK300, "mout_sw_aclk300_disp1",
 > 
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
