@@ -1,223 +1,227 @@
-Return-Path: <SRS0=tNAh=ZO=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=JUEE=ZQ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33CCAC432C0
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Nov 2019 23:56:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1491FC432C0
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Nov 2019 23:53:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 054982071F
-	for <linux-clk@archiver.kernel.org>; Fri, 22 Nov 2019 23:56:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFB4C206E0
+	for <linux-clk@archiver.kernel.org>; Sun, 24 Nov 2019 23:53:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="gByxFV47"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Cz/oz5DA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726813AbfKVX4m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 22 Nov 2019 18:56:42 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:34953 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfKVX4l (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 22 Nov 2019 18:56:41 -0500
-Received: from apollo.fritz.box (unknown [IPv6:2a02:810c:c200:2e91:6257:18ff:fec4:ca34])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-         key-exchange ECDHE (P-384) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id E98AF23D06;
-        Sat, 23 Nov 2019 00:56:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1574466999;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=KXeBY+gO4TTDPyLB3nDYLfeOhaloj7KBExK+QQQbyxE=;
-        b=gByxFV47SuizKsfhJqjPNMo7Nyl7JeO9V/RId/gm7tLZgQt8RPMHtnGJTMYwIliZFkcSoW
-        ytQnC3P808Xj4c+O8h/ijSsSMouzojbpVX4+105eU13nnz7aatOK1x7zjjS+grJ1JVvGAo
-        VC6rHKI190aM2yiXFeiEsc4qzIEkHPM=
-From:   Michael Walle <michael@walle.cc>
-To:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726867AbfKXXx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Nov 2019 18:53:57 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:43962 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726861AbfKXXx5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Nov 2019 18:53:57 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191124235353epoutp02983ef58cefea583500e3e91a465ea769~aPmd1vhnc0272402724epoutp020
+        for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2019 23:53:53 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191124235353epoutp02983ef58cefea583500e3e91a465ea769~aPmd1vhnc0272402724epoutp020
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1574639633;
+        bh=AVvdCtMY//59JkfT+HX/3Kx1Dzwu9AgzcPoN1Jdpdt8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Cz/oz5DAAUC2aZ8t+UcwtXzs95cjBc1hP7+2mvnw4jFhrerHyCS3RLb5rCPltOpCH
+         jufLCbhRzZxprdSiFIHBILNV3fhe0WejA1BYhdtRmJbX9Ki5HS1ZXz8I/wPs36qi1r
+         L8TUYUTp3436XjYlnfwiKDDFjFwa16tFn6f9JhLg=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20191124235352epcas1p3fed83ed00327ba1521f2b91b5819fdfe~aPmc9ok1a1532315323epcas1p3l;
+        Sun, 24 Nov 2019 23:53:52 +0000 (GMT)
+Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
+        epsnrtp3.localdomain (Postfix) with ESMTP id 47Ln7J23CczMqYkZ; Sun, 24 Nov
+        2019 23:53:48 +0000 (GMT)
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        DC.DE.48498.C081BDD5; Mon, 25 Nov 2019 08:53:48 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20191124235347epcas1p28508f778af78e31484ff54490986f2fe~aPmXrHABF0205002050epcas1p2k;
+        Sun, 24 Nov 2019 23:53:47 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191124235347epsmtrp1c1294cb0c214ff9bcda9b225b2d1ed49~aPmXp1pT32074420744epsmtrp1g;
+        Sun, 24 Nov 2019 23:53:47 +0000 (GMT)
+X-AuditID: b6c32a36-a55ff7000001bd72-90-5ddb180cb625
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        AD.9F.10238.B081BDD5; Mon, 25 Nov 2019 08:53:47 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20191124235346epsmtip2b7ab829c6bf0a17771700d4bc29825ce~aPmXRJ2Sq1614516145epsmtip2t;
+        Sun, 24 Nov 2019 23:53:46 +0000 (GMT)
+Subject: Re: [PATCH v7 4/5] PM / devfreq: Add dynamic scaling for imx8m ddr
+ controller
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Shawn Guo <shawnguo@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Michael Walle <michael@walle.cc>
-Subject: [PATCH 2/2] clk: fsl-sai: new driver
-Date:   Sat, 23 Nov 2019 00:56:22 +0100
-Message-Id: <20191122235622.8818-2-michael@walle.cc>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191122235622.8818-1-michael@walle.cc>
-References: <20191122235622.8818-1-michael@walle.cc>
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Silvano di Ninno <silvano.dininno@nxp.com>,
+        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-imx@nxp.com,
+        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <f8838bc8-44db-551f-3199-eeea91e493f7@samsung.com>
+Date:   Mon, 25 Nov 2019 08:59:53 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spamd-Bar: ++++++
-X-Rspamd-Server: web
-X-Rspamd-Queue-Id: E98AF23D06
-X-Spamd-Result: default: False [6.40 / 15.00];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         R_MISSING_CHARSET(2.50)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         DKIM_SIGNED(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[8];
-         MID_CONTAINS_FROM(1.00)[];
-         NEURAL_HAM(-0.00)[-0.633];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         ASN(0.00)[asn:31334, ipnet:2a02:810c::/31, country:DE];
-         SUSPICIOUS_RECIPS(1.50)[]
-X-Spam: Yes
+In-Reply-To: <c0b332b85560e39d7dbb5e88b99bbed1d1b32373.1574458460.git.leonard.crestez@nxp.com>
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxbVRj29N7eXnB1l0LHESMtdzFxKNDCwIOBuQibN2xm+BFjFhnewE0h
+        9MvednNuTvxgMGQbZOJC1a3pxlIQhX6wwQSRUtkY0AnyFRA1A5NNHTgrC2Gitr0s8u95n/d5
+        zpvnPXlJTNYriSNL9WbOpGe1NBGJX+zbkpK0Ac4UqOxDDyJvf7sELQ1eA+jC6LcA/VV/GUNz
+        P80AdKmhCJ31+cXI6Z7B0eluF4Ga6ztxdP16mwQNv/e7BDlm74iRa25CjO7U/ChG1StNGAoc
+        9wHUODkiQhOOOjEKtM0BNHJtB5p510Ggz/29BBoaHBWjim6fBFV7Vwn0z4QTRzc9sajx3ASG
+        nEvM9nimvtoBmJYzLYBZnKqQMJ+Uj+CMzWVhXM3HCOaHiS6CcZ9/h3EudIiY3oUuEXNyVcWs
+        9MkZz3glzpzwNAMm4IrP37i3LKuEY4s5k5LTFxmKS/WabHrXS4U5hekZKnWSOhM9RSv1rI7L
+        pnN35yftLNUGd0Qr97NaS5DKZ3meTtmWZTJYzJyyxMCbs2nOWKw1ZhqTeVbHW/Sa5CKD7mm1
+        SpWaHhS+XlZyymoXGS/ANxevDGHlwB1VDSJISG2F9slOSTWIJGVUB4BjK35MKP4E8PhHYyKh
+        uAugq+8Wft8yfqMLFxrdADaN3V0rFgFsr5gEIVU09Sp0fPV1sEGSMZQJ1gwkhjQY9a8EXrRd
+        xUIagkqEPTeniBDeSCXA8eW5sFdKbYP+yvawBqceg60VgfA78uCbg0usIImCAw3zYTqC2gfd
+        tsMhGqNi4fT8WZGAFfDS7U/DaSA1RkLf1dNrAXJh4MMmIOBo+OsVj0TAcfDWyaNr+BBsGvAR
+        grkKQE/Pd2KhkQZ7Gk+JQoMxagtsvZwi0Amw895nQBj8EFxYqhGHJJCSwqqjMkGyGX7/86xI
+        wA/Dc5XHiFpAW9elsa6LYF0Xwfr/MBvAm8EmzsjrNByvNqau/2wXCJ9PYkYHsPt3ewFFAnqD
+        tO2L6QKZmN3PH9R5ASQxOka6c3iqQCYtZg++xZkMhSaLluO9ID246zosTl5kCB6j3lyoTk9N
+        S0tDW9UZ6Wo1HSsll0cKZJSGNXNlHGfkTPd9IjIirhy03XO27sk57M8se+WNB55UTD0hVbXk
+        2fe1K5Q5uc+ye5JHFXV7uTwgtcp/0XSuyp97OSEmev7R3gOv7TqwcGjghVyNLfnMcKYrMq+/
+        9vm+F0WVJvdv/VWzmmeORO+48YHy7/c3NQSmHy//g3qktbGWzPvmy+3nfW8rso5INy9/HM9H
+        1d6mcb6EVSdiJp79Dxo3fjBUBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHefZe9rpavs7GHg2UFlEZZVIfnsCkD11eCCIwuoHZ0Bc1t7n2
+        ql0hK0RaF+2ywnWzvLSWkts0zVu0qZWW4WpzqZW6UhN12CrEW7mtYN/+nPP7nXM+HAoTVRDh
+        VJoyk1UrZXIpKcCfWqWRaxbAnoR1tj4MWVqr+ehXextAZbYWgH5q6zDk+tIDUE1hErrX3EEg
+        o7kHRzcbTSQyaJ/h6N27Sj56e3aUj/SfJghkcjkINHHxM4E0U48w5LnUDFBpVycPOfRXCOSp
+        dAHU2bYV9ZzRk+hxxwsSvWm3ESi3sZmPNJZZEs05jDgarpKg0mIHhoy/mM0RjFajB0z53XLA
+        uJ25fOZWTifOFJmyGJPhPMn0OhpIxlxymjGO1/KYF+MNPCZ/dh0zZRUzVfY8nLlcZQCMxxSx
+        K/iAIDaZladls+rouEOC1Gu6BzxVGTzmfvkGywHmEA0IoiC9AdoHGnANEFAiuh7A56/vA38j
+        DN7obME0gJrPodBq5fzMGIADvX2Ylwml90F9fRPuzYtpNawry+d7IYzOpWBFeyHfbwwAWDBr
+        Ir0USUfB58NOXw6ml0L7pMu3TUjHwY68at9UnF4On+R6fFPF8xuGapz/mBD4uvAr7r0oiD4I
+        zUWnvGWMXgFn7towf5bA7q/3eP4cCWvGbmMFIFQXYOsCFF2AogtQigBuAGGsilOkKLgYVYyS
+        PbqWkym4LGXK2qQMhQn4nihqVS14X5JoATQFpAuFlRXdCSJCls0dV1gApDDpYuG2t84EkTBZ
+        dvwEq85IVGfJWc4CllC4VCL8pmzdL6JTZJlsOsuqWPX/Lo8KCs8Bmxxq0+Ca4PqrDdf3pKsG
+        5uj4I67IHys/9ldsKdYe3nvglfwz4dg4dw4MDU7vjKPLuz6FFeRETO8Xu8fnsusWfIgWx+5Y
+        5D54Z9nqskeb02NGtpfG936Xrb95bTp+h32vvWlUIjd3W2ZGJg27LdV/7giswt8TJ3UXjP01
+        u1uVcQ9HpDiXKouJwtSc7C+oqkdRQAMAAA==
+X-CMS-MailID: 20191124235347epcas1p28508f778af78e31484ff54490986f2fe
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: SVC_REQ_APPROVE
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20191122214539epcas1p34d4ca24634642e8a79c33d7a7c9291ba
+References: <cover.1574458460.git.leonard.crestez@nxp.com>
+        <CGME20191122214539epcas1p34d4ca24634642e8a79c33d7a7c9291ba@epcas1p3.samsung.com>
+        <c0b332b85560e39d7dbb5e88b99bbed1d1b32373.1574458460.git.leonard.crestez@nxp.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-With this driver it is possible to use the BCLK pin of the SAI module as
-a generic clock output. This is esp. useful if you want to drive a clock
-to an audio codec. Because the output only allows integer divider values
-the audio codec needs an integrated PLL.
+Hi Leonard,
 
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/clk/Kconfig       | 12 ++++++
- drivers/clk/Makefile      |  1 +
- drivers/clk/clk-fsl-sai.c | 84 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 97 insertions(+)
- create mode 100644 drivers/clk/clk-fsl-sai.c
+On 11/23/19 6:45 AM, Leonard Crestez wrote:
+> Add driver for dynamic scaling the DDR Controller on imx8m chips. Actual
+> frequency switching is implemented inside TF-A, this driver wraps the
+> SMC calls and synchronizes the clk tree.
+> 
+> The DRAM clocks on imx8m have the following structure (abridged):
+> 
+>  +----------+       |\            +------+
+>  | dram_pll |-------|M| dram_core |      |
+>  +----------+       |U|---------->| D    |
+>                  /--|X|           |  D   |
+>    dram_alt_root |  |/            |   R  |
+>                  |                |    C |
+>             +---------+           |      |
+>             |FIX DIV/4|           |      |
+>             +---------+           |      |
+>   composite:     |                |      |
+>  +----------+    |                |      |
+>  | dram_alt |----/                |      |
+>  +----------+                     |      |
+>  | dram_apb |-------------------->|      |
+>  +----------+                     +------+
+> 
+> The dram_pll is used for higher rates and dram_alt is used for lower
+> rates. The dram_alt and dram_apb clocks are "imx composite" and their
+> parent can also be modified.
+> 
+> This driver will prepare/enable the new parents ahead of switching (so
+> that the expected roots are enabled) and afterwards it will call
+> clk_set_parent to ensure the parents in clock framework are up-to-date.
+> 
+> The driver relies on dram_pll dram_alt and dram_apb being marked with
+> CLK_GET_RATE_NOCACHE for rate updates.
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> ---
+>  drivers/devfreq/Kconfig      |   9 +
+>  drivers/devfreq/Makefile     |   1 +
+>  drivers/devfreq/imx8m-ddrc.c | 465 +++++++++++++++++++++++++++++++++++
+>  3 files changed, 475 insertions(+)
+>  create mode 100644 drivers/devfreq/imx8m-ddrc.c
+> 
+> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> index 59027d7ddf2a..5eac479dd05f 100644
+> --- a/drivers/devfreq/Kconfig
+> +++ b/drivers/devfreq/Kconfig
+> @@ -89,10 +89,19 @@ config ARM_EXYNOS_BUS_DEVFREQ
+>  	  Each memory bus group could contain many memoby bus block. It reads
+>  	  PPMU counters of memory controllers by using DEVFREQ-event device
+>  	  and adjusts the operating frequencies and voltages with OPP support.
+>  	  This does not yet operate with optimal voltages.
+>  
+> +config ARM_IMX8M_DDRC_DEVFREQ
+> +	tristate "i.MX8M DDRC DEVFREQ Driver"
+> +	depends on ARCH_MXC && HAVE_ARM_SMCCC
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index c44247d0b83e..d3bd43e8a912 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -167,6 +167,18 @@ config COMMON_CLK_CS2000_CP
- 	help
- 	  If you say yes here you get support for the CS2000 clock multiplier.
+I'll edit it as following and applied it.
+
+diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+index 5eac479dd05f..38a94df749a2 100644
+--- a/drivers/devfreq/Kconfig
++++ b/drivers/devfreq/Kconfig
+@@ -93,7 +93,8 @@ config ARM_EXYNOS_BUS_DEVFREQ
  
-+config COMMON_CLK_FSL_SAI
-+	bool "Clock driver for BCLK of Freescale SAI cores"
-+	depends on ARCH_LAYERSCAPE || COMPILE_TEST
-+	help
-+	  This driver supports the Freescale SAI (Synchronous Audio Interface)
-+	  to be used as a generic clock output. Some SoCs have restrictions
-+	  regarding the possible pin multiplexer settings. Eg. on some SoCs
-+	  two SAI interfaces can only be enabled together. If just one is
-+	  needed, the BCLK pin of the second one can be used as general
-+	  purpose clock output. Ideally, it can be used to drive an audio
-+	  codec (sometimes known as MCLK).
-+
- config COMMON_CLK_GEMINI
- 	bool "Clock driver for Cortina Systems Gemini SoC"
- 	depends on ARCH_GEMINI || COMPILE_TEST
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 0138fb14e6f8..139f55e544a8 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -28,6 +28,7 @@ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
- obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
- obj-$(CONFIG_ARCH_EFM32)		+= clk-efm32gg.o
- obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
-+obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
- obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
- obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
- obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
-diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
-new file mode 100644
-index 000000000000..b92054d15ab1
---- /dev/null
-+++ b/drivers/clk/clk-fsl-sai.c
-@@ -0,0 +1,84 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Freescale SAI BCLK as a generic clock driver
-+ *
-+ * Copyright 2019 Kontron Europe GmbH
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/slab.h>
-+
-+#define I2S_CSR		0x00
-+#define I2S_CR2		0x08
-+#define CSR_BCE_BIT	28
-+#define CR2_BCD		BIT(24)
-+#define CR2_DIV_SHIFT	0
-+#define CR2_DIV_WIDTH	8
-+
-+struct fsl_sai_clk {
-+	struct clk_divider div;
-+	struct clk_gate gate;
-+	spinlock_t lock;
-+};
-+
-+static void __init fsl_sai_clk_setup(struct device_node *node)
-+{
-+	const char *clk_name = node->name;
-+	struct fsl_sai_clk *sai_clk;
-+	unsigned int num_parents;
-+	const char *parent_name;
-+	void __iomem *base;
-+	struct clk_hw *hw;
-+
-+	num_parents = of_clk_get_parent_count(node);
-+	if (!num_parents) {
-+		pr_err("%s: no parent found", clk_name);
-+		return;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(node, 0);
-+
-+	sai_clk = kzalloc(sizeof(*sai_clk), GFP_KERNEL);
-+	if (!sai_clk)
-+		return;
-+
-+	base = of_iomap(node, 0);
-+	if (base == NULL) {
-+		pr_err("%s: failed to map register space", clk_name);
-+		goto err;
-+	}
-+
-+	spin_lock_init(&sai_clk->lock);
-+
-+	sai_clk->gate.reg = base + I2S_CSR;
-+	sai_clk->gate.bit_idx = CSR_BCE_BIT;
-+	sai_clk->gate.lock = &sai_clk->lock;
-+
-+	sai_clk->div.reg = base + I2S_CR2;
-+	sai_clk->div.shift = CR2_DIV_SHIFT;
-+	sai_clk->div.width = CR2_DIV_WIDTH;
-+	sai_clk->div.lock = &sai_clk->lock;
-+
-+	/* set clock direction, we are the BCLK master */
-+	writel(CR2_BCD, base + I2S_CR2);
-+
-+	hw = clk_hw_register_composite(NULL, clk_name, &parent_name, 1,
-+				       NULL, NULL,
-+				       &sai_clk->div.hw, &clk_divider_ops,
-+				       &sai_clk->gate.hw, &clk_gate_ops,
-+				       CLK_SET_RATE_GATE);
-+	if (IS_ERR(hw))
-+		goto err;
-+
-+	of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
-+
-+	return;
-+
-+err:
-+	kfree(sai_clk);
-+}
-+
-+CLK_OF_DECLARE(fsl_sai_clk, "fsl,vf610-sai-clock", fsl_sai_clk_setup);
--- 
-2.20.1
+ config ARM_IMX8M_DDRC_DEVFREQ
+        tristate "i.MX8M DDRC DEVFREQ Driver"
+-       depends on ARCH_MXC && HAVE_ARM_SMCCC
++       depends on (ARCH_MXC && HAVE_ARM_SMCCC) || \
++               (COMPILE_TEST && HAVE_ARM_SMCCC)
 
+(snip)
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
