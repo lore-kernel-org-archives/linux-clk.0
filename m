@@ -1,227 +1,84 @@
-Return-Path: <SRS0=JUEE=ZQ=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=MLLt=ZR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1491FC432C0
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Nov 2019 23:53:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF59C432C0
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 01:33:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFB4C206E0
-	for <linux-clk@archiver.kernel.org>; Sun, 24 Nov 2019 23:53:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Cz/oz5DA"
+	by mail.kernel.org (Postfix) with ESMTP id 9EBEA20748
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 01:33:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574645593;
+	bh=aHpsAgdjSsrOg3rfp8+01pOTc2dY01+7ldqLq4i00CE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
+	b=Ig8SJDSUXWTKxISiwQN+QtcWiD6m+G0Sal6PINRhw9aqSlmIVsQWeeduQAfF/ecxW
+	 JIoSnGxhde0yXOkcQqanJLItQ5FtppWrs2EF69i4RqRzERfyrGq+b+lsDeMHCi7PIa
+	 eC8990n1aCYw2IJEkl3Jc+SuVd6b8cRP7TJeCS+0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfKXXx5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 24 Nov 2019 18:53:57 -0500
-Received: from mailout2.samsung.com ([203.254.224.25]:43962 "EHLO
-        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726861AbfKXXx5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 24 Nov 2019 18:53:57 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20191124235353epoutp02983ef58cefea583500e3e91a465ea769~aPmd1vhnc0272402724epoutp020
-        for <linux-clk@vger.kernel.org>; Sun, 24 Nov 2019 23:53:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20191124235353epoutp02983ef58cefea583500e3e91a465ea769~aPmd1vhnc0272402724epoutp020
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1574639633;
-        bh=AVvdCtMY//59JkfT+HX/3Kx1Dzwu9AgzcPoN1Jdpdt8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=Cz/oz5DAAUC2aZ8t+UcwtXzs95cjBc1hP7+2mvnw4jFhrerHyCS3RLb5rCPltOpCH
-         jufLCbhRzZxprdSiFIHBILNV3fhe0WejA1BYhdtRmJbX9Ki5HS1ZXz8I/wPs36qi1r
-         L8TUYUTp3436XjYlnfwiKDDFjFwa16tFn6f9JhLg=
-Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20191124235352epcas1p3fed83ed00327ba1521f2b91b5819fdfe~aPmc9ok1a1532315323epcas1p3l;
-        Sun, 24 Nov 2019 23:53:52 +0000 (GMT)
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
-        epsnrtp3.localdomain (Postfix) with ESMTP id 47Ln7J23CczMqYkZ; Sun, 24 Nov
-        2019 23:53:48 +0000 (GMT)
-Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        DC.DE.48498.C081BDD5; Mon, 25 Nov 2019 08:53:48 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191124235347epcas1p28508f778af78e31484ff54490986f2fe~aPmXrHABF0205002050epcas1p2k;
-        Sun, 24 Nov 2019 23:53:47 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191124235347epsmtrp1c1294cb0c214ff9bcda9b225b2d1ed49~aPmXp1pT32074420744epsmtrp1g;
-        Sun, 24 Nov 2019 23:53:47 +0000 (GMT)
-X-AuditID: b6c32a36-a55ff7000001bd72-90-5ddb180cb625
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-        AD.9F.10238.B081BDD5; Mon, 25 Nov 2019 08:53:47 +0900 (KST)
-Received: from [10.113.221.102] (unknown [10.113.221.102]) by
-        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191124235346epsmtip2b7ab829c6bf0a17771700d4bc29825ce~aPmXRJ2Sq1614516145epsmtip2t;
-        Sun, 24 Nov 2019 23:53:46 +0000 (GMT)
-Subject: Re: [PATCH v7 4/5] PM / devfreq: Add dynamic scaling for imx8m ddr
- controller
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Shawn Guo <shawnguo@kernel.org>,
+        id S1727085AbfKYBdN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 24 Nov 2019 20:33:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55986 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727072AbfKYBdN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 24 Nov 2019 20:33:13 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ACC2E2071A;
+        Mon, 25 Nov 2019 01:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574645592;
+        bh=aHpsAgdjSsrOg3rfp8+01pOTc2dY01+7ldqLq4i00CE=;
+        h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+        b=D8PBOxbCRzzQhyZbLmVoTvPRZ7rw8j+3TLcwyseOPwsesl4rL6dOwuJT+FAdTYbqe
+         jwMiElG4yu5Dho9tcm01+RCWozxPy45if3LATu3fdRZR6Z9F7andgjD750MThY+Fy8
+         IDmVsaMVkzBLzbSjyaJbQQ1qV+LaiDgkY63NqcYs=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAAfSe-twxx4PyERHXuYcoehPoNYiVaOS4hZEK0KndoM2sL_5gQ@mail.gmail.com>
+References: <20191025111338.27324-1-chunyan.zhang@unisoc.com> <20191025111338.27324-6-chunyan.zhang@unisoc.com> <20191113221952.AD925206E3@mail.kernel.org> <CAAfSe-twxx4PyERHXuYcoehPoNYiVaOS4hZEK0KndoM2sL_5gQ@mail.gmail.com>
+Subject: Re: [PATCH 5/5] clk: sprd: add clocks support for SC9863A
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     Chunyan Zhang <chunyan.zhang@unisoc.com>,
         Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Martin Kepplinger <martink@posteo.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Silvano di Ninno <silvano.dininno@nxp.com>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-Message-ID: <f8838bc8-44db-551f-3199-eeea91e493f7@samsung.com>
-Date:   Mon, 25 Nov 2019 08:59:53 +0900
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
-        Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <c0b332b85560e39d7dbb5e88b99bbed1d1b32373.1574458460.git.leonard.crestez@nxp.com>
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01TbUxbVRj29N7eXnB1l0LHESMtdzFxKNDCwIOBuQibN2xm+BFjFhnewE0h
-        9MvednNuTvxgMGQbZOJC1a3pxlIQhX6wwQSRUtkY0AnyFRA1A5NNHTgrC2Gitr0s8u95n/d5
-        zpvnPXlJTNYriSNL9WbOpGe1NBGJX+zbkpK0Ac4UqOxDDyJvf7sELQ1eA+jC6LcA/VV/GUNz
-        P80AdKmhCJ31+cXI6Z7B0eluF4Ga6ztxdP16mwQNv/e7BDlm74iRa25CjO7U/ChG1StNGAoc
-        9wHUODkiQhOOOjEKtM0BNHJtB5p510Ggz/29BBoaHBWjim6fBFV7Vwn0z4QTRzc9sajx3ASG
-        nEvM9nimvtoBmJYzLYBZnKqQMJ+Uj+CMzWVhXM3HCOaHiS6CcZ9/h3EudIiY3oUuEXNyVcWs
-        9MkZz3glzpzwNAMm4IrP37i3LKuEY4s5k5LTFxmKS/WabHrXS4U5hekZKnWSOhM9RSv1rI7L
-        pnN35yftLNUGd0Qr97NaS5DKZ3meTtmWZTJYzJyyxMCbs2nOWKw1ZhqTeVbHW/Sa5CKD7mm1
-        SpWaHhS+XlZyymoXGS/ANxevDGHlwB1VDSJISG2F9slOSTWIJGVUB4BjK35MKP4E8PhHYyKh
-        uAugq+8Wft8yfqMLFxrdADaN3V0rFgFsr5gEIVU09Sp0fPV1sEGSMZQJ1gwkhjQY9a8EXrRd
-        xUIagkqEPTeniBDeSCXA8eW5sFdKbYP+yvawBqceg60VgfA78uCbg0usIImCAw3zYTqC2gfd
-        tsMhGqNi4fT8WZGAFfDS7U/DaSA1RkLf1dNrAXJh4MMmIOBo+OsVj0TAcfDWyaNr+BBsGvAR
-        grkKQE/Pd2KhkQZ7Gk+JQoMxagtsvZwi0Amw895nQBj8EFxYqhGHJJCSwqqjMkGyGX7/86xI
-        wA/Dc5XHiFpAW9elsa6LYF0Xwfr/MBvAm8EmzsjrNByvNqau/2wXCJ9PYkYHsPt3ewFFAnqD
-        tO2L6QKZmN3PH9R5ASQxOka6c3iqQCYtZg++xZkMhSaLluO9ID246zosTl5kCB6j3lyoTk9N
-        S0tDW9UZ6Wo1HSsll0cKZJSGNXNlHGfkTPd9IjIirhy03XO27sk57M8se+WNB55UTD0hVbXk
-        2fe1K5Q5uc+ye5JHFXV7uTwgtcp/0XSuyp97OSEmev7R3gOv7TqwcGjghVyNLfnMcKYrMq+/
-        9vm+F0WVJvdv/VWzmmeORO+48YHy7/c3NQSmHy//g3qktbGWzPvmy+3nfW8rso5INy9/HM9H
-        1d6mcb6EVSdiJp79Dxo3fjBUBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0iTYRTHefZe9rpavs7GHg2UFlEZZVIfnsCkD11eCCIwuoHZ0Bc1t7n2
-        ql0hK0RaF+2ywnWzvLSWkts0zVu0qZWW4WpzqZW6UhN12CrEW7mtYN/+nPP7nXM+HAoTVRDh
-        VJoyk1UrZXIpKcCfWqWRaxbAnoR1tj4MWVqr+ehXextAZbYWgH5q6zDk+tIDUE1hErrX3EEg
-        o7kHRzcbTSQyaJ/h6N27Sj56e3aUj/SfJghkcjkINHHxM4E0U48w5LnUDFBpVycPOfRXCOSp
-        dAHU2bYV9ZzRk+hxxwsSvWm3ESi3sZmPNJZZEs05jDgarpKg0mIHhoy/mM0RjFajB0z53XLA
-        uJ25fOZWTifOFJmyGJPhPMn0OhpIxlxymjGO1/KYF+MNPCZ/dh0zZRUzVfY8nLlcZQCMxxSx
-        K/iAIDaZladls+rouEOC1Gu6BzxVGTzmfvkGywHmEA0IoiC9AdoHGnANEFAiuh7A56/vA38j
-        DN7obME0gJrPodBq5fzMGIADvX2Ylwml90F9fRPuzYtpNawry+d7IYzOpWBFeyHfbwwAWDBr
-        Ir0USUfB58NOXw6ml0L7pMu3TUjHwY68at9UnF4On+R6fFPF8xuGapz/mBD4uvAr7r0oiD4I
-        zUWnvGWMXgFn7towf5bA7q/3eP4cCWvGbmMFIFQXYOsCFF2AogtQigBuAGGsilOkKLgYVYyS
-        PbqWkym4LGXK2qQMhQn4nihqVS14X5JoATQFpAuFlRXdCSJCls0dV1gApDDpYuG2t84EkTBZ
-        dvwEq85IVGfJWc4CllC4VCL8pmzdL6JTZJlsOsuqWPX/Lo8KCs8Bmxxq0+Ca4PqrDdf3pKsG
-        5uj4I67IHys/9ldsKdYe3nvglfwz4dg4dw4MDU7vjKPLuz6FFeRETO8Xu8fnsusWfIgWx+5Y
-        5D54Z9nqskeb02NGtpfG936Xrb95bTp+h32vvWlUIjd3W2ZGJg27LdV/7giswt8TJ3UXjP01
-        u1uVcQ9HpDiXKouJwtSc7C+oqkdRQAMAAA==
-X-CMS-MailID: 20191124235347epcas1p28508f778af78e31484ff54490986f2fe
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: SVC_REQ_APPROVE
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20191122214539epcas1p34d4ca24634642e8a79c33d7a7c9291ba
-References: <cover.1574458460.git.leonard.crestez@nxp.com>
-        <CGME20191122214539epcas1p34d4ca24634642e8a79c33d7a7c9291ba@epcas1p3.samsung.com>
-        <c0b332b85560e39d7dbb5e88b99bbed1d1b32373.1574458460.git.leonard.crestez@nxp.com>
+        Rob Herring <robh+dt@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>
+To:     Chunyan Zhang <zhang.lyra@gmail.com>
+User-Agent: alot/0.8.1
+Date:   Sun, 24 Nov 2019 17:33:11 -0800
+Message-Id: <20191125013312.ACC2E2071A@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Leonard,
+Quoting Chunyan Zhang (2019-11-17 03:27:15)
+>=20
+> Not sure if I understand correctly - do you mean that switch to use a
+> reference to clk_parent_data.hw in the driver instead?
+> like:
+> https://elixir.bootlin.com/linux/v5.4-rc7/source/drivers/clk/qcom/gcc-sm8=
+150.c#L136
+>=20
 
-On 11/23/19 6:45 AM, Leonard Crestez wrote:
-> Add driver for dynamic scaling the DDR Controller on imx8m chips. Actual
-> frequency switching is implemented inside TF-A, this driver wraps the
-> SMC calls and synchronizes the clk tree.
-> 
-> The DRAM clocks on imx8m have the following structure (abridged):
-> 
->  +----------+       |\            +------+
->  | dram_pll |-------|M| dram_core |      |
->  +----------+       |U|---------->| D    |
->                  /--|X|           |  D   |
->    dram_alt_root |  |/            |   R  |
->                  |                |    C |
->             +---------+           |      |
->             |FIX DIV/4|           |      |
->             +---------+           |      |
->   composite:     |                |      |
->  +----------+    |                |      |
->  | dram_alt |----/                |      |
->  +----------+                     |      |
->  | dram_apb |-------------------->|      |
->  +----------+                     +------+
-> 
-> The dram_pll is used for higher rates and dram_alt is used for lower
-> rates. The dram_alt and dram_apb clocks are "imx composite" and their
-> parent can also be modified.
-> 
-> This driver will prepare/enable the new parents ahead of switching (so
-> that the expected roots are enabled) and afterwards it will call
-> clk_set_parent to ensure the parents in clock framework are up-to-date.
-> 
-> The driver relies on dram_pll dram_alt and dram_apb being marked with
-> CLK_GET_RATE_NOCACHE for rate updates.
-> 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
-> ---
->  drivers/devfreq/Kconfig      |   9 +
->  drivers/devfreq/Makefile     |   1 +
->  drivers/devfreq/imx8m-ddrc.c | 465 +++++++++++++++++++++++++++++++++++
->  3 files changed, 475 insertions(+)
->  create mode 100644 drivers/devfreq/imx8m-ddrc.c
-> 
-> diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-> index 59027d7ddf2a..5eac479dd05f 100644
-> --- a/drivers/devfreq/Kconfig
-> +++ b/drivers/devfreq/Kconfig
-> @@ -89,10 +89,19 @@ config ARM_EXYNOS_BUS_DEVFREQ
->  	  Each memory bus group could contain many memoby bus block. It reads
->  	  PPMU counters of memory controllers by using DEVFREQ-event device
->  	  and adjusts the operating frequencies and voltages with OPP support.
->  	  This does not yet operate with optimal voltages.
->  
-> +config ARM_IMX8M_DDRC_DEVFREQ
-> +	tristate "i.MX8M DDRC DEVFREQ Driver"
-> +	depends on ARCH_MXC && HAVE_ARM_SMCCC
+Yes something like that.
 
-I'll edit it as following and applied it.
+> Since if I have to define many clk_parent_data.fw_name strings
+> instead, it seems not able to reduce the code size, right?
 
-diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
-index 5eac479dd05f..38a94df749a2 100644
---- a/drivers/devfreq/Kconfig
-+++ b/drivers/devfreq/Kconfig
-@@ -93,7 +93,8 @@ config ARM_EXYNOS_BUS_DEVFREQ
- 
- config ARM_IMX8M_DDRC_DEVFREQ
-        tristate "i.MX8M DDRC DEVFREQ Driver"
--       depends on ARCH_MXC && HAVE_ARM_SMCCC
-+       depends on (ARCH_MXC && HAVE_ARM_SMCCC) || \
-+               (COMPILE_TEST && HAVE_ARM_SMCCC)
+Ideally there are some internal only clks that can be linked to their
+parent with a single clk_hw pointer. That will hopefully keep the size
+down somewhat. And if there are any external clks, they can be described
+in DT and then only the .fw_name field can be used and the fallback
+field .name can be left assigned to NULL.
 
-(snip)
-
--- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
