@@ -2,110 +2,120 @@ Return-Path: <SRS0=MLLt=ZR=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 008FFC432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 14:00:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88414C432C0
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 14:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC40B2084D
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 14:00:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jY4XKY/9"
+	by mail.kernel.org (Postfix) with ESMTP id 6746420748
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 14:11:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727767AbfKYN74 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Nov 2019 08:59:56 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40863 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727946AbfKYN7x (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Nov 2019 08:59:53 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v24so11088865lfi.7
-        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2019 05:59:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=wJXgU1Ng7cyLAs4JFhWANoeuEktL+F9+1MeqR48Alzc=;
-        b=jY4XKY/91dQiNFPe3L28KbxvxKBrbFtLaZUgSfddAtxodbkHZ/5fHWRIsna8DA7F5H
-         miUjEE5uOvc5q98pK6uq7K1CFVeJNxQVGYLF/8tUhfoBQFknfL42uEI3ux8tT8A5SJkE
-         suN+xr+gBO5ofHQDROHoK47oIsE6kTvX5JFZ6+toL498YiRRb8hI9KaVo0gj3KUYIu/c
-         VW/lgGSdP6dhTZ6H4lT2ERz58FjnvUYva+MBYjt+j78jMD0l71zjGKD4vK0IZm/7vdJc
-         hBlSiFQvqSMgCDISmW/RItDQrV9pPchpHpmY89mzDj/9+HBCY6m5NFfi09aA3iJlDMRz
-         9I9g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=wJXgU1Ng7cyLAs4JFhWANoeuEktL+F9+1MeqR48Alzc=;
-        b=i9meJRgDE1Gul4Ha3E+/r7MjHg/kv6tmlFMhoviYm7eQXDpPpBNSdboWjVFmHq8Kcs
-         kBElFmhU5BLPkaFZIlVPeH15pEpisuuo8oyJmu3FYe/NScfK7q4HTCjNqB9sPintceJ2
-         MOj6d5O25Vby4tJsnfoTjbHXPvcJo3JipuPPMhF8hhLK84q8is2yMDthSjct2rVLeAW9
-         /92OmpgjKCDO+r1RsHJCJXBnWY5jGKM8ABXj2sTG6M6Wo8KATDRkIIo8zfPyEga7G4Jf
-         XC2DksMn3gQ3Y038FEymfnabmpUG4T6M2ZsrXaY4up3gg9VlSw4fB8QwW/VAKr7rfAL0
-         bFgw==
-X-Gm-Message-State: APjAAAXpGhEGQwPyiZlHlNZhGa23SPXItuXWA21J0jU4D9i1EvzH+Z7c
-        Hk3+p6aCJiVqYTeMlRLj1eseXw==
-X-Google-Smtp-Source: APXvYqz3x/As1OKwSedf76XPDYruYgbzSqZRbTQCUjUICqB818J+1El2T/CtYyY7mD7TaivthOYGaA==
-X-Received: by 2002:ac2:5a08:: with SMTP id q8mr20791341lfn.106.1574690390726;
-        Mon, 25 Nov 2019 05:59:50 -0800 (PST)
-Received: from centauri.lan (ua-84-217-220-205.bbcust.telenor.se. [84.217.220.205])
-        by smtp.gmail.com with ESMTPSA id g11sm3688529lfb.94.2019.11.25.05.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 25 Nov 2019 05:59:50 -0800 (PST)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
-        sboyd@kernel.org,
-        Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
+        id S1727865AbfKYOLZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Nov 2019 09:11:25 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:43692 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727666AbfKYOLZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 25 Nov 2019 09:11:25 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id E46E320C1C;
+        Mon, 25 Nov 2019 15:11:22 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id CDF0620BCE;
+        Mon, 25 Nov 2019 15:11:22 +0100 (CET)
+Subject: Re: [PATCH v1] clk: Add devm_clk_{prepare,enable,prepare_enable}
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3 6/7] clk: qcom: apcs-msm8916: silently error out on EPROBE_DEFER
-Date:   Mon, 25 Nov 2019 14:59:08 +0100
-Message-Id: <20191125135910.679310-7-niklas.cassel@linaro.org>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191125135910.679310-1-niklas.cassel@linaro.org>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org>
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
+ <34e32662-c909-9eb3-e561-3274ad0bf3cc@free.fr>
+ <20191125125530.GP25745@shell.armlinux.org.uk>
+ <c7414301-da0d-cd4d-237d-34277f5ee1d2@free.fr>
+ <20191125133752.GS25745@shell.armlinux.org.uk>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Message-ID: <21c242a9-3599-3288-79bf-a8889fad2a73@free.fr>
+Date:   Mon, 25 Nov 2019 15:11:22 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191125133752.GS25745@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Mon Nov 25 15:11:22 2019 +0100 (CET)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+On 25/11/2019 14:37, Russell King - ARM Linux admin wrote:
 
-If devm_clk_get() fails due to probe deferral, we shouldn't print an
-error message. Just be silent in this case.
+> On Mon, Nov 25, 2019 at 02:10:21PM +0100, Marc Gonzalez wrote:
+>
+>> On 25/11/2019 13:55, Russell King - ARM Linux admin wrote:
+>>
+>>> It's also worth reading https://lore.kernel.org/patchwork/patch/755667/
+>>> and considering whether you really are using the clk_prepare() and
+>>> clk_enable() APIs correctly.  Wanting these devm functions suggests
+>>> you aren't...
+>>
+>> In that older thread, you wrote:
+>>
+>>> If you take the view that trying to keep clocks disabled is a good way
+>>> to save power, then you'd have the clk_prepare() or maybe
+>>> clk_prepare_enable() in your run-time PM resume handler, or maybe even
+>>> deeper in the driver... the original design goal of the clk API was to
+>>> allow power saving and clock control.
+>>>
+>>> With that in mind, getting and enabling the clock together in the
+>>> probe function didn't make sense.
+>>>
+>>> I feel that aspect has been somewhat lost, and people now regard much
+>>> of the clk API as a bit of a probe-time nuisance.
+>>
+>> In the few drivers I've written, I call clk_prepare_enable() at probe.
+> 
+> Right, so the clocks are enabled as soon as the device is probed,
+> in other words at boot time. It remains enabled for as long as the
+> device is bound to its driver, whether or not the device is actually
+> being used. Every switching edge causes heat to be generated. Every
+> switching edge causes energy to be wasted.
+> 
+> That's fine if you have an infinite energy supply. That hasn't been
+> discovered yet.
+> 
+> Given the prevalence of technology, don't you think we should be
+> doing as much as we possibly can to reduce the energy consumption
+> of the devices we use? It may be peanuts per device, but at scale
+> it all adds up.
 
-Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
-Changes since v2:
--New patch. (This change was previously part of another
-patch in this series.)
+OK, I'm starting to see the bigger picture.
 
- drivers/clk/qcom/apcs-msm8916.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+(To provide some rationale for the patch, I think devm is a huge
+improvement for probe error-handling, and I did not understand
+why every driver must do manual error-handling when dealing with
+clocks in probe.)
 
-diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-index a6c89a310b18..46061b3d230e 100644
---- a/drivers/clk/qcom/apcs-msm8916.c
-+++ b/drivers/clk/qcom/apcs-msm8916.c
-@@ -79,7 +79,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
- 	a53cc->pclk = devm_clk_get(parent, NULL);
- 	if (IS_ERR(a53cc->pclk)) {
- 		ret = PTR_ERR(a53cc->pclk);
--		dev_err(dev, "failed to get clk: %d\n", ret);
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(dev, "failed to get clk: %d\n", ret);
- 		return ret;
- 	}
- 
--- 
-2.23.0
+I did envision kernel modules being loaded on an as-needed basis,
+somewhat side-stepping the energy-waste issue you point out.
+But I realize that such a use-case may be uncommon. (Especially
+due to module auto-loading.)
 
+A few months ago, I was discussing a similar issue with GKH:
+Consider a device with a "START" register. Basically, if we write 0,
+the device turns itself off; if we write 1, it runs as configured.
+
+I was trying to start the device only when at least one user had
+it "open". So I used reference counting, and started the device
+on 0->1 open transitions, and stopped the device on 1->0 close
+transitions. GKH told me that was the wrong way to do it, and IIRC
+suggested to start the device in probe.
+
+I probably misunderstood Greg's suggestion. Where is the right place
+to start/stop a device (or gate its clocks)?
+
+Regards.
