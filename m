@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C07C432C0
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 12:52:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DF2EC43215
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 12:55:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3828A2082F
-	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 12:52:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24C702082F
+	for <linux-clk@archiver.kernel.org>; Mon, 25 Nov 2019 12:55:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="yWGq8b99"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="wBbIMGcQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727193AbfKYMwk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Nov 2019 07:52:40 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:34752 "EHLO
+        id S1726926AbfKYMzh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Nov 2019 07:55:37 -0500
+Received: from pandora.armlinux.org.uk ([78.32.30.218]:34800 "EHLO
         pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725823AbfKYMwk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Nov 2019 07:52:40 -0500
+        with ESMTP id S1727577AbfKYMzh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Nov 2019 07:55:37 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
         MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
         List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lGiS2h5LkAFhAPuwBNqfpb6MGmFChlVpjwcOwc0zxAU=; b=yWGq8b994ljO+OiBl8buR4HBn
-        2Kod0h4Rh7hjAFR44DOIK3EFprUO2pO6TuZZ5Att8Q9ueVnh+imfh2H2+tsaga3Z5LUd5P64h2NXd
-        ceQd4w0+muTw6hA1kYnnCXUtOlYki1OL4B1nm/+5d+ney0EYZkfBw1HumqMGb91l1fGh1lwalmIie
-        F8c6VnQA9wal8jrJe9RVVQVPUGAnjcTllUnFRQzk9H41ekrOcGONXiM4xYpbDwbku1GB18eKQqjCQ
-        7+sTpb2/Yv3n1Il3fT5unU7RuC3GrHUbdMztePhyTSUyB5eVEkI2up5/7L27XTEmyEQdP4pYGS12R
-        7rSLUHhVQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44420)
+         bh=YNG9MHfU+4M/7tHZfAwuQAAIZ/jdAGHITsMC8SlHI3Y=; b=wBbIMGcQJbcYna2ZsphcX+i1S
+        PgCnDMaRIpct7x1uzMA0U8sMvKwsoIbuYIt0Vp6dMX7KLCyw70C3vXSxC/mFztoKbwXlonSd+ZU5Y
+        AM7eNSnl6+gKq2ovIdeMhOVlLuXIW6q7AaufEY+oSC/ebXLH76b3so6nxlA3uOs7lZGJShT1jUFkV
+        O4ghOdBi2HBbuPuLx/VFh1ULpLl9533bCkCF5HiSwUdqvIDnOuJtUkbPiKcfpwQ+HoAqD7XmD0MKP
+        AEXVPwjVPpr5Vca8TvJY5VW03rYW3NEBrAFbIbnpcQiWA819rPFM30c0kj3DUzdnP7mHL4BpwYPS4
+        hz9eUYArg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44422)
         by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
         (Exim 4.90_1)
         (envelope-from <linux@armlinux.org.uk>)
-        id 1iZDr0-0007lR-03; Mon, 25 Nov 2019 12:52:34 +0000
+        id 1iZDtr-0007nO-Jj; Mon, 25 Nov 2019 12:55:31 +0000
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.92)
         (envelope-from <linux@shell.armlinux.org.uk>)
-        id 1iZDqx-0006g2-VL; Mon, 25 Nov 2019 12:52:31 +0000
-Date:   Mon, 25 Nov 2019 12:52:31 +0000
+        id 1iZDtq-0006gE-RQ; Mon, 25 Nov 2019 12:55:30 +0000
+Date:   Mon, 25 Nov 2019 12:55:30 +0000
 From:   Russell King - ARM Linux admin <linux@armlinux.org.uk>
 To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
 Cc:     Stephen Boyd <sboyd@kernel.org>,
@@ -50,7 +50,7 @@ Cc:     Stephen Boyd <sboyd@kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
         LKML <linux-kernel@vger.kernel.org>
 Subject: Re: [PATCH v1] clk: Add devm_clk_{prepare,enable,prepare_enable}
-Message-ID: <20191125125231.GO25745@shell.armlinux.org.uk>
+Message-ID: <20191125125530.GP25745@shell.armlinux.org.uk>
 References: <1d7a1b3b-e9bf-1d80-609d-a9c0c932b15a@free.fr>
  <34e32662-c909-9eb3-e561-3274ad0bf3cc@free.fr>
 MIME-Version: 1.0
@@ -154,8 +154,10 @@ On Mon, Nov 25, 2019 at 01:46:51PM +0100, Marc Gonzalez wrote:
 > 
 > Thoughts? Comments?
 
-These are part of the clk API rather than the CCF API, and belong in
-drivers/clk/clk-devres.c.
+It's also worth reading https://lore.kernel.org/patchwork/patch/755667/
+and considering whether you really are using the clk_prepare() and
+clk_enable() APIs correctly.  Wanting these devm functions suggests
+you aren't...
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
