@@ -2,209 +2,156 @@ Return-Path: <SRS0=Oace=ZS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A53D4C432C3
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 02:34:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA4C432C3
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 15:34:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87EE6207FD
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 02:34:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0122F2075C
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 15:34:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w864Jom6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727388AbfKZCez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Nov 2019 21:34:55 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:22340 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727420AbfKZCez (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Nov 2019 21:34:55 -0500
-Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 26 Nov
- 2019 10:35:17 +0800
-Subject: Re: [PATCH v2 3/3] clk: meson: a1: add support for Amlogic A1 clock
- driver
-From:   Jian Hu <jian.hu@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
- <1571382865-41978-4-git-send-email-jian.hu@amlogic.com>
- <1jsgnmba1a.fsf@starbuckisacylon.baylibre.com>
- <49b33e94-910b-3fd9-4da1-050742d07e93@amlogic.com>
- <1jblts3v7e.fsf@starbuckisacylon.baylibre.com>
- <f02b6fb2-5b98-0930-6d47-a3e65840fb82@amlogic.com>
- <1jh839f2ue.fsf@starbuckisacylon.baylibre.com>
- <20d04452-fc63-9e9e-220f-146b493a860f@amlogic.com>
- <1695e9b0-1730-eef6-491d-fe90ac897ee9@amlogic.com>
- <1jtv6yftmm.fsf@starbuckisacylon.baylibre.com>
- <9e652ed1-384e-f630-f2a4-0aa4486df577@amlogic.com>
- <1j7e3oqn36.fsf@starbuckisacylon.baylibre.com>
- <9ec317e8-136e-1ab4-4e9b-21210e7f3e05@amlogic.com>
- <1j5zj8qgsl.fsf@starbuckisacylon.baylibre.com>
- <7a3f1e14-e5a5-407a-335a-eb68d3082eb9@amlogic.com>
-Message-ID: <1ca0c5e1-8417-c5dc-7ad1-80ea707554b2@amlogic.com>
-Date:   Tue, 26 Nov 2019 10:35:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1727754AbfKZPel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Nov 2019 10:34:41 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:40799 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727121AbfKZPel (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Nov 2019 10:34:41 -0500
+Received: by mail-wm1-f66.google.com with SMTP id y5so3821365wmi.5
+        for <linux-clk@vger.kernel.org>; Tue, 26 Nov 2019 07:34:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XHpKE1+pRggjDZg3Vcgn+vzDPH0txuMe168rRQcCK68=;
+        b=w864Jom6wGOmf6sK60smmKGgc+SuwnyTekrouut8YkgOdmKIfioXo3WWtSDucAjPNR
+         WYKH+7MhO2oaQ9OqDIvgWkjg0gy/lDu2VqmCi1+47V3irPn/aerma/cNc+OgLkYbpTyH
+         CK7aZ5jQxixxxlW8zjdxfFjho+2+qTp5vmCBmWo0zLC5A1qdhl2zdj8AnrzS/LUQjeJn
+         d+DDxvSktWFPp/y1YVj/1M1uMqwu9eGg16S8p9ywtgFt4VUup4/ERB5fMdSXrSn88XF5
+         uigHb9uV0hTG3cpI79vb1GnmTXZPwgXeyH3d0RvNJaMIS299a/Jqhh4kKigHioRL0uY5
+         U9Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=XHpKE1+pRggjDZg3Vcgn+vzDPH0txuMe168rRQcCK68=;
+        b=PeKciOR8bjYVjoHwAy7t+xCwlLyRv3KlZa81N97W5h6jGYgeO92b0koa6rlMxNNrXm
+         zOS7ijvQRvECjN5wSBBcj/hrvx3ailXSzK3gH8JrmEtqS0V5U0ljvdKsMY8kDDbG6NdZ
+         vVJt/uo3Jg0vUyC6H3THSZcmSpuTzeiHSmVr2GF8zNookDaO7oVlQMY0HYAUbmqb2yS0
+         ELP+alTd0xl+v7rfuTiAQPmLQOSZvcNG2huakGkIXpyR/1IZ7SbiXvdAo8RdIqiZNt5b
+         hniG6UrX4gCxp8q/ZRB1VHFYpbXVUA+CuIYkfECzgjaoqA3w9cXK7h+Z9jDWogAIetKY
+         m+aQ==
+X-Gm-Message-State: APjAAAXmcAaPKLTkbYv/rYrL13YSuMVAb/LC4ilp337O/RsFHVMxwUA6
+        HbVAmhS8fh4XeO5eAF1brttNBA==
+X-Google-Smtp-Source: APXvYqwdGDfHspdrOG2iQl8u6+NKrF41ljngXKadaalKOG2vajrUY33xi2U+YTG7fb3uci99JUykvw==
+X-Received: by 2002:a1c:6144:: with SMTP id v65mr5025056wmb.53.1574782479214;
+        Tue, 26 Nov 2019 07:34:39 -0800 (PST)
+Received: from localhost.localdomain ([212.45.67.2])
+        by smtp.googlemail.com with ESMTPSA id j10sm15210748wrx.30.2019.11.26.07.34.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 26 Nov 2019 07:34:38 -0800 (PST)
+From:   Georgi Djakov <georgi.djakov@linaro.org>
+To:     sboyd@kernel.org, bjorn.andersson@linaro.org, robdclark@gmail.com
+Cc:     mturquette@baylibre.com, agross@kernel.org, tdas@codeaurora.org,
+        anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        georgi.djakov@linaro.org
+Subject: [PATCH] clk: qcom: gcc-sdm845: Add missing flag to votable GDSCs
+Date:   Tue, 26 Nov 2019 17:34:37 +0200
+Message-Id: <20191126153437.11808-1-georgi.djakov@linaro.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <7a3f1e14-e5a5-407a-335a-eb68d3082eb9@amlogic.com>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Originating-IP: [10.28.39.99]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On sdm845 devices, during boot we see the following warnings (unless we
+have added 'pd_ignore_unused' to the kernel command line):
+	hlos1_vote_mmnoc_mmu_tbu_sf_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu2_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu1_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc status stuck at 'on'
 
+As the name of these GDSCs suggests, they are "votable" and in downstream
+DT, they all have the property "qcom,no-status-check-on-disable", which
+means that we should not poll the status bit when we disable them.
 
-On 2019/11/25 21:51, Jian Hu wrote:
-> 
-> 
-> On 2019/11/25 20:30, Jerome Brunet wrote:
->>
->> On Mon 25 Nov 2019 at 13:01, Jian Hu <jian.hu@amlogic.com> wrote:
->>
->>> On 2019/11/25 18:14, Jerome Brunet wrote:
->>>>
->>>> On Thu 21 Nov 2019 at 04:21, Jian Hu <jian.hu@amlogic.com> wrote:
->>>>
->>>>> Hi, Jerome
->>>>>
->>>>> On 2019/11/20 23:35, Jerome Brunet wrote:
->>>>>>
->>>>>> On Wed 20 Nov 2019 at 10:28, Jian Hu <jian.hu@amlogic.com> wrote:
->>>>>>
->>>>>>> Hi, jerome
->>>>>>>
->>>>>>> Is there any problem about fixed_pll_dco's parent_data?
->>>>>>>
->>>>>>> Now both name and fw_name are described in parent_data.
->>>>>>
->>>>>> Yes, there is a problem.  This approach is incorrect, as I've 
->>>>>> tried to
->>>>>> explain a couple times already. Let me try to re-summarize why this
->>>>>> approach is incorrect.
->>>>>>
->>>>>> Both fw_name and name should be provided when it is possible that
->>>>>> the DT does not describe the input clock. IOW, it is only for 
->>>>>> controllers
->>>>>> which relied on the global name so far and are now starting to 
->>>>>> describe
->>>>>> the clock input in DT
->>>>>>
->>>>>> This is not your case.
->>>>>> Your controller is new and DT will have the correct
->>>>>> info
->>>>>>
->>>>>> You are trying work around an ordering issue by providing both 
->>>>>> fw_name
->>>>>> and name. This is not correct and I'll continue to nack it.
->>>>>>
->>>>>> If the orphan clock is not reparented as you would expect, I 
->>>>>> suggest you
->>>>>> try to look a bit further at how the reparenting of orphans is 
->>>>>> done in
->>>>>> CCF and why it does not match your expectation.
->>>>>>
->>>>> I have debugged the handle for orphan clock in CCF, Maybe you are 
->>>>> missing
->>>>> the last email.
->>>>
->>>> Nope, got it the first time
->>>>
->>>>> Even though the clock index exit, it will get failed for the orphan 
->>>>> clock's
->>>>> parent clock due to it has not beed added to the provider.
->>>>
->>>> If the provider is not registered yet, of course any query to it won't
->>>> work. This why I have suggested to this debug *further* :
->>>>
->>>> * Is the orphan reparenting done when a new provider is registered ?
->>>> * If not, should it be done ? is this your problem ?
->>>>
->>
->> Apparently, I was not clear enough so I'll rephrase
->>
->>> Yes, the orphan reparenting is done when the new provider is
->>> registered.
->>
->> No it is not done yet. Please check the code.
->>
->> The reparenting of orphan is done only on clock registration, not on
->> provider registeration. Now that clocks can be specified by DT, this
->> probably needs to added.The action of reparenting the orphan is before 
->> the provider registration 
-> with the current code.
->>
->> That is your problem.
-> Yes, if the provider is registered before the clock registration, it
-> will reparent successfully.
->>
->> Please fix the underlying issue, then you can post your series again.
->>
->>>
->>> Reparenting the orphan will be done when each clock is registered by
->>> devm_clk_hw_register. And at this time the provider has not been
->>> registered. After all clocks are registered by devm_clk_hw_register, the
->>> provider will be registered by devm_of_clk_add_hw_provider.
->>>
->>> Reparenting the orphan will fail when fw_name is added alone, the 
->>> couse is
->>> that devm_clk_hw_register is always running ahead of
->>> devm_of_clk_add_hw_provider.
->>
->> Please stop bringing the topic of "fw_name" and "name" field together, I
->> told you 3 times why this is wrong. It is not going to change.
->>
->>>
->>> That is why it will failed to get parent for the orphan clock.
->>
->> It fails because the provider is not registered when you try to reparent
->> the orphan.
->>
->> It shows that you should try again once the provider is registered.
->>
-> OK, I have exchanged the position for devm_clk_hw_register and 
-> devm_of_clk_add_hw_provider in meson-eeclk.c.
-> 
-> It reparents successfully for orphan clock.
-> 
-> Is is ok that put devm_of_clk_add_hw_provider ahead?
-> 
-> As far as I am concerned, there is no any effect.Sorry, If the provider is registered first, I find it will affect the 
-assigned-clock-parents and assigned-clock-rates configurations in DT 
-when the provider is registered.
+Luckily the VOTABLE flag already exists and it does exactly what we need,
+so let's make use of it to make the warnings disappear.
 
-It will fail to set the assigned parent and assigned rate for one clock 
-because of the related clocks are not registered yet.
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+Reported-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+---
+ drivers/clk/qcom/gcc-sdm845.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Moreover, registering provider is always after clock registration in 
-other vendor clock drivers.
-
-Maybe registering provider is better after the clock registration.
-
-
->>>
->>>
->>>
->>>>
->>>> .
->>>>
->>
->> .
->>
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 95be125c3bdd..56d22dd225c9 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3255,6 +3255,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+@@ -3263,6 +3264,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+@@ -3271,6 +3273,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+@@ -3279,6 +3282,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+@@ -3287,6 +3291,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3295,6 +3300,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3303,6 +3309,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
+ 
+ static struct clk_regmap *gcc_sdm845_clocks[] = {
