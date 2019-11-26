@@ -2,221 +2,209 @@ Return-Path: <SRS0=Oace=ZS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.4 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E321C432C0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 01:41:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A53D4C432C3
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 02:34:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C3920684
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 01:41:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PLa0RvD/"
+	by mail.kernel.org (Postfix) with ESMTP id 87EE6207FD
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 02:34:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfKZBlZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 25 Nov 2019 20:41:25 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:32962 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726962AbfKZBlZ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Nov 2019 20:41:25 -0500
-Received: by mail-ot1-f66.google.com with SMTP id q23so8657219otn.0
-        for <linux-clk@vger.kernel.org>; Mon, 25 Nov 2019 17:41:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=rJcDUhXRDoSzU6VM3BwzPwwJv9tkg4wejkptoQyWbDs=;
-        b=PLa0RvD/Cw1dZHdlKEMV5+pqmN7gTd7mJ7kFctBiA9BgAdIasobDba62BcJID3HI3g
-         vgDACsfyZEuksaXJuc/c0jwm7eFhn4gYDE1xFXjmO8RZRHmaUCqBTucA4b6aPEdH7R3g
-         Qyup2OUTGXIXqUMRoKvC/Hd/Nlu4UcDJcyRCR15X0tZkmq2Lds64U6MdEfSZOnhIvOYc
-         7PLZkYY8tzcFRZVbL+Ew2Nru4YDGl0NIcXcdq9KxhKDq25dJoqDocsumJzcAGTJWnZI6
-         ncPv8Xcn7vQsO8v9g5lfOEAAJStwOD5O0gB2Urf5xkRqP+jF9MwQ7rDTKnQ0cHWvxOLj
-         ectA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=rJcDUhXRDoSzU6VM3BwzPwwJv9tkg4wejkptoQyWbDs=;
-        b=hFLBnF08T4sWFJISfaOEvGFzZnOYmXiq6VyY9VWU3vVe6J2CKDXs1LCIRjxW9caFUV
-         XeUjw2tDv+RJGTVbOpzfdknLTY9NF3uduvCdgciUwNNupMp9LrgkP3Yuv8G0EliiYNMf
-         hRV4+gP+gMITEAeeZ0VP2iAksYxmzzqkozGUIgt7OIjGUN+FZ7IhJlztCP+4dvOTG0IO
-         sFs7XhH5FGvG29AjxSNv1c0PRPO2nvyL2OUwF/vTfpyLtT8/FuUbwrlbt5kg6c9ZiyBy
-         Hm6f+Uz21JouAONX4Y+Pe9m9Nol0KLWWP3VVFcJ7GXwgPRtYWBcp2KQzLDFroz7UcMIi
-         G1/g==
-X-Gm-Message-State: APjAAAXaRLzzfNH1URp1oXzRoezA4PAwjaG/3NjYPxuiftS65k7D7xcH
-        m+uN/gDZA8TJOYoPBLlYudXeBHvSwtBkFtv2iQ/QKg==
-X-Google-Smtp-Source: APXvYqw0BmovICQjw2LolyXyVvHcUdAWM4lQJR2O96N2H6/dRSdg9xnFk8UVk+dPxzT2YkdZqfMBqN+lKzCDAkmJsHo=
-X-Received: by 2002:a9d:648f:: with SMTP id g15mr536456otl.195.1574732483510;
- Mon, 25 Nov 2019 17:41:23 -0800 (PST)
+        id S1727388AbfKZCez (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 25 Nov 2019 21:34:55 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:22340 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727420AbfKZCez (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 25 Nov 2019 21:34:55 -0500
+Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Tue, 26 Nov
+ 2019 10:35:17 +0800
+Subject: Re: [PATCH v2 3/3] clk: meson: a1: add support for Amlogic A1 clock
+ driver
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1571382865-41978-1-git-send-email-jian.hu@amlogic.com>
+ <1571382865-41978-4-git-send-email-jian.hu@amlogic.com>
+ <1jsgnmba1a.fsf@starbuckisacylon.baylibre.com>
+ <49b33e94-910b-3fd9-4da1-050742d07e93@amlogic.com>
+ <1jblts3v7e.fsf@starbuckisacylon.baylibre.com>
+ <f02b6fb2-5b98-0930-6d47-a3e65840fb82@amlogic.com>
+ <1jh839f2ue.fsf@starbuckisacylon.baylibre.com>
+ <20d04452-fc63-9e9e-220f-146b493a860f@amlogic.com>
+ <1695e9b0-1730-eef6-491d-fe90ac897ee9@amlogic.com>
+ <1jtv6yftmm.fsf@starbuckisacylon.baylibre.com>
+ <9e652ed1-384e-f630-f2a4-0aa4486df577@amlogic.com>
+ <1j7e3oqn36.fsf@starbuckisacylon.baylibre.com>
+ <9ec317e8-136e-1ab4-4e9b-21210e7f3e05@amlogic.com>
+ <1j5zj8qgsl.fsf@starbuckisacylon.baylibre.com>
+ <7a3f1e14-e5a5-407a-335a-eb68d3082eb9@amlogic.com>
+Message-ID: <1ca0c5e1-8417-c5dc-7ad1-80ea707554b2@amlogic.com>
+Date:   Tue, 26 Nov 2019 10:35:17 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-References: <20191118234229.54085-1-saravanak@google.com>
-In-Reply-To: <20191118234229.54085-1-saravanak@google.com>
-From:   Saravana Kannan <saravanak@google.com>
-Date:   Mon, 25 Nov 2019 17:40:46 -0800
-Message-ID: <CAGETcx-CX7aR66XAvZbD9MLeLgtbPPHaFaAOY5f-OqOcWLGndw@mail.gmail.com>
-Subject: Re: [PATCH v1] clk: Keep boot clocks on for multiple consumers
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Android Kernel Team <kernel-team@android.com>,
-        linux-clk@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <7a3f1e14-e5a5-407a-335a-eb68d3082eb9@amlogic.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.28.39.99]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 3:42 PM Saravana Kannan <saravanak@google.com> wrote:
->
-> Clocks can turned on (by the hardware, bootloader, etc) upon a
-> reset/boot of a hardware platform. These "boot clocks" could be clocking
-> devices that are active before the kernel starts running. For example,
-> clocks needed for the interconnects, UART console, display, CPUs, DDR,
-> etc.
->
-> When a boot clock is used by more than one consumer or multiple boot
-> clocks share a parent clock, the boot clock (or the common parent) can
-> be turned off when the first consumer probes. This can potentially crash
-> the device or cause poor user experience.
->
-> This patch fixes this by explicitly enabling the boot clocks during
-> clock registration and then disabling them at late_initcall_sync(). This
-> gives all the consumers until late_initcall() to put their "votes" in to
-> keep any of the boot clocks on past late_initcall().
->
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
->  drivers/clk/clk.c            | 62 ++++++++++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 63 insertions(+)
->
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 1c677d7f7f53..a1b09c9f8845 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -72,6 +72,8 @@ struct clk_core {
->         unsigned long           flags;
->         bool                    orphan;
->         bool                    rpm_enabled;
-> +       bool                    state_held;
-> +       bool                    boot_enabled;
->         unsigned int            enable_count;
->         unsigned int            prepare_count;
->         unsigned int            protect_count;
-> @@ -1300,6 +1302,36 @@ static int clk_disable_unused(void)
->  }
->  late_initcall_sync(clk_disable_unused);
->
-> +static void clk_unprepare_disable_subtree(struct clk_core *core)
-> +{
-> +       struct clk_core *child;
-> +
-> +       lockdep_assert_held(&prepare_lock);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               clk_unprepare_disable_subtree(child);
-> +
-> +       if (!core->state_held)
-> +               return;
-> +
-> +       clk_core_disable_unprepare(core);
-> +}
-> +
-> +static int clk_release_boot_state(void)
-> +{
-> +       struct clk_core *core;
-> +
-> +       clk_prepare_lock();
-> +
-> +       hlist_for_each_entry(core, &clk_root_list, child_node)
-> +               clk_unprepare_disable_subtree(core);
-> +
-> +       clk_prepare_unlock();
-> +
-> +       return 0;
-> +}
-> +late_initcall_sync(clk_release_boot_state);
-> +
->  static int clk_core_determine_round_nolock(struct clk_core *core,
->                                            struct clk_rate_request *req)
->  {
-> @@ -1674,6 +1706,30 @@ static int clk_fetch_parent_index(struct clk_core *core,
->         return i;
->  }
->
-> +static void clk_core_hold_state(struct clk_core *core)
-> +{
-> +       if (core->state_held || !core->boot_enabled ||
-> +           core->flags & CLK_DONT_HOLD_STATE)
-> +               return;
-> +
-> +       WARN(core->orphan, "%s: Can't hold state for orphan clk\n", core->name);
-> +
-> +       core->state_held = !clk_core_prepare_enable(core);
-> +}
-> +
-> +static void __clk_core_update_orphan_hold_state(struct clk_core *core)
-> +{
-> +       struct clk_core *child;
-> +
-> +       if (core->orphan)
-> +               return;
-> +
-> +       clk_core_hold_state(core);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               __clk_core_update_orphan_hold_state(child);
-> +}
-> +
->  /*
->   * Update the orphan status of @core and all its children.
->   */
-> @@ -3374,6 +3430,8 @@ static int __clk_core_init(struct clk_core *core)
->                 rate = 0;
->         core->rate = core->req_rate = rate;
->
-> +       core->boot_enabled = clk_core_is_enabled(core);
-> +
->         /*
->          * Enable CLK_IS_CRITICAL clocks so newly added critical clocks
->          * don't get accidentally disabled when walking the orphan tree and
-> @@ -3389,6 +3447,9 @@ static int __clk_core_init(struct clk_core *core)
->                 clk_enable_unlock(flags);
->         }
->
-> +       if (!core->orphan)
-> +               clk_core_hold_state(core);
-> +
->         /*
->          * walk the list of orphan clocks and reparent any that newly finds a
->          * parent.
-> @@ -3408,6 +3469,7 @@ static int __clk_core_init(struct clk_core *core)
->                         __clk_set_parent_after(orphan, parent, NULL);
->                         __clk_recalc_accuracies(orphan);
->                         __clk_recalc_rates(orphan, 0);
-> +                       __clk_core_update_orphan_hold_state(orphan);
->                 }
->         }
->
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 2fdfe8061363..f0e522ea793f 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -32,6 +32,7 @@
->  #define CLK_OPS_PARENT_ENABLE  BIT(12)
->  /* duty cycle call may be forwarded to the parent clock */
->  #define CLK_DUTY_CYCLE_PARENT  BIT(13)
-> +#define CLK_DONT_HOLD_STATE    BIT(14) /* Don't hold state */
->
->  struct clk;
->  struct clk_hw;
-> --
-> 2.24.0.432.g9d3f5f5b63-goog
->
 
-Stephen,
 
-Nudge, nudge. Thoughts?
+On 2019/11/25 21:51, Jian Hu wrote:
+> 
+> 
+> On 2019/11/25 20:30, Jerome Brunet wrote:
+>>
+>> On Mon 25 Nov 2019 at 13:01, Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>>> On 2019/11/25 18:14, Jerome Brunet wrote:
+>>>>
+>>>> On Thu 21 Nov 2019 at 04:21, Jian Hu <jian.hu@amlogic.com> wrote:
+>>>>
+>>>>> Hi, Jerome
+>>>>>
+>>>>> On 2019/11/20 23:35, Jerome Brunet wrote:
+>>>>>>
+>>>>>> On Wed 20 Nov 2019 at 10:28, Jian Hu <jian.hu@amlogic.com> wrote:
+>>>>>>
+>>>>>>> Hi, jerome
+>>>>>>>
+>>>>>>> Is there any problem about fixed_pll_dco's parent_data?
+>>>>>>>
+>>>>>>> Now both name and fw_name are described in parent_data.
+>>>>>>
+>>>>>> Yes, there is a problem.  This approach is incorrect, as I've 
+>>>>>> tried to
+>>>>>> explain a couple times already. Let me try to re-summarize why this
+>>>>>> approach is incorrect.
+>>>>>>
+>>>>>> Both fw_name and name should be provided when it is possible that
+>>>>>> the DT does not describe the input clock. IOW, it is only for 
+>>>>>> controllers
+>>>>>> which relied on the global name so far and are now starting to 
+>>>>>> describe
+>>>>>> the clock input in DT
+>>>>>>
+>>>>>> This is not your case.
+>>>>>> Your controller is new and DT will have the correct
+>>>>>> info
+>>>>>>
+>>>>>> You are trying work around an ordering issue by providing both 
+>>>>>> fw_name
+>>>>>> and name. This is not correct and I'll continue to nack it.
+>>>>>>
+>>>>>> If the orphan clock is not reparented as you would expect, I 
+>>>>>> suggest you
+>>>>>> try to look a bit further at how the reparenting of orphans is 
+>>>>>> done in
+>>>>>> CCF and why it does not match your expectation.
+>>>>>>
+>>>>> I have debugged the handle for orphan clock in CCF, Maybe you are 
+>>>>> missing
+>>>>> the last email.
+>>>>
+>>>> Nope, got it the first time
+>>>>
+>>>>> Even though the clock index exit, it will get failed for the orphan 
+>>>>> clock's
+>>>>> parent clock due to it has not beed added to the provider.
+>>>>
+>>>> If the provider is not registered yet, of course any query to it won't
+>>>> work. This why I have suggested to this debug *further* :
+>>>>
+>>>> * Is the orphan reparenting done when a new provider is registered ?
+>>>> * If not, should it be done ? is this your problem ?
+>>>>
+>>
+>> Apparently, I was not clear enough so I'll rephrase
+>>
+>>> Yes, the orphan reparenting is done when the new provider is
+>>> registered.
+>>
+>> No it is not done yet. Please check the code.
+>>
+>> The reparenting of orphan is done only on clock registration, not on
+>> provider registeration. Now that clocks can be specified by DT, this
+>> probably needs to added.The action of reparenting the orphan is before 
+>> the provider registration 
+> with the current code.
+>>
+>> That is your problem.
+> Yes, if the provider is registered before the clock registration, it
+> will reparent successfully.
+>>
+>> Please fix the underlying issue, then you can post your series again.
+>>
+>>>
+>>> Reparenting the orphan will be done when each clock is registered by
+>>> devm_clk_hw_register. And at this time the provider has not been
+>>> registered. After all clocks are registered by devm_clk_hw_register, the
+>>> provider will be registered by devm_of_clk_add_hw_provider.
+>>>
+>>> Reparenting the orphan will fail when fw_name is added alone, the 
+>>> couse is
+>>> that devm_clk_hw_register is always running ahead of
+>>> devm_of_clk_add_hw_provider.
+>>
+>> Please stop bringing the topic of "fw_name" and "name" field together, I
+>> told you 3 times why this is wrong. It is not going to change.
+>>
+>>>
+>>> That is why it will failed to get parent for the orphan clock.
+>>
+>> It fails because the provider is not registered when you try to reparent
+>> the orphan.
+>>
+>> It shows that you should try again once the provider is registered.
+>>
+> OK, I have exchanged the position for devm_clk_hw_register and 
+> devm_of_clk_add_hw_provider in meson-eeclk.c.
+> 
+> It reparents successfully for orphan clock.
+> 
+> Is is ok that put devm_of_clk_add_hw_provider ahead?
+> 
+> As far as I am concerned, there is no any effect.Sorry, If the provider is registered first, I find it will affect the 
+assigned-clock-parents and assigned-clock-rates configurations in DT 
+when the provider is registered.
 
--Saravana
+It will fail to set the assigned parent and assigned rate for one clock 
+because of the related clocks are not registered yet.
+
+Moreover, registering provider is always after clock registration in 
+other vendor clock drivers.
+
+Maybe registering provider is better after the clock registration.
+
+
+>>>
+>>>
+>>>
+>>>>
+>>>> .
+>>>>
+>>
+>> .
+>>
