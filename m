@@ -2,111 +2,167 @@ Return-Path: <SRS0=Oace=ZS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86D7BC432C0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 18:11:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1ED4C43141
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 19:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 587322073F
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 18:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 767A120898
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 19:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1574791915;
-	bh=g6Pt8BENoBERMhWmoc+xJ+KNsVDQaHsuOtz12GWEL0A=;
-	h=In-Reply-To:References:Subject:Cc:From:To:Date:List-ID:From;
-	b=qfIMn+ubD3zniunL15vwIxYPhnyPMZG11JGxRno+YJYxPc9cxsZ8/E+IYJBlHTkOM
-	 EYyjoGrZffKpR0Ar5QnIzmSzFCrPeaDE0c2cBCak4d6No9NImEgnFPGcbe2CLEu3Wm
-	 pcHf4x6ZfQpR4bGHlaCXb5Ha96fecemnPMkvYuYc=
+	s=default; t=1574797466;
+	bh=um1j8Y/GaUsZ1q4T+Tiu5+4Kgs2yzoDg2ThT8cprhsY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=DqLojqq7ELDUnU+ohSToncrdTTX7JLrS6tvr87sKzd3Gy5OkrDZcXfPf8yg/Bxj8O
+	 MqPrdafeOSC0P9x//nZluQ4QhnhexjBtGC3rztTZ4CQKwvGs0bmeD4N3lXkFvHNQak
+	 ov0et6N2MscDI83jJ+wLvcBc3uB4K4mwrSyW1Rro=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726299AbfKZSLz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Nov 2019 13:11:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49658 "EHLO mail.kernel.org"
+        id S1726103AbfKZToZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Nov 2019 14:44:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725870AbfKZSLy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Nov 2019 13:11:54 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726049AbfKZToZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Nov 2019 14:44:25 -0500
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 275EA20727;
-        Tue, 26 Nov 2019 18:11:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7E94B20874;
+        Tue, 26 Nov 2019 19:44:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1574791914;
-        bh=g6Pt8BENoBERMhWmoc+xJ+KNsVDQaHsuOtz12GWEL0A=;
-        h=In-Reply-To:References:Subject:Cc:From:To:Date:From;
-        b=PHCvdrDUxwVFk6Az3dmnF7fUMWgLKa6WULn/iuhDMB0oEq6mzTZKrqaKMy5LPDis6
-         0dLw2WZQxD6eGforht/Ts7wm4swGwsXPDzPIBiRD8u7I4wKUkuckn7o+zasU9SeGYm
-         0y8eUCLQafhfbEr/MlD2UAy3YlkoDAVfKSVNp+oE=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1574797464;
+        bh=um1j8Y/GaUsZ1q4T+Tiu5+4Kgs2yzoDg2ThT8cprhsY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=s2DzKRlGMlFyXboS3+ux6a+0J9Jj4ZZ2Ta/XPxcn/LL1zm9tGpoJ2knRLRxeO9UKm
+         7aSAdRg7u09+FNjsPT5WPuvb++5joBKHq8TQWRJVlfwsW0unmURJhcf+tUm4vCnOhA
+         45eqetRrjwiY4T6IizY/TnfK/dpZyfJ+ZiETfYLc=
+Received: by mail-qk1-f176.google.com with SMTP id c124so12823712qkg.0;
+        Tue, 26 Nov 2019 11:44:24 -0800 (PST)
+X-Gm-Message-State: APjAAAXGW1IjEtN2Z7mcpfuM0sbVat53CSxW58Gj6IejL6ARLRc4vglm
+        nq3t9KV0yZ4GPdiXNZl/E2EqbwIjNnsvqwIp/A==
+X-Google-Smtp-Source: APXvYqwtMCX2ktU7XP1vLiDif7HsVDYIGE5gPdIX/yIa4O+B0IDcNylxr73NToCcb42qbcuGNjawEioJubJ0X61Ew5M=
+X-Received: by 2002:a05:620a:1eb:: with SMTP id x11mr115675qkn.254.1574797463436;
+ Tue, 26 Nov 2019 11:44:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAOCk7NqfHe6jRPmw6o650fyd6EyVfFObHhJ9=21ipuAqJo6oGA@mail.gmail.com>
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org> <1573812304-24074-4-git-send-email-tdas@codeaurora.org> <CAOCk7NqfHe6jRPmw6o650fyd6EyVfFObHhJ9=21ipuAqJo6oGA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/8] dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Taniya Das <tdas@codeaurora.org>
-User-Agent: alot/0.8.1
-Date:   Tue, 26 Nov 2019 10:11:53 -0800
-Message-Id: <20191126181154.275EA20727@mail.kernel.org>
+References: <cover.1574458460.git.leonard.crestez@nxp.com> <CGME20191122214539epcas1p34d4ca24634642e8a79c33d7a7c9291ba@epcas1p3.samsung.com>
+ <c0b332b85560e39d7dbb5e88b99bbed1d1b32373.1574458460.git.leonard.crestez@nxp.com>
+ <f8838bc8-44db-551f-3199-eeea91e493f7@samsung.com>
+In-Reply-To: <f8838bc8-44db-551f-3199-eeea91e493f7@samsung.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Tue, 26 Nov 2019 12:44:12 -0700
+X-Gmail-Original-Message-ID: <CAL_JsqJmZUVmM9BqQuD1npJ7Nqsh07CSEA5nB9-pt0v_X6HQCA@mail.gmail.com>
+Message-ID: <CAL_JsqJmZUVmM9BqQuD1npJ7Nqsh07CSEA5nB9-pt0v_X6HQCA@mail.gmail.com>
+Subject: Re: [PATCH v7 4/5] PM / devfreq: Add dynamic scaling for imx8m ddr controller
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Martin Kepplinger <martink@posteo.de>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Georgi Djakov <georgi.djakov@linaro.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Silvano di Ninno <silvano.dininno@nxp.com>,
+        devicetree@vger.kernel.org,
+        "open list:THERMAL" <linux-pm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jeffrey Hugo (2019-11-15 07:11:01)
-> On Fri, Nov 15, 2019 at 3:07 AM Taniya Das <tdas@codeaurora.org> wrote:
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/=
-Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > new file mode 100644
-> > index 0000000..c2d6243
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> > @@ -0,0 +1,69 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/bindings/clock/qcom,gpucc.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Qualcomm Graphics Clock & Reset Controller Binding
-> > +
-> > +maintainers:
-> > +  - Taniya Das <tdas@codeaurora.org>
-> > +
-> > +description: |
-> > +  Qualcomm grpahics clock control module which supports the clocks, re=
-sets and
-> > +  power domains.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - qcom,msm8998-gpucc
-> > +      - qcom,sdm845-gpucc
-> > +
-> > +  clocks:
-> > +    minItems: 1
-> > +    maxItems: 2
-> > +    items:
-> > +      - description: Board XO source
-> > +      - description: GPLL0 source from GCC
->=20
-> This is not an accurate conversion.  GPLL0 was not valid for 845, and
-> is required for 8998.
+On Sun, Nov 24, 2019 at 4:53 PM Chanwoo Choi <cw00.choi@samsung.com> wrote:
+>
+> Hi Leonard,
+>
+> On 11/23/19 6:45 AM, Leonard Crestez wrote:
+> > Add driver for dynamic scaling the DDR Controller on imx8m chips. Actual
+> > frequency switching is implemented inside TF-A, this driver wraps the
+> > SMC calls and synchronizes the clk tree.
+> >
+> > The DRAM clocks on imx8m have the following structure (abridged):
+> >
+> >  +----------+       |\            +------+
+> >  | dram_pll |-------|M| dram_core |      |
+> >  +----------+       |U|---------->| D    |
+> >                  /--|X|           |  D   |
+> >    dram_alt_root |  |/            |   R  |
+> >                  |                |    C |
+> >             +---------+           |      |
+> >             |FIX DIV/4|           |      |
+> >             +---------+           |      |
+> >   composite:     |                |      |
+> >  +----------+    |                |      |
+> >  | dram_alt |----/                |      |
+> >  +----------+                     |      |
+> >  | dram_apb |-------------------->|      |
+> >  +----------+                     +------+
+> >
+> > The dram_pll is used for higher rates and dram_alt is used for lower
+> > rates. The dram_alt and dram_apb clocks are "imx composite" and their
+> > parent can also be modified.
+> >
+> > This driver will prepare/enable the new parents ahead of switching (so
+> > that the expected roots are enabled) and afterwards it will call
+> > clk_set_parent to ensure the parents in clock framework are up-to-date.
+> >
+> > The driver relies on dram_pll dram_alt and dram_apb being marked with
+> > CLK_GET_RATE_NOCACHE for rate updates.
+> >
+> > Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> > Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
+> > ---
+> >  drivers/devfreq/Kconfig      |   9 +
+> >  drivers/devfreq/Makefile     |   1 +
+> >  drivers/devfreq/imx8m-ddrc.c | 465 +++++++++++++++++++++++++++++++++++
+> >  3 files changed, 475 insertions(+)
+> >  create mode 100644 drivers/devfreq/imx8m-ddrc.c
+> >
+> > diff --git a/drivers/devfreq/Kconfig b/drivers/devfreq/Kconfig
+> > index 59027d7ddf2a..5eac479dd05f 100644
+> > --- a/drivers/devfreq/Kconfig
+> > +++ b/drivers/devfreq/Kconfig
+> > @@ -89,10 +89,19 @@ config ARM_EXYNOS_BUS_DEVFREQ
+> >         Each memory bus group could contain many memoby bus block. It reads
+> >         PPMU counters of memory controllers by using DEVFREQ-event device
+> >         and adjusts the operating frequencies and voltages with OPP support.
+> >         This does not yet operate with optimal voltages.
+> >
+> > +config ARM_IMX8M_DDRC_DEVFREQ
+> > +     tristate "i.MX8M DDRC DEVFREQ Driver"
+> > +     depends on ARCH_MXC && HAVE_ARM_SMCCC
+>
+> I'll edit it as following and applied it.
 
-Thanks for checking Jeff.
+You corrupted the URLs in the binding patch when applying the series:
 
-It looks like on 845 there are two gpll0 clocks going to gpucc. From
-gpu_cc_parent_map_0:
+Traceback (most recent call last):
+ File "/usr/local/lib/python3.6/dist-packages/jsonschema/validators.py",
+line 774, in resolve_from_url
+ document = self.store[url]
+ File "/usr/local/lib/python3.6/dist-packages/jsonschema/_utils.py",
+line 22, in __getitem__
+ return self.store[self.normalize(uri)]
+KeyError: 'https://protect2.fireeye.com/url?k=b51ff83f-e8cff0d7-b51e7370-000babff32e3-c25c03b8af1b12ee&u=http://devicetree.org/meta-schemas/core.yaml'
 
-	"gcc_gpu_gpll0_clk_src",
-	"gcc_gpu_gpll0_div_clk_src",
-
+Rob
