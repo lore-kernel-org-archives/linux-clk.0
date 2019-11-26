@@ -2,156 +2,166 @@ Return-Path: <SRS0=Oace=ZS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26AA4C432C3
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 15:34:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF848C432C0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 16:17:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0122F2075C
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 15:34:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w864Jom6"
+	by mail.kernel.org (Postfix) with ESMTP id 9D0172071A
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 16:17:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfKZPel (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Nov 2019 10:34:41 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40799 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727121AbfKZPel (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Nov 2019 10:34:41 -0500
-Received: by mail-wm1-f66.google.com with SMTP id y5so3821365wmi.5
-        for <linux-clk@vger.kernel.org>; Tue, 26 Nov 2019 07:34:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XHpKE1+pRggjDZg3Vcgn+vzDPH0txuMe168rRQcCK68=;
-        b=w864Jom6wGOmf6sK60smmKGgc+SuwnyTekrouut8YkgOdmKIfioXo3WWtSDucAjPNR
-         WYKH+7MhO2oaQ9OqDIvgWkjg0gy/lDu2VqmCi1+47V3irPn/aerma/cNc+OgLkYbpTyH
-         CK7aZ5jQxixxxlW8zjdxfFjho+2+qTp5vmCBmWo0zLC5A1qdhl2zdj8AnrzS/LUQjeJn
-         d+DDxvSktWFPp/y1YVj/1M1uMqwu9eGg16S8p9ywtgFt4VUup4/ERB5fMdSXrSn88XF5
-         uigHb9uV0hTG3cpI79vb1GnmTXZPwgXeyH3d0RvNJaMIS299a/Jqhh4kKigHioRL0uY5
-         U9Yg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=XHpKE1+pRggjDZg3Vcgn+vzDPH0txuMe168rRQcCK68=;
-        b=PeKciOR8bjYVjoHwAy7t+xCwlLyRv3KlZa81N97W5h6jGYgeO92b0koa6rlMxNNrXm
-         zOS7ijvQRvECjN5wSBBcj/hrvx3ailXSzK3gH8JrmEtqS0V5U0ljvdKsMY8kDDbG6NdZ
-         vVJt/uo3Jg0vUyC6H3THSZcmSpuTzeiHSmVr2GF8zNookDaO7oVlQMY0HYAUbmqb2yS0
-         ELP+alTd0xl+v7rfuTiAQPmLQOSZvcNG2huakGkIXpyR/1IZ7SbiXvdAo8RdIqiZNt5b
-         hniG6UrX4gCxp8q/ZRB1VHFYpbXVUA+CuIYkfECzgjaoqA3w9cXK7h+Z9jDWogAIetKY
-         m+aQ==
-X-Gm-Message-State: APjAAAXmcAaPKLTkbYv/rYrL13YSuMVAb/LC4ilp337O/RsFHVMxwUA6
-        HbVAmhS8fh4XeO5eAF1brttNBA==
-X-Google-Smtp-Source: APXvYqwdGDfHspdrOG2iQl8u6+NKrF41ljngXKadaalKOG2vajrUY33xi2U+YTG7fb3uci99JUykvw==
-X-Received: by 2002:a1c:6144:: with SMTP id v65mr5025056wmb.53.1574782479214;
-        Tue, 26 Nov 2019 07:34:39 -0800 (PST)
-Received: from localhost.localdomain ([212.45.67.2])
-        by smtp.googlemail.com with ESMTPSA id j10sm15210748wrx.30.2019.11.26.07.34.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 26 Nov 2019 07:34:38 -0800 (PST)
-From:   Georgi Djakov <georgi.djakov@linaro.org>
-To:     sboyd@kernel.org, bjorn.andersson@linaro.org, robdclark@gmail.com
-Cc:     mturquette@baylibre.com, agross@kernel.org, tdas@codeaurora.org,
-        anischal@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        georgi.djakov@linaro.org
-Subject: [PATCH] clk: qcom: gcc-sdm845: Add missing flag to votable GDSCs
-Date:   Tue, 26 Nov 2019 17:34:37 +0200
-Message-Id: <20191126153437.11808-1-georgi.djakov@linaro.org>
-X-Mailer: git-send-email 2.24.0
+        id S1728396AbfKZQRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Nov 2019 11:17:12 -0500
+Received: from ns.iliad.fr ([212.27.33.1]:35412 "EHLO ns.iliad.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726101AbfKZQRM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Nov 2019 11:17:12 -0500
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+        by ns.iliad.fr (Postfix) with ESMTP id CB34F215C7;
+        Tue, 26 Nov 2019 17:17:09 +0100 (CET)
+Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
+        by ns.iliad.fr (Postfix) with ESMTP id BA55D215C6;
+        Tue, 26 Nov 2019 17:17:09 +0100 (CET)
+To:     linux-clk <linux-clk@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>
+From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
+Subject: [PATCH v1] clk: Convert managed get functions to devm_add_action API
+Message-ID: <3d8a58bf-0814-1ec1-038a-10a20b9646ad@free.fr>
+Date:   Tue, 26 Nov 2019 17:13:14 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Nov 26 17:17:09 2019 +0100 (CET)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sdm845 devices, during boot we see the following warnings (unless we
-have added 'pd_ignore_unused' to the kernel command line):
-	hlos1_vote_mmnoc_mmu_tbu_sf_gdsc status stuck at 'on'
-	hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc status stuck at 'on'
-	hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc status stuck at 'on'
-	hlos1_vote_aggre_noc_mmu_tbu2_gdsc status stuck at 'on'
-	hlos1_vote_aggre_noc_mmu_tbu1_gdsc status stuck at 'on'
-	hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc status stuck at 'on'
-	hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc status stuck at 'on'
+Date: Tue, 26 Nov 2019 13:56:53 +0100
 
-As the name of these GDSCs suggests, they are "votable" and in downstream
-DT, they all have the property "qcom,no-status-check-on-disable", which
-means that we should not poll the status bit when we disable them.
+Using devm_add_action_or_reset() produces simpler code and smaller
+object size:
 
-Luckily the VOTABLE flag already exists and it does exactly what we need,
-so let's make use of it to make the warnings disappear.
+1 file changed, 16 insertions(+), 46 deletions(-)
 
-Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
-Reported-by: Rob Clark <robdclark@gmail.com>
-Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+    text	   data	    bss	    dec	    hex	filename
+-   1797	     80	      0	   1877	    755	drivers/clk/clk-devres.o
++   1499	     56	      0	   1555	    613	drivers/clk/clk-devres.o
+
+Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
 ---
- drivers/clk/qcom/gcc-sdm845.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/clk/clk-devres.c | 62 +++++++++++-----------------------------
+ 1 file changed, 16 insertions(+), 46 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index 95be125c3bdd..56d22dd225c9 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -3255,6 +3255,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
- 		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index be160764911b..04379c1f203e 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -4,31 +4,29 @@
+ #include <linux/export.h>
+ #include <linux/gfp.h>
  
- static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
-@@ -3263,6 +3264,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
- 		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
+-static void devm_clk_release(struct device *dev, void *res)
++static void __clk_put(void *clk)
+ {
+-	clk_put(*(struct clk **)res);
++	clk_put(clk);
+ }
  
- static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
-@@ -3271,6 +3273,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
- 		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
+ struct clk *devm_clk_get(struct device *dev, const char *id)
+ {
+-	struct clk **ptr, *clk;
++	struct clk *clk = clk_get(dev, id);
  
- static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
-@@ -3279,6 +3282,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
- 		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
+-
+-	clk = clk_get(dev, id);
+-	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
+-	}
++	if (!IS_ERR(clk))
++		if (devm_add_action_or_reset(dev, __clk_put, clk))
++			clk = ERR_PTR(-ENOMEM);
  
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
-@@ -3287,6 +3291,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
+ 	return clk;
+ }
+ EXPORT_SYMBOL(devm_clk_get);
  
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
-@@ -3295,6 +3300,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
++void devm_clk_put(struct device *dev, struct clk *clk)
++{
++	devm_release_action(dev, __clk_put, clk);
++}
++EXPORT_SYMBOL(devm_clk_put);
++
+ struct clk *devm_clk_get_optional(struct device *dev, const char *id)
+ {
+ 	struct clk *clk = devm_clk_get(dev, id);
+@@ -116,42 +114,14 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
  
- static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
-@@ -3303,6 +3309,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
- 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.flags = VOTABLE,
- };
+-static int devm_clk_match(struct device *dev, void *res, void *data)
+-{
+-	struct clk **c = res;
+-	if (!c || !*c) {
+-		WARN_ON(!c || !*c);
+-		return 0;
+-	}
+-	return *c == data;
+-}
+-
+-void devm_clk_put(struct device *dev, struct clk *clk)
+-{
+-	int ret;
+-
+-	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
+-
+-	WARN_ON(ret);
+-}
+-EXPORT_SYMBOL(devm_clk_put);
+-
+ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id)
+ {
+-	struct clk **ptr, *clk;
+-
+-	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
+-	if (!ptr)
+-		return ERR_PTR(-ENOMEM);
++	struct clk *clk = of_clk_get_by_name(np, con_id);
  
- static struct clk_regmap *gcc_sdm845_clocks[] = {
+-	clk = of_clk_get_by_name(np, con_id);
+-	if (!IS_ERR(clk)) {
+-		*ptr = clk;
+-		devres_add(dev, ptr);
+-	} else {
+-		devres_free(ptr);
+-	}
++	if (!IS_ERR(clk))
++		if (devm_add_action_or_reset(dev, __clk_put, clk))
++			clk = ERR_PTR(-ENOMEM);
+ 
+ 	return clk;
+ }
+-- 
+2.17.1
