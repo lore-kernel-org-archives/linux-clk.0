@@ -2,166 +2,82 @@ Return-Path: <SRS0=Oace=ZS=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF848C432C0
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 16:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2453FC432C0
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 18:01:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D0172071A
-	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 16:17:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE6DA2073F
+	for <linux-clk@archiver.kernel.org>; Tue, 26 Nov 2019 18:01:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1574791280;
+	bh=omsnWS1CdzFSYWPwB5Bc/IkaXklFcCy9SMZZUTRYQzs=;
+	h=In-Reply-To:References:Subject:Cc:From:To:Date:List-ID:From;
+	b=vjeLvC842jD1w7vH+tYsoAs2VMxj7CbXNZmpCp/b3g2iG/fXwsUZ8eQqsU6QJX7wT
+	 wJPEmw7bn7lNJVoPBm/16V8JLkzw43Yiy6RU+wP4vwIAePz0HmRwkYf4Ibihjim4dm
+	 +zUY7KpHeI8EfzuUWbMNX5F2T3X3++9mE4XUObCI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728396AbfKZQRM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Nov 2019 11:17:12 -0500
-Received: from ns.iliad.fr ([212.27.33.1]:35412 "EHLO ns.iliad.fr"
+        id S1726052AbfKZSBT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Nov 2019 13:01:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726101AbfKZQRM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 26 Nov 2019 11:17:12 -0500
-Received: from ns.iliad.fr (localhost [127.0.0.1])
-        by ns.iliad.fr (Postfix) with ESMTP id CB34F215C7;
-        Tue, 26 Nov 2019 17:17:09 +0100 (CET)
-Received: from [192.168.108.51] (freebox.vlq16.iliad.fr [213.36.7.13])
-        by ns.iliad.fr (Postfix) with ESMTP id BA55D215C6;
-        Tue, 26 Nov 2019 17:17:09 +0100 (CET)
-To:     linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-From:   Marc Gonzalez <marc.w.gonzalez@free.fr>
-Subject: [PATCH v1] clk: Convert managed get functions to devm_add_action API
-Message-ID: <3d8a58bf-0814-1ec1-038a-10a20b9646ad@free.fr>
-Date:   Tue, 26 Nov 2019 17:13:14 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1725870AbfKZSBT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 26 Nov 2019 13:01:19 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C76792071A;
+        Tue, 26 Nov 2019 18:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1574791278;
+        bh=omsnWS1CdzFSYWPwB5Bc/IkaXklFcCy9SMZZUTRYQzs=;
+        h=In-Reply-To:References:Subject:Cc:From:To:Date:From;
+        b=HaNfuNJCXCkhjrwWON6HDO91gUx5c4vNMR1sAm696rb63zkQZGtqM9XDdnHUzfvDM
+         poIJW3DSg7GABxuFVkdWdUSOzGHr2qgxLOpo+OnNLsFXYxwWIe5EEvWGuqaIUhfbJu
+         9owrAiqtUMfRkBfEhno9SjyQg7ED2+XEezweAKJk=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: ClamAV using ClamSMTP ; ns.iliad.fr ; Tue Nov 26 17:17:09 2019 +0100 (CET)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CACPK8XchwGdgE95jkdhwWbp0r+NHge7W3q6yQp-wzfxV3Kpajg@mail.gmail.com>
+References: <20191010020655.3776-1-andrew@aj.id.au> <20191010020655.3776-3-andrew@aj.id.au> <CACPK8Xcrc_2itUcGw6caa8Fp3sJE8oHBO5LJgBtqScwmVAuHJw@mail.gmail.com> <CACPK8XchwGdgE95jkdhwWbp0r+NHge7W3q6yQp-wzfxV3Kpajg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] clk: aspeed: Add RMII RCLK gates for both AST2500 MACs
+Cc:     linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Andrew Jeffery <andrew@aj.id.au>, Joel Stanley <joel@jms.id.au>
+User-Agent: alot/0.8.1
+Date:   Tue, 26 Nov 2019 10:01:17 -0800
+Message-Id: <20191126180118.C76792071A@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Date: Tue, 26 Nov 2019 13:56:53 +0100
+Quoting Joel Stanley (2019-11-25 16:59:19)
+> Hi Stephen,
+>=20
+> On Thu, 10 Oct 2019 at 23:41, Joel Stanley <joel@jms.id.au> wrote:
+> >
+> > On Thu, 10 Oct 2019 at 02:06, Andrew Jeffery <andrew@aj.id.au> wrote:
+> > >
+> > > RCLK is a fixed 50MHz clock derived from HPLL that is described by a
+> > > single gate for each MAC.
+> > >
+> > > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
+> >
+> > Reviewed-by: Joel Stanley <joel@jms.id.au>
+>=20
+> I noticed this one hasn't been applied to clk-next.
+>=20
 
-Using devm_add_action_or_reset() produces simpler code and smaller
-object size:
+It's marked awaiting upstream in my UI. I think it was some patch that
+might have come through your PR?
 
-1 file changed, 16 insertions(+), 46 deletions(-)
-
-    text	   data	    bss	    dec	    hex	filename
--   1797	     80	      0	   1877	    755	drivers/clk/clk-devres.o
-+   1499	     56	      0	   1555	    613	drivers/clk/clk-devres.o
-
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
----
- drivers/clk/clk-devres.c | 62 +++++++++++-----------------------------
- 1 file changed, 16 insertions(+), 46 deletions(-)
-
-diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-index be160764911b..04379c1f203e 100644
---- a/drivers/clk/clk-devres.c
-+++ b/drivers/clk/clk-devres.c
-@@ -4,31 +4,29 @@
- #include <linux/export.h>
- #include <linux/gfp.h>
- 
--static void devm_clk_release(struct device *dev, void *res)
-+static void __clk_put(void *clk)
- {
--	clk_put(*(struct clk **)res);
-+	clk_put(clk);
- }
- 
- struct clk *devm_clk_get(struct device *dev, const char *id)
- {
--	struct clk **ptr, *clk;
-+	struct clk *clk = clk_get(dev, id);
- 
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
--		return ERR_PTR(-ENOMEM);
--
--	clk = clk_get(dev, id);
--	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
--	}
-+	if (!IS_ERR(clk))
-+		if (devm_add_action_or_reset(dev, __clk_put, clk))
-+			clk = ERR_PTR(-ENOMEM);
- 
- 	return clk;
- }
- EXPORT_SYMBOL(devm_clk_get);
- 
-+void devm_clk_put(struct device *dev, struct clk *clk)
-+{
-+	devm_release_action(dev, __clk_put, clk);
-+}
-+EXPORT_SYMBOL(devm_clk_put);
-+
- struct clk *devm_clk_get_optional(struct device *dev, const char *id)
- {
- 	struct clk *clk = devm_clk_get(dev, id);
-@@ -116,42 +114,14 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
- }
- EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
- 
--static int devm_clk_match(struct device *dev, void *res, void *data)
--{
--	struct clk **c = res;
--	if (!c || !*c) {
--		WARN_ON(!c || !*c);
--		return 0;
--	}
--	return *c == data;
--}
--
--void devm_clk_put(struct device *dev, struct clk *clk)
--{
--	int ret;
--
--	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
--
--	WARN_ON(ret);
--}
--EXPORT_SYMBOL(devm_clk_put);
--
- struct clk *devm_get_clk_from_child(struct device *dev,
- 				    struct device_node *np, const char *con_id)
- {
--	struct clk **ptr, *clk;
--
--	ptr = devres_alloc(devm_clk_release, sizeof(*ptr), GFP_KERNEL);
--	if (!ptr)
--		return ERR_PTR(-ENOMEM);
-+	struct clk *clk = of_clk_get_by_name(np, con_id);
- 
--	clk = of_clk_get_by_name(np, con_id);
--	if (!IS_ERR(clk)) {
--		*ptr = clk;
--		devres_add(dev, ptr);
--	} else {
--		devres_free(ptr);
--	}
-+	if (!IS_ERR(clk))
-+		if (devm_add_action_or_reset(dev, __clk_put, clk))
-+			clk = ERR_PTR(-ENOMEM);
- 
- 	return clk;
- }
--- 
-2.17.1
