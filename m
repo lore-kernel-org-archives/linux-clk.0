@@ -2,409 +2,155 @@ Return-Path: <SRS0=22bM=ZT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05187C432C3
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 10:16:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8ACC432C0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 14:31:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C97AC20722
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 10:15:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 943A820722
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 14:31:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vVCcpBZx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfK0KPz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Nov 2019 05:15:55 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:56522 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726510AbfK0KPz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 27 Nov 2019 05:15:55 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3BC7B200932;
-        Wed, 27 Nov 2019 11:15:53 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8216620015F;
-        Wed, 27 Nov 2019 11:15:48 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id AB8314028F;
-        Wed, 27 Nov 2019 18:15:42 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Walle <michael@walle.cc>, Li Yang <leoyang.li@nxp.com>,
+        id S1727138AbfK0Obl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Nov 2019 09:31:41 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:34877 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726747AbfK0Obk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Nov 2019 09:31:40 -0500
+Received: by mail-lj1-f194.google.com with SMTP id j6so15715962lja.2;
+        Wed, 27 Nov 2019 06:31:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=M9v+QKFBceM7UwSZzBuiBDdbBA4xp8eGHt5HTP5gbgc=;
+        b=vVCcpBZx/CT6V3mo1xdBB8U2Q1ZK2bCaI/XYtKfEZ4VTlW+dQgL1REcBAn77EYEvDD
+         UzkT+RGgQ7H2BtBsTJCIaYl3OVLiZoxJog1A38U2jayp38t4ojIo5QJX0iLTeeRG/CyM
+         9JTtfCsLwnf4kusN1K7g2+xPFPZqkWQwKAsQEU/lz2njFMy5Ion/4tboLXx851wG9nZj
+         6EBEUskGO5TFTC417ZX8NTvIA4Ev6bhH1SVT6sicv4ywU7XWwkZZbzc10gXs14Yu+UgK
+         8nb05ofRWMGqaT6LBKDpa8ok8+mKjwPtBl+ntaPv6MqI1yRkdjyryXv0iA7wNCrnSCus
+         PQVA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=M9v+QKFBceM7UwSZzBuiBDdbBA4xp8eGHt5HTP5gbgc=;
+        b=Lcbdnhqh86WvhIF6cOYveTE6HOvPShfEx06kwD4DXDUpFkliXxgPXiLYrZprmfDnCX
+         +jj+6jS0PXXdXHXVRnCwTKU34IsELLu1eNS09py8xEFGUgtKUcnkre1yaAnVnUda/Zxr
+         zzcGrEGUkGqIWvwgZaxze1CthqHM92RLj+bvJutThfKB4tKZERkfo3ZAB9TN7PRoZb3p
+         hJaxzHfmlqq9c0cgMsnXwhlA0p4qLCYX2AZUdlErj2OEa/JyAri0g69Y9Q3CN83rUkPa
+         HyIQ22BuuaFJkG/+knyrxwY0z8bs3S3hnd3B3J8GdrosGsJ2HPNYmccYlr/2Q+VBHpHv
+         hWjA==
+X-Gm-Message-State: APjAAAW/FwjIfG1fCipwXrJ/Xv0CTX6khRxjCGZPTUg20WeFEekACa/Z
+        ssk9bCZNXHPs/ItRYthUO/CQ8DTI
+X-Google-Smtp-Source: APXvYqxT5TbAMagvxoPwkEO7AKeUttwQ+IV1OURSX9UINaImynpi/CEn3C9r2cPJkgzpd9Fl1wrvsA==
+X-Received: by 2002:a2e:9699:: with SMTP id q25mr31094007lji.251.1574865096813;
+        Wed, 27 Nov 2019 06:31:36 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id v21sm6993461lfe.68.2019.11.27.06.31.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 27 Nov 2019 06:31:35 -0800 (PST)
+Subject: Re: [PATCH v2 00/11] Move PMC clocks into Tegra PMC driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com, sboyd@kernel.org
+Cc:     gregkh@linuxfoundation.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com,
+        pgaikwad@nvidia.com, mturquette@baylibre.com,
+        horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com,
+        krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com,
+        josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Wen He <wen.he_1@nxp.com>
-Subject: [v10 2/2] clk: ls1028a: Add clock driver for Display output interface
-Date:   Wed, 27 Nov 2019 18:15:25 +0800
-Message-Id: <20191127101525.44516-2-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191127101525.44516-1-wen.he_1@nxp.com>
-References: <20191127101525.44516-1-wen.he_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <79e7bd6a-f138-1e7d-6e0b-435adde3b3e5@gmail.com>
+Date:   Wed, 27 Nov 2019 17:31:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.1.1
+MIME-Version: 1.0
+In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock driver for QorIQ LS1028A Display output interfaces(LCD, DPHY),
-as implemented in TSMC CLN28HPM PLL, this PLL supports the programmable
-integer division and range of the display output pixel clock's 27-594MHz.
+27.11.2019 07:59, Sowjanya Komatineni пишет:
+> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+> are currently registered by Tegra clock driver using clk_regiser_mux and
+> clk_register_gate which performs direct Tegra PMC register access.
+> 
+> When Tegra PMC is in secure mode, any access from non-secure world will
+> not go through.
+> 
+> This patch series adds these Tegra PMC clocks and blink controls to Tegra
+> PMC driver with PMC as clock provider and removed them from Tegra clock
+> driver. This also adds PMC specific clock id's to use in device tree and
+> removed clock ids of PMC clock from Tegra clock driver.
+> 
+> This series also includes patch to update clock provider from tegra_car
+> to pmc in the device tree tegra210-smaug.dts that uses clk_out_2 from PMC.
+> 
+> [v2]:	Changes between v1 and v2 are
+> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
+> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
+> 	- feedback related to pmc clocks in Tegra PMC driver from v1
+> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
+> 	  by the clock driver using helper functions from Tegra PMC.
+> 
+>  	  Note:
+> 	  To use helper functions from PMC driver, PMC early init need to
+> 	  happen prior to using helper functions and these helper functions are
+> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
+> 	  clock registration which happen in clock_init prior to Tegra PMC
+> 	  probe.
+> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
+> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
+> 	  tegra_mc_init.
+> 	  This implementation of configuring PMC registers thru helper
+> 	  functions in clock driver needs proper changes across PMC, Clock,
+> 	  EMC and MC inits to have it work across all Tegra platforms.
+> 
+> 	  Currently PLLM Override is not enabled in the bootloader so proper
+> 	  patches for this fix will be taken care separately.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
-Signed-off-by: Michael Walle <michael@walle.cc>
----
-change in v10:
-        - Add vco-frequency configurable;
+Hello Sowjanya,
 
- drivers/clk/Kconfig      |  10 ++
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-plldig.c | 301 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 312 insertions(+)
- create mode 100644 drivers/clk/clk-plldig.c
+Could you please clarify what do you mean by "PLLM Override not enabled
+in bootloader"?
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 0530bebfc25a..9f6b0196c604 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -218,6 +218,16 @@ config CLK_QORIQ
- 	  This adds the clock driver support for Freescale QorIQ platforms
- 	  using common clock framework.
- 
-+config CLK_LS1028A_PLLDIG
-+        tristate "Clock driver for LS1028A Display output"
-+        depends on ARCH_LAYERSCAPE || COMPILE_TEST
-+        default ARCH_LAYERSCAPE
-+        help
-+          This driver support the Display output interfaces(LCD, DPHY) pixel clocks
-+          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM PLL. Not all
-+          features of the PLL are currently supported by the driver. By default,
-+          configured bypass mode with this PLL.
-+
- config COMMON_CLK_XGENE
- 	bool "Clock driver for APM XGene SoC"
- 	default ARCH_XGENE
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 0138fb14e6f8..97d1e5bc6de5 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_ARCH_NPCM7XX)	    	+= clk-npcm7xx.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
- obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
-+obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+= clk-plldig.o
- obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
-new file mode 100644
-index 000000000000..365edd30da8c
---- /dev/null
-+++ b/drivers/clk/clk-plldig.c
-@@ -0,0 +1,301 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 NXP
-+ *
-+ * Clock driver for LS1028A Display output interfaces(LCD, DPHY).
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/bitfield.h>
-+
-+/* PLLDIG register offsets and bit masks */
-+#define PLLDIG_REG_PLLSR            0x24
-+#define PLLDIG_LOCK_MASK            BIT(2)
-+#define PLLDIG_REG_PLLDV            0x28
-+#define PLLDIG_MFD_MASK             GENMASK(7, 0)
-+#define PLLDIG_RFDPHI1_MASK         GENMASK(30, 25)
-+#define PLLDIG_REG_PLLFM            0x2c
-+#define PLLDIG_SSCGBYP_ENABLE       BIT(30)
-+#define PLLDIG_REG_PLLFD            0x30
-+#define PLLDIG_FDEN                 BIT(30)
-+#define PLLDIG_FRAC_MASK            GENMASK(15, 0)
-+#define PLLDIG_DTH_MASK             GENMASK(17, 16)
-+#define PLLDIG_DTH_DISABLE          3
-+#define PLLDIG_REG_PLLCAL1          0x38
-+#define PLLDIG_REG_PLLCAL2          0x3c
-+
-+/* Range of the VCO frequencies, in Hz */
-+#define PLLDIG_MIN_VCO_FREQ         650000000
-+#define PLLDIG_MAX_VCO_FREQ         1300000000
-+
-+/* Range of the output frequencies, in Hz */
-+#define PHI1_MIN_FREQ               27000000
-+#define PHI1_MAX_FREQ               600000000
-+
-+/* Maximum value of the reduced frequency divider */
-+#define MAX_RFDPHI1          63UL
-+
-+/* Best value of multiplication factor divider */
-+#define PLLDIG_DEFAULT_MFD   44
-+
-+/*
-+ * Denominator part of the fractional part of the
-+ * loop multiplication factor.
-+ */
-+#define MFDEN          20480
-+
-+static const struct clk_parent_data parent_data[] = {
-+	{.index = 0},
-+};
-+
-+struct clk_plldig {
-+	struct clk_hw hw;
-+	void __iomem *regs;
-+	unsigned int vco_freq;
-+};
-+
-+#define to_clk_plldig(_hw)	container_of(_hw, struct clk_plldig, hw)
-+
-+static int plldig_enable(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFM);
-+	/*
-+	 * Use Bypass mode with PLL off by default, the frequency overshoot
-+	 * detector output was disable. SSCG Bypass mode should be enable.
-+	 */
-+	val |= PLLDIG_SSCGBYP_ENABLE;
-+	writel(val, data->regs + PLLDIG_REG_PLLFM);
-+
-+	return 0;
-+}
-+
-+static void plldig_disable(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFM);
-+
-+	val &= ~PLLDIG_SSCGBYP_ENABLE;
-+	val |= FIELD_PREP(PLLDIG_SSCGBYP_ENABLE, 0x0);
-+
-+	writel(val, data->regs + PLLDIG_REG_PLLFM);
-+}
-+
-+static int plldig_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+
-+	return (readl(data->regs + PLLDIG_REG_PLLFM) &
-+			      PLLDIG_SSCGBYP_ENABLE);
-+}
-+
-+static unsigned long plldig_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val, rfdphi1;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* Check if PLL is bypassed */
-+	if (val & PLLDIG_SSCGBYP_ENABLE)
-+		return parent_rate;
-+
-+	rfdphi1 = FIELD_GET(PLLDIG_RFDPHI1_MASK, val);
-+
-+	/*
-+	 * If RFDPHI1 has a value of 1 the VCO frequency is also divided by
-+	 * one.
-+	 */
-+	if (!rfdphi1)
-+		rfdphi1 = 1;
-+
-+	return DIV_ROUND_UP(data->vco_freq, rfdphi1);
-+}
-+
-+static unsigned long plldig_calc_target_div(unsigned long vco_freq,
-+					    unsigned long target_rate)
-+{
-+	unsigned long div;
-+
-+	div = DIV_ROUND_CLOSEST(vco_freq, target_rate);
-+	div = max(1UL, div);
-+	div = min(div, MAX_RFDPHI1);
-+
-+	return div;
-+}
-+
-+static int plldig_determine_rate(struct clk_hw *hw,
-+				 struct clk_rate_request *req)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	unsigned int div;
-+
-+	if (req->rate < PHI1_MIN_FREQ)
-+		req->rate = PHI1_MIN_FREQ;
-+	if (req->rate > PHI1_MAX_FREQ)
-+		req->rate = PHI1_MAX_FREQ;
-+
-+	div = plldig_calc_target_div(data->vco_freq, req->rate);
-+	req->rate = DIV_ROUND_UP(data->vco_freq, div);
-+
-+	return 0;
-+}
-+
-+static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	unsigned int val, cond;
-+	unsigned int rfdphi1;
-+
-+	if (rate < PHI1_MIN_FREQ)
-+		rate = PHI1_MIN_FREQ;
-+	if (rate > PHI1_MAX_FREQ)
-+		rate = PHI1_MAX_FREQ;
-+
-+	rfdphi1 = plldig_calc_target_div(data->vco_freq, rate);
-+
-+	/* update the divider value */
-+	val = readl(data->regs + PLLDIG_REG_PLLDV);
-+	val &= ~PLLDIG_RFDPHI1_MASK;
-+	val |= FIELD_PREP(PLLDIG_RFDPHI1_MASK, rfdphi1);
-+	writel(val, data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* delay 200us make sure that old lock state is cleared */
-+	udelay(200);
-+
-+	/* Wait until PLL is locked or timeout (maximum 1000 usecs) */
-+	return readl_poll_timeout_atomic(data->regs + PLLDIG_REG_PLLSR, cond,
-+					 cond & PLLDIG_LOCK_MASK, 0,
-+					 USEC_PER_MSEC);
-+}
-+
-+static const struct clk_ops plldig_clk_ops = {
-+	.enable = plldig_enable,
-+	.disable = plldig_disable,
-+	.is_enabled = plldig_is_enabled,
-+	.recalc_rate = plldig_recalc_rate,
-+	.determine_rate = plldig_determine_rate,
-+	.set_rate = plldig_set_rate,
-+};
-+
-+static int plldig_init(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
-+	unsigned long val;
-+	unsigned long long lltmp;
-+	unsigned int mfd, fracdiv = 0;
-+
-+	if (!parent)
-+		return -EINVAL;
-+
-+	if (data->vco_freq) {
-+		mfd = data->vco_freq / parent_rate;
-+		lltmp = data->vco_freq % parent_rate;
-+		lltmp *= MFDEN;
-+		do_div(lltmp, parent_rate);
-+		fracdiv = lltmp;
-+	} else {
-+		mfd = PLLDIG_DEFAULT_MFD;
-+		data->vco_freq = parent_rate * mfd;
-+	}
-+
-+	val = FIELD_PREP(PLLDIG_MFD_MASK, mfd);
-+	writel(val, data->regs + PLLDIG_REG_PLLDV);
-+
-+	if (fracdiv) {
-+		val = FIELD_PREP(PLLDIG_FRAC_MASK, fracdiv);
-+		/* Enable fractional divider */
-+		val |= PLLDIG_FDEN;
-+		/* Disable dither */
-+		val |= FIELD_PREP(PLLDIG_DTH_MASK, PLLDIG_DTH_DISABLE);
-+		writel(val, data->regs + PLLDIG_REG_PLLFD);
-+	}
-+
-+	return 0;
-+}
-+
-+static int plldig_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_plldig *data;
-+	struct resource *mem;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	data->regs = devm_ioremap_resource(dev, mem);
-+	if (IS_ERR(data->regs))
-+		return PTR_ERR(data->regs);
-+
-+	data->hw.init = CLK_HW_INIT_PARENTS_DATA("dpclk",
-+						 parent_data,
-+						 &plldig_clk_ops,
-+						 0);
-+
-+	ret = devm_clk_hw_register(dev, &data->hw);
-+	if (ret) {
-+		dev_err(dev, "failed to register %s clock\n",
-+						dev->of_node->name);
-+		return ret;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &data->hw);
-+	if (ret) {
-+		dev_err(dev, "unable to add clk provider\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * The frequency of the VCO cannot be changed during runtime.
-+	 * Therefore, let the user specify a desired frequency.
-+	 */
-+	if (!of_property_read_u32(dev->of_node, "vco-frequency",
-+				  &data->vco_freq)) {
-+		if (data->vco_freq < PLLDIG_MIN_VCO_FREQ ||
-+		    data->vco_freq > PLLDIG_MAX_VCO_FREQ)
-+			return -EINVAL;
-+	}
-+
-+	return plldig_init(&data->hw);
-+}
-+
-+static const struct of_device_id plldig_clk_id[] = {
-+	{ .compatible = "fsl,ls1028a-plldig"},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, plldig_clk_id);
-+
-+static struct platform_driver plldig_clk_driver = {
-+	.driver = {
-+		.name = "plldig-clock",
-+		.of_match_table = plldig_clk_id,
-+	},
-+	.probe = plldig_clk_probe,
-+};
-+module_platform_driver(plldig_clk_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Wen He <wen.he_1@nxp.com>");
-+MODULE_DESCRIPTION("LS1028A Display output interface pixel clock driver");
--- 
-2.17.1
+There is T124 Nyan Big Chromebook which is supported in upstream kernel,
+it has PLLM Override set by bootloader. I also have T30 Nexus 7 tablet
+which has the PLLM Override set by bootloader as well. It's not clear to
+me whether this patch series is supposed to break these devices. If the
+breakage is the case here, then I'm afraid you can't postpone supporting
+the PLLM Override and a full-featured implementation is needed.
 
+I briefly tried to test this series on T30 and this time it doesn't hang
+on boot, but somehow WiFi MMC card detection is broken. AFAIK, the WiFi
+chip uses the Blink clock source and the clock should be enabled by the
+MMC core because this is how DT part looks like:
+
+brcm_wifi_pwrseq: wifi-pwrseq {
+	compatible = "mmc-pwrseq-simple";
+	clocks = <&pmc TEGRA_PMC_CLK_BLINK>;
+	clock-names = "ext_clock";
+	reset-gpios =  <&gpio TEGRA_GPIO(D, 3) GPIO_ACTIVE_LOW>;
+	post-power-on-delay-ms = <300>;
+	power-off-delay-us = <300>;
+};
+
+BTW, I  tried this series on a T20 device which also uses the Blink
+clock for WiFi card and it works. So looks like this patchset has some
+problem in regards to the T30 PMC clocks implementation.
+
+[snip]
