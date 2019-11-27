@@ -7,35 +7,35 @@ X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 952CBC432C0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C0F7C43141
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:59:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67A9E20835
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:59:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51EE420862
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:59:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="R6F/juMB"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FWAhWaKy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726634AbfK0E7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Nov 2019 23:59:38 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:17820 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726546AbfK0E7h (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Nov 2019 23:59:37 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5dde02bc0000>; Tue, 26 Nov 2019 20:59:40 -0800
+        id S1727266AbfK0E7m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Nov 2019 23:59:42 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:15259 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727198AbfK0E7k (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Nov 2019 23:59:40 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dde02bd0000>; Tue, 26 Nov 2019 20:59:41 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 26 Nov 2019 20:59:37 -0800
+  Tue, 26 Nov 2019 20:59:39 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 26 Nov 2019 20:59:37 -0800
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
- 2019 04:59:36 +0000
+        by hqpgpgate101.nvidia.com on Tue, 26 Nov 2019 20:59:39 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
+ 2019 04:59:38 +0000
 Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
  (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 27 Nov 2019 04:59:36 +0000
+ Transport; Wed, 27 Nov 2019 04:59:38 +0000
 Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.149]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5dde02b70001>; Tue, 26 Nov 2019 20:59:36 -0800
+        id <B5dde02b90000>; Tue, 26 Nov 2019 20:59:38 -0800
 From:   Sowjanya Komatineni <skomatineni@nvidia.com>
 To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
         <jonathanh@nvidia.com>, <digetx@gmail.com>,
@@ -51,9 +51,9 @@ CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
         <markz@nvidia.com>, <devicetree@vger.kernel.org>,
         <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 01/11] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
-Date:   Tue, 26 Nov 2019 20:59:23 -0800
-Message-ID: <1574830773-14892-2-git-send-email-skomatineni@nvidia.com>
+Subject: [PATCH v2 03/11] dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
+Date:   Tue, 26 Nov 2019 20:59:25 -0800
+Message-ID: <1574830773-14892-4-git-send-email-skomatineni@nvidia.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
 References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
@@ -61,57 +61,46 @@ X-NVConfidentiality: public
 MIME-Version: 1.0
 Content-Type: text/plain
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1574830780; bh=nBZ2jL8Xbzw6bstXTbwfBSRgB9PAmA4jf6nyPDEPCRc=;
+        t=1574830781; bh=63eFiSPz4MqupbpIiCdG57XX3PH0P9e9XUqT1iGtGIk=;
         h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
          In-Reply-To:References:X-NVConfidentiality:MIME-Version:
          Content-Type;
-        b=R6F/juMBDC5JvDEQMfAH+uKMwWRutAxkRwb8YDJSR0vOaS9LYczxm0AnMISORdbNf
-         lRW7FdnIMuDG2pDCFBWI3qvd1Y/Bra3F4TqxZJ5jjAA/mT3pqYNAMVw1chOny/yJb7
-         i6+ofLF+6TkPIuKKMfselmR8PQq5uxGYqaI98uKAq29BmHA/7pZUV4fkSOF2BJAvTT
-         yoheccWEKfKVD3Pncs5fQBl6KZRr7vSnFnvbrNkGQbFslregFhi30MD/LB16P3pskI
-         LdK+Uzezxj5mQcAFfZJHcdLte+pkjpR9qm7vdy6bTEPE433J5g2XkSuESYILW3sO1V
-         ITIkievKrV+2Q==
+        b=FWAhWaKyEXNQsePRPUlommZzV0syu6JB4j7o+wFy0J331DUpy5/DO9RU/Aa7MhkqK
+         hXU5Ex9m31V0HeNyTQ2Qcynmo4EcwL4fK7UvNauZKZAKhLxUHV8BgZHWO8mqAv8vX3
+         Bk1bbWFx0hIdikRtnM7aaMMDx9c7m/5aeWWrmG/dxrOEQTgU3PaD9wobhJ8dbTaoXW
+         nGc+u4jwsOoIcuzb+ho8peFCWB9/y9qWDmR/c/xoCDcZYmmJ2LomNj3xCJYOd92bWU
+         fjg/g9gyVtwpR33ODQ+YCBJ/L4YVUKlqTaF/UV5csxDKHedpB++LUpcLLOKBNVBbFE
+         iCEs0/1L6h/zQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
-these clocks has mux and a gate as a part of PMC controller.
+Tegra PMC has a blinking control to output 32 KHz clock to blink
+pin.
 
-This patch adds ids for each of these PMC clock mux and gates to
-use with the devicetree.
+This patch adds id for this blink control to use for enabling or
+disabling the blink output through devicetree.
 
 Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 ---
- include/dt-bindings/soc/tegra-pmc.h | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+ include/dt-bindings/soc/tegra-pmc.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
 diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
-new file mode 100644
-index 000000000000..705ee8083070
---- /dev/null
+index 705ee8083070..6fe28516017e 100644
+--- a/include/dt-bindings/soc/tegra-pmc.h
 +++ b/include/dt-bindings/soc/tegra-pmc.h
-@@ -0,0 +1,18 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*
-+ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
-+#define _DT_BINDINGS_SOC_TEGRA_PMC_H
-+
-+#define TEGRA_PMC_CLK_OUT_1_MUX		0
-+#define TEGRA_PMC_CLK_OUT_1		1
-+#define TEGRA_PMC_CLK_OUT_2_MUX		2
-+#define TEGRA_PMC_CLK_OUT_2		3
-+#define TEGRA_PMC_CLK_OUT_3_MUX		4
-+#define TEGRA_PMC_CLK_OUT_3		5
-+
-+#define TEGRA_PMC_CLK_MAX		6
-+
-+#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+@@ -12,7 +12,8 @@
+ #define TEGRA_PMC_CLK_OUT_2		3
+ #define TEGRA_PMC_CLK_OUT_3_MUX		4
+ #define TEGRA_PMC_CLK_OUT_3		5
++#define TEGRA_PMC_CLK_BLINK		6
+ 
+-#define TEGRA_PMC_CLK_MAX		6
++#define TEGRA_PMC_CLK_MAX		7
+ 
+ #endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
 2.7.4
 
