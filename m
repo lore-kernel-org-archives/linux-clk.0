@@ -7,29 +7,29 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5200C432C0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 15:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E1AFC432C3
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 15:14:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C99D20674
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 15:14:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E6D6B20674
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 15:14:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727208AbfK0PNe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 27 Nov 2019 10:13:34 -0500
-Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:37917 "EHLO
+        id S1727184AbfK0PNd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 27 Nov 2019 10:13:33 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:48549 "EHLO
         alexa-out-blr-02.qualcomm.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727146AbfK0PNe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Nov 2019 10:13:34 -0500
+        by vger.kernel.org with ESMTP id S1726984AbfK0PNd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 27 Nov 2019 10:13:33 -0500
 Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
-  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 27 Nov 2019 20:43:26 +0530
-IronPort-SDR: Mrr8pzJRttAqRBb6qEd/CjLW/5UMAD7dpEY1sqvKTamw65QKMh2vZrMgO6gx1VxqLgPKyjNmFv
- pzmU/mc3cJjWKcFtNxo+A1cryfEH32ZoqLJ8LlJ2PPHX0EtyaE4bUdEmdFQ/MD+xJsaWqEVzIl
- Jh0F9ha4T4Niu3EcklSGQeyKHnWl2k3melSjQL7xgF626bEcLcMRJJYYwk17tuzVmjgIXgbdHa
- f+EmADD2tJnfqXKzcYjsYIOkeOcXaa2dl2r+9bjckxYqulbhz+fu3AE6GF+Z2u55ihb9d61Jj3
- NTY8+LmQedw1Lp/rIxLPtx7n
+  by alexa-out-blr-02.qualcomm.com with ESMTP/TLS/AES256-SHA; 27 Nov 2019 20:43:25 +0530
+IronPort-SDR: 4spPvObFyNU5G2WR8swjaJC+AbOWsfJZt/E0sJxnLN8DW+2uNQ2F/L2uT4miSfxBWCbnv5kF7l
+ mQqtqgn620ugCUdZuddHN5nCnTrsyeWrD2pwcMKR1B9d2sSzG/ggfNBbNe03iH3kGJc04TNZk2
+ PKpWRXx1YSSTJ8yi5jqqHoD7S5suB0O6yYgPcWr+nFeQcAy3poBYjWqHRZv/B5kJLAJJ+M1RI5
+ E7xCljJXUJrCrU4JvG9usKUy4Fe0ONhpOeXbyYOmz93f022T4rhzDcUbYWleKBCsI4rGa7evZl
+ RAmrgez5OtduujDLuPNw1HOu
 Received: from gokulsri-linux.qualcomm.com ([10.201.2.207])
   by ironmsg01-blr.qualcomm.com with ESMTP; 27 Nov 2019 20:42:58 +0530
 Received: by gokulsri-linux.qualcomm.com (Postfix, from userid 432570)
-        id F1BFD398A; Wed, 27 Nov 2019 20:42:55 +0530 (IST)
+        id D67F0398C; Wed, 27 Nov 2019 20:42:55 +0530 (IST)
 From:   Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
         bjorn.andersson@linaro.org, david.brown@linaro.org,
@@ -39,9 +39,9 @@ To:     gokulsri@codeaurora.org, sboyd@kernel.org, agross@kernel.org,
         mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com,
         robh+dt@kernel.org, sricharan@codeaurora.org,
         nprakash@codeaurora.org
-Subject: [PATCH V3 06/10] dt-bindings: clock: qcom: Add reset for WCSSAON
-Date:   Wed, 27 Nov 2019 20:42:50 +0530
-Message-Id: <1574867574-2216-7-git-send-email-gokulsri@codeaurora.org>
+Subject: [PATCH V3 08/10] dt-bindings: firmware: qcom: Add compatible for IPQ8074 SoC
+Date:   Wed, 27 Nov 2019 20:42:52 +0530
+Message-Id: <1574867574-2216-9-git-send-email-gokulsri@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
 References: <1574867574-2216-1-git-send-email-gokulsri@codeaurora.org>
@@ -50,28 +50,28 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add binding for WCSSAON reset required for Q6v5 reset on IPQ8074 SoC.
+Add compatible for IPQ8074 support.
+This does not need clocks for scm calls.
 
 Signed-off-by: Gokul Sriram Palanisamy <gokulsri@codeaurora.org>
 Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-Signed-off-by: Nikhil Prakash V <nprakash@codeaurora.org>
-Acked-by: Rob Herring <robh@kernel.org>
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- include/dt-bindings/clock/qcom,gcc-ipq8074.h | 1 +
+ Documentation/devicetree/bindings/firmware/qcom,scm.txt | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/include/dt-bindings/clock/qcom,gcc-ipq8074.h b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-index 4de4811..04e1f57 100644
---- a/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-+++ b/include/dt-bindings/clock/qcom,gcc-ipq8074.h
-@@ -362,5 +362,6 @@
- #define GCC_PCIE1_AXI_SLAVE_ARES		128
- #define GCC_PCIE1_AHB_ARES			129
- #define GCC_PCIE1_AXI_MASTER_STICKY_ARES	130
-+#define GCC_WCSSAON_RESET			131
- 
- #endif
+diff --git a/Documentation/devicetree/bindings/firmware/qcom,scm.txt b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
+index 3f29ea0..3c5d37c 100644
+--- a/Documentation/devicetree/bindings/firmware/qcom,scm.txt
++++ b/Documentation/devicetree/bindings/firmware/qcom,scm.txt
+@@ -10,6 +10,7 @@ Required properties:
+  * "qcom,scm-apq8064"
+  * "qcom,scm-apq8084"
+  * "qcom,scm-ipq4019"
++ * "qcom,scm-ipq8074"
+  * "qcom,scm-msm8660"
+  * "qcom,scm-msm8916"
+  * "qcom,scm-msm8960"
 -- 
 1.9.1
 
