@@ -2,132 +2,116 @@ Return-Path: <SRS0=22bM=ZT=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199CAC432C0
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:06:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 952CBC432C0
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7C9A2084B
-	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67A9E20835
+	for <linux-clk@archiver.kernel.org>; Wed, 27 Nov 2019 04:59:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="JCmQk2Z6";
-	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="SDjJ1wxl"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="R6F/juMB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbfK0EGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 26 Nov 2019 23:06:51 -0500
-Received: from a27-10.smtp-out.us-west-2.amazonses.com ([54.240.27.10]:57010
-        "EHLO a27-10.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726525AbfK0EGv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Nov 2019 23:06:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1574827610;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        bh=5ARwXEreVexfeHJvosDOjQ5dg3IjsVVnM3f/Nqmw6W0=;
-        b=JCmQk2Z6dcatoaCXep4HC6AfnatpEIN49DnbxJHgxzw2GjQDkdHKdSm27WhVVOGV
-        gzmXDtZZyRs8DIiemflHgONuIiKw63So+zAxixOoMBtl7u1XXdnKL16zhZT/NqD1Bkt
-        VWaL93ZDp7BODCzUaAtNEqjv1l+WUjclvX44qYng=
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
-        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1574827609;
-        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
-        bh=5ARwXEreVexfeHJvosDOjQ5dg3IjsVVnM3f/Nqmw6W0=;
-        b=SDjJ1wxlm3fUlda1VoPEHzxNZTVBWKkrKLTYlqsZj5nbKYfXmitca2y1xFWTlnTV
-        TDLsAXNBEMtm9NXdDYweOOqnQpUJ6CaTkEkTynTPWBjbmZYB6GqXuRHjZ+6hsb4xLLm
-        MLXG2dzjp94r47aQooYygyvmywe9KtzaND7wOJ9A=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 57FA4C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 3/8] dt-bindings: clock: Add YAML schemas for the QCOM
- GPUCC clock bindings
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
- <1573812304-24074-4-git-send-email-tdas@codeaurora.org>
- <CAOCk7NqfHe6jRPmw6o650fyd6EyVfFObHhJ9=21ipuAqJo6oGA@mail.gmail.com>
- <20191126181154.275EA20727@mail.kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <0101016eab0a4e76-b8eb44c5-d076-46b9-a156-b80dc650ca31-000000@us-west-2.amazonses.com>
-Date:   Wed, 27 Nov 2019 04:06:49 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+        id S1726634AbfK0E7i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 26 Nov 2019 23:59:38 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17820 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726546AbfK0E7h (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 26 Nov 2019 23:59:37 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5dde02bc0000>; Tue, 26 Nov 2019 20:59:40 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 26 Nov 2019 20:59:37 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 26 Nov 2019 20:59:37 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 27 Nov
+ 2019 04:59:36 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Wed, 27 Nov 2019 04:59:36 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.149]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5dde02b70001>; Tue, 26 Nov 2019 20:59:36 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2 01/11] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock ids
+Date:   Tue, 26 Nov 2019 20:59:23 -0800
+Message-ID: <1574830773-14892-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20191126181154.275EA20727@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-SES-Outgoing: 2019.11.27-54.240.27.10
-Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1574830780; bh=nBZ2jL8Xbzw6bstXTbwfBSRgB9PAmA4jf6nyPDEPCRc=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=R6F/juMBDC5JvDEQMfAH+uKMwWRutAxkRwb8YDJSR0vOaS9LYczxm0AnMISORdbNf
+         lRW7FdnIMuDG2pDCFBWI3qvd1Y/Bra3F4TqxZJ5jjAA/mT3pqYNAMVw1chOny/yJb7
+         i6+ofLF+6TkPIuKKMfselmR8PQq5uxGYqaI98uKAq29BmHA/7pZUV4fkSOF2BJAvTT
+         yoheccWEKfKVD3Pncs5fQBl6KZRr7vSnFnvbrNkGQbFslregFhi30MD/LB16P3pskI
+         LdK+Uzezxj5mQcAFfZJHcdLte+pkjpR9qm7vdy6bTEPE433J5g2XkSuESYILW3sO1V
+         ITIkievKrV+2Q==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
+these clocks has mux and a gate as a part of PMC controller.
 
+This patch adds ids for each of these PMC clock mux and gates to
+use with the devicetree.
 
-On 11/26/2019 11:41 PM, Stephen Boyd wrote:
-> Quoting Jeffrey Hugo (2019-11-15 07:11:01)
->> On Fri, Nov 15, 2019 at 3:07 AM Taniya Das <tdas@codeaurora.org> wrote:
->>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->>> new file mode 100644
->>> index 0000000..c2d6243
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
->>> @@ -0,0 +1,69 @@
->>> +# SPDX-License-Identifier: GPL-2.0-only
->>> +%YAML 1.2
->>> +---
->>> +$id: http://devicetree.org/schemas/bindings/clock/qcom,gpucc.yaml#
->>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>> +
->>> +title: Qualcomm Graphics Clock & Reset Controller Binding
->>> +
->>> +maintainers:
->>> +  - Taniya Das <tdas@codeaurora.org>
->>> +
->>> +description: |
->>> +  Qualcomm grpahics clock control module which supports the clocks, resets and
->>> +  power domains.
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - qcom,msm8998-gpucc
->>> +      - qcom,sdm845-gpucc
->>> +
->>> +  clocks:
->>> +    minItems: 1
->>> +    maxItems: 2
->>> +    items:
->>> +      - description: Board XO source
->>> +      - description: GPLL0 source from GCC
->>
->> This is not an accurate conversion.  GPLL0 was not valid for 845, and
->> is required for 8998.
-> 
-> Thanks for checking Jeff.
-> 
-> It looks like on 845 there are two gpll0 clocks going to gpucc. From
-> gpu_cc_parent_map_0:
-> 
-> 	"gcc_gpu_gpll0_clk_src",
-> 	"gcc_gpu_gpll0_div_clk_src",
-> 
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ include/dt-bindings/soc/tegra-pmc.h | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
 
-There are branches of GPLL0 which would be connected to most external 
-CCs. It is upto to the external CCs to either use them to source a 
-frequency or not.
-
+diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+new file mode 100644
+index 000000000000..705ee8083070
+--- /dev/null
++++ b/include/dt-bindings/soc/tegra-pmc.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
++#define _DT_BINDINGS_SOC_TEGRA_PMC_H
++
++#define TEGRA_PMC_CLK_OUT_1_MUX		0
++#define TEGRA_PMC_CLK_OUT_1		1
++#define TEGRA_PMC_CLK_OUT_2_MUX		2
++#define TEGRA_PMC_CLK_OUT_2		3
++#define TEGRA_PMC_CLK_OUT_3_MUX		4
++#define TEGRA_PMC_CLK_OUT_3		5
++
++#define TEGRA_PMC_CLK_MAX		6
++
++#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.7.4
 
---
