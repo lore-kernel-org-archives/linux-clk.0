@@ -7,98 +7,94 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCFFC43215
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 14:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19404C432C0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 14:45:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E71C2176D
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 14:45:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF9BA2176D
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 14:45:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726758AbfK1OpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Nov 2019 09:45:22 -0500
-Received: from mout.kundenserver.de ([212.227.17.24]:44231 "EHLO
+        id S1726723AbfK1Opg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Nov 2019 09:45:36 -0500
+Received: from mout.kundenserver.de ([212.227.17.13]:43023 "EHLO
         mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726709AbfK1OpV (ORCPT
+        with ESMTP id S1726722AbfK1OpV (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Nov 2019 09:45:21 -0500
 Received: from orion.localdomain ([95.117.37.214]) by mrelayeu.kundenserver.de
  (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1M8hEd-1iVe4j2fth-004kdf; Thu, 28 Nov 2019 15:45:16 +0100
+ 1Mg6uW-1hsj5P2orG-00hf1o; Thu, 28 Nov 2019 15:45:17 +0100
 From:   "Enrico Weigelt, metux IT consult" <info@metux.net>
 To:     linux-kernel@vger.kernel.org
 Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-clk@vger.kernel.org
-Subject: [PATCH 2/7] drivers: clk: unexport clk_hw_register_gpio_gate()
-Date:   Thu, 28 Nov 2019 15:44:45 +0100
-Message-Id: <20191128144450.24094-2-info@metux.net>
+Subject: [PATCH 6/7] drivers: clk: unexport clk_gpio_gate_ops field
+Date:   Thu, 28 Nov 2019 15:44:49 +0100
+Message-Id: <20191128144450.24094-6-info@metux.net>
 X-Mailer: git-send-email 2.11.0
 In-Reply-To: <20191128144450.24094-1-info@metux.net>
 References: <20191128144450.24094-1-info@metux.net>
-X-Provags-ID: V03:K1:8wHv1XyPtuQ9Q/kuYc5WWANDyR0hnbQtR5xxLnnqLlMBW6quR/l
- 1v7oFYqQ+nJD8UuuQ3BByXwAsc32F3jI5usdJube6EKMoTCg+1sXb8z9wr7zIM1jRkWXvdy
- TyYqlWf0yspPrVN1jROPQMHkQQlotGb4amuojentvSE91DL+YVkalDYi4WUFL2QcHsD4lIi
- WqEY5cUYrTgXuwpYLj8KQ==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3G94kiDwzmg=:71tEPawSbu9uEFtB7W8ez1
- YrTb6RhPSwpE6N+SbPJwj1vl4ahFzTbR6DGLjDVc6DJiB+SgLqSMOpLz2ANeUxeDxRW96dAS+
- RJDhameSgqZh7aTDOfyxFKmOeCNwt8dTU8Z4/kX/cdql6kKE0C6Y54V5p7g9/tj6SfWsCt+Wv
- eXaPsTUEoSySNHdTybJRIYDnE6/S267lHWo8bk5XdsAMB35khWbwLzl6NPdUpW/k+xLKLYbE6
- idq1hEFJnK9Sf5CPEghtj1TtfeO5EZafCeoUUqNztshFhGXhL6rGQdYBa5cmSjWIWG8uVor+m
- jiK2Cwg4EgO4meeIcB4wKG9gr1xLwRlhuqCV2LeXIFSrH7wc3B/LRq0NSD/ca3uF4YFk1H1W8
- flVUbqXxbEmkXQlIeVGD3SyDsHrGRiE3XT1/W3zvhhfR9JiijfdwXeBibTLdyxxhzK6tkmLcp
- H4dcqDZ5R6S2a1vO4o1iLmnI98R3FWYSh/03vX3TQ9VtTphR5ocxg+/6TV0UY27FHm+JSR6nM
- YOQo7UF5BCBGxBiIijTX/2NnxmFgZk2EU/+CyN81EX9VcRQ0/NMyUOFTPskwvMm0w7Pzc5e2z
- 8WvOksNTBGfvykui7If8/WeHO346ooDYYPOLlMnDyC91hUHw+2QAM7clwUZvB4SM70xvf6BrV
- DNdkJfD0LE9TXRZSEOfQtxN9BVprmY0DGHsMNeB3jPuGJqKK1z+fsmICjN5slDP1kjvwMFTRx
- gqdXH8Vcna7CN4HKnmnZCfrQLUrQ+s9krmIQl949rFBTnq4jfPLKEZ5U5Hqo+nwUWb6b34uwI
- 6/Dkfp7Ht2Tm5IRbTEbEcv5Zoih1wl8QA9HUNj4a4smFD4Ew+a51mA7hoX6fzvqAJzVWDjSVJ
- IbOhTfMqqS0pwZrhAOCA==
+X-Provags-ID: V03:K1:CmTdkl0zWo2JdCF7jhXzf9pYfGYcWwsGodJaK7DNxsfTMpaKiCk
+ H+9wKJwziO/9InfSE9VMfa3YrTC4jvBIzgchgZ7vMXLZXPh3NAV+JlvRX9yiQAkCdcVD7l0
+ KgGiPxSF+dfXgA19RrCrLSCpQr8rjwH8CqGacEYYqWdPMSCq1Q7wt7M91VJYJFxwYj53tSD
+ /UhDyT0sKl8P42ucyxY5w==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:gCvM3hAvcMU=:eXUcK8oFZ0UkvOO8K+U0rg
+ DNkuqW1ghi+X5+7MLqKUJ9ROadCFtIjnJyNeM2+5cAhDIFAux7aGChk/fi1Tb9AG8leyLtGZj
+ sfeucbYKMOpGET7r7mOskE4tG/2nR7CCuTiS3rTVY6qtDyjA2OgsEU1eMXTAPFya0Mxw+2gIh
+ AOl2AFerZ8E6vglq+iqqKcgKkpmkAtZUXKi+x4Z67lYiuzbfHl3VGbnWPWC3faI8X8LXRPQ0u
+ PBwMWIbLWpC5wdUBPQsuB2VaDpcjPcpdR9L+QRC20EwRd0q22g1eboV9xZsQvLZmJhU8L09yt
+ MBLl84C5U5KLxpSz3owMNblxl+eG2fHM/Z2MqBltcI48GlQiCDAFrpRp4SBgCv7yQo9WKf3Pk
+ eUUAgm4+HK8FEXLWmr5vcS9AQWLcv7msU11zn5R1tQColoejHeCP5UgGSMVseKtpD76Qn96fx
+ 0HnlzZRIVBeab1iR6vOhlmcSrDZNeGDL/4++J/WAjb9HsRuHewefrU2bqNQulmCi7ebGsjp2+
+ cRFn3ZF/JFK8R3JJqFfuivsgUI8IzWZKEX53crpv65GqhjKiTcNb9Dl1xF/xp+u8sQ8PglExs
+ iQubTTqWc79Exu2RlMgYKy6uveazqot8pnECHB6FwW1d3mZsK9c7OXljubdt9mdogQN3Clvpf
+ lstlXXq7/QpaqXUPy5yUnmuXofJyiKS8oBeI1wTR6qpxqXx3WA+HFk5K2YgSzXvKPpFDGjJbD
+ 9/BsVMsFo96GY0T6+P6Kx4+wXt2cbDERg9e5Jt04CvQGOcs+9A9DYRzU7gdb2zyJlWJzMz3dn
+ SUwvahg6guO5sBfwU8nHz80GMrE0Je6JE8Qo1JOpluvrZ7X0rj2Hk9jTSy1/2hMR2t07jl/Tq
+ rJVb69Ijc3K4rerdvJvg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The function clk_hw_register_gpio_gate() doesn't seem to have any
+The clk_gpio_gate_ops field doesn't seem to have any
 users outside clk-gpio.c, thus unexport and make it static.
 
 Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
 ---
  drivers/clk/clk-gpio.c       | 3 +--
- include/linux/clk-provider.h | 3 ---
- 2 files changed, 1 insertion(+), 5 deletions(-)
+ include/linux/clk-provider.h | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
-index f9f81a31984a..f457b30e4900 100644
+index 005e311c1822..a7e75a038728 100644
 --- a/drivers/clk/clk-gpio.c
 +++ b/drivers/clk/clk-gpio.c
-@@ -169,7 +169,7 @@ static struct clk_hw *clk_register_gpio(struct device *dev, const char *name,
-  * @gpiod: gpio descriptor to gate this clock
-  * @flags: clock flags
-  */
--struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
-+static struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, struct gpio_desc *gpiod,
- 		unsigned long flags)
- {
-@@ -184,7 +184,6 @@ struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
- 			(parent_name ? &parent_name : NULL),
- 			(parent_name ? 1 : 0), gpiod, flags, ops);
+@@ -51,12 +51,11 @@ static int clk_gpio_gate_is_enabled(struct clk_hw *hw)
+ 	return gpiod_get_value(clk->gpiod);
  }
--EXPORT_SYMBOL_GPL(clk_hw_register_gpio_gate);
  
- static struct clk *clk_register_gpio_gate(struct device *dev, const char *name,
- 		const char *parent_name, struct gpio_desc *gpiod,
+-const struct clk_ops clk_gpio_gate_ops = {
++static const struct clk_ops clk_gpio_gate_ops = {
+ 	.enable = clk_gpio_gate_enable,
+ 	.disable = clk_gpio_gate_disable,
+ 	.is_enabled = clk_gpio_gate_is_enabled,
+ };
+-EXPORT_SYMBOL_GPL(clk_gpio_gate_ops);
+ 
+ static int clk_sleeping_gpio_gate_prepare(struct clk_hw *hw)
+ {
 diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-index d283f9896e86..b4338b26aed7 100644
+index b00adc1909a1..59a7f273a182 100644
 --- a/include/linux/clk-provider.h
 +++ b/include/linux/clk-provider.h
-@@ -773,9 +773,6 @@ struct clk_gpio {
+@@ -772,8 +772,6 @@ struct clk_gpio {
+ 
  #define to_clk_gpio(_hw) container_of(_hw, struct clk_gpio, hw)
  
- extern const struct clk_ops clk_gpio_gate_ops;
--struct clk_hw *clk_hw_register_gpio_gate(struct device *dev, const char *name,
--		const char *parent_name, struct gpio_desc *gpiod,
--		unsigned long flags);
- void clk_hw_unregister_gpio_gate(struct clk_hw *hw);
- 
- extern const struct clk_ops clk_gpio_mux_ops;
+-extern const struct clk_ops clk_gpio_gate_ops;
+-
+ struct clk_hw *clk_hw_register_gpio_mux(struct device *dev, const char *name,
+ 		const char * const *parent_names, u8 num_parents, struct gpio_desc *gpiod,
+ 		unsigned long flags);
 -- 
 2.11.0
 
