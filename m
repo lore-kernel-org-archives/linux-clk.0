@@ -2,78 +2,312 @@ Return-Path: <SRS0=Uxw9=ZU=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 856F1C432C0
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 13:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D9DC432C0
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 14:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FD2F2084D
-	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 13:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14EF22071F
+	for <linux-clk@archiver.kernel.org>; Thu, 28 Nov 2019 14:43:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="Yx1kH5OK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVR7QBA5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726320AbfK1N62 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Nov 2019 08:58:28 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:64488 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726227AbfK1N62 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 28 Nov 2019 08:58:28 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 47Nzgf2vq8zCF;
-        Thu, 28 Nov 2019 14:55:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1574949360; bh=YbVoq25/hTlPA7F4rLBVhD7nrJGKHabWavLh0FzR5CQ=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Yx1kH5OKPMYDRtcLwbdir/Q0QERwnwTnn2LjkvtlVrly0qfsTVHNF41Kt9CgGjB+g
-         /BXaUIr0MWBndg0C9rvtZOlRusbhJxTSqph9jwvxWJF/jG1KG2rUDuYHE9KItnzc2O
-         fxbiRryo692WcPlwHdNbMkinsif7m3NDNGsfHP/bESc1AWfzENVVKb/R8AE8Ah1ai9
-         UZWEjCzYIevzAQVdGkxcSeHIYKK7eVit0sFitnVOzbGb55eoiAtKE80RAchXikg6Cx
-         bJzrsk5f33VJyg7k3xTVdmGud4fsgZlE9+0g1oG5B2W1mlQ3pTccEAbc1HUFMr2N42
-         /o8jKSrkwCI9Q==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Thu, 28 Nov 2019 14:58:22 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: at91: fix possible deadlock
-Message-ID: <20191128135822.GA6522@qmqm.qmqm.pl>
-References: <20191127171915.GK299836@piout.net>
- <20191128102531.817549-1-alexandre.belloni@bootlin.com>
+        id S1726700AbfK1Ond (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Nov 2019 09:43:33 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45316 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726545AbfK1Ond (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Nov 2019 09:43:33 -0500
+Received: by mail-io1-f68.google.com with SMTP id i11so18300589ioi.12;
+        Thu, 28 Nov 2019 06:43:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Z4OMB9FrnRPZRUHwvOwqK6rgFmvyxzvzmzgSErk1FuA=;
+        b=GVR7QBA5LCthVUe8s3WHX6R1zzLV1oBi3txKCgqCMuk/fePCuPFPSkNWB917B0Ee8f
+         fDwIiyF834JV7NaHFEZtEhwKcotP2gKhli9D9WqhfjjD2d9pZ+VCGKYxXI9TldFa0DDf
+         kdZ/Vn4ql/t/W0h9xPh8zBg1fSig/B7KlQ+SOLwshC4KLnqO8/9rENX+6AaxVWShl77s
+         vsslrAsMvZ24MU8nGRZJj03MF0XDdDJt7QH798QU7t10PDqynLWFNPTVz/0abfgi15tJ
+         Jo6RdDOJYgRrRS3TADPYrmVWHSxRZ3DWDyY7jL7F+67QnwpKknF2jp4ekX5C8L+OQeOo
+         62KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Z4OMB9FrnRPZRUHwvOwqK6rgFmvyxzvzmzgSErk1FuA=;
+        b=F5TLlXMRICcHjgUS0hmV/IBta8Q6qNOR/Ozlq9GPCfZf/UftFJSQ6T+KaCh3aSG8bW
+         bB+5pWhoJucF8yUyX5X1lQi//dNHeo3kniXiUkOH00zZwAYUeE16jKgMLqVIb4mo2vyR
+         J42tIJf95XEoT9YFW/oSuXPIIDEkDeqnID7HI0zfy6U6jBBEDkUJFNTASgqFdFxDX4fs
+         wfpeaF5c+Jx9UwN6u4I1ki3q7Hxg4DouusnSfcOHk36bWGWVINb0Dq7qzLdgd5pqFjtJ
+         Yt3tNEv3SY0SJcj/PZdhemRj8dYnXVWwxpxIu8vxyL3+NlVadSS/R2Uw4krE104OVXJk
+         vw8Q==
+X-Gm-Message-State: APjAAAUYxlJ0aTyiKb1Nyc6DBh2KQTHScJNSX78T3IqP5Rir75GeOYF4
+        rA73BLM/rIiz78viAp5P1bLBxpJSWQRy3xErn08=
+X-Google-Smtp-Source: APXvYqxmYtcweNZvmQamB+3MqsYEvLc6Vlj1zSMxlf9AdoyRV0M1IpinPiPVlm6ML7fvBE97Hbo1OQQuaabfzT2qJ1I=
+X-Received: by 2002:a02:a0cf:: with SMTP id i15mr10296595jah.95.1574952211778;
+ Thu, 28 Nov 2019 06:43:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191128102531.817549-1-alexandre.belloni@bootlin.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1574458460.git.leonard.crestez@nxp.com> <23e46c12c98947315229c20dea6784ad40d294c4.1574458460.git.leonard.crestez@nxp.com>
+In-Reply-To: <23e46c12c98947315229c20dea6784ad40d294c4.1574458460.git.leonard.crestez@nxp.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Thu, 28 Nov 2019 08:43:20 -0600
+Message-ID: <CAHCN7xK_w9m7sZOJtGFVtpeu1BHN_H6eyeYCOgZQS67t1SvmRQ@mail.gmail.com>
+Subject: Re: [PATCH v7 5/5] arm64: dts: imx8m: Add ddr controller nodes
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-pm@vger.kernel.org, Martin Kepplinger <martink@posteo.de>,
+        Silvano di Ninno <silvano.dininno@nxp.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Nov 28, 2019 at 11:25:31AM +0100, Alexandre Belloni wrote:
-> Lockdep warns about a possible circular locking dependency because using
-> syscon_node_to_regmap() will make the created regmap get and enable the
-> first clock it can parse from the device tree. This clock is not needed to
-> access the registers and should not be enabled at that time.
-> 
-> Use the recently introduced device_node_to_regmap to solve that as it looks
-> up the regmap in the same list but doesn't care about the clocks.
-> 
-> Reported-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-[...]
+On Fri, Nov 22, 2019 at 3:46 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+>
+> This is used by the imx-ddrc devfreq driver to implement dynamic
+> frequency scaling of DRAM.
+>
+> Support for proactive scaling via interconnect will come later. The
+> high-performance bus masters which need that (display, vpu, gpu) are
+> mostly not yet enabled in upstream anyway.
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 18 ++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8mm.dtsi     | 10 ++++++++
+>  .../boot/dts/freescale/imx8mn-ddr4-evk.dts    | 18 ++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8mn.dtsi     | 10 ++++++++
+>  arch/arm64/boot/dts/freescale/imx8mq-evk.dts  | 24 +++++++++++++++++++
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi     | 10 ++++++++
+>  6 files changed, 90 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> index 28ab17a277bb..ecf0d385c164 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts
+> @@ -75,10 +75,28 @@
+>
+>  &A53_0 {
+>         cpu-supply = <&buck2_reg>;
+>  };
+>
+> +&ddrc {
+> +       operating-points-v2 = <&ddrc_opp_table>;
+> +
+> +       ddrc_opp_table: opp-table {
+> +               compatible = "operating-points-v2";
+> +
+> +               opp-25M {
+> +                       opp-hz = /bits/ 64 <25000000>;
+> +               };
+> +               opp-100M {
+> +                       opp-hz = /bits/ 64 <100000000>;
+> +               };
+> +               opp-750M {
+> +                       opp-hz = /bits/ 64 <750000000>;
+> +               };
+> +       };
+> +};
 
-Tested-by: Micha³ Miros³aw <mirq-linux@rere.qmqm.pl>
+The SoC's device tree has the opp for the SoC.  Since the SoC also has
+the DDR controller, why not put the opp for the DDR into the SoC's
+device tree set for its maximum rates.  If the individual boards need
+to change them, they can do it on a case-by-case basis.
 
-Thanks! Can you push this to stable?
+As more and more people add devices based on imx8m q/m/n, I can
+imaging a lot of these entries will be duplicated if they base their
+design on the reference evk for their respective SoC.
 
-Best Regards,
-Micha³ Miros³aw
+> +
+>  &fec1 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pinctrl_fec1>;
+>         phy-mode = "rgmii-id";
+>         phy-handle = <&ethphy0>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm.dtsi b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> index 6edbdfe2d0d7..3d4802375715 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm.dtsi
+> @@ -856,10 +856,20 @@
+>                         #interrupt-cells = <3>;
+>                         interrupt-controller;
+>                         interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+>
+> +               ddrc: memory-controller@3d400000 {
+> +                       compatible = "fsl,imx8mm-ddrc", "fsl,imx8m-ddrc";
+> +                       reg = <0x3d400000 0x400000>;
+> +                       clock-names = "core", "pll", "alt", "apb";
+> +                       clocks = <&clk IMX8MM_CLK_DRAM_CORE>,
+> +                                <&clk IMX8MM_DRAM_PLL>,
+> +                                <&clk IMX8MM_CLK_DRAM_ALT>,
+> +                                <&clk IMX8MM_CLK_DRAM_APB>;
+> +               };
+> +
+>                 ddr-pmu@3d800000 {
+>                         compatible = "fsl,imx8mm-ddr-pmu", "fsl,imx8m-ddr-pmu";
+>                         reg = <0x3d800000 0x400000>;
+>                         interrupt-parent = <&gic>;
+>                         interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+> index 071949412caf..b051c927c11e 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mn-ddr4-evk.dts
+> @@ -15,10 +15,28 @@
+>
+>  &A53_0 {
+>         cpu-supply = <&buck2_reg>;
+>  };
+>
+> +&ddrc {
+> +       operating-points-v2 = <&ddrc_opp_table>;
+> +
+> +       ddrc_opp_table: opp-table {
+> +               compatible = "operating-points-v2";
+> +
+> +               opp-25M {
+> +                       opp-hz = /bits/ 64 <25000000>;
+> +               };
+> +               opp-100M {
+> +                       opp-hz = /bits/ 64 <100000000>;
+> +               };
+> +               opp-600M {
+> +                       opp-hz = /bits/ 64 <600000000>;
+> +               };
+> +       };
+> +};
+> +
+>  &i2c1 {
+>         pmic@4b {
+>                 compatible = "rohm,bd71847";
+>                 reg = <0x4b>;
+>                 pinctrl-0 = <&pinctrl_pmic>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mn.dtsi b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> index e91625063f8e..3a79fdddc72b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mn.dtsi
+> @@ -757,10 +757,20 @@
+>                         #interrupt-cells = <3>;
+>                         interrupt-controller;
+>                         interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+>
+> +               ddrc: memory-controller@3d400000 {
+> +                       compatible = "fsl,imx8mn-ddrc", "fsl,imx8m-ddrc";
+> +                       reg = <0x3d400000 0x400000>;
+> +                       clock-names = "core", "pll", "alt", "apb";
+> +                       clocks = <&clk IMX8MN_CLK_DRAM_CORE>,
+> +                                <&clk IMX8MN_DRAM_PLL>,
+> +                                <&clk IMX8MN_CLK_DRAM_ALT>,
+> +                                <&clk IMX8MN_CLK_DRAM_APB>;
+> +               };
+> +
+>                 ddr-pmu@3d800000 {
+>                         compatible = "fsl,imx8mn-ddr-pmu", "fsl,imx8m-ddr-pmu";
+>                         reg = <0x3d800000 0x400000>;
+>                         interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+>                 };
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> index c36685916683..ee6dc5f07622 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq-evk.dts
+> @@ -103,10 +103,34 @@
+>
+>  &A53_3 {
+>         cpu-supply = <&buck2_reg>;
+>  };
+>
+> +&ddrc {
+> +       operating-points-v2 = <&ddrc_opp_table>;
+> +
+> +       ddrc_opp_table: opp-table {
+> +               compatible = "operating-points-v2";
+> +
+> +               opp-25M {
+> +                       opp-hz = /bits/ 64 <25000000>;
+> +               };
+> +               opp-100M {
+> +                       opp-hz = /bits/ 64 <100000000>;
+> +               };
+> +               /*
+> +                * On imx8mq B0 PLL can't be bypassed so low bus is 166M
+> +                */
+> +               opp-166M {
+> +                       opp-hz = /bits/ 64 <166935483>;
+> +               };
+> +               opp-800M {
+> +                       opp-hz = /bits/ 64 <800000000>;
+> +               };
+> +       };
+> +};
+> +
+>  &fec1 {
+>         pinctrl-names = "default";
+>         pinctrl-0 = <&pinctrl_fec1>;
+>         phy-mode = "rgmii-id";
+>         phy-handle = <&ethphy0>;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> index 7f9319452b58..d1fcf9887f8b 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> @@ -1111,10 +1111,20 @@
+>                         interrupt-controller;
+>                         interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+>                         interrupt-parent = <&gic>;
+>                 };
+>
+> +               ddrc: memory-controller@3d400000 {
+> +                       compatible = "fsl,imx8mq-ddrc", "fsl,imx8m-ddrc";
+> +                       reg = <0x3d400000 0x400000>;
+> +                       clock-names = "core", "pll", "alt", "apb";
+> +                       clocks = <&clk IMX8MQ_CLK_DRAM_CORE>,
+> +                                <&clk IMX8MQ_DRAM_PLL_OUT>,
+> +                                <&clk IMX8MQ_CLK_DRAM_ALT>,
+> +                                <&clk IMX8MQ_CLK_DRAM_APB>;
+> +               };
+> +
+>                 ddr-pmu@3d800000 {
+>                         compatible = "fsl,imx8mq-ddr-pmu", "fsl,imx8m-ddr-pmu";
+>                         reg = <0x3d800000 0x400000>;
+>                         interrupt-parent = <&gic>;
+>                         interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
+> --
+> 2.17.1
+>
+>
+> _______________________________________________
+> linux-arm-kernel mailing list
+> linux-arm-kernel@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
