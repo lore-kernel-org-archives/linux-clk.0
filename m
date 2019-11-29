@@ -2,196 +2,189 @@ Return-Path: <SRS0=1MK8=ZV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 790A6C432C0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 05:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DF17C432C0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 07:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33003206E0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 05:34:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="bZFp7oMD"
+	by mail.kernel.org (Postfix) with ESMTP id 44BBC215F1
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 07:48:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725892AbfK2FeD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Nov 2019 00:34:03 -0500
-Received: from mail-eopbgr130047.outbound.protection.outlook.com ([40.107.13.47]:54496
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725860AbfK2FeC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Nov 2019 00:34:02 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RcMMtLTIMc6Li6DKdxkVfIiSwvEV6tB2hUxj3Ox+oZ37EfXL/BjextTFQwVITfVJdeeWLu/0Ce5lqDq6qiLPoAeDO+yXKXgxAqUnZJlpx3p2/6Bvq3UKxARUmcjvuSQcf81l2NLDqT6aakR0DLuZw5y8c21B+VuoZLZbL8S9pg7htddRex4svjGrqdayXmwVPb8cSaDJ1Hr6cU6PM+JLNWMOWguM2mlrbWa3lYXZfn6fsfq597G4Os5YA5+2XlXWYJPjVbAiCJDPVw3bpfE8YYFGDVVklb5FpSQncVMg4mDUja8iFTV60MCQcwJU0tPxgUc12oz61eBd/GNPUR5YvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dxbD+1226YR2VeViQqTfgbStEMJKdquYiojmwBwHWUk=;
- b=CvvDiI76n/PNmJWtZEctDRbV0BCDQSYE5HMUn9xqkBaNzwJ/GZ22aZoUKD5cpYvNWeB8rhgYKe2mEFhGltsPRSEnSt9E8ix71e892XWieBa3sPDHuerkmc5/5Lw19lJqszrMSr8Bsi9gmEVD1tTiSwxHA6OQHQcejAEIwHGOIJV4bm5y9hwbwf3/Gjad2cj8yxI+CYG4jz3rCd5Hb9aAaSU/W2E1M/T5L+WSibtxx/G7dE/atM3B/1yyG+Gt+xSQ9Fl0U+tlw9heM1jtmxGavLyI7IHH4jZqh5Oi2tVld4y0Dxt1nMWOzOnY5xIJJe94eNNiZQpTBQNpyVJ2FGVHrw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=dxbD+1226YR2VeViQqTfgbStEMJKdquYiojmwBwHWUk=;
- b=bZFp7oMDerOAkB+zYkL179kVBtEXpV5yG0iKyboiK/+3/pXSe/2g8nu6vZKrVHkSurjMS+JYjyBp74YTp0RA2kpxTqerGMr3+N9w7L7gYZqkITQh5I4vWQHSkzgCnpCBYK5PMP9Z9aLz7wm5apxqAWkzWcpqfvi4bz8x9iomiCc=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB6221.eurprd04.prod.outlook.com (20.179.25.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.21; Fri, 29 Nov 2019 05:33:55 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::dd0c:72dc:e462:16b3]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::dd0c:72dc:e462:16b3%5]) with mapi id 15.20.2495.014; Fri, 29 Nov 2019
- 05:33:55 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Adam Ford <aford173@gmail.com>, Rob Herring <robh+dt@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>
-CC:     Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?iso-8859-2?Q?Artur_=A6wigo=F1?= <a.swigon@partner.samsung.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-        Martin Kepplinger <martink@posteo.de>,
-        Silvano Di Ninno <silvano.dininno@nxp.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Subject: Re: [PATCH v7 5/5] arm64: dts: imx8m: Add ddr controller nodes
-Thread-Topic: [PATCH v7 5/5] arm64: dts: imx8m: Add ddr controller nodes
-Thread-Index: AQHVoX4qUUvWMnVlkEqCY7YW+VjVzQ==
-Date:   Fri, 29 Nov 2019 05:33:55 +0000
-Message-ID: <VI1PR04MB702390E22E7273310BE47747EE460@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <cover.1574458460.git.leonard.crestez@nxp.com>
- <23e46c12c98947315229c20dea6784ad40d294c4.1574458460.git.leonard.crestez@nxp.com>
- <CAHCN7xK_w9m7sZOJtGFVtpeu1BHN_H6eyeYCOgZQS67t1SvmRQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
+        id S1726702AbfK2HsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Nov 2019 02:48:21 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:55590 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbfK2HsV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Nov 2019 02:48:21 -0500
+X-AuditID: c0a8fbf4-183ff70000001fa6-5f-5de0cd42b140
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 00.DB.08102.24DC0ED5; Fri, 29 Nov 2019 08:48:18 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Fri, 29 Nov 2019 08:48:14 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>
+Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Thread-Topic: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Thread-Index: AQHVndzxthsd4Y8wKkm7W/92Uslk+KeRDPcAgAAbkICAAZUNgIAACqYAgAAMmACADvFigA==
+Date:   Fri, 29 Nov 2019 07:48:13 +0000
+Message-ID: <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
+References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+         <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+         <20191118162502.GJ9761@sirena.org.uk>
+         <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
+         <20191119181325.GD3634@sirena.org.uk>
+         <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
+         <20191119193636.GH3634@sirena.org.uk>
+In-Reply-To: <20191119193636.GH3634@sirena.org.uk>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 650fd6cb-af99-4959-bcfa-08d7748db9d9
-x-ms-traffictypediagnostic: VI1PR04MB6221:|VI1PR04MB6221:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB6221AEBD7118D69D12995FBDEE460@VI1PR04MB6221.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0236114672
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(376002)(136003)(366004)(346002)(396003)(199004)(189003)(3846002)(6116002)(7696005)(4326008)(2906002)(8936002)(86362001)(81166006)(81156014)(8676002)(14454004)(55016002)(9686003)(4001150100001)(6436002)(6246003)(186003)(14444005)(256004)(102836004)(26005)(53546011)(6506007)(76176011)(25786009)(54906003)(110136005)(66446008)(64756008)(66556008)(66476007)(74316002)(66066001)(316002)(66946007)(7416002)(76116006)(91956017)(99286004)(446003)(305945005)(7736002)(5660300002)(44832011)(478600001)(229853002)(52536014)(71190400001)(71200400001)(33656002)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB6221;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: +pJgowwOVjh9zjulv1XQkAYe3hfOvoV2H+EvqfI910Cnfr+RxjyRjlGtL0t9vKhqWa5INw9bx+SsC1cjUliXpPGwEUFcqDBV33XFDuGCFFkR0xViO+KMLq5GCOzSkNvt6fCfVam8qT/eDuMlrTehWzcjt9yRaLrhVnAkpGEPfLcihbnEhb86o+CNIRDzJVdvhCbyJm7X3f8igDdRMDu1OkcfQ2hThIuWJRwMruAnSlvHRjOvThwGSxCLPNWO/zUYz0XQoe9Ho0ghsultFJg0sbj+ONoJ7LBFY7qSpPSeshgQBz7JiYBF5DRxmGTvdin76+tvkpynqQXrXSYMKa7kYDxBbG9bkzKHk2pGfv4CxdUgb7tcp1HocvNT6s/HJCZfNHKLEqDqkGyzZ7IH3cpezMiHJOVLoPFcHjHW89h7nOcclJp3xiIfE2gIb+4aRfB1
-Content-Type: text/plain; charset="iso-8859-2"
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <4A7012CE0C8B984CBF9A799F6553634D@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 650fd6cb-af99-4959-bcfa-08d7748db9d9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Nov 2019 05:33:55.2056
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: Eup+OmXlpjWhVoCDx0dpP9irOXPbmgO9Z40jDkqENdNMwx9WQmPagNBMMsoD7UamyhEoo/cznOv+oXbHRyszyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB6221
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TW0wUVxjOmTlz4TJmXBb3dG1Nuq29IQjWtifGtKSpceiDJaE1adMtDmVk
+        0WWXzO5aL21CYi0sINF0rbpyc7mKVGSBVDdoDUVEQJGIiuKKRGqEEmkRMSDFzjBVeDpf/u/2
+        P/yHJXXVjJFNtzkl2SZaTXQoPFf9tD7640t3zbGeiVhc3nONwdkPKxk8UdQB8YHBIRoPncsG
+        uKT1MoXzOhsp7Bs7RGG3O4fC/U0nIW5vGAB44PF5gCd7cwjsmaki8D/5dyh89KdyiBtKZgC+
+        GiikcdPoCYDbjvfS+NfWIIMrbvQQuLCiHeKxcTeBezrW4WDHeRrv7ukj8Z4zrQyevV4PccHl
+        9fHLhNriWiCM9e1hhOLaXcJpb5ARypqHCcFf46aF29ebaaGs4GdKeJD/BxQmu/ZDoaCxBgj3
+        j9ZB4ULfb4RwsHiKEKqPP2GER/5lifxXYWtTROe2pPQ028oPN4VZHvf+DjI9q7cX/70XZoEH
+        q3IByyJ+NTpZacgFIayOvwaQ58g3uSBUwe0AdZ/Og6qG5tei3JuMqtHz0ejAdBmtakj+cDgq
+        vOSnVSKC34Qa/7oHNZGISiefEhreiHzBIVLNgfxyNJ3vVMccvwGVBkZJrauGRP7AjTlNCL8K
+        1d/iVA3gX0HurIdzMSRvQP77TygVI55H5c3dpIYj0fC92f/nJnRmanBuZZJ/G9UFVmrWeJRd
+        u5fS8KvIkzfIaCssRhcPD8F9YIl3QYN33u1d4PYucHsXuEsBVQNQhphuTROdUlyMLLliZLsl
+        Q3m+tWf4gXZ5E6fAs5aEFkCwoAW8xBKmSG5RyYBZtyjFnrrDIjosybLLKjlaAGJJk55LKVI4
+        LlXcsVOS7c+ppSw0Gbg3B/ebdbzatVWSMiX5Ofsyy5oQ90XnXbNusSylSds3p1ud8zTBhqjh
+        oUa9Q7KlSrLoclqS1eNIdijXoVLhSu+Pqp1zZIoZylSzdoAodt9wkY9kW4sqfKQO2uw2yWjg
+        7F2KlFelFpftRdEIMLDAFMGtUNlw5fu9yBlRKgil4mzBHbXCKc5TxixQdiXs9Snp1K3hyq83
+        Nvzp2hnIORbxb1L/zDHX+8HX2HdzRqIix/1N9pjls7EcmeDebE66uP6XQFXc1bMfXZkO8SfG
+        dn6aqU/68rtu4+cnrB+gIxcSXD98tmbJhrb4N7p841veSvQl9m+zRjcsfa8tSq87+P3uNY9W
+        rPskdFddfcx41czoMxN0WMS4d0jZIf4Hc3Z7HDsEAAA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2019-11-28 4:43 PM, Adam Ford wrote:=0A=
-> On Fri, Nov 22, 2019 at 3:46 PM Leonard Crestez <leonard.crestez@nxp.com>=
- wrote:=0A=
->>=0A=
->> This is used by the imx-ddrc devfreq driver to implement dynamic=0A=
->> frequency scaling of DRAM.=0A=
->>=0A=
->> Support for proactive scaling via interconnect will come later. The=0A=
->> high-performance bus masters which need that (display, vpu, gpu) are=0A=
->> mostly not yet enabled in upstream anyway.=0A=
->>=0A=
->> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>=0A=
->> ---=0A=
->>   arch/arm64/boot/dts/freescale/imx8mm-evk.dts  | 18 ++++++++++++++=0A=
->>   arch/arm64/boot/dts/freescale/imx8mm.dtsi     | 10 ++++++++=0A=
->>   .../boot/dts/freescale/imx8mn-ddr4-evk.dts    | 18 ++++++++++++++=0A=
->>   arch/arm64/boot/dts/freescale/imx8mn.dtsi     | 10 ++++++++=0A=
->>   arch/arm64/boot/dts/freescale/imx8mq-evk.dts  | 24 +++++++++++++++++++=
-=0A=
->>   arch/arm64/boot/dts/freescale/imx8mq.dtsi     | 10 ++++++++=0A=
->>   6 files changed, 90 insertions(+)=0A=
->>=0A=
->> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts b/arch/arm64/b=
-oot/dts/freescale/imx8mm-evk.dts=0A=
->> index 28ab17a277bb..ecf0d385c164 100644=0A=
->> --- a/arch/arm64/boot/dts/freescale/imx8mm-evk.dts=0A=
->> +++ b/arch/arm64/boot/dts/freescale/imx8mm-evk.dts=0A=
->> @@ -75,10 +75,28 @@=0A=
->>=0A=
->>   &A53_0 {=0A=
->>          cpu-supply =3D <&buck2_reg>;=0A=
->>   };=0A=
->>=0A=
->> +&ddrc {=0A=
->> +       operating-points-v2 =3D <&ddrc_opp_table>;=0A=
->> +=0A=
->> +       ddrc_opp_table: opp-table {=0A=
->> +               compatible =3D "operating-points-v2";=0A=
->> +=0A=
->> +               opp-25M {=0A=
->> +                       opp-hz =3D /bits/ 64 <25000000>;=0A=
->> +               };=0A=
->> +               opp-100M {=0A=
->> +                       opp-hz =3D /bits/ 64 <100000000>;=0A=
->> +               };=0A=
->> +               opp-750M {=0A=
->> +                       opp-hz =3D /bits/ 64 <750000000>;=0A=
->> +               };=0A=
->> +       };=0A=
->> +};=0A=
-> =0A=
-> The SoC's device tree has the opp for the SoC.  Since the SoC also has=0A=
-> the DDR controller, why not put the opp for the DDR into the SoC's=0A=
-> device tree set for its maximum rates.  If the individual boards need=0A=
-> to change them, they can do it on a case-by-case basis.=0A=
-> =0A=
-> As more and more people add devices based on imx8m q/m/n, I can=0A=
-> imaging a lot of these entries will be duplicated if they base their=0A=
-> design on the reference evk for their respective SoC.=0A=
-=0A=
-The OPPs can vary from board to board for the same SoC. For example ddr4 =
-=0A=
-and lpddr4 variants of the NXP evk boards have different setpoints.=0A=
-=0A=
-If a default set was included in soc dtsi then some boards would end up =0A=
-having to use /delete-node/ and I wanted to avoid that. Last I check =0A=
-that feature wasn't even officially documented for dtc?=0A=
-=0A=
-Perhaps this could be revisited if it ends up being duplicated on many =0A=
-boards.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+SGVsbG8gQWdhaW4gTWFyaywNCg0KU29ycnkgZm9yIGxvbmcgZGVsYXkgLSBJIGFtIHJlYWxseSBo
+YXZpbmcgdG9vIG1hbnkgdGhpbmdzIG9uIG15IHRhYmxlDQpyaWdodCBub3cgOi8NCg0KT24gVHVl
+LCAyMDE5LTExLTE5IGF0IDE5OjM2ICswMDAwLCBNYXJrIEJyb3duIHdyb3RlOg0KPiBPbiBUdWUs
+IE5vdiAxOSwgMjAxOSBhdCAwNjo1MTozN1BNICswMDAwLCBWYWl0dGluZW4sIE1hdHRpIHdyb3Rl
+Og0KPiA+IE9uIFR1ZSwgMjAxOS0xMS0xOSBhdCAxODoxMyArMDAwMCwgTWFyayBCcm93biB3cm90
+ZToNCj4gPiA+IEFoLCBPSy4gIEkgZGlkbid0IGV2ZW4gbm90aWNlIHRoYXQgcGF0Y2ggd2hlbiBJ
+IHNjYW5uZWQgdGhlDQo+ID4gPiBzZXJpZXMuDQo+ID4gPiBJJ2xsIGxvb2sgb3V0IGZvciB0aGlz
+IG5leHQgdGltZSBhcm91bmQgYnV0IHRoYXQgc291bmRzIGxpa2UgaXQncw0KPiA+ID4gZ2VuZXJh
+bGx5IGdvaW5nIGluIHRoZSByaWdodCBkaXJlY3Rpb24sIGVzcGVjaWFsbHkgaWYgaXQncw0KPiA+
+ID4gaW50ZWdyYXRlZA0KPiA+ID4gd2l0aCB0aGUgc3VzcGVuZCBtb2RlIHJlZ3VsYXRvciBiaW5k
+aW5ncyB0aGF0IENodW55YW4gZGlkLg0KPiA+IFByb2JhYmx5IGl0IGlzIG5vdCBhcyBJIGFtIG5v
+dCBmYW1pbGlhciB3aXRoIENodW55YW4ncyB3b3JrLiBJJ2xsDQo+ID4gdHJ5DQo+ID4gbG9va2lu
+ZyB3aGF0IGhhcyBiZWVuIGRvbmUgb24gdGhhdCBmcm9udCA6KSBBbmQgSSBhbSBwcmV0dHkgc3Vy
+ZQ0KPiA+IHlvdQ0KPiA+IG1pZ2h0IG5vdCBiZSBoYXBweSB3aXRoIHRoYXQgcGF0Y2ggLSBidXQg
+cGVyaGFwcyB5b3UgY2FuIGdpdmUgbWUgYQ0KPiA+IG51ZGdlIHRvIGJldHRlciBkaXJlY3Rpb24u
+Li4NCj4gDQo+IFRoZSBkcml2ZXIgaW50ZXJmYWNlIHdhcyBhZGRlZCBpbiAicmVndWxhdG9yOiBh
+ZGQgUE0gc3VzcGVuZCBhbmQNCj4gcmVzdW1lDQo+IGhvb2tzIi4NCg0KSSBsb29rZWQgdGhyb3Vn
+aCB0aGUgc2V0IGJ1dCBkaWRuJ3Qgc3BvdCBhbnkgbmV3IGludGVyZmFjZSB0b3dhcmRzIHRoZQ0K
+cmVndWxhdG9yIGRyaXZlciAod2hpY2ggYWNjZXNzZXMgdGhlIEhXKS4gSSBzYXcgaW50ZXJmYWNl
+IHRvd2FyZHMNCnJlZ3VsYXRvciBjb25zdW1lciBkcml2ZXIgd2hpY2ggY2FuIGJlIHVzZWQgdG8g
+c2V0IHRoZSBjb25zdHJhaW5zDQp0aG91Z2guDQoNClNwZWNpZmljYWxseSwgSSBkb24ndCBzZWUg
+dm9sdGFnZSBzZXR0aW5nIGNhbGxiYWNrIGZvciBkaWZmZXJlbnQgcnVuLQ0KbW9kZXMuIE5vciBk
+byBJIHNlZSB2b2x0YWdlIHNldHRpbmcgKG9yIGRpZmZlcmVudGlhdGlvbikgb2YgbW9yZSB0aGFu
+DQpvbmUgc3VzcGVuZCBzdGF0ZS4NCg0KVG8gZXhwbGFpbiBpdCBmdXJ0aGVyIC0gbXkgYXNzdW1w
+dGlvbiBpcyB0aGF0IHRoZSBCRDcxODI4ICdydW4tbGV2ZWxzJw0KKFJVTjAsIC4uLiBSVU4zKSBj
+b3VsZCBiZSBtYXBwZWQgdG8gcmVndWxhdG9yIG1vZGVzDQpSRUdVTEFUT1JfTU9ERV9GQVNULCBS
+RUdVTEFUT1JfTU9ERV9OT1JNQUwsIFJFR1VMQVRPUl9NT0RFX0lETEUgYW5kIA0KUkVHVUxBVE9S
+X01PREVfU1RBTkRCWS4gQnV0IHJlZ3VsYXRvcnMgd2hpY2ggYXJlIGNvbnRyb2xsZWQgYnkgdGhl
+c2UNCnJ1bi1sZXZlbHMsIGNhbid0IGJlIGluZGl2aWR1YWxseSBjb250cm9sbGVkLiBJZiBzdGF0
+ZSBmb3Igb25lIGlzDQpjaGFuZ2VkLCB0aGUgc3RhdGUgaXMgY2hhbmdlZCBmb3IgYWxsIG9mIHRo
+ZW0uIFRoZSBEVlMgYnVja3MgMSwyLDYgYW5kDQo3IHN1cHBvcnQgdGhpcy4gUmVzdCBvZiB0aGUg
+TERPcyBhbmQgQlVDS3MgKGFuZCBhbHNvIHRob3NlIERWUyBidWNrcw0Kd2hpY2ggYXJlIG5vdCBj
+b25maWd1cmVkIHRvIGJlIGNvbnRyb2xsZWQgYnkgcnVuLWxldmVscykgaGF2ZSBtb2RlcyBSVU4N
+CmFuZCBJRExFLCB3aGVyZSB0aGUgcHJvY2Vzc29yIHN0YXlzIHBvd2VyZWQuDQoNCkluIGFkZGl0
+aW9uIHRvIHRoZXNlIChhY3RpdmUpIG1vZGVzL3N0YXRlcywgdGhlcmUgaXMgZmV3IHN0YXRlcyB3
+aGVyZQ0KcHJvY2Vzc29yIGlzIG5vdCBwb3dlcmVkLiBJIGd1ZXNzIHRoZXNlIGNvdWxkIGJlIG1h
+cHBlZCB0byAnZGlmZmVyZW50Jw0Kc3VzcGVuZCBzdGF0ZXMuIEF0IGxlYXN0IExQU1IsIEhCTlQg
+YW5kIFNISVAgc3RhdGVzIGFyZSBzdWNoLiBUaGVzZSBhcmUNCmFnYWluIGdsb2JhbCBQTUlDIHN0
+YXRlcyAtIG5vdCBwZXIgcmVndWxhdG9yIHN0YXRlcy4gVGhleSBjYW4gYmUgZWl0aGVyDQpjb250
+cm9sbGVkIGJ5IGRyaXZpbmcgYSBwaW4gb24gUE1JQyAtIG9yIGJ5IEkyQyByZWdpc3RlciBzZXR0
+aW5nLiBJDQpkb24ndCBzZWUgaG93IEkgY291bGQgZGlmZmVyZW50aWF0ZSB0aGVzZSBzdGF0ZXMg
+d2hlbiB1c2luZyBzdGFuZGFyZA0KQVBJcyAtIG5vciBkbyBJIGtub3cgaWYgdGhlc2Ugc2hvdWxk
+IGJlIGNoYW5nZWQgdmlhIHJlZ3VsYXRvcg0KaW50ZXJmYWNlcyBhdCBhbGwuDQoNCkFsbCBpbiBh
+bGwgLSBJIGFtIGFsc28gYSBiaXQgdW5zdXJlIGhvdyBJIHNob3VsZCBkbyB0aGUgbWFwcGluZyBv
+ZiB0aGUNClBNSUMgbG93LXBvd2VyIG1vZGVzIHRvIHRoZSBtb2RlcyB1c2VkIGJ5IExpbnV4IC0g
+dGhlIGN1cnNlIG9mIHdvcmtpbmcNCmZvciBjb21wb25lbnQgdmVuZG9yIGlzIHRoYXQgSSBoYXZl
+IGxpbWl0ZWQgdmlzaWJpbGl0eSB0byBhY3R1YWwgZW5kLQ0KcHJvZHVjdHMgLSBpZiB0aGV5IGFy
+ZSBub3QgaW4tdHJlZS4gOiggQW5kIEkgZG9uJ3QgdGhpbmsgd2UgaGF2ZSBhbnkNCmluLXRyZWUg
+Ym9hcmRzIHdoaWNoIHVzZSB0aGVzZSBsb3ctcG93ZXIgc3RhdGVzIChhdCBsZWFzdCBmb3Igbm93
+KSAtIFNvDQppZiB5b3Ugb3IgUm9iIGRvIG5vdCBvYmplY3QgLSBJIHdpbGwgbGVhdmUgdGhlc2Ug
+YmluZGluZ3MgaW4gdGhpcyBkb2MgLQ0KYnV0IEkgbmVlZCB0byBjb25zaWRlciB0aGUgdmFsdWUg
+b2YgYWRkaW5nIHN0dWZmIHByZXNlbnRlZCBpbiBwYXRjaCAxMg0KaW4tdHJlZSBrZXJuZWwuLi4g
+R3Vlc3MgSSdsbCBkcm9wIGl0IG91dCB1bmxlc3MgSSBnZXQgc29tZSBiZXR0ZXINCnVuZGVyc3Rh
+bmRpbmcgaG93IHJ1bi1sZXZlbHMgYW5kIGxvdy1wb3dlciBtb2RlcyBhcmUgaGFuZGxlZCBpbiBz
+b21lIG9mDQp0aGUgYWN0dWFsIGRldmljZXMuIFdlIGNhbiBhbHdheXMgYWRkIHRoaXMgc3VwcG9y
+dCBsYXRlciA6KQ0KDQo+ID4gPiBZZXMsIEkgdGhpbmsgdGhpcyBuZWVkcyBjbGFyaWZpY2F0aW9u
+IGFzIEkgY29tcGxldGVseSBmYWlsZWQgdG8NCj4gPiA+IHBpY2sNCj4gPiA+IHVwDQo+ID4gPiBv
+biB0aGlzIGFuZCBkaWQgaW5kZWVkIHJlYWQgdGhpcyBhcyByZWZlcnJpbmcgdG8gdGhlDQo+ID4g
+PiBtb2Rlcy4gICJWb2x0YWdlcw0KPiA+ID4gdGhhdCBjYW4gYmUgc2V0IGluIFJVTiBtb2RlIiBv
+ciBzb21ldGhpbmc/ICBJIHRha2UgaXQgdGhlc2UNCj4gPiA+IHZvbHRhZ2VzDQo+ID4gPiBhcmUN
+Cj4gPiA+IGZpeGVkIGFuZCB0aGUgT1MgY2FuJ3QgY2hhbmdlIHRoZW0/DQo+ID4gVW5mb3J0dW5h
+dGVseSB0aGV5IGFyZSBub3QuIFZvbHRhZ2VzIGFuZCBlbmFibGUvZGlzYWJsZSBzdGF0dXNlcw0K
+PiA+IGZvcg0KPiA+IGVhY2ggcnVuLWxldmVsIChhbmQgaW5kaXZpZHVhbGx5IGZvciBlYWNoIHJ1
+bi1sZXZlbCBjYXBhYmxlIGJ1Y2spDQo+ID4gY2FuDQo+ID4gYmUgY2hhbmdlZCBhdCBydW50aW1l
+IHZpYSBJMkMuIEFuZCBhIGN1c3RvbWVyIHJlcXVlc3RlZCBtZSBhbHNvIHRvDQo+ID4gc3VwcG9y
+dCB0aGlzIC0gaGVuY2UgdGhlIGluLWtlcm5lbCBBUEkgLSBidXQgSSBhbSBzdXJlIHlvdSBoYXZl
+DQo+ID4gc29tZQ0KPiA+IG5pY2Ugd29yZHMgd2hlbiB5b3UgY2hlY2sgdGhlIHBhdGNoIDEyLiA6
+XQ0KPiANCj4gQWgsIHRoYXQncyBhY3R1YWxseSBiZXR0ZXIuICBJdCBvcGVucyB1cCBwb3NzaWJs
+aXRpZXMgZm9yIG1ha2luZyB1c2UNCj4gb2YNCj4gdGhlIGZlYXR1cmUgd2l0aG91dCBlbmNvZGlu
+ZyB2b2x0YWdlcyBpbiBEVC4gIEZvciBleGFtcGxlLCB5b3UgY2FuDQo+IGNhY2hlDQo+IHRoZSBs
+YXN0IGhvd2V2ZXIgbWFueSB2b2x0YWdlcyB0aGF0IHdlcmUgc2V0IGFuZCBqdW1wIHF1aWNrbHkg
+dG8gdGhlbQ0KPiBvcg0KPiBkbyBzb21ldGhpbmcgbGlrZSBwdXQgdGhlIHRvcCBvZiB0aGUgY29u
+c3RyYWludHMgaW4gdG8gaGVscCB3aXRoDQo+IGdvdmVybm9ycyBsaWtlIG9uZGVtYW5kLiAgSSdk
+IHJlY29tbWVuZCB0cnlpbmcgZm9yIHNvbWV0aGluZyBsaWtlDQo+IHRoYXQNCj4gcmF0aGVyIHRo
+YW4gZW5jb2RpbmcgaW4gRFQsIGl0J2xsIHByb2JhYmx5IGJlIG1vcmUgcm9idXN0IHdpdGggdGhp
+bmdzDQo+IGxpa2UgY3B1ZnJlcSBjaGFuZ2luZy4NCg0KSSB3aXNoIEkgd2FzIHdvcmtpbmcgd2l0
+aCB0aGUgZnVsbCBwcm9kdWN0IHNvIHRoYXQgSSBjb3VsZCBzZWUgYW5kDQpsZWFybiBhIHByb3Bl
+ciBleGFtcGxlIG9uIGhvdyB0aGUgY3B1ZnJlcSBhY3R1YWxseSB1c2VzIHRoZXNlDQppbnRlcmZh
+Y2VzIDopIEknZCByZWFsbHkgbGlrZSB0byB1bmRlcnN0YW5kIHRoaXMgbXVjaCBiZXR0ZXIuIE1h
+eWJlDQp0aGlzIGNvdWxkIGJlIGEgdG9waWMgZm9yIHlvdSB0byBwcmVzZW50IGluIHNvbWUgTGlu
+dXggY29uZmVyZW5jZSA7KQ0KSnVzdCBwbGVhc2UgcGluZyBtZSB3aGVuIHlvdSBhcmUgZG9pbmcg
+dGhhdCBhbmQgSSdsbCBiZSBsaXN0ZW5pbmcgdGhlcmUNCmZvciBzdXJlIDspDQoNCkFueXdheXMs
+IG15IGlkZWEgd2FzIHRvIHNldCB0aGUgaW5pdGFsIHZvbHRhZ2UgdmFsdWVzIGZvciB0aGVzZSBz
+dGF0ZXMNCnZpYSBEVCAtIGJ1dCBhbGxvdyB0aGUgdm9sdGFnZXMgdG8gYmUgY2hhbmdlZCBhdCBy
+dW4tdGltZSB0b28gKEkgZ3Vlc3MNCnRoaXMgaWRlYSBpcyB2aXNpYmxlIGluIHRoZSBwYXRjaCAx
+MikuDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0KDQo=
