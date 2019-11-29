@@ -2,83 +2,81 @@ Return-Path: <SRS0=1MK8=ZV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70D58C432C0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 01:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA93C432C3
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 03:37:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E13921781
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 01:22:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="dTehSbOk"
+	by mail.kernel.org (Postfix) with ESMTP id EF88A216F4
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 03:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726696AbfK2BWz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 28 Nov 2019 20:22:55 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:41834 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726692AbfK2BWz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 28 Nov 2019 20:22:55 -0500
-Received: by mail-qk1-f194.google.com with SMTP id m125so24176444qkd.8;
-        Thu, 28 Nov 2019 17:22:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i702aI34Ezre+0jrw+L6vx9jKRLYCS8yu6Eoq+4nGJE=;
-        b=dTehSbOkY05Dr9nkgHtoKE1xSiDuW5wG/Ajt1b3KazxlRGS9m76EmQ0EGoKnsfLbPb
-         Duue+a7zkw1MO0Gzq2mA7tdyiQd1nS3VT3d3UkK3yXBnNGvLy/ZTkLPilzlW40pp3+me
-         NlZ4IVSvcbXLRiRtthWxx0lEasUQXG07FUQkQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i702aI34Ezre+0jrw+L6vx9jKRLYCS8yu6Eoq+4nGJE=;
-        b=LxhWmQQKeLDEsxGvvkS72xTVcDAf4JK6apNvFXxxfDJSUnbnMNpsmVV83v0i91PNQf
-         f+J2EuPFnyYKcEF/ymfACdVvA7dDv/3+EJAvNlVcZW7p3CKdDoBVur8wI4YCVtWGaQoC
-         FP0iHIQ8BavQBzHSNTr7lG/d8KAaUc8ocnzFD6DsxPG0b+IgdD+3G5zX2LBIZnqEGuhG
-         tviJppgcZ/G6pytcCOZN2o0Xvisl9JuWPgrWiInN/y2dm5XkvhY1NvzehDFlt/6m89KN
-         iSA14fK9s3+DeD6StVkAgy729IOTX7CfUzj8rsQMtx3oigmc4dJL05GdsBqgiWF2A73E
-         Nj3A==
-X-Gm-Message-State: APjAAAVq47CSbEiA7DkJSruc6vfNTtOugTAH2eiLQ875h5A7v+uiSOLw
-        nrnvHYb9LxRDIzYs54cfU4AE6DvouvYQGO1BOSs=
-X-Google-Smtp-Source: APXvYqzz9CXdrxz6xF/zS1AxHhxumwbTlTDCuJZgIlcJE1zBHaC5e91x03jmrOXsqeNZRVN0YWwsyRZ5BX10t1m375k=
-X-Received: by 2002:a37:dcc7:: with SMTP id v190mr13463552qki.330.1574990574036;
- Thu, 28 Nov 2019 17:22:54 -0800 (PST)
+        id S1726856AbfK2Dhk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 28 Nov 2019 22:37:40 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:7176 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726773AbfK2Dhk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 28 Nov 2019 22:37:40 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 5F1338584C3E47A3F3DE;
+        Fri, 29 Nov 2019 11:37:38 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.439.0; Fri, 29 Nov 2019 11:37:31 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "Michael Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>, Hulk Robot <hulkci@huawei.com>
+Subject: [PATCH -next] clk: bm1800: Remove set but not used variable 'fref'
+Date:   Fri, 29 Nov 2019 03:35:34 +0000
+Message-ID: <20191129033534.188257-1-yuehaibing@huawei.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20191010020655.3776-1-andrew@aj.id.au> <20191010020655.3776-3-andrew@aj.id.au>
- <20191126180320.1A2132071A@mail.kernel.org>
-In-Reply-To: <20191126180320.1A2132071A@mail.kernel.org>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Fri, 29 Nov 2019 01:22:41 +0000
-Message-ID: <CACPK8Xd73GokmT=6ABDQSJoumHL4aMLx3R2qkp9PqGThRExz8A@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: aspeed: Add RMII RCLK gates for both AST2500 MACs
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type:   text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7BIT
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 26 Nov 2019 at 18:03, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Andrew Jeffery (2019-10-09 19:06:55)
-> > RCLK is a fixed 50MHz clock derived from HPLL that is described by a
-> > single gate for each MAC.
-> >
-> > Signed-off-by: Andrew Jeffery <andrew@aj.id.au>
-> > ---
->
-> Applied to clk-next
->
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Thanks!
+drivers/clk/clk-bm1880.c: In function 'bm1880_pll_rate_calc':
+drivers/clk/clk-bm1880.c:477:13: warning:
+ variable 'fref' set but not used [-Wunused-but-set-variable]
+
+It is never used, so remove it.
+
+Reported-by: Hulk Robot <hulkci@huawei.com>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/clk/clk-bm1880.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
+index 4cd175afce9b..e6d6599d310a 100644
+--- a/drivers/clk/clk-bm1880.c
++++ b/drivers/clk/clk-bm1880.c
+@@ -474,11 +474,10 @@ static struct bm1880_composite_clock bm1880_composite_clks[] = {
+ static unsigned long bm1880_pll_rate_calc(u32 regval, unsigned long parent_rate)
+ {
+ 	u64 numerator;
+-	u32 fbdiv, fref, refdiv;
++	u32 fbdiv, refdiv;
+ 	u32 postdiv1, postdiv2, denominator;
+ 
+ 	fbdiv = (regval >> 16) & 0xfff;
+-	fref = parent_rate;
+ 	refdiv = regval & 0x1f;
+ 	postdiv1 = (regval >> 8) & 0x7;
+ 	postdiv2 = (regval >> 12) & 0x7;
+
+
+
