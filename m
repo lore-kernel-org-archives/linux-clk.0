@@ -2,200 +2,156 @@ Return-Path: <SRS0=1MK8=ZV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284EDC432C0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 16:17:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18399C432C0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 19:02:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E15DF215A5
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 16:17:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E121821721
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 19:02:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="eg/2w4s0"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ah15mlbZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfK2QRG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Nov 2019 11:17:06 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38906 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726909AbfK2QRG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Nov 2019 11:17:06 -0500
-Received: by mail-wr1-f66.google.com with SMTP id i12so35938057wro.5
-        for <linux-clk@vger.kernel.org>; Fri, 29 Nov 2019 08:17:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2u4id74AuIDefeyl6HPZTpmm+BjNUkbxmsv8qghnzxE=;
-        b=eg/2w4s0ARwwzJIyvoQV9eZtjhRTG0mLCFM2uJeucVbUwmBbr0EnTlmRi1O5LjCKc4
-         Rq3YWQ/7YSShDjqGJvy17FsFYn93axz+BWMlrBUPGtj+jkzfcApSZTuKqKwBu1ubSNOb
-         zN24rOxmy4NALD2wKVz+8CZ9A4goebPRfwznoDQ+tGQ7Mc/mM2bAD2xffLeT3Hh0NeYb
-         28yfMaszMFyX7HAy7MPZaIMlN1W8JROkY/h0Jz4rVDelMYP9585ksfA6Sfls0TaID75E
-         HFOsiJkopxlO2DOarRjQ5qeHmID66xo5V6QdJScr9RDb0oOwILX3eFYwU7ohjicgP/mK
-         tTbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=2u4id74AuIDefeyl6HPZTpmm+BjNUkbxmsv8qghnzxE=;
-        b=NRJjFJiV0tsQdxpuEmRzCucQFqDNsZVPabrrElVK4Cs8q7SHqvnFRQkndLtX1t2zUa
-         dUxJdO+bxJxGb4FjWl2L0ShmXyq+qFepa9VqZlNqOD5ymYmZxjS8cFke4svjfYF1/yG8
-         lsmdI9Nm5Wf/jIrQmNozVSoSVkLIjR7o6/B4Do0SNMvuiD17CsBu7mdrT8pwAOIgsD3A
-         72MrsWCYKHScQ/Vft1cLOH4qsrg+DsJ7md6dWguFEaaJq1vobvhEJv5IkqZ1ki6nBJYN
-         7kQJfAbMdN4I/AuXpGH88g7lFFzWoW0PCrS+FhsH24FtoFr4W5f/Xjc69RBxsiQiAePT
-         geUw==
-X-Gm-Message-State: APjAAAWrnyXu+Y5t2oFR/EEorR9u0Dc7Wsa5hKc8ECq8Msizq60CPoFb
-        bCDlILL8uWIlHVHswMJbLhmPqA==
-X-Google-Smtp-Source: APXvYqxZ+bxdoT3YaQeYAKePtV7Adt55hkXCYBiVIZqfZu8udIBJ2o7TfGUfLVi07mcuZSWRf/kbCw==
-X-Received: by 2002:a5d:46c7:: with SMTP id g7mr20275395wrs.11.1575044223145;
-        Fri, 29 Nov 2019 08:17:03 -0800 (PST)
-Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.googlemail.com with ESMTPSA id 72sm28730412wrl.73.2019.11.29.08.17.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 29 Nov 2019 08:17:02 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH] clk: walk orphan list on clock provider registration
-Date:   Fri, 29 Nov 2019 17:16:58 +0100
-Message-Id: <20191129161658.344517-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.23.0
+        id S1726980AbfK2TCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Nov 2019 14:02:33 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:35768 "EHLO
+        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726926AbfK2TCd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Nov 2019 14:02:33 -0500
+Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
+        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xATIx7XI022707;
+        Fri, 29 Nov 2019 19:02:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2019-08-05;
+ bh=PMSpyAZwm5n49dSwZWbSUza3afbhx07BpmaBJxUA6eY=;
+ b=Ah15mlbZc28+/ntfcw2uJeT2TY5X7o46m8gJwAB6hxe8t+zIxqhbH4QGVJ+jfyftyys4
+ SodtDo+RPH236douXuWTTMRJPJXm0klYO8BP6PleBT6Pa/R0NAA4M7e2hA2Oq5N0hFO8
+ IHOVJdSUHL2zxs21DSL5j1UxMraE0XTjF0yiaUncs98utz4eQeoNtMTbWWUr6yccSD8w
+ dHmyIFMj2d6DS/RaImxn3ws0turngLE52pAQpvWLLZn3yLV8J33JUT5cIWGcprh1hKer
+ R2sQSyjNjS4qvBDJz9BJefHGUUILYJrUF+7+YfaI3Ginzmbv2sALG/g/dNw8paesBi52 dg== 
+Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
+        by aserp2120.oracle.com with ESMTP id 2wevqqwscr-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Nov 2019 19:02:22 +0000
+Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
+        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xATIrXnY155220;
+        Fri, 29 Nov 2019 19:02:21 GMT
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userp3020.oracle.com with ESMTP id 2wjh0tccg1-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 29 Nov 2019 19:02:21 +0000
+Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xATJ2Ifg023014;
+        Fri, 29 Nov 2019 19:02:19 GMT
+Received: from kadam (/129.205.23.165)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 29 Nov 2019 11:02:18 -0800
+Date:   Fri, 29 Nov 2019 22:02:06 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
+Cc:     devel@driverdev.osuosl.org, Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
+        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
+Subject: Re: [PATCH v3 08/10] clk: clock-wizard: Make the output names unique
+Message-ID: <20191129190205.GA3282@kadam>
+References: <cover.1574922435.git.shubhrajyoti.datta@xilinx.com>
+ <d9277db2692bb77a41dfed927cfb791bdcced17d.1574922435.git.shubhrajyoti.datta@xilinx.com>
+ <20191128074505.GC1781@kadam>
+ <CAKfKVtHpP4j32CNA8ioET=wqYPWtzrQvH-A+4n-pcvj1KZy=fg@mail.gmail.com>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKfKVtHpP4j32CNA8ioET=wqYPWtzrQvH-A+4n-pcvj1KZy=fg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9456 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1911140001 definitions=main-1911290163
+X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9456 signatures=668685
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
+ definitions=main-1911290164
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-So far, we walked the orphan list every time a new clock was registered
-in CCF. This was fine since the clocks were only referenced by name.
+On Fri, Nov 29, 2019 at 05:37:57PM +0530, Shubhrajyoti Datta wrote:
+> On Thu, Nov 28, 2019 at 1:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
+> >
+> > On Thu, Nov 28, 2019 at 12:06:15PM +0530, shubhrajyoti.datta@gmail.com wrote:
+> > > From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > >
+> > > Incase there are more than one instance of the clocking wizard.
+> > > And if the output name given is the same then the probe fails.
+> > > Fix the same by appending the device name to the output name to
+> > > make it unique.
+> > >
+> > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
+> > > ---
+> > >  drivers/clk/clk-xlnx-clock-wizard.c | 13 ++++++++-----
+> > >  1 file changed, 8 insertions(+), 5 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
+> > > index 75ea745..9993543 100644
+> > > --- a/drivers/clk/clk-xlnx-clock-wizard.c
+> > > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
+> > > @@ -555,6 +555,9 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >               ret = -ENOMEM;
+> > >               goto err_disable_clk;
+> > >       }
+> > > +     outputs = of_property_count_strings(np, "clock-output-names");
+> > > +     if (outputs == 1)
+> > > +             flags = CLK_SET_RATE_PARENT;
+> > >       clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
+> > >                       (&pdev->dev, clk_name,
+> > >                        __clk_get_name(clk_wzrd->clk_in1),
+> > > @@ -566,9 +569,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >               goto err_disable_clk;
+> > >       }
+> > >
+> > > -     outputs = of_property_count_strings(np, "clock-output-names");
+> > > -     if (outputs == 1)
+> > > -             flags = CLK_SET_RATE_PARENT;
+> > >       clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
+> > >       if (!clk_name) {
+> > >               ret = -ENOMEM;
+> > > @@ -591,6 +591,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >       /* register div per output */
+> > >       for (i = outputs - 1; i >= 0 ; i--) {
+> > >               const char *clkout_name;
+> > > +             const char *clkout_name_wiz;
+> > >
+> > >               if (of_property_read_string_index(np, "clock-output-names", i,
+> > >                                                 &clkout_name)) {
+> > > @@ -599,9 +600,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
+> > >                       ret = -EINVAL;
+> > >                       goto err_rm_int_clks;
+> > >               }
+> > > +             clkout_name_wiz = kasprintf(GFP_KERNEL, "%s_%s",
+> > > +                                         dev_name(&pdev->dev), clkout_name);
+> >
+> > If this kasprintf() crashes then clk_wzrd_register_divf() will fail.
 
-Now that the clock can be referenced through DT, it is not enough:
-* Controller A register first a reference clocks from controller B
-  through DT.
-* Controller B register all its clocks then register the provider.
+I meant if kasprintf() returns NULL not crashes...  :/
 
-Each time controller B registers a new clock, the orphan list is walked
-but it can't match since the provider is registered yet. When the
-provider is finally registered, the orphan list is not walked unless
-another clock is registered afterward.
+> > But that was a headache to review.  Just add a check for NULL.  We need
+> > a kfree() as well.
 
-This can lead to situation where some clocks remain orphaned even if
-the parent is available.
+regards,
+dan carpenter
 
-Walking the orphan list on provider registration solves the problem.
-
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 59 +++++++++++++++++++++++++++++------------------
- 1 file changed, 37 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ef4416721777..917ba37c3b9d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3249,6 +3249,34 @@ static inline void clk_debug_unregister(struct clk_core *core)
- }
- #endif
- 
-+static void __clk_core_reparent_orphan(void)
-+{
-+	struct clk_core *orphan;
-+	struct hlist_node *tmp2;
-+
-+	/*
-+	 * walk the list of orphan clocks and reparent any that newly finds a
-+	 * parent.
-+	 */
-+	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-+		struct clk_core *parent = __clk_init_parent(orphan);
-+
-+		/*
-+		 * We need to use __clk_set_parent_before() and _after() to
-+		 * to properly migrate any prepare/enable count of the orphan
-+		 * clock. This is important for CLK_IS_CRITICAL clocks, which
-+		 * are enabled during init but might not have a parent yet.
-+		 */
-+		if (parent) {
-+			/* update the clk tree topology */
-+			__clk_set_parent_before(orphan, parent);
-+			__clk_set_parent_after(orphan, parent, NULL);
-+			__clk_recalc_accuracies(orphan);
-+			__clk_recalc_rates(orphan, 0);
-+		}
-+	}
-+}
-+
- /**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-@@ -3259,8 +3287,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
- static int __clk_core_init(struct clk_core *core)
- {
- 	int ret;
--	struct clk_core *orphan;
--	struct hlist_node *tmp2;
- 	unsigned long rate;
- 
- 	if (!core)
-@@ -3416,27 +3442,8 @@ static int __clk_core_init(struct clk_core *core)
- 		clk_enable_unlock(flags);
- 	}
- 
--	/*
--	 * walk the list of orphan clocks and reparent any that newly finds a
--	 * parent.
--	 */
--	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		struct clk_core *parent = __clk_init_parent(orphan);
-+	__clk_core_reparent_orphan();
- 
--		/*
--		 * We need to use __clk_set_parent_before() and _after() to
--		 * to properly migrate any prepare/enable count of the orphan
--		 * clock. This is important for CLK_IS_CRITICAL clocks, which
--		 * are enabled during init but might not have a parent yet.
--		 */
--		if (parent) {
--			/* update the clk tree topology */
--			__clk_set_parent_before(orphan, parent);
--			__clk_set_parent_after(orphan, parent, NULL);
--			__clk_recalc_accuracies(orphan);
--			__clk_recalc_rates(orphan, 0);
--		}
--	}
- 
- 	kref_init(&core->ref);
- out:
-@@ -4288,6 +4295,10 @@ int of_clk_add_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clock from %pOF\n", np);
- 
-+	clk_prepare_lock();
-+	__clk_core_reparent_orphan();
-+	clk_prepare_unlock();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
-@@ -4323,6 +4334,10 @@ int of_clk_add_hw_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clk_hw provider from %pOF\n", np);
- 
-+	clk_prepare_lock();
-+	__clk_core_reparent_orphan();
-+	clk_prepare_unlock();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
--- 
-2.23.0
 
