@@ -2,174 +2,111 @@ Return-Path: <SRS0=1MK8=ZV=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ACD5C43141
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 12:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADC02C432C0
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 14:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00DAF217AB
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 12:09:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575029373;
-	bh=jGaMu88zl6ED3WverAr02i8/B4AFL3F/8VtWk2oAvco=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=kWJGoNrFPA6K++xnfTPOBhjNqKPomejXdbNsnhe1+tYeYko5VZF/4KMNGwx8uSdCA
-	 4HytiJLxCKoy6KIKBbgQhCfaeyI7YoJmXD49tBlzFj4+TzR0DLmk4uFCWRiHOI07ST
-	 7651eCrlboZ/jPKFtut+/NhNTe/MkOQxmYFLgZmI=
+	by mail.kernel.org (Postfix) with ESMTP id 87343217AB
+	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 14:46:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfK2MJ2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Nov 2019 07:09:28 -0500
-Received: from foss.arm.com ([217.140.110.172]:46922 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726360AbfK2MJ2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 29 Nov 2019 07:09:28 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8653C1FB;
-        Fri, 29 Nov 2019 04:09:27 -0800 (PST)
-Received: from localhost (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1B4ED3F52E;
-        Fri, 29 Nov 2019 04:09:27 -0800 (PST)
-Date:   Fri, 29 Nov 2019 12:09:25 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "corbet@lwn.net" <corbet@lwn.net>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "hofrat@osadl.org" <hofrat@osadl.org>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>
-Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Message-ID: <20191129120925.GA5747@sirena.org.uk>
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <20191118162502.GJ9761@sirena.org.uk>
- <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
- <20191119181325.GD3634@sirena.org.uk>
- <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
- <20191119193636.GH3634@sirena.org.uk>
- <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
+        id S1726925AbfK2OqR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 29 Nov 2019 09:46:17 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:43435 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfK2OqR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Nov 2019 09:46:17 -0500
+Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Fri, 29 Nov 2019
+ 22:46:36 +0800
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v3 0/7] add Amlogic A1 clock controller driver
+Date:   Fri, 29 Nov 2019 22:45:58 +0800
+Message-ID: <20191129144605.182774-1-jian.hu@amlogic.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
-Content-Disposition: inline
-In-Reply-To: <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
-X-Cookie: To love is good, love being difficult.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.28.8.25]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+add support for Amlogic A1 clock driver, the clock includes 
+three parts: peripheral clocks, pll clocks, CPU clocks.
+sys pll and CPU clocks will be sent in next patch.
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Changes since v1 at [2]:
+-add probe function for A1
+-seperate the clock driver into two patch
+-change some clock flags and ops
+-add support for a1 PLL ops
+-add A1 clock node
 
-On Fri, Nov 29, 2019 at 07:48:13AM +0000, Vaittinen, Matti wrote:
-> On Tue, 2019-11-19 at 19:36 +0000, Mark Brown wrote:
+Changes since v1 at [1]:
+-place A1 config alphabetically
+-add actual reason for RO ops, CLK_IS_CRITICAL, CLK_IGNORE_UNUSED
+-separate the driver into two driver: peripheral and pll driver
+-delete CLK_IGNORE_UNUSED flag for pwm b/c/d/e/f clock, dsp clock
+-delete the change in Kconfig.platforms, address to Kevin alone
+-remove the useless comments
+-modify the meson pll driver to support A1 PLLs
 
-> > The driver interface was added in "regulator: add PM suspend and
-> > resume
-> > hooks".
+[1] https://lkml.kernel.org/r/1569411888-98116-1-git-send-email-jian.hu@amlogic.com
+[2] https://lkml.kernel.org/r/1571382865-41978-1-git-send-email-jian.hu@amlogic.com
 
-> I looked through the set but didn't spot any new interface towards the
-> regulator driver (which accesses the HW). I saw interface towards
-> regulator consumer driver which can be used to set the constrains
-> though.
+Jian Hu (7):
+  dt-bindings: clock: meson: add A1 PLL clock controller bindings
+  clk: meson: add support for A1 PLL clock ops
+  clk: meson: eeclk: refactor eeclk common driver to support A1
+  clk: meson: a1: add support for Amlogic A1 PLL clock driver
+  dt-bindings: clock: meson: add A1 peripheral clock controller bindings
+  clk: meson: a1: add support for Amlogic A1 Peripheral clock driver
+  arm64: dts: meson: add A1 PLL and periphs clock controller
 
-The regulator driver has a bunch fo set_suspend_ operations.
+ .../bindings/clock/amlogic,a1-clkc.yaml       |   70 +
+ .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   56 +
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |   26 +
+ drivers/clk/meson/Kconfig                     |   20 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/a1-pll.c                    |  334 +++
+ drivers/clk/meson/a1-pll.h                    |   56 +
+ drivers/clk/meson/a1.c                        | 2309 +++++++++++++++++
+ drivers/clk/meson/a1.h                        |  120 +
+ drivers/clk/meson/clk-pll.c                   |   21 +
+ drivers/clk/meson/clk-pll.h                   |    1 +
+ drivers/clk/meson/meson-eeclk.c               |   59 +-
+ drivers/clk/meson/meson-eeclk.h               |    2 +
+ drivers/clk/meson/parm.h                      |    1 +
+ include/dt-bindings/clock/a1-clkc.h           |   98 +
+ include/dt-bindings/clock/a1-pll-clkc.h       |   16 +
+ 16 files changed, 3181 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/a1-pll.c
+ create mode 100644 drivers/clk/meson/a1-pll.h
+ create mode 100644 drivers/clk/meson/a1.c
+ create mode 100644 drivers/clk/meson/a1.h
+ create mode 100644 include/dt-bindings/clock/a1-clkc.h
+ create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
 
-> Specifically, I don't see voltage setting callback for different run-
-> modes. Nor do I see voltage setting (or differentiation) of more than
-> one suspend state.
+-- 
+2.24.0
 
-set_suspend_voltage.
-
-> To explain it further - my assumption is that the BD71828 'run-levels'
-> (RUN0, ... RUN3) could be mapped to regulator modes
-> REGULATOR_MODE_FAST, REGULATOR_MODE_NORMAL, REGULATOR_MODE_IDLE and=20
-> REGULATOR_MODE_STANDBY. But regulators which are controlled by these
-
-That doesn't make sense at all, the modes affect the quality of
-regulation not the voltage that is set.
-
-> run-levels, can't be individually controlled. If state for one is
-> changed, the state is changed for all of them. The DVS bucks 1,2,6 and
-
-We don't really have anything that'd only work for group configuration
-except for the suspend modes.
-
-> > Ah, that's actually better.  It opens up possiblities for making use
-> > of
-> > the feature without encoding voltages in DT.  For example, you can
-> > cache
-> > the last however many voltages that were set and jump quickly to them
-> > or
-> > do something like put the top of the constraints in to help with
-> > governors like ondemand.  I'd recommend trying for something like
-> > that
-> > rather than encoding in DT, it'll probably be more robust with things
-> > like cpufreq changing.
-
-> I wish I was working with the full product so that I could see and
-> learn a proper example on how the cpufreq actually uses these
-> interfaces :) I'd really like to understand this much better. Maybe
-> this could be a topic for you to present in some Linux conference ;)
-> Just please ping me when you are doing that and I'll be listening there
-> for sure ;)
-
-The cpufreq code is all there in kernel - drivers/cpufreq.  I can't
-remember if Android still has a custom governor in their trees but it
-doesn't really make much difference in terms of how it interacts with
-the regulator drivers.
-
-> Anyways, my idea was to set the inital voltage values for these states
-> via DT - but allow the voltages to be changed at run-time too (I guess
-> this idea is visible in the patch 12).
-
-It'd be much better if you could avoid putting the voltages in the
-binding if they're not strictly required.
-
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3hCnMACgkQJNaLcl1U
-h9DYngf+IXV00SV4baSzbbPD499t+tcmC50xm6QHtyWWK8Cp9civk8HKVm+I8Hq4
-QD4QuFuR+eqK2qDTm+BAX6fTA64j0WeXKdEzN7PL83q4TlUI+f6n3l7baWyikfS+
-jvtHyZGD6QeSMlTBIpR3pDt4u61HM7aFgSH6m86zZX/trPBDfMqk5AynMT4kePZ1
-/F2ygmNUUbuZKkS1NLLKsQxr7nvtNvGyR+4HbQbNBuLlMN9BZaFGnQPmVzeksPe4
-PnJgOV90Ka3VvoJfRUKKs2z2hvdUP7j+NVjib9COrIhiz987HedXU52OxS/Ae90c
-08uWP7tcnqokEsVNIdA6qRO5Jn/lug==
-=D2yP
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
