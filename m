@@ -1,157 +1,156 @@
-Return-Path: <SRS0=1MK8=ZV=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=28uc=ZY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18399C432C0
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 19:02:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50446C432C0
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Dec 2019 01:17:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E121821721
-	for <linux-clk@archiver.kernel.org>; Fri, 29 Nov 2019 19:02:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ah15mlbZ"
+	by mail.kernel.org (Postfix) with ESMTP id 1B67021774
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Dec 2019 01:17:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575249469;
+	bh=r++ufhdV5NVlSi05PmMJPmTLWPGMRkuNwvrCIPM7vWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ebH3UC100zFCOhHhyHOKRERSZkWUja++Nwe7jrSXHC6TmoyTkY4J8QZECbm7v0F1+
+	 k36LoDdH7W0GTti2bUNb3YDxK19+qYCYiauVRFT4OiWW7BsxHPqvxFoRIUPqIaXqmP
+	 RtVE9sWe6iuwafr1Fi78zugyaBFWfi9HBZmmETEk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfK2TCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 29 Nov 2019 14:02:33 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:35768 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726926AbfK2TCd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 29 Nov 2019 14:02:33 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xATIx7XI022707;
-        Fri, 29 Nov 2019 19:02:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2019-08-05;
- bh=PMSpyAZwm5n49dSwZWbSUza3afbhx07BpmaBJxUA6eY=;
- b=Ah15mlbZc28+/ntfcw2uJeT2TY5X7o46m8gJwAB6hxe8t+zIxqhbH4QGVJ+jfyftyys4
- SodtDo+RPH236douXuWTTMRJPJXm0klYO8BP6PleBT6Pa/R0NAA4M7e2hA2Oq5N0hFO8
- IHOVJdSUHL2zxs21DSL5j1UxMraE0XTjF0yiaUncs98utz4eQeoNtMTbWWUr6yccSD8w
- dHmyIFMj2d6DS/RaImxn3ws0turngLE52pAQpvWLLZn3yLV8J33JUT5cIWGcprh1hKer
- R2sQSyjNjS4qvBDJz9BJefHGUUILYJrUF+7+YfaI3Ginzmbv2sALG/g/dNw8paesBi52 dg== 
-Received: from userp3020.oracle.com (userp3020.oracle.com [156.151.31.79])
-        by aserp2120.oracle.com with ESMTP id 2wevqqwscr-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Nov 2019 19:02:22 +0000
-Received: from pps.filterd (userp3020.oracle.com [127.0.0.1])
-        by userp3020.oracle.com (8.16.0.27/8.16.0.27) with SMTP id xATIrXnY155220;
-        Fri, 29 Nov 2019 19:02:21 GMT
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userp3020.oracle.com with ESMTP id 2wjh0tccg1-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 29 Nov 2019 19:02:21 +0000
-Received: from abhmp0018.oracle.com (abhmp0018.oracle.com [141.146.116.24])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id xATJ2Ifg023014;
-        Fri, 29 Nov 2019 19:02:19 GMT
-Received: from kadam (/129.205.23.165)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 29 Nov 2019 11:02:18 -0800
-Date:   Fri, 29 Nov 2019 22:02:06 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Shubhrajyoti Datta <shubhrajyoti.datta@gmail.com>
-Cc:     devel@driverdev.osuosl.org, Mark Rutland <mark.rutland@arm.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, linux-clk@vger.kernel.org,
-        =?iso-8859-1?Q?S=F6ren?= Brinkmann <soren.brinkmann@xilinx.com>
-Subject: Re: [PATCH v3 08/10] clk: clock-wizard: Make the output names unique
-Message-ID: <20191129190205.GA3282@kadam>
-References: <cover.1574922435.git.shubhrajyoti.datta@xilinx.com>
- <d9277db2692bb77a41dfed927cfb791bdcced17d.1574922435.git.shubhrajyoti.datta@xilinx.com>
- <20191128074505.GC1781@kadam>
- <CAKfKVtHpP4j32CNA8ioET=wqYPWtzrQvH-A+4n-pcvj1KZy=fg@mail.gmail.com>
+        id S1727280AbfLBBRs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 1 Dec 2019 20:17:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43834 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727266AbfLBBRs (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 1 Dec 2019 20:17:48 -0500
+Received: from dragon (li2093-158.members.linode.com [172.105.159.158])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5F972146E;
+        Mon,  2 Dec 2019 01:17:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575249467;
+        bh=r++ufhdV5NVlSi05PmMJPmTLWPGMRkuNwvrCIPM7vWw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=dBh24tZKD/7zjoNqX/NGFOhKLsn/+CaaH6xJ3LPngO06Ux87Flqd/FQZcn/gD86TC
+         PXD0O7Ra/Us4zbtu5wLWVxbed0ogucnybU2uYKmfnrm2+MhEXa2aLS8IBync2gsJdP
+         Jo+cRbi2jWVEXggGXxMViRUsGUUwX3ebLPAmux4k=
+Date:   Mon, 2 Dec 2019 09:17:24 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Peng Fan <peng.fan@nxp.com>
+Cc:     "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+Subject: Re: [PATCH 1/7] clk: imx: clk-pll14xx: Switch to clk_hw based API
+Message-ID: <20191202011721.GA17574@dragon>
+References: <1572356175-24950-1-git-send-email-peng.fan@nxp.com>
+ <1572356175-24950-2-git-send-email-peng.fan@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAKfKVtHpP4j32CNA8ioET=wqYPWtzrQvH-A+4n-pcvj1KZy=fg@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9456 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911140001 definitions=main-1911290163
-X-Proofpoint-Virus-Version: vendor=nai engine=6000 definitions=9456 signatures=668685
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1911140001
- definitions=main-1911290164
+In-Reply-To: <1572356175-24950-2-git-send-email-peng.fan@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 05:37:57PM +0530, Shubhrajyoti Datta wrote:
-> On Thu, Nov 28, 2019 at 1:15 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> >
-> > On Thu, Nov 28, 2019 at 12:06:15PM +0530, shubhrajyoti.datta@gmail.com wrote:
-> > > From: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > >
-> > > Incase there are more than one instance of the clocking wizard.
-> > > And if the output name given is the same then the probe fails.
-> > > Fix the same by appending the device name to the output name to
-> > > make it unique.
-> > >
-> > > Signed-off-by: Shubhrajyoti Datta <shubhrajyoti.datta@xilinx.com>
-> > > ---
-> > >  drivers/clk/clk-xlnx-clock-wizard.c | 13 ++++++++-----
-> > >  1 file changed, 8 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/clk-xlnx-clock-wizard.c b/drivers/clk/clk-xlnx-clock-wizard.c
-> > > index 75ea745..9993543 100644
-> > > --- a/drivers/clk/clk-xlnx-clock-wizard.c
-> > > +++ b/drivers/clk/clk-xlnx-clock-wizard.c
-> > > @@ -555,6 +555,9 @@ static int clk_wzrd_probe(struct platform_device *pdev)
-> > >               ret = -ENOMEM;
-> > >               goto err_disable_clk;
-> > >       }
-> > > +     outputs = of_property_count_strings(np, "clock-output-names");
-> > > +     if (outputs == 1)
-> > > +             flags = CLK_SET_RATE_PARENT;
-> > >       clk_wzrd->clks_internal[wzrd_clk_mul] = clk_register_fixed_factor
-> > >                       (&pdev->dev, clk_name,
-> > >                        __clk_get_name(clk_wzrd->clk_in1),
-> > > @@ -566,9 +569,6 @@ static int clk_wzrd_probe(struct platform_device *pdev)
-> > >               goto err_disable_clk;
-> > >       }
-> > >
-> > > -     outputs = of_property_count_strings(np, "clock-output-names");
-> > > -     if (outputs == 1)
-> > > -             flags = CLK_SET_RATE_PARENT;
-> > >       clk_name = kasprintf(GFP_KERNEL, "%s_mul_div", dev_name(&pdev->dev));
-> > >       if (!clk_name) {
-> > >               ret = -ENOMEM;
-> > > @@ -591,6 +591,7 @@ static int clk_wzrd_probe(struct platform_device *pdev)
-> > >       /* register div per output */
-> > >       for (i = outputs - 1; i >= 0 ; i--) {
-> > >               const char *clkout_name;
-> > > +             const char *clkout_name_wiz;
-> > >
-> > >               if (of_property_read_string_index(np, "clock-output-names", i,
-> > >                                                 &clkout_name)) {
-> > > @@ -599,9 +600,11 @@ static int clk_wzrd_probe(struct platform_device *pdev)
-> > >                       ret = -EINVAL;
-> > >                       goto err_rm_int_clks;
-> > >               }
-> > > +             clkout_name_wiz = kasprintf(GFP_KERNEL, "%s_%s",
-> > > +                                         dev_name(&pdev->dev), clkout_name);
-> >
-> > If this kasprintf() crashes then clk_wzrd_register_divf() will fail.
+On Tue, Oct 29, 2019 at 01:40:54PM +0000, Peng Fan wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Switch the imx_clk_pll14xx function to clk_hw based API, rename
+> accordingly and add a macro for clk based legacy. This allows us to
+> move closer to a clear split between consumer and provider clk APIs.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/imx/clk-pll14xx.c | 22 +++++++++++++---------
+>  drivers/clk/imx/clk.h         |  8 ++++++--
+>  2 files changed, 19 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> index 5c458199060a..fa76e04251c4 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -369,13 +369,14 @@ static const struct clk_ops clk_pll1443x_ops = {
+>  	.set_rate	= clk_pll1443x_set_rate,
+>  };
+>  
+> -struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+> -			    void __iomem *base,
+> -			    const struct imx_pll14xx_clk *pll_clk)
+> +struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
+> +				  void __iomem *base,
+> +				  const struct imx_pll14xx_clk *pll_clk)
+>  {
+>  	struct clk_pll14xx *pll;
+> -	struct clk *clk;
+> +	struct clk_hw *hw;
+>  	struct clk_init_data init;
+> +	int ret;
+>  	u32 val;
+>  
+>  	pll = kzalloc(sizeof(*pll), GFP_KERNEL);
+> @@ -412,12 +413,15 @@ struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+>  	val &= ~BYPASS_MASK;
+>  	writel_relaxed(val, pll->base + GNRL_CTL);
+>  
+> -	clk = clk_register(NULL, &pll->hw);
+> -	if (IS_ERR(clk)) {
+> -		pr_err("%s: failed to register pll %s %lu\n",
+> -			__func__, name, PTR_ERR(clk));
+> +	hw = &pll->hw;
+> +
+> +	ret = clk_hw_register(NULL, hw);
+> +	if (ret) {
+> +		pr_err("%s: failed to register pll %s %d\n",
+> +			__func__, name, ret);
+>  		kfree(pll);
+> +		return ERR_PTR(ret);
+>  	}
+>  
+> -	return clk;
+> +	return hw;
+>  }
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index bc5bb6ac8636..5038622f1a72 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -97,8 +97,12 @@ extern struct imx_pll14xx_clk imx_1443x_pll;
+>  #define imx_clk_mux(name, reg, shift, width, parents, num_parents) \
+>  	imx_clk_hw_mux(name, reg, shift, width, parents, num_parents)->clk
+>  
+> -struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
+> -		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
+> +#define imx_clk_pll14xx(name, parent_name, base, pll_clk) \
+> +	imx_clk_hw_pll14xx(name, parent_name, base, pll_clk)->clk
+> +
 
-I meant if kasprintf() returns NULL not crashes...  :/
+I would suggest to use an inline function for this, which will be more
+readable and complying to kernel coding style.
 
-> > But that was a headache to review.  Just add a check for NULL.  We need
-> > a kfree() as well.
+Shawn
 
-regards,
-dan carpenter
-
-
+> +struct clk_hw *imx_clk_hw_pll14xx(const char *name, const char *parent_name,
+> +				  void __iomem *base,
+> +				  const struct imx_pll14xx_clk *pll_clk);
+>  
+>  struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
+>  		const char *parent, void __iomem *base);
+> -- 
+> 2.16.4
+> 
