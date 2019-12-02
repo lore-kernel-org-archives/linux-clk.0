@@ -2,593 +2,152 @@ Return-Path: <SRS0=28uc=ZY=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42FD1C432C0
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Dec 2019 05:39:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90918C432C3
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Dec 2019 06:01:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED80621774
-	for <linux-clk@archiver.kernel.org>; Mon,  2 Dec 2019 05:39:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575265152;
-	bh=SDP6eq/Hom7CggoDaioOTn5NWU1DhHjAdZ7VlPBSBS0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gT/9EbAwokhgrYq87jLplKr5ryit3D8sm/VPmrazRAp8G5KNd65QbfLEFSOPF0TQw
-	 CZ/u40Nsx6cUcfVEIbOs8MgNQ40MPfvmxWOiF2UaykDzcsiuxPhQnMM1nXoulaairG
-	 1BqwWagG0Y/zGOiIQET+OcTXqe3n5sm9bJy83Jhk=
+	by mail.kernel.org (Postfix) with ESMTP id 6DA1520881
+	for <linux-clk@archiver.kernel.org>; Mon,  2 Dec 2019 06:01:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726190AbfLBFjL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Dec 2019 00:39:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60134 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725838AbfLBFjL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 2 Dec 2019 00:39:11 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B462820675;
-        Mon,  2 Dec 2019 05:38:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575265150;
-        bh=SDP6eq/Hom7CggoDaioOTn5NWU1DhHjAdZ7VlPBSBS0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=djetOPwdmmF+bqNJtPdVSI84cuZhyeQnR1GYBswkfYoy7Uyq/zdYtQIJXHt9WCBTQ
-         mBqJyDeH/DPx8av49/Jh5HwWUI+tdANuE9E0I/Lx22u2k25dTiI3NGo+F92tig6km5
-         EFk2T9XFcgD9Tkx5Ry/tBa08AwD8xFiuP3Ki/ycY=
-Date:   Mon, 2 Dec 2019 13:38:48 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1725920AbfLBGBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 2 Dec 2019 01:01:22 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:20041 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725852AbfLBGBV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Dec 2019 01:01:21 -0500
+Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Mon, 2 Dec
+ 2019 14:01:47 +0800
+Subject: Re: [PATCH v3 0/7] add Amlogic A1 clock controller driver
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Artur =?utf-8?B?xZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Martin Kepplinger <martink@posteo.de>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, Jacky Bai <ping.bai@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        devicetree@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-imx@nxp.com,
-        kernel@pengutronix.de, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 4/6] PM / devfreq: Add dynamic scaling for imx ddr
- controller
-Message-ID: <20191202053847.GC9767@dragon>
-References: <cover.1572558427.git.leonard.crestez@nxp.com>
- <5fcf829265ecde1af32cb1369528c97361c76992.1572558427.git.leonard.crestez@nxp.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20191129144605.182774-1-jian.hu@amlogic.com>
+ <1jwobi7lcy.fsf@starbuckisacylon.baylibre.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <63d776af-6ded-02d2-cc34-1b3733e2625b@amlogic.com>
+Date:   Mon, 2 Dec 2019 14:01:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5fcf829265ecde1af32cb1369528c97361c76992.1572558427.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1jwobi7lcy.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.99]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Oct 31, 2019 at 11:50:25PM +0200, Leonard Crestez wrote:
-> Add driver for dynamic scaling the DDR Controller on imx8m chips. Actual
-> frequency switching is implemented inside TF-A, this driver wraps the
-> SMC calls and synchronizes the clk tree.
+
+
+On 2019/11/29 23:28, Jerome Brunet wrote:
 > 
-> The DRAM clocks on imx8m have the following structure (abridged):
+> On Fri 29 Nov 2019 at 15:45, Jian Hu <jian.hu@amlogic.com> wrote:
 > 
->  +----------+       |\            +------+
->  | dram_pll |-------|M| dram_core |      |
->  +----------+       |U|---------->| D    |
->                  /--|X|           |  D   |
->    dram_alt_root |  |/            |   R  |
->                  |                |    C |
->             +---------+           |      |
->             |FIX DIV/4|           |      |
->             +---------+           |      |
->   composite:     |                |      |
->  +----------+    |                |      |
->  | dram_alt |----/                |      |
->  +----------+                     |      |
->  | dram_apb |-------------------->|      |
->  +----------+                     +------+
+>> add support for Amlogic A1 clock driver, the clock includes
+>> three parts: peripheral clocks, pll clocks, CPU clocks.
+>> sys pll and CPU clocks will be sent in next patch.
+>>
+>> Changes since v1 at [2]:
 > 
-> The dram_pll is used for higher rates and dram_alt is used for lower
-> rates. The dram_alt and dram_apb clocks are "imx composite" and their
-> parent can also be modified.
+> v2 or v1 ??
+It is v2 here, I will fix it in next version.
 > 
-> This driver will prepare/enable the new parents ahead of switching (so
-> that the expected roots are enabled) and afterwards it will call
-> clk_set_parent to ensure the parents in clock framework are up-to-date.
+>> -add probe function for A1
+>> -seperate the clock driver into two patch
+>> -change some clock flags and ops
+>> -add support for a1 PLL ops
+>> -add A1 clock node
+>>
+>> Changes since v1 at [1]:
+>> -place A1 config alphabetically
+>> -add actual reason for RO ops, CLK_IS_CRITICAL, CLK_IGNORE_UNUSED
+>> -separate the driver into two driver: peripheral and pll driver
+>> -delete CLK_IGNORE_UNUSED flag for pwm b/c/d/e/f clock, dsp clock
+>> -delete the change in Kconfig.platforms, address to Kevin alone
+>> -remove the useless comments
+>> -modify the meson pll driver to support A1 PLLs
+>>
+>> [1] https://lkml.kernel.org/r/1569411888-98116-1-git-send-email-jian.hu@amlogic.com
+>> [2] https://lkml.kernel.org/r/1571382865-41978-1-git-send-email-jian.hu@amlogic.com
+>>
+>> Jian Hu (7):
+>>    dt-bindings: clock: meson: add A1 PLL clock controller bindings
+>>    clk: meson: add support for A1 PLL clock ops
+>>    clk: meson: eeclk: refactor eeclk common driver to support A1
+>>    clk: meson: a1: add support for Amlogic A1 PLL clock driver
+>>    dt-bindings: clock: meson: add A1 peripheral clock controller bindings
+>>    clk: meson: a1: add support for Amlogic A1 Peripheral clock driver
+>>    arm64: dts: meson: add A1 PLL and periphs clock controller
 > 
-> The driver relies on dram_pll dram_alt and dram_apb being marked with
-> CLK_GET_RATE_NOCACHE for rate updates.
+> The arm64 is for the DT maintainer. Please send it separately after this
+> series is applied (if it gets applied)
 > 
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-> ---
->  drivers/devfreq/Makefile   |   1 +
->  drivers/devfreq/imx-ddrc.c | 430 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 431 insertions(+)
->  create mode 100644 drivers/devfreq/imx-ddrc.c
+>> Please fix the underlying issue, then you can post your series again.
 > 
-> diff --git a/drivers/devfreq/Makefile b/drivers/devfreq/Makefile
-> index 338ae8440db6..1ac92614b6aa 100644
-> --- a/drivers/devfreq/Makefile
-> +++ b/drivers/devfreq/Makefile
-> @@ -7,10 +7,11 @@ obj-$(CONFIG_DEVFREQ_GOV_POWERSAVE)	+= governor_powersave.o
->  obj-$(CONFIG_DEVFREQ_GOV_USERSPACE)	+= governor_userspace.o
->  obj-$(CONFIG_DEVFREQ_GOV_PASSIVE)	+= governor_passive.o
->  
->  # DEVFREQ Drivers
->  obj-$(CONFIG_ARM_EXYNOS_BUS_DEVFREQ)	+= exynos-bus.o
-> +obj-$(CONFIG_ARM_IMX_DEVFREQ)		+= imx-ddrc.o
->  obj-$(CONFIG_ARM_RK3399_DMC_DEVFREQ)	+= rk3399_dmc.o
->  obj-$(CONFIG_ARM_TEGRA_DEVFREQ)		+= tegra30-devfreq.o
->  obj-$(CONFIG_ARM_TEGRA20_DEVFREQ)	+= tegra20-devfreq.o
->  
->  # DEVFREQ Event Drivers
-> diff --git a/drivers/devfreq/imx-ddrc.c b/drivers/devfreq/imx-ddrc.c
-> new file mode 100644
-> index 000000000000..3ce51614ecab
-> --- /dev/null
-> +++ b/drivers/devfreq/imx-ddrc.c
-> @@ -0,0 +1,430 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright 2019 NXP
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/device.h>
-> +#include <linux/of_device.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/devfreq.h>
-> +#include <linux/pm_opp.h>
-> +#include <linux/clk.h>
-> +#include <linux/clk-provider.h>
+> This was a comment on your v2. Did you fix the orphan/ordering issue ?
 
-This is a header that should ideally be used by clock drivers only.
+> If you did, you probably should mention it here.
+Yes, I have fixed it in A1 periphs driver, not fixed it in CCF.
+I have realised a probe function for A1 periphs driver, Not using the 
+common probe interface in meson-eeclk.c. Skip registering xtal_fixedpll 
+and xtal_hifipll clocks when register all periphs clocks. And after the 
+provider registration. Registering xtal_fixedpll and xtal_hifipll clock 
+alone.
 
-> +#include <linux/arm-smccc.h>
-> +
-> +#define IMX_SIP_DDR_DVFS			0xc2000004
-> +
-> +/* Values starting from 0 switch to specific frequency */
-> +#define IMX_SIP_DDR_FREQ_SET_HIGH		0x00
-> +
-> +/* Deprecated after moving IRQ handling to ATF */
-> +#define IMX_SIP_DDR_DVFS_WAIT_CHANGE		0x0F
+I will add some comments here about orphan issue.
 
-These two defines are not used.  Will be?
+And I have noticed you have fixed it in CCF,  I will update the A1 
+periphs driver, drop the probe function in the next vertion.
+Could I send the v4 after your patch 'clk: walk orphan list on clock 
+provider registration' is applied? Or I can send v4 based on your patch now.
 
-> +
-> +/* Query available frequencies. */
-> +#define IMX_SIP_DDR_DVFS_GET_FREQ_COUNT		0x10
-> +#define IMX_SIP_DDR_DVFS_GET_FREQ_INFO		0x11
-> +
-> +/*
-> + * This should be in a 1:1 mapping with devicetree OPPs but
-> + * firmware provides additional info.
-> + */
-> +struct imx_ddrc_freq {
-> +	unsigned long rate;
-> +	unsigned long smcarg;
-> +	int dram_core_parent_index;
-> +	int dram_alt_parent_index;
-> +	int dram_apb_parent_index;
-> +};
-> +
-> +/* Hardware limitation */
-> +#define IMX_DDRC_MAX_FREQ_COUNT 4
-> +
-> +/*
-> + * imx DRAM controller
-> + *
-> + * imx DRAM controller clocks have the following structure (abridged):
-> + *
-> + * +----------+       |\            +------+
-> + * | dram_pll |-------|M| dram_core |      |
-> + * +----------+       |U|---------->| D    |
-> + *                 /--|X|           |  D   |
-> + *   dram_alt_root |  |/            |   R  |
-> + *                 |                |    C |
-> + *            +---------+           |      |
-> + *            |FIX DIV/4|           |      |
-> + *            +---------+           |      |
-> + *  composite:     |                |      |
-> + * +----------+    |                |      |
-> + * | dram_alt |----/                |      |
-> + * +----------+                     |      |
-> + * | dram_apb |-------------------->|      |
-> + * +----------+                     +------+
-> + *
-> + * The dram_pll is used for higher rates and dram_alt is used for lower rates.
-> + *
-> + * Frequency switching is implemented in TF-A (via SMC call) and can change the
-> + * configuration of the clocks, including mux parents. The dram_alt and
-> + * dram_apb clocks are "imx composite" and their parent can change too.
-> + *
-> + * We need to prepare/enable the new mux parents head of switching and update
-> + * their information afterwards.
-> + */
-> +struct imx_ddrc {
-> +	struct devfreq_dev_profile profile;
-> +	struct devfreq *devfreq;
-> +
-> +	/* For frequency switching: */
-> +	struct clk *dram_core;
-> +	struct clk *dram_pll;
-> +	struct clk *dram_alt;
-> +	struct clk *dram_apb;
-> +
-> +	int freq_count;
-> +	struct imx_ddrc_freq freq_table[IMX_DDRC_MAX_FREQ_COUNT];
-> +};
-> +
-> +static struct imx_ddrc_freq *imx_ddrc_find_freq(struct imx_ddrc *priv,
-> +						unsigned long rate)
-> +{
-> +	int i;
-> +
-> +	/*
-> +	 * Firmware reports values in MT/s, so we round-down from Hz
-> +	 * Rounding is extra generous to ensure a match.
-> +	 */
-> +	rate = DIV_ROUND_CLOSEST(rate, 250000);
-> +	for (i = 0; i < priv->freq_count; ++i) {
-> +		struct imx_ddrc_freq *freq = &priv->freq_table[i];
-> +		if (freq->rate == rate ||
-> +				freq->rate + 1 == rate ||
-> +				freq->rate - 1 == rate)
-> +			return freq;
-> +	}
-> +
-> +	return NULL;
-> +}
-> +
-> +static void imx_ddrc_smc_set_freq(int target_freq)
-> +{
-> +	struct arm_smccc_res res;
-> +	u32 online_cpus = 0;
-> +	int cpu;
-> +
-> +	local_irq_disable();
-> +
-> +	for_each_online_cpu(cpu)
-> +		online_cpus |= (1 << (cpu * 8));
-
-Nit: one level of unnecessary parentheses.
-
-> +
-> +	/* change the ddr freqency */
-> +	arm_smccc_smc(IMX_SIP_DDR_DVFS, target_freq, online_cpus,
-> +			0, 0, 0, 0, 0, &res);
-> +
-> +	local_irq_enable();
-> +}
-> +
-> +struct clk *clk_get_parent_by_index(struct clk *clk, int index)
-> +{
-> +	struct clk_hw *hw;
-> +
-> +	hw = clk_hw_get_parent_by_index(__clk_get_hw(clk), index);
-
-Okay, this is why you need clk-provider.h.  But this
-clk_get_parent_by_index() function looks completely generic, and should
-be proposed to clock core?
-
-Shawn
-
-> +
-> +	return hw ? hw->clk : NULL;
-> +}
-> +
-> +static int imx_ddrc_set_freq(struct device *dev, struct imx_ddrc_freq *freq)
-> +{
-> +	struct imx_ddrc *priv = dev_get_drvdata(dev);
-> +	struct clk *new_dram_core_parent;
-> +	struct clk *new_dram_alt_parent;
-> +	struct clk *new_dram_apb_parent;
-> +	int ret;
-> +
-> +	new_dram_core_parent = clk_get_parent_by_index(
-> +			priv->dram_core, freq->dram_core_parent_index - 1);
-> +	new_dram_alt_parent = clk_get_parent_by_index(
-> +			priv->dram_alt, freq->dram_alt_parent_index - 1);
-> +	new_dram_apb_parent = clk_get_parent_by_index(
-> +			priv->dram_apb, freq->dram_apb_parent_index - 1);
-> +
-> +	/* increase reference counts and ensure clks are ON before switch */
-> +	ret = clk_prepare_enable(new_dram_core_parent);
-> +	if (ret) {
-> +		dev_err(dev, "failed enable new dram_core parent: %d\n", ret);
-> +		goto out;
-> +	}
-> +	ret = clk_prepare_enable(new_dram_alt_parent);
-> +	if (ret) {
-> +		dev_err(dev, "failed enable new dram_alt parent: %d\n", ret);
-> +		goto out_dis_core;
-> +	}
-> +	ret = clk_prepare_enable(new_dram_apb_parent);
-> +	if (ret) {
-> +		dev_err(dev, "failed enable new dram_apb parent: %d\n", ret);
-> +		goto out_dis_alt;
-> +	}
-> +
-> +	imx_ddrc_smc_set_freq(freq->smcarg);
-> +
-> +	/* update parents in clk tree after switch. */
-> +	ret = clk_set_parent(priv->dram_core, new_dram_core_parent);
-> +	if (ret)
-> +		dev_err(dev, "failed set dram_core parent: %d\n", ret);
-> +	if (new_dram_alt_parent) {
-> +		ret = clk_set_parent(priv->dram_alt, new_dram_alt_parent);
-> +		if (ret)
-> +			dev_err(dev, "failed set dram_alt parent: %d\n", ret);
-> +	}
-> +	if (new_dram_apb_parent) {
-> +		ret = clk_set_parent(priv->dram_apb, new_dram_apb_parent);
-> +		if (ret)
-> +			dev_err(dev, "failed set dram_apb parent: %d\n", ret);
-> +	}
-> +
-> +	/*
-> +	 * Explicitly refresh dram PLL rate.
-> +	 *
-> +	 * Even if it's marked with CLK_GET_RATE_NOCACHE the rate will not be
-> +	 * automatically refreshed when clk_get_rate is called on children.
-> +	 */
-> +	clk_get_rate(priv->dram_pll);
-> +
-> +	/*
-> +	 * clk_set_parent transfer the reference count from old parent.
-> +	 * now we drop extra reference counts used during the switch
-> +	 */
-> +	clk_disable_unprepare(new_dram_apb_parent);
-> +out_dis_alt:
-> +	clk_disable_unprepare(new_dram_alt_parent);
-> +out_dis_core:
-> +	clk_disable_unprepare(new_dram_core_parent);
-> +out:
-> +	return ret;
-> +}
-> +
-> +static int imx_ddrc_target(struct device *dev, unsigned long *freq, u32 flags)
-> +{
-> +	struct imx_ddrc *priv = dev_get_drvdata(dev);
-> +	struct imx_ddrc_freq *freq_info;
-> +	struct dev_pm_opp *new_opp;
-> +	unsigned long old_freq, new_freq;
-> +	int ret;
-> +
-> +	new_opp = devfreq_recommended_opp(dev, freq, flags);
-> +	if (IS_ERR(new_opp)) {
-> +		ret = PTR_ERR(new_opp);
-> +		dev_err(dev, "failed to get recommended opp: %d\n", ret);
-> +		return ret;
-> +	}
-> +	dev_pm_opp_put(new_opp);
-> +
-> +	old_freq = clk_get_rate(priv->dram_core);
-> +	if (*freq == old_freq)
-> +		return 0;
-> +
-> +	freq_info = imx_ddrc_find_freq(priv, *freq);
-> +	if (!freq_info)
-> +		return -EINVAL;
-> +	ret = imx_ddrc_set_freq(dev, freq_info);
-> +
-> +	/* Also read back the clk rate to verify switch was correct */
-> +	new_freq = clk_get_rate(priv->dram_core);
-> +	if (ret || *freq != new_freq)
-> +		dev_err(dev, "ddrc failed to change freq %lu to %lu: now at %lu\n",
-> +				old_freq, *freq, new_freq);
-> +	else
-> +		dev_dbg(dev, "ddrc changed freq %lu to %lu\n",
-> +				old_freq, *freq);
-> +
-> +	return ret;
-> +}
-> +
-> +static int imx_ddrc_get_cur_freq(struct device *dev, unsigned long *freq)
-> +{
-> +	struct imx_ddrc *priv = dev_get_drvdata(dev);
-> +
-> +	*freq = clk_get_rate(priv->dram_core);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_ddrc_get_dev_status(struct device *dev,
-> +		struct devfreq_dev_status *stat)
-> +{
-> +	struct imx_ddrc *priv = dev_get_drvdata(dev);
-> +
-> +	stat->busy_time = 0;
-> +	stat->total_time = 0;
-> +	stat->current_frequency = clk_get_rate(priv->dram_core);
-> +
-> +	return 0;
-> +}
-> +
-> +static int imx_ddrc_init_freq_info(struct device *dev)
-> +{
-> +	struct imx_ddrc *priv = dev_get_drvdata(dev);
-> +	struct arm_smccc_res res;
-> +	int index;
-> +
-> +	/*
-> +	 * An error here means DDR DVFS API not supported by firmware
-> +	 */
-> +	arm_smccc_smc(IMX_SIP_DDR_DVFS, IMX_SIP_DDR_DVFS_GET_FREQ_COUNT,
-> +			0, 0, 0, 0, 0, 0, &res);
-> +	priv->freq_count = res.a0;
-> +	if (priv->freq_count <= 0 || priv->freq_count > IMX_DDRC_MAX_FREQ_COUNT)
-> +		return -ENODEV;
-> +
-> +	for (index = 0; index < priv->freq_count; ++index) {
-> +		struct imx_ddrc_freq *freq = &priv->freq_table[index];
-> +
-> +		arm_smccc_smc(IMX_SIP_DDR_DVFS, IMX_SIP_DDR_DVFS_GET_FREQ_INFO,
-> +				index, 0, 0, 0, 0, 0, &res);
-> +		/* Result should be strictly positive */
-> +		if ((long)res.a0 <= 0)
-> +			return -ENODEV;
-> +
-> +		freq->rate = res.a0;
-> +		freq->smcarg = index;
-> +		freq->dram_core_parent_index = res.a1;
-> +		freq->dram_alt_parent_index = res.a2;
-> +		freq->dram_apb_parent_index = res.a3;
-> +
-> +		/* dram_core has 2 options: dram_pll or dram_alt_root */
-> +		if (freq->dram_core_parent_index != 1 &&
-> +				freq->dram_core_parent_index != 2)
-> +			return -ENODEV;
-> +		/* dram_apb and dram_alt have exactly 8 possible parents */
-> +		if (freq->dram_alt_parent_index > 8 ||
-> +				freq->dram_apb_parent_index > 8)
-> +			return -ENODEV;
-> +		/* dram_core from alt requires explicit dram_alt parent */
-> +		if (freq->dram_core_parent_index == 2 &&
-> +				freq->dram_alt_parent_index == 0)
-> +			return -ENODEV;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +/* imx_ddrc_check_opps() - disable OPPs not supported by firmware */
-> +static int imx_ddrc_check_opps(struct device *dev)
-> +{
-> +	struct imx_ddrc *priv = dev_get_drvdata(dev);
-> +	struct imx_ddrc_freq *freq_info;
-> +	struct dev_pm_opp *opp;
-> +	unsigned long freq;
-> +
-> +	freq = ULONG_MAX;
-> +	while (true) {
-> +		opp = dev_pm_opp_find_freq_floor(dev, &freq);
-> +		if (opp == ERR_PTR(-ERANGE))
-> +			break;
-> +		if (IS_ERR(opp)) {
-> +			dev_err(dev, "Failed enumerating OPPs: %ld\n",
-> +				PTR_ERR(opp));
-> +			return PTR_ERR(opp);
-> +		}
-> +		dev_pm_opp_put(opp);
-> +
-> +		freq_info = imx_ddrc_find_freq(priv, freq);
-> +		if (!freq_info) {
-> +			dev_info(dev, "Disable unsupported OPP %luHz %luMT/s\n",
-> +					freq, DIV_ROUND_CLOSEST(freq, 250000));
-> +			dev_pm_opp_disable(dev, freq);
-> +		}
-> +
-> +		freq--;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static void imx_ddrc_exit(struct device *dev)
-> +{
-> +	dev_pm_opp_of_remove_table(dev);
-> +}
-> +
-> +static int imx_ddrc_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct imx_ddrc *priv;
-> +	struct device_node *events_node;
-> +	const char *gov = DEVFREQ_GOV_USERSPACE;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	ret = imx_ddrc_init_freq_info(dev);
-> +	if (ret) {
-> +		dev_err(dev, "failed to init firmware freq info: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	priv->dram_core = devm_clk_get(dev, "dram_core");
-> +	priv->dram_pll = devm_clk_get(dev, "dram_pll");
-> +	priv->dram_alt = devm_clk_get(dev, "dram_alt");
-> +	priv->dram_apb = devm_clk_get(dev, "dram_apb");
-> +	if (IS_ERR(priv->dram_core) ||
-> +		IS_ERR(priv->dram_pll) ||
-> +		IS_ERR(priv->dram_alt) ||
-> +		IS_ERR(priv->dram_apb)) {
-> +		ret = PTR_ERR(priv->devfreq);
-> +		dev_err(dev, "failed to fetch clocks: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = dev_pm_opp_of_add_table(dev);
-> +	if (ret < 0) {
-> +		dev_err(dev, "failed to get OPP table\n");
-> +		return ret;
-> +	}
-> +
-> +	ret = imx_ddrc_check_opps(dev);
-> +	if (ret < 0)
-> +		goto err;
-> +
-> +	priv->profile.polling_ms = 1000;
-> +	priv->profile.target = imx_ddrc_target;
-> +	priv->profile.get_dev_status = imx_ddrc_get_dev_status;
-> +	priv->profile.exit = imx_ddrc_exit;
-> +	priv->profile.get_cur_freq = imx_ddrc_get_cur_freq;
-> +	priv->profile.initial_freq = clk_get_rate(priv->dram_core);
-> +
-> +	priv->devfreq = devm_devfreq_add_device(dev, &priv->profile,
-> +						gov, NULL);
-> +	if (IS_ERR(priv->devfreq)) {
-> +		ret = PTR_ERR(priv->devfreq);
-> +		dev_err(dev, "failed to add devfreq device: %d\n", ret);
-> +		goto err;
-> +	}
-> +
-> +	return 0;
-> +
-> +err:
-> +	dev_pm_opp_of_remove_table(dev);
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id imx_ddrc_of_match[] = {
-> +	{ .compatible = "fsl,imx8m-ddrc", },
-> +	{ /* sentinel */ },
-> +};
-> +MODULE_DEVICE_TABLE(of, imx_ddrc_of_match);
-> +
-> +static struct platform_driver imx_ddrc_platdrv = {
-> +	.probe		= imx_ddrc_probe,
-> +	.driver = {
-> +		.name	= "imx-ddrc-devfreq",
-> +		.of_match_table = of_match_ptr(imx_ddrc_of_match),
-> +	},
-> +};
-> +module_platform_driver(imx_ddrc_platdrv);
-> +
-> +MODULE_DESCRIPTION("i.MX DDR controller frequency driver");
-> +MODULE_AUTHOR("Leonard Crestez <leonard.crestez@nxp.com>");
-> +MODULE_LICENSE("GPL v2");
-> -- 
-> 2.17.1
+> If you did not, I'm probably not going to review this further until you do.
+> 
+>>
+>>   .../bindings/clock/amlogic,a1-clkc.yaml       |   70 +
+>>   .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   56 +
+>>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi     |   26 +
+>>   drivers/clk/meson/Kconfig                     |   20 +
+>>   drivers/clk/meson/Makefile                    |    2 +
+>>   drivers/clk/meson/a1-pll.c                    |  334 +++
+>>   drivers/clk/meson/a1-pll.h                    |   56 +
+>>   drivers/clk/meson/a1.c                        | 2309 +++++++++++++++++
+>>   drivers/clk/meson/a1.h                        |  120 +
+>>   drivers/clk/meson/clk-pll.c                   |   21 +
+>>   drivers/clk/meson/clk-pll.h                   |    1 +
+>>   drivers/clk/meson/meson-eeclk.c               |   59 +-
+>>   drivers/clk/meson/meson-eeclk.h               |    2 +
+>>   drivers/clk/meson/parm.h                      |    1 +
+>>   include/dt-bindings/clock/a1-clkc.h           |   98 +
+>>   include/dt-bindings/clock/a1-pll-clkc.h       |   16 +
+>>   16 files changed, 3181 insertions(+), 10 deletions(-)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>   create mode 100644 drivers/clk/meson/a1-pll.c
+>>   create mode 100644 drivers/clk/meson/a1-pll.h
+>>   create mode 100644 drivers/clk/meson/a1.c
+>>   create mode 100644 drivers/clk/meson/a1.h
+>>   create mode 100644 include/dt-bindings/clock/a1-clkc.h
+>>   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+> 
+> .
 > 
