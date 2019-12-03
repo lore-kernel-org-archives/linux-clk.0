@@ -2,148 +2,119 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03102C43141
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 11:48:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7AC5C43141
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77C920684
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 11:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BF333207DD
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 13:27:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="ANmDGJCQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726055AbfLCLrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 06:47:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:49394 "EHLO mx1.suse.de"
+        id S1726186AbfLCN1p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 08:27:45 -0500
+Received: from mail-eopbgr1400121.outbound.protection.outlook.com ([40.107.140.121]:34209
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725773AbfLCLrw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Dec 2019 06:47:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6C137B183;
-        Tue,  3 Dec 2019 11:47:49 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     andrew.murray@arm.com, maz@kernel.org, linux-kernel@vger.kernel.org
-Cc:     james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Robin Murphy <robin.murphy@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        bcm-kernel-feedback-list@broadcom.com, devicetree@vger.kernel.org,
-        linux-acpi@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-rdma@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        kexec@lists.infradead.org, linux-nfs@vger.kernel.org
-Subject: [PATCH v4 0/8] Raspberry Pi 4 PCIe support
-Date:   Tue,  3 Dec 2019 12:47:33 +0100
-Message-Id: <20191203114743.1294-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.24.0
+        id S1726086AbfLCN1o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Dec 2019 08:27:44 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=JatFMizwGImVXjvDJbkSZnUreVzkUiqy+rZ6bMTZ5GbFVMJvB5w5WbuCBDsbsk9/deNKuNgS6KHOPpsZ0XDt+2m5ag2lXMc7OWDjHXoSzlos9la/bbV7IX6XY0OCUrGcTHGfUY5eL8grBlbdF62IFZ3zC7w0b/I/7zTCl+mzeB/Z9IcmnrHCDy+pvDtlL7aSWwR8dwvLKoQzXxP4x+7yVHPF8lZeGV8McwCkQNsBsMa07Q3Uvptk9UgsgpwR5xWU6SFwQkQR3nH0UvjxIikHMYKJsPp/lVzyupfYIWOL0b4bwNcCmIG/IJ8PbvYys272TQfT2m5kRnkZtyWnI7N78Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E6iqdCRYte3HB+lK+qyaQjUGwN5HP9VlAZ5gNuMz5mA=;
+ b=ZgwBYVAFgN1w1ElyOE5/j8MyrJPMAlIiHfcnSkiC1YaCAsYu8xGUrwAA1hUdCl+LRX3rLVfV/C6w6giHtVCYbgMVQjb7/pk4dEFgjPYMk5PdpuNWEOXs2FykPfxgeFd7TnpeJ7+sUgjap9kJriR51LKskqP/7ZPooG8IlREsIGCWpO5m3Ddpk26Xy8vOBfnZadEJjofeM8OLcbKdGgXgmul+SNt6kMLPKyQQ8YYNla2QhEpb5Iob4Hz0GWrs/LAd2N8XgFJtgdZKTwf5C+s3ZURVfMg7iRAfrq983KCDZtm0CiWydgCu/auod0z9t9y702lM1lWtqhmfFSOmTjyykQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=E6iqdCRYte3HB+lK+qyaQjUGwN5HP9VlAZ5gNuMz5mA=;
+ b=ANmDGJCQk3jSmec7QnPtO1uy7X4sh+kzz+O/wuzUxs5fd+AovaWgs6oTzEL0q2HXRZMFz22ongKtzC75B4jL6xMVHX82++xAYcvn2dOO2Hq7dSzsj2t2HJcd7Ppqd+e7dF+ePEi/0Ec7iLd4fs1/t4m5cj5O4F3p6dxLZIfHaSs=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
+ TY1SPR01MB2.jpnprd01.prod.outlook.com (52.133.161.16) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.12; Tue, 3 Dec 2019 13:27:40 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Tue, 3 Dec 2019
+ 13:27:39 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+Subject: RE: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+Thread-Topic: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+Thread-Index: AQHVqYxRjjQT6EPsk0uhvsHduSJ+e6eoIQoAgAA7ZYA=
+Date:   Tue, 3 Dec 2019 13:27:39 +0000
+Message-ID: <TY1PR01MB156262E8D33A0624457CAE248A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20191203034519.5640-1-chris.brandt@renesas.com>
+ <20191203034519.5640-7-chris.brandt@renesas.com>
+ <17e66541-41fb-26ed-c87b-15c59ab57bef@cogentembedded.com>
+In-Reply-To: <17e66541-41fb-26ed-c87b-15c59ab57bef@cogentembedded.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctYWJkMjliMjMtMTVkMC0xMWVhLWFhNTEtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XGFiZDI5YjI0LTE1ZDAtMTFlYS1hYTUxLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iNjk2IiB0PSIxMzIxOTg1MzI1Nzg5ODY2OTgiIGg9ImJTaFlmT3U3bUZmWDBxL0Jtbks1NUFhSlYybz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 1947f291-f0a1-42e0-7c66-08d777f491e0
+x-ms-traffictypediagnostic: TY1SPR01MB2:
+x-microsoft-antispam-prvs: <TY1SPR01MB2F7B2FF101FF1A03AEA618A420@TY1SPR01MB2.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7219;
+x-forefront-prvs: 02408926C4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(366004)(376002)(396003)(136003)(199004)(189003)(7416002)(7736002)(305945005)(74316002)(8676002)(71190400001)(81156014)(8936002)(446003)(71200400001)(11346002)(25786009)(81166006)(52536014)(316002)(76116006)(5660300002)(66946007)(478600001)(54906003)(102836004)(26005)(6246003)(99286004)(4326008)(9686003)(76176011)(7696005)(6506007)(110136005)(4744005)(55016002)(33656002)(256004)(2906002)(186003)(14454004)(6436002)(66556008)(3846002)(6116002)(66446008)(66476007)(64756008)(86362001)(229853002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1SPR01MB2;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9KXwGIDSGdFEgQABHZ4Hkls6+ZaJgDc2I8mzDrO12b6cEohJ/DY+AkTvPCPGU6yR/xeXlf8i1zNDPxlhSx+KmsyUJQ4RWxw3ujSy8VtHkh1JvZZz0uy+wBCwOS9YnxZ1y48bOeIkWhsGsP0vCw86OXWR8sk3X9p5CmBu6f6EhQutGIpknomrEAK09cTjnUE+m3M3vM87PkKiPUPjWXlwyKJf+zGuq35tPzxUi3aOX/CNS/W52diSFdUWLEoJsDRtK9keeaRkUayxbBBnknIZqJ7K+bCLDjSoE2Dsk+3+S6Kf+/ucYCNSZoBUIblcLyVvO1yXMJkve/pWuf5ABl5qhCd/yO12URLsK5YL9M3vkH5oWG9EfPrRBuars6PWcCSWK4mPz3unKbm15SRRf26NNtA5bfzbtYlAYjKXilsOSSBZLNaQ0qubHgO6MTmXrDti
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1947f291-f0a1-42e0-7c66-08d777f491e0
+X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 13:27:39.8089
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tPnjXvmGvnBqZ5vRniYYFOEpW72iGcpN/fAJCvcN1oyBvHT3HWsPH8QwMjOvdxYDFq+I+JlDswxzuNUgN+gY6MZMjl/7JUZI7yTQoz0O/Zs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR01MB2
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series aims at providing support for Raspberry Pi 4's PCIe
-controller, which is also shared with the Broadcom STB family of
-devices.
-
-There was a previous attempt to upstream this some years ago[1] but was
-blocked as most STB PCIe integrations have a sparse DMA mapping[2] which
-is something currently not supported by the kernel.  Luckily this is not
-the case for the Raspberry Pi 4.
-
-Note that the driver code is to be based on top of Rob Herring's series
-simplifying inbound and outbound range parsing.
-
-[1] https://patchwork.kernel.org/cover/10605933/
-[2] https://patchwork.kernel.org/patch/10605957/
-
----
-
-Changes since v3:
-  - Moved all the log2.h related changes at the end of the series, as I
-    presume they will be contentious and I don't want the PCIe patches
-    to depend on them. Ultimately I think I'll respin them on their own
-    series but wanted to keep them in for this submission just for the
-    sake of continuity.
-  - Addressed small nits here and there.
-
-Changes since v2:
-  - Redo register access in driver avoiding indirection while keeping
-    the naming intact
-  - Add patch editing ARM64's config
-  - Last MSI cleanups, notably removing MSIX flag
-  - Got rid of all _RB writes
-  - Got rid of all of_data
-  - Overall churn removal
-  - Address the rest of Andrew's comments
-
-Changes since v1:
-  - add generic rounddown/roundup_pow_two64() patch
-  - Add MAINTAINERS patch
-  - Fix Kconfig
-  - Cleanup probe, use up to date APIs, exit on MSI failure
-  - Get rid of linux,pci-domain and other unused constructs
-  - Use edge triggered setup for MSI
-  - Cleanup MSI implementation
-  - Fix multiple cosmetic issues
-  - Remove supend/resume code
-
-Jim Quinlan (3):
-  dt-bindings: PCI: Add bindings for brcmstb's PCIe device
-  PCI: brcmstb: Add Broadcom STB PCIe host controller driver
-  PCI: brcmstb: Add MSI support
-
-Nicolas Saenz Julienne (5):
-  ARM: dts: bcm2711: Enable PCIe controller
-  MAINTAINERS: Add brcmstb PCIe controller
-  arm64: defconfig: Enable Broadcom's STB PCIe controller
-  linux/log2.h: Fix 64bit calculations in roundup/down_pow_two()
-  linux/log2.h: Use roundup/dow_pow_two() on 64bit calculations
-
- .../bindings/pci/brcm,stb-pcie.yaml           |   97 ++
- MAINTAINERS                                   |    4 +
- arch/arm/boot/dts/bcm2711.dtsi                |   37 +
- arch/arm64/configs/defconfig                  |    1 +
- drivers/acpi/arm64/iort.c                     |    2 +-
- drivers/clk/clk-divider.c                     |    8 +-
- drivers/clk/sunxi/clk-sunxi.c                 |    2 +-
- drivers/infiniband/hw/hfi1/chip.c             |    4 +-
- drivers/infiniband/hw/hfi1/init.c             |    4 +-
- drivers/infiniband/hw/mlx4/srq.c              |    2 +-
- drivers/infiniband/hw/mthca/mthca_srq.c       |    2 +-
- drivers/infiniband/sw/rxe/rxe_qp.c            |    4 +-
- drivers/iommu/intel-iommu.c                   |    4 +-
- drivers/iommu/intel-svm.c                     |    4 +-
- drivers/iommu/intel_irq_remapping.c           |    2 +-
- drivers/net/ethernet/amd/xgbe/xgbe-ethtool.c  |    4 +-
- drivers/net/ethernet/marvell/sky2.c           |    2 +-
- drivers/net/ethernet/mellanox/mlx4/en_clock.c |    3 +-
- drivers/net/ethernet/rocker/rocker_hw.h       |    4 +-
- drivers/net/ethernet/sfc/ef10.c               |    2 +-
- drivers/net/ethernet/sfc/efx.h                |    2 +-
- drivers/net/ethernet/sfc/falcon/efx.h         |    2 +-
- drivers/of/device.c                           |    3 +-
- drivers/pci/controller/Kconfig                |    9 +
- drivers/pci/controller/Makefile               |    1 +
- .../pci/controller/cadence/pcie-cadence-ep.c  |    3 +-
- drivers/pci/controller/cadence/pcie-cadence.c |    3 +-
- drivers/pci/controller/pcie-brcmstb.c         | 1008 +++++++++++++++++
- drivers/pci/controller/pcie-rockchip-ep.c     |    5 +-
- drivers/pci/msi.c                             |    2 +-
- include/linux/log2.h                          |   44 +-
- kernel/dma/direct.c                           |    2 +-
- kernel/kexec_core.c                           |    3 +-
- lib/rhashtable.c                              |    2 +-
- net/sunrpc/xprtrdma/verbs.c                   |    2 +-
- 35 files changed, 1211 insertions(+), 72 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/pci/brcm,stb-pcie.yaml
- create mode 100644 drivers/pci/controller/pcie-brcmstb.c
-
--- 
-2.24.0
-
+T24gVHVlLCBEZWMgMywgMjAxOSwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiAgICAgVGhhdCdz
+IG9ubHkgMiBhcmVhcywgbm90IDMuIDotKQ0KVGhhbmsgeW91IQ0KDQo+ID4gKy0gZmxhc2g6IHNo
+b3VsZCBiZSByZXByZXNlbnRlZCBieSBhIHN1Ym5vZGUgb2YgdGhlIFNQSUJTQyBub2RlLA0KPiA+
+ICsJIGl0cyAiY29tcGF0aWJsZSIgcHJvcGVydHkgY29udGFpbnMgImplZGVjLHNwaS1ub3IiIGlm
+IFNQSSBpcyB1c2VkLg0KPiANCj4gICAgIEFyZSBhbnkgb3RoZXIgZmxhc2ggdmFyaWFudHMgc3Vw
+cG9ydGVkPw0KDQpEbyB5b3UgbWVhbiBvdGhlciB0eXBlcyBvZiBTUEkgZmxhc2g/DQpJJ3ZlIG9u
+bHkgdXNlZCBTUEkgZmxhc2ggZGV2aWNlcyB0aGF0IGFyZSBhdXRvIGRldGVjdGVkIHVzaW5nIA0K
+ImplZGVjLHNwaS1ub3IiLg0KSW4gdGhlb3J5LCB5b3UgY291bGQgdXNlIG90aGVyIHR5cGVzIG9m
+IFNQSSBmbGFzaCBsaWtlICJhdG1lbCxhdDQ1IiwgYnV0DQpubyBvbmUgaGFzIGV2ZXJ5IHRyaWVk
+IGl0LCBtb3N0bHkgYmVjYXVzZSB0aGUgU29DIHdpbGwgb25seSBib290IGZyb20NCkpFREVDIGNv
+bXBhdGlibGUgU1BJIGZsYXNoLg0KDQpDaHJpcw0K
