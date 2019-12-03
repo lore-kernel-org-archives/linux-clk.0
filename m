@@ -2,130 +2,248 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5A6C432C0
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 06:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51666C432C0
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 07:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E6B320684
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 06:42:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="SwoYHX5o"
+	by mail.kernel.org (Postfix) with ESMTP id 325AA2073B
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 07:36:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfLCGmP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 01:42:15 -0500
-Received: from conssluserg-03.nifty.com ([210.131.2.82]:35687 "EHLO
-        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726521AbfLCGmP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 01:42:15 -0500
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
-        by conssluserg-03.nifty.com with ESMTP id xB36fxQx002046;
-        Tue, 3 Dec 2019 15:41:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xB36fxQx002046
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1575355319;
-        bh=d1TaPWKkweQ1rY/9jQKGxR8RbctwUl4ZdBH262gE6Ek=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=SwoYHX5ogHo9RL8Nc+N0vXtoMdM8NTbmdzHaNGMQ8mkQAHOL/krz6QWLr4Vn72MfY
-         OSPm4OaSQgfPeghIdjSFPVKurVV4Xy94Oj7MQBwgH6ptJ3vMjxhRLLFZXS4PWfmiUA
-         H+3M1wPKDdPRfYCJbv7nrR6FEeXsW80r09rOsxFGVYzix4//vA5PBuTlv4w82VJSwZ
-         M5twJrrM7vL8yd/iXmHzDlkHiEL/XxvPOAOlfcQLae//PzwCdFxrjI3Ydqbt6OlzOj
-         iOEKDYVL4rR3wZYDxQ1Q7KHFhcrD7JIXTDhePJ04lvB2YzzFcbU8l0X3mVkYKj0Htg
-         ARgPMppx73Zbg==
-X-Nifty-SrcIP: [209.85.217.48]
-Received: by mail-vs1-f48.google.com with SMTP id n27so1685569vsa.0;
-        Mon, 02 Dec 2019 22:41:59 -0800 (PST)
-X-Gm-Message-State: APjAAAVWGdEYYebf8uWhcG94343K8IDlsICABzwOHU0u7SyVDdGc97NC
-        kfP/TqR3ynAKgV8wsW4MRT+DhUI/2SfjNU0ou8g=
-X-Google-Smtp-Source: APXvYqzLsiH4HRQY9QqmGR/SA97yO7NrrmjdmBWFjksc9y+rkTjK3+4kSlw3fdNk79ycV87KfqHrKT+gli71BIb+qN8=
-X-Received: by 2002:a67:f6c2:: with SMTP id v2mr1763077vso.54.1575355318341;
- Mon, 02 Dec 2019 22:41:58 -0800 (PST)
+        id S1727516AbfLCHgN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 02:36:13 -0500
+Received: from rtits2.realtek.com ([211.75.126.72]:38853 "EHLO
+        rtits2.realtek.com.tw" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727386AbfLCHgN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 02:36:13 -0500
+Authenticated-By: 
+X-SpamFilter-By: BOX Solutions SpamTrap 5.62 with qID xB37ZrtC014065, This message is accepted by code: ctloc85258
+Received: from mail.realtek.com (RTITCASV01.realtek.com.tw[172.21.6.18])
+        by rtits2.realtek.com.tw (8.15.2/2.57/5.78) with ESMTPS id xB37ZrtC014065
+        (version=TLSv1 cipher=DHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 3 Dec 2019 15:35:53 +0800
+Received: from james-BS01.localdomain (172.21.190.33) by
+ RTITCASV01.realtek.com.tw (172.21.6.18) with Microsoft SMTP Server id
+ 14.3.468.0; Tue, 3 Dec 2019 15:35:51 +0800
+From:   James Tai <james.tai@realtek.com>
+To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>
+CC:     Palmer Dabbelt <palmer@sifive.com>,
+        Paul Walmsley <paul.walmsley@sifive.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <linux-riscv@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        cylee12 <cylee12@realtek.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH 4/6] clk: realtek: add reset controller support for Realtek SoCs
+Date:   Tue, 3 Dec 2019 15:35:38 +0800
+Message-ID: <20191203073540.9321-5-james.tai@realtek.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191203073540.9321-1-james.tai@realtek.com>
+References: <20191203073540.9321-1-james.tai@realtek.com>
 MIME-Version: 1.0
-References: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
-In-Reply-To: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 3 Dec 2019 15:41:22 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
-Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
-Subject: Re: [PATCH] clk: uniphier: Add SCSSI clock gate for each channel
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 29, 2019 at 1:16 PM Kunihiko Hayashi
-<hayashi.kunihiko@socionext.com> wrote:
->
-> SCSSI has clock gates for each channel in the SoCs newer than Pro4,
-> so this adds missing clock gates for channel 1, 2 and 3. And more, this
-> moves MCSSI clock ID after SCSSI.
->
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> ---
+From: cylee12 <cylee12@realtek.com>
 
+This patch add reset control support for Realtek SoCs.
 
-Fixes: ff388ee36516 ("clk: uniphier: add clock frequency support for SPI")
+Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
+Signed-off-by: James Tai <james.tai@realtek.com>
+---
+ drivers/clk/realtek/Kconfig  |   1 +
+ drivers/clk/realtek/Makefile |   1 +
+ drivers/clk/realtek/reset.c  | 107 +++++++++++++++++++++++++++++++++++
+ drivers/clk/realtek/reset.h  |  37 ++++++++++++
+ 4 files changed, 146 insertions(+)
+ create mode 100644 drivers/clk/realtek/reset.c
+ create mode 100644 drivers/clk/realtek/reset.h
 
-Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-
-
-
-
->  drivers/clk/uniphier/clk-uniphier-peri.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
-> index 9caa529..3e32db9 100644
-> --- a/drivers/clk/uniphier/clk-uniphier-peri.c
-> +++ b/drivers/clk/uniphier/clk-uniphier-peri.c
-> @@ -18,8 +18,8 @@
->  #define UNIPHIER_PERI_CLK_FI2C(idx, ch)                                        \
->         UNIPHIER_CLK_GATE("i2c" #ch, (idx), "i2c", 0x24, 24 + (ch))
->
-> -#define UNIPHIER_PERI_CLK_SCSSI(idx)                                   \
-> -       UNIPHIER_CLK_GATE("scssi", (idx), "spi", 0x20, 17)
-> +#define UNIPHIER_PERI_CLK_SCSSI(idx, ch)                               \
-> +       UNIPHIER_CLK_GATE("scssi" #ch, (idx), "spi", 0x20, 17 + (ch))
->
->  #define UNIPHIER_PERI_CLK_MCSSI(idx)                                   \
->         UNIPHIER_CLK_GATE("mcssi", (idx), "spi", 0x24, 14)
-> @@ -35,7 +35,7 @@ const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
->         UNIPHIER_PERI_CLK_I2C(6, 2),
->         UNIPHIER_PERI_CLK_I2C(7, 3),
->         UNIPHIER_PERI_CLK_I2C(8, 4),
-> -       UNIPHIER_PERI_CLK_SCSSI(11),
-> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
->         { /* sentinel */ }
->  };
->
-> @@ -51,7 +51,10 @@ const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
->         UNIPHIER_PERI_CLK_FI2C(8, 4),
->         UNIPHIER_PERI_CLK_FI2C(9, 5),
->         UNIPHIER_PERI_CLK_FI2C(10, 6),
-> -       UNIPHIER_PERI_CLK_SCSSI(11),
-> -       UNIPHIER_PERI_CLK_MCSSI(12),
-> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
-> +       UNIPHIER_PERI_CLK_SCSSI(12, 1),
-> +       UNIPHIER_PERI_CLK_SCSSI(13, 2),
-> +       UNIPHIER_PERI_CLK_SCSSI(14, 3),
-> +       UNIPHIER_PERI_CLK_MCSSI(15),
->         { /* sentinel */ }
->  };
-> --
-> 2.7.4
->
-
+diff --git a/drivers/clk/realtek/Kconfig b/drivers/clk/realtek/Kconfig
+index 5bca757dddfa..8e7e7edf64dd 100644
+--- a/drivers/clk/realtek/Kconfig
++++ b/drivers/clk/realtek/Kconfig
+@@ -1,6 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config COMMON_CLK_REALTEK
+ 	bool "Clock driver for realtek"
++	select RESET_CONTROLLER
+ 	select MFD_SYSCON
+ 
+ config CLK_PLL_PSAUD
+diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
+index 050d450db067..43f8bd71c0c8 100644
+--- a/drivers/clk/realtek/Makefile
++++ b/drivers/clk/realtek/Makefile
+@@ -7,3 +7,4 @@ clk-rtk-y += clk-regmap-gate.o
+ clk-rtk-y += clk-pll.o
+ clk-rtk-$(CONFIG_CLK_PLL_PSAUD) += clk-pll-psaud.o
+ clk-rtk-$(CONFIG_CLK_PLL_DIF) += clk-pll-dif.o
++clk-rtk-y += reset.o
+diff --git a/drivers/clk/realtek/reset.c b/drivers/clk/realtek/reset.c
+new file mode 100644
+index 000000000000..3f4d1a723b2a
+--- /dev/null
++++ b/drivers/clk/realtek/reset.c
+@@ -0,0 +1,107 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Copyright (C) 2019 Realtek Semiconductor Corporation
++ */
++
++#include <linux/of.h>
++#include <linux/device.h>
++#include <linux/regmap.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include "reset.h"
++
++static int rtk_reset_assert(struct reset_controller_dev *rcdev,
++			    unsigned long idx)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	struct rtk_reset_bank *bank = &data->banks[idx >> 8];
++	uint32_t id   = idx & 0xff;
++	uint32_t mask = bank->write_en ? (0x3 << id) : BIT(id);
++	uint32_t val  = bank->write_en ? (0x2 << id) : 0;
++
++	return regmap_update_bits(data->regmap, bank->ofs, mask, val);
++}
++
++static int rtk_reset_deassert(struct reset_controller_dev *rcdev,
++			      unsigned long idx)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	struct rtk_reset_bank *bank = &data->banks[idx >> 8];
++	uint32_t id   = idx & 0xff;
++	uint32_t mask = bank->write_en ? (0x3 << id) : BIT(id);
++	uint32_t val  = mask;
++
++	return regmap_update_bits(data->regmap, bank->ofs, mask, val);
++}
++
++static int rtk_reset_reset(struct reset_controller_dev *rcdev,
++			   unsigned long idx)
++{
++	int ret;
++
++	ret = rtk_reset_assert(rcdev, idx);
++	if (ret)
++		return ret;
++
++	return rtk_reset_deassert(rcdev, idx);
++}
++
++static int rtk_reset_status(struct reset_controller_dev *rcdev,
++			    unsigned long idx)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	struct rtk_reset_bank *bank = &data->banks[idx >> 8];
++	uint32_t id = idx & 0xff;
++	uint32_t val;
++
++	regmap_read(data->regmap, bank->ofs, &val);
++	return !((val >> id) & 1);
++}
++
++static struct reset_control_ops rtk_reset_ops = {
++	.assert   = rtk_reset_assert,
++	.deassert = rtk_reset_deassert,
++	.reset    = rtk_reset_reset,
++	.status   = rtk_reset_status,
++};
++
++static int rtk_of_reset_xlate(struct reset_controller_dev *rcdev,
++			      const struct of_phandle_args *reset_spec)
++{
++	struct rtk_reset_data *data = to_rtk_reset_controller(rcdev);
++	int val;
++
++	val = reset_spec->args[0];
++	if (val >= rcdev->nr_resets)
++		return -EINVAL;
++
++	if (data->id_xlate)
++		return data->id_xlate(val);
++	return val;
++}
++
++
++int rtk_reset_controller_add(struct device *dev, struct regmap *regmap,
++			     struct rtk_reset_initdata *initdata)
++{
++	struct rtk_reset_data *data;
++	struct device_node *np = dev->of_node;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++	data->regmap    = regmap;
++	data->num_banks = initdata->num_banks;
++	data->banks     = initdata->banks;
++	data->id_xlate  = initdata->id_xlate;
++
++	data->rcdev.owner     = THIS_MODULE;
++	data->rcdev.ops       = &rtk_reset_ops;
++	data->rcdev.of_node   = np;
++	data->rcdev.nr_resets = initdata->num_banks * 0x100;
++	data->rcdev.of_xlate  = rtk_of_reset_xlate;
++	data->rcdev.of_reset_n_cells = 1;
++
++	return reset_controller_register(&data->rcdev);
++}
++
+diff --git a/drivers/clk/realtek/reset.h b/drivers/clk/realtek/reset.h
+new file mode 100644
+index 000000000000..f0cc7b1045ee
+--- /dev/null
++++ b/drivers/clk/realtek/reset.h
+@@ -0,0 +1,37 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (C) 2019 Realtek Semiconductor Corporation
++ * Author: Cheng-Yu Lee <cylee12@realtek.com>
++ */
++
++#ifndef __CLK_REALTEK_RESET_H
++#define __CLK_REALTEK_RESET_H
++
++#include <linux/reset-controller.h>
++
++struct rtk_reset_bank {
++	uint32_t ofs;
++	uint32_t write_en;
++};
++
++struct rtk_reset_data {
++	struct reset_controller_dev rcdev;
++	struct rtk_reset_bank *banks;
++	uint32_t num_banks;
++	struct regmap *regmap;
++	unsigned long (*id_xlate)(unsigned long id);
++};
++
++#define to_rtk_reset_controller(r) \
++	container_of(r, struct rtk_reset_data, rcdev)
++
++struct rtk_reset_initdata {
++	struct rtk_reset_bank *banks;
++	uint32_t num_banks;
++	unsigned long (*id_xlate)(unsigned long id);
++};
++
++int rtk_reset_controller_add(struct device *dev, struct regmap *regmap,
++			     struct rtk_reset_initdata *initdata);
++
++#endif /* __CLK_REALTEK_RESET_H */
 -- 
-Best Regards
-Masahiro Yamada
+2.24.0
+
