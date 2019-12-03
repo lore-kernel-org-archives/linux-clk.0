@@ -2,98 +2,242 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2F77C432C3
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 20:40:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2696C432C0
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 22:07:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A11802084F
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 20:40:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B0F22080A
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 22:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575410854;
+	bh=dJRyQapT6rNWPi9x2ro/xRn3/Z/BWbeUocntIPdTaVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=oYERs+P5uRyzjdVAhXDXWEC0CfO7Ms7ewkrA5jE4oxf2KlBZrKxUDvnONnIeunzd2
+	 52LFM12b5Xmhl+MwHKvBA26jJLP8cqHC+kxro3GBmeY3bEwo/bt0jHJ1yMDUcfyTG+
+	 CupBn6NUOwlZxxPqgBLPW+VGlBUgLB/xIc9wJ9KU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726990AbfLCUkU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 15:40:20 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33434 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727100AbfLCUkU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 15:40:20 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v140so4541089oie.0;
-        Tue, 03 Dec 2019 12:40:19 -0800 (PST)
+        id S1727539AbfLCWHa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 17:07:30 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36823 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727516AbfLCWHa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 17:07:30 -0500
+Received: by mail-oi1-f196.google.com with SMTP id c16so4915401oic.3;
+        Tue, 03 Dec 2019 14:07:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Z349GRiHa+TYd/Gh6NHrqmK3aSP2393XNbqmu8AYhJY=;
-        b=AilBBrDOyMlUU6jvLb9Mw9ki6ENn/AlYcE33SL8hT8Tjx7h0G6m8j2TuiIGXcw94VP
-         vTag4lS5nsifVrJPd4b6fRVTSDQEiI8OIsFSmD7DYIoyCl9D0p+bLs0sPE+P/rSf8xFR
-         DXKA00IoztrT6o3lwQMUQ0ywqR/GDNyQURukp2zuh+0XbudNF5+LGIFtzzRmrKugEWVD
-         O39MUhADqbFoOoWmmSsQTGIXDv+VFF1ssXUG0HoYIM7vSjVGPNVBrQEXaMghDF4gMSj4
-         4muOeS0UVPPNjNfa3iT+tFp7Uclv1K/nv7sHTKipw1GmIZbGHW1+wjo0DjIGF51t8gXv
-         0a9A==
-X-Gm-Message-State: APjAAAVjGkkWE2eYbJ5Fv5kXPW3D9h/8jzRVnhz3/SYPCDlAAADTGGJR
-        UYnPoqZIZwdXQcLS2MPxYAgnDvTVGnPt2sKCu7U=
-X-Google-Smtp-Source: APXvYqyZcXL4G/5uMj4Buh0JQMvj7ZbfYAwu5UGnu0/RiMZS4+NXQS7z9UEucye+2BDM1bUTmrDta6Qsm6i/225QPlk=
-X-Received: by 2002:aca:36c5:: with SMTP id d188mr5670131oia.54.1575405619309;
- Tue, 03 Dec 2019 12:40:19 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=BwKTMzYHU8KC/723XteTIPp1IXDMUZwn/2LYWS85bsY=;
+        b=ZvPydDWc8UpJafzDEiijaM71pD4rREwsbhpBiOmA72j5GXB8EwphdPHWXrfqcoISAo
+         I+sj1SXsyAo3AeCXy1b5LwI9AF/C3Tzz8bWXQcg2P0EWATnvmfBac30zkqj9HG+ACyWq
+         Qi9WvBcAeJpuVzJbSVRReoZxVF7LzWWrPNS6cpmoKh6GxjQVnVE+06gB20aJskv1Fkk5
+         InwN0Mk9QKNtEYU6SVnuYLq4mjsWxrbuF1IbpIfjt2a7PbBDNxFRLirKAa/gGjxWBP9j
+         SHOLzQlbBOEncYdX187Wr+Tf4n1lm6CN6QyeVljIDDV75uPNsR4RPHhSWYNSA4ZtMZxc
+         Im5w==
+X-Gm-Message-State: APjAAAUPb154d1wS5mIn8GI9vUQQRh9sNWyfPXXLtBkxlbOMz5EW6Qsd
+        PHo8IDHlFNw6NabGTilT2w==
+X-Google-Smtp-Source: APXvYqxahROn5+cYweochttTrXtRy81KujPWooahfcQ7HtSD3QLFajv2JM+bmDVevohuS4iZJ3j+zA==
+X-Received: by 2002:a54:4f8e:: with SMTP id g14mr185570oiy.144.1575410848747;
+        Tue, 03 Dec 2019 14:07:28 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id m7sm96146otl.20.2019.12.03.14.07.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 03 Dec 2019 14:07:27 -0800 (PST)
+Date:   Tue, 3 Dec 2019 16:07:27 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
+        allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mturquette@baylibre.com, horms+renesas@verge.net.au,
+        Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de,
+        spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 11/17] dt-bindings: clock: tegra: Remove pmc clock ids
+ from clock dt-bindings
+Message-ID: <20191203220727.GA22716@bogus>
+References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
+ <1574146234-3871-12-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-4-chris.brandt@renesas.com> <CAMuHMdUxCdJXyY15f6sr+QFNpg9FLsa5pL3171bm_meJcBNR2g@mail.gmail.com>
- <TY1PR01MB1562D198A463C18B1D810DF48A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1562D198A463C18B1D810DF48A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 3 Dec 2019 21:40:08 +0100
-Message-ID: <CAMuHMdXKn3GN5toqH=s4=KuEhEO_10Qi9EAyC_VT4-E4XOWdHA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] clk: renesas: r7s9210: Add SPIBSC clock
-To:     Chris Brandt <Chris.Brandt@renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1574146234-3871-12-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chris,
+On Mon, Nov 18, 2019 at 10:50:28PM -0800, Sowjanya Komatineni wrote:
+> clk_out_1, clk_out_2, clk_out_3, blink are part of Tegra pmc clocks.
+> 
+> This patch removes ids for these clocks from Tegra clock dt-bindings.
 
-On Tue, Dec 3, 2019 at 8:09 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Tue, Dec 3, 2019, Geert Uytterhoeven wrote:
-> > > +static const unsigned int r7s9210_crit_mod_clks[] __initconst = {
-> > > +       MOD_CLK_ID_10(83),      /* SPIBSC */
-> >
-> > This is only a critical clock if XIP is in use, right?
->
-> Correct.
->
->
-> > Can we do better, and only mark it critical if we detect the FLASH is used in
-> > XIP mode?
-> > E.g. by using for_each_compatible_node(..., "mtd-rom"), and checking if any
-> > of the corresponding register blocks matches the SPIBSC FLASH memory window?
->
-> Well...technically...you don't need the "mtd-rom" partition when using the AXFS
-> file system. But, we can make a rule that you have to use it regardless.
+Your commit message should answer why, not what.
 
-Just wondering, how does AXFS access the FLASH without it being mapped
-using "mtd-rom"?
+This is not a backwards compatible change if any of these IDs are used. 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  include/dt-bindings/clock/tegra114-car.h        | 14 +++++++-------
+>  include/dt-bindings/clock/tegra124-car-common.h | 14 +++++++-------
+>  include/dt-bindings/clock/tegra20-car.h         |  2 +-
+>  include/dt-bindings/clock/tegra210-car.h        | 14 +++++++-------
+>  include/dt-bindings/clock/tegra30-car.h         | 14 +++++++-------
+>  5 files changed, 29 insertions(+), 29 deletions(-)
+> 
+> diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+> index bb5c2c999c05..9175cd0571b5 100644
+> --- a/include/dt-bindings/clock/tegra114-car.h
+> +++ b/include/dt-bindings/clock/tegra114-car.h
+> @@ -270,10 +270,10 @@
+>  #define TEGRA114_CLK_AUDIO3 242
+>  #define TEGRA114_CLK_AUDIO4 243
+>  #define TEGRA114_CLK_SPDIF 244
+> -#define TEGRA114_CLK_CLK_OUT_1 245
+> -#define TEGRA114_CLK_CLK_OUT_2 246
+> -#define TEGRA114_CLK_CLK_OUT_3 247
+> -#define TEGRA114_CLK_BLINK 248
+> +/* 245 */
+> +/* 246 */
+> +/* 247 */
+> +/* 248 */
+>  /* 249 */
+>  /* 250 */
+>  /* 251 */
+> @@ -333,9 +333,9 @@
+>  #define TEGRA114_CLK_AUDIO3_MUX 303
+>  #define TEGRA114_CLK_AUDIO4_MUX 304
+>  #define TEGRA114_CLK_SPDIF_MUX 305
+> -#define TEGRA114_CLK_CLK_OUT_1_MUX 306
+> -#define TEGRA114_CLK_CLK_OUT_2_MUX 307
+> -#define TEGRA114_CLK_CLK_OUT_3_MUX 308
+> +/* 306 */
+> +/* 307 */
+> +/* 308 */
+>  #define TEGRA114_CLK_DSIA_MUX 309
+>  #define TEGRA114_CLK_DSIB_MUX 310
+>  #define TEGRA114_CLK_XUSB_SS_DIV2 311
+> diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+> index 0c4f5be0a742..90a0c5e7eb5f 100644
+> --- a/include/dt-bindings/clock/tegra124-car-common.h
+> +++ b/include/dt-bindings/clock/tegra124-car-common.h
+> @@ -269,10 +269,10 @@
+>  #define TEGRA124_CLK_AUDIO3 242
+>  #define TEGRA124_CLK_AUDIO4 243
+>  #define TEGRA124_CLK_SPDIF 244
+> -#define TEGRA124_CLK_CLK_OUT_1 245
+> -#define TEGRA124_CLK_CLK_OUT_2 246
+> -#define TEGRA124_CLK_CLK_OUT_3 247
+> -#define TEGRA124_CLK_BLINK 248
+> +/* 245 */
+> +/* 246 */
+> +/* 247 */
+> +/* 248 */
+>  /* 249 */
+>  /* 250 */
+>  /* 251 */
+> @@ -332,9 +332,9 @@
+>  #define TEGRA124_CLK_AUDIO3_MUX 303
+>  #define TEGRA124_CLK_AUDIO4_MUX 304
+>  #define TEGRA124_CLK_SPDIF_MUX 305
+> -#define TEGRA124_CLK_CLK_OUT_1_MUX 306
+> -#define TEGRA124_CLK_CLK_OUT_2_MUX 307
+> -#define TEGRA124_CLK_CLK_OUT_3_MUX 308
+> +/* 306 */
+> +/* 307 */
+> +/* 308 */
+>  /* 309 */
+>  /* 310 */
+>  #define TEGRA124_CLK_SOR0_LVDS 311 /* deprecated */
+> diff --git a/include/dt-bindings/clock/tegra20-car.h b/include/dt-bindings/clock/tegra20-car.h
+> index b21a0eb32921..fe541f627965 100644
+> --- a/include/dt-bindings/clock/tegra20-car.h
+> +++ b/include/dt-bindings/clock/tegra20-car.h
+> @@ -131,7 +131,7 @@
+>  #define TEGRA20_CLK_CCLK 108
+>  #define TEGRA20_CLK_HCLK 109
+>  #define TEGRA20_CLK_PCLK 110
+> -#define TEGRA20_CLK_BLINK 111
+> +/* 111 */
+>  #define TEGRA20_CLK_PLL_A 112
+>  #define TEGRA20_CLK_PLL_A_OUT0 113
+>  #define TEGRA20_CLK_PLL_C 114
+> diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+> index 44f60623f99b..a3d8d3e75728 100644
+> --- a/include/dt-bindings/clock/tegra210-car.h
+> +++ b/include/dt-bindings/clock/tegra210-car.h
+> @@ -304,10 +304,10 @@
+>  #define TEGRA210_CLK_AUDIO3 274
+>  #define TEGRA210_CLK_AUDIO4 275
+>  #define TEGRA210_CLK_SPDIF 276
+> -#define TEGRA210_CLK_CLK_OUT_1 277
+> -#define TEGRA210_CLK_CLK_OUT_2 278
+> -#define TEGRA210_CLK_CLK_OUT_3 279
+> -#define TEGRA210_CLK_BLINK 280
+> +/* 277 */
+> +/* 278 */
+> +/* 279 */
+> +/* 280 */
+>  #define TEGRA210_CLK_SOR0_LVDS 281 /* deprecated */
+>  #define TEGRA210_CLK_SOR0_OUT 281
+>  #define TEGRA210_CLK_SOR1_OUT 282
+> @@ -386,9 +386,9 @@
+>  #define TEGRA210_CLK_AUDIO3_MUX 353
+>  #define TEGRA210_CLK_AUDIO4_MUX 354
+>  #define TEGRA210_CLK_SPDIF_MUX 355
+> -#define TEGRA210_CLK_CLK_OUT_1_MUX 356
+> -#define TEGRA210_CLK_CLK_OUT_2_MUX 357
+> -#define TEGRA210_CLK_CLK_OUT_3_MUX 358
+> +/* 356 */
+> +/* 357 */
+> +/* 358 */
+>  #define TEGRA210_CLK_DSIA_MUX 359
+>  #define TEGRA210_CLK_DSIB_MUX 360
+>  /* 361 */
+> diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+> index 3c90f1535551..20ef2462d9e1 100644
+> --- a/include/dt-bindings/clock/tegra30-car.h
+> +++ b/include/dt-bindings/clock/tegra30-car.h
+> @@ -230,11 +230,11 @@
+>  #define TEGRA30_CLK_AUDIO3 204
+>  #define TEGRA30_CLK_AUDIO4 205
+>  #define TEGRA30_CLK_SPDIF 206
+> -#define TEGRA30_CLK_CLK_OUT_1 207 /* (extern1) */
+> -#define TEGRA30_CLK_CLK_OUT_2 208 /* (extern2) */
+> -#define TEGRA30_CLK_CLK_OUT_3 209 /* (extern3) */
+> +/* 207 */
+> +/* 208 */
+> +/* 209 */
+>  #define TEGRA30_CLK_SCLK 210
+> -#define TEGRA30_CLK_BLINK 211
+> +/* 211 */
+>  #define TEGRA30_CLK_CCLK_G 212
+>  #define TEGRA30_CLK_CCLK_LP 213
+>  #define TEGRA30_CLK_TWD 214
+> @@ -260,9 +260,9 @@
+>  /* 297 */
+>  /* 298 */
+>  /* 299 */
+> -#define TEGRA30_CLK_CLK_OUT_1_MUX 300
+> -#define TEGRA30_CLK_CLK_OUT_2_MUX 301
+> -#define TEGRA30_CLK_CLK_OUT_3_MUX 302
+> +/* 300 */
+> +/* 301 */
+> +/* 302 */
+>  #define TEGRA30_CLK_AUDIO0_MUX 303
+>  #define TEGRA30_CLK_AUDIO1_MUX 304
+>  #define TEGRA30_CLK_AUDIO2_MUX 305
+> -- 
+> 2.7.4
+> 
