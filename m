@@ -2,163 +2,122 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06E40C432C0
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 22:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D9AC432C3
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 22:19:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA2852073C
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 22:11:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575411099;
-	bh=yV8JD0/MRHN7tQ3o/mx8oneY2Drn3aD4ChTwAw/nX4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=U6hAHitKtp2tIJ854YRFBbuqE+Ojc5c2/EMDet0sS5/uvzE1qwFC3B/1LSVFegehn
-	 f+GFbSRme8hhryW/4W4QlD2CbkiD/ADzs2VZ2xkA/FxmjuNuHf78lcZypMNkIWW8qe
-	 +DiQVNjKESHZeQ39JwvdsHTodZ8QH/+1gY3IaGus=
+	by mail.kernel.org (Postfix) with ESMTP id 06F2F2053B
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 22:19:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="c5bT86/L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727564AbfLCWLj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 17:11:39 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:45440 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727502AbfLCWLj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 17:11:39 -0500
-Received: by mail-oi1-f193.google.com with SMTP id v10so2835663oiv.12;
-        Tue, 03 Dec 2019 14:11:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=477xV8KhxSU4eFJtRC9YkvcLWD2tDbYJIPfmHJ8cs4I=;
-        b=lFew31/q93Jl+RjRw6W++MjzuPwAv2yos1eIdY1tct5cGaRm0FmRzQR2DTh7p14fad
-         EHxSpfNsoVcyxmBlZkZqvSW96nHIA8xPCiIuD65VYKubY5BeLC77T7PlRbU+RFYhsUIC
-         KNU6JEhC29SbDYYpDGIu/PdW80Z3TiYB82paVYR5dWOtPXteKpP2bGQfh0pe4FAs4w+y
-         aos7QQ2Q9NTcp3LaNofOVeu4oQGvhua8F/4mK/xedoYxBT104z5hgNwF6czQmtDzdjAo
-         maYkmMP3Ui0cVxZZ6Jfins3/L9MJFxHafiW4W68s5zwqp58kq4kA/iwjtF7HXszmllwx
-         872w==
-X-Gm-Message-State: APjAAAXtcMPQpgalWE6jDYq0z3sM1USnVmcYM/QIt1zWMgfWWvIhGOrZ
-        AbPHCj9rMW80MH+ix2hD5Q==
-X-Google-Smtp-Source: APXvYqxGOcD+wXxTp7nqGCSZ7mOF2ARYJRHRh1NYspCna0wEbPtu3A+Sk2oM+XjkYzB91ANachrw0Q==
-X-Received: by 2002:aca:d80b:: with SMTP id p11mr183106oig.83.1575411098160;
-        Tue, 03 Dec 2019 14:11:38 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id f1sm1539410otq.4.2019.12.03.14.11.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 14:11:37 -0800 (PST)
-Date:   Tue, 3 Dec 2019 16:11:37 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, tglx@linutronix.de, mark.rutland@arm.com,
-        allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
-        mturquette@baylibre.com, horms+renesas@verge.net.au,
-        Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de,
-        spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com,
-        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
-        markz@nvidia.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 15/17] dt-bindings: tegra186-pmc: Add Tegra PMC clock
- bindings
-Message-ID: <20191203221137.GC22716@bogus>
+        id S1727561AbfLCWTT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 17:19:19 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12841 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727480AbfLCWTT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 17:19:19 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5de6df570000>; Tue, 03 Dec 2019 14:19:03 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 03 Dec 2019 14:19:17 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 03 Dec 2019 14:19:17 -0800
+Received: from [10.2.160.125] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 3 Dec
+ 2019 22:19:15 +0000
+Subject: Re: [PATCH v1 03/17] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock
+ ids
+To:     Rob Herring <robh@kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
+        <tglx@linutronix.de>, <mark.rutland@arm.com>,
+        <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 References: <1574146234-3871-1-git-send-email-skomatineni@nvidia.com>
- <1574146234-3871-16-git-send-email-skomatineni@nvidia.com>
+ <1574146234-3871-4-git-send-email-skomatineni@nvidia.com>
+ <20191203220850.GB22716@bogus>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <50f7db27-a1bd-6e2a-0994-82740b4ef6cb@nvidia.com>
+Date:   Tue, 3 Dec 2019 14:19:37 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1574146234-3871-16-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191203220850.GB22716@bogus>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575411543; bh=0IKNAVktirUsylXHSyz6GuS3zjLJXwqxN2fIYWCdxn0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=c5bT86/Lv5nwl2ZV/7cNK6nZUqNWH+hTofWP+zr42J7cZxRwZaDohpOZXOBESZgSZ
+         +iLN7mElqBL1NvU1sgN23Aq1PeloHw+ehrQoNT1lXidQxMXxT4Mm9896JWpAyNEsuu
+         fUdZ22RXQLrky3mP2Cgpcq4q5chC3D9ijEh/ejsStO59IbUVIFUGGT530na4AhjcMM
+         nxB3rMtqFIGmshurtdKOIJfCD7mee0YVo4D6ansUoakxTdeY2TVLVRfN/2L2sbAx1/
+         XH2UfVAUFzdMn2z6TZMmQtOaO2DIgjSunkFOv/rmZwnJRWzkTNzRcJRk2dsqXgVTLz
+         q26YdTfOyF5ew==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Nov 18, 2019 at 10:50:32PM -0800, Sowjanya Komatineni wrote:
-> Document clock bindings for pmc clocks clk_out_1, clk_out_2 and clk_out_3.
-> These clocks are part of Tegra PMC block and pmc node is the provider for
-> these clocks.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  .../bindings/arm/tegra/nvidia,tegra186-pmc.txt     | 44 ++++++++++++++++++++++
->  1 file changed, 44 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> index 2d89cdc39eb0..4576de92e4cc 100644
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra186-pmc.txt
-> @@ -12,6 +12,10 @@ Required properties:
->    - "aotag"
->    - "scratch"
->    - "misc" (Only for Tegra194)
-> +- #clock-cells : Should be 1 for Tegra30 and higher.
-> +  In clock consumers, this cell represents the PMC clock ID.
-> +  The assignments may be found in header file
-> +  <dt-bindings/soc/tegra-pmc.h>.
 
-Kind of strange the header is shared, but the binding doc is not.
-
->  
->  Optional properties:
->  - nvidia,invert-interrupt: If present, inverts the PMU interrupt signal.
-> @@ -130,3 +134,43 @@ Pinctrl client example:
->  		pinctrl-1 = <&hdmi_on>;
->  		pinctrl-names = "hdmi-on", "hdmi-off";
->  	};
-> +
-> +== Clock Control ==
-> +
-> +Tegra PMC has 3 clocks clk_1, clk_2 and clk_3. Each of these clocks has
-> +source selection and enable/disable gate.
-> +Parent/source for these clocks can be either of clk_m, clk_m_div2, clk_m_div4,
-> +or extern clock from Tegra CAR module.
-> +
-> +Clock configuration example:
-> +	pmc: pmc@7000e400 {
-> +		compatible = "nvidia,tegra186-pmc";
-> +		reg = <0 0x0c360000 0 0x10000>,
-> +		      <0 0x0c370000 0 0x10000>,
-> +		      <0 0x0c380000 0 0x10000>,
-> +		      <0 0x0c390000 0 0x10000>;
-> +		reg-names = "pmc", "wake", "aotag", "scratch";
-> +		...
-> +		#clock-cells = <1>;
-> +		...
-
-Once converted to schema, the examples have to compile and this won't. 
-They also have to be complete enough to pass validation checks.
-
-> +	};
-> +
-> +Clock consumer example:
-> +	host1x@50000000 {
-> +		...
-> +		vi@54080000 {
-> +		...
-> +		assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
-> +		assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
-
-Indentation is wrong.
-
-> +		};
-> +		...
-> +	};
-> +	...
-> +	i2c@7000c500 {
-> +		cam_sensor {
-> +		...
-> +		clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
-> +		clock-names = "mclk";
-
-Same here.
-
-> +		...
-> +		};
-> +	};
-> -- 
-> 2.7.4
-> 
+On 12/3/19 2:08 PM, Rob Herring wrote:
+> On Mon, Nov 18, 2019 at 10:50:20PM -0800, Sowjanya Komatineni wrote:
+>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
+>> these clocks has mux and a gate as a part of PMC controller.
+>>
+>> This patch adds ids for each of these PMC clock mux and gates to
+>> use with the devicetree.
+>>
+>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>> ---
+>>   include/dt-bindings/soc/tegra-pmc.h | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>   create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+> This should be part of the binding patch.
+ok, will combine in v3
+>> diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+>> new file mode 100644
+>> index 000000000000..fa1ccfc2514b
+>> --- /dev/null
+>> +++ b/include/dt-bindings/soc/tegra-pmc.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: GPL-2.0-only */
+>> +/*
+>> + * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
+>> + */
+>> +
+>> +#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
+>> +#define _DT_BINDINGS_SOC_TEGRA_PMC_H
+>> +
+>> +#define TEGRA_PMC_CLK_OUT_1_MUX		0
+>> +#define TEGRA_PMC_CLK_OUT_1		1
+>> +#define TEGRA_PMC_CLK_OUT_2_MUX		2
+>> +#define TEGRA_PMC_CLK_OUT_2		3
+>> +#define TEGRA_PMC_CLK_OUT_3_MUX		4
+>> +#define TEGRA_PMC_CLK_OUT_3		5
+>> +
+>> +#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+>> -- 
+>> 2.7.4
+>>
