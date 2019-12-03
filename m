@@ -2,126 +2,130 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACB0C432C0
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 04:07:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A5A6C432C0
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 06:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76659206E1
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 04:07:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E6B320684
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 06:42:16 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="SwoYHX5o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLCEHp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 2 Dec 2019 23:07:45 -0500
-Received: from pbmsgap01.intersil.com ([192.157.179.201]:35032 "EHLO
-        pbmsgap01.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfLCEHo (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 2 Dec 2019 23:07:44 -0500
-Received: from pps.filterd (pbmsgap01.intersil.com [127.0.0.1])
-        by pbmsgap01.intersil.com (8.16.0.27/8.16.0.27) with SMTP id xB33k3qb001850;
-        Mon, 2 Dec 2019 22:46:03 -0500
-Received: from pbmxdp01.intersil.corp (pbmxdp01.pb.intersil.com [132.158.200.222])
-        by pbmsgap01.intersil.com with ESMTP id 2wkmu327q7-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Mon, 02 Dec 2019 22:46:03 -0500
-Received: from pbmxdp01.intersil.corp (132.158.200.222) by
- pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Mon, 2 Dec 2019 22:46:01 -0500
-Received: from localhost.localdomain (132.158.202.109) by
- pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Mon, 2 Dec 2019 22:46:00 -0500
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH 1/6] clk: renesas: mstp: Add critical clock from device tree support
-Date:   Mon, 2 Dec 2019 22:45:14 -0500
-Message-ID: <20191203034519.5640-2-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191203034519.5640-1-chris.brandt@renesas.com>
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
+        id S1727192AbfLCGmP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 01:42:15 -0500
+Received: from conssluserg-03.nifty.com ([210.131.2.82]:35687 "EHLO
+        conssluserg-03.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfLCGmP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 01:42:15 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-03.nifty.com with ESMTP id xB36fxQx002046;
+        Tue, 3 Dec 2019 15:41:59 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-03.nifty.com xB36fxQx002046
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1575355319;
+        bh=d1TaPWKkweQ1rY/9jQKGxR8RbctwUl4ZdBH262gE6Ek=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=SwoYHX5ogHo9RL8Nc+N0vXtoMdM8NTbmdzHaNGMQ8mkQAHOL/krz6QWLr4Vn72MfY
+         OSPm4OaSQgfPeghIdjSFPVKurVV4Xy94Oj7MQBwgH6ptJ3vMjxhRLLFZXS4PWfmiUA
+         H+3M1wPKDdPRfYCJbv7nrR6FEeXsW80r09rOsxFGVYzix4//vA5PBuTlv4w82VJSwZ
+         M5twJrrM7vL8yd/iXmHzDlkHiEL/XxvPOAOlfcQLae//PzwCdFxrjI3Ydqbt6OlzOj
+         iOEKDYVL4rR3wZYDxQ1Q7KHFhcrD7JIXTDhePJ04lvB2YzzFcbU8l0X3mVkYKj0Htg
+         ARgPMppx73Zbg==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id n27so1685569vsa.0;
+        Mon, 02 Dec 2019 22:41:59 -0800 (PST)
+X-Gm-Message-State: APjAAAVWGdEYYebf8uWhcG94343K8IDlsICABzwOHU0u7SyVDdGc97NC
+        kfP/TqR3ynAKgV8wsW4MRT+DhUI/2SfjNU0ou8g=
+X-Google-Smtp-Source: APXvYqzLsiH4HRQY9QqmGR/SA97yO7NrrmjdmBWFjksc9y+rkTjK3+4kSlw3fdNk79ycV87KfqHrKT+gli71BIb+qN8=
+X-Received: by 2002:a67:f6c2:: with SMTP id v2mr1763077vso.54.1575355318341;
+ Mon, 02 Dec 2019 22:41:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-12-02_06:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911200000 definitions=main-1912030031
-X-Proofpoint-Spam-Reason: mlx
+References: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
+In-Reply-To: <1575000968-19434-1-git-send-email-hayashi.kunihiko@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 3 Dec 2019 15:41:22 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
+Message-ID: <CAK7LNARjGtt-Ee_seet=nB7K0AVA8x4Q+bFRm=1A_aLn7Qancg@mail.gmail.com>
+Subject: Re: [PATCH] clk: uniphier: Add SCSSI clock gate for each channel
+To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
+        Jassi Brar <jaswinder.singh@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allow critical clocks to be specified in the Device Tree.
+On Fri, Nov 29, 2019 at 1:16 PM Kunihiko Hayashi
+<hayashi.kunihiko@socionext.com> wrote:
+>
+> SCSSI has clock gates for each channel in the SoCs newer than Pro4,
+> so this adds missing clock gates for channel 1, 2 and 3. And more, this
+> moves MCSSI clock ID after SCSSI.
+>
+> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
+> ---
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- drivers/clk/renesas/clk-mstp.c | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
-index 003e9ce45757..8e28e9671265 100644
---- a/drivers/clk/renesas/clk-mstp.c
-+++ b/drivers/clk/renesas/clk-mstp.c
-@@ -148,7 +148,7 @@ static const struct clk_ops cpg_mstp_clock_ops = {
- 
- static struct clk * __init cpg_mstp_clock_register(const char *name,
- 	const char *parent_name, unsigned int index,
--	struct mstp_clock_group *group)
-+	struct mstp_clock_group *group, unsigned long flags)
- {
- 	struct clk_init_data init;
- 	struct mstp_clock *clock;
-@@ -160,12 +160,12 @@ static struct clk * __init cpg_mstp_clock_register(const char *name,
- 
- 	init.name = name;
- 	init.ops = &cpg_mstp_clock_ops;
--	init.flags = CLK_SET_RATE_PARENT;
-+	init.flags = CLK_SET_RATE_PARENT | flags;
- 	/* INTC-SYS is the module clock of the GIC, and must not be disabled */
--	if (!strcmp(name, "intc-sys")) {
--		pr_debug("MSTP %s setting CLK_IS_CRITICAL\n", name);
-+	if (!strcmp(name, "intc-sys"))
- 		init.flags |= CLK_IS_CRITICAL;
--	}
-+	if (init.flags & CLK_IS_CRITICAL)
-+		pr_debug("MSTP %s setting CLK_IS_CRITICAL\n", name);
- 	init.parent_names = &parent_name;
- 	init.num_parents = 1;
- 
-@@ -187,6 +187,7 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 	const char *idxname;
- 	struct clk **clks;
- 	unsigned int i;
-+	unsigned long flags;
- 
- 	group = kzalloc(struct_size(group, clks, MSTP_MAX_CLOCKS), GFP_KERNEL);
- 	if (!group)
-@@ -239,8 +240,11 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
- 			continue;
- 		}
- 
-+		flags = 0;
-+		of_clk_detect_critical(np, i, &flags);
-+
- 		clks[clkidx] = cpg_mstp_clock_register(name, parent_name,
--						       clkidx, group);
-+						       clkidx, group, flags);
- 		if (!IS_ERR(clks[clkidx])) {
- 			group->data.clk_num = max(group->data.clk_num,
- 						  clkidx + 1);
+Fixes: ff388ee36516 ("clk: uniphier: add clock frequency support for SPI")
+
+Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+
+
+
+
+>  drivers/clk/uniphier/clk-uniphier-peri.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/clk/uniphier/clk-uniphier-peri.c b/drivers/clk/uniphier/clk-uniphier-peri.c
+> index 9caa529..3e32db9 100644
+> --- a/drivers/clk/uniphier/clk-uniphier-peri.c
+> +++ b/drivers/clk/uniphier/clk-uniphier-peri.c
+> @@ -18,8 +18,8 @@
+>  #define UNIPHIER_PERI_CLK_FI2C(idx, ch)                                        \
+>         UNIPHIER_CLK_GATE("i2c" #ch, (idx), "i2c", 0x24, 24 + (ch))
+>
+> -#define UNIPHIER_PERI_CLK_SCSSI(idx)                                   \
+> -       UNIPHIER_CLK_GATE("scssi", (idx), "spi", 0x20, 17)
+> +#define UNIPHIER_PERI_CLK_SCSSI(idx, ch)                               \
+> +       UNIPHIER_CLK_GATE("scssi" #ch, (idx), "spi", 0x20, 17 + (ch))
+>
+>  #define UNIPHIER_PERI_CLK_MCSSI(idx)                                   \
+>         UNIPHIER_CLK_GATE("mcssi", (idx), "spi", 0x24, 14)
+> @@ -35,7 +35,7 @@ const struct uniphier_clk_data uniphier_ld4_peri_clk_data[] = {
+>         UNIPHIER_PERI_CLK_I2C(6, 2),
+>         UNIPHIER_PERI_CLK_I2C(7, 3),
+>         UNIPHIER_PERI_CLK_I2C(8, 4),
+> -       UNIPHIER_PERI_CLK_SCSSI(11),
+> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
+>         { /* sentinel */ }
+>  };
+>
+> @@ -51,7 +51,10 @@ const struct uniphier_clk_data uniphier_pro4_peri_clk_data[] = {
+>         UNIPHIER_PERI_CLK_FI2C(8, 4),
+>         UNIPHIER_PERI_CLK_FI2C(9, 5),
+>         UNIPHIER_PERI_CLK_FI2C(10, 6),
+> -       UNIPHIER_PERI_CLK_SCSSI(11),
+> -       UNIPHIER_PERI_CLK_MCSSI(12),
+> +       UNIPHIER_PERI_CLK_SCSSI(11, 0),
+> +       UNIPHIER_PERI_CLK_SCSSI(12, 1),
+> +       UNIPHIER_PERI_CLK_SCSSI(13, 2),
+> +       UNIPHIER_PERI_CLK_SCSSI(14, 3),
+> +       UNIPHIER_PERI_CLK_MCSSI(15),
+>         { /* sentinel */ }
+>  };
+> --
+> 2.7.4
+>
+
 -- 
-2.23.0
-
+Best Regards
+Masahiro Yamada
