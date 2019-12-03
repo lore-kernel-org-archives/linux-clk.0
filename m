@@ -2,204 +2,87 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 726A9C432C0
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 08:08:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCA2C432C0
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 09:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE0E2068E
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 08:08:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ACE03k+J"
+	by mail.kernel.org (Postfix) with ESMTP id 28D8920661
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 09:05:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575363917;
+	bh=kH7M6raCYcwzp14cZpiS1nz6oSFsgOSES0lH2kUYIbc=;
+	h=In-Reply-To:References:Subject:To:From:Cc:Date:List-ID:From;
+	b=htxpPX8QJsj8yFadLg7rY9+Ln6PW1okpPAl6rd7QFxpr4PzXTT6Ko/C0QBiRcdQQY
+	 vpxbhZZx/wqdhpeVwlE35NFPD0mODPpct1I/gxn+rrEB51mIztQAAO/bPIC+H1r27/
+	 UblgJbjJ7VRJfQtJNUKeT7s+eRfilMUqdn35qam4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfLCIIf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 03:08:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:37332 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727060AbfLCIIf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 03:08:35 -0500
-Received: by mail-wr1-f67.google.com with SMTP id w15so2453774wru.4
-        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2019 00:08:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0R64hlt7XwI/N3fKuGoKmEX8pew5cHbSg5pee7ssZ9M=;
-        b=ACE03k+J3bQYPwGdDs/MDRbltZ5w+dOYRY4LzkdTknCOZD557nirzb765JXZ7FZ8Ul
-         xv4aFc5ZN8JbbPfx/TescvxkpcO7bwV5Q8vW+IeHNgueM1NWrW7XVJM1r7A4LjDFK/k6
-         E+si2lf4uiq4Az948pp/rkYSasS92LC/fdTWYktd/Qt/Y0yitT/ok2VM9yx5xeeUSkW+
-         sLiRHq5pTyxiPkTvLa0o35awHgg8mNV27eVd/hm/W7aNs36bbOat00hLv8ycdIQ4Eahl
-         t7VPgrfpdsHwLOOYOTIOq8nrR6GQT4WGjgqCDJt6/0/Pv7j+SqmKkyuyhL+uKqodPUmi
-         8lXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=0R64hlt7XwI/N3fKuGoKmEX8pew5cHbSg5pee7ssZ9M=;
-        b=eYQZ/r+su7ouA84tOTx2Skj0ZRuJLu1Qd6ScoispQ9CNi8xIRozZ5d3z4qCUTd/YoQ
-         YB2xm/JiRjIVxOK0muSiRbEUKqX7wpQTS158iBGNqqeiQ15TwVSJbP1IssVathAdkAVH
-         RXKlZe01AcMba12N3MRW1209Nf7GVu0q4rr/Vx3RGrbyzrAOww+kqJkYVPpuQ7TIoh4B
-         Q+ZGhXkp1XQ280TvYZXoCRDTv5A7C0dp10/pK96rfpbmQmWoAW2NH4V/BjoLlof7AEWY
-         1sAoWlktNRcz3Tah8tmrqpLUIMH8WTsepdF2f6pC+KsWAxIScMajfO8/sxFY137LCnSZ
-         OQWg==
-X-Gm-Message-State: APjAAAX3xflPGE0tVp9uLfn76hqpO2mDof+rGyw7TFZu25gzBa/M/rFV
-        gpmtDindItAXMozHIau6u376wA==
-X-Google-Smtp-Source: APXvYqz8AVR9cMm++hDehzZTHRh4xWczw0r4rSWNjQHKTYEvMNTRYnQzW4NwG/numStsR1+76rhwSw==
-X-Received: by 2002:adf:ebc6:: with SMTP id v6mr3569496wrn.75.1575360513938;
-        Tue, 03 Dec 2019 00:08:33 -0800 (PST)
-Received: from localhost.localdomain (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.googlemail.com with ESMTPSA id w12sm2084204wmi.17.2019.12.03.00.08.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 03 Dec 2019 00:08:33 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, Jian Hu <jian.hu@amlogic.com>
-Subject: [PATCH v2] clk: walk orphan list on clock provider registration
-Date:   Tue,  3 Dec 2019 09:08:05 +0100
-Message-Id: <20191203080805.104628-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.23.0
+        id S1725774AbfLCJFQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 04:05:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37152 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725773AbfLCJFQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Dec 2019 04:05:16 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1A03B20661;
+        Tue,  3 Dec 2019 09:05:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575363916;
+        bh=kH7M6raCYcwzp14cZpiS1nz6oSFsgOSES0lH2kUYIbc=;
+        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
+        b=yLaYHkcUYhTB5dMIAfawF2MIKjgR0iQV5k/t02Uqmww2lc3bYrZ8x9inAWCS1P992
+         WdKqbojHyVHi4XPlP2AW8T/2cn3wL6HH8O6DHJoT+lFo4a2PfPRs9iPUU3+QKHW+yW
+         iG9RTsU9ljzDwfGw1299K8sp4Z4X6W5QK08FK+bM=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jv9r27kzn.fsf@starbuckisacylon.baylibre.com>
+References: <20190924123954.31561-1-jbrunet@baylibre.com> <1jv9r27kzn.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 0/3] clk: let clock perform allocation in init
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Tue, 03 Dec 2019 01:05:15 -0800
+Message-Id: <20191203090516.1A03B20661@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-So far, we walked the orphan list every time a new clock was registered
-in CCF. This was fine since the clocks were only referenced by name.
+Quoting Jerome Brunet (2019-11-29 07:36:28)
+>=20
+> On Tue 24 Sep 2019 at 14:39, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>=20
+> > This patchset is a follow up on this pinky swear [0].
+> > Its purpose is:
+> >  * Clarify the acceptable use of clk_ops init() callback
+> >  * Let the init() callback return an error code in case anything
+> >    fail.
+> >  * Add the terminate() counter part of of init() to release the
+> >    resources which may have been claimed in init()
+> >
+> > After discussing with Stephen at LPC, I decided to drop the 2 last patc=
+hes
+> > of the RFC [1]. I can live without it for now and nobody expressed a
+> > critical need to get the proposed placeholder.
+> >
+> > [0]: https://lkml.kernel.org/r/CAEG3pNB-143Pr_xCTPj=3DtURhpiTiJqi61xfDG=
+DVdU7zG5H-2tA@mail.gmail.com
+> > [1]: https://lkml.kernel.org/r/20190828102012.4493-1-jbrunet@baylibre.c=
+om
+> >
+>=20
+> Hi Stephen,
+>=20
+> Do you think we can fit this into the incoming cycle ?
+>=20
 
-Now that the clock can be referenced through DT, it is not enough:
-* Controller A register first a reference clocks from controller B
-  through DT.
-* Controller B register all its clocks then register the provider.
-
-Each time controller B registers a new clock, the orphan list is walked
-but it can't match since the provider is registered yet. When the
-provider is finally registered, the orphan list is not walked unless
-another clock is registered afterward.
-
-This can lead to situation where some clocks remain orphaned even if
-the parent is available.
-
-Walking the orphan list on provider registration solves the problem.
-
-Reported-by: Jian Hu <jian.hu@amlogic.com>
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/clk.c | 62 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 40 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ef4416721777..df16a535e800 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3249,6 +3249,41 @@ static inline void clk_debug_unregister(struct clk_core *core)
- }
- #endif
- 
-+static void clk_core_reparent_orphans_nolock(void)
-+{
-+	struct clk_core *orphan;
-+	struct hlist_node *tmp2;
-+
-+	/*
-+	 * walk the list of orphan clocks and reparent any that newly finds a
-+	 * parent.
-+	 */
-+	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-+		struct clk_core *parent = __clk_init_parent(orphan);
-+
-+		/*
-+		 * We need to use __clk_set_parent_before() and _after() to
-+		 * to properly migrate any prepare/enable count of the orphan
-+		 * clock. This is important for CLK_IS_CRITICAL clocks, which
-+		 * are enabled during init but might not have a parent yet.
-+		 */
-+		if (parent) {
-+			/* update the clk tree topology */
-+			__clk_set_parent_before(orphan, parent);
-+			__clk_set_parent_after(orphan, parent, NULL);
-+			__clk_recalc_accuracies(orphan);
-+			__clk_recalc_rates(orphan, 0);
-+		}
-+	}
-+}
-+
-+static void clk_core_reparent_orphans(void)
-+{
-+	clk_prepare_lock();
-+	clk_core_reparent_orphans_nolock();
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-@@ -3259,8 +3294,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
- static int __clk_core_init(struct clk_core *core)
- {
- 	int ret;
--	struct clk_core *orphan;
--	struct hlist_node *tmp2;
- 	unsigned long rate;
- 
- 	if (!core)
-@@ -3416,27 +3449,8 @@ static int __clk_core_init(struct clk_core *core)
- 		clk_enable_unlock(flags);
- 	}
- 
--	/*
--	 * walk the list of orphan clocks and reparent any that newly finds a
--	 * parent.
--	 */
--	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		struct clk_core *parent = __clk_init_parent(orphan);
-+	clk_core_reparent_orphans_nolock();
- 
--		/*
--		 * We need to use __clk_set_parent_before() and _after() to
--		 * to properly migrate any prepare/enable count of the orphan
--		 * clock. This is important for CLK_IS_CRITICAL clocks, which
--		 * are enabled during init but might not have a parent yet.
--		 */
--		if (parent) {
--			/* update the clk tree topology */
--			__clk_set_parent_before(orphan, parent);
--			__clk_set_parent_after(orphan, parent, NULL);
--			__clk_recalc_accuracies(orphan);
--			__clk_recalc_rates(orphan, 0);
--		}
--	}
- 
- 	kref_init(&core->ref);
- out:
-@@ -4288,6 +4302,8 @@ int of_clk_add_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clock from %pOF\n", np);
- 
-+	clk_core_reparent_orphans();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
-@@ -4323,6 +4339,8 @@ int of_clk_add_hw_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clk_hw provider from %pOF\n", np);
- 
-+	clk_core_reparent_orphans();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
--- 
-2.23.0
+Sorry I missed this one. I'll apply it soon but won't be for this merge
+window.
 
