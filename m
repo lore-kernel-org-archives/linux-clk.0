@@ -2,129 +2,155 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 560D6C43141
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 15:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BA7C432C0
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 15:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC6E2084F
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 15:00:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Aj7LsSXi"
+	by mail.kernel.org (Postfix) with ESMTP id 6BC27206EC
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 15:15:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575386130;
+	bh=+JqMigEUmtKPTqcnM6ZbCi/YuA1GoQgvuShVp0TQOLY=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=IbRh0obNesJoNC9aFi6+GMVPVr6xbJ1+Zf7VDFy+0IwGF871A2LONUsSXr9q6YWed
+	 DMCKDKdfv9vh1/iYJDcpBfUc4pHCPbCw6VqKS82h9OzLo7zwrTs3F+/0Hz321ZMRqD
+	 1HYSoAA5OF4OdIGyMo4IczU58pD2Lxzhxl/vQeQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726086AbfLCPAM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 10:00:12 -0500
-Received: from mail-eopbgr1410115.outbound.protection.outlook.com ([40.107.141.115]:36791
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726057AbfLCPAM (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:00:12 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=YJwc3CQWEioQqqT6pbi8AZmpxeLNMN64zkshGga58z0v6cdIyq9LCOoZL9f9Kr3Ttn0S1s40eJfZHaGb/zUe/oQy3HdISIiaV0zw5m1CWSy8d/plOwzIxIIVnitKEc4wRkJLmp3aQ0vWWoDJ5VMg4BaiMerQK+jANL2VPYP2b11qx5bL2ocdsCGjBRY3HLTTrdvp/xVnyZ98kneCsXbNAKnx07Y1hn97UD0j4xV0KRCLezLgn6lcqa8qzmhClmXNc+9zhqCaM8RsP2CRuiZJQ+Cgg46HZZRvlV67GvErFl+QITW2bnuHsvzHnOwpSwm/SCQVTUWQCGL+ErSVERSm2A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zwsRmqi7yk04w9kf/0aqpJt18YPZLQH/5HrPnbwDYCc=;
- b=O1o+eYLjHQ5YsrehwBuNKqUgLXu3QZNgGt3H9pTU3WwoTdWSDsUpjf0aXvPhvJDaNXQ7HUm8XRv7ntvFZgDInnStFKs3USIkcBT0y7jaZXHMEEWCX52eIBb5ndt0VsGIb6cXgzsU6r0NrD9EJQNWDKjsL2NJOfuRKOgt+tRop9ORb+nUJkCyCoTzf/W73OrENvV7T1036krV+GuaIDFSM0cTmd8ST+KZla5yqm/g9Sv7IXAoOUPxe4W+sXRdnBx1/z0ogwCnDPyVoQLnLT0SPiMWxygwwgAZbHKwHkDSKlYcU8gRBvhQs7dKE+6J/8K5v9+QJ0bG+5KQ78mwOleOYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zwsRmqi7yk04w9kf/0aqpJt18YPZLQH/5HrPnbwDYCc=;
- b=Aj7LsSXilsjqcna+VEvKO6WIDhU1c6FCJVRzaxSfTu8EbLsfJI/3BoI0pSx4M9/y6PPH5CFEfeHsrWhRbdfQIAR7aZCHGdv4zqf4hNqVvr/NMNgi1qy8apltR2VMK1xlNDR4NJO590RGd4iA1CUeF3ptH6q081059Ouf2gKPc38=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1561.jpnprd01.prod.outlook.com (52.133.161.141) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.22; Tue, 3 Dec 2019 15:00:08 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Tue, 3 Dec 2019
- 15:00:08 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Mark Brown <broonie@kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: RE: [PATCH 4/6] spi: Add SPIBSC driver
-Thread-Topic: [PATCH 4/6] spi: Add SPIBSC driver
-Thread-Index: AQHVqYxFvw0/++3CUEK7207HpOVVR6eodlIAgAAIHbA=
-Date:   Tue, 3 Dec 2019 15:00:08 +0000
-Message-ID: <TY1PR01MB15627FA556E5B8CE03D535118A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-5-chris.brandt@renesas.com>
- <20191203141944.GI1998@sirena.org.uk>
-In-Reply-To: <20191203141944.GI1998@sirena.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctOTczY2M1ZTUtMTVkZC0xMWVhLWFhNTEtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDk3M2NjNWU2LTE1ZGQtMTFlYS1hYTUxLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iNTYxIiB0PSIxMzIxOTg1ODgwNjgyMjc3NDEiIGg9InRqWHhsWGF1cTdFYTkvK01YT0kwcEE1QzJoUT0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 37432c48-a07e-4dae-4320-08d778017d1a
-x-ms-traffictypediagnostic: TY1PR01MB1561:
-x-microsoft-antispam-prvs: <TY1PR01MB1561B19FAF44DA872A64CBD08A420@TY1PR01MB1561.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8273;
-x-forefront-prvs: 02408926C4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(396003)(366004)(346002)(136003)(376002)(199004)(189003)(7696005)(14454004)(186003)(7416002)(25786009)(33656002)(2906002)(55016002)(8936002)(102836004)(6916009)(316002)(76176011)(52536014)(11346002)(256004)(446003)(4326008)(6246003)(86362001)(99286004)(6436002)(3846002)(54906003)(6116002)(4744005)(478600001)(5660300002)(71190400001)(71200400001)(74316002)(66446008)(76116006)(64756008)(9686003)(305945005)(66476007)(66946007)(7736002)(229853002)(8676002)(81156014)(6506007)(66556008)(81166006)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1561;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: u5nEvTE+JsO+kE+BcpCz3ZXLNU7iZlb9zCA2pJXPyRVZxdgaIddjkDYpWVLWKsjngg+yeMhGkUvAQ7G+F8Xhqq4LWtaoHGUH1djt7zan1AOXAHXzaI/M8pCCmoF1OCqNVmDcpWJDgJkWFqZgXw1HjG0Nk49PK7xhfP4LzymJsqC6ZEMJjPJOn7d5eAZWUYtwOW0J8GUEVeB0Sbyjyw4aBf6tNxKXJyPgyJGROaeBB3OHHGzbqnQc4nmvP8EGclw+w9oBgdhSyI+BFPuuQZC9q+V7fu1e0UTOuWmdThOSucity5LzLx0mwXA0fgus6TBNkGnNKfEjsLp0qVTUJ/E+4/mOrOThPKD0ItIK/EjyM+PxiSuRFgOvz0fbQ7nMoTjCb7L3PWE2a4yu1GXxWd8no0LSU91myiv+R1RoMlFatUDDQR9oNMWd6dJjXP4pkf1b
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1726592AbfLCPP0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 10:15:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726057AbfLCPP0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 3 Dec 2019 10:15:26 -0500
+Received: from [192.168.1.31] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E00A42073C;
+        Tue,  3 Dec 2019 15:15:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575386124;
+        bh=+JqMigEUmtKPTqcnM6ZbCi/YuA1GoQgvuShVp0TQOLY=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=IK/Vv0oJltH1/SQcCB9uNZ+1oGSxUksJq2j9TRAg6+PuJ97y38INjE12t7POU5kCH
+         +cKZVyKeehrpkZS/TFAmn18P6M7MZSQATdh6HBo622xdbj/ivycdvNF34koqO42nva
+         5IFD/mXxlT9GIkzw5+WaCG4uWoLaRP9GdW3M5AjA=
+Subject: Re: [PATCH 2/2] clk: socfpga: agilex: add clock driver for the Agilex
+ platform
+To:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     devicetree@vger.kernel.org, mturquette@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org
+References: <20190918013459.15966-1-dinguyen@kernel.org>
+ <20190918013459.15966-2-dinguyen@kernel.org>
+ <20190918050010.74B4021848@mail.kernel.org>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <4726f580-fe88-5b20-e869-4e31bd63c6e3@kernel.org>
+Date:   Tue, 3 Dec 2019 09:15:21 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37432c48-a07e-4dae-4320-08d778017d1a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 03 Dec 2019 15:00:08.4408
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v4naSS+qoaCwkbVyInLyH4Jl+pqqmjLjJ3IhmTcnf/ExrKJCYGj/9d0m5asLQ9w8EWOtw/9ShPpfqFIaZZ7t+ikZBIQkqi/CtFZDEZ2sFeY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1561
+In-Reply-To: <20190918050010.74B4021848@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Mark,
+Hi Stephen,
 
-On Tue, Dec 3, 2019, Mark Brown wrote:
-> On Mon, Dec 02, 2019 at 10:45:17PM -0500, Chris Brandt wrote:
->=20
-> > +config SPI_SPIBSC
-> > +	tristate "Renesas SPI Multi I/O Bus Controller"
-> > +	depends on ARCH_R7S72100 || ARCH_R7S9210
->=20
-> I'm not seeing any build dependency here, please add an || COMPILE_TEST f=
-or
-> build coverage.
-(snip)
+On 9/18/19 12:00 AM, Stephen Boyd wrote:
+> Quoting Dinh Nguyen (2019-09-17 18:34:59)
+>> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+>> index 0cad76021297..ef2c96c0f1e0 100644
+>> --- a/drivers/clk/Makefile
+>> +++ b/drivers/clk/Makefile
+>> @@ -18,6 +18,7 @@ endif
+>>  
 
-Thank you for your review!
+<snip>
 
-I have no complaints about your comments so I will make the changes and
-send out a v2.
+>> +struct clk *agilex_register_pll(const char *name,
+>> +                               const char * const *parent_names,
+>> +                               u8 num_parents, unsigned long flags,
+>> +                               void __iomem *reg, unsigned long offset)
+>> +{
+>> +       struct clk *clk;
+>> +       struct socfpga_pll *pll_clk;
+>> +       struct clk_init_data init;
+>> +
+>> +       pll_clk = kzalloc(sizeof(*pll_clk), GFP_KERNEL);
+>> +       if (WARN_ON(!pll_clk))
+>> +               return NULL;
+>> +
+>> +       pll_clk->hw.reg = reg + offset;
+>> +
+>> +       if (streq(name, SOCFPGA_BOOT_CLK))
+>> +               init.ops = &clk_boot_ops;
+>> +       else
+>> +               init.ops = &agilex_clk_pll_ops;
+>> +
+>> +       init.name = name;
+>> +       init.flags = flags;
+>> +
+>> +       init.num_parents = num_parents;
+>> +       init.parent_names = parent_names;
+> 
+> Is it possible to use the new way of specifying clk parents here so that
+> we don't have to keep using strings to describe the clk topology?
+> 
 
-Chris
+Can you point me to what you mean here? Perhaps a driver that is using
+this new way of specifying clk parents?
+
+Thanks,
+Dinh
 
