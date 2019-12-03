@@ -2,285 +2,106 @@ Return-Path: <SRS0=M9OD=ZZ=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E03FC432C3
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 15:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89423C43215
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 16:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDF3C20661
-	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 15:28:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A1E02080F
+	for <linux-clk@archiver.kernel.org>; Tue,  3 Dec 2019 16:05:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="EpZg4MNf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726024AbfLCP2Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 10:28:25 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34268 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725997AbfLCP2Z (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Dec 2019 10:28:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 2BD8169A7F;
-        Tue,  3 Dec 2019 15:28:22 +0000 (UTC)
-Subject: Re: [PATCH 3/6] clk: realtek: add common clock support for Realtek
- SoCs
-To:     James Tai <james.tai@realtek.com>
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-realtek-soc@lists.infradead.org,
-        cylee12 <cylee12@realtek.com>,
+        id S1726516AbfLCQFD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 3 Dec 2019 11:05:03 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:33605 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbfLCQFD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 3 Dec 2019 11:05:03 -0500
+Received: by mail-lj1-f194.google.com with SMTP id 21so4483270ljr.0
+        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2019 08:05:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ISxgLk82KYg9gcCYMQW4c3ORz6YkAHuAhHBO9CgaMTE=;
+        b=EpZg4MNfgVquGvO4fH/X5H+3P+UFIyXs1dvDST18rfRasIrdEob3Vz7delQ08QikL9
+         HwLUZjCnZcsKyEi3G8SToHRvBaZdnFFcsPnG4k/5YWG/cwZB1DsyOMnn3iHOgJ5jBhRF
+         0/tv0b27SOMfdHAAS9uvvyzYHSvJz29jXZ8Ghn8P74JIXgbqiQ8Xmf3E7xd0IOJWjYpt
+         v9k8TskKjI/UpljG8OYXfqRkCLbkH8b4DSia7T8a+v1EfZoGxKC3CBVYnqYDmqJFopMg
+         3Xur2LBWPfoAUY+YgoW9CnTNt3+RV4Uwq2EleIYU8L5WljjTjJj4DuITTMBVU0AW9mEM
+         J5uw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=ISxgLk82KYg9gcCYMQW4c3ORz6YkAHuAhHBO9CgaMTE=;
+        b=P3DqmKeZnq3V9RRalGnZqiHCku1QGxG02OWkro/B59LaHBLKug2pxE8ANyYDVWDujU
+         KxGRUBAYP5r/kHk8paVzbOSU4/zQJxliEI7X705QOWIGUf2s6VmCxN3Fd4RzpoBZfGMd
+         y3iS+aYQ8RIWG9Y58wmUUzXawOvRZIWLH5wFFeDBrnbSbbAjKmHCloyAJjTQFe25FCBi
+         CQQWBuwn8SmzNZRttNqYiDtrqB3gFvmNOsT+4ONB1AYU4zsjUL9PoIW3BxVvwvlFYs06
+         Qxwpw2oJPdAKwnSClXWHoU+GzFptXOdNFlAdlcTHk7xWCdeQxseomQritbwnoQbqv1Vh
+         BJOg==
+X-Gm-Message-State: APjAAAWqT9ljJzwdKYw7/iW5Ov8XGiyjCfAobhtggJ7xAYwJaq47UoAf
+        zdhvfb4z5p6Tmwq2YyohEXAONQ==
+X-Google-Smtp-Source: APXvYqwyp3PFALxnKddtKsL8vY1KS7etYmE6Qhye0Iq2Sqts4Tc5bj5UbJeYQy+vhfctVJQU7uj6RA==
+X-Received: by 2002:a2e:85d5:: with SMTP id h21mr3018520ljj.243.1575389101408;
+        Tue, 03 Dec 2019 08:05:01 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:6d1:3848:12e:c7de:68cf:5575])
+        by smtp.gmail.com with ESMTPSA id y192sm1791884lfa.63.2019.12.03.08.04.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 03 Dec 2019 08:05:00 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+To:     Chris Brandt <Chris.Brandt@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <20191203074513.9416-1-james.tai@realtek.com>
- <20191203074513.9416-4-james.tai@realtek.com>
-From:   =?UTF-8?Q?Andreas_F=c3=a4rber?= <afaerber@suse.de>
-Organization: SUSE Software Solutions Germany GmbH
-Message-ID: <90124940-e946-1163-8baa-5064d3d973c5@suse.de>
-Date:   Tue, 3 Dec 2019 16:28:21 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.1
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+References: <20191203034519.5640-1-chris.brandt@renesas.com>
+ <20191203034519.5640-7-chris.brandt@renesas.com>
+ <17e66541-41fb-26ed-c87b-15c59ab57bef@cogentembedded.com>
+ <TY1PR01MB156262E8D33A0624457CAE248A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Organization: Cogent Embedded
+Message-ID: <6c2cb15b-896c-e749-8b33-02da46fbc222@cogentembedded.com>
+Date:   Tue, 3 Dec 2019 19:04:58 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191203074513.9416-4-james.tai@realtek.com>
+In-Reply-To: <TY1PR01MB156262E8D33A0624457CAE248A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi James,
+On 12/03/2019 04:27 PM, Chris Brandt wrote:
 
-[dropping Palmer]
-
-Am 03.12.19 um 08:45 schrieb James Tai:
-> From: cylee12 <cylee12@realtek.com>
-
-Please fix the author name.
-
+>>> +- flash: should be represented by a subnode of the SPIBSC node,
+>>> +	 its "compatible" property contains "jedec,spi-nor" if SPI is used.
+>>
+>>     Are any other flash variants supported?
 > 
-> This patch adds common clock support for Realtek SoCs, including PLLs,
-> Mux clocks and Gate clocks.
+> Do you mean other types of SPI flash?
 
-Can you be more specific here, please? Is this compatible back to
-RTD1195 or RTD1295 or just 1619 forward? I only see RTD1619 in 5/6. And
-not a single .dtsi patch is included in this series for testing it.
+   No, I mean flashes connected via different buses, like HyperBus with the gen3 SoC RPC-IF.
+If SPI's the only bu supported, there's no point saying "if SPI is used".
 
-> 
-> Signed-off-by: Cheng-Yu Lee <cylee12@realtek.com>
-> Signed-off-by: James Tai <james.tai@realtek.com>
-> ---
->  drivers/clk/Kconfig                   |   1 +
->  drivers/clk/Makefile                  |   1 +
->  drivers/clk/realtek/Kconfig           |  10 +
->  drivers/clk/realtek/Makefile          |   9 +
->  drivers/clk/realtek/clk-pll-dif.c     |  81 ++++++
->  drivers/clk/realtek/clk-pll-psaud.c   | 120 ++++++++
->  drivers/clk/realtek/clk-pll.c         | 400 ++++++++++++++++++++++++++
->  drivers/clk/realtek/clk-pll.h         | 151 ++++++++++
->  drivers/clk/realtek/clk-regmap-gate.c |  89 ++++++
->  drivers/clk/realtek/clk-regmap-gate.h |  26 ++
->  drivers/clk/realtek/clk-regmap-mux.c  |  63 ++++
->  drivers/clk/realtek/clk-regmap-mux.h  |  26 ++
->  drivers/clk/realtek/common.c          | 320 +++++++++++++++++++++
->  drivers/clk/realtek/common.h          | 123 ++++++++
->  14 files changed, 1420 insertions(+)
+[...]
+> Chris
 
-This patch is way too large for me to review. Please split this up
-further into logically self-contained, compile-testable patches.
-
->  create mode 100644 drivers/clk/realtek/Kconfig
->  create mode 100644 drivers/clk/realtek/Makefile
->  create mode 100644 drivers/clk/realtek/clk-pll-dif.c
->  create mode 100644 drivers/clk/realtek/clk-pll-psaud.c
->  create mode 100644 drivers/clk/realtek/clk-pll.c
->  create mode 100644 drivers/clk/realtek/clk-pll.h
->  create mode 100644 drivers/clk/realtek/clk-regmap-gate.c
->  create mode 100644 drivers/clk/realtek/clk-regmap-gate.h
->  create mode 100644 drivers/clk/realtek/clk-regmap-mux.c
->  create mode 100644 drivers/clk/realtek/clk-regmap-mux.h
->  create mode 100644 drivers/clk/realtek/common.c
->  create mode 100644 drivers/clk/realtek/common.h
-> 
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index c44247d0b83e..8e06487440ce 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -317,6 +317,7 @@ source "drivers/clk/mediatek/Kconfig"
->  source "drivers/clk/meson/Kconfig"
->  source "drivers/clk/mvebu/Kconfig"
->  source "drivers/clk/qcom/Kconfig"
-> +source "drivers/clk/realtek/Kconfig"
->  source "drivers/clk/renesas/Kconfig"
->  source "drivers/clk/samsung/Kconfig"
->  source "drivers/clk/sifive/Kconfig"
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 0138fb14e6f8..71ea17f97f7d 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -95,6 +95,7 @@ obj-$(CONFIG_COMMON_CLK_NXP)		+= nxp/
->  obj-$(CONFIG_MACH_PISTACHIO)		+= pistachio/
->  obj-$(CONFIG_COMMON_CLK_PXA)		+= pxa/
->  obj-$(CONFIG_COMMON_CLK_QCOM)		+= qcom/
-> +obj-$(CONFIG_COMMON_CLK_REALTEK)	+= realtek/
-
-Should we take the Renesas approach here and allow for COMPILE_TEST?
-
->  obj-y					+= renesas/
->  obj-$(CONFIG_ARCH_ROCKCHIP)		+= rockchip/
->  obj-$(CONFIG_COMMON_CLK_SAMSUNG)	+= samsung/
-> diff --git a/drivers/clk/realtek/Kconfig b/drivers/clk/realtek/Kconfig
-> new file mode 100644
-> index 000000000000..5bca757dddfa
-> --- /dev/null
-> +++ b/drivers/clk/realtek/Kconfig
-> @@ -0,0 +1,10 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +config COMMON_CLK_REALTEK
-
-I would personally think that it's not necessary to prefix with COMMON_
-here, even if based on CONFIG_COMMON_CLK framework, since Realtek is no
-longer common. Stephen/Michael?
-
-Which brings us to the next aspect, is this really universally common
-for Realtek? Are they compatible with old MIPS SoCs and Arm SoCs from
-departments other than DHC? (e.g., Smart TV)
-If the answer to any of these is no, then please rename the Kconfig
-symbol to the oldest SoC for uniqueness, e.g., RTD1195.
-
-> +	bool "Clock driver for realtek"
-
-Spelling.
-
-> +	select MFD_SYSCON
-
-Please add help text and include SoC names.
-
-> +
-> +config CLK_PLL_PSAUD
-
-Too generic name.
-
-> +	bool
-> +
-> +config CLK_PLL_DIF
-
-Ditto.
-
-> +	bool
-> diff --git a/drivers/clk/realtek/Makefile b/drivers/clk/realtek/Makefile
-> new file mode 100644
-> index 000000000000..050d450db067
-> --- /dev/null
-> +++ b/drivers/clk/realtek/Makefile
-> @@ -0,0 +1,9 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_COMMON_CLK_REALTEK) += clk-rtk.o
-> +
-> +clk-rtk-y += common.o
-> +clk-rtk-y += clk-regmap-mux.o
-> +clk-rtk-y += clk-regmap-gate.o
-> +clk-rtk-y += clk-pll.o
-> +clk-rtk-$(CONFIG_CLK_PLL_PSAUD) += clk-pll-psaud.o
-> +clk-rtk-$(CONFIG_CLK_PLL_DIF) += clk-pll-dif.o
-> diff --git a/drivers/clk/realtek/clk-pll-dif.c b/drivers/clk/realtek/clk-pll-dif.c
-> new file mode 100644
-> index 000000000000..d19efef2626e
-> --- /dev/null
-> +++ b/drivers/clk/realtek/clk-pll-dif.c
-> @@ -0,0 +1,81 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-
-Can you relicense this code as GPL-2.0-or-later? For Makefile and
-Kconfig it doesn't matter, just for low-level code that could become
-relevant for debuggers like OpenOCD, which is licensed GPLv2+.
-
-> +/*
-
-Care to elaborate here what "dif" is? :)
-
-> + * Copyright (c) 2019 Realtek Semiconductor Corporation
-> + * Author: Cheng-Yu Lee <cylee12@realtek.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/clk.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/delay.h>
-
-Insert white line here?
-
-> +#include "common.h"
-> +#include "clk-pll.h"
-> +
-> +static int clk_pll_dif_enable(struct clk_hw *hw)
-> +{
-> +	struct clk_pll_dif *pll = to_clk_pll_dif(hw);
-> +
-> +	pr_debug("%pC: %s\n", hw->clk, __func__);
-
-Please review debug and info messages for whether they are still needed
-- in particular for info below I assume no.
-
-> +
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x0C, 0x00000048);
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x08, 0x00020c00);
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x04, 0x204004ca);
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x00, 0x8000a000);
-
-This is way too much dark magic!
-
-Start with giving the offsets symbolic names, please.
-
-Next, construct the value from symbolic constants. You will see me use
-BIT() and GENMASK() macros elsewhere; please adopt those conventions.
-
-> +	udelay(100);
-
-Is this from some internal datasheet? Otherwise, from some MCU clocks
-that I've previously implemented, I would expect there to be some status
-bit indicating readyness that we should poll rather than trusting a
-hardcoded delay. I don't see a single read below, nor any explanatory
-comment.
-
-> +
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x08, 0x00420c00);
-> +	udelay(50);
-> +
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x08, 0x00420c03);
-> +	udelay(200);
-> +
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x0C, 0x00000078);
-> +	udelay(100);
-> +
-> +	clk_regmap_write(&pll->clkr, pll->pll_ofs + 0x04, 0x204084ca);
-> +
-> +	/* ssc control */
-
-This lonely comment seems kind of redundant with ssc_ofs vs. pll_ofs.
-
-> +	clk_regmap_write(&pll->clkr, pll->ssc_ofs + 0x00, 0x00000004);
-> +	clk_regmap_write(&pll->clkr, pll->ssc_ofs + 0x04, 0x00006800);
-> +	clk_regmap_write(&pll->clkr, pll->ssc_ofs + 0x0C, 0x00000000);
-> +	clk_regmap_write(&pll->clkr, pll->ssc_ofs + 0x10, 0x00000000);
-> +	clk_regmap_write(&pll->clkr, pll->ssc_ofs + 0x08, 0x001e1f98);
-> +	clk_regmap_write(&pll->clkr, pll->ssc_ofs + 0x00, 0x00000005);
-> +	pll->status = 1;
-> +
-> +	return 0;
-> +}
-[snip]
-
-I'll stop reviewing here and am waiting for a v2.
-
-Thanks,
-Andreas
-
--- 
-SUSE Software Solutions Germany GmbH
-Maxfeldstr. 5, 90409 Nürnberg, Germany
-GF: Felix Imendörffer
-HRB 36809 (AG Nürnberg)
+MBR, Sergei
