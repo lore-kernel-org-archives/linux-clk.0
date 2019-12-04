@@ -2,51 +2,62 @@ Return-Path: <SRS0=t43R=Z2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A48CC2BBE2
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 09:03:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D105FC43603
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 09:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C332073C
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 09:03:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A502F2077B
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 09:47:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Pll/orGq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726313AbfLDJDP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Dec 2019 04:03:15 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:39745 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfLDJDP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 04:03:15 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a67so6169677oib.6;
-        Wed, 04 Dec 2019 01:03:14 -0800 (PST)
+        id S1727158AbfLDJrx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 04:47:53 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33862 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727136AbfLDJrx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 04:47:53 -0500
+Received: by mail-wr1-f68.google.com with SMTP id t2so7749573wrr.1
+        for <linux-clk@vger.kernel.org>; Wed, 04 Dec 2019 01:47:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=nUdWcCxekLeFMDxvcujgfAEAbAWtlApWfV7PYiJfUJk=;
+        b=Pll/orGq1IfyiAKUYWN6G2acirexQXuI5LIS2uQT6IlXhuW8X1vz7/Dn/gHgOaS6NK
+         huaal0U4LwwRJzu70M7avAlqcfECyJUbP1xzsLbqhYHE0pKKVNaq4/zdJu73r1du0TQB
+         wo3uf0zJeN/w6NoZllZo7EVKSUp6LF7rvA4LYxbI5OLKGKGj7ROn3ouPxZCoF44rQcnP
+         0DtrZcw2+HTiqtkMO2Wpt+73mtY1d1sft0pCcLOZJc6ASQIv3irB2MWFPBQGYpjHTgzW
+         rsDl+R3SFhTbvxla4nZmr0hE5i8K3OnD64QoKnxoC4rHv2dsNH3uIfNnldO8X6BWS4TP
+         cYdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GiimM+vAPJm9W6bXX8wORh+f+Ya7ArJHf1Ny0AsE3FE=;
-        b=I+sFzUmkVNyh8AH+f+UMttJ4b8zfqyjU0FPs+sUkrnksWIgaKPeNvjT6UDOWEQPVKv
-         CkPiaXfafyS6aU6mT0AZzTPvpBuU8yq6NcGDKYbHMgU8umKfgx8ch4ai8DuyEebe6C57
-         92gQ/3OKdR+vAU1fcTAVZ4r6DrazR32zyBY7qYDfliUqwBn9yIqT7GoRonJXpfdMPZJf
-         nvSPq/vRnQYJFDZQJLRtoUB+eRe9npa5BzWmb0BroagOPSGijOeSuyQq7E9AYYaaq0Tb
-         KlAGeao/IbYqMeao2QFaUjG4ROuijEqkryEshflpILq/R5RTiuoSIV5KMHf7f4iSGb34
-         F8RQ==
-X-Gm-Message-State: APjAAAVfP6NkFyg/LuWQ7D3mligYY4DaYefxYqBSQhymyqWZGKOyIOGB
-        7b6rZAEBLICB0YvGMnRc0dd89wVDteudHX01qwM=
-X-Google-Smtp-Source: APXvYqzQXYe4gQCdUWg4G1jBsuzwR+3cpC7tyX1rRK1ihEkgVryFHXzaVwEjpn5VWpFRyxiwDsOp9WBGaMP8rktHGag=
-X-Received: by 2002:aca:36c5:: with SMTP id d188mr1768698oia.54.1575450194036;
- Wed, 04 Dec 2019 01:03:14 -0800 (PST)
-MIME-Version: 1.0
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-3-chris.brandt@renesas.com> <CAMuHMdXUVdG_PMQEpz=QWLCaabfK8Mc41zFiymXJ4Rx_C2gzdg@mail.gmail.com>
- <TY1PR01MB1562F44E4FB80788922CE9BE8A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdX_sD+UHnOF+bdbT99zfK1V92+1kVzGnb9JXJyBd-Y5-w@mail.gmail.com> <20191204083821.GA3468@dell>
-In-Reply-To: <20191204083821.GA3468@dell>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Dec 2019 10:03:02 +0100
-Message-ID: <CAMuHMdXC+=2nH51ASu0u3WUchjM5bC_bROgcYM-OrsM7OgZpbg@mail.gmail.com>
-Subject: Re: [PATCH 2/6] ARM: dts: r7s72100: Add SPIBSC clocks
-To:     Lee Jones <lee.jones@linaro.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=nUdWcCxekLeFMDxvcujgfAEAbAWtlApWfV7PYiJfUJk=;
+        b=FIl5uUMUdh0qxsE8DGhVdNse66WRwgiPY0Wek3hqRYp1x9xrtx68hZqPON9NU9pLop
+         c5IX26VrN1Xxr0or1erocQJn6SjEGRwSNYs5LpUSyPXWo58F9SX+x3uM8hZErWg7w4N8
+         +hD4AsOuAzd3qPHdmWZxthRi0U3hd0E22zPc9ZFPh93TW3gKZqi2jThhNIlbM3e/hRJV
+         pgkvZOU9nAcI5/5JI6iySeGGAKhOl1r+Bmyts4ZGW4W11wo0/7jj0YUSBj/MnjXPBB3X
+         ENrcsLfqFr6yyQIRGQ2qRjfUrwmSZvv/4yUlHHDF9YuE5Xbj9b0Ql4CWEPptjvjC2ct8
+         ZcLQ==
+X-Gm-Message-State: APjAAAUJgGpVMPZhhcRg5j+u4MukS3H+GFNSyKNS7q/p/uBb0kp7vaem
+        /UjXXknFPk6BiVaVPmXfDDEZiw==
+X-Google-Smtp-Source: APXvYqweyVggL0J5SQNi6hKbn22bvo4CUaUJ5obDRItJYXjMPgmMB/E2hFto2npEuG1XdZ4eBodgyA==
+X-Received: by 2002:a5d:640d:: with SMTP id z13mr2913510wru.181.1575452870670;
+        Wed, 04 Dec 2019 01:47:50 -0800 (PST)
+Received: from dell ([2.27.167.28])
+        by smtp.gmail.com with ESMTPSA id 60sm8178016wrn.86.2019.12.04.01.47.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 01:47:50 -0800 (PST)
+Date:   Wed, 4 Dec 2019 09:47:41 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
 Cc:     Chris Brandt <Chris.Brandt@renesas.com>,
         Mark Brown <broonie@kernel.org>,
         Rob Herring <robh+dt@kernel.org>,
@@ -60,94 +71,123 @@ Cc:     Chris Brandt <Chris.Brandt@renesas.com>,
         linux-clk <linux-clk@vger.kernel.org>,
         Mason Yang <masonccyang@mxic.com.tw>,
         Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH 2/6] ARM: dts: r7s72100: Add SPIBSC clocks
+Message-ID: <20191204094741.GC3468@dell>
+References: <20191203034519.5640-1-chris.brandt@renesas.com>
+ <20191203034519.5640-3-chris.brandt@renesas.com>
+ <CAMuHMdXUVdG_PMQEpz=QWLCaabfK8Mc41zFiymXJ4Rx_C2gzdg@mail.gmail.com>
+ <TY1PR01MB1562F44E4FB80788922CE9BE8A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdX_sD+UHnOF+bdbT99zfK1V92+1kVzGnb9JXJyBd-Y5-w@mail.gmail.com>
+ <20191204083821.GA3468@dell>
+ <CAMuHMdXC+=2nH51ASu0u3WUchjM5bC_bROgcYM-OrsM7OgZpbg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMuHMdXC+=2nH51ASu0u3WUchjM5bC_bROgcYM-OrsM7OgZpbg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lee,
+On Wed, 04 Dec 2019, Geert Uytterhoeven wrote:
 
-On Wed, Dec 4, 2019 at 9:38 AM Lee Jones <lee.jones@linaro.org> wrote:
-> On Tue, 03 Dec 2019, Geert Uytterhoeven wrote:
-> > On Tue, Dec 3, 2019 at 7:58 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> > > On Tue, Dec 3, 2019, Geert Uytterhoeven wrote:
-> > > > > +                       reg = <0x3fefa000 0x100>, <0x18000000
-> > > > > + 0x4000000>;
+> Hi Lee,
+> 
+> On Wed, Dec 4, 2019 at 9:38 AM Lee Jones <lee.jones@linaro.org> wrote:
+> > On Tue, 03 Dec 2019, Geert Uytterhoeven wrote:
+> > > On Tue, Dec 3, 2019 at 7:58 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> > > > On Tue, Dec 3, 2019, Geert Uytterhoeven wrote:
+> > > > > > +                       reg = <0x3fefa000 0x100>, <0x18000000
+> > > > > > + 0x4000000>;
+> > > > >
+> > > > > The second region conflicts with the XIP flash@18000000 in
+> > > > > arch/arm/boot/dts/r7s72100-gr-peach.dts.
+> > > > > Yes, I know it is the same device ;-)
 > > > >
-> > > > The second region conflicts with the XIP flash@18000000 in
-> > > > arch/arm/boot/dts/r7s72100-gr-peach.dts.
-> > > > Yes, I know it is the same device ;-)
+> > > > Is that just an FYI?? Or do you have some suggestion??
 > > >
-> > > Is that just an FYI?? Or do you have some suggestion??
-> >
-> > Can the flash subnode be compatible with "mtd-rom", even if the parent node
-> > is kept disabled?
-> >
-> > > > > +                       clock-critical = <4>; /* spibsc0 */
+> > > Can the flash subnode be compatible with "mtd-rom", even if the parent node
+> > > is kept disabled?
+> > >
+> > > > > > +                       clock-critical = <4>; /* spibsc0 */
+> > > > >
+> > > > > Iff we go this clock-critical route, I think this should be specified in the
+> > > > > board-specific .dts instead of in the SoC-specific .dtsi.
 > > > >
-> > > > Iff we go this clock-critical route, I think this should be specified in the
-> > > > board-specific .dts instead of in the SoC-specific .dtsi.
+> > > > OK, that's fine. It makes more sense to be in the .dts because it's a board
+> > > > design decision. I will remove it from the patch.
+> > > >
+> > > > The one 'tricky' thing is that the <4> is the index into the number of clocks.
+> > > >
+> > > > So in the Renesas BSP where it includes the VDC5 LCD controllers,
+> > > >
+> > > > clock-output-names = "i2c0", "i2c1", "i2c2", "i2c3", "vdc50", "vdc51", "spibsc0", "spibsc1";
+> > > >
+> > > > the <4> needs to become a <6>.
 > > >
-> > > OK, that's fine. It makes more sense to be in the .dts because it's a board
-> > > design decision. I will remove it from the patch.
+> > > Unless you pass "clkidx" instead of "i" to of_clk_detect_critical() in [1],
+> > > and use "clock-critical = <R7S72100_CLK_SPIBSC0>" in DT?
 > > >
-> > > The one 'tricky' thing is that the <4> is the index into the number of clocks.
-> > >
-> > > So in the Renesas BSP where it includes the VDC5 LCD controllers,
-> > >
-> > > clock-output-names = "i2c0", "i2c1", "i2c2", "i2c3", "vdc50", "vdc51", "spibsc0", "spibsc1";
-> > >
-> > > the <4> needs to become a <6>.
+> > > Unfortunately the exact semantics of clock-critical were never documented.
+> > > Lee?
 > >
-> > Unless you pass "clkidx" instead of "i" to of_clk_detect_critical() in [1],
-> > and use "clock-critical = <R7S72100_CLK_SPIBSC0>" in DT?
+> > /**
+> >  * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
+> >  * @np: Device node pointer associated with clock provider
+> >  * @index: clock index
+> >  * @flags: pointer to top-level framework flags
+> >  *
+> >  * Detects if the clock-critical property exists and, if so, sets the
+> >  * corresponding CLK_IS_CRITICAL flag.
+> >  *
+> >  * Do not use this function. It exists only for legacy Device Tree
+> >  * bindings, such as the one-clock-per-node style that are outdated.
+> >  * Those bindings typically put all clock data into .dts and the Linux
+> >  * driver has no clock data, thus making it impossible to set this flag
+> >  * correctly from the driver. Only those drivers may call
+> >  * of_clk_detect_critical from their setup functions.
+> >  *
+> >  * Return: error code or zero on success
+> >  */
 > >
-> > Unfortunately the exact semantics of clock-critical were never documented.
-> > Lee?
->
-> /**
->  * of_clk_detect_critical() - set CLK_IS_CRITICAL flag from Device Tree
->  * @np: Device node pointer associated with clock provider
->  * @index: clock index
->  * @flags: pointer to top-level framework flags
->  *
->  * Detects if the clock-critical property exists and, if so, sets the
->  * corresponding CLK_IS_CRITICAL flag.
->  *
->  * Do not use this function. It exists only for legacy Device Tree
->  * bindings, such as the one-clock-per-node style that are outdated.
->  * Those bindings typically put all clock data into .dts and the Linux
->  * driver has no clock data, thus making it impossible to set this flag
->  * correctly from the driver. Only those drivers may call
->  * of_clk_detect_critical from their setup functions.
->  *
->  * Return: error code or zero on success
->  */
->
-> If this meets the criteria, the API is pretty simple/self
-> explanatory.  What are you having trouble with?
+> > If this meets the criteria, the API is pretty simple/self
+> > explanatory.  What are you having trouble with?
+> 
+> What exactly is the "index" parameter?  This value is matched against
+> the values of the "clock-critical" (array) property, but it is described
+> nowhere in the DT bindings.
+> stih407-clock.dtsi seems to assume this value is an index into the
+> clock-output-names array?
+> Can we use it as a value of "clock-indices" instead?
 
-What exactly is the "index" parameter?  This value is matched against
-the values of the "clock-critical" (array) property, but it is described
-nowhere in the DT bindings.
-stih407-clock.dtsi seems to assume this value is an index into the
-clock-output-names array?
-Can we use it as a value of "clock-indices" instead?
+of_clk_detect_critical(), the consumer of the device tree property
+'clock-critical', is a helper.  Neither deliver any auto-magical
+functionality.  Simply providing an index into the property will not
+do anything useful.  It's up to the vendor's clock driver to handle.
 
-> > Thanks!
-> >
-> > [1] "[PATCH 1/6] clk: renesas: mstp: Add critical clock from device
-> > tree support"
-> >     https://lore.kernel.org/linux-renesas-soc/20191203034519.5640-2-chris.brandt@renesas.com/
+The vendor driver can call of_clk_detect_critical() with *any* index
+it sees fit.  If it matches a number listed in the 'clock-critical'
+array, the CLK_IS_CRITICAL flag is set in the flags pointed to by the
+3rd function parameter.
 
-Gr{oetje,eeting}s,
+Take a look at some of the call sites in drivers/clk/st/* for further
+clarification.
 
-                        Geert
+> > > Thanks!
+> > >
+> > > [1] "[PATCH 1/6] clk: renesas: mstp: Add critical clock from device
+> > > tree support"
+> > >     https://lore.kernel.org/linux-renesas-soc/20191203034519.5640-2-chris.brandt@renesas.com/
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
