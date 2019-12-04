@@ -2,177 +2,577 @@ Return-Path: <SRS0=t43R=Z2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADFBC2BD09
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 13:31:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BFD1C43603
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 13:39:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D324620866
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 13:31:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B64162077B
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 13:39:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="Iy++Pkfa"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6qov3/X"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727977AbfLDNbZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Dec 2019 08:31:25 -0500
-Received: from mail-eopbgr1400107.outbound.protection.outlook.com ([40.107.140.107]:6127
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727850AbfLDNbY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 4 Dec 2019 08:31:24 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Y60DW9zXDUiHyPVK4J90b4ka8oKyDkBLySTJBGGXaksmv4h9F0r5tiUKrHU5RpKGXD5fqS6jFJR4idlLUU5fqbFxJ3/Q5pPrRba+P91EyX/SUAGsXMbcA8MlC/KZ5w1LR+/yfmzoSYgNP8bai3Pdfio0fXdFvDcym93miNQfwt/jpleybI98PZWcrFUWTvRLBvJTi9zIqmA/x2qVtigTH0Nemmrcgx2g/kgzH1niiqDf5dgHyhNXqQ/aHZ67/9S7U2K/HAvJFHrv6qEonNKaO49BZbdpoDYJiZ47MYzXe+Cjmov5IlYm7S8GKygyylmkCKYQzqgYdu+YN+s7xcnzYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mwH9zS6s9FTL0up9iZv9OXp7e7Js2qdzAmQLOEVwZU4=;
- b=SrKiYMKgrLWdv04YtKTiJ64TyENz0OWAqJ/BzwOfKXBPCQwOVgGTBPNyMpT5vIeQUDR8x4mly2HU7ZxeJ3Bt0ZEP0JRmlpAicI58xUDXoV9QNvy0qtZVwwwUGW9hSXYF7s6vXhJL/qOK1C/OG9n66X7rqEU81ed/Pc7d5Ar4FVIX1indGXDsFGPy1tOE2rWE9sfoWmH851LlWjV3wIjZhbsKK0U2hn3e9PnNxxrknuPuRy5X1KLf8FYkTw/ePa4a/H8Bqmb0Kv0ey7oYd0wlilxfP5VBI+tb1hDVTlEv5p5eRQcDr2ZxaGl/kJhtoYfMio9bmoZUxDqTXKMLZe9Olg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        id S1727838AbfLDNjY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 08:39:24 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:45392 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbfLDNjY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 08:39:24 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so6119865lfa.12;
+        Wed, 04 Dec 2019 05:39:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mwH9zS6s9FTL0up9iZv9OXp7e7Js2qdzAmQLOEVwZU4=;
- b=Iy++PkfakTpbhgRzRPmQN0SNvD7pHDgLA/0dnX99zBEqHLVsi8u3mY0ruyxmfoYBZnt+wldBx7XVzSFJMsDsZwJ6bBS0t/+f3msauAuPeKC+J65lneXa3U+S4fzshlY6a0qKyFTsRL6Vv6mWIsXi7HrkP/l2t/+yOgqbgq9BuRc=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1465.jpnprd01.prod.outlook.com (52.133.160.140) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2495.22; Wed, 4 Dec 2019 13:31:19 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Wed, 4 Dec 2019
- 13:31:19 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: RE: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
-Thread-Topic: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
-Thread-Index: AQHVqYxRjjQT6EPsk0uhvsHduSJ+e6eow+OAgAAcgACAACHMAIAArCeAgABEDRA=
-Date:   Wed, 4 Dec 2019 13:31:18 +0000
-Message-ID: <TY1PR01MB1562322613FC52617312F14E8A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-7-chris.brandt@renesas.com>
- <CAMuHMdVBYpuoK7hcyNLK-mAdpTQz3ohTGXuYdFPHdpU5RoPr6Q@mail.gmail.com>
- <CAMuHMdV7XY7FB9pBsxuWxGsqYaD9n1Y+XZXEJO5OsuigjjUgpw@mail.gmail.com>
- <TY1PR01MB1562A6AFD8D0807B345B7A208A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdUn3h1VjYkARTFBqMij5aYg2mJSVErwceHc0NATBo+_hw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUn3h1VjYkARTFBqMij5aYg2mJSVErwceHc0NATBo+_hw@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNTk0ZjFhOGUtMTY5YS0xMWVhLWFhNTEtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDU5NGYxYThmLTE2OWEtMTFlYS1hYTUxLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iMzgzMyIgdD0iMTMyMTk5Mzk4Nzc3OTQwOTI0IiBoPSJLc2JLQnNYVTh1TWc1ZEM5OEx0eWF4VE80UXc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 37db6f0f-5585-46e7-350b-08d778be3eec
-x-ms-traffictypediagnostic: TY1PR01MB1465:
-x-microsoft-antispam-prvs: <TY1PR01MB146569DB8B6D8296D102184D8A5D0@TY1PR01MB1465.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 0241D5F98C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(136003)(366004)(396003)(376002)(199004)(189003)(6246003)(9686003)(76176011)(6436002)(86362001)(186003)(14444005)(26005)(4326008)(66446008)(5660300002)(316002)(6916009)(54906003)(55016002)(76116006)(102836004)(7696005)(7736002)(66556008)(14454004)(66476007)(66946007)(64756008)(52536014)(6506007)(33656002)(229853002)(8676002)(3846002)(99286004)(74316002)(11346002)(25786009)(8936002)(305945005)(81166006)(6116002)(478600001)(7416002)(71190400001)(71200400001)(81156014)(2906002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1465;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: YF6Fl9x3faw8tkoMJx+L6aGdacc9XOXNgV8aCo11WwIasuz8X/F0rWL4goQA13Mg7lcU1spvEZwFW7MDOByJlbut9f+/1BP1MrzukFd28EbOTQ72ITjO7dOXauGUB0kQzEL5QT+AiYmi6FkSkgXYdB1o2K2S3sz/QavTaRcRKt6Q82oL/WjlKpzK8jS9waL5bDfceUp3o1BYToV+Ie/ZMkkucbMooBSAwOMbDrh0HZB27jirdk5QthIuVCGzChE2ir/UBWREvRZmvyZKPJfeZyMKAfsKLLfxa/Wtp1eIpmnkJCYxAvHIHjhsWGw5swbhvn/D3EQlDgUBoChegfj+1H0vRgKF+kV1Qo0Wla1C4c2NFUj2KTnGqMbjk+tSgwBEaQaTT1uIP2zYdLYTOBjPAD8K7IqmwJYAr2d5yFF1m6pNXDApZsH74ilCeAIsCDs1
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=S9tbWpEDvH3jkRFkGwC8aPnTNR6fsY39Cbyyt9rbgoI=;
+        b=h6qov3/XKL84xKOrBePPVQqqBofp8f2hd628fLHFyNDAJkHJr/SoPltlypCjCGDz5y
+         CIW9XIvZX6V7DmBXXn1NmEBnS2MSQG5CcF81aJlQqw6PRE/dsXdL/SBaFskSwQBpxYke
+         PwQv7aB4ULQiHKEae+o988dhMn9e339JZDUEJJJOMVxbgQ3/JrCZFlYAlu4abFOewgRH
+         NHADhMT/b04xdWZzXiPacKz8Ua9jJqJ8lHmCCwNSGsVb7dsRiBkPtkMxA8/uNkJg8cQL
+         TeUJStiUVKSTiawUAYjmohYQ1Qk35IUkjha7IIxsy+tcBB1XAOzLmMtZxLQx2wkOY1aF
+         lFcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=S9tbWpEDvH3jkRFkGwC8aPnTNR6fsY39Cbyyt9rbgoI=;
+        b=N4yGoqU9qWuH+CGjUAx5huxFEBuYyevJgA5FZrkqtwgGsVMjOhSEG1s6NN/GrkIm4n
+         mEGSHBGcD8jgb6wVvOgYHjZ5xUziJWMFOUEJ1xeQpniEvOjclwKETnul6vb1LHsm1MCN
+         ZJc6VSqICsxk5KlSdKXgiGHLYi4tuvqmjhW7nEH0cn94CJJjPePu84z9IneTRlP/bJIe
+         rY4Lel3GEqVP/kaQhWQSemNttmmNRDQPXB5eCDatkNE7w7U9XZK0CFek5qQ1vMfZKNrC
+         /YzPM/gV2NK2h8513v6m/w4Nm46QKeg+lRx30LrLA6PwXGIWK7gNzEDxJljxePzxa/g+
+         Nh4A==
+X-Gm-Message-State: APjAAAVtGDV9WO4ktyHHireOkelXxWo+UOYWPKAjNewCkJxsZYhOKTzP
+        52Zexapwq13nJudK3VkYqt89+XiM
+X-Google-Smtp-Source: APXvYqyo09lzKa9mf/p6BeETV90uX8OTCRUiSfqh2TQnhxGmZJxBMkSeh1LP9n2t9b1WfZ3bkhEJKA==
+X-Received: by 2002:a19:8104:: with SMTP id c4mr2077729lfd.191.1575466759756;
+        Wed, 04 Dec 2019 05:39:19 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id 145sm3146217ljj.69.2019.12.04.05.39.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 04 Dec 2019 05:39:18 -0800 (PST)
+Subject: Re: [PATCH v2 02/11] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     allison@lohutok.net, pdeschrijver@nvidia.com, pgaikwad@nvidia.com,
+        mturquette@baylibre.com, horms+renesas@verge.net.au,
+        Jisheng.Zhang@synaptics.com, krzk@kernel.org, arnd@arndb.de,
+        spujar@nvidia.com, josephl@nvidia.com, vidyas@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1574830773-14892-1-git-send-email-skomatineni@nvidia.com>
+ <1574830773-14892-3-git-send-email-skomatineni@nvidia.com>
+ <749de44c-ec59-3cab-c02e-7b8fcb1fb9f4@gmail.com>
+ <3d1492a1-f2a5-2d56-5341-a28fcb73fe64@nvidia.com>
+ <484cb1bb-4fb2-9e71-87be-2bd5bd5b2348@gmail.com>
+ <e4ee58aa-c421-ea4b-a37b-574fc987c7c1@nvidia.com>
+ <e5da42b8-bf21-4b57-8ae6-37ce6ca4210c@gmail.com>
+ <bb4853a1-83d7-273d-50df-324570c4a4b8@nvidia.com>
+ <bd979864-b3e8-02b1-e0b0-869ddfa8ac67@nvidia.com>
+ <41508376-f30b-3761-47bf-c9c87db997dc@nvidia.com>
+ <348e9382-9978-0c01-1493-4226c1cd70a3@nvidia.com>
+ <74ff9e90-0969-bf53-444c-d643d342d0cb@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f9d85789-b847-ef88-dbd0-2883a45ed9c3@gmail.com>
+Date:   Wed, 4 Dec 2019 16:39:16 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 37db6f0f-5585-46e7-350b-08d778be3eec
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2019 13:31:18.9832
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: LXNffY+Y6CL0Y+eM+0xcWKTGSNg42Uw4lvwIMO21wPgJLndDHLvyxhUjUcrrP5St/admAhHqGQ5nBkfqj0ek+0ikzQw1Vsp20qxONTVeGo4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1465
+In-Reply-To: <74ff9e90-0969-bf53-444c-d643d342d0cb@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCj4gVG8gYXZvaWQgZnV0dXJlIHByb2JsZW1zLCB5b3UgcHJvYmFibHkgZG8g
-d2FudCB0byBzcGVjaWZ5IHNwaS10eC1idXMtd2lkdGggPQ0KPiA8ND4gYW5kIHNwaS1yeC1idXMt
-d2lkdGggPSA8ND4gaW4gRFRTIG5vdy4NCg0KSSBkaWRuJ3QgZG8gdGhhdCBiZWNhdXNlIGlmIHRo
-ZSBNVEQgbGF5ZXIgdGhlbiB0aGlua3MgSSAnd2FudCcgdG8gZG8gNC1iaXQgYWNjZXNzLCB0aGVu
-IHRoYXQgaW50cm9kdWNlcyBhIG5ldyBwcm9ibGVtIHRoZSBzb2x2ZS4NClRoZSBNVEQgbGF5ZXIg
-bWlnaHQgc3RhcnQgc2VuZGluZyBkb3duIFFVQUQgUkVBRCBjb21tYW5kcyB0byB0aGUgZXh0ZXJu
-YWwgU1BJIGFuZCB0aGVuIHRoZSBTUEkgRmxhc2ggd2lsbCBzdGFydCBzZW5kaW5nIGJhY2sgZGF0
-YSBvbiBhbGwgNCBsaW5lcywgYnV0IHRoZSBjb250cm9sbGVyIGlzIG9ubHkgY29uZmlndXJlZCBm
-b3IgMS1iaXQgdHJhbnNmZXJzLg0KDQpJIGhvbmVzdGx5IGRvbid0IGtub3cgd2hlbi93aHkgdGhl
-IE1URCBsYXllciBkZWNpZGVzIG9uIHN3aXRjaCBmcm9tIDEtYml0IHRvIDQtYml0IG1vZGUsIHNv
-IHdoaWxlIHRoZSBib2FyZCBoYXJkd2FyZSBpcyB3aXJlZCBmb3IgNC1iaXQgKGFzIHRoZSBEVCB3
-b3VsZCBkb2N1bWVudCksIHdlIGFyZSBub3QgcmVhZHkgdG8gYmUgZG9pbmcgNC1iaXQganVzdCB5
-ZXQuDQpJIGp1c3Qgd2FudCB0byB0cnkgYW5kIGdldCB0aGUgZHJpdmVyIGluIGF0IGZpcnN0Li4u
-LnRoZW4gd2UgY2FuIG1ha2UgaXQgZG8gZmFuY3kgc3R1ZmYgbGF0ZXIuDQoNCklmIHNvbWVvbmUg
-Y2FuIHRlbGwgbWUgdGhhdCBldmVuIGlmICJzcGktcngtYnVzLXdpZHRoID0gPDQ+IiBpcyBwdXQg
-SSB0aGUgYm9hcmQgRFRTLCB0aGUgc3BpIHdpbGwgc3RpbGwgb25seSBkbyAxLWJpdCB0cmFuc2Zl
-cnMgdW50aWwgdGhlIGFwcGxpY2F0aW9uIHNwZWNpYWxseSBlbmFibGVzIDQtYml0IG1vZGUsIHRo
-ZW4gSSdtIGZpbmUgd2l0aCBhZGQgYnVzLXdpZHRoPTw0PiBpbiB0aGUgRFRTLg0KDQpVbmxlc3Mu
-Li4uSSBkaWQgbm90IHVuZGVyc3RhbmQgeW91IG1lYW5pbmcuLi4uDQoNCkRpZCB5b3UgbWVhbiBw
-dXQgJ3NwaS1yeC1idXMtd2lkdGggPSA8ND4nIGluIHRoZSAuZHRzaT8/Pz8gICh0aGVuIEkgY2Fu
-IG92ZXJyaWRlIGl0IGJhY2sgdG8gPDE+ICB0aGF0IGluIHRoZSBib2FyZCAuZHRzKT8/Pw0KDQoN
-Cg0KPiA+IEJhc2ljYWxseSwgaXQncyBsaWtlIHRoZSAncm9sZSBzd2l0Y2gnIGluIHRoZSBVU0Ig
-T1RHIGRyaXZlcnMuDQo+IA0KPiBJZiB5b3Ugd2FudCB0byBkbyB0aGF0LCBib3RoIGNvbmZpZ3Vy
-YXRpb25zIHNob3VsZCBiZSBkZXNjcmliZWQgaW4gRFQsIGFuZCB3ZQ0KPiBuZWVkIGEgd2F5IHRv
-IHNwZWNpZnkgd2hhdCdzIGJlaW5nIHVzZWQuDQo+IEkgZ3Vlc3MgaWYgdGhlIGRpcmVjdCBtYXBw
-ZWQgbW9kZSBpcyB1c2VkLCB5b3UgYWx3YXlzIHdhbnQgdG8gYm9vdCB0aGUga2VybmVsDQo+IHVz
-aW5nIHRoYXQgbW9kZSwgYW5kIG9ubHkgc3dpdGNoIHRvIFNQSSBtb2RlIHRlbXBvcmFyaWx5IGFm
-dGVyIGJvb3Q/ICBTbyB0aGF0DQo+IGNvdWxkIGJlIGhhbmRsZWQgYnkgbWFudWFsbHkgdW5iaW5k
-aW5nIHRoZSBkcml2ZXIgZnJvbSBwaHlzbWFwLWZsYXNoLCBhbmQNCj4gZm9yY2luZyBhIGJpbmQg
-dG8gc3BpYnNjLCBhbGwgZnJvbSBzeXNmcy4NCg0KWWVzLCBJIGFncmVlLiBUaGF0IGlzIHdoYXQg
-SSB3b3VsZCBzdWdnZXN0IHRvIHNvbWVvbmUuIChJIHN1Z2dlc3QgdW5iaW5kL2JpbmQgZm9yIGEg
-bG90IG9mIHNpdHVhdGlvbnMgdGhhdCBwZW9wbGUgYXNrIG1lIHdoYXQgdG8gZG8pLg0KDQo+IChX
-aGljaCBjdXRzIHRoZSBicmFuY2ggdGhlIGtlcm5lbCBpcyBzaXR0aW5nIG9uIGluIHRoZSBjYXNl
-IG9mIFhJUC4uLikNClhJUCBpcyBhIHNwZWNpYWwgY2FzZSBhbGwgaW4gaXQncyBvd24uLi4uLndo
-aWNoIGlzIHdoeSB3ZSB1c2VzIGEgY29tcGxldGVseSBzcGVjaWFsIGRyaXZlciBmb3IgUi9XIGlu
-IFhJUCBtb2RlLi4ud2hpY2ggaXMgb3V0IG9mIHNjb3BlIGZyb20gbWFpbmxpbmUuDQpUaGUgY2Fz
-ZSBJJ20gdGFsa2luZyBhYm92ZSB3b3VsZCBwcm9iYWJseSBiZWZvcmUgYW4gUi1DYXIgb3IgUlov
-RyB1c2UgY2FzZS4gQnV0LCBzaW5jZSBubyBvbmUgaGFzIHN0YXRlZCBhIHVzZSBjYXNlIGxpa2Ug
-dGhhdCwgaXQncyB2ZXJ5IGxvdyBvbiB0aGUgcHJpb3JpdHkgbGlzdC4NCg0KDQo+ID4gU28gbXkg
-c3VnZ2VzdGlvbiBpcyB0byBmb3JnZXQgYWJvdXQgdHJ5aW5nIHRvICdzdXBwb3J0JyBkaXJlY3Qg
-bW9kZSBpbg0KPiA+IHRoaXMgZHJpdmVyIGF0IHRoZSBtb21lbnQuIElmIHlvdSdyZSB1c2luZyB0
-aGlzIEhXIGZvciBzb21ldGhpbmcgbGlrZQ0KPiA+IFhJUCwgdGhlbiBkb24ndCBlbmFibGUgdGhp
-cyBkcml2ZXIgYXQgYWxsICh3aGljaCBpcyB3aGF0IHdlIGhhdmUgYmVlbg0KPiA+IGRvaW5nKS4N
-Cj4gDQo+IFN0aWxsLCB0aGUgZGlyZWN0LW1hcHBlZCBtb2RlIHNob3VsZCBiZSBkZXNjcmliZWQg
-aW4gRFQsIHdoZW4gdXNlZC4NCj4gYXJjaC9hcm0vYm9vdC9kdHMvcjdzNzIxMDAtZ3ItcGVhY2gu
-ZHRzIGRvZXMgZGVzY3JpYmUgdGhlIEZMQVNILCBidXQgZmFpbHMgdG8NCj4gZGVzY3JpYmUgdGhl
-IGV4YWN0IHRvcG9sb2d5IChmbGFzaCBpcyBhIGNoaWxkIG9mIHNwaWJzYywgYW5kIHRodXMgcmVs
-aWVzIG9uDQo+IHRoZSBzcGlic2MgbW9kdWxlIGNsb2NrIGJlaW5nIHR1cm5lZCBvbikuDQoNCkkg
-Y2FuIGFncmVlIHdpdGggdGhhdC4uLi5hbmQgd2UgZ28gYmFjayB0byBteSBmaXJzdCBpZGVhOiBJ
-ZiB5b3UgYXJlICd1c2luZycgdGhlIFNQSUJTQyBmb3IgYW55dGhpbmcgKFhJUCBvciBTUEkgbW9k
-ZSkgdGhlbiB5b3UgZGVzY3JpYmUgdGhhdCBpbiBEVC4gQW5kIHdoZW4gdGhlIGRyaXZlciBwcm9i
-ZXMsIGlmIGl0IGRvZXMgbm90IHNlZSBhICdzcGktbm9yJyBwYXJ0aXRpb24sIGl0IGRvZXMgbm90
-IHJlZ2lzdGVyIGEgc3BpLWNvbnRyb2xsZXIsIGJ1dCBpdCBkb2VzIGtlZXAgdGhlIGNsb2NrIChw
-b3dlcikgb24gdGhlIGVudGlyZSB0aW1lICh1bnRpbCByZW1vdmVkKS4NCg0KRm9yIEdSLVBFQUNI
-LCB3ZSB3b3VsZCBqdXN0IGhhdmUgdG8gZ28gYmFjayBhbmQgcHV0IHRoZSBxc3BpQDE4MDAwMDAw
-ICh3aGljaCBpcyBjdXJyZW50bHkgYXQgdGhlIHJvb3QpIG5vZGUgdW5kZXIgYSBzcGlic2Mgbm9k
-ZS4NCg0KT2YgY291cnNlIGFsc28gaWYgd2UgZG8gYWxsIHRoaXMsIHdlIGNvdWxkIGRyb3AgYWxs
-IHRoZSBwYXRjaGVzIGZvciBlbmFibGluZyAnY3JpdGljYWwgY2xvY2tzJyB0aGF0IHdlcmUgbmVl
-ZGVkIHRvIGNvdmVyIHRoZSBYSVAgY2FzZXMuDQoNCg0KPiBCVFcsIHdoZW4gdXNpbmcgc3BpYnNj
-IGluIGRpcmVjdC1tYXBwZWQgbW9kZTogaWYgeW91IHR1cm4gb2YgYW5kIG9uIGFnYWluIHRoZQ0K
-PiBtb2R1bGUgY2xvY2ssIGRvZXMgdGhlIHNwaWJzYyBuZWVkIHJlcHJvZ3JhbW1pbmc/DQoNCk5v
-cGUuIEV2ZXJ5dGhpbmcgd2lsbCBzdGF5IHRoZSBzYW1lIChqdXN0IGxpa2UgYWxsIHRoZSBvdGhl
-ciBwZXJpcGhlcmFscykuIFRoZSBvbmx5IHRoaW5nIHlvdSAnbWlnaHQnIHdhbnQgdG8gZG8gaXMg
-Zmx1c2ggdGhlIHJlYWQgY2FjaGUgKGVzcGVjaWFsbHkgaWYgeW91IGRpc2Nvbm5lY3RlZCBpdCBi
-ZWNhdXNlIHlvdSB3ZXJlIGdvaW5nIHRvIGdvIG91dCBhbmQgcmUtd3JpdGUgc29tZSBvZiB0aGUg
-Zmxhc2ggaW4gU1BJIG1vZGUpLg0KDQpDaHJpcw0KDQo=
+03.12.2019 19:45, Sowjanya Komatineni пишет:
+> 
+> On 12/2/19 4:07 PM, Sowjanya Komatineni wrote:
+>>
+>> On 12/2/19 3:14 PM, Sowjanya Komatineni wrote:
+>>>
+>>> On 12/2/19 3:10 PM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 12/2/19 2:58 PM, Sowjanya Komatineni wrote:
+>>>>>
+>>>>> On 12/2/19 1:50 PM, Dmitry Osipenko wrote:
+>>>>>> 02.12.2019 23:09, Sowjanya Komatineni пишет:
+>>>>>>> On 11/28/19 5:25 AM, Dmitry Osipenko wrote:
+>>>>>>>> 28.11.2019 01:57, Sowjanya Komatineni пишет:
+>>>>>>>>> On 11/27/19 7:14 AM, Dmitry Osipenko wrote:
+>>>>>>>>>> 27.11.2019 07:59, Sowjanya Komatineni пишет:
+>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2,
+>>>>>>>>>>> clk_out_3 with
+>>>>>>>>>>> mux and gate for each of these clocks.
+>>>>>>>>>>>
+>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock
+>>>>>>>>>>> driver using
+>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base
+>>>>>>>>>>> address
+>>>>>>>>>>> and register offsets and PMC programming for these clocks
+>>>>>>>>>>> happens
+>>>>>>>>>>> through direct PMC access by the clock driver.
+>>>>>>>>>>>
+>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
+>>>>>>>>>>> from the
+>>>>>>>>>>> non-secure world does not go through and these clocks will
+>>>>>>>>>>> not be
+>>>>>>>>>>> functional.
+>>>>>>>>>>>
+>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
+>>>>>>>>>>> provider
+>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
+>>>>>>>>>>> clocks
+>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
+>>>>>>>>>>> programming
+>>>>>>>>>>> in secure mode and non-secure mode.
+>>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>>>>> ---
+>>>>>>>>>>>     drivers/soc/tegra/pmc.c | 330
+>>>>>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
+>>>>>>>>>>>     1 file changed, 330 insertions(+)
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
+>>>>>>>>>>> index ea0e11a09c12..a353f6d0a832 100644
+>>>>>>>>>>> --- a/drivers/soc/tegra/pmc.c
+>>>>>>>>>>> +++ b/drivers/soc/tegra/pmc.c
+>>>>>>>>>>> @@ -13,6 +13,9 @@
+>>>>>>>>>>>       #include <linux/arm-smccc.h>
+>>>>>>>>>>>     #include <linux/clk.h>
+>>>>>>>>>>> +#include <linux/clk-provider.h>
+>>>>>>>>>>> +#include <linux/clkdev.h>
+>>>>>>>>>>> +#include <linux/clk/clk-conf.h>
+>>>>>>>>>>>     #include <linux/clk/tegra.h>
+>>>>>>>>>>>     #include <linux/debugfs.h>
+>>>>>>>>>>>     #include <linux/delay.h>
+>>>>>>>>>>> @@ -48,6 +51,7 @@
+>>>>>>>>>>>     #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
+>>>>>>>>>>>     #include <dt-bindings/gpio/tegra186-gpio.h>
+>>>>>>>>>>>     #include <dt-bindings/gpio/tegra194-gpio.h>
+>>>>>>>>>>> +#include <dt-bindings/soc/tegra-pmc.h>
+>>>>>>>>>>>       #define PMC_CNTRL            0x0
+>>>>>>>>>>>     #define  PMC_CNTRL_INTR_POLARITY    BIT(17) /* inverts INTR
+>>>>>>>>>>> polarity */
+>>>>>>>>>>> @@ -100,6 +104,7 @@
+>>>>>>>>>>>     #define PMC_WAKE2_STATUS        0x168
+>>>>>>>>>>>     #define PMC_SW_WAKE2_STATUS        0x16c
+>>>>>>>>>>>     +#define PMC_CLK_OUT_CNTRL        0x1a8
+>>>>>>>>>>>     #define PMC_SENSOR_CTRL            0x1b0
+>>>>>>>>>>>     #define  PMC_SENSOR_CTRL_SCRATCH_WRITE BIT(2)
+>>>>>>>>>>>     #define  PMC_SENSOR_CTRL_ENABLE_RST BIT(1)
+>>>>>>>>>>> @@ -155,6 +160,91 @@
+>>>>>>>>>>>     #define  TEGRA_SMC_PMC_READ    0xaa
+>>>>>>>>>>>     #define  TEGRA_SMC_PMC_WRITE    0xbb
+>>>>>>>>>>>     +struct pmc_clk_mux {
+>>>>>>>>>>> +    struct clk_hw    hw;
+>>>>>>>>>>> +    unsigned long    offs;
+>>>>>>>>>>> +    u32        mask;
+>>>>>>>>>>> +    u32        shift;
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +#define to_pmc_clk_mux(_hw) container_of(_hw, struct
+>>>>>>>>>>> pmc_clk_mux, hw)
+>>>>>>>>>>> +
+>>>>>>>>>>> +struct pmc_clk_gate {
+>>>>>>>>>>> +    struct clk_hw    hw;
+>>>>>>>>>>> +    unsigned long    offs;
+>>>>>>>>>>> +    u32        shift;
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +#define to_pmc_clk_gate(_hw) container_of(_hw, struct
+>>>>>>>>>>> pmc_clk_gate, hw)
+>>>>>>>>>>> +
+>>>>>>>>>>> +struct pmc_clk_init_data {
+>>>>>>>>>>> +    char *mux_name;
+>>>>>>>>>>> +    char *gate_name;
+>>>>>>>>>>> +    const char **parents;
+>>>>>>>>>>> +    int num_parents;
+>>>>>>>>>>> +    int mux_id;
+>>>>>>>>>>> +    int gate_id;
+>>>>>>>>>>> +    char *dev_name;
+>>>>>>>>>>> +    u8 mux_shift;
+>>>>>>>>>>> +    u8 gate_shift;
+>>>>>>>>>>> +    u8 init_parent_index;
+>>>>>>>>>>> +    int init_state;
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +static const char *clk_out1_parents[] = { "clk_m",
+>>>>>>>>>>> "clk_m_div2",
+>>>>>>>>>>> +    "clk_m_div4", "extern1",
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +static const char *clk_out2_parents[] = { "clk_m",
+>>>>>>>>>>> "clk_m_div2",
+>>>>>>>>>>> +    "clk_m_div4", "extern2",
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +static const char *clk_out3_parents[] = { "clk_m",
+>>>>>>>>>>> "clk_m_div2",
+>>>>>>>>>>> +    "clk_m_div4", "extern3",
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +static struct pmc_clk_init_data tegra_pmc_clks_data[] = {
+>>>>>>>>>>> +    {
+>>>>>>>>>>> +        .mux_name = "clk_out_1_mux",
+>>>>>>>>>>> +        .gate_name = "clk_out_1",
+>>>>>>>>>>> +        .parents = clk_out1_parents,
+>>>>>>>>>>> +        .num_parents = ARRAY_SIZE(clk_out1_parents),
+>>>>>>>>>>> +        .mux_id = TEGRA_PMC_CLK_OUT_1_MUX,
+>>>>>>>>>>> +        .gate_id = TEGRA_PMC_CLK_OUT_1,
+>>>>>>>>>>> +        .dev_name = "extern1",
+>>>>>>>>>>> +        .mux_shift = 6,
+>>>>>>>>>>> +        .gate_shift = 2,
+>>>>>>>>>>> +        .init_parent_index = 3,
+>>>>>>>>>>> +        .init_state = 1,
+>>>>>>>>>>> +    },
+>>>>>>>>>>> +    {
+>>>>>>>>>>> +        .mux_name = "clk_out_2_mux",
+>>>>>>>>>>> +        .gate_name = "clk_out_2",
+>>>>>>>>>>> +        .parents = clk_out2_parents,
+>>>>>>>>>>> +        .num_parents = ARRAY_SIZE(clk_out2_parents),
+>>>>>>>>>>> +        .mux_id = TEGRA_PMC_CLK_OUT_2_MUX,
+>>>>>>>>>>> +        .gate_id = TEGRA_PMC_CLK_OUT_2,
+>>>>>>>>>>> +        .dev_name = "extern2",
+>>>>>>>>>>> +        .mux_shift = 14,
+>>>>>>>>>>> +        .gate_shift = 10,
+>>>>>>>>>>> +        .init_parent_index = 0,
+>>>>>>>>>>> +        .init_state = 0,
+>>>>>>>>>>> +    },
+>>>>>>>>>>> +    {
+>>>>>>>>>>> +        .mux_name = "clk_out_3_mux",
+>>>>>>>>>>> +        .gate_name = "clk_out_3",
+>>>>>>>>>>> +        .parents = clk_out3_parents,
+>>>>>>>>>>> +        .num_parents = ARRAY_SIZE(clk_out3_parents),
+>>>>>>>>>>> +        .mux_id = TEGRA_PMC_CLK_OUT_3_MUX,
+>>>>>>>>>>> +        .gate_id = TEGRA_PMC_CLK_OUT_3,
+>>>>>>>>>>> +        .dev_name = "extern3",
+>>>>>>>>>>> +        .mux_shift = 22,
+>>>>>>>>>>> +        .gate_shift = 18,
+>>>>>>>>>>> +        .init_parent_index = 0,
+>>>>>>>>>>> +        .init_state = 0,
+>>>>>>>>>>> +    },
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>>     struct tegra_powergate {
+>>>>>>>>>>>         struct generic_pm_domain genpd;
+>>>>>>>>>>>         struct tegra_pmc *pmc;
+>>>>>>>>>>> @@ -254,6 +344,9 @@ struct tegra_pmc_soc {
+>>>>>>>>>>>          */
+>>>>>>>>>>>         const struct tegra_wake_event *wake_events;
+>>>>>>>>>>>         unsigned int num_wake_events;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    struct pmc_clk_init_data *pmc_clks_data;
+>>>>>>>>>>> +    unsigned int num_pmc_clks;
+>>>>>>>>>>>     };
+>>>>>>>>>>>       static const char * const tegra186_reset_sources[] = {
+>>>>>>>>>>> @@ -2163,6 +2256,228 @@ static int
+>>>>>>>>>>> tegra_pmc_clk_notify_cb(struct
+>>>>>>>>>>> notifier_block *nb,
+>>>>>>>>>>>         return NOTIFY_OK;
+>>>>>>>>>>>     }
+>>>>>>>>>>>     +static void pmc_clk_fence_udelay(u32 offset)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    tegra_pmc_readl(pmc, offset);
+>>>>>>>>>>> +    /* pmc clk propagation delay 2 us */
+>>>>>>>>>>> +    udelay(2);
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct pmc_clk_mux *mux = to_pmc_clk_mux(hw);
+>>>>>>>>>>> +    int num_parents = clk_hw_get_num_parents(hw);
+>>>>>>>>>>> +    u32 val;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    val = tegra_pmc_readl(pmc, mux->offs) >> mux->shift;
+>>>>>>>>>>> +    val &= mux->mask;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    if (val >= num_parents)
+>>>>>>>>>>> +        return -EINVAL;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    return val;
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct pmc_clk_mux *mux = to_pmc_clk_mux(hw);
+>>>>>>>>>>> +    u32 val;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    val = tegra_pmc_readl(pmc, mux->offs);
+>>>>>>>>>>> +    val &= ~(mux->mask << mux->shift);
+>>>>>>>>>>> +    val |= index << mux->shift;
+>>>>>>>>>>> +    tegra_pmc_writel(pmc, val, mux->offs);
+>>>>>>>>>>> +    pmc_clk_fence_udelay(mux->offs);
+>>>>>>>>>>> +
+>>>>>>>>>>> +    return 0;
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static const struct clk_ops pmc_clk_mux_ops = {
+>>>>>>>>>>> +    .get_parent = pmc_clk_mux_get_parent,
+>>>>>>>>>>> +    .set_parent = pmc_clk_mux_set_parent,
+>>>>>>>>>>> +    .determine_rate = __clk_mux_determine_rate,
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +static struct clk *
+>>>>>>>>>>> +tegra_pmc_clk_mux_register(const char *name, const char * const
+>>>>>>>>>>> *parent_names,
+>>>>>>>>>>> +               int num_parents, unsigned long flags,
+>>>>>>>>>>> +               unsigned long offset, u32 shift, u32 mask)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct clk_init_data init;
+>>>>>>>>>>> +    struct pmc_clk_mux *mux;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+>>>>>>>>>>> +    if (!mux)
+>>>>>>>>>>> +        return ERR_PTR(-ENOMEM);
+>>>>>>>>>>> +
+>>>>>>>>>>> +    init.name = name;
+>>>>>>>>>>> +    init.ops = &pmc_clk_mux_ops;
+>>>>>>>>>>> +    init.parent_names = parent_names;
+>>>>>>>>>>> +    init.num_parents = num_parents;
+>>>>>>>>>>> +    init.flags = flags;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    mux->hw.init = &init;
+>>>>>>>>>>> +    mux->offs = offset;
+>>>>>>>>>>> +    mux->mask = mask;
+>>>>>>>>>>> +    mux->shift = shift;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    return clk_register(NULL, &mux->hw);
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+>>>>>>>>>>> +
+>>>>>>>>>>> +    return tegra_pmc_readl(pmc, gate->offs) &
+>>>>>>>>>>> BIT(gate->shift) ? 1
+>>>>>>>>>>> : 0;
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static void pmc_clk_set_state(struct clk_hw *hw, int state)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct pmc_clk_gate *gate = to_pmc_clk_gate(hw);
+>>>>>>>>>>> +    u32 val;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    val = tegra_pmc_readl(pmc, gate->offs);
+>>>>>>>>>>> +    val = state ? (val | BIT(gate->shift)) : (val &
+>>>>>>>>>>> ~BIT(gate->shift));
+>>>>>>>>>>> +    tegra_pmc_writel(pmc, val, gate->offs);
+>>>>>>>>>>> +    pmc_clk_fence_udelay(gate->offs);
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static int pmc_clk_enable(struct clk_hw *hw)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    pmc_clk_set_state(hw, 1);
+>>>>>>>>>>> +
+>>>>>>>>>>> +    return 0;
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static void pmc_clk_disable(struct clk_hw *hw)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    pmc_clk_set_state(hw, 0);
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops = {
+>>>>>>>>>>> +    .is_enabled = pmc_clk_is_enabled,
+>>>>>>>>>>> +    .enable = pmc_clk_enable,
+>>>>>>>>>>> +    .disable = pmc_clk_disable,
+>>>>>>>>>>> +};
+>>>>>>>>>>> +
+>>>>>>>>>>> +static struct clk *
+>>>>>>>>>>> +tegra_pmc_clk_gate_register(const char *name, const char
+>>>>>>>>>>> *parent_name,
+>>>>>>>>>>> +                unsigned long flags, unsigned long offset,
+>>>>>>>>>>> +                u32 shift)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct clk_init_data init;
+>>>>>>>>>>> +    struct pmc_clk_gate *gate;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+>>>>>>>>>>> +    if (!gate)
+>>>>>>>>>>> +        return ERR_PTR(-ENOMEM);
+>>>>>>>>>>> +
+>>>>>>>>>>> +    init.name = name;
+>>>>>>>>>>> +    init.ops = &pmc_clk_gate_ops;
+>>>>>>>>>>> +    init.parent_names = &parent_name;
+>>>>>>>>>>> +    init.num_parents = 1;
+>>>>>>>>>>> +    init.flags = flags;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    gate->hw.init = &init;
+>>>>>>>>>>> +    gate->offs = offset;
+>>>>>>>>>>> +    gate->shift = shift;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    return clk_register(NULL, &gate->hw);
+>>>>>>>>>>> +}
+>>>>>>>>>>> +
+>>>>>>>>>>> +static void tegra_pmc_clock_register(struct tegra_pmc *pmc,
+>>>>>>>>>>> +                     struct device_node *np)
+>>>>>>>>>>> +{
+>>>>>>>>>>> +    struct clk *clkmux, *clk, *parent;
+>>>>>>>>>>> +    struct clk_onecell_data *clk_data;
+>>>>>>>>>>> +    unsigned int num_clks;
+>>>>>>>>>>> +    int i, ret;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    /* each pmc clock output has a mux and a gate */
+>>>>>>>>>>> +    num_clks = pmc->soc->num_pmc_clks * 2;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    if (!num_clks)
+>>>>>>>>>>> +        return;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    clk_data = kmalloc(sizeof(*clk_data), GFP_KERNEL);
+>>>>>>>>>>> +    if (!clk_data)
+>>>>>>>>>>> +        return;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    clk_data->clks = kcalloc(TEGRA_PMC_CLK_MAX,
+>>>>>>>>>>> sizeof(*clk_data->clks),
+>>>>>>>>>>> +                 GFP_KERNEL);
+>>>>>>>>>>> +    if (!clk_data->clks)
+>>>>>>>>>>> +        goto free_clkdata;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    clk_data->clk_num = num_clks;
+>>>>>>>>>>> +
+>>>>>>>>>>> +    for (i = 0; i < pmc->soc->num_pmc_clks; i++) {
+>>>>>>>>>>> +        struct pmc_clk_init_data *data;
+>>>>>>>>>>> +
+>>>>>>>>>>> +        data = pmc->soc->pmc_clks_data + i;
+>>>>>>>>>>> +
+>>>>>>>>>>> +        clkmux = tegra_pmc_clk_mux_register(data->mux_name,
+>>>>>>>>>>> +                            data->parents,
+>>>>>>>>>>> + data->num_parents,
+>>>>>>>>>>> + CLK_SET_RATE_NO_REPARENT |
+>>>>>>>>>>> + CLK_SET_RATE_PARENT,
+>>>>>>>>>>> +                            PMC_CLK_OUT_CNTRL,
+>>>>>>>>>>> +                            data->mux_shift, 3);
+>>>>>>>>>>> +        if (IS_ERR(clkmux))
+>>>>>>>>>>> +            goto free_clks;
+>>>>>>>>>>> +
+>>>>>>>>>>> +        clk_data->clks[data->mux_id] = clkmux;
+>>>>>>>>>>> +
+>>>>>>>>>>> +        clk = tegra_pmc_clk_gate_register(data->gate_name,
+>>>>>>>>>>> +                          data->mux_name,
+>>>>>>>>>>> +                          CLK_SET_RATE_PARENT,
+>>>>>>>>>>> +                          PMC_CLK_OUT_CNTRL,
+>>>>>>>>>>> +                          data->gate_shift);
+>>>>>>>>>>> +        if (IS_ERR(clk))
+>>>>>>>>>>> +            goto free_clks;
+>>>>>>>>>>> +
+>>>>>>>>>>> +        clk_data->clks[data->gate_id] = clk;
+>>>>>>>>>>> +
+>>>>>>>>>>> +        ret = clk_set_parent(clk, clkmux);
+>>>>>>>>>>> +        if (ret < 0) {
+>>>>>>>>>>> +            pr_err("failed to set parent of %s to %s\n",
+>>>>>>>>>>> +                   __func__, __clk_get_name(clk),
+>>>>>>>>>>> +                   __clk_get_name(clkmux));
+>>>>>>>>>>> +        }
+>>>>>>>>>>> +
+>>>>>>>>>>> +        clk_register_clkdev(clk, data->dev_name,
+>>>>>>>>>>> data->gate_name);
+>>>>>>>>>>> +
+>>>>>>>>>>> +        /* configure initial clock parent and state */
+>>>>>>>>>>> +        parent = clk_get_sys(data->gate_name,
+>>>>>>>>>>> + data->parents[data->init_parent_index]);
+>>>>>> Couldn't the default parent be defined using "assigned clock" in a
+>>>>>> device-tree? Please see "Assigned clock parents and rates" in the
+>>>>>> doc.
+>>>>>>
+>>>>>> https://www.kernel.org/doc/Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>>>>>
+>>>>>>
+>>>>>> Then you could simply use of_clk_set_defaults(pmc->dev->of_node,
+>>>>>> true).
+>>>>>
+>>>>> Yes, of_clk_add_provider() does of_clk_set_defaults which sets
+>>>>> based on assigned parents and clock rates.
+>>>>>
+>>>>> This need device tree to specify assigned clock parent properties.
+>>>>> Will update device tree and remove init parent from the driver.
+>>>>>
+>>>> assigned-clock properties should be set in consumer node of these
+>>>> clocks and currently these clocks are not used yet.
+>>>>
+>>>> So will just remove init parent from driver and when these clocks
+>>>> are used device tree can be updated in corresponding consumer node
+>>>> with these properties.
+>>>>
+>>> How about default ON/OFF init state for the clocks? I see
+>>> assigned-clock properties for parent and rate only.
+>>>
+>>> But based on existing clock-tegra-pmc driver, I see clk_out_1 is
+>>> default enabled with extern1 parent for T30 thru T210 platforms.
+>>>
+>>> Peter/Thierry, What was the reason we enable clk_out_1 right from the
+>>> clock registration?
+>>>
+>> clk_out_1 is for audio and its not required to be enabled during the
+>> boot and audio driver can enable/disable it.
+>>
+>> same with blink 32khz which is used for WIFI. WIFI driver can
+>> enable/disable during power up/down sequence and technically as per
+>> design we dont need to have it always on right from the boot.
+>>
+>> So can remove out clocks init states from driver once thierry also
+>> agree on this.
+>>
+> Hi Dmitry,
+> 
+> Looking at audio driver, it doesn't take care of mclk which is from
+> clk_out_1 and expects mclk to be always on.
+> 
+> So probably we should have this init state enables in pmc driver for
+> 32Khz and clk_out's to not break existing functionality.
+
+Hello Sowjanya,
+
+IIUC, it's a bug in the device-trees and sound's MCLK actually should be
+set to CLK_OUT_1 of PMC instead of CaR's EXTPERIPH1. If that's the case,
+then the device-trees need to be fixed.
+
+> Regarding using assigned-clock properties for init parent and removing
+> init parent from driver, it also needs consumer node in device tree to
+> be updated to specify assigned-clock properties for default/init parent.
+> 
+> This breaks device tree ABI as prior Tegra210 supports audio driver.
+
+So it's the sound node which should have had the assigned clocks in
+device-tree in order to define route for the audio MCLK clock from CaR
+to PMC.
+
+Given that the audio clocks configuration is the same for all of the
+currently supported boards, I think it will be better to remove the
+entire audio clocks initialization from the clk drivers and move it all
+to the audio driver. It could be something like this:
+
+int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+			  struct device *dev)
+{
+	...
+
+	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
+	    tegra_get_chip_id() > TEGRA20) {
+		clk_extern1 = clk_get(dev, "extern1");
+		...
+		clk_set_parent(clk_extern1, clk_pll_a_out0);
+		...
+		clk_put(data->clk_cdev1);
+
+		data->clk_cdev1 = clk_out_1;
+	}
+	...
+
+So now the old device-trees will cointinue to work and new could have
+the assigned-clocks and set MCLK to CLK_OUT_1.
+
+[snip]
