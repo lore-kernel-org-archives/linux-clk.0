@@ -2,92 +2,86 @@ Return-Path: <SRS0=t43R=Z2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EF6CC2BBE2
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 07:57:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E0B5C43603
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 08:21:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BA272084F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 07:57:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4194E2073B
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 08:21:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LgOMDRmh";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="NfP1Of3r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726217AbfLDH5n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Dec 2019 02:57:43 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:45962 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726053AbfLDH5n (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 02:57:43 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v10so3948377oiv.12;
-        Tue, 03 Dec 2019 23:57:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O4LalYjsnfEaSEeb2Zehe/J93R0bKGaAEEsomnP7Lc4=;
-        b=PRvqFkHg9bv4mpYaE8XKLbG5GEGz7O2LmBAOb0awr22hFcyxza1O0PDVjIJpdGdVHk
-         d31/MqFt7uNNCkMexqygSi45B6yBlCTTN8VAWs8aQ8LbcklnBxASRl4esqhDjxVaxJIe
-         QeU/SGP+0L9wqy5L77nm4gcZSSk1DPyn4ozhi+Yll0tK/lomRrPwwOeLm8LgUAY4yAOx
-         jMD1BFVXNc7xqYEkLlGqh14jceyBAVx/n0hTDOvWaSAGZSQRXov0bIvVEHB4hkX4bPlW
-         27yZSoJ6+f+MRkI/fsHwGb9eFrEPPkYY1+4LzUL1AtULQ0+jX4R0691fggYv+4ZMoiDx
-         t8KA==
-X-Gm-Message-State: APjAAAX8MT75CbnQsq+QicFbCqVwwfCeYx053cIbgIcVlv57jPrHZiVv
-        nVwk1dlI4i7uFyi+/2AvQiVVgtDHL3TFK4azgClJAg==
-X-Google-Smtp-Source: APXvYqzjyb4FJbVQHtyhh2tGF9RdLiHEpGR+02icu52LShy7lvntJoGkd+WARmtOCmx9JC+h7OytDime9XYsdUgzjLY=
-X-Received: by 2002:aca:4e87:: with SMTP id c129mr1455643oib.153.1575446262417;
- Tue, 03 Dec 2019 23:57:42 -0800 (PST)
-MIME-Version: 1.0
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-6-chris.brandt@renesas.com> <CAMuHMdXS_dSEGdMzHFuYraP=dU5WQFM+9DbPW1rFYH2reG2QhA@mail.gmail.com>
- <TY1PR01MB1562E550DD31E799446F0FD48A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB1562E550DD31E799446F0FD48A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Dec 2019 08:57:31 +0100
-Message-ID: <CAMuHMdVO2ud70cxVUHpCpvvZiMidHG1091bg3iOoOnFGOqpqWQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] ARM: dts: r7s9210: Add SPIBSC Device support
-To:     Chris Brandt <Chris.Brandt@renesas.com>
-Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+        id S1726913AbfLDIVr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 03:21:47 -0500
+Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:52962
+        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726166AbfLDIVr (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 03:21:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575447706;
+        h=From:To:Cc:Subject:Date:Message-Id;
+        bh=gZXkqSU/a39Efrt2FbC+7Z4ewg5zJcA9TZ31Pu4BsP4=;
+        b=LgOMDRmhi/mlsEUaHcCZkzExiFb++eHZLy/X14LVUIvKWVkMCwhi8Tf24b+VyuVF
+        EGn0VS40pJYorExhcc0vqaJ0HHLNtxS6Es6fYsleOJJ+zZrmQNXOSpd6VqaMJNYkbcE
+        I8hf6c2UAUIqooWyXEfCzxAjZNL4t5otsDoSW/Z4=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575447706;
+        h=From:To:Cc:Subject:Date:Message-Id:Feedback-ID;
+        bh=gZXkqSU/a39Efrt2FbC+7Z4ewg5zJcA9TZ31Pu4BsP4=;
+        b=NfP1Of3rnNRqBwZ/q9J0wwH5yv59Gs9/Y+AYUvKclhdSQTPt1i6HnbCR0+moLY4h
+        yWaO2N3ikueNuHQpA/Ztf6oAp7hCjqhqEIC+gR6jH1OSjkPHMYeBWijbKPGryYp/7q8
+        lQXQAZiUjT6imfVLn4svsMkmJCqr+90z2YLatVOs=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 636C6C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>,
+        robh+dt@kernel.org
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v1 0/3] Add modem Clock controller (MSS CC) driver for SC7180
+Date:   Wed, 4 Dec 2019 08:21:46 +0000
+Message-ID: <0101016ed0003c0a-c3f2e19a-eb6f-42f6-b66f-4cabb055e828-000000@us-west-2.amazonses.com>
+X-Mailer: git-send-email 2.7.4
+X-SES-Outgoing: 2019.12.04-54.240.27.56
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chris,
+Add driver support for Modem clock controller for SC7180 and also
+update device tree bindings for the various clocks supported in the
+clock controller.
 
-On Tue, Dec 3, 2019 at 11:38 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Tue, Dec 3, 2019, Geert Uytterhoeven wrote:
-> > > +                       reg = <0x1f800000 0x8c>, <0x20000000
-> > > + 0x10000000 >;
-> >
-> > Any specific reason you're using 0x8c, not 0x100?
->
-> Because....I keep forgetting what is the latest 'correct' size:
->   A. The exact size of the register range
-> or
->   B. The size rounded up to look nicer
 
-C. The size used by the on-chip address decoder providing the module's
-   select signal? I doubt that's not a power of two ;-)
+Taniya Das (3):
+  dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
+  dt-bindings: clock: Introduce QCOM Modem clock  bindings
+  clk: qcom: Add modem clock controller driver for  SC7180
 
-Gr{oetje,eeting}s,
+ .../devicetree/bindings/clock/qcom,mss.yaml        | 40 ++++++++++
+ drivers/clk/qcom/Kconfig                           |  9 +++
+ drivers/clk/qcom/Makefile                          |  1 +
+ drivers/clk/qcom/gcc-sc7180.c                      | 70 ++++++++++++++++
+ drivers/clk/qcom/mss-sc7180.c                      | 93 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sc7180.h        |  5 ++
+ include/dt-bindings/clock/qcom,mss-sc7180.h        | 12 +++
+ 7 files changed, 230 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mss.yaml
+ create mode 100644 drivers/clk/qcom/mss-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
 
-                        Geert
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
