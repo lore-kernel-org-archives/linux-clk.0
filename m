@@ -2,25 +2,26 @@ Return-Path: <SRS0=t43R=Z2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6814CC2BC73
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05DDCC0044D
 	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 08:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BDC720637
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 08:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D6357207DD
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 08:30:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726166AbfLDIaE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Dec 2019 03:30:04 -0500
-Received: from lucky1.263xmail.com ([211.157.147.133]:40348 "EHLO
+        id S1727316AbfLDIaD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 03:30:03 -0500
+Received: from lucky1.263xmail.com ([211.157.147.130]:53378 "EHLO
         lucky1.263xmail.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725951AbfLDIaD (ORCPT
+        with ESMTP id S1726166AbfLDIaD (ORCPT
         <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 03:30:03 -0500
+X-Greylist: delayed 479 seconds by postgrey-1.27 at vger.kernel.org; Wed, 04 Dec 2019 03:30:02 EST
 Received: from localhost (unknown [192.168.167.13])
-        by lucky1.263xmail.com (Postfix) with ESMTP id 9B7AB7F168;
-        Wed,  4 Dec 2019 16:22:08 +0800 (CST)
+        by lucky1.263xmail.com (Postfix) with ESMTP id D91BF79906;
+        Wed,  4 Dec 2019 16:21:59 +0800 (CST)
 X-MAIL-GRAY: 0
 X-MAIL-DELIVERY: 1
 X-ADDR-CHECKED4: 1
@@ -28,9 +29,9 @@ X-ANTISPAM-LEVEL: 2
 X-ABS-CHECKED: 0
 Received: from localhost.localdomain (unknown [58.22.7.114])
         by smtp.263.net (postfix) whith ESMTP id P8551T139845177427712S1575447579673282_;
-        Wed, 04 Dec 2019 16:19:41 +0800 (CST)
+        Wed, 04 Dec 2019 16:19:43 +0800 (CST)
 X-IP-DOMAINF: 1
-X-UNIQUE-TAG: <cea2e463ad378ee25ff8f0934b08a611>
+X-UNIQUE-TAG: <0747cfb5f6f826420574473ff9633a35>
 X-RL-SENDER: zhangqing@rock-chips.com
 X-SENDER: zhangqing@rock-chips.com
 X-LOGIN-NAME: zhangqing@rock-chips.com
@@ -45,54 +46,96 @@ Cc:     mturquette@baylibre.com, sboyd@kernel.org,
         linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
         xxx@rock-chips.com, xf@rock-chips.com, huangtao@rock-chips.com,
         Elaine Zhang <zhangqing@rock-chips.com>
-Subject: [PATCH v4 0/5] clk: rockchip: Support for some new features
-Date:   Wed,  4 Dec 2019 16:18:54 +0800
-Message-Id: <20191204081859.19454-1-zhangqing@rock-chips.com>
+Subject: [PATCH v4 3/5] clk: rockchip: add a clock-type for muxes based in the pmugrf
+Date:   Wed,  4 Dec 2019 16:18:57 +0800
+Message-Id: <20191204081859.19454-4-zhangqing@rock-chips.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191204081859.19454-1-zhangqing@rock-chips.com>
+References: <20191204081859.19454-1-zhangqing@rock-chips.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-1. Support for some new features
-2. fix up some error
+Rockchip socs often have some tiny number of muxes not controlled from
+the core clock controller but through bits set in the pmugrf.
+Use MUXPMUGRF() to cover this special clock-type.
 
-Chang in V4:
-[PATCH v3 1/5] : Update the commit message.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+---
+ drivers/clk/rockchip/clk.c |  9 +++++++++
+ drivers/clk/rockchip/clk.h | 17 +++++++++++++++++
+ 2 files changed, 26 insertions(+)
 
-Chang in V3:
-[PATCH v2 3/6] : It's been merged
-So rebased and resubmit.
-
-Chang in V2:
-[PATCH v2 5/6] : fix up the Register error, and add delay.
-
-Elaine Zhang (4):
-  clk: rockchip: fix up the frac clk get rate error
-  clk: rockchip: add a clock-type for muxes based in the pmugrf
-  clk: rockchip: add pll up and down when change pll freq
-  clk: rockchip: support pll setting by auto
-
-Finley Xiao (1):
-  clk: rockchip: Add supprot to limit input rate for fractional divider
-
- drivers/clk/rockchip/clk-pll.c    | 236 ++++++++++++++++++++++++++++--
- drivers/clk/rockchip/clk-px30.c   |  29 ++--
- drivers/clk/rockchip/clk-rk3036.c |  13 +-
- drivers/clk/rockchip/clk-rk3128.c |  15 +-
- drivers/clk/rockchip/clk-rk3188.c |  24 +--
- drivers/clk/rockchip/clk-rk3228.c |  18 ++-
- drivers/clk/rockchip/clk-rk3288.c |  19 ++-
- drivers/clk/rockchip/clk-rk3308.c |  46 +++---
- drivers/clk/rockchip/clk-rk3328.c |  17 ++-
- drivers/clk/rockchip/clk-rk3368.c |  17 ++-
- drivers/clk/rockchip/clk-rk3399.c |  32 ++--
- drivers/clk/rockchip/clk-rv1108.c |  14 +-
- drivers/clk/rockchip/clk.c        |  39 ++++-
- drivers/clk/rockchip/clk.h        |  27 +++-
- include/linux/clk-provider.h      |   2 +
- 15 files changed, 422 insertions(+), 126 deletions(-)
-
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index 8f77c3f9fab7..4f238f2851ac 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -407,6 +407,8 @@ struct rockchip_clk_provider * __init rockchip_clk_init(struct device_node *np,
+ 
+ 	ctx->grf = syscon_regmap_lookup_by_phandle(ctx->cru_node,
+ 						   "rockchip,grf");
++	ctx->pmugrf = syscon_regmap_lookup_by_phandle(ctx->cru_node,
++						   "rockchip,pmugrf");
+ 
+ 	return ctx;
+ 
+@@ -482,6 +484,13 @@ void __init rockchip_clk_register_branches(
+ 				list->mux_shift, list->mux_width,
+ 				list->mux_flags);
+ 			break;
++		case branch_muxpmugrf:
++			clk = rockchip_clk_register_muxgrf(list->name,
++				list->parent_names, list->num_parents,
++				flags, ctx->pmugrf, list->muxdiv_offset,
++				list->mux_shift, list->mux_width,
++				list->mux_flags);
++			break;
+ 		case branch_divider:
+ 			if (list->div_table)
+ 				clk = clk_register_divider_table(NULL,
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index 0d401ce09a54..ae059b7744f9 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -238,6 +238,7 @@ struct rockchip_clk_provider {
+ 	struct clk_onecell_data clk_data;
+ 	struct device_node *cru_node;
+ 	struct regmap *grf;
++	struct regmap *pmugrf;
+ 	spinlock_t lock;
+ };
+ 
+@@ -390,6 +391,7 @@ enum rockchip_clk_branch_type {
+ 	branch_composite,
+ 	branch_mux,
+ 	branch_muxgrf,
++	branch_muxpmugrf,
+ 	branch_divider,
+ 	branch_fraction_divider,
+ 	branch_gate,
+@@ -662,6 +664,21 @@ struct rockchip_clk_branch {
+ 		.gate_offset	= -1,				\
+ 	}
+ 
++#define MUXPMUGRF(_id, cname, pnames, f, o, s, w, mf)		\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_muxpmugrf,		\
++		.name		= cname,			\
++		.parent_names	= pnames,			\
++		.num_parents	= ARRAY_SIZE(pnames),		\
++		.flags		= f,				\
++		.muxdiv_offset	= o,				\
++		.mux_shift	= s,				\
++		.mux_width	= w,				\
++		.mux_flags	= mf,				\
++		.gate_offset	= -1,				\
++	}
++
+ #define DIV(_id, cname, pname, f, o, s, w, df)			\
+ 	{							\
+ 		.id		= _id,				\
 -- 
 2.17.1
 
