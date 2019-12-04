@@ -2,106 +2,176 @@ Return-Path: <SRS0=t43R=Z2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0D9AC43603
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 12:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE253C2BC73
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 12:47:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B48C20803
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 12:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B374620833
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 12:47:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575463665;
+	bh=YhBNn2pIe/XfuGHUHPcwfE5cePX6v0rmcKrFXfekw34=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=FU9Nn46hjx79VdUcxD9Z2O4H8/S+A6/17jT/ohVnD5T4JvqEIPIt3ILn8YCjmC//S
+	 4DRQ7pbw/VD+OiWwWIfe/LoRMPXvxuK2Zx8UI/mcwzr62XMugDV+wV5qnBk5AIjJW6
+	 j7NkDvkz4x1fSJb3hTaWCrajcjQWCX7wABgHJ3xs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727508AbfLDMOW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Dec 2019 07:14:22 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:42398 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727445AbfLDMOW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 07:14:22 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j22so6611565oij.9;
-        Wed, 04 Dec 2019 04:14:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gyltMSwaGXAux8Z3E1Rs/8+GQsTqCMlqwz9wEprYuxI=;
-        b=qLWp7sO2ECMTDQgb+3QyLoEYzIQ2A9L4W+BG7LhccZqbYaUq8B7EHV9iPcm+Tt+cl1
-         HGC7M9qcFwgW67HyP6dLkgaML7LAiA/YlCq3LV9YMpsRIJ9X6FIAslWWm09oQuNek1k0
-         YfB3vfB42XYC39ua8t+OsoNEsrqZbYCMra9pw2ZpQ0br/wUqL4UnfDzw28AXqovQYtuh
-         y40EUjh0V6pWQnXAdlYIiNVeFJvbRbeYVNbJRtrm1qwpLUIIjqTaMnXVKGeN2MxO4gAt
-         3spc5o1NBP+mLZiUipyfWdqawC55gypORoL5iSvxGfuVwVfM/RQts+D8/FMcZCoVoDMy
-         FUlw==
-X-Gm-Message-State: APjAAAXpEQnGDfdi5t64lRwAbmdrfCcruulzaBN/5DrngQWdKUDAetRi
-        XdVb+NUPstQD1sXy32laY45l3G8e5BqdwnFNdNA=
-X-Google-Smtp-Source: APXvYqw8Fs1+GeWP1j9ni3BiJ585N8x8j9pInrEEwGCzSDYGx3Bebh2yBXnZb5CHErF17b0reE6WRUv9j4VhTCJ0ntE=
-X-Received: by 2002:a05:6808:8ec:: with SMTP id d12mr530181oic.131.1575461661003;
- Wed, 04 Dec 2019 04:14:21 -0800 (PST)
+        id S1727552AbfLDMrk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 07:47:40 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:49656 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726215AbfLDMrk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 07:47:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=wvspINbC0rd5pzrtB6IdbMhDRhq0Gg7sBdygu5GhV/g=; b=xXhDP38bEFkCILphtkcyG2GaF
+        jidMnvmM6z0sQcofRm5Aly/bnCMFa4fyoRZ3t1zviZvzBW8vHhdofmGYIIvsI0HWA7sUyoO7fpHO1
+        dmDDWh8zmi2YVI2jdiU9VV335soA8GuPDJYV1Epa55tPSvam/KNjhcpvcvPkwY3bhqWtY=;
+Received: from fw-tnat-cam3.arm.com ([217.140.106.51] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1icU3p-0000LL-Hi; Wed, 04 Dec 2019 12:47:17 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 10DC4D003B4; Wed,  4 Dec 2019 12:47:17 +0000 (GMT)
+Date:   Wed, 4 Dec 2019 12:47:17 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>, "pavel@ucw.cz" <pavel@ucw.cz>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>
+Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Message-ID: <20191204124717.GR1998@sirena.org.uk>
+References: <20191118162502.GJ9761@sirena.org.uk>
+ <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
+ <20191119181325.GD3634@sirena.org.uk>
+ <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
+ <20191119193636.GH3634@sirena.org.uk>
+ <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
+ <20191129120925.GA5747@sirena.org.uk>
+ <297fa021fb243072dbbb7bca455e57c13e8c6843.camel@fi.rohmeurope.com>
+ <20191202131140.GD1998@sirena.org.uk>
+ <72a1f4c5768b8c08c2669ea01e60d1b614095a43.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-5-chris.brandt@renesas.com> <20191203141944.GI1998@sirena.org.uk>
- <CAMuHMdXk5DDebriHxmtz0NWF_zDhBK=fBZugdUfmEAyU0O4zMQ@mail.gmail.com> <20191204112528.GQ1998@sirena.org.uk>
-In-Reply-To: <20191204112528.GQ1998@sirena.org.uk>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Wed, 4 Dec 2019 13:14:09 +0100
-Message-ID: <CAMuHMdXY4Po4p0uL_6VU7ia4R7i7F5N+GA4MUaQfhGFvpgLT7g@mail.gmail.com>
-Subject: Re: [PATCH 4/6] spi: Add SPIBSC driver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Chris Brandt <chris.brandt@renesas.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="r7tUYVWcdYzDJoZW"
+Content-Disposition: inline
+In-Reply-To: <72a1f4c5768b8c08c2669ea01e60d1b614095a43.camel@fi.rohmeurope.com>
+X-Cookie: Cleanliness is next to impossible.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Mark,
 
-On Wed, Dec 4, 2019 at 12:25 PM Mark Brown <broonie@kernel.org> wrote:
-> On Tue, Dec 03, 2019 at 07:29:45PM +0100, Geert Uytterhoeven wrote:
-> > On Tue, Dec 3, 2019 at 3:19 PM Mark Brown <broonie@kernel.org> wrote:
-> > > > +     pm_runtime_put(&pdev->dev);
-> > > > +     pm_runtime_disable(&pdev->dev);
->
-> > > There seems to be no purpose in the runtime PM code in this
-> > > driver, there's no PM operations of any kind and the driver holds
-> > > a runtime PM reference for the entire lifetime of the device.
->
-> > It matters for the clock domain (assumed the module clock is not always
-> > marked as a critical clock).
->
-> That seems like a problem with what the clock domains are doing
-> surely?  The default is supposed to be that if runtime PM isn't
-> enabled we get the behaviour the driver is manually implementing
+--r7tUYVWcdYzDJoZW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Unfortunately not: if the driver doesn't implement Runtime PM, the
-default is to not do anything.  Later, unused clocks will be disabled,
-and the device will stop functioning.
+On Mon, Dec 02, 2019 at 02:02:41PM +0000, Vaittinen, Matti wrote:
+> On Mon, 2019-12-02 at 13:11 +0000, Mark Brown wrote:
 
-> here.  Besides, if this is actually impacting power management
-> I'd expect us to be letting the IP idle rather than holding it
-> powered up all the time.
+> > No, look at the bindings - we support a bunch of different
+> > suspend states matching the different suspend states that the
+> > kernel as a whole supports.  We don't assume that the device will
+> > know this but you can always use the current suspend we're going
+> > for to decide where to update.
 
-That would be better, definitely.  However, that's just an optimization over
-holding it powered up all the time.
+> Hm. So if I understand this correctly, you mean user should set the
+> suspend 'target' - and then call the set_suspend_voltage for this
+> state. To set voltages for all states one should do loop
 
-Gr{oetje,eeting}s,
+The general idea is that we set the suspend state during the
+process of suspending rather than in advance - that way when the
+hardware doesn't understand different types of suspsend things
+work fine.
 
-                        Geert
+> get_current_mode()
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> for_all_modes() {
+> 	set_mode()
+> 	set_voltage()
+> }
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> restore_original_mode()
+
+> am I on a right track? I'll try to see if I can find some examples of
+> this - thanks.
+
+I don't understand the save and restore of mode?  If setting the
+suspend configuration affects the runtime state then the hardware
+doesn't support suspend configuration.
+
+> > The framework doesn't care how a device is controlled, that's up
+> > to the device.  Like I said I recommend figuring out what
+> > voltages are useful to have quick access to at runtime, for
+> > example it's likely that it's good to have quick access to the
+> > highest voltage that's been set (and/or the top of the
+> > constraints).
+
+> Problem is that the run-level controlled regulator can't be
+> individually controlled (unless it is only regulator in the group). I
+
+Regulators that have to be controlled en masse aren't really
+supported by the API, it only understands regulators that are
+individually controllable.
+
+> But just to confirm, I meant for example assigning bucks 1,2,6 and 7
+> into a group which 'state' is changed via GPIO line. Say 'states' are
+> RUN0, RUN1. For each of these bucks we can define a voltage and
+> enable/disable status which is to be used on RUN0, and another
+> voltage/state tuple for RUN1.
+
+So you could also just create a group consisting of a single
+regulator?  That would be fine for the API.
+
+--r7tUYVWcdYzDJoZW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3nqtQACgkQJNaLcl1U
+h9DtkQf/ZOvqt/xvJrkjQ2zSreCV2pRVglwsGchtoOcrs1gS/5iuRXJb8Fic/clC
+BMt7wBK5Zqeu6q2A3oqQ85hPjYMipgmMfwDQzNCGMTHN+EpVvmYX0R8PXWM5yEiP
+SJJ3ZVZHk2TqOIhiGwFbBpYnm3u/J5AbHeHXPXKVMuyMap2OVfXFx2DNexM1vC4X
+Kj70z8B9MA7Hv+VBbmOK/+nsQiRVkr8FyZjoefUdmIF1vPHqMWXA9S8+jziZoyZS
+6QZ5EJFXS99omTKYYeOL4R6RlrMW/Ln5HWRWWuXVNV8uvt3xqQNln9QMSNYzHGAn
+3fl1ynbYU1UiEsY07AKvLnboLE0iDA==
+=9lBU
+-----END PGP SIGNATURE-----
+
+--r7tUYVWcdYzDJoZW--
