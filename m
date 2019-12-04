@@ -2,115 +2,306 @@ Return-Path: <SRS0=t43R=Z2=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4266CC3F68F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 16:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E05ACC2D0B1
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 19:53:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A5702086D
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 16:50:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A9C482077B
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 19:53:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575478218;
-	bh=n2TpjN/OptBYY/G/BcEkXA4jaPFSNlIuaHlzaeouaPg=;
+	s=default; t=1575489208;
+	bh=61d9e5m5Lx24/1swdfOjeWYUJ2v/Ml2x5o9y2l1lSrU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uuAnTO/GGMvqE/ouuhChIFVhLtyggrIFU13R6KQZhb6E4iYHKOcR3EehGGXHvACoi
-	 WsxNrjnYS3Uuq/88pv2q+hv7wY4Oj0x/zIjlouMu19j50BLQktGyks0+TFu6cNNovD
-	 kRJ25j69hrsekZRksnKhjp9H/uf4dpJ/PAqESqWA=
+	b=VQmN+HIMHUNVwT1vgMT2Jg0XqcfGRWAdcnxBZwLqJfzmBgYJ1mix+wCgytetbjkTF
+	 m6CDPHxwdgkBgTLH0w78pujGlV7UvQLJ5hF//wIfxQcN8e05GagZiaMnmtVCBbR4+l
+	 JlaP3zElRwNmzuUsBsNTr1Rp5D2eBLQ2N5x/pa5g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728301AbfLDQuR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 4 Dec 2019 11:50:17 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33770 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726934AbfLDQuR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 11:50:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=n2TpjN/OptBYY/G/BcEkXA4jaPFSNlIuaHlzaeouaPg=; b=WMWH7NGdkGTZzxQg9+gxsMtVB
-        y/0M2EFDget8RQRmOCU5Yf8U1nJ0hHmrDbtxavFx1rl7q8RM6/uMeJwJTWAtU1LFjznXK8yK/RG/3
-        tKbFKNgjtTIzT0p9RICpiVnv0yEfVjJ+A1KWmB8Fa5iGVI6IN1xKIVlOY7pFqZHqXBcVA=;
-Received: from fw-tnat-cam6.arm.com ([217.140.106.54] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1icXqq-0001IV-CM; Wed, 04 Dec 2019 16:50:08 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 02A22D00466; Wed,  4 Dec 2019 16:49:57 +0000 (GMT)
-Date:   Wed, 4 Dec 2019 16:49:56 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Chris Brandt <Chris.Brandt@renesas.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: Re: [PATCH 4/6] spi: Add SPIBSC driver
-Message-ID: <20191204164956.GW1998@sirena.org.uk>
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-5-chris.brandt@renesas.com>
- <20191203141944.GI1998@sirena.org.uk>
- <TY1PR01MB1562C00B477C60A6C264F2A28A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+        id S1727944AbfLDTxX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 14:53:23 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:36039 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727887AbfLDTxX (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 14:53:23 -0500
+Received: by mail-ot1-f67.google.com with SMTP id i4so401329otr.3;
+        Wed, 04 Dec 2019 11:53:22 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VErAFhUGRb0cNxhhu1eTo9w0H41l+9thkMVm9GG9tXc=;
+        b=iSdHBsixDHKQiw/XBpcae8rDNYrNDn8B48jhtMP4J+shjdvH+3wwSFJ/t2B7Q0/9pF
+         26kKRXxObGqdyWan8JRF3hlpF0kq71djeBZvJD8WdOCeiIJd1GwT7k3HWfPGZ9DSolC/
+         hyB/S10DBxQRv1CWJ29cq1VC2OwMJuYLQTOFP9/hRkpvkszRTp+XfwbDbogzrl6NZJRm
+         BPcOgoySmQONzbUm/0peUclU2h5eu/Ta8k2Bosn0tlFG0+Y9OVEgThWPvcTjQon/2UK6
+         bUtVxpMOW2vw05vwpzIDdqgoUi/KYj7WhXYj81UtiwKLdz3h61UMmhhaUYdvHOp98qFe
+         Q2wg==
+X-Gm-Message-State: APjAAAXm5cbFOjOZesN8VGXzsYuM4VAAHIhUzK7pxFZ5JihD9us7flKV
+        HSXRxDUt8dHPgKOx95gA5Q==
+X-Google-Smtp-Source: APXvYqxcpDfq7UKMVa3zk4+HKd/+0nlN8Z8TpaOkq3Ac+qhC2WwGHINTz7n/nZbH9FKtcKaUylVVCg==
+X-Received: by 2002:a9d:73c8:: with SMTP id m8mr4065348otk.34.1575489201937;
+        Wed, 04 Dec 2019 11:53:21 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id r6sm2514506otd.66.2019.12.04.11.53.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 04 Dec 2019 11:53:21 -0800 (PST)
+Date:   Wed, 4 Dec 2019 13:53:20 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Rajan Vaja <rajan.vaja@xilinx.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        michal.simek@xilinx.com, jolly.shah@xilinx.com,
+        m.tretter@pengutronix.de, gustavo@embeddedor.com,
+        dan.carpenter@oracle.com, tejas.patel@xilinx.com,
+        nava.manne@xilinx.com, mdf@kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 1/6] dt-bindings: clock: Add bindings for versal clock
+ driver
+Message-ID: <20191204195320.GA7173@bogus>
+References: <1573564580-9006-1-git-send-email-rajan.vaja@xilinx.com>
+ <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com>
+ <1574415814-19797-2-git-send-email-rajan.vaja@xilinx.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="Y974o0GblB/Ae/yP"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <TY1PR01MB1562C00B477C60A6C264F2A28A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-X-Cookie: Cleanliness is next to impossible.
+In-Reply-To: <1574415814-19797-2-git-send-email-rajan.vaja@xilinx.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Fri, Nov 22, 2019 at 01:43:29AM -0800, Rajan Vaja wrote:
+> Add documentation to describe Xilinx Versal clock driver
+> bindings.
+> 
+> Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
+> ---
+> Changes in v2:
+>  - Correct description.
+>  - Add "select: false" field to avoid failing when firmware schema is
+>    available.
+>  - Remove "_clk" from clock names.
+>  - Remove minItems and maxItems fields.
+> 
+> NOTE: firmware dt-bindings in yaml format will be added in a separate
+>       change and $ref of this yaml to firmware will be added.
+> ---
+>  .../devicetree/bindings/clock/xlnx,versal-clk.yaml |  64 +++++++++++
+>  include/dt-bindings/clock/xlnx-versal-clk.h        | 123 +++++++++++++++++++++
+>  2 files changed, 187 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+>  create mode 100644 include/dt-bindings/clock/xlnx-versal-clk.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> new file mode 100644
+> index 0000000..a1f47cf
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,versal-clk.yaml
+> @@ -0,0 +1,64 @@
+> +# SPDX-License-Identifier: GPL-2.0
 
---Y974o0GblB/Ae/yP
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+For new bindings: (GPL-2.0-only OR BSD-2-Clause)
 
-On Wed, Dec 04, 2019 at 03:51:48PM +0000, Chris Brandt wrote:
-> On Tue, Dec 3, 2019, Mark Brown wrote:
+With that,
 
-> > Looking at a bunch of the stuff here it looks like you could benefit fr=
-om
-> > regmap, it's got lots of debug infrastructure.
+Reviewed-by: Rob Herring <robh@kernel.org>
 
-> Thank you for the suggestion, but I looked into using regmap, and there=
-=20
-> are a lot of drivers that use it, but I don't think it's going to work=20
-> well for me.
-> Regmap assumes that all the registers will be the same size. I have to=20
-> have functions that write with different widths (8/16/32) for a reason.
-
-You *can* have more than one regmap for a device, or if it really
-only is one or two registers open code accesses to just those
-registers.
-
---Y974o0GblB/Ae/yP
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3n47IACgkQJNaLcl1U
-h9Be3wf/WcxNfLSB6o1qW6xEZEOwlzwVHkE9O/D4Er+nOK513sA9f2VcM1ApH5Zu
-ZQR0no8iK2XQgLRnuaKp7MjoI4tuWCR8LBYAC4eqsrgFXmaklbzHuzAnA/sVJgPA
-bVk/FbV0XZzqLgKH8V7D1sdpSbWGgU4rb61/8vCAfEz1P4zF6HGcoDNDD14RAeEa
-9ZIWAHioZc9JhnijqqJZiWjSUQH5aUShFqvtuCfpl3IYb0hQ97uZWkw34SK+TV4G
-5cJsV52wGp22whXzizQpxUweaTQPRlMyMK6uVo9IlWRjTSdoiVF+T2v1taFo81tC
-G6nx9Uxh9iA2HQmB2Rjd1ypWgKPV3g==
-=rw0F
------END PGP SIGNATURE-----
-
---Y974o0GblB/Ae/yP--
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/xlnx,versal-clk.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Xilinx Versal clock controller
+> +
+> +maintainers:
+> +  - Michal Simek <michal.simek@xilinx.com>
+> +  - Jolly Shah <jolly.shah@xilinx.com>
+> +  - Rajan Vaja <rajan.vaja@xilinx.com>
+> +
+> +description: |
+> +  The clock controller is a hardware block of Xilinx versal clock tree. It
+> +  reads required input clock frequencies from the devicetree and acts as clock
+> +  provider for all clock consumers of PS clocks.
+> +
+> +select: false
+> +
+> +properties:
+> +  compatible:
+> +    const: xlnx,versal-clk
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  clocks:
+> +    description: List of clock specifiers which are external input
+> +      clocks to the given clock controller.
+> +    items:
+> +      - description: reference clock
+> +      - description: alternate reference clock
+> +      - description: alternate reference clock for programmable logic
+> +
+> +  clock-names:
+> +    items:
+> +      - const: ref
+> +      - const: alt_ref
+> +      - const: pl_alt_ref
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    firmware {
+> +      zynqmp_firmware: zynqmp-firmware {
+> +        compatible = "xlnx,zynqmp-firmware";
+> +        method = "smc";
+> +        versal_clk: clock-controller {
+> +          #clock-cells = <1>;
+> +          compatible = "xlnx,versal-clk";
+> +          clocks = <&ref>, <&alt_ref>, <&pl_alt_ref>;
+> +          clock-names = "ref", "alt_ref", "pl_alt_ref";
+> +        };
+> +      };
+> +    };
+> +...
+> diff --git a/include/dt-bindings/clock/xlnx-versal-clk.h b/include/dt-bindings/clock/xlnx-versal-clk.h
+> new file mode 100644
+> index 0000000..264d634
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/xlnx-versal-clk.h
+> @@ -0,0 +1,123 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + *  Copyright (C) 2019 Xilinx Inc.
+> + *
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLK_VERSAL_H
+> +#define _DT_BINDINGS_CLK_VERSAL_H
+> +
+> +#define PMC_PLL					1
+> +#define APU_PLL					2
+> +#define RPU_PLL					3
+> +#define CPM_PLL					4
+> +#define NOC_PLL					5
+> +#define PLL_MAX					6
+> +#define PMC_PRESRC				7
+> +#define PMC_POSTCLK				8
+> +#define PMC_PLL_OUT				9
+> +#define PPLL					10
+> +#define NOC_PRESRC				11
+> +#define NOC_POSTCLK				12
+> +#define NOC_PLL_OUT				13
+> +#define NPLL					14
+> +#define APU_PRESRC				15
+> +#define APU_POSTCLK				16
+> +#define APU_PLL_OUT				17
+> +#define APLL					18
+> +#define RPU_PRESRC				19
+> +#define RPU_POSTCLK				20
+> +#define RPU_PLL_OUT				21
+> +#define RPLL					22
+> +#define CPM_PRESRC				23
+> +#define CPM_POSTCLK				24
+> +#define CPM_PLL_OUT				25
+> +#define CPLL					26
+> +#define PPLL_TO_XPD				27
+> +#define NPLL_TO_XPD				28
+> +#define APLL_TO_XPD				29
+> +#define RPLL_TO_XPD				30
+> +#define EFUSE_REF				31
+> +#define SYSMON_REF				32
+> +#define IRO_SUSPEND_REF				33
+> +#define USB_SUSPEND				34
+> +#define SWITCH_TIMEOUT				35
+> +#define RCLK_PMC				36
+> +#define RCLK_LPD				37
+> +#define WDT					38
+> +#define TTC0					39
+> +#define TTC1					40
+> +#define TTC2					41
+> +#define TTC3					42
+> +#define GEM_TSU					43
+> +#define GEM_TSU_LB				44
+> +#define MUXED_IRO_DIV2				45
+> +#define MUXED_IRO_DIV4				46
+> +#define PSM_REF					47
+> +#define GEM0_RX					48
+> +#define GEM0_TX					49
+> +#define GEM1_RX					50
+> +#define GEM1_TX					51
+> +#define CPM_CORE_REF				52
+> +#define CPM_LSBUS_REF				53
+> +#define CPM_DBG_REF				54
+> +#define CPM_AUX0_REF				55
+> +#define CPM_AUX1_REF				56
+> +#define QSPI_REF				57
+> +#define OSPI_REF				58
+> +#define SDIO0_REF				59
+> +#define SDIO1_REF				60
+> +#define PMC_LSBUS_REF				61
+> +#define I2C_REF					62
+> +#define TEST_PATTERN_REF			63
+> +#define DFT_OSC_REF				64
+> +#define PMC_PL0_REF				65
+> +#define PMC_PL1_REF				66
+> +#define PMC_PL2_REF				67
+> +#define PMC_PL3_REF				68
+> +#define CFU_REF					69
+> +#define SPARE_REF				70
+> +#define NPI_REF					71
+> +#define HSM0_REF				72
+> +#define HSM1_REF				73
+> +#define SD_DLL_REF				74
+> +#define FPD_TOP_SWITCH				75
+> +#define FPD_LSBUS				76
+> +#define ACPU					77
+> +#define DBG_TRACE				78
+> +#define DBG_FPD					79
+> +#define LPD_TOP_SWITCH				80
+> +#define ADMA					81
+> +#define LPD_LSBUS				82
+> +#define CPU_R5					83
+> +#define CPU_R5_CORE				84
+> +#define CPU_R5_OCM				85
+> +#define CPU_R5_OCM2				86
+> +#define IOU_SWITCH				87
+> +#define GEM0_REF				88
+> +#define GEM1_REF				89
+> +#define GEM_TSU_REF				90
+> +#define USB0_BUS_REF				91
+> +#define UART0_REF				92
+> +#define UART1_REF				93
+> +#define SPI0_REF				94
+> +#define SPI1_REF				95
+> +#define CAN0_REF				96
+> +#define CAN1_REF				97
+> +#define I2C0_REF				98
+> +#define I2C1_REF				99
+> +#define DBG_LPD					100
+> +#define TIMESTAMP_REF				101
+> +#define DBG_TSTMP				102
+> +#define CPM_TOPSW_REF				103
+> +#define USB3_DUAL_REF				104
+> +#define OUTCLK_MAX				105
+> +#define REF_CLK					106
+> +#define PL_ALT_REF_CLK				107
+> +#define MUXED_IRO				108
+> +#define PL_EXT					109
+> +#define PL_LB					110
+> +#define MIO_50_OR_51				111
+> +#define MIO_24_OR_25				112
+> +
+> +#endif
+> -- 
+> 2.7.4
+> 
