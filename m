@@ -3,126 +3,182 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 797B9C432C3
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 03:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5BAFC43603
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 07:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC532080F
-	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 03:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52CC124652
+	for <linux-clk@archiver.kernel.org>; Wed,  4 Dec 2019 06:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="SNv6W3x8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jnGMJDQl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726834AbfLDDJw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 3 Dec 2019 22:09:52 -0500
-Received: from mail-eopbgr1400111.outbound.protection.outlook.com ([40.107.140.111]:53312
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726804AbfLDDJw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 3 Dec 2019 22:09:52 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=a4lFI+Gcb8+5Sp58DJ7he2I3abKriG2iN7/bg6VtYFtbqvPWUDLTfunvlNBZOzpXb+VUjqWJVArp0qpAa8qKm46LRatx/xul6GzWtaU4YieDWCzAO++1oixPo5PWUAaAfIKVGAS7LNynRVB7P+rycVDz8PN8j+Er+ELYlmFKm+G8j4jXBSlllKRtJ75hNqjykZMdFi35To8/xtPdU9FvRls4Eo4omANglxAXPpcn2ZMYHhzcs5i68c/JGh3Vf9K68RwLsSg3REXztsjw8G8wDSsprs3cVwe3T5wL5GPTae3oLBuh9sZkWtWnk0MDfaxUeFU+gnvtzIKUn4+WiM2fGw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qMS2jmU5TDoOWCSuh9uh8kLjmLh1N13nBafFywpdjNE=;
- b=VEQ3GsyfIS4v835xIDdeu121OJbDQAKZLzSKWEmYKLFbCmiP8RZwB1fWca5KK1CGBs2BHyOB49i7k0oTsIJ5Dwa44wLAldK6XgW5bRKk9UIhLaUBwMj45P2RkBFuEPh5D7OOZIgFbiMzbIopAWVABHR3Pv9aIjPZXM3CBNSY70YLBJRAJWfijI878L4iXteXfw6gah+L25If9Ay2lpFtjn78C81FFs/vCVWBKnF4HPCsk+KBQQpFQ/XytwYmF8o8Zn7eI/7eNAvcMwDRqo1aSiO3judXbFDKr8mWNEcIHkAcaCMm1bAKZIEzWirQ1hpnTWZU6ORpw7wG14k5arDDdA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
+        id S1725791AbfLDGJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 4 Dec 2019 01:09:54 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38635 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725932AbfLDGJx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 4 Dec 2019 01:09:53 -0500
+Received: by mail-io1-f67.google.com with SMTP id u7so4185089iop.5
+        for <linux-clk@vger.kernel.org>; Tue, 03 Dec 2019 22:09:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qMS2jmU5TDoOWCSuh9uh8kLjmLh1N13nBafFywpdjNE=;
- b=SNv6W3x8Y0XeWLXCreCE/Qu7Y5F9MvyXFN6LrseGq/Ku0qp/PcRI6sZNUzPRqzMFkYNScU4TZYOoLM67OfJkpKPrAacMYLdyrpNBB8CNk3lJ8CQN3c1eikrzewrdWabUSDAOVVRGqqrwGvPdT0et5pEeXU5zpjzlqKr9KZzt+6M=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1SPR01MB1.jpnprd01.prod.outlook.com (52.133.164.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.12; Wed, 4 Dec 2019 03:09:49 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Wed, 4 Dec 2019
- 03:09:49 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-CC:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Subject: RE: [PATCH 3/6] clk: renesas: r7s9210: Add SPIBSC clock
-Thread-Topic: [PATCH 3/6] clk: renesas: r7s9210: Add SPIBSC clock
-Thread-Index: AQHVqYw+LjFTYBzcx0ONO00s2jlMoaeowc4AgAACl6CAABw1AIAAaP+A
-Date:   Wed, 4 Dec 2019 03:09:48 +0000
-Message-ID: <TY1PR01MB1562AB46693003DB54D57C0C8A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191203034519.5640-1-chris.brandt@renesas.com>
- <20191203034519.5640-4-chris.brandt@renesas.com>
- <CAMuHMdUxCdJXyY15f6sr+QFNpg9FLsa5pL3171bm_meJcBNR2g@mail.gmail.com>
- <TY1PR01MB1562D198A463C18B1D810DF48A420@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <CAMuHMdXKn3GN5toqH=s4=KuEhEO_10Qi9EAyC_VT4-E4XOWdHA@mail.gmail.com>
-In-Reply-To: <CAMuHMdXKn3GN5toqH=s4=KuEhEO_10Qi9EAyC_VT4-E4XOWdHA@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctODY2MTg5ODgtMTY0My0xMWVhLWFhNTEtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDg2NjE4OTg5LTE2NDMtMTFlYS1hYTUxLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iMTAxMiIgdD0iMTMyMTk5MDI1ODcxOTM5NDQzIiBoPSIxZnZIQUJTWFpzV1UzSWxzTU1VZ3BvMHJHb3M9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 252fa417-33a9-4a03-db82-08d778676c4c
-x-ms-traffictypediagnostic: TY1SPR01MB1:
-x-microsoft-antispam-prvs: <TY1SPR01MB181F2E7DF0A1DD91D36A88A5D0@TY1SPR01MB1.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:9508;
-x-forefront-prvs: 0241D5F98C
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(39860400002)(136003)(366004)(396003)(376002)(199004)(189003)(99286004)(86362001)(11346002)(66946007)(256004)(14444005)(229853002)(76116006)(64756008)(66556008)(66446008)(54906003)(478600001)(7696005)(316002)(186003)(52536014)(446003)(66476007)(76176011)(6436002)(25786009)(6246003)(4744005)(81156014)(26005)(8936002)(102836004)(6116002)(3846002)(2906002)(8676002)(74316002)(7736002)(305945005)(81166006)(55016002)(9686003)(5660300002)(6916009)(14454004)(6506007)(71190400001)(33656002)(71200400001)(4326008)(7416002);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1SPR01MB1;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3QHK8dsjRoPpPOCEI+e4EtXCIUxuW+D6DHBi2/GDsN5WMUmePb+25OBn3wt77v/uvrHWV960eoIo5cPCrj+GdiG/0aPUTvXBagxd91A5aMNXz+mukKNAPnt5HgAGgVYrvUXVMpuWZsePc+1qLFo75T3aAz4nytLlIGkH+ENRiRahzhXxIFOVucqbncIR11ikJdmoQ9YcccYdbbQflTI52AzN0p8sU3sVzZU+0idH+CGCjzS3JO2b1k7jG3UAN831qIeNqicXjPpzt0Yga9yxUIUDaRvAUvRRladB1JDusDycip6+zezPHOkpdCwggJ0hRvZ5nXq3Qc0n6ai3xFch3sKxud6mSREfIU5cwJyi8deY9I2MfgJUPwThmuW17flba1fCkiWkbn5LEmxrgAEOkJzm0RRUQW0n/GKkbvNSyKsOoR4jQuLjeRxwpMfT+3CE
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=4jzAFltpu0J+4vz8XE00BFWN2RjNCAxYJnQznX1Z+Xg=;
+        b=jnGMJDQlP6VnaR/rzSND//h22uscV3GaIcecJmwnWbQyjfsWW2OzOZGBb6nidrLPsz
+         CgyQchVePdI42BNGVg4L/9tRHTdxEhHvVewB7auycAq332EiEhADTSAzZ5+stzHyooLC
+         mWLULsHZpkT79hQc8BKhGB10A6xIa/gGHEn/WYj3C8uG6rH7FCr/rYDzdFQQvKzdwuxd
+         DGkSKg+WPk6M8yaWK/xbtQHxfzDRokFKyPBOO5lFwjlBI7wCc3E7vE6CxT8Si0wnXaen
+         ARFz3euhhRKDEvWGeBBrpjlE0aIocRuFfdovElYHo9xvezzUtsQa2msR37o1w9K0Oeh7
+         WE1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=4jzAFltpu0J+4vz8XE00BFWN2RjNCAxYJnQznX1Z+Xg=;
+        b=HgzNcWAwRvECAe7of+o4DOe4531a1zbg6FhexyeqXqMFeq4B4Cmaeb38Y4rAhrGZnL
+         xB34+VKTl+YqODKMc3y/qBMoew1DWS0B480xhWfCIvRJ6CPQQqU+qCI8Ji+M3mUp9pBI
+         AntDIMjBw3B6r1IKZ/BH8hpcBM/r7PsqpBKSWzlHpB8P241VfWavROfwcuE7XWOp438E
+         OARSIn4DAL3hOqCu77xIsOdqSBx405a7gZrPlW5VYExz73bSEnerthHEFZQA4Db3CLy1
+         NFAQUa4sIl3COuabNqx7Qtkx/p2pzLMIEOSeRw+oZ+B7BqWZLbXXn5NXQwQi0m1GOjOu
+         k6NQ==
+X-Gm-Message-State: APjAAAVsbicedKt5upKkvPY8CtpotJoryilcGodBUQbp2e8z5a1ZHOft
+        XOhzk5lxYXkPxom0KsF+huVa5DafqQCTNslT3Hyjiw==
+X-Google-Smtp-Source: APXvYqz4Pw88LRkEnmh2SH8eskVaSjidohBjwfV2t8JDl1TAfhGM8m+OJSmsI+r/sywEWrSf3mMBwpV5V2BEoOsl1lM=
+X-Received: by 2002:a02:3309:: with SMTP id c9mr1560177jae.52.1575439792493;
+ Tue, 03 Dec 2019 22:09:52 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 252fa417-33a9-4a03-db82-08d778676c4c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Dec 2019 03:09:48.8946
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +Bhaxz8LeAzEixOglZe4czfG8QkynWrYkgevRyrMcJFd29lDisrv959vHgQdfcMcNjEKmqJOU8+9+dcdfJ3s+BNnJvmjqoMDgm9CCtq0t3A=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1SPR01MB1
+References: <20191202144524.5391-1-jun.nie@linaro.org> <20191202144524.5391-3-jun.nie@linaro.org>
+ <449968d8f085a1d1fcf4018bb8efe454fa35b3e3.camel@pengutronix.de>
+ <CABymUCNDZSH+mB9TyyUBwgRu-qTRbgUv89va2HuBs4VeJWn6uA@mail.gmail.com> <5ca8ff65b8489195ef5349cd2d074d412c9d0036.camel@pengutronix.de>
+In-Reply-To: <5ca8ff65b8489195ef5349cd2d074d412c9d0036.camel@pengutronix.de>
+From:   Jun Nie <jun.nie@linaro.org>
+Date:   Wed, 4 Dec 2019 14:09:41 +0800
+Message-ID: <CABymUCORzaeaD--wPLSD66x1Y3StSW624u7LxykM_j-1bzWsXg@mail.gmail.com>
+Subject: Re: [PATCH 2/3] reset: hisilicon: Extend reset operation type
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Michael Turquette <mturquette@baylibre.com>, sboyd@kernel.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Wei Xu <xuwei5@hisilicon.com>, opensource@jilayne.com,
+        swinslow@gmail.com, allison@lohutok.net, yuehaibing@huawei.com,
+        tglx@linutronix.de, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        xuejiancheng@hisilicon.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGkgR2VlcnQsDQoNCj4gPiBXZWxsLi4udGVjaG5pY2FsbHkuLi55b3UgZG9uJ3QgbmVlZCB0aGUg
-Im10ZC1yb20iIHBhcnRpdGlvbiB3aGVuIHVzaW5nDQo+ID4gdGhlIEFYRlMgZmlsZSBzeXN0ZW0u
-IEJ1dCwgd2UgY2FuIG1ha2UgYSBydWxlIHRoYXQgeW91IGhhdmUgdG8gdXNlIGl0DQo+IHJlZ2Fy
-ZGxlc3MuDQo+IA0KPiBKdXN0IHdvbmRlcmluZywgaG93IGRvZXMgQVhGUyBhY2Nlc3MgdGhlIEZM
-QVNIIHdpdGhvdXQgaXQgYmVpbmcgbWFwcGVkIHVzaW5nDQo+ICJtdGQtcm9tIj8NCg0KaW9yZWFt
-cCBpbiB0aGUgZHJpdmVyICh0aGUgcGh5c2ljYWwgYWRkcmVzcyBnZXRzIHBhc3NlZCBhcyBhbiBh
-cmd1bWVudCkuDQpCdXQsIGFzIHRoZSBEQVggcGVvcGxlIGZvdW5kIG91dCwgaW9yZW1hcCBpbiBh
-IGZpbGUgc3lzdGVtIGRyaXZlcnMgaXMgYSANCmJpZyBuby1ubyB3aGVuIHlvdSBhcmUgdHJ5aW5n
-IHRvIGdldCBhIG5ldyBmaWxlIHN5c3RlbSBpbnRvIG1haW5saW5lLg0KTmljb2xhcyAoUGl0cmUp
-IGFsc28gcmFuIGludG8gdGhpcyB3aGVuIGhlIHdhcyBhZGRpbmcgWElQIHN1cHBvcnQgdG8gDQpj
-cmFtZnMgbGFzdCB5ZWFyLi4uLmhlbmNlIG10ZC1yb20gaXMgbWFuZGF0b3J5IGZvciB0aGF0Lg0K
-DQpJIHdvdWxkIGxpa2UgdXMgdG8gYmUgYWJsZSB0byBmbGFnIGEgY2xvY2sgYXMgY3JpdGljYWwg
-d2l0aG91dCBhIA0Kc3BlY2lmaWMgdXNlIGNhc2UgdG8gbG9vayBmb3IgKGllLCBsb29raW5nIGZv
-ciBtdGQtcm9tKS4NCg0KRm9yIFJaL0ExLCB3ZSdyZSBhbGwgc2V0IGJlY2F1c2Ugd2UgY2FuIGRv
-IGl0IGluIHRoZSBib2FyZCdzIC5kc3QuIEVhc3khDQoNCkkganVzdCB3aXNoIGl0IHdhcyB0aGF0
-IGVhc3kgZm9yIFJaL0EyICh1c2luZyB0aGUgbmV3ZXIgcmVuZXNhcy1jcGctbXNzcg0KZHJpdmVy
-KS4NCg0KDQpDaHJpcw0K
+Philipp Zabel <p.zabel@pengutronix.de> =E4=BA=8E2019=E5=B9=B412=E6=9C=883=
+=E6=97=A5=E5=91=A8=E4=BA=8C =E4=B8=8B=E5=8D=8810:15=E5=86=99=E9=81=93=EF=BC=
+=9A
+>
+> Hi Jun,
+>
+> On Tue, 2019-12-03 at 11:53 +0800, Jun Nie wrote:
+> [...]
+> > @@ -48,13 +56,33 @@ static int hisi_reset_assert(struct reset_controlle=
+r_dev *rcdev,
+> > > >       u32 offset, reg;
+> > > >       u8 bit;
+> > > >
+> > > > +     flags =3D (id & HISI_RESET_FLAG_MASK) >> HISI_RESET_FLAG_SHIF=
+T;
+> > > > +     if (flags & HISI_ASSERT_NONE)
+> > > > +             return -ENOTSUPP; /* assert not supported for this re=
+set */
+> > >
+> > > As long as .assert and .deassert are the only implemented operations =
+for
+> > > this reset controller, this does not make any sense to me. Are there
+> > > resets that can only be deasserted?
+> >
+> > Some reset is asserted on power on automatically. So only .deassert is =
+needed.
+>
+> But if the bit was set/cleared again after being deasserted, would it
+> assert the reset line? Basically, I wonder if those bits are write-once
+> or not.
+
+I did not see vendor's code to clear it, seems the bit is only polled
+to be set on every
+device enablement.
+>
+> [...]
+> > > > +             if (flags & HISI_ASSERT_SET)
+> > > > +                     return readl_poll_timeout(rstc->membase + off=
+set,
+> > > > +                                               reg, reg & BIT(bit)=
+, 0, 5000);
+> > > > +             else
+> > > > +                     return readl_poll_timeout(rstc->membase + off=
+set,
+> > > > +                                               reg, !(reg & BIT(bi=
+t)),
+> > > > +                                               0, 5000);
+> > >
+> > > And this is effectively dead code. Do you really have hardware that
+> > > asserts or asserts a reset line in reaction to a read access?
+> > >
+> > > Should HISI_ASSERT_POLL and HISI_DEASSERT_POLL be mutually exclusive?
+>
+> This is missing an explanation.
+
+They are not mutually exclusive in logic. But I did not see the need
+to poll for a assert yet.
+>
+> [...]
+> > > > +     writel(reg, rstc->membase + offset);
+> > > >
+> > > >       spin_unlock_irqrestore(&rstc->lock, flags);
+> > > >
+> > > > @@ -69,13 +97,33 @@ static int hisi_reset_deassert(struct reset_con=
+troller_dev *rcdev,
+> > > >       u32 offset, reg;
+> > > >       u8 bit;
+> > > >
+> > > > +     flags =3D (id & HISI_RESET_FLAG_MASK) >> HISI_RESET_FLAG_SHIF=
+T;
+> > > > +     if (flags & HISI_DEASSERT_NONE)
+> > > > +             return -ENOTSUPP; /* deassert not supported for this =
+reset */
+> > > > +
+> > >
+> > > Are there resets that can only ever be asserted?
+> >
+> > I do not know yet. Only extend this driver with all combination in logi=
+c.
+>
+> If this is not used, let's leave it out.
+>
+> [...]
+> > > > @@ -103,7 +151,7 @@ struct hisi_reset_controller *hisi_reset_init(s=
+truct platform_device *pdev)
+> > > >       rstc->rcdev.owner =3D THIS_MODULE;
+> > > >       rstc->rcdev.ops =3D &hisi_reset_ops;
+> > > >       rstc->rcdev.of_node =3D pdev->dev.of_node;
+> > > > -     rstc->rcdev.of_reset_n_cells =3D 2;
+> > > > +     rstc->rcdev.of_reset_n_cells =3D 3;
+> > >
+> > > This breaks current device trees (before patch 3). You can make sure
+> > > device trees with #reset-cells =3D <2> keep working by parsing the #r=
+eset-
+> > > cells and setting this value to 2 for old DTs.
+> >
+> > All current dts file are modified accordingly. But existing dtb binary =
+support
+> > is an issue. Do you have any suggestion?
+>
+> Since this is for a new SoC, you should keep using of_reset_n_cells =3D 2
+> for the current SoCs and only set it to 3 for a new compatible, for
+> example using of_device_get_match_data().
+
+Yeah, this should be the solution. I will check the detail, thanks!
+
+Regards,
+Jun
