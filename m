@@ -7,134 +7,117 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8A5C43603
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 14:26:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6CBC43603
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 15:16:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D5FD21835
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 14:26:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E02622525
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 15:16:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575556012;
-	bh=fA/W+GlBHxPpmRALmc4GGsh/PVzpNgy54K013xZZ1iQ=;
+	s=default; t=1575559011;
+	bh=WIK65c6WJMswuB1/yzsaX0B0TqDvDhjVpIdXeK0c/Ro=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=A3GKpjfyNthoR3HcO8u35410xNnLTQSSzmkcwlUbV5urzLrykyzqR/+PaEqc+1xtF
-	 Qj2Ytv6o08k9Q3Mu+lMocgZdQkVvRmkTi1D1KX8QNNXMCZxGdz5lUIHjyS6NDLT67B
-	 NkW2nyfkkKrbCD4ZUXEHQVEZjib4xZcVjxWMrZkU=
+	b=gh3oqHsvTegwG6hFZJH3l/LggHToga4vAdMPVCZ1FvnnS8C3VZohtWAPdh+O8KDC4
+	 wOKRbiqCB3izWPgY4AlvEc9wcBDy9dDjOVmi1SoZUhS7AZkadq8zf/ErsKFAendAwk
+	 TLJxr3Yti7tE1If2HHDAPCRcGFtvAlQEFiMTweyc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729633AbfLEO0w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 09:26:52 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:40412 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729402AbfLEO0w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 09:26:52 -0500
-Received: by mail-oi1-f196.google.com with SMTP id 6so2872732oix.7;
-        Thu, 05 Dec 2019 06:26:51 -0800 (PST)
+        id S1729816AbfLEPQu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 10:16:50 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45889 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfLEPQu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 10:16:50 -0500
+Received: by mail-oi1-f194.google.com with SMTP id v10so3002513oiv.12;
+        Thu, 05 Dec 2019 07:16:49 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VgcMhS0MdRQ8HUeMUuCAybmGz2xDw/Z2U63rVP/mjCQ=;
-        b=MMw7etlmAshHJRhuii0E/xbvMVkjaV9hFeosld/A8ABpc0DGzbh/jYlJy++jjcHxeh
-         3N/zpJbcVuT/qywWt5CaFBG/IqprwWMPTQW9cy/lbuzzDXs4S/EkPPb7F15IBbZXOP/n
-         tdWZTX7Huhxgf7uKZ49BjmGIukx3t6Uo0fdq5NIbIt41V08ZtIfqabCpOTdKlwu34fpF
-         oDgz2yPL03Yszz2KmrvfyR5DCTjZkzasHCKtzoKHfZckuN/cT8hYTP597j2UmgOghFz7
-         +YpBoiD4mIL64W5a2bgSAmxl275MGDDcKiB9FLEhE2iA9Gfybxjyjw66U+cvROJizyAJ
-         MG9A==
-X-Gm-Message-State: APjAAAUflBLNRVNHesbbfyaT6NQzovy632WpRBPKPJoqQ8cEX1nGLHci
-        fERlgnwDbj/TSTCjXiUamKoquJo=
-X-Google-Smtp-Source: APXvYqxSoqus5d/8hi2Eh1B0hQRpz/laIuyUQk/92iXppMEV2M1B8bHnUSOymfzoB4Z1Y+EgwWSgnA==
-X-Received: by 2002:aca:fdd7:: with SMTP id b206mr7068593oii.35.1575556010979;
-        Thu, 05 Dec 2019 06:26:50 -0800 (PST)
+        bh=X30L2/SCmmy4K42AOTapqg9tKMhPdm3eZC6cSR8du98=;
+        b=XQz2YfLztJW5y4gcuRfrtmsitouZOdzhCplZMmeaCleNdJjmWb3bddIdCAl+8u1Xl7
+         77ZWFoPvtz2oJfChCfB086yeH9SZxxoSroI5S5rYUlLxLjhra6rx5Q1cGykOkRyMZ1LK
+         PsuV9Jv8LVvw+5ODQRAZ3/z/TZYUDghMFn5jv3sUnZ5Af/2RqNaRu0FjIEsZk+OZnq/F
+         K5IbRqz4oyfPPp2cqkiChVfc2WCFnfc96q8dxq1UGEGlB0s2hHXf8iiackjQywyXkZd/
+         VLs3rupKb8+ZtbA5ddGa2IkYhvm+hZEP7311+lqaileHg2MmmaC1ScpoTOOKZnb+atOv
+         hzCA==
+X-Gm-Message-State: APjAAAWTLRXZsZ8LVWae+3EAMqyhg088stj1UH/VdD1QmYA2vCojIXzS
+        jtUhbK9Vg0DqhMGKwulLvQ==
+X-Google-Smtp-Source: APXvYqzHqt/rY6XQcuU7ueo8b9ybugfDYukAes39oBqOVVyEu3v063qYQtF2pekF0yMjPZb9r5Dd2A==
+X-Received: by 2002:aca:f083:: with SMTP id o125mr7281931oih.122.1575559009391;
+        Thu, 05 Dec 2019 07:16:49 -0800 (PST)
 Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id t203sm1446494oig.39.2019.12.05.06.26.49
+        by smtp.gmail.com with ESMTPSA id e17sm3469100otq.58.2019.12.05.07.16.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 06:26:50 -0800 (PST)
-Date:   Thu, 5 Dec 2019 08:26:49 -0600
+        Thu, 05 Dec 2019 07:16:48 -0800 (PST)
+Date:   Thu, 5 Dec 2019 09:16:48 -0600
 From:   Rob Herring <robh@kernel.org>
-To:     Wen He <wen.he_1@nxp.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
+To:     Michael Walle <michael@walle.cc>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Walle <michael@walle.cc>, Li Yang <leoyang.li@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [v11 1/2] dt/bindings: clk: Add YAML schemas for LS1028A Display
- Clock bindings
-Message-ID: <20191205142649.GA22738@bogus>
-References: <20191205072653.34701-1-wen.he_1@nxp.com>
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: document the fsl-sai driver
+Message-ID: <20191205151648.GA5680@bogus>
+References: <20191122235622.8818-1-michael@walle.cc>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191205072653.34701-1-wen.he_1@nxp.com>
+In-Reply-To: <20191122235622.8818-1-michael@walle.cc>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 03:26:52PM +0800, Wen He wrote:
-> LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
-> output interface. Add a YAML schema for this.
-> 
-> Signed-off-by: Wen He <wen.he_1@nxp.com>
+On Sat, Nov 23, 2019 at 12:56:21AM +0100, Michael Walle wrote:
 > Signed-off-by: Michael Walle <michael@walle.cc>
 > ---
-> change in v11:
-> 	- renamed 'vco-frequency' to 'fsl,vco-hz' to clearly feild definiation
+>  .../bindings/clock/fsl,sai-clock.yaml         | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
 > 
->  .../devicetree/bindings/clock/fsl,plldig.yaml | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
 > new file mode 100644
-> index 000000000000..23cce65b3a93
+> index 000000000000..7116c8bc24d3
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
-> @@ -0,0 +1,55 @@
+> +++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
+> @@ -0,0 +1,48 @@
 > +# SPDX-License-Identifier: GPL-2.0
+
+Dual license new bindings please: (GPL-2.0-only OR BSD-2-Clause)
+
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
+> +$id: http://devicetree.org/schemas/bindings/clock/fsl,sai-clock.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
+> +title: Freescale SAI bitclock-as-a-clock binding
 > +
 > +maintainers:
-> +  - Wen He <wen.he_1@nxp.com>
+> +  - Michael Walle <michael@walle.cc>
 > +
 > +description: |
-> +  NXP LS1028A has a clock domain PXLCLK0 used for the Display output
-> +  interface in the display core, as implemented in TSMC CLN28HPM PLL.
-> +  which generate and offers pixel clocks to Display.
+> +  It is possible to use the BCLK pin of a SAI module as a generic clock
+> +  output. Some SoC are very constrained in their pin multiplexer
+> +  configuration. Eg. pins can only be changed groups. For example, on the
+> +  LS1028A SoC you can only enable SAIs in pairs. If you use only one SAI,
+> +  the second pins are wasted. Using this binding it is possible to use the
+> +  clock of the second SAI as a MCLK clock for an audio codec, for example.
+> +
+> +  This is a composite of a gated clock and a divider clock.
 > +
 > +properties:
 > +  compatible:
-> +    const: fsl,ls1028a-plldig
+> +    const: fsl,vf610-sai-clock
 > +
 > +  reg:
 > +    maxItems: 1
 > +
+> +  clocks:
+> +    maxItems: 1
+> +
 > +  '#clock-cells':
 > +    const: 0
-> +
-> +  fsl,vco-hz:
-> +     $ref: '/schemas/types.yaml#/definitions/uint32'
-
-Drop this as '*-hz' already has a type.
-
-With that,
-
-Reviewed-by: Rob Herring <robh@kernel.org>
-
-> +     description: Optional for VCO frequency of the PLL in Hertz.
-> +        The VCO frequency of this PLL cannot be changed during runtime
-> +        only at startup. Therefore, the output frequencies are very
-> +        limited and might not even closely match the requested frequency.
-> +        To work around this restriction the user may specify its own
-> +        desired VCO frequency for the PLL.
-> +     minimum: 650000000
-> +     maximum: 1300000000
-> +     default: 1188000000
 > +
 > +required:
 > +  - compatible
@@ -142,17 +125,23 @@ Reviewed-by: Rob Herring <robh@kernel.org>
 > +  - clocks
 > +  - '#clock-cells'
 > +
+
+Add:
+
+additionalProperties: false
+
 > +examples:
-> +  # Display PIXEL Clock node:
 > +  - |
-> +    dpclk: clock-display@f1f0000 {
-> +        compatible = "fsl,ls1028a-plldig";
-> +        reg = <0x0 0xf1f0000 0x0 0xffff>;
+> +    mclk: clock-mclk@f130080 {
+> +        compatible = "fsl,vf610-sai-clock";
+> +        reg = <0x0 0xf130080 0x0 0x80>;
+
+Examples are built now and this will fail because the default 
+#address-cells and #size-cells are 1.
+
 > +        #clock-cells = <0>;
-> +        clocks = <&osc_27m>;
+> +        clocks = <&parentclk>;
 > +    };
-> +
-> +...
 > -- 
-> 2.17.1
+> 2.20.1
 > 
