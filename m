@@ -2,146 +2,116 @@ Return-Path: <SRS0=46D9=Z3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C6CBC43603
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 15:16:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB306C2BD09
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 15:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E02622525
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 15:16:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575559011;
-	bh=WIK65c6WJMswuB1/yzsaX0B0TqDvDhjVpIdXeK0c/Ro=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gh3oqHsvTegwG6hFZJH3l/LggHToga4vAdMPVCZ1FvnnS8C3VZohtWAPdh+O8KDC4
-	 wOKRbiqCB3izWPgY4AlvEc9wcBDy9dDjOVmi1SoZUhS7AZkadq8zf/ErsKFAendAwk
-	 TLJxr3Yti7tE1If2HHDAPCRcGFtvAlQEFiMTweyc=
+	by mail.kernel.org (Postfix) with ESMTP id 80F84206DB
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 15:48:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbfLEPQu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 10:16:50 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:45889 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfLEPQu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 10:16:50 -0500
-Received: by mail-oi1-f194.google.com with SMTP id v10so3002513oiv.12;
-        Thu, 05 Dec 2019 07:16:49 -0800 (PST)
+        id S1729022AbfLEPsV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 10:48:21 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44114 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726028AbfLEPsV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 10:48:21 -0500
+Received: by mail-oi1-f193.google.com with SMTP id d62so3116108oia.11;
+        Thu, 05 Dec 2019 07:48:20 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X30L2/SCmmy4K42AOTapqg9tKMhPdm3eZC6cSR8du98=;
-        b=XQz2YfLztJW5y4gcuRfrtmsitouZOdzhCplZMmeaCleNdJjmWb3bddIdCAl+8u1Xl7
-         77ZWFoPvtz2oJfChCfB086yeH9SZxxoSroI5S5rYUlLxLjhra6rx5Q1cGykOkRyMZ1LK
-         PsuV9Jv8LVvw+5ODQRAZ3/z/TZYUDghMFn5jv3sUnZ5Af/2RqNaRu0FjIEsZk+OZnq/F
-         K5IbRqz4oyfPPp2cqkiChVfc2WCFnfc96q8dxq1UGEGlB0s2hHXf8iiackjQywyXkZd/
-         VLs3rupKb8+ZtbA5ddGa2IkYhvm+hZEP7311+lqaileHg2MmmaC1ScpoTOOKZnb+atOv
-         hzCA==
-X-Gm-Message-State: APjAAAWTLRXZsZ8LVWae+3EAMqyhg088stj1UH/VdD1QmYA2vCojIXzS
-        jtUhbK9Vg0DqhMGKwulLvQ==
-X-Google-Smtp-Source: APXvYqzHqt/rY6XQcuU7ueo8b9ybugfDYukAes39oBqOVVyEu3v063qYQtF2pekF0yMjPZb9r5Dd2A==
-X-Received: by 2002:aca:f083:: with SMTP id o125mr7281931oih.122.1575559009391;
-        Thu, 05 Dec 2019 07:16:49 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e17sm3469100otq.58.2019.12.05.07.16.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 07:16:48 -0800 (PST)
-Date:   Thu, 5 Dec 2019 09:16:48 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Michael Walle <michael@walle.cc>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=XZiF8L55aoKSCKIPsroK6TKVziAXxA4eopxQuCxnWPg=;
+        b=j7xCbNPAfUIVLs3H6M0n+STqooL2KHW3AZu0fnhSi6JXSUVXpOWAfEJfOq77tZmXsC
+         PvbQTcCprSRxnlQBefSzfksWVMkz3Xi/krtKb6OuuKqrhef+3BySnxiD8JELF9VdnIoT
+         Kk68rwSbeTWJ4yF5b6gdwGHYEmS+Tcb5IgOspEXuu2nkyElGTzugOv3CTsGcs9bfsGGC
+         PkzD2JgJtRqBQcyMJPgcPbDxnMJtwlnupUtEKYzaiNb73MHUNR+6SzEvfPj7i4NlYPBM
+         lK7ryuw5nhy0Fh/sBjAOm5NPp3MDRwhzO8SeRKCz0iBHa0Q1zyqE67cfngChMjsXbNMq
+         3sLQ==
+X-Gm-Message-State: APjAAAV4Zh13ePUuWklTaK6sOlnhWeYbXNfzjkEmGjXjEmKkc44+nGNB
+        ltSeZjY91Lz5u/+Lhdv68F0xNDmTtkurAwyOGpU=
+X-Google-Smtp-Source: APXvYqw/+zkbokRYmfSgQpeCPIqliBYTc3RYgcji0fDJoOYlF/6LAGPuT8XtB0B9Q+xDPgtWc3MSZasdOt39nB2UEYI=
+X-Received: by 2002:aca:4a41:: with SMTP id x62mr7347186oia.148.1575560900523;
+ Thu, 05 Dec 2019 07:48:20 -0800 (PST)
+MIME-Version: 1.0
+References: <20191203034519.5640-1-chris.brandt@renesas.com>
+ <20191203034519.5640-7-chris.brandt@renesas.com> <CAMuHMdVBYpuoK7hcyNLK-mAdpTQz3ohTGXuYdFPHdpU5RoPr6Q@mail.gmail.com>
+ <CAMuHMdV7XY7FB9pBsxuWxGsqYaD9n1Y+XZXEJO5OsuigjjUgpw@mail.gmail.com>
+ <TY1PR01MB1562A6AFD8D0807B345B7A208A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <CAMuHMdUn3h1VjYkARTFBqMij5aYg2mJSVErwceHc0NATBo+_hw@mail.gmail.com> <TY1PR01MB1562322613FC52617312F14E8A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY1PR01MB1562322613FC52617312F14E8A5D0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Thu, 5 Dec 2019 16:48:09 +0100
+Message-ID: <CAMuHMdVy_0e5_94a-G83Tt14XsxmLFOpstvSP6Yw8m9oRW_eZg@mail.gmail.com>
+Subject: Re: [PATCH 6/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+To:     Chris Brandt <Chris.Brandt@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: document the fsl-sai driver
-Message-ID: <20191205151648.GA5680@bogus>
-References: <20191122235622.8818-1-michael@walle.cc>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191122235622.8818-1-michael@walle.cc>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Nov 23, 2019 at 12:56:21AM +0100, Michael Walle wrote:
-> Signed-off-by: Michael Walle <michael@walle.cc>
-> ---
->  .../bindings/clock/fsl,sai-clock.yaml         | 48 +++++++++++++++++++
->  1 file changed, 48 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-> new file mode 100644
-> index 000000000000..7116c8bc24d3
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
-> @@ -0,0 +1,48 @@
-> +# SPDX-License-Identifier: GPL-2.0
+Hi Chris,
 
-Dual license new bindings please: (GPL-2.0-only OR BSD-2-Clause)
+On Wed, Dec 4, 2019 at 2:31 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
+> > To avoid future problems, you probably do want to specify spi-tx-bus-width =
+> > <4> and spi-rx-bus-width = <4> in DTS now.
+>
+> I didn't do that because if the MTD layer then thinks I 'want' to do 4-bit access, then that introduces a new problem the solve.
+> The MTD layer might start sending down QUAD READ commands to the external SPI and then the SPI Flash will start sending back data on all 4 lines, but the controller is only configured for 1-bit transfers.
+>
+> I honestly don't know when/why the MTD layer decides on switch from 1-bit to 4-bit mode, so while the board hardware is wired for 4-bit (as the DT would document), we are not ready to be doing 4-bit just yet.
+> I just want to try and get the driver in at first....then we can make it do fancy stuff later.
+>
+> If someone can tell me that even if "spi-rx-bus-width = <4>" is put I the board DTS, the spi will still only do 1-bit transfers until the application specially enables 4-bit mode, then I'm fine with add bus-width=<4> in the DTS.
 
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/bindings/clock/fsl,sai-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Freescale SAI bitclock-as-a-clock binding
-> +
-> +maintainers:
-> +  - Michael Walle <michael@walle.cc>
-> +
-> +description: |
-> +  It is possible to use the BCLK pin of a SAI module as a generic clock
-> +  output. Some SoC are very constrained in their pin multiplexer
-> +  configuration. Eg. pins can only be changed groups. For example, on the
-> +  LS1028A SoC you can only enable SAIs in pairs. If you use only one SAI,
-> +  the second pins are wasted. Using this binding it is possible to use the
-> +  clock of the second SAI as a MCLK clock for an audio codec, for example.
-> +
-> +  This is a composite of a gated clock and a divider clock.
-> +
-> +properties:
-> +  compatible:
-> +    const: fsl,vf610-sai-clock
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - '#clock-cells'
-> +
+Your spibsc driver does:
 
-Add:
+    master->mode_bits = SPI_CPOL | SPI_CPHA;
 
-additionalProperties: false
+i.e. SPI_[TR]X_{QUAD,DUAL} are not set, so it should not try those modes.
 
-> +examples:
-> +  - |
-> +    mclk: clock-mclk@f130080 {
-> +        compatible = "fsl,vf610-sai-clock";
-> +        reg = <0x0 0xf130080 0x0 0x80>;
+At least on RSK+RZA1, the FLASHes are wired in quad mode, so you
+should describe the hardware in DT.
 
-Examples are built now and this will fail because the default 
-#address-cells and #size-cells are 1.
+>
+> Unless....I did not understand you meaning....
+>
+> Did you mean put 'spi-rx-bus-width = <4>' in the .dtsi????  (then I can override it back to <1>  that in the board .dts)???
 
-> +        #clock-cells = <0>;
-> +        clocks = <&parentclk>;
-> +    };
-> -- 
-> 2.20.1
-> 
+No, in the board .dtb.
+
+> > BTW, when using spibsc in direct-mapped mode: if you turn of and on again the
+> > module clock, does the spibsc need reprogramming?
+>
+> Nope. Everything will stay the same (just like all the other peripherals). The only thing you 'might' want to do is flush the read cache (especially if you disconnected it because you were going to go out and re-write some of the flash in SPI mode).
+
+Good. So that means the MTD driver can be modular.  Unused clocks are
+turned off at boot, and can be turned on when the mtd-rom driver is loaded
+and activated.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
