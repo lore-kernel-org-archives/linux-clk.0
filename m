@@ -2,161 +2,157 @@ Return-Path: <SRS0=46D9=Z3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39BC5C3F68F
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 13:56:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB8A5C43603
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 14:26:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0EEB324653
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 13:56:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D5FD21835
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 14:26:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575554189;
-	bh=SI5/UqDvOLdW/ebXgeRPP0F1wEDuikwE8BLTviwj7zI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=JfRQKVhdhlErY7RN2nqLH+6xj7VWgo00XlZnyBk2QJmylbYKm79MLSIKsc1RYz9iQ
-	 ZXg3I64mUQTFIgJ594/TrEGzc0uDOhMCwVvBDPQjI0YF2hgl3P+4+OVMGWx7s9yus7
-	 7M8bw1Tg0RPa92SUbmKY2HPNsnkifLnwQDXXNlJc=
+	s=default; t=1575556012;
+	bh=fA/W+GlBHxPpmRALmc4GGsh/PVzpNgy54K013xZZ1iQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=A3GKpjfyNthoR3HcO8u35410xNnLTQSSzmkcwlUbV5urzLrykyzqR/+PaEqc+1xtF
+	 Qj2Ytv6o08k9Q3Mu+lMocgZdQkVvRmkTi1D1KX8QNNXMCZxGdz5lUIHjyS6NDLT67B
+	 NkW2nyfkkKrbCD4ZUXEHQVEZjib4xZcVjxWMrZkU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfLEN4Y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 08:56:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39286 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729099AbfLEN4Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Dec 2019 08:56:24 -0500
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41D1422525;
-        Thu,  5 Dec 2019 13:56:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575554183;
-        bh=SI5/UqDvOLdW/ebXgeRPP0F1wEDuikwE8BLTviwj7zI=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yg7lntnXFYlbDO+rC98Zawl9736UXE/JoMSwLlGu7DSzz7ZIVo1Fn+kvVe5wFj8oX
-         ORE1V1NZRCFe2OD/LgTnjmhjR3dknHNDXRNDSgqnudzCaVzxk3wXXypAPX4W9yBJo/
-         IvY/jADxsCi/U5vhAWde20l3rRE8DKIdnpbdYnKY=
-Received: by mail-qk1-f180.google.com with SMTP id g15so3351553qka.8;
-        Thu, 05 Dec 2019 05:56:23 -0800 (PST)
-X-Gm-Message-State: APjAAAXnxAyCdpUF/kT0rPEg9X/NRMCpzg9nVS5m0TdkobzL+7eVYT7R
-        K4mWvs+KgtYlesl2KJcDMSb2LPvlcoSLOk0E9w==
-X-Google-Smtp-Source: APXvYqxTieNjxwOysjbfDY0Jzt7u28n6wJ0i4JI/0Df2CY+8bRxVrS6cJAN5zimj0f/y7nSsmjIvD9YzQK49P9OeD5Y=
-X-Received: by 2002:ae9:f205:: with SMTP id m5mr8502354qkg.152.1575554182339;
- Thu, 05 Dec 2019 05:56:22 -0800 (PST)
-MIME-Version: 1.0
-References: <20191205002503.13088-1-masneyb@onstation.org> <20191205002503.13088-5-masneyb@onstation.org>
-In-Reply-To: <20191205002503.13088-5-masneyb@onstation.org>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Thu, 5 Dec 2019 07:56:10 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+jpz6_N18sChREC_xGYt9sSFZFtWr3omb_6o7+MFxuHg@mail.gmail.com>
-Message-ID: <CAL_Jsq+jpz6_N18sChREC_xGYt9sSFZFtWr3omb_6o7+MFxuHg@mail.gmail.com>
-Subject: Re: [PATCH 4/7] dt-bindings: Input: introduce new clock vibrator bindings
-To:     Brian Masney <masneyb@onstation.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        id S1729633AbfLEO0w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 09:26:52 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:40412 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729402AbfLEO0w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 09:26:52 -0500
+Received: by mail-oi1-f196.google.com with SMTP id 6so2872732oix.7;
+        Thu, 05 Dec 2019 06:26:51 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VgcMhS0MdRQ8HUeMUuCAybmGz2xDw/Z2U63rVP/mjCQ=;
+        b=MMw7etlmAshHJRhuii0E/xbvMVkjaV9hFeosld/A8ABpc0DGzbh/jYlJy++jjcHxeh
+         3N/zpJbcVuT/qywWt5CaFBG/IqprwWMPTQW9cy/lbuzzDXs4S/EkPPb7F15IBbZXOP/n
+         tdWZTX7Huhxgf7uKZ49BjmGIukx3t6Uo0fdq5NIbIt41V08ZtIfqabCpOTdKlwu34fpF
+         oDgz2yPL03Yszz2KmrvfyR5DCTjZkzasHCKtzoKHfZckuN/cT8hYTP597j2UmgOghFz7
+         +YpBoiD4mIL64W5a2bgSAmxl275MGDDcKiB9FLEhE2iA9Gfybxjyjw66U+cvROJizyAJ
+         MG9A==
+X-Gm-Message-State: APjAAAUflBLNRVNHesbbfyaT6NQzovy632WpRBPKPJoqQ8cEX1nGLHci
+        fERlgnwDbj/TSTCjXiUamKoquJo=
+X-Google-Smtp-Source: APXvYqxSoqus5d/8hi2Eh1B0hQRpz/laIuyUQk/92iXppMEV2M1B8bHnUSOymfzoB4Z1Y+EgwWSgnA==
+X-Received: by 2002:aca:fdd7:: with SMTP id b206mr7068593oii.35.1575556010979;
+        Thu, 05 Dec 2019 06:26:50 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id t203sm1446494oig.39.2019.12.05.06.26.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2019 06:26:50 -0800 (PST)
+Date:   Thu, 5 Dec 2019 08:26:49 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Wen He <wen.he_1@nxp.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Input <linux-input@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Michael Walle <michael@walle.cc>, Li Yang <leoyang.li@nxp.com>,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [v11 1/2] dt/bindings: clk: Add YAML schemas for LS1028A Display
+ Clock bindings
+Message-ID: <20191205142649.GA22738@bogus>
+References: <20191205072653.34701-1-wen.he_1@nxp.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191205072653.34701-1-wen.he_1@nxp.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 4, 2019 at 6:25 PM Brian Masney <masneyb@onstation.org> wrote:
->
-> Add support for clock-based vibrator devices where the speed can be
-> controlled by changing the duty cycle.
->
-> Signed-off-by: Brian Masney <masneyb@onstation.org>
+On Thu, Dec 05, 2019 at 03:26:52PM +0800, Wen He wrote:
+> LS1028A has a clock domain PXLCLK0 used for provide pixel clocks to Display
+> output interface. Add a YAML schema for this.
+> 
+> Signed-off-by: Wen He <wen.he_1@nxp.com>
+> Signed-off-by: Michael Walle <michael@walle.cc>
 > ---
->  .../bindings/input/clk-vibrator.yaml          | 60 +++++++++++++++++++
->  1 file changed, 60 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/clk-vibrator.yaml
->
-> diff --git a/Documentation/devicetree/bindings/input/clk-vibrator.yaml b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> change in v11:
+> 	- renamed 'vco-frequency' to 'fsl,vco-hz' to clearly feild definiation
+> 
+>  .../devicetree/bindings/clock/fsl,plldig.yaml | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
 > new file mode 100644
-> index 000000000000..2103a5694fad
+> index 000000000000..23cce65b3a93
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
-> @@ -0,0 +1,60 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+> @@ -0,0 +1,55 @@
+> +# SPDX-License-Identifier: GPL-2.0
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/bindings/input/clk-vibrator.yaml#
+> +$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Clock vibrator
+> +title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
 > +
 > +maintainers:
-> +  - Brian Masney <masneyb@onstation.org>
+> +  - Wen He <wen.he_1@nxp.com>
 > +
 > +description: |
-> +  Support for clock-based vibrator devices where the speed can be controlled
-> +  by changing the duty cycle.
+> +  NXP LS1028A has a clock domain PXLCLK0 used for the Display output
+> +  interface in the display core, as implemented in TSMC CLN28HPM PLL.
+> +  which generate and offers pixel clocks to Display.
 > +
 > +properties:
 > +  compatible:
-> +    const: clk-vibrator
+> +    const: fsl,ls1028a-plldig
 > +
-> +  clocks:
+> +  reg:
 > +    maxItems: 1
 > +
-> +  clock-names:
-> +    description: output clock that controls the speed
-> +    items:
-> +      - const: core
-
-No point in making up a name when there's only one clock, so drop.
-
+> +  '#clock-cells':
+> +    const: 0
 > +
-> +  clock-frequency: true
+> +  fsl,vco-hz:
+> +     $ref: '/schemas/types.yaml#/definitions/uint32'
 
-Given the frequency is variable, what does this mean in this case?
+Drop this as '*-hz' already has a type.
 
-> +  enable-gpios:
-> +    maxItems: 1
-> +
-> +  vcc-supply:
-> +    description: Regulator that provides power
+With that,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +     description: Optional for VCO frequency of the PLL in Hertz.
+> +        The VCO frequency of this PLL cannot be changed during runtime
+> +        only at startup. Therefore, the output frequencies are very
+> +        limited and might not even closely match the requested frequency.
+> +        To work around this restriction the user may specify its own
+> +        desired VCO frequency for the PLL.
+> +     minimum: 650000000
+> +     maximum: 1300000000
+> +     default: 1188000000
 > +
 > +required:
 > +  - compatible
+> +  - reg
 > +  - clocks
-> +  - clock-names
-> +  - clock-frequency
-
-Add:
-
-additionalProperties: false
-
+> +  - '#clock-cells'
 > +
 > +examples:
+> +  # Display PIXEL Clock node:
 > +  - |
-> +    #include <dt-bindings/clock/qcom,mmcc-msm8974.h>
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    vibrator {
-> +        compatible = "clk-vibrator";
-> +
-> +        vcc-supply = <&pm8941_l19>;
-> +
-> +        clocks = <&mmcc CAMSS_GP1_CLK>;
-> +        clock-names = "core";
-> +        clock-frequency = <24000>;
-> +
-> +        enable-gpios = <&msmgpio 60 GPIO_ACTIVE_HIGH>;
-> +
-> +        pinctrl-names = "default";
-> +        pinctrl-0 = <&vibrator_pin>;
+> +    dpclk: clock-display@f1f0000 {
+> +        compatible = "fsl,ls1028a-plldig";
+> +        reg = <0x0 0xf1f0000 0x0 0xffff>;
+> +        #clock-cells = <0>;
+> +        clocks = <&osc_27m>;
 > +    };
-> --
-> 2.21.0
->
+> +
+> +...
+> -- 
+> 2.17.1
+> 
