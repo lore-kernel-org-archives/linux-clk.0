@@ -2,84 +2,139 @@ Return-Path: <SRS0=46D9=Z3=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3445C43603
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 20:38:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BE8C2D0C1
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 22:30:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96F1E2466E
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 20:38:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C6E42464E
+	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 22:30:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575578302;
-	bh=21csPdtWJmgPnQe5lwdVPtzwMxWouQRzzO8OBoiffJc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=wtilvuqFXQe4mR26oAsME8HUKY2DxSnhwe4lNnO1pSy6cc7AUM9/sdWrDkH8ZyJtr
-	 lF5AGjGrfDgLMC5XcyIWAwGGGm0tDyUXvK6qhDck+QbRldTOY6PmGgmWTrr5tQKuCe
-	 +A6SHBSIH9yzm3d7K3vj5sCGra4SlVoO3FlygVNk=
+	s=default; t=1575585054;
+	bh=rwc2W/J/V58JZoKOWg2doRruK6KWPbQgM5Sb2F/Ai60=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
+	b=ErfjxFZLPZDhYvM17yImvQ770tEUIilTK5bhU6iZNFPnsAdfqziqKMbDT32+ZwJbv
+	 seet2UFJeO8fkYw0d6+CWVGGd1Ik/i4LiZj27mw9L3Pe9KNWN8qbuneH+RKqU1D2Cu
+	 fuYiv+Ta2iqrTI8W3X9CPHgvOqv+hQd6Puy2hgqc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729799AbfLEUiT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 15:38:19 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44381 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729154AbfLEUiT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 15:38:19 -0500
-Received: by mail-oi1-f193.google.com with SMTP id d62so4011015oia.11;
-        Thu, 05 Dec 2019 12:38:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=74bslwr2DN1zCeo3ND+D4pQywMdZbBoCHyc8IyQISLI=;
-        b=hE0mfFC8J9r2HuPp3Il6e8pQywLUNA/aBB1kC1QDk9mjWVGDoh0T+ftSic3o3CGPP+
-         zGV6W4jo3VNLf6QSqXC+8BzAq3kohBqQM01aYBfk1Kiyqf8EkyigT1rotvVMVpKDQW8T
-         1qqRHyNh0piVeaXx1/fg3dfZPLSZA/nljAvbymKQ2KLzo+FqZC3ESknPGQ4qNGyWyGhS
-         KE4Gwzm7hPNBigMpTgRGGmkWL6dyQBDxO/0LLg6r6nG2A3vmr1P2gW35Ft3usoSdSWOL
-         cFJ4WkOO588w7iT9btFGpXSGzBz0obIeEkMLDjSH2d4zoi56uLPyjF7Ko76oP/TCVaFo
-         bkRg==
-X-Gm-Message-State: APjAAAVhbAK2oqyA497y2wyYz9Tl+fGXGERgG1WpPfpDHySe48YXyHDF
-        ZCpT5FgW//28lczsO++piA==
-X-Google-Smtp-Source: APXvYqw6k/qoeDxNK4Ffi3fcSBgKVBXoNd3CIqjOnqbICiI6Mu4iE4xT6+8vPcZIWZ6oOHNHTV4KVg==
-X-Received: by 2002:aca:c354:: with SMTP id t81mr9425585oif.149.1575578298263;
-        Thu, 05 Dec 2019 12:38:18 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id b3sm3907834oie.25.2019.12.05.12.38.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2019 12:38:17 -0800 (PST)
-Date:   Thu, 5 Dec 2019 14:38:17 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        syq@debian.org, paul@crapouillou.net, sernia.zhou@foxmail.com,
-        zhenwenjin@gmail.com
-Subject: Re: [PATCH 2/5] dt-bindings: clock: Add X1830 bindings.
-Message-ID: <20191205203817.GA3571@bogus>
-References: <1574825576-91028-1-git-send-email-zhouyanjie@zoho.com>
- <1574825576-91028-3-git-send-email-zhouyanjie@zoho.com>
+        id S1727907AbfLEWas (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 17:30:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727595AbfLEWas (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Dec 2019 17:30:48 -0500
+Received: from localhost (mobile-166-170-221-197.mycingular.net [166.170.221.197])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 84F6520707;
+        Thu,  5 Dec 2019 22:30:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1575585047;
+        bh=rwc2W/J/V58JZoKOWg2doRruK6KWPbQgM5Sb2F/Ai60=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:From;
+        b=cliOZcUxDWzGZ1UQTKJkPsD++s/EPrjyE7H/snJuA3uqE7NURH520sOnVje6nd0Ts
+         Td38CmfeZyMBlRyr+Rypsepv/EG8hoAOa7B7sJiJzOVgMDkiBquX3yxdZnHzKOkS/c
+         BBv+wew7DxEj2QDNBsIebdp/nYnu0CS5l8OPwMaM=
+Date:   Thu, 5 Dec 2019 16:30:44 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
+Cc:     andrew.murray@arm.com, maz@kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
+        Maxime Ripard <mripard@kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Mike Marciniszyn <mike.marciniszyn@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Yishai Hadas <yishaih@mellanox.com>,
+        Moni Shoua <monis@mellanox.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Mirko Lindner <mlindner@marvell.com>,
+        Stephen Hemminger <stephen@networkplumber.org>,
+        Jiri Pirko <jiri@resnulli.us>,
+        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
+        Edward Cree <ecree@solarflare.com>,
+        Martin Habets <mhabets@solarflare.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Thomas Graf <tgraf@suug.ch>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        james.quinlan@broadcom.com, mbrugger@suse.com,
+        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
+        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
+        linux-rpi-kernel@lists.infradead.org,
+        Robin Murphy <robin.murphy@arm.con>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        Trond Myklebust <trond.myklebust@hammerspace.com>,
+        Anna Schumaker <anna.schumaker@netapp.com>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rdma@vger.kernel.org, iommu@lists.linux-foundation.org,
+        netdev@vger.kernel.org, kexec@lists.infradead.org,
+        linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v4 7/8] linux/log2.h: Fix 64bit calculations in
+ roundup/down_pow_two()
+Message-ID: <20191205223044.GA250573@google.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1574825576-91028-3-git-send-email-zhouyanjie@zoho.com>
+In-Reply-To: <20191203114743.1294-8-nsaenzjulienne@suse.de>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 27 Nov 2019 11:32:53 +0800, Zhou Yanjie wrote:
-> Add the clock bindings for the X1830 Soc from Ingenic.
-> 
-> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
-> ---
->  .../devicetree/bindings/clock/ingenic,cgu.txt      |  1 +
->  include/dt-bindings/clock/x1830-cgu.h              | 46 ++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
->  create mode 100644 include/dt-bindings/clock/x1830-cgu.h
-> 
+You got the "n" on "down" in the subject, but still missing "of" ;)
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On Tue, Dec 03, 2019 at 12:47:40PM +0100, Nicolas Saenz Julienne wrote:
+> Some users need to make sure their rounding function accepts and returns
+> 64bit long variables regardless of the architecture. Sadly
+> roundup/rounddown_pow_two() takes and returns unsigned longs. It turns
+> out ilog2() already handles 32/64bit calculations properly, and being
+> the building block to the round functions we can rework them as a
+> wrapper around it.
+
+Missing "of" in the function names here.
+s/a wrapper/wrappers/
+
+IIUC the point of this is that roundup_pow_of_two() returned
+"unsigned long", which can be either 32 or 64 bits (worth pointing
+out, I think), and many callers need something that returns
+"unsigned long long" (always 64 bits).
+
+It's a nice simplification to remove the "__" variants.  Just as a
+casual reader of this commit message, I'd like to know why we had both
+the roundup and the __roundup versions in the first place, and why we
+no longer need both.
+
+> -#define roundup_pow_of_two(n)			\
+> -(						\
+> -	__builtin_constant_p(n) ? (		\
+> -		(n == 1) ? 1 :			\
+> -		(1UL << (ilog2((n) - 1) + 1))	\
+> -				   ) :		\
+> -	__roundup_pow_of_two(n)			\
+> - )
+> +#define roundup_pow_of_two(n)			  \
+> +(						  \
+> +	(__builtin_constant_p(n) && ((n) == 1)) ? \
+> +	1 : (1ULL << (ilog2((n) - 1) + 1))        \
+> +)
+
+Should the resulting type of this expression always be a ULL, even
+when n==1, i.e., should it be this?
+
+  1ULL : (1ULL << (ilog2((n) - 1) + 1))        \
+
+Or maybe there's no case where that makes a difference?
+
+Bjorn
