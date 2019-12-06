@@ -2,92 +2,124 @@ Return-Path: <SRS0=//ax=Z4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECFDBC2BD09
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 14:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA8BC2BD09
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 15:55:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCC6F2464E
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 14:08:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44EC724675
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 15:55:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ragnatech-se.20150623.gappssmtp.com header.i=@ragnatech-se.20150623.gappssmtp.com header.b="vp0xmB8w"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726237AbfLFOIY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Dec 2019 09:08:24 -0500
-Received: from pbmsgap02.intersil.com ([192.157.179.202]:49756 "EHLO
-        pbmsgap02.intersil.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726234AbfLFOIY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Dec 2019 09:08:24 -0500
-Received: from pps.filterd (pbmsgap02.intersil.com [127.0.0.1])
-        by pbmsgap02.intersil.com (8.16.0.27/8.16.0.27) with SMTP id xB6DhCkB000787;
-        Fri, 6 Dec 2019 08:43:42 -0500
-Received: from pbmxdp01.intersil.corp (pbmxdp01.pb.intersil.com [132.158.200.222])
-        by pbmsgap02.intersil.com with ESMTP id 2wkkffmn5y-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Fri, 06 Dec 2019 08:43:41 -0500
-Received: from pbmxdp02.intersil.corp (132.158.200.223) by
- pbmxdp01.intersil.corp (132.158.200.222) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384_P384) id
- 15.1.1531.3; Fri, 6 Dec 2019 08:43:40 -0500
-Received: from localhost.localdomain (132.158.202.109) by
- pbmxdp02.intersil.corp (132.158.200.223) with Microsoft SMTP Server id
- 15.1.1531.3 via Frontend Transport; Fri, 6 Dec 2019 08:43:39 -0500
-From:   Chris Brandt <chris.brandt@renesas.com>
-To:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Mark Rutland" <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     <linux-spi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-renesas-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Chris Brandt <chris.brandt@renesas.com>
-Subject: [PATCH v2 6/6] ARM: dts: gr-peach: Enable SPIBSC
-Date:   Fri, 6 Dec 2019 08:42:02 -0500
-Message-ID: <20191206134202.18784-7-chris.brandt@renesas.com>
-X-Mailer: git-send-email 2.23.0
-In-Reply-To: <20191206134202.18784-1-chris.brandt@renesas.com>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
+        id S1726350AbfLFPz3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Dec 2019 10:55:29 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:45361 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726251AbfLFPz3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 6 Dec 2019 10:55:29 -0500
+Received: by mail-lf1-f68.google.com with SMTP id 203so5602776lfa.12
+        for <linux-clk@vger.kernel.org>; Fri, 06 Dec 2019 07:55:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ragnatech-se.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=UQ8toDsRC0YNjw3gGw86jGVjw7PA7mTM+776H0WBXh4=;
+        b=vp0xmB8wiGHqs05Yg9DJZX7OJ6uzvnsiliouPnT4IAqCsSrxtxKSksoxURAwaPZHUh
+         V7HHgskW8E0hMSp97tiApMxCvuDVKnEmumEgR+1MsmloEdueu2PkQ2D3ieXaMXP7EEWQ
+         1McjCML/TDvUew/yOwq9QxVv8juleopDDX49ZH3CW5LX+64AyNdz389aWeb/zqjDUIlq
+         rkCR7GPz2amiI5KFv+Xg3NgWoyuKuNvod5UwVGQI1SxenODncn257JanXSyuNTh4UdSU
+         1+V25zZoTp6mEKLlePJZf4jSYn+d4DYg4NLxTuslVpzqCbt+Mbbj9vqHDBEaFC0gv9/Z
+         tbBw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=UQ8toDsRC0YNjw3gGw86jGVjw7PA7mTM+776H0WBXh4=;
+        b=CV6sddg64G9JWjXxRtyqtcGDaCrA5YFLSC1/Z9Z3tsb2be7yJ56gatsMDNqKOHKmGd
+         xgiQNXRdCW+8Z/Vw8E71yidtsuBux+Iv+oX2eZiKJtfyMWqBidUxqAmR13GKhmBrlr+c
+         uQVnSeeRe8ynNn7L/DKi6UR9K++99GhN7wyr8Q9+8IxLqinPp4aNGPe/gsVheXTlzP+T
+         AmvPkuWLrMF/byoUj9BW8DOVqcteBKcOB5bS9d9SNs6q4EW/jh/zXNSLyHjuAUMzmPHD
+         eENJsS6ebAdBSurURZ5q7qLzL7pzrKDwtlG3r5cOeSe4HbgKaRcYBTWJyEqYR+njwGX9
+         SwEA==
+X-Gm-Message-State: APjAAAVbJCzaPX70zfTtlSZjJoTXByLwxlAXsdhf2WxrQ8PGFc8ELvmU
+        Z9lKiePsgFFhKK57O4BEpW5gxA==
+X-Google-Smtp-Source: APXvYqwX1XqeLRAU/UEqcrk+OubpQKYZPUPDrfOgmMrTwL128pFAiNeTQX4J9+SmhK741myLDkrO6g==
+X-Received: by 2002:ac2:4a61:: with SMTP id q1mr8858590lfp.36.1575647726105;
+        Fri, 06 Dec 2019 07:55:26 -0800 (PST)
+Received: from localhost (h-93-159.A463.priv.bahnhof.se. [46.59.93.159])
+        by smtp.gmail.com with ESMTPSA id p4sm6936176lji.107.2019.12.06.07.55.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2019 07:55:25 -0800 (PST)
+Date:   Fri, 6 Dec 2019 16:55:24 +0100
+From:   Niklas =?iso-8859-1?Q?S=F6derlund?= 
+        <niklas.soderlund@ragnatech.se>
+To:     Geert Uytterhoeven <geert+renesas@glider.be>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH] clk: renesas: rcar-gen2: Change multipliers and dividers
+ to u8
+Message-ID: <20191206155524.GI28879@bigcity.dyn.berto.se>
+References: <20191206133254.23800-1-geert+renesas@glider.be>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-12-06_03:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=junk_notspam policy=junk score=0 suspectscore=2 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=879
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1911200000 definitions=main-1912060118
-X-Proofpoint-Spam-Reason: mlx
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191206133254.23800-1-geert+renesas@glider.be>
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The SPIBSC is used to memory map the QSPI device for XIP of the kernel and
-root file system.
+Hi Geert,
 
-Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
----
- arch/arm/boot/dts/r7s72100-gr-peach.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+Thanks for your work.
 
-diff --git a/arch/arm/boot/dts/r7s72100-gr-peach.dts b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-index fe1a4aa4d7cb..df3c37b4fa31 100644
---- a/arch/arm/boot/dts/r7s72100-gr-peach.dts
-+++ b/arch/arm/boot/dts/r7s72100-gr-peach.dts
-@@ -116,6 +116,11 @@
- 	status = "okay";
- };
- 
-+/* Used for XIP of kernel and root file system. */
-+&spibsc0 {
-+	status = "okay";
-+};
-+
- &ether {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&ether_pins>;
+On 2019-12-06 14:32:54 +0100, Geert Uytterhoeven wrote:
+> All multipliers and dividers are small.
+> Storing them in u8 instead of unsigned int reduces kernel size for a
+> generic kernel by ca. 0.5 KiB.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> To be queued in clk-renesas-for-v5.6.
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> 
+>  drivers/clk/renesas/rcar-gen2-cpg.h | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/clk/renesas/rcar-gen2-cpg.h b/drivers/clk/renesas/rcar-gen2-cpg.h
+> index db2f57ef2f9984e4..bdcd4a38d48d01bd 100644
+> --- a/drivers/clk/renesas/rcar-gen2-cpg.h
+> +++ b/drivers/clk/renesas/rcar-gen2-cpg.h
+> @@ -24,10 +24,10 @@ enum rcar_gen2_clk_types {
+>  };
+>  
+>  struct rcar_gen2_cpg_pll_config {
+> -	unsigned int extal_div;
+> -	unsigned int pll1_mult;
+> -	unsigned int pll3_mult;
+> -	unsigned int pll0_mult;		/* leave as zero if PLL0CR exists */
+> +	u8 extal_div;
+> +	u8 pll1_mult;
+> +	u8 pll3_mult;
+> +	u8 pll0_mult;		/* leave as zero if PLL0CR exists */
+>  };
+>  
+>  struct clk *rcar_gen2_cpg_clk_register(struct device *dev,
+> -- 
+> 2.17.1
+> 
+
 -- 
-2.23.0
-
+Regards,
+Niklas Söderlund
