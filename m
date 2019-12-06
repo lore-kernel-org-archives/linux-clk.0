@@ -1,140 +1,177 @@
-Return-Path: <SRS0=46D9=Z3=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=//ax=Z4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FAKE_REPLY_C,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69BE8C2D0C1
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 22:30:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E342EC43603
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 01:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C6E42464E
-	for <linux-clk@archiver.kernel.org>; Thu,  5 Dec 2019 22:30:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575585054;
-	bh=rwc2W/J/V58JZoKOWg2doRruK6KWPbQgM5Sb2F/Ai60=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:List-ID:From;
-	b=ErfjxFZLPZDhYvM17yImvQ770tEUIilTK5bhU6iZNFPnsAdfqziqKMbDT32+ZwJbv
-	 seet2UFJeO8fkYw0d6+CWVGGd1Ik/i4LiZj27mw9L3Pe9KNWN8qbuneH+RKqU1D2Cu
-	 fuYiv+Ta2iqrTI8W3X9CPHgvOqv+hQd6Puy2hgqc=
+	by mail.kernel.org (Postfix) with ESMTP id B33EC2245C
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 01:23:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="o4qCVfP0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727907AbfLEWas (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 17:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727595AbfLEWas (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 5 Dec 2019 17:30:48 -0500
-Received: from localhost (mobile-166-170-221-197.mycingular.net [166.170.221.197])
+        id S1726065AbfLFBXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 20:23:34 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:47939 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725959AbfLFBXe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 20:23:34 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84F6520707;
-        Thu,  5 Dec 2019 22:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575585047;
-        bh=rwc2W/J/V58JZoKOWg2doRruK6KWPbQgM5Sb2F/Ai60=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:From;
-        b=cliOZcUxDWzGZ1UQTKJkPsD++s/EPrjyE7H/snJuA3uqE7NURH520sOnVje6nd0Ts
-         Td38CmfeZyMBlRyr+Rypsepv/EG8hoAOa7B7sJiJzOVgMDkiBquX3yxdZnHzKOkS/c
-         BBv+wew7DxEj2QDNBsIebdp/nYnu0CS5l8OPwMaM=
-Date:   Thu, 5 Dec 2019 16:30:44 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Cc:     andrew.murray@arm.com, maz@kernel.org,
+        by ssl.serverraum.org (Postfix) with ESMTPSA id EBFE422F2E;
+        Fri,  6 Dec 2019 02:23:31 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1575595412;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=7IzjyfROkcHZFtBAIimy3ELelZ7D2yFO3GY3Enthhl4=;
+        b=o4qCVfP0gs/qAM28R/XS14hlLwPzvDPl/V0/z1hNmpufNjTnR5Ey061alP7a41G7XRYsF6
+        EGJWWty6GTBOS+awMn81d0XP3bNxKLXJ9qPYnT/7JkPKD4xG9MXcIj8PvFtDTeWN2Dh39a
+        3VpVZBatCFAX65koc5SCFun/B3xXIAQ=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 06 Dec 2019 02:23:31 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Rob Herring <robh@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Mike Marciniszyn <mike.marciniszyn@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Yishai Hadas <yishaih@mellanox.com>,
-        Moni Shoua <monis@mellanox.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Mirko Lindner <mlindner@marvell.com>,
-        Stephen Hemminger <stephen@networkplumber.org>,
-        Jiri Pirko <jiri@resnulli.us>,
-        Solarflare linux maintainers <linux-net-drivers@solarflare.com>,
-        Edward Cree <ecree@solarflare.com>,
-        Martin Habets <mhabets@solarflare.com>,
-        Eric Biederman <ebiederm@xmission.com>,
-        Thomas Graf <tgraf@suug.ch>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        james.quinlan@broadcom.com, mbrugger@suse.com,
-        f.fainelli@gmail.com, phil@raspberrypi.org, wahrenst@gmx.net,
-        jeremy.linton@arm.com, linux-pci@vger.kernel.org,
-        linux-rpi-kernel@lists.infradead.org,
-        Robin Murphy <robin.murphy@arm.con>,
-        Doug Ledford <dledford@redhat.com>,
-        Jason Gunthorpe <jgg@ziepe.ca>,
-        "David S. Miller" <davem@davemloft.net>,
-        Trond Myklebust <trond.myklebust@hammerspace.com>,
-        Anna Schumaker <anna.schumaker@netapp.com>,
-        "J. Bruce Fields" <bfields@fieldses.org>,
-        Chuck Lever <chuck.lever@oracle.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-rdma@vger.kernel.org, iommu@lists.linux-foundation.org,
-        netdev@vger.kernel.org, kexec@lists.infradead.org,
-        linux-nfs@vger.kernel.org
-Subject: Re: [PATCH v4 7/8] linux/log2.h: Fix 64bit calculations in
- roundup/down_pow_two()
-Message-ID: <20191205223044.GA250573@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191203114743.1294-8-nsaenzjulienne@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: document the fsl-sai driver
+In-Reply-To: <20191205151648.GA5680@bogus>
+References: <20191122235622.8818-1-michael@walle.cc>
+ <20191205151648.GA5680@bogus>
+Message-ID: <e28881421014b641c37fc2cacdf6c43e@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.8
+X-Spamd-Bar: /
+X-Rspamd-Server: web
+X-Rspamd-Queue-Id: EBFE422F2E
+X-Spamd-Result: default: False [-0.10 / 15.00];
+         TO_DN_SOME(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         NEURAL_HAM(-0.00)[-0.795]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-You got the "n" on "down" in the subject, but still missing "of" ;)
+Am 2019-12-05 16:16, schrieb Rob Herring:
+> On Sat, Nov 23, 2019 at 12:56:21AM +0100, Michael Walle wrote:
+>> Signed-off-by: Michael Walle <michael@walle.cc>
+>> ---
+>>  .../bindings/clock/fsl,sai-clock.yaml         | 48 
+>> +++++++++++++++++++
+>>  1 file changed, 48 insertions(+)
+>>  create mode 100644 
+>> Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
+>> 
+>> diff --git 
+>> a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml 
+>> b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
+>> new file mode 100644
+>> index 000000000000..7116c8bc24d3
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
+>> @@ -0,0 +1,48 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+> 
+> Dual license new bindings please: (GPL-2.0-only OR BSD-2-Clause)
 
-On Tue, Dec 03, 2019 at 12:47:40PM +0100, Nicolas Saenz Julienne wrote:
-> Some users need to make sure their rounding function accepts and returns
-> 64bit long variables regardless of the architecture. Sadly
-> roundup/rounddown_pow_two() takes and returns unsigned longs. It turns
-> out ilog2() already handles 32/64bit calculations properly, and being
-> the building block to the round functions we can rework them as a
-> wrapper around it.
+sure.
 
-Missing "of" in the function names here.
-s/a wrapper/wrappers/
+> 
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/bindings/clock/fsl,sai-clock.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Freescale SAI bitclock-as-a-clock binding
+>> +
+>> +maintainers:
+>> +  - Michael Walle <michael@walle.cc>
+>> +
+>> +description: |
+>> +  It is possible to use the BCLK pin of a SAI module as a generic 
+>> clock
+>> +  output. Some SoC are very constrained in their pin multiplexer
+>> +  configuration. Eg. pins can only be changed groups. For example, on 
+>> the
+>> +  LS1028A SoC you can only enable SAIs in pairs. If you use only one 
+>> SAI,
+>> +  the second pins are wasted. Using this binding it is possible to 
+>> use the
+>> +  clock of the second SAI as a MCLK clock for an audio codec, for 
+>> example.
+>> +
+>> +  This is a composite of a gated clock and a divider clock.
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: fsl,vf610-sai-clock
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  '#clock-cells':
+>> +    const: 0
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - '#clock-cells'
+>> +
+> 
+> Add:
+> 
+> additionalProperties: false
 
-IIUC the point of this is that roundup_pow_of_two() returned
-"unsigned long", which can be either 32 or 64 bits (worth pointing
-out, I think), and many callers need something that returns
-"unsigned long long" (always 64 bits).
+ok.
 
-It's a nice simplification to remove the "__" variants.  Just as a
-casual reader of this commit message, I'd like to know why we had both
-the roundup and the __roundup versions in the first place, and why we
-no longer need both.
+>> +examples:
+>> +  - |
+>> +    mclk: clock-mclk@f130080 {
+>> +        compatible = "fsl,vf610-sai-clock";
+>> +        reg = <0x0 0xf130080 0x0 0x80>;
+> 
+> Examples are built now and this will fail because the default
+> #address-cells and #size-cells are 1.
 
-> -#define roundup_pow_of_two(n)			\
-> -(						\
-> -	__builtin_constant_p(n) ? (		\
-> -		(n == 1) ? 1 :			\
-> -		(1UL << (ilog2((n) - 1) + 1))	\
-> -				   ) :		\
-> -	__roundup_pow_of_two(n)			\
-> - )
-> +#define roundup_pow_of_two(n)			  \
-> +(						  \
-> +	(__builtin_constant_p(n) && ((n) == 1)) ? \
-> +	1 : (1ULL << (ilog2((n) - 1) + 1))        \
-> +)
+Mh, I've run the make dt_binding_check on this. It wasn't flagged,
+but I guess thats because its interpreted as two resources.
 
-Should the resulting type of this expression always be a ULL, even
-when n==1, i.e., should it be this?
+I haven't found anything how you can change the default. Or do you
+mean I should change the example to just use one address cell and
+one size cell? But then how would that work for examples (on other
+bindings) where there should be size-cells = <0> for example.
 
-  1ULL : (1ULL << (ilog2((n) - 1) + 1))        \
-
-Or maybe there's no case where that makes a difference?
-
-Bjorn
+> 
+>> +        #clock-cells = <0>;
+>> +        clocks = <&parentclk>;
+>> +    };
+>> --
+>> 2.20.1
+>> 
