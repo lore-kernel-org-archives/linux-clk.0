@@ -2,176 +2,207 @@ Return-Path: <SRS0=//ax=Z4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E342EC43603
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 01:23:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B68F4C43603
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 02:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B33EC2245C
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 01:23:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83FD32245C
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 02:49:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="o4qCVfP0"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Q9/De5yx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbfLFBXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 20:23:34 -0500
-Received: from ssl.serverraum.org ([176.9.125.105]:47939 "EHLO
-        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725959AbfLFBXe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 20:23:34 -0500
-Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ssl.serverraum.org (Postfix) with ESMTPSA id EBFE422F2E;
-        Fri,  6 Dec 2019 02:23:31 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
-        t=1575595412;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=7IzjyfROkcHZFtBAIimy3ELelZ7D2yFO3GY3Enthhl4=;
-        b=o4qCVfP0gs/qAM28R/XS14hlLwPzvDPl/V0/z1hNmpufNjTnR5Ey061alP7a41G7XRYsF6
-        EGJWWty6GTBOS+awMn81d0XP3bNxKLXJ9qPYnT/7JkPKD4xG9MXcIj8PvFtDTeWN2Dh39a
-        3VpVZBatCFAX65koc5SCFun/B3xXIAQ=
+        id S1726268AbfLFCtC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 21:49:02 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15934 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726076AbfLFCtC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 21:49:02 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5de9c18c0000>; Thu, 05 Dec 2019 18:48:44 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 05 Dec 2019 18:49:00 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 05 Dec 2019 18:49:00 -0800
+Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL105.nvidia.com
+ (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
+ 2019 02:49:00 +0000
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL109.nvidia.com
+ (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
+ 2019 02:49:00 +0000
+Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Fri, 6 Dec 2019 02:48:59 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.163.171]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5de9c19a0000>; Thu, 05 Dec 2019 18:48:59 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
+Subject: [PATCH v3 01/15] dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
+Date:   Thu, 5 Dec 2019 18:48:41 -0800
+Message-ID: <1575600535-26877-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 06 Dec 2019 02:23:31 +0100
-From:   Michael Walle <michael@walle.cc>
-To:     Rob Herring <robh@kernel.org>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: document the fsl-sai driver
-In-Reply-To: <20191205151648.GA5680@bogus>
-References: <20191122235622.8818-1-michael@walle.cc>
- <20191205151648.GA5680@bogus>
-Message-ID: <e28881421014b641c37fc2cacdf6c43e@walle.cc>
-X-Sender: michael@walle.cc
-User-Agent: Roundcube Webmail/1.3.8
-X-Spamd-Bar: /
-X-Rspamd-Server: web
-X-Rspamd-Queue-Id: EBFE422F2E
-X-Spamd-Result: default: False [-0.10 / 15.00];
-         TO_DN_SOME(0.00)[];
-         RCPT_COUNT_SEVEN(0.00)[7];
-         RCVD_COUNT_ZERO(0.00)[0];
-         FROM_EQ_ENVFROM(0.00)[];
-         MIME_TRACE(0.00)[0:+];
-         MID_RHS_MATCH_FROM(0.00)[];
-         ARC_NA(0.00)[];
-         FROM_HAS_DN(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         MIME_GOOD(-0.10)[text/plain];
-         DKIM_SIGNED(0.00)[];
-         NEURAL_HAM(-0.00)[-0.795]
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1575600524; bh=x1pr6sgyfaOabztcrcNVrPuJufF6ICFod7I86nzimHc=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=Q9/De5yxZu/cBzNKRe2HJIG6KdEWZBXHGBGsC1NHObJgz2P/ReowrMY0p4Qw7UjZZ
+         sf/0+1967CowJk7EkaWPiHQ9McKP62PONz/9oZe9PUlK3I/OSM3ENmEDKcrfC/OKXK
+         CJ5tje0n/cVvF/mSsZ5Me1OBVt4Y4I5fGpWkVgRhwP7ODnmkVBUoSBAdSwez5ra2wk
+         vdJmrUYiMpKH2HPx/os92EcCzKkuUXGL7m64l9P9eph1P68LhgviWObxuOzaLW+ITt
+         nNeqa+e34BlqKJMIHqTCQbWzzHfSrnxmojEdl9bsYC4As4PGMD8JwIhOO1by9J3YdI
+         7JeyVB7cAOigg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Am 2019-12-05 16:16, schrieb Rob Herring:
-> On Sat, Nov 23, 2019 at 12:56:21AM +0100, Michael Walle wrote:
->> Signed-off-by: Michael Walle <michael@walle.cc>
->> ---
->>  .../bindings/clock/fsl,sai-clock.yaml         | 48 
->> +++++++++++++++++++
->>  1 file changed, 48 insertions(+)
->>  create mode 100644 
->> Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
->> 
->> diff --git 
->> a/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml 
->> b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
->> new file mode 100644
->> index 000000000000..7116c8bc24d3
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
->> @@ -0,0 +1,48 @@
->> +# SPDX-License-Identifier: GPL-2.0
-> 
-> Dual license new bindings please: (GPL-2.0-only OR BSD-2-Clause)
+Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
+these clocks has mux and a gate as a part of PMC controller.
 
-sure.
+This patch documents PMC clock bindings and adds a header defining
+Tegra PMC clock ids.
 
-> 
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/bindings/clock/fsl,sai-clock.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Freescale SAI bitclock-as-a-clock binding
->> +
->> +maintainers:
->> +  - Michael Walle <michael@walle.cc>
->> +
->> +description: |
->> +  It is possible to use the BCLK pin of a SAI module as a generic 
->> clock
->> +  output. Some SoC are very constrained in their pin multiplexer
->> +  configuration. Eg. pins can only be changed groups. For example, on 
->> the
->> +  LS1028A SoC you can only enable SAIs in pairs. If you use only one 
->> SAI,
->> +  the second pins are wasted. Using this binding it is possible to 
->> use the
->> +  clock of the second SAI as a MCLK clock for an audio codec, for 
->> example.
->> +
->> +  This is a composite of a gated clock and a divider clock.
->> +
->> +properties:
->> +  compatible:
->> +    const: fsl,vf610-sai-clock
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  clocks:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 0
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - clocks
->> +  - '#clock-cells'
->> +
-> 
-> Add:
-> 
-> additionalProperties: false
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 45 +++++++++++++++++++++-
+ include/dt-bindings/soc/tegra-pmc.h                | 18 +++++++++
+ 2 files changed, 62 insertions(+), 1 deletion(-)
+ create mode 100644 include/dt-bindings/soc/tegra-pmc.h
 
-ok.
+diff --git a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+index cb12f33a247f..cd895423ccfd 100644
+--- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
++++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+@@ -21,6 +21,10 @@ Required properties:
+ - clock-names : Must include the following entries:
+   "pclk" (The Tegra clock of that name),
+   "clk32k_in" (The 32KHz clock input to Tegra).
++- #clock-cells : Should be 1 for Tegra30 and higher.
++  In clock consumers, this cell represents the PMC clock ID.
++  The assignments may be found in header file
++  <dt-bindings/soc/tegra-pmc.h>.
+ 
+ Optional properties:
+ - nvidia,invert-interrupt : If present, inverts the PMU interrupt signal.
+@@ -80,11 +84,12 @@ Optional nodes:
+ Example:
+ 
+ / SoC dts including file
+-pmc@7000f400 {
++pmc: pmc@7000f400 {
+ 	compatible = "nvidia,tegra20-pmc";
+ 	reg = <0x7000e400 0x400>;
+ 	clocks = <&tegra_car 110>, <&clk32k_in>;
+ 	clock-names = "pclk", "clk32k_in";
++	#clock-cells = <1>;
+ 	nvidia,invert-interrupt;
+ 	nvidia,suspend-mode = <1>;
+ 	nvidia,cpu-pwr-good-time = <2000>;
+@@ -171,6 +176,7 @@ Example:
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
+ 
+ 		powergates {
+ 			pd_audio: aud {
+@@ -260,6 +266,7 @@ Pad configuration state example:
+ 		reg = <0x0 0x7000e400 0x0 0x400>;
+ 		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
+ 		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
+ 
+ 		...
+ 
+@@ -298,3 +305,39 @@ Pinctrl client example:
+ 		pinctrl-1 = <&hdmi_on>;
+ 		pinctrl-names = "hdmi-on", "hdmi-off";
+ 	};
++
++== Clock Control ==
++
++Tegra PMC has 3 clocks clk_1, clk_2 and clk_3. Each of these clocks has
++source selection and enable/disable gate.
++Parent/source for these clocks can be either of clk_m, clk_m_div2, clk_m_div4,
++or extern clock from Tegra CAR module.
++
++Clock configuration example:
++	pmc: pmc@7000e400 {
++		compatible = "nvidia,tegra210-pmc";
++		reg = <0x0 0x7000e400 0x0 0x400>;
++		clocks = <&tegra_car TEGRA210_CLK_PCLK>, <&clk32k_in>;
++		clock-names = "pclk", "clk32k_in";
++		#clock-cells = <1>;
++	};
++
++Clock consumer example:
++	host1x@50000000 {
++		...
++		vi@54080000 {
++			...
++			assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
++			assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
++		};
++		...
++	};
++	...
++	i2c@7000c500 {
++		cam_sensor {
++			...
++			clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
++			clock-names = "mclk";
++			...
++		};
++	};
+diff --git a/include/dt-bindings/soc/tegra-pmc.h b/include/dt-bindings/soc/tegra-pmc.h
+new file mode 100644
+index 000000000000..705ee8083070
+--- /dev/null
++++ b/include/dt-bindings/soc/tegra-pmc.h
+@@ -0,0 +1,18 @@
++/* SPDX-License-Identifier: GPL-2.0-only */
++/*
++ * Copyright (c) 2019-2020, NVIDIA CORPORATION.  All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_SOC_TEGRA_PMC_H
++#define _DT_BINDINGS_SOC_TEGRA_PMC_H
++
++#define TEGRA_PMC_CLK_OUT_1_MUX		0
++#define TEGRA_PMC_CLK_OUT_1		1
++#define TEGRA_PMC_CLK_OUT_2_MUX		2
++#define TEGRA_PMC_CLK_OUT_2		3
++#define TEGRA_PMC_CLK_OUT_3_MUX		4
++#define TEGRA_PMC_CLK_OUT_3		5
++
++#define TEGRA_PMC_CLK_MAX		6
++
++#endif	/* _DT_BINDINGS_SOC_TEGRA_PMC_H */
+-- 
+2.7.4
 
->> +examples:
->> +  - |
->> +    mclk: clock-mclk@f130080 {
->> +        compatible = "fsl,vf610-sai-clock";
->> +        reg = <0x0 0xf130080 0x0 0x80>;
-> 
-> Examples are built now and this will fail because the default
-> #address-cells and #size-cells are 1.
-
-Mh, I've run the make dt_binding_check on this. It wasn't flagged,
-but I guess thats because its interpreted as two resources.
-
-I haven't found anything how you can change the default. Or do you
-mean I should change the example to just use one address cell and
-one size cell? But then how would that work for examples (on other
-bindings) where there should be size-cells = <0> for example.
-
-> 
->> +        #clock-cells = <0>;
->> +        clocks = <&parentclk>;
->> +    };
->> --
->> 2.20.1
->> 
