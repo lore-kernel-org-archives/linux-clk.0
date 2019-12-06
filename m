@@ -2,100 +2,119 @@ Return-Path: <SRS0=//ax=Z4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40D1DC43603
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 18:58:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1FCC43603
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 19:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189EE24673
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 18:58:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1780024673
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 19:49:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=rere.qmqm.pl header.i=@rere.qmqm.pl header.b="qVvSJYj9"
+	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="I8MOIuol"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726353AbfLFS6K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 6 Dec 2019 13:58:10 -0500
-Received: from rere.qmqm.pl ([91.227.64.183]:51602 "EHLO rere.qmqm.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfLFS6J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 6 Dec 2019 13:58:09 -0500
-Received: from remote.user (localhost [127.0.0.1])
-        by rere.qmqm.pl (Postfix) with ESMTPSA id 47V1xd4KSvz3c;
-        Fri,  6 Dec 2019 19:55:33 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=rere.qmqm.pl; s=1;
-        t=1575658536; bh=ezWxskmwxI8C/8lBttgiFOBWumB5XqgQX2Lyv35wtXs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qVvSJYj9YFwdhcAJDhCbE27sYYMUvgdTONxp+WWKd+z5M7iiAI5MehkQT3K2RazLO
-         Fd9fJReH4fmO4JIbPH7vvAG5OF2f+k2n+Ld1c3N3PX5ld+hkdoJQ2IFzQMJIwLVZc3
-         677oFRZnpUv7WC+skB2A72eXwr/NiceO2d59iHAuZSWyiZ9j4ZIfNR224I4LEuylT/
-         OgQXR2R6mep2NizcYogzTvDzpSM7LavHwjNn8x1geUwhPTgKNZ4p0HkFQKk3rbFUkn
-         D2t6f0Opeh7KPGs9oDBi617XDzVFR99l7Pg+gcwf5VVg4jPbwVWPMzXiXjjzcViHtW
-         OGnWhmW29zmJQ==
-X-Virus-Status: Clean
-X-Virus-Scanned: clamav-milter 0.101.4 at mail
-Date:   Fri, 6 Dec 2019 19:58:00 +0100
-From:   =?iso-8859-2?Q?Micha=B3_Miros=B3aw?= <mirq-linux@rere.qmqm.pl>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, tglx@linutronix.de, robh-dt@kernel.org,
-        mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, mturquette@baylibre.com,
-        horms-renesas@verge.net.au, Jisheng.Zhang@synaptics.com,
-        krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com,
-        josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, broonie@kernel.org, perex@perex.cz,
-        tiwai@suse.com, alexios.zavras@intel.com,
-        alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 01/15] dt-bindings: soc: tegra-pmc: Add Tegra PMC
- clock bindings
-Message-ID: <20191206185800.GB20259@qmqm.qmqm.pl>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-2-git-send-email-skomatineni@nvidia.com>
+        id S1726365AbfLFTtk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 6 Dec 2019 14:49:40 -0500
+Received: from mail-eopbgr1400104.outbound.protection.outlook.com ([40.107.140.104]:36171
+        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726325AbfLFTtk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 6 Dec 2019 14:49:40 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ch9UQrbrUPPG0nB8ZNlSSzkqsKKpXirydgCOcmA3qDgWoTskqP9B6+NhJ0BCZ5dVIh81wiqMnPDT79lv+91HcIxewGE+loEvSJHnmuUJIcv9l5ByaeZxTl4Uo6s+ZjkJyZWO6E1GgAh+otI+INgGhpdtnDqbliuGzCCiSdIDFguWUrd5SalAne7UD3owwgNrum6t2A243emyu4goOuR7igVWuu9ch/cO6SkL7G581fzmqT7CpcY8Pe+FMUBu5NYKX5uvE4uWdfIWNF42eI5ndM7xfXwyyb86Y/sGIaN3NvkGEvaBIwnRKJAKOOtzRe6waqN9N1w8m9h3AhiW8ekt1w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gyGjU7T6WutyAvOkNHgc4SGQpxnvbKyXVi72RF4mXN0=;
+ b=hWVgc0bOr1sTfPcWMcZKu/rYEW+6bNzuT7JGtu+DnZNS3QyiJIPd9uGr/yc1M1lA4pkxyN32piWlASbV4K7uzSDdFOtHVaunyd6Hhv0zsLlL0ZccZxDs3TDIBs1nFTiN8HiQCdtsVZBk/LK94nIfQOP5FmZBlgGxM45VOF86b3Qys5f7tTaRunF7WAq94riO8PF8uLDsaa7hOKt2LWDsjTH0uleeXRucbFCSuK54z16EXfRY/vRVUuEL71a/VtnJSinsGLjUsukLM3SsAgIY8zt/dN5zQ7zkMzM3uYb3z/u7FP39JKPKZ39NCfV6tUr7HcGDi/GRrrYNGNUnRYXIBg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gyGjU7T6WutyAvOkNHgc4SGQpxnvbKyXVi72RF4mXN0=;
+ b=I8MOIuol4RDN8Gk7j2z9N1kFQBXIgzBakIchV6NB+y+fWgWQqvNK1pB2r5/Cck5It8uB6BxudPPqrYoblnvBTo/PN09bA+9Ybnw2FCJk6B9WTuS3M95+wZOPexe2rvft5yBqTrIzQRgN2CxUvonrCDwXBqFVENcVROAserMGJlM=
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
+ TY1PR01MB1643.jpnprd01.prod.outlook.com (52.133.163.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.17; Fri, 6 Dec 2019 19:49:34 +0000
+Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
+ ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.003; Fri, 6 Dec 2019
+ 19:49:34 +0000
+From:   Chris Brandt <Chris.Brandt@renesas.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+Subject: RE: [PATCH v2 3/6] clk: renesas: r7s9210: Add SPIBSC clock
+Thread-Topic: [PATCH v2 3/6] clk: renesas: r7s9210: Add SPIBSC clock
+Thread-Index: AQHVrDsZnI+SMLkmZkyW5+1FSLVd3qetcNKAgAAShiA=
+Date:   Fri, 6 Dec 2019 19:49:34 +0000
+Message-ID: <TY1PR01MB1562645184402F7C01CE36958A5F0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <20191206134202.18784-4-chris.brandt@renesas.com>
+ <5644c687-7692-53f2-f01e-0e7bf62464ea@cogentembedded.com>
+In-Reply-To: <5644c687-7692-53f2-f01e-0e7bf62464ea@cogentembedded.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctODQ5ZDdkZDEtMTg2MS0xMWVhLWFhNTItOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDg0OWQ3ZGQzLTE4NjEtMTFlYS1hYTUyLTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iNjg5IiB0PSIxMzIyMDEzNTM3MTQ0MTg1ODkiIGg9IjlzS0dEQ0xiVktiaWd4VjIwQnM0NTg2ZnRjaz0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
+x-dg-rorf: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Chris.Brandt@renesas.com; 
+x-originating-ip: [75.60.247.61]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: e6c8f820-1813-40e3-8c57-08d77a856b70
+x-ms-traffictypediagnostic: TY1PR01MB1643:
+x-microsoft-antispam-prvs: <TY1PR01MB1643437E672D90FEACCBC5148A5F0@TY1PR01MB1643.jpnprd01.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:9508;
+x-forefront-prvs: 0243E5FD68
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(39860400002)(366004)(346002)(376002)(396003)(136003)(189003)(199004)(9686003)(76176011)(99286004)(478600001)(81166006)(81156014)(55016002)(7696005)(8936002)(186003)(5660300002)(305945005)(74316002)(8676002)(229853002)(2906002)(102836004)(53546011)(6506007)(66946007)(33656002)(52536014)(7416002)(66446008)(64756008)(66556008)(66476007)(76116006)(86362001)(71200400001)(71190400001)(4744005)(54906003)(316002)(110136005)(26005)(4326008);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1643;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: renesas.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: fiaYp+NTbST/jqAv5SDWDFSh10U6W1RT2pRmDViYtD7uBfroouJrNtIU4gQJqBWPg1uJ+kDEspwSbl+SJE5ZwYsyiFyrFrBo6NRbJbvEWdmW86ol7Vxtr9i7moT4aOmJ8vY0K89U3xViSDc34PJziFPbI71PB5nX5pAB20LzgQNFZuXClXUPc7eSxeV/NL971eUx3nD+Of2aWHxbVwHoPAd2smQjNAmpXq/r+7/PZfK1tBrFytL8d1vWoiQvQny6lUfGg4KLDkH0iU5UKnSSBWbs6VC26CvlBd+wx6RD9mrhyEJ+h/ll1JJYyXrxZQYyb0UWHy5CG1S1XbNiV/1mVRgKXJBmB9YB/WELmNAZKAtN1oX//bQC3dYjQXduQ5r+4MHFu25xudE5ph6E+dnnYo2iMR9WDFTXBpZcTxp0Me1U/h1Q0NceiYNXCFz/6jEW
+x-ms-exchange-transport-forked: True
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-2
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1575600535-26877-2-git-send-email-skomatineni@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e6c8f820-1813-40e3-8c57-08d77a856b70
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2019 19:49:34.5742
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1bKrH3wZIooZwFvEX2a7biiARZrNaHJke7cWlJfaprGqzxgC07McP1gpZ1YmH/x1dQzpHzG1i2m/HIIEWUvB8/qeefNps+ombkkiqIw+s2M=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1643
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 05, 2019 at 06:48:41PM -0800, Sowjanya Komatineni wrote:
-> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 clocks and each of
-> these clocks has mux and a gate as a part of PMC controller.
-[...]
-> --- a/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-> +++ b/Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
-[...]
-> +Clock consumer example:
-> +	host1x@50000000 {
-> +		...
-> +		vi@54080000 {
-> +			...
-> +			assigned-clocks = <&pmc TEGRA_PMC_CLK_OUT_3_MUX>;
-> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_EXTERN3>;
-> +		};
-> +		...
-> +	};
-> +	...
-> +	i2c@7000c500 {
-> +		cam_sensor {
-> +			...
-> +			clocks = <&pmc TEGRA_PMC_CLK_OUT_3>;
-> +			clock-names = "mclk";
-> +			...
-> +		};
-> +	};
-
-The assigned-clocks should be in the cam_sensor node, unless vi device
-also uses the clock.
-
-Best Regards,
-Micha³ Miros³aw
+T24gRnJpLCBEZWMgNiwgMjAxOSwgU2VyZ2VpIFNodHlseW92IHdyb3RlOg0KPiBPbiAxMi8wNi8y
+MDE5IDA0OjQxIFBNLCBDaHJpcyBCcmFuZHQgd3JvdGU6DQo+IA0KPiA+IFRoZSBTUElCU0MgY2xv
+Y2tzIGFyZSBtYXJrZWQgYXMgY3JpdGljYWwgYmVjYXVzZSBmb3IgWElQIHN5c3RlbXMsIHRoZQ0K
+PiA+IGtlcm5lbCB3aWxsIGJlIHJ1bm5pbmcgZnJvbSBRU1BJIGZsYXNoIGFuZCBjYW5ub3QgYmUg
+dHVybmVkIG9mZi4NCj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IENocmlzIEJyYW5kdCA8Y2hyaXMu
+YnJhbmR0QHJlbmVzYXMuY29tPg0KPiA+IC0tLQ0KPiA+IHYyOg0KPiA+ICAqIFJlbW92ZWQgc3Bp
+YnNjIGZyb20gY3JpdGljYWwgY2xvY2sgc2VjdGlvbg0KPiANCj4gICAgU28geW91J3ZlIHJlbW92
+ZWQgaXQgZnJvbSB0aGUgY3JpdGljYWwgdGFibGUgYnV0IGxlZnQgdGhlIHBhdGNoDQo+IGRlc2Ny
+aXB0aW9uIGludGFjdD8NCg0KRGFtbiENClRoYW5rIHlvdSBmb3IgcG9pbnRpbmcgdGhhdCBvdXQu
+DQpJIHJlbWVtYmVyZWQgdG8gdGFrZSB0aGUgY29tbWVudCBvdXQgb2Ygb25lIHBhdGNoLCBidXQg
+SSBtaXNzZWQgdGhpcyBvbmUuDQoNCkNocmlzDQoNCg==
