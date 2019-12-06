@@ -2,222 +2,175 @@ Return-Path: <SRS0=//ax=Z4=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D6837C2D0BF
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 02:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21792C3F68F
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 03:01:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0B8421823
-	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 02:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D678D21823
+	for <linux-clk@archiver.kernel.org>; Fri,  6 Dec 2019 03:01:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="p5fDX/1M"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="gfRjPBNG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726516AbfLFCtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 5 Dec 2019 21:49:03 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:14396 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbfLFCtD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 5 Dec 2019 21:49:03 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5de9c1970000>; Thu, 05 Dec 2019 18:48:55 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 05 Dec 2019 18:48:59 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 05 Dec 2019 18:48:59 -0800
-Received: from HQMAIL109.nvidia.com (172.20.187.15) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
- 2019 02:48:59 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL109.nvidia.com
- (172.20.187.15) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 6 Dec
- 2019 02:48:58 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Fri, 6 Dec 2019 02:48:58 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.163.171]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5de9c1990000>; Thu, 05 Dec 2019 18:48:58 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <digetx@gmail.com>,
-        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <sboyd@kernel.org>, <tglx@linutronix.de>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>
-CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
-Subject: [PATCH v3 00/15] Move PMC clocks into Tegra PMC driver
-Date:   Thu, 5 Dec 2019 18:48:40 -0800
-Message-ID: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        id S1726109AbfLFDBz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 5 Dec 2019 22:01:55 -0500
+Received: from mail-eopbgr00064.outbound.protection.outlook.com ([40.107.0.64]:9663
+        "EHLO EUR02-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726097AbfLFDBz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 5 Dec 2019 22:01:55 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=hnmn/yVT18kbwkdw8hqXBsASyPce0ElayZctdO2dQJifRackhj5Mxi958j7XvUovxbU7j/j9C55ks/hOrVqh+j5dZMtXSkKd7OH5Dqm0rJjc2ek36KmOSho0QRrifvRLFaahqk7P6kSXgsfpWN4XTroSY7f2M9Zsg1HPutuTJmXK87Dflg3j/7Tr3sP5zrxAebJ8beV8//kk3GaC9seZqO8B+IVj/acMemL0ryCVdDE0xV3Q+ES1WxxCxeGl2cwMwAVn4mFKJQ1NWtQb0XyThwxoz6Kk60PLdxZdzXmZtX7UWoZBEb8Ml0w2Qm9aPRk7np1oCIQ9yTWU4T9EyWf15Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hVRJrmfh44c6GzGsZ91vL9j8SdUVeL5uXlP6QfwtzMs=;
+ b=Cs1HRqu5bkarYk9pOLcZlHsNrLu7zAh8WOCJ+z591RMTWVVUzDO13CLDXMxgItiUJqUQo9nEUt9uZS4knIKfmKX6gBDzB2XGG1G9gc4P+G7kNS77wUQjexQQl3NV661CG1S5eq/PgD7yDR0UFlXSW+hDZs5wyVHQyn1n2SJcQfwxLPNOyMAS4EytnBJEyxCMzNwHKOU8YFQS7P9Sh42ez28pEKBkQFHPBYiLGM37cWTEkAbR0+bkYNGFxqrjoA8yDWemdHZdtMKj0sFFWauITtEEm9t27mDEffytMMFnB1JBSROdkOEpsDHXQvtd5JJey6DtYxKVlLZ3G7hECCBo3g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hVRJrmfh44c6GzGsZ91vL9j8SdUVeL5uXlP6QfwtzMs=;
+ b=gfRjPBNGDGUIcujaalFk3Fq2X8xXHoV1UBeLpzS1cH56v0tlWNhcxjlUXlzMrgHMR2JbbSsc/FQpP6Ed98c/GRTr/t79lh85njolRXubLOXlzAB44j83m9+WvHzDgQ4nJYRK8CwOscMuSzhMZ+3tGQjfnjZruHgbiimMRA6Sp+o=
+Received: from DB7PR04MB5195.eurprd04.prod.outlook.com (20.176.236.27) by
+ DB7PR04MB4507.eurprd04.prod.outlook.com (52.135.139.27) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2516.12; Fri, 6 Dec 2019 03:01:44 +0000
+Received: from DB7PR04MB5195.eurprd04.prod.outlook.com
+ ([fe80::742b:b817:f90f:f444]) by DB7PR04MB5195.eurprd04.prod.outlook.com
+ ([fe80::742b:b817:f90f:f444%3]) with mapi id 15.20.2516.014; Fri, 6 Dec 2019
+ 03:01:44 +0000
+From:   Wen He <wen.he_1@nxp.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Walle <michael@walle.cc>, Leo Li <leoyang.li@nxp.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [EXT] Re: [v11 1/2] dt/bindings: clk: Add YAML schemas for
+ LS1028A Display Clock bindings
+Thread-Topic: [EXT] Re: [v11 1/2] dt/bindings: clk: Add YAML schemas for
+ LS1028A Display Clock bindings
+Thread-Index: AQHVqz131RIPeWxBDUyVjDElENZugaermZSAgADQtTA=
+Date:   Fri, 6 Dec 2019 03:01:44 +0000
+Message-ID: <DB7PR04MB519531AFC4C84AE8A5916E95E25F0@DB7PR04MB5195.eurprd04.prod.outlook.com>
+References: <20191205072653.34701-1-wen.he_1@nxp.com>
+ <20191205142649.GA22738@bogus>
+In-Reply-To: <20191205142649.GA22738@bogus>
+Accept-Language: en-US, zh-CN
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=wen.he_1@nxp.com; 
+x-originating-ip: [119.31.174.73]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 5f4e4ed0-e793-4431-5889-08d779f8a061
+x-ms-traffictypediagnostic: DB7PR04MB4507:|DB7PR04MB4507:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB7PR04MB4507837BDC417D487025024BE25F0@DB7PR04MB4507.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:8882;
+x-forefront-prvs: 0243E5FD68
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(366004)(376002)(39860400002)(396003)(199004)(189003)(13464003)(4326008)(316002)(5660300002)(54906003)(74316002)(305945005)(25786009)(55016002)(33656002)(9686003)(229853002)(76116006)(66556008)(6506007)(26005)(53546011)(2906002)(186003)(71190400001)(71200400001)(478600001)(6916009)(99286004)(11346002)(66476007)(86362001)(52536014)(64756008)(66446008)(66946007)(45080400002)(8936002)(102836004)(8676002)(7696005)(81166006)(81156014)(76176011)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:DB7PR04MB4507;H:DB7PR04MB5195.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: TaJmrJNCIdJv/zXyM6gG97Zk+OGlFGRxuVXJLKfRxKYrgRPcp9w+ZxT6W5w2WNBRIpZOlSKh4xjYCQ+mfDNbdfzfG38Xn3BXf9OZoX5m2TN21ViWPmhHJnK0hGYybx517PKtSrA920fKZ9pUnMGFTzUeaGnBU4OTQTF9Ll7w3L7uPnkZDNXhVRAJM1HQgHH7RrYjbFnI5uNKpllb8dnXWo979Yb+lnWeu4HaCf4PLv+zqme4NmbCT/le0rZQeAUHfrq07tNuo9eZpUEnmiV6yQt3DbeKja72caeLo4LJ5MbdtOzMB4n9u1cHZbw3y6csVWXN6oGlUA0hkDgT9xFcVuqA+qorrYVRsPtiArtTxb3/n2/ds3VcgRZxf8svtUyHSiDoZ3J/p8E+ZSSqed/4P05Jrv3IcaEZwXjqQeCAnbb+QIEpkV/mcDigOnP1JvbZDoLw7OCSZk6r7nbigr5jWVwkoMI4R2DKTqKCh8qrx0u0lhOUWx8qI6jhsNPq1V0s
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1575600535; bh=0yY6O5GHk7xgeOMvI4k8qGNpUWrzvrDV5dKwrtLp/f4=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=p5fDX/1MwveGhBRGiUlIbddYp8Ctk6ez5ooV/2pkOm633fsIn3zDiZ7j1UbHqdAdG
-         Rv/7MxrOAbLMBRFBmpJ+fi/Ib6CB5IKhmUAlvtEm04SwIgmIzk9zDBTNcEDVxaDfjq
-         jW5e1b/0nj8Wf2K9Ej2UJl1g/V8+VJvRCHFViRK8wSObItVITQcwRJtVshOhrOdXNR
-         YmbH9aw9OtUIGc2gcEwngQX1INW4gt6/Zg+fDdRpxKtDXzJrlNwfcZysxh/CVUEEkd
-         TgXaA2tgf/UtKZTZyfZcIhWVO7OOa2fZKvrRuLvkpv3eZcmBoquiJ27La1DxNwQtFh
-         bzEqI7udvTKpw==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5f4e4ed0-e793-4431-5889-08d779f8a061
+X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2019 03:01:44.4279
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: mvIzWVXwx1PTABgCsFy091M1TP559u1V5b64Qr2BOLFm8vyf9qUi0dBkkGvbW0ETwnnU8mnp0MF2CNZ6Ap7faQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB7PR04MB4507
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-are currently registered by Tegra clock driver using clk_regiser_mux and
-clk_register_gate which performs direct Tegra PMC register access.
-
-When Tegra PMC is in secure mode, any access from non-secure world will
-not go through.
-
-This patch series adds these Tegra PMC clocks and blink controls to Tegra
-PMC driver with PMC as clock provider and removed them from Tegra clock
-driver. This also adds PMC specific clock id's to use in device tree and
-removed clock ids of PMC clock from Tegra clock driver.
-
-clk_out_1 is dedicated for audio mclk and current ASoC driver does not
-setting extern1 as parent for clk_out_1 and enabling clk_out_1 and
-currently this is taken care by Tegra clock driver during clock inits
-and there is no need to enable this during clock init.
-
-So, this series also includes patch that updates ASoC driver to take
-care of configuring parent of mclk and enabling mclk using both extern1
-and clk_out_1 and updates all device trees to use clk_out_1 from pmc as
-mclk incase if device tree don't specify assigned-clock-parents.
-
-This series also includes a patch for mclk fallback to use extern1
-when retrieving mclk fails with new device tree which uses pmc provider
-to have this backward compatible of new DT with old kernels.
-
-This series also includes a patch to remove clock ids for these clocks
-from clock dt-binding as these clocks are not used in any of the existing
-device tree except in tegra210-smaug.dts and this series includes a patch
-to update clock provider from tegra_car to pmc in tegra210-smaug.dts for
-clk_out_2.
-
-[v3]:	Changes between v2 and v3 are
-	- Removes set parent of clk_out_1_mux to extern1 and enabling
-	  extern1 from the clock driver.
-	- Doesn't enable clk_out_1 and blink by default in pmc driver
-	- Updates ASoC driver to take care of audio mclk parent
-	  configuration incase if device tree don't specify assigned
-	  clock parent properties and enables mclk using both clk_out_1
-	  and extern1.
-	- updates all device trees using extern1 as mclk in sound node
-	  to use clk_out_1 from pmc.
-	- patch for YAML format pmc dt-binding
-	- Includes v2 feedback
-
-[v2]:	Changes between v1 and v2 are
-	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-	- feedback related to pmc clocks in Tegra PMC driver from v1
-	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-	  by the clock driver using helper functions from Tegra PMC.
-
- 	  Note:
-	  To use helper functions from PMC driver, PMC early init need to
-	  happen prior to using helper functions and these helper functions are
-	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-	  clock registration which happen in clock_init prior to Tegra PMC
-	  probe.
-	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-	  tegra_mc_init.
-	  This implementation of configuring PMC registers thru helper
-	  functions in clock driver needs proper changes across PMC, Clock,
-	  EMC and MC inits to have it work across all Tegra platforms.
-
-	  Currently PLLM Override is not enabled in the bootloader so proper
-	  patches for this fix will be taken care separately.
-
-[v1]:	v1 includes patches for below fixes.
-	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
-	  driver and removing clk-tegra-pmc.
-	- updated clock provider from tegra_car to pmc in the device tree
-	  tegra210-smaug.dts that uses clk_out_2.
-	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
-	  IDDQ programming to use by clock driver and updated clock driver to
-	  use these helper functions and removed direct PMC access from clock
-	  driver and all pmc base address references in clock driver.
-
-
-Sowjanya Komatineni (15):
-  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
-  dt-bindings: tegra: Convert Tegra PMC bindings to YAML
-  soc: tegra: Add Tegra PMC clock registrations into PMC driver
-  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC blink control
-  soc: pmc: Add blink output clock registration to Tegra PMC
-  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
-  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
-  ASoC: tegra: Add audio mclk control through clk_out_1 and extern1
-  ASoC: tegra: Add fallback for audio mclk
-  clk: tegra: Remove extern1 and cdev1 from clocks inittable
-  ARM: dts: tegra: Add clock-cells property to pmc
-  arm64: tegra: Add clock-cells property to Tegra PMC node
-  ARM: tegra: Update sound node clocks in device tree
-  arm64: tegra: smaug: Change clk_out_2 provider to pmc
-  ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
-
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      |  45 ++-
- .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 291 ++++++++++++++++++
- .../devicetree/bindings/sound/nau8825.txt          |   2 +-
- arch/arm/boot/dts/tegra114-dalmore.dts             |   7 +-
- arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   7 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi             |   7 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   7 +-
- arch/arm/boot/dts/tegra124-nyan.dtsi               |   7 +-
- arch/arm/boot/dts/tegra124-venice2.dts             |   7 +-
- arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
- arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   7 +-
- arch/arm/boot/dts/tegra30-apalis.dtsi              |   7 +-
- arch/arm/boot/dts/tegra30-beaver.dts               |   7 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi              |   7 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi             |   7 +-
- arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   2 +
- drivers/clk/tegra/Makefile                         |   1 -
- drivers/clk/tegra/clk-id.h                         |   7 -
- drivers/clk/tegra/clk-tegra-pmc.c                  | 122 --------
- drivers/clk/tegra/clk-tegra114.c                   |  12 -
- drivers/clk/tegra/clk-tegra124.c                   |  28 +-
- drivers/clk/tegra/clk-tegra20.c                    |   5 -
- drivers/clk/tegra/clk-tegra210.c                   |  12 -
- drivers/clk/tegra/clk-tegra30.c                    |  13 -
- drivers/clk/tegra/clk.h                            |   1 -
- drivers/soc/tegra/pmc.c                            | 340 +++++++++++++++++++++
- include/dt-bindings/clock/tegra114-car.h           |  14 +-
- include/dt-bindings/clock/tegra124-car-common.h    |  14 +-
- include/dt-bindings/clock/tegra20-car.h            |   2 +-
- include/dt-bindings/clock/tegra210-car.h           |  14 +-
- include/dt-bindings/clock/tegra30-car.h            |  14 +-
- include/dt-bindings/soc/tegra-pmc.h                |  19 ++
- sound/soc/tegra/tegra_asoc_utils.c                 |  76 ++++-
- sound/soc/tegra/tegra_asoc_utils.h                 |   1 +
- 39 files changed, 890 insertions(+), 244 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
- delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
-
--- 
-2.7.4
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iIEhlcnJpbmcgPHJv
+YmhAa2VybmVsLm9yZz4NCj4gU2VudDogMjAxOcTqMTLUwjXI1SAyMjoyNw0KPiBUbzogV2VuIEhl
+IDx3ZW4uaGVfMUBueHAuY29tPg0KPiBDYzogTWljaGFlbCBUdXJxdWV0dGUgPG10dXJxdWV0dGVA
+YmF5bGlicmUuY29tPjsgU3RlcGhlbiBCb3lkDQo+IDxzYm95ZEBrZXJuZWwub3JnPjsgTWFyayBS
+dXRsYW5kIDxtYXJrLnJ1dGxhbmRAYXJtLmNvbT47IE1pY2hhZWwgV2FsbGUNCj4gPG1pY2hhZWxA
+d2FsbGUuY2M+OyBMZW8gTGkgPGxlb3lhbmcubGlAbnhwLmNvbT47DQo+IGRldmljZXRyZWVAdmdl
+ci5rZXJuZWwub3JnOyBsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnOw0KPiBsaW51eC1rZXJuZWxA
+dmdlci5rZXJuZWwub3JnDQo+IFN1YmplY3Q6IFtFWFRdIFJlOiBbdjExIDEvMl0gZHQvYmluZGlu
+Z3M6IGNsazogQWRkIFlBTUwgc2NoZW1hcyBmb3IgTFMxMDI4QQ0KPiBEaXNwbGF5IENsb2NrIGJp
+bmRpbmdzDQo+IA0KPiBDYXV0aW9uOiBFWFQgRW1haWwNCj4gDQo+IE9uIFRodSwgRGVjIDA1LCAy
+MDE5IGF0IDAzOjI2OjUyUE0gKzA4MDAsIFdlbiBIZSB3cm90ZToNCj4gPiBMUzEwMjhBIGhhcyBh
+IGNsb2NrIGRvbWFpbiBQWExDTEswIHVzZWQgZm9yIHByb3ZpZGUgcGl4ZWwgY2xvY2tzIHRvDQo+
+ID4gRGlzcGxheSBvdXRwdXQgaW50ZXJmYWNlLiBBZGQgYSBZQU1MIHNjaGVtYSBmb3IgdGhpcy4N
+Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFdlbiBIZSA8d2VuLmhlXzFAbnhwLmNvbT4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBNaWNoYWVsIFdhbGxlIDxtaWNoYWVsQHdhbGxlLmNjPg0KPiA+IC0tLQ0K
+PiA+IGNoYW5nZSBpbiB2MTE6DQo+ID4gICAgICAgLSByZW5hbWVkICd2Y28tZnJlcXVlbmN5JyB0
+byAnZnNsLHZjby1oeicgdG8gY2xlYXJseSBmZWlsZA0KPiA+IGRlZmluaWF0aW9uDQo+ID4NCj4g
+PiAgLi4uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svZnNsLHBsbGRpZy55YW1sIHwgNTUNCj4g
+PiArKysrKysrKysrKysrKysrKysrDQo+ID4gIDEgZmlsZSBjaGFuZ2VkLCA1NSBpbnNlcnRpb25z
+KCspDQo+ID4gIGNyZWF0ZSBtb2RlIDEwMDY0NA0KPiA+IERvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9jbG9jay9mc2wscGxsZGlnLnlhbWwNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9E
+b2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svZnNsLHBsbGRpZy55YW1sDQo+
+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvY2xvY2svZnNsLHBsbGRpZy55
+YW1sDQo+ID4gbmV3IGZpbGUgbW9kZSAxMDA2NDQNCj4gPiBpbmRleCAwMDAwMDAwMDAwMDAuLjIz
+Y2NlNjViM2E5Mw0KPiA+IC0tLSAvZGV2L251bGwNCj4gPiArKysgYi9Eb2N1bWVudGF0aW9uL2Rl
+dmljZXRyZWUvYmluZGluZ3MvY2xvY2svZnNsLHBsbGRpZy55YW1sDQo+ID4gQEAgLTAsMCArMSw1
+NSBAQA0KPiA+ICsjIFNQRFgtTGljZW5zZS1JZGVudGlmaWVyOiBHUEwtMi4wDQo+ID4gKyVZQU1M
+IDEuMg0KPiA+ICstLS0NCj4gPiArJGlkOg0KPiA+ICtodHRwczovL2V1cjAxLnNhZmVsaW5rcy5w
+cm90ZWN0aW9uLm91dGxvb2suY29tLz91cmw9aHR0cCUzQSUyRiUyRmRldmkNCj4gPg0KPiArY2V0
+cmVlLm9yZyUyRnNjaGVtYXMlMkZiaW5kaW5ncyUyRmNsb2NrJTJGZnNsJTJDcGxsZGlnLnlhbWwl
+MjMmYW1wOw0KPiBkYQ0KPiA+DQo+ICt0YT0wMiU3QzAxJTdDd2VuLmhlXzElNDBueHAuY29tJTdD
+YmMzZTdlYWJjZmVmNGY3NTMxNmUwOGQ3Nzk4Zg0KPiAyYzJlJTdDDQo+ID4NCj4gKzY4NmVhMWQz
+YmMyYjRjNmZhOTJjZDk5YzVjMzAxNjM1JTdDMCU3QzAlN0M2MzcxMTE1MjgxMzMxNTA3Mg0KPiA0
+JmFtcDtzZGENCj4gPg0KPiArdGE9dkZSdldhV2dkeUlXcVFBVkU3TlhuVUtDbkUlMkJVMzhzdkEl
+MkJqV3FOYyUyRmI4dyUzRCZhDQo+IG1wO3Jlc2VydmVkPQ0KPiA+ICswDQo+ID4gKyRzY2hlbWE6
+DQo+ID4gK2h0dHBzOi8vZXVyMDEuc2FmZWxpbmtzLnByb3RlY3Rpb24ub3V0bG9vay5jb20vP3Vy
+bD1odHRwJTNBJTJGJTJGZGV2aQ0KPiA+DQo+ICtjZXRyZWUub3JnJTJGbWV0YS1zY2hlbWFzJTJG
+Y29yZS55YW1sJTIzJmFtcDtkYXRhPTAyJTdDMDElN0N3ZW4NCj4gLmhlXzElDQo+ID4NCj4gKzQw
+bnhwLmNvbSU3Q2JjM2U3ZWFiY2ZlZjRmNzUzMTZlMDhkNzc5OGYyYzJlJTdDNjg2ZWExZDNiYzJi
+NGM2Zg0KPiBhOTJjZDkNCj4gPg0KPiArOWM1YzMwMTYzNSU3QzAlN0MwJTdDNjM3MTExNTI4MTMz
+MTUwNzI0JmFtcDtzZGF0YT1kcWolMkZCSyUyDQo+IEY0JTJCQm1maw0KPiA+ICtIa0dqZU5abTNG
+WlpsVFlQSk96RUtyb3lIMGpLREElM0QmYW1wO3Jlc2VydmVkPTANCj4gPiArDQo+ID4gK3RpdGxl
+OiBOWFAgUW9ySVEgTGF5ZXJzY2FwZSBMUzEwMjhBIERpc3BsYXkgUElYRUwgQ2xvY2sgQmluZGlu
+Zw0KPiA+ICsNCj4gPiArbWFpbnRhaW5lcnM6DQo+ID4gKyAgLSBXZW4gSGUgPHdlbi5oZV8xQG54
+cC5jb20+DQo+ID4gKw0KPiA+ICtkZXNjcmlwdGlvbjogfA0KPiA+ICsgIE5YUCBMUzEwMjhBIGhh
+cyBhIGNsb2NrIGRvbWFpbiBQWExDTEswIHVzZWQgZm9yIHRoZSBEaXNwbGF5IG91dHB1dA0KPiA+
+ICsgIGludGVyZmFjZSBpbiB0aGUgZGlzcGxheSBjb3JlLCBhcyBpbXBsZW1lbnRlZCBpbiBUU01D
+IENMTjI4SFBNIFBMTC4NCj4gPiArICB3aGljaCBnZW5lcmF0ZSBhbmQgb2ZmZXJzIHBpeGVsIGNs
+b2NrcyB0byBEaXNwbGF5Lg0KPiA+ICsNCj4gPiArcHJvcGVydGllczoNCj4gPiArICBjb21wYXRp
+YmxlOg0KPiA+ICsgICAgY29uc3Q6IGZzbCxsczEwMjhhLXBsbGRpZw0KPiA+ICsNCj4gPiArICBy
+ZWc6DQo+ID4gKyAgICBtYXhJdGVtczogMQ0KPiA+ICsNCj4gPiArICAnI2Nsb2NrLWNlbGxzJzoN
+Cj4gPiArICAgIGNvbnN0OiAwDQo+ID4gKw0KPiA+ICsgIGZzbCx2Y28taHo6DQo+ID4gKyAgICAg
+JHJlZjogJy9zY2hlbWFzL3R5cGVzLnlhbWwjL2RlZmluaXRpb25zL3VpbnQzMicNCj4gDQo+IERy
+b3AgdGhpcyBhcyAnKi1oeicgYWxyZWFkeSBoYXMgYSB0eXBlLg0KPiANCj4gV2l0aCB0aGF0LA0K
+PiANCj4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQoNClRoYW5r
+cyBhIGxvdDsgDQoNCkJlc3QgUmVnYXJkcywNCldlbg0KDQo+IA0KPiA+ICsgICAgIGRlc2NyaXB0
+aW9uOiBPcHRpb25hbCBmb3IgVkNPIGZyZXF1ZW5jeSBvZiB0aGUgUExMIGluIEhlcnR6Lg0KPiA+
+ICsgICAgICAgIFRoZSBWQ08gZnJlcXVlbmN5IG9mIHRoaXMgUExMIGNhbm5vdCBiZSBjaGFuZ2Vk
+IGR1cmluZyBydW50aW1lDQo+ID4gKyAgICAgICAgb25seSBhdCBzdGFydHVwLiBUaGVyZWZvcmUs
+IHRoZSBvdXRwdXQgZnJlcXVlbmNpZXMgYXJlIHZlcnkNCj4gPiArICAgICAgICBsaW1pdGVkIGFu
+ZCBtaWdodCBub3QgZXZlbiBjbG9zZWx5IG1hdGNoIHRoZSByZXF1ZXN0ZWQNCj4gZnJlcXVlbmN5
+Lg0KPiA+ICsgICAgICAgIFRvIHdvcmsgYXJvdW5kIHRoaXMgcmVzdHJpY3Rpb24gdGhlIHVzZXIg
+bWF5IHNwZWNpZnkgaXRzIG93bg0KPiA+ICsgICAgICAgIGRlc2lyZWQgVkNPIGZyZXF1ZW5jeSBm
+b3IgdGhlIFBMTC4NCj4gPiArICAgICBtaW5pbXVtOiA2NTAwMDAwMDANCj4gPiArICAgICBtYXhp
+bXVtOiAxMzAwMDAwMDAwDQo+ID4gKyAgICAgZGVmYXVsdDogMTE4ODAwMDAwMA0KPiA+ICsNCj4g
+PiArcmVxdWlyZWQ6DQo+ID4gKyAgLSBjb21wYXRpYmxlDQo+ID4gKyAgLSByZWcNCj4gPiArICAt
+IGNsb2Nrcw0KPiA+ICsgIC0gJyNjbG9jay1jZWxscycNCj4gPiArDQo+ID4gK2V4YW1wbGVzOg0K
+PiA+ICsgICMgRGlzcGxheSBQSVhFTCBDbG9jayBub2RlOg0KPiA+ICsgIC0gfA0KPiA+ICsgICAg
+ZHBjbGs6IGNsb2NrLWRpc3BsYXlAZjFmMDAwMCB7DQo+ID4gKyAgICAgICAgY29tcGF0aWJsZSA9
+ICJmc2wsbHMxMDI4YS1wbGxkaWciOw0KPiA+ICsgICAgICAgIHJlZyA9IDwweDAgMHhmMWYwMDAw
+IDB4MCAweGZmZmY+Ow0KPiA+ICsgICAgICAgICNjbG9jay1jZWxscyA9IDwwPjsNCj4gPiArICAg
+ICAgICBjbG9ja3MgPSA8Jm9zY18yN20+Ow0KPiA+ICsgICAgfTsNCj4gPiArDQo+ID4gKy4uLg0K
+PiA+IC0tDQo+ID4gMi4xNy4xDQo+ID4NCg==
