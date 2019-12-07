@@ -2,46 +2,45 @@ Return-Path: <SRS0=FLPw=Z5=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4482C2D0BE
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Dec 2019 22:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD88C43603
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Dec 2019 22:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FB8F2467E
-	for <linux-clk@archiver.kernel.org>; Sat,  7 Dec 2019 22:25:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E034E2467A
+	for <linux-clk@archiver.kernel.org>; Sat,  7 Dec 2019 22:48:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575757535;
-	bh=T3/4wZPL9p7tEA69OL6cyT7PPtrc6Pr84n3ts0k0Pfo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Xpl7qXueuRzAj/hhyzIo13eiWAaR5VYGP0E5LFT/mEWP+m9VXI5ATOudaCee7qNS3
-	 L6i0ydCW5FyCa+XfV8+RblruLRVLoyRDRbr3reIm+RC5VTlLWOUFYTg7+k2pjem7De
-	 5a4Xjy/E123MqKaqihYJ9mkB2cjWPRzkmFcpGfRk=
+	s=default; t=1575758885;
+	bh=93NzKwhH96xN9ph6jHZTyuNaVTL3dPzKjPH/rfZohME=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=rlLH01A49Ty9ufsP0Lmd7et42Gt4Ti2/XzLoKPDXL+pwnAbVm6JHbHAbvvvu7MHb1
+	 bk8N85J93dn/f6QW9Dg7BnyZ5fffrMdjhzURqj6M2etcO480NHpZEiMCxBwPWJXJU/
+	 /NRAoPGONBlS1j2Aumt50cv4uCniJ+56qpRkPNuk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfLGWYx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 7 Dec 2019 17:24:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36828 "EHLO mail.kernel.org"
+        id S1726511AbfLGWsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 7 Dec 2019 17:48:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726949AbfLGWYx (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 7 Dec 2019 17:24:53 -0500
+        id S1726416AbfLGWsE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sat, 7 Dec 2019 17:48:04 -0500
 Received: from ziggy.de (unknown [95.169.229.25])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B2722467D;
-        Sat,  7 Dec 2019 22:24:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D691D206DF;
+        Sat,  7 Dec 2019 22:47:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1575757492;
-        bh=T3/4wZPL9p7tEA69OL6cyT7PPtrc6Pr84n3ts0k0Pfo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uxXS1VAMa98HE9acicpZKn+v42FOxv/RwEn0KlvGqCpmFiXQQB+VvpdNB5J8kHNgY
-         mDI3JrWQOHNThSTkpfpxL4P459FvdL1qqJs5C3u+VHcJ+bV+D/fWZiNoow7ajO+EHM
-         HZ2Sg2xGCo4X8lW1mO/BssttoEDiRv2hrD4cqwH4=
+        s=default; t=1575758882;
+        bh=93NzKwhH96xN9ph6jHZTyuNaVTL3dPzKjPH/rfZohME=;
+        h=From:To:Cc:Subject:Date:From;
+        b=e5NmXO42FZJxfWU96LzDKeiQX5mbz0BLaxnTby1/9Pn0Q+JizVFSuHjnqRW0s9ZnY
+         hnN5q3R2ur6DOk9b02yjQvdFxlp7N/IsI5sxaEXsJM68Q0thsq6Sc5+H0jUsrVLdY3
+         ORalyU0pxGNSd6MkPptb313Q+9TlthVRPr6mio+w=
 From:   matthias.bgg@kernel.org
 To:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
         p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@codeaurora.org, ulrich.hecht+renesas@gmail.com,
+        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
         laurent.pinchart@ideasonboard.com, enric.balletbo@collabora.com
 Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
         rdunlap@infradead.org, wens@csie.org, hsinyi@chromium.org,
@@ -49,13 +48,12 @@ Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
         linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, mbrugger@suse.com
-Subject: [PATCH v6 05/12] media: mtk-mdp: Check return value of of_clk_get
-Date:   Sat,  7 Dec 2019 23:23:42 +0100
-Message-Id: <20191207222349.23161-6-matthias.bgg@kernel.org>
+        devicetree@vger.kernel.org, mbrugger@suse.com,
+        matthias.bgg@kernel.org
+Subject: [resend PATCH v6 00/12] arm/arm64: mediatek: Fix mmsys device probing
+Date:   Sat,  7 Dec 2019 23:47:28 +0100
+Message-Id: <20191207224740.24536-1-matthias.bgg@kernel.org>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191207222349.23161-1-matthias.bgg@kernel.org>
-References: <20191207222349.23161-1-matthias.bgg@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -65,31 +63,101 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Matthias Brugger <mbrugger@suse.com>
 
-Check the return value of of_clk_get and print an error
-message if not EPROBE_DEFER.
+[reseding due to wrong mail of Stephen]
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
----
- drivers/media/platform/mtk-mdp/mtk_mdp_comp.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+This is version five of the series. It's a long time this wasn't worked on, so
+as a reminder, version four can be found here:
+https://patchwork.kernel.org/cover/10686247/
 
-diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-index 9afe8161a8c0..4e2fc1337b80 100644
---- a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-+++ b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-@@ -110,6 +110,12 @@ int mtk_mdp_comp_init(struct device *dev, struct device_node *node,
+The biggest changes this new version does, is to implement the clock probing
+through a platform driver. The corresponding platform device get's created in
+the DRM driver. I converted all the clock drivers to platform drivers and tested
+the approach on the Acer Chromebook R13 (mt8173 based).
+Apart from that I reordered the patches so that the DT bindings update are the first
+patches.
+
+Changes since v5:
+- re-arrange the patch order
+- generate platform_device for mmsys clock driver inside the DRM driver
+- fix DTS binding accordingly
+- switch all mmsys clock driver to platform probing
+- fix mt8173 platform driver remove function
+- fix probe defer path in HDMI driver
+- fix probe defer path in mtk_mdp_comp
+- fix identation of error messages
+
+Changes since v4:
+- fix missing regmap accessors in drm diver (patch 1)
+- omit probe deffered warning on all drivers (patch 5)
+- update drm and clk bindings (patch 6 and 7)
+- put mmsys clock part in dts child node of mmsys. Only done
+for HW where no dts backport compatible breakage is expected 
+(either DRM driver not yet implemented or no HW available to
+the public) (patch 9 to 12)
+
+Changes since v3:
+- use platform device to probe clock driver
+- add Acked-by CK Hu for the probe deferred patch
+
+Changes since v2:
+- fix kconfig typo (shame on me)
+- delete __initconst from mm_clocks as converted to a platform driver
+  
+Changes since v1:
+- add binding documentation
+- ddp: use regmap_update_bits
+- ddp: ignore EPROBE_DEFER on clock probing
+- mfd: delete mmsys_private
+- add Reviewed-by and Acked-by tags
  
- 	for (i = 0; i < ARRAY_SIZE(comp->clk); i++) {
- 		comp->clk[i] = of_clk_get(node, i);
-+		if (IS_ERR(comp->clk[i])i) {
-+			if (PTR_ERR(comp->clk[i] != -EPROBE_DEFER)
-+					dev_err(dev, "Failed to get clock\n");
-+
-+			return PTR_ERR(comp->clk[i]);
-+		}
- 
- 		/* Only RDMA needs two clocks */
- 		if (comp->type != MTK_MDP_RDMA)
+MMSYS in Mediatek SoCs has some registers to control clock gates (which is 
+used in the clk driver) and some registers to set the routing and enable
+the differnet blocks of the display subsystem.
+
+Up to now both drivers, clock and drm are probed with the same device tree
+compatible. But only the first driver get probed, which in effect breaks
+graphics on mt8173 and mt2701.
+
+This patch uses a platform device registration in the DRM driver, which
+will trigger the probe of the corresponding clock driver. It was tested on the
+bananapi-r2 and the Acer R13 Chromebook.
+
+
+Matthias Brugger (12):
+  dt-bindings: display: mediatek: Add mmsys binding description
+  dt-bindings: mediatek: Add compatible for mt7623
+  drm/mediatek: Use regmap for register access
+  drm: mediatek: Omit warning on probe defers
+  media: mtk-mdp: Check return value of of_clk_get
+  clk: mediatek: mt2701: switch mmsys to platform device probing
+  clk: mediatek: mt2712e: switch to platform device probing
+  clk: mediatek: mt6779: switch mmsys to platform device probing
+  clk: mediatek: mt6797: switch to platform device probing
+  clk: mediatek: mt8183: switch mmsys to platform device probing
+  clk: mediatek: mt8173: switch mmsys to platform device probing
+  drm/mediatek: Add support for mmsys through a pdev
+
+ .../display/mediatek/mediatek,disp.txt        | 30 ++++++-----
+ drivers/clk/mediatek/clk-mt2701-mm.c          | 41 +++++++++-----
+ drivers/clk/mediatek/clk-mt2712-mm.c          | 39 +++++++++-----
+ drivers/clk/mediatek/clk-mt6779-mm.c          | 41 +++++++++-----
+ drivers/clk/mediatek/clk-mt6797-mm.c          | 43 ++++++++++-----
+ drivers/clk/mediatek/clk-mt8173.c             | 51 +++++++++++++++---
+ drivers/clk/mediatek/clk-mt8183-mm.c          | 39 +++++++++-----
+ drivers/gpu/drm/mediatek/mtk_disp_color.c     |  5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_ovl.c       |  5 +-
+ drivers/gpu/drm/mediatek/mtk_disp_rdma.c      |  5 +-
+ drivers/gpu/drm/mediatek/mtk_dpi.c            | 12 +++--
+ drivers/gpu/drm/mediatek/mtk_drm_crtc.c       |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.c        | 54 +++++++++----------
+ drivers/gpu/drm/mediatek/mtk_drm_ddp.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_drm_drv.c        | 35 +++++++++---
+ drivers/gpu/drm/mediatek/mtk_drm_drv.h        |  4 +-
+ drivers/gpu/drm/mediatek/mtk_dsi.c            |  8 ++-
+ drivers/gpu/drm/mediatek/mtk_hdmi.c           |  4 +-
+ drivers/media/platform/mtk-mdp/mtk_mdp_comp.c |  6 +++
+ 19 files changed, 295 insertions(+), 135 deletions(-)
+
 -- 
 2.24.0
 
