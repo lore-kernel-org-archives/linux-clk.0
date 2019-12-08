@@ -6,40 +6,35 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C83FC43603
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Dec 2019 20:55:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D4A7C43603
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Dec 2019 21:13:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2454E206D5
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Dec 2019 20:55:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4BE6320637
+	for <linux-clk@archiver.kernel.org>; Sun,  8 Dec 2019 21:13:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726708AbfLHUz0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Dec 2019 15:55:26 -0500
-Received: from relay6-d.mail.gandi.net ([217.70.183.198]:55441 "EHLO
-        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726513AbfLHUz0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Dec 2019 15:55:26 -0500
-X-Originating-IP: 88.190.179.123
+        id S1726586AbfLHVNq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Dec 2019 16:13:46 -0500
+Received: from relay12.mail.gandi.net ([217.70.178.232]:55857 "EHLO
+        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725554AbfLHVNp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Dec 2019 16:13:45 -0500
 Received: from localhost (unknown [88.190.179.123])
         (Authenticated sender: repk@triplefau.lt)
-        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id DE367C0003;
-        Sun,  8 Dec 2019 20:55:22 +0000 (UTC)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 4C24A200006;
+        Sun,  8 Dec 2019 21:13:41 +0000 (UTC)
 From:   Remi Pommarel <repk@triplefau.lt>
 To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Yue Wang <yue.wang@Amlogic.com>
+        Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Kevin Hilman <khilman@baylibre.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 2/2] PCI: amlogic: Use PCIe pll gate when available
-Date:   Sun,  8 Dec 2019 22:03:20 +0100
-Message-Id: <20191208210320.15539-3-repk@triplefau.lt>
+        Remi Pommarel <repk@triplefau.lt>
+Subject: [PATCH] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
+Date:   Sun,  8 Dec 2019 22:22:06 +0100
+Message-Id: <20191208212206.16808-1-repk@triplefau.lt>
 X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191208210320.15539-1-repk@triplefau.lt>
-References: <20191208210320.15539-1-repk@triplefau.lt>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -47,39 +42,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In order to get PCIe working reliably on some AXG platforms, PCIe pll
-cml needs to be enabled. This is done by using the PCIE_PLL_CML_ENABLE
-clock gate.
+Some meson pll registers can be initialized with 0 as N value, introducing
+the following division by 0 when computing rate :
 
-This clock gate is optional, so do not fail if it is missing in the
-devicetree.
+  UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
+  division by zero
+  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
+  Call trace:
+   dump_backtrace+0x0/0x1c0
+   show_stack+0x14/0x20
+   dump_stack+0xc4/0x100
+   ubsan_epilogue+0x14/0x68
+   __ubsan_handle_divrem_overflow+0x98/0xb8
+   __pll_params_to_rate+0xdc/0x140
+   meson_clk_pll_recalc_rate+0x278/0x3a0
+   __clk_register+0x7c8/0xbb0
+   devm_clk_hw_register+0x54/0xc0
+   meson_eeclkc_probe+0xf4/0x1a0
+   platform_drv_probe+0x54/0xd8
+   really_probe+0x16c/0x438
+   driver_probe_device+0xb0/0xf0
+   device_driver_attach+0x94/0xa0
+   __driver_attach+0x70/0x108
+   bus_for_each_dev+0xd8/0x128
+   driver_attach+0x30/0x40
+   bus_add_driver+0x1b0/0x2d8
+   driver_register+0xbc/0x1d0
+   __platform_driver_register+0x78/0x88
+   axg_driver_init+0x18/0x20
+   do_one_initcall+0xc8/0x24c
+   kernel_init_freeable+0x2b0/0x344
+   kernel_init+0x10/0x128
+   ret_from_fork+0x10/0x18
 
+This checks if N is null before doing the division.
+
+Fixes: 8289aafa4f36 ("clk: meson: improve pll driver results with frac")
 Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 ---
- drivers/pci/controller/dwc/pci-meson.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/clk/meson/clk-pll.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-index 3772b02a5c55..32b70ea9a426 100644
---- a/drivers/pci/controller/dwc/pci-meson.c
-+++ b/drivers/pci/controller/dwc/pci-meson.c
-@@ -89,6 +89,7 @@ struct meson_pcie_clk_res {
- 	struct clk *mipi_gate;
- 	struct clk *port_clk;
- 	struct clk *general_clk;
-+	struct clk *pll_cml_gate;
- };
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index ddb1e5634739..6649659f216a 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -66,6 +66,10 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+ 					 (1 << pll->frac.width));
+ 	}
  
- struct meson_pcie_rc_reset {
-@@ -300,6 +301,10 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
- 	if (IS_ERR(res->clk))
- 		return PTR_ERR(res->clk);
- 
-+	res->pll_cml_gate = meson_pcie_probe_clock(dev, "pll_cml_en", 0);
-+	if (IS_ERR(res->pll_cml_gate))
-+		res->pll_cml_gate = NULL;
++	/* Avoid by zero division */
++	if (n == 0)
++		return 0;
 +
- 	return 0;
+ 	return DIV_ROUND_UP_ULL(rate, n);
  }
  
 -- 
