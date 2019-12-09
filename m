@@ -2,108 +2,115 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D656CC43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 11:03:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2C3C43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 12:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CBC20726
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 11:03:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 355212073D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 12:45:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ea4Z1cQ4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfLILDS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 06:03:18 -0500
-Received: from foss.arm.com ([217.140.110.172]:56290 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726297AbfLILDS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Dec 2019 06:03:18 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 965571FB;
-        Mon,  9 Dec 2019 03:03:17 -0800 (PST)
-Received: from localhost (unknown [10.37.6.20])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0D6EF3F6CF;
-        Mon,  9 Dec 2019 03:03:16 -0800 (PST)
-Date:   Mon, 9 Dec 2019 11:03:15 +0000
-From:   Andrew Murray <andrew.murray@arm.com>
-To:     Remi Pommarel <repk@triplefau.lt>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Yue Wang <yue.wang@Amlogic.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: amlogic: Use PCIe pll gate when available
-Message-ID: <20191209110314.GQ18399@e119886-lin.cambridge.arm.com>
-References: <20191208210320.15539-1-repk@triplefau.lt>
- <20191208210320.15539-3-repk@triplefau.lt>
+        id S1727458AbfLIMpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 07:45:22 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44538 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbfLIMpW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 07:45:22 -0500
+Received: by mail-lj1-f195.google.com with SMTP id c19so15399330lji.11;
+        Mon, 09 Dec 2019 04:45:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0EqX6cEm7s4jaUP8gqU2WgVaUAwSF8/ZNfo7D9M8hX0=;
+        b=ea4Z1cQ4j6pVroJI93taTqrNYi4d55Dj2qnxcURpemD++k1BEhkABPoa3SP+An7qJa
+         hqOcS0dm14hhp7GHCdMy90aT9j7kxxGG06b9lh0kzY5z5ShRTjcq7q4XTCmx2aiyOnLx
+         VAUgCFXP0bed1Wtxma48iO60LicJGzeXvmxmGG7/d3YYtIrHxHKsRp36j4goGEB93LnA
+         eueH1BYrBFj81qVyHY8Ur24otJj76LOnZ4uygKZmRqZbVSwi9cyDENQgpvhyKV3YQDBC
+         4RKheWS7M4YZYVOqKwxmbeQZhgSg+puxqhejgz3ankmYLGoQPyFtJhVz8NGzR/KBFMKm
+         9O9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0EqX6cEm7s4jaUP8gqU2WgVaUAwSF8/ZNfo7D9M8hX0=;
+        b=gFuDyUxu249i9UArEDhDqMtLFWo1HymbSREjtPoRHXknRfzMAoZspRR7h9J+OP2aXN
+         TN7oHu/zKBxof1MWMsl6b04DIydkjjwAhUVffSwtv2LsQhiDlEZXavzShnLqmecYFCj1
+         jV0oHGO6xtEEf4n4P5P1TRyA/ddT/cg80r3hrFtNjXostLaKwNsKeDaXrd4GISOVbggd
+         vIJlvioK3kJlLMGPH3JbqZWd8z0Ft7IVJkI8AlTXuquYD3rTVJsrZk5ydgMSlKm1fZt/
+         YbpT/7NMKIwLm7uz9PAh+iz73/HCi04QWlQ9Ajz0j6R+9QAU+5voj+NWIfi2YgNmvTCS
+         Zmmg==
+X-Gm-Message-State: APjAAAVuI0cXxaSB4v3RXDWuWFUVIZKFxd3T9870zM8MLQNMoKKcA2JI
+        WAvNRDFBNeGey8VlmUXS4ge1YJ4U
+X-Google-Smtp-Source: APXvYqxu678dkp/5vM+8A/RpDAIhinyjuBIeVcmRDlVaSxwyt6q83NX/ycTAw/NrVajhxzxdCwC2jg==
+X-Received: by 2002:a2e:98c4:: with SMTP id s4mr16745523ljj.102.1575895519630;
+        Mon, 09 Dec 2019 04:45:19 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id y72sm4442818lfa.12.2019.12.09.04.45.18
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2019 04:45:18 -0800 (PST)
+Subject: Re: Build regressions/improvements in v5.5-rc1
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+References: <20191209105613.2491-1-geert@linux-m68k.org>
+ <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <33f03ef9-c868-8bd5-ae5d-3da703d21fa9@gmail.com>
+Date:   Mon, 9 Dec 2019 15:45:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191208210320.15539-3-repk@triplefau.lt>
-User-Agent: Mutt/1.10.1+81 (426a6c1) (2018-08-26)
+In-Reply-To: <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 08, 2019 at 10:03:20PM +0100, Remi Pommarel wrote:
-> In order to get PCIe working reliably on some AXG platforms, PCIe pll
-> cml needs to be enabled. This is done by using the PCIE_PLL_CML_ENABLE
-> clock gate.
-
-s/cml/CML/
-
-In addition to Jerome's feedback - it would also be helpful to explain
-when CML outputs should be enabled, i.e. which platforms and why those
-ones?
-
+09.12.2019 14:02, Geert Uytterhoeven пишет:
+> On Mon, Dec 9, 2019 at 11:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+>> Below is the list of build error/warning regressions/improvements in
+>> v5.5-rc1[1] compared to v5.4[2].
+>>
+>> Summarized:
+>>   - build errors: +2/-8
+>>   - build warnings: +84/-87
+>>
+>> Happy fixing! ;-)
+>>
+>> Thanks to the linux-next team for providing the build service.
+>>
+>> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/e42617b825f8073569da76dc4510bfa019b1c35a/ (all 232 configs)
+>> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
+>>
+>>
+>> *** ERRORS ***
+>>
+>> 2 error regressions:
+>>   + error: "clk_set_min_rate" [drivers/devfreq/tegra30-devfreq.ko] undefined!:  => N/A
+>>   + error: tegra30-devfreq.c: undefined reference to `clk_set_min_rate':  => .text+0xcc8)
 > 
-> This clock gate is optional, so do not fail if it is missing in the
-> devicetree.
-
-If certain platforms require PCIE_PLL_CML_ENABLE to work reliably and
-thus the clock is specified in the device tree - then surely if there
-is an error in enabling the clock we should fail? I.e. should you only
-ignore -ENOENT here?
-
-Thanks,
-
-Andrew Murray
-
+> sh-all{mod,yes}config
 > 
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> ---
->  drivers/pci/controller/dwc/pci-meson.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pci-meson.c b/drivers/pci/controller/dwc/pci-meson.c
-> index 3772b02a5c55..32b70ea9a426 100644
-> --- a/drivers/pci/controller/dwc/pci-meson.c
-> +++ b/drivers/pci/controller/dwc/pci-meson.c
-> @@ -89,6 +89,7 @@ struct meson_pcie_clk_res {
->  	struct clk *mipi_gate;
->  	struct clk *port_clk;
->  	struct clk *general_clk;
-> +	struct clk *pll_cml_gate;
->  };
->  
->  struct meson_pcie_rc_reset {
-> @@ -300,6 +301,10 @@ static int meson_pcie_probe_clocks(struct meson_pcie *mp)
->  	if (IS_ERR(res->clk))
->  		return PTR_ERR(res->clk);
->  
-> +	res->pll_cml_gate = meson_pcie_probe_clock(dev, "pll_cml_en", 0);
-> +	if (IS_ERR(res->pll_cml_gate))
-> +		res->pll_cml_gate = NULL;
-> +
->  	return 0;
->  }
->  
-> -- 
-> 2.24.0
-> 
+> Legacy non-CCF platform do not provide clk_set_min_rate(), so this needs
+> a dependency on CCF.
+
+Hello Geert,
+
+Thanks for the report, I'll make a patch to fix it.
+
+> BTW, it seems this was already known back in June...
+> https://lore.kernel.org/linux-pm/5301c593-97e1-db4e-067b-0522537b55d9@gmail.com/
+
+Yes, I was a bit confused about why only T20 driver was causing the
+trouble.
