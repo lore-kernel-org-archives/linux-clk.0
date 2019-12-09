@@ -2,94 +2,155 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7EBEC43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 09:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D85EC43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 09:51:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76C5124680
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 09:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B75324684
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 09:51:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="1QP8E5rE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfLIJuI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 04:50:08 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:40512 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725994AbfLIJuI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 04:50:08 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: eballetbo)
-        with ESMTPSA id D519528BA69
-Subject: Re: [resend PATCH v6 05/12] media: mtk-mdp: Check return value of
- of_clk_get
-To:     matthias.bgg@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        ck.hu@mediatek.com, p.zabel@pengutronix.de, airlied@linux.ie,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com
-Cc:     sean.wang@mediatek.com, sean.wang@kernel.org,
-        rdunlap@infradead.org, wens@csie.org, hsinyi@chromium.org,
-        frank-w@public-files.de, drinkcat@chromium.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, mbrugger@suse.com
-References: <20191207224740.24536-1-matthias.bgg@kernel.org>
- <20191207224740.24536-6-matthias.bgg@kernel.org>
-From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Message-ID: <8d0b7ac3-abb5-2a05-32a6-648830632a74@collabora.com>
-Date:   Mon, 9 Dec 2019 10:50:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727260AbfLIJvR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 04:51:17 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:53697 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727200AbfLIJvQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 04:51:16 -0500
+Received: by mail-wm1-f65.google.com with SMTP id n9so14200268wmd.3
+        for <linux-clk@vger.kernel.org>; Mon, 09 Dec 2019 01:51:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=/lV4JOds+hQfSWH7coNmWVW3vJirPTXEaWuWEYduTYk=;
+        b=1QP8E5rEnnpU1XZQRU97MeWENs2Clw1QWJ71vLW8hAfEkhPVRwKXiPNjy/x0GSLHYy
+         iEBd0l9DIz9rS1Oyx0EPugmBekdTVFsgULtW+CLZXn6/HjLgmtUzplUdlOsDM5LAUDj0
+         ZcxA33nqqE0xugQ3p8BMXNCeyP1AYFooYXFa5XI0QPTEhBKECdxMuXuvxVKG7YuiLuvu
+         HcyR3Y2Qfj6WJ/wDGu3KhySAy/so+P9mJ6kfLB8OW3wCl4ZRytOKZZXu2Ml1Q45RY5jB
+         fTuVR/SzH8ZWZBk7CdkFP5J3sdSMCEMFKPUnlAg2AJyR7r3onPgGF9+GTHCkZZdD9moJ
+         1SZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=/lV4JOds+hQfSWH7coNmWVW3vJirPTXEaWuWEYduTYk=;
+        b=gOtNxGAlHPQBJdgIoEur1OFLHDlIpk4+AY9DOapLPoDJsNdOLoA7MMcktNVRuDuM6I
+         vsfMbXNDg6BxEtrB1+B0spyreVxzc9AJi3lfGpojBLoaf7HwTKVYwryiSaXxw+lYK+hl
+         hRcz9n5my6wG1iOVpqButwLlspAtp2uCKubFczUxXTUdBSuKLVe4mQ63u06YDdP3Rh43
+         tZ1ms5CrZJ/o1uFJjOdyCN1z5xxG3LneAKt3l2iXH0PTkg6ZNikDwX2fXg5U44ukawET
+         jv4ebK/eLRf9IHXB3huF+m6y0VnheXzkoL0O4IpTDuyM/KHS9unz6fEcQhHV97AIr4UN
+         JDWQ==
+X-Gm-Message-State: APjAAAV1fUfV20eAnbVcXVDJfdGJNKEyBhaU6gbEb39tbiUH1B9BarhJ
+        H68KDzRCu9pkj/fPcGo3TRaVSw==
+X-Google-Smtp-Source: APXvYqyJrZdhijAo9WBhDx6CQX/GMWF1YJMIkaeUQIf7KJnAzbt8wQFio/hP1vuXx3Nyfi9YFWG7zg==
+X-Received: by 2002:a1c:238c:: with SMTP id j134mr24393284wmj.151.1575885074948;
+        Mon, 09 Dec 2019 01:51:14 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id y6sm25826838wrl.17.2019.12.09.01.51.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2019 01:51:14 -0800 (PST)
+References: <20191208212206.16808-1-repk@triplefau.lt>
+User-agent: mu4e 1.3.3; emacs 26.2
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Remi Pommarel <repk@triplefau.lt>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
+In-reply-to: <20191208212206.16808-1-repk@triplefau.lt>
+Date:   Mon, 09 Dec 2019 10:51:13 +0100
+Message-ID: <1jo8whesj2.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <20191207224740.24536-6-matthias.bgg@kernel.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Matthias,
 
-On 7/12/19 23:47, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> Check the return value of of_clk_get and print an error
-> message if not EPROBE_DEFER.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+On Sun 08 Dec 2019 at 22:22, Remi Pommarel <repk@triplefau.lt> wrote:
+
+> Some meson pll registers can be initialized with 0 as N value, introducing
+> the following division by 0 when computing rate :
+>
+>   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
+>   division by zero
+>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
+>   Call trace:
+>    dump_backtrace+0x0/0x1c0
+>    show_stack+0x14/0x20
+>    dump_stack+0xc4/0x100
+>    ubsan_epilogue+0x14/0x68
+>    __ubsan_handle_divrem_overflow+0x98/0xb8
+>    __pll_params_to_rate+0xdc/0x140
+>    meson_clk_pll_recalc_rate+0x278/0x3a0
+>    __clk_register+0x7c8/0xbb0
+>    devm_clk_hw_register+0x54/0xc0
+>    meson_eeclkc_probe+0xf4/0x1a0
+>    platform_drv_probe+0x54/0xd8
+>    really_probe+0x16c/0x438
+>    driver_probe_device+0xb0/0xf0
+>    device_driver_attach+0x94/0xa0
+>    __driver_attach+0x70/0x108
+>    bus_for_each_dev+0xd8/0x128
+>    driver_attach+0x30/0x40
+>    bus_add_driver+0x1b0/0x2d8
+>    driver_register+0xbc/0x1d0
+>    __platform_driver_register+0x78/0x88
+>    axg_driver_init+0x18/0x20
+>    do_one_initcall+0xc8/0x24c
+>    kernel_init_freeable+0x2b0/0x344
+>    kernel_init+0x10/0x128
+>    ret_from_fork+0x10/0x18
+>
+> This checks if N is null before doing the division.
+
+Thanks for reporting this
+
+>
+> Fixes: 8289aafa4f36 ("clk: meson: improve pll driver results with
+> frac")
+
+In mainline, the commit above went in with sha1 3c4fe763d64d.
+
+Also, this commit is not really responsible for the problem. Having HW
+initialized with N = 0 would have failed since the beginning, I believe.
+
+In this case the correct fixes would be:
+Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
+
+
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
 > ---
->  drivers/media/platform/mtk-mdp/mtk_mdp_comp.c | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-> index 9afe8161a8c0..4e2fc1337b80 100644
-> --- a/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-> +++ b/drivers/media/platform/mtk-mdp/mtk_mdp_comp.c
-> @@ -110,6 +110,12 @@ int mtk_mdp_comp_init(struct device *dev, struct device_node *node,
+>  drivers/clk/meson/clk-pll.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+> index ddb1e5634739..6649659f216a 100644
+> --- a/drivers/clk/meson/clk-pll.c
+> +++ b/drivers/clk/meson/clk-pll.c
+> @@ -66,6 +66,10 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
+>  					 (1 << pll->frac.width));
+>  	}
 >  
->  	for (i = 0; i < ARRAY_SIZE(comp->clk); i++) {
->  		comp->clk[i] = of_clk_get(node, i);
-> +		if (IS_ERR(comp->clk[i])i) {
+> +	/* Avoid by zero division */
+> +	if (n == 0)
+> +		return 0;
 
-Oops                                    ^
+This can only really happen after init, in recalc() rate.
 
-> +			if (PTR_ERR(comp->clk[i] != -EPROBE_DEFER)
-
-and missing closing )
-
-> +					dev_err(dev, "Failed to get clock\n");
-
-Like the previous patch I think that the clk core will print a message if the
-clock is not found and you can just this redundand dev_err.
+I would much prefer if you could check the n value right after it is
+read (meson_parm_read()) in .recalc_rate() and add a comment explaining
+that some HW may have this parameter set 0 on init.
 
 > +
-> +			return PTR_ERR(comp->clk[i]);
-> +		}
->  
->  		/* Only RDMA needs two clocks */
->  		if (comp->type != MTK_MDP_RDMA)
-> 
+>  	return DIV_ROUND_UP_ULL(rate, n);
+>  }
+
