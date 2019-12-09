@@ -2,111 +2,91 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A5EC43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 20:47:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87D4FC43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 20:56:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF5822068E
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 20:47:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575924459;
-	bh=xjQtbBTSqhoMGJwn3RUeOi50GwFWIhX8xMZTaQKQu9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JUMB06ZmEoSXevGjr05TL+XJM3yidgAnId/4v94dh+N8N2HelGF8dB5M4xv2q/j2J
-	 FbCPxcIxMoXzll4SoCRC8oyeP7baJhVYcUammk1b7SL2plUID++RaiOlnH33G6RxnO
-	 XqCqvYOWX3on+EPgnvIwfWolJTlkF+/O/TvOegb8=
+	by mail.kernel.org (Postfix) with ESMTP id 5CD37206D5
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 20:56:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfLIUri (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 15:47:38 -0500
-Received: from foss.arm.com ([217.140.110.172]:45592 "EHLO foss.arm.com"
+        id S1726532AbfLIU4d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 15:56:33 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:56716 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726522AbfLIUri (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Dec 2019 15:47:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E147A328;
-        Mon,  9 Dec 2019 12:47:37 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5E6833F718;
-        Mon,  9 Dec 2019 12:47:37 -0800 (PST)
-Date:   Mon, 9 Dec 2019 20:47:35 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, mturquette@baylibre.com,
-        horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com,
-        krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com,
-        josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        alexios.zavras@intel.com, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 09/15] ASoC: tegra: Add fallback for audio mclk
-Message-ID: <20191209204735.GK5483@sirena.org.uk>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
- <20191209164027.GG5483@sirena.org.uk>
- <7fe879fd-dae3-1e64-1031-cd9f00e31552@gmail.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="LQ77YLfPrO/qF/pM"
-Content-Disposition: inline
-In-Reply-To: <7fe879fd-dae3-1e64-1031-cd9f00e31552@gmail.com>
-X-Cookie: We read to say that we have read.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1726483AbfLIU4c (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Dec 2019 15:56:32 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id ECE971A07D6;
+        Mon,  9 Dec 2019 21:56:30 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id DF7FB1A0483;
+        Mon,  9 Dec 2019 21:56:30 +0100 (CET)
+Received: from fsr-ub1864-112.ea.freescale.net (fsr-ub1864-112.ea.freescale.net [10.171.82.98])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 58578205D0;
+        Mon,  9 Dec 2019 21:56:30 +0100 (CET)
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Yangtao Li <tiny.windzz@gmail.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        kernel@pengutronix.de, linux-imx@nxp.com
+Subject: [PATCH] clk: imx8qxp-lpcg: Warn against devm_platform_ioremap_resource
+Date:   Mon,  9 Dec 2019 22:56:28 +0200
+Message-Id: <329ac54993d5eb955249d037241a7213faff508f.1575924858.git.leonard.crestez@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On imx8 the LPCG nodes map entire subsystems and overlap peripherals,
+this means that using devm_platform_ioremap_resource will cause many
+devices to fail to probe including serial ports.
 
---LQ77YLfPrO/qF/pM
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Well-meaning but boot-breaking patches were posted multiple times so add
+a comment explaining this issue.
 
-On Mon, Dec 09, 2019 at 11:31:59PM +0300, Dmitry Osipenko wrote:
-> 09.12.2019 19:40, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+Suggested-by: Peng Fan <peng.fan@nxp.com>
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+---
+ drivers/clk/imx/clk-imx8qxp-lpcg.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-> > Why would this need to be a stable fix?  Presumably people with stable
-> > kernels are using the old device tree anyway?
+diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+index c0aff7ca6374..04c8ee35e14c 100644
+--- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
++++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+@@ -171,10 +171,21 @@ static int imx8qxp_lpcg_clk_probe(struct platform_device *pdev)
+ 
+ 	ss_lpcg = of_device_get_match_data(dev);
+ 	if (!ss_lpcg)
+ 		return -ENODEV;
+ 
++	/*
++	 * Please don't replace this with devm_platform_ioremap_resource.
++	 *
++	 * devm_platform_ioremap_resource calls devm_ioremap_resource which
++	 * differs from devm_ioremap by also calling devm_request_mem_region
++	 * and preventing other mappings in the same area.
++	 *
++	 * On imx8 the LPCG nodes map entire subsystems and overlap
++	 * peripherals, this means that using devm_platform_ioremap_resource
++	 * will cause many devices to fail to probe including serial ports.
++	 */
+ 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 	if (!res)
+ 		return -EINVAL;
+ 	base = devm_ioremap(dev, res->start, resource_size(res));
+ 	if (!base)
+-- 
+2.17.1
 
-> At least Rob Herring is asking to maintain backwards compatibility
-> because some ditros are using newer device-trees with stable kernels.
-
-You're talking about forwards compatibility not backwards here.  Are
-those distros actually using LTS kernels?
-
-> I'm personally also tending to use the newer DTB with older kernel
-> version whenever there is a need to check something using stable kernel.
-> Perhaps losing sound is not very important, but will be nicer if that
-> doesn't happen.
-
-That really does sound like a "you broke it, you get all the pieces"
-situation TBH...  I'd be a lot more comfortable if the stable kernels
-were sticking to bugfix only though I do appreciate that they're not
-really that any more.
-
---LQ77YLfPrO/qF/pM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3usucACgkQJNaLcl1U
-h9DLZgf/bl+y6tN1f9+6Q5i4PkGjVAppOzDxi0mDZ6TrvcSLsNfAhK9+1IH7w0+x
-F90tauu6Flsm9/TnoDK5Csuotm+nKlkXidXNL5qfSzW4azrXes5gdOrwpicKOnEG
-7T92jLjHOCPaANNqKrtX+29qAamyxmKOCW/8AKH8SNjerkCDZfZks3yjqilm4i4A
-6jwUUAi9ij8TvZlSGteUlqfmib7FdxodH0Gud2q3lYFUKWrKpGnPh823iHtTpiKK
-EGDYhbcuS1BeEP6dB/7baejQjkrEjpz7YslmD2KjGlUWIRVEpKPqU/SY63e7mChB
-UDCefmC858Tzlkyi7AFFmjnFrTfrMQ==
-=IA00
------END PGP SIGNATURE-----
-
---LQ77YLfPrO/qF/pM--
