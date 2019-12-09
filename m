@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AADC43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 18:42:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 228A1C2BD09
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 18:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D59E214AF
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 18:42:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9E062080D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 18:43:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726801AbfLISmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 13:42:53 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:34222 "EHLO mail.bugwerft.de"
+        id S1726903AbfLISnA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 13:43:00 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:34252 "EHLO mail.bugwerft.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726483AbfLISmw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Dec 2019 13:42:52 -0500
+        id S1726265AbfLISm6 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Dec 2019 13:42:58 -0500
 Received: from zenbar.fritz.box (pD95EF75D.dip0.t-ipconnect.de [217.94.247.93])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 294F82E5CEC;
-        Mon,  9 Dec 2019 18:29:14 +0000 (UTC)
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 834332E5CEB;
+        Mon,  9 Dec 2019 18:29:15 +0000 (UTC)
 From:   Daniel Mack <daniel@zonque.org>
 To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
@@ -28,9 +28,9 @@ To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
 Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
         broonie@kernel.org, lee.jones@linaro.org, lars@metafoo.de,
         pascal.huerst@gmail.com, Daniel Mack <daniel@zonque.org>
-Subject: [PATCH 07/10] i2c: Add driver for AD242x bus controller
-Date:   Mon,  9 Dec 2019 19:35:08 +0100
-Message-Id: <20191209183511.3576038-9-daniel@zonque.org>
+Subject: [PATCH 09/10] clk: Add support for AD242x clock output providers
+Date:   Mon,  9 Dec 2019 19:35:10 +0100
+Message-Id: <20191209183511.3576038-11-daniel@zonque.org>
 X-Mailer: git-send-email 2.23.0
 In-Reply-To: <20191209183511.3576038-1-daniel@zonque.org>
 References: <20191209183511.3576038-1-daniel@zonque.org>
@@ -41,239 +41,286 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This device must be instantiated as a sub-device of the AD242x MFD
-device.
+AD242x have two pins that can be used as clock outputs. This driver makes
+that functionality available through the common clock framework.
 
-In order to access remote I2C peripherals, the master node is configured
-to the slave node number and the remote I2C client address on the remote
-side, and then the payload is sent to the BUS client of the master node,
-which transparently proxies the traffic through.
+Apart from gating the clocks and setting their rates, the hardware also
+allows for a phase shift of 180 degrees.
 
 Signed-off-by: Daniel Mack <daniel@zonque.org>
 ---
- drivers/i2c/busses/Kconfig      |  10 ++
- drivers/i2c/busses/Makefile     |   1 +
- drivers/i2c/busses/i2c-ad242x.c | 178 ++++++++++++++++++++++++++++++++
- 3 files changed, 189 insertions(+)
- create mode 100644 drivers/i2c/busses/i2c-ad242x.c
+ drivers/clk/Kconfig      |   6 +
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-ad242x.c | 231 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 238 insertions(+)
+ create mode 100644 drivers/clk/clk-ad242x.c
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 6a0aa76859f3..b9cf049bedb0 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -365,6 +365,16 @@ config I2C_POWERMAC
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 45653a0e6ecd..28b700d068fe 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -39,6 +39,12 @@ config CLK_HSDK
+ 	  This driver supports the HSDK core, system, ddr, tunnel and hdmi PLLs
+ 	  control.
  
- comment "I2C system bus drivers (mostly embedded / system-on-chip)"
- 
-+config I2C_AD242X
-+	tristate "Analog Devices AD242x"
++config COMMON_CLK_AD242X
++	tristate "Clock driver for AD242x A2B nodes"
 +	depends on MFD_AD242X
-+	help
-+	  If you say yes to this option, support will be included for the
-+	  I2C bus controller function of AD242x slave nodes.
++	---help---
++	  This driver supports clock outputs on AD242x A2B nodes.
 +
-+	  This driver can also be built as a module.  If so, the module
-+	  will be called i2c-ad242x.
-+
- config I2C_ALTERA
- 	tristate "Altera Soft IP I2C"
- 	depends on (ARCH_SOCFPGA || NIOS2) && OF
-diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
-index 3ab8aebc39c9..57c31ea8a477 100644
---- a/drivers/i2c/busses/Makefile
-+++ b/drivers/i2c/busses/Makefile
-@@ -32,6 +32,7 @@ obj-$(CONFIG_I2C_HYDRA)		+= i2c-hydra.o
- obj-$(CONFIG_I2C_POWERMAC)	+= i2c-powermac.o
+ config COMMON_CLK_MAX77686
+ 	tristate "Clock driver for Maxim 77620/77686/77802 MFD"
+ 	depends on MFD_MAX77686 || MFD_MAX77620 || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 0696a0c1ab58..3f8cbddb48c7 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -18,6 +18,7 @@ endif
  
- # Embedded system I2C/SMBus host controller drivers
-+obj-$(CONFIG_I2C_AD242X)	+= i2c-ad242x.o
- obj-$(CONFIG_I2C_ALTERA)	+= i2c-altera.o
- obj-$(CONFIG_I2C_AMD_MP2)	+= i2c-amd-mp2-pci.o i2c-amd-mp2-plat.o
- obj-$(CONFIG_I2C_ASPEED)	+= i2c-aspeed.o
-diff --git a/drivers/i2c/busses/i2c-ad242x.c b/drivers/i2c/busses/i2c-ad242x.c
+ # hardware specific clock types
+ # please keep this section sorted lexicographically by file path name
++obj-$(CONFIG_COMMON_CLK_AD242X)		+= clk-ad242x.o
+ obj-$(CONFIG_MACH_ASM9260)		+= clk-asm9260.o
+ obj-$(CONFIG_COMMON_CLK_AXI_CLKGEN)	+= clk-axi-clkgen.o
+ obj-$(CONFIG_ARCH_AXXIA)		+= clk-axm5516.o
+diff --git a/drivers/clk/clk-ad242x.c b/drivers/clk/clk-ad242x.c
 new file mode 100644
-index 000000000000..b94056653898
+index 000000000000..201789d8f174
 --- /dev/null
-+++ b/drivers/i2c/busses/i2c-ad242x.c
-@@ -0,0 +1,178 @@
-+// SPDX-License-Identifier: GPL-2.0-only
++++ b/drivers/clk/clk-ad242x.c
+@@ -0,0 +1,231 @@
++// SPDX-License-Identifier: GPL-2.0
 +
++#include <linux/module.h>
++#include <linux/kernel.h>
++#include <linux/clk.h>
++#include <linux/clk-provider.h>
 +#include <linux/err.h>
 +#include <linux/errno.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
 +#include <linux/mfd/ad242x.h>
-+#include <linux/of.h>
 +#include <linux/platform_device.h>
 +#include <linux/regmap.h>
 +
-+struct ad242x_i2c {
-+	struct device		*dev;
-+	struct ad242x_node	*node;
-+	struct i2c_adapter	adap;
-+	u32			node_index;
++#include <dt-bindings/clock/adi,ad242x.h>
++
++#define AD242X_NUM_CLKS 2
++
++struct ad242x_clk_hw {
++	struct clk_hw hw;
++	struct clk_init_data init;
++	struct ad242x_node *node;
++	u8 reg;
 +};
 +
-+static int ad242x_set_addr(struct ad242x_node *mnode,
-+			   struct ad242x_i2c_bus *bus,
-+			   uint8_t node_id, uint8_t addr)
++struct ad242x_clk_driver_data {
++	struct ad242x_clk_hw hw[AD242X_NUM_CLKS];
++};
++
++static inline struct ad242x_clk_hw *to_ad242x_clk(struct clk_hw *hw)
 +{
-+	int ret;
-+	uint8_t buf[2] = { AD242X_CHIP, addr };
-+
-+	ret = regmap_update_bits(mnode->regmap, AD242X_NODEADR,
-+				 AD242X_NODEADR_PERI | AD242X_NODEADR_MASK,
-+				 node_id);
-+	if (ret < 0)
-+		return ret;
-+
-+	/*
-+	 * We can't use the slave's regmap here as it holds the same
-+	 * lock we also need to guard this context.
-+	 */
-+	ret = i2c_transfer_buffer_flags(bus->client,
-+					buf, sizeof(buf), 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	return regmap_update_bits(mnode->regmap, AD242X_NODEADR,
-+				  AD242X_NODEADR_PERI, AD242X_NODEADR_PERI);
++	return container_of(hw, struct ad242x_clk_hw, hw);
 +}
 +
-+static int ad242x_i2c_xfer(struct i2c_adapter *adap,
-+			   struct i2c_msg msgs[], int num)
++static int ad242x_clk_prepare(struct clk_hw *hw)
 +{
-+	struct ad242x_i2c *i2c = adap->algo_data;
-+	struct ad242x_i2c_bus *bus = ad242x_master_get_bus(i2c->node->master);
-+	struct ad242x_node *mnode = ad242x_master_get_node(i2c->node->master);
-+	int ret, i, current_addr = -1;
++	struct ad242x_clk_hw *clk_hw = to_ad242x_clk(hw);
 +
-+	mutex_lock(&bus->mutex);
++	return regmap_update_bits(clk_hw->node->regmap, clk_hw->reg,
++				  AD242X_CLKCFG_EN, AD242X_CLKCFG_EN);
++}
 +
-+	for (i = 0; i < num; i++) {
-+		struct i2c_msg *msg = msgs + i;
++static void ad242x_clk_unprepare(struct clk_hw *hw)
++{
++	struct ad242x_clk_hw *clk_hw = to_ad242x_clk(hw);
 +
-+		if (msg->addr != current_addr) {
-+			ret = ad242x_set_addr(mnode, bus,
-+					      i2c->node->id, msg->addr);
-+			if (ret < 0) {
-+				dev_err(i2c->node->dev,
-+					"Cannot set address: %d\n", ret);
-+				break;
-+			}
++	regmap_update_bits(clk_hw->node->regmap, clk_hw->reg,
++			   AD242X_CLKCFG_EN, 0);
++}
 +
-+			current_addr = msg->addr;
-+		}
++static void ad242x_do_div(unsigned long rate, unsigned long parent_rate,
++			  unsigned long *prediv, unsigned long *div)
++{
++	if (rate < parent_rate / 32UL)
++		*prediv = 32UL;
++	else
++		*prediv = 2UL;
 +
-+		ret = i2c_transfer_buffer_flags(bus->client,
-+						msg->buf, msg->len, msg->flags);
-+		if (ret < 0)
-+			break;
++	parent_rate /= *prediv;
++	*div = parent_rate / rate;
++}
++
++static int ad242x_clk_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct ad242x_clk_hw *clk_hw = to_ad242x_clk(hw);
++	unsigned long pll_rate = parent_rate * 2048UL;
++	unsigned long prediv, div;
++	unsigned int val = 0;
++
++	if (rate > pll_rate / 4 || rate < pll_rate / 1024UL)
++		return -EINVAL;
++
++	ad242x_do_div(rate, pll_rate, &prediv, &div);
++
++	if (prediv == 32UL)
++		val |= AD242X_CLKCFG_PDIV32;
++
++	val |= AD242X_CLKCFG_DIV((div / 2UL) - 1UL);
++
++	return regmap_update_bits(clk_hw->node->regmap, clk_hw->reg,
++				  AD242X_CLKCFG_DIVMSK | AD242X_CLKCFG_PDIV32,
++				  val);
++}
++
++static unsigned long ad242x_clk_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct ad242x_clk_hw *clk_hw = to_ad242x_clk(hw);
++	unsigned long pll_rate = parent_rate * 2048UL;
++	unsigned long prediv, div;
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(clk_hw->node->regmap, clk_hw->reg, &val);
++	if (ret < 0)
++		return ret;
++
++	prediv = (val & AD242X_CLKCFG_PDIV32) ? 32UL : 2UL;
++	div = 2UL * ((val & AD242X_CLKCFG_DIVMSK) + 1UL);
++
++	return pll_rate / (prediv * div);
++}
++
++static long ad242x_clk_round_rate(struct clk_hw *hw, unsigned long rate,
++				  unsigned long *parent_rate)
++{
++	unsigned long pll_rate = *parent_rate * 2048UL;
++	unsigned long prediv, div;
++
++	if (rate > pll_rate / 4 || rate < pll_rate / 1024UL)
++		return -EINVAL;
++
++	ad242x_do_div(rate, pll_rate, &prediv, &div);
++
++	return pll_rate / (prediv * div);
++}
++
++static int ad242x_clk_get_phase(struct clk_hw *hw)
++{
++	struct ad242x_clk_hw *clk_hw = to_ad242x_clk(hw);
++	unsigned int val;
++	int ret;
++
++	ret = regmap_read(clk_hw->node->regmap, clk_hw->reg, &val);
++	if (ret < 0)
++		return ret;
++
++	return (val & AD242X_CLKCFG_INV) ? 180 : 0;
++}
++
++static int ad242x_clk_set_phase(struct clk_hw *hw, int phase)
++{
++	struct ad242x_clk_hw *clk_hw = to_ad242x_clk(hw);
++	unsigned int val;
++
++	switch (phase) {
++	case 0:
++		val = 0;
++		break;
++	case 180:
++		val = AD242X_CLKCFG_INV;
++		break;
++	default:
++		return -EINVAL;
 +	}
 +
-+	mutex_unlock(&bus->mutex);
-+
-+	return ret < 0 ? ret : num;
++	return regmap_update_bits(clk_hw->node->regmap, clk_hw->reg,
++				  AD242X_CLKCFG_INV, val);
 +}
 +
-+static u32 ad242x_i2c_functionality(struct i2c_adapter *adap)
-+{
-+	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
-+}
-+
-+static const struct i2c_algorithm ad242x_i2c_algorithm = {
-+	.master_xfer	= ad242x_i2c_xfer,
-+	.functionality	= ad242x_i2c_functionality,
++static const struct clk_ops ad242x_clk_ops = {
++	.prepare	= ad242x_clk_prepare,
++	.unprepare	= ad242x_clk_unprepare,
++	.get_phase	= ad242x_clk_get_phase,
++	.set_phase	= ad242x_clk_set_phase,
++	.recalc_rate	= ad242x_clk_recalc_rate,
++	.round_rate	= ad242x_clk_round_rate,
++	.set_rate	= ad242x_clk_set_rate,
 +};
 +
-+static int ad242x_i2c_probe(struct platform_device *pdev)
++static struct clk_hw *
++ad242x_of_clk_get(struct of_phandle_args *clkspec, void *data)
 +{
++	struct ad242x_clk_driver_data *drvdata = data;
++	unsigned int idx = clkspec->args[0];
++
++	return &drvdata->hw[idx].hw;
++}
++
++static int ad242x_clk_probe(struct platform_device *pdev)
++{
++	const char *clk_names[AD242X_NUM_CLKS] = { "clkout1", "clkout2" };
++	u8 regs[AD242X_NUM_CLKS] = { AD242X_CLK1CFG, AD242X_CLK2CFG };
++	struct ad242x_clk_driver_data *drvdata;
 +	struct device *dev = &pdev->dev;
++	const char *sync_clk_name;
 +	struct ad242x_node *node;
-+	struct ad242x_i2c *i2c;
-+	u32 freq, val = 0;
-+	int ret;
++	int i, ret;
 +
 +	if (!dev->of_node)
 +		return -ENODEV;
 +
-+	node = dev_get_drvdata(dev->parent);
-+	if ((node->caps & AD242X_CAPABILITY_I2C) == 0) {
-+		dev_err(dev, "Node %d has no I2C capability", node->id);
-+		return -ENOTSUPP;
-+	}
-+
-+	if (ad242x_node_is_master(node))
-+		return -EINVAL;
-+
-+	freq = ad242x_master_get_clk_rate(node->master);
-+	if (freq == 44100)
-+		val |= AD242X_I2CCFG_FRAMERATE;
-+
-+	if (!of_property_read_u32(dev->of_node, "clock-frequency", &freq)) {
-+		if (freq == 400000)
-+			val |= AD242X_I2CCFG_DATARATE;
-+		else if (freq != 100000)
-+			dev_warn(dev, "Unsupported frequency %d\n", freq);
-+	}
-+
-+	ret = regmap_write(node->regmap, AD242X_I2CCFG, val);
-+	if (ret < 0)
-+		return ret;
-+
-+	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
-+	if (!i2c)
++	drvdata = devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
++	if (!drvdata)
 +		return -ENOMEM;
 +
-+	i2c->node = node;
-+	i2c->adap.algo = &ad242x_i2c_algorithm;
-+	i2c->adap.algo_data = i2c;
-+	i2c->adap.dev.parent = dev;
-+	i2c->adap.dev.of_node = dev->of_node;
-+	i2c_set_adapdata(&i2c->adap, i2c);
-+	strlcpy(i2c->adap.name, "ad242x remote I2C bus",
-+		sizeof(i2c->adap.name));
++	node = dev_get_drvdata(dev->parent);
++	sync_clk_name = ad242x_master_get_clk_name(node->master);
 +
-+	ret = i2c_add_adapter(&i2c->adap);
-+	if (ret < 0) {
-+		dev_err(dev, "error registering adapter: %d\n", ret);
-+		return ret;
++	for (i = 0; i < AD242X_NUM_CLKS; i++) {
++		const char *name;
++
++		if (of_property_read_string_index(dev->of_node,
++						  "clock-output-names",
++						  i, &name) == 0)
++			drvdata->hw[i].init.name = name;
++		else
++			drvdata->hw[i].init.name = clk_names[i];
++
++		drvdata->hw[i].reg = regs[i];
++		drvdata->hw[i].init.ops = &ad242x_clk_ops;
++		drvdata->hw[i].init.num_parents = 1;
++		drvdata->hw[i].init.parent_names = &sync_clk_name;
++		drvdata->hw[i].hw.init = &drvdata->hw[i].init;
++		drvdata->hw[i].node = node;
++
++		ret = devm_clk_hw_register(dev, &drvdata->hw[i].hw);
++		if (ret < 0)
++			return ret;
 +	}
 +
-+	dev_info(dev, "ad242x i2c driver, node ID %d\n", node->id);
-+	platform_set_drvdata(pdev, i2c);
-+
-+	return 0;
++	return devm_of_clk_add_hw_provider(dev, ad242x_of_clk_get, drvdata);
 +}
 +
-+static int ad242x_i2c_remove(struct platform_device *dev)
-+{
-+	struct ad242x_i2c *i2c = platform_get_drvdata(dev);
-+
-+	i2c_del_adapter(&i2c->adap);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id ad242x_i2c_of_match[] = {
-+	{ .compatible = "adi,ad2428w-i2c" },
-+	{ }
++static const struct of_device_id ad242x_dt_ids[] = {
++	{ .compatible = "adi,ad2428w-clk", },
++	{}
 +};
-+MODULE_DEVICE_TABLE(of, ad242x_i2c_of_match);
++MODULE_DEVICE_TABLE(of, ad242x_dt_ids);
 +
-+static struct platform_driver ad242x_i2c_driver = {
++static struct platform_driver ad242x_clk_driver = {
++	.probe = ad242x_clk_probe,
 +	.driver = {
-+		.name = "ad242x-i2c",
-+		.of_match_table = ad242x_i2c_of_match,
++		.name = "ad242x-clk",
++		.of_match_table	= ad242x_dt_ids,
 +	},
-+	.probe = ad242x_i2c_probe,
-+	.remove = ad242x_i2c_remove,
 +};
++module_platform_driver(ad242x_clk_driver);
 +
-+module_platform_driver(ad242x_i2c_driver);
-+MODULE_LICENSE("GPL");
++MODULE_AUTHOR("Daniel Mack <daniel@zonque.org>");
++MODULE_DESCRIPTION("AD242x clock driver");
++MODULE_LICENSE("GPL v2");
 -- 
 2.23.0
 
