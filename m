@@ -2,101 +2,135 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7AE32C43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 16:40:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A1BC43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 16:56:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FDBC2080D
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 16:40:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575909631;
-	bh=vbkK5CIGGgBE8zOV3p0UskGcCxJ2wOHra9eBgs5nW38=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=xM5gMi7Vy004E3xw4D7ZsTb2pANWrVzrgdDeR1gFommJfjDE4MkQ4TTogNhq4/pBq
-	 i8Kicu6Fz9i7QfonW5lntYBMxhayxQWI48SaL5aX/dG5jzfI6Nw4hnz/+whCWrOTtx
-	 3oBWqQKuv3egtpsJfA1geaJGQ/OMcl3Idzw8M4p0=
+	by mail.kernel.org (Postfix) with ESMTP id 55D1220836
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 16:56:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="pv/qQ4oR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726484AbfLIQka (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 11:40:30 -0500
-Received: from foss.arm.com ([217.140.110.172]:37948 "EHLO foss.arm.com"
+        id S1726379AbfLIQ4A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 11:56:00 -0500
+Received: from onstation.org ([52.200.56.107]:39240 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726197AbfLIQka (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:40:30 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1C7B1045;
-        Mon,  9 Dec 2019 08:40:29 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E38B23F718;
-        Mon,  9 Dec 2019 08:40:28 -0800 (PST)
-Date:   Mon, 9 Dec 2019 16:40:27 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com, digetx@gmail.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, tglx@linutronix.de, robh+dt@kernel.org,
-        mark.rutland@arm.com, allison@lohutok.net, pdeschrijver@nvidia.com,
-        pgaikwad@nvidia.com, mturquette@baylibre.com,
-        horms+renesas@verge.net.au, Jisheng.Zhang@synaptics.com,
-        krzk@kernel.org, arnd@arndb.de, spujar@nvidia.com,
-        josephl@nvidia.com, vidyas@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        alexios.zavras@intel.com, alsa-devel@alsa-project.org
-Subject: Re: [PATCH v3 09/15] ASoC: tegra: Add fallback for audio mclk
-Message-ID: <20191209164027.GG5483@sirena.org.uk>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
+        id S1725904AbfLIQz7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Dec 2019 11:55:59 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id C5F0A3E8F7;
+        Mon,  9 Dec 2019 16:55:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1575910558;
+        bh=IOou9TpV+L1zTliwsDvEweGpQGlqyMJMFaeFEvowmJk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=pv/qQ4oRIKZXzsuVDiX+sBNfpA+09Ne97DInXCT6Wpym9V3Dt113bUDVb+iNGWMcJ
+         CGoTHeGIVsZudI8+KLLM3KRF6QLbX/a+6PX6nB4wzjlMD3QIs4wDD5pFGjCYtu8Zjd
+         tKkd8akm416FTOfVJRHg5lSyXOC4lRlSfm8c5MsA=
+Date:   Mon, 9 Dec 2019 11:55:58 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Input <linux-input@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        thierry.reding@gmail.com
+Subject: Re: [PATCH 4/7] dt-bindings: Input: introduce new clock vibrator
+ bindings
+Message-ID: <20191209165558.GA3212@onstation.org>
+References: <20191205002503.13088-1-masneyb@onstation.org>
+ <20191205002503.13088-5-masneyb@onstation.org>
+ <CAL_Jsq+jpz6_N18sChREC_xGYt9sSFZFtWr3omb_6o7+MFxuHg@mail.gmail.com>
+ <20191209005436.GA13647@onstation.org>
+ <CAL_JsqJ2v1fL7gkAg7C3GjokV7WD87S3P5HCwi-ZJ7EOjds8Pw@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UKNXkkdQCYZ6W5l3"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1575600535-26877-10-git-send-email-skomatineni@nvidia.com>
-X-Cookie: We read to say that we have read.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAL_JsqJ2v1fL7gkAg7C3GjokV7WD87S3P5HCwi-ZJ7EOjds8Pw@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On Mon, Dec 09, 2019 at 10:16:26AM -0600, Rob Herring wrote:
+> On Sun, Dec 8, 2019 at 6:54 PM Brian Masney <masneyb@onstation.org> wrote:
+> >
+> > On Thu, Dec 05, 2019 at 07:56:10AM -0600, Rob Herring wrote:
+> > > On Wed, Dec 4, 2019 at 6:25 PM Brian Masney <masneyb@onstation.org> wrote:
+> > > >
+> > > > Add support for clock-based vibrator devices where the speed can be
+> > > > controlled by changing the duty cycle.
+> > > >
+> > > > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > > > ---
+> > > >  .../bindings/input/clk-vibrator.yaml          | 60 +++++++++++++++++++
+> > > >  1 file changed, 60 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> > > >
+> > > > diff --git a/Documentation/devicetree/bindings/input/clk-vibrator.yaml b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..2103a5694fad
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> > > > @@ -0,0 +1,60 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/bindings/input/clk-vibrator.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Clock vibrator
+> > > > +
+> > > > +maintainers:
+> > > > +  - Brian Masney <masneyb@onstation.org>
+> > > > +
+> > > > +description: |
+> > > > +  Support for clock-based vibrator devices where the speed can be controlled
+> > > > +  by changing the duty cycle.
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    const: clk-vibrator
+> > > > +
+> > > > +  clocks:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clock-names:
+> > > > +    description: output clock that controls the speed
+> > > > +    items:
+> > > > +      - const: core
+> > >
+> > > No point in making up a name when there's only one clock, so drop.
+> >
+> > OK, will do.
+> >
+> > >
+> > > > +
+> > > > +  clock-frequency: true
+> > >
+> > > Given the frequency is variable, what does this mean in this case?
+> >
+> > The clock frequency is fixed. The duty cycle is what's variable.
+> 
+> That sounds like a PWM then...
 
---UKNXkkdQCYZ6W5l3
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yes... See this message from Stephen with some more background
+information about why this is in the clk subsystem:
 
-On Thu, Dec 05, 2019 at 06:48:49PM -0800, Sowjanya Komatineni wrote:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
->=20
-> New device tree uses clk_out_1 from pmc clock provider.
->=20
-> So, this patch adds fallback to extern1 in case of retrieving mclk fails
-> to be backward compatible of new device tree with older kernels.
->=20
-> Cc: stable@vger.kernel.org
+https://lore.kernel.org/lkml/20190627234929.B78E520815@mail.kernel.org/
 
-Why would this need to be a stable fix?  Presumably people with stable
-kernels are using the old device tree anyway?
-
---UKNXkkdQCYZ6W5l3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3uePoACgkQJNaLcl1U
-h9D66wf9EtL0BmittcbTOCbTdEmV+6j2kRHf90+8kREBk+po5Zgw/f04NXW1VR/o
-kLtbsSNRWvW6HVGcWiKcNfqwBnq6P5mb2ufc9OsvjWAKJJNBnZxF2AacAn7/I2my
-ck6qGzJj4X70Xdt+KkhdTorKJX8PdX3Az9abC77DTq8cH2kbWt/domujEXrR/36g
-XCAXHpj+Id9dTLaqKz8z0ZhYsZlzaaW+QTJ12Ocuayna4rF/JB/P0n94rSjBVSVG
-ozfOhg7YYn9Q0NaGtjX7tUNX6vSF48kHKfrhfMIEDtkidq3AogcQACno8rg4amIL
-EhtifDhVUKFWuXliJGz3WveE8/2MrA==
-=CHYQ
------END PGP SIGNATURE-----
-
---UKNXkkdQCYZ6W5l3--
+Brian
