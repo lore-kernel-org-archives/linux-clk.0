@@ -2,143 +2,129 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A8F3C43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 08:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0100C43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 08:48:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B9F8206E0
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 08:32:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="l2RINini"
+	by mail.kernel.org (Postfix) with ESMTP id 995192073D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 08:48:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727196AbfLIIcW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 03:32:22 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51134 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727044AbfLIIcW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 03:32:22 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p9so14477590wmg.0
-        for <linux-clk@vger.kernel.org>; Mon, 09 Dec 2019 00:32:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=emf4IJEEMsmxfQFP3fayTObEfLJTqttr7F9XFtfzuqY=;
-        b=l2RINiniKcey/jhYyNEjboTgQuFh87XyROBMa0gj84/Vm4tnZlbyZamK6aJYwRdYBn
-         uqHL+5kmm95wY5dB41OWQXTWCUveOtySqUfhMwfer/v8Zb1TYo9st7wgVs1pPSWwjQnE
-         CTWybUczEiNtygy24UTDLkRuDSYBdDwHu6Rw5oEQYbRCuQN3N1sOmM/QgTGJrqYK/+gd
-         ZsBs5IBMow3rG8I+aOTopBP+NLYSYP93vryqBdFCNpkC9MIh76Nwq73qdxpBNEwpOy40
-         MLrjAHDJQUIoyS8+q75zjNhm3Z0PuAC7sNYZQKTbpnxuI+nQ0TAGdRfv5aoeVP8gz0BD
-         SLmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=emf4IJEEMsmxfQFP3fayTObEfLJTqttr7F9XFtfzuqY=;
-        b=iaUugO7on6gmX+CMMbIEyqEVi7DZ/vA0vUknxd1RcbRduRNGfE1N/g6qS9v9m89nKc
-         1Ucpi5SnsAVy2MiBb+rZKQLIty1HXWIwHxZevRW9KR6xMpva1kTD5DjQXOPeerhvRMnx
-         GXCF/nTKtnj1lkNaIfYJhMoD1I8c5wSB67jmqMCTse+yWwg3KCVIWldPEzPS5HdgxHJQ
-         VHGmo72Mor1irF/p1LfoHgxeYaXmSV5bmeKuLE6ZYz8f1XlAJ3iTEHGQ3rk9YCZyXsND
-         A3Baffzx7z/2JbB0vzsMeO6Dp5l5AzK7aMHl1vbRENd8W1Drz/vs1shcAmT7PxRhX6s3
-         vJTQ==
-X-Gm-Message-State: APjAAAVBVUFVC7Wrm7PQQhYonDlKQQ2KJDG4VRTD+B19zE3KKjYWMYYD
-        C7kLy6a1Dd663c+4+SDaNewxfg==
-X-Google-Smtp-Source: APXvYqzCeYkH/XjSzuD2xv6U2QTFu/p0/ipUgx0/xb5fgeGV8FOzVH5MhgwTY08LUaCdUwXNjXg2fA==
-X-Received: by 2002:a05:600c:2144:: with SMTP id v4mr22522732wml.141.1575880340584;
-        Mon, 09 Dec 2019 00:32:20 -0800 (PST)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id v188sm13242989wma.10.2019.12.09.00.32.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 00:32:19 -0800 (PST)
-References: <20191208210320.15539-1-repk@triplefau.lt>
-User-agent: mu4e 1.3.3; emacs 26.2
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Remi Pommarel <repk@triplefau.lt>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Yue Wang <yue.wang@Amlogic.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH 0/2] PCI: amlogic: Make PCIe working reliably on AXG platforms
-In-reply-to: <20191208210320.15539-1-repk@triplefau.lt>
-Date:   Mon, 09 Dec 2019 09:32:18 +0100
-Message-ID: <1jpngxew6l.fsf@starbuckisacylon.baylibre.com>
+        id S1727247AbfLIIsY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 03:48:24 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:39264 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727228AbfLIIsY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 03:48:24 -0500
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+        (Authenticated sender: eballetbo)
+        with ESMTPSA id 4B35028D7A3
+Subject: Re: [resend PATCH v6 01/12] dt-bindings: display: mediatek: Add mmsys
+ binding description
+To:     CK Hu <ck.hu@mediatek.com>, matthias.bgg@kernel.org
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, p.zabel@pengutronix.de,
+        airlied@linux.ie, mturquette@baylibre.com, sboyd@kernel.org,
+        ulrich.hecht+renesas@gmail.com, laurent.pinchart@ideasonboard.com,
+        sean.wang@mediatek.com, sean.wang@kernel.org,
+        rdunlap@infradead.org, wens@csie.org, hsinyi@chromium.org,
+        frank-w@public-files.de, drinkcat@chromium.org,
+        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, mbrugger@suse.com
+References: <20191207224740.24536-1-matthias.bgg@kernel.org>
+ <20191207224740.24536-2-matthias.bgg@kernel.org>
+ <1575868373.7013.4.camel@mtksdaap41>
+From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Message-ID: <dec02ff4-6627-2755-b05b-2ab0560feee7@collabora.com>
+Date:   Mon, 9 Dec 2019 09:48:17 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1575868373.7013.4.camel@mtksdaap41>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi Matthias,
 
-On Sun 08 Dec 2019 at 22:03, Remi Pommarel <repk@triplefau.lt> wrote:
+On 9/12/19 6:12, CK Hu wrote:
+> Hi, Matthias:
+> 
+> On Sat, 2019-12-07 at 23:47 +0100, matthias.bgg@kernel.org wrote:
+>> From: Matthias Brugger <mbrugger@suse.com>
+>>
+>> The MediaTek DRM has a block called mmsys, which sets
+>> the routing and enalbes the different blocks.
 
-> PCIe device probing failures have been seen on some AXG platforms and were
-> due to unreliable clock signal output. Setting HHI_MIPI_CNTL0[26] bit
-> solved the problem. After being contacted about this, vendor reported that
-> this bit was linked to PCIe PLL CML output.
+Typo s/enalbes/enables/
 
-Thanks for reporting the problem.
-
-As Martin pointed out, the CML outputs already exist in the AXG clock
-controller but are handled using HHI_PCIE_PLL_CNTL6. Although
-incomplete, it seems to be aligned with the datasheet I have (v0.9)
-
-According to the same document, HHI_MIPI_CNTL0 belong to the MIPI Phy.
-Unfortunately bit 26 is not documented
-
-AFAICT, the clock controller is not appropriate driver to deal with this
-register/bit
-
->
-> This serie adds a way to set this bit through AXG clock gating logic.
-> Platforms having this kind of issue could make use of this gating by
-> applying a patch to their devicetree similar to:
->
->                 clocks = <&clkc CLKID_USB
->                         &clkc CLKID_MIPI_ENABLE
->                         &clkc CLKID_PCIE_A
-> -                       &clkc CLKID_PCIE_CML_EN0>;
-> +                       &clkc CLKID_PCIE_CML_EN0
-> +                       &clkc CLKID_PCIE_PLL_CML_ENABLE>;
->                 clock-names = "pcie_general",
->                                 "pcie_mipi_en",
->                                 "pcie",
-> -                               "port";
-> +                               "port",
-> +                               "pll_cml_en";
->                 resets = <&reset RESET_PCIE_PHY>,
->                         <&reset RESET_PCIE_A>,
->                         <&reset RESET_PCIE_APB>;
-
-A few remarks for your future patches:
-
-* You need to document any need binding you introduce:
-  It means that there should have been a patch in
-  Documentation/devicetree/... before using your newclock name in the
-  pcie driver. As Martin pointed out, dt-bindings should be dealt with
-  in their own patches
-
->
->
-> Remi Pommarel (2):
->   clk: meson: axg: add pcie pll cml gating
-
-Whenever possible, patches intended for different maintainers should be
-sent separately (different series)
-
->   PCI: amlogic: Use PCIe pll gate when available
->
->  drivers/clk/meson/axg.c                | 3 +++
->  drivers/clk/meson/axg.h                | 2 +-
->  drivers/pci/controller/dwc/pci-meson.c | 5 +++++
->  include/dt-bindings/clock/axg-clkc.h   | 1 +
->  4 files changed, 10 insertions(+), 1 deletion(-)
-
+>> This patch adds one line for the mmsys bindings description.
+>>
+>> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
+>> ---
+>>  .../display/mediatek/mediatek,disp.txt        | 28 ++++++++++---------
+>>  1 file changed, 15 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> index 8469de510001..c71c8a4b73ff 100644
+>> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,disp.txt
+>> @@ -27,20 +27,22 @@ Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.txt.
+>>  
+>>  Required properties (all function blocks):
+>>  - compatible: "mediatek,<chip>-disp-<function>", one of
+>> -	"mediatek,<chip>-disp-ovl"   - overlay (4 layers, blending, csc)
+>> -	"mediatek,<chip>-disp-rdma"  - read DMA / line buffer
+>> -	"mediatek,<chip>-disp-wdma"  - write DMA
+>> -	"mediatek,<chip>-disp-color" - color processor
+>> -	"mediatek,<chip>-disp-aal"   - adaptive ambient light controller
+>> -	"mediatek,<chip>-disp-gamma" - gamma correction
+>> -	"mediatek,<chip>-disp-merge" - merge streams from two RDMA sources
+>> -	"mediatek,<chip>-disp-split" - split stream to two encoders
+>> -	"mediatek,<chip>-disp-ufoe"  - data compression engine
+>> -	"mediatek,<chip>-dsi"        - DSI controller, see mediatek,dsi.txt
+>> -	"mediatek,<chip>-dpi"        - DPI controller, see mediatek,dpi.txt
+>> -	"mediatek,<chip>-disp-mutex" - display mutex
+>> -	"mediatek,<chip>-disp-od"    - overdrive
+>> +	"mediatek,<chip>-disp-ovl"		- overlay (4 layers, blending, csc)
+> 
+> This patch conflicts with 5.5-rc, please resend this patch base on
+> 5.5-rc1.
+> 
+>> +	"mediatek,<chip>-disp-rdma"		- read DMA / line buffer
+>> +	"mediatek,<chip>-disp-wdma"		- write DMA
+>> +	"mediatek,<chip>-disp-color"		- color processor
+>> +	"mediatek,<chip>-disp-aal"		- adaptive ambient light controller
+>> +	"mediatek,<chip>-disp-gamma"		- gamma correction
+>> +	"mediatek,<chip>-disp-merge"		- merge streams from two RDMA sources
+>> +	"mediatek,<chip>-disp-split"		- split stream to two encoders
+>> +	"mediatek,<chip>-disp-ufoe"		- data compression engine
+>> +	"mediatek,<chip>-dsi"			- DSI controller, see mediatek,dsi.txt
+>> +	"mediatek,<chip>-dpi"			- DPI controller, see mediatek,dpi.txt
+>> +	"mediatek,<chip>-disp-mutex"		- display mutex
+>> +	"mediatek,<chip>-disp-od"		- overdrive
+>> +	"mediatek,<chip>-mmsys", "syscon"	- provide clocks and components management
+>>    the supported chips are mt2701, mt2712 and mt8173.
+> 
+> The original binding document for mmsys is in [1], I think we should not
+> define it in duplicate. Maybe you could remove the original document.
+> 
+> [1]
+> https://www.kernel.org/doc/Documentation/devicetree/bindings/arm/mediatek/mediatek%2Cmmsys.txt
+> 
+> Regards,
+> CK
+> 
+>> +
+>>  - reg: Physical base address and length of the function block register space
+>>  - interrupts: The interrupt signal from the function block (required, except for
+>>    merge and split function blocks).
+> 
