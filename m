@@ -2,115 +2,240 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F2C3C43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 12:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932B2C43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 14:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355212073D
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 12:45:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ea4Z1cQ4"
+	by mail.kernel.org (Postfix) with ESMTP id 664A020828
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 14:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727458AbfLIMpW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 07:45:22 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:44538 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727200AbfLIMpW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 07:45:22 -0500
-Received: by mail-lj1-f195.google.com with SMTP id c19so15399330lji.11;
-        Mon, 09 Dec 2019 04:45:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0EqX6cEm7s4jaUP8gqU2WgVaUAwSF8/ZNfo7D9M8hX0=;
-        b=ea4Z1cQ4j6pVroJI93taTqrNYi4d55Dj2qnxcURpemD++k1BEhkABPoa3SP+An7qJa
-         hqOcS0dm14hhp7GHCdMy90aT9j7kxxGG06b9lh0kzY5z5ShRTjcq7q4XTCmx2aiyOnLx
-         VAUgCFXP0bed1Wtxma48iO60LicJGzeXvmxmGG7/d3YYtIrHxHKsRp36j4goGEB93LnA
-         eueH1BYrBFj81qVyHY8Ur24otJj76LOnZ4uygKZmRqZbVSwi9cyDENQgpvhyKV3YQDBC
-         4RKheWS7M4YZYVOqKwxmbeQZhgSg+puxqhejgz3ankmYLGoQPyFtJhVz8NGzR/KBFMKm
-         9O9g==
+        id S1727816AbfLIOJk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 09:09:40 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35522 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726687AbfLIOJj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 09:09:39 -0500
+Received: by mail-oi1-f196.google.com with SMTP id k196so6415610oib.2;
+        Mon, 09 Dec 2019 06:09:39 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0EqX6cEm7s4jaUP8gqU2WgVaUAwSF8/ZNfo7D9M8hX0=;
-        b=gFuDyUxu249i9UArEDhDqMtLFWo1HymbSREjtPoRHXknRfzMAoZspRR7h9J+OP2aXN
-         TN7oHu/zKBxof1MWMsl6b04DIydkjjwAhUVffSwtv2LsQhiDlEZXavzShnLqmecYFCj1
-         jV0oHGO6xtEEf4n4P5P1TRyA/ddT/cg80r3hrFtNjXostLaKwNsKeDaXrd4GISOVbggd
-         vIJlvioK3kJlLMGPH3JbqZWd8z0Ft7IVJkI8AlTXuquYD3rTVJsrZk5ydgMSlKm1fZt/
-         YbpT/7NMKIwLm7uz9PAh+iz73/HCi04QWlQ9Ajz0j6R+9QAU+5voj+NWIfi2YgNmvTCS
-         Zmmg==
-X-Gm-Message-State: APjAAAVuI0cXxaSB4v3RXDWuWFUVIZKFxd3T9870zM8MLQNMoKKcA2JI
-        WAvNRDFBNeGey8VlmUXS4ge1YJ4U
-X-Google-Smtp-Source: APXvYqxu678dkp/5vM+8A/RpDAIhinyjuBIeVcmRDlVaSxwyt6q83NX/ycTAw/NrVajhxzxdCwC2jg==
-X-Received: by 2002:a2e:98c4:: with SMTP id s4mr16745523ljj.102.1575895519630;
-        Mon, 09 Dec 2019 04:45:19 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id y72sm4442818lfa.12.2019.12.09.04.45.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2019 04:45:18 -0800 (PST)
-Subject: Re: Build regressions/improvements in v5.5-rc1
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <20191209105613.2491-1-geert@linux-m68k.org>
- <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <33f03ef9-c868-8bd5-ae5d-3da703d21fa9@gmail.com>
-Date:   Mon, 9 Dec 2019 15:45:17 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AYKsf4+zyiXbX+LMwBugJf17+cTXdoGFUuI3+FrWo80=;
+        b=JEasZ2/+6zkgZ3m/Arf0txmxxiZ4SumZ19u1sMeGGLeckTLG/AWiY4gTfdwXY035bN
+         Ut4zgiKFfMJqGrJSPqvBMWL0ZYHktHxITzj+ovwdSi4xssgBW7FxSlqEQph+LJocEAME
+         5khvIBJqFsczh1y71uGN57n9q3QbkNE7nBRO9xFfgzxv1PgDStm9fEFzTPlsHEdLccLB
+         TWQQ2TsCeXjgI994u6Uy5yRnphOG28ZzzJOJvm39XYwCDIGIoNgPv1fJF0wUXfbmUG70
+         E92x5Aki6/RvzSkGSQeE9Jr+XP3KmkHtNR5uw9egDkZqwWmbxAh4v/07PqLGBdcxJFqG
+         7aAw==
+X-Gm-Message-State: APjAAAVf2F7iPZOpS+HMpqUm/qzFzxJM7VNjxDGqrgFxlExdD9D5B7uh
+        AoifRN+OiE2Tr0bu6grXeRmgH9ZsDrSIeTOeWCs=
+X-Google-Smtp-Source: APXvYqwpmEvUqY5ENm33wFm2S/SfZlMsJ8IWglG14ZVPhVnUKhd1QoH8ywOkoILfWcJzeyuCZVC+1xbiMPXa9hXELhc=
+X-Received: by 2002:aca:4a41:: with SMTP id x62mr23172438oia.148.1575900578654;
+ Mon, 09 Dec 2019 06:09:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV+4Q2atJUPsYuc+UFxyoh1fscQL7aLUp4CWrb7=U706g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191206134202.18784-1-chris.brandt@renesas.com> <20191206134202.18784-3-chris.brandt@renesas.com>
+In-Reply-To: <20191206134202.18784-3-chris.brandt@renesas.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 9 Dec 2019 15:09:27 +0100
+Message-ID: <CAMuHMdXW6_tCcx_DE66qBSTK8XmWyWm82ZD6h-N5YX_+xcvBtw@mail.gmail.com>
+Subject: Re: [PATCH v2 2/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+To:     Chris Brandt <chris.brandt@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>,
+        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-09.12.2019 14:02, Geert Uytterhoeven пишет:
-> On Mon, Dec 9, 2019 at 11:57 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
->> Below is the list of build error/warning regressions/improvements in
->> v5.5-rc1[1] compared to v5.4[2].
->>
->> Summarized:
->>   - build errors: +2/-8
->>   - build warnings: +84/-87
->>
->> Happy fixing! ;-)
->>
->> Thanks to the linux-next team for providing the build service.
->>
->> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/e42617b825f8073569da76dc4510bfa019b1c35a/ (all 232 configs)
->> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/219d54332a09e8d8741c1e1982f5eae56099de85/ (all 232 configs)
->>
->>
->> *** ERRORS ***
->>
->> 2 error regressions:
->>   + error: "clk_set_min_rate" [drivers/devfreq/tegra30-devfreq.ko] undefined!:  => N/A
->>   + error: tegra30-devfreq.c: undefined reference to `clk_set_min_rate':  => .text+0xcc8)
-> 
-> sh-all{mod,yes}config
-> 
-> Legacy non-CCF platform do not provide clk_set_min_rate(), so this needs
-> a dependency on CCF.
+Hi Chris,
 
-Hello Geert,
+On Fri, Dec 6, 2019 at 2:43 PM Chris Brandt <chris.brandt@renesas.com> wrote:
+> Document the bindings used by the Renesas SPI bus space controller.
+>
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+> ---
+> v2:
+>  * change to YAML format
+>  * add interrupts property
+>  * Used more terms directly from the hardware manual
 
-Thanks for the report, I'll make a patch to fix it.
+Thanks for the update!
 
-> BTW, it seems this was already known back in June...
-> https://lore.kernel.org/linux-pm/5301c593-97e1-db4e-067b-0522537b55d9@gmail.com/
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spi/renesas,spibsc.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: GPL-2.0
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spi/renesas,spibsc.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Renesas SPI Bus Space Controller (SPIBSC) Device Tree Bindings
+> +
+> +description: |
+> +  Otherwise referred to as the "SPI Multi I/O Bus Controller" in SoC hardware
+> +  manuals. This controller was designed specifically for accessing Serial flash
+> +  devices such as SPI Flash, HyperFlash and OctaFlash. The HW can operate in two
+> +  modes. One mode allows for normal byte by byte access (refereed to as
+> +  "Manual Mode"). The other mode allows for direct memory mapped access (read
+> +  only) to the flash area by the CPU (refereed to as "External Address Space
+> +  Read Mode").
+> +
+> +allOf:
+> +  - $ref: spi-controller.yaml#
+> +
+> +maintainers:
+> +  - Chris Brandt <chris.brandt@renesas.com>
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - renesas,r7s72100-spibsc     # RZ/A1
+> +              - renesas,r7s9210-spibsc      # RZ/A2
+> +
+> +  reg:
+> +    minItems: 2
+> +    maxItems: 2
+> +    items:
+> +      - description: Registers
+> +      - description: Memory Mapped Address Space
 
-Yes, I was a bit confused about why only T20 driver was causing the
-trouble.
+The second one is not needed, if you would add "ranges" for the
+memory-mapped mode.
+
+> +
+> +  interrupts:
+> +    description: Some HW versions do not contain interrupts
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  flash:
+> +    description: |
+> +      (Optional) In order to use the HW for R/W access ("Manual Mode"), a "flash"
+> +      subnode must be present with a "compatible" property that contains
+> +      "jedec,spi-nor". If a spi-nor property is not found, the HW is assumed to be
+> +      already operating in "External Address Space Read Mode".
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - '#address-cells'
+> +  - '#size-cells'
+
+I would make the flash subnode mandatory.
+
+> +
+> +examples:
+> +  - |
+> +    # This example is for "Manual Mode"
+> +    spibsc: spi@1f800000 {
+> +        compatible = "renesas,r7s9210-spibsc";
+> +        reg = <0x1f800000 0x100>, <0x20000000 0x10000000>;
+> +        clocks = <&cpg CPG_MOD 83>;
+> +        power-domains = <&cpg>;
+> +        interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        flash@0 {
+> +            compatible = "jedec,spi-nor";
+> +            reg = <0>;
+> +            spi-max-frequency = <40000000>;
+> +
+> +            partitions {
+> +                compatible = "fixed-partitions";
+> +                #address-cells = <1>;
+> +                #size-cells = <1>;
+> +
+> +                partition@0000000 {
+> +                    label = "u-boot";
+> +                    reg = <0x00000000 0x80000>;
+> +                };
+> +            };
+> +        };
+> +
+> +    # This example is for "External Address Space Read Mode"
+> +    spibsc: spi@1f800000 {
+> +        compatible = "renesas,r7s9210-spibsc";
+> +        reg = <0x1f800000 0x100>, <0x20000000 0x10000000>;
+> +        clocks = <&cpg CPG_MOD 83>;
+> +        power-domains = <&cpg>;
+> +        interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +    };
+> +    flash@20000000 {
+
+This does not describe the hardware topology: the flash node should be
+a subnode of the spibsc node, as it relies on the spibsc being clocked.
+
+I think when using:
+
+    spibsc: spi@1f800000 {
+                compatible = "renesas,r7s9210-spibsc", "simple-pm-bus";
+                reg = <0x1f800000 0x100>;
+                clocks = <&cpg CPG_MOD 83>;
+                power-domains = <&cpg>;
+                interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+                #address-cells = <1>;
+                #size-cells = <1>;
+                ranges = <0 0x20000000 0x10000000>;
+
+                flash@0 {
+                        ...
+                };
+    };
+
+and applying "[PATCH] mtd: maps: physmap: Add minimal Runtime PM
+support"[1], the memory-mapped case should work, without your spibsc
+driver.
+
+Of course, you still need your driver for using the FLASH in SPI mode.
+
+> +        compatible = "mtd-rom";
+> +        probe-type = "direct-mapped";
+> +        reg = <0x20000000 0x4000000>;
+> +        bank-width = <4>;
+> +        device-width = <1>;
+> +        #address-cells = <1>;
+> +        #size-cells = <1>;
+1> +
+> +        partition@80000 {
+> +            label ="uboot_env";
+> +            reg = <0x00080000 0x010000>;
+> +            read-only;
+> +        };
+> +    };
+
+[1] https://lore.kernel.org/linux-mtd/20191209134823.13330-1-geert+renesas@glider.be/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
