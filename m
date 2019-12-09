@@ -1,102 +1,166 @@
-Return-Path: <SRS0=sAtK=Z6=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81DB5C43603
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Dec 2019 22:08:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F03A4C2D0C2
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 00:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43A1C206DB
-	for <linux-clk@archiver.kernel.org>; Sun,  8 Dec 2019 22:08:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C670020700
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 00:54:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="JiUPaF+a"
+	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="h7AuxBaB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726687AbfLHWIJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 8 Dec 2019 17:08:09 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43689 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726665AbfLHWIJ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 8 Dec 2019 17:08:09 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x14so4635240oic.10;
-        Sun, 08 Dec 2019 14:08:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6LcpecxJCuptWnky/wBInRHW7dBWZyoNDO8ejqGqya4=;
-        b=JiUPaF+aLz6TU175q9IIuAWCfbj1Dp34A44ajwK6wWjJuU4qAW6BB4WFznxCnlrz+m
-         11aV+yzG5hho4KnFOHqZ4MdNh0vO5men3cU1qp5cZ4yKlf8NYCo/WlL3zH/9Us1l56E2
-         zaiUI5IFBXi84lF7T6fkfCSTwUxRB+6DMpcPrFgw+839cVtn7VvEd/tz1YJlMGKUMrFv
-         cMVvpXHbsEhI+l1VNNoyP/3w2xVFStHfFJ1IDsQzMBaQj74boPcUBmJpW+MuWdDWAp4S
-         z91RVykEF70X975kRocmzBBOXgC3eOuH0yxBwNCsUrxB0bkqd2TIjaIXJztFPi8M4KID
-         6zPQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6LcpecxJCuptWnky/wBInRHW7dBWZyoNDO8ejqGqya4=;
-        b=RFKfF3+N3VgeXEAJWocg22vGGkANgCW6zk3A93KeUHfbeZ/OFd5ZUbH45i9Q0oNybe
-         SM6A9TKT3/heLEn5KVBG6bu74Jw+HHe7KY3TaFP/AQUks97W3EeMWtWSlzLM0A8DI+xF
-         GVSxDILmZAciC4J2vkMKcpv/OfEK6XBdlzRozZ0sQ8yOYasnyFq/F215R6cm6z890Lu6
-         eG/5Tkj0qKBz5tfZS0vL5jPhaZY2ccA/aHRZVB4J7HkYQZ+8mCDynIU6fxgd8/oLzX+l
-         q84o85GFm+R1mxAMiqpjsDkSRLtP5mBw19m4SNYPu4Imxb0m5HKSoA97u6J64CuwbC8y
-         OMsA==
-X-Gm-Message-State: APjAAAWMJoo2W9LAGWfV6bui17gBqhmP/zf2IKD07K2a0CaQPSOWJJyS
-        VcjB+l4bRf+NdU8gUMLIiPRGklF6qLc+zl7mZQQ=
-X-Google-Smtp-Source: APXvYqyhNhm0JNicy/loq8RdAT4DHahKdfAG1UNTU2pTEGoRTXZgPhgK9yLqIJ8epqm1nERlorhDJkru2+6iVkzYho0=
-X-Received: by 2002:a54:401a:: with SMTP id x26mr21795889oie.15.1575842888488;
- Sun, 08 Dec 2019 14:08:08 -0800 (PST)
-MIME-Version: 1.0
-References: <20191208210320.15539-1-repk@triplefau.lt> <20191208210320.15539-2-repk@triplefau.lt>
-In-Reply-To: <20191208210320.15539-2-repk@triplefau.lt>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 8 Dec 2019 23:07:57 +0100
-Message-ID: <CAFBinCA7Tnc2M=4jxYYS_RuoLnGNprUOFDrZG_G6fhQCyb3Cig@mail.gmail.com>
-Subject: Re: [PATCH 1/2] clk: meson: axg: add pcie pll cml gating
-To:     Remi Pommarel <repk@triplefau.lt>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Yue Wang <yue.wang@amlogic.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-pci@vger.kernel.org,
+        id S1726659AbfLIAyh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 8 Dec 2019 19:54:37 -0500
+Received: from onstation.org ([52.200.56.107]:37092 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726596AbfLIAyh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 8 Dec 2019 19:54:37 -0500
+Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: masneyb)
+        by onstation.org (Postfix) with ESMTPSA id 68F983E995;
+        Mon,  9 Dec 2019 00:54:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
+        s=default; t=1575852876;
+        bh=dGqyMsBDrjQ3UdfK1DQX10vVAD15A+SKxZss7KlSu8M=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h7AuxBaB5JPI1qheJo50SFsN2MviAWGUESZ7PpykmcfMNvvhnSolh+oUw1MiElcxr
+         ezki8sak4GRO0UF6Bz5RGhcRNTmrvTXS6YDFqhYprO+geG5oaKA7KPze3Y5a7QjgaE
+         HVtZmJnXTNqGIg8u9b9SHAsVZs36q42UCsBbclYw=
+Date:   Sun, 8 Dec 2019 19:54:36 -0500
+From:   Brian Masney <masneyb@onstation.org>
+To:     Rob Herring <robh+dt@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+        Linux Input <linux-input@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 4/7] dt-bindings: Input: introduce new clock vibrator
+ bindings
+Message-ID: <20191209005436.GA13647@onstation.org>
+References: <20191205002503.13088-1-masneyb@onstation.org>
+ <20191205002503.13088-5-masneyb@onstation.org>
+ <CAL_Jsq+jpz6_N18sChREC_xGYt9sSFZFtWr3omb_6o7+MFxuHg@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAL_Jsq+jpz6_N18sChREC_xGYt9sSFZFtWr3omb_6o7+MFxuHg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Remi,
+On Thu, Dec 05, 2019 at 07:56:10AM -0600, Rob Herring wrote:
+> On Wed, Dec 4, 2019 at 6:25 PM Brian Masney <masneyb@onstation.org> wrote:
+> >
+> > Add support for clock-based vibrator devices where the speed can be
+> > controlled by changing the duty cycle.
+> >
+> > Signed-off-by: Brian Masney <masneyb@onstation.org>
+> > ---
+> >  .../bindings/input/clk-vibrator.yaml          | 60 +++++++++++++++++++
+> >  1 file changed, 60 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/input/clk-vibrator.yaml b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> > new file mode 100644
+> > index 000000000000..2103a5694fad
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
+> > @@ -0,0 +1,60 @@
+> > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/bindings/input/clk-vibrator.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Clock vibrator
+> > +
+> > +maintainers:
+> > +  - Brian Masney <masneyb@onstation.org>
+> > +
+> > +description: |
+> > +  Support for clock-based vibrator devices where the speed can be controlled
+> > +  by changing the duty cycle.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: clk-vibrator
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    description: output clock that controls the speed
+> > +    items:
+> > +      - const: core
+> 
+> No point in making up a name when there's only one clock, so drop.
 
-On Sun, Dec 8, 2019 at 9:56 PM Remi Pommarel <repk@triplefau.lt> wrote:
-[...]
-> +static MESON_GATE(axg_pcie_pll_cml_enable, HHI_MIPI_CNTL0, 26);
-we already have CLKID_PCIE_CML_EN0
-do you know how this new one is related (in terms of clock hierarchy)
-to the existing one?
+OK, will do.
 
-[...]
-> --- a/include/dt-bindings/clock/axg-clkc.h
-> +++ b/include/dt-bindings/clock/axg-clkc.h
-> @@ -72,5 +72,6 @@
->  #define CLKID_PCIE_CML_EN1                     80
->  #define CLKID_MIPI_ENABLE                      81
->  #define CLKID_GEN_CLK                          84
-> +#define CLKID_PCIE_PLL_CML_ENABLE              91
-this has to be a separate patch if you want the .dts patch to go into
-the same cycle
-the .dts change depends on this one. what we typically do is to apply
-the dt-bindings patches to a separate clock branch, create an
-immutable tag and then Kevin pulls that into his dt64 branch.
-the clock controller changes go into a separate patch in the
-clk-meson/drivers branch to avoid conflicts with other driver changes
+> 
+> > +
+> > +  clock-frequency: true
+> 
+> Given the frequency is variable, what does this mean in this case?
+
+The clock frequency is fixed. The duty cycle is what's variable.
+
+Brian
 
 
-Martin
+
+> 
+> > +  enable-gpios:
+> > +    maxItems: 1
+> > +
+> > +  vcc-supply:
+> > +    description: Regulator that provides power
+> > +
+> > +required:
+> > +  - compatible
+> > +  - clocks
+> > +  - clock-names
+> > +  - clock-frequency
+> 
+> Add:
+> 
+> additionalProperties: false
+> 
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/qcom,mmcc-msm8974.h>
+> > +    #include <dt-bindings/gpio/gpio.h>
+> > +
+> > +    vibrator {
+> > +        compatible = "clk-vibrator";
+> > +
+> > +        vcc-supply = <&pm8941_l19>;
+> > +
+> > +        clocks = <&mmcc CAMSS_GP1_CLK>;
+> > +        clock-names = "core";
+> > +        clock-frequency = <24000>;
+> > +
+> > +        enable-gpios = <&msmgpio 60 GPIO_ACTIVE_HIGH>;
+> > +
+> > +        pinctrl-names = "default";
+> > +        pinctrl-0 = <&vibrator_pin>;
+> > +    };
+> > --
+> > 2.21.0
+> >
