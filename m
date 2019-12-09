@@ -8,52 +8,52 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D1D9C04E30
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 19:58:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05CD5C2D0C6
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 19:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7B63208C3
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 19:58:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C80EA2080D
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 19:58:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ql1idqnF"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RXmVdRBE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726584AbfLIT6r (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 14:58:47 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:37426 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbfLIT61 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 14:58:27 -0500
-Received: by mail-pj1-f68.google.com with SMTP id ep17so6336806pjb.4;
-        Mon, 09 Dec 2019 11:58:26 -0800 (PST)
+        id S1727104AbfLIT6Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 14:58:16 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35157 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727086AbfLIT6Q (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 14:58:16 -0500
+Received: by mail-pg1-f193.google.com with SMTP id l24so7637127pgk.2;
+        Mon, 09 Dec 2019 11:58:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Rh0bnLPUtx+tPcJ7oCSjUFbyV7d1BipJo6LPETVaXJc=;
-        b=Ql1idqnFkeOA1b2ibaJk1lP2UsH/b2TD0BILC3fV3jIWbO6hOXSrjUaYvsFKb84JtS
-         s6YZZ4GWy0d+u0x82WVYr3eyDLh2FJTWL5ABfs+z4V0q8cwbuATv9EHOY2Poa6e0YqRk
-         7uNOluhmhtg4XC1xGIyRPFwvn1VP64F56d4gZzQ+08CJKJ4bR8ZoPrnMEcLpi3NdhqlW
-         3Rk0Cp24NqoNVHhL27o1FoM87UpuMvKiEAgj3ME1e/Uiu602SGAV7YWjBsmARtVOjgZ3
-         WcYhoM0cIeckI9/dvRc8hmoc84F1JMCdxHEUQTZhA1eZqcAywBsuDW39KOXb1iDtuqtI
-         lq/w==
+        bh=e/xw/4DU6R/wwAQXOSaREMBJ7MJ6SzjE/v+O35UsN0I=;
+        b=RXmVdRBEPDoF3rwjV8HCt2/y7yrz0sWN0CCE+wTL4LBZk1SPdgMEvRR2Ry9YXy46hq
+         GVwnLz0DEU3+FhOwG1DB/2RRvOdIwQm8HoDC8uOCalGUOGtBD0XuyYkc8u9FkcrdG8k6
+         6g6N8DmMTaj9b/gnD7PCHsDg1i5oDebstS77oQzmQU30DxZOt1qAeTLXNEwYEdL3/aan
+         9lq3KEYU3DTp90PGWtqJ5uN0JTt6iOPdvssOtlt7HdduSDktyUFuAEvjVfff7bSkzyG2
+         ohoslBU8NiAw8wh6CNHlM4yMQLxiLqFzZLU6dtLUPt1c4Zo7cTUHZwTEgmEtbgOjKXh3
+         G0zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Rh0bnLPUtx+tPcJ7oCSjUFbyV7d1BipJo6LPETVaXJc=;
-        b=Cd+KNrfRyXB2Jlvsec0Z9WrQ38fx7/JDrPZhcTOEHVFsySg3vTHEspKdqOoRPqB279
-         DPEgng0It+GJg4IeBuXVBGOVHp5iCxtutHNUbUtLKcbogyfpEZ2AECQvVCW+a9MdVuHJ
-         qFyn+KJjDvaV6fYcdp+ZQwBPJX8s+f9tsU+pdeWNhYCnLmfae5F+t4jPwGNKY+EZ2k3A
-         ZvTkWu8PpZ5h1abEf55PDy3GEoqMMxGcGaS58aWSzyqiuSBmBKH4wezAQICD/rhVDdKX
-         uJ6HUVWXkWTBEAqZpL5P+BI94N09AlRfUbIUltFdGnpdAvnncMCgicna6lHSYHpZxEgz
-         g1wA==
-X-Gm-Message-State: APjAAAVMLWBkO6+uOm59SNg8BUJBeYLI4Yl1DD8GJU25SvJ4gfFv54fw
-        9585xxKcNrzxaONYbKURkV4=
-X-Google-Smtp-Source: APXvYqw0rvrrMAD8BKloCopu8xC3C8Rdw1NB+NEIqLAqNAoIW5lOeisBjjvEUWp1r84TMZN7X6Ltgw==
-X-Received: by 2002:a17:902:b701:: with SMTP id d1mr3560003pls.144.1575921506316;
-        Mon, 09 Dec 2019 11:58:26 -0800 (PST)
+        bh=e/xw/4DU6R/wwAQXOSaREMBJ7MJ6SzjE/v+O35UsN0I=;
+        b=oQZ0z3qaHsGQXGfUosNJuHTsYOH04KurCOOfG0sIGiGoCOAB8QpWQofQhPHfItOaFF
+         CSHjCKskDg/HndTAey/v0ffmGc/H9sgCqTWk5DQuuA74DC3vlsUCKdpHDUFE9i/9Lxvi
+         ThGOq9QWITDYwY+O0Mx0mmgWSMxjIq7JWjZKlyG9zYEbKvlHHHbjpAKoXgjtpaLH03dG
+         W/JGUzYCOVeaa37+/zm2gQRWgekQobpZCDci7Levp4IeAHhn574InjUbt/V33T/KgrCU
+         U10aJayF9szyzM2txCSDIxipRAx5MMNUfhEfZZ35aCsFmwK80jUn0SRgWCw/O9B3l2r+
+         10/Q==
+X-Gm-Message-State: APjAAAWz2SSm2OfeQ1RhlC2ex7xXgTHerEl6P3uG0JmyDLcikq4K7VYq
+        20VW7yN4/cmdaK+4HSS2RzE=
+X-Google-Smtp-Source: APXvYqx/xVThTCf89p72LZFA4UzOdBkyyKi9dguN+2zd9txD/+pD++B6QJgrWwAPA+xTEfTBozXgEA==
+X-Received: by 2002:aa7:86c5:: with SMTP id h5mr30662267pfo.259.1575921495225;
+        Mon, 09 Dec 2019 11:58:15 -0800 (PST)
 Received: from localhost ([2001:19f0:6001:12c8:5400:2ff:fe72:6403])
-        by smtp.gmail.com with ESMTPSA id m34sm378688pgb.26.2019.12.09.11.58.25
+        by smtp.gmail.com with ESMTPSA id bo9sm193008pjb.21.2019.12.09.11.58.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 09 Dec 2019 11:58:25 -0800 (PST)
+        Mon, 09 Dec 2019 11:58:14 -0800 (PST)
 From:   Yangtao Li <tiny.windzz@gmail.com>
 To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
         mturquette@baylibre.com, sboyd@kernel.org,
@@ -79,9 +79,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-samsung-soc@vger.kernel.org, linux-riscv@lists.infradead.org,
         linux-tegra@vger.kernel.org, linux-mediatek@lists.infradead.org,
         Yangtao Li <tiny.windzz@gmail.com>
-Subject: [PATCH 15/17] clk: bm1880: convert to devm_platform_ioremap_resource
-Date:   Mon,  9 Dec 2019 19:57:47 +0000
-Message-Id: <20191209195749.868-15-tiny.windzz@gmail.com>
+Subject: [PATCH 09/17] clk: sifive: convert to devm_platform_ioremap_resource
+Date:   Mon,  9 Dec 2019 19:57:41 +0000
+Message-Id: <20191209195749.868-9-tiny.windzz@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191209195749.868-1-tiny.windzz@gmail.com>
 References: <20191209195749.868-1-tiny.windzz@gmail.com>
@@ -94,31 +94,30 @@ Use devm_platform_ioremap_resource() to simplify code.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 ---
- drivers/clk/clk-bm1880.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+ drivers/clk/sifive/fu540-prci.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-diff --git a/drivers/clk/clk-bm1880.c b/drivers/clk/clk-bm1880.c
-index 4cd175afce9b..9fa0ca1fe833 100644
---- a/drivers/clk/clk-bm1880.c
-+++ b/drivers/clk/clk-bm1880.c
-@@ -893,16 +893,13 @@ static int bm1880_clk_probe(struct platform_device *pdev)
- 	struct bm1880_clock_data *clk_data;
- 	void __iomem *pll_base, *sys_base;
+diff --git a/drivers/clk/sifive/fu540-prci.c b/drivers/clk/sifive/fu540-prci.c
+index 6282ee2f361c..ececee273d32 100644
+--- a/drivers/clk/sifive/fu540-prci.c
++++ b/drivers/clk/sifive/fu540-prci.c
+@@ -582,7 +582,6 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd)
+ static int sifive_fu540_prci_probe(struct platform_device *pdev)
+ {
  	struct device *dev = &pdev->dev;
 -	struct resource *res;
- 	int num_clks, i;
+ 	struct __prci_data *pd;
+ 	int r;
+ 
+@@ -590,8 +589,7 @@ static int sifive_fu540_prci_probe(struct platform_device *pdev)
+ 	if (!pd)
+ 		return -ENOMEM;
  
 -	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	pll_base = devm_ioremap_resource(&pdev->dev, res);
-+	pll_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(pll_base))
- 		return PTR_ERR(pll_base);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 1);
--	sys_base = devm_ioremap_resource(&pdev->dev, res);
-+	sys_base = devm_platform_ioremap_resource(pdev, 1);
- 	if (IS_ERR(sys_base))
- 		return PTR_ERR(sys_base);
+-	pd->va = devm_ioremap_resource(dev, res);
++	pd->va = devm_platform_ioremap_resource(pdev, 0);
+ 	if (IS_ERR(pd->va))
+ 		return PTR_ERR(pd->va);
  
 -- 
 2.17.1
