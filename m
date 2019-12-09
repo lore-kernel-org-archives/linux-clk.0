@@ -2,135 +2,278 @@ Return-Path: <SRS0=N9em=Z7=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89A1BC43603
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 16:56:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7AADC43603
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 18:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 55D1220836
-	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 16:56:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="pv/qQ4oR"
+	by mail.kernel.org (Postfix) with ESMTP id 7D59E214AF
+	for <linux-clk@archiver.kernel.org>; Mon,  9 Dec 2019 18:42:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726379AbfLIQ4A (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 11:56:00 -0500
-Received: from onstation.org ([52.200.56.107]:39240 "EHLO onstation.org"
+        id S1726801AbfLISmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 13:42:53 -0500
+Received: from mail.bugwerft.de ([46.23.86.59]:34222 "EHLO mail.bugwerft.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725904AbfLIQz7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 9 Dec 2019 11:55:59 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id C5F0A3E8F7;
-        Mon,  9 Dec 2019 16:55:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1575910558;
-        bh=IOou9TpV+L1zTliwsDvEweGpQGlqyMJMFaeFEvowmJk=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=pv/qQ4oRIKZXzsuVDiX+sBNfpA+09Ne97DInXCT6Wpym9V3Dt113bUDVb+iNGWMcJ
-         CGoTHeGIVsZudI8+KLLM3KRF6QLbX/a+6PX6nB4wzjlMD3QIs4wDD5pFGjCYtu8Zjd
-         tKkd8akm416FTOfVJRHg5lSyXOC4lRlSfm8c5MsA=
-Date:   Mon, 9 Dec 2019 11:55:58 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Rob Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Linux Input <linux-input@vger.kernel.org>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        thierry.reding@gmail.com
-Subject: Re: [PATCH 4/7] dt-bindings: Input: introduce new clock vibrator
- bindings
-Message-ID: <20191209165558.GA3212@onstation.org>
-References: <20191205002503.13088-1-masneyb@onstation.org>
- <20191205002503.13088-5-masneyb@onstation.org>
- <CAL_Jsq+jpz6_N18sChREC_xGYt9sSFZFtWr3omb_6o7+MFxuHg@mail.gmail.com>
- <20191209005436.GA13647@onstation.org>
- <CAL_JsqJ2v1fL7gkAg7C3GjokV7WD87S3P5HCwi-ZJ7EOjds8Pw@mail.gmail.com>
+        id S1726483AbfLISmw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 9 Dec 2019 13:42:52 -0500
+Received: from zenbar.fritz.box (pD95EF75D.dip0.t-ipconnect.de [217.94.247.93])
+        by mail.bugwerft.de (Postfix) with ESMTPSA id 294F82E5CEC;
+        Mon,  9 Dec 2019 18:29:14 +0000 (UTC)
+From:   Daniel Mack <daniel@zonque.org>
+To:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        broonie@kernel.org, lee.jones@linaro.org, lars@metafoo.de,
+        pascal.huerst@gmail.com, Daniel Mack <daniel@zonque.org>
+Subject: [PATCH 07/10] i2c: Add driver for AD242x bus controller
+Date:   Mon,  9 Dec 2019 19:35:08 +0100
+Message-Id: <20191209183511.3576038-9-daniel@zonque.org>
+X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191209183511.3576038-1-daniel@zonque.org>
+References: <20191209183511.3576038-1-daniel@zonque.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAL_JsqJ2v1fL7gkAg7C3GjokV7WD87S3P5HCwi-ZJ7EOjds8Pw@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 10:16:26AM -0600, Rob Herring wrote:
-> On Sun, Dec 8, 2019 at 6:54 PM Brian Masney <masneyb@onstation.org> wrote:
-> >
-> > On Thu, Dec 05, 2019 at 07:56:10AM -0600, Rob Herring wrote:
-> > > On Wed, Dec 4, 2019 at 6:25 PM Brian Masney <masneyb@onstation.org> wrote:
-> > > >
-> > > > Add support for clock-based vibrator devices where the speed can be
-> > > > controlled by changing the duty cycle.
-> > > >
-> > > > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > > > ---
-> > > >  .../bindings/input/clk-vibrator.yaml          | 60 +++++++++++++++++++
-> > > >  1 file changed, 60 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/input/clk-vibrator.yaml
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/input/clk-vibrator.yaml b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..2103a5694fad
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/input/clk-vibrator.yaml
-> > > > @@ -0,0 +1,60 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/bindings/input/clk-vibrator.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: Clock vibrator
-> > > > +
-> > > > +maintainers:
-> > > > +  - Brian Masney <masneyb@onstation.org>
-> > > > +
-> > > > +description: |
-> > > > +  Support for clock-based vibrator devices where the speed can be controlled
-> > > > +  by changing the duty cycle.
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    const: clk-vibrator
-> > > > +
-> > > > +  clocks:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  clock-names:
-> > > > +    description: output clock that controls the speed
-> > > > +    items:
-> > > > +      - const: core
-> > >
-> > > No point in making up a name when there's only one clock, so drop.
-> >
-> > OK, will do.
-> >
-> > >
-> > > > +
-> > > > +  clock-frequency: true
-> > >
-> > > Given the frequency is variable, what does this mean in this case?
-> >
-> > The clock frequency is fixed. The duty cycle is what's variable.
-> 
-> That sounds like a PWM then...
+This device must be instantiated as a sub-device of the AD242x MFD
+device.
 
-Yes... See this message from Stephen with some more background
-information about why this is in the clk subsystem:
+In order to access remote I2C peripherals, the master node is configured
+to the slave node number and the remote I2C client address on the remote
+side, and then the payload is sent to the BUS client of the master node,
+which transparently proxies the traffic through.
 
-https://lore.kernel.org/lkml/20190627234929.B78E520815@mail.kernel.org/
+Signed-off-by: Daniel Mack <daniel@zonque.org>
+---
+ drivers/i2c/busses/Kconfig      |  10 ++
+ drivers/i2c/busses/Makefile     |   1 +
+ drivers/i2c/busses/i2c-ad242x.c | 178 ++++++++++++++++++++++++++++++++
+ 3 files changed, 189 insertions(+)
+ create mode 100644 drivers/i2c/busses/i2c-ad242x.c
 
-Brian
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 6a0aa76859f3..b9cf049bedb0 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -365,6 +365,16 @@ config I2C_POWERMAC
+ 
+ comment "I2C system bus drivers (mostly embedded / system-on-chip)"
+ 
++config I2C_AD242X
++	tristate "Analog Devices AD242x"
++	depends on MFD_AD242X
++	help
++	  If you say yes to this option, support will be included for the
++	  I2C bus controller function of AD242x slave nodes.
++
++	  This driver can also be built as a module.  If so, the module
++	  will be called i2c-ad242x.
++
+ config I2C_ALTERA
+ 	tristate "Altera Soft IP I2C"
+ 	depends on (ARCH_SOCFPGA || NIOS2) && OF
+diff --git a/drivers/i2c/busses/Makefile b/drivers/i2c/busses/Makefile
+index 3ab8aebc39c9..57c31ea8a477 100644
+--- a/drivers/i2c/busses/Makefile
++++ b/drivers/i2c/busses/Makefile
+@@ -32,6 +32,7 @@ obj-$(CONFIG_I2C_HYDRA)		+= i2c-hydra.o
+ obj-$(CONFIG_I2C_POWERMAC)	+= i2c-powermac.o
+ 
+ # Embedded system I2C/SMBus host controller drivers
++obj-$(CONFIG_I2C_AD242X)	+= i2c-ad242x.o
+ obj-$(CONFIG_I2C_ALTERA)	+= i2c-altera.o
+ obj-$(CONFIG_I2C_AMD_MP2)	+= i2c-amd-mp2-pci.o i2c-amd-mp2-plat.o
+ obj-$(CONFIG_I2C_ASPEED)	+= i2c-aspeed.o
+diff --git a/drivers/i2c/busses/i2c-ad242x.c b/drivers/i2c/busses/i2c-ad242x.c
+new file mode 100644
+index 000000000000..b94056653898
+--- /dev/null
++++ b/drivers/i2c/busses/i2c-ad242x.c
+@@ -0,0 +1,178 @@
++// SPDX-License-Identifier: GPL-2.0-only
++
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/i2c.h>
++#include <linux/init.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/mfd/ad242x.h>
++#include <linux/of.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++
++struct ad242x_i2c {
++	struct device		*dev;
++	struct ad242x_node	*node;
++	struct i2c_adapter	adap;
++	u32			node_index;
++};
++
++static int ad242x_set_addr(struct ad242x_node *mnode,
++			   struct ad242x_i2c_bus *bus,
++			   uint8_t node_id, uint8_t addr)
++{
++	int ret;
++	uint8_t buf[2] = { AD242X_CHIP, addr };
++
++	ret = regmap_update_bits(mnode->regmap, AD242X_NODEADR,
++				 AD242X_NODEADR_PERI | AD242X_NODEADR_MASK,
++				 node_id);
++	if (ret < 0)
++		return ret;
++
++	/*
++	 * We can't use the slave's regmap here as it holds the same
++	 * lock we also need to guard this context.
++	 */
++	ret = i2c_transfer_buffer_flags(bus->client,
++					buf, sizeof(buf), 0);
++	if (ret < 0)
++		return ret;
++
++	return regmap_update_bits(mnode->regmap, AD242X_NODEADR,
++				  AD242X_NODEADR_PERI, AD242X_NODEADR_PERI);
++}
++
++static int ad242x_i2c_xfer(struct i2c_adapter *adap,
++			   struct i2c_msg msgs[], int num)
++{
++	struct ad242x_i2c *i2c = adap->algo_data;
++	struct ad242x_i2c_bus *bus = ad242x_master_get_bus(i2c->node->master);
++	struct ad242x_node *mnode = ad242x_master_get_node(i2c->node->master);
++	int ret, i, current_addr = -1;
++
++	mutex_lock(&bus->mutex);
++
++	for (i = 0; i < num; i++) {
++		struct i2c_msg *msg = msgs + i;
++
++		if (msg->addr != current_addr) {
++			ret = ad242x_set_addr(mnode, bus,
++					      i2c->node->id, msg->addr);
++			if (ret < 0) {
++				dev_err(i2c->node->dev,
++					"Cannot set address: %d\n", ret);
++				break;
++			}
++
++			current_addr = msg->addr;
++		}
++
++		ret = i2c_transfer_buffer_flags(bus->client,
++						msg->buf, msg->len, msg->flags);
++		if (ret < 0)
++			break;
++	}
++
++	mutex_unlock(&bus->mutex);
++
++	return ret < 0 ? ret : num;
++}
++
++static u32 ad242x_i2c_functionality(struct i2c_adapter *adap)
++{
++	return I2C_FUNC_I2C | I2C_FUNC_SMBUS_EMUL;
++}
++
++static const struct i2c_algorithm ad242x_i2c_algorithm = {
++	.master_xfer	= ad242x_i2c_xfer,
++	.functionality	= ad242x_i2c_functionality,
++};
++
++static int ad242x_i2c_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct ad242x_node *node;
++	struct ad242x_i2c *i2c;
++	u32 freq, val = 0;
++	int ret;
++
++	if (!dev->of_node)
++		return -ENODEV;
++
++	node = dev_get_drvdata(dev->parent);
++	if ((node->caps & AD242X_CAPABILITY_I2C) == 0) {
++		dev_err(dev, "Node %d has no I2C capability", node->id);
++		return -ENOTSUPP;
++	}
++
++	if (ad242x_node_is_master(node))
++		return -EINVAL;
++
++	freq = ad242x_master_get_clk_rate(node->master);
++	if (freq == 44100)
++		val |= AD242X_I2CCFG_FRAMERATE;
++
++	if (!of_property_read_u32(dev->of_node, "clock-frequency", &freq)) {
++		if (freq == 400000)
++			val |= AD242X_I2CCFG_DATARATE;
++		else if (freq != 100000)
++			dev_warn(dev, "Unsupported frequency %d\n", freq);
++	}
++
++	ret = regmap_write(node->regmap, AD242X_I2CCFG, val);
++	if (ret < 0)
++		return ret;
++
++	i2c = devm_kzalloc(dev, sizeof(*i2c), GFP_KERNEL);
++	if (!i2c)
++		return -ENOMEM;
++
++	i2c->node = node;
++	i2c->adap.algo = &ad242x_i2c_algorithm;
++	i2c->adap.algo_data = i2c;
++	i2c->adap.dev.parent = dev;
++	i2c->adap.dev.of_node = dev->of_node;
++	i2c_set_adapdata(&i2c->adap, i2c);
++	strlcpy(i2c->adap.name, "ad242x remote I2C bus",
++		sizeof(i2c->adap.name));
++
++	ret = i2c_add_adapter(&i2c->adap);
++	if (ret < 0) {
++		dev_err(dev, "error registering adapter: %d\n", ret);
++		return ret;
++	}
++
++	dev_info(dev, "ad242x i2c driver, node ID %d\n", node->id);
++	platform_set_drvdata(pdev, i2c);
++
++	return 0;
++}
++
++static int ad242x_i2c_remove(struct platform_device *dev)
++{
++	struct ad242x_i2c *i2c = platform_get_drvdata(dev);
++
++	i2c_del_adapter(&i2c->adap);
++
++	return 0;
++}
++
++static const struct of_device_id ad242x_i2c_of_match[] = {
++	{ .compatible = "adi,ad2428w-i2c" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, ad242x_i2c_of_match);
++
++static struct platform_driver ad242x_i2c_driver = {
++	.driver = {
++		.name = "ad242x-i2c",
++		.of_match_table = ad242x_i2c_of_match,
++	},
++	.probe = ad242x_i2c_probe,
++	.remove = ad242x_i2c_remove,
++};
++
++module_platform_driver(ad242x_i2c_driver);
++MODULE_LICENSE("GPL");
+-- 
+2.23.0
+
