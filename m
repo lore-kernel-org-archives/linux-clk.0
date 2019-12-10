@@ -2,133 +2,116 @@ Return-Path: <SRS0=Y6WK=2A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C7A2C43603
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 20:33:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EFE7C2D0BF
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 22:54:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14B3120652
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 20:33:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="rEOmH5X6"
+	by mail.kernel.org (Postfix) with ESMTP id 10F3E2073B
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 22:54:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576018451;
+	bh=xiMoy7GjqiE2pdfBtbdz4V+ljFI3QmXpQyv7un7NzPc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=rpgoA1spxi8StiWF/9AJSkSchpbUCk7lSnwD4QEHWPNad7w5VcupfqSPb2AN3nft2
+	 eTol4qgWbQLRSNAviytnygOuiO9JeCSBy+NZ/7dDlelIkY0Hzg5b82V5IFbhJNGP2w
+	 OB8xGk40l76F44GCJk6Suia5fpoAGXAkNTbXhEXY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726691AbfLJUdi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Dec 2019 15:33:38 -0500
-Received: from mail-eopbgr1400132.outbound.protection.outlook.com ([40.107.140.132]:22272
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725999AbfLJUdi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Dec 2019 15:33:38 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Fd3MVjnrgE48Beo0o6fKJgLqA8AopjvxPc0pK27dR80j+8BtZmcQYFPBgd3EB26xKI7WpLM3RO3dWzWgKUUbBkWe4LglyM3sLxWWlDWPw5JTX0Z3yJgDpQMEIhokwOgTtY2R4qOjIbO//CiaQ3xEGyYK0NfSf06hp9uns/xDvGRLyXDGPxCR8I/A2EAnrFEAzDqR1i5XvKgGdp+N+fG9Ig8QeVyPCd79WlSR6Ckzw0KWHNvEhkYYN04ldt8H5QnNhT596U5YPHYFfYV2xUs5Ez0UQLFnVwNgS6OIgiO0oyFALi4NRTSfskMC0+0S3g80KjaFhLKqJXdWOSmRfZaoGQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u4/uSArMR28G5csbjFLTdj7CESpD3u/INYskxbXXAy4=;
- b=beZui5Jf9G6b1qvBALDH+44ueAPFdlGFmGjAIg2ef+zrUKjpbdCMi6zjKGxJKdq2SeH8Jg/6DJPT29L07SBLd06SKJdyER5V2GRkFxZdK9MnjXeI4zA+rhTmDRZT2/4JKeWxxfdmDUC7azizqTLeYV234orYjmxST6qdKuRoSBmpBswZedg29Gkcn3hZRjeJsp2HD5XYWU470Jx3zaUoGiY8B2GAySKbeMa/e3m22K8e+h7fExEDlM6nj4iLDzWSOiBJRHN8RSle0jdzj4tK3SrP/11oWerdLdG0iz+xe7uPgu0RvaCEO28DEuf0XGXlckGdEVV9+VJVBzZ5mvvR4A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=u4/uSArMR28G5csbjFLTdj7CESpD3u/INYskxbXXAy4=;
- b=rEOmH5X6LqDdpioJISFbI8u4v5ljxTf3IogCDN5hO1Do3vKKE46DqPoumHq06Y4NqorYqehyot2DK2qq+0w5c4ltF5clobUuP9jfI6h11U5EeeUxvxV/DlgU0L7+dxPH6mzR2d/FWpfna+a91qxp8kEnzP2Yyeq/UMkoAnCj/ZE=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1723.jpnprd01.prod.outlook.com (52.133.163.21) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.14; Tue, 10 Dec 2019 20:33:34 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
- 20:33:34 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-CC:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Subject: RE: [PATCH v2 2/6] dt-bindings: spi: Document Renesas SPIBSC bindings
-Thread-Topic: [PATCH v2 2/6] dt-bindings: spi: Document Renesas SPIBSC
- bindings
-Thread-Index: AQHVrDsTjXSeF7WhuEKgUGoi0guPiaex3BKAgAH2T4CAAAK6gIAAAbsQ
-Date:   Tue, 10 Dec 2019 20:33:34 +0000
-Message-ID: <TY1PR01MB1562D812E6060516E689C7578A5B0@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <20191206134202.18784-3-chris.brandt@renesas.com>
- <CAMuHMdXW6_tCcx_DE66qBSTK8XmWyWm82ZD6h-N5YX_+xcvBtw@mail.gmail.com>
- <0cbd8556-cf17-7d6b-5c12-e8d663a39cfa@cogentembedded.com>
- <CAMuHMdUOUctfD7K21yAx8QFAj0LP+D2PrMCri8H2PMUr5WzXoQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdUOUctfD7K21yAx8QFAj0LP+D2PrMCri8H2PMUr5WzXoQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNTRjZTYxMzYtMWI4Yy0xMWVhLWFhNTUtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDU0Y2U2MTM4LTFiOGMtMTFlYS1hYTU1LTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iMTM0OSIgdD0iMTMyMjA0ODM2MTMwNjkzMjM5IiBoPSJscXUvK2R0ZHRNRVhOSTM5d3VLR1M5ZmpVME09IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [24.206.39.126]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: b01d1cc0-c1dc-468c-66b4-08d77db03aa2
-x-ms-traffictypediagnostic: TY1PR01MB1723:
-x-microsoft-antispam-prvs: <TY1PR01MB17230E1470E6D8509A341DB58A5B0@TY1PR01MB1723.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02475B2A01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(346002)(376002)(39860400002)(136003)(396003)(366004)(199004)(189003)(52314003)(9686003)(7416002)(55016002)(110136005)(2906002)(8936002)(186003)(66946007)(5660300002)(7696005)(8676002)(33656002)(316002)(71200400001)(6506007)(478600001)(66476007)(54906003)(4326008)(81156014)(81166006)(64756008)(76116006)(86362001)(52536014)(26005)(66556008)(66446008);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1723;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: nXAF56K3jOz3F4XnnxtycEIUifh+AudmUf7XNhAPuj+WyZtBBXvg6D/TRZApEdMKY288E1E8EERLXboAOUWyFq2t7QMNjBn4GrpSvZ96xlRRjzvHqst4ZEYJA6Ory2L4j3OznzBshB2S6FJXYVmLz6dOwuPsWvEuufdL7/0XrwtoKxpQN7mFsdnxp0d83T/VVpdysPh2avR+vTTQM0jHU6/y/2FO42l/nHQ+v2m6vyrUDCdh6lxxgNCNyLIbLVnAaeDMnp5xPsWdyM6ux5loB0lj2wCdNL0kg9T9BmQQrUXnrpA6XhN2kC/v5BQV7tV5Dva+/j98UK+8SJZ0s+DFTSRvC0giSoDfBUmnEIAlNtostWwyh6RdBI2YKOb+G+DSa7IM1AaNywyIpU5BlJHViC0C0+W3xgUZxk2TQLy6qzERcBk5fJ/kXNrPYqi7+ZRhklf256EdLGr64usOhJxaMp/T9SkG9dUlPPDIyg5sPF1WhjKCstMBTRs2YRdKUlBW
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727209AbfLJWyH convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Dec 2019 17:54:07 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35845 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbfLJWyH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Dec 2019 17:54:07 -0500
+Received: by mail-pg1-f193.google.com with SMTP id k3so8978234pgc.3;
+        Tue, 10 Dec 2019 14:54:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Uc6nUyx0tWcpYbMt8ma4oxDDyJv0615QHHpUzzEGUYg=;
+        b=rxTdYtyGil11OqU8xmilGx2QIhnrRQcS1GdxFVeauU7mqgYLfkCMHh1d3sSWVL6NJl
+         ivjN7IxT979Jzm1kaPgtIi+QihFy4Oqn8D8VEreDwBd4voC4cOBRJw/hfBvT/Rj1Qg5o
+         DAI1vPVqmDnCXyX7pcRvgADjtky6zy/SzXGUv7SdPv7aqIJouSsxSjIXZVqOMA8hn90x
+         D34Al5YdmKeXNEvRde7WF4RCvVwVWdCxmUpX7xcrumDKwgdhNVmrqpiyP81cAYmWO1Ff
+         JVDBlvKxf52ZuWJoVUtTA+xr1XBh8dC1prX8OrjqzZMsyKNgnJws5sppaxegBVSsclTd
+         eDTw==
+X-Gm-Message-State: APjAAAUXkOvoij9bOIJndIpMr1fc5+Aw4gPwNVBnc5gKztuDC0LHY5wf
+        uAfJ/uDi5ppSEFqRfpJVFcM=
+X-Google-Smtp-Source: APXvYqzT4nRMuygUybmv0z7MJHp0Jn15ImWI/vUXkOVE8NMGjoWmLiq4x33grbemVSea0CIPzLKwZQ==
+X-Received: by 2002:aa7:9d0d:: with SMTP id k13mr344069pfp.254.1576018446035;
+        Tue, 10 Dec 2019 14:54:06 -0800 (PST)
+Received: from localhost ([2601:646:8a00:9810:5af3:56d9:f882:39d4])
+        by smtp.gmail.com with ESMTPSA id d4sm37554pjz.12.2019.12.10.14.54.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 14:54:05 -0800 (PST)
+Date:   Tue, 10 Dec 2019 14:55:03 -0800
+From:   Paul Burton <paulburton@kernel.org>
+To:     Paul Cercueil <paul@crapouillou.net>,
+        Zhou Yanjie <zhouyanjie@zoho.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, mturquette@baylibre.com,
+        sboyd@kernel.org, mark.rutland@arm.com, syq@debian.org,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Subject: Re: [PATCH 1/5] clk: Ingenic: Adjust code to make it compatible with
+ X1830.
+Message-ID: <20191210225503.nf77ksu2sznngbp2@lantea.localdomain>
+References: <1574825576-91028-1-git-send-email-zhouyanjie@zoho.com>
+ <1574825576-91028-2-git-send-email-zhouyanjie@zoho.com>
+ <1574876253.3.4@crapouillou.net>
+ <5DDF694B.1000902@zoho.com>
+ <1575026622.3.2@crapouillou.net>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b01d1cc0-c1dc-468c-66b4-08d77db03aa2
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 20:33:34.6442
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 3clbG2Ii6SdBbGJiIiz/4b+fEVRBoWxpF1tGuv5nT7/M576daiuhJaHOgtQhcrxLsOSNC3C32YKghLmyz9pA43qE8StRRLR6cUrT7tpAybk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1723
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <1575026622.3.2@crapouillou.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gVHVlLCBEZWMgMTAsIDIwMTksIEdlZXJ0IFV5dHRlcmhvZXZlbiB3cm90ZToNCj4gPiA+IFRo
-ZSBzZWNvbmQgb25lIGlzIG5vdCBuZWVkZWQsIGlmIHlvdSB3b3VsZCBhZGQgInJhbmdlcyIgZm9y
-IHRoZQ0KPiA+ID4gbWVtb3J5LW1hcHBlZCBtb2RlLg0KPiA+DQo+ID4gICAgSSdtIG5vdCBzdXJl
-IHdlIGNhbiBkbyB0aGF0LiBUaGUgZmxhc2ggYnVzIGlzIGFjY2Vzc2VkIHZpYSBhIHdpbmRvdw0K
-PiA+IHdpdGggdGhlIGhpZ2ggYml0cyBpbiB0aGUgRFJFQVIgcmVnLCBldmVuIGluIHRoZSBkaXJl
-Y3QgcmVhZCBtb2RlLi4uDQo+IA0KPiBTbyBpZiB0aGUgRkxBU0ggaXMgdG9vIGxhcmdlLCB5b3Ug
-Y2Fubm90IGFjY2VzcyBhbGwgb2YgaXQgd2l0aG91dCBwcm9ncmFtbWluZw0KPiB0aGUgaGlnaCBi
-aXRzLg0KPiBIb3dldmVyLCB3aGVuIHVzaW5nIFhJUCwgIHlvdSdyZSBsaW1pdGVkIHRvIHRoZSB3
-aW5kb3cgc2l6ZSBhbnl3YXkuDQoNCklmIHlvdXIgU1BJIGZsYXNoIHN1cHBvcnRzIDMyLWJpdCBh
-ZGRyZXNzIGNvbW1hbmRzLCAoIjRSRUFEIiBmb3IgDQpleGFtcGxlKSB0aGVuIGFsbCAzMi1iaXQg
-YXJlIHNlbnQgb3V0Lg0KDQpUaGUgJ2hpZ2ggYml0cycgdGhhdCBoZSdzIHRhbGtpbmcgYWJvdXQg
-aXMgZm9yIGFjY2Vzc2luZyBTUEkgdGhhdCBpcyANCmJleW9uZCB0aGUgWElQIHdpbmRvdyBzaXpl
-Lg0KDQpGb3IgZXhhbXBsZSwgdGhlIFJaL0ExIGhhcyA2NE1CIHdpbmRvdyBzaXplIChSWi9BMj0y
-NTZNQikuIE1lYW5pbmcgDQphbnl0aGluZyBhYm92ZSA2NE1CIGlzIG5vdCBhY2Nlc3NpYmxlLg0K
-SG93ZXZlciwgeW91IGNvdWxkIHByb2dyYW0gdGhpcyByZWdpc3RlciB0byBiYXNpY2FsbHkgY2hh
-bmdlIHRoZSB3aW5kb3cgDQpzdGFydGluZyBwb2ludCBhbmQgbWFrZSB0aGUgdXBwZXIgNjRNQiBv
-ZiBhIDEyOE1CIGZsYXNoIHZpc2libGUgYW5kIHRoZQ0KbG93ZXIgNjRNQiBwb3J0aW9uIGhpZGRl
-bi4NCkZvciBhbiBYSVAgc3lzdGVtLCB0aGlzIGlzIG9uZSB3YXkgb2YgZG9pbmcgYSByZW1vdGUg
-ZmlybXdhcmUgdXBkYXRlIA0KYW5kIGtlZXBpbmcgdGhlIG9sZCBjb3B5IGFyb3VuZCBqdXN0IGlu
-IGNhc2UgeW91IG5lZWQgdG8gcmV2ZXJ0IGJhY2suDQoNCkFueXdheSwgdGhlIHBvaW50IGlzIHRo
-aXMgZG9lc24ndCBtYXR0ZXIgaW4gZWl0aGVyIHRoZSBNVEQvU1BJIG9yIA0KTVREL1JPTSBvcGVy
-YXRpb24gb2YgdGhlIGRyaXZlciBhcyBmYXIgYXMgSSBjYW4gc2VlLg0KDQpDaHJpcw0KDQo=
+Hi Paul, Zhou,
+
+On Fri, Nov 29, 2019 at 12:23:42PM +0100, Paul Cercueil wrote:
+> > > > @@ -93,8 +93,17 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,
+> > > > unsigned long parent_rate)
+> > > >      n += pll_info->n_offset;
+> > > >      od_enc = ctl >> pll_info->od_shift;
+> > > >      od_enc &= GENMASK(pll_info->od_bits - 1, 0);
+> > > > -    bypass = !pll_info->no_bypass_bit &&
+> > > > -         !!(ctl & BIT(pll_info->bypass_bit));
+> > > > +
+> > > > +    if (pll_info->version >= CGU_X1830) {
+> > > > +        spin_lock_irqsave(&cgu->lock, flags);
+> > > > +        ctl = readl(cgu->base + pll_info->reg[0]);
+> > > > +        spin_unlock_irqrestore(&cgu->lock, flags);
+> > > 
+> > > Why the spinlock?
+> > > 
+> > 
+> > The original code used spinlock when reading the control register,
+> > so when reading this new control register, I think it should also
+> > be added with spinlock.
+> 
+> Well, the original code looks wrong to me. There's nothing to protect here.
+> 
+> Maybe @Paul Burton can shed some light?
+
+I wish I could remember, but I agree it seems pointless here. The only
+way I can think it could be of any use is if writes to the CGU register
+we're accessing aren't atomic (ie. if we could observe a partially
+completed write), but I don't believe that's the case.
+
+So Zhou, if you want to drop the spinlock here from your X1830 path &
+ideally also add a patch to remove it in the non-X1830 path that would
+be great.
+
+Thanks,
+    Paul
