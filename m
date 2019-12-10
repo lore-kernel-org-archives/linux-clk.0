@@ -2,272 +2,122 @@ Return-Path: <SRS0=Y6WK=2A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 393DEC00454
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 11:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D371C00454
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 12:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0620F20836
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 11:52:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="ISDoyhvp"
+	by mail.kernel.org (Postfix) with ESMTP id 54A4D214AF
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 12:11:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1575979897;
+	bh=VoTZ+YSXt6jYeDOFmlVbX/TCJXliKP5PCwhjpNG3DIg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=ab2AA3n3HrPP7OesmAtlJCleSy1ycUlS7akR+t0K7PB2HRFtK3oY6QWz6zzeEZ4cQ
+	 KDOo3TVLYkvdmlFCbgHAzsDN2ymKNNmwQo9iQe0+nRpHzzjdFUFR1KuuqCHEZD21eF
+	 CR+LhBW+wGoLbGHPqmqH3MMNMC2uvD34INp63s/c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727802AbfLJLv4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Dec 2019 06:51:56 -0500
-Received: from onstation.org ([52.200.56.107]:42316 "EHLO onstation.org"
+        id S1727407AbfLJMLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Dec 2019 07:11:33 -0500
+Received: from foss.arm.com ([217.140.110.172]:41922 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbfLJLvz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Dec 2019 06:51:55 -0500
-Received: from localhost (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id EF4BA3E8F7;
-        Tue, 10 Dec 2019 11:51:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=onstation.org;
-        s=default; t=1575978714;
-        bh=30eM9AeN2U7UZiaB8mnsdwLndEUaPhap2fjO0o8/B50=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ISDoyhvpC4VpbMXCaTUeDalAIMymmq+F6jnvBUX6eYmgwaIBnpyahiibx4RihlGTJ
-         XmbE9ENMbzq1qvkK54tU1Y9MnnGb7ib40RUKVKRPlGo7qEyH3LZp6EHzh1xql2ojiI
-         f4n/LaY+uHSbHx+4fnQ8yBu1b+qMP+SnPx02M1Lw=
-Date:   Tue, 10 Dec 2019 06:51:53 -0500
-From:   Brian Masney <masneyb@onstation.org>
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     sboyd@kernel.org, dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, agross@kernel.org,
-        bjorn.andersson@linaro.org, mturquette@baylibre.com,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/7] clk: qcom: add support for setting the duty cycle
-Message-ID: <20191210115153.GA10298@onstation.org>
-References: <20191205002503.13088-1-masneyb@onstation.org>
- <20191205002503.13088-2-masneyb@onstation.org>
- <0101016eee224b50-8a5545e2-837f-41c2-9574-b385e111a6b3-000000@us-west-2.amazonses.com>
+        id S1727272AbfLJMLc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 10 Dec 2019 07:11:32 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D3D71FB;
+        Tue, 10 Dec 2019 04:11:31 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C62F3F6CF;
+        Tue, 10 Dec 2019 04:11:31 -0800 (PST)
+Date:   Tue, 10 Dec 2019 12:11:29 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Message-ID: <20191210121129.GA6110@sirena.org.uk>
+References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+ <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191118162502.GJ9761@sirena.org.uk>
+ <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
+ <20191119181325.GD3634@sirena.org.uk>
+ <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
+ <20191119193636.GH3634@sirena.org.uk>
+ <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
+ <20191129120925.GA5747@sirena.org.uk>
+ <ccc533df4e00bdcbe18ea45a0e0679161ff41354.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
 Content-Disposition: inline
-In-Reply-To: <0101016eee224b50-8a5545e2-837f-41c2-9574-b385e111a6b3-000000@us-west-2.amazonses.com>
+In-Reply-To: <ccc533df4e00bdcbe18ea45a0e0679161ff41354.camel@fi.rohmeurope.com>
+X-Cookie: We have ears, earther...FOUR OF THEM!
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Taniya,
 
-On Tue, Dec 10, 2019 at 04:47:35AM +0000, Taniya Das wrote:
-> On 12/5/2019 5:54 AM, Brian Masney wrote:
-> > Add support for setting the duty cycle via the D register for the
-> > Qualcomm clocks.
-> > 
-> > Signed-off-by: Brian Masney <masneyb@onstation.org>
-> > ---
-> > A few quirks that were noted when varying the speed of CAMSS_GP1_CLK on
-> > msm8974 (Nexus 5 phone):
-> > 
-> >    - The mnd_width is set to 8 bits, however the d width is actually 7
-> >      bits, at least for this clock. I'm not sure about the other clocks.
-> > 
-> >    - When the d register has a value less than 17, the following error
-> >      from update_config() is shown: rcg didn't update its configuration.
-> >      So this patch keeps the value of the d register within the range
-> >      [17, 127].
-> > 
-> > I'm not sure about the relationship of the m, n, and d values,
-> > especially how the 50% duty cycle is calculated by inverting the n
-> > value, so that's why I'm saving the duty cycle ratio for
-> > get_duty_cycle().
-> > 
-> >   drivers/clk/qcom/clk-rcg.h  |  4 +++
-> >   drivers/clk/qcom/clk-rcg2.c | 61 +++++++++++++++++++++++++++++++++++--
-> >   2 files changed, 63 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-> > index 78358b81d249..c3b8732cec8f 100644
-> > --- a/drivers/clk/qcom/clk-rcg.h
-> > +++ b/drivers/clk/qcom/clk-rcg.h
-> > @@ -139,6 +139,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
-> >    * @freq_tbl: frequency table
-> >    * @clkr: regmap clock handle
-> >    * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
-> > + * @duty_cycle_num: Numerator of the duty cycle ratio
-> > + * @duty_cycle_den: Denominator of the duty cycle ratio
-> >    */
-> >   struct clk_rcg2 {
-> >   	u32			cmd_rcgr;
-> > @@ -149,6 +151,8 @@ struct clk_rcg2 {
-> >   	const struct freq_tbl	*freq_tbl;
-> >   	struct clk_regmap	clkr;
-> >   	u8			cfg_off;
-> > +	int			duty_cycle_num;
-> > +	int			duty_cycle_den;
-> >   };
-> >   #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
-> > diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> > index 8f4b9bec2956..8d685baefe50 100644
-> > --- a/drivers/clk/qcom/clk-rcg2.c
-> > +++ b/drivers/clk/qcom/clk-rcg2.c
-> > @@ -258,7 +258,11 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
-> >   	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
-> >   }
-> > -static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> > +static int __clk_rcg2_configure_with_duty_cycle(struct clk_rcg2 *rcg,
-> > +						const struct freq_tbl *f,
-> > +						int d_reg_val,
-> > +						int duty_cycle_num,
-> > +						int duty_cycle_den)
-> >   {
-> >   	u32 cfg, mask;
-> >   	struct clk_hw *hw = &rcg->clkr.hw;
-> > @@ -280,9 +284,12 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> >   			return ret;
-> >   		ret = regmap_update_bits(rcg->clkr.regmap,
-> > -				RCG_D_OFFSET(rcg), mask, ~f->n);
-> > +				RCG_D_OFFSET(rcg), mask, d_reg_val);
-> >   		if (ret)
-> >   			return ret;
-> > +
-> > +		rcg->duty_cycle_num = duty_cycle_num;
-> > +		rcg->duty_cycle_den = duty_cycle_den;
-> >   	}
-> >   	mask = BIT(rcg->hid_width) - 1;
-> > @@ -295,6 +302,12 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> >   					mask, cfg);
-> >   }
-> > +static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> > +{
-> > +	/* Set a 50% duty cycle */
-> > +	return __clk_rcg2_configure_with_duty_cycle(rcg, f, ~f->n, 1, 2);
-> > +}
-> > +
-> >   static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
-> >   {
-> >   	int ret;
-> > @@ -353,6 +366,32 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
-> >   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
-> >   }
-> > +static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> > +{
-> > +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > +
-> > +	duty->num = rcg->duty_cycle_num;
-> > +	duty->den = rcg->duty_cycle_den;
-> > +
-> > +	return 0;
-> > +}
-> > +
-> > +static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
-> > +{
-> > +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-> > +	int ret, d_reg_val, mask;
-> > +
-> > +	mask = BIT(rcg->mnd_width - 1) - 1;
-> > +	d_reg_val = mask - (((mask - 17) * duty->num) / duty->den);
-> > +	ret = __clk_rcg2_configure_with_duty_cycle(rcg, rcg->freq_tbl,
-> > +						   d_reg_val, duty->num,
-> > +						   duty->den);
-> 
-> The duty-cycle calculation is not accurate.
-> There is already a plan to submit the duty-cycle changes from my side.
+--xHFwDpU9dbj6ez1V
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-OK... I assume that the m and n values need to be changed as well. I
-couldn't find any docs online about the meaning of the m, n, and d
-values and how they relate to each other.
+On Tue, Dec 10, 2019 at 11:14:48AM +0000, Vaittinen, Matti wrote:
 
-Feel free to take over this patch if you find any value in what I posted
-here.
+> Problem is that if no default voltages are given from DT, the the first
+> voltage changes are likely to be slow (require register access - I
+> guess the HW defaults are not working for many use-cases) - which may
+> be undesirable.
 
-> > +	if (ret)
-> > +		return ret;
-> > +
-> > +	return update_config(rcg);
-> > +}
-> > +
-> >   const struct clk_ops clk_rcg2_ops = {
-> >   	.is_enabled = clk_rcg2_is_enabled,
-> >   	.get_parent = clk_rcg2_get_parent,
-> > @@ -361,6 +400,8 @@ const struct clk_ops clk_rcg2_ops = {
-> >   	.determine_rate = clk_rcg2_determine_rate,
-> >   	.set_rate = clk_rcg2_set_rate,
-> >   	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_rcg2_ops);
-> > @@ -372,6 +413,8 @@ const struct clk_ops clk_rcg2_floor_ops = {
-> >   	.determine_rate = clk_rcg2_determine_floor_rate,
-> >   	.set_rate = clk_rcg2_set_floor_rate,
-> >   	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
-> > @@ -499,6 +542,8 @@ const struct clk_ops clk_edp_pixel_ops = {
-> >   	.set_rate = clk_edp_pixel_set_rate,
-> >   	.set_rate_and_parent = clk_edp_pixel_set_rate_and_parent,
-> >   	.determine_rate = clk_edp_pixel_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_edp_pixel_ops);
-> > @@ -557,6 +602,8 @@ const struct clk_ops clk_byte_ops = {
-> >   	.set_rate = clk_byte_set_rate,
-> >   	.set_rate_and_parent = clk_byte_set_rate_and_parent,
-> >   	.determine_rate = clk_byte_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_byte_ops);
-> > @@ -627,6 +674,8 @@ const struct clk_ops clk_byte2_ops = {
-> >   	.set_rate = clk_byte2_set_rate,
-> >   	.set_rate_and_parent = clk_byte2_set_rate_and_parent,
-> >   	.determine_rate = clk_byte2_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_byte2_ops);
-> > @@ -717,6 +766,8 @@ const struct clk_ops clk_pixel_ops = {
-> >   	.set_rate = clk_pixel_set_rate,
-> >   	.set_rate_and_parent = clk_pixel_set_rate_and_parent,
-> >   	.determine_rate = clk_pixel_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_pixel_ops);
-> > @@ -804,6 +855,8 @@ const struct clk_ops clk_gfx3d_ops = {
-> >   	.set_rate = clk_gfx3d_set_rate,
-> >   	.set_rate_and_parent = clk_gfx3d_set_rate_and_parent,
-> >   	.determine_rate = clk_gfx3d_determine_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
-> > @@ -942,6 +995,8 @@ const struct clk_ops clk_rcg2_shared_ops = {
-> >   	.determine_rate = clk_rcg2_determine_rate,
-> >   	.set_rate = clk_rcg2_shared_set_rate,
-> >   	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> >   EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
-> > @@ -1081,6 +1136,8 @@ static const struct clk_ops clk_rcg2_dfs_ops = {
-> >   	.get_parent = clk_rcg2_get_parent,
-> >   	.determine_rate = clk_rcg2_dfs_determine_rate,
-> >   	.recalc_rate = clk_rcg2_dfs_recalc_rate,
-> > +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
-> > +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
-> >   };
-> > 
-> 
-> Why do you want to support duty-cycle for other RCGs when you are
-> specifically want it for GP clocks only.
-> The DFS can never handle duty-cycle set/get.
+I don't think that's likely to be a practical problem, and it's not
+likely it'd be worse than always doing writes.  A lot of things are
+slower the first time you do them and you're still going to have to
+do the writes no matter what.
 
-I wrongly assumed that all of variants supported this. I did this
-without any of the hardware documentation.
+--xHFwDpU9dbj6ez1V
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Brian
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3vi24ACgkQJNaLcl1U
+h9D/zwgAgJGg4Rzbjb/3neARAW2iuL6cC3Z2NQEUh8aJUuljcByF/iXTtlKuups0
+bGOmzkA+eYmrW2wPZPoV88r4feU8A4ri9lzgR3G8cO5n3tAT3lvMiA0ENfYm99nk
+h+YwnKi6WIhhQw4BNNdIfmqr+UfNCUIKLwpmdo2hqm8ALwp/2O9Ge1tpdqVMWfk4
+bV+sqZQW/yxKYYl2vBz9YVw2WGQV7me/vK4fPbxcjUe1nIDJ2MSR2ZZL3Io5RRZ5
+f/V3zG3Ao8ak6Hgg8HaAmZKGsJqtSn1AFwm//zV8BNDHkHC745uTnvIs702ytDgl
+o4pdZZNbPIMmyOtLJtueNJUHBCIwsw==
+=S22J
+-----END PGP SIGNATURE-----
+
+--xHFwDpU9dbj6ez1V--
