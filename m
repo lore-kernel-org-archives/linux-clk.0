@@ -2,217 +2,209 @@ Return-Path: <SRS0=Y6WK=2A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCAFDC43603
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 19:19:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A82A9C43603
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 20:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6082077B
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 19:19:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 79755206D5
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 20:07:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="B0W8Q5Lp"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="muNxyZVX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726674AbfLJTTe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Dec 2019 14:19:34 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:8902 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725999AbfLJTTe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Dec 2019 14:19:34 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5defef970000>; Tue, 10 Dec 2019 11:18:47 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 10 Dec 2019 11:18:53 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 10 Dec 2019 11:18:53 -0800
-Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
- 2019 19:18:53 +0000
-Received: from [10.2.174.71] (10.124.1.5) by DRHQMAIL107.nvidia.com
- (10.27.9.16) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 10 Dec
- 2019 19:18:51 +0000
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        <tglx@linutronix.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
-        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
-        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
-        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
-        <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
- <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
- <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
- <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
- <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
- <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
- <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
- <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
- <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
- <db3bee1e-1bfa-2f9e-9ed1-91b98554556a@gmail.com>
- <22a2f8bd-561d-f4c6-4eef-bb61095c53b2@nvidia.com>
- <5a5cfa74-66be-5c7a-04eb-88c355851c59@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <302d8483-513c-9c20-e4d4-1e24f2b317d6@nvidia.com>
-Date:   Tue, 10 Dec 2019 11:18:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1726613AbfLJUHX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Dec 2019 15:07:23 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36584 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbfLJUHW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Dec 2019 15:07:22 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n12so14783011lfe.3
+        for <linux-clk@vger.kernel.org>; Tue, 10 Dec 2019 12:07:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=IVcVWrTqzzoJOExedrP/w3aCQxV5GwfvKkNgJHaUgQY=;
+        b=muNxyZVX+j2ePeHGmZ8JuT3kaQ7OHqbg1mVUZHgJU3kcA/u0qsdDaR4cFFP/metLVh
+         UYCcgR2D0Dr+DVzcO9ocmf4B1J5rqOBrmJNsfcAI0+GMRmC9Yimt7i/vhqgMfclsjWbp
+         PzMoMBCVu7Q9K9s/uIuVB9GjrlC3tZ4Dnl2x74Qas0MWU8AaRFdGiISXZ++PHkUr99li
+         pKBeyZERVNJ2WxVWTFgwOh3V+mjAsbNAZ91cwwdPS8fTGS0Hs647lOtWUqMQYFAldCpn
+         9mGK7HvPh6FjisA2/sdwfPdV/a7dDqrSa5Xp5CDiV0/M1bkIvKNm5DEj5zaHDSp5qoSJ
+         c17Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=IVcVWrTqzzoJOExedrP/w3aCQxV5GwfvKkNgJHaUgQY=;
+        b=JIXwl7uqoefLQt3vB4CNafdiIa1eEvfKGWKch9hMAQ8K16u9vNmwLm1q26iv4M3iPE
+         dQZ/gcOCXjITpME7FX5uWsKhFwujI4tXzJ15eOwawbIKRt+FywWUGjbn3cCSAX6OIY5E
+         7w3sPAl3AZzcd9Gdahbf7Bje9r6sQpv6Gb1GQH2lCLz7nxcFyoMXnk4oIqKJw95OsYBP
+         CSOqdvssPUNxaYtPXzVm6kF2HqYqZ5GWrvqS94is3sdqTK9A52tMpyYLNyxY0DjDGZPS
+         itmaVrpTYjTp4g1IDQfY9agyUd8n/b5irL3JvH2XrTuD1rY8GJTSckM9C0R3pI0REZsN
+         TypQ==
+X-Gm-Message-State: APjAAAWE7OSqsN7LaHDR+17iPFucuguANhlfEcD6ygolLpAS/gaihtln
+        EULmcgY5cCd8fTbFWK8Z8Swajg==
+X-Google-Smtp-Source: APXvYqy7jA1CkGtuRr5UKn5k9QWlLPx4dGI/unO0eIDc3ayyv08uFHffOSNGvFma2xOaj8U/PD/aXw==
+X-Received: by 2002:a19:760c:: with SMTP id c12mr12867007lff.60.1576008440109;
+        Tue, 10 Dec 2019 12:07:20 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:88a:ffe6:e26c:e506:75a0:c93a])
+        by smtp.gmail.com with ESMTPSA id j19sm2323761lja.100.2019.12.10.12.07.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 10 Dec 2019 12:07:19 -0800 (PST)
+Subject: Re: [PATCH v2 2/6] dt-bindings: spi: Document Renesas SPIBSC bindings
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Chris Brandt <chris.brandt@renesas.com>
+Cc:     Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <20191206134202.18784-3-chris.brandt@renesas.com>
+ <CAMuHMdXW6_tCcx_DE66qBSTK8XmWyWm82ZD6h-N5YX_+xcvBtw@mail.gmail.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <0cbd8556-cf17-7d6b-5c12-e8d663a39cfa@cogentembedded.com>
+Date:   Tue, 10 Dec 2019 23:07:17 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <5a5cfa74-66be-5c7a-04eb-88c355851c59@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- DRHQMAIL107.nvidia.com (10.27.9.16)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576005527; bh=nSHPQRJtbbzTaMMJDPqshfJCmi/GwjGhrtfnMwUJLaI=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=B0W8Q5LpqO32TI3xWEwQx0LT8eQMvWgXZLszXRSbB8TBCxrSlsceBtBnkH1UOyFDQ
-         mlB3aa0PLKPpV/bzhLn1+MEVDffLWKWl1lWK6UzyuvYuFjCjYtQdbS6GI8J00nRgdf
-         8nJeFrvRzhlyWgIOONKA5rNPFDYabLTCmpxCAhtdTQ6trhGDJa6zRipQe97GtMbwoT
-         cgcPcjuY9g+t/W1ryMF9taW7HLd2n4wI/4MeDZqdfBaYPBtBtKH1LI4gl8g3WZI8EH
-         kwBMDIvyDOCOJ2be3kLnySp45FQ5pTH1uE1fcr6YNZpDpDv2dp8VUh0shZ1SzXFcPh
-         sT7kcJhNaE7Hg==
+In-Reply-To: <CAMuHMdXW6_tCcx_DE66qBSTK8XmWyWm82ZD6h-N5YX_+xcvBtw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello!
 
-On 12/10/19 10:30 AM, Dmitry Osipenko wrote:
-> 10.12.2019 20:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->> On 12/10/19 9:41 AM, Dmitry Osipenko wrote:
->>> 09.12.2019 23:46, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
->>>>> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
->>>>>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
->>>>>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82:
->>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2, clk_out=
-_3
->>>>>>>>>>>> with
->>>>>>>>>>>> mux and gate for each of these clocks.
->>>>>>>>>>>>
->>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock drive=
-r
->>>>>>>>>>>> using
->>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base add=
-ress
->>>>>>>>>>>> and register offsets and PMC programming for these clocks happ=
-ens
->>>>>>>>>>>> through direct PMC access by the clock driver.
->>>>>>>>>>>>
->>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
->>>>>>>>>>>> from the
->>>>>>>>>>>> non-secure world does not go through and these clocks will not=
- be
->>>>>>>>>>>> functional.
->>>>>>>>>>>>
->>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
->>>>>>>>>>>> provider
->>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
->>>>>>>>>>>> clocks
->>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
->>>>>>>>>>>> programming
->>>>>>>>>>>> in secure mode and non-secure mode.
->>>>>>>>>>>>
->>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>>>>> ---
->>>>>>>>>> [snip]
->>>>>>>>>>
->>>>>>>>>>>> +
->>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
->>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>>>>>>>>>> +};
->>>>>>>>>>> What's the benefit of separating GATE from the MUX?
->>>>>>>>>>>
->>>>>>>>>>> I think it could be a single clock.
->>>>>>>>>> According to TRM:
->>>>>>>>>>
->>>>>>>>>> 1. GATE and MUX are separate entities.
->>>>>>>>>>
->>>>>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram in
->>>>>>>>>> TRM).
->>>>>>>>>>
->>>>>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable" it,
->>>>>>>>>> correct?
->>>>>> Was following existing clk-tegra-pmc as I am not sure of reason for
->>>>>> having these clocks registered as separate mux and gate clocks.
->>>>>>
->>>>>> Yes, PMC clocks can be registered as single clock and can use clk_op=
-s
->>>>>> for set/get parent and enable/disable.
->>>>>>
->>>>>> enable/disable of PMC clocks is for force-enable to force the clock =
-to
->>>>>> run regardless of ACCEPT_REQ or INVERT_REQ.
->>>>>>
->>>>>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these cloc=
-ks
->>>>>>>>> should belong to PMC.
->>>>>>>> Also, it should be "osc" and not "clk_m".
->>>>>>> I followed the same parents as it were in existing clk-tegra-pmc
->>>>>>> driver.
->>>>>>>
->>>>>>> Yeah they are wrong and they should be from osc and not clk_m.
->>>>>>>
->>>>>>> Will fix in next version.
->>>>>>>
->>>>> Could you please describe the full EXTPERIPH clock topology and how t=
-he
->>>>> pinmux configuration is related to it all?
->>>>>
->>>>> What is internal to the Tegra chip and what are the external outputs?
->>>>>
->>>>> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
->>>> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,
->>>> EXTPERIPH from CAR.
->>>>
->>>> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
->>>>
->>>> EXTPERIPH is from CAR and it has reset and enable controls along with
->>>> clock source selections to choose one of the PLLA_OUT0, CLK_S,
->>>> PLLP_OUT0, CLK_M, PLLE_OUT0
->>> Are you sure that EXTPERIPH has a reset? What will it reset? Why it's
->>> not documented in TRM?
->> Yes, Extperiph1/2/3 has RST part of CAR RST_DEVICES_V bits 24/25/26
-> Are these bits not documented in a public TRMs? I checked
-> T30/114/124/210 TRMs and CLK_RST_CONTROLLER_RST_DEVICES_V_0 doesn't have
-> those bits in the docs.
->
-Yeah these bits are missing in all Tegra TRM docs. Will request for=20
-having EXTPERIPH reset bits to be updated in TRM...
->>>> So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4, EX=
-TERN.
->>>>
->>>>
->>>> CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
->>> Could you please clarify what are "these" pins? Perhaps you meant the
->>> EXTERN pin of PMC?
->> By CLK1/2/3 pins, I am referring to CLK_OUT_1/2/3 pins from Tegra
-> I see now what you meant, thanks.
->
-> [snip}
+On 12/09/2019 05:09 PM, Geert Uytterhoeven wrote:
+
+>> Document the bindings used by the Renesas SPI bus space controller.
+>>
+>> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
+>> ---
+>> v2:
+>>  * change to YAML format
+>>  * add interrupts property
+>>  * Used more terms directly from the hardware manual
+> 
+> Thanks for the update!
+> 
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/spi/renesas,spibsc.yaml
+[...]
+>> +properties:
+>> +  compatible:
+>> +    oneOf:
+>> +      - items:
+>> +          - enum:
+>> +              - renesas,r7s72100-spibsc     # RZ/A1
+>> +              - renesas,r7s9210-spibsc      # RZ/A2
+>> +
+>> +  reg:
+>> +    minItems: 2
+>> +    maxItems: 2
+>> +    items:
+>> +      - description: Registers
+>> +      - description: Memory Mapped Address Space
+> 
+> The second one is not needed, if you would add "ranges" for the
+> memory-mapped mode.
+
+   I'm not sure we can do that. The flash bus is accessed via a window
+with the high bits in the DREAR reg, even in the direct read mode...
+
+> 
+>> +
+>> +  interrupts:
+>> +    description: Some HW versions do not contain interrupts
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +
+>> +  flash:
+>> +    description: |
+>> +      (Optional) In order to use the HW for R/W access ("Manual Mode"), a "flash"
+>> +      subnode must be present with a "compatible" property that contains
+>> +      "jedec,spi-nor". If a spi-nor property is not found, the HW is assumed to be
+>> +      already operating in "External Address Space Read Mode".
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - '#address-cells'
+>> +  - '#size-cells'
+> 
+> I would make the flash subnode mandatory.
+
+   Agreed.
+
+>> +
+>> +examples:
+>> +  - |
+>> +    # This example is for "Manual Mode"
+>> +    spibsc: spi@1f800000 {
+>> +        compatible = "renesas,r7s9210-spibsc";
+>> +        reg = <0x1f800000 0x100>, <0x20000000 0x10000000>;
+>> +        clocks = <&cpg CPG_MOD 83>;
+>> +        power-domains = <&cpg>;
+>> +        interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        flash@0 {
+>> +            compatible = "jedec,spi-nor";
+>> +            reg = <0>;
+>> +            spi-max-frequency = <40000000>;
+>> +
+>> +            partitions {
+>> +                compatible = "fixed-partitions";
+>> +                #address-cells = <1>;
+>> +                #size-cells = <1>;
+>> +
+>> +                partition@0000000 {
+>> +                    label = "u-boot";
+>> +                    reg = <0x00000000 0x80000>;
+>> +                };
+>> +            };
+>> +        };
+>> +
+>> +    # This example is for "External Address Space Read Mode"
+>> +    spibsc: spi@1f800000 {
+>> +        compatible = "renesas,r7s9210-spibsc";
+>> +        reg = <0x1f800000 0x100>, <0x20000000 0x10000000>;
+>> +        clocks = <&cpg CPG_MOD 83>;
+>> +        power-domains = <&cpg>;
+>> +        interrupts = <GIC_SPI 445 IRQ_TYPE_LEVEL_HIGH>;
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +    };
+>> +    flash@20000000 {
+> 
+> This does not describe the hardware topology: the flash node should be
+> a subnode of the spibsc node, as it relies on the spibsc being clocked.
+
+   ACK.
+
+[...]
+
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+
+MBR, Sergei
