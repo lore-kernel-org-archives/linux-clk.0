@@ -2,122 +2,121 @@ Return-Path: <SRS0=Y6WK=2A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D371C00454
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 12:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB25C43603
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 12:22:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54A4D214AF
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 12:11:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1575979897;
-	bh=VoTZ+YSXt6jYeDOFmlVbX/TCJXliKP5PCwhjpNG3DIg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ab2AA3n3HrPP7OesmAtlJCleSy1ycUlS7akR+t0K7PB2HRFtK3oY6QWz6zzeEZ4cQ
-	 KDOo3TVLYkvdmlFCbgHAzsDN2ymKNNmwQo9iQe0+nRpHzzjdFUFR1KuuqCHEZD21eF
-	 CR+LhBW+wGoLbGHPqmqH3MMNMC2uvD34INp63s/c=
+	by mail.kernel.org (Postfix) with ESMTP id CE9B220836
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 12:22:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZRiXMKS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727407AbfLJMLd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Dec 2019 07:11:33 -0500
-Received: from foss.arm.com ([217.140.110.172]:41922 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727272AbfLJMLc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Dec 2019 07:11:32 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9D3D71FB;
-        Tue, 10 Dec 2019 04:11:31 -0800 (PST)
-Received: from localhost (unknown [10.37.6.21])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1C62F3F6CF;
-        Tue, 10 Dec 2019 04:11:31 -0800 (PST)
-Date:   Tue, 10 Dec 2019 12:11:29 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "corbet@lwn.net" <corbet@lwn.net>,
-        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "hofrat@osadl.org" <hofrat@osadl.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>
-Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
- regulator bindings
-Message-ID: <20191210121129.GA6110@sirena.org.uk>
-References: <cover.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <d29e0eb587b764f3ea77647392e45fac67bbd757.1574059625.git.matti.vaittinen@fi.rohmeurope.com>
- <20191118162502.GJ9761@sirena.org.uk>
- <fd1e4e652840346bd990c769eabe2f966bda4ed6.camel@fi.rohmeurope.com>
- <20191119181325.GD3634@sirena.org.uk>
- <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
- <20191119193636.GH3634@sirena.org.uk>
- <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
- <20191129120925.GA5747@sirena.org.uk>
- <ccc533df4e00bdcbe18ea45a0e0679161ff41354.camel@fi.rohmeurope.com>
+        id S1727211AbfLJMWF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Dec 2019 07:22:05 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37401 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727131AbfLJMWF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Dec 2019 07:22:05 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f129so2934510wmf.2;
+        Tue, 10 Dec 2019 04:22:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=a+dlcCmsRbzcBFunwr1JnGDOPrlivjZmuvq7yoce49M=;
+        b=GZRiXMKSMxG+7Ceuvnbe7cMAlxU1dIJR80oFbAtAEjX8QsNdjuOTrX5/i1lV7gq4B8
+         1oqUbs9g+3jesCLKBcX6mEcG1wkv15LVTEMy5JwvvEd3cvKm0ioauZR8LKIMn1v1+kIK
+         ivekR+5IgYIguWNreGRGctdb1BIsQE0MfIkLSx5398hz5KQ4E4xb51tmhguvmlQrSk8z
+         b8zX63KIDDeDgFXSSfiFX5sQAhmH58Ic4Cfv94oxvXmKBDUQofIBR1sYuaT69a8xa2W7
+         KMumPJu76ZO8ZjI0P4+k76jxMljOze0K/WiM+/xkmUw/TH9BY1c+ZOfOkTRPMjYIkFsh
+         yAzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a+dlcCmsRbzcBFunwr1JnGDOPrlivjZmuvq7yoce49M=;
+        b=q4sRHuBmbAZPXm2NE8ZQlP9c2O3p3Z1+tWP6s/SXVHWsI5GGUgziJ3zjCqKDYsrqGo
+         sv8+oOcMgzs9JgAddpBeGochjbiXYT45o23AJE6KRLDnz0FMnZCk+T+dA5xAnXGZ2GH+
+         j1HZMM4xUmrA9ZbnCymSzL21Imt/AXHunJsYvSeKyE9c2/yVLkhqEcRkQATipPGJqBZ4
+         1KZ2TdyxFYeKbJHrE475WW6zx6IekaVPIQe3Ps/U8/5X16PRqaJ6/T9CvGNPB/V7B4Bz
+         G8v5qm+Dx78OTg1207IdGm0DFHoNy0xVICXqa6KoU3M+8MW6Pdy/NOTiQWo+yB9kXAHp
+         WnmA==
+X-Gm-Message-State: APjAAAVc8/yO0a/ABrbdFOauvrfnn4Ja7I6mLypRIZ0Fq1KmZig1BAZG
+        m6eXvTJLZVyzHDAslgOuLPTKBQeO
+X-Google-Smtp-Source: APXvYqwwHyU3bBJ5PUaapPSWnHIXfXABUdZ/1utxorIxSjqTXYyPG/AXrZXuKhWTDpQtcl+SrcK1TQ==
+X-Received: by 2002:a1c:3c86:: with SMTP id j128mr4868723wma.137.1575980522789;
+        Tue, 10 Dec 2019 04:22:02 -0800 (PST)
+Received: from localhost (pD9E518ED.dip0.t-ipconnect.de. [217.229.24.237])
+        by smtp.gmail.com with ESMTPSA id m7sm2967979wrr.40.2019.12.10.04.22.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2019 04:22:01 -0800 (PST)
+Date:   Tue, 10 Dec 2019 13:22:00 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] clk: tegra: Fix double-free in tegra_clk_init()
+Message-ID: <20191210122200.GC2703785@ulmo>
+References: <20191210020512.6088-1-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="xHFwDpU9dbj6ez1V"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ghzN8eJ9Qlbqn3iT"
 Content-Disposition: inline
-In-Reply-To: <ccc533df4e00bdcbe18ea45a0e0679161ff41354.camel@fi.rohmeurope.com>
-X-Cookie: We have ears, earther...FOUR OF THEM!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191210020512.6088-1-digetx@gmail.com>
+User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---xHFwDpU9dbj6ez1V
+--ghzN8eJ9Qlbqn3iT
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Dec 10, 2019 at 11:14:48AM +0000, Vaittinen, Matti wrote:
+On Tue, Dec 10, 2019 at 05:05:12AM +0300, Dmitry Osipenko wrote:
+> It's unlikely to happen in practice ever, but makes static checkers happy.
+>=20
+> Fixes: 535f296d47de ("clk: tegra: Add suspend and resume support on Tegra=
+210")
+> Reported-by: Stephen Boyd <sboyd@kernel.org>
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/clk/tegra/clk.c | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 
-> Problem is that if no default voltages are given from DT, the the first
-> voltage changes are likely to be slow (require register access - I
-> guess the HW defaults are not working for many use-cases) - which may
-> be undesirable.
+Good catch:
 
-I don't think that's likely to be a practical problem, and it's not
-likely it'd be worse than always doing writes.  A lot of things are
-slower the first time you do them and you're still going to have to
-do the writes no matter what.
+Acked-by: Thierry Reding <treding@nvidia.com>
 
---xHFwDpU9dbj6ez1V
+--ghzN8eJ9Qlbqn3iT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl3vi24ACgkQJNaLcl1U
-h9D/zwgAgJGg4Rzbjb/3neARAW2iuL6cC3Z2NQEUh8aJUuljcByF/iXTtlKuups0
-bGOmzkA+eYmrW2wPZPoV88r4feU8A4ri9lzgR3G8cO5n3tAT3lvMiA0ENfYm99nk
-h+YwnKi6WIhhQw4BNNdIfmqr+UfNCUIKLwpmdo2hqm8ALwp/2O9Ge1tpdqVMWfk4
-bV+sqZQW/yxKYYl2vBz9YVw2WGQV7me/vK4fPbxcjUe1nIDJ2MSR2ZZL3Io5RRZ5
-f/V3zG3Ao8ak6Hgg8HaAmZKGsJqtSn1AFwm//zV8BNDHkHC745uTnvIs702ytDgl
-o4pdZZNbPIMmyOtLJtueNJUHBCIwsw==
-=S22J
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl3vjegACgkQ3SOs138+
+s6GOoRAAidaUWN9p+mEK9ws/uUDXI6Xmy+ARBVvNkFB/tvhUIuI/gLHE+dpeLwsh
+pmatWTRMujK3ILr1DJ2hojSZU0nEMdceLztyP2u0aiyoDYYUeI+WSb7Jcqd+9Bq4
+ug6ZwkWs++U+S1FGNxETPiXm2xFLSWTPa/+n4fvC5bMTcbHV3yU98j7h20MEiFkr
+6V1o86caDHp4mFDeJd4+3G6j8KHV1CPK3UycWed6A6GNJVxbVdF4+y+T/itMduIo
+lMDaIsNFm6+LqNVDyQoYJRPmPYS/ClgZk5Hz6/ZJgyTzDEYeJkDaod8bJaVrpt/U
+qzdn3u+C9M8xX68hOe8NQxZi5my/tSIx/G8RpK2fNDIc8kN0Mi8Bo8hKZjSXNB6X
+6tippzUuQ2Nw1MoGcOgsCPKyCY6SfsOnZG4UGqsuGkPD/OXNvhWTr51v7TsAhCvs
+p0ElbZrFy2n6Yw15LCHyJoDf+ovGOZrKNVfz7jZrG0buloGux8Iu+RInQKLPexGm
+Hv7k1O8x5/k3ALRUo3fZG6mvt0CPdh06tLkbuX0fZQ2zmgfxTRLbaNAbjk8g9XWR
+xV+qUkhDcEKQ8zkkGiO7IcWh+hQUzsPZU4Bn4eknIa6TShCZHG8a/+vR0kxLNlOu
+F3ZpPW1PKNiKgFtDjnNhIzFWz4VC07Po4VrayaR9HGpFn5xxVmE=
+=5N0X
 -----END PGP SIGNATURE-----
 
---xHFwDpU9dbj6ez1V--
+--ghzN8eJ9Qlbqn3iT--
