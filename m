@@ -2,160 +2,131 @@ Return-Path: <SRS0=Y6WK=2A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6222C43603
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 06:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 736DFC2D0C7
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 10:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A7B2205ED
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 06:07:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Bvit9jIC"
+	by mail.kernel.org (Postfix) with ESMTP id 531C62077B
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 10:40:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbfLJGHf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 10 Dec 2019 01:07:35 -0500
-Received: from mail-eopbgr30048.outbound.protection.outlook.com ([40.107.3.48]:30223
-        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725942AbfLJGHe (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 10 Dec 2019 01:07:34 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=i97F74nnFNAxbPJ0HxeSOmokGIl/k4zkPRD3GdFbu+6zeVQIkm49if29kcz5ldu0RdAizuOS/97o9j2th+6sL39rV+7sXb6t+Q9EMdkKsVdv/vCIljX41ZaWR18a2RV7BW/I+U53HreuMVlTveL0TyStzhNNh9jXKgLZ3ic1ecrD8ZG3J9gk5ZWbDlH/dduMcb2ibh6XCqDpfjfPgeD5LojxjBhZOcwhr5dZn0G3utEJy2pvyQ69VQQl43lv9x0G27qca2LCqq4bV7QuXMTb7S5HQ1vAwS37pgleCKneg8pczu/VUeSyYyrMaXKDEAHhgYV4sI3AskdsvXSNw56gjA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/hqnbI14WHkcr5VUoBWLgiQqzowhOoft0GDJuGrNCo4=;
- b=VfMyXIvBqL+Si1be/iN0MaPNxTlKwR3LgrEM7m9bWjbat0UTkX2n6TMrNp5MGA7Xatcug2E3GuAbTXUQJHd/4hqcLcHHfBagnoX89fsG+XKHnfe4cL8+IiBOgxO7W5ujTWKyzgZM9GKQsj9mbxKLE+Bw0FlKkajEuCb4jIIEWys8RDD9M36hEHRVVioV4OHwfUo2mYw8NypOmkox8FuxKY/crqQd7bDTv3m92xjHOZ6HcmHHLculRROUmNrxi30mbwvTlfIxHkY4H32ID4tP6RudV11CkRrqaUIjRii/4zPlR5yh4E9kBjkgV23L6PUJElqdANsL4LI/tYcZUby/Gw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/hqnbI14WHkcr5VUoBWLgiQqzowhOoft0GDJuGrNCo4=;
- b=Bvit9jICu//IUnMe0D/BtjghZb+UKL9R2dGcPaBuf+342f48VVmYfY/Fgbjblo+quBYMGjHjBf1LJhMZh3E8e/B40sp879WcpM/sz3qGnNnrFbbH3rPgvQI2lvE2B/8q+lroJ1vHjVmGDatpRZ+Bbac7UHuWwZ7+ddjIW/Fxpxc=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6258.eurprd04.prod.outlook.com (20.179.35.78) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2516.14; Tue, 10 Dec 2019 06:07:31 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::505:87e7:6b49:3d29]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::505:87e7:6b49:3d29%7]) with mapi id 15.20.2516.018; Tue, 10 Dec 2019
- 06:07:31 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Aisheng Dong <aisheng.dong@nxp.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Anson Huang <anson.huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+        id S1727272AbfLJKkG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 10 Dec 2019 05:40:06 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:50958 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbfLJKkG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 10 Dec 2019 05:40:06 -0500
+X-AuditID: c0a8fbf4-199ff70000001fa6-8f-5def76030a76
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 42.1B.08102.3067FED5; Tue, 10 Dec 2019 11:40:03 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Tue, 10 Dec 2019 11:39:58 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "hkallweit1@gmail.com" <hkallweit1@gmail.com>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "hofrat@osadl.org" <hofrat@osadl.org>,
+        "jeffrey.t.kirsher@intel.com" <jeffrey.t.kirsher@intel.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "m.szyprowski@samsung.com" <m.szyprowski@samsung.com>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>
-Subject: RE: [PATCH] clk: imx8qxp-lpcg: Warn against
- devm_platform_ioremap_resource
-Thread-Topic: [PATCH] clk: imx8qxp-lpcg: Warn against
- devm_platform_ioremap_resource
-Thread-Index: AQHVrtMiGjV8+r6RA0KzZFABaAlgB6ey4ngw
-Date:   Tue, 10 Dec 2019 06:07:31 +0000
-Message-ID: <AM0PR04MB4481421FCFF6AE90813572AA885B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-References: <329ac54993d5eb955249d037241a7213faff508f.1575924858.git.leonard.crestez@nxp.com>
-In-Reply-To: <329ac54993d5eb955249d037241a7213faff508f.1575924858.git.leonard.crestez@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Thread-Topic: [PATCH v5 01/16] dt-bindings: regulator: Document ROHM BD71282
+ regulator bindings
+Thread-Index: AQHVndzxthsd4Y8wKkm7W/92Uslk+KeRDPcAgAAbkICAAZUNgIAACqYAgAAMmACADvFigIAASP2AgARwk4CAAFfQAIAADk+AgAMPioCAAAc/gIAAESOAgAkyBwA=
+Date:   Tue, 10 Dec 2019 10:39:57 +0000
+Message-ID: <aea80c251dbafa8f2cd433eaf397a754812338d8.camel@fi.rohmeurope.com>
+References: <20191119181325.GD3634@sirena.org.uk>
+         <fa69d01504817e3260d2b023ae2637aa2f1b2862.camel@fi.rohmeurope.com>
+         <20191119193636.GH3634@sirena.org.uk>
+         <eb685cc78b936bc61ed9f7fbfa18c96398b00909.camel@fi.rohmeurope.com>
+         <20191129120925.GA5747@sirena.org.uk>
+         <297fa021fb243072dbbb7bca455e57c13e8c6843.camel@fi.rohmeurope.com>
+         <20191202131140.GD1998@sirena.org.uk>
+         <72a1f4c5768b8c08c2669ea01e60d1b614095a43.camel@fi.rohmeurope.com>
+         <20191204124717.GR1998@sirena.org.uk>
+         <6f7b96c71bd1257b0b218a092f8aca7f32ef5468.camel@fi.rohmeurope.com>
+         <20191204141433.GU1998@sirena.org.uk>
+In-Reply-To: <20191204141433.GU1998@sirena.org.uk>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-originating-ip: [119.31.174.71]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 7582e97e-077d-4aab-3de3-08d77d373e32
-x-ms-traffictypediagnostic: AM0PR04MB6258:|AM0PR04MB6258:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB6258B2468395248508A93BE1885B0@AM0PR04MB6258.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02475B2A01
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(346002)(136003)(39860400002)(376002)(366004)(199004)(189003)(6636002)(71190400001)(9686003)(7696005)(316002)(6506007)(478600001)(86362001)(81166006)(8936002)(52536014)(5660300002)(81156014)(66556008)(26005)(55016002)(66476007)(66446008)(110136005)(186003)(33656002)(8676002)(4326008)(54906003)(229853002)(2906002)(71200400001)(76116006)(64756008)(66946007)(44832011)(305945005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6258;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: cZ1AT1zNUvoE+aQyU7gioThUVNGp2HxlrVqrdbi4c5l0lqYJ0r8hKuof/0h16TH82cF3os8oJYrR+hULZgkqN3NDukWDl5Tuj1jbU3Hx8G7MPR9Sk85nFP1zUFw2QB+xMMegaG/mWxEPLdq6Z3Y2uCXKgjrA/6Tno1e0HgacyC0dKvKksZytDcBmX5RrbQc6hgku+mgihmAYSFAgKhg/jAY2RT0xX7lOsi+F2hhe9BXOugUTATcwV//eyvEWSjMo3UqPhFQ2NMBizFcLIzO56SQWF7Fc08PJ8IJxDnEYK6suP7yUjWzfqYnMTYKj6053FHiCfYKyYlTfA4BLTBUQQTrwIztP1uQUMli84/rRzoQghOG1LrLUKjCsuvY6zxSxQz79BG5Z7w4IsDlw3UbNgofFomH9x3sho9eB9BfE8/rEsAT6C1QoC0XvCD5GLbbEI6lxg2kdh/p7hlwIwaX0GsoLoLwnI5jlEKx9tXf3veuUkHqZSI2NcbL8qRmjfRWT
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7EDEB04F51B872489D3A15D2A5378E04@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7582e97e-077d-4aab-3de3-08d77d373e32
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Dec 2019 06:07:31.5808
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: b4pDZDL8G+lspQ0ztAEobC0hUCGNHxbLjnAYgooLM71YNWlxBrmETIz1sgd+4IRmAPdTnqdysl1Qm2FjvELqig==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6258
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0wUVxjNnffiDh0XKFeqpN3U2NoAYvxxE03RJtaxbZq2/jAxpTiUKbtx
+        2V1ndo2PGqkGYReCWKEtW96P8nCtFUFbAxa2IHR9UFpWMbqYVbSilkWrKGppZ5gq/Lrnfuc7
+        53w3+S6DG7x0HGO2OkTJKliMVATR2fjkSAK+JZy6ZE8jh+oGAjTKHfuORvfL/QQqCY1QaKQz
+        F6DK7nMkyj/dSqKa8DckcrnySHSp7QcC9R29AtCVBz0ATQzmYaj4aQOG7hYMk6h6bx2BjlY+
+        BeiPE2UUarvzPUCnDg5S6FB3kEb1FwYwVFbfR6DwPReGBvyrUdDfQ6E9A0M4yunoptHU+SME
+        Kjy3ZmU8763wAj48lEPzFd4d/E+eIM3Xto9ifEuzi+Ivn2+n+NrCAyR/s+AXgp84s5/gC1ub
+        AX+j+jDB9w4dx/ivKyYxvvHgQ5r/uyX+A27DnBXpgmPLOnOmNenNjXNMx/t7aHt75NbcyhI8
+        GxREuoGOgdwy+PuxfNoNIhgDFwCw0XcX1y59AAZ+HlcuDENxK6D7Iq0KorkEWPK4llJ7cK5U
+        Dx9NTlIqEcVthK23rxFakwCrJp5gGnYDePLPhSomuIXQnVNGqpjl3ofB0/WYFnaZgHmFXdOE
+        jlsKG6bGp40AtwC6ssemjXAuFrbceEhqY3Owrr0f13AMHL029X/dCDsmQ4Q6NM69Dg+fSNKk
+        K2FX7z1aw6/A4vwQrc0wF/5aOkIUgRc9sxI8M2rPLLVnltozS10FyGYAswSzJVNwiMmJkuhM
+        lGymLOX41JbVArTtu/8j+Ne31gcwBvjAPAYzxrCHLOFUQ2S6LWObSZBNaZLTIso+ABncGM32
+        7h1LNbAZwrbtomR7Rr3EEMZYdlFof6qBU7M2iaJdlJ6x8xnGCNkmh2I6VxIzxa2fmS2OGRpj
+        dKp5RFy0LFozRElwOkxp6oKkycqGqJReydU7FTkr24UspapJ/eANpmi0vAZnusvra3ADYbVZ
+        xbhYtlRN4tRWk9P6POgWiGWAMYrNVI30yhd87nNLicCUCFeG+jTZIcxQcdmg68MiLPDxqt6o
+        f3Y+fut6fMP4eLHJKicNr1r+8pmlbVfZHS+crdqQ8uqp94qDTYu/NI8l0+A13WD15pTVHcw7
+        Qd3Nk8Nr0uZd2tfs/TbmkcjuMzT57e+mNB0ILX/wW8TuTQs6wfqPvnp7/hefLCmXNgcWeRPS
+        ye1nd19fu+svvF9vT/z8mJGQTULyYlyShf8AEWHJOj8EAAA=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-> Subject: [PATCH] clk: imx8qxp-lpcg: Warn against
-> devm_platform_ioremap_resource
->=20
-> On imx8 the LPCG nodes map entire subsystems and overlap peripherals, thi=
-s
-> means that using devm_platform_ioremap_resource will cause many devices
-> to fail to probe including serial ports.
->=20
-> Well-meaning but boot-breaking patches were posted multiple times so add =
-a
-> comment explaining this issue.
->=20
-> Suggested-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
-
-> ---
->  drivers/clk/imx/clk-imx8qxp-lpcg.c | 11 +++++++++++
->  1 file changed, 11 insertions(+)
->=20
-> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> index c0aff7ca6374..04c8ee35e14c 100644
-> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> @@ -171,10 +171,21 @@ static int imx8qxp_lpcg_clk_probe(struct
-> platform_device *pdev)
->=20
->  	ss_lpcg =3D of_device_get_match_data(dev);
->  	if (!ss_lpcg)
->  		return -ENODEV;
->=20
-> +	/*
-> +	 * Please don't replace this with devm_platform_ioremap_resource.
-> +	 *
-> +	 * devm_platform_ioremap_resource calls devm_ioremap_resource
-> which
-> +	 * differs from devm_ioremap by also calling
-> devm_request_mem_region
-> +	 * and preventing other mappings in the same area.
-> +	 *
-> +	 * On imx8 the LPCG nodes map entire subsystems and overlap
-> +	 * peripherals, this means that using devm_platform_ioremap_resource
-> +	 * will cause many devices to fail to probe including serial ports.
-> +	 */
->  	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
->  	if (!res)
->  		return -EINVAL;
->  	base =3D devm_ioremap(dev, res->start, resource_size(res));
->  	if (!base)
-> --
-> 2.17.1
-
+DQpPbiBXZWQsIDIwMTktMTItMDQgYXQgMTQ6MTQgKzAwMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
+IE9uIFdlZCwgRGVjIDA0LCAyMDE5IGF0IDAxOjEzOjA4UE0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0
+dGkgd3JvdGU6DQo+IA0KPiA+IEkgdGhpbmsgSSBvbmNlIGFnYWluIGV4cGxhaW5lZCBteXNlbGYg
+YmFkbHkuIFRoZXJlIGNhbiBiZSBvbmx5IG9uZQ0KPiA+IGdyb3VwIHdpdGggNCBSVU4gc3RhdGVz
+IHNlbGVjdGVkIGJ5IGNvbWJpbmF0aW9uIG9mIDIgR1BJTyBsaW5lcy4NCj4gPiBidWNrcw0KPiA+
+IDEsMiw2IGFuZCA3IGNhbiBlYWNoIGVpdGhlciBiZSBhc3NpZ25lZCBpbnRvIHRoaXMgb25lIGdy
+b3VwIG9yDQo+ID4gY29udHJvbGxlZCBpbmRpdmlkdWFsbHkgdmlhIEkyQy4gQnV0IEkgZG91YnQg
+YXNzaWduaW5nIG9ubHkgb25lIG9mDQo+ID4gdGhlDQo+ID4gYnVja3MgaW4gdGhpcyBncm91cCBp
+cyB0aGUgdHlwaWNhbCB1c2UtY2FzZS4gV2hhdCB3ZSB3b3VsZCBuZWVkDQo+ID4gd291bGQNCj4g
+DQo+IEkgZG9uJ3QgdGhpbmsgdGhpcyBpcyBhcyB1bnVzdWFsIGFzIHlvdSdyZSB0aGlua2luZyAt
+IHRoZQ0KPiByZWd1bGF0b3JzIHBlb3BsZSB3YW50IHRvIGNvbnRyb2wgcXVpY2tseSBhcmUgdXN1
+YWxseSB0aGUgbWFpbg0KPiBDUFUgc3VwcGx5IHJlZ3VsYXRvcnMgYW5kIHRoZXNlIG9mdGVuIHZh
+cnkgaW5kZXBlbmRlbnRseSBvZg0KPiBhbnl0aGluZyBlbHNlLg0KDQpIbW0uIEkgc2VlIHlvdXIg
+cG9pbnQuIFlvdSBtaWdodCBiZSBjb3JyZWN0LiBBbGxvd2luZyBvbmx5IG9uZSBidWNrIHRvDQpi
+ZSBhc3NpZ25lZCBpbiAncnVuLWxldmVsIGdyb3VwJyAodG8gYmUgY29udHJvbGxlZCBieSBHUElP
+cykgd291bGQgYmUNCnRvdGFsbHkgcG9zc2libGUgd2l0aCBjdXJyZW50IHJlZ3VsYXRvciBBUEkg
+LSBhbmQgaXQgbWlnaHQgYmUgdXNlZnVsDQpmb3Igc2NhbGluZyB0aGUgQ1BVIHZvbHRhZ2UuIEkg
+YXBwcmVjaWF0ZSB5b3VyIGhlbHAgYW5kIGV4cGVyaWVuY2UgaGVyZQ0KOikgSW1wbGVtZW50aW5n
+IGl0IHdvdWxkIGJlIGFsc28gcHJldHR5IHNpbXBsZSwgY2FjaGluZyBhbmQgY29udHJvbGxpbmcN
+CnRoZSBydW4tbGV2ZWwgdm9sdGFnZXMgaXMgYWxyZWFkeSB0aGVyZSBpbiBwYXRjaCAxMiwgSSBq
+dXN0IHNob3VsZA0KcmVzdHJpY3QgdGhlIGdyb3VwIHNpemUgdG8gb25lIGJ1Y2suIEkgd2lsbCBz
+ZWUgaG93IGl0IHdvcmtzIGFuZCBhbHNvDQphc2sgaWYgbXkgY29sbGVhZ3VlcyBrbm93IHdoZXRo
+ZXIgdGhpcyBpcyB2YWx1YWJsZSB3aXRoIG91ciBjdXJyZW50DQpjdXN0b21lcidzIFNPQ3MuIFRo
+YW5rcyBhIGJ1bmNoIQ0KDQpCciwNCglNYXR0aSBWYWl0dGluZW4NCg==
