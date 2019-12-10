@@ -2,105 +2,290 @@ Return-Path: <SRS0=Y6WK=2A=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	FORGED_MUA_MOZILLA,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76355C43603
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 02:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B749C43603
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 04:47:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A12F2071E
-	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 02:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC1BE20838
+	for <linux-clk@archiver.kernel.org>; Tue, 10 Dec 2019 04:47:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K42xURoU"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="h3tTN+1W";
+	dkim=pass (1024-bit key) header.d=amazonses.com header.i=@amazonses.com header.b="UfqGKbFz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726605AbfLJCGO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 9 Dec 2019 21:06:14 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35479 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726538AbfLJCGN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 21:06:13 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j6so18005081lja.2;
-        Mon, 09 Dec 2019 18:06:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AmQ89GILhlx/U5P8wU6P6IdbZMbjFb3kbbiTdTM2PN8=;
-        b=K42xURoUdWBqhYqBJsTlXFkBp+gv727RKojcVrVpC4YZ8E4bbMVrGlBdAoc1gaY4nl
-         tJAybS6U2p76KORxvwPIY7BrslTlGtz1O/memkiy6v5u3loWBan8WH+YiTYV4SpjV4IC
-         dxZ+82w4EY2WVvdlRPU+pekuBIUvxBnlaR6TZfu1u9//78vSXpvaqVOGQ+84ZiWvw1oj
-         e4M+xiVCD4JHh/qKeVcsexKW2Mwc76yZ9h+F20++l2bcWd2D2xao0oT2gxgXJVhL5R8Q
-         +eFRctm5FdUZRiEnr3K2bTQzX5dKQp04KrvGra/8ZEALyZBjUSoA98hCM0/aWLJvhaVD
-         gK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AmQ89GILhlx/U5P8wU6P6IdbZMbjFb3kbbiTdTM2PN8=;
-        b=So+FUes6uWJ6ofF+wH2pIfOhJS1nD3FXQjO1LYJPsUah247hWoSGpIL7DLWw+ctS/z
-         cdokKo/xY0Fk118dLDBvLHnBU1dSB0eaoi1bRqTVb0gIC775FtKTAAkX+BSACi4KQ2p4
-         4JwH1MQkmiQvU8mxq4agKKrGvYDAJQguGjbUyK3AOy6rf8LCClL/L1PqUNQDfqEk52tZ
-         sH06JuL9PU1dT0sgd3ylIkdRfOkp/FaAkwsRxcYepwAUB7A0svuK2Vo9qYGrT1wGuhRx
-         L5BK8SYwTNdXobC4sAGXIiWgdcQTostOzH1yhLSYnlAsDzZx+w+tmv4tZyt6+1jRgTDd
-         kWLw==
-X-Gm-Message-State: APjAAAWUamPNmqcx7Eht3X6vKQfPZZeT2Dmx2NdC2zvvg2JrGPBcmHjU
-        00NBZ+508ACluJoAXII9pY4=
-X-Google-Smtp-Source: APXvYqyAlnA1BMRhELESRDbCH7OGjo25oaNp4BWKPx/VCjt0jyNLpGnyzNhReAYH7B90uswNz0W1GA==
-X-Received: by 2002:a2e:8e97:: with SMTP id z23mr17993160ljk.125.1575943571643;
-        Mon, 09 Dec 2019 18:06:11 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id o20sm789018ljc.35.2019.12.09.18.06.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2019 18:06:11 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk: tegra: Fix double-free in tegra_clk_init()
-Date:   Tue, 10 Dec 2019 05:05:12 +0300
-Message-Id: <20191210020512.6088-1-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
+        id S1726989AbfLJErh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 9 Dec 2019 23:47:37 -0500
+Received: from a27-56.smtp-out.us-west-2.amazonses.com ([54.240.27.56]:57758
+        "EHLO a27-56.smtp-out.us-west-2.amazonses.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726890AbfLJErh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 9 Dec 2019 23:47:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=zsmsymrwgfyinv5wlfyidntwsjeeldzt; d=codeaurora.org; t=1575953255;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
+        bh=mpAwQ0yghqGsPhLD+klLGT0jWL2m9olWHP42MbTN74M=;
+        b=h3tTN+1WLLUIqdIbkEahtkDdxI4CMkQEus8oeX+ADtUsPuVkhRc49qofDr1WQc15
+        +M3UvngO+7EM9HNzZ9i59evYYCa8udj5PAK1ycE2+L7xsT7wyg9iL8T7y/7igCM2JMP
+        eOuIrPK0Jz6Y6c2RZHrTTFc9dFoWwCztrBTb0DLw=
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/simple;
+        s=gdwg2y3kokkkj5a55z2ilkup5wp5hhxx; d=amazonses.com; t=1575953255;
+        h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID;
+        bh=mpAwQ0yghqGsPhLD+klLGT0jWL2m9olWHP42MbTN74M=;
+        b=UfqGKbFzpC3l+WSrZYhtcksQIHwZlmrC8mdyKlHJHcIAUtYD2gY+N3fgervxXp3B
+        1XXX1zFNPutBIzZtLT/ODbkvMQroEQaKGtifL0ELDaAhzd7lit71TxUpBa5JvDQ0ei4
+        pID6nShGgTM9ICFvN/7V5w+Zs9XW+A1PjcU6Bh7s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3E672C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH 1/7] clk: qcom: add support for setting the duty cycle
+To:     Brian Masney <masneyb@onstation.org>, sboyd@kernel.org,
+        dmitry.torokhov@gmail.com, robh+dt@kernel.org
+Cc:     mark.rutland@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+References: <20191205002503.13088-1-masneyb@onstation.org>
+ <20191205002503.13088-2-masneyb@onstation.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <0101016eee224b83-b0577d24-8f51-4e1a-9afb-b3f518e5ba77-000000@us-west-2.amazonses.com>
+Date:   Tue, 10 Dec 2019 04:47:35 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20191205002503.13088-2-masneyb@onstation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-SES-Outgoing: 2019.12.10-54.240.27.56
+Feedback-ID: 1.us-west-2.CZuq2qbDmUIuT3qdvXlRHZZCpfZqZ4GtG9v3VKgRyF0=:AmazonSES
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-It's unlikely to happen in practice ever, but makes static checkers happy.
+Hi Brian,
 
-Fixes: 535f296d47de ("clk: tegra: Add suspend and resume support on Tegra210")
-Reported-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+On 12/5/2019 5:54 AM, Brian Masney wrote:
+> Add support for setting the duty cycle via the D register for the
+> Qualcomm clocks.
+> 
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+> A few quirks that were noted when varying the speed of CAMSS_GP1_CLK on
+> msm8974 (Nexus 5 phone):
+> 
+>    - The mnd_width is set to 8 bits, however the d width is actually 7
+>      bits, at least for this clock. I'm not sure about the other clocks.
+> 
+>    - When the d register has a value less than 17, the following error
+>      from update_config() is shown: rcg didn't update its configuration.
+>      So this patch keeps the value of the d register within the range
+>      [17, 127].
+> 
+> I'm not sure about the relationship of the m, n, and d values,
+> especially how the 50% duty cycle is calculated by inverting the n
+> value, so that's why I'm saving the duty cycle ratio for
+> get_duty_cycle().
+> 
+>   drivers/clk/qcom/clk-rcg.h  |  4 +++
+>   drivers/clk/qcom/clk-rcg2.c | 61 +++++++++++++++++++++++++++++++++++--
+>   2 files changed, 63 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+> index 78358b81d249..c3b8732cec8f 100644
+> --- a/drivers/clk/qcom/clk-rcg.h
+> +++ b/drivers/clk/qcom/clk-rcg.h
+> @@ -139,6 +139,8 @@ extern const struct clk_ops clk_dyn_rcg_ops;
+>    * @freq_tbl: frequency table
+>    * @clkr: regmap clock handle
+>    * @cfg_off: defines the cfg register offset from the CMD_RCGR + CFG_REG
+> + * @duty_cycle_num: Numerator of the duty cycle ratio
+> + * @duty_cycle_den: Denominator of the duty cycle ratio
+>    */
+>   struct clk_rcg2 {
+>   	u32			cmd_rcgr;
+> @@ -149,6 +151,8 @@ struct clk_rcg2 {
+>   	const struct freq_tbl	*freq_tbl;
+>   	struct clk_regmap	clkr;
+>   	u8			cfg_off;
+> +	int			duty_cycle_num;
+> +	int			duty_cycle_den;
+>   };
+>   
+>   #define to_clk_rcg2(_hw) container_of(to_clk_regmap(_hw), struct clk_rcg2, clkr)
+> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+> index 8f4b9bec2956..8d685baefe50 100644
+> --- a/drivers/clk/qcom/clk-rcg2.c
+> +++ b/drivers/clk/qcom/clk-rcg2.c
+> @@ -258,7 +258,11 @@ static int clk_rcg2_determine_floor_rate(struct clk_hw *hw,
+>   	return _freq_tbl_determine_rate(hw, rcg->freq_tbl, req, FLOOR);
+>   }
+>   
+> -static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+> +static int __clk_rcg2_configure_with_duty_cycle(struct clk_rcg2 *rcg,
+> +						const struct freq_tbl *f,
+> +						int d_reg_val,
+> +						int duty_cycle_num,
+> +						int duty_cycle_den)
+>   {
+>   	u32 cfg, mask;
+>   	struct clk_hw *hw = &rcg->clkr.hw;
+> @@ -280,9 +284,12 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>   			return ret;
+>   
+>   		ret = regmap_update_bits(rcg->clkr.regmap,
+> -				RCG_D_OFFSET(rcg), mask, ~f->n);
+> +				RCG_D_OFFSET(rcg), mask, d_reg_val);
+>   		if (ret)
+>   			return ret;
+> +
+> +		rcg->duty_cycle_num = duty_cycle_num;
+> +		rcg->duty_cycle_den = duty_cycle_den;
+>   	}
+>   
+>   	mask = BIT(rcg->hid_width) - 1;
+> @@ -295,6 +302,12 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>   					mask, cfg);
+>   }
+>   
+> +static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+> +{
+> +	/* Set a 50% duty cycle */
+> +	return __clk_rcg2_configure_with_duty_cycle(rcg, f, ~f->n, 1, 2);
+> +}
+> +
+>   static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+>   {
+>   	int ret;
+> @@ -353,6 +366,32 @@ static int clk_rcg2_set_floor_rate_and_parent(struct clk_hw *hw,
+>   	return __clk_rcg2_set_rate(hw, rate, FLOOR);
+>   }
+>   
+> +static int clk_rcg2_get_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +
+> +	duty->num = rcg->duty_cycle_num;
+> +	duty->den = rcg->duty_cycle_den;
+> +
+> +	return 0;
+> +}
+> +
+> +static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+> +{
+> +	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> +	int ret, d_reg_val, mask;
+> +
+> +	mask = BIT(rcg->mnd_width - 1) - 1;
+> +	d_reg_val = mask - (((mask - 17) * duty->num) / duty->den);
+> +	ret = __clk_rcg2_configure_with_duty_cycle(rcg, rcg->freq_tbl,
+> +						   d_reg_val, duty->num,
+> +						   duty->den);
 
-diff --git a/drivers/clk/tegra/clk.c b/drivers/clk/tegra/clk.c
-index e6bd6d1ea012..f6cdce441cf7 100644
---- a/drivers/clk/tegra/clk.c
-+++ b/drivers/clk/tegra/clk.c
-@@ -231,8 +231,10 @@ struct clk ** __init tegra_clk_init(void __iomem *regs, int num, int banks)
- 	periph_banks = banks;
- 
- 	clks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
--	if (!clks)
-+	if (!clks) {
- 		kfree(periph_clk_enb_refcnt);
-+		return NULL;
-+	}
- 
- 	clk_num = num;
- 
+The duty-cycle calculation is not accurate.
+There is already a plan to submit the duty-cycle changes from my side.
+> +	if (ret)
+> +		return ret;
+> +
+> +	return update_config(rcg);
+> +}
+> +
+>   const struct clk_ops clk_rcg2_ops = {
+>   	.is_enabled = clk_rcg2_is_enabled,
+>   	.get_parent = clk_rcg2_get_parent,
+> @@ -361,6 +400,8 @@ const struct clk_ops clk_rcg2_ops = {
+>   	.determine_rate = clk_rcg2_determine_rate,
+>   	.set_rate = clk_rcg2_set_rate,
+>   	.set_rate_and_parent = clk_rcg2_set_rate_and_parent,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+>   
+> @@ -372,6 +413,8 @@ const struct clk_ops clk_rcg2_floor_ops = {
+>   	.determine_rate = clk_rcg2_determine_floor_rate,
+>   	.set_rate = clk_rcg2_set_floor_rate,
+>   	.set_rate_and_parent = clk_rcg2_set_floor_rate_and_parent,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_rcg2_floor_ops);
+>   
+> @@ -499,6 +542,8 @@ const struct clk_ops clk_edp_pixel_ops = {
+>   	.set_rate = clk_edp_pixel_set_rate,
+>   	.set_rate_and_parent = clk_edp_pixel_set_rate_and_parent,
+>   	.determine_rate = clk_edp_pixel_determine_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_edp_pixel_ops);
+>   
+> @@ -557,6 +602,8 @@ const struct clk_ops clk_byte_ops = {
+>   	.set_rate = clk_byte_set_rate,
+>   	.set_rate_and_parent = clk_byte_set_rate_and_parent,
+>   	.determine_rate = clk_byte_determine_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_byte_ops);
+>   
+> @@ -627,6 +674,8 @@ const struct clk_ops clk_byte2_ops = {
+>   	.set_rate = clk_byte2_set_rate,
+>   	.set_rate_and_parent = clk_byte2_set_rate_and_parent,
+>   	.determine_rate = clk_byte2_determine_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_byte2_ops);
+>   
+> @@ -717,6 +766,8 @@ const struct clk_ops clk_pixel_ops = {
+>   	.set_rate = clk_pixel_set_rate,
+>   	.set_rate_and_parent = clk_pixel_set_rate_and_parent,
+>   	.determine_rate = clk_pixel_determine_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_pixel_ops);
+>   
+> @@ -804,6 +855,8 @@ const struct clk_ops clk_gfx3d_ops = {
+>   	.set_rate = clk_gfx3d_set_rate,
+>   	.set_rate_and_parent = clk_gfx3d_set_rate_and_parent,
+>   	.determine_rate = clk_gfx3d_determine_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_gfx3d_ops);
+>   
+> @@ -942,6 +995,8 @@ const struct clk_ops clk_rcg2_shared_ops = {
+>   	.determine_rate = clk_rcg2_determine_rate,
+>   	.set_rate = clk_rcg2_shared_set_rate,
+>   	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+>   EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
+>   
+> @@ -1081,6 +1136,8 @@ static const struct clk_ops clk_rcg2_dfs_ops = {
+>   	.get_parent = clk_rcg2_get_parent,
+>   	.determine_rate = clk_rcg2_dfs_determine_rate,
+>   	.recalc_rate = clk_rcg2_dfs_recalc_rate,
+> +	.get_duty_cycle = clk_rcg2_get_duty_cycle,
+> +	.set_duty_cycle = clk_rcg2_set_duty_cycle,
+>   };
+> 
+
+Why do you want to support duty-cycle for other RCGs when you are 
+specifically want it for GP clocks only.
+The DFS can never handle duty-cycle set/get.
+
+>   static int clk_rcg2_enable_dfs(const struct clk_rcg_dfs_data *data,
+> 
+
 -- 
-2.24.0
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
+--
