@@ -2,108 +2,130 @@ Return-Path: <SRS0=MyMj=2B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 207B0C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:06:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 508A8C00454
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:11:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB26620836
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576080375;
-	bh=91iWh5fmI1a06yBOSNjXj8il8TOi4Ro8Y8i/EzjO7lA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qU07RJch2tSJQnBB7p3umS22z2FR7i7wqlsDUxr7b+5k1UVDBzaZHk5jphKoZboE2
-	 2sEq+yxSJRgkMS57ypPn9AfifwKSyFeXpmst1q8LPt93k+hXsH8dVF1HrsRyUeHHqZ
-	 7TSZag4CA3zgacq4Ymgk+JN/JdUNWpfqxZZ/LSUs=
+	by mail.kernel.org (Postfix) with ESMTP id 25D4A214D8
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:11:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Lm5F6nqi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731218AbfLKPMo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 10:12:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34804 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731213AbfLKPMn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:12:43 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 21B1F20663;
-        Wed, 11 Dec 2019 15:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077162;
-        bh=91iWh5fmI1a06yBOSNjXj8il8TOi4Ro8Y8i/EzjO7lA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gGGrDo5FbnSvVdMGO+eIOgRqfeXtjkOfJ+A0dAokOogkQzrn3FX70zpJgI+YqsWen
-         E8DfihFU/JzbHJr3itsBYgTPBEQDckJ3H+ns11GvtjR/yY0cay5wjBQVkdpWYLXefd
-         fAdDxhdX6WNsnt6qRiDG3Zr7g98YfK7Zb9oE+5Ds=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 048/134] clk: qcom: smd: Add missing pnoc clock
-Date:   Wed, 11 Dec 2019 10:10:24 -0500
-Message-Id: <20191211151150.19073-48-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
-References: <20191211151150.19073-1-sashal@kernel.org>
+        id S1730782AbfLKPKh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 10:10:37 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15745 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730487AbfLKPKg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 10:10:36 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df106e40000>; Wed, 11 Dec 2019 07:10:28 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Wed, 11 Dec 2019 07:10:34 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Wed, 11 Dec 2019 07:10:34 -0800
+Received: from DRHQMAIL107.nvidia.com (10.27.9.16) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Dec
+ 2019 15:10:31 +0000
+Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by
+ DRHQMAIL107.nvidia.com (10.27.9.16) with Microsoft SMTP Server (TLS) id
+ 15.0.1473.3; Wed, 11 Dec 2019 15:10:30 +0000
+Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
+        id 66AC6447B2; Wed, 11 Dec 2019 17:10:28 +0200 (EET)
+Date:   Wed, 11 Dec 2019 17:10:28 +0200
+From:   Peter De Schrijver <pdeschrijver@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>
+CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <mperttunen@nvidia.com>, <sboyd@kernel.org>,
+        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <allison@lohutok.net>, <pgaikwad@nvidia.com>,
+        <mturquette@baylibre.com>, <horms+renesas@verge.net.au>,
+        <Jisheng.Zhang@synaptics.com>, <krzk@kernel.org>, <arnd@arndb.de>,
+        <spujar@nvidia.com>, <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
+Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
+ into PMC driver
+Message-ID: <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
+References: <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
+ <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
+ <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
+ <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
+ <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
+ <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
+ <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
+ <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
+ <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
+ <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
+X-NVConfidentiality: public
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ DRHQMAIL107.nvidia.com (10.27.9.16)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576077028; bh=VvDMrUYT7taYzbMa3m3Y5QwG5+rFZtiGCZ+lwUnZ+H4=;
+        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
+         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
+         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
+        b=Lm5F6nqi5lm9oF3AFvMVlJyM+vsVmkKVxMC3aCEATgZO2h7/YDOmlhxTh16jJsYJc
+         RiTDpkOAGndf7f5g1VHhTGp0uN0v291Ea9MpN52Vs9fo5PtJEB6Zx5z61K91j3ytjq
+         mff6ObVy21nYWvLr+C7tSIvriqp0/PQ0hSigNsBE/FlJGH+QmpZXlRv7KroBogN+1w
+         Cz7mjfNTukwY2nltQx3atJPxUyEKwDEJnOP/0N6zXKUqC2iRiQJTV8QETKFJ8qqemu
+         yrIV5TJcqcqdsN6mPTX3i85m8T+/UOb2TOeAfLfE+x5CnmT8RyiTFIDmSn7YykhuIu
+         1ZWP3M73v2MFg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+On Tue, Dec 10, 2019 at 08:41:56PM +0300, Dmitry Osipenko wrote:
 
-[ Upstream commit ba1d366de261981c0dd04fac44d2ce3a5eba2eaa ]
+..
 
-When MSM8998 support was added, and analysis was done to determine what
-clocks would be consumed.  That analysis had a flaw, which caused the
-pnoc to be skipped.  The pnoc clock needs to be on to access the uart
-for the console.  The clock is on from boot, but has no consumer votes
-in the RPM.  When we attempt to boot the modem, it causes the RPM to
-turn off pnoc, which kills our access to the console and causes CPU hangs.
+> >
+> > PMC clock gate is based on the state of CLKx_ACCEPT_REQ and FORCE_EN
+> > like explained above.
+> >
+> > CLKx_ACCEPT_REQ is 0 default and FORCE_EN acts as gate to enable/disable
+> > EXTPERIPH clock output to PMC CLK_OUT_1/2/3.
+> 
+> [and to enable OSC as well]
+> 
+> > So I believe we need to register as MUX and Gate rather than as a single
+> > clock. Please confirm.
+> 
+> 1. The force-enabling is applied to both OSC and EXTERN sources of
+> PMC_CLK_OUT_x by PMC at once.
+> 
+> 2. Both of PMC's force-enabling and OSC/EXTERN selection is internal to PMC.
+> 
+> Should be better to define it as a single "pmc_clk_out_x". I don't see
+> any good reasons for differentiating PMC's Gate from the MUX, it's a
+> single hardware unit from a point of view of the rest of the system.
+> 
+> Peter, do you have any objections?
 
-We need pnoc to be defined, so that clk_smd_rpm_handoff() will put in
-an implicit vote for linux and prevent issues when booting modem.
-Hopefully pnoc can be consumed by the interconnect framework in future
-so that Linux can rely on explicit votes.
+The reason to have separate gate and mux clocks, is to preserve compatibility
+with existing users.
+Otherwise the current users would need to figure out if there's a
+single clock or 2 clocks to configure. I don't think adding that code in
+each user is worth it only to have a sligthly nicer modelling of the
+hardware.
 
-Fixes: 6131dc81211c ("clk: qcom: smd: Add support for MSM8998 rpm clocks")
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Link: https://lkml.kernel.org/r/20191107190615.5656-1-jeffrey.l.hugo@gmail.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/qcom/clk-smd-rpm.c | 3 +++
- 1 file changed, 3 insertions(+)
+Cheers,
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index fef5e81570614..930fa4a4c52a8 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -648,6 +648,7 @@ static const struct rpm_smd_clk_desc rpm_clk_qcs404 = {
- };
- 
- /* msm8998 */
-+DEFINE_CLK_SMD_RPM(msm8998, pcnoc_clk, pcnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 0);
- DEFINE_CLK_SMD_RPM(msm8998, snoc_clk, snoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 1);
- DEFINE_CLK_SMD_RPM(msm8998, cnoc_clk, cnoc_a_clk, QCOM_SMD_RPM_BUS_CLK, 2);
- DEFINE_CLK_SMD_RPM(msm8998, ce1_clk, ce1_a_clk, QCOM_SMD_RPM_CE_CLK, 0);
-@@ -670,6 +671,8 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk2_pin, rf_clk2_a_pin, 5);
- DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8998, rf_clk3, rf_clk3_a, 6);
- DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8998, rf_clk3_pin, rf_clk3_a_pin, 6);
- static struct clk_smd_rpm *msm8998_clks[] = {
-+	[RPM_SMD_PCNOC_CLK] = &msm8998_pcnoc_clk,
-+	[RPM_SMD_PCNOC_A_CLK] = &msm8998_pcnoc_a_clk,
- 	[RPM_SMD_SNOC_CLK] = &msm8998_snoc_clk,
- 	[RPM_SMD_SNOC_A_CLK] = &msm8998_snoc_a_clk,
- 	[RPM_SMD_CNOC_CLK] = &msm8998_cnoc_clk,
--- 
-2.20.1
-
+Peter.
