@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF3EFC2D0C8
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 15:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9DFC2D0C6
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3985208C3
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 15:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 875BB22B48
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:01:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576079106;
-	bh=Pr2oFJ7XY1TZXcI3B8gnXwsouW7AxpiOMBNsqEIjfSs=;
+	s=default; t=1576080093;
+	bh=qLeT4GxcH0g5QErrR4SX5v90f8Y1T5ZXWdgd+HBEe+o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KKGi6lfeeO8Z3hzxM/zjvCyJgKty93T4GYtqSr9YX+v3cYpW1Qt1cwqGi8SX+pjUw
-	 Riht9PokminRVDuAq2TDzjyoJpejyWoN13Id8iw2TrEnV5bAQhYGzwx0sionvxv7BC
-	 tfuN6/R1+WEyS8qNvvtyMJA5Eup7NlbcYZxt2J6Q=
+	b=OdUP6CFhMKyRJ4UfbeD3nxWmuB1qiTRQbZbkjx0fnK2Jvhe1AZa39+fowtGEXOQu7
+	 S913U32bCmYFG5cUlj8+hmrPT3bL/QpmrP/5K0I8l4z0I5FswDk5gFCmg6EAd/RFrI
+	 TkPHRuBF2NbSd+6NpTCyRgUUCiThakxY4cv6RX3c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733285AbfLKP1Q (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 10:27:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32826 "EHLO mail.kernel.org"
+        id S1730780AbfLKPN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 10:13:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733279AbfLKP1Q (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:27:16 -0500
+        id S1731422AbfLKPN2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8C7032467D;
-        Wed, 11 Dec 2019 15:27:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D93624685;
+        Wed, 11 Dec 2019 15:13:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078035;
-        bh=Pr2oFJ7XY1TZXcI3B8gnXwsouW7AxpiOMBNsqEIjfSs=;
+        s=default; t=1576077208;
+        bh=qLeT4GxcH0g5QErrR4SX5v90f8Y1T5ZXWdgd+HBEe+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ziv6c5X8ReFKVAQFYcqi7UIoQKD3VtJWO7HjetWSM38IJp3F7GihDxzVhf2QZlD/L
-         iCGrCRyqnQ/zxjhtdQRoN369LxczD1b9RlbxYZd8m7wL4Z4IXJpf9S9VUNbPTeHeSu
-         j4OSra5ZdtEkNw0MHonyelqp1NjrvThq/4h+0gaE=
+        b=y+g1QBzWfRtZbQmfRb03b7TnVig/pnuafxpAon3anleMdmV75d/SmItBObdMdzZEz
+         mKqNY+oSVLdDliUiCirjazWHcipqjPKlTAHmqBFjWERaVJs14+o2OqI3LyxvrjenA8
+         OFfZl5JAeDH1rUWFXltzNy+nFFJF6Zc0ZF7rSkU0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 29/79] clk: qcom: Allow constant ratio freq tables for rcg
-Date:   Wed, 11 Dec 2019 10:25:53 -0500
-Message-Id: <20191211152643.23056-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 090/134] clk: Fix memory leak in clk_unregister()
+Date:   Wed, 11 Dec 2019 10:11:06 -0500
+Message-Id: <20191211151150.19073-90-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
-References: <20191211152643.23056-1-sashal@kernel.org>
+In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
+References: <20191211151150.19073-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,62 +59,58 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Kishon Vijay Abraham I <kishon@ti.com>
 
-[ Upstream commit efd164b5520afd6fb2883b68e0d408a7de29c491 ]
+[ Upstream commit 8247470772beb38822f226c99a2ed8c195f6b438 ]
 
-Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
-some constant ratio from the input across the entire frequency range.  It
-would be great if we could specify the frequency table as a single entry
-constant ratio instead of a long list, ie:
+Memory allocated in alloc_clk() for 'struct clk' and
+'const char *con_id' while invoking clk_register() is never freed
+in clk_unregister(), resulting in kmemleak showing the following
+backtrace.
 
-	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
-        { }
+  backtrace:
+    [<00000000546f5dd0>] kmem_cache_alloc+0x18c/0x270
+    [<0000000073a32862>] alloc_clk+0x30/0x70
+    [<0000000082942480>] __clk_register+0xc8/0x760
+    [<000000005c859fca>] devm_clk_register+0x54/0xb0
+    [<00000000868834a8>] 0xffff800008c60950
+    [<00000000d5a80534>] platform_drv_probe+0x50/0xa0
+    [<000000001b3889fc>] really_probe+0x108/0x348
+    [<00000000953fa60a>] driver_probe_device+0x58/0x100
+    [<0000000008acc17c>] device_driver_attach+0x6c/0x90
+    [<0000000022813df3>] __driver_attach+0x84/0xc8
+    [<00000000448d5443>] bus_for_each_dev+0x74/0xc8
+    [<00000000294aa93f>] driver_attach+0x20/0x28
+    [<00000000e5e52626>] bus_add_driver+0x148/0x1f0
+    [<000000001de21efc>] driver_register+0x60/0x110
+    [<00000000af07c068>] __platform_driver_register+0x40/0x48
+    [<0000000060fa80ee>] 0xffff800008c66020
 
-So, lets support that.
+Fix it here.
 
-We need to fix a corner case in qcom_find_freq() where if the freq table
-is non-null, but has no frequencies, we end up returning an "entry" before
-the table array, which is bad.  Then, we need ignore the freq from the
-table, and instead base everything on the requested freq.
-
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Link: https://lkml.kernel.org/r/20191031185715.15504-1-jeffrey.l.hugo@gmail.com
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Link: https://lkml.kernel.org/r/20191022071153.21118-1-kishon@ti.com
+Fixes: 1df4046a93e0 ("clk: Combine __clk_get() and __clk_create_clk()")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 2 ++
- drivers/clk/qcom/common.c   | 3 +++
- 2 files changed, 5 insertions(+)
+ drivers/clk/clk.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 52208d4165f43..51b2388d80ac9 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -206,6 +206,8 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		rate = f->freq;
- 		if (f->pre_div) {
-+			if (!rate)
-+				rate = req->rate;
- 			rate /= 2;
- 			rate *= f->pre_div + 1;
- 		}
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index db9b2471ac401..bfb6d6065a90c 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -29,6 +29,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
- 	if (!f)
- 		return NULL;
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1c677d7f7f530..2f2eea26c3750 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3879,6 +3879,7 @@ void clk_unregister(struct clk *clk)
+ 					__func__, clk->core->name);
  
-+	if (!f->freq)
-+		return f;
-+
- 	for (; f->freq; f++)
- 		if (rate <= f->freq)
- 			return f;
+ 	kref_put(&clk->core->ref, __clk_release);
++	free_clk(clk);
+ unlock:
+ 	clk_prepare_unlock();
+ }
 -- 
 2.20.1
 
