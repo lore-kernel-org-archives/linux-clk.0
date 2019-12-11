@@ -2,80 +2,153 @@ Return-Path: <SRS0=MyMj=2B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1248FC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 12:59:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F04FC00454
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 13:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA6D0208C3
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 12:59:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576069150;
-	bh=qiT+xSbAZvNk4JKVs9YsOP6T2z7d+7SiVART93y9REw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fCeyS4MsNJLjjO6cFn+uXAj1AS00fM02qwpNZuylhYfRidLf5/0hX/g43Z305B3/O
-	 JUoJO4ZiMH36SBhT/owikYgEmnQTur5EMdKOW58XySLTWCv5ArvcX/PaT9WVOtgW62
-	 Y4l1V26L0PfU62lSZs/ZAeUFxCtu+gmlzTks64Dk=
+	by mail.kernel.org (Postfix) with ESMTP id 5EB0521556
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 13:15:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729132AbfLKM7K (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 07:59:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55042 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728128AbfLKM7K (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 07:59:10 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3D1062077B;
-        Wed, 11 Dec 2019 12:58:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576069149;
-        bh=qiT+xSbAZvNk4JKVs9YsOP6T2z7d+7SiVART93y9REw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=t+yblEiw4zA7nSQwN9zoBEaTpnJNvwnFK6kGbSNdGSSsUh47Z6aP9z+ZQZjXsg6CM
-         lAxPzRkLxMn/X8mYoyzYL/49c+WFOcYc7EJnid7Ikamc5RGKMoUaRIlWuN2UdCZ11Q
-         D0kzUxiU0RcwGQ/han+2LdHO2vbI5NekX2MZt9MQ=
-Date:   Wed, 11 Dec 2019 20:58:53 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Abel Vesa <abel.vesa@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Peng Fan <peng.fan@nxp.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [RESEND v2 00/11] clk: imx: Trivial cleanups for clk_hw based API
-Message-ID: <20191211112029.GY15858@dragon>
-References: <1576056350-20715-1-git-send-email-abel.vesa@nxp.com>
+        id S1729230AbfLKNPo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 08:15:44 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:12596 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729299AbfLKNPo (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 08:15:44 -0500
+Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Wed, 11 Dec
+ 2019 21:16:13 +0800
+Subject: Re: [PATCH] arm64: dts: meson: add A1 periphs and PLL clock nodes
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20191211070835.83489-1-jian.hu@amlogic.com>
+ <1jimmnkxj5.fsf@starbuckisacylon.baylibre.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <a171b388-7f92-17cd-8b9a-dcb1c846b6f7@amlogic.com>
+Date:   Wed, 11 Dec 2019 21:16:13 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1576056350-20715-1-git-send-email-abel.vesa@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <1jimmnkxj5.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.99]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 11:25:39AM +0200, Abel Vesa wrote:
-> Shawn, just rebased on your clk/imx branch as requested.
-> 
-> Abel Vesa (11):
->   clk: imx: Add correct failure handling for clk based helpers
->   clk: imx: Rename the SCCG to SSCG
->   clk: imx: Replace all the clk based helpers with macros
->   clk: imx: pllv1: Switch to clk_hw based API
->   clk: imx: pllv2: Switch to clk_hw based API
->   clk: imx: imx7ulp composite: Rename to show is clk_hw based
->   clk: imx: Rename sccg and frac pll register to suggest clk_hw
->   clk: imx: Rename the imx_clk_pllv4 to imply it's clk_hw based
->   clk: imx: Rename the imx_clk_pfdv2 to imply it's clk_hw based
->   clk: imx: Rename the imx_clk_divider_gate to imply it's clk_hw based
->   clk: imx7up: Rename the clks to hws
 
-Applied all, thanks.
+
+On 2019/12/11 17:43, Jerome Brunet wrote:
+> 
+> On Wed 11 Dec 2019 at 08:08, Jian Hu <jian.hu@amlogic.com> wrote:
+> 
+>> Add A1 periphs and PLL clock controller nodes, Some clocks
+>> in periphs controller are the parents of PLL clocks, Meanwhile
+>> some clocks in PLL controller are those of periphs clocks.
+>> They rely on each other.
+> 
+>> Compared with the previous series,
+>> the register region is only for the clock. So syscon is not
+>> used in A1.
+> 
+> Again, while this is valuable information for the maintainer to keep up,
+> it is not something that should appear in the commit description.
+> 
+> The evolution of your commit should be described after the '---'
+> 
+OK, I will put the compared message after the '---'
+> Also, this obviously depends on another series. It should be mentioned
+> accordingly
+OK, I will add the dependent clock patchset.
+> 
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 26 +++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>> index 7210ad049d1d..de43a010fa6e 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
+>> @@ -5,6 +5,8 @@
+>>   
+>>   #include <dt-bindings/interrupt-controller/irq.h>
+>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +#include <dt-bindings/clock/a1-pll-clkc.h>
+>> +#include <dt-bindings/clock/a1-clkc.h>
+> 
+> When possible, please order the includes alpha-numerically
+> 
+OK, I will reorder it.
+>>   
+>>   / {
+>>   	compatible = "amlogic,a1";
+>> @@ -74,6 +76,30 @@
+>>   			#size-cells = <2>;
+>>   			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x1000000>;
+>>   
+>> +			clkc_periphs: periphs-clock-controller@800 {
+>                                               ^
+>>From DT spec: "The name of a node should be somewhat generic, reflecting
+> the function of the device and not its precise programming model."
+> 
+> Here, an appropriate node name would be "clock-controller", not
+> "periphs-clock-controller"
+OK, I will change the node name.
+> 
+>> +				compatible = "amlogic,a1-periphs-clkc";
+>> +				#clock-cells = <1>;
+>> +				reg = <0 0x800 0 0x104>;
+>> +				clocks = <&clkc_pll CLKID_FCLK_DIV2>,
+>> +					<&clkc_pll CLKID_FCLK_DIV3>,
+>> +					<&clkc_pll CLKID_FCLK_DIV5>,
+>> +					<&clkc_pll CLKID_FCLK_DIV7>,
+>> +					<&clkc_pll CLKID_HIFI_PLL>,
+>> +					<&xtal>;
+>> +				clock-names = "fclk_div2", "fclk_div3",
+>> +					"fclk_div5", "fclk_div7",
+>> +					"hifi_pll", "xtal";
+>> +			};
+>> +
+>> +			clkc_pll: pll-clock-controller@7c80 {
+> 
+> Please order nodes by address when they have one.
+> This clock controller should appear after the uarts
+OK, I will reorder it.
+> 
+>> +				compatible = "amlogic,a1-pll-clkc";
+>> +				#clock-cells = <1>;
+>> +				reg = <0 0x7c80 0 0x21c>;
+>> +				clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
+>> +					<&clkc_periphs CLKID_XTAL_HIFIPLL>;
+>> +				clock-names = "xtal_fixpll", "xtal_hifipll";
+>> +			};
+>> +
+>>   			uart_AO: serial@1c00 {
+>>   				compatible = "amlogic,meson-gx-uart",
+>>   					     "amlogic,meson-ao-uart";
+> 
+> .
+> 
