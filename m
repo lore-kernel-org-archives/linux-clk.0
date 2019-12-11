@@ -2,109 +2,92 @@ Return-Path: <SRS0=MyMj=2B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 639DCC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 07:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE9DC43603
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 08:05:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 416AD21556
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 07:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 387F221D7D
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 08:05:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576051539;
+	bh=lOgUt5y6/9L7MQb4eG6VNacAiDWxoo4lEdTGn+202fM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=tqnfWyGWjce4E7HPdpcO++QQJHDDAjL7YmMlODewvrY6MliHkV2nN32ofnipAoDaF
+	 eOghJFkpWPZ1PJ2sViZxe+y4WgwUajQpKFxERULhtnD2mPzDqzJ21VXLOF9umC+niB
+	 0Zt/yqSbI5rVfg7JMunkZOOpwomDJBzmbbQwQaAs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727888AbfLKHIj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 02:08:39 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:15962 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725800AbfLKHIj (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 02:08:39 -0500
-Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sz.amlogic.com
- (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Wed, 11 Dec 2019
- 15:09:10 +0800
-From:   Jian Hu <jian.hu@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
-Subject: [PATCH] arm64: dts: meson: add A1 periphs and PLL clock nodes
-Date:   Wed, 11 Dec 2019 15:08:34 +0800
-Message-ID: <20191211070835.83489-1-jian.hu@amlogic.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727888AbfLKIFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 03:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727829AbfLKIFi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 03:05:38 -0500
+Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
+        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 772762173E;
+        Wed, 11 Dec 2019 08:05:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576051538;
+        bh=lOgUt5y6/9L7MQb4eG6VNacAiDWxoo4lEdTGn+202fM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=kKGpcDBhAqIccgus4FFXLt4MvUzoZW0PD5sFYKdYrreTHPlai14UxDSWNgPwR2nBi
+         HlRy9l//1vZqEVYHnr+cfSyNqxplAvQVQn1SOKzbQ0IwXB2ZGXGQnmtBz8DDzACugm
+         kcbrMhBb068Bmp1y9k5g7L0rni8KhwxFNUB3e/PU=
+Date:   Wed, 11 Dec 2019 16:05:26 +0800
+From:   Shawn Guo <shawnguo@kernel.org>
+To:     Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        mturquette@baylibre.com, fabio.estevam@nxp.com, linux-imx@nxp.com,
+        kernel@pengutronix.de
+Subject: Re: [PATCH RESEND V5 00/11] clk: imx8: add new clock binding for
+ better pm support
+Message-ID: <20191211080525.GS15858@dragon>
+References: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [10.28.8.25]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add A1 periphs and PLL clock controller nodes, Some clocks
-in periphs controller are the parents of PLL clocks, Meanwhile
-some clocks in PLL controller are those of periphs clocks.
-They rely on each other. Compared with the previous series,
-the register region is only for the clock. So syscon is not
-used in A1.
+On Sun, Nov 17, 2019 at 08:25:08PM +0800, Dong Aisheng wrote:
+> This is a follow up of this patch series.
+> https://patchwork.kernel.org/cover/10924029/
+> [V2,0/2] clk: imx: scu: add parsing clocks from device tree support
+> 
+> This patch series is a preparation for the MX8 Architecture improvement.
+> As for IMX SCU based platforms like MX8QM and MX8QXP, they are comprised
+> of a couple of SS(Subsystems) while most of them within the same SS
+> can be shared. e.g. Clocks, Devices and etc.
+> 
+> However, current clock binding is using SW IDs for device tree to use
+> which can cause troubles in writing the common <soc>-ss-xx.dtsi file for
+> different SoCs.
+> 
+> This patch series aims to introduce a new binding which is more close to
+> hardware and platform independent and can makes us write a more general
+> drivers for different SCU based SoCs.
+> 
+> Another important thing is that on MX8, each Clock resource is associated
+> with a power domain. So we have to attach that clock device to the power
+> domain in order to make it work properly. Further more, the clock state
+> will be lost when its power domain is completely off during suspend/resume,
+> so we also introduce the clock state save&restore mechanism.
+> 
+> ChangeLog:
+> v4->v5:
+>  * Address all comments from Stephen
 
-Signed-off-by: Jian Hu <jian.hu@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 26 +++++++++++++++++++++++
- 1 file changed, 26 insertions(+)
+Hi Stephen,
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 7210ad049d1d..de43a010fa6e 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -5,6 +5,8 @@
- 
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/clock/a1-pll-clkc.h>
-+#include <dt-bindings/clock/a1-clkc.h>
- 
- / {
- 	compatible = "amlogic,a1";
-@@ -74,6 +76,30 @@
- 			#size-cells = <2>;
- 			ranges = <0x0 0x0 0x0 0xfe000000 0x0 0x1000000>;
- 
-+			clkc_periphs: periphs-clock-controller@800 {
-+				compatible = "amlogic,a1-periphs-clkc";
-+				#clock-cells = <1>;
-+				reg = <0 0x800 0 0x104>;
-+				clocks = <&clkc_pll CLKID_FCLK_DIV2>,
-+					<&clkc_pll CLKID_FCLK_DIV3>,
-+					<&clkc_pll CLKID_FCLK_DIV5>,
-+					<&clkc_pll CLKID_FCLK_DIV7>,
-+					<&clkc_pll CLKID_HIFI_PLL>,
-+					<&xtal>;
-+				clock-names = "fclk_div2", "fclk_div3",
-+					"fclk_div5", "fclk_div7",
-+					"hifi_pll", "xtal";
-+			};
-+
-+			clkc_pll: pll-clock-controller@7c80 {
-+				compatible = "amlogic,a1-pll-clkc";
-+				#clock-cells = <1>;
-+				reg = <0 0x7c80 0 0x21c>;
-+				clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
-+					<&clkc_periphs CLKID_XTAL_HIFIPLL>;
-+				clock-names = "xtal_fixpll", "xtal_hifipll";
-+			};
-+
- 			uart_AO: serial@1c00 {
- 				compatible = "amlogic,meson-gx-uart",
- 					     "amlogic,meson-ao-uart";
--- 
-2.24.0
+Are you fine with this version?
 
+Shawn
