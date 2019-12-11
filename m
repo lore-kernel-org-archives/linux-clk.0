@@ -7,27 +7,27 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10859C2D0C7
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DA1AC2D0C6
 	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 09:26:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA64214D8
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 09:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D30E21556
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 09:26:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfLKJ0j (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 04:26:39 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:49664 "EHLO inva020.nxp.com"
+        id S1728462AbfLKJ0F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 04:26:05 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:49514 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726983AbfLKJ0G (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 04:26:06 -0500
+        id S1726988AbfLKJ0F (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 04:26:05 -0500
 Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5C8A71A0C2F;
-        Wed, 11 Dec 2019 10:26:04 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B092D1A05EB;
+        Wed, 11 Dec 2019 10:26:02 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 5019D1A0C29;
-        Wed, 11 Dec 2019 10:26:04 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A29721A0C28;
+        Wed, 11 Dec 2019 10:26:02 +0100 (CET)
 Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id CD4B420568;
-        Wed, 11 Dec 2019 10:26:03 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 29E1920568;
+        Wed, 11 Dec 2019 10:26:02 +0100 (CET)
 From:   Abel Vesa <abel.vesa@nxp.com>
 To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Sascha Hauer <kernel@pengutronix.de>
@@ -38,9 +38,9 @@ Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
         linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Leonard Crestez <leonard.crestez@nxp.com>,
         Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
-Subject: [RESEND v2 04/11] clk: imx: pllv1: Switch to clk_hw based API
-Date:   Wed, 11 Dec 2019 11:25:43 +0200
-Message-Id: <1576056350-20715-5-git-send-email-abel.vesa@nxp.com>
+Subject: [RESEND v2 01/11] clk: imx: Add correct failure handling for clk based helpers
+Date:   Wed, 11 Dec 2019 11:25:40 +0200
+Message-Id: <1576056350-20715-2-git-send-email-abel.vesa@nxp.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1576056350-20715-1-git-send-email-abel.vesa@nxp.com>
 References: <1576056350-20715-1-git-send-email-abel.vesa@nxp.com>
@@ -50,73 +50,101 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Switch the imx_clk_pllv1 register function to clk_hw based API, rename
-accordingly and add a macro for clk based legacy. This allows us to
-move closer to a clear split between consumer and provider clk APIs.
+If the clk_hw based API returns an error, trying to return the clk from
+hw will end up in a NULL pointer dereference. So adding the to_clk
+checker and using it inside every clk based macro helper we handle that
+case correctly.
+
+This to_clk is also temporary and will go away along with the clk based
+macro helpers once there is no user that need them anymore.
 
 Signed-off-by: Abel Vesa <abel.vesa@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/imx/clk-pllv1.c | 14 +++++++++-----
- drivers/clk/imx/clk.h       |  5 ++++-
- 2 files changed, 13 insertions(+), 6 deletions(-)
+ drivers/clk/imx/clk.h | 37 ++++++++++++++++++++++---------------
+ 1 file changed, 22 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-pllv1.c b/drivers/clk/imx/clk-pllv1.c
-index 4ba9973..de4f8a4 100644
---- a/drivers/clk/imx/clk-pllv1.c
-+++ b/drivers/clk/imx/clk-pllv1.c
-@@ -111,12 +111,13 @@ static const struct clk_ops clk_pllv1_ops = {
- 	.recalc_rate = clk_pllv1_recalc_rate,
- };
- 
--struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
-+struct clk_hw *imx_clk_hw_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base)
- {
- 	struct clk_pllv1 *pll;
--	struct clk *clk;
-+	struct clk_hw *hw;
- 	struct clk_init_data init;
-+	int ret;
- 
- 	pll = kmalloc(sizeof(*pll), GFP_KERNEL);
- 	if (!pll)
-@@ -132,10 +133,13 @@ struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
- 	init.num_parents = 1;
- 
- 	pll->hw.init = &init;
-+	hw = &pll->hw;
- 
--	clk = clk_register(NULL, &pll->hw);
--	if (IS_ERR(clk))
-+	ret = clk_hw_register(NULL, hw);
-+	if (ret) {
- 		kfree(pll);
-+		return ERR_PTR(ret);
-+	}
- 
--	return clk;
-+	return hw;
- }
 diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 62b7c14..9dd5ea5 100644
+index 81122c9..00ec481 100644
 --- a/drivers/clk/imx/clk.h
 +++ b/drivers/clk/imx/clk.h
-@@ -110,10 +110,13 @@ extern struct imx_pll14xx_clk imx_1443x_dram_pll;
- #define imx_clk_mux(name, reg, shift, width, parents, num_parents) \
- 	to_clk(imx_clk_hw_mux(name, reg, shift, width, parents, num_parents))
+@@ -55,48 +55,48 @@ extern struct imx_pll14xx_clk imx_1443x_pll;
+ extern struct imx_pll14xx_clk imx_1443x_dram_pll;
  
-+#define imx_clk_pllv1(type, name, parent, base) \
-+	to_clk(imx_clk_hw_pllv1(type, name, parent, base))
-+
+ #define imx_clk_cpu(name, parent_name, div, mux, pll, step) \
+-	imx_clk_hw_cpu(name, parent_name, div, mux, pll, step)->clk
++	to_clk(imx_clk_hw_cpu(name, parent_name, div, mux, pll, step))
+ 
+ #define clk_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
+ 				cgr_val, clk_gate_flags, lock, share_count) \
+-	clk_hw_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
+-				cgr_val, clk_gate_flags, lock, share_count)->clk
++	to_clk(clk_hw_register_gate2(dev, name, parent_name, flags, reg, bit_idx, \
++				cgr_val, clk_gate_flags, lock, share_count))
+ 
+ #define imx_clk_pllv3(type, name, parent_name, base, div_mask) \
+-	imx_clk_hw_pllv3(type, name, parent_name, base, div_mask)->clk
++	to_clk(imx_clk_hw_pllv3(type, name, parent_name, base, div_mask))
+ 
+ #define imx_clk_pfd(name, parent_name, reg, idx) \
+-	imx_clk_hw_pfd(name, parent_name, reg, idx)->clk
++	to_clk(imx_clk_hw_pfd(name, parent_name, reg, idx))
+ 
+ #define imx_clk_gate_exclusive(name, parent, reg, shift, exclusive_mask) \
+-	imx_clk_hw_gate_exclusive(name, parent, reg, shift, exclusive_mask)->clk
++	to_clk(imx_clk_hw_gate_exclusive(name, parent, reg, shift, exclusive_mask))
+ 
+ #define imx_clk_fixed_factor(name, parent, mult, div) \
+-	imx_clk_hw_fixed_factor(name, parent, mult, div)->clk
++	to_clk(imx_clk_hw_fixed_factor(name, parent, mult, div))
+ 
+ #define imx_clk_divider2(name, parent, reg, shift, width) \
+-	imx_clk_hw_divider2(name, parent, reg, shift, width)->clk
++	to_clk(imx_clk_hw_divider2(name, parent, reg, shift, width))
+ 
+ #define imx_clk_gate_dis(name, parent, reg, shift) \
+-	imx_clk_hw_gate_dis(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate_dis(name, parent, reg, shift))
+ 
+ #define imx_clk_gate2(name, parent, reg, shift) \
+-	imx_clk_hw_gate2(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate2(name, parent, reg, shift))
+ 
+ #define imx_clk_gate2_flags(name, parent, reg, shift, flags) \
+-	imx_clk_hw_gate2_flags(name, parent, reg, shift, flags)->clk
++	to_clk(imx_clk_hw_gate2_flags(name, parent, reg, shift, flags))
+ 
+ #define imx_clk_gate2_shared2(name, parent, reg, shift, share_count) \
+-	imx_clk_hw_gate2_shared2(name, parent, reg, shift, share_count)->clk
++	to_clk(imx_clk_hw_gate2_shared2(name, parent, reg, shift, share_count))
+ 
+ #define imx_clk_gate3(name, parent, reg, shift) \
+-	imx_clk_hw_gate3(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate3(name, parent, reg, shift))
+ 
+ #define imx_clk_gate4(name, parent, reg, shift) \
+-	imx_clk_hw_gate4(name, parent, reg, shift)->clk
++	to_clk(imx_clk_hw_gate4(name, parent, reg, shift))
+ 
+ #define imx_clk_mux(name, reg, shift, width, parents, num_parents) \
+-	imx_clk_hw_mux(name, reg, shift, width, parents, num_parents)->clk
++	to_clk(imx_clk_hw_mux(name, reg, shift, width, parents, num_parents))
+ 
  struct clk *imx_clk_pll14xx(const char *name, const char *parent_name,
  		 void __iomem *base, const struct imx_pll14xx_clk *pll_clk);
+@@ -199,6 +199,13 @@ struct clk_hw *imx_clk_hw_fixup_mux(const char *name, void __iomem *reg,
+ 			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
  
--struct clk *imx_clk_pllv1(enum imx_pllv1_type type, const char *name,
-+struct clk_hw *imx_clk_hw_pllv1(enum imx_pllv1_type type, const char *name,
- 		const char *parent, void __iomem *base);
- 
- struct clk *imx_clk_pllv2(const char *name, const char *parent,
++static inline struct clk *to_clk(struct clk_hw *hw)
++{
++	if (IS_ERR_OR_NULL(hw))
++		return ERR_CAST(hw);
++	return hw->clk;
++}
++
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ {
+ 	return clk_register_fixed_rate(NULL, name, NULL, 0, rate);
 -- 
 2.7.4
 
