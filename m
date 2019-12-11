@@ -2,78 +2,83 @@ Return-Path: <SRS0=MyMj=2B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC1DC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 08:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A2D6C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 09:26:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1807222C4
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 08:06:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576051601;
-	bh=aZtYd98mzUkDYBimIJiIk+xpvUxyvOdwk4skO2rZsWU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1TPndoGhg67oLz0xSasTBlsvzho8NklKMsHiYqzTvhGmolZUoAlUUrUjtK/in6XL6
-	 APWq68xNKfZMuzpLOU4DPn08pbRqOpDC5BVVB7XNJurCRxezipRLJ0f6QxR4jnIiIR
-	 4a5Bbe4RV/tgBy+p+GlNys6G6Ilt1PSVMiX4nVmQ=
+	by mail.kernel.org (Postfix) with ESMTP id 1811D21556
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 09:26:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbfLKIGl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 03:06:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58576 "EHLO mail.kernel.org"
+        id S1728401AbfLKJ0E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 04:26:04 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:42470 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726543AbfLKIGk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 03:06:40 -0500
-Received: from dragon (98.142.130.235.16clouds.com [98.142.130.235])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35EA12054F;
-        Wed, 11 Dec 2019 08:06:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576051599;
-        bh=aZtYd98mzUkDYBimIJiIk+xpvUxyvOdwk4skO2rZsWU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=tRBOLd7GogVABRX6jLstcnMWcS5/AnpxkmChvjpnfYJ61Yl3+pM15HSBu7xDVKBOM
-         a0qVMbdC9b8ZZBPDpXgJLlkljluvdJxDZdGVCCmp3uVb/d8nfu8+RAVGvmN0gQ/giB
-         dPp6V5vJDVJaPuCvdOKFJu9emxfjAjYrvgrWftO8=
-Date:   Wed, 11 Dec 2019 16:06:29 +0800
-From:   Shawn Guo <shawnguo@kernel.org>
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
+        id S1726983AbfLKJ0E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 04:26:04 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 295812008DD;
+        Wed, 11 Dec 2019 10:26:02 +0100 (CET)
+Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 1B830200987;
+        Wed, 11 Dec 2019 10:26:02 +0100 (CET)
+Received: from fsr-ub1664-175.ea.freescale.net (fsr-ub1664-175.ea.freescale.net [10.171.82.40])
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 9715620568;
+        Wed, 11 Dec 2019 10:26:01 +0100 (CET)
+From:   Abel Vesa <abel.vesa@nxp.com>
+To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Sascha Hauer <kernel@pengutronix.de>
+Cc:     Dong Aisheng <aisheng.dong@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
         Peng Fan <peng.fan@nxp.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Yangtao Li <tiny.windzz@gmail.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        kernel@pengutronix.de, linux-imx@nxp.com
-Subject: Re: [PATCH] clk: imx8qxp-lpcg: Warn against
- devm_platform_ioremap_resource
-Message-ID: <20191211080628.GT15858@dragon>
-References: <329ac54993d5eb955249d037241a7213faff508f.1575924858.git.leonard.crestez@nxp.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <329ac54993d5eb955249d037241a7213faff508f.1575924858.git.leonard.crestez@nxp.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>, Abel Vesa <abel.vesa@nxp.com>
+Subject: [RESEND v2 00/11] clk: imx: Trivial cleanups for clk_hw based API
+Date:   Wed, 11 Dec 2019 11:25:39 +0200
+Message-Id: <1576056350-20715-1-git-send-email-abel.vesa@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 10:56:28PM +0200, Leonard Crestez wrote:
-> On imx8 the LPCG nodes map entire subsystems and overlap peripherals,
-> this means that using devm_platform_ioremap_resource will cause many
-> devices to fail to probe including serial ports.
-> 
-> Well-meaning but boot-breaking patches were posted multiple times so add
-> a comment explaining this issue.
-> 
-> Suggested-by: Peng Fan <peng.fan@nxp.com>
-> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Shawn, just rebased on your clk/imx branch as requested.
 
-Applied, thanks.
+Abel Vesa (11):
+  clk: imx: Add correct failure handling for clk based helpers
+  clk: imx: Rename the SCCG to SSCG
+  clk: imx: Replace all the clk based helpers with macros
+  clk: imx: pllv1: Switch to clk_hw based API
+  clk: imx: pllv2: Switch to clk_hw based API
+  clk: imx: imx7ulp composite: Rename to show is clk_hw based
+  clk: imx: Rename sccg and frac pll register to suggest clk_hw
+  clk: imx: Rename the imx_clk_pllv4 to imply it's clk_hw based
+  clk: imx: Rename the imx_clk_pfdv2 to imply it's clk_hw based
+  clk: imx: Rename the imx_clk_divider_gate to imply it's clk_hw based
+  clk: imx7up: Rename the clks to hws
+
+ drivers/clk/imx/Makefile             |   2 +-
+ drivers/clk/imx/clk-composite-7ulp.c |   2 +-
+ drivers/clk/imx/clk-divider-gate.c   |   2 +-
+ drivers/clk/imx/clk-frac-pll.c       |   7 +-
+ drivers/clk/imx/clk-imx7ulp.c        | 182 ++++++------
+ drivers/clk/imx/clk-imx8mq.c         |   6 +-
+ drivers/clk/imx/clk-pfdv2.c          |   2 +-
+ drivers/clk/imx/clk-pllv1.c          |  14 +-
+ drivers/clk/imx/clk-pllv2.c          |  14 +-
+ drivers/clk/imx/clk-pllv4.c          |   2 +-
+ drivers/clk/imx/clk-sccg-pll.c       | 549 -----------------------------------
+ drivers/clk/imx/clk-sscg-pll.c       | 549 +++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk.h                | 102 ++++---
+ 13 files changed, 724 insertions(+), 709 deletions(-)
+ delete mode 100644 drivers/clk/imx/clk-sccg-pll.c
+ create mode 100644 drivers/clk/imx/clk-sscg-pll.c
+
+-- 
+2.7.4
+
