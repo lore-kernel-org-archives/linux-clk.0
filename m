@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87511C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 15:40:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CCE0EC00454
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 15:43:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ADC022B48
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 15:40:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 988D121556
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 15:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576078822;
-	bh=esa15qrGR6MRyGSoU79iMqG1CZ5FwOwyNFcTRLnOjSg=;
+	s=default; t=1576079030;
+	bh=GBIrAr1l8C2ZPdGvo6eDiObM3EIARTztlICo/05jRaY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gMGegQuWyWwKLERkiKqO8sWQYvASXRmi25QGms+LCBhB4+p+Nw8Z9JjoD1pDbyB7a
-	 iD+FvXe6ZpCjuaMDQcko6uA4QPqXeiJGEv/LRsVoFPds18yvlL5neKVl2HL1oitKkj
-	 bW2isE5V30B2MX/bjhCdM1+HKA+YCA+oydB0d6zg=
+	b=ECtg6nqAr0MphnhkF+szfgHicXYSOW57Vrt9G5yKcw9rV0yke+KX58j5Y6LI9jWDV
+	 XQ0aUsZzb/XvwBzuiQsoxmfr2osaSx51Bc/CTwyxPapWGgo3jk4KoZCbgARWqyL7rz
+	 wEjRIziIK16f6Z20MKEaF7fM+jEoggVRyfSgtXEU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387665AbfLKPkU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 10:40:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48948 "EHLO mail.kernel.org"
+        id S2387486AbfLKPnu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 10:43:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388380AbfLKPia (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:38:30 -0500
+        id S2387434AbfLKP1d (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:27:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0265B22527;
-        Wed, 11 Dec 2019 15:38:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B8CAA2173E;
+        Wed, 11 Dec 2019 15:27:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576078709;
-        bh=esa15qrGR6MRyGSoU79iMqG1CZ5FwOwyNFcTRLnOjSg=;
+        s=default; t=1576078052;
+        bh=GBIrAr1l8C2ZPdGvo6eDiObM3EIARTztlICo/05jRaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I7JoHMBJqqTC5HLsKUzfJASWzn/wCAu+8VneDv2jcuN4cfeYQ8o5MLUwG8AAkllW6
-         IoHjylKzF+obAc1CoQXADKWkl2eDNRhYa8JcMXP9Hh2cYBiPDZ5DmOQhVliHW+SL8V
-         pXDlPAk2B9QBhAKJeH3fP+QJbWazJR5xaBN54C68=
+        b=voI0bA+oSuNpfs9pBAdNs6jAZ19LvJyLMhp6SK5OEDJzZH5PVhIAx3CTacXkP6Z74
+         h8qmkvcqjqu5G5WIBpWIzFrGJ8KPxvxexmjbE+7zYAxQWBrnc8Yw66UvVh8YELm9bS
+         B2Y1mx2sUFcXDoHtH6i3dCZvzOJpEcoxHyDADgQY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 15/37] clk: qcom: Allow constant ratio freq tables for rcg
-Date:   Wed, 11 Dec 2019 10:37:51 -0500
-Message-Id: <20191211153813.24126-15-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 45/79] clk: pxa: fix one of the pxa RTC clocks
+Date:   Wed, 11 Dec 2019 10:26:09 -0500
+Message-Id: <20191211152643.23056-45-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191211153813.24126-1-sashal@kernel.org>
-References: <20191211153813.24126-1-sashal@kernel.org>
+In-Reply-To: <20191211152643.23056-1-sashal@kernel.org>
+References: <20191211152643.23056-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -58,62 +58,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
-[ Upstream commit efd164b5520afd6fb2883b68e0d408a7de29c491 ]
+[ Upstream commit 46acbcb4849b2ca2e6e975e7c8130c1d61c8fd0c ]
 
-Some RCGs (the gfx_3d_src_clk in msm8998 for example) are basically just
-some constant ratio from the input across the entire frequency range.  It
-would be great if we could specify the frequency table as a single entry
-constant ratio instead of a long list, ie:
+The pxa27x platforms have a single IP with 2 drivers, sa1100-rtc and
+rtc-pxa drivers.
 
-	{ .src = P_GPUPLL0_OUT_EVEN, .pre_div = 3 },
-        { }
+A previous patch fixed the sa1100-rtc case, but the pxa-rtc wasn't
+fixed. This patch completes the previous one.
 
-So, lets support that.
-
-We need to fix a corner case in qcom_find_freq() where if the freq table
-is non-null, but has no frequencies, we end up returning an "entry" before
-the table array, which is bad.  Then, we need ignore the freq from the
-table, and instead base everything on the requested freq.
-
-Suggested-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Link: https://lkml.kernel.org/r/20191031185715.15504-1-jeffrey.l.hugo@gmail.com
+Fixes: 8b6d10345e16 ("clk: pxa: add missing pxa27x clocks for Irda and sa1100-rtc")
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Link: https://lkml.kernel.org/r/20191026194420.11918-1-robert.jarzmik@free.fr
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/clk-rcg2.c | 2 ++
- drivers/clk/qcom/common.c   | 3 +++
- 2 files changed, 5 insertions(+)
+ drivers/clk/pxa/clk-pxa27x.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index b544bb302f798..350a01f748706 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -196,6 +196,8 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw,
- 	p = clk_hw_get_parent_by_index(hw, index);
- 	if (clk_flags & CLK_SET_RATE_PARENT) {
- 		if (f->pre_div) {
-+			if (!rate)
-+				rate = req->rate;
- 			rate /= 2;
- 			rate *= f->pre_div + 1;
- 		}
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 8fa477293ae0a..d2f26577f5c0e 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -36,6 +36,9 @@ struct freq_tbl *qcom_find_freq(const struct freq_tbl *f, unsigned long rate)
- 	if (!f)
- 		return NULL;
- 
-+	if (!f->freq)
-+		return f;
-+
- 	for (; f->freq; f++)
- 		if (rate <= f->freq)
- 			return f;
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index d40b63e7bbce9..b44c4cf8011a3 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -463,6 +463,7 @@ struct dummy_clk {
+ };
+ static struct dummy_clk dummy_clks[] __initdata = {
+ 	DUMMY_CLK(NULL, "pxa27x-gpio", "osc_32_768khz"),
++	DUMMY_CLK(NULL, "pxa-rtc", "osc_32_768khz"),
+ 	DUMMY_CLK(NULL, "sa1100-rtc", "osc_32_768khz"),
+ 	DUMMY_CLK("UARTCLK", "pxa2xx-ir", "STUART"),
+ };
 -- 
 2.20.1
 
