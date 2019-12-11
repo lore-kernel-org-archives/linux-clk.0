@@ -2,101 +2,79 @@ Return-Path: <SRS0=MyMj=2B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D85D9C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02613C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3C7821556
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:05:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ssyokr5U"
+	by mail.kernel.org (Postfix) with ESMTP id CBF6021556
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:29:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576074544;
+	bh=N8PbFLkORFvjWt9sLI4T9YHFqVWqnofZgm531GGx/5U=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=MMTAwHUU5fG8qHylhAwYdW75fv9xTE6owTUS6vOUM31nHM/UkZ7P4Ms0Ee3DFnD4E
+	 zr2CxKvm5GPIw2L/f79AZspR3F/O4AV5DUgdj7vH8WZtfk612/2HCA0pD4yZhisCsH
+	 A5gZIqd/9aUNXt/uIksk9MKUQOFFtoEcphs6Ckok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729701AbfLKOEv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 09:04:51 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:44880 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729118AbfLKOEv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 09:04:51 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBBE4mlD114268;
-        Wed, 11 Dec 2019 08:04:48 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576073088;
-        bh=216FgmVh31ZodJk67M2YBwnr592MVdcEK9wwwhnHv7w=;
-        h=From:To:CC:Subject:Date;
-        b=ssyokr5UGOC+0A5IF+orh3+EQNG06U1PfwQxdarW9Pv1xZhnYtglKSaTHjwNexVci
-         zNWVslWfNZ9XfQUrDPmkdz/V7rpoZF5EjJldL50FfgX8LrBk78uky0cek+62aMjkPh
-         xHhgfX0/z2NN56pw80EyR+Inkwb7Y2qVOB8SGmeg=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBE4mPw102523;
-        Wed, 11 Dec 2019 08:04:48 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 11
- Dec 2019 08:04:48 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 11 Dec 2019 08:04:48 -0600
-Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBE4m6e088450;
-        Wed, 11 Dec 2019 08:04:48 -0600
-From:   Benoit Parrot <bparrot@ti.com>
-To:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v5 0/3] ARM: dts: dra7: add vpe nodes 
-Date:   Wed, 11 Dec 2019 08:08:07 -0600
-Message-ID: <20191211140810.10657-1-bparrot@ti.com>
-X-Mailer: git-send-email 2.17.1
+        id S1729865AbfLKO3E (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 09:29:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34860 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729829AbfLKO3E (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 09:29:04 -0500
+Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D453C22B48;
+        Wed, 11 Dec 2019 14:29:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576074544;
+        bh=N8PbFLkORFvjWt9sLI4T9YHFqVWqnofZgm531GGx/5U=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Q/vHswAa4Py9NtwngVg0E+ERq9UCWTuf40G9x6bs+Qa5YGvhxP55rO15r5AqfsuJH
+         2PvUT0gv7XO2QvD7ipJK2H4nU7mf3DJp9SrEHCBzWSXZwqBuNCxqIQxvScy7g0tdX2
+         uRUotylziv8axWluuyh6XFmtVzD4iB5hUXX4EybQ=
+Received: by mail-qv1-f47.google.com with SMTP id t7so5794868qve.4;
+        Wed, 11 Dec 2019 06:29:03 -0800 (PST)
+X-Gm-Message-State: APjAAAXL/qxRrMyG04jhHBrDv0zePHRADHuijmGWIs3jpvOsEZHm9L8N
+        NcKV1XC2V2EdA04ZkmIwzTH224nJyTmAGy+U+w==
+X-Google-Smtp-Source: APXvYqyslXHQeTlnxyWBHE+KQno4F7yO5jXM3IgMVqdVyPdAJw+emUIKIy0nf6WbxEaL8liKiMq7CxtC86P/ZYmk4FI=
+X-Received: by 2002:a0c:f6cd:: with SMTP id d13mr3244655qvo.20.1576074542962;
+ Wed, 11 Dec 2019 06:29:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20191209233305.18619-1-michael@walle.cc>
+In-Reply-To: <20191209233305.18619-1-michael@walle.cc>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Wed, 11 Dec 2019 08:28:51 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJB5oeUmtzV0jT0f-Rh22Cf3OzMVpfZvRa6xOEhx3e2cA@mail.gmail.com>
+Message-ID: <CAL_JsqJB5oeUmtzV0jT0f-Rh22Cf3OzMVpfZvRa6xOEhx3e2cA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: clock: document the fsl-sai driver
+To:     Michael Walle <michael@walle.cc>
+Cc:     linux-clk <linux-clk@vger.kernel.org>, devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series adds the needed clkctrl and ty-sysc nodes for VPE module.
-We also document the VPE DT bindings.
+On Mon, Dec 9, 2019 at 5:33 PM Michael Walle <michael@walle.cc> wrote:
+>
+> Signed-off-by: Michael Walle <michael@walle.cc>
+> ---
+> changes since v1:
+>  - dual license gpl-2.0-only and bsd-2-clause
+>  - add "additionalProperties: false"
+>  - wrap example in soc {} node with correct #address-cells and #size-cells
+>
+>  .../bindings/clock/fsl,sai-clock.yaml         | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/fsl,sai-clock.yaml
 
-Changes since v4:
-- Added Tony's ack 
-
-Changes since v3:
-- Patches [1](dt-bindings) and [5](driver compatible) were merged in
-  linux-media
-- Added special clock naming notice to commit message as per Tony's
-  comment
-
-Changes since v2:
-- Fix binding spdx license
-- Added Rob's ack 
-
-Changes since v1:
-- Added a patch to update the compatible in the driver
-- Removed unnededed #cell #size properties
-- Updated the compatible in dtsi to match binding
-- Split off the clk code into its own patch
-- Added device specific prefix
-- Converted binding to dt schema
-
-Benoit Parrot (3):
-  clk: ti: dra7: add vpe clkctrl data
-  ARM: dts: dra7: add vpe clkctrl node
-  ARM: dts: dra7: Add ti-sysc node for VPE
-
- arch/arm/boot/dts/dra7-l4.dtsi       | 28 +++++++++++++++++++++++++---
- arch/arm/boot/dts/dra7xx-clocks.dtsi | 18 ++++++++++++++++--
- drivers/clk/ti/clk-7xx.c             |  6 ++++++
- include/dt-bindings/clock/dra7.h     | 10 ++++++++++
- 4 files changed, 57 insertions(+), 5 deletions(-)
-
--- 
-2.17.1
-
+Reviewed-by: Rob Herring <robh@kernel.org>
