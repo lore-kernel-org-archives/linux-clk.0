@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF9DFC2D0C6
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B960C00454
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:02:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 875BB22B48
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:01:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11F8E214D8
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 16:02:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576080093;
-	bh=qLeT4GxcH0g5QErrR4SX5v90f8Y1T5ZXWdgd+HBEe+o=;
+	s=default; t=1576080161;
+	bh=YsusyAIUKcATBuLFEtcW2skx9IEUaVucMS6ufVznoRw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OdUP6CFhMKyRJ4UfbeD3nxWmuB1qiTRQbZbkjx0fnK2Jvhe1AZa39+fowtGEXOQu7
-	 S913U32bCmYFG5cUlj8+hmrPT3bL/QpmrP/5K0I8l4z0I5FswDk5gFCmg6EAd/RFrI
-	 TkPHRuBF2NbSd+6NpTCyRgUUCiThakxY4cv6RX3c=
+	b=0zzOVmhwi4wXrVRSjyv7nhrlTHOS7Mmt1k5FoMPNS94SsbPyTWI/qSusID2WkXEMy
+	 guAPpY1RZ88pjvCGrPSuW9+FAbjMW+NwphWKQJzwCyP1sPR7hMWh57C/FSiyDHYFOB
+	 o+CdEB/XerNz11SwJAIPmLnndfI/eWHLvgJq3ks0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730780AbfLKPN3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 10:13:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37000 "EHLO mail.kernel.org"
+        id S1731072AbfLKQCd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 11:02:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36196 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731422AbfLKPN2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 11 Dec 2019 10:13:28 -0500
+        id S1731358AbfLKPNK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 11 Dec 2019 10:13:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7D93624685;
-        Wed, 11 Dec 2019 15:13:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4FB2B2467E;
+        Wed, 11 Dec 2019 15:13:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576077208;
-        bh=qLeT4GxcH0g5QErrR4SX5v90f8Y1T5ZXWdgd+HBEe+o=;
+        s=default; t=1576077190;
+        bh=YsusyAIUKcATBuLFEtcW2skx9IEUaVucMS6ufVznoRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=y+g1QBzWfRtZbQmfRb03b7TnVig/pnuafxpAon3anleMdmV75d/SmItBObdMdzZEz
-         mKqNY+oSVLdDliUiCirjazWHcipqjPKlTAHmqBFjWERaVJs14+o2OqI3LyxvrjenA8
-         OFfZl5JAeDH1rUWFXltzNy+nFFJF6Zc0ZF7rSkU0=
+        b=NytPwQDbJ0PA4H3G4+KNbgMjAfggX/GhzqrVDoC/SRvKxm0HlgQuqqRZBAGScBgwl
+         5XGVdIZQWmVDDWsV/B9ylMA+zz5Ob5xi3ffAWQB4uwtlSRgypPSCOvjg1IIHQLhFUO
+         ILTvV6J2fACDyQ3NxHrwMSjlZ4IRC3LUlnxm7kK8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Tero Kristo <t-kristo@ti.com>, Stephen Boyd <sboyd@kernel.org>,
+Cc:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 090/134] clk: Fix memory leak in clk_unregister()
-Date:   Wed, 11 Dec 2019 10:11:06 -0500
-Message-Id: <20191211151150.19073-90-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 073/134] clk: pxa: fix one of the pxa RTC clocks
+Date:   Wed, 11 Dec 2019 10:10:49 -0500
+Message-Id: <20191211151150.19073-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191211151150.19073-1-sashal@kernel.org>
 References: <20191211151150.19073-1-sashal@kernel.org>
@@ -59,58 +58,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Kishon Vijay Abraham I <kishon@ti.com>
+From: Robert Jarzmik <robert.jarzmik@free.fr>
 
-[ Upstream commit 8247470772beb38822f226c99a2ed8c195f6b438 ]
+[ Upstream commit 46acbcb4849b2ca2e6e975e7c8130c1d61c8fd0c ]
 
-Memory allocated in alloc_clk() for 'struct clk' and
-'const char *con_id' while invoking clk_register() is never freed
-in clk_unregister(), resulting in kmemleak showing the following
-backtrace.
+The pxa27x platforms have a single IP with 2 drivers, sa1100-rtc and
+rtc-pxa drivers.
 
-  backtrace:
-    [<00000000546f5dd0>] kmem_cache_alloc+0x18c/0x270
-    [<0000000073a32862>] alloc_clk+0x30/0x70
-    [<0000000082942480>] __clk_register+0xc8/0x760
-    [<000000005c859fca>] devm_clk_register+0x54/0xb0
-    [<00000000868834a8>] 0xffff800008c60950
-    [<00000000d5a80534>] platform_drv_probe+0x50/0xa0
-    [<000000001b3889fc>] really_probe+0x108/0x348
-    [<00000000953fa60a>] driver_probe_device+0x58/0x100
-    [<0000000008acc17c>] device_driver_attach+0x6c/0x90
-    [<0000000022813df3>] __driver_attach+0x84/0xc8
-    [<00000000448d5443>] bus_for_each_dev+0x74/0xc8
-    [<00000000294aa93f>] driver_attach+0x20/0x28
-    [<00000000e5e52626>] bus_add_driver+0x148/0x1f0
-    [<000000001de21efc>] driver_register+0x60/0x110
-    [<00000000af07c068>] __platform_driver_register+0x40/0x48
-    [<0000000060fa80ee>] 0xffff800008c66020
+A previous patch fixed the sa1100-rtc case, but the pxa-rtc wasn't
+fixed. This patch completes the previous one.
 
-Fix it here.
-
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
-Link: https://lkml.kernel.org/r/20191022071153.21118-1-kishon@ti.com
-Fixes: 1df4046a93e0 ("clk: Combine __clk_get() and __clk_create_clk()")
+Fixes: 8b6d10345e16 ("clk: pxa: add missing pxa27x clocks for Irda and sa1100-rtc")
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+Link: https://lkml.kernel.org/r/20191026194420.11918-1-robert.jarzmik@free.fr
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 1 +
+ drivers/clk/pxa/clk-pxa27x.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 1c677d7f7f530..2f2eea26c3750 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3879,6 +3879,7 @@ void clk_unregister(struct clk *clk)
- 					__func__, clk->core->name);
- 
- 	kref_put(&clk->core->ref, __clk_release);
-+	free_clk(clk);
- unlock:
- 	clk_prepare_unlock();
- }
+diff --git a/drivers/clk/pxa/clk-pxa27x.c b/drivers/clk/pxa/clk-pxa27x.c
+index 287fdeae7c7c2..7b123105b5de4 100644
+--- a/drivers/clk/pxa/clk-pxa27x.c
++++ b/drivers/clk/pxa/clk-pxa27x.c
+@@ -459,6 +459,7 @@ struct dummy_clk {
+ };
+ static struct dummy_clk dummy_clks[] __initdata = {
+ 	DUMMY_CLK(NULL, "pxa27x-gpio", "osc_32_768khz"),
++	DUMMY_CLK(NULL, "pxa-rtc", "osc_32_768khz"),
+ 	DUMMY_CLK(NULL, "sa1100-rtc", "osc_32_768khz"),
+ 	DUMMY_CLK("UARTCLK", "pxa2xx-ir", "STUART"),
+ };
 -- 
 2.20.1
 
