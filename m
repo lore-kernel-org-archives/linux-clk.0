@@ -2,296 +2,221 @@ Return-Path: <SRS0=MyMj=2B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2CCDC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 18:50:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 906F5C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 19:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B061A206A5
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 18:50:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C3452173E
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 19:09:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="rbi6f2Ld"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="BAtcnlT6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfLKSuW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 13:50:22 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:18004 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726242AbfLKSuW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 13:50:22 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df13a650000>; Wed, 11 Dec 2019 10:50:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Wed, 11 Dec 2019 10:50:19 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Wed, 11 Dec 2019 10:50:19 -0800
-Received: from [10.2.169.141] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 11 Dec
- 2019 18:50:12 +0000
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
-        <sboyd@kernel.org>, <pdeschrijver@nvidia.com>
-CC:     <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <allison@lohutok.net>, <pgaikwad@nvidia.com>,
-        <mturquette@baylibre.com>, <horms+renesas@verge.net.au>,
-        <Jisheng.Zhang@synaptics.com>, <krzk@kernel.org>, <arnd@arndb.de>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
-References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
- <1575600535-26877-4-git-send-email-skomatineni@nvidia.com>
- <7cf4ff77-2f33-4ee5-0e09-5aa6aef3e8be@gmail.com>
- <ad3a6743-4b36-fa25-9cc7-72803038ecc5@gmail.com>
- <dc7a057a-0bed-0e6f-0987-edcfec47f867@gmail.com>
- <288a1701-def6-d628-26bc-a305f817bdb1@gmail.com>
- <78644d45-2ae3-121f-99fc-0a46f205907d@nvidia.com>
- <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
- <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
- <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
- <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
- <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
- <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
- <8eb792ad-cded-05cc-93fc-763be7ee66aa@nvidia.com>
-Message-ID: <bb966cf2-50f6-6729-7644-54d71d55bbcb@nvidia.com>
-Date:   Wed, 11 Dec 2019 10:50:11 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1727380AbfLKTJt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 14:09:49 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:46077 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726312AbfLKTJt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 14:09:49 -0500
+Received: by mail-lf1-f66.google.com with SMTP id 203so17508852lfa.12
+        for <linux-clk@vger.kernel.org>; Wed, 11 Dec 2019 11:09:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=F2hQxSbx80dzLoD4LOY/tQag3ZJk3szWSla+aYe1eXQ=;
+        b=BAtcnlT6l6osRO74rPsAcoDcc7Pz5AYSWxMDHZnkVtqtiMNRq3KTghuXR3LRUeC9FN
+         epR2ZIgbZ13gPSCJBuA6N8ySJ44OEe+ebev3VWjXhTbW/ub94AEPDCROZKc5xz7IXqDn
+         gwQnZHAoJrzKOqKEh8YC9JUeyRRDgTzv8i7nIhwg0GXeIBeFMA1Qq/VTm7PCVN3a751T
+         Qu2ryWBegnDr2vryhXyaVmH0gzRUMCWa0FmLXrrbYkZaPb89koL7AiwUKWJASsgMOT8l
+         GGxqE8KFhs6DZkjKcVosiY39EC6rS5oN25gpJ7CrAtnxg+r/zENASUiAsNpNT2dEm9Wq
+         xOwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=F2hQxSbx80dzLoD4LOY/tQag3ZJk3szWSla+aYe1eXQ=;
+        b=k2VPQgsSqhC7OcpS+KpdqMv8F8OwRa8GAiBRxrlf1UEqW3xGtWnkAydvPDUSHi9moj
+         8n5EOtUXhby4YycxDU11yda4hWWtUbGWMjgBH4kHyAWDaGdzKK7mM/k4mb86JqCNI3CQ
+         hGX5jqUcHZHE9ie3GKPXRXSj3NBmSvyS5231jWa0h5kl7iUAKjvCx/lyyBVL46iO9mpF
+         tmQHKJ6T+yRcukY4xYTt3VtGllncL1Wns313zdK4oF74ae5aSjz8H1sAX3CP/FQyNw+Y
+         qldGLlxUdj/u0h51WKcgh/4UL2le5VxBReNkO7IfOQEeTY5QwztJ8ZawbA0ZPtESbY/v
+         5P1A==
+X-Gm-Message-State: APjAAAVqdMoSKIhReWkaTVtYZtieT+sp2clFF89RD6N9BWY+hdO3jTh6
+        ULP1eIMWyxxYX/2aMP2B3GQq8w==
+X-Google-Smtp-Source: APXvYqwTP8Syk9MFdAQXoVHE+1eQSGVsmkwJrqYhkYsHqy4MBoe0ip6R2MXyz6m6Qk6ncdoSD8mJ+A==
+X-Received: by 2002:a19:f10e:: with SMTP id p14mr3282287lfh.3.1576091387397;
+        Wed, 11 Dec 2019 11:09:47 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:8d8:12fe:a87e:d4b8:621e:2b62])
+        by smtp.gmail.com with ESMTPSA id i5sm1708098ljj.29.2019.12.11.11.09.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 11 Dec 2019 11:09:46 -0800 (PST)
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+To:     Chris Brandt <Chris.Brandt@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+ <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+Date:   Wed, 11 Dec 2019 22:09:44 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <8eb792ad-cded-05cc-93fc-763be7ee66aa@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576090213; bh=VyqMDGmm+JI2LIt/qKWwHVNdqu5k+ibwjmxWczdvl2M=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=rbi6f2LdMWVuWgEhsuE+o+qRQkNfWp676UQI1FOhAW84IoX0Fin2HcdhwJAsnx3f9
-         Dzge0ELIjJGM8/2jL8C4kbAtd+AkR1Gx8Q4kH8q+zGr4gxc/qncaNpvCa9H17DPGV6
-         3oTCMzp7QXTSzD7YxTnsssQo/Qox2KhwR87SawDsk6Xvn6mDAyFiyvTIopHBMhjC7w
-         NXZnmoKoUYL3t2nBsi9fqkTh8geAFYPquZVTedqnwXrI4Y8qytgsduwEBoYZ3q8OdF
-         q1ogM5cwrW7pZZ2/owRVhbPe21fUCba8MVBb07nr1ivNsH4qPnCDU1oesVmKXXvFFM
-         +3q6/vKb3OvHg==
+In-Reply-To: <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+On 12/09/2019 06:10 PM, Chris Brandt wrote:
 
-On 12/10/19 5:06 PM, Sowjanya Komatineni wrote:
->
-> On 12/10/19 9:41 AM, Dmitry Osipenko wrote:
->> 10.12.2019 19:53, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>> On 12/9/19 3:03 PM, Sowjanya Komatineni wrote:
->>>> On 12/9/19 12:46 PM, Sowjanya Komatineni wrote:
->>>>> On 12/9/19 12:12 PM, Dmitry Osipenko wrote:
->>>>>> 08.12.2019 00:36, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>> On 12/7/19 11:59 AM, Sowjanya Komatineni wrote:
->>>>>>>> On 12/7/19 8:00 AM, Dmitry Osipenko wrote:
->>>>>>>>> 07.12.2019 18:53, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->>>>>>>>>> 07.12.2019 18:47, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=82=
-:
->>>>>>>>>>> 07.12.2019 17:28, Dmitry Osipenko =D0=BF=D0=B8=D1=88=D0=B5=D1=
-=82:
->>>>>>>>>>>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=
-=D1=82:
->>>>>>>>>>>>> Tegra210 and prior Tegra PMC has clk_out_1, clk_out_2,=20
->>>>>>>>>>>>> clk_out_3
->>>>>>>>>>>>> with
->>>>>>>>>>>>> mux and gate for each of these clocks.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Currently these PMC clocks are registered by Tegra clock=20
->>>>>>>>>>>>> driver
->>>>>>>>>>>>> using
->>>>>>>>>>>>> clk_register_mux and clk_register_gate by passing PMC base
->>>>>>>>>>>>> address
->>>>>>>>>>>>> and register offsets and PMC programming for these clocks
->>>>>>>>>>>>> happens
->>>>>>>>>>>>> through direct PMC access by the clock driver.
->>>>>>>>>>>>>
->>>>>>>>>>>>> With this, when PMC is in secure mode any direct PMC access
->>>>>>>>>>>>> from the
->>>>>>>>>>>>> non-secure world does not go through and these clocks will
->>>>>>>>>>>>> not be
->>>>>>>>>>>>> functional.
->>>>>>>>>>>>>
->>>>>>>>>>>>> This patch adds these clocks registration with PMC as a clock
->>>>>>>>>>>>> provider
->>>>>>>>>>>>> for these clocks. clk_ops callback implementations for these
->>>>>>>>>>>>> clocks
->>>>>>>>>>>>> uses tegra_pmc_readl and tegra_pmc_writel which supports PMC
->>>>>>>>>>>>> programming
->>>>>>>>>>>>> in secure mode and non-secure mode.
->>>>>>>>>>>>>
->>>>>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>>>>>> ---
->>>>>>>>>>> [snip]
->>>>>>>>>>>
->>>>>>>>>>>>> +
->>>>>>>>>>>>> +static const struct clk_ops pmc_clk_gate_ops =3D {
->>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .is_enabled =3D pmc_clk_is_enabled,
->>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .enable =3D pmc_clk_enable,
->>>>>>>>>>>>> +=C2=A0=C2=A0=C2=A0 .disable =3D pmc_clk_disable,
->>>>>>>>>>>>> +};
->>>>>>>>>>>> What's the benefit of separating GATE from the MUX?
->>>>>>>>>>>>
->>>>>>>>>>>> I think it could be a single clock.
->>>>>>>>>>> According to TRM:
->>>>>>>>>>>
->>>>>>>>>>> 1. GATE and MUX are separate entities.
->>>>>>>>>>>
->>>>>>>>>>> 2. GATE is the parent of MUX (see PMC's CLK_OUT paths diagram
->>>>>>>>>>> in TRM).
->>>>>>>>>>>
->>>>>>>>>>> 3. PMC doesn't gate EXTPERIPH clock but could "force-enable"=20
->>>>>>>>>>> it,
->>>>>>>>>>> correct?
->>>>>>> Was following existing clk-tegra-pmc as I am not sure of reason for
->>>>>>> having these clocks registered as separate mux and gate clocks.
->>>>>>>
->>>>>>> Yes, PMC clocks can be registered as single clock and can use=20
->>>>>>> clk_ops
->>>>>>> for set/get parent and enable/disable.
->>>>>>>
->>>>>>> enable/disable of PMC clocks is for force-enable to force the=20
->>>>>>> clock to
->>>>>>> run regardless of ACCEPT_REQ or INVERT_REQ.
->>>>>>>
->>>>>>>>>> 4. clk_m_div2/4 are internal PMC OSC dividers and thus these=20
->>>>>>>>>> clocks
->>>>>>>>>> should belong to PMC.
->>>>>>>>> Also, it should be "osc" and not "clk_m".
->>>>>>>> I followed the same parents as it were in existing clk-tegra-pmc
->>>>>>>> driver.
->>>>>>>>
->>>>>>>> Yeah they are wrong and they should be from osc and not clk_m.
->>>>>>>>
->>>>>>>> Will fix in next version.
->>>>>>>>
->>>> Reg clk_m_div2/3, they are dividers at OSC pad and not really internal
->>>> to PMC block.
->>>>
->>>> current clock driver creates clk_m_div clocks which should actually be
->>>> osc_div2/osc_div4 clocks with osc as parent.
->>>>
->>>> There are no clk_m_div2 and clk_m_div4 from clk_m
->>>>
->>>> Will fix this in next version.
->>>>
->>>>>> Could you please describe the full EXTPERIPH clock topology and=20
->>>>>> how the
->>>>>> pinmux configuration is related to it all?
->>>>>>
->>>>>> What is internal to the Tegra chip and what are the external=20
->>>>>> outputs?
->>>>>>
->>>>>> Is it possible to bypass PMC on T30+ for the EXTPERIPH clocks?
->>>>> PMC CLK1/2/3 possible sources are OSC_DIV1, OSC_DIV2, OSC_DIV4,
->>>>> EXTPERIPH from CAR.
->>>>>
->>>>> OSC_DIV1/2/4 are with internal dividers at the OSC Pads
->>>>>
->>>>> EXTPERIPH is from CAR and it has reset and enable controls along with
->>>>> clock source selections to choose one of the PLLA_OUT0, CLK_S,
->>>>> PLLP_OUT0, CLK_M, PLLE_OUT0
->>>>>
->>>>> So, PMC CLK1/2/4 possible parents are OSC_DIV1, OSC_DIV2, OSC_DIV4,
->>>>> EXTERN.
->>>>>
->>>>>
->>>>> CLK1/2/3 also has Pinmux to route EXTPERIPH output on to these pins.
->>>>>
->>>>>
->>>>> When EXTERN output clock is selected for these PMC clocks thru
->>>>> CLKx_SRC_SEL, output clock is from driver by EXTPERIPH from CAR via
->>>>> Pinmux logic or driven as per CLKx_SRC_SEL bypassing pinmux based on
->>>>> CLKx_ACCEPT_REQ bit.
->>>>>
->>>>>
->>>>> PMC Clock control register has bit CLKx_ACCEPT_REQ
->>>>> When CLKx_ACCEPT_REQ =3D 0, output clock driver is from by EXTPERIPH
->>>>> through the pinmux
->>>>> When CLKx_ACCEPT_REQ =3D 1, output clock is based on CLKx_SRC_SEL bit=
-s
->>>>> (OSC_DIV1/2/4 and EXTPERIPH clock bypassing the pinmux)
->>>>>
->>>>> FORCE_EN bit in PMC CLock control register forces the clock to run
->>>>> regardless of this.
->>> PMC clock gate is based on the state of CLKx_ACCEPT_REQ and FORCE_EN
->>> like explained above.
->>>
->>> CLKx_ACCEPT_REQ is 0 default and FORCE_EN acts as gate to=20
->>> enable/disable
->>> EXTPERIPH clock output to PMC CLK_OUT_1/2/3.
->> [and to enable OSC as well]
+>>> The Renesas SPI Bus Space Controller (SPIBSC) HW was specifically
+>>> designed for accessing Serial flash devices (QSPI,
 >>
->>> So I believe we need to register as MUX and Gate rather than as a=20
->>> single
->>> clock. Please confirm.
->> 1. The force-enabling is applied to both OSC and EXTERN sources of
->> PMC_CLK_OUT_x by PMC at once.
+>>    The initial design did only support SPI, hence the SPI in the name.
+> 
+> The more important part is the "Bus Space Controller". Meaning the main 
+> purpose of this hardware was to allow the CPU to access serial flash 
+> directly (as in, XIP).
+> 
+> "SPI-BSC" was the internal name for the HW but does not appear in any of
+> the hardware manual. The hardware manuals (even the MCUs) only say "SPI
+> Multi I/O Bus Controller".
+> Even the R-car gen3 manual says 'SPI':  "SPI Multi I/O Bus Controller 
+> (RPC)".
+> 
+> I have no idea why the R-Car people felt they needed to put "RPC" in the
+> hardware manual as the title of the chapter. (Although, "Multi I/O" is 
+> just as bad as a name)
+>  
+> I did make the request to the RZ/G team to not put "RPC" in the title of
+> the chapter in any future RZ/G hardware manuals.
+> 
+> Since QSPI, HyperFlash and OctaFlash are all 'serial' Flash 
+> technologies, I would be find with a driver name of "SBSC" ("Serial Bus Space 
+> Controller") which at least looks closer to what is in all the hardware 
+> manuals.
+
+   How about "Serial Flash Controller" instead?
+
+>>    SPIBSC is also misleading... RPC-IF seems misleading too as it's only
+>> spelled out in the R-Car gen3 and RZ/A2H manuals.
+> 
+> In the RZ/A2 manual, "RPC" is only used to label the 3 new external pins
+> that were added for HyperFlash.
+
+   Sorry, I was to hasty to check the RZ/A2H manual before typing. :-/
+
+>   RPC_RESET# , RPC_WP# , RPC_INT#
+> But of course they were just copied from the R-Car manual.
+> 
+> But, maybe that's enough about the name for now.
+
+   OK. :-)
+
+>>> This driver has been tested on an RZ/A1H RSK and RZ/A2M EVB.
 >>
->> 2. Both of PMC's force-enabling and OSC/EXTERN selection is internal=20
->> to PMC.
+>>    In the SPI mode only, I assume?
+> 
+> Yes. At the moment, there are only requests from users for QSPI flash access
+> (RZ/A and RZ/G users).
+
+   I keep being told by the management that we need HyperFlash too. :-)
+In our BSP development, our engineers went "same hardware, 2 drivers"
+way (with different "compatibles" per driver)...
+
+> The RZ/A2M EVB was laid out to support all the different combinations of
+> serial flashes (by populating different chips). That is why there is 
+> already Segger J-link support for QSPI, Hyper and Octa for the RZ/A2.
+> 
+> I will admit, to developed this driver for the "SPI-BSC" HW, I have been
+> using an XIP kernel (XIP from another HyperFlash / HyperRAM combo chip 
+> on the board) because I didn't feel like moving all the switches to use 
+> SDRAM and a uImage kernel.
+> The RZ/A2M has a HyperFlash controller (for R/W), a OctaBus controller 
+> (for R/W) and the SPI BSC (Read-only).
+
+   Seen these...
+
+>>    What I have now is the core driver (or rather a library) placed under
+>> drivers/memory/ and the SPI and HyperFlash front ends in drivers/spi/ and
+>> drivers/mtd/hyperbus/ respectfully.
+>> I'm almost ready to post the core driver/bindings, the SPI driver still needs
+>> some Mark Brown's comments addressed, and the HyperFlash driver is also ready
+>> but needs the existing HyperBus infrastructure properly fixed up (having a
+>> draft patch now)...
+
+> But are these for the HyperBus controller? Or the SPI-BSC controller?
+> They are 2 different controllers, so you would think they would have 2 different drivers.
+
+   R-Car gen3 only has RPC-IF, no separate HyperBus controller, so the second case.
+
+>>> The testing mostly consisted of formatting an area as JFFS2 and doing
+>>> copying of files and such.
 >>
->> Should be better to define it as a single "pmc_clk_out_x". I don't see
->> any good reasons for differentiating PMC's Gate from the MUX, it's a
->> single hardware unit from a point of view of the rest of the system.
+>>    Did the same (or at least tried to :-) and I must admit that writing
+>> doesn't work with any of the front ends... I still need to get this fixed.
+
+   The last word from our BSP people was that JFFS2 doesn't work with the HyperFLash
+dedicated BSP driver... :-/
+
+> That's the part I'm confused about. I saw the last patch series that 
+> made it up to v17 but still didn't get in. Although, it did look very 
+> complicated.
+> You can see from my SPI-BSC driver, it's basically 2 function: a SPI 
+
+   I'll read/try it next thing...
+
+> write and SPI read. The upper layer sends you down data to write, and you 
+> just write it. In theory, if a HyperFlash MTD layer was sending down 
+> data, the commands bytes would be different, but the procedure would be the 
+> same.
+
+   Yeah, the commands are different...
+
+>>> While the HW changed a little between the RZ/A1 and RZ/A2 generations,
+>>> the IP block in the RZ/A2M was taken from the R-Car H3 design, so in
+>>> theory this driver should work for R-Car Gen3 as well.
 >>
->> Peter, do you have any objections?
->
-> We added fallback option for audio mclk and also added check for=20
-> assigned-clock-parents dt property in audio driver and if its not then=20
-> we do parent init configuration in audio driver.
->
-> Current clock driver creates 2 separate clocks clk_out_1_mux and=20
-> clk_out_1 for each pmc clock in clock driver and uses extern1 as=20
-> parent to clk_out_1_mux and clk_out_1_mux is parent to clk_out_1.
->
-> With change of registering each pmc clock as a single clock, when we=20
-> do parent init assignment in audio driver when=20
-> assigned-clock-properties are not used in DT (as we removed parent=20
-> inits for extern and clk_outs from clock driver), we should still try=20
-> to get clock based on clk_out_1_mux as parent assignment of extern1 is=20
-> for clk_out_1_mux as per existing clock tree.
->
-> clk_out_1_mux clock retrieve will fail with this change of single=20
-> clock when any new platform device tree doesn't specify=20
-> assigned-clock-parents properties and tegra_asoc_utils_init fails.
->
-> With single clock, extern1 is the parent for clk_out_1 and with=20
-> separate clocks for mux and gate, extern1 is the parent for=20
-> clk_out_1_mux.
+>>    I don't think it's a good idea to use the SPI dedicated driver on R-Car
+>> gen3, I would rather see the RZ/A1 using the RPC-IF driver/library to reduce
+>> the code duplication...
+> 
+> I agree on not having competing drivers. Especially since future RZ/A 
+> and RZ/G devices will most likely continue to include this HW.
 
-If we move to single clock now, it need one more additional fallback=20
-implementation in audio driver during parent configuration as=20
-clk_out_1_mux will not be there with single clock change and old/current=20
-kernel has it as it uses separate clocks for pmc mux and gate.
+> However, the driver I posted is pretty simple and works. Does the 
+> HyperFlash MTD
 
-Also, with single clock for both PMC mux and gate now, new DT should use=20
-extern1 as parent to CLK_OUT_1 as CLK_OUT_1_MUX will not be there old=20
-PMC dt-bindings has separate clocks for MUX (CLK_OUT_1_MUX) and gate=20
-(CLK_OUT_1)
+   There's no HF library, only front end driver.
+   The real library covers both SPI and HF. The only difference between the two
+is the h/w setup (minor difference).
 
-DT bindings will not be compatible b/w old and new changes if we move to=20
-Single PMC clock now.
+> library that you are proposing have a very different API than 
+> just 'send bytes' and 'receive bytes'?
 
-Should we go with same separate clocks to have it compatible to avoid=20
-all this?
+   There's "prepare" and "transfer" APIs and also "direct map read" API.
 
+> Chris
+
+MBR, Sergei
