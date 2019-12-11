@@ -7,53 +7,53 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA194C00454
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9E3C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:03:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91DA6214D8
-	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 362D324656
+	for <linux-clk@archiver.kernel.org>; Wed, 11 Dec 2019 14:03:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="x5+/rdt0"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="CJDylWCe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729689AbfLKOCt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 11 Dec 2019 09:02:49 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:51474 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729742AbfLKOCq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 09:02:46 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2hiG036964;
-        Wed, 11 Dec 2019 08:02:43 -0600
+        id S1729801AbfLKODA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 11 Dec 2019 09:03:00 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:47972 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729686AbfLKOC7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 11 Dec 2019 09:02:59 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2eB9034203;
+        Wed, 11 Dec 2019 08:02:40 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1576072963;
-        bh=rRP6nZ5QSmHV4vVUjQ8KoXLwJhm7iGv4L56yHM0DLRM=;
+        s=ti-com-17Q1; t=1576072960;
+        bh=M257Xz7fAOlmSwrEbNXIJwipCrFIM2SaIl6IE3TF+hM=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=x5+/rdt0BARbv0DT3TrLJR4na6cshefzL8DJzHxADtlhuCXf6xF/M2VZpPXHZbnNX
-         Xi1x05UQUdvkZra+JjB/cZbp1x1dGKn1tuXugSbCvw8fIyRl2yqUZUgMPIGM0wm+x3
-         SakZ7VtJHQVn+NVAw4yxsQd2xQ3IoKHfQGphVedo=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBBE2hfp124546
+        b=CJDylWCeipf8CKUttWGo3+ahpp4Y1XWTGnotzOSEyx6uwXUO+3zu0QHCVmz3CuFxs
+         YMGpIVaVlma8862wgu8ih1kofw8J/HnIkFJMhO/qFVcOYnyXrEbisH9edkBpC2ZMWE
+         /aP4sOCDj4zfpLH2FUVutN6wBmcbQPKID6jMkrH4=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id xBBE2exl094063
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 11 Dec 2019 08:02:43 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+        Wed, 11 Dec 2019 08:02:40 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 11
- Dec 2019 08:02:42 -0600
-Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ Dec 2019 08:02:39 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Wed, 11 Dec 2019 08:02:42 -0600
+ Frontend Transport; Wed, 11 Dec 2019 08:02:39 -0600
 Received: from uda0869644b.dal.design.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2afr007398;
-        Wed, 11 Dec 2019 08:02:42 -0600
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id xBBE2afn007398;
+        Wed, 11 Dec 2019 08:02:39 -0600
 From:   Benoit Parrot <bparrot@ti.com>
 To:     Tony Lindgren <tony@atomide.com>, Tero Kristo <t-kristo@ti.com>,
         <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>
 CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>, Benoit Parrot <bparrot@ti.com>
-Subject: [Patch v4 07/10] arm: dtsi: dra76x: Add CAL dtsi node
-Date:   Wed, 11 Dec 2019 08:05:55 -0600
-Message-ID: <20191211140558.10407-8-bparrot@ti.com>
+Subject: [Patch v4 03/10] ARM: OMAP: DRA7xx: Make CAM clock domain SWSUP only
+Date:   Wed, 11 Dec 2019 08:05:51 -0600
+Message-ID: <20191211140558.10407-4-bparrot@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20191211140558.10407-1-bparrot@ti.com>
 References: <20191211140558.10407-1-bparrot@ti.com>
@@ -65,67 +65,38 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the required dtsi node to support the Camera
-Adaptation Layer (CAL) for the DRA76 family of devices.
+Both CAL and VIP rely on this clock domain. But CAL DPHY require
+LVDSRX_96M_GFCLK to be active. When this domain is set to HWSUP the
+LVDSRX_96M_GFCLK is on;y active when VIP1 clock is also active.  If only
+CAL on DRA72x (which uses the VIP2 clkctrl) probes the CAM domain is
+enabled but the LVDSRX_96M_GFCLK is left gated. Since LVDSRX_96M_GFCLK
+is sourcing the input clock to the DPHY then actual frame capture cannot
+start as the phy are inactive.
+
+So we either have to also enabled VIP1 even if we don't intend on using
+it or we need to set the CAM domain to use SWSUP only.
+
+This patch implements the latter.
 
 Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Acked-by: Tony Lindgren <tony@atomide.com>
 ---
- arch/arm/boot/dts/dra76x.dtsi | 42 +++++++++++++++++++++++++++++++++++
- 1 file changed, 42 insertions(+)
+ arch/arm/mach-omap2/clockdomains7xx_data.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/dra76x.dtsi b/arch/arm/boot/dts/dra76x.dtsi
-index cdcba3f561c4..2f7539afef2b 100644
---- a/arch/arm/boot/dts/dra76x.dtsi
-+++ b/arch/arm/boot/dts/dra76x.dtsi
-@@ -41,6 +41,48 @@
- 
+diff --git a/arch/arm/mach-omap2/clockdomains7xx_data.c b/arch/arm/mach-omap2/clockdomains7xx_data.c
+index 3068802824b7..27835c4d1aa9 100644
+--- a/arch/arm/mach-omap2/clockdomains7xx_data.c
++++ b/arch/arm/mach-omap2/clockdomains7xx_data.c
+@@ -606,7 +606,7 @@ static struct clockdomain cam_7xx_clkdm = {
+ 	.dep_bit	  = DRA7XX_CAM_STATDEP_SHIFT,
+ 	.wkdep_srcs	  = cam_wkup_sleep_deps,
+ 	.sleepdep_srcs	  = cam_wkup_sleep_deps,
+-	.flags		  = CLKDM_CAN_HWSUP_SWSUP,
++	.flags		  = CLKDM_CAN_SWSUP,
  };
  
-+&l4_per3 {
-+	target-module@1b0000 {			/* 0x489b0000, ap 25 34.0 */
-+		compatible = "ti,sysc-omap4", "ti,sysc";
-+		reg = <0x1b0000 0x4>,
-+		      <0x1b0010 0x4>;
-+		reg-names = "rev", "sysc";
-+		ti,sysc-midle = <SYSC_IDLE_FORCE>,
-+				<SYSC_IDLE_NO>;
-+		ti,sysc-sidle = <SYSC_IDLE_FORCE>,
-+				<SYSC_IDLE_NO>;
-+		clocks = <&cam_clkctrl DRA7_CAM_VIP3_CLKCTRL 0>;
-+		clock-names = "fck";
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges = <0x0 0x1b0000 0x10000>;
-+
-+		cal: cal@0 {
-+			compatible = "ti,dra76-cal";
-+			reg = <0x0000 0x400>,
-+			      <0x0800 0x40>,
-+			      <0x0900 0x40>;
-+			reg-names = "cal_top",
-+				    "cal_rx_core0",
-+				    "cal_rx_core1";
-+			interrupts = <GIC_SPI 353 IRQ_TYPE_LEVEL_HIGH>;
-+			ti,camerrx-control = <&scm_conf 0x6dc>;
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				csi2_0: port@0 {
-+					reg = <0>;
-+				};
-+				csi2_1: port@1 {
-+					reg = <1>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- /* MCAN interrupts are hard-wired to irqs 67, 68 */
- &crossbar_mpu {
- 	ti,irqs-skip = <10 67 68 133 139 140>;
+ static struct clockdomain l4per_7xx_clkdm = {
 -- 
 2.17.1
 
