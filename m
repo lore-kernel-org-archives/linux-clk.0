@@ -4,56 +4,56 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6006C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 10:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB25DC2D0C9
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 10:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B5CB206A5
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 10:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3CA522B48
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 10:20:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="fZ8ym5wi"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ch+J675q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728437AbfLLKQQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Dec 2019 05:16:16 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:52102 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728345AbfLLKQQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Dec 2019 05:16:16 -0500
-Received: by mail-wm1-f65.google.com with SMTP id d73so1719785wmd.1
-        for <linux-clk@vger.kernel.org>; Thu, 12 Dec 2019 02:16:13 -0800 (PST)
+        id S1728568AbfLLKUD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Dec 2019 05:20:03 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46882 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728461AbfLLKUD (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Dec 2019 05:20:03 -0500
+Received: by mail-wr1-f67.google.com with SMTP id z7so2051443wrl.13
+        for <linux-clk@vger.kernel.org>; Thu, 12 Dec 2019 02:20:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=references:user-agent:from:to:cc:subject:in-reply-to:date
          :message-id:mime-version;
-        bh=qTx2vi9sq1DjlIujztZ1QG4YIeemlAnEZ4TJMf6wqjQ=;
-        b=fZ8ym5wiyLI8tAQ3CrB2XdCDetkueTTgeNnA+AaN85MRT09dekPDn485MKyKMA/n3l
-         Ei72d3mF2vDeKdVokKPTnv7wFWIoc0q27jynW1t/FsI6o858s7jF2XEx8H6JniLGX3jK
-         7YWbEjESl8QA9Xvia0TBrauiCvlckNBWvgV5MeU4rrgDz9j82ZHSjdMXOUZvxVFGrPof
-         jHpsEnnypSevZjaHGHOphZ33lBQ+qTg11x8OZxv/sdOtkaSAu8pJVuBTOiPG7QaeNgxT
-         EYQ/9s8c+w55DskN97YHhsfttrlyNdq5A8Ba/F9Rg81AzYw1NPOc3tCxYzCyqT93itCx
-         MUtA==
+        bh=FWshdGOlPI7yjVJAElFvMo0mlzQ6xIrNID/VuBYtMSo=;
+        b=Ch+J675qtJbBX8NFcLS7CYqYDrNctC1O0yw6s4DcnHprhA91RaEmIlTNuyNTsQwWrC
+         hvbgwH5ipBMwZN/Ar5J6GQJPFZwa49XYAT5QK12dmuqXkFJ0ZMPa8A24SpxxohwxxDIj
+         S5KM2WaPLDMe6iu+lTejbUH7fGBZnQGwsexvq9rgMDEX9KjE9q5UJDGKhGFrNhSVAq+D
+         xJWnK6ThYoeS8N9wQg0AWif5xusWzRBrA5KLqeo8coRGQUVOFs8e6o34T/CfPalY1nPl
+         7K7IlI+Tg35SVoDo2AnDk4E0bjXPrZ+iNJn28zUBHamlbQDZxtlLAeg+ce0MtasPGheL
+         RmPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:references:user-agent:from:to:cc:subject
          :in-reply-to:date:message-id:mime-version;
-        bh=qTx2vi9sq1DjlIujztZ1QG4YIeemlAnEZ4TJMf6wqjQ=;
-        b=CCUevshLQRnAVTc1BrU+qgj4pdMUmROYKCRuEu1UdUw6MZp1mW66zN7ykiOl1ZNRg5
-         7hqgzr7z0Cjuo8BCkj7/ExOZzhEB9EtdnzBzfpYf12WSyblbC2ldEi2SbXx3CGhpi5aO
-         gr3cWsdTMEOMnfdDkgwbyHgtMJkOd3j8G8MBiuqudnfKvYcdmW5rqNj+rLQQKXtlMAZB
-         yUi59fv6byGgA3K9IVX0ehZyVfDnOf+rw0StY7Vw9ljCkBiclyOuw+j/fxOEy9njb2Ju
-         NKnCP2rYVuIFBtKPNyUlEMAZO7mf2AcVsDbBTZHFAs+VevTLrBEb6NuXLX2hvyHLrKbc
-         MsYw==
-X-Gm-Message-State: APjAAAVupxfcKf+KujN7FW8JMRfOWzBoKlwu/tRSDIGmnVpd92WZ9NkU
-        TY9lx9ltKN1vdoCiPgXlvk4c2A==
-X-Google-Smtp-Source: APXvYqy0R5kxieJspDN7DzFwaZMTS8PH2ROLNLU1OkAXMoWb9HYF7YwVXjoZYbV7FUe0sc4Ynpi8vg==
-X-Received: by 2002:a1c:407:: with SMTP id 7mr5451329wme.29.1576145773042;
-        Thu, 12 Dec 2019 02:16:13 -0800 (PST)
+        bh=FWshdGOlPI7yjVJAElFvMo0mlzQ6xIrNID/VuBYtMSo=;
+        b=sfD96mhj9VidUYbqqk0wOo2NWWwvAS5tHQyiR5hEMnDWmULPh9g9r/7fgXmpSrATiE
+         3PtY+0j352DkZBWG8eEB6cBLrxMTXPsx3gBjR69pzkQ9gZcC0pypGAaqWjXcqQZg+oY4
+         dynMwfrPKBR5/bLEMaALFAALawTADCEzchNCelu6GMfldQU+iVWq8QXaFqJt1NSNBuk/
+         EMEb4IkmSf7yo52egeGDQjmxgejlUCcKrnLX0lNZvKWk3LjsU34ulM49zyR45gFjqy3u
+         Aq24fT++agQzzDroqpT4NIJuVJk/ni16bDQkEOuMCCjnxbx/p/uJ9o0pJ6j1uR6icrE6
+         F6AA==
+X-Gm-Message-State: APjAAAWcFWe0bN0cUdnf/2w3EAEl85ygna068M34H5vrimaWVkX5+zgm
+        isnNlrlKL4jPZ/wgqHwGCqVikq7apD0=
+X-Google-Smtp-Source: APXvYqw+sp+j42VZGq85rGThgx/ogUAVCFmxSUrPZRugAeSCRN9cShhFUB1lK7uDgM7f0ZfqlYo+zg==
+X-Received: by 2002:adf:ffc7:: with SMTP id x7mr5320534wrs.159.1576146000146;
+        Thu, 12 Dec 2019 02:20:00 -0800 (PST)
 Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id o4sm5341601wrx.25.2019.12.12.02.16.12
+        by smtp.gmail.com with ESMTPSA id e6sm5485646wru.44.2019.12.12.02.19.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 02:16:12 -0800 (PST)
-References: <20191206074052.15557-1-jian.hu@amlogic.com> <20191206074052.15557-3-jian.hu@amlogic.com>
+        Thu, 12 Dec 2019 02:19:59 -0800 (PST)
+References: <20191206074052.15557-1-jian.hu@amlogic.com> <20191206074052.15557-4-jian.hu@amlogic.com>
 User-agent: mu4e 1.3.3; emacs 26.2
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Jian Hu <jian.hu@amlogic.com>,
@@ -68,12 +68,11 @@ Cc:     Kevin Hilman <khilman@baylibre.com>,
         Victor Wan <victor.wan@amlogic.com>,
         Chandle Zou <chandle.zou@amlogic.com>,
         linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 2/6] clk: meson: add support for A1 PLL clock ops
-In-reply-to: <20191206074052.15557-3-jian.hu@amlogic.com>
-Date:   Thu, 12 Dec 2019 11:16:11 +0100
-Message-ID: <1j8snhluhg.fsf@starbuckisacylon.baylibre.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 3/6] clk: meson: eeclk: refactor eeclk common driver to support A1
+In-reply-to: <20191206074052.15557-4-jian.hu@amlogic.com>
+Date:   Thu, 12 Dec 2019 11:19:59 +0100
+Message-ID: <1j7e31lub4.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -84,123 +83,120 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Fri 06 Dec 2019 at 08:40, Jian Hu <jian.hu@amlogic.com> wrote:
 
-> The A1 PLL design is different with previous SoCs. The PLL
-> internal analog modules Power-on sequence is different
-> with previous, and thus requires a strict register sequence to
-> enable the PLL.
+> Introduce a common probe function for A1 series, the way to get
+> regmap is different between A1 series and the previous series.
+> The register region is only for one clock driver, the function of
+> meson_eeclkc_probe is not fit for A1, So it is necessary to
+> introduce a new function.
+
+Please drop this patch
+
+#1 you are patching the EE driver for something that is no longer an EE
+ driver
+#2 Let's get the basics right, you can move (re)factoring afterward
+
+Your probe function is simple enough. Just properly write it in each
+driver for now.
+
 >
 > Signed-off-by: Jian Hu <jian.hu@amlogic.com>
 > ---
->  drivers/clk/meson/clk-pll.c | 21 +++++++++++++++++++++
->  drivers/clk/meson/clk-pll.h |  1 +
->  drivers/clk/meson/parm.h    |  1 +
->  3 files changed, 23 insertions(+)
+>  drivers/clk/meson/meson-eeclk.c | 59 +++++++++++++++++++++++++++------
+>  drivers/clk/meson/meson-eeclk.h |  1 +
+>  2 files changed, 50 insertions(+), 10 deletions(-)
 >
-> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> index ddb1e5634739..4aff31a51589 100644
-> --- a/drivers/clk/meson/clk-pll.c
-> +++ b/drivers/clk/meson/clk-pll.c
-> @@ -318,6 +318,23 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->  	struct clk_regmap *clk = to_clk_regmap(hw);
->  	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+> diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
+> index a7cb1e7aedc4..12ceb1caabd8 100644
+> --- a/drivers/clk/meson/meson-eeclk.c
+> +++ b/drivers/clk/meson/meson-eeclk.c
+> @@ -13,25 +13,37 @@
+>  #include "clk-regmap.h"
+>  #include "meson-eeclk.h"
 >  
-> +	/*
-> +	 * The A1 design is different with previous SoCs.The PLL
-> +	 * internal analog modules Power-on sequence is different with
-> +	 * previous, and thus requires a strict register sequence to
-> +	 * enable the PLL.
-
-The code does something more, not completly different. This comment is
-not aligned with what the code does
-
-> +	 */
-> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
-> +		/* Enable the pll */
-> +		meson_parm_write(clk->map, &pll->en, 1);
-> +		udelay(10);
-> +		/* Enable the pll self-adaption module current */
-> +		meson_parm_write(clk->map, &pll->current_en, 1);
-> +		udelay(40);
-> +		meson_parm_write(clk->map, &pll->rst, 1);
-> +		meson_parm_write(clk->map, &pll->rst, 0);
-
-Here you enable the PLL and self adaptation module then reset the PLL.
-However:
-#1 when you enter this function, the PLL should already by in reset
-and disabled
-#2 the code after that will reset the PLL again
-
-So if what you submited works, inserting the following should accomplish
-the same thing:
-
----8<---
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index 489092dde3a6..9b38df0a7682 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -330,6 +330,13 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
-        /* Enable the pll */
-        meson_parm_write(clk->map, &pll->en, 1);
-
-+       if (MESON_PARM_APPLICABLE(&pll->current_en)) {
-+               udelay(10);
-+               /* Enable the pll self-adaption module current */
-+               meson_parm_write(clk->map, &pll->current_en, 1);
-+               udelay(40);
-+       }
-+
-        /* Take the pll out reset */
-        meson_parm_write(clk->map, &pll->rst, 0);
---->8---
-
-
-
-
+> -int meson_eeclkc_probe(struct platform_device *pdev)
+> +static struct regmap_config clkc_regmap_config = {
+> +	.reg_bits       = 32,
+> +	.val_bits       = 32,
+> +	.reg_stride     = 4,
+> +};
+> +
+> +static struct regmap *meson_regmap_resource(struct platform_device *pdev)
+> +{
+> +	struct resource *res;
+> +	void __iomem *base;
+> +	struct device *dev = &pdev->dev;
+> +
+> +	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +
+> +	base = devm_ioremap_resource(dev, res);
+> +	if (IS_ERR(base))
+> +		return ERR_CAST(base);
+> +
+> +	return devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
+> +}
+> +
+> +static int meson_common_probe(struct platform_device *pdev, struct regmap *map)
+>  {
+>  	const struct meson_eeclkc_data *data;
+>  	struct device *dev = &pdev->dev;
+> -	struct regmap *map;
+>  	int ret, i;
+>  
+>  	data = of_device_get_match_data(dev);
+>  	if (!data)
+>  		return -EINVAL;
+>  
+> -	/* Get the hhi system controller node */
+> -	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
+> -	if (IS_ERR(map)) {
+> -		dev_err(dev,
+> -			"failed to get HHI regmap\n");
+> -		return PTR_ERR(map);
+> -	}
+> -
+>  	if (data->init_count)
+>  		regmap_multi_reg_write(map, data->init_regs, data->init_count);
+>  
+> @@ -54,3 +66,30 @@ int meson_eeclkc_probe(struct platform_device *pdev)
+>  	return devm_of_clk_add_hw_provider(dev, of_clk_hw_onecell_get,
+>  					   data->hw_onecell_data);
+>  }
+> +
+> +int meson_eeclkc_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *map;
+> +
+> +	/* Get the hhi system controller node */
+> +	map = syscon_node_to_regmap(of_get_parent(dev->of_node));
+> +	if (IS_ERR(map)) {
+> +		dev_err(dev,
+> +			"failed to get HHI regmap\n");
+> +		return PTR_ERR(map);
 > +	}
 > +
->  	/* do nothing if the PLL is already enabled */
->  	if (clk_hw_is_enabled(hw))
->  		return 0;
-
-In any case, nothing should be done on the clock before this check
-otherwise you might just break the clock
-
-> @@ -347,6 +364,10 @@ static void meson_clk_pll_disable(struct clk_hw *hw)
->  
->  	/* Disable the pll */
->  	meson_parm_write(clk->map, &pll->en, 0);
+> +	return meson_common_probe(pdev, map);
+> +}
 > +
-> +	/* Disable PLL internal self-adaption module current */
-> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
-> +		meson_parm_write(clk->map, &pll->current_en, 0);
->  }
+> +int meson_clkc_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *map;
+> +
+> +	map = meson_regmap_resource(pdev);
+> +	if (IS_ERR(map))
+> +		return PTR_ERR(map);
+> +
+> +	return meson_common_probe(pdev, map);
+> +}
+> diff --git a/drivers/clk/meson/meson-eeclk.h b/drivers/clk/meson/meson-eeclk.h
+> index 77316207bde1..a2e9ab3a4f6b 100644
+> --- a/drivers/clk/meson/meson-eeclk.h
+> +++ b/drivers/clk/meson/meson-eeclk.h
+> @@ -21,5 +21,6 @@ struct meson_eeclkc_data {
+>  };
 >  
->  static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
-> index 367efd0f6410..30f039242a65 100644
-> --- a/drivers/clk/meson/clk-pll.h
-> +++ b/drivers/clk/meson/clk-pll.h
-> @@ -36,6 +36,7 @@ struct meson_clk_pll_data {
->  	struct parm frac;
->  	struct parm l;
->  	struct parm rst;
-> +	struct parm current_en;
->  	const struct reg_sequence *init_regs;
->  	unsigned int init_count;
->  	const struct pll_params_table *table;
-> diff --git a/drivers/clk/meson/parm.h b/drivers/clk/meson/parm.h
-> index 3c9ef1b505ce..c53fb26577e3 100644
-> --- a/drivers/clk/meson/parm.h
-> +++ b/drivers/clk/meson/parm.h
-> @@ -20,6 +20,7 @@
->  	(((reg) & CLRPMASK(width, shift)) | ((val) << (shift)))
+>  int meson_eeclkc_probe(struct platform_device *pdev);
+> +int meson_clkc_probe(struct platform_device *pdev);
 >  
->  #define MESON_PARM_APPLICABLE(p)		(!!((p)->width))
-> +#define MESON_PARM_CURRENT(p)			(!!((p)->width))
-
-Why do we need that ?
-
->  
->  struct parm {
->  	u16	reg_off;
+>  #endif /* __MESON_CLKC_H */
 
