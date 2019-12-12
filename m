@@ -2,177 +2,116 @@ Return-Path: <SRS0=I7U7=2C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8F8C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 21:07:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62F9DC43603
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 21:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4A1C214D8
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 21:07:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E3EE2173E
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 21:51:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576187475;
+	bh=wJ/XZ7pA6ovLz41DrcE1XnfC1dmO8L0R7vqGMT5CLKk=;
+	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
+	b=yBMWZYe1yi8kvckhMv7G6plb4U/iUATGmOqub5rsjb6BiA4vfHnX/YGsFDwVcV8UT
+	 wwxlX9QAa6pj61XGVvtAx2SZjRnluzjmlwLSl7MwCwpRxsur1WvFhNhVj21NK1L36M
+	 pisp8G0+/ig3+PkkdQQ5ZiLZWV1nPMIdDhW4+Qzs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730945AbfLLVH4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Dec 2019 16:07:56 -0500
-Received: from foss.arm.com ([217.140.110.172]:60880 "EHLO foss.arm.com"
+        id S1731134AbfLLVvO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Dec 2019 16:51:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44562 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730742AbfLLVH4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 12 Dec 2019 16:07:56 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5E04E328;
-        Thu, 12 Dec 2019 13:07:55 -0800 (PST)
-Received: from [192.168.1.123] (unknown [172.31.20.19])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4585F3F718;
-        Thu, 12 Dec 2019 13:07:53 -0800 (PST)
-Subject: Re: [PATCH v1] clk: Convert managed get functions to devm_add_action
- API
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        x86 <x86@kernel.org>
-References: <20191128185630.GK82109@yoga> <20191202014237.GR248138@dtor-ws>
- <f177ef95-ef7e-cab0-1322-6de28f18ecdb@free.fr>
- <c0ccca86-b7b1-b587-60c1-4794376fa789@arm.com>
- <ba630966-5479-c831-d0e2-bc2eb12bc317@free.fr>
- <20191211222829.GV50317@dtor-ws>
- <70528f77-ca10-01cd-153b-23486ce87d45@free.fr>
- <cf5b3dee-061e-a476-7219-aa08c2977488@arm.com>
- <6a647c20-c2fa-f14c-256d-6516d0ad03b0@free.fr>
- <6ce49a67-8065-277b-5f80-ed47011e50d6@arm.com>
- <20191212191002.GA101194@dtor-ws>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <3ce51e0b-f4eb-707d-c55d-0eaf4ac72c5a@arm.com>
-Date:   Thu, 12 Dec 2019 21:08:04 +0000
-User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1730784AbfLLVvO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 12 Dec 2019 16:51:14 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F84B21556;
+        Thu, 12 Dec 2019 21:51:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576187474;
+        bh=wJ/XZ7pA6ovLz41DrcE1XnfC1dmO8L0R7vqGMT5CLKk=;
+        h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
+        b=mesjzGzJm9XI01CAns4XKRHZ/SLhUS2nfBmTrtlog7AV1EvUH6BsFhokcREU94kX+
+         NZiMWmXqsAUPSXCFA5WJb2/KKOQrROsYOrFwlY2FhxT+7m0wfHWiR1Z2DU+E6wueZh
+         y+08cV8Cbk3f13MuTCtqd+tekYmCf0j6AJK65JNo=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <20191212191002.GA101194@dtor-ws>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <741ff2c5-56b3-5ba0-3d52-39f77d468739@metux.net>
+References: <871rtae1m5.wl-kuninori.morimoto.gx@renesas.com> <741ff2c5-56b3-5ba0-3d52-39f77d468739@metux.net>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To:     "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: CONFIG_COMMON_CLK vs CONFIG_HAVE_CLK
+User-Agent: alot/0.8.1
+Date:   Thu, 12 Dec 2019 13:51:13 -0800
+Message-Id: <20191212215114.1F84B21556@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2019-12-12 7:10 pm, Dmitry Torokhov wrote:
-> On Thu, Dec 12, 2019 at 06:15:16PM +0000, Robin Murphy wrote:
->> On 12/12/2019 4:59 pm, Marc Gonzalez wrote:
->>> On 12/12/2019 15:47, Robin Murphy wrote:
->>>
->>>> On 12/12/2019 1:53 pm, Marc Gonzalez wrote:
->>>>
->>>>> On 11/12/2019 23:28, Dmitry Torokhov wrote:
->>>>>
->>>>>> On Wed, Dec 11, 2019 at 05:17:28PM +0100, Marc Gonzalez wrote:
->>>>>>
->>>>>>> What is the rationale for the devm_add_action API?
->>>>>>
->>>>>> For one-off and maybe complex unwind actions in drivers that wish to use
->>>>>> devm API (as mixing devm and manual release is verboten). Also is often
->>>>>> used when some core subsystem does not provide enough devm APIs.
->>>>>
->>>>> Thanks for the insight, Dmitry. Thanks to Robin too.
->>>>>
->>>>> This is what I understand so far:
->>>>>
->>>>> devm_add_action() is nice because it hides/factorizes the complexity
->>>>> of the devres API, but it incurs a small storage overhead of one
->>>>> pointer per call, which makes it unfit for frequently used actions,
->>>>> such as clk_get.
->>>>>
->>>>> Is that correct?
->>>>>
->>>>> My question is: why not design the API without the small overhead?
->>>>
->>>> Probably because on most architectures, ARCH_KMALLOC_MINALIGN is at
->>>> least as big as two pointers anyway, so this "overhead" should mostly be
->>>> free in practice. Plus the devres API is almost entirely about being
->>>> able to write simple robust code, rather than absolute efficiency - I
->>>> mean, struct devres itself is already 5 pointers large at the absolute
->>>> minimum ;)
->>>
->>> (3 pointers: 1 list_head + 1 function pointer)
->>
->> Ah yes, I failed to mentally preprocess the debug config :)
->>
->>> I'm confused. The first patch was criticized for potentially adding
->>> an extra pointer for every devm_clk_get (e.g. 800 bytes on a 64-bit
->>> platform with 100 clocks).
->>
->> I'm not sure it was a criticism so much as an observation of an aspect that
->> deserved consideration (certainly it was on my part, and I read Dmitry's "It
->> might still, ..." as implying the same). I'd say by this point it has been
->> thoroughly considered, and personally I'm now happy with the conclusion that
->> the kind of embedded platforms that will have many dozens of clocks are also
->> the kind that will tend to have enough padding to make it moot, and thus the
->> code simplification probably is worthwhile overall.
-> 
-> I wonder if we could actually avoid allocating the data with
-> ARCH_KMALLOC_MINALIGN in all the cases. It is definitely needed for the
-> devm_k*alloc() group of functions as they are direct replacement for
-> k*alloc() APIs that give users aligned memory, but for other data
-> structures (clocks, regulators, etc, etc) it is not required.
+Quoting Enrico Weigelt, metux IT consult (2019-12-12 02:57:14)
+> On 12.12.19 03:09, Kuninori Morimoto wrote:
+>=20
+> > I noticed that there are some CONFIG_HAVE_CLK vs CONFIG_COMMON_CLK mism=
+atch.
+> > Because of it, I got compile error at clk_set_min_rate() on SH.
+> > SH will have HAVE_CLK, but doesn't have COMMON_CLK.
+> >=20
+> >       > ARCH=3Dsh make allyesconfig
+> >       > make
+> >       ...
+> >       drivers/devfreq/tegra30-devfreq.o: In function `tegra_devfreq_tar=
+get':
+> >       tegra30-devfreq.c:(.text+0x368): undefined reference to `clk_set_=
+min_rate'
+> >=20
+> > clk_set_min_rate() is under HAVE_CLK at clk.h
+> >=20
+> >       --- clk.h ---
+> > =3D>    #ifdef CONFIG_HAVE_CLK
+> >       ...
+> >       int clk_set_min_rate(struct clk *clk, unsigned long rate);
+> >       ...
+> >       #else /* !CONFIG_HAVE_CLK */
+> >       static inline int clk_set_min_rate(struct clk *clk, unsigned long=
+ rate)
+> >       ...
+> >       -------------
+> >=20
+> > It is implemented at clk.c.
+> > But it will be compiled via COMMON_CLK
+> >=20
+> >       --- Makefile ---
+> >       ...
+> > =3D>    obj-$(CONFIG_COMMON_CLK)        +=3D clk.o
+>=20
+> You've got CONFIG_HAVE_CLK enabled, but CONFIG_COMMON_CLK disabled ?
+>=20
+> hmm, the whole CONFIG_HAVE_CLK looks a bit weird to me. I wonder what's
+> the actual purpose of having this arch-specific.
+>=20
+> IMHO, we should sort out whether there are some things that some arch
+> really *needs*, and what could be optional - then split that into
+> separate modules along this line.
+>=20
+> It seems that clk_set_min_rate() belongs to CONFIG_COMMON_CLK, and
+> tegra30-devfreq.c needds to depend on CONFIG_COMMON_CLK.
+>=20
 
-That's a very good point - perhaps something like this (only done properly)?
+Years ago there wasn't a common clk framework. Just CONFIG_HAVE_CLK and
+architectures implementing the API defined in the clk.h header file.
+Then the common clk framework was created and we got CONFIG_COMMON_CLK.
+When new clk API features are added to the common clk framework, we
+typically limit their implementation and scope to CONFIG_COMMON_CLK so
+that architectures are encouraged to migrate to the common clk
+framework. I'm not really tracking the other implementations of the clk
+API, but I thought we were down to a handful of implementations that
+haven't migrated. I suppose SH is one of the big ones.
 
-Robin.
-
-diff --git a/drivers/base/devres.c b/drivers/base/devres.c
-index 0bbb328bd17f..2382f963abbe 100644
---- a/drivers/base/devres.c
-+++ b/drivers/base/devres.c
-@@ -26,14 +26,7 @@ struct devres_node {
-
-  struct devres {
-         struct devres_node              node;
--       /*
--        * Some archs want to perform DMA into kmalloc caches
--        * and need a guaranteed alignment larger than
--        * the alignment of a 64-bit integer.
--        * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
--        * buffer alignment as if it was allocated by plain kmalloc().
--        */
--       u8 __aligned(ARCH_KMALLOC_MINALIGN) data[];
-+       u8                              data[];
-  };
-
-  struct devres_group {
-@@ -810,6 +803,17 @@ static int devm_kmalloc_match(struct device *dev, 
-void *res, void *data)
-  void * devm_kmalloc(struct device *dev, size_t size, gfp_t gfp)
-  {
-         struct devres *dr;
-+       size_t align;
-+
-+       /*
-+        * Some archs want to perform DMA into kmalloc caches
-+        * and need a guaranteed alignment larger than
-+        * the alignment of a 64-bit integer.
-+        * Thus we use ARCH_KMALLOC_MINALIGN here and get exactly the same
-+        * buffer alignment as if it was allocated by plain kmalloc().
-+        */
-+       align = (ARCH_KMALLOC_MINALIGN - sizeof(*dr)) % 
-ARCH_KMALLOC_MINALIGN;
-+       size += align;
-
-         /* use raw alloc_dr for kmalloc caller tracing */
-         dr = alloc_dr(devm_kmalloc_release, size, gfp, dev_to_node(dev));
-@@ -822,7 +826,7 @@ void * devm_kmalloc(struct device *dev, size_t size, 
-gfp_t gfp)
-          */
-         set_node_dbginfo(&dr->node, "devm_kzalloc_release", size);
-         devres_add(dev, dr->data);
--       return dr->data;
-+       return dr->data + align;
-  }
-  EXPORT_SYMBOL_GPL(devm_kmalloc);
