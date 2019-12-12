@@ -2,155 +2,116 @@ Return-Path: <SRS0=I7U7=2C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EB04C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 19:10:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4904DC2D0CA
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 19:36:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023D521556
-	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 19:10:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 210F72467C
+	for <linux-clk@archiver.kernel.org>; Thu, 12 Dec 2019 19:36:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DDCckX+5"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="lGc6HuLS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730096AbfLLTKG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 12 Dec 2019 14:10:06 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:41385 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730346AbfLLTKG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Dec 2019 14:10:06 -0500
-Received: by mail-pj1-f68.google.com with SMTP id ca19so1449012pjb.8;
-        Thu, 12 Dec 2019 11:10:06 -0800 (PST)
+        id S1730762AbfLLTgl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 12 Dec 2019 14:36:41 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:44568 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730765AbfLLTgk (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 12 Dec 2019 14:36:40 -0500
+Received: by mail-lf1-f67.google.com with SMTP id v201so117411lfa.11
+        for <linux-clk@vger.kernel.org>; Thu, 12 Dec 2019 11:36:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/CFTvsuLouSL+b+ykFmdN8fLszmQshAka4tYRtpWxCg=;
-        b=DDCckX+53jRup7lxzh/bxqu4w8WMEM7JfkNDE8ddbtmubhsPo4HzghREbieunEzc4N
-         /QIPAlyEXZJpzbxaTi/10nLMDa2VjWS3gJv37yKhE9LNJVNy2mVKqq/QAOaZqPnDnqUI
-         JGiiJtS9CXi/rZk6LP7urXNmhEgcbd9d9neOsGM0759DtGXJxFhvRqYZW0WivJwpCv/K
-         Q2eqUU2ulZ32zGaWZ0ojcvhTNMi2R8RD0zyGSumPB/oCZbcQInbGOvCBYz5DNbmVfl3t
-         YZFHzsIy/mTl3a9enQkCC7bg68f7N4oj8pajqNH3ytaqLgRJbHxLhxIg1QOQl2HpmsZu
-         4OeQ==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lIK7T8B7Eyyku8RF0XNgNwtCGhRp7hkIh7+TFMDTOOM=;
+        b=lGc6HuLSAiMqXLMDP/tAyif2jwHyEA6NsPow0XZ3qXGTakl08BokK7tnFnkRXIYVT4
+         CB+WqxsNtTwVLVA1yChKPip/IMbsON8pgRvKA5uMK+GL+s/ReQwFrXSJS/aIcDc25jPO
+         NQcVSSANR21HgM77FanVSlyChehzNv5KcWsgAWxYP5IhhkHTQeF9lT++50iw3iNU38Xg
+         RRKHqENHjODrPdGnUvQaeOiDEDZTZIwjPe4DKFeUY6nYFetlY/d5Jhv8aGTFSl+Koqdl
+         rWlDmGR8MgXaYe9WGKZz1ZmW3CfvmOOyGOrSXr7JcvlfFjAS02V+iLjeGWMdmUp+I8Lf
+         r55g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/CFTvsuLouSL+b+ykFmdN8fLszmQshAka4tYRtpWxCg=;
-        b=EAyPXDVCZyv3FvYov9MZAsQFrjmpEXucat0VTr/Ev6md8bgMBn9GQsNa6SWBf2GF6q
-         16xm5Ndr+dSCLFaBsDDmrE1ztOwHvzs3vzDM2qqL2SFhZX3t6r1ruKwjdZJGg96jyg/n
-         qPQYDLc46ojaweapIKTIWTcPr8v06R0WwX0iZQvJYZR1MwBPcyzVuSR1rfX6JZHRb0k1
-         dZzidoXBAlMPiwbli80jTrfN6tWFWdWRZIwlq7ZMLOBMiOfXmDXQIj/pknrRRs1mUTuf
-         jpR9dlYqkkkgT32gJ/fxhZM8FDMr9lywBswt1r/10CdBKbS/5K/TdmlYhKGlP7UfnfSD
-         czIw==
-X-Gm-Message-State: APjAAAUKmNw7OY+OO6SmtJLnBCZq5fGry8YptZkVNti5jOquP6MWwyHF
-        WDwO0kYaQ3H85AHjdfO1zhw=
-X-Google-Smtp-Source: APXvYqy80cGHOGC3vXShKkDjiLlNoD3iNKSNfr0cJkwWPHaK/hzVp8CcTB//JpDWpvEmMRR4xvjaSA==
-X-Received: by 2002:a17:902:7287:: with SMTP id d7mr11152811pll.17.1576177805515;
-        Thu, 12 Dec 2019 11:10:05 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id v29sm7466413pgl.88.2019.12.12.11.10.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 12 Dec 2019 11:10:04 -0800 (PST)
-Date:   Thu, 12 Dec 2019 11:10:02 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Robin Murphy <robin.murphy@arm.com>
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=lIK7T8B7Eyyku8RF0XNgNwtCGhRp7hkIh7+TFMDTOOM=;
+        b=Es30yUkmuXTtK2TfdcbgOReM9sMe99monvKqhKflnkK5ZeMar32MkMfdc5AMDd7Okp
+         l9o3EDFu7jzuBwVrlDFQMqQRuqLYdjBfpaOLoqEiHFMsHzDsRytTZPpn/vKwViEzTLRW
+         05SEZSrGLJGmkMyr/dpqayvuSKVoWR2iRsz92skRAGTicCl+0kCehAJLzj4vuIfNosgK
+         CN+c4nZo4SXQOtVbMBOr5nFq0MJ9wwl/diadCkF7xBRhHfVcfnP7lka/0GgzXLmXoSIh
+         ZqhQ/O7hfvfuJnSi7z41UjDw2m1v0WFM2xoWllNIAnaFOe0BpZ9WoycSFoctawpgdxid
+         IszA==
+X-Gm-Message-State: APjAAAWZwxe4LkBA/xHHDS3JcDKtbiBjjC0aZ1b2+paZo9tGl7JDAO/k
+        cgYJCJHIxEXMcVmY/7SuCAcftg==
+X-Google-Smtp-Source: APXvYqxdpKEqSDXHq2d0D9envgFK5PeLwzFOc+DNwPACrZIGrON9Q2farga3fEcJ/DDnTT7CDyNnRA==
+X-Received: by 2002:ac2:53a8:: with SMTP id j8mr6952034lfh.28.1576179398495;
+        Thu, 12 Dec 2019 11:36:38 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:818:b9d7:c53b:d021:132e:26de])
+        by smtp.gmail.com with ESMTPSA id y23sm3518960ljk.6.2019.12.12.11.36.36
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 12 Dec 2019 11:36:37 -0800 (PST)
+Subject: Re: [PATCH v2 1/6] spi: Add SPIBSC driver
+To:     Chris Brandt <chris.brandt@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Michael Turquette <mturquette@baylibre.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Guenter Roeck <linux@roeck-us.net>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        x86 <x86@kernel.org>
-Subject: Re: [PATCH v1] clk: Convert managed get functions to devm_add_action
- API
-Message-ID: <20191212191002.GA101194@dtor-ws>
-References: <20191128185630.GK82109@yoga>
- <20191202014237.GR248138@dtor-ws>
- <f177ef95-ef7e-cab0-1322-6de28f18ecdb@free.fr>
- <c0ccca86-b7b1-b587-60c1-4794376fa789@arm.com>
- <ba630966-5479-c831-d0e2-bc2eb12bc317@free.fr>
- <20191211222829.GV50317@dtor-ws>
- <70528f77-ca10-01cd-153b-23486ce87d45@free.fr>
- <cf5b3dee-061e-a476-7219-aa08c2977488@arm.com>
- <6a647c20-c2fa-f14c-256d-6516d0ad03b0@free.fr>
- <6ce49a67-8065-277b-5f80-ed47011e50d6@arm.com>
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Mason Yang <masonccyang@mxic.com.tw>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <20191206134202.18784-2-chris.brandt@renesas.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <37c13497-d20f-583f-72d7-1e3c8a241990@cogentembedded.com>
+Date:   Thu, 12 Dec 2019 22:36:36 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <6ce49a67-8065-277b-5f80-ed47011e50d6@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191206134202.18784-2-chris.brandt@renesas.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 12, 2019 at 06:15:16PM +0000, Robin Murphy wrote:
-> On 12/12/2019 4:59 pm, Marc Gonzalez wrote:
-> > On 12/12/2019 15:47, Robin Murphy wrote:
-> > 
-> > > On 12/12/2019 1:53 pm, Marc Gonzalez wrote:
-> > > 
-> > > > On 11/12/2019 23:28, Dmitry Torokhov wrote:
-> > > > 
-> > > > > On Wed, Dec 11, 2019 at 05:17:28PM +0100, Marc Gonzalez wrote:
-> > > > > 
-> > > > > > What is the rationale for the devm_add_action API?
-> > > > > 
-> > > > > For one-off and maybe complex unwind actions in drivers that wish to use
-> > > > > devm API (as mixing devm and manual release is verboten). Also is often
-> > > > > used when some core subsystem does not provide enough devm APIs.
-> > > > 
-> > > > Thanks for the insight, Dmitry. Thanks to Robin too.
-> > > > 
-> > > > This is what I understand so far:
-> > > > 
-> > > > devm_add_action() is nice because it hides/factorizes the complexity
-> > > > of the devres API, but it incurs a small storage overhead of one
-> > > > pointer per call, which makes it unfit for frequently used actions,
-> > > > such as clk_get.
-> > > > 
-> > > > Is that correct?
-> > > > 
-> > > > My question is: why not design the API without the small overhead?
-> > > 
-> > > Probably because on most architectures, ARCH_KMALLOC_MINALIGN is at
-> > > least as big as two pointers anyway, so this "overhead" should mostly be
-> > > free in practice. Plus the devres API is almost entirely about being
-> > > able to write simple robust code, rather than absolute efficiency - I
-> > > mean, struct devres itself is already 5 pointers large at the absolute
-> > > minimum ;)
-> > 
-> > (3 pointers: 1 list_head + 1 function pointer)
-> 
-> Ah yes, I failed to mentally preprocess the debug config :)
-> 
-> > I'm confused. The first patch was criticized for potentially adding
-> > an extra pointer for every devm_clk_get (e.g. 800 bytes on a 64-bit
-> > platform with 100 clocks).
-> 
-> I'm not sure it was a criticism so much as an observation of an aspect that
-> deserved consideration (certainly it was on my part, and I read Dmitry's "It
-> might still, ..." as implying the same). I'd say by this point it has been
-> thoroughly considered, and personally I'm now happy with the conclusion that
-> the kind of embedded platforms that will have many dozens of clocks are also
-> the kind that will tend to have enough padding to make it moot, and thus the
-> code simplification probably is worthwhile overall.
+On 12/06/2019 04:41 PM, Chris Brandt wrote:
 
-I wonder if we could actually avoid allocating the data with
-ARCH_KMALLOC_MINALIGN in all the cases. It is definitely needed for the
-devm_k*alloc() group of functions as they are direct replacement for
-k*alloc() APIs that give users aligned memory, but for other data
-structures (clocks, regulators, etc, etc) it is not required.
+> Add a driver for the SPIBSC controller in Renesas SoC devices.
+> 
+> Signed-off-by: Chris Brandt <chris.brandt@renesas.com>
 
-Thanks.
+   Hm... I've just tested JFFS2 with this driver and got the same result as with
+my own drivers:
 
--- 
-Dmitry
+root@192.168.2.11:~# mount -t jffs2 /dev/mtdblock11 /mnt/jffs2/                 
+root@192.168.2.11:~# cd /mnt/jffs2/                                             
+root@192.168.2.11:/mnt/jffs2# ls -l                                             
+total 34                                                                        
+-rwxr-xr-x 1 root root 18678 Jan 22  2000 evtest                                
+-rw-r--r-- 1 root root 15169 Jan 22  2000 evtest.c                              
+root@192.168.2.11:/mnt/jffs2# rm evtest                                         
+root@192.168.2.11:/mnt/jffs2# ls -l                                             
+total 15                                                                        
+-rw-r--r-- 1 root root 15169 Jan 22  2000 evtest.c                              
+root@192.168.2.11:/mnt/jffs2# cd                                                
+root@192.168.2.11:~# umount /mnt/jffs2/                                         
+root@192.168.2.11:~# mount -t jffs2 /dev/mtdblock11 /mnt/jffs2/                 
+root@192.168.2.11:~# ls -l /mnt/jffs2/                                          
+total 34                                                                        
+-rwxr-xr-x 1 root root 18678 Jan 22  2000 evtest                                
+-rw-r--r-- 1 root root 15169 Jan 22  2000 evtest.c                              
+
+   As you can see, the deleted file is back after unmount/re-mount...
+
+MBR, Sergei
