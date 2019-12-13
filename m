@@ -2,124 +2,251 @@ Return-Path: <SRS0=y/Yu=2D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AA3C2D0D1
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D75FDC2D0CF
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 21:25:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 754F2246D0
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5734821655
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 21:25:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="MFKfwISe"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="kGau77Zj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726494AbfLMUnJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Dec 2019 15:43:09 -0500
-Received: from mail-eopbgr1400119.outbound.protection.outlook.com ([40.107.140.119]:34016
-        "EHLO JPN01-TY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726382AbfLMUnJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Dec 2019 15:43:09 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=bd8iJrbICVVrlNIcflP671Ou+t2w4fEYabHjfO8xKFeCSyXEuxwaeBreqkYIf06/F0fj7iCT1W5TUA9qBakX6JH8nIOWP7j0CPBpUK/Fej+wqtZNvG6DgbO/I3lBvuil1NIY3PbXqf26TxokgW5BF4cUHuKjth+uvXdSzLwI+5fFvH4N1HKVHighXl+giGhA3hpp5gE50xNzdie9jQSKPvcAITLCPBTysIGrfURO5ZTAKPiDiWxRYijPA62zWPwIoShy5Z8ZLma0Ac8cRKxC3m1E6j2U38uOqwaIi29na6XLySr1YGtlLsO8t+ftFrMPyMNIU0/hL38EOh67ZmnM8A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zhJPmvzvRyTiOsK5TplbGSS7MXbi0JjowYOw1Kqd2sY=;
- b=E0l5PzYEnAGvab2ifRIdGtG0XncMC0eDy00YS9LkJc6M6Leneb5xOAUhEDcwcctb1m31Ksicpj9QgS4OrdlzQNPeZ0JjHObvE/EiqctXK6aENCC0f8+cYG7hQVvr4o6bRodI/uff6k2M8rOtlq5nBXVGjAVORmgxkVrA6gK7kgYtIK36JgaI8TQNHsbtSR12OniqWJ4zfVfTX7hXdoWvE1RVRyWuh8RB5DOmc9FEEVxcQQ3i3GbaDAfVwCdICyNDd2CUPSHYJgMWYqVAsFNWe7Pme7zOVIzp0jhhhe0LEAcBDkStyppGU7BXwWbEzZ3F8ucsYpxVzvZ7W1oJ11fTbw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zhJPmvzvRyTiOsK5TplbGSS7MXbi0JjowYOw1Kqd2sY=;
- b=MFKfwISedmS8K0M/8J8bh5H2xZNOoBrxvVT8XTtO/bFWtgzt32VPpTG3T0rzqtWgaNv77MOsJSMn9s3ASVprLTZl2IVp9RgvG8zE8i4GGd01fnKM9mwYcLTvD5Qu+24aNINGOh4OAirpOWRIOlwsOWUkqfrgRqo8Ni5r7430Ob4=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1658.jpnprd01.prod.outlook.com (52.133.162.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.16; Fri, 13 Dec 2019 20:43:05 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2538.017; Fri, 13 Dec 2019
- 20:43:05 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Subject: RE: [PATCH v2 1/6] spi: Add SPIBSC driver
-Thread-Topic: [PATCH v2 1/6] spi: Add SPIBSC driver
-Thread-Index: AQHVrDsMpgzelIsB7UCp/Sk4dX5yJ6e27ngAgAAFoLCAAXvGAIAAEhqAgAAPbOA=
-Date:   Fri, 13 Dec 2019 20:43:05 +0000
-Message-ID: <TY1PR01MB1562F30F0B58465A6988F29C8A540@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <20191206134202.18784-2-chris.brandt@renesas.com>
- <37c13497-d20f-583f-72d7-1e3c8a241990@cogentembedded.com>
- <TYXPR01MB1568ED4D40CEC399E64F6A2B8A550@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <7386b38f-2f52-39cb-3887-e97b024ec563@cogentembedded.com>
- <2e3211c6-59e8-3057-66a2-29b89a353b8a@cogentembedded.com>
-In-Reply-To: <2e3211c6-59e8-3057-66a2-29b89a353b8a@cogentembedded.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctMjc5NjQ3OTctMWRlOS0xMWVhLWFhNTUtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDI3OTY0Nzk4LTFkZTktMTFlYS1hYTU1LTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iNzgzIiB0PSIxMzIyMDc0MzM4MjgyNDM2MzciIGg9IjRjbFVOUFNjUksxTjJOZ2JzZmllbGlCaStBUT0iIGlkPSIiIGJsPSIwIiBibz0iMSIvPjwvbWV0YT4=
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 4d8752f9-4a03-4174-c400-08d7800d0e24
-x-ms-traffictypediagnostic: TY1PR01MB1658:
-x-microsoft-antispam-prvs: <TY1PR01MB16587E13F2C66FF06B9C8B028A540@TY1PR01MB1658.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 0250B840C1
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(366004)(136003)(376002)(346002)(39850400004)(396003)(189003)(199004)(5660300002)(110136005)(4326008)(9686003)(6506007)(186003)(4744005)(2906002)(55016002)(316002)(66476007)(66946007)(8936002)(33656002)(64756008)(81166006)(52536014)(66556008)(76116006)(66446008)(81156014)(8676002)(7696005)(26005)(478600001)(54906003)(7416002)(71200400001)(86362001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1658;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: mdtEqNVarSJHI9tdhCiAIMPPw08eOyMifUA8xOAotNV4rqgDKtBDIS65ZOAol+LlRv1AY4N6DUwd6Aa1Que1wpNblTcA62qqIc8xxYx/CCPm7J/TvS8zssn9JhCa318q1vsS3TEuC/Oz8k1DRBoknfNKO0eQ2wuXBb/LKB7Htgubiu59T/H2dxjZMhJh9RV2n8v9PgJ0dFbUO+0pkmcItPS3PQAQwCs8T7nW4VP3IKdvaOamNFiN47jmY+AbfMExEkXU++O5LyqTTo3Zh05D5+AD7BHICz5mNB68VrjFvZ+yWnMsyxjgI8zxxacxj+a2IRGm0RJfu+qjrjJ/abThJc8qqRw0mCrBf1wGwl2d6eATVB4NPbcErraqinarCsFp4eY5pVBKJhJ8Iu1TzguDzlh86N2VIgWR+96EOHcW9zDV5YAhwCd71H5W0tOrDw6I
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726772AbfLMVZM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Dec 2019 16:25:12 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:50316 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726638AbfLMVZL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 16:25:11 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1576272308; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Gyd/iXeMfPWamj4m2FYrweXavCCrf5f9T5ZiqQRwBNg=;
+        b=kGau77ZjLiQK028CkDrJnLm/azl1Q1JFkuUyUEp/gNp1LLNgbdmU6uN6LUdngm7QHaFsYq
+        feY035GcTKTT/LUYlZGV2nzxFHe8NM0oJBlCMDuSYRqU57RYEh1QbeY2tjEszihJC9ddpu
+        HxZxumuUw4E7Kn6+XbOzY50GKYSdnxw=
+Date:   Fri, 13 Dec 2019 22:25:01 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v2 1/5] clk: Ingenic: Adjust cgu code to make it
+ compatible with X1830.
+To:     =?UTF-8?b?5ZGo55Cw5p2w?= "(Zhou Yanjie)" 
+        <zhouyanjie@wanyeetech.com>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Message-Id: <1576272301.3.3@crapouillou.net>
+In-Reply-To: <1576250472-124315-3-git-send-email-zhouyanjie@wanyeetech.com>
+References: <1576250472-124315-1-git-send-email-zhouyanjie@wanyeetech.com>
+        <1576250472-124315-3-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d8752f9-4a03-4174-c400-08d7800d0e24
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Dec 2019 20:43:05.4596
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 32sF5k+Gp1H1LzhHN4VRoOic2ztijQ1xoguQxY1RaHMNhZNa8OiC8V7pv36geNIxcrjqNwIxDj1rACX4/AmF9AtgiW//ng6pIX/+LMHAKvw=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1658
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gRnJpLCBEZWMgMTMsIDIwMTksIFNlcmdlaSBTaHR5bHlvdiB3cm90ZToNCj4gICAgVGhlIHBh
-dGNoIGlzbid0IGFwcGxpY2FibGUgYXMgd2VsbCwgYW5kIHRoZSBiZWhhdmlvdXIgaXMgdGhlIHNh
-bWUgYXMgaW4NCj4gNS4yLi1yYzYgYmFzZWQNCj4ga2VybmVsIC0tZGVsZXRlZCBmaWxlIGlzIGJh
-Y2sgYWZ0ZXIgcmVtb3VudGluZywgc3luYyBvciBub3QuLi4NCg0KRG8gdGhlIGJhc2ljIFIvVyBv
-cGVyYXRpb25zIHdvcmtzPw0KDQpIZXJlIGlzIHRoZSBmaXJzdCB0ZXN0IEkgZG8gb24gbXkgcGxh
-dGZvcm1zLiBBZnRlciBJIHBhc3NlZCB0aGlzLCBldmVyeXRoaW5nDQplbHNlIHNlZW1zIHRvIHdv
-cmtlZCBwcmV0dHkgZ29vZCAod3JpdGluZyBsYXJnZSBmaWxlcykuDQoNCiQgZmxhc2hfZXJhc2Vh
-bGwgLWogL2Rldi9tdGQ0DQokIG1vdW50IC10IGpmZnMyIC9kZXYvbXRkYmxvY2s0IC9tbnQNCiQg
-ZWNobyAiaGVsbG8iID4gL21udC9oZWxsby50eHQNCiQgc3luYw0KDQoNCklmIHRoZSBGbGFzaCB3
-YXMgcmVjb2duaXplZCBhdCBib290LCB0aGVuIHdlIGtub3cgdGhhdCB0aGUgSUQgY29tbWFuZCAo
-MHg5RikNCmF0IGxlYXN0IHdvcmtlZC4gTWVhbmluZyByZWFkIGNvbW1hbmRzIHdlcmUgYXQgbGVh
-c3Qgd29ya2luZyAod2hpY2ggaXMgdGhlDQpkaWZmaWN1bHQgb25lIGZvciB0aGlzIEhXLi4ud3Jp
-dGluZyBpcyBlYXNpZXIpDQoNCkNocmlzDQoNCg==
+Hi Zhou,
+
+
+Le ven., d=C3=A9c. 13, 2019 at 23:21, =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yan=
+jie)=20
+<zhouyanjie@wanyeetech.com> a =C3=A9crit :
+> The PLL of X1830 Soc from Ingenic has been greatly changed,
+> the bypass control is placed in another register, so now two
+> registers may needed to control the PLL. To this end, the
+> original "reg" was changed to "pll_reg", and a new "bypass_reg"
+> was introduced. In addition, when calculating rate, the PLL of
+> X1830 introduced an extra 2x multiplier, so a new "rate_multiplier"
+> was introduced.
+>=20
+> Signed-off-by: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wany=
+eetech.com>
+> ---
+>=20
+> Notes:
+>     v1->v2:
+>     1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
+>       array (reg[2]).
+>     2.Remove the "pll_info->version" and add a=20
+> "pll_info->rate_multiplier".
+>     3.Fix the coding style and add more detailed commit message.
+>     4.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+>       to "=E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wanyeetec=
+h.com>" because
+>       the old mailbox is in an unstable state.
+>=20
+>  drivers/clk/ingenic/cgu.c | 32 +++++++++++++++++++++-----------
+>  drivers/clk/ingenic/cgu.h |  8 ++++++--
+>  2 files changed, 27 insertions(+), 13 deletions(-)
+>=20
+> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+> index 6e96303..ae1ddcb 100644
+> --- a/drivers/clk/ingenic/cgu.c
+> +++ b/drivers/clk/ingenic/cgu.c
+> @@ -84,7 +84,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned=20
+> long parent_rate)
+>  	pll_info =3D &clk_info->pll;
+>=20
+>  	spin_lock_irqsave(&cgu->lock, flags);
+> -	ctl =3D readl(cgu->base + pll_info->reg);
+> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
+>  	spin_unlock_irqrestore(&cgu->lock, flags);
+>=20
+>  	m =3D (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
+> @@ -93,6 +93,11 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,=20
+> unsigned long parent_rate)
+>  	n +=3D pll_info->n_offset;
+>  	od_enc =3D ctl >> pll_info->od_shift;
+>  	od_enc &=3D GENMASK(pll_info->od_bits - 1, 0);
+> +
+> +	spin_lock_irqsave(&cgu->lock, flags);
+> +	ctl =3D readl(cgu->base + pll_info->bypass_reg);
+> +	spin_unlock_irqrestore(&cgu->lock, flags);
+
+I think you should start the patchset with the current [5/5] patch;=20
+then you wouldn't have to add spinlock protection here just to see it=20
+removed later in the same patchset.
+
+Cheers,
+-Paul
+
+> +
+>  	bypass =3D !pll_info->no_bypass_bit &&
+>  		 !!(ctl & BIT(pll_info->bypass_bit));
+>=20
+> @@ -106,7 +111,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,=20
+> unsigned long parent_rate)
+>  	BUG_ON(od =3D=3D pll_info->od_max);
+>  	od++;
+>=20
+> -	return div_u64((u64)parent_rate * m, n * od);
+> +	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier, n=20
+> * od);
+>  }
+>=20
+>  static unsigned long
+> @@ -139,7 +144,7 @@ ingenic_pll_calc(const struct=20
+> ingenic_cgu_clk_info *clk_info,
+>  	if (pod)
+>  		*pod =3D od;
+>=20
+> -	return div_u64((u64)parent_rate * m, n * od);
+> +	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier, n=20
+> * od);
+>  }
+>=20
+>  static inline const struct ingenic_cgu_clk_info *to_clk_info(
+> @@ -183,7 +188,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned=20
+> long req_rate,
+>  			clk_info->name, req_rate, rate);
+>=20
+>  	spin_lock_irqsave(&cgu->lock, flags);
+> -	ctl =3D readl(cgu->base + pll_info->reg);
+> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
+>=20
+>  	ctl &=3D ~(GENMASK(pll_info->m_bits - 1, 0) << pll_info->m_shift);
+>  	ctl |=3D (m - pll_info->m_offset) << pll_info->m_shift;
+> @@ -194,7 +199,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned=20
+> long req_rate,
+>  	ctl &=3D ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+>  	ctl |=3D pll_info->od_encoding[od - 1] << pll_info->od_shift;
+>=20
+> -	writel(ctl, cgu->base + pll_info->reg);
+> +	writel(ctl, cgu->base + pll_info->pll_reg);
+>  	spin_unlock_irqrestore(&cgu->lock, flags);
+>=20
+>  	return 0;
+> @@ -212,16 +217,21 @@ static int ingenic_pll_enable(struct clk_hw *hw)
+>  	u32 ctl;
+>=20
+>  	spin_lock_irqsave(&cgu->lock, flags);
+> -	ctl =3D readl(cgu->base + pll_info->reg);
+> +	ctl =3D readl(cgu->base + pll_info->bypass_reg);
+>=20
+>  	ctl &=3D ~BIT(pll_info->bypass_bit);
+> +
+> +	writel(ctl, cgu->base + pll_info->bypass_reg);
+> +
+> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
+> +
+>  	ctl |=3D BIT(pll_info->enable_bit);
+>=20
+> -	writel(ctl, cgu->base + pll_info->reg);
+> +	writel(ctl, cgu->base + pll_info->pll_reg);
+>=20
+>  	/* wait for the PLL to stabilise */
+>  	for (i =3D 0; i < timeout; i++) {
+> -		ctl =3D readl(cgu->base + pll_info->reg);
+> +		ctl =3D readl(cgu->base + pll_info->pll_reg);
+>  		if (ctl & BIT(pll_info->stable_bit))
+>  			break;
+>  		mdelay(1);
+> @@ -245,11 +255,11 @@ static void ingenic_pll_disable(struct clk_hw=20
+> *hw)
+>  	u32 ctl;
+>=20
+>  	spin_lock_irqsave(&cgu->lock, flags);
+> -	ctl =3D readl(cgu->base + pll_info->reg);
+> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
+>=20
+>  	ctl &=3D ~BIT(pll_info->enable_bit);
+>=20
+> -	writel(ctl, cgu->base + pll_info->reg);
+> +	writel(ctl, cgu->base + pll_info->pll_reg);
+>  	spin_unlock_irqrestore(&cgu->lock, flags);
+>  }
+>=20
+> @@ -263,7 +273,7 @@ static int ingenic_pll_is_enabled(struct clk_hw=20
+> *hw)
+>  	u32 ctl;
+>=20
+>  	spin_lock_irqsave(&cgu->lock, flags);
+> -	ctl =3D readl(cgu->base + pll_info->reg);
+> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
+>  	spin_unlock_irqrestore(&cgu->lock, flags);
+>=20
+>  	return !!(ctl & BIT(pll_info->enable_bit));
+> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+> index 0dc8004..f7b6908 100644
+> --- a/drivers/clk/ingenic/cgu.h
+> +++ b/drivers/clk/ingenic/cgu.h
+> @@ -16,7 +16,9 @@
+>=20
+>  /**
+>   * struct ingenic_cgu_pll_info - information about a PLL
+> - * @reg: the offset of the PLL's control register within the CGU
+> + * @pll_reg: the offset of the PLL's control register within the CGU
+> + * @bypass_reg: the offset of the bypass control register within the=20
+> CGU
+> + * @rate_multiplier: the multiplier needed by pll rate calculation
+>   * @m_shift: the number of bits to shift the multiplier value by=20
+> (ie. the
+>   *           index of the lowest bit of the multiplier value in the=20
+> PLL's
+>   *           control register)
+> @@ -43,7 +45,9 @@
+>   * @no_bypass_bit: if set, the PLL has no bypass functionality
+>   */
+>  struct ingenic_cgu_pll_info {
+> -	unsigned reg;
+> +	unsigned pll_reg;
+> +	unsigned bypass_reg;
+> +	unsigned rate_multiplier;
+>  	const s8 *od_encoding;
+>  	u8 m_shift, m_bits, m_offset;
+>  	u8 n_shift, n_bits, n_offset;
+> --
+> 2.7.4
+>=20
+
+=
+
