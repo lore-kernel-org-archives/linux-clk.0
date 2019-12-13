@@ -2,391 +2,170 @@ Return-Path: <SRS0=y/Yu=2D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C40D3C2D0BF
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 08:35:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2690C43603
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 09:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 979D124679
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 08:35:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A282C2077B
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 09:35:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726623AbfLMIfB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Dec 2019 03:35:01 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:34842 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725946AbfLMIfA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 13 Dec 2019 03:35:00 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 083602007DD;
-        Fri, 13 Dec 2019 09:34:58 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 4CBC820033F;
-        Fri, 13 Dec 2019 09:34:53 +0100 (CET)
-Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id C251C402B4;
-        Fri, 13 Dec 2019 16:34:46 +0800 (SGT)
-From:   Wen He <wen.he_1@nxp.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726687AbfLMJfE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Dec 2019 04:35:04 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:33034 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726004AbfLMJfE (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 04:35:04 -0500
+Received: from [10.28.39.99] (10.28.39.99) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 13 Dec
+ 2019 17:35:20 +0800
+Subject: Re: [PATCH v4 1/6] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Walle <michael@walle.cc>, Li Yang <leoyang.li@nxp.com>,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Wen He <wen.he_1@nxp.com>
-Subject: [v12 2/2] clk: ls1028a: Add clock driver for Display output interface
-Date:   Fri, 13 Dec 2019 16:34:02 +0800
-Message-Id: <20191213083402.35678-2-wen.he_1@nxp.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191213083402.35678-1-wen.he_1@nxp.com>
-References: <20191213083402.35678-1-wen.he_1@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20191206074052.15557-1-jian.hu@amlogic.com>
+ <20191206074052.15557-2-jian.hu@amlogic.com>
+ <1jblsdlvck.fsf@starbuckisacylon.baylibre.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <db7f731b-32c3-b4a6-1cab-2c34082b2c22@amlogic.com>
+Date:   Fri, 13 Dec 2019 17:35:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
+MIME-Version: 1.0
+In-Reply-To: <1jblsdlvck.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.99]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add clock driver for QorIQ LS1028A Display output interfaces(LCD, DPHY),
-as implemented in TSMC CLN28HPM PLL, this PLL supports the programmable
-integer division and range of the display output pixel clock's 27-594MHz.
 
-Signed-off-by: Wen He <wen.he_1@nxp.com>
-Signed-off-by: Michael Walle <michael@walle.cc>
----
- drivers/clk/Kconfig      |  10 ++
- drivers/clk/Makefile     |   1 +
- drivers/clk/clk-plldig.c | 286 +++++++++++++++++++++++++++++++++++++++
- 3 files changed, 297 insertions(+)
- create mode 100644 drivers/clk/clk-plldig.c
 
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 0530bebfc25a..9f6b0196c604 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -218,6 +218,16 @@ config CLK_QORIQ
- 	  This adds the clock driver support for Freescale QorIQ platforms
- 	  using common clock framework.
- 
-+config CLK_LS1028A_PLLDIG
-+        tristate "Clock driver for LS1028A Display output"
-+        depends on ARCH_LAYERSCAPE || COMPILE_TEST
-+        default ARCH_LAYERSCAPE
-+        help
-+          This driver support the Display output interfaces(LCD, DPHY) pixel clocks
-+          of the QorIQ Layerscape LS1028A, as implemented TSMC CLN28HPM PLL. Not all
-+          features of the PLL are currently supported by the driver. By default,
-+          configured bypass mode with this PLL.
-+
- config COMMON_CLK_XGENE
- 	bool "Clock driver for APM XGene SoC"
- 	default ARCH_XGENE
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 0138fb14e6f8..97d1e5bc6de5 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -43,6 +43,7 @@ obj-$(CONFIG_ARCH_NPCM7XX)	    	+= clk-npcm7xx.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= clk-nspire.o
- obj-$(CONFIG_COMMON_CLK_OXNAS)		+= clk-oxnas.o
- obj-$(CONFIG_COMMON_CLK_PALMAS)		+= clk-palmas.o
-+obj-$(CONFIG_CLK_LS1028A_PLLDIG)	+= clk-plldig.o
- obj-$(CONFIG_COMMON_CLK_PWM)		+= clk-pwm.o
- obj-$(CONFIG_CLK_QORIQ)			+= clk-qoriq.o
- obj-$(CONFIG_COMMON_CLK_RK808)		+= clk-rk808.o
-diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
-new file mode 100644
-index 000000000000..a5da08f98d01
---- /dev/null
-+++ b/drivers/clk/clk-plldig.c
-@@ -0,0 +1,286 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright 2019 NXP
-+ *
-+ * Clock driver for LS1028A Display output interfaces(LCD, DPHY).
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/device.h>
-+#include <linux/module.h>
-+#include <linux/err.h>
-+#include <linux/io.h>
-+#include <linux/iopoll.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_device.h>
-+#include <linux/platform_device.h>
-+#include <linux/slab.h>
-+#include <linux/bitfield.h>
-+
-+/* PLLDIG register offsets and bit masks */
-+#define PLLDIG_REG_PLLSR            0x24
-+#define PLLDIG_LOCK_MASK            BIT(2)
-+#define PLLDIG_REG_PLLDV            0x28
-+#define PLLDIG_MFD_MASK             GENMASK(7, 0)
-+#define PLLDIG_RFDPHI1_MASK         GENMASK(30, 25)
-+#define PLLDIG_REG_PLLFM            0x2c
-+#define PLLDIG_SSCGBYP_ENABLE       BIT(30)
-+#define PLLDIG_REG_PLLFD            0x30
-+#define PLLDIG_FDEN                 BIT(30)
-+#define PLLDIG_FRAC_MASK            GENMASK(15, 0)
-+#define PLLDIG_REG_PLLCAL1          0x38
-+#define PLLDIG_REG_PLLCAL2          0x3c
-+
-+/* Range of the VCO frequencies, in Hz */
-+#define PLLDIG_MIN_VCO_FREQ         650000000
-+#define PLLDIG_MAX_VCO_FREQ         1300000000
-+
-+/* Range of the output frequencies, in Hz */
-+#define PHI1_MIN_FREQ               27000000
-+#define PHI1_MAX_FREQ               600000000
-+
-+/* Maximum value of the reduced frequency divider */
-+#define MAX_RFDPHI1          63UL
-+
-+/* Best value of multiplication factor divider */
-+#define PLLDIG_DEFAULT_MFD   44
-+
-+/*
-+ * Denominator part of the fractional part of the
-+ * loop multiplication factor.
-+ */
-+#define MFDEN          20480
-+
-+static const struct clk_parent_data parent_data[] = {
-+	{ .index = 0 },
-+};
-+
-+struct clk_plldig {
-+	struct clk_hw hw;
-+	void __iomem *regs;
-+	unsigned int vco_freq;
-+};
-+
-+#define to_clk_plldig(_hw)	container_of(_hw, struct clk_plldig, hw)
-+
-+static int plldig_enable(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFM);
-+	/*
-+	 * Use Bypass mode with PLL off by default, the frequency overshoot
-+	 * detector output was disable. SSCG Bypass mode should be enable.
-+	 */
-+	val |= PLLDIG_SSCGBYP_ENABLE;
-+	writel(val, data->regs + PLLDIG_REG_PLLFM);
-+
-+	return 0;
-+}
-+
-+static void plldig_disable(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLFM);
-+
-+	val &= ~PLLDIG_SSCGBYP_ENABLE;
-+	val |= FIELD_PREP(PLLDIG_SSCGBYP_ENABLE, 0x0);
-+
-+	writel(val, data->regs + PLLDIG_REG_PLLFM);
-+}
-+
-+static int plldig_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+
-+	return readl(data->regs + PLLDIG_REG_PLLFM) &
-+			      PLLDIG_SSCGBYP_ENABLE;
-+}
-+
-+static unsigned long plldig_recalc_rate(struct clk_hw *hw,
-+					unsigned long parent_rate)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	u32 val, rfdphi1;
-+
-+	val = readl(data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* Check if PLL is bypassed */
-+	if (val & PLLDIG_SSCGBYP_ENABLE)
-+		return parent_rate;
-+
-+	rfdphi1 = FIELD_GET(PLLDIG_RFDPHI1_MASK, val);
-+
-+	/*
-+	 * If RFDPHI1 has a value of 1 the VCO frequency is also divided by
-+	 * one.
-+	 */
-+	if (!rfdphi1)
-+		rfdphi1 = 1;
-+
-+	return DIV_ROUND_UP(data->vco_freq, rfdphi1);
-+}
-+
-+static unsigned long plldig_calc_target_div(unsigned long vco_freq,
-+					    unsigned long target_rate)
-+{
-+	unsigned long div;
-+
-+	div = DIV_ROUND_CLOSEST(vco_freq, target_rate);
-+	div = clamp(div, 1UL, MAX_RFDPHI1);
-+
-+	return div;
-+}
-+
-+static int plldig_determine_rate(struct clk_hw *hw,
-+				 struct clk_rate_request *req)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	unsigned int div;
-+
-+	req->rate = clamp(req->rate, PHI1_MIN_FREQ, PHI1_MAX_FREQ);
-+	div = plldig_calc_target_div(data->vco_freq, req->rate);
-+	req->rate = DIV_ROUND_UP(data->vco_freq, div);
-+
-+	return 0;
-+}
-+
-+static int plldig_set_rate(struct clk_hw *hw, unsigned long rate,
-+		unsigned long parent_rate)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	unsigned int val, cond;
-+	unsigned int rfdphi1;
-+
-+	rate = clamp(rate, PHI1_MIN_FREQ, PHI1_MAX_FREQ);
-+	rfdphi1 = plldig_calc_target_div(data->vco_freq, rate);
-+
-+	/* update the divider value */
-+	val = readl(data->regs + PLLDIG_REG_PLLDV);
-+	val &= ~PLLDIG_RFDPHI1_MASK;
-+	val |= FIELD_PREP(PLLDIG_RFDPHI1_MASK, rfdphi1);
-+	writel(val, data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* waiting for old lock state to clear */
-+	udelay(200);
-+
-+	/* Wait until PLL is locked or timeout */
-+	return readl_poll_timeout_atomic(data->regs + PLLDIG_REG_PLLSR, cond,
-+					 cond & PLLDIG_LOCK_MASK, 0,
-+					 USEC_PER_MSEC);
-+}
-+
-+static const struct clk_ops plldig_clk_ops = {
-+	.enable = plldig_enable,
-+	.disable = plldig_disable,
-+	.is_enabled = plldig_is_enabled,
-+	.recalc_rate = plldig_recalc_rate,
-+	.determine_rate = plldig_determine_rate,
-+	.set_rate = plldig_set_rate,
-+};
-+
-+static int plldig_init(struct clk_hw *hw)
-+{
-+	struct clk_plldig *data = to_clk_plldig(hw);
-+	struct clk_hw *parent = clk_hw_get_parent(hw);
-+	unsigned long parent_rate = clk_hw_get_rate(parent);
-+	unsigned long val;
-+	unsigned long long lltmp;
-+	unsigned int mfd, fracdiv = 0;
-+
-+	if (!parent)
-+		return -EINVAL;
-+
-+	if (data->vco_freq) {
-+		mfd = data->vco_freq / parent_rate;
-+		lltmp = data->vco_freq % parent_rate;
-+		lltmp *= MFDEN;
-+		do_div(lltmp, parent_rate);
-+		fracdiv = lltmp;
-+	} else {
-+		mfd = PLLDIG_DEFAULT_MFD;
-+		data->vco_freq = parent_rate * mfd;
-+	}
-+
-+	val = FIELD_PREP(PLLDIG_MFD_MASK, mfd);
-+	writel(val, data->regs + PLLDIG_REG_PLLDV);
-+
-+	/* Enable fractional divider */
-+	if (fracdiv) {
-+		val = FIELD_PREP(PLLDIG_FRAC_MASK, fracdiv);
-+		val |= PLLDIG_FDEN;
-+		writel(val, data->regs + PLLDIG_REG_PLLFD);
-+	}
-+
-+	return 0;
-+}
-+
-+static int plldig_clk_probe(struct platform_device *pdev)
-+{
-+	struct clk_plldig *data;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	data->regs = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(data->regs))
-+		return PTR_ERR(data->regs);
-+
-+	data->hw.init = CLK_HW_INIT_PARENTS_DATA("dpclk",
-+						 parent_data,
-+						 &plldig_clk_ops,
-+						 0);
-+
-+	ret = devm_clk_hw_register(dev, &data->hw);
-+	if (ret) {
-+		dev_err(dev, "failed to register %s clock\n",
-+						dev->of_node->name);
-+		return ret;
-+	}
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &data->hw);
-+	if (ret) {
-+		dev_err(dev, "unable to add clk provider\n");
-+		return ret;
-+	}
-+
-+	/*
-+	 * The frequency of the VCO cannot be changed during runtime.
-+	 * Therefore, let the user specify a desired frequency.
-+	 */
-+	if (!of_property_read_u32(dev->of_node, "fsl,vco-hz",
-+				  &data->vco_freq)) {
-+		if (data->vco_freq < PLLDIG_MIN_VCO_FREQ ||
-+		    data->vco_freq > PLLDIG_MAX_VCO_FREQ)
-+			return -EINVAL;
-+	}
-+
-+	return plldig_init(&data->hw);
-+}
-+
-+static const struct of_device_id plldig_clk_id[] = {
-+	{ .compatible = "fsl,ls1028a-plldig" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, plldig_clk_id);
-+
-+static struct platform_driver plldig_clk_driver = {
-+	.driver = {
-+		.name = "plldig-clock",
-+		.of_match_table = plldig_clk_id,
-+	},
-+	.probe = plldig_clk_probe,
-+};
-+module_platform_driver(plldig_clk_driver);
-+
-+MODULE_LICENSE("GPL v2");
-+MODULE_AUTHOR("Wen He <wen.he_1@nxp.com>");
-+MODULE_DESCRIPTION("LS1028A Display output interface pixel clock driver");
--- 
-2.17.1
-
+On 2019/12/12 17:57, Jerome Brunet wrote:
+> 
+> On Fri 06 Dec 2019 at 08:40, Jian Hu <jian.hu@amlogic.com> wrote:
+> 
+>> Add the documentation to support Amlogic A1 PLL clock driver,
+>> and add A1 PLL clock controller bindings.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 59 +++++++++++++++++++
+>>   include/dt-bindings/clock/a1-pll-clkc.h       | 16 +++++
+>>   2 files changed, 75 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> new file mode 100644
+>> index 000000000000..7feeef5abf1b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> @@ -0,0 +1,59 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> 
+> Rob commented on the above in v1 and it remains unaddressedOK, I will fix it in the next version.
+> 
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Amlogic Meson A/C serials PLL Clock Control Unit Device Tree Bindings
+>> +
+>> +maintainers:
+>> +  - Neil Armstrong <narmstrong@baylibre.com>
+>> +  - Jerome Brunet <jbrunet@baylibre.com>
+>> +  - Jian Hu <jian.hu@jian.hu.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    - enum:
+>> +        - amlogic,a1-pll-clkc
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +clocks:
+>> +  minItems: 2
+>> +  maxItems: 2
+>> +  items:
+>> +   - description: Input xtal_fixpll
+>> +   - description: Input xtal_hifipll
+>> +
+>> +clock-names:
+>> +  minItems: 2
+>> +  maxItems: 2
+>> +  items:
+>> +     - const: xtal_fixpll
+>> +     - const: xtal_hifipll
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#clock-cells"
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clkc_pll: pll-clock-controller@7c80 {
+>> +                compatible = "amlogic,a1-pll-clkc";
+>> +                reg = <0 0x7c80 0 0x18c>;
+>> +                #clock-cells = <1>;
+>> +                clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
+>> +                         <&clkc_periphs CLKID_XTAL_HIFIPLL>;
+>> +                clock-names = "xtal_fixpll", "xtal_hifipll";
+>> +    };
+>> diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
+>> new file mode 100644
+>> index 000000000000..58eae237e503
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/a1-pll-clkc.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __A1_PLL_CLKC_H
+>> +#define __A1_PLL_CLKC_H
+>> +
+>> +#define CLKID_FIXED_PLL				1
+>> +#define CLKID_FCLK_DIV2				6
+>> +#define CLKID_FCLK_DIV3				7
+>> +#define CLKID_FCLK_DIV5				8
+>> +#define CLKID_FCLK_DIV7				9
+>> +#define CLKID_HIFI_PLL				10
+>> +
+>> +#endif /* __A1_PLL_CLKC_H */
+> 
+> .
+> 
