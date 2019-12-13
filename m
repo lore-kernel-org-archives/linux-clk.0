@@ -2,129 +2,121 @@ Return-Path: <SRS0=y/Yu=2D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA23EC34379
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:37:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10938C5071E
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:37:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4C724764
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:37:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46A3D24712
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:37:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UDTr9nd5"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a7VtdNfH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfLMN1w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Dec 2019 08:27:52 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:39893 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726524AbfLMN1v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 08:27:51 -0500
-Received: by mail-lf1-f68.google.com with SMTP id y1so1953827lfb.6;
-        Fri, 13 Dec 2019 05:27:50 -0800 (PST)
+        id S1727594AbfLMN4o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Dec 2019 08:56:44 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:45211 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727552AbfLMN4n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 08:56:43 -0500
+Received: by mail-lj1-f195.google.com with SMTP id d20so2699483ljc.12
+        for <linux-clk@vger.kernel.org>; Fri, 13 Dec 2019 05:56:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=3a5X/HsBz/Jc1tMHJpbmDEO9eAeGDYj6GdIi3XHqmgk=;
-        b=UDTr9nd5YdTb0v4Cj17QdUNasXorhaf3wFgqaZW+mh5qHk9tgTFVfXJT3QqZ8MIpvH
-         NXrAFiKT68JxWuNnIA8IIhJnY7IzP/mqtAac+7QkKHZn9Lq2MatgeODHqxVT8wRzBf8X
-         BTbQ+1JjFqPAuOCOxaM1SIWCiadtPhAh/mL8CBZF9dEP4iKqO4i1aEB71Hg5xEXWJNVL
-         U7I02pje8D8nu0w09x5OxgiF3FQTxuMy0pb+5B1x9/VLA0I57ZgxX/RMGrnlSuTmtQvD
-         DAxtqUoNakVHTLZkYfajb/4DJJbmIlSUifZCZV0UJb1rj0qEiCqUKiA0IxE8s8BPvs7P
-         74Yg==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Ng0J7VT6q7et93hoQowYvQqzLfb9VIPnBEUDJ7gqlTQ=;
+        b=a7VtdNfHIVILhuTWgjDaH90Fod1yB199ZL5r5mn6i4THtWtQEmPH/80tBhAvFb2KbB
+         yIdi/QHqtBtrv8HC1b3iZZ1tPyZjOfk/FQIjWMiX2h688sfN4AXvyKc5nzSFeTYvBSKE
+         7JlvVL8AGXd7X4Lpz8QGLCSGmZKW9577YuwJvHYfKT9afQZu4Wx/L55yqoShjOmsAjTk
+         4j/BN4Whchk2P92Zep2kex1nqoloN3cLNLkBhpQgfZFknQ3NmneYmojRpBhR+20laW4F
+         P70/2ApsdcbiKLhVM13ta3Z0O1KKYVhkyhZ0fYXtmEgAu0629c6/T/AT4aHX82ooblbb
+         VmjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3a5X/HsBz/Jc1tMHJpbmDEO9eAeGDYj6GdIi3XHqmgk=;
-        b=YtZj4dp+J0YPfl+CSLp9LLkKCh8mjqwydIvN9bLDQYUC7fP42RBoKjtwukeeuDPNb2
-         mOYhyGp76vGdkNvCKN4iYo0ky8KYH4s5epLOJhYlkIuPsN5KARt44eK1/3UKPyclRCb0
-         hpe71YzI7HNiJWjjabUF66Dos9a6WZ20BMeVW30JF0gt0XdcnuxIPYqYbn18eJG5lig2
-         +RP3x0GItlCgmN3o/cTkNDItZtczbhIgRWcLCdMxrqXH4Zjx6lg8UOgdU+8rPZRcCqUo
-         WpIDduxAe+jJwxJFIK9hurcAwIoI5z/l/U19coatG3iYGoKyemxAc1gA/v8t0S7qKMTW
-         yjIQ==
-X-Gm-Message-State: APjAAAV3Ekm4EjCe24191+mjtaGXiNri+HOT88M4e+Yh5D8bwaCL3Ihb
-        QC0pYAsHPmZfduix3tuTpdWoOJWH
-X-Google-Smtp-Source: APXvYqzdJxJTo1vC8tE/6X67cFm/2BzOhMPwQfT4615iB1t6JDsbDMiKJl5e+NhYNhJGVufp+Zj/Fw==
-X-Received: by 2002:a19:4ac2:: with SMTP id x185mr2761270lfa.131.1576243669708;
-        Fri, 13 Dec 2019 05:27:49 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id 2sm4774272ljq.38.2019.12.13.05.27.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 13 Dec 2019 05:27:48 -0800 (PST)
-Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
- and Tegra30 SoCs
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191118164512.8676-1-digetx@gmail.com>
- <20191118164512.8676-8-digetx@gmail.com>
- <2776e3c7-999e-5e6f-3a0e-211226dc30e6@gmail.com>
-Message-ID: <aee736a0-444c-3d1a-1e51-c5b5259eb1b5@gmail.com>
-Date:   Fri, 13 Dec 2019 16:27:47 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Ng0J7VT6q7et93hoQowYvQqzLfb9VIPnBEUDJ7gqlTQ=;
+        b=oBgH+1c8IQw6j2s/9PKhejBviGASeUh16AcsdavSd7gEe3cyzxkekI+lwm4RKEWUw8
+         tOa2px5lSPFQ07UaQkXZLCr/tnpmcpTcVQ6xj5vtG7nIjg9AaggpHwtURsTWRCIVFNJC
+         NiHv/mM1bfH5TDm8PZO0x9NQxCiO9BlPRaXCWVJ6kNgzNfSYwCqOIXLJKoz390LbNvZN
+         VrW2aHlHyosyQnel03lKObocpGvb3s4uHX/QMUxBVHdif9As5zDdc7zmxOmuXvYGAEdQ
+         kjJW2YGE0OAnMoZCWB3cJZHnJgltsH37c4US4hgCNsJTCkoQNTq12HMg8Ubx8tb/KX1m
+         Wn7A==
+X-Gm-Message-State: APjAAAUxngLK1YYzu3eUCSBuPjYij6Wz+2gHubDB2fkjjOeRs38nP3tp
+        D+j3PZCvzuZrmty6U9x8Bv6hVs+GfpwMzZjHe4iymVGGkVEhnQ==
+X-Google-Smtp-Source: APXvYqy0vWEsCjDFZyfSN/Lrm144Do0DBoodpv0T4Wt1uLstCAlXzPsbmrt/BMig0xLpHmCvNRunXlxDBV860t28M7A=
+X-Received: by 2002:a05:651c:1049:: with SMTP id x9mr9521183ljm.233.1576245401607;
+ Fri, 13 Dec 2019 05:56:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <2776e3c7-999e-5e6f-3a0e-211226dc30e6@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191205002503.13088-1-masneyb@onstation.org> <20191205002503.13088-2-masneyb@onstation.org>
+ <0101016eee224b50-8a5545e2-837f-41c2-9574-b385e111a6b3-000000@us-west-2.amazonses.com>
+ <20191210115153.GA10298@onstation.org>
+In-Reply-To: <20191210115153.GA10298@onstation.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 13 Dec 2019 14:56:30 +0100
+Message-ID: <CACRpkdY+yP6-MyFw1tFvVN_FjNfPBGYZxiK5rZiS5Yyp7eainw@mail.gmail.com>
+Subject: Re: [PATCH 1/7] clk: qcom: add support for setting the duty cycle
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Linux Input <linux-input@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        MSM <linux-arm-msm@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-18.11.2019 19:51, Dmitry Osipenko пишет:
-> 18.11.2019 19:45, Dmitry Osipenko пишет:
->> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
->> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
->> Currently cpufreq-dt driver produces a bit annoying warning splats
->> during boot because valid OPPs are not found, this will be fixed once
->> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
->> will also happen on older stable kernels using newer device-trees, thus
->> this patch should be backported to stable kernels as well.
->>
->> Cc: <stable@vger.kernel.org>
->> Reported-by: Jon Hunter <jonathanh@nvidia.com>
->> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->> ---
->>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
->>  1 file changed, 2 insertions(+)
->>
->> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
->> index f1d170dcf4d3..aba591d57c67 100644
->> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
->> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
->> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
->>  	{ .compatible = "mediatek,mt8176", },
->>  	{ .compatible = "mediatek,mt8183", },
->>  
->> +	{ .compatible = "nvidia,tegra20", },
->> +	{ .compatible = "nvidia,tegra30", },
->>  	{ .compatible = "nvidia,tegra124", },
->>  	{ .compatible = "nvidia,tegra210", },
->>  
->>
-> 
-> Hello Viresh,
-> 
-> Could you please pick up this patch for v5.5 fixes? Thanks in advance!
-> 
+On Tue, Dec 10, 2019 at 12:52 PM Brian Masney <masneyb@onstation.org> wrote:
+> On Tue, Dec 10, 2019 at 04:47:35AM +0000, Taniya Das wrote:
+> > On 12/5/2019 5:54 AM, Brian Masney wrote:
 
-Viresh / Rafael? Maybe I should send that patch separately?
+> > > I'm not sure about the relationship of the m, n, and d values,
+> > > especially how the 50% duty cycle is calculated by inverting the n
+> > > value, so that's why I'm saving the duty cycle ratio for
+> > > get_duty_cycle().
+(...)
+> > > +static int clk_rcg2_set_duty_cycle(struct clk_hw *hw, struct clk_duty *duty)
+> > > +{
+> > > +   struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+> > > +   int ret, d_reg_val, mask;
+> > > +
+> > > +   mask = BIT(rcg->mnd_width - 1) - 1;
+> > > +   d_reg_val = mask - (((mask - 17) * duty->num) / duty->den);
+> > > +   ret = __clk_rcg2_configure_with_duty_cycle(rcg, rcg->freq_tbl,
+> > > +                                              d_reg_val, duty->num,
+> > > +                                              duty->den);
+> >
+> > The duty-cycle calculation is not accurate.
+> > There is already a plan to submit the duty-cycle changes from my side.
+>
+> OK... I assume that the m and n values need to be changed as well. I
+> couldn't find any docs online about the meaning of the m, n, and d
+> values and how they relate to each other.
+
+I have also at times struggled to understand this.
+
+If someone could just in a very concise form describe how these
+rcg[2] clock dividers work and how m,n,d work that'd be GREAT.
+ASCII art etc would be a bonus :)
+
+Like with a patch with a big comment in
+drivers/clk/qcom/clk-rcg.h
+
+As these tend to be quite regularly reused and incarnated in
+ever new silicon a complete picture for developers would be
+much appreciated.
+
+Yours,
+Linus Walleij
