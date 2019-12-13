@@ -2,100 +2,55 @@ Return-Path: <SRS0=y/Yu=2D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DEA0C35246
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:37:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D47E6C341A2
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD7C7247A1
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:37:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F1472469F
+	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 20:38:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727754AbfLMOsv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Dec 2019 09:48:51 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:43632 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727690AbfLMOsv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 09:48:51 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x14so1095036oic.10;
-        Fri, 13 Dec 2019 06:48:50 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=DBQ9/WA8dJ3yj6YsudcTec03HFt1nH6b3ZMKGQoshZA=;
-        b=Lho4W3VYXrMqPX8203M09YviMSW/usQi76JfLp+7or7fv/6I8htgLnkZos68vOkGR0
-         QpfDOT5xG1XFEXFybZQDyDQibLEqOBvbJPDWu7Uww0HnqZPwvTv/O4v+dEmifTbRebap
-         vuD855UKpQeBACovct6zBo8lFk81j/q2/MViLi/h1AlXUYAzln35rRYHjB0PVPtUR6af
-         twZ4UFcmmd1E1kZzT+qwXJjd3Vs7BP1Lbp+SYGCm/ggHNErdI04J6+luid2VRjbivx58
-         NKbg2yhF9umR89yBEQYFg98aC3kEkwkRPd4SsJ9UnxFV/KsOUSmaDIA7+cXKzbTTlyDX
-         89fA==
-X-Gm-Message-State: APjAAAWuGw839W9xqixnTjiWh5GC/C5yPIqSGxBVWNVeh/ovxIVK7ahY
-        3ib+yxpadgAnL+Uwnpa/sgEskNS/4V2oQGT1W3I=
-X-Google-Smtp-Source: APXvYqxMUciMS4Fl8EikJlRe3Ox04DBMI5w6FiyUlCP13ScCYG4vGuP13u/7YMjuXx6vrNDeeFn1L3GecFnfUuqqwjg=
-X-Received: by 2002:aca:4a41:: with SMTP id x62mr6794805oia.148.1576248530226;
- Fri, 13 Dec 2019 06:48:50 -0800 (PST)
+        id S1727706AbfLMPV1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 13 Dec 2019 10:21:27 -0500
+Received: from out28-195.mail.aliyun.com ([115.124.28.195]:44113 "EHLO
+        out28-195.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726908AbfLMPV1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 10:21:27 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.1875682|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.0205657-0.000635969-0.978798;DS=CONTINUE|ham_system_inform|0.104908-0.00039177-0.8947;FP=12608124286243724992|1|1|1|0|-1|-1|-1;HT=e01l07423;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.GGSxanS_1576250475;
+Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GGSxanS_1576250475)
+          by smtp.aliyun-inc.com(10.147.40.233);
+          Fri, 13 Dec 2019 23:21:21 +0800
+From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        <zhouyanjie@wanyeetech.com>
+To:     linux-mips@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, robh+dt@kernel.org,
+        paul.burton@mips.com, paulburton@kernel.org, paul@crapouillou.net,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+Subject: clk: Ingenic: Add support for the X1830 v2.
+Date:   Fri, 13 Dec 2019 23:21:06 +0800
+Message-Id: <1576250472-124315-1-git-send-email-zhouyanjie@wanyeetech.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <20191206134202.18784-2-chris.brandt@renesas.com> <37c13497-d20f-583f-72d7-1e3c8a241990@cogentembedded.com>
- <TYXPR01MB1568ED4D40CEC399E64F6A2B8A550@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <CAMuHMdWCgOsj_ZWF-+f-5XjZU9RSCm6Ww3gBmYQeSGz0B77_ig@mail.gmail.com> <TY1PR01MB15625260CB3CE48A3FBA11058A540@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY1PR01MB15625260CB3CE48A3FBA11058A540@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 13 Dec 2019 15:48:39 +0100
-Message-ID: <CAMuHMdUoFKm9Eox=xY1tnxeqG89X=EeRh0N+Aynjg6gBxBgm6A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/6] spi: Add SPIBSC driver
-To:     Chris Brandt <Chris.Brandt@renesas.com>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Chris,
+v1->v2:
+1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
+  array (reg[2]).
+2.Remove the "pll_info->version" and add a "pll_info->rate_multiplier".
+3.Fix the coding style and add more detailed commit message.
+4.Remove [4/5] and [5/5] in v1, because some problems were found in
+  subsequent tests.
+5.Remove unnecessary spinlock as Paul Burton and Paul Cercueil's suggestion.
+6.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+  to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
+  the old mailbox is in an unstable state.
 
-On Fri, Dec 13, 2019 at 3:45 PM Chris Brandt <Chris.Brandt@renesas.com> wrote:
-> On Fri, Dec 13, 2019, Geert Uytterhoeven wrote:
-> > On Thu, Dec 12, 2019 at 9:19 PM Chris Brandt <Chris.Brandt@renesas.com>
-> > wrote:
-> > > On Thu, Dec 12, 2019, Sergei Shtylyov wrote:
-> > > >    As you can see, the deleted file is back after unmount/re-mount...
-> > >
-> > > Did you do a 'sync' before you unmounted?
-> >
-> > Does it fail without? If yes, that must be a jffs2 bug.
->
-> It does not fail for me with or without the sync.
-
-Good.
-
-> I just I was remembering that you need to call sync before you call reboot
-> or shutdown because those do not sync first. That's what I remember anyway.
-
-Yeah, "embedded" reboot commands may reboot immediately, without shutting
-down the system cleanly.  Same for "reboot -f" on Debian.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
