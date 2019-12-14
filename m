@@ -1,93 +1,248 @@
-Return-Path: <SRS0=y/Yu=2D=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=i7EJ=2E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBA34C43603
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 23:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A358CC2D0C9
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 12:16:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57862067C
-	for <linux-clk@archiver.kernel.org>; Fri, 13 Dec 2019 23:26:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576279600;
-	bh=eSCH3/y/JW3xCU+ymbXlZgBpU6wy/YQlq7+3c6LUUhI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ggH4HZ0tYrQCkEqXvzQAtlai3leC9CgMe8V+2Tf29JQKVBg9hwnAM5WbR4Uq5urR1
-	 J+RtWkfKDkmiRWoNaxGoqNw6RqpSZfV9uKF31kWj0CUnSrBkRpfeh7FZ+nl+nuYn9U
-	 mfvupAey5ZmB+FW0jcdkES2k6V1Xg6EtWxrXZapo=
+	by mail.kernel.org (Postfix) with ESMTP id 7C91E24676
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 12:16:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726705AbfLMX0g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 13 Dec 2019 18:26:36 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:41941 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725747AbfLMX0g (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 13 Dec 2019 18:26:36 -0500
-Received: by mail-oi1-f193.google.com with SMTP id i1so2069616oie.8;
-        Fri, 13 Dec 2019 15:26:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=9tBcNOCxqPdqixtTHmzQKgwSJzOr34ZtfeLXIY6339k=;
-        b=khVneIrKmjIAtmnIrM+drJeKx9TkuhUDIKXE67ML5R5AtyD9WEOMH65pfxpdznRvcT
-         APK1x3EbjQJmVA3l9Feu7Rnvx1l+UdvYKnoPN2wbWsIAO0SQHcxVbbM7R7Gt2D+jI2n2
-         51BD4jrykrWutXbpSnCxFBC9rwvZ+Uhko3Ey4P7L0aRQvrsvg3MlgxCD1dmZuvNigEeB
-         ujmrcF37JuBf53ylRpAIMqC1aECmhMAbIoQ2qeoQWtAVpowKCd0O36zevmoUNMjJnw9Y
-         wj7mpQ669qHXIwnVMmDa7TqP+ChIrC++HEi+iQc2ZUiNbeyUb2hFOPtNVc0Y5z+fKcfA
-         MPVg==
-X-Gm-Message-State: APjAAAVuknYfRwxHpvUZE5wZ6shmLmjbrWAxXYeTtu46+CvknbkHDSnH
-        afFxHh8xs1QQEuHhtq4UZA==
-X-Google-Smtp-Source: APXvYqwNYGgD2lL8HkWOAPYgLrNju3VL3N1vf+LrHhWb+bLnt1opXtXZP9zsrWmQ8iKm2ZyeU5xyfQ==
-X-Received: by 2002:a05:6808:102:: with SMTP id b2mr8248272oie.127.1576279595637;
-        Fri, 13 Dec 2019 15:26:35 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id l128sm3844610oif.55.2019.12.13.15.26.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 13 Dec 2019 15:26:35 -0800 (PST)
-Date:   Fri, 13 Dec 2019 17:26:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     gabriel.fernandez@st.com
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@st.com>,
+        id S1726683AbfLNMQx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Dec 2019 07:16:53 -0500
+Received: from out28-53.mail.aliyun.com ([115.124.28.53]:54946 "EHLO
+        out28-53.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbfLNMQx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 07:16:53 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07436329|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.477822-0.00910106-0.513076;DS=CONTINUE|ham_regular_dialog|0.28273-0.00130711-0.715963;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03300;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.GH.ETg._1576325792;
+Received: from 192.168.88.128(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GH.ETg._1576325792)
+          by smtp.aliyun-inc.com(10.147.40.2);
+          Sat, 14 Dec 2019 20:16:33 +0800
+Subject: Re: [PATCH v2 1/5] clk: Ingenic: Adjust cgu code to make it
+ compatible with X1830.
+To:     Paul Cercueil <paul@crapouillou.net>
+References: <1576250472-124315-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1576250472-124315-3-git-send-email-zhouyanjie@wanyeetech.com>
+ <1576272301.3.3@crapouillou.net>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Gabriel Fernandez <gabriel.fernandez@st.com>
-Subject: Re: [PATCH] dt-bindings: rcc: Convert stm32mp1 rcc bindings to
- json-schema
-Message-ID: <20191213232634.GA21711@bogus>
-References: <20191202150343.27854-1-gabriel.fernandez@st.com>
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+From:   zhouyanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <5DF4D2A0.3010603@wanyeetech.com>
+Date:   Sat, 14 Dec 2019 20:16:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191202150343.27854-1-gabriel.fernandez@st.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1576272301.3.3@crapouillou.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 2 Dec 2019 16:03:43 +0100, <gabriel.fernandez@st.com> wrote:
-> From: Gabriel Fernandez <gabriel.fernandez@st.com>
-> 
-> Convert the STM32MP1 RCC binding to DT schema format using json-schema.
-> 
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@st.com>
-> ---
->  .../bindings/clock/st,stm32mp1-rcc.txt        | 60 --------------
->  .../bindings/clock/st,stm32mp1-rcc.yaml       | 79 +++++++++++++++++++
->  2 files changed, 79 insertions(+), 60 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.txt
->  create mode 100644 Documentation/devicetree/bindings/clock/st,stm32mp1-rcc.yaml
-> 
+Hi Paul,
 
-Applied, thanks.
+On 2019年12月14日 05:25, Paul Cercueil wrote:
+> Hi Zhou,
+>
+>
+> Le ven., déc. 13, 2019 at 23:21, 周琰杰 (Zhou Yanjie) 
+> <zhouyanjie@wanyeetech.com> a écrit :
+>> The PLL of X1830 Soc from Ingenic has been greatly changed,
+>> the bypass control is placed in another register, so now two
+>> registers may needed to control the PLL. To this end, the
+>> original "reg" was changed to "pll_reg", and a new "bypass_reg"
+>> was introduced. In addition, when calculating rate, the PLL of
+>> X1830 introduced an extra 2x multiplier, so a new "rate_multiplier"
+>> was introduced.
+>>
+>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> ---
+>>
+>> Notes:
+>>     v1->v2:
+>>     1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
+>>       array (reg[2]).
+>>     2.Remove the "pll_info->version" and add a 
+>> "pll_info->rate_multiplier".
+>>     3.Fix the coding style and add more detailed commit message.
+>>     4.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
+>>       to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
+>>       the old mailbox is in an unstable state.
+>>
+>>  drivers/clk/ingenic/cgu.c | 32 +++++++++++++++++++++-----------
+>>  drivers/clk/ingenic/cgu.h |  8 ++++++--
+>>  2 files changed, 27 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+>> index 6e96303..ae1ddcb 100644
+>> --- a/drivers/clk/ingenic/cgu.c
+>> +++ b/drivers/clk/ingenic/cgu.c
+>> @@ -84,7 +84,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned 
+>> long parent_rate)
+>>      pll_info = &clk_info->pll;
+>>
+>>      spin_lock_irqsave(&cgu->lock, flags);
+>> -    ctl = readl(cgu->base + pll_info->reg);
+>> +    ctl = readl(cgu->base + pll_info->pll_reg);
+>>      spin_unlock_irqrestore(&cgu->lock, flags);
+>>
+>>      m = (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
+>> @@ -93,6 +93,11 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, 
+>> unsigned long parent_rate)
+>>      n += pll_info->n_offset;
+>>      od_enc = ctl >> pll_info->od_shift;
+>>      od_enc &= GENMASK(pll_info->od_bits - 1, 0);
+>> +
+>> +    spin_lock_irqsave(&cgu->lock, flags);
+>> +    ctl = readl(cgu->base + pll_info->bypass_reg);
+>> +    spin_unlock_irqrestore(&cgu->lock, flags);
+>
+> I think you should start the patchset with the current [5/5] patch; 
+> then you wouldn't have to add spinlock protection here just to see it 
+> removed later in the same patchset.
+>
 
-Rob
+OK, I will adjust their order in v3.
+
+Thanks and best regards!
+
+> Cheers,
+> -Paul
+>
+>> +
+>>      bypass = !pll_info->no_bypass_bit &&
+>>           !!(ctl & BIT(pll_info->bypass_bit));
+>>
+>> @@ -106,7 +111,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, 
+>> unsigned long parent_rate)
+>>      BUG_ON(od == pll_info->od_max);
+>>      od++;
+>>
+>> -    return div_u64((u64)parent_rate * m, n * od);
+>> +    return div_u64((u64)parent_rate * m * pll_info->rate_multiplier, 
+>> n * od);
+>>  }
+>>
+>>  static unsigned long
+>> @@ -139,7 +144,7 @@ ingenic_pll_calc(const struct 
+>> ingenic_cgu_clk_info *clk_info,
+>>      if (pod)
+>>          *pod = od;
+>>
+>> -    return div_u64((u64)parent_rate * m, n * od);
+>> +    return div_u64((u64)parent_rate * m * pll_info->rate_multiplier, 
+>> n * od);
+>>  }
+>>
+>>  static inline const struct ingenic_cgu_clk_info *to_clk_info(
+>> @@ -183,7 +188,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned 
+>> long req_rate,
+>>              clk_info->name, req_rate, rate);
+>>
+>>      spin_lock_irqsave(&cgu->lock, flags);
+>> -    ctl = readl(cgu->base + pll_info->reg);
+>> +    ctl = readl(cgu->base + pll_info->pll_reg);
+>>
+>>      ctl &= ~(GENMASK(pll_info->m_bits - 1, 0) << pll_info->m_shift);
+>>      ctl |= (m - pll_info->m_offset) << pll_info->m_shift;
+>> @@ -194,7 +199,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned 
+>> long req_rate,
+>>      ctl &= ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
+>>      ctl |= pll_info->od_encoding[od - 1] << pll_info->od_shift;
+>>
+>> -    writel(ctl, cgu->base + pll_info->reg);
+>> +    writel(ctl, cgu->base + pll_info->pll_reg);
+>>      spin_unlock_irqrestore(&cgu->lock, flags);
+>>
+>>      return 0;
+>> @@ -212,16 +217,21 @@ static int ingenic_pll_enable(struct clk_hw *hw)
+>>      u32 ctl;
+>>
+>>      spin_lock_irqsave(&cgu->lock, flags);
+>> -    ctl = readl(cgu->base + pll_info->reg);
+>> +    ctl = readl(cgu->base + pll_info->bypass_reg);
+>>
+>>      ctl &= ~BIT(pll_info->bypass_bit);
+>> +
+>> +    writel(ctl, cgu->base + pll_info->bypass_reg);
+>> +
+>> +    ctl = readl(cgu->base + pll_info->pll_reg);
+>> +
+>>      ctl |= BIT(pll_info->enable_bit);
+>>
+>> -    writel(ctl, cgu->base + pll_info->reg);
+>> +    writel(ctl, cgu->base + pll_info->pll_reg);
+>>
+>>      /* wait for the PLL to stabilise */
+>>      for (i = 0; i < timeout; i++) {
+>> -        ctl = readl(cgu->base + pll_info->reg);
+>> +        ctl = readl(cgu->base + pll_info->pll_reg);
+>>          if (ctl & BIT(pll_info->stable_bit))
+>>              break;
+>>          mdelay(1);
+>> @@ -245,11 +255,11 @@ static void ingenic_pll_disable(struct clk_hw *hw)
+>>      u32 ctl;
+>>
+>>      spin_lock_irqsave(&cgu->lock, flags);
+>> -    ctl = readl(cgu->base + pll_info->reg);
+>> +    ctl = readl(cgu->base + pll_info->pll_reg);
+>>
+>>      ctl &= ~BIT(pll_info->enable_bit);
+>>
+>> -    writel(ctl, cgu->base + pll_info->reg);
+>> +    writel(ctl, cgu->base + pll_info->pll_reg);
+>>      spin_unlock_irqrestore(&cgu->lock, flags);
+>>  }
+>>
+>> @@ -263,7 +273,7 @@ static int ingenic_pll_is_enabled(struct clk_hw *hw)
+>>      u32 ctl;
+>>
+>>      spin_lock_irqsave(&cgu->lock, flags);
+>> -    ctl = readl(cgu->base + pll_info->reg);
+>> +    ctl = readl(cgu->base + pll_info->pll_reg);
+>>      spin_unlock_irqrestore(&cgu->lock, flags);
+>>
+>>      return !!(ctl & BIT(pll_info->enable_bit));
+>> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
+>> index 0dc8004..f7b6908 100644
+>> --- a/drivers/clk/ingenic/cgu.h
+>> +++ b/drivers/clk/ingenic/cgu.h
+>> @@ -16,7 +16,9 @@
+>>
+>>  /**
+>>   * struct ingenic_cgu_pll_info - information about a PLL
+>> - * @reg: the offset of the PLL's control register within the CGU
+>> + * @pll_reg: the offset of the PLL's control register within the CGU
+>> + * @bypass_reg: the offset of the bypass control register within the 
+>> CGU
+>> + * @rate_multiplier: the multiplier needed by pll rate calculation
+>>   * @m_shift: the number of bits to shift the multiplier value by 
+>> (ie. the
+>>   *           index of the lowest bit of the multiplier value in the 
+>> PLL's
+>>   *           control register)
+>> @@ -43,7 +45,9 @@
+>>   * @no_bypass_bit: if set, the PLL has no bypass functionality
+>>   */
+>>  struct ingenic_cgu_pll_info {
+>> -    unsigned reg;
+>> +    unsigned pll_reg;
+>> +    unsigned bypass_reg;
+>> +    unsigned rate_multiplier;
+>>      const s8 *od_encoding;
+>>      u8 m_shift, m_bits, m_offset;
+>>      u8 n_shift, n_bits, n_offset;
+>> -- 
+>> 2.7.4
+>>
+>
+
