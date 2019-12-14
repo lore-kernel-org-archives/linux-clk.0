@@ -2,450 +2,128 @@ Return-Path: <SRS0=i7EJ=2E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16C6AC43603
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 15:36:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C9D3C43603
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 18:07:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3C724656
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 15:36:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 119E1214AF
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 18:07:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="rycc+mG2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfLNPgq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Dec 2019 10:36:46 -0500
-Received: from out28-99.mail.aliyun.com ([115.124.28.99]:52316 "EHLO
-        out28-99.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726704AbfLNPgq (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 10:36:46 -0500
-X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07473686|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.514699-0.0199671-0.465334;DS=CONTINUE|ham_alarm|0.0300551-0.000725998-0.969219;FP=0|0|0|0|0|-1|-1|-1;HT=e01l07447;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.GH4QmPi_1576337632;
-Received: from zhouyanjie-virtual-machine.localdomain(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GH4QmPi_1576337632)
-          by smtp.aliyun-inc.com(10.147.41.143);
-          Sat, 14 Dec 2019 23:34:03 +0800
-From:   =?UTF-8?q?=E5=91=A8=E7=90=B0=E6=9D=B0=20=28Zhou=20Yanjie=29?= 
+        id S1726814AbfLNSHw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Dec 2019 13:07:52 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:55596 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfLNSHv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 13:07:51 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1576346868; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=ZT2nfN79WKkY25XI09ribZUpmxko5AgJRuhVtZX21qo=;
+        b=rycc+mG2TcvGcPDixft9zvbFOY3l5I4eORFU8FgZxSWjlhS+PIDP1QGCkYQ/htuivYNrx/
+        zV5DHZLJjJxnEV9QMZNaisa9bUGr8Tm9S5a37Wg7yWIRC06FsCgcQIlRgJR4RLZ+BTAZqh
+        QVbiBsMLp7d1OP0fTE69ISmVbPzUVMM=
+Date:   Sat, 14 Dec 2019 19:07:43 +0100
+From:   Paul Cercueil <paul@crapouillou.net>
+Subject: Re: [PATCH v3 1/5] clk: Ingenic: Remove unnecessary spinlock when
+ reading registers.
+To:     =?UTF-8?b?5ZGo55Cw5p2w?= "(Zhou Yanjie)" 
         <zhouyanjie@wanyeetech.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, paulburton@kernel.org, paul@crapouillou.net,
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
         sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Subject: [PATCH v3 5/5] clk: Ingenic: Add CGU driver for X1830.
-Date:   Sat, 14 Dec 2019 23:33:50 +0800
-Message-Id: <1576337630-78576-7-git-send-email-zhouyanjie@wanyeetech.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1576337630-78576-1-git-send-email-zhouyanjie@wanyeetech.com>
+Message-Id: <1576346863.3.1@crapouillou.net>
+In-Reply-To: <1576337630-78576-3-git-send-email-zhouyanjie@wanyeetech.com>
 References: <1576337630-78576-1-git-send-email-zhouyanjie@wanyeetech.com>
+        <1576337630-78576-3-git-send-email-zhouyanjie@wanyeetech.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add support for the clocks provided by the CGU in the Ingenic X1830
-SoC, making use of the cgu code to do the heavy lifting.
+Hi Zhou,
 
-Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
----
+You can also remove the locks around ingenic_cgu_gate_get(), they are=20
+useless. Then also edit the doc of this function as currently it says=20
+that the caller must hold the lock.
 
-Notes:
-    v1->v2:
-    1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
-      array (reg[2]).
-    2.Remove the "pll_info->version" and add a "pll_info->rate_multiplier".
-    3.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
-      to "周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>" because
-      the old mailbox is in an unstable state.
-    
-    v2->v3:
-    Adjust order from [4/5] in v2 to [5/5] in v3.
+-Paul
 
- drivers/clk/ingenic/Kconfig     |  10 ++
- drivers/clk/ingenic/Makefile    |   1 +
- drivers/clk/ingenic/x1830-cgu.c | 340 ++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 351 insertions(+)
- create mode 100644 drivers/clk/ingenic/x1830-cgu.c
 
-diff --git a/drivers/clk/ingenic/Kconfig b/drivers/clk/ingenic/Kconfig
-index b4555b4..580b0cf 100644
---- a/drivers/clk/ingenic/Kconfig
-+++ b/drivers/clk/ingenic/Kconfig
-@@ -55,6 +55,16 @@ config INGENIC_CGU_X1000
- 
- 	  If building for a X1000 SoC, you want to say Y here.
- 
-+config INGENIC_CGU_X1830
-+	bool "Ingenic X1830 CGU driver"
-+	default MACH_X1830
-+	select INGENIC_CGU_COMMON
-+	help
-+	  Support the clocks provided by the CGU hardware on Ingenic X1830
-+	  and compatible SoCs.
-+
-+	  If building for a X1830 SoC, you want to say Y here.
-+
- config INGENIC_TCU_CLK
- 	bool "Ingenic JZ47xx TCU clocks driver"
- 	default MACH_INGENIC
-diff --git a/drivers/clk/ingenic/Makefile b/drivers/clk/ingenic/Makefile
-index 8b1dad9..aaa4bff 100644
---- a/drivers/clk/ingenic/Makefile
-+++ b/drivers/clk/ingenic/Makefile
-@@ -5,4 +5,5 @@ obj-$(CONFIG_INGENIC_CGU_JZ4725B)	+= jz4725b-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4770)	+= jz4770-cgu.o
- obj-$(CONFIG_INGENIC_CGU_JZ4780)	+= jz4780-cgu.o
- obj-$(CONFIG_INGENIC_CGU_X1000)		+= x1000-cgu.o
-+obj-$(CONFIG_INGENIC_CGU_X1830)		+= x1830-cgu.o
- obj-$(CONFIG_INGENIC_TCU_CLK)		+= tcu.o
-diff --git a/drivers/clk/ingenic/x1830-cgu.c b/drivers/clk/ingenic/x1830-cgu.c
-new file mode 100644
-index 00000000..35ea05f
---- /dev/null
-+++ b/drivers/clk/ingenic/x1830-cgu.c
-@@ -0,0 +1,340 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * X1830 SoC CGU driver
-+ * Copyright (c) 2019 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/delay.h>
-+#include <linux/of.h>
-+#include <dt-bindings/clock/x1830-cgu.h>
-+#include "cgu.h"
-+#include "pm.h"
-+
-+/* CGU register offsets */
-+#define CGU_REG_CPCCR		0x00
-+#define CGU_REG_CPPCR		0x0c
-+#define CGU_REG_APLL		0x10
-+#define CGU_REG_MPLL		0x14
-+#define CGU_REG_CLKGR0		0x20
-+#define CGU_REG_OPCR		0x24
-+#define CGU_REG_CLKGR1		0x28
-+#define CGU_REG_DDRCDR		0x2c
-+#define CGU_REG_USBPCR		0x3c
-+#define CGU_REG_USBRDT		0x40
-+#define CGU_REG_USBVBFIL	0x44
-+#define CGU_REG_USBPCR1		0x48
-+#define CGU_REG_MACCDR		0x54
-+#define CGU_REG_EPLL		0x58
-+#define CGU_REG_I2SCDR		0x60
-+#define CGU_REG_LPCDR		0x64
-+#define CGU_REG_MSC0CDR		0x68
-+#define CGU_REG_I2SCDR1		0x70
-+#define CGU_REG_SSICDR		0x74
-+#define CGU_REG_CIMCDR		0x7c
-+#define CGU_REG_MSC1CDR		0xa4
-+#define CGU_REG_CMP_INTR	0xb0
-+#define CGU_REG_CMP_INTRE	0xb4
-+#define CGU_REG_DRCG		0xd0
-+#define CGU_REG_CPCSR		0xd4
-+#define CGU_REG_VPLL		0xe0
-+#define CGU_REG_MACPHYC		0xe8
-+
-+/* bits within the OPCR register */
-+#define OPCR_SPENDN0		BIT(7)
-+#define OPCR_SPENDN1		BIT(6)
-+
-+static struct ingenic_cgu *cgu;
-+
-+static const s8 pll_od_encoding[64] = {
-+	0x0, 0x1,  -1, 0x2,  -1,  -1,  -1, 0x3,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x4,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x5,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1,  -1,
-+	 -1,  -1,  -1,  -1,  -1,  -1,  -1, 0x6,
-+};
-+
-+static const struct ingenic_cgu_clk_info x1830_cgu_clocks[] = {
-+
-+	/* External clocks */
-+
-+	[X1830_CLK_EXCLK] = { "ext", CGU_CLK_EXT },
-+	[X1830_CLK_RTCLK] = { "rtc", CGU_CLK_EXT },
-+
-+	/* PLLs */
-+
-+	[X1830_CLK_APLL] = {
-+		"apll", CGU_CLK_PLL,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.pll = {
-+			.pll_reg = CGU_REG_APLL,
-+			.bypass_reg = CGU_REG_CPPCR,
-+			.rate_multiplier = 2,
-+			.m_shift = 20,
-+			.m_bits = 9,
-+			.m_offset = 1,
-+			.n_shift = 14,
-+			.n_bits = 6,
-+			.n_offset = 1,
-+			.od_shift = 11,
-+			.od_bits = 3,
-+			.od_max = 64,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_bit = 30,
-+			.enable_bit = 0,
-+			.stable_bit = 3,
-+		},
-+	},
-+
-+	[X1830_CLK_MPLL] = {
-+		"mpll", CGU_CLK_PLL,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.pll = {
-+			.pll_reg = CGU_REG_MPLL,
-+			.bypass_reg = CGU_REG_CPPCR,
-+			.rate_multiplier = 2,
-+			.m_shift = 20,
-+			.m_bits = 9,
-+			.m_offset = 1,
-+			.n_shift = 14,
-+			.n_bits = 6,
-+			.n_offset = 1,
-+			.od_shift = 11,
-+			.od_bits = 3,
-+			.od_max = 64,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_bit = 28,
-+			.enable_bit = 0,
-+			.stable_bit = 3,
-+		},
-+	},
-+
-+	[X1830_CLK_EPLL] = {
-+		"epll", CGU_CLK_PLL,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.pll = {
-+			.pll_reg = CGU_REG_EPLL,
-+			.bypass_reg = CGU_REG_CPPCR,
-+			.rate_multiplier = 2,
-+			.m_shift = 20,
-+			.m_bits = 9,
-+			.m_offset = 1,
-+			.n_shift = 14,
-+			.n_bits = 6,
-+			.n_offset = 1,
-+			.od_shift = 11,
-+			.od_bits = 3,
-+			.od_max = 64,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_bit = 24,
-+			.enable_bit = 0,
-+			.stable_bit = 3,
-+		},
-+	},
-+
-+	[X1830_CLK_VPLL] = {
-+		"vpll", CGU_CLK_PLL,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.pll = {
-+			.pll_reg = CGU_REG_VPLL,
-+			.bypass_reg = CGU_REG_CPPCR,
-+			.rate_multiplier = 2,
-+			.m_shift = 20,
-+			.m_bits = 9,
-+			.m_offset = 1,
-+			.n_shift = 14,
-+			.n_bits = 6,
-+			.n_offset = 1,
-+			.od_shift = 11,
-+			.od_bits = 3,
-+			.od_max = 64,
-+			.od_encoding = pll_od_encoding,
-+			.bypass_bit = 26,
-+			.enable_bit = 0,
-+			.stable_bit = 3,
-+		},
-+	},
-+
-+	/* Muxes & dividers */
-+
-+	[X1830_CLK_SCLKA] = {
-+		"sclk_a", CGU_CLK_MUX,
-+		.parents = { -1, X1830_CLK_EXCLK, X1830_CLK_APLL, -1 },
-+		.mux = { CGU_REG_CPCCR, 30, 2 },
-+	},
-+
-+	[X1830_CLK_CPUMUX] = {
-+		"cpu_mux", CGU_CLK_MUX,
-+		.parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
-+		.mux = { CGU_REG_CPCCR, 28, 2 },
-+	},
-+
-+	[X1830_CLK_CPU] = {
-+		"cpu", CGU_CLK_DIV,
-+		.parents = { X1830_CLK_CPUMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 0, 1, 4, 22, -1, -1 },
-+	},
-+
-+	[X1830_CLK_L2CACHE] = {
-+		"l2cache", CGU_CLK_DIV,
-+		.parents = { X1830_CLK_CPUMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 4, 1, 4, 22, -1, -1 },
-+	},
-+
-+	[X1830_CLK_AHB0] = {
-+		"ahb0", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
-+		.mux = { CGU_REG_CPCCR, 26, 2 },
-+		.div = { CGU_REG_CPCCR, 8, 1, 4, 21, -1, -1 },
-+	},
-+
-+	[X1830_CLK_AHB2PMUX] = {
-+		"ahb2_apb_mux", CGU_CLK_MUX,
-+		.parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
-+		.mux = { CGU_REG_CPCCR, 24, 2 },
-+	},
-+
-+	[X1830_CLK_AHB2] = {
-+		"ahb2", CGU_CLK_DIV,
-+		.parents = { X1830_CLK_AHB2PMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 12, 1, 4, 20, -1, -1 },
-+	},
-+
-+	[X1830_CLK_PCLK] = {
-+		"pclk", CGU_CLK_DIV,
-+		.parents = { X1830_CLK_AHB2PMUX, -1, -1, -1 },
-+		.div = { CGU_REG_CPCCR, 16, 1, 4, 20, -1, -1 },
-+	},
-+
-+	[X1830_CLK_DDR] = {
-+		"ddr", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { -1, X1830_CLK_SCLKA, X1830_CLK_MPLL, -1 },
-+		.mux = { CGU_REG_DDRCDR, 30, 2 },
-+		.div = { CGU_REG_DDRCDR, 0, 1, 4, 29, 28, 27 },
-+		.gate = { CGU_REG_CLKGR0, 31 },
-+	},
-+
-+	[X1830_CLK_MAC] = {
-+		"mac", CGU_CLK_MUX | CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
-+					 X1830_CLK_VPLL, X1830_CLK_EPLL },
-+		.mux = { CGU_REG_MACCDR, 30, 2 },
-+		.div = { CGU_REG_MACCDR, 0, 1, 8, 29, 28, 27 },
-+		.gate = { CGU_REG_CLKGR1, 4 },
-+	},
-+
-+	[X1830_CLK_MSCMUX] = {
-+		"msc_mux", CGU_CLK_MUX,
-+		.parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
-+					 X1830_CLK_VPLL, X1830_CLK_EPLL },
-+		.mux = { CGU_REG_MSC0CDR, 30, 2 },
-+	},
-+
-+	[X1830_CLK_MSC0] = {
-+		"msc0", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { X1830_CLK_MSCMUX, -1, -1, -1 },
-+		.div = { CGU_REG_MSC0CDR, 0, 2, 8, 29, 28, 27 },
-+		.gate = { CGU_REG_CLKGR0, 4 },
-+	},
-+
-+	[X1830_CLK_MSC1] = {
-+		"msc1", CGU_CLK_DIV | CGU_CLK_GATE,
-+		.parents = { X1830_CLK_MSCMUX, -1, -1, -1 },
-+		.div = { CGU_REG_MSC1CDR, 0, 2, 8, 29, 28, 27 },
-+		.gate = { CGU_REG_CLKGR0, 5 },
-+	},
-+
-+	[X1830_CLK_SSIPLL] = {
-+		"ssi_pll", CGU_CLK_MUX | CGU_CLK_DIV,
-+		.parents = { X1830_CLK_SCLKA, X1830_CLK_MPLL,
-+					 X1830_CLK_VPLL, X1830_CLK_EPLL },
-+		.mux = { CGU_REG_SSICDR, 30, 2 },
-+		.div = { CGU_REG_SSICDR, 0, 1, 8, 28, 27, 26 },
-+	},
-+
-+	[X1830_CLK_SSIMUX] = {
-+		"ssi_mux", CGU_CLK_MUX,
-+		.parents = { X1830_CLK_EXCLK, X1830_CLK_SSIPLL, -1, -1 },
-+		.mux = { CGU_REG_SSICDR, 29, 1 },
-+	},
-+
-+	/* Gate-only clocks */
-+
-+	[X1830_CLK_SSI0] = {
-+		"ssi0", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_SSIMUX, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 6 },
-+	},
-+
-+	[X1830_CLK_SMB0] = {
-+		"smb0", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_PCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 7 },
-+	},
-+
-+	[X1830_CLK_SMB1] = {
-+		"smb1", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_PCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 8 },
-+	},
-+
-+	[X1830_CLK_SMB2] = {
-+		"smb2", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_PCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 9 },
-+	},
-+
-+	[X1830_CLK_UART0] = {
-+		"uart0", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 14 },
-+	},
-+
-+	[X1830_CLK_UART1] = {
-+		"uart1", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 15 },
-+	},
-+
-+	[X1830_CLK_SSI1] = {
-+		"ssi1", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_SSIMUX, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 19 },
-+	},
-+
-+	[X1830_CLK_SFC] = {
-+		"sfc", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_SSIPLL, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 20 },
-+	},
-+
-+	[X1830_CLK_PDMA] = {
-+		"pdma", CGU_CLK_GATE,
-+		.parents = { X1830_CLK_EXCLK, -1, -1, -1 },
-+		.gate = { CGU_REG_CLKGR0, 21 },
-+	},
-+};
-+
-+static void __init x1830_cgu_init(struct device_node *np)
-+{
-+	int retval;
-+
-+	cgu = ingenic_cgu_new(x1830_cgu_clocks,
-+			      ARRAY_SIZE(x1830_cgu_clocks), np);
-+	if (!cgu) {
-+		pr_err("%s: failed to initialise CGU\n", __func__);
-+		return;
-+	}
-+
-+	retval = ingenic_cgu_register_clocks(cgu);
-+	if (retval) {
-+		pr_err("%s: failed to register CGU Clocks\n", __func__);
-+		return;
-+	}
-+
-+	ingenic_cgu_register_syscore_ops(cgu);
-+}
-+CLK_OF_DECLARE_DRIVER(x1830_cgu, "ingenic,x1830-cgu", x1830_cgu_init);
--- 
-2.7.4
+Le sam., d=C3=A9c. 14, 2019 at 23:33, =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yan=
+jie)=20
+<zhouyanjie@wanyeetech.com> a =C3=A9crit :
+> It is not necessary to use spinlock when reading registers,
+> so remove it from cgu.c.
+>=20
+> Suggested-by: Paul Cercueil <paul@crapouillou.net>
+> Suggested-by: Paul Burton <paulburton@kernel.org>
+> Signed-off-by: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wany=
+eetech.com>
+> ---
+>=20
+> Notes:
+>     v2:
+>     New patch.
+>=20
+>     v2->v3:
+>     Adjust order from [5/5] in v2 to [1/5] in v3.
+>=20
+>  drivers/clk/ingenic/cgu.c | 6 ------
+>  1 file changed, 6 deletions(-)
+>=20
+> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+> index 6e96303..8bd3998 100644
+> --- a/drivers/clk/ingenic/cgu.c
+> +++ b/drivers/clk/ingenic/cgu.c
+> @@ -76,16 +76,13 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,=20
+> unsigned long parent_rate)
+>  	const struct ingenic_cgu_pll_info *pll_info;
+>  	unsigned m, n, od_enc, od;
+>  	bool bypass;
+> -	unsigned long flags;
+>  	u32 ctl;
+>=20
+>  	clk_info =3D &cgu->clock_info[ingenic_clk->idx];
+>  	BUG_ON(clk_info->type !=3D CGU_CLK_PLL);
+>  	pll_info =3D &clk_info->pll;
+>=20
+> -	spin_lock_irqsave(&cgu->lock, flags);
+>  	ctl =3D readl(cgu->base + pll_info->reg);
+> -	spin_unlock_irqrestore(&cgu->lock, flags);
+>=20
+>  	m =3D (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
+>  	m +=3D pll_info->m_offset;
+> @@ -259,12 +256,9 @@ static int ingenic_pll_is_enabled(struct clk_hw=20
+> *hw)
+>  	struct ingenic_cgu *cgu =3D ingenic_clk->cgu;
+>  	const struct ingenic_cgu_clk_info *clk_info =3D=20
+> to_clk_info(ingenic_clk);
+>  	const struct ingenic_cgu_pll_info *pll_info =3D &clk_info->pll;
+> -	unsigned long flags;
+>  	u32 ctl;
+>=20
+> -	spin_lock_irqsave(&cgu->lock, flags);
+>  	ctl =3D readl(cgu->base + pll_info->reg);
+> -	spin_unlock_irqrestore(&cgu->lock, flags);
+>=20
+>  	return !!(ctl & BIT(pll_info->enable_bit));
+>  }
+> --
+> 2.7.4
+>=20
+
+=
 
