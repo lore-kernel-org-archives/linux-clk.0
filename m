@@ -4,247 +4,73 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 378E9C43603
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 18:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 470E5C43603
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 22:35:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01BA920706
-	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 18:10:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 068032067C
+	for <linux-clk@archiver.kernel.org>; Sat, 14 Dec 2019 22:35:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="tDyiQ5J4"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="pxfJyM/s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725975AbfLNSJ4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Dec 2019 13:09:56 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:57900 "EHLO
+        id S1726783AbfLNWfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Dec 2019 17:35:08 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:47642 "EHLO
         crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725972AbfLNSJ4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 13:09:56 -0500
+        with ESMTP id S1726687AbfLNWfI (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 17:35:08 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1576346992; h=from:from:sender:reply-to:subject:subject:date:date:
+        s=mail; t=1576362907; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=kjxytof43EwC/NCcO7/Oddxq3k1AJWoIntsJ65bazro=;
-        b=tDyiQ5J4mDcbQ7n1Ws1TdW82WBe/kq0hrCHXRDypyUG5z7Xo1mQ9GO9qenauBVo4s+T15h
-        jN8zxNcPN5DIXvp8FRC/KTzpXkVuznERcyz6re7OGILIUkVZwWwBLDz94sufvhTtI7lwif
-        0tRT4o+IBk6ShxouANXs++F8Xn+ErTg=
-Date:   Sat, 14 Dec 2019 19:09:47 +0100
+         content-type:content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:references; bh=D8vcvAXh5n4Ipif6aaOi/DGeJKxBOvkvdh2wheOB+JI=;
+        b=pxfJyM/sjHPouXV1XzvvqPmfTYqZI4FDkQ1OTxSXW4DRzNRYzd+hf5lpI8qTRbHlXx+ro1
+        JHYysaf6ckh5rPur+PU8aFkEHLsq2S9emG4WKpBvf3CXvu8ekBAWf1ty02IFJVbUa1gNZ/
+        q398Ik1pKvXTBBvg42rsuwyEOtt+l34=
 From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH v3 2/5] clk: Ingenic: Adjust cgu code to make it
- compatible with X1830.
-To:     =?UTF-8?b?5ZGo55Cw5p2w?= "(Zhou Yanjie)" 
-        <zhouyanjie@wanyeetech.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
-        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
-Message-Id: <1576346987.3.2@crapouillou.net>
-In-Reply-To: <1576337630-78576-4-git-send-email-zhouyanjie@wanyeetech.com>
-References: <1576337630-78576-1-git-send-email-zhouyanjie@wanyeetech.com>
-        <1576337630-78576-4-git-send-email-zhouyanjie@wanyeetech.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     od@zcrc.me, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paul Cercueil <paul@crapouillou.net>,
+        kbuild test robot <lkp@intel.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: [PATCH] clk: ingenic/jz4770: Exit with error if CGU init failed
+Date:   Sat, 14 Dec 2019 23:35:00 +0100
+Message-Id: <20191214223500.100093-1-paul@crapouillou.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Zhou,
+Exit jz4770_cgu_init() if the 'cgu' pointer we get is NULL, since the
+pointer is passed as argument to functions later on.
 
-The patch looks good but it should be merged with [3/5]. Because right=20
-now it is not atomic, if you only have the first two patches applied=20
-the kernel won't compile.
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Reported-by: kbuild test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
+---
+ drivers/clk/ingenic/jz4770-cgu.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
--Paul
-
-
-Le sam., d=C3=A9c. 14, 2019 at 23:33, =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yan=
-jie)=20
-<zhouyanjie@wanyeetech.com> a =C3=A9crit :
-> The PLL of X1830 Soc from Ingenic has been greatly changed,
-> the bypass control is placed in another register, so now two
-> registers may needed to control the PLL. To this end, the
-> original "reg" was changed to "pll_reg", and a new "bypass_reg"
-> was introduced. In addition, when calculating rate, the PLL of
-> X1830 introduced an extra 2x multiplier, so a new "rate_multiplier"
-> was introduced.
->=20
-> Signed-off-by: =E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wany=
-eetech.com>
-> ---
->=20
-> Notes:
->     v1->v2:
->     1.Use two fields (pll_reg & bypass_reg) instead of the 2-values
->       array (reg[2]).
->     2.Remove the "pll_info->version" and add a=20
-> "pll_info->rate_multiplier".
->     3.Fix the coding style and add more detailed commit message.
->     4.Change my Signed-off-by from "Zhou Yanjie <zhouyanjie@zoho.com>"
->       to "=E5=91=A8=E7=90=B0=E6=9D=B0 (Zhou Yanjie) <zhouyanjie@wanyeetec=
-h.com>" because
->       the old mailbox is in an unstable state.
->=20
->     v2->v3:
->     Adjust order from [1/5] in v2 to [2/5] in v3.
->=20
->  drivers/clk/ingenic/cgu.c | 30 +++++++++++++++++++-----------
->  drivers/clk/ingenic/cgu.h |  8 ++++++--
->  2 files changed, 25 insertions(+), 13 deletions(-)
->=20
-> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
-> index 8bd3998..3c95451 100644
-> --- a/drivers/clk/ingenic/cgu.c
-> +++ b/drivers/clk/ingenic/cgu.c
-> @@ -82,7 +82,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned=20
-> long parent_rate)
->  	BUG_ON(clk_info->type !=3D CGU_CLK_PLL);
->  	pll_info =3D &clk_info->pll;
->=20
-> -	ctl =3D readl(cgu->base + pll_info->reg);
-> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
->=20
->  	m =3D (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
->  	m +=3D pll_info->m_offset;
-> @@ -90,6 +90,9 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, unsigned=20
-> long parent_rate)
->  	n +=3D pll_info->n_offset;
->  	od_enc =3D ctl >> pll_info->od_shift;
->  	od_enc &=3D GENMASK(pll_info->od_bits - 1, 0);
-> +
-> +	ctl =3D readl(cgu->base + pll_info->bypass_reg);
-> +
->  	bypass =3D !pll_info->no_bypass_bit &&
->  		 !!(ctl & BIT(pll_info->bypass_bit));
->=20
-> @@ -103,7 +106,7 @@ ingenic_pll_recalc_rate(struct clk_hw *hw,=20
-> unsigned long parent_rate)
->  	BUG_ON(od =3D=3D pll_info->od_max);
->  	od++;
->=20
-> -	return div_u64((u64)parent_rate * m, n * od);
-> +	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier, n=20
-> * od);
->  }
->=20
->  static unsigned long
-> @@ -136,7 +139,7 @@ ingenic_pll_calc(const struct=20
-> ingenic_cgu_clk_info *clk_info,
->  	if (pod)
->  		*pod =3D od;
->=20
-> -	return div_u64((u64)parent_rate * m, n * od);
-> +	return div_u64((u64)parent_rate * m * pll_info->rate_multiplier, n=20
-> * od);
->  }
->=20
->  static inline const struct ingenic_cgu_clk_info *to_clk_info(
-> @@ -180,7 +183,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned=20
-> long req_rate,
->  			clk_info->name, req_rate, rate);
->=20
->  	spin_lock_irqsave(&cgu->lock, flags);
-> -	ctl =3D readl(cgu->base + pll_info->reg);
-> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
->=20
->  	ctl &=3D ~(GENMASK(pll_info->m_bits - 1, 0) << pll_info->m_shift);
->  	ctl |=3D (m - pll_info->m_offset) << pll_info->m_shift;
-> @@ -191,7 +194,7 @@ ingenic_pll_set_rate(struct clk_hw *hw, unsigned=20
-> long req_rate,
->  	ctl &=3D ~(GENMASK(pll_info->od_bits - 1, 0) << pll_info->od_shift);
->  	ctl |=3D pll_info->od_encoding[od - 1] << pll_info->od_shift;
->=20
-> -	writel(ctl, cgu->base + pll_info->reg);
-> +	writel(ctl, cgu->base + pll_info->pll_reg);
->  	spin_unlock_irqrestore(&cgu->lock, flags);
->=20
->  	return 0;
-> @@ -209,16 +212,21 @@ static int ingenic_pll_enable(struct clk_hw *hw)
->  	u32 ctl;
->=20
->  	spin_lock_irqsave(&cgu->lock, flags);
-> -	ctl =3D readl(cgu->base + pll_info->reg);
-> +	ctl =3D readl(cgu->base + pll_info->bypass_reg);
->=20
->  	ctl &=3D ~BIT(pll_info->bypass_bit);
-> +
-> +	writel(ctl, cgu->base + pll_info->bypass_reg);
-> +
-> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
-> +
->  	ctl |=3D BIT(pll_info->enable_bit);
->=20
-> -	writel(ctl, cgu->base + pll_info->reg);
-> +	writel(ctl, cgu->base + pll_info->pll_reg);
->=20
->  	/* wait for the PLL to stabilise */
->  	for (i =3D 0; i < timeout; i++) {
-> -		ctl =3D readl(cgu->base + pll_info->reg);
-> +		ctl =3D readl(cgu->base + pll_info->pll_reg);
->  		if (ctl & BIT(pll_info->stable_bit))
->  			break;
->  		mdelay(1);
-> @@ -242,11 +250,11 @@ static void ingenic_pll_disable(struct clk_hw=20
-> *hw)
->  	u32 ctl;
->=20
->  	spin_lock_irqsave(&cgu->lock, flags);
-> -	ctl =3D readl(cgu->base + pll_info->reg);
-> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
->=20
->  	ctl &=3D ~BIT(pll_info->enable_bit);
->=20
-> -	writel(ctl, cgu->base + pll_info->reg);
-> +	writel(ctl, cgu->base + pll_info->pll_reg);
->  	spin_unlock_irqrestore(&cgu->lock, flags);
->  }
->=20
-> @@ -258,7 +266,7 @@ static int ingenic_pll_is_enabled(struct clk_hw=20
-> *hw)
->  	const struct ingenic_cgu_pll_info *pll_info =3D &clk_info->pll;
->  	u32 ctl;
->=20
-> -	ctl =3D readl(cgu->base + pll_info->reg);
-> +	ctl =3D readl(cgu->base + pll_info->pll_reg);
->=20
->  	return !!(ctl & BIT(pll_info->enable_bit));
->  }
-> diff --git a/drivers/clk/ingenic/cgu.h b/drivers/clk/ingenic/cgu.h
-> index 0dc8004..f7b6908 100644
-> --- a/drivers/clk/ingenic/cgu.h
-> +++ b/drivers/clk/ingenic/cgu.h
-> @@ -16,7 +16,9 @@
->=20
->  /**
->   * struct ingenic_cgu_pll_info - information about a PLL
-> - * @reg: the offset of the PLL's control register within the CGU
-> + * @pll_reg: the offset of the PLL's control register within the CGU
-> + * @bypass_reg: the offset of the bypass control register within the=20
-> CGU
-> + * @rate_multiplier: the multiplier needed by pll rate calculation
->   * @m_shift: the number of bits to shift the multiplier value by=20
-> (ie. the
->   *           index of the lowest bit of the multiplier value in the=20
-> PLL's
->   *           control register)
-> @@ -43,7 +45,9 @@
->   * @no_bypass_bit: if set, the PLL has no bypass functionality
->   */
->  struct ingenic_cgu_pll_info {
-> -	unsigned reg;
-> +	unsigned pll_reg;
-> +	unsigned bypass_reg;
-> +	unsigned rate_multiplier;
->  	const s8 *od_encoding;
->  	u8 m_shift, m_bits, m_offset;
->  	u8 n_shift, n_bits, n_offset;
-> --
-> 2.7.4
->=20
-
-=
+diff --git a/drivers/clk/ingenic/jz4770-cgu.c b/drivers/clk/ingenic/jz4770-cgu.c
+index 956dd653a43d..c051ecba5cf8 100644
+--- a/drivers/clk/ingenic/jz4770-cgu.c
++++ b/drivers/clk/ingenic/jz4770-cgu.c
+@@ -432,8 +432,10 @@ static void __init jz4770_cgu_init(struct device_node *np)
+ 
+ 	cgu = ingenic_cgu_new(jz4770_cgu_clocks,
+ 			      ARRAY_SIZE(jz4770_cgu_clocks), np);
+-	if (!cgu)
++	if (!cgu) {
+ 		pr_err("%s: failed to initialise CGU\n", __func__);
++		return;
++	}
+ 
+ 	retval = ingenic_cgu_register_clocks(cgu);
+ 	if (retval)
+-- 
+2.24.0
 
