@@ -2,137 +2,140 @@ Return-Path: <SRS0=7Hsc=2F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3A8EC43603
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 10:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80A87C43603
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 11:30:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 733C22253D
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 10:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59167206CB
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 11:30:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726089AbfLOKv7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Dec 2019 05:51:59 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:51337 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726081AbfLOKv7 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 05:51:59 -0500
-X-Originating-IP: 88.190.179.123
+        id S1726101AbfLOL2P (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Dec 2019 06:28:15 -0500
+Received: from relay10.mail.gandi.net ([217.70.178.230]:33497 "EHLO
+        relay10.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726083AbfLOL2O (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 06:28:14 -0500
 Received: from localhost (unknown [88.190.179.123])
         (Authenticated sender: repk@triplefau.lt)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id 2EAAD240003;
-        Sun, 15 Dec 2019 10:51:55 +0000 (UTC)
-Date:   Sun, 15 Dec 2019 12:00:20 +0100
+        by relay10.mail.gandi.net (Postfix) with ESMTPSA id 2A494240004;
+        Sun, 15 Dec 2019 11:28:09 +0000 (UTC)
+Date:   Sun, 15 Dec 2019 12:36:34 +0100
 From:   Remi Pommarel <repk@triplefau.lt>
 To:     Jerome Brunet <jbrunet@baylibre.com>
 Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Yue Wang <yue.wang@amlogic.com>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
         linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: meson: pll: Fix by 0 division in
- __pll_params_to_rate()
-Message-ID: <20191215110020.GA7304@voidbox>
-References: <20191208212206.16808-1-repk@triplefau.lt>
- <1jo8whesj2.fsf@starbuckisacylon.baylibre.com>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH 0/2] PCI: amlogic: Make PCIe working reliably on AXG
+ platforms
+Message-ID: <20191215113634.GB7304@voidbox>
+References: <20191208210320.15539-1-repk@triplefau.lt>
+ <1jpngxew6l.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1jo8whesj2.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1jpngxew6l.fsf@starbuckisacylon.baylibre.com>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 09, 2019 at 10:51:13AM +0100, Jerome Brunet wrote:
+On Mon, Dec 09, 2019 at 09:32:18AM +0100, Jerome Brunet wrote:
 > 
-> On Sun 08 Dec 2019 at 22:22, Remi Pommarel <repk@triplefau.lt> wrote:
+> On Sun 08 Dec 2019 at 22:03, Remi Pommarel <repk@triplefau.lt> wrote:
 > 
-> > Some meson pll registers can be initialized with 0 as N value, introducing
-> > the following division by 0 when computing rate :
-> >
-> >   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
-> >   division by zero
-> >   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
-> >   Call trace:
-> >    dump_backtrace+0x0/0x1c0
-> >    show_stack+0x14/0x20
-> >    dump_stack+0xc4/0x100
-> >    ubsan_epilogue+0x14/0x68
-> >    __ubsan_handle_divrem_overflow+0x98/0xb8
-> >    __pll_params_to_rate+0xdc/0x140
-> >    meson_clk_pll_recalc_rate+0x278/0x3a0
-> >    __clk_register+0x7c8/0xbb0
-> >    devm_clk_hw_register+0x54/0xc0
-> >    meson_eeclkc_probe+0xf4/0x1a0
-> >    platform_drv_probe+0x54/0xd8
-> >    really_probe+0x16c/0x438
-> >    driver_probe_device+0xb0/0xf0
-> >    device_driver_attach+0x94/0xa0
-> >    __driver_attach+0x70/0x108
-> >    bus_for_each_dev+0xd8/0x128
-> >    driver_attach+0x30/0x40
-> >    bus_add_driver+0x1b0/0x2d8
-> >    driver_register+0xbc/0x1d0
-> >    __platform_driver_register+0x78/0x88
-> >    axg_driver_init+0x18/0x20
-> >    do_one_initcall+0xc8/0x24c
-> >    kernel_init_freeable+0x2b0/0x344
-> >    kernel_init+0x10/0x128
-> >    ret_from_fork+0x10/0x18
-> >
-> > This checks if N is null before doing the division.
+> > PCIe device probing failures have been seen on some AXG platforms and were
+> > due to unreliable clock signal output. Setting HHI_MIPI_CNTL0[26] bit
+> > solved the problem. After being contacted about this, vendor reported that
+> > this bit was linked to PCIe PLL CML output.
 > 
-> Thanks for reporting this
+> Thanks for reporting the problem.
 > 
-> >
-> > Fixes: 8289aafa4f36 ("clk: meson: improve pll driver results with
-> > frac")
+> As Martin pointed out, the CML outputs already exist in the AXG clock
+> controller but are handled using HHI_PCIE_PLL_CNTL6. Although
+> incomplete, it seems to be aligned with the datasheet I have (v0.9)
 > 
-> In mainline, the commit above went in with sha1 3c4fe763d64d.
+> According to the same document, HHI_MIPI_CNTL0 belong to the MIPI Phy.
+> Unfortunately bit 26 is not documented
 > 
-> Also, this commit is not really responsible for the problem. Having HW
-> initialized with N = 0 would have failed since the beginning, I believe.
-> 
-> In this case the correct fixes would be:
-> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
-> 
-> 
-> > Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> > ---
-> >  drivers/clk/meson/clk-pll.c | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> >
-> > diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-> > index ddb1e5634739..6649659f216a 100644
-> > --- a/drivers/clk/meson/clk-pll.c
-> > +++ b/drivers/clk/meson/clk-pll.c
-> > @@ -66,6 +66,10 @@ static unsigned long __pll_params_to_rate(unsigned long parent_rate,
-> >  					 (1 << pll->frac.width));
-> >  	}
-> >  
-> > +	/* Avoid by zero division */
-> > +	if (n == 0)
-> > +		return 0;
-> 
-> This can only really happen after init, in recalc() rate.
-> 
-> I would much prefer if you could check the n value right after it is
-> read (meson_parm_read()) in .recalc_rate() and add a comment explaining
-> that some HW may have this parameter set 0 on init.
+> AFAICT, the clock controller is not appropriate driver to deal with this
+> register/bit
 > 
 
-Sure will do.
+Regarding both @Martin's and your remark.
+
+Unfortunately the documentation I have and vendor feedback are a bit
+vague to me. I do agree that CLKID_PCIE_PLL_CML_ENABLE is not a proper
+name for this bit because this register is MIPI related.
+
+Here is the information I got from the vendor [1]. As you can see
+HHI_MIPI_CNTL0[29] and HHI_MIPI_CNTL0[26] are related together, and
+HHI_MIPI_CNTL0[29] is implemented in the clock controller as
+axg_mipi_enable which is why I used this driver for HHI_MIPI_CNTL0[26].
+
+So maybe I could rename this bit to something MIPI related ?
+
+> >
+> > This serie adds a way to set this bit through AXG clock gating logic.
+> > Platforms having this kind of issue could make use of this gating by
+> > applying a patch to their devicetree similar to:
+> >
+> >                 clocks = <&clkc CLKID_USB
+> >                         &clkc CLKID_MIPI_ENABLE
+> >                         &clkc CLKID_PCIE_A
+> > -                       &clkc CLKID_PCIE_CML_EN0>;
+> > +                       &clkc CLKID_PCIE_CML_EN0
+> > +                       &clkc CLKID_PCIE_PLL_CML_ENABLE>;
+> >                 clock-names = "pcie_general",
+> >                                 "pcie_mipi_en",
+> >                                 "pcie",
+> > -                               "port";
+> > +                               "port",
+> > +                               "pll_cml_en";
+> >                 resets = <&reset RESET_PCIE_PHY>,
+> >                         <&reset RESET_PCIE_A>,
+> >                         <&reset RESET_PCIE_APB>;
+> 
+> A few remarks for your future patches:
+> 
+> * You need to document any need binding you introduce:
+>   It means that there should have been a patch in
+>   Documentation/devicetree/... before using your newclock name in the
+>   pcie driver. As Martin pointed out, dt-bindings should be dealt with
+>   in their own patches
+> 
+> >
+> >
+> > Remi Pommarel (2):
+> >   clk: meson: axg: add pcie pll cml gating
+> 
+> Whenever possible, patches intended for different maintainers should be
+> sent separately (different series)
+
+Thanks, will do both of the above remarks.
+
+> 
+> >   PCI: amlogic: Use PCIe pll gate when available
+> >
+> >  drivers/clk/meson/axg.c                | 3 +++
+> >  drivers/clk/meson/axg.h                | 2 +-
+> >  drivers/pci/controller/dwc/pci-meson.c | 5 +++++
+> >  include/dt-bindings/clock/axg-clkc.h   | 1 +
+> >  4 files changed, 10 insertions(+), 1 deletion(-)
+> 
 
 Thanks for reviewing this.
 
+[1] https://i.snipboard.io/bHMPeq.jpg
 -- 
 Remi
 
-> > +
-> >  	return DIV_ROUND_UP_ULL(rate, n);
-> >  }
-> 
