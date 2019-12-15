@@ -2,64 +2,66 @@ Return-Path: <SRS0=7Hsc=2F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FCDC2D0CF
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 04:25:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14C3FC2D0D4
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 04:25:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 481AC24680
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 04:25:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAD6124683
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 04:25:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="BV/CcvtM";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="TTQOvW6r"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="Y3B7esRl";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Oe0HD8Xi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726101AbfLOEZA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 14 Dec 2019 23:25:00 -0500
-Received: from new3-smtp.messagingengine.com ([66.111.4.229]:59753 "EHLO
+        id S1726794AbfLOEZG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 14 Dec 2019 23:25:06 -0500
+Received: from new3-smtp.messagingengine.com ([66.111.4.229]:55703 "EHLO
         new3-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726036AbfLOEZA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 23:25:00 -0500
+        by vger.kernel.org with ESMTP id S1726019AbfLOEZF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 14 Dec 2019 23:25:05 -0500
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailnew.nyi.internal (Postfix) with ESMTP id 9B5E45AC7;
-        Sat, 14 Dec 2019 23:24:58 -0500 (EST)
+        by mailnew.nyi.internal (Postfix) with ESMTP id 379475AC9;
+        Sat, 14 Dec 2019 23:25:04 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Sat, 14 Dec 2019 23:24:58 -0500
+  by compute5.internal (MEProxy); Sat, 14 Dec 2019 23:25:04 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
-        from:to:cc:subject:date:message-id:mime-version
-        :content-transfer-encoding; s=fm1; bh=yF1ILw6fVT9Ms/aRvWhr5GmNy8
-        yCGr3pdt2J77P8Ksg=; b=BV/CcvtMaUwJ5Xkmrafcunww9v4v4S5kcTx99tU1EB
-        sOPSEYwERghframe5KVWMwobt2PY4HQNQQu2M1chgX+ubpFEf3J8XO3qD4JJxmln
-        RflPCYFWyHYjDGPo78fb47HlR078gaPkLsEdr9P9jqliVCTo1SY7AJ6Hp6rWd8r7
-        W5DBV/pMMSJkh1q0OIQIBhbSExv75caTPQgBunbHvXNqGH4vSRUFdyKso0gdEgM8
-        0onhPU13x8uBGlfOA8LWsEv03wWaPsxzbIfiZnlnV6Fy7uI7HbSi6igzK+X/cb3n
-        zvG7ebfYEYT56dV/G5nuOu1eYZqjq36OhZCZy7RGnQAQ==
+        from:to:cc:subject:date:message-id:in-reply-to:references
+        :mime-version:content-transfer-encoding; s=fm1; bh=eiExqcZ7ujXnf
+        ULrpep8+tjQvNG7hCVX9mCQFkEA6Uo=; b=Y3B7esRl9WjdxAbHeNYyrAjnpTM5n
+        /sxSOD24kVHfDwnWXzc2FcA0QeX+Syj9i8dtZz/HLEb96dWpD90JPa2DDsbG10qq
+        4qp9saXXWWXMD7wOGjpEfA2ZBy3F588WejM4+hUDCNddldCGctUhQTjJJtEdZKtU
+        ZgnuJFqVGgxe/FVzNxYkWApkmkQJrbeaHg0jYbhFfXNJ841aeD5t4oRGtFGb7ifU
+        4WPajAbXxI4R+C5O4WTzm7HJfHbrNNMalRaXBdTqC4HPlL2YOHJWdBeREiek+29K
+        EIuP5IbCbDQfy6RvOT9C/Wcf9cOAswMvclhtT7bRCGpal1ek3jqsaqBNQ==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
-        :message-id:mime-version:subject:to:x-me-proxy:x-me-proxy
-        :x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=yF1ILw6fVT9Ms/aRv
-        Whr5GmNy8yCGr3pdt2J77P8Ksg=; b=TTQOvW6r9Mi392k9GGi6muC4N+pNtQ0Xm
-        GdWhR+xYvDth+aBUAQdmPL/NmyJcHOcCwhhdoqed8QlH0hqrAVK6M9vJ+iolQ51o
-        tybj41uNSMpYU/HPiznEFifdy/VzsCUbOLw87LXXKwB0dJANNXhQwfGCu4pb8GD6
-        7zoDYpbfXvxsFgVmUnoXCrhPGyIlKQkH5Bn0uPnpn6N6WFpjuezhxMmYUXUwUuX0
-        btYLyeaZ7K1D8fKxLnGrrTEEsQIv/cqF6UiOCt+EXXNDtVdLGzmkkVrhNnAGUY4z
-        63iWDlkgSRUlLr7ZDRAV2K7d/mD5Qid43lMtdemyYwn+tBfg4yB/A==
-X-ME-Sender: <xms:mbX1XSkQcijX_Y6EzV-uhI2a9R45QZY5H9LY2SSO8tivwy6LVJIpbA>
+        :in-reply-to:message-id:mime-version:references:subject:to
+        :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+        fm1; bh=eiExqcZ7ujXnfULrpep8+tjQvNG7hCVX9mCQFkEA6Uo=; b=Oe0HD8Xi
+        1Mk7itRp/qo0Mk7pIEd/zKrwkmAT+4VBjv7vwuJq/ybqpemhfBTI2Xne8EBclGfP
+        xNl+10hp1MAddEx9AbVSXE8Ng/PNI5k/jg/2QyYhZDNaKn2jW3xrs0YMtSG3YRKc
+        ldF0KsHlOmF87mgZ2kNbtFwm8GA1/MqlUFnXvZo1zx9LTj3zwBb3K+yyU6GGraqs
+        ZK0I0U8K9kKd5kF67i/XKy84Rdny2+Evnn/QD3II5pRN6QN/4As1oC4QdrBaz5E3
+        1nnzBqdiPxMr5+CCw63bWtt6T0/aBKS4SjkkJsEV+PelyL4PDUmtjesCRm1EBZfk
+        pQR+e8WWak2tXA==
+X-ME-Sender: <xms:oLX1XYDiok_1POBQxg95OkoXKhgLHZktDPGxuFQK7HTd-nJ1SQFbtA>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddtvddgieelucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhephffvufffkffoggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgvlhcu
-    jfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkphepje
-    dtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghmuhgv
-    lhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgeptd
-X-ME-Proxy: <xmx:mbX1XfHA4DWZTjW_wQrEfGKPsFvCpNrWl6sarDuEFlgi5KMgA1K4_Q>
-    <xmx:mbX1XSVMypIjxbOqYHykcFy4kPMrcwFCew_zUWsipqB1yqKG1kG8kg>
-    <xmx:mbX1Xeyf8LwH_9K-1dQEO830eTGigJUaAxK_Zx2PTGAq6J1Yas7iHA>
-    <xmx:mrX1XYRbkjBPBJSJfIXXEqhDzpdYk8PWkZBxxL5FMcffXggFEGcI6A>
+    cujfgurhephffvufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefurghmuhgv
+    lhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenucfkph
+    epjedtrddufeehrddugeekrdduhedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehsrghm
+    uhgvlhesshhhohhllhgrnhgurdhorhhgnecuvehluhhsthgvrhfuihiivgepvd
+X-ME-Proxy: <xmx:oLX1XSLpkAWwI3qOhoCsdTWKd9fqMHG0la571rOACOwOKvyhpipQdQ>
+    <xmx:oLX1XbzWSA3A86E2CJGAWj90Ea1rxhHH_sRktGr7nCtFPxqbiVhXfA>
+    <xmx:oLX1XWw7An2FuzIJTNcjVCiiH8eFAWLmCHz95XkzsfH8fRw2GK3Tpw>
+    <xmx:oLX1XRH3K7Di1erBh9UIyftu4nis3iwYuRKcTDaFU4EYI89DrSYflQ>
 Received: from titanium.stl.sholland.net (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B5ACC80060;
-        Sat, 14 Dec 2019 23:24:56 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2730A80059;
+        Sat, 14 Dec 2019 23:25:03 -0500 (EST)
 From:   Samuel Holland <samuel@sholland.org>
 To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
         Jassi Brar <jassisinghbrar@gmail.com>,
@@ -74,10 +76,12 @@ To:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
 Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-sunxi@googlegroups.com, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH v5 0/8] Allwinner sun6i message box support
-Date:   Sat, 14 Dec 2019 22:24:47 -0600
-Message-Id: <20191215042455.51001-1-samuel@sholland.org>
+Subject: [PATCH v5 8/8] firmware: arm_scpi: Support unidirectional mailbox channels
+Date:   Sat, 14 Dec 2019 22:24:55 -0600
+Message-Id: <20191215042455.51001-9-samuel@sholland.org>
 X-Mailer: git-send-email 2.23.0
+In-Reply-To: <20191215042455.51001-1-samuel@sholland.org>
+References: <20191215042455.51001-1-samuel@sholland.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -85,88 +89,125 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This series adds support for the "hardware message box" in sun8i, sun9i,
-and sun50i SoCs, used for communication with the ARISC management
-processor (the platform's equivalent of the ARM SCP). The end goal is to
-use the arm_scpi driver as a client, communicating with firmware running
-on the ARISC CPU.
+Some mailbox controllers have only unidirectional channels, so we need a
+pair of them for each SCPI channel. If a mbox-names property is present,
+look for "rx" and "tx" mbox channels; otherwise, the existing behavior
+is preserved, and a single mbox channel is used for each SCPI channel.
 
-I have tested this driver with various firmware programs on the A64, H5,
-and H6 SoCs (including specifically this arm_scpi patch on A64 and H6),
-and Ondrej Jirman has tested the driver on the A83T (using a similar
-patch to arm_scpi).
+Note that since the mailbox framework only supports a single phandle
+with each name (mbox_request_channel_byname always returns the first
+one), this new mode only supports a single SCPI channel.
 
-The change to make the arm_scpi compatible with unidirectional mailbox
-controllers is attached to the end of this patch series. While it would
-be nice to get this merged too, I don't consider it a prerequisite to
-getting the driver merged. And even without the driver, the clock change
-(patch #1) can go in at any time.
+Signed-off-by: Samuel Holland <samuel@sholland.org>
+---
+ drivers/firmware/arm_scpi.c | 58 +++++++++++++++++++++++++++++--------
+ 1 file changed, 46 insertions(+), 12 deletions(-)
 
-Thanks,
-Samuel
-
-Changes from v4:
-  - Rebased on sunxi-next
-  - Dropped AR100 clock patch, as it was controversial and unnecessary
-  - Renamed sunxi-msgbox to sun6i-msgbox and sun6i-a31-msgbox
-  - Added comments about not asserting the reset line
-  - Dropped A80 DTS changes as they were untested
-  - Added Ondrej's Tested-by for A83T
-  - Dropped the demo; replaced with a real arm_scpi fix
-
-Changes from v3:
-  - Rebased on sunxi-next
-  - Added Rob's Reviewed-by for patch 3
-  - Fixed a crash when receiving a message on a disabled channel
-  - Cleaned up some comments/formatting in the driver
-  - Fixed #mbox-cells in sunxi-h3-h5.dtsi (patch 7)
-  - Removed the irqchip example (no longer relevant to the fw design)
-  - Added a demo/example client that uses the driver and a toy firmware
-
-Changes from v2:
-  - Merge patches 1-3
-  - Add a comment in the code explaining the CLK_IS_CRITICAL usage
-  - Add a patch to mark the AR100 clocks as critical
-  - Use YAML for the device tree binding
-  - Include a not-for-merge example usage of the mailbox
-
-Changes from v1:
-  - Marked message box clocks as critical instead of hacks in the driver
-  - 8 unidirectional channels instead of 4 bidirectional pairs
-  - Use per-SoC compatible strings and an A31 fallback compatible
-  - Dropped the mailbox framework patch
-  - Include DT patches for SoCs that document the message box
-
-Samuel Holland (8):
-  clk: sunxi-ng: Mark msgbox clocks as critical
-  dt-bindings: mailbox: Add a sun6i message box binding
-  mailbox: sun6i-msgbox: Add a new mailbox driver
-  ARM: dts: sunxi: a83t: Add msgbox node
-  ARM: dts: sunxi: h3/h5: Add msgbox node
-  arm64: dts: allwinner: a64: Add msgbox node
-  arm64: dts: allwinner: h6: Add msgbox node
-  firmware: arm_scpi: Support unidirectional mailbox channels
-
- .../mailbox/allwinner,sun6i-a31-msgbox.yaml   |  78 ++++
- arch/arm/boot/dts/sun8i-a83t.dtsi             |  10 +
- arch/arm/boot/dts/sunxi-h3-h5.dtsi            |  10 +
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  10 +
- arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi  |  10 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   3 +-
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c          |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c          |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c          |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c         |   3 +-
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c           |   3 +-
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c          |   3 +-
- drivers/firmware/arm_scpi.c                   |  58 ++-
- drivers/mailbox/Kconfig                       |   9 +
- drivers/mailbox/Makefile                      |   2 +
- drivers/mailbox/sun6i-msgbox.c                | 332 ++++++++++++++++++
- 16 files changed, 520 insertions(+), 19 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
- create mode 100644 drivers/mailbox/sun6i-msgbox.c
-
+diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
+index a80c331c3a6e..36ff9dd8d0fa 100644
+--- a/drivers/firmware/arm_scpi.c
++++ b/drivers/firmware/arm_scpi.c
+@@ -231,7 +231,8 @@ struct scpi_xfer {
+ 
+ struct scpi_chan {
+ 	struct mbox_client cl;
+-	struct mbox_chan *chan;
++	struct mbox_chan *rx_chan;
++	struct mbox_chan *tx_chan;
+ 	void __iomem *tx_payload;
+ 	void __iomem *rx_payload;
+ 	struct list_head rx_pending;
+@@ -505,7 +506,7 @@ static int scpi_send_message(u8 idx, void *tx_buf, unsigned int tx_len,
+ 	msg->rx_len = rx_len;
+ 	reinit_completion(&msg->done);
+ 
+-	ret = mbox_send_message(scpi_chan->chan, msg);
++	ret = mbox_send_message(scpi_chan->tx_chan, msg);
+ 	if (ret < 0 || !rx_buf)
+ 		goto out;
+ 
+@@ -854,8 +855,13 @@ static void scpi_free_channels(void *data)
+ 	struct scpi_drvinfo *info = data;
+ 	int i;
+ 
+-	for (i = 0; i < info->num_chans; i++)
+-		mbox_free_channel(info->channels[i].chan);
++	for (i = 0; i < info->num_chans; i++) {
++		struct scpi_chan *pchan = &info->channels[i];
++
++		if (pchan->tx_chan != pchan->rx_chan)
++			mbox_free_channel(pchan->tx_chan);
++		mbox_free_channel(pchan->rx_chan);
++	}
+ }
+ 
+ static int scpi_remove(struct platform_device *pdev)
+@@ -903,6 +909,7 @@ static int scpi_probe(struct platform_device *pdev)
+ 	struct resource res;
+ 	struct device *dev = &pdev->dev;
+ 	struct device_node *np = dev->of_node;
++	bool use_mbox_names = false;
+ 
+ 	scpi_info = devm_kzalloc(dev, sizeof(*scpi_info), GFP_KERNEL);
+ 	if (!scpi_info)
+@@ -916,6 +923,14 @@ static int scpi_probe(struct platform_device *pdev)
+ 		dev_err(dev, "no mboxes property in '%pOF'\n", np);
+ 		return -ENODEV;
+ 	}
++	if (of_get_property(dev->of_node, "mbox-names", NULL)) {
++		use_mbox_names = true;
++		if (count != 2) {
++			dev_err(dev, "need exactly 2 mboxes with mbox-names\n");
++			return -ENODEV;
++		}
++		count /= 2;
++	}
+ 
+ 	scpi_info->channels = devm_kcalloc(dev, count, sizeof(struct scpi_chan),
+ 					   GFP_KERNEL);
+@@ -961,15 +976,34 @@ static int scpi_probe(struct platform_device *pdev)
+ 		mutex_init(&pchan->xfers_lock);
+ 
+ 		ret = scpi_alloc_xfer_list(dev, pchan);
+-		if (!ret) {
+-			pchan->chan = mbox_request_channel(cl, idx);
+-			if (!IS_ERR(pchan->chan))
+-				continue;
+-			ret = PTR_ERR(pchan->chan);
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(dev, "failed to get channel%d err %d\n",
+-					idx, ret);
++		if (ret)
++			return ret;
++
++		if (use_mbox_names) {
++			pchan->rx_chan = mbox_request_channel_byname(cl, "rx");
++			if (IS_ERR(pchan->rx_chan)) {
++				ret = PTR_ERR(pchan->rx_chan);
++				goto fail;
++			}
++			pchan->tx_chan = mbox_request_channel_byname(cl, "tx");
++			if (IS_ERR(pchan->rx_chan)) {
++				ret = PTR_ERR(pchan->tx_chan);
++				goto fail;
++			}
++		} else {
++			pchan->rx_chan = mbox_request_channel(cl, idx);
++			if (IS_ERR(pchan->rx_chan)) {
++				ret = PTR_ERR(pchan->rx_chan);
++				goto fail;
++			}
++			pchan->tx_chan = pchan->rx_chan;
+ 		}
++		continue;
++
++fail:
++		if (ret != -EPROBE_DEFER)
++			dev_err(dev, "failed to get channel%d err %d\n",
++				idx, ret);
+ 		return ret;
+ 	}
+ 
 -- 
 2.23.0
 
