@@ -2,117 +2,125 @@ Return-Path: <SRS0=7Hsc=2F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBF4C43603
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:35:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0ABC43603
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:44:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B9B12467A
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:35:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 972862467A
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:44:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="vIlTcnG3"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="IQ2bT4OF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726232AbfLOUfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Dec 2019 15:35:08 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:40204 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfLOUfH (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 15:35:07 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i15so6251811oto.7;
-        Sun, 15 Dec 2019 12:35:07 -0800 (PST)
+        id S1726267AbfLOUoc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Dec 2019 15:44:32 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:40201 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfLOUoc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 15:44:32 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i15so6273647oto.7;
+        Sun, 15 Dec 2019 12:44:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=zbZi4+r1yCXEc/CpcpD0dVQFYFaG6+F9udODBceajHk=;
-        b=vIlTcnG35CEORdkR5yB86tv9FbzKRT1W+ELh/GPd3BpXHeuW8hjKrTqgctfag462oH
-         tvfUB51YRb9A/TG5liti5EZHwg/9+OS5yC8PuRGNPEeapPi4sOUp9Io45pruYZoz9Qbn
-         LeXhxCVCfXq0XTtKbxZd5wmrm6WUeA2iYP2vAyTZVJg6o1uNzecFZ45dUIV+MRK5WuGn
-         bFvS0kfl1TPY3ncwhZGaXWeZADtgNNKu73hiqaC10wq+vGJ+/TwEPTbPthyMPJAH9KhL
-         ZZcTsK6naGV/rZFj6eZEafwoE9ShfCrsA43y71duQATJaCbLgJfoJ+Ae/E8ayuEvJC5g
-         v/Lw==
+        bh=zt9xL93I8MsKs6Socqd2NmMVjNPgCRRv4tjGDgdBCSw=;
+        b=IQ2bT4OFZQWWliGC6Q+V6Kf26jnuzpQACPXwyY6cwPMUJe0lD7BDA0rJLHRc9AXQ+7
+         nUEzp1ASKVPv7h6zeGDoll31LQwdkrQtAcIN2+6nx5WZny6yhUJOnqiwFNTkut6yFTA1
+         kMeckmsoC3tLNdBKledAnfZnx8cHXghd3aBmZLI7ZhyyT7sXyrt14wocHkFxe9A4kW/J
+         SThbE0Mx/WoCntEioF+6KZz/gHL1umZFXDjGJA0WjPEcfmhgXl2Jo3YntsteRQfjRX/4
+         ZPaNmW+HeQ2+x76oRGia3CS2jcc7ASMO27s5yHqdVri5kjws8+FioaxM5SYJmTl3k36V
+         MjAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=zbZi4+r1yCXEc/CpcpD0dVQFYFaG6+F9udODBceajHk=;
-        b=VkV+YqP8kHKZ3H9081y9EQWVFoFHBtzlcb5+a6/c8K9EBpU9ifjgxOw9Fajrj89glk
-         bq+e68M67gghlkCYZq5AEsbirTRbKBpa9wax3uhMfTUBTxngeYgM5tbstRj9vpOd9fiz
-         itnwIT9yRles90+4r+O2maIayBPuxY16OghnjR3Xg0C5pJDkwVoowlfyptgXu/v8TkP9
-         alPzl4IKncJ+MFsh8UDO1ZU/p9pm1S6h1n7yk/JyTx8fCYyXCrCZigx4qkjGwOL7nIQH
-         7KgdrQwGKnNg1W5chg9PkEim8xIIFNXV7cSM9ae4LyhBv0FuurA0xpEfXFYodWB0IeAS
-         uBgA==
-X-Gm-Message-State: APjAAAWlS9QdiWHCtRK+eBBuzKWnIprTY1jCPFjER88K9Gyfe5HKQxtE
-        F5E/W436EIrzoHKfZP5DEML4ApvmDCuoF7KeawY=
-X-Google-Smtp-Source: APXvYqxIwAW1/JmFMVUr2AzvIDmU4NWd/3e3k+sCn/MyW7UxkkzglVYwDhPDH6T/yFg/ReNTT/nmp+LIKw+NRnoEAGs=
-X-Received: by 2002:a9d:7342:: with SMTP id l2mr28007361otk.98.1576442106640;
- Sun, 15 Dec 2019 12:35:06 -0800 (PST)
+        bh=zt9xL93I8MsKs6Socqd2NmMVjNPgCRRv4tjGDgdBCSw=;
+        b=YsOZ8p23FujVJpt6g83z7C+/UmbsFuZj4MjSEb5jmPLv67I0g5zjYH+xPvRe73Hq0a
+         Xz2VKS90KDsl0Sa2dI2BpHgTjEN9THK1f+A2dzOUOwFgKLt8mTQ7VkPECbl6jneGOyxD
+         drj9leeoFi68jb96Zlr1f5swARTu4dmpTSvP/tytgEHrH0BGLyYdcANujRda5bD/oCkW
+         xgHwYqLSa9JomxLbzNviN1CTbV4iMhlErCkPlpzXFfVVfoXdEAsxm4m7vIxn4KUO7aH3
+         WpYU/BSTOCscxppv1VEL8nLpjqL6Ll+jb2hqif37+fKyiBhbxMLwcdiWg2D37wBDWUT0
+         Ab1w==
+X-Gm-Message-State: APjAAAW2KGwmOhvKtzvONpv0fh/der++C5hn889UjuIcguyB9v5R523P
+        Z+Mcxbi7LGI065mvDmiYdn0xY8IhonhdqH2CsCU=
+X-Google-Smtp-Source: APXvYqzTskIRt2Xw6EqKZjSVIvxiX/lSFCf08HAZcNVOCGDv9OhkOltw6Or9ek9Mtm4/ItWI9/ZSUmrTMq6qqm+Z6UI=
+X-Received: by 2002:a9d:6a4c:: with SMTP id h12mr28669493otn.81.1576442671149;
+ Sun, 15 Dec 2019 12:44:31 -0800 (PST)
 MIME-Version: 1.0
-References: <20191215114705.24401-1-repk@triplefau.lt>
-In-Reply-To: <20191215114705.24401-1-repk@triplefau.lt>
+References: <20191208210320.15539-1-repk@triplefau.lt> <1jpngxew6l.fsf@starbuckisacylon.baylibre.com>
+ <20191215113634.GB7304@voidbox>
+In-Reply-To: <20191215113634.GB7304@voidbox>
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sun, 15 Dec 2019 21:34:55 +0100
-Message-ID: <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
+Date:   Sun, 15 Dec 2019 21:44:20 +0100
+Message-ID: <CAFBinCC+i5nFdyHGZkaV0gm3Qkn6OA8xR91iQJAK1SGUBRMJTw@mail.gmail.com>
+Subject: Re: [PATCH 0/2] PCI: amlogic: Make PCIe working reliably on AXG platforms
 To:     Remi Pommarel <repk@triplefau.lt>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Kevin Hilman <khilman@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+        linux-kernel@vger.kernel.org, Yue Wang <yue.wang@amlogic.com>,
+        linux-pci@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        jianxin.pan@amlogic.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sun, Dec 15, 2019 at 12:39 PM Remi Pommarel <repk@triplefau.lt> wrote:
->
-> Some meson pll registers can be initialized with 0 as N value, introducing
-> the following division by 0 when computing rate :
->
->   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
->   division by zero
->   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
->   Call trace:
->    dump_backtrace+0x0/0x1c0
->    show_stack+0x14/0x20
->    dump_stack+0xc4/0x100
->    ubsan_epilogue+0x14/0x68
->    __ubsan_handle_divrem_overflow+0x98/0xb8
->    __pll_params_to_rate+0xdc/0x140
->    meson_clk_pll_recalc_rate+0x278/0x3a0
->    __clk_register+0x7c8/0xbb0
->    devm_clk_hw_register+0x54/0xc0
->    meson_eeclkc_probe+0xf4/0x1a0
->    platform_drv_probe+0x54/0xd8
->    really_probe+0x16c/0x438
->    driver_probe_device+0xb0/0xf0
->    device_driver_attach+0x94/0xa0
->    __driver_attach+0x70/0x108
->    bus_for_each_dev+0xd8/0x128
->    driver_attach+0x30/0x40
->    bus_add_driver+0x1b0/0x2d8
->    driver_register+0xbc/0x1d0
->    __platform_driver_register+0x78/0x88
->    axg_driver_init+0x18/0x20
->    do_one_initcall+0xc8/0x24c
->    kernel_init_freeable+0x2b0/0x344
->    kernel_init+0x10/0x128
->    ret_from_fork+0x10/0x18
->
-> This checks if N is null before doing the division.
->
-> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
-> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Hi Remi,
 
-thank you for the patch Remi!
+On Sun, Dec 15, 2019 at 12:28 PM Remi Pommarel <repk@triplefau.lt> wrote:
+>
+> On Mon, Dec 09, 2019 at 09:32:18AM +0100, Jerome Brunet wrote:
+> >
+> > On Sun 08 Dec 2019 at 22:03, Remi Pommarel <repk@triplefau.lt> wrote:
+> >
+> > > PCIe device probing failures have been seen on some AXG platforms and were
+> > > due to unreliable clock signal output. Setting HHI_MIPI_CNTL0[26] bit
+> > > solved the problem. After being contacted about this, vendor reported that
+> > > this bit was linked to PCIe PLL CML output.
+> >
+> > Thanks for reporting the problem.
+> >
+> > As Martin pointed out, the CML outputs already exist in the AXG clock
+> > controller but are handled using HHI_PCIE_PLL_CNTL6. Although
+> > incomplete, it seems to be aligned with the datasheet I have (v0.9)
+> >
+> > According to the same document, HHI_MIPI_CNTL0 belong to the MIPI Phy.
+> > Unfortunately bit 26 is not documented
+> >
+> > AFAICT, the clock controller is not appropriate driver to deal with this
+> > register/bit
+> >
+>
+> Regarding both @Martin's and your remark.
+>
+> Unfortunately the documentation I have and vendor feedback are a bit
+> vague to me. I do agree that CLKID_PCIE_PLL_CML_ENABLE is not a proper
+> name for this bit because this register is MIPI related.
+>
+> Here is the information I got from the vendor [1]. As you can see
+> HHI_MIPI_CNTL0[29] and HHI_MIPI_CNTL0[26] are related together, and
+> HHI_MIPI_CNTL0[29] is implemented in the clock controller as
+> axg_mipi_enable which is why I used this driver for HHI_MIPI_CNTL0[26].
+I agree, the details you got so far are unfortunately pretty vague
+(with my knowledge at least)
+from my experience Amlogic has very good documentation internally, so
+I'm sure that more details are available.
+
+Yue Wang (the Amlogic PCIe controller maintainer) is already Cc'ed and
+I added Jianxin. I hope that they can explain the meaning of bis 26
+and 29 in HHI_MIPI_CNTL0 on the AXG SoCs (assuming Remi's contact at
+Amlogic can't) and how they are related to the PCIe controller (even
+though they're in a MIPI related register).
 
 
 Martin
