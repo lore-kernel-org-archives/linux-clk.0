@@ -2,106 +2,128 @@ Return-Path: <SRS0=7Hsc=2F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	UNPARSEABLE_RELAY,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2441C3F68F
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 11:38:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A98E4C43603
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 14:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CE112465B
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 11:38:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DDA5206C3
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 14:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726192AbfLOLiz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Dec 2019 06:38:55 -0500
-Received: from relay12.mail.gandi.net ([217.70.178.232]:38039 "EHLO
-        relay12.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726083AbfLOLiz (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 06:38:55 -0500
-Received: from localhost (unknown [88.190.179.123])
-        (Authenticated sender: repk@triplefau.lt)
-        by relay12.mail.gandi.net (Postfix) with ESMTPSA id 1CEFD200003;
-        Sun, 15 Dec 2019 11:38:51 +0000 (UTC)
-From:   Remi Pommarel <repk@triplefau.lt>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH v2] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
-Date:   Sun, 15 Dec 2019 12:47:05 +0100
-Message-Id: <20191215114705.24401-1-repk@triplefau.lt>
-X-Mailer: git-send-email 2.24.0
+        id S1726121AbfLOOMF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Dec 2019 09:12:05 -0500
+Received: from out28-194.mail.aliyun.com ([115.124.28.194]:45803 "EHLO
+        out28-194.mail.aliyun.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbfLOOME (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 09:12:04 -0500
+X-Alimail-AntiSpam: AC=CONTINUE;BC=0.07524233|-1;CH=green;DM=CONTINUE|CONTINUE|true|0.748144-0.0180301-0.233826;DS=SPAM|spam_ad|0.859637-0.000764868-0.139599;FP=0|0|0|0|0|-1|-1|-1;HT=e02c03311;MF=zhouyanjie@wanyeetech.com;NM=1;PH=DS;RN=13;RT=13;SR=0;TI=SMTPD_---.GHcsMuJ_1576419116;
+Received: from 192.168.88.128(mailfrom:zhouyanjie@wanyeetech.com fp:SMTPD_---.GHcsMuJ_1576419116)
+          by smtp.aliyun-inc.com(10.147.41.143);
+          Sun, 15 Dec 2019 22:11:58 +0800
+Subject: Re: [PATCH v3 1/5] clk: Ingenic: Remove unnecessary spinlock when
+ reading registers.
+To:     Paul Cercueil <paul@crapouillou.net>
+References: <1576337630-78576-1-git-send-email-zhouyanjie@wanyeetech.com>
+ <1576337630-78576-3-git-send-email-zhouyanjie@wanyeetech.com>
+ <1576346863.3.1@crapouillou.net>
+Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        robh+dt@kernel.org, paul.burton@mips.com, paulburton@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, mark.rutland@arm.com,
+        sernia.zhou@foxmail.com, zhenwenjin@gmail.com
+From:   Zhou Yanjie <zhouyanjie@wanyeetech.com>
+Message-ID: <5DF63F2E.2040608@wanyeetech.com>
+Date:   Sun, 15 Dec 2019 22:11:58 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
+ Thunderbird/38.8.0
 MIME-Version: 1.0
+In-Reply-To: <1576346863.3.1@crapouillou.net>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some meson pll registers can be initialized with 0 as N value, introducing
-the following division by 0 when computing rate :
+Hi Paul,
 
-  UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
-  division by zero
-  CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
-  Call trace:
-   dump_backtrace+0x0/0x1c0
-   show_stack+0x14/0x20
-   dump_stack+0xc4/0x100
-   ubsan_epilogue+0x14/0x68
-   __ubsan_handle_divrem_overflow+0x98/0xb8
-   __pll_params_to_rate+0xdc/0x140
-   meson_clk_pll_recalc_rate+0x278/0x3a0
-   __clk_register+0x7c8/0xbb0
-   devm_clk_hw_register+0x54/0xc0
-   meson_eeclkc_probe+0xf4/0x1a0
-   platform_drv_probe+0x54/0xd8
-   really_probe+0x16c/0x438
-   driver_probe_device+0xb0/0xf0
-   device_driver_attach+0x94/0xa0
-   __driver_attach+0x70/0x108
-   bus_for_each_dev+0xd8/0x128
-   driver_attach+0x30/0x40
-   bus_add_driver+0x1b0/0x2d8
-   driver_register+0xbc/0x1d0
-   __platform_driver_register+0x78/0x88
-   axg_driver_init+0x18/0x20
-   do_one_initcall+0xc8/0x24c
-   kernel_init_freeable+0x2b0/0x344
-   kernel_init+0x10/0x128
-   ret_from_fork+0x10/0x18
+On 2019年12月15日 02:07, Paul Cercueil wrote:
+> Hi Zhou,
+>
+> You can also remove the locks around ingenic_cgu_gate_get(), they are 
+> useless. Then also edit the doc of this function as currently it says 
+> that the caller must hold the lock.
+>
 
-This checks if N is null before doing the division.
+Sure, I'll remove it in v4.
 
-Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
----
-Changes since v1:
-  - Change Fix tag
-  - Move null test to .recalc_rate()
----
- drivers/clk/meson/clk-pll.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Thanks and best regards!
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index ddb1e5634739..4d3a8003ca20 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -77,6 +77,10 @@ static unsigned long meson_clk_pll_recalc_rate(struct clk_hw *hw,
- 	unsigned int m, n, frac;
- 
- 	n = meson_parm_read(clk->map, &pll->n);
-+	/* Some hw may have n set to 0 at init, avoid div by 0 in that case */
-+	if (n == 0)
-+		return 0;
-+
- 	m = meson_parm_read(clk->map, &pll->m);
- 
- 	frac = MESON_PARM_APPLICABLE(&pll->frac) ?
--- 
-2.24.0
+> -Paul
+>
+>
+> Le sam., déc. 14, 2019 at 23:33, 周琰杰 (Zhou Yanjie) 
+> <zhouyanjie@wanyeetech.com> a écrit :
+>> It is not necessary to use spinlock when reading registers,
+>> so remove it from cgu.c.
+>>
+>> Suggested-by: Paul Cercueil <paul@crapouillou.net>
+>> Suggested-by: Paul Burton <paulburton@kernel.org>
+>> Signed-off-by: 周琰杰 (Zhou Yanjie) <zhouyanjie@wanyeetech.com>
+>> ---
+>>
+>> Notes:
+>>     v2:
+>>     New patch.
+>>
+>>     v2->v3:
+>>     Adjust order from [5/5] in v2 to [1/5] in v3.
+>>
+>>  drivers/clk/ingenic/cgu.c | 6 ------
+>>  1 file changed, 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+>> index 6e96303..8bd3998 100644
+>> --- a/drivers/clk/ingenic/cgu.c
+>> +++ b/drivers/clk/ingenic/cgu.c
+>> @@ -76,16 +76,13 @@ ingenic_pll_recalc_rate(struct clk_hw *hw, 
+>> unsigned long parent_rate)
+>>      const struct ingenic_cgu_pll_info *pll_info;
+>>      unsigned m, n, od_enc, od;
+>>      bool bypass;
+>> -    unsigned long flags;
+>>      u32 ctl;
+>>
+>>      clk_info = &cgu->clock_info[ingenic_clk->idx];
+>>      BUG_ON(clk_info->type != CGU_CLK_PLL);
+>>      pll_info = &clk_info->pll;
+>>
+>> -    spin_lock_irqsave(&cgu->lock, flags);
+>>      ctl = readl(cgu->base + pll_info->reg);
+>> -    spin_unlock_irqrestore(&cgu->lock, flags);
+>>
+>>      m = (ctl >> pll_info->m_shift) & GENMASK(pll_info->m_bits - 1, 0);
+>>      m += pll_info->m_offset;
+>> @@ -259,12 +256,9 @@ static int ingenic_pll_is_enabled(struct clk_hw 
+>> *hw)
+>>      struct ingenic_cgu *cgu = ingenic_clk->cgu;
+>>      const struct ingenic_cgu_clk_info *clk_info = 
+>> to_clk_info(ingenic_clk);
+>>      const struct ingenic_cgu_pll_info *pll_info = &clk_info->pll;
+>> -    unsigned long flags;
+>>      u32 ctl;
+>>
+>> -    spin_lock_irqsave(&cgu->lock, flags);
+>>      ctl = readl(cgu->base + pll_info->reg);
+>> -    spin_unlock_irqrestore(&cgu->lock, flags);
+>>
+>>      return !!(ctl & BIT(pll_info->enable_bit));
+>>  }
+>> -- 
+>> 2.7.4
+>>
+>
 
