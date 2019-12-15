@@ -2,142 +2,117 @@ Return-Path: <SRS0=7Hsc=2F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C17CC43603
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBF4C43603
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:35:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBA8A24676
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:27:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B9B12467A
+	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 20:35:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="vIlTcnG3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726219AbfLOU1X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Dec 2019 15:27:23 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:51232 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726146AbfLOU1X (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 15 Dec 2019 15:27:23 -0500
-Received: from [192.168.178.200] (p57BC9BBE.dip0.t-ipconnect.de [87.188.155.190])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 0143A2E79BE;
-        Sun, 15 Dec 2019 20:20:57 +0000 (UTC)
-Subject: Re: [PATCH 07/10] i2c: Add driver for AD242x bus controller
-To:     Wolfram Sang <wsa@the-dreams.de>,
-        Luca Ceresoli <luca@lucaceresoli.net>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        broonie@kernel.org, lee.jones@linaro.org, lars@metafoo.de,
-        pascal.huerst@gmail.com
-References: <20191209183511.3576038-1-daniel@zonque.org>
- <20191209183511.3576038-9-daniel@zonque.org>
- <64adf5d7-754a-f1da-aa9b-11579c5a2780@lucaceresoli.net>
- <20191212163315.GA3932@kunai>
-From:   Daniel Mack <daniel@zonque.org>
-Autocrypt: addr=daniel@zonque.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <482316ef-775a-cb7b-015e-e00463503e6b@zonque.org>
-Date:   Sun, 15 Dec 2019 21:27:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726232AbfLOUfI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Dec 2019 15:35:08 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40204 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726219AbfLOUfH (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 15:35:07 -0500
+Received: by mail-ot1-f67.google.com with SMTP id i15so6251811oto.7;
+        Sun, 15 Dec 2019 12:35:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=zbZi4+r1yCXEc/CpcpD0dVQFYFaG6+F9udODBceajHk=;
+        b=vIlTcnG35CEORdkR5yB86tv9FbzKRT1W+ELh/GPd3BpXHeuW8hjKrTqgctfag462oH
+         tvfUB51YRb9A/TG5liti5EZHwg/9+OS5yC8PuRGNPEeapPi4sOUp9Io45pruYZoz9Qbn
+         LeXhxCVCfXq0XTtKbxZd5wmrm6WUeA2iYP2vAyTZVJg6o1uNzecFZ45dUIV+MRK5WuGn
+         bFvS0kfl1TPY3ncwhZGaXWeZADtgNNKu73hiqaC10wq+vGJ+/TwEPTbPthyMPJAH9KhL
+         ZZcTsK6naGV/rZFj6eZEafwoE9ShfCrsA43y71duQATJaCbLgJfoJ+Ae/E8ayuEvJC5g
+         v/Lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=zbZi4+r1yCXEc/CpcpD0dVQFYFaG6+F9udODBceajHk=;
+        b=VkV+YqP8kHKZ3H9081y9EQWVFoFHBtzlcb5+a6/c8K9EBpU9ifjgxOw9Fajrj89glk
+         bq+e68M67gghlkCYZq5AEsbirTRbKBpa9wax3uhMfTUBTxngeYgM5tbstRj9vpOd9fiz
+         itnwIT9yRles90+4r+O2maIayBPuxY16OghnjR3Xg0C5pJDkwVoowlfyptgXu/v8TkP9
+         alPzl4IKncJ+MFsh8UDO1ZU/p9pm1S6h1n7yk/JyTx8fCYyXCrCZigx4qkjGwOL7nIQH
+         7KgdrQwGKnNg1W5chg9PkEim8xIIFNXV7cSM9ae4LyhBv0FuurA0xpEfXFYodWB0IeAS
+         uBgA==
+X-Gm-Message-State: APjAAAWlS9QdiWHCtRK+eBBuzKWnIprTY1jCPFjER88K9Gyfe5HKQxtE
+        F5E/W436EIrzoHKfZP5DEML4ApvmDCuoF7KeawY=
+X-Google-Smtp-Source: APXvYqxIwAW1/JmFMVUr2AzvIDmU4NWd/3e3k+sCn/MyW7UxkkzglVYwDhPDH6T/yFg/ReNTT/nmp+LIKw+NRnoEAGs=
+X-Received: by 2002:a9d:7342:: with SMTP id l2mr28007361otk.98.1576442106640;
+ Sun, 15 Dec 2019 12:35:06 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20191212163315.GA3932@kunai>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191215114705.24401-1-repk@triplefau.lt>
+In-Reply-To: <20191215114705.24401-1-repk@triplefau.lt>
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date:   Sun, 15 Dec 2019 21:34:55 +0100
+Message-ID: <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
+Subject: Re: [PATCH v2] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
+To:     Remi Pommarel <repk@triplefau.lt>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+On Sun, Dec 15, 2019 at 12:39 PM Remi Pommarel <repk@triplefau.lt> wrote:
+>
+> Some meson pll registers can be initialized with 0 as N value, introducing
+> the following division by 0 when computing rate :
+>
+>   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
+>   division by zero
+>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
+>   Call trace:
+>    dump_backtrace+0x0/0x1c0
+>    show_stack+0x14/0x20
+>    dump_stack+0xc4/0x100
+>    ubsan_epilogue+0x14/0x68
+>    __ubsan_handle_divrem_overflow+0x98/0xb8
+>    __pll_params_to_rate+0xdc/0x140
+>    meson_clk_pll_recalc_rate+0x278/0x3a0
+>    __clk_register+0x7c8/0xbb0
+>    devm_clk_hw_register+0x54/0xc0
+>    meson_eeclkc_probe+0xf4/0x1a0
+>    platform_drv_probe+0x54/0xd8
+>    really_probe+0x16c/0x438
+>    driver_probe_device+0xb0/0xf0
+>    device_driver_attach+0x94/0xa0
+>    __driver_attach+0x70/0x108
+>    bus_for_each_dev+0xd8/0x128
+>    driver_attach+0x30/0x40
+>    bus_add_driver+0x1b0/0x2d8
+>    driver_register+0xbc/0x1d0
+>    __platform_driver_register+0x78/0x88
+>    axg_driver_init+0x18/0x20
+>    do_one_initcall+0xc8/0x24c
+>    kernel_init_freeable+0x2b0/0x344
+>    kernel_init+0x10/0x128
+>    ret_from_fork+0x10/0x18
+>
+> This checks if N is null before doing the division.
+>
+> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
+> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-Thanks for the review!
-
-On 12/12/2019 5:33 pm, Wolfram Sang wrote:
-> Hi Luca,
-> 
-> thanks for the review!
-> 
->> good, but I think there's a problem in this function. A "normal"
->> master_xfer function issues a repeated start between one msg and the
->> next one, at least in the typical case where all msgs have the same
->> slave address. Your implementation breaks repeated start. At first sight
->> we might need more complex code here to coalesce all consecutive msgs
->> with the same address into a single i2c_transfer() call.
-> 
-> Note that it is by far the standard case that all messages in a transfer
-> have the same client address (99,999%?). But technically, this is not a
-> requirement and the repeated start on the bus is totally independent of
-> the addresses used. It is just a master wanting to send without being
-> interrupted by another master.
-
-I'm not quite sure I understand.
-
-Let's assume the following setup. An i2c client (some driver code) is
-sending a list of messages to the a2b xfer function, which in turn is
-logically connected to a 'real' i2c bus master that'll put the data on
-the wire.
-
-The a2b code has to tell the 'master node' the final destination of the
-payload by programming registers on its primary i2c address, and then
-forwards the messages to its secondary i2c address. The layout of the
-messages don't change, and neither do the flags; i2c messages are being
-sent as i2c messages, except their addresses are changed, a bit like NAT
-in networking. That procedure is described on page 3-4 of the TRM,
-"Remote Peripheral I2C Accesses".
-
-The 'real' i2c master that handles the hardware bus is responsible for
-adding start conditions, and as the messages as such are untouched, I
-believe it should do the right thing. The code in my xfer functions
-merely suppresses reprogramming remote addresses by remembering the last
-one that was used, but that is independent of the start conditions on
-the wire.
-
-Maybe I'm missing anything. Could you provide an example that explains
-in which case this approach would leads to issues?
+thank you for the patch Remi!
 
 
-Thanks,
-Daniel
+Martin
