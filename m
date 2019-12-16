@@ -6,65 +6,63 @@ X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A3853C43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:13:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30AE2C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:17:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73E0E215A4
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02FF7207FF
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:17:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WUP++Ukk"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="z9FknNNf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbfLPJNf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 04:13:35 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54999 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726987AbfLPJNf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 04:13:35 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b19so5856183wmj.4
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 01:13:33 -0800 (PST)
+        id S1726992AbfLPJRa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 04:17:30 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53260 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726967AbfLPJRa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 04:17:30 -0500
+Received: by mail-wm1-f68.google.com with SMTP id m24so4486815wmc.3
+        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 01:17:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=references:user-agent:from:to:cc:subject:in-reply-to:date
          :message-id:mime-version;
-        bh=hGz9qWdY8ZcUU5/VcrTyxse6NvOSG2JsP6RQHgyur6o=;
-        b=WUP++UkkkRHAngukuNoFL6QdnnAcsECwDXGu5MQfgjJHODHN6xd2WMIiokGIBHeJeY
-         Xtr1sfbZVaBjybPoIos7VuR8uYpG2CQ6mV7+A9FhXATLlJdFc21aKVjsQctJD3oOVJI+
-         j0gaFHhyX0/J//241U49HhKK5tv0N7vfW8xW9nsL+FPYkfo7loQk7KaEkpgiFgXb26FY
-         bbd35FmlBznv/3K5Dw4098MXk+dR5bhE1BZFGdprT0krRVjCR5XeI/758Sqgk5ZBKLBy
-         DTlU59r2daKnL4q0/U9E4IeAjQIt7ZYunYv05taTdrauBJUWbfi0v5Pr3wcN7Phj0ZOw
-         DreA==
+        bh=ympWuvVHTsyQisGFsJE6wNDGlF/BBCJa5n1XjqeTn0M=;
+        b=z9FknNNfh6oxBP9msMi4VEbjlqa3qy68J30GAW/tCYFxV0uy+7uMZCI0ZHCwEHt6YK
+         c/ahqRY/6HR5sEG+IJJTGcnUaYKMALkFB5dCK29eKZ0Ikn98GTodFNyjGLt+HrBxmDjI
+         Sji6eAmYkZ2bbpv6YY+V43m2n5vLUxb7JrWmuALxEJBKxBuRQwChomjkSofJhs/Rvihf
+         Cv2KA2orkiR8gADcIBF7nIYrJLpHR/l1bjkp3eBCoojaycERuYNaAAzaJasrQylpp/Lf
+         1YfUdVv6KT3wMuK8k7KLM+hx8sFJ72qZQxYOMBeq+HNmi982jr8wro9euBnzO7fTq1rw
+         5mXg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:references:user-agent:from:to:cc:subject
          :in-reply-to:date:message-id:mime-version;
-        bh=hGz9qWdY8ZcUU5/VcrTyxse6NvOSG2JsP6RQHgyur6o=;
-        b=VhS5IJ14xRM2h/KL3QN+kjyk9msXW/Z8EvQ7mkQ9TH4WP4JI0n/5seoDHUKkbEvx3F
-         HJCezhcsca8zKeHPbV0UfE/BZ/7i5sibiu5kof2TAQzKw+XSBatjpvj8pcfGluJqpO2n
-         NxZMs2bSKqAFUsgCxl0gKXybiZyliPD32LyCK3OHYfOJWXhhp+hGqY+Vj5NlFg8GBR6q
-         3WiYb5Kx8aWYNtV27MOgODLJeTp6RYHMhu5QEgU4Yz/ScCoZkg1YmFC9hkTcpIsblL3l
-         tuG8Yg9L+LHEVR5zZbWIc0IvOeDlJFsMpcIGibxkFgCIL7GmkETlAzWXLK8ZFB4xm+Fp
-         gNig==
-X-Gm-Message-State: APjAAAXpUVvt2vO8ZrDiTaXarHqHWKpBcfWsYrcnr9Zt9P9EUNc8FC6V
-        WRRnrKc/ny3QK+F48fwyXxezjw==
-X-Google-Smtp-Source: APXvYqy19YVm/1kSejmA9wVlq3iOrl0I2bxY+X47LQj5Bypu9SC2jPZAIHgTCn3wIgxj4Ti9RIfJaw==
-X-Received: by 2002:a1c:4008:: with SMTP id n8mr27710908wma.121.1576487613009;
-        Mon, 16 Dec 2019 01:13:33 -0800 (PST)
+        bh=ympWuvVHTsyQisGFsJE6wNDGlF/BBCJa5n1XjqeTn0M=;
+        b=F6/ihjwEEmraHVLXX4UKdSpkxLt1I/35y5VGGe8baKuZAxWztdE+YKy1kcdjmll8zW
+         c42zxa2W5uVFCoKjMXvgU1DNL9CUbQ+2Qt1RCZi+QwYTxcW2iUqetCPk4lpHP4tcXp1R
+         gbNBSHBXlHTM+xZUx+sVw+ZenAJPRNB0RYJz1eSIZIuqlkGlXY8qBT3u9HGqhUGRuFFe
+         crqx73i0bmcwPath4kvRpSEJ0jxOslgrbLFFQqi53zMKT3WRvf+jhK4EmqLe66tANByH
+         +GFBylcTzjW6BdM8v7DRx81XxQ06LBkfjnGbg+0ShfZKOnZ4Cjm4lF4yd+9CFtqh2FIk
+         H14Q==
+X-Gm-Message-State: APjAAAXp1TcvFCuNrOVDEEs8961bmAAP1h2nO1OaFpeonpICBPvcV9Or
+        +6qZrb/+1pqr33kJ3POpIW+hVaNP7Uw=
+X-Google-Smtp-Source: APXvYqzU8Tsr5oYK5LGn7OcfoU1jW/4JBvMiYIGT9Wfohalc0a4Io77U2njn9tjcLYyBn3aCc5QqIg==
+X-Received: by 2002:a7b:cf21:: with SMTP id m1mr28670265wmg.170.1576487848048;
+        Mon, 16 Dec 2019 01:17:28 -0800 (PST)
 Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id b10sm21088066wrt.90.2019.12.16.01.13.32
+        by smtp.gmail.com with ESMTPSA id n67sm20894797wmb.8.2019.12.16.01.17.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 01:13:32 -0800 (PST)
-References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com>
+        Mon, 16 Dec 2019 01:17:26 -0800 (PST)
+References: <20190924123954.31561-1-jbrunet@baylibre.com> <1jv9r27kzn.fsf@starbuckisacylon.baylibre.com> <20191203090516.1A03B20661@mail.kernel.org>
 User-agent: mu4e 1.3.3; emacs 26.3
 From:   Jerome Brunet <jbrunet@baylibre.com>
 To:     Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
-In-reply-to: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com>
-Date:   Mon, 16 Dec 2019 10:13:31 +0100
-Message-ID: <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] clk: let clock perform allocation in init
+In-reply-to: <20191203090516.1A03B20661@mail.kernel.org>
+Date:   Mon, 16 Dec 2019 10:17:25 +0100
+Message-ID: <1jpngobpei.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
@@ -73,73 +71,35 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+On Tue 03 Dec 2019 at 10:05, Stephen Boyd <sboyd@kernel.org> wrote:
 
-> While playing with devfreq support for the lima driver I experienced
-> sporadic (random) system lockups. It turned out that this was in
-> certain cases when changing the mali clock.
+> Quoting Jerome Brunet (2019-11-29 07:36:28)
+>> 
+>> On Tue 24 Sep 2019 at 14:39, Jerome Brunet <jbrunet@baylibre.com> wrote:
+>> 
+>> > This patchset is a follow up on this pinky swear [0].
+>> > Its purpose is:
+>> >  * Clarify the acceptable use of clk_ops init() callback
+>> >  * Let the init() callback return an error code in case anything
+>> >    fail.
+>> >  * Add the terminate() counter part of of init() to release the
+>> >    resources which may have been claimed in init()
+>> >
+>> > After discussing with Stephen at LPC, I decided to drop the 2 last patches
+>> > of the RFC [1]. I can live without it for now and nobody expressed a
+>> > critical need to get the proposed placeholder.
+>> >
+>> > [0]: https://lkml.kernel.org/r/CAEG3pNB-143Pr_xCTPj=tURhpiTiJqi61xfDGDVdU7zG5H-2tA@mail.gmail.com
+>> > [1]: https://lkml.kernel.org/r/20190828102012.4493-1-jbrunet@baylibre.com
+>> >
+>> 
+>> Hi Stephen,
+>> 
+>> Do you think we can fit this into the incoming cycle ?
+>> 
 >
-> The Amlogic vendor GPU platform driver (which is responsible for
-> changing the clock frequency) uses the following pattern when updating
-> the mali clock rate:
-> - at initialization: initialize the two mali_0 and mali_1 clock trees
->   with a default setting and enable both clocks
-> - when changing the clock frequency:
-> -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
-> -- update the mali_0 clock tree (set the mux, divider, etc.)
-> -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
-                                      ^ no final setting then ? :P
->    output again
->
-> With the common clock framework we can even do better:
-> by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
-                ^
-From your patch, I guess you mean CLK_SET_RATE_GATE ?
+> Sorry I missed this one. I'll apply it soon but won't be for this merge
+> window.
 
-> we can force the common clock framework to update the "inactive" clock
-> and then switch to it's output.
->
-> I only tested this patch for a limited time only (approx. 2 hours).
-> So far I couldn't reproduce the sporadic system lockups with it.
-> However, broader testing would be great so I would like this to be
-> applied for -next.
-
-CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
-use. While it works at your advantage here, I'm not sure CCF guarantees
-the assumption this implementation is based on. Some explanation below:
-
-In your case, if it works as you expect when calling set_rate() on the
-top clock, it goes as this:
-
-- mali0 is use with rate X:
-- => set_rate(mali_top, Y)
-- mali0 is in use, cannot change, will round rate Y to X
-- mali1 is not in use, can provide Y
-- mali1 is determined to be the new best parent for mali top
-
-So far so good.
-
-- CCF pick the mali1 subtree
-  *start updating the clock from the root to the leaf*
-
-So the mali top mux, which choose between mali0 and mali1, will be
-*updated last* which crucial to your use case.
-
-I just wonder if this crucial part something CCF guarantee and you can
-rely on it ... or if it might break in the future.
-
-Stephen, any thoughts on this ?
-
-PS: If CCF does guarantee "root-to-leaf" updates, I think this
-implementation is a clever trick to solve this usual glitch free clock
-update issue ... much more elegant that the notifier solution we have
-been using so far.
-
->
->
-> Martin Blumenstingl (1):
->   clk: meson: meson8b: make the CCF use the glitch-free "mali" mux
->
->  drivers/clk/meson/meson8b.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-
+No worries, I was referring to the v5.6 cycle, not the v5.5 merge
+window. 
