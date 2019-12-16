@@ -2,210 +2,131 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C90A5C2D0C3
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:04:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A6DC43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F7EB206B7
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:04:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576505066;
-	bh=eqhwT21aMAQai25oTPNjuF/wi6Lr8PnjARGwV07MqLM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=cPsC6DuxcD6s7LDk8nWVxlX/QYatqW9eHVIO20jR1N+UGatyeGT9DTqlbuiNZxkW1
-	 uCitSgqw1b/KqWkrNjYnGUZdA741rxmgF98Db+cVDFTiHUI7Nbcl5I3kMuFrXK1lAy
-	 QD/JjA2EszuSlbedO8maRaIPURVPBUINT7DUm8v4=
+	by mail.kernel.org (Postfix) with ESMTP id A4879206A5
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:11:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrqJzc+/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728129AbfLPOE0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 09:04:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60140 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728015AbfLPOE0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Dec 2019 09:04:26 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C951C206A5;
-        Mon, 16 Dec 2019 14:04:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576505065;
-        bh=eqhwT21aMAQai25oTPNjuF/wi6Lr8PnjARGwV07MqLM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=A8aG72OOaT8znWL8+GmFhVW5bWEDI5ITGF2n2FOZQrOGAZPAK8TwebfG6yZ/idgLI
-         72X8kyE2neY4gEQpT7V7jx7S3d/A8I93FNZ7g4n7lf6lWWMvpr01tj0/lLzWy59qJT
-         uaTK+pIxRpmLZ3iLVuMB5bPe6qQRh9KJfGq2Dmw0=
-Date:   Mon, 16 Dec 2019 15:04:22 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
+        id S1727987AbfLPOLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 09:11:31 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:41617 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727807AbfLPOLb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 09:11:31 -0500
+Received: by mail-lj1-f195.google.com with SMTP id h23so6953850ljc.8;
+        Mon, 16 Dec 2019 06:11:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HhL5GMKIFDddfWEaX7NT4E3scjRhU5x3XuH72/9QCyo=;
+        b=jrqJzc+/u/LblZplRKW3eR4/Ge+b4/2IipInHNNk7BL2mZZnJtPHF2ZpEvr4zsXT1J
+         uNT59SvM5Amun90YFgy8GJzXdI5uoQJyXExaUd7leci+peFjiC7FlTNA92UA8SXbq3eU
+         MOegPJ7i/pv8To6BHlKcZOUywqyxx7q8eDcm/w8IcgvKWVKOInasra8tqfsDnbVAZCeo
+         FpIablaEjBiUFVOb5Oc0Dbr0b4mJ8ZAykZ3nLPICiBB6XgqFk8G8mN64aUBY5aLZxTf+
+         nO2neK1yMlESAkGPyxew4xii+fD4A3cY7oTtZWnvBa7G3H6/qK9o1TnCZa/65H7yPpe+
+         HIsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HhL5GMKIFDddfWEaX7NT4E3scjRhU5x3XuH72/9QCyo=;
+        b=gmfTl1Diu40j8X3EqhewKQ99dyOTAVcsxIrFljpKAgAUOFq/CnD0DxoTQZWeuxz16W
+         fAlbjPcLxHH7qq4N62UHzR/o1/Ee8tVrH98cW/8xZEmN/oIDykf4YBsxWXSpb/+v2rI9
+         5drstD3nEfMo1zkvnowEvLO+DPHR/aY93DT9rzAPOkniKhwcu2tTAyhYqVbMqmNTkRZa
+         vM8EKHYWPfLmsjHc/B3PzoNnwEJhDiK5EeftziQp3QbSFEp+COfUeX/WV8Qor0n3g7hU
+         eh//W/XGa9Em2Od0OUtx5yDsSRLoHNKhZ82CeQwnIuN26Cmv0bc/88Phtq5ATxSTJTpO
+         7ERQ==
+X-Gm-Message-State: APjAAAWGUxGmuzNr0oPQm8xyNkxmEMsvOWJr6YuFSLwWxAl7sLLn2ETz
+        TdYFbTNghitDNCD3oWitdq4fNQQe
+X-Google-Smtp-Source: APXvYqxVulbjGD7qBtkHu8dFjhoK+mY8pmMw7WHa5Lz77cd2cK6am3IF8jv4B0zPS4UWLTmlFAOg1g==
+X-Received: by 2002:a2e:9216:: with SMTP id k22mr19606187ljg.52.1576505488021;
+        Mon, 16 Dec 2019 06:11:28 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id z9sm10499851ljm.40.2019.12.16.06.11.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 16 Dec 2019 06:11:27 -0800 (PST)
+Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
+ and Tegra30 SoCs
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 2/8] dt-bindings: mailbox: Add a sun6i message box
- binding
-Message-ID: <20191216140422.on4bredklgdxywbw@gilmour.lan>
-References: <20191215042455.51001-1-samuel@sholland.org>
- <20191215042455.51001-3-samuel@sholland.org>
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191118164512.8676-1-digetx@gmail.com>
+ <20191118164512.8676-8-digetx@gmail.com>
+ <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
+ <20191216040808.w67jxu7oapxgm7yh@vireshk-i7>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <a57c80f0-59a7-c758-c914-025f12c85ba8@gmail.com>
+Date:   Mon, 16 Dec 2019 17:11:25 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6kpcajowhdygmdk2"
-Content-Disposition: inline
-In-Reply-To: <20191215042455.51001-3-samuel@sholland.org>
+In-Reply-To: <20191216040808.w67jxu7oapxgm7yh@vireshk-i7>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+16.12.2019 07:08, Viresh Kumar пишет:
+> On 16-12-19, 09:35, Viresh Kumar wrote:
+>> On 18-11-19, 19:45, Dmitry Osipenko wrote:
+>>> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
+>>> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
+>>> Currently cpufreq-dt driver produces a bit annoying warning splats
+>>> during boot because valid OPPs are not found, this will be fixed once
+>>> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
+>>> will also happen on older stable kernels using newer device-trees, thus
+>>> this patch should be backported to stable kernels as well.
+>>>
+>>> Cc: <stable@vger.kernel.org>
+>>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+>>> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
+>>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+>>> ---
+>>>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+>>> index f1d170dcf4d3..aba591d57c67 100644
+>>> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+>>> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+>>> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
+>>>  	{ .compatible = "mediatek,mt8176", },
+>>>  	{ .compatible = "mediatek,mt8183", },
+>>>  
+>>> +	{ .compatible = "nvidia,tegra20", },
+>>> +	{ .compatible = "nvidia,tegra30", },
+>>>  	{ .compatible = "nvidia,tegra124", },
+>>>  	{ .compatible = "nvidia,tegra210", },
+>>
+>> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> 
+> Oops, pasted the wrong register here :(
+> 
+> Applied. Thanks.
+> 
 
---6kpcajowhdygmdk2
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-Hi,
-
-On Sat, Dec 14, 2019 at 10:24:49PM -0600, Samuel Holland wrote:
-> This mailbox hardware is present in Allwinner sun6i, sun8i, sun9i, and
-> sun50i SoCs. Add a device tree binding for it. As it has only been
-> tested on the A83T, A64, H3/H5, and H6 SoCs, only those compatibles are
-> included.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
-> ---
->  .../mailbox/allwinner,sun6i-a31-msgbox.yaml   | 78 +++++++++++++++++++
->  1 file changed, 78 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
->
-> diff --git a/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
-> new file mode 100644
-> index 000000000000..dd746e07acfd
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
-> @@ -0,0 +1,78 @@
-> +# SPDX-License-Identifier: GPL-2.0
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/allwinner,sun6i-a31-msgbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allwinner sunxi Message Box
-> +
-> +maintainers:
-> +  - Samuel Holland <samuel@sholland.org>
-> +
-> +description: |
-> +  The hardware message box on sun6i, sun8i, sun9i, and sun50i SoCs is a
-> +  two-user mailbox controller containing 8 unidirectional FIFOs. An interrupt
-> +  is raised for received messages, but software must poll to know when a
-> +  transmitted message has been acknowledged by the remote user. Each FIFO can
-> +  hold four 32-bit messages; when a FIFO is full, clients must wait before
-> +  attempting more transmissions.
-> +
-> +  Refer to ./mailbox.txt for generic information about mailbox device-tree
-> +  bindings.
-> +
-> +properties:
-> +  compatible:
-> +     items:
-> +      - enum:
-> +          - allwinner,sun8i-a83t-msgbox
-> +          - allwinner,sun8i-h3-msgbox
-> +          - allwinner,sun50i-a64-msgbox
-> +          - allwinner,sun50i-h6-msgbox
-> +      - const: allwinner,sun6i-a31-msgbox
-
-This will fail for the A31, since it won't have two compatibles but
-just one.
-
-You can have something like this if you want to do it with an enum:
-
-compatible:
-  oneOf:
-    - const: allwinner,sun6i-a31-msgbox
-    - items:
-      - enum:
-        - allwinner,sun8i-a83t-msgbox
-        - allwinner,sun8i-h3-msgbox
-        - allwinner,sun50i-a64-msgbox
-        - allwinner,sun50i-h6-msgbox
-      - const: allwinner,sun6i-a31-msgbox
-
-> +  reg:
-> +    items:
-> +      - description: MMIO register range
-
-There's no need for an obvious description like this.
-Just set it to maxItems: 1
-
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: bus clock
-> +
-> +  resets:
-> +    maxItems: 1
-> +    description: bus reset
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +    description: controller interrupt
-
-Ditto, you can drop the description here.
-
-> +  '#mbox-cells':
-> +    const: 1
-
-However, you should document what the argument is about?
-
-> +required:
-> +  - compatible
-> +  - reg
-> +  - clocks
-> +  - resets
-> +  - interrupts
-> +  - '#mbox-cells'
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/sun8i-h3-ccu.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/reset/sun8i-h3-ccu.h>
-> +
-> +    msgbox: mailbox@1c17000 {
-> +            compatible = "allwinner,sun8i-h3-msgbox",
-> +                         "allwinner,sun6i-a31-msgbox";
-> +            reg = <0x01c17000 0x1000>;
-> +            clocks = <&ccu CLK_BUS_MSGBOX>;
-> +            resets = <&ccu RST_BUS_MSGBOX>;
-> +            interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
-> +            #mbox-cells = <1>;
-> +    };
-
-Look good otherwise, thanks!
-Maxime
-
---6kpcajowhdygmdk2
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfeO5gAKCRDj7w1vZxhR
-xZz1AP4ummpThYn1v2bFsXFQFsYqcm6TRKjZ8eZz+DriVOSSjAEAgxnXw2btNZrv
-PVGRNuENk6kHsBf7eVmnaJa2MVik5Qs=
-=/Mdk
------END PGP SIGNATURE-----
-
---6kpcajowhdygmdk2--
+Thanks!
