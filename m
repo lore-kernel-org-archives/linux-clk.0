@@ -2,92 +2,149 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F3FC2D0C3
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 17:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7911C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 17:50:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BED542072D
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 17:08:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B0F620700
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 17:50:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576516120;
-	bh=QXjZ3NUYOTcRGYoFgeBkUlOrcelwhDJ23ou7b18ZyKs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=jOY3tsYBgU2dxZ/6eKfhmDwxfMoV2bMMCTbxBC7454wWsGF8DuF5WxOPbLyAGqjkX
-	 A9U1SoCAyHYfJffrpyge8TneiuEOCBiVX9kRn15I0iXM/hncX3e8QxlSAigp/QV3T3
-	 twMXLqgI+Jot5bQSDG/Vlfy8/xA+v0vhVuFf6NMg=
+	s=default; t=1576518616;
+	bh=g8/rjNCZq7LbHvZLvTNNpjZ1plcZnKZdtSsnrwvnKXs=;
+	h=In-Reply-To:References:Subject:To:From:Cc:Date:List-ID:From;
+	b=2RRFFbFz8e4hAXNB1weYqRffU4MAai8qSttlcIcCm3btHrhxZ9I7C3pffvLcPlZ5p
+	 qV9VbA5DIIyP+i0G+DnS94Z8YOUInimPzMjYCMa6XJW54cu7k5InYkuiA8xrhomeZT
+	 /9asX3MezwbZBf51bd/pYNtk2ToI6mLC2Noxn7L0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726561AbfLPRIj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 12:08:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44510 "EHLO mail.kernel.org"
+        id S1726016AbfLPRuQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 12:50:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39686 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726795AbfLPRId (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Dec 2019 12:08:33 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        id S1725805AbfLPRuQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:50:16 -0500
+Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44F2C206EC;
-        Mon, 16 Dec 2019 17:08:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2A642206EC;
+        Mon, 16 Dec 2019 17:50:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576516112;
-        bh=QXjZ3NUYOTcRGYoFgeBkUlOrcelwhDJ23ou7b18ZyKs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=zsdLiGBIeBF8PChIX3V4KiCUO47SxnGY6Zut2ucgG76ai2dOrnn9RlXaqtd0FvD52
-         PY5QytrdGzCuUcqZfP4xJMC4tFpYRX2FqjHXyMgW0Ygs8eOxOUZuGpR3E6daVi+qaI
-         feDaBlzvSpq7qrbYTLhK7XPKcYj3WX81LSjDDaUM=
-Date:   Mon, 16 Dec 2019 18:08:30 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/3] dt-bindings: clocks: Convert Allwinner A80 DE clocks
- to a schema
-Message-ID: <20191216170830.sw2svgszlebb7cfu@gilmour.lan>
-References: <20191209093558.50940-1-maxime@cerno.tech>
- <20191209093558.50940-3-maxime@cerno.tech>
+        s=default; t=1576518615;
+        bh=g8/rjNCZq7LbHvZLvTNNpjZ1plcZnKZdtSsnrwvnKXs=;
+        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
+        b=hyJriL7F96LxiYiCXXD6CLjvtW73yKVQDMHGaYpoy1QPMrmgRBbgjZQ2CFT5CAg+W
+         +KrAVw6jQMk7TdXrDODjsWdn7uaXccTJfRVXit4cex32jK7jAeY7lAXuMDrm0lEvfi
+         xm/9xn40U82jAhw/4ZBRdSf9wMSNHaoWdmQdIbhE=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="jfxwmnq66iyhmoim"
-Content-Disposition: inline
-In-Reply-To: <20191209093558.50940-3-maxime@cerno.tech>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
+References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Mon, 16 Dec 2019 09:50:14 -0800
+Message-Id: <20191216175015.2A642206EC@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Jerome Brunet (2019-12-16 01:13:31)
+>=20
+> On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@goo=
+glemail.com> wrote:
+>=20
+> > While playing with devfreq support for the lima driver I experienced
+> > sporadic (random) system lockups. It turned out that this was in
+> > certain cases when changing the mali clock.
+> >
+> > The Amlogic vendor GPU platform driver (which is responsible for
+> > changing the clock frequency) uses the following pattern when updating
+> > the mali clock rate:
+> > - at initialization: initialize the two mali_0 and mali_1 clock trees
+> >   with a default setting and enable both clocks
+> > - when changing the clock frequency:
+> > -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
+> > -- update the mali_0 clock tree (set the mux, divider, etc.)
+> > -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
+>                                       ^ no final setting then ? :P
+> >    output again
+> >
+> > With the common clock framework we can even do better:
+> > by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
+>                 ^
+> From your patch, I guess you mean CLK_SET_RATE_GATE ?
+>=20
+> > we can force the common clock framework to update the "inactive" clock
+> > and then switch to it's output.
+> >
+> > I only tested this patch for a limited time only (approx. 2 hours).
+> > So far I couldn't reproduce the sporadic system lockups with it.
+> > However, broader testing would be great so I would like this to be
+> > applied for -next.
+>=20
+> CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
+> use. While it works at your advantage here, I'm not sure CCF guarantees
+> the assumption this implementation is based on. Some explanation below:
+>=20
+> In your case, if it works as you expect when calling set_rate() on the
+> top clock, it goes as this:
+>=20
+> - mali0 is use with rate X:
+> - =3D> set_rate(mali_top, Y)
+> - mali0 is in use, cannot change, will round rate Y to X
+> - mali1 is not in use, can provide Y
+> - mali1 is determined to be the new best parent for mali top
+>=20
+> So far so good.
+>=20
+> - CCF pick the mali1 subtree
+>   *start updating the clock from the root to the leaf*
+>=20
+> So the mali top mux, which choose between mali0 and mali1, will be
+> *updated last* which crucial to your use case.
+>=20
+> I just wonder if this crucial part something CCF guarantee and you can
+> rely on it ... or if it might break in the future.
+>=20
+> Stephen, any thoughts on this ?
 
---jfxwmnq66iyhmoim
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+We have problems with the order in which we call the set_rate clk_op.
+Sometimes clk providers want us to call from leaf to root but instead we
+call from root to leaf because of implementation reasons. Controlling
+the order in which clk operations are done is an unsolved problem. But
+yes, in the future I'd like to see us introduce the vaporware that is
+coordinated clk rates that would allow clk providers to decide what this
+order should be, instead of having to do this "root-to-leaf" update.
+Doing so would help us with the clk dividers that have some parent
+changing rate that causes the downstream device to be overclocked while
+we change the parent before the divider.
 
-On Mon, Dec 09, 2019 at 10:35:58AM +0100, Maxime Ripard wrote:
-> The Allwinner A80 SoC has a display clocks controller that is supported in
-> Linux, with a matching Device Tree binding.
->
-> Now that we have the DT validation in place, let's convert the device tree
-> bindings for that controller over to a YAML schemas.
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+If there are more assumptions like this about how the CCF is implemented
+then we'll have to be extra careful to not disturb the "normal" order of
+operations when introducing something that allows clk providers to
+modify it.
 
-Applied all three.
+Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
+isn't called on that particular clk? I seem to recall that the flag only
+matters when it's applied to the "leaf" or entry point into the CCF from
+a consumer API. I've wanted to fix that but never gotten around to it.
+The whole flag sort of irks me because I don't understand what consumers
+are supposed to do when this flag is set on a clk. How do they discover
+it? They're supposed to "just know" and turn off the clk first and then
+call clk_set_rate()? Why can't the framework do this all in the
+clk_set_rate() call?
 
-Maxime
-
---jfxwmnq66iyhmoim
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfe6DgAKCRDj7w1vZxhR
-xfX7AP9Z+s6gPPC1reoTZSt7GAPc/TEDd7kUms0QWUcLZnu9NAEAyLHUh87Tow0u
-/b0eA5xrrvHPxmsK7y+/Pw/uqXoQXAk=
-=6iZL
------END PGP SIGNATURE-----
-
---jfxwmnq66iyhmoim--
+>=20
+> PS: If CCF does guarantee "root-to-leaf" updates, I think this
+> implementation is a clever trick to solve this usual glitch free clock
+> update issue ... much more elegant that the notifier solution we have
+> been using so far.
