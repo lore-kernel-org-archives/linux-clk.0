@@ -2,125 +2,204 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C477CC2D0C3
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 18:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F091C2D0BF
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 19:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C60D21582
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 18:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE0C82082E
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 19:17:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="dZKk5Aqv"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xvdovwie"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727531AbfLPSrd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 13:47:33 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:43891 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728339AbfLPSrb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 13:47:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id a13so7921892ljm.10
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 10:47:29 -0800 (PST)
+        id S1726426AbfLPTR2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 14:17:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55860 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726191AbfLPTR1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 14:17:27 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q9so488664wmj.5
+        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 11:17:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ZzVqpm7vISxN2XVUCXGY2m/2XgAiTT0hZi9cW/dInYQ=;
-        b=dZKk5AqvtPHFii8jZi+8J/lePw5/aQn7GaI4xJEsfiKeEXKxrjqY7SsMgUzuGBuAnJ
-         lhHmUXQNOUmAKADBgGGctmtIDE3s/1+6pcASqF2hFgTu8mD30bn9yMBCo9ZTLNOxljHx
-         QYDm+2L84AhvHNfnxjn+ViFTqrOeIfMOVPu7Prn88zScJX9hR2BR2hWtwKdwQrdLAV2Q
-         eMvufEfsfkYQJhyt6Ah6X7ItvTdP8KnIZaJQ0bHcOQ1ywCsoMJ4rdxsO8mFO1zOkOPES
-         nuI7/rn3Hlv7CyP/TU81LEOUpC8Pqo6udw7BvliaHjOa/FSQLmOs+87UyF19Vsk+bk65
-         Mi/g==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=TaI0P/S1Bo1801cSTwOrAdNkaWycLWwGESwHFZB6KEs=;
+        b=xvdovwieuu2wlweKn+bC82YHPbOfrIQNK/KniqVl/LOyohWKBHwrU797ArnIsfpYZY
+         LDDNQlzGxpBkWeBsrQUF+Vap3F/F1x6LCA34Y5i4axTfLB//VFOjbTZgt9DbejVI7bm4
+         XqYAlC9Yvz2keoscHo7fRACoo2ZjzY2vZ3hUfDPyXfMTil7mXMp/S1w0khldmBW9z4s/
+         0oG//LwoTu0fraVx4xZp5RHcUHxS7cXHkUMSKuPzIyoCMLkX1XqZs620cofxsuYPl5KH
+         RL8NhD/FLK1qu812eWtxMIQLTAQgsnH4Z6UKwDhd/MuC/B23GCpOcY/ulUNjenn6ph3+
+         w0vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=ZzVqpm7vISxN2XVUCXGY2m/2XgAiTT0hZi9cW/dInYQ=;
-        b=XwcipWt8Pm+nHhm0lJr36MjOoRVm9b5APJD+U0JD99XYMVxEJ3n9StbF636TgMH2lK
-         ESfjEAcdtZYpmaNnHZw5fRi4D/0aLmp/GIaYrYbq0fNjTGL3aIRKk1MVz9cmKcO0E48y
-         RTvCgd47ILrUmPTans9L7O1Y2XweGp62E8PTRrOdu1sVY+gEX7v/+3Fkt32DT6lBqBv9
-         ecAPBxQ30OL39n6aafAcT2w/agaChF0n0Z60R1ANENayWNdULqLJtlm4ddJQY7G3GxBl
-         mB+lz8p8Pl47W2kYou7MQFdKsVax4XzpirUCOWa9iSr/4q6KD3+HF4fJ3exCsxUwIZkP
-         g59g==
-X-Gm-Message-State: APjAAAWNpxif+AW9mtA4D4QU6BVcC/nOeqUOHnKkUwKGev0ZLPLv9Gzn
-        XrmDireXd5SneEAcWKUOvt+AFrfL2+c=
-X-Google-Smtp-Source: APXvYqwA7Ysm4UNtu9E+akNwfRxfaN3bIefRHQCWigpiGZVf0Q7o0UssOPcmwHdK6c+oVuOA9w9V3Q==
-X-Received: by 2002:a2e:3a12:: with SMTP id h18mr379963lja.81.1576522049068;
-        Mon, 16 Dec 2019 10:47:29 -0800 (PST)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:48df:e424:ff05:dd96:8970:d4c9])
-        by smtp.gmail.com with ESMTPSA id g27sm9427223lfj.49.2019.12.16.10.47.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Dec 2019 10:47:28 -0800 (PST)
-Subject: Re: [PATCH v2 1/6] spi: Add SPIBSC driver
-To:     Chris Brandt <Chris.Brandt@renesas.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <20191206134202.18784-2-chris.brandt@renesas.com>
- <37c13497-d20f-583f-72d7-1e3c8a241990@cogentembedded.com>
- <TYXPR01MB1568ED4D40CEC399E64F6A2B8A550@TYXPR01MB1568.jpnprd01.prod.outlook.com>
- <7386b38f-2f52-39cb-3887-e97b024ec563@cogentembedded.com>
- <2e3211c6-59e8-3057-66a2-29b89a353b8a@cogentembedded.com>
- <TY1PR01MB1562F30F0B58465A6988F29C8A540@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <a9b051ac-da70-37bb-bb82-540f0f161b25@cogentembedded.com>
-Date:   Mon, 16 Dec 2019 21:47:26 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=TaI0P/S1Bo1801cSTwOrAdNkaWycLWwGESwHFZB6KEs=;
+        b=PcyrghOhAfHb+GQL/vD7HbhRou6EPbice6R9AIwxk1ez04u4O4xZPDogvdnKfhr/sT
+         /u8l7qSznUDnIBmRYdyFKy2goRSF9QE4xP4jlxtOoImCxw0tRXqsnpnI9O7Ngw2CcjKT
+         EzfuaKc7y/7Fm5I06f/Ylyyk5nJx0a86SLqJ3p4yfWFVwMNEYQV9WQXvQYchjHubGOLN
+         gs1Ezzxe62JQ8ogFsQ4OQEkCJDFLB8qhS3IkNU8ncP1ZwjKCU0YRjcPYKW5TTZ3GpRBG
+         tkgEEnAAB2XnGTNzoUSrt3fSH9YJvIlmFLnbT8BSN+x4jya9tXYEbCt4RRFMcrOHeNzo
+         Q55g==
+X-Gm-Message-State: APjAAAXIbSFkFqvelPICj0/aMlRwYaVIGYdOv1RhtQbTvyjzFWt1Lhn9
+        tuC/8yMmZAh2D1qPk5ClsYAZsQ==
+X-Google-Smtp-Source: APXvYqxx7C0OjSpuBe4yr998Ep7mXAjBkYmeq2Ns5kTbTRAuKQseJcwGroV2UfloXbHqT0riVdJBkA==
+X-Received: by 2002:a1c:e108:: with SMTP id y8mr566525wmg.147.1576523843234;
+        Mon, 16 Dec 2019 11:17:23 -0800 (PST)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id b17sm22647883wrp.49.2019.12.16.11.17.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 11:17:22 -0800 (PST)
+References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com> <20191216175015.2A642206EC@mail.kernel.org>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
+In-reply-to: <20191216175015.2A642206EC@mail.kernel.org>
+Date:   Mon, 16 Dec 2019 20:17:21 +0100
+Message-ID: <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <TY1PR01MB1562F30F0B58465A6988F29C8A540@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/13/2019 11:43 PM, Chris Brandt wrote:
 
->>    The patch isn't applicable as well, and the behaviour is the same as in
->> 5.2.-rc6 based
->> kernel --deleted file is back after remounting, sync or not...
-> 
-> Do the basic R/W operations works?
-> 
-> Here is the first test I do on my platforms. After I passed this, everything
-> else seems to worked pretty good (writing large files).
-> 
-> $ flash_eraseall -j /dev/mtd4
-> $ mount -t jffs2 /dev/mtdblock4 /mnt
-> $ echo "hello" > /mnt/hello.txt
-> $ sync
+On Mon 16 Dec 2019 at 18:50, Stephen Boyd <sboyd@kernel.org> wrote:
 
-   This works but the created file doesn't survive a remount.
- 
-> If the Flash was recognized at boot, then we know that the ID command (0x9F)
-> at least worked. Meaning read commands were at least working (which is the
-> difficult one for this HW...writing is easier)
+> Quoting Jerome Brunet (2019-12-16 01:13:31)
+>> 
+>> On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+>> 
+>> > While playing with devfreq support for the lima driver I experienced
+>> > sporadic (random) system lockups. It turned out that this was in
+>> > certain cases when changing the mali clock.
+>> >
+>> > The Amlogic vendor GPU platform driver (which is responsible for
+>> > changing the clock frequency) uses the following pattern when updating
+>> > the mali clock rate:
+>> > - at initialization: initialize the two mali_0 and mali_1 clock trees
+>> >   with a default setting and enable both clocks
+>> > - when changing the clock frequency:
+>> > -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
+>> > -- update the mali_0 clock tree (set the mux, divider, etc.)
+>> > -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
+>>                                       ^ no final setting then ? :P
+>> >    output again
+>> >
+>> > With the common clock framework we can even do better:
+>> > by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
+>>                 ^
+>> From your patch, I guess you mean CLK_SET_RATE_GATE ?
+>> 
+>> > we can force the common clock framework to update the "inactive" clock
+>> > and then switch to it's output.
+>> >
+>> > I only tested this patch for a limited time only (approx. 2 hours).
+>> > So far I couldn't reproduce the sporadic system lockups with it.
+>> > However, broader testing would be great so I would like this to be
+>> > applied for -next.
+>> 
+>> CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
+>> use. While it works at your advantage here, I'm not sure CCF guarantees
+>> the assumption this implementation is based on. Some explanation below:
+>> 
+>> In your case, if it works as you expect when calling set_rate() on the
+>> top clock, it goes as this:
+>> 
+>> - mali0 is use with rate X:
+>> - => set_rate(mali_top, Y)
+>> - mali0 is in use, cannot change, will round rate Y to X
+>> - mali1 is not in use, can provide Y
+>> - mali1 is determined to be the new best parent for mali top
+>> 
+>> So far so good.
+>> 
+>> - CCF pick the mali1 subtree
+>>   *start updating the clock from the root to the leaf*
+>> 
+>> So the mali top mux, which choose between mali0 and mali1, will be
+>> *updated last* which crucial to your use case.
+>> 
+>> I just wonder if this crucial part something CCF guarantee and you can
+>> rely on it ... or if it might break in the future.
+>> 
+>> Stephen, any thoughts on this ?
+>
+> We have problems with the order in which we call the set_rate clk_op.
+> Sometimes clk providers want us to call from leaf to root but instead we
+> call from root to leaf because of implementation reasons. Controlling
+> the order in which clk operations are done is an unsolved problem. But
+> yes, in the future I'd like to see us introduce the vaporware that is
+> coordinated clk rates that would allow clk providers to decide what this
+> order should be, instead of having to do this "root-to-leaf" update.
+> Doing so would help us with the clk dividers that have some parent
+> changing rate that causes the downstream device to be overclocked while
+> we change the parent before the divider.
+>
+> If there are more assumptions like this about how the CCF is implemented
+> then we'll have to be extra careful to not disturb the "normal" order of
+> operations when introducing something that allows clk providers to
+> modify it.
 
-   BTW, during boot I'm seeing with thsi driver:
+I understand that CCR would, in theory, allow to define that sort of
+details. Still defining (and documenting) the default behavior would be
+nice.
 
-spi spi0.0: setup: ignoring unsupported mode bits 800                           
-spi-nor spi0.0: Failed to parse optional parameter table: ff81                  
+So the question is:
+ * Can we rely set_rate() doing a root-to-leaf update until CCR comes
+   around ?
+ * If not, for use cases like the one described by Martin, I guess we
+   are stuck with the notifier ? Or would you have something else to
+   propose ?
+   
+>
+> Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
+> isn't called on that particular clk? I seem to recall that the flag only
+> matters when it's applied to the "leaf" or entry point into the CCF from
+> a consumer API.
 
-   (The 2nd message is also seen with my drivers).
+It did but not anymore
 
-> Chris
+> I've wanted to fix that but never gotten around to it.
 
-MBR, Sergei
+I fixed that already :P
+CLK_SET_RATE_GATE is a special case of clock protect. The clock is
+protecting itself so it is going down through the tree.
+
+
+> The whole flag sort of irks me because I don't understand what consumers
+> are supposed to do when this flag is set on a clk. How do they discover
+> it?
+
+Actually (ATM) the consumer is not even aware of it. If a clock with
+CLK_SET_RATE_GATE is enabled, it will return the current rate to
+.round_rate() and .set_rate() ... as if it was fixed.
+
+> They're supposed to "just know" and turn off the clk first and then
+> call clk_set_rate()?
+
+ATM, yes ... if CCF cannot switch to another "unlocked" subtree (the
+case here)
+
+> Why can't the framework do this all in the clk_set_rate() call?
+
+When there is multiple consumers the behavior would become a bit
+difficult to predict and drivers may have troubles anticipating that,
+maybe, the clock is locked.
+
+>
+>> 
+>> PS: If CCF does guarantee "root-to-leaf" updates, I think this
+>> implementation is a clever trick to solve this usual glitch free clock
+>> update issue ... much more elegant that the notifier solution we have
+>> been using so far.
+
