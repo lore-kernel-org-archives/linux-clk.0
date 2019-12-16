@@ -2,124 +2,92 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5DD3C2D0C3
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 16:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2F3FC2D0C3
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 17:08:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BDB6206E0
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 16:47:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MupdptuU"
+	by mail.kernel.org (Postfix) with ESMTP id BED542072D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 17:08:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576516120;
+	bh=QXjZ3NUYOTcRGYoFgeBkUlOrcelwhDJ23ou7b18ZyKs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jOY3tsYBgU2dxZ/6eKfhmDwxfMoV2bMMCTbxBC7454wWsGF8DuF5WxOPbLyAGqjkX
+	 A9U1SoCAyHYfJffrpyge8TneiuEOCBiVX9kRn15I0iXM/hncX3e8QxlSAigp/QV3T3
+	 twMXLqgI+Jot5bQSDG/Vlfy8/xA+v0vhVuFf6NMg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726133AbfLPQre (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 11:47:34 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:35370 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726515AbfLPQra (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 11:47:30 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so26652wmb.0
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 08:47:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=Hk4aENi5JfntNywk6okXwxduwNUObctMo6Ti9zshqoY=;
-        b=MupdptuUoWe4nG6XWXO8Am4U5S+54eAzf2A0C0d2Y/5L2NO1Pz8TTYTYp5Oj5iY/hm
-         93t/S9vt5md+700bRha+NTqKBl6oALW4Cyyoy6nn+4F5ibH3bCyki7R/JsAZ4NHflnE+
-         ylV5xuhgvWwd1TxuaFKOb/aFAARfMBD2SMozH1sxIsh3v61V0bAF0jCcttX+d+5MsQ8a
-         N7X0BKMbj5GiVmGpbnjoYcA5U6nauymoWAe/L8NRaOKwVvAw6MyZaLOAepZg7xnyZ+Wh
-         oZqdlXigYNHIy+jwcnTQ+KhoxTXXftAxwM7ur1lCbGU4eP+IxWxLxRdYTCK5wujQtV8H
-         6qig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=Hk4aENi5JfntNywk6okXwxduwNUObctMo6Ti9zshqoY=;
-        b=A10nYtLyQILrD328ri1vCXXECY4nS5d3Ix1hgxFg6U9Jul7F9Kca0rMJ+Aj6bTmQxm
-         iq31BP/KP20Gmg/DXCQpIDwZN5kkiKDUjN5kUqgCKcM1NP42G+cVM6XBIqf9paVoETwd
-         EDUfQ2C2jOce9L4pOiFVjwPid9+CAlFoTwfGFCrkStwBQ9VsQTDU6cYeCaRRLPFUusru
-         ckIMc7/20rmPwZv35tXPU8w4W4nNan2N1oUttfQVOgXj0Ph5cPnk9wQ07btO0NnYwea2
-         E6lGd3y+SAwmnQO1yv4Uuw66QbXbgd5VVwCMQCQNNGR7GQXv5YYHaZk8oEvD8Fm4DRc3
-         Dbaw==
-X-Gm-Message-State: APjAAAU5wGWdTjlDG79iFbhmaNk0q+mdtAo0IFAxOXLHMQQ3fy5nC9nJ
-        NwPBkDfQ4Vs0xtn9m5SK+Sgf6A==
-X-Google-Smtp-Source: APXvYqyNpItBQC+K60hdbMXgCjsSVi+l3bidixDPaRGU5wZG3XvKQQsnCfJdpNCLx9rGhg7CBCc8sw==
-X-Received: by 2002:a05:600c:108a:: with SMTP id e10mr30010613wmd.38.1576514848119;
-        Mon, 16 Dec 2019 08:47:28 -0800 (PST)
-Received: from dell ([185.17.149.202])
-        by smtp.gmail.com with ESMTPSA id p5sm21821060wrt.79.2019.12.16.08.47.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 08:47:27 -0800 (PST)
-Date:   Mon, 16 Dec 2019 16:47:26 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        id S1726561AbfLPRIj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 12:08:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44510 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726795AbfLPRId (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Dec 2019 12:08:33 -0500
+Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 44F2C206EC;
+        Mon, 16 Dec 2019 17:08:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576516112;
+        bh=QXjZ3NUYOTcRGYoFgeBkUlOrcelwhDJ23ou7b18ZyKs=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=zsdLiGBIeBF8PChIX3V4KiCUO47SxnGY6Zut2ucgG76ai2dOrnn9RlXaqtd0FvD52
+         PY5QytrdGzCuUcqZfP4xJMC4tFpYRX2FqjHXyMgW0Ygs8eOxOUZuGpR3E6daVi+qaI
+         feDaBlzvSpq7qrbYTLhK7XPKcYj3WX81LSjDDaUM=
+Date:   Mon, 16 Dec 2019 18:08:30 +0100
+From:   Maxime Ripard <mripard@kernel.org>
+To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v6 07/15] clk: bd718x7: Support ROHM BD71828 clk block
-Message-ID: <20191216164726.GD18955@dell>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
- <b88c451a1bece5a22936e9a021146f3e026f8885.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+        Frank Rowand <frowand.list@gmail.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 3/3] dt-bindings: clocks: Convert Allwinner A80 DE clocks
+ to a schema
+Message-ID: <20191216170830.sw2svgszlebb7cfu@gilmour.lan>
+References: <20191209093558.50940-1-maxime@cerno.tech>
+ <20191209093558.50940-3-maxime@cerno.tech>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="jfxwmnq66iyhmoim"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b88c451a1bece5a22936e9a021146f3e026f8885.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191209093558.50940-3-maxime@cerno.tech>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 11 Dec 2019, Matti Vaittinen wrote:
 
-> BD71828GW is a single-chip power management IC for battery-powered portable
-> devices. Add support for controlling BD71828 clk using bd718x7 driver.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
-> 
-> No changes since v5
-> 
->  drivers/clk/Kconfig              |  6 ++---
->  drivers/clk/clk-bd718x7.c        | 38 +++++++++++++++++++++++---------
+--jfxwmnq66iyhmoim
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
->  include/linux/mfd/rohm-bd70528.h |  6 -----
->  include/linux/mfd/rohm-bd71828.h |  4 ----
->  include/linux/mfd/rohm-bd718x7.h |  6 -----
+On Mon, Dec 09, 2019 at 10:35:58AM +0100, Maxime Ripard wrote:
+> The Allwinner A80 SoC has a display clocks controller that is supported in
+> Linux, with a matching Device Tree binding.
+>
+> Now that we have the DT validation in place, let's convert the device tree
+> bindings for that controller over to a YAML schemas.
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+Applied all three.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Maxime
+
+--jfxwmnq66iyhmoim
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXfe6DgAKCRDj7w1vZxhR
+xfX7AP9Z+s6gPPC1reoTZSt7GAPc/TEDd7kUms0QWUcLZnu9NAEAyLHUh87Tow0u
+/b0eA5xrrvHPxmsK7y+/Pw/uqXoQXAk=
+=6iZL
+-----END PGP SIGNATURE-----
+
+--jfxwmnq66iyhmoim--
