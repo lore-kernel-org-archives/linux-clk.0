@@ -2,142 +2,129 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B2C3C2D0C0
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 11:05:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7BAC2D0C0
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 11:21:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5191E2072B
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 11:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04084206D3
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 11:21:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="JHLD0A1n"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qC2K4KTY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727519AbfLPLFU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 06:05:20 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:60889 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727482AbfLPLFU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 06:05:20 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191216110518euoutp0100419c94ad090a5d967c4f100df13f92~g1TraT2BI3123331233euoutp01o
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 11:05:18 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191216110518euoutp0100419c94ad090a5d967c4f100df13f92~g1TraT2BI3123331233euoutp01o
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1576494318;
-        bh=D7ziW8Ra8ercCRi5TtnxsBxx+Qcdq/e8MjDG0YYEBt8=;
-        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
-        b=JHLD0A1n4rEu9Bo6sUlivu933+bcfSHlxUVAb25Tn/tK8pYnWAUDs2g3VHf3R/pM3
-         m2gOUTgVT6vtADWUNPmMoZhtD7ZPBy5zy7BSqYsjBhq+BbamLP3+kskOxC1j7ty2n6
-         uHy2cnjuuDwB2WFGWsX8M1ZH1PG6x9DBoY37jKGo=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20191216110517eucas1p17928e21e70f982dc3267ba6987b8c9fe~g1TrE5G3R1842718427eucas1p1o;
-        Mon, 16 Dec 2019 11:05:17 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id DD.66.60679.DE467FD5; Mon, 16
-        Dec 2019 11:05:17 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-        20191216110517eucas1p2945e7b1145aeea34d106ab7fd3aa1dcb~g1Tqtgld33221732217eucas1p27;
-        Mon, 16 Dec 2019 11:05:17 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-        20191216110517eusmtrp1b98a9923126ade5c2475b7181e9a755b~g1Tqs4c0U2037820378eusmtrp14;
-        Mon, 16 Dec 2019 11:05:17 +0000 (GMT)
-X-AuditID: cbfec7f4-0e5ff7000001ed07-22-5df764ed7e85
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id D2.14.07950.DE467FD5; Mon, 16
-        Dec 2019 11:05:17 +0000 (GMT)
-Received: from [106.120.51.75] (unknown [106.120.51.75]) by
-        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-        20191216110517eusmtip209ca570792e13674a59ecf8aec1f7387~g1TqR5d8u2795227952eusmtip25;
-        Mon, 16 Dec 2019 11:05:17 +0000 (GMT)
-Subject: Re: [PATCH] clk: samsung: exynos5420: Keep top G3D clocks enabled
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-samsung-soc@vger.kernel.org
-Cc:     Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
-Message-ID: <26b1c535-b942-29f8-ca93-f841a01f0441@samsung.com>
-Date:   Mon, 16 Dec 2019 12:05:16 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
-        Thunderbird/68.2.2
+        id S1727140AbfLPLVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 06:21:52 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:55734 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727138AbfLPLVv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 06:21:51 -0500
+Received: by mail-wm1-f66.google.com with SMTP id q9so6289001wmj.5
+        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 03:21:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=cl0rAMLqqZ3vDX0ytFuKFHQWL+5kw7GkHR6k2JTXXWs=;
+        b=qC2K4KTYi+HAmeVp1g+GJ7rpwe9o8iLBeAuo+VRD+ciwGilXWVRHxRgwey5RAPE2Cr
+         s8l2O4jNJs1ycBBORqMjWAOsAR7ahxytekVVQssAhlI/VbrD4DhEFIufFQ3Wjl7Vc206
+         XHqWkxoClvveHskQ/V2Z2CPPwkiOAZhzS2bd73KV+vmYNXLQ3d2FBQ469Z91wI4ySqe4
+         p5YBbLd4p+3UDfRCXIGOR2q+taVmR4/f1bnSyHvW/ERADWraiBGfXNjwXYbiblpOZVsq
+         Oc6vI8GQNLd2VFAEPwa3bQymsQnGC77o7jQFOQyYJdzNyw9DfRYkmAOnzb083mrZX9e6
+         An7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=cl0rAMLqqZ3vDX0ytFuKFHQWL+5kw7GkHR6k2JTXXWs=;
+        b=IUjNPHfj43fOjabRpqcJppjirnP6p/a26mQ31SMxDWN+d0szdAZbrBWF/3j0uVfAAe
+         AsZt8jCXxlAdediu1GJEH3LnDRwFfcdTxdN5Cg2doDuHLt3MjikRx/R0rMVd+UaSkj8W
+         qdsjZjjOmmPl8yEVs6ScCSCHvnwA7SeD3rr0f5wHt/aZcV3FzFX+eUDt8AaCwkyRcXNg
+         C3XZtsZR5/dSBV/NTd2UbVVKnkErn2QMfTmcBQudDIE3z8BBeG7A1TcrCRj0rPx+Tcyg
+         cmwZhCVU8vfl5Jw2O26KTbSowg0SWrU+mPJxQDnT5c1enFgooKFQrvIUZw3l2uOQF+IQ
+         bhXw==
+X-Gm-Message-State: APjAAAVzSAmo2fWZxiyWsX9xtOXAQrckGigQO/U/7kJMgK6/71PVOkdt
+        KlmlbuM6rvtzhB8wDABF2JHaAwnPcpo=
+X-Google-Smtp-Source: APXvYqxC+UeKU5NKi91Br581QakkL4y4s0iWzgxBCk+lvnaus0NdoX9FH6aPCsJEfd8efqNI4k/Fug==
+X-Received: by 2002:a05:600c:507:: with SMTP id i7mr31082793wmc.135.1576495309273;
+        Mon, 16 Dec 2019 03:21:49 -0800 (PST)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id d16sm22991983wrg.27.2019.12.16.03.21.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 03:21:48 -0800 (PST)
+References: <20191215114705.24401-1-repk@triplefau.lt> <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Remi Pommarel <repk@triplefau.lt>
+Cc:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
+In-reply-to: <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
+Date:   Mon, 16 Dec 2019 12:21:47 +0100
+Message-ID: <1jmubsbjn8.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <f7fbb6a3-6890-7a25-3a15-b608aa2e69dc@samsung.com>
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrFKsWRmVeSWpSXmKPExsWy7djP87pvU77HGuz/Z2GxccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFhdPuVr8u7aRxaL96UtmBy6P9zda2T12zrrL
-        7rFpVSebR9+WVYwenzfJBbBGcdmkpOZklqUW6dslcGWcWzWftaCTs2Ln82PsDYzz2LsYOTkk
-        BEwklnUsZ+5i5OIQEljBKPF/zRpWCOcLo8TVFQegnM+MEod3XmeBaenc+44JIrGcUWLuqtvs
-        EM5bRomJqzaDDRYW8JJYM+UKK4gtIjCJUWLL5lCQImaBfiaJ3vu/wRJsAoYSvUf7GLsYOTh4
-        BewkfqwSBQmzCKhKtFxsYgKxRQUiJJ5ceQxWzisgKHFy5hOwKzgF7CXuLN4EFmcWEJdo+rIS
-        ypaX2P52DthDEgKn2CVm961hhjjbReJ820UoW1ji1fEt0BCQkTg9uYcFoqGZUaJnN8Q7EgIT
-        GCXuH1/ACFFlLXH4+EVWkEuZBTQl1u/Shwg7Slx9fAIsLCHAJ3HjrSDEEXwSk7ZNZ4YI80p0
-        tAlBVKtI/F41nQnClpLofvKfZQKj0iwkr81C8s4sJO/MQti7gJFlFaN4amlxbnpqsVFearle
-        cWJucWleul5yfu4mRmCKOv3v+JcdjLv+JB1iFOBgVOLhdcj+FivEmlhWXJl7iFGCg1lJhHeH
-        wvdYId6UxMqq1KL8+KLSnNTiQ4zSHCxK4rzGi17GCgmkJ5akZqemFqQWwWSZODilGhhTtSaH
-        SaZyS4Ru2qp7I+byL3sZpvBfP1fJu//yOxqp8HhpcfKx3LlZPtnWOyQcLzmX73cT1Y7g8jSa
-        tjOiV7b++Be/n813zRf+mHvd1fu0d1dz2i6HFXcff1iYxaDX33JK8d/ZbUlnHp/Y4VCllXvh
-        2rSJ877snXL/5OlMH5kijTaW82/MtXcqsRRnJBpqMRcVJwIALUe4800DAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsVy+t/xe7pvU77HGmz+oWCxccZ6VovrX56z
-        Wpw/v4Hd4mPPPVaLGef3MVmsPXKX3WL9tJ+sFhdPuVr8u7aRxaL96UtmBy6P9zda2T12zrrL
-        7rFpVSebR9+WVYwenzfJBbBG6dkU5ZeWpCpk5BeX2CpFG1oY6RlaWugZmVjqGRqbx1oZmSrp
-        29mkpOZklqUW6dsl6GWcWzWftaCTs2Ln82PsDYzz2LsYOTkkBEwkOve+Y+pi5OIQEljKKDFt
-        XguQwwGUkJKY36IEUSMs8edaFxtEzWtGiZ/7mtlAEsICXhJrplxhBUmICExilNj2YScLSIJZ
-        YCKTxOq5uhAdK5kkNt/czwySYBMwlOg92scIsoFXwE7ixypRkDCLgKpEy8UmJhBbVCBC4u3v
-        m6wgNq+AoMTJmU/AZnIK2EvcWbyJFWK+usSfeZeYIWxxiaYvK6Hi8hLb385hnsAoNAtJ+ywk
-        LbOQtMxC0rKAkWUVo0hqaXFuem6xkV5xYm5xaV66XnJ+7iZGYERuO/Zzyw7GrnfBhxgFOBiV
-        eHgdsr/FCrEmlhVX5h5ilOBgVhLh3aHwPVaINyWxsiq1KD++qDQntfgQoynQcxOZpUST84HJ
-        Iq8k3tDU0NzC0tDc2NzYzEJJnLdD4GCMkEB6YklqdmpqQWoRTB8TB6dUA+Oeoh9lglZSaze2
-        fPaJEFTdNeMmT8W5oJjNUzteHBPJfab/3WeZ/K698+I6bVedttvkzn1eVjQ7q+btDyZFzfhu
-        pr9/Ti9olfXLzn6dnXNIjff4B+/bt/8yaD/pL55wxKdPXb2qZa4Ny04Jrw22/Zk/zzt3R537
-        bJ7IERE358o2AUajDSq1qkosxRmJhlrMRcWJAElImpbeAgAA
-X-CMS-MailID: 20191216110517eucas1p2945e7b1145aeea34d106ab7fd3aa1dcb
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8
-References: <CGME20191121101158eucas1p26b1f74cd2396a2461530e684d17a82e8@eucas1p2.samsung.com>
-        <20191121101145.15899-1-m.szyprowski@samsung.com>
-        <f46f7d3d-c107-2542-d9ed-124c9079aeca@samsung.com>
-        <20191213030311.8FB3F2253D@mail.kernel.org>
-        <f7fbb6a3-6890-7a25-3a15-b608aa2e69dc@samsung.com>
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/13/19 08:11, Marek Szyprowski wrote:
-> The real issue here is that some SoC internal busses (not assigned to 
-> any driver at all) are sourced from the same MUX, which that patch 
-> flagged as CRITICAL without any additional gates, thus if the only 
-> client of that MUX disables its gate clock, the whole path up to the 
-> root PLL is disabled what causes the HW issue. The driver (or user via 
-> dts) might change the root PLL, so that CRITICAL flag cannot be moved to 
-> the top clock in this hierarchy.
-> 
-> I can change that CRITICAL flag to a explicit call to 
-> clk_prepare_enable() during exynos542x-clk driver probe, but IMHO the 
-> flag better fits in such case.
 
-I would prefer an explicit clk_prepare_enable() call, similarly as it is 
-done in drivers/clk/samsung/clk-exynos-audss.c. This would somewhat separate
-proper clocks definition from workarounds. The CLK_IS_CRITICAL flag might be 
-a bit misleading IMO because the clock for which it is being added now doesn't 
-have gating ability. The flag really applies to some root PLL clock which is
-behind few other muxes going up in the clk tree.
+On Sun 15 Dec 2019 at 21:34, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
 
--- 
-Regards
-Sylwester
+> On Sun, Dec 15, 2019 at 12:39 PM Remi Pommarel <repk@triplefau.lt> wrote:
+>>
+>> Some meson pll registers can be initialized with 0 as N value, introducing
+>> the following division by 0 when computing rate :
+>>
+>>   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
+>>   division by zero
+>>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
+>>   Call trace:
+>>    dump_backtrace+0x0/0x1c0
+>>    show_stack+0x14/0x20
+>>    dump_stack+0xc4/0x100
+>>    ubsan_epilogue+0x14/0x68
+>>    __ubsan_handle_divrem_overflow+0x98/0xb8
+>>    __pll_params_to_rate+0xdc/0x140
+>>    meson_clk_pll_recalc_rate+0x278/0x3a0
+>>    __clk_register+0x7c8/0xbb0
+>>    devm_clk_hw_register+0x54/0xc0
+>>    meson_eeclkc_probe+0xf4/0x1a0
+>>    platform_drv_probe+0x54/0xd8
+>>    really_probe+0x16c/0x438
+>>    driver_probe_device+0xb0/0xf0
+>>    device_driver_attach+0x94/0xa0
+>>    __driver_attach+0x70/0x108
+>>    bus_for_each_dev+0xd8/0x128
+>>    driver_attach+0x30/0x40
+>>    bus_add_driver+0x1b0/0x2d8
+>>    driver_register+0xbc/0x1d0
+>>    __platform_driver_register+0x78/0x88
+>>    axg_driver_init+0x18/0x20
+>>    do_one_initcall+0xc8/0x24c
+>>    kernel_init_freeable+0x2b0/0x344
+>>    kernel_init+0x10/0x128
+>>    ret_from_fork+0x10/0x18
+>>
+>> This checks if N is null before doing the division.
+>>
+>> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
+>> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+
+Applied with a slightly more detailed comment.
+Thx
+
+>
+> thank you for the patch Remi!
+>
+>
+> Martin
+
