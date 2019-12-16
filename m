@@ -2,91 +2,99 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27F2EC43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:30:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2668C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 10:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F26F320725
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:30:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ucY3lk6k"
+	by mail.kernel.org (Postfix) with ESMTP id 9E94320CC7
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 10:02:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfLPJaV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 04:30:21 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:43471 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726992AbfLPJaT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 04:30:19 -0500
-Received: by mail-wr1-f68.google.com with SMTP id d16so6327247wre.10
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 01:30:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=Qa3rJnhJbTcROjMKp121dlZfgwfeX0Vh5JSjU4DOTw4=;
-        b=ucY3lk6kSKWb8WI8WYYykhbuCjOXeHofj9fsa35CoZnZbnzTkKgxvFUwQWDWih9Yh/
-         S3X48gi697HVj1p61iRLoLyIm8Jhgc2ByjKs7nimotgLP7PSDRP3qH0eJkwl290U+T/5
-         i4tIW8nxv6bY/VEZd2lunf8iHrg22LjAd5C6iLUYfGzl2Yowgj1d6t3LNm++IZqZoAYx
-         V4ZyAHz3y/KH2XTIW+8lIu+3gqo8jw327Qh/65fyhWJ9O2ht9o2efNhQkT4ZWYxFS64D
-         u0H2S9H84GZa6s0JVOr0Ndrs66NbYGMWICVzxH1coajOWm5oHoJSb/0UYE/cipuoU9GK
-         RsTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=Qa3rJnhJbTcROjMKp121dlZfgwfeX0Vh5JSjU4DOTw4=;
-        b=PGgNdU0ht4a2EMxpSleEoQnItHSI3fF8IIt9Dgon5lqSMCqz06f+FTHwdwxQrhzfUh
-         /2saddFOsk/YYyOKqElC8zQHaTuhL6zo+5Ans02kz/XXB/6rEQcpEJ+nuaVTF0Mo1p5c
-         +58FeewgneVZ90WsoCq1BXtDsq+jXrUnzZBtjIh7v0HHzEjlGqIiW1ZOTZFEa34BHJd4
-         jrFRD5OYoNmeRuJG8fh4vJtw6w0sV+/wTcbrtkRfwYoypI0PYqtUQUGGsZ2O1eKu9zlg
-         jHJzYAPtUBzq80lPXCEv+gWEy5B7M+EcOIh2HUFgE6UynqmUL9UUsDA1ahTBXviVKR2B
-         T6Uw==
-X-Gm-Message-State: APjAAAVnHBCKMRN1wtVfVyLamppt8Q67xNRhMj6v78TknIKk2rXu4RjF
-        FeCg27qFcRT+NvgqOv1AJ5zHJA==
-X-Google-Smtp-Source: APXvYqw0Oq5EvD7tniwfOWliXttZ46sD5RoIB8+aIXMEBzjm4iXlYItK0hdJX7LShDNOWedUKQ+hfA==
-X-Received: by 2002:a5d:6886:: with SMTP id h6mr28736169wru.154.1576488616925;
-        Mon, 16 Dec 2019 01:30:16 -0800 (PST)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id s16sm20951366wrn.78.2019.12.16.01.30.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 01:30:16 -0800 (PST)
-References: <20191213103304.12867-1-jbrunet@baylibre.com> <7h1rt89nuf.fsf@baylibre.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Dmitry Shmidt <dimitrysh@google.com>
-Subject: Re: [PATCH] clk: meson: g12a: fix missing uart2 in regmap table
-In-reply-to: <7h1rt89nuf.fsf@baylibre.com>
-Date:   Mon, 16 Dec 2019 10:30:15 +0100
-Message-ID: <1jo8w8bot4.fsf@starbuckisacylon.baylibre.com>
-MIME-Version: 1.0
-Content-Type: text/plain
+        id S1727199AbfLPKCG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 05:02:06 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:38794 "EHLO inva021.nxp.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726992AbfLPKCG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Dec 2019 05:02:06 -0500
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5628620153D;
+        Mon, 16 Dec 2019 11:02:04 +0100 (CET)
+Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 28B9520097B;
+        Mon, 16 Dec 2019 11:02:02 +0100 (CET)
+Received: from localhost.localdomain (mega.ap.freescale.net [10.192.208.232])
+        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 139C5402DA;
+        Mon, 16 Dec 2019 18:01:59 +0800 (SGT)
+From:   Yangbo Lu <yangbo.lu@nxp.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc:     Yangbo Lu <yangbo.lu@nxp.com>
+Subject: [PATCH] clk: qoriq: add ls1088a hwaccel clocks support
+Date:   Mon, 16 Dec 2019 18:01:11 +0800
+Message-Id: <20191216100111.17122-1-yangbo.lu@nxp.com>
+X-Mailer: git-send-email 2.17.1
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+This patch is to add hwaccel clocks information for ls1088a.
 
-On Fri 13 Dec 2019 at 17:44, Kevin Hilman <khilman@baylibre.com> wrote:
+Signed-off-by: Yangbo Lu <yangbo.lu@nxp.com>
+---
+ drivers/clk/clk-qoriq.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-> Jerome Brunet <jbrunet@baylibre.com> writes:
->
->> UART2 peripheral is missing from the regmap fixup table of the g12a family
->> clock controller. As it is, any access to this clock would Oops, which is
->> not great.
->>
->> Add the clock to the table to fix the problem.
->>
->> Fixes: 085a4ea93d54 ("clk: meson: g12a: add peripheral clock controller")
->> Reported-by: Dmitry Shmidt <dimitrysh@google.com>
->> Tested-by: Dmitry Shmidt <dimitrysh@google.com>
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->
-> Tested-by: Kevin Hilman <khilman@baylibre.com>
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index bed140f..d5946f7 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -342,6 +342,32 @@ static const struct clockgen_muxinfo ls1046a_hwa2 = {
+ 	},
+ };
+ 
++static const struct clockgen_muxinfo ls1088a_hwa1 = {
++	{
++		{},
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV4 },
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++	},
++};
++
++static const struct clockgen_muxinfo ls1088a_hwa2 = {
++	{
++		{},
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV1 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV3 },
++		{ CLKSEL_VALID, CGA_PLL2, PLL_DIV4 },
++		{},
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV2 },
++		{ CLKSEL_VALID, CGA_PLL1, PLL_DIV3 },
++	},
++};
++
+ static const struct clockgen_muxinfo ls1012a_cmux = {
+ 	{
+ 		[0] = { CLKSEL_VALID, CGA_PLL1, PLL_DIV1 },
+@@ -607,6 +633,9 @@ static const struct clockgen_chipinfo chipinfo[] = {
+ 		.cmux_groups = {
+ 			&clockgen2_cmux_cga12
+ 		},
++		.hwaccel = {
++			&ls1088a_hwa1, &ls1088a_hwa2
++		},
+ 		.cmux_to_group = {
+ 			0, 0, -1
+ 		},
+-- 
+2.7.4
 
-Applied for fixes
