@@ -2,141 +2,144 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC59FC43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 08:59:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3853C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:13:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9011D20725
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 08:59:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73E0E215A4
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 09:13:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="WUP++Ukk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726881AbfLPI73 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 03:59:29 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:53562 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726867AbfLPI73 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 03:59:29 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-1b-5df7476d9f32
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 5B.FD.08102.D6747FD5; Mon, 16 Dec 2019 09:59:26 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Mon, 16 Dec 2019 09:59:14 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: Re: [PATCH v6 10/15] gpio: devres: Add devm_gpiod_get_parent_array
-Thread-Topic: [PATCH v6 10/15] gpio: devres: Add devm_gpiod_get_parent_array
-Thread-Index: AQHVsAgD2gnib6iDu0CtY9qHC9JPxqe8ZSSAgAAIPIA=
-Date:   Mon, 16 Dec 2019 08:59:14 +0000
-Message-ID: <812acba9df70c4bb6975580c7965b61e923a3a13.camel@fi.rohmeurope.com>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-         <f34765b5cb4e949c2e85415ded3d0ee7736cc97b.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-         <CACRpkdbUS7WeQ7OoTtjGnB7L=uhYncwwcHxkJ1Uj6GqYCGNGJA@mail.gmail.com>
-In-Reply-To: <CACRpkdbUS7WeQ7OoTtjGnB7L=uhYncwwcHxkJ1Uj6GqYCGNGJA@mail.gmail.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <43C53F21BE36E2478B2439D9C76E2F2B@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726994AbfLPJNf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 04:13:35 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:54999 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726987AbfLPJNf (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 04:13:35 -0500
+Received: by mail-wm1-f66.google.com with SMTP id b19so5856183wmj.4
+        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 01:13:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=hGz9qWdY8ZcUU5/VcrTyxse6NvOSG2JsP6RQHgyur6o=;
+        b=WUP++UkkkRHAngukuNoFL6QdnnAcsECwDXGu5MQfgjJHODHN6xd2WMIiokGIBHeJeY
+         Xtr1sfbZVaBjybPoIos7VuR8uYpG2CQ6mV7+A9FhXATLlJdFc21aKVjsQctJD3oOVJI+
+         j0gaFHhyX0/J//241U49HhKK5tv0N7vfW8xW9nsL+FPYkfo7loQk7KaEkpgiFgXb26FY
+         bbd35FmlBznv/3K5Dw4098MXk+dR5bhE1BZFGdprT0krRVjCR5XeI/758Sqgk5ZBKLBy
+         DTlU59r2daKnL4q0/U9E4IeAjQIt7ZYunYv05taTdrauBJUWbfi0v5Pr3wcN7Phj0ZOw
+         DreA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=hGz9qWdY8ZcUU5/VcrTyxse6NvOSG2JsP6RQHgyur6o=;
+        b=VhS5IJ14xRM2h/KL3QN+kjyk9msXW/Z8EvQ7mkQ9TH4WP4JI0n/5seoDHUKkbEvx3F
+         HJCezhcsca8zKeHPbV0UfE/BZ/7i5sibiu5kof2TAQzKw+XSBatjpvj8pcfGluJqpO2n
+         NxZMs2bSKqAFUsgCxl0gKXybiZyliPD32LyCK3OHYfOJWXhhp+hGqY+Vj5NlFg8GBR6q
+         3WiYb5Kx8aWYNtV27MOgODLJeTp6RYHMhu5QEgU4Yz/ScCoZkg1YmFC9hkTcpIsblL3l
+         tuG8Yg9L+LHEVR5zZbWIc0IvOeDlJFsMpcIGibxkFgCIL7GmkETlAzWXLK8ZFB4xm+Fp
+         gNig==
+X-Gm-Message-State: APjAAAXpUVvt2vO8ZrDiTaXarHqHWKpBcfWsYrcnr9Zt9P9EUNc8FC6V
+        WRRnrKc/ny3QK+F48fwyXxezjw==
+X-Google-Smtp-Source: APXvYqy19YVm/1kSejmA9wVlq3iOrl0I2bxY+X47LQj5Bypu9SC2jPZAIHgTCn3wIgxj4Ti9RIfJaw==
+X-Received: by 2002:a1c:4008:: with SMTP id n8mr27710908wma.121.1576487613009;
+        Mon, 16 Dec 2019 01:13:33 -0800 (PST)
+Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id b10sm21088066wrt.90.2019.12.16.01.13.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 16 Dec 2019 01:13:32 -0800 (PST)
+References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
+In-reply-to: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com>
+Date:   Mon, 16 Dec 2019 10:13:31 +0100
+Message-ID: <1jr214bpl0.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tb0wTZxzee3e9u4JnjoLruyrLvMQs4qhzW7J3izF8mHqLhrlooi4hcIwb
-        JcCVXFsn7MM6mSJgGGrVWQuIUiSCQjvYGNGNIP8sWwUVVtl060bIAAPBuRKR4e44FT69T37P
-        8/ye58PvpXGDlzLRWZJdlCUhhyOjiPa6x75EaetMyuvTlwGqGRikUNFkLYX+O9ZNoYcVAQKd
-        CI+QaKS9CKCqzqAOlfY161Dh+UYS/drSRKDf/+0CKHL7MIZccxcwNH3kng5VH6oh0DdVcwDd
-        avOQqOW+srm7/jaJvL8MYMjj7SXQ1INiDA0ENqMTgUkK3Q10kahwIISjg1c7KTQ/5CNQWXBr
-        UjzfUNkA+MezxwA/FTpI8ZUNn/Hfu+9SvP9iMcn/NnSF5H+saKD482XHdXzkp6MEP1rdSPA9
-        oe8w/lTlI4xvPNIJ+Lr6GYr/x//yDvaj6I3pgn3fzqxMaf2mtGjLz3PHybwDK/ef8spOUGcq
-        AXoasm/BUHktpmIDOwjgpdPWEhCl4F4AZ4ddCkHTJLsRltyhVE0c+w681ushVA3O9kbDs8Ew
-        UIlYdhu81TxLaKLt8GYoiGv4Xej0RxbMBLsGBvo8C3OGTYYTQx5SC5sAsOWPCZ1K6NkPYbP/
-        24VGgI2Hxc7JBYyzRugfndFprVlYc+UGruEVcOyv+adzDl59FCbU0ji7Fja2rdesSbC07x7Q
-        8GroKg1TWocYeP30CFEOXnQvSXAvut1L3O4lbvcS91mguwhgrpCVkynYxQ1mWXSYZaslV3k+
-        tub6gXZ2D1vBk473OwBGgw7wEo1xK5hddyIphuXp1ox8i2CzpMqOHNHWASCNc3FM6yszKQYm
-        Q8gvEGXrM2olTXBG5tXw0RQDq2Zli2KeKD9jV9E0B5n8LYoxRhYzxf2fZOXYF2mM1qvLo0xx
-        NlHKEGXBYbekqueRalPuQ6WWKbku1c7Y8oRcZapZA2AdXT5WcQ6nOyu853ADIVkl0WRkLm1W
-        pKwqtTik50HjwEgDLpYJqIuWKX/v+Z5xJQJTIt5IjqgRdmGRMjnBvvu6np6JdU0O7vPXajL7
-        h7/62ydVtvYXvrma/DL7vfiE9jM248ntadhgUpvxWqg+OHwgb9Aylrimu7Tgi9pNiVumpk17
-        fReuJ7bNv1Ck7/c8iPF98ENV+qg5ZPz0UFxC/dobrvyTyy/vPlxmHi8wJ++5Wf3nE33Xbpi9
-        I+3rt5uc22I5wmYRNiTgsk34H70bqoo4BAAA
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpIaSBkZWUgSG8gcGVlcHMhIChMaW51cyAmIExlZSArIG90aGVyIGludGVyZXN0ZWQpLA0KDQpP
-biBNb24sIDIwMTktMTItMTYgYXQgMDk6MjkgKzAxMDAsIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+
-IE9uIFdlZCwgRGVjIDExLCAyMDE5IGF0IDEwOjQ3IEFNIE1hdHRpIFZhaXR0aW5lbg0KPiA8bWF0
-dGkudmFpdHRpbmVuQGZpLnJvaG1ldXJvcGUuY29tPiB3cm90ZToNCj4gDQo+ID4gQnVuY2ggb2Yg
-TUZEIHN1Yi1kZXZpY2VzIHdoaWNoIGFyZSBpbnN0YW50aWF0ZWQgYnkgTUZEIGRvIG5vdCBoYXZl
-DQo+ID4gb3duIGRldmljZS10cmVlIG5vZGVzIGJ1dCBoYXZlIChmb3IgZXhhbXBsZSkgdGhlIEdQ
-SU8gY29uc3VtZXINCj4gPiBpbmZvcm1hdGlvbiBpbiBwYXJlbnQgZGV2aWNlJ3MgRFQgbm9kZS4g
-QWRkIHJlc291cmNlIG1hbmFnZWQNCj4gPiBkZXZtX2dwaW9kX2dldF9hcnJheSgpIGZvciBzdWNo
-IGRldmljZXMgc28gdGhhdCB0aGV5IGNhbiBnZXQgdGhlDQo+ID4gY29uc3VtZXIgaW5mb3JtYXRp
-b24gZnJvbSBwYXJlbnQgRFQgd2hpbGUgc3RpbGwgYmluZGluZyB0aGUgR1BJTw0KPiA+IHJlc2Vy
-dmF0aW9uIGxpZmUtdGltZSB0byB0aGlzIHN1Yi1kZXZpY2UgbGlmZSB0aW1lLg0KPiA+IA0KPiA+
-IElmIGRldm1fZ3Bpb2RfZ2V0X2FycmF5IGlzIHVzZWQgYXMgc3VjaCAtIHRoZW4gdW5sb2FkaW5n
-IGFuZCB0aGVuDQo+ID4gcmUtbG9hZGluZyB0aGUgY2hpbGQgZGV2aWNlIGZhaWxzIGFzIHRoZSBH
-UElPcyByZXNlcnZlZCBkdXJpbmcNCj4gPiBmaXJzdA0KPiA+IGxvYWQgYXJlIG5vdCBmcmVlZCB3
-aGVuIGRyaXZlciBmb3Igc3ViLWRldmljZSBpcyB1bmxvYWQgKGlmIHBhcmVudA0KPiA+IHN0YXlz
-IHRoZXJlKS4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRp
-LnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNvbT4NCj4gPiAtLS0NCj4gPiANCj4gPiBDaGFuZ2Vz
-IHNpbmNlIHY1Og0KPiA+IC0gcmVuYW1lZCBpbnRlcm5hbCBmdW5jdGlvbiAobm8gX18gLSBwcmVm
-aXhlcyBmb3IgTGludXMgOl0gKQ0KPiANCj4gVGhhbmtzLCBhcyB0aGVyZSBhcmUgdGhpbmdzIGhh
-cHBlbmluZyBpbiB0aGUgR1BJTyBzdWJzeXN0ZW0gSQ0KPiBoYXZlIHB1dCB0aGlzIG9uZSBwYXRj
-aCBvbiBhbiBpbW11dGFibGUgYnJhbmNoIGhlcmU6DQo+IGh0dHBzOi8vZ2l0Lmtlcm5lbC5vcmcv
-cHViL3NjbS9saW51eC9rZXJuZWwvZ2l0L2xpbnVzdy9saW51eC1ncGlvLmdpdC9sb2cvP2g9aWIt
-ZGV2bS1ncGlvZC1nZXQtcGFyZW50LWFycmF5DQo+IA0KPiBQbGVhc2UgYXNrIHRoZSBtYWludGFp
-bmVyIChJIGd1ZXNzIExlZT8pIHRvIHB1bGwgdGhpcyBpbnRvIHdoZXJldmVyDQo+IHRoZSByZXN0
-IG9mIHRoZSBwYXRjaGVzIHNob3VsZCBiZSBtZXJnZWQgaWYgeW91IHdhbnQgcGF0Y2hlcyBiZXlv
-bmQNCj4gdGhpcyBwb2ludCB0byBiZSBhcHBsaWVkIGZvciB0aGUgbmV4dCAodjUuNikgbWVyZ2Ug
-d2luZG93LCB0aGVuIHRoaXMNCj4gcGF0Y2ggaXMgbm90IG5lZWRlZCBpbiB0aGUgc2VyaWVzLg0K
-DQpJIGRyb3BwZWQgdGhlIHJ1bi1sZXZlbCBzdXBwb3J0IGZyb20gcmVndWxhdG9yIHBhdGNoIChm
-b3Igbm93IGF0DQpsZWFzdCkuIFRoaXMgbWVhbnMgdGhhdCBJIG5vIGxvbmdlciBoYXZlIEdQSU8g
-Y29uc3VtZXJzIG5lZWRpbmcgdGhpcw0KbmV3IEFQSSBpbiB0aGUgc2VyaWVzLiBXaGljaCBtZWFu
-cyB0d28gdGhpbmdzOg0KDQoxLiBUaGVyZSBpcyBubyBpbi10cmVlIHVzZXJzIG9mIHRoaXMgbmV3
-IEFQSSBhcyBvZiBub3cuIFRoaXMgQVBJIGhhcw0KdmFsaWQgdXNlLWNhc2UgaW1tZWRpYXRlbHkg
-d2hlbiBhbiBNRkQgc3ViLWRldmljZSB3aGljaCBoYXMgbm8gb3duDQooc3ViLWRldmljZSBzcGVj
-aWZpYykgY29tcGF0aWJsZSBpbiBEVCB3YW50cyB0byBnZXQgdGhlIEdQSU8gYXJyYXkgYW5kDQp1
-c2UgZGV2bSAtIGJ1dCBJIGFtIG5vdCBzdXJlIGlmIHdlIGhhdmUgYW55IGluLXRyZWUuIChJIGNo
-ZWNrZWQgY3VycmVudA0KZGV2bV9ncGlvZF9nZXRfYXJyYXkoKSB1c2VycyBhbmQgZGlkbid0IHNl
-ZSBhbnkgTUZEIHN1Yi1kZXZpY2VzIHdoaWNoDQp3b3VsZCBoYXZlIGVycm9ybmVvdXNseSB1c2Vk
-IHRoZSBwYXJlbnQgZGV2aWNlIGZvciBtYW5hZ2VtZW50IC0gYnV0IEkNCmRpZG4ndCBjaGVjayBp
-ZiB0aGVyZSBpcyBhbnkgbm9uLWRldm0gdmFyaWFudCB1c2VycyB0aGF0IG1pZ2h0IGJlbmVmaXQN
-CmZyb20gdGhpcyBBUEkpDQoNCjIuIFRoZXJlIGlzIG5vIGRlcGVuZGVuY3kgZnJvbSB0aGlzIHNl
-cmllcyB0byB0aGUgbmV3IEFQSS4NCg0KDQpTbywgdGhlcmUgaXMgdHdvIG90aGVyIG9wdGlvbnMg
-b25lIGNhbiBjb25zaWRlcjoNCjEuIERyb3AgdGhpcyBwYXRjaCBjb21wbGV0ZWx5IGZyb20gdGhl
-IHNlcmllcyBhbmQgR1BJTyB0cmVlLg0KMi4gQXBwbHkgaXQgdG8gR1BJTyB0cmVlIG9ubHkgYW5k
-IGRyb3AgaXQgZnJvbSB0aGlzIHNlcmllcyAoaWYgdGhpcyBpcw0Kc3RpbGwgc2VlbiB1c2VmdWwp
-Lg0KDQpCciwNCglNYXR0aQ0K
+
+On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+
+> While playing with devfreq support for the lima driver I experienced
+> sporadic (random) system lockups. It turned out that this was in
+> certain cases when changing the mali clock.
+>
+> The Amlogic vendor GPU platform driver (which is responsible for
+> changing the clock frequency) uses the following pattern when updating
+> the mali clock rate:
+> - at initialization: initialize the two mali_0 and mali_1 clock trees
+>   with a default setting and enable both clocks
+> - when changing the clock frequency:
+> -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
+> -- update the mali_0 clock tree (set the mux, divider, etc.)
+> -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
+                                      ^ no final setting then ? :P
+>    output again
+>
+> With the common clock framework we can even do better:
+> by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
+                ^
+From your patch, I guess you mean CLK_SET_RATE_GATE ?
+
+> we can force the common clock framework to update the "inactive" clock
+> and then switch to it's output.
+>
+> I only tested this patch for a limited time only (approx. 2 hours).
+> So far I couldn't reproduce the sporadic system lockups with it.
+> However, broader testing would be great so I would like this to be
+> applied for -next.
+
+CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
+use. While it works at your advantage here, I'm not sure CCF guarantees
+the assumption this implementation is based on. Some explanation below:
+
+In your case, if it works as you expect when calling set_rate() on the
+top clock, it goes as this:
+
+- mali0 is use with rate X:
+- => set_rate(mali_top, Y)
+- mali0 is in use, cannot change, will round rate Y to X
+- mali1 is not in use, can provide Y
+- mali1 is determined to be the new best parent for mali top
+
+So far so good.
+
+- CCF pick the mali1 subtree
+  *start updating the clock from the root to the leaf*
+
+So the mali top mux, which choose between mali0 and mali1, will be
+*updated last* which crucial to your use case.
+
+I just wonder if this crucial part something CCF guarantee and you can
+rely on it ... or if it might break in the future.
+
+Stephen, any thoughts on this ?
+
+PS: If CCF does guarantee "root-to-leaf" updates, I think this
+implementation is a clever trick to solve this usual glitch free clock
+update issue ... much more elegant that the notifier solution we have
+been using so far.
+
+>
+>
+> Martin Blumenstingl (1):
+>   clk: meson: meson8b: make the CCF use the glitch-free "mali" mux
+>
+>  drivers/clk/meson/meson8b.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
