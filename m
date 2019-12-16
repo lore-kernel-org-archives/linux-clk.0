@@ -2,204 +2,238 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F091C2D0BF
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 19:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD9E7C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 19:45:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE0C82082E
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 19:17:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F8CC2176D
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 19:45:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xvdovwie"
+	dkim=pass (2048-bit key) header.d=sholland.org header.i=@sholland.org header.b="UTOAgPsO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="gSN3UzMB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbfLPTR2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 14:17:28 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55860 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726191AbfLPTR1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 14:17:27 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q9so488664wmj.5
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 11:17:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=TaI0P/S1Bo1801cSTwOrAdNkaWycLWwGESwHFZB6KEs=;
-        b=xvdovwieuu2wlweKn+bC82YHPbOfrIQNK/KniqVl/LOyohWKBHwrU797ArnIsfpYZY
-         LDDNQlzGxpBkWeBsrQUF+Vap3F/F1x6LCA34Y5i4axTfLB//VFOjbTZgt9DbejVI7bm4
-         XqYAlC9Yvz2keoscHo7fRACoo2ZjzY2vZ3hUfDPyXfMTil7mXMp/S1w0khldmBW9z4s/
-         0oG//LwoTu0fraVx4xZp5RHcUHxS7cXHkUMSKuPzIyoCMLkX1XqZs620cofxsuYPl5KH
-         RL8NhD/FLK1qu812eWtxMIQLTAQgsnH4Z6UKwDhd/MuC/B23GCpOcY/ulUNjenn6ph3+
-         w0vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=TaI0P/S1Bo1801cSTwOrAdNkaWycLWwGESwHFZB6KEs=;
-        b=PcyrghOhAfHb+GQL/vD7HbhRou6EPbice6R9AIwxk1ez04u4O4xZPDogvdnKfhr/sT
-         /u8l7qSznUDnIBmRYdyFKy2goRSF9QE4xP4jlxtOoImCxw0tRXqsnpnI9O7Ngw2CcjKT
-         EzfuaKc7y/7Fm5I06f/Ylyyk5nJx0a86SLqJ3p4yfWFVwMNEYQV9WQXvQYchjHubGOLN
-         gs1Ezzxe62JQ8ogFsQ4OQEkCJDFLB8qhS3IkNU8ncP1ZwjKCU0YRjcPYKW5TTZ3GpRBG
-         tkgEEnAAB2XnGTNzoUSrt3fSH9YJvIlmFLnbT8BSN+x4jya9tXYEbCt4RRFMcrOHeNzo
-         Q55g==
-X-Gm-Message-State: APjAAAXIbSFkFqvelPICj0/aMlRwYaVIGYdOv1RhtQbTvyjzFWt1Lhn9
-        tuC/8yMmZAh2D1qPk5ClsYAZsQ==
-X-Google-Smtp-Source: APXvYqxx7C0OjSpuBe4yr998Ep7mXAjBkYmeq2Ns5kTbTRAuKQseJcwGroV2UfloXbHqT0riVdJBkA==
-X-Received: by 2002:a1c:e108:: with SMTP id y8mr566525wmg.147.1576523843234;
-        Mon, 16 Dec 2019 11:17:23 -0800 (PST)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id b17sm22647883wrp.49.2019.12.16.11.17.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 11:17:22 -0800 (PST)
-References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com> <20191216175015.2A642206EC@mail.kernel.org>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
-In-reply-to: <20191216175015.2A642206EC@mail.kernel.org>
-Date:   Mon, 16 Dec 2019 20:17:21 +0100
-Message-ID: <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com>
+        id S1726717AbfLPTpO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 14:45:14 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:41765 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726646AbfLPTpO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 14:45:14 -0500
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 466455D4D;
+        Mon, 16 Dec 2019 14:45:12 -0500 (EST)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute5.internal (MEProxy); Mon, 16 Dec 2019 14:45:12 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sholland.org; h=
+        subject:to:cc:references:from:message-id:date:mime-version
+        :in-reply-to:content-type:content-transfer-encoding; s=fm1; bh=D
+        jvFrxDSCUB8eHUxPxhWbB5MN/QXEIpJKqGs29bik/g=; b=UTOAgPsOjSc+PDzq2
+        TbV6VqaDsig1q/9HC0HZls8uW/UfF92M6kz8uVaYweaShAQ86mt3HUi+6xgIBtSS
+        IN81PFgUCVp1R4u/b+GbHcnrbQ+BNhlcz6am7yjqD8jqTRC962j7P1kEJBG3O4sr
+        r4J6UypswoxE5dgHG8gH4Ti09ujX/ZHfx25SEH/XigHNjsxAtzZKOSCCuUPwHRzg
+        ZTmuNgKtAl7MGqz8TiaumGtfQw24xhdrRLoymswgzbnoduHe4ZNvDT31OZRkwuz1
+        QRnm70bxu0bhEmaeNlbhxIrJtJrZBanakVxM2tlk6szU2P19jWvIrLYuZDl6A9Vl
+        1+d8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-transfer-encoding:content-type
+        :date:from:in-reply-to:message-id:mime-version:references
+        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+        :x-sasl-enc; s=fm1; bh=DjvFrxDSCUB8eHUxPxhWbB5MN/QXEIpJKqGs29bik
+        /g=; b=gSN3UzMBPqefR5puzS2Eoul+JnCupRGeA3+Mn1i3BbrRkPWk4eyWteLFB
+        +UfODa3iFvIGgJZddtqcozNUmz/nISHp/I08itXnmkzjODvEK6xuDwmsOq5V0VER
+        961d8duFPgrc0mORchgTTTVEAZYxdi2EbULJuky/sD01xgRe383sjQ8Dg63YFtZS
+        8gW0YUYoJawuZjxTCFHsA+KcwI/TbH6q4Y7BzbsE0OVzRdIbNBLUU05LlliW4Oue
+        /oegQHBNZ5XTftx3+WNQL3MhFQBQ3FnNaqhXGUA7KOq02EKGG3T8pIpj/t5IRHKB
+        31FAwfssmDnWaJmmZ/QS7Q/oEcKlw==
+X-ME-Sender: <xms:xd73XZS8AFm5-oK7L4gysz86ed_XseCLVKRzGzEpEOkZz8D3O0M6og>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedufedrvddthedguddvlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefuvfhfhffkffgfgggjtgfgsehtjeertddtfeejnecuhfhrohhmpefurghm
+    uhgvlhcujfholhhlrghnugcuoehsrghmuhgvlhesshhhohhllhgrnhgurdhorhhgqeenuc
+    ffohhmrghinhepuggvvhhitggvthhrvggvrdhorhhgnecukfhppeejtddrudefhedrudeg
+    kedrudehudenucfrrghrrghmpehmrghilhhfrhhomhepshgrmhhuvghlsehshhholhhlrg
+    hnugdrohhrghenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:xd73XWtslmQDVjFi9lufQzu1iJwpxInNF_j5RUC4VnpwjWVYk8sUtw>
+    <xmx:xd73XX5KS_VJ1EqaXUq84fnyy1KnNRJvIP9NT-glll3Uc6A71PDWKQ>
+    <xmx:xd73XZhzyr7B5ADOnIFlz9ZS3hAojyzhc3ibEFMF5ERI6_rj7Q8eKw>
+    <xmx:yN73XUCJ4FpkwtUkmMecIXBKBLhJLWsPPYbHvRUtJ_wlEKfy-ReDbQ>
+Received: from [192.168.50.169] (70-135-148-151.lightspeed.stlsmo.sbcglobal.net [70.135.148.151])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 1B15C80061;
+        Mon, 16 Dec 2019 14:45:09 -0500 (EST)
+Subject: Re: [PATCH v5 2/8] dt-bindings: mailbox: Add a sun6i message box
+ binding
+To:     Maxime Ripard <mripard@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+References: <20191215042455.51001-1-samuel@sholland.org>
+ <20191215042455.51001-3-samuel@sholland.org>
+ <20191216140422.on4bredklgdxywbw@gilmour.lan>
+From:   Samuel Holland <samuel@sholland.org>
+Message-ID: <d3a1c7c2-953a-cbfe-970e-c00f9a9f5742@sholland.org>
+Date:   Mon, 16 Dec 2019 13:45:08 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20191216140422.on4bredklgdxywbw@gilmour.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hi,
 
-On Mon 16 Dec 2019 at 18:50, Stephen Boyd <sboyd@kernel.org> wrote:
+On 12/16/19 8:04 AM, Maxime Ripard wrote:
+> Hi,
+> 
+> On Sat, Dec 14, 2019 at 10:24:49PM -0600, Samuel Holland wrote:
+>> This mailbox hardware is present in Allwinner sun6i, sun8i, sun9i, and
+>> sun50i SoCs. Add a device tree binding for it. As it has only been
+>> tested on the A83T, A64, H3/H5, and H6 SoCs, only those compatibles are
+>> included.
+>>
+>> Signed-off-by: Samuel Holland <samuel@sholland.org>
+>> ---
+>>  .../mailbox/allwinner,sun6i-a31-msgbox.yaml   | 78 +++++++++++++++++++
+>>  1 file changed, 78 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+>> new file mode 100644
+>> index 000000000000..dd746e07acfd
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/mailbox/allwinner,sun6i-a31-msgbox.yaml
+>> @@ -0,0 +1,78 @@
+>> +# SPDX-License-Identifier: GPL-2.0
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/mailbox/allwinner,sun6i-a31-msgbox.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Allwinner sunxi Message Box
+>> +
+>> +maintainers:
+>> +  - Samuel Holland <samuel@sholland.org>
+>> +
+>> +description: |
+>> +  The hardware message box on sun6i, sun8i, sun9i, and sun50i SoCs is a
+>> +  two-user mailbox controller containing 8 unidirectional FIFOs. An interrupt
+>> +  is raised for received messages, but software must poll to know when a
+>> +  transmitted message has been acknowledged by the remote user. Each FIFO can
+>> +  hold four 32-bit messages; when a FIFO is full, clients must wait before
+>> +  attempting more transmissions.
+>> +
+>> +  Refer to ./mailbox.txt for generic information about mailbox device-tree
+>> +  bindings.
+>> +
+>> +properties:
+>> +  compatible:
+>> +     items:
+>> +      - enum:
+>> +          - allwinner,sun8i-a83t-msgbox
+>> +          - allwinner,sun8i-h3-msgbox
+>> +          - allwinner,sun50i-a64-msgbox
+>> +          - allwinner,sun50i-h6-msgbox
+>> +      - const: allwinner,sun6i-a31-msgbox
+> 
+> This will fail for the A31, since it won't have two compatibles but
+> just one.
 
-> Quoting Jerome Brunet (2019-12-16 01:13:31)
->> 
->> On Sun 15 Dec 2019 at 22:01, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
->> 
->> > While playing with devfreq support for the lima driver I experienced
->> > sporadic (random) system lockups. It turned out that this was in
->> > certain cases when changing the mali clock.
->> >
->> > The Amlogic vendor GPU platform driver (which is responsible for
->> > changing the clock frequency) uses the following pattern when updating
->> > the mali clock rate:
->> > - at initialization: initialize the two mali_0 and mali_1 clock trees
->> >   with a default setting and enable both clocks
->> > - when changing the clock frequency:
->> > -- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
->> > -- update the mali_0 clock tree (set the mux, divider, etc.)
->> > -- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
->>                                       ^ no final setting then ? :P
->> >    output again
->> >
->> > With the common clock framework we can even do better:
->> > by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
->>                 ^
->> From your patch, I guess you mean CLK_SET_RATE_GATE ?
->> 
->> > we can force the common clock framework to update the "inactive" clock
->> > and then switch to it's output.
->> >
->> > I only tested this patch for a limited time only (approx. 2 hours).
->> > So far I couldn't reproduce the sporadic system lockups with it.
->> > However, broader testing would be great so I would like this to be
->> > applied for -next.
->> 
->> CLK_SET_RATE_GATE guarantees that a clock cannot be updated while in
->> use. While it works at your advantage here, I'm not sure CCF guarantees
->> the assumption this implementation is based on. Some explanation below:
->> 
->> In your case, if it works as you expect when calling set_rate() on the
->> top clock, it goes as this:
->> 
->> - mali0 is use with rate X:
->> - => set_rate(mali_top, Y)
->> - mali0 is in use, cannot change, will round rate Y to X
->> - mali1 is not in use, can provide Y
->> - mali1 is determined to be the new best parent for mali top
->> 
->> So far so good.
->> 
->> - CCF pick the mali1 subtree
->>   *start updating the clock from the root to the leaf*
->> 
->> So the mali top mux, which choose between mali0 and mali1, will be
->> *updated last* which crucial to your use case.
->> 
->> I just wonder if this crucial part something CCF guarantee and you can
->> rely on it ... or if it might break in the future.
->> 
->> Stephen, any thoughts on this ?
->
-> We have problems with the order in which we call the set_rate clk_op.
-> Sometimes clk providers want us to call from leaf to root but instead we
-> call from root to leaf because of implementation reasons. Controlling
-> the order in which clk operations are done is an unsolved problem. But
-> yes, in the future I'd like to see us introduce the vaporware that is
-> coordinated clk rates that would allow clk providers to decide what this
-> order should be, instead of having to do this "root-to-leaf" update.
-> Doing so would help us with the clk dividers that have some parent
-> changing rate that causes the downstream device to be overclocked while
-> we change the parent before the divider.
->
-> If there are more assumptions like this about how the CCF is implemented
-> then we'll have to be extra careful to not disturb the "normal" order of
-> operations when introducing something that allows clk providers to
-> modify it.
+You asked me earlier to only include compatibles that had been tested, so I did.
+This hasn't been tested on the A31, so there's no A31-only compatible.
 
-I understand that CCR would, in theory, allow to define that sort of
-details. Still defining (and documenting) the default behavior would be
-nice.
+> You can have something like this if you want to do it with an enum:
+> 
+> compatible:
+>   oneOf:
+>     - const: allwinner,sun6i-a31-msgbox
+>     - items:
+>       - enum:
+>         - allwinner,sun8i-a83t-msgbox
+>         - allwinner,sun8i-h3-msgbox
+>         - allwinner,sun50i-a64-msgbox
+>         - allwinner,sun50i-h6-msgbox
+>       - const: allwinner,sun6i-a31-msgbox
+> 
+>> +  reg:
+>> +    items:
+>> +      - description: MMIO register range
+> 
+> There's no need for an obvious description like this.
+> Just set it to maxItems: 1
 
-So the question is:
- * Can we rely set_rate() doing a root-to-leaf update until CCR comes
-   around ?
- * If not, for use cases like the one described by Martin, I guess we
-   are stuck with the notifier ? Or would you have something else to
-   propose ?
-   
->
-> Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
-> isn't called on that particular clk? I seem to recall that the flag only
-> matters when it's applied to the "leaf" or entry point into the CCF from
-> a consumer API.
+Will do for v6.
 
-It did but not anymore
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: bus clock
+>> +
+>> +  resets:
+>> +    maxItems: 1
+>> +    description: bus reset
+>> +
+>> +  interrupts:
+>> +    maxItems: 1
+>> +    description: controller interrupt
+> 
+> Ditto, you can drop the description here.
 
-> I've wanted to fix that but never gotten around to it.
+Will do for v6.
 
-I fixed that already :P
-CLK_SET_RATE_GATE is a special case of clock protect. The clock is
-protecting itself so it is going down through the tree.
+>> +  '#mbox-cells':
+>> +    const: 1
+> 
+> However, you should document what the argument is about?
 
+Ok. "Number of cells used to encode a mailbox specifier" should work.
 
-> The whole flag sort of irks me because I don't understand what consumers
-> are supposed to do when this flag is set on a clk. How do they discover
-> it?
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - clocks
+>> +  - resets
+>> +  - interrupts
+>> +  - '#mbox-cells'
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/sun8i-h3-ccu.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +    #include <dt-bindings/reset/sun8i-h3-ccu.h>
+>> +
+>> +    msgbox: mailbox@1c17000 {
+>> +            compatible = "allwinner,sun8i-h3-msgbox",
+>> +                         "allwinner,sun6i-a31-msgbox";
+>> +            reg = <0x01c17000 0x1000>;
+>> +            clocks = <&ccu CLK_BUS_MSGBOX>;
+>> +            resets = <&ccu RST_BUS_MSGBOX>;
+>> +            interrupts = <GIC_SPI 49 IRQ_TYPE_LEVEL_HIGH>;
+>> +            #mbox-cells = <1>;
+>> +    };
+> 
+> Look good otherwise, thanks!
+> Maxime
+> 
 
-Actually (ATM) the consumer is not even aware of it. If a clock with
-CLK_SET_RATE_GATE is enabled, it will return the current rate to
-.round_rate() and .set_rate() ... as if it was fixed.
-
-> They're supposed to "just know" and turn off the clk first and then
-> call clk_set_rate()?
-
-ATM, yes ... if CCF cannot switch to another "unlocked" subtree (the
-case here)
-
-> Why can't the framework do this all in the clk_set_rate() call?
-
-When there is multiple consumers the behavior would become a bit
-difficult to predict and drivers may have troubles anticipating that,
-maybe, the clock is locked.
-
->
->> 
->> PS: If CCF does guarantee "root-to-leaf" updates, I think this
->> implementation is a clever trick to solve this usual glitch free clock
->> update issue ... much more elegant that the notifier solution we have
->> been using so far.
-
+Thanks,
+Samuel
