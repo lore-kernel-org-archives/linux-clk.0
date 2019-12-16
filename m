@@ -2,61 +2,61 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695A7C43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 08:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DEDC43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 08:31:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39FEF2075A
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 08:30:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A6332080A
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 08:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GJ6KAmw6"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wOHPZF2+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726900AbfLPIaE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 03:30:04 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:41839 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726756AbfLPIaD (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 03:30:03 -0500
-Received: by mail-ua1-f67.google.com with SMTP id f7so1770201uaa.8
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 00:30:03 -0800 (PST)
+        id S1726856AbfLPIbh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 03:31:37 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:32798 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726808AbfLPIbg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 03:31:36 -0500
+Received: by mail-ua1-f66.google.com with SMTP id v19so1788576uap.0
+        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 00:31:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=kDxQhaeLo6rNMVFT3CBcpOhBFhoVMYpLfsYqZHIsllM=;
-        b=GJ6KAmw6S+sq3Ccetl/H3ixiZVhos+PR0jEMWgPCzfx0kYdnBXsUmmddRDGHKCa+IW
-         XpoIFbLS8+19HgHvj1aji88fMJFyb1lR/OZ36673QRjkhDqdlzrIFkgM8oE+oLQDArnf
-         b7+9QxLZM6bFfD0TyRkuo4e0dVkdBL0SKoIBmAyTVM1uFsJHNelZ/+e0ANXGZ4aezkeZ
-         o4gb0cTRAp9bOD/PgQ9vQbyM+lGwK9Ok7JQXcF4SJ5b4Kw9UhJJL2BCwrf0d2BtMgGGk
-         5R3A+AL4JyWngHzSseIzNmoBzR/zYQxFslU5c3tgyAMleZF6TpW7mWEL4HtKwSHPi2AZ
-         9W7Q==
+        bh=rfvNJ6SwD135PnS64Nblsl7Xm55KVFsUpW1c0eS2aVY=;
+        b=wOHPZF2+BYK6vzqlz1znc9EAj8uqLkELPngMwylGAxwnHWVHi5jDTQsS5EfDYt6Bqa
+         V4ru3lw+J8heO3Q5g6OoS8A8ConuE4Ic3Lym6EkjxnEQ3Z9oY8AXSmMVRGHWNXBZVI2t
+         /p4RShonvw73Ywu2BrVxv02T0FhA9iagfClQ10XNrKcMAYVoIyYj8vWu0h3p0mgQNX40
+         MN7v6mUuqZLSHvblwbxzjcgQCNrsgg5oaCLfiGP6PvS2qJZGQFszpU8BS5wAjLraSRIu
+         QuSxv1yIZyYfmQWeq/HignciG/JW4vhXQVXGIlx/5x816KYrIYVFPzELAaL9QymoQWAu
+         1S7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=kDxQhaeLo6rNMVFT3CBcpOhBFhoVMYpLfsYqZHIsllM=;
-        b=VSryU4sXYNJ8rqHH90DYKFYHbzeWF5qgssR0d1N0nP5ROIEtv5ApTifu3bderOfg98
-         xUeRaX2I6vzv97xN5xzTLizBjulH7kbczrhbD8JBelh0vCf7yhq0kca7oQ+vTVYA5KTs
-         SYENk/cOZcOxCq6044WnBHH/WcjSPrnX6/ch4AdE+Bf35c0h1LRjqf9FgKqvQyYf8Oln
-         grilSeBEFbDME1GH0JHPK80U/LHZoHRt2RPQNMYFReAi4WCHP1NOvVjbHA3yWRoz0EnC
-         Tqe62F28pwvfKuIYpnCULwysZmNQsnVz/tc+nDtHp1qMs/KeQDWCHd/7qKHX6/iuJt3N
-         95xQ==
-X-Gm-Message-State: APjAAAUadcKzvuOtlLj3J/rxzgn121HXifNgwjNvpno7T03e3GmcXpQH
-        ryicbFZqfm1S2eFSnBDsJWxaPzbWpMIsPhdLM1J8Dw==
-X-Google-Smtp-Source: APXvYqwni+l6XxPCyreJYxRHqzJXidyE2iM9tvx9B737sdIeXKOHoRA6FLpVo5xoUtWtnIiiMdWW6jDBBKJSinB1wok=
-X-Received: by 2002:ab0:5512:: with SMTP id t18mr22623715uaa.128.1576485002794;
- Mon, 16 Dec 2019 00:30:02 -0800 (PST)
+        bh=rfvNJ6SwD135PnS64Nblsl7Xm55KVFsUpW1c0eS2aVY=;
+        b=JUbGUGydjkLtdDoDfi31U4RxoMSMk4lj9yQBDrZxKizdF2HYlJxbkhwg7nclXsXtGf
+         FuNtWEpwogWyahA0lBaOznp5fmF7sJkSWwujdG0VlNL1/RVpSQKoFIH5hOWLu26KTjtY
+         EQJNfFHpGWLdqPUckHONqFsh25hoBEkLdQ2faJznXgmgLd0tYFyNKFBojjwLk+3R5Af2
+         jyA+Nlwsc2esDNscMBIJNasgXyxivhQAeoTbPNs7RUuq897Hgzlyj7ArqdTblE0G8Gwo
+         EKATprl7QoXuen+UoXCpBP469vJlfw/QQiaBUB44mPmFnT7+TYtPTnCE2rux2tb+IUS/
+         /TLw==
+X-Gm-Message-State: APjAAAVMGBkS4QWJ55po7CNjvj4mXKWF9Nv+8yvrjsw4TO0H0nhp5JA4
+        FGO9IVKIr58zKVMkZv5lVTfbd/KqGn/h/5XvR2gohQ==
+X-Google-Smtp-Source: APXvYqxpum27qzlPECIy99bHs3MTRT1fsw5fQXcrzj94L1CgoL4z3o4EdzdWdo+LFQweAhtr1FIPsa+WvuSZCwwL/ps=
+X-Received: by 2002:ab0:2716:: with SMTP id s22mr22638741uao.20.1576485095866;
+ Mon, 16 Dec 2019 00:31:35 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com> <f34765b5cb4e949c2e85415ded3d0ee7736cc97b.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <f34765b5cb4e949c2e85415ded3d0ee7736cc97b.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com> <f56dce4fcb71592cbcf0fc48a841f86f52770d4c.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <f56dce4fcb71592cbcf0fc48a841f86f52770d4c.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 16 Dec 2019 09:29:51 +0100
-Message-ID: <CACRpkdbUS7WeQ7OoTtjGnB7L=uhYncwwcHxkJ1Uj6GqYCGNGJA@mail.gmail.com>
-Subject: Re: [PATCH v6 10/15] gpio: devres: Add devm_gpiod_get_parent_array
+Date:   Mon, 16 Dec 2019 09:31:24 +0100
+Message-ID: <CACRpkdap9TXqWpUKb+vPmLkjV-1msm8zVWshv+m6c87oDxip7A@mail.gmail.com>
+Subject: Re: [PATCH v6 11/15] docs: driver-model: Add missing managed GPIO
+ array get functions
 To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
         Jacek Anaszewski <jacek.anaszewski@gmail.com>,
@@ -92,35 +92,20 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 11, 2019 at 10:47 AM Matti Vaittinen
+On Wed, Dec 11, 2019 at 10:48 AM Matti Vaittinen
 <matti.vaittinen@fi.rohmeurope.com> wrote:
 
-> Bunch of MFD sub-devices which are instantiated by MFD do not have
-> own device-tree nodes but have (for example) the GPIO consumer
-> information in parent device's DT node. Add resource managed
-> devm_gpiod_get_array() for such devices so that they can get the
-> consumer information from parent DT while still binding the GPIO
-> reservation life-time to this sub-device life time.
->
-> If devm_gpiod_get_array is used as such - then unloading and then
-> re-loading the child device fails as the GPIOs reserved during first
-> load are not freed when driver for sub-device is unload (if parent
-> stays there).
+> devm_gpiod_get_array and devm_gpiod_get_array_optional were missing
+> from the list. Add them.
 >
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > ---
->
-> Changes since v5:
-> - renamed internal function (no __ - prefixes for Linus :] )
+> No changes sinnce v5
 
-Thanks, as there are things happening in the GPIO subsystem I
-have put this one patch on an immutable branch here:
-https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-gpio.git/log/?h=ib-devm-gpiod-get-parent-array
+Patch applied.
 
-Please ask the maintainer (I guess Lee?) to pull this into wherever
-the rest of the patches should be merged if you want patches beyond
-this point to be applied for the next (v5.6) merge window, then this
-patch is not needed in the series.
+No need to merge this patch into MFD or other subsystem where the
+rest gets merged.
 
 Yours,
 Linus Walleij
