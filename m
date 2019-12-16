@@ -1,116 +1,120 @@
-Return-Path: <SRS0=7Hsc=2F=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0564CC43603
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 21:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC7C4C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 04:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D17C82467A
-	for <linux-clk@archiver.kernel.org>; Sun, 15 Dec 2019 21:02:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A6AE622B48
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 04:05:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="EdMEfomi"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HchpIwQM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726481AbfLOVCQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 15 Dec 2019 16:02:16 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33151 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726260AbfLOVCP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 16:02:15 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b6so4849883wrq.0;
-        Sun, 15 Dec 2019 13:02:14 -0800 (PST)
+        id S1726705AbfLPEFj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 15 Dec 2019 23:05:39 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:36498 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726719AbfLPEFg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 15 Dec 2019 23:05:36 -0500
+Received: by mail-pf1-f195.google.com with SMTP id x184so4854637pfb.3
+        for <linux-clk@vger.kernel.org>; Sun, 15 Dec 2019 20:05:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5gHIa9kqk84t33T9/NR0KW4i+WbdOUW3zGPJ6/IWE5o=;
-        b=EdMEfomij+fA1v4b/Yor6lscI3NPOuQmskR5Fr1gAOqyq5dbnCqVnM4yIIEtgkWAku
-         EW4kz6sHZIwfrf/X1Y/uXzcuWcaS/m5ukjlM+f0sPTwKyWthLe5RKObOyDdacAoQ6iOV
-         jDBbUqupMO0Bk+5UwEw4vCAI7QrBxmfjOp3n5KHnUkRmMhS99a+slIp74029MYHP8zmk
-         R05TuKtLVIJwPF5FRrhw1XJF301yoURMYqgtBvsCAVGcpxlgBMBSjVjTZuywFsSuIDxj
-         f6DfoCT7iZM+pVHl6DIQr3qo3nxoKCL4LTvc3a5AfroEXdwPs8TW7A0eKfsf8swGHYHn
-         9qSQ==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=d4XspCOLY0K+C1Vfb2PDWcaWLInJRK+f1WKwR2zrrME=;
+        b=HchpIwQMnBNKqHOnvMjOMVaASy6pIUbbRENB4Er0WySYNfH+cBpQd/VVttcEc1iKxU
+         S1PRRWmCeQcvQ71kCjxcxw41+AUwXVn06ggSP/Zx9ly0DoKdBGTHyVbF0ccUKPnpjHM+
+         xX3YY+c/v+G56ALgVfZqfy5qyUXDan07Mw01WG8VVtLiAxZf3yM10dpMJQx5B+lGuXdA
+         hydKasR+2Z/bXmU6U1hqBFvb0IYLydzNSl3ZU39fzdqrbkMJDNWsewQly1buzzFbWPFk
+         ielGKUyIRolOQcCwzMA3Dslc650R54M64soVcZ6fdMEva18UuIe1odrXveTbZJmYsueA
+         Ga0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5gHIa9kqk84t33T9/NR0KW4i+WbdOUW3zGPJ6/IWE5o=;
-        b=dsibvf5H6VlroESQgr+pM6xJV4oYG4G96Z8XZt8X6j12vZF5lWQJa2Xfqs17YtQQHX
-         mDcZS6YCd1HSRcWJ0rapTVHZhMIKg6gJ8SHP8xEEFEe9pAS3Q9gZezRMgdlo2vAJN/R+
-         S/D4OBoi8p1LLKh7CNE70k42Ez6ISU45dUdkycCQIVprNN0gH1zABQzLPpKR0GWIUNyA
-         FEfps6qpSK5iSQB3Z+vBqD/yPQqfygYOd72mQ1uS8b94CaSjZeT5mZRaSkKXNajZnkAI
-         oXmU/XuxnqGPF5naaSc+Gg6LG6KSbQpOjwE8d7rhSKgyExbpOUOCXQUOoD1Km5QrdBkO
-         GodQ==
-X-Gm-Message-State: APjAAAVQ4aCdEB2+W2W+qePG/+QlqoQKG7ZsxgxQFtFm3iWLfli6ilRJ
-        eKGOMhs2mEELCMUbgdjjTHM=
-X-Google-Smtp-Source: APXvYqwgM/b7u1mLXpFZdVCEUisopxkubQb3HOxGH/WKnOjGP69jUA3GLe0OxIjfyI4giLcKZXVjTA==
-X-Received: by 2002:a5d:6211:: with SMTP id y17mr26014162wru.344.1576443733657;
-        Sun, 15 Dec 2019 13:02:13 -0800 (PST)
-Received: from localhost.localdomain (p200300F1370FCC00428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:370f:cc00:428d:5cff:feb9:9db8])
-        by smtp.googlemail.com with ESMTPSA id f1sm19565645wrp.93.2019.12.15.13.02.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 15 Dec 2019 13:02:13 -0800 (PST)
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
-        narmstrong@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 1/1] clk: meson: meson8b: make the CCF use the glitch-free "mali" mux
-Date:   Sun, 15 Dec 2019 22:01:53 +0100
-Message-Id: <20191215210153.1449067-2-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.24.1
-In-Reply-To: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com>
-References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=d4XspCOLY0K+C1Vfb2PDWcaWLInJRK+f1WKwR2zrrME=;
+        b=alI+H6DHN+XAJ6wucIGdFMPN+TmVkPgv2gY3N+L9lmlqdlvboePosrCTbWt/cq7aHA
+         XVxkEgzgdWwSky8Fi86k9GBT7jcKVmQrjdKJY0OFvkCyrx15VUax1/gnmRWquGqZRlHZ
+         6/mLUlrws0BOYoSU6YUhxkaMwjLlOHIisNtop36uzGtzqYCxbKQNmMfcXgIoYONqVUuS
+         hD9YbAuZqlbUffqSINQBKBIL9wxAkjj+etQldTo7ft7zq/F6uv0gTPnubMAGjlCNH9yJ
+         2As4iIJz46/zMdZpbbHLw4lhLXSPDs3zRd2O1PPxhZMexh0WSR5cMV5tBiv8a7j1UQTx
+         g9lg==
+X-Gm-Message-State: APjAAAXIuxvNH6VBKFl++zYpNMJpEV+fttDJiiW9BleR0231hVi6CPRi
+        3+4vLr1Q2BFYYpvuF1elV8Gw9w==
+X-Google-Smtp-Source: APXvYqwLt7wj56FeIgG9ZelBz/Zll/j8P4bcApK8Q+7U541auajpxb17fqK7nFsQ5ScZhkF9BwftfQ==
+X-Received: by 2002:a65:66d7:: with SMTP id c23mr16106550pgw.40.1576469135086;
+        Sun, 15 Dec 2019 20:05:35 -0800 (PST)
+Received: from localhost ([122.171.234.168])
+        by smtp.gmail.com with ESMTPSA id e10sm20480322pfm.3.2019.12.15.20.05.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 15 Dec 2019 20:05:34 -0800 (PST)
+Date:   Mon, 16 Dec 2019 09:35:32 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
+ and Tegra30 SoCs
+Message-ID: <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
+References: <20191118164512.8676-1-digetx@gmail.com>
+ <20191118164512.8676-8-digetx@gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191118164512.8676-8-digetx@gmail.com>
+User-Agent: NeoMutt/20180716-391-311a52
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Mali clock tree should not be updated while the clock is running.
-Enforce this by setting CLK_SET_RATE_GATE on the "mali_0" and "mali_1"
-gates. This makes the CCF switch to the "mali_1" tree when "mali_0" is
-currently active and vice versa which is exactly what the vendor driver
-does when updating the frequency of the mali clock.
+On 18-11-19, 19:45, Dmitry Osipenko wrote:
+> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
+> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
+> Currently cpufreq-dt driver produces a bit annoying warning splats
+> during boot because valid OPPs are not found, this will be fixed once
+> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
+> will also happen on older stable kernels using newer device-trees, thus
+> this patch should be backported to stable kernels as well.
+> 
+> Cc: <stable@vger.kernel.org>
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
+> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+> ---
+>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
+> index f1d170dcf4d3..aba591d57c67 100644
+> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
+> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
+> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
+>  	{ .compatible = "mediatek,mt8176", },
+>  	{ .compatible = "mediatek,mt8183", },
+>  
+> +	{ .compatible = "nvidia,tegra20", },
+> +	{ .compatible = "nvidia,tegra30", },
+>  	{ .compatible = "nvidia,tegra124", },
+>  	{ .compatible = "nvidia,tegra210", },
 
-This fixes a potential hang when changing the GPU frequency at runtime.
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Fixes: 74e1f2521f16ff ("clk: meson: meson8b: add the GPU clock tree")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
----
- drivers/clk/meson/meson8b.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 3408297bff65..6b13084eebf5 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -1838,7 +1838,7 @@ static struct clk_regmap meson8b_mali_0 = {
- 			&meson8b_mali_0_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
- 	},
- };
- 
-@@ -1893,7 +1893,7 @@ static struct clk_regmap meson8b_mali_1 = {
- 			&meson8b_mali_1_div.hw
- 		},
- 		.num_parents = 1,
--		.flags = CLK_SET_RATE_PARENT,
-+		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
- 	},
- };
- 
 -- 
-2.24.1
-
+viresh
