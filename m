@@ -2,129 +2,124 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D7BAC2D0C0
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 11:21:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E131C43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 12:19:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04084206D3
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 11:21:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30B9A206D3
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 12:19:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="qC2K4KTY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AKl7+aHb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727140AbfLPLVw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 06:21:52 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:55734 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727138AbfLPLVv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 06:21:51 -0500
-Received: by mail-wm1-f66.google.com with SMTP id q9so6289001wmj.5
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 03:21:49 -0800 (PST)
+        id S1727481AbfLPMT5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 07:19:57 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38587 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727383AbfLPMT4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 07:19:56 -0500
+Received: by mail-pf1-f194.google.com with SMTP id x185so5492049pfc.5;
+        Mon, 16 Dec 2019 04:19:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=references:user-agent:from:to:cc:subject:in-reply-to:date
-         :message-id:mime-version;
-        bh=cl0rAMLqqZ3vDX0ytFuKFHQWL+5kw7GkHR6k2JTXXWs=;
-        b=qC2K4KTYi+HAmeVp1g+GJ7rpwe9o8iLBeAuo+VRD+ciwGilXWVRHxRgwey5RAPE2Cr
-         s8l2O4jNJs1ycBBORqMjWAOsAR7ahxytekVVQssAhlI/VbrD4DhEFIufFQ3Wjl7Vc206
-         XHqWkxoClvveHskQ/V2Z2CPPwkiOAZhzS2bd73KV+vmYNXLQ3d2FBQ469Z91wI4ySqe4
-         p5YBbLd4p+3UDfRCXIGOR2q+taVmR4/f1bnSyHvW/ERADWraiBGfXNjwXYbiblpOZVsq
-         Oc6vI8GQNLd2VFAEPwa3bQymsQnGC77o7jQFOQyYJdzNyw9DfRYkmAOnzb083mrZX9e6
-         An7A==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WYFHoC/Y4PCCPPkEkAbTfP7mUpyA/6C+ox8rPVg4xLc=;
+        b=AKl7+aHb1QZC2RvbCeCyMUc0I4lzTpkH+gFKhVOEDixOmWUKkhcUI3PvnrA5YHPPlx
+         pFE1xXg59dYdZf5C1aHD1riuCso8Ub3Esa8lQtnQDyzMInsCemtHNOzw1QPawV7J+iPx
+         WL3AVtZbvjIYzhaAEVo0adfdKJjZaCX8r5PLlk4twyOqNqM69CnLVd3nDfjEo9cUkzpC
+         nhBBQbjbSoM94ruMctO5hhwC71D/McH19ezNlj2uCTix//5ddohA2kmtrZ3IThx1I2sI
+         9DQJgDQ0Dkvp/wFOayuyBA5Btnd9WIFE8pvKOUqvEsrceYz51yu6me6TZGaPmrSL3eyy
+         Qk1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:references:user-agent:from:to:cc:subject
-         :in-reply-to:date:message-id:mime-version;
-        bh=cl0rAMLqqZ3vDX0ytFuKFHQWL+5kw7GkHR6k2JTXXWs=;
-        b=IUjNPHfj43fOjabRpqcJppjirnP6p/a26mQ31SMxDWN+d0szdAZbrBWF/3j0uVfAAe
-         AsZt8jCXxlAdediu1GJEH3LnDRwFfcdTxdN5Cg2doDuHLt3MjikRx/R0rMVd+UaSkj8W
-         qdsjZjjOmmPl8yEVs6ScCSCHvnwA7SeD3rr0f5wHt/aZcV3FzFX+eUDt8AaCwkyRcXNg
-         C3XZtsZR5/dSBV/NTd2UbVVKnkErn2QMfTmcBQudDIE3z8BBeG7A1TcrCRj0rPx+Tcyg
-         cmwZhCVU8vfl5Jw2O26KTbSowg0SWrU+mPJxQDnT5c1enFgooKFQrvIUZw3l2uOQF+IQ
-         bhXw==
-X-Gm-Message-State: APjAAAVzSAmo2fWZxiyWsX9xtOXAQrckGigQO/U/7kJMgK6/71PVOkdt
-        KlmlbuM6rvtzhB8wDABF2JHaAwnPcpo=
-X-Google-Smtp-Source: APXvYqxC+UeKU5NKi91Br581QakkL4y4s0iWzgxBCk+lvnaus0NdoX9FH6aPCsJEfd8efqNI4k/Fug==
-X-Received: by 2002:a05:600c:507:: with SMTP id i7mr31082793wmc.135.1576495309273;
-        Mon, 16 Dec 2019 03:21:49 -0800 (PST)
-Received: from localhost (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
-        by smtp.gmail.com with ESMTPSA id d16sm22991983wrg.27.2019.12.16.03.21.48
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WYFHoC/Y4PCCPPkEkAbTfP7mUpyA/6C+ox8rPVg4xLc=;
+        b=SdV2yIDwVrFujAtrtjas40s9kn1HqGR2Vt1tKl96SbiBdxsrMzA1e45oVdK1cJUS3Q
+         EUJl0Y+hHiw/s4g09YJrVXsi2VG5OUmFVXXKCL7q8dBH1I2uf3CxNGPF55Tnhq3n0l1l
+         IcUMEeSAnfgbxNAXiitcXIgMonJSeqb8+0BCcykQP88kf/86Y6vf3tqtHapIqJiFdyj6
+         hgNwxUWJLINOLFbQ1CiftZayjWFTw1kDN7xZSVDVDZfecPnyCYkscX8l/F6k9CEgK3zT
+         Pbiwx8azgwwFrNyM1KwuSsQrs7BI9dF1hE4vStDeJeICVbLuk4LOxv0YQBw3f8CbIvXk
+         0+gw==
+X-Gm-Message-State: APjAAAXqGJcgrHaCciYBn1+YL561+zFrsRfRanr+bOyrT+MlKnyVvR/q
+        ZClU+8j0MBo8zfVnlgMFLS4=
+X-Google-Smtp-Source: APXvYqzDlHm7cTjmXD6EXn3pd5YTAdkVoV946lry0lOwhlTr2p8WQ/cuPQBOoSFd/fX35hz/0IxlOw==
+X-Received: by 2002:a05:6a00:5b:: with SMTP id i27mr15785985pfk.112.1576498796223;
+        Mon, 16 Dec 2019 04:19:56 -0800 (PST)
+Received: from ubt.spreadtrum.com ([117.18.48.82])
+        by smtp.gmail.com with ESMTPSA id o17sm18633910pjq.1.2019.12.16.04.19.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 16 Dec 2019 03:21:48 -0800 (PST)
-References: <20191215114705.24401-1-repk@triplefau.lt> <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
-User-agent: mu4e 1.3.3; emacs 26.3
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Remi Pommarel <repk@triplefau.lt>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Kevin Hilman <khilman@baylibre.com>,
+        Mon, 16 Dec 2019 04:19:54 -0800 (PST)
+From:   Chunyan Zhang <zhang.lyra@gmail.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] clk: meson: pll: Fix by 0 division in __pll_params_to_rate()
-In-reply-to: <CAFBinCAsoE3zFEKbS1Tag=Y_honnpfin625u=N+7QMv4cPy2Wg@mail.gmail.com>
-Date:   Mon, 16 Dec 2019 12:21:47 +0100
-Message-ID: <1jmubsbjn8.fsf@starbuckisacylon.baylibre.com>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
+        Baolin Wang <baolin.wang7@gmail.com>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
+Subject: [PATCH V2 0/6] Add clocks for Unisoc's SC9863A
+Date:   Mon, 16 Dec 2019 20:19:26 +0800
+Message-Id: <20191216121932.22967-1-zhang.lyra@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Add SC9863A specific clock driver and devicetree bindings for it.
 
-On Sun 15 Dec 2019 at 21:34, Martin Blumenstingl <martin.blumenstingl@googlemail.com> wrote:
+Also this patchset added support gate clock for pll which need to
+wait a certain time for stable after being switched on.
 
-> On Sun, Dec 15, 2019 at 12:39 PM Remi Pommarel <repk@triplefau.lt> wrote:
->>
->> Some meson pll registers can be initialized with 0 as N value, introducing
->> the following division by 0 when computing rate :
->>
->>   UBSAN: Undefined behaviour in drivers/clk/meson/clk-pll.c:75:9
->>   division by zero
->>   CPU: 0 PID: 1 Comm: swapper/0 Not tainted 5.4.0-rc3-608075-g86c9af8630e1-dirty #400
->>   Call trace:
->>    dump_backtrace+0x0/0x1c0
->>    show_stack+0x14/0x20
->>    dump_stack+0xc4/0x100
->>    ubsan_epilogue+0x14/0x68
->>    __ubsan_handle_divrem_overflow+0x98/0xb8
->>    __pll_params_to_rate+0xdc/0x140
->>    meson_clk_pll_recalc_rate+0x278/0x3a0
->>    __clk_register+0x7c8/0xbb0
->>    devm_clk_hw_register+0x54/0xc0
->>    meson_eeclkc_probe+0xf4/0x1a0
->>    platform_drv_probe+0x54/0xd8
->>    really_probe+0x16c/0x438
->>    driver_probe_device+0xb0/0xf0
->>    device_driver_attach+0x94/0xa0
->>    __driver_attach+0x70/0x108
->>    bus_for_each_dev+0xd8/0x128
->>    driver_attach+0x30/0x40
->>    bus_add_driver+0x1b0/0x2d8
->>    driver_register+0xbc/0x1d0
->>    __platform_driver_register+0x78/0x88
->>    axg_driver_init+0x18/0x20
->>    do_one_initcall+0xc8/0x24c
->>    kernel_init_freeable+0x2b0/0x344
->>    kernel_init+0x10/0x128
->>    ret_from_fork+0x10/0x18
->>
->> This checks if N is null before doing the division.
->>
->> Fixes: 7a29a869434e ("clk: meson: Add support for Meson clock controller")
->> Signed-off-by: Remi Pommarel <repk@triplefau.lt>
-> Reviewed-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Changes from v1:
+* Address comments:
+- Remove redefine things;
+- Switch DT bindings to yaml schema;
+- Add macros for the new way of specifying clk parents; 
+- Switch to use the new way of specifying clk parents;
+- Clean CLK_IGNORE_UNUSED flags for some SC9863A clocks;
+- Drop the module alias;
+- Use device_get_match_data() instead of of_match_node();
 
-Applied with a slightly more detailed comment.
-Thx
+* Add Rob's reviewed-by on patch 2.
 
->
-> thank you for the patch Remi!
->
->
-> Martin
+Chunyan Zhang (5):
+  dt-bindings: clk: sprd: rename the common file name sprd.txt to SoC
+    specific
+  dt-bindings: clk: sprd: add bindings for sc9863a clock controller
+  clk: sprd: Add dt-bindings include file for SC9863A
+  clk: sprd: Add macros for referencing parents without strings
+  clk: sprd: add clocks support for SC9863A
+
+Xiaolong Zhang (1):
+  clk: sprd: add gate for pll clocks
+
+ .../clock/{sprd.txt => sprd,sc9860-clk.txt}   |    2 +-
+ .../bindings/clock/sprd,sc9863a-clk.yaml      |   77 +
+ drivers/clk/sprd/Kconfig                      |    8 +
+ drivers/clk/sprd/Makefile                     |    1 +
+ drivers/clk/sprd/composite.h                  |   39 +-
+ drivers/clk/sprd/div.h                        |   20 +-
+ drivers/clk/sprd/gate.c                       |   17 +
+ drivers/clk/sprd/gate.h                       |  120 +-
+ drivers/clk/sprd/mux.h                        |   28 +-
+ drivers/clk/sprd/pll.h                        |   55 +-
+ drivers/clk/sprd/sc9863a-clk.c                | 1835 +++++++++++++++++
+ include/dt-bindings/clock/sprd,sc9863a-clk.h  |  345 ++++
+ 12 files changed, 2494 insertions(+), 53 deletions(-)
+ rename Documentation/devicetree/bindings/clock/{sprd.txt => sprd,sc9860-clk.txt} (98%)
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.yaml
+ create mode 100644 drivers/clk/sprd/sc9863a-clk.c
+ create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
+
+-- 
+2.20.1
 
