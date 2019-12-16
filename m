@@ -2,127 +2,110 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D55E2C43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 15:11:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCDDDC43603
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 15:21:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5C0B20717
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 15:11:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="QGhs5FcV"
+	by mail.kernel.org (Postfix) with ESMTP id AF991206EC
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 15:21:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576509698;
+	bh=Cw5yrFeph9fXCYVC95bvd8jskgsxlhRJXiqAqD8JNUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=RdQ3v/OZtoTPX2MzjwjqtTC/KqJyPldKB7CQCBfUbtH1q2jf3kIGjtrzMFEXrfKDL
+	 gqncB4XHHJduzjpcCkZovosL5dSWJTNqzNJmrgJ6huvaYhimDLHDG0aMLGZv/j+wYj
+	 HRctjH3rD0Zp69/vZITF5ur1PNmqiFNjHafMm8TE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728221AbfLPPLi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 10:11:38 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:4487 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728202AbfLPPLi (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 10:11:38 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5df79e8c0000>; Mon, 16 Dec 2019 07:11:08 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 16 Dec 2019 07:11:35 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 16 Dec 2019 07:11:35 -0800
-Received: from tbergstrom-lnx.Nvidia.com (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Mon, 16 Dec
- 2019 15:11:35 +0000
-Received: by tbergstrom-lnx.Nvidia.com (Postfix, from userid 1000)
-        id 9ECB942762; Mon, 16 Dec 2019 17:11:32 +0200 (EET)
-Date:   Mon, 16 Dec 2019 17:11:32 +0200
-From:   Peter De Schrijver <pdeschrijver@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>
-CC:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <mperttunen@nvidia.com>, <sboyd@kernel.org>,
-        <gregkh@linuxfoundation.org>, <tglx@linutronix.de>,
-        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <allison@lohutok.net>, <pgaikwad@nvidia.com>,
-        <mturquette@baylibre.com>, <horms+renesas@verge.net.au>,
-        <Jisheng.Zhang@synaptics.com>, <krzk@kernel.org>, <arnd@arndb.de>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>, <vidyas@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
-        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
-        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH v3 03/15] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-Message-ID: <20191216151132.GC28289@pdeschrijver-desktop.Nvidia.com>
-References: <b35916e1-c6ee-52ca-9111-5ae109437b6e@nvidia.com>
- <ccb715cc-c927-ea91-a26e-24d6eeeeef1a@gmail.com>
- <ee1d39d4-9a57-da9b-fce6-8130dac1d2fd@nvidia.com>
- <49da77dc-b346-68eb-9ef8-42cfb3221489@nvidia.com>
- <3f1c9325-3017-62be-1e3b-82fd28540fdf@nvidia.com>
- <6fcbff3d-8695-7cd0-60de-6eb523b6964c@gmail.com>
- <20191211151028.GZ28289@pdeschrijver-desktop.Nvidia.com>
- <0930a710-174b-859b-294c-e9f81f6a3b5e@gmail.com>
- <20191216122005.GB28289@pdeschrijver-desktop.Nvidia.com>
- <53653719-f8e5-f6d1-a1d1-e53c7ccd7636@gmail.com>
+        id S1728225AbfLPPVi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 10:21:38 -0500
+Received: from foss.arm.com ([217.140.110.172]:58714 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728221AbfLPPVi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Dec 2019 10:21:38 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7CBCF1FB;
+        Mon, 16 Dec 2019 07:21:37 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F08EE3F718;
+        Mon, 16 Dec 2019 07:21:36 -0800 (PST)
+Date:   Mon, 16 Dec 2019 15:21:35 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Chris Brandt <Chris.Brandt@renesas.com>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+Message-ID: <20191216152135.GG4161@sirena.org.uk>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+ <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+ <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <20191212152855.GD4310@sirena.org.uk>
+ <TY1PR01MB15627D5522BE325B7BE74E328A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <20191212171307.GL4310@sirena.org.uk>
+ <TY1PR01MB156256ED8A09D4CD02AC26AC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="yQbNiKLmgenwUfTN"
 Content-Disposition: inline
-In-Reply-To: <53653719-f8e5-f6d1-a1d1-e53c7ccd7636@gmail.com>
-X-NVConfidentiality: public
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1576509068; bh=I1odfwufiuiQcheICSY0jJckHTKldkWpkyjJ/8Oh1yo=;
-        h=X-PGP-Universal:Date:From:To:CC:Subject:Message-ID:References:
-         MIME-Version:Content-Type:Content-Disposition:In-Reply-To:
-         X-NVConfidentiality:User-Agent:X-Originating-IP:X-ClientProxiedBy;
-        b=QGhs5FcVVC9cXcbG8mVyS/58pX1r9J7lPBVu+qYUczhyUutwmKxk8BXjKOEodxPNq
-         SWD/7lfvn0vVj63lQtSz/LTeCpmW3oOLm40rb50bGYyapKrR38KFLMyHk6YHSsMq+t
-         3jOta+DeLHkCU5w2PV0nwAXaZU9yl4IXPPTD/iHHdykkOKP3t87ZEXA6ePfHJ+yAwm
-         9DP4WpRbkkOz1TriLmktw3gt/+rLw0QCapYDSoP2PYj5fjSr68r8kAG8nM5FbdyJU6
-         b4gp9q43RHeA/M4kHxjl/pbJ88VhM28ga3/0q1niS8ZqLtJeJd7vZQ0aTI+/Q26dcF
-         xjIM8Izf/qTRw==
+In-Reply-To: <TY1PR01MB156256ED8A09D4CD02AC26AC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+X-Cookie: Backed up the system lately?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 05:23:23PM +0300, Dmitry Osipenko wrote:
-> >> Could you please clarify what do you mean by the "existing users"?
-> >> AFAIK, nothing in kernel uses mux clocks.
-> >
-> > The DT clk bindings allow for parent initialization, so it's certainly
-> > possible there are some DTs which rely on this. We promised to never
-> > break the bindings, which changing to 1 clock would do.
-> 
-> What about this variant:
-> 
->   1. Keep the old CaR code in place.
-> 
->   2. Make CaR driver to scan whole device-tree for the legacy PMC clocks.
-> 
->   3. If legacy clock is found, then register PMC clocks from CaR.
-> 
->   4. If legacy clocks are not found, then don't register PMC clocks from
-> CaR.
-> 
->   5. Add clocks support to the PMC driver and only register them if
-> legacy clocks are not registered by CaR.
-> 
-> Now both old and new DTBs can co-exist and work, everyone happy.
 
-That seems even more work.. Today the only upstream user is audio. 
-Currently these clocks are setup by the CAR clock driver. However
-as they will move to the PMC driver, this mechanism cannot be used.
-Hence the plan is to modify the audio driver to check for the PMC clocks
-in DT and if they are not available use the CAR clocks as fallback.
-The whole reason the clocks move to the PMC driver, is that when PMC
-becomes secure, all accesses have to go via an SMC. Given that we don't
-want SMCs all over the Tegra drivers, it's a good opportunity to move
-the PMC clock handling into the PMC driver. PMC can be secure with both
-'new' and old DTs, so just registering the PMC clocks in the CAR driver
-if legacy clocks are found in the DT, won't always work.
+--yQbNiKLmgenwUfTN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Peter.
+On Thu, Dec 12, 2019 at 05:25:43PM +0000, Chris Brandt wrote:
+> On Thu, Dec 12, 2019, Mark Brown wrote:
+
+> > I don't really know enough about the device and there was *huge* amounts
+> > of discussion which I'd have to try to page in so it'd be really good if
+> > there were some agreement among those of you working with this device as
+> > to what the best way forwards is.  I'm not sure any of the issues were
+> > at the framework level so that's probably more sensible anyway.
+
+> I'm trying to figure out if the differences are 'technical' or
+> 'ideological' (ie, R-Car use cases vs RZ use cases).
+> Of course we can do anything we want in our vendor BSPs, but I'd like
+> to see a common upstream path.
+
+That'd certainly be good to achieve.  Hopefully we can get some
+agreement between everyone on what the best way forwards is.  I don't
+recall any substantial framework concerns with either driver so I think
+it's more a renesas question.
+
+--yQbNiKLmgenwUfTN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl33oP4ACgkQJNaLcl1U
+h9AaYgf9FWzuFWeQnyYn63oY+9wqMpwmFKKYapmBdLEDpM4FvBClhmmHDFp7/Z3M
+Gu5PZc0KJUDCrmBr2oulXL7cVjG1WlON/AkYHhU/OHElt1VJstBbUxGc1umu3Xap
++m2wEFfP63AvTL+d2fhkGhCOcQ5qsYRf1oYfUWTw550yMdR5CNnaPe0a81GJKd9W
+RapZHUrSdZDd46Ab6e2y/wCb+JyA0thWLr3ctUN5zmGTYQSeXEMJcxTEHaRxjJSw
+M3K/Ta9DbWE4IoaH/9avPv8TClP9KieW1ts4flJRc2E7bJ/Xp6bV1aZTU63iKvwJ
+2XyTtPY0KF/rO+dilSJ9gwcLHaRksw==
+=YGOH
+-----END PGP SIGNATURE-----
+
+--yQbNiKLmgenwUfTN--
