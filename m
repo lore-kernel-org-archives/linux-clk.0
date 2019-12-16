@@ -2,131 +2,112 @@ Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1A6DC43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FCF7C2D0D1
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:23:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4879206A5
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:11:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jrqJzc+/"
+	by mail.kernel.org (Postfix) with ESMTP id F0923206CB
+	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 14:23:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576506200;
+	bh=bf/Eh6+RNsClsF0CYZLmzC8pbuP0NjhGX+4C33oAHpk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Qv3lOxnaCELGE9zINjL4yVRvjkijO8bTyqyyqGqIm+ID4AqltV8XKzGl0eAloW0SW
+	 V2k3+lVgyg3KMIsIjuKOnrLWpmZ63BcRkQxuUYNpGbCYcdoC7P2MVsDAFH9NSe3Iqt
+	 rnjEytml7TLtoOlNVUElSTfgV85VNFfoKG4GmPG0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727987AbfLPOLb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 09:11:31 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41617 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbfLPOLb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 09:11:31 -0500
-Received: by mail-lj1-f195.google.com with SMTP id h23so6953850ljc.8;
-        Mon, 16 Dec 2019 06:11:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HhL5GMKIFDddfWEaX7NT4E3scjRhU5x3XuH72/9QCyo=;
-        b=jrqJzc+/u/LblZplRKW3eR4/Ge+b4/2IipInHNNk7BL2mZZnJtPHF2ZpEvr4zsXT1J
-         uNT59SvM5Amun90YFgy8GJzXdI5uoQJyXExaUd7leci+peFjiC7FlTNA92UA8SXbq3eU
-         MOegPJ7i/pv8To6BHlKcZOUywqyxx7q8eDcm/w8IcgvKWVKOInasra8tqfsDnbVAZCeo
-         FpIablaEjBiUFVOb5Oc0Dbr0b4mJ8ZAykZ3nLPICiBB6XgqFk8G8mN64aUBY5aLZxTf+
-         nO2neK1yMlESAkGPyxew4xii+fD4A3cY7oTtZWnvBa7G3H6/qK9o1TnCZa/65H7yPpe+
-         HIsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HhL5GMKIFDddfWEaX7NT4E3scjRhU5x3XuH72/9QCyo=;
-        b=gmfTl1Diu40j8X3EqhewKQ99dyOTAVcsxIrFljpKAgAUOFq/CnD0DxoTQZWeuxz16W
-         fAlbjPcLxHH7qq4N62UHzR/o1/Ee8tVrH98cW/8xZEmN/oIDykf4YBsxWXSpb/+v2rI9
-         5drstD3nEfMo1zkvnowEvLO+DPHR/aY93DT9rzAPOkniKhwcu2tTAyhYqVbMqmNTkRZa
-         vM8EKHYWPfLmsjHc/B3PzoNnwEJhDiK5EeftziQp3QbSFEp+COfUeX/WV8Qor0n3g7hU
-         eh//W/XGa9Em2Od0OUtx5yDsSRLoHNKhZ82CeQwnIuN26Cmv0bc/88Phtq5ATxSTJTpO
-         7ERQ==
-X-Gm-Message-State: APjAAAWGUxGmuzNr0oPQm8xyNkxmEMsvOWJr6YuFSLwWxAl7sLLn2ETz
-        TdYFbTNghitDNCD3oWitdq4fNQQe
-X-Google-Smtp-Source: APXvYqxVulbjGD7qBtkHu8dFjhoK+mY8pmMw7WHa5Lz77cd2cK6am3IF8jv4B0zPS4UWLTmlFAOg1g==
-X-Received: by 2002:a2e:9216:: with SMTP id k22mr19606187ljg.52.1576505488021;
-        Mon, 16 Dec 2019 06:11:28 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id z9sm10499851ljm.40.2019.12.16.06.11.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 16 Dec 2019 06:11:27 -0800 (PST)
-Subject: Re: [PATCH v5 07/11] cpufreq: dt-platdev: Blacklist NVIDIA Tegra20
- and Tegra30 SoCs
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191118164512.8676-1-digetx@gmail.com>
- <20191118164512.8676-8-digetx@gmail.com>
- <20191216040532.mzdovqoub5rdztwb@vireshk-i7>
- <20191216040808.w67jxu7oapxgm7yh@vireshk-i7>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <a57c80f0-59a7-c758-c914-025f12c85ba8@gmail.com>
-Date:   Mon, 16 Dec 2019 17:11:25 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1728015AbfLPOXQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 09:23:16 -0500
+Received: from foss.arm.com ([217.140.110.172]:57116 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727974AbfLPOXP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 16 Dec 2019 09:23:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39B091FB;
+        Mon, 16 Dec 2019 06:23:15 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AC44E3F718;
+        Mon, 16 Dec 2019 06:23:14 -0800 (PST)
+Date:   Mon, 16 Dec 2019 14:23:13 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Daniel Mack <daniel@zonque.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        lee.jones@linaro.org, lars@metafoo.de, pascal.huerst@gmail.com
+Subject: Re: [PATCH 10/10] ASoC: Add codec component for AD242x nodes
+Message-ID: <20191216142313.GD4161@sirena.org.uk>
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-12-daniel@zonque.org>
 MIME-Version: 1.0
-In-Reply-To: <20191216040808.w67jxu7oapxgm7yh@vireshk-i7>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="AkbCVLjbJ9qUtAXD"
+Content-Disposition: inline
+In-Reply-To: <20191209183511.3576038-12-daniel@zonque.org>
+X-Cookie: Backed up the system lately?
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-16.12.2019 07:08, Viresh Kumar пишет:
-> On 16-12-19, 09:35, Viresh Kumar wrote:
->> On 18-11-19, 19:45, Dmitry Osipenko wrote:
->>> Both NVIDIA Tegra20 and Tegra30 SoCs should be blacklisted because CPU
->>> OPPs use supported_hw and thus platdev isn't suitable for these SoCs.
->>> Currently cpufreq-dt driver produces a bit annoying warning splats
->>> during boot because valid OPPs are not found, this will be fixed once
->>> tegra20-cpufreq driver will be update to support cpufreq-dt. The warnings
->>> will also happen on older stable kernels using newer device-trees, thus
->>> this patch should be backported to stable kernels as well.
->>>
->>> Cc: <stable@vger.kernel.org>
->>> Reported-by: Jon Hunter <jonathanh@nvidia.com>
->>> Fixes: 4053aa65c517 ("ARM: tegra: cardhu-a04: Add CPU Operating Performance Points")
->>> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
->>> ---
->>>  drivers/cpufreq/cpufreq-dt-platdev.c | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/drivers/cpufreq/cpufreq-dt-platdev.c b/drivers/cpufreq/cpufreq-dt-platdev.c
->>> index f1d170dcf4d3..aba591d57c67 100644
->>> --- a/drivers/cpufreq/cpufreq-dt-platdev.c
->>> +++ b/drivers/cpufreq/cpufreq-dt-platdev.c
->>> @@ -121,6 +121,8 @@ static const struct of_device_id blacklist[] __initconst = {
->>>  	{ .compatible = "mediatek,mt8176", },
->>>  	{ .compatible = "mediatek,mt8183", },
->>>  
->>> +	{ .compatible = "nvidia,tegra20", },
->>> +	{ .compatible = "nvidia,tegra30", },
->>>  	{ .compatible = "nvidia,tegra124", },
->>>  	{ .compatible = "nvidia,tegra210", },
->>
->> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> 
-> Oops, pasted the wrong register here :(
-> 
-> Applied. Thanks.
-> 
 
-Thanks!
+--AkbCVLjbJ9qUtAXD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Mon, Dec 09, 2019 at 07:35:11PM +0100, Daniel Mack wrote:
+
+> +	/*
+> +	 * Setting clock inversion is only supported globally for both DAIs,
+> +	 * so we ignore the settings made for DAI1 here.
+> +	 */
+> +	if (index == 0) {
+> +		switch (format & SND_SOC_DAIFMT_INV_MASK) {
+> +		case SND_SOC_DAIFMT_NB_NF:
+
+I dunno if it's a blocker but it'd feel nicer to try to verify that the
+settings are the same and warn if not.
+
+> +static int ad242x_set_dai_fmt_dai0(struct snd_soc_dai *codec_dai,
+> +				   unsigned int format)
+> +{
+> +	return ad242x_set_dai_fmt(codec_dai, format, 0);
+> +}
+> +
+> +static int ad242x_set_dai_fmt_dai1(struct snd_soc_dai *codec_dai,
+> +				   unsigned int format)
+> +{
+> +	return ad242x_set_dai_fmt(codec_dai, format, 1);
+> +}
+
+You don't need separate ops, just look at dai->id.
+
+> +module_platform_driver(ad242x_platform_driver);
+> +
+> +MODULE_AUTHOR("Daniel Mack <daniel@zonque.org>");
+> +MODULE_DESCRIPTION("AD242X ALSA SoC driver");
+> +MODULE_LICENSE("GPL");
+
+Should have a MODULE_ALIAS() as well for autoloading.
+
+--AkbCVLjbJ9qUtAXD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl33k1AACgkQJNaLcl1U
+h9CJzAf5AVSyR1/mSM1ETDWuCIYuCIEFlu7/ooDTySWL/oz8g/+17UrUPo4t74Kv
+vEBYnAiDtdNss2zAjSK4TGyvVRqIH+PRdOpEyJcaGK23yLD8tr/MzD3iYvVxXnhP
+4rd555BKIjpXedGoFoVUMsqYq6elyLawB42m2kVesOxlY2YxGw76dpcNJH061vjM
+M8YttjOvZdbN4maecBVI6tq1gTttZ+ap+k/T3CqAEa6A701pg6GlQR0ZX/rsKl84
+BTYGk9C2XDYoJrwMp6cPRr93AyxAf/pAzYqhju0Co1VxnvnDxk0r6gfSW4EYn18n
+kIHoPy2cHMeADFhK7n4j0Sc1c79h4g==
+=eeff
+-----END PGP SIGNATURE-----
+
+--AkbCVLjbJ9qUtAXD--
