@@ -2,125 +2,150 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0069C2D0BF
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 19:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C4F4C43603
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 20:04:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 892F22176D
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 19:54:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 863DB20716
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 20:04:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="p+NoUpLu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728152AbfLQTyF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 14:54:05 -0500
-Received: from mga02.intel.com ([134.134.136.20]:22025 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727492AbfLQTyF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:54:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Dec 2019 11:54:04 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,326,1571727600"; 
-   d="scan'208";a="389942463"
-Received: from vramados-mobl.amr.corp.intel.com (HELO [10.254.1.250]) ([10.254.1.250])
-  by orsmga005.jf.intel.com with ESMTP; 17 Dec 2019 11:54:02 -0800
-Subject: Re: [alsa-devel] [PATCH 10/10] ASoC: Add codec component for AD242x
- nodes
-To:     Daniel Mack <daniel@zonque.org>, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
-        lee.jones@linaro.org
-References: <20191209183511.3576038-1-daniel@zonque.org>
- <20191209183511.3576038-12-daniel@zonque.org>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <0565e5cd-9a6e-db65-0632-0bc1aa1d79db@linux.intel.com>
-Date:   Tue, 17 Dec 2019 13:28:31 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727437AbfLQUEN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 15:04:13 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:2751 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727070AbfLQUEN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 15:04:13 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df9349f0001>; Tue, 17 Dec 2019 12:03:43 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 17 Dec 2019 12:04:11 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 17 Dec 2019 12:04:11 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Dec
+ 2019 20:04:11 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 17 Dec 2019 20:04:11 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.174.101]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5df934ba0004>; Tue, 17 Dec 2019 12:04:11 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <digetx@gmail.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <spujar@nvidia.com>, <josephl@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v4 01/19] dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
+Date:   Tue, 17 Dec 2019 12:03:48 -0800
+Message-ID: <1576613046-17159-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
+References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-In-Reply-To: <20191209183511.3576038-12-daniel@zonque.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576613023; bh=boB5dWrzB7K/fO5nQQLi9ejW3crjRKXkywFBAFroObw=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=p+NoUpLuurXZjNxihmr9I7sy+Rv8KMAE1dCgUbjxr27LAYIkYsDFGzPDZznE1g1/k
+         6uypX7eBY7kZXQq9fK3LxWxpwrBFVKrpHRos73u7LqrJGuH+7Jod4g4+UvstMFiVFy
+         fWLWxrlTLe5VSQQhrj95AIyOW4SlBTwaYWy+q6z3mUUkSmTvhtONeJCv5vsaKaN10Z
+         TZquUcgzkEH/CUGXQ+x+w6ykn5okCQfxjxySNHT+sC42ECi9+rBvceAbTI8R2Q7FFn
+         C6u9weBUQePkkP7qXWdynS9mii/v60DG6rQC8KAF5qrPTOGRl1LByBBIpTdkgs9bm3
+         FIZAR7JUntd2A==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Tegra has no CLK_M_DIV2 and CLK_M_DIV4 clocks and instead it has
+OSC_DIV2 and OSC_DIV4 clocks from OSC pads.
 
+This patch changes CLK_M_DIV2 and CLK_M_DIV4 clock ids to OSC_DIV2
+and OSC_DIV4 clock ids for Tegra30 through Tegra210.
 
-On 12/9/19 12:35 PM, Daniel Mack wrote:
-> This driver makes AD242x nodes available as DAIs in ASoC topologies.
-> 
-> The hardware allows multiple TDM channel modes and bitdepths, but
-> as these modes have influence in the timing calculations at discovery
-> time, the mode in that the will be used in needs to be configured
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ include/dt-bindings/clock/tegra114-car.h        | 4 ++--
+ include/dt-bindings/clock/tegra124-car-common.h | 4 ++--
+ include/dt-bindings/clock/tegra210-car.h        | 4 ++--
+ include/dt-bindings/clock/tegra30-car.h         | 4 ++--
+ 4 files changed, 8 insertions(+), 8 deletions(-)
 
-the mode in that the <what> will be used in?
-
-You should probably reword this for clarity.
-
-> statically in the devicetree.
-
-> +	if (ad242x_node_is_master(priv->node) &&
-> +	   ((format & SND_SOC_DAIFMT_MASTER_MASK) != SND_SOC_DAIFMT_CBS_CFS)) {
-> +		dev_err(component->dev, "master node must be clock slave\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	if (!ad242x_node_is_master(priv->node) &&
-> +	   ((format & SND_SOC_DAIFMT_MASTER_MASK) != SND_SOC_DAIFMT_CBM_CFM)) {
-> +		dev_err(component->dev, "slave node must be clock master\n");
-> +		return -EINVAL;
-> +	}
-
-It was my understanding that the master node provides the clock to the 
-bus, so not sure how it could be a clock slave, and conversely how a 
-slave node could provide a clock to the bus?
-
-
-> +	switch (params_format(params)) {
-> +	case SNDRV_PCM_FORMAT_S16_LE:
-> +		if (priv->node->tdm_slot_size != 16)
-> +			return -EINVAL;
-> +		break;
-> +	case SNDRV_PCM_FORMAT_S32_LE:
-> +		if (priv->node->tdm_slot_size != 32)
-> +			return -EINVAL;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-
-how does this work for PDM data?
-
-is the PDM data packed into a regular TDM slot?
-
-> +
-> +	if (priv->pdm[index]) {
-> +		if (substream->stream != SNDRV_PCM_STREAM_PLAYBACK)
-> +			return -EINVAL;
-> +
-> +		if (index == 0) {
-> +			val = AD242X_PDMCTL_PDM0EN;
-> +			mask = AD242X_PDMCTL_PDM0EN | AD242X_PDMCTL_PDM0SLOTS;
-> +		} else {
-> +			val = AD242X_PDMCTL_PDM1EN;
-> +			mask = AD242X_PDMCTL_PDM1EN | AD242X_PDMCTL_PDM1SLOTS;
-> +		}
-> +
-> +		switch (params_channels(params)) {
-> +		case 1:
-> +			break;
-> +		case 2:
-> +			val = mask;
-> +			break;
-
-A comment wouldn't hurt here...
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index bb5c2c999c05..f4880959b094 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -226,8 +226,8 @@
+ #define TEGRA114_CLK_FUSE_BURN 199
+ #define TEGRA114_CLK_CLK_32K 200
+ #define TEGRA114_CLK_CLK_M 201
+-#define TEGRA114_CLK_CLK_M_DIV2 202
+-#define TEGRA114_CLK_CLK_M_DIV4 203
++#define TEGRA114_CLK_OSC_DIV2 202
++#define TEGRA114_CLK_OSC_DIV4 203
+ #define TEGRA114_CLK_PLL_REF 204
+ #define TEGRA114_CLK_PLL_C 205
+ #define TEGRA114_CLK_PLL_C_OUT1 206
+diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+index 0c4f5be0a742..e7e601a88d3d 100644
+--- a/include/dt-bindings/clock/tegra124-car-common.h
++++ b/include/dt-bindings/clock/tegra124-car-common.h
+@@ -225,8 +225,8 @@
+ #define TEGRA124_CLK_FUSE_BURN 199
+ #define TEGRA124_CLK_CLK_32K 200
+ #define TEGRA124_CLK_CLK_M 201
+-#define TEGRA124_CLK_CLK_M_DIV2 202
+-#define TEGRA124_CLK_CLK_M_DIV4 203
++#define TEGRA124_CLK_OSC_DIV2 202
++#define TEGRA124_CLK_OSC_DIV4 203
+ #define TEGRA124_CLK_PLL_REF 204
+ #define TEGRA124_CLK_PLL_C 205
+ #define TEGRA124_CLK_PLL_C_OUT1 206
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 44f60623f99b..6f65c14bf013 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -260,8 +260,8 @@
+ #define TEGRA210_CLK_FUSE_BURN 231
+ #define TEGRA210_CLK_CLK_32K 232
+ #define TEGRA210_CLK_CLK_M 233
+-#define TEGRA210_CLK_CLK_M_DIV2 234
+-#define TEGRA210_CLK_CLK_M_DIV4 235
++#define TEGRA210_CLK_OSC_DIV2 234
++#define TEGRA210_CLK_OSC_DIV4 235
+ #define TEGRA210_CLK_PLL_REF 236
+ #define TEGRA210_CLK_PLL_C 237
+ #define TEGRA210_CLK_PLL_C_OUT1 238
+diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+index 3c90f1535551..907a8a04c280 100644
+--- a/include/dt-bindings/clock/tegra30-car.h
++++ b/include/dt-bindings/clock/tegra30-car.h
+@@ -194,8 +194,8 @@
+ #define TEGRA30_CLK_TVO 169
+ #define TEGRA30_CLK_CLK_32K 170
+ #define TEGRA30_CLK_CLK_M 171
+-#define TEGRA30_CLK_CLK_M_DIV2 172
+-#define TEGRA30_CLK_CLK_M_DIV4 173
++#define TEGRA30_CLK_OSC_DIV2 172
++#define TEGRA30_CLK_OSC_DIV4 173
+ #define TEGRA30_CLK_PLL_REF 174
+ #define TEGRA30_CLK_PLL_C 175
+ #define TEGRA30_CLK_PLL_C_OUT1 176
+-- 
+2.7.4
 
