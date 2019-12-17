@@ -2,271 +2,165 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1330BC43603
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 19:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68E08C3F68F
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 19:30:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D718921775
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 19:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D6E824650
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 19:30:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="Ns+AKACO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726612AbfLQTYX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 14:24:23 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:41530 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726411AbfLQTYX (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Dec 2019 14:24:23 -0500
-Received: from [192.168.178.106] (pD95EF574.dip0.t-ipconnect.de [217.94.245.116])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id BC582281AEB;
-        Tue, 17 Dec 2019 19:17:55 +0000 (UTC)
-Subject: Re: [PATCH 06/10] mfd: Add core driver for AD242x A2B transceivers
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        broonie@kernel.org, lars@metafoo.de, pascal.huerst@gmail.com
-References: <20191209183511.3576038-1-daniel@zonque.org>
- <20191209183511.3576038-8-daniel@zonque.org> <20191217133952.GJ18955@dell>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <ce6e0b19-ec40-c17b-cee6-05eca52d5df3@zonque.org>
-Date:   Tue, 17 Dec 2019 20:24:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1727546AbfLQTaG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 14:30:06 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38212 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfLQTaG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 14:30:06 -0500
+Received: by mail-lj1-f196.google.com with SMTP id k8so905969ljh.5
+        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2019 11:30:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Dt7nMF9lAkMR+CxlS7AwqAXWN5PCEwzjfiKWmOUTLlg=;
+        b=Ns+AKACOV6e7e9TkvUXRNw8Wva+XCOU9aloQmpthLvLBSl6JESIcpisGlyuFN0JRWu
+         ln/8BwL5r0jFtBfhVcW1SMD0HcLJggp8GPwd1xnttoIJU1yy8eiI9wKfodItjtwbK26l
+         xPBrfg8nF7Wb7ZcZRrua07jxCmDqwfRfii5TIk1wWkgO6C+wpbiKkJ5gwZrEfJqmZogp
+         e6glKtXnUgksZLkpbY9PxGArUy1yhm5IIpW3aROW4+7ThByK7XNxBJ54ecvWD2dC19Sw
+         CjwcDG2mw3ejnYLKY/d2xlov04GLWFd2CzOMIzsiF0TA4nWAw69WcPBQR4s+tgd/rgHh
+         3GmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Dt7nMF9lAkMR+CxlS7AwqAXWN5PCEwzjfiKWmOUTLlg=;
+        b=bgPswGMLMZknxX87jCsrMy36UkrS2VGjcuQnhnZn2dn6Lb9v5RQ5pyThiz3MLcw92y
+         trh58jpJCu6Wb60o8kEuvsHSWQePTtp9gIZcUPExcS5Rufkixmv5sMKrVVMzEjygFWFW
+         FZvZr4QEVuRAiki0Q0IpuxNqirzfbb5yaXdzKlLz0MkvDlo5Z5Wd0g1n2yc5cfqWezM6
+         pYe8zbowQYmq9W7x4mxEL7igwO+4eGg7hia83dslZDvPj7WxqrWLmURcMnVksLLXoxZy
+         M7NvVWkNni3dvl310j9n7NWDex2X4MtrrWHNQCuCP0QFGBrr1ve5TXJBiOI1ILUAnePD
+         qm2Q==
+X-Gm-Message-State: APjAAAV9S/ESN94XXL1ersE/PnFGp5uiOlEtehI6S88zJHl5gjGfdxDp
+        lScy0HeNz9C/WUVMSy0Tk1cG+w==
+X-Google-Smtp-Source: APXvYqwtdqLcLDLULkyXRPxe+Tq0eGIziCjfHWNA2pKHIBv1+qMr2mEGCl6NlJu00JcDH7T8xu6aUw==
+X-Received: by 2002:a2e:9095:: with SMTP id l21mr4378074ljg.175.1576611004354;
+        Tue, 17 Dec 2019 11:30:04 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:411:5312:624c:c19e:baea:21d3])
+        by smtp.gmail.com with ESMTPSA id q25sm13291384lji.7.2019.12.17.11.30.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 17 Dec 2019 11:30:03 -0800 (PST)
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+To:     Chris Brandt <Chris.Brandt@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+ <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+ <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
+ <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
+Date:   Tue, 17 Dec 2019 22:30:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <20191217133952.GJ18955@dell>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
 Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Lee,
+Hello!
 
-Thanks a lot for your review, much appreciated.
+On 12/17/2019 01:21 AM, Chris Brandt wrote:
 
-I'll leave out the trivial things from your reply and address those in a v2.
-
-I'm well aware of the fact that there are some details in this driver 
-stack that deserve discussion. I wanted to title this set 'RFC', but I 
-forgot to do so when I sent it.
-
-On 12/17/19 2:39 PM, Lee Jones wrote:
-> On Mon, 09 Dec 2019, Daniel Mack wrote:
-> 
->> The core driver for these devices is split into several parts.
+>>> As a side note, there is another HW block in Renesas that does the same
+>>> thing as the SPI-BSC that they use in the MCU devices. That one they
 >>
->> The master node driver is an I2C client. It is responsible for
->> bringing up the bus topology and discovering the slave nodes.
->> This process requries some knowlegde of the slave node configuration
->> to program the bus timings correctly, so the master drivers walks
->> the tree of nodes in the devicetree. The slave driver handles platform
->> devices that are instantiated by the master node driver after
->> discovery has finished.
+>>    MCU?
+> Yup.
+>   But...it has no significance to this discussion though :)
+
+   But what does the acronym mean?
+
+>>> When I first saw the series on the mailing list, my plan was to just wait
+>>> and then add RZ/A1 and RZ/A2 support. But....it looks like it all died.
 >>
->> Master nodes expose two addresses on the I2C bus, one (referred to as
->> 'BASE' in the datasheet) for accessing registers on the transceiver
->> node itself, and one (referred to as 'BUS') for accessing remote
->> registers, either on the remote transceiver itself, or on I2C hardware
->> connected to that remote transceiver, which then acts as a remote I2C
->> bus master.
+>>    No. :-) It was worked on during all these months... I just finally decided
+>> to stop, take a deep breath, and post what patches I had accumulated, without
+>> the whole driver suite working first... I'm sorry it took so long....
+> 
+> So at the moment, there is nothing yet for me to 'try' on the RZ/A series, correct?
+
+   Why, I can send you a working version of the SPI driver, and even HF one if you're
+interested.
+ 
+>>> My understanding is that HyperFlash uses standard CFI commands, so all
 >>
->> In order to allow MFD sub-devices to be registered as children of
->> either the master or any slave node, the details on how to access the
->> registers are hidden behind a regmap config. A pointer to the regmap
->> is then exposed in the struct shared with the sub-devices.
+>>    The CFI command set driver needed some changes too (e.g. using the status
+>> register to determine if a command is done).
+> 
+> So the existing MTD-SPI layer knows how to talk to SPI devices.
+
+   SPI-NOR does it with a help of drivers/spi/spi-mem.c... As for the HyperFlash,
+it needs a HyperBus driver (that I have a working patch for)...
+
+> And, you've fixed up the existing CFI layer to talk to HyperFlash evices.
+
+   Mostly Boris B. did it... :-)
+
+> But, you do not want these MTD layer to talk directly to a Renesas HW driver?
+
+   Yes, because the SPI-NOR and HyperBus have different driver APIs.
+
+> You want to put another software layer in between?
+
+   Yes.
+
+> I'm guessing that from this statement....
+
+>>>>> library that you are proposing have a very different API than just
+>>>>> 'send bytes' and 'receive bytes'?
+>>>>
+>>>>    There's "prepare" and "transfer" APIs and also "direct map read" API.
 >>
->> The ad242x-bus driver is a simple proxy that occupies the BUS I2C
->> address and which is referred to through a devicetree handle by the
->> master driver.
->>
->> For the discovery process, the driver has to wait for an interrupt
->> to occur. In case no interrupt is configured in DT, the driver falls
->> back to interrupt polling. After the discovery phase is completed,
->> interrupts are only needed for error handling and GPIO handling,
->> both of which is not currenty implemented.
->>
->> Code common to both the master and the slave driver lives in
->> 'ad242x-node.c'.
-
-
->> +++ b/drivers/mfd/ad242x-bus.c
->> @@ -0,0 +1,42 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +
->> +#include <linux/i2c.h>
->> +#include <linux/init.h>
->> +#include <linux/mfd/ad242x.h>
->> +#include <linux/module.h>
->> +#include <linux/of.h>
->> +
->> +static int ad242x_bus_i2c_probe(struct i2c_client *i2c,
->> +				const struct i2c_device_id *id)
->> +{
->> +	dev_set_drvdata(&i2c->dev, i2c);
->> +	i2c_set_clientdata(i2c, &i2c->dev);
+>>   The 1st one prepares the values to be written in either SPI mode or direct
+>> read mode registers. Then you can call "transfer" or "direct mao read" which
+>> would write out the register values into either set...
 > 
-> Please explain to me what you think is happening here.
+> ...that you want more control of the data stream being passed to the RPC-IF driver.
+> Correct??
 > 
->> +	return 0;
->> +}
-> 
-> What does this driver do?  Seems kinda pointless?
+> It all keeps sounding complicated, unless I'm just not understanding the code
+> you are trying to implement.
 
-As explained in the commit log, these devices expose two addresses on 
-the i2c bus, and each of which exists for a distinct purpose. The 
-primary one is used to access registers on the master node itself, the 
-second one is proxying traffic to remote nodes.
+   Well, it reflects the fact that the "SPI mode" and "direct read" register sets
+are largely identical. The "preparation" stage sets up the register values, the 
+other stages use that data to set up the real register sets and then do the
+needed transfers...
 
-Now, the question is how to support that, and the approach chosen here 
-is to have a dummy driver sitting on the 2nd address, and to reach out 
-to it via a DT phandle from the master node. I don't like that much 
-either, but I'm not aware of a cleaner way to bind two addresses with 
-one driver. If there is any, I'd be happy to change that.
+> Chris
 
->> +struct ad242x_node *ad242x_master_get_node(struct ad242x_master *master)
->> +{
->> +	return &master->node;
->> +}
->> +EXPORT_SYMBOL_GPL(ad242x_master_get_node);
->> +
->> +struct ad242x_i2c_bus *ad242x_master_get_bus(struct ad242x_master *master)
->> +{
->> +	return &master->bus;
->> +}
->> +EXPORT_SYMBOL_GPL(ad242x_master_get_bus);
->> +
->> +const char *ad242x_master_get_clk_name(struct ad242x_master *master)
->> +{
->> +	return __clk_get_name(master->sync_clk);
->> +}
->> +EXPORT_SYMBOL_GPL(ad242x_master_get_clk_name);
->> +
->> +unsigned int ad242x_master_get_clk_rate(struct ad242x_master *master)
->> +{
->> +	return master->sync_clk_rate;
->> +}
->> +EXPORT_SYMBOL_GPL(ad242x_master_get_clk_rate);
-> 
-> All of these functions provide abstraction for the sake of
-> abstraction.  They should be removed and replaced with the code
-> contained within them.
-
-That would mean to expose the internals of the struct, which is what I 
-wanted to avoid. But okay, I'll see how the respin of this driver looks 
-like and reconsider.
-
->> +	return ret == 0 ? -ETIMEDOUT : 0;
->> +}
->> +
->> +/* See Table 3-2 in the datasheet */
-> 
-> Do you provide a link to the datasheet anywhere?
-
-Yes, in the cover letter. But you're right, I can add that to the code 
-as well. Will do.
-
->> +static unsigned int ad242x_master_respoffs(struct ad242x_node *node)
->> +{
->> +	if (node->tdm_mode == 2 && node->tdm_slot_size == 16)
->> +		return 238;
->> +
->> +	if ((node->tdm_mode == 2 && node->tdm_slot_size == 32) ||
->> +	    (node->tdm_mode == 4 && node->tdm_slot_size == 16))
->> +		return 245;
->> +
->> +	return 248;
-> 
-> No magic numbers please.  You need to define them.
-
-I generally agree, but these are just magic numbers in the datasheet.
-You're thinking of something like this, next to a comment?
-
-   #define AD242X_RESPOFFS_248 248
-
->> +	master->sync_clk_rate = clk_get_rate(master->sync_clk);
->> +	if (master->sync_clk_rate != 44100 && master->sync_clk_rate != 48000) {
-> 
-> Please define these magic numbers.
-> 
-> Something descriptive that tells us what the different clock speeds
-> do.
-
-The device can only operate on one of the two clock speeds. I can add a 
-comment on that, but do you think defines for these two particular 
-constants would make the code more readable?
-
->> +	master->dn_slot_alt_fmt =
->> +		of_property_read_bool(dev->of_node,
->> +				      "adi,alternate-downstream-slot-format");
->> +	master->up_slot_alt_fmt =
->> +		of_property_read_bool(dev->of_node,
->> +				      "adi,alternate-upstream-slot-format");
-> 
-> Obviously this all needs to be run past the DT maintainer(s).
-
-Yes, absolutely. I believe I copied them all in the thread.
-
->> +	/* Register platform devices for nodes */
->> +
->> +	for_each_available_child_of_node(nodes_np, np)
->> +		of_platform_device_create(np, NULL, dev);
-> 
-> What are you doing here?
-> 
-> Either use OF to register all child devices OR use MFD, not a mixture
-> of both.
-
-Okay, this one is interesting, and I'd really appreciate some guidance here.
-
-What the master node driver does here is register a number of slave node 
-devices which are then handled by the driver in ad242x-slave.c. Because 
-the master is not able to auto-probe slave nodes, users need to define 
-them manually in DT. The driver will try to discover them at probe time, 
-and then create a platform device for each of them.
-
-Both the master driver and the slave driver are then registering 
-sub-devices for functions (such as GPIO, clk, audio-codec etc) via MFD, 
-as they can be enabled on both device types. And the function-drivers 
-are agnostic about whether the device type (master or slave) they 
-communicate with.
-
-What would be a good way to support this scheme if not by a mixture of 
-child devices and MFD?
-
->> +static int ad242x_slave_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct ad242x_slave *slave;
->> +	struct ad242x_node *mnode;
->> +	struct regmap *regmap;
->> +	unsigned int val;
->> +	int i, ret;
->> +
->> +	slave = devm_kzalloc(dev, sizeof(*slave), GFP_KERNEL);
->> +	if (!slave)
->> +		return -ENOMEM;
->> +
->> +	regmap = devm_regmap_init(dev, NULL, slave, &ad242x_regmap_config);
->> +	if (IS_ERR(regmap)) {
->> +		ret = PTR_ERR(regmap);
->> +		dev_err(dev, "regmap init failed: %d\n", ret);
->> +		return ret;
->> +	}
->> +
->> +	of_property_read_u32(dev->of_node, "reg", &val);
->> +	slave->node.id = val;
-> 
-> This looks like an abuse of the 'reg' property.
-
-I had my doubts about that as well, but I've found my places that do 
-similar things. Not sure, but of course that can be renamed.
-
-
-Again, thanks for your review.
-
-Daniel
+MBR, Sergei
