@@ -2,169 +2,145 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C7D5C2D0CD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 14:25:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57BCBC43603
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 15:19:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33AF52467E
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 14:25:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D880218AC
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 15:19:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nDOQqhZN"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="uzCjJ9tX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfLQOZk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 09:25:40 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:39219 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729016AbfLQOZk (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 09:25:40 -0500
-Received: by mail-wm1-f65.google.com with SMTP id b72so3387045wme.4
-        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2019 06:25:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=6kERw8dQIBACWsW0c+lQf/JA1vmIIx6c9Yg7JLLE81M=;
-        b=nDOQqhZNRhoqSIT9ygYhf6sYksvjQo/V0MI0iG8xAI89/NE0iO63AgxOdrYKa917lh
-         cV57WmnloRdU8ZjuMMbUdWOmp2MgBXI2WEQ5WqGnLOoJOFyKMPsabxDfUcaNKPAPeiM2
-         zv4czVKjcJqiWovFGXwRRlP2dVy0h+1BS1p9/h4xdRTva3rVoO1B1OcPZ/XgmnA+sJ40
-         vWKeXt+JEwXo0VccppBW2PHy+gJw6MXFYRlbIzyrMoKTbuZ7A7Y74SobzBvgiX6bUQpV
-         WikCepIxqMQ9K/Ngfgj9jIUxHUgZNtMRIlArBYGinPF/qsIGu7SOJYhQd1ZXTxJwZQUR
-         5tkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=6kERw8dQIBACWsW0c+lQf/JA1vmIIx6c9Yg7JLLE81M=;
-        b=E965BxoIvwZjDqkdUbfxoWtdH1PR5fWu87tEyr8h6JDK7A/GaOxKgCRqGpNd+Ap7Cw
-         FHRKnlrHjVBUK7ghe+7ttniGLkiaoe0S5MhwmLITP1XPvcdbUVdbKGqpJMHBlUGA26yI
-         HBW/hHtSUwrhz3NNL04zM8gZ8oOkJjPZNqJAetXNsO67ECIHJ89ik0iqrOcHLyYaPXOH
-         Pvza6fzkip6wqefPow/coMpLFPJkoKJ8wggGAchFD5q5t3U+uZ0F8G+C2PVPtZ9ruQ5O
-         h8vqaTKH0S85/7tB0FP3lUpQBBpz93jhqP/rCTdXptU6lqW3ksvsowo2IzOPIOppdzLC
-         75iQ==
-X-Gm-Message-State: APjAAAVZUdVsYZJ3p02UepqTYdmocTRut5q3ufk5yx9BiaSD0vHuHfwm
-        O0+ppIYWasKAkgo1bH9WoYomtA==
-X-Google-Smtp-Source: APXvYqxwCwi38Wr5D9A/L2wvMeZPSaKLDoI2uWPVSQnU9lhUcxlxXv46EcbtmUS5uruundfigIgz8w==
-X-Received: by 2002:a05:600c:2207:: with SMTP id z7mr5654182wml.138.1576592738272;
-        Tue, 17 Dec 2019 06:25:38 -0800 (PST)
-Received: from dell ([2.27.35.132])
-        by smtp.gmail.com with ESMTPSA id s65sm3189680wmf.48.2019.12.17.06.25.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 06:25:37 -0800 (PST)
-Date:   Tue, 17 Dec 2019 14:25:37 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Cc:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v6 05/15] mfd: bd71828: Support ROHM BD71828 PMIC - core
-Message-ID: <20191217142537.GN18955@dell>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
- <252de5646fedfec7c575269843a47091fe199c79.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
- <20191216164641.GC18955@dell>
- <5593db6b3328c0a1a7069d839f5c777b4b3822b6.camel@fi.rohmeurope.com>
- <20191217135430.GM18955@dell>
- <20191217140810.GD3489463@kroah.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191217140810.GD3489463@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728247AbfLQPTi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 10:19:38 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:18885 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727459AbfLQPTi (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 10:19:38 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1576595977; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=rL62ogSm89mxzqo5jGWrbCifh9fRJzz4WrEa353v4VY=; b=uzCjJ9tXjDlWOQsvTCoS+U0Y9w0s8N5bFwZatJ1UyG6tz6kFqnFWMrAJrFu0kycSJYqTue2x
+ OJ1hVz9+4jY16yLktidWud8iarvJYXgs8eccqVbXly8pBvY7WPK1xdxnHMSkRbLTifWDoHtA
+ xuZPyvFuy3GuVf9iYmggFVBjqC8=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5df8f203.7f3c7a516e30-smtp-out-n03;
+ Tue, 17 Dec 2019 15:19:31 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 259B5C433A2; Tue, 17 Dec 2019 15:19:31 +0000 (UTC)
+Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 72CADC43383;
+        Tue, 17 Dec 2019 15:19:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 72CADC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+To:     sboyd@kernel.org
+Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
+        marc.w.gonzalez@free.fr, mturquette@baylibre.com,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        Jeffrey Hugo <jhugo@codeaurora.org>
+Subject: [PATCH v11 0/4] MSM8998 Multimedia Clock Controller
+Date:   Tue, 17 Dec 2019 08:19:14 -0700
+Message-Id: <1576595954-9991-1-git-send-email-jhugo@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 17 Dec 2019, gregkh@linuxfoundation.org wrote:
-> On Tue, Dec 17, 2019 at 01:54:30PM +0000, Lee Jones wrote:
-> > On Tue, 17 Dec 2019, Vaittinen, Matti wrote:
-> > > On Mon, 2019-12-16 at 16:46 +0000, Lee Jones wrote:
-> > > > On Wed, 11 Dec 2019, Matti Vaittinen wrote:
-> > > > 
-> > > > > BD71828GW is a single-chip power management IC for battery-powered
-> > > > > portable
-> > > > > devices. The IC integrates 7 buck converters, 7 LDOs, and a 1500 mA
-> > > > > single-cell linear charger. Also included is a Coulomb counter, a
-> > > > > real-time
-> > > > > clock (RTC), 3 GPO/regulator control pins, HALL input and a 32.768
-> > > > > kHz
-> > > > > clock gate.
-> > > > > 
-> > > > > Add MFD core driver providing interrupt controller facilities and
-> > > > > i2c
-> > > > > access to sub device drivers.
-> > > > > 
-> > > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > > ---
-> > > > > 
-> > > > > Changes since v5:
-> > > > > - No changes
-> > > > > 
-> > > > >  drivers/mfd/Kconfig              |  15 ++
-> > > > >  drivers/mfd/Makefile             |   2 +-
-> > > > >  drivers/mfd/rohm-bd71828.c       | 319 +++++++++++++++++++++++
-> > > > >  include/linux/mfd/rohm-bd71828.h | 425
-> > > > > +++++++++++++++++++++++++++++++
-> > > > >  include/linux/mfd/rohm-generic.h |   1 +
-> > > > >  5 files changed, 761 insertions(+), 1 deletion(-)
-> > > > >  create mode 100644 drivers/mfd/rohm-bd71828.c
-> > > > >  create mode 100644 include/linux/mfd/rohm-bd71828.h
+The multimedia clock controller (mmcc) is the main clock controller for
+the multimedia subsystem and is required to enable things like display and
+camera.
 
-[...]
-> > 
-> > If you have this in your header:
-> > 
-> >   GPL-2.0-only
-> > 
-> > Your MODULE tags should read:
-> > 
-> > MODULE_LICENSE("GPL v2");
-> 
-> Nope, as per module.h, which is quoted here, either:
-> 	MODULE_LICENSE("GPL");
-> or:
-> 	MODULE_LICENSE("GPL v2");
-> mean the exact same thing.
+v11:
+-rebsed to 5.5-rc1
+-picked up review tags
 
-Interesting.  I always took a non-specified version to mean:
+v10:
+-Add Taniya Das as co-maintainer as she indicated a willingness to do so
+-Add sleep clock
+-Add a gcc example per request
+-Pick up tags
 
-  "... and any other future version of the licence"
+v9:
+-expand the commit text for the DT changes a bit more to explain some of the
+extra changes
 
-Educated, thanks!
+v8:
+-drop dts changes from series per Stephen's request
+-fix the mislabeled mmcc example
+-drop Stephen as maintainer of the mmcc binding
+
+v7:
+-port to gcc.yaml.  Drop reviewed-by for DT changes as they got completely
+rewritten
+-drop "clk: qcom: smd: Add XO clock for MSM8998".  Will need to find another
+solution and this is not blocking right now
+-convert mmcc to yaml
+-drop errant clk.h include
+-use blank entries in the DT when no clock is available
+
+v6:
+-drop clk_get from mmcc clock provider
+
+v5:
+-handle the case where gcc uses rpmcc for xo, but the link is not specified in dt
+-have gcc select rpmcc
+
+v4:
+-fix makefile to use correct config item
+-pick up tags
+-fix ordering of clocks and clock-names in dt
+-drop MODULE_ALIAS
+-wait for xo in mmcc since that was found to be useful in some debug configs
+
+v3:
+-Rebase onto linux-next to get the final version of the clk parent rewrite
+series
+-Moved the bindings header to the bindings patch per Rob
+-Made xo manditory for GCC to work around the lack of clk orphan probe defer
+to avoid the uart console glitch
+
+v2:
+-Rebased on the "Rewrite clk parent handling" series and updated to the clk init
+mechanisms introduced there.
+-Marked XO clk as CLK_IGNORE_UNUSED to avoid the concern about the XO going away
+"incorrectly" during late init
+-Corrected the name of the XO clock to "xo"
+-Dropped the fake XO clock in GCC to prevent a namespace conflict
+-Fully enumerated the external clocks (DSI PLLs, etc) in the DT binding
+-Cleaned up the weird newlines in the added DT node
+-Added DT header file to msm8998 DT for future clients
+
+Jeffrey Hugo (4):
+  dt-bindings: clock: Document external clocks for MSM8998 gcc
+  dt-bindings: clock: Convert qcom,mmcc to DT schema
+  dt-bindings: clock: Add support for the MSM8998 mmcc
+  clk: qcom: Add MSM8998 Multimedia Clock Controller (MMCC) driver
+
+ .../devicetree/bindings/clock/qcom,gcc.yaml        |   73 +-
+ .../devicetree/bindings/clock/qcom,mmcc.txt        |   28 -
+ .../devicetree/bindings/clock/qcom,mmcc.yaml       |   98 +
+ drivers/clk/qcom/Kconfig                           |    9 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/mmcc-msm8998.c                    | 2913 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,mmcc-msm8998.h      |  210 ++
+ 7 files changed, 3290 insertions(+), 42 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mmcc.yaml
+ create mode 100644 drivers/clk/qcom/mmcc-msm8998.c
+ create mode 100644 include/dt-bindings/clock/qcom,mmcc-msm8998.h
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
