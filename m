@@ -1,147 +1,365 @@
-Return-Path: <SRS0=d2gX=2G=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6562C43603
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 22:22:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43989C43603
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 01:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D5424673
-	for <linux-clk@archiver.kernel.org>; Mon, 16 Dec 2019 22:22:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 009C5206E0
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 01:29:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=renesasgroup.onmicrosoft.com header.i=@renesasgroup.onmicrosoft.com header.b="bjBTJepl"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Gj1ZtYiO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727452AbfLPWWI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 17:22:08 -0500
-Received: from mail-eopbgr1410117.outbound.protection.outlook.com ([40.107.141.117]:21568
-        "EHLO JPN01-OS2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725836AbfLPWWH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 16 Dec 2019 17:22:07 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=kQ4mc0e9hk79Ho0knuzRD5mn4fR6wOt5IX3eoK8brUdmlXWBeg4QaJ9+Y7ptl7V/4OLaL/UOQj3OO8mC7vom3EuZGhlm3zR77sujV5gJyTkc6VelgCxQ4jPuHAbV1V5d67FHpXl6yZfD/wbaHXLTbiaSkpn6RtmSxs/tNkRuBmX1mxjuZKQiaHolM+o4Tma9kGzSpEexLsHWU0JtDl9SXlXl2L5F/zY93dsHC9F/E321Oz+DsGXwDQmmqwJb+oK8LidrTujLDy+VGlOSKQOlmDhcynE8VRbTQ4AWq9k9Fxewj79fJ4s8oiAGnvkbekaLtWdsbC/5D3j6aRW7F6nURw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZM7x4/dxpf2yVgpNms5omvMeZY1cUKJkl/IOnV+kAiw=;
- b=meNDZX5YNB0Uw2wv7Jv1MFEZQUyZ+d+ArNMoSx4TytMRMiP8CNQWvy28Hwf4vWz/5FW1JPSFT4FE2Oo+f0yAVSHQlJ/G5+u3iUAyrQClvikBeM8R4YCWLjsBROdYik1mNF9tgR8OS09bTs12vbyYyq7+Cj/f2HxCdyYb4w6Hl46So7Jr4RL1dW2E/ML5/CU06f4tKjF4eiS7XG1DIdNkB5lumElM3fJozVNM5AobOQQrAMYJNsbE7UQms4jNjO5BA5zowHF7/ZVfOctrTkB8aLahzo5ctub2XLd+DtJGqVWu6GRMfBPJZpgbRbPxWEziUZaMXLlw6+cFrezdUPLOMw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
- dkim=pass header.d=renesas.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=renesasgroup.onmicrosoft.com; s=selector2-renesasgroup-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ZM7x4/dxpf2yVgpNms5omvMeZY1cUKJkl/IOnV+kAiw=;
- b=bjBTJeplLsg2noH7nEsgihncB1owFwjMRG2fCAB6lMUm9VcuvP9iHAgqlVtvwI0iUMacNz7db8JO31fukuCuvbrc7dC6S+ZUe9CqFgn7g5RXyDW1y1Cggcs7sLDe/FeUDcxr0hHf7/SZlmxRoZz4OEIVSpgcezwAwZ79m4sDkvo=
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com (52.133.163.12) by
- TY1PR01MB1596.jpnprd01.prod.outlook.com (52.133.162.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2538.18; Mon, 16 Dec 2019 22:21:24 +0000
-Received: from TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2]) by TY1PR01MB1562.jpnprd01.prod.outlook.com
- ([fe80::74db:232e:f59e:83f2%3]) with mapi id 15.20.2538.019; Mon, 16 Dec 2019
- 22:21:24 +0000
-From:   Chris Brandt <Chris.Brandt@renesas.com>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        Mason Yang <masonccyang@mxic.com.tw>
-Subject: RE: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
-Thread-Topic: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
-Thread-Index: AQHVrDsFo/XrCnZmIE+HK5Vec6rH7qevIW6AgAK0x/CAA35sAIABOkowgAa4UICAABhMQA==
-Date:   Mon, 16 Dec 2019 22:21:23 +0000
-Message-ID: <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
- <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
- <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
-In-Reply-To: <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-dg-ref: PG1ldGE+PGF0IG5tPSJib2R5LnR4dCIgcD0iYzpcdXNlcnNcY2JyYW5kdDAxXGFwcGRhdGFccm9hbWluZ1wwOWQ4NDliNi0zMmQzLTRhNDAtODVlZS02Yjg0YmEyOWUzNWJcbXNnc1xtc2ctNjIyNzMwMDAtMjA1Mi0xMWVhLWFhNTYtOTRlNmY3Njc5M2FlXGFtZS10ZXN0XDYyMjczMDAxLTIwNTItMTFlYS1hYTU2LTk0ZTZmNzY3OTNhZWJvZHkudHh0IiBzej0iMjAzNiIgdD0iMTMyMjEwMDg0ODA1MTIxODc5IiBoPSJ6R3VaZys0bEgxNlZjNVgvcGk1T2ZJa3pxWmc9IiBpZD0iIiBibD0iMCIgYm89IjEiLz48L21ldGE+
-x-dg-rorf: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Chris.Brandt@renesas.com; 
-x-originating-ip: [75.60.247.61]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: da50c817-175d-4d27-a896-08d782764924
-x-ms-traffictypediagnostic: TY1PR01MB1596:
-x-microsoft-antispam-prvs: <TY1PR01MB15964B0FD39AD7353DA111628A510@TY1PR01MB1596.jpnprd01.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:10000;
-x-forefront-prvs: 02530BD3AA
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(4636009)(396003)(376002)(366004)(346002)(136003)(39860400002)(199004)(189003)(7416002)(64756008)(76116006)(66946007)(66476007)(66556008)(2906002)(7696005)(86362001)(33656002)(478600001)(4326008)(316002)(8936002)(66446008)(6506007)(9686003)(81166006)(5660300002)(81156014)(26005)(186003)(8676002)(71200400001)(52536014)(54906003)(110136005)(55016002)(582214001);DIR:OUT;SFP:1102;SCL:1;SRVR:TY1PR01MB1596;H:TY1PR01MB1562.jpnprd01.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: renesas.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 9UmYBD3CyCFznE6yCd4LwSw0KLfViR5WxXMCFHtw9/Ux4o2+mgTRMWFRyHcNfLlKm8kd+xZQ9nYoPrcAkRCSeDvVzLKTQCyGwBP9Fqeav9I33ikpBHLbZok3fBnRSRxrXZa2ZTTdSlOAmkH/cFQMtb1s+5UwbVj+5jE294CzVpe2NBUuSU4NWVpas9C9+eiZ3h7jFi1YoSHMrcyDeqkY2o2ATPfI0Nx2phblTYc0Z44faTEszijYfhGBO9OlnSfDt4YwTPnJz/xYOCljGDiNRiFitKfQQExYlOBUCLAJ+3D8n7S6BJUdRqDyJkrAry+EhEpaH2PCGowLslPwbzgpgnSdb/5DvwX/HFT4yXtHyWqHtj4VGYIPdSbWH3PzgU03VsJfCiHu+01RSqRNpXkg5iiPSnmySFvW3bUMbkMhrniCo0196K5pXBzGJaIyKwfacKTFB3//oUS5GJf8McXO4IOi0cANr5J4SvVvBW6RM1Yex4CkJX1pXqb9Y/zqmI5I
-x-ms-exchange-transport-forked: True
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1726368AbfLQB3w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 16 Dec 2019 20:29:52 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:3399 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725805AbfLQB3w (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 20:29:52 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5df82f720000>; Mon, 16 Dec 2019 17:29:22 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 16 Dec 2019 17:29:49 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 16 Dec 2019 17:29:49 -0800
+Received: from [10.110.102.167] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 17 Dec
+ 2019 01:29:48 +0000
+Subject: Re: [PATCH v3 08/15] ASoC: tegra: Add audio mclk control through
+ clk_out_1 and extern1
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <mperttunen@nvidia.com>,
+        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
+        <tglx@linutronix.de>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <allison@lohutok.net>, <pdeschrijver@nvidia.com>,
+        <pgaikwad@nvidia.com>, <mturquette@baylibre.com>,
+        <horms+renesas@verge.net.au>, <Jisheng.Zhang@synaptics.com>,
+        <krzk@kernel.org>, <arnd@arndb.de>, <spujar@nvidia.com>,
+        <josephl@nvidia.com>, <vidyas@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <lgirdwood@gmail.com>,
+        <broonie@kernel.org>, <perex@perex.cz>, <tiwai@suse.com>,
+        <alexios.zavras@intel.com>, <alsa-devel@alsa-project.org>
+References: <1575600535-26877-1-git-send-email-skomatineni@nvidia.com>
+ <1575600535-26877-9-git-send-email-skomatineni@nvidia.com>
+ <0ce2e83b-800c-da1e-7a3c-3cf1427cfe20@gmail.com>
+ <2eeceabe-b5f0-6f9e-ff8c-4ac6167b7cc3@nvidia.com>
+Message-ID: <41a7325c-9bb9-f681-4d30-d19079869d12@nvidia.com>
+Date:   Mon, 16 Dec 2019 17:29:38 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-OriginatorOrg: renesas.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da50c817-175d-4d27-a896-08d782764924
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Dec 2019 22:21:23.5029
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 7ItarIGcZuAJKi+oYajFT2gmiUC71U8UwGW5tJEYescy00Z/KFfROUk+PnY6BK8bIFNGNNnN2Q4ZGnSP1B18X5p3qhf3cGqtLkmeLgWQZS8=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY1PR01MB1596
+In-Reply-To: <2eeceabe-b5f0-6f9e-ff8c-4ac6167b7cc3@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1576546162; bh=vWEX6rcdlmCWI1tCTwB9CxcWknbSbF9tyo6M17CZFf4=;
+        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Gj1ZtYiOKvjPdUiYD4Sz5bWkElqD3/GkzpnixVd16df8uAP3CCAiWbCr9lN1fAZ4v
+         bVq8rMcp3OpnVqJXphStXaLp1bSsUN6QbBT7Nu+ttXR7qZH266n2ySMRCw8GHI8BoC
+         OsKAxi18PUq3NbLgbPwWom+/iQz26y+NLs2cuVCO4lzCg2SJ0pEavCFLpG5hKAU3j0
+         SZCmytctrLGJ7f3cQ8qkUF/wSKugvs+LwirzwA0iIrf2ufcZkwD9J2/REJzRFYzjnc
+         imKeVxTgt4GRTStNpoAzTjywQ0uT8ucKdZ2FLfQl0yFPD1Oy3Po2AoNX7IofBYKx/D
+         c6dz8UyXtwRqA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8NCg0KT24gTW9uLCBEZWMgMTYsIDIwMTksIFNlcmdlaSBTaHR5bHlvdiB3cm90ZToNCj4g
-PiBBcyBhIHNpZGUgbm90ZSwgdGhlcmUgaXMgYW5vdGhlciBIVyBibG9jayBpbiBSZW5lc2FzIHRo
-YXQgZG9lcyB0aGUgc2FtZQ0KPiA+IHRoaW5nIGFzIHRoZSBTUEktQlNDIHRoYXQgdGhleSB1c2Ug
-aW4gdGhlIE1DVSBkZXZpY2VzLiBUaGF0IG9uZSB0aGV5DQo+IA0KPiAgICBNQ1U/DQpZdXAuDQog
-IEJ1dC4uLml0IGhhcyBubyBzaWduaWZpY2FuY2UgdG8gdGhpcyBkaXNjdXNzaW9uIHRob3VnaCA6
-KQ0KDQoNCj4gPiBXaGVuIEkgZmlyc3Qgc2F3IHRoZSBzZXJpZXMgb24gdGhlIG1haWxpbmcgbGlz
-dCwgbXkgcGxhbiB3YXMgdG8ganVzdCB3YWl0DQo+ID4gYW5kIHRoZW4gYWRkIFJaL0ExIGFuZCBS
-Wi9BMiBzdXBwb3J0LiBCdXQuLi4uaXQgbG9va3MgbGlrZSBpdCBhbGwgZGllZC4NCj4gDQo+ICAg
-IE5vLiA6LSkgSXQgd2FzIHdvcmtlZCBvbiBkdXJpbmcgYWxsIHRoZXNlIG1vbnRocy4uLiBJIGp1
-c3QgZmluYWxseSBkZWNpZGVkDQo+IHRvIHN0b3AsIHRha2UgYSBkZWVwIGJyZWF0aCwgYW5kIHBv
-c3Qgd2hhdCBwYXRjaGVzIEkgaGFkIGFjY3VtdWxhdGVkLCB3aXRob3V0DQo+IHRoZSB3aG9sZSBk
-cml2ZXIgc3VpdGUgd29ya2luZyBmaXJzdC4uLiBJJ20gc29ycnkgaXQgdG9vayBzbyBsb25nLi4u
-Lg0KDQpTbyBhdCB0aGUgbW9tZW50LCB0aGVyZSBpcyBub3RoaW5nIHlldCBmb3IgbWUgdG8gJ3Ry
-eScgb24gdGhlIFJaL0Egc2VyaWVzLCBjb3JyZWN0Pw0KDQoNCj4gPiBNeSB1bmRlcnN0YW5kaW5n
-IGlzIHRoYXQgSHlwZXJGbGFzaCB1c2VzIHN0YW5kYXJkIENGSSBjb21tYW5kcywgc28gYWxsDQo+
-IA0KPiAgICBUaGUgQ0ZJIGNvbW1hbmQgc2V0IGRyaXZlciBuZWVkZWQgc29tZSBjaGFuZ2VzIHRv
-byAoZS5nLiB1c2luZyB0aGUgc3RhdHVzDQo+IHJlZ2lzdGVyIHRvIGRldGVybWluZSBpZiBhIGNv
-bW1hbmQgaXMgZG9uZSkuDQoNClNvIHRoZSBleGlzdGluZyBNVEQtU1BJIGxheWVyIGtub3dzIGhv
-dyB0byB0YWxrIHRvIFNQSSBkZXZpY2VzLg0KQW5kLCB5b3UndmUgZml4ZWQgdXAgdGhlIGV4aXN0
-aW5nIENGSSBsYXllciB0byB0YWxrIHRvIEh5cGVyRmxhc2ggZGV2aWNlcy4NCkJ1dCwgeW91IGRv
-IG5vdCB3YW50IHRoZXNlIE1URCBsYXllciB0byB0YWxrIGRpcmVjdGx5IHRvIGEgUmVuZXNhcyBI
-VyBkcml2ZXI/DQpZb3Ugd2FudCB0byBwdXQgYW5vdGhlciBzb2Z0d2FyZSBsYXllciBpbiBiZXR3
-ZWVuPw0KDQoNCkknbSBndWVzc2luZyB0aGF0IGZyb20gdGhpcyBzdGF0ZW1lbnQuLi4uDQoNCj4g
-Pj4+IGxpYnJhcnkgdGhhdCB5b3UgYXJlIHByb3Bvc2luZyBoYXZlIGEgdmVyeSBkaWZmZXJlbnQg
-QVBJIHRoYW4ganVzdA0KPiA+Pj4gJ3NlbmQgYnl0ZXMnIGFuZCAncmVjZWl2ZSBieXRlcyc/DQo+
-ID4+DQo+ID4+ICAgIFRoZXJlJ3MgInByZXBhcmUiIGFuZCAidHJhbnNmZXIiIEFQSXMgYW5kIGFs
-c28gImRpcmVjdCBtYXAgcmVhZCIgQVBJLg0KPiANCj4gICBUaGUgMXN0IG9uZSBwcmVwYXJlcyB0
-aGUgdmFsdWVzIHRvIGJlIHdyaXR0ZW4gaW4gZWl0aGVyIFNQSSBtb2RlIG9yIGRpcmVjdA0KPiBy
-ZWFkIG1vZGUgcmVnaXN0ZXJzLiBUaGVuIHlvdSBjYW4gY2FsbCAidHJhbnNmZXIiIG9yICJkaXJl
-Y3QgbWFvIHJlYWQiIHdoaWNoDQo+IHdvdWxkIHdyaXRlIG91dCB0aGUgcmVnaXN0ZXIgdmFsdWVz
-IGludG8gZWl0aGVyIHNldC4uLg0KDQouLi50aGF0IHlvdSB3YW50IG1vcmUgY29udHJvbCBvZiB0
-aGUgZGF0YSBzdHJlYW0gYmVpbmcgcGFzc2VkIHRvIHRoZSBSUEMtSUYgZHJpdmVyLg0KQ29ycmVj
-dD8/DQoNCkl0IGFsbCBrZWVwcyBzb3VuZGluZyBjb21wbGljYXRlZCwgdW5sZXNzIEknbSBqdXN0
-IG5vdCB1bmRlcnN0YW5kaW5nIHRoZSBjb2RlDQp5b3UgYXJlIHRyeWluZyB0byBpbXBsZW1lbnQu
-DQoNCg0KQ2hyaXMNCg0K
+
+On 12/7/19 11:20 AM, Sowjanya Komatineni wrote:
+>
+> On 12/7/19 6:58 AM, Dmitry Osipenko wrote:
+>> 06.12.2019 05:48, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>> Current ASoC driver uses extern1 as cdev1 clock from Tegra30 onwards
+>>> through device tree.
+>>>
+>>> Actual audio mclk is clk_out_1 and to use PLLA for mclk rate control,
+>>> need to clk_out_1_mux parent to extern1 and extern1 parent to=20
+>>> PLLA_OUT0.
+>>>
+>>> Currently Tegra clock driver init sets the parents and enables both
+>>> clk_out_1 and extern1 clocks. But these clocks parent and enables=20
+>>> should
+>>> be controlled by ASoC driver.
+>>>
+>>> Clock parents can be specified in device tree using assigned-clocks
+>>> and assigned-clock-parents.
+>>>
+>>> To enable audio mclk, both clk_out_1 and extern1 clocks need to be
+>>> enabled.
+>>>
+>>> This patch configures parents for clk_out_1 and extern1 clocks if=20
+>>> device
+>>> tree does not specify clock parents inorder to support old device tree
+>>> and controls mclk using both clk_out_1 and extern1 clocks.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>> =C2=A0 sound/soc/tegra/tegra_asoc_utils.c | 66=20
+>>> ++++++++++++++++++++++++++++++++++++++
+>>> =C2=A0 sound/soc/tegra/tegra_asoc_utils.h |=C2=A0 1 +
+>>> =C2=A0 2 files changed, 67 insertions(+)
+>>>
+>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c=20
+>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>> index 536a578e9512..8e3a3740df7c 100644
+>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>> @@ -60,6 +60,7 @@ int tegra_asoc_utils_set_rate(struct=20
+>>> tegra_asoc_utils_data *data, int srate,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->set_mclk =3D 0;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_c=
+dev1);
+>>> +=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_extern1);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_pll_a_ou=
+t0);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_pll_a);
+>>> =C2=A0 @@ -89,6 +90,14 @@ int tegra_asoc_utils_set_rate(struct=20
+>>> tegra_asoc_utils_data *data, int srate,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 if (!IS_ERR_OR_NULL(data->clk_extern1)) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enable(=
+data->clk_extern1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev, "Can't enable extern1: %d\n", err);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+urn err;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enable(data->clk_cde=
+v1);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->de=
+v, "Can't enable cdev1: %d\n", err);
+>>> @@ -109,6 +118,7 @@ int tegra_asoc_utils_set_ac97_rate(struct=20
+>>> tegra_asoc_utils_data *data)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int err;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_c=
+dev1);
+>>> +=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_extern1);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_pll_a_ou=
+t0);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_disable_unprepare(data->clk_pll_a);
+>>> =C2=A0 @@ -142,6 +152,14 @@ int tegra_asoc_utils_set_ac97_rate(struct=20
+>>> tegra_asoc_utils_data *data)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return err;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 +=C2=A0=C2=A0=C2=A0 if (!IS_ERR_OR_NULL(data->clk_extern1)) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enable(=
+data->clk_extern1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev, "Can't enable extern1: %d\n", err);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+urn err;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 }
+>> Why this is needed given that clk_extern1 is either a child of MCLK or
+>> MCLK itself (on T20)? The child clocks are enabled when the parent is
+>> enabled.
+>
+> For T30 and later, clk_extern1 is one of the source for clk_out_1_mux.=20
+> clk_extern1 is in CAR and it has its own gate and mux.
+>
+> As audio mclk related clocks (clk_out_1, clk_out_1_mux, and extern1)=20
+> are moved into ASoC driver from clock driver
+>
+> need to enable extern1 gate as well along with clk_out1 for T30=20
+> through T210.
+>
+> Just FYI, extern1 enable here happens only when data->clk_extern1 is=20
+> available which is for T30 onwards.
+>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 err =3D clk_prepare_enable(data->clk_cde=
+v1);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (err) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->de=
+v, "Can't enable cdev1: %d\n", err);
+>>> @@ -158,6 +176,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+>>> =C2=A0 int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 struct device *dev)
+>>> =C2=A0 {
+>>> +=C2=A0=C2=A0=C2=A0 struct clk *clk_out_1_mux;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->dev =3D dev;
+>>> @@ -196,6 +215,51 @@ int tegra_asoc_utils_init(struct=20
+>>> tegra_asoc_utils_data *data,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_put_pll=
+_a_out0;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> In a previous patch you added fallback to EXTPERIPH when clk_get(MCLK)
+>> fails. This will work perfectly fine for the older kernels which have
+>> all clocks in the same single CaR driver, but this may not work that
+>> great for the newer kernels because PMC driver isn't registered early
+>> during boot and thus it is possible to get a legit -EPROBE_DEFER which
+>> shouldn't be ignored. In other words, you need to add into this patch a
+>> check for the error code returned by clk_get(MCLK) and fallback only for
+>> -EINVAL.
+> yeah right, will add check in next version.
+>>> +=C2=A0=C2=A0=C2=A0 /*
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * If clock parents are not set in DT, configu=
+re here to use=20
+>>> clk_out_1
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 * as mclk and extern1 as parent for Tegra30 a=
+nd higher.
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0 */
+>>> +=C2=A0=C2=A0=C2=A0 if (!of_find_property(dev->of_node, "assigned-clock=
+-parents",=20
+>>> NULL) &&
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->soc > TEGRA_ASOC_UTIL=
+S_SOC_TEGRA20) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_extern1 =3D clk_g=
+et_sys("clk_out_1", "extern1");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_extern=
+1)) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev, "Can't retrieve clk extern1\n");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+ =3D PTR_ERR(data->clk_extern1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o err_put_cdev1;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D clk_set_parent(data=
+->clk_extern1, data->clk_pll_a_out0);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 "Set parent failed for clk extern1: %d\n",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 ret);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o err_put_cdev1;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_out_1_mux =3D clk_get_s=
+ys(NULL, "clk_out_1_mux");
+>> Note1: clk_get(dev, "clk_out_1_mux") should work here by letting clk
+>> core to fall back to the clk_get_sys() by itself. Either way should=20
+>> be good.
+
+clk_get uses device rather and dev_id will be name of this device and=20
+when clk_get fall back to __clk_get_sys() it still will use dev id of=20
+this device rather than actual dev_id that pmc clocks are added to the=20
+lookup. So clk_get_sys() seems to be correct to use as we can specify=20
+exact dev_id and con_id.
+
+Also, clk_find retrieves clock from lookup only when it finds matching=20
+clock with both dev_id and con_id as pmc clocks are registered with both=20
+dev_id and con_id.
+
+I see existing clock driver adds both extern and pmc clocks (clk_out) to=20
+lookup with same dev_id of clk_out_1/2/3 and con_id of extern1/2/3 and=20
+with this always extern clock will be retrieved and this is probably=20
+because old DT and audio driver always uses extern1 rather than actual=20
+clk_out_1
+
+But this need to be fixed now as we changed to use clk_out directly=20
+rather than extern (even for other pmc clocks) to match actual hw design.
+
+Will fix this as well to register pmc clocks using con_id as=20
+clk_out_1/2/3 in pmc driver and extern clocks using con_id of=20
+extern1/2/3 with dev_id being NULL so we can retrieve these clocks by=20
+just using con_id only using clk_get_sys as we switched to use clk_out_1=20
+directly as pmc clock rather than extern from DT and no longer need to=20
+pair pmc clocks to extern clocks.
+
+>>
+>> Note2: devm_clk_get() could be used everywhere here. Maybe it won't hurt
+>> to convert tegra_asoc_utils to use managed resources to keep code a bit
+>> cleaner. It should be a separate patch.
+>
+> OK Will add patch to use devm_clk_get() in tegra_asoc_utils_init and=20
+> will use same for these patches
+>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(clk_out_1_mux)) =
+{
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev, "Can't retrieve clk clk_out_1_mux\n");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+ =3D PTR_ERR(clk_out_1_mux);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o err_put_cdev1;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D clk_set_parent(clk_=
+out_1_mux, data->clk_extern1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret < 0) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev,
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 "Set parent failed for clk_out_1_mux: %d\n",
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 ret);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk=
+_put(clk_out_1_mux);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o err_put_cdev1;
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>> clk_put(clk_cdev1);
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D clk_get=
+_sys(NULL, "clk_out_1");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1)=
+) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev, "Can't retrieve clk clk_out_1\n");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+ =3D PTR_ERR(data->clk_cdev1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 got=
+o err_put_cdev1;
+>> goto err_put_pll_a_out0;
+>>
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D tegra_asoc_utils_set_rate(data, =
+44100, 256 * 44100);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 goto err_put_cde=
+v1;
+>>> @@ -215,6 +279,8 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_init);
+>>> =C2=A0 =C2=A0 void tegra_asoc_utils_fini(struct tegra_asoc_utils_data *=
+data)
+>>> =C2=A0 {
+>>> +=C2=A0=C2=A0=C2=A0 if (!IS_ERR_OR_NULL(data->clk_extern1))
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_put(data->clk_extern1);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_put(data->clk_cdev1);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_put(data->clk_pll_a_out0);
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_put(data->clk_pll_a);
+>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.h=20
+>>> b/sound/soc/tegra/tegra_asoc_utils.h
+>>> index 0c13818dee75..5f2b96478caf 100644
+>>> --- a/sound/soc/tegra/tegra_asoc_utils.h
+>>> +++ b/sound/soc/tegra/tegra_asoc_utils.h
+>>> @@ -25,6 +25,7 @@ struct tegra_asoc_utils_data {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk *clk_pll_a;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk *clk_pll_a_out0;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct clk *clk_cdev1;
+>>> +=C2=A0=C2=A0=C2=A0 struct clk *clk_extern1;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int set_baseclock;
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int set_mclk;
+>>> =C2=A0 };
+>>>
