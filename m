@@ -2,298 +2,86 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABE96C2D0CD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 14:08:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2401C2D0CD
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 14:12:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7831221739
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 14:08:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FC4C2176D
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 14:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576591698;
-	bh=ms+aXOE3EdejqpGn+s3s9ci5ddw4kV2jIv1YOjsFUks=;
+	s=default; t=1576591926;
+	bh=sJ9ZcIroVoAcSdgRNeq0MYynqRKM5xhE4GjqRLXnliA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ZwLQkBX1wOGW4zmXeR0hZ59kMA0pC6j4nQDGcHenWVhM9kAy5CV5MbPoR9wv0VwGZ
-	 +MMQl3eNfhLbin4d/l/n3DiXP2Jb+Trkb/atsEjSeA1AaaGX7PgoJvtben0t+qnDHA
-	 X37y4PujLyaAScDp6cEjQtRtS/jRzOHIVvMjBNJo=
+	b=alCj1MoNlIoJhcHN+GOytozsg8T1yiDphvGIxcyaKQ6xxHS3C56+cZAFEziW2UqHN
+	 HSkAE3+Bq1qaamolaSojKSyl3Txb34ENb5Ssr4srB8FuoMsJxM6/v1EtoNbT/r4s/X
+	 iMBupdg67PPdr+8RdOVTsa7LzSQurz/tbJYDq97M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728661AbfLQOIP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 09:08:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51176 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728575AbfLQOIO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Dec 2019 09:08:14 -0500
-Received: from localhost (83-86-89-107.cable.dynamic.v4.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9702D21582;
-        Tue, 17 Dec 2019 14:08:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576591693;
-        bh=ms+aXOE3EdejqpGn+s3s9ci5ddw4kV2jIv1YOjsFUks=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=IZf3rYkXbIEYiApuYswptT8vlxYzci3pkhoMeBz5u/K9mft/ZYrtxZBRrciWm/exV
-         LH7MUCTS4pevFSn6oMbLL1kmud09E3YGeBKdzxP/ZBH14EbCSwwTX7zC4J5uBXh3BY
-         u1UKy/m0ucZPyTm1RdNmqD73DNVtlwqeqah80uDM=
-Date:   Tue, 17 Dec 2019 15:08:10 +0100
-From:   "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-To:     Lee Jones <lee.jones@linaro.org>
-Cc:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v6 05/15] mfd: bd71828: Support ROHM BD71828 PMIC - core
-Message-ID: <20191217140810.GD3489463@kroah.com>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
- <252de5646fedfec7c575269843a47091fe199c79.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
- <20191216164641.GC18955@dell>
- <5593db6b3328c0a1a7069d839f5c777b4b3822b6.camel@fi.rohmeurope.com>
- <20191217135430.GM18955@dell>
+        id S1728661AbfLQOMC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 09:12:02 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:34460 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728575AbfLQOMC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 09:12:02 -0500
+Received: by mail-ot1-f66.google.com with SMTP id a15so919899otf.1;
+        Tue, 17 Dec 2019 06:12:01 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7rqOZSsecbL2UhtBa4fx6RNVQTfn4hGMuYHOIPPf+Vg=;
+        b=fb0I30PDXz6XyrKKiCrSrS98AXGcnwj5kzborhjfcEF+JuCbdA8rGVCuECur1w938L
+         7yY4XX2uHmQm7ZpokrWq9SeMyO/bhgErbE3YPh9F5npHtoSbNdr9RftaShI0kEdgXvW8
+         PHpN3PUKJKBHip5gdBgkjNNAKmeMWZBHBWQfgJ9t3IwlDcqa1rAZMmIVL+LMGcCVWxoj
+         yeql20Xqrh6hjk6p6kPVGoGmWuA/TfvEY34qIK+U0XnBSqqj0Wne6yeg/dVPFoZ/3o/e
+         yTP0JmjzdiOvfKYCoIc4KpuUBWWGxYRUlG17FfXQmEo7qkfwklX0dLvKxQ0LQ1dglimG
+         s5mA==
+X-Gm-Message-State: APjAAAVpystEA5NA7jOx/1z7WepZBseHhc+RL3E30d4q3jQxSSOrwXMk
+        S2SyNtDN/ijJPK0m9Rr7gQ==
+X-Google-Smtp-Source: APXvYqzpVlXg5lD8QaRZoYczlzBvb9EV2OaM1vk2lbqIALkgqhWBspcL5MF3P9ytTEuLdP0Xt2oy1Q==
+X-Received: by 2002:a9d:1d02:: with SMTP id m2mr35624006otm.45.1576591921370;
+        Tue, 17 Dec 2019 06:12:01 -0800 (PST)
+Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.gmail.com with ESMTPSA id v25sm8050659otk.51.2019.12.17.06.12.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 06:12:00 -0800 (PST)
+Date:   Tue, 17 Dec 2019 08:11:59 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Brian Masney <masneyb@onstation.org>
+Cc:     sboyd@kernel.org, dmitry.torokhov@gmail.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, agross@kernel.org,
+        bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH 2/7] dt-bindings: Input: drop msm-vibrator in favor of
+ clk-vibrator
+Message-ID: <20191217141159.GA21795@bogus>
+References: <20191205002503.13088-1-masneyb@onstation.org>
+ <20191205002503.13088-3-masneyb@onstation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191217135430.GM18955@dell>
+In-Reply-To: <20191205002503.13088-3-masneyb@onstation.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, Dec 17, 2019 at 01:54:30PM +0000, Lee Jones wrote:
-> On Tue, 17 Dec 2019, Vaittinen, Matti wrote:
+On Wed,  4 Dec 2019 19:24:58 -0500, Brian Masney wrote:
+> Let's drop the msm-vibrator bindings so that the more generic
+> clk-vibrator can be used instead. No one is currently using these
+> bindings so this won't affect any users.
 > 
-> > Hello Lee,
-> > 
-> > On Mon, 2019-12-16 at 16:46 +0000, Lee Jones wrote:
-> > > On Wed, 11 Dec 2019, Matti Vaittinen wrote:
-> > > 
-> > > > BD71828GW is a single-chip power management IC for battery-powered
-> > > > portable
-> > > > devices. The IC integrates 7 buck converters, 7 LDOs, and a 1500 mA
-> > > > single-cell linear charger. Also included is a Coulomb counter, a
-> > > > real-time
-> > > > clock (RTC), 3 GPO/regulator control pins, HALL input and a 32.768
-> > > > kHz
-> > > > clock gate.
-> > > > 
-> > > > Add MFD core driver providing interrupt controller facilities and
-> > > > i2c
-> > > > access to sub device drivers.
-> > > > 
-> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > ---
-> > > > 
-> > > > Changes since v5:
-> > > > - No changes
-> > > > 
-> > > >  drivers/mfd/Kconfig              |  15 ++
-> > > >  drivers/mfd/Makefile             |   2 +-
-> > > >  drivers/mfd/rohm-bd71828.c       | 319 +++++++++++++++++++++++
-> > > >  include/linux/mfd/rohm-bd71828.h | 425
-> > > > +++++++++++++++++++++++++++++++
-> > > >  include/linux/mfd/rohm-generic.h |   1 +
-> > > >  5 files changed, 761 insertions(+), 1 deletion(-)
-> > > >  create mode 100644 drivers/mfd/rohm-bd71828.c
-> > > >  create mode 100644 include/linux/mfd/rohm-bd71828.h
-> > > 
-> > > Couple of small nits.  Once fixed, please apply my:
-> > > 
-> > > For my own reference:
-> > >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
-> > > 
-> > > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > > > index 420900852166..c3c9432ef51c 100644
-> > > > --- a/drivers/mfd/Kconfig
-> > > > +++ b/drivers/mfd/Kconfig
-> > > > @@ -1906,6 +1906,21 @@ config MFD_ROHM_BD70528
-> > > >  	  10 bits SAR ADC for battery temperature monitor and 1S
-> > > > battery
-> > > >  	  charger.
-> > > >  
-> > > > +config MFD_ROHM_BD71828
-> > > > +	tristate "ROHM BD71828 Power Management IC"
-> > > > +	depends on I2C=y
-> > > > +	depends on OF
-> > > > +	select REGMAP_I2C
-> > > > +	select REGMAP_IRQ
-> > > > +	select MFD_CORE
-> > > > +	help
-> > > > +	  Select this option to get support for the ROHM BD71828 Power
-> > > > +	  Management IC. BD71828GW is a single-chip power management IC
-> > > > for
-> > > > +	  battery-powered portable devices. The IC integrates 7 buck
-> > > > +	  converters, 7 LDOs, and a 1500 mA single-cell linear charger.
-> > > > +	  Also included is a Coulomb counter, a real-time clock (RTC),
-> > > > and
-> > > > +	  a 32.768 kHz clock gate.
-> > > > +
-> > > >  config MFD_STM32_LPTIMER
-> > > >  	tristate "Support for STM32 Low-Power Timer"
-> > > >  	depends on (ARCH_STM32 && OF) || COMPILE_TEST
-> > > > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> > > > index aed99f08739f..ca2d55c679c5 100644
-> > > > --- a/drivers/mfd/Makefile
-> > > > +++ b/drivers/mfd/Makefile
-> > > > @@ -252,6 +252,6 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
-> > > >  obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
-> > > >  obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
-> > > >  obj-$(CONFIG_MFD_ROHM_BD70528)	+= rohm-bd70528.o
-> > > > +obj-$(CONFIG_MFD_ROHM_BD71828)	+= rohm-bd71828.o
-> > > >  obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
-> > > >  obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
-> > > > -
-> > > 
-> > > Nit: This is an unrelated change and should not really be in this
-> > > patch.
-> > 
-> > Ok. Will get rid of it.
-> > 
-> > > 
-> > > > diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-
-> > > > bd71828.c
-> > > > new file mode 100644
-> > > > index 000000000000..7f445d699fd9
-> > > > --- /dev/null
-> > > > +++ b/drivers/mfd/rohm-bd71828.c
-> > > > @@ -0,0 +1,319 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > +//
-> > > > +// Copyright (C) 2019 ROHM Semiconductors
-> > > > +//
-> > > > +// ROHM BD71828 PMIC driver
-> > > > +
-> > 
-> > //snip
-> > 
-> > > > +
-> > > > +static struct i2c_driver bd71828_drv = {
-> > > > +	.driver = {
-> > > > +		.name = "rohm-bd71828",
-> > > > +		.of_match_table = bd71828_of_match,
-> > > > +	},
-> > > > +	.probe_new = &bd71828_i2c_probe,
-> > > > +};
-> > > > +
-> > > 
-> > > Nit: You can remove this line.
-> > 
-> > Will do.
-> > 
-> > > 
-> > > > +module_i2c_driver(bd71828_drv);
-> > > > +
-> > > > +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> > > > ");
-> > > > +MODULE_DESCRIPTION("ROHM BD71828 Power Management IC driver");
-> > > > +MODULE_LICENSE("GPL");
-> > > 
-> > > This does not match the header.
-> > 
-> > How is that? This is what is stated in module.h for the 
-> > MODULE_LICENSE:
-> > 
-> > /*
-> >  * The following license idents are currently accepted as indicating
-> > free
-> >  * software modules
-> >  *
-> >  *	"GPL"				[GNU Public License v2]
-> >  *	"GPL v2"			[GNU Public License v2]
-> >  *	"GPL and additional rights"	[GNU Public License v2 rights
-> > and more]
-> >  *	"Dual BSD/GPL"			[GNU Public License v2
-> >  *					 or BSD license choice]
-> >  *	"Dual MIT/GPL"			[GNU Public License v2
-> >  *					 or MIT license choice]
-> >  *	"Dual MPL/GPL"			[GNU Public License v2
-> >  *					 or Mozilla license choice]
-> >  *
-> >  * The following other idents are available
-> >  *
-> >  *	"Proprietary"			[Non free products]
-> >  *
-> >  * Both "GPL v2" and "GPL" (the latter also in dual licensed strings)
-> > are
-> >  * merely stating that the module is licensed under the GPL v2, but are
-> > not
-> >  * telling whether "GPL v2 only" or "GPL v2 or later". The reason why
-> > there
-> >  * are two variants is a historic and failed attempt to convey more
-> >  * information in the MODULE_LICENSE string. For module loading the
-> >  * "only/or later" distinction is completely irrelevant and does
-> > neither
-> >  * replace the proper license identifiers in the corresponding source
-> > file
-> >  * nor amends them in any way. The sole purpose is to make the
-> >  * 'Proprietary' flagging work and to refuse to bind symbols which are
-> >  * exported with EXPORT_SYMBOL_GPL when a non free module is loaded.
-> >  *
-> >  * In the same way "BSD" is not a clear license information. It merely
-> >  * states, that the module is licensed under one of the compatible BSD
-> >  * license variants. The detailed and correct license information is
-> > again
-> >  * to be found in the corresponding source files.
-> >  *
-> >  * There are dual licensed components, but when running with Linux it
-> > is the
-> >  * GPL that is relevant so this is a non issue. Similarly LGPL linked
-> > with GPL
-> >  * is a GPL combined work.
-> >  *
-> >  * This exists for several reasons
-> >  * 1.	So modinfo can show license info for users wanting to vet their
-> > setup
-> >  *	is free
-> >  * 2.	So the community can ignore bug reports including proprietary
-> > modules
-> >  * 3.	So vendors can do likewise based on their own policies
-> >  */
-> > #define MODULE_LICENSE(_license) MODULE_INFO(license, _license)
-> > 
-> > I have no objections on changing the license if needed but can you
-> > please tell me what is Ok combos then - I am having hard time when
-> > trying to select licenses which are acceptable for all.
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
+> ---
+>  .../bindings/input/msm-vibrator.txt           | 36 -------------------
+>  1 file changed, 36 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/input/msm-vibrator.txt
 > 
-> If you have this in your header:
-> 
->   GPL-2.0-only
-> 
-> Your MODULE tags should read:
-> 
-> MODULE_LICENSE("GPL v2");
 
-Nope, as per module.h, which is quoted here, either:
-	MODULE_LICENSE("GPL");
-or:
-	MODULE_LICENSE("GPL v2");
-mean the exact same thing.
-
-thanks,
-
-greg k-h
+Acked-by: Rob Herring <robh@kernel.org>
