@@ -2,115 +2,254 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 649CEC2D0C5
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 09:15:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5B22C43603
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 09:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C022465E
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 09:15:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0E19206A5
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 09:29:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="tc/PfHiq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbfLQJP5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 04:15:57 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:50236 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726571AbfLQJP5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 04:15:57 -0500
-X-AuditID: c0a8fbf4-183ff70000001fa6-67-5df89cca770e
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 46.55.08102.ACC98FD5; Tue, 17 Dec 2019 10:15:54 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Tue, 17 Dec 2019 10:15:49 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: Re: [PATCH v6 09/15] regulator: bd71828: Basic support for ROHM
- bd71828 PMIC regulators
-Thread-Topic: [PATCH v6 09/15] regulator: bd71828: Basic support for ROHM
- bd71828 PMIC regulators
-Thread-Index: AQHVsAfYI3uVDvKcOUypO4bwmJ45Qqe80OIAgAEzbYA=
-Date:   Tue, 17 Dec 2019 09:15:48 +0000
-Message-ID: <f56acdc65ab341f9c4ec0709fbfcc32b9f16d6ae.camel@fi.rohmeurope.com>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-         <5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191216145528.GE4161@sirena.org.uk>
-In-Reply-To: <20191216145528.GE4161@sirena.org.uk>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D46A00866A9A2D4495284B4D77EF2287@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726633AbfLQJ3m (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 04:29:42 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:39160 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726164AbfLQJ3m (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 04:29:42 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y11so10468154wrt.6
+        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2019 01:29:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version:content-transfer-encoding;
+        bh=alzctH88nkGm93shdXD815TJhUtkbcFmRm1xB1d3sFA=;
+        b=tc/PfHiqx1g9OhIykMghdMOuoCxnyJdDyPEmSV0knr75jcrkVRJZfKmHAYXm0FBKDs
+         UYcH2/HU30rCIORaulUyRPU2g20qK1XerGUoLQvh5R/AVgf6VVEscmumSNrBSMV2Qa3h
+         ra0DnMItw09nmDb4xque4pdDav7HoQeaCKg7vpm/fsrICZonkm40JYK5j0VJ6ROlMzTD
+         6ow4dYP5+wQH/Q3bqg5XlisumxdsJXmQU5VlttKhl7EA0dbEVuzAeDyGnQVIBHfvwqhG
+         OhKCA5abYNyJxzr33sL7Z2jL1BOIUcPqfFWI3maLedUfMIYXp9Vi1jawxUDhzqA0CaKQ
+         +riw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version:content-transfer-encoding;
+        bh=alzctH88nkGm93shdXD815TJhUtkbcFmRm1xB1d3sFA=;
+        b=WM62aqu0mcb02Ty1+BBveNOyZYCAhyZfbRSFTmKoevVGDhO8lXipJWso81kluMrFTg
+         twQHwgEDVs3ZRn3K0cswd+uU9H4VkmELs8wS1bx8qPIYaY+ib8I+aoisJm5mT7nGIxMk
+         L1/kQWg+9+nJeaBOOMs/95S/aX/JBPYt4erraFGRhpzyGeWoOcYxh0wxcj+LnGNuN5T/
+         5czULuF6tgz70/LoZ8cr5eqoN+sc66Q6ekAfHEMRs0dzEaKsTmrvOAJB0V00e/UY0A4z
+         5lmUzMDCSa4rRb8b6EO6+1VcXp6VpPq1WhSpOcQMpJgw4CpWJsg8RAbCrJMk0ih+0zM6
+         SO/g==
+X-Gm-Message-State: APjAAAUe5VTRSHuSCcSWLZLgJuZTVjgHXOISF3Ru0sQNtQZBFxjkPOg5
+        tCSYmPWTGsovhxv/8uXpQDCCig==
+X-Google-Smtp-Source: APXvYqy/DS/azJ653mUdjjacLdbuxYCf410YHUG5mlvieCYQz0Ahh9MbX5t88z0FLKKawrQe+Eanww==
+X-Received: by 2002:a5d:6349:: with SMTP id b9mr37238202wrw.346.1576574979348;
+        Tue, 17 Dec 2019 01:29:39 -0800 (PST)
+Received: from localhost (uluru.liltaz.com. [163.172.81.188])
+        by smtp.gmail.com with ESMTPSA id q8sm2258746wmq.3.2019.12.17.01.29.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 17 Dec 2019 01:29:38 -0800 (PST)
+References: <20191206074052.15557-1-jian.hu@amlogic.com> <20191206074052.15557-3-jian.hu@amlogic.com> <1j8snhluhg.fsf@starbuckisacylon.baylibre.com> <741284be-2ae8-1102-22bc-c510e822c883@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>, Rob Herring <robh@kernel.org>,
+        "Martin Blumenstingl" <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 2/6] clk: meson: add support for A1 PLL clock ops
+In-reply-to: <741284be-2ae8-1102-22bc-c510e822c883@amlogic.com>
+Date:   Tue, 17 Dec 2019 10:29:37 +0100
+Message-ID: <1jk16vb8qm.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tf0wTZxj2u7veHT/OHRXks07jurjNLSgYtnxuSojxx5k4ssRky1ywPeSk
-        HaXFa1lk/iGRqQMVC0gMpUWlMIkQKwWiokZSKmpnWBpPrEFdmMTfAaYMUFB356nw1/d87/M+
-        z/P+8b40rvVSOtpsdQiilbfoyWiis3GiJSnkHs9MvnJpLqoPX6fQnsE/KPSyoptCI54Qgar6
-        B0g00LkHoMPBHg3a+2ebBhV7fSTqaz9JoL//uwjQqPQ7hg5OHsPQv/vuaNDR3fUEaj08CdC1
-        DjeJ2p+cAKi7SSJRw40whtwNlwk09LQEQ+HQalQVGqTQ7dBFEhWHIzjadT5IoVe9LQQq61mb
-        Po9rrm0G3MSLCsANRXZRXG3zdu6M6zbF+Y+XkNyt3nMkd8HTTHHeskoNN3q1nODuHfUR3KXI
-        KYw7VPsc43z7goBrbBqjuGf++d+xG2OWZ/GOXzaYc6xL0owxplppR35F9LZjrl6iCAxHlYIo
-        GrKp8FC3pCkF0bSWvQ5gl/M+pX4uA7j/SRsoBTRNssth6U1KEcSzSbDqhZdUMM5KMbDm7E8K
-        nsVmQV/Xbkzt2QwvPPC+xV9D6YgHVzDBLoTOcORNnWEz4F23D1ezrgLYJ1W+MY1il8J/HncS
-        CgbsPFhSNIipYYnQf29Mo07Nwvpzf+EqToAP7756W9fD88/7CWVmnF0EfR1LVJgOD3R+orp8
-        BA/u7afUEeLgleoBwglmu6YFuKbErimxa5rYNU18BGiOA5jHmy05vENIWSwKBYtFmylPfjbb
-        8vxAXbqR0+B1YF0AYDQIgDk0pk9gYteOZ2pnZtmyC0283WQQCyyCPQAgjevjmdMLxjK1TDZf
-        +Ksg2t5Rc2lCn8h82l+eqWWVrFxByBfEd+yHNK2HzNNq2TROFHKEbVvMFscUjdFRinm0Lt4u
-        WLMFkS9wmAzKchjs8nYoVKyc+7F8GVrGns/nyVVVGgJf0M6HnjqcDnoa6nAtYbVZBV0iU1gj
-        t7JKq6nA+j7oEUikgX4W43TJbKx8ee99HskRmByxNGNUiXDwU5SuCPx2c8V48k7jB8XSluRy
-        5kZ225dMwFDT2lXcdG3FHXvEGZizJtyzMc1rzm1YPzEjddmGnw2tPa/9kVWNzPBnYzMQPBEb
-        nL1y/mSTbXLolGRMivvq+/Tq1APg2+HKReVp7bqtt9adTW2xGEt2/liRe3I0oWPE/XjrJulZ
-        30Jja9kPKd/oCbuJT/kcF+38/5X8RXI2BAAA
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gTWFyaywNCg0KT24gTW9uLCAyMDE5LTEyLTE2IGF0IDE0OjU1ICswMDAwLCBNYXJrIEJy
-b3duIHdyb3RlOg0KPiBPbiBXZWQsIERlYyAxMSwgMjAxOSBhdCAxMTo0NjoxMUFNICswMjAwLCBN
-YXR0aSBWYWl0dGluZW4gd3JvdGU6DQo+IA0KPiA+ICtzdGF0aWMgaW50IGJkNzE4MjhfbGRvNl9n
-ZXRfdm9sdGFnZShzdHJ1Y3QgcmVndWxhdG9yX2RldiAqcmRldikNCj4gPiArew0KPiA+ICsJcmV0
-dXJuIEJENzE4MjhfTERPXzZfVk9MVEFHRTsNCj4gPiArfQ0KPiA+ICsNCj4gPiArc3RhdGljIGNv
-bnN0IHN0cnVjdCByZWd1bGF0b3Jfb3BzIGJkNzE4MjhfbGRvNl9vcHMgPSB7DQo+ID4gKwkuZW5h
-YmxlID0gcmVndWxhdG9yX2VuYWJsZV9yZWdtYXAsDQo+ID4gKwkuZGlzYWJsZSA9IHJlZ3VsYXRv
-cl9kaXNhYmxlX3JlZ21hcCwNCj4gPiArCS5nZXRfdm9sdGFnZSA9IGJkNzE4MjhfbGRvNl9nZXRf
-dm9sdGFnZSwNCj4gDQo+IFlvdSBjYW4ganVzdCBzZXQgZml4ZWRfdVYgaW4gdGhlIHJlZ3VsYXRv
-cl9kZXNjLCB5b3UgZG9uJ3QgbmVlZCBhDQo+IGdldF92b2x0YWdlKCkgb3BlcmF0aW9uIGhlcmUu
-ICBPdGhlcndpc2UgdGhpcyBsb29rcyBnb29kLCBJJ2xsIGFwcGx5DQo+IGl0DQo+IGFuZCBwbGVh
-c2Ugc2VuZCBhbiBpbmNyZW1lbnRhbCBmaXggZm9yIHRoaXMuDQoNCkp1c3QgdG8gY29uZmlybSAt
-IGFyZSB5b3UgYWxzbyB0YWtpbmcgaW4gdGhlDQpbUEFUQ0ggdjYgMDgvMTVdIHJlZ3VsYXRvcjog
-YmQ3MTh4NzogU3BsaXQgZHJpdmVyIHRvIGNvbW1vbiBhbmQgYmQ3MTh4Nw0Kc3BlY2lmaWMgcGFy
-dHMNCg0KSSB0aGluayB0aGVyZSBpcyBhIGRlcGVuZGVuY3kuIChJIGFtIHByZXBhcmluZyBuZXh0
-IHZlcnNpb24gb2YgdGhlDQpzZXJpZXMgc28gSSdsbCBkcm9wIHRoZSBhbHJlYWR5IGFwcGxpZWQg
-cGF0Y2hlcy4pDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0K
+
+On Tue 17 Dec 2019 at 09:41, Jian Hu <jian.hu@amlogic.com> wrote:
+
+> On 2019/12/12 18:16, Jerome Brunet wrote:
+>>
+>> On Fri 06 Dec 2019 at 08:40, Jian Hu <jian.hu@amlogic.com> wrote:
+>>
+>>> The A1 PLL design is different with previous SoCs. The PLL
+>>> internal analog modules Power-on sequence is different
+>>> with previous, and thus requires a strict register sequence to
+>>> enable the PLL.
+>>>
+>>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>>> ---
+>>>   drivers/clk/meson/clk-pll.c | 21 +++++++++++++++++++++
+>>>   drivers/clk/meson/clk-pll.h |  1 +
+>>>   drivers/clk/meson/parm.h    |  1 +
+>>>   3 files changed, 23 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+>>> index ddb1e5634739..4aff31a51589 100644
+>>> --- a/drivers/clk/meson/clk-pll.c
+>>> +++ b/drivers/clk/meson/clk-pll.c
+>>> @@ -318,6 +318,23 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>>>   	struct clk_regmap *clk =3D to_clk_regmap(hw);
+>>>   	struct meson_clk_pll_data *pll =3D meson_clk_pll_data(clk);
+>>>   +	/*
+>>> +	 * The A1 design is different with previous SoCs.The PLL
+>>> +	 * internal analog modules Power-on sequence is different with
+>>> +	 * previous, and thus requires a strict register sequence to
+>>> +	 * enable the PLL.
+>>
+>> The code does something more, not completly different. This comment is
+>> not aligned with what the code does
+> ok, I will correct the comment.
+>>
+>>> +	 */
+>>> +	if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+>>> +		/* Enable the pll */
+>>> +		meson_parm_write(clk->map, &pll->en, 1);
+>>> +		udelay(10);
+>>> +		/* Enable the pll self-adaption module current */
+>>> +		meson_parm_write(clk->map, &pll->current_en, 1);
+>>> +		udelay(40);
+>>> +		meson_parm_write(clk->map, &pll->rst, 1);
+>>> +		meson_parm_write(clk->map, &pll->rst, 0);
+>>
+>> Here you enable the PLL and self adaptation module then reset the PLL.
+>> However:
+>> #1 when you enter this function, the PLL should already by in reset
+>> and disabled
+>> #2 the code after that will reset the PLL again
+> For A1 PLLs, There is no reset bit, It will not reset the PLL.
+> And in V2, you mentioned PARM 'rst' can be used for one toggling, And 'rs=
+t'
+> is used for BIT(6) in CTRL2.
+>
+
+oh my ! What is it then ? Why do you need to toggle it ? What does is do ?
+
+> Quote V2 the HIFI PLL init_regs definition=EF=BC=9A
+>
+>
+> +static const struct reg_sequence a1_hifi_init_regs[] =3D {
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL1, .def =3D 0x01800000 },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL2, .def =3D 0x00001100 },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL3, .def =3D 0x100a1100 },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL4, .def =3D 0x00302000 },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL0, .def =3D 0x01f18440 },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL0, .def =3D 0x11f18440, .delay_us =3D 10=
+ },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL0, .def =3D 0x15f18440, .delay_us =3D 40=
+ },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL2, .def =3D 0x00001140 },
+> +	{ .reg =3D ANACTRL_HIFIPLL_CTRL2, .def =3D 0x00001100 },
+> +};
+>
+> So maybe another new PARM should be defined to avoid the ambiguity.
+> What do you think about it?
+
+This is not the point of my comment Jian !
+
+I'm assuming here that you have tested your v4 before sending and that
+it work (hopefully)
+
+The fact is that with this code, when disabled the bit behind rst
+(whatever it is) is set. So when you get to enable the bit is already set.
+The code you sent does the same as the snip I gave you in the reply.
+
+Now, if your PLL is THAT different, maybe it would be best if you could
+clearly explain how it works, what bit should be set and why. Then we
+will be able to figure out how the driver has to be restructured.
+
+>
+>>
+>> So if what you submited works, inserting the following should accomplish
+>> the same thing:
+>>
+>> ---8<---
+>> diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+>> index 489092dde3a6..9b38df0a7682 100644
+>> --- a/drivers/clk/meson/clk-pll.c
+>> +++ b/drivers/clk/meson/clk-pll.c
+>> @@ -330,6 +330,13 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
+>>          /* Enable the pll */
+>>          meson_parm_write(clk->map, &pll->en, 1);
+>>
+>> +       if (MESON_PARM_APPLICABLE(&pll->current_en)) {
+>> +               udelay(10);
+>> +               /* Enable the pll self-adaption module current */
+>> +               meson_parm_write(clk->map, &pll->current_en, 1);
+>> +               udelay(40);
+>> +       }
+>> +
+>>          /* Take the pll out reset */
+>>          meson_parm_write(clk->map, &pll->rst, 0);
+>> --->8---
+>>
+>>
+>>
+>>
+>>> +	}
+>>> +
+>>>   	/* do nothing if the PLL is already enabled */
+>>>   	if (clk_hw_is_enabled(hw))
+>>>   		return 0;
+>>
+>> In any case, nothing should be done on the clock before this check
+>> otherwise you might just break the clock
+>>
+> OK, I will put the enabled check ahead.
+>>> @@ -347,6 +364,10 @@ static void meson_clk_pll_disable(struct clk_hw *h=
+w)
+>>>     	/* Disable the pll */
+>>>   	meson_parm_write(clk->map, &pll->en, 0);
+>>> +
+>>> +	/* Disable PLL internal self-adaption module current */
+>>> +	if (MESON_PARM_APPLICABLE(&pll->current_en))
+>>> +		meson_parm_write(clk->map, &pll->current_en, 0);
+>>>   }
+>>>     static int meson_clk_pll_set_rate(struct clk_hw *hw, unsigned long
+>>> rate,
+>>> diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+>>> index 367efd0f6410..30f039242a65 100644
+>>> --- a/drivers/clk/meson/clk-pll.h
+>>> +++ b/drivers/clk/meson/clk-pll.h
+>>> @@ -36,6 +36,7 @@ struct meson_clk_pll_data {
+>>>   	struct parm frac;
+>>>   	struct parm l;
+>>>   	struct parm rst;
+>>> +	struct parm current_en;
+>>>   	const struct reg_sequence *init_regs;
+>>>   	unsigned int init_count;
+>>>   	const struct pll_params_table *table;
+>>> diff --git a/drivers/clk/meson/parm.h b/drivers/clk/meson/parm.h
+>>> index 3c9ef1b505ce..c53fb26577e3 100644
+>>> --- a/drivers/clk/meson/parm.h
+>>> +++ b/drivers/clk/meson/parm.h
+>>> @@ -20,6 +20,7 @@
+>>>   	(((reg) & CLRPMASK(width, shift)) | ((val) << (shift)))
+>>>     #define MESON_PARM_APPLICABLE(p)		(!!((p)->width))
+>>> +#define MESON_PARM_CURRENT(p)			(!!((p)->width))
+>>
+>> Why do we need that ?
+> OK, I will remove it ,and use 'MESON_PARM_APPLICABLE' instead
+>>
+>>>     struct parm {
+>>>   	u16	reg_off;
+>>
+>> .
+>>
+
