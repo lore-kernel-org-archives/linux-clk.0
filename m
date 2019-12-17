@@ -2,110 +2,129 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC2B2C43603
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 08:25:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA89EC43603
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 08:35:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96DEE2146E
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 08:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576571102;
-	bh=bZFigZLvzDu1g+N6Jc7cJNMSgtBaJrpe7C/fnRca+dE=;
-	h=In-Reply-To:References:Cc:To:From:Subject:Date:List-ID:From;
-	b=ZLrB2vUxiImsHFHMz26n204vRLeYm9hmkcqzmxJedvjyjYWlMUAAUwLpEmrKjuCyR
-	 2ilN1ss9YZDXA9JYmCcucQot9dOlqRTibHDWnF1lcapLbWN3iWSlaW3KTt1x5oAw8j
-	 eMzzyz4Vga+tcEsrt+/BQdrNgXsO/4KGGXCP76H0=
+	by mail.kernel.org (Postfix) with ESMTP id 87A132072D
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 08:35:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725805AbfLQIZC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 03:25:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36490 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725769AbfLQIZC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 17 Dec 2019 03:25:02 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 424892072D;
-        Tue, 17 Dec 2019 08:25:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576571101;
-        bh=bZFigZLvzDu1g+N6Jc7cJNMSgtBaJrpe7C/fnRca+dE=;
-        h=In-Reply-To:References:Cc:To:From:Subject:Date:From;
-        b=PDxbQ6NoBkf49Li2REiyNLweDfeWSx7ggVzm+kPmnIfRf8cfwcaImBm0FWY3ZiWKI
-         VhdNZ8HfBv6A0FhPohejXie2oyGQ4cy6khQp1KUoEQJS1uzzJ95bfb7yH+KvnHc4GG
-         zu7oBtys2Q9zjsgW8jftVDK75OrQW6X5KgktxYYc=
-Content-Type: text/plain; charset="utf-8"
+        id S1726699AbfLQIfq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 03:35:46 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:46783 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726520AbfLQIfp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 03:35:45 -0500
+Received: from [37.163.141.23] (port=40521 helo=[192.168.43.3])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1ih8KT-0002cv-Fc; Tue, 17 Dec 2019 09:35:41 +0100
+Subject: Re: [PATCH 07/10] i2c: Add driver for AD242x bus controller
+To:     Daniel Mack <daniel@zonque.org>, Wolfram Sang <wsa@the-dreams.de>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        broonie@kernel.org, lee.jones@linaro.org, lars@metafoo.de,
+        pascal.huerst@gmail.com
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-9-daniel@zonque.org>
+ <64adf5d7-754a-f1da-aa9b-11579c5a2780@lucaceresoli.net>
+ <20191212163315.GA3932@kunai>
+ <482316ef-775a-cb7b-015e-e00463503e6b@zonque.org>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <4f2e1332-eac3-e54d-5de8-b84a76cb1a34@lucaceresoli.net>
+Date:   Tue, 17 Dec 2019 09:35:39 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191217044635.127912-1-olof@lixom.net>
-References: <20191217044146.127200-1-olof@lixom.net> <20191217044635.127912-1-olof@lixom.net>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Olof Johansson <olof@lixom.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Olof Johansson <olof@lixom.net>
-From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: declare clk_core_reparent_orphans() inline
-User-Agent: alot/0.8.1
-Date:   Tue, 17 Dec 2019 00:25:00 -0800
-Message-Id: <20191217082501.424892072D@mail.kernel.org>
+In-Reply-To: <482316ef-775a-cb7b-015e-e00463503e6b@zonque.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Olof Johansson (2019-12-16 20:46:35)
-> A recent addition exposed a helper that is only used for
-> CONFIG_OF. Instead of figuring out best place to have it in the order
-> of various functions, just declare it as explicitly inline, and the
-> compiler will happily handle it without warning.
->=20
-> (Also fixup of a single stray empty line while I was looking at the code)
->=20
-> Fixes: 66d9506440bb ("clk: walk orphan list on clock provider registratio=
-n")
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> ---
->=20
-> v3: ACTUALLY amend this time. Sigh. Time to go home.
->=20
+Hi Daniel,
 
-Isn't it simple enough to just move the function down to CONFIG_OF in
-drivers/clk/clk.c?
+On 15/12/19 21:27, Daniel Mack wrote:
+> Hi,
+> 
+> Thanks for the review!
+> 
+> On 12/12/2019 5:33 pm, Wolfram Sang wrote:
+>> Hi Luca,
+>>
+>> thanks for the review!
+>>
+>>> good, but I think there's a problem in this function. A "normal"
+>>> master_xfer function issues a repeated start between one msg and the
+>>> next one, at least in the typical case where all msgs have the same
+>>> slave address. Your implementation breaks repeated start. At first sight
+>>> we might need more complex code here to coalesce all consecutive msgs
+>>> with the same address into a single i2c_transfer() call.
+>>
+>> Note that it is by far the standard case that all messages in a transfer
+>> have the same client address (99,999%?). But technically, this is not a
+>> requirement and the repeated start on the bus is totally independent of
+>> the addresses used. It is just a master wanting to send without being
+>> interrupted by another master.
+> 
+> I'm not quite sure I understand.
+> 
+> Let's assume the following setup. An i2c client (some driver code) is
+> sending a list of messages to the a2b xfer function, which in turn is
+> logically connected to a 'real' i2c bus master that'll put the data on
+> the wire.
+> 
+> The a2b code has to tell the 'master node' the final destination of the
+> payload by programming registers on its primary i2c address, and then
+> forwards the messages to its secondary i2c address. The layout of the
+> messages don't change, and neither do the flags; i2c messages are being
+> sent as i2c messages, except their addresses are changed, a bit like NAT
+> in networking. That procedure is described on page 3-4 of the TRM,
+> "Remote Peripheral I2C Accesses".
+> 
+> The 'real' i2c master that handles the hardware bus is responsible for
+> adding start conditions, and as the messages as such are untouched, I
+> believe it should do the right thing. The code in my xfer functions
+> merely suppresses reprogramming remote addresses by remembering the last
+> one that was used, but that is independent of the start conditions on
+> the wire.
 
-----8<----
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ae2795b30e06..6a11239ccde3 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3277,13 +3277,6 @@ static void clk_core_reparent_orphans_nolock(void)
- 	}
- }
-=20
--static void clk_core_reparent_orphans(void)
--{
--	clk_prepare_lock();
--	clk_core_reparent_orphans_nolock();
--	clk_prepare_unlock();
--}
--
- /**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-@@ -4193,6 +4186,13 @@ int clk_notifier_unregister(struct clk *clk, struct =
-notifier_block *nb)
- EXPORT_SYMBOL_GPL(clk_notifier_unregister);
-=20
- #ifdef CONFIG_OF
-+static void clk_core_reparent_orphans(void)
-+{
-+	clk_prepare_lock();
-+	clk_core_reparent_orphans_nolock();
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * struct of_clk_provider - Clock provider registration structure
-  * @link: Entry in global list of clock providers
+My concern is not about the start condition, it's about the *repeated*
+start condition.
+
+The first question is whether the A2B chips can do it. What if the host
+processor sets a slave chip address and then issues two messages
+separated by a repeated start condition? Will the slave transceiver emit
+a repeated start condition too?
+
+If the answer is "yes", then the issue moves to the driver code. A
+master xfer function receives a set of messages that are normally
+emitted with a repeated start between each other. But ad242x_i2c_xfer()
+splits the msgs and calls i2c_transfer_buffer_flags() with one msg at a
+time. i2c_transfer_buffer_flags() then will emit a stop condition.
+
+This is not necessarily a problem, unless multi-master is used, but if
+there are limitations or deviations from the standard they should at
+least be well known and documented.
+
+-- 
+Luca
