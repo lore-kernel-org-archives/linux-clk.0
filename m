@@ -2,110 +2,78 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D81BBC43603
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 04:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFD29C2D0CD
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 05:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAFF3206B7
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 04:46:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="HJVh2+Bu"
+	by mail.kernel.org (Postfix) with ESMTP id A82A524687
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 05:12:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfLQEqm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 16 Dec 2019 23:46:42 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33801 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726841AbfLQEqm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 16 Dec 2019 23:46:42 -0500
-Received: by mail-pf1-f195.google.com with SMTP id l127so5046111pfl.1
-        for <linux-clk@vger.kernel.org>; Mon, 16 Dec 2019 20:46:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=0F0MkR1JRqDekqk4jUNdiQGr6cEsKuLu66z/RkLTN2A=;
-        b=HJVh2+BuYsEZ9uTAWiEcNpkne75QSKbMD3rtUSoALv40QtftJv0tRDneAFitaNW7gL
-         GvNsN+oP1fgi/rH2fE93+tqe66T25wAu3mhNtg3omMgAwY9kDkH45EXgTy6qk1Ox45/5
-         Hj9JKZXhnK5D3jYBNuCLy1az04HIh/ayTcbiA3Jniuu4LHi8Oc0LhuKPOETczWpfb7op
-         FxqwKv4m+Hi3VAp5fANaFp5Ibiv7HodrrJeXMXet7pGI8a13ESgjzM00wiXk1qyIcc58
-         4Zx9BQC/zbdg4Sz7rz+cJM4p9t8SyfdWeIHAZMdvgAwhZ3u7Aag8Y57F1lrZ0LWreaqG
-         809g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=0F0MkR1JRqDekqk4jUNdiQGr6cEsKuLu66z/RkLTN2A=;
-        b=TaqqEMvH8TIN7eaqDvPtwMPyU/XNrJ8CJMCpVa1nxDgM/hHJzmfBgjk3U3HHm2xTIE
-         RdPvkRGLoPtwfi1d4lu3FjO+y+nBksAq5uF/pa8rxSRps7aOEccH7jCK9UJWqc+pzLuT
-         5JcjuRfj25C/PzxtdoPw+VQLPDTsDTIT0CH/tSiiEFK8UZlH+qDJWfhtNHukfq039RqM
-         u4OHJiyUGKxxAUlaHjA4PIejHCAuaKnMH6AMVeR6aMAO10Bq3G75hQV9ytUxh6DLXa6y
-         /NIav7adVGEFijMsirjcCx1P/egbLMhPCdDNMnqab1RwU6NVZENC5jWKkRYeORVl3LMC
-         936Q==
-X-Gm-Message-State: APjAAAUqatozvfq5ZdrEbXmvluIt/E7YpLTwRjLs4HZy4wRq9m0q4THX
-        pAnDXwPF6JeSPk1xMRRt46yFNQ==
-X-Google-Smtp-Source: APXvYqyPrSASNn9/ioGFsWW1l32w1KIj82W7Q6YFe8j8rFs1uwbd2Ec+cbkR57rojUImMim9MClHFA==
-X-Received: by 2002:a63:d00f:: with SMTP id z15mr22767593pgf.143.1576558001540;
-        Mon, 16 Dec 2019 20:46:41 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id k60sm1201638pjh.22.2019.12.16.20.46.40
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 16 Dec 2019 20:46:40 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH v3] clk: declare clk_core_reparent_orphans() inline
-Date:   Mon, 16 Dec 2019 20:46:35 -0800
-Message-Id: <20191217044635.127912-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20191217044146.127200-1-olof@lixom.net>
-References: <20191217044146.127200-1-olof@lixom.net>
+        id S1727715AbfLQFMs (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 00:12:48 -0500
+Received: from relmlor2.renesas.com ([210.160.252.172]:16909 "EHLO
+        relmlie6.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726920AbfLQFMs (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 00:12:48 -0500
+Date:   17 Dec 2019 14:12:46 +0900
+X-IronPort-AV: E=Sophos;i="5.69,324,1571670000"; 
+   d="scan'208";a="34401499"
+Received: from unknown (HELO relmlir5.idc.renesas.com) ([10.200.68.151])
+  by relmlie6.idc.renesas.com with ESMTP; 17 Dec 2019 14:12:46 +0900
+Received: from morimoto-PC.renesas.com (unknown [10.166.18.140])
+        by relmlir5.idc.renesas.com (Postfix) with ESMTP id 7A74B400965A;
+        Tue, 17 Dec 2019 14:12:46 +0900 (JST)
+Message-ID: <87immfh6wh.wl-kuninori.morimoto.gx@renesas.com>
+From:   Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Dmitry Osipenko <digetx@gmail.com>, linux-pm@vger.kernel.org,
+        "Enrico Weigelt, metux IT consult" <lkml@metux.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] PM / devfreq: tegra30: add COMMON_CLK dependency
+In-Reply-To: <87sglo4xr0.wl-kuninori.morimoto.gx@renesas.com>
+References: <CGME20191213044804epcas1p34eaf8872b5688c01255931c79bfd0ef0@epcas1p3.samsung.com>
+        <87v9qk4yrk.wl-kuninori.morimoto.gx@renesas.com>
+        <23cc9bbb-f6a4-fc1c-7678-79040d3a18aa@samsung.com>
+        <87sglo4xr0.wl-kuninori.morimoto.gx@renesas.com>
+User-Agent: Wanderlust/2.15.9 Emacs/24.5 Mule/6.0
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-A recent addition exposed a helper that is only used for
-CONFIG_OF. Instead of figuring out best place to have it in the order
-of various functions, just declare it as explicitly inline, and the
-compiler will happily handle it without warning.
 
-(Also fixup of a single stray empty line while I was looking at the code)
+Hi Chanwoo again
 
-Fixes: 66d9506440bb ("clk: walk orphan list on clock provider registration")
-Signed-off-by: Olof Johansson <olof@lixom.net>
+> > > Compile-testing the new driver on platforms without CONFIG_COMMON_CLK
+> > > leads to a link error:
+> > > 
+> > > 	drivers/devfreq/tegra30-devfreq.o: In function `tegra_devfreq_target':
+> > > 	tegra30-devfreq.c:(.text+0x288): undefined reference to `clk_set_min_rate'
+> > > 
+> > > Add a dependency on COMMON_CLK to avoid this.
+> > > 
+> > > Fixes: 35f8dbc727212 ("PM / devfreq: tegra: Enable COMPILE_TEST for the driver")
+> > > Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+> > > ---
+> (snip)
+> > Thanks for the fixup.
+> > 
+> > But, it was merged as following:
+> > - https://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/linux.git/commit/?h=devfreq-next&id=252ef98ed524612667e2e2a0ce065fe21e80ec93
+
+It is for v5.6 ?
+SH needs it for v5.5-rcX
+
+Thank you for your help !!
+Best regards
 ---
-
-v3: ACTUALLY amend this time. Sigh. Time to go home.
-
- drivers/clk/clk.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index ae2795b30e060..2b0f54b6af9d5 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3277,7 +3277,7 @@ static void clk_core_reparent_orphans_nolock(void)
- 	}
- }
- 
--static void clk_core_reparent_orphans(void)
-+static void inline clk_core_reparent_orphans(void)
- {
- 	clk_prepare_lock();
- 	clk_core_reparent_orphans_nolock();
-@@ -3442,7 +3442,6 @@ static int __clk_core_init(struct clk_core *core)
- 
- 	clk_core_reparent_orphans_nolock();
- 
--
- 	kref_init(&core->ref);
- out:
- 	clk_pm_runtime_put(core);
--- 
-2.11.0
-
+Kuninori Morimoto
