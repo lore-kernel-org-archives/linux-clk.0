@@ -2,148 +2,309 @@ Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA33AC2D0C8
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 13:46:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B87DBC2D0D3
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 13:54:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9042321739
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 13:46:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D4962067C
+	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 13:54:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XK994wVV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lTG+PpfF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728554AbfLQNqU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 08:46:20 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:36022 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728557AbfLQNqU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 08:46:20 -0500
-Received: by mail-wm1-f68.google.com with SMTP id p17so3248562wma.1
-        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2019 05:46:18 -0800 (PST)
+        id S1728594AbfLQNyi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 08:54:38 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40104 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728568AbfLQNye (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 08:54:34 -0500
+Received: by mail-wr1-f66.google.com with SMTP id c14so11395720wrn.7
+        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2019 05:54:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=kZuWd/3jkSU468vrZtKybTAjJX1Jep24XVi1Wi4q33k=;
-        b=XK994wVVrkzFy0kYAn6YNVPCGij+VqhuMZC2yPF2zmpoSL1t182ncy8nuiNo5zng4Z
-         WPFfdmKerYYyv2faiAywqYmjUlJWN8c8sDMRIiX2QhGVIqH9X2zcK+ROViyaRiDUZfjN
-         MS46kihklyILLInJAkBt/mjzCwvf4dpgp0yac7AA3B1aclCBtqlsVz1qRWbAJUzDd6Wp
-         walFi+txkCkoY1p6ZAmsmDSUtNZN4W9uvEoo1yOW0pXVuhMT3ppXifn3dvN1DFIBG6hT
-         /2vATZu+R8Iuq8zTRgwX1otltmSndbWvbKrOSQtab37hC5Xokm6YJYdFkuILS1JKU5S4
-         RQMA==
+        bh=oA8lLtw5+Ki0rvk2E5DHDZT8Xzrj3ly5MFjUCZJfvp4=;
+        b=lTG+PpfFsBwem7LWNxasDI84APR3q/FRpiSMZtA97AEzPrTw2ZyGUJQg/2FxOcmzPj
+         mR8fMTv8VyALWzwIWUVsBn08FAh1PZukJmgC3lBgktyX0rejOrHDGoS+brxtqiakPnkw
+         +Lp5ryB6ZwG4GA7LfhEGedR1eicJaEWe+LMu4udE1xyaJyW9uUIpiZsMoP6UMmVWXSTX
+         pa5+4HCL7T03BoJ5cUrNB0Dol/uKTrsHHawoIZQSQ9Tgj1fhu8JpdmCFKDMsIeTjeWop
+         bSBopk1rH/KXWuS/YL9zR1B30nDVAx0UFUfY375pnL/CKYQhEI+hIlOXnU5xyuBlv5uz
+         bVfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=kZuWd/3jkSU468vrZtKybTAjJX1Jep24XVi1Wi4q33k=;
-        b=GcrbSBOUDOR6jd7v+8Wctaxb/I5gORctXUuJI4wdx0B7qtm538qcDwhMqnp+wGxnHm
-         8jCw04NeZTqKS+oJ+iqXBD+g9zarMmeWBlVHOrBInJXgcW8rVBYwSoiXJ7/qrlIzBQEU
-         U+U43TwDHfbcZRSOhs8pibPkFXAmcBJkytNBYI2BwNJ91o6uGCTY2Gw7iSW8eiOVCTYe
-         g/CJhgXTxV6eGKD6EzNCVFBFyzVB22hcz4lGEsBjh4BjE8NMEsX7x+/9A0lkhxKfn9RN
-         ghnAYr3klQjcwG6nBw9v78Ao0Pez6zXba17j1i51phx2d3z7758xygyiuw/89iNg5l2Y
-         e3IQ==
-X-Gm-Message-State: APjAAAXOhvY9YltGhlFPpitpxmwCPmmwAQfytirvJy1jqmXsCKNE21nm
-        qfE5EfZKw1h7Z5bBV9GLCNcaow==
-X-Google-Smtp-Source: APXvYqyNCklkEVENRexg11/lVsAZF67JMyMSJB9/s1vxBi0hQ6lOnAJ1HSWjhfQSwKh/52Z4A1/krA==
-X-Received: by 2002:a1c:3d07:: with SMTP id k7mr5986321wma.79.1576590377924;
-        Tue, 17 Dec 2019 05:46:17 -0800 (PST)
+        bh=oA8lLtw5+Ki0rvk2E5DHDZT8Xzrj3ly5MFjUCZJfvp4=;
+        b=XCC/R2LQCro5a+dptQymPIznDAXyUSN70vrqLADVUBA1GUcVAnHa37l0IrdckL4Yv9
+         Nn9Bv9YTXGI5nBQMAog/jsJamOUQpgYP17XEJxyZxGaVquoz0rXWIYLTXbRkYLuexfXQ
+         +JWLgQMnz3FC3ov3SoqmorgJqYvOmM96kwcJZBLc0fRPDRqBbzyZEsA8S6VygO2+hl2g
+         h321dix2MTixRhnA/GL83km0fYi5NxIPNw6NYVlNvTgGj+7oEL/HFETSbeCEKyaV/6CI
+         5OqW1LSvlSLdaBAVs5HiINIGLAlf4O8Bdrjb+uudT91A6od83vnv+trntx6NNYiYIWWD
+         Ni4g==
+X-Gm-Message-State: APjAAAUIr/uNq3I8ZjqwRUiSWJHyTdS68Su4ThyszjTU7aNIPvb54djI
+        yuuVhRChOO780R5gnIbXj/4HChvXXd8=
+X-Google-Smtp-Source: APXvYqwHiX7Jsxay7dET6g2LF2XE9E9hwjKYARcptPGb5BljEooR+jLCasy9A33y/rTtfMlkvAcXww==
+X-Received: by 2002:adf:f80c:: with SMTP id s12mr36904115wrp.1.1576590871292;
+        Tue, 17 Dec 2019 05:54:31 -0800 (PST)
 Received: from dell ([2.27.35.132])
-        by smtp.gmail.com with ESMTPSA id r15sm2967823wmh.21.2019.12.17.05.46.17
+        by smtp.gmail.com with ESMTPSA id x10sm25415862wrp.58.2019.12.17.05.54.29
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 05:46:17 -0800 (PST)
-Date:   Tue, 17 Dec 2019 13:46:17 +0000
+        Tue, 17 Dec 2019 05:54:30 -0800 (PST)
+Date:   Tue, 17 Dec 2019 13:54:30 +0000
 From:   Lee Jones <lee.jones@linaro.org>
-To:     Daniel Mack <daniel@zonque.org>
-Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        broonie@kernel.org, lars@metafoo.de, pascal.huerst@gmail.com
-Subject: Re: [PATCH 06/10] mfd: Add core driver for AD242x A2B transceivers
-Message-ID: <20191217134617.GK18955@dell>
-References: <20191209183511.3576038-1-daniel@zonque.org>
- <20191209183511.3576038-8-daniel@zonque.org>
- <20191217133952.GJ18955@dell>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Subject: Re: [PATCH v6 05/15] mfd: bd71828: Support ROHM BD71828 PMIC - core
+Message-ID: <20191217135430.GM18955@dell>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <252de5646fedfec7c575269843a47091fe199c79.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <20191216164641.GC18955@dell>
+ <5593db6b3328c0a1a7069d839f5c777b4b3822b6.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20191217133952.GJ18955@dell>
+In-Reply-To: <5593db6b3328c0a1a7069d839f5c777b4b3822b6.camel@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 17 Dec 2019, Lee Jones wrote:
+On Tue, 17 Dec 2019, Vaittinen, Matti wrote:
 
-> On Mon, 09 Dec 2019, Daniel Mack wrote:
+> Hello Lee,
 > 
-> > The core driver for these devices is split into several parts.
+> On Mon, 2019-12-16 at 16:46 +0000, Lee Jones wrote:
+> > On Wed, 11 Dec 2019, Matti Vaittinen wrote:
 > > 
-> > The master node driver is an I2C client. It is responsible for
-> > bringing up the bus topology and discovering the slave nodes.
-> > This process requries some knowlegde of the slave node configuration
-> > to program the bus timings correctly, so the master drivers walks
-> > the tree of nodes in the devicetree. The slave driver handles platform
-> > devices that are instantiated by the master node driver after
-> > discovery has finished.
+> > > BD71828GW is a single-chip power management IC for battery-powered
+> > > portable
+> > > devices. The IC integrates 7 buck converters, 7 LDOs, and a 1500 mA
+> > > single-cell linear charger. Also included is a Coulomb counter, a
+> > > real-time
+> > > clock (RTC), 3 GPO/regulator control pins, HALL input and a 32.768
+> > > kHz
+> > > clock gate.
+> > > 
+> > > Add MFD core driver providing interrupt controller facilities and
+> > > i2c
+> > > access to sub device drivers.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ---
+> > > 
+> > > Changes since v5:
+> > > - No changes
+> > > 
+> > >  drivers/mfd/Kconfig              |  15 ++
+> > >  drivers/mfd/Makefile             |   2 +-
+> > >  drivers/mfd/rohm-bd71828.c       | 319 +++++++++++++++++++++++
+> > >  include/linux/mfd/rohm-bd71828.h | 425
+> > > +++++++++++++++++++++++++++++++
+> > >  include/linux/mfd/rohm-generic.h |   1 +
+> > >  5 files changed, 761 insertions(+), 1 deletion(-)
+> > >  create mode 100644 drivers/mfd/rohm-bd71828.c
+> > >  create mode 100644 include/linux/mfd/rohm-bd71828.h
 > > 
-> > Master nodes expose two addresses on the I2C bus, one (referred to as
-> > 'BASE' in the datasheet) for accessing registers on the transceiver
-> > node itself, and one (referred to as 'BUS') for accessing remote
-> > registers, either on the remote transceiver itself, or on I2C hardware
-> > connected to that remote transceiver, which then acts as a remote I2C
-> > bus master.
+> > Couple of small nits.  Once fixed, please apply my:
 > > 
-> > In order to allow MFD sub-devices to be registered as children of
-> > either the master or any slave node, the details on how to access the
-> > registers are hidden behind a regmap config. A pointer to the regmap
-> > is then exposed in the struct shared with the sub-devices.
+> > For my own reference:
+> >   Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 > > 
-> > The ad242x-bus driver is a simple proxy that occupies the BUS I2C
-> > address and which is referred to through a devicetree handle by the
-> > master driver.
+> > > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> > > index 420900852166..c3c9432ef51c 100644
+> > > --- a/drivers/mfd/Kconfig
+> > > +++ b/drivers/mfd/Kconfig
+> > > @@ -1906,6 +1906,21 @@ config MFD_ROHM_BD70528
+> > >  	  10 bits SAR ADC for battery temperature monitor and 1S
+> > > battery
+> > >  	  charger.
+> > >  
+> > > +config MFD_ROHM_BD71828
+> > > +	tristate "ROHM BD71828 Power Management IC"
+> > > +	depends on I2C=y
+> > > +	depends on OF
+> > > +	select REGMAP_I2C
+> > > +	select REGMAP_IRQ
+> > > +	select MFD_CORE
+> > > +	help
+> > > +	  Select this option to get support for the ROHM BD71828 Power
+> > > +	  Management IC. BD71828GW is a single-chip power management IC
+> > > for
+> > > +	  battery-powered portable devices. The IC integrates 7 buck
+> > > +	  converters, 7 LDOs, and a 1500 mA single-cell linear charger.
+> > > +	  Also included is a Coulomb counter, a real-time clock (RTC),
+> > > and
+> > > +	  a 32.768 kHz clock gate.
+> > > +
+> > >  config MFD_STM32_LPTIMER
+> > >  	tristate "Support for STM32 Low-Power Timer"
+> > >  	depends on (ARCH_STM32 && OF) || COMPILE_TEST
+> > > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> > > index aed99f08739f..ca2d55c679c5 100644
+> > > --- a/drivers/mfd/Makefile
+> > > +++ b/drivers/mfd/Makefile
+> > > @@ -252,6 +252,6 @@ obj-$(CONFIG_MFD_MXS_LRADC)     += mxs-lradc.o
+> > >  obj-$(CONFIG_MFD_SC27XX_PMIC)	+= sprd-sc27xx-spi.o
+> > >  obj-$(CONFIG_RAVE_SP_CORE)	+= rave-sp.o
+> > >  obj-$(CONFIG_MFD_ROHM_BD70528)	+= rohm-bd70528.o
+> > > +obj-$(CONFIG_MFD_ROHM_BD71828)	+= rohm-bd71828.o
+> > >  obj-$(CONFIG_MFD_ROHM_BD718XX)	+= rohm-bd718x7.o
+> > >  obj-$(CONFIG_MFD_STMFX) 	+= stmfx.o
+> > > -
 > > 
-> > For the discovery process, the driver has to wait for an interrupt
-> > to occur. In case no interrupt is configured in DT, the driver falls
-> > back to interrupt polling. After the discovery phase is completed,
-> > interrupts are only needed for error handling and GPIO handling,
-> > both of which is not currenty implemented.
-> > 
-> > Code common to both the master and the slave driver lives in
-> > 'ad242x-node.c'.
-> > 
-> > Signed-off-by: Daniel Mack <daniel@zonque.org>
-> > 
-> > mfd
+> > Nit: This is an unrelated change and should not really be in this
+> > patch.
 > 
-> ?
+> Ok. Will get rid of it.
 > 
-> > ---
-> >  drivers/mfd/Kconfig         |  11 +
-> >  drivers/mfd/Makefile        |   1 +
-> >  drivers/mfd/ad242x-bus.c    |  42 +++
-> >  drivers/mfd/ad242x-master.c | 611 ++++++++++++++++++++++++++++++++++++
-> >  drivers/mfd/ad242x-node.c   | 262 ++++++++++++++++
-> >  drivers/mfd/ad242x-slave.c  | 234 ++++++++++++++
-> >  include/linux/mfd/ad242x.h  | 400 +++++++++++++++++++++++
+> > 
+> > > diff --git a/drivers/mfd/rohm-bd71828.c b/drivers/mfd/rohm-
+> > > bd71828.c
+> > > new file mode 100644
+> > > index 000000000000..7f445d699fd9
+> > > --- /dev/null
+> > > +++ b/drivers/mfd/rohm-bd71828.c
+> > > @@ -0,0 +1,319 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +//
+> > > +// Copyright (C) 2019 ROHM Semiconductors
+> > > +//
+> > > +// ROHM BD71828 PMIC driver
+> > > +
 > 
-> This device, or at least the way it's been coded is batty!
+> //snip
 > 
-> It's going to need a lot of massaging before being accepted.
+> > > +
+> > > +static struct i2c_driver bd71828_drv = {
+> > > +	.driver = {
+> > > +		.name = "rohm-bd71828",
+> > > +		.of_match_table = bd71828_of_match,
+> > > +	},
+> > > +	.probe_new = &bd71828_i2c_probe,
+> > > +};
+> > > +
+> > 
+> > Nit: You can remove this line.
+> 
+> Will do.
+> 
+> > 
+> > > +module_i2c_driver(bd71828_drv);
+> > > +
+> > > +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > ");
+> > > +MODULE_DESCRIPTION("ROHM BD71828 Power Management IC driver");
+> > > +MODULE_LICENSE("GPL");
+> > 
+> > This does not match the header.
+> 
+> How is that? This is what is stated in module.h for the 
+> MODULE_LICENSE:
+> 
+> /*
+>  * The following license idents are currently accepted as indicating
+> free
+>  * software modules
+>  *
+>  *	"GPL"				[GNU Public License v2]
+>  *	"GPL v2"			[GNU Public License v2]
+>  *	"GPL and additional rights"	[GNU Public License v2 rights
+> and more]
+>  *	"Dual BSD/GPL"			[GNU Public License v2
+>  *					 or BSD license choice]
+>  *	"Dual MIT/GPL"			[GNU Public License v2
+>  *					 or MIT license choice]
+>  *	"Dual MPL/GPL"			[GNU Public License v2
+>  *					 or Mozilla license choice]
+>  *
+>  * The following other idents are available
+>  *
+>  *	"Proprietary"			[Non free products]
+>  *
+>  * Both "GPL v2" and "GPL" (the latter also in dual licensed strings)
+> are
+>  * merely stating that the module is licensed under the GPL v2, but are
+> not
+>  * telling whether "GPL v2 only" or "GPL v2 or later". The reason why
+> there
+>  * are two variants is a historic and failed attempt to convey more
+>  * information in the MODULE_LICENSE string. For module loading the
+>  * "only/or later" distinction is completely irrelevant and does
+> neither
+>  * replace the proper license identifiers in the corresponding source
+> file
+>  * nor amends them in any way. The sole purpose is to make the
+>  * 'Proprietary' flagging work and to refuse to bind symbols which are
+>  * exported with EXPORT_SYMBOL_GPL when a non free module is loaded.
+>  *
+>  * In the same way "BSD" is not a clear license information. It merely
+>  * states, that the module is licensed under one of the compatible BSD
+>  * license variants. The detailed and correct license information is
+> again
+>  * to be found in the corresponding source files.
+>  *
+>  * There are dual licensed components, but when running with Linux it
+> is the
+>  * GPL that is relevant so this is a non issue. Similarly LGPL linked
+> with GPL
+>  * is a GPL combined work.
+>  *
+>  * This exists for several reasons
+>  * 1.	So modinfo can show license info for users wanting to vet their
+> setup
+>  *	is free
+>  * 2.	So the community can ignore bug reports including proprietary
+> modules
+>  * 3.	So vendors can do likewise based on their own policies
+>  */
+> #define MODULE_LICENSE(_license) MODULE_INFO(license, _license)
+> 
+> I have no objections on changing the license if needed but can you
+> please tell me what is Ok combos then - I am having hard time when
+> trying to select licenses which are acceptable for all.
 
-One thing I should mention upfront; there is too much code "doing
-things" in here for it to be an MFD.  MFDs don't care about; syncs,
-slots, TDM, inverting lines, upstreams, downstreams, etc etc etc.
-Anything remotely technical or functional, the code that "does things"
-should be moved out to the relevant areas.  In the case of this
-device, that's looking like one of the Audio related subsystems.
+If you have this in your header:
+
+  GPL-2.0-only
+
+Your MODULE tags should read:
+
+MODULE_LICENSE("GPL v2");
 
 -- 
 Lee Jones [李琼斯]
