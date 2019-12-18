@@ -2,121 +2,133 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFF30C2D0CD
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 19:34:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3313C2D0D2
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 20:22:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 935C721D7D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 19:34:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86A372467E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 20:22:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="dBqeZoqH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kHuQP2LH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726698AbfLRTeh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 14:34:37 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46910 "EHLO
+        id S1727727AbfLRUWU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 15:22:20 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45524 "EHLO
         mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbfLRTeh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 14:34:37 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f15so2510348lfl.13
-        for <linux-clk@vger.kernel.org>; Wed, 18 Dec 2019 11:34:36 -0800 (PST)
+        with ESMTP id S1727685AbfLRUWN (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 15:22:13 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 203so2609903lfa.12;
+        Wed, 18 Dec 2019 12:22:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Zv7k1aksETejwDWUWN9UiYVG/dAaMjP+EXzK+A4z4Zs=;
-        b=dBqeZoqHlTddFj9hv5eNEjhiq6F8BmzOkJfmi2oU9OLm0uMrlRlQhN39HgxdIb8Joo
-         Ap0Qw9CnkVsVorE7auTS1AlyYr6JpfJsv4WmF3XYA7OFiaGckalFesrWYkL64c6OZ5Ql
-         tcndHwHGq+QiOSsxhHSavzaLxc+pU1EgFDvCPCHXukmrd+51ey5cJZ+0ISczfQ+7aT0u
-         j7sL6jmumu2bPuYu8gG7Ll4bEsVczjAtHioxEQHOBT9p0w0290FrtetBNBl1HWEUklPQ
-         GYSkn7VYBInSi82QqXCsochx/nSeRI85Wb2DYKEV+W5uwUiwEcLz9woBQLqitlpJO2hk
-         H/Tg==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=tdwll2I+0UIi7XhGuE9ZdnnXdDMdxuduY/8e8BdrqG0=;
+        b=kHuQP2LHWukkPzJ/45IDQvB3gd/sszhYVcerwVPf3XxtIBkBOqYZmnnwdCHiWHbDpO
+         vTfO3xLur/SZGCXjpWNpMdfPEkSNCrIL9/U7aE3EDL0QBie+ykrheURkxRb7p0h8tqJf
+         oRpIYnOz5mavbBiEMlJdl5LFJcZT0XtbNqVU9JTXXSeJvGfF/jpVZOnwKhLW1xY1QUl2
+         OPz7n0y8p7q7qRr9QI/JVZC8wI/Ijdw9NCJwEWVs+u2N96FQB9AeC5SMeJ27YXO56NY3
+         /7oK0BaoQ/+XNIgCtKrskoXztqhPi5ah7014bySKHm2jJSJ988zwLgwL/ATpFpYjIed1
+         sSoQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=Zv7k1aksETejwDWUWN9UiYVG/dAaMjP+EXzK+A4z4Zs=;
-        b=lkwTPt0UYjvH7oVdDxKgjiPfh3zHRJVS2W4wpRscN7V7cfZmSa8vl+tKSdkStdK3aB
-         seNWZZHTxBSUYyz5/eL8g/qoCio5j5bgB+kdThOAf6JwajFj7ZLc8NKYWkOw26FASBI/
-         lraY+owoPyVqEUFs5W9JzZH4J1U6pwj7mbJ89lb/UKi71G5UUGJnLeLyiE/Pc6uBbH+j
-         ScJjrTdEAptxhbnycyPMnOQFbpsEx/Lu8WSvmnbq0OqIK+VW4+ingqtfBr9wpTb4QB/z
-         ebA1undAG7mlGL72oKpQVGRDBIGjy/uCvPL/p7eGQouMzFItJB3I1f0D9NlYgap1km51
-         wMUw==
-X-Gm-Message-State: APjAAAVxJMc8mW20E2q2/3Fbf06ruFsdXuyej3Rjg5NRECvYEPvcQtRI
-        PVPnEDGZvyfrxo6Y+ZW0LFBMr01hftQ=
-X-Google-Smtp-Source: APXvYqwk9FFGe6Vk63ThvejpFKVr+bpEmXVmX7L4L1N7Lel8mOX5zbWzDKSdEgiqgt6xoYOIz4Q5xA==
-X-Received: by 2002:a19:710a:: with SMTP id m10mr2845712lfc.58.1576697675023;
-        Wed, 18 Dec 2019 11:34:35 -0800 (PST)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:48d1:e89a:1bf6:a9f0:1b42:e170])
-        by smtp.gmail.com with ESMTPSA id m15sm1722179ljg.4.2019.12.18.11.34.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 18 Dec 2019 11:34:34 -0800 (PST)
-Subject: Re: [PATCH] clk: renesas: rcar-gen3: allow changing the RPC[D2]
- clocks
-To:     Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=tdwll2I+0UIi7XhGuE9ZdnnXdDMdxuduY/8e8BdrqG0=;
+        b=T8sj8C2DgV7PHx9z1xknKh2mPvansmTwVkGI7mXWZRQe2KJua1xiC+BUB83BUwQhEe
+         rRlh61OYahnpju6xhEP83oA5klhAoi/f8THVFGLf8mfGHX5f6GFfh2e86Q9kBjO1qXAI
+         Yo/i+H2Fg20OT+tN8/+n4MVxRHY+94syJzcf05z1WF7Fh0LxZFFzq/uj0GJWu3aLgG98
+         W5IVzK3AUXwKWeLEs/vtHHlex4gzcBlJopc2OITnHwDSfg9vFsNggkYolSpgwggKyijh
+         AjZKod2UOPHfgo0YNuM7B+tUSHOqxZP+ZiZL4eyPdm/0eqJdDbAJg2JksdqA2p+918E4
+         zKSw==
+X-Gm-Message-State: APjAAAVd5p8irrQeIZK/O7NkYOjkoV0Lx6FSFV+uqGs4ITo+GE98H3Sw
+        L0PgWZZApqzme7vIKcfu3eOvZTFj
+X-Google-Smtp-Source: APXvYqwcL1Z0PzCBN6ROSM2Su43KblPjIZ8Qw8lJApa5QoC8wUXlEQTcoTTHRxEvfMz6QUIrVJIZzg==
+X-Received: by 2002:ac2:599c:: with SMTP id w28mr3138290lfn.78.1576700530955;
+        Wed, 18 Dec 2019 12:22:10 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id m15sm1766993ljg.4.2019.12.18.12.22.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 18 Dec 2019 12:22:10 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk <linux-clk@vger.kernel.org>
-References: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
- <be27a344-d8bf-9e0c-8950-2d1b48498496@cogentembedded.com>
- <CAMuHMdVmh6fZ=oRRMA6+H05jdpyPPgK3g=1ivNQUe0LB5sfMjg@mail.gmail.com>
- <c879023c-77d9-5230-7086-4a495999f154@cogentembedded.com>
- <CAMuHMdV_hYNLYxQXvpVLgSphzpJn0NckOu0CvwUO+ggF0thhkw@mail.gmail.com>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <c2a1832a-0100-980f-b858-ced6c7c17b97@cogentembedded.com>
-Date:   Wed, 18 Dec 2019 22:34:32 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>
+Cc:     linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v6 12/12] ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
+Date:   Wed, 18 Dec 2019 23:21:42 +0300
+Message-Id: <20191218202142.11717-13-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
+In-Reply-To: <20191218202142.11717-1-digetx@gmail.com>
+References: <20191218202142.11717-1-digetx@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdV_hYNLYxQXvpVLgSphzpJn0NckOu0CvwUO+ggF0thhkw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/17/2019 11:43 PM, Geert Uytterhoeven wrote:
+Utilize common Tegra30 CPU OPP table. CPU DVFS is available now on beaver.
 
-[...]
->>>> I was unable to get clk_set_rate() setting a lower RPC-IF clock frequency
->>>> and that issue boiled down to me not passing CLK_SET_RATE_PARENT flag to
->>>> clk_register_composite() when registering the RPC[D2] clocks...
->>>>
->>>> Fixes: db4a0073cc82 ("clk: renesas: rcar-gen3: Add RPC clocks")
->>>> Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
->>>
->>> Thanks for your patch!
->>>
->>> LGTM, so
->>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
->>
->>    Thanks. :-)
->>
->>> Now, before I apply this: does this make RPC-IF work?
->>
->>    Unfortunately, no. :-/
-> 
-> As per private communication, I understand the problem is elsewhere,
-> and this patch itself is working fine, and thus safe to apply?
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ arch/arm/boot/dts/tegra30-beaver.dts | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
 
-   Yes, I was able to lower the RPC[D2] frequencies but that didn't
-really help...
-   I should mention that CLK_SET_RATE_PARENT logic seemed a bit backward
-to me, i.e. how the given clock know the properties of its parent clock...
+diff --git a/arch/arm/boot/dts/tegra30-beaver.dts b/arch/arm/boot/dts/tegra30-beaver.dts
+index 6ebb3105af9e..86556622be25 100644
+--- a/arch/arm/boot/dts/tegra30-beaver.dts
++++ b/arch/arm/boot/dts/tegra30-beaver.dts
+@@ -2,6 +2,8 @@
+ /dts-v1/;
+ 
+ #include "tegra30.dtsi"
++#include "tegra30-cpu-opp.dtsi"
++#include "tegra30-cpu-opp-microvolt.dtsi"
+ 
+ / {
+ 	model = "NVIDIA Tegra30 Beaver evaluation board";
+@@ -2124,4 +2126,26 @@ sound {
+ 			 <&tegra_car TEGRA30_CLK_EXTERN1>;
+ 		clock-names = "pll_a", "pll_a_out0", "mclk";
+ 	};
++
++	cpus {
++		cpu0: cpu@0 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@1 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@2 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++
++		cpu@3 {
++			cpu-supply = <&vddctrl_reg>;
++			operating-points-v2 = <&cpu0_opp_table>;
++		};
++	};
+ };
+-- 
+2.24.0
 
-> Thanks for confirming!
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-
-MBR, Sergei
