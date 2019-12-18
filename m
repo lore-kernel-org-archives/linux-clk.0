@@ -2,73 +2,74 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B668C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 09:53:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 271E8C3F68F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:12:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17EDA20717
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 09:53:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0DDE2467F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:12:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726551AbfLRJxF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 04:53:05 -0500
-Received: from mail.bugwerft.de ([46.23.86.59]:46500 "EHLO mail.bugwerft.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725799AbfLRJxF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Dec 2019 04:53:05 -0500
-Received: from [10.10.222.226] (unknown [194.162.236.226])
-        by mail.bugwerft.de (Postfix) with ESMTPSA id 3A811281DF4;
-        Wed, 18 Dec 2019 09:46:38 +0000 (UTC)
-Subject: Re: [alsa-devel] [PATCH 00/10] mfd: Add support for Analog Devices
- A2B transceiver
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Cc:     lars@metafoo.de, sboyd@kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, broonie@kernel.org, pascal.huerst@gmail.com,
-        lee.jones@linaro.org
-References: <20191209183511.3576038-1-daniel@zonque.org>
- <cb86a793-014a-1acf-c144-f9014ac0a0ac@linux.intel.com>
-From:   Daniel Mack <daniel@zonque.org>
-Message-ID: <22803ea0-0c4a-b096-ec11-5e8f5c27d8d3@zonque.org>
-Date:   Wed, 18 Dec 2019 10:53:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <cb86a793-014a-1acf-c144-f9014ac0a0ac@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        id S1726726AbfLRLMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 06:12:00 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:40168 "EHLO
+        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726674AbfLRLMA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 06:12:00 -0500
+X-IronPort-AV: E=Sophos;i="5.69,329,1571670000"; 
+   d="scan'208";a="34755017"
+Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
+  by relmlie5.idc.renesas.com with ESMTP; 18 Dec 2019 20:11:58 +0900
+Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
+        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EAB434218BE9;
+        Wed, 18 Dec 2019 20:11:55 +0900 (JST)
+From:   Biju Das <biju.das@bp.renesas.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Biju Das <biju.das@bp.renesas.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        Simon Horman <horms@verge.net.au>,
+        Chris Paterson <Chris.Paterson2@renesas.com>,
+        Marian-Cristian Rotariu 
+        <marian-cristian.rotariu.rb@bp.renesas.com>,
+        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
+        linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] clock: renesas: cpg-mssr: Fix the typo
+Date:   Wed, 18 Dec 2019 11:09:50 +0000
+Message-Id: <1576667390-29449-1-git-send-email-biju.das@bp.renesas.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+This patch fixes the typo %s/r8a774a1/r8a774b1/.
 
-On 12/17/19 8:29 PM, Pierre-Louis Bossart wrote:
->> Transceivers can both receive and provide audio, and streams can be
->> routed from one node to any other, including many others. The tricky
->> bit is how to expose the audio routing in DT in a sane way.
->> The way it is implemented here, the slave nodes specify the number of
->> slots they each consume and generate, and which thereof they forward
->> from one side to the other. This mimics the internal register
->> structure and should allow for even exotic setups.
-> 
-> It was my understanding that the A2B bus is bidirectional but with
-> separate time windows allocated for host->device and device->host
-> transmission. The wording seems to hint at device-to-device
-> communication but I wonder if this is really what you meant.
+Fixes: 1000393 ("dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1
+binding")
+Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+---
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, audio frames can be exchanged between two slave nodes without
-interaction by the master node. I'm not sure what the best way is to
-describe that in DT really, but as the hardware is capable of doing it,
-there must be a way to enable such setups.
-
-
-Thanks,
-Daniel
+diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+index c7674d0..f4d153f 100644
+--- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
++++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
+@@ -19,7 +19,7 @@ Required Properties:
+       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
+       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
+       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
+-      - "renesas,r8a774b1-cpg-mssr" for the r8a774a1 SoC (RZ/G2N)
++      - "renesas,r8a774b1-cpg-mssr" for the r8a774b1 SoC (RZ/G2N)
+       - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
+       - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
+       - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
+-- 
+2.7.4
 
