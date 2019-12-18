@@ -2,91 +2,118 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52A26C2D0BF
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 17:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD079C2D0BF
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 17:24:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DEB02176D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 17:02:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B61C92176D
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 17:24:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576688539;
-	bh=we2zMDAHiAzaJJ7ie3iIZyPD57spjJwHDGeCFx7sl+4=;
+	s=default; t=1576689858;
+	bh=J9mVnpcPRlh0mvJgCzhidZ1PLmoyNm+FA0e8Ks3E2p4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vGHZaFMZRS5yIVu+zQNTCBtYRgDvvnWhrMjTCzhzzCK1RzIE+uf5hjOilzNtlsuvR
-	 aiMKmCoJaTx5TMoPnrOmLlU92Ij/Ir0+L6QeIdjyc8yb3uWkuQArTJ6yekUnKrrkmS
-	 7QHM3d4LUdWhV2PXmKAyBcEArnPLqzeQNcjWSB/c=
+	b=er9chD2kpyuLYf3HH9bS7Rq9EW3jNxTtvgp9c020KZhyoWCzjzN0Qp7UErIYkv0E2
+	 mlI2kgvTrIcTCzGjAoko4BiJ2aNI5OQj6TfQwg/q2tWK3bo3sPxSBkgY2goyK5h/d7
+	 BE3UY/lcnpMUnO3Vhm6Un9wGltL4w7dALF4xjScI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727526AbfLRRCT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 12:02:19 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:42888 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727368AbfLRRCS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 12:02:18 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 66so3270275otd.9;
-        Wed, 18 Dec 2019 09:02:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JaI7AY/5dEsE+PzKKfws1NegVl++uA5oApSBgLNQCls=;
-        b=OPOC6z/S5Kay/I2CleJEl2T6qdDSFYINzJ1M8U814F9vbpbVUGE0uQmQOqyMBFpS/T
-         xHHerFD0RuMjwJaYNH1nYGktEHbHn5lkSyttcq2t+HbRVHoFF9VcG8rII+KlOFw3WHvY
-         ugl9PZ0vA74Qmn4TMX2SyWvwmYwdKRAAS+7U5ZZib4Hfvx9K2xd3QIhqKFxLqXiZx0MQ
-         xvcadG7kFoGxZXN1vAh7VFGuFsCbN1oXn9TzCzjbgxwJXyP0s59aL9SdeYayHt/fl6Yr
-         9isDKD13k/Pem4ql2Y7ra33gQzMeUvsuhE0fihPSb/D3seDB0mtfleGaJ3q2ByEPflhH
-         ryOg==
-X-Gm-Message-State: APjAAAWlFA5NucoR2DGMQCbOZy0JgSqfWCB9ugRgqC4gvUgKIVGzaKqw
-        55MTrcOJiy6GligHShSZpA==
-X-Google-Smtp-Source: APXvYqzOiFGi11lFLhBbyJQ2UV01N4xUjbtoI1m67WTwLSZq6goK5Ks+0SR2sX/w079C4Hu9mqDTmw==
-X-Received: by 2002:a9d:7c8f:: with SMTP id q15mr3730626otn.341.1576688537723;
-        Wed, 18 Dec 2019 09:02:17 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id r13sm963542oic.52.2019.12.18.09.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 09:02:17 -0800 (PST)
-Date:   Wed, 18 Dec 2019 11:02:16 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     matthias.bgg@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@kernel.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, enric.balletbo@collabora.com,
-        sean.wang@mediatek.com, sean.wang@kernel.org,
-        rdunlap@infradead.org, wens@csie.org, hsinyi@chromium.org,
-        frank-w@public-files.de, drinkcat@chromium.org,
-        linux-media@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, mbrugger@suse.com,
-        matthias.bgg@kernel.org
-Subject: Re: [resend PATCH v6 02/12] dt-bindings: mediatek: Add compatible
- for mt7623
-Message-ID: <20191218170216.GA18152@bogus>
-References: <20191207224740.24536-1-matthias.bgg@kernel.org>
- <20191207224740.24536-3-matthias.bgg@kernel.org>
+        id S1727334AbfLRRYP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 12:24:15 -0500
+Received: from foss.arm.com ([217.140.110.172]:54788 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727193AbfLRRYP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Dec 2019 12:24:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2610231B;
+        Wed, 18 Dec 2019 09:24:14 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 984363F67D;
+        Wed, 18 Dec 2019 09:24:13 -0800 (PST)
+Date:   Wed, 18 Dec 2019 17:24:12 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "corbet@lwn.net" <corbet@lwn.net>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: Applied "regulator: bd71828: Basic support for ROHM bd71828 PMIC
+ regulators" to the regulator tree
+Message-ID: <20191218172412.GK3219@sirena.org.uk>
+References: <applied-5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <de7424126e285d9bbd21a70945415d78203c2ba7.camel@fi.rohmeurope.com>
+ <20191218131700.GB42175@sirena.org.uk>
+ <b72cd22df0bbbb159cda08e556037f1ccf490b3d.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="vk/v8fjDPiDepTtA"
 Content-Disposition: inline
-In-Reply-To: <20191207224740.24536-3-matthias.bgg@kernel.org>
+In-Reply-To: <b72cd22df0bbbb159cda08e556037f1ccf490b3d.camel@fi.rohmeurope.com>
+X-Cookie: Power is poison.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat,  7 Dec 2019 23:47:30 +0100, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
-> 
-> MediaTek mt7623 uses the mt2701 binings as fallback.
-> Document this in the binding description.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  .../devicetree/bindings/display/mediatek/mediatek,disp.txt      | 2 ++
->  1 file changed, 2 insertions(+)
-> 
 
-Acked-by: Rob Herring <robh@kernel.org>
+--vk/v8fjDPiDepTtA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Wed, Dec 18, 2019 at 02:01:27PM +0000, Vaittinen, Matti wrote:
+> On Wed, 2019-12-18 at 13:17 +0000, Mark Brown wrote:
+> > On Wed, Dec 18, 2019 at 08:06:04AM +0000, Vaittinen, Matti wrote:
+
+> > > I think you missed the [PATCH v6 08/15] regulator: bd718x7: Split
+> > > driver to common and bd718x7 specific parts
+
+> > I didn't miss it, it was queued but it doesn't apply.
+
+> Right. The rohm-generic.h is changed by
+> [PATCH v6 04/15] mfd: rohm PMICs - use platform_device_id to match MFD
+> sub-devices
+
+Ugh, right.  I guess that'll have to go in with the MFD changes then.
+
+--vk/v8fjDPiDepTtA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl36YLsACgkQJNaLcl1U
+h9BkDAf/XSz4D3T25M0yYqmY2TIMQ+uimSMMMoiwsyS2ivd9XZXc66Y8aQJ68D4k
+phnZsmDtIQL/WPGbI85z8igy1eup0r7RABEbUJsRFELudd9udrnrWBLBVKFdb5BF
+3WoB7YBfUOaIm22ktVjVLyawXe/hvxqaAvpiWdRM80GBqGufRnf3fcT/Auv15ImJ
++q5BE6k24FErC519kY8ZFw8B4fszmqCCK6UfOTVyFNvOlLMYcUFGs3BDbgWNxpSF
+fOhGp47IZj2RPA85Ut6fGeYuL/dpVa6VaPYPxpkwnDflZeIlY1U/hKpqAd4y+MTv
+aEKbFYlOE0P6HfjnUDEyZIs0eIORJQ==
+=fXt1
+-----END PGP SIGNATURE-----
+
+--vk/v8fjDPiDepTtA--
