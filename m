@@ -2,133 +2,106 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_2 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 795A9C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 08:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2E3EC2D0C3
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 08:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C1D12072B
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 08:06:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 846D12465E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 08:09:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726536AbfLRIGN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 03:06:13 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:45684 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbfLRIGM (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 03:06:12 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-bb-5df9ddf133de
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 9E.8C.08102.1FDD9FD5; Wed, 18 Dec 2019 09:06:09 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Wed, 18 Dec 2019 09:06:05 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        id S1725799AbfLRIJ6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 03:09:58 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:57684 "EHLO
+        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725535AbfLRIJ6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 03:09:58 -0500
+Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:5cf4:84a1:2763:fe0d])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: bbrezillon)
+        by bhuna.collabora.co.uk (Postfix) with ESMTPSA id 5440F28EAAE;
+        Wed, 18 Dec 2019 08:09:55 +0000 (GMT)
+Date:   Wed, 18 Dec 2019 09:09:52 +0100
+From:   Boris Brezillon <boris.brezillon@collabora.com>
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Chris Brandt <Chris.Brandt@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
         "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>
-Subject: Re: Applied "regulator: bd71828: Basic support for ROHM bd71828
- PMIC regulators" to the regulator tree
-Thread-Topic: Applied "regulator: bd71828: Basic support for ROHM bd71828
- PMIC regulators" to the regulator tree
-Thread-Index: AQHVtNcCPO+Kt0OMfE2l+CzrBWADfqe/eY8A
-Date:   Wed, 18 Dec 2019 08:06:04 +0000
-Message-ID: <de7424126e285d9bbd21a70945415d78203c2ba7.camel@fi.rohmeurope.com>
-References: <applied-5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <applied-5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <9AFCB8A8827600419DE3AEDCAF90D462@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        Mason Yang <masonccyang@mxic.com.tw>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+Message-ID: <20191218090952.4c9f02a1@collabora.com>
+In-Reply-To: <90164352-6b74-ff78-261c-374f51f83330@cogentembedded.com>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+        <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+        <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+        <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+        <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+        <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
+        <90164352-6b74-ff78-261c-374f51f83330@cogentembedded.com>
+Organization: Collabora
+X-Mailer: Claws Mail 3.17.4 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf2wTZRzGfe+ud7dupy9ls68dE20kZBpACIkvBA3/oGdMFgkxUZM6buxY
-        q/0xr51haOLMZGzjh4yuQes62NaNCg0d7VCYMMcsEwvBNLZzMIYum0s2tXP82FIYw7udsP11
-        z73P87yf7x/flyV1rYyBtdhdomQXrEZaS3UH7oVXTA6mTS/G/8jD/niSwbtTbQy+f7CXwbd9
-        MQp7hkZoPNK9G+DD0SsavOdShwZXtoRoPHCqncK/37kA8FSimsD1M0cJPLn3hgY3VfkpHDk8
-        A/CvnQ00PvX3CYB7jydo3PpbnMANrRcpPHGzhsDx2CbsiaUYPBi7QOPKeD+Jd52LMni27ySF
-        9195bWMeH2wMAv7e3YOAn+jfxfCNwY/5M95Bhg8fq6H5631naf4HX5DhW/a7NfzU5TqKH20K
-        UfxP/d8R/KHGNMGH9kYBHzg+zfC3wk+/Cd/N3FAkuD7aYimxr3pla6b5s8hJTelszo7zo89V
-        gI6cWpDBIrgWfRGoI2qBltXBJECXOxKU+nMRIO/pCKgFLEvDDaj2KqMUsuEK5LnbQisZEiYy
-        UVtLFVCMxfBDtC8SI9WQhK7dH6NUvQYFKofnNAWXoSPp1JzmYAGa7uqiFa2DDtTUeWYOkAFL
-        0dXuSULRAOahmorUnCahHoVHpzXq1BD5z/5CqjoHjQ3P/n9uROfSQ5QyMwnzUahzlVrdiIIR
-        NULCZ1H9niFGHWER+vmrEeoAeNK7gOCdb3sXtL0L2t4F7SNAcwwgm2CxlggucfVKSSxbKTnM
-        NvmzzWELA3Xtbp8GD3pe7wEEC3rAUyxhzOGM5rRJ93iRo7jcLDjNhVKZVXT2AMSSxmxuoFr2
-        uGKhfKcoOR5auSxl1HPLh+pMOqiwPhDFUlF66C5hWSPifkzKxUWSWCLu2G6xuuZtgs1QLtca
-        sp2ivViUhDKXuVBZj0KnvB+KlSVz1w8qXGepYJNP1WoMvMAeGPM1k2zU19pM6ii7wy4a9Byt
-        RKESNZfZH4HGgZ4FxsXct9dlN0t+e4/uGZcRhIxYUzClIFzCvGWoANufYMpP/MMn1rqzDDuD
-        pnVb4lLxJ83awET/1rf8BZuWtQdTyJcxcykW9j/40qbn1r/9qfS1qcbgrrAe2pcf7xuv6q0e
-        zj1qec/S9epEvZsEnhu3QunN7S+VfPNGvufzxxLX3m8Y+D761/msd3KTd5Y6/yxvE90v31xX
-        pF3C9P77TNJIOc3C6udJySn8B2u2+V44BAAA
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gTWFyaywNCg0KT24gVHVlLCAyMDE5LTEyLTE3IGF0IDEyOjM5ICswMDAwLCBNYXJrIEJy
-b3duIHdyb3RlOg0KPiBUaGUgcGF0Y2gNCj4gDQo+ICAgIHJlZ3VsYXRvcjogYmQ3MTgyODogQmFz
-aWMgc3VwcG9ydCBmb3IgUk9ITSBiZDcxODI4IFBNSUMgcmVndWxhdG9ycw0KPiANCj4gaGFzIGJl
-ZW4gYXBwbGllZCB0byB0aGUgcmVndWxhdG9yIHRyZWUgYXQNCg0KSSB0aGluayB5b3UgbWlzc2Vk
-IHRoZSBbUEFUQ0ggdjYgMDgvMTVdIHJlZ3VsYXRvcjogYmQ3MTh4NzogU3BsaXQNCmRyaXZlciB0
-byBjb21tb24gYW5kIGJkNzE4eDcgc3BlY2lmaWMgcGFydHMNCg0Kd2hpY2ggdG9vayB0aGUgZnVu
-Y3Rpb25zIHBhcnNpbmcgZmV3IHJvaG0gc3BlY2lmaWMgRFQgZW50cmllcyBvdXQgb2YNCmJkNzE4
-eDcgZHJpdmVyIGFuZCBleHBvcnRlZCB0aGVtIGZvciBzaGFyZWQgdXNlLiAoRWcsIGN1cnJlbnRs
-eSB0aGUNCmJkNzE4eDcgYW5kIHRoaXMgYmQ3MTgyOCBkcml2ZXIgdXNlIHNhbWUgcHJvcGVydGll
-cyBhbmQgc2hhcmluZyB0aGUNCnByb3BlcnR5IHBhcnNpbmcgY29kZSBzZWVtcyBiZXR0ZXIgdGhh
-biBkdWJsaWNhdGluZyBpdCkuDQoNCkFueXdheXMsIHRoaXMgcGF0Y2ggYnJlYWtzIHRoZSBjb21w
-aWxhdGlvbiB3L28gUEFUQ0ggdjYgMDgvMTUuDQoNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJz
-L3JlZ3VsYXRvci9LY29uZmlnIGIvZHJpdmVycy9yZWd1bGF0b3IvS2NvbmZpZw0KPiBpbmRleCA3
-NGViNWFmNzI5NWYuLjU2NTEyNzQ4YTQ3ZCAxMDA2NDQNCj4gLS0tIGEvZHJpdmVycy9yZWd1bGF0
-b3IvS2NvbmZpZw0KPiArKysgYi9kcml2ZXJzL3JlZ3VsYXRvci9LY29uZmlnDQo+IEBAIC0xOTQs
-NiArMTk0LDE4IEBAIGNvbmZpZyBSRUdVTEFUT1JfQkQ3MDUyOA0KPiAgCSAgVGhpcyBkcml2ZXIg
-Y2FuIGFsc28gYmUgYnVpbHQgYXMgYSBtb2R1bGUuIElmIHNvLCB0aGUgbW9kdWxlDQo+ICAJICB3
-aWxsIGJlIGNhbGxlZCBiZDcwNTI4LXJlZ3VsYXRvci4NCj4gIA0KPiArY29uZmlnIFJFR1VMQVRP
-Ul9CRDcxODI4DQo+ICsJdHJpc3RhdGUgIlJPSE0gQkQ3MTgyOCBQb3dlciBSZWd1bGF0b3IiDQo+
-ICsJZGVwZW5kcyBvbiBNRkRfUk9ITV9CRDcxODI4DQo+ICsJc2VsZWN0IFJFR1VMQVRPUl9ST0hN
-DQoNCkkgdGhpbmsgdGhpcyB3YXMgaW50cm9kdWNlZCBpbiBbUEFUQ0ggdjYgMDgvMTVdDQoNCj4g
-KwloZWxwDQo+ICsJICBUaGlzIGRyaXZlciBzdXBwb3J0cyB2b2x0YWdlIHJlZ3VsYXRvcnMgb24g
-Uk9ITSBCRDcxODI4IFBNSUMuDQo+ICsJICBUaGlzIHdpbGwgZW5hYmxlIHN1cHBvcnQgZm9yIHRo
-ZSBzb2Z0d2FyZSBjb250cm9sbGFibGUgYnVjaw0KPiArCSAgYW5kIExETyByZWd1bGF0b3JzLg0K
-DQovL3NuaXANCg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9yZWd1bGF0b3IvYmQ3MTgyOC1yZWd1
-bGF0b3IuYw0KPiBiL2RyaXZlcnMvcmVndWxhdG9yL2JkNzE4MjgtcmVndWxhdG9yLmMNCg0KLy9z
-bmlwDQoNCj4gKw0KPiArc3RhdGljIGludCBidWNrX3NldF9od19kdnNfbGV2ZWxzKHN0cnVjdCBk
-ZXZpY2Vfbm9kZSAqbnAsDQo+ICsJCQkJICBjb25zdCBzdHJ1Y3QgcmVndWxhdG9yX2Rlc2MgKmRl
-c2MsDQo+ICsJCQkJICBzdHJ1Y3QgcmVndWxhdG9yX2NvbmZpZyAqY2ZnKQ0KPiArew0KPiArCXN0
-cnVjdCBiZDcxODI4X3JlZ3VsYXRvcl9kYXRhICpkYXRhOw0KPiArDQo+ICsJZGF0YSA9IGNvbnRh
-aW5lcl9vZihkZXNjLCBzdHJ1Y3QgYmQ3MTgyOF9yZWd1bGF0b3JfZGF0YSwgZGVzYyk7DQo+ICsN
-Cj4gKwlyZXR1cm4gcm9obV9yZWd1bGF0b3Jfc2V0X2R2c19sZXZlbHMoJmRhdGEtPmR2cywgbnAs
-IGRlc2MsIGNmZy0NCj4gPnJlZ21hcCk7DQoNClNvIHdhcyB0aGlzLg0KDQpEbyB5b3UgdGhpbmsg
-eW91IGNvdWxkIGFsc28gYXBwbHkgdGhlIFtQQVRDSCB2NiAwOC8xNV0gb3IgcGVyaGFwcyBkcm9w
-DQp0aGlzIG9uZSB0byBhdm9pZCBicmVha2luZyB0aGUgY29tcGlsYXRpb24gd2hlbiBNRkRfUk9I
-TV9CRDcxODI4IGNvbmZpZw0Kb3B0aW9uIGlzIGludHJvZHVjZWQ/DQoNCg0KQnIsDQoJTWF0dGkN
-Cg==
+On Tue, 17 Dec 2019 22:44:14 +0300
+Sergei Shtylyov <sergei.shtylyov@cogentembedded.com> wrote:
+
+> On 12/16/2019 11:31 PM, Sergei Shtylyov wrote:
+> 
+> [...]
+> >> My understanding is that HyperFlash uses standard CFI commands, so all   
+> > 
+> >    The CFI command set driver needed some changes too (e.g. using the status
+> > register to determine if a command is done).
+> >   
+> >> we need to do is register a CFI device in the driver, just like we 
+> >> register a serial flash device.  
+> >   
+> >> (I guess I could go look at the sample code for our RTOS package and find out)
+> >>  
+> >>>> library that you are proposing have a very different API than just
+> >>>> 'send bytes' and 'receive bytes'?  
+> >>>
+> >>>    There's "prepare" and "transfer" APIs and also "direct map read" API.  
+> > 
+> >   The 1st one prepares the values to be written in either SPI mode or direct
+> > read mode registers. Then you can call "transfer" or "direct mao read" which
+> > would write out the register values into either set...
+> >   
+> >> I wonder what is the value of the "direct map read" (other than XIP in 
+> >> RZ/A systems). If you really want to directly access the flash (no 
+> >> buffering though the MTD layer), you need to register as a mtd-rom device, 
+> >> and then you don't really need an API at all.  
+> > 
+> >   I'd leave this question to Boris, else I never complete this msg. :-)   
+> 
+>    Didn't really summon him, doing that now... :-)
+
+The dirmap API has not been designed with XIP in mind (though we could
+theoretically extend it to support XIP). The main reason we added this
+feature is because most controllers have either a slow PIO based path
+where you can basically send every command you want and a fast
+direct-mapping path which only support specific cmds or patterns. We
+also hide things behind an API instead of returning a virtual mapping
+because some controllers have extra constraints when accessing the
+direct mapping (alignment, minimum size, limited direct mapping window
+size, ...). Not to mention that some drivers might want to use DMA to
+not stall the CPU on flash accesses.
