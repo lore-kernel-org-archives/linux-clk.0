@@ -2,163 +2,91 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D6CC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:48:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8996C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:56:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057B724650
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:48:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A7542082E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:56:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gerhold.net header.i=@gerhold.net header.b="k3zgNOVd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726939AbfLRSsR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 13:48:17 -0500
-Received: from foss.arm.com ([217.140.110.172]:57250 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726699AbfLRSsR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Dec 2019 13:48:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8288D1FB;
-        Wed, 18 Dec 2019 10:48:16 -0800 (PST)
-Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D5B93F67D;
-        Wed, 18 Dec 2019 10:48:14 -0800 (PST)
-Date:   Wed, 18 Dec 2019 18:48:09 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Samuel Holland <samuel@sholland.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Ondrej Jirman <megous@megous.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v5 8/8] firmware: arm_scpi: Support unidirectional
- mailbox channels
-Message-ID: <20191218184809.GA14599@bogus>
-References: <20191215042455.51001-1-samuel@sholland.org>
- <20191215042455.51001-9-samuel@sholland.org>
+        id S1726699AbfLRS4n (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 13:56:43 -0500
+Received: from mo4-p00-ob.smtp.rzone.de ([85.215.255.21]:20093 "EHLO
+        mo4-p00-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfLRS4n (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 13:56:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1576695401;
+        s=strato-dkim-0002; d=gerhold.net;
+        h=In-Reply-To:References:Message-ID:Subject:Cc:To:From:Date:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=RHrceRHBhza4YVXmCAi7LfS8ePHybs5o1mTm91RAdCw=;
+        b=k3zgNOVdav1wsgQY5KG6E/620q/nFNyk9DhbJc2csQDO3J8U+GlFzzT1Rznoil7gOf
+        EmhfHtYgQ66LLw4Ccxi3F1WSZchZ2atUy/DltEYjNeCj8mITMboqEYeHkymbsXPWw43r
+        ZL0BgmxOJbz0i0JbWc4k4/YQ9XYkHvZY/x8xm8LR+bi8pV+qKCh/hWozQ3EQffvmkNxc
+        8zrqwTu43ekXtreTOBxZoy//fPDtCr9Gt4iiBenG07/ValkcbxjZTWCrMgMvCAYU0z5F
+        ifOa64BbKQ7Ig8f/Cq4pUCAEY/YqTLJw42SlPsJfU61hxIR0SH1B8XS68A7gct9s3GsM
+        pJIQ==
+X-RZG-AUTH: ":P3gBZUipdd93FF5ZZvYFPugejmSTVR2nRPhVOQ/OcYgojyw4j34+u266HpF+ORJDY77yYxJueg=="
+X-RZG-CLASS-ID: mo00
+Received: from gerhold.net
+        by smtp.strato.de (RZmta 46.0.7 DYNA|AUTH)
+        with ESMTPSA id 9046ccvBIIocA4H
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
+        (Client did not present a certificate);
+        Wed, 18 Dec 2019 19:50:38 +0100 (CET)
+Date:   Wed, 18 Dec 2019 19:50:30 +0100
+From:   Stephan Gerhold <stephan@gerhold.net>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] clk: ux500: Fix up the SGA clock for some variants
+Message-ID: <20191218185030.GA60941@gerhold.net>
+References: <20191217210504.27888-1-linus.walleij@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191215042455.51001-9-samuel@sholland.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191217210504.27888-1-linus.walleij@linaro.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, Dec 14, 2019 at 10:24:55PM -0600, Samuel Holland wrote:
-> Some mailbox controllers have only unidirectional channels, so we need a
-> pair of them for each SCPI channel. If a mbox-names property is present,
-> look for "rx" and "tx" mbox channels; otherwise, the existing behavior
-> is preserved, and a single mbox channel is used for each SCPI channel.
->
+On Tue, Dec 17, 2019 at 10:05:04PM +0100, Linus Walleij wrote:
+> Some of the special PRCMU firmware variants were not
+> properly detected in the Ux500 clock driver, resulting
+> in the wrong clock for the SGA.
+> 
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Stephan Gerhold <stephan@gerhold.net>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
-I need to look at the bindings again, but I think you must update it.
+Reviewed-by: Stephan Gerhold <stephan@gerhold.net>
 
-> Note that since the mailbox framework only supports a single phandle
-> with each name (mbox_request_channel_byname always returns the first
-> one), this new mode only supports a single SCPI channel.
->
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
 > ---
->  drivers/firmware/arm_scpi.c | 58 +++++++++++++++++++++++++++++--------
->  1 file changed, 46 insertions(+), 12 deletions(-)
->
-> diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
-> index a80c331c3a6e..36ff9dd8d0fa 100644
-> --- a/drivers/firmware/arm_scpi.c
-> +++ b/drivers/firmware/arm_scpi.c
-> @@ -231,7 +231,8 @@ struct scpi_xfer {
->
->  struct scpi_chan {
->  	struct mbox_client cl;
-> -	struct mbox_chan *chan;
-> +	struct mbox_chan *rx_chan;
-> +	struct mbox_chan *tx_chan;
->  	void __iomem *tx_payload;
->  	void __iomem *rx_payload;
->  	struct list_head rx_pending;
-> @@ -505,7 +506,7 @@ static int scpi_send_message(u8 idx, void *tx_buf, unsigned int tx_len,
->  	msg->rx_len = rx_len;
->  	reinit_completion(&msg->done);
->
-> -	ret = mbox_send_message(scpi_chan->chan, msg);
-> +	ret = mbox_send_message(scpi_chan->tx_chan, msg);
->  	if (ret < 0 || !rx_buf)
->  		goto out;
->
-> @@ -854,8 +855,13 @@ static void scpi_free_channels(void *data)
->  	struct scpi_drvinfo *info = data;
->  	int i;
->
-> -	for (i = 0; i < info->num_chans; i++)
-> -		mbox_free_channel(info->channels[i].chan);
-> +	for (i = 0; i < info->num_chans; i++) {
-> +		struct scpi_chan *pchan = &info->channels[i];
-> +
-> +		if (pchan->tx_chan != pchan->rx_chan)
-> +			mbox_free_channel(pchan->tx_chan);
-> +		mbox_free_channel(pchan->rx_chan);
-
-I think mbox_free_channel handles !chan->cl, so just do unconditionally.
-
-> +	}
->  }
->
->  static int scpi_remove(struct platform_device *pdev)
-> @@ -903,6 +909,7 @@ static int scpi_probe(struct platform_device *pdev)
->  	struct resource res;
->  	struct device *dev = &pdev->dev;
->  	struct device_node *np = dev->of_node;
-> +	bool use_mbox_names = false;
->
->  	scpi_info = devm_kzalloc(dev, sizeof(*scpi_info), GFP_KERNEL);
->  	if (!scpi_info)
-> @@ -916,6 +923,14 @@ static int scpi_probe(struct platform_device *pdev)
->  		dev_err(dev, "no mboxes property in '%pOF'\n", np);
->  		return -ENODEV;
->  	}
-> +	if (of_get_property(dev->of_node, "mbox-names", NULL)) {
-
-So, for this platform, this is required and must fail if it is not found.
-But instead your check here is optional and may end up populating 2
-scpi channels instead of one. I would suggest to make it required and
-fail for it based on some compatible, otherwise you are not checking
-correctly.
-
-Something like:
-        if (of_match_device(blah_blah_of_match, &pdev->dev)) {
-                use_mbox_names = true;
-		count = 1;
-	}
-
-
-> +		use_mbox_names = true;
-> +		if (count != 2) {
-> +			dev_err(dev, "need exactly 2 mboxes with mbox-names\n");
-> +			return -ENODEV;
-> +		}
-> +		count /= 2;
-> +	}
-
-Ah, OK then you must update the binding as it's different usage of mailbox. 
-
-General query, not related to this patch: If you are in process of
-implementing the firmware, I suggest to move to SCMI protocol than this
-one if not too late. This specification is deprecated and no longer
-updated while SCMI is actively developed and maintained. However it has
-slightly different notion of tx and rx and the way the specification
-commands which messages are synchronous and which can be async/delayed.
-
---
-Regards,
-Sudeep
+>  drivers/clk/ux500/u8500_of_clk.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
+> index 72ed97c6662a..0aedd42fad52 100644
+> --- a/drivers/clk/ux500/u8500_of_clk.c
+> +++ b/drivers/clk/ux500/u8500_of_clk.c
+> @@ -99,8 +99,10 @@ static void u8500_clk_init(struct device_node *np)
+>  	if (fw_version != NULL) {
+>  		switch (fw_version->project) {
+>  		case PRCMU_FW_PROJECT_U8500_C2:
+> +		case PRCMU_FW_PROJECT_U8500_MBL:
+>  		case PRCMU_FW_PROJECT_U8520:
+>  		case PRCMU_FW_PROJECT_U8420:
+> +		case PRCMU_FW_PROJECT_U8420_SYSCLK:
+>  			sgaclk_parent = "soc0_pll";
+>  			break;
+>  		default:
+> -- 
+> 2.21.0
+> 
