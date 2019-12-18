@@ -2,77 +2,108 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D66B0C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 13:01:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 065D8C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 13:13:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4E3D206D7
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 13:01:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CDD612465E
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 13:13:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576674780;
+	bh=dFNR4Z1HB0x5D3aBxML9H4BzTZ4z7QedbnTWRrY29YI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=F9tLg5y2wLQY5eGPxbq5f1EPW6F514AFKJ+EmvqGtm6kLXbat9HqD82lTnMDbN2A/
+	 Ltt7D05GHs3Mny2m5yb0Awebf7bA51Ij6+f+pbat7lFyR6vYGg7YoWpAw9L10LpvUc
+	 wJASfG3wH2owBEwF9RlzSNhY3KAxgklCJC1KNkmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726710AbfLRNBy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 08:01:54 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:49125 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726545AbfLRNBy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 08:01:54 -0500
-X-IronPort-AV: E=Sophos;i="5.69,329,1571670000"; 
-   d="scan'208";a="34759505"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Dec 2019 22:01:52 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id 500BE42277BB;
-        Wed, 18 Dec 2019 22:01:49 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1726944AbfLRNNA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 08:13:00 -0500
+Received: from foss.arm.com ([217.140.110.172]:45860 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726545AbfLRNNA (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Dec 2019 08:13:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1C74730E;
+        Wed, 18 Dec 2019 05:12:59 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67D5A3F718;
+        Wed, 18 Dec 2019 05:12:58 -0800 (PST)
+Date:   Wed, 18 Dec 2019 13:12:57 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH V2] clock: renesas: cpg-mssr: Fix the typo
-Date:   Wed, 18 Dec 2019 12:59:44 +0000
-Message-Id: <1576673984-37752-1-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Wolfram Sang <wsa+renesas@sang-engineering.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v6 08/15] regulator: bd718x7: Split driver to common and
+ bd718x7 specific parts
+Message-ID: <20191218131256.GA42175@sirena.org.uk>
+References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+ <fea73fd89f0db81fac30eba3b523c2232c401eae.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="jI8keyz6grp/JLjh"
+Content-Disposition: inline
+In-Reply-To: <fea73fd89f0db81fac30eba3b523c2232c401eae.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+X-Cookie: In the next world, you're on your own.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch fixes the typo %s/r8a774a1/r8a774b1/.
 
-Fixes: 10003938a0c64 ("dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1 binding")
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
----
-V1-->V2
- * Incorporated Sergei's review comments.
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--jI8keyz6grp/JLjh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index c7674d0..f4d153f 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -19,7 +19,7 @@ Required Properties:
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
-       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
--      - "renesas,r8a774b1-cpg-mssr" for the r8a774a1 SoC (RZ/G2N)
-+      - "renesas,r8a774b1-cpg-mssr" for the r8a774b1 SoC (RZ/G2N)
-       - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
-       - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
-       - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
--- 
-2.7.4
+On Wed, Dec 11, 2019 at 11:44:51AM +0200, Matti Vaittinen wrote:
+> Few ROHM PMICs allow setting the voltage states for different system states
+> like RUN, IDLE, SUSPEND and LPSR. States are then changed via SoC specific
+> mechanisms. bd718x7 driver implemented device-tree parsing functions for
+> these state specific voltages. The parsing functions can be re-used by
+> other ROHM chip drivers like bd71828. Split the generic functions from
+> bd718x7-regulator.c to rohm-regulator.c and export them for other modules
+> to use.
 
+This doesn't apply against current code, please check and resend.
+
+--jI8keyz6grp/JLjh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl36JdgACgkQJNaLcl1U
+h9DRzAf9GnOeN9QrXV/Jr5D4kRT68S0BysPHNoXDglBc5m5saw2Xi10Wt8Yov3+b
+1tdcVFQmjj41vcRZ8FHNma019NBth1CezUFjN9EagATCMFH2tFculjHcLFSywRhY
+EBL4+OttxR37zIS7rtqWbk6U8GUNrTjJKbZeELPODuIkSxCJGSrm5TwMvmVnyCie
+8jKr9a/7f4USdEz//uVvAbK0lAhwujG781fF+ymXz8hjJw+2NyZ9QYtpxqO53x/m
+Z6ImWi10KNA4p3nHHs6dcJcaotd6wYv7zB5B5bWSP5E8L9Csl/AzVfZNkHwMFK20
+Nswu4+WMO8olZX88qcj/ZsccB6glKg==
+=KLXG
+-----END PGP SIGNATURE-----
+
+--jI8keyz6grp/JLjh--
