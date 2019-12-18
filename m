@@ -2,144 +2,145 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B61DC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 09:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97EDBC2D0C3
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 09:44:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1A8B21D7D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 09:44:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576662260;
-	bh=qSC6/H9GfsyCcelafyoAunXcGxJQCK0ulcmX0aIl0sY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=TkL5d4vJRRaPhVvqkJXKiSK2znJpmHY7BLbEyqlIhuZbzhSEmiTJjh/ZTae/BORVg
-	 9rF809EDaRxpZ0tf/wAFwzmBVt3K1JL8rGHdQe1qGK/Sxz+7jfIMeHAlwicTog4mQm
-	 yd9IHIbe2p4gg9aGx70ruAhWwSavBRXSaGpNIOv0=
+	by mail.kernel.org (Postfix) with ESMTP id 5ED3021D7D
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 09:44:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RD81bRQP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbfLRJoU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 04:44:20 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45387 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725785AbfLRJoU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 04:44:20 -0500
-Received: by mail-ed1-f68.google.com with SMTP id v28so1092959edw.12;
-        Wed, 18 Dec 2019 01:44:18 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=gJQXaXEKQkd+spSjYG8zG6Syqx3wWTMxVQgMC7CUTsA=;
-        b=Gu2LbL7ju9/4SB4nM5tL2dXzeRDblF0AadXIM28geVf7kB5psnY+N3Ek7fbmLqAhcU
-         So59xD9FqIRsYFMN/KD6owjbKBGxdyvQ2sNEYBwqEfZpsNf6qEiSbEOhP3THVXg40ube
-         WFwmLVB+aOZpAI4V8luKqnLM8qY2knKHQCshJ1c23eGb8x981x6CF230yEF57hLsuMQA
-         UbIDmIVZBarfGsex95/06T5XNVGwBDoUwfjI6VhUgLYCoCSMMkgdQ6fM/lzC47yd0TbX
-         S6NGG3OgIXkxLf8xhwZdkkA/lzxDykfC/HeursWhhX6xpDEdXuXczghiO1NJrLjclwaz
-         KylQ==
-X-Gm-Message-State: APjAAAXfzycrcMhsz4zX39XCXtW5kENXgOIrUu0hVjpNE8tiqyaesTEY
-        O8dsDLYGJYRhg5/dIoK+7q4=
-X-Google-Smtp-Source: APXvYqwYiPXjMqEBn2DXb6aWt/7XHzF/wds2uZOh7jKved27Zg3XGn4BG+YB4raaOe3N9lsBmmDqgQ==
-X-Received: by 2002:a05:6402:3059:: with SMTP id bu25mr1209953edb.216.1576662257949;
-        Wed, 18 Dec 2019 01:44:17 -0800 (PST)
-Received: from pi3 ([194.230.155.234])
-        by smtp.googlemail.com with ESMTPSA id dx7sm71097ejb.81.2019.12.18.01.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 01:44:17 -0800 (PST)
-Date:   Wed, 18 Dec 2019 10:44:15 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Marek Szyprowski <m.szyprowski@samsung.com>
-Cc:     linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Marian Mihailescu <mihailescu2m@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk: samsung: exynos5420: Keep top G3D clocks enabled
-Message-ID: <20191218094415.GA15819@pi3>
-References: <CGME20191216131423eucas1p2162d6bf0a870357be9f0ab308641015b@eucas1p2.samsung.com>
- <20191216131407.17225-1-m.szyprowski@samsung.com>
+        id S1726674AbfLRJoZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 04:44:25 -0500
+Received: from mail-eopbgr20069.outbound.protection.outlook.com ([40.107.2.69]:41892
+        "EHLO EUR02-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725785AbfLRJoY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Dec 2019 04:44:24 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=daZCnpoudQyZasiFZDJwDXDA2XBO0Mg9xsr+c47H08J2NG1xmkhwZBD5wfZYFUnm8kUQLoSV645ieQ/9i/QAjbS3wADoZSN5tEXsyLcKLSpZbvNr3h8sX+Z5iIBJpy9n8qVzJOwJScMw6UCutp8Svd2Pl+arHX/LlMHYGNtRKFXTtn6q6ScGXXpAWBfyEH6WpgEN1adNHmbQKmu0h5nUbHN6/UXRDjkCRsp5wxD57t4kbPbpCmSoGizczPpFfLlJ3rsuIhS+qypg0J+gLOmrp/yXR1sOrz4cUOACr7qtF5MRW1/YbMKOkqBLqbgrBKp9dtlnMsTetKlpW5oG3Ag+EA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VQ8kdml7Uspcnw3Wt1yu6k0bD+zhn0ITPEzX/NhMTN8=;
+ b=gJ0W49XbpnB1vhUtCrbAWAHansSHTFb6oPwyr3HFsjSJWYew4bIeIbSglBbuPTmeo+AwImieAvf8YpxwrNB8F19ne4dMoyOzv2c1iFMgTlLXSBCgz+gfMuoLA0sfH775eCEQaxtH1UO1mZhwAGU1Wy5+SSOhstVwXHhw2gpnWG5fwjJmzhLSrMurK1BNhKwc8AIMlyJHQESyCWBC7hC5jSumv81FU4q+7fnQalsZ3yQPrDwwG/oS0iuWMRm3l833wYPzOpsKPGejGlRyjysmRPEOdgwJW3IsfhSvqS1pC7up/9xqqnccg23qtbmgdryG61qhwvzvJ5DA/OV+alxdBA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VQ8kdml7Uspcnw3Wt1yu6k0bD+zhn0ITPEzX/NhMTN8=;
+ b=RD81bRQPUe3Tg/hZ5EQfMpjGGTLd7rC3JYy07K8CiVCV80p2oDp5KlRZA/Gcyn+ssuLsnDR+eVf6Y05qw5EKcLkFuAfXqoqAsuA789lG6n1aBZK9SA52sCexuqTLtgHKRqF62TyiKU/U+oZYWEywveIYj1qcgTH0MV3kLa1/P1U=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB5795.eurprd04.prod.outlook.com (20.178.118.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2538.18; Wed, 18 Dec 2019 09:44:20 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::505:87e7:6b49:3d29]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::505:87e7:6b49:3d29%7]) with mapi id 15.20.2559.012; Wed, 18 Dec 2019
+ 09:44:20 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: mux: check mux value after set
+Thread-Topic: [PATCH] clk: mux: check mux value after set
+Thread-Index: AQHVtYe4wU7+6XXnBEmMewbXqrixpw==
+Date:   Wed, 18 Dec 2019 09:44:20 +0000
+Message-ID: <1576662086-10569-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR01CA0052.apcprd01.prod.exchangelabs.com
+ (2603:1096:203:a6::16) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 52b8d3fe-b786-4c8d-479b-08d7839edb26
+x-ms-traffictypediagnostic: AM0PR04MB5795:|AM0PR04MB5795:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB5795D6834985F0858B301D5E88530@AM0PR04MB5795.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6430;
+x-forefront-prvs: 0255DF69B9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(39860400002)(366004)(376002)(396003)(346002)(136003)(189003)(199004)(4326008)(44832011)(6506007)(71200400001)(8676002)(81166006)(81156014)(2906002)(8936002)(52116002)(36756003)(6486002)(26005)(54906003)(6512007)(66446008)(86362001)(64756008)(6916009)(66946007)(5660300002)(478600001)(316002)(2616005)(66556008)(66476007)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5795;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: Rabg83IjPT1KBsobf+dSc+ogqUazn7X/WPIyVaI4NkID1G2Q6llpJLrFWwNFhcIj6g+vBgevenr93FokoCCPsdfJR36oZSEnQa7OLrpDPuwmG/yQui/IaMW5v3GNKH+dELVhYNmCS36XNkmGxe0GHMZM2+DbPpKKILVa0N2nxhpCanUYk7XJqIjg6XX+q4S2An/gWpOM5m9yrgiC2rUlQoBDyyc7uFmgaj03kI0d9ZjyRAS70LDafL0uJPXsJd6zhMmb9rSTbxVqmJqpI/yE97Kagly0A0pgpMf+XvFR/g/a+GfWNO7DeeiJkG1ygAbDwlfduJm2uvG0qK84s3zAsnFFnrVhyzbZKYpYPRKxqXUc38lH6iMdEBv0f1/HdPa4TUnIKtpuDm8nkYRyA8sldftpmgfg8VgNhXH6tkSjZKhxxvUouYxI0beoJ9x4lhr0
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20191216131407.17225-1-m.szyprowski@samsung.com>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 52b8d3fe-b786-4c8d-479b-08d7839edb26
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Dec 2019 09:44:20.4702
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Z6mRNZsHtFxUFq2NKABguOPvr9s+E74n/kKs4J/YOvUBsw0h8A7JxLaJdGH1aD+GgogNiflmIq1KIS4YqcscZA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5795
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 16, 2019 at 02:14:07PM +0100, Marek Szyprowski wrote:
-> In Exynos542x/5800 SoCs, the G3D leaf clocks are located in the G3D power
-> domain. This is similar to the other hardware modules and their power
-> domains. However there is one thing specific to G3D clocks hierarchy.
-> Unlike other hardware modules, the G3D clocks hierarchy doesn't have any
-> gate clock between the TOP part of the hierarchy and the part located in
-> the power domain and some SoC internal busses are sourced directly from
-> the TOP muxes. The consequence of this design if the fact that the TOP
-> part of the hierarchy has to be enabled permanently to ensure proper
-> operation of the SoC power related components (G3D power domain and
-> Exynos Power Management Unit for system suspend/resume).
-> 
-> This patch adds an explicit call to clk_prepare_enable() on the last MUX
-> in the TOP part of G3D clock hierarchy to keep it enabled permanently to
-> ensure that the internal busses get their clock regardless of the main
-> G3D clock enablement status.
-> 
-> This fixes following imprecise abort issue observed on Odroid XU3/XU4
-> after enabling Panfrost driver by commit 1a5a85c56402 "ARM: dts: exynos:
-> Add Mali/GPU node on Exynos5420 and enable it on Odroid XU3/4"):
-> 
-> panfrost 11800000.gpu: clock rate = 400000000
-> panfrost 11800000.gpu: failed to get regulator: -517
-> panfrost 11800000.gpu: regulator init failed -517
-> Power domain G3D disable failed
-> ...
-> panfrost 11800000.gpu: clock rate = 400000000
-> 8<--- cut here ---
-> Unhandled fault: imprecise external abort (0x1406) at 0x00000000
-> pgd = (ptrval)
-> [00000000] *pgd=00000000
-> Internal error: : 1406 [#1] PREEMPT SMP ARM
-> Modules linked in:
-> CPU: 7 PID: 53 Comm: kworker/7:1 Not tainted 5.4.0-rc8-next-20191119-00032-g56f1001191a6 #6923
-> Hardware name: SAMSUNG EXYNOS (Flattened Device Tree)
-> Workqueue: events deferred_probe_work_func
-> PC is at panfrost_gpu_soft_reset+0x94/0x110
-> LR is at ___might_sleep+0x128/0x2dc
-> ...
-> [<c05c231c>] (panfrost_gpu_soft_reset) from [<c05c2704>] (panfrost_gpu_init+0x10/0x67c)
-> [<c05c2704>] (panfrost_gpu_init) from [<c05c15d0>] (panfrost_device_init+0x158/0x2cc)
-> [<c05c15d0>] (panfrost_device_init) from [<c05c0cb0>] (panfrost_probe+0x80/0x178)
-> [<c05c0cb0>] (panfrost_probe) from [<c05cfaa0>] (platform_drv_probe+0x48/0x9c)
-> [<c05cfaa0>] (platform_drv_probe) from [<c05cd20c>] (really_probe+0x1c4/0x474)
-> [<c05cd20c>] (really_probe) from [<c05cd694>] (driver_probe_device+0x78/0x1bc)
-> [<c05cd694>] (driver_probe_device) from [<c05cb374>] (bus_for_each_drv+0x74/0xb8)
-> [<c05cb374>] (bus_for_each_drv) from [<c05ccfa8>] (__device_attach+0xd4/0x16c)
-> [<c05ccfa8>] (__device_attach) from [<c05cc110>] (bus_probe_device+0x88/0x90)
-> [<c05cc110>] (bus_probe_device) from [<c05cc634>] (deferred_probe_work_func+0x4c/0xd0)
-> [<c05cc634>] (deferred_probe_work_func) from [<c0149df0>] (process_one_work+0x300/0x864)
-> [<c0149df0>] (process_one_work) from [<c014a3ac>] (worker_thread+0x58/0x5a0)
-> [<c014a3ac>] (worker_thread) from [<c0151174>] (kthread+0x12c/0x160)
-> [<c0151174>] (kthread) from [<c01010b4>] (ret_from_fork+0x14/0x20)
-> Exception stack(0xee03dfb0 to 0xee03dff8)
-> ...
-> Code: e594300c e5933020 e3130c01 1a00000f (ebefff50).
-> ---[ end trace badde2b74a65a540 ]---
-> 
-> In the above case, the Panfrost driver disables G3D clocks after failure
-> of getting the needed regulator and return with -EPROVE_DEFER code. This
-> causes G3D power domain disable failure and then, during second probe
-> an imprecise abort is triggered due to undefined power domain state.
-> 
-> Fixes: 45f10dabb56b ("clk: samsung: exynos5420: Add SET_RATE_PARENT flag to clocks on G3D path")
-> Fixes: c9f7567aff31 ("clk: samsung: exynos542x: Move G3D subsystem clocks to its sub-CMU")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> ---
->  drivers/clk/samsung/clk-exynos5420.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
+From: Peng Fan <peng.fan@nxp.com>
 
-Acked-by: Krzysztof Kozlowski <krzk@kernel.org>
+check mux value after set to see whether it failed or not.
 
-Best regards,
-Krzysztof
+To some platforms, it might failed to set the mux value because
+of the hardware not allow the change, let's catch such case and report,
+then it will be easy for us the catch issue.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/clk-mux.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/clk-mux.c b/drivers/clk/clk-mux.c
+index 570b6e5b603b..3e78ec65bffb 100644
+--- a/drivers/clk/clk-mux.c
++++ b/drivers/clk/clk-mux.c
+@@ -101,6 +101,7 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 ind=
+ex)
+ 	u32 val =3D clk_mux_index_to_val(mux->table, mux->flags, index);
+ 	unsigned long flags =3D 0;
+ 	u32 reg;
++	int ret =3D 0;
+=20
+ 	if (mux->lock)
+ 		spin_lock_irqsave(mux->lock, flags);
+@@ -117,12 +118,15 @@ static int clk_mux_set_parent(struct clk_hw *hw, u8 i=
+ndex)
+ 	reg |=3D val;
+ 	clk_mux_writel(mux, reg);
+=20
++	if (clk_mux_get_parent(hw) !=3D index)
++		ret =3D -EPERM;
++
+ 	if (mux->lock)
+ 		spin_unlock_irqrestore(mux->lock, flags);
+ 	else
+ 		__release(mux->lock);
+=20
+-	return 0;
++	return ret;
+ }
+=20
+ static int clk_mux_determine_rate(struct clk_hw *hw,
+--=20
+2.16.4
+
