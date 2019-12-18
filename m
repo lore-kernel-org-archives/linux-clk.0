@@ -2,75 +2,102 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BBFC43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:18:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB092C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:21:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D3942467B
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:18:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A55221D7D
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:21:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726916AbfLRLSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 06:18:11 -0500
-Received: from foss.arm.com ([217.140.110.172]:42382 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726880AbfLRLRz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 18 Dec 2019 06:17:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 204D130E;
-        Wed, 18 Dec 2019 03:17:55 -0800 (PST)
-Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 18BE53F6CF;
-        Wed, 18 Dec 2019 03:17:53 -0800 (PST)
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH v2 08/11] clk: scmi: Match scmi device by both name and protocol id
-Date:   Wed, 18 Dec 2019 11:17:39 +0000
-Message-Id: <20191218111742.29731-9-sudeep.holla@arm.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20191218111742.29731-1-sudeep.holla@arm.com>
-References: <20191218111742.29731-1-sudeep.holla@arm.com>
+        id S1726734AbfLRLVC convert rfc822-to-8bit (ORCPT
+        <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 06:21:02 -0500
+Received: from hostingweb31-40.netsons.net ([89.40.174.40]:47269 "EHLO
+        hostingweb31-40.netsons.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726676AbfLRLVC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 06:21:02 -0500
+Received: from [37.162.94.155] (port=27596 helo=[192.168.43.3])
+        by hostingweb31.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.92)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1ihXNz-00B31J-Q6; Wed, 18 Dec 2019 12:20:59 +0100
+Subject: Re: [PATCH 06/10] mfd: Add core driver for AD242x A2B transceivers
+To:     Daniel Mack <daniel@zonque.org>, Lee Jones <lee.jones@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-i2c@vger.kernel.org, alsa-devel@alsa-project.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        broonie@kernel.org, lars@metafoo.de, pascal.huerst@gmail.com
+References: <20191209183511.3576038-1-daniel@zonque.org>
+ <20191209183511.3576038-8-daniel@zonque.org> <20191217133952.GJ18955@dell>
+ <ce6e0b19-ec40-c17b-cee6-05eca52d5df3@zonque.org>
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Message-ID: <e288a6e1-a967-d7cd-72fc-d190819953e3@lucaceresoli.net>
+Date:   Wed, 18 Dec 2019 12:20:58 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
+MIME-Version: 1.0
+In-Reply-To: <ce6e0b19-ec40-c17b-cee6-05eca52d5df3@zonque.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - hostingweb31.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: hostingweb31.netsons.net: authenticated_id: luca@lucaceresoli.net
+X-Authenticated-Sender: hostingweb31.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The scmi bus now has support to match the driver with devices not only
-based on their protocol id but also based on their device name if one is
-available. This was added to cater the need to support multiple devices
-and drivers for the same protocol.
+Hi Daniel,
 
-Let us add the name "clocks" to scmi_device_id table in the driver so
-that in matches only with device with the same name and protocol id
-SCMI_PROTOCOL_CLOCK.
+On 17/12/19 20:24, Daniel Mack wrote:
+>>> +++ b/drivers/mfd/ad242x-bus.c
+>>> @@ -0,0 +1,42 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +
+>>> +#include <linux/i2c.h>
+>>> +#include <linux/init.h>
+>>> +#include <linux/mfd/ad242x.h>
+>>> +#include <linux/module.h>
+>>> +#include <linux/of.h>
+>>> +
+>>> +static int ad242x_bus_i2c_probe(struct i2c_client *i2c,
+>>> +                const struct i2c_device_id *id)
+>>> +{
+>>> +    dev_set_drvdata(&i2c->dev, i2c);
+>>> +    i2c_set_clientdata(i2c, &i2c->dev);
+>>
+>> Please explain to me what you think is happening here.
+>>
+>>> +    return 0;
+>>> +}
+>>
+>> What does this driver do?  Seems kinda pointless?
+> 
+> As explained in the commit log, these devices expose two addresses on
+> the i2c bus, and each of which exists for a distinct purpose. The
+> primary one is used to access registers on the master node itself, the
+> second one is proxying traffic to remote nodes.
+> 
+> Now, the question is how to support that, and the approach chosen here
+> is to have a dummy driver sitting on the 2nd address, and to reach out
+> to it via a DT phandle from the master node. I don't like that much
+> either, but I'm not aware of a cleaner way to bind two addresses with
+> one driver. If there is any, I'd be happy to change that.
 
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/clk/clk-scmi.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Have a look at i2c_new_dummy_device(), perhaps it is what you need here.
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index 886f7c5df51a..c491f5de0f3f 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -176,7 +176,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
- }
- 
- static const struct scmi_device_id scmi_id_table[] = {
--	{ SCMI_PROTOCOL_CLOCK },
-+	{ SCMI_PROTOCOL_CLOCK, "clocks" },
- 	{ },
- };
- MODULE_DEVICE_TABLE(scmi, scmi_id_table);
 -- 
-2.17.1
+Luca
 
