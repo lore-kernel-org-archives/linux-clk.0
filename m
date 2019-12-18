@@ -2,251 +2,115 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4555C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 13:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064EEC3F68F
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 14:01:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B4132176D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 13:35:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sssgw8nW"
+	by mail.kernel.org (Postfix) with ESMTP id D023424676
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 14:01:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727053AbfLRNfZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 08:35:25 -0500
-Received: from mail-il1-f193.google.com ([209.85.166.193]:33570 "EHLO
-        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726774AbfLRNfY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 08:35:24 -0500
-Received: by mail-il1-f193.google.com with SMTP id v15so1724359iln.0;
-        Wed, 18 Dec 2019 05:35:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=gkEKgt/GZK2xmOcGzjWTpOOcB/kiPGj9OjuqfsdNIfE=;
-        b=sssgw8nWNunrDFpKcaAgWjMyHej/RR2H11AeBSC/xDwY5ZQyBYSBn7hi5kkzz+yFeV
-         Orw4J1cfsiRpDTz+nz5Yd4p+y9tN5Us8s7/YgtEqzXqLyg9IY1+hOVGQsWW3b9z5m6NS
-         oCYbOVpV/WBdLxBl9O3Q5fnjj+YHPt6YdVVH743B9pKQiW5D1CJHwAcPvgNwk8JkVvdX
-         n5Kh71LHQkGED5QDvSluKxYpxxAzI91qBTS2BqphYFDS3WP11Uxw/IY6tlzxUBE3+DJs
-         r+FQf7OkHhU8X8qcWBNZfzBmBkv2lI25T6rtlMxc0Y86ICf4ml1CARcOu2HAs783IYI4
-         mXYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=gkEKgt/GZK2xmOcGzjWTpOOcB/kiPGj9OjuqfsdNIfE=;
-        b=ufbJJCznjL9wdmCjEn7zQ2MzYfNTv/GP1D5Lk1wU58jS+ktbMDXx1ugt/4RE66bXyl
-         sZhSLqrlqWyQO5OKxH/x8GdAy+E35FqggrNZzkQFgQguLwDcCW3Z5UPoexYeHYkm+Qrv
-         rY+n5oKPoKRSWDWFPzj2osZDfYLbop90mS0wd8UphGdr2GvzOGVk/Mu2gDJYHlUeGp0V
-         VZ+ETmHeM2MuRj7Fx1q+vrMz006dlaJE7SKf2Aj3pweoQq+fh+1a7G7UXQZDc9wN4YmU
-         +LDXGkvNg30Gdn+2VprrTTSulp7rjX5MmvoYPh88KvY+L45j0Faa1kivRyRppmoBBCWI
-         qrrQ==
-X-Gm-Message-State: APjAAAWvUA51Oqbmpo11x1fXOYXeaZhK2hYpfGyvliAHUBPVaJt2as1/
-        qFcFDJDkhz/rZJg3+lBicULYFFOPkWU4UVJjrCKE2jlw
-X-Google-Smtp-Source: APXvYqwJAf46d/C9VjYfkHpeuMrtLbleQhk2rMy5HqEUAoJqtaKfqLVyH8Z8d5F1MGmKJXZT8+I9ntTVoI/PjfKQtVI=
-X-Received: by 2002:a92:4095:: with SMTP id d21mr1831507ill.158.1576676123483;
- Wed, 18 Dec 2019 05:35:23 -0800 (PST)
+        id S1727160AbfLROBi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 09:01:38 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:59018 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726942AbfLROBg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 09:01:36 -0500
+X-AuditID: c0a8fbf4-199ff70000001fa6-87-5dfa313d1e2b
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id DE.4F.08102.D313AFD5; Wed, 18 Dec 2019 15:01:33 +0100 (CET)
+Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Wed, 18 Dec 2019 15:01:27 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "corbet@lwn.net" <corbet@lwn.net>,
+        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "noralf@tronnes.org" <noralf@tronnes.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: Applied "regulator: bd71828: Basic support for ROHM bd71828
+ PMIC regulators" to the regulator tree
+Thread-Topic: Applied "regulator: bd71828: Basic support for ROHM bd71828
+ PMIC regulators" to the regulator tree
+Thread-Index: AQHVtNcCPO+Kt0OMfE2l+CzrBWADfqe/eY8AgABW2wCAAAxsgA==
+Date:   Wed, 18 Dec 2019 14:01:27 +0000
+Message-ID: <b72cd22df0bbbb159cda08e556037f1ccf490b3d.camel@fi.rohmeurope.com>
+References: <applied-5b1c4a22c7945e97ff2a7924abfeb3239043f8eb.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+         <de7424126e285d9bbd21a70945415d78203c2ba7.camel@fi.rohmeurope.com>
+         <20191218131700.GB42175@sirena.org.uk>
+In-Reply-To: <20191218131700.GB42175@sirena.org.uk>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <0EC2AB5390333649B5FA8FB87510E416@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <cover.1574458460.git.leonard.crestez@nxp.com>
-In-Reply-To: <cover.1574458460.git.leonard.crestez@nxp.com>
-From:   Adam Ford <aford173@gmail.com>
-Date:   Wed, 18 Dec 2019 07:35:12 -0600
-Message-ID: <CAHCN7xKNwit8ueUO0OkebfYh=4hsL7_+DRWEbn2dEt0H322W4w@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] PM / devfreq: Add dynamic scaling for imx8m ddr controller
-To:     Leonard Crestez <leonard.crestez@nxp.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        =?UTF-8?B?QXJ0dXIgxZp3aWdvxYQ=?= <a.swigon@partner.samsung.com>,
-        Jacky Bai <ping.bai@nxp.com>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Angus Ainslie <angus@akkea.ca>,
-        Alexandre Bailon <abailon@baylibre.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Saravana Kannan <saravanak@google.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-pm@vger.kernel.org, Martin Kepplinger <martink@posteo.de>,
-        Silvano di Ninno <silvano.dininno@nxp.com>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        Dong Aisheng <aisheng.dong@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0wUVxTGc2dmZy7gNOMK3du1mjhtbWzDK5p4E221bYhDjMTEtCaNhI7u
+        lCHCLs4uKjVGjAFlwdcCtW5dWHnVCBVZBBUhpRsW7NZCiKAoPrKWkoBmadVKAB+dYarw1/3u
+        +c7vfuePcyFprGXMMMPqkBSrmMnTkVTHmenG2E8Sp1ITvv9jFa7uG2DwwXAtg1+4uhj81BOk
+        cFlomMbDHQcBrujsMeCi3y8Y8IGqBhoPNZ+n8P1/AwA/6z9E4NLnPxH4n+J7Bny6oJrCTRXP
+        Ab7eeorGzY/OAdxV10/jmpt9BD5Vc5XC448LCdwXTMJlwTCD7wYDND7QN0ji/PZOBr+80Ujh
+        Iz3r1i4S6svrgTA95QLC+GA+I5TX7xEuu+8ygu9sIS3cudFGC7946hmh6kiJQXh27TgljJxu
+        oITuwYuEcKJ8khAaijuBcKZughGe+BZv5L6OWr1VdOzclJFujf/0myi5IJyQ7Yrc3dLiA3ng
+        7wgniICIW4HyTnTTThAJjdwAQOdK7hn0y1WAwj/UASeAkOZWI+ctRgOiuVhUNlU1A5BcfxSq
+        7C8hNWMBtwMdbgqSepOCbr8YpXT9OSryjczUKe4DVPRXKdA0y6Wgh12XgB52HyBP6yODZkRw
+        y9HtWtdMGuAWocK8MKFpkjMh38iEQR+bQ9VtvaSuY9Dony//r/OofTJEaUOT3DLU0Bqvo2tR
+        S8kgqeslqLQoxOgzzEe/nRymjoG33XMS3LO0ew7tnkO759BeYDgLUJaYkZkuOqTEOEXKiVNs
+        cpZ6bLNl+YC+d08vgVf+ZD8gIPCDdyDBx7C8PJlqfGurzZIri3Y5TcnJlOx+gCDJR7NDh1SP
+        tYi530mK7bW1EFK8if0wdDzVyGlZ2yUpW1Jeu+9CyCO2LXYq1ThfkdKl3d9mZDpmbQJGaI9H
+        mqPtktUiKWKOQ07T9iPNri6IZs1Tcy3xKs7as8UstaqjQfAxPDbqqSRhp6emkjRSVptVMptY
+        dqnaymmtco71TdAYMEHAL2D3J6juPPXzvXlnTI0g1Ai4bCbCIc5a5jwQPz6R25HUIl45umFs
+        DdW78uTi5PdSVvUcnf7isEJXVMlG/2Pf5t73cSDmq33XU27+6vU++PLVBdeuQNM+rxFZNz+J
+        cbvOr9gY8rLFS4RmJm6vybS/wBy482P79oWNQ9tqNjUnr3FeLF0/kFQ3vOXyuh3lll74cLzr
+        s4H8K065+9rPPGWXxcSPSMUu/gfQRcVfOQQAAA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Nov 22, 2019 at 3:45 PM Leonard Crestez <leonard.crestez@nxp.com> wrote:
->
-> This adds support for dynamic scaling of the DDR Controller (ddrc)
-> present on i.MX8M series chips. Actual frequency switching is
-> implemented inside TF-A, this driver wraps the SMC calls and
-> synchronizes the clk tree.
->
-> DRAM frequency switching requires clock manipulation but during this operation
-> DRAM itself is briefly inaccessible so this operation is performed a SMC call
-> to by TF-A which runs from a SRAM area. Upon returning to linux the clock tree
-> is updated to correspond to hardware configuration.
->
-> This is handled via CLK_GET_RATE_NO_CACHE for dividers but muxes are handled
-> manually: the driver will prepare/enable the new parents ahead of switching (so
-> that the expected roots are enabled) and afterwards it will call clk_set_parent
-> to ensure the parents in clock framework are up-to-date.
->
-> This series is useful standalone and roughly similar to devfreq drivers for
-> tegra and rockchip.
->
-> Running at lower dram rates saves power but can affect the functionality of
-> other blocks in the chip (display, vpu etc). Support for in-kernel constraints
-> will some separately.
->
-> This series has no dependencies outside linux-next. The driver depends
-> on features from the NXP branch of TF-A and will cleanly fail to probe
-> on mainline. There are also plans to upstream dram dvfs in TF-A.
->
-> Changes since v6:
-> * Replace ARCH_MXC || COMPILE_TEST with ARCH_MXC && HAVE_ARM_SMCCC
-> * Collect reviews
-> Link to v6: https://patchwork.kernel.org/cover/11244283/
->
-> I'd rather not fix COMPILE_TEST with ifdefs for this driver, if anything
-> that should be fixed in smccc header. ARCH_MXC doesn't imply SMCCC, it
-> also covers some very old chips which don't have it.
->
-> Resending full series because that's the standard method.
->
-> Changes since v5:
-> * Fix a dram_apb/dram_alt mixup in imx8m_ddrc_set_freq
-> * Make clk_get_parent_by_index static (kbuild robot)
-> * Adjust messages in imx8m_ddrc_set_freq
-> * Use a for loop inside imx8m_ddrc_check_opps instead of while
-> * More elaborate description in dt-bindings file.
-> Link to v5: https://patchwork.kernel.org/cover/11240289/
->
-> Changes since v4:
-> * Restore empty _get_dev_status: testing shows this is *NOT* optional. If
-> absent then switching to simple_ondemand governor will trigger an Oops.
-> * Keep clk registration on single-line in clk-imx8m* for consistency with rest
-> of the file.
-> * Drop explicit "select PM_OPP"
-> * Check for NULL new_dram_core_parent
-> * Rename "out_dis_" labels to out_disable_*
-> * Use dev_warn on imx8m_ddrc_set_freq error paths after SMC call (where
-> operation is not abandoned).
-> * More elaborate error messages in imx8m_ddrc_target
-> * More elaborate checks when fetching clks in imx8m_ddrc_set_freq
-> * Rename ddrc nodes to memory-controller@* as per devicetree.org "Generic Names
-> Recommendation"
-> * Defer perf support, it requires perf changes to fetch PMU by DT
-> Link to v4: https://patchwork.kernel.org/cover/11235685/
->
-> Changes since v3:
-> * Rename to imx8m-ddrc. Similar blocks are present on imx7d and imx8qxp/imx8qm
-> but soc integration is different.
-> * Move dt bindings to /memory-controllers/fsl/
-> * Fix dt validation issues
-> * Fix imx8mm.dtsi ddrc referencing ddrc_opp_table which is only defined in evk
-> * Move opps to child of ddrc device node
-> * Only add imx_ddrc_get_dev_status in perf patch.
-> * Adjust print messages
-> Link to v3: https://patchwork.kernel.org/cover/11221935/
->
-> Changes since v2:
-> * Add support for entire imx8m family including imx8mq B0.
-> * Also mark dram PLLs as CLK_GET_RATE_NO_CACHE (required for imx8mq b0 low OPP)
-> * Explicitly update dram pll rate at the end of imx_ddrc_set_freq.
-> * Use do_div in imx-ddrc (kbuild robot)
-> * Improve explanations around adding CLK_GET_RATE_NO_CACHE to dram clks.
-> (Stephen Boyd)
-> * Handle ddrc devfreq-events earlier for fewer probe defers.
-> * Validate DDRC opp tables versus firmware: supported OPPs depend on board and
-> SOC revision.
-> * Move DDRC opp tables to board dts because they can vary based on ram type on
-> board.
-> * Verify DDRC rate is changed in clk tree and otherwise report an error.
-> * Change imx_ddrc_freq.rate to be measure in MT/s and round down from HZ in
-> imx_ddrc_find_freq instead.
-> * Split away from NOC scaling and interconnect support.
-> Link to v2: https://patchwork.kernel.org/cover/11104113/
->
-> Changes since v1:
-> * bindings: Stop using "contains" for "compatible"
-> * bindings: Set "additionalProperties: false" and document missing stuff.
-> * Remove (c) from NXP copyright notice
-> * Fix various checkpatch issues
-> * Remove unused dram_alt_root clk from imx-ddrc
-> Link to v1: https://patchwork.kernel.org/cover/11090649/
->
-> Leonard Crestez (5):
->   clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram clocks
->   clk: imx: Mark dram pll on 8mm and 8mn with CLK_GET_RATE_NOCACHE
->   dt-bindings: memory: Add bindings for imx8m ddr controller
->   PM / devfreq: Add dynamic scaling for imx8m ddr controller
->   arm64: dts: imx8m: Add ddr controller nodes
->
->  .../memory-controllers/fsl/imx8m-ddrc.yaml    |  72 +++
->  arch/arm64/boot/dts/freescale/imx8mm-evk.dts  |  18 +
->  arch/arm64/boot/dts/freescale/imx8mm.dtsi     |  10 +
->  .../boot/dts/freescale/imx8mn-ddr4-evk.dts    |  18 +
->  arch/arm64/boot/dts/freescale/imx8mn.dtsi     |  10 +
->  arch/arm64/boot/dts/freescale/imx8mq-evk.dts  |  24 +
->  arch/arm64/boot/dts/freescale/imx8mq.dtsi     |  10 +
->  drivers/clk/imx/clk-imx8mm.c                  |  11 +-
->  drivers/clk/imx/clk-imx8mn.c                  |  12 +-
->  drivers/clk/imx/clk-imx8mq.c                  |  12 +-
->  drivers/clk/imx/clk-pll14xx.c                 |   7 +
->  drivers/clk/imx/clk.h                         |   1 +
->  drivers/devfreq/Kconfig                       |   9 +
-
-Since there is a Kconfig change, should there me a defconfig change?
-
->  drivers/devfreq/Makefile                      |   1 +
->  drivers/devfreq/imx8m-ddrc.c                  | 465 ++++++++++++++++++
->  15 files changed, 670 insertions(+), 10 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/memory-controllers/fsl/imx8m-ddrc.yaml
->  create mode 100644 drivers/devfreq/imx8m-ddrc.c
-
-I applied the whole series against 5.5-rc1 and I am trying to test it.
-I know the 4.14 kernel NXP posted on Code Aurora is capable to
-lowering the DDRC controller to 25MHz on the 8MM when the video is
-off.  Since there is no video support yet for the 8MM, I was expecting
-to see the DDRC clock to be at or around 25MHz.
-
-Using debug FS, I can see the dram core clock is still running at
-750MHz, and measuring power, it shows something consistent with what I
-see on the Code Aurora kernel with video turned on and the clock at
-750MHz.
-
-Is there some way to get the dram_core_clk to drop to 25MHz to see
-some power reduction?  The same commands used in the Yocto build don't
-apply here since we don't have video.
-
-thanks,
-
-adam
->
-> --
-> 2.17.1
->
->
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+DQpPbiBXZWQsIDIwMTktMTItMTggYXQgMTM6MTcgKzAwMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
+IE9uIFdlZCwgRGVjIDE4LCAyMDE5IGF0IDA4OjA2OjA0QU0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0
+dGkgd3JvdGU6DQo+IA0KPiA+IEkgdGhpbmsgeW91IG1pc3NlZCB0aGUgW1BBVENIIHY2IDA4LzE1
+XSByZWd1bGF0b3I6IGJkNzE4eDc6IFNwbGl0DQo+ID4gZHJpdmVyIHRvIGNvbW1vbiBhbmQgYmQ3
+MTh4NyBzcGVjaWZpYyBwYXJ0cw0KPiANCj4gSSBkaWRuJ3QgbWlzcyBpdCwgaXQgd2FzIHF1ZXVl
+ZCBidXQgaXQgZG9lc24ndCBhcHBseS4NClJpZ2h0LiBUaGUgcm9obS1nZW5lcmljLmggaXMgY2hh
+bmdlZCBieQ0KW1BBVENIIHY2IDA0LzE1XSBtZmQ6IHJvaG0gUE1JQ3MgLSB1c2UgcGxhdGZvcm1f
+ZGV2aWNlX2lkIHRvIG1hdGNoIE1GRA0Kc3ViLWRldmljZXMNCg0KZGlmZiAtLWdpdCBhL2luY2x1
+ZGUvbGludXgvbWZkL3JvaG0tZ2VuZXJpYy5oIGIvaW5jbHVkZS9saW51eC9tZmQvcm9obS0NCmdl
+bmVyaWMuaA0KaW5kZXggYmZmMTVhYzI2ZjJjLi45MjJmODgwMDgyMzIgMTAwNjQ0DQotLS0gYS9p
+bmNsdWRlL2xpbnV4L21mZC9yb2htLWdlbmVyaWMuaA0KKysrIGIvaW5jbHVkZS9saW51eC9tZmQv
+cm9obS1nZW5lcmljLmgNCkBAIC00LDcgKzQsNyBAQA0KICNpZm5kZWYgX19MSU5VWF9NRkRfUk9I
+TV9IX18NCiAjZGVmaW5lIF9fTElOVVhfTUZEX1JPSE1fSF9fDQogDQotZW51bSB7DQorZW51bSBy
+b2htX2NoaXBfdHlwZSB7DQoNCg0KSSB0aGluayB0aGlzIGlzIHRoZSByb290IG9mIHRoZSBjb25m
+bGljdCBoZXJlIGFzIFtQQVRDSCB2NiAwNC8xNV0gaXMNCm5vdCBpbiByZWd1bGF0b3IgdHJlZS4g
+SG93IHNob3VsZCBJIGhhbmRsZSB0aGlzIHNvIHRoYXQgaXQgd29uJ3QNCmNvbmZsaWN0IGluIHlv
+dXIgYW5kIExlZSdzIHRyZWVzPw0KDQpCciwNCglNYXR0aQ0K
