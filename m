@@ -1,70 +1,56 @@
-Return-Path: <SRS0=Sw4L=2H=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B546C2D0CD
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 21:05:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05965C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 03:04:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DA2921775
-	for <linux-clk@archiver.kernel.org>; Tue, 17 Dec 2019 21:05:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="t3sDIijj"
+	by mail.kernel.org (Postfix) with ESMTP id C2ADB21582
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 03:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1576638290;
+	bh=ZBVlMQS3Efo5A+DA0zxAHU4x5O/v5668a6b5on5I/xk=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=nSTgXLhFqwfyNI4pfms1E5zfhZRo6WxXlDxWW02NY6JfcQ0jFQ4T7lUnM3yqeb4Sq
+	 315bdJSNrMTlCvfch2xXSxJW9p7RbChlczLIot+BZESxQupHbITPesnbbVHw6xjDoQ
+	 FdXNAeFafh9pLZMEc/ZnyQENodJKUVup2N3g1kQ0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727954AbfLQVFL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 17 Dec 2019 16:05:11 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35057 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727820AbfLQVFL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 17 Dec 2019 16:05:11 -0500
-Received: by mail-lj1-f196.google.com with SMTP id j6so12562835lja.2
-        for <linux-clk@vger.kernel.org>; Tue, 17 Dec 2019 13:05:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aLf9wz93MEAXNDXIPlXLX3P5OWuWNJuqEQzvRIvyEF0=;
-        b=t3sDIijjpkmZPa1OEJaHkKJD+lIEgJSbdZO8WFtcYy/wUdGrlDP6XzD7OsCmYBPyVh
-         jUcYEpW6DOTKh7Fua/JyxY9y7QC+/FVLsctGhLahsyonTsJUj7eMf++WY0iJb+lWpoux
-         K7FxHDDmBRW2X9539RCx1hd4HRnlyPD33Ja/hI9MfYBq7X8GiNOtIKlz78+zpyY1uv8p
-         PAf9odOInpNCB9Jli85GEkVim383+dfWlyhKpUrFRFCGerCDIkRTTOpkovagyPIf7SRu
-         Kc549zy2AWaejKFpMj1b9UGL/UEJqkgnrSERrQMXPANcxD6GSo/bIUeQVL1W9yydLJ9Y
-         zDpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=aLf9wz93MEAXNDXIPlXLX3P5OWuWNJuqEQzvRIvyEF0=;
-        b=coGF/rjZ6vwJ0n3NxTgl9rLkBU2xCRpHWXBXoe3ReQS8bJ/a2ZuX4cB6Ol473ASsb5
-         hpKqaARTFHHOgfBRaSNpQfCaFr2vXg/YH6dtFu1KDzO8T5IZsTyY58Cre7U+CG9m13FV
-         G+qCADFguKu6A1BVPN+Bj5Eq5YWEIiY6Z58mDAUtYMGuYKXvy71tzgq/oV3tH/B06UTE
-         ygYFm3v+t9Lg9Czjlxa26p/AnswebgNHGoJvx2mz70omNbwJ8Lr9iCzzo76xwUkR1WkO
-         Bp3EjlbR4lsZoydaGAZzwI9vo+ODq6mTxZKXZjlaLP7MQSik0xnI/7mXuY0w43KT2kte
-         Hp6g==
-X-Gm-Message-State: APjAAAWrHkS3z1lg9Zp6RmlnoPH4y8C/KH62TdQ9POZIyuyEkhCDSjhp
-        LrBWGOHX0Z3LRPaIugE82mY4keeMA1U0oQ==
-X-Google-Smtp-Source: APXvYqwgbaxwnw809S062XGPwR4/odi9mZz+jctSDrWBOijOS3IZrE65A1TJvlgdb0G2BXJnPW0V+w==
-X-Received: by 2002:a2e:8119:: with SMTP id d25mr508206ljg.76.1576616708754;
-        Tue, 17 Dec 2019 13:05:08 -0800 (PST)
-Received: from localhost.bredbandsbolaget (c-21cd225c.014-348-6c756e10.bbcust.telenor.se. [92.34.205.33])
-        by smtp.gmail.com with ESMTPSA id u20sm13176467lju.34.2019.12.17.13.05.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 17 Dec 2019 13:05:08 -0800 (PST)
-From:   Linus Walleij <linus.walleij@linaro.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
+        id S1726518AbfLRDEu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 17 Dec 2019 22:04:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59272 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726510AbfLRDEu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 17 Dec 2019 22:04:50 -0500
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD318206D8;
+        Wed, 18 Dec 2019 03:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576638289;
+        bh=ZBVlMQS3Efo5A+DA0zxAHU4x5O/v5668a6b5on5I/xk=;
+        h=From:To:Cc:Subject:Date:From;
+        b=krx8BswHUf6o4YajouOrHUh+piYDKsRsVCZpNtiv6gGJn+V/5NRcAV/ISeepIfjjr
+         QR1Uvr0fx+onmwSIvdYspUG3+SPOPkl9H+MD6g7VdhakzrHXn6hBIwMnd23ebxnWY6
+         q+cCrsq0mdoEGNqXsO+4NpXD7hW4mgfmho1UrxCE=
+Received: by wens.tw (Postfix, from userid 1000)
+        id CD7765FCD0; Wed, 18 Dec 2019 11:04:46 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-Subject: [PATCH] clk: ux500: Fix up the SGA clock for some variants
-Date:   Tue, 17 Dec 2019 22:05:04 +0100
-Message-Id: <20191217210504.27888-1-linus.walleij@linaro.org>
-X-Mailer: git-send-email 2.21.0
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@kernel.org
+Subject: [PATCH] clk: sunxi-ng: r40: Allow setting parent rate for external clock outputs
+Date:   Wed, 18 Dec 2019 11:04:31 +0800
+Message-Id: <20191218030431.14578-1-wens@kernel.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -72,32 +58,48 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Some of the special PRCMU firmware variants were not
-properly detected in the Ux500 clock driver, resulting
-in the wrong clock for the SGA.
+From: Chen-Yu Tsai <wens@csie.org>
 
-Cc: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Stephan Gerhold <stephan@gerhold.net>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+One of the uses of the external clock outputs is to provide a stable
+32768 Hz clock signal to WiFi and Bluetooth chips. On the R40, the RTC
+has an internal RC oscillator that is muxed with the external crystal.
+
+Allow setting the parent rate for the external clock outputs so that
+requests for 32768 Hz get passed to the RTC's clock driver to mux in
+the external crystal if it isn't already muxed correctly.
+
+Fixes: cd030a78f7aa ("clk: sunxi-ng: support R40 SoC")
+Fixes: 01a7ea763fc4 ("clk: sunxi-ng: r40: Force LOSC parent to RTC LOSC output")
+Cc: <stable@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/clk/ux500/u8500_of_clk.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
-index 72ed97c6662a..0aedd42fad52 100644
---- a/drivers/clk/ux500/u8500_of_clk.c
-+++ b/drivers/clk/ux500/u8500_of_clk.c
-@@ -99,8 +99,10 @@ static void u8500_clk_init(struct device_node *np)
- 	if (fw_version != NULL) {
- 		switch (fw_version->project) {
- 		case PRCMU_FW_PROJECT_U8500_C2:
-+		case PRCMU_FW_PROJECT_U8500_MBL:
- 		case PRCMU_FW_PROJECT_U8520:
- 		case PRCMU_FW_PROJECT_U8420:
-+		case PRCMU_FW_PROJECT_U8420_SYSCLK:
- 			sgaclk_parent = "soc0_pll";
- 			break;
- 		default:
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+index 897490800102..23bfe1d12f21 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
+@@ -761,7 +761,8 @@ static struct ccu_mp outa_clk = {
+ 		.reg		= 0x1f0,
+ 		.features	= CCU_FEATURE_FIXED_PREDIV,
+ 		.hw.init	= CLK_HW_INIT_PARENTS("outa", out_parents,
+-						      &ccu_mp_ops, 0),
++						      &ccu_mp_ops,
++						      CLK_SET_RATE_PARENT),
+ 	}
+ };
+ 
+@@ -779,7 +780,8 @@ static struct ccu_mp outb_clk = {
+ 		.reg		= 0x1f4,
+ 		.features	= CCU_FEATURE_FIXED_PREDIV,
+ 		.hw.init	= CLK_HW_INIT_PARENTS("outb", out_parents,
+-						      &ccu_mp_ops, 0),
++						      &ccu_mp_ops,
++						      CLK_SET_RATE_PARENT),
+ 	}
+ };
+ 
 -- 
-2.21.0
+2.24.0
 
