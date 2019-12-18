@@ -2,96 +2,110 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E448C4741C
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC461C43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:44:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E678F2467B
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:08:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576692496;
-	bh=8QceqfckdODoaPKg6/IkQok3XjM0pu0xRkpfXmk4JBQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ezwThcL1BSTgsXUsI8UtX0vX6fidst0mpBXBtCqWs04UlZ6pB8VCp0PP4oaGvbcgh
-	 UF7zC1bAVuOrKya7ZLifiP0omsU1l23z1V5bqBpcAz+/45wL5MYnTJRYBX5Kwl5+48
-	 nEHu8zoL4a7E3qsoLowiMX98/NtF9h/folSlJ/sA=
+	by mail.kernel.org (Postfix) with ESMTP id 827A8206D7
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:44:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="thPumv5f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727726AbfLRSIK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 13:08:10 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:39560 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbfLRSIK (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 13:08:10 -0500
-Received: by mail-oi1-f193.google.com with SMTP id a67so1545698oib.6;
-        Wed, 18 Dec 2019 10:08:09 -0800 (PST)
+        id S1727031AbfLRSoa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 13:44:30 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:43722 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726698AbfLRSoa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 13:44:30 -0500
+Received: by mail-lj1-f193.google.com with SMTP id a13so3281781ljm.10;
+        Wed, 18 Dec 2019 10:44:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EpQ7EVQ0aGkFQjgOVCKiJvDzcZVMql3g2JOMsgEUNSU=;
+        b=thPumv5fAYHTM097c7raI8dSZI+GCRYI3OeDcBVPBkoaK1tErsjgvM3h36gRZez/cW
+         yO/VsIhx+dKFAb0tB4cQjr0xInTqCpnISu2rj3Xovu9SBcnum8X0/xB4g7NTVouJftgx
+         jgCddhgQyNkmSrBAtA+Z6aQus//rI+AIM7VfiSOivH4IEShEIwZuc3U0/Uhf2Jc+xT83
+         OeaKSn6ZxRWlXFNy3h2f+0KF/Evsax1EsujeY/5UnB4cPM1pSQcGTxoDtgDxWfMhaxlw
+         AUBdhoWk4MXJDPwUH5eXxVj8EKprRMVi1594SgiVCgfV0fakjJsK4cMpXbsR0io6YGhY
+         cD5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=DFlpwK3AxGJVLFi7l3r97G6DWX/N2u0QA0ZvIo1IjIs=;
-        b=Cy9elW83IRvo8FqtZwlKeNNyEImOWnbMThpJkjADghFFD52K5+ejZQRarbxDvlsQG7
-         RFWkPOQgvgcKFxhlNxPFXIrM+e2ThjU2W9wUII4F1TLuNoyea0ZREOztBPczdXSzfLIP
-         Sk1iQNM4DCxuNo0rY+HRL1pi96aydtDfO0L+7PB+N0P+mpFjEno12dFVqMYnIfljg+54
-         WFOWHDeeVRoSavIFYMrjibUYbR2LxsdJWPT24m16tCVusNJjF7Vc08tPzVnRB8NqmQoJ
-         pjO/k7EnTgemE+d8CxFRlqbymp3N7BkfHzUq3UnslUNLqjPqAxFpT62BKU5NZxCE3qRf
-         dflw==
-X-Gm-Message-State: APjAAAVTHMrFwebaXcQAmjZFciEHXkHfOA0Fs6aheixhRaXM9yzpH7zY
-        /uUF9ATe355JCYklbzfH5g==
-X-Google-Smtp-Source: APXvYqxV3PQgsNKWechNRemE0G3OUmYxE4aKcrp20lSkDN5QSvgGAnJKNyOqxoZGsjHlbI5X+3IITw==
-X-Received: by 2002:a05:6808:3c5:: with SMTP id o5mr1201077oie.142.1576692489561;
-        Wed, 18 Dec 2019 10:08:09 -0800 (PST)
-Received: from localhost (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id m2sm1022649oim.13.2019.12.18.10.08.09
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EpQ7EVQ0aGkFQjgOVCKiJvDzcZVMql3g2JOMsgEUNSU=;
+        b=Djj23qXzmaTE+AAm/xnWtkdcm+Lfpd3qv3ext083eN/7vPq0c4msnIkktdy4/tgWYj
+         mmUDfm03advi3MgDarfMHfr7GMAua4DyqTQDJ3m6NlTriqmiaOemtwqwynW9l7djlYAT
+         mjEfLqS44wxKxupL9wUfMnfqTObwxLYQtHTfYPcX8n5tbh6s+mg5jXsBkuM7rmFEGDJb
+         NfXw1IljE/xaufaez62Nem8jZ13H+eVB6gcCjScGrxvu4V3S8jQerKhLF1O3bs5qRuMM
+         RbNxXRyCMP8caw4Xf1ZG+QC6hWYeI3EY+ig/Pp8awOW7rXJsT1gXvvuhp6yCsATdLB86
+         OEUw==
+X-Gm-Message-State: APjAAAWnIYH69prc9ICrX3cSmuoG2yn+MtNF8mDth4AilqOhhy/g/hmD
+        +qmmeObH88TKQER4zuUwEv8=
+X-Google-Smtp-Source: APXvYqyvMaRtp4686l1Lo52cqWmm7b7M2mtvgdEr0RyPC5bN64UhVtKq8ynkLXVs5B63lyVD/CQxKg==
+X-Received: by 2002:a2e:978d:: with SMTP id y13mr2989694lji.103.1576694668005;
+        Wed, 18 Dec 2019 10:44:28 -0800 (PST)
+Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.gmail.com with ESMTPSA id j204sm1553354lfj.38.2019.12.18.10.44.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 10:08:09 -0800 (PST)
-Date:   Wed, 18 Dec 2019 12:08:08 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Wolfram Sang <wsa+renesas@sang-engineering.com>,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        Noralf =?iso-8859-1?Q?Tr=F8nnes?= <noralf@tronnes.org>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v6 03/15] dt-bindings: mfd: Document ROHM BD71828 bindings
-Message-ID: <20191218180808.GA6226@bogus>
-References: <cover.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
- <c910b9a057e76044291a4d669530ccf19225675f.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
+        Wed, 18 Dec 2019 10:44:26 -0800 (PST)
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH RESEND for 5.6 v1 1/3] clk: tegra: divider: Check UART's divider enable-bit state on rate's recalculation
+Date:   Wed, 18 Dec 2019 21:44:05 +0300
+Message-Id: <20191218184407.25790-1-digetx@gmail.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c910b9a057e76044291a4d669530ccf19225675f.1576054779.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, 11 Dec 2019 11:37:59 +0200, Matti Vaittinen wrote:
-> ROHM BD71828 Power management IC integrates 7 buck converters, 7 LDOs,
-> a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
-> and a 32.768 kHz clock gate.
-> 
-> Document the dt bindings drivers are using.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> ---
-> Changes since v5:
-> - Remove regulator run-level properties
-> - Change SPDX to dual lisence
-> - remove trivial descriptions
-> 
->  .../bindings/mfd/rohm,bd71828-pmic.yaml       | 193 ++++++++++++++++++
->  1 file changed, 193 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
-> 
+UART clock is divided using divisor values from DLM/DLL registers when
+enable-bit is unset in clk register and clk's divider configuration isn't
+taken onto account in this case. This doesn't cause any problems, but
+let's add a check for the divider's enable-bit state, for consistency.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Peter De Schrijver <pdeschrijver@nvidia.com>
+Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
+---
+ drivers/clk/tegra/clk-divider.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/tegra/clk-divider.c b/drivers/clk/tegra/clk-divider.c
+index ca0de5f11f84..38daf483ddf1 100644
+--- a/drivers/clk/tegra/clk-divider.c
++++ b/drivers/clk/tegra/clk-divider.c
+@@ -40,8 +40,13 @@ static unsigned long clk_frac_div_recalc_rate(struct clk_hw *hw,
+ 	int div, mul;
+ 	u64 rate = parent_rate;
+ 
+-	reg = readl_relaxed(divider->reg) >> divider->shift;
+-	div = reg & div_mask(divider);
++	reg = readl_relaxed(divider->reg);
++
++	if ((divider->flags & TEGRA_DIVIDER_UART) &&
++	    !(reg & PERIPH_CLK_UART_DIV_ENB))
++		return rate;
++
++	div = (reg >> divider->shift) & div_mask(divider);
+ 
+ 	mul = get_mul(divider);
+ 	div += mul;
+-- 
+2.24.0
+
