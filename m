@@ -2,118 +2,163 @@ Return-Path: <SRS0=818c=2I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 491C5C43603
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27D6CC43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6882176D
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:44:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fl/mcjN0"
+	by mail.kernel.org (Postfix) with ESMTP id 057B724650
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 18:48:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727205AbfLRSoc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 13:44:32 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:35829 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726960AbfLRSob (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 13:44:31 -0500
-Received: by mail-lf1-f68.google.com with SMTP id 15so2460379lfr.2;
-        Wed, 18 Dec 2019 10:44:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=oOVKsDe9LGG5j1ETif1ZJ64tX9Yfod2gK7GPtOgEPIo=;
-        b=fl/mcjN0Inn4J53cTISzwwKunBpVjOFs6mO2NmR74kNswtmnBdosMc6FyNU5wku3G9
-         XsRq6fpgtpUuI/AqtzJAQmPT1NvMvN/ZgSO/zlYppUrf4JsnVllJTR2g1Z/lXPWiEUFL
-         5LFxHSJjZnSHaUVvQgGXVQ/8FZt2hzxjS4VGX5D92gB0BHhzhLtj1KKi90YiuNPYCdrp
-         qnwiN6Fnjdp66ITEjQpBPkX5iOtV4ySPXiMB5E8v4ifl7+45VQ0EGYcqZq7XGjSUBV8I
-         oKqyDpX0/TPfKvmDhOTG5FGUEVdXzgpoXlwlIWp2Eo60CzA4yDKAGggoiN8gFjJ8ZhIX
-         Ow/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=oOVKsDe9LGG5j1ETif1ZJ64tX9Yfod2gK7GPtOgEPIo=;
-        b=l7ucKabOmFNDe0hvvqQ0CaNnvxmevZMZu9hzIizkJ3ZYOU8iAkIJbubOjqMgvFsf0q
-         JY9oLYnerXa8SGoyrWv2ZjdL+bBQxHTZhTZMUqU0vBnXKZYjHOLHrJfUIkqb8i31Hh1q
-         pg/3odFnaC7K3L8ySQ9DEKE7jEL3SfetgtAIS1rX281LAuRLGq1AQmPSvW8V8r4xIXCu
-         5vMMSGQSkgNM33Shymp9GZDT79u9kAnhy0jheMUyXLuiMwxxjehCvYQNl93nwGgLtmRD
-         fxMAFWFxW6VSMRQ6VYETmeCi9DNf01zPVP1C8fPl+y8YkjCePszt3mbU+hVXamSiBH+D
-         P4Hg==
-X-Gm-Message-State: APjAAAUseISSFdabruQ6NiYbCsN10FbkHUBB0ZcRmTEA0cRsFZRvn+B4
-        59wdjBdA2Qksc4EbhZfFrx8=
-X-Google-Smtp-Source: APXvYqxcOhEC+YyoDwD71+Fs8/hy9mFoRrOTi5mjrD5gpfu4V0qnSlUn6BTpa/nMq7OHBBIhV0a7WA==
-X-Received: by 2002:a19:784:: with SMTP id 126mr2655011lfh.191.1576694668859;
-        Wed, 18 Dec 2019 10:44:28 -0800 (PST)
-Received: from localhost.localdomain (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.gmail.com with ESMTPSA id j204sm1553354lfj.38.2019.12.18.10.44.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 18 Dec 2019 10:44:28 -0800 (PST)
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        id S1726939AbfLRSsR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 13:48:17 -0500
+Received: from foss.arm.com ([217.140.110.172]:57250 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726699AbfLRSsR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Dec 2019 13:48:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8288D1FB;
+        Wed, 18 Dec 2019 10:48:16 -0800 (PST)
+Received: from bogus (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6D5B93F67D;
+        Wed, 18 Dec 2019 10:48:14 -0800 (PST)
+Date:   Wed, 18 Dec 2019 18:48:09 +0000
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     Samuel Holland <samuel@sholland.org>
+Cc:     Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Jassi Brar <jassisinghbrar@gmail.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND for 5.6 v1 2/3] clk: tegra20/30: Don't pre-initialize displays parent clock
-Date:   Wed, 18 Dec 2019 21:44:06 +0300
-Message-Id: <20191218184407.25790-2-digetx@gmail.com>
-X-Mailer: git-send-email 2.24.0
-In-Reply-To: <20191218184407.25790-1-digetx@gmail.com>
-References: <20191218184407.25790-1-digetx@gmail.com>
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Ondrej Jirman <megous@megous.com>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v5 8/8] firmware: arm_scpi: Support unidirectional
+ mailbox channels
+Message-ID: <20191218184809.GA14599@bogus>
+References: <20191215042455.51001-1-samuel@sholland.org>
+ <20191215042455.51001-9-samuel@sholland.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191215042455.51001-9-samuel@sholland.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Both Tegra20 and Tegra30 are initializing display's parent clock
-incorrectly because PLLP is running at 216/408MHz while display rate is
-set to 600MHz, but pre-setting the parent isn't needed at all because
-display driver selects proper parent anyways.
+On Sat, Dec 14, 2019 at 10:24:55PM -0600, Samuel Holland wrote:
+> Some mailbox controllers have only unidirectional channels, so we need a
+> pair of them for each SCPI channel. If a mbox-names property is present,
+> look for "rx" and "tx" mbox channels; otherwise, the existing behavior
+> is preserved, and a single mbox channel is used for each SCPI channel.
+>
 
-Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
----
- drivers/clk/tegra/clk-tegra20.c | 2 --
- drivers/clk/tegra/clk-tegra30.c | 2 --
- 2 files changed, 4 deletions(-)
+I need to look at the bindings again, but I think you must update it.
 
-diff --git a/drivers/clk/tegra/clk-tegra20.c b/drivers/clk/tegra/clk-tegra20.c
-index 4d8222f5c638..0c14fb570343 100644
---- a/drivers/clk/tegra/clk-tegra20.c
-+++ b/drivers/clk/tegra/clk-tegra20.c
-@@ -1046,8 +1046,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA20_CLK_SBC3, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_SBC4, TEGRA20_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA20_CLK_HOST1X, TEGRA20_CLK_PLL_C, 150000000, 0 },
--	{ TEGRA20_CLK_DISP1, TEGRA20_CLK_PLL_P, 600000000, 0 },
--	{ TEGRA20_CLK_DISP2, TEGRA20_CLK_PLL_P, 600000000, 0 },
- 	{ TEGRA20_CLK_GR2D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_GR3D, TEGRA20_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA20_CLK_VDE, TEGRA20_CLK_CLK_MAX, 300000000, 0 },
-diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-tegra30.c
-index c8bc18e4d7e5..bd4d42005897 100644
---- a/drivers/clk/tegra/clk-tegra30.c
-+++ b/drivers/clk/tegra/clk-tegra30.c
-@@ -1251,8 +1251,6 @@ static struct tegra_clk_init_table init_table[] __initdata = {
- 	{ TEGRA30_CLK_SBC6, TEGRA30_CLK_PLL_P, 100000000, 0 },
- 	{ TEGRA30_CLK_PLL_C, TEGRA30_CLK_CLK_MAX, 600000000, 0 },
- 	{ TEGRA30_CLK_HOST1X, TEGRA30_CLK_PLL_C, 150000000, 0 },
--	{ TEGRA30_CLK_DISP1, TEGRA30_CLK_PLL_P, 600000000, 0 },
--	{ TEGRA30_CLK_DISP2, TEGRA30_CLK_PLL_P, 600000000, 0 },
- 	{ TEGRA30_CLK_TWD, TEGRA30_CLK_CLK_MAX, 0, 1 },
- 	{ TEGRA30_CLK_GR2D, TEGRA30_CLK_PLL_C, 300000000, 0 },
- 	{ TEGRA30_CLK_GR3D, TEGRA30_CLK_PLL_C, 300000000, 0 },
--- 
-2.24.0
+> Note that since the mailbox framework only supports a single phandle
+> with each name (mbox_request_channel_byname always returns the first
+> one), this new mode only supports a single SCPI channel.
+>
+> Signed-off-by: Samuel Holland <samuel@sholland.org>
+> ---
+>  drivers/firmware/arm_scpi.c | 58 +++++++++++++++++++++++++++++--------
+>  1 file changed, 46 insertions(+), 12 deletions(-)
+>
+> diff --git a/drivers/firmware/arm_scpi.c b/drivers/firmware/arm_scpi.c
+> index a80c331c3a6e..36ff9dd8d0fa 100644
+> --- a/drivers/firmware/arm_scpi.c
+> +++ b/drivers/firmware/arm_scpi.c
+> @@ -231,7 +231,8 @@ struct scpi_xfer {
+>
+>  struct scpi_chan {
+>  	struct mbox_client cl;
+> -	struct mbox_chan *chan;
+> +	struct mbox_chan *rx_chan;
+> +	struct mbox_chan *tx_chan;
+>  	void __iomem *tx_payload;
+>  	void __iomem *rx_payload;
+>  	struct list_head rx_pending;
+> @@ -505,7 +506,7 @@ static int scpi_send_message(u8 idx, void *tx_buf, unsigned int tx_len,
+>  	msg->rx_len = rx_len;
+>  	reinit_completion(&msg->done);
+>
+> -	ret = mbox_send_message(scpi_chan->chan, msg);
+> +	ret = mbox_send_message(scpi_chan->tx_chan, msg);
+>  	if (ret < 0 || !rx_buf)
+>  		goto out;
+>
+> @@ -854,8 +855,13 @@ static void scpi_free_channels(void *data)
+>  	struct scpi_drvinfo *info = data;
+>  	int i;
+>
+> -	for (i = 0; i < info->num_chans; i++)
+> -		mbox_free_channel(info->channels[i].chan);
+> +	for (i = 0; i < info->num_chans; i++) {
+> +		struct scpi_chan *pchan = &info->channels[i];
+> +
+> +		if (pchan->tx_chan != pchan->rx_chan)
+> +			mbox_free_channel(pchan->tx_chan);
+> +		mbox_free_channel(pchan->rx_chan);
 
+I think mbox_free_channel handles !chan->cl, so just do unconditionally.
+
+> +	}
+>  }
+>
+>  static int scpi_remove(struct platform_device *pdev)
+> @@ -903,6 +909,7 @@ static int scpi_probe(struct platform_device *pdev)
+>  	struct resource res;
+>  	struct device *dev = &pdev->dev;
+>  	struct device_node *np = dev->of_node;
+> +	bool use_mbox_names = false;
+>
+>  	scpi_info = devm_kzalloc(dev, sizeof(*scpi_info), GFP_KERNEL);
+>  	if (!scpi_info)
+> @@ -916,6 +923,14 @@ static int scpi_probe(struct platform_device *pdev)
+>  		dev_err(dev, "no mboxes property in '%pOF'\n", np);
+>  		return -ENODEV;
+>  	}
+> +	if (of_get_property(dev->of_node, "mbox-names", NULL)) {
+
+So, for this platform, this is required and must fail if it is not found.
+But instead your check here is optional and may end up populating 2
+scpi channels instead of one. I would suggest to make it required and
+fail for it based on some compatible, otherwise you are not checking
+correctly.
+
+Something like:
+        if (of_match_device(blah_blah_of_match, &pdev->dev)) {
+                use_mbox_names = true;
+		count = 1;
+	}
+
+
+> +		use_mbox_names = true;
+> +		if (count != 2) {
+> +			dev_err(dev, "need exactly 2 mboxes with mbox-names\n");
+> +			return -ENODEV;
+> +		}
+> +		count /= 2;
+> +	}
+
+Ah, OK then you must update the binding as it's different usage of mailbox. 
+
+General query, not related to this patch: If you are in process of
+implementing the firmware, I suggest to move to SCMI protocol than this
+one if not too late. This specification is deprecated and no longer
+updated while SCMI is actively developed and maintained. However it has
+slightly different notion of tx and rx and the way the specification
+commands which messages are synchronous and which can be async/delayed.
+
+--
+Regards,
+Sudeep
