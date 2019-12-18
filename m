@@ -6,70 +6,71 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271E8C3F68F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31BBFC43603
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:18:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0DDE2467F
-	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:12:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0D3942467B
+	for <linux-clk@archiver.kernel.org>; Wed, 18 Dec 2019 11:18:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726726AbfLRLMA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 18 Dec 2019 06:12:00 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:40168 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726674AbfLRLMA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 18 Dec 2019 06:12:00 -0500
-X-IronPort-AV: E=Sophos;i="5.69,329,1571670000"; 
-   d="scan'208";a="34755017"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie5.idc.renesas.com with ESMTP; 18 Dec 2019 20:11:58 +0900
-Received: from be1yocto.ree.adwin.renesas.com (unknown [172.29.43.62])
-        by relmlir6.idc.renesas.com (Postfix) with ESMTP id EAB434218BE9;
-        Wed, 18 Dec 2019 20:11:55 +0900 (JST)
-From:   Biju Das <biju.das@bp.renesas.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Biju Das <biju.das@bp.renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        Simon Horman <horms@verge.net.au>,
-        Chris Paterson <Chris.Paterson2@renesas.com>,
-        Marian-Cristian Rotariu 
-        <marian-cristian.rotariu.rb@bp.renesas.com>,
-        Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
-        linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] clock: renesas: cpg-mssr: Fix the typo
-Date:   Wed, 18 Dec 2019 11:09:50 +0000
-Message-Id: <1576667390-29449-1-git-send-email-biju.das@bp.renesas.com>
-X-Mailer: git-send-email 2.7.4
+        id S1726916AbfLRLSL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 18 Dec 2019 06:18:11 -0500
+Received: from foss.arm.com ([217.140.110.172]:42382 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726880AbfLRLRz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 18 Dec 2019 06:17:55 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 204D130E;
+        Wed, 18 Dec 2019 03:17:55 -0800 (PST)
+Received: from usa.arm.com (e107155-lin.cambridge.arm.com [10.1.196.42])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 18BE53F6CF;
+        Wed, 18 Dec 2019 03:17:53 -0800 (PST)
+From:   Sudeep Holla <sudeep.holla@arm.com>
+To:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH v2 08/11] clk: scmi: Match scmi device by both name and protocol id
+Date:   Wed, 18 Dec 2019 11:17:39 +0000
+Message-Id: <20191218111742.29731-9-sudeep.holla@arm.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20191218111742.29731-1-sudeep.holla@arm.com>
+References: <20191218111742.29731-1-sudeep.holla@arm.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch fixes the typo %s/r8a774a1/r8a774b1/.
+The scmi bus now has support to match the driver with devices not only
+based on their protocol id but also based on their device name if one is
+available. This was added to cater the need to support multiple devices
+and drivers for the same protocol.
 
-Fixes: 1000393 ("dt-bindings: clock: renesas: cpg-mssr: Document r8a774b1
-binding")
-Signed-off-by: Biju Das <biju.das@bp.renesas.com>
+Let us add the name "clocks" to scmi_device_id table in the driver so
+that in matches only with device with the same name and protocol id
+SCMI_PROTOCOL_CLOCK.
+
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 2 +-
+ drivers/clk/clk-scmi.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-index c7674d0..f4d153f 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt
-@@ -19,7 +19,7 @@ Required Properties:
-       - "renesas,r8a7745-cpg-mssr" for the r8a7745 SoC (RZ/G1E)
-       - "renesas,r8a77470-cpg-mssr" for the r8a77470 SoC (RZ/G1C)
-       - "renesas,r8a774a1-cpg-mssr" for the r8a774a1 SoC (RZ/G2M)
--      - "renesas,r8a774b1-cpg-mssr" for the r8a774a1 SoC (RZ/G2N)
-+      - "renesas,r8a774b1-cpg-mssr" for the r8a774b1 SoC (RZ/G2N)
-       - "renesas,r8a774c0-cpg-mssr" for the r8a774c0 SoC (RZ/G2E)
-       - "renesas,r8a7790-cpg-mssr" for the r8a7790 SoC (R-Car H2)
-       - "renesas,r8a7791-cpg-mssr" for the r8a7791 SoC (R-Car M2-W)
+diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+index 886f7c5df51a..c491f5de0f3f 100644
+--- a/drivers/clk/clk-scmi.c
++++ b/drivers/clk/clk-scmi.c
+@@ -176,7 +176,7 @@ static int scmi_clocks_probe(struct scmi_device *sdev)
+ }
+ 
+ static const struct scmi_device_id scmi_id_table[] = {
+-	{ SCMI_PROTOCOL_CLOCK },
++	{ SCMI_PROTOCOL_CLOCK, "clocks" },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(scmi, scmi_id_table);
 -- 
-2.7.4
+2.17.1
 
