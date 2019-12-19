@@ -2,90 +2,132 @@ Return-Path: <SRS0=J300=2J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFD84C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 14:20:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C08A5C2D0C0
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 14:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90B25206D8
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 14:20:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 94EC124676
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 14:36:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fIjaEL+x"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YK7Ldqaa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfLSOUf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 09:20:35 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42063 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbfLSOUf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 09:20:35 -0500
-Received: by mail-io1-f67.google.com with SMTP id n11so4368981iom.9;
-        Thu, 19 Dec 2019 06:20:34 -0800 (PST)
+        id S1726751AbfLSOgv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 09:36:51 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50699 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726813AbfLSOgu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 09:36:50 -0500
+Received: by mail-wm1-f67.google.com with SMTP id a5so5671579wmb.0
+        for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2019 06:36:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d3uNqyau+uqHl1+nVlgL9fnHSgknMtxXHMZq1PGXbPI=;
-        b=fIjaEL+xy1liB8a19YiHcLE/YmTaQAcfoRDPTsFpSyJAWVR/R+GbGxWTkTlklsSPjX
-         Yu3FCBgbImKi2S9yWuq/Npy+Idoa147eGtNr5dCggAIUGBVk7rz0wkRkoqvV/BU15Clo
-         GOkz839U3L8RH6QMkA17wi+1ZGyFSpMmcZuNe1OmqmA/hLOkcCDBSCGGfk8C78vv+h3J
-         UiwvHtSeS3wvhRDLAiBbY4YzDVmZwFGFV3Cp6Nts75kM7OaYbn5fJQS9eDpGjbIP+/Nr
-         qiAi/fj7z/9aAFtIM+VhPKC7tMqGFjp4+IPHBCocWN/yTnJwqGvSNxQcbmtGQT/ieM/x
-         01Bg==
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=AoW0ANcjhnWhVQy1nVWVlNehespmk84ZLnrhmIANeDA=;
+        b=YK7LdqaacIifpKR43grXurOLS6lstMbGSX6yh9BiZsQbKGNAobIumTzzfI0vzVab3R
+         BkL1DaoAW+buzNT46GZR1VAyTxwQHfe6Iqdri+qpsLkTm1jLnks+ua7+UCV5dwzRWpBr
+         zHE1KRA4Iy2WKEJFJsjuikO4s1AxpUw2M4/JDE9e80qW+IzcNdabq4wW2jwE6Xy00jH5
+         8JUp76OYneB+zZAZuHdXWgdWHsHIhMW2gicqtOp+PQxuKbTk7uEprMzGXTs55KHJtezM
+         aAawLm+qXV4CRlSmp8cS3SguI+nL2u/3rdPi/AuPaXieEK/Qv5k6q+UklgBSCRaqY02x
+         TROw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d3uNqyau+uqHl1+nVlgL9fnHSgknMtxXHMZq1PGXbPI=;
-        b=qsTzIjSzpy3fiz8FNlJqS3Vd6TlT1Kfff1fwbpZ430wg7XoXbJ+drERvkmHo5gYN03
-         oDwT7cRV4WezTM8gZxkKWul8afSwwyTfRsYUZ19B2YyRirPQfbmAsqwwCYJILzElBE52
-         KUKkXIKf9a0QfaTp2rzTOwEOvWOU4UPRWsWn+AVTJiDDsIgKOTn5B2/K1GYen+4QJPa2
-         jSKPM2NoieSI5Hz6aNhPxhSO92vsjZgoaXDA3rEAdzNqX75Szi43Z74kVKBXZmxeof6f
-         J4dZbWHInceMhu70bFlGTxajTGUS5MyA6q7k5VV+wY8iUB44jwjAvdWg8zn9Yg79TlQ+
-         sd8g==
-X-Gm-Message-State: APjAAAXsnqoyqpR3qcY4UZwE5A/VgjIEN59v2cxWzHvl1jIXJcd/o75H
-        u3WPC9hC3OzLk5i8H5jtQTxUTSDrNIAtbBwAX8A=
-X-Google-Smtp-Source: APXvYqyse2tZmLbWeTJHu9jPZ4y7jNwi6OE18BMIORT8ZvbIy8VS+HkWhe05B83mbuQvzggj2mMbqfwpJ8aQ0JO88YY=
-X-Received: by 2002:a5d:9c4e:: with SMTP id 14mr6199922iof.166.1576765234271;
- Thu, 19 Dec 2019 06:20:34 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=AoW0ANcjhnWhVQy1nVWVlNehespmk84ZLnrhmIANeDA=;
+        b=RFuxrrCaJTwSyIC91kT621R/TQ0A5cU8AOAGkO0mvZaJGbhP3xydejdIUrTTJhIAZG
+         IpKiJOal9QZX2XqB6e3T7jQmb6hoKyZNWCfKyWgEMQ4PPHx8SD70+erjW4qlpJ0Mgb2X
+         0e4kPMNkE6SDUQv0AY6lIvsIbSK14FNROi1yzvrVDbu29Q15mVJwADoDwPKqSikEAhUK
+         ACUJ4wbFTUXu2zl3yonxjeO09RXW6cDmRa5ys1w6H+rrx9OMuU2qCyn/kiINQOMzeZR6
+         tQF3Dllkol9Ul7HdclGJp8oZw52xzCaT9imb7zKdHNKEasz/h70eZSEoMP0XSEc5489I
+         ubJw==
+X-Gm-Message-State: APjAAAVQiDOF/fOpqefZc3DgIwe8uurm3S1D4H5TOP1m+lp/KvwGah97
+        bX/TzIBfEB+UzjNfuqmpuOxABA==
+X-Google-Smtp-Source: APXvYqzWCOPBrg4orgmeiuAAjBbDOGoPenNVv75ndLEhJ5dP0c89acYNuswyk6Faok6Xlh/8ZdFv0Q==
+X-Received: by 2002:a7b:ce81:: with SMTP id q1mr10589381wmj.47.1576766208594;
+        Thu, 19 Dec 2019 06:36:48 -0800 (PST)
+Received: from dell ([2.27.35.132])
+        by smtp.gmail.com with ESMTPSA id 188sm6700579wmd.1.2019.12.19.06.36.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 19 Dec 2019 06:36:47 -0800 (PST)
+Date:   Thu, 19 Dec 2019 14:36:47 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>
+Subject: Re: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828 bindings
+Message-ID: <20191219143647.GQ18955@dell>
+References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+ <702daeb9d8604e2feddd5f6f92b067a2d60d81ad.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+ <f9b0fbb7b898691d09ed8954e8df67cf3706aa96.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-References: <20191217171205.5492-1-jeffrey.l.hugo@gmail.com> <20191219060020.573342146E@mail.kernel.org>
-In-Reply-To: <20191219060020.573342146E@mail.kernel.org>
-From:   Jeffrey Hugo <jeffrey.l.hugo@gmail.com>
-Date:   Thu, 19 Dec 2019 07:20:23 -0700
-Message-ID: <CAOCk7NpZmH8XahFmcKXSGsbT2nrY7kuWftGW1Ss6NdkqGs08cA@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Make gcc_gpu_cfg_ahb_clk critical
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-clk@vger.kernel.org,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f9b0fbb7b898691d09ed8954e8df67cf3706aa96.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed, Dec 18, 2019 at 11:00 PM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Jeffrey Hugo (2019-12-17 09:12:05)
-> > diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-> > index df1d7056436c..26cc1458ce4a 100644
-> > --- a/drivers/clk/qcom/gcc-msm8998.c
-> > +++ b/drivers/clk/qcom/gcc-msm8998.c
-> > @@ -2044,6 +2044,7 @@ static struct clk_branch gcc_gpu_cfg_ahb_clk = {
-> >                 .hw.init = &(struct clk_init_data){
-> >                         .name = "gcc_gpu_cfg_ahb_clk",
-> >                         .ops = &clk_branch2_ops,
-> > +                       .flags = CLK_IS_CRITICAL, /* to access gpucc */
->
-> Can we not do the thing that Bjorn did to turn on ahb clks with runtime
-> PM for clk controllers that need them? See 892df0191b29 ("clk: qcom: Add
-> QCS404 TuringCC").
->
+On Thu, 19 Dec 2019, Vaittinen, Matti wrote:
 
-Interesting.  I didn't think of that solution, nor was I aware of that
-change.  Let me have a look.  Thanks for the tip.
+> Hello Mark, Lee, Rob
+> 
+> I just noticed we have a dependency here. This binding is referring to
+> regulator binding - which was applied by Mark and is thus missing from
+> the series. What's the best way forward?
+> 
+> On Thu, 2019-12-19 at 11:46 +0200, Matti Vaittinen wrote:
+> > ROHM BD71828 Power management IC integrates 7 buck converters, 7
+> > LDOs,
+> > a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
+> > and a 32.768 kHz clock gate.
+> > 
+> > Document the dt bindings drivers are using.
+> > 
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> > 
+> > No changes since v6
+> 
+> //snip
+> 
+> > +  regulators:
+> > +    $ref: ../regulator/rohm,bd71828-regulator.yaml
+> 
+> This file is missing from the series and is applied to Mark's tree.
+
+Shouldn't matter.  I guess they're all heading for he same release.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
