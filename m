@@ -3,94 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31D5BC43603
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DABCCC43603
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:36:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E301F222C2
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:32:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1D65222C2
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:36:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576733570;
-	bh=3TqDyq33bDOA1DBAAdKO4OY8wnBgiYZgW9/buyRHLqc=;
+	s=default; t=1576733770;
+	bh=SphPqeX+O5iIOIShcb3YDC1d5sRfJwLkxLogSjEcn9s=;
 	h=In-Reply-To:References:Cc:Subject:From:To:Date:List-ID:From;
-	b=YgxE98CJLmWLkrH00jJmqNYvNIDVeCH56N9hWJKrNffZQrZS/C7qyQIasqWX8LmVB
-	 MUF7NshUqsqpImPKmSCcbvQcxeEeNZlweEKohigTyVocQgUcUSU/ULc311UtYUmoDi
-	 fewoo2FEMda5qgGcq+vDPVp9su1wu9t3wcId+IkA=
+	b=l3B0pq2bdEu+9x7gdZUqjHF+JW6b9g+dxi5ZAkt57nXem7UpIvLHpxFl1++4HavO5
+	 3lPIvSVt1S2YHhfBY7N28K4Mz7m5mKTsfaX3Z6+iDjjrye1H5wv9UXAOlojv92SlDM
+	 fh0Br50+Bflgyt2c3GCr4y4o51wFZJ4mKq5R0SlI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725996AbfLSFcq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 00:32:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46078 "EHLO mail.kernel.org"
+        id S1725844AbfLSFgH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 00:36:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfLSFcq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:32:46 -0500
+        id S1725817AbfLSFgG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Dec 2019 00:36:06 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 88D3A222C2;
-        Thu, 19 Dec 2019 05:32:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD605222C2;
+        Thu, 19 Dec 2019 05:36:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576733564;
-        bh=3TqDyq33bDOA1DBAAdKO4OY8wnBgiYZgW9/buyRHLqc=;
+        s=default; t=1576733765;
+        bh=SphPqeX+O5iIOIShcb3YDC1d5sRfJwLkxLogSjEcn9s=;
         h=In-Reply-To:References:Cc:Subject:From:To:Date:From;
-        b=PcpMTHNRau9NZL1ZlOqBXpdNprIkeT+kV7OT+iz0x+RJP2h9jWZkg8d/Ht+9GNZj+
-         UiO1w/+mRpxc2YSTdgWcO+6kWc8/wdbw+wjqaQlFhizz8oo1FVpNDlOM3twBK4b2cx
-         7z3B5lV256lAwcJJQ5d76sOQLf/9V/gCQhEsgZsY=
+        b=V8Prj0YDFwA75GBp1ddOn/96sqam6QW7/oUTjTSJoghdtDDWsH41RFHZrPJ2PRY+n
+         cY80UGmF/Q/285RTL7xc6xHh+0gUsPf5kQl29PbEIiroycpy9t7tnd+jp6ZKiCd/b5
+         hsh8IDVmBXgFwbEeOi/yE5G+AoK2mpyUz/sQ6vUY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0101016eab0a4e76-b8eb44c5-d076-46b9-a156-b80dc650ca31-000000@us-west-2.amazonses.com>
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org> <1573812304-24074-4-git-send-email-tdas@codeaurora.org> <CAOCk7NqfHe6jRPmw6o650fyd6EyVfFObHhJ9=21ipuAqJo6oGA@mail.gmail.com> <20191126181154.275EA20727@mail.kernel.org> <0101016eab0a4e76-b8eb44c5-d076-46b9-a156-b80dc650ca31-000000@us-west-2.amazonses.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        MSM <linux-arm-msm@vger.kernel.org>, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, lkml <linux-kernel@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH v2 3/8] dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings
+In-Reply-To: <20191204120341.1.I9971817e83ee890d1096c43c5a6ce6ced53d5bd3@changeid>
+References: <20191204120341.1.I9971817e83ee890d1096c43c5a6ce6ced53d5bd3@changeid>
+Cc:     linux-arm-msm@vger.kernel.org, Taniya Das <tdas@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Matthias Kaehlcke <mka@chromium.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sc7180: Fix setting flag for votable GDSCs
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        Taniya Das <tdas@codeaurora.org>
+To:     Andy Gross <agross@kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>
 User-Agent: alot/0.8.1
-Date:   Wed, 18 Dec 2019 21:32:43 -0800
-Message-Id: <20191219053244.88D3A222C2@mail.kernel.org>
+Date:   Wed, 18 Dec 2019 21:36:04 -0800
+Message-Id: <20191219053605.AD605222C2@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-11-26 20:06:49)
+Quoting Matthias Kaehlcke (2019-12-04 12:04:12)
+> Commit 17269568f7267 ("clk: qcom: Add Global Clock controller (GCC)
+> driver for SC7180") sets the VOTABLE flag in .pwrsts, but it needs
+> to be set in .flags, fix this.
 >=20
->=20
-> On 11/26/2019 11:41 PM, Stephen Boyd wrote:
-> > Quoting Jeffrey Hugo (2019-11-15 07:11:01)
-> >> On Fri, Nov 15, 2019 at 3:07 AM Taniya Das <tdas@codeaurora.org> wrote:
-> >>> diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml =
-b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> >>> new file mode 100644
-> >>> index 0000000..c2d6243
-> >>> --- /dev/null
-> >>> +++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> >>> +      - description: GPLL0 source from GCC
-> >>
-> >> This is not an accurate conversion.  GPLL0 was not valid for 845, and
-> >> is required for 8998.
-> >=20
-> > Thanks for checking Jeff.
-> >=20
-> > It looks like on 845 there are two gpll0 clocks going to gpucc. From
-> > gpu_cc_parent_map_0:
-> >=20
-> >       "gcc_gpu_gpll0_clk_src",
-> >       "gcc_gpu_gpll0_div_clk_src",
-> >=20
->=20
-> There are branches of GPLL0 which would be connected to most external=20
-> CCs. It is upto to the external CCs to either use them to source a=20
-> frequency or not.
+> Fixes: 17269568f7267 ("clk: qcom: Add Global Clock controller (GCC) drive=
+r for SC7180")
+> Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> ---
 
-Yes, they can decide to use them or not, but they really do go to the
-CCs so the DT should describe that.
+Applied to clk-fixes
 
