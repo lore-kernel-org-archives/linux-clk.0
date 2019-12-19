@@ -6,70 +6,64 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301D6C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:14:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D776C2D0C1
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:27:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00B6E24672
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:14:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57B8227BF
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 05:27:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576732480;
-	bh=zutbo+tkyWAeoZo0maixsENGTToLoAmt9MwqGd10Gvk=;
+	s=default; t=1576733231;
+	bh=XfApUyXzV/e0yM51NT790SN9nE5vGwbfLWxVxLCGNVM=;
 	h=In-Reply-To:References:Cc:Subject:From:To:Date:List-ID:From;
-	b=x6X+VUzBBLPOU5ygJ+Zmmk0aZHgz+mcEhIGuWIYDnTZitGf4sFFC5MNXOKHaQnLXX
-	 UoYjkDpEMqvn5AibaXgVG5gWmSXLsmfh5w5SEhufJ5zNeN8MNWbAbxQw2MSK8FUCSx
-	 PRtqhQ59vBd+g9+Tc5aMsLEv00CZutYXv2vkMjr4=
+	b=NJqfPK1BBOscPA8yW8ZHX3tPL+GpYbj9glbRxRPryPxH53bz48xpOmAzy+JSObY01
+	 LZimvqcOujCcieudXTTIGPsS2bMQK/Z+sjpZocs5nvcOug4+2LUYS4q1UBRKH8FIoW
+	 OSvZ0kT62Ulpsb9q6wlUSU/YnZMbmYOAmlbzSFWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726702AbfLSFOj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 00:14:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41832 "EHLO mail.kernel.org"
+        id S1725987AbfLSF1I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 00:27:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725821AbfLSFOj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Dec 2019 00:14:39 -0500
+        id S1725821AbfLSF1I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Dec 2019 00:27:08 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C2B842146E;
-        Thu, 19 Dec 2019 05:14:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 60728222C2;
+        Thu, 19 Dec 2019 05:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576732478;
-        bh=zutbo+tkyWAeoZo0maixsENGTToLoAmt9MwqGd10Gvk=;
+        s=default; t=1576733227;
+        bh=XfApUyXzV/e0yM51NT790SN9nE5vGwbfLWxVxLCGNVM=;
         h=In-Reply-To:References:Cc:Subject:From:To:Date:From;
-        b=SvdIWTueB22fAa/EqIDmetplXA/yHVHTxROAlv9nALYp6XEVxf+PZ13hSd6ZP7zUq
-         aTg2Gj1IuqzblN2opxfhhQGK69ycvcncMQcLaTtpyasdIk7oDDXmNz1FnV+R7GK84H
-         +SADY9DR+IEd06Bjcm6lnOiXp6BUonTRz8RoxwAc=
+        b=e/Iod/JpW+fahQnJ0gJngxtfinR5+T8mMxvjnR5Jib+8G4P9mMm+c/dK3L5CAV8iw
+         /+kheWE+FE7f37MkR/2K/BGQlqBrANcgczSZa7vKw7zdv2BLvk9luNcSPkLFmCcfvl
+         b55YVBnQ5iPHggqSsgKaPluejhbiTzxuQgUA62fM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191218190454.420358-3-lkundrak@v3.sk>
-References: <20191218190454.420358-1-lkundrak@v3.sk> <20191218190454.420358-3-lkundrak@v3.sk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Michael Turquette <mturquette@baylibre.com>, soc@kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: Re: [PATCH 2/2] clk: mmp2: Fix the order of timer mux parents
+In-Reply-To: <20190731182713.8123-2-tdas@codeaurora.org>
+References: <20190731182713.8123-1-tdas@codeaurora.org> <20190731182713.8123-2-tdas@codeaurora.org>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: Re: [PATCH v3 1/2] clk: qcom: rcg2: Add support for display port clock ops
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>
 User-Agent: alot/0.8.1
-Date:   Wed, 18 Dec 2019 21:14:37 -0800
-Message-Id: <20191219051438.C2B842146E@mail.kernel.org>
+Date:   Wed, 18 Dec 2019 21:27:06 -0800
+Message-Id: <20191219052707.60728222C2@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-12-18 11:04:54)
-> Determined empirically, no documentation is available.
+Quoting Taniya Das (2019-07-31 11:27:12)
+> New display port clock ops supported for display port clocks.
 >=20
-> The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), b=
-ut
-> thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
-> what is going on, ended up just dividing the rate as of
-> commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
 
-Any Fixes: tag?
-
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
 
