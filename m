@@ -2,96 +2,146 @@ Return-Path: <SRS0=J300=2J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A42C2D0D2
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 18:24:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BA4FC2D0C1
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 19:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA00E24676
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 18:24:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576779879;
-	bh=2W0W2Y6VzngkvQOJb3lty+DYlJYsduZ6Ch/aMIAI4HI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nilUzud6ei2fIVs6MqAQa/97xU938r4X7+kyYbqzVNezHkdDjOC9CYyHN0tiFLmK7
-	 6X51L7TvsLfQ9ou0DxRnO01DnWjy0vsMQS0GtC9iziejPieo4I70QUcdZsh6G4RozZ
-	 f9QqqiP6Hu5agoksxiBzm2O94+EOlw3iVSpO6KCU=
+	by mail.kernel.org (Postfix) with ESMTP id 4FFED2465E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 19:01:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="lEbPRqMg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726880AbfLSSYf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 13:24:35 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:46303 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726797AbfLSSYf (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 13:24:35 -0500
-Received: by mail-oi1-f195.google.com with SMTP id p67so3406058oib.13;
-        Thu, 19 Dec 2019 10:24:34 -0800 (PST)
+        id S1727823AbfLSTBW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 14:01:22 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:44979 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729373AbfLSTBU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 14:01:20 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v201so5086777lfa.11
+        for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2019 11:01:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=from:subject:to:cc:references:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=EnctfXeH6eSWsiC3SsB5Huqb0Ku44kDLoFN9p69SIAE=;
+        b=lEbPRqMg9JeGspNDXadsO0erORgltj+FUrBlrmYlwUjMc774JfhJ6eRumOi/hEBQc1
+         j/UkZlmTqlmFwyEQAz0i+0DGHuUvbLlC4AKLAlUIVPRGHmaqEzY7+6gI88wUx8LOezTp
+         6BQkhhD7gDpCJs7CNaKeplHsSflIs3AJgQMoNNyxeUH2ebKSk56q+NCyIZzeeWfZcHFv
+         HXQi+nxzjx1jRs9VMt4b6suCTgj9NDXnNpu11YNAKN1Kb+CZB9H1JhhcELAP7azOQw7P
+         1t4g9xWB8JNohzB+7BNQ21UOE2bci6K1O+MtXz5/dnZo8E0LfZv8LjVO9BimFwtNU4aD
+         h2OA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ubbzcYJgK4J86pN20uK4XO1/Lq32GjugkrqkcPBc/FQ=;
-        b=p2x2ZJTkL3ccDvljtZmgIMYdrt4rD9ioHZFgFk28K3Jd1PDv+KFUPxIn9iDXCxqS/x
-         b8z0CsFrBIMiDA+BU6lBjbAE8QpsctOoGCxedQDTJFTqDgzEUZ7lh50+oa/IsBZxrhyd
-         f7vIV0e5ExRE3VstO3LXXz4cJxP0Q5BdN8UmS2bfHmnwkffFJYQldkLzqZKDViOyNbvt
-         cj3buD0zYtOgFP5oIKbf5K9TGFKvSKEss11sIiFRcRBJUbJI7KMTRp/g2qHjvdFwW+bg
-         ue3zP25CUGelLeTQ2yJMy9wf/gWWw9RCGq/37HgiRyS95IreBFDias2ZF9m2Ch8fimO3
-         mzbw==
-X-Gm-Message-State: APjAAAX4CpcCu6+UuXSRgx0sX2TBfJCYOU4FrKtW4mECOpHIhpLIC7m6
-        9OsM+BzmIDeCUN9FwRSbWg==
-X-Google-Smtp-Source: APXvYqwP+cokLxTWgWJHG2u8DLdl2oWM5ybBdugsg2ffv/IoIVKtZicq+YLqD5RB1XijlarWQmG0Gg==
-X-Received: by 2002:aca:4fc2:: with SMTP id d185mr1123274oib.33.1576779874375;
-        Thu, 19 Dec 2019 10:24:34 -0800 (PST)
-Received: from localhost ([2607:fb90:bdf:98e:3549:d84c:9720:edb4])
-        by smtp.gmail.com with ESMTPSA id p24sm2374547oth.28.2019.12.19.10.24.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 10:24:33 -0800 (PST)
-Date:   Thu, 19 Dec 2019 12:24:31 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-soc@vger.kernel.org, sboyd@kernel.org,
-        sivaprak@codeaurora.org
-Subject: Re: [PATCH V2 4/7] clk: qcom: Add DT bindings for ipq6018 gcc clock
- controller
-Message-ID: <20191219182431.GA25227@bogus>
-References: <1576752109-24497-1-git-send-email-sricharan@codeaurora.org>
- <1576752109-24497-5-git-send-email-sricharan@codeaurora.org>
+        h=x-gm-message-state:from:subject:to:cc:references:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=EnctfXeH6eSWsiC3SsB5Huqb0Ku44kDLoFN9p69SIAE=;
+        b=R8ZEZZaqaK4WeijQ6YCfLXDjbkfFbZ71mF/mxs4AZfSo5EHS4ZDWGEyT0q91YsgNsN
+         9K1dLtaOeVs+dTcV2DA+2OywFwQmcGC2fDrs55IOK7r/83IeoD84b136TngdYna2kjwJ
+         9m8dZY21aoZl31tbKn3Ug22QhglXgEX2VuLPSsGzvZq4G0j7gvJbk2ATwJkApWNXl17U
+         AHmflps1QQq9+jiek/HgIq+Lij1U/qvgAt+/ePwQ8UnjXDZgEtArKrdaKHi3nXgPSMJF
+         kPJs4/eAuWPCGlfBWAuKprGoe1gzry5n9cKsrnk3rOgFaaGjWOOtPguPjMGChGrnfLhl
+         O2Nw==
+X-Gm-Message-State: APjAAAVg5sW9nPQDEQtEv4APcRKXwqhB4yBbocBrckvRqA372Mh7pam5
+        q3aEYUQhls0rGrs+oyBxBQBi8RiIIUQ=
+X-Google-Smtp-Source: APXvYqznQi99px26YNP9vyR+IDtMFUiA2KIXWA7/G1NfQxBqe4E+4935xoJv7nCF7+iJcnj4xRyJ5A==
+X-Received: by 2002:ac2:50cc:: with SMTP id h12mr6326667lfm.29.1576782077671;
+        Thu, 19 Dec 2019 11:01:17 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:899:8379:9861:263:6bbe:73b8])
+        by smtp.gmail.com with ESMTPSA id z5sm45547lji.40.2019.12.19.11.01.13
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 19 Dec 2019 11:01:16 -0800 (PST)
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+To:     Chris Brandt <Chris.Brandt@renesas.com>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        Mason Yang <masonccyang@mxic.com.tw>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+ <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+ <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
+ <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
+ <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Organization: Cogent Embedded
+Message-ID: <6f4c5d92-3ca4-2d1d-47c4-cbd52ad428b0@cogentembedded.com>
+Date:   Thu, 19 Dec 2019 22:01:12 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1576752109-24497-5-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 19, 2019 at 04:11:46PM +0530, Sricharan R wrote:
-> Add the compatible strings and the include file for ipq6018
-> gcc clock controller.
-> 
-> Co-developed-by: Anusha Canchi Ramachandra Rao <anusharao@codeaurora.org>
-> Signed-off-by: Anusha Canchi Ramachandra Rao <anusharao@codeaurora.org>
-> Co-developed-by: Abhishek Sahu <absahu@codeaurora.org>
-> Signed-off-by: Abhishek Sahu <absahu@codeaurora.org>
-> Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
-> ---
-> 
->  [V2] Addressed review comments.
-> 
->  .../devicetree/bindings/clock/qcom,gcc.yaml        |   3 +-
->  include/dt-bindings/clock/qcom,gcc-ipq6018.h       | 262 +++++++++++++++++++++
->  include/dt-bindings/reset/qcom,gcc-ipq6018.h       | 157 ++++++++++++
->  3 files changed, 421 insertions(+), 1 deletion(-)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq6018.h
->  create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq6018.h
+Hello!
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+On 12/19/2019 07:57 PM, Chris Brandt wrote:
+
+>>> So at the moment, there is nothing yet for me to 'try' on the RZ/A series,
+>> correct?
+>>
+>>    Why, I can send you a working version of the SPI driver, and even HF one
+>> if you're
+>> interested.
+> 
+> The point of this whole discussion is to determine if we should have 2 drivers
+> for the same Renesas HW IP.
+> 
+> There was a RPC-IF patch series that made it to v17....and is now dead.
+> 
+> You sent a new RFC series for a new method, but all it had was low level APIs,
+> no MTD framework, do it didn't really do anything.
+
+   Apparently you have missed the previous RFC iteration, the MFD/SPI drivers posted
+at end of May:
+
+https://patchwork.kernel.org/patch/10969211/
+https://patchwork.kernel.org/patch/10969213/
+https://patchwork.kernel.org/patch/10969217/
+
+   There's not yet merged MTD patch you'd need too:
+
+http://patchwork.ozlabs.org/patch/1199645/
+
+   The MFD driver was shot down by Lee Jones who has advised placing the common
+code into drivers/memory/ instead... I don't want to re-post the SPI driver as
+I haven't yet addressed all of Mark Brown's comments...
+
+> If there was a complete patch set that I could try on the RZ/A SoCs and 
+> get a working SPI MTD device to show up, then I would drop my efforts of
+> getting my driver in and just add RZ/A support to the R-Car driver.
+
+   Please try these patches, there's a big chance they'll work. 
+
+[...]
+> Honestly, I'll be out of the office until January, so it's not like I'm 
+> going to do anything with it until then. But if there is a complete series
+> to try by then, I will see how it performs on RZ/A boards.
+
+   Hopefully I will have addressed Mark's feedback by then and post the new SPI
+driver... Have happy holidays! (Ours happen on 1/1 and last till 1/8 this year.)
+
+> Chris
+
+MBR, Sergei
