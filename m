@@ -2,103 +2,165 @@ Return-Path: <SRS0=J300=2J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49C31C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 09:58:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F98CC43603
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 10:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD6A206D8
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 09:58:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4E872465E
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 10:05:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Ag+1Fssh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726664AbfLSJ65 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 04:58:57 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:45744 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726652AbfLSJ65 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 04:58:57 -0500
-X-AuditID: c0a8fbf4-183ff70000001fa6-4e-5dfb49dfc7dc
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id BE.74.08102.FD94BFD5; Thu, 19 Dec 2019 10:58:55 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Thu, 19 Dec 2019 10:58:50 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>
-Subject: Re: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828
- bindings
-Thread-Topic: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828
- bindings
-Thread-Index: AQHVtlEjPJdYWhzff0OqIDcPrX4s7KfBKG6A
-Date:   Thu, 19 Dec 2019 09:58:47 +0000
-Message-ID: <f9b0fbb7b898691d09ed8954e8df67cf3706aa96.camel@fi.rohmeurope.com>
-References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-         <702daeb9d8604e2feddd5f6f92b067a2d60d81ad.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <702daeb9d8604e2feddd5f6f92b067a2d60d81ad.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [84.253.217.17]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <B6C67A5C16966941A778612C207EB21C@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726760AbfLSKFJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 05:05:09 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:56922 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726609AbfLSKFJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 05:05:09 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20191219100506euoutp01b1523462fb55f0aaae4b37f792da0195~hva_vweQx2043820438euoutp01j
+        for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2019 10:05:06 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20191219100506euoutp01b1523462fb55f0aaae4b37f792da0195~hva_vweQx2043820438euoutp01j
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1576749906;
+        bh=pH74D6f+oQZBNWZYsVqwklPPFDsLBR/ZagwamM+O/N8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=Ag+1FsshMlYmheMjvCU8XQx7dEr0x5/ythDybb0s4wuuKXDOAFSytRhlOs91cY0iH
+         B7s64duUBgAS4l6TqEWYpa5lO7pUy0gcqXR5vbwGj21UfnuTmi3tHN8zh/Ys75kk/l
+         M5bwQIqN52SFbplUScxNeZQxH/ZV8dbazYSpS7no=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20191219100506eucas1p2623c38b3c8bda0a4d6a9b2c64ca93421~hva_RTIQc1602316023eucas1p2N;
+        Thu, 19 Dec 2019 10:05:06 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 5C.F9.60679.25B4BFD5; Thu, 19
+        Dec 2019 10:05:06 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20191219100505eucas1p1a5b0dc6c4ef9014dbfaacaf73a4f0ec2~hva99KSbW1111611116eucas1p1Z;
+        Thu, 19 Dec 2019 10:05:05 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20191219100505eusmtrp1b571898eb81dc36367031556a17523e5~hva98d4a43113331133eusmtrp1T;
+        Thu, 19 Dec 2019 10:05:05 +0000 (GMT)
+X-AuditID: cbfec7f4-0e5ff7000001ed07-bf-5dfb4b5294f1
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id E4.F4.08375.15B4BFD5; Thu, 19
+        Dec 2019 10:05:05 +0000 (GMT)
+Received: from [106.120.51.75] (unknown [106.120.51.75]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20191219100505eusmtip1dc684690d50a14523f6b05a3b5d5e0ad~hva9fOzfa1146811468eusmtip1A;
+        Thu, 19 Dec 2019 10:05:05 +0000 (GMT)
+Subject: Re: [PATCH v2] clk: samsung: exynos5420: Keep top G3D clocks
+ enabled
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-clk@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
+From:   Sylwester Nawrocki <s.nawrocki@samsung.com>
+Message-ID: <f4f23b53-4eae-de3e-c8b2-099909522ce2@samsung.com>
+Date:   Thu, 19 Dec 2019 11:05:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+        Thunderbird/68.2.2
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Te0xTVxzHPfd5QK+eVhjH+gqNBl/TsZjsaJwhKvFqssXJP2iseBlXipSW
-        3Jb5wGVsSsSqEaPGWCk+ywglaqv4LMZhrdoZlYDVRZyrz2gUVHRGYbh7vSr8c87n/L7n+/ue
-        P34H0sYHnAkW2F2yYpdsZi6ROVvbFfjyzpwuy1drOoaQA83XebKuvYYnr7xRhmyP3+fI7vAV
-        lmz48yhLbjUcZsid1+cB+be1giLbun+nyIuNf7PkyO5uQFpOVXGk4elBQCL+Vo74bjRTpMp3
-        kSHN0UxyO3qeI+WNYZ70xAJMRrJYX10PxI6b5bxYXV8qnvTc5sVg3XpObIuFOPHCzeOUuKP6
-        LSXW+t/wYmdwxLzEhf2n5Uqun7IK8u2Tpi/pb41VeKnid3DF5YiXLQNt0A0gxGgy7g596waJ
-        0IiuA9ywsZPTDxcBPr3zNaNd4tA07P6L1zAJTcGBZoMbJEAaVUHcU7FK48FoHo5dizMaJ6Ef
-        cLxuK9D5a7x5TSWlMYNG4+qjLziNBfQ9ru98+jFqP8C7/mn/cCkBWXFZxPeBARqO15fpdRql
-        4ODDN6zGGCF8IHSV1jkZP77X87Geivf6g6z2ThqNxYdOTdKtGfjwwxpe51S8bUOc199gwJd2
-        3mcqwReePgmeXrenj9vTx+3p494D2DqAi6QCW77kktMnKnLJRMVhLVK3Hx1FQaAPzKsT4H3T
-        nCZAQdAEhkDKnCzkTe2yGAfmOvJWWiWnNUcpscnOJoAhbU4SblW8tRiFPGnlKllxfJKGQsac
-        IqTFt1iMSMsqlOViWfmkDoPQjAW/qDY1KHK+vGJpgc3VK1MwQWueaEpyyvY8WZFKXNYcbTpy
-        nOp4aNIANXexZhecxVKRWtWtUZAOKx9799Ew7PWp642ORh9tZOwOu2xKEdbOVg1IM1hL7J/j
-        noAUCMyDhXKt3QD173zu9kQNotQgOPadFuSSeiVTGfhj1r3vvjEUHqLbJtwNLEqL/vooNiia
-        Ptt+uvhZ8uQ9GZaRhT8r/42vyWSfN87vrBVKZ/wSjtzdf2amI9JS2N7vuK0lPnr45ewFyw/+
-        9t49LJ/NepT9MkRnPTCVtkbTxtDc8kHn4qFMccvczFGrN2Xnzg8YZnVPrQNt/pebY6lp4WPL
-        zIzTKqWPoxWn9D/9jQrW+AMAAA==
+In-Reply-To: <20191216131407.17225-1-m.szyprowski@samsung.com>
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0hTYRjHeXfO2TlbTt9NzQeVgqFlQZpZcKJQg4KBRWFkIQ1bebyUU9m8
+        ZFGIZtlSEY201QeRQB3ovGXmyNQ0CTMNzBRZVi5l4cDLyCuax2Pkt9/zPv/n8n94GUJRS3kz
+        iclpnC5Zk6QUS8mW90sDByIjVtQHZ8xubEO5mWK/OqcodmCgnmZnC75RbPlAu4it7bbSrPnJ
+        EsWuDTeQ7INfdiJconpttNKqRtNDsaqo2YRU8427zpHR0uOxXFJiBqcLCr0iTcgffUmnduOb
+        6z+islGdzIAYBvBhmHsmNyApo8DVCKyrI6QQOBEYvrxAQjCPYKjTRhmQZLNitfSNmGcFrkIw
+        3y8T2IGguyyaZ3d8Fgy51k29B9ZCjr2J4hsROE8EJlPVZkKMg6GwpwjxLMOhMLzYRPNMYn+o
+        LbOIePbEl8A2NEEJGjl8eGojeZZs6O/Nrm0uQWAvyHHWUALvhleO5wQ/DHA7Da3tc1tbn4QS
+        4xQS2B1+9zbTAvtCX2kBKRTkIiiwjNFCUIxgvLdiq+IYvOv9TPEXI/A+MLcFCcc7Ad8rwwV0
+        hRGHXNjBFUpaygjhWQb59xVCDz9YMZWJBPaGR7Z1shgpjducGbe5MW5zY/w/tgKRJuTFpeu1
+        8Zz+UDKXGajXaPXpyfGB11K0jWjjE/Wt9TpbUdvq1S6EGaR0kS2eWlYrKE2GPkvbhYAhlB6y
+        sfwltUIWq8m6xelSYnTpSZy+C/kwpNJLFlJpVytwvCaNu8FxqZzuX1bESLyzUW1+QEzHqDxv
+        j8RylLi+1z5XrzrzMbLzSM30zlKLW0hcJR39uC4gsyjM92LL+MTP0MS34XdcdnjE6eBTj+0u
+        94d14sv9C2zHeaYaWNdJx+RCX89tzzGt7nSoyeGxvDQ9cUFVbjf5hwxGRbSvWQeLS+NJ37Au
+        8Uydn1HsA4VKUp+gCd5P6PSav4sLVGZAAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsVy+t/xu7qB3r9jDVZ1WFpsnLGe1eL6l+es
+        FufPb2C3+Nhzj9Vixvl9TBZrj9xlt1g/7Serxb9rG1ks2p++ZHbg9Ng56y67x6ZVnWwefVtW
+        MXp83iQXwBKlZ1OUX1qSqpCRX1xiqxRtaGGkZ2hpoWdkYqlnaGwea2VkqqRvZ5OSmpNZllqk
+        b5egl9Fxcyt7wRGBiv8PwxoY1/F2MXJySAiYSPyZvJeti5GLQ0hgKaPErt51zF2MHEAJKYn5
+        LUoQNcISf651QdW8ZpTY0DCZESQhLOAr8a/jFBNIvYhArsTpSfYgNcwC7UwSBya/ZIJomMgo
+        Mb3rDQtIA5uAoUTv0T6wZl4BO4lrPzazg9gsAqoSa6fvZgKxRQUiJN7+vskKUSMocXLmE7Be
+        TqD6lo//2EBsZgF1iT/zLjFD2OISTV9WskLY8hLb385hnsAoNAtJ+ywkLbOQtMxC0rKAkWUV
+        o0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYPRtO/Zz8w7GSxuDDzEKcDAq8fD+cP0VK8SaWFZc
+        mXuIUYKDWUmE93bHz1gh3pTEyqrUovz4otKc1OJDjKZAz01klhJNzgcmhrySeENTQ3MLS0Nz
+        Y3NjMwslcd4OgYMxQgLpiSWp2ampBalFMH1MHJxSDYzsRkcFN+WmrG6ac2PFhL1yPSrbnVXu
+        ea9ZUKpo6iNxPOHq3hhf6UDGm3MbFdM3nH4WGbn8cpREx0Svx785nVqsJ+TejYlddnb5tg+Z
+        FvePrecJ5runsqFBJulx5qlWVTfX110pYhJvjqb5dTSKm6sX1XmcflvB9nB7+iw9nnXHNjY3
+        nerlXqbEUpyRaKjFXFScCABM1Utv1AIAAA==
+X-CMS-MailID: 20191219100505eucas1p1a5b0dc6c4ef9014dbfaacaf73a4f0ec2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20191216131423eucas1p2162d6bf0a870357be9f0ab308641015b
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20191216131423eucas1p2162d6bf0a870357be9f0ab308641015b
+References: <CGME20191216131423eucas1p2162d6bf0a870357be9f0ab308641015b@eucas1p2.samsung.com>
+        <20191216131407.17225-1-m.szyprowski@samsung.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gTWFyaywgTGVlLCBSb2INCg0KSSBqdXN0IG5vdGljZWQgd2UgaGF2ZSBhIGRlcGVuZGVu
-Y3kgaGVyZS4gVGhpcyBiaW5kaW5nIGlzIHJlZmVycmluZyB0bw0KcmVndWxhdG9yIGJpbmRpbmcg
-LSB3aGljaCB3YXMgYXBwbGllZCBieSBNYXJrIGFuZCBpcyB0aHVzIG1pc3NpbmcgZnJvbQ0KdGhl
-IHNlcmllcy4gV2hhdCdzIHRoZSBiZXN0IHdheSBmb3J3YXJkPw0KDQpPbiBUaHUsIDIwMTktMTIt
-MTkgYXQgMTE6NDYgKzAyMDAsIE1hdHRpIFZhaXR0aW5lbiB3cm90ZToNCj4gUk9ITSBCRDcxODI4
-IFBvd2VyIG1hbmFnZW1lbnQgSUMgaW50ZWdyYXRlcyA3IGJ1Y2sgY29udmVydGVycywgNw0KPiBM
-RE9zLA0KPiBhIHJlYWwtdGltZSBjbG9jayAoUlRDKSwgMyBHUE8vcmVndWxhdG9yIGNvbnRyb2wg
-cGlucywgSEFMTCBpbnB1dA0KPiBhbmQgYSAzMi43Njgga0h6IGNsb2NrIGdhdGUuDQo+IA0KPiBE
-b2N1bWVudCB0aGUgZHQgYmluZGluZ3MgZHJpdmVycyBhcmUgdXNpbmcuDQo+IA0KPiBTaWduZWQt
-b2ZmLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVyb3BlLmNv
-bT4NCj4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtlcm5lbC5vcmc+DQo+IC0tLQ0K
-PiANCj4gTm8gY2hhbmdlcyBzaW5jZSB2Ng0KDQovL3NuaXANCg0KPiArICByZWd1bGF0b3JzOg0K
-PiArICAgICRyZWY6IC4uL3JlZ3VsYXRvci9yb2htLGJkNzE4MjgtcmVndWxhdG9yLnlhbWwNCg0K
-VGhpcyBmaWxlIGlzIG1pc3NpbmcgZnJvbSB0aGUgc2VyaWVzIGFuZCBpcyBhcHBsaWVkIHRvIE1h
-cmsncyB0cmVlLg0KDQpCciwNCglNYXR0aSBWYWl0dGluZW4NCg0K
+On 12/16/19 14:14, Marek Szyprowski wrote:
+> In Exynos542x/5800 SoCs, the G3D leaf clocks are located in the G3D power
+> domain. This is similar to the other hardware modules and their power
+> domains. However there is one thing specific to G3D clocks hierarchy.
+> Unlike other hardware modules, the G3D clocks hierarchy doesn't have any
+> gate clock between the TOP part of the hierarchy and the part located in
+> the power domain and some SoC internal busses are sourced directly from
+> the TOP muxes. The consequence of this design if the fact that the TOP
+> part of the hierarchy has to be enabled permanently to ensure proper
+> operation of the SoC power related components (G3D power domain and
+> Exynos Power Management Unit for system suspend/resume).
+> 
+> This patch adds an explicit call to clk_prepare_enable() on the last MUX
+> in the TOP part of G3D clock hierarchy to keep it enabled permanently to
+> ensure that the internal busses get their clock regardless of the main
+> G3D clock enablement status.
+
+> ---
+> diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+> index 3a991ca1ee36..c9e5a1fb6653 100644
+> --- a/drivers/clk/samsung/clk-exynos5420.c
+> +++ b/drivers/clk/samsung/clk-exynos5420.c
+
+> @@ -1646,6 +1647,13 @@ static void __init exynos5x_clk_init(struct device_node *np,
+>  				     exynos5x_subcmus);
+>  	}
+>  
+> +	/*
+> +	 * Keep top part of G3D clock path enabled permanently to ensure
+> +	 * that the internal busses get their clock regardless of the
+> +	 * main G3D clock enablement status.
+> +	 */
+> +	clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
+> +
+>  	samsung_clk_of_add_provider(np, ctx);
+>  }
+
+It's a bit unfortunate we don't store that clock in the driver internally,
+which would let us avoid the __clk_lookup() call. I can't come up with any
+simple alternative though so let's apply it for now.
+
+Acked-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+
+I don't have any other bug fix patches for clk/samsung, could you take it 
+directly into your tree Stephen? 
+
+-- 
+Thanks,
+Sylwester
