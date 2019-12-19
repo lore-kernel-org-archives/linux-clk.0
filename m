@@ -6,65 +6,65 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0C95C43603
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 06:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11A7C43603
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 06:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 660D8222C2
-	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 06:24:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4EA924650
+	for <linux-clk@archiver.kernel.org>; Thu, 19 Dec 2019 06:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576736672;
-	bh=2My7XHOzyO+6is46gUo4mxdgo/e36X6AXdiIRPDg1lI=;
+	s=default; t=1576736677;
+	bh=h47HwmbwWxnlP7sBKCa1G3atR7pn17uNb4Yp+RU4vVI=;
 	h=In-Reply-To:References:Cc:Subject:From:To:Date:List-ID:From;
-	b=iUvNu5z9V9JHMjfzBd+kXrBbChUZ4nWeITWSRIT12nsJFRAtgCrNtvdqpFpyGTe5o
-	 Gg9iU3+MIBflM+NxA7Ct1DLaejL/VYMWurrh2cEwoceqky03qqzCjHnfh8jxgwRI7f
-	 HafB/8hgU5qzsL1jfQ6E48MdvNEGVrQ8jbTHU92I=
+	b=1yi32ABbq38P3+1bWakIfkS9wgpK/lexJfNbfiPcPjhPKSHAyf80SfOV4sy2XHGTP
+	 6yVx28oH48ypw0VXvniI35eYVK4ELbMJlwzBzz7OEniOqfGDhyGopilsOw8nmesDDZ
+	 DmTRlFtzgl801rXJ37MH0GgfvQ2G7RgddF8W0D9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726498AbfLSGYc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 01:24:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59682 "EHLO mail.kernel.org"
+        id S1726582AbfLSGYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 01:24:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59758 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725844AbfLSGYc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 19 Dec 2019 01:24:32 -0500
+        id S1725844AbfLSGYh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Dec 2019 01:24:37 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6578A21582;
-        Thu, 19 Dec 2019 06:24:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A33C221582;
+        Thu, 19 Dec 2019 06:24:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1576736671;
-        bh=2My7XHOzyO+6is46gUo4mxdgo/e36X6AXdiIRPDg1lI=;
+        s=default; t=1576736676;
+        bh=h47HwmbwWxnlP7sBKCa1G3atR7pn17uNb4Yp+RU4vVI=;
         h=In-Reply-To:References:Cc:Subject:From:To:Date:From;
-        b=F4lsnFdZJfb6EC7apOmq1aBzEZgLN091GwCmAKEpmdvSDX2fdIpU1GG/es+9ZhvSW
-         9as6JDeiGSfomcaQSw+0VyfOyvW7iKExE968xsSsTL0LO8vkaQoryEzEYu7RLEKsX0
-         ykm8s71kTEeM5lDY+W2egdRes6kk+Pve9CZcOMpU=
+        b=sKk19ckN/ORE7LCrCWeTvqkyQX+ROrsKH96zmlmEibioSAcm76isoyd9DJiWM0p0F
+         e3EaUp0XJjFUSQYfX82VGMFUFUvgZmqSwBJxk5aPU8SWchyst4k2GUPme+VnNyV4hh
+         RpUspYrNg2r1BAh/7UfGoB2H+KYA7bgHwSZtNhgw=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191125135910.679310-3-niklas.cassel@linaro.org>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org> <20191125135910.679310-3-niklas.cassel@linaro.org>
+In-Reply-To: <20191125135910.679310-4-niklas.cassel@linaro.org>
+References: <20191125135910.679310-1-niklas.cassel@linaro.org> <20191125135910.679310-4-niklas.cassel@linaro.org>
 Cc:     linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
         Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>,
         Niklas Cassel <niklas.cassel@linaro.org>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/7] clk: qcom: gcc: limit GPLL0_AO_OUT operating frequency
+Subject: Re: [PATCH v3 3/7] clk: qcom: hfpll: register as clock provider
 From:   Stephen Boyd <sboyd@kernel.org>
 To:     Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
         Niklas Cassel <niklas.cassel@linaro.org>
 User-Agent: alot/0.8.1
-Date:   Wed, 18 Dec 2019 22:24:30 -0800
-Message-Id: <20191219062431.6578A21582@mail.kernel.org>
+Date:   Wed, 18 Dec 2019 22:24:35 -0800
+Message-Id: <20191219062436.A33C221582@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Niklas Cassel (2019-11-25 05:59:04)
+Quoting Niklas Cassel (2019-11-25 05:59:05)
 > From: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 >=20
-> Limit the GPLL0_AO_OUT_MAIN operating frequency as per its hardware
-> specifications.
+> Make the output of the high frequency pll a clock provider.
+> On the QCS404 this PLL controls cpu frequency scaling.
 >=20
 > Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
