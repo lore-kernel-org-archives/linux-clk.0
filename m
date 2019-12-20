@@ -2,152 +2,84 @@ Return-Path: <SRS0=nEAM=2K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A1EC43603
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 10:55:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53262C43603
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 14:31:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 606BB2467F
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 10:55:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lnsxrNEC"
+	by mail.kernel.org (Postfix) with ESMTP id 27773206CB
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 14:31:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727202AbfLTKzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Dec 2019 05:55:07 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45893 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727192AbfLTKzG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 05:55:06 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j42so8937619wrj.12
-        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2019 02:55:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=a9C14P9lsGAuh8F6Rdx7vHrUThQ9aonGy2O3DOUo7Ds=;
-        b=lnsxrNECjkBnFDoUoh4Zk3vI7gih7BdHS5VDD/ljXCsq9ilLRKOZ8GzzX7sx/6q8XK
-         zXuAKwefaAx9xOCMJiNWqqF/21CHWenY5X0UiZceAAACBFFJpSOR2/UekgYy3Alhn+7K
-         ieZJlFRB2hooAr36DkhTxOLH/VBGWvH3v/mySwaI6BcLANoApcE8RhKRUozqUqqmupM9
-         pRRKHrcSYVWSErKLI8B7XsVpW7oGvA9qLZMI7MVHFPZ7zG0gSaC9VyAIgYXmv8TF26Ih
-         fDVRzS4kElTzBv5ztckoj5PvaMpdOldZIi3GMchS7cYL/6H8DBkQYaUkNyrvhqkZXB72
-         YaSg==
+        id S1727482AbfLTOb2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Dec 2019 09:31:28 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:45339 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727511AbfLTOb1 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 09:31:27 -0500
+Received: by mail-oi1-f194.google.com with SMTP id n16so514677oie.12;
+        Fri, 20 Dec 2019 06:31:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=a9C14P9lsGAuh8F6Rdx7vHrUThQ9aonGy2O3DOUo7Ds=;
-        b=e0nuPrCEpH/9GeXgwPdaNbIF+ETzqjisKQfTcK2qpOWm0LE09aoN5CjaQqZR26adjE
-         cl+DwcMBX/m5YFwGKXEfp0cEjNeMiiTF2umGS4CR3KEfe5BW0wnAFos4iw508HIPk2HL
-         qWs56JTqI6oDEh9z1pJ1cYpG0YBIehOMrwjJ51hhOV07zMSYVaakac6ksZSEYCBYH0Lq
-         6iy5BMA5LrrisewnS/+Z7iBqItbMd6xGXEtNqIjopRr1LfqxuulT2KVkBoaGRBlZX/hg
-         Ri3wWJeIDTJkuH54lju04x89CwgI+aVdsmAKwJ3bBWLAwlOtxP13MCqRStAGMk6A//u6
-         ZyGA==
-X-Gm-Message-State: APjAAAXhYstooQD3cPjVqaPJESNzkmic/9FDPnZ4Hz1qMNON3DBHUw/m
-        fBzkIkHiVa3K5eOCAN5HFDZNCw==
-X-Google-Smtp-Source: APXvYqyicvSFzhHzxpljiw/uidTI78NGorAjjg+bi/J4O8iYxkHUB7TVkQ+2LhBMrPCHOQeS/2zn7Q==
-X-Received: by 2002:adf:f052:: with SMTP id t18mr14250816wro.192.1576839304724;
-        Fri, 20 Dec 2019 02:55:04 -0800 (PST)
-Received: from dell ([2.27.35.132])
-        by smtp.gmail.com with ESMTPSA id f17sm9339549wmc.8.2019.12.20.02.55.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 02:55:04 -0800 (PST)
-Date:   Fri, 20 Dec 2019 10:55:05 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828 bindings
-Message-ID: <20191220105505.GS18955@dell>
-References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
- <702daeb9d8604e2feddd5f6f92b067a2d60d81ad.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
- <f9b0fbb7b898691d09ed8954e8df67cf3706aa96.camel@fi.rohmeurope.com>
- <20191219143647.GQ18955@dell>
- <e734a11ed158814119256a3fac253a8574c90837.camel@fi.rohmeurope.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CXTmqfsqQIcvEZP4mfMoRX6YILN9s0WAIe4dxaX6Qsg=;
+        b=dMlZ7eStNEwddH6GRgemuEa3afTmIU5NIg6f8PjfJk2PSggU7ZbIdxmnaInI6w0th5
+         cDBmWpFrFhZkvhK55JQFdp5uVPdUAErw9fZQbTdByVJcfBn6h4nOgzTj4atidRa+IJrU
+         Z/So5mln87XslszONLiGsaC6G1Mr+Q4FSTG25sQXmhMhXFDeKG7Um4XeC7Rf4ak18OnP
+         R3O6G7fLzHzHpP8FXpknT/s2WJim8PWcwCA2WeJPcbrI42Hy7ykE9ssqSAXOc02oKdDZ
+         73YcNhS4mojmaddMIexxNvc3CZH+Zl6Ok27O0cRE0d7ZqVZ8Eb0YMiNg3qyorcEYbSiq
+         B/kg==
+X-Gm-Message-State: APjAAAWUITk3ByJIbQlEIqzRQ0NdZ95ktx6qZNm0BoOzT/HYiq+fKube
+        IkCO0WOp53m5HOwpBROVrCNhk4HlyEYSJc6jk60=
+X-Google-Smtp-Source: APXvYqwXppQv9wXn0gUgYJoZYpJSkOFnsvXl+hpWQJPSejWrZ2S9U8+/w+h2wepfv5vwz4nkuHyDx+zAV9zu/HQ7Uj0=
+X-Received: by 2002:aca:36c5:: with SMTP id d188mr3991242oia.54.1576852286954;
+ Fri, 20 Dec 2019 06:31:26 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e734a11ed158814119256a3fac253a8574c90837.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <f1c53dd5-2dc5-9f11-44e3-8e222ed21903@cogentembedded.com>
+ <be27a344-d8bf-9e0c-8950-2d1b48498496@cogentembedded.com> <CAMuHMdVmh6fZ=oRRMA6+H05jdpyPPgK3g=1ivNQUe0LB5sfMjg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVmh6fZ=oRRMA6+H05jdpyPPgK3g=1ivNQUe0LB5sfMjg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Fri, 20 Dec 2019 15:31:15 +0100
+Message-ID: <CAMuHMdXfqJpm_F=vQ6rmrTBo80tQ1wV6Uf6VRTvvRiO1pECr7g@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rcar-gen3: allow changing the RPC[D2] clocks
+To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Cc:     Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 20 Dec 2019, Vaittinen, Matti wrote:
+On Mon, Oct 7, 2019 at 1:45 PM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> On Fri, Sep 27, 2019 at 8:09 PM Sergei Shtylyov
+> <sergei.shtylyov@cogentembedded.com> wrote:
+> > I was unable to get clk_set_rate() setting a lower RPC-IF clock frequency
+> > and that issue boiled down to me not passing CLK_SET_RATE_PARENT flag to
+> > clk_register_composite() when registering the RPC[D2] clocks...
+> >
+> > Fixes: db4a0073cc82 ("clk: renesas: rcar-gen3: Add RPC clocks")
+> > Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+>
+> Thanks for your patch!
+>
+> LGTM, so
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> On Thu, 2019-12-19 at 14:36 +0000, Lee Jones wrote:
-> > On Thu, 19 Dec 2019, Vaittinen, Matti wrote:
-> > 
-> > > Hello Mark, Lee, Rob
-> > > 
-> > > I just noticed we have a dependency here. This binding is referring
-> > > to
-> > > regulator binding - which was applied by Mark and is thus missing
-> > > from
-> > > the series. What's the best way forward?
-> > > 
-> > > On Thu, 2019-12-19 at 11:46 +0200, Matti Vaittinen wrote:
-> > > > ROHM BD71828 Power management IC integrates 7 buck converters, 7
-> > > > LDOs,
-> > > > a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
-> > > > and a 32.768 kHz clock gate.
-> > > > 
-> > > > Document the dt bindings drivers are using.
-> > > > 
-> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com
-> > > > >
-> > > > Reviewed-by: Rob Herring <robh@kernel.org>
-> > > > ---
-> > > > 
-> > > > No changes since v6
-> > > 
-> > > //snip
-> > > 
-> > > > +  regulators:
-> > > > +    $ref: ../regulator/rohm,bd71828-regulator.yaml
-> > > 
-> > > This file is missing from the series and is applied to Mark's tree.
-> > 
-> > Shouldn't matter.  I guess they're all heading for he same release.
-> > 
-> Ok. Thanks for clarification. I was asking this because Rob asked me to
-> reorder the patches a few versions ago so that the dt_binding_check
-> Make target would not be broken between commits. He asked me to submit
-> the regulator and LED bindings first and MFD (which refers to those)
-> only after them. Thus I was wondering if the final merge order of MFD
-> and regulator trees is such that it can result the breakage Rob hoped
-> to avoid. But I am more than glad if the series can go in like this :)
+Queueing in clk-renesas-for-v5.6.
 
-It's not something that concerns me personally.  I only care about
-*build* breakages.  Rob might be more upset about it however.
+Gr{oetje,eeting}s,
+
+                        Geert
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
