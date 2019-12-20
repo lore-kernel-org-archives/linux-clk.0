@@ -2,122 +2,94 @@ Return-Path: <SRS0=nEAM=2K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E55C43603
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 02:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28550C43603
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 03:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86FFF24683
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 02:34:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="A5XLiLj5"
+	by mail.kernel.org (Postfix) with ESMTP id 09B9024687
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 03:31:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727191AbfLTCeb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 21:34:31 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:46184 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727169AbfLTCeb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 21:34:31 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z124so4145458pgb.13
-        for <linux-clk@vger.kernel.org>; Thu, 19 Dec 2019 18:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mVLwMYU9a1Ur9p84n79pZdcxfrBVZ9dl3tOWS7SY+xA=;
-        b=A5XLiLj5XSorkfvQSx4vNY7HKLa68YNU6fUVPeKVnsYSZxhYpHtADihv6LVt/KThhw
-         abQr4Lo1YZ70r6Yhzt10AHq7H8T4cjrLV5hutX6T0x/76ECM+WY8MccHN1292kSeidFS
-         +lq66CmXgUyXMFeHnmljFNydyHmw5XUejn6zHWNL4ZI1R9NkCKrHDWtpUP3vnKcGT7Kd
-         bU5mUETfLlbIRvAgZNr9RksSLcfEBrSTRAJPsaTAXTRW+ZePHwsgiTmNvtbqKOfpg+Gu
-         lnb4RlFSEv1mYTe2rn1/Z8X9nam7y5eArPaygWDvKNnvYNd55ba+LXn4qYCXQETYs6eE
-         BcGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mVLwMYU9a1Ur9p84n79pZdcxfrBVZ9dl3tOWS7SY+xA=;
-        b=FFuH2rY78CdIdzyqqB0RFW6G/e/Oh88iRsamCMsiY/R8yE4U1Kb6biYQIqNMEfAmC6
-         /F61nITO907QGoem9q8CnhUxu0IJ77zgaglc/jK1+8cPRvaY7+C0XIPbxtbntzzBslTw
-         rPEu79IzCu73PmnSULzufOT8ft544AM9FdFoHBvuHWviuA4ZuEKUmgCXqVdzOCa4ebp2
-         ND/rpMfN2UPy/2vsiFMB2Bwh9Kv8wVNM7GXTqrx1JhmiPHUALpC/N4THec1l8lkrhMVQ
-         pRonTIMvkgzceGKwb+EWj7FknKc9SD4h8U3FTurPEImIEkiebHR/WoRaJzGnredOL2xj
-         pO1g==
-X-Gm-Message-State: APjAAAU629udmK9KL97BjVctQJ+z4w3INhmJc6a8WlARxLw3WaomNuCg
-        wRV7pXKNS9zDm7iB/GUsZFBGNQ==
-X-Google-Smtp-Source: APXvYqzQxouN9+tP55/5fJi1dLRhTZxq4NQnMIOJeo5MymuGtB8QKOUaMrH+A5MNTCh7N14bYMd1UA==
-X-Received: by 2002:a62:e30f:: with SMTP id g15mr13168064pfh.124.1576809270507;
-        Thu, 19 Dec 2019 18:34:30 -0800 (PST)
-Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id x33sm8946698pga.86.2019.12.19.18.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 19 Dec 2019 18:34:29 -0800 (PST)
-Date:   Thu, 19 Dec 2019 18:34:27 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks
-Message-ID: <20191220023427.GL448416@yoga>
-References: <20191207203603.2314424-1-bjorn.andersson@linaro.org>
- <20191207203603.2314424-2-bjorn.andersson@linaro.org>
- <20191219063719.5AF942146E@mail.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219063719.5AF942146E@mail.kernel.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+        id S1727071AbfLTDbN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 19 Dec 2019 22:31:13 -0500
+Received: from mga04.intel.com ([192.55.52.120]:65387 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726986AbfLTDbN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 19 Dec 2019 22:31:13 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 19 Dec 2019 19:31:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,334,1571727600"; 
+   d="scan'208";a="222412899"
+Received: from sgsxdev001.isng.intel.com (HELO localhost) ([10.226.88.11])
+  by fmsmga001.fm.intel.com with ESMTP; 19 Dec 2019 19:31:10 -0800
+From:   Rahul Tanwar <rahul.tanwar@linux.intel.com>
+To:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        yixin.zhu@linux.intel.com, qi-ming.wu@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: [PATCH v2 0/2] clk: intel: Add a new driver for a new clock controller IP
+Date:   Fri, 20 Dec 2019 11:31:06 +0800
+Message-Id: <cover.1576811332.git.rahul.tanwar@linux.intel.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Wed 18 Dec 22:37 PST 2019, Stephen Boyd wrote:
+Hi,
 
-> Quoting Bjorn Andersson (2019-12-07 12:36:02)
-> > The CLKREF clocks are all fed by the clock signal on the CXO2 pad on the
-> > SoC. Update the definition of these clocks to allow this to be wired up
-> > to the appropriate clock source.
-> > 
-> > Retain "xo" as the global named parent to make the change a nop in the
-> > event that DT doesn't carry the necessary clocks definition.
-> 
-> Something seems wrong still.
-> 
-> I wonder if we need to add the XO "active only" clk to the rpm clk
-> driver(s) and mark it as CLK_IS_CRITICAL. In theory that is really the
-> truth for most of the SoCs out there because it's the only crystal that
-> needs to be on all the time when the CPU is active. The "normal" XO clk
-> will then be on all the time unless deep idle is entered and nobody has
-> turned that on via some clk_prepare() call. That's because we root all
-> other clks through the "normal" XO clk that will be on in deep
-> idle/suspend if someone needs it to be.
-> 
+This series adds clock driver for Clock Generation Unit(CGU) of
+Lightning Mountain(LGM) SoC.
 
-The patch doesn't attempt to address the fact that our representation of
-XO is incomplete, only the fact that CXO2 isn't properly described.
+Patch 1 adds common clock framework based clock driver for CGU.
+Patch 2 adds bindings document & include file for CGU.
 
-Looking at the clock distribution, we do have RPM_SMD_BB_CLK1_A which
-presumably is the clock you're referring to here - i.e. the clock
-resource connected to CXO.
+These patches are baselined upon Linux 5.5-rc1 at below Git link:
+git git://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
 
-> Did the downstream code explicitly enable this ln_bb_clk in the phy
-> drivers? I think it may have?
-> 
+v2:
+- Move the driver to x86 folder.
+- Remove syscon usage.
+- Remove regmap based access. Use direct readl()/write() instead. Add spinlocks.
+- Change all enum values to capitals.
+- Rename all data structures & functions from intel_* to lgm_*.
+- Remove multiple header files. Keep only one header file.
+- Make probe fail when any of the clk/pll registration fails.
+- Fix few bugs with clk_init_data assignement.
+- Address review concerns for code quality/style/convention.
 
-Yes, afaict all downstream drivers consuming a CLKREF also consumes
-LN_BB and ensures that this is enabled. So we've been relying on UFS to
-either not have probed yet or that UFS probed successfully for PCIe and
-USB to be functional.
+v1:
+- Initial version.
 
-So either we need this patch to ensure that the requests propagates
-down, or I need to patch up the PHY drivers to ensure that they also
-vote for the PMIC clock - and I do prefer this patch.
+Rahul Tanwar (1):
+  dt-bindings: clk: intel: Add bindings document & header file for CGU
 
-Regards,
-Bjorn
+rtanwar (1):
+  clk: intel: Add CGU clock driver for a new SoC
+
+ .../devicetree/bindings/clock/intel,cgu-lgm.yaml   |  43 ++
+ drivers/clk/Kconfig                                |   8 +
+ drivers/clk/x86/Makefile                           |   1 +
+ drivers/clk/x86/clk-cgu-pll.c                      | 194 +++++++
+ drivers/clk/x86/clk-cgu.c                          | 559 +++++++++++++++++++++
+ drivers/clk/x86/clk-cgu.h                          | 296 +++++++++++
+ drivers/clk/x86/clk-lgm.c                          | 351 +++++++++++++
+ include/dt-bindings/clock/intel,lgm-clk.h          | 150 ++++++
+ 8 files changed, 1602 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+ create mode 100644 drivers/clk/x86/clk-cgu-pll.c
+ create mode 100644 drivers/clk/x86/clk-cgu.c
+ create mode 100644 drivers/clk/x86/clk-cgu.h
+ create mode 100644 drivers/clk/x86/clk-lgm.c
+ create mode 100644 include/dt-bindings/clock/intel,lgm-clk.h
+
+-- 
+2.11.0
+
