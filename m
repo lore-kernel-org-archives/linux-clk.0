@@ -1,81 +1,131 @@
 Return-Path: <SRS0=nEAM=2K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: **
-X-Spam-Status: No, score=2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_REPLYTO_END_DIGIT,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,HK_NAME_MR_MRS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB843C43603
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 16:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31811C43603
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 17:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62EB520866
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 16:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 09B8F206A5
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 17:22:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=joeblasc0.com header.i=@joeblasc0.com header.b="lidNuxFf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XjJXAYPU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfLTQze (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Dec 2019 11:55:34 -0500
-Received: from standard7.doveserver.com ([67.220.187.210]:47720 "EHLO
-        standard7.doveserver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727181AbfLTQze (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 11:55:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=joeblasc0.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-        MIME-Version:Message-ID:Date:Subject:To:From:Reply-To:Sender:Cc:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=5nz6drlcwLkkcnrPddyhNVU4n5QUNNiisMSZ45MDcC0=; b=lidNuxFfGG1fFTCCdiylF1PS/U
-        0LICv8BMLY4ZgzhAhZIN094RX1FJRD/dyaIglsRbIQccYACw50H0oC4F68+ft25ESVklOFBNG+CKm
-        lGAe6/k6cA9J8g+YDDmtkIR47b89zGdi09ofM817l5HP/nO6IdoMtSZnF7wRdaSJ4vGKLOGRA71Cn
-        chyX0DZWau25QeyVpRlqlPKLSVYbYXf8rJT89g4IT/1kPJ/5tiJAOlW8fwUiLnrmw4qN0EwIZ3k7F
-        psT65LfiF30/2bbKRLNoCeJ5C0pH5G1qpN8TgEsS/dXtZAw2zzXjjcOO0eUqdNcDJqgmiW9kmDC2C
-        HI6SdQYg==;
-Received: from [172.107.168.105] (port=49904 helo=gmail.com)
-        by standard7.doveserver.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.92)
-        (envelope-from <info@gmail.com>)
-        id 1ihnvB-00DWdu-3H
-        for linux-clk@vger.kernel.org; Thu, 19 Dec 2019 06:00:21 +0100
-Reply-To: songlile110@gmail.com
-From:   Mr Lili <info@gmail.com>
-To:     linux-clk@vger.kernel.org
-Subject: hello
-Date:   18 Dec 2019 23:02:58 -0800
-Message-ID: <20191218230256.45E1D54A391E3DB1@gmail.com>
+        id S1727425AbfLTRWR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Dec 2019 12:22:17 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40380 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727394AbfLTRWR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 12:22:17 -0500
+Received: by mail-pl1-f194.google.com with SMTP id s21so1626747plr.7
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2019 09:22:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=/2DfzHUs0wsHD/N2W+XhWHO23KTYPn9e2s28qhRJzhQ=;
+        b=XjJXAYPUZ8YdDmf+jaUqlJRjgwtOxi6VMYlNPJ0TfWrt/80WfT0Y3L48ZzNOY/MWln
+         N/K8E43vURX8cw47TlbrPiDraNNiygcW3fgUCCBT6COyXamPgc2aRq0S7NVcgq31Ib8h
+         2BnBK804e2tsDcubk2Mm/zs6n9F/MFTOuGSfnLkZGKWUEKGnoJ9azGu1i4DjwQFIzayx
+         zVlAxETeneD0V5NyJ0NURbZVrYMDXW+DaUr7yDi77bVZISgUuEyZMNdKdvjJHnDbh9R1
+         ZZBqzpxjNALx+HhVBQCgthKpnXIYVa9HhRWNc0m57OlWZHY7OtwX+16kCBF7SeZVLDhD
+         L8wA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=/2DfzHUs0wsHD/N2W+XhWHO23KTYPn9e2s28qhRJzhQ=;
+        b=Qhqp643INGTeuy997KDVAnLHc8YfdIRqfnqvRogKM5x35LZulKTdhsdLectBpmmc7M
+         L2MFpd1XMV82L78P6+rzhjYxiRKzapCTU4VnGBMT/Arv3DsjC61QvAFkl5zB+a2P/7fs
+         nIHKDXmHgWeArm5vidUCnE9S+sdk9Ejo/8+Z8KAa9IV7O6R9BQVTRtocrW8fR+8LLgqY
+         hSDBq1n99VaWEYMjiEKXOEK4DynxBkUqML0iMwHtb7/smT3lQC5yrn0rA4S+9jvMm0r0
+         s1VkjTG06Ky9/xHEht0dGSK+KTptqBCf3xPfwkFPtTeAymR+gagL86b8K+tFmktHOSLe
+         eCNg==
+X-Gm-Message-State: APjAAAWpw93VRV5ASo70zke8e7xxBKuFKVUGIKZ0MQ9z6He3wOwJAev7
+        tAkeef2hnodkqy6FQ7js0J/sfw==
+X-Google-Smtp-Source: APXvYqy1FpD2j/oQp4717WQbUxL5P6k3OuBWeZGZGtqNIeNYxUs8xcXL64DHhVRvlC21gva151JhIw==
+X-Received: by 2002:a17:902:b496:: with SMTP id y22mr16764859plr.158.1576862536707;
+        Fri, 20 Dec 2019 09:22:16 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id e9sm12572878pgn.49.2019.12.20.09.22.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2019 09:22:16 -0800 (PST)
+Date:   Fri, 20 Dec 2019 09:22:06 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] clk: qcom: apcs-msm8916: use clk_parent_data to
+ specify the parent
+Message-ID: <20191220172206.GB1908628@ripper>
+References: <20191125135910.679310-1-niklas.cassel@linaro.org>
+ <20191125135910.679310-8-niklas.cassel@linaro.org>
+ <20191219062339.DC0DE21582@mail.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - standard7.doveserver.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - gmail.com
-X-Get-Message-Sender-Via: standard7.doveserver.com: authenticated_id: 4thuser@joeblasc0.com
-X-Authenticated-Sender: standard7.doveserver.com: 4thuser@joeblasc0.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191219062339.DC0DE21582@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello,
+On Wed 18 Dec 22:23 PST 2019, Stephen Boyd wrote:
 
-My name is Mr.Song Lile (I work with a Bank as an account officer=20
-in the
-Treasury/Credit Control Unit) I want to solicit your attention to=20
-receive the money on my behalf.
-The purpose of my contacting you is because you live in outside=20
-Hong Kong.
-When you reply this message, I will send you the full details and=20
-more
-information about myself and the funds.
-Thank you.
-Kindest regards,
-Mr.Song Lile
-songlile110@gmail.com
+> Quoting Niklas Cassel (2019-11-25 05:59:09)
+> > diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+> > index 46061b3d230e..bb91644edc00 100644
+> > --- a/drivers/clk/qcom/apcs-msm8916.c
+> > +++ b/drivers/clk/qcom/apcs-msm8916.c
+> > @@ -51,6 +51,19 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+> >         struct clk_init_data init = { };
+> >         int ret = -ENODEV;
+> >  
+> > +       /*
+> > +        * This driver is defined by the devicetree binding
+> > +        * Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt,
+> > +        * however, this driver is registered as a platform device by
+> > +        * qcom-apcs-ipc-mailbox.c. Because of this, when this driver
+> > +        * uses dev_get_regmap() and devm_clk_get(), it has to send the parent
+> > +        * device as argument.
+> > +        * When registering with the clock framework, we cannot use this trick,
+> > +        * since the clock framework always looks at dev->of_node when it tries
+> > +        * to find parent clock names using clk_parent_data.
+> > +        */
+> > +       dev->of_node = parent->of_node;
+> 
+> This is odd. The clks could be registered with of_clk_hw_register() but
+> then we lose the device provider information. Maybe we should search up
+> one level to the parent node and if that has a DT node but the
+> clk controller device doesn't we should use that instead?
+> 
+
+Yeah, we shouldn't have two struct device with the same of_node in the
+system, and your suggestion looks quite reasonable. Do you mind spinning
+a patch out of it and we can drop above chunk from Niklas' patch - and
+afaict merge all the remaining patches to enable CPR on our first
+target!
+
+Thanks,
+Bjorn
+
+> ----8<-----
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index b68e200829f2..c8745c415c04 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3669,7 +3669,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+>  	if (dev && pm_runtime_enabled(dev))
+>  		core->rpm_enabled = true;
+>  	core->dev = dev;
+> -	core->of_node = np;
+> +	core->of_node = np ? : dev_of_node(dev->parent);
+>  	if (dev && dev->driver)
+>  		core->owner = dev->driver->owner;
+>  	core->hw = hw;
