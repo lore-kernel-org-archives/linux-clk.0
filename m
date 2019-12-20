@@ -2,377 +2,120 @@ Return-Path: <SRS0=nEAM=2K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6517DC43603
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 04:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24CA0C43603
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 06:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 268AE227BF
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 04:34:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XFsS68au"
+	by mail.kernel.org (Postfix) with ESMTP id EE93F222C2
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 06:33:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727128AbfLTEeS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 19 Dec 2019 23:34:18 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40997 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726986AbfLTEeS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 19 Dec 2019 23:34:18 -0500
-Received: by mail-lf1-f68.google.com with SMTP id m30so5968131lfp.8;
-        Thu, 19 Dec 2019 20:34:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nKGm2xFRSvP0X3vJgZHxnoRUBlQbc+oj9pelZTqgU7k=;
-        b=XFsS68aujoyzJlShGtNr3xUwKYurDAyaGvR/ZNTa9JOC/e7rhxXIBipB2BYaLINQUF
-         PH6/vJKhMqv41cu2pgcJvvFibGmnmXJ1uX6HGYx10dWUgLIQ53x/LEuoXQLueibT5p6T
-         e8pBhUBS3cvbBWmGneSBajewTPricSJYFkTQqCq28cMfqNi4Tfsl6L8YFBja+coyLN2p
-         ZB9Uu/OXSkzvx8joecRSi6aQlwmpuXDzqUez+2wZJJI/NspHWeywCZZU2TZxKZZpNFjq
-         8+U8fxBJT9fnADvUydy7U2aXkY2SSxsUc7ZZc/S/OzquU/XnVc+VuNVdGv/8dwSz3ZFL
-         LiCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nKGm2xFRSvP0X3vJgZHxnoRUBlQbc+oj9pelZTqgU7k=;
-        b=QIakmgJLT4VDBxu+kHfDD9fcD87nfCd2YLdxyZuefxSCmHr1VhnreLJqEfd9L5nizG
-         HIBfHFcJGDGDSBKXOVZxnkuEQRmMBlgVwT+Tu2vyZsVVHIjpCgOU6lo7IBBuuw58z6ht
-         589kOVMSz5maB7khJXD1O+duqFYNVPFiBFDymi6b9LavCFNd+szlhmvKghQyFVg7tVbQ
-         UnGIbjwE8UTTYKkod6eZihAJoXLleLxpwod+50RlxuRiRj8RWnYC8C4BBwOoTNe2W5QG
-         JwIpbohCWcWVfDCRRSMwbh6AOvICBmY9SmzXcLvt8x/k83DGTzSgEfAenMm8jD5b2Eo2
-         cAig==
-X-Gm-Message-State: APjAAAV0zNy1EFAMb+zWqHV+rowtX2kuPU4pfnJaXlpyhrAKbbRHB5oj
-        Ch9WE7uBY2dax9+VnoPRjvoQpHAI
-X-Google-Smtp-Source: APXvYqzVTbn2TAXQz089+hANY9rahhNz6la/CgQ5Gdd6NvPbjZK87wAegs2R2PUoir7XlheU/we8CA==
-X-Received: by 2002:ac2:4add:: with SMTP id m29mr7437240lfp.190.1576816455041;
-        Thu, 19 Dec 2019 20:34:15 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id t27sm3771634ljd.26.2019.12.19.20.34.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 19 Dec 2019 20:34:14 -0800 (PST)
-Subject: Re: [PATCH v4 06/19] soc: tegra: Add Tegra PMC clock registrations
- into PMC driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1576613046-17159-1-git-send-email-skomatineni@nvidia.com>
- <1576613046-17159-7-git-send-email-skomatineni@nvidia.com>
- <87b2b266-e4a9-9a7a-2336-6ec57d7c4d1d@gmail.com>
- <55a56c3d-3fac-cc77-46ae-acf5de77d262@gmail.com>
- <e11d2ea9-20f1-6920-7efc-ba8a50312f75@gmail.com>
- <c5bb3c25-1fae-3ca9-6bf3-c3d66be20e19@nvidia.com>
- <664f1a41-d539-36e8-092b-11d7e4555108@nvidia.com>
- <31020f6b-97bf-eb48-1150-0355c868eafc@gmail.com>
- <8fa81a47-63e5-d64d-7cc6-7fdd20ff89f0@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <42f39288-da11-e28d-2a0e-28f1b020e674@gmail.com>
-Date:   Fri, 20 Dec 2019 07:34:13 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1725853AbfLTGdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Dec 2019 01:33:19 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:57220 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725801AbfLTGdT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 01:33:19 -0500
+X-AuditID: c0a8fbf4-183ff70000001fa6-5e-5dfc6b2c7575
+Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 32.E9.08102.C2B6CFD5; Fri, 20 Dec 2019 07:33:16 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
+ 14.03.0439.000; Fri, 20 Dec 2019 07:33:12 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "lee.jones@linaro.org" <lee.jones@linaro.org>
+CC:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Thread-Topic: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828
+ bindings
+Thread-Index: AQHVtlEjPJdYWhzff0OqIDcPrX4s7KfBKG6AgABNp4CAAQs1gA==
+Date:   Fri, 20 Dec 2019 06:33:11 +0000
+Message-ID: <e734a11ed158814119256a3fac253a8574c90837.camel@fi.rohmeurope.com>
+References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+         <702daeb9d8604e2feddd5f6f92b067a2d60d81ad.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+         <f9b0fbb7b898691d09ed8954e8df67cf3706aa96.camel@fi.rohmeurope.com>
+         <20191219143647.GQ18955@dell>
+In-Reply-To: <20191219143647.GQ18955@dell>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <1C16384D061ADF49AF9CC3E5ACD4B484@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <8fa81a47-63e5-d64d-7cc6-7fdd20ff89f0@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TW0wUVxjumZmdOaCDwwJy3GpTpxgDKojh4ZhSNRp0+lCLaXxRNzjIyG5g
+        d8nsYqFGgzFaXazBlIZ25VLpgrig4iIoCK0hYLeoXKIgqKCrSINVCRFLEIKdYarwNN/83+1/
+        +A8k9QO0AZqtDkm2iuk8HUhdr5j0rlqZNmVc3Z+/DLu7uhn8/atyBo8VtVH4J/8gjUta2nU4
+        9+ZlHX5QW03hR29aAf737jEC50+dJfDoiQEdrimZAvhOQyGNa19cAPhG5V0al93rInBhmY/C
+        XW0JuL+tlcZHmloYPN1zidoQJlQVVwFhpPcIIxRX7RfqXf2M4PUcp4WHPY208GfvFUIoKJ4g
+        hIrKcUZ47f0kMXDHvPhk0bHvG3OqNWbd7nmmk6fPMxljwVm9nUE54GqwEwRAxMWhC2NvgRME
+        Qj3XDdD0HwWM9uMD6NaQk3YCCGkuHjn7GNUQysUit+8ZpWpIrhyiU4f7Z4gQLhH1dPopTbQN
+        +T0/Ag1vRG9uFc7MKW4Z+v3iDzoVs9xWdN7pmvHqOSeB7tfFqTiAi0KjnWWEigG3BB3PeTWD
+        SS4ceYfGddrWHHI3dpAaDkPDT6f/n/OoaULdASr6SHSxIUaDG1DH4EYtZSnKz/Uz2gbB6K9f
+        Bqk8sNA1p8A1a3bNml1zzK455l+BzgOQRTSnp4oOKTZaljKjZZvJonz22CxeoN3L2FXwrvnL
+        ZkBA0AwWQYIPY5O/njLqg5JtKdkm0W5KkjPTJXszQJDkQ9kHxyaMejZFzP5Okm3vqY8hxYez
+        y/2njHpO7UqTpAxJfs8uhpBH7JBJCQ2WpVQpa6853TFLEzBADQ80hNola4oki5kOU5J6HEl2
+        5TpUar7SK5kVO2vPEC3KVLO2gRUwb7iolIQtRWWlpJ6y2qySIZyNUJs4VWrKtH4oeg7CIeBD
+        2KNq0Hzl0XzIea5UEEoFjHyrVjjEWcqQA6oN69ZGnl7DX8t78vKsr71+nPzoN+u5Gsu72uVF
+        B7ulyd7Xa2tLeE/fePzCiIT1PuO9AgcTtylockdfVuWh7d/68OaBUnuE+0CKf9dX1WcqPv1i
+        ODtxm4cKe1nxz4JN23fGfFa35fM85ucRqWlJ4f3J1oTbNx+PYPeC8twtEVzr35uf8ZTdJMZG
+        kbJd/A/V97ob8QMAAA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-20.12.2019 07:13, Sowjanya Komatineni пишет:
-> 
-> On 12/19/19 5:39 PM, Dmitry Osipenko wrote:
->> 20.12.2019 04:21, Sowjanya Komatineni пишет:
->>> On 12/18/19 4:41 PM, Sowjanya Komatineni wrote:
->>>> On 12/18/19 1:44 PM, Dmitry Osipenko wrote:
->>>>> 18.12.2019 11:35, Dmitry Osipenko пишет:
->>>>>> 18.12.2019 11:30, Dmitry Osipenko пишет:
->>>>>>> 17.12.2019 23:03, Sowjanya Komatineni пишет:
->>>>>>>> Tegra PMC has clk_out_1, clk_out_2, and clk_out_3 clocks and
->>>>>>>> currently
->>>>>>>> these PMC clocks are registered by Tegra clock driver with each
->>>>>>>> clock as
->>>>>>>> separate mux and gate clocks using clk_register_mux and
->>>>>>>> clk_register_gate
->>>>>>>> by passing PMC base address and register offsets and PMC
->>>>>>>> programming for
->>>>>>>> these clocks happens through direct PMC access by the clock driver.
->>>>>>>>
->>>>>>>> With this, when PMC is in secure mode any direct PMC access from
->>>>>>>> the
->>>>>>>> non-secure world does not go through and these clocks will not be
->>>>>>>> functional.
->>>>>>>>
->>>>>>>> This patch adds these PMC clocks registration to pmc driver with
->>>>>>>> PMC as
->>>>>>>> a clock provider and registers each clock as single clock.
->>>>>>>>
->>>>>>>> clk_ops callback implementations for these clocks uses
->>>>>>>> tegra_pmc_readl and
->>>>>>>> tegra_pmc_writel which supports PMC programming in both secure
->>>>>>>> mode and
->>>>>>>> non-secure mode.
->>>>>>>>
->>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>> ---
->>>>>>>>    drivers/soc/tegra/pmc.c | 248
->>>>>>>> ++++++++++++++++++++++++++++++++++++++++++++++++
->>>>>>>>    1 file changed, 248 insertions(+)
->>>>>>>>
->>>>>>>> diff --git a/drivers/soc/tegra/pmc.c b/drivers/soc/tegra/pmc.c
->>>>>>>> index ea0e11a09c12..6d65194a6e71 100644
->>>>>>>> --- a/drivers/soc/tegra/pmc.c
->>>>>>>> +++ b/drivers/soc/tegra/pmc.c
->>>>>>>> @@ -13,6 +13,9 @@
->>>>>>>>      #include <linux/arm-smccc.h>
->>>>>>>>    #include <linux/clk.h>
->>>>>>>> +#include <linux/clk-provider.h>
->>>>>>>> +#include <linux/clkdev.h>
->>>>>>>> +#include <linux/clk/clk-conf.h>
->>>>>>>>    #include <linux/clk/tegra.h>
->>>>>>>>    #include <linux/debugfs.h>
->>>>>>>>    #include <linux/delay.h>
->>>>>>>> @@ -48,6 +51,7 @@
->>>>>>>>    #include <dt-bindings/pinctrl/pinctrl-tegra-io-pad.h>
->>>>>>>>    #include <dt-bindings/gpio/tegra186-gpio.h>
->>>>>>>>    #include <dt-bindings/gpio/tegra194-gpio.h>
->>>>>>>> +#include <dt-bindings/soc/tegra-pmc.h>
->>>>>>>>      #define PMC_CNTRL            0x0
->>>>>>>>    #define  PMC_CNTRL_INTR_POLARITY    BIT(17) /* inverts INTR
->>>>>>>> polarity */
->>>>>>>> @@ -100,6 +104,7 @@
->>>>>>>>    #define PMC_WAKE2_STATUS        0x168
->>>>>>>>    #define PMC_SW_WAKE2_STATUS        0x16c
->>>>>>>>    +#define PMC_CLK_OUT_CNTRL        0x1a8
->>>>>>>>    #define PMC_SENSOR_CTRL            0x1b0
->>>>>>>>    #define  PMC_SENSOR_CTRL_SCRATCH_WRITE    BIT(2)
->>>>>>>>    #define  PMC_SENSOR_CTRL_ENABLE_RST    BIT(1)
->>>>>>>> @@ -155,6 +160,64 @@
->>>>>>>>    #define  TEGRA_SMC_PMC_READ    0xaa
->>>>>>>>    #define  TEGRA_SMC_PMC_WRITE    0xbb
->>>>>>>>    +struct pmc_clk {
->>>>>>>> +    struct clk_hw    hw;
->>>>>>>> +    unsigned long    offs;
->>>>>>>> +    u32        mux_mask;
->>>>>>>> +    u32        mux_shift;
->>>>>>>> +    u32        gate_shift;
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +#define to_pmc_clk(_hw) container_of(_hw, struct pmc_clk, hw)
->>>>>>>> +
->>>>>>>> +struct pmc_clk_init_data {
->>>>>>>> +    char *name;
->>>>>>>> +    const char *const *parents;
->>>>>>>> +    int num_parents;
->>>>>>>> +    int clk_id;
->>>>>>>> +    u8 mux_shift;
->>>>>>>> +    u8 gate_shift;
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +static const char * const clk_out1_parents[] = { "osc",
->>>>>>>> "osc_div2",
->>>>>>>> +    "osc_div4", "extern1",
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +static const char * const clk_out2_parents[] = { "osc",
->>>>>>>> "osc_div2",
->>>>>>>> +    "osc_div4", "extern2",
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +static const char * const clk_out3_parents[] = { "osc",
->>>>>>>> "osc_div2",
->>>>>>>> +    "osc_div4", "extern3",
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +static const struct pmc_clk_init_data tegra_pmc_clks_data[] = {
->>>>>>>> +    {
->>>>>>>> +        .name = "clk_out_1",
->>>>>>>> +        .parents = clk_out1_parents,
->>>>>>>> +        .num_parents = ARRAY_SIZE(clk_out1_parents),
->>>>>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_1,
->>>>>>>> +        .mux_shift = 6,
->>>>>>>> +        .gate_shift = 2,
->>>>>>> I'd replace these with a single .shift, given that mux_shift =
->>>>>>> gate_shift + 4 for all clocks.
->>>>>>>
->>>>>>>> +    },
->>>>>>>> +    {
->>>>>>>> +        .name = "clk_out_2",
->>>>>>>> +        .parents = clk_out2_parents,
->>>>>>>> +        .num_parents = ARRAY_SIZE(clk_out2_parents),
->>>>>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_2,
->>>>>>>> +        .mux_shift = 14,
->>>>>>>> +        .gate_shift = 10,
->>>>>>>> +    },
->>>>>>>> +    {
->>>>>>>> +        .name = "clk_out_3",
->>>>>>>> +        .parents = clk_out3_parents,
->>>>>>>> +        .num_parents = ARRAY_SIZE(clk_out3_parents),
->>>>>>>> +        .clk_id = TEGRA_PMC_CLK_OUT_3,
->>>>>>>> +        .mux_shift = 22,
->>>>>>>> +        .gate_shift = 18,
->>>>>>>> +    },
->>>>>>>> +};
->>>>>>>> +
->>>>>>>>    struct tegra_powergate {
->>>>>>>>        struct generic_pm_domain genpd;
->>>>>>>>        struct tegra_pmc *pmc;
->>>>>>>> @@ -254,6 +317,9 @@ struct tegra_pmc_soc {
->>>>>>>>         */
->>>>>>>>        const struct tegra_wake_event *wake_events;
->>>>>>>>        unsigned int num_wake_events;
->>>>>>>> +
->>>>>>>> +    const struct pmc_clk_init_data *pmc_clks_data;
->>>>>>>> +    unsigned int num_pmc_clks;
->>>>>>>>    };
->>>>>>>>      static const char * const tegra186_reset_sources[] = {
->>>>>>>> @@ -2163,6 +2229,173 @@ static int tegra_pmc_clk_notify_cb(struct
->>>>>>>> notifier_block *nb,
->>>>>>>>        return NOTIFY_OK;
->>>>>>>>    }
->>>>>>>>    +static void pmc_clk_fence_udelay(u32 offset)
->>>>>>>> +{
->>>>>>>> +    tegra_pmc_readl(pmc, offset);
->>>>>>>> +    /* pmc clk propagation delay 2 us */
->>>>>>>> +    udelay(2);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static u8 pmc_clk_mux_get_parent(struct clk_hw *hw)
->>>>>>>> +{
->>>>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>>>> +    u32 val;
->>>>>>>> +
->>>>>>>> +    val = tegra_pmc_readl(pmc, clk->offs) >> clk->mux_shift;
->>>>>>>> +    val &= clk->mux_mask;
->>>>>>>> +
->>>>>>>> +    return val;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int pmc_clk_mux_set_parent(struct clk_hw *hw, u8 index)
->>>>>>>> +{
->>>>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>>>> +    u32 val;
->>>>>>>> +
->>>>>>>> +    val = tegra_pmc_readl(pmc, clk->offs);
->>>>>>>> +    val &= ~(clk->mux_mask << clk->mux_shift);
->>>>>>>> +    val |= index << clk->mux_shift;
->>>>>>>> +    tegra_pmc_writel(pmc, val, clk->offs);
->>>>>>>> +    pmc_clk_fence_udelay(clk->offs);
->> Is this fencing applies only to clock changes or maybe it won't hurt to
->> move it into tegra_pmc_writel()?
->>
->>>>>>>> +    return 0;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int pmc_clk_is_enabled(struct clk_hw *hw)
->>>>>>>> +{
->>>>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>>>> +
->>>>>>>> +    return tegra_pmc_readl(pmc, clk->offs) & BIT(clk->gate_shift)
->>>>>>>> ? 1 : 0;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static void pmc_clk_set_state(unsigned long offs, u32 shift, int
->>>>>>>> state)
->>>>>>>> +{
->>>>>>>> +    u32 val;
->>>>>>>> +
->>>>>>>> +    val = tegra_pmc_readl(pmc, offs);
->>>>>>>> +    val = state ? (val | BIT(shift)) : (val & ~BIT(shift));
->>>>>>>> +    tegra_pmc_writel(pmc, val, offs);
->>>>>>>> +    pmc_clk_fence_udelay(offs);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int pmc_clk_enable(struct clk_hw *hw)
->>>>>>>> +{
->>>>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>>>> +
->>>>>>>> +    pmc_clk_set_state(clk->offs, clk->gate_shift, 1);
->>>>>>>> +
->>>>>>>> +    return 0;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static void pmc_clk_disable(struct clk_hw *hw)
->>>>>>>> +{
->>>>>>>> +    struct pmc_clk *clk = to_pmc_clk(hw);
->>>>>>>> +
->>>>>>>> +    pmc_clk_set_state(clk->offs, clk->gate_shift, 0);
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static const struct clk_ops pmc_clk_ops = {
->>>>>>>> +    .get_parent = pmc_clk_mux_get_parent,
->>>>>>>> +    .set_parent = pmc_clk_mux_set_parent,
->>>>>>>> +    .determine_rate = __clk_mux_determine_rate,
->>>>>>>> +    .is_enabled = pmc_clk_is_enabled,
->>>>>>>> +    .enable = pmc_clk_enable,
->>>>>>>> +    .disable = pmc_clk_disable,
->>>>>>>> +};
->>>>>>>> +
->>>>>>>> +static struct clk *
->>>>>>>> +tegra_pmc_clk_out_register(const struct pmc_clk_init_data *data,
->>>>>>>> +               unsigned long offset)
->>>>>>>> +{
->>>>>>>> +    struct clk_init_data init;
->>>>>>>> +    struct pmc_clk *pmc_clk;
->>>>>>>> +
->>>>>>>> +    pmc_clk = kzalloc(sizeof(*pmc_clk), GFP_KERNEL);
->>>>>>>> +    if (!pmc_clk)
->>>>>>>> +        return ERR_PTR(-ENOMEM);
->>>>>>>> +
->>>>>>>> +    init.name = data->name;
->>>>>>>> +    init.ops = &pmc_clk_ops;
->>>>>>>> +    init.parent_names = data->parents;
->>>>>>>> +    init.num_parents = data->num_parents;
->>>>>>>> +    init.flags = CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT |
->>>>>>>> +             CLK_SET_PARENT_GATE;
->>>>>>>> +
->>>>>>>> +    pmc_clk->hw.init = &init;
->>>>>>>> +    pmc_clk->offs = offset;
->>>>>>>> +    pmc_clk->mux_mask = 3;
->>>>>>> If mux_mask is a constant value, perhaps will be better to
->>>>>>> replace the
->>>>>>> variable with a literal?
->>>>>>>
->>>>>>> #define PMC_CLK_OUT_MUX_MASK    GENMASK(1, 0)
->>>>>> Maybe even:
->>>>>>
->>>>>> #define PMC_CLK_OUT_MUX_MASK(c)    GENMASK(c->shift + 1, c->shift)
->>>> MUX Mask is used only here for PMC clock out and is same for all
->>>> clk_out mux so will use
->>>>
->>>> #define PMC_CLK_OUT_MUX_MASK    GENMASK(1, 0)
->>>>
->>>>> I want to point out that may be a separated gate/mux shifts is a fine
->>>>> variant, you should try and see whether another variants produce more
->>>>> concise result.
->>>>>
->>>>> [snip]
->>> We can do mux_shift as gate_shift + 4 and that restricts this clk
->>> register only for clk1/2/3 as well and there are no other clocks in pmc
->>> anyway.
->>>
->>> How about using bit shift define for CLK1, CLK2, and CLK3?
->>>
->>> .mux_shift = PMC_CLK1_SRC_SEL_SHIFT,
->>>
->>> .gate_shift = PMC_CLK1_FORCE_EN_SHIFT,
->>>
->>>
->> I think that just renaming ".gate_shift" -> ".force_en_shift" should be
->> good enough.
-> You meant to assign bit position directly instead of defines like what I
-> have now in v4 and use force_en_shift instead of gate_shift?
-
-Yes
+DQpPbiBUaHUsIDIwMTktMTItMTkgYXQgMTQ6MzYgKzAwMDAsIExlZSBKb25lcyB3cm90ZToNCj4g
+T24gVGh1LCAxOSBEZWMgMjAxOSwgVmFpdHRpbmVuLCBNYXR0aSB3cm90ZToNCj4gDQo+ID4gSGVs
+bG8gTWFyaywgTGVlLCBSb2INCj4gPiANCj4gPiBJIGp1c3Qgbm90aWNlZCB3ZSBoYXZlIGEgZGVw
+ZW5kZW5jeSBoZXJlLiBUaGlzIGJpbmRpbmcgaXMgcmVmZXJyaW5nDQo+ID4gdG8NCj4gPiByZWd1
+bGF0b3IgYmluZGluZyAtIHdoaWNoIHdhcyBhcHBsaWVkIGJ5IE1hcmsgYW5kIGlzIHRodXMgbWlz
+c2luZw0KPiA+IGZyb20NCj4gPiB0aGUgc2VyaWVzLiBXaGF0J3MgdGhlIGJlc3Qgd2F5IGZvcndh
+cmQ/DQo+ID4gDQo+ID4gT24gVGh1LCAyMDE5LTEyLTE5IGF0IDExOjQ2ICswMjAwLCBNYXR0aSBW
+YWl0dGluZW4gd3JvdGU6DQo+ID4gPiBST0hNIEJENzE4MjggUG93ZXIgbWFuYWdlbWVudCBJQyBp
+bnRlZ3JhdGVzIDcgYnVjayBjb252ZXJ0ZXJzLCA3DQo+ID4gPiBMRE9zLA0KPiA+ID4gYSByZWFs
+LXRpbWUgY2xvY2sgKFJUQyksIDMgR1BPL3JlZ3VsYXRvciBjb250cm9sIHBpbnMsIEhBTEwgaW5w
+dXQNCj4gPiA+IGFuZCBhIDMyLjc2OCBrSHogY2xvY2sgZ2F0ZS4NCj4gPiA+IA0KPiA+ID4gRG9j
+dW1lbnQgdGhlIGR0IGJpbmRpbmdzIGRyaXZlcnMgYXJlIHVzaW5nLg0KPiA+ID4gDQo+ID4gPiBT
+aWduZWQtb2ZmLWJ5OiBNYXR0aSBWYWl0dGluZW4gPG1hdHRpLnZhaXR0aW5lbkBmaS5yb2htZXVy
+b3BlLmNvbQ0KPiA+ID4gPg0KPiA+ID4gUmV2aWV3ZWQtYnk6IFJvYiBIZXJyaW5nIDxyb2JoQGtl
+cm5lbC5vcmc+DQo+ID4gPiAtLS0NCj4gPiA+IA0KPiA+ID4gTm8gY2hhbmdlcyBzaW5jZSB2Ng0K
+PiA+IA0KPiA+IC8vc25pcA0KPiA+IA0KPiA+ID4gKyAgcmVndWxhdG9yczoNCj4gPiA+ICsgICAg
+JHJlZjogLi4vcmVndWxhdG9yL3JvaG0sYmQ3MTgyOC1yZWd1bGF0b3IueWFtbA0KPiA+IA0KPiA+
+IFRoaXMgZmlsZSBpcyBtaXNzaW5nIGZyb20gdGhlIHNlcmllcyBhbmQgaXMgYXBwbGllZCB0byBN
+YXJrJ3MgdHJlZS4NCj4gDQo+IFNob3VsZG4ndCBtYXR0ZXIuICBJIGd1ZXNzIHRoZXkncmUgYWxs
+IGhlYWRpbmcgZm9yIGhlIHNhbWUgcmVsZWFzZS4NCj4gDQpPay4gVGhhbmtzIGZvciBjbGFyaWZp
+Y2F0aW9uLiBJIHdhcyBhc2tpbmcgdGhpcyBiZWNhdXNlIFJvYiBhc2tlZCBtZSB0bw0KcmVvcmRl
+ciB0aGUgcGF0Y2hlcyBhIGZldyB2ZXJzaW9ucyBhZ28gc28gdGhhdCB0aGUgZHRfYmluZGluZ19j
+aGVjaw0KTWFrZSB0YXJnZXQgd291bGQgbm90IGJlIGJyb2tlbiBiZXR3ZWVuIGNvbW1pdHMuIEhl
+IGFza2VkIG1lIHRvIHN1Ym1pdA0KdGhlIHJlZ3VsYXRvciBhbmQgTEVEIGJpbmRpbmdzIGZpcnN0
+IGFuZCBNRkQgKHdoaWNoIHJlZmVycyB0byB0aG9zZSkNCm9ubHkgYWZ0ZXIgdGhlbS4gVGh1cyBJ
+IHdhcyB3b25kZXJpbmcgaWYgdGhlIGZpbmFsIG1lcmdlIG9yZGVyIG9mIE1GRA0KYW5kIHJlZ3Vs
+YXRvciB0cmVlcyBpcyBzdWNoIHRoYXQgaXQgY2FuIHJlc3VsdCB0aGUgYnJlYWthZ2UgUm9iIGhv
+cGVkDQp0byBhdm9pZC4gQnV0IEkgYW0gbW9yZSB0aGFuIGdsYWQgaWYgdGhlIHNlcmllcyBjYW4g
+Z28gaW4gbGlrZSB0aGlzIDopDQoNClRoYW5rcyBhZ2FpbiBmb3IgYWxsIHRoZSBoZWxwIGd1eXMg
+OikNCg0KQnIsDQoJTWF0dGkgDQo=
