@@ -2,164 +2,152 @@ Return-Path: <SRS0=nEAM=2K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C8025C2D0C0
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 10:13:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92A1EC43603
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 10:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A808224682
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 10:13:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 606BB2467F
+	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 10:55:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lnsxrNEC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727235AbfLTKN5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Dec 2019 05:13:57 -0500
-Received: from mga09.intel.com ([134.134.136.24]:27828 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727399AbfLTKN4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 20 Dec 2019 05:13:56 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 20 Dec 2019 02:13:55 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.69,335,1571727600"; 
-   d="scan'208";a="228566117"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.68.40])
-  by orsmga002.jf.intel.com with ESMTP; 20 Dec 2019 02:13:52 -0800
-Received: from andy by smile with local (Exim 4.93-RC7)
-        (envelope-from <andriy.shevchenko@intel.com>)
-        id 1iiFI8-0000Yx-UM; Fri, 20 Dec 2019 12:13:52 +0200
-Date:   Fri, 20 Dec 2019 12:13:52 +0200
-From:   Andy Shevchenko <andriy.shevchenko@intel.com>
-To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        yixin.zhu@linux.intel.com, qi-ming.wu@intel.com,
-        rtanwar <rahul.tanwar@intel.com>
-Subject: Re: [PATCH v2 1/2] clk: intel: Add CGU clock driver for a new SoC
-Message-ID: <20191220101352.GU32742@smile.fi.intel.com>
-References: <cover.1576811332.git.rahul.tanwar@linux.intel.com>
- <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
+        id S1727202AbfLTKzH (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Dec 2019 05:55:07 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:45893 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727192AbfLTKzG (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 05:55:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j42so8937619wrj.12
+        for <linux-clk@vger.kernel.org>; Fri, 20 Dec 2019 02:55:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=a9C14P9lsGAuh8F6Rdx7vHrUThQ9aonGy2O3DOUo7Ds=;
+        b=lnsxrNECjkBnFDoUoh4Zk3vI7gih7BdHS5VDD/ljXCsq9ilLRKOZ8GzzX7sx/6q8XK
+         zXuAKwefaAx9xOCMJiNWqqF/21CHWenY5X0UiZceAAACBFFJpSOR2/UekgYy3Alhn+7K
+         ieZJlFRB2hooAr36DkhTxOLH/VBGWvH3v/mySwaI6BcLANoApcE8RhKRUozqUqqmupM9
+         pRRKHrcSYVWSErKLI8B7XsVpW7oGvA9qLZMI7MVHFPZ7zG0gSaC9VyAIgYXmv8TF26Ih
+         fDVRzS4kElTzBv5ztckoj5PvaMpdOldZIi3GMchS7cYL/6H8DBkQYaUkNyrvhqkZXB72
+         YaSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=a9C14P9lsGAuh8F6Rdx7vHrUThQ9aonGy2O3DOUo7Ds=;
+        b=e0nuPrCEpH/9GeXgwPdaNbIF+ETzqjisKQfTcK2qpOWm0LE09aoN5CjaQqZR26adjE
+         cl+DwcMBX/m5YFwGKXEfp0cEjNeMiiTF2umGS4CR3KEfe5BW0wnAFos4iw508HIPk2HL
+         qWs56JTqI6oDEh9z1pJ1cYpG0YBIehOMrwjJ51hhOV07zMSYVaakac6ksZSEYCBYH0Lq
+         6iy5BMA5LrrisewnS/+Z7iBqItbMd6xGXEtNqIjopRr1LfqxuulT2KVkBoaGRBlZX/hg
+         Ri3wWJeIDTJkuH54lju04x89CwgI+aVdsmAKwJ3bBWLAwlOtxP13MCqRStAGMk6A//u6
+         ZyGA==
+X-Gm-Message-State: APjAAAXhYstooQD3cPjVqaPJESNzkmic/9FDPnZ4Hz1qMNON3DBHUw/m
+        fBzkIkHiVa3K5eOCAN5HFDZNCw==
+X-Google-Smtp-Source: APXvYqyicvSFzhHzxpljiw/uidTI78NGorAjjg+bi/J4O8iYxkHUB7TVkQ+2LhBMrPCHOQeS/2zn7Q==
+X-Received: by 2002:adf:f052:: with SMTP id t18mr14250816wro.192.1576839304724;
+        Fri, 20 Dec 2019 02:55:04 -0800 (PST)
+Received: from dell ([2.27.35.132])
+        by smtp.gmail.com with ESMTPSA id f17sm9339549wmc.8.2019.12.20.02.55.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 20 Dec 2019 02:55:04 -0800 (PST)
+Date:   Fri, 20 Dec 2019 10:55:05 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v7 02/12] dt-bindings: mfd: Document ROHM BD71828 bindings
+Message-ID: <20191220105505.GS18955@dell>
+References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+ <702daeb9d8604e2feddd5f6f92b067a2d60d81ad.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+ <f9b0fbb7b898691d09ed8954e8df67cf3706aa96.camel@fi.rohmeurope.com>
+ <20191219143647.GQ18955@dell>
+ <e734a11ed158814119256a3fac253a8574c90837.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e734a11ed158814119256a3fac253a8574c90837.camel@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Dec 20, 2019 at 11:31:07AM +0800, Rahul Tanwar wrote:
-> From: rtanwar <rahul.tanwar@intel.com>
+On Fri, 20 Dec 2019, Vaittinen, Matti wrote:
+
 > 
-> Clock Generation Unit(CGU) is a new clock controller IP of a forthcoming
-> Intel network processor SoC. It provides programming interfaces to control
-> & configure all CPU & peripheral clocks. Add common clock framework based
-> clock controller driver for CGU.
+> On Thu, 2019-12-19 at 14:36 +0000, Lee Jones wrote:
+> > On Thu, 19 Dec 2019, Vaittinen, Matti wrote:
+> > 
+> > > Hello Mark, Lee, Rob
+> > > 
+> > > I just noticed we have a dependency here. This binding is referring
+> > > to
+> > > regulator binding - which was applied by Mark and is thus missing
+> > > from
+> > > the series. What's the best way forward?
+> > > 
+> > > On Thu, 2019-12-19 at 11:46 +0200, Matti Vaittinen wrote:
+> > > > ROHM BD71828 Power management IC integrates 7 buck converters, 7
+> > > > LDOs,
+> > > > a real-time clock (RTC), 3 GPO/regulator control pins, HALL input
+> > > > and a 32.768 kHz clock gate.
+> > > > 
+> > > > Document the dt bindings drivers are using.
+> > > > 
+> > > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com
+> > > > >
+> > > > Reviewed-by: Rob Herring <robh@kernel.org>
+> > > > ---
+> > > > 
+> > > > No changes since v6
+> > > 
+> > > //snip
+> > > 
+> > > > +  regulators:
+> > > > +    $ref: ../regulator/rohm,bd71828-regulator.yaml
+> > > 
+> > > This file is missing from the series and is applied to Mark's tree.
+> > 
+> > Shouldn't matter.  I guess they're all heading for he same release.
+> > 
+> Ok. Thanks for clarification. I was asking this because Rob asked me to
+> reorder the patches a few versions ago so that the dt_binding_check
+> Make target would not be broken between commits. He asked me to submit
+> the regulator and LED bindings first and MFD (which refers to those)
+> only after them. Thus I was wondering if the final merge order of MFD
+> and regulator trees is such that it can result the breakage Rob hoped
+> to avoid. But I am more than glad if the series can go in like this :)
 
-...
-
->  drivers/clk/Kconfig           |   8 +
-
-This should be in x86 folder and you perhaps need to add
-source "drivers/clk/x86/Kconfig" here.
-
-Also drivers/clk/Makefile should be updated accordingly.
-
-...
-
-> +static int lgm_pll_wait_for_lock(struct lgm_clk_pll *pll)
-> +{
-> +	int max_loop_cnt = 100;
-> +	unsigned long flags;
-> +	unsigned int val;
-> +
-> +	while (max_loop_cnt > 0) {
-> +		raw_spin_lock_irqsave(&pll->lock, flags);
-> +		val = lgm_get_clk_val(pll->membase, pll->reg, 0, 1);
-> +		raw_spin_unlock_irqrestore(&pll->lock, flags);
-> +
-> +		if (val)
-> +			return 0;
-> +
-> +		udelay(1);
-> +		max_loop_cnt--;
-> +	}
-
-Looks like a repetition of iopoll.h.
-Even without that the waiting loops like this more natural in a form of
-
-	unsigned int count = ...;
-	...
-	do {
-		...
-	} while (--count);
-
-> +
-> +	return -EIO;
-> +}
-
-I think I told you that during internal review.
-
-...
-
-> +void lgm_set_clk_val(void *membase, u32 reg,
-> +		     u8 shift, u8 width, u32 set_val)
-
-There is plenty of space, and to be precise it would take exactly 80, on the
-previous line.
-
-> +{
-> +	u32 mask = (GENMASK(width - 1, 0) << shift);
-> +	u32 regval;
-> +
-> +	regval = readl(membase + reg);
-> +	regval = (regval & ~mask) | ((set_val << shift) & mask);
-> +	writel(regval, membase + reg);
-> +}
-
-...
-
-> +void lgm_clk_add_lookup(struct lgm_clk_provider *ctx,
-> +			struct clk_hw *hw, unsigned int id)
-
-Ditto.
-
-...
-
-> +	if (gate->flags & GATE_CLK_HW)
-> +		reg = GATE_HW_REG_EN(gate->reg);
-> +	else if (gate->flags & GATE_CLK_SW)
-> +		reg = gate->reg;
-> +	else {
-> +		dev_err(gate->dev, "%s has unsupported flags 0x%lx\n",
-> +			clk_hw_get_name(hw), gate->flags);
-> +		return 0;
-> +	}
-
-Missed curly braces in first two conditionals.
-
-...
-
-> +	if (gate->flags & GATE_CLK_HW)
-> +		reg = GATE_HW_REG_STAT(gate->reg);
-> +	else if (gate->flags & GATE_CLK_SW)
-> +		reg = gate->reg;
-> +	else {
-> +		dev_err(gate->dev, "%s has unsupported flags 0x%lx\n",
-> +			clk_hw_get_name(hw), gate->flags);
-> +		return 0;
-> +	}
-
-Ditto.
+It's not something that concerns me personally.  I only care about
+*build* breakages.  Rob might be more upset about it however.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
