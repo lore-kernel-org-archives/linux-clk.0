@@ -1,97 +1,115 @@
-Return-Path: <SRS0=nEAM=2K=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=4A1a=2L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E98AC43603
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 22:45:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7ED74C43603
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Dec 2019 04:09:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41D882146E
-	for <linux-clk@archiver.kernel.org>; Fri, 20 Dec 2019 22:45:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 435DD21655
+	for <linux-clk@archiver.kernel.org>; Sat, 21 Dec 2019 04:09:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1576881937;
-	bh=3C+B2ysqfREEI7rfSpJKeNGLAp0nRjh1KbKbLxKJ4Es=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=YIh+eRF/EzuaS6Zt+cSRp2U85Xq6z6sRfas0Zknw1r2R7FGaRt+FWrvHzufstpSzF
-	 0BjvahkPTvqOYw0Hhw8ObqhVwh5UCC8fq3n5BtgSLRgVi4X2AB4OTjS97d1EKOLlTI
-	 GaQf5i9jYLX24qLl9OgkgHhf/zJ4NeYj/8GUznik=
+	s=default; t=1576901393;
+	bh=6Jtau3362NuZSeWe5mH+jT+l23lapVjJ8jUZD8wIpxA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=ER9CwKWacX4TrJ9nY46WCxxjLnaLBthtX9QER5G4PsTVc7QB8IIUCuHX7b9Bgj0Fe
+	 /Cjrp/jIGCUKRGXc42uZgOAxYzPOHp4eQP4dLpzd+jKoYLfhuJIcQ/xNDv5+XGV0sX
+	 G3lgMPv6aYS7mM5Xop7qRBahvEf8lf09F297p4ew=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726716AbfLTWpd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 20 Dec 2019 17:45:33 -0500
-Received: from mail-il1-f195.google.com ([209.85.166.195]:45527 "EHLO
-        mail-il1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfLTWpd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 20 Dec 2019 17:45:33 -0500
-Received: by mail-il1-f195.google.com with SMTP id p8so9258374iln.12;
-        Fri, 20 Dec 2019 14:45:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CY9sMs+zro4McTGd9aPHOfBOz472x2dTm0RnIrjREH0=;
-        b=pRD19i2lAH4lO1uoc9Lg9tOc+0RJ115hOM3taE0yT82s+GVZjwZp6T7UZrWg4reqhY
-         YOrfVIpQ/v7Ear5G2977HgWJtTGJa80ENx/nTqbgZfQYNmN+Z3NKsZ0CpeDmVMPsBbfo
-         XJBIcns5syD6cZCvvWRx1j1Rnh4SGsrXgn/PT6z72iTbIJBx1gIOFqVA7KSHQ11Ej3xz
-         xueD41lPtCLdjLc/Lr6Vl485MHIaLNi/sXmwCwV+9eEbrRu/BVKffkehlpNCU97D7UnJ
-         JT6/3ktNgKLM+GxoEeBWCu4hmFd/NabcvXHS8E7jsaeCVBhlVLU1YpLmn9jp1mbZ1gq9
-         Atmw==
-X-Gm-Message-State: APjAAAVzdD170RhIGvWaPVt0oESS7XZaLnzHxLtNrXKWug5cPz6znGTs
-        D08mrpXOQMYgxFsMopMVxg==
-X-Google-Smtp-Source: APXvYqyIXFLQKvMNyT4CvtPyK5CJUbTKi6uMqY/7MWchstbPBwwZAsx97u2f2VEcT0G9XSIKsUHQNw==
-X-Received: by 2002:a92:8307:: with SMTP id f7mr14881259ild.73.1576881932586;
-        Fri, 20 Dec 2019 14:45:32 -0800 (PST)
-Received: from localhost ([64.188.179.251])
-        by smtp.gmail.com with ESMTPSA id t12sm3864906ioj.82.2019.12.20.14.45.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 20 Dec 2019 14:45:32 -0800 (PST)
-Date:   Fri, 20 Dec 2019 15:45:31 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Maxime Ripard <maxime@cerno.tech>
-Cc:     p.zabel@pengutronix.de, Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, lee.jones@linaro.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Maxime Ripard <maxime@cerno.tech>
-Subject: Re: [PATCH 3/3] dt-bindings: resets: Convert Allwinner legacy resets
- to schemas
-Message-ID: <20191220224531.GA20297@bogus>
-References: <20191219090712.947490-1-maxime@cerno.tech>
- <20191219090712.947490-3-maxime@cerno.tech>
+        id S1726671AbfLUEJw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 20 Dec 2019 23:09:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39542 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726633AbfLUEJw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 20 Dec 2019 23:09:52 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B6EB206DA;
+        Sat, 21 Dec 2019 04:09:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1576901391;
+        bh=6Jtau3362NuZSeWe5mH+jT+l23lapVjJ8jUZD8wIpxA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ZN3XOClbWPo40aA0hKMpG9HzC8D+R+6d5aYlKEJBoo8Nk6yF9LZHdK9yC4rYc1uh5
+         k7QSqVcem80v++yTBo5Rt7dMDjrZD7JFT10+g5ro9nDJFHWqpkaK9ckRUJBqmGjIqe
+         I20PVGNqnzxNrc/NmtSEsYQ81FHR0rGZxxl7iLjo=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v5.5-rc2
+Date:   Fri, 20 Dec 2019 20:09:50 -0800
+Message-Id: <20191221040950.59130-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191219090712.947490-3-maxime@cerno.tech>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 19 Dec 2019 10:07:12 +0100, Maxime Ripard wrote:
-> The Allwinner SoCs have a legacy set of bindings (and a framework to
-> support it in Linux) for their reset controllers.
-> 
-> Now that we have the DT validation in place, let's split into separate file
-> and convert the device tree bindings for those resets to schemas, and mark
-> them all as deprecated.
-> 
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> ---
->  .../allwinner,sun6i-a31-clock-reset.yaml      | 68 +++++++++++++++++++
->  .../reset/allwinner,sunxi-clock-reset.txt     | 21 ------
->  2 files changed, 68 insertions(+), 21 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/reset/allwinner,sun6i-a31-clock-reset.yaml
->  delete mode 100644 Documentation/devicetree/bindings/reset/allwinner,sunxi-clock-reset.txt
-> 
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-Applied, thanks.
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
-Rob
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 781d8cea68ac41d11a80df2a5f5babd584f86447:
+
+  clk: qcom: Avoid SMMU/cx gdsc corner cases (2019-12-18 22:02:27 -0800)
+
+----------------------------------------------------------------
+One core framework fix to walk the orphan list and match up clks to
+parents when clk providers register the DT provider after registering
+all their clks (as they should). Then a handful of driver fixes for the
+qcom, imx, and at91 drivers. The driver fixes are relatively small fixes
+for incorrect register settings or missing locks causing race
+conditions.
+
+----------------------------------------------------------------
+Alexandre Belloni (1):
+      clk: at91: fix possible deadlock
+
+Jeffrey Hugo (1):
+      clk: qcom: Avoid SMMU/cx gdsc corner cases
+
+Jerome Brunet (1):
+      clk: walk orphan list on clock provider registration
+
+Matthias Kaehlcke (1):
+      clk: qcom: gcc-sc7180: Fix setting flag for votable GDSCs
+
+Olof Johansson (1):
+      clk: Move clk_core_reparent_orphans() under CONFIG_OF
+
+Peng Fan (3):
+      clk: imx: clk-composite-8m: add lock to gate/mux
+      clk: imx: clk-imx7ulp: Add missing sentinel of ulp_div_table
+      clk: imx: pll14xx: fix clk_pll14xx_wait_lock
+
+Stephen Boyd (1):
+      Merge tag 'imx-clk-fixes-5.5' of git://git.kernel.org/.../shawnguo/linux into clk-fixes
+
+ drivers/clk/at91/at91sam9260.c     |  2 +-
+ drivers/clk/at91/at91sam9rl.c      |  2 +-
+ drivers/clk/at91/at91sam9x5.c      |  2 +-
+ drivers/clk/at91/pmc.c             |  2 +-
+ drivers/clk/at91/sama5d2.c         |  2 +-
+ drivers/clk/at91/sama5d4.c         |  2 +-
+ drivers/clk/clk.c                  | 62 ++++++++++++++++++++++++--------------
+ drivers/clk/imx/clk-composite-8m.c |  2 ++
+ drivers/clk/imx/clk-imx7ulp.c      |  1 +
+ drivers/clk/imx/clk-pll14xx.c      |  2 +-
+ drivers/clk/qcom/gcc-sc7180.c      |  6 ++--
+ drivers/clk/qcom/gpucc-msm8998.c   |  2 ++
+ 12 files changed, 56 insertions(+), 31 deletions(-)
+
+-- 
+Sent by a computer, using git, on the internet
