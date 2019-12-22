@@ -1,107 +1,106 @@
-Return-Path: <SRS0=4A1a=2L=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=uTOl=2M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB9CDC2D0D5
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Dec 2019 19:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B3B1C2D0C8
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Dec 2019 20:29:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0AC620700
-	for <linux-clk@archiver.kernel.org>; Sat, 21 Dec 2019 19:48:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E41DB206CB
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Dec 2019 20:29:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nDCjAxuG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726940AbfLUTsG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 21 Dec 2019 14:48:06 -0500
-Received: from jabberwock.ucw.cz ([46.255.230.98]:45404 "EHLO
-        jabberwock.ucw.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726736AbfLUTsG (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 21 Dec 2019 14:48:06 -0500
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-        id A7AD51C24A9; Sat, 21 Dec 2019 20:48:03 +0100 (CET)
-Date:   Sat, 21 Dec 2019 20:48:02 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Dan Murphy <dmurphy@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Lee Jones <lee.jones@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        id S1725997AbfLVU3g (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Dec 2019 15:29:36 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40345 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfLVU3g (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Dec 2019 15:29:36 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u1so15812704ljk.7
+        for <linux-clk@vger.kernel.org>; Sun, 22 Dec 2019 12:29:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e1hSMTsmfaLaprOXSq+UVK8DvTxDFM0cuzoXJb6/s1U=;
+        b=nDCjAxuGk/xzyq0ZuIn+tfZd3zr6PxFvDV4QMIWDybCuiAOzatWQD0tMqN+27gjMhq
+         LgYAPezJEnPHmn7GMXLflmz/qWZ+CHNeTdf0Nvh3Nx53dXbh3gjgEBoX6OxJ+nwmc1gg
+         eH6uux/BiU+1s4NgXEVfRQfVv/hG/aKe9HPCfjx1H4r7GC7J6EVCnd1/u3aqpFDKBbrN
+         UnvgG4ULLjk1XXJJiSPQH4kMmMrrtgSXCRCFtrWPSGE1FMhpZlbZ+yQQW9na6kKbIBRv
+         E3WyDQfkyhNZ9dzLXcA7tzcEGaTX49UsEWlUM5x1vSqx+yreUbq59OOnpDZ7uJFeZGDC
+         QM3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=e1hSMTsmfaLaprOXSq+UVK8DvTxDFM0cuzoXJb6/s1U=;
+        b=jBwhBU0Ykmcpg91t3WNCXjp6G9547f6ORsPan9rrvl+UpIrlbrZ0tGWQpKovAIvoS5
+         ngHlEoJm15rIlZIA3JakL0J45N2Kup2zuEP7i/MukES++2oowNMTOEoGPjTDTxo0WkDO
+         YNUwfzGK14sdkUI0rSr3jf3+NbRm0DmOZDyi14fUTyLoKi1TSNy7ogm67QjyYtnCWcxf
+         Q/QWdFFWf/oQQBpd9PXsZM0mMnrgX9N1AnWVJmeffm4zuYi17szqrnM2AZUpjDRK2Ba8
+         R4QzxSgnLyizBb/99EsW1sv7V1Dxu1AlQYMjOaIh/C6EfMcYniE8oztaMtt5C/p2FeMt
+         Pkow==
+X-Gm-Message-State: APjAAAWnW45pFw7GghHRuUT6pnl+fY4K05x5RfguiFVfYtKxt36X80P9
+        lWgt3G89N2cY+f/I6+fZoFFVrc5BR6ee5g==
+X-Google-Smtp-Source: APXvYqzeDPAKMoNKeoSj8E3kG+qFYXlPhCWaW5sGZ20Wjv6PYhaaCC9/sD4uGKXQmXcdSTJPwOiEwQ==
+X-Received: by 2002:a2e:8916:: with SMTP id d22mr16079488lji.19.1577046574300;
+        Sun, 22 Dec 2019 12:29:34 -0800 (PST)
+Received: from localhost.bredbandsbolaget (c-21cd225c.014-348-6c756e10.bbcust.telenor.se. [92.34.205.33])
+        by smtp.gmail.com with ESMTPSA id n23sm7059336lfa.41.2019.12.22.12.29.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 22 Dec 2019 12:29:33 -0800 (PST)
+From:   Linus Walleij <linus.walleij@linaro.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org,
         Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v7 12/12] led: bd71828: Support LED outputs on ROHM
- BD71828 PMIC
-Message-ID: <20191221194802.GK32732@amd>
-References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
- <c95eb856c8e05a196551179c2416455c022eb3ea.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+Subject: [PATCH] clk: ux500: Initialize DSI clocks before registering
+Date:   Sun, 22 Dec 2019 21:29:28 +0100
+Message-Id: <20191222202928.14142-1-linus.walleij@linaro.org>
+X-Mailer: git-send-email 2.21.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="++alDQ2ROsODg1x+"
-Content-Disposition: inline
-In-Reply-To: <c95eb856c8e05a196551179c2416455c022eb3ea.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The DSI clocks need to be initialized properly and cannot
+rely on boot defaults, this is especially important for the
+U8420 SYSCLK variant of the PRCMU firmware which requires
+that you poke these registers right before trying to use
+the HS DSI clock. Some vital setup such as the PRCM_TVCLK_MGT
+register will not happen unless we call this making some
+displays fail to work on the U8420.
 
---++alDQ2ROsODg1x+
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Cc: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Stephan Gerhold <stephan@gerhold.net>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ drivers/clk/ux500/u8500_of_clk.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Hi!
+diff --git a/drivers/clk/ux500/u8500_of_clk.c b/drivers/clk/ux500/u8500_of_clk.c
+index 0aedd42fad52..c1043a6b383f 100644
+--- a/drivers/clk/ux500/u8500_of_clk.c
++++ b/drivers/clk/ux500/u8500_of_clk.c
+@@ -65,6 +65,9 @@ static void u8500_clk_init(struct device_node *np)
+ 	u32 bases[CLKRST_MAX];
+ 	int i;
+ 
++	/* Initialize display clocks */
++	prcmu_set_display_clocks();
++
+ 	for (i = 0; i < ARRAY_SIZE(bases); i++) {
+ 		struct resource r;
+ 
+-- 
+2.21.0
 
-> ROHM BD71828 power management IC has two LED outputs for charge status
-> and button pressing indications. The LED outputs can also be forced
-> by SW so add driver allowing to use these LEDs for other indications
-> as well.
->=20
-> Leds are controlled by SW using 'Force ON' bits. Please note the
-> constrains mentioned in data-sheet:
->     1. If one LED is forced ON - then also the other LED is forced.
->             =3D> You can't use SW control to force ON one LED and allow HW
->                to control the other.
->     2. You can't force both LEDs OFF. If the FORCE bit for both LED's is
->        zero, then LEDs are controlled by HW and indicate button/charger
->        states as explained in data-sheet.
-
-That's really quite sad, is it?
-
-All the effort and all we got is ... one working LED. Because hardware
-does not allow you to control both LEDs...
-
-=2E..and we don't even have support selecting if the LED should be sw or
-hw controlled in the mainline, yet...
-
-Best regards,
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---++alDQ2ROsODg1x+
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAl3+dvIACgkQMOfwapXb+vIg1wCfYtYi6MN/BEF+ztr/KeVKSAJq
-ufgAoL9RYqOIuswW/TX+njSk7v8JSMf0
-=GjUc
------END PGP SIGNATURE-----
-
---++alDQ2ROsODg1x+--
