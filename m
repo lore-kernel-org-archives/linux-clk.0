@@ -2,341 +2,90 @@ Return-Path: <SRS0=uTOl=2M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1E4AC2D0C8
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Dec 2019 21:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2543EC3F68F
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Dec 2019 21:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3B53206D3
-	for <linux-clk@archiver.kernel.org>; Sun, 22 Dec 2019 21:19:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E33692067C
+	for <linux-clk@archiver.kernel.org>; Sun, 22 Dec 2019 21:46:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ihaRYykM"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xGUL+a5u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726162AbfLVVS5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 22 Dec 2019 16:18:57 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:41254 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726010AbfLVVS5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Dec 2019 16:18:57 -0500
-Received: by mail-lj1-f193.google.com with SMTP id h23so15879328ljc.8;
-        Sun, 22 Dec 2019 13:18:54 -0800 (PST)
+        id S1726783AbfLVVqR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 22 Dec 2019 16:46:17 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:33163 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbfLVVqR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 22 Dec 2019 16:46:17 -0500
+Received: by mail-lj1-f196.google.com with SMTP id y6so7912604lji.0
+        for <linux-clk@vger.kernel.org>; Sun, 22 Dec 2019 13:46:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=gFk165C6u1WowXAQ/IGtjex+DHRYGJFw3gc6psMVtlA=;
-        b=ihaRYykMD85EYqYo/KbWsm5uuiFj7d3g+rXehpol0Jeai6ky/JJvNyR0+xJFp2yFfi
-         GY0C4KNnB+n8Nf5HTbN8s8CUsMl2oP/oQLiFDWldaN23NkhGoBvswmdmPF2XXsTg6Oih
-         /f0lQlvRUtsblWAXjPDCPPMTcMxHbIhbIwiSzKsyP2cKCzsj2BjJ3KYSRjKGpPqyhN2B
-         s76WE0LMGOFDILn9B3bDohhUB9IP2UGqC44MJOaIQ8khGNfEodP+CzPz8z2q4QATjJEC
-         74Hfs3OWHNZHA/fDhAUvGrH24rm3/byQSa7KZBtxY/t97DsnN8Qocwx3e4mkX/M7ZFbA
-         8brw==
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2ZcIx7YpLr2GwG1ykVTlz7FG4UCDs7xiMGT6P40VL1Y=;
+        b=xGUL+a5u2gNC7SD0yWthky38reNximiBmWxb5GMQlJr0b68gxhdUcWlSx+AdIaWiZq
+         lsTN2EET85KoV1VZ+i8H3+8IhZKRu+UyC7Bw5E33r/4AiGQ4Nmfx9UwBnUC6Tl4e34zq
+         qntZymmiOFubmoHVXwHKS5HoMXI0CLHMeCTfQPDXtDQdSS/Dpz7cBZyDBsUBT+X+3Vw/
+         2tRBlyh5rkFo+SnxDe8x4b0pY1hhYNFJLkZ75gaWMPpmy9gl/KU3nTo15TUSsQP807jb
+         9++E5s6r6cDIfZd3ltXcdYzGrfTdMjRD2b2wQ+Xrz0Ry0YnhRBMsB0YiZllB9S9dS0Bi
+         GyLw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=gFk165C6u1WowXAQ/IGtjex+DHRYGJFw3gc6psMVtlA=;
-        b=bM1Q/CEUGuBr79/srHErEid9tu2S8/aUluJ8s80I/6Usx/NUCDbUGrG6Kx4I1aWzZy
-         GGAZjggIwFUcDFlF0575gJydaW1IoubdsVecYyjv2PBBTimvC+5yw6Gd7NyqCOwQ9lw9
-         YYlaBuaOTKiYk6A5AuqWYfbR940MSXyKLHBfiJjPMGDydE4U/NKErDLDm4ig5g8kndyb
-         E5Dwm2+WkfuE+TvTFzyPR5PyVgOaQ/slLScDrZt/aGhjLgXzXA77di9YA3BMh+0u5gr8
-         QKdYRRVd+NuI+5TAkVgun2+so0gEoDgheaF90tbuiyZ7c/pZ1GBGVnGIJCWdsCyRnDut
-         qvGg==
-X-Gm-Message-State: APjAAAVXcR54GzcMKrrhVjI7Ry6fa595lHxmmFt8AYAjO3rkYSfjXiNj
-        QA8a2AQLmY/g2PE9gnhfvtH+1lgG
-X-Google-Smtp-Source: APXvYqyrBdcwJ5LbnZkgNY56puGtk5JX9gVePW8df8SvKK7yrSYs7xf3SOjdzrAB53UbSumgem5nGQ==
-X-Received: by 2002:a2e:9050:: with SMTP id n16mr5257829ljg.49.1577049533897;
-        Sun, 22 Dec 2019 13:18:53 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id r2sm7100058lfn.13.2019.12.22.13.18.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 22 Dec 2019 13:18:53 -0800 (PST)
-Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
- for audio mclk
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
- <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
-Message-ID: <1b79ab92-c163-3857-dd38-df35c509b823@gmail.com>
-Date:   Mon, 23 Dec 2019 00:18:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2ZcIx7YpLr2GwG1ykVTlz7FG4UCDs7xiMGT6P40VL1Y=;
+        b=OpmsAwL8vrM7Uci/BkkXZg0Y92JNO+1Fn6LaxuV8V43aGID/d+2oxDVWcZZ/2ofGa7
+         X9wpRPEsygJly2oQCtp4ZpNrUs8bmxUZMb2ZTr+U0fm8wFNzDhm0hkAk1S4YUmc1C2Sw
+         z1ja18+MvI2duBQkjhpDJO1TfPAP/A0xxBG93Ehh6mKowro3t8RAXDUcEwbX507NGPUB
+         C3YJX8cp9OnvjZPDAaU4aJ1Wcm8ipxg1AMF4Z/Nx/WUvxjFpdgleZ8xiRG5nWVDcjX0Y
+         8yAM5gUBIJbYk2b0lhXi7NkYEqDr2z+FB23JENFMMvHX6L/OQXqn8SAkF7MqoGdLRlXm
+         GbcQ==
+X-Gm-Message-State: APjAAAU2Sg6ZzXCEpaMNegfRV5+Lnr7SzSGS18T8ibjyZanSFN7++oWa
+        tqjYAuElyuggJBFZQTd0+AILCYaFd0c0uG47wkvazg==
+X-Google-Smtp-Source: APXvYqziys8v4+MXOKTrDhKWcQ63s2cCMUVMradsUfyZNvEam8bNdMnrJ3z7gBEOnq5Fn5RWbh0I/CiFLIqBie187iE=
+X-Received: by 2002:a2e:b4f6:: with SMTP id s22mr16499195ljm.218.1577051175068;
+ Sun, 22 Dec 2019 13:46:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20191222202928.14142-1-linus.walleij@linaro.org>
+In-Reply-To: <20191222202928.14142-1-linus.walleij@linaro.org>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Sun, 22 Dec 2019 22:46:03 +0100
+Message-ID: <CACRpkdaE1T6yt4u5uO+SZB18KjrVp2_4Qd9gr_aN0v5GTJ2VGw@mail.gmail.com>
+Subject: Re: [PATCH] clk: ux500: Initialize DSI clocks before registering
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk <linux-clk@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Stephan Gerhold <stephan@gerhold.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-23.12.2019 00:14, Dmitry Osipenko пишет:
-> 21.12.2019 01:26, Sowjanya Komatineni пишет:
->> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
->> through Tegra210 and currently Tegra clock driver does initial parent
->> configuration for audio mclk "clk_out_1" and enables them by default.
->>
->> With the move of Tera PMC clocks from clock driver to Tegra PMC
->> driver, initial parent configuration for audio clocks are through
->> the device tree using assigned-clock-parents property.
->>
->> Default clock parents can be specified in device tree using
->> assigned-clocks and assigned-clock-parents and there is no need
->> to have clock driver do parent configuration and enable audio related
->> clocks.
->>
->> This patch has implementation for initial parent configuration in
->> audio driver when default parent configuration is not specified in the
->> device tree using assigned-clock properties and enables audio clocks
->> during the clock rate change.
->>
->> This patch configures PLLA_OUT0 as parent to extern1 and extern1
->> as parent to clk_out_1 and uses clk_out_1 as cdev1 clock to allow
->> mclk control from this driver.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>  sound/soc/tegra/tegra_asoc_utils.c | 71 ++++++++++++++++++++++----------------
->>  1 file changed, 41 insertions(+), 30 deletions(-)
->>
->> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
->> index 38535962029c..fc3135c08f43 100644
->> --- a/sound/soc/tegra/tegra_asoc_utils.c
->> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->> @@ -7,6 +7,7 @@
->>   */
->>  
->>  #include <linux/clk.h>
->> +#include <linux/clk-provider.h>
-> 
-> This is illegal, it is not a clock provider.
-> 
->>  #include <linux/device.h>
->>  #include <linux/err.h>
->>  #include <linux/kernel.h>
->> @@ -59,9 +60,8 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
->>  	data->set_baseclock = 0;
->>  	data->set_mclk = 0;
->>  
->> -	clk_disable_unprepare(data->clk_cdev1);
->> -	clk_disable_unprepare(data->clk_pll_a_out0);
->> -	clk_disable_unprepare(data->clk_pll_a);
->> +	if (__clk_is_enabled(data->clk_cdev1))
->> +		clk_disable_unprepare(data->clk_cdev1);
-> 
-> The root of the problem is that you removed clocks enabling from
-> tegra_asoc_utils_init().
-> 
-> I'm not sure why clocks should be disabled during the rate-changing,
-> probably this action is not really needed.
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
-> b/sound/soc/tegra/tegra_asoc_utils.c
-> index 46ff70c16b74..789fd03e51a7 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -7,7 +7,6 @@
->   */
-> 
->  #include <linux/clk.h>
-> -#include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/err.h>
->  #include <linux/kernel.h>
-> @@ -60,9 +59,6 @@ int tegra_asoc_utils_set_rate(struct
-> tegra_asoc_utils_data *data, int srate,
->  	data->set_baseclock = 0;
->  	data->set_mclk = 0;
-> 
-> -	if (__clk_is_enabled(data->clk_cdev1))
-> -		clk_disable_unprepare(data->clk_cdev1);
-> -
->  	err = clk_set_rate(data->clk_pll_a, new_baseclock);
->  	if (err) {
->  		dev_err(data->dev, "Can't set pll_a rate: %d\n", err);
-> @@ -77,12 +73,6 @@ int tegra_asoc_utils_set_rate(struct
-> tegra_asoc_utils_data *data, int srate,
-> 
->  	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
-> 
-> -	err = clk_prepare_enable(data->clk_cdev1);
-> -	if (err) {
-> -		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
-> -		return err;
-> -	}
-> -
->  	data->set_baseclock = new_baseclock;
->  	data->set_mclk = mclk;
-> 
-> @@ -96,9 +86,6 @@ int tegra_asoc_utils_set_ac97_rate(struct
-> tegra_asoc_utils_data *data)
->  	const int ac97_rate = 24576000;
->  	int err;
-> 
-> -	if (__clk_is_enabled(data->clk_cdev1))
-> -		clk_disable_unprepare(data->clk_cdev1);
-> -
->  	/*
->  	 * AC97 rate is fixed at 24.576MHz and is used for both the host
->  	 * controller and the external codec
-> @@ -117,12 +104,6 @@ int tegra_asoc_utils_set_ac97_rate(struct
-> tegra_asoc_utils_data *data)
-> 
->  	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
-> 
-> -	err = clk_prepare_enable(data->clk_cdev1);
-> -	if (err) {
-> -		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
-> -		return err;
-> -	}
-> -
->  	data->set_baseclock = pll_rate;
->  	data->set_mclk = ac97_rate;
-> 
-> @@ -213,6 +194,12 @@ int tegra_asoc_utils_init(struct
-> tegra_asoc_utils_data *data,
->  		data->clk_cdev1 = clk_out_1;
->  	}
-> 
-> +	ret = clk_prepare_enable(data->clk_cdev1);
-> +	if (ret) {
-> +		dev_err(data->dev, "Can't enable cdev1: %d\n", ret);
-> +		return ret;
-> +	}
-> +
->  	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
-> 
->  	return ret;
-> 
-> 
->>  	err = clk_set_rate(data->clk_pll_a, new_baseclock);
->>  	if (err) {
->> @@ -77,18 +77,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
->>  
->>  	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
->>  
->> -	err = clk_prepare_enable(data->clk_pll_a);
->> -	if (err) {
->> -		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
->> -		return err;
->> -	}
->> -
->> -	err = clk_prepare_enable(data->clk_pll_a_out0);
->> -	if (err) {
->> -		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
->> -		return err;
->> -	}
->> -
->>  	err = clk_prepare_enable(data->clk_cdev1);
->>  	if (err) {
->>  		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
->> @@ -108,9 +96,8 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
->>  	const int ac97_rate = 24576000;
->>  	int err;
->>  
->> -	clk_disable_unprepare(data->clk_cdev1);
->> -	clk_disable_unprepare(data->clk_pll_a_out0);
->> -	clk_disable_unprepare(data->clk_pll_a);
->> +	if (__clk_is_enabled(data->clk_cdev1))
->> +		clk_disable_unprepare(data->clk_cdev1);
->>  
->>  	/*
->>  	 * AC97 rate is fixed at 24.576MHz and is used for both the host
->> @@ -130,18 +117,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
->>  
->>  	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
->>  
->> -	err = clk_prepare_enable(data->clk_pll_a);
->> -	if (err) {
->> -		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
->> -		return err;
->> -	}
->> -
->> -	err = clk_prepare_enable(data->clk_pll_a_out0);
->> -	if (err) {
->> -		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
->> -		return err;
->> -	}
->> -
->>  	err = clk_prepare_enable(data->clk_cdev1);
->>  	if (err) {
->>  		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
->> @@ -158,6 +133,7 @@ EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
->>  int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->>  			  struct device *dev)
->>  {
->> +	struct clk *clk_out_1, *clk_extern1;
->>  	int ret;
->>  
->>  	data->dev = dev;
->> @@ -193,6 +169,41 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->>  		return PTR_ERR(data->clk_cdev1);
->>  	}
->>  
->> +	/*
->> +	 * If clock parents are not set in DT, configure here to use clk_out_1
->> +	 * as mclk and extern1 as parent for Tegra30 and higher.
->> +	 */
->> +	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
->> +	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
-> 
-> Please add a message here about falling back to configuring clocks for a
-> legacy device-tree, telling that device-tree needs to be updated.
-> 
->> +		clk_extern1 = devm_clk_get(dev, "extern1");
->> +		if (IS_ERR(clk_extern1)) {
->> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
->> +			return PTR_ERR(clk_extern1);
->> +		}
->> +
->> +		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
->> +		if (ret < 0) {
->> +			dev_err(data->dev,
->> +				"Set parent failed for clk extern1\n");
->> +			return ret;
->> +		}
->> +
->> +		clk_out_1 = devm_clk_get(dev, "clk_out_1");
->> +		if (IS_ERR(clk_out_1)) {
->> +			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
->> +			return PTR_ERR(clk_out_1);
->> +		}
->> +
->> +		ret = clk_set_parent(clk_out_1, clk_extern1);
->> +		if (ret < 0) {
->> +			dev_err(data->dev,
->> +				"Set parent failed for clk_out_1\n");
->> +			return ret;
->> +		}
->> +
->> +		data->clk_cdev1 = clk_out_1;
->> +	}
->> +
->>  	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+On Sun, Dec 22, 2019 at 9:29 PM Linus Walleij <linus.walleij@linaro.org> wrote:
 
-Actually, this tegra_asoc_utils_set_rate() should be removed because it
-doesn't do anything useful since drivers configure the clock rate when
-necessary.
+> The DSI clocks need to be initialized properly and cannot
+> rely on boot defaults, this is especially important for the
+> U8420 SYSCLK variant of the PRCMU firmware which requires
+> that you poke these registers right before trying to use
+> the HS DSI clock. Some vital setup such as the PRCM_TVCLK_MGT
+> register will not happen unless we call this making some
+> displays fail to work on the U8420.
+>
+> Cc: Ulf Hansson <ulf.hansson@linaro.org>
+> Cc: Stephan Gerhold <stephan@gerhold.net>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 
->>  	return ret;
->>
-> 
-> I'd also add tegra_asoc_utils_deinit() to disable clock on drivers removal.
-> 
+Sorry I got lost in the macros for CLK_MGT_ENTRY
+that does poke these registers including PRCM_TVCLK_MGT.
 
+I need to figure out what is actually going wrong with the
+DSI clocks here.
+
+Yours,
+Linus Walleij
