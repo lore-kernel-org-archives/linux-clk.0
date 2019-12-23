@@ -2,130 +2,208 @@ Return-Path: <SRS0=2Ll0=2N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F2C2C2D0C0
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 16:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87ED4C2D0C0
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 18:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B21C2073A
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 16:26:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u0m+N1gZ"
+	by mail.kernel.org (Postfix) with ESMTP id 60C62206CB
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 18:42:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbfLWQ0I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Dec 2019 11:26:08 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:47011 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbfLWQ0H (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 23 Dec 2019 11:26:07 -0500
-Received: by mail-lf1-f67.google.com with SMTP id f15so13014617lfl.13
-        for <linux-clk@vger.kernel.org>; Mon, 23 Dec 2019 08:26:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xgjTeEG260m1CCCVRdrYw5FNp+3UxoH+k/l83TrvmvU=;
-        b=u0m+N1gZrcN0OIaSt7XejzRaxrKSq3A+l18IIo4YF9a40pgVgGwfpifiNNMDANL5m5
-         TntBQ+CwVxMzWKl9qARDuIydMO1WWsbzA5+vP5cV/3Kn3w0dpLRqLQtCgmFiIuVJ6Q+z
-         u2C9n0rbJ9nXTyDpBMkZSoq1sxGC/9k4bB3EdzhS77qN/47uBjqdMsu61YB1IEmdO2BJ
-         8B9QtEg9CiLB1uSzwkLOjWfZGgBiL9zaOojOEEDeZhDGFA1CRsMqJJ+j3kNSidJTOysS
-         JuNB5K4iBDNUHNrsBGD+a4XiLqElQdkgD/j7lKVvXQKlI9B7C5L2pbDOHZ4rPS16nOPB
-         6Xww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xgjTeEG260m1CCCVRdrYw5FNp+3UxoH+k/l83TrvmvU=;
-        b=r4F2+U2IWuQyqUPLsolJ9+DY9kZAVioiWuES18qOt+IPVacQMZv2Wwtewgvn3wSaxq
-         JiTDc/ELkaeQkumVJWK2eDrzEGgTv2R8YDeJC2yzxXoZAekanRX0Eehryt8GvalDZ5Xg
-         gNmX945nDfB9v5yqLAwYdpsv9TO1g17xO9yjGwq+YXK6AM41FIVN8TQFC/sKXtgOKHMO
-         b49zCU0KP+hatWjx4HhUSeILkw5TPLXXlKfPFrVpTyhkMDA7k0YpTX9ZB0qd13Cf5u9y
-         5dPAikDSu7gaYXzwji3lws/os6fM5Gpfm6dTNoyN0AH4voSuXEokXjO9c4kTM+Bpt2l7
-         7rDw==
-X-Gm-Message-State: APjAAAVnWcKmNMb51bS9HBeHj2BYzGFJ73KH4+eWwchdmbyGyQFVTY2X
-        9WqAumvfG6DOvouZtfROdzQ/nqTFMwhH/uGCBbNOtA==
-X-Google-Smtp-Source: APXvYqwOrb8+7qCguo3qsfr/QdizG5j7KbjqE0dDclRcaasBiQY8ghSg1jvs2xY3EV1ILYhlVbOcREA+n3SoPkaZHEE=
-X-Received: by 2002:a19:c0b:: with SMTP id 11mr17638945lfm.135.1577118364685;
- Mon, 23 Dec 2019 08:26:04 -0800 (PST)
+        id S1726817AbfLWSmy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Dec 2019 13:42:54 -0500
+Received: from mga11.intel.com ([192.55.52.93]:13784 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726756AbfLWSmy (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 23 Dec 2019 13:42:54 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 23 Dec 2019 10:42:53 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.69,348,1571727600"; 
+   d="scan'208";a="268223854"
+Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
+  by FMSMGA003.fm.intel.com with ESMTP; 23 Dec 2019 10:42:51 -0800
+Received: from kbuild by lkp-server01 with local (Exim 4.89)
+        (envelope-from <lkp@intel.com>)
+        id 1ijSfK-000AEj-IR; Tue, 24 Dec 2019 02:42:50 +0800
+Date:   Tue, 24 Dec 2019 02:42:25 +0800
+From:   kbuild test robot <lkp@intel.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     kbuild-all@lists.01.org, mturquette@baylibre.com, sboyd@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        yixin.zhu@linux.intel.com, qi-ming.wu@intel.com,
+        rtanwar <rahul.tanwar@intel.com>,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Subject: Re: [PATCH v2 1/2] clk: intel: Add CGU clock driver for a new SoC
+Message-ID: <201912240240.HCfwzN11%lkp@intel.com>
+References: <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
-References: <20191222202928.14142-1-linus.walleij@linaro.org>
- <CACRpkdaE1T6yt4u5uO+SZB18KjrVp2_4Qd9gr_aN0v5GTJ2VGw@mail.gmail.com> <CAPDyKFrYZ3UHAaBdkO9+R+19hEp4yecgdxP=OzWD=VRJ1G4bEw@mail.gmail.com>
-In-Reply-To: <CAPDyKFrYZ3UHAaBdkO9+R+19hEp4yecgdxP=OzWD=VRJ1G4bEw@mail.gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 23 Dec 2019 17:25:53 +0100
-Message-ID: <CACRpkdYvkwP6U6BtOF22yGUQtF45YR39M7TaFEZ4A=D0h4BBdw@mail.gmail.com>
-Subject: Re: [PATCH] clk: ux500: Initialize DSI clocks before registering
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stephan Gerhold <stephan@gerhold.net>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 23, 2019 at 10:16 AM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> On Sun, 22 Dec 2019 at 22:46, Linus Walleij <linus.walleij@linaro.org> wrote:
-> > On Sun, Dec 22, 2019 at 9:29 PM Linus Walleij <linus.walleij@linaro.org> wrote:
-> >
-> > > The DSI clocks need to be initialized properly and cannot
-> > > rely on boot defaults, this is especially important for the
-> > > U8420 SYSCLK variant of the PRCMU firmware which requires
-> > > that you poke these registers right before trying to use
-> > > the HS DSI clock. Some vital setup such as the PRCM_TVCLK_MGT
-> > > register will not happen unless we call this making some
-> > > displays fail to work on the U8420.
-> > >
-> > > Cc: Ulf Hansson <ulf.hansson@linaro.org>
-> > > Cc: Stephan Gerhold <stephan@gerhold.net>
-> > > Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Sorry I got lost in the macros for CLK_MGT_ENTRY
-> > that does poke these registers including PRCM_TVCLK_MGT.
-> >
-> > I need to figure out what is actually going wrong with the
-> > DSI clocks here.
->
-> In the downstream kernel, I authored a patch that added a new per
-> clock config flag "CLK_BOOT_NOGATE", which was set for DSI clocks and
-> its friends. If this flag was set, the clock was prevented from being
-> unprepared/disabled by the common clock core, even if unused.
->
-> This was only needed during the boot process, when the bootloaders
-> have turned on the clock, HW wise. As then those needed to stay on,
-> else things would break, in one way or the other.
+Hi Rahul,
 
-What I'm seeing after some tests is that the boot loader
-(splash screen) sets PRCMU_DSI0ESCCLK to 9600000
-(9.6MHz) and if I try to switch that to 19.2 MHz which the
-component should be fine with (and a vendor kernel
-is using it) things bug up.
+Thank you for the patch! Perhaps something to improve:
 
-A workaround that works is to set the clock to 9.6MHz
-so it matches what the boot loader splash set it to,
-the display works fine if I do this.
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on robh/for-next v5.5-rc3 next-20191220]
+[if your patch is applied to the wrong git tree, please drop us a note to help
+improve the system. BTW, we also suggest to use '--base' option to specify the
+base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
 
-From what I can see the problem is maybe that the clock
-framework is trying to re-initialize a PRCMU clock that was
-already turned on, but I haven't looked closer.
+url:    https://github.com/0day-ci/linux/commits/Rahul-Tanwar/clk-intel-Add-a-new-driver-for-a-new-clock-controller-IP/20191223-110300
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+reproduce:
+        # apt-get install sparse
+        # sparse version: v0.6.1-129-g341daf20-dirty
+        make ARCH=x86_64 allmodconfig
+        make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
 
-Do you think that it could possibly be that the problem isn't
-really that of disabling the clock, but actually that the code
-re-enables a clock that is already enabled?
+If you fix the issue, kindly add following tag
+Reported-by: kbuild test robot <lkp@intel.com>
 
-I.e. to switch the frequency of this clock we need to go
-through a disable/set_rate/enable sequence, but as it is
-now, we will issue set_rate() on a clock that is already
-enabled, just that the framework isn't aware that is is
-already enabled?
 
-I.e. we would need something like regulator-boot-on
-but for clocks, clock-boot-on;?
+sparse warnings: (new ones prefixed by >>)
 
-Yours,
-Linus Walleij
+>> drivers/clk/x86/clk-cgu.c:32:32: sparse: sparse: incorrect type in argument 1 (different address spaces)
+>> drivers/clk/x86/clk-cgu.c:32:32: sparse:    expected void const volatile [noderef] <asn:2> *addr
+>> drivers/clk/x86/clk-cgu.c:32:32: sparse:    got void *
+   drivers/clk/x86/clk-cgu.c:34:32: sparse: sparse: incorrect type in argument 2 (different address spaces)
+>> drivers/clk/x86/clk-cgu.c:34:32: sparse:    expected void volatile [noderef] <asn:2> *addr
+   drivers/clk/x86/clk-cgu.c:34:32: sparse:    got void *
+   drivers/clk/x86/clk-cgu.c:41:29: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:41:29: sparse:    expected void const volatile [noderef] <asn:2> *addr
+   drivers/clk/x86/clk-cgu.c:41:29: sparse:    got void *
+   drivers/clk/x86/clk-cgu.c:61:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+>> drivers/clk/x86/clk-cgu.c:61:36: sparse:    expected void *membase
+>> drivers/clk/x86/clk-cgu.c:61:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:78:34: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:78:34: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:78:34: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:91:28: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:91:28: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:91:28: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:155:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:155:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:155:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:170:38: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:170:38: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:170:38: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:202:32: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:202:32: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:202:32: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:260:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:260:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:260:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:282:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:282:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:282:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:307:29: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:307:29: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:307:29: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:333:29: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:333:29: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:333:29: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:354:35: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:354:35: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:354:35: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:409:37: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:409:37: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:409:37: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:466:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:466:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:466:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:468:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:468:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:468:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu.c:470:37: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu.c:470:37: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu.c:470:37: sparse:    got void [noderef] <asn:2> *membase
+--
+>> drivers/clk/x86/clk-cgu-pll.c:49:42: sparse: sparse: incorrect type in argument 1 (different address spaces)
+>> drivers/clk/x86/clk-cgu-pll.c:49:42: sparse:    expected void *membase
+>> drivers/clk/x86/clk-cgu-pll.c:49:42: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu-pll.c:69:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu-pll.c:69:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu-pll.c:69:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu-pll.c:70:35: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu-pll.c:70:35: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu-pll.c:70:35: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu-pll.c:71:36: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu-pll.c:71:36: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu-pll.c:71:36: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu-pll.c:94:34: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu-pll.c:94:34: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu-pll.c:94:34: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu-pll.c:106:28: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu-pll.c:106:28: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu-pll.c:106:28: sparse:    got void [noderef] <asn:2> *membase
+   drivers/clk/x86/clk-cgu-pll.c:118:28: sparse: sparse: incorrect type in argument 1 (different address spaces)
+   drivers/clk/x86/clk-cgu-pll.c:118:28: sparse:    expected void *membase
+   drivers/clk/x86/clk-cgu-pll.c:118:28: sparse:    got void [noderef] <asn:2> *membase
+
+vim +32 drivers/clk/x86/clk-cgu.c
+
+    25	
+    26	void lgm_set_clk_val(void *membase, u32 reg,
+    27			     u8 shift, u8 width, u32 set_val)
+    28	{
+    29		u32 mask = (GENMASK(width - 1, 0) << shift);
+    30		u32 regval;
+    31	
+  > 32		regval = readl(membase + reg);
+    33		regval = (regval & ~mask) | ((set_val << shift) & mask);
+  > 34		writel(regval, membase + reg);
+    35	}
+    36	
+    37	u32 lgm_get_clk_val(void *membase, u32 reg, u8 shift, u8 width)
+    38	{
+    39		u32 val;
+    40	
+    41		val = readl(membase + reg);
+    42		val = (val >> shift) & (BIT(width) - 1);
+    43	
+    44		return val;
+    45	}
+    46	
+    47	void lgm_clk_add_lookup(struct lgm_clk_provider *ctx,
+    48				struct clk_hw *hw, unsigned int id)
+    49	{
+    50		if (ctx->clk_data.hws)
+    51			ctx->clk_data.hws[id] = hw;
+    52	}
+    53	
+    54	static struct clk_hw *lgm_clk_register_fixed(struct lgm_clk_provider *ctx,
+    55						     const struct lgm_clk_branch *list)
+    56	{
+    57		unsigned long flags;
+    58	
+    59		if (list->div_flags & CLOCK_FLAG_VAL_INIT) {
+    60			raw_spin_lock_irqsave(&ctx->lock, flags);
+  > 61			lgm_set_clk_val(ctx->membase, list->div_off, list->div_shift,
+    62					list->div_width, list->div_val);
+    63			raw_spin_unlock_irqrestore(&ctx->lock, flags);
+    64		}
+    65	
+    66		return clk_hw_register_fixed_rate(NULL, list->name,
+    67						  list->parent_names[0],
+    68						  list->flags, list->mux_flags);
+    69	}
+    70	
+
+---
+0-DAY kernel test infrastructure                 Open Source Technology Center
+https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
