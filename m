@@ -3,69 +3,136 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB64EC2D0C0
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 19:33:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE5EC2D0C0
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 19:38:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C661120643
-	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 19:33:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76546206CB
+	for <linux-clk@archiver.kernel.org>; Mon, 23 Dec 2019 19:38:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577129592;
-	bh=42fYECSTluuRQ8eLqMhkXNWwb8IO70Xx5mGL32XhXK0=;
+	s=default; t=1577129893;
+	bh=Dih/wOurVTvIq8c1XErUHJTObmDBQEui58gJp3SRloM=;
 	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=rdC1PZvO5HBXY45HJRYMp2vUf7iW7UUwyHAOQXG+Xs77rYETfJip+0kYA5rd056wF
-	 fm8nBJ3qMNiMlhZDwM87vRvAJIo93omE/BfQqu8oxOUa1i9d19mZwYe708utHxnCsl
-	 8uJHJ3DTEYfV7f39RSeyCLC0BL4hncUlVy8O6b/c=
+	b=XJn1oacxILIzK9pVgAb3r8tIvYygfDFPQWVfjVr0+x/K3c5JK+raEP/jYJgCemsF2
+	 5G+RLbUEWDUlHudmS4u91J7eSzMdzbeLBIAy0GrnqsP01RGa7K+3ee7JwBU37DozY0
+	 F2u+kranfUqa8GGG4xsuW2ggu1VHr1GC1X1xNIl0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726908AbfLWTdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Dec 2019 14:33:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35832 "EHLO mail.kernel.org"
+        id S1726766AbfLWTiK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Dec 2019 14:38:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726787AbfLWTdJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Dec 2019 14:33:09 -0500
+        id S1726756AbfLWTiJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 23 Dec 2019 14:38:09 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3E6E20643;
-        Mon, 23 Dec 2019 19:33:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 518DD206CB;
+        Mon, 23 Dec 2019 19:38:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577129589;
-        bh=42fYECSTluuRQ8eLqMhkXNWwb8IO70Xx5mGL32XhXK0=;
+        s=default; t=1577129889;
+        bh=Dih/wOurVTvIq8c1XErUHJTObmDBQEui58gJp3SRloM=;
         h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=dLnNk/YN7gVRHkJ157sA0ImKSiZcsLw8dM1m2//GLkfeImDc9U4ztYuu2sTtksSCa
-         +AgT8n7Na50i3VoDqVphcM641JDyDDTmvceD9d9zgR+SbzD886KW5motsX708cC9Ny
-         JMnIBNVsc6A3Rk1V4GTRGUMuq7pFo9xCTmp4FgsI=
+        b=VpJQ1DX6mclIWUzMvp5eMrYTvEbIE4X0oZMhvCOHX9ufMvaVWxAb5Tu/tYJdTe6bE
+         Emwxky6snUkBGEGADIALj6teuEObdD4hxaIL9gNl3h/nVb4iZGdNfXJVH0FKJ5NIf6
+         U1Xw5kOGAnyjc71UVfpwPuDZ0hwGudbq5yFUG5j8=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191220065314.237624-3-lkundrak@v3.sk>
-References: <20191220065314.237624-1-lkundrak@v3.sk> <20191220065314.237624-3-lkundrak@v3.sk>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, soc@kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
+In-Reply-To: <706ef9c0e08e10798a4cecacff52a4c72e8fe693.1576811332.git.rahul.tanwar@linux.intel.com>
+References: <cover.1576811332.git.rahul.tanwar@linux.intel.com> <706ef9c0e08e10798a4cecacff52a4c72e8fe693.1576811332.git.rahul.tanwar@linux.intel.com>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com,
+        yixin.zhu@linux.intel.com, qi-ming.wu@intel.com,
+        Rahul Tanwar <rahul.tanwar@linux.intel.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>
-Subject: Re: [PATCH 2/5] clk: mmp2: Add HSIC clocks
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>, mark.rutland@arm.com,
+        mturquette@baylibre.com, robh+dt@kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: clk: intel: Add bindings document & header file for CGU
 User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 11:33:08 -0800
-Message-Id: <20191223193308.E3E6E20643@mail.kernel.org>
+Date:   Mon, 23 Dec 2019 11:38:08 -0800
+Message-Id: <20191223193809.518DD206CB@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Lubomir Rintel (2019-12-19 22:53:11)
-> There are two USB HSIC controllers on MMP2 and MMP3.
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
+Quoting Rahul Tanwar (2019-12-19 19:31:08)
+> diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b=
+/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+> new file mode 100644
+> index 000000000000..2c9edabe0490
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
+> @@ -0,0 +1,43 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/intel,cgu-lgm.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Intel Lightning Mountain SoC's Clock Controller(CGU) Binding
+> +
+> +maintainers:
+> +  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> +
+> +description: |
+> +  Lightning Mountain(LGM) SoC's Clock Generation Unit(CGU) driver provid=
+es
+> +  all means to access the CGU hardware module in order to generate a ser=
+ies
+> +  of clocks for the whole system and individual peripherals.
+> +
+> +  This binding uses the common clock bindings
+> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+I don't know if this second paragraph is very useful.
+
+> +
+> +properties:
+> +  compatible:
+> +    const: intel,cgu-lgm
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +examples:
+> +  - |
+> +    cgu: cgu@e0200000 {
+
+Node name should be 'clock-controller'
+
+> +        compatible =3D "intel,cgu-lgm";
+> +        reg =3D <0xe0200000 0x33c>;
+> +        #clock-cells =3D <1>;
+> +    };
+> +
+> +...
+> diff --git a/include/dt-bindings/clock/intel,lgm-clk.h b/include/dt-bindi=
+ngs/clock/intel,lgm-clk.h
+> new file mode 100644
+> index 000000000000..09e5dc59ff5b
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/intel,lgm-clk.h
+> @@ -0,0 +1,150 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+
+Can this be more than just GPL? Maybe GPL or BSD?
+
+[...]
+> +
+> +#define CLK_NR_CLKS            180
+
+Can this be removed from the binding file? It's too generic of a name
+regardless and it doesn't describe something that is actually part of
+the binding.
 
