@@ -3,213 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9779BC2D0CF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:46:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE36C2D0CF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:49:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641BB2071A
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:46:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C804820730
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:49:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577173602;
-	bh=1BJxrvDxsrR7VIQZMUVHbOxilZxPHKLhLbtnCYK0wCI=;
+	s=default; t=1577173743;
+	bh=GTiuJToEf1rYPyFg+M8KQHlG48XsZfpkE1FmUWz15rw=;
 	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=njiJIH07M0L5XTTKtnSZPgVTnjus6ztyNE5gAOQYFu/bApbNfem6T0vG/7+3OXrR5
-	 CESP6wwediqQ4KC8f0PCYya27mZh/o0y4N/lubHOnffdWbQcvoeLCf0mQjiNPEbX2M
-	 mf8oCnl5UFbknDJ64nShLhNj8aYVSm/DJxNmzd/w=
+	b=OO5y2Br8lVyMyho+VKtXb3ZcrnOICCt1aUduJ3M8dH6I1yPzbBNO4LL+sdHPz0kx1
+	 ACWvnK6n120K2TgodLolRTb2uw1kbNAjnXn9fheqssjHNMpa3hZIlB4KvLyalnZ7+s
+	 pI3RbVt+wDGIHVCW6NHethgF0ZIjxAwlFdF0n9Y0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727031AbfLXHqm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Dec 2019 02:46:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37476 "EHLO mail.kernel.org"
+        id S1726068AbfLXHtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Dec 2019 02:49:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726910AbfLXHqk (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:46:40 -0500
+        id S1726037AbfLXHtD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Dec 2019 02:49:03 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1589220706;
-        Tue, 24 Dec 2019 07:46:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9CF620706;
+        Tue, 24 Dec 2019 07:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577173599;
-        bh=1BJxrvDxsrR7VIQZMUVHbOxilZxPHKLhLbtnCYK0wCI=;
+        s=default; t=1577173742;
+        bh=GTiuJToEf1rYPyFg+M8KQHlG48XsZfpkE1FmUWz15rw=;
         h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=JdfRkv/iA1GPjKltY9g+b6rJwS1+cIxjN0vr48ttnpmYMEX8QPn5meFCchbWv1huh
-         l5/CLVEWnsvGvfxUOH+WSJj1UElcjrFHTrpxVoM+UwvZIgbLRtqAKwkA5RoQzbHRTr
-         W3VvVkpDVzCB4m2PWvDaoMi4Nd5r5ZrjumyhIS7s=
+        b=LtYDFR5QH+rp40jWZrHpHHIfROItwwLlOpd1+T0oPEZYQQD8VyVLoeikFdTwtapxN
+         Fmwpw8nLFLqTN5794+J0FC5rz/Bdfektw2hYboggdM7vjugpp4ZEP/CLzvHEOdp1kB
+         oHDxRvHk+ROafWKtHk2qh4a6yopx1uDFfcTNxY3c=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191209183511.3576038-11-daniel@zonque.org>
-References: <20191209183511.3576038-1-daniel@zonque.org> <20191209183511.3576038-11-daniel@zonque.org>
-Cc:     mturquette@baylibre.com, robh+dt@kernel.org, broonie@kernel.org,
-        lee.jones@linaro.org, lars@metafoo.de, pascal.huerst@gmail.com,
-        Daniel Mack <daniel@zonque.org>
+In-Reply-To: <20191210145345.11616-13-sudeep.holla@arm.com>
+References: <20191210145345.11616-1-sudeep.holla@arm.com> <20191210145345.11616-13-sudeep.holla@arm.com>
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Daniel Mack <daniel@zonque.org>, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 09/10] clk: Add support for AD242x clock output providers
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/15] clk: scmi: Match scmi device by both name and protocol id
 User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 23:46:38 -0800
-Message-Id: <20191224074639.1589220706@mail.kernel.org>
+Date:   Mon, 23 Dec 2019 23:49:02 -0800
+Message-Id: <20191224074902.C9CF620706@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Daniel Mack (2019-12-09 10:35:10)
-> diff --git a/drivers/clk/clk-ad242x.c b/drivers/clk/clk-ad242x.c
-> new file mode 100644
-> index 000000000000..201789d8f174
-> --- /dev/null
-> +++ b/drivers/clk/clk-ad242x.c
-> @@ -0,0 +1,231 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <linux/module.h>
-> +#include <linux/kernel.h>
-> +#include <linux/clk.h>
+Quoting Sudeep Holla (2019-12-10 06:53:42)
+> The scmi bus now has support to match the driver with devices not only
+> based on their protocol id but also based on their device name if one is
+> available. This was added to cater the need to support multiple devices
+> and drivers for the same protocol.
+>=20
+> Let us add the name "clocks" to scmi_device_id table in the driver so
+> that in matches only with device with the same name and protocol id
+> SCMI_PROTOCOL_CLOCK.
+>=20
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> ---
 
-Is this include used?
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/errno.h>
-
-Is this include used?
-
-> +#include <linux/mfd/ad242x.h>
-
-Any way we can avoid this build dependency? Maybe just put defines in
-this driver that deals with the clk bits of the device?
-
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +
-> +#include <dt-bindings/clock/adi,ad242x.h>
-> +
-> +#define AD242X_NUM_CLKS 2
-> +
-> +struct ad242x_clk_hw {
-> +       struct clk_hw hw;
-> +       struct clk_init_data init;
-
-Do we need to keep around this init data after probe? I'd rather leave
-this out.
-
-> +       struct ad242x_node *node;
-
-What's the point of this structure? Can we use dev->parent->regmap and
-just store the struct regmap pointer here instead of using this custom
-struct?
-
-> +       u8 reg;
-> +};
-> +
-> +struct ad242x_clk_driver_data {
-> +       struct ad242x_clk_hw hw[AD242X_NUM_CLKS];
-
-If this is the only drvdata, then I'd prefer just the array and not
-another struct so we can have clarity.
-
-> +};
-> +
-> +static inline struct ad242x_clk_hw *to_ad242x_clk(struct clk_hw *hw)
-> +{
-> +       return container_of(hw, struct ad242x_clk_hw, hw);
-> +}
-> +
-[...]
-> +
-> +static long ad242x_clk_round_rate(struct clk_hw *hw, unsigned long rate,
-> +                                 unsigned long *parent_rate)
-> +{
-> +       unsigned long pll_rate =3D *parent_rate * 2048UL;
-> +       unsigned long prediv, div;
-> +
-> +       if (rate > pll_rate / 4 || rate < pll_rate / 1024UL)
-> +               return -EINVAL;
-
-This callback should round the rate to something valid. If the rate is
-larger than pll_rate / 4 then it should clamp to be the highest rate
-supported. Likewise for something slow.
-
-> +
-> +       ad242x_do_div(rate, pll_rate, &prediv, &div);
-> +
-> +       return pll_rate / (prediv * div);
-> +}
-> +
-[...]
-> +
-> +static struct clk_hw *
-> +ad242x_of_clk_get(struct of_phandle_args *clkspec, void *data)
-> +{
-> +       struct ad242x_clk_driver_data *drvdata =3D data;
-> +       unsigned int idx =3D clkspec->args[0];
-> +
-> +       return &drvdata->hw[idx].hw;
-
-It looks quite a bit like of_clk_hw_onecell_get(). Can that be used? Or
-at least check for out of bounds and return failure?
-
-> +}
-> +
-> +static int ad242x_clk_probe(struct platform_device *pdev)
-> +{
-> +       const char *clk_names[AD242X_NUM_CLKS] =3D { "clkout1", "clkout2"=
- };
-> +       u8 regs[AD242X_NUM_CLKS] =3D { AD242X_CLK1CFG, AD242X_CLK2CFG };
-> +       struct ad242x_clk_driver_data *drvdata;
-> +       struct device *dev =3D &pdev->dev;
-> +       const char *sync_clk_name;
-> +       struct ad242x_node *node;
-> +       int i, ret;
-> +
-> +       if (!dev->of_node)
-> +               return -ENODEV;
-
-Please drop this. It's not useful.
-
-> +
-> +       drvdata =3D devm_kzalloc(dev, sizeof(*drvdata), GFP_KERNEL);
-> +       if (!drvdata)
-> +               return -ENOMEM;
-> +
-> +       node =3D dev_get_drvdata(dev->parent);
-
-Add a NULL check on node?
-
-> +       sync_clk_name =3D ad242x_master_get_clk_name(node->master);
-> +
-> +       for (i =3D 0; i < AD242X_NUM_CLKS; i++) {
-> +               const char *name;
-> +
-> +               if (of_property_read_string_index(dev->of_node,
-> +                                                 "clock-output-names",
-> +                                                 i, &name) =3D=3D 0)
-> +                       drvdata->hw[i].init.name =3D name;
-> +               else
-> +                       drvdata->hw[i].init.name =3D clk_names[i];
-
-Do you need unique names? Or can you generate psuedo unique names based
-on the device name and clk number?
-
-> +
-> +               drvdata->hw[i].reg =3D regs[i];
-> +               drvdata->hw[i].init.ops =3D &ad242x_clk_ops;
-> +               drvdata->hw[i].init.num_parents =3D 1;
-> +               drvdata->hw[i].init.parent_names =3D &sync_clk_name;
-> +               drvdata->hw[i].hw.init =3D &drvdata->hw[i].init;
-> +               drvdata->hw[i].node =3D node;
-> +
-> +               ret =3D devm_clk_hw_register(dev, &drvdata->hw[i].hw);
-> +               if (ret < 0)
-> +                       return ret;
-> +       }
-> +
-> +       return devm_of_clk_add_hw_provider(dev, ad242x_of_clk_get, drvdat=
-a);
-> +}
