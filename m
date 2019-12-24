@@ -6,73 +6,64 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF0AC2D0C0
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 02:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A577DC2D0C0
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 02:59:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A291B2075B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 02:48:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 772FC20709
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 02:59:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577155726;
-	bh=GDZHiwpYpPN2Oz81f+vptATrIiOpyVjE00BybrrHoww=;
+	s=default; t=1577156384;
+	bh=Z4z6F/8kAVtJEUdjR7Ofsvw8xLI9AKntZE2rBDxc+XU=;
 	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=RaESVBiD9z2awCY7/gth/JVCiDXOvWH9iqgHmgbUNs47qqj96pPJ9qEOdb1Qzvgxe
-	 Mm5avirr79t5NM4yQUnntnL+PtCYMyKbPZLylA/kNsJBMjPNIChSlTgO3PTpVyxPJ1
-	 0vDIwueAtBVuY1QHYPP76KpWkAydZpHFhzkQSLek=
+	b=OV3z3odI0Glwi8T8RzPNuUmZnE0Yt3PFelY+FWAS4Ct53h2flBAvyZUTn4lKooGv1
+	 EN+XJnvpVKaCtQenfIMVHCSevdlTrrBw8ddd3IdPdvdMsRUQSQ/Q6dDP7+AKPB6yFu
+	 aNiCMoNQM402RVmBhBMawPLnGQO8NSdMQCHvaKNQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbfLXCsq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Dec 2019 21:48:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56182 "EHLO mail.kernel.org"
+        id S1726832AbfLXC7o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Dec 2019 21:59:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58654 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfLXCsq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Dec 2019 21:48:46 -0500
+        id S1726747AbfLXC7o (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 23 Dec 2019 21:59:44 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 445A92070E;
-        Tue, 24 Dec 2019 02:48:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 510E8206B7;
+        Tue, 24 Dec 2019 02:59:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577155725;
-        bh=GDZHiwpYpPN2Oz81f+vptATrIiOpyVjE00BybrrHoww=;
+        s=default; t=1577156383;
+        bh=Z4z6F/8kAVtJEUdjR7Ofsvw8xLI9AKntZE2rBDxc+XU=;
         h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=z9nfV09MMzOEluK/WrMZxT7JKKaRJPLFpw4iOxLjRXT7xq+aF9PpQZ3fOobbEMje8
-         ohoUrlCHniVm1aVt7fZgw9Lq/y9xcmK7r6cZB5oRyh3ohpc7sNu43ssFhOyKra0PbW
-         RPeO3zDe0ThxiXn0obt3CgoeCLnQAKVuEfHk+3NI=
+        b=o2DsGcZLJZi83Vs+HunUjbJVy9jBNgIvOXeJfvMgSGMY1vZSmxvPGVHV8exaIlFgQ
+         JhKIPQaaX8q1/A7bdcgWSSxiFFMbiiR4vVy3VfQ/tH/0qv2/utXyBAq809v5f34cqf
+         xS9FtFzQr7celYXKa9fFsjnLt0dT3dPZoc5Nud2M=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191207203603.2314424-2-bjorn.andersson@linaro.org>
-References: <20191207203603.2314424-1-bjorn.andersson@linaro.org> <20191207203603.2314424-2-bjorn.andersson@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>
+In-Reply-To: <20190924123954.31561-2-jbrunet@baylibre.com>
+References: <20190924123954.31561-1-jbrunet@baylibre.com> <20190924123954.31561-2-jbrunet@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH 1/3] clk: actually call the clock init before any other callback of the clock
 User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 18:48:44 -0800
-Message-Id: <20191224024845.445A92070E@mail.kernel.org>
+Date:   Mon, 23 Dec 2019 18:59:42 -0800
+Message-Id: <20191224025943.510E8206B7@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Bjorn Andersson (2019-12-07 12:36:02)
-> The CLKREF clocks are all fed by the clock signal on the CXO2 pad on the
-> SoC. Update the definition of these clocks to allow this to be wired up
-> to the appropriate clock source.
+Quoting Jerome Brunet (2019-09-24 05:39:52)
+>  __clk_init_parent() will call the .get_parent() callback of the clock
+>  so .init() must run before.
 >=20
-> Retain "xo" as the global named parent to make the change a nop in the
-> event that DT doesn't carry the necessary clocks definition.
->=20
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> Fixes: 541debae0adf ("clk: call the clock init() callback before any othe=
+r ops callback")
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->  .../devicetree/bindings/clock/qcom,gcc.yaml   |  6 ++--
->  drivers/clk/qcom/gcc-msm8996.c                | 35 +++++++++++++++----
->  2 files changed, 32 insertions(+), 9 deletions(-)
 
-What is this patch based on? I think I'm missing some sort of 8996 yaml
-gcc binding patch.
+Applied to clk-next
 
