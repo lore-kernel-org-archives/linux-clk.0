@@ -6,108 +6,149 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
 	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCD9C2D0C0
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD30C2D0D0
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:36:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F57120709
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23A742075B
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:36:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577156673;
-	bh=owfHBdwaORIK4L5asGXD/WbRybZzQGR4SY7hj7jRnks=;
+	s=default; t=1577158598;
+	bh=hKOk/K7hTl+yIynX4qaqBR8jYeq8G7LYQWQa8oBkIlg=;
 	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=YKSehqIB/ix09a8mDc0F+TETHuQsTskjerXqFB2qv7gM5T1RwLfXEEDHfTdVWavKe
-	 c3nZb3NSCN7oF7+Dz25PgRPRYtvv9LA4Uk3yEqCCvo8ZbELOEoBqclIQHARKl/Ix5n
-	 Z6clgcubsZK80/WguyyWswNfff7EtdyDLj90J+zw=
+	b=jfyLAiqhYMrDym8N3GFas2TW1bV0s35wSAmXqAQhwzefTjcdiFru7lDa15Md0rDRU
+	 wab2s4Jxm42rqp8mX97Wm5HfN1hGCLr682JjNOov9fYUBq1PubX8JfQkJUIRsXWiI3
+	 DMSvgHot/Cv1pRWwOLdHXNX9cQDBZREPBynbZ+ms=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfLXDEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Dec 2019 22:04:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60606 "EHLO mail.kernel.org"
+        id S1726832AbfLXDgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Dec 2019 22:36:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfLXDEc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Dec 2019 22:04:32 -0500
+        id S1726747AbfLXDgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 23 Dec 2019 22:36:37 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0E93206B7;
-        Tue, 24 Dec 2019 03:04:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BB3F206B7;
+        Tue, 24 Dec 2019 03:36:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577156672;
-        bh=owfHBdwaORIK4L5asGXD/WbRybZzQGR4SY7hj7jRnks=;
+        s=default; t=1577158596;
+        bh=hKOk/K7hTl+yIynX4qaqBR8jYeq8G7LYQWQa8oBkIlg=;
         h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=xgXHAq+ptsMMelxcsMUUqPbuXn1zmTj7/iNcPMvpG6Hy1tkCMrc+WHIgeR0319hKS
-         zJXQaEMezrBou8JR5ROMPXd3Cxsi1kvEWPcKHp87dYXb1SZgPqk6haPleYvzhqRu7/
-         K8SkF6tUK2OnlnEyNo9j8etnGpkBqvlz+svNBGNo=
+        b=hHtreC+yvNjl49/8yHJTSGyyOzkmVhJrs1i0vH3I48Q//kO9OhuqlsYbFZGZS7UD9
+         qF0SxC4zVszjRT+VAwWZk0iEidiQxCbragcL3l+teGxjSjc766HzB2K4bdsAaELmKj
+         qbAK1MUf9hu4AjzTbfwKLPgpXxAodx8v5psEzWvs=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAHp75VdtsXjW5kaWVspi-5u6ya5512Yk7VN4HJ4Tn34PWci5Og@mail.gmail.com>
-References: <cover.1566975410.git.rahul.tanwar@linux.intel.com> <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com> <20190828150951.GS2680@smile.fi.intel.com> <e4a1fd0a-b179-92dd-fb81-22d9d7465a33@linux.intel.com> <20190902122030.GE2680@smile.fi.intel.com> <20190902122454.GF2680@smile.fi.intel.com> <db9b8978-b9ae-d1bf-2477-78a99b82367a@linux.intel.com> <CAHp75VdtsXjW5kaWVspi-5u6ya5512Yk7VN4HJ4Tn34PWci5Og@mail.gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        robhkernel.org@smile.fi.intel.com,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
-        cheol.yong.kim@intel.com, rahul.tanwar@intel.com
+In-Reply-To: <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com>
+References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com> <20191216175015.2A642206EC@mail.kernel.org> <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com>
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
-Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
 User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 19:04:31 -0800
-Message-Id: <20191224030431.E0E93206B7@mail.kernel.org>
+Date:   Mon, 23 Dec 2019 19:36:35 -0800
+Message-Id: <20191224033636.1BB3F206B7@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Andy Shevchenko (2019-12-07 06:57:43)
-> On Fri, Dec 6, 2019 at 7:06 AM Tanwar, Rahul
-> <rahul.tanwar@linux.intel.com> wrote:
-> > On 2/9/2019 8:24 PM, Andy Shevchenko wrote:
-> > >>
-> > >>      div =3D val < 3 ? (val + 1) : (1 << ((val - 3) / 3));
-> > > It's not complete, but I think you got the idea.
-> > >
-> > >> So, can we eliminate table?
-> >
-> > In the desperation to eliminate table, below is what i can come up with:
-> >
-> >         struct clk_div_table div_table[16];
+Quoting Jerome Brunet (2019-12-16 11:17:21)
 >=20
-> But this is not an elimination, it's just a replacement from static to
-> dynamically calculated one.
+> On Mon 16 Dec 2019 at 18:50, Stephen Boyd <sboyd@kernel.org> wrote:
 >=20
-> >         int i, j;
+> > Quoting Jerome Brunet (2019-12-16 01:13:31)
+> >>=20
+> >> *updated last* which crucial to your use case.
+> >>=20
+> >> I just wonder if this crucial part something CCF guarantee and you can
+> >> rely on it ... or if it might break in the future.
+> >>=20
+> >> Stephen, any thoughts on this ?
 > >
-> >         for (i =3D 0; i < 16; i++)
-> >                 div_table[i].val =3D i;
+> > We have problems with the order in which we call the set_rate clk_op.
+> > Sometimes clk providers want us to call from leaf to root but instead we
+> > call from root to leaf because of implementation reasons. Controlling
+> > the order in which clk operations are done is an unsolved problem. But
+> > yes, in the future I'd like to see us introduce the vaporware that is
+> > coordinated clk rates that would allow clk providers to decide what this
+> > order should be, instead of having to do this "root-to-leaf" update.
+> > Doing so would help us with the clk dividers that have some parent
+> > changing rate that causes the downstream device to be overclocked while
+> > we change the parent before the divider.
 > >
-> >         for (i =3D 0, j=3D0; i < 16; i+=3D3, j++) {
-> >                 div_table[i].div =3D (i =3D=3D 0) ? (1 << j) : (1 << (j=
- + 1));
-> >                 if (i =3D=3D 15)
-> >                         break;
-> >
-> >                 div_table[i + 1].div =3D (i =3D=3D 0) ? ((1 << j) + 1) :
-> >                                         (1 << (j + 1)) + (1 << (j - 1));
-> >                 div_table[i + 2].div =3D (3 << j);
-> >         }
-> >
-> > To me, table still looks a better approach. Also, table is more extenda=
-ble &
-> > consistent w.r.t. clk framework & other referenced clk drivers.
-> >
-> > Whats your opinion ?
+> > If there are more assumptions like this about how the CCF is implemented
+> > then we'll have to be extra careful to not disturb the "normal" order of
+> > operations when introducing something that allows clk providers to
+> > modify it.
 >=20
-> Whatever CCF maintainers is fine with.
+> I understand that CCR would, in theory, allow to define that sort of
+> details. Still defining (and documenting) the default behavior would be
+> nice.
+>=20
+> So the question is:
+>  * Can we rely set_rate() doing a root-to-leaf update until CCR comes
+>    around ?
+>  * If not, for use cases like the one described by Martin, I guess we
+>    are stuck with the notifier ? Or would you have something else to
+>    propose ?
+
+I suppose we should just state that clk_set_rate() should do a
+root-to-leaf update. It's not like anyone is interested in changing
+this behavior. The notifier is not ideal. I've wanted to add a new
+clk_op that would cover some amount of the notifier users by having a
+'pre_set_rate' clk op that can mux the clk over to something safe or
+setup a divider to something that is known to be safe and work. Then we
+can avoid having to register for a notifier just to do something right
+before the root-to-leaf update happens.
+
+>   =20
+> >
+> > Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
+> > isn't called on that particular clk? I seem to recall that the flag only
+> > matters when it's applied to the "leaf" or entry point into the CCF from
+> > a consumer API.
+>=20
+> It did but not anymore
+>=20
+> > I've wanted to fix that but never gotten around to it.
+>=20
+> I fixed that already :P
+> CLK_SET_RATE_GATE is a special case of clock protect. The clock is
+> protecting itself so it is going down through the tree.
 >=20
 
-Table is fine. Or something that calculates is also fine. Is it going to
-be extended in the future? If we're talking about a driver for hardware
-I wonder if this is really going to change in the future.
+Ahaha ok. As you can see I'm trying to forget clock protect ;-)
 
-Please resend so your binding can be reviewed.
+
+>=20
+> > The whole flag sort of irks me because I don't understand what consumers
+> > are supposed to do when this flag is set on a clk. How do they discover
+> > it?
+>=20
+> Actually (ATM) the consumer is not even aware of it. If a clock with
+> CLK_SET_RATE_GATE is enabled, it will return the current rate to
+> .round_rate() and .set_rate() ... as if it was fixed.
+
+And then when the clk is disabled it will magically "unstick" and start
+to accept the same rate request again?
+
+>=20
+> > They're supposed to "just know" and turn off the clk first and then
+> > call clk_set_rate()?
+>=20
+> ATM, yes ... if CCF cannot switch to another "unlocked" subtree (the
+> case here)
+>=20
+> > Why can't the framework do this all in the clk_set_rate() call?
+>=20
+> When there is multiple consumers the behavior would become a bit
+> difficult to predict and drivers may have troubles anticipating that,
+> maybe, the clock is locked.
+
+Fun times!
 
