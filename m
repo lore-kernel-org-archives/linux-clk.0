@@ -2,86 +2,112 @@ Return-Path: <SRS0=7p6v=2O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9410C2D0C0
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:00:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BCD9C2D0C0
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC7092073A
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:00:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F57120709
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:04:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577156451;
-	bh=NrKmP/pKKzrTVnxrhbEWGh9BtAtGRur1ikxSIvLahO0=;
+	s=default; t=1577156673;
+	bh=owfHBdwaORIK4L5asGXD/WbRybZzQGR4SY7hj7jRnks=;
 	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=paKv5EvH6aRFoQLTd2ogcieOTyeZOpDmzOr806wpxvUalMzzX1MGqDf08DYG5ibzm
-	 kNOsROvPD1d7KxggbtFbsJyD4HLTFp2E01D0XimtaT/lw2QwBqMn7T1to3u3tMAuUU
-	 dWS9ajm8owrc6k1smijuV7X/ytQez7985GeNR7Ms=
+	b=YKSehqIB/ix09a8mDc0F+TETHuQsTskjerXqFB2qv7gM5T1RwLfXEEDHfTdVWavKe
+	 c3nZb3NSCN7oF7+Dz25PgRPRYtvv9LA4Uk3yEqCCvo8ZbELOEoBqclIQHARKl/Ix5n
+	 Z6clgcubsZK80/WguyyWswNfff7EtdyDLj90J+zw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfLXDAv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Dec 2019 22:00:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59062 "EHLO mail.kernel.org"
+        id S1726853AbfLXDEc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 23 Dec 2019 22:04:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfLXDAv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Dec 2019 22:00:51 -0500
+        id S1726747AbfLXDEc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 23 Dec 2019 22:04:32 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59E95206B7;
-        Tue, 24 Dec 2019 03:00:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0E93206B7;
+        Tue, 24 Dec 2019 03:04:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577156450;
-        bh=NrKmP/pKKzrTVnxrhbEWGh9BtAtGRur1ikxSIvLahO0=;
+        s=default; t=1577156672;
+        bh=owfHBdwaORIK4L5asGXD/WbRybZzQGR4SY7hj7jRnks=;
         h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=VGU+Ae1VYFR7rN1bJsc/luGIK3SXHLp6ZoPSZD4nT9/GbrMtVMfviFP6VQqDvHZD8
-         lLY6FAuvA/yxQ1IgSL3UQJYeW5eyE797t6dcIPoWJYoENHGeT7dQeOhsutTCy6IXdS
-         SeqhIhwrTxiXB2GS45+1EllIubuIun6RVbdyiGJ0=
+        b=xgXHAq+ptsMMelxcsMUUqPbuXn1zmTj7/iNcPMvpG6Hy1tkCMrc+WHIgeR0319hKS
+         zJXQaEMezrBou8JR5ROMPXd3Cxsi1kvEWPcKHp87dYXb1SZgPqk6haPleYvzhqRu7/
+         K8SkF6tUK2OnlnEyNo9j8etnGpkBqvlz+svNBGNo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191219181914.6015-1-info@metux.net>
-References: <20191219181914.6015-1-info@metux.net>
-Cc:     mturquette@baylibre.com, matthias.bgg@gmail.com,
-        linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org
+In-Reply-To: <CAHp75VdtsXjW5kaWVspi-5u6ya5512Yk7VN4HJ4Tn34PWci5Og@mail.gmail.com>
+References: <cover.1566975410.git.rahul.tanwar@linux.intel.com> <6a3c26bc6e25d883686287883528dbde30725922.1566975410.git.rahul.tanwar@linux.intel.com> <20190828150951.GS2680@smile.fi.intel.com> <e4a1fd0a-b179-92dd-fb81-22d9d7465a33@linux.intel.com> <20190902122030.GE2680@smile.fi.intel.com> <20190902122454.GF2680@smile.fi.intel.com> <db9b8978-b9ae-d1bf-2477-78a99b82367a@linux.intel.com> <CAHp75VdtsXjW5kaWVspi-5u6ya5512Yk7VN4HJ4Tn34PWci5Og@mail.gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        robhkernel.org@smile.fi.intel.com,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        qi-ming.wu@intel.com, yixin.zhu@linux.intel.com,
+        cheol.yong.kim@intel.com, rahul.tanwar@intel.com
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     "Enrico Weigelt, metux IT consult" <info@metux.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: clk: make gpio-gated clock support optional
+To:     "Tanwar, Rahul" <rahul.tanwar@linux.intel.com>,
+        Andy Shevchenko <andy.shevchenko@gmail.com>
+Subject: Re: [PATCH v1 1/2] clk: intel: Add CGU clock driver for a new SoC
 User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 19:00:49 -0800
-Message-Id: <20191224030050.59E95206B7@mail.kernel.org>
+Date:   Mon, 23 Dec 2019 19:04:31 -0800
+Message-Id: <20191224030431.E0E93206B7@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Enrico Weigelt, metux IT consult (2019-12-19 10:19:14)
-> The gpio-gate-clock / gpio-mux-clock driver isn't used much,
-> just by a few ARM SoCs, so there's no need to always include
-> it unconditionally.
+Quoting Andy Shevchenko (2019-12-07 06:57:43)
+> On Fri, Dec 6, 2019 at 7:06 AM Tanwar, Rahul
+> <rahul.tanwar@linux.intel.com> wrote:
+> > On 2/9/2019 8:24 PM, Andy Shevchenko wrote:
+> > >>
+> > >>      div =3D val < 3 ? (val + 1) : (1 << ((val - 3) / 3));
+> > > It's not complete, but I think you got the idea.
+> > >
+> > >> So, can we eliminate table?
+> >
+> > In the desperation to eliminate table, below is what i can come up with:
+> >
+> >         struct clk_div_table div_table[16];
 >=20
-> Thus make it optional, but keep it enabled by default.
+> But this is not an elimination, it's just a replacement from static to
+> dynamically calculated one.
 >=20
-> Signed-off-by: Enrico Weigelt, metux IT consult <info@metux.net>
-> ---
->  drivers/clk/Kconfig  | 7 +++++++
->  drivers/clk/Makefile | 2 +-
->  2 files changed, 8 insertions(+), 1 deletion(-)
+> >         int i, j;
+> >
+> >         for (i =3D 0; i < 16; i++)
+> >                 div_table[i].val =3D i;
+> >
+> >         for (i =3D 0, j=3D0; i < 16; i+=3D3, j++) {
+> >                 div_table[i].div =3D (i =3D=3D 0) ? (1 << j) : (1 << (j=
+ + 1));
+> >                 if (i =3D=3D 15)
+> >                         break;
+> >
+> >                 div_table[i + 1].div =3D (i =3D=3D 0) ? ((1 << j) + 1) :
+> >                                         (1 << (j + 1)) + (1 << (j - 1));
+> >                 div_table[i + 2].div =3D (3 << j);
+> >         }
+> >
+> > To me, table still looks a better approach. Also, table is more extenda=
+ble &
+> > consistent w.r.t. clk framework & other referenced clk drivers.
+> >
+> > Whats your opinion ?
 >=20
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 45653a0e6ecd..880f89c46f6f 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -23,6 +23,13 @@ config COMMON_CLK
->  menu "Common Clock Framework"
->         depends on COMMON_CLK
-> =20
-> +config COMMON_CLK_GPIO
-> +       tristate "GPIO gated clock support"
-> +       default y
+> Whatever CCF maintainers is fine with.
+>=20
 
-Maybe make it depend on GPIOLIB and default to that too?
+Table is fine. Or something that calculates is also fine. Is it going to
+be extended in the future? If we're talking about a driver for hardware
+I wonder if this is really going to change in the future.
 
-Otherwise sounds OK to me.
+Please resend so your binding can be reviewed.
 
