@@ -2,153 +2,151 @@ Return-Path: <SRS0=7p6v=2O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AD30C2D0D0
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:36:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6F9C2D0CF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 05:29:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23A742075B
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 03:36:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577158598;
-	bh=hKOk/K7hTl+yIynX4qaqBR8jYeq8G7LYQWQa8oBkIlg=;
-	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=jfyLAiqhYMrDym8N3GFas2TW1bV0s35wSAmXqAQhwzefTjcdiFru7lDa15Md0rDRU
-	 wab2s4Jxm42rqp8mX97Wm5HfN1hGCLr682JjNOov9fYUBq1PubX8JfQkJUIRsXWiI3
-	 DMSvgHot/Cv1pRWwOLdHXNX9cQDBZREPBynbZ+ms=
+	by mail.kernel.org (Postfix) with ESMTP id 590C52053B
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 05:29:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXcMGRKt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfLXDgh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 23 Dec 2019 22:36:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39004 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726747AbfLXDgh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 23 Dec 2019 22:36:37 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BB3F206B7;
-        Tue, 24 Dec 2019 03:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577158596;
-        bh=hKOk/K7hTl+yIynX4qaqBR8jYeq8G7LYQWQa8oBkIlg=;
-        h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=hHtreC+yvNjl49/8yHJTSGyyOzkmVhJrs1i0vH3I48Q//kO9OhuqlsYbFZGZS7UD9
-         qF0SxC4zVszjRT+VAwWZk0iEidiQxCbragcL3l+teGxjSjc766HzB2K4bdsAaELmKj
-         qbAK1MUf9hu4AjzTbfwKLPgpXxAodx8v5psEzWvs=
-Content-Type: text/plain; charset="utf-8"
+        id S1725934AbfLXF3v (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Dec 2019 00:29:51 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:33585 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725858AbfLXF3u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Dec 2019 00:29:50 -0500
+Received: by mail-ot1-f65.google.com with SMTP id b18so3168882otp.0;
+        Mon, 23 Dec 2019 21:29:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5mIHnK6BEXabOhDkyqQEsS+XZ4SjPH+Ikpu6wNoKfTY=;
+        b=OXcMGRKt+jJv0xgFfQWCl/en/y7wiuoYYfovW6TgMPcdLXQVqP3tw5pvmFCEyhHwZP
+         wNFcQtSUDSe6dQMP49m9xNBUFB/s9iIpiv6RKSFKfjSqWtMP2OO+VzWtmCATpb+QyjO9
+         ZlC4vCaO07aKO/ajAkyUaVpRBFGhQ1QAIEEKyxXosQtMmBqm84ZoxrSU7gEsXjq/egWp
+         8jzR13+nUBRG6h9dFV4BlBULrmjylMxNpj9Dk2WoSbBPiv1tM02umpcDg8nxuejqflYC
+         1iZgvwkFxCKhHw1LU07KbJM+Eh2PoCcvRk549DxQS5m7c6NMVds8cQpXvgqjHT5hnTXd
+         1SsA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5mIHnK6BEXabOhDkyqQEsS+XZ4SjPH+Ikpu6wNoKfTY=;
+        b=rPHMcOK09scCQqmMIbV1efI1jt4FVcO+DI9lQ5hTG3O5HTPVGXHhm9PuLiDIkWkmT4
+         /n+NI8lddIOc1d3ELgUot8MQbUPuBE5eePpqgAtvrAal3O4pCyVNSVb42lt3DOYV9LnB
+         k5uVx/FT4tH/DsrPcYn1V7YI8d9ls3v53FdRpls1ysrXV9GAyM9E+W6Q4ro7vOrKz9U6
+         yfEsp1zFzgaEsYyYDwyWZl/yMWZwVlSCKRL+Awx5Ux/lxj+kxFk13D4re+3WHwUehgin
+         14/mIlYo8ytNMZkOhUNERlY5fCHPm/NXx6nSuAXHMvOjPGAq2rXDwn0ZINJTfVOvwLAI
+         8F5g==
+X-Gm-Message-State: APjAAAUJetQzAirAc4RLwXTKkf0FGieJu9vReLDnzv9i3Fh80HdC1JKB
+        Q5we2MyaabrOX9G8LRnLaI9Bkpx8
+X-Google-Smtp-Source: APXvYqzBtDy5T8KNyDQtb9LOhaIsbpL690b19vPzf0dbocSBvDQ6VjIZQwUMHSj7KJKAuf5Z0AlrYw==
+X-Received: by 2002:a05:6830:605:: with SMTP id w5mr34268557oti.79.1577165389758;
+        Mon, 23 Dec 2019 21:29:49 -0800 (PST)
+Received: from ubuntu-m2-xlarge-x86 ([2604:1380:4111:8b00::1])
+        by smtp.gmail.com with ESMTPSA id p20sm8171116otr.71.2019.12.23.21.29.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 23 Dec 2019 21:29:48 -0800 (PST)
+Date:   Mon, 23 Dec 2019 22:29:47 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     Rahul Tanwar <rahul.tanwar@linux.intel.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        andriy.shevchenko@intel.com, yixin.zhu@linux.intel.com,
+        qi-ming.wu@intel.com, rtanwar <rahul.tanwar@intel.com>,
+        clang-built-linux@googlegroups.com
+Subject: Re: [PATCH v2 1/2] clk: intel: Add CGU clock driver for a new SoC
+Message-ID: <20191224052947.GA54145@ubuntu-m2-xlarge-x86>
+References: <cover.1576811332.git.rahul.tanwar@linux.intel.com>
+ <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com>
-References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com> <20191216175015.2A642206EC@mail.kernel.org> <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com>
-Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
-Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
-User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 19:36:35 -0800
-Message-Id: <20191224033636.1BB3F206B7@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2019-12-16 11:17:21)
->=20
-> On Mon 16 Dec 2019 at 18:50, Stephen Boyd <sboyd@kernel.org> wrote:
->=20
-> > Quoting Jerome Brunet (2019-12-16 01:13:31)
-> >>=20
-> >> *updated last* which crucial to your use case.
-> >>=20
-> >> I just wonder if this crucial part something CCF guarantee and you can
-> >> rely on it ... or if it might break in the future.
-> >>=20
-> >> Stephen, any thoughts on this ?
-> >
-> > We have problems with the order in which we call the set_rate clk_op.
-> > Sometimes clk providers want us to call from leaf to root but instead we
-> > call from root to leaf because of implementation reasons. Controlling
-> > the order in which clk operations are done is an unsolved problem. But
-> > yes, in the future I'd like to see us introduce the vaporware that is
-> > coordinated clk rates that would allow clk providers to decide what this
-> > order should be, instead of having to do this "root-to-leaf" update.
-> > Doing so would help us with the clk dividers that have some parent
-> > changing rate that causes the downstream device to be overclocked while
-> > we change the parent before the divider.
-> >
-> > If there are more assumptions like this about how the CCF is implemented
-> > then we'll have to be extra careful to not disturb the "normal" order of
-> > operations when introducing something that allows clk providers to
-> > modify it.
->=20
-> I understand that CCR would, in theory, allow to define that sort of
-> details. Still defining (and documenting) the default behavior would be
-> nice.
->=20
-> So the question is:
->  * Can we rely set_rate() doing a root-to-leaf update until CCR comes
->    around ?
->  * If not, for use cases like the one described by Martin, I guess we
->    are stuck with the notifier ? Or would you have something else to
->    propose ?
+On Fri, Dec 20, 2019 at 11:31:07AM +0800, Rahul Tanwar wrote:
+> From: rtanwar <rahul.tanwar@intel.com>
+> 
+> Clock Generation Unit(CGU) is a new clock controller IP of a forthcoming
+> Intel network processor SoC. It provides programming interfaces to control
+> & configure all CPU & peripheral clocks. Add common clock framework based
+> clock controller driver for CGU.
+> 
+> Signed-off-by: Rahul Tanwar <rahul.tanwar@linux.intel.com>
 
-I suppose we should just state that clk_set_rate() should do a
-root-to-leaf update. It's not like anyone is interested in changing
-this behavior. The notifier is not ideal. I've wanted to add a new
-clk_op that would cover some amount of the notifier users by having a
-'pre_set_rate' clk op that can mux the clk over to something safe or
-setup a divider to something that is known to be safe and work. Then we
-can avoid having to register for a notifier just to do something right
-before the root-to-leaf update happens.
+Hi Rahul,
 
->   =20
-> >
-> > Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
-> > isn't called on that particular clk? I seem to recall that the flag only
-> > matters when it's applied to the "leaf" or entry point into the CCF from
-> > a consumer API.
->=20
-> It did but not anymore
->=20
-> > I've wanted to fix that but never gotten around to it.
->=20
-> I fixed that already :P
-> CLK_SET_RATE_GATE is a special case of clock protect. The clock is
-> protecting itself so it is going down through the tree.
->=20
+The 0day bot reported this warning with clang with your patch, mind
+taking a look at it since it seems like you will need to do a v2 based
+on other comments?
 
-Ahaha ok. As you can see I'm trying to forget clock protect ;-)
+It seems like the check either needs to be something different or the
+check should just be removed.
 
+Cheers,
+Nathan
 
->=20
-> > The whole flag sort of irks me because I don't understand what consumers
-> > are supposed to do when this flag is set on a clk. How do they discover
-> > it?
->=20
-> Actually (ATM) the consumer is not even aware of it. If a clock with
-> CLK_SET_RATE_GATE is enabled, it will return the current rate to
-> .round_rate() and .set_rate() ... as if it was fixed.
-
-And then when the clk is disabled it will magically "unstick" and start
-to accept the same rate request again?
-
->=20
-> > They're supposed to "just know" and turn off the clk first and then
-> > call clk_set_rate()?
->=20
-> ATM, yes ... if CCF cannot switch to another "unlocked" subtree (the
-> case here)
->=20
-> > Why can't the framework do this all in the clk_set_rate() call?
->=20
-> When there is multiple consumers the behavior would become a bit
-> difficult to predict and drivers may have troubles anticipating that,
-> maybe, the clock is locked.
-
-Fun times!
-
+On Mon, Dec 23, 2019 at 04:48:54PM +0800, kbuild test robot wrote:
+> CC: kbuild-all@lists.01.org
+> In-Reply-To: <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
+> References: <ee8a8a0f0c882e22361895b2663870c8037c422f.1576811332.git.rahul.tanwar@linux.intel.com>
+> TO: Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> CC: mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+> CC: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, andriy.shevchenko@intel.com, yixin.zhu@linux.intel.com, qi-ming.wu@intel.com, rtanwar <rahul.tanwar@intel.com>, Rahul Tanwar <rahul.tanwar@linux.intel.com>
+> 
+> Hi Rahul,
+> 
+> Thank you for the patch! Perhaps something to improve:
+> 
+> [auto build test WARNING on clk/clk-next]
+> [also build test WARNING on robh/for-next v5.5-rc3 next-20191220]
+> [if your patch is applied to the wrong git tree, please drop us a note to help
+> improve the system. BTW, we also suggest to use '--base' option to specify the
+> base tree in git format-patch, please see https://stackoverflow.com/a/37406982]
+> 
+> url:    https://github.com/0day-ci/linux/commits/Rahul-Tanwar/clk-intel-Add-a-new-driver-for-a-new-clock-controller-IP/20191223-110300
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> config: x86_64-allyesconfig (attached as .config)
+> compiler: clang version 10.0.0 (git://gitmirror/llvm_project 891e25b02d760d0de18c7d46947913b3166047e7)
+> reproduce:
+>         # save the attached .config to linux build tree
+>         make ARCH=x86_64 
+> 
+> If you fix the issue, kindly add following tag
+> Reported-by: kbuild test robot <lkp@intel.com>
+> 
+> All warnings (new ones prefixed by >>):
+> 
+> >> drivers/clk/x86/clk-cgu.c:50:20: warning: address of array 'ctx->clk_data.hws' will always evaluate to 'true' [-Wpointer-bool-conversion]
+>            if (ctx->clk_data.hws)
+>            ~~  ~~~~~~~~~~~~~~^~~
+>    1 warning generated.
+> 
+> vim +50 drivers/clk/x86/clk-cgu.c
+> 
+>     46	
+>     47	void lgm_clk_add_lookup(struct lgm_clk_provider *ctx,
+>     48				struct clk_hw *hw, unsigned int id)
+>     49	{
+>   > 50		if (ctx->clk_data.hws)
+>     51			ctx->clk_data.hws[id] = hw;
+>     52	}
+>     53	
+> 
+> ---
+> 0-DAY kernel test infrastructure                 Open Source Technology Center
+> https://lists.01.org/hyperkitty/list/kbuild-all@lists.01.org Intel Corporation
