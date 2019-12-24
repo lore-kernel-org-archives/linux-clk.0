@@ -2,106 +2,130 @@ Return-Path: <SRS0=7p6v=2O=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BA8AC2D0CF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 14:17:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D34C2D0CF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 16:58:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA3F820643
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 14:17:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFD1E20731
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 16:58:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I5YXx13f"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="W0hlLL5D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726140AbfLXORU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Dec 2019 09:17:20 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:35002 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbfLXORU (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Dec 2019 09:17:20 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f8so18061146edv.2;
-        Tue, 24 Dec 2019 06:17:18 -0800 (PST)
+        id S1726201AbfLXQ6Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Dec 2019 11:58:25 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:34475 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726171AbfLXQ6Z (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Dec 2019 11:58:25 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l18so7294864lfc.1
+        for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2019 08:58:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=OwIM/6cz60aNzrhaQrqrMVGzhfDf7WlhxDj7li/s5F8=;
-        b=I5YXx13f5Qp5fHQV6xCwP7z5y+V1kYpSkwJT/YEKyKWi+z2WLsImzP25a2CBbcYxNq
-         RGBBzVz7jkkhHx3Flu9Fx5JOFBt106W50i0N9H9OZitpzvAFEhekbALhRNGkWSxE4chM
-         ZqKv9jx4zNHJ4UZuS6mgNZbxDOd547G3b/+NQOGx1PIaWf5LbxqlE1dSndCcUFSp2oLZ
-         cx/DKhtNLG6kmwJX2KDClt4zB5UnEb/DDI43yqkkSs8S6c4bq/126QvadErid7s/NFgQ
-         4uOc/o6ySAsh+DyHGaVOjUYLdmWhuOK25beRRG4Nov7LL4BEWY6MiLy8Jkpvbg7zoEja
-         t1pA==
+        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=J9xVipWdZ9ewXXkBZXIrSrABSMZzc9X1MMnhoAbWXlE=;
+        b=W0hlLL5DhTEpCFv0TCctzYOTXyobKMI6Y6UJK8+lDzVhnHItHqQwaIpn680DfYumSV
+         L8WcWNVtAVhspp+9zGEG05NY2Th2BRK8yr/LBjNXiqAM/JFXdq2isbMLHBZPrMvXg/n0
+         pF/574ew1QU8lMu8AA68vrFTMlZwzN43O4YFR0soGdns80TeDSeZlF/mUZ1fMejn/WEj
+         BkgoETEWv70bXzccrBSJ1DQ4IYDU3/uJLE1qGrL0sJyHHXvZSlpG7TKjSdqmBnzcNne/
+         mhRNJ6DrtfIb3G8kzyuQlh3QToM5aJZTIlslg0SRb1VYd9JUY0o5Ayl8xO3zpTXgisBm
+         PoIw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=OwIM/6cz60aNzrhaQrqrMVGzhfDf7WlhxDj7li/s5F8=;
-        b=RaOiBhjWqo6tA0BYG8nhQ029Yfeg0VtB4A/ydgXnZAeAuTnujU06RDcH7gwE4Ftmji
-         FJnR65BmhfBPNbnfJDjQqMyXl9Iol2JuVGqYVWXxdmLEUY65z/g/WogZh0M1weF3+s8O
-         S3tOS68bxEDMIOFdau+V9I+VQk0vZwDlHhvghcbh67PPLkpaZT37FUBPZP8i+a7WuBGX
-         UhdfZ96w8NI0jD43FIEwG2Zp1AvR3Pk9ceUW6/LG2uOJsW7eZN4WmobzBHpspNFDFuOx
-         wYdnhEzcIgLRoQG8S61vn/uhKVaEtyqr5M27C3x+99eI/PFDr9b1ZdajID/+6xqDseO4
-         g/dA==
-X-Gm-Message-State: APjAAAX1mubz/GewpgZieoGEF0WmG4KTn7Zzs13EGyBirebKKJravqMo
-        /KiX3Xk9Gi/IhCh2vURpsZDLzryjGiB/irqc9dM3J4uOkwM=
-X-Google-Smtp-Source: APXvYqz/P0UqlYNNcPT+eGRq4v7AomIRC1X88sjHfSUfWMqRof8CiIRHZ5X0mHE2TUrGwossoMwGRKtg9kLH9FiPC3g=
-X-Received: by 2002:a50:f704:: with SMTP id g4mr38811179edn.123.1577197038209;
- Tue, 24 Dec 2019 06:17:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20191015103221.51345-1-kholk11@gmail.com> <20191015103221.51345-3-kholk11@gmail.com>
-In-Reply-To: <20191015103221.51345-3-kholk11@gmail.com>
-From:   Vladimir Oltean <olteanv@gmail.com>
-Date:   Tue, 24 Dec 2019 16:17:07 +0200
-Message-ID: <CA+h21hpmeMhKWeAMLZP1wr+OXUubUPADDH164geDwZ0BaR_0aQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: Document MSM8976 gcc compatible
-To:     kholk11@gmail.com
-Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=J9xVipWdZ9ewXXkBZXIrSrABSMZzc9X1MMnhoAbWXlE=;
+        b=NXSb/0v1JL683Y6U5n0TUdo8wdRxYrZ6udvWfHSpuJhHsyNEIBHfxxjrXCT/ATRc1t
+         kToraDn6H60OrfXo7agWcaFhnI2s7lkJz5TpVBiOW0+wVyxxvQxVJq6/3+rx9qsh6IVQ
+         iZN4iyZGRas0/ROaAtM2k5ljnoGnJsKvq3lkmWrJBaAqC1D+Oglj9hOfEX+3y+KnuvoH
+         ZZp4fmkMcPZZIDJwd5k0//lz4qczR9X1reFrreGa+/ET/HGWGKPuU7pkXcJdTJ2T4fRr
+         yAs37HGfPLRQxWUX2shLHL+C6lzFiqAor+IoD6VRAwmmSKZVrFrvx9hNcD2409p1u2/p
+         uEOQ==
+X-Gm-Message-State: APjAAAURqnNfoMtgfOjxs0CSQg481CFOJ+qHYgGli/RcW/GRKYF/uwoZ
+        t3SjNdP4MCyMYcKZGaYp95Xj5A==
+X-Google-Smtp-Source: APXvYqwV8IVoVjnuRZBeIW/7BCYcFzMxWYQyUyZDt6oXFV1ZN/xkagQ1KHils7pYZlCWzv9yW2hdjA==
+X-Received: by 2002:a19:c1c1:: with SMTP id r184mr20571865lff.128.1577206703390;
+        Tue, 24 Dec 2019 08:58:23 -0800 (PST)
+Received: from wasted.cogentembedded.com ([2a00:1fa0:441d:5f5:f336:feb9:305c:b1aa])
+        by smtp.gmail.com with ESMTPSA id x21sm10232507ljd.2.2019.12.24.08.58.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 24 Dec 2019 08:58:22 -0800 (PST)
+Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
+To:     masonccyang@mxic.com.tw
+Cc:     Mark Brown <broonie@kernel.org>,
+        Chris Brandt <Chris.Brandt@renesas.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-renesas-soc@vger.kernel.org" 
+        <linux-renesas-soc@vger.kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>, mturquette@baylibre.com,
-        agross@kernel.org, bjorn.andersson@linaro.org, marijns95@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+        Stephen Boyd <sboyd@kernel.org>
+References: <20191206134202.18784-1-chris.brandt@renesas.com>
+ <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
+ <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
+ <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
+ <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
+ <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
+ <6f4c5d92-3ca4-2d1d-47c4-cbd52ad428b0@cogentembedded.com>
+ <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
+From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Organization: Cogent Embedded
+Message-ID: <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
+Date:   Tue, 24 Dec 2019 19:58:21 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
+MIME-Version: 1.0
+In-Reply-To: <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-MW
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Angelo,
+Hello!
 
-On Tue, 15 Oct 2019 at 14:42, <kholk11@gmail.com> wrote:
->
-> From: AngeloGioacchino Del Regno <kholk11@gmail.com>
->
-> Document the Global Clock Controller driver (gcc-msm8976)
-> compatible string.
-> This driver is valid for MSM8976, MSM8956 and APQ variants.
->
-> Signed-off-by: AngeloGioacchino Del Regno <kholk11@gmail.com>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,gcc.txt | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.txt b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> index d14362ad4132..565bba5df298 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> +++ b/Documentation/devicetree/bindings/clock/qcom,gcc.txt
-> @@ -15,6 +15,7 @@ Required properties :
->                         "qcom,gcc-msm8974"
->                         "qcom,gcc-msm8974pro"
->                         "qcom,gcc-msm8974pro-ac"
-> +                       "qcom,gcc-msm8976"
->                         "qcom,gcc-msm8994"
->                         "qcom,gcc-msm8996"
->                         "qcom,gcc-msm8998"
-> --
-> 2.21.0
->
+On 12/20/2019 04:45 AM, masonccyang@mxic.com.tw wrote:
 
-You should respin this 2-patch series because qcom,gcc.txt was
-converted to qcom,gcc.yaml and this patch no longer applies.
+>>>>> So at the moment, there is nothing yet for me to 'try' on the RZ/A series,
+>>>> correct?
+>>>>
+>>>>    Why, I can send you a working version of the SPI driver, and even HF one
+>>>> if you're
+>>>> interested.
+>>>
+>>> The point of this whole discussion is to determine if we should have 2 drivers
+>>> for the same Renesas HW IP.
+>>>
+>>> There was a RPC-IF patch series that made it to v17....and is now dead.
+> 
+> It's under review by Geert Uytterhoeven
+> 
+> https://patchwork.kernel.org/project/linux-renesas-soc/list/?submitter=181859 
+> https://patchwork.kernel.org/patch/11078131/ 
+> https://patchwork.kernel.org/patch/11078133/
 
-Thanks,
--Vladimir
+https://patchwork.kernel.org/patch/11078137/
+https://patchwork.kernel.org/patch/11078139/ 
+
+   It doesn't matter much what's in the renesas-soc patchwork, the patch would
+be merged thru the linux-spi repo, and in their patchwork the status of your v17
+patches is "New, archived"...
+
+> thanks & best regards,
+> Mason
+
+MBR, Sergei
