@@ -3,76 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CE36C2D0CF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:49:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF72C2D0CF
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:53:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C804820730
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E947420731
+	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 07:53:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577173743;
-	bh=GTiuJToEf1rYPyFg+M8KQHlG48XsZfpkE1FmUWz15rw=;
+	s=default; t=1577173989;
+	bh=r/BxLHZ2kIL3z3M4NiqdWj2qJGId/jqvcT7kxFmG+Z0=;
 	h=In-Reply-To:References:Cc:From:To:Subject:Date:List-ID:From;
-	b=OO5y2Br8lVyMyho+VKtXb3ZcrnOICCt1aUduJ3M8dH6I1yPzbBNO4LL+sdHPz0kx1
-	 ACWvnK6n120K2TgodLolRTb2uw1kbNAjnXn9fheqssjHNMpa3hZIlB4KvLyalnZ7+s
-	 pI3RbVt+wDGIHVCW6NHethgF0ZIjxAwlFdF0n9Y0=
+	b=TacJB5WzT1hmJ/vTiXKMZagRrWEnfH0QFEmfxkizkBgnS0V4mhEQsKtwSIPVK4xuK
+	 /IWUr6iSHquK/h+z3ixwVKLsV3boCIyGTRmTsXiTwFJ28R3VPFYSWOy+VjeuTOh82i
+	 9eta2AJzhbdbcFYgSEjYsY8F2G5B+MVh2lHuo7eg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726068AbfLXHtD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Dec 2019 02:49:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
+        id S1726178AbfLXHxI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 24 Dec 2019 02:53:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726037AbfLXHtD (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 24 Dec 2019 02:49:03 -0500
+        id S1725993AbfLXHxI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 24 Dec 2019 02:53:08 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C9CF620706;
-        Tue, 24 Dec 2019 07:49:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6BBAA2071A;
+        Tue, 24 Dec 2019 07:53:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577173742;
-        bh=GTiuJToEf1rYPyFg+M8KQHlG48XsZfpkE1FmUWz15rw=;
+        s=default; t=1577173987;
+        bh=r/BxLHZ2kIL3z3M4NiqdWj2qJGId/jqvcT7kxFmG+Z0=;
         h=In-Reply-To:References:Cc:From:To:Subject:Date:From;
-        b=LtYDFR5QH+rp40jWZrHpHHIfROItwwLlOpd1+T0oPEZYQQD8VyVLoeikFdTwtapxN
-         Fmwpw8nLFLqTN5794+J0FC5rz/Bdfektw2hYboggdM7vjugpp4ZEP/CLzvHEOdp1kB
-         oHDxRvHk+ROafWKtHk2qh4a6yopx1uDFfcTNxY3c=
+        b=iNuCiFWaiV6/PKXahwve0YoTljS1WcMj4pkbmuO2Pydp/LEcGHM07AQCDBUfDSuIc
+         skYY0cHB6xIPxu7+/UncYetR87s43DIWhY6Q9jUOhqMSIDVEymxF+6uPBQRYQYezoR
+         XRYATdpLwKIbvMmBxuWgHDCh0Fa+t6pa8AhXVxpo=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191210145345.11616-13-sudeep.holla@arm.com>
-References: <20191210145345.11616-1-sudeep.holla@arm.com> <20191210145345.11616-13-sudeep.holla@arm.com>
-Cc:     Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi <cristian.marussi@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org
+In-Reply-To: <f4f23b53-4eae-de3e-c8b2-099909522ce2@samsung.com>
+References: <CGME20191216131423eucas1p2162d6bf0a870357be9f0ab308641015b@eucas1p2.samsung.com> <20191216131407.17225-1-m.szyprowski@samsung.com> <f4f23b53-4eae-de3e-c8b2-099909522ce2@samsung.com>
+Cc:     linux-samsung-soc@vger.kernel.org,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marian Mihailescu <mihailescu2m@gmail.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-To:     Sudeep Holla <sudeep.holla@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/15] clk: scmi: Match scmi device by both name and protocol id
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2] clk: samsung: exynos5420: Keep top G3D clocks enabled
 User-Agent: alot/0.8.1
-Date:   Mon, 23 Dec 2019 23:49:02 -0800
-Message-Id: <20191224074902.C9CF620706@mail.kernel.org>
+Date:   Mon, 23 Dec 2019 23:53:06 -0800
+Message-Id: <20191224075307.6BBAA2071A@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Sudeep Holla (2019-12-10 06:53:42)
-> The scmi bus now has support to match the driver with devices not only
-> based on their protocol id but also based on their device name if one is
-> available. This was added to cater the need to support multiple devices
-> and drivers for the same protocol.
+Quoting Sylwester Nawrocki (2019-12-19 02:05:04)
+> On 12/16/19 14:14, Marek Szyprowski wrote:
+> > In Exynos542x/5800 SoCs, the G3D leaf clocks are located in the G3D pow=
+er
+> > domain. This is similar to the other hardware modules and their power
+> > domains. However there is one thing specific to G3D clocks hierarchy.
+> > Unlike other hardware modules, the G3D clocks hierarchy doesn't have any
+> > gate clock between the TOP part of the hierarchy and the part located in
+> > the power domain and some SoC internal busses are sourced directly from
+> > the TOP muxes. The consequence of this design if the fact that the TOP
+> > part of the hierarchy has to be enabled permanently to ensure proper
+> > operation of the SoC power related components (G3D power domain and
+> > Exynos Power Management Unit for system suspend/resume).
+> >=20
+> > This patch adds an explicit call to clk_prepare_enable() on the last MUX
+> > in the TOP part of G3D clock hierarchy to keep it enabled permanently to
+> > ensure that the internal busses get their clock regardless of the main
+> > G3D clock enablement status.
 >=20
-> Let us add the name "clocks" to scmi_device_id table in the driver so
-> that in matches only with device with the same name and protocol id
-> SCMI_PROTOCOL_CLOCK.
+> > ---
+> > diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung=
+/clk-exynos5420.c
+> > index 3a991ca1ee36..c9e5a1fb6653 100644
+> > --- a/drivers/clk/samsung/clk-exynos5420.c
+> > +++ b/drivers/clk/samsung/clk-exynos5420.c
 >=20
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: linux-clk@vger.kernel.org
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
+> > @@ -1646,6 +1647,13 @@ static void __init exynos5x_clk_init(struct devi=
+ce_node *np,
+> >                                    exynos5x_subcmus);
+> >       }
+> > =20
+> > +     /*
+> > +      * Keep top part of G3D clock path enabled permanently to ensure
+> > +      * that the internal busses get their clock regardless of the
+> > +      * main G3D clock enablement status.
+> > +      */
+> > +     clk_prepare_enable(__clk_lookup("mout_sw_aclk_g3d"));
+> > +
+> >       samsung_clk_of_add_provider(np, ctx);
+> >  }
+>=20
+> It's a bit unfortunate we don't store that clock in the driver internally,
+> which would let us avoid the __clk_lookup() call. I can't come up with any
+> simple alternative though so let's apply it for now.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Yes it would be better to not use __clk_lookup(). I'll apply it for now
+but please avoid it somehow in a future patch.
 
