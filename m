@@ -2,124 +2,126 @@ Return-Path: <SRS0=TWnL=2P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D034C2D0DA
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 16:34:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF5DC2D0DA
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 17:57:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 057B720722
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 16:34:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tk0h3zyt"
+	by mail.kernel.org (Postfix) with ESMTP id DEE63207FF
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 17:57:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577296670;
+	bh=9Xq4VcjOueDmHCx5x1MsWoS3HcZBZ8M/IUkjuiAPHRo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=N4ge8z8Gh3/rhvmkHcTB2LJ/iWjOAREKWPejXYgGrnja+NzUWyLqEBHTwXXAMMomq
+	 q7WkEHRGaAIk7Cm1b0o532OSy2ZcTFH/uHuz+Xvd0IkYfNyXlMOiJ5fmjjZNtc5Afc
+	 DEJPnj2JefWR3eUHjE0BsfdEEtA4SjmNunp6flWQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726397AbfLYQef (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Dec 2019 11:34:35 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:34577 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfLYQef (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Dec 2019 11:34:35 -0500
-Received: by mail-pg1-f193.google.com with SMTP id r11so11800011pgf.1;
-        Wed, 25 Dec 2019 08:34:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=bM15yY7unBCboNQn0vtKKuJc6P9Ay93lXeItl76c2q0=;
-        b=Tk0h3zyt8O/p5F3+j0HKXDtRinFFYF5/mfOJnqQZnXmb9S9njd2ELDf2DFSTtYlbNd
-         KdUQ+53mbOMHpoMjTcZ0sfqdrFBRdPsdffgeHETwv22HBVGyPl+idbpSNyqEeerkUsVw
-         iHnA7UhCfW9BjY8pla7q20R+csHYg9uGOa6/gXZ9xbXUdvGK4Q74e1n99RWrDYR5PsqX
-         H1AMrIdtaVbAiX/tt+gYmbIiqTVBUM4GlmUZ9kE8Om/ygBug/yYTbbTNNka7efKF35DC
-         62jCBnXXyEzPntXjRepOd3nAXLeKTHYw2ZN2vp5gZASUQwCc4o5ETSL++Tg//GvGuH0s
-         vhyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=bM15yY7unBCboNQn0vtKKuJc6P9Ay93lXeItl76c2q0=;
-        b=CsJ0GV2oJOJj1L6MytcxGsn/RqzYywl18O18oS7niDmQ+sfazbUsVq5ETYDj/+SI2T
-         WpGqvIHSBEHPiufrby5INqBoGmAlU307uquLudAhKPWus8U9z9A1Bg0n1b0xEfjy4736
-         WzN+UEY7UrmwFCTGMe9I+2oyI2xpND1okblZfvPFriErkQNjnAjZZQ/hteeeEaAn4HAj
-         EonsPLIABuG+HrOfnO8KdbLqzEjij+/46P50/iktqtR8WopdD7vsS/vbjSUTIJikPS3g
-         OLE1dZHQRcqsOVU8A70Q8UFJXpqiH2DmDKE9H72eYiNaFEpI+DW8FKqAcYErtyufKeVd
-         HV7g==
-X-Gm-Message-State: APjAAAWN/vjibRtGSq2jbH1ofo85qY588m+tcHt/2acS45KCiFdbOyoc
-        ypW5nzYQKBpwrwxm1DdzN04=
-X-Google-Smtp-Source: APXvYqw1qvcsid6VJtiBetDQXvsJ7ayB2ot+OMcWo7b6tScrQecVUQtRND3OzAHpSX4y8Ag4Vad3mQ==
-X-Received: by 2002:a63:eb02:: with SMTP id t2mr44014216pgh.289.1577291674429;
-        Wed, 25 Dec 2019 08:34:34 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id r66sm33694347pfc.74.2019.12.25.08.34.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 25 Dec 2019 08:34:33 -0800 (PST)
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Michael Turquette <mturquette@baylibre.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: [PATCH] clk: Don't try to enable critical clocks if prepare failed
-Date:   Wed, 25 Dec 2019 08:34:29 -0800
-Message-Id: <20191225163429.29694-1-linux@roeck-us.net>
-X-Mailer: git-send-email 2.17.1
+        id S1726399AbfLYR5u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Dec 2019 12:57:50 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50258 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfLYR5u (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Dec 2019 12:57:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=lwfuEESWR4zX92Iq386iPtYoiE2TFNKpmeIvlfpb3Os=; b=ApchFp7KIms6vjJID9dvLZ2r+
+        PQTXOQ3OE960aPn9u/+AEYhG5LzJsAxA97mGha1rgYrqURa9QEAAH7eh+NOHB2MZv5A7/H4K/k4Ed
+        5kADNv5RtiErBeCzhHvh83uuv3GbqAUlGdvzN1dYcQdVJ3imwsytSCMn80BheYSlj5qg0=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.92)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1ikAuf-0001kC-72; Wed, 25 Dec 2019 17:57:37 +0000
+Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
+        id 77952D01A24; Wed, 25 Dec 2019 17:57:36 +0000 (GMT)
+Date:   Wed, 25 Dec 2019 17:57:36 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Dmitry Osipenko <digetx@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
+ for audio mclk
+Message-ID: <20191225175736.GC27497@sirena.org.uk>
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
+ <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
+Content-Disposition: inline
+In-Reply-To: <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+X-Cookie: I have many CHARTS and DIAGRAMS..
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The following traceback is seen if a critical clock fails to prepare.
 
-bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
-------------[ cut here ]------------
-Enabling unprepared plld_per
-WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
-...
-Call trace:
- clk_core_enable+0xcc/0x2c0
- __clk_register+0x5c4/0x788
- devm_clk_hw_register+0x4c/0xb0
- bcm2835_register_pll_divider+0xc0/0x150
- bcm2835_clk_probe+0x134/0x1e8
- platform_drv_probe+0x50/0xa0
- really_probe+0xd4/0x308
- driver_probe_device+0x54/0xe8
- device_driver_attach+0x6c/0x78
- __driver_attach+0x54/0xd8
-...
+--gr/z0/N6AeWAPJVB
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Check return values from clk_core_prepare() and clk_core_enable() and
-bail out if any of those functions returns an error.
+On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
+> 21.12.2019 01:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+> > Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+> > through Tegra210 and currently Tegra clock driver does initial parent
+> > configuration for audio mclk "clk_out_1" and enables them by default.
 
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
----
- drivers/clk/clk.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Please delete unneeded context from mails when replying.  Doing this
+makes it much easier to find your reply in the message, helping ensure
+it won't be missed by people scrolling through the irrelevant quoted
+material.
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 6a11239ccde3..772258de2d1f 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3426,11 +3426,17 @@ static int __clk_core_init(struct clk_core *core)
- 	if (core->flags & CLK_IS_CRITICAL) {
- 		unsigned long flags;
- 
--		clk_core_prepare(core);
-+		ret = clk_core_prepare(core);
-+		if (ret)
-+			goto out;
- 
- 		flags = clk_enable_lock();
--		clk_core_enable(core);
-+		ret = clk_core_enable(core);
- 		clk_enable_unlock(flags);
-+		if (ret) {
-+			clk_core_unprepare(core);
-+			goto out;
-+		}
- 	}
- 
- 	clk_core_reparent_orphans_nolock();
--- 
-2.17.1
+> > -	clk_disable_unprepare(data->clk_cdev1);
+> > -	clk_disable_unprepare(data->clk_pll_a_out0);
+> > -	clk_disable_unprepare(data->clk_pll_a);
+> > +	if (__clk_is_enabled(data->clk_cdev1))
+> > +		clk_disable_unprepare(data->clk_cdev1);
 
+> The root of the problem is that you removed clocks enabling from
+> tegra_asoc_utils_init().
+
+> I'm not sure why clocks should be disabled during the rate-changing,
+> probably this action is not really needed.
+
+I know nothing about this particular device but this is not that
+unusual a restriction for audio hardware, you often can't
+robustly reconfigure the clocking for a device while it's active
+due to issues in the hardware.  You often see issues with FIFOs
+glitching or state machines getting stuck.  This may not be an
+issue here but if it's something that's documented as a
+requirement it's probably good to pay attention.
+
+--gr/z0/N6AeWAPJVB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4Dow8ACgkQJNaLcl1U
+h9CI+gf+NTSVmEXknNylmrROVvkijHFJkHpvx7hDJFGvYsu/qNKP8FkbIRWeKkE1
+h1R5yupSd5QDSNRwtOG2Z3ZO5Dv/HYo+FmOIz+XDFNyKI7MU3fr4CkEzwZXcUzKt
+GcGGfzcxYPJ8H7f5tbVvNjRHu+DiDvHEFvShhKUbHk7HJYqCrG6eMCfEDHlEkHU5
+PkAp309INr7VEQSuch/JBXbvvI0glE66kcLH9CrHVdmrqc7hR8DmCm+49lGBOfIM
+Jv1ylQj/Kx52U/zErkRqc9nsAkgJtQVafmwwCFj5SEeJIpCIanlTUXbRFRMkaMBL
+5zpR7FZej7V40gjlWEGR0RaT9x6r5Q==
+=c7E7
+-----END PGP SIGNATURE-----
+
+--gr/z0/N6AeWAPJVB--
