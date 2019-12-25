@@ -1,131 +1,125 @@
-Return-Path: <SRS0=7p6v=2O=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=TWnL=2P=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11D34C2D0CF
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 16:58:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D034C2D0DA
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 16:34:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFD1E20731
-	for <linux-clk@archiver.kernel.org>; Tue, 24 Dec 2019 16:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 057B720722
+	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 16:34:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="W0hlLL5D"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tk0h3zyt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726201AbfLXQ6Z (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 24 Dec 2019 11:58:25 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:34475 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726171AbfLXQ6Z (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 24 Dec 2019 11:58:25 -0500
-Received: by mail-lf1-f67.google.com with SMTP id l18so7294864lfc.1
-        for <linux-clk@vger.kernel.org>; Tue, 24 Dec 2019 08:58:24 -0800 (PST)
+        id S1726397AbfLYQef (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 25 Dec 2019 11:34:35 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34577 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726353AbfLYQef (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Dec 2019 11:34:35 -0500
+Received: by mail-pg1-f193.google.com with SMTP id r11so11800011pgf.1;
+        Wed, 25 Dec 2019 08:34:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=J9xVipWdZ9ewXXkBZXIrSrABSMZzc9X1MMnhoAbWXlE=;
-        b=W0hlLL5DhTEpCFv0TCctzYOTXyobKMI6Y6UJK8+lDzVhnHItHqQwaIpn680DfYumSV
-         L8WcWNVtAVhspp+9zGEG05NY2Th2BRK8yr/LBjNXiqAM/JFXdq2isbMLHBZPrMvXg/n0
-         pF/574ew1QU8lMu8AA68vrFTMlZwzN43O4YFR0soGdns80TeDSeZlF/mUZ1fMejn/WEj
-         BkgoETEWv70bXzccrBSJ1DQ4IYDU3/uJLE1qGrL0sJyHHXvZSlpG7TKjSdqmBnzcNne/
-         mhRNJ6DrtfIb3G8kzyuQlh3QToM5aJZTIlslg0SRb1VYd9JUY0o5Ayl8xO3zpTXgisBm
-         PoIw==
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=bM15yY7unBCboNQn0vtKKuJc6P9Ay93lXeItl76c2q0=;
+        b=Tk0h3zyt8O/p5F3+j0HKXDtRinFFYF5/mfOJnqQZnXmb9S9njd2ELDf2DFSTtYlbNd
+         KdUQ+53mbOMHpoMjTcZ0sfqdrFBRdPsdffgeHETwv22HBVGyPl+idbpSNyqEeerkUsVw
+         iHnA7UhCfW9BjY8pla7q20R+csHYg9uGOa6/gXZ9xbXUdvGK4Q74e1n99RWrDYR5PsqX
+         H1AMrIdtaVbAiX/tt+gYmbIiqTVBUM4GlmUZ9kE8Om/ygBug/yYTbbTNNka7efKF35DC
+         62jCBnXXyEzPntXjRepOd3nAXLeKTHYw2ZN2vp5gZASUQwCc4o5ETSL++Tg//GvGuH0s
+         vhyA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=J9xVipWdZ9ewXXkBZXIrSrABSMZzc9X1MMnhoAbWXlE=;
-        b=NXSb/0v1JL683Y6U5n0TUdo8wdRxYrZ6udvWfHSpuJhHsyNEIBHfxxjrXCT/ATRc1t
-         kToraDn6H60OrfXo7agWcaFhnI2s7lkJz5TpVBiOW0+wVyxxvQxVJq6/3+rx9qsh6IVQ
-         iZN4iyZGRas0/ROaAtM2k5ljnoGnJsKvq3lkmWrJBaAqC1D+Oglj9hOfEX+3y+KnuvoH
-         ZZp4fmkMcPZZIDJwd5k0//lz4qczR9X1reFrreGa+/ET/HGWGKPuU7pkXcJdTJ2T4fRr
-         yAs37HGfPLRQxWUX2shLHL+C6lzFiqAor+IoD6VRAwmmSKZVrFrvx9hNcD2409p1u2/p
-         uEOQ==
-X-Gm-Message-State: APjAAAURqnNfoMtgfOjxs0CSQg481CFOJ+qHYgGli/RcW/GRKYF/uwoZ
-        t3SjNdP4MCyMYcKZGaYp95Xj5A==
-X-Google-Smtp-Source: APXvYqwV8IVoVjnuRZBeIW/7BCYcFzMxWYQyUyZDt6oXFV1ZN/xkagQ1KHils7pYZlCWzv9yW2hdjA==
-X-Received: by 2002:a19:c1c1:: with SMTP id r184mr20571865lff.128.1577206703390;
-        Tue, 24 Dec 2019 08:58:23 -0800 (PST)
-Received: from wasted.cogentembedded.com ([2a00:1fa0:441d:5f5:f336:feb9:305c:b1aa])
-        by smtp.gmail.com with ESMTPSA id x21sm10232507ljd.2.2019.12.24.08.58.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 24 Dec 2019 08:58:22 -0800 (PST)
-Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
-To:     masonccyang@mxic.com.tw
-Cc:     Mark Brown <broonie@kernel.org>,
-        Chris Brandt <Chris.Brandt@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-References: <20191206134202.18784-1-chris.brandt@renesas.com>
- <922cfa46-efb5-9e6d-67ea-3ac505b8211c@cogentembedded.com>
- <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
- <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
- <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
- <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <6f4c5d92-3ca4-2d1d-47c4-cbd52ad428b0@cogentembedded.com>
- <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
-Date:   Tue, 24 Dec 2019 19:58:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=bM15yY7unBCboNQn0vtKKuJc6P9Ay93lXeItl76c2q0=;
+        b=CsJ0GV2oJOJj1L6MytcxGsn/RqzYywl18O18oS7niDmQ+sfazbUsVq5ETYDj/+SI2T
+         WpGqvIHSBEHPiufrby5INqBoGmAlU307uquLudAhKPWus8U9z9A1Bg0n1b0xEfjy4736
+         WzN+UEY7UrmwFCTGMe9I+2oyI2xpND1okblZfvPFriErkQNjnAjZZQ/hteeeEaAn4HAj
+         EonsPLIABuG+HrOfnO8KdbLqzEjij+/46P50/iktqtR8WopdD7vsS/vbjSUTIJikPS3g
+         OLE1dZHQRcqsOVU8A70Q8UFJXpqiH2DmDKE9H72eYiNaFEpI+DW8FKqAcYErtyufKeVd
+         HV7g==
+X-Gm-Message-State: APjAAAWN/vjibRtGSq2jbH1ofo85qY588m+tcHt/2acS45KCiFdbOyoc
+        ypW5nzYQKBpwrwxm1DdzN04=
+X-Google-Smtp-Source: APXvYqw1qvcsid6VJtiBetDQXvsJ7ayB2ot+OMcWo7b6tScrQecVUQtRND3OzAHpSX4y8Ag4Vad3mQ==
+X-Received: by 2002:a63:eb02:: with SMTP id t2mr44014216pgh.289.1577291674429;
+        Wed, 25 Dec 2019 08:34:34 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id r66sm33694347pfc.74.2019.12.25.08.34.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 25 Dec 2019 08:34:33 -0800 (PST)
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Michael Turquette <mturquette@baylibre.com>
+Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>,
+        Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH] clk: Don't try to enable critical clocks if prepare failed
+Date:   Wed, 25 Dec 2019 08:34:29 -0800
+Message-Id: <20191225163429.29694-1-linux@roeck-us.net>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello!
+The following traceback is seen if a critical clock fails to prepare.
 
-On 12/20/2019 04:45 AM, masonccyang@mxic.com.tw wrote:
+bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
+------------[ cut here ]------------
+Enabling unprepared plld_per
+WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
+...
+Call trace:
+ clk_core_enable+0xcc/0x2c0
+ __clk_register+0x5c4/0x788
+ devm_clk_hw_register+0x4c/0xb0
+ bcm2835_register_pll_divider+0xc0/0x150
+ bcm2835_clk_probe+0x134/0x1e8
+ platform_drv_probe+0x50/0xa0
+ really_probe+0xd4/0x308
+ driver_probe_device+0x54/0xe8
+ device_driver_attach+0x6c/0x78
+ __driver_attach+0x54/0xd8
+...
 
->>>>> So at the moment, there is nothing yet for me to 'try' on the RZ/A series,
->>>> correct?
->>>>
->>>>    Why, I can send you a working version of the SPI driver, and even HF one
->>>> if you're
->>>> interested.
->>>
->>> The point of this whole discussion is to determine if we should have 2 drivers
->>> for the same Renesas HW IP.
->>>
->>> There was a RPC-IF patch series that made it to v17....and is now dead.
-> 
-> It's under review by Geert Uytterhoeven
-> 
-> https://patchwork.kernel.org/project/linux-renesas-soc/list/?submitter=181859 
-> https://patchwork.kernel.org/patch/11078131/ 
-> https://patchwork.kernel.org/patch/11078133/
+Check return values from clk_core_prepare() and clk_core_enable() and
+bail out if any of those functions returns an error.
 
-https://patchwork.kernel.org/patch/11078137/
-https://patchwork.kernel.org/patch/11078139/ 
+Cc: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/clk/clk.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-   It doesn't matter much what's in the renesas-soc patchwork, the patch would
-be merged thru the linux-spi repo, and in their patchwork the status of your v17
-patches is "New, archived"...
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 6a11239ccde3..772258de2d1f 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3426,11 +3426,17 @@ static int __clk_core_init(struct clk_core *core)
+ 	if (core->flags & CLK_IS_CRITICAL) {
+ 		unsigned long flags;
+ 
+-		clk_core_prepare(core);
++		ret = clk_core_prepare(core);
++		if (ret)
++			goto out;
+ 
+ 		flags = clk_enable_lock();
+-		clk_core_enable(core);
++		ret = clk_core_enable(core);
+ 		clk_enable_unlock(flags);
++		if (ret) {
++			clk_core_unprepare(core);
++			goto out;
++		}
+ 	}
+ 
+ 	clk_core_reparent_orphans_nolock();
+-- 
+2.17.1
 
-> thanks & best regards,
-> Mason
-
-MBR, Sergei
