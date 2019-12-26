@@ -1,127 +1,181 @@
-Return-Path: <SRS0=TWnL=2P=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=lYXC=2Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DF5DC2D0DA
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 17:57:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ECA8C2D0DB
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 09:06:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEE63207FF
-	for <linux-clk@archiver.kernel.org>; Wed, 25 Dec 2019 17:57:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577296670;
-	bh=9Xq4VcjOueDmHCx5x1MsWoS3HcZBZ8M/IUkjuiAPHRo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=N4ge8z8Gh3/rhvmkHcTB2LJ/iWjOAREKWPejXYgGrnja+NzUWyLqEBHTwXXAMMomq
-	 q7WkEHRGaAIk7Cm1b0o532OSy2ZcTFH/uHuz+Xvd0IkYfNyXlMOiJ5fmjjZNtc5Afc
-	 DEJPnj2JefWR3eUHjE0BsfdEEtA4SjmNunp6flWQ=
+	by mail.kernel.org (Postfix) with ESMTP id 359C22080D
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 09:06:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nvAkBpcL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726399AbfLYR5u (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 25 Dec 2019 12:57:50 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:50258 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726353AbfLYR5u (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 25 Dec 2019 12:57:50 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=lwfuEESWR4zX92Iq386iPtYoiE2TFNKpmeIvlfpb3Os=; b=ApchFp7KIms6vjJID9dvLZ2r+
-        PQTXOQ3OE960aPn9u/+AEYhG5LzJsAxA97mGha1rgYrqURa9QEAAH7eh+NOHB2MZv5A7/H4K/k4Ed
-        5kADNv5RtiErBeCzhHvh83uuv3GbqAUlGdvzN1dYcQdVJ3imwsytSCMn80BheYSlj5qg0=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ikAuf-0001kC-72; Wed, 25 Dec 2019 17:57:37 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 77952D01A24; Wed, 25 Dec 2019 17:57:36 +0000 (GMT)
-Date:   Wed, 25 Dec 2019 17:57:36 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Dmitry Osipenko <digetx@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
- for audio mclk
-Message-ID: <20191225175736.GC27497@sirena.org.uk>
-References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
- <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
- <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+        id S1726440AbfLZJG3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 04:06:29 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:35885 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726109AbfLZJG3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 04:06:29 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z3so23200344wru.3
+        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2019 01:06:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=j+rJoTy0dYbhBsarNtahr7o1qTLApLBfvxcpqlInHlY=;
+        b=nvAkBpcLAc37eLjbd+5F1xgcQDzAXQtQeP4B1sH1ZFgFzUItSmCkmKqNGtzXfN6OiW
+         6+vCt2bOh/Hvi2EA/v4KzokKHx+eVD4kEpiNrlXY8ahXLo9/mpbjT6liE/YTg9SRSaMm
+         utHNu39DVrnNl2QpY6UbC5IN1LV/lnGJIMA92dnSMco8Rift6OtpnErNPXe0Vm/bBVMl
+         bRiMpveqWcfgP9B6rlr+oH8hSVUPPVeGMhQwJgQpUBfSc9tHshI32bAeQOEqImwsdvXr
+         mmKgunF6XiojdV+75+DvbqIS1xA1MRlzhj2Og/lD9EHpAOWa/zZ36YGNhFuW/Y0gqvmd
+         yrWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=j+rJoTy0dYbhBsarNtahr7o1qTLApLBfvxcpqlInHlY=;
+        b=azP50iP6YaEMCSzyvANFLR4XvQQd9KpPPafqVXdPClhOltOjnUTYqrh+2j/fer1sRD
+         HHRjfDNxJ2F+VJZhHU7tz4GItnObvwBHRyQHVYyXzrz7qPhjrXVFVPfTecRgAbVlXriS
+         FXXbkU3KOG0w1xrZicFzEYpZeE/Y2yx8WmccaKLhA9dPwIxafpPQWzLEc/e3LABjGiK7
+         Zln+PoUKl2bKgPSiXUU1CC1QACZPJmzj6KAMBGjHY5OXJ59EM2oZPzCnU1qFnv6evaVu
+         rriMi1QkdtsNOqHrdKribK8kPKerDSndVz1p1EnLZin4/Ur5bpkARzJUq3EV7wheCGHw
+         fx5Q==
+X-Gm-Message-State: APjAAAUTXC29zQKGB7bUFupnjcG97VVrtomhFCZ8BOrRvwJqasrZmkit
+        U2sOYNeDFAwsP2OS2n72gHPZkw==
+X-Google-Smtp-Source: APXvYqzOwW1G2WbL2PBTGbpeF0gLW3p6XrRVMRXhqGRlF15j/j5EuqDwuC2Ds5c/xELL0O/J7Q24CA==
+X-Received: by 2002:adf:b60f:: with SMTP id f15mr41821186wre.372.1577351186530;
+        Thu, 26 Dec 2019 01:06:26 -0800 (PST)
+Received: from localhost ([2a01:e0a:1a5:7ee0:1e09:f4bb:719a:3028])
+        by smtp.gmail.com with ESMTPSA id g7sm30361342wrq.21.2019.12.26.01.06.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Dec 2019 01:06:25 -0800 (PST)
+References: <20191215210153.1449067-1-martin.blumenstingl@googlemail.com> <1jr214bpl0.fsf@starbuckisacylon.baylibre.com> <20191216175015.2A642206EC@mail.kernel.org> <1jlfrcaxmm.fsf@starbuckisacylon.baylibre.com> <20191224033636.1BB3F206B7@mail.kernel.org>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, narmstrong@baylibre.com
+Cc:     mturquette@baylibre.com, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/1] clk: Meson8/8b/8m2: fix the mali clock flags
+In-reply-to: <20191224033636.1BB3F206B7@mail.kernel.org>
+Date:   Thu, 26 Dec 2019 10:06:25 +0100
+Message-ID: <1jimm3pib2.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gr/z0/N6AeWAPJVB"
-Content-Disposition: inline
-In-Reply-To: <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
-X-Cookie: I have many CHARTS and DIAGRAMS..
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---gr/z0/N6AeWAPJVB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue 24 Dec 2019 at 04:36, Stephen Boyd <sboyd@kernel.org> wrote:
 
-On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
-> 21.12.2019 01:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
-> > Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
-> > through Tegra210 and currently Tegra clock driver does initial parent
-> > configuration for audio mclk "clk_out_1" and enables them by default.
+> Quoting Jerome Brunet (2019-12-16 11:17:21)
+>> 
+>> On Mon 16 Dec 2019 at 18:50, Stephen Boyd <sboyd@kernel.org> wrote:
+>> 
+>> > Quoting Jerome Brunet (2019-12-16 01:13:31)
+>> >> 
+>> >> *updated last* which crucial to your use case.
+>> >> 
+>> >> I just wonder if this crucial part something CCF guarantee and you can
+>> >> rely on it ... or if it might break in the future.
+>> >> 
+>> >> Stephen, any thoughts on this ?
+>> >
+>> > We have problems with the order in which we call the set_rate clk_op.
+>> > Sometimes clk providers want us to call from leaf to root but instead we
+>> > call from root to leaf because of implementation reasons. Controlling
+>> > the order in which clk operations are done is an unsolved problem. But
+>> > yes, in the future I'd like to see us introduce the vaporware that is
+>> > coordinated clk rates that would allow clk providers to decide what this
+>> > order should be, instead of having to do this "root-to-leaf" update.
+>> > Doing so would help us with the clk dividers that have some parent
+>> > changing rate that causes the downstream device to be overclocked while
+>> > we change the parent before the divider.
+>> >
+>> > If there are more assumptions like this about how the CCF is implemented
+>> > then we'll have to be extra careful to not disturb the "normal" order of
+>> > operations when introducing something that allows clk providers to
+>> > modify it.
+>> 
+>> I understand that CCR would, in theory, allow to define that sort of
+>> details. Still defining (and documenting) the default behavior would be
+>> nice.
+>> 
+>> So the question is:
+>>  * Can we rely set_rate() doing a root-to-leaf update until CCR comes
+>>    around ?
+>>  * If not, for use cases like the one described by Martin, I guess we
+>>    are stuck with the notifier ? Or would you have something else to
+>>    propose ?
+>
+> I suppose we should just state that clk_set_rate() should do a
+> root-to-leaf update. It's not like anyone is interested in changing
+> this behavior. The notifier is not ideal. I've wanted to add a new
+> clk_op that would cover some amount of the notifier users by having a
+> 'pre_set_rate' clk op that can mux the clk over to something safe or
+> setup a divider to something that is known to be safe and work. Then we
+> can avoid having to register for a notifier just to do something right
+> before the root-to-leaf update happens.
+>
 
-Please delete unneeded context from mails when replying.  Doing this
-makes it much easier to find your reply in the message, helping ensure
-it won't be missed by people scrolling through the irrelevant quoted
-material.
+Martin,
 
-> > -	clk_disable_unprepare(data->clk_cdev1);
-> > -	clk_disable_unprepare(data->clk_pll_a_out0);
-> > -	clk_disable_unprepare(data->clk_pll_a);
-> > +	if (__clk_is_enabled(data->clk_cdev1))
-> > +		clk_disable_unprepare(data->clk_cdev1);
+It looks like a green light to me ;) Just add a detailed comment on the
+mali top clock explaining things and it should be alright.
 
-> The root of the problem is that you removed clocks enabling from
-> tegra_asoc_utils_init().
+>>    
+>> >
+>> > Also, isn't CLK_SET_RATE_GATE broken in the case that clk_set_rate()
+>> > isn't called on that particular clk? I seem to recall that the flag only
+>> > matters when it's applied to the "leaf" or entry point into the CCF from
+>> > a consumer API.
+>> 
+>> It did but not anymore
+>> 
+>> > I've wanted to fix that but never gotten around to it.
+>> 
+>> I fixed that already :P
+>> CLK_SET_RATE_GATE is a special case of clock protect. The clock is
+>> protecting itself so it is going down through the tree.
+>> 
+>
+> Ahaha ok. As you can see I'm trying to forget clock protect ;-)
+>
+>
+>> 
+>> > The whole flag sort of irks me because I don't understand what consumers
+>> > are supposed to do when this flag is set on a clk. How do they discover
+>> > it?
+>> 
+>> Actually (ATM) the consumer is not even aware of it. If a clock with
+>> CLK_SET_RATE_GATE is enabled, it will return the current rate to
+>> .round_rate() and .set_rate() ... as if it was fixed.
+>
+> And then when the clk is disabled it will magically "unstick" and start
+> to accept the same rate request again?
+>
 
-> I'm not sure why clocks should be disabled during the rate-changing,
-> probably this action is not really needed.
+Exactly
 
-I know nothing about this particular device but this is not that
-unusual a restriction for audio hardware, you often can't
-robustly reconfigure the clocking for a device while it's active
-due to issues in the hardware.  You often see issues with FIFOs
-glitching or state machines getting stuck.  This may not be an
-issue here but if it's something that's documented as a
-requirement it's probably good to pay attention.
+>> 
+>> > They're supposed to "just know" and turn off the clk first and then
+>> > call clk_set_rate()?
+>> 
+>> ATM, yes ... if CCF cannot switch to another "unlocked" subtree (the
+>> case here)
+>> 
+>> > Why can't the framework do this all in the clk_set_rate() call?
+>> 
+>> When there is multiple consumers the behavior would become a bit
+>> difficult to predict and drivers may have troubles anticipating that,
+>> maybe, the clock is locked.
+>
+> Fun times!
 
---gr/z0/N6AeWAPJVB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4Dow8ACgkQJNaLcl1U
-h9CI+gf+NTSVmEXknNylmrROVvkijHFJkHpvx7hDJFGvYsu/qNKP8FkbIRWeKkE1
-h1R5yupSd5QDSNRwtOG2Z3ZO5Dv/HYo+FmOIz+XDFNyKI7MU3fr4CkEzwZXcUzKt
-GcGGfzcxYPJ8H7f5tbVvNjRHu+DiDvHEFvShhKUbHk7HJYqCrG6eMCfEDHlEkHU5
-PkAp309INr7VEQSuch/JBXbvvI0glE66kcLH9CrHVdmrqc7hR8DmCm+49lGBOfIM
-Jv1ylQj/Kx52U/zErkRqc9nsAkgJtQVafmwwCFj5SEeJIpCIanlTUXbRFRMkaMBL
-5zpR7FZej7V40gjlWEGR0RaT9x6r5Q==
-=c7E7
------END PGP SIGNATURE-----
-
---gr/z0/N6AeWAPJVB--
