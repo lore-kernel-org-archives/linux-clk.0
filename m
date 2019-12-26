@@ -2,160 +2,94 @@ Return-Path: <SRS0=lYXC=2Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A3FFC2D0DA
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 17:22:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D566C2D0DA
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 18:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64BE620828
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 17:22:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vQzA5qIm"
+	by mail.kernel.org (Postfix) with ESMTP id 4511720838
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 18:17:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577384238;
+	bh=aLKpatQcOVXD9gRo7QQflxFo1wz0PRXr5HEqOw11ovc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=BH/y4xl3AaIrIpMBdBJWjGO24aWTlzCOAGopP5HHsXYFWac1vyexDFba4pFYfNxKP
+	 pGssxmzJt2V1UJ07qYLZWL2A1tUkKuR2hCTeMDSsimOAjwNeWSdbKLAZKZpPZ3qZU9
+	 Oo7drGuWfrwpb0mcntZBa6tm7v8488/hadS/0y+Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726513AbfLZRWN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 12:22:13 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43979 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfLZRWN (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 12:22:13 -0500
-Received: by mail-pg1-f195.google.com with SMTP id k197so13114773pga.10;
-        Thu, 26 Dec 2019 09:22:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=l6FNc4QNuGPNE1Oy+AsJ/HcUQQhUOJ+/HyK0yE0YRTo=;
-        b=vQzA5qImmRfD2Viy4OoHhSeUm+QmovQe6k6UgmOfo4fvkM/CXD/vijtbh+JKdxcHay
-         hALLMOacPTTCyq3X11raB4Ud2m9xBznin3q/EetWqHSFXNN+QRvQ14dufx1PH8DHOYQy
-         KDW47SB9NQTgo2kIT3MvPdv6UjPE/q70LSPpG8A4ndSKDxsIZ5k5UO8xmv0fSvRGN8lI
-         BzAnNrBosEPg29fQb0QKTCMghBlJ6OMcGC3I8MSCdBmk9Hwo2PIUeTw203HjQrqxbnRt
-         a6JmPOhY2YEo9rV5lPbCfoaK4B8lUC0RzUVnnTA1wWm2qyovHBJtSlm2iiQGLjWxBcyS
-         mJWA==
+        id S1726827AbfLZSRR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 13:17:17 -0500
+Received: from mail-il1-f193.google.com ([209.85.166.193]:39578 "EHLO
+        mail-il1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfLZSRR (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 13:17:17 -0500
+Received: by mail-il1-f193.google.com with SMTP id x5so20723877ila.6;
+        Thu, 26 Dec 2019 10:17:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=l6FNc4QNuGPNE1Oy+AsJ/HcUQQhUOJ+/HyK0yE0YRTo=;
-        b=ka35tkT2NC29tx/7u92RsyqFmqhf2uqVJF38yiQZ8XuKsjsPby3sZ4VPVSoVWid7d4
-         PQUQf3aM/8d8/Ns/21VCuYeDlUwhktFJ0MtUbH48rzQj1v+sKIXKHljRbsb44y9hlklg
-         DbvoudhmfMuoOf3i8rhAw5KzPDkcaKQ8Kw65MfaWBSYJfbUzluJsxyIR4tdmgdb5eEQq
-         djKjRN4YqeVMKwLjcV5Uv9CHklOtUl39Sx1/LmodwVljEok77LOOD+2t4cf3B68uNyCu
-         jgnBT/74nNTsxCWUxmSakGRjpd9RFfCBT7v5tnvpNqotl/QkepJ2xOhzTBzSbgtFBoQ7
-         eadg==
-X-Gm-Message-State: APjAAAXaGC5Cm4XNcFGK9W3NWtq5LOKnUXP6tJL7bYLIyd4BXKsIAviG
-        tXqySHgrU4LS4u/RVDWvmK6C9rwA
-X-Google-Smtp-Source: APXvYqyEvJWlsXAytZd921Rhph3L83NAE4icdA/dphchI5YRrfhXDV06kSFwOM+s/HucnNokBs3wzA==
-X-Received: by 2002:aa7:8181:: with SMTP id g1mr50402760pfi.215.1577380932643;
-        Thu, 26 Dec 2019 09:22:12 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d23sm36583295pfo.176.2019.12.26.09.22.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 26 Dec 2019 09:22:11 -0800 (PST)
-Subject: Re: [PATCH] clk: Don't try to enable critical clocks if prepare
- failed
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191225163429.29694-1-linux@roeck-us.net>
- <1jd0cbpg77.fsf@starbuckisacylon.baylibre.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <fed37460-6097-1a3d-3c05-e203871610ac@roeck-us.net>
-Date:   Thu, 26 Dec 2019 09:22:10 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=idn95+ZWYyG6h7W6CvDgqkHcYG/FW+FnbauTlYb4rps=;
+        b=tftqvR8ZQtUu0Ku0OdIAmaMG5N2Glnd50NJwAz//9ITL4p0B+XOtTuLwIJdAp9onkL
+         uPPB2Jlv8N7Vc3J+gExBsBKKqDm/jCmMlBDjj3fv1yYQr1ko83A/RagxVqAr4x6ZgD7Y
+         ljHquMHfiph0Cx0xSYkvOKD7TUrhSUXDBuH9Ub3JCqvCTtq0U3Mkl09DrekzYRhn36tT
+         9YJn79fcB6gD0Hr9CMZvnwTsRekgiGEN2UkefaDROtxVd26oKo+QExaEwAg5FKg6KcTY
+         r0VMbxpMkBrLxP4E08n6EIqH+YK8LiNnAuhpInZ7VYW4HBeKFZhkdkE+4q4kKqUxzH6W
+         xjww==
+X-Gm-Message-State: APjAAAWWiwRvyKRhc6MyTIQm8kgLSak6/YEnytbtKd5/eEEkX6L8z7tX
+        ocQiT0723kfEP77b4zS1og==
+X-Google-Smtp-Source: APXvYqw/PMXhHNGBXaITaVAZELOintjsvcqn9FlYkKK3CE5GzqNsYCUJc5zUMO2uAWvI+atZKwyq9w==
+X-Received: by 2002:a92:b06:: with SMTP id b6mr38749968ilf.127.1577384236575;
+        Thu, 26 Dec 2019 10:17:16 -0800 (PST)
+Received: from localhost ([64.188.179.250])
+        by smtp.gmail.com with ESMTPSA id k17sm8813834ioh.64.2019.12.26.10.17.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Dec 2019 10:17:16 -0800 (PST)
+Date:   Thu, 26 Dec 2019 11:17:15 -0700
+From:   Rob Herring <robh@kernel.org>
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>
+Cc:     skomatineni@nvidia.com, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, digetx@gmail.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 07/19] dt-bindings: soc: tegra-pmc: Add id for Tegra
+ PMC 32KHz blink clock
+Message-ID: <20191226181715.GA12506@bogus>
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
 MIME-Version: 1.0
-In-Reply-To: <1jd0cbpg77.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1576880825-15010-8-git-send-email-skomatineni@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 12/26/19 1:51 AM, Jerome Brunet wrote:
+On Fri, 20 Dec 2019 14:26:53 -0800, Sowjanya Komatineni wrote:
+> Tegra PMC has blink functionality that allows 32KHz clock out to
+> blink pin of the Tegra.
 > 
-> On Wed 25 Dec 2019 at 17:34, Guenter Roeck <linux@roeck-us.net> wrote:
+> This patch adds id for this blink clock to use for enabling or
+> disabling blink output through device tree.
 > 
->> The following traceback is seen if a critical clock fails to prepare.
->>
->> bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
->> ------------[ cut here ]------------
->> Enabling unprepared plld_per
->> WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
->> ...
->> Call trace:
->>   clk_core_enable+0xcc/0x2c0
->>   __clk_register+0x5c4/0x788
->>   devm_clk_hw_register+0x4c/0xb0
->>   bcm2835_register_pll_divider+0xc0/0x150
->>   bcm2835_clk_probe+0x134/0x1e8
->>   platform_drv_probe+0x50/0xa0
->>   really_probe+0xd4/0x308
->>   driver_probe_device+0x54/0xe8
->>   device_driver_attach+0x6c/0x78
->>   __driver_attach+0x54/0xd8
->> ...
->>
->> Check return values from clk_core_prepare() and clk_core_enable() and
->> bail out if any of those functions returns an error.
->>
->> Cc: Jerome Brunet <jbrunet@baylibre.com>
->> Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
->> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
->> ---
->>   drivers/clk/clk.c | 10 ++++++++--
->>   1 file changed, 8 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
->> index 6a11239ccde3..772258de2d1f 100644
->> --- a/drivers/clk/clk.c
->> +++ b/drivers/clk/clk.c
->> @@ -3426,11 +3426,17 @@ static int __clk_core_init(struct clk_core *core)
->>   	if (core->flags & CLK_IS_CRITICAL) {
->>   		unsigned long flags;
->>   
->> -		clk_core_prepare(core);
->> +		ret = clk_core_prepare(core);
->> +		if (ret)
->> +			goto out;
->>   
->>   		flags = clk_enable_lock();
->> -		clk_core_enable(core);
->> +		ret = clk_core_enable(core);
->>   		clk_enable_unlock(flags);
->> +		if (ret) {
->> +			clk_core_unprepare(core);
->> +			goto out;
->> +		}
-> 
-> Hi Guenter,
-> 
-> It looks like it was a mistake to discard the possibility of a failure
-> here. Thanks for correcting this.
-> 
-> However, we would not want a critical clock to silently fail to
-> enable. This might lead to unexpected behavior which are generally hard
-> (and annoying) to debug.
-> 
-> Would you mind adding some kind of warning trace in case this fails ?
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  include/dt-bindings/soc/tegra-pmc.h | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
 
-The really relevant information is:
+Please add Acked-by/Reviewed-by tags when posting new versions. However,
+there's no need to repost patches *only* to add the tags. The upstream
+maintainer will do that for acks received on the version they apply.
 
-bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
-
-which is already displayed (and not surprising since cprman isn't implemented
-in qemu). While I agree that an error message might be useful, replacing
-one traceback with another doesn't really make sense to me, and I am not
-really a friend of spreading tracebacks throughout the kernel. Please feel
-free to consider this patch to be a bug report, and feel free to ignore it
-and suggest something else.
-
-Thanks,
-Guenter
+If a tag was not added on purpose, please state why and what changed.
