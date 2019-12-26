@@ -2,106 +2,275 @@ Return-Path: <SRS0=lYXC=2Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AA8C2D0C0
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CF8BC2D0C0
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850E9206CB
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:23:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h5ghKZ7Q"
+	by mail.kernel.org (Postfix) with ESMTP id 0834320838
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:25:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577399140;
+	bh=vujbv1A6xlDUz2g33Y+kPra2PiAgA/fV/uyBHWmtQ6Y=;
+	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
+	b=IKq0IcQiWsrXSTZCgk3WFYrD8OLIE5t00NEcgQfczPSwlKWM8sqzHTc7NEYsmpk0p
+	 exTlgSCJgPKNAXL/kWBPZIu0Nff7mZk0g8Sfps3HqIZZ/xD09HI1wFSNmUVL3NUjle
+	 /HeMbJjg1HH5QTsZrRreYyYSLwJMMlnG6XxKLgJI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfLZWXb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 17:23:31 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34744 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfLZWXb (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 17:23:31 -0500
-Received: by mail-pf1-f193.google.com with SMTP id i6so6964193pfc.1
-        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2019 14:23:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=Sprza847Fg3Wz4gx8X0Ya4BdhvQ1Fb4mpkG/Xj/3FE4=;
-        b=h5ghKZ7QvZulvsEfe/dDrD3+cHPYPbwYA06G2rOMtFaM5jznZuvFQTpkDzmk8a44Bu
-         4ZdMEnrtCAU2E/pBbmFy/M5psqskyCfEZwvFqNVRp9ltsjmXnfAG3c7E/+NM58iD+JHi
-         u6BAqKvesPH+nLdfYGqmdjHpbkWJkaHSnrAiLAa+2nKzxZW9sDnbY83wc96tQ6/ctY9P
-         zM4A1AppsJ4LL4a0yUJltMZa7Xe7Oqx9kTIUhMZ8pnzuvM/9ygcD8pKY8yu9BR96eLcv
-         kBhWHheUkboln9UwbuKG6Ef4EunKkQCZ+UJDNFPC06DhxN3bjKBGXQHHUnXqV83LHn1H
-         861Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=Sprza847Fg3Wz4gx8X0Ya4BdhvQ1Fb4mpkG/Xj/3FE4=;
-        b=PL9jTaKgL6GPPrDwODUeaFHtcqsmttfSzw4xzJcpfWcggspmbVnaJA9rzup1wLcfi0
-         dcs7uZafqxBW7ItcVVxj/jqEXKYOxMsX4hNVvckxqxETJ/J6CYGYAdkJGePaHDQQCxEM
-         uoomKosK5nU0/yPvLCXdb0Ko5PARnfNAofiGY/3nt6aTTp3Qm+R+nn82VeAJbZeIMG4A
-         QEAEY62KIb2chpr+U8bUMBTN0s5hLP6HEKfnegFdSyvf2EJDmz2Y+ZM6GvtwtE04XPWc
-         PSQ18qZONAhaeBz2oyK/580mHOyJA8gtifldHqstaBqX1SzDU36FmgvlcIYGy/6IKZVM
-         Xycg==
-X-Gm-Message-State: APjAAAXSZ8KJz6xYqdNZN/jtT2sgF+7gBSCX5IncTd4BnfhQAJyrpioJ
-        ao/py2Bk4FsHDQ1ETh1MrjmPbA==
-X-Google-Smtp-Source: APXvYqyCu1goN+OnYdwfkwXryXqj7LcmvuOHhUxkblWrrpql52W39bq2TU9mRFQIpm8+K+MEiVP+tQ==
-X-Received: by 2002:a62:5447:: with SMTP id i68mr41980642pfb.44.1577399010364;
-        Thu, 26 Dec 2019 14:23:30 -0800 (PST)
-Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id i11sm12282752pjg.0.2019.12.26.14.23.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 14:23:29 -0800 (PST)
-Date:   Thu, 26 Dec 2019 14:23:15 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>
-Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks
-Message-ID: <20191226222315.GD1908628@ripper>
-References: <20191207203603.2314424-1-bjorn.andersson@linaro.org>
- <20191207203603.2314424-2-bjorn.andersson@linaro.org>
- <20191224024845.445A92070E@mail.kernel.org>
+        id S1727066AbfLZWZj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 17:25:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726277AbfLZWZj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Dec 2019 17:25:39 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AE60206CB;
+        Thu, 26 Dec 2019 22:25:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577399138;
+        bh=vujbv1A6xlDUz2g33Y+kPra2PiAgA/fV/uyBHWmtQ6Y=;
+        h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
+        b=f7ktoGybsJOTU/FXJvQp6XsCinWkltPH/f82MaEdDRUwHWJyvbph23Zy8aPgNl0vG
+         qgiB+PunZlEVeUKdEC2kfxqDXYPGUSeF0s/NEW05PyKqoMs6aMMajbCeHfAar2RK6N
+         NDfrYvtnjRDsxnWAwM2acFt+Yn75kpo2oPPn9hm8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191224024845.445A92070E@mail.kernel.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20191015103221.51345-2-kholk11@gmail.com>
+References: <20191015103221.51345-1-kholk11@gmail.com> <20191015103221.51345-2-kholk11@gmail.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        mark.rutland@arm.com, robh+dt@kernel.org, mturquette@baylibre.com,
+        agross@kernel.org, bjorn.andersson@linaro.org, marijns95@gmail.com,
+        AngeloGioacchino Del Regno <kholk11@gmail.com>
+To:     kholk11@gmail.com, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] clk: qcom: Add MSM8976/56 Global Clock Controller (GCC) driver
+User-Agent: alot/0.8.1
+Date:   Thu, 26 Dec 2019 14:25:37 -0800
+Message-Id: <20191226222538.2AE60206CB@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 23 Dec 18:48 PST 2019, Stephen Boyd wrote:
+Quoting kholk11@gmail.com (2019-10-15 03:32:20)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 32dbb4f09492..f2a7743c53a1 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -188,6 +188,14 @@ config MSM_MMCC_8974
+>           Say Y if you want to support multimedia devices such as display,
+>           graphics, video encode/decode, camera, etc.
+> =20
+> +config MSM_GCC_8976
+> +       tristate "MSM8956/76 Global Clock Controller"
+> +       select QCOM_GDSC
+> +       help
+> +         Support for the global clock controller on msm8956/76 devices.
+> +         Say Y if you want to use peripheral devices such as UART, SPI,
+> +         i2c, USB, SD/eMMC, display, graphics, camera etc.
 
-> Quoting Bjorn Andersson (2019-12-07 12:36:02)
-> > The CLKREF clocks are all fed by the clock signal on the CXO2 pad on the
-> > SoC. Update the definition of these clocks to allow this to be wired up
-> > to the appropriate clock source.
-> > 
-> > Retain "xo" as the global named parent to make the change a nop in the
-> > event that DT doesn't carry the necessary clocks definition.
-> > 
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > ---
-> >  .../devicetree/bindings/clock/qcom,gcc.yaml   |  6 ++--
-> >  drivers/clk/qcom/gcc-msm8996.c                | 35 +++++++++++++++----
-> >  2 files changed, 32 insertions(+), 9 deletions(-)
-> 
-> What is this patch based on? I think I'm missing some sort of 8996 yaml
-> gcc binding patch.
-> 
+Does it have display and graphics and camera?
 
-The patch applies cleanly on linux-next and afaict it depends on the
-yamlification done in 9de7269e9703 ("dt-bindings: clock: Add YAML
-schemas for the QCOM GCC clock bindings"), which git tells me is
-included in v5.5-rc1 as well.
+> +
+>  config MSM_GCC_8994
+>         tristate "MSM8994 Global Clock Controller"
+>         help
+> diff --git a/drivers/clk/qcom/gcc-msm8976.c b/drivers/clk/qcom/gcc-msm897=
+6.c
+> new file mode 100644
+> index 000000000000..c670b53f0b5f
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-msm8976.c
+> @@ -0,0 +1,4215 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Qualcomm Global Clock Controller driver for MSM8956/76
+> + *
+> + * Copyright (C) 2016, The Linux Foundation. All rights reserved.
+> + * Copyright (C) 2018, AngeloGioacchino Del Regno <kholk11@gmail.com>
+> + *
+> + * Author: AngeloGioacchino Del Regno <kholk11@gmail.com>
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/clk.h>
 
-Am I misunderstanding your question?
+Is this include used?
 
-Regards,
-Bjorn
+> +#include <linux/clk-provider.h>
+> +#include <linux/err.h>
+> +#include <linux/bitops.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_opp.h>
+
+Is this include used?
+
+> +#include <linux/module.h>
+> +#include <linux/mfd/syscon.h>
+
+Is this include used?
+
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +#include <dt-bindings/clock/qcom,gcc-msm8976.h>
+> +
+> +#include "clk-alpha-pll.h"
+> +#include "clk-branch.h"
+> +#include "common.h"
+> +#include "clk-pll.h"
+> +#include "clk-regmap.h"
+> +#include "clk-rcg.h"
+> +#include "reset.h"
+> +#include "gdsc.h"
+[...]
+> +
+> +static struct clk_branch gcc_usb_fs_system_clk =3D {
+> +       .halt_reg =3D 0x3F004,
+
+Please use lowercase hex throughout the code.
+
+> +       .clkr =3D {
+> +               .enable_reg =3D 0x3F004,
+> +               .enable_mask =3D BIT(0),
+> +               .hw.init =3D &(struct clk_init_data) {
+> +                       .name =3D "gcc_usb_fs_system_clk",
+> +                       .parent_names =3D (const char*[]) {
+> +                               "usb_fs_system_clk_src",
+> +                       },
+> +                       .num_parents =3D 1,
+> +                       .flags =3D CLK_SET_RATE_PARENT,
+> +                       .ops =3D &clk_branch2_ops,
+> +               },
+> +       },
+> +};
+> +
+[...]
+> +
+> +static const struct of_device_id msm_clock_gcc_match_table[] =3D {
+
+This name is super generic. Can you name it gcc_msm8976_match_table?
+
+> +       { .compatible =3D "qcom,gcc-msm8976" },
+> +       {},
+
+Please drop the comma. This is the sentinel
+
+> +};
+> +
+> +static int gcc_8976_probe(struct platform_device *pdev)
+> +{
+> +       struct regmap *regmap;
+> +       int i, ret;
+> +       u32 val;
+> +
+> +       regmap =3D qcom_cc_map(pdev, &gcc_msm8976_desc);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       /* Vote for GPLL0 to turn on. Needed by acpuclock. */
+> +       regmap_update_bits(regmap, 0x45000, BIT(0), BIT(0));
+> +
+> +       /* Register the hws */
+
+Please drop this useless comment.
+
+> +       for (i =3D 0; i < ARRAY_SIZE(gcc_msm8976_hws); i++) {
+> +               ret =3D devm_clk_hw_register(&pdev->dev, gcc_msm8976_hws[=
+i]);
+> +               if (ret)
+> +                       return ret;
+> +       }
+> +
+> +       ret =3D qcom_cc_really_probe(pdev, &gcc_msm8976_desc, regmap);
+> +       if (ret) {
+> +               dev_err(&pdev->dev, "Failed to register GCC clocks\n");
+
+Please remove error print.
+
+> +               return ret;
+> +       }
+> +
+> +       clk_set_rate(apss_ahb_clk_src.clkr.hw.clk, 19200000);
+
+Why? Isn't it 19.2MHz by default?
+
+> +       clk_prepare_enable(apss_ahb_clk_src.clkr.hw.clk);
+
+Looks like the clk should be marked CLK_IS_CRITICAL. Also, document why
+clks are marked CLK_IS_CRITICAL with a comment.
+
+> +
+> +       /* Configure Sleep and Wakeup cycles for GMEM clock */
+> +       regmap_read(regmap, 0x59024, &val);
+> +       val ^=3D 0xFF0;
+> +       val |=3D (0 << 8);
+> +       val |=3D (0 << 4);
+> +       regmap_write(regmap, 0x59024, val);
+
+This is regmap_update_bits()?
+
+> +
+> +       clk_pll_configure_sr_hpm_lp(&gpll3, regmap,
+> +                                       &gpll3_config, true);
+> +
+> +       clk_set_rate(gpll3.clkr.hw.clk, 1100000000);
+
+Don't think this is required. The PLL configuration should do this.
+
+> +
+> +       /* Enable AUX2 clock for APSS */
+> +       regmap_update_bits(regmap, 0x60000, BIT(2), BIT(2));
+> +
+> +       /* Oxili Ocmem in GX rail: OXILI_GMEM_CLAMP_IO */
+> +       regmap_update_bits(regmap, 0x5B00C, BIT(0), 0);
+> +
+> +       /* Configure Sleep and Wakeup cycles for OXILI clock */
+> +       val =3D regmap_read(regmap, 0x59020, &val);
+> +       val &=3D ~0xF0;
+> +       val |=3D (0 << 4);
+> +       regmap_write(regmap, 0x59020, val);
+
+regmap_update_bits()?
+
+> +
+> +       dev_dbg(&pdev->dev, "Registered GCC-8976 clocks\n");
+
+Please remove this. It's not useful.
+
+> +
+> +       return 0;
+> +}
+> +
+> +static struct platform_driver gcc_8976_driver =3D {
+> +       .probe =3D gcc_8976_probe,
+> +       .driver =3D {
+> +               .name =3D "gcc-msm8976",
+> +               .of_match_table =3D msm_clock_gcc_match_table,
+> +       },
+> +};
+> +
+> +static int __init gcc_8976_init(void)
+> +{
+> +       return platform_driver_register(&gcc_8976_driver);
+> +}
+> +core_initcall_sync(gcc_8976_init);
+> +
+> +static void __exit gcc_8976_exit(void)
+> +{
+> +       platform_driver_unregister(&gcc_8976_driver);
+> +}
+> +module_exit(gcc_8976_exit);
+> +
+> +MODULE_AUTHOR("AngeloGioacchino Del Regno <kholk11@gmail.com>");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_ALIAS("platform:gcc-msm8976");
+
+I don't think we need MODULE_ALIAS anymore.
+
