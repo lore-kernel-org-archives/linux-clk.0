@@ -2,88 +2,122 @@ Return-Path: <SRS0=lYXC=2Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F694C2D0C0
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 18:57:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC38C3F68F
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 19:12:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D5B220838
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 18:57:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577386633;
-	bh=egJk+YJEdEZUHkmawZ2xJQDY2KVH9LnoXavNew67DIk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=bUdt72wIiMJT+EO7b3SoL83zAzBTb7O5yL4RVD9t7UNKNC1i8TwAQxR7iBZc5qVEe
-	 C2mS/2gOOlj23pSoEIwqom+2Bz4qQkbU+mVZIEaLA4q+wF5yGmeA02Mnl++nFBd+gP
-	 uc7q5C05+vlgt/MYogb4pEicYak00jTx2JeIGacI=
+	by mail.kernel.org (Postfix) with ESMTP id CADA120882
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 19:12:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="i8vuntsp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726796AbfLZS5N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 13:57:13 -0500
-Received: from mail-il1-f194.google.com ([209.85.166.194]:44748 "EHLO
-        mail-il1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726480AbfLZS5M (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 13:57:12 -0500
-Received: by mail-il1-f194.google.com with SMTP id z12so20757056iln.11;
-        Thu, 26 Dec 2019 10:57:12 -0800 (PST)
+        id S1726827AbfLZTMp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 14:12:45 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37193 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbfLZTMp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 14:12:45 -0500
+Received: by mail-wr1-f65.google.com with SMTP id w15so11719361wru.4;
+        Thu, 26 Dec 2019 11:12:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o51048wYw9BEZaiitxLj90ZEMjEnTK72AipdZVc4KuA=;
+        b=i8vuntspkDhdm9kb7ZKWY0l4L1kEyaFhXOKywZwoQEtIaTXSCJ21zDm6faFsybW7u/
+         rYJ0iw3mK/ofkusOEzVsR4Czh4xj7ICqWfnKe0hRA08VcrczuT6A6HIUmZlrtUKj166M
+         Q36OV++Jsv1YL+0YSYhnbDj206025nkSTx+JaHQg8BHZkA16NAlmZ4tr3IxMB/bQTm8b
+         C3mIqUNInWBkia2ZA64gUEB4yOEJZQydUbNm/6mjCS+BXBHg4pe4rtQePnS9FnN9Ts7l
+         1pTSRiMRAO9R5EaL9MLhurhiHxtu3+Jpk8qGoVdgX4Wgu5UgSuHly8WSQhO+4dGm5E79
+         TBTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bfFASreyzqEKIaIlQEpKOKdP7fjtn5hK821zVwpHaQg=;
-        b=UKnTkfk3sKiD+1Si4Fuwie6HBVKmziVqG8kPEpZMIlXT1fXfA0uZ4OUHRuy/jBng/X
-         LJPOLFTa1UvbN/td4f33GgdShyM2luvbwEVfIq7BVfHQvjZUPtdakj1GS4hcF3ucQx51
-         DwVBjQgvCovW0PYKLstKtI5zx3HQPNWhQ5kUNaI7PpxpffgU5qwsYObk49MNntW44XCu
-         FNrib3L00vSsaV1H+HIGTvRH/AVbYybNk7fI1apRfxuxrFxtUVlLqHLQdX/tPzAkQlL5
-         7muOI4yfx1OihFRUNeYhs0IfCQ5OD9or9cgjIr7vyyADTjIGVK8xW0qPOhwmqjYnSC5R
-         WSGQ==
-X-Gm-Message-State: APjAAAVE2erL76cjmfYuB1hn0LBM4XFae/5X9i9DYJJ8qhLo4ryvPCVh
-        rx7v1peIDgKjwmzb0l6toA==
-X-Google-Smtp-Source: APXvYqwgg1UJCnGmdjOODKkwLbFlszTIpJ9ffWr9vGwMXlrCkaUxy18fBNKT9IVuOEOa3OdclX8XJg==
-X-Received: by 2002:a92:b06:: with SMTP id b6mr38897567ilf.127.1577386632134;
-        Thu, 26 Dec 2019 10:57:12 -0800 (PST)
-Received: from localhost ([64.188.179.250])
-        by smtp.gmail.com with ESMTPSA id k7sm6215606iol.15.2019.12.26.10.57.11
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=o51048wYw9BEZaiitxLj90ZEMjEnTK72AipdZVc4KuA=;
+        b=fplzXlBACgHW7s0Lrnm3TM+o2001fsiiaNL4NYWcYfnta0HswPz8wII6lhBTF+/7jN
+         xf4fm2uQaFRiK+dIKzSeGxdWJ054R5k2gqRPIW7l2z5ywFXezzVUL8JWD0ofyhq8LWfB
+         FTOmAVF71iPB0Tw7d5hAxzc3e4MT1q1wVODJ+x3mhnnD3eIM1PS67fLd70p0x7gRToVd
+         zm279xbi7nIFP7hDRhKpf1UsT601OtzWbsxJqYFu09CFQwxe4eGVhuGZHRTAWhYhl3tS
+         UH8V/vG9Wcy9kWGzJezBUPoRUPqNO9V81WZ8aHTnWAo0yrVzZDiqGBe7yqGWu41nfPmu
+         u7Pw==
+X-Gm-Message-State: APjAAAX2paWV8jFxp/Rhm+rvvlyLXug6t31mUNtCio1kZv3Ad9hS3bV0
+        hIgK8FgGPVMs+2C1hbwcdXVbtPDAXhs=
+X-Google-Smtp-Source: APXvYqyLfiM/yY8EI/4Sm/i06hdMrdhfhj1HyNFKjcjBqFpoHTDendyzweHnTqvKQ5F4jw+c9GzBnQ==
+X-Received: by 2002:adf:e609:: with SMTP id p9mr45201687wrm.397.1577387563096;
+        Thu, 26 Dec 2019 11:12:43 -0800 (PST)
+Received: from localhost.localdomain (p200300F1373A1900428D5CFFFEB99DB8.dip0.t-ipconnect.de. [2003:f1:373a:1900:428d:5cff:feb9:9db8])
+        by smtp.googlemail.com with ESMTPSA id o7sm8965937wmh.11.2019.12.26.11.12.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 10:57:11 -0800 (PST)
-Date:   Thu, 26 Dec 2019 11:57:10 -0700
-From:   Rob Herring <robh@kernel.org>
-To:     Chunyan Zhang <zhang.lyra@gmail.com>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH V2 4/6] clk: sprd: Add dt-bindings include file for
- SC9863A
-Message-ID: <20191226185710.GA13156@bogus>
-References: <20191216121932.22967-1-zhang.lyra@gmail.com>
- <20191216121932.22967-5-zhang.lyra@gmail.com>
+        Thu, 26 Dec 2019 11:12:42 -0800 (PST)
+From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+To:     linux-amlogic@lists.infradead.org, jbrunet@baylibre.com,
+        sboyd@kernel.org
+Cc:     narmstrong@baylibre.com, mturquette@baylibre.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 0/2] clk: Meson8/8b/8m2: fix the mali clock flags
+Date:   Thu, 26 Dec 2019 20:12:22 +0100
+Message-Id: <20191226191224.3785282-1-martin.blumenstingl@googlemail.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191216121932.22967-5-zhang.lyra@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 16 Dec 2019 20:19:30 +0800, Chunyan Zhang wrote:
-> From: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> 
-> This file defines all SC9863A clock indexes, it should be included in the
-> device tree in which there's device using the clocks.
-> 
-> Signed-off-by: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> ---
->  include/dt-bindings/clock/sprd,sc9863a-clk.h | 345 +++++++++++++++++++
->  1 file changed, 345 insertions(+)
->  create mode 100644 include/dt-bindings/clock/sprd,sc9863a-clk.h
-> 
+While playing with devfreq support for the lima driver I experienced
+sporadic (random) system lockups. It turned out that this was in
+certain cases when changing the mali clock.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+The Amlogic vendor GPU platform driver (which is responsible for
+changing the clock frequency) uses the following pattern when updating
+the mali clock rate:
+- at initialization: initialize the two mali_0 and mali_1 clock trees
+  with a default setting and enable both clocks
+- when changing the clock frequency:
+-- set HHI_MALI_CLK_CNTL[31] to temporarily use the mali_1 clock output
+-- update the mali_0 clock tree (set the mux, divider, etc.)
+-- clear HHI_MALI_CLK_CNTL[31] to temporarily use the mali_0 clock
+   output again
+
+With the common clock framework we can even do better:
+by setting CLK_SET_RATE_PARENT for the mali_0 and mali_1 output gates
+we can force the common clock framework to update the "inactive" clock
+and then switch to it's output.
+
+I only tested this patch for a limited time only (approx. 2 hours).
+So far I couldn't reproduce the sporadic system lockups with it.
+However, broader testing would be great so I would like this to be
+applied for -next.
+
+Changes since v1 at [0]:
+- extend the existing comment in patch #1 to describe how the glitch-
+  free mux works with the CCF
+- slightly updated the patch description of patch #1 to clarify that
+  the "mali_0" or "mali_1" trees must not be changed while running
+- add patch #2 to update the clk_set_rate() kerneldoc because we agreed
+  that clk_set_rate() should do a root-to-leaf update (it does already,
+  it's just not documented)
+
+
+[0] https://patchwork.kernel.org/cover/11293177/
+
+
+Martin Blumenstingl (2):
+  clk: meson: meson8b: make the CCF use the glitch-free "mali" mux
+  clk: clarify that clk_set_rate() does updates from top to bottom
+
+ drivers/clk/meson/meson8b.c | 11 +++++++----
+ include/linux/clk.h         |  3 +++
+ 2 files changed, 10 insertions(+), 4 deletions(-)
+
+-- 
+2.24.1
+
