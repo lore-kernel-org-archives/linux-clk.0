@@ -6,86 +6,73 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4C6C2D0C0
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:01:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0788BC2D0C0
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:05:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E0A320828
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:01:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7C9520828
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:04:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577397688;
-	bh=MBkkTBlGWw5olWrDSZWXdjwoo5PlsiIXyeF7PDw8KPI=;
+	s=default; t=1577397899;
+	bh=dDH3D1EfprMu1UoAl8ug4u3jFlQc6Q+o2AOtTd4nevQ=;
 	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=B1lPbzAo/SiYQL+mJeq1T7vJ9bVFVoNb1ot5ATvKbhstIJ2Wb+KhZIp6AYMgfaoIW
-	 nbN3xWrZCYPPbStv7K4ELksg3UJO/1y09kA0/5VJABQg9b1a/UGdrq422r7mhP7nI/
-	 f9qPEhlbOSto8w8SQFE4q6vmiOR7lghUo3d9P60M=
+	b=vF5fEHWG42iZ1sJQWbitc4mL2boGQncLzRZGCmbyyM7OQTMhqxB0Cx9b/jIecvyYa
+	 gXg3qeAD5wIEFV3DCA2Ch9xP0Ds2SpXZvo6t6efHI60NSrRyD0yyfydjyN9u2E88XD
+	 WoI40Xrtc+Bmk4L0Ehs8bBsiIsLJOySFKh34KW6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726827AbfLZWB1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 17:01:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54056 "EHLO mail.kernel.org"
+        id S1726277AbfLZWE7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 17:04:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726277AbfLZWB1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Dec 2019 17:01:27 -0500
+        id S1726105AbfLZWE7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Dec 2019 17:04:59 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0006B2080D;
-        Thu, 26 Dec 2019 22:01:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E4322080D;
+        Thu, 26 Dec 2019 22:04:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577397687;
-        bh=MBkkTBlGWw5olWrDSZWXdjwoo5PlsiIXyeF7PDw8KPI=;
+        s=default; t=1577397898;
+        bh=dDH3D1EfprMu1UoAl8ug4u3jFlQc6Q+o2AOtTd4nevQ=;
         h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=1Hp7vDJ30HYk8fJopeTfrE6NEh+9TnNDKSOseE4yR4j4bDD35fVNRM7Y9EQoyRYdz
-         uHd0JXRQlDZVbh9lNg2/5ZViVl9krzgmKwGfAEfJZRr962z9QKCeZZABMqElyvq5Pc
-         i6f2oaToF5canUwKnCdrNhv12lTnPJpg1z9MlW1w=
+        b=IztsENYbDRRaxNR33TTwwS8DDrwWNLtlqCT1FrMMS4D0tXoWPf4f2NrtlQOtuZ1aA
+         ePg7Bu3e4IM54p9+3+7MQQy+/60e7D2/uh6ulZzcKaOK4/cRhPjutJEa9+5lDVR0K+
+         XD8jLeL+6ioGK0/42zO2mF+OxXRfszLeFNzh3C7g=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191225163429.29694-1-linux@roeck-us.net>
-References: <20191225163429.29694-1-linux@roeck-us.net>
+In-Reply-To: <20191218111742.29731-9-sudeep.holla@arm.com>
+References: <20191218111742.29731-1-sudeep.holla@arm.com> <20191218111742.29731-9-sudeep.holla@arm.com>
 From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Guenter Roeck <linux@roeck-us.net>,
-        Jerome Brunet <jbrunet@baylibre.com>
-To:     Guenter Roeck <linux@roeck-us.net>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH] clk: Don't try to enable critical clocks if prepare failed
+Cc:     Sudeep Holla <sudeep.holla@arm.com>,
+        Cristian Marussi <cristian.marussi@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org
+To:     Sudeep Holla <sudeep.holla@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 08/11] clk: scmi: Match scmi device by both name and protocol id
 User-Agent: alot/0.8.1
-Date:   Thu, 26 Dec 2019 14:01:26 -0800
-Message-Id: <20191226220127.0006B2080D@mail.kernel.org>
+Date:   Thu, 26 Dec 2019 14:04:57 -0800
+Message-Id: <20191226220458.9E4322080D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Guenter Roeck (2019-12-25 08:34:29)
-> The following traceback is seen if a critical clock fails to prepare.
+Quoting Sudeep Holla (2019-12-18 03:17:39)
+> The scmi bus now has support to match the driver with devices not only
+> based on their protocol id but also based on their device name if one is
+> available. This was added to cater the need to support multiple devices
+> and drivers for the same protocol.
 >=20
-> bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
-> ------------[ cut here ]------------
-> Enabling unprepared plld_per
-> WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2=
-c0
-> ...
-> Call trace:
->  clk_core_enable+0xcc/0x2c0
->  __clk_register+0x5c4/0x788
->  devm_clk_hw_register+0x4c/0xb0
->  bcm2835_register_pll_divider+0xc0/0x150
->  bcm2835_clk_probe+0x134/0x1e8
->  platform_drv_probe+0x50/0xa0
->  really_probe+0xd4/0x308
->  driver_probe_device+0x54/0xe8
->  device_driver_attach+0x6c/0x78
->  __driver_attach+0x54/0xd8
-> ...
+> Let us add the name "clocks" to scmi_device_id table in the driver so
+> that in matches only with device with the same name and protocol id
+> SCMI_PROTOCOL_CLOCK.
 >=20
-> Check return values from clk_core_prepare() and clk_core_enable() and
-> bail out if any of those functions returns an error.
->=20
-> Cc: Jerome Brunet <jbrunet@baylibre.com>
-> Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: linux-clk@vger.kernel.org
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
 > ---
 
-Applied to clk-fixes
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 
