@@ -2,97 +2,106 @@ Return-Path: <SRS0=lYXC=2Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B5FC2D0C0
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9AA8C2D0C0
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:23:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DFD320838
-	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:13:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577398436;
-	bh=90pnlG/obJZXLtPlvtggqp56usNEZuHeb/P54sr5v80=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=JK96GtKtTNKMKzbJ+C9eM7cXJ5qruz4BS5Rs3mjQpcTNi1BhIM56VO41sH2P1tWdr
-	 eDoHCKExam/3whYG6OsP8fUhPE5Lr2tub1a5s18ikiJiNyMjvAEOE9ADJKCGt2Kl2E
-	 apQWnZPQOwuhbxCwqdr575hDZvYiJOgfxN1E0gB0=
+	by mail.kernel.org (Postfix) with ESMTP id 850E9206CB
+	for <linux-clk@archiver.kernel.org>; Thu, 26 Dec 2019 22:23:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h5ghKZ7Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726277AbfLZWNz (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 17:13:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33846 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfLZWNz (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 26 Dec 2019 17:13:55 -0500
-Received: from mail.kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A4DAB20740;
-        Thu, 26 Dec 2019 22:13:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577398434;
-        bh=90pnlG/obJZXLtPlvtggqp56usNEZuHeb/P54sr5v80=;
-        h=From:To:Cc:Subject:Date:From;
-        b=z8i51ZYDgmGWuNGdcLm1xmTfdOWeV09OS9PNzq4VaZ+1XMp5vx0Tq72Y2Pok7hk+5
-         ZRe5VmCkExDPFjAlt69RBgU0YugcjXm20wPG+OfOIsFvTdIUNdQcPCHVI4qfJrPzG3
-         ohIDKdA1sPYFjFNBbVe2Ry1fOOaVPSCfhU1sQqnE=
-From:   Stephen Boyd <sboyd@kernel.org>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Guenter Roeck <linux@roeck-us.net>
-Subject: [PATCH] clk: Warn about critical clks that fail to enable
-Date:   Thu, 26 Dec 2019 14:13:54 -0800
-Message-Id: <20191226221354.11957-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
+        id S1726885AbfLZWXb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 17:23:31 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:34744 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726105AbfLZWXb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 17:23:31 -0500
+Received: by mail-pf1-f193.google.com with SMTP id i6so6964193pfc.1
+        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2019 14:23:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=Sprza847Fg3Wz4gx8X0Ya4BdhvQ1Fb4mpkG/Xj/3FE4=;
+        b=h5ghKZ7QvZulvsEfe/dDrD3+cHPYPbwYA06G2rOMtFaM5jznZuvFQTpkDzmk8a44Bu
+         4ZdMEnrtCAU2E/pBbmFy/M5psqskyCfEZwvFqNVRp9ltsjmXnfAG3c7E/+NM58iD+JHi
+         u6BAqKvesPH+nLdfYGqmdjHpbkWJkaHSnrAiLAa+2nKzxZW9sDnbY83wc96tQ6/ctY9P
+         zM4A1AppsJ4LL4a0yUJltMZa7Xe7Oqx9kTIUhMZ8pnzuvM/9ygcD8pKY8yu9BR96eLcv
+         kBhWHheUkboln9UwbuKG6Ef4EunKkQCZ+UJDNFPC06DhxN3bjKBGXQHHUnXqV83LHn1H
+         861Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=Sprza847Fg3Wz4gx8X0Ya4BdhvQ1Fb4mpkG/Xj/3FE4=;
+        b=PL9jTaKgL6GPPrDwODUeaFHtcqsmttfSzw4xzJcpfWcggspmbVnaJA9rzup1wLcfi0
+         dcs7uZafqxBW7ItcVVxj/jqEXKYOxMsX4hNVvckxqxETJ/J6CYGYAdkJGePaHDQQCxEM
+         uoomKosK5nU0/yPvLCXdb0Ko5PARnfNAofiGY/3nt6aTTp3Qm+R+nn82VeAJbZeIMG4A
+         QEAEY62KIb2chpr+U8bUMBTN0s5hLP6HEKfnegFdSyvf2EJDmz2Y+ZM6GvtwtE04XPWc
+         PSQ18qZONAhaeBz2oyK/580mHOyJA8gtifldHqstaBqX1SzDU36FmgvlcIYGy/6IKZVM
+         Xycg==
+X-Gm-Message-State: APjAAAXSZ8KJz6xYqdNZN/jtT2sgF+7gBSCX5IncTd4BnfhQAJyrpioJ
+        ao/py2Bk4FsHDQ1ETh1MrjmPbA==
+X-Google-Smtp-Source: APXvYqyCu1goN+OnYdwfkwXryXqj7LcmvuOHhUxkblWrrpql52W39bq2TU9mRFQIpm8+K+MEiVP+tQ==
+X-Received: by 2002:a62:5447:: with SMTP id i68mr41980642pfb.44.1577399010364;
+        Thu, 26 Dec 2019 14:23:30 -0800 (PST)
+Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id i11sm12282752pjg.0.2019.12.26.14.23.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 26 Dec 2019 14:23:29 -0800 (PST)
+Date:   Thu, 26 Dec 2019 14:23:15 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Paolo Pisati <p.pisati@gmail.com>
+Subject: Re: [PATCH 1/2] clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks
+Message-ID: <20191226222315.GD1908628@ripper>
+References: <20191207203603.2314424-1-bjorn.andersson@linaro.org>
+ <20191207203603.2314424-2-bjorn.andersson@linaro.org>
+ <20191224024845.445A92070E@mail.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20191224024845.445A92070E@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-If we don't warn here users of the CLK_IS_CRITICAL flag may not know
-that their clk isn't actually enabled because it silently fails to
-enable. Let's drop a big WARN_ON in that case so developers find these
-problems faster.
+On Mon 23 Dec 18:48 PST 2019, Stephen Boyd wrote:
 
-Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
+> Quoting Bjorn Andersson (2019-12-07 12:36:02)
+> > The CLKREF clocks are all fed by the clock signal on the CXO2 pad on the
+> > SoC. Update the definition of these clocks to allow this to be wired up
+> > to the appropriate clock source.
+> > 
+> > Retain "xo" as the global named parent to make the change a nop in the
+> > event that DT doesn't carry the necessary clocks definition.
+> > 
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> > ---
+> >  .../devicetree/bindings/clock/qcom,gcc.yaml   |  6 ++--
+> >  drivers/clk/qcom/gcc-msm8996.c                | 35 +++++++++++++++----
+> >  2 files changed, 32 insertions(+), 9 deletions(-)
+> 
+> What is this patch based on? I think I'm missing some sort of 8996 yaml
+> gcc binding patch.
+> 
 
-I suspect that this may start warning for other users. Let's see
-and revert in case it doesn't work.
+The patch applies cleanly on linux-next and afaict it depends on the
+yamlification done in 9de7269e9703 ("dt-bindings: clock: Add YAML
+schemas for the QCOM GCC clock bindings"), which git tells me is
+included in v5.5-rc1 as well.
 
- drivers/clk/clk.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Am I misunderstanding your question?
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 772258de2d1f..6a9a66dfdeaa 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3427,13 +3427,13 @@ static int __clk_core_init(struct clk_core *core)
- 		unsigned long flags;
- 
- 		ret = clk_core_prepare(core);
--		if (ret)
-+		if (WARN_ON(ret))
- 			goto out;
- 
- 		flags = clk_enable_lock();
- 		ret = clk_core_enable(core);
- 		clk_enable_unlock(flags);
--		if (ret) {
-+		if (WARN_ON(ret)) {
- 			clk_core_unprepare(core);
- 			goto out;
- 		}
-
-base-commit: 12ead77432f2ce32dea797742316d15c5800cb32
--- 
-Sent by a computer, using git, on the internet
-
+Regards,
+Bjorn
