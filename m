@@ -2,114 +2,214 @@ Return-Path: <SRS0=11AX=2R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 395B4C2D0DC
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 00:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DC8C2D0C0
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 01:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F07E20882
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 00:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6098120838
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 01:33:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577408350;
-	bh=24eJ6Avn14dhmQXXO11gVGgOVubQHh7MvHAR0V0HDLU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=vS2SEtfQ0pI/0XTzDL8MoZsHk51G2bOIWd6EfROiRuIVQinl/yTMKY6QqY6fZJK5a
-	 oOGHS4Gzb2f1r+xF87nWs+GmHipC/sG2sbij5x+D7iYEoTgmciOPXwh8ER39s0X88y
-	 XbsEyXNUSPlxYGgGaspm8aB48gVp9pbE4xfJk05s=
+	s=default; t=1577410399;
+	bh=5Yx3y9PHsdQln0iIJjCGPleS3otmhTjrs6Rx8bNhXJI=;
+	h=In-Reply-To:References:From:To:Subject:Date:List-ID:From;
+	b=0b4BVwxnydNEzsNFwWpnYikNAL8wDoxB6Nsde+mZXB/Xuo6lHUhWg7QVNG+2MH/J1
+	 If24MLeqLzmleslIJpEitYxt4gNkvgmHZJ+LpSJicrXBjzo790M1JJ1T6CcA65m7Ra
+	 ++gdKXcF47fO+ypnr/qRje+KF6yV4z+g/oYT/krU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfL0A7J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 19:59:09 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43302 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726277AbfL0A7J (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 19:59:09 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b2rtFlDWT9u7yqTvQM+L2HoYozAhuvbhOAHBbpkqe5o=; b=rJE9LqGxvBqnQ69avZ18Yrp9H
-        Wbg67tXSt2jFUMHx2UKQw5x82OAOcvfSyTNeQaRAzgOWpLMpNwk8i2M1+SBp7ckOqJ2qjeQS9ecFr
-        ZpHY7u5nCsAWlwSiAkubqm7F6n6/WGrayjvT1KpeCEa9UB01CggOupVUMh368oE5RNfAo=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=fitzroy.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.92)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1ikdxz-00048c-Ip; Fri, 27 Dec 2019 00:58:59 +0000
-Received: by fitzroy.sirena.org.uk (Postfix, from userid 1000)
-        id 98563D01896; Fri, 27 Dec 2019 00:58:58 +0000 (GMT)
-Date:   Fri, 27 Dec 2019 00:58:58 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Cc:     masonccyang@mxic.com.tw, Chris Brandt <Chris.Brandt@renesas.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-renesas-soc@vger.kernel.org" 
-        <linux-renesas-soc@vger.kernel.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2 0/6] spi: Add Renesas SPIBSC controller
-Message-ID: <20191227005858.GJ27497@sirena.org.uk>
-References: <TY1PR01MB156215E8668C0317FA0826B18A580@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <e6a73df5-31c4-3472-f7bc-a0984f1f5380@cogentembedded.com>
- <TY1PR01MB1562D343E1AB06DCA2973DAC8A550@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <590840ce-a250-2512-3d04-c2420d83f7da@cogentembedded.com>
- <TY1PR01MB1562B9EB96818DCA507079808A510@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <bb630141-021c-5618-f266-b98b29956fa8@cogentembedded.com>
- <TY1PR01MB1562E196AB1C582F186CC74B8A520@TY1PR01MB1562.jpnprd01.prod.outlook.com>
- <6f4c5d92-3ca4-2d1d-47c4-cbd52ad428b0@cogentembedded.com>
- <OF3F92D76C.33FFFBFC-ON482584D6.00093DAC-482584D6.0009A51D@mxic.com.tw>
- <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
+        id S1726277AbfL0BdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 20:33:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726193AbfL0BdT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 26 Dec 2019 20:33:19 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7E912080D;
+        Fri, 27 Dec 2019 01:33:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577410397;
+        bh=5Yx3y9PHsdQln0iIJjCGPleS3otmhTjrs6Rx8bNhXJI=;
+        h=In-Reply-To:References:From:To:Subject:Date:From;
+        b=XI+Zisoxpm8SwwYJNDsvSQkTzHwpTwZsSfUEWofgzSM16z8W8FIw6ba4xmhq+xBK2
+         fBHr9PUlNxRqckDZJeXlJj4ucC70RecitokBRLdysZ0XaCyun70yO9W/kHDpwt5w2v
+         awLJaUtqmWgnr8E6hc2tLTjRoD90CRRlb9mflaOQ=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="ZG+WKzXzVby2T9Ro"
-Content-Disposition: inline
-In-Reply-To: <bac1f4db-302d-0dd7-3b66-341a74f67a6b@cogentembedded.com>
-X-Cookie: I have many CHARTS and DIAGRAMS..
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1576752109-24497-6-git-send-email-sricharan@codeaurora.org>
+References: <1576752109-24497-1-git-send-email-sricharan@codeaurora.org> <1576752109-24497-6-git-send-email-sricharan@codeaurora.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     agross@kernel.org, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-soc@vger.kernel.org, robh+dt@kernel.org,
+        sivaprak@codeaurora.org, sricharan@codeaurora.org
+Subject: Re: [PATCH V2 5/7] clk: qcom: Add ipq6018 Global Clock Controller support
+User-Agent: alot/0.8.1
+Date:   Thu, 26 Dec 2019 17:33:16 -0800
+Message-Id: <20191227013317.C7E912080D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Sricharan R (2019-12-19 02:41:47)
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 3b33ef1..d0392f1 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -95,6 +95,14 @@ config IPQ_GCC_4019
+>           Say Y if you want to use peripheral devices such as UART, SPI,
+>           i2c, USB, SD/eMMC, etc.
+> =20
+> +config IPQ_GCC_6018
+> +       tristate "IPQ6018 Global Clock Controller"
+> +       help
+> +         Support for global clock controller on ipq6018 devices.
+> +         Say Y if you want to use peripheral devices such as UART, SPI,
+> +         i2c, USB, SD/eMMC, etc. Select this for the root clock
+> +         of ipq6018.
 
---ZG+WKzXzVby2T9Ro
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+What is the root clock of ipq6018?
 
-On Tue, Dec 24, 2019 at 07:58:21PM +0300, Sergei Shtylyov wrote:
+> +
+>  config IPQ_GCC_806X
+>         tristate "IPQ806x Global Clock Controller"
+>         help
+> diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq601=
+8.c
+> new file mode 100644
+> index 0000000..b6f0148
+> --- /dev/null
+> +++ b/drivers/clk/qcom/gcc-ipq6018.c
+> @@ -0,0 +1,4674 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2018, The Linux Foundation. All rights reserved.
+> + */
+> +
+> +#include <linux/kernel.h>
+> +#include <linux/err.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/regmap.h>
+> +
+> +#include <linux/reset-controller.h>
+> +#include <dt-bindings/clock/qcom,gcc-ipq6018.h>
+> +#include <dt-bindings/reset/qcom,gcc-ipq6018.h>
+> +
+> +#include "common.h"
+> +#include "clk-regmap.h"
+> +#include "clk-pll.h"
+> +#include "clk-rcg.h"
+> +#include "clk-branch.h"
+> +#include "clk-alpha-pll.h"
+> +#include "clk-regmap-divider.h"
+> +#include "clk-regmap-mux.h"
+> +#include "reset.h"
+> +
+> +#define F(f, s, h, m, n) { (f), (s), (2 * (h) - 1), (m), (n) }
+> +
+> +enum {
+> +       P_XO,
+> +       P_BIAS_PLL,
+> +       P_UNIPHY0_RX,
+> +       P_UNIPHY0_TX,
+> +       P_UNIPHY1_RX,
+> +       P_BIAS_PLL_NSS_NOC,
+> +       P_UNIPHY1_TX,
+> +       P_PCIE20_PHY0_PIPE,
+> +       P_USB3PHY_0_PIPE,
+> +       P_GPLL0,
+> +       P_GPLL0_DIV2,
+> +       P_GPLL2,
+> +       P_GPLL4,
+> +       P_GPLL6,
+> +       P_SLEEP_CLK,
+> +       P_UBI32_PLL,
+> +       P_NSS_CRYPTO_PLL,
+> +       P_PI_SLEEP,
+> +};
+> +
+> +static const struct clk_parent_data gcc_xo_gpll0_gpll0_out_main_div2[] =
+=3D {
+> +       { .fw_name =3D "xo", .name =3D "xo"},
+> +       { .fw_name =3D "gpll0", .name =3D "gpll0"},
+> +       { .fw_name =3D "gpll0_out_main_div2", .name =3D "gpll0_out_main_d=
+iv2"},
 
->    It doesn't matter much what's in the renesas-soc patchwork, the patch would
-> be merged thru the linux-spi repo, and in their patchwork the status of your v17
-> patches is "New, archived"...
+Because we aren't migrating this from existing DT to new DT we should be
+able to leave out .name in all these structs. That's the legacy fallback
+mechanism used to migrate DT over to the new way.
 
-To be fair patchwork isn't exactly used in the review process for
-SPI like it is with some other subsystems so other than automated
-updates when things get applied or superceeded the states don't
-mean a huge amount.  Like I said elsewhere in the thread I'd been
-expecting some review from other people working with this
-hardware since up until that point it had been pretty active.
+> +};
+> +
+> +static const struct parent_map gcc_xo_gpll0_gpll0_out_main_div2_map[] =
+=3D {
+> +       { P_XO, 0 },
+> +       { P_GPLL0, 1 },
+> +       { P_GPLL0_DIV2, 4 },
+> +};
+> +
+[...]
+> +
+> +static int gcc_ipq6018_probe(struct platform_device *pdev)
+> +{
+> +       int i, ret;
+> +       struct regmap *regmap;
+> +       struct clk *clk;
+> +       struct device *dev =3D &pdev->dev;
+> +
+> +       regmap =3D qcom_cc_map(pdev, &gcc_ipq6018_desc);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       for (i =3D 0; i < ARRAY_SIZE(gcc_ipq6018_hws); i++) {
+> +               clk =3D devm_clk_register(&pdev->dev, gcc_ipq6018_hws[i]);
+> +               if (IS_ERR(clk))
+> +                       return PTR_ERR(clk);
+> +       }
+> +
+> +       clk_register_fixed_rate(dev, "pcie20_phy0_pipe_clk", NULL, 0, 250=
+000000);
 
---ZG+WKzXzVby2T9Ro
-Content-Type: application/pgp-signature; name="signature.asc"
+Why do we need to register this? Can it come from DT then? Also what if
+it fails? And what if really_probe fails? Then we'll need to undo this
+registration. Ideally this is created somewhere else.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +       /* Disable SW_COLLAPSE for USB0 GDSCR */
+> +       regmap_update_bits(regmap, 0x3e078, BIT(0), 0x0);
+> +       /* Enable SW_OVERRIDE for USB0 GDSCR */
+> +       regmap_update_bits(regmap, 0x3e078, BIT(2), BIT(2));
+> +       /* Disable SW_COLLAPSE for USB1 GDSCR */
+> +       regmap_update_bits(regmap, 0x3f078, BIT(0), 0x0);
+> +       /* Enable SW_OVERRIDE for USB1 GDSCR */
+> +       regmap_update_bits(regmap, 0x3f078, BIT(2), BIT(2));
+> +
+> +       /* SW Workaround for UBI Huyara PLL */
+> +       regmap_update_bits(regmap, 0x2501c, BIT(26), BIT(26));
+> +
+> +       clk_alpha_pll_configure(&ubi32_pll_main, regmap, &ubi32_pll_confi=
+g);
+> +
+> +       clk_alpha_pll_configure(&nss_crypto_pll_main, regmap,
+> +                               &nss_crypto_pll_config);
+> +
+> +       ret =3D qcom_cc_really_probe(pdev, &gcc_ipq6018_desc, regmap);
+> +
+> +       dev_dbg(&pdev->dev, "Registered ipq6018 clock provider");
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4FV1EACgkQJNaLcl1U
-h9Dw/Qf9H6McVLuJOf7UR+8tvE28HHYofwkbY9W0uLfOPBnIsIVtKzOG2cAfPJay
-kXZ0Up1m1wHAMLGSw9Cb0NO8sweKh9ke+7V8lP9uXajisXtUbUVar3kgita+zRtB
-Qsv/8L4zPyskxKL97XySBb+28UPEcmm2evLJf+LUiL6msYQ2S9960UKZ8JYj90g3
-GDCZgbuZjGNpzy/fmQib5mG9JbpXHAzy0QSrT5X7h+hIepp/zDI+C1r+wyOzM7YE
-pNtZ9ndxtEaKGqkmW+slAJn3peHxOqvS6S1BTGANnCPfsruGKOb/XL4ItNcOpLzp
-7jHMO77S8ZX5o+nu46YjuqwYv+ziCA==
-=L9BN
------END PGP SIGNATURE-----
+Please remove this and just return the result of really_probe.
 
---ZG+WKzXzVby2T9Ro--
+> +
+> +       return ret;
+> +}
