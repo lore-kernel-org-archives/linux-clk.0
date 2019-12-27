@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C66C2D0C6
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 06:39:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66316C2D0C3
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 06:39:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A39120882
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 06:39:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39EDF20CC7
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 06:39:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="EshxMI6k"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="xA+IvecV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726538AbfL0GjF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Dec 2019 01:39:05 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:49553 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727122AbfL0GjE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Dec 2019 01:39:04 -0500
+        id S1727215AbfL0GjW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Dec 2019 01:39:22 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:20925 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727240AbfL0GjW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Dec 2019 01:39:22 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1577428744; h=References: In-Reply-To: Message-Id: Date:
+ s=smtp; t=1577428761; h=References: In-Reply-To: Message-Id: Date:
  Subject: Cc: To: From: Sender;
- bh=tAwYy0/Rv6fEN1n94Y1H83WdAyxZjsoA0t2egkDA0HU=; b=EshxMI6kUXl3uCwkadKPZHWYjlb9s5yJzlOG67PlWZ1PaeJAPfJuNjPVGIfhJYdpPJA2rA5z
- JI7Uw82zkyHCwCGH+kuHcbjDR/jGS3K0EuluVkDQkbdNPGAxX1XX/4q8JXB+Xq6C7TAN4cO5
- gmyde69OCRK5avX85R9hAiJKS0M=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ bh=ED19oCczwV2UFlfq68R6UTeBcqLK3BJjh4lx+T2hwAc=; b=xA+IvecVb3psl11jqTzBhfs9MxNfyQ3ouxKzEsz76gK5VZWc1+RxewbTod9cc44+c8ngG5SE
+ VEmPVvW1T+ogqcF5SA0jNB1iYbsBcrdOzFCPaNG4xEPlOq6JHss6pRKa6XJg3Sef/OV7Cf8a
+ ECURjEFY3y99FjR3PJJgzWWHacw=
+X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e05a705.7fdb14894ca8-smtp-out-n02;
- Fri, 27 Dec 2019 06:39:01 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e05a718.7f1a79e28378-smtp-out-n03;
+ Fri, 27 Dec 2019 06:39:20 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id E076EC447AD; Fri, 27 Dec 2019 06:38:59 +0000 (UTC)
+        id 5B7A1C433A2; Fri, 27 Dec 2019 06:39:19 +0000 (UTC)
 Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8DDC9C433A2;
-        Fri, 27 Dec 2019 06:38:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DDC9C433A2
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 6A21AC43383;
+        Fri, 27 Dec 2019 06:39:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 6A21AC43383
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
 From:   Taniya Das <tdas@codeaurora.org>
@@ -53,9 +53,9 @@ Cc:     David Brown <david.brown@linaro.org>,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: [PATCH v3 2/6] dt-bindings: clock: Introduce QCOM Graphics clock bindings
-Date:   Fri, 27 Dec 2019 12:08:30 +0530
-Message-Id: <1577428714-17766-3-git-send-email-tdas@codeaurora.org>
+Subject: [PATCH v3 5/6] dt-bindings: clock: Introduce SC7180 QCOM Video clock bindings
+Date:   Fri, 27 Dec 2019 12:08:33 +0530
+Message-Id: <1577428714-17766-6-git-send-email-tdas@codeaurora.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
 References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
@@ -64,54 +64,56 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add device tree bindings for graphics clock controller for
+Add device tree bindings for video clock controller for
 Qualcomm Technology Inc's SC7180 SoCs.
 
 Signed-off-by: Taniya Das <tdas@codeaurora.org>
 Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- .../devicetree/bindings/clock/qcom,gpucc.yaml       |  1 +
- include/dt-bindings/clock/qcom,gpucc-sc7180.h       | 21 +++++++++++++++++++++
- 2 files changed, 22 insertions(+)
- create mode 100644 include/dt-bindings/clock/qcom,gpucc-sc7180.h
+ .../devicetree/bindings/clock/qcom,videocc.yaml    |  1 +
+ include/dt-bindings/clock/qcom,videocc-sc7180.h    | 23 ++++++++++++++++++++++
+ 2 files changed, 24 insertions(+)
+ create mode 100644 include/dt-bindings/clock/qcom,videocc-sc7180.h
 
-diff --git a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-index 993913d..622845a 100644
---- a/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-+++ b/Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-@@ -17,6 +17,7 @@ properties:
+diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+index fc3fcca..43cfc89 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+@@ -16,6 +16,7 @@ description: |
+ properties:
    compatible:
      enum:
-       - qcom,msm8998-gpucc
-+      - qcom,sc7180-gpucc
-       - qcom,sdm845-gpucc
++      - qcom,sc7180-videocc
+       - qcom,sdm845-videocc
 
    clocks:
-diff --git a/include/dt-bindings/clock/qcom,gpucc-sc7180.h b/include/dt-bindings/clock/qcom,gpucc-sc7180.h
+diff --git a/include/dt-bindings/clock/qcom,videocc-sc7180.h b/include/dt-bindings/clock/qcom,videocc-sc7180.h
 new file mode 100644
-index 0000000..0e4643b
+index 0000000..7acaf13
 --- /dev/null
-+++ b/include/dt-bindings/clock/qcom,gpucc-sc7180.h
-@@ -0,0 +1,21 @@
++++ b/include/dt-bindings/clock/qcom,videocc-sc7180.h
+@@ -0,0 +1,23 @@
 +/* SPDX-License-Identifier: GPL-2.0-only */
 +/*
 + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
 + */
 +
-+#ifndef _DT_BINDINGS_CLK_QCOM_GPU_CC_SC7180_H
-+#define _DT_BINDINGS_CLK_QCOM_GPU_CC_SC7180_H
++#ifndef _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SC7180_H
++#define _DT_BINDINGS_CLK_QCOM_VIDEO_CC_SC7180_H
 +
-+#define GPU_CC_PLL1			0
-+#define GPU_CC_AHB_CLK			1
-+#define GPU_CC_CRC_AHB_CLK		2
-+#define GPU_CC_CX_GMU_CLK		3
-+#define GPU_CC_CX_SNOC_DVM_CLK		4
-+#define GPU_CC_CXO_AON_CLK		5
-+#define GPU_CC_CXO_CLK			6
-+#define GPU_CC_GMU_CLK_SRC		7
++/* VIDEO_CC clocks */
++#define VIDEO_PLL0				0
++#define VIDEO_CC_VCODEC0_AXI_CLK		1
++#define VIDEO_CC_VCODEC0_CORE_CLK		2
++#define VIDEO_CC_VENUS_AHB_CLK			3
++#define VIDEO_CC_VENUS_CLK_SRC			4
++#define VIDEO_CC_VENUS_CTL_AXI_CLK		5
++#define VIDEO_CC_VENUS_CTL_CORE_CLK		6
++#define VIDEO_CC_XO_CLK				7
 +
-+/* CAM_CC GDSCRs */
-+#define CX_GDSC				0
++/* VIDEO_CC GDSCRs */
++#define VENUS_GDSC				0
++#define VCODEC0_GDSC				1
 +
 +#endif
 --
