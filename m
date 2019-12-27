@@ -2,176 +2,170 @@ Return-Path: <SRS0=11AX=2R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E445DC2D0C6
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:23:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC442C2D0C6
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B264920882
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:23:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="iUba+NWN"
+	by mail.kernel.org (Postfix) with ESMTP id 9B1842067D
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:51:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577469083;
+	bh=ta6P7W4Qxx76cOxWAlSlu27XJGWgczrHYC2HaYJxa4o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rZb2VuWVjtaIxsGMw+ub2xZxn/8IhTHj622wmQCswu72h4ynai9+Hkni4q5BkiwwD
+	 jfxlQU0/zfIBX3mU2ArfRtAe3tD2HGnJxwZXvvEjSbW40ijdugTxbQanpqjD/jkDuB
+	 mnKXIe6qBZLfBWJ5CY0pSmWj6MRLSDRL2YQVddPY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726527AbfL0RXF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Dec 2019 12:23:05 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34563 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726495AbfL0RXF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Dec 2019 12:23:05 -0500
-Received: by mail-ed1-f65.google.com with SMTP id l8so25866051edw.1;
-        Fri, 27 Dec 2019 09:23:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0UU+ysXx+Shc0uhfL0eYU+6BwpIeAsm7S9P/UHU0eAg=;
-        b=iUba+NWNA3cOXpD5+r04DSS11HD3AciHWRXYHS97zSESLqL4y0CXv4NzzuOaX99bzt
-         ijCXSOhYV7ucxVIFQWm5EEk/PHpCHm262LIdFhKd3Rj0m8MgP13uJJMMPxutIF12TVyt
-         NeWqHxRT6MtNP4fmJIauTMBXbxKxEjttj5+94a23FLWXoIAoodB+HyGqa6S8lOrIe75v
-         i60FDLNZzZLYOIW5tvr+PcsslPbLLmKqP+wm0iZRMRi6GIy9xPTVDyI4MDcgS98s5Z5k
-         0s44aKJRenjj9Cfz02DFsvOurf9rWc/4pyIoPOH42pX6++sh94sq7PqyE2MsZ3kWiC4a
-         Fk1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0UU+ysXx+Shc0uhfL0eYU+6BwpIeAsm7S9P/UHU0eAg=;
-        b=b6ZUDnFx4I6w5s/M132PXjmdrSw61Kw9qdjNctyk2SWWPCNscHWEDNPacJ+AKG9T4B
-         DQmEtkVlT7q1m1jhJSekGolrrTi1pX1zEgxlQcY7AuuguLjoOM8JVS9xRgUuMw9GMt2a
-         VrJPRktVprQHYLC2OBDa/MozsZXNPFAZ5QjBXXuUO0+W2SV6nx0s1tOI8FkYNvYrRlso
-         NzEevGfslypRMF6cla+4Vy+SDjWc9DTyTARVIM/SzjKZmMYB4UCBdVTtaYlmRglTrMux
-         QSHQoyq2NXzP3YTwoYFrBIAhXPeyjVabsFqWMP81pYy6y5fVCK/k80kXdMtWtX7PsKGp
-         LYfg==
-X-Gm-Message-State: APjAAAX08T4qCdm8K8vbLlDFp6+zRYYdeUG7rKB6BSnxQxfOcwOW8+Ol
-        QWzl2EaBe6KdWnRyNXbQYh+q471KjvNhUooZs2ZEdDFo
-X-Google-Smtp-Source: APXvYqygztpCwMZ2tOw2bt5blxVcse049EWJn1V8ypi9uRoEfMAWYxJV7H8W3FniudLtvI6csg6ZP2n5//ATD5ueUVI=
-X-Received: by 2002:a50:bae1:: with SMTP id x88mr39175305ede.10.1577467383228;
- Fri, 27 Dec 2019 09:23:03 -0800 (PST)
-MIME-Version: 1.0
-References: <20191227094606.143637-1-jian.hu@amlogic.com> <20191227094606.143637-6-jian.hu@amlogic.com>
-In-Reply-To: <20191227094606.143637-6-jian.hu@amlogic.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 27 Dec 2019 18:22:52 +0100
-Message-ID: <CAFBinCB_0+k6rGxChpB77rPUrb-0mzxt_nQWXbiztCJnJq8XnQ@mail.gmail.com>
-Subject: Re: [PATCH v5 5/5] clk: meson: a1: add support for Amlogic A1
- Peripheral clock driver
-To:     Jian Hu <jian.hu@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
+        id S1727612AbfL0RvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Dec 2019 12:51:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728238AbfL0Rn2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Dec 2019 12:43:28 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A63B821744;
+        Fri, 27 Dec 2019 17:43:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577468607;
+        bh=ta6P7W4Qxx76cOxWAlSlu27XJGWgczrHYC2HaYJxa4o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=i1R8KvnO8Py5NUmbcgVF31xE7Rx4O/AvPkg8WjwzCCEsiM3knECYStBvI7myMf4Ul
+         xlvmTGUfVfxuVC+9D3oo3TO+3p3BDPodA6bjr7iF4LnO2mgnDt6JJrpLarmVnWFW3C
+         aEoXDN7CZojteSugWdAv3GXlRwhSoKg/ieZNvEwI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
         Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 5.4 127/187] clk: at91: fix possible deadlock
+Date:   Fri, 27 Dec 2019 12:39:55 -0500
+Message-Id: <20191227174055.4923-127-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20191227174055.4923-1-sashal@kernel.org>
+References: <20191227174055.4923-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
- Hi Jian,
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-my comments and questions below
-please keep in mind that I don't have access to the A1 datasheets, so
-I may ask stupid questions :)
+[ Upstream commit 6956eb33abb5deab2cd916b4c31226b57736bc3c ]
 
-On Fri, Dec 27, 2019 at 10:47 AM Jian Hu <jian.hu@amlogic.com> wrote:
-[...]
-> +/* PLLs clock in gates, its parent is xtal */
-yes. doesn't the code below describe exactly this (what is so special
-about it that we need an extra comment)?
+Lockdep warns about a possible circular locking dependency because using
+syscon_node_to_regmap() will make the created regmap get and enable the
+first clock it can parse from the device tree. This clock is not needed to
+access the registers and should not be enabled at that time.
 
-[...]
-> +static const struct clk_parent_data sys_clk_parents[] = {
-> +       { .fw_name = "xtal" },
-> +       { .fw_name = "fclk_div2"},
-> +       { .fw_name = "fclk_div3"},
-> +       { .fw_name = "fclk_div5"},
-the last three values are missing a space before "}"
+Use the recently introduced device_node_to_regmap to solve that as it looks
+up the regmap in the same list but doesn't care about the clocks.
 
-[...]
-> +       .hw.init = &(struct clk_init_data){
-> +               .name = "sys_clk",
-> +               .ops = &clk_regmap_mux_ro_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &a1_sys_a.hw, &a1_sys_b.hw,
-> +               },
-> +               .num_parents = 2,
-> +               /*
-> +                * This clock is used by APB bus which setted in Romcode
-like in the PLL clkc patch:
-- setted -> "is set"
-- Romcode == boot ROM ?
+Reported-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Link: https://lkml.kernel.org/r/20191128102531.817549-1-alexandre.belloni@bootlin.com
+Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/clk/at91/at91sam9260.c | 2 +-
+ drivers/clk/at91/at91sam9rl.c  | 2 +-
+ drivers/clk/at91/at91sam9x5.c  | 2 +-
+ drivers/clk/at91/pmc.c         | 2 +-
+ drivers/clk/at91/sama5d2.c     | 2 +-
+ drivers/clk/at91/sama5d4.c     | 2 +-
+ 6 files changed, 6 insertions(+), 6 deletions(-)
 
-[...]
-> +static struct clk_regmap a1_rtc_32k_sel = {
-> +       .data = &(struct clk_regmap_mux_data) {
-> +               .offset = RTC_CTRL,
-> +               .mask = 0x3,
-> +               .shift = 0,
-> +               .flags = CLK_MUX_ROUND_CLOSEST,
-CLK_MUX_ROUND_CLOSEST means the common clock framework will also
-accept rates greater than 32kHz.
-is that fine for this case?
+diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
+index 0aabe49aed09..a9d4234758d7 100644
+--- a/drivers/clk/at91/at91sam9260.c
++++ b/drivers/clk/at91/at91sam9260.c
+@@ -348,7 +348,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
+ 
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
+index 0ac34cdaa106..77fe83a73bf4 100644
+--- a/drivers/clk/at91/at91sam9rl.c
++++ b/drivers/clk/at91/at91sam9rl.c
+@@ -83,7 +83,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
+ 
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
+index 0855f3a80cc7..086cf0b4955c 100644
+--- a/drivers/clk/at91/at91sam9x5.c
++++ b/drivers/clk/at91/at91sam9x5.c
+@@ -146,7 +146,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
+ 
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
+index 0b03cfae3a9d..b71515acdec1 100644
+--- a/drivers/clk/at91/pmc.c
++++ b/drivers/clk/at91/pmc.c
+@@ -275,7 +275,7 @@ static int __init pmc_register_ops(void)
+ 
+ 	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
+ 
+-	pmcreg = syscon_node_to_regmap(np);
++	pmcreg = device_node_to_regmap(np);
+ 	if (IS_ERR(pmcreg))
+ 		return PTR_ERR(pmcreg);
+ 
+diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
+index 0de1108737db..ff7e3f727082 100644
+--- a/drivers/clk/at91/sama5d2.c
++++ b/drivers/clk/at91/sama5d2.c
+@@ -162,7 +162,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
+ 
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
+index 25b156d4e645..a6dee4a3b6e4 100644
+--- a/drivers/clk/at91/sama5d4.c
++++ b/drivers/clk/at91/sama5d4.c
+@@ -136,7 +136,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
+ 		return;
+ 	mainxtal_name = of_clk_get_parent_name(np, i);
+ 
+-	regmap = syscon_node_to_regmap(np);
++	regmap = device_node_to_regmap(np);
+ 	if (IS_ERR(regmap))
+ 		return;
+ 
+-- 
+2.20.1
 
-[...]
-> +/*
-> + * the second parent is sys_pll_div16, it will complete in the CPU clock,
-I was confused by this but I assume you mean the parent with index 2?
-
-> + * the forth parent is the clock measurement source, it relies on
-> + * the clock measurement register configuration.
-...and parent with index 4 here
-
-[...]
-> +static struct clk_regmap a1_pwm_a = {
-> +       .data = &(struct clk_regmap_gate_data){
-> +               .offset = PWM_CLK_AB_CTRL,
-> +               .bit_idx = 8,
-> +       },
-> +       .hw.init = &(struct clk_init_data) {
-> +               .name = "pwm_a",
-> +               .ops = &clk_regmap_gate_ops,
-> +               .parent_hws = (const struct clk_hw *[]) {
-> +                       &a1_pwm_a_div.hw
-> +               },
-> +               .num_parents = 1,
-> +               /*
-> +                * The CPU working voltage is controlled by pwm_a
-> +                * in BL2 firmware. add the CLK_IS_CRITICAL flag
-> +                * to avoid changing at runtime.
-on G12A and G12B Linux has to manage the CPU voltage regulator
-can you confirm that for the A1 SoC this is really done by BL2? (I'm
-wondering since A1 is newer than G12)
-
-> +/*
-> + * spicc clk
-> + *    div2   |\         |\       _____
-> + *  ---------| |---DIV--| |     |     |    spicc out
-> + *  ---------| |        | |-----|GATE |---------
-> + *     ..... |/         | /     |_____|
-> + *  --------------------|/
-> + *                 24M
-does that "div2" stand for fclk_div2?
-
-[...]
-> +static const struct meson_eeclkc_data a1_periphs_data = {
-> +               .regmap_clks = a1_periphs_regmaps,
-> +               .regmap_clk_num = ARRAY_SIZE(a1_periphs_regmaps),
-> +               .hw_onecell_data = &a1_periphs_hw_onecell_data,
-> +};
-same comment as for the PLL clkc: please drop this and use the
-variables directly inside _probe to get rid of the struct
-meson_eeclkc_data (so I won't be confused about "EE clocks" on A1,
-while according to your description there's no "EE" domain)
-
-
-Martin
