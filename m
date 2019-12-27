@@ -2,153 +2,110 @@ Return-Path: <SRS0=11AX=2R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F0BDC2D0C0
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 02:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C01C2D0C3
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 04:06:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F6720828
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 02:27:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04BCF20882
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 04:06:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v9A7QNZc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q09vfW/S"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfL0C1I (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 21:27:08 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:39889 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726375AbfL0C1I (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 21:27:08 -0500
-Received: by mail-pj1-f65.google.com with SMTP id t101so4268162pjb.4
-        for <linux-clk@vger.kernel.org>; Thu, 26 Dec 2019 18:27:07 -0800 (PST)
+        id S1727016AbfL0EGB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 23:06:01 -0500
+Received: from mail-pj1-f68.google.com ([209.85.216.68]:54946 "EHLO
+        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbfL0EGB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 23:06:01 -0500
+Received: by mail-pj1-f68.google.com with SMTP id kx11so4198433pjb.4;
+        Thu, 26 Dec 2019 20:06:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to;
-        bh=HRaliDhVnq/217XrC6XzvYQIHefSB9f5VfV1cfrjUjM=;
-        b=v9A7QNZciiH62Ux6WW7R7xt+ao5jHaKO5BX25D0sUtapTFAFgOI4SFc52AwZFEHshO
-         JDbBh61Ud+suCwpCgAM6o9+NuBGMUWV2qmUUocRwJBDnwJXKWFZHaJX1NBVO9OENU8HS
-         r9O46WduKLe97dPIGfT2QWAl54m0eUhpvDPO9hKJ0NqZfhzEFoI0CGBSoYsIPLZJ36+m
-         IjC458eZoRAZfndRER6z1QjcKv3zefsN5vU9JkklIVU1ahAPpmbP9DjvkCBV7z/oCQTP
-         r9K3rINpALchJw3rSinOw7KYQEr5QZ6fyY9Qx2iT9DM74epROK7155Xfo9ERQcKkpWK1
-         xkgg==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=PJkLmBIgDAd224gT5d1DEVPXAmElvH5/SyzF20ifwMo=;
+        b=Q09vfW/SGRVXtGM34/lTpgtjhPEwrGBE0/EEJtzI8/vsrFCra+4gqmIdydDRooImqY
+         8muJdTK0JrpppOytreDPvtY/s0vepd+ye9WYnrhigJY9qnSBsf6KsYN6bItx3l/5JksD
+         feGkXzrpe8ewZU02qrAJfZGfu541zCACZZrvS05Vz8ArDVYFf0xKdnawIfyDYnrnENYP
+         TK0zNg89pxEI5wEhK4F59cITHcyUIvaKFyVvo8FTbTCAEvbvPg9Zi1jrF9Kx/VVg+TvR
+         m9aQGLKkVxgNKbxBmvLEXSHdhoQxEBI3L8G4ORs3j5MumPoGhMOjE79ZsRvruWaxxOTE
+         IcQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to;
-        bh=HRaliDhVnq/217XrC6XzvYQIHefSB9f5VfV1cfrjUjM=;
-        b=YfXddzPQPPwxcqMthB4mzlkY9J9Iey+Ara2EKboMEWP6e/ydmW6tZ9YkMbvcFyDn39
-         9I4XfsGGLBTLUb0mmvWpSELolOla+jTdEDs9U0mig4yT06z00X6lwin2bt6GDG6YGSKY
-         xY+aefpHeNTuxxfkMo863NayzcpkoRIZTM6kcOUIt+biM4bHSPxa3Gp42rjXK2OkICuY
-         fIfK82oOWWZdjdiOSKd/3mXDeFPHPOlttQ1Ibd9ILV9W/eSQ00z+0MS7ClIzM+bkq4I3
-         T/P/R8Bq4lKwfkSn0m/mNHdma/r58IZAxa+X4YMrF5QvCDYD8wYKjjoQpGYPu40n+sj0
-         PA5w==
-X-Gm-Message-State: APjAAAXUXOokHaadxqcElyY1Rq7K1ze9e65EEEGsL5PmR9HNRfu41jys
-        vCLuWAG5MFhlEjbynqlTAytsTA==
-X-Google-Smtp-Source: APXvYqz7Pwn5lGym0No+6OsEjVrryh9zt/AGCvff0ordJzYAJnVuW8tN9WwPRMUYgQRsCBMpdTI4qg==
-X-Received: by 2002:a17:902:8481:: with SMTP id c1mr21078144plo.319.1577413627086;
-        Thu, 26 Dec 2019 18:27:07 -0800 (PST)
-Received: from ripper (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id h26sm40975182pfr.9.2019.12.26.18.27.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 26 Dec 2019 18:27:06 -0800 (PST)
-Date:   Thu, 26 Dec 2019 18:26:52 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=PJkLmBIgDAd224gT5d1DEVPXAmElvH5/SyzF20ifwMo=;
+        b=QZzQtXQmtD1feD3+bIGK+rHdjZvHF7tAweyKkp6gQuZoO3/YWDk3ChNxNFwBuG4k7H
+         rVxtporNdg6fxb9DnMpNE8F5SU1ftE5jmCReF+8mXQ6nBgH5lj/T/nLcphqWDxzNc77y
+         eGOalQGxO9dpvKLHhI1iLb6qguJVutOnPkJpW0zfYpij/p/iRyBEXkfquhGYsgrjXN3S
+         aQ3ibtfQEVbT+K9tazEB0sZp8exX9VwN3Qi9EP+CNURU22r4pIL4/aCmxDUoeaJIRfFp
+         vOUmTj7v+PyRVyzTYfK9JWx+D1dkjM3BMA/MQpCEexAhQSZ9YnKnq85Z2rVHuj/Z82jy
+         MCjA==
+X-Gm-Message-State: APjAAAUN6FrgM5P687QBgTAEZ/RMCJJBoH4C4s7fTXl8W2XNv4vsJcP+
+        dG9tA4RHhOuwlZU4qOSi23g6UNAF
+X-Google-Smtp-Source: APXvYqzOu6CINIEj+3Po9oup12+oEk7wt9we8AL0MVzW4ktlZFw08d31+E8r7YXUCsU9yx30F9mPqg==
+X-Received: by 2002:a17:902:b087:: with SMTP id p7mr51612685plr.10.1577419560274;
+        Thu, 26 Dec 2019 20:06:00 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d65sm38462733pfa.159.2019.12.26.20.05.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 26 Dec 2019 20:05:59 -0800 (PST)
+Date:   Thu, 26 Dec 2019 20:05:58 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
 To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Niklas Cassel <nks@flawful.org>, Andy Gross <agross@kernel.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        linux-arm-msm@vger.kernel.org, amit.kucheria@linaro.org,
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
         Michael Turquette <mturquette@baylibre.com>,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] clk: qcom: apcs-msm8916: use clk_parent_data to
- specify the parent
-Message-ID: <20191227022652.GH1908628@ripper>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org>
- <20191125135910.679310-8-niklas.cassel@linaro.org>
- <20191219062339.DC0DE21582@mail.kernel.org>
- <20191220175616.3wdslb7hm773zb22@flawful.org>
- <20191224021636.CF47E20643@mail.kernel.org>
+Subject: Re: [PATCH] clk: Don't try to enable critical clocks if prepare
+ failed
+Message-ID: <20191227040558.GA22856@roeck-us.net>
+References: <20191225163429.29694-1-linux@roeck-us.net>
+ <1jd0cbpg77.fsf@starbuckisacylon.baylibre.com>
+ <fed37460-6097-1a3d-3c05-e203871610ac@roeck-us.net>
+ <20191226215919.CFD572080D@mail.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191224021636.CF47E20643@mail.kernel.org>
+In-Reply-To: <20191226215919.CFD572080D@mail.kernel.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 23 Dec 18:16 PST 2019, Stephen Boyd wrote:
-
-> Quoting Niklas Cassel (2019-12-20 09:56:16)
-> > On Wed, Dec 18, 2019 at 10:23:39PM -0800, Stephen Boyd wrote:
-> > > This is odd. The clks could be registered with of_clk_hw_register() but
-> > > then we lose the device provider information. Maybe we should search up
-> > > one level to the parent node and if that has a DT node but the
-> > > clk controller device doesn't we should use that instead?
+On Thu, Dec 26, 2019 at 01:59:19PM -0800, Stephen Boyd wrote:
+> Quoting Guenter Roeck (2019-12-26 09:22:10)
+> > On 12/26/19 1:51 AM, Jerome Brunet wrote:
+> > > 
+> > > However, we would not want a critical clock to silently fail to
+> > > enable. This might lead to unexpected behavior which are generally hard
+> > > (and annoying) to debug.
+> > > 
+> > > Would you mind adding some kind of warning trace in case this fails ?
+> > > 
 > > 
-> > Hello Stephen,
+> > The really relevant information is:
 > > 
-> > Having this in the clk core is totally fine with me,
-> > since it solves my problem.
+> > bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
 > > 
-> > Will you cook up a patch, or do you want me to do it?
-> > 
+> > which is already displayed (and not surprising since cprman isn't implemented
+> > in qemu). While I agree that an error message might be useful, replacing
+> > one traceback with another doesn't really make sense to me, and I am not
+> > really a friend of spreading tracebacks throughout the kernel. Please feel
+> > free to consider this patch to be a bug report, and feel free to ignore it
+> > and suggest something else.
 > 
-> Can you try the patch I appended to my previous mail? I can write
-> something up more proper later this week.
+> Can the cprman device node be disabled or removed in the DT that qemu
+> uses? If it isn't actually implemented then it shouldn't be in the DT.
+> Presumably that will make this traceback go away.
 > 
+cprman feeds all clocks. If the node isn't there, the system doesn't boot.
+Also, I don't modify devicetree files in my boot tests; that would defeat
+the purpose - like, in this case, to find missing error handling.
 
-Unfortunately we have clocks with no dev, so this fail as below. Adding
-a second check for dev != NULL to your oneliner works fine though.
+Again, please feel free to ignore this patch.
 
-I.e. this ugly hack works fine:
-  core->of_node = np ? : (dev ? dev_of_node(dev->parent) : NULL);
-
-Regards,
-Bjorn
-
-[    0.000000] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000040
-[    0.000000] Mem abort info:
-[    0.000000]   ESR = 0x96000004
-[    0.000000]   EC = 0x25: DABT (current EL), IL = 32 bits
-[    0.000000]   SET = 0, FnV = 0
-[    0.000000]   EA = 0, S1PTW = 0
-[    0.000000] Data abort info:
-[    0.000000]   ISV = 0, ISS = 0x00000004
-[    0.000000]   CM = 0, WnR = 0
-[    0.000000] [0000000000000040] user address but active_mm is swapper
-[    0.000000] Internal error: Oops: 96000004 [#1] PREEMPT SMP
-[    0.000000] Modules linked in:
-[    0.000000] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 5.5.0-rc2-next-20191220-00017-g359fd8f91acb-dirty #107
-[    0.000000] Hardware name: Qualcomm Technologies, Inc. QCS404 EVB 4000 (DT)
-[    0.000000] pstate: 80000085 (Nzcv daIf -PAN -UAO)
-[    0.000000] pc : __clk_register (drivers/clk/clk.c:3679)
-[    0.000000] lr : __clk_register (drivers/clk/clk.c:3664)
-[    0.000000] sp : ffffdb6871043d70
-[    0.000000] x29: ffffdb6871043d70 x28: ffff00003ddf4518
-[    0.000000] x27: 0000000000000001 x26: 0000000000000008
-[    0.000000] x25: 0000000000000000 x24: 0000000000000000
-[    0.000000] x23: 0000000000000000 x22: 0000000000000000
-[    0.000000] x21: ffff00003d821080 x20: ffffdb6871043e60
-[    0.000000] x19: ffff00003d822000 x18: 0000000000000014
-[    0.000000] x17: 000000006f7295ba x16: 0000000043d45a86
-[    0.000000] x15: 000000005f0037cd x14: 00000000b22e3fc4
-[    0.000000] x13: 0000000000000001 x12: 0000000000000000
-[    0.000000] x11: 0101010101010101 x10: 7f7f7f7f7f7f7f7f
-[    0.000000] x9 : fefefefefefefeff x8 : 7f7f7f7f7f7f7f7f
-[    0.000000] x7 : 6371606e612c6e77 x6 : ffff00003d821109
-[    0.000000] x5 : 0000000000000000 x4 : ffff00003dd9d060
-[    0.000000] x3 : 0000000000000000 x2 : 0000000000000009
-[    0.000000] x1 : ffff00003ddf47b9 x0 : ffffdb68705b0ee0
-[    0.000000] Call trace:
-[    0.000000] __clk_register (drivers/clk/clk.c:3679)
-[    0.000000] clk_hw_register (./include/linux/err.h:60 drivers/clk/clk.c:3760)
-[    0.000000] clk_hw_register_fixed_rate_with_accuracy (drivers/clk/clk-fixed-rate.c:82)
-[    0.000000] _of_fixed_clk_setup (drivers/clk/clk-fixed-rate.c:98 drivers/clk/clk-fixed-rate.c:173)
-[    0.000000] of_fixed_clk_setup (drivers/clk/clk-fixed-rate.c:193)
-[    0.000000] of_clk_init (drivers/clk/clk.c:4856)
-[    0.000000] time_init (arch/arm64/kernel/time.c:59)
-[    0.000000] start_kernel (init/main.c:697)
-
-
+Guenter
