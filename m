@@ -7,52 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC442C2D0C6
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:51:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E67C2D0C6
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:53:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B1842067D
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:51:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA2F920CC7
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:53:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577469083;
-	bh=ta6P7W4Qxx76cOxWAlSlu27XJGWgczrHYC2HaYJxa4o=;
+	s=default; t=1577469227;
+	bh=2fWph/ItbPzO4DF1XjbTfqheJe3a3uYNXv0N8SZl55w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rZb2VuWVjtaIxsGMw+ub2xZxn/8IhTHj622wmQCswu72h4ynai9+Hkni4q5BkiwwD
-	 jfxlQU0/zfIBX3mU2ArfRtAe3tD2HGnJxwZXvvEjSbW40ijdugTxbQanpqjD/jkDuB
-	 mnKXIe6qBZLfBWJ5CY0pSmWj6MRLSDRL2YQVddPY=
+	b=DmfUEK0AOx48kUGBGWFwMOsXVGhehTdOkiT2G1BxWW395yJl5toHWQGRzSFsAevCE
+	 v0ZHn/tH1vKseeJkHaVGxQMRCT4voXdu2ex0WYxNOS6baiVvXqzvKGNrLFw23CQdvK
+	 D2knSvsz/f9PkabnY3zGIF1g8FfNVRuqnuLePw3w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbfL0RvN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Dec 2019 12:51:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40970 "EHLO mail.kernel.org"
+        id S1727947AbfL0Rmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Dec 2019 12:42:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728238AbfL0Rn2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:43:28 -0500
+        id S1727962AbfL0Rmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 27 Dec 2019 12:42:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A63B821744;
-        Fri, 27 Dec 2019 17:43:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5171E20740;
+        Fri, 27 Dec 2019 17:42:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577468607;
-        bh=ta6P7W4Qxx76cOxWAlSlu27XJGWgczrHYC2HaYJxa4o=;
+        s=default; t=1577468564;
+        bh=2fWph/ItbPzO4DF1XjbTfqheJe3a3uYNXv0N8SZl55w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i1R8KvnO8Py5NUmbcgVF31xE7Rx4O/AvPkg8WjwzCCEsiM3knECYStBvI7myMf4Ul
-         xlvmTGUfVfxuVC+9D3oo3TO+3p3BDPodA6bjr7iF4LnO2mgnDt6JJrpLarmVnWFW3C
-         aEoXDN7CZojteSugWdAv3GXlRwhSoKg/ieZNvEwI=
+        b=Ek5HNad94J9UvQm4qRn7WtvIblZvilXXHSGkNvkPK+jyV+h6+foeeStn1bsq5SCbF
+         iyozP6LC4oiLhz37ZzIo+Wsne7VNGX7Aut8B6/g9fviVVKf+6kYQKF7LRHEe7A1PZf
+         8ef5q6loRGrPkh/MFk2Yaxxp4OwUsQ3Fp4dSsMvs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 127/187] clk: at91: fix possible deadlock
-Date:   Fri, 27 Dec 2019 12:39:55 -0500
-Message-Id: <20191227174055.4923-127-sashal@kernel.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Jian Hu <jian.hu@amlogic.com>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 5.4 089/187] clk: walk orphan list on clock provider registration
+Date:   Fri, 27 Dec 2019 12:39:17 -0500
+Message-Id: <20191227174055.4923-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20191227174055.4923-1-sashal@kernel.org>
 References: <20191227174055.4923-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-stable: review
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -61,111 +58,140 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 6956eb33abb5deab2cd916b4c31226b57736bc3c ]
+[ Upstream commit 66d9506440bb05289eb4867059e7b8c6ed209717 ]
 
-Lockdep warns about a possible circular locking dependency because using
-syscon_node_to_regmap() will make the created regmap get and enable the
-first clock it can parse from the device tree. This clock is not needed to
-access the registers and should not be enabled at that time.
+So far, we walked the orphan list every time a new clock was registered
+in CCF. This was fine since the clocks were only referenced by name.
 
-Use the recently introduced device_node_to_regmap to solve that as it looks
-up the regmap in the same list but doesn't care about the clocks.
+Now that the clock can be referenced through DT, it is not enough:
+* Controller A register first a reference clocks from controller B
+  through DT.
+* Controller B register all its clocks then register the provider.
 
-Reported-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Link: https://lkml.kernel.org/r/20191128102531.817549-1-alexandre.belloni@bootlin.com
-Tested-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Each time controller B registers a new clock, the orphan list is walked
+but it can't match since the provider is registered yet. When the
+provider is finally registered, the orphan list is not walked unless
+another clock is registered afterward.
+
+This can lead to situation where some clocks remain orphaned even if
+the parent is available.
+
+Walking the orphan list on provider registration solves the problem.
+
+Reported-by: Jian Hu <jian.hu@amlogic.com>
+Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Link: https://lkml.kernel.org/r/20191203080805.104628-1-jbrunet@baylibre.com
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/at91/at91sam9260.c | 2 +-
- drivers/clk/at91/at91sam9rl.c  | 2 +-
- drivers/clk/at91/at91sam9x5.c  | 2 +-
- drivers/clk/at91/pmc.c         | 2 +-
- drivers/clk/at91/sama5d2.c     | 2 +-
- drivers/clk/at91/sama5d4.c     | 2 +-
- 6 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/clk.c | 62 ++++++++++++++++++++++++++++++-----------------
+ 1 file changed, 40 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/clk/at91/at91sam9260.c b/drivers/clk/at91/at91sam9260.c
-index 0aabe49aed09..a9d4234758d7 100644
---- a/drivers/clk/at91/at91sam9260.c
-+++ b/drivers/clk/at91/at91sam9260.c
-@@ -348,7 +348,7 @@ static void __init at91sam926x_pmc_setup(struct device_node *np,
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 1c677d7f7f53..9c570bfc40d6 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3231,6 +3231,41 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ }
+ #endif
  
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
++static void clk_core_reparent_orphans_nolock(void)
++{
++	struct clk_core *orphan;
++	struct hlist_node *tmp2;
++
++	/*
++	 * walk the list of orphan clocks and reparent any that newly finds a
++	 * parent.
++	 */
++	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
++		struct clk_core *parent = __clk_init_parent(orphan);
++
++		/*
++		 * We need to use __clk_set_parent_before() and _after() to
++		 * to properly migrate any prepare/enable count of the orphan
++		 * clock. This is important for CLK_IS_CRITICAL clocks, which
++		 * are enabled during init but might not have a parent yet.
++		 */
++		if (parent) {
++			/* update the clk tree topology */
++			__clk_set_parent_before(orphan, parent);
++			__clk_set_parent_after(orphan, parent, NULL);
++			__clk_recalc_accuracies(orphan);
++			__clk_recalc_rates(orphan, 0);
++		}
++	}
++}
++
++static void clk_core_reparent_orphans(void)
++{
++	clk_prepare_lock();
++	clk_core_reparent_orphans_nolock();
++	clk_prepare_unlock();
++}
++
+ /**
+  * __clk_core_init - initialize the data structures in a struct clk_core
+  * @core:	clk_core being initialized
+@@ -3241,8 +3276,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
+ static int __clk_core_init(struct clk_core *core)
+ {
+ 	int ret;
+-	struct clk_core *orphan;
+-	struct hlist_node *tmp2;
+ 	unsigned long rate;
  
-diff --git a/drivers/clk/at91/at91sam9rl.c b/drivers/clk/at91/at91sam9rl.c
-index 0ac34cdaa106..77fe83a73bf4 100644
---- a/drivers/clk/at91/at91sam9rl.c
-+++ b/drivers/clk/at91/at91sam9rl.c
-@@ -83,7 +83,7 @@ static void __init at91sam9rl_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
+ 	if (!core)
+@@ -3389,27 +3422,8 @@ static int __clk_core_init(struct clk_core *core)
+ 		clk_enable_unlock(flags);
+ 	}
  
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
+-	/*
+-	 * walk the list of orphan clocks and reparent any that newly finds a
+-	 * parent.
+-	 */
+-	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
+-		struct clk_core *parent = __clk_init_parent(orphan);
++	clk_core_reparent_orphans_nolock();
  
-diff --git a/drivers/clk/at91/at91sam9x5.c b/drivers/clk/at91/at91sam9x5.c
-index 0855f3a80cc7..086cf0b4955c 100644
---- a/drivers/clk/at91/at91sam9x5.c
-+++ b/drivers/clk/at91/at91sam9x5.c
-@@ -146,7 +146,7 @@ static void __init at91sam9x5_pmc_setup(struct device_node *np,
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
+-		/*
+-		 * We need to use __clk_set_parent_before() and _after() to
+-		 * to properly migrate any prepare/enable count of the orphan
+-		 * clock. This is important for CLK_IS_CRITICAL clocks, which
+-		 * are enabled during init but might not have a parent yet.
+-		 */
+-		if (parent) {
+-			/* update the clk tree topology */
+-			__clk_set_parent_before(orphan, parent);
+-			__clk_set_parent_after(orphan, parent, NULL);
+-			__clk_recalc_accuracies(orphan);
+-			__clk_recalc_rates(orphan, 0);
+-		}
+-	}
  
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
+ 	kref_init(&core->ref);
+ out:
+@@ -4255,6 +4269,8 @@ int of_clk_add_provider(struct device_node *np,
+ 	mutex_unlock(&of_clk_mutex);
+ 	pr_debug("Added clock from %pOF\n", np);
  
-diff --git a/drivers/clk/at91/pmc.c b/drivers/clk/at91/pmc.c
-index 0b03cfae3a9d..b71515acdec1 100644
---- a/drivers/clk/at91/pmc.c
-+++ b/drivers/clk/at91/pmc.c
-@@ -275,7 +275,7 @@ static int __init pmc_register_ops(void)
++	clk_core_reparent_orphans();
++
+ 	ret = of_clk_set_defaults(np, true);
+ 	if (ret < 0)
+ 		of_clk_del_provider(np);
+@@ -4290,6 +4306,8 @@ int of_clk_add_hw_provider(struct device_node *np,
+ 	mutex_unlock(&of_clk_mutex);
+ 	pr_debug("Added clk_hw provider from %pOF\n", np);
  
- 	np = of_find_matching_node(NULL, sama5d2_pmc_dt_ids);
- 
--	pmcreg = syscon_node_to_regmap(np);
-+	pmcreg = device_node_to_regmap(np);
- 	if (IS_ERR(pmcreg))
- 		return PTR_ERR(pmcreg);
- 
-diff --git a/drivers/clk/at91/sama5d2.c b/drivers/clk/at91/sama5d2.c
-index 0de1108737db..ff7e3f727082 100644
---- a/drivers/clk/at91/sama5d2.c
-+++ b/drivers/clk/at91/sama5d2.c
-@@ -162,7 +162,7 @@ static void __init sama5d2_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
- 
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
- 
-diff --git a/drivers/clk/at91/sama5d4.c b/drivers/clk/at91/sama5d4.c
-index 25b156d4e645..a6dee4a3b6e4 100644
---- a/drivers/clk/at91/sama5d4.c
-+++ b/drivers/clk/at91/sama5d4.c
-@@ -136,7 +136,7 @@ static void __init sama5d4_pmc_setup(struct device_node *np)
- 		return;
- 	mainxtal_name = of_clk_get_parent_name(np, i);
- 
--	regmap = syscon_node_to_regmap(np);
-+	regmap = device_node_to_regmap(np);
- 	if (IS_ERR(regmap))
- 		return;
- 
++	clk_core_reparent_orphans();
++
+ 	ret = of_clk_set_defaults(np, true);
+ 	if (ret < 0)
+ 		of_clk_del_provider(np);
 -- 
 2.20.1
 
