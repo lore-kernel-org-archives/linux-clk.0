@@ -2,196 +2,131 @@ Return-Path: <SRS0=11AX=2R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E67C2D0C6
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:53:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BFE4C2D0DA
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 21:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA2F920CC7
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 17:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577469227;
-	bh=2fWph/ItbPzO4DF1XjbTfqheJe3a3uYNXv0N8SZl55w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DmfUEK0AOx48kUGBGWFwMOsXVGhehTdOkiT2G1BxWW395yJl5toHWQGRzSFsAevCE
-	 v0ZHn/tH1vKseeJkHaVGxQMRCT4voXdu2ex0WYxNOS6baiVvXqzvKGNrLFw23CQdvK
-	 D2knSvsz/f9PkabnY3zGIF1g8FfNVRuqnuLePw3w=
+	by mail.kernel.org (Postfix) with ESMTP id 700B820838
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 21:20:05 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lTrdhLtU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727947AbfL0Rmq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Dec 2019 12:42:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39858 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727962AbfL0Rmp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 27 Dec 2019 12:42:45 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5171E20740;
-        Fri, 27 Dec 2019 17:42:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577468564;
-        bh=2fWph/ItbPzO4DF1XjbTfqheJe3a3uYNXv0N8SZl55w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ek5HNad94J9UvQm4qRn7WtvIblZvilXXHSGkNvkPK+jyV+h6+foeeStn1bsq5SCbF
-         iyozP6LC4oiLhz37ZzIo+Wsne7VNGX7Aut8B6/g9fviVVKf+6kYQKF7LRHEe7A1PZf
-         8ef5q6loRGrPkh/MFk2Yaxxp4OwUsQ3Fp4dSsMvs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Jian Hu <jian.hu@amlogic.com>, Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 089/187] clk: walk orphan list on clock provider registration
-Date:   Fri, 27 Dec 2019 12:39:17 -0500
-Message-Id: <20191227174055.4923-89-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20191227174055.4923-1-sashal@kernel.org>
-References: <20191227174055.4923-1-sashal@kernel.org>
+        id S1726369AbfL0VUC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Dec 2019 16:20:02 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:17303 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbfL0VUC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Dec 2019 16:20:02 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e0675740000>; Fri, 27 Dec 2019 13:19:48 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Fri, 27 Dec 2019 13:20:01 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Fri, 27 Dec 2019 13:20:01 -0800
+Received: from [10.2.173.37] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 27 Dec
+ 2019 21:20:00 +0000
+Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
+ for audio mclk
+To:     Dmitry Osipenko <digetx@gmail.com>, Mark Brown <broonie@kernel.org>
+CC:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
+        <sboyd@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <spujar@nvidia.com>, <josephl@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
+ <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+ <20191225175736.GC27497@sirena.org.uk>
+ <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <dbbce994-27f5-d949-078d-05646100e6be@nvidia.com>
+Date:   Fri, 27 Dec 2019 13:19:59 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: quoted-printable
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1577481588; bh=jZvV6hBkMM5Yr4UvEkRndXiGnt0j3d2GsRy1bKw+1ZQ=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=lTrdhLtUMlsmPRtO7bEC9eQVmtszFNAjGEyoJHTAOJ8YDvmYcui+mjFF69f9bWcC+
+         OFQ8IWLdsk5RdSDVMkbHkx3KCe21Zq1G3HJaZ6TohE2lccvfrJOKWKs36P0OJ9603T
+         Y0WTQ8Ys+blXlqceLQWV0xhIYxm32fNGilkLjhgbH6sjl2BVQHuTSySSt6X+GyUNmC
+         taUJ70fgL3aFAIdXl4XNC8/guhno7Q130wn/idkaoNsIF4nC1Mt8ECvC5tFjhFkqiC
+         qQWB+vY/2FO9+hSliRute35To65/jV2jle+TCNQ95EpycJWV4rZXedCxHvlM2Tlxzz
+         LPRkQ7BA/Beyg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 66d9506440bb05289eb4867059e7b8c6ed209717 ]
+On 12/27/19 6:56 AM, Dmitry Osipenko wrote:
+> 25.12.2019 20:57, Mark Brown =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>> On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
+>>> 21.12.2019 01:26, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
+>>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+>>>> through Tegra210 and currently Tegra clock driver does initial parent
+>>>> configuration for audio mclk "clk_out_1" and enables them by default.
+>> Please delete unneeded context from mails when replying.  Doing this
+>> makes it much easier to find your reply in the message, helping ensure
+>> it won't be missed by people scrolling through the irrelevant quoted
+>> material.
+> Ok
+>
+>>>> -	clk_disable_unprepare(data->clk_cdev1);
+>>>> -	clk_disable_unprepare(data->clk_pll_a_out0);
+>>>> -	clk_disable_unprepare(data->clk_pll_a);
+>>>> +	if (__clk_is_enabled(data->clk_cdev1))
+>>>> +		clk_disable_unprepare(data->clk_cdev1);
+>>> The root of the problem is that you removed clocks enabling from
+>>> tegra_asoc_utils_init().
+currently, audio mclk and its parent clocks enabling are from clock=20
+driver init and not from tegra_asoc_utils_init.
+>>> I'm not sure why clocks should be disabled during the rate-changing,
+>>> probably this action is not really needed.
+>> I know nothing about this particular device but this is not that
+>> unusual a restriction for audio hardware, you often can't
+>> robustly reconfigure the clocking for a device while it's active
+>> due to issues in the hardware.  You often see issues with FIFOs
+>> glitching or state machines getting stuck.  This may not be an
+>> issue here but if it's something that's documented as a
+>> requirement it's probably good to pay attention.
+> I don't know details about that hardware either, maybe it is simply not
+> safe to change PLL_A rate dynamically and then CLK_SET_RATE_GATE could
+> be used.
+>
+> If nobody knows for sure, then will be better to keep
+> tegra_asoc_utils_set_rate() unchanged.
+plla rate change through tegra_asoc_utils_set_rate() happens only when=20
+there is not active playback or record corresponding to this sound device.
 
-So far, we walked the orphan list every time a new clock was registered
-in CCF. This was fine since the clocks were only referenced by name.
+So, I don't see reason for disabling clock during rate change and not=20
+sure why we had this from the beginning.
 
-Now that the clock can be referenced through DT, it is not enough:
-* Controller A register first a reference clocks from controller B
-  through DT.
-* Controller B register all its clocks then register the provider.
+Thierry/Sameer,
 
-Each time controller B registers a new clock, the orphan list is walked
-but it can't match since the provider is registered yet. When the
-provider is finally registered, the orphan list is not walked unless
-another clock is registered afterward.
+Can you please comment?
 
-This can lead to situation where some clocks remain orphaned even if
-the parent is available.
-
-Walking the orphan list on provider registration solves the problem.
-
-Reported-by: Jian Hu <jian.hu@amlogic.com>
-Fixes: fc0c209c147f ("clk: Allow parents to be specified without string names")
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-Link: https://lkml.kernel.org/r/20191203080805.104628-1-jbrunet@baylibre.com
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/clk.c | 62 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 40 insertions(+), 22 deletions(-)
-
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 1c677d7f7f53..9c570bfc40d6 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -3231,6 +3231,41 @@ static inline void clk_debug_unregister(struct clk_core *core)
- }
- #endif
- 
-+static void clk_core_reparent_orphans_nolock(void)
-+{
-+	struct clk_core *orphan;
-+	struct hlist_node *tmp2;
-+
-+	/*
-+	 * walk the list of orphan clocks and reparent any that newly finds a
-+	 * parent.
-+	 */
-+	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
-+		struct clk_core *parent = __clk_init_parent(orphan);
-+
-+		/*
-+		 * We need to use __clk_set_parent_before() and _after() to
-+		 * to properly migrate any prepare/enable count of the orphan
-+		 * clock. This is important for CLK_IS_CRITICAL clocks, which
-+		 * are enabled during init but might not have a parent yet.
-+		 */
-+		if (parent) {
-+			/* update the clk tree topology */
-+			__clk_set_parent_before(orphan, parent);
-+			__clk_set_parent_after(orphan, parent, NULL);
-+			__clk_recalc_accuracies(orphan);
-+			__clk_recalc_rates(orphan, 0);
-+		}
-+	}
-+}
-+
-+static void clk_core_reparent_orphans(void)
-+{
-+	clk_prepare_lock();
-+	clk_core_reparent_orphans_nolock();
-+	clk_prepare_unlock();
-+}
-+
- /**
-  * __clk_core_init - initialize the data structures in a struct clk_core
-  * @core:	clk_core being initialized
-@@ -3241,8 +3276,6 @@ static inline void clk_debug_unregister(struct clk_core *core)
- static int __clk_core_init(struct clk_core *core)
- {
- 	int ret;
--	struct clk_core *orphan;
--	struct hlist_node *tmp2;
- 	unsigned long rate;
- 
- 	if (!core)
-@@ -3389,27 +3422,8 @@ static int __clk_core_init(struct clk_core *core)
- 		clk_enable_unlock(flags);
- 	}
- 
--	/*
--	 * walk the list of orphan clocks and reparent any that newly finds a
--	 * parent.
--	 */
--	hlist_for_each_entry_safe(orphan, tmp2, &clk_orphan_list, child_node) {
--		struct clk_core *parent = __clk_init_parent(orphan);
-+	clk_core_reparent_orphans_nolock();
- 
--		/*
--		 * We need to use __clk_set_parent_before() and _after() to
--		 * to properly migrate any prepare/enable count of the orphan
--		 * clock. This is important for CLK_IS_CRITICAL clocks, which
--		 * are enabled during init but might not have a parent yet.
--		 */
--		if (parent) {
--			/* update the clk tree topology */
--			__clk_set_parent_before(orphan, parent);
--			__clk_set_parent_after(orphan, parent, NULL);
--			__clk_recalc_accuracies(orphan);
--			__clk_recalc_rates(orphan, 0);
--		}
--	}
- 
- 	kref_init(&core->ref);
- out:
-@@ -4255,6 +4269,8 @@ int of_clk_add_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clock from %pOF\n", np);
- 
-+	clk_core_reparent_orphans();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
-@@ -4290,6 +4306,8 @@ int of_clk_add_hw_provider(struct device_node *np,
- 	mutex_unlock(&of_clk_mutex);
- 	pr_debug("Added clk_hw provider from %pOF\n", np);
- 
-+	clk_core_reparent_orphans();
-+
- 	ret = of_clk_set_defaults(np, true);
- 	if (ret < 0)
- 		of_clk_del_provider(np);
--- 
-2.20.1
+Yes, we can use CLK_SET_RATE_GATE for PLLA and remove clock disabling=20
+before rate change.
 
