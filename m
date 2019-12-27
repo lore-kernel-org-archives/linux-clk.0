@@ -2,91 +2,149 @@ Return-Path: <SRS0=11AX=2R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EECC2D0DA
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 06:44:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B49EC2D0C6
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 07:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8781A208C4
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 06:44:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 61109206CB
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 07:01:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="RDk+DMH7"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="XH7UgCIl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726491AbfL0Goh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 27 Dec 2019 01:44:37 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:41326 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726297AbfL0Gog (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Dec 2019 01:44:36 -0500
+        id S1726379AbfL0HBK (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 27 Dec 2019 02:01:10 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:33761 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726396AbfL0HBK (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 27 Dec 2019 02:01:10 -0500
 DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1577429076; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=3CSvDtpGg7KClQhTEdyBaheE3oP4+TR2kHYW+0myb+w=; b=RDk+DMH7I3mtSYQlr5mETwOT8ufi7JvVejwmOtVuc/yYRIuNHwOfMNIoxqI6ReLl4NYo6ddg
- HyX9Kjl/kWxZF2pNdjHBMobbCF3Q6CB/dMs2TBsrR9HbFOyHgdYpZZzBNRnuf6y1pfkPy+sS
- s5daWHA9I8BIHGcjv3fcRDQ2RmQ=
-X-Mailgun-Sending-Ip: 104.130.122.26
+ s=smtp; t=1577430069; h=Message-ID: References: In-Reply-To: Subject:
+ Cc: To: From: Date: Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Sender; bh=jEq3NH8Tt/tdYJokKq7xs3z1G/fYNQMKHrUk2kxZTyE=;
+ b=XH7UgCIlGU1QyDpo/KNS3BFSM9DHsTuGmzRRsxEnS12Oi4n0wlEHcejE1GqB89JyRK30ScQE
+ QmAzTtLPSdlhrnczlR7ZDvQDL540fVptjzMJA62sbiSzmV29riTaIneiG9EcyUnxstd3Qil1
+ up04KPyLV54bdZKT0ij7MBQabb0=
+X-Mailgun-Sending-Ip: 104.130.122.25
 X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
 Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e05a852.7f2673138ed8-smtp-out-n03;
- Fri, 27 Dec 2019 06:44:34 -0000 (UTC)
+ by mxa.mailgun.org with ESMTP id 5e05ac34.7f01612741b8-smtp-out-n02;
+ Fri, 27 Dec 2019 07:01:08 -0000 (UTC)
 Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 76EF2C433CB; Fri, 27 Dec 2019 06:44:34 +0000 (UTC)
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id 24E47C447A0; Fri, 27 Dec 2019 07:01:07 +0000 (UTC)
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        (using TLSv1 with cipher ECDHE-RSA-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8DDE2C447A0;
-        Fri, 27 Dec 2019 06:44:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8DDE2C447A0
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 0/8] Add GPU & Video Clock controller driver for SC7180
-To:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
+        (Authenticated sender: sibis)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 67CA6C4479F;
+        Fri, 27 Dec 2019 07:01:05 +0000 (UTC)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 27 Dec 2019 12:31:05 +0530
+From:   Sibi Sankar <sibis@codeaurora.org>
+To:     Taniya Das <tdas@codeaurora.org>, bjorn.andersson@linaro.org
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?Q?Michael_Turquette_=C2=A0?= <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, robh@kernel.org, robh+dt@kernel.org
-References: <1573812304-24074-1-git-send-email-tdas@codeaurora.org>
- <20191224023250.5A3EC206D3@mail.kernel.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <c2906227-fc53-895c-824c-13f4b69a3610@codeaurora.org>
-Date:   Fri, 27 Dec 2019 12:14:26 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
-MIME-Version: 1.0
-In-Reply-To: <20191224023250.5A3EC206D3@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        linux-arm-msm-owner@vger.kernel.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
+In-Reply-To: <1577421760-1174-2-git-send-email-tdas@codeaurora.org>
+References: <1577421760-1174-1-git-send-email-tdas@codeaurora.org>
+ <1577421760-1174-2-git-send-email-tdas@codeaurora.org>
+Message-ID: <5b16d051146224c1efad40c4548dd0c4@codeaurora.org>
+X-Sender: sibis@codeaurora.org
+User-Agent: Roundcube Webmail/1.3.9
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hey Taniya,
 
-
-On 12/24/2019 8:02 AM, Stephen Boyd wrote:
-> Quoting Taniya Das (2019-11-15 02:04:56)
->> [v2]
->>   * Split Fabia code cleanup and calibration code.
->>   * Few cleanups for GPU/Video CC are
->>      * header file inclusion, const for pll vco table.
->>      * removal of always enabled clock from gpucc.
->>      * compatibles added in sorted order.
->>      * move from core_initcall to subsys_initcall().
->>      * cleanup clk_parent_data for clocks to be provided from DT.
+On 2019-12-27 10:12, Taniya Das wrote:
+> The MSS clock provider have a bunch of generic properties that
+> are needed in a device tree. Add a YAML schemas for those.
 > 
-> Can you please resend with comments addressed?
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,mss.yaml        | 41 
+> ++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+>  create mode 100644 
+> Documentation/devicetree/bindings/clock/qcom,mss.yaml
 > 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,mss.yaml
+> b/Documentation/devicetree/bindings/clock/qcom,mss.yaml
+> new file mode 100644
+> index 0000000..05efe2b2
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,mss.yaml
+> @@ -0,0 +1,41 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/qcom,mss.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Modem Clock Controller Binding
+> +
+> +maintainers:
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+> +  Qualcomm modem clock control module which supports the clocks.
+> +
+> +properties:
+> +  compatible :
+> +    enum:
+> +       - qcom,sc7180-mss
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  additionalItems: false
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - '#clock-cells'
+> +
+> +examples:
+> +  # Example of MSS with clock nodes properties for SC7180:
+> +  - |
+> +    clock-controller@41aa000 {
+> +      compatible = "qcom,sc7180-mss";
+> +      reg = <0x041aa000 0x100>;
 
-Next patches are submitted for review.
+Bjorn/me had a discussion about the size
+a while back, we should use the entire
+reg space instead of fragmenting it.
+
+reg = <0x041a8000 0x8000>;
+
+We should just use ^^ instead.
+
+> +      #clock-cells = <1>;
+> +    };
+> +...
+> --
+> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a 
+> member
+> of the Code Aurora Forum, hosted by the  Linux Foundation.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
+a Linux Foundation Collaborative Project.
