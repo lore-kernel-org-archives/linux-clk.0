@@ -2,110 +2,169 @@ Return-Path: <SRS0=11AX=2R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40C01C2D0C3
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 04:06:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B43C2D0DB
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 04:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04BCF20882
-	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 04:06:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B7F120838
+	for <linux-clk@archiver.kernel.org>; Fri, 27 Dec 2019 04:35:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q09vfW/S"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="P939WHrV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727016AbfL0EGB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 26 Dec 2019 23:06:01 -0500
-Received: from mail-pj1-f68.google.com ([209.85.216.68]:54946 "EHLO
-        mail-pj1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbfL0EGB (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 23:06:01 -0500
-Received: by mail-pj1-f68.google.com with SMTP id kx11so4198433pjb.4;
-        Thu, 26 Dec 2019 20:06:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=PJkLmBIgDAd224gT5d1DEVPXAmElvH5/SyzF20ifwMo=;
-        b=Q09vfW/SGRVXtGM34/lTpgtjhPEwrGBE0/EEJtzI8/vsrFCra+4gqmIdydDRooImqY
-         8muJdTK0JrpppOytreDPvtY/s0vepd+ye9WYnrhigJY9qnSBsf6KsYN6bItx3l/5JksD
-         feGkXzrpe8ewZU02qrAJfZGfu541zCACZZrvS05Vz8ArDVYFf0xKdnawIfyDYnrnENYP
-         TK0zNg89pxEI5wEhK4F59cITHcyUIvaKFyVvo8FTbTCAEvbvPg9Zi1jrF9Kx/VVg+TvR
-         m9aQGLKkVxgNKbxBmvLEXSHdhoQxEBI3L8G4ORs3j5MumPoGhMOjE79ZsRvruWaxxOTE
-         IcQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=PJkLmBIgDAd224gT5d1DEVPXAmElvH5/SyzF20ifwMo=;
-        b=QZzQtXQmtD1feD3+bIGK+rHdjZvHF7tAweyKkp6gQuZoO3/YWDk3ChNxNFwBuG4k7H
-         rVxtporNdg6fxb9DnMpNE8F5SU1ftE5jmCReF+8mXQ6nBgH5lj/T/nLcphqWDxzNc77y
-         eGOalQGxO9dpvKLHhI1iLb6qguJVutOnPkJpW0zfYpij/p/iRyBEXkfquhGYsgrjXN3S
-         aQ3ibtfQEVbT+K9tazEB0sZp8exX9VwN3Qi9EP+CNURU22r4pIL4/aCmxDUoeaJIRfFp
-         vOUmTj7v+PyRVyzTYfK9JWx+D1dkjM3BMA/MQpCEexAhQSZ9YnKnq85Z2rVHuj/Z82jy
-         MCjA==
-X-Gm-Message-State: APjAAAUN6FrgM5P687QBgTAEZ/RMCJJBoH4C4s7fTXl8W2XNv4vsJcP+
-        dG9tA4RHhOuwlZU4qOSi23g6UNAF
-X-Google-Smtp-Source: APXvYqzOu6CINIEj+3Po9oup12+oEk7wt9we8AL0MVzW4ktlZFw08d31+E8r7YXUCsU9yx30F9mPqg==
-X-Received: by 2002:a17:902:b087:: with SMTP id p7mr51612685plr.10.1577419560274;
-        Thu, 26 Dec 2019 20:06:00 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d65sm38462733pfa.159.2019.12.26.20.05.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 26 Dec 2019 20:05:59 -0800 (PST)
-Date:   Thu, 26 Dec 2019 20:05:58 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        id S1727050AbfL0Ef2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 26 Dec 2019 23:35:28 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:64124 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727040AbfL0Ef2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 26 Dec 2019 23:35:28 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1577421327; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=UWTLJHhMYKjpdzVTqqLlwIAkQzLn0eTzuvQ7iSDt/8Y=; b=P939WHrV9K9pjXt1BbEhs6uY8EnYZeHzswN5MvmIqL3ps8CFaLbp1gdiToNGoiMh8gE3o9fq
+ CP8HkhUIQYuCOOcxO90EtX6mWHi9zAzb0bzxeJpMDeyre0/TnQTb9gTTqdmzXEW+uxY46ndm
+ NR/Ov1MSPhSZTWU7wSC91RhS5Hw=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e058a0c.7fb7254fe0a0-smtp-out-n02;
+ Fri, 27 Dec 2019 04:35:24 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id 9E671C447A2; Fri, 27 Dec 2019 04:35:23 +0000 (UTC)
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 307F9C43383;
+        Fri, 27 Dec 2019 04:35:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 307F9C43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
+ MSS clock bindings
+To:     Rob Herring <robh@kernel.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: Don't try to enable critical clocks if prepare
- failed
-Message-ID: <20191227040558.GA22856@roeck-us.net>
-References: <20191225163429.29694-1-linux@roeck-us.net>
- <1jd0cbpg77.fsf@starbuckisacylon.baylibre.com>
- <fed37460-6097-1a3d-3c05-e203871610ac@roeck-us.net>
- <20191226215919.CFD572080D@mail.kernel.org>
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
+References: <1575447687-9296-1-git-send-email-tdas@codeaurora.org>
+ <0101016ed0006092-b6693b0f-f8c6-428a-9b64-f6e1f4606844-000000@us-west-2.amazonses.com>
+ <20191216180144.GA27463@bogus>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <03538ce3-c172-e895-0fe0-c52362e16dfd@codeaurora.org>
+Date:   Fri, 27 Dec 2019 10:05:15 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191226215919.CFD572080D@mail.kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20191216180144.GA27463@bogus>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, Dec 26, 2019 at 01:59:19PM -0800, Stephen Boyd wrote:
-> Quoting Guenter Roeck (2019-12-26 09:22:10)
-> > On 12/26/19 1:51 AM, Jerome Brunet wrote:
-> > > 
-> > > However, we would not want a critical clock to silently fail to
-> > > enable. This might lead to unexpected behavior which are generally hard
-> > > (and annoying) to debug.
-> > > 
-> > > Would you mind adding some kind of warning trace in case this fails ?
-> > > 
-> > 
-> > The really relevant information is:
-> > 
-> > bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
-> > 
-> > which is already displayed (and not surprising since cprman isn't implemented
-> > in qemu). While I agree that an error message might be useful, replacing
-> > one traceback with another doesn't really make sense to me, and I am not
-> > really a friend of spreading tracebacks throughout the kernel. Please feel
-> > free to consider this patch to be a bug report, and feel free to ignore it
-> > and suggest something else.
-> 
-> Can the cprman device node be disabled or removed in the DT that qemu
-> uses? If it isn't actually implemented then it shouldn't be in the DT.
-> Presumably that will make this traceback go away.
-> 
-cprman feeds all clocks. If the node isn't there, the system doesn't boot.
-Also, I don't modify devicetree files in my boot tests; that would defeat
-the purpose - like, in this case, to find missing error handling.
+Hello Rob,
 
-Again, please feel free to ignore this patch.
+Thanks for the review comments.
 
-Guenter
+On 12/16/2019 11:31 PM, Rob Herring wrote:
+> On Wed, Dec 04, 2019 at 08:21:56AM +0000, Taniya Das wrote:
+>> The MSS clock provider have a bunch of generic properties that
+>> are needed in a device tree. Add a YAML schemas for those.
+>>
+>> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,mss.yaml        | 40 ++++++++++++++++++++++
+>>   1 file changed, 40 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,mss.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,mss.yaml b/Documentation/devicetree/bindings/clock/qcom,mss.yaml
+>> new file mode 100644
+>> index 0000000..4494a6b
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,mss.yaml
+>> @@ -0,0 +1,40 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only
+> 
+> Dual license new bindings please:
+> 
+> (GPL-2.0-only OR BSD-2-Clause)
+> 
+
+Will update the license.
+
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/bindings/clock/qcom,mss.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Modem Clock Controller Binding
+>> +
+>> +maintainers:
+>> +  - Taniya Das <tdas@codeaurora.org>
+>> +
+>> +description: |
+>> +  Qualcomm modem clock control module which supports the clocks.
+>> +
+>> +properties:
+>> +  compatible :
+>> +    enum:
+>> +       - qcom,mss-sc7180
+> 
+> Normal order is 'qcom,sc7180-mss'.
+> 
+My bad.
+>> +
+>> +  '#clock-cells':
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - '#clock-cells'
+> 
+> Add:
+> 
+> additionalItems: false
+> 
+
+Will add it in the next patch.
+
+>> +
+>> +examples:
+>> +  # Example of MSS with clock nodes properties for SC7180:
+>> +  - |
+>> +    clock-controller@41aa000 {
+>> +      compatible = "qcom,sc7180-mss";
+>> +      reg = <0x041aa000 0x100>;
+>> +      reg-names = "cc";
+> 
+> Not documented, nor necessary.
+> 
+
+Will remove this.
+
+>> +      #clock-cells = <1>;
+>> +    };
+>> +...
+>> --
+>> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+>> of the Code Aurora Forum, hosted by the  Linux Foundation.
+>>
+
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
+
+--
