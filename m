@@ -2,298 +2,118 @@ Return-Path: <SRS0=LwSD=2T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60E9EC2D0C0
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 03:41:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65858C2D0CE
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 17:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 221D1207FD
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 03:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3DDEF20409
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 17:33:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S1mkTqQV"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wf71Wq0y"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726366AbfL2Dla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 28 Dec 2019 22:41:30 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36178 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfL2Dla (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 28 Dec 2019 22:41:30 -0500
-Received: by mail-pl1-f195.google.com with SMTP id a6so12626105plm.3
-        for <linux-clk@vger.kernel.org>; Sat, 28 Dec 2019 19:41:29 -0800 (PST)
+        id S1729421AbfL2RdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Dec 2019 12:33:19 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45292 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729423AbfL2RdS (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Dec 2019 12:33:18 -0500
+Received: by mail-ed1-f68.google.com with SMTP id v28so30397746edw.12
+        for <linux-clk@vger.kernel.org>; Sun, 29 Dec 2019 09:33:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=3nYzbiySbBMWr0PTl27fhW8zMhEg+ip2bE0c5QuOqsI=;
-        b=S1mkTqQVQ4HAOpRtLQ3Z5Ot5b91O27ZQMN1tfWr/raiqea/k8s8N8PSIaJbI0eVc+o
-         wD+9B5R9McHSd/EBOEFNTwMwNZyMuEOmazjgDRZrCxYZkvptsX+YD8lU+ylSMOYJuhmT
-         uhfTLW8UQwhkfZwVgyUt8hK+WXYDwKOl04yZZXQHrg9BDI1LGlE7lnhTovBU6JXXW755
-         vVHv8fXhfmO1BF5s+YfNchQ8A2UWPm06AjsXzN2ZBfpNZlmXLK5y0yd179I0qNPiBypn
-         laZ5sIZHqIfpuW33OA/0j/F1GAFFktKbhWvKszbcSgCZ270SwxYVASQkEY//HhAop+Pr
-         3SaA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
+        b=wf71Wq0yMOB58FsNbi2p888B5RLQ+mTavSy4HA7XvUnu6YC98zDS1ey+qK1HxpzbCz
+         6L2tloRWFY4Q7RvQIsEA9ZbK5V1v4V5avPP+9GCeSHiPIbf7Tpmorx0qZXXba7X2DB5W
+         kwmNwUUsBAk2CmQxiD6T2LL+e7bhOpjNvW2pbsPNyLF+/+jQlCa1UL01REnyBo48MJuh
+         JumoHJbyuy81K+RyvAR81dhk9zZwR/fTiDARReOxK4iG/D7vF0f+jbXECX1btRxqyckv
+         0ABHpABgoZ4jGMtVfG/I5hdTjow6AKldsBt3vO0+5UKn1ClaUEw6AKa9x3tu06mRS6wa
+         JArw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=3nYzbiySbBMWr0PTl27fhW8zMhEg+ip2bE0c5QuOqsI=;
-        b=m7i23MeMRM8G70MkrKu5NkGoAnhdotAG9mdPXylQZiT4d13oICiAKsMdpER2k6717u
-         s4fGAcgyay/XOcgLs8+KMlJXE46DQ6Fs5Y3cc4snc2Q7yPl9mLcdwCorC3HNecu72ee6
-         jM1g7S5SK9+nJTGk6uQHMfgJR+pNL5vcaLPEqYrZ/0fkJRPn40DhniQP+7QgpF+My6nI
-         5GX0dJbik+PX5l7m2orvb+k7ViTlOmauCR8XUD1Ke7SeKXbQPbLVKWuSGzBXdQBd3RoI
-         wM7Ak3J9gS2mhBFYL09+zcrkHS1qtDVAON9GJy/0WxVLTYCc5iB04zMMIFfw1BVpCS9c
-         GyzQ==
-X-Gm-Message-State: APjAAAVYJJaMmMN+zZmGmOtJUDpYJKMGjNg9L4J/dfmlGJE63WpS0ldW
-        1Hq+gXllF3tjzrY4gpqAHvenkA==
-X-Google-Smtp-Source: APXvYqx2y3B/ZHSUs+Yq+AjalZ9qvoYa/EeRtB3Ey/8PQ54ZGkoeZ7JZ0pjNRy1k0Qim7ZgoA659iA==
-X-Received: by 2002:a17:902:82c3:: with SMTP id u3mr57953226plz.73.1577590889282;
-        Sat, 28 Dec 2019 19:41:29 -0800 (PST)
-Received: from builder (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id u23sm45938315pfm.29.2019.12.28.19.41.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 28 Dec 2019 19:41:28 -0800 (PST)
-Date:   Sat, 28 Dec 2019 19:41:26 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Sricharan R <sricharan@codeaurora.org>
-Cc:     agross@kernel.org, devicetree@vger.kernel.org,
-        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-soc@vger.kernel.org, robh+dt@kernel.org, sboyd@kernel.org,
-        sivaprak@codeaurora.org
-Subject: Re: [PATCH V2 1/7] dt-bindings: pinctrl: qcom: Add ipq6018 pinctrl
- bindings
-Message-ID: <20191229034126.GO3755841@builder>
-References: <1576752109-24497-1-git-send-email-sricharan@codeaurora.org>
- <1576752109-24497-2-git-send-email-sricharan@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
+        b=iuDc6x8eJxONTYA/2PjDG43/xBdYxMOrVoU1pOWEOJUIQvCW0Nw5HkZ5M2Y3/FrAP9
+         rcZq8lG3QXpz4BR4pfXKYHnUvhvtpxByHZIS5gBCWwBfzNU/VA1PhFtr+tx7+LpSgacd
+         Yy8wDnVjgc+901QrUN8EZeVGZwxFpWC0MZfIN6qbI93P2lffXQ3OLb2cec8XBGdvqQNy
+         Dm8ju31iG6p4Ll1eMZo+qg8nzZJAC/MdwR/GyEx2ouLFfeWwMFU3GKSyzxq79ioijQF3
+         A+PDwcBnDViG2aCYEIR47iXNktWYq2bXXFLT8AAudZX2ghvbnpxpwgi/Z3pTbZLszaqG
+         rztA==
+X-Gm-Message-State: APjAAAVdaYq912h8x6zsoX6jThBp0O3DV1uZPxwpt228O1OYCfrs3+jo
+        C/Yn+B/Eq4DAqjMPaEhGp5lRkw==
+X-Google-Smtp-Source: APXvYqxl8lf/vPqrZynpCjFh+E2DeE1Gmv+uphj+YiOjk0n+Mhaq4H+8GfqCzbvQgw4NmnTE2TrGcg==
+X-Received: by 2002:a17:906:7b96:: with SMTP id s22mr65320610ejo.213.1577640796290;
+        Sun, 29 Dec 2019 09:33:16 -0800 (PST)
+Received: from [192.168.0.104] ([91.139.216.39])
+        by smtp.googlemail.com with ESMTPSA id c19sm5162660edu.76.2019.12.29.09.33.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 29 Dec 2019 09:33:15 -0800 (PST)
+Subject: Re: [PATCH v3 6/6] clk: qcom: Add video clock controller driver for
+ SC7180
+To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org
+References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
+ <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <8f744444-428c-56e2-2565-35b55f1e4aae@linaro.org>
+Date:   Sun, 29 Dec 2019 19:33:14 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1576752109-24497-2-git-send-email-sricharan@codeaurora.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+In-Reply-To: <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu 19 Dec 02:41 PST 2019, Sricharan R wrote:
+Hi Taniya,
 
-> Add device tree binding Documentation details for ipq6018
-> pinctrl driver.
+On 12/27/19 8:38 AM, Taniya Das wrote:
+> Add support for the video clock controller found on SC7180
+> based devices. This would allow video drivers to probe
+> and control their clocks.
 > 
-> Co-developed-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
-> Signed-off-by: Rajkumar Ayyasamy <arajkuma@codeaurora.org>
-> Co-developed-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Signed-off-by: Selvam Sathappan Periakaruppan <speriaka@codeaurora.org>
-> Co-developed-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> Signed-off-by: Sivaprakash Murugesan <sivaprak@codeaurora.org>
-> Signed-off-by: Sricharan R <sricharan@codeaurora.org>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
+>  drivers/clk/qcom/Kconfig          |   8 ++
+>  drivers/clk/qcom/Makefile         |   1 +
+>  drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 268 insertions(+)
+>  create mode 100644 drivers/clk/qcom/videocc-sc7180.c
 > 
-> [V2] Splitted dt bindings and driver into different patches. Added missing bindings,
->      and some style changes.
-> 
->  .../bindings/pinctrl/qcom,ipq6018-pinctrl.yaml     | 172 +++++++++++++++++++++
->  1 file changed, 172 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-> new file mode 100644
-> index 0000000..745a11e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/qcom,ipq6018-pinctrl.yaml
-> @@ -0,0 +1,172 @@
-> +# SPDX-License-Identifier: GPL-2.0-or-later
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/pinctrl/qcom,ipq6018-pinctrl.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Qualcomm Technologies, Inc. IPQ6018 TLMM block
-> +
-> +maintainers:
-> +  - Sricharan R <sricharan@codeaurora.org>
-> +
-> +description: |
-> +  This binding describes the Top Level Mode Multiplexer block found in the
-> +  IPQ6018 platform.
-> +
-> +properties:
-> +  compatible:
-> +    const: qcom,ipq6018-pinctrl
-> +  reg:
-> +    maxItems: 1
-> +  interrupts:
-> +    Description: Specifies the TLMM summary IRQ
-> +    maxItems: 1
-> +  interrupt-controller: true
-> +  '#interrupt-cells':
-> +    Description:
-> +      Specifies the PIN numbers and Flags, as defined in defined in
-> +      include/dt-bindings/interrupt-controller/irq.h
-> +    const: 2
-> +  gpio-controller: true
-> +  '#gpio-cells':
-> +    Description: Specifying the pin number and flags, as defined in
-> +      include/dt-bindings/gpio/gpio.h
-> +    const: 2
-> +  gpio-ranges:
-> +    Description: Documentation/devicetree/bindings/gpio/gpio.txt
-> +    maxItems: 1
-> +
-> +#PIN CONFIGURATION NODES
-> +patternProperties:
-> +  '-pins$':
-> +    type: object
-> +    Description:
-> +      Pinctrl node's client devices use subnodes for desired pin configuration.
-> +      Client device subnodes use below standard properties.
-> +
-> +    Properties:
-> +      pins:
-> +        allOf:
-> +          $ref: /schemas/types.yaml#/definitions/string
-> +          enum:
-> +            gpio0-gpio80
-> +            sdc1_clk
-> +            sdc1_cmd
-> +            sdc1_data
-> +            sdc2_clk
-> +            sdc2_cmd
-> +            sdc2_data
-> +            qdsd_cmd
-> +            qdsd_data0
-> +            qdsd_data1
-> +            qdsd_data2
-> +            qdsd_data3
-> +        Description:
-> +          List of gpio pins affected by the properties specified in this
-> +          subnode.
-> +
-> +      function:
-> +        allOf:
-> +          $ref: /schemas/types.yaml#/definitions/string
-> +          enum:
-> +            adsp_ext, alsp_int, atest_bbrx0, atest_bbrx1, atest_char,
-> +            atest_char0, atest_char1, atest_char2, atest_char3, atest_combodac,
-> +            atest_gpsadc0, atest_gpsadc1, atest_tsens, atest_wlan0,
-> +            atest_wlan1, backlight_en, bimc_dte0, bimc_dte1, blsp_i2c1,
-> +            blsp_i2c2, blsp_i2c3, blsp_i2c4, blsp_i2c5, blsp_i2c6,  blsp_spi1,
-> +            blsp_spi1_cs1, blsp_spi1_cs2, blsp_spi1_cs3, blsp_spi2,
-> +            blsp_spi2_cs1, blsp_spi2_cs2, blsp_spi2_cs3, blsp_spi3,
-> +            blsp_spi3_cs1, blsp_spi3_cs2, blsp_spi3_cs3, blsp_spi4, blsp_spi5,
-> +            blsp_spi6, blsp_uart1, blsp_uart2, blsp_uim1, blsp_uim2, cam1_rst,
-> +            cam1_standby, cam_mclk0, cam_mclk1, cci_async, cci_i2c, cci_timer0,
-> +            cci_timer1, cci_timer2, cdc_pdm0, codec_mad, dbg_out, display_5v,
-> +            dmic0_clk, dmic0_data, dsi_rst, ebi0_wrcdc, euro_us, ext_lpass,
-> +            flash_strobe, gcc_gp1_clk_a, gcc_gp1_clk_b, gcc_gp2_clk_a,
-> +            gcc_gp2_clk_b, gcc_gp3_clk_a, gcc_gp3_clk_b, gpio, gsm0_tx0,
-> +            gsm0_tx1, gsm1_tx0, gsm1_tx1, gyro_accl, kpsns0, kpsns1, kpsns2,
-> +            ldo_en, ldo_update, mag_int, mdp_vsync, modem_tsync, m_voc,
-> +            nav_pps, nav_tsync, pa_indicator, pbs0, pbs1, pbs2, pri_mi2s,
-> +            pri_mi2s_ws, prng_rosc, pwr_crypto_enabled_a, pwr_crypto_enabled_b,
-> +            pwr_modem_enabled_a,  pwr_modem_enabled_b, pwr_nav_enabled_a,
-> +            pwr_nav_enabled_b, qdss_ctitrig_in_a0, qdss_ctitrig_in_a1,
-> +            qdss_ctitrig_in_b0, qdss_ctitrig_in_b1, qdss_ctitrig_out_a0,
-> +            qdss_ctitrig_out_a1, qdss_ctitrig_out_b0, qdss_ctitrig_out_b1,
-> +            qdss_traceclk_a, qdss_traceclk_b, qdss_tracectl_a, qdss_tracectl_b,
-> +            qdss_tracedata_a, qdss_tracedata_b, reset_n, sd_card, sd_write,
-> +            sec_mi2s, smb_int, ssbi_wtr0, ssbi_wtr1, uim1, uim2, uim3,
-> +            uim_batt, wcss_bt, wcss_fm, wcss_wlan, webcam1_rst
-> +        Description:
-> +          Specify the alternative function to be configured for the specified
-> +          pins.
-> +      bias-disable:
 
-Is there any way to inherit these from some common definition?
+<cut>
 
-> +        type: boolean
-> +        Description:
-> +          The specified pins should be configured as no pull.
-> +      bias-pull-down:
-> +        type: boolean
-> +        Description:
-> +          The specified pins should be configured as pull down.
-> +      bias-pull-up:
-> +        type: boolean
-> +        Description:
-> +          The specified pins should be configured as pull up.
-> +      output-high:
-> +        type: boolean
-> +        Description:
-> +          The specified pins are configured in output mode, driven high.
-> +          This option is not available for sdc pins.
-> +      output-low:
-> +        type: boolean
-> +        Description:
-> +          The specified pins are configured in output mode, driven low.
-> +          This option is not available for sdc pins.
-> +      drive-strength:
-> +        allOf:
-> +          $ref: /schemas/types.yaml#/definitions/uint32
-> +          enum: [2, 4, 6, 8, 10, 12, 14, 16]
-> +        Description:
-> +          elects the drive strength for the specified pins, in mA.
+> +static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
+> +	F(19200000, P_BI_TCXO, 1, 0, 0),
 
-Selects?
+Do you know is this frequency (19.2MHz) has real usage? The lower freq
+I've seen for Venus was 75MHz.
 
+> +	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
+> +	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
+> +	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
+> +	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
+> +	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
+> +	{ }
+> +};
 > +
-> +    required:
-> +      - pins
-> +      - function
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-controller
-> +  - '#interrupt-cells'
-> +  - gpio-controller
-> +  - '#gpio-cells'
-> +  - gpio-ranges
-> +
-> +example:
-> +        tlmm: pinctrl@1000000 {
-> +                compatible = "qcom,ipq6018-pinctrl";
-> +                reg = <0x1000000 0x300000>;
-> +                interrupts = <0 208 0>;
-
-<GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>
-
-> +                gpio-controller;
-> +                #gpio-cells = <2>;
-> +                interrupt-controller;
-> +                #interrupt-cells = <2>;
-> +
-> +                uart_pins: uart_pins {
-
-s/_/- in the node name.
-
-> +                        mux {
-> +                                pins = "gpio4", "gpio5";
-> +                                function = "blsp_uart2";
-
-Duplicate the function definition in tx and rx and drop the "mux" node.
-
-Regards,
-Bjorn
-
-> +                        };
-> +
-> +                        tx {
-> +                                pins = "gpio4";
-> +                                drive-strength = <4>;
-> +                                bias-disable;
-> +                        };
-> +
-> +                        rx {
-> +                                pins = "gpio5";
-> +                                drive-strength = <2>;
-> +                                bias-pull-up;
-> +                        };
-> +                };
-> +        };
-> -- 
-> 1.9.1
+-- 
+regards,
+Stan
