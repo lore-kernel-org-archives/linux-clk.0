@@ -2,118 +2,307 @@ Return-Path: <SRS0=LwSD=2T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65858C2D0CE
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 17:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D33C2D0C0
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 20:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DDEF20409
-	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 17:33:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wf71Wq0y"
+	by mail.kernel.org (Postfix) with ESMTP id 2E0142071E
+	for <linux-clk@archiver.kernel.org>; Sun, 29 Dec 2019 20:29:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729421AbfL2RdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 29 Dec 2019 12:33:19 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:45292 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729423AbfL2RdS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Dec 2019 12:33:18 -0500
-Received: by mail-ed1-f68.google.com with SMTP id v28so30397746edw.12
-        for <linux-clk@vger.kernel.org>; Sun, 29 Dec 2019 09:33:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
-        b=wf71Wq0yMOB58FsNbi2p888B5RLQ+mTavSy4HA7XvUnu6YC98zDS1ey+qK1HxpzbCz
-         6L2tloRWFY4Q7RvQIsEA9ZbK5V1v4V5avPP+9GCeSHiPIbf7Tpmorx0qZXXba7X2DB5W
-         kwmNwUUsBAk2CmQxiD6T2LL+e7bhOpjNvW2pbsPNyLF+/+jQlCa1UL01REnyBo48MJuh
-         JumoHJbyuy81K+RyvAR81dhk9zZwR/fTiDARReOxK4iG/D7vF0f+jbXECX1btRxqyckv
-         0ABHpABgoZ4jGMtVfG/I5hdTjow6AKldsBt3vO0+5UKn1ClaUEw6AKa9x3tu06mRS6wa
-         JArw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=g+ZqxN5m5gAkIByhRJf04aggcuX7J+K/cyMPSK2p+QA=;
-        b=iuDc6x8eJxONTYA/2PjDG43/xBdYxMOrVoU1pOWEOJUIQvCW0Nw5HkZ5M2Y3/FrAP9
-         rcZq8lG3QXpz4BR4pfXKYHnUvhvtpxByHZIS5gBCWwBfzNU/VA1PhFtr+tx7+LpSgacd
-         Yy8wDnVjgc+901QrUN8EZeVGZwxFpWC0MZfIN6qbI93P2lffXQ3OLb2cec8XBGdvqQNy
-         Dm8ju31iG6p4Ll1eMZo+qg8nzZJAC/MdwR/GyEx2ouLFfeWwMFU3GKSyzxq79ioijQF3
-         A+PDwcBnDViG2aCYEIR47iXNktWYq2bXXFLT8AAudZX2ghvbnpxpwgi/Z3pTbZLszaqG
-         rztA==
-X-Gm-Message-State: APjAAAVdaYq912h8x6zsoX6jThBp0O3DV1uZPxwpt228O1OYCfrs3+jo
-        C/Yn+B/Eq4DAqjMPaEhGp5lRkw==
-X-Google-Smtp-Source: APXvYqxl8lf/vPqrZynpCjFh+E2DeE1Gmv+uphj+YiOjk0n+Mhaq4H+8GfqCzbvQgw4NmnTE2TrGcg==
-X-Received: by 2002:a17:906:7b96:: with SMTP id s22mr65320610ejo.213.1577640796290;
-        Sun, 29 Dec 2019 09:33:16 -0800 (PST)
-Received: from [192.168.0.104] ([91.139.216.39])
-        by smtp.googlemail.com with ESMTPSA id c19sm5162660edu.76.2019.12.29.09.33.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 29 Dec 2019 09:33:15 -0800 (PST)
-Subject: Re: [PATCH v3 6/6] clk: qcom: Add video clock controller driver for
- SC7180
-To:     Taniya Das <tdas@codeaurora.org>, Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org
-References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org>
- <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <8f744444-428c-56e2-2565-35b55f1e4aae@linaro.org>
-Date:   Sun, 29 Dec 2019 19:33:14 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726892AbfL2U3f (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 29 Dec 2019 15:29:35 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:48157 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726857AbfL2U3f (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 29 Dec 2019 15:29:35 -0500
+X-Originating-IP: 92.184.100.83
+Received: from localhost (unknown [92.184.100.83])
+        (Authenticated sender: alexandre.belloni@bootlin.com)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 5A021C0002;
+        Sun, 29 Dec 2019 20:29:31 +0000 (UTC)
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>
+Subject: [PATCH] clk: at91: add sama5d3 pmc driver
+Date:   Sun, 29 Dec 2019 21:29:07 +0100
+Message-Id: <20191229202907.335931-1-alexandre.belloni@bootlin.com>
+X-Mailer: git-send-email 2.23.0
 MIME-Version: 1.0
-In-Reply-To: <1577428714-17766-7-git-send-email-tdas@codeaurora.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Taniya,
+Add a driver for the PMC clocks of the sama5d3.
 
-On 12/27/19 8:38 AM, Taniya Das wrote:
-> Add support for the video clock controller found on SC7180
-> based devices. This would allow video drivers to probe
-> and control their clocks.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  drivers/clk/qcom/Kconfig          |   8 ++
->  drivers/clk/qcom/Makefile         |   1 +
->  drivers/clk/qcom/videocc-sc7180.c | 259 ++++++++++++++++++++++++++++++++++++++
->  3 files changed, 268 insertions(+)
->  create mode 100644 drivers/clk/qcom/videocc-sc7180.c
-> 
+Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+---
+ drivers/clk/at91/Makefile  |   1 +
+ drivers/clk/at91/sama5d3.c | 236 +++++++++++++++++++++++++++++++++++++
+ 2 files changed, 237 insertions(+)
+ create mode 100644 drivers/clk/at91/sama5d3.c
 
-<cut>
-
-> +static const struct freq_tbl ftbl_video_cc_venus_clk_src[] = {
-> +	F(19200000, P_BI_TCXO, 1, 0, 0),
-
-Do you know is this frequency (19.2MHz) has real usage? The lower freq
-I've seen for Venus was 75MHz.
-
-> +	F(150000000, P_VIDEO_PLL0_OUT_MAIN, 4, 0, 0),
-> +	F(270000000, P_VIDEO_PLL0_OUT_MAIN, 2.5, 0, 0),
-> +	F(340000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-> +	F(434000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-> +	F(500000000, P_VIDEO_PLL0_OUT_MAIN, 2, 0, 0),
-> +	{ }
-> +};
-> +
+diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
+index 3732241352ce..e3be7f40f79e 100644
+--- a/drivers/clk/at91/Makefile
++++ b/drivers/clk/at91/Makefile
+@@ -17,5 +17,6 @@ obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
+ obj-$(CONFIG_HAVE_AT91_SAM9X60_PLL)	+= clk-sam9x60-pll.o
+ obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o
+ obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
++obj-$(CONFIG_SOC_SAMA5D3) += sama5d3.o
+ obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
+ obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
+diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
+new file mode 100644
+index 000000000000..0b73c174ab56
+--- /dev/null
++++ b/drivers/clk/at91/sama5d3.c
+@@ -0,0 +1,236 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/clk-provider.h>
++#include <linux/mfd/syscon.h>
++#include <linux/slab.h>
++
++#include <dt-bindings/clock/at91.h>
++
++#include "pmc.h"
++
++static const struct clk_master_characteristics mck_characteristics = {
++	.output = { .min = 0, .max = 166000000 },
++	.divisors = { 1, 2, 4, 3 },
++};
++
++static u8 plla_out[] = { 0 };
++
++static u16 plla_icpll[] = { 0 };
++
++static const struct clk_range plla_outputs[] = {
++	{ .min = 400000000, .max = 1000000000 },
++};
++
++static const struct clk_pll_characteristics plla_characteristics = {
++	.input = { .min = 8000000, .max = 50000000 },
++	.num_output = ARRAY_SIZE(plla_outputs),
++	.output = plla_outputs,
++	.icpll = plla_icpll,
++	.out = plla_out,
++};
++
++static const struct clk_pcr_layout sama5d3_pcr_layout = {
++	.offset = 0x10c,
++	.cmd = BIT(12),
++	.pid_mask = GENMASK(6, 0),
++	.div_mask = GENMASK(17, 16),
++};
++
++static const struct {
++	char *n;
++	char *p;
++	u8 id;
++} sama5d3_systemck[] = {
++	{ .n = "ddrck", .p = "masterck", .id = 2 },
++	{ .n = "lcdck", .p = "masterck", .id = 3 },
++	{ .n = "smdck", .p = "smdclk",   .id = 4 },
++	{ .n = "uhpck", .p = "usbck",    .id = 6 },
++	{ .n = "udpck", .p = "usbck",    .id = 7 },
++	{ .n = "pck0",  .p = "prog0",    .id = 8 },
++	{ .n = "pck1",  .p = "prog1",    .id = 9 },
++	{ .n = "pck2",  .p = "prog2",    .id = 10 },
++};
++
++static const struct {
++	char *n;
++	u8 id;
++	struct clk_range r;
++} sama5d3_periphck[] = {
++	{ .n = "dbgu_clk", .id = 2, },
++	{ .n = "hsmc_clk", .id = 5, },
++	{ .n = "pioA_clk", .id = 6, },
++	{ .n = "pioB_clk", .id = 7, },
++	{ .n = "pioC_clk", .id = 8, },
++	{ .n = "pioD_clk", .id = 9, },
++	{ .n = "pioE_clk", .id = 10, },
++	{ .n = "usart0_clk", .id = 12, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "usart1_clk", .id = 13, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "usart2_clk", .id = 14, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "usart3_clk", .id = 15, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "uart0_clk", .id = 16, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "uart1_clk", .id = 17, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "twi0_clk", .id = 18, .r = { .min = 0, .max = 16625000 }, },
++	{ .n = "twi1_clk", .id = 19, .r = { .min = 0, .max = 16625000 }, },
++	{ .n = "twi2_clk", .id = 20, .r = { .min = 0, .max = 16625000 }, },
++	{ .n = "mci0_clk", .id = 21, },
++	{ .n = "mci1_clk", .id = 22, },
++	{ .n = "mci2_clk", .id = 23, },
++	{ .n = "spi0_clk", .id = 24, .r = { .min = 0, .max = 133000000 }, },
++	{ .n = "spi1_clk", .id = 25, .r = { .min = 0, .max = 133000000 }, },
++	{ .n = "tcb0_clk", .id = 26, .r = { .min = 0, .max = 133000000 }, },
++	{ .n = "tcb1_clk", .id = 27, },
++	{ .n = "pwm_clk", .id = 28, },
++	{ .n = "adc_clk", .id = 29, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "dma0_clk", .id = 30, },
++	{ .n = "dma1_clk", .id = 31, },
++	{ .n = "uhphs_clk", .id = 32, },
++	{ .n = "udphs_clk", .id = 33, },
++	{ .n = "macb0_clk", .id = 34, },
++	{ .n = "macb1_clk", .id = 35, },
++	{ .n = "lcdc_clk", .id = 36, },
++	{ .n = "isi_clk", .id = 37, },
++	{ .n = "ssc0_clk", .id = 38, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "ssc1_clk", .id = 39, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "can0_clk", .id = 40, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "can1_clk", .id = 41, .r = { .min = 0, .max = 66000000 }, },
++	{ .n = "sha_clk", .id = 42, },
++	{ .n = "aes_clk", .id = 43, },
++	{ .n = "tdes_clk", .id = 44, },
++	{ .n = "trng_clk", .id = 45, },
++	{ .n = "fuse_clk", .id = 48, },
++	{ .n = "mpddr_clk", .id = 49, },
++};
++
++static void __init sama5d3_pmc_setup(struct device_node *np)
++{
++	const char *slck_name, *mainxtal_name;
++	struct pmc_data *sama5d3_pmc;
++	const char *parent_names[5];
++	struct regmap *regmap;
++	struct clk_hw *hw;
++	int i;
++	bool bypass;
++
++	i = of_property_match_string(np, "clock-names", "slow_clk");
++	if (i < 0)
++		return;
++
++	slck_name = of_clk_get_parent_name(np, i);
++
++	i = of_property_match_string(np, "clock-names", "main_xtal");
++	if (i < 0)
++		return;
++	mainxtal_name = of_clk_get_parent_name(np, i);
++
++	regmap = syscon_node_to_regmap(np);
++	if (IS_ERR(regmap))
++		return;
++
++	sama5d3_pmc = pmc_data_allocate(PMC_MAIN + 1,
++					nck(sama5d3_systemck),
++					nck(sama5d3_periphck), 0);
++	if (!sama5d3_pmc)
++		return;
++
++	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
++					   50000000);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	bypass = of_property_read_bool(np, "atmel,osc-bypass");
++
++	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
++					bypass);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = "main_rc_osc";
++	parent_names[1] = "main_osc";
++	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
++				   &sama5d3_pll_layout, &plla_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d3_pmc->chws[PMC_UTMI] = hw;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
++				      &at91sam9x5_master_layout,
++				      &mck_characteristics);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	sama5d3_pmc->chws[PMC_MCK] = hw;
++
++	parent_names[0] = "plladivck";
++	parent_names[1] = "utmick";
++	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_names, 2);
++	if (IS_ERR(hw))
++		goto err_free;
++
++	parent_names[0] = slck_name;
++	parent_names[1] = "mainck";
++	parent_names[2] = "plladivck";
++	parent_names[3] = "utmick";
++	parent_names[4] = "masterck";
++	for (i = 0; i < 3; i++) {
++		char name[6];
++
++		snprintf(name, sizeof(name), "prog%d", i);
++
++		hw = at91_clk_register_programmable(regmap, name,
++						    parent_names, 5, i,
++						    &at91sam9x5_programmable_layout);
++		if (IS_ERR(hw))
++			goto err_free;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d3_systemck); i++) {
++		hw = at91_clk_register_system(regmap, sama5d3_systemck[i].n,
++					      sama5d3_systemck[i].p,
++					      sama5d3_systemck[i].id);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d3_pmc->shws[sama5d3_systemck[i].id] = hw;
++	}
++
++	for (i = 0; i < ARRAY_SIZE(sama5d3_periphck); i++) {
++		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
++							 &sama5d3_pcr_layout,
++							 sama5d3_periphck[i].n,
++							 "masterck",
++							 sama5d3_periphck[i].id,
++							 &sama5d3_periphck[i].r);
++		if (IS_ERR(hw))
++			goto err_free;
++
++		sama5d3_pmc->phws[sama5d3_periphck[i].id] = hw;
++	}
++
++	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d3_pmc);
++
++	return;
++
++err_free:
++	pmc_data_free(sama5d3_pmc);
++}
++CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
 -- 
-regards,
-Stan
+2.23.0
+
