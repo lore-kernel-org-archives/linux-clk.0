@@ -2,107 +2,80 @@ Return-Path: <SRS0=S7bi=2U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07B9BC3F68F
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 07:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A356CC2D0DA
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 08:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBA42207FF
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 07:36:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AC72208C4
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 08:09:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727249AbfL3Hgd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Dec 2019 02:36:33 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:62412 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727173AbfL3Hgd (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Dec 2019 02:36:33 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-38-5e09a8fedbab
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 28.83.08102.EF8A90E5; Mon, 30 Dec 2019 08:36:30 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Mon, 30 Dec 2019 08:36:19 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "pavel@ucw.cz" <pavel@ucw.cz>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v7 11/12] leds: Add common LED binding parsing support
- to LED class/core
-Thread-Topic: [PATCH v7 11/12] leds: Add common LED binding parsing support
- to LED class/core
-Thread-Index: AQHVtlJMyatI9ieot0i0jk0Qmtw3YKfE7uMAgA1bZYA=
-Date:   Mon, 30 Dec 2019 07:36:17 +0000
-Message-ID: <8359b8365f6c86fe4acb9c35c2c6be55091b45a3.camel@fi.rohmeurope.com>
-References: <cover.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-         <c7abf8d15ea54fee504fbec5666d013c26d3b62a.1576745635.git.matti.vaittinen@fi.rohmeurope.com>
-         <20191221193758.GJ32732@amd>
-In-Reply-To: <20191221193758.GJ32732@amd>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A634DDBC66D8E242A516C99F83209630@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Ta0wTWRTH986rt8VZhwpyrfgaH/iIiBvjXg1ZNdFklPiIJn4wWBxllhL7
-        INNiQN2EfRAE2YhGRSoPo7xEAlpEpZGEFHDdEtcQRXxCGhtUsmHDiiKRrTvTUeHTPfec/+/8
-        z4dzIGkMMCaYbndJsl208oyBaqv96FkeqtWbEy718biyu0eH84aqdXikzE/hM4Eggys6/qLx
-        8a7rNH7WfJXC/e86AX7/8BiBT4/XEHi4sI/GTRXjAD/wljK4+e8GgO9cecjgqt5uApdW3aVw
-        t38TfuHvZHBua4cOhx5do9ZHC/Xl9UD453GuTiivPyK0uF/oBE9dPiM8f3SbEf54fJMQisvH
-        CKH2yqhOeOuZvcOwJyJxv+g6tCs9zb7ih30RlluXjzEZQUNW28ApOge0GQqAHiJuFaoeOUsU
-        AAM0cj0ABWu9jPa5C1Dd8CXlAyHDJaKCJzoViOLmoabC/LCG5G5A1DLQQ6iaaZwZ3axZoGlS
-        UMPrCkKL16Lm9l5ajSluIQoWd4X7sNw21Dh+j9a82gEqLwyGAT23BLW3PA+LADcL5ecMhfMk
-        F4M8A6O0NjWHKm/fJ7U4Gr15Gfqc51HrWIBS5yGVPo3eFRq6Hp37eZDW4nno9PHA5xki0Z8l
-        QaoITHdPcnBP0O5JtHsS7Z5EXwB0HUA2Md2aJrqklfGylBkvOyw25TngsHmAtjIjt8An32Yf
-        ICDwgRmQ4KPZihPQbPx2vyM12yI6LSlyplVy+gCCJB/FrkrWm41sqph9WJIdX0ozIcXHsHGB
-        k3uNnOp1UJIyJPlLNRZCHrG2agWMlKU0KevHdKtrokxAvdrcYIpySvZUSRYzXZYUdT9SnMqC
-        qKUpii+j4qwzQ7QpWQ31g2Ww6E3ZRRJ2lFVdJI2U3WGXTDGst0aRcqrUkmn/ajQIYiDgp7Gt
-        yoEYpyh387XPoGJBKBZbIKNauMSJkikHSP/O2ChGjrhCv+3ezmctjN0QUZjUlDQat3h136He
-        6LiE8wd3bl36U3zay5C35l2pU0ye2bimv/j+kH95zyKU2FX0a/v2BPm/DZ3Ws/MTXv/ecCpH
-        yi1Oih1L/nTv1YV1eZGzj8aNbcs7+d0vWZWXP8wp+GZB6vc7S/qfTs/wTR1eYjZlz+Upp0Vc
-        uZSUneL/+jCsR/QDAAA=
+        id S1727175AbfL3IJF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Dec 2019 03:09:05 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:41874 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfL3IJF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Dec 2019 03:09:05 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id k8932100N5USYZQ01893gb; Mon, 30 Dec 2019 09:09:03 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ilq6p-0006bH-IQ; Mon, 30 Dec 2019 09:09:03 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ilq6p-0000zc-G7; Mon, 30 Dec 2019 09:09:03 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: Prepare for split of R-Car H3 config symbol
+Date:   Mon, 30 Dec 2019 09:09:02 +0100
+Message-Id: <20191230080902.2832-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8gQWdhaW4gUGF2ZWwsDQoNCk9uIFNhdCwgMjAxOS0xMi0yMSBhdCAyMDozNyArMDEwMCwg
-UGF2ZWwgTWFjaGVrIHdyb3RlOg0KPiA+ICtzdGF0aWMgdm9pZCBsZWRfYWRkX3Byb3BzKHN0cnVj
-dCBsZWRfY2xhc3NkZXYgKmxkLCBzdHJ1Y3QNCj4gPiBsZWRfcHJvcGVydGllcyAqcHJvcHMpDQo+
-ID4gK3sNCj4gPiArCWlmIChwcm9wcy0+ZGVmYXVsdF90cmlnZ2VyKQ0KPiA+ICsJCWxkLT5kZWZh
-dWx0X3RyaWdnZXIgPSBwcm9wcy0+ZGVmYXVsdF90cmlnZ2VyOw0KPiA+ICsJLyoNCj4gPiArCSAq
-IEFjY29yZGluZyB0byBiaW5kaW5nIGRvY3MgdGhlIExFRCBpcyBieS1kZWZhdWx0IHR1cm5lZCBP
-RkYNCj4gPiB1bmxlc3MNCj4gPiArCSAqIGRlZmF1bHRfc3RhdGUgaXMgdXNlZCB0byBpbmRpY2F0
-ZSBpdCBzaG91bGQgYmUgT04gb3IgdGhhdA0KPiA+IHN0YXRlDQo+ID4gKwkgKiBzaG91bGQgYmUg
-a2VwdCBhcyBpcw0KPiA+ICsJICovDQo+ID4gKwlpZiAocHJvcHMtPmRlZmF1bHRfc3RhdGUpIHsN
-Cj4gPiArCQlsZC0+YnJpZ2h0bmVzcyA9IExFRF9PRkY7DQo+ID4gKwkJaWYgKCFzdHJjbXAocHJv
-cHMtPmRlZmF1bHRfc3RhdGUsICJvbiIpKQ0KPiA+ICsJCQlsZC0+YnJpZ2h0bmVzcyA9IExFRF9G
-VUxMOw0KPiANCj4gTWF4IGJyaWdodG5lc3MgaXMgbm90IGFsd2F5cyA9PSBMRURfRlVMTCB0aGVz
-ZSBkYXlzLg0KDQpJIHRvb2sgYW5vdGhlciBsb29rIGF0IHRoaXMgYW5kIGNoYW5nZWQgdGhpcyB0
-bzoNCg0KaWYgKCFzdHJjbXAocHJvcHMtPmRlZmF1bHRfc3RhdGUsICJvbiIpKSB7DQoJaWYgKCFs
-ZC0+bWF4X2JyaWdodG5lc3MpDQoJCWxkLT5icmlnaHRuZXNzID0gTEVEX0ZVTEw7DQoJZWxzZQ0K
-CQlsZC0+YnJpZ2h0bmVzcyA9IGxkLT5tYXhfYnJpZ2h0bmVzczsNCn0NCg0KSSBob3BlIHRoaXMg
-aXMgd2hhdCB5b3Ugd2VyZSBzdWdnZXN0aW5nLiBJJ2xsIHNlbmQgdGhlIHY4IChob3BlZnVsbHkp
-DQpzb29uKGlzaCkuDQoNCkJlc3QgUmVnYXJkcw0KCU1hdHRpDQo=
+Despite using the same compatible values ("r8a7795"-based) because of
+historical reasons, R-Car H3 ES1.x (R8A77950) and R-Car H3 ES2.0+
+(R8A77951) are really different SoCs, with different part numbers.
+Hence the SoC configuration symbol will be split in two separate config
+symbols.
+
+As the Clock Pulse Generator / Module Standby and Software Reset blocks
+in both SoCs are very similar, they will keep on sharing a driver.
+Extend the dependency of CONFIG_CLK_R8A7795, to prepare for the split.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v5.6.
+
+This complements, but has no dependencies on "[PATCH 0/5] arm64:
+renesas: Split/rename R-Car H3 support"
+https://lore.kernel.org/linux-renesas-soc/20191217183841.432-1-geert+renesas@glider.be/T/
+---
+ drivers/clk/renesas/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+index 94ef2bac289fb45a..250d8165167aa013 100644
+--- a/drivers/clk/renesas/Kconfig
++++ b/drivers/clk/renesas/Kconfig
+@@ -20,7 +20,7 @@ config CLK_RENESAS
+ 	select CLK_R8A7791 if ARCH_R8A7791 || ARCH_R8A7793
+ 	select CLK_R8A7792 if ARCH_R8A7792
+ 	select CLK_R8A7794 if ARCH_R8A7794
+-	select CLK_R8A7795 if ARCH_R8A7795
++	select CLK_R8A7795 if ARCH_R8A77950 || ARCH_R8A77951 || ARCH_R8A7795
+ 	select CLK_R8A77960 if ARCH_R8A77960
+ 	select CLK_R8A77961 if ARCH_R8A77961
+ 	select CLK_R8A77965 if ARCH_R8A77965
+-- 
+2.17.1
+
