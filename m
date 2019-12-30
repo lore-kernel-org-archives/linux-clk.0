@@ -2,203 +2,325 @@ Return-Path: <SRS0=S7bi=2U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-2.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05956C2D0CE
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 09:13:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD1C7C2D0CE
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 09:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB836207E0
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 09:13:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="fQObsyyv"
+	by mail.kernel.org (Postfix) with ESMTP id A71F0206DB
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 09:33:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfL3JNO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Dec 2019 04:13:14 -0500
-Received: from mail-eopbgr10084.outbound.protection.outlook.com ([40.107.1.84]:20292
-        "EHLO EUR02-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727267AbfL3JNN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 30 Dec 2019 04:13:13 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=TGK9XFDY5UmY8HtbqmD2v1kUGlXJFFP1SB4UXbRP6Wo/8l7z/+NOmZTZNncsZmRLruoqayfImMa+K0zIAShGDCLVYgStSfeYw8m2fIky+qirTphadYPvSidB1N/lRdVSYdNAofZImyxE2okZULvMEs9zkzL3ebrDthsAkZSNT9wNSWQaeVeJzGyi9cZqLwlVG5RdnkoGaB/k8a8iBWZ3jhgZdcSGbPDfx6iz6g4oMsua19U0z0ixgX+xOAtgXHFKCzO7cP7PHfrvnQzP/ipsflToddHpVK2Itkih/WcUWxc1elMhfBoeoJIog44hSEMFrbnP5COR1uPIjdRPkqpNRg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ozk4iXgh/7e/KqpdllhBQgFjyUvd8vUZ0U4pzwDjvxU=;
- b=PP1cIlR3by9GPG+VsNe0cB31k78e9BOvDjrdUDnDifrTBVfz1HhUDjetaoXw5AdQg4AknNPZrB7Bx+t22CywYBYcre4NltJCIN7RjAUSSfgdWFtIQMkHjT9R87t31edzDsqRCw2rfudwWR9s+pz+fqWtns18WCZ435b8BIks8I7DZN/q+vJjVWhDmP2lgS17uWkhNIJZfaZdIIqhlXQ+QIX3SAf8ygqT6oALSi12BuoHaPjh+F5HOcfNXUHqe7lK7fV/IG16tH3Kqqc6DVGD8C4anX/AKDuhogbEDY3J+4B9BveIQIXIeFT5EqgD6rfqJUL05tIMs3HdpjRNZB+LsQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ozk4iXgh/7e/KqpdllhBQgFjyUvd8vUZ0U4pzwDjvxU=;
- b=fQObsyyvpWfB3qLMsdz0c2RbAMrGPRfwoHH+kTB82Vjk1yguY7CmOF47IxgdWRCCTmKV8sooxuvir99cwTZMfWeEhGTTK4sNr2oLTGFikl8UqYKu7PStCwkRhFOpeQhLwcTIrAjCgOpqaxxaNmOxoVcBDAXqLKw9viDtDNjxHgU=
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
- AM0PR04MB6401.eurprd04.prod.outlook.com (20.179.254.97) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2581.12; Mon, 30 Dec 2019 09:13:10 +0000
-Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::c58c:e631:a110:ba58]) by AM0PR04MB4481.eurprd04.prod.outlook.com
- ([fe80::c58c:e631:a110:ba58%6]) with mapi id 15.20.2581.007; Mon, 30 Dec 2019
- 09:13:10 +0000
-Received: from localhost.localdomain (119.31.174.67) by HK2PR03CA0057.apcprd03.prod.outlook.com (2603:1096:202:17::27) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2602.8 via Frontend Transport; Mon, 30 Dec 2019 09:13:06 +0000
-From:   Peng Fan <peng.fan@nxp.com>
-To:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>,
-        Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 3/3] clk: imx: imx8m: use imx_clk_hw_pll14xx_flags for dram
- pll
-Thread-Topic: [PATCH 3/3] clk: imx: imx8m: use imx_clk_hw_pll14xx_flags for
- dram pll
-Thread-Index: AQHVvvFbxKyPeAf2oEWw9V8pqxLyug==
-Date:   Mon, 30 Dec 2019 09:13:10 +0000
-Message-ID: <1577696903-27870-4-git-send-email-peng.fan@nxp.com>
-References: <1577696903-27870-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1577696903-27870-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-mailer: git-send-email 2.7.4
-x-clientproxiedby: HK2PR03CA0057.apcprd03.prod.outlook.com
- (2603:1096:202:17::27) To AM0PR04MB4481.eurprd04.prod.outlook.com
- (2603:10a6:208:70::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=peng.fan@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [119.31.174.67]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 42829551-2c58-46b1-3b16-08d78d087d85
-x-ms-traffictypediagnostic: AM0PR04MB6401:|AM0PR04MB6401:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB64015307A4C988EB80AC453588270@AM0PR04MB6401.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:2733;
-x-forefront-prvs: 0267E514F9
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(376002)(396003)(346002)(39860400002)(366004)(136003)(189003)(199004)(81166006)(81156014)(6506007)(66946007)(69590400006)(71200400001)(66476007)(66556008)(8676002)(52116002)(4326008)(66446008)(64756008)(26005)(8936002)(2616005)(110136005)(6486002)(54906003)(6666004)(956004)(86362001)(6636002)(316002)(16526019)(186003)(478600001)(36756003)(5660300002)(2906002)(6512007)(44832011)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6401;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: B/Aj+4H26luSTUJBNYrwQfvdkPAIE7fquu+FLEi9++KkPnwB/ki1q3nbOloRy00mNxdgujlYC79WWRUp+PKEWibflD+STroTw1dorur4hHMrRAc2fKK42/Ewk4fobfXKgbX/YRTaOw7C+Cz6ZMWP/beygU6O1EY/yhEWEGl2od1a56oYFYWuM8tN9UbLs9ZxUV9Vlhk0GsKrnMNn/YHuW1bSquCJbWIwMsCWbuWkOsVXXFgzp3Ll8zcMBGuTad7lWMNHmXcg2/MYQyg0INigZpQYy/3IkcOTC3+BOc1nKD0yE9PzsTYW4G6MjOp2I1F70F5dBhj3/nqK8RSt1V+RL5ca0tjex7TA5dDdoTFaguqCscvMjwvLcnq6dg4FWP24c1a1juZWkWtcjanmP6Bf2WJWTH3Nmla5hpHi4W0PQnXsXTCPR8k5i9FKQAL+rbBo9o5s1uM9xCohaxmAdj6u8KasRuCqmeJnw3NtgE+kLlRMimLg0ZwHHEAO5rhl/j6uLXucTeRypps5EENDTPiMQg==
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        id S1727247AbfL3Jdq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Dec 2019 04:33:46 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:45264 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727162AbfL3Jdq (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Dec 2019 04:33:46 -0500
+Received: by mail-lj1-f193.google.com with SMTP id j26so32697999ljc.12;
+        Mon, 30 Dec 2019 01:33:42 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2NqufcPBhZYTsIAthp0VQiEaEhhWxUx6Zd6ePwQaHwA=;
+        b=Fc8vgM/doOa9CfvPsMUXWuf5vi+jJAaoaq2AmFDubhNKDw4w+Q/+6Gt/YiNi8jKhZT
+         Tbl5tdxgj+FTdzytDs+QM3p+WnMpL9Vl2SM9srV/ugkOh763H7weml6/o/lFJFOjetfK
+         p/QhZxTfVoCp3lkzxPDOvPJpvVuvF7qC6EAdYlr13wrdiggYXMStZPfjp2Fz10426nO2
+         QxxONHUoNsPNC9DetG9o0I+B8KqGZvqpcUnONgFF0FFJFd901xd6q6SVuVfuo4kIzy2G
+         c/6TMobiEqUhzMrkTJxQRaR7w8yya16rUMQdQcEcdEcEEiY9xFgyZ3aHRqkq8cQ4q5Wl
+         DMeA==
+X-Gm-Message-State: APjAAAWyTCAC/o6B3Qp9Fa9jd3xo3ipHGf/S3+YErW+Bn68E/sLeOprC
+        Qf9OwnSqyqdQzIDr4bnuxAA=
+X-Google-Smtp-Source: APXvYqzhWugypZhTyKQNBXK74HluaZ01T85otH8kn1BRJYWI3nvywn5dyy8ChnYswhBLEbpqg7y+FA==
+X-Received: by 2002:a2e:9a04:: with SMTP id o4mr39685118lji.214.1577698421811;
+        Mon, 30 Dec 2019 01:33:41 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g25sm12527532ljn.107.2019.12.30.01.33.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 30 Dec 2019 01:33:41 -0800 (PST)
+Date:   Mon, 30 Dec 2019 11:33:33 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: [PATCH v8 00/12] Support ROHM BD71828 PMIC
+Message-ID: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 42829551-2c58-46b1-3b16-08d78d087d85
-X-MS-Exchange-CrossTenant-originalarrivaltime: 30 Dec 2019 09:13:10.4560
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SzNACm0XTZut76tukBFkfWnywltQrevlk8vez33vt7IeHWRAg90C5ALTuoRGic6S6hc8p+AW393xn2XKFcYQOQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6401
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.12.1 (2019-06-15)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Peng Fan <peng.fan@nxp.com>
+Patch series introducing support for ROHM BD71828 PMIC
 
-Use imx_clk_hw_pll14xx_flags for dram pll.
-Modify imx_1443x_dram_pll to imx_1443x_dram_readonly, because dram pll
-is not expected to be modified from Linux.
+ROHM BD71828 is a power management IC containing 7 bucks and 7 LDOs. All
+regulators can be controlled individually via I2C. Bucks 1,2,6 and
+7 can also be assigned to a "regulator group" controlled by run-levels.
+Eg. Run level specific voltages and enable/disable statuses for each of
+these bucks can be set via register interface. The buck run-level group
+assignment (selection if buck is to be controlled individually or via
+run-levels) can be changed at run-time via I2C.
 
-Signed-off-by: Peng Fan <peng.fan@nxp.com>
+This patch series brings only the basic support for controlling
+regulators individually via I2C.
+
+In addition to the bucks and LDOs there are:
+
+- The usual clk gate
+- 4 IO pins (mostly usable as GPO or tied to specific purpose)
+- power button support
+- RTC
+- two LEDs
+- battery charger
+- HALL sensor input
+
+This patch series adds support to regulators, clk, RTC, GPIOs and LEDs.
+
+Power-supply driver for charger is not included in this series.
+
+The series also adds LED DT-node lookup based on node name or given
+property name/value pair in LED core. It also adds generic default-state
+and default-trigger property handling to LED core. Follow-up patches
+simplifying few other LED drivers should follow.
+
+Changelog v8:
+  LEDs:
+    - Fixed bunch of typos.
+    - Corrected the commit message which errorneously contained the
+      'leds-compatible' which I dropped in favour of match_property.
+    - use max_brightness instead of LED_FULL if it is given when
+      handling the default_state, "on".
+    - clean fwnode_owned at the end of unsuccessfull registration or
+      at the end of deregistration.
+    - fix the accidental linuxdoc comment.
+    - rename led_find_fwnode to led_get_fwnode as it increases refcount.
+
+Changelog v7:
+  - Rebased on top of v5.5-rc2
+  - Dropped already applied patches
+    - basic regulator support (in regulator tree now)
+    - regulator dt-bindings (in regulator tree now)
+    - gpio devm function documentation (in GPIO tree now)
+  - Dropped new devm-variant of gpio_array getting for MFD sub-devices who
+    have consumer information in parent DT node as gpio consumer was
+    dropped from the series
+  - removed extra line-breaks from MFD driver and Makefile
+  - fixed RTC patch subject line (added missing colon)
+  - included a patch which adds compatible for ROHM BD71850 PMIC
+
+Changelog v6:
+  Rebased on top of v5.5-rc1
+  LED core:
+    - Do new fw-node look-up only if the new match data is given. That
+      way behaviour for existing drivers is not changed
+    - Handle generic LED properties by core only if explisitly requested
+      in init-data. That way behaviour for existing drivers is not changed
+      until they are verified to work.
+  BD71828 LEDs:
+    - Fix module loading by adding "dummy" of_device_id table.
+  DT bindings:
+    All:
+    - Remove regulator run-level properties as run-level support was
+      dropped for now.
+    - Change SPDX to dual lisence
+    LED:
+    - added select: false
+    - replace oneOf + const by enum
+    Regulator:
+    - remove forgotten comments
+    - comment indenting
+    MFD:
+    - remove unnecessary descriptions
+  Regulators:
+    - Dropped patch 12 with run-level controls
+    - Dropped unnecessary ramp_delay_supported() - ram_delay ops were
+      already only filled for DVS bucks.
+  GPIO:
+    - rename internal function.
+  RTC:
+    - Added missing blank line
+  
+Changelog v5:
+  Only LED patch (patch 15) changed, rest as in v4.
+  LED:
+    - Fixed issues reported by Dan Carpenter and kbuild-bot static
+      analysis.
+Changelog v4 (first non RFC):
+  General:
+    - Changed subdevice loading and chip version identification to use
+      platform ID.
+    - License identifiers changed to GPL-2.0-only
+  MFD:
+    - Styling fixes mostly
+  DT-Bindings:
+    - a few more checks as suggested by Rob Herring.
+    - Order of DT patches changed.
+    - me as maintainer
+    - standard units to new properties (microvolts, ohms)
+    - runlevel values in an array
+  LED:
+    - BD71828 driver added (back)
+      - Added DT support
+    - Added LED DT node lookup in led framework when init_data is given
+      with DT node match information.
+    - Added common property parsing for default-state and
+      default-trigger.
+  Regulators:
+    - dropped sysfs interfaces
+    - fixed module unload/reload by binding gpio consumer information to
+      regulator device not to MFD.
+  GPIO:
+    - Added devm_gpiod_get_parent_array
+    - added few missing devm functions to documentation
+
+Changelog v3:
+  DT-Bindings:
+    - yamlify
+    - add LED binding doc
+  CLK:
+    - Move clk register definitions from MFD headers to clk driver
+  GPIO:
+    - Add generic direction define and use it.
+  LED:
+    - Drop LED driver from the series (for now).
+
+Changelog v2: Mainly RTC and GPIO fixes suggested by Alexandre and Bartosz
+  General:
+    -Patch ordering changed to provide dt binding documents right after the
+     MFD core.
+  DT-Bindings for regulators (Patch 3)
+    -Fix typo in PMIC model number
+  RTC (patch 11)
+    -Reverted renaming in order to reduce patch size.
+    -Reworded commit message
+  BD71828 regulator (patch 7)
+    -Add MODULE_ALIAS
+  GPIO (patch 12)
+    -Remove file-name from comment
+    -prefix IN and OUT defines with chip type
+    -improved documentation for the INPUT only pin.
+    -removed empty left-over function
+    -removed unnecessary #ifdef CONFIG_OF_GPIO
+    -removed unnecessary error print
+    -Add MODULE_ALIAS
+
+Patch 1:
+        dt-bindings for LEDs on BD71828 PMIC
+Patch 2:
+	dt-bindings for BD71828 PMIC
+Patch 3:
+	Convert rohm PMICs with common sub-devices to use platform_
+	device_id to match MFD sub-devices
+Patch 4:
+	Add compatible for BD71850
+Patch 5:
+        BD71828 MFD core.
+Patch 6:
+	Power button support using GPIO keys.
+Patch 7:
+        CLK gate support using existing clk-bd718x7
+Patch 8:
+        Split existing bd718x7 regulator driver to generic ROHM dt
+        parsing portion (used by more than one ROHM drivers) and
+        bd718x8 specific parts
+Patch 9:
+        Support BD71828 RTC block using BD70528 RTC driver
+Patch 10:
+        Allow control of GP(I)O pins on BD71828 via GPIO subsystem
+Patch 11:
+	Add LED node lookup and common LED binding parsing support
+	to LED class/core
+Patch 12:
+        Support toggling the LEDs on BD71828.
+
 ---
- drivers/clk/imx/clk-imx8mm.c  | 2 +-
- drivers/clk/imx/clk-imx8mn.c  | 2 +-
- drivers/clk/imx/clk-pll14xx.c | 3 +--
- drivers/clk/imx/clk.h         | 2 +-
- 4 files changed, 4 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-index 2ed93fc25087..55862652b19f 100644
---- a/drivers/clk/imx/clk-imx8mm.c
-+++ b/drivers/clk/imx/clk-imx8mm.c
-@@ -337,7 +337,7 @@ static int imx8mm_clocks_probe(struct platform_device *=
-pdev)
- 	hws[IMX8MM_AUDIO_PLL1] =3D imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_r=
-ef_sel", base, &imx_1443x_pll);
- 	hws[IMX8MM_AUDIO_PLL2] =3D imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_r=
-ef_sel", base + 0x14, &imx_1443x_pll);
- 	hws[IMX8MM_VIDEO_PLL1] =3D imx_clk_hw_pll14xx("video_pll1", "video_pll1_r=
-ef_sel", base + 0x28, &imx_1443x_pll);
--	hws[IMX8MM_DRAM_PLL] =3D imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel=
-", base + 0x50, &imx_1443x_dram_pll);
-+	hws[IMX8MM_DRAM_PLL] =3D imx_clk_hw_pll14xx_flags("dram_pll", "dram_pll_r=
-ef_sel", base + 0x50, &imx_1443x_pll_readonly, CLK_GET_RATE_NOCACHE);
- 	hws[IMX8MM_GPU_PLL] =3D imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", =
-base + 0x64, &imx_1416x_pll);
- 	hws[IMX8MM_VPU_PLL] =3D imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", =
-base + 0x74, &imx_1416x_pll);
- 	hws[IMX8MM_ARM_PLL] =3D imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", =
-base + 0x84, &imx_1416x_pll);
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index c5e7316b4c66..e4710d3cf3e0 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -334,7 +334,7 @@ static int imx8mn_clocks_probe(struct platform_device *=
-pdev)
- 	hws[IMX8MN_AUDIO_PLL1] =3D imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_r=
-ef_sel", base, &imx_1443x_pll);
- 	hws[IMX8MN_AUDIO_PLL2] =3D imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_r=
-ef_sel", base + 0x14, &imx_1443x_pll);
- 	hws[IMX8MN_VIDEO_PLL1] =3D imx_clk_hw_pll14xx("video_pll1", "video_pll1_r=
-ef_sel", base + 0x28, &imx_1443x_pll);
--	hws[IMX8MN_DRAM_PLL] =3D imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel=
-", base + 0x50, &imx_1443x_dram_pll);
-+	hws[IMX8MN_DRAM_PLL] =3D imx_clk_hw_pll14xx_flags("dram_pll", "dram_pll_r=
-ef_sel", base + 0x50, &imx_1443x_pll_readonly, CLK_GET_RATE_NOCACHE);
- 	hws[IMX8MN_GPU_PLL] =3D imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", =
-base + 0x64, &imx_1416x_pll);
- 	hws[IMX8MN_VPU_PLL] =3D imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", =
-base + 0x74, &imx_1416x_pll);
- 	hws[IMX8MN_ARM_PLL] =3D imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", =
-base + 0x84, &imx_1416x_pll);
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index 030159dc4884..33236d8580a6 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -67,9 +67,8 @@ struct imx_pll14xx_clk imx_1443x_pll =3D {
- 	.rate_count =3D ARRAY_SIZE(imx_pll1443x_tbl),
- };
-=20
--struct imx_pll14xx_clk imx_1443x_dram_pll =3D {
-+struct imx_pll14xx_clk imx_1443x_pll_readonly =3D {
- 	.type =3D PLL_1443X,
--	.flags =3D CLK_GET_RATE_NOCACHE,
- };
-=20
- struct imx_pll14xx_clk imx_1416x_pll =3D {
-diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-index 35a9d294b6df..ea84d2993b57 100644
---- a/drivers/clk/imx/clk.h
-+++ b/drivers/clk/imx/clk.h
-@@ -53,7 +53,7 @@ struct imx_pll14xx_clk {
-=20
- extern struct imx_pll14xx_clk imx_1416x_pll;
- extern struct imx_pll14xx_clk imx_1443x_pll;
--extern struct imx_pll14xx_clk imx_1443x_dram_pll;
-+extern struct imx_pll14xx_clk imx_1443x_pll_readonly;
-=20
- #define imx_clk_cpu(name, parent_name, div, mux, pll, step) \
- 	to_clk(imx_clk_hw_cpu(name, parent_name, div, mux, pll, step))
---=20
-2.16.4
+Matti Vaittinen (12):
+  dt-bindings: leds: ROHM BD71282 PMIC LED driver
+  dt-bindings: mfd: Document ROHM BD71828 bindings
+  mfd: rohm PMICs - use platform_device_id to match MFD sub-devices
+  mfd: bd718x7: Add compatible for BD71850
+  mfd: bd71828: Support ROHM BD71828 PMIC - core
+  mfd: input: bd71828: Add power-key support
+  clk: bd718x7: Support ROHM BD71828 clk block
+  regulator: bd718x7: Split driver to common and bd718x7 specific parts
+  rtc: bd70528: add BD71828 support
+  gpio: bd71828: Initial support for ROHM BD71828 PMIC GPIOs
+  leds: Add common LED binding parsing support to LED class/core
+  led: bd71828: Support LED outputs on ROHM BD71828 PMIC
 
+ .../bindings/leds/rohm,bd71828-leds.yaml      |  52 +++
+ .../bindings/mfd/rohm,bd71828-pmic.yaml       | 193 ++++++++
+ drivers/clk/Kconfig                           |   6 +-
+ drivers/clk/clk-bd718x7.c                     |  50 ++-
+ drivers/gpio/Kconfig                          |  12 +
+ drivers/gpio/Makefile                         |   1 +
+ drivers/gpio/gpio-bd71828.c                   | 159 +++++++
+ drivers/leds/Kconfig                          |  10 +
+ drivers/leds/Makefile                         |   1 +
+ drivers/leds/led-class.c                      | 115 ++++-
+ drivers/leds/led-core.c                       | 258 +++++++++--
+ drivers/leds/leds-bd71828.c                   | 118 +++++
+ drivers/mfd/Kconfig                           |  15 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/rohm-bd70528.c                    |   3 +-
+ drivers/mfd/rohm-bd71828.c                    | 344 ++++++++++++++
+ drivers/mfd/rohm-bd718x7.c                    |  43 +-
+ drivers/regulator/Kconfig                     |   4 +
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/bd718x7-regulator.c         | 200 +++------
+ drivers/regulator/rohm-regulator.c            |  95 ++++
+ drivers/rtc/Kconfig                           |   3 +-
+ drivers/rtc/rtc-bd70528.c                     | 168 ++++++-
+ include/linux/leds.h                          |  94 +++-
+ include/linux/mfd/rohm-bd70528.h              |  19 +-
+ include/linux/mfd/rohm-bd71828.h              | 423 ++++++++++++++++++
+ include/linux/mfd/rohm-bd718x7.h              |   6 -
+ include/linux/mfd/rohm-generic.h              |  48 +-
+ include/linux/mfd/rohm-shared.h               |  27 ++
+ 29 files changed, 2206 insertions(+), 263 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+ create mode 100644 drivers/gpio/gpio-bd71828.c
+ create mode 100644 drivers/leds/leds-bd71828.c
+ create mode 100644 drivers/mfd/rohm-bd71828.c
+ create mode 100644 drivers/regulator/rohm-regulator.c
+ create mode 100644 include/linux/mfd/rohm-bd71828.h
+ create mode 100644 include/linux/mfd/rohm-shared.h
+
+
+base-commit: commit d1eef1c61974 ("Linux 5.5-rc2")
+-- 
+2.21.0
+
+
+-- 
+Matti Vaittinen, Linux device drivers
+ROHM Semiconductors, Finland SWDC
+Kiviharjunlenkki 1E
+90220 OULU
+FINLAND
+
+~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
+Simon says - in Latin please.
+~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
+Thanks to Simon Glass for the translation =] 
