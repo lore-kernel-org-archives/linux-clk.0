@@ -2,127 +2,142 @@ Return-Path: <SRS0=S7bi=2U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65890C2D0C2
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 18:46:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84581C2D0C2
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 19:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39B2C20722
-	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 18:46:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NiiEQlwy"
+	by mail.kernel.org (Postfix) with ESMTP id 521D120658
+	for <linux-clk@archiver.kernel.org>; Mon, 30 Dec 2019 19:04:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1577732697;
+	bh=p8M2OEtkcPThYS4Ece3U5r41flQ/iN5brOD0ybpPheo=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=C58vFRcLzXM7T9CljVnVLS/jLD32/BnxXbsf1fPDxOps9VqGBpg9BAZvbH7tv7kMk
+	 rzcdSFx1epCQFJ2Gm9gx/eebSQZKTkx5dxMDRjVmkdEHXRH6jc6YphVVFYJqR0fuaG
+	 IJ/uMOu4mN745BbcD76iZ8E3DvKz1Ig2zzTMfphQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbfL3SqS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 30 Dec 2019 13:46:18 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45047 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727537AbfL3SqS (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 30 Dec 2019 13:46:18 -0500
-Received: by mail-pf1-f195.google.com with SMTP id 195so17771439pfw.11;
-        Mon, 30 Dec 2019 10:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=nBZiNp/5ZDljBNnJwdB8VJM1EgbiFAgEf4nBjxk3pCQ=;
-        b=NiiEQlwyaPxeR/HBCUL36jKYZzqdi6gXMafTaB3Y39Vmwke2cpj5Kapy6zbrh9qVdg
-         ExnQZ/20EcUibQpnV5EfXvqR8jbodKB3elEE4y7BOzOUsZHj+Jvsy8OYYbzjSsYq2d4e
-         vm2L4SyYNmuaL81ZnWM+vRmiu0YAeflfo+waQ+ETVv1zsmA7gnxJJIKUpkdkRf+z5UYt
-         ndds0fvHZ4uyw7I9YG+D8JBRrGENVfCCVr84PPWXsvo9vy39UzXfhuqBMomFUMNYH/2S
-         rgPR+SMbR7ZTTNq6t587mjwrPNS9m/QxYO35GE1Vn6rkM5MeFmXX/21732GGY/wZZRuG
-         oppw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=nBZiNp/5ZDljBNnJwdB8VJM1EgbiFAgEf4nBjxk3pCQ=;
-        b=jc6LU68qVj8JhxpW+6ZncC7HCO45VjrBx4gLizos2boRbMXAgywLPMku38QUyb79BU
-         cunL+EvOzKX3qbEM7Tr7LASlvKEMHWE9gXVWpErD3l+lkFFXxgPrvLzRDUyffIYE+9mR
-         wFtAhCOq/Tz/8o5XxkVluuqsG7M532FwYP7JXVqIPjwaSB/oawRYT/LUFDD92Xa+76Ia
-         pwd+fcWXaOLYmu3jLcSo/VoIDkZ272twbsmp/yoh3wTSnrl6Y2xJS3m9fvd5+4uzB60K
-         DgzNcaUhL5rNgDtNLwh5U3gqprYNOerkv5P9kh4vqlT5IYnF7psuZAdS9otojS6fX90D
-         Lgzg==
-X-Gm-Message-State: APjAAAVyMK+ntxcR1yA3QUxJ6URFTGo2aeVQCtvc0n0cQjSkk4ZTKQeF
-        E2v6fvSxTqKVcuJZbD+JEjxaISOt
-X-Google-Smtp-Source: APXvYqxj8DCa4bG6Y2U2srYNmQTFBC2du5c79JALur2/0MlM/fSZPJ66ZjgvqFWpl5gJa+pbzELPgw==
-X-Received: by 2002:a63:a357:: with SMTP id v23mr73973634pgn.223.1577731577587;
-        Mon, 30 Dec 2019 10:46:17 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id i68sm54113232pfe.173.2019.12.30.10.46.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 30 Dec 2019 10:46:16 -0800 (PST)
-Date:   Mon, 30 Dec 2019 10:46:15 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Jerome Brunet <jbrunet@baylibre.com>
-Subject: Re: [PATCH] clk: Warn about critical clks that fail to enable
-Message-ID: <20191230184615.GA25973@roeck-us.net>
-References: <20191226221354.11957-1-sboyd@kernel.org>
- <20191230175517.D2CC620718@mail.kernel.org>
+        id S1727571AbfL3TE5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 30 Dec 2019 14:04:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38082 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727278AbfL3TE4 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 30 Dec 2019 14:04:56 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE5C020658;
+        Mon, 30 Dec 2019 19:04:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1577732696;
+        bh=p8M2OEtkcPThYS4Ece3U5r41flQ/iN5brOD0ybpPheo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=VXfAVnfX0pCF4+EO8/FpwofMi0eLyIWyodRALEdQx6v7TeZNY68sIShz3MXJhkLvd
+         Z7B+pXBb+IGbUV+FfUwrVblf+KMh/SYY0vpB7Uh+oNTKkJlNcwD9ryhU9S4jzK8TaS
+         +CmCwoh7G4Xb/r2RPuki2ehFpGcsjh7Q9uWFEk9s=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>
+Subject: [PATCH] clk: Use parent node pointer during registration if necessary
+Date:   Mon, 30 Dec 2019 11:04:55 -0800
+Message-Id: <20191230190455.141339-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.24.1.735.g03f4e72817-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230175517.D2CC620718@mail.kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 09:55:17AM -0800, Stephen Boyd wrote:
-> Quoting Stephen Boyd (2019-12-26 14:13:54)
-> > If we don't warn here users of the CLK_IS_CRITICAL flag may not know
-> > that their clk isn't actually enabled because it silently fails to
-> > enable. Let's drop a big WARN_ON in that case so developers find these
-> > problems faster.
-> > 
-> > Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
-> > Cc: Guenter Roeck <linux@roeck-us.net>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> > ---
-> > 
-> > I suspect that this may start warning for other users. Let's see
-> > and revert in case it doesn't work.
-> > 
-> >  drivers/clk/clk.c | 4 ++--
-> >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> > index 772258de2d1f..6a9a66dfdeaa 100644
-> > --- a/drivers/clk/clk.c
-> > +++ b/drivers/clk/clk.c
-> > @@ -3427,13 +3427,13 @@ static int __clk_core_init(struct clk_core *core)
-> >                 unsigned long flags;
-> >  
-> >                 ret = clk_core_prepare(core);
-> > -               if (ret)
-> > +               if (WARN_ON(ret))
-> 
-> We should probably just print the clk name that failed to be critically
-> enabled with a pr_warn(). The traceback pointing to this location will
-> be really hard to understand otherwise.
-> 
-Agreed.
+Sometimes clk drivers are attached to devices which are children of a
+parent device that is connected to a node in DT. This happens when
+devices are MFD-ish and the parent device driver mostly registers child
+devices to match against drivers placed in their respective subsystem
+directories like drivers/clk, drivers/regulator, etc. When the clk
+driver calls clk_register() with a device pointer, that struct device
+pointer won't have a device_node associated with it because it was
+created purely in software as a way to partition logic to a subsystem.
 
-Guenter
+This causes problems for the way we find parent clks for the clks
+registered by these child devices because we look at the registering
+device's device_node pointer to lookup 'clocks' and 'clock-names'
+properties. Let's use the parent device's device_node pointer if the
+registering device doesn't have a device_node but the parent does. This
+simplifies clk registration code by avoiding the need to assign some
+device_node to the device registering the clk.
 
-> >                         goto out;
-> >  
-> >                 flags = clk_enable_lock();
-> >                 ret = clk_core_enable(core);
-> >                 clk_enable_unlock(flags);
-> > -               if (ret) {
-> > +               if (WARN_ON(ret)) {
-> >                         clk_core_unprepare(core);
-> >                         goto out;
-> >                 }
-> > 
-> > base-commit: 12ead77432f2ce32dea797742316d15c5800cb32
-> > -- 
-> > Sent by a computer, using git, on the internet
-> > 
+Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+
+I decided to introduce a new function instead of trying to jam it all
+in the one line where we assign np. This way the function gets the 
+true 'np' as an argument all the time.
+
+ drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
+ 1 file changed, 25 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index b68e200829f2..a743fffe8e46 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -3719,6 +3719,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+ 	return ERR_PTR(ret);
+ }
+ 
++/**
++ * dev_or_parent_of_node - Get device node of @dev or @dev's parent
++ * @dev: Device to get device node of
++ *
++ * Returns: device node pointer of @dev, or the device node pointer of
++ * @dev->parent if dev doesn't have a device node, or NULL if neither
++ * @dev or @dev->parent have a device node.
++ */
++static struct device_node *dev_or_parent_of_node(struct device *dev)
++{
++	struct device_node *np;
++
++	if (!dev)
++		return NULL;
++
++	np = dev_of_node(dev);
++	if (!np)
++		np = dev_of_node(dev->parent);
++
++	return np;
++}
++
+ /**
+  * clk_register - allocate a new clock, register it and return an opaque cookie
+  * @dev: device that is registering this clock
+@@ -3734,7 +3756,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
+  */
+ struct clk *clk_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return __clk_register(dev, dev_of_node(dev), hw);
++	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
+ }
+ EXPORT_SYMBOL_GPL(clk_register);
+ 
+@@ -3750,7 +3772,8 @@ EXPORT_SYMBOL_GPL(clk_register);
+  */
+ int clk_hw_register(struct device *dev, struct clk_hw *hw)
+ {
+-	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
++	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
++			       hw));
+ }
+ EXPORT_SYMBOL_GPL(clk_hw_register);
+ 
+
+base-commit: e42617b825f8073569da76dc4510bfa019b1c35a
+-- 
+Sent by a computer, using git, on the internet
+
