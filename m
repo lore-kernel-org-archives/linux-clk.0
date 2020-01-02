@@ -2,114 +2,165 @@ Return-Path: <SRS0=1mk2=2X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D434CC2D0DC
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 14:38:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D32C2D0DC
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 16:12:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F96F21734
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 14:38:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2954620866
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 16:12:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IN6tujye"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zn5iPKur"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728487AbgABOi0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jan 2020 09:38:26 -0500
-Received: from mail-pj1-f65.google.com ([209.85.216.65]:53659 "EHLO
-        mail-pj1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728425AbgABOi0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jan 2020 09:38:26 -0500
-Received: by mail-pj1-f65.google.com with SMTP id n96so3327460pjc.3;
-        Thu, 02 Jan 2020 06:38:25 -0800 (PST)
+        id S1728791AbgABQMQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jan 2020 11:12:16 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:43042 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728777AbgABQMQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jan 2020 11:12:16 -0500
+Received: by mail-lf1-f65.google.com with SMTP id 9so30193492lfq.10;
+        Thu, 02 Jan 2020 08:12:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:to:cc:references:from:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=dDEL4xCv+XB3PtXbUiZpFi9F9tjNuKGarbsndcdWlAI=;
-        b=IN6tujyeczsHq4JMfuS70Jsso8h8/MscT+uLnH2bUwQHkXyJYRN+Rb5Y+KavE6EfIn
-         wC4wj0UYpqNCfo2ONSlcOMOo8HvI5pUyrQwW7M+pnkaMMgUYNSyuW0/khy9+sjLg+BHU
-         RfeIdSibxonN40o4sCn9cIYREaUpWWA6icN8QxgUx+xweXC+B2dxDotYwNVRv8i/y12v
-         Azo0EHtXlRaEOid5b8+s72zFsyhP+y+3zBASiTNFWRmJsW/iyowKae80PvmYur9sAmm2
-         YrDxITMfc/pog1Gwu3zqv06e1O6QLgzdDXC9DGA9JStfxHllDd3Vmw+f/MM2ct104N/N
-         tXKQ==
+        bh=dcFwimzrGJGHbW4zkICP1L/UJVH4w/OzpiQZKEHjlT8=;
+        b=Zn5iPKurYyanA4kUWRnwHDKueC9SOo767QwsXFmamOBiHVBNAxgMyCWWsr5QvpIXTu
+         KOQQ+RJlbmMxuMFk188IogcEuh5fdXyLGStVP0PtJj7HtZisvQEL+8oUMcSQVZt97+DK
+         2HHPtW8F0PSgLJUKcDTA91viP3QMYKxCeAecgNdimfxLjSWiqfMh43XX6UK6WR+4hm/C
+         ZdWQa/NM6HEK4iRj8c8f4ZUXKl8kcOeGbWVR5K8nUv5jhOKh+IUX6wN1Nnw6f3DWhA+k
+         +8DMCK+B24MlSz7al+pXO01vQNjBFHlEP270FJNzWI6P4znuF/Akj/LC+TOAqRQO+VoK
+         Cfng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=dDEL4xCv+XB3PtXbUiZpFi9F9tjNuKGarbsndcdWlAI=;
-        b=TM7s6H5I+6u93M7zUvNQtUOnRc0qEBU/1pgDurUuCq/q3EJNxC5fe7qzXHqlrD6Bfc
-         CZSfJLzE9uv+AF5BWN4+Zemyrwq/v4vih7cCuLhzw5sdbxTmLZh2xx9U6CkEK8UbssH5
-         sd0JL2Xa3Z8hTLF5dx2Sn//ENHQRITif8xEd/zAhVdPmFOHk59rvbIUm9ajSkjKwOYXN
-         /fbY62L/WTukzqyteAqXikJnR5ZHcTjZofaNWaG0o185w8krXHKceXVuz4JQ6UGPC+Pg
-         LF7CoPkC0oylXLlphV2AhfOQ9cba/hHIPC9V4Vd92E/iioxAgVR6gmayQhspgPcAikfl
-         X7tw==
-X-Gm-Message-State: APjAAAWu0VnH++dGkXl+FM35ss7ToMCw6x/+ji3qNfY6yO+iqqVb0ktT
-        rR8ni5lJzu9q5DqGXQI+ZTh3+IU3
-X-Google-Smtp-Source: APXvYqymIsrCz06b+YYXTXBgzywmdTfrymeeAo3mHe6dSAip4TEmCCseUv+2AvKA/Frme1JjZpT/mg==
-X-Received: by 2002:a17:90a:fb4f:: with SMTP id iq15mr20307474pjb.86.1577975905062;
-        Thu, 02 Jan 2020 06:38:25 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id d26sm58314003pgv.66.2020.01.02.06.38.23
+        bh=dcFwimzrGJGHbW4zkICP1L/UJVH4w/OzpiQZKEHjlT8=;
+        b=Sgk9lt1HYtYODn23OtSAPd9ThwQMl6hE147+USI8GpRoe84xNoG+KgdBc95Ei3KCvL
+         +WTBZT13nafsEsi7BsXNWQ2iE5QRDYsw11jlX4WCf6XGeRPRgV7BxBmUb3n61kCGavrb
+         J7gLNfpoWK0v8KWh1hlv+Dx8Fym0ZO+awnMu7vz3ozPBJk2alisE/02+L8eR/LkkFUHW
+         vjYcMFjxVD8fMq+IRR+3nL10txhQYVKHF+Gd47g7C9NkCW6w13d7urgPQc3ZY5mvmFDK
+         xddN0YCUKJNCGWkbMLHKa8mTlZJ1I6BC+jEixSRDr7PZ/XEDCUoS25arqMmhXlcZ9r9D
+         /N4A==
+X-Gm-Message-State: APjAAAUIG1nRjsEc12cZubfC8DVYUzd9cCmxl3EeswYC9KrBlTpxKifl
+        0yUKcvbg4p+zlQFQBWLXUWNjUGvY
+X-Google-Smtp-Source: APXvYqyfEY36gXJ9h70J0DMmP7FdD4bTt9h5xd/SKUdazjGa3OJfr2VFaE3bXrWlfgvlnia9vyLy3Q==
+X-Received: by 2002:ac2:48bc:: with SMTP id u28mr46662691lfg.81.1577981532701;
+        Thu, 02 Jan 2020 08:12:12 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id f11sm27918349lfa.9.2020.01.02.08.12.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 02 Jan 2020 06:38:24 -0800 (PST)
-Subject: Re: Clock related crashes in v5.4.y-queue
-To:     Naresh Kamboju <naresh.kamboju@linaro.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable <stable@vger.kernel.org>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        linux-clk@vger.kernel.org
-References: <029dab5a-22f5-c4e9-0797-54cdba0f3539@roeck-us.net>
- <5869f050-7b3f-b950-bfb6-5601d2b30fbd@roeck-us.net>
- <20200102073058.662A9215A4@mail.kernel.org>
- <63d158e4-14ce-279f-1e77-eb50cb07b465@roeck-us.net>
- <CA+G9fYsDEQwdE559dqDBe5bq5_fcAs0QYvYx0LNYMBEn+ij2Ew@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <5f08fd73-10a0-1c5c-2bb3-46ac359a4c92@roeck-us.net>
-Date:   Thu, 2 Jan 2020 06:38:23 -0800
+        Thu, 02 Jan 2020 08:12:12 -0800 (PST)
+Subject: Re: [PATCH v5 12/19] ASoC: tegra: Add initial parent configuration
+ for audio mclk
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Mark Brown <broonie@kernel.org>
+Cc:     thierry.reding@gmail.com, jonathanh@nvidia.com,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1576880825-15010-1-git-send-email-skomatineni@nvidia.com>
+ <1576880825-15010-13-git-send-email-skomatineni@nvidia.com>
+ <a6567ff1-7bc2-3ca5-1200-92a63eb44ddb@gmail.com>
+ <20191225175736.GC27497@sirena.org.uk>
+ <856d8a92-0c24-6722-952c-06b86c706e97@gmail.com>
+ <dbbce994-27f5-d949-078d-05646100e6be@nvidia.com>
+ <b6ec6cfd-d883-ea28-00f8-884fa80cfee1@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <576fca44-6734-5431-b523-512747a0bf12@gmail.com>
+Date:   Thu, 2 Jan 2020 19:12:10 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <CA+G9fYsDEQwdE559dqDBe5bq5_fcAs0QYvYx0LNYMBEn+ij2Ew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <b6ec6cfd-d883-ea28-00f8-884fa80cfee1@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/2/20 6:19 AM, Naresh Kamboju wrote:
-> Hi Guenter
+02.01.2020 10:03, Sowjanya Komatineni пишет:
 > 
-> On Thu, 2 Jan 2020 at 19:45, Guenter Roeck <linux@roeck-us.net> wrote:
+> On 12/27/19 1:19 PM, Sowjanya Komatineni wrote:
 >>
->> On 1/1/20 11:30 PM, Stephen Boyd wrote:
->>> (Happy New Year!)
+>> On 12/27/19 6:56 AM, Dmitry Osipenko wrote:
+>>> 25.12.2019 20:57, Mark Brown пишет:
+>>>> On Mon, Dec 23, 2019 at 12:14:34AM +0300, Dmitry Osipenko wrote:
+>>>>> 21.12.2019 01:26, Sowjanya Komatineni пишет:
+>>>>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+>>>>>> through Tegra210 and currently Tegra clock driver does initial parent
+>>>>>> configuration for audio mclk "clk_out_1" and enables them by default.
+>>>> Please delete unneeded context from mails when replying.  Doing this
+>>>> makes it much easier to find your reply in the message, helping ensure
+>>>> it won't be missed by people scrolling through the irrelevant quoted
+>>>> material.
+>>> Ok
 >>>
->>> Quoting Guenter Roeck (2020-01-01 19:41:40)
->>>> On 1/1/20 6:44 PM, Guenter Roeck wrote:
->>>>> Hi,
->>>>>
->>>>> I see a number of crashes in the latest v5.4.y-queue; please see below
->>>>> for details. The problem bisects to commit 54a311c5d3988d ("clk: Fix memory
->>>>> leak in clk_unregister()").
+>>>>>> -    clk_disable_unprepare(data->clk_cdev1);
+>>>>>> -    clk_disable_unprepare(data->clk_pll_a_out0);
+>>>>>> -    clk_disable_unprepare(data->clk_pll_a);
+>>>>>> +    if (__clk_is_enabled(data->clk_cdev1))
+>>>>>> +        clk_disable_unprepare(data->clk_cdev1);
+>>>>> The root of the problem is that you removed clocks enabling from
+>>>>> tegra_asoc_utils_init().
+>> currently, audio mclk and its parent clocks enabling are from clock
+>> driver init and not from tegra_asoc_utils_init.
+>>>>> I'm not sure why clocks should be disabled during the rate-changing,
+>>>>> probably this action is not really needed.
+>>>> I know nothing about this particular device but this is not that
+>>>> unusual a restriction for audio hardware, you often can't
+>>>> robustly reconfigure the clocking for a device while it's active
+>>>> due to issues in the hardware.  You often see issues with FIFOs
+>>>> glitching or state machines getting stuck.  This may not be an
+>>>> issue here but if it's something that's documented as a
+>>>> requirement it's probably good to pay attention.
+>>> I don't know details about that hardware either, maybe it is simply not
+>>> safe to change PLL_A rate dynamically and then CLK_SET_RATE_GATE could
+>>> be used.
+>>>
+>>> If nobody knows for sure, then will be better to keep
+>>> tegra_asoc_utils_set_rate() unchanged.
+>> plla rate change through tegra_asoc_utils_set_rate() happens only when
+>> there is not active playback or record corresponding to this sound
+>> device.
+>>
+>> So, I don't see reason for disabling clock during rate change and not
+>> sure why we had this from the beginning.
+>>
+>> Thierry/Sameer,
+>>
+>> Can you please comment?
+>>
+>> Yes, we can use CLK_SET_RATE_GATE for PLLA and remove clock disabling
+>> before rate change.
+>>
+> PLLA is used for both I2S controller clock and also for audio mclk. I2S
+> driver suspend resume implementations takes care of enabling and
+> disabling I2S clock but audio mclk will be enabled during that time and
+> PLLA disable might not happen. So using CLK_SET_RATE_GATE prevents rate
+> change to happen and as rate change happens only when there is no active
+> audio record/playback, we can perform rate change without disable/enable
+> during rate change.
 > 
-> Please share steps to reproduce this crash.
+> So probably below changes should be good.
+> 
+>   * remove asoc_utils_set_rate call from asoc_utils_init as set_rate
+>     happens during existing hw_params callback implementations in sound
+>     drivers and there is no need to do rate change during asoc_utils_init.
+>   * remove disable/enable clocks during rate change in asoc_utils_set_rate.
+>   * add startup and shutdown snd_soc_ops callbacks to do enable and
+>     disable audio mclk.
 > 
 
-With multi_v7_defconfig:
-
-qemu-system-arm -M xilinx-zynq-a9 -kernel arch/arm/boot/zImage \
-	-no-reboot -initrd rootfs-armv5.cpio \
-	-m 128 -serial null \
-	--append 'panic=-1 slub_debug=FZPUA rdinit=/sbin/init console=ttyPS0' \
-	-dtb arch/arm/boot/dts/zynq-zc702.dtb \
-	-nographic -monitor null -serial stdio
-
-initrd from https://github.com/groeck/linux-build-test/blob/master/rootfs/arm/rootfs-armv5.cpio.gz
-
-Guenter
+Sounds good, thanks. I'll be happy to review and test it.
