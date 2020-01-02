@@ -2,122 +2,122 @@ Return-Path: <SRS0=1mk2=2X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DA5CC2D0DC
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 12:06:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2FC3C3276C
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 12:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3A221655
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 12:06:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8DC520863
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 12:48:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="GNJfKR2B"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728260AbgABMGv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jan 2020 07:06:51 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:58285 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728205AbgABMGv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jan 2020 07:06:51 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.92)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1imzFN-0003cs-KI; Thu, 02 Jan 2020 13:06:37 +0100
-Message-ID: <1cb30ea7ed8acabb02dc78f6f054be19d4b5b609.camel@pengutronix.de>
-Subject: Re: [PATCH v5 3/8] mailbox: sun6i-msgbox: Add a new mailbox driver
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     Samuel Holland <samuel@sholland.org>,
-        Maxime Ripard <mripard@kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Ondrej Jirman <megous@megous.com>,
-        Vasily Khoruzhick <anarsoul@gmail.com>
-Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com
-Date:   Thu, 02 Jan 2020 13:06:34 +0100
-In-Reply-To: <20191215042455.51001-4-samuel@sholland.org>
-References: <20191215042455.51001-1-samuel@sholland.org>
-         <20191215042455.51001-4-samuel@sholland.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.5-1.1 
+        id S1728288AbgABMsA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jan 2020 07:48:00 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:40436 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728302AbgABMr6 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jan 2020 07:47:58 -0500
+Received: by mail-wr1-f65.google.com with SMTP id c14so39093524wrn.7
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2020 04:47:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=ZPjjlsLBRy/AsEOd+5TSLn081vD0O0nsEFO/LF3ENuo=;
+        b=GNJfKR2BW87CUTDAdER/HrYYLqseSgCIl1bZUDk4RmYZCp4/Z0iULdGwZYN6A8LFIU
+         NVpa5uSYKjQ5lujMZfT+b1X0G8kamQVGs1ru8vVPMk/Ka5Sh1/uHDyrkuLKsINdOnOcB
+         N1DK/TgTCX3jezUlxvz4SnkpByciHZZjGYtImSdU11ikysE6tfwlY8B67ctRZ4ewZryC
+         Dro6n8qznNkXTgbbbScuLuZA5Lit5zdyN8C1+Yj26GmrK9vduR6HLXsq/0iYZTVepNgV
+         FOIfYu8f/pv8p01ABASWH6H8VUow27wT2bg2Oq+LXE5D1gY9QG28+VD549EP4RO/b8sI
+         fEHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=ZPjjlsLBRy/AsEOd+5TSLn081vD0O0nsEFO/LF3ENuo=;
+        b=I+dmLeLY4rRMt6kQ2JTwjiI8ne2z/nSKXJ5RbUvUag8087UJh3pvRk7SIPa0JpQHBO
+         tRiZ6dzaNK+I9VY4deFEU63pjaNZu7Dblg/z8tX6ijZIVPtOi7JGnrNqgvX4MF1KHOTN
+         BKyczBc2m1qv+NyrJK6NbGs3doUGkKOD6YX7gSY9OpqXSgDWesOUpA84TRqKBaUqm8Bi
+         Kc85G6QofoGUtPd7eWlFijjQBQ4oS4Yvfehs1rlHcvp1U9rNmuQDISnaKiXgRy4h9L3f
+         naJTkVU1QRPMW/PNMiSh9obs8Qn+F4UkocKVVb5abgopkgkNQ1ppRFzpGqFd3oZ7lm/l
+         5ckg==
+X-Gm-Message-State: APjAAAVEZhat84Zw/WmnmW6CHWRKnKJggHO0Y5DqYuZa1PFkAbl+/7MG
+        1SJ/M4yhwlEXj8Pf6dnaP2kwFA==
+X-Google-Smtp-Source: APXvYqzwGUgWcvkkN8gOC3/lVJJr0Lne8X1G54XU++EANytHtRvN2z6E9NP6cuFHkOL/vDpXUUvwFg==
+X-Received: by 2002:adf:d846:: with SMTP id k6mr78632937wrl.337.1577969275854;
+        Thu, 02 Jan 2020 04:47:55 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id t8sm54509968wrp.69.2020.01.02.04.47.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 02 Jan 2020 04:47:54 -0800 (PST)
+References: <20200102005503.71923-1-sboyd@kernel.org>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2] clk: Warn about critical clks that fail to enable
+In-reply-to: <20200102005503.71923-1-sboyd@kernel.org>
+Date:   Thu, 02 Jan 2020 13:47:53 +0100
+Message-ID: <1j8smqja86.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Sat, 2019-12-14 at 22:24 -0600, Samuel Holland wrote:
-> Allwinner sun6i, sun8i, sun9i, and sun50i SoCs contain a hardware
-> message box used for communication between the ARM CPUs and the ARISC
-> management coprocessor. This mailbox contains 8 unidirectional
-> 4-message FIFOs.
-> 
-> Add a driver for it, so it can be used for SCPI or other communication
-> protocols.
-> 
-> Signed-off-by: Samuel Holland <samuel@sholland.org>
+
+On Thu 02 Jan 2020 at 01:55, Stephen Boyd <sboyd@kernel.org> wrote:
+
+> If we don't warn here users of the CLK_IS_CRITICAL flag may not know
+> that their clk isn't actually enabled because it silently fails to
+> enable. Let's print a warning in that case so developers find these
+> problems faster.
+
+Thanks Stephen !
+Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+
+>
+> Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->  drivers/mailbox/Kconfig        |   9 +
->  drivers/mailbox/Makefile       |   2 +
->  drivers/mailbox/sun6i-msgbox.c | 332 +++++++++++++++++++++++++++++++++
->  3 files changed, 343 insertions(+)
->  create mode 100644 drivers/mailbox/sun6i-msgbox.c
-> 
-[...]
-> diff --git a/drivers/mailbox/sun6i-msgbox.c b/drivers/mailbox/sun6i-msgbox.c
-> new file mode 100644
-> index 000000000000..7a41e732457c
-> --- /dev/null
-> +++ b/drivers/mailbox/sun6i-msgbox.c
-> @@ -0,0 +1,332 @@
-[...]
-> +static int sun6i_msgbox_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct mbox_chan *chans;
-> +	struct reset_control *reset;
-> +	struct resource *res;
-> +	struct sun6i_msgbox *mbox;
-> +	int i, ret;
-> +
-> +	mbox = devm_kzalloc(dev, sizeof(*mbox), GFP_KERNEL);
-> +	if (!mbox)
-> +		return -ENOMEM;
-> +
-> +	chans = devm_kcalloc(dev, NUM_CHANS, sizeof(*chans), GFP_KERNEL);
-> +	if (!chans)
-> +		return -ENOMEM;
-> +
-> +	for (i = 0; i < NUM_CHANS; ++i)
-> +		chans[i].con_priv = mbox;
-> +
-> +	mbox->clk = devm_clk_get(dev, NULL);
-> +	if (IS_ERR(mbox->clk)) {
-> +		ret = PTR_ERR(mbox->clk);
-> +		dev_err(dev, "Failed to get clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	ret = clk_prepare_enable(mbox->clk);
-> +	if (ret) {
-> +		dev_err(dev, "Failed to enable clock: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	reset = devm_reset_control_get(dev, NULL);
-
-Please use devm_reset_control_get_exclusive() explicitly.
-
-regards
-Philipp
+>
+> Changes from v1:
+>  * Switched to pr_warn and indicated clk name
+>
+>  drivers/clk/clk.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+> index 772258de2d1f..b03c2be4014b 100644
+> --- a/drivers/clk/clk.c
+> +++ b/drivers/clk/clk.c
+> @@ -3427,13 +3427,18 @@ static int __clk_core_init(struct clk_core *core)
+>  		unsigned long flags;
+>  
+>  		ret = clk_core_prepare(core);
+> -		if (ret)
+> +		if (ret) {
+> +			pr_warn("%s: critical clk '%s' failed to prepare\n",
+> +			       __func__, core->name);
+>  			goto out;
+> +		}
+>  
+>  		flags = clk_enable_lock();
+>  		ret = clk_core_enable(core);
+>  		clk_enable_unlock(flags);
+>  		if (ret) {
+> +			pr_warn("%s: critical clk '%s' failed to enable\n",
+> +			       __func__, core->name);
+>  			clk_core_unprepare(core);
+>  			goto out;
+>  		}
+>
+> base-commit: 12ead77432f2ce32dea797742316d15c5800cb32
 
