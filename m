@@ -2,219 +2,129 @@ Return-Path: <SRS0=1mk2=2X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54ADAC2D0DD
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 08:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38134C2D0DD
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 08:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DFD4217F4
-	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 08:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1577952571;
-	bh=yKk4Yxcs8PbwJF1fYpOt/+cGZY0MXBz9tOWOoJQKoDM=;
-	h=In-Reply-To:References:From:Cc:To:Subject:Date:List-ID:From;
-	b=PACqtHUDIj0K+tNGVt9tDrZFUuoYYskk7n/R8cjTcJtWtw2L5ZcQZKZi1QY/suNzW
-	 WBPgaNrr3lAK8B+ml6Hm8whNvGuQOr6gGH/DRgLUkn8Z1ovK1pIE7rtB2cB2nBCHIL
-	 EpTwzJRcDlKUpKkMowfO9k9+PQlMUvcOV8t6f6Fc=
+	by mail.kernel.org (Postfix) with ESMTP id 0044C21655
+	for <linux-clk@archiver.kernel.org>; Thu,  2 Jan 2020 08:26:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qpnJOBgq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727734AbgABIJa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jan 2020 03:09:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33880 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727714AbgABIJa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 2 Jan 2020 03:09:30 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0EE2C215A4;
-        Thu,  2 Jan 2020 08:09:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1577952569;
-        bh=yKk4Yxcs8PbwJF1fYpOt/+cGZY0MXBz9tOWOoJQKoDM=;
-        h=In-Reply-To:References:From:Cc:To:Subject:Date:From;
-        b=nsBAoR7hGS+zpj6oHxmL46hoZd5ZxIZJWuwShLiZjfIcQS+x0LObrojJVAd5yJiDp
-         TYsrrNT0w2qKObbn4of2dK+/TgxmvbHdKPQB048voAuK474SI8iv/oInhXAZ37oU4z
-         vUGgygKBlgwWUIosCB8XanFDY9Q9kpGan8ALu/nI=
+        id S1727771AbgABI0D (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 2 Jan 2020 03:26:03 -0500
+Received: from mail-eopbgr60083.outbound.protection.outlook.com ([40.107.6.83]:6590
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727707AbgABI0D (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 2 Jan 2020 03:26:03 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=QoKHwfI+f16Nt9MQpZXNrGLuOOqaACsrTPM815nMyspVK6zrnISocE2dkwlOsZeYyA4D7vY+JCJ40p0C3/XCrB0vaUkZGOV+8akcBY1Q+VVyN0RBc67f265V1ATsDW+ymJW323niC6NhFVHHm0ho/NNNdwwcLhdaM7+BjXBwp/pFWujbKTQxx9mAly/ySgjLLGHbFra+o4AqiehgypfWpRM9dcXLIADYjKaekn5Z1jqJ4D3D1AtvVQVx4i2iiMNK0rr/zX8+rM2TqG906eGenh4lXyffz9+j1EPXqnX3xkLQep+0MUg0iI0VYJmDGuDhEY0zvJNecihWfkAtgab2Gg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SSJMzro42Dt4jZBptFxx+TKhBDY6zCDd3SMZJ2U29BI=;
+ b=IlpiZvGh11kHMh9q0Dj5f53sipMENWIt7uWRVwOH5sMeQdmEhv1IsVw3zyJuxortltHmoUV0H/OFFsg463zLSYyVqyoQP1JusiYcO9onTAJW5hiX83XAAZWg6OLVRz13OGYsD0cR8r5PL0rN2x53JvzaBEyqPMgQGlsF/osATHYPLUuK0ILSAcgnVd9eY9ZrtlnjJL/JRidezPNj+Q8bdYCMHzecabKGa2RJiEgUoCNaCTzx9Ue/vv/rKDpXA3WWATvPFdsWMRttblMVV96tuBynWTvutRuX7ADtzohtmZ7K1ckfLNJbOjJwZq/O5E9gxpWmcAVnVLDUVwUfLfav2Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SSJMzro42Dt4jZBptFxx+TKhBDY6zCDd3SMZJ2U29BI=;
+ b=qpnJOBgqze44/YXE707JQOmGSANgKFCIEXi2kIT43pySip7sdjvr4IutFk0SEzfGwm8kDuGtqkVyYfriMigL6Atpi7IZtYSs+1gj7Xa8dB3RfFAADo7YGi0QQEmz+pXw+ZJ/IvS/MQFsrxKfJoVJvHo3cfwBevCG8RbcIb8danI=
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.92.158) by
+ AM0PR04MB6418.eurprd04.prod.outlook.com (20.179.252.13) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2581.11; Thu, 2 Jan 2020 08:26:00 +0000
+Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::b9bd:470c:5f9c:1bfd]) by AM0PR04MB4211.eurprd04.prod.outlook.com
+ ([fe80::b9bd:470c:5f9c:1bfd%7]) with mapi id 15.20.2602.010; Thu, 2 Jan 2020
+ 08:26:00 +0000
+From:   Aisheng Dong <aisheng.dong@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>
+CC:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>
+Subject: RE: [PATCH RESEND V5 00/11] clk: imx8: add new clock binding for
+ better pm support
+Thread-Topic: [PATCH RESEND V5 00/11] clk: imx8: add new clock binding for
+ better pm support
+Thread-Index: AQHVnUJfJlMJ/jCUUkSe2HX97baBSqe0uPgAgCKYlZA=
+Date:   Thu, 2 Jan 2020 08:25:59 +0000
+Message-ID: <AM0PR04MB42111A436D719D321ADB479380200@AM0PR04MB4211.eurprd04.prod.outlook.com>
+References: <1573993519-14308-1-git-send-email-aisheng.dong@nxp.com>
+ <20191211080525.GS15858@dragon>
+In-Reply-To: <20191211080525.GS15858@dragon>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=aisheng.dong@nxp.com; 
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: b0b0d60b-4ebc-42a0-ce7e-08d78f5d65df
+x-ms-traffictypediagnostic: AM0PR04MB6418:|AM0PR04MB6418:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB6418A257862DDD96BA341B7F80200@AM0PR04MB6418.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:7691;
+x-forefront-prvs: 0270ED2845
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(396003)(136003)(346002)(376002)(366004)(39860400002)(199004)(189003)(54534003)(66556008)(66476007)(33656002)(478600001)(76116006)(44832011)(86362001)(4326008)(7696005)(71200400001)(66446008)(6506007)(66946007)(64756008)(110136005)(81156014)(26005)(8936002)(52536014)(186003)(316002)(55016002)(9686003)(81166006)(8676002)(54906003)(2906002)(5660300002);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6418;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: 9VIiaHJVgqdYEbHoNIZniTno8xCawKJj9jShKpjazoDWaYze1VO/C8ON2Aa8GgoAo8Z8ovtzdspRZ/Yt0G0PD0uXL4Yijy3x71igI/1N0de0RGkP9A5FlQ0mlamk+7mSKNBDQ9+bhbxDz10DmqxyymP/m7EdkCVfh3iixaBb+QgZNeOWxhRAmtICx3BslqJq8FqHGmMLv26hxtFyt1wq1fNO6g1cdJpPfdn/qKUGehoHlg1GKPpWeq356VuFrw0MeQFqgi+jXVINRJ+66Egbh3mzEOX5GiYPcZTIzvezrzkZtkmT4akR+wxpR+42hAdbiGl98wfKIM8E33Dnr+cD8DycfWcS2T78q3UGJYZatRo2Lcy3zxpyHIlE+FxOMElLO8SGERYKeQL15y+p1WxL4k7qbwErQZfuD8PVvV0pFtIieEUW0Hl98Pz7MwhsO20J+wxPu9WgkZIv0mnI15MT/Wf13Puix1WmR7wU3VxUrRb9TmPFFmVfb/Y8QDGTZ4+/
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <91275d33d6a7c9978a2c70545fde38cd@walle.cc>
-References: <20191209233305.18619-1-michael@walle.cc> <20191209233305.18619-2-michael@walle.cc> <20191224080536.B0C99206CB@mail.kernel.org> <91275d33d6a7c9978a2c70545fde38cd@walle.cc>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-To:     Michael Walle <michael@walle.cc>
-Subject: Re: [PATCH v2 2/2] clk: fsl-sai: new driver
-User-Agent: alot/0.8.1
-Date:   Thu, 02 Jan 2020 00:09:28 -0800
-Message-Id: <20200102080929.0EE2C215A4@mail.kernel.org>
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0b0d60b-4ebc-42a0-ce7e-08d78f5d65df
+X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jan 2020 08:25:59.9161
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: a7P/lZ/pJojatBEd0YseI8Tz0xK9QxtRmZlCvzXGuSl4sWO45q4DzkFKLVT9SHVzaeZ9qPgADKdGhAJC6kqY3A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6418
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Michael Walle (2020-01-01 07:15:32)
->=20
-> Hi Stephen,
->=20
-> thanks for the review.
->=20
-> Am 2019-12-24 09:05, schrieb Stephen Boyd:
-> > Quoting Michael Walle (2019-12-09 15:33:05)
-> >> diff --git a/drivers/clk/clk-fsl-sai.c b/drivers/clk/clk-fsl-sai.c
-> >> new file mode 100644
-> >> index 000000000000..b92054d15ab1
-> >> --- /dev/null
-> >> +++ b/drivers/clk/clk-fsl-sai.c
-> >> @@ -0,0 +1,84 @@
-> >> +// SPDX-License-Identifier: GPL-2.0
-> >> +/*
-> >> + * Freescale SAI BCLK as a generic clock driver
-> >> + *
-> >> + * Copyright 2019 Kontron Europe GmbH
-> >> + */
-> >> +
-> >> +#include <linux/clk-provider.h>
-> >> +#include <linux/err.h>
-> >> +#include <linux/of.h>
-> >> +#include <linux/of_address.h>
-> >> +#include <linux/slab.h>
-> >> +
-> >> +#define I2S_CSR                0x00
-> >> +#define I2S_CR2                0x08
-> >> +#define CSR_BCE_BIT    28
-> >> +#define CR2_BCD                BIT(24)
-> >> +#define CR2_DIV_SHIFT  0
-> >> +#define CR2_DIV_WIDTH  8
-> >> +
-> >> +struct fsl_sai_clk {
-> >> +       struct clk_divider div;
-> >> +       struct clk_gate gate;
-> >> +       spinlock_t lock;
-> >> +};
-> >> +
-> >> +static void __init fsl_sai_clk_setup(struct device_node *node)
-> >> +{
-> >> +       const char *clk_name =3D node->name;
-> >> +       struct fsl_sai_clk *sai_clk;
-> >> +       unsigned int num_parents;
-> >> +       const char *parent_name;
-> >> +       void __iomem *base;
-> >> +       struct clk_hw *hw;
-> >> +
-> >> +       num_parents =3D of_clk_get_parent_count(node);
-> >> +       if (!num_parents) {
-> >> +               pr_err("%s: no parent found", clk_name);
-> >> +               return;
-> >> +       }
-> >> +
-> >> +       parent_name =3D of_clk_get_parent_name(node, 0);
-> >=20
-> > Could this use the new way of specifying clk parents so that we don't
-> > have to query DT for parent names and just let the core framework do it
-> > whenever it needs to?
->=20
-> you mean specifying parent_data with .index =3D 0? Seems like=20
-> clk_composite
-> does not support this. The parent can only be specified by supplying the
-> clock names.
->=20
-> I could add that in a separate patch. What do you think about the
-> following new functions, where a driver can use parent_data instead
-> of parent_names.
-
-I started doing this in
-https://lkml.kernel.org/r/20190830150923.259497-1-sboyd@kernel.org but I
-never got around to the composite clks. Sounds fine to add this new API
-for your use case.
-
->=20
-> +struct clk *clk_register_composite_pdata(struct device *dev, const char =
-
-> *name,
-> +               const struct clk_parent_data *parent_data,
-> +               struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
-> +               struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-> +               struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
-> +               unsigned long flags);
->=20
-> +struct clk_hw *clk_hw_register_composite_pdata(struct device *dev,
-> +               const char *name, const struct clk_parent_data=20
-> *parent_data,
-> +               struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
-> +               struct clk_hw *rate_hw, const struct clk_ops *rate_ops,
-> +               struct clk_hw *gate_hw, const struct clk_ops *gate_ops,
-> +               unsigned long flags);
->=20
->=20
-> >> +
-> >> +       sai_clk =3D kzalloc(sizeof(*sai_clk), GFP_KERNEL);
-> >> +       if (!sai_clk)
-> >> +               return;
-> >> +
-> >> +       base =3D of_iomap(node, 0);
-> >> +       if (base =3D=3D NULL) {
-> >> +               pr_err("%s: failed to map register space", clk_name);
-> >> +               goto err;
-> >> +       }
-> >> +
-> >> +       spin_lock_init(&sai_clk->lock);
-> >> +
-> >> +       sai_clk->gate.reg =3D base + I2S_CSR;
-> >> +       sai_clk->gate.bit_idx =3D CSR_BCE_BIT;
-> >> +       sai_clk->gate.lock =3D &sai_clk->lock;
-> >> +
-> >> +       sai_clk->div.reg =3D base + I2S_CR2;
-> >> +       sai_clk->div.shift =3D CR2_DIV_SHIFT;
-> >> +       sai_clk->div.width =3D CR2_DIV_WIDTH;
-> >> +       sai_clk->div.lock =3D &sai_clk->lock;
-> >> +
-> >> +       /* set clock direction, we are the BCLK master */
-> >=20
-> > Should this configuration come from DT somehow?
->=20
-> No, we are always master, because as a slave, there would be no clock
-> output ;)
-
-Got it.
-
->=20
-> >> +       writel(CR2_BCD, base + I2S_CR2);
-> >> +
-> >> +       hw =3D clk_hw_register_composite(NULL, clk_name, &parent_name,=
-=20
-> >> 1,
-> >> +                                      NULL, NULL,
-> >> +                                      &sai_clk->div.hw,=20
-> >> &clk_divider_ops,
-> >> +                                      &sai_clk->gate.hw,=20
-> >> &clk_gate_ops,
-> >> +                                      CLK_SET_RATE_GATE);
-> >> +       if (IS_ERR(hw))
-> >> +               goto err;
-> >> +
-> >> +       of_clk_add_hw_provider(node, of_clk_hw_simple_get, hw);
-> >> +
-> >> +       return;
-> >> +
-> >> +err:
-> >> +       kfree(sai_clk);
-> >> +}
-> >> +
-> >> +CLK_OF_DECLARE(fsl_sai_clk, "fsl,vf610-sai-clock",=20
-> >> fsl_sai_clk_setup);
-> >=20
-> > Is there a reason this can't be a platform device driver?
->=20
-> I don't think so, the user will be a sound codec for now. I'll convert=20
-> it
-> to a platform device, in that case I could also use the devm_ variants.
->=20
-
-Awesome. Thanks!
-
+SGkgU3RlcGhlbiwNCg0KQ291bGQgeW91IHRha2UgYSBsb29rIGF0IHRoaXM/DQoNClJlZ2FyZHMN
+CkFpc2hlbmcNCg0KPiBGcm9tOiBTaGF3biBHdW8gPHNoYXduZ3VvQGtlcm5lbC5vcmc+DQo+IFNl
+bnQ6IFdlZG5lc2RheSwgRGVjZW1iZXIgMTEsIDIwMTkgNDowNSBQTQ0KPiANCj4gT24gU3VuLCBO
+b3YgMTcsIDIwMTkgYXQgMDg6MjU6MDhQTSArMDgwMCwgRG9uZyBBaXNoZW5nIHdyb3RlOg0KPiA+
+IFRoaXMgaXMgYSBmb2xsb3cgdXAgb2YgdGhpcyBwYXRjaCBzZXJpZXMuDQo+ID4gW1YyLDAvMl0g
+Y2xrOiBpbXg6IHNjdTogYWRkIHBhcnNpbmcgY2xvY2tzIGZyb20gZGV2aWNlIHRyZWUgc3VwcG9y
+dA0KPiA+DQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgaXMgYSBwcmVwYXJhdGlvbiBmb3IgdGhlIE1Y
+OCBBcmNoaXRlY3R1cmUgaW1wcm92ZW1lbnQuDQo+ID4gQXMgZm9yIElNWCBTQ1UgYmFzZWQgcGxh
+dGZvcm1zIGxpa2UgTVg4UU0gYW5kIE1YOFFYUCwgdGhleSBhcmUNCj4gPiBjb21wcmlzZWQgb2Yg
+YSBjb3VwbGUgb2YgU1MoU3Vic3lzdGVtcykgd2hpbGUgbW9zdCBvZiB0aGVtIHdpdGhpbiB0aGUN
+Cj4gPiBzYW1lIFNTIGNhbiBiZSBzaGFyZWQuIGUuZy4gQ2xvY2tzLCBEZXZpY2VzIGFuZCBldGMu
+DQo+ID4NCj4gPiBIb3dldmVyLCBjdXJyZW50IGNsb2NrIGJpbmRpbmcgaXMgdXNpbmcgU1cgSURz
+IGZvciBkZXZpY2UgdHJlZSB0byB1c2UNCj4gPiB3aGljaCBjYW4gY2F1c2UgdHJvdWJsZXMgaW4g
+d3JpdGluZyB0aGUgY29tbW9uIDxzb2M+LXNzLXh4LmR0c2kgZmlsZQ0KPiA+IGZvciBkaWZmZXJl
+bnQgU29Dcy4NCj4gPg0KPiA+IFRoaXMgcGF0Y2ggc2VyaWVzIGFpbXMgdG8gaW50cm9kdWNlIGEg
+bmV3IGJpbmRpbmcgd2hpY2ggaXMgbW9yZSBjbG9zZQ0KPiA+IHRvIGhhcmR3YXJlIGFuZCBwbGF0
+Zm9ybSBpbmRlcGVuZGVudCBhbmQgY2FuIG1ha2VzIHVzIHdyaXRlIGEgbW9yZQ0KPiA+IGdlbmVy
+YWwgZHJpdmVycyBmb3IgZGlmZmVyZW50IFNDVSBiYXNlZCBTb0NzLg0KPiA+DQo+ID4gQW5vdGhl
+ciBpbXBvcnRhbnQgdGhpbmcgaXMgdGhhdCBvbiBNWDgsIGVhY2ggQ2xvY2sgcmVzb3VyY2UgaXMN
+Cj4gPiBhc3NvY2lhdGVkIHdpdGggYSBwb3dlciBkb21haW4uIFNvIHdlIGhhdmUgdG8gYXR0YWNo
+IHRoYXQgY2xvY2sgZGV2aWNlDQo+ID4gdG8gdGhlIHBvd2VyIGRvbWFpbiBpbiBvcmRlciB0byBt
+YWtlIGl0IHdvcmsgcHJvcGVybHkuIEZ1cnRoZXIgbW9yZSwNCj4gPiB0aGUgY2xvY2sgc3RhdGUg
+d2lsbCBiZSBsb3N0IHdoZW4gaXRzIHBvd2VyIGRvbWFpbiBpcyBjb21wbGV0ZWx5IG9mZg0KPiA+
+IGR1cmluZyBzdXNwZW5kL3Jlc3VtZSwgc28gd2UgYWxzbyBpbnRyb2R1Y2UgdGhlIGNsb2NrIHN0
+YXRlIHNhdmUmcmVzdG9yZQ0KPiBtZWNoYW5pc20uDQo+ID4NCj4gPiBDaGFuZ2VMb2c6DQo+ID4g
+djQtPnY1Og0KPiA+ICAqIEFkZHJlc3MgYWxsIGNvbW1lbnRzIGZyb20gU3RlcGhlbg0KPiANCj4g
+SGkgU3RlcGhlbiwNCj4gDQo+IEFyZSB5b3UgZmluZSB3aXRoIHRoaXMgdmVyc2lvbj8NCj4gDQo+
+IFNoYXduDQo=
