@@ -7,176 +7,152 @@ X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3380C00523
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:39:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 478E0C00523
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:47:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83CC122314
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:39:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 188B022B48
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:47:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uFbz82Uc"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEFtpMy5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727425AbgACHja (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jan 2020 02:39:30 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39159 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726077AbgACHj3 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jan 2020 02:39:29 -0500
-Received: by mail-pf1-f193.google.com with SMTP id q10so23180127pfs.6
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2020 23:39:29 -0800 (PST)
+        id S1726077AbgACHrv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jan 2020 02:47:51 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:41417 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726054AbgACHrv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jan 2020 02:47:51 -0500
+Received: by mail-pl1-f195.google.com with SMTP id bd4so18771462plb.8
+        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2020 23:47:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=sjtveIW4Cl8kNrXZqHnmr6fnNFiKvYCRuejNL5G2GwA=;
-        b=uFbz82UcbCfLMIjitqY2s+Lf/IFr5b/di7TwUd18XW7lu7xxcWBAj7ARLY+CotoDWW
-         yiGAQS0F3w1BHdhzdF+AtSWqmHlBAkIcl2c5eSKyB1YKsg+dWtOKhgZqiehTnsyXLGnO
-         JPNZnSm+TeooIHjD2gpIjsFM1C8sADgcLsyLAs83Z4qLFiK05PSU82g5gQn+9WyAvK0B
-         OeG8s/YAK/hbsMGsPWn13iXxRUst9irRAJ0NPuzrlG0uzYZYh2NDRXnhH9Ug6zRgR30H
-         21QwSQ7vSTYpd2EtkOtYXTtVfDodJDeQjKLx/T81AuZA554FOPJR6/wq9E0o1rge9/98
-         Ctrw==
+        bh=TYmR7Su3TQRhxaGSs/Gmy519O0CuGnaDkzrvLms+94Q=;
+        b=XEFtpMy5dirtZBAqM+HlhZxWmFJs8HM7yAX4hIvs1uimxFANWi/fN275Yyz0CfOQZn
+         VKiiTqf2W6g4Eug26y3EBVgcQiGR4E1Lv28ZNhY3cNo7bcsThg2VG3jNwU4hX8LsKa7Y
+         +x9xhrdzgZPuLS7t/3yM4jrcK/t3npeui8yU9zzihZCfmNiXppGIIFxle1dS8JC0fVhw
+         Zs4sLyPsqJHT/fr1v2/7dO8AVfCUoLeb5OdPcNoMrD8BRFfJGra8meReEPPIkK0OXyLM
+         hD+vWP0pgKG/8VXUOQTVDq0FzW6a8Qa55dAXGTZW63b7HFulGhCwrMkJ3vuqwGCsaOOz
+         /SOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sjtveIW4Cl8kNrXZqHnmr6fnNFiKvYCRuejNL5G2GwA=;
-        b=iOd2/hbwAkEGBhfsVG96pS71rNUIfBR1loHCivScwXdP8NPT1AqNBpWxoGIMKwgpdO
-         qYIYY+O3FaRsgGhyUGudFSDTvZWSKn9e5gOnpLGu5QlYXIDYz9YUBEtHryxllhcO0Lz7
-         FTq2pff+v8Y4X9aJJmLo2On8Qj1J09bGhKfPo1iWyWtm3AUIlIMqccgBpVGrK8+2pHj3
-         Lh0VMyS0DN3UYFYNO1hNYqOI1qRusl4i6ouxxpZIfICCRPaE+wrXXuwAEfRfYbEjoxDb
-         xwvC0ZG1ZAUtJN1uc8VVGb3qBKTUh+wD5hUKbBRv+8Y5yQoEqMhQmQWTWHEuAlJZibOr
-         XhNQ==
-X-Gm-Message-State: APjAAAUJfJYj9fBqOdF+OqUDXE+/e3uwlOZRUKwQOFUPNd+JaBERWFWi
-        mrXA5ox/Ei8YX7o4HKswolKpsg==
-X-Google-Smtp-Source: APXvYqyyU7kpxL3w14To+lQvT4cnfmqHinwWDkZhr0aaOhBIOoiPbjX7uA+9mJHxSwxrRijEC7CYoQ==
-X-Received: by 2002:aa7:9629:: with SMTP id r9mr60567555pfg.51.1578037169173;
-        Thu, 02 Jan 2020 23:39:29 -0800 (PST)
+        bh=TYmR7Su3TQRhxaGSs/Gmy519O0CuGnaDkzrvLms+94Q=;
+        b=pWr4gg57hpCwsXSmkDfLf/vC9dNIcars0MoejkN5jaW2TwPcbJePqIkNUdFuBlu2N8
+         v0FAVc4n5Pfi34158I9fy9t2u5JXM8FcfGLUuTyoH76JyYNXUcRBBGN5xVa8BHoC7fJ5
+         pgokk6Z0L0M6rRg/yH3PVdSiWxcjk1nJow59bu+JeCty5ZEkamUXdu7K8GwkMRgw45+z
+         boOeHsB4jfOKvcxg14ckBpVty4yjb08VFDQR148z6TC4ON65sFaJQfm7P+PUAB4z4foM
+         BPEt1KMfl33OFCXp7iZkTrrgX16NKx7GWNAvFtZJBthnK/AbkQfTbfb9XOfcvPWEDyfI
+         xzsw==
+X-Gm-Message-State: APjAAAUuS/XB1yCRM4GOuB0omPJbw7pKtHYNDHSMXizaIn9p+X9d/Fa3
+        H4ImkAnhuY+7hAji8/CWCaQ+UQ==
+X-Google-Smtp-Source: APXvYqxz0tmqTG4nkUi/jqHamIprde+Yghm55ERkvI/ApLP+eEKBlyIgUlbqqmbMFNvps9rmIp6gCw==
+X-Received: by 2002:a17:90a:c388:: with SMTP id h8mr24798177pjt.83.1578037670646;
+        Thu, 02 Jan 2020 23:47:50 -0800 (PST)
 Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id y6sm13245950pjy.1.2020.01.02.23.39.28
+        by smtp.gmail.com with ESMTPSA id k16sm13727175pje.18.2020.01.02.23.47.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 23:39:28 -0800 (PST)
-Date:   Thu, 2 Jan 2020 23:39:26 -0800
+        Thu, 02 Jan 2020 23:47:49 -0800 (PST)
+Date:   Thu, 2 Jan 2020 23:47:47 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: Re: [PATCH] clk: Use parent node pointer during registration if
- necessary
-Message-ID: <20200103073926.GM988120@minitux>
-References: <20191230190455.141339-1-sboyd@kernel.org>
+To:     Niklas Cassel <niklas.cassel@linaro.org>
+Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+        amit.kucheria@linaro.org, sboyd@kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 7/7] clk: qcom: apcs-msm8916: use clk_parent_data to
+ specify the parent
+Message-ID: <20200103074747.GN988120@minitux>
+References: <20191125135910.679310-1-niklas.cassel@linaro.org>
+ <20191125135910.679310-8-niklas.cassel@linaro.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20191230190455.141339-1-sboyd@kernel.org>
+In-Reply-To: <20191125135910.679310-8-niklas.cassel@linaro.org>
 User-Agent: Mutt/1.12.2 (2019-09-21)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 30 Dec 11:04 PST 2019, Stephen Boyd wrote:
+On Mon 25 Nov 05:59 PST 2019, Niklas Cassel wrote:
 
-> Sometimes clk drivers are attached to devices which are children of a
-> parent device that is connected to a node in DT. This happens when
-> devices are MFD-ish and the parent device driver mostly registers child
-> devices to match against drivers placed in their respective subsystem
-> directories like drivers/clk, drivers/regulator, etc. When the clk
-> driver calls clk_register() with a device pointer, that struct device
-> pointer won't have a device_node associated with it because it was
-> created purely in software as a way to partition logic to a subsystem.
+> Allow accessing the parent clock names required for the driver
+> operation by using the device tree node, while falling back to
+> the previous method of using names in the global name space.
 > 
-> This causes problems for the way we find parent clks for the clks
-> registered by these child devices because we look at the registering
-> device's device_node pointer to lookup 'clocks' and 'clock-names'
-> properties. Let's use the parent device's device_node pointer if the
-> registering device doesn't have a device_node but the parent does. This
-> simplifies clk registration code by avoiding the need to assign some
-> device_node to the device registering the clk.
+> This permits extending the driver to other platforms without having to
+> modify its source code.
 > 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > ---
+> Changes since v2:
+> -Use clk_parent_data when specifying clock parents.
 > 
-> I decided to introduce a new function instead of trying to jam it all
-> in the one line where we assign np. This way the function gets the 
-> true 'np' as an argument all the time.
+>  drivers/clk/qcom/apcs-msm8916.c | 23 ++++++++++++++++++-----
+>  1 file changed, 18 insertions(+), 5 deletions(-)
 > 
-
-Looks better.
-
->  drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b68e200829f2..a743fffe8e46 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3719,6 +3719,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  	return ERR_PTR(ret);
->  }
+> diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+> index 46061b3d230e..bb91644edc00 100644
+> --- a/drivers/clk/qcom/apcs-msm8916.c
+> +++ b/drivers/clk/qcom/apcs-msm8916.c
+> @@ -19,9 +19,9 @@
 >  
-> +/**
-> + * dev_or_parent_of_node - Get device node of @dev or @dev's parent
+>  static const u32 gpll0_a53cc_map[] = { 4, 5 };
+>  
+> -static const char * const gpll0_a53cc[] = {
+> -	"gpll0_vote",
+> -	"a53pll",
+> +static const struct clk_parent_data pdata[] = {
+> +	{ .fw_name = "aux", .name = "gpll0_vote", },
+> +	{ .fw_name = "pll", .name = "a53pll", },
+>  };
+>  
+>  /*
+> @@ -51,6 +51,19 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+>  	struct clk_init_data init = { };
+>  	int ret = -ENODEV;
+>  
+> +	/*
+> +	 * This driver is defined by the devicetree binding
+> +	 * Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt,
+> +	 * however, this driver is registered as a platform device by
+> +	 * qcom-apcs-ipc-mailbox.c. Because of this, when this driver
+> +	 * uses dev_get_regmap() and devm_clk_get(), it has to send the parent
+> +	 * device as argument.
+> +	 * When registering with the clock framework, we cannot use this trick,
+> +	 * since the clock framework always looks at dev->of_node when it tries
+> +	 * to find parent clock names using clk_parent_data.
+> +	 */
+> +	dev->of_node = parent->of_node;
+> +
 
-()
+With this hunk replaced by Stephen's patch for handling this in the
+clock core I did some basic tests and things seems to work as expected.
 
-> + * @dev: Device to get device node of
-> + *
-> + * Returns: device node pointer of @dev, or the device node pointer of
-
-Return: (no 's')
-
-
-With that,
-
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
 
 Regards,
 Bjorn
 
-> + * @dev->parent if dev doesn't have a device node, or NULL if neither
-> + * @dev or @dev->parent have a device node.
-> + */
-> +static struct device_node *dev_or_parent_of_node(struct device *dev)
-> +{
-> +	struct device_node *np;
-> +
-> +	if (!dev)
-> +		return NULL;
-> +
-> +	np = dev_of_node(dev);
-> +	if (!np)
-> +		np = dev_of_node(dev->parent);
-> +
-> +	return np;
-> +}
-> +
->  /**
->   * clk_register - allocate a new clock, register it and return an opaque cookie
->   * @dev: device that is registering this clock
-> @@ -3734,7 +3756,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->   */
->  struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->  {
-> -	return __clk_register(dev, dev_of_node(dev), hw);
-> +	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
->  }
->  EXPORT_SYMBOL_GPL(clk_register);
+>  	regmap = dev_get_regmap(parent, NULL);
+>  	if (!regmap) {
+>  		dev_err(dev, "failed to get regmap: %d\n", ret);
+> @@ -62,8 +75,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
 >  
-> @@ -3750,7 +3772,8 @@ EXPORT_SYMBOL_GPL(clk_register);
->   */
->  int clk_hw_register(struct device *dev, struct clk_hw *hw)
->  {
-> -	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
-> +	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
-> +			       hw));
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_register);
+>  	init.name = "a53mux";
+> -	init.parent_names = gpll0_a53cc;
+> -	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
+> +	init.parent_data = pdata;
+> +	init.num_parents = ARRAY_SIZE(pdata);
+>  	init.ops = &clk_regmap_mux_div_ops;
+>  	init.flags = CLK_SET_RATE_PARENT;
 >  
-> 
-> base-commit: e42617b825f8073569da76dc4510bfa019b1c35a
 > -- 
-> Sent by a computer, using git, on the internet
+> 2.23.0
 > 
