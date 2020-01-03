@@ -2,152 +2,102 @@ Return-Path: <SRS0=Lhyk=2Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDC60C3276C
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 00:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30F0AC32771
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:18:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3FBF215A4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 00:17:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=flawful.org header.i=@flawful.org header.b="jMwyMSB7"
+	by mail.kernel.org (Postfix) with ESMTP id F347C24672
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:18:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578035932;
+	bh=FV053rnnc3Ysq//ItKxgra7oEosNJ8yKfv9gjd3Akao=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=KCFz8rxNU0HTCHNI/SEjwayGEXiDmYCOmwkdgiAY8Ic+CsJOOyfBO9NOwP5PO+Mj3
+	 OmrenbpJT2FOM/ol/42mSl8Xo9F/U7K+w1EvwnyLcl2tl4AT8hoqfaIKOWWvnSCZdB
+	 kFpt2ReGvaLP+xwAkh5KiuSvdilioS3KXGDEPgD8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726083AbgACARR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 2 Jan 2020 19:17:17 -0500
-Received: from ste-pvt-msa1.bahnhof.se ([213.80.101.70]:35505 "EHLO
-        ste-pvt-msa1.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725872AbgACARQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 2 Jan 2020 19:17:16 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTP id 3EFB33F43C;
-        Fri,  3 Jan 2020 01:17:13 +0100 (CET)
-Authentication-Results: ste-pvt-msa1.bahnhof.se;
-        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b=jMwyMSB7;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at bahnhof.se
-Received: from ste-pvt-msa1.bahnhof.se ([127.0.0.1])
-        by localhost (ste-pvt-msa1.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 8N7kFaLmKTmI; Fri,  3 Jan 2020 01:17:12 +0100 (CET)
-Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
-        (Authenticated sender: mb274189)
-        by ste-pvt-msa1.bahnhof.se (Postfix) with ESMTPA id B9E123F41D;
-        Fri,  3 Jan 2020 01:17:11 +0100 (CET)
-Received: by flawful.org (Postfix, from userid 1001)
-        id B260667D; Fri,  3 Jan 2020 01:17:10 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
-        t=1578010630; bh=cww1rlemj26bNhUf55QD0U0OYjSzwgFpv3Sw4ih5L0s=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=jMwyMSB7CTvZNiQwtvqVov7mg685304CLerqF2sLJedx5OcW5rNpjk93NczStb9gP
-         dk6ND1hAxtrmi9K01J7CWXycv3f9MEU/5Aj7fowNlPPWyaX2siDc/Zen+xZcbzJh6Y
-         3pW5dpXYxUhBefGcCsNeAzQ9/YAQbKsDwlt82Nr0=
-Date:   Fri, 3 Jan 2020 01:17:10 +0100
-From:   Niklas Cassel <nks@flawful.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>
-Subject: Re: [PATCH] clk: Use parent node pointer during registration if
- necessary
-Message-ID: <20200103001710.indj23ajryzj77bf@flawful.org>
-References: <20191230190455.141339-1-sboyd@kernel.org>
+        id S1726528AbgACHSv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jan 2020 02:18:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34846 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725890AbgACHSv (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 3 Jan 2020 02:18:51 -0500
+Received: from wens.tw (mirror2.csie.ntu.edu.tw [140.112.30.76])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72899222C3;
+        Fri,  3 Jan 2020 07:18:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578035930;
+        bh=FV053rnnc3Ysq//ItKxgra7oEosNJ8yKfv9gjd3Akao=;
+        h=From:To:Cc:Subject:Date:From;
+        b=jzgTO2MqtxBwsNZQ8PN9KIeVu9nevlCM/egS/oKHH34BfyhH+O3qwNe/11pHQE+2c
+         qJJnU1488/tJXT56WynIKr0FXlxgcqMFhs6cEEkYZ2X/fd7MZ2aOhnQw6wSIb/Y8bK
+         QCxSt9n1aOpQLsKv6BcOS/lZhjk72rYAgLUsrZpY=
+Received: by wens.tw (Postfix, from userid 1000)
+        id BCD7E5FC7C; Fri,  3 Jan 2020 15:18:48 +0800 (CST)
+From:   Chen-Yu Tsai <wens@kernel.org>
+To:     Maxime Ripard <mripard@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: sunxi-ng: r40: Export MBUS clock
+Date:   Fri,  3 Jan 2020 15:18:48 +0800
+Message-Id: <20200103071848.3977-1-wens@kernel.org>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191230190455.141339-1-sboyd@kernel.org>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 11:04:55AM -0800, Stephen Boyd wrote:
-> Sometimes clk drivers are attached to devices which are children of a
-> parent device that is connected to a node in DT. This happens when
-> devices are MFD-ish and the parent device driver mostly registers child
-> devices to match against drivers placed in their respective subsystem
-> directories like drivers/clk, drivers/regulator, etc. When the clk
-> driver calls clk_register() with a device pointer, that struct device
-> pointer won't have a device_node associated with it because it was
-> created purely in software as a way to partition logic to a subsystem.
-> 
-> This causes problems for the way we find parent clks for the clks
-> registered by these child devices because we look at the registering
-> device's device_node pointer to lookup 'clocks' and 'clock-names'
-> properties. Let's use the parent device's device_node pointer if the
-> registering device doesn't have a device_node but the parent does. This
-> simplifies clk registration code by avoiding the need to assign some
-> device_node to the device registering the clk.
-> 
-> Cc: Bjorn Andersson <bjorn.andersson@linaro.org>
-> Reported-by: Niklas Cassel <niklas.cassel@linaro.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
-> 
-> I decided to introduce a new function instead of trying to jam it all
-> in the one line where we assign np. This way the function gets the 
-> true 'np' as an argument all the time.
-> 
->  drivers/clk/clk.c | 27 +++++++++++++++++++++++++--
->  1 file changed, 25 insertions(+), 2 deletions(-)
-> 
-> 
-> base-commit: e42617b825f8073569da76dc4510bfa019b1c35a
-> 
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index b68e200829f2..a743fffe8e46 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -3719,6 +3719,28 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->  	return ERR_PTR(ret);
->  }
->  
-> +/**
-> + * dev_or_parent_of_node - Get device node of @dev or @dev's parent
-> + * @dev: Device to get device node of
-> + *
-> + * Returns: device node pointer of @dev, or the device node pointer of
-> + * @dev->parent if dev doesn't have a device node, or NULL if neither
-> + * @dev or @dev->parent have a device node.
-> + */
-> +static struct device_node *dev_or_parent_of_node(struct device *dev)
-> +{
-> +	struct device_node *np;
-> +
-> +	if (!dev)
-> +		return NULL;
-> +
-> +	np = dev_of_node(dev);
-> +	if (!np)
-> +		np = dev_of_node(dev->parent);
-> +
-> +	return np;
-> +}
-> +
->  /**
->   * clk_register - allocate a new clock, register it and return an opaque cookie
->   * @dev: device that is registering this clock
-> @@ -3734,7 +3756,7 @@ __clk_register(struct device *dev, struct device_node *np, struct clk_hw *hw)
->   */
->  struct clk *clk_register(struct device *dev, struct clk_hw *hw)
->  {
-> -	return __clk_register(dev, dev_of_node(dev), hw);
-> +	return __clk_register(dev, dev_or_parent_of_node(dev), hw);
->  }
->  EXPORT_SYMBOL_GPL(clk_register);
->  
-> @@ -3750,7 +3772,8 @@ EXPORT_SYMBOL_GPL(clk_register);
->   */
->  int clk_hw_register(struct device *dev, struct clk_hw *hw)
->  {
-> -	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_of_node(dev), hw));
-> +	return PTR_ERR_OR_ZERO(__clk_register(dev, dev_or_parent_of_node(dev),
-> +			       hw));
->  }
->  EXPORT_SYMBOL_GPL(clk_hw_register);
->  
+From: Chen-Yu Tsai <wens@csie.org>
 
-Reviewed-by: Niklas Cassel <nks@flawful.org>
+The MBUS clock needs to be referenced in the MBUS device node.
+Export it.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.h      | 4 ----
+ include/dt-bindings/clock/sun8i-r40-ccu.h | 2 +-
+ 2 files changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+index a69637b6b0c1..6f7071df8e1c 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.h
+@@ -55,10 +55,6 @@
+ 
+ /* Some more module clocks are exported */
+ 
+-#define CLK_MBUS		155
+-
+-/* Another bunch of module clocks are exported */
+-
+ #define CLK_NUMBER		(CLK_OUTB + 1)
+ 
+ #endif /* _CCU_SUN8I_R40_H_ */
+diff --git a/include/dt-bindings/clock/sun8i-r40-ccu.h b/include/dt-bindings/clock/sun8i-r40-ccu.h
+index f9e15a235626..d7337b55a4ef 100644
+--- a/include/dt-bindings/clock/sun8i-r40-ccu.h
++++ b/include/dt-bindings/clock/sun8i-r40-ccu.h
+@@ -176,7 +176,7 @@
+ #define CLK_AVS			152
+ #define CLK_HDMI		153
+ #define CLK_HDMI_SLOW		154
+-
++#define CLK_MBUS		155
+ #define CLK_DSI_DPHY		156
+ #define CLK_TVE0		157
+ #define CLK_TVE1		158
+-- 
+2.24.1
+
