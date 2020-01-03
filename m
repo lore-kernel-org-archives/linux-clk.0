@@ -2,157 +2,125 @@ Return-Path: <SRS0=Lhyk=2Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 478E0C00523
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:47:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 881A3C32767
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 09:00:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 188B022B48
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 07:47:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52BEE24649
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 09:00:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XEFtpMy5"
+	dkim=pass (1024-bit key) header.d=walle.cc header.i=@walle.cc header.b="HVHMul+0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726077AbgACHrv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jan 2020 02:47:51 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:41417 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726054AbgACHrv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jan 2020 02:47:51 -0500
-Received: by mail-pl1-f195.google.com with SMTP id bd4so18771462plb.8
-        for <linux-clk@vger.kernel.org>; Thu, 02 Jan 2020 23:47:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=TYmR7Su3TQRhxaGSs/Gmy519O0CuGnaDkzrvLms+94Q=;
-        b=XEFtpMy5dirtZBAqM+HlhZxWmFJs8HM7yAX4hIvs1uimxFANWi/fN275Yyz0CfOQZn
-         VKiiTqf2W6g4Eug26y3EBVgcQiGR4E1Lv28ZNhY3cNo7bcsThg2VG3jNwU4hX8LsKa7Y
-         +x9xhrdzgZPuLS7t/3yM4jrcK/t3npeui8yU9zzihZCfmNiXppGIIFxle1dS8JC0fVhw
-         Zs4sLyPsqJHT/fr1v2/7dO8AVfCUoLeb5OdPcNoMrD8BRFfJGra8meReEPPIkK0OXyLM
-         hD+vWP0pgKG/8VXUOQTVDq0FzW6a8Qa55dAXGTZW63b7HFulGhCwrMkJ3vuqwGCsaOOz
-         /SOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TYmR7Su3TQRhxaGSs/Gmy519O0CuGnaDkzrvLms+94Q=;
-        b=pWr4gg57hpCwsXSmkDfLf/vC9dNIcars0MoejkN5jaW2TwPcbJePqIkNUdFuBlu2N8
-         v0FAVc4n5Pfi34158I9fy9t2u5JXM8FcfGLUuTyoH76JyYNXUcRBBGN5xVa8BHoC7fJ5
-         pgokk6Z0L0M6rRg/yH3PVdSiWxcjk1nJow59bu+JeCty5ZEkamUXdu7K8GwkMRgw45+z
-         boOeHsB4jfOKvcxg14ckBpVty4yjb08VFDQR148z6TC4ON65sFaJQfm7P+PUAB4z4foM
-         BPEt1KMfl33OFCXp7iZkTrrgX16NKx7GWNAvFtZJBthnK/AbkQfTbfb9XOfcvPWEDyfI
-         xzsw==
-X-Gm-Message-State: APjAAAUuS/XB1yCRM4GOuB0omPJbw7pKtHYNDHSMXizaIn9p+X9d/Fa3
-        H4ImkAnhuY+7hAji8/CWCaQ+UQ==
-X-Google-Smtp-Source: APXvYqxz0tmqTG4nkUi/jqHamIprde+Yghm55ERkvI/ApLP+eEKBlyIgUlbqqmbMFNvps9rmIp6gCw==
-X-Received: by 2002:a17:90a:c388:: with SMTP id h8mr24798177pjt.83.1578037670646;
-        Thu, 02 Jan 2020 23:47:50 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id k16sm13727175pje.18.2020.01.02.23.47.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 02 Jan 2020 23:47:49 -0800 (PST)
-Date:   Thu, 2 Jan 2020 23:47:47 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Niklas Cassel <niklas.cassel@linaro.org>
-Cc:     Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
-        amit.kucheria@linaro.org, sboyd@kernel.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 7/7] clk: qcom: apcs-msm8916: use clk_parent_data to
- specify the parent
-Message-ID: <20200103074747.GN988120@minitux>
-References: <20191125135910.679310-1-niklas.cassel@linaro.org>
- <20191125135910.679310-8-niklas.cassel@linaro.org>
+        id S1727436AbgACJAc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jan 2020 04:00:32 -0500
+Received: from ssl.serverraum.org ([176.9.125.105]:49319 "EHLO
+        ssl.serverraum.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726050AbgACJAb (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jan 2020 04:00:31 -0500
+Received: from ssl.serverraum.org (web.serverraum.org [172.16.0.2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ssl.serverraum.org (Postfix) with ESMTPSA id C6944230E1;
+        Fri,  3 Jan 2020 10:00:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=walle.cc; s=mail2016061301;
+        t=1578042029;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=cxest8tMtRZIdMS9+HLvWHLoP9WwYOR1xCl5Hh5xNZQ=;
+        b=HVHMul+06/ZqJth5tKFXAnG5dpRCq4qhYeW3NtIHl/pcOfI7lniaAEVLNvdgIL4ZRV/eMq
+        9pHtaXe2W30cM+5iMTQ3BfdBfegn/YY2xoQlPYHJQPRSOMvWYZOuIsf63p8cyeDFz5Hra6
+        pPajyaQkEQJ0mLNgU90PDN65qrDSUZI=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20191125135910.679310-8-niklas.cassel@linaro.org>
-User-Agent: Mutt/1.12.2 (2019-09-21)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 03 Jan 2020 10:00:27 +0100
+From:   Michael Walle <michael@walle.cc>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [PATCH v2 2/2] clk: fsl-sai: new driver
+In-Reply-To: <20200102080929.0EE2C215A4@mail.kernel.org>
+References: <20191209233305.18619-1-michael@walle.cc>
+ <20191209233305.18619-2-michael@walle.cc>
+ <20191224080536.B0C99206CB@mail.kernel.org>
+ <91275d33d6a7c9978a2c70545fde38cd@walle.cc>
+ <20200102080929.0EE2C215A4@mail.kernel.org>
+Message-ID: <6b092a602b3b8cf09160b1dcb4a282e6@walle.cc>
+X-Sender: michael@walle.cc
+User-Agent: Roundcube Webmail/1.3.8
+X-Spamd-Bar: +
+X-Rspamd-Server: web
+X-Rspamd-Queue-Id: C6944230E1
+X-Spamd-Result: default: False [1.40 / 15.00];
+         ARC_NA(0.00)[];
+         FROM_HAS_DN(0.00)[];
+         TO_DN_SOME(0.00)[];
+         TO_MATCH_ENVRCPT_ALL(0.00)[];
+         TAGGED_RCPT(0.00)[dt];
+         MIME_GOOD(-0.10)[text/plain];
+         DKIM_SIGNED(0.00)[];
+         RCPT_COUNT_SEVEN(0.00)[7];
+         NEURAL_HAM(-0.00)[-0.273];
+         RCVD_COUNT_ZERO(0.00)[0];
+         FROM_EQ_ENVFROM(0.00)[];
+         MIME_TRACE(0.00)[0:+];
+         MID_RHS_MATCH_FROM(0.00)[];
+         SUSPICIOUS_RECIPS(1.50)[]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon 25 Nov 05:59 PST 2019, Niklas Cassel wrote:
+Hi Stephen,
 
-> Allow accessing the parent clock names required for the driver
-> operation by using the device tree node, while falling back to
-> the previous method of using names in the global name space.
+>> >> +       parent_name = of_clk_get_parent_name(node, 0);
+>> >
+>> > Could this use the new way of specifying clk parents so that we don't
+>> > have to query DT for parent names and just let the core framework do it
+>> > whenever it needs to?
+>> 
+>> you mean specifying parent_data with .index = 0? Seems like
+>> clk_composite
+>> does not support this. The parent can only be specified by supplying 
+>> the
+>> clock names.
+>> 
+>> I could add that in a separate patch. What do you think about the
+>> following new functions, where a driver can use parent_data instead
+>> of parent_names.
 > 
-> This permits extending the driver to other platforms without having to
-> modify its source code.
-> 
-> Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-> ---
-> Changes since v2:
-> -Use clk_parent_data when specifying clock parents.
-> 
->  drivers/clk/qcom/apcs-msm8916.c | 23 ++++++++++++++++++-----
->  1 file changed, 18 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
-> index 46061b3d230e..bb91644edc00 100644
-> --- a/drivers/clk/qcom/apcs-msm8916.c
-> +++ b/drivers/clk/qcom/apcs-msm8916.c
-> @@ -19,9 +19,9 @@
->  
->  static const u32 gpll0_a53cc_map[] = { 4, 5 };
->  
-> -static const char * const gpll0_a53cc[] = {
-> -	"gpll0_vote",
-> -	"a53pll",
-> +static const struct clk_parent_data pdata[] = {
-> +	{ .fw_name = "aux", .name = "gpll0_vote", },
-> +	{ .fw_name = "pll", .name = "a53pll", },
->  };
->  
->  /*
-> @@ -51,6 +51,19 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
->  	struct clk_init_data init = { };
->  	int ret = -ENODEV;
->  
-> +	/*
-> +	 * This driver is defined by the devicetree binding
-> +	 * Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.txt,
-> +	 * however, this driver is registered as a platform device by
-> +	 * qcom-apcs-ipc-mailbox.c. Because of this, when this driver
-> +	 * uses dev_get_regmap() and devm_clk_get(), it has to send the parent
-> +	 * device as argument.
-> +	 * When registering with the clock framework, we cannot use this trick,
-> +	 * since the clock framework always looks at dev->of_node when it tries
-> +	 * to find parent clock names using clk_parent_data.
-> +	 */
-> +	dev->of_node = parent->of_node;
-> +
+> I started doing this in
+> https://lkml.kernel.org/r/20190830150923.259497-1-sboyd@kernel.org but 
+> I
+> never got around to the composite clks. Sounds fine to add this new API
+> for your use case.
 
-With this hunk replaced by Stephen's patch for handling this in the
-clock core I did some basic tests and things seems to work as expected.
+Yeah took me a while to figure out what you've meant by the "new way" ;)
+Anyway, I've posted a v3 of this series with the new composite clock 
+API.
 
-Tested-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
-
->  	regmap = dev_get_regmap(parent, NULL);
->  	if (!regmap) {
->  		dev_err(dev, "failed to get regmap: %d\n", ret);
-> @@ -62,8 +75,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
->  		return -ENOMEM;
->  
->  	init.name = "a53mux";
-> -	init.parent_names = gpll0_a53cc;
-> -	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
-> +	init.parent_data = pdata;
-> +	init.num_parents = ARRAY_SIZE(pdata);
->  	init.ops = &clk_regmap_mux_div_ops;
->  	init.flags = CLK_SET_RATE_PARENT;
->  
-> -- 
-> 2.23.0
 > 
+>> 
+>> +struct clk *clk_register_composite_pdata(struct device *dev, const 
+>> char
+>> *name,
+>> +               const struct clk_parent_data *parent_data,
+>> +               struct clk_hw *mux_hw, const struct clk_ops *mux_ops,
+>> +               struct clk_hw *rate_hw, const struct clk_ops 
+>> *rate_ops,
+>> +               struct clk_hw *gate_hw, const struct clk_ops 
+>> *gate_ops,
+>> +               unsigned long flags);
+
+num_parents was missing here. added that in the v3.
+
+-michael
