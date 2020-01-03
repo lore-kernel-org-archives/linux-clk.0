@@ -2,89 +2,111 @@ Return-Path: <SRS0=Lhyk=2Y=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BED85C2D0C2
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 09:37:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 916A9C2D0C2
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 11:14:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84DB4222C4
-	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 09:37:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578044248;
-	bh=t1n4osX8UFyfzagbobo+KoZCptgIJ8gvbeKetytczeM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=I/XM/PyG/8b7uVM4AokfuSCCZ/j5aea71jjWQbTVg4BxNFew1pIwfj3hE+1eLUVbL
-	 ZLVSvnaGOzwoEJZzFSJCssm902xslcDKyehCs6wfDP/7qjOdzRuIFLfC0bBRNAdOWw
-	 5CGJxBIxKetF0evndsbD29jGe4M2DG4PkaFAIctE=
+	by mail.kernel.org (Postfix) with ESMTP id 3D45D222C4
+	for <linux-clk@archiver.kernel.org>; Fri,  3 Jan 2020 11:14:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=flawful.org header.i=@flawful.org header.b="NT27eyjW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726181AbgACJh2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 3 Jan 2020 04:37:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56948 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725972AbgACJh2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 3 Jan 2020 04:37:28 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 121A821734;
-        Fri,  3 Jan 2020 09:37:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578044247;
-        bh=t1n4osX8UFyfzagbobo+KoZCptgIJ8gvbeKetytczeM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=H6+N5bPGQlNhV1gyvOOg2A1ukTS7rQlhfNWi+c/GaXeqQYGYgRzbiDrVw9GctGa3P
-         BDAjdvQDi8XqZV/vhzmGC8cCssXQwvcTd1Lv0QDXWUzKaoTfKCCeGhCebE7SY6VmSy
-         mM3QibPSZ/Z5n5vQSCNzCYvjKYD01jayq8lpO9co=
-Date:   Fri, 3 Jan 2020 10:37:24 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Chen-Yu Tsai <wens@kernel.org>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: r40: Export MBUS clock
-Message-ID: <20200103093724.qo2enqqpr5dzcvfc@gilmour.lan>
-References: <20200103071848.3977-1-wens@kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="6ydtg2u437jgrsyi"
-Content-Disposition: inline
-In-Reply-To: <20200103071848.3977-1-wens@kernel.org>
+        id S1727453AbgACLOg (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 3 Jan 2020 06:14:36 -0500
+Received: from pio-pvt-msa3.bahnhof.se ([79.136.2.42]:37778 "EHLO
+        pio-pvt-msa3.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727220AbgACLOg (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 3 Jan 2020 06:14:36 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTP id 860973F4C5;
+        Fri,  3 Jan 2020 12:14:33 +0100 (CET)
+Authentication-Results: pio-pvt-msa3.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b=NT27eyjW;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+Received: from pio-pvt-msa3.bahnhof.se ([127.0.0.1])
+        by localhost (pio-pvt-msa3.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 1vrB6au3qAVr; Fri,  3 Jan 2020 12:14:31 +0100 (CET)
+Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
+        (Authenticated sender: mb274189)
+        by pio-pvt-msa3.bahnhof.se (Postfix) with ESMTPA id 0BA8A3F385;
+        Fri,  3 Jan 2020 12:14:30 +0100 (CET)
+Received: by flawful.org (Postfix, from userid 1001)
+        id ECC201496; Fri,  3 Jan 2020 12:14:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
+        t=1578050070; bh=6KjCPaq3Lj//YPOv4YVpEjW6cBeoz6aqpIpOgGoP/2c=;
+        h=From:To:Cc:Subject:Date:From;
+        b=NT27eyjWDdhC4HdfCrDW4Z6n9ddc9m3qp9Iw/rH1K1N3J/X4/Bq23h+heRP7yYZfI
+         2XnbEXmVwFA6KaQS0NEva2Fm7qd734RMzBhZYHJfzyx08+G9nB8lc0gooh7qfOjAQN
+         KxV9d9oONoBZZYbLG5/V3628TFl0NoI4AC5dYt+Y=
+From:   Niklas Cassel <nks@flawful.org>
+To:     sboyd@kernel.org, bjorn.andersson@linaro.org
+Cc:     mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH v4] clk: qcom: apcs-msm8916: use clk_parent_data to specify the parent
+Date:   Fri,  3 Jan 2020 12:14:29 +0100
+Message-Id: <20200103111429.1347-1-nks@flawful.org>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+From: Niklas Cassel <niklas.cassel@linaro.org>
 
---6ydtg2u437jgrsyi
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Allow accessing the parent clock names required for the driver operation
+by using the device tree 'clock-names' property, while falling back to
+the previous method of using names in the global name space.
 
-On Fri, Jan 03, 2020 at 03:18:48PM +0800, Chen-Yu Tsai wrote:
-> From: Chen-Yu Tsai <wens@csie.org>
->
-> The MBUS clock needs to be referenced in the MBUS device node.
-> Export it.
->
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+This permits extending the driver to other platforms without having to
+modify its source code.
 
-Applied, thanks
-Maxime
+Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+---
+Changes since v3:
+-Don't set dev->of_node explicitly, since the clock framework will now
+automatically use the parent node pointer when needed.
 
---6ydtg2u437jgrsyi
-Content-Type: application/pgp-signature; name="signature.asc"
+Requires the following patch to the clock framework to land first:
+https://patchwork.kernel.org/patch/11313639/
 
------BEGIN PGP SIGNATURE-----
+ drivers/clk/qcom/apcs-msm8916.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXg8LVAAKCRDj7w1vZxhR
-xTXyAPwOmHJ3brL7yUfKmR5he70BqWy5MhxZQ3ik2vpHkUxeEwD9F58DhQY/DVl+
-PPeLEWk09d1ZxePABfHlBOoPLFXWXAQ=
-=vkyJ
------END PGP SIGNATURE-----
+diff --git a/drivers/clk/qcom/apcs-msm8916.c b/drivers/clk/qcom/apcs-msm8916.c
+index 46061b3d230e..cf69a97d0439 100644
+--- a/drivers/clk/qcom/apcs-msm8916.c
++++ b/drivers/clk/qcom/apcs-msm8916.c
+@@ -19,9 +19,9 @@
+ 
+ static const u32 gpll0_a53cc_map[] = { 4, 5 };
+ 
+-static const char * const gpll0_a53cc[] = {
+-	"gpll0_vote",
+-	"a53pll",
++static const struct clk_parent_data pdata[] = {
++	{ .fw_name = "aux", .name = "gpll0_vote", },
++	{ .fw_name = "pll", .name = "a53pll", },
+ };
+ 
+ /*
+@@ -62,8 +62,8 @@ static int qcom_apcs_msm8916_clk_probe(struct platform_device *pdev)
+ 		return -ENOMEM;
+ 
+ 	init.name = "a53mux";
+-	init.parent_names = gpll0_a53cc;
+-	init.num_parents = ARRAY_SIZE(gpll0_a53cc);
++	init.parent_data = pdata;
++	init.num_parents = ARRAY_SIZE(pdata);
+ 	init.ops = &clk_regmap_mux_div_ops;
+ 	init.flags = CLK_SET_RATE_PARENT;
+ 
+-- 
+2.24.1
 
---6ydtg2u437jgrsyi--
