@@ -6,68 +6,68 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59C59C33C9A
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:14:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 453ACC00523
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:16:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 303882085B
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:14:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 173CB21775
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578208485;
-	bh=kOXrx1wqEa/YU4lIH0OxdprB9v8RhMxQwy9bb/pK0gQ=;
+	s=default; t=1578208581;
+	bh=IcMgc84dm+TL+mNfCGFUnF3P4H21ROobsV1M/6/Pz7o=;
 	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
-	b=c8E92yIxOSYLH3EAcwR1X0KlBaXIK6FWbVlwbiYyfz1CMkLi81xRxztpkzFP8jwfB
-	 oBk2MG1b+kjWzoOavkpIPuUJKLr/NjcsA4PSiA8HaBbLVfHvNPkEg211HrIhdtxJmI
-	 sS6/9QYRomAAuzby+b4cmPgYHPrM5IpNrkA9X11g=
+	b=LJ5tHlyp2qpDNqU0WPA20ouakDzcvVLbMBdu1QvY2Tynn11QndrrpJC2hgWSPEQk9
+	 FMsZD3gOyIu3OxUJBK2viGPyUhImFa/3XWSUYClgtKrxco/Zh12jxP9kjRYjhTHEpW
+	 /siigdrkNc3IRqwp63S+AtUx4NJs+H/FMzDP1KWc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726092AbgAEHOk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jan 2020 02:14:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33716 "EHLO mail.kernel.org"
+        id S1725955AbgAEHQU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jan 2020 02:16:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36242 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726569AbgAEHOj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 5 Jan 2020 02:14:39 -0500
+        id S1725785AbgAEHQU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 5 Jan 2020 02:16:20 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F10452085B;
-        Sun,  5 Jan 2020 07:14:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04B872085B;
+        Sun,  5 Jan 2020 07:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578208479;
-        bh=kOXrx1wqEa/YU4lIH0OxdprB9v8RhMxQwy9bb/pK0gQ=;
+        s=default; t=1578208580;
+        bh=IcMgc84dm+TL+mNfCGFUnF3P4H21ROobsV1M/6/Pz7o=;
         h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=H0FIKvn+Ai1x5HOYaGq5OBIo0Viyoj+P5TcI/toM3CSQQhWJ1/3rKDYZEP3yWOivZ
-         HQnh7gXUzshpQ9o46RicBifMTSe6rnJcJQBphR2UqnzmsU7S2yrev5MTvWYxVunLL7
-         m6ytha2jaet8zQT6A0bZm+kk9MFEck3iAM0UqYGk=
+        b=vtvtCaZLe4xxLIgfnm6V0RYnP2CEqMWzXKLX7HOzwpppkmGp8EybwFwe+PofUMDK0
+         eQhDTWIsRwkjhHbnI5StAJmyt5x/aHolozktulYQBqb8NIq1NbJXIrG2gTpbwgLsD3
+         3PFercCtS17QAAooqD2py7HOzrkvnqg/xdl/yZjk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1577410925-22021-1-git-send-email-hayashi.kunihiko@socionext.com>
-References: <1577410925-22021-1-git-send-email-hayashi.kunihiko@socionext.com>
-Cc:     linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Masami Hiramatsu <masami.hiramatsu@linaro.org>,
-        Jassi Brar <jaswinder.singh@linaro.org>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Subject: Re: [PATCH v2] clk: uniphier: Add SCSSI clock gate for each channel
-To:     Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20200103111429.1347-1-nks@flawful.org>
+References: <20200103111429.1347-1-nks@flawful.org>
+Cc:     mturquette@baylibre.com, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: qcom: apcs-msm8916: use clk_parent_data to specify the parent
+To:     Niklas Cassel <nks@flawful.org>, bjorn.andersson@linaro.org
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Sat, 04 Jan 2020 23:14:38 -0800
-Message-Id: <20200105071438.F10452085B@mail.kernel.org>
+Date:   Sat, 04 Jan 2020 23:16:19 -0800
+Message-Id: <20200105071620.04B872085B@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Kunihiko Hayashi (2019-12-26 17:42:05)
-> SCSSI has clock gates for each channel in the SoCs newer than Pro4,
-> so this adds missing clock gates for channel 1, 2 and 3. And more, this
-> moves MCSSI clock ID after SCSSI.
+Quoting Niklas Cassel (2020-01-03 03:14:29)
+> From: Niklas Cassel <niklas.cassel@linaro.org>
 >=20
-> Fixes: ff388ee36516 ("clk: uniphier: add clock frequency support for SPI")
-> Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-> Acked-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> Allow accessing the parent clock names required for the driver operation
+> by using the device tree 'clock-names' property, while falling back to
+> the previous method of using names in the global name space.
+>=20
+> This permits extending the driver to other platforms without having to
+> modify its source code.
+>=20
+> Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 > ---
 
 Applied to clk-next
