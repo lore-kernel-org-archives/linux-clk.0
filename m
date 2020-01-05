@@ -2,149 +2,71 @@ Return-Path: <SRS0=VfBy=22=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34471C00523
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:20:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A737C00523
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:22:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3E5921775
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:20:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F82A218AC
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578208809;
-	bh=DFP+6Fqfh7hM7WvrzekJyaKGyzJkPSyVvD0HF60ILVU=;
+	s=default; t=1578208933;
+	bh=36YMIfds6bcjOeZrdHkRP5guH3R8Wyde9Xa7tDKb8pI=;
 	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
-	b=x4Xj3q+EwrTSt0BDFertNnsDXWqX800YgE9VLdJ0DTsbH/SWWCs+pQ+BQc7m3Y2si
-	 RLk7/yRqQqqnOjG7kahm4Mh83ZuJXZyOz11Wh1HyCKyOn7AGVI0jhsbEBvoAcP+KuZ
-	 Azimz1g0an/gl95VUiUN9XjfmhWEBCBCseaQAPrA=
+	b=efCSqPzofvjeVeGNzDudFt0Oua7A7kuCIj7GHQT0V9D73G1b9NeR3MUtGnc7bQuAJ
+	 ODE7hHjdzYIdfs90Vb2y0gDiCYXtJY2+lbH/hU+iKyp/zzDkhPxLMLSgJ4lwDCZBiK
+	 UhWzpm0e74XpBIR+a9fVpa459LWNiZ2eeQ2otCfs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbgAEHUI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jan 2020 02:20:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41492 "EHLO mail.kernel.org"
+        id S1726260AbgAEHWI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jan 2020 02:22:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725785AbgAEHUI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 5 Jan 2020 02:20:08 -0500
+        id S1725535AbgAEHWI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 5 Jan 2020 02:22:08 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 910862085B;
-        Sun,  5 Jan 2020 07:20:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B5A4217F4;
+        Sun,  5 Jan 2020 07:22:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578208807;
-        bh=DFP+6Fqfh7hM7WvrzekJyaKGyzJkPSyVvD0HF60ILVU=;
+        s=default; t=1578208928;
+        bh=36YMIfds6bcjOeZrdHkRP5guH3R8Wyde9Xa7tDKb8pI=;
         h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=PKUxDu88g3Pb0WzRLvMn8jnZv+pqxcUwzBcJjGAW6qli8rsetWUoEUOYezXcpbixJ
-         naFvHX7Ucvl8sXbm/v5SodZszL6zRhkUt9EP+TxXPbks+ss8eJaZa1qiPktQCZ3k+g
-         ZhYzV7x1DwufbBpiaRciMUbwzvUA1I9eigX9kpk0=
+        b=Y5pNq0reydLkdp82SHfKPQEDwJd7XZHJbQ4N8+70XSxR5RX0nrt+g1d7r2CQH5LSo
+         F9xVK8on6mx2cKZ8ys9ezNjDWKdtJZ0TjUIaAK9bmB2nsPAl/J1u9hsSuiJ5URoooC
+         9E4xYTSsfY6DWyMHj9u5D2js3Z2qHFmt6TTmrtmY=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191216121932.22967-7-zhang.lyra@gmail.com>
-References: <20191216121932.22967-1-zhang.lyra@gmail.com> <20191216121932.22967-7-zhang.lyra@gmail.com>
-Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Orson Zhai <orsonzhai@gmail.com>,
-        Baolin Wang <baolin.wang7@gmail.com>,
-        Chunyan Zhang <zhang.lyra@gmail.com>,
-        Chunyan Zhang <chunyan.zhang@unisoc.com>
-Subject: Re: [PATCH V2 6/6] clk: sprd: add clocks support for SC9863A
-To:     Chunyan Zhang <zhang.lyra@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>
+In-Reply-To: <20200102005503.71923-1-sboyd@kernel.org>
+References: <20200102005503.71923-1-sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Guenter Roeck <linux@roeck-us.net>
+Subject: Re: [PATCH v2] clk: Warn about critical clks that fail to enable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Sat, 04 Jan 2020 23:20:06 -0800
-Message-Id: <20200105072007.910862085B@mail.kernel.org>
+Date:   Sat, 04 Jan 2020 23:22:07 -0800
+Message-Id: <20200105072208.0B5A4217F4@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Chunyan Zhang (2019-12-16 04:19:32)
-> diff --git a/drivers/clk/sprd/sc9863a-clk.c b/drivers/clk/sprd/sc9863a-cl=
-k.c
-> new file mode 100644
-> index 000000000000..145bb0a78740
-> --- /dev/null
-> +++ b/drivers/clk/sprd/sc9863a-clk.c
-> @@ -0,0 +1,1835 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Unisoc SC9863A clock driver
-> + *
-> + * Copyright (C) 2019 Unisoc, Inc.
-> + * Author: Chunyan Zhang <chunyan.zhang@unisoc.com>
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/io.h>
-> +#include <linux/module.h>
-> +#include <linux/of_device.h>
+Quoting Stephen Boyd (2020-01-01 16:55:03)
+> If we don't warn here users of the CLK_IS_CRITICAL flag may not know
+> that their clk isn't actually enabled because it silently fails to
+> enable. Let's print a warning in that case so developers find these
+> problems faster.
+>=20
+> Suggested-by: Jerome Brunet <jbrunet@baylibre.com>
+> Cc: Guenter Roeck <linux@roeck-us.net>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-Is this include used?
+Applied to clk-next
 
-> +#include <linux/platform_device.h>
-> +#include <linux/slab.h>
-> +
-> +#include <dt-bindings/clock/sprd,sc9863a-clk.h>
-> +
-> +#include "common.h"
-> +#include "composite.h"
-> +#include "div.h"
-> +#include "gate.h"
-> +#include "mux.h"
-> +#include "pll.h"
-> +
-[...]
-> +                               0x1000, BIT(12), 0, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(uart0_eb,      "uart0-eb",     "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(13), CLK_IGNORE_UNUSED, 0);
-
-Why are we CLK_IGNORE_UNUSED marking these clks? Please add a comment to
-explain why this should stay instead of being marked as critical.
-
-> +static SPRD_SC_GATE_CLK_FW_NAME(uart1_eb,      "uart1-eb",     "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(14), CLK_IGNORE_UNUSED, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(uart2_eb,      "uart2-eb",     "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(15), CLK_IGNORE_UNUSED, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(uart3_eb,      "uart3-eb",     "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(16), CLK_IGNORE_UNUSED, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(uart4_eb,      "uart4-eb",     "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(17), CLK_IGNORE_UNUSED, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(sim0_32k_eb,   "sim0_32k-eb",  "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(18), 0, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(spi3_eb,       "spi3-eb",      "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(19), 0, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(i2c5_eb,       "i2c5-eb",      "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(20), 0, 0);
-> +static SPRD_SC_GATE_CLK_FW_NAME(i2c6_eb,       "i2c6-eb",      "ext-26m"=
-, 0x0,
-> +                               0x1000, BIT(21), 0, 0);
-> +
-> +
-> +static int sc9863a_clk_probe(struct platform_device *pdev)
-> +{
-> +       const struct sprd_clk_desc *desc;
-> +
-> +       desc =3D device_get_match_data(&pdev->dev);
-> +       if (!desc)
-> +               return -ENODEV;
-> +
-> +       sprd_clk_regmap_init(pdev, desc);
-
-Can this fail?
-
-> +
-> +       return sprd_clk_probe(&pdev->dev, desc->hw_clks);
-> +}
-> +
