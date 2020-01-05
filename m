@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A8AC00523
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:26:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43F0BC00523
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA4F321775
-	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:26:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A3B218AC
+	for <linux-clk@archiver.kernel.org>; Sun,  5 Jan 2020 07:26:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578209172;
-	bh=rPfglwdJqeEZXf5vWDd4ttjNMd8Ue3VnVSRMo5DzdRY=;
+	s=default; t=1578209178;
+	bh=94/thocqIgj3RdFa84KJK7YEbL1bzQTv52muGWmOGrY=;
 	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
-	b=v4sI8xtxiWhqYgO+LImrErwehXnMiCn+WhU0qfKN7RzU76cxNCuRrDN2TOiEoFOzv
-	 ivZ4U283YrtgX/r3WUdiYsAEX39ayBHP+jlPSwr7h5Zs3pB/ifou1e06F0EH88P7rB
-	 UJGkomlML6U33C0W06HR7ofL4eHAX7KJn2nCd5Ws=
+	b=DJXcNHSTS8mhSz+IuDh9mTpeLDx2mQFvuQbkq3bizXd5PYD1zLhZTuu7UwM26GEBW
+	 Y531/KvC6PtcrcUPlqyg0H1/ezuFXOCZO+8zJUlD4siVAOquTLkrVjeZqXbGWcSJ1T
+	 frtd8aQeEWMDVSRQn78tTJcMKXlRMRhr1dXjD8Bk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725881AbgAEH0J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jan 2020 02:26:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46814 "EHLO mail.kernel.org"
+        id S1726383AbgAEH0R (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jan 2020 02:26:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725535AbgAEH0I (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 5 Jan 2020 02:26:08 -0500
+        id S1725535AbgAEH0R (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 5 Jan 2020 02:26:17 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EE870206F0;
-        Sun,  5 Jan 2020 07:26:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A76D21775;
+        Sun,  5 Jan 2020 07:26:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578209168;
-        bh=rPfglwdJqeEZXf5vWDd4ttjNMd8Ue3VnVSRMo5DzdRY=;
+        s=default; t=1578209176;
+        bh=94/thocqIgj3RdFa84KJK7YEbL1bzQTv52muGWmOGrY=;
         h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
-        b=ttgqc2m0Qz/o5uam9J+3rXFoKS8mjVr1eSbGrmzxfzgOYZgJW06bRTXB/C3o2cyOn
-         9WBYEoOOeCgEfBMinI6Po5t3rVP98WSB0uxS9cDH7YsRM15xqwamrgseiudF2oHHi9
-         ntYeMg660I7UQ1he4bnrJUI1AZvCEvM4VEvAjTh0=
+        b=t+DFcXrw/ptCq8o2r+ETDcyLkb+2XnVNgCs5kGDgYR3YXqhtOHKDUIDEroQFuUX9M
+         WNT6bgARca+8fzEBs7Tkq35jwxXlV0elMp2pXvE/AP0vGu9Z2BIFBCHWY9xDjYNwuh
+         /XyvS5it2jYNh427PWSJbbQBVIdnATPoaQYsAxcg=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1577428714-17766-2-git-send-email-tdas@codeaurora.org>
-References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org> <1577428714-17766-2-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1577428714-17766-4-git-send-email-tdas@codeaurora.org>
+References: <1577428714-17766-1-git-send-email-tdas@codeaurora.org> <1577428714-17766-4-git-send-email-tdas@codeaurora.org>
 Cc:     David Brown <david.brown@linaro.org>,
         Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
@@ -49,21 +49,22 @@ Cc:     David Brown <david.brown@linaro.org>,
         Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
         robh@kernel.org, robh+dt@kernel.org,
         Taniya Das <tdas@codeaurora.org>
-Subject: Re: [PATCH v3 1/6] dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings
+Subject: Re: [PATCH v3 3/6] clk: qcom: Add graphics clock controller driver for SC7180
 To:     Michael Turquette <mturquette@baylibre.com>,
         Taniya Das <tdas@codeaurora.org>
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Sat, 04 Jan 2020 23:26:07 -0800
-Message-Id: <20200105072607.EE870206F0@mail.kernel.org>
+Date:   Sat, 04 Jan 2020 23:26:15 -0800
+Message-Id: <20200105072616.6A76D21775@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2019-12-26 22:38:29)
-> The GPUCC clock provider have a bunch of generic properties that
-> are needed in a device tree. Add a YAML schemas for those.
+Quoting Taniya Das (2019-12-26 22:38:31)
+> Add support for the graphics clock controller found on SC7180
+> based devices. This would allow graphics drivers to probe and
+> control their clocks.
 >=20
 > Signed-off-by: Taniya Das <tdas@codeaurora.org>
 > ---
