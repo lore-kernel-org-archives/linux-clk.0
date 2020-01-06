@@ -2,86 +2,98 @@ Return-Path: <SRS0=2auu=23=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D37F9C33C9A
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 06:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 320A7C32771
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 08:06:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FCB321775
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 06:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578290573;
-	bh=5hxva25df32tAsqNh8cqFx9odnLgu5hRKNw8HZPCLjk=;
-	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=XGIw5ON2W9oDZmHTYVUIdYZ7DHjAZnDReGJFYx1UhNMuvzaXGutNqjowTkGOW2jC9
-	 u7PaYlJ97TjY7TRaUk7Q45Moe9Ot2xF+TOSMzwi/jKFebiWYYOTC9+gF3Qx7YAO7nS
-	 tzFdQqg0DYGQvWWvamV/9pFzNhKPLF+bWuApIdAE=
+	by mail.kernel.org (Postfix) with ESMTP id 029D4218AC
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 08:06:30 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="N6vlhfEm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726858AbgAFGCr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jan 2020 01:02:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726338AbgAFGCr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 6 Jan 2020 01:02:47 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49A5720848;
-        Mon,  6 Jan 2020 06:02:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578290566;
-        bh=5hxva25df32tAsqNh8cqFx9odnLgu5hRKNw8HZPCLjk=;
-        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=eJpHhyL6Zn+jn0TWh26dV/uWPfkkWmsibBqQhvb21LVcA6A7krW1p2EYvzXNOKOcK
-         ZHOPLcOkOfPCnDSxRNQ3b9pxbUrX2wYkH4wWSFdwiASwgMB9KVTYbGmcU+0aeg6ay6
-         vV9ndySbUZQE22ipz4z55cTxtK2FyQVvBOuHX2Vk=
-Content-Type: text/plain; charset="utf-8"
+        id S1726133AbgAFIG3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jan 2020 03:06:29 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:43337 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725843AbgAFIG3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jan 2020 03:06:29 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p27so21558012pli.10
+        for <linux-clk@vger.kernel.org>; Mon, 06 Jan 2020 00:06:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kc4OOP9HlDHrazGn8ygbL0+SnkDIKiZeyDLgjyCdafs=;
+        b=N6vlhfEmOvMy7F7CmodSMsAX5uy/sztUmVOPhLo8EIl9iFwQ2NLWDi1zBiQ0HUI+ro
+         H563QhrI02xzr4klertPbDzI0unhimjQiTnFJo9Lm/Y5LNTk7uQDut/SczTOtbFuvfFy
+         T67gJwf+zgRk1FzK/lyW90NtqOanKwHtonwbvMw3QYn1nQeU/MYxDRE9oMfGw9yOKWz+
+         R8hxdeoq07y1LNcYCPr4h+rDa12O9RqgQPqubsGtauUci2YgAYgyBn6YjxkUe+fniB3F
+         AwcjV8JD6WgPv2DEehMpZ9CoJhopQgW3nafA0e470xlqukNHjbhNdSOkkOZynRJ+An8G
+         VJqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Kc4OOP9HlDHrazGn8ygbL0+SnkDIKiZeyDLgjyCdafs=;
+        b=HYBFQVObiHXHd+9Kigjph8s6hLbsjebuuW15R30nLoQN5V/z/ixc9mwHkgKBi29xhI
+         r/F660zGpdGxPMeCB7ACmmczGFFFnQRyaPfUrgydXh3f4P4mdNL/5wGUz743Nt3uI2in
+         YPvKgjmBVDltqKnZAhzTE01EwNDbvM7kMhyO84nd2DzD0vFqs40NymDJ9gxBMzsu52dD
+         Bz2UrHpd38ncgGz+wq8JPCfWomyrLdNsvPOfmZRGOD7sLbyb3/DOtD97W+aREGpZeZ7v
+         XyTIsVH6uNGaHZvaLfYfligQaZu70jXVorL+6re2+qdwz8IR8TRNKy1pBJeiCovmGYP3
+         lXYA==
+X-Gm-Message-State: APjAAAWqYXTo5X9Zwhi7VW5zLKidczDAhQD2EaJWhIltGX/CrHmURTpV
+        HTv36fVmglqCR5eG5iap6bU0uA==
+X-Google-Smtp-Source: APXvYqzPwEbf3yDTuo1YSLiQbcrhWeM/h2hOgU19IgmTT+k+BL1n/XH4cHd3sSgnA+OFj25/f1W7Gw==
+X-Received: by 2002:a17:902:d898:: with SMTP id b24mr100079663plz.133.1578297988771;
+        Mon, 06 Jan 2020 00:06:28 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y20sm11916038pfe.107.2020.01.06.00.06.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 06 Jan 2020 00:06:28 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] clk: qcom: gcc-msm8996: Fix CLKREF parenting
+Date:   Mon,  6 Jan 2020 00:05:44 -0800
+Message-Id: <20200106080546.3192125-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200106045833.1725-1-masahiroy@kernel.org>
-References: <20200106045833.1725-1-masahiroy@kernel.org>
-Cc:     Julia Lawall <julia.lawall@lip6.fr>, linux-acpi@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        Masahiro Yamada <masahiroy@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Masahiro Yamada <masahiroy@kernel.org>
-Subject: Re: [PATCH] treewide: remove redundent IS_ERR() before error code check
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Sun, 05 Jan 2020 22:02:45 -0800
-Message-Id: <20200106060246.49A5720848@mail.kernel.org>
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Masahiro Yamada (2020-01-05 20:58:33)
-> 'PTR_ERR(p) =3D=3D -E*' is a stronger condition than IS_ERR(p).
-> Hence, IS_ERR(p) is unneeded.
->=20
-> The semantic patch that generates this commit is as follows:
->=20
-> // <smpl>
-> @@
-> expression ptr;
-> constant error_code;
-> @@
-> -IS_ERR(ptr) && (PTR_ERR(ptr) =3D=3D - error_code)
-> +PTR_ERR(ptr) =3D=3D - error_code
-> // </smpl>
->=20
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+We've always seen intermittent resets of msm8996 during boot, seemingly related
+to PCIe somehow. The likely cause of these errors are the fact that the CLKREF
+of all PHYs are parented by LN_BB, which while being on during boot is disabled
+by the UFS host driver if it fails to find its PHY.
 
-For
+As such, depending on the timeing (and success) of the UFS initialization, PCIe
+might loose its clocking.
 
->  drivers/clk/clk.c                    | 2 +-
+These two patches ensures that LN_BB, connected to the CXO2 pad on the SoC, is
+described as parent for all the CLKREF clocks. So that they all vote for this
+clock appropriately.
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Bjorn Andersson (2):
+  clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks
+  arm64: dts: qcom: msm8996: Define parent clocks for gcc
+
+ .../devicetree/bindings/clock/qcom,gcc.yaml   | 10 ++++++
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  3 ++
+ drivers/clk/qcom/gcc-msm8996.c                | 35 +++++++++++++++----
+ 3 files changed, 41 insertions(+), 7 deletions(-)
+
+-- 
+2.24.0
 
