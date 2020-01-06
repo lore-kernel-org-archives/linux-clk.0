@@ -2,99 +2,99 @@ Return-Path: <SRS0=2auu=23=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05035C2D0D1
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 10:06:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06D2AC2D0D1
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 10:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8F12207FD
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 10:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF994207FD
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 10:18:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="sjpMTO63"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726294AbgAFKGF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 6 Jan 2020 05:06:05 -0500
-Received: from sauhun.de ([88.99.104.3]:37032 "EHLO pokefinder.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726133AbgAFKGE (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 6 Jan 2020 05:06:04 -0500
-Received: from localhost (p54B338AC.dip0.t-ipconnect.de [84.179.56.172])
-        by pokefinder.org (Postfix) with ESMTPSA id 8DC052C0686;
-        Mon,  6 Jan 2020 11:06:01 +0100 (CET)
-Date:   Mon, 6 Jan 2020 11:05:58 +0100
-From:   Wolfram Sang <wsa@the-dreams.de>
-To:     Masahiro Yamada <masahiroy@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Julia Lawall <julia.lawall@lip6.fr>,
-        linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-crypto@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH] treewide: remove redundent IS_ERR() before error code
- check
-Message-ID: <20200106100558.GA4831@kunai>
-References: <20200106045833.1725-1-masahiroy@kernel.org>
+        id S1725446AbgAFKSW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 6 Jan 2020 05:18:22 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:54262 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726080AbgAFKSV (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 6 Jan 2020 05:18:21 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578305901; h=Content-Transfer-Encoding: Content-Type:
+ In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
+ Subject: Sender; bh=1OHQW4/xD2XUS1jStNjnGNpG1EuF7f1TD2E/Qky6pv4=; b=sjpMTO63FfJc3lLcwYKnPyLg+CcJfufiKwMXtyzAJtXHfGSYA0adseRkGPdMxeFppEKACtKP
+ UEv+6XYY3N2AH6Qil107Wh/064gQBrkkjkPd6i44Ob1zGwtCUlFvGB6ifTF9/CWcCM5y/8GX
+ grk/Y9XVNK33HOmxa8BFxBWt58I=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e130965.7efd9b990848-smtp-out-n02;
+ Mon, 06 Jan 2020 10:18:13 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id EA5E5C447A1; Mon,  6 Jan 2020 10:18:11 +0000 (UTC)
+Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 31D34C433CB;
+        Mon,  6 Jan 2020 10:18:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 31D34C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+Subject: Re: [PATCH v1 1/2] clk: qcom: rpmh: skip undefined clocks when
+ registering
+To:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1577790048-18263-1-git-send-email-tdas@codeaurora.org>
+ <1577790048-18263-2-git-send-email-tdas@codeaurora.org>
+ <20200102005700.1EAAE20672@mail.kernel.org>
+From:   Taniya Das <tdas@codeaurora.org>
+Message-ID: <806299af-38fb-05e4-7fd5-9e2344a53f8d@codeaurora.org>
+Date:   Mon, 6 Jan 2020 15:48:06 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="zhXaljGHf11kAtnf"
-Content-Disposition: inline
-In-Reply-To: <20200106045833.1725-1-masahiroy@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200102005700.1EAAE20672@mail.kernel.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Hello Stephen,
 
---zhXaljGHf11kAtnf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for your review comments.
 
-On Mon, Jan 06, 2020 at 01:58:33PM +0900, Masahiro Yamada wrote:
-> 'PTR_ERR(p) =3D=3D -E*' is a stronger condition than IS_ERR(p).
-> Hence, IS_ERR(p) is unneeded.
->=20
-> The semantic patch that generates this commit is as follows:
->=20
-> // <smpl>
-> @@
-> expression ptr;
-> constant error_code;
-> @@
-> -IS_ERR(ptr) && (PTR_ERR(ptr) =3D=3D - error_code)
-> +PTR_ERR(ptr) =3D=3D - error_code
-> // </smpl>
->=20
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+On 1/2/2020 6:26 AM, Stephen Boyd wrote:
+> Quoting Taniya Das (2019-12-31 03:00:47)
+>> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+>> index 7ed313a..05cbe6f 100644
+>> --- a/drivers/clk/qcom/clk-rpmh.c
+>> +++ b/drivers/clk/qcom/clk-rpmh.c
+>> @@ -462,7 +464,8 @@ static int clk_rpmh_probe(struct platform_device *pdev)
+>>
+>>                  ret = devm_clk_hw_register(&pdev->dev, hw_clks[i]);
+>>                  if (ret) {
+>> -                       dev_err(&pdev->dev, "failed to register %s\n", name);
+>> +                       dev_err(&pdev->dev, "failed to register %s\n",
+>> +                                                       hw_clks[i]->init->name);
+> 
+> After register clk_hw::init is NULL. This will probably oops. It would
+> be better to save off the name before registering.
+> 
 
-For drivers/i2c:
+Will take care in the next patch series.
 
-Acked-by: Wolfram Sang <wsa@the-dreams.de>
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation.
 
-Thanks!
-
-
---zhXaljGHf11kAtnf
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAl4TBoIACgkQFA3kzBSg
-KbYycQ/9HHMMaJuiDZs2ZZyg9Szbt/uDs6lfGNwX2WQjjgoo0FHwIISx26fwUSS0
-sfKb1VukurwS3gKvijHI2Tgo+f8Vb5W76AfDl7l2Pt+/1Fc3udj81ejuq6hrwDtX
-8lb3i4K7U7mReQW1CuGDL2a15XNeUCNSocbEz9r/fSMSCcO7vtYFQdJ1PRCiO40n
-Z9RU/AGK5/6Dm8H6JaPvBbkL4cSaKu0fWTLYwZfm5lUqpj8ERaGKdlz4W/DEy5nw
-/FLsLSoRRKpkrWFzohHUjEplvrX5Xv7//Pl4GHVxH25rPhKgXL7M4bkJUrAOG8Ap
-zRni09tOZTNrB2zkt3dFgDSUXwPHJOM0KLrVyFeze3ZtA/8rDaDxbr7a0lK0Jgi6
-X3+CMoirCftC9W2ub9a9h/IOhLqzFzVoWNN3QsHr4XxLYmE1EvhoIYbCRs3JpVrV
-cgbYECZxZElbp6K6u7sEsETPvGjvHi4gzXBZUwxYpdZyWaUsV+XIzxqQyeQIqkFF
-Yp6Cjmd/cjgLLUMwxL2QaopFPm+Ul+f5AojzQbMP6ScKbrjYfKn8S60q4fwrShk1
-yDlNFlQgdSrn1Dt1PfGllfjLz1bcQ/tsZsmP/ulyPE0Ph9Mv5ixDhEse7mZmOVjm
-8khnVJiGQcIi1CMl8mR8uDU6319aQvxcYWlG84KlF7nXsigrRqA=
-=e1Dd
------END PGP SIGNATURE-----
-
---zhXaljGHf11kAtnf--
+--
