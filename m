@@ -2,77 +2,74 @@ Return-Path: <SRS0=2auu=23=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DFCBCC32767
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 03:13:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8418C32767
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 03:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A955521734
-	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 03:13:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3658222C4
+	for <linux-clk@archiver.kernel.org>; Mon,  6 Jan 2020 03:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578280408;
-	bh=xp5rF0xCmJyirucp8HZboIfxMQ8XLnhsBHjxGVseJco=;
+	s=default; t=1578280432;
+	bh=rRiXaqB4lKgL0CIczu5dMCejRCDmvD2iQ9XuI7vNKWQ=;
 	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=pwtQx5DoKhsNw44ybSZAetQrA2/Fb7IQYYxMXbpMsIbWJAEuUA4PIWzHsvIvLqJ5k
-	 fWOKjb7OL38fVxP8WRjgJKLHe5tSy06Vv171QTsRjyRlG+DLwbk5VGDLXTx5irbHr6
-	 w+9k1HgPdhjxRA6c0bXdB0w07cB/5BHUGdRe/wks=
+	b=NbSxghIxTYRz9hpky0KtTdN+i/VNsw06Yj9p6v1E+xozv4iMRt0I9xFZS0MPMn2CA
+	 hWScWBTiYYpRB9CVs9AiwQigL/BgnWa4x0Tv1ojDtA5n0LKWbQhtL3AYYPcuVpka4F
+	 XP0//D2N0mVgKVPlJhucqMKaIIjm4Mpr8hCG1WJs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727378AbgAFDN2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 5 Jan 2020 22:13:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36526 "EHLO mail.kernel.org"
+        id S1727376AbgAFDNw (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 5 Jan 2020 22:13:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727369AbgAFDN2 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sun, 5 Jan 2020 22:13:28 -0500
+        id S1727369AbgAFDNw (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 5 Jan 2020 22:13:52 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B85DF21582;
-        Mon,  6 Jan 2020 03:13:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8CAA221582;
+        Mon,  6 Jan 2020 03:13:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578280407;
-        bh=xp5rF0xCmJyirucp8HZboIfxMQ8XLnhsBHjxGVseJco=;
+        s=default; t=1578280431;
+        bh=rRiXaqB4lKgL0CIczu5dMCejRCDmvD2iQ9XuI7vNKWQ=;
         h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=RlTrdEvsDbPNoGW9+XnBUgE2QpnFbWKcBiZ/8CGOljq+0R+M1u5xDb/26vLYnm93I
-         +cB9Ahz7XHg5BgI4a9errFsY9KD43p8eg0LNZaqLyy1D/uCAZ+aec8N/TkcdEfpol1
-         vzg/w3dG0n3Z7FLzQcc1NXK99SxjxgG46bRaqV6s=
+        b=F5e4GLspOXukrm/Z9aTuG5SdIvceK9UtrGlDmdCQciJ9hmd38+xcEPzfaYIs6HZ1G
+         VGULXAWpdEdmEISCX0rwT67ZcZgesG5+mh5iFERpvUYIol/uxJj1YB1leCamZTot+b
+         BFHrkW7oAGVPcuUSXN8WU1+0mguaHax/PapccolQ=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20190828132306.19012-1-geert+renesas@glider.be>
-References: <20190828132306.19012-1-geert+renesas@glider.be>
-Cc:     Raman Banka <raman.k2@samsung.com>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [PATCH v2] clk: Add support for setting clk_rate via debugfs
+In-Reply-To: <20191001090202.26346-1-t-kristo@ti.com>
+References: <20191001090202.26346-1-t-kristo@ti.com>
+Cc:     tomi.valkeinen@ti.com
+To:     Tero Kristo <t-kristo@ti.com>, linux-clk@vger.kernel.org,
+        mturquette@baylibre.com
+Subject: Re: [PATCH 0/4] clk: debugfs: add some simple debug functionality
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Sun, 05 Jan 2020 19:13:26 -0800
-Message-Id: <20200106031327.B85DF21582@mail.kernel.org>
+Date:   Sun, 05 Jan 2020 19:13:50 -0800
+Message-Id: <20200106031351.8CAA221582@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Geert Uytterhoeven (2019-08-28 06:23:06)
-> For testing, it is useful to be able to specify a clock rate manually.
-> As this is a dangerous feature, it is not enabled by default.
-> Users need to modify the source directly and #define
-> CLOCK_ALLOW_WRITE_DEBUGFS.
+Quoting Tero Kristo (2019-10-01 02:01:58)
+> Hi,
 >=20
-> This follows the spirit of commit 09c6ecd394105c48 ("regmap: Add support
-> for writing to regmap registers via debugfs").
+> I have been using a variation of these patches myself for several years
+> for debugging / testing different clock issues. Basically what I do here
+> is extend the functionality of debugfs to allow write access to certain
+> properties, like rate, enable / prepare counts, mux parents.
 >=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> Stephen: you suggested this approach in
-> https://lore.kernel.org/linux-clk/153029668040.143105.2059491089047180792=
-@swboyd.mtv.corp.google.com/
+> This allows simple testing of new features or debugging directly from
+> userspace. The functionality is hidden behind a Kconfig option because
+> it can be rather dangerous to allow access to these unconditionally if
+> the user does not know what they are doing.
+>=20
+> Any thoughts?
 
-Ok. Let's do it!
-
-Applied to clk-next.
+I just applied Geerts approach to this. Let's follow that and not
+provide any Kconfig things.
 
