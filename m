@@ -7,73 +7,76 @@ X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E8C9C282DD
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 23:01:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2EE2C33C9E
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 23:17:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F5932072A
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 23:01:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89F2A20715
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 23:17:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mccTS+X1"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EQsoySUS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727185AbgAGXBn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 18:01:43 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:33568 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727077AbgAGXBn (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 18:01:43 -0500
-Received: by mail-lj1-f194.google.com with SMTP id y6so1367952lji.0;
-        Tue, 07 Jan 2020 15:01:40 -0800 (PST)
+        id S1727311AbgAGXRF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jan 2020 18:17:05 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:40900 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727074AbgAGXRF (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 18:17:05 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i23so996086lfo.7;
+        Tue, 07 Jan 2020 15:17:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=x2kj4N+C6gCkt1JU+MFC0kPX5ARyQ6tNvJwxO0Ybx1U=;
-        b=mccTS+X1eqtGG+Xj75lrAhJhipHNj7TTHfNK9oIcHZuVq/eXeUZzdr3VvArJdZHwXt
-         u1ukLV62os883OM4lXJgvycBQFki5KpvlfjSUMMN5TT85dweBMmTQ0cUyS5QXzZUq3l8
-         N8cS8iKvJMWOpljbbzV0qYbOu5Mt56wDBV4DdyWYhlsR1QdhpPMmc76BTkScviUuMGel
-         yjl7NriW3uItha150T2juNY4pP7CZkVXR/Ck6HnLcGmn3VNekp9HoFAbFJ1+s0GwfHYH
-         O4UmBJo8G4IbgqrRC/1sWa+lSbBl7/fa/2dSWTQihe3g5Bg3ihEYQlmC0QhGFYkC7f1Y
-         eNPA==
+        bh=z3UtITc4zK9Gssc2kyYRqxkunqDolPS6OQRkM0QUDtY=;
+        b=EQsoySUSRqREURbglDkMpdKVjg7eKOdVdnGQceh4ZMZckD9eTKjPsdhL+J6E+QZ69N
+         QyuynbapDeAO0nc3e4xnbjaxGiBgLXE71h2iL85U+G/ycdrz7H07Cpj/yPyaeO3F+4Rt
+         /WUO85IAyOKH3NhVnNdAFoYsmqcpbDBBJUvv6NXa8C9yHLjXJEyPnNQFBfAau/Nu7bzs
+         qlAckR03wlON54gxxfPHou2/3MmBavmx5cb2wBQadXgAQxQImuvPEqfkM8/Bq1T+JqXI
+         5ZvOuE41iPq+wKT4RMc9Myu3ablGDLJJSXQAPUanLqQn3HaTArsHCA9VKrfDVSKnDFy2
+         OWew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=x2kj4N+C6gCkt1JU+MFC0kPX5ARyQ6tNvJwxO0Ybx1U=;
-        b=oExXaRhnM1876x7VCXUBKUje3C1hPor1RjUOWNAcra936QL6yKq/JRftCsf3fxfmtL
-         Qpozt3RYoi3D/MpPAIU8MCsgZ4y8ZFoIRVZ7kRTsAjn0+UaPF5UsdTEnXW53MSep4g1A
-         b4O2jstlaFkDufp2KhwHypEgc1vMpxxYPxb9l7/1qdjaIi7WoPF1gVOEf9uXEsKE8D88
-         3UhRKMaZ1E+Tu0AvoB/8gGeOK7UEf61JxRWpl4O3eGZoDf0ikqIrhnZVoLS4wq9wrJsB
-         +V4qS4vxjkTCeKf9B6Bp7p4NtKz683VwZFZ8Z656oCuFpovnkUj8fLIghj59jZitqYYf
-         yx1Q==
-X-Gm-Message-State: APjAAAVT/cJ/DjzQ5AMxN5O5JexjGu4Dog6oR/BBr9xJVXSzDKXUKwd9
-        Y/1T9u52X3CAnbz0L8xYZvZmc0gn
-X-Google-Smtp-Source: APXvYqzoYl93X7aPOMlXKQiUsb1Nt1VsBwVGp+t0R3nNAjr7CVuBU3Xds6oAR7ZyuUw2CocCJakRaw==
-X-Received: by 2002:a05:651c:1110:: with SMTP id d16mr1114333ljo.86.1578438099463;
-        Tue, 07 Jan 2020 15:01:39 -0800 (PST)
+        bh=z3UtITc4zK9Gssc2kyYRqxkunqDolPS6OQRkM0QUDtY=;
+        b=kp8jjM1+S13xUS+Wfr8vOi9/uZRUsvLUzzSJPknjunRkhChKLoohRl8Pdab92ce3rN
+         +2UTtzEacWG0+n5bTsGyY4X5NoOLA+mhh6dH8rZyDQkriWdL7sjd/SR2oWDhWtbY//rv
+         ZDaZ34pVXFrQ2KsymkHA38JsHd5j/cbvbUKfbKlCTkR6Rfw1IKFfbi3rcOc/yEpV52Sg
+         cPxVpGPAVJdY3abSPjtlep54d4/8dJebL7BlCHsFd+5025DPqwZ/dLQTwMJ0aIhG1kXp
+         f+REIFodGNPlwZct08C81pbHI1SfXzI7ulxaXYIjef8Y1PSGt1NHnXkuvWaedrSCZwWD
+         lHKg==
+X-Gm-Message-State: APjAAAWNmDaeZLagUmFytqfklg0PR/OVbGVgANkZNyNzk3+6NTQ1Ab3v
+        Lw+vo7J3FCWrRLrsWkd9sF/VGEIV
+X-Google-Smtp-Source: APXvYqxZMJb5KnSBEXAC4K7LWG92+6r0yVQIv2mY1VHq/LxhTXrOjzLw0n/qj2BPsGoqosGpf6xGxA==
+X-Received: by 2002:a19:9157:: with SMTP id y23mr1176014lfj.74.1578439021866;
+        Tue, 07 Jan 2020 15:17:01 -0800 (PST)
 Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id s18sm455462ljj.36.2020.01.07.15.01.38
+        by smtp.googlemail.com with ESMTPSA id t27sm407149ljd.26.2020.01.07.15.17.00
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 Jan 2020 15:01:38 -0800 (PST)
-Subject: Re: [PATCH v6 00/19] Move PMC clocks into Tegra PMC driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
+        Tue, 07 Jan 2020 15:17:01 -0800 (PST)
+Subject: Re: [PATCH v6 00/12] NVIDIA Tegra20 CPUFreq driver major update
 From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <4f52bc6e-3e97-f5fb-ce20-be7b55e688ee@gmail.com>
-Date:   Wed, 8 Jan 2020 02:01:37 +0300
+To:     Peter De Schrijver <pdeschrijver@nvidia.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Peter Geis <pgwipeout@gmail.com>,
+        Nicolas Chauvet <kwizart@gmail.com>,
+        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
+        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20191218202142.11717-1-digetx@gmail.com>
+Message-ID: <ff3006a1-b5b1-5854-3a2c-67278e53b6dd@gmail.com>
+Date:   Wed, 8 Jan 2020 02:17:00 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <20191218202142.11717-1-digetx@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -82,204 +85,102 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hello Sowjanya,
-
-07.01.2020 07:13, Sowjanya Komatineni пишет:
-> This patch series moves Tegra PMC clocks from clock driver to pmc driver
-> along with the device trees changes and audio driver which uses one of
-> the pmc clock for audio mclk.
+18.12.2019 23:21, Dmitry Osipenko пишет:
+> Hello,
 > 
-> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-> are currently registered by Tegra clock driver using clk_regiser_mux and
-> clk_register_gate which performs direct Tegra PMC register access.
+> This series moves intermediate-clk handling from tegra20-cpufreq into
+> tegra-clk driver. This allows us to switch to generic cpufreq-dt driver
+> which brings voltage scaling, per-hardware OPPs and Tegra30 support out
+> of the box. All boards need to adopt CPU OPPs in their device-trees in
+> order to get cpufreq support.
 > 
-> When Tegra PMC is in secure mode, any access from non-secure world will
-> not go through.
+> Changelog:
 > 
-> This patch series adds these Tegra PMC clocks and blink controls to Tegra
-> PMC driver with PMC as clock provider and removes them from Tegra clock
-> driver.
+> v6: - Dropped "cpufreq: dt-platdev: Blacklist NVIDIA Tegra20 and Tegra30 SoCs"
+>       patch from the series since Viresh picked up that patch separately.
 > 
-> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
-> and clock driver does inital parent configuration for it and enables them.
-> But this clock should be taken care by audio driver as there is no need
-> to have this clock pre enabled.
+>     - Added two new patches to this series:
 > 
-> So, this series also includes patch that updates ASoC driver to take
-> care of parent configuration for mclk if device tree don't specify
-> initial parent configuration using assigned-clock-parents and controls
-> audio mclk enable/disable during ASoC machine startup and shutdown.
+>         ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+>         ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
 > 
-> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
+>       Previously these patches were sent out separately from this series,
+>       but it should be more consistent to include them into the series since
+>       they directly relate to enabling of the cpufreq driver on Tegra30.
 > 
-> This series also includes a patch for mclk fallback to extern1 when
-> retrieving mclk fails to have this backward compatible of new DT with
-> old kernels.
+> v5: - The "Use generic cpufreq-dt driver (Tegra30 supported now)" patch
+>       is separated now into two patches by factoring out the blacklisting
+>       of cpufreq-dt-platdev into a standalone patch. This is done in a
+>       response to request from Jon Hunter to fix the warning splats during
+>       boot that are coming from OPP core because OPPs are unavailable. The
+>       OPPs will become available once tegra20-cpufreq driver will be updated
+>       to support the cpufreq-dt.
 > 
-> [v6]:	Changes between v5 and v6 are
-> 	- v5 feedback
-> 	- Added ASoC machine startup and shutdown callbacks to control audio
-> 	  mclk enable/disable and removed default mclk enable from clock driver.
-> 	- Updated tegra_asoc_utils_set_rate to disable mclk only during PLLA
-> 	  rate change and removed disabling PLLA as its already taken care by
-> 	  pll clock driver.
-> 	- Removed tegra_asoc_utils_set_rate call from utils_init as set_rate
-> 	  is set during machine hw_params and during utils_init mclk is
-> 	  already in disabled state and this causes warning during mclk disable
-> 	  in utils_set_rate.
+> v4: - Updated CCLK diagram in the "Add custom CCLK implementation" patch.
 > 
-> [v5]:	Changes between v4 and v5 are
-> 	- v4 feedback
-> 	- updated dt-binding pmc YAML schema with more description on power
-> 	  gate nodes and pad configuration state nodes.
-> 	- update tegra_asoc_utils_set_rate to disable audio mclk only if
-> 	  its in enable state.
+>     - <linux/cpu.h> is now included in the "Use generic cpufreq-dt driver"
+>       patch, for consistency.
 > 
-> [v4]:	Changes between v3 and v4 are
-> 	- v3 Feedback
-> 	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
-> 	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
-> 	  be osc_div2 and osc_div4 clocks from osc pads.
-> 	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
-> 	- Register each PMC clock as single clock rather than separate
-> 	  mux and gate clocks.
-> 	- Update ASoC utils to use resource managed APIs rather than
-> 	  using clk_get and clk_put.
-> 	- Updated device tree and ASoC driver to use clk_out_1 instead of
-> 	  clk_out_1_mux as PMC clocks are registered as single clock.
-> 	- Update clock driver init_table to not enable audio related clocks
-> 	  as ASoC utils will do audio clock enables.
+>     - Returned value of get_cpu_device() is now checked in the "Use generic
+>       cpufreq-dt driver" patch, for consistency as well.
 > 
-> [v3]:	Changes between v2 and v3 are
-> 	- Removes set parent of clk_out_1_mux to extern1 and enabling
-> 	  extern1 from the clock driver.
-> 	- Doesn't enable clk_out_1 and blink by default in pmc driver
-> 	- Updates ASoC driver to take care of audio mclk parent
-> 	  configuration incase if device tree don't specify assigned
-> 	  clock parent properties and enables mclk using both clk_out_1
-> 	  and extern1.
-> 	- updates all device trees using extern1 as mclk in sound node
-> 	  to use clk_out_1 from pmc.
-> 	- patch for YAML format pmc dt-binding
-> 	- Includes v2 feedback
+> v3: - The "Add custom CCLK implementation" patch was updated in accordance
+>       to the comments from Peter De Schrijver. We will not use the clock
+>       skipper.
 > 
-> [v2]:	Changes between v1 and v2 are
-> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-> 	- feedback related to pmc clocks in Tegra PMC driver from v1
-> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-> 	  by the clock driver using helper functions from Tegra PMC.
+>     - Re added OPPs for T30 Beaver board because Thierry has that board ;)
 > 
->  	  Note:
-> 	  To use helper functions from PMC driver, PMC early init need to
-> 	  happen prior to using helper functions and these helper functions are
-> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-> 	  clock registration which happen in clock_init prior to Tegra PMC
-> 	  probe.
-> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-> 	  tegra_mc_init.
-> 	  This implementation of configuring PMC registers thru helper
-> 	  functions in clock driver needs proper changes across PMC, Clock,
-> 	  EMC and MC inits to have it work across all Tegra platforms.
+>     - Added r-b for the "DT binding" patch from Rob Herring.
 > 
-> 	  Currently PLLM Override is not enabled in the bootloader so proper
-> 	  patches for this fix will be taken care separately.
+> v2: - Kept modularity of the tegra20-cpufreq as was requested by Viresh Kumar
+>       in a review comment to v1.
 > 
-> [v1]:	v1 includes patches for below fixes.
-> 	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
-> 	  driver and removing clk-tegra-pmc.
-> 	- updated clock provider from tegra_car to pmc in the device tree
-> 	  tegra210-smaug.dts that uses clk_out_2.
-> 	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
-> 	  IDDQ programming to use by clock driver and updated clock driver to
-> 	  use these helper functions and removed direct PMC access from clock
-> 	  driver and all pmc base address references in clock driver.
+>     - Added acks from Viresh Kumar.
 > 
+>     - Added tested-by from Nicolas Chauvet to the "trimslice" patch.
+>       Nicolas told me on IRC that it works fine.
 > 
+>     - Fixed compilation of the "Add custom CCLK implementation" patch. The
+>       error happened because v1 was based on top of yet unreviewed/unapplied
+>       patch "clk: tegra: divider: Support enable-bit for Super clocks".
+>       Thanks to Peter Geis for reporting the problem.
 > 
+>     - Replaced Tegra30 "beaver" board with "cardhu-a04" because turned out
+>       that's what NVIDIA uses in the testing farm.
 > 
-> Sowjanya Komatineni (19):
->   dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
->   clk: tegra: Change CLK_M_DIV clocks to OSC_DIV clocks
->   clk: tegra: Fix Tegra PMC clock out parents
->   dt-bindings: tegra: Convert Tegra PMC bindings to YAML
->   dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
->   soc: tegra: Add Tegra PMC clocks registration into PMC driver
->   dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
->   soc: tegra: Add support for 32KHz blink clock
->   clk: tegra: Remove tegra_pmc_clk_init along with clk ids
->   dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
->   ASoC: tegra: Use device managed resource APIs to get the clock
->   ASoC: tegra: Add audio mclk configuration
->   ASoC: tegra: Add fallback implementation for audio mclk
->   clk: tegra: Remove audio related clock enables from init_table
->   ARM: dts: tegra: Add clock-cells property to pmc
->   arm64: tegra: Add clock-cells property to Tegra PMC node
->   ARM: tegra: Update sound node clocks in device tree
->   arm64: tegra: smaug: Change clk_out_2 provider to pmc
->   ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
+> Dmitry Osipenko (12):
+>   clk: tegra: Add custom CCLK implementation
+>   clk: tegra: pll: Add pre/post rate-change hooks
+>   clk: tegra: cclk: Add helpers for handling PLLX rate changes
+>   clk: tegra20: Use custom CCLK implementation
+>   clk: tegra30: Use custom CCLK implementation
+>   ARM: tegra: Switch CPU to PLLP on resume from LP1 on Tegra30/114/124
+>   ARM: tegra: Don't enable PLLX while resuming from LP1 on Tegra30
+>   dt-bindings: cpufreq: Add binding for NVIDIA Tegra20/30
+>   cpufreq: tegra20: Use generic cpufreq-dt driver (Tegra30 supported
+>     now)
+>   ARM: tegra: Create tegra20-cpufreq platform device on Tegra30
+>   ARM: dts: tegra30: beaver: Set up voltage regulators for DVFS
+>   ARM: dts: tegra30: beaver: Add CPU Operating Performance Points
 > 
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 -----------------
->  .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 354 +++++++++++++++++++++
->  .../devicetree/bindings/sound/nau8825.txt          |   2 +-
->  arch/arm/boot/dts/tegra114-dalmore.dts             |   8 +-
->  arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
->  arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   8 +-
->  arch/arm/boot/dts/tegra124-apalis.dtsi             |   8 +-
->  arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
->  arch/arm/boot/dts/tegra124-nyan.dtsi               |   8 +-
->  arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
->  arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
->  arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
->  arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   8 +-
->  arch/arm/boot/dts/tegra30-apalis.dtsi              |   8 +-
->  arch/arm/boot/dts/tegra30-beaver.dts               |   8 +-
->  arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 +-
->  arch/arm/boot/dts/tegra30-colibri.dtsi             |   8 +-
->  arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
->  arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
->  arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
->  drivers/clk/tegra/Makefile                         |   1 -
->  drivers/clk/tegra/clk-id.h                         |  11 +-
->  drivers/clk/tegra/clk-tegra-fixed.c                |  32 +-
->  drivers/clk/tegra/clk-tegra-pmc.c                  | 122 -------
->  drivers/clk/tegra/clk-tegra114.c                   |  41 +--
->  drivers/clk/tegra/clk-tegra124.c                   |  46 +--
->  drivers/clk/tegra/clk-tegra20.c                    |   9 +-
->  drivers/clk/tegra/clk-tegra210.c                   |  30 +-
->  drivers/clk/tegra/clk-tegra30.c                    |  31 +-
->  drivers/clk/tegra/clk.h                            |   1 -
->  drivers/soc/tegra/pmc.c                            | 352 ++++++++++++++++++++
->  include/dt-bindings/clock/tegra114-car.h           |  18 +-
->  include/dt-bindings/clock/tegra124-car-common.h    |  18 +-
->  include/dt-bindings/clock/tegra20-car.h            |   2 +-
->  include/dt-bindings/clock/tegra210-car.h           |  18 +-
->  include/dt-bindings/clock/tegra30-car.h            |  18 +-
->  include/dt-bindings/soc/tegra-pmc.h                |  16 +
->  sound/soc/tegra/tegra_alc5632.c                    |  28 +-
->  sound/soc/tegra/tegra_asoc_utils.c                 | 125 ++++----
->  sound/soc/tegra/tegra_asoc_utils.h                 |   3 +-
->  sound/soc/tegra/tegra_max98090.c                   |  43 ++-
->  sound/soc/tegra/tegra_rt5640.c                     |  43 ++-
->  sound/soc/tegra/tegra_rt5677.c                     |  28 +-
->  sound/soc/tegra/tegra_sgtl5000.c                   |  28 +-
->  sound/soc/tegra/tegra_wm8753.c                     |  43 ++-
->  sound/soc/tegra/tegra_wm8903.c                     |  43 ++-
->  sound/soc/tegra/tegra_wm9712.c                     |   8 +-
->  sound/soc/tegra/trimslice.c                        |  39 ++-
->  49 files changed, 1192 insertions(+), 777 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
->  create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
->  delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
->  create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+>  .../cpufreq/nvidia,tegra20-cpufreq.txt        |  56 +++++
+>  arch/arm/boot/dts/tegra30-beaver.dts          |  40 +++-
+>  arch/arm/mach-tegra/sleep-tegra30.S           |  18 +-
+>  arch/arm/mach-tegra/tegra.c                   |   4 +
+>  drivers/clk/tegra/Makefile                    |   1 +
+>  drivers/clk/tegra/clk-pll.c                   |  12 +-
+>  drivers/clk/tegra/clk-tegra-super-cclk.c      | 212 +++++++++++++++++
+>  drivers/clk/tegra/clk-tegra20.c               |   7 +-
+>  drivers/clk/tegra/clk-tegra30.c               |   6 +-
+>  drivers/clk/tegra/clk.h                       |  19 +-
+>  drivers/cpufreq/Kconfig.arm                   |   6 +-
+>  drivers/cpufreq/tegra20-cpufreq.c             | 217 +++++-------------
+>  12 files changed, 418 insertions(+), 180 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/cpufreq/nvidia,tegra20-cpufreq.txt
+>  create mode 100644 drivers/clk/tegra/clk-tegra-super-cclk.c
 > 
 
-I briefly looked through the patches and tested them in all possible
-configurations. For now everything looks and works well.
+Hello Peter,
 
-You could add this to all patches:
-
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Could you please take a look at the patches and ACK them if they are
+okay to you?
