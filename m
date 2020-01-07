@@ -2,216 +2,128 @@ Return-Path: <SRS0=q0Yx=24=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B2B0C33C99
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 05:48:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C3A8C33C99
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 06:29:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 563562075A
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 05:48:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBACE2077B
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 06:29:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578376123;
-	bh=beZTMdPPp2jWXKQD6/STikDCgpcO/mLfQp5aGJ6sHDA=;
-	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=RJWisO82glP/aCMeoWc/XOgedoUiVOyUt2vJMxFIXpP05Fb7tAvE+rU3VWg1Ju9Pi
-	 09O2qPoDgeY7S+01YPpBagtFnu4TXnF0IyB2dI0hq70N2tzmfjYgzlR2Qo1rC5Z4z2
-	 N128sR+TV+tl0k5VhOKSLEWzF2EA1lIZYT2VXcd4=
+	s=default; t=1578378568;
+	bh=GhOSuQQThHxmyW2srU1iYmKJZPiYeVV/Z+EWg2Jn4L8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=N1Al9bNHyipCulH19zczRqUfLVOUVi3OcvQUcb3NHuNXJKKOa/6hfnA9kggiuaulW
+	 jB43BXvLJU6KiJA/iwFdOEoFyLk2w5m/4UI9DEb5HoL9tw23ipjj1C74jvEtE7kh0U
+	 kbXkeyfHO5YEXT7uCcCYSF7OZlKu6w59xh9Y3xw4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727632AbgAGFsj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 00:48:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47000 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727624AbgAGFsi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Jan 2020 00:48:38 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DB91F2075A;
-        Tue,  7 Jan 2020 05:48:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578376118;
-        bh=beZTMdPPp2jWXKQD6/STikDCgpcO/mLfQp5aGJ6sHDA=;
-        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=0KJuvIpRECR8mMSN2IPjzGA8Eb9Brsh2PCM9vpxD4VvkEKcDGjRjrTtGr82l9Nxn0
-         8iJu+48oEGB06egRUxZxTVQfzjidP+aoFy4Wynsoxxbvcy9hgYWNsbpFaguyqOaxEb
-         0FZJlrzoAV2GjB3lTdTh8PFNMZ2FjSKJXvto5y4I=
-Content-Type: text/plain; charset="utf-8"
+        id S1725914AbgAGG31 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jan 2020 01:29:27 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:51037 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725267AbgAGG31 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 01:29:27 -0500
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com [209.85.222.46]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id 0076TA8c014378;
+        Tue, 7 Jan 2020 15:29:10 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com 0076TA8c014378
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1578378551;
+        bh=V4OXT4Fpyi9+NOlQeIWNoTFry/VXFE9skkoLr0JmobU=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=PUtkQKRh/fLDhr7OyI2jsy3dRzrVKjGRsJD26kFb8Yi5DYb3ZzVIj9aI89P3bCxO2
+         kcx+0mSsXbAq4C2G/aOvNTObJyA3sA7ZRSemwGljOlIhcw4yni6N1g0mkghKwLkTff
+         PCvpPysq86Ay4TJqu/B05j3eWpmSKVpUV3flWj7fJbDYzYBRe9GDCcNj/9ZPgS6WVy
+         mBpxYB8cwCaNXyhhFYC562rrdIJWQJ4ftIQllFGlOQDej1RK7yQoEXLAEkU4cuevXA
+         FSB3dvO2xXez30a7IBaDz3GjYj6T2nLHidaWCSDoGt0mX8w317v0yQ6iasfpegGulk
+         qbQdyYxrLIKew==
+X-Nifty-SrcIP: [209.85.222.46]
+Received: by mail-ua1-f46.google.com with SMTP id y23so18070021ual.2;
+        Mon, 06 Jan 2020 22:29:10 -0800 (PST)
+X-Gm-Message-State: APjAAAX4OV0JdmY3G5sTMv5AWHnVrwQNu0DHhBg8VT2p58i/tMByElVg
+        ROQnZfbu9nt9w1UAX2VzjdAUszkWFQxJNHz/+bk=
+X-Google-Smtp-Source: APXvYqypZNoHbzfj+w5gFDA3N15SQKWwFjdrHnOhN5aGCU+FKq8xDDltKeTcAoYEWk93oUB5yZ92m3AGy2jJt8IgSdk=
+X-Received: by 2002:ab0:2ea6:: with SMTP id y6mr41352359uay.25.1578378549666;
+ Mon, 06 Jan 2020 22:29:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191205115734.6987-1-mike.looijmans@topic.nl>
-References: <20191205115734.6987-1-mike.looijmans@topic.nl>
-Cc:     linux-kernel@vger.kernel.org, mturquette@baylibre.com,
-        Mike Looijmans <mike.looijmans@topic.nl>
-To:     Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH] clk, clk-si5341: Support multiple input ports
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 06 Jan 2020 21:48:37 -0800
-Message-Id: <20200107054837.DB91F2075A@mail.kernel.org>
+References: <20200106045833.1725-1-masahiroy@kernel.org> <20200107051521.GF705@sol.localdomain>
+In-Reply-To: <20200107051521.GF705@sol.localdomain>
+From:   Masahiro Yamada <masahiroy@kernel.org>
+Date:   Tue, 7 Jan 2020 15:28:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNATbLESJ6CdPSN8bdpt7+4iOKW2L3c4OZaz2sLzqJH6BTw@mail.gmail.com>
+Message-ID: <CAK7LNATbLESJ6CdPSN8bdpt7+4iOKW2L3c4OZaz2sLzqJH6BTw@mail.gmail.com>
+Subject: Re: [PATCH] treewide: remove redundent IS_ERR() before error code check
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Julia Lawall <julia.lawall@lip6.fr>,
+        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        linux-crypto@vger.kernel.org,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-i2c@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-mtd <linux-mtd@lists.infradead.org>,
+        Networking <netdev@vger.kernel.org>,
+        ALSA Development Mailing List <alsa-devel@alsa-project.org>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mike Looijmans (2019-12-05 03:57:34)
-> The Si5341 and Si5340 have multiple input clock options. So far, the driv=
-er
-> only supported the XTAL input, this adds support for the three external
-> clock inputs as well.
->=20
-> If the clock chip is't programmed at boot, the driver will default to the
+On Tue, Jan 7, 2020 at 2:15 PM Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> On Mon, Jan 06, 2020 at 01:58:33PM +0900, Masahiro Yamada wrote:
+> > 'PTR_ERR(p) == -E*' is a stronger condition than IS_ERR(p).
+> > Hence, IS_ERR(p) is unneeded.
+> >
+> > The semantic patch that generates this commit is as follows:
+> >
+> > // <smpl>
+> > @@
+> > expression ptr;
+> > constant error_code;
+> > @@
+> > -IS_ERR(ptr) && (PTR_ERR(ptr) == - error_code)
+> > +PTR_ERR(ptr) == - error_code
+> > // </smpl>
+> >
+> > Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>
+> Any reason for not doing instead:
+>
+>         ptr == ERR_PTR(-error_code)
+>
+> ?
 
-isn't
+Because there is no reason to change
 
-> XTAL input as before. If there is no "xtal" clock input available, it will
-> pick the first connected input (e.g. "in0") as the input clock for the PL=
-L.
-> One can use clock-assigned-parents to select a particular clock as input.
->=20
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+        PTR_ERR(ptr) == -error_code
+to
+        ptr == ERR_PTR(-error_code)
 
-> diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-> index 6e780c2a9e6b..f7dba7698083 100644
-> --- a/drivers/clk/clk-si5341.c
-> +++ b/drivers/clk/clk-si5341.c
-> @@ -4,7 +4,6 @@
->   * Copyright (C) 2019 Topic Embedded Products
->   * Author: Mike Looijmans <mike.looijmans@topic.nl>
->   */
-> -
->  #include <linux/clk.h>
->  #include <linux/clk-provider.h>
->  #include <linux/delay.h>
 
-I think we can do without this hunk.
 
-> @@ -390,7 +410,112 @@ static unsigned long si5341_clk_recalc_rate(struct =
-clk_hw *hw,
->         return (unsigned long)res;
->  }
-> =20
-> +static int si5341_clk_get_selected_input(struct clk_si5341 *data)
-> +{
-> +       int err;
-> +       u32 val;
-> +
-> +       err =3D regmap_read(data->regmap, SI5341_IN_SEL, &val);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       return (val & SI5341_IN_SEL_MASK) >> SI5341_IN_SEL_SHIFT;
-> +}
-> +
-> +static unsigned char si5341_clk_get_parent(struct clk_hw *hw)
+     if (PTR_ERR(ptr) == -error_code)
+style seems to be used more often.
 
-Please use u8 for now.
+But, I think it is just a matter of preference after all.
+Both work equally fine.
 
-> +{
-> +       struct clk_si5341 *data =3D to_clk_si5341(hw);
-> +       int res =3D si5341_clk_get_selected_input(data);
-> +
-> +       if (res < 0)
-> +               return 0; /* Apparently we cannot report errors */
 
-For now this is the case. I'll rekick the series to convert this API to
-a function that returns clk_hw pointers.
-=20
-> +
-> +       return res;
-> +}
-> +
-[...]
-> @@ -985,7 +1110,8 @@ static const struct regmap_range si5341_regmap_volat=
-ile_range[] =3D {
->         regmap_reg_range(0x000C, 0x0012), /* Status */
->         regmap_reg_range(0x001C, 0x001E), /* reset, finc/fdec */
->         regmap_reg_range(0x00E2, 0x00FE), /* NVM, interrupts, device read=
-y */
-> -       /* Update bits for synth config */
-> +       /* Update bits for P divider and synth config */
-> +       regmap_reg_range(SI5341_PX_UPD, SI5341_PX_UPD),
->         regmap_reg_range(SI5341_SYNTH_N_UPD(0), SI5341_SYNTH_N_UPD(0)),
->         regmap_reg_range(SI5341_SYNTH_N_UPD(1), SI5341_SYNTH_N_UPD(1)),
->         regmap_reg_range(SI5341_SYNTH_N_UPD(2), SI5341_SYNTH_N_UPD(2)),
-> @@ -1122,6 +1248,7 @@ static int si5341_initialize_pll(struct clk_si5341 =
-*data)
->         struct device_node *np =3D data->i2c_client->dev.of_node;
->         u32 m_num =3D 0;
->         u32 m_den =3D 0;
-> +       int sel;
-> =20
->         if (of_property_read_u32(np, "silabs,pll-m-num", &m_num)) {
->                 dev_err(&data->i2c_client->dev,
-> @@ -1135,7 +1262,11 @@ static int si5341_initialize_pll(struct clk_si5341=
- *data)
->         if (!m_num || !m_den) {
->                 dev_err(&data->i2c_client->dev,
->                         "PLL configuration invalid, assume 14GHz\n");
-> -               m_den =3D clk_get_rate(data->pxtal) / 10;
-> +               sel =3D si5341_clk_get_selected_input(data);
-> +               if (sel < 0)
-> +                       return sel;
-> +
-> +               m_den =3D clk_get_rate(data->input_clk[sel]) / 10;
->                 m_num =3D 1400000000;
->         }
-> =20
-> @@ -1143,11 +1274,52 @@ static int si5341_initialize_pll(struct clk_si534=
-1 *data)
->                         SI5341_PLL_M_NUM, m_num, m_den);
->  }
-> =20
-> +static int si5341_clk_select_active_input(struct clk_si5341 *data)
-> +{
-> +       int res;
-> +       int err;
-> +       int i;
-> +
-> +       res =3D si5341_clk_get_selected_input(data);
-> +       if (res < 0)
-> +               return res;
-> +
-> +       /* If the current register setting is invalid, pick the first inp=
-ut */
-> +       if (!data->input_clk[res]) {
-> +               dev_dbg(&data->i2c_client->dev,
-> +                       "Input %d not connected, rerouting\n", res);
-> +               res =3D -ENODEV;
-> +               for (i =3D 0; i < SI5341_NUM_INPUTS; ++i) {
-> +                       if (data->input_clk[i]) {
-> +                               res =3D i;
-> +                               break;
-> +                       }
-> +               }
-> +               if (res < 0) {
 
-What if res is =3D=3D SI5341_NUM_INPUTS?
+>  To me it seems weird to use PTR_ERR() on non-error pointers.  I even had to
+> double check that it returns a 'long' and not an 'int'.  (If it returned an
+> 'int', it wouldn't work...)
+>
+> - Eric
 
-> +                       dev_err(&data->i2c_client->dev,
-> +                               "No clock input available\n");
-> +                       return res;
-> +               }
-> +       }
-> +
-> +       /* Make sure the selected clock is also enabled and routed */
-> +       err =3D si5341_clk_reparent(data, res);
-> +       if (err < 0)
-> +               return err;
-> +
-> +       err =3D clk_prepare_enable(data->input_clk[res]);
 
-Is it possible to do this setup and configuration stuff when the clk is
-prepared by something? Maybe I've asked this before but I'd prefer that
-this driver is a clk provider and not a clk consumer. If some default
-setup needs to be done, preferably do that via direct register writes or
-by calling the clk_ops functions directly instead of going through the
-framework, preferably before registering the clks to the framework.
 
-> +       if (err < 0)
-> +               return err;
-> +
-> +       return res;
-> +}
-> +
+-- 
+Best Regards
+Masahiro Yamada
