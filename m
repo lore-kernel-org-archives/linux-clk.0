@@ -2,385 +2,149 @@ Return-Path: <SRS0=q0Yx=24=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0176C33C99
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 07:53:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54678C33C99
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 08:31:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 704E72077B
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 07:53:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D7152081E
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 08:31:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="ELcm+RwL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726558AbgAGHxu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 02:53:50 -0500
-Received: from jax4mhob14.registeredsite.com ([64.69.218.102]:39024 "EHLO
-        jax4mhob14.registeredsite.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725874AbgAGHxu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 02:53:50 -0500
-Received: from mailpod.hostingplatform.com ([10.30.71.205])
-        by jax4mhob14.registeredsite.com (8.14.4/8.14.4) with ESMTP id 0077rlA5122421
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL)
-        for <linux-clk@vger.kernel.org>; Tue, 7 Jan 2020 02:53:47 -0500
-Received: (qmail 5502 invoked by uid 0); 7 Jan 2020 07:53:47 -0000
-X-TCPREMOTEIP: 81.173.50.109
-X-Authenticated-UID: mike@milosoftware.com
-Received: from unknown (HELO mikebuntu.TOPIC.LOCAL) (mike@milosoftware.com@81.173.50.109)
-  by 0 with ESMTPA; 7 Jan 2020 07:53:46 -0000
-From:   Mike Looijmans <mike.looijmans@topic.nl>
-To:     linux-clk@vger.kernel.org
-Cc:     sboyd@kernel.org, mturquette@baylibre.com,
-        linux-kernel@vger.kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
-Subject: [PATCH v2] clk, clk-si5341: Support multiple input ports
-Date:   Tue,  7 Jan 2020 08:53:40 +0100
-Message-Id: <20200107075340.14528-1-mike.looijmans@topic.nl>
-X-Mailer: git-send-email 2.17.1
+        id S1726565AbgAGIb5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jan 2020 03:31:57 -0500
+Received: from mail-am6eur05on2087.outbound.protection.outlook.com ([40.107.22.87]:28360
+        "EHLO EUR05-AM6-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726485AbgAGIb5 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 7 Jan 2020 03:31:57 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=VEo3OKRvo4RuthXlYHBOBZUoSsEOqJFmoOWI4MYa399YFnUbI0mz/RfNSzZHj0tRg8SlFENKpPy6dQ+JGISincrNsi9mJHzJsi6mqxs8KopGk9VqCkaEfUGlDyNL9zWFoC6nq2i/ZHNcfGHGnYq1zA9z9It1lt6h9y1WGQ7jVsSPlqe1NufyBvduPFvph26bqMP7/jPuXzy5i5JBFrCeSmDYz+9NEMnQlQV7iU18RntcyzNIWly8PvF7asUYqgj+CVMiuTJ9rc9m2XZR/qigWUdHCF0n7FhdtldZy69/5XXQkY/HlpUeexgULtf5EMa/+BSYqe0/fKDl4yOaeiIclQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EoYesY8cbHtBv0CDkJZmgycuW0WcBanZcHwPBkMW8Oc=;
+ b=RK+tpUIz6KusYM81oG1SbYd5f61WQzvD66FIz4h/P0ScQg1+blOgq4oiCTGdEqXdO+Xgf3Uu9OUijbAAiCNYGL1cFPgaJrJl4KtS8/rzbj/Ec0F8PvxTvA3rVjxSK++hEWXakCac4lK8+5T4TGUtYyVWHkzDLD3hn93FeaP7NFCTeiBJgQqPvvFAfql6I0lsDv4sYuLPB+MPIlRz0rQDz6nJdePA4jHWqRC58eQkhT71kaksm/PaRkBF3w2KgKYCA2o0Ki0iSV8vRsVl2Mwe0Aos9tW4mUi60c9OYgGDAuIGHmGmCk8UFF+nW+uXGJ4k2Z+0MCdmNXO+JNBFdJc9qw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=EoYesY8cbHtBv0CDkJZmgycuW0WcBanZcHwPBkMW8Oc=;
+ b=ELcm+RwLX6eJrQi93W9UIJCqDH8Kexui1g3zp3LGnQLCAMVkjEHafVVC3oI/rTnieJM+5oFLngD/FfLidPRJw7/EWYWuV1QEsh5AmzCLjPwvH1uru1gPAVGHYf7JaElB1sL+jOyLSb92VXufqeLGe8PL8mH5vfD4smjMgQRjSVU=
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com (52.134.72.18) by
+ DB3PR0402MB3899.eurprd04.prod.outlook.com (52.134.71.154) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2602.15; Tue, 7 Jan 2020 08:31:12 +0000
+Received: from DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d968:56ad:4c0c:616f]) by DB3PR0402MB3916.eurprd04.prod.outlook.com
+ ([fe80::d968:56ad:4c0c:616f%7]) with mapi id 15.20.2602.016; Tue, 7 Jan 2020
+ 08:31:12 +0000
+From:   Anson Huang <anson.huang@nxp.com>
+To:     Stephen Boyd <sboyd@kernel.org>, Abel Vesa <abel.vesa@nxp.com>,
+        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
+        "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "dinguyen@kernel.org" <dinguyen@kernel.org>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "marcin.juszkiewicz@linaro.org" <marcin.juszkiewicz@linaro.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "maxime@cerno.tech" <maxime@cerno.tech>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "olof@lixom.net" <olof@lixom.net>, Jacky Bai <ping.bai@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "will@kernel.org" <will@kernel.org>
+CC:     dl-linux-imx <linux-imx@nxp.com>
+Subject: RE: [PATCH 2/3] clk: imx: Add support for i.MX8MP clock driver
+Thread-Topic: [PATCH 2/3] clk: imx: Add support for i.MX8MP clock driver
+Thread-Index: AQHVvFuWiN3d+7pKeE+rF1Aj40+sqqfdAdWAgABZqkCAAZTXsA==
+Date:   Tue, 7 Jan 2020 08:31:12 +0000
+Message-ID: <DB3PR0402MB391625E9E0C5078C64DAA523F53F0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+References: <1577412748-28213-1-git-send-email-Anson.Huang@nxp.com>
+ <1577412748-28213-2-git-send-email-Anson.Huang@nxp.com>
+ <20200106025914.A180E206F0@mail.kernel.org>
+ <DB3PR0402MB39164DCE1E5A819A5A614E86F53C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+In-Reply-To: <DB3PR0402MB39164DCE1E5A819A5A614E86F53C0@DB3PR0402MB3916.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=anson.huang@nxp.com; 
+x-originating-ip: [119.31.174.67]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 2c372a9b-7275-4dbe-a461-08d7934bf478
+x-ms-traffictypediagnostic: DB3PR0402MB3899:|DB3PR0402MB3899:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DB3PR0402MB3899DE45153874971FA78443F53F0@DB3PR0402MB3899.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:6108;
+x-forefront-prvs: 027578BB13
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(366004)(376002)(39860400002)(396003)(346002)(189003)(199004)(44832011)(7416002)(186003)(6506007)(5660300002)(7696005)(2906002)(26005)(52536014)(71200400001)(33656002)(8676002)(4326008)(478600001)(81156014)(81166006)(110136005)(86362001)(316002)(66476007)(66556008)(8936002)(9686003)(64756008)(66946007)(76116006)(66446008)(55016002)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DB3PR0402MB3899;H:DB3PR0402MB3916.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: NsSk5t0DN8y+iksHCRlfyrVw6bYV5uyMJ14KmMU2CDcHlorWA13dSA3oOBrzz00qfJEE8SCPCKgcBP9LsqS5xQ7iGWwK2hzTFhEurN5gdAkNDGW1aN4Nfo5NqgSi45LnNvEUJjlnSzg3UpMtexDlOLqITivz2MKZLRlXnowo6hH/WiPqeFNC05Lk+N20IM9WDVkqcg05Iv+T7+3FnvK5lsz54wEj7Q+lmBMU6Q9k/AXy7em0Mih14CPJun4K/tScCX9liYQUNSshgF4QYun82BYCnq+mv76cJfIy8XRKnWscEmRxTDSC0fVhbwOEO1sKL7oyLn7INja+xmrKwQNH/KoriemD1DkvIg+v3TfvLSdvke4ebWX7C1LlDBEwy2nxGIK8T37UR0N1F6OcE0/qzvkaByMHHv2QhKGec7QtC5CgA/LbIpi8KFOFd34YVy8EQLO5hiot9NzC+a0PjC1abQeQoHx9e5wSiR38MTJ+9eFDuH92Y76pUyb5m6Ew/gZG
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-In-Reply-To: <20200107054837.DB91F2075A@mail.kernel.org>
-References: <20191205115734.6987-1-mike.looijmans@topic.nl> <20200107054837.DB91F2075A@mail.kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2c372a9b-7275-4dbe-a461-08d7934bf478
+X-MS-Exchange-CrossTenant-originalarrivaltime: 07 Jan 2020 08:31:12.8282
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: yEBv6hhrOoIEVnQrdmIJMz82KCNkzfQpyu2mzoGSU34PRQG16pyRj9nNeYs0rWyxka4AOiZe+09hXbE3GZc0lw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB3PR0402MB3899
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The Si5341 and Si5340 have multiple input clock options. So far, the driver
-only supported the XTAL input, this adds support for the three external
-clock inputs as well.
-
-If the clock chip isn't programmed at boot, the driver will default to the
-XTAL input as before. If there is no "xtal" clock input available, it will
-pick the first connected input (e.g. "in0") as the input clock for the PLL.
-One can use clock-assigned-parents to select a particular clock as input.
-
-Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
----
-v2: Typo "isn't", remove first hunk, s/unsigned char/u8/
-
- drivers/clk/clk-si5341.c | 212 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 196 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/clk/clk-si5341.c b/drivers/clk/clk-si5341.c
-index 6e780c2a9e6b..3c228b018116 100644
---- a/drivers/clk/clk-si5341.c
-+++ b/drivers/clk/clk-si5341.c
-@@ -16,6 +16,8 @@
- #include <linux/slab.h>
- #include <asm/unaligned.h>
- 
-+#define SI5341_NUM_INPUTS 4
-+
- #define SI5341_MAX_NUM_OUTPUTS 10
- #define SI5340_MAX_NUM_OUTPUTS 4
- 
-@@ -56,8 +58,8 @@ struct clk_si5341 {
- 	struct i2c_client *i2c_client;
- 	struct clk_si5341_synth synth[SI5341_NUM_SYNTH];
- 	struct clk_si5341_output clk[SI5341_MAX_NUM_OUTPUTS];
--	struct clk *pxtal;
--	const char *pxtal_name;
-+	struct clk *input_clk[SI5341_NUM_INPUTS];
-+	const char *input_clk_name[SI5341_NUM_INPUTS];
- 	const u16 *reg_output_offset;
- 	const u16 *reg_rdiv_offset;
- 	u64 freq_vco; /* 13500–14256 MHz */
-@@ -78,10 +80,25 @@ struct clk_si5341_output_config {
- #define SI5341_DEVICE_REV	0x0005
- #define SI5341_STATUS		0x000C
- #define SI5341_SOFT_RST		0x001C
-+#define SI5341_IN_SEL		0x0021
-+#define SI5341_XAXB_CFG		0x090E
-+#define SI5341_IN_EN		0x0949
-+#define SI5341_INX_TO_PFD_EN	0x094A
-+
-+/* Input selection */
-+#define SI5341_IN_SEL_MASK	0x06
-+#define SI5341_IN_SEL_SHIFT	1
-+#define SI5341_IN_SEL_REGCTRL	0x01
-+#define SI5341_INX_TO_PFD_SHIFT	4
-+
-+/* XTAL config bits */
-+#define SI5341_XAXB_CFG_EXTCLK_EN	BIT(0)
-+#define SI5341_XAXB_CFG_PDNB		BIT(1)
- 
- /* Input dividers (48-bit) */
- #define SI5341_IN_PDIV(x)	(0x0208 + ((x) * 10))
- #define SI5341_IN_PSET(x)	(0x020E + ((x) * 10))
-+#define SI5341_PX_UPD		0x0230
- 
- /* PLL configuration */
- #define SI5341_PLL_M_NUM	0x0235
-@@ -120,6 +137,10 @@ struct si5341_reg_default {
- 	u8 value;
- };
- 
-+static const char * const si5341_input_clock_names[] = {
-+	"in0", "in1", "in2", "xtal"
-+};
-+
- /* Output configuration registers 0..9 are not quite logically organized */
- static const u16 si5341_reg_output_offset[] = {
- 	0x0108,
-@@ -390,7 +411,112 @@ static unsigned long si5341_clk_recalc_rate(struct clk_hw *hw,
- 	return (unsigned long)res;
- }
- 
-+static int si5341_clk_get_selected_input(struct clk_si5341 *data)
-+{
-+	int err;
-+	u32 val;
-+
-+	err = regmap_read(data->regmap, SI5341_IN_SEL, &val);
-+	if (err < 0)
-+		return err;
-+
-+	return (val & SI5341_IN_SEL_MASK) >> SI5341_IN_SEL_SHIFT;
-+}
-+
-+static u8 si5341_clk_get_parent(struct clk_hw *hw)
-+{
-+	struct clk_si5341 *data = to_clk_si5341(hw);
-+	int res = si5341_clk_get_selected_input(data);
-+
-+	if (res < 0)
-+		return 0; /* Apparently we cannot report errors */
-+
-+	return res;
-+}
-+
-+static int si5341_clk_reparent(struct clk_si5341 *data, u8 index)
-+{
-+	int err;
-+	u8 val;
-+
-+	val = (index << SI5341_IN_SEL_SHIFT) & SI5341_IN_SEL_MASK;
-+	/* Enable register-based input selection */
-+	val |= SI5341_IN_SEL_REGCTRL;
-+
-+	err = regmap_update_bits(data->regmap,
-+		SI5341_IN_SEL, SI5341_IN_SEL_REGCTRL | SI5341_IN_SEL_MASK, val);
-+	if (err < 0)
-+		return err;
-+
-+	if (index < 3) {
-+		/* Enable input buffer for selected input */
-+		err = regmap_update_bits(data->regmap,
-+				SI5341_IN_EN, 0x07, BIT(index));
-+		if (err < 0)
-+			return err;
-+
-+		/* Enables the input to phase detector */
-+		err = regmap_update_bits(data->regmap, SI5341_INX_TO_PFD_EN,
-+				0x7 << SI5341_INX_TO_PFD_SHIFT,
-+				BIT(index + SI5341_INX_TO_PFD_SHIFT));
-+		if (err < 0)
-+			return err;
-+
-+		/* Power down XTAL oscillator and buffer */
-+		err = regmap_update_bits(data->regmap, SI5341_XAXB_CFG,
-+				SI5341_XAXB_CFG_PDNB, 0);
-+		if (err < 0)
-+			return err;
-+
-+		/*
-+		 * Set the P divider to "1". There's no explanation in the
-+		 * datasheet of these registers, but the clockbuilder software
-+		 * programs a "1" when the input is being used.
-+		 */
-+		err = regmap_write(data->regmap, SI5341_IN_PDIV(index), 1);
-+		if (err < 0)
-+			return err;
-+
-+		err = regmap_write(data->regmap, SI5341_IN_PSET(index), 1);
-+		if (err < 0)
-+			return err;
-+
-+		/* Set update PDIV bit */
-+		err = regmap_write(data->regmap, SI5341_PX_UPD, BIT(index));
-+		if (err < 0)
-+			return err;
-+	} else {
-+		/* Disable all input buffers */
-+		err = regmap_update_bits(data->regmap, SI5341_IN_EN, 0x07, 0);
-+		if (err < 0)
-+			return err;
-+
-+		/* Disable input to phase detector */
-+		err = regmap_update_bits(data->regmap, SI5341_INX_TO_PFD_EN,
-+				0x7 << SI5341_INX_TO_PFD_SHIFT, 0);
-+		if (err < 0)
-+			return err;
-+
-+		/* Power up XTAL oscillator and buffer */
-+		err = regmap_update_bits(data->regmap, SI5341_XAXB_CFG,
-+				SI5341_XAXB_CFG_PDNB, SI5341_XAXB_CFG_PDNB);
-+		if (err < 0)
-+			return err;
-+	}
-+
-+	return 0;
-+}
-+
-+static int si5341_clk_set_parent(struct clk_hw *hw, u8 index)
-+{
-+	struct clk_si5341 *data = to_clk_si5341(hw);
-+
-+	return si5341_clk_reparent(data, index);
-+}
-+
- static const struct clk_ops si5341_clk_ops = {
-+	.set_parent = si5341_clk_set_parent,
-+	.get_parent = si5341_clk_get_parent,
- 	.recalc_rate = si5341_clk_recalc_rate,
- };
- 
-@@ -985,7 +1111,8 @@ static const struct regmap_range si5341_regmap_volatile_range[] = {
- 	regmap_reg_range(0x000C, 0x0012), /* Status */
- 	regmap_reg_range(0x001C, 0x001E), /* reset, finc/fdec */
- 	regmap_reg_range(0x00E2, 0x00FE), /* NVM, interrupts, device ready */
--	/* Update bits for synth config */
-+	/* Update bits for P divider and synth config */
-+	regmap_reg_range(SI5341_PX_UPD, SI5341_PX_UPD),
- 	regmap_reg_range(SI5341_SYNTH_N_UPD(0), SI5341_SYNTH_N_UPD(0)),
- 	regmap_reg_range(SI5341_SYNTH_N_UPD(1), SI5341_SYNTH_N_UPD(1)),
- 	regmap_reg_range(SI5341_SYNTH_N_UPD(2), SI5341_SYNTH_N_UPD(2)),
-@@ -1122,6 +1249,7 @@ static int si5341_initialize_pll(struct clk_si5341 *data)
- 	struct device_node *np = data->i2c_client->dev.of_node;
- 	u32 m_num = 0;
- 	u32 m_den = 0;
-+	int sel;
- 
- 	if (of_property_read_u32(np, "silabs,pll-m-num", &m_num)) {
- 		dev_err(&data->i2c_client->dev,
-@@ -1135,7 +1263,11 @@ static int si5341_initialize_pll(struct clk_si5341 *data)
- 	if (!m_num || !m_den) {
- 		dev_err(&data->i2c_client->dev,
- 			"PLL configuration invalid, assume 14GHz\n");
--		m_den = clk_get_rate(data->pxtal) / 10;
-+		sel = si5341_clk_get_selected_input(data);
-+		if (sel < 0)
-+			return sel;
-+
-+		m_den = clk_get_rate(data->input_clk[sel]) / 10;
- 		m_num = 1400000000;
- 	}
- 
-@@ -1143,11 +1275,52 @@ static int si5341_initialize_pll(struct clk_si5341 *data)
- 			SI5341_PLL_M_NUM, m_num, m_den);
- }
- 
-+static int si5341_clk_select_active_input(struct clk_si5341 *data)
-+{
-+	int res;
-+	int err;
-+	int i;
-+
-+	res = si5341_clk_get_selected_input(data);
-+	if (res < 0)
-+		return res;
-+
-+	/* If the current register setting is invalid, pick the first input */
-+	if (!data->input_clk[res]) {
-+		dev_dbg(&data->i2c_client->dev,
-+			"Input %d not connected, rerouting\n", res);
-+		res = -ENODEV;
-+		for (i = 0; i < SI5341_NUM_INPUTS; ++i) {
-+			if (data->input_clk[i]) {
-+				res = i;
-+				break;
-+			}
-+		}
-+		if (res < 0) {
-+			dev_err(&data->i2c_client->dev,
-+				"No clock input available\n");
-+			return res;
-+		}
-+	}
-+
-+	/* Make sure the selected clock is also enabled and routed */
-+	err = si5341_clk_reparent(data, res);
-+	if (err < 0)
-+		return err;
-+
-+	err = clk_prepare_enable(data->input_clk[res]);
-+	if (err < 0)
-+		return err;
-+
-+	return res;
-+}
-+
- static int si5341_probe(struct i2c_client *client,
- 		const struct i2c_device_id *id)
- {
- 	struct clk_si5341 *data;
- 	struct clk_init_data init;
-+	struct clk *input;
- 	const char *root_clock_name;
- 	const char *synth_clock_names[SI5341_NUM_SYNTH];
- 	int err;
-@@ -1161,12 +1334,16 @@ static int si5341_probe(struct i2c_client *client,
- 
- 	data->i2c_client = client;
- 
--	data->pxtal = devm_clk_get(&client->dev, "xtal");
--	if (IS_ERR(data->pxtal)) {
--		if (PTR_ERR(data->pxtal) == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
--
--		dev_err(&client->dev, "Missing xtal clock input\n");
-+	for (i = 0; i < SI5341_NUM_INPUTS; ++i) {
-+		input = devm_clk_get(&client->dev, si5341_input_clock_names[i]);
-+		if (IS_ERR(input)) {
-+			if (PTR_ERR(input) == -EPROBE_DEFER)
-+				return -EPROBE_DEFER;
-+			data->input_clk_name[i] = si5341_input_clock_names[i];
-+		} else {
-+			data->input_clk[i] = input;
-+			data->input_clk_name[i] = __clk_get_name(input);
-+		}
- 	}
- 
- 	err = si5341_dt_parse_dt(client, config);
-@@ -1188,9 +1365,6 @@ static int si5341_probe(struct i2c_client *client,
- 	if (err < 0)
- 		return err;
- 
--	/* "Activate" the xtal (usually a fixed clock) */
--	clk_prepare_enable(data->pxtal);
--
- 	if (of_property_read_bool(client->dev.of_node, "silabs,reprogram")) {
- 		initialization_required = true;
- 	} else {
-@@ -1223,7 +1397,14 @@ static int si5341_probe(struct i2c_client *client,
- 					ARRAY_SIZE(si5341_reg_defaults));
- 		if (err < 0)
- 			return err;
-+	}
-+
-+	/* Input must be up and running at this point */
-+	err = si5341_clk_select_active_input(data);
-+	if (err < 0)
-+		return err;
- 
-+	if (initialization_required) {
- 		/* PLL configuration is required */
- 		err = si5341_initialize_pll(data);
- 		if (err < 0)
-@@ -1231,9 +1412,8 @@ static int si5341_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register the PLL */
--	data->pxtal_name = __clk_get_name(data->pxtal);
--	init.parent_names = &data->pxtal_name;
--	init.num_parents = 1; /* For now, only XTAL input supported */
-+	init.parent_names = data->input_clk_name;
-+	init.num_parents = SI5341_NUM_INPUTS;
- 	init.ops = &si5341_clk_ops;
- 	init.flags = 0;
- 	data->hw.init = &init;
--- 
-2.17.1
-
+SGksIFN0ZXBoZW4NCg0KPiA+ID4gKyAgICAgICBjbGtzW0lNWDhNUF9BVURJT19QTEwxX09VVF0g
+PSBpbXhfY2xrX2dhdGUoImF1ZGlvX3BsbDFfb3V0IiwNCj4gPiAiYXVkaW9fcGxsMV9ieXBhc3Mi
+LCBiYXNlLCAxMyk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX0FVRElPX1BMTDJfT1VUXSA9
+IGlteF9jbGtfZ2F0ZSgiYXVkaW9fcGxsMl9vdXQiLA0KPiA+ICJhdWRpb19wbGwyX2J5cGFzcyIs
+IGJhc2UgKyAweDE0LCAxMyk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX1ZJREVPX1BMTDFf
+T1VUXSA9IGlteF9jbGtfZ2F0ZSgidmlkZW9fcGxsMV9vdXQiLA0KPiA+ICJ2aWRlb19wbGwxX2J5
+cGFzcyIsIGJhc2UgKyAweDI4LCAxMyk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX0RSQU1f
+UExMX09VVF0gPSBpbXhfY2xrX2dhdGUoImRyYW1fcGxsX291dCIsDQo+ID4gImRyYW1fcGxsX2J5
+cGFzcyIsIGJhc2UgKyAweDUwLCAxMyk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX0dQVV9Q
+TExfT1VUXSA9IGlteF9jbGtfZ2F0ZSgiZ3B1X3BsbF9vdXQiLA0KPiA+ICJncHVfcGxsX2J5cGFz
+cyIsIGJhc2UgKyAweDY0LCAxMSk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX1ZQVV9QTExf
+T1VUXSA9IGlteF9jbGtfZ2F0ZSgidnB1X3BsbF9vdXQiLA0KPiA+ICJ2cHVfcGxsX2J5cGFzcyIs
+IGJhc2UgKyAweDc0LCAxMSk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX0FSTV9QTExfT1VU
+XSA9IGlteF9jbGtfZ2F0ZSgiYXJtX3BsbF9vdXQiLA0KPiA+ICJhcm1fcGxsX2J5cGFzcyIsIGJh
+c2UgKyAweDg0LCAxMSk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX1NZU19QTEwxX09VVF0g
+PSBpbXhfY2xrX2dhdGUoInN5c19wbGwxX291dCIsDQo+ID4gInN5c19wbGwxX2J5cGFzcyIsIGJh
+c2UgKyAweDk0LCAxMSk7DQo+ID4gPiArICAgICAgIGNsa3NbSU1YOE1QX1NZU19QTEwyX09VVF0g
+PSBpbXhfY2xrX2dhdGUoInN5c19wbGwyX291dCIsDQo+ID4gInN5c19wbGwyX2J5cGFzcyIsIGJh
+c2UgKyAweDEwNCwgMTEpOw0KPiA+ID4gKyAgICAgICBjbGtzW0lNWDhNUF9TWVNfUExMM19PVVRd
+ID0gaW14X2Nsa19nYXRlKCJzeXNfcGxsM19vdXQiLA0KPiA+ID4gKyAic3lzX3BsbDNfYnlwYXNz
+IiwgYmFzZSArIDB4MTE0LCAxMSk7DQo+ID4NCj4gPiBBbnkgcmVhc29uIHdoeSB3ZSBjYW4ndCBn
+ZXQgYmFjayBjbGtfaHcgcG9pbnRlcnMgaW5zdGVhZCBhbmQgcmVnaXN0ZXINCj4gPiBhIGh3IGJh
+c2VkIHByb3ZpZGVyPw0KPiANCj4gQmVjYXVzZSBpLk1YOE0gc2VyaWVzIFNvQ3MgYXJlIHN0aWxs
+IE5PVCB1c2luZyBodyBiYXNlZCBjbG9jaw0KPiBpbXBsZW1lbnRhdGlvbiwgc29tZSBvZiB0aGUg
+QVBJcyBhcmUgc2hhcmVkLCBsaWtlIGlteF9jbGtfcGxsMTR4eCgpIGFuZA0KPiBpbXg4bV9jbGtf
+Y29tcG9zaXRlKCkgZXRjLiwgc28gSSB0aGluayBpdCBpcyBiZXR0ZXIgdG8ga2VlcA0KPiB0aGVt
+KGkuTVg4TVEvaS5NWDhNTS9pLk1YOE1OL2kuTVg4TVApIGFsaWduZWQsIGFuZCBJIHdpbGwgZmlu
+ZCBhDQo+IGNoYW5jZSBzb29uIHRvIGRvIGEgcGF0Y2ggc2VyaWVzIHRvIHN3aXRjaCBhbGwgb2Yg
+dGhlbSB0byBodyBiYXNlZCBjbG9jaywNCj4gZG9lcyBpdCBtYWtlIHNlbnNlIHRvIHlvdT8NCg0K
+UGxlYXNlIGlnbm9yZSB0aGlzLCBJIHdpbGwgZG8gbmVjZXNzYXJ5IHBhdGNoZXMgdG9nZXRoZXIg
+aW4gdGhpcyBzZXJpZXMgdG8gc3VwcG9ydA0KaHcgY2xrIGJhc2VkIHByb3ZpZGVyIGZvciBpLk1Y
+OE0gU29DcywgaS5NWDhNUCB3aWxsIHVzZSBodyBiYXNlZCBwcm92aWRlciwNCmFuZCBvbGQgaS5N
+WDhNIFNvQ3Mgd2lsbCBiZSBoYW5kbGVkIGxhdGVyIHdpdGggc2VwYXJhdGUgcGF0Y2guDQoNClRo
+YW5rcywNCkFuc29uDQo=
