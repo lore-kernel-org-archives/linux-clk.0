@@ -2,328 +2,290 @@ Return-Path: <SRS0=q0Yx=24=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E88C33C8C
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 12:57:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B1B1C33C8C
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 16:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C8892081E
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 12:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8773214D8
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 16:50:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FyRzPZic"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Oci8+bWv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728003AbgAGM5l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 07:57:41 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:38226 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727996AbgAGM5k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 07:57:40 -0500
-Received: by mail-wr1-f68.google.com with SMTP id y17so53837261wrh.5
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jan 2020 04:57:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=93QCy+6lfoPu6T2jeY2YuuqgksbRKDw7v2F+iiG2Jic=;
-        b=FyRzPZicMMxp+pAWuWqWtAdTwZ3vMQndL9HoJsAxXaC8Lui7wOPJsm0geFbfSDw6Dd
-         nrwfovxHI2u0lUEJ4C2RPqAfw31p0iI2xgo7ZzLfgOy5BYd9eo5LPjQ79nKmMn7uXpji
-         yWh0Qk1MIyP/EkWv1WHtqJrguSIy8bXZFWFL952IlOzXB095CADywjTfy7mVkmAFOXmP
-         n7n/QLfzytJQbbEyIFCceszQFyaNeJdQNyOoHKHwmieOTUvhyHgbxgncBq21oWX0Iq2n
-         tNujW6zoah5QZurnwEcCLBSJw9Tot2YZXDBpxsHvcBJ8DAk9hvV3t50r2/cmCEzOizS7
-         /1Wg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=93QCy+6lfoPu6T2jeY2YuuqgksbRKDw7v2F+iiG2Jic=;
-        b=JuRLGlqsKvFSNc6awfMbDCBkJ7uZakCCyPLALpxmkSJuyDuGikUPac03zTLGr8Ej+z
-         PDHhV7CVdnLQXwiHwXGZ3lRtJ5zp+7JyE6JzffX2OBCLY8D3T0ZWGSPqCydIS7RJvhE7
-         HpuoZNkGV8O8v2wjVKmUd1BG57uirrAgawuJbQBiGJcw0zk/n3dJ9ouxqSrs8lq/us91
-         oAr3z6llfH1Yaglz779F6eCxL0lwY++abMSr5QXkHs0AEAqKSbmsN8urBzR8hAUpV0rG
-         NSMQs7Ev2rkpz89i3wW1Lu0KlB5AMHgj9Y36y/RiDkCYMo/SoId+JnIAGaYkxyLjD6wN
-         3GOg==
-X-Gm-Message-State: APjAAAU5dUc7Ec/4xcS+fIEAgoeNtrwPOoOor0p3c4yUoRgpuzM4GBbV
-        H/O91AAlUoD2x49/I4pRXJSsxQ==
-X-Google-Smtp-Source: APXvYqwOseVEoEwqvKt/WKPStKBJ1FZIuG8u48y75PfT52y/SVxc8BBiYwOqw0EIng9E63iyfPitLw==
-X-Received: by 2002:adf:f80c:: with SMTP id s12mr108243229wrp.1.1578401858462;
-        Tue, 07 Jan 2020 04:57:38 -0800 (PST)
-Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id m10sm77330092wrx.19.2020.01.07.04.57.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 04:57:37 -0800 (PST)
-Date:   Tue, 7 Jan 2020 12:57:51 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v8 09/12] rtc: bd70528: add BD71828 support
-Message-ID: <20200107125751.GJ14821@dell>
-References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <b904fd485b61d3f3af3c100855f5100940916abf.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1728236AbgAGQuk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jan 2020 11:50:40 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3484 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728173AbgAGQuj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 11:50:39 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e14b6cd0000>; Tue, 07 Jan 2020 08:50:21 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 07 Jan 2020 08:50:38 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 08:50:38 -0800
+Received: from [10.2.175.47] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 7 Jan
+ 2020 16:50:36 +0000
+Subject: Re: [PATCH v6 00/19] Move PMC clocks into Tegra PMC driver
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>,
+        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <spujar@nvidia.com>, <josephl@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1578370458-3686-1-git-send-email-skomatineni@nvidia.com>
+ <20200107122152.GD1964183@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <1f7d3c1e-115c-e08e-240b-c4df9e68543d@nvidia.com>
+Date:   Tue, 7 Jan 2020 08:50:34 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <b904fd485b61d3f3af3c100855f5100940916abf.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200107122152.GD1964183@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578415821; bh=OHk9ZJAbknPVSAF+dwgy4sOyO8m5MYo93JfovcdLbCI=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=Oci8+bWvmI2DK3Ozj9DH38BXlKdAz2LldN7OSlQJzc2PNYY/3U0QzohTDpnsHh2fX
+         1PqWVci+x+NSy5/kO3WjMB0/2zuqK2ZVMy2eo+1+ix1F8VCDbDvFOdOYgtGQDTCj2h
+         nYxi3T/wD7KU1xLfCzoRbqgSub35N3w8eDpB5BH9FmnZrlW4glYmdXj/wOFiCy/FEr
+         i65dJ9o/wRcL+cknc+4XY5MVo5r63C/BbyCpDtbL3wU0Twua4e/uhPo/gxLtRnGWSq
+         3EmTev4zgTyRS7rnZzACt63XQNwqUX2DLVi5REfvR7RlP9o0KeVy/sxa08ljoobcHa
+         GKsBzm6hDjERA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 30 Dec 2019, Matti Vaittinen wrote:
 
-> ROHM BD71828 PMIC RTC block is from many parts similar to one
-> on BD70528. Support BD71828 RTC using BD70528 RTC driver and
-> avoid re-inventing the wheel.
-> 
-> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-> Acked-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-> ---
-> 
-> Changes from v7 - no changes
-> 
->  drivers/rtc/Kconfig              |   3 +-
->  drivers/rtc/rtc-bd70528.c        | 168 ++++++++++++++++++++++++++++---
->  include/linux/mfd/rohm-bd70528.h |  13 +--
->  include/linux/mfd/rohm-bd71828.h |   4 +-
->  include/linux/mfd/rohm-shared.h  |  27 +++++
->  5 files changed, 186 insertions(+), 29 deletions(-)
->  create mode 100644 include/linux/mfd/rohm-shared.h
-> 
-> diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-> index d77515d8382c..df7a3843069d 100644
-> --- a/drivers/rtc/Kconfig
-> +++ b/drivers/rtc/Kconfig
-> @@ -498,12 +498,13 @@ config RTC_DRV_M41T80_WDT
->  	help
->  	  If you say Y here you will get support for the
->  	  watchdog timer in the ST M41T60 and M41T80 RTC chips series.
-> +
->  config RTC_DRV_BD70528
->  	tristate "ROHM BD70528 PMIC RTC"
->  	depends on MFD_ROHM_BD70528 && (BD70528_WATCHDOG || !BD70528_WATCHDOG)
->  	help
->  	  If you say Y here you will get support for the RTC
-> -	  on ROHM BD70528 Power Management IC.
-> +	  block on ROHM BD70528 and BD71828 Power Management IC.
->  
->  	  This driver can also be built as a module. If so, the module
->  	  will be called rtc-bd70528.
-> diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
-> index 627037aa66a8..2ce202040556 100644
-> --- a/drivers/rtc/rtc-bd70528.c
-> +++ b/drivers/rtc/rtc-bd70528.c
-> @@ -6,6 +6,7 @@
->  
->  #include <linux/bcd.h>
->  #include <linux/mfd/rohm-bd70528.h>
-> +#include <linux/mfd/rohm-bd71828.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> @@ -15,7 +16,7 @@
->  /*
->   * We read regs RTC_SEC => RTC_YEAR
->   * this struct is ordered according to chip registers.
-> - * Keep it u8 only to avoid padding issues.
-> + * Keep it u8 only (or packed) to avoid padding issues.
->   */
->  struct bd70528_rtc_day {
->  	u8 sec;
-> @@ -36,6 +37,13 @@ struct bd70528_rtc_wake {
->  	u8 ctrl;
->  } __packed;
->  
-> +struct bd71828_rtc_alm {
-> +	struct bd70528_rtc_data alm0;
-> +	struct bd70528_rtc_data alm1;
-> +	u8 alm_mask;
-> +	u8 alm1_mask;
-> +} __packed;
-> +
->  struct bd70528_rtc_alm {
->  	struct bd70528_rtc_data data;
->  	u8 alm_mask;
-> @@ -45,6 +53,8 @@ struct bd70528_rtc_alm {
->  struct bd70528_rtc {
->  	struct rohm_regmap_dev *mfd;
+On 1/7/20 4:21 AM, Thierry Reding wrote:
+> On Mon, Jan 06, 2020 at 08:13:59PM -0800, Sowjanya Komatineni wrote:
+>> This patch series moves Tegra PMC clocks from clock driver to pmc driver
+>> along with the device trees changes and audio driver which uses one of
+>> the pmc clock for audio mclk.
+>>
+>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
+>> are currently registered by Tegra clock driver using clk_regiser_mux and
+>> clk_register_gate which performs direct Tegra PMC register access.
+>>
+>> When Tegra PMC is in secure mode, any access from non-secure world will
+>> not go through.
+>>
+>> This patch series adds these Tegra PMC clocks and blink controls to Tegra
+>> PMC driver with PMC as clock provider and removes them from Tegra clock
+>> driver.
+>>
+>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
+>> and clock driver does inital parent configuration for it and enables them.
+>> But this clock should be taken care by audio driver as there is no need
+>> to have this clock pre enabled.
+>>
+>> So, this series also includes patch that updates ASoC driver to take
+>> care of parent configuration for mclk if device tree don't specify
+>> initial parent configuration using assigned-clock-parents and controls
+>> audio mclk enable/disable during ASoC machine startup and shutdown.
+>>
+>> DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
+>>
+>> This series also includes a patch for mclk fallback to extern1 when
+>> retrieving mclk fails to have this backward compatible of new DT with
+>> old kernels.
+> Hi Sowjanya,
+>
+> this looks like it's almost ready to merge. Can you highlight if there
+> are any build-time or runtime dependencies between the patches? The
+> audio driver changes seem to be mostly isolated from the rest by the
+> fallback implementation for legacy device trees.
+>
+> Is there anything that I need to keep in mind when applying these? And
+> would it be fine for Mark to pick up the ASoC patches separately from
+> the rest?
+>
+> Thierry
 
-I think it would be better if you fixed this up be more forthcoming.
-It took some grepping to find out what this actually meant.  An MFD
-isn't really a thing, we made it up.  Here you are referring to this
-platform device's parent's device data.
+Yes, ASoC patches can be picked separately.
 
-With that in mind I offer some suggestions:
+dependencies are b/w clock and pmc driver patches.
 
-  'struct rohm_parent_ddata pddata'
-  'struct rohm_parent_ddata parent'
-
->  	struct device *dev;
-> +	u8 reg_time_start;
-> +	bool has_rtc_timers;
->  };
-
-[...]
-
-> +static int bd71828_set_alarm(struct device *dev, struct rtc_wkalrm *a)
-> +{
-> +	int ret;
-> +	struct bd71828_rtc_alm alm;
-> +	struct bd70528_rtc *r = dev_get_drvdata(dev);
-> +	struct rohm_regmap_dev *bd71828 = r->mfd;
-
-Then ...
-
-	struct rohm_parent_ddata *parent = r->parent;
-
-	ret = regmap_bulk_read(parent->regmap, BD71828_REG_RTC_ALM_START,
-			       &alm, sizeof(alm));
-	if (ret) {
-		dev_err(dev, "Failed to read alarm regs\n");
-		return ret;
-	}
-
-[...]
-
-> diff --git a/include/linux/mfd/rohm-bd70528.h b/include/linux/mfd/rohm-bd70528.h
-> index 2ad2320d0a96..a57af878fd0c 100644
-> --- a/include/linux/mfd/rohm-bd70528.h
-> +++ b/include/linux/mfd/rohm-bd70528.h
-> @@ -7,6 +7,7 @@
->  #include <linux/bits.h>
->  #include <linux/device.h>
->  #include <linux/mfd/rohm-generic.h>
-> +#include <linux/mfd/rohm-shared.h>
->  #include <linux/regmap.h>
->  
->  enum {
-> @@ -307,17 +308,6 @@ enum {
->  
->  /* RTC masks to mask out reserved bits */
->  
-> -#define BD70528_MASK_RTC_SEC		0x7f
-> -#define BD70528_MASK_RTC_MINUTE		0x7f
-> -#define BD70528_MASK_RTC_HOUR_24H	0x80
-> -#define BD70528_MASK_RTC_HOUR_PM	0x20
-> -#define BD70528_MASK_RTC_HOUR		0x1f
-> -#define BD70528_MASK_RTC_DAY		0x3f
-> -#define BD70528_MASK_RTC_WEEK		0x07
-> -#define BD70528_MASK_RTC_MONTH		0x1f
-> -#define BD70528_MASK_RTC_YEAR		0xff
-> -#define BD70528_MASK_RTC_COUNT_L	0x7f
-> -
->  #define BD70528_MASK_ELAPSED_TIMER_EN	0x1
->  /* Mask second, min and hour fields
->   * HW would support ALM irq for over 24h
-> @@ -326,7 +316,6 @@ enum {
->   * wake-up we limit ALM to 24H and only
->   * unmask sec, min and hour
->   */
-> -#define BD70528_MASK_ALM_EN		0x7
->  #define BD70528_MASK_WAKE_EN		0x1
->  
->  /* WDT masks */
-> diff --git a/include/linux/mfd/rohm-bd71828.h b/include/linux/mfd/rohm-bd71828.h
-> index d013e03f742d..017a4c01cb31 100644
-> --- a/include/linux/mfd/rohm-bd71828.h
-> +++ b/include/linux/mfd/rohm-bd71828.h
-> @@ -5,6 +5,7 @@
->  #define __LINUX_MFD_BD71828_H__
->  
->  #include <linux/mfd/rohm-generic.h>
-> +#include <linux/mfd/rohm-shared.h>
-
-Isn't generic shared?
-
->  /* Regulator IDs */
->  enum {
-> @@ -160,6 +161,7 @@ enum {
->  #define BD71828_REG_RTC_YEAR		0x52
->  
->  #define BD71828_REG_RTC_ALM0_SEC	0x53
-> +#define BD71828_REG_RTC_ALM_START	BD71828_REG_RTC_ALM0_SEC
->  #define BD71828_REG_RTC_ALM0_MINUTE	0x54
->  #define BD71828_REG_RTC_ALM0_HOUR	0x55
->  #define BD71828_REG_RTC_ALM0_WEEK	0x56
-> @@ -178,6 +180,7 @@ enum {
->  #define BD71828_REG_RTC_ALM1_MASK	0x62
->  
->  #define BD71828_REG_RTC_ALM2		0x63
-> +#define BD71828_REG_RTC_START		BD71828_REG_RTC_SEC
->  
->  /* Charger/Battey */
->  #define BD71828_REG_CHG_STATE		0x65
-> @@ -204,7 +207,6 @@ enum {
->  #define BD71828_REG_INT_MASK_TEMP	0xdd
->  #define BD71828_REG_INT_MASK_RTC	0xde
->  
-> -
->  #define BD71828_REG_INT_MAIN		0xdf
->  #define BD71828_REG_INT_BUCK		0xe0
->  #define BD71828_REG_INT_DCIN1		0xe1
-> diff --git a/include/linux/mfd/rohm-shared.h b/include/linux/mfd/rohm-shared.h
-> new file mode 100644
-> index 000000000000..f16fc3b5000e
-> --- /dev/null
-> +++ b/include/linux/mfd/rohm-shared.h
-> @@ -0,0 +1,27 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/* Copyright (C) 2018 ROHM Semiconductors */
-
-This is very out of data now!
-
-> +
-> +#ifndef __LINUX_MFD_ROHM_SHARED_H__
-> +#define __LINUX_MFD_ROHM_SHARED_H__
-> +
-> +/*
-> + * RTC definitions shared between
-> + *
-> + * BD70528
-> + * and BD71828
-
-This reads poorly.
-
-Either form a bullet pointed list, or just write it out.
-
-> + */
-> +
-> +
-> +#define BD70528_MASK_RTC_SEC		0x7f
-> +#define BD70528_MASK_RTC_MINUTE	0x7f
-> +#define BD70528_MASK_RTC_HOUR_24H	0x80
-> +#define BD70528_MASK_RTC_HOUR_PM	0x20
-> +#define BD70528_MASK_RTC_HOUR		0x3f
-> +#define BD70528_MASK_RTC_DAY		0x3f
-> +#define BD70528_MASK_RTC_WEEK		0x07
-> +#define BD70528_MASK_RTC_MONTH		0x1f
-> +#define BD70528_MASK_RTC_YEAR		0xff
-> +#define BD70528_MASK_ALM_EN		0x7
-> +
-> +#endif /* __LINUX_MFD_ROHM_SHARED_H__ */
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+>
+>> [v6]:	Changes between v5 and v6 are
+>> 	- v5 feedback
+>> 	- Added ASoC machine startup and shutdown callbacks to control audio
+>> 	  mclk enable/disable and removed default mclk enable from clock driver.
+>> 	- Updated tegra_asoc_utils_set_rate to disable mclk only during PLLA
+>> 	  rate change and removed disabling PLLA as its already taken care by
+>> 	  pll clock driver.
+>> 	- Removed tegra_asoc_utils_set_rate call from utils_init as set_rate
+>> 	  is set during machine hw_params and during utils_init mclk is
+>> 	  already in disabled state and this causes warning during mclk disable
+>> 	  in utils_set_rate.
+>>
+>> [v5]:	Changes between v4 and v5 are
+>> 	- v4 feedback
+>> 	- updated dt-binding pmc YAML schema with more description on power
+>> 	  gate nodes and pad configuration state nodes.
+>> 	- update tegra_asoc_utils_set_rate to disable audio mclk only if
+>> 	  its in enable state.
+>>
+>> [v4]:	Changes between v3 and v4 are
+>> 	- v3 Feedback
+>> 	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
+>> 	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
+>> 	  be osc_div2 and osc_div4 clocks from osc pads.
+>> 	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
+>> 	- Register each PMC clock as single clock rather than separate
+>> 	  mux and gate clocks.
+>> 	- Update ASoC utils to use resource managed APIs rather than
+>> 	  using clk_get and clk_put.
+>> 	- Updated device tree and ASoC driver to use clk_out_1 instead of
+>> 	  clk_out_1_mux as PMC clocks are registered as single clock.
+>> 	- Update clock driver init_table to not enable audio related clocks
+>> 	  as ASoC utils will do audio clock enables.
+>>
+>> [v3]:	Changes between v2 and v3 are
+>> 	- Removes set parent of clk_out_1_mux to extern1 and enabling
+>> 	  extern1 from the clock driver.
+>> 	- Doesn't enable clk_out_1 and blink by default in pmc driver
+>> 	- Updates ASoC driver to take care of audio mclk parent
+>> 	  configuration incase if device tree don't specify assigned
+>> 	  clock parent properties and enables mclk using both clk_out_1
+>> 	  and extern1.
+>> 	- updates all device trees using extern1 as mclk in sound node
+>> 	  to use clk_out_1 from pmc.
+>> 	- patch for YAML format pmc dt-binding
+>> 	- Includes v2 feedback
+>>
+>> [v2]:	Changes between v1 and v2 are
+>> 	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
+>> 	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
+>> 	- feedback related to pmc clocks in Tegra PMC driver from v1
+>> 	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
+>> 	  by the clock driver using helper functions from Tegra PMC.
+>>
+>>   	  Note:
+>> 	  To use helper functions from PMC driver, PMC early init need to
+>> 	  happen prior to using helper functions and these helper functions are
+>> 	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
+>> 	  clock registration which happen in clock_init prior to Tegra PMC
+>> 	  probe.
+>> 	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
+>> 	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
+>> 	  tegra_mc_init.
+>> 	  This implementation of configuring PMC registers thru helper
+>> 	  functions in clock driver needs proper changes across PMC, Clock,
+>> 	  EMC and MC inits to have it work across all Tegra platforms.
+>>
+>> 	  Currently PLLM Override is not enabled in the bootloader so proper
+>> 	  patches for this fix will be taken care separately.
+>>
+>> [v1]:	v1 includes patches for below fixes.
+>> 	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
+>> 	  driver and removing clk-tegra-pmc.
+>> 	- updated clock provider from tegra_car to pmc in the device tree
+>> 	  tegra210-smaug.dts that uses clk_out_2.
+>> 	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
+>> 	  IDDQ programming to use by clock driver and updated clock driver to
+>> 	  use these helper functions and removed direct PMC access from clock
+>> 	  driver and all pmc base address references in clock driver.
+>>
+>>
+>>
+>>
+>> Sowjanya Komatineni (19):
+>>    dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
+>>    clk: tegra: Change CLK_M_DIV clocks to OSC_DIV clocks
+>>    clk: tegra: Fix Tegra PMC clock out parents
+>>    dt-bindings: tegra: Convert Tegra PMC bindings to YAML
+>>    dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
+>>    soc: tegra: Add Tegra PMC clocks registration into PMC driver
+>>    dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
+>>    soc: tegra: Add support for 32KHz blink clock
+>>    clk: tegra: Remove tegra_pmc_clk_init along with clk ids
+>>    dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
+>>    ASoC: tegra: Use device managed resource APIs to get the clock
+>>    ASoC: tegra: Add audio mclk configuration
+>>    ASoC: tegra: Add fallback implementation for audio mclk
+>>    clk: tegra: Remove audio related clock enables from init_table
+>>    ARM: dts: tegra: Add clock-cells property to pmc
+>>    arm64: tegra: Add clock-cells property to Tegra PMC node
+>>    ARM: tegra: Update sound node clocks in device tree
+>>    arm64: tegra: smaug: Change clk_out_2 provider to pmc
+>>    ASoC: nau8825: change Tegra clk_out_2 provider from tegra_car to pmc
+>>
+>>   .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 -----------------
+>>   .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 354 +++++++++++++++++++++
+>>   .../devicetree/bindings/sound/nau8825.txt          |   2 +-
+>>   arch/arm/boot/dts/tegra114-dalmore.dts             |   8 +-
+>>   arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
+>>   arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   8 +-
+>>   arch/arm/boot/dts/tegra124-apalis.dtsi             |   8 +-
+>>   arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
+>>   arch/arm/boot/dts/tegra124-nyan.dtsi               |   8 +-
+>>   arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
+>>   arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
+>>   arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
+>>   arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   8 +-
+>>   arch/arm/boot/dts/tegra30-apalis.dtsi              |   8 +-
+>>   arch/arm/boot/dts/tegra30-beaver.dts               |   8 +-
+>>   arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 +-
+>>   arch/arm/boot/dts/tegra30-colibri.dtsi             |   8 +-
+>>   arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
+>>   arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
+>>   arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
+>>   arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
+>>   drivers/clk/tegra/Makefile                         |   1 -
+>>   drivers/clk/tegra/clk-id.h                         |  11 +-
+>>   drivers/clk/tegra/clk-tegra-fixed.c                |  32 +-
+>>   drivers/clk/tegra/clk-tegra-pmc.c                  | 122 -------
+>>   drivers/clk/tegra/clk-tegra114.c                   |  41 +--
+>>   drivers/clk/tegra/clk-tegra124.c                   |  46 +--
+>>   drivers/clk/tegra/clk-tegra20.c                    |   9 +-
+>>   drivers/clk/tegra/clk-tegra210.c                   |  30 +-
+>>   drivers/clk/tegra/clk-tegra30.c                    |  31 +-
+>>   drivers/clk/tegra/clk.h                            |   1 -
+>>   drivers/soc/tegra/pmc.c                            | 352 ++++++++++++++++++++
+>>   include/dt-bindings/clock/tegra114-car.h           |  18 +-
+>>   include/dt-bindings/clock/tegra124-car-common.h    |  18 +-
+>>   include/dt-bindings/clock/tegra20-car.h            |   2 +-
+>>   include/dt-bindings/clock/tegra210-car.h           |  18 +-
+>>   include/dt-bindings/clock/tegra30-car.h            |  18 +-
+>>   include/dt-bindings/soc/tegra-pmc.h                |  16 +
+>>   sound/soc/tegra/tegra_alc5632.c                    |  28 +-
+>>   sound/soc/tegra/tegra_asoc_utils.c                 | 125 ++++----
+>>   sound/soc/tegra/tegra_asoc_utils.h                 |   3 +-
+>>   sound/soc/tegra/tegra_max98090.c                   |  43 ++-
+>>   sound/soc/tegra/tegra_rt5640.c                     |  43 ++-
+>>   sound/soc/tegra/tegra_rt5677.c                     |  28 +-
+>>   sound/soc/tegra/tegra_sgtl5000.c                   |  28 +-
+>>   sound/soc/tegra/tegra_wm8753.c                     |  43 ++-
+>>   sound/soc/tegra/tegra_wm8903.c                     |  43 ++-
+>>   sound/soc/tegra/tegra_wm9712.c                     |   8 +-
+>>   sound/soc/tegra/trimslice.c                        |  39 ++-
+>>   49 files changed, 1192 insertions(+), 777 deletions(-)
+>>   delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
+>>   create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
+>>   delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
+>>   create mode 100644 include/dt-bindings/soc/tegra-pmc.h
+>>
+>> -- 
+>> 2.7.4
+>>
