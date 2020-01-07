@@ -2,61 +2,61 @@ Return-Path: <SRS0=q0Yx=24=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2970AC33CA3
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 12:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC687C33C9E
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 12:41:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F326821744
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 12:36:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B29392081E
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 12:41:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="v1vH5ppf"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ix7q3VoW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727939AbgAGMgi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 07:36:38 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:40626 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728076AbgAGMgg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 07:36:36 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t14so19192221wmi.5
-        for <linux-clk@vger.kernel.org>; Tue, 07 Jan 2020 04:36:35 -0800 (PST)
+        id S1727806AbgAGMlO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jan 2020 07:41:14 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41820 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727559AbgAGMlO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 07:41:14 -0500
+Received: by mail-wr1-f67.google.com with SMTP id c9so53770326wrw.8
+        for <linux-clk@vger.kernel.org>; Tue, 07 Jan 2020 04:41:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=ZigGWyR5dA/rlmY5eQN1DFgU3TyM5dNJj4wuZim4lMg=;
-        b=v1vH5ppfwwaQyU0557PdvzkzfgSmt8Qdg6In7lDLwtorTe1YQxwgrSRGTR5HVqP9vs
-         vlx8AHphmwSmzv1+rEga+lsE7Vd2hsCizbJj2B4tf8xsJZ7uJuQtemgVOHWPPV0gKk6x
-         +vAOeFTOnUCSdvEd17cltbU2Ik5HqO293wNSuEyTaYl8hUuUpRUwWgfR0ci9RMjUTcyd
-         oknu0+e6xNYP+Ispe8wDu+NASM46j93S1pyqp7bXmvjBGxs89hAedp2RdiSxBa60Mzm0
-         pb+gbmV+0HdEsjBsFQ3LYy7EZeOEYECZ/Y1UWbJ7+ur+0r+VfYvk69jdDmlHRRmP6N7E
-         WVtA==
+        bh=W1LjRqVdC+lguBKzA6hEhdSKsqbzU0HC/EHXe2PyVFE=;
+        b=Ix7q3VoWX7RQy4IAIFvZnnhHrgIlYKKRROKOYAnNZ7BmaaaAs6jHQ61Lxw6GWYosc9
+         js3xOlPWY3Q5glXRYBlLsJy6HptsLcAlxLGYCX5GHoAzT1qratDLllAjeejrq4hB7AG3
+         xclbiyCAqcpiX6ql5hcsvKpZlQMb+kpvEcQEDqtz16NHo0TYR68+ZeN/Mm2pPWK6czSU
+         naCoCQZM/fCLwV2Ea7sZj7L9QcXiu2mYvkjJm3royTbxjzhTcA+uMJWvxw+zzgtrgGRD
+         KUow505mmVSANNrmqo07vaWfAbesYmYiyYN247IZipCnnBntZBu8utEIBaWfQ+VB+Uj5
+         q3DA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=ZigGWyR5dA/rlmY5eQN1DFgU3TyM5dNJj4wuZim4lMg=;
-        b=V8Wrv8GpCIGw2ic/W59IBJl3Zk+goPXo68ee29Ce0muhixx4+Cxz6DvMnTe/Ge1tPJ
-         3ACnrXgCDg7oXO/ocPpd+LRuXH54LtlYvWsaCjhZnWv+4Q15v/1QT7mpfKGTmJJiijWI
-         +QCi3yCJimLgG18Ua80/wrBxqAYIlD4O50K8m8z5Xh8ae6+n09kYTUb+vOz61j0GyGuH
-         NZ5blWrTaJEBCppt95e112lInuoUbUA8N639xA50N+x1p3aibfv6YzOqZ76Ugjbbe+1D
-         vFWFM8vbMpK0CqKumGILMmwouFtUN71d44b10aiQxBuN98H6opGecjXeHwwGf2UZZ3VG
-         /lDA==
-X-Gm-Message-State: APjAAAUkZ1cF+eoHEY2zfE4bAi8mtlCmLJb8dk0jJktk9o09JukjRgij
-        5jia8VIf6Iy6LMDN8y5R3tOYzA==
-X-Google-Smtp-Source: APXvYqx8hyPUO/+s6KqblUDY9P6qWopaZFPmK+OaNZfoX/P2gCtwCPDOS87mnKX8JiJIT/d3LpZ01g==
-X-Received: by 2002:a05:600c:2046:: with SMTP id p6mr40496323wmg.110.1578400594309;
-        Tue, 07 Jan 2020 04:36:34 -0800 (PST)
+        bh=W1LjRqVdC+lguBKzA6hEhdSKsqbzU0HC/EHXe2PyVFE=;
+        b=mG9tatvafX/HiRky58/tieN0xjNSv4rYwTfWTsXIrSgkQiulSjvJB19o9Qie9BsMPs
+         T0LneBf/T2NspeD66nWkbpokeiCpHHDNt2WTYIIozrY+RgUgsBBPnMMNKOMxqsj1wWbJ
+         yxpjXs9LpXQ5kDoXwHKCCa1FQhTk04R4uR4816rjbtBBSJpoHx5PFM4uQ0DTgoWMzuqe
+         sIkioDgw+yW6ZFPT/asHBZpbeoU6XzgH9SUK0uAfYR5V1KvmM1Nqn9crdOAq0Jw4Gwsw
+         RlWUOF6ksg81Pio8sz86WotzozbLfZVYhn13vVPAekhdFsb9oOSu6b5q3Trmn4XMJuZ5
+         At7g==
+X-Gm-Message-State: APjAAAXQfwnUQpfIbgwLswyS0HVN7oE3Wil5xpNDXhdpszGCzbBog2fv
+        lHOqeRzkst0PCA6G7EPYLPXWMw==
+X-Google-Smtp-Source: APXvYqzbZqg0vGgagk5eTcBKjSPx4R7BBZCx64xNuANabxrxXTmsIcFLkSO0bRPr4frccQzcW69BPg==
+X-Received: by 2002:adf:ee45:: with SMTP id w5mr105522947wro.352.1578400871598;
+        Tue, 07 Jan 2020 04:41:11 -0800 (PST)
 Received: from dell ([2.27.35.135])
-        by smtp.gmail.com with ESMTPSA id e18sm76983844wrw.70.2020.01.07.04.36.33
+        by smtp.gmail.com with ESMTPSA id i16sm27397404wmb.36.2020.01.07.04.41.10
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 07 Jan 2020 04:36:33 -0800 (PST)
-Date:   Tue, 7 Jan 2020 12:36:47 +0000
+        Tue, 07 Jan 2020 04:41:10 -0800 (PST)
+Date:   Tue, 7 Jan 2020 12:41:24 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     mazziesaccount@gmail.com,
@@ -75,15 +75,16 @@ Cc:     mazziesaccount@gmail.com,
         linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v8 04/12] mfd: bd718x7: Add compatible for BD71850
-Message-ID: <20200107123647.GH14821@dell>
+Subject: Re: [PATCH v8 08/12] regulator: bd718x7: Split driver to common and
+ bd718x7 specific parts
+Message-ID: <20200107124124.GI14821@dell>
 References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <bd5009357c16d73d9bad52be68db74a2cfa6328f.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+ <d247d71e183b388dd7f211aee1235965cff979b4.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <bd5009357c16d73d9bad52be68db74a2cfa6328f.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <d247d71e183b388dd7f211aee1235965cff979b4.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -92,22 +93,97 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 30 Dec 2019, Matti Vaittinen wrote:
 
-> ROHM BD71850 PMIC is almost identical to BD71847. Main difference is some
-> initial voltage values for regulators. The BD71850 can be handled by
-> BD71847 driver but adding own compatible makes it clearer for one who
-> creates the DT for board containing this PMIC and allows SW to be
-> differentiating PMICs if needed.
+> Few ROHM PMICs allow setting the voltage states for different system states
+> like RUN, IDLE, SUSPEND and LPSR. States are then changed via SoC specific
+> mechanisms. bd718x7 driver implemented device-tree parsing functions for
+> these state specific voltages. The parsing functions can be re-used by
+> other ROHM chip drivers like bd71828. Split the generic functions from
+> bd718x7-regulator.c to rohm-regulator.c and export them for other modules
+> to use.
 > 
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> Acked-by: Mark Brown <broonie@kernel.org>
 > ---
 > 
 > Changes from v7 - no changes
 > 
->  drivers/mfd/rohm-bd718x7.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/regulator/Kconfig             |   4 +
+>  drivers/regulator/Makefile            |   1 +
+>  drivers/regulator/bd718x7-regulator.c | 183 ++++++++------------------
+>  drivers/regulator/rohm-regulator.c    |  95 +++++++++++++
+>  include/linux/mfd/rohm-generic.h      |  44 +++++++
+>  5 files changed, 199 insertions(+), 128 deletions(-)
+>  create mode 100644 drivers/regulator/rohm-regulator.c
 
-For my own reference:
-  Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
+[...]
+
+> diff --git a/include/linux/mfd/rohm-generic.h b/include/linux/mfd/rohm-generic.h
+> index ff3dd7578fd3..8037421cc6a1 100644
+> --- a/include/linux/mfd/rohm-generic.h
+> +++ b/include/linux/mfd/rohm-generic.h
+> @@ -4,6 +4,9 @@
+>  #ifndef __LINUX_MFD_ROHM_H__
+>  #define __LINUX_MFD_ROHM_H__
+>  
+> +#include <linux/regmap.h>
+> +#include <linux/regulator/driver.h>
+> +
+>  enum rohm_chip_type {
+>  	ROHM_CHIP_TYPE_BD71837 = 0,
+>  	ROHM_CHIP_TYPE_BD71847,
+> @@ -17,4 +20,45 @@ struct rohm_regmap_dev {
+>  	struct regmap *regmap;
+>  };
+>  
+> +enum {
+> +	ROHM_DVS_LEVEL_UNKNOWN,
+> +	ROHM_DVS_LEVEL_RUN,
+> +	ROHM_DVS_LEVEL_IDLE,
+> +	ROHM_DVS_LEVEL_SUSPEND,
+> +	ROHM_DVS_LEVEL_LPSR,
+> +#define ROHM_DVS_LEVEL_MAX ROHM_DVS_LEVEL_LPSR
+> +};
+> +
+> +struct rohm_dvs_config {
+> +	uint64_t level_map;
+> +	unsigned int run_reg;
+> +	unsigned int run_mask;
+> +	unsigned int run_on_mask;
+> +	unsigned int idle_reg;
+> +	unsigned int idle_mask;
+> +	unsigned int idle_on_mask;
+> +	unsigned int suspend_reg;
+> +	unsigned int suspend_mask;
+> +	unsigned int suspend_on_mask;
+> +	unsigned int lpsr_reg;
+> +	unsigned int lpsr_mask;
+> +	unsigned int lpsr_on_mask;
+> +};
+
+I think this deserves a kernel-doc header.
+
+> +#if IS_ENABLED(CONFIG_REGULATOR_ROHM)
+> +int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config *dvs,
+> +				  struct device_node *np,
+> +				  const struct regulator_desc *desc,
+> +				  struct regmap *regmap);
+
+Does these really need to live in the parent's header file?
+
+What other call-sites are there?
+
+> +#else
+> +static inline int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config *dvs,
+> +						struct device_node *np,
+> +						const struct regulator_desc *desc,
+> +						struct regmap *regmap)
+> +{
+> +	return 0;
+> +}
+> +#endif //IS_ENABLED(CONFIG_REGULATOR_ROHM)
+
+a) This comment is not really required
+b) You shouldn't be using C++ comments
 
 -- 
 Lee Jones [李琼斯]
