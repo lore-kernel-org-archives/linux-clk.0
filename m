@@ -2,111 +2,94 @@ Return-Path: <SRS0=q0Yx=24=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9370C33C99
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 07:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E888C33C99
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 07:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A99207FD
-	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 07:00:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578380408;
-	bh=mqVAhJYsDI+d9WjdV8n8DMR9ou/rAJnSZlAgkuo6W9o=;
-	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=cGXz1TwBm78QYgR9rA3tWqNLsHR+evH8KGB6Z26NGXKb87BYlpB59mKTJlVXkDw9x
-	 B8mI351epHURY2M+kXhO4dMo34P025UAHPqEWjQSSG2yyDTeQPmFzgdx8dF1Ep/NwY
-	 bcqx73KnWlJMz81NoAERcGKTZZPI7qqONK+af6yM=
+	by mail.kernel.org (Postfix) with ESMTP id 0E75D207FD
+	for <linux-clk@archiver.kernel.org>; Tue,  7 Jan 2020 07:28:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=flawful.org header.i=@flawful.org header.b="c85HOvOQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725920AbgAGHAI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 02:00:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbgAGHAI (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 7 Jan 2020 02:00:08 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D92F206DB;
-        Tue,  7 Jan 2020 07:00:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578380407;
-        bh=mqVAhJYsDI+d9WjdV8n8DMR9ou/rAJnSZlAgkuo6W9o=;
-        h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=aEqhSLP7UscDWt/g0rnZTzPSmOVPtuv25EZAc0MuCqYhpQrhc2QkDjuZ7QFZBnO5h
-         jYSDwkDVEbXmD91SJs+L4JIN5aokcceddk+PL+7p+gYfCcACiWmwuPH/10/4HR4ddT
-         jaN5gdi57+7Tb/DTQMbTociQ4MHJsQ+oq0Hn0+50=
-Content-Type: text/plain; charset="utf-8"
+        id S1726651AbgAGH2N (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 7 Jan 2020 02:28:13 -0500
+Received: from ste-pvt-msa2.bahnhof.se ([213.80.101.71]:54407 "EHLO
+        ste-pvt-msa2.bahnhof.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725987AbgAGH2N (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 02:28:13 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTP id 147F43F802;
+        Tue,  7 Jan 2020 08:28:10 +0100 (CET)
+Authentication-Results: ste-pvt-msa2.bahnhof.se;
+        dkim=pass (1024-bit key; unprotected) header.d=flawful.org header.i=@flawful.org header.b=c85HOvOQ;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at bahnhof.se
+Authentication-Results: ste-ftg-msa2.bahnhof.se (amavisd-new);
+        dkim=pass (1024-bit key) header.d=flawful.org
+Received: from ste-pvt-msa2.bahnhof.se ([127.0.0.1])
+        by localhost (ste-ftg-msa2.bahnhof.se [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id yaDjQPufIJux; Tue,  7 Jan 2020 08:28:09 +0100 (CET)
+Received: from flawful.org (ua-84-217-220-205.bbcust.telenor.se [84.217.220.205])
+        (Authenticated sender: mb274189)
+        by ste-pvt-msa2.bahnhof.se (Postfix) with ESMTPA id 93E593F595;
+        Tue,  7 Jan 2020 08:28:08 +0100 (CET)
+Received: by flawful.org (Postfix, from userid 1001)
+        id 9F2777D3; Tue,  7 Jan 2020 08:28:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flawful.org; s=mail;
+        t=1578382087; bh=tnzsZ8mdTwEiMWFTfrnl9vn0sxTVhquSnNtRwsMD9tI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=c85HOvOQhk3wevv8jlvpu4WJ97wJhym835xX+QX1ZnsUS00BR4OWw7cvFWXr+T2X0
+         hUZZkcljGzzsavDVqUBPLNTjSk0nK6wAXIQ14hm9LkvMszoZUF845+u/moN/y+DF+M
+         S3iMrnvcl/sNWA0Ruf8WaqT0VuLsjMdWIcUZuhXs=
+Date:   Tue, 7 Jan 2020 08:28:07 +0100
+From:   Niklas Cassel <nks@flawful.org>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     bjorn.andersson@linaro.org, mturquette@baylibre.com,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4] clk: qcom: apcs-msm8916: use clk_parent_data to
+ specify the parent
+Message-ID: <20200107072807.2afp3bg7uopzxr4b@flawful.org>
+References: <20200103111429.1347-1-nks@flawful.org>
+ <20200105071620.04B872085B@mail.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <4726f580-fe88-5b20-e869-4e31bd63c6e3@kernel.org>
-References: <20190918013459.15966-1-dinguyen@kernel.org> <20190918013459.15966-2-dinguyen@kernel.org> <20190918050010.74B4021848@mail.kernel.org> <4726f580-fe88-5b20-e869-4e31bd63c6e3@kernel.org>
-Cc:     devicetree@vger.kernel.org, mturquette@baylibre.com,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        linux-kernel@vger.kernel.org
-To:     Dinh Nguyen <dinguyen@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/2] clk: socfpga: agilex: add clock driver for the Agilex platform
-From:   Stephen Boyd <sboyd@kernel.org>
-User-Agent: alot/0.8.1
-Date:   Mon, 06 Jan 2020 23:00:06 -0800
-Message-Id: <20200107070007.6D92F206DB@mail.kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200105071620.04B872085B@mail.kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Dinh Nguyen (2019-12-03 07:15:21)
-> Hi Stephen,
->=20
-> On 9/18/19 12:00 AM, Stephen Boyd wrote:
-> > Quoting Dinh Nguyen (2019-09-17 18:34:59)
-> >> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> >> index 0cad76021297..ef2c96c0f1e0 100644
-> >> --- a/drivers/clk/Makefile
-> >> +++ b/drivers/clk/Makefile
-> >> @@ -18,6 +18,7 @@ endif
-> >> =20
->=20
-> <snip>
->=20
-> >> +struct clk *agilex_register_pll(const char *name,
-> >> +                               const char * const *parent_names,
-> >> +                               u8 num_parents, unsigned long flags,
-> >> +                               void __iomem *reg, unsigned long offse=
-t)
-> >> +{
-> >> +       struct clk *clk;
-> >> +       struct socfpga_pll *pll_clk;
-> >> +       struct clk_init_data init;
-> >> +
-> >> +       pll_clk =3D kzalloc(sizeof(*pll_clk), GFP_KERNEL);
-> >> +       if (WARN_ON(!pll_clk))
-> >> +               return NULL;
-> >> +
-> >> +       pll_clk->hw.reg =3D reg + offset;
-> >> +
-> >> +       if (streq(name, SOCFPGA_BOOT_CLK))
-> >> +               init.ops =3D &clk_boot_ops;
-> >> +       else
-> >> +               init.ops =3D &agilex_clk_pll_ops;
-> >> +
-> >> +       init.name =3D name;
-> >> +       init.flags =3D flags;
-> >> +
-> >> +       init.num_parents =3D num_parents;
-> >> +       init.parent_names =3D parent_names;
-> >=20
-> > Is it possible to use the new way of specifying clk parents here so that
-> > we don't have to keep using strings to describe the clk topology?
-> >=20
->=20
-> Can you point me to what you mean here? Perhaps a driver that is using
-> this new way of specifying clk parents?
->=20
+On Sat, Jan 04, 2020 at 11:16:19PM -0800, Stephen Boyd wrote:
+> Quoting Niklas Cassel (2020-01-03 03:14:29)
+> > From: Niklas Cassel <niklas.cassel@linaro.org>
+> > 
+> > Allow accessing the parent clock names required for the driver operation
+> > by using the device tree 'clock-names' property, while falling back to
+> > the previous method of using names in the global name space.
+> > 
+> > This permits extending the driver to other platforms without having to
+> > modify its source code.
+> > 
+> > Co-developed-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> > Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+> > Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
+> > ---
+> 
+> Applied to clk-next
+> 
 
-I'm supposed to write some documentation, but you can look for drivers
-that have 'struct clk_parent_data' until I write the doc up.
+Hello Stephen,
 
- $ git grep 'struct clk_parent_data' -- drivers/clk/
+It has been 3 days, but I still can't find this in:
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/log/?h=clk-next
 
+Did you perhaps forget to push your branch, or am I simply being to eager? :)
+
+Kind regards,
+Niklas
