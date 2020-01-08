@@ -7,142 +7,92 @@ X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FF81C33C9E
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 12:00:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58806C282DD
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 19:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1D032075D
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 12:00:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 291C120705
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 19:18:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwDXqQhD"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PUDO+As9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726252AbgAHMAR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jan 2020 07:00:17 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33265 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726098AbgAHMAR (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 07:00:17 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b6so3138322wrq.0;
-        Wed, 08 Jan 2020 04:00:16 -0800 (PST)
+        id S1729074AbgAHTSd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jan 2020 14:18:33 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:38968 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726989AbgAHTSd (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 14:18:33 -0500
+Received: by mail-lj1-f196.google.com with SMTP id l2so4505528lja.6;
+        Wed, 08 Jan 2020 11:18:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fkvTw8nuKOGG7J7vlMkW4QWnRS/Unh/bS82CuU0k0/E=;
-        b=BwDXqQhDmnUhHZ96Tk99EKJJ+Tu2ikrs5pjK+cseUy0tXqqne6Gnmrn4Lf6tpitx8b
-         3ed+BrbNV0gRA0+QWcxaHxKdIpYWs8Va52oQzLlkMzEDtk6dVd1qxdwJXTVaRq7rYdNr
-         zstdrPVsy2ZJtc+ij2cub/v+WglDiDkA1VNd0E3P6mAMgXj8Qgwa9S7xiFzYfOjmI6xE
-         qC9h4idhcxze5XpRHwCkl7IFhFdUAl+RJ3yV8OEwpIPxLGQHW+a7jMmseeOeUdzmnoio
-         iw9eTC2tGfoubwAJKdKfC+A1kymFLMHy3kf4IfWVddH1TL+cVX6CfDdfP3ukl7XtbiFn
-         drqA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=71tYmvlt1/OOqPFBAI/jjpMMYNxkMt5zcCbmPmd2ETA=;
+        b=PUDO+As9UymSnClBvDvqSFYHVAkKXUizQpgRHB1mEJKNdaTeowHIAxh41LlWDvHlsa
+         OG57rciwPJ3lFnKvgwp9Xy5Bl8BQ+DiURyp1g1S+N/Sekjn1RDo/NrcvoOJyGaC+9/VA
+         3NB4+isxt8Ku5KSf2AAwp7wHmIQ/mrVO2Rq4JekZBlmlvxEh8gBtmi7dQ4TxcgPguXTL
+         THJyoZK92dkKs44FZrVD5kWt11ASdvh+LHnCbJnAVA3oj73NeYwhdedfe2uQORl2CMYz
+         svKrSfQ/vM1svExi9UZ3yyjO1Mv5ncNW7plUA9yl5gO9tkRQ25D9EMfwXXarhdm85DDD
+         sLtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fkvTw8nuKOGG7J7vlMkW4QWnRS/Unh/bS82CuU0k0/E=;
-        b=CnUEs2fxz1rcVgw/iQEFKPpiwaiemzP7/b5FoL2M7Y5XOB3CZDDJQ097ke3zkSq42g
-         BnDs0j40+ipRY6dCqyWvE8KrJxAgbwLuD6xe1gd8ycS+N4zVqM7Nyl4800G9VTrMbDRQ
-         dAgCJBSVz245J0wQYmM3FjpXZzbExzGkoO2w6gcQ7Nd1jd5HpMgFKqhWFGC+OEbt1d3F
-         7Yna4dTJBPnPC/8fVu8lgX27wRGkmXbyNCrcOJXqKacUERwGF2IRnXEWWXMR/ldWN4ll
-         B1FbJ593B9trB3RTTlchSNs7ZSsxcZo9XTb27NOLKrco/Gwk56rax6Li5+kSygOPCjfG
-         fDPA==
-X-Gm-Message-State: APjAAAVsYLUWD3XafHxA4KIzw2/ffyFPCj7l9zNyYGxBbpHq1UPZR1Gn
-        PouiXhsTtjLUSjarOHxazVo=
-X-Google-Smtp-Source: APXvYqyBmJ3A4HslVib4mPtBFexLp1t0TpdaYUI8juhKXdr5YvZw2OCdKzN1uEQ89uVa3dzLyml0fQ==
-X-Received: by 2002:adf:e887:: with SMTP id d7mr4028428wrm.162.1578484815859;
-        Wed, 08 Jan 2020 04:00:15 -0800 (PST)
-Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id o4sm3932302wrw.97.2020.01.08.04.00.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 Jan 2020 04:00:14 -0800 (PST)
-Date:   Wed, 8 Jan 2020 13:00:13 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Stephen Warren <swarren@wwwdotorg.org>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: Re: [PATCH V3 2/4] ARM: tegra: Enable PLLP bypass during Tegra124 LP1
-Message-ID: <20200108120013.GB1993114@ulmo>
-References: <20191003205033.98381-1-swarren@wwwdotorg.org>
- <20191003205033.98381-2-swarren@wwwdotorg.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=71tYmvlt1/OOqPFBAI/jjpMMYNxkMt5zcCbmPmd2ETA=;
+        b=Cn8gYgYV84infd/xIrjbTN/DfEu+q7Mz7nrHIqQjnDgger/UfeLwXeMv1hQXU2Rvxp
+         ErxuPZLyvuI2KQZ4hV+aJpf6oJ7YOgV4cIrtVuttDNQsHqZv8a8ZknHkuxyKJBuoQaZL
+         ACnqYpL67BoyHSENK1CgflnzY6NlVOzbPs3dpWDmFhOVvpkOyBOTAMjUCBx5Ejdk9hr/
+         JIA+KcyqfZRtsW0B+XFH8DCI0S/Noeox2x1lhde974XSMQYgj62TN9/tEq3mSqI7CO9m
+         ItmCKwWlaSWHxDQezKQpoPgzWYF/aEBV191ocrZrYSirxj0jDNAtfSp7jLbAMxooewZ4
+         EOsA==
+X-Gm-Message-State: APjAAAVSX3ig8qVVwz7WLamvunVe+IdhYULco/yhxSHB5OPhxRXxIzzD
+        e/2AzYjPSmhPAMBr9OxWqDwCBOAU
+X-Google-Smtp-Source: APXvYqx/i2fcvteVjDObebNcYyRRkA/45O12bIrSnU7Foob/eK5/fQZ2csTYr2BtD92U/8h3E/J1RA==
+X-Received: by 2002:a2e:884f:: with SMTP id z15mr3801293ljj.46.1578511110777;
+        Wed, 08 Jan 2020 11:18:30 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id n3sm1849852lfk.61.2020.01.08.11.18.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 08 Jan 2020 11:18:29 -0800 (PST)
+Subject: Re: [PATCH v7 03/21] dt-bindings: clock: tegra: Add DT id for OSC
+ clock
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
+        josephl@nvidia.com, daniel.lezcano@linaro.org,
+        mmaddireddy@nvidia.com, markz@nvidia.com,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-4-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <f78cc952-a582-e84c-4f80-8baac4ecb111@gmail.com>
+Date:   Wed, 8 Jan 2020 22:18:27 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="0eh6TmSyL6TZE2Uz"
-Content-Disposition: inline
-In-Reply-To: <20191003205033.98381-2-swarren@wwwdotorg.org>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <1578457515-3477-4-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-
---0eh6TmSyL6TZE2Uz
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Thu, Oct 03, 2019 at 02:50:31PM -0600, Stephen Warren wrote:
-> From: Stephen Warren <swarren@nvidia.com>
->=20
-> For a little over a year, U-Boot has configured the flow controller to
-> perform automatic RAM re-repair on off->on power transitions of the CPU
-> rail1]. This is mandatory for correct operation of Tegra124. However, RAM
-> re-repair relies on certain clocks, which the kernel must enable and
-> leave running. PLLP is one of those clocks. This clock is shut down
-> during LP1 in order to save power. Enable bypass (which I believe routes
-> osc_div_clk, essentially the crystal clock, to the PLL output) so that
-> this clock signal toggles even though the PLL is not active. This is
-> required so that LP1 power mode (system suspend) operates correctly.
->=20
-> The bypass configuration must then be undone when resuming from LP1, so
-> that all peripheral clocks run at the expected rate. Without this, many
-> peripherals won't work correctly; for example, the UART baud rate would
-> be incorrect.
->=20
-> NVIDIA's downstream kernel code only does this if not compiled for
-> Tegra30, so the added code is made conditional upon the chip ID. NVIDIA's
-> downstream code makes this change conditional upon the active CPU
-> cluster. The upstream kernel currently doesn't support cluster switching,
-> so this patch doesn't test the active CPU cluster ID.
->=20
-> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
->=20
-> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+08.01.2020 07:24, Sowjanya Komatineni пишет:
+> OSC is one of the parent for Tegra clocks clk_out_1, clk_out_2, and
+> clk_out_3.
+> 
+> This patch adds DT id for OSC clock to allow parent configuration
+> through device tree.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 > ---
-> v3: No change.
-> v2: No change.
-> ---
->  arch/arm/mach-tegra/sleep-tegra30.S | 11 +++++++++++
->  1 file changed, 11 insertions(+)
 
-Patches 2-4 applied to for-5.6/arm/core, thanks.
-
-Thierry
-
---0eh6TmSyL6TZE2Uz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4VxE0ACgkQ3SOs138+
-s6E3Ig/+JjmQL+DrA9FZlgMo3Ni2wA7V95dT4yry/2c1athzRmI2QNMrQpfGZScP
-zXrhZTpPO4Nyq0mFhxV9cjSDs6HPfMIPqtO3HGt3n2r0glywFRTmzOROfUAwC06B
-sGJ8NzV47AGQd4ueON+jf81GXvBvlsqeLsUc2fC8zy1wtuic68jo+p4/Xypw+Lwu
-W9lPUE5yThqJ2AegnYTZMwT7L+O4XtpXEJb8kwtDVFSOilRfoZwtURCjUGjRZ9X9
-oe40yUAdeiHWo0RyMyawgZ6LpcsFREdBtfS19hI32K7YZr/PtMppD8F4oiNdz7pu
-nxtHZwgz3GeLa4I5l5sAVXgaVjnbMaC0qIlnAQJ+mu8x5slHogJtARb/sLOKdahc
-2hlfD+0Ig4lCGhNHTG9xvDL5aP1TMX3JseK51H2l/Poo0p6o00auUM83NuLBsavs
-y/Xh02MT9bt/Nl4++GPWQxyAyoWUmgNPwlxzLwqAiimSFMmIUw0zla2ux97Mn0wO
-hPuyFZrXWysD+y8sl2RjzwbOnF+rWP425zxKNg8hxspCOUGd5zcIsUrKyth2KTJI
-Y8tbHYXVO3L6Zt8ctpnah81m19pZEezqDNKXeCjC2BKdQNINeadrOJcXTdzm6y6k
-03LVoHLMTU+IfoOvV9W7xM+XfoIy2tTyR7ApXAhsO9BxdVucBw4=
-=oiR4
------END PGP SIGNATURE-----
-
---0eh6TmSyL6TZE2Uz--
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
