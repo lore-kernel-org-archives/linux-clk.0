@@ -2,135 +2,99 @@ Return-Path: <SRS0=n/Bj=25=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.8 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44304C00523
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 08:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8C31C33C9E
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 09:10:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AB802073A
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 08:34:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GkoOEJ8b"
+	by mail.kernel.org (Postfix) with ESMTP id 7FC2620705
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 09:10:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727231AbgAHIed (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jan 2020 03:34:33 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39026 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726281AbgAHIed (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 03:34:33 -0500
-Received: by mail-wr1-f66.google.com with SMTP id y11so2389303wrt.6;
-        Wed, 08 Jan 2020 00:34:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=jX0Klzp5UaveyVN/+/3AvXAeXp0+CqqhMniHJ22g+l0=;
-        b=GkoOEJ8bEHGnPv0NL6Y/sFC5J5aWA9ICcbWhT/u2oQdKtCysCXfgA4ZLFed+V2nYBw
-         g5mVHahI2a4wlIf0qQjtjieTacqQ1y5oSOTZ3oX5wloVWg3fvCdKrdFtYfywIzUTqSv3
-         vsUu1nsBXQkOh3Fx/uhhfakNFbrmFQZgoyQN5h4gWv56tYTVpXfVEaDCK732R86DDvQQ
-         /SKUbNTVuGtLSFFYrerjBZqGCkT+Wsn0OesYNduyjuopL9MhspyUPo3Ees+pMpsT7N9Q
-         rLFEB0gAb1XBVIzOwvtN/Beo8ciLf0/o1YlnalthH/XKIRlxfbwsXG1I95fqvoR8FjNC
-         rG/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=jX0Klzp5UaveyVN/+/3AvXAeXp0+CqqhMniHJ22g+l0=;
-        b=sVLhJnzkVqPpVc4v555F2iDGT/TlaxB19AJhayb+0zeMWx0bMYXcfOIcLSNFLwU20U
-         kq7GRaJAf2YDLVG2M2a/jPxNPTpODM8keUwBN215u9SnpYDBfQKJTNV4INILbE5R39fV
-         +rDVzJEmEScPNmcmTu6OjvrPXQHtIpe8DxgwP4gOU0KyI/7GwqN9kPAy8LXmaO/NeBey
-         s85mtpnuObH2udWc93KJk+wIvFmUfG9lwDvok1ysXWZRSBLPwhXgxfWUFdrI2tM5ymhY
-         a+dIkP6mm+ogADmSRJztR/D8jEe8VCfOTFWLepaHuTOJDCwqvHFKAgZoK7qvkRpyW63L
-         U9YQ==
-X-Gm-Message-State: APjAAAW844rG3GzLq+8dXzv1UeIGC3sUuDizIImtNYFADU5AVAIs94+K
-        /8Yd/6TuWTK6i+L1SqldmNHQr7foCwA2MLzYlxw=
-X-Google-Smtp-Source: APXvYqxmcnRfZZ9RiVnC0PwvEAlnT5+dkD7rgkP0AyD649GpBjET5MasrA7qwnY8xO6DJ2IRjkuiJPC5YTLBpU0tfqE=
-X-Received: by 2002:a5d:50ce:: with SMTP id f14mr3116204wrt.254.1578472470690;
- Wed, 08 Jan 2020 00:34:30 -0800 (PST)
-MIME-Version: 1.0
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com> <1578457515-3477-6-git-send-email-skomatineni@nvidia.com>
-In-Reply-To: <1578457515-3477-6-git-send-email-skomatineni@nvidia.com>
-From:   Nicolas Chauvet <kwizart@gmail.com>
-Date:   Wed, 8 Jan 2020 09:34:19 +0100
-Message-ID: <CABr+WT=qP1BJUfzgmr4AzN18Zp-trMEStF6SQ+AH7+aYBUuUww@mail.gmail.com>
-Subject: Re: [PATCH v7 05/21] clk: tegra: Fix Tegra PMC clock out parents
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, broonie@kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        digetx@gmail.com, mperttunen@nvidia.com,
-        gregkh@linuxfoundation.org, sboyd@kernel.org,
-        Rob Herring <robh+dt@kernel.org>, mark.rutland@arm.com,
-        pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        markz@nvidia.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        id S1727368AbgAHJKe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jan 2020 04:10:34 -0500
+Received: from baptiste.telenet-ops.be ([195.130.132.51]:59750 "EHLO
+        baptiste.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727112AbgAHJKe (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 04:10:34 -0500
+Received: from ramsan ([84.195.182.253])
+        by baptiste.telenet-ops.be with bizsmtp
+        id nlAY210055USYZQ01lAYoy; Wed, 08 Jan 2020 10:10:32 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ip7MG-0003Ng-28; Wed, 08 Jan 2020 10:10:32 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1ip7MF-0001Vv-Ux; Wed, 08 Jan 2020 10:10:31 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v5.6
+Date:   Wed,  8 Jan 2020 10:10:27 +0100
+Message-Id: <20200108091027.5773-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Le mer. 8 janv. 2020 =C3=A0 05:27, Sowjanya Komatineni
-<skomatineni@nvidia.com> a =C3=A9crit :
->
-> Tegra PMC clock out parents are osc, osc_div2, osc_div4 and extern
-> clock.
->
-> Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
-> for PMC clocks.
->
-> This patch fixes this.
->
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-te=
-gra-pmc.c
-> index bec3e008335f..5e044ba1ae36 100644
-> --- a/drivers/clk/tegra/clk-tegra-pmc.c
-> +++ b/drivers/clk/tegra/clk-tegra-pmc.c
-> @@ -49,16 +49,16 @@ struct pmc_clk_init_data {
->
->  static DEFINE_SPINLOCK(clk_out_lock);
->
-> -static const char *clk_out1_parents[] =3D { "clk_m", "clk_m_div2",
-> -       "clk_m_div4", "extern1",
-> +static const char *clk_out1_parents[] =3D { "osc", "osc_div2",
-> +       "osc_div4", "extern1",
->  };
->
-> -static const char *clk_out2_parents[] =3D { "clk_m", "clk_m_div2",
-> -       "clk_m_div4", "extern2",
-> +static const char *clk_out2_parents[] =3D { "osc", "osc_div2",
-> +       "osc_div4", "extern2",
->  };
->
-> -static const char *clk_out3_parents[] =3D { "clk_m", "clk_m_div2",
-> -       "clk_m_div4", "extern3",
-> +static const char *clk_out3_parents[] =3D { "osc", "osc_div2",
-> +       "osc_div4", "extern3",
->  };
->
->  static struct pmc_clk_init_data pmc_clks[] =3D {
-> --
-> 2.7.4
+	Hi Mike, Stephen,
 
-Out of curiosity, this patch touch the clk-tegra-pmc.c file which is
-later removed (by patch 11).
-Is this change made for bugfix ? Is there a stable tag missing ?
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
---=20
--
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
-Nicolas (kwizart)
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/clk-renesas-for-v5.6-tag1
+
+for you to fetch changes up to 8040bf4091cdd13b6d0f9ab00e621ae6eb29174d:
+
+  clk: renesas: Prepare for split of R-Car H3 config symbol (2020-01-08 09:52:43 +0100)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v5.6
+
+  - Add SPIBSC (SPI FLASH) clock on RZ/A2,
+  - Prepare for split of R-Car H3 ES1.x and ES2.0+ config symbols,
+  - Minor fixes and cleanups.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Biju Das (1):
+      dt-bindings: clock: renesas: cpg-mssr: Fix r8a774b1 typo
+
+Chris Brandt (1):
+      clk: renesas: r7s9210: Add SPIBSC clock
+
+Geert Uytterhoeven (3):
+      clk: renesas: rcar-gen2: Change multipliers and dividers to u8
+      clk: renesas: Remove use of ARCH_R8A7796
+      clk: renesas: Prepare for split of R-Car H3 config symbol
+
+Sergei Shtylyov (1):
+      clk: renesas: rcar-gen3: Allow changing the RPC[D2] clocks
+
+ Documentation/devicetree/bindings/clock/renesas,cpg-mssr.txt | 2 +-
+ drivers/clk/renesas/Kconfig                                  | 4 ++--
+ drivers/clk/renesas/r7s9210-cpg-mssr.c                       | 1 +
+ drivers/clk/renesas/rcar-gen2-cpg.h                          | 8 ++++----
+ drivers/clk/renesas/rcar-gen3-cpg.c                          | 6 ++++--
+ 5 files changed, 12 insertions(+), 9 deletions(-)
+
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
