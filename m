@@ -2,37 +2,37 @@ Return-Path: <SRS0=n/Bj=25=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10C88C00523
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:26:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3AA2C00523
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:34:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAC9920720
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:26:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7546820720
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:34:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="l5xqIVub"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="GZuc0rwo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726131AbgAHF0d (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jan 2020 00:26:33 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:12578 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725773AbgAHF0d (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 00:26:33 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1567d70000>; Tue, 07 Jan 2020 21:25:43 -0800
+        id S1726558AbgAHFe6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jan 2020 00:34:58 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15278 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726079AbgAHFe5 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 00:34:57 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1569ef0000>; Tue, 07 Jan 2020 21:34:39 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 21:26:32 -0800
+  Tue, 07 Jan 2020 21:34:56 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 21:26:32 -0800
+        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 21:34:56 -0800
 Received: from [10.24.44.157] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 05:26:25 +0000
-Subject: Re: [PATCH v7 13/21] ASoC: tegra: Use device managed resource APIs to
- get the clock
+ 2020 05:34:50 +0000
+Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
+ audio mclk
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
         <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
@@ -45,32 +45,32 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
         <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <1578457515-3477-14-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
 From:   Sameer Pujar <spujar@nvidia.com>
-Message-ID: <692ae1f9-ec01-f0e9-9b9a-a0eba3f32e44@nvidia.com>
-Date:   Wed, 8 Jan 2020 10:56:23 +0530
+Message-ID: <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
+Date:   Wed, 8 Jan 2020 11:04:47 +0530
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <1578457515-3477-14-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
 X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
  HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 Content-Language: en-GB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578461144; bh=w+gsWa0qiEkQSfXhM8XZ4JIoQhx/eP1errE4+Rsqd/E=;
+        t=1578461679; bh=ooJxGk1Mj4xaggKc+sBCL1z4jOUVJa4U4iUSojVi5Pc=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
          Content-Language;
-        b=l5xqIVubpaNoOoNwLqOYOWizAjo7K2v7/n/TYg/81Uto2BR6zBJUqI9DlxaMjJ9wA
-         qNCQ8QWGVjX/5ggpMQqPrx84daWX9h8Yfg9Nw+F69H/q182bWw6sjptir0uDVGUl1F
-         WPm0NQrdqf8ynfLk/4vZmMzJuseNxW5GLzuB+GxlE+52la9KKO46N36K8+dhdXrlye
-         o+pWY5V8K3jPo4izmxLsFjDOGBTcc3JEiY8kx94qLoupPz82nUG3wMepXT0w363yp5
-         NozOnsnXYvk+uQMVc7bMKe3Cro//GQ8qW4JlmU6qT1fb9fD1hjeJKkY4264KotxBjY
-         zTNOTVdBHQjZw==
+        b=GZuc0rwo2hc8I1wHVYCC44JBPoD1pyB+PuI2wWCn5ErgMpXDuZctfA22ZZmFmDzXJ
+         H6jaH0bnOh5sPy2XvJkLRF8xr7kmn9CPhxBgKBYoIXl9Bw3un8hYQtMmdQ9RFGViX1
+         0epv7NMFAcF//b8SY6CfgZh7PQe7Ttihomu7WYr7I9e1+q+A5FMCdOsvA3qmKys58u
+         FdTrNm7FrryoDjlf1CL8HGr6w1u8JOjf1+Sc91ZAwQRFZFU/43xDdpgolxgDMYj/Gr
+         15AvZvhiUciGg4rT/rFJtw7jer4DOM5IaNjP8Ke9vo7UmO5+3IMEFud65EVi/z7s2N
+         Zk5bRaxCnBEnA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
@@ -78,31 +78,49 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 
 On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
-> tegra_asoc_utils uses clk_get() and clk_put() to get the clock
-> and to free them explicitly.
+> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+> are moved to Tegra PMC driver with pmc as clock provider and using pmc
+> clock ids.
 >
-> This patch updates it to use device managed resource API
-> devm_clk_get() so the clock will be automatically released and freed
-> when the device is unbound and removes tegra_asoc_utils_fini() as
-> its no longer needed.
+> New device tree uses clk_out_1 from pmc clock provider.
+>
+> So, this patch adds implementation for mclk fallback to extern1 when
+> retrieving mclk returns -ENOENT to be backward compatible of new device
+> tree with older kernels.
 >
 > Tested-by: Dmitry Osipenko <digetx@gmail.com>
 > Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
 > Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-
-Reviewed-by: Sameer Pujar <spujar@nvidia.com>
-
 > ---
->   sound/soc/tegra/tegra_alc5632.c    |  7 +------
->   sound/soc/tegra/tegra_asoc_utils.c | 34 +++++++---------------------------
->   sound/soc/tegra/tegra_asoc_utils.h |  1 -
->   sound/soc/tegra/tegra_max98090.c   | 22 ++++++----------------
->   sound/soc/tegra/tegra_rt5640.c     | 22 ++++++----------------
->   sound/soc/tegra/tegra_rt5677.c     |  7 +------
->   sound/soc/tegra/tegra_sgtl5000.c   |  7 +------
->   sound/soc/tegra/tegra_wm8753.c     | 22 ++++++----------------
->   sound/soc/tegra/tegra_wm8903.c     | 22 ++++++----------------
->   sound/soc/tegra/tegra_wm9712.c     |  8 ++------
->   sound/soc/tegra/trimslice.c        | 18 ++++--------------
->   11 files changed, 40 insertions(+), 130 deletions(-)
-. . .
+>   sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+>   1 file changed, 10 insertions(+), 1 deletion(-)
+>
+> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+> index 9cfebef74870..9a5f81039491 100644
+> --- a/sound/soc/tegra/tegra_asoc_utils.c
+> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>   	data->clk_cdev1 = devm_clk_get(dev, "mclk");
+>   	if (IS_ERR(data->clk_cdev1)) {
+>   		dev_err(data->dev, "Can't retrieve clk cdev1\n");
+
+This error print can be moved inside below if, when this actually meant 
+to be an error condition.
+
+> -		return PTR_ERR(data->clk_cdev1);
+> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT)
+> +			return PTR_ERR(data->clk_cdev1);
+> +		/* Fall back to extern1 */
+> +		data->clk_cdev1 = devm_clk_get(dev, "extern1");
+> +		if (IS_ERR(data->clk_cdev1)) {
+> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
+> +			return PTR_ERR(data->clk_cdev1);
+> +		}
+> +
+> +		dev_err(data->dev, "Falling back to extern1\n");
+
+This can be a info print?
+
+>   	}
+>   
+>   	/*
