@@ -2,273 +2,514 @@ Return-Path: <SRS0=n/Bj=25=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5683FC00523
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 04:26:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A33C00523
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2074820705
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 04:26:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEF6620720
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:15:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="H6wbMbmB"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="U+0MHtp2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726699AbgAHEZX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 7 Jan 2020 23:25:23 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:12464 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbgAHEZX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 7 Jan 2020 23:25:23 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e15599f0000>; Tue, 07 Jan 2020 20:25:03 -0800
+        id S1725907AbgAHFPt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jan 2020 00:15:49 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:12338 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725774AbgAHFPt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 00:15:49 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e15656d0001>; Tue, 07 Jan 2020 21:15:25 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 20:25:20 -0800
+  Tue, 07 Jan 2020 21:15:43 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 20:25:20 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL105.nvidia.com
- (172.20.187.12) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 04:25:20 +0000
-Received: from rnnvemgw01.nvidia.com (10.128.109.123) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Wed, 8 Jan 2020 04:25:20 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.162.131]) by rnnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e1559ae0000>; Tue, 07 Jan 2020 20:25:19 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 21:15:43 -0800
+Received: from [10.24.44.157] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
+ 2020 05:15:36 +0000
+Subject: Re: [PATCH v7 14/21] ASoC: tegra: Add audio mclk configuration
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <digetx@gmail.com>, <mperttunen@nvidia.com>,
         <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
-Date:   Tue, 7 Jan 2020 20:24:54 -0800
-Message-ID: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        <josephl@nvidia.com>, <daniel.lezcano@linaro.org>,
+        <mmaddireddy@nvidia.com>, <markz@nvidia.com>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-15-git-send-email-skomatineni@nvidia.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <6110236f-9bab-b166-1a31-05e71f95e8eb@nvidia.com>
+Date:   Wed, 8 Jan 2020 10:45:33 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <1578457515-3477-15-git-send-email-skomatineni@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-GB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578457503; bh=vTnJ6UV6D8N/iqnZQiwmRsdOZFb6A/xn5C+ozGxR8hA=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=H6wbMbmB7EHDRXjf4EWrKaadwkjDY41iUkfzVmL6RF+y7LMf+Y2dWDwkUgJBlABNg
-         D/524xWmkstgCAqBeLdXYXxSxNENcLen/iIVgLQ7F6vPjPOvpmmSKrrjd1HZB6gjYw
-         kcO5xfkQdihMHbg4WG2C+/qTn8/0SrpArDLk1GUJBgRAbX/GPG5nd3FYz0ys9H1zTS
-         kYC+IBvpMMatWx/jTdzvcgbIQq/bbhNdpC9+HE5Fr1wCPM8WeBPPug1dIbtm4zFWh0
-         S2Qr/6/btUApkKqPlhJtoC2a3AaY234ILxGWb1PEdwPL8cFysEzTpUqovBt3PoQG5/
-         4z8eZAWvifBaQ==
+        t=1578460526; bh=eTstNcjqbretY4ixX92EWt07UW4gr9VTT4StBhf4Kn0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=U+0MHtp2aOWp2dGOaeV8w/dEXRbKI1PoesQ/fx0IxxtC2O9fC80VK4nse8584i4d5
+         U9T9ppXqd0fexh+hR4+zTBhLCvb73LlS815G4jaImv/9ACdH0G8CJJOeqCR8xbD4cz
+         NEWf6QmjXsautNLByq2bhwty6f/UNRH4OJ6AABAcg236HkGxcXCQSuJXwUJh6M9Cra
+         ehbYuN0uAHsOLBOhvfUq5lM5bb+tgZFKIjhLv5A9mDD7SQ+1bSqw/7xIOX5XNpSuNq
+         6E3jiYch9cm9IcXXdk1FUDO8fu19+yEEKy5ct3UmGJY6UOxRl2zqAy6o6pkAu1DmcF
+         zv8PPscJweVAw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch series moves Tegra PMC clocks from clock driver to pmc driver
-along with the device trees changes and audio driver which uses one of
-the pmc clock for audio mclk.
 
-Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls which
-are currently registered by Tegra clock driver using clk_regiser_mux and
-clk_register_gate which performs direct Tegra PMC register access.
+On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
+> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+> through Tegra210 and currently Tegra clock driver does the initial parent
+> configuration for audio mclk and keeps it enabled by default.
+>
+> With the move of PMC clocks from clock driver into pmc driver,
+> audio clocks parent configuration can be specified through the device tree
+> using assigned-clock-parents property and audio mclk control should be
+> taken care by the audio driver.
+>
+> This patch has implementation for parent configuration when default parent
+> configuration is not specified in the device tree and controls audio mclk
+> enable and disable during machine startup and shutdown.
+>
+> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
 
-When Tegra PMC is in secure mode, any access from non-secure world will
-not go through.
+Reviewed-by: Sameer Pujar <spujar@nvidia.com>
 
-This patch series adds these Tegra PMC clocks and blink controls to Tegra
-PMC driver with PMC as clock provider and removes them from Tegra clock
-driver.
-
-PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru Tegra210
-and clock driver does inital parent configuration for it and enables them.
-But this clock should be taken care by audio driver as there is no need
-to have this clock pre enabled.
-
-So, this series also includes patch that updates ASoC driver to take
-care of parent configuration for mclk if device tree don't specify
-initial parent configuration using assigned-clock-parents and controls
-audio mclk enable/disable during ASoC machine startup and shutdown.
-
-DTs are also updated to use clk_out_1 as audio mclk rather than extern1.
-
-This series also includes a patch for mclk fallback to extern1 when
-retrieving mclk fails to have this backward compatible of new DT with
-old kernels.
-
-[v7]:	Changes between v7 and v7 are
-	- v6 minor feedback
-	- Added DT id for Tegra OSC to use in device tree for pmc clock
-	  parent.
-
-[v6]:	Changes between v5 and v6 are
-	- v5 feedback
-	- Added ASoC machine startup and shutdown callbacks to control audio
-	  mclk enable/disable and removed default mclk enable from clock driver.
-	- Updated tegra_asoc_utils_set_rate to disable mclk only during PLLA
-	  rate change and removed disabling PLLA as its already taken care by
-	  pll clock driver.
-	- Removed tegra_asoc_utils_set_rate call from utils_init as set_rate
-	  is set during machine hw_params and during utils_init mclk is
-	  already in disabled state and this causes warning during mclk disable
-	  in utils_set_rate.
-
-[v5]:	Changes between v4 and v5 are
-	- v4 feedback
-	- updated dt-binding pmc YAML schema with more description on power
-	  gate nodes and pad configuration state nodes.
-	- update tegra_asoc_utils_set_rate to disable audio mclk only if
-	  its in enable state.
-
-[v4]:	Changes between v3 and v4 are
-	- v3 Feedback
-	- Updated clocks clk_m_div2 and clk_m_div4 as osc_div2 and osc_div4.
-	  Tegra don't have clk_m_div2, clk_m_div4 and they should actually
-	  be osc_div2 and osc_div4 clocks from osc pads.
-	- Fixed PMC clock parents to use osc, osc_div2, osc_div4.
-	- Register each PMC clock as single clock rather than separate
-	  mux and gate clocks.
-	- Update ASoC utils to use resource managed APIs rather than
-	  using clk_get and clk_put.
-	- Updated device tree and ASoC driver to use clk_out_1 instead of
-	  clk_out_1_mux as PMC clocks are registered as single clock.
-	- Update clock driver init_table to not enable audio related clocks
-	  as ASoC utils will do audio clock enables.
-
-[v3]:	Changes between v2 and v3 are
-	- Removes set parent of clk_out_1_mux to extern1 and enabling
-	  extern1 from the clock driver.
-	- Doesn't enable clk_out_1 and blink by default in pmc driver
-	- Updates ASoC driver to take care of audio mclk parent
-	  configuration incase if device tree don't specify assigned
-	  clock parent properties and enables mclk using both clk_out_1
-	  and extern1.
-	- updates all device trees using extern1 as mclk in sound node
-	  to use clk_out_1 from pmc.
-	- patch for YAML format pmc dt-binding
-	- Includes v2 feedback
-
-[v2]:	Changes between v1 and v2 are
-	- v2 includes patches for adding clk_out_1, clk_out_2, clk_out_3,
-	  blink controls to Tegra PMC driver and removing clk-tegra-pmc.
-	- feedback related to pmc clocks in Tegra PMC driver from v1
-	- Removed patches for WB0 PLLM overrides and PLLE IDDQ PMC programming
-	  by the clock driver using helper functions from Tegra PMC.
-
- 	  Note:
-	  To use helper functions from PMC driver, PMC early init need to
-	  happen prior to using helper functions and these helper functions are
-	  for PLLM Override and PLLE IDDQ programming in PMC during PLLM/PLLE
-	  clock registration which happen in clock_init prior to Tegra PMC
-	  probe.
-	  Moving PLLM/PLLE clocks registration to happen after Tegra PMC
-	  impacts other clocks EMC, MC and corresponding tegra_emc_init and
-	  tegra_mc_init.
-	  This implementation of configuring PMC registers thru helper
-	  functions in clock driver needs proper changes across PMC, Clock,
-	  EMC and MC inits to have it work across all Tegra platforms.
-
-	  Currently PLLM Override is not enabled in the bootloader so proper
-	  patches for this fix will be taken care separately.
-
-[v1]:	v1 includes patches for below fixes.
-	- adding clk_out_1, clk_out_2, clk_out_3, blink controls to Tegra PMC
-	  driver and removing clk-tegra-pmc.
-	- updated clock provider from tegra_car to pmc in the device tree
-	  tegra210-smaug.dts that uses clk_out_2.
-	- Added helper functions in PMC driver for WB0 PLLM overrides and PLLE
-	  IDDQ programming to use by clock driver and updated clock driver to
-	  use these helper functions and removed direct PMC access from clock
-	  driver and all pmc base address references in clock driver.
-
-
-
-
-
-Sowjanya Komatineni (21):
-  dt-bindings: clock: tegra: Change CLK_M_DIV to OSC_DIV clocks
-  clk: tegra: Change CLK_M_DIV clocks to OSC_DIV clocks
-  dt-bindings: clock: tegra: Add DT id for OSC clock
-  clk: tegra: Add Tegra OSC to clock lookup
-  clk: tegra: Fix Tegra PMC clock out parents
-  dt-bindings: tegra: Convert Tegra PMC bindings to YAML
-  dt-bindings: soc: tegra-pmc: Add Tegra PMC clock bindings
-  soc: tegra: Add Tegra PMC clocks registration into PMC driver
-  dt-bindings: soc: tegra-pmc: Add id for Tegra PMC 32KHz blink clock
-  soc: tegra: Add support for 32KHz blink clock
-  clk: tegra: Remove tegra_pmc_clk_init along with clk ids
-  dt-bindings: clock: tegra: Remove pmc clock ids from clock dt-bindings
-  ASoC: tegra: Use device managed resource APIs to get the clock
-  ASoC: tegra: Add audio mclk configuration
-  ASoC: tegra: Add fallback implementation for audio mclk
-  clk: tegra: Remove audio related clock enables from init_table
-  ARM: dts: tegra: Add clock-cells property to pmc
-  arm64: tegra: Add clock-cells property to Tegra PMC node
-  ARM: tegra: Update sound node clocks in device tree
-  arm64: tegra: smaug: Change clk_out_2 provider to pmc
-  ASoC: nau8825: change Tegra clk_out_2 provider to tegra_pmc
-
- .../bindings/arm/tegra/nvidia,tegra20-pmc.txt      | 300 -----------------
- .../bindings/arm/tegra/nvidia,tegra20-pmc.yaml     | 354 +++++++++++++++++++++
- .../devicetree/bindings/sound/nau8825.txt          |   2 +-
- arch/arm/boot/dts/tegra114-dalmore.dts             |   8 +-
- arch/arm/boot/dts/tegra114.dtsi                    |   4 +-
- arch/arm/boot/dts/tegra124-apalis-v1.2.dtsi        |   8 +-
- arch/arm/boot/dts/tegra124-apalis.dtsi             |   8 +-
- arch/arm/boot/dts/tegra124-jetson-tk1.dts          |   8 +-
- arch/arm/boot/dts/tegra124-nyan.dtsi               |   8 +-
- arch/arm/boot/dts/tegra124-venice2.dts             |   8 +-
- arch/arm/boot/dts/tegra124.dtsi                    |   4 +-
- arch/arm/boot/dts/tegra20.dtsi                     |   4 +-
- arch/arm/boot/dts/tegra30-apalis-v1.1.dtsi         |   8 +-
- arch/arm/boot/dts/tegra30-apalis.dtsi              |   8 +-
- arch/arm/boot/dts/tegra30-beaver.dts               |   8 +-
- arch/arm/boot/dts/tegra30-cardhu.dtsi              |   8 +-
- arch/arm/boot/dts/tegra30-colibri.dtsi             |   8 +-
- arch/arm/boot/dts/tegra30.dtsi                     |   4 +-
- arch/arm64/boot/dts/nvidia/tegra132.dtsi           |   4 +-
- arch/arm64/boot/dts/nvidia/tegra210-smaug.dts      |   2 +-
- arch/arm64/boot/dts/nvidia/tegra210.dtsi           |   6 +-
- drivers/clk/tegra/Makefile                         |   1 -
- drivers/clk/tegra/clk-id.h                         |  12 +-
- drivers/clk/tegra/clk-tegra-fixed.c                |  37 ++-
- drivers/clk/tegra/clk-tegra-pmc.c                  | 122 -------
- drivers/clk/tegra/clk-tegra114.c                   |  43 +--
- drivers/clk/tegra/clk-tegra124.c                   |  48 ++-
- drivers/clk/tegra/clk-tegra20.c                    |   9 +-
- drivers/clk/tegra/clk-tegra210.c                   |  32 +-
- drivers/clk/tegra/clk-tegra30.c                    |  33 +-
- drivers/clk/tegra/clk.h                            |   1 -
- drivers/soc/tegra/pmc.c                            | 352 ++++++++++++++++++++
- include/dt-bindings/clock/tegra114-car.h           |  20 +-
- include/dt-bindings/clock/tegra124-car-common.h    |  20 +-
- include/dt-bindings/clock/tegra20-car.h            |   2 +-
- include/dt-bindings/clock/tegra210-car.h           |  20 +-
- include/dt-bindings/clock/tegra30-car.h            |  20 +-
- include/dt-bindings/soc/tegra-pmc.h                |  16 +
- sound/soc/tegra/tegra_alc5632.c                    |  25 +-
- sound/soc/tegra/tegra_asoc_utils.c                 | 129 ++++----
- sound/soc/tegra/tegra_asoc_utils.h                 |   3 +-
- sound/soc/tegra/tegra_max98090.c                   |  40 ++-
- sound/soc/tegra/tegra_rt5640.c                     |  40 ++-
- sound/soc/tegra/tegra_rt5677.c                     |  25 +-
- sound/soc/tegra/tegra_sgtl5000.c                   |  25 +-
- sound/soc/tegra/tegra_wm8753.c                     |  40 ++-
- sound/soc/tegra/tegra_wm8903.c                     |  40 ++-
- sound/soc/tegra/tegra_wm9712.c                     |   8 +-
- sound/soc/tegra/trimslice.c                        |  36 ++-
- 49 files changed, 1190 insertions(+), 781 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.txt
- create mode 100644 Documentation/devicetree/bindings/arm/tegra/nvidia,tegra20-pmc.yaml
- delete mode 100644 drivers/clk/tegra/clk-tegra-pmc.c
- create mode 100644 include/dt-bindings/soc/tegra-pmc.h
-
--- 
-2.7.4
-
+> ---
+>   sound/soc/tegra/tegra_alc5632.c    | 18 ++++++++
+>   sound/soc/tegra/tegra_asoc_utils.c | 88 +++++++++++++++++++++++++-------------
+>   sound/soc/tegra/tegra_asoc_utils.h |  2 +
+>   sound/soc/tegra/tegra_max98090.c   | 18 ++++++++
+>   sound/soc/tegra/tegra_rt5640.c     | 18 ++++++++
+>   sound/soc/tegra/tegra_rt5677.c     | 18 ++++++++
+>   sound/soc/tegra/tegra_sgtl5000.c   | 18 ++++++++
+>   sound/soc/tegra/tegra_wm8753.c     | 18 ++++++++
+>   sound/soc/tegra/tegra_wm8903.c     | 18 ++++++++
+>   sound/soc/tegra/trimslice.c        | 18 ++++++++
+>   10 files changed, 204 insertions(+), 30 deletions(-)
+>
+> diff --git a/sound/soc/tegra/tegra_alc5632.c b/sound/soc/tegra/tegra_alc5632.c
+> index 50a6d2ff4442..5da7933f6a99 100644
+> --- a/sound/soc/tegra/tegra_alc5632.c
+> +++ b/sound/soc/tegra/tegra_alc5632.c
+> @@ -62,8 +62,26 @@ static int tegra_alc5632_asoc_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int tegra_alc5632_asoc_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_alc5632_asoc_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_alc5632 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_alc5632_asoc_ops = {
+> +	.startup = tegra_alc5632_asoc_startup,
+>   	.hw_params = tegra_alc5632_asoc_hw_params,
+> +	.shutdown = tegra_alc5632_asoc_shutdown,
+>   };
+>   
+>   static struct snd_soc_jack tegra_alc5632_hs_jack;
+> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
+> index 0d2271952555..9cfebef74870 100644
+> --- a/sound/soc/tegra/tegra_asoc_utils.c
+> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+> @@ -60,8 +60,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+>   	data->set_mclk = 0;
+>   
+>   	clk_disable_unprepare(data->clk_cdev1);
+> -	clk_disable_unprepare(data->clk_pll_a_out0);
+> -	clk_disable_unprepare(data->clk_pll_a);
+>   
+>   	err = clk_set_rate(data->clk_pll_a, new_baseclock);
+>   	if (err) {
+> @@ -77,18 +75,6 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+>   
+>   	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+>   
+> -	err = clk_prepare_enable(data->clk_pll_a);
+> -	if (err) {
+> -		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+> -		return err;
+> -	}
+> -
+> -	err = clk_prepare_enable(data->clk_pll_a_out0);
+> -	if (err) {
+> -		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+> -		return err;
+> -	}
+> -
+>   	err = clk_prepare_enable(data->clk_cdev1);
+>   	if (err) {
+>   		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+> @@ -109,8 +95,6 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+>   	int err;
+>   
+>   	clk_disable_unprepare(data->clk_cdev1);
+> -	clk_disable_unprepare(data->clk_pll_a_out0);
+> -	clk_disable_unprepare(data->clk_pll_a);
+>   
+>   	/*
+>   	 * AC97 rate is fixed at 24.576MHz and is used for both the host
+> @@ -130,17 +114,28 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+>   
+>   	/* Don't set cdev1/extern1 rate; it's locked to pll_a_out0 */
+>   
+> -	err = clk_prepare_enable(data->clk_pll_a);
+> +	err = clk_prepare_enable(data->clk_cdev1);
+>   	if (err) {
+> -		dev_err(data->dev, "Can't enable pll_a: %d\n", err);
+> +		dev_err(data->dev, "Can't enable cdev1: %d\n", err);
+>   		return err;
+>   	}
+>   
+> -	err = clk_prepare_enable(data->clk_pll_a_out0);
+> -	if (err) {
+> -		dev_err(data->dev, "Can't enable pll_a_out0: %d\n", err);
+> -		return err;
+> -	}
+> +	data->set_baseclock = pll_rate;
+> +	data->set_mclk = ac97_rate;
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+> +
+> +void tegra_asoc_utils_clk_disable(struct tegra_asoc_utils_data *data)
+> +{
+> +	clk_disable_unprepare(data->clk_cdev1);
+> +}
+> +EXPORT_SYMBOL_GPL(tegra_asoc_utils_clk_disable);
+> +
+> +int tegra_asoc_utils_clk_enable(struct tegra_asoc_utils_data *data)
+> +{
+> +	int err;
+>   
+>   	err = clk_prepare_enable(data->clk_cdev1);
+>   	if (err) {
+> @@ -148,16 +143,14 @@ int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data)
+>   		return err;
+>   	}
+>   
+> -	data->set_baseclock = pll_rate;
+> -	data->set_mclk = ac97_rate;
+> -
+>   	return 0;
+>   }
+> -EXPORT_SYMBOL_GPL(tegra_asoc_utils_set_ac97_rate);
+> +EXPORT_SYMBOL_GPL(tegra_asoc_utils_clk_enable);
+>   
+>   int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>   			  struct device *dev)
+>   {
+> +	struct clk *clk_out_1, *clk_extern1;
+>   	int ret;
+>   
+>   	data->dev = dev;
+> @@ -193,9 +186,44 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>   		return PTR_ERR(data->clk_cdev1);
+>   	}
+>   
+> -	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+> -	if (ret)
+> -		return ret;
+> +	/*
+> +	 * If clock parents are not set in DT, configure here to use clk_out_1
+> +	 * as mclk and extern1 as parent for Tegra30 and higher.
+> +	 */
+> +	if (!of_find_property(dev->of_node, "assigned-clock-parents", NULL) &&
+> +	    data->soc > TEGRA_ASOC_UTILS_SOC_TEGRA20) {
+> +		dev_warn(data->dev,
+> +			 "Configuring clocks for a legacy device-tree\n");
+> +		dev_warn(data->dev,
+> +			 "Please update DT to use assigned-clock-parents\n");
+> +		clk_extern1 = devm_clk_get(dev, "extern1");
+> +		if (IS_ERR(clk_extern1)) {
+> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
+> +			return PTR_ERR(clk_extern1);
+> +		}
+> +
+> +		ret = clk_set_parent(clk_extern1, data->clk_pll_a_out0);
+> +		if (ret < 0) {
+> +			dev_err(data->dev,
+> +				"Set parent failed for clk extern1\n");
+> +			return ret;
+> +		}
+> +
+> +		clk_out_1 = devm_clk_get(dev, "clk_out_1");
+> +		if (IS_ERR(clk_out_1)) {
+> +			dev_err(data->dev, "Can't retrieve clk clk_out_1\n");
+> +			return PTR_ERR(clk_out_1);
+> +		}
+> +
+> +		ret = clk_set_parent(clk_out_1, clk_extern1);
+> +		if (ret < 0) {
+> +			dev_err(data->dev,
+> +				"Set parent failed for clk_out_1\n");
+> +			return ret;
+> +		}
+> +
+> +		data->clk_cdev1 = clk_out_1;
+> +	}
+>   
+>   	return 0;
+>   }
+> diff --git a/sound/soc/tegra/tegra_asoc_utils.h b/sound/soc/tegra/tegra_asoc_utils.h
+> index a34439587d59..6db93009a317 100644
+> --- a/sound/soc/tegra/tegra_asoc_utils.h
+> +++ b/sound/soc/tegra/tegra_asoc_utils.h
+> @@ -34,5 +34,7 @@ int tegra_asoc_utils_set_rate(struct tegra_asoc_utils_data *data, int srate,
+>   int tegra_asoc_utils_set_ac97_rate(struct tegra_asoc_utils_data *data);
+>   int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
+>   			  struct device *dev);
+> +int tegra_asoc_utils_clk_enable(struct tegra_asoc_utils_data *data);
+> +void tegra_asoc_utils_clk_disable(struct tegra_asoc_utils_data *data);
+>   
+>   #endif
+> diff --git a/sound/soc/tegra/tegra_max98090.c b/sound/soc/tegra/tegra_max98090.c
+> index f554a3d4571f..ec43b27ca3f7 100644
+> --- a/sound/soc/tegra/tegra_max98090.c
+> +++ b/sound/soc/tegra/tegra_max98090.c
+> @@ -82,8 +82,26 @@ static int tegra_max98090_asoc_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int tegra_max98090_asoc_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_max98090_asoc_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_max98090 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_max98090_ops = {
+> +	.startup = tegra_max98090_asoc_startup,
+>   	.hw_params = tegra_max98090_asoc_hw_params,
+> +	.shutdown = tegra_max98090_asoc_shutdown,
+>   };
+>   
+>   static struct snd_soc_jack tegra_max98090_hp_jack;
+> diff --git a/sound/soc/tegra/tegra_rt5640.c b/sound/soc/tegra/tegra_rt5640.c
+> index 5c695dfea009..2d63ab0987ea 100644
+> --- a/sound/soc/tegra/tegra_rt5640.c
+> +++ b/sound/soc/tegra/tegra_rt5640.c
+> @@ -65,8 +65,26 @@ static int tegra_rt5640_asoc_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int tegra_rt5640_asoc_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_rt5640_asoc_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_rt5640 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_rt5640_ops = {
+> +	.startup = tegra_rt5640_asoc_startup,
+>   	.hw_params = tegra_rt5640_asoc_hw_params,
+> +	.shutdown = tegra_rt5640_asoc_shutdown,
+>   };
+>   
+>   static struct snd_soc_jack tegra_rt5640_hp_jack;
+> diff --git a/sound/soc/tegra/tegra_rt5677.c b/sound/soc/tegra/tegra_rt5677.c
+> index fb86f76728b3..81485dbe4ec6 100644
+> --- a/sound/soc/tegra/tegra_rt5677.c
+> +++ b/sound/soc/tegra/tegra_rt5677.c
+> @@ -82,8 +82,26 @@ static int tegra_rt5677_event_hp(struct snd_soc_dapm_widget *w,
+>   	return 0;
+>   }
+>   
+> +static int tegra_rt5677_asoc_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_rt5677_asoc_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_rt5677 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_rt5677_ops = {
+> +	.startup = tegra_rt5677_asoc_startup,
+>   	.hw_params = tegra_rt5677_asoc_hw_params,
+> +	.shutdown = tegra_rt5677_asoc_shutdown,
+>   };
+>   
+>   static struct snd_soc_jack tegra_rt5677_hp_jack;
+> diff --git a/sound/soc/tegra/tegra_sgtl5000.c b/sound/soc/tegra/tegra_sgtl5000.c
+> index 586f56f435f4..8852a4bcafe7 100644
+> --- a/sound/soc/tegra/tegra_sgtl5000.c
+> +++ b/sound/soc/tegra/tegra_sgtl5000.c
+> @@ -71,8 +71,26 @@ static int tegra_sgtl5000_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int tegra_sgtl5000_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_sgtl5000_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_sgtl5000 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_sgtl5000_ops = {
+> +	.startup = tegra_sgtl5000_startup,
+>   	.hw_params = tegra_sgtl5000_hw_params,
+> +	.shutdown = tegra_sgtl5000_shutdown,
+>   };
+>   
+>   static const struct snd_soc_dapm_widget tegra_sgtl5000_dapm_widgets[] = {
+> diff --git a/sound/soc/tegra/tegra_wm8753.c b/sound/soc/tegra/tegra_wm8753.c
+> index f76cfdc963ed..a4595d73df53 100644
+> --- a/sound/soc/tegra/tegra_wm8753.c
+> +++ b/sound/soc/tegra/tegra_wm8753.c
+> @@ -75,8 +75,26 @@ static int tegra_wm8753_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int tegra_wm8753_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_wm8753_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_wm8753 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_wm8753_ops = {
+> +	.startup = tegra_wm8753_startup,
+>   	.hw_params = tegra_wm8753_hw_params,
+> +	.shutdown = tegra_wm8753_shutdown,
+>   };
+>   
+>   static const struct snd_soc_dapm_widget tegra_wm8753_dapm_widgets[] = {
+> diff --git a/sound/soc/tegra/tegra_wm8903.c b/sound/soc/tegra/tegra_wm8903.c
+> index f5f78c3512cd..9cd637385685 100644
+> --- a/sound/soc/tegra/tegra_wm8903.c
+> +++ b/sound/soc/tegra/tegra_wm8903.c
+> @@ -82,8 +82,26 @@ static int tegra_wm8903_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int tegra_wm8903_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void tegra_wm8903_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_wm8903 *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops tegra_wm8903_ops = {
+> +	.startup = tegra_wm8903_startup,
+>   	.hw_params = tegra_wm8903_hw_params,
+> +	.shutdown = tegra_wm8903_shutdown,
+>   };
+>   
+>   static struct snd_soc_jack tegra_wm8903_hp_jack;
+> diff --git a/sound/soc/tegra/trimslice.c b/sound/soc/tegra/trimslice.c
+> index e51c67092c8f..a78c2bc633bc 100644
+> --- a/sound/soc/tegra/trimslice.c
+> +++ b/sound/soc/tegra/trimslice.c
+> @@ -60,8 +60,26 @@ static int trimslice_asoc_hw_params(struct snd_pcm_substream *substream,
+>   	return 0;
+>   }
+>   
+> +static int trimslice_asoc_startup(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_trimslice *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	return tegra_asoc_utils_clk_enable(&machine->util_data);
+> +}
+> +
+> +static void trimslice_asoc_shutdown(struct snd_pcm_substream *substream)
+> +{
+> +	struct snd_soc_pcm_runtime *rtd = substream->private_data;
+> +	struct tegra_trimslice *machine = snd_soc_card_get_drvdata(rtd->card);
+> +
+> +	tegra_asoc_utils_clk_disable(&machine->util_data);
+> +}
+> +
+>   static const struct snd_soc_ops trimslice_asoc_ops = {
+> +	.startup = trimslice_asoc_startup,
+>   	.hw_params = trimslice_asoc_hw_params,
+> +	.shutdown = trimslice_asoc_shutdown,
+>   };
+>   
+>   static const struct snd_soc_dapm_widget trimslice_dapm_widgets[] = {
