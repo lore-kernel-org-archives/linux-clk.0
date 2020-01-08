@@ -2,122 +2,135 @@ Return-Path: <SRS0=n/Bj=25=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_SANE_2 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9057CC33C9E
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 11:27:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 024FBC33C9E
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 11:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61FF3206DB
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 11:27:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C67FD206ED
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 11:59:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="r/5T5aJW"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NpYYVKZ+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726363AbgAHL1l (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jan 2020 06:27:41 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:29186 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726098AbgAHL1k (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 06:27:40 -0500
-X-UUID: c02c473c9be144d299865735663f90f0-20200108
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-        h=Content-Transfer-Encoding:MIME-Version:Content-Type:References:In-Reply-To:Date:CC:To:From:Subject:Message-ID; bh=1fi/fDDjeP/w31P1XgOwqFMDo56O99pCAi7DUbNxiWw=;
-        b=r/5T5aJWB59LTnEkYNHmW6r5/rlvodqYKmJvWZ4DBmfbXvx14YA6w2sXfrmVK8ed2rNBb71n4uE6EsfTWVEcJ6ZQ6QtBU2082sqAjE1Y5YiuVINjsR4frij6u3q7guy1Qqjk/Fzt8kjYs4tqeeDjb9mSGU0a+MZtdBvA+8tYJ64=;
-X-UUID: c02c473c9be144d299865735663f90f0-20200108
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <hanks.chen@mediatek.com>)
-        (Cellopoint E-mail Firewall v4.1.10 Build 0809 with TLS)
-        with ESMTP id 1577135201; Wed, 08 Jan 2020 19:27:36 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Wed, 8 Jan 2020 19:28:10 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Wed, 8 Jan 2020 19:25:57 +0800
-Message-ID: <1578482850.7554.18.camel@mtkswgap22>
-Subject: Re: [PATCH v2 05/11] pinctrl: mediatek: avoid virtual gpio trying
- to set reg
-From:   Hanks Chen <hanks.chen@mediatek.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-CC:     Rob Herring <robh@kernel.org>, CC Hwang <cc.hwang@mediatek.com>,
-        <wsd_upstream@mediatek.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Loda Chou <loda.chou@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "Mars Cheng" <mars.cheng@mediatek.com>,
-        mtk01761 <wendell.lin@mediatek.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "moderated list:ARM/Mediatek SoC support" 
-        <linux-mediatek@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>
-Date:   Wed, 8 Jan 2020 19:27:30 +0800
-In-Reply-To: <CACRpkdZUxpQ1tS9mKG9tc_U==M2BL9HwXt3DS1t413GGSEaVTA@mail.gmail.com>
-References: <1566206502-4347-1-git-send-email-mars.cheng@mediatek.com>
-         <1566206502-4347-6-git-send-email-mars.cheng@mediatek.com>
-         <CACRpkdZa_sQgvWC3ic0NxrVi9gS1cNTsV-wa-SDpA0e5kutBRw@mail.gmail.com>
-         <1577022724.7468.20.camel@mtkswgap22>
-         <CACRpkdZUxpQ1tS9mKG9tc_U==M2BL9HwXt3DS1t413GGSEaVTA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
+        id S1726323AbgAHL7y (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jan 2020 06:59:54 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:54005 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726098AbgAHL7y (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 06:59:54 -0500
+Received: by mail-wm1-f67.google.com with SMTP id m24so2187222wmc.3;
+        Wed, 08 Jan 2020 03:59:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=VweC90OhMbRB5YC06/dP5Bg2TdjACi3YY8MpAp++EzY=;
+        b=NpYYVKZ+Z9rpqPMje8On2UojyJa3jonkiJ/zW+2DguQc+IdBPd11Fgbzj2PvXSUH3g
+         kYpU0587O1bsBTyeNTUYANPla7o1NbKgNfdB/NxojFaOKYausRFuRlpbqI9lXEDGJLmd
+         tpQChw+XiyyQ09ABL3FIqr+KJeX55wugMimRHd5NdFDXFBWt5ak0nXaqeuoWkFeJ/ulQ
+         K5QY3dGGZxHYT+uWwIjCFls8Any7E1KVrhUaIjmVkoyfJiBdfxWEfphQWNBiYe3RPMfW
+         yPQCKGWmdiRKlh5T6EblpcOoq+ZYty6AMYVgxwE0BIcZQU413tVE+/lNqOmrep0aX9DY
+         o4xg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VweC90OhMbRB5YC06/dP5Bg2TdjACi3YY8MpAp++EzY=;
+        b=WBvg0jeCdnfqkFdd9qjxoc8liO9ZsCkNVhRb0PCkxDo5NKNLIx4sfqCvNR2TZ3rGjS
+         ZxEI9vdGM8F8feod0Jdj96kh/pPAHzLAWJoYjc8WZGkBch/g7nQwJkYoBvWa50WfUv1s
+         leNALiUy7m3FVGKrfQSiJIabBLmd0BU9w60A2p86ighxg4a86x/Cg1EV7DbJHnLAER4C
+         NexMl/xNLkH/JWzq1EaBeF0oLGkHdj1O07ckq3xovaDYzAz3Y5Qcc5do+GQuvI5C2KTQ
+         9gmVF6Y8WG5CEE3NDv+at1rWbSnjUKxS/B1qr5iNLSajGxJN7htFc+CEe2pJQp7U7xh0
+         TPrw==
+X-Gm-Message-State: APjAAAW1Ne2Mg6hPywcp+oDjrw/zeOh6vbVrv8+L8dJTmi8dJ1E1tdpj
+        QB0YAp4BN4SEIUNqeHt2Esk=
+X-Google-Smtp-Source: APXvYqzH19+2YKXGZL/Gjf2VptczLfcFBt9bdRvOwXVszToouij5SZJpfPWgkLCY8hDUO42jb+u8Yg==
+X-Received: by 2002:a7b:c450:: with SMTP id l16mr3464058wmi.31.1578484792384;
+        Wed, 08 Jan 2020 03:59:52 -0800 (PST)
+Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
+        by smtp.gmail.com with ESMTPSA id d10sm4138463wrw.64.2020.01.08.03.59.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 Jan 2020 03:59:50 -0800 (PST)
+Date:   Wed, 8 Jan 2020 12:59:49 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Stephen Warren <swarren@wwwdotorg.org>
+Cc:     Jonathan Hunter <jonathanh@nvidia.com>,
+        Peter De Schrijver <pdeschrijver@nvidia.com>,
+        Prashant Gaikwad <pgaikwad@nvidia.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: Re: [PATCH V3 1/4] clk: tegra: mark fuse clock as critical
+Message-ID: <20200108115949.GA1993114@ulmo>
+References: <20191003205033.98381-1-swarren@wwwdotorg.org>
 MIME-Version: 1.0
-X-MTK:  N
-Content-Transfer-Encoding: base64
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="fdj2RfSjLxBAspz7"
+Content-Disposition: inline
+In-Reply-To: <20191003205033.98381-1-swarren@wwwdotorg.org>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-T24gVHVlLCAyMDIwLTAxLTA3IGF0IDExOjIwICswMTAwLCBMaW51cyBXYWxsZWlqIHdyb3RlOg0K
-PiBPbiBNb24sIERlYyAyMywgMjAxOSBhdCA0OjExIEFNIEhhbmtzIENoZW4gPGhhbmtzLmNoZW5A
-bWVkaWF0ZWsuY29tPiB3cm90ZToNCj4gPiBPbiBGcmksIDIwMTktMDgtMjMgYXQgMTA6NTcgKzAy
-MDAsIExpbnVzIFdhbGxlaWogd3JvdGU6DQo+ID4gPiBPbiBNb24sIEF1ZyAxOSwgMjAxOSBhdCAx
-MToyMiBBTSBNYXJzIENoZW5nIDxtYXJzLmNoZW5nQG1lZGlhdGVrLmNvbT4gd3JvdGU6DQo+IA0K
-PiA+ID4gVGhpcyBkb2VzIG5vdCBleHBsYWluIHdoYXQgYSAidmlydHVhbCBHUElPIiBpcyBpbiB0
-aGlzDQo+ID4gPiBjb250ZXh0LCBzbyBwbGVhc2UgZWxhYm9yYXRlLiBXaGF0IGlzIHRoaXM/IFdo
-eSBkb2VzDQo+ID4gPiBpdCBleGlzdD8gV2hhdCBpcyBpdCB1c2VkIGZvcj8NCj4gPiA+DQo+ID4g
-PiBHUElPIGlzICJnZW5lcmFsIHB1cnBvc2UgaW5wdXQvb3V0cHV0IiBhbmQgaXQgaXMgYQ0KPiA+
-ID4gcHJldHR5IHJ1YmJlcnkgY2F0ZWdvcnkgYWxyZWFkeSBhcyBpdCBpcywgc28gd2UgbmVlZA0K
-PiA+ID4gdG8gZGVmaW5lIG91ciB0ZXJtcyBwcmV0dHkgc3RyaWN0bHkuDQo+ID4gPg0KPiA+IFZp
-cnR1YWwgR1BJTyBvbmx5IHVzZWQgaW5zaWRlIFNPQyBhbmQgbm90IGJlaW5nIGV4cG9ydGVkIHRv
-IG91dHNpZGUgU09DDQo+ID4gaW4gTVRLIHBsYXRmb3JtLiBTb21lIG1vZHVsZXMgdXNlIHZpcnR1
-YWwgR1BJTyBhcyBlaW50IChlLmcuIHBtaWMgb3INCj4gPiB1c2IpLg0KPiANCj4gSSB3b3VsZCBj
-YWxsIHRoYXQgaW50ZXJuYWwgR1BJT3MsIHRob3NlIGFyZSB2ZXJ5IHJlYWwgcmFpbHMgaW5zaWRl
-DQo+IHRoZSBjaGlwIG1hZGUgd2l0aCBwb2x5c2lsaWNvbmUgc28gdGhlcmUgaXMgbm90aGluZyAi
-dmlydHVhbCINCj4gYWJvdXQgdGhlbS4gSWYgdGhlIGRvY3VtZW50YXRpb24gZm9yIHRoZSBjaGlw
-IGNhbGxzIHRoZW0gdmlydHVhbA0KPiB0aGVuIGV4cGxhaW4gaW4gdGhlIGRyaXZlciB0aGF0IHRo
-ZXNlIGFyZSBTb0MtaW50ZXJuYWwNCj4gbGluZXMgc28gdGhhdCBldmVyeW9uZSB3aWxsIGdldCBp
-dC4NCj4gDQoNCkdvdCBpdCwgSSB3aWxsIGFkZCB0aGUgaW5mbyBpbnRvIHRoZSBkcml2ZXIgaW4g
-djMgDQoNCj4gSXMgdGhlIFBNSUMgaW5zaWRlIHRoZSBTb0M/IEkgdGhvdWdodCB0aGF0IHdhcyB1
-c3VhbGx5IG91dHNpZGUgb2YgaXQNCj4gaW4gaXRzIG93biBjaGlwLg0KPiANCj4gQnV0IEkgc3Vw
-cG9zZSB0aGVyZSBjb3VsZCBiZSBzb21lIGludGVyZmFjZSB0byBpdCBpbiB0aGUgU29DIGFuZA0K
-PiB0aGVuIHRoYXQgaW50ZXJmYWNlIGhhcyB0aGlzIEVJTlQ/DQo+IA0KDQpUaGF0J3MgcmlnaHQu
-IEkgdXNlIGluY29ycmVjdCB3b3JkLg0KZS5nLiBwbWljIGludGVyZmFjZSBpbnNpZGUgdGhlIFNP
-QyAoUE1JRiksIG5vdCBwbWljLi4uDQoNCj4gPiBJbiBNVEsgcGxhdGZvcm0sIGV4dGVybmFsIGlu
-dGVycnVwdCAoRUlOVCkgYW5kIEdQSU8gaXMgMS0xIG1hcHBpbmcgYW5kDQo+ID4gd2UgY2FuIHNl
-dCBHUElPIGFzIGVpbnQuDQo+ID4gQnV0IHNvbWUgbW9kdWxlcyB1c2Ugc3BlY2lmaWMgZWludCB3
-aGljaCBkb2Vzbid0IGhhdmUgcmVhbCBHUElPIHBpbi4NCj4gPiBTbyB3ZSB1c2UgdmlydHVhbCBH
-UElPIHRvIG1hcCBpdC4NCj4gDQo+IE9LIEkgZ2V0IGl0IEkgdGhpbmsuLi4ganVzdCBwdXQgdGhl
-c2UgY29tbWVudHMgaW50byB0aGUgY29kZSBhcyB3ZWxsDQo+IHNvIHdlIHVuZGVyc3RhbmQgd2hl
-biByZWFkaW5nIHRoZSBjb2RlIHdoYXQgaXMgZ29pbmcgb24uDQoNCkdvdCBpdCwgd2lsbCBhZGQg
-dGhlIGNvbW1lbnRzIGluIHYzLiBUaGFua3MgZm9yIHJldmlld2luZy4NCg0KPiANCj4gPiA+ID4g
-KyAgICAgICBpZiAobXRrX2lzX3ZpcnRfZ3BpbyhodywgZ3BpbykpDQo+ID4gPiA+ICsgICAgICAg
-ICAgICAgICByZXR1cm4gMTsNCj4gPiA+DQo+ID4gPiBXaHkgYXJlICJ2aXJ0dWFsIEdQSU9zIiBh
-bHdheXMgaW5wdXRzPw0KPiA+DQo+ID4gV2Ugc2V0IHZpcnR1YWwgR1BJTyBhcyBlaW50Lg0KPiA+
-IEl0IG1lYW4gdmlydHVhbCBHUElPIG9ubHkgdXNlZCBpbnNpZGUgU09DIGFuZCBub3QgYmVpbmcg
-ZXhwb3J0ZWQgdG8NCj4gPiBvdXRzaWRlIFNPQy4NCj4gDQo+IEFyZSB5b3Ugc2F5aW5nIHRoYXQ6
-DQo+IC0gIlZpcnR1YWwiIEdQSU9zIGFyZSBhbHdheXMgYW5kIG9ubHkgdXNlZCBmb3IgaW50ZXJy
-dXB0cw0KPiAtIFNpbmNlIHRoZXkgYXJlIG9ubHkgdXNlZCBmb3IgaW50ZXJydXB0cywgdGhleSBh
-cmUgYWx3YXlzIGlucHV0cw0KPiANCj4gVGhlbiB3cml0ZSB0aGF0IGluIGEgY29tbWVudCB0byB0
-aGUgYWJvdmUgY2hhbmdlIHNvIHdlIGtub3cNCj4gdGhpcyBjb250ZXh0Lg0KPiANCg0KWWVzLCB2
-aXJ0dWFsIEdQSU9zIGFyZSBhbHdheXMgYW5kIG9ubHkgdXNlZCBmb3IgaW50ZXJydXB0cyBpbiBt
-dGsNCnBsYXRmb3JtLiBJJ2xsIGFkZCB0aGUgY29tbWVudHMgaW4gdjMuIFRoYW5rcyBmb3IgcmV2
-aWV3aW5nDQoNCj4gWW91cnMsDQo+IExpbnVzIFdhbGxlaWoNCj4gDQo+IF9fX19fX19fX19fX19f
-X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fDQo+IExpbnV4LW1lZGlhdGVrIG1haWxp
-bmcgbGlzdA0KPiBMaW51eC1tZWRpYXRla0BsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6Ly9s
-aXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtbWVkaWF0ZWsNCg0KDQo=
 
+--fdj2RfSjLxBAspz7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Oct 03, 2019 at 02:50:30PM -0600, Stephen Warren wrote:
+> From: Stephen Warren <swarren@nvidia.com>
+>=20
+> For a little over a year, U-Boot on Tegra124 has configured the flow
+> controller to perform automatic RAM re-repair on off->on power transitions
+> of the CPU rail1]. This is mandatory for correct operation of Tegra124.
+> However, RAM re-repair relies on certain clocks, which the kernel must
+> enable and leave running. The fuse clock is one of those clocks. Mark this
+> clock as critical so that LP1 power mode (system suspend) operates
+> correctly.
+>=20
+> [1] 3cc7942a4ae5 ARM: tegra: implement RAM repair
+>=20
+> Reported-by: Jonathan Hunter <jonathanh@nvidia.com>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Stephen Warren <swarren@nvidia.com>
+> ---
+> v3: Added comment to the clock table entry indicating why the clock is
+>     critical.
+> v2: Set CRITICAL flag on the clock, rather than enabling it in
+>     tegra124_init_table[].
+> ---
+>  drivers/clk/tegra/clk-tegra-periph.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+
+Applied to for-5.6/clk, thanks.
+
+Thierry
+
+--fdj2RfSjLxBAspz7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4VxDMACgkQ3SOs138+
+s6F6PhAAlrIuajL3DdiqYncmRYYV7/TjqJxFw2VwBy9bhCisUem0d4zjoIWBl90E
+0smLovIXi5278XwG2zdZAtPqA58tKy6xybLzZRez0CY3ACghUSPnfxC6fLH0EMpj
+QecOh6LeN6mKkf0EtM810FDRTh+k2YJciaFGV7l5lz+d6qmxEPGeawy81VbnVNyB
+F16b9sCYjzqPlEbz/UxySc/b6hD7po6+MBguko8kb6xXs0beKRiKVQ7hJxuOUA2F
+RhR1h1amdCArtcqRwWIgTGhS+e+M2sMssv/JCywjBGhm9yMjI6hPffyKkawCoLJD
+GUBbV2cnt3ucR1DxmWnnkm1Vks577M11PDro+7V4FM0qWMBsLysO4t2uq2QlkHpk
+2tAhMt7X0VvSqtG7pO8aUteCezY+JPck26XOhMuzCVR/ByaaIVi2gEFOzwOezgDy
+YuyAa0zL1oB92AjsaTwtgZ7jIULmUox+kEt2IwEJJcDesOGOmTDfsvZTWiXsJe0K
+JfhmAsU3jnFHUkgUCATa6gSuZJiFhcfY1pPJoZ2GJDtEHDP0DTF63WDJDDqM/i8l
+CTjNIg8dC4MX8wEkZvdZ1VP2Dp/A1zWEl2cppCLX/y5rQFCB8hSyIfYg++KvVN0b
+whEWoIWUs0tJfDWAFroFO2GLa6B2n2NbzgaEIKl6tTN6A6p7BeY=
+=zoua
+-----END PGP SIGNATURE-----
+
+--fdj2RfSjLxBAspz7--
