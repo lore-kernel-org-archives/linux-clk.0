@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F36FCC00523
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAE46C00523
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 06:29:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4A5820720
-	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 05:48:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AFD392072A
+	for <linux-clk@archiver.kernel.org>; Wed,  8 Jan 2020 06:29:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="aV98CB9Q"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ZNR7SZJg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725907AbgAHFsE (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 8 Jan 2020 00:48:04 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:16367 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725774AbgAHFsE (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 00:48:04 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e156d010004>; Tue, 07 Jan 2020 21:47:46 -0800
+        id S1725944AbgAHG3G (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 8 Jan 2020 01:29:06 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:15810 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725773AbgAHG3G (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 8 Jan 2020 01:29:06 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1576800002>; Tue, 07 Jan 2020 22:28:16 -0800
 Received: from hqmail.nvidia.com ([172.20.161.6])
   by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 07 Jan 2020 21:48:03 -0800
+  Tue, 07 Jan 2020 22:29:05 -0800
 X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 21:48:03 -0800
-Received: from [10.2.162.131] (10.124.1.5) by HQMAIL107.nvidia.com
+        by hqpgpgate101.nvidia.com on Tue, 07 Jan 2020 22:29:05 -0800
+Received: from [10.24.44.157] (10.124.1.5) by HQMAIL107.nvidia.com
  (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 8 Jan
- 2020 05:48:01 +0000
+ 2020 06:28:59 +0000
 Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
  audio mclk
-To:     Sameer Pujar <spujar@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
+        <broonie@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <digetx@gmail.com>, <mperttunen@nvidia.com>,
         <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
         <robh+dt@kernel.org>, <mark.rutland@arm.com>
 CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
@@ -47,96 +47,105 @@ CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
 References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
  <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
  <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
-Date:   Tue, 7 Jan 2020 21:48:00 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+ <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
+From:   Sameer Pujar <spujar@nvidia.com>
+Message-ID: <a3c5293b-9ed4-3266-f792-38b980e54b1e@nvidia.com>
+Date:   Wed, 8 Jan 2020 11:58:56 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 MIME-Version: 1.0
-In-Reply-To: <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
+In-Reply-To: <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
 X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
  HQMAIL107.nvidia.com (172.20.187.13)
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
+Content-Language: en-GB
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578462466; bh=GQANHx+miKT/xFnjFw8SvljwDPz/I599x2UEzMokWfU=;
+        t=1578464897; bh=OHhIle+XKX/LTcA5mmunIMXF7a5LS6VUkkqyvI0+XNg=;
         h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
          User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
          X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
          Content-Language;
-        b=aV98CB9QC8JyG8GXOwpMrLT8QNkMj+OOzED8H0aLx8mhQ/t5Pu0P3tTV3m9Y7dMK9
-         rc2TJY1XEY1p7bryNhFFUPUuZctVQD3Sl0U4YIxfKqqxnS7Mzil7c9j0TeRwbUdc6l
-         eSlt1xo2llXnImNXhMu909wTqeDrAndEVyKVg5iNF9a349q2nD9A/OzRzLpX1CcabZ
-         BTFLofk0Lkc0fYOuX90fm5hQzvfquwO1t9w4vjDx26I5jK7dy0CH8uG2cHqCCytxGN
-         rW7yqReLPD7SST6+PpEvs1qwbeD9J9vLfHDZRkoWcIF/MWOusKNRGnN05jA+w1oaly
-         tcYMJ/hLYqx/Q==
+        b=ZNR7SZJgFRYaRAx4eRFJT2uN5zQzJqxtOI2lcGNIlSwFBmAEIBNAWOaBMHMhyLs39
+         AYBer1uvKCm9U/ZUrwjhcjhAATw3Je5U+v7ubgsWf+mEAd9sC3SBG6IY/bvaXTTlra
+         Vc8vOpPasi+ZKzgw+3nhm0VZmYV5OZ89xt3Vi6as2nlt5/CIiMlhzhJrtlEn4eKsLC
+         eMObyYS7kHlRN6oTWH8yCSmnodXewyv7fsEDrzsrdBD0JAVIUwrqV6+iqhkiQcVzIP
+         hlLgZOiOtDl28knHeiGM7iEYvRGtjq9YyY403f4bVVEsdJ3TjVaSBrNbnU6TDZnUJ3
+         nXcH7t0bhalBQ==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 1/7/20 9:34 PM, Sameer Pujar wrote:
+On 1/8/2020 11:18 AM, Sowjanya Komatineni wrote:
 >
-> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
->> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
->> are moved to Tegra PMC driver with pmc as clock provider and using pmc
->> clock ids.
+> On 1/7/20 9:34 PM, Sameer Pujar wrote:
 >>
->> New device tree uses clk_out_1 from pmc clock provider.
+>> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
+>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
+>>> are moved to Tegra PMC driver with pmc as clock provider and using pmc
+>>> clock ids.
+>>>
+>>> New device tree uses clk_out_1 from pmc clock provider.
+>>>
+>>> So, this patch adds implementation for mclk fallback to extern1 when
+>>> retrieving mclk returns -ENOENT to be backward compatible of new device
+>>> tree with older kernels.
+>>>
+>>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>> =C2=A0 sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+>>> =C2=A0 1 file changed, 10 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c=20
+>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>> index 9cfebef74870..9a5f81039491 100644
+>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct=20
+>>> tegra_asoc_utils_data *data,
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_clk_get(dev, "m=
+clk");
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1)) {
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->de=
+v, "Can't retrieve clk cdev1\n");
 >>
->> So, this patch adds implementation for mclk fallback to extern1 when
->> retrieving mclk returns -ENOENT to be backward compatible of new device
->> tree with older kernels.
+>> This error print can be moved inside below if, when this actually=20
+>> meant to be an error condition.
 >>
->> Tested-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->> =C2=A0 sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->> =C2=A0 1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/sound/soc/tegra/tegra_asoc_utils.c=20
->> b/sound/soc/tegra/tegra_asoc_utils.c
->> index 9cfebef74870..9a5f81039491 100644
->> --- a/sound/soc/tegra/tegra_asoc_utils.c
->> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct=20
->> tegra_asoc_utils_data *data,
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_clk_get(dev, "mc=
-lk");
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1)) {
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->dev=
-, "Can't retrieve clk cdev1\n");
->
-> This error print can be moved inside below if, when this actually=20
-> meant to be an error condition.
->
-Want to show error even if mclk retrieval returns ENOENT to clearly=20
-indicate mclk does not exist along with message of falling back to extern1.
->> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(data->clk_cde=
-v1);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (PTR_ERR(data->clk_cdev1)=
- !=3D -ENOENT)
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retu=
-rn PTR_ERR(data->clk_cdev1);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Fall back to extern1 */
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_clk=
-_get(dev, "extern1");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1))=
- {
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_=
-err(data->dev, "Can't retrieve clk extern1\n");
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 retu=
-rn PTR_ERR(data->clk_cdev1);
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> +
->> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->dev, "Falling =
-back to extern1\n");
->
-> This can be a info print?
+> Want to show error even if mclk retrieval returns ENOENT to clearly=20
+> indicate mclk does not exist along with message of falling back to=20
+> extern1.
 
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
->> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
+Yes, but falling back essentially means 'mclk' is not available and=20
+fallback print is not an error.
+Not a major issue though, you can consider updating. Otherwise LGTM.
+
+>>> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return PTR_ERR(data->clk_cd=
+ev1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (PTR_ERR(data->clk_cdev1=
+) !=3D -ENOENT)
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+urn PTR_ERR(data->clk_cdev1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /* Fall back to extern1 */
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 data->clk_cdev1 =3D devm_cl=
+k_get(dev, "extern1");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (IS_ERR(data->clk_cdev1)=
+) {
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev=
+_err(data->dev, "Can't retrieve clk extern1\n");
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret=
+urn PTR_ERR(data->clk_cdev1);
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> +
+>>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dev_err(data->dev, "Falling=
+ back to extern1\n");
+>>
+>> This can be a info print?
+>
+>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
+>>> =C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 /*
