@@ -2,152 +2,194 @@ Return-Path: <SRS0=I35j=26=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9013AC32771
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 10:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED290C32771
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 11:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5527720656
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 10:56:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="S0UUkW5E"
+	by mail.kernel.org (Postfix) with ESMTP id B94AA20656
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 11:11:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729743AbgAIK4C (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jan 2020 05:56:02 -0500
-Received: from mail-vi1eur05on2085.outbound.protection.outlook.com ([40.107.21.85]:6177
-        "EHLO EUR05-VI1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729609AbgAIK4C (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 9 Jan 2020 05:56:02 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=FKABXYGq4OjVd9qQ8DeAgvyTkH/chQmH7wuusZ4kKdNyAoDTI1WZS6cnq0+JLPKoi0lp18HmUJOcNFbWgeqHdxS1S/DonBQq5sNBUMvIBpgcgcuOfjIL8UpXHCb5+2w/cnU3BxppRsnnVGpoI0CHnScr84IIoWDVAJTcFBKvBQhYNAVfMDeoVWledYLdAVtt+n7ohndYHWHJcu0a6cvn6C8TT6LIaaiuzQ7/CU/SU3urBE5ZaFsk0h2IMcKK565If1gJ7+3Ffhu3iRgggCkETMOsEKoDp7PPOURzeDr/ZdheLediwAu8B6GkEp9fotyciXBd3OEqI+yhgDVp443LXw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CgYlhc7Gk3rUevxUCFgtT1heqpCnClB+4mXI9JUawW0=;
- b=iqhQ9LAURgRI9v7ImsXJLZn45opy810tl2zzqqft4FdMwhPZ3+JVqG7XF/q8ZyNvGAd0RGq9KxYVNpel+oBYZm4FIgGMZvlKniopR8q2+k3c1MOWVG9UkTHasOHBP+A4sSUfO/GofRbPI+D11yHOLsWfOYycydzPnzoeMo2xAjBgEU2w4xl7CEaAM5Xb9CxacChp6wYh8UKU3uUjrw1t+VTygl6uBoaeCMtcYptk04V2YXj7o/ILIe+tOb51XJNbSlLY3nFGcxQnr1zC1W7aE1GwIyyK+IncElb039z9vbNUXshpgN7myUT+Ua1B8TYK8q28HxsDu1ot+maplD6nkQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=CgYlhc7Gk3rUevxUCFgtT1heqpCnClB+4mXI9JUawW0=;
- b=S0UUkW5EmXiQO9e2OK5vURpmvHil6g7uy32+btK8WFmZQSfUwgwB22CdE6nyvePmbxfhivKXWVm3dz1tXlYp8c614nM3eHUoFNuwKSbAmwhzBgv4YFkfQPw3sNc4FpBc2EyGnaqfjADb9+Ey7Sg0p/GUve72s9tNzyEnCbdzWEo=
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com (20.178.202.151) by
- AM0PR04MB6324.eurprd04.prod.outlook.com (20.179.34.12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.9; Thu, 9 Jan 2020 10:55:59 +0000
-Received: from AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::6d52:5678:e02f:95f4]) by AM0PR04MB5779.eurprd04.prod.outlook.com
- ([fe80::6d52:5678:e02f:95f4%3]) with mapi id 15.20.2623.008; Thu, 9 Jan 2020
- 10:55:58 +0000
-Received: from localhost (89.37.124.34) by AM6P193CA0091.EURP193.PROD.OUTLOOK.COM (2603:10a6:209:88::32) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.2623.10 via Frontend Transport; Thu, 9 Jan 2020 10:55:58 +0000
-From:   Abel Vesa <abel.vesa@nxp.com>
-To:     Peng Fan <peng.fan@nxp.com>
-CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
+        id S1729739AbgAILLh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jan 2020 06:11:37 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:11158 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729108AbgAILLh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jan 2020 06:11:37 -0500
+Received: from [10.28.39.63] (10.28.39.63) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 9 Jan
+ 2020 19:11:59 +0800
+Subject: Re: [PATCH v5 5/5] clk: meson: a1: add support for Amlogic A1
+ Peripheral clock driver
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+CC:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH 0/4] clk: imx: imx8m: introduce
- imx8m_clk_hw_core_composite
-Thread-Topic: [PATCH 0/4] clk: imx: imx8m: introduce
- imx8m_clk_hw_core_composite
-Thread-Index: AQHVxtJpermqa5NGzEysq2aeSusjm6fiKRmA
-Date:   Thu, 9 Jan 2020 10:55:58 +0000
-Message-ID: <20200109105557.gntbgzj3efbqpjwf@fsr-ub1664-175>
-References: <1578563269-32710-1-git-send-email-peng.fan@nxp.com>
-In-Reply-To: <1578563269-32710-1-git-send-email-peng.fan@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM6P193CA0091.EURP193.PROD.OUTLOOK.COM
- (2603:10a6:209:88::32) To AM0PR04MB5779.eurprd04.prod.outlook.com
- (2603:10a6:208:131::23)
-x-originating-ip: [89.37.124.34]
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=abel.vesa@nxp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: 34a17818-7e82-4fd4-3f15-08d794f2825f
-x-ms-traffictypediagnostic: AM0PR04MB6324:|AM0PR04MB6324:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <AM0PR04MB6324FF8E8061A92F1A19B9EAF6390@AM0PR04MB6324.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:7691;
-x-forefront-prvs: 02778BF158
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(7916004)(376002)(39860400002)(366004)(136003)(346002)(396003)(189003)(199004)(6486002)(66476007)(66446008)(956004)(66556008)(5660300002)(66946007)(6496006)(81166006)(64756008)(53546011)(9686003)(478600001)(6862004)(4326008)(86362001)(8676002)(2906002)(186003)(16526019)(316002)(26005)(81156014)(44832011)(71200400001)(1076003)(8936002)(6636002)(33716001)(52116002)(54906003)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6324;H:AM0PR04MB5779.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 36Hp7ZAkqORd9O5wSMZdQ7gojPvhAqgGRRyQr/uHSkUsUX1+wxqVNyPaVgrO/Dco9j/rOf1YyBZQCxMyzqTsrOy+KNZbEw17eNN2UXUHImFlShtEvrokiEna3CGFKf/UfCWwlK0TC36RuZf9rbQiPV6IjqKqP/RwaaGPLiNB2tQtijNJg0BClRBl4NznUciwyz/K79J1jRRpOMRv3Mj79bRn64DDO9v+jSK4fdIecO+iYrOyivXQq4k+t6XiFiLBakF2H1wRKkIY/WJ+BuyGa/0z2j6uBVaIxECmBreLTIIyirwo9WTJt5mClvKlWs7hjce8xooBLCwuH9DW3GyR5QL+tuKVtusCoKcHWC0ZFKxPbAa6/Bm+kfMDyOy9ZRF/ACN2X0NC29U+iZ6QQC/E5N/GRQUmN76zrpzmoeML4HsiPr/VEdEjhy5/b3Ewv7NNW1ry72yi6/0XAurUY0wIcfQp53oHx8puYYYouOl+mRGc9wGv2vdQYvn1IKBTmD6c
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <205F1779450AE149A9D3ED27732F1C2A@eurprd04.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        <linux-kernel@vger.kernel.org>
+References: <20191227094606.143637-1-jian.hu@amlogic.com>
+ <20191227094606.143637-6-jian.hu@amlogic.com>
+ <CAFBinCB_0+k6rGxChpB77rPUrb-0mzxt_nQWXbiztCJnJq8XnQ@mail.gmail.com>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <5fc8e620-3d0d-c982-d506-f7234537ff0c@amlogic.com>
+Date:   Thu, 9 Jan 2020 19:11:59 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34a17818-7e82-4fd4-3f15-08d794f2825f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Jan 2020 10:55:58.8400
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: XK9fcP4xxo3+CmZHwNgquuA8ByzqBMP6D4sqqbqBdcOlDa5CYC3Lk3AJqQIE486PBiRIiWVoCPxJYKbjgeNs+w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6324
+In-Reply-To: <CAFBinCB_0+k6rGxChpB77rPUrb-0mzxt_nQWXbiztCJnJq8XnQ@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.63]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 20-01-09 09:51:49, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> To i.MX8M family, there are different types of clock slices,
-> bus/core/ip and etc. Currently, the imx8m_clk_hw_composite
-> api could only handle bus and ip clock slice, it could
-> not handle core slice. The difference is core slice not have
-> pre divider and the width of post divider is 3 bits.
->=20
-> To simplify code and reuse imx8m_clk_hw_composite, introduce a
-> flag IMX_COMPOSITE_CORE to differentiate the slices.
->=20
-> With this new helper, we could simplify i.MX8M SoC clk drivers.
->=20
 
-I like the simplification this patchset adds, but maybe we should
-keep the extra flags (or clock types) at the end of the API, so=20
-instead of imx8m_clk_hw_core_composite maybe we could use=20
-imx8m_clk_hw_composite_core.
 
-Other than that:
+On 2019/12/28 1:22, Martin Blumenstingl wrote:
+>   Hi Jian,
+> 
+> my comments and questions below
+> please keep in mind that I don't have access to the A1 datasheets, so
+> I may ask stupid questions :)
+> 
+> On Fri, Dec 27, 2019 at 10:47 AM Jian Hu <jian.hu@amlogic.com> wrote:
+> [...]
+>> +/* PLLs clock in gates, its parent is xtal */
+> yes. doesn't the code below describe exactly this (what is so special
+> about it that we need an extra comment)?
+It is a useless comment actually. I will remove it.
+There is a gate clock between the xtal clock and PLL clocks(and other 
+clocks)
+> 
+> [...]
+>> +static const struct clk_parent_data sys_clk_parents[] = {
+>> +       { .fw_name = "xtal" },
+>> +       { .fw_name = "fclk_div2"},
+>> +       { .fw_name = "fclk_div3"},
+>> +       { .fw_name = "fclk_div5"},
+> the last three values are missing a space before "}"
+> 
+OK, I will fix it.
+> [...]
+>> +       .hw.init = &(struct clk_init_data){
+>> +               .name = "sys_clk",
+>> +               .ops = &clk_regmap_mux_ro_ops,
+>> +               .parent_hws = (const struct clk_hw *[]) {
+>> +                       &a1_sys_a.hw, &a1_sys_b.hw,
+>> +               },
+>> +               .num_parents = 2,
+>> +               /*
+>> +                * This clock is used by APB bus which setted in Romcode
+> like in the PLL clkc patch:
+> - setted -> "is set"
+> - Romcode == boot ROM ?
+Yes, same with the PLL driver. Romcode is boot ROM.
+> 
+> [...]
+>> +static struct clk_regmap a1_rtc_32k_sel = {
+>> +       .data = &(struct clk_regmap_mux_data) {
+>> +               .offset = RTC_CTRL,
+>> +               .mask = 0x3,
+>> +               .shift = 0,
+>> +               .flags = CLK_MUX_ROUND_CLOSEST,
+> CLK_MUX_ROUND_CLOSEST means the common clock framework will also
+> accept rates greater than 32kHz.
+> is that fine for this case?
+Here is a reference to g12a-aoclkc.c
+The g12a_aoclk_32k_by_oscin_sel has the same flag.
+I am confused about the flag here.
 
-Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+The ceca and cecb clocks' parent is rtc_clk. It
+can be set to 32k, and it has been verified by
+clock measurement.
 
-> Peng Fan (4):
->   clk: imx: composite-8m: add imx8m_clk_hw_core_composite
->   clk: imx: imx8mq: use imx8m_clk_hw_core_composite
->   clk: imx: imx8mm: use imx8m_clk_hw_core_composite
->   clk: imx: imx8mn: use imx8m_clk_hw_core_composite
->=20
->  drivers/clk/imx/clk-composite-8m.c | 18 ++++++++++++++----
->  drivers/clk/imx/clk-imx8mm.c       | 17 +++++------------
->  drivers/clk/imx/clk-imx8mn.c       | 10 +++-------
->  drivers/clk/imx/clk-imx8mq.c       | 19 +++++--------------
->  drivers/clk/imx/clk.h              | 12 ++++++++++--
->  5 files changed, 37 insertions(+), 39 deletions(-)
->=20
-> --=20
-> 2.16.4
->=20
+> 
+> [...]
+>> +/*
+>> + * the second parent is sys_pll_div16, it will complete in the CPU clock,
+> I was confused by this but I assume you mean the parent with index 2?
+Yes, it is index 2, it is the third parent in datasheet. I will change it
+> 
+>> + * the forth parent is the clock measurement source, it relies on
+>> + * the clock measurement register configuration.
+> ...and parent with index 4 here
+Yes, it is index 4 .
+> 
+> [...]
+>> +static struct clk_regmap a1_pwm_a = {
+>> +       .data = &(struct clk_regmap_gate_data){
+>> +               .offset = PWM_CLK_AB_CTRL,
+>> +               .bit_idx = 8,
+>> +       },
+>> +       .hw.init = &(struct clk_init_data) {
+>> +               .name = "pwm_a",
+>> +               .ops = &clk_regmap_gate_ops,
+>> +               .parent_hws = (const struct clk_hw *[]) {
+>> +                       &a1_pwm_a_div.hw
+>> +               },
+>> +               .num_parents = 1,
+>> +               /*
+>> +                * The CPU working voltage is controlled by pwm_a
+>> +                * in BL2 firmware. add the CLK_IS_CRITICAL flag
+>> +                * to avoid changing at runtime.
+> on G12A and G12B Linux has to manage the CPU voltage regulator
+> can you confirm that for the A1 SoC this is really done by BL2? (I'm
+> wondering since A1 is newer than G12)
+For A1 ad401 board, the cpu voltage is controlled by PMU regulator. And 
+for A1 ad409 board, the cpu voltage is controlled by PWM regulator, The 
+PWM A channel feeds the cpu voltage, it is initialized in BL2. So it is 
+necessary to add critical flag.
+
+In G12A board, (arch/arm64/boot/dts/amlogic/meson-g12a-sei510.dts +194)
+the regulator is PWM regulator too.
+
+Compared with G12A, the PWM clock is in A1 periphs clock controller.
+However, the PWM clock is in PWM controller in G12A.
+We enable the clock by setting pwm register directly , it has not been 
+registered to the CCF.
+
+> 
+>> +/*
+>> + * spicc clk
+>> + *    div2   |\         |\       _____
+>> + *  ---------| |---DIV--| |     |     |    spicc out
+>> + *  ---------| |        | |-----|GATE |---------
+>> + *     ..... |/         | /     |_____|
+>> + *  --------------------|/
+>> + *                 24M
+> does that "div2" stand for fclk_div2?
+Yes, it is fclk_div2. I will replace it as fdiv2 for short
+> 
+> [...]
+>> +static const struct meson_eeclkc_data a1_periphs_data = {
+>> +               .regmap_clks = a1_periphs_regmaps,
+>> +               .regmap_clk_num = ARRAY_SIZE(a1_periphs_regmaps),
+>> +               .hw_onecell_data = &a1_periphs_hw_onecell_data,
+>> +};
+> same comment as for the PLL clkc: please drop this and use the
+> variables directly inside _probe to get rid of the struct
+> meson_eeclkc_data (so I won't be confused about "EE clocks" on A1,
+> while according to your description there's no "EE" domain)
+> 
+OK, I will remove meson_eeclkc_data here. And use the variables directly.
+> 
+> Martin
+> 
+> .
+> 
