@@ -6,23 +6,24 @@ X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1B2CC32771
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 06:54:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2210BC32771
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 07:54:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A16A52075D
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 06:54:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED7B22072E
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 07:54:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728105AbgAIGyv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jan 2020 01:54:51 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:19459 "EHLO
+        id S1728267AbgAIHyy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jan 2020 02:54:54 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:58274 "EHLO
         mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726541AbgAIGyv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jan 2020 01:54:51 -0500
+        with ESMTP id S1728184AbgAIHyy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jan 2020 02:54:54 -0500
 Received: from [10.28.39.63] (10.28.39.63) by mail-sz.amlogic.com (10.28.11.5)
  with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 9 Jan
- 2020 14:55:14 +0800
-Subject: Re: [PATCH v5 2/5] clk: meson: add support for A1 PLL clock ops
+ 2020 15:55:17 +0800
+Subject: Re: [PATCH v5 3/5] clk: meson: a1: add support for Amlogic A1 PLL
+ clock driver
 To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 CC:     Jerome Brunet <jbrunet@baylibre.com>,
         Neil Armstrong <narmstrong@baylibre.com>,
@@ -36,17 +37,17 @@ CC:     Jerome Brunet <jbrunet@baylibre.com>,
         Chandle Zou <chandle.zou@amlogic.com>,
         <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+        <linux-kernel@vger.kernel.org>
 References: <20191227094606.143637-1-jian.hu@amlogic.com>
- <20191227094606.143637-3-jian.hu@amlogic.com>
- <CAFBinCC4Fgn3QQ6H-TWO_Xx+USonzMDZDyvJBfYp-_6=pmKdLQ@mail.gmail.com>
+ <20191227094606.143637-4-jian.hu@amlogic.com>
+ <CAFBinCB2XF1unfEGbApuoXR3ZBRMwgc4EuqSjgKWKm_2G16S5g@mail.gmail.com>
 From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <ee163cd0-a05e-5147-c307-e9870535b1dd@amlogic.com>
-Date:   Thu, 9 Jan 2020 14:55:14 +0800
+Message-ID: <6d8b7bd4-87ea-46ad-0909-9803032580e4@amlogic.com>
+Date:   Thu, 9 Jan 2020 15:55:17 +0800
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCC4Fgn3QQ6H-TWO_Xx+USonzMDZDyvJBfYp-_6=pmKdLQ@mail.gmail.com>
+In-Reply-To: <CAFBinCB2XF1unfEGbApuoXR3ZBRMwgc4EuqSjgKWKm_2G16S5g@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -58,110 +59,85 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Martin
 
-Thanks for your review
 
-On 2019/12/28 0:53, Martin Blumenstingl wrote:
+On 2019/12/28 1:04, Martin Blumenstingl wrote:
 > Hi Jian,
 > 
 > On Fri, Dec 27, 2019 at 10:46 AM Jian Hu <jian.hu@amlogic.com> wrote:
 > [...]
->> @@ -294,9 +298,12 @@ static int meson_clk_pll_is_enabled(struct clk_hw *hw)
->>   {
->>          struct clk_regmap *clk = to_clk_regmap(hw);
->>          struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
->> +       int ret = 0;
->>
->> -       if (meson_parm_read(clk->map, &pll->rst) ||
->> -           !meson_parm_read(clk->map, &pll->en) ||
->> +       if (MESON_PARM_APPLICABLE(&pll->rst))
->> +               ret = meson_parm_read(clk->map, &pll->rst);
+>> +               .parent_data = &(const struct clk_parent_data){
+>> +                       .fw_name = "xtal_fixpll",
+>> +               },
+> in the Meson8b and G12A (I assume it's the same on GXBB, I didn't
+> check it) we have a space between " clk_parent_data)" and "{"
+> this applies to at least one more occurrence below
+> 
+I have checked G12A and Meson8b, there is a space.The space is missing 
+here, the same as other place. I will fix it in next version.
+> [...]
+>> +               /*
+>> +                * This clock is used by APB bus which setted in Romcode
+> nit-pick: I'm not sure about the grammar here: setted -> "is set"?
+> and to make sure I understand this correctly: do you mean the "boot
+> ROM" with "Romcode"?
+You are right, it is a mistake here. 'is set' is right.
+Yes, Romcode means boot ROM. I will change it to 'boot ROM code'
+> 
+> [...]
+>> +static int meson_a1_pll_probe(struct platform_device *pdev)
+>> +{
+>> +       const struct meson_eeclkc_data *data;
+> what do you need this "data" variable for?
+> 
+>> +       struct device *dev = &pdev->dev;
+>> +       struct resource *res;
+>> +       void __iomem *base;
+>> +       struct regmap *map;
+>> +       int ret, i;
 >> +
->> +       if (ret || !meson_parm_read(clk->map, &pll->en) ||
->>              !meson_parm_read(clk->map, &pll->l))
->>                  return 0;
-> I had to read this part twice to understand what it's doing because I
-> misunderstood what "ret" is used for (I thought that some "return ret"
-> is missing)
-> my proposal to make it easier to read:
-> ...
-> if (MESON_PARM_APPLICABLE(&pll->rst) &&
->      meson_parm_read(clk->map, &pll->rst))
->    return 0;
+>> +       data = of_device_get_match_data(dev);
+>> +       if (!data)
+>> +               return -EINVAL;
+>> +
+>> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+>> +
+>> +       base = devm_ioremap_resource(dev, res);
+>> +       if (IS_ERR(base))
+>> +               return PTR_ERR(base);
+>> +
+>> +       map = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
+>> +       if (IS_ERR(map))
+>> +              return PTR_ERR(map);
+>> +
+>> +       /* Populate regmap for the regmap backed clocks */
+>> +       for (i = 0; i < data->regmap_clk_num; i++)
+>> +               data->regmap_clks[i]->map = map;
+> why can't we use a1_pll_regmaps directly here?
 > 
-> if (!meson_parm_read(clk->map, &pll->en) ||
->      !meson_parm_read(clk->map, &pll->l))
->                   return 0;
-> ...
+OK, I will use it directly .
+>> +
+>> +       for (i = 0; i < data->hw_onecell_data->num; i++) {
+>> +               /* array might be sparse */
+>> +               if (!data->hw_onecell_data->hws[i])
+>> +                       continue;
+>> +
+>> +               ret = devm_clk_hw_register(dev, data->hw_onecell_data->hws[i]);
+> and why can't we use a1_pll_hw_onecell_data directly here?
 > 
-> please let me know what you think about this
-I was intended to use 'ret' to store the return value of pll->rst.
-
-If pll->rst exists, it will get it. Otherwise, the ret will be zero.
-
-Your proposal is a good way for it. I will use it.
+OK, I will use it directly.
+> [...]
+>> +static const struct meson_eeclkc_data a1_pll_data = {
+>> +               .regmap_clks = a1_pll_regmaps,
+>> +               .regmap_clk_num = ARRAY_SIZE(a1_pll_regmaps),
+>> +               .hw_onecell_data = &a1_pll_hw_onecell_data,
+>> +};
+> if _probe would access these directly then you can drop meson_eeclkc_data
+> that is a good thing in my opinion because I was confused by the
+> "eeclk" since the patch description says that there's no EE or AO
+> domain on the A1 SoCs
 > 
->> @@ -321,6 +328,23 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->>          /* do nothing if the PLL is already enabled */
->>          if (clk_hw_is_enabled(hw))
->>                  return 0;
->> +       /*
->> +        * Compared with the previous SoCs, self-adaption module current
->> +        * is newly added for A1, keep the new power-on sequence to enable the
->> +        * PLL.
->> +        */
->> +       if (MESON_PARM_APPLICABLE(&pll->current_en)) {
->> +               /* Enable the pll */
->> +               meson_parm_write(clk->map, &pll->en, 1);
->> +               udelay(10);
->> +               /* Enable the pll self-adaption module current */
->> +               meson_parm_write(clk->map, &pll->current_en, 1);
->> +               udelay(40);
->> +               /* Enable lock detect module */
->> +               meson_parm_write(clk->map, &pll->l_detect, 1);
->> +               meson_parm_write(clk->map, &pll->l_detect, 0);
->> +               goto out;
->> +       }
-> in all other functions you are skipping the pll->rst register by
-> checking for MESON_PARM_APPLICABLE(&pll->rst)
-> I like that because it's a pattern which is easy to follow
-> 
-> do you think we can make this part consistent with that?
-> I'm thinking of something like this (not compile-tested and I dropped
-> all comments, just so you get the idea):
-It is a good idea. I will test it.
-> ...
-> if (MESON_PARM_APPLICABLE(&pll->rst)
->    meson_parm_write(clk->map, &pll->rst, 1);
-> 
-> meson_parm_write(clk->map, &pll->en, 1);
-> 
-> if (MESON_PARM_APPLICABLE(&pll->rst))
->    meson_parm_write(clk->map, &pll->rst, 0);
-> 
-> if (MESON_PARM_APPLICABLE(&pll->current_en))
->    meson_parm_write(clk->map, &pll->current_en, 1);
-> 
-> if (MESON_PARM_APPLICABLE(&pll->l_detect)) {
->    meson_parm_write(clk->map, &pll->l_detect, 1);
->    meson_parm_write(clk->map, &pll->l_detect, 0);
-> }
-> 
-> if (meson_clk_pll_wait_lock(hw))
-> ...
-> 
-> I see two (and a half) benefits here:
-> - if there's a PLL with neither the pll->current_en nor the pll->rst
-> registers then you get support for this implementation for free
-> - the if (MESON_PARM_APPLICABLE(...)) pattern is already used in the
-> driver, but only for one register (in your example when
-> MESON_PARM_APPLICABLE(&pll->current_en) exists you also modify the
-> pll->l_detect register, which I did not expect)
-> - only counts half: no use of "goto", which in my opinion makes it
-> very easy to read (just read from top to bottom, checking each "if")
-> 
-I see, I will verify it.
+OK, I will remove it and verify it.
 > 
 > Martin
 > 
