@@ -2,134 +2,79 @@ Return-Path: <SRS0=I35j=26=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AA67C282DD
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 17:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C90C282DD
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 18:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3034C2072A
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 17:18:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Oxg9sk0T"
+	by mail.kernel.org (Postfix) with ESMTP id 707FC2072A
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 18:19:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1578593951;
+	bh=N5ayqb9hJI/an6dqyr0YYn3Ng/ODIBWl27ADDvsd2M8=;
+	h=In-Reply-To:References:Cc:Subject:To:From:Date:List-ID:From;
+	b=tJZzwqFWUq4sYcQe810ihGzN0rDsjrqfoLrBqTqNqRMGNrXyExVQ0b7zMPadrfLYg
+	 SiZU/rrmEolHNdpQHg2avrcgnHoiv5dwetwfN/kfE9P034l6yDedxFH+gEp2UuHQhi
+	 ld0Qff0OSHIo0W9W0wIEG+o4ydbNLOO8r4Wy77ik=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731630AbgAIRST (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jan 2020 12:18:19 -0500
-Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:15466 "EHLO
-        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728951AbgAIRST (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jan 2020 12:18:19 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e1760480001>; Thu, 09 Jan 2020 09:18:00 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 09 Jan 2020 09:18:18 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 09 Jan 2020 09:18:18 -0800
-Received: from [10.2.165.201] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 9 Jan
- 2020 17:18:17 +0000
-Subject: Re: [PATCH v7 05/21] clk: tegra: Fix Tegra PMC clock out parents
-To:     Nicolas Chauvet <kwizart@gmail.com>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <digetx@gmail.com>, <mperttunen@nvidia.com>,
-        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <mark.rutland@arm.com>,
-        <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>,
-        Manikanta Maddireddy <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <1578457515-3477-6-git-send-email-skomatineni@nvidia.com>
- <CABr+WT=qP1BJUfzgmr4AzN18Zp-trMEStF6SQ+AH7+aYBUuUww@mail.gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <1af4584b-70ae-c439-8f8f-bbeceb3cb036@nvidia.com>
-Date:   Thu, 9 Jan 2020 09:18:16 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S2388436AbgAISTL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jan 2020 13:19:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57754 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730290AbgAISTL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 9 Jan 2020 13:19:11 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59B2B206ED;
+        Thu,  9 Jan 2020 18:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1578593950;
+        bh=N5ayqb9hJI/an6dqyr0YYn3Ng/ODIBWl27ADDvsd2M8=;
+        h=In-Reply-To:References:Cc:Subject:To:From:Date:From;
+        b=LBHmaoC2zH/CzzWb9JWpt3BWiP9bRmNAqVVCrvo5nPvRajrPLr/UA9JorxddhYYG4
+         V3SmrfP/HCTrfV9X2nvi3H35hMQnwpKU5K/M4/ZZURtquBsM+ItMYrXnxRIXasQx6d
+         7qLATly7XljbfSva+mo51us2JMAhJdo8d5gYnbz4=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <CABr+WT=qP1BJUfzgmr4AzN18Zp-trMEStF6SQ+AH7+aYBUuUww@mail.gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL111.nvidia.com (172.20.187.18) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1578590280; bh=jOhKnx9g9TIFBclihu2Z+5VX5VY2h3UI9ybvBvQojao=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=Oxg9sk0T9L/aCRfpgKJnxWUvdS8C0WpPqXPwPXMvSxy2sQAE3pijQ4fWoeue4ZGZD
-         5oQoycnWQy+KT8z48sW4zvxopoaOYu+DNxLK9aP0fNtAUAn4FU0i8AYFeIBdHbGB6J
-         ve7QJly6Tt+40AKzjunYLv2U5YH7IymCJXmbDKzGVfUMwQywVNdGNNsx9/qEFJ501B
-         wyjeN/i+uDaQK9ScKkcACpdj2FT+owD/wMAr8VcwZS93/QeR3w7X+D0VtscCDSZ/e1
-         gqjW6THdx4ar01v0isu5/wyV6J6MXgj3VpwphM5fZBmAFBaQD56u+EOWX/ibIx1pQl
-         MqkIYklvekXxw==
+In-Reply-To: <20200108110218.GT3040@piout.net>
+References: <20191229202907.335931-1-alexandre.belloni@bootlin.com> <20200106030905.8643221582@mail.kernel.org> <20200108110218.GT3040@piout.net>
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: at91: add sama5d3 pmc driver
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+User-Agent: alot/0.8.1
+Date:   Thu, 09 Jan 2020 10:19:09 -0800
+Message-Id: <20200109181910.59B2B206ED@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+Quoting Alexandre Belloni (2020-01-08 03:02:18)
+> On 05/01/2020 19:09:04-0800, Stephen Boyd wrote:
+> > > +       return;
+> > > +
+> > > +err_free:
+> > > +       pmc_data_free(sama5d3_pmc);
+> > > +}
+> > > +CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_=
+setup);
+> >=20
+> > Any reason this can't be a platform driver?
+> >=20
+>=20
+> As for the other PMC driver, we need a few of the peripheral clocks very
+> early which means that we would have to register most of the clock tree
+> registered early leaving only a few clocks to be registered by a
+> platform driver.
+>=20
 
-On 1/8/20 12:34 AM, Nicolas Chauvet wrote:
-> Le mer. 8 janv. 2020 =C3=A0 05:27, Sowjanya Komatineni
-> <skomatineni@nvidia.com> a =C3=A9crit :
->> Tegra PMC clock out parents are osc, osc_div2, osc_div4 and extern
->> clock.
->>
->> Clock driver is using incorrect parents clk_m, clk_m_div2, clk_m_div4
->> for PMC clocks.
->>
->> This patch fixes this.
->>
->> Tested-by: Dmitry Osipenko <digetx@gmail.com>
->> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->> ---
->>   drivers/clk/tegra/clk-tegra-pmc.c | 12 ++++++------
->>   1 file changed, 6 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/tegra/clk-tegra-pmc.c b/drivers/clk/tegra/clk-t=
-egra-pmc.c
->> index bec3e008335f..5e044ba1ae36 100644
->> --- a/drivers/clk/tegra/clk-tegra-pmc.c
->> +++ b/drivers/clk/tegra/clk-tegra-pmc.c
->> @@ -49,16 +49,16 @@ struct pmc_clk_init_data {
->>
->>   static DEFINE_SPINLOCK(clk_out_lock);
->>
->> -static const char *clk_out1_parents[] =3D { "clk_m", "clk_m_div2",
->> -       "clk_m_div4", "extern1",
->> +static const char *clk_out1_parents[] =3D { "osc", "osc_div2",
->> +       "osc_div4", "extern1",
->>   };
->>
->> -static const char *clk_out2_parents[] =3D { "clk_m", "clk_m_div2",
->> -       "clk_m_div4", "extern2",
->> +static const char *clk_out2_parents[] =3D { "osc", "osc_div2",
->> +       "osc_div4", "extern2",
->>   };
->>
->> -static const char *clk_out3_parents[] =3D { "clk_m", "clk_m_div2",
->> -       "clk_m_div4", "extern3",
->> +static const char *clk_out3_parents[] =3D { "osc", "osc_div2",
->> +       "osc_div4", "extern3",
->>   };
->>
->>   static struct pmc_clk_init_data pmc_clks[] =3D {
->> --
->> 2.7.4
-> Out of curiosity, this patch touch the clk-tegra-pmc.c file which is
-> later removed (by patch 11).
-> Is this change made for bugfix ? Is there a stable tag missing ?
-Will resend final version with stable tags for patches that should be=20
-backported.
+What peripheral clks? Can you add a comment to the code?
+
