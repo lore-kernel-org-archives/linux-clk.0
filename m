@@ -2,144 +2,87 @@ Return-Path: <SRS0=I35j=26=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2210BC32771
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 07:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE4BC33CA1
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 08:05:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED7B22072E
-	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 07:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8FEB12072A
+	for <linux-clk@archiver.kernel.org>; Thu,  9 Jan 2020 08:05:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Q6RVH8WN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbgAIHyy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 9 Jan 2020 02:54:54 -0500
-Received: from mail-sz.amlogic.com ([211.162.65.117]:58274 "EHLO
-        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728184AbgAIHyy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jan 2020 02:54:54 -0500
-Received: from [10.28.39.63] (10.28.39.63) by mail-sz.amlogic.com (10.28.11.5)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Thu, 9 Jan
- 2020 15:55:17 +0800
-Subject: Re: [PATCH v5 3/5] clk: meson: a1: add support for Amlogic A1 PLL
- clock driver
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-CC:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191227094606.143637-1-jian.hu@amlogic.com>
- <20191227094606.143637-4-jian.hu@amlogic.com>
- <CAFBinCB2XF1unfEGbApuoXR3ZBRMwgc4EuqSjgKWKm_2G16S5g@mail.gmail.com>
-From:   Jian Hu <jian.hu@amlogic.com>
-Message-ID: <6d8b7bd4-87ea-46ad-0909-9803032580e4@amlogic.com>
-Date:   Thu, 9 Jan 2020 15:55:17 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1728331AbgAIIFk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 9 Jan 2020 03:05:40 -0500
+Received: from mail25.static.mailgun.info ([104.130.122.25]:54930 "EHLO
+        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728340AbgAIIFj (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 9 Jan 2020 03:05:39 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1578557139; h=Content-Transfer-Encoding: Content-Type:
+ MIME-Version: Message-Id: Date: Subject: To: From: Sender;
+ bh=BuUdAvhMRovZFUB4BJ0UiwY2Y6k8o8mctzHNiqvFTHc=; b=Q6RVH8WN4REMDA4J4LCWSw2xR2U6Wp5gFSeKZ1oZnlCwSFWrLHVbvrgzGtlWuCpTG3jOgIhU
+ Y8XJ0MdFh2MHGw1mm9fpyrfP2efeLy6gk42E195lbtO1TLt2VLaF6YWeJzaYjvLQRSzMZiAs
+ iXGgEJg8fOiZaf7umOccCk+LtlQ=
+X-Mailgun-Sending-Ip: 104.130.122.25
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e16ded1.7fc6d05c2148-smtp-out-n01;
+ Thu, 09 Jan 2020 08:05:37 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id E44E8C447A5; Thu,  9 Jan 2020 08:05:35 +0000 (UTC)
+Received: from srichara1-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: sricharan)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id BD78EC4479C;
+        Thu,  9 Jan 2020 08:05:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org BD78EC4479C
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=sricharan@codeaurora.org
+From:   Sricharan R <sricharan@codeaurora.org>
+To:     agross@kernel.org, devicetree@vger.kernel.org,
+        linus.walleij@linaro.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-soc@vger.kernel.org, robh+dt@kernel.org,
+        sivaprak@codeaurora.org, sricharan@codeaurora.org, sboyd@kernel.org
+Subject: [PATCH V2 0/2] Add Global clock controller support for IPQ6018
+Date:   Thu,  9 Jan 2020 13:35:19 +0530
+Message-Id: <1578557121-423-1-git-send-email-sricharan@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCB2XF1unfEGbApuoXR3ZBRMwgc4EuqSjgKWKm_2G16S5g@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.28.39.63]
-X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
- (10.28.11.5)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The IPQ6018 is Qualcomm’s 802.11ax/u2019s SoC for Routers,
+Gateways and Access Points.
 
+[V2]
+ * Addressed sparse warnings reported by Kbuild test robot.
 
-On 2019/12/28 1:04, Martin Blumenstingl wrote:
-> Hi Jian,
-> 
-> On Fri, Dec 27, 2019 at 10:46 AM Jian Hu <jian.hu@amlogic.com> wrote:
-> [...]
->> +               .parent_data = &(const struct clk_parent_data){
->> +                       .fw_name = "xtal_fixpll",
->> +               },
-> in the Meson8b and G12A (I assume it's the same on GXBB, I didn't
-> check it) we have a space between " clk_parent_data)" and "{"
-> this applies to at least one more occurrence below
-> 
-I have checked G12A and Meson8b, there is a space.The space is missing 
-here, the same as other place. I will fix it in next version.
-> [...]
->> +               /*
->> +                * This clock is used by APB bus which setted in Romcode
-> nit-pick: I'm not sure about the grammar here: setted -> "is set"?
-> and to make sure I understand this correctly: do you mean the "boot
-> ROM" with "Romcode"?
-You are right, it is a mistake here. 'is set' is right.
-Yes, Romcode means boot ROM. I will change it to 'boot ROM code'
-> 
-> [...]
->> +static int meson_a1_pll_probe(struct platform_device *pdev)
->> +{
->> +       const struct meson_eeclkc_data *data;
-> what do you need this "data" variable for?
-> 
->> +       struct device *dev = &pdev->dev;
->> +       struct resource *res;
->> +       void __iomem *base;
->> +       struct regmap *map;
->> +       int ret, i;
->> +
->> +       data = of_device_get_match_data(dev);
->> +       if (!data)
->> +               return -EINVAL;
->> +
->> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
->> +
->> +       base = devm_ioremap_resource(dev, res);
->> +       if (IS_ERR(base))
->> +               return PTR_ERR(base);
->> +
->> +       map = devm_regmap_init_mmio(dev, base, &clkc_regmap_config);
->> +       if (IS_ERR(map))
->> +              return PTR_ERR(map);
->> +
->> +       /* Populate regmap for the regmap backed clocks */
->> +       for (i = 0; i < data->regmap_clk_num; i++)
->> +               data->regmap_clks[i]->map = map;
-> why can't we use a1_pll_regmaps directly here?
-> 
-OK, I will use it directly .
->> +
->> +       for (i = 0; i < data->hw_onecell_data->num; i++) {
->> +               /* array might be sparse */
->> +               if (!data->hw_onecell_data->hws[i])
->> +                       continue;
->> +
->> +               ret = devm_clk_hw_register(dev, data->hw_onecell_data->hws[i]);
-> and why can't we use a1_pll_hw_onecell_data directly here?
-> 
-OK, I will use it directly.
-> [...]
->> +static const struct meson_eeclkc_data a1_pll_data = {
->> +               .regmap_clks = a1_pll_regmaps,
->> +               .regmap_clk_num = ARRAY_SIZE(a1_pll_regmaps),
->> +               .hw_onecell_data = &a1_pll_hw_onecell_data,
->> +};
-> if _probe would access these directly then you can drop meson_eeclkc_data
-> that is a good thing in my opinion because I was confused by the
-> "eeclk" since the patch description says that there's no EE or AO
-> domain on the A1 SoCs
-> 
-OK, I will remove it and verify it.
-> 
-> Martin
-> 
-> .
-> 
+This series adds Global clock controller support for ipq6018.
+
+Sricharan R (2):
+  clk: qcom: Add DT bindings for ipq6018 gcc clock controller
+  clk: qcom: Add ipq6018 Global Clock Controller support
+
+ .../devicetree/bindings/clock/qcom,gcc.yaml        |    3 +-
+ drivers/clk/qcom/Kconfig                           |    8 +
+ drivers/clk/qcom/Makefile                          |    1 +
+ drivers/clk/qcom/gcc-ipq6018.c                     | 4643 ++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-ipq6018.h       |  262 ++
+ include/dt-bindings/reset/qcom,gcc-ipq6018.h       |  157 +
+ 6 files changed, 5073 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/clk/qcom/gcc-ipq6018.c
+ create mode 100644 include/dt-bindings/clock/qcom,gcc-ipq6018.h
+ create mode 100644 include/dt-bindings/reset/qcom,gcc-ipq6018.h
+
+-- 
+1.9.1
