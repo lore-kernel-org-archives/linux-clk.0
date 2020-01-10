@@ -2,119 +2,192 @@ Return-Path: <SRS0=Bq/F=27=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F09C282DD
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 17:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4C6FC282DD
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 22:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1572072E
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 17:12:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578676364;
-	bh=kKeXIrCjLnzo0TiSj4u3FOjbFcwFK2qdWHisOUcq/BE=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=eis0+P5a6IMorGdajr/fxDCiFsJclffdTnVZBM57ypAzbDLa4f6qx/bsB23ZPgdw5
-	 pRjZIgSL6V1LOYm03gwWxGY2cmRNnnonXXVrAScL+iLcdAlJAv/nuuVdIYt8kY/Tqu
-	 Qm0B5cgTcb9+7gcLRJk11glnCpj1NE9L+D1a9c1U=
+	by mail.kernel.org (Postfix) with ESMTP id 7019C2072E
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 22:07:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qz1/Pb4p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726463AbgAJRMn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jan 2020 12:12:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54504 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726066AbgAJRMn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:12:43 -0500
-Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A47D720838;
-        Fri, 10 Jan 2020 17:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578676363;
-        bh=kKeXIrCjLnzo0TiSj4u3FOjbFcwFK2qdWHisOUcq/BE=;
-        h=Date:From:To:Cc:Subject:From;
-        b=f6ssEJjmpAaawy/bbJuUA36jMLkQTvz8EbBcuQ5ZUUHwH3SyAw9VjRef7ksv91pu2
-         4XtIMU4B04XX6JzI4WC0Tw6OkAVkZZpfe5vb68DPM3IIlDFMsMmXvZXQhLFL8hy6yD
-         HbgfO/wHIvRe7gq7IyD6FAtAMAdATkA8dwvtB3v8=
-Date:   Fri, 10 Jan 2020 18:12:40 +0100
-From:   Maxime Ripard <mripard@kernel.org>
-To:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-Subject: [GIT PULL] Allwinner Clock Fixes for 5.5
-Message-ID: <918a4585-19f8-4753-abb1-b71702877ddf.lettre@localhost>
+        id S1727913AbgAJWHP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jan 2020 17:07:15 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:44727 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727904AbgAJWF4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jan 2020 17:05:56 -0500
+Received: by mail-lj1-f193.google.com with SMTP id u71so3637096lje.11;
+        Fri, 10 Jan 2020 14:05:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=8pDdBlhWNVam1EjlfmhvY4SQpYPYOi2Ig/s8K41IUaw=;
+        b=Qz1/Pb4pC7P03RqKsGpIAItdR8xSpvEw582sN51S+81oV/Cg0oj3Wbre36Ai2mjRpu
+         rV9CgEg+Oy4cvqaQfakp1zaqFz1he+s2WuQgWrTQo/xLQks+ABogBFcBsT6/5cRPsivB
+         UWDR+rIfTXKqSm22Ycz4I5nVpPb2SBPC7Vr6E+6dRiJuI8Pr2kCPure9YrWJXHToykki
+         v6S1/BG4U34CMKYXuzWqU0epDaK9G5Voe7CQhay/gaO/7FnfvZODb6VsDThPn2s8nDW1
+         Y57yG9U2VAnkOmbbbPpwV00YHkn4cVxzCwA6WWwJoRhose2uVMgBVZ5+cpsLQEYO7zJe
+         iyIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=8pDdBlhWNVam1EjlfmhvY4SQpYPYOi2Ig/s8K41IUaw=;
+        b=UwDWQE2N/t3bB14+bgzGUHCHa7qmSCIfWfCsds5QgxlYs9/senIO2+3ohzCxIhjmgs
+         oyN4sOMW6R5BGj9S/YV3x4iXme5c8yGIiKilfR+0Hptwik96ARrKW2D3TeWOR1CdJ93j
+         HpHtZ5nc6zT4tq+Efz0p9PdRrjf8nPVaROAS+G1TBifVQ5piTZQfK7HEwwyipd9yfi1g
+         Re6Tfd4iCUqLzf8SrcE6Ymv+xCf2vLL2rMopQeYtKswWahUI72KcXtiLbNIWTwPsJYGW
+         BczvG9hSHma8f+5mMTqs234Tn/QejiANfv+D2Ni5A2QHCeiVbbOGAkxG3KIVjgwvL53l
+         899A==
+X-Gm-Message-State: APjAAAUrt1+OWmIO0VjsOFYk787KbkOr5dxdK7vXJkw6ujlZak2GQreZ
+        RhDxsZpwqAtmOOGnY32LJLzogpxW
+X-Google-Smtp-Source: APXvYqzPGa94FAtfR4u0tGbPaN4w7oHlnvLScAjWCQIR8bGDXUCVaLsQZU5pIJLQGcAwLpX58QtR0g==
+X-Received: by 2002:a2e:81d0:: with SMTP id s16mr3826511ljg.166.1578693953408;
+        Fri, 10 Jan 2020 14:05:53 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id r2sm1654055lfn.13.2020.01.10.14.05.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 14:05:52 -0800 (PST)
+Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
+ audio mclk
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
+        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
+ <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
+ <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
+ <a3c5293b-9ed4-3266-f792-38b980e54b1e@nvidia.com>
+ <745b8c7b-4fe3-c9ea-284e-b89546e8ad87@nvidia.com>
+ <705edf9b-d1bc-8090-017e-fa4ad445f9fb@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <135f0c0b-86d1-9b1a-af02-c14c4b5308c4@gmail.com>
+Date:   Sat, 11 Jan 2020 01:05:50 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
-Content-Disposition: inline
+In-Reply-To: <705edf9b-d1bc-8090-017e-fa4ad445f9fb@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+10.01.2020 20:04, Sowjanya Komatineni пишет:
+> 
+> On 1/9/20 10:52 AM, Sowjanya Komatineni wrote:
+>>
+>>
+>> On 1/7/20 10:28 PM, Sameer Pujar wrote:
+>>>
+>>> On 1/8/2020 11:18 AM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 1/7/20 9:34 PM, Sameer Pujar wrote:
+>>>>>
+>>>>> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
+>>>>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc
+>>>>>> clocks
+>>>>>> are moved to Tegra PMC driver with pmc as clock provider and using
+>>>>>> pmc
+>>>>>> clock ids.
+>>>>>>
+>>>>>> New device tree uses clk_out_1 from pmc clock provider.
+>>>>>>
+>>>>>> So, this patch adds implementation for mclk fallback to extern1 when
+>>>>>> retrieving mclk returns -ENOENT to be backward compatible of new
+>>>>>> device
+>>>>>> tree with older kernels.
+>>>>>>
+>>>>>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>> ---
+>>>>>>   sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+>>>>>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> index 9cfebef74870..9a5f81039491 100644
+>>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct
+>>>>>> tegra_asoc_utils_data *data,
+>>>>>>       data->clk_cdev1 = devm_clk_get(dev, "mclk");
+>>>>>>       if (IS_ERR(data->clk_cdev1)) {
+>>>>>>           dev_err(data->dev, "Can't retrieve clk cdev1\n");
+>>>>>
+>>>>> This error print can be moved inside below if, when this actually
+>>>>> meant to be an error condition.
+>>>>>
+>>>> Want to show error even if mclk retrieval returns ENOENT to clearly
+>>>> indicate mclk does not exist along with message of falling back to
+>>>> extern1.
+>>>
+>>> Yes, but falling back essentially means 'mclk' is not available and
+>>> fallback print is not an error.
+>>> Not a major issue though, you can consider updating. Otherwise LGTM.
+>>>
+>> Will update
+>>>>>> -        return PTR_ERR(data->clk_cdev1);
+>>>>>> +        if (PTR_ERR(data->clk_cdev1) != -ENOENT)
+>>>>>> +            return PTR_ERR(data->clk_cdev1);
+>>>>>> +        /* Fall back to extern1 */
+>>>>>> +        data->clk_cdev1 = devm_clk_get(dev, "extern1");
+>>>>>> +        if (IS_ERR(data->clk_cdev1)) {
+>>>>>> +            dev_err(data->dev, "Can't retrieve clk extern1\n");
+>>>>>> +            return PTR_ERR(data->clk_cdev1);
+>>>>>> +        }
+>>>>>> +
+>>>>>> +        dev_err(data->dev, "Falling back to extern1\n");
+>>>>>
+>>>>> This can be a info print?
+>>>>
+>> Will use dev_info
+>>>>>>       }
+>>>>>>         /*
+>>
+>> Dmitry/Rob, there was discussion in v3 regarding backporting mclk
+>> fallback.
+>>
+>> Dmitry wanted Rob to confirm on this
+>>
+>> I think openSUSE Leap could be one of those distros that use LTS kernel
+>> with newer device-trees, but that's not 100%. Maybe Rob could help
+>> clarifying that.
+>>
+>> Dmitry/Rob, Can you please confirm if mclk fallback patch need
+>> backport to have new device tree work with old kernels?
+>>
+> Dmitry,
+> 
+> Can you please confirm if we need to backport this mclk fallback patch?
+> 
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Seems only T210 was making use of the CaR's TEGRA*_CLK_CLK_OUT_*, thus
+the backporting isn't needed.
 
-Hi Mike, Stephen,
-
-Happy New Year!
-
-Please pull the following changes for the current release.
-
-Thanks!
-Maxime
-
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
-
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-fixes-for-5.5
-
-for you to fetch changes up to 0c545240aebc2ccb8f661dc54283a14d64659804:
-
-  clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order (2020-01-02 10:28:47 +0100)
-
-----------------------------------------------------------------
-Our usual set of fixes for Allwinner, to fix the number of reported
-clocks on the v3s, fixing the external clock on the R40, and some
-fixes for the AR100 co-processor clocks.
-
-----------------------------------------------------------------
-Chen-Yu Tsai (1):
-      clk: sunxi-ng: r40: Allow setting parent rate for external clock outputs
-
-Samuel Holland (3):
-      clk: sunxi-ng: sun8i-r: Fix divider on APB0 clock
-      clk: sunxi-ng: h6-r: Simplify R_APB1 clock definition
-      clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order
-
-Yunhao Tian (1):
-      clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
-
-
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 16 +++-------------
- drivers/clk/sunxi-ng/ccu-sun8i-r.c     | 21 +++------------------
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c   |  6 ++++--
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c   |  4 ++--
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.h   |  2 --
- 5 files changed, 12 insertions(+), 37 deletions(-)
-
---4Ckj6UjgE2iN1+kY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhiwiAAKCRDj7w1vZxhR
-xRGHAPwONcRU+W+ushufBb6rKGNFg8z9oS++5EPoXnBPlbFWQQEAoD7G69YPfgx4
-rEV8huRRK/hYaOBV2Za9FF5JLM5AawE=
-=96f2
------END PGP SIGNATURE-----
-
---4Ckj6UjgE2iN1+kY--
+Also, please use 'git rebase --exec make ...' to make sure that all
+patches are compiling without problems. The removal of the legacy clock
+IDs should be done after the device-trees changes, otherwise it looks
+like DTBs compilation will fail. It's possible that the order of the
+patches could be changed if Thierry will chose to split this series into
+several pull requests, nevertheless all patches should compile and work
+in the original order.
