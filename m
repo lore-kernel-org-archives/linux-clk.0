@@ -2,205 +2,182 @@ Return-Path: <SRS0=Bq/F=27=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0817C33CA4
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 14:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D4FC282DD
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 15:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF8B20721
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 14:55:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 292BA20721
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 15:37:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZwSnLpKa"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vRay9pvF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728327AbgAJOzG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jan 2020 09:55:06 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37382 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728383AbgAJOyv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jan 2020 09:54:51 -0500
-Received: by mail-lf1-f65.google.com with SMTP id b15so1688440lfc.4;
-        Fri, 10 Jan 2020 06:54:49 -0800 (PST)
+        id S1728297AbgAJPhB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jan 2020 10:37:01 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:38548 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728244AbgAJPhB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jan 2020 10:37:01 -0500
+Received: by mail-wm1-f66.google.com with SMTP id u2so2434554wmc.3
+        for <linux-clk@vger.kernel.org>; Fri, 10 Jan 2020 07:37:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=0gvZHliErrU7djUiz1bUBUU13O2uF7FKyxCjuMcMz4A=;
-        b=ZwSnLpKaKb6q4r7zGNWe7D5oMy4xJbxw62JlSACoi+64rbdXXBIpYyPqTqP1l2jnoo
-         oFI1qdzwPLQgcpjHA/MkHpdyxcu3wUfYPWc17x1oXRJ8RQGCklBYvNrrxGcrSZCXlUcJ
-         IypPLhtptAxQ1LzaPeFulZ9PO0X1kokI4CU0NkIu6MyRe+5kMLTjRvnGWXsPmV36CxHy
-         lxGRd1Cl1WPtVZoW9YQvs7KRzno2qiQSSW3XLuTVOJGH2rtIy3bF4M4R3pJrHbRLxZ6c
-         hQnLHvNgEPuq56C+mShBGJlIaK1m3hd3z34JoU43ZdW4pR1HnfBOfPXgCtu320IihwQM
-         Wgng==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=references:user-agent:from:to:cc:subject:in-reply-to:date
+         :message-id:mime-version;
+        bh=pEddeOiXJFcjUAbR7H9RaoBSbQx3hSBx3dFhHIC3P9A=;
+        b=vRay9pvF3Zmr+rpl6zT5EZiGH0qGpBk8haDxTuGjq30RxDXk29mHCiY/1I6BmPe/s0
+         6oCiokpUOrptCo5UKbfe1R45I8H85IKWEa/krQUDtvQrVnyp3ThoHIMQmya/HxNjNhx9
+         dyeLepzaVDmRjEFT4YjqE8RJj+jZVDRqU/KZ8IvcsjfvS+AIWgvOCysh/huOUmmhTdpA
+         7WCsf9iN4DEc3UaCWGOn2Dg9HmvYl7g0r3QnorYAthcjA7ZgvWFhwhxWpESaMpdCz0Oz
+         Z15wbsGKjP6FazqS3yuA/hoe1BbFenY98F9HnJAP4YWlbLnw/iMcH+Ef7cRXVXjwG/u+
+         mKog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=0gvZHliErrU7djUiz1bUBUU13O2uF7FKyxCjuMcMz4A=;
-        b=F7Lv1vRoGJAa5CrWFPaPkSMxoO/iTimjPrDjJf2tW518Urgm/bPqIuyuXwgB4/UEUx
-         pfMqTUaehTavyITwh/imATnXEVOnBdgaQva5XmKGpdla71Aj1oQNxGYzjTbkgdJf2dhq
-         e3rWDPjIw/80HarBWX5Rhb3fXEviyzs+wsoiymKCRneAFFibkhicGyqDQ+tdii9dYpFA
-         /uU0aELSw99SYGTXwfmuUApiBGjsU6NAHu6WY+cgyqy5qstpTKCMBU8SS/1qZM9Hebe1
-         /v2YcUGcTAZe0EG61msLNO5nfB6wUJmFu8qZ2Cz8YFbrgnKM0q3WZ7x0yk4lgRyURTbT
-         KB8A==
-X-Gm-Message-State: APjAAAUt12uO11Yqbo/1u8FMkvg7L8p+jW5+8MxDjOB8CIjY7ge8HtaT
-        EBsUIEWMllxnNHAKzhjunomsvygo
-X-Google-Smtp-Source: APXvYqxePfSFGAZu4SWy5PyGmHGomgkEOZPqNm3XdZH9IjoYpGYtGKRWcHyDO7lwvXnVKadQOSjIEQ==
-X-Received: by 2002:a05:6512:244:: with SMTP id b4mr2579177lfo.85.1578668087958;
-        Fri, 10 Jan 2020 06:54:47 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id y14sm1118286ljk.46.2020.01.10.06.54.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 Jan 2020 06:54:47 -0800 (PST)
-Subject: Re: [PATCH v7 00/21] Move PMC clocks into Tegra PMC driver
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
-        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
-        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
-        markz@nvidia.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <4e9fab30-14b5-bf1f-dc91-fd57ef614503@gmail.com>
- <61a78ba8-4cc3-f6a6-513b-36daa9be32f0@nvidia.com>
- <37a9676b-e0e5-7e80-5ee4-abfca361dcf7@nvidia.com>
- <62751d2d-2b7d-509b-e236-363d2bb29b02@nvidia.com>
- <880b2e8a-aa55-40f3-7502-24392b88e53f@nvidia.com>
- <738f42e2-7135-b111-5863-1cb15aa96c18@nvidia.com>
- <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <06919c0e-d0a5-5cf6-ba94-758fe9e1cdd6@gmail.com>
-Date:   Fri, 10 Jan 2020 17:54:45 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:references:user-agent:from:to:cc:subject
+         :in-reply-to:date:message-id:mime-version;
+        bh=pEddeOiXJFcjUAbR7H9RaoBSbQx3hSBx3dFhHIC3P9A=;
+        b=XSETgWcFn1QnYTRbjE4zXXZFIu+Sy6C6s1tUtjjvo4VL0VEMIoJvAV4kuFpCT9nezX
+         3/7XzCF+eWd+Nb36SyZF54GiB3xSbKXraXDzY016u5YMdjvDSUtObydnshSfMacn3L5U
+         fa/fdPgmC78YMwoFknnYZ6DKl81fkrq6JOOSYEl+7CvMPkZXC8Jxs9mfU35QsVVd+gx+
+         fLZmEhIdQtpobdtJHb1qVDgnc2No0phmpJT5WFF0ZuzyQXl6sIJ7ivcKtci8QvgvwL8P
+         wsp1mPyMxkPfo5eOA0KYNZj2eP/Ukt19ztkW0QOjO+MvPEq9zYKjJN59mPHT0h8YzAR8
+         EFqw==
+X-Gm-Message-State: APjAAAXQrdD0tAvtRTMa5/gp2SyaZ2tMKhi1Zls2lvq+tyTNBBLVdPVC
+        4LZlSSskC9Wdg4o8UsI49p8o8w==
+X-Google-Smtp-Source: APXvYqzc2nGXd7108Ds+0oMWW/Y8cJyrznk+PHcBCjP73lPCIDH7xnnVC1cTGqjJbnfhtg//qCC3KQ==
+X-Received: by 2002:a1c:4454:: with SMTP id r81mr4959259wma.117.1578670619718;
+        Fri, 10 Jan 2020 07:36:59 -0800 (PST)
+Received: from localhost (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id s16sm2586587wrn.78.2020.01.10.07.36.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 10 Jan 2020 07:36:59 -0800 (PST)
+References: <20191227094606.143637-1-jian.hu@amlogic.com> <20191227094606.143637-2-jian.hu@amlogic.com>
+User-agent: mu4e 1.3.3; emacs 26.3
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Jian Hu <jian.hu@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        "Rob Herring" <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v5 1/5] dt-bindings: clock: meson: add A1 PLL clock controller bindings
+In-reply-to: <20191227094606.143637-2-jian.hu@amlogic.com>
+Date:   Fri, 10 Jan 2020 16:36:58 +0100
+Message-ID: <1jftgnz5k5.fsf@starbuckisacylon.baylibre.com>
 MIME-Version: 1.0
-In-Reply-To: <dbb80785-59a8-6725-f43b-babe27ebbaeb@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-10.01.2020 07:47, Sowjanya Komatineni пишет:
-> 
-> On 1/9/20 8:43 PM, Sameer Pujar wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> On 1/10/2020 10:06 AM, Sowjanya Komatineni wrote:
->>>
->>> On 1/9/20 7:32 PM, Sowjanya Komatineni wrote:
->>>>
->>>> On 1/9/20 7:24 PM, Sowjanya Komatineni wrote:
->>>>>
->>>>> On 1/9/20 5:39 PM, Sowjanya Komatineni wrote:
->>>>>>
->>>>>> On 1/9/20 11:44 AM, Dmitry Osipenko wrote:
->>>>>>> External email: Use caution opening links or attachments
->>>>>>>
->>>>>>>
->>>>>>> 08.01.2020 07:24, Sowjanya Komatineni пишет:
->>>>>>>> This patch series moves Tegra PMC clocks from clock driver to pmc
->>>>>>>> driver
->>>>>>>> along with the device trees changes and audio driver which uses
->>>>>>>> one of
->>>>>>>> the pmc clock for audio mclk.
->>>>>>>>
->>>>>>>> Tegra PMC has clk_out_1, clk_out_2, clk_out_3 and blink controls
->>>>>>>> which
->>>>>>>> are currently registered by Tegra clock driver using
->>>>>>>> clk_regiser_mux and
->>>>>>>> clk_register_gate which performs direct Tegra PMC register access.
->>>>>>>>
->>>>>>>> When Tegra PMC is in secure mode, any access from non-secure
->>>>>>>> world will
->>>>>>>> not go through.
->>>>>>>>
->>>>>>>> This patch series adds these Tegra PMC clocks and blink controls
->>>>>>>> to Tegra
->>>>>>>> PMC driver with PMC as clock provider and removes them from Tegra
->>>>>>>> clock
->>>>>>>> driver.
->>>>>>>>
->>>>>>>> PMC clock clk_out_1 is dedicated for audio mclk from Tegra30 thru
->>>>>>>> Tegra210
->>>>>>>> and clock driver does inital parent configuration for it and
->>>>>>>> enables them.
->>>>>>>> But this clock should be taken care by audio driver as there is
->>>>>>>> no need
->>>>>>>> to have this clock pre enabled.
->>>>>>>>
->>>>>>>> So, this series also includes patch that updates ASoC driver to
->>>>>>>> take
->>>>>>>> care of parent configuration for mclk if device tree don't specify
->>>>>>>> initial parent configuration using assigned-clock-parents and
->>>>>>>> controls
->>>>>>>> audio mclk enable/disable during ASoC machine startup and shutdown.
->>>>>>>>
->>>>>>>> DTs are also updated to use clk_out_1 as audio mclk rather than
->>>>>>>> extern1.
->>>>>>>>
->>>>>>>> This series also includes a patch for mclk fallback to extern1 when
->>>>>>>> retrieving mclk fails to have this backward compatible of new DT
->>>>>>>> with
->>>>>>>> old kernels.
->>>>>>> Suspend-resume doesn't work anymore, reverting this series helps. I
->>>>>>> don't have any other information yet, please take a look.
->>>>>> Thanks Dmitry. Will test suspend resume and check..
->>>>>
->>>>> I see if we leave audio mclk (cdev1) enabled during
->>>>> tegra_asoc_utils_init, suspend resume works.
->>>>>
->>>>> Without audio mclk enabled during tegra_asoc_utils_init, somehow it
->>>>> prevents entry to suspend on Tegra30 platform.
->>>>>
->>>>> Will look in detail..
->>>>>
->>>> audio mclk is only needed for audio and werid that having it not
->>>> enabled all the time like in current clock driver prevents suspend
->>>> entry on Tegra30
->>>>
->>>> Looks like this issue is masked earlier with having mclk enabled all
->>>> the time by clock driver.
->>>>
->>> On linux-next without this patch series, I just disabled mclk to be
->>> enabled all the time (removed set_rate from utils_init) and also
->>> disabled default enable from clock driver.
->>>
->>> So somehow disabling mclk is preventing suspend entry.
->>
->> This is strange.
->>
->>>
->>> Probably debugging suspend issue on Tegra30 when audio mclk is
->>> disabled can be done separately and will keep audio mclk enabled in
->>> asoc_utils_init with comment mentioning this issue and fix as TBD to
->>> move on with PMC clock fixes.
->>
->> Sounds fine with me as the suspend/resume issue is not introduced in the
->> current series. It can be addressed separately.
->>
->>>
-> Thanks Sameer. So, will keep mclk not enabled in clock driver but will
-> do mclk enable in asoc_utils_init and will remove machine startup and
-> shutdown.
-> 
-> mclk dependency with suspend/resume and I2S and audio clocks proper
-> handling in audio driver can be taken care separately out of this series.
-> 
-> Dimitry, I hope you too agree with this.
 
-Yes, should be fine to fix it separately from this series.
+On Fri 27 Dec 2019 at 10:46, Jian Hu <jian.hu@amlogic.com> wrote:
 
-I suppose the clocks management isn't done properly by some of the audio
-drivers and machine hangs after trying to access hardware module which
-has the disabled clock. That's a quite typical bug.
+Please read Documentation/devicetree/writing-schema.rst, run the test and
+make the necessary correction.
+
+> Add the documentation to support Amlogic A1 PLL clock driver,
+> and add A1 PLL clock controller bindings.
+>
+> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+> ---
+>  .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 54 +++++++++++++++++++
+>  include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
+>  2 files changed, 70 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>  create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+>
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> new file mode 100644
+> index 000000000000..7a327bb174b8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: "http://devicetree.org/schemas/clock/amlogic,a1-pll-clkc.yaml#"
+> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+> +
+> +title: Amlogic Meson A/C serials PLL Clock Control Unit Device Tree Bindings
+> +
+> +maintainers:
+> +  - Neil Armstrong <narmstrong@baylibre.com>
+> +  - Jerome Brunet <jbrunet@baylibre.com>
+> +  - Jian Hu <jian.hu@jian.hu.com>
+> +
+> +properties:
+> +  compatible:
+> +    const: amlogic,a1-pll-clkc
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +clocks:
+> +  maxItems: 2
+> +  items:
+> +   - description: Input xtal_fixpll
+> +   - description: Input xtal_hifipll
+> +
+> +clock-names:
+> +  maxItems: 2
+> +  items:
+> +     - const: xtal_fixpll
+> +     - const: xtal_hifipll
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clkc_pll: pll-clock-controller@7c80 {
+> +                compatible = "amlogic,a1-pll-clkc";
+> +                reg = <0 0x7c80 0 0x18c>;
+> +                #clock-cells = <1>;
+> +                clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
+> +                         <&clkc_periphs CLKID_XTAL_HIFIPLL>;
+> +                clock-names = "xtal_fixpll", "xtal_hifipll";
+> +    };
+> diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
+> new file mode 100644
+> index 000000000000..58eae237e503
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/a1-pll-clkc.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+> +/*
+> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+> + */
+> +
+> +#ifndef __A1_PLL_CLKC_H
+> +#define __A1_PLL_CLKC_H
+> +
+> +#define CLKID_FIXED_PLL				1
+> +#define CLKID_FCLK_DIV2				6
+> +#define CLKID_FCLK_DIV3				7
+> +#define CLKID_FCLK_DIV5				8
+> +#define CLKID_FCLK_DIV7				9
+> +#define CLKID_HIFI_PLL				10
+> +
+> +#endif /* __A1_PLL_CLKC_H */
+
