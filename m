@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88699C282DD
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 17:11:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F09C282DD
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 17:12:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BA2F2080D
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 17:11:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D1572072E
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 17:12:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578676306;
-	bh=bWxh+tbHCeX172gqnL4h7j7sF5CxwqQygqdECt3fif8=;
+	s=default; t=1578676364;
+	bh=kKeXIrCjLnzo0TiSj4u3FOjbFcwFK2qdWHisOUcq/BE=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=nZoTC6fVuv/qT/DbgCmHihJX0D80gxGIhYD6IQPb5hHG4Q9Dg+t0qEv254gErNrzx
-	 OA2DIao6mSuG8aKMi8Y+60IkkFZhCOSofPBk5MR/n2R9iIBPoTa3j6rMXjaEdG/s+z
-	 M/34AkP2bQA6PnpM9IDW6/nS6HRPJdAmPkOcNJJk=
+	b=eis0+P5a6IMorGdajr/fxDCiFsJclffdTnVZBM57ypAzbDLa4f6qx/bsB23ZPgdw5
+	 pRjZIgSL6V1LOYm03gwWxGY2cmRNnnonXXVrAScL+iLcdAlJAv/nuuVdIYt8kY/Tqu
+	 Qm0B5cgTcb9+7gcLRJk11glnCpj1NE9L+D1a9c1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726066AbgAJRLq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jan 2020 12:11:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53174 "EHLO mail.kernel.org"
+        id S1726463AbgAJRMn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jan 2020 12:12:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725774AbgAJRLp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 10 Jan 2020 12:11:45 -0500
+        id S1726066AbgAJRMn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 10 Jan 2020 12:12:43 -0500
 Received: from localhost (lfbn-tou-1-1502-76.w90-89.abo.wanadoo.fr [90.89.68.76])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C5EFB2072E;
-        Fri, 10 Jan 2020 17:11:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A47D720838;
+        Fri, 10 Jan 2020 17:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578676305;
-        bh=bWxh+tbHCeX172gqnL4h7j7sF5CxwqQygqdECt3fif8=;
+        s=default; t=1578676363;
+        bh=kKeXIrCjLnzo0TiSj4u3FOjbFcwFK2qdWHisOUcq/BE=;
         h=Date:From:To:Cc:Subject:From;
-        b=kEgvNxvnEDem0uUvP/+Z3DPzYzrqThiJCDH1aD69GtGkCHazkiLVpowsFi+H6f+No
-         k+w5YQJOve8T27K0IxQxfqXjyi9RO/VLnD0XbjV0ViVhe/91mFirDxCh5/Wbew3SOM
-         GnavM6NYyyEDn0pV75V3nGEUqedPh8IYuYLQh5fY=
-Date:   Fri, 10 Jan 2020 18:11:42 +0100
+        b=f6ssEJjmpAaawy/bbJuUA36jMLkQTvz8EbBcuQ5ZUUHwH3SyAw9VjRef7ksv91pu2
+         4XtIMU4B04XX6JzI4WC0Tw6OkAVkZZpfe5vb68DPM3IIlDFMsMmXvZXQhLFL8hy6yD
+         HbgfO/wHIvRe7gq7IyD6FAtAMAdATkA8dwvtB3v8=
+Date:   Fri, 10 Jan 2020 18:12:40 +0100
 From:   Maxime Ripard <mripard@kernel.org>
 To:     Mike Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>
 Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
         Chen-Yu Tsai <wens@csie.org>
-Subject: [GIT PULL] Allwinner Clock Changes for 5.6
-Message-ID: <cf293816-3ef7-4b67-bd9e-be2e88bfa950.lettre@localhost>
+Subject: [GIT PULL] Allwinner Clock Fixes for 5.5
+Message-ID: <918a4585-19f8-4753-abb1-b71702877ddf.lettre@localhost>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
+        protocol="application/pgp-signature"; boundary="4Ckj6UjgE2iN1+kY"
 Content-Disposition: inline
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -56,13 +56,15 @@ List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---fUYQa+Pmc3FrFX/N
+--4Ckj6UjgE2iN1+kY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-Hi,
+Hi Mike, Stephen,
 
-Please pull the following changes for the next release.
+Happy New Year!
+
+Please pull the following changes for the current release.
 
 Thanks!
 Maxime
@@ -73,56 +75,46 @@ The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-for-5.6
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/tags/sunxi-clk-fixes-for-5.5
 
-for you to fetch changes up to 9c232d324bfa1bb6204f6c2c5e1bea12c51cc6bd:
+for you to fetch changes up to 0c545240aebc2ccb8f661dc54283a14d64659804:
 
-  clk: sunxi: a23/a33: Export the MIPI PLL (2020-01-04 09:45:19 +0100)
+  clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order (2020-01-02 10:28:47 +0100)
 
 ----------------------------------------------------------------
-Our usual set of patches for sunxi, with a bunch of them required to
-enable the MBUS controller, and two patches to enable cpufreq on the
-A64.
+Our usual set of fixes for Allwinner, to fix the number of reported
+clocks on the v3s, fixing the external clock on the R40, and some
+fixes for the AR100 co-processor clocks.
 
 ----------------------------------------------------------------
 Chen-Yu Tsai (1):
-      clk: sunxi-ng: r40: Export MBUS clock
+      clk: sunxi-ng: r40: Allow setting parent rate for external clock outputs
 
-Corentin Labbe (1):
-      clk: sunxi: use of_device_get_match_data
+Samuel Holland (3):
+      clk: sunxi-ng: sun8i-r: Fix divider on APB0 clock
+      clk: sunxi-ng: h6-r: Simplify R_APB1 clock definition
+      clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order
 
-Icenowy Zheng (1):
-      clk: sunxi-ng: add mux and pll notifiers for A64 CPU clock
-
-Maxime Ripard (2):
-      clk: sunxi: a31: Export the MIPI PLL
-      clk: sunxi: a23/a33: Export the MIPI PLL
-
-Vasily Khoruzhick (1):
-      clk: sunxi-ng: a64: export CLK_CPUX clock for DVFS
+Yunhao Tian (1):
+      clk: sunxi-ng: v3s: Fix incorrect number of hw_clks.
 
 
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c         | 28 +++++++++++++++++++++++++++-
- drivers/clk/sunxi-ng/ccu-sun50i-a64.h         |  1 +-
- drivers/clk/sunxi-ng/ccu-sun6i-a31.h          |  4 +++-
- drivers/clk/sunxi-ng/ccu-sun8i-a23-a33.h      |  4 +++-
- drivers/clk/sunxi-ng/ccu-sun8i-r40.h          |  4 +----
- drivers/clk/sunxi/clk-sun6i-apb0-gates.c      |  6 ++----
- include/dt-bindings/clock/sun50i-a64-ccu.h    |  1 +-
- include/dt-bindings/clock/sun6i-a31-ccu.h     |  2 ++-
- include/dt-bindings/clock/sun8i-a23-a33-ccu.h |  2 ++-
- include/dt-bindings/clock/sun8i-r40-ccu.h     |  2 +-
- 10 files changed, 41 insertions(+), 13 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 16 +++-------------
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c     | 21 +++------------------
+ drivers/clk/sunxi-ng/ccu-sun8i-r40.c   |  6 ++++--
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.c   |  4 ++--
+ drivers/clk/sunxi-ng/ccu-sun8i-v3s.h   |  2 --
+ 5 files changed, 12 insertions(+), 37 deletions(-)
 
---fUYQa+Pmc3FrFX/N
+--4Ckj6UjgE2iN1+kY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhiwTgAKCRDj7w1vZxhR
-xVI+AQCJE82xhiEUOCLJgLFIWdnMWvG7Bo4gVoYNjpPFrX9QowEA1AaQVlogJFWQ
-iRRSGmrkpl+ZWtmVJ+v4mqkNdKiwOQE=
-=Nese
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXhiwiAAKCRDj7w1vZxhR
+xRGHAPwONcRU+W+ushufBb6rKGNFg8z9oS++5EPoXnBPlbFWQQEAoD7G69YPfgx4
+rEV8huRRK/hYaOBV2Za9FF5JLM5AawE=
+=96f2
 -----END PGP SIGNATURE-----
 
---fUYQa+Pmc3FrFX/N--
+--4Ckj6UjgE2iN1+kY--
