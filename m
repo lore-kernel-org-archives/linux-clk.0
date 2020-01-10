@@ -2,316 +2,204 @@ Return-Path: <SRS0=Bq/F=27=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2AF0C282DD
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 22:30:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D62EC282DD
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 23:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 763B32082E
-	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 22:30:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6612A2072A
+	for <linux-clk@archiver.kernel.org>; Fri, 10 Jan 2020 23:03:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ubkzjegv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727369AbgAJWao (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 10 Jan 2020 17:30:44 -0500
-Received: from relay3-d.mail.gandi.net ([217.70.183.195]:40321 "EHLO
-        relay3-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727324AbgAJWan (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jan 2020 17:30:43 -0500
-X-Originating-IP: 90.65.92.102
-Received: from localhost (lfbn-lyo-1-1913-102.w90-65.abo.wanadoo.fr [90.65.92.102])
-        (Authenticated sender: alexandre.belloni@bootlin.com)
-        by relay3-d.mail.gandi.net (Postfix) with ESMTPSA id F1A4360003;
-        Fri, 10 Jan 2020 22:30:40 +0000 (UTC)
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Karl=20Rudb=C3=A6k=20Olsen?= <karl@micro-technic.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>
-Subject: [PATCH v2] clk: at91: add sama5d3 pmc driver
-Date:   Fri, 10 Jan 2020 23:30:33 +0100
-Message-Id: <20200110223033.1261791-1-alexandre.belloni@bootlin.com>
-X-Mailer: git-send-email 2.24.1
+        id S1727444AbgAJXDB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 10 Jan 2020 18:03:01 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:40887 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727387AbgAJXDA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 10 Jan 2020 18:03:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id i23so2681588lfo.7;
+        Fri, 10 Jan 2020 15:02:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=LIfOt2/H9o4TTylsMEhxFyK9SgreyZMevB6yzbjwKbI=;
+        b=ubkzjegvG3dqELIcb4AmPudiOofr2lyNnfFetYJTit+CMRY5udjJEH9gCUVYn5TwUY
+         P9hQtzYmaI32BlAFvZaOT3bwB3C1OoAOw3sHoe99bTVqjkZaefxbjZGrWAJDtGWSqi3e
+         4PXZvty9sfIsF+vQUkR2/yy9oa27sg+fIPWfiVflnqmlCs8l7XTHWFY0++PQyG1iNXAW
+         JhOG8FaPfyCM9JXXRkSLTS0bfo797Z2prIfrTRnYh7QE6K48fvF3pSrCguc0mTJWGw3j
+         Jk75tIXrUTVkvQ4QhH72Ac/G0lGOI//WAyTRPLMVUqBjA3H2eQbseKhEu6NsSlL5r7VM
+         Exyg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=LIfOt2/H9o4TTylsMEhxFyK9SgreyZMevB6yzbjwKbI=;
+        b=bTowMViNmTIxkJm9KUTf6I91lgq8rz3xi/qkYSk4P4na1yBqjfrxEfUnl2UX2YS//Y
+         qKNiMFV2lLfEm4qVStOHCSlNNwHD5JxestHd/70L+50o19rPg66dVZnIl2CHgwop9Z0K
+         q/NHO7ogZgIlMRoNUgDCtbd9fr5AyqRliUXgxZhf4FbZjuZMV1kPLRw9zs2k26n1MVrm
+         n4RPfk6yQLxH3OLBEVLjyvGnoj4oaavd6FzwtO/enUPcc5JINEBrxpXBkTCgTAeq9s3W
+         A1N+9F2vhGpFYpOcOuDM7ISOQHIFJyR3GR7yjwnwf5p8X2iUx61fTBRZaECdU/9H3dn8
+         d7SA==
+X-Gm-Message-State: APjAAAVn2+6jY/8zVJeAUDb9HYFDEs/7TZyVZoBCfyu8yGL/ulSIa54x
+        xm30zJtSt26algTp39ahVVFwsyLe
+X-Google-Smtp-Source: APXvYqwt12uR3kPf6mwgmKJNqx+Sr3i+nO5lvG+ZnOGBJVMTp5uTXSl23AnwSoLoxhGxT6gApz9g3Q==
+X-Received: by 2002:ac2:5605:: with SMTP id v5mr3760197lfd.136.1578697376884;
+        Fri, 10 Jan 2020 15:02:56 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id t13sm1602788ljk.78.2020.01.10.15.02.54
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 10 Jan 2020 15:02:55 -0800 (PST)
+Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
+ audio mclk
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
+        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
+        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
+        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
+ <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
+ <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
+ <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
+ <a3c5293b-9ed4-3266-f792-38b980e54b1e@nvidia.com>
+ <745b8c7b-4fe3-c9ea-284e-b89546e8ad87@nvidia.com>
+ <705edf9b-d1bc-8090-017e-fa4ad445f9fb@nvidia.com>
+ <135f0c0b-86d1-9b1a-af02-c14c4b5308c4@gmail.com>
+ <575aa30e-1b5a-2a2d-5893-3f6832f416f1@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <9bca6c3e-bfe0-7130-b233-3f25c436f76e@gmail.com>
+Date:   Sat, 11 Jan 2020 02:02:54 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
+In-Reply-To: <575aa30e-1b5a-2a2d-5893-3f6832f416f1@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add a driver for the PMC clocks of the sama5d3.
+11.01.2020 01:13, Sowjanya Komatineni пишет:
+> 
+> On 1/10/20 2:05 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 10.01.2020 20:04, Sowjanya Komatineni пишет:
+>>> On 1/9/20 10:52 AM, Sowjanya Komatineni wrote:
+>>>>
+>>>> On 1/7/20 10:28 PM, Sameer Pujar wrote:
+>>>>> On 1/8/2020 11:18 AM, Sowjanya Komatineni wrote:
+>>>>>> On 1/7/20 9:34 PM, Sameer Pujar wrote:
+>>>>>>> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
+>>>>>>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc
+>>>>>>>> clocks
+>>>>>>>> are moved to Tegra PMC driver with pmc as clock provider and using
+>>>>>>>> pmc
+>>>>>>>> clock ids.
+>>>>>>>>
+>>>>>>>> New device tree uses clk_out_1 from pmc clock provider.
+>>>>>>>>
+>>>>>>>> So, this patch adds implementation for mclk fallback to extern1
+>>>>>>>> when
+>>>>>>>> retrieving mclk returns -ENOENT to be backward compatible of new
+>>>>>>>> device
+>>>>>>>> tree with older kernels.
+>>>>>>>>
+>>>>>>>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>>>> ---
+>>>>>>>>    sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
+>>>>>>>>    1 file changed, 10 insertions(+), 1 deletion(-)
+>>>>>>>>
+>>>>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>>>> index 9cfebef74870..9a5f81039491 100644
+>>>>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>>>>>>> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct
+>>>>>>>> tegra_asoc_utils_data *data,
+>>>>>>>>        data->clk_cdev1 = devm_clk_get(dev, "mclk");
+>>>>>>>>        if (IS_ERR(data->clk_cdev1)) {
+>>>>>>>>            dev_err(data->dev, "Can't retrieve clk cdev1\n");
+>>>>>>> This error print can be moved inside below if, when this actually
+>>>>>>> meant to be an error condition.
+>>>>>>>
+>>>>>> Want to show error even if mclk retrieval returns ENOENT to clearly
+>>>>>> indicate mclk does not exist along with message of falling back to
+>>>>>> extern1.
+>>>>> Yes, but falling back essentially means 'mclk' is not available and
+>>>>> fallback print is not an error.
+>>>>> Not a major issue though, you can consider updating. Otherwise LGTM.
+>>>>>
+>>>> Will update
+>>>>>>>> -        return PTR_ERR(data->clk_cdev1);
+>>>>>>>> +        if (PTR_ERR(data->clk_cdev1) != -ENOENT)
+>>>>>>>> +            return PTR_ERR(data->clk_cdev1);
+>>>>>>>> +        /* Fall back to extern1 */
+>>>>>>>> +        data->clk_cdev1 = devm_clk_get(dev, "extern1");
+>>>>>>>> +        if (IS_ERR(data->clk_cdev1)) {
+>>>>>>>> +            dev_err(data->dev, "Can't retrieve clk extern1\n");
+>>>>>>>> +            return PTR_ERR(data->clk_cdev1);
+>>>>>>>> +        }
+>>>>>>>> +
+>>>>>>>> +        dev_err(data->dev, "Falling back to extern1\n");
+>>>>>>> This can be a info print?
+>>>> Will use dev_info
+>>>>>>>>        }
+>>>>>>>>          /*
+>>>> Dmitry/Rob, there was discussion in v3 regarding backporting mclk
+>>>> fallback.
+>>>>
+>>>> Dmitry wanted Rob to confirm on this
+>>>>
+>>>> I think openSUSE Leap could be one of those distros that use LTS kernel
+>>>> with newer device-trees, but that's not 100%. Maybe Rob could help
+>>>> clarifying that.
+>>>>
+>>>> Dmitry/Rob, Can you please confirm if mclk fallback patch need
+>>>> backport to have new device tree work with old kernels?
+>>>>
+>>> Dmitry,
+>>>
+>>> Can you please confirm if we need to backport this mclk fallback patch?
+>>>
+>> Seems only T210 was making use of the CaR's TEGRA*_CLK_CLK_OUT_*, thus
+>> the backporting isn't needed.
+> Thanks Dmitry
+>>
+>> Also, please use 'git rebase --exec make ...' to make sure that all
+>> patches are compiling without problems. The removal of the legacy clock
+>> IDs should be done after the device-trees changes, otherwise it looks
+>> like DTBs compilation will fail. It's possible that the order of the
+>> patches could be changed if Thierry will chose to split this series into
+>> several pull requests, nevertheless all patches should compile and work
+>> in the original order.
+> OK, Will move patches of device tree updates to use new DT ID prior to
+> removal of old ID.
 
-Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
-Changes in v2:
- - fixed the output range for the paripheral clocks
- - added a comment why the PMC driver can't be a platform driver
+Oh, wait. But then the newer device-trees won't work with the stable
+kernels, so it actually won't hurt to backport this change.
 
- drivers/clk/at91/Makefile  |   1 +
- drivers/clk/at91/sama5d3.c | 240 +++++++++++++++++++++++++++++++++++++
- 2 files changed, 241 insertions(+)
- create mode 100644 drivers/clk/at91/sama5d3.c
+Secondly, please move the "Use device managed resource APIs to get the
+clock" after the ASoC patches with the stable tags, such that the stable
+patches could be applied cleanly.
 
-diff --git a/drivers/clk/at91/Makefile b/drivers/clk/at91/Makefile
-index 3732241352ce..e3be7f40f79e 100644
---- a/drivers/clk/at91/Makefile
-+++ b/drivers/clk/at91/Makefile
-@@ -17,5 +17,6 @@ obj-$(CONFIG_HAVE_AT91_I2S_MUX_CLK)	+= clk-i2s-mux.o
- obj-$(CONFIG_HAVE_AT91_SAM9X60_PLL)	+= clk-sam9x60-pll.o
- obj-$(CONFIG_SOC_AT91SAM9) += at91sam9260.o at91sam9rl.o at91sam9x5.o
- obj-$(CONFIG_SOC_SAM9X60) += sam9x60.o
-+obj-$(CONFIG_SOC_SAMA5D3) += sama5d3.o
- obj-$(CONFIG_SOC_SAMA5D4) += sama5d4.o
- obj-$(CONFIG_SOC_SAMA5D2) += sama5d2.o
-diff --git a/drivers/clk/at91/sama5d3.c b/drivers/clk/at91/sama5d3.c
-new file mode 100644
-index 000000000000..88506f909c08
---- /dev/null
-+++ b/drivers/clk/at91/sama5d3.c
-@@ -0,0 +1,240 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/clk-provider.h>
-+#include <linux/mfd/syscon.h>
-+#include <linux/slab.h>
-+
-+#include <dt-bindings/clock/at91.h>
-+
-+#include "pmc.h"
-+
-+static const struct clk_master_characteristics mck_characteristics = {
-+	.output = { .min = 0, .max = 166000000 },
-+	.divisors = { 1, 2, 4, 3 },
-+};
-+
-+static u8 plla_out[] = { 0 };
-+
-+static u16 plla_icpll[] = { 0 };
-+
-+static const struct clk_range plla_outputs[] = {
-+	{ .min = 400000000, .max = 1000000000 },
-+};
-+
-+static const struct clk_pll_characteristics plla_characteristics = {
-+	.input = { .min = 8000000, .max = 50000000 },
-+	.num_output = ARRAY_SIZE(plla_outputs),
-+	.output = plla_outputs,
-+	.icpll = plla_icpll,
-+	.out = plla_out,
-+};
-+
-+static const struct clk_pcr_layout sama5d3_pcr_layout = {
-+	.offset = 0x10c,
-+	.cmd = BIT(12),
-+	.pid_mask = GENMASK(6, 0),
-+	.div_mask = GENMASK(17, 16),
-+};
-+
-+static const struct {
-+	char *n;
-+	char *p;
-+	u8 id;
-+} sama5d3_systemck[] = {
-+	{ .n = "ddrck", .p = "masterck", .id = 2 },
-+	{ .n = "lcdck", .p = "masterck", .id = 3 },
-+	{ .n = "smdck", .p = "smdclk",   .id = 4 },
-+	{ .n = "uhpck", .p = "usbck",    .id = 6 },
-+	{ .n = "udpck", .p = "usbck",    .id = 7 },
-+	{ .n = "pck0",  .p = "prog0",    .id = 8 },
-+	{ .n = "pck1",  .p = "prog1",    .id = 9 },
-+	{ .n = "pck2",  .p = "prog2",    .id = 10 },
-+};
-+
-+static const struct {
-+	char *n;
-+	u8 id;
-+	struct clk_range r;
-+} sama5d3_periphck[] = {
-+	{ .n = "dbgu_clk", .id = 2, },
-+	{ .n = "hsmc_clk", .id = 5, },
-+	{ .n = "pioA_clk", .id = 6, },
-+	{ .n = "pioB_clk", .id = 7, },
-+	{ .n = "pioC_clk", .id = 8, },
-+	{ .n = "pioD_clk", .id = 9, },
-+	{ .n = "pioE_clk", .id = 10, },
-+	{ .n = "usart0_clk", .id = 12, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "usart1_clk", .id = 13, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "usart2_clk", .id = 14, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "usart3_clk", .id = 15, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart0_clk", .id = 16, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "uart1_clk", .id = 17, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "twi0_clk", .id = 18, .r = { .min = 0, .max = 41500000 }, },
-+	{ .n = "twi1_clk", .id = 19, .r = { .min = 0, .max = 41500000 }, },
-+	{ .n = "twi2_clk", .id = 20, .r = { .min = 0, .max = 41500000 }, },
-+	{ .n = "mci0_clk", .id = 21, },
-+	{ .n = "mci1_clk", .id = 22, },
-+	{ .n = "mci2_clk", .id = 23, },
-+	{ .n = "spi0_clk", .id = 24, .r = { .min = 0, .max = 166000000 }, },
-+	{ .n = "spi1_clk", .id = 25, .r = { .min = 0, .max = 166000000 }, },
-+	{ .n = "tcb0_clk", .id = 26, .r = { .min = 0, .max = 166000000 }, },
-+	{ .n = "tcb1_clk", .id = 27, .r = { .min = 0, .max = 166000000 }, },
-+	{ .n = "pwm_clk", .id = 28, },
-+	{ .n = "adc_clk", .id = 29, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "dma0_clk", .id = 30, },
-+	{ .n = "dma1_clk", .id = 31, },
-+	{ .n = "uhphs_clk", .id = 32, },
-+	{ .n = "udphs_clk", .id = 33, },
-+	{ .n = "macb0_clk", .id = 34, },
-+	{ .n = "macb1_clk", .id = 35, },
-+	{ .n = "lcdc_clk", .id = 36, },
-+	{ .n = "isi_clk", .id = 37, },
-+	{ .n = "ssc0_clk", .id = 38, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "ssc1_clk", .id = 39, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "can0_clk", .id = 40, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "can1_clk", .id = 41, .r = { .min = 0, .max = 83000000 }, },
-+	{ .n = "sha_clk", .id = 42, },
-+	{ .n = "aes_clk", .id = 43, },
-+	{ .n = "tdes_clk", .id = 44, },
-+	{ .n = "trng_clk", .id = 45, },
-+	{ .n = "fuse_clk", .id = 48, },
-+	{ .n = "mpddr_clk", .id = 49, },
-+};
-+
-+static void __init sama5d3_pmc_setup(struct device_node *np)
-+{
-+	const char *slck_name, *mainxtal_name;
-+	struct pmc_data *sama5d3_pmc;
-+	const char *parent_names[5];
-+	struct regmap *regmap;
-+	struct clk_hw *hw;
-+	int i;
-+	bool bypass;
-+
-+	i = of_property_match_string(np, "clock-names", "slow_clk");
-+	if (i < 0)
-+		return;
-+
-+	slck_name = of_clk_get_parent_name(np, i);
-+
-+	i = of_property_match_string(np, "clock-names", "main_xtal");
-+	if (i < 0)
-+		return;
-+	mainxtal_name = of_clk_get_parent_name(np, i);
-+
-+	regmap = syscon_node_to_regmap(np);
-+	if (IS_ERR(regmap))
-+		return;
-+
-+	sama5d3_pmc = pmc_data_allocate(PMC_MAIN + 1,
-+					nck(sama5d3_systemck),
-+					nck(sama5d3_periphck), 0);
-+	if (!sama5d3_pmc)
-+		return;
-+
-+	hw = at91_clk_register_main_rc_osc(regmap, "main_rc_osc", 12000000,
-+					   50000000);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	bypass = of_property_read_bool(np, "atmel,osc-bypass");
-+
-+	hw = at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name,
-+					bypass);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = "main_rc_osc";
-+	parent_names[1] = "main_osc";
-+	hw = at91_clk_register_sam9x5_main(regmap, "mainck", parent_names, 2);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_pll(regmap, "pllack", "mainck", 0,
-+				   &sama5d3_pll_layout, &plla_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_plldiv(regmap, "plladivck", "pllack");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91_clk_register_utmi(regmap, NULL, "utmick", "mainck");
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sama5d3_pmc->chws[PMC_UTMI] = hw;
-+
-+	parent_names[0] = slck_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "plladivck";
-+	parent_names[3] = "utmick";
-+	hw = at91_clk_register_master(regmap, "masterck", 4, parent_names,
-+				      &at91sam9x5_master_layout,
-+				      &mck_characteristics);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	sama5d3_pmc->chws[PMC_MCK] = hw;
-+
-+	parent_names[0] = "plladivck";
-+	parent_names[1] = "utmick";
-+	hw = at91sam9x5_clk_register_usb(regmap, "usbck", parent_names, 2);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	hw = at91sam9x5_clk_register_smd(regmap, "smdclk", parent_names, 2);
-+	if (IS_ERR(hw))
-+		goto err_free;
-+
-+	parent_names[0] = slck_name;
-+	parent_names[1] = "mainck";
-+	parent_names[2] = "plladivck";
-+	parent_names[3] = "utmick";
-+	parent_names[4] = "masterck";
-+	for (i = 0; i < 3; i++) {
-+		char name[6];
-+
-+		snprintf(name, sizeof(name), "prog%d", i);
-+
-+		hw = at91_clk_register_programmable(regmap, name,
-+						    parent_names, 5, i,
-+						    &at91sam9x5_programmable_layout);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sama5d3_systemck); i++) {
-+		hw = at91_clk_register_system(regmap, sama5d3_systemck[i].n,
-+					      sama5d3_systemck[i].p,
-+					      sama5d3_systemck[i].id);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama5d3_pmc->shws[sama5d3_systemck[i].id] = hw;
-+	}
-+
-+	for (i = 0; i < ARRAY_SIZE(sama5d3_periphck); i++) {
-+		hw = at91_clk_register_sam9x5_peripheral(regmap, &pmc_pcr_lock,
-+							 &sama5d3_pcr_layout,
-+							 sama5d3_periphck[i].n,
-+							 "masterck",
-+							 sama5d3_periphck[i].id,
-+							 &sama5d3_periphck[i].r);
-+		if (IS_ERR(hw))
-+			goto err_free;
-+
-+		sama5d3_pmc->phws[sama5d3_periphck[i].id] = hw;
-+	}
-+
-+	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama5d3_pmc);
-+
-+	return;
-+
-+err_free:
-+	pmc_data_free(sama5d3_pmc);
-+}
-+/*
-+ * The TCB is used as the clocksource so its clock is needed early. This means
-+ * this can't be a platform driver.
-+ */
-+CLK_OF_DECLARE_DRIVER(sama5d3_pmc, "atmel,sama5d3-pmc", sama5d3_pmc_setup);
--- 
-2.24.1
-
+Lastly, please separate the assigned-clocks change from the the audio
+mclk enable/disable into a standalone patch. These changes are not
+interdependent, unless I'm missing something.
