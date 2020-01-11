@@ -1,243 +1,93 @@
-Return-Path: <SRS0=83Ci=3A=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=BKdB=3B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DBD5C33CA5
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jan 2020 15:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB941C33CA7
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jan 2020 00:12:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5432C20848
-	for <linux-clk@archiver.kernel.org>; Sat, 11 Jan 2020 15:32:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WEqUPqIN"
+	by mail.kernel.org (Postfix) with ESMTP id 79F4620848
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jan 2020 00:12:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729979AbgAKPcL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Jan 2020 10:32:11 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37185 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729958AbgAKPcL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Jan 2020 10:32:11 -0500
-Received: by mail-lj1-f196.google.com with SMTP id o13so5253133ljg.4;
-        Sat, 11 Jan 2020 07:32:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Jzwxp3lWZeyeoVo+7adSEFYxLkJCA6sCkYkRhViRSF4=;
-        b=WEqUPqINVv8iSLFS7PGBWB0tCktQhyTKsxEAX2Hut6ihWFSzNO9B7XQFwzJc/b6bCy
-         6d9qK6otsCJyMu74C7I6i5PQDwUFog69bZVU5zYz9lYfZEoLKG2Yn/hlz7JJYrHVWAIg
-         wpWT83V1yBDp2uYSSoMpEpjsDLEKo7s9Z1p7+j4CeD3F6zsTNcGIag3yxNuui2SUnY/P
-         ICK5Gb832cKL1x3VePNWO1zMnQDVr+AE0wshMPUX2JBJFFDiuGaYg1cfZYg8mlPwZV81
-         0joAxyaW0t6s++vzIiadLscFoYbOdw8LlxN+OaYafgo7reKk4wwie/SMysivS7/PxPoL
-         pk4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Jzwxp3lWZeyeoVo+7adSEFYxLkJCA6sCkYkRhViRSF4=;
-        b=qsrShAcAbFND1zuutDYGkaP+NLPNt/Vy0G4PxLp+Dg/OtsYSlpDyLrsddPKuj8BhO7
-         ewHLI1a0prvhfJ6S3BrsD9kL1Crdstg2UUGRMJdt2DcMRTGqTzesfXbeEHh17hwU5bDR
-         rq+2UPN9utNeB05R2xzLJGdh0D009aY47cp0W0t8gNLyVK/0GzD0NdWRmOpwl1DKK+0t
-         hvfYbqc9wKp8KndG3TfiWXTRHYFHkrz/3K6+YuvED9ZLVHupmJ96X/8Pe9enSxk+TYQ2
-         cffxM7OXfUk1Rw1uGKkFRhADGTBzdMtX5gCp4W6SVSvkU4UdELJ6FFoyyXuOAutngm5T
-         dPZQ==
-X-Gm-Message-State: APjAAAUqXKTvbxh8A7m2aw9k3PWozs3gs4RXOkzFNgw1g7ffURcKnZMO
-        QIFcvQuQM1Aprc704yfx6OR+nVnr
-X-Google-Smtp-Source: APXvYqz7GKZn3IvrC1VjsoXBOdrMCrzr8YTMIOnxEhesELZ/ZaMW6I+1WG0TxSzkPry/rXlXazFEkA==
-X-Received: by 2002:a2e:9e03:: with SMTP id e3mr6129684ljk.186.1578756727755;
-        Sat, 11 Jan 2020 07:32:07 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id d4sm2845137lfn.42.2020.01.11.07.32.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 Jan 2020 07:32:07 -0800 (PST)
-Subject: Re: [PATCH v7 15/21] ASoC: tegra: Add fallback implementation for
- audio mclk
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        Sameer Pujar <spujar@nvidia.com>, thierry.reding@gmail.com,
-        jonathanh@nvidia.com, broonie@kernel.org, lgirdwood@gmail.com,
-        perex@perex.cz, tiwai@suse.com, mperttunen@nvidia.com,
-        gregkh@linuxfoundation.org, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
-        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
-        markz@nvidia.com, devicetree@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1578457515-3477-1-git-send-email-skomatineni@nvidia.com>
- <1578457515-3477-16-git-send-email-skomatineni@nvidia.com>
- <f3f550a2-c6e0-7a78-5c83-da3e54dab309@nvidia.com>
- <d7ac6135-73b0-1087-dafa-4df558a06ef4@nvidia.com>
- <a3c5293b-9ed4-3266-f792-38b980e54b1e@nvidia.com>
- <745b8c7b-4fe3-c9ea-284e-b89546e8ad87@nvidia.com>
- <705edf9b-d1bc-8090-017e-fa4ad445f9fb@nvidia.com>
- <135f0c0b-86d1-9b1a-af02-c14c4b5308c4@gmail.com>
- <575aa30e-1b5a-2a2d-5893-3f6832f416f1@nvidia.com>
- <9bca6c3e-bfe0-7130-b233-3f25c436f76e@gmail.com>
- <dcfd35f3-7fdd-fdc9-1c77-bcb63bcabd5b@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <1319c4d2-7929-43e1-c036-45396f28c2fa@gmail.com>
-Date:   Sat, 11 Jan 2020 18:32:04 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1731787AbgALAMD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sat, 11 Jan 2020 19:12:03 -0500
+Received: from mail3-bck.iservicesmail.com ([217.130.24.85]:23705 "EHLO
+        mail3-bck.iservicesmail.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731786AbgALAMC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sat, 11 Jan 2020 19:12:02 -0500
+X-Greylist: delayed 303 seconds by postgrey-1.27 at vger.kernel.org; Sat, 11 Jan 2020 19:12:02 EST
+IronPort-SDR: 6tmDr9rZO97mynykUnrds8+9Uwdv1pX3XE0mZPyOv9QbbD6DT3MyGuh+CxJnB3MFeR0Iml2o0K
+ ZIl/fHLrQb3A==
+IronPort-PHdr: =?us-ascii?q?9a23=3ALZpK3h25soDA1fiysmDT+DRfVm0co7zxezQtwd?=
+ =?us-ascii?q?8ZseIeLfad9pjvdHbS+e9qxAeQG9mCsLQe1bSd6v+ocFdDyK7JiGoFfp1IWk?=
+ =?us-ascii?q?1NouQttCtkPvS4D1bmJuXhdS0wEZcKflZk+3amLRodQ56mNBXdrXKo8DEdBA?=
+ =?us-ascii?q?j0OxZrKeTpAI7SiNm82/yv95HJbAhEmTSwbalsIBi3rAjdudQajIl/Iast1x?=
+ =?us-ascii?q?XFpWdFdf5Lzm1yP1KTmBj85sa0/JF99ilbpuws+c1dX6jkZqo0VbNXAigoPG?=
+ =?us-ascii?q?Az/83rqALMTRCT6XsGU2UZiQRHDg7Y5xznRJjxsy/6tu1g2CmGOMD9UL45VS?=
+ =?us-ascii?q?i+46ptVRTkjiALOSMl/27Nj8xxjLtXrQympxxl247UZ5uVO+BifqzDZN8VW2?=
+ =?us-ascii?q?xBUt9NWixdHoOzdZcAD+ofMuZdsYb9oUcOoQKgCgmqHe/hzThIhnno0qw6yu?=
+ =?us-ascii?q?guDwfG1xEkE98ArHjYsND5OaEPWu630abI1y3OYf1W1zfn9obGcQ0vrv6QUr?=
+ =?us-ascii?q?x/asfR1UsiGB/ZglmMtYDpITWY3fkNvWiB6OpgUPqihXQ5pAFtvDev3NonhY?=
+ =?us-ascii?q?nOhoITxVDP6CJ0wJ4rKt2kVkF7e9ClEJxWtyGVLIZ2QtgiTHp0tyog1rIGvp?=
+ =?us-ascii?q?u7cDIKyJQk3hPSbeGMfYuQ4h/7SuqdPDV1iGh4dL+xmxq+61asx+LmWsS60F?=
+ =?us-ascii?q?tHqDdOnMPWuXAXzRPT79CKSv56/ki8xzmCzxvT6uRYIUAskqrbNoIhzqYwlp?=
+ =?us-ascii?q?UNtUTDGTf7mEDsg6+XckUk4Pan6+D7brjpvJOcKYh0hRzkPaQgncy/B/o3Ph?=
+ =?us-ascii?q?IQUGiA4ei81bvj8lPlQLhSkPE6j6vUvIrHKckVuqK1GRFZ34k55xuxDzqqyN?=
+ =?us-ascii?q?EYkmMGLFJBdhKHlY/pO1TWLfDgE/i/n0qjkC1lxvDBOL3hDY7ALnjYkLj6Yb?=
+ =?us-ascii?q?lx8VJTyA02zdxF55JUCakNIOjvVU/pqNzYEhg5PhSww+bmDtV9y4wfVXuTDa?=
+ =?us-ascii?q?+dM6PfqkGI5u0xLOmWfoMVuyjyK+Ij5/HwiX81g1gdfbOm3chfVHftGvVgPl?=
+ =?us-ascii?q?Xcan7vqskOHH1MvQckSuHuzlqYXm1pam62Tp47swk2FI+8RbjEQI/l1KSMwC?=
+ =?us-ascii?q?qhAZpQaWBdAFuMEl/ncoyFX7EHbyfEceF7lTlRbbW9RpVp6haou0eu07d7I/?=
+ =?us-ascii?q?DL/SsXnZL43tMz7OrW0xExo28nR/+B2n2AGjgn1lgDQCU7ifsn+UE=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2HVAQCcYhpelyMYgtlMGBoBAQEBAQE?=
+ =?us-ascii?q?BAQEDAQEBAREBAQECAgEBAQGBaAQBAQEBCwEBGwQBgSmBTVIgEpNQgU0fg0O?=
+ =?us-ascii?q?LY4EAgx4VhgcUDIFbDQEBAQEBNQIBAYRATgEXgQ8kNQgOAgMNAQEFAQEBAQE?=
+ =?us-ascii?q?FBAEBAhABAQEBAQYYBoVzgh0MHgEEAQEBAQMDAwEBDAGDXQcZDzlKTAEOAVO?=
+ =?us-ascii?q?DBIJLAQEznXgBjQQNDQKFHYJIBAqBCYEaI4E2AYwYGoFBP4EjIYIrCAGCAYJ?=
+ =?us-ascii?q?/ARIBbIJIglkEjUISIYEHiCmYF4JBBHaJTIwCgjcBD4gBhDEDEIJFD4EJiAO?=
+ =?us-ascii?q?EToF9ozdXdAGBHnEzGoImGoEgTxgNiBuOLUCBFhACT4xbgjIBAQ?=
+X-IPAS-Result: =?us-ascii?q?A2HVAQCcYhpelyMYgtlMGBoBAQEBAQEBAQEDAQEBAREBA?=
+ =?us-ascii?q?QECAgEBAQGBaAQBAQEBCwEBGwQBgSmBTVIgEpNQgU0fg0OLY4EAgx4VhgcUD?=
+ =?us-ascii?q?IFbDQEBAQEBNQIBAYRATgEXgQ8kNQgOAgMNAQEFAQEBAQEFBAEBAhABAQEBA?=
+ =?us-ascii?q?QYYBoVzgh0MHgEEAQEBAQMDAwEBDAGDXQcZDzlKTAEOAVODBIJLAQEznXgBj?=
+ =?us-ascii?q?QQNDQKFHYJIBAqBCYEaI4E2AYwYGoFBP4EjIYIrCAGCAYJ/ARIBbIJIglkEj?=
+ =?us-ascii?q?UISIYEHiCmYF4JBBHaJTIwCgjcBD4gBhDEDEIJFD4EJiAOEToF9ozdXdAGBH?=
+ =?us-ascii?q?nEzGoImGoEgTxgNiBuOLUCBFhACT4xbgjIBAQ?=
+X-IronPort-AV: E=Sophos;i="5.69,423,1571695200"; 
+   d="scan'208";a="323039201"
+Received: from mailrel04.vodafone.es ([217.130.24.35])
+  by mail02.vodafone.es with ESMTP; 12 Jan 2020 01:06:57 +0100
+Received: (qmail 8348 invoked from network); 11 Jan 2020 23:46:31 -0000
+Received: from unknown (HELO 192.168.1.3) (quesosbelda@[217.217.179.17])
+          (envelope-sender <peterwong@hsbc.com.hk>)
+          by mailrel04.vodafone.es (qmail-ldap-1.03) with SMTP
+          for <linux-clk@vger.kernel.org>; 11 Jan 2020 23:46:31 -0000
+Date:   Sun, 12 Jan 2020 00:46:30 +0100 (CET)
+From:   Peter Wong <peterwong@hsbc.com.hk>
+Reply-To: Peter Wong <peterwonghsbchk@gmail.com>
+To:     linux-clk@vger.kernel.org
+Message-ID: <25401770.172052.1578786391180.JavaMail.cash@217.130.24.55>
+Subject: Investment opportunity
 MIME-Version: 1.0
-In-Reply-To: <dcfd35f3-7fdd-fdc9-1c77-bcb63bcabd5b@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-11.01.2020 02:14, Sowjanya Komatineni пишет:
-> 
-> On 1/10/20 3:02 PM, Dmitry Osipenko wrote:
->> External email: Use caution opening links or attachments
->>
->>
->> 11.01.2020 01:13, Sowjanya Komatineni пишет:
->>> On 1/10/20 2:05 PM, Dmitry Osipenko wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> 10.01.2020 20:04, Sowjanya Komatineni пишет:
->>>>> On 1/9/20 10:52 AM, Sowjanya Komatineni wrote:
->>>>>> On 1/7/20 10:28 PM, Sameer Pujar wrote:
->>>>>>> On 1/8/2020 11:18 AM, Sowjanya Komatineni wrote:
->>>>>>>> On 1/7/20 9:34 PM, Sameer Pujar wrote:
->>>>>>>>> On 1/8/2020 9:55 AM, Sowjanya Komatineni wrote:
->>>>>>>>>> mclk is from clk_out_1 which is part of Tegra PMC block and pmc
->>>>>>>>>> clocks
->>>>>>>>>> are moved to Tegra PMC driver with pmc as clock provider and
->>>>>>>>>> using
->>>>>>>>>> pmc
->>>>>>>>>> clock ids.
->>>>>>>>>>
->>>>>>>>>> New device tree uses clk_out_1 from pmc clock provider.
->>>>>>>>>>
->>>>>>>>>> So, this patch adds implementation for mclk fallback to extern1
->>>>>>>>>> when
->>>>>>>>>> retrieving mclk returns -ENOENT to be backward compatible of new
->>>>>>>>>> device
->>>>>>>>>> tree with older kernels.
->>>>>>>>>>
->>>>>>>>>> Tested-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>>> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
->>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>>> ---
->>>>>>>>>>     sound/soc/tegra/tegra_asoc_utils.c | 11 ++++++++++-
->>>>>>>>>>     1 file changed, 10 insertions(+), 1 deletion(-)
->>>>>>>>>>
->>>>>>>>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>>> b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>>> index 9cfebef74870..9a5f81039491 100644
->>>>>>>>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
->>>>>>>>>> @@ -183,7 +183,16 @@ int tegra_asoc_utils_init(struct
->>>>>>>>>> tegra_asoc_utils_data *data,
->>>>>>>>>>         data->clk_cdev1 = devm_clk_get(dev, "mclk");
->>>>>>>>>>         if (IS_ERR(data->clk_cdev1)) {
->>>>>>>>>>             dev_err(data->dev, "Can't retrieve clk cdev1\n");
->>>>>>>>> This error print can be moved inside below if, when this actually
->>>>>>>>> meant to be an error condition.
->>>>>>>>>
->>>>>>>> Want to show error even if mclk retrieval returns ENOENT to clearly
->>>>>>>> indicate mclk does not exist along with message of falling back to
->>>>>>>> extern1.
->>>>>>> Yes, but falling back essentially means 'mclk' is not available and
->>>>>>> fallback print is not an error.
->>>>>>> Not a major issue though, you can consider updating. Otherwise LGTM.
->>>>>>>
->>>>>> Will update
->>>>>>>>>> -        return PTR_ERR(data->clk_cdev1);
->>>>>>>>>> +        if (PTR_ERR(data->clk_cdev1) != -ENOENT)
->>>>>>>>>> +            return PTR_ERR(data->clk_cdev1);
->>>>>>>>>> +        /* Fall back to extern1 */
->>>>>>>>>> +        data->clk_cdev1 = devm_clk_get(dev, "extern1");
->>>>>>>>>> +        if (IS_ERR(data->clk_cdev1)) {
->>>>>>>>>> +            dev_err(data->dev, "Can't retrieve clk extern1\n");
->>>>>>>>>> +            return PTR_ERR(data->clk_cdev1);
->>>>>>>>>> +        }
->>>>>>>>>> +
->>>>>>>>>> +        dev_err(data->dev, "Falling back to extern1\n");
->>>>>>>>> This can be a info print?
->>>>>> Will use dev_info
->>>>>>>>>>         }
->>>>>>>>>>           /*
->>>>>> Dmitry/Rob, there was discussion in v3 regarding backporting mclk
->>>>>> fallback.
->>>>>>
->>>>>> Dmitry wanted Rob to confirm on this
->>>>>>
->>>>>> I think openSUSE Leap could be one of those distros that use LTS
->>>>>> kernel
->>>>>> with newer device-trees, but that's not 100%. Maybe Rob could help
->>>>>> clarifying that.
->>>>>>
->>>>>> Dmitry/Rob, Can you please confirm if mclk fallback patch need
->>>>>> backport to have new device tree work with old kernels?
->>>>>>
->>>>> Dmitry,
->>>>>
->>>>> Can you please confirm if we need to backport this mclk fallback
->>>>> patch?
->>>>>
->>>> Seems only T210 was making use of the CaR's TEGRA*_CLK_CLK_OUT_*, thus
->>>> the backporting isn't needed.
->>> Thanks Dmitry
->>>> Also, please use 'git rebase --exec make ...' to make sure that all
->>>> patches are compiling without problems. The removal of the legacy clock
->>>> IDs should be done after the device-trees changes, otherwise it looks
->>>> like DTBs compilation will fail. It's possible that the order of the
->>>> patches could be changed if Thierry will chose to split this series
->>>> into
->>>> several pull requests, nevertheless all patches should compile and work
->>>> in the original order.
->>> OK, Will move patches of device tree updates to use new DT ID prior to
->>> removal of old ID.
->> Oh, wait. But then the newer device-trees won't work with the stable
->> kernels, so it actually won't hurt to backport this change.
-> ok will add Fixes tag to have this mclk fallback patch backported.
->>
->> Secondly, please move the "Use device managed resource APIs to get the
->> clock" after the ASoC patches with the stable tags, such that the stable
->> patches could be applied cleanly.
-> OK
->>
->> Lastly, please separate the assigned-clocks change from the the audio
->> mclk enable/disable into a standalone patch. These changes are not
->> interdependent, unless I'm missing something.
-> 
-> But parent configuration when assigned-clock-parents are not in DT are
-> needed along with mclk enable
-> 
-> as we are removing audio clocks parent configuration and enabling them
-> together from clock driver.
-> 
-> So doesn't both parent configuration and enabling mclk together need to
-> be in same patch to match what we are removing from clock driver?
-> 
+Greetings,
+Please read the attached investment proposal and reply for more details.
+Are you interested in loan?
+Sincerely: Peter Wong
 
-All current stable kernels happen to work without any visible problems
-because of the non-critical clk-enable refcounting bug that masks the
-problem. Thus the mclk will be enabled in stable kernels without any
-extra changes and the assigned-clock-parents shouldn't affect that.
 
-Please make sure that every patch in this series:
 
-1) Compiles without any errors and warnings.
 
-2) Works, i.e. you should be able to checkout any commit and kernel
-should boot/work without any regressions.
+----------------------------------------------------
+This email was sent by the shareware version of Postman Professional.
 
-3) Stable patches could be cherry-picked into stable kernels without
-merge conflicts.
-
-To achieve that you'll need to sort patches in the correct order and do
-some basic testing.
