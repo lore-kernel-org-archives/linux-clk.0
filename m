@@ -2,148 +2,74 @@ Return-Path: <SRS0=BKdB=3B=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B460C33C9E
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jan 2020 02:41:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF762C33CA9
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jan 2020 06:09:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD502087F
-	for <linux-clk@archiver.kernel.org>; Sun, 12 Jan 2020 02:41:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC17C21744
+	for <linux-clk@archiver.kernel.org>; Sun, 12 Jan 2020 06:09:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578796860;
-	bh=/IIGU/qgpqqRTXW8bMohqvTwPewVuB6W2G42p3yc9HE=;
+	s=default; t=1578809355;
+	bh=Heu80LHCoPJcbS3RqgvNvmIR7Uh41kQ9EeMPtb6yrP0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=oYhwFXM5ZuXBdu0RB33zUyoFU2ofFryoEWdZ4Eobo3+gZoP6O5AsVczdS7wogbZ70
-	 v5TiNF7dBkxLXJcUpqcUz0y/cvgh2dJbWZaRK7mFdXkz7mT6nAHb90ZO3Nu0yvrb9f
-	 s+neVO9cU5DeDxGQ9YuWwXgVk3zWTXG2Hjuf561E=
+	b=2RuuCLkTiptPqhfnM3e26nXJuOYLP9422gsE6Bqf312AwmsQLSaN2ZXy+g0H18TAW
+	 fWZOTeEG1Bcv2Yaa17ONlRG9DUMZOFX83UimxMDWywDE1hmyAI6JjqmMaNDQWOsy54
+	 t+6hdUo1gPskytxWg5SVdzMSB3E9r3jo3GE1EkY4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731990AbgALCk7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 11 Jan 2020 21:40:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46742 "EHLO mail.kernel.org"
+        id S1732257AbgALGJO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 12 Jan 2020 01:09:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731986AbgALCk7 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Sat, 11 Jan 2020 21:40:59 -0500
+        id S1732256AbgALGJO (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 12 Jan 2020 01:09:14 -0500
 Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5380C2084D;
-        Sun, 12 Jan 2020 02:40:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69D72084D;
+        Sun, 12 Jan 2020 06:09:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578796858;
-        bh=/IIGU/qgpqqRTXW8bMohqvTwPewVuB6W2G42p3yc9HE=;
+        s=default; t=1578809354;
+        bh=Heu80LHCoPJcbS3RqgvNvmIR7Uh41kQ9EeMPtb6yrP0=;
         h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=ImEJwUTEMXWvenNIqnbvhqnBQZTjX3B2m84HwCyMPCThfYeDfZcKPhf5Ad1ba/AGu
-         3jUgo70nCH90gVas+ybFyBfGoQ6IH50MOlI9oC3FUlmnda/OMf6m0Tn/YnQ/tMYwSq
-         2U2c4xFwQS/G9z1C/+zgJZGiNu5kQQ126qwJYp+0=
-Date:   Sun, 12 Jan 2020 10:40:48 +0800
+        b=JcubbLrL47hwtFgDulYq855+Bm5soO0vJ1tGx8/eBpAN5zNtpMbB0xuwVlFsCGSjw
+         rnoj1JK4nZTheXAJ+O95le9bNr3zkuGNHvBL5C8fo5MBaJ0Hgsp8FiuG0BdB/1PJfl
+         bTWeV151u59oNBiRdXhy2ke3SSdwRSTm+SWBest4=
+Date:   Sun, 12 Jan 2020 14:09:00 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH 3/3] clk: imx: imx8m: use imx_clk_hw_pll14xx_flags for
- dram pll
-Message-ID: <20200112024046.GZ4456@T480>
-References: <1577696903-27870-1-git-send-email-peng.fan@nxp.com>
- <1577696903-27870-4-git-send-email-peng.fan@nxp.com>
+To:     Anson Huang <Anson.Huang@nxp.com>
+Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, s.hauer@pengutronix.de,
+        kernel@pengutronix.de, festevam@gmail.com, catalin.marinas@arm.com,
+        will@kernel.org, bjorn.andersson@linaro.org, olof@lixom.net,
+        maxime@cerno.tech, leonard.crestez@nxp.com, dinguyen@kernel.org,
+        marcin.juszkiewicz@linaro.org, ping.bai@nxp.com, abel.vesa@nxp.com,
+        nsekhar@ti.com, t-kristo@ti.com, peng.fan@nxp.com,
+        yuehaibing@huawei.com, aisheng.dong@nxp.com, sfr@canb.auug.org.au,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Linux-imx@nxp.com
+Subject: Re: [PATCH V3 1/4] clk: imx: gate4: Switch imx_clk_gate4_flags() to
+ clk_hw based API
+Message-ID: <20200112060859.GA27570@T480>
+References: <1578448417-17760-1-git-send-email-Anson.Huang@nxp.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1577696903-27870-4-git-send-email-peng.fan@nxp.com>
+In-Reply-To: <1578448417-17760-1-git-send-email-Anson.Huang@nxp.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Dec 30, 2019 at 09:13:10AM +0000, Peng Fan wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Wed, Jan 08, 2020 at 09:53:34AM +0800, Anson Huang wrote:
+> Switch the imx_clk_gate4_flags() function to clk_hw based API, rename
+> accordingly and add a macro for clk based legacy. This allows us to
+> move closer to a clear split between consumer and provider clk APIs.
 > 
-> Use imx_clk_hw_pll14xx_flags for dram pll.
-> Modify imx_1443x_dram_pll to imx_1443x_dram_readonly, because dram pll
-> is not expected to be modified from Linux.
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/imx/clk-imx8mm.c  | 2 +-
->  drivers/clk/imx/clk-imx8mn.c  | 2 +-
->  drivers/clk/imx/clk-pll14xx.c | 3 +--
->  drivers/clk/imx/clk.h         | 2 +-
->  4 files changed, 4 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mm.c b/drivers/clk/imx/clk-imx8mm.c
-> index 2ed93fc25087..55862652b19f 100644
-> --- a/drivers/clk/imx/clk-imx8mm.c
-> +++ b/drivers/clk/imx/clk-imx8mm.c
-> @@ -337,7 +337,7 @@ static int imx8mm_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MM_AUDIO_PLL1] = imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_ref_sel", base, &imx_1443x_pll);
->  	hws[IMX8MM_AUDIO_PLL2] = imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_ref_sel", base + 0x14, &imx_1443x_pll);
->  	hws[IMX8MM_VIDEO_PLL1] = imx_clk_hw_pll14xx("video_pll1", "video_pll1_ref_sel", base + 0x28, &imx_1443x_pll);
-> -	hws[IMX8MM_DRAM_PLL] = imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_dram_pll);
-> +	hws[IMX8MM_DRAM_PLL] = imx_clk_hw_pll14xx_flags("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_pll_readonly, CLK_GET_RATE_NOCACHE);
->  	hws[IMX8MM_GPU_PLL] = imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", base + 0x64, &imx_1416x_pll);
->  	hws[IMX8MM_VPU_PLL] = imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", base + 0x74, &imx_1416x_pll);
->  	hws[IMX8MM_ARM_PLL] = imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", base + 0x84, &imx_1416x_pll);
-> diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-> index c5e7316b4c66..e4710d3cf3e0 100644
-> --- a/drivers/clk/imx/clk-imx8mn.c
-> +++ b/drivers/clk/imx/clk-imx8mn.c
-> @@ -334,7 +334,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MN_AUDIO_PLL1] = imx_clk_hw_pll14xx("audio_pll1", "audio_pll1_ref_sel", base, &imx_1443x_pll);
->  	hws[IMX8MN_AUDIO_PLL2] = imx_clk_hw_pll14xx("audio_pll2", "audio_pll2_ref_sel", base + 0x14, &imx_1443x_pll);
->  	hws[IMX8MN_VIDEO_PLL1] = imx_clk_hw_pll14xx("video_pll1", "video_pll1_ref_sel", base + 0x28, &imx_1443x_pll);
-> -	hws[IMX8MN_DRAM_PLL] = imx_clk_hw_pll14xx("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_dram_pll);
-> +	hws[IMX8MN_DRAM_PLL] = imx_clk_hw_pll14xx_flags("dram_pll", "dram_pll_ref_sel", base + 0x50, &imx_1443x_pll_readonly, CLK_GET_RATE_NOCACHE);
->  	hws[IMX8MN_GPU_PLL] = imx_clk_hw_pll14xx("gpu_pll", "gpu_pll_ref_sel", base + 0x64, &imx_1416x_pll);
->  	hws[IMX8MN_VPU_PLL] = imx_clk_hw_pll14xx("vpu_pll", "vpu_pll_ref_sel", base + 0x74, &imx_1416x_pll);
->  	hws[IMX8MN_ARM_PLL] = imx_clk_hw_pll14xx("arm_pll", "arm_pll_ref_sel", base + 0x84, &imx_1416x_pll);
-> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-> index 030159dc4884..33236d8580a6 100644
-> --- a/drivers/clk/imx/clk-pll14xx.c
-> +++ b/drivers/clk/imx/clk-pll14xx.c
-> @@ -67,9 +67,8 @@ struct imx_pll14xx_clk imx_1443x_pll = {
->  	.rate_count = ARRAY_SIZE(imx_pll1443x_tbl),
->  };
->  
-> -struct imx_pll14xx_clk imx_1443x_dram_pll = {
-> +struct imx_pll14xx_clk imx_1443x_pll_readonly = {
->  	.type = PLL_1443X,
-> -	.flags = CLK_GET_RATE_NOCACHE,
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-Not really sure what we gain from creating a new function and moving the
-flag from here to there.  I'm personally not fond of it.
-
-Shawn
-
->  };
->  
->  struct imx_pll14xx_clk imx_1416x_pll = {
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index 35a9d294b6df..ea84d2993b57 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -53,7 +53,7 @@ struct imx_pll14xx_clk {
->  
->  extern struct imx_pll14xx_clk imx_1416x_pll;
->  extern struct imx_pll14xx_clk imx_1443x_pll;
-> -extern struct imx_pll14xx_clk imx_1443x_dram_pll;
-> +extern struct imx_pll14xx_clk imx_1443x_pll_readonly;
->  
->  #define imx_clk_cpu(name, parent_name, div, mux, pll, step) \
->  	to_clk(imx_clk_hw_cpu(name, parent_name, div, mux, pll, step))
-> -- 
-> 2.16.4
-> 
+Applied all, thanks.
