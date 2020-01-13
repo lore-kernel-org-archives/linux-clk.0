@@ -2,184 +2,110 @@ Return-Path: <SRS0=xcQL=3C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E350C33CAF
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 12:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8FE5C33CA9
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 15:27:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDF962075B
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 12:10:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gUIejq+F"
+	by mail.kernel.org (Postfix) with ESMTP id A0F2B207E0
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 15:27:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726878AbgAMMKy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jan 2020 07:10:54 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40844 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726163AbgAMMKx (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jan 2020 07:10:53 -0500
-Received: by mail-wr1-f67.google.com with SMTP id c14so8299820wrn.7
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2020 04:10:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=WBfLyLnxB/57Tfgm5ZKZyPtCmfHaakxN3M7SxJ598pA=;
-        b=gUIejq+FCx8Kd6HvjLMU8Nn1XtbcJ8M/jb0ryLOxB4/zVBuKYX4Af8SLra9eJs4rcB
-         mghg3QF8PPQNWvjwOAiVdwcSKLrvUlD57Ufq0i7SOK/qR+0UNHRDR60OFB5lvntqzNTu
-         cu/o0c5QoHplbht9CBc/FT8dE/Qs9MJ/hHR+zNX6ciZxIM+gEzATdOQ6DekDQYvxm+Hq
-         coYzl5K4gougiM/zugUm0SpSjhtHCDP5PDewrpJ7SkFqDI7kQoZhX7RBBi+Kp8J/QRj8
-         b9h5efbNYhOIsDtIFMb0+S+PQKoOuQsMHi34A9odAr2wmItf2LEGgYfuYCF0f/xhMBSL
-         mEyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=WBfLyLnxB/57Tfgm5ZKZyPtCmfHaakxN3M7SxJ598pA=;
-        b=resReXyfKD6SWkZVheMEdngJxjgAP1SasXg+2hVSprlxajzvYjF1Rr3eQK++e3D7JV
-         STH/jYCEZ/7NMZS8+0RTF3y1KGqEGC07DSufxycCoLcpL1gg+HGahuDOBH2wLFl/FXaG
-         MKeTo/oHqwb/et1LFltkKgnddvbMNqyTcZ6u/xFmA+ThWnFv8Evre5MJrf0IoP/y1/52
-         d5pccHQ8KMABuwUb/H2gbXAlP8Lb89Fe1II3SUL5KQp82pSuXJVnf2sgyIS80SA+h++G
-         WGgGc5K0Pr//NzMtQ0ZdB2mtQL1cF5rTl7ZYD1dvKabv7aglyxqb1Gdrj0ljH07Iso4R
-         SIwA==
-X-Gm-Message-State: APjAAAWRfe/K8VOJbjialZUnXoqbBUJpyfwMx+p/cAEVRSoEpBL/TK7M
-        WibQS3YEQ1dCM3UzKQA/Tw6L3w==
-X-Google-Smtp-Source: APXvYqwEQVVqvqvjsj+6jgiSXpHXeqdDkCbyvYTNsbrb9Hsh7vYWqFLAsxhpBg00+gIiid7GIRicMQ==
-X-Received: by 2002:adf:edd0:: with SMTP id v16mr18025079wro.310.1578917449742;
-        Mon, 13 Jan 2020 04:10:49 -0800 (PST)
-Received: from dell ([95.147.198.95])
-        by smtp.gmail.com with ESMTPSA id s3sm14052259wmh.25.2020.01.13.04.10.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 13 Jan 2020 04:10:49 -0800 (PST)
-Date:   Mon, 13 Jan 2020 12:11:09 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v8 08/12] regulator: bd718x7: Split driver to common and
- bd718x7 specific parts
-Message-ID: <20200113121109.GG5414@dell>
-References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <d247d71e183b388dd7f211aee1235965cff979b4.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
- <20200107124124.GI14821@dell>
- <32f8fa4201ae99df64e7a39c6a69be2bef179f7b.camel@fi.rohmeurope.com>
- <20200113105301.GF5414@dell>
- <ab72ce13d008a0d5e9cd753b87fe397953210f70.camel@fi.rohmeurope.com>
+        id S1727286AbgAMP1L (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jan 2020 10:27:11 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:55640 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726567AbgAMP1L (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 13 Jan 2020 10:27:11 -0500
+Received: from wf0253.dip.tu-dresden.de ([141.76.180.253] helo=phil.sntech)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1ir1cQ-0003Zh-SO; Mon, 13 Jan 2020 16:27:06 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
+        christoph.muellner@theobroma-systems.com, zhangqing@rock-chips.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: [PATCH] clk: rockchip: convert rk3036 pll type to use internal lock status
+Date:   Mon, 13 Jan 2020 16:26:56 +0100
+Message-Id: <20200113152656.2313846-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <ab72ce13d008a0d5e9cd753b87fe397953210f70.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Jan 2020, Vaittinen, Matti wrote:
+From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-> Hello Lee,
-> 
-> On Mon, 2020-01-13 at 10:53 +0000, Lee Jones wrote:
-> > On Wed, 08 Jan 2020, Vaittinen, Matti wrote:
-> > 
-> > > Hello Lee,
-> > > 
-> > > On Tue, 2020-01-07 at 12:41 +0000, Lee Jones wrote:
-> > > > On Mon, 30 Dec 2019, Matti Vaittinen wrote:
-> > > > 
-> > > > > Few ROHM PMICs allow setting the voltage states for different
-> > > > > system states
-> > > > > like RUN, IDLE, SUSPEND and LPSR. States are then changed via
-> > > > > SoC
-> > > > > specific
-> > > > > mechanisms. bd718x7 driver implemented device-tree parsing
-> > > > > functions for
-> > > > > these state specific voltages. The parsing functions can be re-
-> > > > > used 
-> > > > > by
-> > > > > other ROHM chip drivers like bd71828. Split the generic
-> > > > > functions
-> > > > > from
-> > > > > bd718x7-regulator.c to rohm-regulator.c and export them for
-> > > > > other
-> > > > > modules
-> > > > > to use.
-> > > > > 
-> > > > > Signed-off-by: Matti Vaittinen <
-> > > > > matti.vaittinen@fi.rohmeurope.com>
-> > > > > Acked-by: Mark Brown <broonie@kernel.org>
-> > > > > ---
-> > 
-> > [...]
-> > 
-> > > > > +#if IS_ENABLED(CONFIG_REGULATOR_ROHM)
-> > > > > +int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config
-> > > > > *dvs,
-> > > > > +				  struct device_node *np,
-> > > > > +				  const struct regulator_desc
-> > > > > *desc,
-> > > > > +				  struct regmap *regmap);
-> > > > 
-> > > > Does these really need to live in the parent's header file?
-> > > 
-> > > I don't know what would be a better place?
-> > 
-> > You don't have a regulator header file?
-> > 
-> > It seems over-kill to create one for this, so leave it as is.
-> > 
-> > > > What other call-sites are there?
-> > > 
-> > > After this series the bd718x7-regulator.c and bd71828-regulator.c
-> > > are
-> > > the in-tree drivers using these. rohm-regulator.c is implementing
-> > > them.
-> > > And I hope we see yet another driver landing in later this year. 
-> > > 
-> > > Anyways, I will investigate if I can switch this to some common
-> > > (not
-> > > rohm specific) DT bindings at some point (I've scheduled this study
-> > > to
-> > > March) - If I can then they should live in regulator core headers.
-> > > 
-> > > But changing the existing properties should again be own set of
-> > > patches
-> > > and I'd prefer doing that work independently of this series and not
-> > > delaying the BD71828 due to not-yet-evaluated bd718x7 property
-> > > changes.
-> > 
-> > That's fine.
-> 
-> Glad to hear :) By the way, I already sent the v9 ;)
+The rk3036 pll type exposes its lock status in both its pllcon registers
+as well as the General Register Files. To remove one dependency convert
+it to the "internal" lock status, similar to how rk3399 handles it.
 
-It's in my queue.
+Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 24 +++++++++++++++++++++---
+ 1 file changed, 21 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 198417d56300..37378ded0993 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -118,12 +118,30 @@ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+ #define RK3036_PLLCON1_REFDIV_SHIFT		0
+ #define RK3036_PLLCON1_POSTDIV2_MASK		0x7
+ #define RK3036_PLLCON1_POSTDIV2_SHIFT		6
++#define RK3036_PLLCON1_LOCK_STATUS		BIT(10)
+ #define RK3036_PLLCON1_DSMPD_MASK		0x1
+ #define RK3036_PLLCON1_DSMPD_SHIFT		12
++#define RK3036_PLLCON1_PWRDOWN			BIT(13)
+ #define RK3036_PLLCON2_FRAC_MASK		0xffffff
+ #define RK3036_PLLCON2_FRAC_SHIFT		0
+ 
+-#define RK3036_PLLCON1_PWRDOWN			(1 << 13)
++static int rockchip_rk3036_pll_wait_lock(struct rockchip_clk_pll *pll)
++{
++	u32 pllcon;
++	int delay = 24000000;
++
++	/* poll check the lock status in rk3399 xPLLCON2 */
++	while (delay > 0) {
++		pllcon = readl_relaxed(pll->reg_base + RK3036_PLLCON(1));
++		if (pllcon & RK3036_PLLCON1_LOCK_STATUS)
++			return 0;
++
++		delay--;
++	}
++
++	pr_err("%s: timeout waiting for pll to lock\n", __func__);
++	return -ETIMEDOUT;
++}
+ 
+ static void rockchip_rk3036_pll_get_params(struct rockchip_clk_pll *pll,
+ 					struct rockchip_pll_rate_table *rate)
+@@ -221,7 +239,7 @@ static int rockchip_rk3036_pll_set_params(struct rockchip_clk_pll *pll,
+ 	writel_relaxed(pllcon, pll->reg_base + RK3036_PLLCON(2));
+ 
+ 	/* wait for the pll to lock */
+-	ret = rockchip_pll_wait_lock(pll);
++	ret = rockchip_rk3036_pll_wait_lock(pll);
+ 	if (ret) {
+ 		pr_warn("%s: pll update unsuccessful, trying to restore old params\n",
+ 			__func__);
+@@ -260,7 +278,7 @@ static int rockchip_rk3036_pll_enable(struct clk_hw *hw)
+ 
+ 	writel(HIWORD_UPDATE(0, RK3036_PLLCON1_PWRDOWN, 0),
+ 	       pll->reg_base + RK3036_PLLCON(1));
+-	rockchip_pll_wait_lock(pll);
++	rockchip_rk3036_pll_wait_lock(pll);
+ 
+ 	return 0;
+ }
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.24.1
+
