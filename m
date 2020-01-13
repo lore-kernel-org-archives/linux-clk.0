@@ -2,225 +2,161 @@ Return-Path: <SRS0=xcQL=3C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23C2AC33C9A
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 10:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B26CBC33CB0
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 10:52:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EED492080D
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 10:04:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 87C452081E
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 10:52:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="N+Di7oJC"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="woLsoFo8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbgAMKEl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jan 2020 05:04:41 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:50878 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726523AbgAMKEl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jan 2020 05:04:41 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1578909880; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=2VLlvvePkhwbNWgY08l12MGTLHGCfKM0Z8oHlUQZfGY=; b=N+Di7oJCEzh55s6MoTvIHvmiV58DOHq9NAaVWiMsZUvTNm0FIq4QFLceWZw8nmtFMuNWahg4
- xb3RKZZ2si3HGjbog+Kj6dhLdj76DJaF/V+vG9/VPcedcm9xZDKmhduQ1dSn3N1E//dI2rML
- Pu4cYTPy0hHwjTTkr2q+bKgGv3k=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e1c40b4.7fec150055a8-smtp-out-n01;
- Mon, 13 Jan 2020 10:04:36 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 247E0C447A2; Mon, 13 Jan 2020 10:04:35 +0000 (UTC)
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 992C6C433CB;
-        Mon, 13 Jan 2020 10:04:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 992C6C433CB
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 3/3] clk: qcom: Add modem clock controller driver for
- SC7180
-To:     Sibi Sankar <sibis@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        linux-arm-msm-owner@vger.kernel.org
-References: <1577421760-1174-1-git-send-email-tdas@codeaurora.org>
- <1577421760-1174-4-git-send-email-tdas@codeaurora.org>
- <7e63d3a91264e7c237c4cb10508182bf@codeaurora.org>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <af34688b-656c-d6df-982a-ec7708c4d228@codeaurora.org>
-Date:   Mon, 13 Jan 2020 15:34:28 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.1
+        id S1726163AbgAMKwo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jan 2020 05:52:44 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55358 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbgAMKwn (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jan 2020 05:52:43 -0500
+Received: by mail-wm1-f68.google.com with SMTP id q9so9096489wmj.5
+        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2020 02:52:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=ZgZbNBWe0oTcqdIBNdNvd74B3ro0WVKyi3/VTdqw3xE=;
+        b=woLsoFo8w6H55+I2zLR2KHGqFepzum+orJMMrLzKCgk1ZJK212giD75NsNz8DNfjlP
+         vodvnf5v+e7GXZsYfps9azChJyoplTYXHzTXHM6oJ8gDA7ltgi33YYzABGb6l8CIE9c5
+         hMv3K6ZPvkOFnsDgXeVZqXsNofOaN8AiM2PHq7+IHOIDZdKR7nbPDShmz6x3+Mf3CWix
+         bYGxSqk6ZFO9B7Icj1OsAaDdjqD8AaCjk+XeSlKSNfEIGojIYHc/p9hLrJ9fOIcRGaJF
+         i8L4nWE354nw10ZeJTDo5wwrjCjl7fJ905rU03Czk/VeCDLFgkEzPkWz1mCBWhND4DST
+         82BA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=ZgZbNBWe0oTcqdIBNdNvd74B3ro0WVKyi3/VTdqw3xE=;
+        b=NQTYX/u4G0jNimS8AoGe+U1MiqjGHMXivOoo29rzfOplEssacx4iyEOfqRag310aOj
+         Yw1t5KO9cfnusLbrKA/OJLxeqS38RQUXHv1VL3GJnJb9GFOL6AJZWZeXmElgVzZ1zi6z
+         Dygp8rnslGFZhnxbeTWLJNCiE6nPXv7dx4FbgY5mjXC0TbFcxSRGQ3RihtHeNSWACWbO
+         O++c8BOy4fJ8B6WXkgkJ9qNdJKHDS/qLQefNkXK3l0x9d+/BtkTr+DdFx6FJPTiU/3lw
+         X4RuzV6pmfTOwWtRcL3JefyLl8toGmbulq9rlL4RdMWCLKTMvnYVANw1nxoyTHccqsWT
+         ghcQ==
+X-Gm-Message-State: APjAAAWqexRzL6LWWZI02r2WG20HC7pKzHbNA3SPnU5B1wZqumpsHxy6
+        wbhpukaOPa6foBoqwEAPMtVLiA==
+X-Google-Smtp-Source: APXvYqx8Vm7CK6+Z+RiNNpP0t0i/mmfam2P7FFBzWOE/l3fKY62yfP75eVxj2Ys8ub0l0x8bGFfDQQ==
+X-Received: by 2002:a05:600c:2046:: with SMTP id p6mr19619532wmg.110.1578912761970;
+        Mon, 13 Jan 2020 02:52:41 -0800 (PST)
+Received: from dell ([95.147.198.95])
+        by smtp.gmail.com with ESMTPSA id x14sm13574924wmj.42.2020.01.13.02.52.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 Jan 2020 02:52:41 -0800 (PST)
+Date:   Mon, 13 Jan 2020 10:53:01 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v8 08/12] regulator: bd718x7: Split driver to common and
+ bd718x7 specific parts
+Message-ID: <20200113105301.GF5414@dell>
+References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+ <d247d71e183b388dd7f211aee1235965cff979b4.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200107124124.GI14821@dell>
+ <32f8fa4201ae99df64e7a39c6a69be2bef179f7b.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <7e63d3a91264e7c237c4cb10508182bf@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <32f8fa4201ae99df64e7a39c6a69be2bef179f7b.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Sibi,
+On Wed, 08 Jan 2020, Vaittinen, Matti wrote:
 
-Thanks for your review.
+> Hello Lee,
+> 
+> On Tue, 2020-01-07 at 12:41 +0000, Lee Jones wrote:
+> > On Mon, 30 Dec 2019, Matti Vaittinen wrote:
+> > 
+> > > Few ROHM PMICs allow setting the voltage states for different
+> > > system states
+> > > like RUN, IDLE, SUSPEND and LPSR. States are then changed via SoC
+> > > specific
+> > > mechanisms. bd718x7 driver implemented device-tree parsing
+> > > functions for
+> > > these state specific voltages. The parsing functions can be re-used 
+> > > by
+> > > other ROHM chip drivers like bd71828. Split the generic functions
+> > > from
+> > > bd718x7-regulator.c to rohm-regulator.c and export them for other
+> > > modules
+> > > to use.
+> > > 
+> > > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > > Acked-by: Mark Brown <broonie@kernel.org>
+> > > ---
 
-On 12/27/2019 12:50 PM, Sibi Sankar wrote:
-> Hey Taniya,
-> 
+[...]
 
->>  static const struct qcom_reset_map gcc_sc7180_resets[] = {
->> diff --git a/drivers/clk/qcom/mss-sc7180.c 
->> b/drivers/clk/qcom/mss-sc7180.c
->> new file mode 100644
->> index 0000000..24c38dc
->> --- /dev/null
->> +++ b/drivers/clk/qcom/mss-sc7180.c
->> @@ -0,0 +1,94 @@
->> +// SPDX-License-Identifier: GPL-2.0-only
->> +/*
->> + * Copyright (c) 2019, The Linux Foundation. All rights reserved.
->> + */
->> +
->> +#include <linux/clk-provider.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/module.h>
->> +#include <linux/of_address.h>
->> +#include <linux/regmap.h>
->> +
->> +#include <dt-bindings/clock/qcom,mss-sc7180.h>
->> +
->> +#include "clk-regmap.h"
->> +#include "clk-branch.h"
->> +#include "common.h"
->> +
->> +static struct clk_branch mss_axi_nav_clk = {
->> +    .halt_reg = 0xbc,
+> > > +#if IS_ENABLED(CONFIG_REGULATOR_ROHM)
+> > > +int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config
+> > > *dvs,
+> > > +				  struct device_node *np,
+> > > +				  const struct regulator_desc *desc,
+> > > +				  struct regmap *regmap);
+> > 
+> > Does these really need to live in the parent's header file?
 > 
-> if we use the entire mpss_perph
-> reg space it should be 0x20bc
-> instead.
-> 
->> +    .halt_check = BRANCH_HALT,
->> +    .clkr = {
->> +        .enable_reg = 0xbc,
-> 
-> 0x20bc
-> 
+> I don't know what would be a better place?
 
-yes, will take care in the next patch.
+You don't have a regulator header file?
 
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "mss_axi_nav_clk",
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->> +static struct clk_branch mss_axi_crypto_clk = {
->> +    .halt_reg = 0xcc,
-> 
-> if we use the entire mpss_perph
-> reg space it should be 0x20cc
-> instead.
-> 
->> +    .halt_check = BRANCH_HALT,
->> +    .clkr = {
->> +        .enable_reg = 0xcc,
-> 
-> 0x20cc
-> 
+It seems over-kill to create one for this, so leave it as is.
 
-same as above.
-
->> +        .enable_mask = BIT(0),
->> +        .hw.init = &(struct clk_init_data){
->> +            .name = "mss_axi_crypto_clk",
->> +            .ops = &clk_branch2_ops,
->> +        },
->> +    },
->> +};
->> +
->> +static struct regmap_config mss_regmap_config = {
->> +    .reg_bits    = 32,
->> +    .reg_stride    = 4,
->> +    .val_bits    = 32,
->> +    .fast_io    = true,
->> +};
->> +
->> +static struct clk_regmap *mss_sc7180_clocks[] = {
->> +    [MSS_AXI_CRYPTO_CLK] = &mss_axi_crypto_clk.clkr,
->> +    [MSS_AXI_NAV_CLK] = &mss_axi_nav_clk.clkr,
->> +};
->> +
->> +static const struct qcom_cc_desc mss_sc7180_desc = {
->> +    .config = &mss_regmap_config,
->> +    .clks = mss_sc7180_clocks,
->> +    .num_clks = ARRAY_SIZE(mss_sc7180_clocks),
->> +};
->> +
->> +static int mss_sc7180_probe(struct platform_device *pdev)
->> +{
->> +    return qcom_cc_probe(pdev, &mss_sc7180_desc);
+> > What other call-sites are there?
 > 
-> Similar to turingcc-qcs404 and q6sstop-qcs404
-> shouldn't we model the iface clk dependency
-> here since  both the above clocks cant be turned
-> on/off without it.
+> After this series the bd718x7-regulator.c and bd71828-regulator.c are
+> the in-tree drivers using these. rohm-regulator.c is implementing them.
+> And I hope we see yet another driver landing in later this year. 
 > 
-
-Could we skip and proceed with the above for now?
-
->> +}
->> +
->> +static const struct of_device_id mss_sc7180_match_table[] = {
->> +    { .compatible = "qcom,sc7180-mss" },
->> +    { }
->> +};
->> +MODULE_DEVICE_TABLE(of, mss_sc7180_match_table);
->> +
->> +static struct platform_driver mss_sc7180_driver = {
->> +    .probe        = mss_sc7180_probe,
->> +    .driver        = {
->> +        .name        = "sc7180-mss",
->> +        .of_match_table = mss_sc7180_match_table,
->> +    },
->> +};
->> +
->> +static int __init mss_sc7180_init(void)
->> +{
->> +    return platform_driver_register(&mss_sc7180_driver);
->> +}
->> +subsys_initcall(mss_sc7180_init);
->> +
->> +static void __exit mss_sc7180_exit(void)
->> +{
->> +    platform_driver_unregister(&mss_sc7180_driver);
->> +}
->> +module_exit(mss_sc7180_exit);
->> +
->> +MODULE_DESCRIPTION("QTI MSS SC7180 Driver");
->> +MODULE_LICENSE("GPL v2");
->> -- 
->> Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
->> of the Code Aurora Forum, hosted by the  Linux Foundation.
+> Anyways, I will investigate if I can switch this to some common (not
+> rohm specific) DT bindings at some point (I've scheduled this study to
+> March) - If I can then they should live in regulator core headers.
 > 
+> But changing the existing properties should again be own set of patches
+> and I'd prefer doing that work independently of this series and not
+> delaying the BD71828 due to not-yet-evaluated bd718x7 property changes.
+
+That's fine.
 
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
-
---
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
