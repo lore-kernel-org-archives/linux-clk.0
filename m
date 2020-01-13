@@ -2,115 +2,113 @@ Return-Path: <SRS0=xcQL=3C=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
-	autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4FC8C33CA9
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 16:21:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E18BC33CA9
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 16:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79864207FD
-	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 16:21:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1578932501;
-	bh=uyuX80zSyZU0zdvqiIzVXq0YSlCSPT17EFubZK/qreU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=snoJsDYfWfg7TG+cB76t70rVYwkfa72Uy8P1BWloO6YG/zIBWaQSCzUFXPLKAEY3I
-	 thpUKMQYb/NOJtcY2vO6mMefNTHK7tGuJCvwb4n80p1QH2Ae05rS7FbG4VEI4E8clK
-	 hFmaC+MdCDKhot4GyV39JntCdF5WKBkjwg1EcXaY=
+	by mail.kernel.org (Postfix) with ESMTP id 128BE206DA
+	for <linux-clk@archiver.kernel.org>; Mon, 13 Jan 2020 16:50:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="a8Qpy0NX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728899AbgAMQVi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 13 Jan 2020 11:21:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33054 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726567AbgAMQVh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 13 Jan 2020 11:21:37 -0500
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A13B207FD;
-        Mon, 13 Jan 2020 16:21:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1578932497;
-        bh=uyuX80zSyZU0zdvqiIzVXq0YSlCSPT17EFubZK/qreU=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=lgYohJZn7Il6C43tp/6EeaPdCSmjU/5LlT1IA5NZAfd4nxYbth1KhquOZ0SRdvT2D
-         YDob0FIyHlQsGWuDwScuc3L36wNmpNagvrbcnQQWrLDvYhZtUKnf/+h6jXSmt4+HzW
-         JWPzy62MM5dlv0/UTUq6yjv2GgA6ash1qo4YYTfQ=
-Received: by mail-qt1-f178.google.com with SMTP id w47so9574289qtk.4;
-        Mon, 13 Jan 2020 08:21:37 -0800 (PST)
-X-Gm-Message-State: APjAAAW6kYEwH1BIkzMvwMiWXD5wTGxeYKxy0IQJQbsLhnNNGUa7lIhf
-        B+LAlKTvemiO9pUyYxmNHzU8qHdWTpJZ4PTn/A==
-X-Google-Smtp-Source: APXvYqy1aBli8QPGYN67tcxz0ioFkcG7Q8WDfjn/ep7R6JHh30SkhNkJk8G4wwwi/DRECco6JJw0FXj+/6AD7B1/xVo=
-X-Received: by 2002:ac8:1415:: with SMTP id k21mr14844595qtj.300.1578932496310;
- Mon, 13 Jan 2020 08:21:36 -0800 (PST)
+        id S1728656AbgAMQud (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 13 Jan 2020 11:50:33 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:45354 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726567AbgAMQud (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 13 Jan 2020 11:50:33 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00DGoSjN038467;
+        Mon, 13 Jan 2020 10:50:28 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1578934228;
+        bh=XK6+NRwFhrVriY+slNkZ6meisOxrLFFEaA/1jaSkTlU=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=a8Qpy0NXBTmG5OseZxRsDIfrLlcAdLoh4eTBP2GKa31gW5oXPoAJ4G/CYHdPX0Bpi
+         5Fwi2xOpqOaoNuaQXLkkLLnQ75HH5iOo+wsuPdyUUY4Y2kYyOILEpnM9oPpD5np5wB
+         gXmAQQXomVXp+aXU1qHua1gPTJVl2Kg14pH9H1oo=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00DGoSa9123735
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 13 Jan 2020 10:50:28 -0600
+Received: from DLEE103.ent.ti.com (157.170.170.33) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Mon, 13
+ Jan 2020 10:50:28 -0600
+Received: from lelv0326.itg.ti.com (10.180.67.84) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Mon, 13 Jan 2020 10:50:28 -0600
+Received: from ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by lelv0326.itg.ti.com (8.15.2/8.15.2) with SMTP id 00DGoS1g130674;
+        Mon, 13 Jan 2020 10:50:28 -0600
+Date:   Mon, 13 Jan 2020 10:54:14 -0600
+From:   Benoit Parrot <bparrot@ti.com>
+To:     Tony Lindgren <tony@atomide.com>
+CC:     Tero Kristo <t-kristo@ti.com>, <linux-omap@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [Patch v3 0/3] ARM: dts: am43x-vpfe/ov2659.patch
+Message-ID: <20200113165413.i6nbi2i7xyue4fti@ti.com>
+References: <20191211140720.10539-1-bparrot@ti.com>
+ <20191212174123.GF35479@atomide.com>
+ <c4ae58dc-3c81-f493-a665-6926baa0f04c@ti.com>
+ <20191213152938.GK35479@atomide.com>
 MIME-Version: 1.0
-References: <1577421760-1174-1-git-send-email-tdas@codeaurora.org>
- <1577421760-1174-2-git-send-email-tdas@codeaurora.org> <20200104213645.GA25711@bogus>
- <2d4a70f0-c882-a15b-cfa8-7fefef59f45b@codeaurora.org>
-In-Reply-To: <2d4a70f0-c882-a15b-cfa8-7fefef59f45b@codeaurora.org>
-From:   Rob Herring <robh@kernel.org>
-Date:   Mon, 13 Jan 2020 10:21:24 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqKiFipqb5KEs2RsyQKcoD78qOw2UvobEmj5=8-Q=qJF3Q@mail.gmail.com>
-Message-ID: <CAL_JsqKiFipqb5KEs2RsyQKcoD78qOw2UvobEmj5=8-Q=qJF3Q@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: Add YAML schemas for the QCOM
- MSS clock bindings
-To:     Taniya Das <tdas@codeaurora.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20191213152938.GK35479@atomide.com>
+User-Agent: NeoMutt/20171215
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, Jan 13, 2020 at 4:00 AM Taniya Das <tdas@codeaurora.org> wrote:
->
-> Hi Rob,
->
-> Thanks for your review.
->
-> On 1/5/2020 3:06 AM, Rob Herring wrote:
->
-> >> +description: |
-> >> +  Qualcomm modem clock control module which supports the clocks.
-> >> +
-> >> +properties:
-> >> +  compatible :
-> >
-> > drop space     ^
-> >
->
-> Will take care in the next patch.
->
-> >> +    enum:
-> >> +       - qcom,sc7180-mss
-> >> +
-> >> +  '#clock-cells':
-> >> +    const: 1
-> >> +
-> >> +  reg:
-> >> +    maxItems: 1
-> >> +
-> >> +  additionalItems: false
-> >
-> > With the indentation here, you are defining a property. Should be no
-> > indent.
-> >
->
-> I tried removing the indent too, but I keep getting this error.
->   Additional properties are not allowed ('additionalItems' was unexpected)
->
-> Please let me know if I am missing something?
+Tony Lindgren <tony@atomide.com> wrote on Fri [2019-Dec-13 07:29:38 -0800]:
+> * Tero Kristo <t-kristo@ti.com> [191213 07:43]:
+> > On 12/12/2019 19:41, Tony Lindgren wrote:
+> > > * Benoit Parrot <bparrot@ti.com> [191211 06:04]:
+> > > > This patch series adds the missing camera endpoint (ov2659) as well as
+> > > > the required source clocks nodes for the sensor.
+> > > > 
+> > > > On the am437x-sk-evm the camera sensor is sourced from clkout1 but that
+> > > > clock nodes/tree was removed as it was unsed at the time, we are
+> > > > re-adding the needed clock nodes here.
+> > > 
+> > > Tero, it seems I can already pick this series?
+> > 
+> > I believe it is ready if you approve the clkout1 clock patch.
+> 
+> OK yeah looks fine.
+> 
+> > > Or ou want to queue the changes to am43xx-clocks.dtsi along with all
+> > > your other clock patches?
+> > 
+> > Well, I have actually never queued any omap2+ dts patches myself, and I
+> > don't think there would be too many of those coming for next merge either.
+> 
+> OK will queue this series then. For the other ones from Benoit
+> looks like we need an immutable clock branch before I can apply
+> anything.
 
-Sorry, I was reading that as 'additionalProperties' which is what you
-want at the top level. Generally, 'additionalItems' is not needed.
+Tony, Tero,
 
-Rob
+Are these merged anyware now?
+I still don't see any of these on linux-next?
+
+And by "these" I mean this one and both
+ ARM: dts: dra7: add vpe nodes
+ ARM: dts: dra7: add cal nodes
+
+Regards,
+Benoit
+
+> 
+> Regards,
+> 
+> Tony
