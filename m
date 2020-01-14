@@ -2,184 +2,140 @@ Return-Path: <SRS0=Myif=3D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36A14C33C9E
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 17:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82369C33C9E
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 17:42:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0617F2465A
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 17:15:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579022114;
-	bh=FmYo1QnMZ+BRW2X7UNoRjYmUEyQPzFYiriNK4Qllzq8=;
-	h=In-Reply-To:References:Subject:Cc:From:To:Date:List-ID:From;
-	b=rjjT+YgX0XP2IX3k+mdtM1HNtUFoWXkHFdYKSoV+8ywYKTAopGIWpRh/etkPxrF8o
-	 oq+KC/NAxeBhG6qilbb3kSORW1GQJD3X5lmAxiyxfqdzrHNnq3VLFt7EM7N+3iPxc6
-	 0EWeYypK5aREoQLvcag/vaYC1FGaAPz3f2bA6GkY=
+	by mail.kernel.org (Postfix) with ESMTP id 5A9F92465A
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 17:42:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726450AbgANRPN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jan 2020 12:15:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726270AbgANRPN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 14 Jan 2020 12:15:13 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 44CA024656;
-        Tue, 14 Jan 2020 17:15:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579022112;
-        bh=FmYo1QnMZ+BRW2X7UNoRjYmUEyQPzFYiriNK4Qllzq8=;
-        h=In-Reply-To:References:Subject:Cc:From:To:Date:From;
-        b=l55vGv9I6rct+66XuAmKoj8HwPhePEeTu7HRjD0vZM5dLmfxU3rQlkZJSY64gZONh
-         KjYYBK2iO/4tgB1mN64DRgnKZPEwhz2rKGSnD5KqjaBmaFIj13OFkre+lMaC6srXur
-         5WsUj+Prrjhs2epAiOFzXQE3d7mX0PBzhrQMd9yM=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20191118234229.54085-1-saravanak@google.com>
-References: <20191118234229.54085-1-saravanak@google.com>
-Subject: Re: [PATCH v1] clk: Keep boot clocks on for multiple consumers
-Cc:     Saravana Kannan <saravanak@google.com>, kernel-team@android.com,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-From:   Stephen Boyd <sboyd@kernel.org>
+        id S1726270AbgANRm3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jan 2020 12:42:29 -0500
+Received: from outgoing18.flk.host-h.net ([197.242.87.52]:35085 "EHLO
+        outgoing18.flk.host-h.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726053AbgANRm3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jan 2020 12:42:29 -0500
+X-Greylist: delayed 4458 seconds by postgrey-1.27 at vger.kernel.org; Tue, 14 Jan 2020 12:42:28 EST
+Received: from www31.flk1.host-h.net ([188.40.1.173])
+        by antispam5-flk1.host-h.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1irP2z-0005f4-Ct; Tue, 14 Jan 2020 18:28:06 +0200
+Received: from [130.255.73.16] (helo=v01.28459.vpscontrol.net)
+        by www31.flk1.host-h.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <justin.swartz@risingedge.co.za>)
+        id 1irP2v-0007ID-6N; Tue, 14 Jan 2020 18:28:01 +0200
+From:   Justin Swartz <justin.swartz@risingedge.co.za>
 To:     Michael Turquette <mturquette@baylibre.com>,
-        Saravana Kannan <saravanak@google.com>
-User-Agent: alot/0.8.1
-Date:   Tue, 14 Jan 2020 09:15:11 -0800
-Message-Id: <20200114171512.44CA024656@mail.kernel.org>
+        Stephen Boyd <sboyd@kernel.org>,
+        Heiko Stuebner <heiko@sntech.de>
+Cc:     Justin Swartz <justin.swartz@risingedge.co.za>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: rockchip: fix incorrect configuration of rk3228 aclk_gpu* clocks
+Date:   Tue, 14 Jan 2020 16:25:02 +0000
+Message-Id: <20200114162503.7548-1-justin.swartz@risingedge.co.za>
+X-Mailer: git-send-email 2.11.0
+X-Authenticated-Sender: justin.swartz@risingedge.co.za
+X-Virus-Scanned: Clear
+X-Originating-IP: 188.40.1.173
+X-SpamExperts-Domain: risingedge.co.za
+X-SpamExperts-Username: 
+Authentication-Results: host-h.net; auth=pass (login) smtp.auth=@risingedge.co.za
+X-SpamExperts-Outgoing-Class: ham
+X-SpamExperts-Outgoing-Evidence: Combined (0.03)
+X-Recommended-Action: accept
+X-Filter-ID: Mvzo4OR0dZXEDF/gcnlw0YvzwMmgjmY0UwihWARy7g6pSDasLI4SayDByyq9LIhVQj5rfp7t2+1U
+ Z1jMPOrlNUTNWdUk1Ol2OGx3IfrIJKyP9eGNFz9TW9u+Jt8z2T3K7uDjV/sFUXQr+CDrNQuIHgQg
+ mAX8Bxy/iUu0ThNZg0h/RxVysY5Ye6+GGw0VqdJD7ren9RtRNyYim5e3GD8LGfWrcbYvelpuN/Pk
+ qhBpvAyWwieZyauFYqHkIbFa+ipFJdVl2Qo16OdG/SgJyrKdw0Znvotuy3L4aSJjqFExmwGwvf6h
+ PQx0fYKjNC9VXDo4KyWWo0k/XI0fGv8bNm7IfazUKrTRmPfW13HBdTouyUQiTqTLnMPwSR2klzqa
+ C1hRfn6HuUe9L0a5vwf8PHac6dlnibl3vcBqVmvQB4A18acnPwH1VlXOoo++LXPjBzJ/AVXirbLu
+ Jjy3NtnGWLbnBGfrUBEXB2fYGLNieGQuoHtJvp0r29Rf3ZjFwL+MhHEWw/0qBlNDp8uABz3dkWV+
+ tgmYFaNu+2UDArzT1gq7P+ZTycYLFeAN4+MGwnsp7SkU6CLbyF0Zq4b1/7rjUzETJrWks4pbbQJq
+ 6gWopI3ep45X19ZysgQ+31LcAX8eoFXAhohfegXGH2GIVQVglJFbK771YV8YbC29CtmpcTqTfSIf
+ CWq9oj7OiT8GwpAriB+3/81I3rvR8KJ2fK9jiDYgijyqqY0rATpzHKGfmtNsYTr4SmDZ/bGW8xZC
+ RRs6ZD24UhFcZZEpLhnBCwImTQNvxaLyCc35VA7RvW/HGiGqxL09Cymermt8NAa/gGopT3kKfO4C
+ gvcKmV0o9jYzsFpuc43pp/LzIs3ornuRuAAdgrkq+6l7ZLNYJcf7Z6PCydDzoYZgInuDxgFOs7AZ
+ TwbwMWQbSR6Wmuan/Ls9Qsz9RDDIN7T0mcqBMddGdUDgESur38NrFoXSENXH6UXfnav35JPA4YfM
+ 6tBkXsqvKY6zoLLTPpuFqUUQz+mM8JAD4ECWNo09vb0YLIRnK477e9Xake5PIWKjIXX7qe2zOXoS
+ foyP6zRt50eEqxpBU45i9YX9FCnI0IkSddJcntdBoUG5LGbjO41FyBEqIaDudcVplPE6wCr6GXU1
+ lCw88ijyus1sGnWknJqS8gGhNQxpB5P3qu7c1xMljx2PG/R+pKBSKy8hXOgvE1zSS7XUhkYEQYeb
+ 3jR5NeVaJQBh0uawl0Cg8j+knAzOA9mmoJvkuhKHiekUuskYaI6ERCKp8gXWqnT9kLHhStr5fiGK
+ 7KncpWELuTEvuGslKTrRIXcXpFg5ivY=
+X-Report-Abuse-To: spam@antispammaster.host-h.net
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Saravana Kannan (2019-11-18 15:42:28)
-> Clocks can turned on (by the hardware, bootloader, etc) upon a
-> reset/boot of a hardware platform. These "boot clocks" could be clocking
-> devices that are active before the kernel starts running. For example,
-> clocks needed for the interconnects, UART console, display, CPUs, DDR,
-> etc.
+The following changes prevent the unrecoverable freezes and rcu_sched
+stall warnings experienced in each of my attempts to take advantage of
+lima.
 
-This has been a long standing issue with clk framework. Some clk
-providers work around it by marking clks like UART as special and keep
-them on whenever earlycon is present on the commandline. Mike tried to
-do something about this too[1] but that patchset only merged the
-critical clk part and not the handoff part. How does this compare with
-what Mike attempted many years ago?
+Replace the COMPOSITE_NOGATE definition of aclk_gpu_pre with a
+COMPOSITE that retains the selection of HDMIPHY as the PLL source, but
+instead makes uses of the aclk_gpu PLL source gate and parent names
+defined by mux_pll_src_4plls_p rather than mux_aclk_gpu_pre_p.
 
-It may also be a good first step to merely detect that a clk is enabled
-at boot and to inform the framework that the clk is enabled and
-synchronize the state of the clk out of boot with the state that the
-framework is tracking. Essentially try to avoid the "when to turn it
-off" problem and fix the "what state is the clk in at boot" problem. We
-have clk providers that want to know this detail and currently
-workaround it by reading the state in their prepare/enable ops and bail
-out early, or read the enable state in their set_rate method and try to
-make the rate change go through. It's a mess.
+Remove the now unused mux_aclk_gpu_pre_p and the four named but also
+unused definitions (cpll_gpu, gpll_gpu, hdmiphy_gpu and usb480m_gpu)
+of the aclk_gpu PLL source gate.
 
-[1] https://lkml.kernel.org/r/1455225554-13267-1-git-send-email-mturquette@=
-baylibre.com
+Use the correct gate offset for aclk_gpu and aclk_gpu_noc.
 
->=20
-> When a boot clock is used by more than one consumer or multiple boot
-> clocks share a parent clock, the boot clock (or the common parent) can
-> be turned off when the first consumer probes. This can potentially crash
-> the device or cause poor user experience.
->=20
-> This patch fixes this by explicitly enabling the boot clocks during
-> clock registration and then disabling them at late_initcall_sync(). This
-> gives all the consumers until late_initcall() to put their "votes" in to
-> keep any of the boot clocks on past late_initcall().
+Signed-off-by: Justin Swartz <justin.swartz@risingedge.co.za>
+---
+ drivers/clk/rockchip/clk-rk3228.c | 17 ++++-------------
+ 1 file changed, 4 insertions(+), 13 deletions(-)
 
-How do we know some consumer won't "put in their votes" after late init?
-I suspect we should somehow scan the entire DT to determine what
-consumers exist and then match those consumers up with the clks that
-providers detect are on out of boot and then only remove the enable
-state of a clk once all consumers have gotten and enabled their clks.
+diff --git a/drivers/clk/rockchip/clk-rk3228.c b/drivers/clk/rockchip/clk-rk3228.c
+index d17cfb7a3..d7243c09c 100644
+--- a/drivers/clk/rockchip/clk-rk3228.c
++++ b/drivers/clk/rockchip/clk-rk3228.c
+@@ -156,8 +156,6 @@ PNAME(mux_i2s_out_p)		= { "i2s1_pre", "xin12m" };
+ PNAME(mux_i2s2_p)		= { "i2s2_src", "i2s2_frac", "xin12m" };
+ PNAME(mux_sclk_spdif_p)		= { "sclk_spdif_src", "spdif_frac", "xin12m" };
+ 
+-PNAME(mux_aclk_gpu_pre_p)	= { "cpll_gpu", "gpll_gpu", "hdmiphy_gpu", "usb480m_gpu" };
+-
+ PNAME(mux_uart0_p)		= { "uart0_src", "uart0_frac", "xin24m" };
+ PNAME(mux_uart1_p)		= { "uart1_src", "uart1_frac", "xin24m" };
+ PNAME(mux_uart2_p)		= { "uart2_src", "uart2_frac", "xin24m" };
+@@ -468,16 +466,9 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 			RK2928_CLKSEL_CON(24), 6, 10, DFLAGS,
+ 			RK2928_CLKGATE_CON(2), 8, GFLAGS),
+ 
+-	GATE(0, "cpll_gpu", "cpll", 0,
+-			RK2928_CLKGATE_CON(3), 13, GFLAGS),
+-	GATE(0, "gpll_gpu", "gpll", 0,
+-			RK2928_CLKGATE_CON(3), 13, GFLAGS),
+-	GATE(0, "hdmiphy_gpu", "hdmiphy", 0,
+-			RK2928_CLKGATE_CON(3), 13, GFLAGS),
+-	GATE(0, "usb480m_gpu", "usb480m", 0,
++	COMPOSITE(0, "aclk_gpu_pre", mux_pll_src_4plls_p, 0,
++			RK2928_CLKSEL_CON(34), 5, 2, MFLAGS, 0, 5, DFLAGS,
+ 			RK2928_CLKGATE_CON(3), 13, GFLAGS),
+-	COMPOSITE_NOGATE(0, "aclk_gpu_pre", mux_aclk_gpu_pre_p, 0,
+-			RK2928_CLKSEL_CON(34), 5, 2, MFLAGS, 0, 5, DFLAGS),
+ 
+ 	COMPOSITE(SCLK_SPI0, "sclk_spi0", mux_pll_src_2plls_p, 0,
+ 			RK2928_CLKSEL_CON(25), 8, 1, MFLAGS, 0, 7, DFLAGS,
+@@ -582,8 +573,8 @@ static struct rockchip_clk_branch rk3228_clk_branches[] __initdata = {
+ 	GATE(0, "pclk_peri_noc", "pclk_peri", CLK_IGNORE_UNUSED, RK2928_CLKGATE_CON(12), 2, GFLAGS),
+ 
+ 	/* PD_GPU */
+-	GATE(ACLK_GPU, "aclk_gpu", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(13), 14, GFLAGS),
+-	GATE(0, "aclk_gpu_noc", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(13), 15, GFLAGS),
++	GATE(ACLK_GPU, "aclk_gpu", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(7), 14, GFLAGS),
++	GATE(0, "aclk_gpu_noc", "aclk_gpu_pre", 0, RK2928_CLKGATE_CON(7), 15, GFLAGS),
+ 
+ 	/* PD_BUS */
+ 	GATE(0, "sclk_initmem_mbist", "aclk_cpu", 0, RK2928_CLKGATE_CON(8), 1, GFLAGS),
+-- 
+2.11.0
 
-
->=20
-> Signed-off-by: Saravana Kannan <saravanak@google.com>
-> ---
-
-Please mention something about the new clk flag introduced and why it is
-introduced. Also talk about orphan clks and why they're special.
-
->  drivers/clk/clk.c            | 62 ++++++++++++++++++++++++++++++++++++
->  include/linux/clk-provider.h |  1 +
->  2 files changed, 63 insertions(+)
->=20
-> diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-> index 1c677d7f7f53..a1b09c9f8845 100644
-> --- a/drivers/clk/clk.c
-> +++ b/drivers/clk/clk.c
-> @@ -1300,6 +1302,36 @@ static int clk_disable_unused(void)
->  }
->  late_initcall_sync(clk_disable_unused);
-> =20
-> +static void clk_unprepare_disable_subtree(struct clk_core *core)
-> +{
-> +       struct clk_core *child;
-> +
-> +       lockdep_assert_held(&prepare_lock);
-> +
-> +       hlist_for_each_entry(child, &core->children, child_node)
-> +               clk_unprepare_disable_subtree(child);
-> +
-> +       if (!core->state_held)
-> +               return;
-> +
-> +       clk_core_disable_unprepare(core);
-> +}
-> +
-> +static int clk_release_boot_state(void)
-> +{
-> +       struct clk_core *core;
-> +
-> +       clk_prepare_lock();
-> +
-> +       hlist_for_each_entry(core, &clk_root_list, child_node)
-> +               clk_unprepare_disable_subtree(core);
-> +
-> +       clk_prepare_unlock();
-> +
-> +       return 0;
-> +}
-> +late_initcall_sync(clk_release_boot_state);
-> +
->  static int clk_core_determine_round_nolock(struct clk_core *core,
->                                            struct clk_rate_request *req)
->  {
-> @@ -1674,6 +1706,30 @@ static int clk_fetch_parent_index(struct clk_core =
-*core,
->         return i;
->  }
-> =20
-> +static void clk_core_hold_state(struct clk_core *core)
-> +{
-> +       if (core->state_held || !core->boot_enabled ||
-> +           core->flags & CLK_DONT_HOLD_STATE)
-> +               return;
-> +
-> +       WARN(core->orphan, "%s: Can't hold state for orphan clk\n", core-=
->name);
-
-Why are orphans special?
-
-> +
-> +       core->state_held =3D !clk_core_prepare_enable(core);
-> +}
-> +
-> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
-> index 2fdfe8061363..f0e522ea793f 100644
-> --- a/include/linux/clk-provider.h
-> +++ b/include/linux/clk-provider.h
-> @@ -32,6 +32,7 @@
->  #define CLK_OPS_PARENT_ENABLE  BIT(12)
->  /* duty cycle call may be forwarded to the parent clock */
->  #define CLK_DUTY_CYCLE_PARENT  BIT(13)
-> +#define CLK_DONT_HOLD_STATE    BIT(14) /* Don't hold state */
-> =20
