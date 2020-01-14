@@ -2,111 +2,183 @@ Return-Path: <SRS0=Myif=3D=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E34C33CA9
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 06:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743EBC33CAE
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 07:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3661C2187F
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 06:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4370B207E0
+	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 07:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="VtlV23SB"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="lOrYLvb7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725854AbgANGP4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jan 2020 01:15:56 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:41339 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbgANGP4 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jan 2020 01:15:56 -0500
-Received: by mail-qt1-f195.google.com with SMTP id k40so11479914qtk.8
-        for <linux-clk@vger.kernel.org>; Mon, 13 Jan 2020 22:15:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ch4JFaWZ+4hulVW/75xxG1rRsAkPE8hB8vp6jGgpbd4=;
-        b=VtlV23SBZz6TEZdceHzpbWroE1C4NMpU13ieE1Bsl/va9EE9/lFhqmpRUeRPnIxQ3D
-         5OA9uuF5pxcwG9SNt/GUdoZdSPxtL8wo3DBThSw8cL1vaPGnEzKmuK4lqQVO/u+12R+h
-         IZksJ8HSFDxJlOgZJhCY0wvHN66LNhu5enBzw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ch4JFaWZ+4hulVW/75xxG1rRsAkPE8hB8vp6jGgpbd4=;
-        b=Vs2EN7z1u0WRdzqh92Xvjeg1CPvPLuIFbLRtX9ZRE98usPDhxeUkLGLQ5vgr5sq1Qv
-         oXmutdmT4KcDxPRLieZkvDAdTxSSV+OgQPSyLP5DC/G4j8K3Ua3uoXQNtRbiXXKfPE8w
-         ZT1Q33WmilefaeJdBmjdUFyswvpukxGaNY0glO18MXrl3HP73fjgdBDSDexKvSn10VCP
-         zbAsJ9zmyXH400B61h0m0Rkv2c79oyUlsfR0KB28cUTZjiCFSjtddyOxwpVWZHb8Dzh0
-         GP/JDTJgqWrcWY+FEb5N4QN2xn/mYXi6x/kBQUzhoKEQpKffz0W8bsA209PCUgt6dAoi
-         B8EA==
-X-Gm-Message-State: APjAAAVyYT88znt6vSeX2QgO7wpTTMYrB0l7Qj68lOSup7FM03giuo0r
-        L0rR+zMTtbEcDl4ITuk2nN/ZttuVqEL1fFOoQFm+aoUr
-X-Google-Smtp-Source: APXvYqxGOHfPgoNxBhydrYQjWY/pdNkxc8V8q5t4XPG2AnZ51P0xjiURnDVSATAJro+qmMalgYFzAyr8L81/7IC0eiM=
-X-Received: by 2002:ac8:1aeb:: with SMTP id h40mr2277927qtk.269.1578982555458;
- Mon, 13 Jan 2020 22:15:55 -0800 (PST)
+        id S1728920AbgANHYb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 14 Jan 2020 02:24:31 -0500
+Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13193 "EHLO
+        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728879AbgANHYa (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jan 2020 02:24:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e1d6c770000>; Mon, 13 Jan 2020 23:23:35 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Mon, 13 Jan 2020 23:24:29 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Mon, 13 Jan 2020 23:24:29 -0800
+Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 14 Jan
+ 2020 07:24:29 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
+ (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 14 Jan 2020 07:24:29 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.169.242]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e1d6cac0001>; Mon, 13 Jan 2020 23:24:28 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <broonie@kernel.org>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
+        <digetx@gmail.com>, <mperttunen@nvidia.com>,
+        <gregkh@linuxfoundation.org>, <sboyd@kernel.org>,
+        <robh+dt@kernel.org>, <mark.rutland@arm.com>
+CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
+        <spujar@nvidia.com>, <josephl@nvidia.com>,
+        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
+        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v8 01/22] dt-bindings: clock: tegra: Add IDs for OSC clocks
+Date:   Mon, 13 Jan 2020 23:24:06 -0800
+Message-ID: <1578986667-16041-2-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+X-NVConfidentiality: public
 MIME-Version: 1.0
-References: <20200113213453.27108-1-jae.hyun.yoo@linux.intel.com>
-In-Reply-To: <20200113213453.27108-1-jae.hyun.yoo@linux.intel.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Tue, 14 Jan 2020 06:15:43 +0000
-Message-ID: <CACPK8Xf0Oa62BsNOQ55rqAp_a=V-_9bm1c4nu_+Oo5zB=2+zpA@mail.gmail.com>
-Subject: Re: [PATCH] clk: ast2600: enable BCLK for PCI/PCIe bus always
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1578986615; bh=4p5PIBxwtEEfb+01/btqQjCdO4ySfH88+0attSXq/Pk=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
+         Content-Type;
+        b=lOrYLvb7LgZ1K1W05iTx9b0R8ntz/4WBhu/HQ0tBYteWT49Q1o3KsRzE9DdOPi+Xx
+         jGEBOq2qv0K9KvbtFH5vefUVycWLpvzFBqjmygDLEuhMJ0B8WK7QpXMn5mk3lpEm5x
+         0sySKNIyhBC4y1VKf7kH1eIVNNUseylTDgt2XBL9YTEjZrfzF90RYHNrMxkdv1dI1e
+         tvImJSIfYBKG2CPawkPWRbMIAKm6LZL5cCg1IWLBQBQEKTYs8JxQNxeVq4ztQm5rSd
+         FB6M2WlI3I//K9PuY4G+/o59ZyR+VT/oKIWU4UsJwgjinxM7nfOc6fDGq00urOAKlq
+         W0KR87nVzEykw==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Mon, 13 Jan 2020 at 21:33, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->
-> BCLK for PCI/PCIe bus should be enabled always with having the
-> CLK_IS_CRITICAL flag otherwise it will be disabled at kernel late
-> initcall phase as an unused clock, and eventually it causes
-> unexpected behavior on BMC features that are connected to the host
-> through PCI/PCIe bus.
+Tegra has OSC, OSC_DIV2 and OSC_DIV4 clocks from OSC pads which are
+the possible parents of Tegra PMC clocks clk_out_1, clk_out_2, and
+clk_out_3 for Tegra30 through Tegra210.
 
-This is true for systems that have PCIe connected. There are systems
-that do not, and in that case we don't want to have the clock enabled.
+So, this patch adds ids for these clocks.
 
-Are you doing this to support the case where the PCIe device not load
-a BMC driver? (eg for host VGA use). If not, then you can have the
-driver you're loading request the BCLK.
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
+Acked-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+---
+ include/dt-bindings/clock/tegra114-car.h        | 4 +++-
+ include/dt-bindings/clock/tegra124-car-common.h | 4 +++-
+ include/dt-bindings/clock/tegra210-car.h        | 4 +++-
+ include/dt-bindings/clock/tegra30-car.h         | 4 +++-
+ 4 files changed, 12 insertions(+), 4 deletions(-)
 
-If this is for the host VGA device, then you will need to come up with
-a mechanism that makes the enabling of this clock depend on the device
-tree.
+diff --git a/include/dt-bindings/clock/tegra114-car.h b/include/dt-bindings/clock/tegra114-car.h
+index bb5c2c999c05..df59aaf5bf34 100644
+--- a/include/dt-bindings/clock/tegra114-car.h
++++ b/include/dt-bindings/clock/tegra114-car.h
+@@ -228,6 +228,8 @@
+ #define TEGRA114_CLK_CLK_M 201
+ #define TEGRA114_CLK_CLK_M_DIV2 202
+ #define TEGRA114_CLK_CLK_M_DIV4 203
++#define TEGRA114_CLK_OSC_DIV2 202
++#define TEGRA114_CLK_OSC_DIV4 203
+ #define TEGRA114_CLK_PLL_REF 204
+ #define TEGRA114_CLK_PLL_C 205
+ #define TEGRA114_CLK_PLL_C_OUT1 206
+@@ -274,7 +276,7 @@
+ #define TEGRA114_CLK_CLK_OUT_2 246
+ #define TEGRA114_CLK_CLK_OUT_3 247
+ #define TEGRA114_CLK_BLINK 248
+-/* 249 */
++#define TEGRA114_CLK_OSC 249
+ /* 250 */
+ /* 251 */
+ #define TEGRA114_CLK_XUSB_HOST_SRC 252
+diff --git a/include/dt-bindings/clock/tegra124-car-common.h b/include/dt-bindings/clock/tegra124-car-common.h
+index 0c4f5be0a742..2a9acd592bff 100644
+--- a/include/dt-bindings/clock/tegra124-car-common.h
++++ b/include/dt-bindings/clock/tegra124-car-common.h
+@@ -227,6 +227,8 @@
+ #define TEGRA124_CLK_CLK_M 201
+ #define TEGRA124_CLK_CLK_M_DIV2 202
+ #define TEGRA124_CLK_CLK_M_DIV4 203
++#define TEGRA124_CLK_OSC_DIV2 202
++#define TEGRA124_CLK_OSC_DIV4 203
+ #define TEGRA124_CLK_PLL_REF 204
+ #define TEGRA124_CLK_PLL_C 205
+ #define TEGRA124_CLK_PLL_C_OUT1 206
+@@ -273,7 +275,7 @@
+ #define TEGRA124_CLK_CLK_OUT_2 246
+ #define TEGRA124_CLK_CLK_OUT_3 247
+ #define TEGRA124_CLK_BLINK 248
+-/* 249 */
++#define TEGRA124_CLK_OSC 249
+ /* 250 */
+ /* 251 */
+ #define TEGRA124_CLK_XUSB_HOST_SRC 252
+diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
+index 44f60623f99b..7a8f10b9a66d 100644
+--- a/include/dt-bindings/clock/tegra210-car.h
++++ b/include/dt-bindings/clock/tegra210-car.h
+@@ -262,6 +262,8 @@
+ #define TEGRA210_CLK_CLK_M 233
+ #define TEGRA210_CLK_CLK_M_DIV2 234
+ #define TEGRA210_CLK_CLK_M_DIV4 235
++#define TEGRA210_CLK_OSC_DIV2 234
++#define TEGRA210_CLK_OSC_DIV4 235
+ #define TEGRA210_CLK_PLL_REF 236
+ #define TEGRA210_CLK_PLL_C 237
+ #define TEGRA210_CLK_PLL_C_OUT1 238
+@@ -355,7 +357,7 @@
+ #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
+ #define TEGRA210_CLK_PLL_A_OUT0_OUT_ADSP 324
+ /* 325 */
+-/* 326 */
++#define TEGRA210_CLK_OSC 326
+ /* 327 */
+ /* 328 */
+ /* 329 */
+diff --git a/include/dt-bindings/clock/tegra30-car.h b/include/dt-bindings/clock/tegra30-car.h
+index 3c90f1535551..7b542c10fc27 100644
+--- a/include/dt-bindings/clock/tegra30-car.h
++++ b/include/dt-bindings/clock/tegra30-car.h
+@@ -196,6 +196,8 @@
+ #define TEGRA30_CLK_CLK_M 171
+ #define TEGRA30_CLK_CLK_M_DIV2 172
+ #define TEGRA30_CLK_CLK_M_DIV4 173
++#define TEGRA30_CLK_OSC_DIV2 172
++#define TEGRA30_CLK_OSC_DIV4 173
+ #define TEGRA30_CLK_PLL_REF 174
+ #define TEGRA30_CLK_PLL_C 175
+ #define TEGRA30_CLK_PLL_C_OUT1 176
+@@ -243,7 +245,7 @@
+ #define TEGRA30_CLK_HCLK 217
+ #define TEGRA30_CLK_PCLK 218
+ /* 219 */
+-/* 220 */
++#define TEGRA30_CLK_OSC 220
+ /* 221 */
+ /* 222 */
+ /* 223 */
+-- 
+2.7.4
 
-Cheers,
-
-Joel
-
->
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> ---
->  drivers/clk/clk-ast2600.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/clk-ast2600.c b/drivers/clk/clk-ast2600.c
-> index 392d01705b97..42bfdc16bf7a 100644
-> --- a/drivers/clk/clk-ast2600.c
-> +++ b/drivers/clk/clk-ast2600.c
-> @@ -64,7 +64,7 @@ static const struct aspeed_gate_data aspeed_g6_gates[] = {
->         [ASPEED_CLK_GATE_GCLK]          = {  2,  7, "gclk-gate",        NULL,    0 },   /* 2D engine */
->         /* vclk parent - dclk/d1clk/hclk/mclk */
->         [ASPEED_CLK_GATE_VCLK]          = {  3,  6, "vclk-gate",        NULL,    0 },   /* Video Capture */
-> -       [ASPEED_CLK_GATE_BCLK]          = {  4,  8, "bclk-gate",        "bclk",  0 }, /* PCIe/PCI */
-> +       [ASPEED_CLK_GATE_BCLK]          = {  4,  8, "bclk-gate",        "bclk",  CLK_IS_CRITICAL }, /* PCIe/PCI */
->         /* From dpll */
->         [ASPEED_CLK_GATE_DCLK]          = {  5, -1, "dclk-gate",        NULL,    CLK_IS_CRITICAL }, /* DAC */
->         [ASPEED_CLK_GATE_REF0CLK]       = {  6, -1, "ref0clk-gate",     "clkin", CLK_IS_CRITICAL },
-> --
-> 2.17.1
->
