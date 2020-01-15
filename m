@@ -2,270 +2,189 @@ Return-Path: <SRS0=l8GQ=3E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E34DBC33CB1
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 09:21:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3EDAC33CB1
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 09:39:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B53892081E
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 09:21:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6D1582467A
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 09:39:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579081160;
+	bh=3BwWvYMuem14+n2TmV9f9i2OsgoBt6h4ggsil5vWDig=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=HbTcRdY3gLfIFOiI9uwV6/WSZ3oXDNpbphetjDdMChJfef1zoMtfiNgBBc+57vdFl
+	 /qYE5sFB9JpIHkKcrwEQP8/DIU/dMof51x6V2PAtyjjejIssdV3ZMMxY+BQxBg9WQm
+	 xmhporvNp/wvjFN+vdEtaWXFrcwHYZy6LnFj5a1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgAOJV0 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jan 2020 04:21:26 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:41722 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729274AbgAOJV0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jan 2020 04:21:26 -0500
-Received: by mail-lj1-f195.google.com with SMTP id h23so17709418ljc.8;
-        Wed, 15 Jan 2020 01:21:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TjnFZnYpavuuIzu2Rl5bBCXuvSBiJHMpAhaUfeoSNP4=;
-        b=SeBKen9ONRYipTBfcoZEtVMWuiJNgGqGkfdfLKqJbbINEKQu/ALBGtkfeB8hQHJAgR
-         rUP3ytIchvLvkH4oORbxGIgEx4AufR6VaJAoABAQH9PoBmvNW1E3HjAOQ6L0W/bDbBkP
-         ohPjwuW7A6uLXQ516wK3rsq+ZbCXgcpnP240QHLDFwzqjeUutL5h7dB3t+wFqzA3zm7y
-         7Mymg5rtUGRNLJrzUZFYc1GbMa/dA5pI05/VZcpEXuc7ti0m/OJBMrZ0eFYMD5FCjsZt
-         byy3quoCSwzAYEycLKZgsnvZsF1hZ/t0QqJ/FJO43yo0H8ALxN5NgCiB9q4HPGjAqrdk
-         M7qQ==
-X-Gm-Message-State: APjAAAUAmDrg3bA11c+8aBW6lMWDdcn7NMNVxjWVs2wwc1Epj3jeqUCs
-        aCWpdCWAj4Bcia4gWQh4zu4=
-X-Google-Smtp-Source: APXvYqzWmD1W6pE3iCdNmTjckMC8T2A+3eyQ8PnKFzMvZ/aj8BbSsA45tg/zjM3aJ1siTR4hsSesIQ==
-X-Received: by 2002:a2e:8015:: with SMTP id j21mr1155943ljg.172.1579080082228;
-        Wed, 15 Jan 2020 01:21:22 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id a9sm8501575lfk.23.2020.01.15.01.21.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 Jan 2020 01:21:21 -0800 (PST)
-Date:   Wed, 15 Jan 2020 11:21:09 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     matti.vaittinen@fi.rohmeurope.com, mazziesaccount@gmail.com
-Cc:     Lee Jones <lee.jones@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: [RESEND PATCH v9 12/12] led: bd71828: Support LED outputs on ROHM
- BD71828 PMIC
-Message-ID: <cfa2f494fb9c47ec36856980e2fda11f43dc19a1.1579078681.git.matti.vaittinen@fi.rohmeurope.com>
-References: <cover.1579078681.git.matti.vaittinen@fi.rohmeurope.com>
+        id S1729470AbgAOJjU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jan 2020 04:39:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40594 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729396AbgAOJjT (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jan 2020 04:39:19 -0500
+Received: from mail-yw1-f44.google.com (mail-yw1-f44.google.com [209.85.161.44])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4398624671
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2020 09:39:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579081158;
+        bh=3BwWvYMuem14+n2TmV9f9i2OsgoBt6h4ggsil5vWDig=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=cA5aoyXyxYGI7IPsDDoug57lJFbBGjHiBDTBlq5mADqc33fl2xeBsNh0/zVcPmcVz
+         suq5supQ4caOVJbABB4nVMYD3djLwwrCIDoPbMm6L0wj0oJ0GwigBG9dYdhffUT7z0
+         GL0QIQnV5eyUvi+5inGo101sNQae5tL8xqVHOWow=
+Received: by mail-yw1-f44.google.com with SMTP id l22so10750567ywc.8
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2020 01:39:18 -0800 (PST)
+X-Gm-Message-State: APjAAAV3k/D/DWECV4WC9gBM2wHLc5bbH7jUyeF1z9uFQdehA/9EqXcq
+        PV0FCl+BnVDWX42h9pJ4qp58NZJI1mYESJDVST8=
+X-Google-Smtp-Source: APXvYqwbbFyKZvB+uBGHFoEP+PhF2sh9i9BNmnc893jtvBts+oqSNTSCleGN5QbTWxkgAzRP3Ks1uOl0ZITmuP35jeA=
+X-Received: by 2002:a81:60c2:: with SMTP id u185mr22270637ywb.112.1579081157390;
+ Wed, 15 Jan 2020 01:39:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1579078681.git.matti.vaittinen@fi.rohmeurope.com>
-User-Agent: Mutt/1.12.1 (2019-06-15)
+References: <20200112122107.GD27570@T480>
+In-Reply-To: <20200112122107.GD27570@T480>
+From:   Shawn Guo <shawnguo@kernel.org>
+Date:   Wed, 15 Jan 2020 17:39:06 +0800
+X-Gmail-Original-Message-ID: <CAJBJ56LzrbLPEL2fCxd+d4GhEcvgk+hUW5QOh7-kjjpE3=40Qw@mail.gmail.com>
+Message-ID: <CAJBJ56LzrbLPEL2fCxd+d4GhEcvgk+hUW5QOh7-kjjpE3=40Qw@mail.gmail.com>
+Subject: Re: [GIT PULL] i.MX clock changes for 5.6
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-ROHM BD71828 power management IC has two LED outputs for charge status
-and button pressing indications. The LED outputs can also be forced
-by SW so add driver allowing to use these LEDs for other indications
-as well.
+Hi Stephen,
 
-Leds are controlled by SW using 'Force ON' bits. Please note the
-constrains mentioned in data-sheet:
-    1. If one LED is forced ON - then also the other LED is forced.
-            => You can't use SW control to force ON one LED and allow HW
-               to control the other.
-    2. You can't force both LEDs OFF. If the FORCE bit for both LED's is
-       zero, then LEDs are controlled by HW and indicate button/charger
-       states as explained in data-sheet.
+On Sun, Jan 12, 2020 at 8:21 PM Shawn Guo <shawnguo@kernel.org> wrote:
+>
+> The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+>
+>   Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
+>
+> are available in the Git repository at:
+>
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-5.6
 
-Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
----
-No changes since v8
+Please ignore this pull request.  IMX_COMPOSITE_CORE change breaks DT
+compatibility.  I will send v2 shortly with the offending patches
+taken out.
 
- drivers/leds/Kconfig        |  10 +++
- drivers/leds/Makefile       |   1 +
- drivers/leds/leds-bd71828.c | 118 ++++++++++++++++++++++++++++++++++++
- 3 files changed, 129 insertions(+)
- create mode 100644 drivers/leds/leds-bd71828.c
+Shawn
 
-diff --git a/drivers/leds/Kconfig b/drivers/leds/Kconfig
-index 4b68520ac251..db408e03e296 100644
---- a/drivers/leds/Kconfig
-+++ b/drivers/leds/Kconfig
-@@ -545,6 +545,16 @@ config LEDS_BD2802
- 	  This option enables support for BD2802GU RGB LED driver chips
- 	  accessed via the I2C bus.
- 
-+config LEDS_BD71828
-+	tristate "LED driver for LEDS on ROHM BD71828 PMIC"
-+	depends on LEDS_CLASS
-+	depends on MFD_ROHM_BD71828
-+	help
-+	  This option enables support for LED outputs located on ROHM
-+	  BD71828 power management IC. ROHM BD71828 has two led output pins
-+	  which can be left to indicate HW states or controlled by SW. Say
-+	  yes here if you want to enable SW control for these LEDs.
-+
- config LEDS_INTEL_SS4200
- 	tristate "LED driver for Intel NAS SS4200 series"
- 	depends on LEDS_CLASS
-diff --git a/drivers/leds/Makefile b/drivers/leds/Makefile
-index 2da39e896ce8..a5164acfaf51 100644
---- a/drivers/leds/Makefile
-+++ b/drivers/leds/Makefile
-@@ -15,6 +15,7 @@ obj-$(CONFIG_LEDS_AN30259A)		+= leds-an30259a.o
- obj-$(CONFIG_LEDS_BCM6328)		+= leds-bcm6328.o
- obj-$(CONFIG_LEDS_BCM6358)		+= leds-bcm6358.o
- obj-$(CONFIG_LEDS_BD2802)		+= leds-bd2802.o
-+obj-$(CONFIG_LEDS_BD71828)		+= leds-bd71828.o
- obj-$(CONFIG_LEDS_CPCAP)		+= leds-cpcap.o
- obj-$(CONFIG_LEDS_LOCOMO)		+= leds-locomo.o
- obj-$(CONFIG_LEDS_LM3530)		+= leds-lm3530.o
-diff --git a/drivers/leds/leds-bd71828.c b/drivers/leds/leds-bd71828.c
-new file mode 100644
-index 000000000000..a02c2ac4a70b
---- /dev/null
-+++ b/drivers/leds/leds-bd71828.c
-@@ -0,0 +1,118 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+// Copyright (C) 2019 ROHM Semiconductors
-+
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/kernel.h>
-+#include <linux/leds.h>
-+#include <linux/mfd/rohm-bd71828.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/slab.h>
-+
-+#define BD71828_LED_TO_DATA(l) ((l)->id == ID_GREEN_LED ? \
-+	container_of((l), struct bd71828_leds, green) : \
-+	container_of((l), struct bd71828_leds, amber))
-+
-+/* Names for led identification - these match the data sheet names */
-+enum {
-+	ID_GREEN_LED,
-+	ID_AMBER_LED,
-+	ID_NMBR_OF,
-+};
-+
-+struct bd71828_led {
-+	struct led_init_data init_data;
-+	int id;
-+	struct led_classdev l;
-+	u8 force_mask;
-+};
-+
-+struct bd71828_leds {
-+	struct rohm_regmap_dev *bd71828;
-+	struct bd71828_led green;
-+	struct bd71828_led amber;
-+};
-+
-+static int bd71828_led_brightness_set(struct led_classdev *led_cdev,
-+				      enum led_brightness value)
-+{
-+	struct bd71828_led *l = container_of(led_cdev, struct bd71828_led, l);
-+	struct bd71828_leds *data;
-+	unsigned int val = BD71828_LED_OFF;
-+
-+	data = BD71828_LED_TO_DATA(l);
-+	if (value != LED_OFF)
-+		val = BD71828_LED_ON;
-+
-+	return regmap_update_bits(data->bd71828->regmap, BD71828_REG_LED_CTRL,
-+			    l->force_mask, val);
-+}
-+
-+static int bd71828_led_probe(struct platform_device *pdev)
-+{
-+	struct rohm_regmap_dev *bd71828;
-+	struct bd71828_leds *l;
-+	struct bd71828_led *g, *a;
-+	int ret;
-+
-+	bd71828 = dev_get_drvdata(pdev->dev.parent);
-+	l = devm_kzalloc(&pdev->dev, sizeof(*l), GFP_KERNEL);
-+	if (!l)
-+		return -ENOMEM;
-+	l->bd71828 = bd71828;
-+	a = &l->amber;
-+	g = &l->green;
-+
-+	/* Fill in details for 'AMBLED' */
-+	a->init_data.match_property.name = "rohm,led-compatible";
-+	a->init_data.match_property.raw_val = "bd71828-ambled";
-+	a->init_data.match_property.size = strlen("bd71828-ambled");
-+	a->id = ID_AMBER_LED;
-+	a->force_mask = BD71828_MASK_LED_AMBER;
-+
-+	/* Fill in details for 'GRNLED' */
-+	g->init_data.match_property.name = "rohm,led-compatible";
-+	g->init_data.match_property.raw_val = "bd71828-grnled";
-+	g->init_data.match_property.size = strlen("bd71828-grnled");
-+	g->id = ID_GREEN_LED;
-+	g->force_mask = BD71828_MASK_LED_GREEN;
-+
-+	a->l.brightness_set_blocking = bd71828_led_brightness_set;
-+	g->l.brightness_set_blocking = bd71828_led_brightness_set;
-+
-+	ret = devm_led_classdev_register_ext(&pdev->dev, &g->l, &g->init_data);
-+	if (ret)
-+		return ret;
-+
-+	return devm_led_classdev_register_ext(&pdev->dev, &a->l, &a->init_data);
-+}
-+
-+/*
-+ * Device is instantiated through parent MFD device and device matching is done
-+ * through platform_device_id.
-+ *
-+ * However, the *module* matching will be done trough DT aliases. This requires
-+ * of_device_id table - but no .of_match_table as *device* matching is still
-+ * done through platform_device_id.
-+ */
-+static const struct of_device_id bd71828_dt_match[] __used = {
-+	{ .compatible = "rohm,bd71828-leds" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, bd71828_dt_match);
-+
-+static struct platform_driver bd71828_led_driver = {
-+	.driver = {
-+		.name  = "bd71828-led",
-+	},
-+	.probe  = bd71828_led_probe,
-+};
-+
-+module_platform_driver(bd71828_led_driver);
-+
-+MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("ROHM BD71828 LED driver");
-+MODULE_LICENSE("GPL");
--- 
-2.21.0
-
-
--- 
-Matti Vaittinen, Linux device drivers
-ROHM Semiconductors, Finland SWDC
-Kiviharjunlenkki 1E
-90220 OULU
-FINLAND
-
-~~~ "I don't think so," said Rene Descartes. Just then he vanished ~~~
-Simon says - in Latin please.
-~~~ "non cogito me" dixit Rene Descarte, deinde evanescavit ~~~
-Thanks to Simon Glass for the translation =] 
+>
+> for you to fetch changes up to ec44c497dc64f1cd4cc4cde414235891344a353a:
+>
+>   clk: imx: imx8mn: use imx8m_clk_hw_composite_core (2020-01-12 15:24:04 +0800)
+>
+> ----------------------------------------------------------------
+> i.MX clock changes for 5.6:
+>
+>  - A series from Abel Vesa to do some trivial cleanups which will be
+>    helpful for i.MX clock driver switching to clk_hw based API.
+>  - A series from Anson Huang to add i.MX8MP clock driver support.
+>  - Disable non-functional divider between pll4_audio_div and
+>    pll4_post_div on imx6q.
+>  - Fix watchdog2 clock name typo in imx7ulp clock driver.
+>  - A couple of patches from Leonard Crestez to set CLK_GET_RATE_NOCACHE
+>    flag for DRAM related clocks on i.MX8M SoCs.
+>  - Suppress bind attrs for i.MX8M clock driver to avoid the possibility
+>    of reloading the driver at runtime.
+>  - Add a big comment in imx8qxp-lpcg driver to tell why
+>    devm_platform_ioremap_resource() shouldn't be used for the driver.
+>  - A correction on i.MX8MN usb1_ctrl parent clock setting.
+>  - A couple of trivial cleanup on clk-divider-gate driver.
+>  - A series from Peng Fan to convert i.MX8M clock drivers to clk_hw
+>    based API.
+>  - Add a IMX_COMPOSITE_CORE flag for i.MX8M clock drivers to reuse
+>    imx8m_clk_hw_composite for core clock slice.
+>
+> ----------------------------------------------------------------
+> Abel Vesa (11):
+>       clk: imx: Add correct failure handling for clk based helpers
+>       clk: imx: Rename the SCCG to SSCG
+>       clk: imx: Replace all the clk based helpers with macros
+>       clk: imx: pllv1: Switch to clk_hw based API
+>       clk: imx: pllv2: Switch to clk_hw based API
+>       clk: imx: imx7ulp composite: Rename to show is clk_hw based
+>       clk: imx: Rename sccg and frac pll register to suggest clk_hw
+>       clk: imx: Rename the imx_clk_pllv4 to imply it's clk_hw based
+>       clk: imx: Rename the imx_clk_pfdv2 to imply it's clk_hw based
+>       clk: imx: Rename the imx_clk_divider_gate to imply it's clk_hw based
+>       clk: imx7up: Rename the clks to hws
+>
+> Anson Huang (3):
+>       clk: imx: gate4: Switch imx_clk_gate4_flags() to clk_hw based API
+>       dt-bindings: imx: Add clock binding doc for i.MX8MP
+>       clk: imx: Add support for i.MX8MP clock driver
+>
+> Fabio Estevam (1):
+>       clk: imx7ulp: Fix watchdog2 clock name typo
+>
+> Jan Remmet (1):
+>       clk: imx6q: disable non functional divider
+>
+> Leonard Crestez (4):
+>       clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram clocks
+>       clk: imx: Mark dram pll on 8mm and 8mn with CLK_GET_RATE_NOCACHE
+>       clk: imx8m: Suppress bind attrs
+>       clk: imx8qxp-lpcg: Warn against devm_platform_ioremap_resource
+>
+> Li Jun (1):
+>       clk: imx8mn: correct the usb1_ctrl parent to be usb_bus
+>
+> Peng Fan (15):
+>       clk: imx: clk-divider-gate: fix a typo in comment
+>       clk: imx: clk-divider-gate: drop redundant initialization
+>       clk: imx: clk-pll14xx: Switch to clk_hw based API
+>       clk: imx: clk-composite-8m: Switch to clk_hw based API
+>       clk: imx: add imx_unregister_hw_clocks
+>       clk: imx: add hw API imx_clk_hw_mux2_flags
+>       clk: imx: gate3: Switch to clk_hw based API
+>       clk: imx: Remove __init for imx_obtain_fixed_clk_hw() API
+>       clk: imx: imx8mn: Switch to clk_hw based API
+>       clk: imx: imx8mm: Switch to clk_hw based API
+>       clk: imx: imx8mq: Switch to clk_hw based API
+>       clk: imx: composite-8m: add imx8m_clk_hw_composite_core
+>       clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+>       clk: imx: imx8mm: use imx8m_clk_hw_composite_core
+>       clk: imx: imx8mn: use imx8m_clk_hw_composite_core
+>
+>  .../devicetree/bindings/clock/imx8mp-clock.yaml    |  68 ++
+>  drivers/clk/imx/Kconfig                            |   6 +
+>  drivers/clk/imx/Makefile                           |   3 +-
+>  drivers/clk/imx/clk-composite-7ulp.c               |   2 +-
+>  drivers/clk/imx/clk-composite-8m.c                 |  22 +-
+>  drivers/clk/imx/clk-divider-gate.c                 |  12 +-
+>  drivers/clk/imx/clk-frac-pll.c                     |   7 +-
+>  drivers/clk/imx/clk-imx6q.c                        |   5 +-
+>  drivers/clk/imx/clk-imx7ulp.c                      | 182 ++---
+>  drivers/clk/imx/clk-imx8mm.c                       | 558 +++++++--------
+>  drivers/clk/imx/clk-imx8mn.c                       | 494 ++++++-------
+>  drivers/clk/imx/clk-imx8mp.c                       | 764 +++++++++++++++++++++
+>  drivers/clk/imx/clk-imx8mq.c                       | 575 ++++++++--------
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c                 |  11 +
+>  drivers/clk/imx/clk-pfdv2.c                        |   2 +-
+>  drivers/clk/imx/clk-pll14xx.c                      |  29 +-
+>  drivers/clk/imx/clk-pllv1.c                        |  14 +-
+>  drivers/clk/imx/clk-pllv2.c                        |  14 +-
+>  drivers/clk/imx/clk-pllv4.c                        |   2 +-
+>  drivers/clk/imx/{clk-sccg-pll.c => clk-sscg-pll.c} | 152 ++--
+>  drivers/clk/imx/clk.c                              |  12 +-
+>  drivers/clk/imx/clk.h                              | 172 +++--
+>  include/dt-bindings/clock/imx8mp-clock.h           | 300 ++++++++
+>  23 files changed, 2349 insertions(+), 1057 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
+>  create mode 100644 drivers/clk/imx/clk-imx8mp.c
+>  rename drivers/clk/imx/{clk-sccg-pll.c => clk-sscg-pll.c} (70%)
+>  create mode 100644 include/dt-bindings/clock/imx8mp-clock.h
