@@ -2,72 +2,140 @@ Return-Path: <SRS0=l8GQ=3E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E556CC33CB1
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 08:43:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BADA0C33CB1
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 08:55:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD25D24655
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 08:43:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DCFD222C3
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 08:55:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JdwsMlUg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729011AbgAOImu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jan 2020 03:42:50 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:38978 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726472AbgAOImt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jan 2020 03:42:49 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F21961A05A6;
-        Wed, 15 Jan 2020 09:42:47 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E36091A0212;
-        Wed, 15 Jan 2020 09:42:47 +0100 (CET)
-Received: from fsr-ub1864-014.ea.freescale.net (fsr-ub1864-014.ea.freescale.net [10.171.95.219])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 0233920340;
-        Wed, 15 Jan 2020 09:42:46 +0100 (CET)
-From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
+        id S1729035AbgAOIzu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jan 2020 03:55:50 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:50818 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726513AbgAOIzu (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jan 2020 03:55:50 -0500
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00F8tYgN109707;
+        Wed, 15 Jan 2020 02:55:34 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579078534;
+        bh=oAu0uGBid0yAygrmck+chOzn+hR2qgaPhFP4hnfF6y0=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=JdwsMlUgQc+02EYqcXhsgBUxb/lPU4/R/57/+8anFdr7jNJkXMtnPJ+T+f0fOtq0P
+         00JObIx8tI3ATqe/aEg44p8NC0xHftviQzTQFxgJOvQZaKwGIE4iyek23/n4voS1fi
+         qDut4H+HwANsouH8abbEnn07Jb76+pJTokM9KOHg=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00F8tYwU080197
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 15 Jan 2020 02:55:34 -0600
+Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Wed, 15
+ Jan 2020 02:55:33 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Wed, 15 Jan 2020 02:55:33 -0600
+Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00F8tUZS023564;
+        Wed, 15 Jan 2020 02:55:31 -0600
+Subject: Re: [PATCH] clk: ti: omap5: Add missing AESS clock
+To:     Tony Lindgren <tony@atomide.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        Abel Vesa <abel.vesa@nxp.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 0/3] clk: imx8mn: add snvs clock
-Date:   Wed, 15 Jan 2020 10:42:22 +0200
-Message-Id: <20200115084225.30464-1-horia.geanta@nxp.com>
-X-Mailer: git-send-email 2.17.1
+        Stephen Boyd <sboyd@codeaurora.org>,
+        Tero Kristo <t-kristo@ti.com>
+CC:     <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>,
+        "H . Nikolaus Schaller" <hns@goldelico.com>,
+        Matthijs van Duin <matthijsvanduin@gmail.com>
+References: <20200114150607.18092-1-tony@atomide.com>
+From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
+Message-ID: <23f9723b-cb9e-8737-92c5-4c20bed55cf5@ti.com>
+Date:   Wed, 15 Jan 2020 10:56:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20200114150607.18092-1-tony@atomide.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: ClamAV using ClamSMTP
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This patch set adds the clock for snvs module on imx8mn.
-DT bindings, clk driver are updated accordingly.
-DT for imx8mn (snvs-rtc-lp node) is also updated.
 
-Horia Geantă (3):
-  dt-bindings: clock: imx8mn: add SNVS clock
-  clk: imx8mn: add SNVS clock to clock tree
-  arm64: dts: imx8mn: add clock for snvs rtc node
 
- arch/arm64/boot/dts/freescale/imx8mn.dtsi | 1 +
- drivers/clk/imx/clk-imx8mn.c              | 1 +
- include/dt-bindings/clock/imx8mn-clock.h  | 4 +++-
- 3 files changed, 5 insertions(+), 1 deletion(-)
+On 14/01/2020 17.06, Tony Lindgren wrote:
+> Looks like we're missing AESS clock for omap5. This is similar to what
+> omap4 has.
 
--- 
-2.17.1
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
 
+> Cc: H. Nikolaus Schaller <hns@goldelico.com>
+> Cc: Matthijs van Duin <matthijsvanduin@gmail.com>
+> Cc: Peter Ujfalusi <peter.ujfalusi@ti.com>
+> Signed-off-by: Tony Lindgren <tony@atomide.com>
+> ---
+>  drivers/clk/ti/clk-54xx.c         | 15 +++++++++++++++
+>  include/dt-bindings/clock/omap5.h |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/drivers/clk/ti/clk-54xx.c b/drivers/clk/ti/clk-54xx.c
+> --- a/drivers/clk/ti/clk-54xx.c
+> +++ b/drivers/clk/ti/clk-54xx.c
+> @@ -35,6 +35,20 @@ static const struct omap_clkctrl_reg_data omap5_dsp_clkctrl_regs[] __initconst =
+>  	{ 0 },
+>  };
+>  
+> +static const char * const omap5_aess_fclk_parents[] __initconst = {
+> +	"abe_clk",
+> +	NULL,
+> +};
+> +
+> +static const struct omap_clkctrl_div_data omap5_aess_fclk_data __initconst = {
+> +	.max_div = 2,
+> +};
+> +
+> +static const struct omap_clkctrl_bit_data omap5_aess_bit_data[] __initconst = {
+> +	{ 24, TI_CLK_DIVIDER, omap5_aess_fclk_parents, &omap5_aess_fclk_data },
+> +	{ 0 },
+> +};
+> +
+>  static const char * const omap5_dmic_gfclk_parents[] __initconst = {
+>  	"abe_cm:clk:0018:26",
+>  	"pad_clks_ck",
+> @@ -122,6 +136,7 @@ static const struct omap_clkctrl_bit_data omap5_timer8_bit_data[] __initconst =
+>  
+>  static const struct omap_clkctrl_reg_data omap5_abe_clkctrl_regs[] __initconst = {
+>  	{ OMAP5_L4_ABE_CLKCTRL, NULL, 0, "abe_iclk" },
+> +	{ OMAP5_AESS_CLKCTRL, omap5_aess_bit_data, CLKF_SW_SUP, "abe_cm:clk:0008:24" },
+>  	{ OMAP5_MCPDM_CLKCTRL, NULL, CLKF_SW_SUP, "pad_clks_ck" },
+>  	{ OMAP5_DMIC_CLKCTRL, omap5_dmic_bit_data, CLKF_SW_SUP, "abe_cm:clk:0018:24" },
+>  	{ OMAP5_MCBSP1_CLKCTRL, omap5_mcbsp1_bit_data, CLKF_SW_SUP, "abe_cm:clk:0028:24" },
+> diff --git a/include/dt-bindings/clock/omap5.h b/include/dt-bindings/clock/omap5.h
+> --- a/include/dt-bindings/clock/omap5.h
+> +++ b/include/dt-bindings/clock/omap5.h
+> @@ -16,6 +16,7 @@
+>  
+>  /* abe clocks */
+>  #define OMAP5_L4_ABE_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x20)
+> +#define OMAP5_AESS_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x28)
+>  #define OMAP5_MCPDM_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x30)
+>  #define OMAP5_DMIC_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x38)
+>  #define OMAP5_MCBSP1_CLKCTRL	OMAP5_CLKCTRL_INDEX(0x48)
+> 
+
+- Péter
+
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
+Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
