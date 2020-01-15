@@ -2,101 +2,183 @@ Return-Path: <SRS0=l8GQ=3E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F715C33CB1
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 05:43:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B7ABC33CB1
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 08:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23F832467D
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 05:43:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4319F24681
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 08:29:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="h+DJfabl"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pxINdBip"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725999AbgAOFnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jan 2020 00:43:16 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:44583 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726018AbgAOFnQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jan 2020 00:43:16 -0500
-Received: by mail-qk1-f196.google.com with SMTP id w127so14591760qkb.11
-        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2020 21:43:15 -0800 (PST)
+        id S1728885AbgAOI3W (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jan 2020 03:29:22 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:46055 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729263AbgAOI3V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jan 2020 03:29:21 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j42so14772823wrj.12
+        for <linux-clk@vger.kernel.org>; Wed, 15 Jan 2020 00:29:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=jms.id.au; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VV6aOYpoC2q2Em6EQrcwUhEq6b9Yl+28VpEwnLT0CsA=;
-        b=h+DJfablG7916162OA00JdupY60BQAzyzEv95mMuZPj6EFv2tNxCR8FZf+peJo36b7
-         pkWojonjP1i46YVBFo0pHRsrODOkUxsDxeo+Tcd1sMRbpiw1S/dHzRwKSEjGc2oHbyXf
-         QXO43pQ4Y38n6Y0hJeK0Oi7H1i7q2/iFqFOn0=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3GK5Djc6Es4Lf2bms5LobhRrB6cfPeA6TPSSmCtuW7o=;
+        b=pxINdBipIObKzAeju8UwLEZAh1c5Lz1AFYRX/gAiXp8HUgwfqjdIyb/QJQy8cq+DGJ
+         G1TfipKXPwr+RZM/eigUSHh5njYxyxJZKjJKCrRroT1Rn0/X8060NszcvuJnUWQ3pKq9
+         i9lA5p3Q1AUb8ZoVC/koPJs1YWYGrmRXX7YlokbI2szyEJ84euHOPRCiCyQGQEUfLhKF
+         lN/1qkVsQZSmhhBxica9csSceRRk4mUwyx3bsn93E4AuWl8gLuDD8fxO0lc5XB8QUORb
+         94ecpjrpXdaL3osYQWCL5R3SF0gGpKlUlb6qqYB9ywtCqBxyDGWk1lOqGWUu/kpCRtiy
+         Gn6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VV6aOYpoC2q2Em6EQrcwUhEq6b9Yl+28VpEwnLT0CsA=;
-        b=uZUnoEMAxY3anLsmpLyXnxCrZKrqjiXfjYCa+hzC/qOQxPU+ZqMOMwEeOYTMkK0Mqh
-         vpO5/6duSGloqQFsyFk2RtxF46qsXSnkRcpwOcP4JmVwyG/Iz3+AtQBWdNIbv72hrlD5
-         wUL/lSszk0r1p4c2ZfT1Kr3yGoAHCT+An9/giIGMamWDczgllIaPoVFhNPzUyHB6vWZY
-         cdyUybXYuP8546RbdrhT5RK2S5juIF+23Q0hEMhimdE39qE1OMcuYPehBikuEmpJHPPH
-         97ed8dG9DW4qmP830wo/N5ACKKqssvQDnZhfN/sYE9r+KnSkgETPyqltDnzujuuA/Z88
-         RPEw==
-X-Gm-Message-State: APjAAAUdhGiaJXuxNAQwxMuQjYDkpyB0o6DmnEtWDEDA+NTJrbs3KM4K
-        OrdHApqLcZtVXPFY4BGmw5zC11HZTqjcEWqeZ+U=
-X-Google-Smtp-Source: APXvYqwrOmTBUExJJT1fUGv0npZvc0tXC2tVGawXY0yYpOu8/dlawk5v470gu5OXo54xyHwuUXcwtRpVGMvlfZrhZdY=
-X-Received: by 2002:ae9:e702:: with SMTP id m2mr20840949qka.208.1579066995074;
- Tue, 14 Jan 2020 21:43:15 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3GK5Djc6Es4Lf2bms5LobhRrB6cfPeA6TPSSmCtuW7o=;
+        b=FXZSWocbhyEpN5RWFjwZdf08QVm7l+WYVBeA/gaCnQXq+14lj9i3cLlF4nkbqLYDxJ
+         XAq9WvS5kKfl0umoFocE49nFpOMd4b8LLe3LuZTzJt2RqX1KFG6F2Tth1ZXRTU90jMz4
+         K++cN8V6KFaq6stfL7hDAy8/JoZlvY8HqZej4gt6udcrRkpMWm77DFDyECQ2+dCvGFVJ
+         03hAIrWTwokeji4JSTk+JDFJBzq+9PzyI2Fr5/dJTb3u8mAvuVZWgG9I3s2iogY+H72J
+         FELpVt8ajoglruTj3In+U12CI4WFIFHnkyJ4k/ew4oyAw7zPl0sMP/tC3kAwHjrrpni7
+         IFmA==
+X-Gm-Message-State: APjAAAWTrRghBcVGIKc5uXRWSixzBr8incvcrVAzzpvmrfekw3bsLzMs
+        UQGErGYIs0v1jkNxg6tQjZ5gIQ==
+X-Google-Smtp-Source: APXvYqxg5fYMbpzJkbMnE9bwu+VJEIcsdrHoYIUzhPAxEC31+lysJdWQxte1D3bkl5SWo9KJvHl4Nw==
+X-Received: by 2002:adf:dd51:: with SMTP id u17mr29019061wrm.290.1579076959924;
+        Wed, 15 Jan 2020 00:29:19 -0800 (PST)
+Received: from dell ([2.27.35.221])
+        by smtp.gmail.com with ESMTPSA id b16sm24408442wrj.23.2020.01.15.00.29.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 15 Jan 2020 00:29:18 -0800 (PST)
+Date:   Wed, 15 Jan 2020 08:29:37 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "dmurphy@ti.com" <dmurphy@ti.com>,
+        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
+        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
+        "a.zummo@towertech.it" <a.zummo@towertech.it>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "pavel@ucw.cz" <pavel@ucw.cz>,
+        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>
+Subject: Re: [PATCH v8 08/12] regulator: bd718x7: Split driver to common and
+ bd718x7 specific parts
+Message-ID: <20200115082937.GD325@dell>
+References: <cover.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+ <d247d71e183b388dd7f211aee1235965cff979b4.1577694311.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200107124124.GI14821@dell>
+ <32f8fa4201ae99df64e7a39c6a69be2bef179f7b.camel@fi.rohmeurope.com>
+ <20200113105301.GF5414@dell>
+ <ab72ce13d008a0d5e9cd753b87fe397953210f70.camel@fi.rohmeurope.com>
+ <20200113121109.GG5414@dell>
 MIME-Version: 1.0
-References: <20200113213453.27108-1-jae.hyun.yoo@linux.intel.com>
- <CACPK8Xf0Oa62BsNOQ55rqAp_a=V-_9bm1c4nu_+Oo5zB=2+zpA@mail.gmail.com> <255b53d2-d4b5-8bc0-393b-a2f531a98fc1@linux.intel.com>
-In-Reply-To: <255b53d2-d4b5-8bc0-393b-a2f531a98fc1@linux.intel.com>
-From:   Joel Stanley <joel@jms.id.au>
-Date:   Wed, 15 Jan 2020 05:43:03 +0000
-Message-ID: <CACPK8XfevBQxdAanN5QjiUv8KKevetjKP7cbr3tuL=mrULjttg@mail.gmail.com>
-Subject: Re: [PATCH] clk: ast2600: enable BCLK for PCI/PCIe bus always
-To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
-        linux-aspeed <linux-aspeed@lists.ozlabs.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200113121109.GG5414@dell>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Jan 2020 at 19:53, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
->
-> Hi Joel,
->
-> On 1/13/2020 10:15 PM, Joel Stanley wrote:
-> > On Mon, 13 Jan 2020 at 21:33, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
-> >>
-> >> BCLK for PCI/PCIe bus should be enabled always with having the
-> >> CLK_IS_CRITICAL flag otherwise it will be disabled at kernel late
-> >> initcall phase as an unused clock, and eventually it causes
-> >> unexpected behavior on BMC features that are connected to the host
-> >> through PCI/PCIe bus.
-> >
-> > This is true for systems that have PCIe connected. There are systems
-> > that do not, and in that case we don't want to have the clock enabled.
-> >
-> > Are you doing this to support the case where the PCIe device not load
-> > a BMC driver? (eg for host VGA use). If not, then you can have the
-> > driver you're loading request the BCLK.
-> >
-> > If this is for the host VGA device, then you will need to come up with
-> > a mechanism that makes the enabling of this clock depend on the device
-> > tree.
->
-> Is there any way to enable clock by just adding a node in device tree?
-> Do you want me to add a simple driver module for host VGA just for
-> enabling BCLK?
+On Mon, 13 Jan 2020, Lee Jones wrote:
+> On Mon, 13 Jan 2020, Vaittinen, Matti wrote:
+> > On Mon, 2020-01-13 at 10:53 +0000, Lee Jones wrote:
+> > > On Wed, 08 Jan 2020, Vaittinen, Matti wrote:
+> > > > On Tue, 2020-01-07 at 12:41 +0000, Lee Jones wrote:
+> > > > > On Mon, 30 Dec 2019, Matti Vaittinen wrote:
+> > > > > 
+> > > > > > Few ROHM PMICs allow setting the voltage states for different
+> > > > > > system states
+> > > > > > like RUN, IDLE, SUSPEND and LPSR. States are then changed via
+> > > > > > SoC
+> > > > > > specific
+> > > > > > mechanisms. bd718x7 driver implemented device-tree parsing
+> > > > > > functions for
+> > > > > > these state specific voltages. The parsing functions can be re-
+> > > > > > used 
+> > > > > > by
+> > > > > > other ROHM chip drivers like bd71828. Split the generic
+> > > > > > functions
+> > > > > > from
+> > > > > > bd718x7-regulator.c to rohm-regulator.c and export them for
+> > > > > > other
+> > > > > > modules
+> > > > > > to use.
+> > > > > > 
+> > > > > > Signed-off-by: Matti Vaittinen <
+> > > > > > matti.vaittinen@fi.rohmeurope.com>
+> > > > > > Acked-by: Mark Brown <broonie@kernel.org>
+> > > > > > ---
+> > > 
+> > > [...]
+> > > 
+> > > > > > +#if IS_ENABLED(CONFIG_REGULATOR_ROHM)
+> > > > > > +int rohm_regulator_set_dvs_levels(const struct rohm_dvs_config
+> > > > > > *dvs,
+> > > > > > +				  struct device_node *np,
+> > > > > > +				  const struct regulator_desc
+> > > > > > *desc,
+> > > > > > +				  struct regmap *regmap);
+> > > > > 
+> > > > > Does these really need to live in the parent's header file?
+> > > > 
+> > > > I don't know what would be a better place?
+> > > 
+> > > You don't have a regulator header file?
+> > > 
+> > > It seems over-kill to create one for this, so leave it as is.
+> > > 
+> > > > > What other call-sites are there?
+> > > > 
+> > > > After this series the bd718x7-regulator.c and bd71828-regulator.c
+> > > > are
+> > > > the in-tree drivers using these. rohm-regulator.c is implementing
+> > > > them.
+> > > > And I hope we see yet another driver landing in later this year. 
+> > > > 
+> > > > Anyways, I will investigate if I can switch this to some common
+> > > > (not
+> > > > rohm specific) DT bindings at some point (I've scheduled this study
+> > > > to
+> > > > March) - If I can then they should live in regulator core headers.
+> > > > 
+> > > > But changing the existing properties should again be own set of
+> > > > patches
+> > > > and I'd prefer doing that work independently of this series and not
+> > > > delaying the BD71828 due to not-yet-evaluated bd718x7 property
+> > > > changes.
+> > > 
+> > > That's fine.
+> > 
+> > Glad to hear :) By the way, I already sent the v9 ;)
+> 
+> It's in my queue.
 
-Okay, so this is for the case where we lack a BMC driver.
+Although you didn't submit the whole set to me, so I only have a few
+of the patches.  Why did you choose to do that this time?
 
-One option would be to do as you suggest, adding a simple driver that
-claims essential clocks.
-
-Another could be to add some extra properties that clock driver parses
-and enables the clocks.
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
