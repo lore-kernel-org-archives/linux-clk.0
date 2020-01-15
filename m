@@ -2,202 +2,184 @@ Return-Path: <SRS0=l8GQ=3E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62526C33CB1
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 11:48:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D46D5C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 20:09:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 254D5207E0
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 11:48:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 988842465A
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 20:09:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="F1B5QH2b"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IW94MIKQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729900AbgAOLsP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jan 2020 06:48:15 -0500
-Received: from mail-eopbgr140080.outbound.protection.outlook.com ([40.107.14.80]:5547
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729892AbgAOLsP (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:48:15 -0500
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=hjgVgdj7x7j5PQxdixV5fzgXExsIwrEAmo5/l6dh2VFxGstAOd6er+a/sPppl/Db4Jood4RIFMPXSyp1xg/Zcogu62YG5rK034VY0knvvcHEKXghATPDD7NSn/fZSdzWOE9f5cgDqRwmoedA49lgl8xtUeDuUOJjMV02pJIfFwv8xIQIF0qwBInaQ+cz/Av+Ddscld+J2auuIraoDZnRSLOYDI1dIb7mt9SJ0L9QVL4F+81s0EMuta5YdaoAUdfZNihLQhiOhjH5iLO9oxRtIow1fSiR2QABHLDt8tQeac6F1FflcofeWN4KIkOHe2JcwsJ/03wcr5EHhE8v1Hi3JA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fmEvxD35nBUYTKdZ6odL3f+pmh2ZfvjhV3YFzX2pMGs=;
- b=HVm2zop/g8RXhzBN6smkLBJDGcgb51VQzHokxHao+867uMv6eXE7l0JjsQ5EC+z90c87PhSmxOeeVGsn6bY58BPJ1ZfQ0SaRvGkfCAYrNVS/aBtqzPuU9NAbh4kTrSxDiAavppsETck50b3cH2q8eh2Isf3U2TQwDsLVtcgkvo0LNG+XLpuPWKVexIopyJ/s3KZqvrusdTPfyKaBc1ePu0FPz3PpRgkCSsNLolH6szUWI1JuIoHzYWWSPT1635gz6LSJY7WlucGwvTA0CIALOyXiy9mDG6gnG7xequQbqJAnGGjt5+iPS8QkKyXVzT2btjMbcikk+a/AYRcHsFh5PA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fmEvxD35nBUYTKdZ6odL3f+pmh2ZfvjhV3YFzX2pMGs=;
- b=F1B5QH2bgax6nSpGlDTwKbasFVZhJ1fRuca2O5h8P+UlOwfwgDcOIBZ3dOxFn7PSskUpUrqTWJYsvEERZEhrQFu5QGtoTllEmqHPs6dnLiYIMfCa42LsCgke3wErUzd1LPIq1vid7FqRk7oa48yljQgqzEw8yY0Eehexnare+v0=
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
- VI1PR04MB4351.eurprd04.prod.outlook.com (52.134.122.161) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.2623.9; Wed, 15 Jan 2020 11:48:11 +0000
-Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
- ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2644.015; Wed, 15 Jan 2020
- 11:48:11 +0000
-From:   Leonard Crestez <leonard.crestez@nxp.com>
-To:     Shawn Guo <shawnguo@kernel.org>, Peng Fan <peng.fan@nxp.com>
-CC:     Lucas Stach <l.stach@pengutronix.de>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-        "festevam@gmail.com" <festevam@gmail.com>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
-Subject: Re: [PATCH V2 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
-Thread-Topic: [PATCH V2 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
-Thread-Index: AQHVx4YVaHYUgIfOpEylrWn5NhhQ0A==
-Date:   Wed, 15 Jan 2020 11:48:11 +0000
-Message-ID: <VI1PR04MB7023D08F2C9F97C293695A05EE370@VI1PR04MB7023.eurprd04.prod.outlook.com>
-References: <1578640411-16991-1-git-send-email-peng.fan@nxp.com>
- <1578640411-16991-3-git-send-email-peng.fan@nxp.com>
- <VI1PR04MB7023981770D458F6D1FB546FEE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
- <20200115111205.GB29329@T480>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=leonard.crestez@nxp.com; 
-x-originating-ip: [78.96.82.163]
-x-ms-publictraffictype: Email
-x-ms-office365-filtering-ht: Tenant
-x-ms-office365-filtering-correlation-id: fc608298-d1f3-4d43-bf5a-08d799b0cc3d
-x-ms-traffictypediagnostic: VI1PR04MB4351:|VI1PR04MB4351:
-x-ms-exchange-transport-forked: True
-x-microsoft-antispam-prvs: <VI1PR04MB43518C870136A9A0E07A2760EE370@VI1PR04MB4351.eurprd04.prod.outlook.com>
-x-ms-oob-tlc-oobclassifiers: OLM:8882;
-x-forefront-prvs: 02830F0362
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(346002)(39860400002)(376002)(396003)(366004)(199004)(189003)(6636002)(71200400001)(54906003)(52536014)(5660300002)(110136005)(316002)(9686003)(55016002)(478600001)(44832011)(66556008)(66946007)(66446008)(76116006)(66476007)(33656002)(4326008)(64756008)(81166006)(186003)(8676002)(2906002)(26005)(81156014)(86362001)(6506007)(53546011)(8936002)(7696005)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4351;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;
-x-microsoft-antispam-message-info: 3HxoQC5ASeIHiQDAksaruepEOntV0KSsryiqzOrt2MkTXMsHJYd7AE3PyAgBFpOsYkuWAwPcdYH4TOF0IU27+JPQGJPj0JmL7C7ja+dWWZfpvXoouliU9kZf6ZgS1SRPuuUWNqZe4YmbLd572ChwyiotIHR0+8b5knawC/ebHmIyNLwryrPIQcYQUCkGSSPaOLvamqyMQEeTPqjaQZAFr4rjEntiptWCFP3VZrLeJ8QLLBE6RN3Ca9vK/x7PwFn/d1UnL6/3Mzg+RO8lF6BFWQ1aE8dBGtkYrotrDXWyrlrtJDet4jdQeZHO6QNBT1GgJxbOjhCMX74VXwZqE5C9KNy4nx8n/++flR9PP1qUdTx6xgpwoe77JD6HxXXjGeroHcQoHVXUBqzlXeVL9zCYqUPs5j/XIj68jysAUZoPi+UbvTMFtesI2UTXooYMaK0ZaHfQNlAzhK8jRB8gdPnek1TG7N8wr/oyba50ahASEkzprhdlve9VPCdW51XBbTeQ
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        id S1729532AbgAOUJq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jan 2020 15:09:46 -0500
+Received: from mail-io1-f65.google.com ([209.85.166.65]:35124 "EHLO
+        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729449AbgAOUJp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jan 2020 15:09:45 -0500
+Received: by mail-io1-f65.google.com with SMTP id h8so19219252iob.2;
+        Wed, 15 Jan 2020 12:09:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=NKbYYUka2OKZl4ULarL65Qmdbkm/KqJ8pMqUhGAd4ic=;
+        b=IW94MIKQnRJuCWNAIbEg66dP4sSfY2MlwF3d4QPhaUqhcd5zsyV1TAgedJgnZSZ6H6
+         On4TLLoZpPPLHfJf23fZ68fTE+uLmaQZ4TgsDi9dbYKvKNe5/IkSaop2cp4G2LiO97aM
+         M+5ai6iWxB3f2TQOp/qMFSVbZR1G4n8WFEuki7EPZBSer+aIAQf27Z0SczhjUJcGpIPY
+         PTs/NeS2xFLDqQfu7Oz6pqgcKMPWFu1Xw7dh5N0pO2D2vDrE6S9/Ov430aZ8OO2knkyU
+         LD0Om1fpEgccfatYeyiNPCHwVB1UO1mgSncyTKfyZSH7NozxojPJ2wsWCQziGzwJdeJK
+         7R7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=NKbYYUka2OKZl4ULarL65Qmdbkm/KqJ8pMqUhGAd4ic=;
+        b=Dwpj2m0pasFr8+8D5kirj1dDv4PtMLb0friENJMdvI/yjABKMpPeo+ZugGfH/yjotn
+         u2Wso9eqC19u/bwptmLILasvgV/UHbcnqLChgQdsWxESHvjC/tb7gfZnchvpoZcq5v5U
+         +v4+lS7rKm5nJef/R76rqTZB9AnQujow83flXf14AFV3zAIsyz/iR1IxcPujI4ByburH
+         fE+gu9pNS4WhgbH0WNy1v/EEhTNyteVHNUtIhezOtywcQWqTVxMjbUmvLiqy61XprmQn
+         fQOhn5ZvU2430V57Z2rfh4BnqW9Akwy6grjUbVF9nemV8wccYCABtop973EeNJ9BmNso
+         fpFg==
+X-Gm-Message-State: APjAAAU9R/YTmOzQXJuYoOUNxR9p2KlKXYtPtM8+ALX0Yz1WsjzhUuXT
+        mjvitwJqr4U4VFcpHUSyXdn3+26PTQtokMiZaf8KwGX7hd0=
+X-Google-Smtp-Source: APXvYqzEelNgyROBJYflB/UDF8ucW2Iqu/rx2Jz8VeF4PW5oJv5kdmaJKPWGZq1eoHVN8/OV48Fg1QBRED9VfMlAxPo=
+X-Received: by 2002:a02:a38a:: with SMTP id y10mr25168560jak.55.1579118984323;
+ Wed, 15 Jan 2020 12:09:44 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: fc608298-d1f3-4d43-bf5a-08d799b0cc3d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Jan 2020 11:48:11.4992
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: VvZ6z6uMufHaqbtyzNEhL4f/S9TOKY7kLqcsE38HEzmE4N9zFPueAtV0q2z7PtbyLiNaZutrefcInMDMFfc5Rg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4351
+References: <cover.1574458460.git.leonard.crestez@nxp.com> <CAHCN7xKNwit8ueUO0OkebfYh=4hsL7_+DRWEbn2dEt0H322W4w@mail.gmail.com>
+ <VI1PR04MB70231CA0E3C4574211518359EE530@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <CAHCN7xJNy0z2hvWbM3UhLni5ruS+sCLeBH8BKiYexe3Sp=6Q0w@mail.gmail.com>
+ <VI1PR04MB70235951BC137515BDD2FDC7EE530@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <CAHCN7xKHJAb8k1A+WC3EUOmgLTx-Kbjw_5EsmwyhDkkOKCsmGQ@mail.gmail.com>
+ <VI1PR04MB702379645745FB697033FE6BEE530@VI1PR04MB7023.eurprd04.prod.outlook.com>
+ <CAHCN7xLOgh+E5Gw+2v4RUuZANHa+CkW=ACHL5NALMcSRfRY8eQ@mail.gmail.com>
+ <CAHCN7xKjpN_XEGLj-1jMG5mBbF=su67k+10frheLt+L1XaR0-g@mail.gmail.com> <VI1PR04MB7023DA37F366D4C770D7312EEE350@VI1PR04MB7023.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB7023DA37F366D4C770D7312EEE350@VI1PR04MB7023.eurprd04.prod.outlook.com>
+From:   Adam Ford <aford173@gmail.com>
+Date:   Wed, 15 Jan 2020 14:09:32 -0600
+Message-ID: <CAHCN7xJc8yMe683wsB1e1TdE26FX1oMFT_i_hshkEECrJ52oHg@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] PM / devfreq: Add dynamic scaling for imx8m ddr controller
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Angus Ainslie <angus@akkea.ca>,
+        Alexandre Bailon <abailon@baylibre.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Saravana Kannan <saravanak@google.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        Martin Kepplinger <martink@posteo.de>,
+        Silvano Di Ninno <silvano.dininno@nxp.com>,
+        arm-soc <linux-arm-kernel@lists.infradead.org>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        Anson Huang <anson.huang@nxp.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Sascha Hauer <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Georgi Djakov <georgi.djakov@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 2020-01-15 1:12 PM, Shawn Guo wrote:=0A=
-> On Tue, Jan 14, 2020 at 04:49:20PM +0000, Leonard Crestez wrote:=0A=
->> On 10.01.2020 09:17, Peng Fan wrote:=0A=
->>> From: Peng Fan <peng.fan@nxp.com>=0A=
->>>=0A=
->>> Use imx8m_clk_hw_composite_core to simplify code.=0A=
->>>=0A=
->>> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>=0A=
->>> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
->>> ---=0A=
->>>    drivers/clk/imx/clk-imx8mq.c | 19 +++++--------------=0A=
->>>    1 file changed, 5 insertions(+), 14 deletions(-)=0A=
->>>=0A=
->>> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.=
-c=0A=
->>> index 4c0edca1a6d0..b031183ff427 100644=0A=
->>> --- a/drivers/clk/imx/clk-imx8mq.c=0A=
->>> +++ b/drivers/clk/imx/clk-imx8mq.c=0A=
->>> @@ -403,22 +403,13 @@ static int imx8mq_clocks_probe(struct platform_de=
-vice *pdev)=0A=
->>>    =0A=
->>>    	/* CORE */=0A=
->>>    	hws[IMX8MQ_CLK_A53_SRC] =3D imx_clk_hw_mux2("arm_a53_src", base + 0=
-x8000, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));=0A=
->>> -	hws[IMX8MQ_CLK_M4_SRC] =3D imx_clk_hw_mux2("arm_m4_src", base + 0x808=
-0, 24, 3, imx8mq_arm_m4_sels, ARRAY_SIZE(imx8mq_arm_m4_sels));=0A=
->>> -	hws[IMX8MQ_CLK_VPU_SRC] =3D imx_clk_hw_mux2("vpu_src", base + 0x8100,=
- 24, 3, imx8mq_vpu_sels, ARRAY_SIZE(imx8mq_vpu_sels));=0A=
->>> -	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D imx_clk_hw_mux2("gpu_core_src", base=
- + 0x8180, 24, 3,  imx8mq_gpu_core_sels, ARRAY_SIZE(imx8mq_gpu_core_sels));=
-=0A=
->>> -	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D imx_clk_hw_mux2("gpu_shader_src", =
-base + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader=
-_sels));=0A=
->>> -=0A=
->>>    	hws[IMX8MQ_CLK_A53_CG] =3D imx_clk_hw_gate3_flags("arm_a53_cg", "ar=
-m_a53_src", base + 0x8000, 28, CLK_IS_CRITICAL);=0A=
->>> -	hws[IMX8MQ_CLK_M4_CG] =3D imx_clk_hw_gate3("arm_m4_cg", "arm_m4_src",=
- base + 0x8080, 28);=0A=
->>> -	hws[IMX8MQ_CLK_VPU_CG] =3D imx_clk_hw_gate3("vpu_cg", "vpu_src", base=
- + 0x8100, 28);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_CORE_CG] =3D imx_clk_hw_gate3("gpu_core_cg", "gpu_=
-core_src", base + 0x8180, 28);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_SHADER_CG] =3D imx_clk_hw_gate3("gpu_shader_cg", "=
-gpu_shader_src", base + 0x8200, 28);=0A=
->>> -=0A=
->>>    	hws[IMX8MQ_CLK_A53_DIV] =3D imx_clk_hw_divider2("arm_a53_div", "arm=
-_a53_cg", base + 0x8000, 0, 3);=0A=
->>> -	hws[IMX8MQ_CLK_M4_DIV] =3D imx_clk_hw_divider2("arm_m4_div", "arm_m4_=
-cg", base + 0x8080, 0, 3);=0A=
->>> -	hws[IMX8MQ_CLK_VPU_DIV] =3D imx_clk_hw_divider2("vpu_div", "vpu_cg", =
-base + 0x8100, 0, 3);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D imx_clk_hw_divider2("gpu_core_div", =
-"gpu_core_cg", base + 0x8180, 0, 3);=0A=
->>> -	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D imx_clk_hw_divider2("gpu_shader_di=
-v", "gpu_shader_cg", base + 0x8200, 0, 3);=0A=
->>> +=0A=
->>> +	hws[IMX8MQ_CLK_M4_DIV] =3D imx8m_clk_hw_composite_core("arm_m4_div", =
-imx8mq_arm_m4_sels, base + 0x8080);=0A=
->>> +	hws[IMX8MQ_CLK_VPU_DIV] =3D imx8m_clk_hw_composite_core("vpu_div", im=
-x8mq_vpu_sels, base + 0x8100);=0A=
->>> +	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D imx8m_clk_hw_composite_core("gpu_cor=
-e_div", imx8mq_gpu_core_sels, base + 0x8180);=0A=
->>> +	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D imx8m_clk_hw_composite("gpu_shader=
-_div", imx8mq_gpu_shader_sels, base + 0x8200);=0A=
->>>    =0A=
->>>    	/* BUS */=0A=
->>>    	hws[IMX8MQ_CLK_MAIN_AXI] =3D imx8m_clk_hw_composite_critical("main_=
-axi", imx8mq_main_axi_sels, base + 0x8800);=0A=
->>=0A=
->> Collapsing _SRC _CG into _DIV is an useful simplification but it=0A=
->> technically breaks DT compatibility rules.=0A=
->>=0A=
->> Inside imx8mq.dtsi there are clock assignments for=0A=
->> IMX8MQ_CLK_GPU_CORE_SRC and IMX8MQ_CLK_GPU_SHADER_SRC which no longer=0A=
->> exist so those assignments don't take effect.=0A=
-> =0A=
-> We do not want to break existing DTBs for this case.  Patches dropped.=0A=
-=0A=
-Sorry. I think DT compatibility could be maintained by adding =0A=
-assignments like this:=0A=
-=0A=
-	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D hws[IMX8MQ_CLK_GPU_CORE_DIV];=0A=
-=0A=
-If all the old clocks are aliased to the new composite then all =0A=
-currently valid set_rate and set_parent calls would still have the same =0A=
-effect.=0A=
-=0A=
-It would also mean that you can set_rate on the mux and set_parent on =0A=
-the div but that should be harmless: an enhancement instead of a =0A=
-compat-breaking change.=0A=
-=0A=
---=0A=
-Regards,=0A=
-Leonard=0A=
+On Mon, Jan 13, 2020 at 5:36 PM Leonard Crestez <leonard.crestez@nxp.com> w=
+rote:
+>
+> On 10.01.2020 20:34, Adam Ford wrote:
+> > On Wed, Dec 18, 2019 at 10:42 AM Adam Ford <aford173@gmail.com
+> > <mailto:aford173@gmail.com>> wrote:
+> >      > > U-Boot booted and Linux booted, but I still get:
+> >      > >
+> >      > >     imx8m-ddrc-devfreq 3d400000.memory-controller: failed to i=
+nit
+> >      > > firmware freq info: -19
+> >      >
+> >      > Which version of u-boot is that, upstream? I'm subscribed to ubo=
+ot
+> >      > mailing list and I see that imx8m support has its own separate i=
+ssues
+> >      > but my familiarity is limited :(
+> >
+> >     U-Boot 2020.01-rc4-00244-gf39abbbc53-dirty (Dec 18 2019 - 09:27:40
+> >     -0600)
+> >
+> >      >
+> >      > I've only ever tested with NXP uboot and the NXP version of mkim=
+age:
+> >      >
+> >      >
+> >     https://source.codeaurora.org/external/imx/uboot-imx/log/?h=3Dimx_v=
+2019.04_4.19.35_1.1.0
+> >     <https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%=
+2Fsource.codeaurora.org%2Fexternal%2Fimx%2Fuboot-imx%2Flog%2F%3Fh%3Dimx_v20=
+19.04_4.19.35_1.1.0&data=3D02%7C01%7Cleonard.crestez%40nxp.com%7C5babd2cb3f=
+ec4dc0a21008d795fbbc4a%7C686ea1d3bc2b4c6fa92cd99c5c301635%7C0%7C0%7C6371427=
+80735473321&sdata=3DLhleGMcJzjiNsPbVxmPbvgRVMnl%2F2HxUqVYKcgCFiEg%3D&reserv=
+ed=3D0>
+> >      > https://source.codeaurora.org/external/imx/imx-mkimage/
+> >     <https://eur01.safelinks.protection.outlook.com/?url=3Dhttps%3A%2F%=
+2Fsource.codeaurora.org%2Fexternal%2Fimx%2Fimx-mkimage%2F&data=3D02%7C01%7C=
+leonard.crestez%40nxp.com%7C5babd2cb3fec4dc0a21008d795fbbc4a%7C686ea1d3bc2b=
+4c6fa92cd99c5c301635%7C0%7C0%7C637142780735483320&sdata=3DenJQ9hgVkIG7frJ9v=
+6QBQAgJBL8j3hWB7RAKa8XhPaw%3D&reserved=3D0>
+> >
+> >     I will try your versions and see what happens.
+> >
+> >      > My bootloader prints the following BuildInfo:
+> >      >    - ATF 70fa7bc
+> >      >
+> >      >    - U-Boot 2019.04-00019-g4d377539a119
+> >      >
+> >
+> >     Thanks for your help.
+> >
+> >
+> > I wanted to try again after everything was merged into linux-next.
+> >
+> > I am using the U-Boot master (as of 10 Jan 2020), with ATF from
+> > 4.19.35_1.1.0 from Code Aurora.  I have tried your ATF, but I don't see
+> > any change in behavior.  I have made the DDRC a module, but I still get
+> > the same error message.
+> >
+> > [    2.204554] imx8m-ddrc-devfreq 3d400000.memory-controller: failed to
+> > init firmware freq info: -19
+> >
+> > Is there something else I can try?
+>
+> Yes, the NXP branch of uboot from Code Aurora (my commit hash is above).
+>
+> I understand you want to use uboot and atf master, apparently they both
+> need to be patched for this feature to work. It would still be
+> interesting to validate.
+
+I was able to get the 8MM to work with this new driver using the uboot
+branch from Code Aurora.  Could you point me to what in U-Boot needs
+to be pulled forward to the mainline?  I'd be willing to help if I
+can.
+
+Thanks for your help.
+
+adam
+>
+> --
+> Regards,
+> Leonard
