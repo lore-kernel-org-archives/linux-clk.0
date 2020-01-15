@@ -2,167 +2,125 @@ Return-Path: <SRS0=l8GQ=3E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35461C33CB3
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 11:10:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B04CC33CB1
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 11:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0172B2075B
-	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 11:10:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F63224679
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 11:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579086643;
-	bh=xTHrg5/F20scBUneFWL35xeEaTnP5zm0fgHuucG+X4g=;
-	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=rmYc/D2qE+iNZPnMcpY40Q+RnPv2VVx88RLoRl4DY9xYdiM84YYl0HqKbZZZ38Yf/
-	 Ak5CtR78Rb/KVPtxzuoxZCJIR5o6e4fSwweU0W+I5FVJTKax3oGlCIf3xcJDokkDex
-	 vcloisyuT6Q1EDUNeNmZTcbgKd2Hw2dA+P4WVESY=
+	s=default; t=1579086741;
+	bh=mIK/ag+1db4XNG06hr1nigpUOA3zRCdBgowcA09gjVk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=dSt+FPNKCjnzJSy5C5p2Dd/4KVhkLikO+4a67YpPjH3/QKAQ2uq3c0zXJZDlP54aJ
+	 zI1XnVJZUnksLCT6kyDx26T08texFJJJuFGnCYYcmZZ4gpm1kU+WQSptcphW5t2RuU
+	 vT9exBgUIQ8+KfFWVOTWjADsNcZAoTfSOLqjMnGc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729127AbgAOLKm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 15 Jan 2020 06:10:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39440 "EHLO mail.kernel.org"
+        id S1729785AbgAOLMU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jan 2020 06:12:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41418 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726045AbgAOLKm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Wed, 15 Jan 2020 06:10:42 -0500
+        id S1726045AbgAOLMU (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Wed, 15 Jan 2020 06:12:20 -0500
 Received: from T480 (98.142.130.235.16clouds.com [98.142.130.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BCED222C3;
-        Wed, 15 Jan 2020 11:10:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86BF2222C3;
+        Wed, 15 Jan 2020 11:12:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579086641;
-        bh=xTHrg5/F20scBUneFWL35xeEaTnP5zm0fgHuucG+X4g=;
-        h=Date:From:To:Cc:Subject:From;
-        b=Snn9dHj3tFhbOAT+/D0e9lgk0lt+M2zaNTptlj4v03Xkhh9MPme/xrq4VfEnWD/FR
-         DiUzZpDsRWG7G7TAls7hX+ObpEr6bU8RJPruLtzkgGvzaWHdOOR04JsR5fafMUk0ss
-         2DGPyIi6QA6RbDbPOPxc9i3rjZH1ePHWyvp61PLk=
-Date:   Wed, 15 Jan 2020 19:10:32 +0800
+        s=default; t=1579086739;
+        bh=mIK/ag+1db4XNG06hr1nigpUOA3zRCdBgowcA09gjVk=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=FNAN5eCbDbrgPScaNuiTojnyK4Ho60SU4yw5Lgp90b+YZQ1qRHVo4HblRCAqN4tDD
+         oj4s2Otc9+4ZE0fAoy2p4SpeIXuMMnNVzKYbcy9P8L2WhOJms1IFiEmApBeHBquKgv
+         Jekn+otN2qyIM++kgvuuDbIAFgoU+C99Cohb/L8A=
+Date:   Wed, 15 Jan 2020 19:12:07 +0800
 From:   Shawn Guo <shawnguo@kernel.org>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
-        kernel@pengutronix.de, linux-imx@nxp.com,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL v2] i.MX clock changes for 5.6
-Message-ID: <20200115111030.GA29329@T480>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Peng Fan <peng.fan@nxp.com>, Lucas Stach <l.stach@pengutronix.de>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>, Jacky Bai <ping.bai@nxp.com>
+Subject: Re: [PATCH V2 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+Message-ID: <20200115111205.GB29329@T480>
+References: <1578640411-16991-1-git-send-email-peng.fan@nxp.com>
+ <1578640411-16991-3-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB7023981770D458F6D1FB546FEE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <VI1PR04MB7023981770D458F6D1FB546FEE340@VI1PR04MB7023.eurprd04.prod.outlook.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Changes for v2:
- - Drop imx8m_clk_hw_composite_core() change set, which breaks some
-   existing DTB right away.
+On Tue, Jan 14, 2020 at 04:49:20PM +0000, Leonard Crestez wrote:
+> On 10.01.2020 09:17, Peng Fan wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> > 
+> > Use imx8m_clk_hw_composite_core to simplify code.
+> > 
+> > Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >   drivers/clk/imx/clk-imx8mq.c | 19 +++++--------------
+> >   1 file changed, 5 insertions(+), 14 deletions(-)
+> > 
+> > diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c
+> > index 4c0edca1a6d0..b031183ff427 100644
+> > --- a/drivers/clk/imx/clk-imx8mq.c
+> > +++ b/drivers/clk/imx/clk-imx8mq.c
+> > @@ -403,22 +403,13 @@ static int imx8mq_clocks_probe(struct platform_device *pdev)
+> >   
+> >   	/* CORE */
+> >   	hws[IMX8MQ_CLK_A53_SRC] = imx_clk_hw_mux2("arm_a53_src", base + 0x8000, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));
+> > -	hws[IMX8MQ_CLK_M4_SRC] = imx_clk_hw_mux2("arm_m4_src", base + 0x8080, 24, 3, imx8mq_arm_m4_sels, ARRAY_SIZE(imx8mq_arm_m4_sels));
+> > -	hws[IMX8MQ_CLK_VPU_SRC] = imx_clk_hw_mux2("vpu_src", base + 0x8100, 24, 3, imx8mq_vpu_sels, ARRAY_SIZE(imx8mq_vpu_sels));
+> > -	hws[IMX8MQ_CLK_GPU_CORE_SRC] = imx_clk_hw_mux2("gpu_core_src", base + 0x8180, 24, 3,  imx8mq_gpu_core_sels, ARRAY_SIZE(imx8mq_gpu_core_sels));
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_SRC] = imx_clk_hw_mux2("gpu_shader_src", base + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_sels));
+> > -
+> >   	hws[IMX8MQ_CLK_A53_CG] = imx_clk_hw_gate3_flags("arm_a53_cg", "arm_a53_src", base + 0x8000, 28, CLK_IS_CRITICAL);
+> > -	hws[IMX8MQ_CLK_M4_CG] = imx_clk_hw_gate3("arm_m4_cg", "arm_m4_src", base + 0x8080, 28);
+> > -	hws[IMX8MQ_CLK_VPU_CG] = imx_clk_hw_gate3("vpu_cg", "vpu_src", base + 0x8100, 28);
+> > -	hws[IMX8MQ_CLK_GPU_CORE_CG] = imx_clk_hw_gate3("gpu_core_cg", "gpu_core_src", base + 0x8180, 28);
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_CG] = imx_clk_hw_gate3("gpu_shader_cg", "gpu_shader_src", base + 0x8200, 28);
+> > -
+> >   	hws[IMX8MQ_CLK_A53_DIV] = imx_clk_hw_divider2("arm_a53_div", "arm_a53_cg", base + 0x8000, 0, 3);
+> > -	hws[IMX8MQ_CLK_M4_DIV] = imx_clk_hw_divider2("arm_m4_div", "arm_m4_cg", base + 0x8080, 0, 3);
+> > -	hws[IMX8MQ_CLK_VPU_DIV] = imx_clk_hw_divider2("vpu_div", "vpu_cg", base + 0x8100, 0, 3);
+> > -	hws[IMX8MQ_CLK_GPU_CORE_DIV] = imx_clk_hw_divider2("gpu_core_div", "gpu_core_cg", base + 0x8180, 0, 3);
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_DIV] = imx_clk_hw_divider2("gpu_shader_div", "gpu_shader_cg", base + 0x8200, 0, 3);
+> > +
+> > +	hws[IMX8MQ_CLK_M4_DIV] = imx8m_clk_hw_composite_core("arm_m4_div", imx8mq_arm_m4_sels, base + 0x8080);
+> > +	hws[IMX8MQ_CLK_VPU_DIV] = imx8m_clk_hw_composite_core("vpu_div", imx8mq_vpu_sels, base + 0x8100);
+> > +	hws[IMX8MQ_CLK_GPU_CORE_DIV] = imx8m_clk_hw_composite_core("gpu_core_div", imx8mq_gpu_core_sels, base + 0x8180);
+> > +	hws[IMX8MQ_CLK_GPU_SHADER_DIV] = imx8m_clk_hw_composite("gpu_shader_div", imx8mq_gpu_shader_sels, base + 0x8200);
+> >   
+> >   	/* BUS */
+> >   	hws[IMX8MQ_CLK_MAIN_AXI] = imx8m_clk_hw_composite_critical("main_axi", imx8mq_main_axi_sels, base + 0x8800);
+> 
+> Collapsing _SRC _CG into _DIV is an useful simplification but it 
+> technically breaks DT compatibility rules.
+> 
+> Inside imx8mq.dtsi there are clock assignments for 
+> IMX8MQ_CLK_GPU_CORE_SRC and IMX8MQ_CLK_GPU_SHADER_SRC which no longer 
+> exist so those assignments don't take effect.
 
-The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
+We do not want to break existing DTBs for this case.  Patches dropped.
 
-  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/imx-clk-5.6
-
-for you to fetch changes up to 9c140d9926761b0f5d329ff6c09a1540f3d5e1d3:
-
-  clk: imx: Add support for i.MX8MP clock driver (2020-01-12 14:07:36 +0800)
-
-----------------------------------------------------------------
-i.MX clock changes for 5.6:
-
- - A series from Abel Vesa to do some trivial cleanups which will be
-   helpful for i.MX clock driver switching to clk_hw based API.
- - A series from Anson Huang to add i.MX8MP clock driver support.
- - Disable non-functional divider between pll4_audio_div and
-   pll4_post_div on imx6q.
- - Fix watchdog2 clock name typo in imx7ulp clock driver.
- - A couple of patches from Leonard Crestez to set CLK_GET_RATE_NOCACHE
-   flag for DRAM related clocks on i.MX8M SoCs.
- - Suppress bind attrs for i.MX8M clock driver to avoid the possibility
-   of reloading the driver at runtime.
- - Add a big comment in imx8qxp-lpcg driver to tell why
-   devm_platform_ioremap_resource() shouldn't be used for the driver.
- - A correction on i.MX8MN usb1_ctrl parent clock setting.
- - A couple of trivial cleanup on clk-divider-gate driver.
- - A series from Peng Fan to convert i.MX8M clock drivers to clk_hw
-   based API.
-
-----------------------------------------------------------------
-Abel Vesa (11):
-      clk: imx: Add correct failure handling for clk based helpers
-      clk: imx: Rename the SCCG to SSCG
-      clk: imx: Replace all the clk based helpers with macros
-      clk: imx: pllv1: Switch to clk_hw based API
-      clk: imx: pllv2: Switch to clk_hw based API
-      clk: imx: imx7ulp composite: Rename to show is clk_hw based
-      clk: imx: Rename sccg and frac pll register to suggest clk_hw
-      clk: imx: Rename the imx_clk_pllv4 to imply it's clk_hw based
-      clk: imx: Rename the imx_clk_pfdv2 to imply it's clk_hw based
-      clk: imx: Rename the imx_clk_divider_gate to imply it's clk_hw based
-      clk: imx7up: Rename the clks to hws
-
-Anson Huang (3):
-      clk: imx: gate4: Switch imx_clk_gate4_flags() to clk_hw based API
-      dt-bindings: imx: Add clock binding doc for i.MX8MP
-      clk: imx: Add support for i.MX8MP clock driver
-
-Fabio Estevam (1):
-      clk: imx7ulp: Fix watchdog2 clock name typo
-
-Jan Remmet (1):
-      clk: imx6q: disable non functional divider
-
-Leonard Crestez (4):
-      clk: imx8m: Set CLK_GET_RATE_NOCACHE on dram clocks
-      clk: imx: Mark dram pll on 8mm and 8mn with CLK_GET_RATE_NOCACHE
-      clk: imx8m: Suppress bind attrs
-      clk: imx8qxp-lpcg: Warn against devm_platform_ioremap_resource
-
-Li Jun (1):
-      clk: imx8mn: correct the usb1_ctrl parent to be usb_bus
-
-Peng Fan (11):
-      clk: imx: clk-divider-gate: fix a typo in comment
-      clk: imx: clk-divider-gate: drop redundant initialization
-      clk: imx: clk-pll14xx: Switch to clk_hw based API
-      clk: imx: clk-composite-8m: Switch to clk_hw based API
-      clk: imx: add imx_unregister_hw_clocks
-      clk: imx: add hw API imx_clk_hw_mux2_flags
-      clk: imx: gate3: Switch to clk_hw based API
-      clk: imx: Remove __init for imx_obtain_fixed_clk_hw() API
-      clk: imx: imx8mn: Switch to clk_hw based API
-      clk: imx: imx8mm: Switch to clk_hw based API
-      clk: imx: imx8mq: Switch to clk_hw based API
-
- .../devicetree/bindings/clock/imx8mp-clock.yaml    |  68 ++
- drivers/clk/imx/Kconfig                            |   6 +
- drivers/clk/imx/Makefile                           |   3 +-
- drivers/clk/imx/clk-composite-7ulp.c               |   2 +-
- drivers/clk/imx/clk-composite-8m.c                 |   4 +-
- drivers/clk/imx/clk-divider-gate.c                 |  12 +-
- drivers/clk/imx/clk-frac-pll.c                     |   7 +-
- drivers/clk/imx/clk-imx6q.c                        |   5 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 182 ++---
- drivers/clk/imx/clk-imx8mm.c                       | 565 +++++++--------
- drivers/clk/imx/clk-imx8mn.c                       | 498 +++++++-------
- drivers/clk/imx/clk-imx8mp.c                       | 764 +++++++++++++++++++++
- drivers/clk/imx/clk-imx8mq.c                       | 584 ++++++++--------
- drivers/clk/imx/clk-imx8qxp-lpcg.c                 |  11 +
- drivers/clk/imx/clk-pfdv2.c                        |   2 +-
- drivers/clk/imx/clk-pll14xx.c                      |  29 +-
- drivers/clk/imx/clk-pllv1.c                        |  14 +-
- drivers/clk/imx/clk-pllv2.c                        |  14 +-
- drivers/clk/imx/clk-pllv4.c                        |   2 +-
- drivers/clk/imx/{clk-sccg-pll.c => clk-sscg-pll.c} | 152 ++--
- drivers/clk/imx/clk.c                              |  12 +-
- drivers/clk/imx/clk.h                              | 162 +++--
- include/dt-bindings/clock/imx8mp-clock.h           | 300 ++++++++
- 23 files changed, 2346 insertions(+), 1052 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx8mp-clock.yaml
- create mode 100644 drivers/clk/imx/clk-imx8mp.c
- rename drivers/clk/imx/{clk-sccg-pll.c => clk-sscg-pll.c} (70%)
- create mode 100644 include/dt-bindings/clock/imx8mp-clock.h
+Shawn
