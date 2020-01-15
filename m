@@ -1,92 +1,102 @@
-Return-Path: <SRS0=Myif=3D=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=l8GQ=3E=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DB91C33C9E
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 20:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F715C33CB1
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 05:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E376924655
-	for <linux-clk@archiver.kernel.org>; Tue, 14 Jan 2020 20:36:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23F832467D
+	for <linux-clk@archiver.kernel.org>; Wed, 15 Jan 2020 05:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WkM6BbNg"
+	dkim=pass (1024-bit key) header.d=jms.id.au header.i=@jms.id.au header.b="h+DJfabl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbgANUgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 14 Jan 2020 15:36:24 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41631 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726839AbgANUgY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 14 Jan 2020 15:36:24 -0500
-Received: by mail-lj1-f196.google.com with SMTP id h23so15910621ljc.8;
-        Tue, 14 Jan 2020 12:36:22 -0800 (PST)
+        id S1725999AbgAOFnQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 15 Jan 2020 00:43:16 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:44583 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726018AbgAOFnQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 15 Jan 2020 00:43:16 -0500
+Received: by mail-qk1-f196.google.com with SMTP id w127so14591760qkb.11
+        for <linux-clk@vger.kernel.org>; Tue, 14 Jan 2020 21:43:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a7uP1zpb1ztpEYbYJJBds6WIHHRIrU9oQfAy4KVLdh8=;
-        b=WkM6BbNgq866gAfEyXf/gMGTEPI7AGNlC+zQWZSwrcsNPuuPppyqnkFEBBtson9/Iu
-         xGeijtj56fxzc76sFKTlKyjgyMGtdL9NA66kuAfzB6zAp91zZ3wMN5dnzriKZBhpr1cH
-         TosQEr0TNEmseHF0LfUKTjmZIDx9M2PCEFYrKGQ8TqSCkEkqdNMitHggjtgCltAw6HcM
-         oHIQowQ8VnukyVLrVlYfVUyO3I0yQ15B7EHiqQtVhV3oiBQCpuiJkmlYxDEhzFk5VmdB
-         qfS4aYJwtURtwI6nkjHb3UwBHma2eyY1boZd03gbKorj3P9FqzRd1PtRsrj+zEwzc/az
-         oqOw==
+        d=jms.id.au; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VV6aOYpoC2q2Em6EQrcwUhEq6b9Yl+28VpEwnLT0CsA=;
+        b=h+DJfablG7916162OA00JdupY60BQAzyzEv95mMuZPj6EFv2tNxCR8FZf+peJo36b7
+         pkWojonjP1i46YVBFo0pHRsrODOkUxsDxeo+Tcd1sMRbpiw1S/dHzRwKSEjGc2oHbyXf
+         QXO43pQ4Y38n6Y0hJeK0Oi7H1i7q2/iFqFOn0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a7uP1zpb1ztpEYbYJJBds6WIHHRIrU9oQfAy4KVLdh8=;
-        b=JMVztwvnd+QNvnqYxr8DkDaFkbwDyckD6eNxXjWbg7cQHceL7DdCbkcY8MMu/EiHm1
-         +oaGf/gIbo52b7QDW+bgj76shHX7oL2eEC6iwf9loaZjUuqSTmwf7/yxmFiPqh3j4u6A
-         v+C3TTkbBJI4rdSwxOYXBgTAkdOZAFXze54y/5bjj8CPoQbEYzCrZjRLBiua6ahMMulH
-         FKy5r+PYq9M7A2dBPqHAweSpWq031pU4VCDV5mbGbkAFFBoP8TafW04PmrT7UasU0EoP
-         Eno188NPHcuzaXQrm89Zg0rViTPCnojV8KZ1YAYjuf5huHBm4YJMhiocr1BEJiIi9wiG
-         ll8w==
-X-Gm-Message-State: APjAAAUqlHGNsPMqKP/w0h2q9FGl64ZGxgoN/qY1yODAsaRplV6s66cF
-        AH+MHjwZKPvFZo0guwx+/EqHwgCF
-X-Google-Smtp-Source: APXvYqxe6Hlj5r5z0SlnmU6Lvr152puMRcx58+cpCLnqZW5j0mbPOf0IUgcQv0WPyX0GTg4xcIyEkQ==
-X-Received: by 2002:a2e:3a12:: with SMTP id h18mr15983388lja.81.1579034181518;
-        Tue, 14 Jan 2020 12:36:21 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id p26sm7784178lfh.64.2020.01.14.12.36.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 14 Jan 2020 12:36:20 -0800 (PST)
-Subject: Re: [PATCH v6 00/12] NVIDIA Tegra20 CPUFreq driver major update
-To:     Peter De Schrijver <pdeschrijver@nvidia.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>,
-        Marcel Ziswiler <marcel.ziswiler@toradex.com>,
-        linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20191218202142.11717-1-digetx@gmail.com>
- <20200114155306.GI28289@pdeschrijver-desktop.Nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3ebb7123-db2b-bacc-1f35-f6691a12c94d@gmail.com>
-Date:   Tue, 14 Jan 2020 23:36:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VV6aOYpoC2q2Em6EQrcwUhEq6b9Yl+28VpEwnLT0CsA=;
+        b=uZUnoEMAxY3anLsmpLyXnxCrZKrqjiXfjYCa+hzC/qOQxPU+ZqMOMwEeOYTMkK0Mqh
+         vpO5/6duSGloqQFsyFk2RtxF46qsXSnkRcpwOcP4JmVwyG/Iz3+AtQBWdNIbv72hrlD5
+         wUL/lSszk0r1p4c2ZfT1Kr3yGoAHCT+An9/giIGMamWDczgllIaPoVFhNPzUyHB6vWZY
+         cdyUybXYuP8546RbdrhT5RK2S5juIF+23Q0hEMhimdE39qE1OMcuYPehBikuEmpJHPPH
+         97ed8dG9DW4qmP830wo/N5ACKKqssvQDnZhfN/sYE9r+KnSkgETPyqltDnzujuuA/Z88
+         RPEw==
+X-Gm-Message-State: APjAAAUdhGiaJXuxNAQwxMuQjYDkpyB0o6DmnEtWDEDA+NTJrbs3KM4K
+        OrdHApqLcZtVXPFY4BGmw5zC11HZTqjcEWqeZ+U=
+X-Google-Smtp-Source: APXvYqwrOmTBUExJJT1fUGv0npZvc0tXC2tVGawXY0yYpOu8/dlawk5v470gu5OXo54xyHwuUXcwtRpVGMvlfZrhZdY=
+X-Received: by 2002:ae9:e702:: with SMTP id m2mr20840949qka.208.1579066995074;
+ Tue, 14 Jan 2020 21:43:15 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200114155306.GI28289@pdeschrijver-desktop.Nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <20200113213453.27108-1-jae.hyun.yoo@linux.intel.com>
+ <CACPK8Xf0Oa62BsNOQ55rqAp_a=V-_9bm1c4nu_+Oo5zB=2+zpA@mail.gmail.com> <255b53d2-d4b5-8bc0-393b-a2f531a98fc1@linux.intel.com>
+In-Reply-To: <255b53d2-d4b5-8bc0-393b-a2f531a98fc1@linux.intel.com>
+From:   Joel Stanley <joel@jms.id.au>
+Date:   Wed, 15 Jan 2020 05:43:03 +0000
+Message-ID: <CACPK8XfevBQxdAanN5QjiUv8KKevetjKP7cbr3tuL=mrULjttg@mail.gmail.com>
+Subject: Re: [PATCH] clk: ast2600: enable BCLK for PCI/PCIe bus always
+To:     Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Andrew Jeffery <andrew@aj.id.au>, linux-clk@vger.kernel.org,
+        linux-aspeed <linux-aspeed@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-14.01.2020 18:53, Peter De Schrijver пишет:
-> Acked-By: Peter De Schrijver <pdeschrijver@nvidia.com>
+On Tue, 14 Jan 2020 at 19:53, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+>
+> Hi Joel,
+>
+> On 1/13/2020 10:15 PM, Joel Stanley wrote:
+> > On Mon, 13 Jan 2020 at 21:33, Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com> wrote:
+> >>
+> >> BCLK for PCI/PCIe bus should be enabled always with having the
+> >> CLK_IS_CRITICAL flag otherwise it will be disabled at kernel late
+> >> initcall phase as an unused clock, and eventually it causes
+> >> unexpected behavior on BMC features that are connected to the host
+> >> through PCI/PCIe bus.
+> >
+> > This is true for systems that have PCIe connected. There are systems
+> > that do not, and in that case we don't want to have the clock enabled.
+> >
+> > Are you doing this to support the case where the PCIe device not load
+> > a BMC driver? (eg for host VGA use). If not, then you can have the
+> > driver you're loading request the BCLK.
+> >
+> > If this is for the host VGA device, then you will need to come up with
+> > a mechanism that makes the enabling of this clock depend on the device
+> > tree.
+>
+> Is there any way to enable clock by just adding a node in device tree?
+> Do you want me to add a simple driver module for host VGA just for
+> enabling BCLK?
 
-Thanks! Should help to get these patches into 5.7 :)
+Okay, so this is for the case where we lack a BMC driver.
+
+One option would be to do as you suggest, adding a simple driver that
+claims essential clocks.
+
+Another could be to add some extra properties that clock driver parses
+and enables the clocks.
