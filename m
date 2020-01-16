@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD465C33CAF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC329C33CAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:48:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3F5E246C2
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:43:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 872A62468D
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:48:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196606;
-	bh=pF1tzWeveWpjF/FhMrgqWsyny9+razZTcxf5uSrOWdU=;
+	s=default; t=1579196902;
+	bh=tjezgqyB0lb6GvQGpNFUAhir6YPDZj0KFE56LLwsDVs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WoASFiZdIlycFTgz+v2q2WQHtgzSLXlYPt/924Oig4ZzUMMexdffBKxalhtOE9y5H
-	 /lIT5cFnQqPDQ/NXfxCaq7E/3lpaICrRoAUdoI3CpjIcdjLnus2z/ANYlfPUn0c1nO
-	 5C2Zdf104Atx2knmz6hiYwDu1Nf01npdt6HiAQVQ=
+	b=RgXXQv3NSp0ZKv1w25YDeL02hat2OoCI97JkuqnmrGpc4hHr1pSvLmtV8xvfrvwl1
+	 H6M0C6mJxHYad5NCJEO7ksXuwWE/+mJI+Wv6xuGf9cS75FcPvEf8zAmIYWA3pFJi3I
+	 S0XQlijWBpQeZeFqi6af801cbpDh3CGQp8Kl6PpM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405882AbgAPRnZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:43:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33466 "EHLO mail.kernel.org"
+        id S2406739AbgAPRqk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:46:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405879AbgAPRnY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:24 -0500
+        id S2406738AbgAPRqj (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:46:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 706BE24732;
-        Thu, 16 Jan 2020 17:43:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2B9E1246DE;
+        Thu, 16 Jan 2020 17:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196603;
-        bh=pF1tzWeveWpjF/FhMrgqWsyny9+razZTcxf5uSrOWdU=;
+        s=default; t=1579196799;
+        bh=tjezgqyB0lb6GvQGpNFUAhir6YPDZj0KFE56LLwsDVs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GBiXxRzwkPvifE7TJxqyWpjXCg713DTgrICBo1grlnkJAN+GZRFnp88xa3x+iLLiW
-         2SbjJuR9nEWH5Wp9AVHTwNXBZHDwQwSor3NLWfvJGcN/WP7T6JfucdcetA3B+0TVPe
-         xlHKzilwmpBHGkSfNT0q9njRhYd8j3JAcNNdnVNk=
+        b=mmR0MM0r7SDpzNzBbvY3PqCphAOfFOEiVp73TfZNdghLvEys3G9rOz3+WY2Bu6FZu
+         +Fk4tZ4lxcPRRz1WpY0/46OGvL5cP/xkm+lGNqUl+6Ah0GagbtWLYMU68ZxyL+wKM3
+         jSkJavCdjj6aaqTBw8lvMElyTueRT2L2u2N8Q+h4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.4 024/174] clk: imx6sx: fix refcount leak in imx6sx_clocks_init()
-Date:   Thu, 16 Jan 2020 12:40:21 -0500
-Message-Id: <20200116174251.24326-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 159/174] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
+Date:   Thu, 16 Jan 2020 12:42:36 -0500
+Message-Id: <20200116174251.24326-159-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
 References: <20200116174251.24326-1-sashal@kernel.org>
@@ -59,34 +60,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-[ Upstream commit 1731e14fb30212dd8c1e9f8fc1af061e56498c55 ]
+[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+Save and restore top PLL related configuration registers for big (APLL)
+and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
+were reset to default values after suspend/resume cycle and performance
+after system resume was affected when performance governor has been selected.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: d55135689019 ("ARM: imx: add clock driver for imx6sx")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6sx.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/samsung/clk-exynos5420.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/imx/clk-imx6sx.c b/drivers/clk/imx/clk-imx6sx.c
-index fea125eb4330..8f2958ac04e8 100644
---- a/drivers/clk/imx/clk-imx6sx.c
-+++ b/drivers/clk/imx/clk-imx6sx.c
-@@ -162,6 +162,7 @@ static void __init imx6sx_clocks_init(struct device_node *ccm_node)
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx6sx-anatop");
- 	base = of_iomap(np, 0);
- 	WARN_ON(!base);
-+	of_node_put(np);
- 
- 	clks[IMX6SX_PLL1_BYPASS_SRC] = imx_clk_mux("pll1_bypass_src", base + 0x00, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
- 	clks[IMX6SX_PLL2_BYPASS_SRC] = imx_clk_mux("pll2_bypass_src", base + 0x30, 14, 1, pll_bypass_src_sels, ARRAY_SIZE(pll_bypass_src_sels));
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index c94de13ce362..21bfedf40478 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -166,6 +166,8 @@ static unsigned long exynos5x_clk_regs[] __initdata = {
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	APLL_CON0,
++	KPLL_CON0,
+ 	CPLL_CON0,
+ 	DPLL_CON0,
+ 	EPLL_CON0,
 -- 
 2.20.1
 
