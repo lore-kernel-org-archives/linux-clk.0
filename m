@@ -2,53 +2,52 @@ Return-Path: <SRS0=DYql=3F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 848E5C33CAF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B277C33CB6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5843C246D9
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:28:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1ACBC246AD
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579195690;
-	bh=j34e59IKcX54CiGIr28aSnYPkMhN9+vlP0OPsvp5qJA=;
+	s=default; t=1579196000;
+	bh=3bs2tt+BQ2aDv4/lJ7CKnWz3MwHNBltAwpNAaDCYLDw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bGSBrYR+Y1sPpIxX/BEj+GooyLQFa5HTT6j9w9KYA4BonSk0RwwBVOrN8tp2tliUj
-	 EpWTVUElLSieW4rqj5A5RpNV7O+43WF0EWBeCDVAM3VZn7MptZQoTMo4CRrZKRagn+
-	 qijHBUGhnbmQwkq3YztdHWxmVy84G5JcIyAMmHHU=
+	b=EzbhdoVk2jmKIfGfH4cVnkYXlaJXIKBRt2cKMJj8JL+TvCGYXqItSR9+2E2WlikiZ
+	 JX2b4KbAsMGLeXu3fszLmcsfnr0PwExZE4XN9jcB2n3Tgjxie0TOSmGymD+dqFh8X1
+	 mXiwrr4dHwv/jJKrEaGOjuXXyHor1Tx1S2sISP3Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404118AbgAPR2J (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:28:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38830 "EHLO mail.kernel.org"
+        id S2404467AbgAPRdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:33:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404112AbgAPR2J (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:28:09 -0500
+        id S2404589AbgAPRag (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:30:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2A7BA246F3;
-        Thu, 16 Jan 2020 17:28:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03CC02472C;
+        Thu, 16 Jan 2020 17:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195688;
-        bh=j34e59IKcX54CiGIr28aSnYPkMhN9+vlP0OPsvp5qJA=;
+        s=default; t=1579195835;
+        bh=3bs2tt+BQ2aDv4/lJ7CKnWz3MwHNBltAwpNAaDCYLDw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AXIEFkZ10XeWEbZerafs+TkAiwM4RS4HDomNGDL59/TwlaaryglkWIAuQ/W1W6JIZ
-         LS/eSOWXMdW2SoCou/5Rvw5L6dGWKJnJ8BXuYgpFuz+xJC07QkXHV720eBPGQAEhTK
-         PG8w/hy4zJyYqS1lAZfNv3EOaaBqRAZf4oJ+n1GQ=
+        b=ZPZ8F3cS7N738lJD/6eWbG0Uhba+5z3HRZD6gLSa5wqHuehvPGtyAvbG3rSujufwN
+         PRJ5FwVIjWtjpSHuCqb4t0RqFAY9+ShJmvKz136O9EGDI8eOBFFEHCuzn8fK1TET5m
+         nyhV3dHFKXpuc1GB7pandRuHKTy/JkO2Y7afjfjg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Huckleberry <nhuck@google.com>,
-        clang-built-linux@googlegroups.com,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 239/371] clk: qcom: Fix -Wunused-const-variable
-Date:   Thu, 16 Jan 2020 12:21:51 -0500
-Message-Id: <20200116172403.18149-182-sashal@kernel.org>
+Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
+        Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 340/371] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
+Date:   Thu, 16 Jan 2020 12:23:32 -0500
+Message-Id: <20200116172403.18149-283-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
 References: <20200116172403.18149-1-sashal@kernel.org>
@@ -61,96 +60,36 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Nathan Huckleberry <nhuck@google.com>
+From: Marian Mihailescu <mihailescu2m@gmail.com>
 
-[ Upstream commit da642427bd7710ec4f4140f693f59aa8521a358c ]
+[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
 
-Clang produces the following warning
+Save and restore top PLL related configuration registers for big (APLL)
+and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
+were reset to default values after suspend/resume cycle and performance
+after system resume was affected when performance governor has been selected.
 
-drivers/clk/qcom/gcc-msm8996.c:133:32: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map' [-Wunused-const-variable]
-static const struct
-parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] =
-{ ^drivers/clk/qcom/gcc-msm8996.c:141:27: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div' [-Wunused-const-variable] static
-const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] = { ^
-drivers/clk/qcom/gcc-msm8996.c:187:32: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map'
-[-Wunused-const-variable] static const struct parent_map
-gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] = { ^
-drivers/clk/qcom/gcc-msm8996.c:197:27: warning: unused variable
-'gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div'
-[-Wunused-const-variable] static const char * const
-gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] = {
-
-It looks like these were never used.
-
-Fixes: b1e010c0730a ("clk: qcom: Add MSM8996 Global Clock Control (GCC) driver")
-Cc: clang-built-linux@googlegroups.com
-Link: https://github.com/ClangBuiltLinux/linux/issues/518
-Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Nathan Huckleberry <nhuck@google.com>
-Reviewed-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
+Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
+Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8996.c | 36 ----------------------------------
- 1 file changed, 36 deletions(-)
+ drivers/clk/samsung/clk-exynos5420.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/qcom/gcc-msm8996.c b/drivers/clk/qcom/gcc-msm8996.c
-index 7ddec886fcd3..c0b043b1bd24 100644
---- a/drivers/clk/qcom/gcc-msm8996.c
-+++ b/drivers/clk/qcom/gcc-msm8996.c
-@@ -140,22 +140,6 @@ static const char * const gcc_xo_gpll0_gpll4_gpll0_early_div[] = {
- 	"gpll0_early_div"
- };
- 
--static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL2, 2 },
--	{ P_GPLL3, 3 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"gpll2",
--	"gpll3",
--	"gpll0_early_div"
--};
--
- static const struct parent_map gcc_xo_gpll0_gpll1_early_div_gpll1_gpll4_gpll0_early_div_map[] = {
- 	{ P_XO, 0 },
- 	{ P_GPLL0, 1 },
-@@ -194,26 +178,6 @@ static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll2_early_gpll0_early
- 	"gpll0_early_div"
- };
- 
--static const struct parent_map gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div_map[] = {
--	{ P_XO, 0 },
--	{ P_GPLL0, 1 },
--	{ P_GPLL2, 2 },
--	{ P_GPLL3, 3 },
--	{ P_GPLL1, 4 },
--	{ P_GPLL4, 5 },
--	{ P_GPLL0_EARLY_DIV, 6 }
--};
--
--static const char * const gcc_xo_gpll0_gpll2_gpll3_gpll1_gpll4_gpll0_early_div[] = {
--	"xo",
--	"gpll0",
--	"gpll2",
--	"gpll3",
--	"gpll1",
--	"gpll4",
--	"gpll0_early_div"
--};
--
- static struct clk_fixed_factor xo = {
- 	.mult = 1,
- 	.div = 1,
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 47a14f93f869..2f54df5bef8e 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -170,6 +170,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
+ 	GATE_BUS_CPU,
+ 	GATE_SCLK_CPU,
+ 	CLKOUT_CMU_CPU,
++	APLL_CON0,
++	KPLL_CON0,
+ 	CPLL_CON0,
+ 	DPLL_CON0,
+ 	EPLL_CON0,
 -- 
 2.20.1
 
