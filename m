@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B277C33CB6
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E83C33CAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1ACBC246AD
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:33:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02BE8246D8
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196000;
-	bh=3bs2tt+BQ2aDv4/lJ7CKnWz3MwHNBltAwpNAaDCYLDw=;
+	s=default; t=1579196118;
+	bh=pkx0yXIJGjk4uDyY2N8qEi31EmVtnwYkT0qbkPSW844=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EzbhdoVk2jmKIfGfH4cVnkYXlaJXIKBRt2cKMJj8JL+TvCGYXqItSR9+2E2WlikiZ
-	 JX2b4KbAsMGLeXu3fszLmcsfnr0PwExZE4XN9jcB2n3Tgjxie0TOSmGymD+dqFh8X1
-	 mXiwrr4dHwv/jJKrEaGOjuXXyHor1Tx1S2sISP3Y=
+	b=q8pvQ6LNrkNoIy9tjEfKQtVLSahtiYkfgCHMma2DSDubz9I63ZPmbx297vpDNEUsr
+	 WyxilCcwsk8jkYPcFwwxyXeshXYCm13N1zHYWpvqZHZIFbTYHpmdHfsTZXCW/uV73I
+	 7acJeRw1lK5ecGEoQQx8s6txhAcaeLpc3vYLHWrg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404467AbgAPRdT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:33:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43194 "EHLO mail.kernel.org"
+        id S2404943AbgAPRfR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:35:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49510 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404589AbgAPRag (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:30:36 -0500
+        id S2404939AbgAPRfQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03CC02472C;
-        Thu, 16 Jan 2020 17:30:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 68473246C0;
+        Thu, 16 Jan 2020 17:35:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579195835;
-        bh=3bs2tt+BQ2aDv4/lJ7CKnWz3MwHNBltAwpNAaDCYLDw=;
+        s=default; t=1579196116;
+        bh=pkx0yXIJGjk4uDyY2N8qEi31EmVtnwYkT0qbkPSW844=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZPZ8F3cS7N738lJD/6eWbG0Uhba+5z3HRZD6gLSa5wqHuehvPGtyAvbG3rSujufwN
-         PRJ5FwVIjWtjpSHuCqb4t0RqFAY9+ShJmvKz136O9EGDI8eOBFFEHCuzn8fK1TET5m
-         nyhV3dHFKXpuc1GB7pandRuHKTy/JkO2Y7afjfjg=
+        b=NhoYwrsh+zT02fhLFu11lJFeVxnykA7o2qpxjPvsxYocc7BK1FVu7erMOOcqF38gn
+         xkHrLmAHADFqdUbqa/yx3/et0gOWHT6a4mXZuUplnZI19L5GsSWs6rJfx2tp087mTi
+         cx6c1iOrG3eAY3WRaDc6sw3M+PmPLtDY/+WDQ1RI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marian Mihailescu <mihailescu2m@gmail.com>,
-        Sylwester Nawrocki <s.nawrocki@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 340/371] clk: samsung: exynos5420: Preserve CPU clocks configuration during suspend/resume
-Date:   Thu, 16 Jan 2020 12:23:32 -0500
-Message-Id: <20200116172403.18149-283-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 024/251] clk: highbank: fix refcount leak in hb_clk_init()
+Date:   Thu, 16 Jan 2020 12:30:58 -0500
+Message-Id: <20200116173445.21385-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116172403.18149-1-sashal@kernel.org>
-References: <20200116172403.18149-1-sashal@kernel.org>
+In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
+References: <20200116173445.21385-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,36 +58,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marian Mihailescu <mihailescu2m@gmail.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit e21be0d1d7bd7f78a77613f6bcb6965e72b22fc1 ]
+[ Upstream commit 5eb8ba90958de1285120dae5d3a5d2b1a360b3b4 ]
 
-Save and restore top PLL related configuration registers for big (APLL)
-and LITTLE (KPLL) cores during suspend/resume cycle. So far, CPU clocks
-were reset to default values after suspend/resume cycle and performance
-after system resume was affected when performance governor has been selected.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Fixes: 773424326b51 ("clk: samsung: exynos5420: add more registers to restore list")
-Signed-off-by: Marian Mihailescu <mihailescu2m@gmail.com>
-Signed-off-by: Sylwester Nawrocki <s.nawrocki@samsung.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: 26cae166cff9 ("ARM: highbank: remove custom .init_time hook")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/clk-highbank.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 47a14f93f869..2f54df5bef8e 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -170,6 +170,8 @@ static const unsigned long exynos5x_clk_regs[] __initconst = {
- 	GATE_BUS_CPU,
- 	GATE_SCLK_CPU,
- 	CLKOUT_CMU_CPU,
-+	APLL_CON0,
-+	KPLL_CON0,
- 	CPLL_CON0,
- 	DPLL_CON0,
- 	EPLL_CON0,
+diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+index 727ed8e1bb72..8e4581004695 100644
+--- a/drivers/clk/clk-highbank.c
++++ b/drivers/clk/clk-highbank.c
+@@ -293,6 +293,7 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
+ 	/* Map system registers */
+ 	srnp = of_find_compatible_node(NULL, NULL, "calxeda,hb-sregs");
+ 	hb_clk->reg = of_iomap(srnp, 0);
++	of_node_put(srnp);
+ 	BUG_ON(!hb_clk->reg);
+ 	hb_clk->reg += reg;
+ 
 -- 
 2.20.1
 
