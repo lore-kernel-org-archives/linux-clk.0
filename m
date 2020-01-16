@@ -2,118 +2,137 @@ Return-Path: <SRS0=DYql=3F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 828FFC3F68F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:40:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6EC2C33CAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:41:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F73324681
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:40:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579200037;
-	bh=kTIb/Y3XzjF2+VFSAC+cj2XncnKLjgkHWIlny1KaSHw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SRXWQMfpWXfPHAtJxmhGpcIlUi3IyGw2pn/nWz9oaSI2J99MWkPJJZuTGR+zqCun8
-	 dpc9sUNVuqbUkw/rDL26+GI1evLXrbTguRnUxd1FkRLFzqiDLW0tmYJKF+sKMWRwju
-	 EOgog29e9eG3PBcA26kKXWRvVtFdYVFe3brUotME=
+	by mail.kernel.org (Postfix) with ESMTP id 8B7FE2073A
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:41:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390377AbgAPRMC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:12:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53962 "EHLO mail.kernel.org"
+        id S2389371AbgAPSls (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 13:41:48 -0500
+Received: from mga04.intel.com ([192.55.52.120]:58916 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390372AbgAPRMB (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:12:01 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 23F422469F;
-        Thu, 16 Jan 2020 17:12:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194720;
-        bh=kTIb/Y3XzjF2+VFSAC+cj2XncnKLjgkHWIlny1KaSHw=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=N7fgVBB4TvCyDj3tAVaJw0xpWMf1UalDkcTkfz29sq3PcXkPyju2iTIhhDxucr+Gg
-         1jgn0t1we2VzqrJqgHbRQfb1mlwrD5Nj3fTxoFioTEOXhRf2iPpkAeoq1sE0s5Cr3J
-         Xo8YCWr+zvay25H0cgKFdBg6nQCjWxzAxzD4+HMc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        id S2407184AbgAPSlr (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 13:41:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Jan 2020 10:41:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.70,327,1574150400"; 
+   d="scan'208";a="305959327"
+Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.147]) ([10.7.153.147])
+  by orsmga001.jf.intel.com with ESMTP; 16 Jan 2020 10:41:42 -0800
+Subject: Re: [PATCH 1/2] clk: aspeed: add critical clock setting logic
+To:     Paul Menzel <pmenzel@molgen.mpg.de>, Joel Stanley <joel@jms.id.au>,
+        Michael Turquette <mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 556/671] clk: actions: Fix factor clk struct member access
-Date:   Thu, 16 Jan 2020 12:03:14 -0500
-Message-Id: <20200116170509.12787-293-sashal@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
+        Andrew Jeffery <andrew@aj.id.au>
+Cc:     openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+        linux-aspeed@lists.ozlabs.org
+References: <20200115212639.4998-1-jae.hyun.yoo@linux.intel.com>
+ <20200115212639.4998-2-jae.hyun.yoo@linux.intel.com>
+ <3cafc96a-0ec5-d51c-94cc-2b2e41cc5c65@molgen.mpg.de>
+From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+Message-ID: <0ba94fd3-e57f-82bc-0770-d623c2ce0a3b@linux.intel.com>
+Date:   Thu, 16 Jan 2020 10:41:42 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <3cafc96a-0ec5-d51c-94cc-2b2e41cc5c65@molgen.mpg.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Dear Paul,
 
-[ Upstream commit ed309bfb4812e8b31a3eb877e157b8028a49e50c ]
+On 1/16/2020 1:57 AM, Paul Menzel wrote:
+> Dear Jae,
+> 
+> 
+> On 2020-01-15 22:26, Jae Hyun Yoo wrote:
+>> This commit adds critical clock setting logic that applies
+>> CLK_IS_CRITICAL flag if it detects 'clock-critical' property in
+>> device tree.
+> 
+> Tested how?
 
-Since the helper "owl_factor_helper_round_rate" is shared between factor
-and composite clocks, using the factor clk specific helper function
-like "hw_to_owl_factor" to access its members will create issues when
-called from composite clk specific code. Hence, pass the "factor_hw"
-struct pointer directly instead of fetching it using factor clk specific
-helpers.
+I added in the cover letter how I tested it. For an example, BCLK
+can have the flag if I add below setting into one of
+'aspeed-bmc-*.dts' files.
 
-This issue has been observed when a composite clock like "sd0_clk" tried
-to call "owl_factor_helper_round_rate" resulting in pointer dereferencing
-error.
+&syscon {
+	clock-critical = <ASPEED_CLK_GATE_BCLK>;
+};
 
-While we are at it, let's rename the "clk_val_best" function to
-"owl_clk_val_best" since this is an owl SoCs specific helper.
+>> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
+>> ---
+>>   drivers/clk/clk-aspeed.c | 5 ++++-
+>>   1 file changed, 4 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
+>> index 411ff5fb2c07..d22eeb574ede 100644
+>> --- a/drivers/clk/clk-aspeed.c
+>> +++ b/drivers/clk/clk-aspeed.c
+>> @@ -541,8 +541,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+>>   
+>>   	for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
+>>   		const struct aspeed_gate_data *gd = &aspeed_gates[i];
+>> +		unsigned long flags = gd->flags;
+>>   		u32 gate_flags;
+>>   
+>> +		of_clk_detect_critical(pdev->dev.of_node, i, &flags);
+>> +
+> 
+> The function description in `drivers/clk/clk.c` has the warning below.
+> 
+>>   * Do not use this function. It exists only for legacy Device Tree
+>>   * bindings, such as the one-clock-per-node style that are outdated.
+>>   * Those bindings typically put all clock data into .dts and the Linux
+>>   * driver has no clock data, thus making it impossible to set this flag
+>>   * correctly from the driver. Only those drivers may call
+>>   * of_clk_detect_critical from their setup functions.
+> 
+> Will this still work?
 
-Fixes: 4bb78fc9744a ("clk: actions: Add factor clock support")
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-Link: https://lkml.kernel.org/r/20190916154546.24982-2-manivannan.sadhasivam@linaro.org
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/clk/actions/owl-factor.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+At least, it still works now and still useful for this case. Actually, I
+made this change as an alternative way of
+https://www.spinics.net/lists/linux-clk/msg44836.html
+because not all Aspeed BMC systems enable BCLK as a critical clock, so
+it's for providing more flexible way of critical clock setting for
+various hardware configurations.
 
-diff --git a/drivers/clk/actions/owl-factor.c b/drivers/clk/actions/owl-factor.c
-index 317d4a9e112e..f15e2621fa18 100644
---- a/drivers/clk/actions/owl-factor.c
-+++ b/drivers/clk/actions/owl-factor.c
-@@ -64,11 +64,10 @@ static unsigned int _get_table_val(const struct clk_factor_table *table,
- 	return val;
- }
- 
--static int clk_val_best(struct clk_hw *hw, unsigned long rate,
-+static int owl_clk_val_best(const struct owl_factor_hw *factor_hw,
-+			struct clk_hw *hw, unsigned long rate,
- 			unsigned long *best_parent_rate)
- {
--	struct owl_factor *factor = hw_to_owl_factor(hw);
--	struct owl_factor_hw *factor_hw = &factor->factor_hw;
- 	const struct clk_factor_table *clkt = factor_hw->table;
- 	unsigned long parent_rate, try_parent_rate, best = 0, cur_rate;
- 	unsigned long parent_rate_saved = *best_parent_rate;
-@@ -126,7 +125,7 @@ long owl_factor_helper_round_rate(struct owl_clk_common *common,
- 	const struct clk_factor_table *clkt = factor_hw->table;
- 	unsigned int val, mul = 0, div = 1;
- 
--	val = clk_val_best(&common->hw, rate, parent_rate);
-+	val = owl_clk_val_best(factor_hw, &common->hw, rate, parent_rate);
- 	_get_table_div_mul(clkt, val, &mul, &div);
- 
- 	return *parent_rate * mul / div;
--- 
-2.20.1
+If the function is deprecated and is going to be removed soon, would it
+be acceptable if I add the 'critical-clock' parsing code into this
+driver module instead of using the function?
 
+Best Regards,
+
+Jae
+
+>>   		/* Special case: the USB port 1 clock (bit 14) is always
+>>   		 * working the opposite way from the other ones.
+>>   		 */
+>> @@ -550,7 +553,7 @@ static int aspeed_clk_probe(struct platform_device *pdev)
+>>   		hw = aspeed_clk_hw_register_gate(dev,
+>>   				gd->name,
+>>   				gd->parent_name,
+>> -				gd->flags,
+>> +				flags,
+>>   				map,
+>>   				gd->clock_idx,
+>>   				gd->reset_idx,
+> 
+> 
+> Kind regards,
+> 
+> Paul
+> 
