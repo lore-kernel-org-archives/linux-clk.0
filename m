@@ -7,49 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C6DF6C33CAF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C09ADC33CB3
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0D712073A
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 912D4206E6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579201923;
-	bh=pIk3itN6SGLX9r+2vgQu8eYemBT/0ZRS1G62zBb6kZE=;
+	s=default; t=1579201973;
+	bh=X5TfvNsELNbaSw1/f7bXQHcNfJu3UqudNC6wp+ZOdN0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ohVcMHArI450OJYhx1EWdbjqjxwWv6z5wGeoDP0vlZfznciGiYhExYP4chJYhPUiD
-	 B3idnDmquYRC5wDrxlkgC3ftKGBcvIxi2wUT3SQhZA8JdnvxPmRT+9DIvY4eW4p/Vq
-	 A0xpafvYbF9rxkLPVbYvpH6NOdwld0VIexefhA3M=
+	b=JUwZvheCEmBwHdXtKnQS1Ls/5u4MzWjpcRrCT9VGJLVrSvNwA/bOhptJAtd03hipO
+	 cgowasFNxs1trgAG2CmS+w+XgmebBi/Qiamk9++PHYNonm8ymQW9Oo/TAj0RheLYTj
+	 emAmZ/Wo1JdiB29l2+7fGlbiw8VBG4zvC68xw4jk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387660AbgAPRAG (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:00:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49492 "EHLO mail.kernel.org"
+        id S1729471AbgAPQ7o (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 11:59:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387654AbgAPRAG (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:00:06 -0500
+        id S2387451AbgAPQ5M (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5605F2467C;
-        Thu, 16 Jan 2020 17:00:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C371024673;
+        Thu, 16 Jan 2020 16:57:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194005;
-        bh=pIk3itN6SGLX9r+2vgQu8eYemBT/0ZRS1G62zBb6kZE=;
+        s=default; t=1579193831;
+        bh=X5TfvNsELNbaSw1/f7bXQHcNfJu3UqudNC6wp+ZOdN0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sq1HwvwJjd62VyOy8XCLqsdLcf+yYuLARkGkQqEGtyfaw9y2QQMzzZVcBRrKWKlm3
-         ioy4sh6Hxl0CtqjTW4Wc8mGYKQFZ8O2G1HstPvMQQaePHbgwIsHrpzgClf/XVLHddK
-         6JHHyjZqJFcnMWyAK36tJNu2UHGtk3Mgi5UTwXRw=
+        b=nxzCb8NwhWFE0wTmG+kWXdM/q0n4p3rHQTx5u63v6PKow936NbFi4Nnjsiu4ynxBf
+         nS7Bl2qhGcZ5CXIBel3yt5GjasIy/P5urkPA9sYQsGASsLgoNzoFVbdl65UTpzXKMb
+         SUrRtdF4iHLfGIzhe8jg5/ATbxz0CklGSpqNqW8E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 131/671] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when ungating it
-Date:   Thu, 16 Jan 2020 11:50:40 -0500
-Message-Id: <20200116165940.10720-14-sashal@kernel.org>
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 088/671] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Thu, 16 Jan 2020 11:45:19 -0500
+Message-Id: <20200116165502.8838-88-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
-References: <20200116165940.10720-1-sashal@kernel.org>
+In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
+References: <20200116165502.8838-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,37 +60,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Chen-Yu Tsai <wens@csie.org>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 108a459ef4cd17a28711d81092044e597b5c7618 ]
+[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
 
-The PLL-MIPI clock is somewhat special as it has its own LDOs which
-need to be turned on for this PLL to actually work and output a clock
-signal.
+The of_find_compatible_node() returns a node pointer with refcount
+incremented, but there is the lack of use of the of_node_put() when
+done. Add the missing of_node_put() to release the refcount.
 
-Add the 2 LDO enable bits to the gate bits.
-
-Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/samsung/clk-exynos4.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index a4fa2945f230..4b5f8f4e4ab8 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -144,7 +144,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
- 				    8, 4,		/* N */
- 				    4, 2,		/* K */
- 				    0, 4,		/* M */
--				    BIT(31),		/* gate */
-+				    BIT(31) | BIT(23) | BIT(22), /* gate */
- 				    BIT(28),		/* lock */
- 				    CLK_SET_RATE_UNGATE);
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index 0421960eb963..442309b56920 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1226,6 +1226,7 @@ static unsigned long __init exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
+ 
+ 	return xom;
 -- 
 2.20.1
 
