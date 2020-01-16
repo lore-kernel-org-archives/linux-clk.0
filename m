@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89563C33CB6
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:59:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F1C3C33CB7
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:59:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 540B420728
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:59:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3792120728
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:59:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579193967;
-	bh=i5owRwERAnOiCFmbkU+ANJ+g3C6UCYGaMA8Usv0k760=;
+	s=default; t=1579193968;
+	bh=SyzeMevQErGeZucr06G/o6zoqXfNu3lF1/gYb305y0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jNkq1deX+RUecLo+rYFW3TcKsUqBEwN9G9T8Wvm2MHt02+6BDn5vudjb6l0WQmFbL
-	 862xZqkqRj5HyO4LEHvvgRzFuK/ftIgwLl6Et8gQsKqz5aNZwaZ5HiJqG8oIX9IEWG
-	 n7YjHY6k3gAcv2B/ValRQitPJkJ207ZVO8S6mRXU=
+	b=ap4gMrd+KjMB2PRGXaVg/eKoh9e46kXt8mEOEEQe1DB7iEseuzWR28TROgjN2COKn
+	 cfTQdwxSbFzmLoEP673P5Zm3udqMKNi9QCIUbMjXVy9qj8UsiRx24NDmixCCF1Ox5v
+	 YyJzSWktH6Mu84Kea64lxJuDZLqIlVuiL4pHiAuo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733148AbgAPQ7X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:59:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44542 "EHLO mail.kernel.org"
+        id S1730953AbgAPQ5V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 11:57:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387485AbgAPQ5Y (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:57:24 -0500
+        id S2387472AbgAPQ5T (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:57:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DBE12192A;
-        Thu, 16 Jan 2020 16:57:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A8A0F24673;
+        Thu, 16 Jan 2020 16:57:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193843;
-        bh=i5owRwERAnOiCFmbkU+ANJ+g3C6UCYGaMA8Usv0k760=;
+        s=default; t=1579193839;
+        bh=SyzeMevQErGeZucr06G/o6zoqXfNu3lF1/gYb305y0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WhPnKMYCvJYHQ93Jb3fCRZ1tsh7Mru960wyY+RfC5Oqe6skGM6im1WhnMC8ctgmNo
-         bmU+9OP1tc03tQSSnbWl/xe27l3C2tl0EEaFyYXKVJrbJdt/vUJ1YDoZMtiRnDYHNT
-         gQHS9K+QaNuN2ON9AdGRj8ppvBUYwtxFJ5bdam8Q=
+        b=pwLkfYc9D6hhAzQHtqUEAsAFPWWfrzkG1KHUQj7VaJje4hjCS2PcerBLlNj4suVR+
+         l4SMaYPt4Qs8FAlCKsKrYDBGeBz4IXG6YnCrhY/aUWqe5+pCTwJ34TSsT3gGicPDdR
+         o7SEW6TkJ8DGEObdSIFp4E9Rnea6gUDGvzFIV7Yo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         Gregory CLEMENT <gregory.clement@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 097/671] clk: dove: fix refcount leak in dove_clk_init()
-Date:   Thu, 16 Jan 2020 11:45:28 -0500
-Message-Id: <20200116165502.8838-97-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 094/671] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
+Date:   Thu, 16 Jan 2020 11:45:25 -0500
+Message-Id: <20200116165502.8838-94-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116165502.8838-1-sashal@kernel.org>
 References: <20200116165502.8838-1-sashal@kernel.org>
@@ -61,7 +61,7 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 8d726c5128298386b907963033be93407b0c4275 ]
+[ Upstream commit e7beeab9c61591cd0e690d8733d534c3f4278ff8 ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
@@ -69,35 +69,26 @@ done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
 Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Fixes: 8f7fc5450b64 ("clk: mvebu: dove: maintain clock init order")
-Fixes: 63b8d92c793f ("clk: add Dove PLL divider support for GPU, VMeta and AXI clocks")
+Fixes: 58d516ae95cb ("clk: mvebu: kirkwood: maintain clock init order")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mvebu/dove.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/clk/mvebu/kirkwood.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/mvebu/dove.c b/drivers/clk/mvebu/dove.c
-index 59fad9546c84..5f258c9bb68b 100644
---- a/drivers/clk/mvebu/dove.c
-+++ b/drivers/clk/mvebu/dove.c
-@@ -190,10 +190,14 @@ static void __init dove_clk_init(struct device_node *np)
- 
- 	mvebu_coreclk_setup(np, &dove_coreclks);
- 
--	if (ddnp)
-+	if (ddnp) {
- 		dove_divider_clk_init(ddnp);
-+		of_node_put(ddnp);
-+	}
- 
--	if (cgnp)
-+	if (cgnp) {
- 		mvebu_clk_gating_setup(cgnp, dove_gating_desc);
+diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
+index a2a8d614039d..890ebf623261 100644
+--- a/drivers/clk/mvebu/kirkwood.c
++++ b/drivers/clk/mvebu/kirkwood.c
+@@ -333,6 +333,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
+ 	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
+ 		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
++
 +		of_node_put(cgnp);
-+	}
+ 	}
  }
- CLK_OF_DECLARE(dove_clk, "marvell,dove-core-clock", dove_clk_init);
+ CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
 -- 
 2.20.1
 
