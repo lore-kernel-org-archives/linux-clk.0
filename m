@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 213F6C3F68F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4C0C33CB3
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8B3220684
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8CA2073A
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579198316;
-	bh=nrkyTp04R64DK9v4TJK/K3uh8Hrme3Fh3FlyFA1d3rk=;
+	s=default; t=1579198416;
+	bh=ZGJmYlRjr2H0cz1pgfoxuIs7wu9sOSTq74J+NGGbjRw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1S/twa4v54sS5zoCBNeKZzHAHg9DGslX5Pg61PMcNBo8h53wOvUaAAdftLeHGGHUV
-	 RYif6gyUqbR0MItcq3weIYtK2IUhciKdsZ2FH4khtfSoML/pQtfveeKFJsIiTrdQ7L
-	 UmEyCEU0dbuGE/9X8qrHWmgqlYDFgmQIWN2n5P8I=
+	b=goqLKqnVZ7E+yPQyaD5Tfnbm3IBmfxSbNmoQpHsyUDRlaYnE0V+1TG45fs3NONBor
+	 sUuXZEEjd9W8yawrmvmyshbdh7YN5x/fuk+K8r2JkNxMbjgP4lehtFxeuNffUzm6mR
+	 gSTE5JxJRq+jCodLZ0/tyG22Hy6HV/rDrr/xmra8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393194AbgAPRhX (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:37:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49734 "EHLO mail.kernel.org"
+        id S2393189AbgAPSNf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 13:13:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405016AbgAPRfZ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:35:25 -0500
+        id S2405202AbgAPRgu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:36:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 48C6524713;
-        Thu, 16 Jan 2020 17:35:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2CA66246B8;
+        Thu, 16 Jan 2020 17:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196125;
-        bh=nrkyTp04R64DK9v4TJK/K3uh8Hrme3Fh3FlyFA1d3rk=;
+        s=default; t=1579196210;
+        bh=ZGJmYlRjr2H0cz1pgfoxuIs7wu9sOSTq74J+NGGbjRw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Qp3/AtMfhs1Kk6g1DJ3XJQW20S4lwsbnpTxxh7NlN7zONqgOJB9CHhDIpyIQxLm8z
-         H5owTc8f/QmjbYcDOvZeX/81OAquEqQ6hc/3XlothL6Mcyl4PbncP1AhlteC4qPAIF
-         E7Sw7F2ZWFTt/0WPuA2wjPAdtjzsXzoyPYnpIVio=
+        b=Dgn3RykfLEIcnLGf/6LMjzLGB+c2eak+Tu3H/7mVKlCoDza3Nzos1rLMTJg0YvODD
+         m1G2ZAwUaN9c5ZGb9C/JwCaJNnuxNCJVGJDrG22MumMWZ4o5CXcXDsPSSBtG0TMkdy
+         McF1V50+FRNGAmPupAbZPcGJMInX15kyRVqHYRcw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 030/251] clk: imx7d: fix refcount leak in imx7d_clocks_init()
-Date:   Thu, 16 Jan 2020 12:31:04 -0500
-Message-Id: <20200116173445.21385-30-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 046/251] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when ungating it
+Date:   Thu, 16 Jan 2020 12:33:15 -0500
+Message-Id: <20200116173641.22137-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
-References: <20200116173445.21385-1-sashal@kernel.org>
+In-Reply-To: <20200116173641.22137-1-sashal@kernel.org>
+References: <20200116173641.22137-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,34 +59,37 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 5f8c183a996b76bb09748073c856e4246fd4ce95 ]
+[ Upstream commit 108a459ef4cd17a28711d81092044e597b5c7618 ]
 
-The of_find_compatible_node() returns a node pointer with refcount
-incremented, but there is the lack of use of the of_node_put() when
-done. Add the missing of_node_put() to release the refcount.
+The PLL-MIPI clock is somewhat special as it has its own LDOs which
+need to be turned on for this PLL to actually work and output a clock
+signal.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 8f6d8094b215 ("ARM: imx: add imx7d clk tree support")
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Add the 2 LDO enable bits to the gate bits.
+
+Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx7d.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx7d.c b/drivers/clk/imx/clk-imx7d.c
-index e7c7353a86fc..8c0c0d015132 100644
---- a/drivers/clk/imx/clk-imx7d.c
-+++ b/drivers/clk/imx/clk-imx7d.c
-@@ -415,6 +415,7 @@ static void __init imx7d_clocks_init(struct device_node *ccm_node)
- 	np = of_find_compatible_node(NULL, NULL, "fsl,imx7d-anatop");
- 	base = of_iomap(np, 0);
- 	WARN_ON(!base);
-+	of_node_put(np);
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index 5c6d37bdf247..765c6977484e 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -132,7 +132,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+ 				    8, 4,		/* N */
+ 				    4, 2,		/* K */
+ 				    0, 4,		/* M */
+-				    BIT(31),		/* gate */
++				    BIT(31) | BIT(23) | BIT(22), /* gate */
+ 				    BIT(28),		/* lock */
+ 				    CLK_SET_RATE_UNGATE);
  
- 	clks[IMX7D_PLL_ARM_MAIN_SRC]  = imx_clk_mux("pll_arm_main_src", base + 0x60, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
- 	clks[IMX7D_PLL_DRAM_MAIN_SRC] = imx_clk_mux("pll_dram_main_src", base + 0x70, 14, 2, pll_bypass_src_sel, ARRAY_SIZE(pll_bypass_src_sel));
 -- 
 2.20.1
 
