@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40247C33CB3
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:45:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B552C33CB1
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:45:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13444217F4
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:45:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D631B208C3
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579193129;
-	bh=DiQHE5REgQamHOQjDKS+KWLMX0tIKuXjs1EZJ4ndLqM=;
+	s=default; t=1579193143;
+	bh=0DFAupzXdgEWbk2BQFDxOnnQLwkqnZ8OV7Swv5YwVrs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OHx9wFxicb2fdph5fcSwv/Ww+PR4eK5WNNPwgHCZpvMQXxl8bKU/ga9EbX3wbKPce
-	 7eWbVFiSP/lAplU3IaDSTWUvsVdZnzSB3xfhlxyoEVZOA+jN1iGlsFek7Aa8+LhY0D
-	 p9Ck3X2zbc89GTWqWJuC76e0SnTt+/twHEOFtu8s=
+	b=iOrnqaTRg9fU4G3aiTY+HROfuq96EWTB+/aBwvqnikEC9epsHOmOlT928DY1MDexv
+	 CHlAq6SniMcQPQ2rreQ6jks9XvvJtuKOXMm01Wov1MW31omkRJeMt6ntDJroeJH+/p
+	 h2krKrp3E6VlDIxgUQ714hIQxH5euyz9F7emx6fk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbgAPQpZ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:45:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54202 "EHLO mail.kernel.org"
+        id S1729242AbgAPQpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 11:45:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729164AbgAPQpY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:45:24 -0500
+        id S1729206AbgAPQph (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:45:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3C2E3214AF;
-        Thu, 16 Jan 2020 16:45:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 13D202081E;
+        Thu, 16 Jan 2020 16:45:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193123;
-        bh=DiQHE5REgQamHOQjDKS+KWLMX0tIKuXjs1EZJ4ndLqM=;
+        s=default; t=1579193137;
+        bh=0DFAupzXdgEWbk2BQFDxOnnQLwkqnZ8OV7Swv5YwVrs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qTnVAGqO06gMlbaovWi08KGkdGygqtQxDrl6Dgtjbj8OSKEluRS12BCzHlTANHTzZ
-         qcZeMI4DdRWHk4s9SxTXv5/Gm6G0qZ+EcbKl5OomrgrlYz74BXf9YtPPXozLQ/VUJJ
-         XWEKR0/FQ15DuiH2f9X7J+z1d/MoineNSJvQB0MQ=
+        b=kzdkPVqpAyIamSpSXzB5sEMsQQsiW1gfscqX/nWtX5zFmb75Ju+QpDT8X4QWL4THa
+         ayRhSrY/WmfeqyheUVEDPrDRh+GJbSC+o7TqvuVoxzhysJTVo0TjRzxd76Hj4+KniW
+         4KNEzkeUZkNY5l7uMi4V5e+oGWv0OIiBLtJjjHdM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 029/205] clk: imx: pll14xx: Fix quick switch of S/K parameter
-Date:   Thu, 16 Jan 2020 11:40:04 -0500
-Message-Id: <20200116164300.6705-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 032/205] clk: meson: axg-audio: fix regmap last register
+Date:   Thu, 16 Jan 2020 11:40:07 -0500
+Message-Id: <20200116164300.6705-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -59,102 +60,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+From: Jerome Brunet <jbrunet@baylibre.com>
 
-[ Upstream commit 094234fcf46146339caaac8282aa15d225a5911a ]
+[ Upstream commit 255cab9d27d78703f7450d720859ee146d0ee6e1 ]
 
-The PLL14xx on imx8m can change the S and K parameter without requiring
-a reset and relock of the whole PLL.
+Since the addition of the g12a, the last register is
+AUDIO_CLK_SPDIFOUT_B_CTRL.
 
-Fix clk_pll144xx_mp_change register reading and use it for pll1443 as
-well since no reset+relock is required on K changes either.
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Fixes: 8646d4dcc7fb ("clk: imx: Add PLLs driver for imx8mm soc")
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
+Fixes: 075001385c66 ("clk: meson: axg-audio: add g12a support")
+Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-pll14xx.c | 40 +++++++----------------------------
- 1 file changed, 8 insertions(+), 32 deletions(-)
+ drivers/clk/meson/axg-audio.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
-index d43b4a3c0de8..047f1d8fe323 100644
---- a/drivers/clk/imx/clk-pll14xx.c
-+++ b/drivers/clk/imx/clk-pll14xx.c
-@@ -112,43 +112,17 @@ static unsigned long clk_pll1443x_recalc_rate(struct clk_hw *hw,
- 	return fvco;
- }
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index 18b23cdf679c..aa2522624fd3 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -1001,7 +1001,7 @@ static const struct regmap_config axg_audio_regmap_cfg = {
+ 	.reg_bits	= 32,
+ 	.val_bits	= 32,
+ 	.reg_stride	= 4,
+-	.max_register	= AUDIO_CLK_PDMIN_CTRL1,
++	.max_register	= AUDIO_CLK_SPDIFOUT_B_CTRL,
+ };
  
--static inline bool clk_pll1416x_mp_change(const struct imx_pll14xx_rate_table *rate,
-+static inline bool clk_pll14xx_mp_change(const struct imx_pll14xx_rate_table *rate,
- 					  u32 pll_div)
- {
- 	u32 old_mdiv, old_pdiv;
- 
--	old_mdiv = (pll_div >> MDIV_SHIFT) & MDIV_MASK;
--	old_pdiv = (pll_div >> PDIV_SHIFT) & PDIV_MASK;
-+	old_mdiv = (pll_div & MDIV_MASK) >> MDIV_SHIFT;
-+	old_pdiv = (pll_div & PDIV_MASK) >> PDIV_SHIFT;
- 
- 	return rate->mdiv != old_mdiv || rate->pdiv != old_pdiv;
- }
- 
--static inline bool clk_pll1443x_mpk_change(const struct imx_pll14xx_rate_table *rate,
--					  u32 pll_div_ctl0, u32 pll_div_ctl1)
--{
--	u32 old_mdiv, old_pdiv, old_kdiv;
--
--	old_mdiv = (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
--	old_pdiv = (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
--	old_kdiv = (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
--
--	return rate->mdiv != old_mdiv || rate->pdiv != old_pdiv ||
--		rate->kdiv != old_kdiv;
--}
--
--static inline bool clk_pll1443x_mp_change(const struct imx_pll14xx_rate_table *rate,
--					  u32 pll_div_ctl0, u32 pll_div_ctl1)
--{
--	u32 old_mdiv, old_pdiv, old_kdiv;
--
--	old_mdiv = (pll_div_ctl0 >> MDIV_SHIFT) & MDIV_MASK;
--	old_pdiv = (pll_div_ctl0 >> PDIV_SHIFT) & PDIV_MASK;
--	old_kdiv = (pll_div_ctl1 >> KDIV_SHIFT) & KDIV_MASK;
--
--	return rate->mdiv != old_mdiv || rate->pdiv != old_pdiv ||
--		rate->kdiv != old_kdiv;
--}
--
- static int clk_pll14xx_wait_lock(struct clk_pll14xx *pll)
- {
- 	u32 val;
-@@ -174,7 +148,7 @@ static int clk_pll1416x_set_rate(struct clk_hw *hw, unsigned long drate,
- 
- 	tmp = readl_relaxed(pll->base + 4);
- 
--	if (!clk_pll1416x_mp_change(rate, tmp)) {
-+	if (!clk_pll14xx_mp_change(rate, tmp)) {
- 		tmp &= ~(SDIV_MASK) << SDIV_SHIFT;
- 		tmp |= rate->sdiv << SDIV_SHIFT;
- 		writel_relaxed(tmp, pll->base + 4);
-@@ -239,13 +213,15 @@ static int clk_pll1443x_set_rate(struct clk_hw *hw, unsigned long drate,
- 	}
- 
- 	tmp = readl_relaxed(pll->base + 4);
--	div_val = readl_relaxed(pll->base + 8);
- 
--	if (!clk_pll1443x_mpk_change(rate, tmp, div_val)) {
-+	if (!clk_pll14xx_mp_change(rate, tmp)) {
- 		tmp &= ~(SDIV_MASK) << SDIV_SHIFT;
- 		tmp |= rate->sdiv << SDIV_SHIFT;
- 		writel_relaxed(tmp, pll->base + 4);
- 
-+		tmp = rate->kdiv << KDIV_SHIFT;
-+		writel_relaxed(tmp, pll->base + 8);
-+
- 		return 0;
- 	}
- 
+ struct audioclk_data {
 -- 
 2.20.1
 
