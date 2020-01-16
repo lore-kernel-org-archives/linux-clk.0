@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E83C33CAF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46483C33CAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02BE8246D8
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B2DF24728
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:35:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579196118;
-	bh=pkx0yXIJGjk4uDyY2N8qEi31EmVtnwYkT0qbkPSW844=;
+	s=default; t=1579196130;
+	bh=y1elH+2JG+MYZjSMuDb+RqH4+qmJ1Qal4Hoo1MjNufQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=q8pvQ6LNrkNoIy9tjEfKQtVLSahtiYkfgCHMma2DSDubz9I63ZPmbx297vpDNEUsr
-	 WyxilCcwsk8jkYPcFwwxyXeshXYCm13N1zHYWpvqZHZIFbTYHpmdHfsTZXCW/uV73I
-	 7acJeRw1lK5ecGEoQQx8s6txhAcaeLpc3vYLHWrg=
+	b=EnZAgo0vqy6nJ9+TqZnpma84ddKG+KYriQ0iNpTsdwI+CowjjMY3qkdUsCCqxCbFZ
+	 TdqJJUMAXhb6HDD1GUJACT8FZLXQ3o3m17Z4ZOx69Yx0kn9JaaTWQF2VNuYkdetrIx
+	 rSB3AiXWHoyt5c5wXZ7i+MuaOLsBwbYEw4fnlrag=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2404943AbgAPRfR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:35:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49510 "EHLO mail.kernel.org"
+        id S2404960AbgAPRfW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:35:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2404939AbgAPRfQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:35:16 -0500
+        id S2404498AbgAPRfV (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 68473246C0;
-        Thu, 16 Jan 2020 17:35:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A0D93246A9;
+        Thu, 16 Jan 2020 17:35:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196116;
-        bh=pkx0yXIJGjk4uDyY2N8qEi31EmVtnwYkT0qbkPSW844=;
+        s=default; t=1579196120;
+        bh=y1elH+2JG+MYZjSMuDb+RqH4+qmJ1Qal4Hoo1MjNufQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NhoYwrsh+zT02fhLFu11lJFeVxnykA7o2qpxjPvsxYocc7BK1FVu7erMOOcqF38gn
-         xkHrLmAHADFqdUbqa/yx3/et0gOWHT6a4mXZuUplnZI19L5GsSWs6rJfx2tp087mTi
-         cx6c1iOrG3eAY3WRaDc6sw3M+PmPLtDY/+WDQ1RI=
+        b=c9SMpoDXAXvMSfFCR5rO8qx3+q6Hqk78bN7ir8ESOC9ggX+xu24y5OhfmOZDpli15
+         lK3yBPx3SkQfzHaQuYvR/g82tByMnsNcNHX8peYj1UW8KNisDLfVSwtBHieroRJuKa
+         LBfwos8wqVVgdsKvgYXplAbD7aSRxXCOXjmpDi4s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 024/251] clk: highbank: fix refcount leak in hb_clk_init()
-Date:   Thu, 16 Jan 2020 12:30:58 -0500
-Message-Id: <20200116173445.21385-24-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 027/251] clk: samsung: exynos4: fix refcount leak in exynos4_get_xom()
+Date:   Thu, 16 Jan 2020 12:31:01 -0500
+Message-Id: <20200116173445.21385-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
 References: <20200116173445.21385-1-sashal@kernel.org>
@@ -60,32 +62,32 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 5eb8ba90958de1285120dae5d3a5d2b1a360b3b4 ]
+[ Upstream commit cee82eb9532090cd1dc953e845d71f9b1445c84e ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 26cae166cff9 ("ARM: highbank: remove custom .init_time hook")
+Fixes: e062b571777f ("clk: exynos4: register clocks using common clock framework")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-highbank.c | 1 +
+ drivers/clk/samsung/clk-exynos4.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
-index 727ed8e1bb72..8e4581004695 100644
---- a/drivers/clk/clk-highbank.c
-+++ b/drivers/clk/clk-highbank.c
-@@ -293,6 +293,7 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
- 	/* Map system registers */
- 	srnp = of_find_compatible_node(NULL, NULL, "calxeda,hb-sregs");
- 	hb_clk->reg = of_iomap(srnp, 0);
-+	of_node_put(srnp);
- 	BUG_ON(!hb_clk->reg);
- 	hb_clk->reg += reg;
+diff --git a/drivers/clk/samsung/clk-exynos4.c b/drivers/clk/samsung/clk-exynos4.c
+index faab9b31baf5..91f9b79e3941 100644
+--- a/drivers/clk/samsung/clk-exynos4.c
++++ b/drivers/clk/samsung/clk-exynos4.c
+@@ -1225,6 +1225,7 @@ static unsigned long __init exynos4_get_xom(void)
+ 			xom = readl(chipid_base + 8);
  
+ 		iounmap(chipid_base);
++		of_node_put(np);
+ 	}
+ 
+ 	return xom;
 -- 
 2.20.1
 
