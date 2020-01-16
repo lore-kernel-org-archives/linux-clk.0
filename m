@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB059C33CB1
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 07:37:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79C4CC33CB6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 07:37:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB2FA214AF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 07:37:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5011122464
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 07:37:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729431AbgAPHhe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 02:37:34 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:60468 "EHLO inva021.nxp.com"
+        id S1726994AbgAPHha (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 02:37:30 -0500
+Received: from inva021.nxp.com ([92.121.34.21]:60440 "EHLO inva021.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726513AbgAPHhb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 02:37:31 -0500
+        id S1726230AbgAPHha (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 02:37:30 -0500
 Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id EF976200676;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 3E167200682;
         Thu, 16 Jan 2020 08:37:28 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id E1926200659;
+        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 307A7200659;
         Thu, 16 Jan 2020 08:37:28 +0100 (CET)
 Received: from fsr-ub1864-014.ea.freescale.net (fsr-ub1864-014.ea.freescale.net [10.171.95.219])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 3F4332047A;
-        Thu, 16 Jan 2020 08:37:28 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 826722047A;
+        Thu, 16 Jan 2020 08:37:27 +0100 (CET)
 From:   =?UTF-8?q?Horia=20Geant=C4=83?= <horia.geanta@nxp.com>
 To:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
         Rob Herring <robh+dt@kernel.org>, Abel Vesa <abel.vesa@nxp.com>
@@ -40,9 +40,9 @@ Cc:     Mark Rutland <mark.rutland@arm.com>,
         Leonard Crestez <leonard.crestez@nxp.com>,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/3] clk: imx8mn: add SNVS clock to clock tree
-Date:   Thu, 16 Jan 2020 09:37:17 +0200
-Message-Id: <20200116073718.4475-3-horia.geanta@nxp.com>
+Subject: [PATCH v2 1/3] dt-bindings: clock: imx8mn: add SNVS clock
+Date:   Thu, 16 Jan 2020 09:37:16 +0200
+Message-Id: <20200116073718.4475-2-horia.geanta@nxp.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20200116073718.4475-1-horia.geanta@nxp.com>
 References: <20200116073718.4475-1-horia.geanta@nxp.com>
@@ -55,29 +55,27 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-i.mx8mn has support for clock gating the snvs module.
-Add it into clock tree so that rtc-snvs driver could use it.
-
-Note this will also be required in the snvs_pwrkey driver,
-once support for clock management will be added.
+Add macro for the SNVS clock of the i.MX8MN.
 
 Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
 ---
- drivers/clk/imx/clk-imx8mn.c | 1 +
- 1 file changed, 1 insertion(+)
+ include/dt-bindings/clock/imx8mn-clock.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx8mn.c b/drivers/clk/imx/clk-imx8mn.c
-index ce2ba3dce483..6a50b59968f5 100644
---- a/drivers/clk/imx/clk-imx8mn.c
-+++ b/drivers/clk/imx/clk-imx8mn.c
-@@ -519,6 +519,7 @@ static int imx8mn_clocks_probe(struct platform_device *pdev)
- 	hws[IMX8MN_CLK_SAI5_IPG] = imx_clk_hw_gate2_shared2("sai5_ipg_clk", "ipg_audio_root", base + 0x4370, 0, &share_count_sai5);
- 	hws[IMX8MN_CLK_SAI6_ROOT] = imx_clk_hw_gate2_shared2("sai6_root_clk", "sai6", base + 0x4380, 0, &share_count_sai6);
- 	hws[IMX8MN_CLK_SAI6_IPG] = imx_clk_hw_gate2_shared2("sai6_ipg_clk", "ipg_audio_root", base + 0x4380, 0, &share_count_sai6);
-+	hws[IMX8MN_CLK_SNVS_ROOT] = imx_clk_hw_gate4("snvs_root_clk", "ipg_root", base + 0x4470, 0);
- 	hws[IMX8MN_CLK_UART1_ROOT] = imx_clk_hw_gate4("uart1_root_clk", "uart1", base + 0x4490, 0);
- 	hws[IMX8MN_CLK_UART2_ROOT] = imx_clk_hw_gate4("uart2_root_clk", "uart2", base + 0x44a0, 0);
- 	hws[IMX8MN_CLK_UART3_ROOT] = imx_clk_hw_gate4("uart3_root_clk", "uart3", base + 0x44b0, 0);
+diff --git a/include/dt-bindings/clock/imx8mn-clock.h b/include/dt-bindings/clock/imx8mn-clock.h
+index 0f2b8423ce1d..43883fe65db5 100644
+--- a/include/dt-bindings/clock/imx8mn-clock.h
++++ b/include/dt-bindings/clock/imx8mn-clock.h
+@@ -228,6 +228,8 @@
+ #define IMX8MN_SYS_PLL2_333M_CG			209
+ #define IMX8MN_SYS_PLL2_500M_CG			210
+ 
+-#define IMX8MN_CLK_END				211
++#define IMX8MN_CLK_SNVS_ROOT			211
++
++#define IMX8MN_CLK_END				212
+ 
+ #endif
 -- 
 2.17.1
 
