@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF61C33CB6
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6012CC3F68F
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F9352077B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35272214AF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579197477;
-	bh=4vp6+qYTLEpYWbaUySrr+/hC5VNQsimUjNPYH+qNsso=;
+	s=default; t=1579198314;
+	bh=SyzeMevQErGeZucr06G/o6zoqXfNu3lF1/gYb305y0E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aPxFXd+dBOq7h1RRuBfgE0U9POUje05F6LF+aoFxoc+HaBUScD1gQbDWSsJhAX9m5
-	 syMVPk4XJJPls/uSqh2cq+QmzooJkcA7Y3lBv2lubeY5uj1ITp790IOebYxbfsbAgj
-	 dnvekC2NDZzCH+qRMUrteSAbh5hfJilKRwQW0MFI=
+	b=bbm1LaFT+ScThElZk93503h10ViAHmsCsP32Xyed4AAUW2+ZnkGYnin2eAFFMxSjx
+	 SW2BgyZ7iF9rGnvQPkZ4sFuRGNTC7o03vryVnMcM8uPgrM065TU+g0j46cUIjpXESD
+	 udr+SbqNvKr9nsA7uugLUKTVleFQjs5PjmVDnOzg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405857AbgAPR54 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:57:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33304 "EHLO mail.kernel.org"
+        id S2405343AbgAPRhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:37:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393908AbgAPRnR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:17 -0500
+        id S2405112AbgAPRf3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 295D02472F;
-        Thu, 16 Jan 2020 17:43:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F3B0224724;
+        Thu, 16 Jan 2020 17:35:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196596;
-        bh=4vp6+qYTLEpYWbaUySrr+/hC5VNQsimUjNPYH+qNsso=;
+        s=default; t=1579196128;
+        bh=SyzeMevQErGeZucr06G/o6zoqXfNu3lF1/gYb305y0E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=buFQ3PRz64/uD8wxK26rMNAUVicZm0aNDzK7tXrgJMaqA7yS7hKRuy/jyxy1PmwGj
-         HgDMudpDoHNBC58gvE1xs/RN0pkjdKHNBzVAsKjqdbRbTiq1TstatlzsjCexJoAg4q
-         HNNii6nGMXkvDIhEvbom8uXEFySqctkCOsVeuzmQ=
+        b=GZ69TXNYPQ0NYW4aHR5xosnnotRs1ur9G9LC7Hv/IE78aY7Ie2q87gcamZcUtFJTu
+         BOiBbOlzooeBAju8Cr33ahQI4u2QmZa0dHLl3ax9GICIf8cCdqMTziOjbd1P8KTJ5i
+         j+PePkn8z5j8iHvA/0BfRibiz13Ph1QY6NF30z6w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Gregory CLEMENT <gregory.clement@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 019/174] clk: highbank: fix refcount leak in hb_clk_init()
-Date:   Thu, 16 Jan 2020 12:40:16 -0500
-Message-Id: <20200116174251.24326-19-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 033/251] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
+Date:   Thu, 16 Jan 2020 12:31:07 -0500
+Message-Id: <20200116173445.21385-33-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
-References: <20200116174251.24326-1-sashal@kernel.org>
+In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
+References: <20200116173445.21385-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,32 +61,34 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 5eb8ba90958de1285120dae5d3a5d2b1a360b3b4 ]
+[ Upstream commit e7beeab9c61591cd0e690d8733d534c3f4278ff8 ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 26cae166cff9 ("ARM: highbank: remove custom .init_time hook")
+Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+Fixes: 58d516ae95cb ("clk: mvebu: kirkwood: maintain clock init order")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-highbank.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/mvebu/kirkwood.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
-index be3a21abb185..4105066b428c 100644
---- a/drivers/clk/clk-highbank.c
-+++ b/drivers/clk/clk-highbank.c
-@@ -294,6 +294,7 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
- 	/* Map system registers */
- 	srnp = of_find_compatible_node(NULL, NULL, "calxeda,hb-sregs");
- 	hb_clk->reg = of_iomap(srnp, 0);
-+	of_node_put(srnp);
- 	BUG_ON(!hb_clk->reg);
- 	hb_clk->reg += reg;
- 
+diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
+index a2a8d614039d..890ebf623261 100644
+--- a/drivers/clk/mvebu/kirkwood.c
++++ b/drivers/clk/mvebu/kirkwood.c
+@@ -333,6 +333,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
+ 	if (cgnp) {
+ 		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
+ 		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
++
++		of_node_put(cgnp);
+ 	}
+ }
+ CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
 -- 
 2.20.1
 
