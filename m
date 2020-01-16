@@ -2,55 +2,54 @@ Return-Path: <SRS0=DYql=3F=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLACK,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74D02C33CB3
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BEEEC33CB6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:09:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E6E206E6
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CD14206E6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 19:09:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579201328;
-	bh=xybzNEW3gagGYev3jsj1LC82FcimqtoXS0anepIdcYE=;
+	s=default; t=1579201796;
+	bh=XX4X6EpJrToEwjK3Fv9nagxPTDojAtDKIFRZMSV0bSk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xe0WM3LyXhXb134alx7uxsBeGI3DwDE1BcxYvMaeihCXa4nNviKpgZP3QnQRtZGGJ
-	 CJmVieeLyGhJa6fxV2SE37MkroWmz9boR0sMzV7QRad1eucBSkKGBkB1vKlTtSGwsP
-	 WhpFouJRzs62tbEaPzmpk9dKB7t/8gnBbMMhiJ2g=
+	b=BpZWJmp7GjA/xLmN6Vh34KOw1a3wdC559Gu+XDBKQtMpjL17dyvju+CdjC+22J6KQ
+	 kznD0a5a1gzv+2658D8Dt8HUPnKlQ3LH4RJqY6fYbX6c0s7yPbUCR5CmUfcHBWXZYG
+	 +/t8japE16XRxOcwKQknYaSifqT2JMSszy0XQBVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729913AbgAPRFo (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:05:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34882 "EHLO mail.kernel.org"
+        id S2405294AbgAPTJy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 14:09:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388684AbgAPRFn (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:05:43 -0500
+        id S2387856AbgAPRAi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:00:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89FDF2077B;
-        Thu, 16 Jan 2020 17:05:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F079422525;
+        Thu, 16 Jan 2020 17:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579194342;
-        bh=xybzNEW3gagGYev3jsj1LC82FcimqtoXS0anepIdcYE=;
+        s=default; t=1579194037;
+        bh=XX4X6EpJrToEwjK3Fv9nagxPTDojAtDKIFRZMSV0bSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HewKpN7KRq4Qbjd1xle3+98nQcRAMDVp632EIn9fSghPr0/hue6vi7/Xhw/2LhRxp
-         Ml+2mBFB+BGaIgU9zZd+Xw3oqgYn+jqImcmqSznkPh/FxGCWpq1bSRVQYa1rtdnSYQ
-         ZxqpyROlJBfCsqzmsGbxFXnMnWBdAP/mL6PJaEkI=
+        b=WKgeloLCSxgn+DI+51VViBc9wBhLw7GPE+4j2BdzoxYDS0MaiekupReMtdOhBa6Eb
+         IHXG+E3b0LINKbZDNKz+MXhlvpEY8TsXozET87dapblK4+7LyA3K8tsWQuOInmiKBm
+         d8KFoZkx7vtPZ9Qbbfr9dPx+hYuFaLGfm94gRlnc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Gonzalez <marc.w.gonzalez@free.fr>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
+Cc:     Paul Cercueil <paul@crapouillou.net>,
+        Artur Rojek <contact@artur-rojek.eu>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 285/671] clk: qcom: Skip halt checks on gcc_pcie_0_pipe_clk for 8998
-Date:   Thu, 16 Jan 2020 11:58:43 -0500
-Message-Id: <20200116170509.12787-22-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 155/671] clk: ingenic: jz4740: Fix gating of UDC clock
+Date:   Thu, 16 Jan 2020 11:51:04 -0500
+Message-Id: <20200116165940.10720-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200116170509.12787-1-sashal@kernel.org>
-References: <20200116170509.12787-1-sashal@kernel.org>
+In-Reply-To: <20200116165940.10720-1-sashal@kernel.org>
+References: <20200116165940.10720-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -60,40 +59,34 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Marc Gonzalez <marc.w.gonzalez@free.fr>
+From: Paul Cercueil <paul@crapouillou.net>
 
-[ Upstream commit c0ee0e43c049a13d11e913edf875e4ee376dc84b ]
+[ Upstream commit b7e29924a1a628aec60d18651b493fa1601bf944 ]
 
-See similar issue solved by commit 5f2420ed2189
-("clk: qcom: Skip halt checks on gcc_usb3_phy_pipe_clk for 8998")
+The UDC clock is gated when the bit is cleared, not when it is set.
 
-Without this patch, PCIe PHY init fails:
-
-qcom-qmp-phy 1c06000.phy: pipe_clk enable failed err=-16
-phy phy-1c06000.phy.0: phy init failed --> -16
-
-Signed-off-by: Marc Gonzalez <marc.w.gonzalez@free.fr>
-Reviewed-by: Jeffrey Hugo <jhugo@codeaurora.org>
-Fixes: b5f5f525c547 ("clk: qcom: Add MSM8998 Global Clock Control (GCC) driver")
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Artur Rojek <contact@artur-rojek.eu>
+Fixes: 2b555a4b9cae ("clk: ingenic: Add missing flag for UDC clock")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/qcom/gcc-msm8998.c | 2 +-
+ drivers/clk/ingenic/jz4740-cgu.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-msm8998.c b/drivers/clk/qcom/gcc-msm8998.c
-index 4e23973b6cd1..772a08101ddf 100644
---- a/drivers/clk/qcom/gcc-msm8998.c
-+++ b/drivers/clk/qcom/gcc-msm8998.c
-@@ -2144,7 +2144,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
+diff --git a/drivers/clk/ingenic/jz4740-cgu.c b/drivers/clk/ingenic/jz4740-cgu.c
+index 4479c102e899..b86edd328249 100644
+--- a/drivers/clk/ingenic/jz4740-cgu.c
++++ b/drivers/clk/ingenic/jz4740-cgu.c
+@@ -165,7 +165,7 @@ static const struct ingenic_cgu_clk_info jz4740_cgu_clocks[] = {
+ 		.parents = { JZ4740_CLK_EXT, JZ4740_CLK_PLL_HALF, -1, -1 },
+ 		.mux = { CGU_REG_CPCCR, 29, 1 },
+ 		.div = { CGU_REG_CPCCR, 23, 1, 6, -1, -1, -1 },
+-		.gate = { CGU_REG_SCR, 6 },
++		.gate = { CGU_REG_SCR, 6, true },
+ 	},
  
- static struct clk_branch gcc_pcie_0_pipe_clk = {
- 	.halt_reg = 0x6b018,
--	.halt_check = BRANCH_HALT,
-+	.halt_check = BRANCH_HALT_SKIP,
- 	.clkr = {
- 		.enable_reg = 0x6b018,
- 		.enable_mask = BIT(0),
+ 	/* Gate-only clocks */
 -- 
 2.20.1
 
