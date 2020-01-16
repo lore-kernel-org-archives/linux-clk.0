@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0A66C33CB6
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBF61C33CB6
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D9F2077B
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F9352077B
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 17:57:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579197475;
-	bh=2Gp2Tp8VnXh2eaulPPIZdAlNW2teEQGzKNx7aT491rg=;
+	s=default; t=1579197477;
+	bh=4vp6+qYTLEpYWbaUySrr+/hC5VNQsimUjNPYH+qNsso=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RXk4WuliE8XC9JU0Ye4fjAcKig3oQbFBxzOGnbJi3aRjSx3udLFFPAZJo6jFajbNs
-	 00uSVDnijOSNE0MbedHSyywkuIEX707l3oh+xlKQ/guUGCQz92v4w8uLr2ph8d3zpF
-	 GXSm+6SElBfVHASfat2WU0QBSeh8NphUPPIwmcNw=
+	b=aPxFXd+dBOq7h1RRuBfgE0U9POUje05F6LF+aoFxoc+HaBUScD1gQbDWSsJhAX9m5
+	 syMVPk4XJJPls/uSqh2cq+QmzooJkcA7Y3lBv2lubeY5uj1ITp790IOebYxbfsbAgj
+	 dnvekC2NDZzCH+qRMUrteSAbh5hfJilKRwQW0MFI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2393916AbgAPRnT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 12:43:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33332 "EHLO mail.kernel.org"
+        id S2405857AbgAPR54 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 12:57:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33304 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2393912AbgAPRnS (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:43:18 -0500
+        id S2393908AbgAPRnR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:43:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 408DF24736;
-        Thu, 16 Jan 2020 17:43:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 295D02472F;
+        Thu, 16 Jan 2020 17:43:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196598;
-        bh=2Gp2Tp8VnXh2eaulPPIZdAlNW2teEQGzKNx7aT491rg=;
+        s=default; t=1579196596;
+        bh=4vp6+qYTLEpYWbaUySrr+/hC5VNQsimUjNPYH+qNsso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BrYKsEbGcsVf96M8FfuJ2yqSdV+Sa4DAgSmJRrAhYWCnaUAc0xU5SxK/QC5CemdkV
-         4pX+v+2R3stiFpB68aDWtwX3W+PQ4mFjK8UjNhBePHxEXMQbEZfkTbFpQ9GDhvL1Wa
-         +UPfRdw4n08ZH/YcXoTypFNkQECcoUT7mRcHfxqU=
+        b=buFQ3PRz64/uD8wxK26rMNAUVicZm0aNDzK7tXrgJMaqA7yS7hKRuy/jyxy1PmwGj
+         HgDMudpDoHNBC58gvE1xs/RN0pkjdKHNBzVAsKjqdbRbTiq1TstatlzsjCexJoAg4q
+         HNNii6nGMXkvDIhEvbom8uXEFySqctkCOsVeuzmQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>,
         Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 020/174] clk: qoriq: fix refcount leak in clockgen_init()
-Date:   Thu, 16 Jan 2020 12:40:17 -0500
-Message-Id: <20200116174251.24326-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 019/174] clk: highbank: fix refcount leak in hb_clk_init()
+Date:   Thu, 16 Jan 2020 12:40:16 -0500
+Message-Id: <20200116174251.24326-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116174251.24326-1-sashal@kernel.org>
 References: <20200116174251.24326-1-sashal@kernel.org>
@@ -60,32 +60,32 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 70af6c5b5270e8101f318c4b69cc98a726edfab9 ]
+[ Upstream commit 5eb8ba90958de1285120dae5d3a5d2b1a360b3b4 ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Fixes: 0dfc86b3173f ("clk: qoriq: Move chip-specific knowledge into driver")
+Fixes: 26cae166cff9 ("ARM: highbank: remove custom .init_time hook")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-qoriq.c | 1 +
+ drivers/clk/clk-highbank.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
-index 7244a621c61b..efc9e1973295 100644
---- a/drivers/clk/clk-qoriq.c
-+++ b/drivers/clk/clk-qoriq.c
-@@ -1244,6 +1244,7 @@ static void __init clockgen_init(struct device_node *np)
- 				pr_err("%s: Couldn't map %s regs\n", __func__,
- 				       guts->full_name);
- 			}
-+			of_node_put(guts);
- 		}
+diff --git a/drivers/clk/clk-highbank.c b/drivers/clk/clk-highbank.c
+index be3a21abb185..4105066b428c 100644
+--- a/drivers/clk/clk-highbank.c
++++ b/drivers/clk/clk-highbank.c
+@@ -294,6 +294,7 @@ static __init struct clk *hb_clk_init(struct device_node *node, const struct clk
+ 	/* Map system registers */
+ 	srnp = of_find_compatible_node(NULL, NULL, "calxeda,hb-sregs");
+ 	hb_clk->reg = of_iomap(srnp, 0);
++	of_node_put(srnp);
+ 	BUG_ON(!hb_clk->reg);
+ 	hb_clk->reg += reg;
  
- 	}
 -- 
 2.20.1
 
