@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6012CC3F68F
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFC2C33CAF
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35272214AF
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E9852469A
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 18:11:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579198314;
-	bh=SyzeMevQErGeZucr06G/o6zoqXfNu3lF1/gYb305y0E=;
+	s=default; t=1579198315;
+	bh=kgcXj89cU6yu7VY5V4Lql3Si5XHC1Fct90VFT76Z6Ns=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bbm1LaFT+ScThElZk93503h10ViAHmsCsP32Xyed4AAUW2+ZnkGYnin2eAFFMxSjx
-	 SW2BgyZ7iF9rGnvQPkZ4sFuRGNTC7o03vryVnMcM8uPgrM065TU+g0j46cUIjpXESD
-	 udr+SbqNvKr9nsA7uugLUKTVleFQjs5PjmVDnOzg=
+	b=oTOshsfeI2zFrNqu2ex6CAKyOIxBNzGtU82DKt+JiZBF9rFQtbNhO+K1tjFlPSgtu
+	 v0HmIrXTM1c6/45ox2pkbsQtt3+soFqKDsKZ3edKUW8909XQ4QftpkysEiUuSmjQ1a
+	 GlUAPlvr35/M7UWA2cpFTbAlNRZNLuaNmP4IyHWo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2405343AbgAPRhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S2405338AbgAPRhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Thu, 16 Jan 2020 12:37:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49780 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:49750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2405112AbgAPRf3 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 12:35:29 -0500
+        id S2405050AbgAPRf0 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 12:35:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F3B0224724;
-        Thu, 16 Jan 2020 17:35:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7776D246C0;
+        Thu, 16 Jan 2020 17:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579196128;
-        bh=SyzeMevQErGeZucr06G/o6zoqXfNu3lF1/gYb305y0E=;
+        s=default; t=1579196126;
+        bh=kgcXj89cU6yu7VY5V4Lql3Si5XHC1Fct90VFT76Z6Ns=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GZ69TXNYPQ0NYW4aHR5xosnnotRs1ur9G9LC7Hv/IE78aY7Ie2q87gcamZcUtFJTu
-         BOiBbOlzooeBAju8Cr33ahQI4u2QmZa0dHLl3ax9GICIf8cCdqMTziOjbd1P8KTJ5i
-         j+PePkn8z5j8iHvA/0BfRibiz13Ph1QY6NF30z6w=
+        b=zzAwNxQ4LJOgDoD/Imi29+1RKZH0ZfuwCix+Nrfw9qb8AmZxG2X15qchOjjx9Zz6m
+         PHvLtmYe8o9zSt2bhZRpod3gNGVNtzztfZRzB7eHWh9Zh8rj10Zi7GMQVptHpseDyO
+         ceUPLrlQmv6ErIBWZFIHQCr8Hxk2P2odNqzqxIIs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Gregory CLEMENT <gregory.clement@bootlin.com>,
         Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 033/251] clk: kirkwood: fix refcount leak in kirkwood_clk_init()
-Date:   Thu, 16 Jan 2020 12:31:07 -0500
-Message-Id: <20200116173445.21385-33-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 031/251] clk: vf610: fix refcount leak in vf610_clocks_init()
+Date:   Thu, 16 Jan 2020 12:31:05 -0500
+Message-Id: <20200116173445.21385-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116173445.21385-1-sashal@kernel.org>
 References: <20200116173445.21385-1-sashal@kernel.org>
@@ -61,34 +61,32 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit e7beeab9c61591cd0e690d8733d534c3f4278ff8 ]
+[ Upstream commit 567177024e0313e4f0dcba7ba10c0732e50e655d ]
 
 The of_find_compatible_node() returns a node pointer with refcount
 incremented, but there is the lack of use of the of_node_put() when
 done. Add the missing of_node_put() to release the refcount.
 
 Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Reviewed-by: Gregory CLEMENT <gregory.clement@bootlin.com>
-Fixes: 58d516ae95cb ("clk: mvebu: kirkwood: maintain clock init order")
+Fixes: 1f2c5fd5f048 ("ARM: imx: add VF610 clock support")
 Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/mvebu/kirkwood.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/imx/clk-vf610.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/mvebu/kirkwood.c b/drivers/clk/mvebu/kirkwood.c
-index a2a8d614039d..890ebf623261 100644
---- a/drivers/clk/mvebu/kirkwood.c
-+++ b/drivers/clk/mvebu/kirkwood.c
-@@ -333,6 +333,8 @@ static void __init kirkwood_clk_init(struct device_node *np)
- 	if (cgnp) {
- 		mvebu_clk_gating_setup(cgnp, kirkwood_gating_desc);
- 		kirkwood_clk_muxing_setup(cgnp, kirkwood_mux_desc);
-+
-+		of_node_put(cgnp);
- 	}
- }
- CLK_OF_DECLARE(kirkwood_clk, "marvell,kirkwood-core-clock",
+diff --git a/drivers/clk/imx/clk-vf610.c b/drivers/clk/imx/clk-vf610.c
+index 0476353ab423..a19ab032d073 100644
+--- a/drivers/clk/imx/clk-vf610.c
++++ b/drivers/clk/imx/clk-vf610.c
+@@ -203,6 +203,7 @@ static void __init vf610_clocks_init(struct device_node *ccm_node)
+ 	np = of_find_compatible_node(NULL, NULL, "fsl,vf610-anatop");
+ 	anatop_base = of_iomap(np, 0);
+ 	BUG_ON(!anatop_base);
++	of_node_put(np);
+ 
+ 	np = ccm_node;
+ 	ccm_base = of_iomap(np, 0);
 -- 
 2.20.1
 
