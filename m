@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B552C33CB1
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E68C33CB1
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D631B208C3
-	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:45:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D1152081E
+	for <linux-clk@archiver.kernel.org>; Thu, 16 Jan 2020 16:48:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579193143;
-	bh=0DFAupzXdgEWbk2BQFDxOnnQLwkqnZ8OV7Swv5YwVrs=;
+	s=default; t=1579193295;
+	bh=FkOQnxTg5SvzIvPHLCaOZs+capOhsPMcdpjfo5aP7cY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iOrnqaTRg9fU4G3aiTY+HROfuq96EWTB+/aBwvqnikEC9epsHOmOlT928DY1MDexv
-	 CHlAq6SniMcQPQ2rreQ6jks9XvvJtuKOXMm01Wov1MW31omkRJeMt6ntDJroeJH+/p
-	 h2krKrp3E6VlDIxgUQ714hIQxH5euyz9F7emx6fk=
+	b=n2E0KUZ45qMfOw+EIoUdR330YqLkjhHsjuA353TbMeuJkrfOcyrS7/7BQfsnfmHCz
+	 +Hh8Ze8KRIKoG1dhHUhLrb5pvbC1baQf86nqn74+yg6qW9bstYVLYTsdf/MUdMco0/
+	 xK4WXK5y/qo8mjT2TFCSTFcXr/XNDg/SxC/U2zQI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbgAPQpi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 16 Jan 2020 11:45:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54538 "EHLO mail.kernel.org"
+        id S1728898AbgAPQsL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 16 Jan 2020 11:48:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729206AbgAPQph (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 16 Jan 2020 11:45:37 -0500
+        id S1729795AbgAPQsK (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 16 Jan 2020 11:48:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13D202081E;
-        Thu, 16 Jan 2020 16:45:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 733DE214AF;
+        Thu, 16 Jan 2020 16:48:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579193137;
-        bh=0DFAupzXdgEWbk2BQFDxOnnQLwkqnZ8OV7Swv5YwVrs=;
+        s=default; t=1579193289;
+        bh=FkOQnxTg5SvzIvPHLCaOZs+capOhsPMcdpjfo5aP7cY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kzdkPVqpAyIamSpSXzB5sEMsQQsiW1gfscqX/nWtX5zFmb75Ju+QpDT8X4QWL4THa
-         ayRhSrY/WmfeqyheUVEDPrDRh+GJbSC+o7TqvuVoxzhysJTVo0TjRzxd76Hj4+KniW
-         4KNEzkeUZkNY5l7uMi4V5e+oGWv0OIiBLtJjjHdM=
+        b=cUAgSRQorB6Xsv4mjZ/r1ipk/lsgZItU2FZQ2P2mEbBMgjxuS1uCiN/YEZQCns0OS
+         84PkFzFPQHFSN1eQbfn4bKVFthm6F/1PCoUtxLb1duHxGgKUe8CWSWbZdnbCNdV8+7
+         pE5hCmXbSBsWv78gKObTgGz/KhuLBMkxrVvPx8/g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+Cc:     Anson Huang <Anson.Huang@nxp.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 032/205] clk: meson: axg-audio: fix regmap last register
-Date:   Thu, 16 Jan 2020 11:40:07 -0500
-Message-Id: <20200116164300.6705-32-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 067/205] clk: imx7ulp: Correct system clock source option #7
+Date:   Thu, 16 Jan 2020 11:40:42 -0500
+Message-Id: <20200116164300.6705-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200116164300.6705-1-sashal@kernel.org>
 References: <20200116164300.6705-1-sashal@kernel.org>
@@ -60,34 +60,35 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Jerome Brunet <jbrunet@baylibre.com>
+From: Anson Huang <Anson.Huang@nxp.com>
 
-[ Upstream commit 255cab9d27d78703f7450d720859ee146d0ee6e1 ]
+[ Upstream commit 96ac93a7c4bea4eb4186425795c00937d2dd6085 ]
 
-Since the addition of the g12a, the last register is
-AUDIO_CLK_SPDIFOUT_B_CTRL.
+In the latest reference manual Rev.0,06/2019, the SCS's option #7
+is no longer from upll, it is reserved, update clock driver accordingly.
 
-Fixes: 075001385c66 ("clk: meson: axg-audio: add g12a support")
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fixes: b1260067ac3d ("clk: imx: add imx7ulp clk driver")
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/axg-audio.c | 2 +-
+ drivers/clk/imx/clk-imx7ulp.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
-index 18b23cdf679c..aa2522624fd3 100644
---- a/drivers/clk/meson/axg-audio.c
-+++ b/drivers/clk/meson/axg-audio.c
-@@ -1001,7 +1001,7 @@ static const struct regmap_config axg_audio_regmap_cfg = {
- 	.reg_bits	= 32,
- 	.val_bits	= 32,
- 	.reg_stride	= 4,
--	.max_register	= AUDIO_CLK_PDMIN_CTRL1,
-+	.max_register	= AUDIO_CLK_SPDIFOUT_B_CTRL,
- };
- 
- struct audioclk_data {
+diff --git a/drivers/clk/imx/clk-imx7ulp.c b/drivers/clk/imx/clk-imx7ulp.c
+index a0f650150367..d2c49fbd0563 100644
+--- a/drivers/clk/imx/clk-imx7ulp.c
++++ b/drivers/clk/imx/clk-imx7ulp.c
+@@ -24,7 +24,7 @@ static const char * const spll_pfd_sels[]	= { "spll_pfd0", "spll_pfd1", "spll_pf
+ static const char * const spll_sels[]		= { "spll", "spll_pfd_sel", };
+ static const char * const apll_pfd_sels[]	= { "apll_pfd0", "apll_pfd1", "apll_pfd2", "apll_pfd3", };
+ static const char * const apll_sels[]		= { "apll", "apll_pfd_sel", };
+-static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "upll", };
++static const char * const scs_sels[]		= { "dummy", "sosc", "sirc", "firc", "dummy", "apll_sel", "spll_sel", "dummy", };
+ static const char * const ddr_sels[]		= { "apll_pfd_sel", "upll", };
+ static const char * const nic_sels[]		= { "firc", "ddr_clk", };
+ static const char * const periph_plat_sels[]	= { "dummy", "nic1_bus_clk", "nic1_clk", "ddr_clk", "apll_pfd2", "apll_pfd1", "apll_pfd0", "upll", };
 -- 
 2.20.1
 
