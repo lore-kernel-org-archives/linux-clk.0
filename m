@@ -2,122 +2,93 @@ Return-Path: <SRS0=QoRM=3G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5766C33CB1
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 10:48:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A3B7FC33CB1
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 11:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 806382073A
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 10:48:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85C062087E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 11:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727009AbgAQKsP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jan 2020 05:48:15 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:42832 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbgAQKsP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jan 2020 05:48:15 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-80-5e2190ed649b
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 09.2B.08102.DE0912E5; Fri, 17 Jan 2020 11:48:13 +0100 (CET)
-Received: from WILL-MAIL002.REu.RohmEu.com ([fe80::e0c3:e88c:5f22:d174]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Fri, 17 Jan 2020 11:48:08 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "lee.jones@linaro.org" <lee.jones@linaro.org>
-CC:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v10 00/13] Support ROHM BD71828 PMIC
-Thread-Topic: [PATCH v10 00/13] Support ROHM BD71828 PMIC
-Thread-Index: AQHVzRi5yTX4egnFhE+K8HvJn6t48qfuly8AgAAFDwA=
-Date:   Fri, 17 Jan 2020 10:48:07 +0000
-Message-ID: <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
-References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
-         <20200117103000.GG15507@dell>
-In-Reply-To: <20200117103000.GG15507@dell>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <35BA07293542E7478D19B7C2046172B3@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1726689AbgAQLhD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jan 2020 06:37:03 -0500
+Received: from esa2.microchip.iphmx.com ([68.232.149.84]:14201 "EHLO
+        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726371AbgAQLhC (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jan 2020 06:37:02 -0500
+Received-SPF: Pass (esa2.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa2.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa2.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa2.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: xwQShq9l4VBljm/WWgN5Nzy46/aIe3WKw2CNcekLNHivgKlF1Zj55l+jGlQdTwnJexIjf2qSx3
+ y7O5KRiGC+Nj1TcZ6v6wl0CdQyJb/fKAIJkMlSht856b6SEUQASg/iIx+sL8L8UtdZp+75qUrZ
+ jg64EI6V3opBvWozrDc4qvdEjOWTKRkdh479EP3KVOBTd0S7BIFN7YyLUwj3jlUmTMGOECbtEV
+ yitTuNC4DopW93zt39wSgCfOAEmpIr1jxDNNbG0Z4JojU7RPJoLpJZN3/12xOMIBzo9fwAAKQA
+ 4+o=
+X-IronPort-AV: E=Sophos;i="5.70,330,1574146800"; 
+   d="scan'208";a="62954987"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa2.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jan 2020 04:37:02 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 17 Jan 2020 04:37:02 -0700
+Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Fri, 17 Jan 2020 04:36:59 -0700
+From:   Claudiu Beznea <claudiu.beznea@microchip.com>
+To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+        <ludovic.desroches@microchip.com>
+CC:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        Claudiu Beznea <claudiu.beznea@microchip.com>
+Subject: [PATCH 0/4] clock fixes for at91
+Date:   Fri, 17 Jan 2020 13:36:45 +0200
+Message-ID: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Tb0wTZxjPe3e9e6nUvFQqr2y6cNnm6jKRZCbvDC5kA3PL4rJlnzaz4jne
-        0U5o4VoMOj8wI2HWubHMxqxp0TBAQpnaMjLXYTAMHCvRpcofjRYtoBtuasyQDiWwO06FT/e7
-        5/fv+fC8kDUn+WzocHqo4pTLRN7InW19FH7lTn2ObUP8b0Sa4kMCqbvbIpCpYIwjvuQET472
-        XjCQgwM/GsjVzlMcuf6gD5DpwS8Ycnj2OEPufzlqIB1HZwG5FA3wpPOfE4CcCw3ypHkkzpBA
-        cz9H4rEikoj18aT2TK9A5obDXIFFam9oB9K9y7WC1ND+mfSzPyFIkbYDvHRtuIuXfrv8EyMd
-        aZhhpNZQSpD+jax51/jhsvwdsmfX+45SZ+7r25fZfdE4VzFhqb7n6wY1IGDxgjSI0av4nPe4
-        4AVGaEZDAP96s43Xf/oBPnL+IfACCHmUj71XBM2QifJwU/9NTtOwqAnib2OjQCNWIIJbQsO8
-        LnoNj39+Eeh4E56PDCzMOfQC/qHjz4UgE3oHz/wysKAxI4rDU3cW5mloHb4xHec0DNBqfKDm
-        LqNhFmXhyK2UQd8a4aauP1gdW/Dk+NzjuYjPzCQ5bWcWWfHJaK5uLcCB2TCn4xx8+GDy8QoZ
-        +PfvJrh6sNK/pMG/6PYvcfuXuP1L3MeAoQ3gctlRVip7aN56hVatV1z2cvXzsas8AvSTmToN
-        5nve6gEMBD1gFWREiymza7XNvHyHq2S3XXbbi5WqMuruARiyYqYpcSjHZjaVyLv3UMX1hHoG
-        cmKWaW3ym4/MSOvaSWkFVZ6wz0IoYtPQV6oxQ6GltPoTR5lnkWZgmhZuzM50U2cJVeQqj71Y
-        u49it3ogGpWu9jq+1nrdFXK5OtWtMfAyrJ8MNrKwN9jcyJo5p8tJs7NMNftVKdKk9irn06Lb
-        IAsCcYUJaEHp6rt5mnNbrWDUivo312gVHnmRyq4BlXvfyPhr1wfv1Q0weM+YP3Di+fkXCyNp
-        Hb6G7jAYD0bHbvW9PRblbNP5LutzdJ+zszF1qKuocMvZl8R0X0t3ImdwrXVqa+Hyk8GK7pHK
-        /yZSI9us5oLUlsGtlZ8+uiBc33yjaC40mdtKa8WNYkgwgrqErUUYjbSe/35jtfUBFTm3Xc5b
-        xypu+X/mwo329AMAAA==
+Content-Type: text/plain
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpPbiBGcmksIDIwMjAtMDEtMTcgYXQgMTA6MzAgKzAwMDAsIExlZSBKb25lcyB3cm90ZToNCj4g
-T24gRnJpLCAxNyBKYW4gMjAyMCwgTWF0dGkgVmFpdHRpbmVuIHdyb3RlOg0KPiANCj4gPiBQYXRj
-aCBzZXJpZXMgaW50cm9kdWNpbmcgc3VwcG9ydCBmb3IgUk9ITSBCRDcxODI4IFBNSUMNCj4gPiAN
-Cj4gPiBST0hNIEJENzE4MjggaXMgYSBwb3dlciBtYW5hZ2VtZW50IElDIGNvbnRhaW5pbmcgNyBi
-dWNrcyBhbmQgNw0KPiA+IExET3MuIEFsbA0KPiA+IHJlZ3VsYXRvcnMgY2FuIGJlIGNvbnRyb2xs
-ZWQgaW5kaXZpZHVhbGx5IHZpYSBJMkMuIEJ1Y2tzIDEsMiw2IGFuZA0KPiA+IDcgY2FuIGFsc28g
-YmUgYXNzaWduZWQgdG8gYSAicmVndWxhdG9yIGdyb3VwIiBjb250cm9sbGVkIGJ5IHJ1bi0NCj4g
-PiBsZXZlbHMuDQo+ID4gRWcuIFJ1biBsZXZlbCBzcGVjaWZpYyB2b2x0YWdlcyBhbmQgZW5hYmxl
-L2Rpc2FibGUgc3RhdHVzZXMgZm9yDQo+ID4gZWFjaCBvZg0KPiA+IHRoZXNlIGJ1Y2tzIGNhbiBi
-ZSBzZXQgdmlhIHJlZ2lzdGVyIGludGVyZmFjZS4gVGhlIGJ1Y2sgcnVuLWxldmVsDQo+ID4gZ3Jv
-dXANCj4gPiBhc3NpZ25tZW50IChzZWxlY3Rpb24gaWYgYnVjayBpcyB0byBiZSBjb250cm9sbGVk
-IGluZGl2aWR1YWxseSBvcg0KPiA+IHZpYQ0KPiA+IHJ1bi1sZXZlbHMpIGNhbiBiZSBjaGFuZ2Vk
-IGF0IHJ1bi10aW1lIHZpYSBJMkMuDQo+ID4gDQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgYnJpbmdz
-IG9ubHkgdGhlIGJhc2ljIHN1cHBvcnQgZm9yIGNvbnRyb2xsaW5nDQo+ID4gcmVndWxhdG9ycyBp
-bmRpdmlkdWFsbHkgdmlhIEkyQy4NCj4gPiANCj4gPiBJbiBhZGRpdGlvbiB0byB0aGUgYnVja3Mg
-YW5kIExET3MgdGhlcmUgYXJlOg0KPiA+IA0KPiA+IC0gVGhlIHVzdWFsIGNsayBnYXRlDQo+ID4g
-LSA0IElPIHBpbnMgKG1vc3RseSB1c2FibGUgYXMgR1BPIG9yIHRpZWQgdG8gc3BlY2lmaWMgcHVy
-cG9zZSkNCj4gPiAtIHBvd2VyIGJ1dHRvbiBzdXBwb3J0DQo+ID4gLSBSVEMNCj4gPiAtIHR3byBM
-RURzDQo+ID4gLSBiYXR0ZXJ5IGNoYXJnZXINCj4gPiAtIEhBTEwgc2Vuc29yIGlucHV0DQo+ID4g
-DQo+ID4gVGhpcyBwYXRjaCBzZXJpZXMgYWRkcyBzdXBwb3J0IHRvIHJlZ3VsYXRvcnMsIGNsaywg
-UlRDLCBHUElPcyBhbmQNCj4gPiBMRURzLg0KPiA+IA0KPiA+IFBvd2VyLXN1cHBseSBkcml2ZXIg
-Zm9yIGNoYXJnZXIgaXMgbm90IGluY2x1ZGVkIGluIHRoaXMgc2VyaWVzLg0KPiA+IA0KPiA+IFRo
-ZSBzZXJpZXMgYWxzbyBhZGRzIExFRCBEVC1ub2RlIGxvb2t1cCBiYXNlZCBvbiBub2RlIG5hbWUg
-b3IgZ2l2ZW4NCj4gPiBwcm9wZXJ0eSBuYW1lL3ZhbHVlIHBhaXIgaW4gTEVEIGNvcmUuIEl0IGFs
-c28gYWRkcyBnZW5lcmljIGRlZmF1bHQtDQo+ID4gc3RhdGUNCj4gPiBhbmQgZGVmYXVsdC10cmln
-Z2VyIHByb3BlcnR5IGhhbmRsaW5nIHRvIExFRCBjb3JlLiBGb2xsb3ctdXANCj4gPiBwYXRjaGVz
-DQo+ID4gc2ltcGxpZnlpbmcgZmV3IG90aGVyIExFRCBkcml2ZXJzIHNob3VsZCBmb2xsb3cuDQo+
-ID4gDQo+ID4gQ2hhbmdlbG9nIHYxMDoNCj4gPiAgIC0gU3BsaXQgUlRDIHBhdGNoIHRvIGEgQkQ3
-MDUyOCBmaXggKHdoaWNoIGhvcGVmdWxseSBnb2VzIHRvIDUuNCkNCj4gPiBhbmQgdG8NCj4gPiAg
-ICAgQkQ3MTgyOCBzdXBwb3J0DQo+IA0KPiBTdGlsbCBtaXNzaW5nIExFRCBBY2tzLg0KPiANCg0K
-WWVwLiBJIGtub3cuIEkgaGF2ZW4ndCBoZWFyZCBmcm9tIFBhdmVsIHJlY2VudGx5IGFuZCB0aGUg
-cGF0Y2ggMTINCmRlZmluaXRlbHkgcmVxdWlyZXMgaGlzIGFjay4gQ2FuIHlvdSB0YWtlIHRoZSBv
-dGhlciBwYXRjaGVzIGluIGFuZA0KbGVhdmUgMTIgYW5kIDEzIG91dCBmb3Igbm93PyBJIGNhbiBj
-b250aW51ZSB3b3JrIG9uIExFRHMgd2l0aCBQYXZlbCBidXQNCkkgd291bGQgcmVhbGx5IGxpa2Ug
-dG8gaGF2ZSB0aGUgcmVndWxhdG9ycyB3b3JraW5nIGFuZCBCRDcwNTI4IFJUQw0KZml4ZWQgaW4g
-bmV4dCByZWxlYXNlLi4uDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0K
+Hi,
+
+This series contains some fixes for at91 clocks (usb + sam9x60).
+
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (4):
+  clk: at91: usb: continue if clk_hw_round_rate() returned zero
+  clk: at91: sam9x60: fix usb clock parents
+  clk: at91: usb: use proper usbs_mask
+  clk: at91: usb: introduce num_parents in driver's structure
+
+ drivers/clk/at91/clk-usb.c | 9 +++++++--
+ drivers/clk/at91/sam9x60.c | 5 ++---
+ 2 files changed, 9 insertions(+), 5 deletions(-)
+
+-- 
+2.7.4
+
