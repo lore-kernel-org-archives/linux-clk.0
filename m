@@ -2,162 +2,105 @@ Return-Path: <SRS0=QoRM=3G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A1D1C33CB6
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 13:44:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88926C33CB3
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 14:05:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D502B2082F
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 13:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58A142087E
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 14:05:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zceCobLh"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Fu/Ju9oO"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728682AbgAQNoQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jan 2020 08:44:16 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:35984 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727285AbgAQNoQ (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jan 2020 08:44:16 -0500
-Received: by mail-wr1-f67.google.com with SMTP id z3so22788367wru.3
-        for <linux-clk@vger.kernel.org>; Fri, 17 Jan 2020 05:44:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=LhpCR5vDcuxmC13Hf7ge2eVs5JUiFOiL0U5Ba9egRMw=;
-        b=zceCobLh0fkMReC9xfFdXwldcPtVuv28toduajHElpblXk9BO8nsAonZJU4d4ZYwys
-         /jAk1UpPld0R+1uL1xkA85I5lfqc60s0ccLfjIWBz8kZUMUxTDfcOATaEzJmNElqL6uZ
-         PdGim4iiP/O9ixXknzFJu8o2V5T3elLHj0HTdovMQi1TLRvHYUZdYLN4QjvJKz8tHgyR
-         rl0n3Qu6eat1AqcvapQfUbpu9jgvixKlq99w26Q3cl57QLclNJbC7ON4reh1enfe6VGE
-         ZiE4TP+DXXMHrOBpwjdNTY/QELGcU9jHKkyyIXyj9X64yyjD2CSiqjFYDmDKCQpA3Sa6
-         elUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=LhpCR5vDcuxmC13Hf7ge2eVs5JUiFOiL0U5Ba9egRMw=;
-        b=FXsiJgEUPQ5joHP2wM6lqCsS0U1Sy3SSK5LgCSszBwxXyfqpQpF6jj/lNnRekSTTiO
-         n3cbiSsivHSNLMJFfkuSGkI4x1gjB5+LmcrlLQkHDtZmPjfCilZ6A6mCUyS5PiIsq/F6
-         70XUbz5u5q1NhxIlIfsKQimeLM3sjEpq8yu/+JGbHqGmcdVAU89NFvWHvDNWOAlSDk8d
-         5dIICzPgD9iDm4e11aO3iv9pR16tUP+fCOl3g7Wtjcg/HrEvs57fd/ucvzX4aHrOAQiT
-         zjtY50lWxW83YB80yB1pw54OiQRMdQb2So7rVOXQ52vCWeXZZUYovvXk+LtbviBLidga
-         Uvrw==
-X-Gm-Message-State: APjAAAVC2CPCssUkHgdMhmi+WXmh2tXwsVp/9hadmlQLPGtyh8X+G+mY
-        gD4fZVxA9oUFq7P3xMS+sDf3XA==
-X-Google-Smtp-Source: APXvYqyTu5Tky5NAfYjiXymO2Th58H5BnDHWlmZTL0ub+zBth+sD7V3P+A22iVD9kpySPXrScKf+VA==
-X-Received: by 2002:adf:ee88:: with SMTP id b8mr3261159wro.249.1579268654624;
-        Fri, 17 Jan 2020 05:44:14 -0800 (PST)
-Received: from dell ([2.27.35.221])
-        by smtp.gmail.com with ESMTPSA id t1sm9338897wma.43.2020.01.17.05.44.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 17 Jan 2020 05:44:14 -0800 (PST)
-Date:   Fri, 17 Jan 2020 13:44:32 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-Cc:     "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>
-Subject: Re: [PATCH v10 00/13] Support ROHM BD71828 PMIC
-Message-ID: <20200117134432.GO15507@dell>
-References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
- <20200117103000.GG15507@dell>
- <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
+        id S1727667AbgAQOFQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jan 2020 09:05:16 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:53782 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726885AbgAQOFP (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jan 2020 09:05:15 -0500
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00HE5CtI006300;
+        Fri, 17 Jan 2020 08:05:12 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1579269912;
+        bh=omGhxpfeQLr3vmOE+FhexYeEl7UtpLHlHKKP67yJHMk=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=Fu/Ju9oOsPIw3me+PweiNVyH3EdXcTRC6lweX9dKHY4Oap4ZZXTNWGIZ/olGG9d6q
+         srrca1k246gWq/kzI5ktRhihyRinSpp/owfIKO0LHUaYON6SU0pWUgraWJDls2Ka2h
+         cW/9WU5a5mzvaoLboCUgUeQV7yD7WL30zLjZemOA=
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00HE5Bdh112983
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 17 Jan 2020 08:05:11 -0600
+Received: from DFLE112.ent.ti.com (10.64.6.33) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 17
+ Jan 2020 08:05:11 -0600
+Received: from fllv0040.itg.ti.com (10.64.41.20) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
+ Frontend Transport; Fri, 17 Jan 2020 08:05:11 -0600
+Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by fllv0040.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00HE59bx072317;
+        Fri, 17 Jan 2020 08:05:09 -0600
+Subject: Re: [PATCH v2] clk: ti: dra7: fix parent for gmac_clkctrl
+To:     Grygorii Strashko <grygorii.strashko@ti.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC:     Sekhar Nori <nsekhar@ti.com>, <linux-clk@vger.kernel.org>,
+        <linux-omap@vger.kernel.org>
+References: <20191221110004.9951-1-grygorii.strashko@ti.com>
+From:   Tero Kristo <t-kristo@ti.com>
+Message-ID: <e1782af7-098e-4550-8c9c-9f90187df8f3@ti.com>
+Date:   Fri, 17 Jan 2020 16:05:08 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9785531484b32da487a6016f5c32bf2e9bc45985.camel@fi.rohmeurope.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20191221110004.9951-1-grygorii.strashko@ti.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, 17 Jan 2020, Vaittinen, Matti wrote:
-
+On 21/12/2019 13:00, Grygorii Strashko wrote:
+> The parent clk for gmac clk ctrl has to be gmac_main_clk (125MHz) instead
+> of dpll_gmac_ck (1GHz). This is caused incorrect CPSW MDIO operation.
+> Hence, fix it.
 > 
-> On Fri, 2020-01-17 at 10:30 +0000, Lee Jones wrote:
-> > On Fri, 17 Jan 2020, Matti Vaittinen wrote:
-> > 
-> > > Patch series introducing support for ROHM BD71828 PMIC
-> > > 
-> > > ROHM BD71828 is a power management IC containing 7 bucks and 7
-> > > LDOs. All
-> > > regulators can be controlled individually via I2C. Bucks 1,2,6 and
-> > > 7 can also be assigned to a "regulator group" controlled by run-
-> > > levels.
-> > > Eg. Run level specific voltages and enable/disable statuses for
-> > > each of
-> > > these bucks can be set via register interface. The buck run-level
-> > > group
-> > > assignment (selection if buck is to be controlled individually or
-> > > via
-> > > run-levels) can be changed at run-time via I2C.
-> > > 
-> > > This patch series brings only the basic support for controlling
-> > > regulators individually via I2C.
-> > > 
-> > > In addition to the bucks and LDOs there are:
-> > > 
-> > > - The usual clk gate
-> > > - 4 IO pins (mostly usable as GPO or tied to specific purpose)
-> > > - power button support
-> > > - RTC
-> > > - two LEDs
-> > > - battery charger
-> > > - HALL sensor input
-> > > 
-> > > This patch series adds support to regulators, clk, RTC, GPIOs and
-> > > LEDs.
-> > > 
-> > > Power-supply driver for charger is not included in this series.
-> > > 
-> > > The series also adds LED DT-node lookup based on node name or given
-> > > property name/value pair in LED core. It also adds generic default-
-> > > state
-> > > and default-trigger property handling to LED core. Follow-up
-> > > patches
-> > > simplifying few other LED drivers should follow.
-> > > 
-> > > Changelog v10:
-> > >   - Split RTC patch to a BD70528 fix (which hopefully goes to 5.4)
-> > > and to
-> > >     BD71828 support
-> > 
-> > Still missing LED Acks.
-> > 
+> Fixes: dffa9051d546 ('clk: ti: dra7: add new clkctrl data')
+> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+> ---
+>   drivers/clk/ti/clk-7xx.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Yep. I know. I haven't heard from Pavel recently and the patch 12
-> definitely requires his ack. Can you take the other patches in and
-> leave 12 and 13 out for now? I can continue work on LEDs with Pavel but
-> I would really like to have the regulators working and BD70528 RTC
-> fixed in next release...
+> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
+> index 9dd6185a4b4e..66e4b2b9ec60 100644
+> --- a/drivers/clk/ti/clk-7xx.c
+> +++ b/drivers/clk/ti/clk-7xx.c
+> @@ -405,7 +405,7 @@ static const struct omap_clkctrl_bit_data dra7_gmac_bit_data[] __initconst = {
+>   };
+>   
+>   static const struct omap_clkctrl_reg_data dra7_gmac_clkctrl_regs[] __initconst = {
+> -	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "dpll_gmac_ck" },
+> +	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "gmac_main_clk" },
 
-Sure.  Give me a few days though.
+I think the gmac clk path is still somehow wrong after this change. This 
+only fixes it partially imo.
 
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+Looking at TRM, gmac_main_clk is fed from dpll_gmac_x2_h12, but looking 
+at the existing clock data, gmac_main_clk comes out from 
+dpll_gmac_m2_ck. This potentially applies one extra divider to the path 
+which appears wrong. Can you take a look at fixing the DTS side for this 
+also?
+
+-Tero
+--
+Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
