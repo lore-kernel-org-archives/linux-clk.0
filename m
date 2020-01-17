@@ -2,115 +2,188 @@ Return-Path: <SRS0=QoRM=3G=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B585C33CB1
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 11:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65ED1C33CB1
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 12:16:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E11F52082F
-	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 11:37:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 430302073A
+	for <linux-clk@archiver.kernel.org>; Fri, 17 Jan 2020 12:16:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726876AbgAQLhY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 17 Jan 2020 06:37:24 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:55294 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726553AbgAQLhX (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jan 2020 06:37:23 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="Claudiu.Beznea@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Claudiu.Beznea@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: Ar/Uh1AKX+S7I+8FoBT0VDPfF3fi+zLtVHMeX4UWJyHGp9Gqu9ifdw7aXJWr+EWP+Y3Tu6QaZb
- JAN7qbaiHkfhWX6/dhgLywpSPKt0tLElvuJ2q9hU99sUyrL8SBS4qnCcEIkoj6LaH833tfr3yF
- GgvZ1UmNV/8m9WYhBgF5ngkpVzlcydfVb6RWNGK+ZQNEByvYrBPyKy1GTUvbz8kJX8EKkOid+W
- FEEWSwi+8IB5nN0gb1w+5NnzV/f6qJH2tYbuFkY+OL5tNS5UIIG/Ax3QwI+i/cd9kxZY9nHeUh
- GaY=
-X-IronPort-AV: E=Sophos;i="5.70,330,1574146800"; 
-   d="scan'208";a="63631936"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 17 Jan 2020 04:37:15 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 17 Jan 2020 04:37:14 -0700
-Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Fri, 17 Jan 2020 04:37:11 -0700
-From:   Claudiu Beznea <claudiu.beznea@microchip.com>
-To:     <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
-        <ludovic.desroches@microchip.com>
-CC:     <linux-clk@vger.kernel.org>,
+        id S1726917AbgAQMQP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 17 Jan 2020 07:16:15 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:46620 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726892AbgAQMQO (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 17 Jan 2020 07:16:14 -0500
+Received: from [10.28.39.79] (10.28.39.79) by mail-sz.amlogic.com (10.28.11.5)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1591.10; Fri, 17 Jan
+ 2020 20:16:40 +0800
+Subject: Re: [PATCH v6 1/5] dt-bindings: clock: meson: add A1 PLL clock
+ controller bindings
+To:     Rob Herring <robh@kernel.org>
+CC:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
         <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>,
-        Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 4/4] clk: at91: usb: introduce num_parents in driver's structure
-Date:   Fri, 17 Jan 2020 13:36:49 +0200
-Message-ID: <1579261009-4573-5-git-send-email-claudiu.beznea@microchip.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com>
-References: <1579261009-4573-1-git-send-email-claudiu.beznea@microchip.com>
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20200116080440.118679-1-jian.hu@amlogic.com>
+ <20200116080440.118679-2-jian.hu@amlogic.com> <20200116204817.GA9529@bogus>
+From:   Jian Hu <jian.hu@amlogic.com>
+Message-ID: <a1b0f318-dbbb-c596-2780-2c52911323ec@amlogic.com>
+Date:   Fri, 17 Jan 2020 20:16:40 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.1
 MIME-Version: 1.0
-Content-Type: text/plain
+In-Reply-To: <20200116204817.GA9529@bogus>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.39.79]
+X-ClientProxiedBy: mail-sz.amlogic.com (10.28.11.5) To mail-sz.amlogic.com
+ (10.28.11.5)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SAM9X60 USB clock may have up to 3 parents. Save the number of parents in
-driver's data structure and validate against it when setting parent.
+Hi Rob
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
----
- drivers/clk/at91/clk-usb.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Thanks for your review
 
-diff --git a/drivers/clk/at91/clk-usb.c b/drivers/clk/at91/clk-usb.c
-index c0895c993cce..31d5c45e30d7 100644
---- a/drivers/clk/at91/clk-usb.c
-+++ b/drivers/clk/at91/clk-usb.c
-@@ -25,6 +25,7 @@ struct at91sam9x5_clk_usb {
- 	struct clk_hw hw;
- 	struct regmap *regmap;
- 	u32 usbs_mask;
-+	u8 num_parents;
- };
- 
- #define to_at91sam9x5_clk_usb(hw) \
-@@ -110,7 +111,7 @@ static int at91sam9x5_clk_usb_set_parent(struct clk_hw *hw, u8 index)
- {
- 	struct at91sam9x5_clk_usb *usb = to_at91sam9x5_clk_usb(hw);
- 
--	if (index > 1)
-+	if (index >= usb->num_parents)
- 		return -EINVAL;
- 
- 	regmap_update_bits(usb->regmap, AT91_PMC_USB, usb->usbs_mask, index);
-@@ -215,6 +216,7 @@ _at91sam9x5_clk_register_usb(struct regmap *regmap, const char *name,
- 	usb->hw.init = &init;
- 	usb->regmap = regmap;
- 	usb->usbs_mask = usbs_mask;
-+	usb->num_parents = num_parents;
- 
- 	hw = &usb->hw;
- 	ret = clk_hw_register(NULL, &usb->hw);
--- 
-2.7.4
+On 2020/1/17 4:48, Rob Herring wrote:
+> On Thu, Jan 16, 2020 at 04:04:36PM +0800, Jian Hu wrote:
+>> Add the documentation to support Amlogic A1 PLL clock driver,
+>> and add A1 PLL clock controller bindings.
+>>
+>> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
+>> ---
+>>   .../bindings/clock/amlogic,a1-pll-clkc.yaml   | 54 +++++++++++++++++++
+>>   include/dt-bindings/clock/a1-pll-clkc.h       | 16 ++++++
+>>   2 files changed, 70 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>>   create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> new file mode 100644
+>> index 000000000000..071240b65e70
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> @@ -0,0 +1,54 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: "http://devicetree.org/schemas/amlogic,a1-pll-clkc.yaml#"
+>> +$schema: "http://devicetree.org/meta-schemas/core.yaml#"
+>> +
+>> +title: Amlogic Meson A/C serials PLL Clock Control Unit Device Tree Bindings
+>> +
+>> +maintainers:
+>> +  - Neil Armstrong <narmstrong@baylibre.com>
+>> +  - Jerome Brunet <jbrunet@baylibre.com>
+>> +  - Jian Hu <jian.hu@jian.hu.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: amlogic,a1-pll-clkc
+>> +
+>> +  "#clock-cells":
+>> +    const: 1
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 2
+> 
+> Not necessary, so drop. Implied by the length of 'items'.
+> 
+Ok, I will remove it.
+>> +    items:
+>> +     - description: input xtal_fixpll
+>> +     - description: input xtal_hifipll
+>> +
+>> +  clock-names:
+>> +    maxItems: 2
+> 
+> Same here.
+OK, remove it.
+> 
+>> +    items:
+>> +      - const: xtal_fixpll
+>> +      - const: xtal_hifipll
+>> +
+>> +required:
+>> +  - compatible
+>> +  - "#clock-cells"
+>> +  - reg
+>> +  - clocks
+>> +  - clock-names
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    clkc_pll: pll-clock-controller@7c80 {
+>> +                compatible = "amlogic,a1-pll-clkc";
+>> +                reg = <0 0x7c80 0 0x18c>;
+>> +                #clock-cells = <1>;
+>> +                clocks = <&clkc_periphs CLKID_XTAL_FIXPLL>,
+>> +                         <&clkc_periphs CLKID_XTAL_HIFIPLL>;
+> 
+> The example will fail to build because these aren't defined.
+> 
+> Run 'make dt_binding_check'.
+> 
+I have verified it, it is caused by CLKID_XTAL_FIXPLL and 
+CLKID_XTAL_HIFIPLL. They are defined in 
+include/dt-bindings/clock/a1-clkc.h in another patch [4/5].
 
+The same with patch [4/5], there will be compiling error, too.
+
+If change CLKID_XTAL_FIXPLL to '1', and change CLKID_XTAL_HIFIPLL to
+'4', it can be compiled successfully.
+
+Should I use macros or numbers?
+
+>> +                clock-names = "xtal_fixpll", "xtal_hifipll";
+>> +    };
+>> diff --git a/include/dt-bindings/clock/a1-pll-clkc.h b/include/dt-bindings/clock/a1-pll-clkc.h
+>> new file mode 100644
+>> index 000000000000..58eae237e503
+>> --- /dev/null
+>> +++ b/include/dt-bindings/clock/a1-pll-clkc.h
+>> @@ -0,0 +1,16 @@
+>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>> +/*
+>> + * Copyright (c) 2019 Amlogic, Inc. All rights reserved.
+>> + */
+>> +
+>> +#ifndef __A1_PLL_CLKC_H
+>> +#define __A1_PLL_CLKC_H
+>> +
+>> +#define CLKID_FIXED_PLL				1
+>> +#define CLKID_FCLK_DIV2				6
+>> +#define CLKID_FCLK_DIV3				7
+>> +#define CLKID_FCLK_DIV5				8
+>> +#define CLKID_FCLK_DIV7				9
+>> +#define CLKID_HIFI_PLL				10
+>> +
+>> +#endif /* __A1_PLL_CLKC_H */
+>> -- 
+>> 2.24.0
+>>
+> 
+> .
+> 
