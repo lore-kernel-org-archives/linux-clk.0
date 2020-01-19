@@ -1,129 +1,146 @@
-Return-Path: <SRS0=Etrm=3H=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=T+FL=3I=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 645D4C32771
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Jan 2020 21:57:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE60EC33CB7
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jan 2020 10:12:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC8D2469D
-	for <linux-clk@archiver.kernel.org>; Sat, 18 Jan 2020 21:57:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB6B720730
+	for <linux-clk@archiver.kernel.org>; Sun, 19 Jan 2020 10:12:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="sWCNj0ZQ"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="Vou3mHCa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbgARV5O (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 18 Jan 2020 16:57:14 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43846 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726910AbgARV5O (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 18 Jan 2020 16:57:14 -0500
-Received: by mail-ed1-f68.google.com with SMTP id dc19so25865846edb.10;
-        Sat, 18 Jan 2020 13:57:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xhEeNJG6Xe03fAdCWoX8L2PNC8Ts9rcXxVowinyH7Jk=;
-        b=sWCNj0ZQnbgArqLuw0XgK3tLKDpG6In0kiTRu4lFsb3+62AuuZEdDNrhrHEkXU2ZjV
-         +NrFKwt20CkDMRpye3isHNQcsRe4mFxsOjdn7Gp4QbGCaPHjbubuf4xMV4m850btYfaU
-         TH81GKDtQnnthH05MnOsT+EYtj9H+Mq8IYH5JvMpfk5DC5lpx1gJUk04CLiNe0kou6CR
-         CxjhEulvlHdjr/a8LTvPVSqxb22EoK7D09WKmiSuVPsSpOEI306HLTEK9GmVQdhZeXrk
-         nqo7nRAKokRDqaXotijdhTP9Q8nwucOa4JcN2DR+I55VtM5D4dpSNez7Cw7SNzYTZsas
-         v3Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xhEeNJG6Xe03fAdCWoX8L2PNC8Ts9rcXxVowinyH7Jk=;
-        b=m5qydpr/y7Z/kyd//Xmhcem7usvxMcm3DRA7gmoLFTEL6S5sHduAbCou/UAXm067vA
-         9EZUtROY/SPU9uRCxoLFJkgbF609+yvaiT39sqXz+MhSuCzAcOIrVo06/ofRQhWv/NVe
-         21ydFh7wPHMfWkLMo77zNqxerkw0+7gvoZdfWbkGFb/oih8sgSSPX0sIA/tpJVgY91m4
-         jU1kw6VUgi0KyH5kUGJwKbf2FzYDLz7jdlRt5Y6dt0B9TT1mXI34ykDbOQW6WAlNT9Zo
-         GxcBzGA8E75mAGF7OmSTA6OjyodUMshdGRPvzgzrKeWH5zKaiNHVxDzCrxSiaOuXzcUL
-         wiaw==
-X-Gm-Message-State: APjAAAU8gG7ewlrFuepsXt7BS0o9q6f2ajuqUIojQm6djp/OO0NoOIj/
-        SeWAntXdgUoYI6+axvaOsBYS4kygkZh+RjzFjxMwACcq
-X-Google-Smtp-Source: APXvYqyjnAk8oubKYhxKxWzUPog0rE1nkqWdTWkbrvxjIY8nWbYmSn4gzUFbwFiw03cl5ZtTyqcd01lYsxkaQM35M+Q=
-X-Received: by 2002:a05:6402:2037:: with SMTP id ay23mr10507644edb.146.1579384632180;
- Sat, 18 Jan 2020 13:57:12 -0800 (PST)
+        id S1726874AbgASKMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jan 2020 05:12:49 -0500
+Received: from mail-eopbgr40047.outbound.protection.outlook.com ([40.107.4.47]:41601
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726765AbgASKMt (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Sun, 19 Jan 2020 05:12:49 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RTCcj32Wwq0uKN8EUjlG8PDneNDrRBJkcqvGSBrMAy0cYL4yz3O/lbBRFYb8nSDpxhzh1gw1TQEmAsV/HUrZi4TKfMMz/QKngIYM/izQDNyWfOX3t+0FNmRwQJ17dMvhprn4W7SAajXUD0iXGa4Teq4b6UbYjiNnYfoLrglugoOrptvBw7KZMdNLG6qX1e16pR2FJ+WJBMDhespWLFKIh7dX5Iw+cKKEgYrYNpzbIpqoFHBXfpEIXRU0n0+50Z/1g0F2aMCFquTZUzxgsVQENdBGTqC44Q9vUkRdXb2d6U3es8emet8qsJ9uQzB4Q41fxJyEKCtA0BxbzfmkfF5taQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dW4wqVvrv4KE+Tk5Jysq0WdyDmZh/sj/OhSriDtJQLw=;
+ b=SFQJxehZ7qGp6ZpfwImOshHu4y6wy33R2DsySP6q4vJBaaMYxC+iyh8wZUl6LTC32I3F1NKn6kKDXPtrEqyrYlW/UKgm9I+W78l7gYC8S75yt3x32OC1zivZwiJs3IoMfkgEOzx7xlel8Y/V56yB/c2k0oH5kk9jZtX8jaE0DOvqCZIk9oPv0CQdse+jSSLzndTcw8aZeZ7ytxlk1Aap6SF+zKkOBCeDmQ9S7XfAbvg8eXHzrnE+V56qgseUThK9bZJ7/1Oyr4aKej6/zMMzS3ozz77sAh/YVHs235yujq4ndTl1R+Yz0R9ngzYuUW9bpNjLRveK9l2hmSURVUQ5aw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=dW4wqVvrv4KE+Tk5Jysq0WdyDmZh/sj/OhSriDtJQLw=;
+ b=Vou3mHCa/skQ5X1jPgDyQvrbCIyNbTv2WuAz1eHPEE3IiWc0NVJ46Ev62lW7VaxAXAwgDD5e3Uq4DsjrRf+5aoh87MTM9TKkmpsjw9V67HT1TYLSBiVZvfagqV8SgfbXlsPdVvy/gqp/BL6T1AfEROQrdT4/AeenV9d7UkWoXxI=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0SPR01MB0058.eurprd04.prod.outlook.com (20.179.37.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.22; Sun, 19 Jan 2020 10:12:46 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2644.024; Sun, 19 Jan 2020
+ 10:12:46 +0000
+Received: from localhost.localdomain (119.31.174.66) by HK0PR03CA0104.apcprd03.prod.outlook.com (2603:1096:203:b0::20) with Microsoft SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id 15.20.2644.20 via Frontend Transport; Sun, 19 Jan 2020 10:12:41 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        Leonard Crestez <leonard.crestez@nxp.com>
+CC:     "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>,
+        Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH] clk: imx: imx8mp: add ocotp root clk
+Thread-Topic: [PATCH] clk: imx: imx8mp: add ocotp root clk
+Thread-Index: AQHVzrD+KCxt16k/UUaPoEt5ULSIVQ==
+Date:   Sun, 19 Jan 2020 10:12:46 +0000
+Message-ID: <1579428498-10068-1-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: git-send-email 2.7.4
+x-clientproxiedby: HK0PR03CA0104.apcprd03.prod.outlook.com
+ (2603:1096:203:b0::20) To AM0PR04MB4481.eurprd04.prod.outlook.com
+ (2603:10a6:208:70::15)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [119.31.174.66]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: cdaf15f2-6689-402c-0dd7-08d79cc8212f
+x-ms-traffictypediagnostic: AM0SPR01MB0058:|AM0SPR01MB0058:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0SPR01MB0058475C3FFD38E11A1E754988330@AM0SPR01MB0058.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:546;
+x-forefront-prvs: 0287BBA78D
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(366004)(346002)(396003)(376002)(39860400002)(136003)(189003)(199004)(66556008)(66476007)(66446008)(64756008)(2906002)(16526019)(186003)(6512007)(36756003)(478600001)(44832011)(26005)(66946007)(6486002)(4326008)(956004)(2616005)(8936002)(6636002)(81166006)(81156014)(6506007)(52116002)(86362001)(5660300002)(316002)(8676002)(110136005)(54906003)(71200400001)(69590400006)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0SPR01MB0058;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: dOJ7reTn/7x5QHW5gqu6jc71Gpgb24s8wMQyEGtMLSpob1tHtymzD9UVQstSvdINsfeGVc/z5eAJNQC88Z/qMJWkWRgqb/a/PwSVmMCv/T/5Sdxanhje3TfdxhAsMvOmsXtYZk6BRsn5o5aQh2XpnDY8N5AHRPPKT6DkCyEtI7q90nioGZfmAn1H/IPM2OPhDSk1linXky8UVb08xyhWvvW3xjUD4zRcwEJZ8tCyKbBtE6IFmsXMeUmR6f+sf4SiD+Q1pqgMt5YYAsLLhDi27z298pWRDlj4xnCrZLHX+/7tChM8KsiYILg+fCAOBGAr96+fqxmM5XVhozqjEc84BnMOQMJqy05PP4+VtsRGHeG3S7W9icsyRbCfPG1kI4lJnjPtSK6KNKSEatBH4TX8JrHROf4A/TFL5biMvBT/6qvw1sky7iE8Mja2DSDT5AGZkiqMW44NE9uVtirEkomMdFZWW4j99OJGRljlWQQT5KsGXsC4eVeBqLNJ+i+ENNF/m7JrlYuosKBmprDNtoBk/g==
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-References: <20200116080440.118679-1-jian.hu@amlogic.com> <20200116080440.118679-3-jian.hu@amlogic.com>
-In-Reply-To: <20200116080440.118679-3-jian.hu@amlogic.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Sat, 18 Jan 2020 22:57:01 +0100
-Message-ID: <CAFBinCCkmUzNBeUz0k7na2FgR1SPKda81j+RnhEp9Jj84HEzmg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/5] clk: meson: add support for A1 PLL clock ops
-To:     Jian Hu <jian.hu@amlogic.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Rob Herring <robh@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Jianxin Pan <jianxin.pan@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        Chandle Zou <chandle.zou@amlogic.com>,
-        linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: cdaf15f2-6689-402c-0dd7-08d79cc8212f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Jan 2020 10:12:46.4476
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: zwfEUGR6/VpzQaxAUA1gZSRz7kx9sCRUANh35HUgMwQr3GebJ8OXwMcwWj1MnXGnlOu7LBHQ6vxbCbZqcMi25Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0SPR01MB0058
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Jian,
+From: Peng Fan <peng.fan@nxp.com>
 
-thank you for the update!
+Add ocotp root clk, then when using nvmem to read fuse, clk
+could be managed.
 
-On Thu, Jan 16, 2020 at 9:04 AM Jian Hu <jian.hu@amlogic.com> wrote:
->
-> Compared with the previous SoCs, self-adaption current module
-> is newly added for A1, and there is no reset parm except the
-> fixed pll. In A1 PLL, the PLL enable sequence is different, using
-> the new power-on sequence to enable the PLL.
->
-> Signed-off-by: Jian Hu <jian.hu@amlogic.com>
-Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
+---
+ drivers/clk/imx/clk-imx8mp.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-[...]
-> @@ -323,13 +330,34 @@ static int meson_clk_pll_enable(struct clk_hw *hw)
->                 return 0;
->
->         /* Make sure the pll is in reset */
-> -       meson_parm_write(clk->map, &pll->rst, 1);
-> +       if (MESON_PARM_APPLICABLE(&pll->rst))
-> +               meson_parm_write(clk->map, &pll->rst, 1);
->
->         /* Enable the pll */
->         meson_parm_write(clk->map, &pll->en, 1);
->
->         /* Take the pll out reset */
-> -       meson_parm_write(clk->map, &pll->rst, 0);
-> +       if (MESON_PARM_APPLICABLE(&pll->rst))
-> +               meson_parm_write(clk->map, &pll->rst, 0);
-> +
-> +       /*
-> +        * Compared with the previous SoCs, self-adaption current module
-> +        * is newly added for A1, keep the new power-on sequence to enable the
-> +        * PLL. The sequence is:
-> +        * 1. enable the pll, delay for 10us
-> +        * 2. enable the pll self-adaption current module, delay for 40us
-> +        * 3. enable the lock detect module
-> +        */
-> +       if (MESON_PARM_APPLICABLE(&pll->current_en)) {
-> +               udelay(10);
-> +               meson_parm_write(clk->map, &pll->current_en, 1);
-> +               udelay(40);
-note to myself: first I thought that these have to be converted to ulseep_range
-BUT: clk_enable can be called from atomic context, so the atomic
-versions (udelay instead of usleep/usleep_range) are perfectly fine in
-Jian's patch
+diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+index f6c120cca0d4..ee83aa2162d9 100644
+--- a/drivers/clk/imx/clk-imx8mp.c
++++ b/drivers/clk/imx/clk-imx8mp.c
+@@ -671,6 +671,7 @@ static int imx8mp_clocks_probe(struct platform_device *=
+pdev)
+ 	hws[IMX8MP_CLK_I2C2_ROOT] =3D imx_clk_hw_gate4("i2c2_root_clk", "i2c2", c=
+cm_base + 0x4180, 0);
+ 	hws[IMX8MP_CLK_I2C3_ROOT] =3D imx_clk_hw_gate4("i2c3_root_clk", "i2c3", c=
+cm_base + 0x4190, 0);
+ 	hws[IMX8MP_CLK_I2C4_ROOT] =3D imx_clk_hw_gate4("i2c4_root_clk", "i2c4", c=
+cm_base + 0x41a0, 0);
++	hws[IMX8MP_CLK_OCOTP_ROOT] =3D imx_clk_hw_gate4("ocotp_root_clk", "ipg_ro=
+ot", ccm_base + 0x4220, 0);
+ 	hws[IMX8MP_CLK_PCIE_ROOT] =3D imx_clk_hw_gate4("pcie_root_clk", "pcie_aux=
+", ccm_base + 0x4250, 0);
+ 	hws[IMX8MP_CLK_PWM1_ROOT] =3D imx_clk_hw_gate4("pwm1_root_clk", "pwm1", c=
+cm_base + 0x4280, 0);
+ 	hws[IMX8MP_CLK_PWM2_ROOT] =3D imx_clk_hw_gate4("pwm2_root_clk", "pwm2", c=
+cm_base + 0x4290, 0);
+--=20
+2.16.4
 
-
-Martin
