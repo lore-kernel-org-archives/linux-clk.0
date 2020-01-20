@@ -4,59 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D7BCC33CB7
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 08:54:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FC87C33CA1
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 08:54:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33536207FD
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 08:54:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 32A612077C
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 08:54:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="we/6y6ed"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vDepYFXL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726130AbgATIyW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jan 2020 03:54:22 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36280 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726894AbgATIyW (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 03:54:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z3so28604198wru.3
-        for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2020 00:54:21 -0800 (PST)
+        id S1726738AbgATIy4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jan 2020 03:54:56 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:35082 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726130AbgATIy4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 03:54:56 -0500
+Received: by mail-wr1-f65.google.com with SMTP id g17so28555083wro.2
+        for <linux-clk@vger.kernel.org>; Mon, 20 Jan 2020 00:54:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=kioLvgS74f9sJjCTsbx/ZLFmZG4mkGnzw8r1w1WYA/4=;
-        b=we/6y6edkk3YpKlsBXl/AgdVTKspovJ98gF9DwytZxXRdKu2lf0yHGZ9cqG+OHNl43
-         1D3wAY7FLKrkB72RdPqnamX5YdLo51GRCa74KmSY6GD35joffcxpIlx05IcZqarzXOP6
-         +x+WZdL8Gs45yw6pNJWCoKrxJUIpW0Icot9uVJGDAki8AJAjxn9VczF5OAkFpdczph4B
-         RkCNnyR+3vU+CuNo9xNEbZOrEsQFIuCf9xPQu0wKKvvAO/Bx0ch6NjL4QHxAd+wfp2yG
-         0v3gxZaqF1zpen8HTiUQZ68tg3+k1M5szuubctad3xbmDv0AW6NzZw39zcETHvk5c+cj
-         kz9g==
+        bh=wFASbmAcjMPLyphRbOiX44SHWrp7PXj1/IhOzEqtzro=;
+        b=vDepYFXLBoVAdHKjwHAvg6Gv/5dJ2HbkMPPpNvh407VhcxpDu6rwVdq06AwjKNtA7z
+         yVjrmfzAr7J2P7/UahLaaxU+a9AEin1BmQ3qPLTeKJebJSXIg/GqD6eKP+QgCMTIHa5X
+         jBpSKQD6BwgTsW0J/wTt5Zr0L9ZVvXUPcN2VJBYBYxNPNOMRhV4Hfkpi0lDASbYL13e2
+         SEQiVDtM6nt9Q+3J9KyCbGBppcZCANbQ0HIohP6/TRBANJBA+oNkyK6r5wifm7b3mZgO
+         MkRAmiuzyekDPZPKh4U9itVgYWiSU0UvlIsEc7d/lTaMTBf5g+VlJWFL9+d0A2NRG0aR
+         unjQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=kioLvgS74f9sJjCTsbx/ZLFmZG4mkGnzw8r1w1WYA/4=;
-        b=KVmZAWfAU4SS9bmx7MpGhw4Z0CHHNJToLaPzn6u1QfpH6vKLQyEIWPqnkweNfhNt0/
-         ANYBRFuOkUvYJGWgazPdXVKiElVOsjlmNTfLcKPahDGHxm8SNG1JaHdaTWvDXHlaGgQ+
-         kkjAomIW1Q7z+q+hmn0J2NJX5FuvrgucrRZfO5VkHVujX4q9lMqignxGVSpKwTLoz9Lu
-         fxi8QBr+uM0jRH+btnSIcWsNVMotyDscjczwBVjGtxTKzKJNUHDJywcaw9S9YERHc4vJ
-         HSsskgFfqnwOkPjfOdQ/eBqrwcADwbJ4DdRgKtWWDiMp9W6k2VZ6117aKXVHqyUyVM6v
-         Q1ew==
-X-Gm-Message-State: APjAAAVFGZtrCa/MqG7SaGlzzkiLHZ5nK3nIMchfWY+D54mKUWS6GEWK
-        M3gzefgu8ejngZZpogW4lXx7Kg==
-X-Google-Smtp-Source: APXvYqxCEa3WXWluxoJWVXwFldWEGwXwSD1xXL7D/5WNmT4sWEkYFaFe3u9dMJfoNyljA8GfrAY9CA==
-X-Received: by 2002:a5d:5304:: with SMTP id e4mr17084301wrv.426.1579510460638;
-        Mon, 20 Jan 2020 00:54:20 -0800 (PST)
+        bh=wFASbmAcjMPLyphRbOiX44SHWrp7PXj1/IhOzEqtzro=;
+        b=tBpuF1VDrcCxoh9IQPplFZp1o9ybRKmVAAQzrgMNsgHXB044CFnTbww/LPBLe1ry7t
+         ZznM5DFtxI86FWqgQHk7HNAh2Dm4GMx77yQn1vZv1hW1nHsAoxidmRtxsi8mMBpGPP4j
+         8/teE9rE+WsT7jfACVGUHa+4uyaze9lYJl9P+Ipbjoe97xfy0V5qP7t/xj7BbHIjH94u
+         1ARhst/t0ezckKDZeiUSzmr+Ere7L6BL3KGLC0IqKrAwLeimVGT9Eff8XXv7cqc440+O
+         z5QIuk0fOexFZlxXsoaSBDRIidWwjisZhoW9btBodTmPwqRM/iWecx8+GmL819Szccdd
+         +nVQ==
+X-Gm-Message-State: APjAAAUb9gfPhZkNXbMlWopA1Yb+aNIylwCW4LIHOczjEKua0JWddOod
+        V+dnG+IHIGEY9z4LHHHO4KlR2Q==
+X-Google-Smtp-Source: APXvYqwCRnZUydx1xxyOAIBs26zb8aTMIoGVsErSpJUIql/6cfDBP9xZ/3XnLh11Kt0M950WObQehQ==
+X-Received: by 2002:adf:fc08:: with SMTP id i8mr16738404wrr.82.1579510494964;
+        Mon, 20 Jan 2020 00:54:54 -0800 (PST)
 Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id b21sm11998wmd.37.2020.01.20.00.54.19
+        by smtp.gmail.com with ESMTPSA id m10sm47135255wrx.19.2020.01.20.00.54.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 20 Jan 2020 00:54:20 -0800 (PST)
-Date:   Mon, 20 Jan 2020 08:54:35 +0000
+        Mon, 20 Jan 2020 00:54:54 -0800 (PST)
+Date:   Mon, 20 Jan 2020 08:55:10 +0000
 From:   Lee Jones <lee.jones@linaro.org>
 To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 Cc:     mazziesaccount@gmail.com,
@@ -83,16 +83,15 @@ Cc:     mazziesaccount@gmail.com,
         linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
         linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
         linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v11 03/13] mfd: rohm PMICs - use platform_device_id to
- match MFD sub-devices
-Message-ID: <20200120085435.GA15507@dell>
+Subject: Re: [PATCH v11 06/13] mfd: input: bd71828: Add power-key support
+Message-ID: <20200120085510.GB15507@dell>
 References: <cover.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
- <13994480cab6d5d6376c8f5228572e55ca06e479.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
+ <aa965067acfbdaa862f5f5de8b66e2c161f276a0.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <13994480cab6d5d6376c8f5228572e55ca06e479.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
+In-Reply-To: <aa965067acfbdaa862f5f5de8b66e2c161f276a0.1579501711.git.matti.vaittinen@fi.rohmeurope.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
@@ -101,26 +100,18 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 On Mon, 20 Jan 2020, Matti Vaittinen wrote:
 
-> Thanks to Stephen Boyd I today learned we can use platform_device_id
-> to do device and module matching for MFD sub-devices!
-> 
-> Do device matching using the platform_device_id instead of using
-> explicit module_aliases to load modules and custom parent-data field
-> to do module loading and sub-device matching.
+> Use gpio_keys to send power input-event to user-space when power
+> button (short) press is detected.
 > 
 > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > Acked-for-MFD-by: Lee Jones <lee.jones@linaro.org>
 > ---
 > No changes since v10
 > 
->  drivers/clk/clk-bd718x7.c             | 12 ++++++++-
->  drivers/mfd/rohm-bd70528.c            |  3 +--
->  drivers/mfd/rohm-bd718x7.c            | 39 ++++++++++++++++++++++-----
->  drivers/regulator/bd718x7-regulator.c | 17 +++++++++---
->  include/linux/mfd/rohm-generic.h      |  3 +--
->  5 files changed, 58 insertions(+), 16 deletions(-)
+>  drivers/mfd/rohm-bd71828.c | 26 ++++++++++++++++++++++++++
+>  1 file changed, 26 insertions(+)
 
-Still needs Clk and Regulator Acks.
+Drop the "input:" tag from the subject line please.
 
 -- 
 Lee Jones [李琼斯]
