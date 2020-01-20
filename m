@@ -4,24 +4,24 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6FD5C33CA1
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 12:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9705C2D0DB
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 12:10:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 861A0208E4
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 12:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 968AF21569
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 12:10:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726573AbgATMKW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jan 2020 07:10:22 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:63221 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728760AbgATMKV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 07:10:21 -0500
-Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+        id S1726798AbgATMKx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jan 2020 07:10:53 -0500
+Received: from esa3.microchip.iphmx.com ([68.232.153.233]:4347 "EHLO
+        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726775AbgATMKw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 07:10:52 -0500
+Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
   Claudiu.Beznea@microchip.com designates 198.175.253.82 as
   permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
   envelope-from="Claudiu.Beznea@microchip.com";
   x-sender="Claudiu.Beznea@microchip.com";
   x-conformance=spf_only; x-record-type="v=spf1";
@@ -29,30 +29,30 @@ Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
   a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
   include:servers.mcsv.net include:mktomail.com
   include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa5.microchip.iphmx.com: no sender
+Received-SPF: None (esa3.microchip.iphmx.com: no sender
   authenticity information available from domain of
   postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
   envelope-from="Claudiu.Beznea@microchip.com";
   x-sender="postmaster@email.microchip.com";
   x-conformance=spf_only
-Authentication-Results: esa5.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: z5Svyt4kryU+HvM3cYYLHgM64ZD5LyY8uzXwVJKsnPqWzm7wNX+zp8e3mTO178GmTWv28SDRsF
- wW+svgV3VJ0aYqrxsFAILV65iD1pali87MxCQQhrYep+ZrgNbwnDICHKU+SayuFWZeIzbHcwhL
- ZUNuPb7hrsAYzGFl1O3BI6JnNaPkJiX1m07oAWAekNgBiEazaVkP84emfA/bJUMgZYOdSOfHIk
- zQxki3bb9lsYtZC4x5kdEfao5XBjKQ9kf1PzLfwtcXha91D9xSIgj3pyBzfniamygyD9B0Ubtl
- 0xY=
-X-IronPort-AV: E=Sophos;i="5.70,341,1574146800"; 
-   d="scan'208";a="62468535"
+Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: 5AXjTAIqWelm8ELnJfPdMSS8MebuYPwOKw9UroUtbAsnbZSOICF1xNQebaw6UUrLDtjmhTwKPk
+ 8hQUKbTeAj3kZd3kYA/C8GXNr81Gs7nWncz7K0KZIZms501zffiqRFx83yJO7iAPMvJrY/1xqq
+ n+9SfqhwDFlp2aYsmJ2hKxSK8ykF/DLK0WUEwN3fc8sp55i26zAMGcyC098Rc2Fu8kAPcJ6x95
+ 1xktUEzsXkeuYPwYvVbYhAu/y6DgA6BVWSIHYfJ8nmfhLI23VUAfU//9BqqnM64713JEgRtzxZ
+ BuQ=
+X-IronPort-AV: E=Sophos;i="5.70,342,1574146800"; 
+   d="scan'208";a="63869254"
 Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Jan 2020 05:10:20 -0700
+  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 20 Jan 2020 05:10:29 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Mon, 20 Jan 2020 05:10:20 -0700
+ 15.1.1713.5; Mon, 20 Jan 2020 05:10:28 -0700
 Received: from m18063-ThinkPad-T460p.mchp-main.com (10.10.85.251) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Mon, 20 Jan 2020 05:10:17 -0700
+ 15.1.1713.5 via Frontend Transport; Mon, 20 Jan 2020 05:10:26 -0700
 From:   Claudiu Beznea <claudiu.beznea@microchip.com>
 To:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
         <ludovic.desroches@microchip.com>, <linux@armlinux.org.uk>,
@@ -60,9 +60,9 @@ To:     <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
 CC:     <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         Claudiu Beznea <claudiu.beznea@microchip.com>
-Subject: [PATCH 2/8] Revert "ARM: at91: pm: do not disable/enable PLLA for ULP modes"
-Date:   Mon, 20 Jan 2020 14:10:02 +0200
-Message-ID: <1579522208-19523-3-git-send-email-claudiu.beznea@microchip.com>
+Subject: [PATCH 5/8] ARM: at91: pm: s/sfr/sfrbu in pm_suspend.S
+Date:   Mon, 20 Jan 2020 14:10:05 +0200
+Message-ID: <1579522208-19523-6-git-send-email-claudiu.beznea@microchip.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
 References: <1579522208-19523-1-git-send-email-claudiu.beznea@microchip.com>
@@ -73,81 +73,44 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-This reverts commit 2725d70aa5138284ba2cebf0ef51dd23e0c9ea21
-("ARM: at91: pm: do not disable/enable PLLA for ULP modes").
-This is because PLLA is the clock source for CPU, PLLA should
-be disabled/enabled in the final/first phase of suspend/resume
-so that the power consumption in suspend/resume to be minimal
-and suspend/resume time to be minimized.
+s/sfr/sfrbu in pm_suspend.S.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea@microchip.com>
 ---
- arch/arm/mach-at91/pm_suspend.S | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+ arch/arm/mach-at91/pm_suspend.S | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/arch/arm/mach-at91/pm_suspend.S b/arch/arm/mach-at91/pm_suspend.S
-index 52b262d56cfd..bfb3aab8859e 100644
+index 5fa0c2aa10f7..c898071e0c0b 100644
 --- a/arch/arm/mach-at91/pm_suspend.S
 +++ b/arch/arm/mach-at91/pm_suspend.S
-@@ -47,6 +47,15 @@ tmp2	.req	r5
- 	.endm
+@@ -103,7 +103,7 @@ ENTRY(at91_pm_suspend_in_sram)
+ 	cmp	tmp1, #0
+ 	ldrne	tmp2, [tmp1, #0]
+ 	ldr	tmp1, [r0, #PM_DATA_SFRBU]
+-	str	tmp1, .sfr
++	str	tmp1, .sfrbu
+ 	cmp	tmp1, #0
+ 	ldrne	tmp2, [tmp1, #0x10]
  
- /*
-+ * Wait until PLLA has locked.
-+ */
-+	.macro wait_pllalock
-+1:	ldr	tmp1, [pmc, #AT91_PMC_SR]
-+	tst	tmp1, #AT91_PMC_LOCKA
-+	beq	1b
-+	.endm
-+
-+/*
-  * Put the processor to enter the idle state
-  */
- 	.macro at91_cpu_idle
-@@ -343,6 +352,14 @@ ENTRY(at91_ulp_mode)
- 
+@@ -150,7 +150,7 @@ ENTRY(at91_backup_mode)
  	wait_mckrdy
  
-+	/* Save PLLA setting and disable it */
-+	ldr	tmp1, [pmc, #AT91_CKGR_PLLAR]
-+	str	tmp1, .saved_pllar
-+
-+	mov	tmp1, #AT91_PMC_PLLCOUNT
-+	orr	tmp1, tmp1, #(1 << 29)		/* bit 29 always set */
-+	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-+
- 	ldr	r0, .pm_mode
- 	cmp	r0, #AT91_PM_ULP1
- 	beq	ulp1_mode
-@@ -357,6 +374,18 @@ ulp1_mode:
- ulp_exit:
- 	ldr	pmc, .pmc_base
+ 	/*BUMEN*/
+-	ldr	r0, .sfr
++	ldr	r0, .sfrbu
+ 	mov	tmp1, #0x1
+ 	str	tmp1, [r0, #0x10]
  
-+	/* Restore PLLA setting */
-+	ldr	tmp1, .saved_pllar
-+	str	tmp1, [pmc, #AT91_CKGR_PLLAR]
-+
-+	tst	tmp1, #(AT91_PMC_MUL &  0xff0000)
-+	bne	3f
-+	tst	tmp1, #(AT91_PMC_MUL & ~0xff0000)
-+	beq	4f
-+3:
-+	wait_pllalock
-+4:
-+
- 	/*
- 	 * Restore master clock setting
- 	 */
-@@ -512,6 +541,8 @@ ENDPROC(at91_sramc_self_refresh)
+@@ -536,7 +536,7 @@ ENDPROC(at91_sramc_self_refresh)
  	.word 0
- .saved_mckr:
+ .shdwc:
  	.word 0
-+.saved_pllar:
-+	.word 0
- .saved_sam9_lpr:
+-.sfr:
++.sfrbu:
  	.word 0
- .saved_sam9_lpr1:
+ .memtype:
+ 	.word 0
 -- 
 2.7.4
 
