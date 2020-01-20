@@ -2,116 +2,176 @@ Return-Path: <SRS0=3VTX=3J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2AE5C2D0DB
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 12:41:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0E2CC2D0DB
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 13:40:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B60E722314
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 12:41:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BDFB2087E
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 13:40:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="lg28HM97"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbgATMla (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jan 2020 07:41:30 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:43708 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbgATMla (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 07:41:30 -0500
-X-AuditID: c0a8fbf4-183ff70000001fa6-ca-5e259ff60110
-Received: from smtp.reu.rohmeu.com (will-cas002.reu.rohmeu.com [192.168.251.178])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 0A.AA.08102.6FF952E5; Mon, 20 Jan 2020 13:41:26 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS002.REu.RohmEu.com ([fe80::fc24:4cbc:e287:8659%12]) with mapi id
- 14.03.0439.000; Mon, 20 Jan 2020 13:41:14 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>
-CC:     "corbet@lwn.net" <corbet@lwn.net>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "phil.edworthy@renesas.com" <phil.edworthy@renesas.com>,
-        "dmurphy@ti.com" <dmurphy@ti.com>,
-        "linux-leds@vger.kernel.org" <linux-leds@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
-        "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
-        "jacek.anaszewski@gmail.com" <jacek.anaszewski@gmail.com>,
-        "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
-        "a.zummo@towertech.it" <a.zummo@towertech.it>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "noralf@tronnes.org" <noralf@tronnes.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "bgolaszewski@baylibre.com" <bgolaszewski@baylibre.com>,
+        id S1726626AbgATNkO (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jan 2020 08:40:14 -0500
+Received: from mail-eopbgr60074.outbound.protection.outlook.com ([40.107.6.74]:53380
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726991AbgATNkN (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 20 Jan 2020 08:40:13 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WQz582JJut6a3XXUOeJBE5ANXtlJ0bn8j+Focf5ohjxvtsmpBzYbm3GLGg9l+KqRh/5aCIso4cBYRWKJbscqYw8xdXjbcSbZCNJi8LhSFOCZX2jy7fmQMzLNfIpEpvZ8VCcjgdqvIF4nZylCnyfPrFiqemDnWNK7E0enFuR16j5rgvZXfXAuaHUXL4EWq+Tlc6zmLY1AgCV1ebGTB1N3ftCFsGCsKxL/f9pnMDL5tO7yJMCYOQmPfoxHrvl1wHCayalTtFWreq9ToFmLMkBJk53ef9/QbihIkbM+LZqj2jHjh57vRyYqPTvVXJfgbsgyZk9AbB+2xeI2XoxO1Qa0Ow==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LyGZy3sD8EmZuxkstiz1d477j7s9NMXzEstrmtRDH6U=;
+ b=dHNeCrbfikInOM0tsUn4aYJB0+XleFXx+9Q3puyllX9kwqzdv0sowILQxfn4d3vkpXgwb/HlLeP+gZAZn2XkH+VnzigyGXbaxTgGQ2r//ob0Us+QfKWDDUjC42cqP7BmjBWIKtspbQVjGHm3lQcjxtIJG1ZbbJKud1Nns8yf+yUj4ASUAoEG+aUoXRBTPJJzaB9+mAIBiW+GP9fT+RrErOyMYM3pxUIzFFDJ5a8Y5o+6TLKJ1t/AhIX/Wna2rYbe4o6Q/SnOQmAJQ8MJXuFnQOZEFIO0cWyRaIX7DHPIhKHo6sm/fjF3Q5VpRzxAcVGu6/ssWOX4LIw5KKOxwyCgOw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LyGZy3sD8EmZuxkstiz1d477j7s9NMXzEstrmtRDH6U=;
+ b=lg28HM97Ym9G+vTgC/sVxPU390osKrZSiPLWzOh7oUsqeCimUw+CI+PdTz1X3Z71m61xVFVgG699zdQSOy2F1f1HOxiN2wlhBBBQm7Pys8QZD69YNdhVlrXoyYC+ilty0Yc+zj1aNnjRuSAVNZu/zDSbbxrWXsYpddgT1olUgFw=
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com (10.186.159.144) by
+ VI1PR04MB4109.eurprd04.prod.outlook.com (52.133.15.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2644.22; Mon, 20 Jan 2020 13:40:10 +0000
+Received: from VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::58c5:f02f:2211:4953]) by VI1PR04MB7023.eurprd04.prod.outlook.com
+ ([fe80::58c5:f02f:2211:4953%7]) with mapi id 15.20.2644.024; Mon, 20 Jan 2020
+ 13:40:10 +0000
+From:   Leonard Crestez <leonard.crestez@nxp.com>
+To:     Peng Fan <peng.fan@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
         "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "pavel@ucw.cz" <pavel@ucw.cz>,
-        "broonie@kernel.org" <broonie@kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>
-Subject: Re: [PATCH v12 00/10] Support ROHM BD71828 PMIC
-Thread-Topic: [PATCH v12 00/10] Support ROHM BD71828 PMIC
-Thread-Index: AQHVz3GxRarqEI+FJkC62zSkifitkKfzbi0A
-Date:   Mon, 20 Jan 2020 12:41:14 +0000
-Message-ID: <ecc8ab43dfdb78c7bcab82311f608f6d4e12dc5c.camel@fi.rohmeurope.com>
-References: <cover.1579511114.git.matti.vaittinen@fi.rohmeurope.com>
-In-Reply-To: <cover.1579511114.git.matti.vaittinen@fi.rohmeurope.com>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Subject: Re: [PATCH V3 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+Thread-Topic: [PATCH V3 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+Thread-Index: AQHVzBLhUkGtl3RwMUeoFEsar3ylZA==
+Date:   Mon, 20 Jan 2020 13:40:10 +0000
+Message-ID: <VI1PR04MB70239267F223F63918362DDCEE320@VI1PR04MB7023.eurprd04.prod.outlook.com>
+References: <1579140562-8060-1-git-send-email-peng.fan@nxp.com>
+ <1579140562-8060-3-git-send-email-peng.fan@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
 X-MS-Has-Attach: 
 X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <1A3D109FBE7D05489C91039926E23B72@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leonard.crestez@nxp.com; 
+x-originating-ip: [89.37.124.34]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 44fceb7f-dbe2-4a75-b72b-08d79dae453e
+x-ms-traffictypediagnostic: VI1PR04MB4109:|VI1PR04MB4109:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <VI1PR04MB410930A5A3604E52081C0E93EE320@VI1PR04MB4109.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2512;
+x-forefront-prvs: 0288CD37D9
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(396003)(376002)(366004)(346002)(39860400002)(199004)(189003)(8936002)(55016002)(81166006)(81156014)(71200400001)(9686003)(478600001)(8676002)(110136005)(54906003)(316002)(86362001)(33656002)(186003)(5660300002)(6506007)(53546011)(2906002)(4326008)(76116006)(66946007)(66446008)(64756008)(66476007)(44832011)(66556008)(7696005)(26005)(52536014)(91956017)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB4109;H:VI1PR04MB7023.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: uCv584JttstAW8geNG8aQLJa8goH904BKlAXjhcwt60byZCYv3ZkDAGMyAj3fNIP3Jc49RRT2D+SkCi9I9e1bbY7YHMtq5z2/wA7+x0oRCzBgcRU/GzmSzqeQWKK+2EQn3yW0lIHs/b5Rf+DS/v1poeTKgkn+ZP4emK+wRkjYDkRvmGLt+hiUTEXa5FtSS8sZmVgBHKPjyzz4cTr96VJRSTZDkvBHJgbImB2yl62py9zqeXi9isEfude2fgkZVksoE80P6YVQUo+gDSC0Oq7YYZi3vDe1XVUErKFYmEIg3N2DNvAB5E+KZyg+X1TiDAmpcMECLEyYW77zqjHe53zoAdj9VUcsMJJ35B25TyLUMVM0xcrMg/dX2i5YH2Va+K/EGpBXUaEZbFL5t2WPHWcfQIArzVMihOWc4u7CS1O19FRTjH5lXslZA7ZHwEc02ax5MK0GdI8rhg6iwZ/66B7vVw3MBV8/Ev5DahcEbArEpqVOCP6COxbCfL9fe8lUoRg
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Tf1AUZRjH593d211+bPNygryRNrUjUo1CNEav5TQ2Sb415Thj9YcVuMbK
-        kcfdzd7RgNZEMGicDAr4A0/uTpJTwPPQC4b4NTGEhKdjHYLglDAow4yMgoXiGGrtcir88+73
-        fZ7n8/3uH8/L0/p6Lo7PMtlkxSQZRTac6ayd9a+cccenvTpctxrXBAc4vHvyOIcflvdw+I4z
-        wOADo2MsHuvcDbC7+6IO7znfqMOFxxpY/GfTaQaP3D0L8Ez/DxTe/+AEhf8uGdbh6l01DP7J
-        /QDgS61VLG666QO452Q/iz2DQQpXeXoZPPVPMYWDgVR8IDDJ4auBsywuDA7RuKijm8OPLp9h
-        cOnF9WuXEq/LC8jsv+WATA0VccTl3UlaHFc54q8vZslfl9tZ8ovTy5FjpRU6MnOhjCHj1Q0M
-        +W2omSKHXPcp0lDSDUjtyXscmfY/vxFujlizVbJ9vSkr05T09pYIw/G+vZylUsi9Nn2LzQc3
-        I+0gjEdwFbpV8StlB+G8Hg4A1FjeyoQuvQD11p9m7YDnWbgG2a9wmoyGq9GZYJQ2QsNABHLV
-        lnCa0SKI0aFL93Sa1mb+OFhFhfRraLjaSWssA+NRUbNFKwtwA5qqu05rWg/Xoba+ibnxMJiK
-        2tsCcxrApag4f3JO0zAW+cdD9ghCVNP+Ox3SMejG9UeP6yLquD/KaFE0fBk1tCaF0LWoxd34
-        2OZFtH/PKBf6hSh07vAYsw8sdixIcMzTjgW0YwHtWEAfBbp6gLKlLGOmZJOTExU5J1ExG7LV
-        z5fmbD8Ibd2dn8F/Xe93AYoHXeBZnhJjBO4rMU3/zFZzRp5BshrSlRyjbO0CiKfFaOFoQXya
-        XsiQ8nbIivlJ6zmeEWOFhNGyL/RQy9ouyxZZedJdwvMiEh5WqWCUImfKuduyjLb5NsWHaebh
-        cdFW2ZQhK1KOzZCubUe6VV0PrRWp5h5xablWi5StVkNoACTz+244f6T5bqdHPQenOjy0njGZ
-        TXJcrIDfVAGoAYYc09O4CRDLA3GRoGh2keoDfOo2oQZRatDAG6IWZJPmW3H5YPHns4c/u3Aq
-        pfluQeLrlh353m+b6FP2IwWZ68Dg8iUp7/R/2PlCwvrAyJaVm26/+1EeO1KTK99mIs5t3vVB
-        4rLKl86n9u28EvQVruK2rYjXfeLbnlrstV8rrfv4LdDigx6j8N7y8aS9ZfwKQ8KyysH2PvJd
-        64m2b3qmY6Yrv3f7Pk2pEBmrQUp+hVas0v+4eIqdPQQAAA==
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 44fceb7f-dbe2-4a75-b72b-08d79dae453e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Jan 2020 13:40:10.6100
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 671PO2fm5mTwNbMX7inSluGjh7gEsvQw99/WJRfVnPMKTQXr3afm3iSiyjVNBvVFqS0pX9IpwJbhyNm688Vu6A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB4109
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-SGVsbG8sDQoNCkRvIHlvdSBrbm93IHRob3NlIGRheXMgd2hlbiBub3RoaW5nLCBfbm90aGluZ18g
-anVzdCB3b3JrcyBvdXQgYXMNCmludGVuZGVkPyBUb2RheSBpcyBvbmUgb2YgdGhvc2UuDQoNCk9u
-IE1vbiwgMjAyMC0wMS0yMCBhdCAxMToxMiArMDIwMCwgTWF0dGkgVmFpdHRpbmVuIHdyb3RlOg0K
-PiBQYXRjaCBzZXJpZXMgaW50cm9kdWNpbmcgc3VwcG9ydCBmb3IgUk9ITSBCRDcxODI4IFBNSUMN
-Cj4gDQo+IFJPSE0gQkQ3MTgyOCBpcyBhIHBvd2VyIG1hbmFnZW1lbnQgSUMgY29udGFpbmluZyA3
-IGJ1Y2tzIGFuZCA3IExET3MuDQo+IEFsbA0KPiByZWd1bGF0b3JzIGNhbiBiZSBjb250cm9sbGVk
-IGluZGl2aWR1YWxseSB2aWEgSTJDLiBCdWNrcyAxLDIsNiBhbmQNCj4gNyBjYW4gYWxzbyBiZSBh
-c3NpZ25lZCB0byBhICJyZWd1bGF0b3IgZ3JvdXAiIGNvbnRyb2xsZWQgYnkgcnVuLQ0KPiBsZXZl
-bHMuDQo+IEVnLiBSdW4gbGV2ZWwgc3BlY2lmaWMgdm9sdGFnZXMgYW5kIGVuYWJsZS9kaXNhYmxl
-IHN0YXR1c2VzIGZvciBlYWNoDQo+IG9mDQo+IHRoZXNlIGJ1Y2tzIGNhbiBiZSBzZXQgdmlhIHJl
-Z2lzdGVyIGludGVyZmFjZS4gVGhlIGJ1Y2sgcnVuLWxldmVsDQo+IGdyb3VwDQo+IGFzc2lnbm1l
-bnQgKHNlbGVjdGlvbiBpZiBidWNrIGlzIHRvIGJlIGNvbnRyb2xsZWQgaW5kaXZpZHVhbGx5IG9y
-IHZpYQ0KPiBydW4tbGV2ZWxzKSBjYW4gYmUgY2hhbmdlZCBhdCBydW4tdGltZSB2aWEgSTJDLg0K
-PiANCj4gVGhpcyBwYXRjaCBzZXJpZXMgYnJpbmdzIG9ubHkgdGhlIGJhc2ljIHN1cHBvcnQgZm9y
-IGNvbnRyb2xsaW5nDQo+IHJlZ3VsYXRvcnMgaW5kaXZpZHVhbGx5IHZpYSBJMkMuDQoNCi8vc25p
-cA0KDQo+IFBhdGNoIDExOg0KPiAgICAgICAgIEFsbG93IGNvbnRyb2wgb2YgR1AoSSlPIHBpbnMg
-b24gQkQ3MTgyOCB2aWEgR1BJTyBzdWJzeXN0ZW0NCj4gDQoNCkkgYWNjaWRlbnRhbGx5IHJlYmFz
-ZWQgdG8gd3JvbmcgY29tbWl0IGFuZCBjcm9wcGVkIHRoZSBHUElPIHBhdGNoIG91dA0Kb2YgdGhl
-IHNlcmllcy4gTGVlIC0gY2FuIHlvdSB0YWtlIHRoZSBHUElPIHBhcnQgZnJvbSB2MTEgKHBhdGNo
-IDExLzEzDQp0aGVyZSkuIEl0IHNob3VsZCBhcHBseSBjbGVhbmx5IGFuZCBJIGhhdmUgbm8gY2hh
-bmdlcyB0byBpdC4gT3Igc2hvdWxkDQpJIGp1c3QgcmVzZW5kIHRoZSB3aG9sZSBzZXJpZXMgKGFn
-YWluKT8NCg0KQnIsDQogICAgTWF0dGkgVmFpdHRpbmVuDQo=
+On 16.01.2020 04:15, Peng Fan wrote:=0A=
+> From: Peng Fan <peng.fan@nxp.com>=0A=
+> =0A=
+> Use imx8m_clk_hw_composite_core to simplify code.=0A=
+> =0A=
+> Reviewed-by: Abel Vesa <abel.vesa@nxp.com>=0A=
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>=0A=
+> ---=0A=
+>   drivers/clk/imx/clk-imx8mq.c | 22 ++++++++--------------=0A=
+>   1 file changed, 8 insertions(+), 14 deletions(-)=0A=
+> =0A=
+> diff --git a/drivers/clk/imx/clk-imx8mq.c b/drivers/clk/imx/clk-imx8mq.c=
+=0A=
+> index 4c0edca1a6d0..e928c1355ad8 100644=0A=
+> --- a/drivers/clk/imx/clk-imx8mq.c=0A=
+> +++ b/drivers/clk/imx/clk-imx8mq.c=0A=
+> @@ -403,22 +403,16 @@ static int imx8mq_clocks_probe(struct platform_devi=
+ce *pdev)=0A=
+>   =0A=
+>   	/* CORE */=0A=
+>   	hws[IMX8MQ_CLK_A53_SRC] =3D imx_clk_hw_mux2("arm_a53_src", base + 0x80=
+00, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));=0A=
+> -	hws[IMX8MQ_CLK_M4_SRC] =3D imx_clk_hw_mux2("arm_m4_src", base + 0x8080,=
+ 24, 3, imx8mq_arm_m4_sels, ARRAY_SIZE(imx8mq_arm_m4_sels));=0A=
+> -	hws[IMX8MQ_CLK_VPU_SRC] =3D imx_clk_hw_mux2("vpu_src", base + 0x8100, 2=
+4, 3, imx8mq_vpu_sels, ARRAY_SIZE(imx8mq_vpu_sels));=0A=
+> -	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D imx_clk_hw_mux2("gpu_core_src", base +=
+ 0x8180, 24, 3,  imx8mq_gpu_core_sels, ARRAY_SIZE(imx8mq_gpu_core_sels));=
+=0A=
+> -	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D imx_clk_hw_mux2("gpu_shader_src", ba=
+se + 0x8200, 24, 3, imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_s=
+els));=0A=
+> -=0A=
+>   	hws[IMX8MQ_CLK_A53_CG] =3D imx_clk_hw_gate3_flags("arm_a53_cg", "arm_a=
+53_src", base + 0x8000, 28, CLK_IS_CRITICAL);=0A=
+> -	hws[IMX8MQ_CLK_M4_CG] =3D imx_clk_hw_gate3("arm_m4_cg", "arm_m4_src", b=
+ase + 0x8080, 28);=0A=
+> -	hws[IMX8MQ_CLK_VPU_CG] =3D imx_clk_hw_gate3("vpu_cg", "vpu_src", base +=
+ 0x8100, 28);=0A=
+> -	hws[IMX8MQ_CLK_GPU_CORE_CG] =3D imx_clk_hw_gate3("gpu_core_cg", "gpu_co=
+re_src", base + 0x8180, 28);=0A=
+> -	hws[IMX8MQ_CLK_GPU_SHADER_CG] =3D imx_clk_hw_gate3("gpu_shader_cg", "gp=
+u_shader_src", base + 0x8200, 28);=0A=
+> -=0A=
+>   	hws[IMX8MQ_CLK_A53_DIV] =3D imx_clk_hw_divider2("arm_a53_div", "arm_a5=
+3_cg", base + 0x8000, 0, 3);=0A=
+> -	hws[IMX8MQ_CLK_M4_DIV] =3D imx_clk_hw_divider2("arm_m4_div", "arm_m4_cg=
+", base + 0x8080, 0, 3);=0A=
+> -	hws[IMX8MQ_CLK_VPU_DIV] =3D imx_clk_hw_divider2("vpu_div", "vpu_cg", ba=
+se + 0x8100, 0, 3);=0A=
+> -	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D imx_clk_hw_divider2("gpu_core_div", "g=
+pu_core_cg", base + 0x8180, 0, 3);=0A=
+> -	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D imx_clk_hw_divider2("gpu_shader_div"=
+, "gpu_shader_cg", base + 0x8200, 0, 3);=0A=
+> +=0A=
+> +	hws[IMX8MQ_CLK_M4_DIV] =3D imx8m_clk_hw_composite_core("arm_m4_div", im=
+x8mq_arm_m4_sels, base + 0x8080);=0A=
+> +	hws[IMX8MQ_CLK_VPU_DIV] =3D imx8m_clk_hw_composite_core("vpu_div", imx8=
+mq_vpu_sels, base + 0x8100);=0A=
+> +	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D imx8m_clk_hw_composite_core("gpu_core_=
+div", imx8mq_gpu_core_sels, base + 0x8180);=0A=
+> +	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D imx8m_clk_hw_composite("gpu_shader_d=
+iv", imx8mq_gpu_shader_sels, base + 0x8200);=0A=
+=0A=
+> +	/* For DTS which still assign parents for gpu core src clk */=0A=
+> +	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D hws[IMX8MQ_CLK_GPU_CORE_DIV];=0A=
+> +	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D hws[IMX8MQ_CLK_GPU_SHADER_DIV];=0A=
+=0A=
+Why not assign to all the old clocks?=0A=
