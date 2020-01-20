@@ -2,109 +2,158 @@ Return-Path: <SRS0=3VTX=3J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54275C2D0DB
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 14:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87A5FC2D0DB
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 15:32:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3615C21D7E
-	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 14:21:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B09722522
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 15:32:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dfMihwdT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728776AbgATOV1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 20 Jan 2020 09:21:27 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:47332 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727048AbgATOV0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 09:21:26 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-bc-5e25b76587d0
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id E8.4B.08102.567B52E5; Mon, 20 Jan 2020 15:21:25 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Mon, 20 Jan 2020 15:21:12 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-gpio@ger.kernel.org" <linux-gpio@ger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
-Subject: Re: [PATCH v13 00/11] Support ROHM BD71828 PMIC
-Thread-Topic: [PATCH v13 00/11] Support ROHM BD71828 PMIC
-Thread-Index: AQHVz5cqdcXL24/7G02IFCD76W21L6fzgmcAgAAHbgA=
-Date:   Mon, 20 Jan 2020 14:21:09 +0000
-Message-ID: <70ac7b71d5d54d4b90ded032214c473569b9fae1.camel@fi.rohmeurope.com>
-References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
-         <20200120135446.GD6852@sirena.org.uk>
-In-Reply-To: <20200120135446.GD6852@sirena.org.uk>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <165D4BF62429F342A4150014AE63C5E3@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+        id S1728712AbgATPcx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 20 Jan 2020 10:32:53 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:45858 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726642AbgATPcw (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 20 Jan 2020 10:32:52 -0500
+Received: by mail-ed1-f68.google.com with SMTP id v28so29818241edw.12;
+        Mon, 20 Jan 2020 07:32:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=OOCggNlyS9YgNLOjDZC4k2CQrj3lgyEzbj3H+eP3SQE=;
+        b=dfMihwdTWj/I8wOKg2Rs9iY5ghrDiTIiktCY71UOSpkgssYifYXSdlBSd609/u9xjS
+         Ds5XiFhFGB5p8GMBSwQ9bZKjmlihWm66nuZmyaaMpi/JL+tME+w0seGaOeRaOg9fGaqW
+         94iTMGe9++uLByUGQzUl2nIquM6MJ3tOFOHU9AlgX6/x2YRYSS2ZN+8HJc6IX1rzz/Iu
+         FzdPETX1u4WE+J3M79HpiN/eryDdkm9hcvES6+9e4RNHGYM+kUdJv7BSLmmmTHJf9ANN
+         VZUv8VfYfOyFBDcmIMWV7byCSHZ/pKFimZbXmL5h2ueObDPJ8/ZoVK+OC77fg6HNkbd0
+         E+7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=OOCggNlyS9YgNLOjDZC4k2CQrj3lgyEzbj3H+eP3SQE=;
+        b=qQ5b+yjmAR3V6I6tzHB1GXQWoTcGTsYYTjrPZ5Qx0ktr7+NQ56sPUB649MADnsVbTj
+         l5uVfR58jX5WfynbYHUoWPp4NK2Tae3bLyAhH0zWhiqdYYFCX+WuprRg50R3bfJ6mASx
+         1rNmwKSH+sxx/4ugY7uxp8peXvOpmDHXmsqCDQ+Ot+5ucLvfGOAq4STuhHlaMt1P+qRT
+         kLXfxHBPnyPjYLx+QH7S3Q0fu/ibi6RWur/PGpTFRMe3yOoYcOHfnDVVFj3mj6jJKB2G
+         8js3aVh/uGT4hYDI6PXhGd9VA4b9M+latJ1Y40N3i9EaR0Vxvm3Vo2WlmsfaYTs8VpuX
+         DPdA==
+X-Gm-Message-State: APjAAAUss5OQji2wzM5yxyhbF5Xi9cuHCHRI8+nPNf1VX41dYATfIY+0
+        bRwVphJKEhtAFqVZQtUEeXWZo52M
+X-Google-Smtp-Source: APXvYqxjYvtLuxzmFSvORJMHr9PS1DmMWSmU08ILsHKVYQCqsxBngzG4LUM4tpU9XK2ZYIqVfQd7Bg==
+X-Received: by 2002:a17:906:948e:: with SMTP id t14mr20975740ejx.123.1579534370408;
+        Mon, 20 Jan 2020 07:32:50 -0800 (PST)
+Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
+        by smtp.googlemail.com with ESMTPSA id z10sm1121714ejn.16.2020.01.20.07.32.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 20 Jan 2020 07:32:49 -0800 (PST)
+Subject: Re: [PATCH v8 19/22] ASoC: tegra: Enable audio mclk during
+ tegra_asoc_utils_init
+To:     Sameer Pujar <spujar@nvidia.com>,
+        Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
+        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
+        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
+        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, josephl@nvidia.com,
+        daniel.lezcano@linaro.org, mmaddireddy@nvidia.com,
+        markz@nvidia.com, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
+ <1578986667-16041-20-git-send-email-skomatineni@nvidia.com>
+ <3a8e609a-58aa-d2c1-c140-e1f0127dd53b@gmail.com>
+ <64027c16-763b-350f-9975-4f9727450ae9@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <0b13d21c-1daf-4e9d-f2c2-e78a3b8935f2@gmail.com>
+Date:   Mon, 20 Jan 2020 18:32:45 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.3.0
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Se0gUURjFufPaWXXqtq7tzZ5OmFRUGmVjRQgFbVDSg6KE2sZ2cqV9yOwq
-        mf9YJOVmppBhm4tl2YYV5WIPQym2DSyCNUoxs8LSTKW3FVpoc518/HXP/c459zcwH0vq8pho
-        NsPukmS7aOWZMOrBlT81i6Q7sXvi+x7GCaUdnYzw9ucjIJz+6yOEb4VvaKG4MEgL5VWNlDDU
-        UkMla4y+thrCWOd5rTH6qwsYY3tLPWP84Z+1mU4NX50murK3ZaTbl6zZG245Wx0iMgOGg+3d
-        p8g80D/VDVgWwWXoWnCrG4SxOtgM0LPgOcYNtMqlEaDuosk4w8DVyP1Sg8d6uAiVDl5kcJ6E
-        Dwj04msZgTORUEB9hdlqJgl5h2ppVa9EpU0NGhyhYCwauDwbjzmYgo5992pUkg19yi8biWvh
-        UlRW2w6wBnAmKsj7TGBNQgPyf/g9kkEQokv1IVLVUajn/dD/OY8aBjoojCLhfHTj3hK1moyO
-        D7+jVB2DTp/o0KifMAU9PttJFYOpngkEz3jbM6HtmdD2TGifB3Q1QDYxw5ouuqSExbKUtVh2
-        WGzKsc9h8wP1j/bfBcOBDQFAsCAAprEEH8XpL8fu0U1Kc5hzLKLTYpKzrJIzABBL8nru/BHF
-        48xiziFJdoxa01mKN3BxHSW7dRCzDkhSpiSPujNYlkfcjVqlOEWW0qWD+zOsrnGbYLX48bBo
-        vVOymyVZzHJZTHg3TE5lObAVoXBTbmOuM1O0KVO1+gQsZIt7vJUkG/RWVZI6yu6wS9EGDuAo
-        xFFLln0M1AsMLOAjuXjsRihrPfZOr4IgFETzCh4jXOK4FZ0HbK0VW9a+NC988iq/ZVNrU/+c
-        N4eXX42sEtf3n+Gu5wpt157T2Rd+lezo3bI+MyZk2s7M+/YpVPSqfNXNirrEXV2RaU7/SW35
-        x41HkwZFd+KcUGvj4B/Q0FZJ1/mym7rqwBe6ZJvh1ow4LmhNfZfb5eu5v26necMhutj+4mkp
-        aJzLU06LmLCAlJ3iP7QP/wSTAwAA
+In-Reply-To: <64027c16-763b-350f-9975-4f9727450ae9@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpPbiBNb24sIDIwMjAtMDEtMjAgYXQgMTM6NTQgKzAwMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
-IE9uIE1vbiwgSmFuIDIwLCAyMDIwIGF0IDAzOjQwOjIwUE0gKzAyMDAsIE1hdHRpIFZhaXR0aW5l
-biB3cm90ZToNCj4gPiBQYXRjaCBzZXJpZXMgaW50cm9kdWNpbmcgc3VwcG9ydCBmb3IgUk9ITSBC
-RDcxODI4IFBNSUMNCj4gPiANCj4gPiBST0hNIEJENzE4MjggaXMgYSBwb3dlciBtYW5hZ2VtZW50
-IElDIGNvbnRhaW5pbmcgNyBidWNrcyBhbmQgNw0KPiA+IExET3MuIEFsbA0KPiA+IHJlZ3VsYXRv
-cnMgY2FuIGJlIGNvbnRyb2xsZWQgaW5kaXZpZHVhbGx5IHZpYSBJMkMuIEJ1Y2tzIDEsMiw2IGFu
-ZA0KPiA+IDcgY2FuIGFsc28gYmUgYXNzaWduZWQgdG8gYSAicmVndWxhdG9yIGdyb3VwIiBjb250
-cm9sbGVkIGJ5IHJ1bi0NCj4gPiBsZXZlbHMuDQo+IA0KPiBUaGlzIGlzIHRoZSAqdGhpcmQqIHZl
-cnNpb24gb2YgdGhpcyB5b3UndmUgc2VudCB0b2RheSBhbG9uZS4gIFBsZWFzZQ0KPiBzdG9wIHNl
-bmRpbmcgbWUgdGhpcyBzZXJpZXMgdW50aWwgdGhlIE1GRCBoYXMgYmVlbiBtZXJnZWQsIHBlcmhh
-cHMNCj4ganVzdA0KPiBkcm9wIHRoZSBzdWJzeXN0ZW0gcGF0Y2hlcyB3aGlsZSB5b3UgcmVzb2x2
-ZSB3aGF0ZXZlciB0aGUgcHJvYmxlbXMNCj4gYXJlDQo+IHRoYXQgcmVtYWluIHdpdGggdGhlIE1G
-RD8gIEknbSBwcmV0dHkgbXVjaCBqdXN0IGRlbGV0aW5nIHRoZXNlDQo+IHBhdGNoZXMNCj4gd2l0
-aG91dCBldmVuIGxvb2tpbmcgYXQgdGhlbSBhdCB0aGlzIHBvaW50LCBpdCdzIGEgbGFyZ2Ugc2Vy
-aWVzLCBpdCdzDQo+IGdldHRpbmcgaHVnZSBudW1iZXJzIG9mIHJlc2VuZHMgYW5kIEkgZG9uJ3Qg
-dGhpbmsgYW55IHZlcnNpb24gSSd2ZQ0KPiBoYWQgYQ0KPiBjaGFuY2UgdG8gbG9vayBhdCBiZWZv
-cmUgaXQgZ290IHJlc2VudCBoYWQgYSBjaGFuZ2UgaW4gdGhlIG9uZQ0KPiByZWd1bGF0b3INCj4g
-cGF0Y2ggdGhhdCdkIGNhdXNlIG1lIHRvIGhhdmUgdG8gcmUtcmV2aWV3IGl0Lg0KDQpTb3JyeSBN
-YXJrIChhbmQgYWxsKS4gSSBndWVzcyB0aGlzIGlzIGFubm95aW5nLiBXaHkgSSBkbyByZXNlbmQg
-d2hvbGUNCnNlcmllcyBpcyB0aGF0IGR1cmluZyB0aGUgYmQ3MTgzNyB3b3JrIExlZSBpbnN0cnVj
-dGVkIG1lIHRvIGFsd2F5cw0KcmVzZW5kIHdob2xlIHNlcmllcyAtIG5vdCBqdXN0IHRoZSBjaGFu
-Z2VkIHBhdGNoZXMuDQoNCkkgc3VyZSBjYW4gbGVhcm4gYW5kIGRyb3Agc29tZSBvZiB0aGUgcmVj
-aXBpZW50cyBpbiB0aGUgZnV0dXJlIC0gYW5kDQphY3R1YWxseSBJIGRpZCBmb3IgdGhpcyBsYXN0
-IHJlc2VuZC4gUmVhc29uIHdoeSB5b3UgYXJlIGluIHRoZQ0KcmVjaXBpZW50cyBpcyB0aGF0IExl
-ZSBhc2tlZCBtZSB0byBnZXQgeW91ciBhY2sgZm9yIHBhdGNoIDMvMTEuIFNhbWUNCmdvZXMgd2l0
-aCBTdGVwaGVuLg0KDQpMaW51cyBpcyBpbnZvbHZlZCBhcyBMZWUgYXNrZWQgbWUgdG8gZ2V0IGhp
-cyBhY2sgZm9yIHBhdGNoIDExLg0KDQpCdXQgcmVzZW5kaW5nIHRoaXMgc2VyaWVzIDMgdGltZXMg
-dG9kYXkgaXMgcmVhbGx5IG15IGZhdWx0LiAoV2VsbCwgb2YNCmNvdXJzZSwgSSBkaWQgc2VuZCB0
-aGlzIGFuZCBubyBvbmUgZWxzZSkuIEkgbWVzc2VkIHVwIHRoZSBwcmV2aW91cw0Kc2VyaWVzLg0K
-DQpJIHdhcyBob3BpbmcgdGhlIHJldmlzaW9uIGhpc3RvcnkgaW4gY292ZXIgbGV0dGVyIHdvdWxk
-IGJlIGEgZmFzdCB3YXkNCnRvIGRldGVybWluZSBpZiBzb21ldGhpbmcgcmVsZXZhbnQgaGFzIGNo
-YW5nZWQuIEFkZGl0aW9uYWxseSwgSSBkaWQgdHJ5DQp0byBpbmNsdWRlIHN0YXRlbWVudCB0aGF0
-ICJubyBjaGFuZ2VzIiBpbiB0aGUgYmVnaW5uaW5nIG9mIGVhY2ggcGF0Y2hlcw0KZm9yIG1vc3Qg
-b2YgdGhlIHZlcnNpb25zLiAoZm9yIHZlcnNpb25zIHVwLXRvIDExIC0gdGhpcyB3YXMgb21pdHRl
-ZA0KZnJvbSB2MTIgYW5kIHYxMyB3aGljaCBvbmx5IGRpZCB2ZXJ5IHNwZWNpZmljIGNoYW5nZXMp
-Lg0KDQpCdXQgc3VyZSwgSSBzaG91bGQgdHJ5IHRvIGJlIG1vcmUgY2FyZWZ1bCBzbyB0aGF0IEkg
-ZG9uJ3QgbmVlZCB0byBkbyBzbw0KbWFueSByZXNlbmRzIC0gYW5kIEkgcmVhbGx5IGNvdWxkIGRy
-b3AgbW9zdCBvZiB0aGUgcmVjaXBpZW50cyBlYXJsaWVyLg0KVGhhbmtzIGZvciBwb2ludGluZyBp
-dCBvdXQuDQoNCkJyLA0KCU1hdHRpIFZhaXR0aW5lbg0K
+20.01.2020 07:10, Sameer Pujar пишет:
+> 
+> On 1/19/2020 8:44 PM, Dmitry Osipenko wrote:
+>> External email: Use caution opening links or attachments
+>>
+>>
+>> 14.01.2020 10:24, Sowjanya Komatineni пишет:
+>>> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
+>>> through Tegra210 and currently Tegra clock driver keeps the audio
+>>> mclk enabled.
+>>>
+>>> With the move of PMC clocks from clock driver into pmc driver,
+>>> audio mclk enable from clock driver is removed and this should be
+>>> taken care by the audio driver.
+>>>
+>>> tegra_asoc_utils_init calls tegra_asoc_utils_set_rate and audio mclk
+>>> rate configuration is not needed during init and set_rate is actually
+>>> done during hw_params callback.
+>>>
+>>> So, this patch removes tegra_asoc_utils_set_rate call and just leaves
+>>> the audio mclk enabled.
+>>>
+>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>> ---
+>>>   sound/soc/tegra/tegra_asoc_utils.c | 11 +++++++++--
+>>>   1 file changed, 9 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/sound/soc/tegra/tegra_asoc_utils.c
+>>> b/sound/soc/tegra/tegra_asoc_utils.c
+>>> index 1dce5ad6e665..99584970f5f4 100644
+>>> --- a/sound/soc/tegra/tegra_asoc_utils.c
+>>> +++ b/sound/soc/tegra/tegra_asoc_utils.c
+>>> @@ -216,9 +216,16 @@ int tegra_asoc_utils_init(struct
+>>> tegra_asoc_utils_data *data,
+>>>                data->clk_cdev1 = clk_out_1;
+>>>        }
+>>>
+>>> -     ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
+>>> -     if (ret)
+>>> +     /*
+>>> +      * FIXME: There is some unknown dependency between audio mclk
+>>> disable
+>>> +      * and suspend-resume functionality on Tegra30, although audio
+>>> mclk is
+>>> +      * only needed for audio.
+>>> +      */
+>>> +     ret = clk_prepare_enable(data->clk_cdev1);
+>>> +     if (ret) {
+>>> +             dev_err(data->dev, "Can't enable cdev1: %d\n", ret);
+>>>                return ret;
+>>> +     }
+>>>
+>>>        return 0;
+>>>   }
+>>>
+>> Shouldn't the clock be disabled on driver's removal?
+> 
+> I am not sure if we really need to do in this series as it does not
+> change the behavior from what was there earlier. Also there is already a
+> FIXME item here and we end up adding clock disable in remove() path of
+> multiple drivers, which is going to be removed once we address FIXME.
+> 
+
+Well, perhaps this is indeed good enough for the time being.
+
+BTW, I didn't spot any suspend-resume problems using v8.
+
+Tested-by: Dmitry Osipenko <digetx@gmail.com>
+Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
