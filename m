@@ -1,134 +1,140 @@
-Return-Path: <SRS0=T+FL=3I=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=3VTX=3J=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3C2C33CB1
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jan 2020 15:14:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B02A8C32771
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 03:49:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EBD5206D7
-	for <linux-clk@archiver.kernel.org>; Sun, 19 Jan 2020 15:14:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KB/g7sTS"
+	by mail.kernel.org (Postfix) with ESMTP id 8EB8A20684
+	for <linux-clk@archiver.kernel.org>; Mon, 20 Jan 2020 03:49:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727121AbgASPON (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sun, 19 Jan 2020 10:14:13 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:45884 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727007AbgASPON (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jan 2020 10:14:13 -0500
-Received: by mail-lj1-f193.google.com with SMTP id j26so31233582ljc.12;
-        Sun, 19 Jan 2020 07:14:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GrHGp0d4BmVw3WqnBEg850rc+eYg9sJP/HTzUcbcC/U=;
-        b=KB/g7sTS0WmnqUZzzzFrUPHHY8rZ+Q2HkixRvNYVFpqdzcO3SCq9Bm9fSRBVMZgGrv
-         VROO0Zu5JCH8ZtSqBiNZOcQhtQQg/w4W4cGRx7IYCM+rndIhkSo+k1uuIMb5Nh8hJhg9
-         R6H5/EHWauts79cj6jsuqkHO9YeHR04IpiUwBx20tpTR6Pw6sg8lBrLAM1PUIYNodgfv
-         bJyTGFOcT2N3LA0HR0lC0ewl/fMFLv0V6HR3swJimX5vbuQfC9Lp4rhRb4IieIKi86ON
-         XR2Y7zIuwJV3g1iy08OKLjXUtv3bvRCdPLSKBI5T+yy+9/J4YyS19OsXnTlPmpDq3xqe
-         OH+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=GrHGp0d4BmVw3WqnBEg850rc+eYg9sJP/HTzUcbcC/U=;
-        b=NPWV/vjbZBqF37QZI85CpUwvSenIHcqo8r9UPMNRZxgEO0j+uk2q+8kHppKOSyCLOu
-         bl/SqeZLR5sUh5mxF2R+cJJU5B+3IVXDE7O+CaLsRjIh5MgnQheLY6XmwAQuPy/42V/i
-         NgdLZ9a5Gb7qrdYdFJQcpqqjGEBsQufAnHJXmq0IOFaAa6nTEdRETMadcmEcP5dYQLsD
-         AREZlPOct99lGKEodgxMlMmDrEICM29GYEFPPR6GGJODZvnOk1iYD39zpiV8vH+o9+SE
-         tDh+hJCL1wPzqKIes2PdJcHVCcLFPbCFpJVbD6sFgRcDE2rbIgzgKwG1j7sN/nQizqVO
-         EK9w==
-X-Gm-Message-State: APjAAAWs++CmzzufH16llYxaELdxegAn0iePvvmyKpnbkJQGj9RQr+/g
-        XKKHPbp5/wsQx60O54WR5QgTh1SE
-X-Google-Smtp-Source: APXvYqx2eT+IAjdXFNChF2tfzfuSJ7RWH9pEmjkaJ+PEAXBnJN7ozQqSofCMDfeKFsej7YGPA/asqQ==
-X-Received: by 2002:a2e:9b05:: with SMTP id u5mr11147694lji.59.1579446850511;
-        Sun, 19 Jan 2020 07:14:10 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id j19sm17747767lfb.90.2020.01.19.07.14.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 19 Jan 2020 07:14:09 -0800 (PST)
-Subject: Re: [PATCH v8 19/22] ASoC: tegra: Enable audio mclk during
- tegra_asoc_utils_init
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
-        lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
-        mperttunen@nvidia.com, gregkh@linuxfoundation.org,
-        sboyd@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
-        josephl@nvidia.com, daniel.lezcano@linaro.org,
-        mmaddireddy@nvidia.com, markz@nvidia.com,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-20-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <3a8e609a-58aa-d2c1-c140-e1f0127dd53b@gmail.com>
-Date:   Sun, 19 Jan 2020 18:14:07 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1729030AbgATDto (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Sun, 19 Jan 2020 22:49:44 -0500
+Received: from mail-sz.amlogic.com ([211.162.65.117]:13027 "EHLO
+        mail-sz.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729015AbgATDto (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Sun, 19 Jan 2020 22:49:44 -0500
+Received: from droid15-sz.amlogic.com (10.28.8.25) by mail-sz.amlogic.com
+ (10.28.11.5) with Microsoft SMTP Server id 15.1.1591.10; Mon, 20 Jan 2020
+ 11:50:11 +0800
+From:   Jian Hu <jian.hu@amlogic.com>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Neil Armstrong <narmstrong@baylibre.com>
+CC:     Jian Hu <jian.hu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>,
+        Rob Herring <robh@kernel.org>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Qiufang Dai <qiufang.dai@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Chandle Zou <chandle.zou@amlogic.com>,
+        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v7 0/5] add Amlogic A1 clock controller driver
+Date:   Mon, 20 Jan 2020 11:49:32 +0800
+Message-ID: <20200120034937.128600-1-jian.hu@amlogic.com>
+X-Mailer: git-send-email 2.24.0
 MIME-Version: 1.0
-In-Reply-To: <1578986667-16041-20-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-Originating-IP: [10.28.8.25]
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-14.01.2020 10:24, Sowjanya Komatineni пишет:
-> Tegra PMC clock clk_out_1 is dedicated for audio mclk from Tegra30
-> through Tegra210 and currently Tegra clock driver keeps the audio
-> mclk enabled.
-> 
-> With the move of PMC clocks from clock driver into pmc driver,
-> audio mclk enable from clock driver is removed and this should be
-> taken care by the audio driver.
-> 
-> tegra_asoc_utils_init calls tegra_asoc_utils_set_rate and audio mclk
-> rate configuration is not needed during init and set_rate is actually
-> done during hw_params callback.
-> 
-> So, this patch removes tegra_asoc_utils_set_rate call and just leaves
-> the audio mclk enabled.
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  sound/soc/tegra/tegra_asoc_utils.c | 11 +++++++++--
->  1 file changed, 9 insertions(+), 2 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index 1dce5ad6e665..99584970f5f4 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -216,9 +216,16 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->  		data->clk_cdev1 = clk_out_1;
->  	}
->  
-> -	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
-> -	if (ret)
-> +	/*
-> +	 * FIXME: There is some unknown dependency between audio mclk disable
-> +	 * and suspend-resume functionality on Tegra30, although audio mclk is
-> +	 * only needed for audio.
-> +	 */
-> +	ret = clk_prepare_enable(data->clk_cdev1);
-> +	if (ret) {
-> +		dev_err(data->dev, "Can't enable cdev1: %d\n", ret);
->  		return ret;
-> +	}
->  
->  	return 0;
->  }
-> 
+add support for Amlogic A1 clock driver, the clock includes 
+three parts: peripheral clocks, pll clocks, CPU clocks.
+sys pll and CPU clocks will be sent in next patch.
 
-Shouldn't the clock be disabled on driver's removal?
+Changes since v6 at [7]:
+-fix 'dt_binding_check' compiling error
+-add acked-by
+
+Changes since v5 at [6]:
+-fix yaml file
+-add rst/current_en/l_detect parm detection
+-remove 'meson_eeclkc_data' in a1.c and a1-pll.c
+
+Changes since v4 at [5]:
+- change yaml GPL
+- drop meson-eeclk.c patch, add probe function in each driver
+- add CLK_IS_CRITICAL for sys_clk clock, drop the flag for sys_a and sys_b
+- add new parm for pll, add protection for rst parm
+- drop flag for a1_fixed_pll
+- remove the same comment for fclk_div, add "refer to"
+- add critical flag for a1_sys_clk
+- remove rtc table
+- rename a1_dspa_en_dspa and a1_dspb_en_dspb
+- remove useless comment
+
+Changes since v3 at [3]:
+-fix reparenting orphan failed, it depends on jerome's patch [4]
+-fix changelist in v3 about reparenting orphan
+-remove the dts patch 
+
+Changes since v2 at [2]:
+-add probe function for A1
+-seperate the clock driver into two patch
+-change some clock flags and ops
+-add support for a1 PLL ops
+-add A1 clock node
+-fix reparenting orphan clock failed, registering xtal_fixpll
+ and xtal_hifipll after the provider registration, it is not
+ a best way.
+
+Changes since v1 at [1]:
+-place A1 config alphabetically
+-add actual reason for RO ops, CLK_IS_CRITICAL, CLK_IGNORE_UNUSED
+-separate the driver into two driver: peripheral and pll driver
+-delete CLK_IGNORE_UNUSED flag for pwm b/c/d/e/f clock, dsp clock
+-delete the change in Kconfig.platforms, address to Kevin alone
+-remove the useless comments
+-modify the meson pll driver to support A1 PLLs
+
+[1] https://lkml.kernel.org/r/1569411888-98116-1-git-send-email-jian.hu@amlogic.com
+[2] https://lkml.kernel.org/r/1571382865-41978-1-git-send-email-jian.hu@amlogic.com
+[3] https://lkml.kernel.org/r/20191129144605.182774-1-jian.hu@amlogic.com
+[4] https://lkml.kernel.org/r/20191203080805.104628-1-jbrunet@baylibre.com
+[5] https://lkml.kernel.org/r/20191206074052.15557-1-jian.hu@amlogic.com
+[6] https://lkml.kernel.org/r/20191227094606.143637-1-jian.hu@amlogic.com
+[7] https://lkml.kernel.org/r/20200116080440.118679-1-jian.hu@amlogic.com
+
+Jian Hu (5):
+  dt-bindings: clock: meson: add A1 PLL clock controller bindings
+  clk: meson: add support for A1 PLL clock ops
+  clk: meson: a1: add support for Amlogic A1 PLL clock driver
+  dt-bindings: clock: meson: add A1 peripheral clock controller bindings
+  clk: meson: a1: add support for Amlogic A1 Peripheral clock driver
+
+ .../bindings/clock/amlogic,a1-clkc.yaml       |   65 +
+ .../bindings/clock/amlogic,a1-pll-clkc.yaml   |   52 +
+ drivers/clk/meson/Kconfig                     |   18 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/a1-pll.c                    |  360 +++
+ drivers/clk/meson/a1-pll.h                    |   56 +
+ drivers/clk/meson/a1.c                        | 2249 +++++++++++++++++
+ drivers/clk/meson/a1.h                        |  120 +
+ drivers/clk/meson/clk-pll.c                   |   47 +-
+ drivers/clk/meson/clk-pll.h                   |    2 +
+ include/dt-bindings/clock/a1-clkc.h           |   98 +
+ include/dt-bindings/clock/a1-pll-clkc.h       |   16 +
+ 12 files changed, 3078 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/a1-pll.c
+ create mode 100644 drivers/clk/meson/a1-pll.h
+ create mode 100644 drivers/clk/meson/a1.c
+ create mode 100644 drivers/clk/meson/a1.h
+ create mode 100644 include/dt-bindings/clock/a1-clkc.h
+ create mode 100644 include/dt-bindings/clock/a1-pll-clkc.h
+
+-- 
+2.24.0
+
