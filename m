@@ -2,120 +2,88 @@ Return-Path: <SRS0=oBAc=3K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F756C2D0CE
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 16:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 739A8C2D0CE
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 16:40:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 630A6217F4
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 16:19:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="KOVOEaWa"
+	by mail.kernel.org (Postfix) with ESMTP id 3BBFC2465B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 16:40:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579624818;
+	bh=iDsi8+4B9y9QAOLsr/dl5nAEor+qoMSKTflkBrE7cbg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=LouOQ4nERvI4XRsk8EYbMCTcS1T0IZPxPf1kMi1RRN1vAaVK48A3H6cguJH9+5mHL
+	 dDgAnwhbV1XgF6P8yFL4Q0V4hF9tGMKSjILC319GTNTR1KhQ+PLTH2ZZb4w3ATa5fJ
+	 PFJk86G4hJNBMY4c+ZetqTftKliD38JhU5EOQWvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729043AbgAUQTu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jan 2020 11:19:50 -0500
-Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:8827 "EHLO
-        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726555AbgAUQTu (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jan 2020 11:19:50 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e2724950000>; Tue, 21 Jan 2020 08:19:33 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 21 Jan 2020 08:19:48 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 21 Jan 2020 08:19:48 -0800
-Received: from [10.2.160.120] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 21 Jan
- 2020 16:19:48 +0000
-Subject: Re: [PATCH v8 22/22] clk: tegra: Remove audio clocks configuration
- from clock driver
-To:     Dmitry Osipenko <digetx@gmail.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <perex@perex.cz>, <tiwai@suse.com>,
-        <mperttunen@nvidia.com>, <gregkh@linuxfoundation.org>,
-        <sboyd@kernel.org>, <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <pdeschrijver@nvidia.com>, <pgaikwad@nvidia.com>,
-        <spujar@nvidia.com>, <josephl@nvidia.com>,
-        <daniel.lezcano@linaro.org>, <mmaddireddy@nvidia.com>,
-        <markz@nvidia.com>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
- <d69fe7a8-71cc-c560-a567-f89b936753ad@gmail.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <9765b723-33af-9863-72c9-8094203c8cb8@nvidia.com>
-Date:   Tue, 21 Jan 2020 08:19:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.2
+        id S1728779AbgAUQkS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jan 2020 11:40:18 -0500
+Received: from foss.arm.com ([217.140.110.172]:45658 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726714AbgAUQkR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jan 2020 11:40:17 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 345B430E;
+        Tue, 21 Jan 2020 08:40:17 -0800 (PST)
+Received: from localhost (unknown [10.37.6.21])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A7E1A3F68E;
+        Tue, 21 Jan 2020 08:40:16 -0800 (PST)
+Date:   Tue, 21 Jan 2020 16:40:15 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Lee Jones <lee.jones@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-gpio@ger.kernel.org
+Subject: Re: [PATCH v13 03/11] mfd: rohm PMICs - use platform_device_id to
+ match MFD sub-devices
+Message-ID: <20200121164015.GF4656@sirena.org.uk>
+References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
+ <fc886259870ee2a67302b22a76c4347feff461ff.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <d69fe7a8-71cc-c560-a567-f89b936753ad@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: quoted-printable
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1579623573; bh=Uvzt4B05OQmJx5YIIthOVUR2fp0v+T1943XGo2TTOM0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=KOVOEaWa6tJBw/qvDH79CnxVhoo0pTK2etj72MAparsNKIW4YF9lQJpjDrWRIShPl
-         tA3Lhmht438lob3yBjTf5BcfqOYZQ4QpgBZqbppd/njbQYKfmJE+C7rC23EWqqmkZ1
-         oyj3GaFWswvi/mSUaTBGh8vdMvrsVev7+km5ItUC65TwUoBRE3Q5rqaulRYEC832AM
-         cM7SqLQNATAw1+EIA67N2bVaFo/IH8qib8nSkGm21OScgXncw+v79kd48ChTuOHkU7
-         85bvRaAfeKr526AUSl6heUXI7lXWrRzvHOD5Kyye3iao5UjkI3lOSMij1v7OONUsOQ
-         s+dfDWwbCw+KQ==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="dgjlcl3Tl+kb3YDk"
+Content-Disposition: inline
+In-Reply-To: <fc886259870ee2a67302b22a76c4347feff461ff.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
+X-Cookie: You too can wear a nose mitten.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
-On 1/19/20 7:04 AM, Dmitry Osipenko wrote:
-> External email: Use caution opening links or attachments
->
->
-> 14.01.2020 10:24, Sowjanya Komatineni =D0=BF=D0=B8=D1=88=D0=B5=D1=82:
->
-> [snip]
->
->> diff --git a/drivers/clk/tegra/clk-tegra30.c b/drivers/clk/tegra/clk-teg=
-ra30.c
->> index 5732fdbe20db..53d1c48532ae 100644
->> --- a/drivers/clk/tegra/clk-tegra30.c
->> +++ b/drivers/clk/tegra/clk-tegra30.c
->> @@ -1221,9 +1221,8 @@ static struct tegra_clk_init_table init_table[] __=
-initdata =3D {
->>        { TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
->>        { TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
->>        { TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
->> -     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
->> -     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
->> -     { TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
->> +     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
->> +     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
->>        { TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
->>        { TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
->>        { TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
->>
-> What about to use the assigned-clock-rates in device-tree and thus to
-> remove those PLL_A entries?
+--dgjlcl3Tl+kb3YDk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Yes clock rates can be used and also PLL rate is set based on sample=20
-rate during hw_params. So this can be removed.
+On Mon, Jan 20, 2020 at 03:42:38PM +0200, Matti Vaittinen wrote:
+> Thanks to Stephen Boyd I today learned we can use platform_device_id
+> to do device and module matching for MFD sub-devices!
+>=20
+> Do device matching using the platform_device_id instead of using
+> explicit module_aliases to load modules and custom parent-data field
+> to do module loading and sub-device matching.
 
-But PLLA clock rates are not related to this patch series and also=20
-changing this needs audio function testing across all platforms and=20
-currently we don't have audio functional tests in place for older platforms=
-.
+Acked-by: Mark Brown <broonie@kernel.org>
 
-All audio clocks proper fixes and cleanup b/w clock driver and audio=20
-driver will be done separately.
+--dgjlcl3Tl+kb3YDk
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAl4nKW4ACgkQJNaLcl1U
+h9CE6wf/SicPr5c9+gMkQZUwm3Hxb3SENdi48/ATn2FNo5omIL/KDpITuK8I86Um
+5CxTmoDOD8yqPqYm0iqTCDdSOHvhADqtxbMuOnp5AWcBc99hvldAncv9sXPII5uu
+uWNY1X9+1pkjzS+oqMoyKTRyyTDkSizQ4cf1ID0Sre/sycEJ+3krqWXqmjUpOjJI
+4eIYMTYU/w9FJ9XxX+0VoFe+aofb5MVGhnmMgeZDykPsQF/mNgW+nR78PYv35V3W
+Lbbk9GL2HpTxW4qEYJz8ls5ONDLeFGDIWwnt2izeQUjOxcUH/LcUZbCiCBHp3pnt
+SDaJsaRV3pdC7m3UdeFyS/reE24y5w==
+=BuAW
+-----END PGP SIGNATURE-----
+
+--dgjlcl3Tl+kb3YDk--
