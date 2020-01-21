@@ -2,87 +2,118 @@ Return-Path: <SRS0=oBAc=3K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 656E1C2D0CE
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 22:01:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1489C2D0CE
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 23:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EC2A24673
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 22:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579644097;
-	bh=Vw+oVzFRH7aiVBIkL7l/KrKTdGDRtvFXSxYNRMFUirg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=f3mG1vk/dHRc+8N3nLin2p6B7UxuWksXEe7srzC7IGYrlN4AczsCCgfvHydGNDxx8
-	 sxQ0U16CUacf9YkJLOrpYwqautqTFPu6sk4b724JjgL3PY3S6ZjbSDHcu/VniQVdg7
-	 nNo7AnDkdraseC2L2cy8DU8pnOvcFFm8IiThAiok=
+	by mail.kernel.org (Postfix) with ESMTP id C416A24125
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 23:33:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=umn.edu header.i=@umn.edu header.b="KwASRaBX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729008AbgAUWBh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jan 2020 17:01:37 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:42967 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728904AbgAUWBg (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jan 2020 17:01:36 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 66so4413976otd.9;
-        Tue, 21 Jan 2020 14:01:36 -0800 (PST)
+        id S1725876AbgAUXdy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jan 2020 18:33:54 -0500
+Received: from mta-p7.oit.umn.edu ([134.84.196.207]:54698 "EHLO
+        mta-p7.oit.umn.edu" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726796AbgAUXdy (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jan 2020 18:33:54 -0500
+Received: from localhost (unknown [127.0.0.1])
+        by mta-p7.oit.umn.edu (Postfix) with ESMTP id 482PxY60Jzz9vKTL
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2020 23:33:53 +0000 (UTC)
+X-Virus-Scanned: amavisd-new at umn.edu
+Received: from mta-p7.oit.umn.edu ([127.0.0.1])
+        by localhost (mta-p7.oit.umn.edu [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id lusxCIrF8wee for <linux-clk@vger.kernel.org>;
+        Tue, 21 Jan 2020 17:33:53 -0600 (CST)
+Received: from mail-yw1-f70.google.com (mail-yw1-f70.google.com [209.85.161.70])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mta-p7.oit.umn.edu (Postfix) with ESMTPS id 482PxY4gTZz9vKT9
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2020 17:33:53 -0600 (CST)
+Received: by mail-yw1-f70.google.com with SMTP id o1so3823755ywl.1
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2020 15:33:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=umn.edu; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j6DJOeztgVtEUvqWLNWMSEIAkWiKOtPrRMe2WYbDoYo=;
+        b=KwASRaBXKDXBrd3U+BHyR/8BeUvKPeRm8uFBCdUu15PV4nFZfrxcAEnapBWvwV6h5W
+         njhhUvjsD4MgUa0BGYfvfctFVRhPZuAZcxTrUFaeh6QBiKd4S5lse6w6dA1+pnlsabwD
+         yTipzcOd2Fu9AzRxohQU/M2AI/WcdTp8v4TRhcBYqPt9dyk9bbuNJfQy0bOc18YSQ0vq
+         vCUP87CL/KmEyn6m40weOhp0OFwTg6hPD2zS3+hpdbRKqjRk0ezyxv4/xIPQzmzOfZQJ
+         RTZxjTmKXo5FGKDSi+cV9jWjkxpN/voa4A59+gzkf9OePy5FJ4EQWb57xdA4fNgYWjRg
+         VWRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=WLamrH1KcwfwPOF7XObLexp7z6M67I0bzxIY4IB2VTI=;
-        b=YhoBsbiJxcXZp/lcxUzSb2KCWnDAJndgQZco12qzO4sPMiXHL92cU7QUTljYZdgA3C
-         LIPdzKH7Kbz/bKT3NFJh0HupbcH32vU7/wigvwAwIh6PjnCp2LQjkaFDWgEkcTbGxgeD
-         zTR3JH2MxKQH5h+M3T10mMZ+yYoP0l7d0+SDw4otd+R/W1ArPdqa8i0ejT7ROOKtV/uv
-         49zLUiH172/wakj6++T8bDRTjiUjKjGksZJ2nUrQmvaeKBQVeathUUx08iRNjz9M7ywy
-         fYsirte6uH25XhuiHPHva2tYlVdfOuRfyHaEkYarW/d+rnPvG5vZUJq6n/BudtCPKEol
-         kRUA==
-X-Gm-Message-State: APjAAAVcFCwFt9n5GGByjDhHtFF2BhkMsYUk48J7izf3tQ0TlfTr0PE2
-        1EEI3td+q/4f07FXGbfCmw==
-X-Google-Smtp-Source: APXvYqwYUtpnZeBhFJqfIbqggpjOxvmlOgiW69hH8RKvbBjceT9T20olL0zhaSZwIuY0rUy9QYz9lw==
-X-Received: by 2002:a05:6830:4b9:: with SMTP id l25mr5244408otd.266.1579644095826;
-        Tue, 21 Jan 2020 14:01:35 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id g19sm13994048otj.1.2020.01.21.14.01.34
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=j6DJOeztgVtEUvqWLNWMSEIAkWiKOtPrRMe2WYbDoYo=;
+        b=P7cHytvM1Vt9nFaKfpm3Sw7VIMOGn3n1qiynOK4ctAdQuihzQ48ty6+1D8C6rsFLZz
+         P++tkshBF2ghL77JqvQ0S6fSxR+l05bpQScjTRsNmu/XxYl2w+BmjjFwM6ToFxpPttWd
+         K2phCqu2hxGayZ6DWBf9h7raP3hfFErnNSzPtXWxDkacJedT02ou+knRBq/cFpNk7FKr
+         EKCuTeACHM7/D2fFDebUyAhQkYeXm8SzfSO6ggDWswq9Ih+2Xw9INEYDFraRim0qkzPq
+         lhBtk9IimfFjEa6sQJys7k0lGM7i3N38LjSNnwXkfpbqbdfYKOsf+kXAKgAEq+nkwla7
+         3Nww==
+X-Gm-Message-State: APjAAAXHkSN6Ewc4n4yOzPZnDZMBTmag3iw3hgRRCL830rU0TAW4Yb2T
+        n/zLSrZVm4rZDWz5eMmgyYxeElEpj696LPyq1Fmx+osBABjzw+C/sj1QgzMmBPZ3OpBAD9ULFE2
+        CdAb7OKyXF7N1r2to6QeHd2cc
+X-Received: by 2002:a81:9e49:: with SMTP id n9mr5204347ywj.234.1579649633103;
+        Tue, 21 Jan 2020 15:33:53 -0800 (PST)
+X-Google-Smtp-Source: APXvYqwCUKRM+rhNc3HX4RueGcoUHZAG+tpxb0+FiK6A2UC7mVWzW3DIwGZJJZBJ0T0YvyGQ/ZIWzA==
+X-Received: by 2002:a81:9e49:: with SMTP id n9mr5204337ywj.234.1579649632829;
+        Tue, 21 Jan 2020 15:33:52 -0800 (PST)
+Received: from cs-u-syssec1.dtc.umn.edu (cs-u-syssec1.cs.umn.edu. [128.101.106.66])
+        by smtp.gmail.com with ESMTPSA id g65sm17650663ywd.109.2020.01.21.15.33.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 14:01:35 -0800 (PST)
-Received: (nullmailer pid 15322 invoked by uid 1000);
-        Tue, 21 Jan 2020 22:01:34 -0000
-Date:   Tue, 21 Jan 2020 16:01:34 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Anson Huang <Anson.Huang@nxp.com>
-Cc:     mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-        kernel@pengutronix.de, festevam@gmail.com,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Linux-imx@nxp.com
-Subject: Re: [PATCH V2 3/3] dt-bindings: clock: Refine i.MX8MN clock binding
-Message-ID: <20200121220134.GA15267@bogus>
-References: <1578965167-31588-1-git-send-email-Anson.Huang@nxp.com>
- <1578965167-31588-3-git-send-email-Anson.Huang@nxp.com>
+        Tue, 21 Jan 2020 15:33:52 -0800 (PST)
+From:   Aditya Pakki <pakki001@umn.edu>
+To:     pakki001@umn.edu
+Cc:     kjlu@umn.edu, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+        Tomasz Figa <tomasz.figa@gmail.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] clk: samsung: Remove redundant check in samsung_cmu_register_one
+Date:   Tue, 21 Jan 2020 17:33:49 -0600
+Message-Id: <20200121233349.28627-1-pakki001@umn.edu>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1578965167-31588-3-git-send-email-Anson.Huang@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 14 Jan 2020 09:26:07 +0800, Anson Huang wrote:
-> Refine i.MX8MN clock binding by removing useless content and
-> updating the example, it makes all i.MX8M SoCs' clock binding
-> aligned.
-> 
-> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-> ---
-> No change.
-> ---
->  .../devicetree/bindings/clock/imx8mn-clock.yaml    | 48 +---------------------
->  1 file changed, 2 insertions(+), 46 deletions(-)
-> 
+Consistent with other instances of samsung_clk_init, the check
+if ctx is NULL is redundant. The function currently does not
+return NULL.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+---
+ drivers/clk/samsung/clk.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/drivers/clk/samsung/clk.c b/drivers/clk/samsung/clk.c
+index dad31308c071..1949ae7851b2 100644
+--- a/drivers/clk/samsung/clk.c
++++ b/drivers/clk/samsung/clk.c
+@@ -356,10 +356,6 @@ struct samsung_clk_provider * __init samsung_cmu_register_one(
+ 	}
+ 
+ 	ctx = samsung_clk_init(np, reg_base, cmu->nr_clk_ids);
+-	if (!ctx) {
+-		panic("%s: unable to allocate ctx\n", __func__);
+-		return ctx;
+-	}
+ 
+ 	if (cmu->pll_clks)
+ 		samsung_clk_register_pll(ctx, cmu->pll_clks, cmu->nr_pll_clks,
+-- 
+2.20.1
+
