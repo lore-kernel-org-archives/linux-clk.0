@@ -2,104 +2,170 @@ Return-Path: <SRS0=oBAc=3K=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5148C2D0DB
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 07:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74647C2D0CE
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 08:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91E921734
-	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 07:34:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 479E92465B
+	for <linux-clk@archiver.kernel.org>; Tue, 21 Jan 2020 08:34:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="aQB9YH3t"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NB17wEru"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727453AbgAUHeI (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jan 2020 02:34:08 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56108 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725890AbgAUHeI (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jan 2020 02:34:08 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00L7Y5Ls021924;
-        Tue, 21 Jan 2020 01:34:05 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579592045;
-        bh=/8wPkVg64Sb6ToRgyES8+yOo10uiXr+Dpe7wHqu2iU4=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=aQB9YH3t70lnrVELntTJR1P5X77Mw7RJUcgFPkk91+OUVyOFTCvI9HfR37JZ2g8xB
-         g0AunY3DsIeObMfjZo8WSQmo+T036yrC/abqBo7j4vQzB4AmdS9SPMq8EotOVwm/6M
-         z2Twk3pHmEixSep+tRwfhe2MFDiAYFseqZoNAAs8=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00L7Y4nu090858
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 21 Jan 2020 01:34:05 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Tue, 21
- Jan 2020 01:34:03 -0600
-Received: from fllv0039.itg.ti.com (10.64.41.19) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Tue, 21 Jan 2020 01:34:03 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by fllv0039.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00L7Y1Og057892;
-        Tue, 21 Jan 2020 01:34:01 -0600
-Subject: Re: [PATCH v2] clk: ti: dra7: fix parent for gmac_clkctrl
-To:     Grygorii Strashko <grygorii.strashko@ti.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC:     Sekhar Nori <nsekhar@ti.com>, <linux-clk@vger.kernel.org>,
-        <linux-omap@vger.kernel.org>
-References: <20191221110004.9951-1-grygorii.strashko@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <df59b0b4-abc0-bab1-78d4-35518c295e06@ti.com>
-Date:   Tue, 21 Jan 2020 09:34:00 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1726052AbgAUIei (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jan 2020 03:34:38 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33340 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726920AbgAUIei (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jan 2020 03:34:38 -0500
+Received: by mail-wr1-f68.google.com with SMTP id b6so2174622wrq.0
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2020 00:34:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=Z+bgbxbzUTNGQI+/VZp2r0XjEBbl7TwogVArBP2mRJc=;
+        b=NB17wErunaQYRJET2RIyMRKFIfBXOSDYccrxJw+1chbepUN6k51qSO2b0fj2H5VNIJ
+         niK0al1uPosacjl4NC4DNjvnvI2LN2c/jBamqYa6fBRRUvWADYKBeBOrqVBiUldT2Lzy
+         Aca99cLF3NbSi47lFpODWO0QDcjuQOOt9kCL4aitGdEjAz60qIpgadd2CSnB9OL2atsg
+         ILEBT4I0Uf2hjT/yQ8X7UCoAO72E2yD7bUkNVuU13x21vJIsAqIt/bTbBruHft2eo0B+
+         Ydgpujt/xC+IgE0TTed2n8SJgXGypy5yIPqXbxcGbJIVz+LzEWOWhwyB1nD11h4veP7G
+         pTTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=Z+bgbxbzUTNGQI+/VZp2r0XjEBbl7TwogVArBP2mRJc=;
+        b=C8V5X+9nH0UeNpBY8OjzZjvjUegaztfgw5Fye4EK8fb56rr3UYoAKbHu/3f1Uj+Pfo
+         CQPSGm2y9LVQZZ4/zsPIaYhq4T3pe6tiUvAWCEoxak5w43MOGzqLajGje6Asft3wMHcK
+         uUnjsKHsLKUYvXdA2uenyiIolruKyKF1EpUSQnmir01s8THozRSR7JjSIoiSpuGdf9e6
+         lOZ7BffscNd7VQ7+TRRWDUm9ca0rAgn88ysHznv1hSs7w+H1PDn24irWM6CUpXWjyBtq
+         Z7xqhdQnS0Ihfv+xELwM2/RiqEAhsjUe4UGa1cL1jVwm3WmMo6QECnfVdOArPH0WR/Hu
+         CRJQ==
+X-Gm-Message-State: APjAAAUZkhziQT4po4TBiN7mi3VLQRPJLXmNMofAbdUpwqTnc1D3s+ok
+        iReiw6I2E0SJBbibERVez9pN6w==
+X-Google-Smtp-Source: APXvYqwzT7EyPaxBCnLVrqxaASOoY/qsRqiUmyFo7lStSiyLndIZNhQhrSyEYyxpC1+tK+YPTXfBJQ==
+X-Received: by 2002:a5d:6a88:: with SMTP id s8mr3855403wru.173.1579595676129;
+        Tue, 21 Jan 2020 00:34:36 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id c5sm2904792wmb.9.2020.01.21.00.34.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 00:34:35 -0800 (PST)
+Date:   Tue, 21 Jan 2020 08:34:50 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+Cc:     "broonie@kernel.org" <broonie@kernel.org>,
+        "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-gpio@ger.kernel.org" <linux-gpio@ger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Subject: Re: [PATCH v13 00/11] Support ROHM BD71828 PMIC
+Message-ID: <20200121083450.GG15507@dell>
+References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200120135446.GD6852@sirena.org.uk>
+ <70ac7b71d5d54d4b90ded032214c473569b9fae1.camel@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <20191221110004.9951-1-grygorii.strashko@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <70ac7b71d5d54d4b90ded032214c473569b9fae1.camel@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 21/12/2019 13:00, Grygorii Strashko wrote:
-> The parent clk for gmac clk ctrl has to be gmac_main_clk (125MHz) instead
-> of dpll_gmac_ck (1GHz). This is caused incorrect CPSW MDIO operation.
-> Hence, fix it.
+On Mon, 20 Jan 2020, Vaittinen, Matti wrote:
+> On Mon, 2020-01-20 at 13:54 +0000, Mark Brown wrote:
+> > On Mon, Jan 20, 2020 at 03:40:20PM +0200, Matti Vaittinen wrote:
+> > > Patch series introducing support for ROHM BD71828 PMIC
+> > > 
+> > > ROHM BD71828 is a power management IC containing 7 bucks and 7
+> > > LDOs. All
+> > > regulators can be controlled individually via I2C. Bucks 1,2,6 and
+> > > 7 can also be assigned to a "regulator group" controlled by run-
+> > > levels.
+> > 
+> > This is the *third* version of this you've sent today alone.  Please
+> > stop sending me this series until the MFD has been merged, perhaps
+> > just
+> > drop the subsystem patches while you resolve whatever the problems
+> > are
+> > that remain with the MFD?  I'm pretty much just deleting these
+> > patches
+> > without even looking at them at this point, it's a large series, it's
+> > getting huge numbers of resends and I don't think any version I've
+> > had a
+> > chance to look at before it got resent had a change in the one
+> > regulator
+> > patch that'd cause me to have to re-review it.
+
+To be fair, yours is one of the reviews we're waiting for!
+
+See [PATCH 03/11].
+
+> Sorry Mark (and all). I guess this is annoying. Why I do resend whole
+> series is that during the bd71837 work Lee instructed me to always
+> resend whole series - not just the changed patches.
+
+Which in general is the correct thing to do.  Having a large threaded
+series on the list containing in the form of subsequent
+versions gets real confusing real quick:
+
+| [PATCH v2 01/05]
+| > [PATCH v3 01/05]
+| [PATCH v2 02/05]
+| > [PATCH v3 02/05]
+| -> [PATCH v4 02/05]
+| [PATCH v2 03/05]
+| [PATCH v2 04/05]
+| > [PATCH v3 04/05]
+| [PATCH v2 05/05]
+| > [PATCH v3 05/05]
+| -> [PATCH v4 05/05]
+| --> [PATCH v5 05/05]
+| ---> [PATCH v6 05/05]
+
+However, you should wait for a suitable period per submission, to give
+each maintainer a chance to review the patches they are responsible
+for.
+
+> I sure can learn and drop some of the recipients in the future - and
+> actually I did for this last resend. Reason why you are in the
+> recipients is that Lee asked me to get your ack for patch 3/11. Same
+> goes with Stephen.
 > 
-> Fixes: dffa9051d546 ('clk: ti: dra7: add new clkctrl data')
-> Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
-
-Queued up for 5.6, thanks.
-
--Tero
-
-> ---
->   drivers/clk/ti/clk-7xx.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Linus is involved as Lee asked me to get his ack for patch 11.
 > 
-> diff --git a/drivers/clk/ti/clk-7xx.c b/drivers/clk/ti/clk-7xx.c
-> index 9dd6185a4b4e..66e4b2b9ec60 100644
-> --- a/drivers/clk/ti/clk-7xx.c
-> +++ b/drivers/clk/ti/clk-7xx.c
-> @@ -405,7 +405,7 @@ static const struct omap_clkctrl_bit_data dra7_gmac_bit_data[] __initconst = {
->   };
->   
->   static const struct omap_clkctrl_reg_data dra7_gmac_clkctrl_regs[] __initconst = {
-> -	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "dpll_gmac_ck" },
-> +	{ DRA7_GMAC_GMAC_CLKCTRL, dra7_gmac_bit_data, CLKF_SW_SUP, "gmac_main_clk" },
->   	{ 0 },
->   };
->   
+> But resending this series 3 times today is really my fault. (Well, of
+> course, I did send this and no one else). I messed up the previous
+> series.
 > 
+> I was hoping the revision history in cover letter would be a fast way
+> to determine if something relevant has changed. Additionally, I did try
+> to include statement that "no changes" in the beginning of each patches
+> for most of the versions. (for versions up-to 11 - this was omitted
+> from v12 and v13 which only did very specific changes).
+> 
+> But sure, I should try to be more careful so that I don't need to do so
+> many resends - and I really could drop most of the recipients earlier.
+> Thanks for pointing it out.
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+If dropping recipients is your tactic of choice (I wouldn't choose to
+do that myself), just ensure you keep everyone on Cc for the
+cover-letter ("[PATCH 00/00]") and maybe indicate the fact that they
+have been dropped and why ("dropped Lee since the MFD patches have
+been reviewed and are unchanged in this series").  Reason being;
+if/when a set is applied, the cover-letter is used as the Reply-to
+for sending out the pull-request to all those concerned.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
