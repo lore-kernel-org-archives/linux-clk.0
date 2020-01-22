@@ -7,63 +7,60 @@ X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA25C2D0CE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:11:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B509C2D0CE
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:17:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BA9624655
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:11:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E231B24676
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:17:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579651911;
-	bh=EIpwquWNrAe0Mtsm6fBObrPGhp5j7Siw39D+6l/OS5w=;
+	s=default; t=1579652258;
+	bh=sG4VLxMMqjJ/N4Sj4WYyY9dkazSZzty1XYWTKVEGEHI=;
 	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=x8Zacr4v0LyboNoT2WcJZE0VkyTtShZ/av4N/hu7UjzV1VGYvpK5L1NguzGZ5gWXb
-	 ax4zKZI7ia2oMsRp5FfO7zHZGDfQERpeLfmfh5duRTFcX33DaK6DIQfAEKSD47MuIj
-	 SeyBNNhgVokLPozUxpca1l4xQuZyWJdbzQMCuwHk=
+	b=JJoQOywUQbYksxoC6PTJz2ekFCB4hWBzQePgLlIu56nUJ5KguxrBKeO7hhQYiO5jD
+	 pZFGJi7g0Dfx8+M9EtN7SzNUSDi5mKM9Qv6uhOl9uNteam2zXcUR/wpZpi3PxhdQV+
+	 GPHOBgFRbY4pcnODpTJjvg8bFTpsghXBaexPo/iU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728750AbgAVALu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jan 2020 19:11:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57814 "EHLO mail.kernel.org"
+        id S1726970AbgAVARh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jan 2020 19:17:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34142 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbgAVALu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jan 2020 19:11:50 -0500
+        id S1726876AbgAVARh (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jan 2020 19:17:37 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C4622253D;
-        Wed, 22 Jan 2020 00:11:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A71BE21734;
+        Wed, 22 Jan 2020 00:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579651910;
-        bh=EIpwquWNrAe0Mtsm6fBObrPGhp5j7Siw39D+6l/OS5w=;
+        s=default; t=1579652256;
+        bh=sG4VLxMMqjJ/N4Sj4WYyY9dkazSZzty1XYWTKVEGEHI=;
         h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=AHiwvSiSslTthdBt/+ysJZHg9bQJn47JWnRjjjwmZYrZIf0jgAkj4jJf8aZc364hg
-         G3iZILTa4DbHBLIz2KeIOL0PDQiCcxGxywaxatZew8XgQxNM14Bs5NRNAytZ7hGg3J
-         s08uPEvhTpgkvbjVGdi//6/FqAnCi4NBQWE5Ry8I=
+        b=mPqZ/Sw9fiwPJzR5xU3Tss/mC79aiFkKkgdo/FjFpau6CfOF7ABWj1ZpjrE9Kkcuw
+         0JgTpKSRW2GA2Czyh6y13AMpz+wvjy7r4s1UEzIXen8FRAkDeOM8V1a4erqE/wNzIZ
+         avGq++FPczqhj8TNEdoHNlqQICgJcvL2WTe3ZnsA=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cf293816-3ef7-4b67-bd9e-be2e88bfa950.lettre@localhost>
-References: <cf293816-3ef7-4b67-bd9e-be2e88bfa950.lettre@localhost>
-Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
-        Chen-Yu Tsai <wens@csie.org>
-To:     Maxime Ripard <mripard@kernel.org>,
-        Mike Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL] Allwinner Clock Changes for 5.6
+In-Reply-To: <20200115111030.GA29329@T480>
+References: <20200115111030.GA29329@T480>
+Cc:     Fabio Estevam <festevam@gmail.com>, Stefan Agner <stefan@agner.ch>,
+        kernel@pengutronix.de, linux-imx@nxp.com,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To:     Shawn Guo <shawnguo@kernel.org>
+Subject: Re: [GIT PULL v2] i.MX clock changes for 5.6
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Tue, 21 Jan 2020 16:11:49 -0800
-Message-Id: <20200122001150.1C4622253D@mail.kernel.org>
+Date:   Tue, 21 Jan 2020 16:17:35 -0800
+Message-Id: <20200122001736.A71BE21734@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Maxime Ripard (2020-01-10 09:11:42)
-> Hi,
->=20
-> Please pull the following changes for the next release.
->=20
-> Thanks!
-> Maxime
+Quoting Shawn Guo (2020-01-15 03:10:32)
+> Changes for v2:
+>  - Drop imx8m_clk_hw_composite_core() change set, which breaks some
+>    existing DTB right away.
 >=20
 > The following changes since commit e42617b825f8073569da76dc4510bfa019b1c3=
 5a:
@@ -72,12 +69,13 @@ Quoting Maxime Ripard (2020-01-10 09:11:42)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/ta=
-gs/sunxi-clk-for-5.6
+>   git://git.kernel.org/pub/scm/linux/kernel/git/shawnguo/linux.git tags/i=
+mx-clk-5.6
 >=20
-> for you to fetch changes up to 9c232d324bfa1bb6204f6c2c5e1bea12c51cc6bd:
+> for you to fetch changes up to 9c140d9926761b0f5d329ff6c09a1540f3d5e1d3:
 >=20
->   clk: sunxi: a23/a33: Export the MIPI PLL (2020-01-04 09:45:19 +0100)
+>   clk: imx: Add support for i.MX8MP clock driver (2020-01-12 14:07:36 +08=
+00)
 >=20
 > ----------------------------------------------------------------
 
