@@ -7,66 +7,63 @@ X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F21FCC2D0CE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:11:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BA25C2D0CE
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:11:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8C62253D
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:11:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1BA9624655
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 00:11:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579651862;
-	bh=vEaqaO0ZcgQH7QRTWO7WivXhD85tdQhgAO8L6q7FUzs=;
+	s=default; t=1579651911;
+	bh=EIpwquWNrAe0Mtsm6fBObrPGhp5j7Siw39D+6l/OS5w=;
 	h=In-Reply-To:References:Cc:To:Subject:From:Date:List-ID:From;
-	b=1a9xAq/JaTcBLwA2r/sA9SAOBA01VY1MDz+NQwkZSBZU35bkmgEZ1tkMaI+P/7uup
-	 wuQRZQ0GjDfmMk0e/QRo99dlPFpJrgC8YU6svZjkCge2ZDb1vQ8ILY02Z3+qfhTWLS
-	 xHoHZq9KhEnO61z/nEL2M1+pUImi+xSYOtjyQZyA=
+	b=x8Zacr4v0LyboNoT2WcJZE0VkyTtShZ/av4N/hu7UjzV1VGYvpK5L1NguzGZ5gWXb
+	 ax4zKZI7ia2oMsRp5FfO7zHZGDfQERpeLfmfh5duRTFcX33DaK6DIQfAEKSD47MuIj
+	 SeyBNNhgVokLPozUxpca1l4xQuZyWJdbzQMCuwHk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbgAVALC (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jan 2020 19:11:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57442 "EHLO mail.kernel.org"
+        id S1728750AbgAVALu (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 21 Jan 2020 19:11:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57814 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726876AbgAVALC (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 21 Jan 2020 19:11:02 -0500
+        id S1726876AbgAVALu (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 21 Jan 2020 19:11:50 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C6B821734;
-        Wed, 22 Jan 2020 00:11:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C4622253D;
+        Wed, 22 Jan 2020 00:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579651861;
-        bh=vEaqaO0ZcgQH7QRTWO7WivXhD85tdQhgAO8L6q7FUzs=;
+        s=default; t=1579651910;
+        bh=EIpwquWNrAe0Mtsm6fBObrPGhp5j7Siw39D+6l/OS5w=;
         h=In-Reply-To:References:Cc:To:Subject:From:Date:From;
-        b=YKLC0q86QMjCp4RUxuzkhxpgzXzpPwMSQ03q5Ku+91131UdMYiV5ddfz6Jk4zB6Op
-         OsgdFyBV8vQ9i+z3tpf6zDvuKYVEyaUkiDKlTDKtZUHfcrLIS+3K4oA18p+ZUvLdgC
-         fQyFrcmfBlut70VdCaSiGL4bZK44bAEP3J3auPiw=
+        b=AHiwvSiSslTthdBt/+ysJZHg9bQJn47JWnRjjjwmZYrZIf0jgAkj4jJf8aZc364hg
+         G3iZILTa4DbHBLIz2KeIOL0PDQiCcxGxywaxatZew8XgQxNM14Bs5NRNAytZ7hGg3J
+         s08uPEvhTpgkvbjVGdi//6/FqAnCi4NBQWE5Ry8I=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j5zhj70ld.fsf@starbuckisacylon.baylibre.com>
-References: <1j5zhj70ld.fsf@starbuckisacylon.baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Michael Turquette <mturquette@baylibre.com>
-Subject: Re: [GIT PULL]: Amlogic clock updates for v5.6
+In-Reply-To: <cf293816-3ef7-4b67-bd9e-be2e88bfa950.lettre@localhost>
+References: <cf293816-3ef7-4b67-bd9e-be2e88bfa950.lettre@localhost>
+Cc:     Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>
+To:     Maxime Ripard <mripard@kernel.org>,
+        Mike Turquette <mturquette@baylibre.com>
+Subject: Re: [GIT PULL] Allwinner Clock Changes for 5.6
 From:   Stephen Boyd <sboyd@kernel.org>
 User-Agent: alot/0.8.1
-Date:   Tue, 21 Jan 2020 16:11:00 -0800
-Message-Id: <20200122001101.9C6B821734@mail.kernel.org>
+Date:   Tue, 21 Jan 2020 16:11:49 -0800
+Message-Id: <20200122001150.1C4622253D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jerome Brunet (2020-01-10 08:11:42)
-> Hi Stephen
+Quoting Maxime Ripard (2020-01-10 09:11:42)
+> Hi,
 >=20
-> Here are the updates for the amlogic clocks for this cycle.
-> The bulk of it is a clean up of the 32bits SoC clock controllers by
-> Martin.
+> Please pull the following changes for the next release.
 >=20
-> Cheers
-> Jerome
+> Thanks!
+> Maxime
 >=20
 > The following changes since commit e42617b825f8073569da76dc4510bfa019b1c3=
 5a:
@@ -75,12 +72,12 @@ Quoting Jerome Brunet (2020-01-10 08:11:42)
 >=20
 > are available in the Git repository at:
 >=20
->   git://github.com/BayLibre/clk-meson.git tags/clk-meson-v5.6-1
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git refs/ta=
+gs/sunxi-clk-for-5.6
 >=20
-> for you to fetch changes up to 64c76b31774db5a0c0ce8df13aef618912136e32:
+> for you to fetch changes up to 9c232d324bfa1bb6204f6c2c5e1bea12c51cc6bd:
 >=20
->   clk: clarify that clk_set_rate() does updates from top to bottom (2020-=
-01-07 11:31:47 +0100)
+>   clk: sunxi: a23/a33: Export the MIPI PLL (2020-01-04 09:45:19 +0100)
 >=20
 > ----------------------------------------------------------------
 
