@@ -2,91 +2,128 @@ Return-Path: <SRS0=3pyO=3L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C793C33CB6
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 16:10:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B42C5C33CB6
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 21:29:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 182612467C
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 16:10:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579709416;
-	bh=QCC5rwQVeJws+7ipSdxfGsVIlrbmKL3wMRFugklLNqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=q6YOpOZ/eKJRKtotz84zhgjlQjTv08E/Ext8GhlWHe/IRkV29KZwfmwDpvYqlNdV5
-	 AArmwofWgYkFMywqtmnYa6aVpUWGPko35cwJ46eIySw7y7o3nf7KBFkLme6JGZQa2H
-	 W/eSvi6w0dUoCDgu8kS7WJ8RSkHXnH3+n5kwnzU8=
+	by mail.kernel.org (Postfix) with ESMTP id 8014A24673
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 21:29:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="U+oDtBN2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728057AbgAVQKL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jan 2020 11:10:11 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33317 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726780AbgAVQKL (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 11:10:11 -0500
-Received: by mail-ot1-f67.google.com with SMTP id b18so6774718otp.0;
-        Wed, 22 Jan 2020 08:10:11 -0800 (PST)
+        id S1729308AbgAVV3V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jan 2020 16:29:21 -0500
+Received: from mail-vk1-f195.google.com ([209.85.221.195]:33175 "EHLO
+        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729355AbgAVV3V (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 16:29:21 -0500
+Received: by mail-vk1-f195.google.com with SMTP id i78so388509vke.0
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2020 13:29:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vTz0lK4MWaaIUm1zOO05D9tP3L8z6e5/rjhy199CFHA=;
+        b=U+oDtBN20djYD2BA6vTb8zmhw0901lDwsc+HsVWuPXXCQLBVtJR/ejKZ8cNJ3WMe4Z
+         /CN4krHpVSEHOfAhc3Jk9LW1RRz3N4rTwDvEh+yEa4T56iundLwEjbRdtG2cdSBVC303
+         v595x/352B+y2PS70/UoqhIh1JCRGHYwWJfd0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=TgzJ9ZutlYtvfAqgtYkqR4r+agw8THf+icQvm+26OKo=;
-        b=p/WSlOHZYu1J04rw2VLiAHrNeWDfljkJ0AD88iAR7BE9m9aJYrSiUGt8xmOrrfpCnV
-         ak81RU0yZ59Q8OS465x+e5q51ROOCpuFj2d0LlwgK7ItseEoneJ7cIkyVFvmABKJV2UR
-         cEXDQ2Yw4hxX2ZY8LAWLlAhx3ULq/EQr7aAklVx4iS44gt3wLUMuR61D5q+hIdr85Xyx
-         xR+6ZKdRdgr/jk5DEks6TCAbYWRblv5jtWsTMzzLUqKqTEqLpojJTwxL6IxOKS1/bkQO
-         UM+ekHlXHsOuF6NYN0X9k95JnBbPpbMCiz9Jwh8vdXGorwWEM0jXqBzmWraVA0yVMzzx
-         6GFg==
-X-Gm-Message-State: APjAAAUoS96wt9YlJFZUBJSTmsQ3wA269XIovwyLLFjgemfgg/BTpIi1
-        K5BhWtXFDxzejSCcf6eHOQ==
-X-Google-Smtp-Source: APXvYqyOIAOrAEHzXYhJhhnCgRLpP7u3uvTd0SqsZnLeBC8DI/vNn4PSdtAK3tvJcEPEa+32hJ8dFA==
-X-Received: by 2002:a05:6830:11d2:: with SMTP id v18mr8306701otq.151.1579709410683;
-        Wed, 22 Jan 2020 08:10:10 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id e65sm14911359otb.62.2020.01.22.08.10.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 22 Jan 2020 08:10:10 -0800 (PST)
-Received: (nullmailer pid 18272 invoked by uid 1000);
-        Wed, 22 Jan 2020 16:10:08 -0000
-Date:   Wed, 22 Jan 2020 10:10:08 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-Cc:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, vinod.koul@linaro.org,
-        psodagud@codeaurora.org, tsoni@codeaurora.org,
-        jshriram@codeaurora.org, tdas@codeaurora.org,
-        vnkgutta@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 5/7] dt-bindings: clock: Add SM8250 GCC clock bindings
-Message-ID: <20200122161008.GA18205@bogus>
-References: <1579217994-22219-1-git-send-email-vnkgutta@codeaurora.org>
- <1579217994-22219-6-git-send-email-vnkgutta@codeaurora.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vTz0lK4MWaaIUm1zOO05D9tP3L8z6e5/rjhy199CFHA=;
+        b=kF4JvUxXRY6K9+kySXhBoKzQtXGnl6xM980JrTAqUcgNjwT4zWMENLzHjmXvrMLcuM
+         ZvlzQ1Y4YMnkUwiUAIUDgkBTddfjU+edDBAHE8XTW9saGrX/dmHkxCrcLz0tbm3vTYe7
+         HTdQQnXfgKvOXOFufxZZtzriz6s5JuBZg/ulyIZccF3Q+cpyyMvg2Tq/8NPfHKSVbRy1
+         K5LDR0Wx5Gk84wAvW28nrkZ86+NlPdvRVgX8rfybNZeWZd7HBQ8vsnTCHV8iqDU6Nhps
+         lqpJ6JFp7/6iQisTBufQRnJJpOQcYFRsbkRJLQkL6lDleIzn7CwDmLr33GVNptJgPwSo
+         MLFg==
+X-Gm-Message-State: APjAAAVyFOnysk8u86Y03uUIV7MehkDDkdKm+wj2wx+TnTi4bZNqXHma
+        oIuw+HUrzrh8BrUj2Q4hVhD+WlTX4zA=
+X-Google-Smtp-Source: APXvYqxAyu6YpNh9f3jjelVa3fJ0P9IhEBT22tRI927UkFxr+egPcTwObjMhOrKP+orZrt7hzPHC5g==
+X-Received: by 2002:a1f:5e54:: with SMTP id s81mr7650558vkb.78.1579728559401;
+        Wed, 22 Jan 2020 13:29:19 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id t11sm8408uad.4.2020.01.22.13.29.17
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 22 Jan 2020 13:29:17 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id t12so366158vso.13
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2020 13:29:17 -0800 (PST)
+X-Received: by 2002:a67:8704:: with SMTP id j4mr4193371vsd.106.1579728557149;
+ Wed, 22 Jan 2020 13:29:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1579217994-22219-6-git-send-email-vnkgutta@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1577421760-1174-1-git-send-email-tdas@codeaurora.org> <1577421760-1174-4-git-send-email-tdas@codeaurora.org>
+In-Reply-To: <1577421760-1174-4-git-send-email-tdas@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Wed, 22 Jan 2020 13:29:06 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=UxTDkwr8Z43TGXjpU6bKRN3ns2BdShKehAga4gkLUpLQ@mail.gmail.com>
+Message-ID: <CAD=FV=UxTDkwr8Z43TGXjpU6bKRN3ns2BdShKehAga4gkLUpLQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/3] clk: qcom: Add modem clock controller driver for SC7180
+To:     Taniya Das <tdas@codeaurora.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Rob Herring <robh@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Jan 2020 15:39:52 -0800, Venkata Narendra Kumar Gutta wrote:
-> From: Taniya Das <tdas@codeaurora.org>
-> 
-> Add device tree bindings for global clock controller on SM8250 SoCs.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-> ---
->  .../devicetree/bindings/clock/qcom,gcc.yaml        |   1 +
->  include/dt-bindings/clock/qcom,gcc-sm8250.h        | 271 +++++++++++++++++++++
->  2 files changed, 272 insertions(+)
->  create mode 100644 include/dt-bindings/clock/qcom,gcc-sm8250.h
-> 
+Hi,
 
-Acked-by: Rob Herring <robh@kernel.org>
+On Thu, Dec 26, 2019 at 8:43 PM Taniya Das <tdas@codeaurora.org> wrote:
+>
+> Add support for the modem clock controller found on SC7180
+> based devices. This would allow modem drivers to probe and
+> control their clocks.
+>
+> Signed-off-by: Taniya Das <tdas@codeaurora.org>
+> ---
+>  drivers/clk/qcom/Kconfig      |  9 +++++
+>  drivers/clk/qcom/Makefile     |  1 +
+>  drivers/clk/qcom/gcc-sc7180.c | 70 ++++++++++++++++++++++++++++++++
+>  drivers/clk/qcom/mss-sc7180.c | 94 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 174 insertions(+)
+>  create mode 100644 drivers/clk/qcom/mss-sc7180.c
+>
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index 3b33ef1..5d4b6e5 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -245,6 +245,15 @@ config SC_GCC_7180
+>           Say Y if you want to use peripheral devices such as UART, SPI,
+>           I2C, USB, UFS, SDCC, etc.
+>
+> +config SC_MSS_7180
+> +       tristate "SC7180 MSS Clock Controller"
+> +       select SC_GCC_7180
+> +       help
+> +         Support for the MSS clock controller on Qualcomm Technologies, Inc
+> +         SC7180 devices.
+> +         Say Y if you want to use the MSS branch clocks of the MSS clock
+> +         controller to reset the MSS subsystem.
+
+I didn't review your whole patch, but I was skimming through things
+and trying to figure out what the heck a "MSS" clock was for a while
+before I finally thought to look at the commit message and figured out
+that it probably means "modem subsystem".  I assume you're going to
+spin this patch somewhat soon.  When you do, can you please expand the
+"MSS" acronym somewhere in your KConfig description?
+
+Thanks!
+
+-Doug
