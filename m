@@ -2,120 +2,90 @@ Return-Path: <SRS0=3pyO=3L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25066C32771
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 07:32:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35018C2D0DB
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 10:04:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB09424672
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 07:32:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF58B2465A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 10:04:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6u8yHtu"
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="2Spclnwq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726170AbgAVHcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jan 2020 02:32:19 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:51909 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725883AbgAVHcT (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 02:32:19 -0500
-Received: by mail-wm1-f68.google.com with SMTP id t23so2053567wmi.1
-        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2020 23:32:18 -0800 (PST)
+        id S1729336AbgAVKE4 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jan 2020 05:04:56 -0500
+Received: from mail-wm1-f42.google.com ([209.85.128.42]:39424 "EHLO
+        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729074AbgAVKE4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 05:04:56 -0500
+Received: by mail-wm1-f42.google.com with SMTP id 20so6458422wmj.4
+        for <linux-clk@vger.kernel.org>; Wed, 22 Jan 2020 02:04:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=3MXVPLATCXULyeCR7yaqGELOWx3DHy+QYePsTz+P4LE=;
-        b=q6u8yHtuE47K1Z+hOqI7fLNWAfN2zOXLqfJMXGS+qwUnyuQOIYGoErhstEMs+YJjJ+
-         7H7p179b9vES5VbNh2SI7WbThfykts9DTNZL9NZwumSnxBARX2NNLT/tC+00s+qnjn9f
-         yatrsjkK2Ul4mnQjvqDtcspDvs3MJgTOHY6f4ycA9z5NbnAbKY/X5AwW4ukCFfAi+doo
-         srBvVbdcLfYU6hDUadUC1VRXHwgNUiwQt7N9CsL8uspZaqoeGEawUoluNJcddYmg5w3O
-         PhNqQ50JYOpqbE/OZiyxkeuP9zuaXJGphq1NujKqluXnWiIazUb3BGM6mqCHejspJn2W
-         wZIA==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xr55sisUQJBKj6Q4LrYEYaq2XUN1tVNpifr1uUk54Rc=;
+        b=2SpclnwqwF+ZtOGLn5/Pzqi457wTIzOMugjwrvqe2e6PJR797j6ImTx5WFNp7pJf+D
+         0oCYEuyjwuXAOyrBfb48iDlGtYXJ9iOcGW5YYffBgwRYC3gqYgczwyagZCk8Du3/RZRe
+         sVU4/NdlRN4MU59vussJBc4x1Wxp+5eXR12w1xgIxs+sZbBjapfCxeJOd659ECntnogA
+         u8/25V+tAYwHIh2eXheHPeMrHlgoEqotUdWOHcpexUj1fjvxMfVZXxE0C6H+AXpm4AWf
+         83HNZuCMrZVH9ziWGen75wPXIo5Zg+UUTeq6R7TbJBbiJ4BcYL5FzY3amnjSAs80R+iQ
+         ONPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=3MXVPLATCXULyeCR7yaqGELOWx3DHy+QYePsTz+P4LE=;
-        b=Rc2Lkc4LI+qI9I7Q9t2gdXxsOpy5O2VA5LbsvXEM1UEGNwYDb9QyzOyKLcBVPnPrnY
-         PlRSw4QBebpH8s2Boo6tk+tt0C3DVHCHC+vDKJNhEV/dFp1EwD9evcnJ3Vy1Fc4x1LnK
-         mlT6VuisgsP/kU/4Yl0CJKpyfQl+RWffOW9TjxpBE6P07w62K9YgrVfi+wWqsEIjplJO
-         VUUNvV12c5dTOiW9zsVXGgjrXvj7py8U28NYVa7jQ0rhyfFPomITXllPx3m+iKS+FZqI
-         e68Dh7e8JLRhtjamG8ro99vVYKH+Xvp+I+l2koPkbK8KoLyZUgdpszpLVJ9FN8kg7AqE
-         ZZnA==
-X-Gm-Message-State: APjAAAVeRvbDhiz7gsLF2Pebz6pPxyDlJvuyiZiRjo68wFTzVoFHx7XN
-        7xtI1QhX4M8fBmH7d66JQUJbug==
-X-Google-Smtp-Source: APXvYqyjPCF7y6EzjM6jOvdrbLjyyz0IpFGGxBG/vUyUMqvtv8ynraUNgAr0S7wDG10A8dZIYfxAQw==
-X-Received: by 2002:a05:600c:24d1:: with SMTP id 17mr1346004wmu.136.1579678337359;
-        Tue, 21 Jan 2020 23:32:17 -0800 (PST)
-Received: from dell ([2.27.35.227])
-        by smtp.gmail.com with ESMTPSA id k82sm2822489wmf.10.2020.01.21.23.32.15
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=xr55sisUQJBKj6Q4LrYEYaq2XUN1tVNpifr1uUk54Rc=;
+        b=ZLQCJKVHvpyhsEPAvyD8agQasBbAosHMaDXzMJByIW58q/monTsPkAa5GuY002p4MH
+         rVZFoS+QuhiXFAMHRSCgWVS/SeDIeVmvcR1MbEcdpnwGcU38xha9eaC8ph/kktSMoas9
+         G2gYSo8j0GlstJIe6es3PiCUmIKencusXUzjDut/PiaP5mm2THEvY0hr0zCmyuL6xz3p
+         ovi5bpEaZleEIcSvYchlA3UktKRq3nQwdTzbBqrxn5Kml1QhJy1Hx+NJYWFnsSYkMVLZ
+         M+Du10mBQLOW+Dh2hQZC9mik3pgOlOs8TOQTUFcqwJiEns8m+Jv7voJFe4l5ctNMEAsY
+         heFA==
+X-Gm-Message-State: APjAAAVcstKtrRivBkZigVBX2Gmp6YCYp6nRCILIeRsksgxdSD8DKsbf
+        4CK7kaqUsLaI+JD1rTQzuib1xw==
+X-Google-Smtp-Source: APXvYqxz2tZXmYV+E9Ld+AOXUw6DT+T8VYNXacbGMy0FhKPCjM0ksmIp44lJOlHnO0vFIuRXZGibVg==
+X-Received: by 2002:a1c:3b0a:: with SMTP id i10mr2197195wma.177.1579687494505;
+        Wed, 22 Jan 2020 02:04:54 -0800 (PST)
+Received: from starbuck.baylibre.local (laubervilliers-658-1-213-31.w90-63.abo.wanadoo.fr. [90.63.244.31])
+        by smtp.googlemail.com with ESMTPSA id l3sm52237648wrt.29.2020.01.22.02.04.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 23:32:16 -0800 (PST)
-Date:   Wed, 22 Jan 2020 07:32:30 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
-        mazziesaccount@gmail.com, Stephen Boyd <sboyd@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-clk@vger.kernel.org, linux-gpio@ger.kernel.org
-Subject: Re: [PATCH v13 00/11] Support ROHM BD71828 PMIC
-Message-ID: <20200122073230.GK15507@dell>
-References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
- <20200120135446.GD6852@sirena.org.uk>
- <20200121083658.GH15507@dell>
- <20200121161512.GC4656@sirena.org.uk>
+        Wed, 22 Jan 2020 02:04:53 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>, linux-clk@vger.kernel.org
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-amlogic@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] clk: meson: gxbb: audio clock updates
+Date:   Wed, 22 Jan 2020 11:04:48 +0100
+Message-Id: <20200122100451.2443153-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.24.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200121161512.GC4656@sirena.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Tue, 21 Jan 2020, Mark Brown wrote:
+This patcheset provides updates related to the audio peripheral clocks
+It adds the peripheral clock required by the internal audio dac
+and reorganize the AIU clocks into a hierarchy to better reflect the
+behavior of the SoC.
 
-> On Tue, Jan 21, 2020 at 08:36:58AM +0000, Lee Jones wrote:
-> > On Mon, 20 Jan 2020, Mark Brown wrote:
-> 
-> > > This is the *third* version of this you've sent today alone.  Please
-> > > stop sending me this series until the MFD has been merged, perhaps just
-> > > drop the subsystem patches while you resolve whatever the problems are
-> > > that remain with the MFD?
-> 
-> > > I'm pretty much just deleting these patches
-> > > without even looking at them at this point
-> 
-> > Don't do that please.  You are one of the reasons he's resending.
-> 
-> Me not looking at something can't reasonably be triggering the volume of
-> resends this series is getting, we're talking multiple times a week
-> here.  For example looking at the changelog in the cover letter the
-> thing that triggered the resends yesterday was converting a macro to an
-> enum, most of the others seem to have been changes for individual
-> drivers.
-> 
-> > Please review Patch 3, or you will block the submission.
-> 
-> That's the patch
-> 
->    mfd: rohm PMICs - use platform_device_id to match MFD sub-devices
-> 
-> which given the title hadn't really registered as needing any
-> attention...
+Jerome Brunet (3):
+  dt-bindings: clk: meson: add the gxl internal dac gate
+  clk: meson: gxbb: add the gxl internal dac gate
+  clk: meson: gxbb: set audio output clock hierarchy
 
-If I chose patches to review based on subject alone, I would miss a
-high percentage of reviews.  Maybe your mail/manual/brain filters
-need to be improved.
+ drivers/clk/meson/gxbb.c              | 21 +++++++++++++--------
+ drivers/clk/meson/gxbb.h              |  2 +-
+ include/dt-bindings/clock/gxbb-clkc.h |  1 +
+ 3 files changed, 15 insertions(+), 9 deletions(-)
 
 -- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+2.24.1
+
