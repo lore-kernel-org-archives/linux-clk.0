@@ -2,111 +2,120 @@ Return-Path: <SRS0=3pyO=3L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4423AC32771
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 06:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25066C32771
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 07:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D82C2465A
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 06:44:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB09424672
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 07:32:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q6u8yHtu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725883AbgAVGoP (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 22 Jan 2020 01:44:15 -0500
-Received: from mailgate1.rohmeurope.com ([178.15.145.194]:64732 "EHLO
-        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725871AbgAVGoP (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 01:44:15 -0500
-X-AuditID: c0a8fbf4-199ff70000001fa6-4c-5e27ef3d4744
-Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
-        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id 33.38.08102.D3FE72E5; Wed, 22 Jan 2020 07:44:13 +0100 (CET)
-Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
- WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
- 14.03.0439.000; Wed, 22 Jan 2020 07:44:09 +0100
-From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
-To:     "broonie@kernel.org" <broonie@kernel.org>
-CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-gpio@ger.kernel.org" <linux-gpio@ger.kernel.org>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "lee.jones@linaro.org" <lee.jones@linaro.org>,
-        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+        id S1726170AbgAVHcT (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jan 2020 02:32:19 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:51909 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725883AbgAVHcT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 02:32:19 -0500
+Received: by mail-wm1-f68.google.com with SMTP id t23so2053567wmi.1
+        for <linux-clk@vger.kernel.org>; Tue, 21 Jan 2020 23:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=3MXVPLATCXULyeCR7yaqGELOWx3DHy+QYePsTz+P4LE=;
+        b=q6u8yHtuE47K1Z+hOqI7fLNWAfN2zOXLqfJMXGS+qwUnyuQOIYGoErhstEMs+YJjJ+
+         7H7p179b9vES5VbNh2SI7WbThfykts9DTNZL9NZwumSnxBARX2NNLT/tC+00s+qnjn9f
+         yatrsjkK2Ul4mnQjvqDtcspDvs3MJgTOHY6f4ycA9z5NbnAbKY/X5AwW4ukCFfAi+doo
+         srBvVbdcLfYU6hDUadUC1VRXHwgNUiwQt7N9CsL8uspZaqoeGEawUoluNJcddYmg5w3O
+         PhNqQ50JYOpqbE/OZiyxkeuP9zuaXJGphq1NujKqluXnWiIazUb3BGM6mqCHejspJn2W
+         wZIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=3MXVPLATCXULyeCR7yaqGELOWx3DHy+QYePsTz+P4LE=;
+        b=Rc2Lkc4LI+qI9I7Q9t2gdXxsOpy5O2VA5LbsvXEM1UEGNwYDb9QyzOyKLcBVPnPrnY
+         PlRSw4QBebpH8s2Boo6tk+tt0C3DVHCHC+vDKJNhEV/dFp1EwD9evcnJ3Vy1Fc4x1LnK
+         mlT6VuisgsP/kU/4Yl0CJKpyfQl+RWffOW9TjxpBE6P07w62K9YgrVfi+wWqsEIjplJO
+         VUUNvV12c5dTOiW9zsVXGgjrXvj7py8U28NYVa7jQ0rhyfFPomITXllPx3m+iKS+FZqI
+         e68Dh7e8JLRhtjamG8ro99vVYKH+Xvp+I+l2koPkbK8KoLyZUgdpszpLVJ9FN8kg7AqE
+         ZZnA==
+X-Gm-Message-State: APjAAAVeRvbDhiz7gsLF2Pebz6pPxyDlJvuyiZiRjo68wFTzVoFHx7XN
+        7xtI1QhX4M8fBmH7d66JQUJbug==
+X-Google-Smtp-Source: APXvYqyjPCF7y6EzjM6jOvdrbLjyyz0IpFGGxBG/vUyUMqvtv8ynraUNgAr0S7wDG10A8dZIYfxAQw==
+X-Received: by 2002:a05:600c:24d1:: with SMTP id 17mr1346004wmu.136.1579678337359;
+        Tue, 21 Jan 2020 23:32:17 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id k82sm2822489wmf.10.2020.01.21.23.32.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 21 Jan 2020 23:32:16 -0800 (PST)
+Date:   Wed, 22 Jan 2020 07:32:30 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mazziesaccount@gmail.com, Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-gpio@ger.kernel.org
 Subject: Re: [PATCH v13 00/11] Support ROHM BD71828 PMIC
-Thread-Topic: [PATCH v13 00/11] Support ROHM BD71828 PMIC
-Thread-Index: AQHVz5cqdcXL24/7G02IFCD76W21L6fzgmcAgAAHbgCAAX6sAIABJjkA
-Date:   Wed, 22 Jan 2020 06:44:06 +0000
-Message-ID: <9609ad80c432360a5b6dd41c32ac2a249973863b.camel@fi.rohmeurope.com>
+Message-ID: <20200122073230.GK15507@dell>
 References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
-         <20200120135446.GD6852@sirena.org.uk>
-         <70ac7b71d5d54d4b90ded032214c473569b9fae1.camel@fi.rohmeurope.com>
-         <20200121131100.GB4656@sirena.org.uk>
-In-Reply-To: <20200121131100.GB4656@sirena.org.uk>
-Accept-Language: en-US, de-DE
-Content-Language: de-DE
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [213.255.186.46]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A00D6CF821472246A702C0A57C10946F@de.rohmeurope.com>
-Content-Transfer-Encoding: base64
+ <20200120135446.GD6852@sirena.org.uk>
+ <20200121083658.GH15507@dell>
+ <20200121161512.GC4656@sirena.org.uk>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA01SW0gUURjmzMzuHi8Tx/WyJ7tAA2Y3tU2DLTR8iNh6KLNeDHIdc3Ild1dm
-        V0uhsNLSzcIiqZak8FpS2HrBC0oqlpuBReRGatamVlpqYWVWWDM73p7mm+/yfz+cH5LKs/JA
-        mGK0cLyRTWXknlTbnT/2kKjJ4PjNFa9CNEWuYbnm7Y9HQHP1byWh+VYwKNMUFnTKNDfLHZRm
-        1mmnohXayj47oW2yvVFoa6ry5doBZ4tcO1WzOkZ2yCsykbVkHEhJNobtSPDSdzVmk2mPVSe+
-        5A2DbPArwAo8IEYReNBZIbMCT6hEvQC3FQ3P/TgAbhq5SFgBhHIUia2vFWLAD4Xgot+lctFD
-        ojYCv/x63e3xRRr8uSBD8mzDxbN1MgnvwhV5LW5MoSA8lFspFzGN9uK6nmo3r0QDALdep0Ts
-        gbbgptpbbh6gVTg/e4IQMYlUuObDtExaGuGylmekhP3x6NDsHM/g1hkXJa5DovW4ujlMikbj
-        yskWSsJr8NULLoW0gg9+cmOYKgQBtiUNtsW0bUnatiRtW5K+DWRVABvYlNRk1sKpQ3kuPZQ3
-        6Q3C54jJUAOkR/3eCP517O4ABAQdYDkkGH+6whEcr1yWaErK1LNmvY5PT+XMHQBDkvGjb58J
-        ilfSSWxmFseb5qUVkGJUdLDr8mElEruOcVwax8+rKyFkMJ0wLgz14blk7sTRlFTLokxAD3G4
-        Z6CfmTMmcTybbtHrxPPQmYX7ECVvoTdiQojT5jTWILBStBtshIWjxSUk7CwuLyGVlNFk5AJV
-        dLJoRaJVn25cKBoDKggYX/qBqHoLl70wZ0yoIISK45vWihUWdlEKzAZbQ58X5lyaaP90sj9O
-        EXsmLkql693tnOl6WnJtqEd9LqvTfj8nxpGhizgfdba9eOpn2Z7+9zvrS9s+ejH+5SPvYvpg
-        fT4ZUnul4VSnNxfwMHd6++cydc/PiHvh43ft6hcNzafWzbRzhCucq57+EXt628FBNNLF090m
-        7b79qvIkB0OZ9ax6A8mb2f/8fO7llgMAAA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20200121161512.GC4656@sirena.org.uk>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-DQpPbiBUdWUsIDIwMjAtMDEtMjEgYXQgMTM6MTEgKzAwMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
-IE9uIE1vbiwgSmFuIDIwLCAyMDIwIGF0IDAyOjIxOjA5UE0gKzAwMDAsIFZhaXR0aW5lbiwgTWF0
-dGkgd3JvdGU6DQo+ID4gT24gTW9uLCAyMDIwLTAxLTIwIGF0IDEzOjU0ICswMDAwLCBNYXJrIEJy
-b3duIHdyb3RlOg0KPiA+ID4gc3RvcCBzZW5kaW5nIG1lIHRoaXMgc2VyaWVzIHVudGlsIHRoZSBN
-RkQgaGFzIGJlZW4gbWVyZ2VkLA0KPiA+ID4gcGVyaGFwcw0KPiA+ID4ganVzdA0KPiA+ID4gZHJv
-cCB0aGUgc3Vic3lzdGVtIHBhdGNoZXMgd2hpbGUgeW91IHJlc29sdmUgd2hhdGV2ZXIgdGhlDQo+
-ID4gPiBwcm9ibGVtcw0KPiA+ID4gYXJlDQo+ID4gPiB0aGF0IHJlbWFpbiB3aXRoIHRoZSBNRkQ/
-ICBJJ20gcHJldHR5IG11Y2gganVzdCBkZWxldGluZyB0aGVzZQ0KPiA+IEkgd2FzIGhvcGluZyB0
-aGUgcmV2aXNpb24gaGlzdG9yeSBpbiBjb3ZlciBsZXR0ZXIgd291bGQgYmUgYSBmYXN0DQo+ID4g
-d2F5DQo+ID4gdG8gZGV0ZXJtaW5lIGlmIHNvbWV0aGluZyByZWxldmFudCBoYXMgY2hhbmdlZC4g
-QWRkaXRpb25hbGx5LCBJIGRpZA0KPiA+IHRyeQ0KPiANCj4gQWxsIEknbSBsb29raW5nIGF0IG1v
-c3RseSBpcyB0byBzZWUgaWYgbXkgQWNrZWQtYnkgdGFnIHdlbnQgYXdheSBkdWUNCj4gdG8NCj4g
-Y2hhbmdlcywgSSBtaWdodCBsb29rIGF0IHRoZSByZXN0IG9mIGEgc2VyaWVzIGlmIEkgaGF2ZSB0
-aW1lIGJ1dCBpZg0KPiBJJ3ZlDQo+IGNoZWNrZWQgdGhlIGJpdCB0aGF0J3MgcmVsZXZhbnQgdG8g
-bWUgSSdtIG5vdCBnb2luZyB0byB3b3JyeSB0b28gbXVjaA0KPiBhYm91dCB0aGUgcmVzdCBvZiBp
-dC4NCj4gDQo+ID4gQnV0IHN1cmUsIEkgc2hvdWxkIHRyeSB0byBiZSBtb3JlIGNhcmVmdWwgc28g
-dGhhdCBJIGRvbid0IG5lZWQgdG8NCj4gPiBkbyBzbw0KPiA+IG1hbnkgcmVzZW5kcyAtIGFuZCBJ
-IHJlYWxseSBjb3VsZCBkcm9wIG1vc3Qgb2YgdGhlIHJlY2lwaWVudHMNCj4gPiBlYXJsaWVyLg0K
-PiA+IFRoYW5rcyBmb3IgcG9pbnRpbmcgaXQgb3V0Lg0KPiANCj4gV2hhdCBJIHdhcyBzdWdnZXN0
-aW5nIHdhcyBtb3JlIGp1c3QgZHJvcHBpbmcgdGhlIGRyaXZlciBiaXRzIHdoaWxlDQo+IHRoZQ0K
-PiBNRkQgZ2V0cyByZXNvbHZlZCwgSSdtIG5ldmVyIDEwMCUgc3VyZSB3aHkgYnV0IHRoZSBjb3Jl
-IE1GRCBvZnRlbg0KPiB0YWtlcw0KPiBhIGxvbmcgdGltZSB0byBmaWd1cmUgb3V0IGFzIHNlZW1z
-IHRvIGJlIHRoZSBjYXNlIGhlcmUuICBUaGVyZSBtaWdodA0KPiBiZQ0KPiBhcyBtYW55IGluZGl2
-aWR1YWwgcmVzZW5kcyBvdmVyYWxsIGJ1dCBlYWNoIG1haW50YWluZXIgd2lsbCBzZWUgZmV3ZXIN
-Cj4gb2YNCj4gdGhlbS4NCg0KSG1tLiBJIGNhbiBkbyB0aGF0IGFzIHdlbGwgLSBvciBqdXN0IHJl
-c2VuZCB0aGUgY292ZXItbGV0dGVyICsgY2hhbmdlZA0KcGF0Y2hlcyB1bnRpbGwgSSBnZXQgYWxs
-IHRoZSBhY2tzIGFuZCB0aGVuIGRvIHNlbmQgdGhlIChob3BlZnVsbHkpDQonZmluYWwnIHZlcnNp
-b24gd2l0aCBhbGwgcGF0Y2hlcyBmb3IgbWVyZ2luZy4gQnV0IHRoaXMgbmVlZHMgdG8gd29yaw0K
-Zm9yIExlZSB0b28uIEkgY291bGQgYWxzbyBhZGQgcmVjaXBpZW50cyBtYW51YWxseSBwZXIgcGF0
-Y2ggc28gdGhhdCB0aGUNCndob2xlIHNlcmllcyB3b3VsZCBub3QgYmUgc2VudCB0byBhbGwgLSBp
-bnRlcmVzdGVkIHBlcnNvbnMgY2FuIGFsd2F5cw0KYXNrIG1lIHRvIGluY2x1ZGUgdGhlbSB0byB0
-aGUgd2hvbGUgc2VyaWVzIC0gb3IgbG9vayBpdCB1cCBmcm9tDQpsb3JlLmtlcm5lbC5vcmcgLSB3
-aGF0IGV2ZXIgd29ya3MgYmVzdCB3aXRoIHlvdSBndXlzLiBCdXQgSSBuZWVkIGNvbW1vbg0KdW5k
-ZXJzdGFuZGluZyBmcm9tIHlvdSByZWdhcmRpbmcgd2hhdCBpcyB0aGUgYmVzdCB3YXkuDQoNCkkg
-YmVsaWV2ZSBJIHdpbGwgaW5pdGlhdGUgdGhlIG5leHQgbmV3IFJPSE0gUE1JQyBwYXRjaCBzZXJp
-ZXMgc29tZXdoZXJlDQpuZWFyIHN1bW1lciAtIGFuZCBwb3NzaWJseSBhIGNoYXJnZXIgY2hpcCBz
-ZXJpZXMgYmVmb3JlIHRoYXQuIEkgd2lsbA0KdHJ5IHRvIGNoYW5nZSBteSB3YXlzIGZvciB0aG9z
-ZSBpZiB5b3Ugd2lsbCBmaW5kIGEgY29tbW9uIHVuZGVyc3RhbmRpbmcNCnJlZ2FyZGluZyB0aGUg
-YmVzdCB3YXkuDQoNCkJlc3QgcmVnYXJkcw0KCU1hdHRpDQo=
+On Tue, 21 Jan 2020, Mark Brown wrote:
+
+> On Tue, Jan 21, 2020 at 08:36:58AM +0000, Lee Jones wrote:
+> > On Mon, 20 Jan 2020, Mark Brown wrote:
+> 
+> > > This is the *third* version of this you've sent today alone.  Please
+> > > stop sending me this series until the MFD has been merged, perhaps just
+> > > drop the subsystem patches while you resolve whatever the problems are
+> > > that remain with the MFD?
+> 
+> > > I'm pretty much just deleting these patches
+> > > without even looking at them at this point
+> 
+> > Don't do that please.  You are one of the reasons he's resending.
+> 
+> Me not looking at something can't reasonably be triggering the volume of
+> resends this series is getting, we're talking multiple times a week
+> here.  For example looking at the changelog in the cover letter the
+> thing that triggered the resends yesterday was converting a macro to an
+> enum, most of the others seem to have been changes for individual
+> drivers.
+> 
+> > Please review Patch 3, or you will block the submission.
+> 
+> That's the patch
+> 
+>    mfd: rohm PMICs - use platform_device_id to match MFD sub-devices
+> 
+> which given the title hadn't really registered as needing any
+> attention...
+
+If I chose patches to review based on subject alone, I would miss a
+high percentage of reviews.  Maybe your mail/manual/brain filters
+need to be improved.
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
