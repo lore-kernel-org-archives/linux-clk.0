@@ -2,92 +2,84 @@ Return-Path: <SRS0=3pyO=3L=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7798C2D0CE
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 01:49:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552FEC32771
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 06:15:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7905E24677
-	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 01:49:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579657767;
-	bh=9KnnXX2/OrzdO6JBb/OFQS7ivsYk0n5NvjqHRcGYyHo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=NxPDllAPgAZT/ThVjm6y1MxwR6jK7MIfXUfXPcpc99JJVM0lwmJLsYW/BIrSOMQ76
-	 Se+emmQW70ub1cmMk/rCO4kfo4Qx8qTOKL9PrclV40vb08eg97LYfn7awf3090otoi
-	 paq8HCL59kaNldAD0MiBFgdGVOStnYFWa+Y74PmA=
+	by mail.kernel.org (Postfix) with ESMTP id 22FEA2465A
+	for <linux-clk@archiver.kernel.org>; Wed, 22 Jan 2020 06:15:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726968AbgAVBt1 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 21 Jan 2020 20:49:27 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:46902 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726605AbgAVBt1 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 21 Jan 2020 20:49:27 -0500
-Received: by mail-ot1-f68.google.com with SMTP id r9so4827154otp.13;
-        Tue, 21 Jan 2020 17:49:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=0e4U3NGNiyOXEG5BTPMvy4a3ChT8Vgud6kZ1y3h76T8=;
-        b=ImuCN6wTfseC10MhjhiwUEO1Ol2i+Gsa47caf140+M4gis1HZqfhg7b6KUyKNna1hV
-         sRn4UJaOstYRk38oGikeVoY/tUhLrVY57OPKWoblj9/AhVVvQw+E/GXK0+U9xLjzuPFu
-         iWb+oxdWkVJ4zQFTnhxR/zoHe/DB7P79rcqeSDqHJoT72+ehygtrGlP/PrHQJqjdcfc4
-         VxF/9D94CYhh+cU122o1uQ0mi+ssnPCV7aIEGanjjy8xCOwJ7ZqeWEitkET2LI6pDDp5
-         RixI4O8kWu059KRj+8usPRAMnC0dhba8mesH1eBCuPz5czgpeYfZEoddJsV+anw40ilb
-         ofKw==
-X-Gm-Message-State: APjAAAW3jFssxpKt2htRIflYLQGFIKIX7uCwXBzs0DZ8WpHAPBp/8Kgb
-        0Ij7K9kBiutwRLSo232wjw==
-X-Google-Smtp-Source: APXvYqyzugwvcOCdxnqZ6MUiET7xvXEGYjJRave83G82DjEs9h7Al45XqkIl1dKWyPMOnsVxk/NrNg==
-X-Received: by 2002:a9d:de9:: with SMTP id 96mr5825817ots.222.1579657766225;
-        Tue, 21 Jan 2020 17:49:26 -0800 (PST)
-Received: from rob-hp-laptop (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.gmail.com with ESMTPSA id 15sm12537842oin.5.2020.01.21.17.49.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 21 Jan 2020 17:49:25 -0800 (PST)
-Received: (nullmailer pid 4806 invoked by uid 1000);
-        Wed, 22 Jan 2020 01:49:24 -0000
-Date:   Tue, 21 Jan 2020 19:49:24 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Horia =?utf-8?Q?Geant=C4=83?= <horia.geanta@nxp.com>
-Cc:     Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-        Abel Vesa <abel.vesa@nxp.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        NXP Linux Team <linux-imx@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Leonard Crestez <leonard.crestez@nxp.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: imx8mn: add SNVS clock
-Message-ID: <20200122014924.GA4746@bogus>
-References: <20200116073718.4475-1-horia.geanta@nxp.com>
- <20200116073718.4475-2-horia.geanta@nxp.com>
+        id S1725870AbgAVGPp (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 22 Jan 2020 01:15:45 -0500
+Received: from mailgate1.rohmeurope.com ([178.15.145.194]:63654 "EHLO
+        mailgate1.rohmeurope.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725861AbgAVGPp (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 22 Jan 2020 01:15:45 -0500
+X-AuditID: c0a8fbf4-183ff70000001fa6-fb-5e27e88f0d7e
+Received: from smtp.reu.rohmeu.com (will-cas001.reu.rohmeu.com [192.168.251.177])
+        by mailgate1.rohmeurope.com (Symantec Messaging Gateway) with SMTP id E7.08.08102.F88E72E5; Wed, 22 Jan 2020 07:15:43 +0100 (CET)
+Received: from WILL-MAIL001.REu.RohmEu.com ([fe80::2915:304f:d22c:c6ba]) by
+ WILL-CAS001.REu.RohmEu.com ([fe80::d57e:33d0:7a5d:f0a6%16]) with mapi id
+ 14.03.0439.000; Wed, 22 Jan 2020 07:15:39 +0100
+From:   "Vaittinen, Matti" <Matti.Vaittinen@fi.rohmeurope.com>
+To:     "broonie@kernel.org" <broonie@kernel.org>
+CC:     "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-gpio@ger.kernel.org" <linux-gpio@ger.kernel.org>,
+        "sboyd@kernel.org" <sboyd@kernel.org>,
+        "lee.jones@linaro.org" <lee.jones@linaro.org>,
+        "linus.walleij@linaro.org" <linus.walleij@linaro.org>
+Subject: Re: [PATCH v13 03/11] mfd: rohm PMICs - use platform_device_id to
+ match MFD sub-devices
+Thread-Topic: [PATCH v13 03/11] mfd: rohm PMICs - use platform_device_id to
+ match MFD sub-devices
+Thread-Index: AQHVz5d8MFFmc8BR0UaMUG6QhONxDaf1QveAgADj0wA=
+Date:   Wed, 22 Jan 2020 06:15:37 +0000
+Message-ID: <f6d2b9b22bd9b9022ef24e2a2ef516da11d0cdbd.camel@fi.rohmeurope.com>
+References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
+         <fc886259870ee2a67302b22a76c4347feff461ff.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
+         <20200121164015.GF4656@sirena.org.uk>
+In-Reply-To: <20200121164015.GF4656@sirena.org.uk>
+Accept-Language: en-US, de-DE
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [213.255.186.46]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7EA19C4391A4E547AE6C6DEEA8EC07DF@de.rohmeurope.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20200116073718.4475-2-horia.geanta@nxp.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Brightmail-Tracker: H4sIAAAAAAAAA01Sa0hTURzv3Ht3d51evU5tp9lzYMtKTfHDKgmJsPVFgj4lNL3q1c3cg7v5
+        KiqNlJzzkSjUdJDP2ZBk60NpBmJKSwSRSkrMWompwVIsQg3r3q6vT+d3/r/XgfMnUOkdXE7o
+        DBaGNdD5ClyCDXStuWNq55SaE+4nCapG3wyu+vRrGKga/jgR1ZJtWqSqsw2JVM0dXky1PuHG
+        ksVq56QbUffaP4rVHlclrp6a6MfVy579F0VpgUmZtKXwki7XEHcmI1B7t8GPm1rxYo+1HCkF
+        NtwKAghIJcI55zhiBRJCSr0DsKa+FxUuXgDbn9aKrYAgcCoJWj+IeUM4FQMbV9twXoNSAwh8
+        u3gf4YkwKhOuV0xtiLLg0OMvG/gUbPV4AY8xKgquOr6jPCapVNgwN4YJZaMA2kbtCF8WQCVA
+        90oSrwHUPlhZ6v+fj1Iy6Jn9LRJeTcH2/jFUwBFw/uv6xlwBX6z4MD4GpaJhT1+cYE2Grqou
+        TMCHYEOVTyw8IRS+fjCD1YHd9h0N9m23fYfbvsNt3+F+CEQuAPW0Lj+XtjDxsSxTEMsatXru
+        yDLqPUD41Z/PwN/BC4MAIcAg2EMgigiy06vUSIMzjdklWtqsTWcL8hnzIIAEqggnH96O0kjJ
+        bLrkGsMaN6lIAlPISKXv3hUpxXddZRgTw26yewlCAUnlLBcayjK5THGOLt+yTSNEAB8ukYeb
+        GUM2w9IFFm06vx/pZm5BeCqI6zXydtJsovXcVLCOgGNE3byjFSWGHB2tqBQzGA2MXEbu+sZJ
+        KV6qLTBsFS0AGQEUYeQYHxTErfZWzgJXgXAVRccP8xUWepuSl4KOpUeXxQuZOSk/wMS0JCXj
+        zcG8shupzTLaManSqJ/fUpbNVN9MCIwO9rTYvBXv21r0y0fqmxznyx2x3eHOxc7CWJc/Ly29
+        aO3sqNnUc/J0ZPd1S9WyJS+kbDxkbMQpelkdbDrX9Hk4gtGkBa+29R0oqwlbWXpFxYT0Jfqx
+        /gwFZtbS8UdR1kz/A1Ry+3qXAwAA
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Thu, 16 Jan 2020 09:37:16 +0200, =?UTF-8?q?Horia=20Geant=C4=83?= wrote:
-> Add macro for the SNVS clock of the i.MX8MN.
-> 
-> Signed-off-by: Horia Geantă <horia.geanta@nxp.com>
-> ---
->  include/dt-bindings/clock/imx8mn-clock.h | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-
-Acked-by: Rob Herring <robh@kernel.org>
+DQpPbiBUdWUsIDIwMjAtMDEtMjEgYXQgMTY6NDAgKzAwMDAsIE1hcmsgQnJvd24gd3JvdGU6DQo+
+IE9uIE1vbiwgSmFuIDIwLCAyMDIwIGF0IDAzOjQyOjM4UE0gKzAyMDAsIE1hdHRpIFZhaXR0aW5l
+biB3cm90ZToNCj4gPiBUaGFua3MgdG8gU3RlcGhlbiBCb3lkIEkgdG9kYXkgbGVhcm5lZCB3ZSBj
+YW4gdXNlDQo+ID4gcGxhdGZvcm1fZGV2aWNlX2lkDQo+ID4gdG8gZG8gZGV2aWNlIGFuZCBtb2R1
+bGUgbWF0Y2hpbmcgZm9yIE1GRCBzdWItZGV2aWNlcyENCj4gPiANCj4gPiBEbyBkZXZpY2UgbWF0
+Y2hpbmcgdXNpbmcgdGhlIHBsYXRmb3JtX2RldmljZV9pZCBpbnN0ZWFkIG9mIHVzaW5nDQo+ID4g
+ZXhwbGljaXQgbW9kdWxlX2FsaWFzZXMgdG8gbG9hZCBtb2R1bGVzIGFuZCBjdXN0b20gcGFyZW50
+LWRhdGENCj4gPiBmaWVsZA0KPiA+IHRvIGRvIG1vZHVsZSBsb2FkaW5nIGFuZCBzdWItZGV2aWNl
+IG1hdGNoaW5nLg0KPiANCj4gQWNrZWQtYnk6IE1hcmsgQnJvd24gPGJyb29uaWVAa2VybmVsLm9y
+Zz4NCg0KVGhhbmtzIGZvciB0YWtpbmcgYSBsb29rIGF0IHRoaXMuIEFwcHJlY2lhdGVkISA6KQ0K
+DQpCciwNCglNYXR0aQ0K
