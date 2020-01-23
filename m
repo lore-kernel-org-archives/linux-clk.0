@@ -6,43 +6,43 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AA8BC33CAA
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 22:58:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66C68C33CAA
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 22:58:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3506721D7E
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 22:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2751521D7E
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 22:58:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579820319;
-	bh=+vO8N90FVF3xL+pii7NOSq2FtfZu7Erby6E+v2V6kuQ=;
+	s=default; t=1579820326;
+	bh=nqyAn+k//cppuY1vQFi8Y79KM+6wFbIlIZtyopOiBL0=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:List-ID:From;
-	b=QEOTlpqlfgZUrU5h2gA6MlAksh/lG/5rtUFb3Au8JnwpEJdmOOkc8DgiEhxAnEFIX
-	 IMAAU20c5dJi/IY04Ir7Eg0gEpVX+yGW9eB7s1/KNEbrth6ROEEpGawgOYyBw+2hsA
-	 pj1EXI0xBzx75Q/sWc5P4MqQDvkXS6nmGxxLHB2k=
+	b=i2wgU3hu0cx1XJ4buUDMQzuHcWOQbHXvxqp/XQ1J7oBgcYOeabvcxMvTWU2fdOpxP
+	 h+bNd+VZBTHMLQh+vrkC/xHmb36Cc4iYZ/FfxfIlR+R9eeebPjPZnEYUF1qLK8U89f
+	 Lhs22f+/q1l1hpB2dnewz2AIo3ci1otNCHLVo72Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729413AbgAWW6i (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jan 2020 17:58:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40002 "EHLO mail.kernel.org"
+        id S1729588AbgAWW6p (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jan 2020 17:58:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40126 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729149AbgAWW6i (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 23 Jan 2020 17:58:38 -0500
+        id S1729149AbgAWW6p (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Thu, 23 Jan 2020 17:58:45 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D2EEC20718;
-        Thu, 23 Jan 2020 22:58:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E7EF021D7D;
+        Thu, 23 Jan 2020 22:58:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579820317;
-        bh=+vO8N90FVF3xL+pii7NOSq2FtfZu7Erby6E+v2V6kuQ=;
+        s=default; t=1579820325;
+        bh=nqyAn+k//cppuY1vQFi8Y79KM+6wFbIlIZtyopOiBL0=;
         h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-        b=2Zns5AlZe0m8NGkGX2ryWE8GWo44d309PozzHP/DAv5lMlw3goyDdq1WwrzUdjnOE
-         TPQa27nTpE7YHTFCdOj54Y55C9SUqf+9qGKRBd52neO9DK7/VXIamyGiHvmJTQ9Gro
-         UX1/GxHwEpg83VQ64d70xfk4XQhnfKXWmQ2iM6S8=
+        b=Gh6n8JsETgFNjzbgwg67lZty0nl3M912MhrZIypM7/DqPCfpMwjF2OH0jD9vB+Jua
+         tmd3fr+FTt70fX7rXxRYqfahPPhfnbGrxykQBuJKPVgMeH++RStiGJqYONW6epYMUS
+         qXFdXQmTi/kv2bNCXfZgew0W3ve+snA+iLo69iSM=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1575527759-26452-2-git-send-email-rajan.vaja@xilinx.com>
-References: <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com> <1575527759-26452-1-git-send-email-rajan.vaja@xilinx.com> <1575527759-26452-2-git-send-email-rajan.vaja@xilinx.com>
-Subject: Re: [PATCH v3 1/6] dt-bindings: clock: Add bindings for versal clock driver
+In-Reply-To: <1575527759-26452-3-git-send-email-rajan.vaja@xilinx.com>
+References: <1574415814-19797-1-git-send-email-rajan.vaja@xilinx.com> <1575527759-26452-1-git-send-email-rajan.vaja@xilinx.com> <1575527759-26452-3-git-send-email-rajan.vaja@xilinx.com>
+Subject: Re: [PATCH v3 2/6] clk: zynqmp: Extend driver for versal
 From:   Stephen Boyd <sboyd@kernel.org>
 Cc:     linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -53,19 +53,20 @@ To:     Rajan Vaja <rajan.vaja@xilinx.com>, gustavo@embeddedor.com,
         mturquette@baylibre.com, nava.manne@xilinx.com, robh+dt@kernel.org,
         tejas.patel@xilinx.com
 User-Agent: alot/0.8.1
-Date:   Thu, 23 Jan 2020 14:58:37 -0800
-Message-Id: <20200123225837.D2EEC20718@mail.kernel.org>
+Date:   Thu, 23 Jan 2020 14:58:44 -0800
+Message-Id: <20200123225844.E7EF021D7D@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Rajan Vaja (2019-12-04 22:35:54)
-> Add documentation to describe Xilinx Versal clock driver
-> bindings.
+Quoting Rajan Vaja (2019-12-04 22:35:55)
+> Add Versal compatible string to support Versal
+> binding.
 >=20
+> Signed-off-by: Jolly Shah <jolly.shah@xilinx.com>
+> Signed-off-by: Michal Simek <michal.simek@xilinx.com>
 > Signed-off-by: Rajan Vaja <rajan.vaja@xilinx.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
 > ---
 
 Applied to clk-next
