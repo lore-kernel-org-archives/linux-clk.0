@@ -2,153 +2,118 @@ Return-Path: <SRS0=1eCt=3M=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6FB5C2D0DB
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 13:30:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 104BAC33CAF
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 15:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C03E24684
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 13:30:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBCC021835
+	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 15:18:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jOo1+tg+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726771AbgAWNa6 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jan 2020 08:30:58 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:36741 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726729AbgAWNa6 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jan 2020 08:30:58 -0500
-Received: by mail-ua1-f66.google.com with SMTP id y3so1007358uae.3;
-        Thu, 23 Jan 2020 05:30:57 -0800 (PST)
+        id S1729095AbgAWPSk (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jan 2020 10:18:40 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36756 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728803AbgAWPSh (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jan 2020 10:18:37 -0500
+Received: by mail-lj1-f196.google.com with SMTP id r19so3882716ljg.3
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jan 2020 07:18:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=mCFNwhKyUI4S3r26cfgULDrw3EJWqsF8R9tqqcBvSXA=;
+        b=jOo1+tg+YOASCAdm2mEQZmYmerWuu4htxLzxplyg2I+p/zeRB/2Cc0tch7urATps8B
+         UlV+0mLYJcjxCWVIHaLOIbjgvbLZfWnALAyNX4tTygAHh2tgNdKyeiP19Udf4sVie3q+
+         jMV0CqQTgWay3Y086QrGLB+ypQ0xLmFG40mxJ30Mvyrw/HZ7SgA2CCnDxa9eXTOn05xK
+         KmyQ4jnJ25+hCr/RRYPOAfJl139AYJRpSPtNpyQGjL+a5HfOns62PvpEcaWrTXf8qmo1
+         WUZ6mheVhmkxXXjBxVhOAEe8EeHikrWHlzmMihgy4xHHjLPShVjQzTwzHnFV7PmkUKdc
+         Txew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=0+L/2IhzPeQzIOBWlkZ5pb6nsfpL9PHovfEkpJKJ33U=;
-        b=tfZ8xdMXne2j6zAYSePkCxIvjgsESJ2alS2OrK1gvvUe9qj08TPmb2CWYRjOH4kDYk
-         5F9VtLFQ7thkAFH3CCL3vWBHT6A7gLnxA0Nbbja98kpXZr+kTkjdY76QpSo1MI4vCJZc
-         uKzyYnbxDVbakiYl4bT9+fVvK1wh+o6vPDu7U0p/sFEbejl+OMXF8bHr4bcYPEj9PU4B
-         AuHHjGqDLJf5mKDhzH3dY/2VE/BkQGWEojVeCXJkLXJ8Mvz3nksoipmWzSb3v1sjLZXD
-         T7C93+Y4F41CKy8YfFiVBs8JXOPccmP6ApM+ZTPLR7kWtdbkoy3vL5TzWkU/KS5ql1RN
-         4iLw==
-X-Gm-Message-State: APjAAAUdT1rWfzN9PaDYU97tRW+uJFtX1HEJVnpdpPRqgvSEHxaZQGdA
-        e3UAZX4vGa2w59BI7jnXipfFWX+AI3Gc2SgGzBe+j0UU
-X-Google-Smtp-Source: APXvYqyRlraHNmDMZdZCjBusJQDVjLX1k8LZn1KXe8p0/vt6EjbszONOt8LLgQR0Jfc3uHWQsHfSAGvWLUwy+B2lRik=
-X-Received: by 2002:a9d:7984:: with SMTP id h4mr11516407otm.297.1579785825019;
- Thu, 23 Jan 2020 05:23:45 -0800 (PST)
+        bh=mCFNwhKyUI4S3r26cfgULDrw3EJWqsF8R9tqqcBvSXA=;
+        b=oXOB3khkNIpm2l+agjd8BJllgamBI6VQJ8NwO/LSYrJeet3+ofzPsUUT9cnEtZBaLt
+         IK6fc7JGQizvOsUniy2VkeXisRprre+RSRlsnTdanKZsH0IyBXKVrCQ+RyQ9r+nWMfi/
+         a/DNnoqidJhz8diro2pUSGPDx0lZuYe2w6gq1orikcyovjkCRm0jAbQw6GCiIwu+9cHR
+         HmEDkHdahmDhEpkQps8Had5JogpkaJqxfeUY/UjlTsKFiCphs0aCFhR0dv5ygNpUtVW3
+         SYSyMetlUXklJM+jBdsVdrcdhd6ouMC1BB8+qeCR6tURhL+SZb7ADkA+MW6cLkqzfIPD
+         03og==
+X-Gm-Message-State: APjAAAU5VwUtY6iuXvAjtu++bEnADKCxYGM3JcqISuHs8FbBeDCg4xPJ
+        O7nEghyop9zjpeC+Cy08YgOXUU9Gxv2UBU2kurljEA==
+X-Google-Smtp-Source: APXvYqwxOS3uccWns345t1Pc28bC+N8TaVTRa/IwkWxxj8DKKJcCwl+5B3q5OOArxG8Kn0UP3937k+GW4ED2Ip6Qexc=
+X-Received: by 2002:a2e:9143:: with SMTP id q3mr23227353ljg.199.1579792715062;
+ Thu, 23 Jan 2020 07:18:35 -0800 (PST)
 MIME-Version: 1.0
-References: <56c7b6d5-1248-15bd-8441-5d80557455b3@free.fr> <CAMuHMdX3kZoEfCeGamreeWq0-Tu2+Mw8MYEbRUZV8wBS+e2K=A@mail.gmail.com>
- <8f1f01a1-b0c7-77d5-7d01-dd53811fa217@free.fr> <CAMuHMdW=0Qf=bdE8Vy75wySRV5wzWhgM=-vhXjc0RhLGwomF_g@mail.gmail.com>
- <91058d8f-7075-6baa-6131-cce1ccd160a6@free.fr>
-In-Reply-To: <91058d8f-7075-6baa-6131-cce1ccd160a6@free.fr>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 23 Jan 2020 14:23:33 +0100
-Message-ID: <CAMuHMdWVisqq-rXi4aB2woKb9rHbXoQjWcbhN4zcf3F2+jhewg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2] clk: Use a new helper in managed functions
-To:     Marc Gonzalez <marc.w.gonzalez@free.fr>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+References: <cover.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+ <c8ed62a1efa0c6fde93a8a08fe6bc74a450a34f3.1579249511.git.matti.vaittinen@fi.rohmeurope.com>
+ <20200117102127.GD15507@dell>
+In-Reply-To: <20200117102127.GD15507@dell>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 23 Jan 2020 16:18:23 +0100
+Message-ID: <CACRpkdbj-yjuqc+=nCKRiAANjGFFHxk_ZprO8zztpRKhmXQtDw@mail.gmail.com>
+Subject: Re: [PATCH v10 11/13] gpio: bd71828: Initial support for ROHM BD71828
+ PMIC GPIOs
+To:     Lee Jones <lee.jones@linaro.org>
+Cc:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Dan Murphy <dmurphy@ti.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
         Michael Turquette <mturquette@baylibre.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         linux-clk <linux-clk@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Guenter Roeck <linux@roeck-us.net>
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        linux-rtc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Marc,
-
-On Thu, Jan 23, 2020 at 1:18 PM Marc Gonzalez <marc.w.gonzalez@free.fr> wrote:
-> On 23/01/2020 11:32, Geert Uytterhoeven wrote:
-> > On Thu, Jan 23, 2020 at 11:13 AM Marc Gonzalez wrote:
-> >> A limitation of devm_add_action is that it stores the void *data argument "as is".
-> >> Users cannot pass the address of a struct on the stack. devm_add() addresses that
-> >> specific use-case, while being a minimal wrapper around devres_alloc + devres_add.
-> >> (devm_add_action adds an extra level of indirection.)
+On Fri, Jan 17, 2020 at 11:21 AM Lee Jones <lee.jones@linaro.org> wrote:
+> On Fri, 17 Jan 2020, Matti Vaittinen wrote:
+>
+> > ROHM BD71828 PMIC contains 4 pins which can be configured by OTP
+> > to be used for general purposes. First 3 can be used as outputs
+> > and 4.th pin can be used as input. Allow them to be controlled
+> > via GPIO framework.
 > >
-> > I didn't mean the advantage of devm_add() over devm_add_action(),
-> > but the advantage of dr_release_t, which has a device pointer.
->
-> I'm confused...
->
->         void *devres_alloc(dr_release_t release, size_t size, gfp_t gfp);
->         int devm_add_action(struct device *dev, void (*action)(void *), void *data);
->
-> devres_alloc() expects a dr_release_t argument; devm_add() is a thin wrapper
-> around devres_alloc(); ergo devm_add() expects that dr_release_t argument.
-
-OK.
-
-> devm_add_action() is a "heavier" wrapper around devres_alloc() which defines
-> a "private" release function which calls a user-defined "action".
-> (i.e. the extra level of indirection I mentioned above.)
->
-> I don't understand the question about the advantage of dr_release_t.
-
-OK. So devm_add_action() is the odd man out there.
-
-> >>>> +       void *data = devres_alloc(func, size, GFP_KERNEL);
-> >>>> +
-> >>>> +       if (data) {
-> >>>> +               memcpy(data, arg, size);
-> >>>> +               devres_add(dev, data);
-> >>>> +       } else
-> >>>> +               func(dev, arg);
-> >>>> +
-> >>>> +       return data;
-> >>>
-> >>> Why return data or NULL, instead of 0 or -Efoo, like devm_add_action()?
-> >>
-> >> My intent is to make devm_add a minimal wrapper (it even started out as
-> >> a macro). As such, I just transparently pass the result of devres_alloc.
-> >>
-> >> Do you see an advantage in processing the result?
+> > The driver assumes all of the pins are configured as GPIOs and
+> > trusts that the reserved pins in other OTP configurations are
+> > excluded from control using "gpio-reserved-ranges" device tree
+> > property (or left untouched by GPIO users).
 > >
-> > There are actually two questions to consider here:
-> >   1. Is there a use case for returning the data pointer?
-> >      I.e. will the caller ever use it?
-> >   2. Can there be another failure mode than out-of-memory?
-> >      Changing from NULL to ERR_PTR() later means that all callers
-> >      need to be updated.
+> > Typical use for 4.th pin (input) is to use it as HALL sensor
+> > input so that this pin state is toggled when HALL sensor detects
+> > LID position change (from close to open or open to close). PMIC
+> > HW implements some extra logic which allows PMIC to power-up the
+> > system when this pin is toggled. Please see the data sheet for
+> > details of GPIO options which can be selected by OTP settings.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> > Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 >
-> I think I see your point. You're saying it's not good to kick the can down
-> the road, because callers won't know what to do with the pointer.
-
-Exactly.
-
-> Actually, I'm in the same boat as these users. I looked at
-> devres_alloc -> devres_alloc_node -> alloc_dr -> kmalloc_node_track_caller -> __do_kmalloc
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 >
-> Basically, the result is NULL when something went wrong, but the actual
-> error condition is not propagated. It could be:
-> 1) check_add_overflow() finds an overflow
-> 2) size > KMALLOC_MAX_CACHE_SIZE
-> 3) kmalloc_slab() or kasan_kmalloc() fail
-> 4) different errors on the CONFIG_NUMA path
->
-> Basically, if lower-level functions don't propagate errors, it's not
-> easy for a wrapper to do something sensible... ENOMEM looks reasonable
-> for kmalloc-related failures.
+> Linus, Is that an Ack?
 
-Indeed.  If devm_add() would return an error code, callers could just check
-for error, and propagate the error code, without a need for hardcoding -ENOMEM.
+Yes! Feel free to merge this.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+Yours,
+Linus Walleij
