@@ -1,63 +1,63 @@
-Return-Path: <SRS0=1eCt=3M=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no
-	version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS,USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3877DC35240
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 23:56:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BDCCC2D0CE
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 04:34:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF2D021835
-	for <linux-clk@archiver.kernel.org>; Thu, 23 Jan 2020 23:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD7332077C
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 04:34:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqdOAPHf"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZLeNoJj9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729832AbgAWX4w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 23 Jan 2020 18:56:52 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41254 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729277AbgAWX4w (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jan 2020 18:56:52 -0500
-Received: by mail-lj1-f196.google.com with SMTP id h23so353215ljc.8;
-        Thu, 23 Jan 2020 15:56:50 -0800 (PST)
+        id S1729017AbgAXEe3 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 23 Jan 2020 23:34:29 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:39414 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728799AbgAXEe3 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 23 Jan 2020 23:34:29 -0500
+Received: by mail-lf1-f66.google.com with SMTP id t23so300396lfk.6;
+        Thu, 23 Jan 2020 20:34:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
+        h=subject:from:to:cc:references:message-id:date:user-agent
          :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=GBpSA+S70IveCTtKIGEFtQpKccngEqKX7VJI5QTlR44=;
-        b=gqdOAPHfQJs7X0ZXIxK83uE8YRY1mng4HqdwWXVTp8ByvyNa6ZheKj2RHCguW3xOwZ
-         PUmnNIdiPmp1TjkbXzo4bwZ21v8NE7OR0rDTqT9O9iEZXXL3EeCNmepJpMkkLj+lNpYn
-         CQ7ZTNuFfLU3mLP1kjo5813jL7L7BEakXcMcWSmqmSrMMDSWau3h0+JuO/z7/fxIARFz
-         Gxho2oK8ZnU+aweBDeR8YBIB01ggNKfDr+9S2Xwfc0/R4iOCDAeWFTxyampSwIweBf3g
-         ylJKbNGhspngo3OUllSFtZxk0fQ6RgE64tZVOJOXmIcNo6z2VE3UZM5OXmDXIEE23tpJ
-         6L0g==
+        bh=iRMdTlWpB/i07RpBQjACVTfdEIqwZ2lTL+v769LcM3k=;
+        b=ZLeNoJj9lm0TqcCEmDTQPBhM4MiG15+CetdBuDpzpbSxShkmzI5SwGqj59jyQFvOlU
+         pRT57mMmEo1vymIWW78BJm0TDGiHlSEQp1SPfjt7isJp6VHa5PMa9hhr0IArUZPAiKnd
+         qrb/4pmjor6Nu/yDJ3YHmaD0gjH+Ch6PM/JoXoVhT0x4z2HP/dRluVtMESb5dTfNIU36
+         /BO/L6or0QUemYBYVDEHyq3S1+7G6BxcdiCRCNfl9SPcsqahMkXJjsiX+70vOKxIanYz
+         nf2Ntft1yg40iZ/6/QzgSmAE9vCRqwWQoUQsopiNXS5KQ3XqtMSzmg1Ghv1dW4cR/Sjk
+         hVJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=GBpSA+S70IveCTtKIGEFtQpKccngEqKX7VJI5QTlR44=;
-        b=ThwgBCnCAaZxwT9cifvUcUMiNz5K5z+XDDaSFK23ZKUmljC0f7s4446PA/nNTyb+2g
-         DiuAVLRrHc/gBbYOfI7d4OTF3EXUiMr3mtPr5xsw3WZsPE1nxVte57o41AdOyB3SMzmf
-         5h0ZZ6VMCDtd3NjgDoxXEzO64HO2H8VtLsMKhcYOd6rZEswuJc4b5obSgHo9VqhVb4vY
-         Xa9qxKmvl+mutP8AaYPH/+AnvCZLWiDmh2pNfX2gw0mtlN7sQmAp2klavPxPDEPqWIPs
-         a3DvcTZcUh4f9xoZrgNWpV9i6auF8HJNZF1PuZfaOziNX15OBM+mG7Mu1csH2+ykFmfW
-         Dvvw==
-X-Gm-Message-State: APjAAAWNkP8SPsvYxVcP2pPY+LPrDPakpYBO3EGWI1RF2hZxMD7qdTUS
-        LP22RPfSoG1mn9VcltVoCBDPQkBB
-X-Google-Smtp-Source: APXvYqxoTeKZ48pGOHQTsLFqutvtN4hgoSviLPAKKeyV9HeVxPD93R0HyzG+SjwU+HzCapUUY5PaPQ==
-X-Received: by 2002:a2e:3619:: with SMTP id d25mr481791lja.231.1579823809203;
-        Thu, 23 Jan 2020 15:56:49 -0800 (PST)
+        bh=iRMdTlWpB/i07RpBQjACVTfdEIqwZ2lTL+v769LcM3k=;
+        b=Y1V4VFzudyDxd1L6da9QUfvWdsZhHvDbLaUrCi1+NxQ9C/u5DINQ1Xrmg0nDWUxv1D
+         UwgFeRE6rZ0+MsTAR75YTOFcFfMG71wQ1McSczG3rr1w8v6XWhlKktegGqTpLdEAjB6M
+         IGMcP/luoza1wh6rqYqQwAEkj22AYc2ywCW7YFw9Ao1O4MlQ8PCaOIcW19QYhMDRzGbN
+         0wSKnYKkXy6RiyY2UobanQ7jDVj8vbo8IpNziR+nno8j4krWKhWKUdHGrnIputh7FGIm
+         6KCbuhWNWRXidX7NaBwMlSKKWkxEX31ylBvmrSVXyixq60WN3R3PS4V9JM9dJHSNCw80
+         nwwQ==
+X-Gm-Message-State: APjAAAV7RnBimkRwwTZauEoqu4DwQ0CXwphnBGp5FYKi5jFtv/a8I5ru
+        Yqp1ScCDeWrlm3i6JGJoe3TX6jUr
+X-Google-Smtp-Source: APXvYqwj3uUlHz/aP9yCFgv4v7F5Xp4Uwp0yDO0OIk5+TdT9VBsVV6BI/tG2l19oYhPq/DM988vGGg==
+X-Received: by 2002:ac2:544f:: with SMTP id d15mr529764lfn.126.1579840465779;
+        Thu, 23 Jan 2020 20:34:25 -0800 (PST)
 Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id y2sm188582ljm.28.2020.01.23.15.56.47
+        by smtp.googlemail.com with ESMTPSA id y5sm2069884lfl.6.2020.01.23.20.34.24
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 23 Jan 2020 15:56:48 -0800 (PST)
-Subject: Re: [PATCH v8 11/22] ASoC: tegra: Add fallback implementation for
- audio mclk
+        Thu, 23 Jan 2020 20:34:25 -0800 (PST)
+Subject: Re: [PATCH v8 22/22] clk: tegra: Remove audio clocks configuration
+ from clock driver
+From:   Dmitry Osipenko <digetx@gmail.com>
 To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
         thierry.reding@gmail.com, jonathanh@nvidia.com, broonie@kernel.org,
         lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com,
@@ -69,14 +69,16 @@ Cc:     pdeschrijver@nvidia.com, pgaikwad@nvidia.com, spujar@nvidia.com,
         devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <1578986667-16041-1-git-send-email-skomatineni@nvidia.com>
- <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <aef36b46-789a-c44e-4cd1-9d4183435ba9@gmail.com>
-Date:   Fri, 24 Jan 2020 02:56:45 +0300
+ <1578986667-16041-23-git-send-email-skomatineni@nvidia.com>
+ <d69fe7a8-71cc-c560-a567-f89b936753ad@gmail.com>
+ <9765b723-33af-9863-72c9-8094203c8cb8@nvidia.com>
+ <f2506b91-0199-f2a5-ea8c-ace7b651b443@gmail.com>
+Message-ID: <e6013c72-4ceb-aa3f-50bf-187794f85b66@gmail.com>
+Date:   Fri, 24 Jan 2020 07:34:24 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
  Thunderbird/68.3.0
 MIME-Version: 1.0
-In-Reply-To: <1578986667-16041-12-git-send-email-skomatineni@nvidia.com>
+In-Reply-To: <f2506b91-0199-f2a5-ea8c-ace7b651b443@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
@@ -85,64 +87,52 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-14.01.2020 10:24, Sowjanya Komatineni пишет:
-> mclk is from clk_out_1 which is part of Tegra PMC block and pmc clocks
-> are moved to Tegra PMC driver with pmc as clock provider and using pmc
-> clock ids.
+21.01.2020 19:57, Dmitry Osipenko пишет:
+> 21.01.2020 19:19, Sowjanya Komatineni пишет:
+>>
+>> On 1/19/20 7:04 AM, Dmitry Osipenko wrote:
+>>> External email: Use caution opening links or attachments
+>>>
+>>>
+>>> 14.01.2020 10:24, Sowjanya Komatineni пишет:
+>>>
+>>> [snip]
+>>>
+>>>> diff --git a/drivers/clk/tegra/clk-tegra30.c
+>>>> b/drivers/clk/tegra/clk-tegra30.c
+>>>> index 5732fdbe20db..53d1c48532ae 100644
+>>>> --- a/drivers/clk/tegra/clk-tegra30.c
+>>>> +++ b/drivers/clk/tegra/clk-tegra30.c
+>>>> @@ -1221,9 +1221,8 @@ static struct tegra_clk_init_table init_table[]
+>>>> __initdata = {
+>>>>        { TEGRA30_CLK_UARTC, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>>>>        { TEGRA30_CLK_UARTD, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>>>>        { TEGRA30_CLK_UARTE, TEGRA30_CLK_PLL_P, 408000000, 0 },
+>>>> -     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 1 },
+>>>> -     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 1 },
+>>>> -     { TEGRA30_CLK_EXTERN1, TEGRA30_CLK_PLL_A_OUT0, 0, 1 },
+>>>> +     { TEGRA30_CLK_PLL_A, TEGRA30_CLK_CLK_MAX, 564480000, 0 },
+>>>> +     { TEGRA30_CLK_PLL_A_OUT0, TEGRA30_CLK_CLK_MAX, 11289600, 0 },
+>>>>        { TEGRA30_CLK_I2S0, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>>>>        { TEGRA30_CLK_I2S1, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>>>>        { TEGRA30_CLK_I2S2, TEGRA30_CLK_PLL_A_OUT0, 11289600, 0 },
+>>>>
+>>> What about to use the assigned-clock-rates in device-tree and thus to
+>>> remove those PLL_A entries?
+>>
+>> Yes clock rates can be used and also PLL rate is set based on sample
+>> rate during hw_params. So this can be removed.
+>>
+>> But PLLA clock rates are not related to this patch series and also
+>> changing this needs audio function testing across all platforms and
+>> currently we don't have audio functional tests in place for older
+>> platforms.
+>>
+>> All audio clocks proper fixes and cleanup b/w clock driver and audio
+>> driver will be done separately.
 > 
-> New device tree uses clk_out_1 from pmc clock provider as audio mclk.
-> 
-> So, this patch adds implementation for mclk fallback to extern1 when
-> retrieving mclk returns -ENOENT to be backward compatible of new device
-> tree with older kernels.
-> 
-> Fixes: 110147c8c513 ("ASoC: tegra: always use clk_get() in utility code")
-> 
-> Tested-by: Dmitry Osipenko <digetx@gmail.com>
-> Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  sound/soc/tegra/tegra_asoc_utils.c | 18 +++++++++++++++---
->  1 file changed, 15 insertions(+), 3 deletions(-)
-> 
-> diff --git a/sound/soc/tegra/tegra_asoc_utils.c b/sound/soc/tegra/tegra_asoc_utils.c
-> index 536a578e9512..74d3ffe7e603 100644
-> --- a/sound/soc/tegra/tegra_asoc_utils.c
-> +++ b/sound/soc/tegra/tegra_asoc_utils.c
-> @@ -191,9 +191,21 @@ int tegra_asoc_utils_init(struct tegra_asoc_utils_data *data,
->  
->  	data->clk_cdev1 = clk_get(dev, "mclk");
->  	if (IS_ERR(data->clk_cdev1)) {
-> -		dev_err(data->dev, "Can't retrieve clk cdev1\n");
-> -		ret = PTR_ERR(data->clk_cdev1);
-> -		goto err_put_pll_a_out0;
-> +		if (PTR_ERR(data->clk_cdev1) != -ENOENT) {
-> +			dev_err(data->dev, "Can't retrieve clk cdev1\n");
-> +			ret = PTR_ERR(data->clk_cdev1);
-> +			goto err_put_pll_a_out0;
-> +		}
-> +
-> +		/* Fall back to extern1 */
-> +		data->clk_cdev1 = clk_get(dev, "extern1");
-> +		if (IS_ERR(data->clk_cdev1)) {
-> +			dev_err(data->dev, "Can't retrieve clk extern1\n");
-> +			ret = PTR_ERR(data->clk_cdev1);
-> +			goto err_put_pll_a_out0;
-> +		}
-> +
-> +		dev_info(data->dev, "Falling back to extern1\n");
->  	}
->  
->  	ret = tegra_asoc_utils_set_rate(data, 44100, 256 * 44100);
-> 
+> If there are real plans to make sound driver to drive the PLLA rate,
+> then indeed should be fine to keep it as-is for now.
 
-I tried to double-check if audio works using the updated DT works with
-this fallback and unfortunately it is not (maybe I actually missed to
-test this case before).. the driver doesn't probe at all because of the
-assigned-clocks presence, which makes clk core to fail finding the MCLK
-and thus assigned-clocks configuration fails, preventing the driver's
-loading.
-
-I'm not sure what could be done about it. Perhaps just to give up on the
-compatibility of older kernels with the new DTs, missing audio isn't
-really that critical (perhaps).
+Looking at tegra_asoc_utils_set_rate(), it already sets the PLLA rate.
+Maybe those table entries are not needed already?
