@@ -2,145 +2,155 @@ Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EC7C3F68F
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 13:31:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DD7FC2D0DB
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:20:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77AEF2075D
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 13:31:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6452E2467F
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:20:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1579875634;
+	bh=qZ/AK7qDtTJakLsjaUI3mUDTzYXOk3amPehL/OjaO/M=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=gCK+Ix36cDtuuwNEQm3wSDgRr5G7yxzaVdCsfDvf1BDYJYkISrOQa85svDlDJhIO/
+	 zvwH9CktQIK4fV+5MMWxMmegBkK89CpJySAUOqSUCJTUR3b4kHgAc9S2TP72BueLcr
+	 TxoD8WaVGiHpc7p1c9++9b9cZzWJL0S9hHcHWpOs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387941AbgAXNbm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 08:31:42 -0500
-Received: from xavier.telenet-ops.be ([195.130.132.52]:44822 "EHLO
-        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388375AbgAXNbm (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 08:31:42 -0500
-Received: from ramsan ([84.195.182.253])
-        by xavier.telenet-ops.be with bizsmtp
-        id uDXf2100t5USYZQ01DXfYb; Fri, 24 Jan 2020 14:31:39 +0100
-Received: from rox.of.borg ([192.168.97.57])
-        by ramsan with esmtp (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iuz3j-0007f7-Gx; Fri, 24 Jan 2020 14:31:39 +0100
-Received: from geert by rox.of.borg with local (Exim 4.90_1)
-        (envelope-from <geert@linux-m68k.org>)
-        id 1iuz3j-00049W-EU; Fri, 24 Jan 2020 14:31:39 +0100
-From:   Geert Uytterhoeven <geert+renesas@glider.be>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Gilad Ben-Yossef <gilad@benyossef.com>, linux-clk@vger.kernel.org,
-        linux-renesas-soc@vger.kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH] clk: renesas: rcar-gen3: Add CCREE clocks
-Date:   Fri, 24 Jan 2020 14:31:37 +0100
-Message-Id: <20200124133137.15921-1-geert+renesas@glider.be>
-X-Mailer: git-send-email 2.17.1
+        id S2390560AbgAXOUd (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 09:20:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41662 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2404879AbgAXOUc (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:20:32 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 40F592077C;
+        Fri, 24 Jan 2020 14:20:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1579875632;
+        bh=qZ/AK7qDtTJakLsjaUI3mUDTzYXOk3amPehL/OjaO/M=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=PjOGT76wvXQbHp3rSUX+AgBe+jcQJKD9gGj5gmjIl0NPAF6ynZjuXUqMJC8CWQ8mr
+         qB5+k1Ps5nRDIyVFeBVy0YXicnEefPbPFBzs4CNsYsR9njTcl3xYRTwoJFB6lWIws8
+         yKUUryEOw4nlZ48cXOQjlNULTIXUjmwwazMjfXpM=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Georgi Djakov <georgi.djakov@linaro.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 16/56] clk: qcom: gcc-sdm845: Add missing flag to votable GDSCs
+Date:   Fri, 24 Jan 2020 09:19:32 -0500
+Message-Id: <20200124142012.29752-16-sashal@kernel.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20200124142012.29752-1-sashal@kernel.org>
+References: <20200124142012.29752-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-stable: review
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Add the CryptoCell module clocks and their parents for the CryptoCell
-instances in the various Renesas R-Car Gen3 SoCs that do not have
-support for them yet in their clock drivers (M3-W/W+, M3-N, E3, D3).
+From: Georgi Djakov <georgi.djakov@linaro.org>
 
-The R-Car H3 clock driver already supports these clocks.
+[ Upstream commit 5e82548e26ef62e257dc2ff37c11acb5eb72728e ]
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On sdm845 devices, during boot we see the following warnings (unless we
+have added 'pd_ignore_unused' to the kernel command line):
+	hlos1_vote_mmnoc_mmu_tbu_sf_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc status stuck at 'on'
+	hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu2_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_tbu1_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc status stuck at 'on'
+	hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc status stuck at 'on'
+
+As the name of these GDSCs suggests, they are "votable" and in downstream
+DT, they all have the property "qcom,no-status-check-on-disable", which
+means that we should not poll the status bit when we disable them.
+
+Luckily the VOTABLE flag already exists and it does exactly what we need,
+so let's make use of it to make the warnings disappear.
+
+Fixes: 06391eddb60a ("clk: qcom: Add Global Clock controller (GCC) driver for SDM845")
+Reported-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Georgi Djakov <georgi.djakov@linaro.org>
+Link: https://lkml.kernel.org/r/20191126153437.11808-1-georgi.djakov@linaro.org
+Tested-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
-To be queued in clk-renesas-for-v5.7.
+ drivers/clk/qcom/gcc-sdm845.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
- drivers/clk/renesas/r8a7796-cpg-mssr.c  | 2 ++
- drivers/clk/renesas/r8a77965-cpg-mssr.c | 4 +++-
- drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
- drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 ++
- 4 files changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-index e8420d3ada94ca45..1155d66368485ea6 100644
---- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
-@@ -105,6 +105,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
- 	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,     0x26c),
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index ada3e4aeb38f9..6bd96ddadbe31 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -3150,6 +3150,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_audio_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
- 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
-+	DEF_FIXED("cr",         R8A7796_CLK_CR,    CLK_PLL1_DIV4,  2, 1),
- 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
- 	DEF_FIXED("cpex",       R8A7796_CLK_CPEX,  CLK_EXTAL,      2, 1),
+ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+@@ -3158,6 +3159,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_pcie_tbu_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
-@@ -132,6 +133,7 @@ static struct mssr_mod_clk r8a7796_mod_clks[] __initdata = {
- 	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S3D1),
- 	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A7796_CLK_S0D3),
-+	DEF_MOD("sceg-pub",		 229,	R8A7796_CLK_CR),
- 	DEF_MOD("cmt3",			 300,	R8A7796_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A7796_CLK_R),
- 	DEF_MOD("cmt1",			 302,	R8A7796_CLK_R),
-diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-index b3af4da2ca74b15d..9530480880f185a4 100644
---- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
-@@ -99,7 +99,8 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
- 	DEF_GEN3_SD("sd2",	R8A77965_CLK_SD2,	CLK_SDSRC,	0x268),
- 	DEF_GEN3_SD("sd3",	R8A77965_CLK_SD3,	CLK_SDSRC,	0x26c),
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+@@ -3166,6 +3168,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu1_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
--	DEF_FIXED("cl",		R8A77965_CLK_CL,	CLK_PLL1_DIV2,	48, 1),
-+	DEF_FIXED("cl",		R8A77965_CLK_CL,	CLK_PLL1_DIV2, 48, 1),
-+	DEF_FIXED("cr",         R8A77965_CLK_CR,	CLK_PLL1_DIV4,  2, 1),
- 	DEF_FIXED("cp",		R8A77965_CLK_CP,	CLK_EXTAL,	2, 1),
- 	DEF_FIXED("cpex",	R8A77965_CLK_CPEX,	CLK_EXTAL,	2, 1),
+ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+@@ -3174,6 +3177,7 @@ static struct gdsc hlos1_vote_aggre_noc_mmu_tbu2_gdsc = {
+ 		.name = "hlos1_vote_aggre_noc_mmu_tbu2_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
-@@ -127,6 +128,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac2",		217,	R8A77965_CLK_S3D1),
- 	DEF_MOD("sys-dmac1",		218,	R8A77965_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		219,	R8A77965_CLK_S0D3),
-+	DEF_MOD("sceg-pub",		229,	R8A77965_CLK_CR),
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+@@ -3182,6 +3186,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf0_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
- 	DEF_MOD("cmt3",			300,	R8A77965_CLK_R),
- 	DEF_MOD("cmt2",			301,	R8A77965_CLK_R),
-diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-index ceabf55c21c253f7..8eda2e3e24807b37 100644
---- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
-@@ -105,6 +105,7 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
- 	DEF_GEN3_SD("sd3",     R8A77990_CLK_SD3,   CLK_SDSRC,	  0x026c),
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+@@ -3190,6 +3195,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_hf1_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
- 	DEF_FIXED("cl",        R8A77990_CLK_CL,    CLK_PLL1,      48, 1),
-+	DEF_FIXED("cr",        R8A77990_CLK_CR,    CLK_PLL1D2,     2, 1),
- 	DEF_FIXED("cp",        R8A77990_CLK_CP,    CLK_EXTAL,      2, 1),
- 	DEF_FIXED("cpex",      R8A77990_CLK_CPEX,  CLK_EXTAL,      4, 1),
+ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+@@ -3198,6 +3204,7 @@ static struct gdsc hlos1_vote_mmnoc_mmu_tbu_sf_gdsc = {
+ 		.name = "hlos1_vote_mmnoc_mmu_tbu_sf_gdsc",
+ 	},
+ 	.pwrsts = PWRSTS_OFF_ON,
++	.flags = VOTABLE,
+ };
  
-@@ -135,6 +136,7 @@ static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac2",		 217,	R8A77990_CLK_S3D1),
- 	DEF_MOD("sys-dmac1",		 218,	R8A77990_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A77990_CLK_S3D1),
-+	DEF_MOD("sceg-pub",		 229,	R8A77990_CLK_CR),
- 
- 	DEF_MOD("cmt3",			 300,	R8A77990_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A77990_CLK_R),
-diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-index 962bb337f2e7c2cd..056ebf3e70e2dd49 100644
---- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
-@@ -91,6 +91,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
- 	DEF_FIXED("s3d4",      R8A77995_CLK_S3D4,  CLK_S3,         4, 1),
- 
- 	DEF_FIXED("cl",        R8A77995_CLK_CL,    CLK_PLL1,      48, 1),
-+	DEF_FIXED("cr",        R8A77995_CLK_CR,    CLK_PLL1D2,     2, 1),
- 	DEF_FIXED("cp",        R8A77995_CLK_CP,    CLK_EXTAL,      2, 1),
- 	DEF_FIXED("cpex",      R8A77995_CLK_CPEX,  CLK_EXTAL,      4, 1),
- 
-@@ -122,6 +123,7 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
- 	DEF_MOD("sys-dmac2",		 217,	R8A77995_CLK_S3D1),
- 	DEF_MOD("sys-dmac1",		 218,	R8A77995_CLK_S3D1),
- 	DEF_MOD("sys-dmac0",		 219,	R8A77995_CLK_S3D1),
-+	DEF_MOD("sceg-pub",		 229,	R8A77995_CLK_CR),
- 	DEF_MOD("cmt3",			 300,	R8A77995_CLK_R),
- 	DEF_MOD("cmt2",			 301,	R8A77995_CLK_R),
- 	DEF_MOD("cmt1",			 302,	R8A77995_CLK_R),
+ static struct clk_regmap *gcc_sdm845_clocks[] = {
 -- 
-2.17.1
+2.20.1
 
