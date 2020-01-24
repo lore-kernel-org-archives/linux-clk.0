@@ -6,32 +6,32 @@ X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
 	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 228B1C2D0CE
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 23:28:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63598C35243
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 23:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFD4620880
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 23:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42B9F2087E
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 23:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729590AbgAXX2V (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 18:28:21 -0500
-Received: from mailoutvs10.siol.net ([185.57.226.201]:38278 "EHLO
+        id S1729236AbgAXX2X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 18:28:23 -0500
+Received: from mailoutvs35.siol.net ([185.57.226.226]:38301 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729530AbgAXX2V (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 18:28:21 -0500
+        with ESMTP id S1729473AbgAXX2W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 18:28:22 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 92DE55228EE;
-        Sat, 25 Jan 2020 00:20:42 +0100 (CET)
+        by mail.siol.net (Zimbra) with ESMTP id 1F03C5228C9;
+        Sat, 25 Jan 2020 00:20:33 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id S5av63ohaILC; Sat, 25 Jan 2020 00:20:42 +0100 (CET)
+        with ESMTP id FVVhKHJUZiki; Sat, 25 Jan 2020 00:20:32 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 4C1965228E9;
-        Sat, 25 Jan 2020 00:20:42 +0100 (CET)
+        by mail.siol.net (Zimbra) with ESMTPS id BB642522899;
+        Sat, 25 Jan 2020 00:20:32 +0100 (CET)
 Received: from localhost.localdomain (cpe-194-152-20-232.static.triera.net [194.152.20.232])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id EAEED5228EE;
-        Sat, 25 Jan 2020 00:20:39 +0100 (CET)
+        by mail.siol.net (Zimbra) with ESMTPSA id 634BE5228C9;
+        Sat, 25 Jan 2020 00:20:30 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     mripard@kernel.org, wens@csie.org
 Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -40,9 +40,9 @@ Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 7/8] ARM: dts: sun8i: a83t: Add device node for rotation core
-Date:   Sat, 25 Jan 2020 00:20:13 +0100
-Message-Id: <20200124232014.574989-8-jernej.skrabec@siol.net>
+Subject: [PATCH 3/8] ARM: dts: sunxi: Fix DE2 clocks register range
+Date:   Sat, 25 Jan 2020 00:20:09 +0100
+Message-Id: <20200124232014.574989-4-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124232014.574989-1-jernej.skrabec@siol.net>
 References: <20200124232014.574989-1-jernej.skrabec@siol.net>
@@ -53,36 +53,74 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Allwinner A83T contains rotation core. Add a node for it.
+As it can be seen from DE2 manual, clock range is 0x10000.
+
+Fix it.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm/boot/dts/sun8i-a83t.dtsi | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ arch/arm/boot/dts/sun8i-a83t.dtsi  | 2 +-
+ arch/arm/boot/dts/sun8i-r40.dtsi   | 2 +-
+ arch/arm/boot/dts/sun8i-v3s.dtsi   | 2 +-
+ arch/arm/boot/dts/sunxi-h3-h5.dtsi | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/arch/arm/boot/dts/sun8i-a83t.dtsi b/arch/arm/boot/dts/sun8i-=
 a83t.dtsi
-index 053d439b01a7..749d8e1e08cb 100644
+index 74ac7ee9383c..053d439b01a7 100644
 --- a/arch/arm/boot/dts/sun8i-a83t.dtsi
 +++ b/arch/arm/boot/dts/sun8i-a83t.dtsi
-@@ -324,6 +324,17 @@ display_clocks: clock@1000000 {
- 			#reset-cells =3D <1>;
- 		};
+@@ -314,7 +314,7 @@ soc {
 =20
-+		rotate: rotate@1020000 {
-+			compatible =3D "allwinner,sun8i-a83t-de2-rotate";
-+			reg =3D <0x1020000 0x10000>;
-+			interrupts =3D <GIC_SPI 92 IRQ_TYPE_LEVEL_HIGH>;
-+			clocks =3D <&display_clocks CLK_BUS_ROT>,
-+				 <&display_clocks CLK_ROT>;
-+			clock-names =3D "bus",
-+				      "mod";
-+			resets =3D <&display_clocks RST_ROT>;
-+		};
-+
- 		mixer0: mixer@1100000 {
- 			compatible =3D "allwinner,sun8i-a83t-de2-mixer-0";
- 			reg =3D <0x01100000 0x100000>;
+ 		display_clocks: clock@1000000 {
+ 			compatible =3D "allwinner,sun8i-a83t-de2-clk";
+-			reg =3D <0x01000000 0x100000>;
++			reg =3D <0x01000000 0x10000>;
+ 			clocks =3D <&ccu CLK_BUS_DE>,
+ 				 <&ccu CLK_PLL_DE>;
+ 			clock-names =3D "bus",
+diff --git a/arch/arm/boot/dts/sun8i-r40.dtsi b/arch/arm/boot/dts/sun8i-r=
+40.dtsi
+index 8f09a24b36ec..a9d037667a83 100644
+--- a/arch/arm/boot/dts/sun8i-r40.dtsi
++++ b/arch/arm/boot/dts/sun8i-r40.dtsi
+@@ -119,7 +119,7 @@ soc {
+ 		display_clocks: clock@1000000 {
+ 			compatible =3D "allwinner,sun8i-r40-de2-clk",
+ 				     "allwinner,sun8i-h3-de2-clk";
+-			reg =3D <0x01000000 0x100000>;
++			reg =3D <0x01000000 0x10000>;
+ 			clocks =3D <&ccu CLK_BUS_DE>,
+ 				 <&ccu CLK_DE>;
+ 			clock-names =3D "bus",
+diff --git a/arch/arm/boot/dts/sun8i-v3s.dtsi b/arch/arm/boot/dts/sun8i-v=
+3s.dtsi
+index 81ea50838cd5..e5312869c0d2 100644
+--- a/arch/arm/boot/dts/sun8i-v3s.dtsi
++++ b/arch/arm/boot/dts/sun8i-v3s.dtsi
+@@ -105,7 +105,7 @@ soc {
+=20
+ 		display_clocks: clock@1000000 {
+ 			compatible =3D "allwinner,sun8i-v3s-de2-clk";
+-			reg =3D <0x01000000 0x100000>;
++			reg =3D <0x01000000 0x10000>;
+ 			clocks =3D <&ccu CLK_BUS_DE>,
+ 				 <&ccu CLK_DE>;
+ 			clock-names =3D "bus",
+diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi=
+-h3-h5.dtsi
+index 5e9c3060aa08..799f32bafd80 100644
+--- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
++++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
+@@ -114,7 +114,7 @@ soc {
+=20
+ 		display_clocks: clock@1000000 {
+ 			/* compatible is in per SoC .dtsi file */
+-			reg =3D <0x01000000 0x100000>;
++			reg =3D <0x01000000 0x10000>;
+ 			clocks =3D <&ccu CLK_BUS_DE>,
+ 				 <&ccu CLK_DE>;
+ 			clock-names =3D "bus",
 --=20
 2.25.0
 
