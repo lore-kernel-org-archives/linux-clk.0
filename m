@@ -2,350 +2,160 @@ Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC55FC32771
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D592C35242
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80A572077C
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:33:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4F07214AF
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:43:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="gFu1l/4P"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="hF7bk4vu"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgAXWdJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 17:33:09 -0500
-Received: from mail25.static.mailgun.info ([104.130.122.25]:18983 "EHLO
-        mail25.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729239AbgAXWco (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 17:32:44 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1579905164; h=References: In-Reply-To: Message-Id: Date:
- Subject: To: From: Sender;
- bh=u2C5jbTrsg1mNOJpP61Huvv7+OYDmwegWsSyA1V0kdI=; b=gFu1l/4Pft5JBWv6E0wnJx0fx2sChsr5dCmKoj2FsYA8GQIdVgfeY6fV6HprSTPy54/lrGAG
- FwSUOeNjlY+xip8yQKXYiz/vGNSTFr9I5C9VNEFZPZwkpRnUfulKCLZnG0d+i1DTdY8e4fnA
- VCH6PxJc+kp7ujjaHDIRcyd9Uts=
-X-Mailgun-Sending-Ip: 104.130.122.25
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e2b7086.7fe6e42f2fb8-smtp-out-n02;
- Fri, 24 Jan 2020 22:32:38 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id B94A6C43383; Fri, 24 Jan 2020 22:32:37 +0000 (UTC)
-Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vgutta)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 2CD70C4479F;
-        Fri, 24 Jan 2020 22:32:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 2CD70C4479F
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
-From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
-To:     agross@kernel.org, bjorn.andersson@linaro.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, vinod.koul@linaro.org,
-        psodagud@codeaurora.org, tsoni@codeaurora.org,
-        jshriram@codeaurora.org, tdas@codeaurora.org,
-        vnkgutta@codeaurora.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v2 4/7] clk: qcom: clk-alpha-pll: Add support for controlling Lucid PLLs
-Date:   Fri, 24 Jan 2020 14:32:24 -0800
-Message-Id: <1579905147-12142-5-git-send-email-vnkgutta@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
-References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
+        id S1729196AbgAXWnR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 17:43:17 -0500
+Received: from mail-pj1-f51.google.com ([209.85.216.51]:37463 "EHLO
+        mail-pj1-f51.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729182AbgAXWnQ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 17:43:16 -0500
+Received: by mail-pj1-f51.google.com with SMTP id m13so467160pjb.2
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2020 14:43:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KvWTwYISlf/IH0hjT9PbQOmz3mWIewJ1JoKDaTvkOQg=;
+        b=hF7bk4vuR6CtJ0Fssbu/x7/X7YqvKoZfK3zZrSkctxYMr+/+DZV1MV73/GwOz/1hz0
+         PWE8CFBsu4VlC7ZxMSzjSZF5H2dUX8C8IeFI7Xr7YY25y4SBHggn7G31YjZRds6PROXN
+         KeBKeGsLOxtsDj12B4akLhlZLbBPXpo0KOWD4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KvWTwYISlf/IH0hjT9PbQOmz3mWIewJ1JoKDaTvkOQg=;
+        b=Qr90js0B+nXadHzpISBPFevAq6Du1nbT1Nr9T+42wcpI7gQHRJkL+C7Jq3KmRd9DSd
+         RG5YcR/z4svjeLltpL3IyEBRnkjTwgXvRrhL9En690v/ZIakCTTuj3aK/iCHEpc6dZfX
+         Y8TPdFtsC+RL0IIgEkNrV6IhGkPlYphMDBO48vz95+KicRR3AfHDo07/Iep6KYetZkh/
+         WZ7P4oyXNteje3f/prARLSaYR3UVKsEXGFB5z7VbpJzjIQ7FGQWMAwCm8a/lxKYgiyvx
+         JEYrUyGUKy5V5EK7b8HZ/c53H5k98AUBFH2h3bjq7v+s6WZmLw13obFmr5ob++JxQR/C
+         IICA==
+X-Gm-Message-State: APjAAAVdxdwScIgjTn3yUaRW2yV+n6k5K5Az6CZdoZx/rRl5PPXX/3so
+        bVfZaa9DHGiZocpTA05Svg96KQ==
+X-Google-Smtp-Source: APXvYqyVW7tLqpJuby8Nh3t3UXD03Vfv+QfRhxyzORFnDeMvIHt6BFh9wx/Yjojz/+d0Ge2D/iQgXg==
+X-Received: by 2002:a17:902:c693:: with SMTP id r19mr6264543plx.25.1579905795881;
+        Fri, 24 Jan 2020 14:43:15 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id o2sm7690948pjo.26.2020.01.24.14.43.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 24 Jan 2020 14:43:15 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
+        mka@chromium.org, kalyan_t@codeaurora.org,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
+        hoegsberg@chromium.org, Douglas Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v2 00/10] clk: qcom: Fix parenting for dispcc/gpucc/videocc
+Date:   Fri, 24 Jan 2020 14:42:15 -0800
+Message-Id: <20200124224225.22547-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Taniya Das <tdas@codeaurora.org>
+The aim of this series is to get the dispcc and gpucc in a workable
+shape upstream for sc7180.  I personally wasn't focusing on (and
+didn't test) videocc but pulled it along for the ride.
 
-Add programming sequence support for managing the Lucid PLLs.
+Most of the work in this series deals with the fact that the parenting
+info for these clock controllers was in a bad shape.  It looks like it
+was half transitioned from the old way of doing things (relying on
+global names) to the new way of doing things (putting the linkage in
+the device tree).  This should fully transition us.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Taniya Das <tdas@codeaurora.org>
-Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
----
- drivers/clk/qcom/clk-alpha-pll.c | 190 +++++++++++++++++++++++++++++++++++++++
- drivers/clk/qcom/clk-alpha-pll.h |  12 +++
- 2 files changed, 202 insertions(+)
+As part of this transition I update the sdm845.dtsi file to specify
+the info as per the new way of doing things.  Although I've now put
+the linkage info in the sdm845.dtsi file, though, I haven't updated
+the sdm845 clock drivers in Linux so they still work via the global
+name matching.  It's left as an exercise to the reader to update the
+sdm845 clock drivers in Linux.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 1b073b2..4258ab0 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -52,6 +52,7 @@
- #define PLL_CONFIG_CTL_U1(p)	((p)->offset + (p)->regs[PLL_OFF_CONFIG_CTL_U1])
- #define PLL_TEST_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_TEST_CTL])
- #define PLL_TEST_CTL_U(p)	((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U])
-+#define PLL_TEST_CTL_U1(p)     ((p)->offset + (p)->regs[PLL_OFF_TEST_CTL_U1])
- #define PLL_STATUS(p)		((p)->offset + (p)->regs[PLL_OFF_STATUS])
- #define PLL_OPMODE(p)		((p)->offset + (p)->regs[PLL_OFF_OPMODE])
- #define PLL_FRAC(p)		((p)->offset + (p)->regs[PLL_OFF_FRAC])
-@@ -116,6 +117,22 @@
- 		[PLL_OFF_ALPHA_VAL] = 0x40,
- 		[PLL_OFF_CAL_VAL] = 0x44,
- 	},
-+	[CLK_ALPHA_PLL_TYPE_LUCID] =  {
-+		[PLL_OFF_L_VAL] = 0x04,
-+		[PLL_OFF_CAL_L_VAL] = 0x08,
-+		[PLL_OFF_USER_CTL] = 0x0c,
-+		[PLL_OFF_USER_CTL_U] = 0x10,
-+		[PLL_OFF_USER_CTL_U1] = 0x14,
-+		[PLL_OFF_CONFIG_CTL] = 0x18,
-+		[PLL_OFF_CONFIG_CTL_U] = 0x1c,
-+		[PLL_OFF_CONFIG_CTL_U1] = 0x20,
-+		[PLL_OFF_TEST_CTL] = 0x24,
-+		[PLL_OFF_TEST_CTL_U] = 0x28,
-+		[PLL_OFF_TEST_CTL_U1] = 0x2c,
-+		[PLL_OFF_STATUS] = 0x30,
-+		[PLL_OFF_OPMODE] = 0x38,
-+		[PLL_OFF_ALPHA_VAL] = 0x40,
-+	},
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_regs);
- 
-@@ -139,6 +156,10 @@
- #define PLL_OUT_MASK		0x7
- #define PLL_RATE_MARGIN		500
- 
-+/* LUCID PLL specific settings and offsets */
-+#define LUCID_PLL_CAL_VAL	0x44
-+#define LUCID_PCAL_DONE		BIT(26)
-+
- #define pll_alpha_width(p)					\
- 		((PLL_ALPHA_VAL_U(p) - PLL_ALPHA_VAL(p) == 4) ?	\
- 				 ALPHA_REG_BITWIDTH : ALPHA_REG_16BIT_WIDTH)
-@@ -1367,3 +1388,172 @@ static int clk_alpha_pll_postdiv_fabia_set_rate(struct clk_hw *hw,
- 	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
- };
- EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_fabia_ops);
-+
-+void clk_lucid_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+			     const struct alpha_pll_config *config)
-+{
-+	if (config->l)
-+		regmap_write(regmap, PLL_L_VAL(pll), config->l);
-+
-+	regmap_write(regmap, PLL_CAL_L_VAL(pll), LUCID_PLL_CAL_VAL);
-+
-+	if (config->alpha)
-+		regmap_write(regmap, PLL_ALPHA_VAL(pll), config->alpha);
-+
-+	if (config->config_ctl_val)
-+		regmap_write(regmap, PLL_CONFIG_CTL(pll),
-+			     config->config_ctl_val);
-+
-+	if (config->config_ctl_hi_val)
-+		regmap_write(regmap, PLL_CONFIG_CTL_U(pll),
-+			     config->config_ctl_hi_val);
-+
-+	if (config->config_ctl_hi1_val)
-+		regmap_write(regmap, PLL_CONFIG_CTL_U1(pll),
-+			     config->config_ctl_hi1_val);
-+
-+	if (config->user_ctl_val)
-+		regmap_write(regmap, PLL_USER_CTL(pll),
-+			     config->user_ctl_val);
-+
-+	if (config->user_ctl_hi_val)
-+		regmap_write(regmap, PLL_USER_CTL_U(pll),
-+			     config->user_ctl_hi_val);
-+
-+	if (config->user_ctl_hi1_val)
-+		regmap_write(regmap, PLL_USER_CTL_U1(pll),
-+			     config->user_ctl_hi1_val);
-+
-+	if (config->test_ctl_val)
-+		regmap_write(regmap, PLL_TEST_CTL(pll),
-+			     config->test_ctl_val);
-+
-+	if (config->test_ctl_hi_val)
-+		regmap_write(regmap, PLL_TEST_CTL_U(pll),
-+			     config->test_ctl_hi_val);
-+
-+	if (config->test_ctl_hi1_val)
-+		regmap_write(regmap, PLL_TEST_CTL_U1(pll),
-+			     config->test_ctl_hi1_val);
-+
-+	regmap_update_bits(regmap, PLL_MODE(pll), PLL_UPDATE_BYPASS,
-+			   PLL_UPDATE_BYPASS);
-+
-+	/* Disable PLL output */
-+	regmap_update_bits(regmap, PLL_MODE(pll),  PLL_OUTCTRL, 0);
-+
-+	/* Set operation mode to OFF */
-+	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
-+
-+	/* PLL should be in OFF mode before continuing */
-+	wmb();
-+
-+	/* Place the PLL in STANDBY mode */
-+	regmap_update_bits(regmap, PLL_MODE(pll), PLL_RESET_N, PLL_RESET_N);
-+}
-+EXPORT_SYMBOL_GPL(clk_lucid_pll_configure);
-+
-+/*
-+ * The Lucid PLL requires a power-on self-calibration which happens when the
-+ * PLL comes out of reset. Calibrate in case it is not completed.
-+ */
-+static int alpha_pll_lucid_prepare(struct clk_hw *hw)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	u32 regval;
-+	int ret;
-+
-+	/* Return early if calibration is not needed. */
-+	regmap_read(pll->clkr.regmap, PLL_STATUS(pll), &regval);
-+	if (regval & LUCID_PCAL_DONE)
-+		return 0;
-+
-+	ret = clk_trion_pll_enable(hw);
-+	if (ret)
-+		return ret;
-+
-+	clk_trion_pll_disable(hw);
-+
-+	return 0;
-+}
-+
-+static int alpha_pll_lucid_set_rate(struct clk_hw *hw, unsigned long rate,
-+				    unsigned long prate)
-+{
-+	struct clk_alpha_pll *pll = to_clk_alpha_pll(hw);
-+	unsigned long rrate;
-+	u32 regval, l, alpha_width = pll_alpha_width(pll);
-+	u64 a;
-+	int ret;
-+
-+	rrate = alpha_pll_round_rate(rate, prate, &l, &a, alpha_width);
-+
-+	/*
-+	 * Due to a limited number of bits for fractional rate programming, the
-+	 * rounded up rate could be marginally higher than the requested rate.
-+	 */
-+	if (rrate > (rate + PLL_RATE_MARGIN) || rrate < rate) {
-+		pr_err("Call set rate on the PLL with rounded rates!\n");
-+		return -EINVAL;
-+	}
-+
-+	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
-+	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
-+
-+	/* Latch the PLL input */
-+	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-+				 PLL_UPDATE, PLL_UPDATE);
-+	if (ret)
-+		return ret;
-+
-+	/* Wait for 2 reference cycles before checking the ACK bit. */
-+	udelay(1);
-+	regmap_read(pll->clkr.regmap, PLL_MODE(pll), &regval);
-+	if (!(regval & ALPHA_PLL_ACK_LATCH)) {
-+		WARN(1, "PLL latch failed. Output may be unstable!\n");
-+		return -EINVAL;
-+	}
-+
-+	/* Return the latch input to 0 */
-+	ret = regmap_update_bits(pll->clkr.regmap, PLL_MODE(pll),
-+				 PLL_UPDATE, 0);
-+	if (ret)
-+		return ret;
-+
-+	if (clk_hw_is_enabled(hw)) {
-+		ret = wait_for_pll_enable_lock(pll);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	/* Wait for PLL output to stabilize */
-+	udelay(100);
-+	return 0;
-+}
-+
-+const struct clk_ops clk_alpha_pll_lucid_ops = {
-+	.prepare = alpha_pll_lucid_prepare,
-+	.enable = clk_trion_pll_enable,
-+	.disable = clk_trion_pll_disable,
-+	.is_enabled = clk_trion_pll_is_enabled,
-+	.recalc_rate = clk_trion_pll_recalc_rate,
-+	.round_rate = clk_alpha_pll_round_rate,
-+	.set_rate = alpha_pll_lucid_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_lucid_ops);
-+
-+const struct clk_ops clk_alpha_pll_fixed_lucid_ops = {
-+	.enable = clk_trion_pll_enable,
-+	.disable = clk_trion_pll_disable,
-+	.is_enabled = clk_trion_pll_is_enabled,
-+	.recalc_rate = clk_trion_pll_recalc_rate,
-+	.round_rate = clk_alpha_pll_round_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_fixed_lucid_ops);
-+
-+const struct clk_ops clk_alpha_pll_postdiv_lucid_ops = {
-+	.recalc_rate = clk_alpha_pll_postdiv_fabia_recalc_rate,
-+	.round_rate = clk_alpha_pll_postdiv_fabia_round_rate,
-+	.set_rate = clk_alpha_pll_postdiv_fabia_set_rate,
-+};
-+EXPORT_SYMBOL_GPL(clk_alpha_pll_postdiv_lucid_ops);
-diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
-index fbc1f67..704674a 100644
---- a/drivers/clk/qcom/clk-alpha-pll.h
-+++ b/drivers/clk/qcom/clk-alpha-pll.h
-@@ -14,6 +14,7 @@ enum {
- 	CLK_ALPHA_PLL_TYPE_BRAMMO,
- 	CLK_ALPHA_PLL_TYPE_FABIA,
- 	CLK_ALPHA_PLL_TYPE_TRION,
-+	CLK_ALPHA_PLL_TYPE_LUCID,
- 	CLK_ALPHA_PLL_TYPE_MAX,
- };
- 
-@@ -30,6 +31,7 @@ enum {
- 	PLL_OFF_CONFIG_CTL_U1,
- 	PLL_OFF_TEST_CTL,
- 	PLL_OFF_TEST_CTL_U,
-+	PLL_OFF_TEST_CTL_U1,
- 	PLL_OFF_STATUS,
- 	PLL_OFF_OPMODE,
- 	PLL_OFF_FRAC,
-@@ -94,10 +96,13 @@ struct alpha_pll_config {
- 	u32 alpha_hi;
- 	u32 config_ctl_val;
- 	u32 config_ctl_hi_val;
-+	u32 config_ctl_hi1_val;
- 	u32 user_ctl_val;
- 	u32 user_ctl_hi_val;
-+	u32 user_ctl_hi1_val;
- 	u32 test_ctl_val;
- 	u32 test_ctl_hi_val;
-+	u32 test_ctl_hi1_val;
- 	u32 main_output_mask;
- 	u32 aux_output_mask;
- 	u32 aux2_output_mask;
-@@ -123,10 +128,17 @@ struct alpha_pll_config {
- extern const struct clk_ops clk_alpha_pll_fixed_fabia_ops;
- extern const struct clk_ops clk_alpha_pll_postdiv_fabia_ops;
- 
-+extern const struct clk_ops clk_alpha_pll_lucid_ops;
-+extern const struct clk_ops clk_alpha_pll_fixed_lucid_ops;
-+extern const struct clk_ops clk_alpha_pll_postdiv_lucid_ops;
-+
- void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 			     const struct alpha_pll_config *config);
- void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
- 				const struct alpha_pll_config *config);
-+void clk_lucid_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
-+			     const struct alpha_pll_config *config);
-+
- extern const struct clk_ops clk_trion_fixed_pll_ops;
- extern const struct clk_ops clk_trion_pll_postdiv_ops;
- 
+This series passes these things for me on linux-next:
+
+  ARCH=arm64 make dtbs_check \
+    DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+  ARCH=arm64 make dtbs_check \
+    DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
+  ARCH=arm64 make dtbs_check \
+    DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+  ARCH=arm64 make dt_binding_check \
+    DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+  ARCH=arm64 make dt_binding_check \
+    DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+  ARCH=arm64 make dt_binding_check \
+    DT_SCHEMA_FILES=Documentation/devicetree/bindings/clock/qcom,dispcc.yaml
+
+I have confirmed that (with extra patches) the display/gpu come up on
+sc7180 and sdm845-cheza.  You can find the top of my downstream tree at:
+  https://crrev.com/c/2017976/3
+
+I have confirmed that sdm845-cheza display / GPU come up atop
+next-20200124, which is what this series is posted against.
+
+This series is marked as 'v2' because in it I have snarfed up Taniya's
+dts patch adding the clock controller nodes to sc7180.dtsi and this is
+"v2" of that patch.  Everything else is brand new.
+
+Changes in v2:
+- Patch ("clk: qcom: rcg2: Don't crash...") new for v2.
+- Patch ("dt-bindings: clock: Fix qcom,dispcc...") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...dispcc") new for v2.
+- Patch ("dt-bindings: clock: Fix qcom,gpucc...") new for v2.
+- Patch ("clk: qcom: Fix sc7180 dispcc parent data") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...gpucc") new for v2.
+- Patch ("clk: qcom: Fix sc7180 gpucc parent data") new for v2.
+- Patch ("dt-bindings: clock: Cleanup qcom,videocc") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...videocc") new for v2.
+- Added includes
+- Changed various parent names to match bindings / driver
+
+Douglas Anderson (9):
+  clk: qcom: rcg2: Don't crash if our parent can't be found; return an
+    error
+  dt-bindings: clock: Fix qcom,dispcc bindings for sdm845/sc7180
+  arm64: dts: qcom: sdm845: Add the missing clocks on the dispcc
+  dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
+  clk: qcom: Fix sc7180 dispcc parent data
+  arm64: dts: qcom: sdm845: Add the missing clocks on the gpucc
+  clk: qcom: Fix sc7180 gpucc parent data
+  dt-bindings: clock: Cleanup qcom,videocc bindings for sdm845/sc7180
+  arm64: dts: qcom: sdm845: Add the missing clock on the videocc
+
+Taniya Das (1):
+  arm64: dts: sc7180: Add clock controller nodes
+
+ .../bindings/clock/qcom,dispcc.yaml           | 87 +++++++++++++++----
+ .../devicetree/bindings/clock/qcom,gpucc.yaml | 42 ++++++---
+ .../bindings/clock/qcom,videocc.yaml          | 10 ++-
+ arch/arm64/boot/dts/qcom/sc7180.dtsi          | 41 +++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 20 ++++-
+ drivers/clk/qcom/clk-rcg2.c                   |  3 +
+ drivers/clk/qcom/dispcc-sc7180.c              | 63 +++++---------
+ drivers/clk/qcom/gpucc-sc7180.c               | 11 ++-
+ 8 files changed, 199 insertions(+), 78 deletions(-)
+
 -- 
-The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
-a Linux Foundation Collaborative Project
+2.25.0.341.g760bfbb309-goog
+
