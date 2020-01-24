@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 191E2C35242
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F168DC2D0DB
 	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:38:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8F7A206F0
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:38:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9AB7222D9
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:38:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=default; t=1579876712;
-	bh=5Shb8Tk5ld6AXNX7FO+L8lYGIpZSgw9dqSshcT78Bqw=;
+	bh=cOyqk97cutL1s+fJwmtKJKAfj/jZXdg6ZAmb/dhgNH8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DWGzYStUrrJG0kaBCDQt3BvPKJm//isbnSN8Ir7LAYt0H1ujvOqLI64z0kMiUx1i8
-	 FGribtwt/UeIytiVujigsPDyDIgwpLDWEOMz9kV0PNAE3yzV4VqSmLiUEs3IYn6w6C
-	 Y0QFiqHmC3BypmSAkwuXnHcNQZGCqWEE3QsUt2XE=
+	b=bUEpOgk2jwc8Nbrp+btME4JbZGy148EX2/q91orTeZL9s63UtinMNQXuGK12s6vVE
+	 qH4RCcuC0k1xvQNOAOfcuo4wgmO8oYNDokzH+EeX+6bltk/iyKfXmgjJNjW0rTj/hb
+	 WnjbTyIYizfZKawIq/BwxqSH03GxKC6H54oS+Hvg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2403767AbgAXOSq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S2403758AbgAXOSq (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 24 Jan 2020 09:18:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38592 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:38538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2391064AbgAXOSq (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:18:46 -0500
+        id S2390973AbgAXOSp (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:18:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 28A3E2077C;
-        Fri, 24 Jan 2020 14:18:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1510B22464;
+        Fri, 24 Jan 2020 14:18:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875525;
-        bh=5Shb8Tk5ld6AXNX7FO+L8lYGIpZSgw9dqSshcT78Bqw=;
+        s=default; t=1579875524;
+        bh=cOyqk97cutL1s+fJwmtKJKAfj/jZXdg6ZAmb/dhgNH8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eyP0/sKpInQVTLfRL3x7K9iC6m8Gy61lefl/yo1VEQgHIklNOhnz3OfcEvVzTTrzp
-         l0JNL/CkIlkQ2+yl6OcjTDqd/7LBWvfN2jLUUveg7Xlb1GikDsz5QDp+dkPjqAKqUj
-         +bVfws5GPoZESU/B2ngP8CcBv94llfiQPZjXsDbI=
+        b=Tk71IFufMPoskqSClLRkmX0e9oOII1vq0algWcVLbXHMAQTKRxDqcyJJaKM6apr22
+         RVbRpPw/sH9oYaJ0SzEWqJ4bECqUwobgKjeTRIZkngfTo33rfOMy0I77Tm/i8jvgef
+         ocwABviNIL1l9lvpPChdqGhmRkIDrbJARrZbV8Zk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Samuel Holland <samuel@sholland.org>,
         Maxime Ripard <maxime@cerno.tech>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 5.4 024/107] clk: sunxi-ng: h6-r: Fix AR100/R_APB2 parent order
-Date:   Fri, 24 Jan 2020 09:16:54 -0500
-Message-Id: <20200124141817.28793-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 5.4 023/107] clk: sunxi-ng: sun8i-r: Fix divider on APB0 clock
+Date:   Fri, 24 Jan 2020 09:16:53 -0500
+Message-Id: <20200124141817.28793-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20200124141817.28793-1-sashal@kernel.org>
 References: <20200124141817.28793-1-sashal@kernel.org>
@@ -61,49 +61,74 @@ X-Mailing-List: linux-clk@vger.kernel.org
 
 From: Samuel Holland <samuel@sholland.org>
 
-[ Upstream commit 0c545240aebc2ccb8f661dc54283a14d64659804 ]
+[ Upstream commit 47d64fef1f3ffbdf960d3330b9865fc9f12fdf84 ]
 
-According to the BSP source code, both the AR100 and R_APB2 clocks have
-PLL_PERIPH0 as mux index 3, not 2 as it was on previous chips. The pre-
-divider used for PLL_PERIPH0 should be changed to index 3 to match.
-
-This was verified by running a rough benchmark on the AR100 with various
-clock settings:
-
-        | mux | pre-divider | iterations/second | clock source |
-        |=====|=============|===================|==============|
-        |   0 |           0 |  19033   (stable) |       osc24M |
-        |   2 |           5 |  11466 (unstable) |  iosc/osc16M |
-        |   2 |          17 |  11422 (unstable) |  iosc/osc16M |
-        |   3 |           5 |  85338   (stable) |  pll-periph0 |
-        |   3 |          17 |  27167   (stable) |  pll-periph0 |
-
-The relative performance numbers all match up (with pll-periph0 running
-at its default 600MHz).
+According to the BSP source code, the APB0 clock on the H3 and H5 has a
+normal M divider, not a power-of-two divider. This matches the hardware
+in the A83T (as described in both the BSP source code and the manual).
+Since the A83T and H3/A64 clocks are actually the same, we can merge the
+definitions.
 
 Signed-off-by: Samuel Holland <samuel@sholland.org>
 Signed-off-by: Maxime Ripard <maxime@cerno.tech>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-r.c | 21 +++------------------
+ 1 file changed, 3 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-index 45a1ed3fe6742..ab194143e06ce 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-@@ -23,9 +23,9 @@
-  */
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+index 4646fdc61053b..4c8c491b87c27 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
+@@ -51,19 +51,7 @@ static struct ccu_div ar100_clk = {
  
- static const char * const ar100_r_apb2_parents[] = { "osc24M", "osc32k",
--					     "pll-periph0", "iosc" };
-+						     "iosc", "pll-periph0" };
- static const struct ccu_mux_var_prediv ar100_r_apb2_predivs[] = {
--	{ .index = 2, .shift = 0, .width = 5 },
-+	{ .index = 3, .shift = 0, .width = 5 },
- };
+ static CLK_FIXED_FACTOR_HW(ahb0_clk, "ahb0", &ar100_clk.common.hw, 1, 1, 0);
  
- static struct ccu_div ar100_clk = {
+-static struct ccu_div apb0_clk = {
+-	.div		= _SUNXI_CCU_DIV_FLAGS(0, 2, CLK_DIVIDER_POWER_OF_TWO),
+-
+-	.common		= {
+-		.reg		= 0x0c,
+-		.hw.init	= CLK_HW_INIT_HW("apb0",
+-						 &ahb0_clk.hw,
+-						 &ccu_div_ops,
+-						 0),
+-	},
+-};
+-
+-static SUNXI_CCU_M(a83t_apb0_clk, "apb0", "ahb0", 0x0c, 0, 2, 0);
++static SUNXI_CCU_M(apb0_clk, "apb0", "ahb0", 0x0c, 0, 2, 0);
+ 
+ /*
+  * Define the parent as an array that can be reused to save space
+@@ -127,7 +115,7 @@ static struct ccu_mp a83t_ir_clk = {
+ 
+ static struct ccu_common *sun8i_a83t_r_ccu_clks[] = {
+ 	&ar100_clk.common,
+-	&a83t_apb0_clk.common,
++	&apb0_clk.common,
+ 	&apb0_pio_clk.common,
+ 	&apb0_ir_clk.common,
+ 	&apb0_timer_clk.common,
+@@ -167,7 +155,7 @@ static struct clk_hw_onecell_data sun8i_a83t_r_hw_clks = {
+ 	.hws	= {
+ 		[CLK_AR100]		= &ar100_clk.common.hw,
+ 		[CLK_AHB0]		= &ahb0_clk.hw,
+-		[CLK_APB0]		= &a83t_apb0_clk.common.hw,
++		[CLK_APB0]		= &apb0_clk.common.hw,
+ 		[CLK_APB0_PIO]		= &apb0_pio_clk.common.hw,
+ 		[CLK_APB0_IR]		= &apb0_ir_clk.common.hw,
+ 		[CLK_APB0_TIMER]	= &apb0_timer_clk.common.hw,
+@@ -282,9 +270,6 @@ static void __init sunxi_r_ccu_init(struct device_node *node,
+ 
+ static void __init sun8i_a83t_r_ccu_setup(struct device_node *node)
+ {
+-	/* Fix apb0 bus gate parents here */
+-	apb0_gate_parent[0] = &a83t_apb0_clk.common.hw;
+-
+ 	sunxi_r_ccu_init(node, &sun8i_a83t_r_ccu_desc);
+ }
+ CLK_OF_DECLARE(sun8i_a83t_r_ccu, "allwinner,sun8i-a83t-r-ccu",
 -- 
 2.20.1
 
