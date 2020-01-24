@@ -2,106 +2,147 @@ Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D954C35242
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 07:25:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7B4C2D0CE
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 07:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3171E2071E
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 07:25:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3964820709
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 07:32:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Kmj75LTh"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nkZgtU9i"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730121AbgAXHZa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 02:25:30 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:35384 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725817AbgAXHZa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 02:25:30 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00O7PPtv035938;
-        Fri, 24 Jan 2020 01:25:25 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579850725;
-        bh=aLKZcPtLNbLT7eCPXz16+bbLYos68avohZ2UHw2V4J8=;
-        h=Subject:From:To:CC:References:Date:In-Reply-To;
-        b=Kmj75LThcu/JVrwWStAt7z/VAW5eFfd9BT+NJjhXLgHSc/e/F/5sfny4hGFzogON5
-         3DkIDku8nscWAb5IHQoolmQUN8M5KO9dMLIpGdW/nnOXb2eRwendguJ0/fL10kDseL
-         ojEaGSx6vNw+dNf/zG0akC0W9ZqzXcbb2WBOwXJo=
-Received: from DLEE115.ent.ti.com (dlee115.ent.ti.com [157.170.170.26])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00O7PP6f029771
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Jan 2020 01:25:25 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE115.ent.ti.com
- (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 24
- Jan 2020 01:25:24 -0600
-Received: from lelv0327.itg.ti.com (10.180.67.183) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 24 Jan 2020 01:25:25 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0327.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00O7PMei089371;
-        Fri, 24 Jan 2020 01:25:23 -0600
-Subject: Re: [Patch v4 00/10] ARM: dts: dra7: add cal nodes
-From:   Tero Kristo <t-kristo@ti.com>
-To:     Tony Lindgren <tony@atomide.com>, Benoit Parrot <bparrot@ti.com>
-CC:     <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191211140558.10407-1-bparrot@ti.com>
- <20200123171737.GB5885@atomide.com> <20200123172624.GE5885@atomide.com>
- <668be3a7-d9be-6a2e-71ba-5631bf99dfae@ti.com>
-Message-ID: <fde9ef6c-e214-7436-10c5-7996f19b5cfe@ti.com>
-Date:   Fri, 24 Jan 2020 09:25:22 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        id S1725821AbgAXHcV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 02:32:21 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34943 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725817AbgAXHcU (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 02:32:20 -0500
+Received: by mail-wr1-f67.google.com with SMTP id g17so751983wro.2
+        for <linux-clk@vger.kernel.org>; Thu, 23 Jan 2020 23:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=HQccjgtMAc0SPlWyaIc43CbCQuVgkEsK2j6Xvgc8lAg=;
+        b=nkZgtU9icywvA3T6BT/bG475Xw0LheKWzeZpVLLSQmEGChDzWK+hs5Hh3GLBtHuDKl
+         jF3u/Ho563lTX8w560DptupOy10UeQy95s7gSR+s+nF/+TrAZibsi8ylxfPGEtmd/3hd
+         Ej4f1ppXhiA6LtxFa3xufMfD3Qj0rVauLHA/JOZFEEb2HKM1rmBnNXenQfE9A/+2Mo3L
+         gTVafIsvVkz0AxYFEBmfESzSV12cgdhaoweVADlWzNE8AGJIMsBGHGt69QJCNKfs89+w
+         cNUr3zq+rGV+EA9YLt3zGkO2tvtFnJVYfDGrXotllIb/qKmLEp2wSu19pktpNUiSMARc
+         /GXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=HQccjgtMAc0SPlWyaIc43CbCQuVgkEsK2j6Xvgc8lAg=;
+        b=HgDnSbpA3lrKCij/ZQ8SFVOJ+T1rZUkLUD/4L731XmRw+QZ3ga52xSNmMQqcokumPf
+         GXu8KmSizntYWzon0hqylmv1bm+xvZlOHcNT0/hPWcQyCrwnUDyqlKIGAny5xaSIVRU9
+         J8qi9ubxRwnuukAzLletrz4wUek+qL3krZaepZ0h4AWpyhRGvMMGd7UgpHFjvpBy/bv6
+         SO8SauLn4xWUFCqMLW0kL+F65YNK1hDeAB2zpeekd26atxPD7WRaN75nu4w/oxcCp1m0
+         SShZCv/w816b40yG6YdbN1rsHk55MlMeHWXWOT9S1AJ0TbUUnvob5F4TWEviSwnHrwYk
+         xpRw==
+X-Gm-Message-State: APjAAAUuWgcsyyK1pBR31STIabWsCMgwwqAQINnYCdZnzbeuH6QuypKk
+        vOlXMAdyvQZU3dP8INH3uzkHBA==
+X-Google-Smtp-Source: APXvYqzSyGspiLTQd3s7PHphq1fUdHq17gU1ICAWacJUBySQIOldM4PuKzvWEqgQZKbVzXS9I+8gfA==
+X-Received: by 2002:a5d:480b:: with SMTP id l11mr2484444wrq.129.1579851138213;
+        Thu, 23 Jan 2020 23:32:18 -0800 (PST)
+Received: from dell ([2.27.35.227])
+        by smtp.gmail.com with ESMTPSA id s10sm6222860wrw.12.2020.01.23.23.32.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 23 Jan 2020 23:32:17 -0800 (PST)
+Date:   Fri, 24 Jan 2020 07:32:30 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, Mark Brown <broonie@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        linux-clk@vger.kernel.org, linux-gpio@ger.kernel.org
+Subject: [GIT PULL] Immutable branch between MFD, Clk, GPIO, Regulator and
+ RTC due for the v5.6 merge window
+Message-ID: <20200124073230.GQ15507@dell>
+References: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
-In-Reply-To: <668be3a7-d9be-6a2e-71ba-5631bf99dfae@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1579527444.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 24/01/2020 09:21, Tero Kristo wrote:
-> On 23/01/2020 19:26, Tony Lindgren wrote:
->> * Tony Lindgren <tony@atomide.com> [200123 17:18]:
->>> * Benoit Parrot <bparrot@ti.com> [191211 06:03]:
->>>> This patch series adds the needed clkctrl and ty-sysc nodes for CAL 
->>>> module.
->>>> It also adds support for the module in related dtsi and dts for DRA72,
->>>> DRA76 and AM654 SoC.
->>>
->>> Applying these into omap-for-v5.6/ti-sysc-dt-cam on top of Tero's
->>> for-5.6-ti-clk branch. It might be too later for v5.6, but we'll
->>> see.
->>
->> Actually I'll leave out the k3-am65 dts changes as I don't see
->> acks for those. Tero can pick up those later.
->>
->> Regards,
->>
->> Tony
->>
-> 
-> Right, I think I also missed the cal clkctrl patch in this series. This 
-> series is imho applying against too many different trees (three if I am 
-> not mistaken) and should be split up to avoid confusion / not to get 
-> lost in mailboxes.
+Enjoy!
 
-Not cal clkctrl but the cal k3 patches. I just assumed all dts patches 
-in this series were against omaps.
+The following changes since commit e42617b825f8073569da76dc4510bfa019b1c35a:
 
-Anyways, I am planning to send k3 dts pull v2 today due to dma patches 
-from Peter, so I think I can sneak these also in with that...
+  Linux 5.5-rc1 (2019-12-08 14:57:55 -0800)
 
--Tero
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git ib-mfd-clk-gpio-regulator-rtc-v5.6
+
+for you to fetch changes up to c31f625d06c9166f753a2f21ac9c3f859647ca9f:
+
+  gpio: bd71828: Initial support for ROHM BD71828 PMIC GPIOs (2020-01-24 07:23:10 +0000)
+
+----------------------------------------------------------------
+Immutable branch between MFD, Clk, GPIO, Regulator and RTC due for the v5.6 merge window
+
+----------------------------------------------------------------
+Matti Vaittinen (11):
+      dt-bindings: leds: ROHM BD71282 PMIC LED driver
+      dt-bindings: mfd: Document ROHM BD71828 bindings
+      mfd: Rohm PMICs: Use platform_device_id to match MFD sub-devices
+      mfd: bd718x7: Add compatible for BD71850
+      mfd: bd71828: Support ROHM BD71828 PMIC - core
+      mfd: bd71828: Add power-key support
+      clk: bd718x7: Support ROHM BD71828 clk block
+      regulator: bd718x7: Split driver to common and bd718x7 specific parts
+      mfd: bd70528: Fix hour register mask
+      rtc: bd70528: add BD71828 support
+      gpio: bd71828: Initial support for ROHM BD71828 PMIC GPIOs
+
+ .../bindings/leds/rohm,bd71828-leds.yaml           |  52 +++
+ .../devicetree/bindings/mfd/rohm,bd71828-pmic.yaml | 193 ++++++++++
+ drivers/clk/Kconfig                                |   6 +-
+ drivers/clk/clk-bd718x7.c                          |  50 ++-
+ drivers/gpio/Kconfig                               |  12 +
+ drivers/gpio/Makefile                              |   1 +
+ drivers/gpio/gpio-bd71828.c                        | 159 ++++++++
+ drivers/mfd/Kconfig                                |  15 +
+ drivers/mfd/Makefile                               |   1 +
+ drivers/mfd/rohm-bd70528.c                         |   3 +-
+ drivers/mfd/rohm-bd71828.c                         | 344 +++++++++++++++++
+ drivers/mfd/rohm-bd718x7.c                         |  43 ++-
+ drivers/regulator/Kconfig                          |   4 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/bd718x7-regulator.c              | 200 ++++------
+ drivers/regulator/rohm-regulator.c                 |  95 +++++
+ drivers/rtc/Kconfig                                |   3 +-
+ drivers/rtc/rtc-bd70528.c                          | 220 +++++++++--
+ include/linux/mfd/rohm-bd70528.h                   |  19 +-
+ include/linux/mfd/rohm-bd71828.h                   | 423 +++++++++++++++++++++
+ include/linux/mfd/rohm-bd718x7.h                   |   6 -
+ include/linux/mfd/rohm-generic.h                   |  70 +++-
+ include/linux/mfd/rohm-shared.h                    |  21 +
+ 23 files changed, 1718 insertions(+), 223 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/leds/rohm,bd71828-leds.yaml
+ create mode 100644 Documentation/devicetree/bindings/mfd/rohm,bd71828-pmic.yaml
+ create mode 100644 drivers/gpio/gpio-bd71828.c
+ create mode 100644 drivers/mfd/rohm-bd71828.c
+ create mode 100644 drivers/regulator/rohm-regulator.c
+ create mode 100644 include/linux/mfd/rohm-bd71828.h
+ create mode 100644 include/linux/mfd/rohm-shared.h
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
