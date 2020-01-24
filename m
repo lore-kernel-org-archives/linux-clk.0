@@ -2,113 +2,112 @@ Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8066C2D0DB
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 21:08:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4C32C35242
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:32:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7FA82081E
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 21:08:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 986E12077C
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:32:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="m/MmEU1c"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726382AbgAXVIi (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 16:08:38 -0500
-Received: from [167.172.186.51] ([167.172.186.51]:57100 "EHLO shell.v3.sk"
-        rhost-flags-FAIL-FAIL-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725747AbgAXVIi (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jan 2020 16:08:38 -0500
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3D8B6DFE17;
-        Fri, 24 Jan 2020 21:08:46 +0000 (UTC)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id nsCRUdqw7lCo; Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 97A45DFEAD;
-        Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id ELtJo5_L7sxB; Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-Received: from localhost (unknown [109.183.109.54])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 4F1C4DFE17;
-        Fri, 24 Jan 2020 21:08:45 +0000 (UTC)
-Date:   Fri, 24 Jan 2020 22:08:33 +0100
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Olof Johansson <olof@lixom.net>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 5.4 028/107] clk: mmp2: Fix the order of timer
- mux parents
-Message-ID: <20200124210833.GA244505@furthur.local>
-References: <20200124141817.28793-1-sashal@kernel.org>
- <20200124141817.28793-28-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200124141817.28793-28-sashal@kernel.org>
+        id S1729165AbgAXWci (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 17:32:38 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:59296 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728205AbgAXWci (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 17:32:38 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1579905157; h=References: In-Reply-To: Message-Id: Date:
+ Subject: To: From: Sender;
+ bh=FVjFxHUDub6SbAvYfGEAxOkKwiZBycsgDmoJKCRC37k=; b=m/MmEU1c7xBxobqM0BjmjJfbSMGAEB58ZzXUYpPwSGAphgs40dLheBdI8AC1D/RVBBTVrCFC
+ rE2ivU3pceHHnK6wnvWQYsovylMBpWgz8CjY7KyE3PO9m7qbIXhgaUqjKJtpsqRiWjqcXnsv
+ xJDHIK2e2zb4OhVXmkjg1Zh7jIQ=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e2b7085.7f8efddc3340-smtp-out-n02;
+ Fri, 24 Jan 2020 22:32:37 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id B627FC447AA; Fri, 24 Jan 2020 22:32:35 +0000 (UTC)
+Received: from vgutta-linux.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vgutta)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9BB76C433CB;
+        Fri, 24 Jan 2020 22:32:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9BB76C433CB
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=vnkgutta@codeaurora.org
+From:   Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+To:     agross@kernel.org, bjorn.andersson@linaro.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, vinod.koul@linaro.org,
+        psodagud@codeaurora.org, tsoni@codeaurora.org,
+        jshriram@codeaurora.org, tdas@codeaurora.org,
+        vnkgutta@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 1/7] dt-bindings: clock: Add RPMHCC bindings for SM8250
+Date:   Fri, 24 Jan 2020 14:32:21 -0800
+Message-Id: <1579905147-12142-2-git-send-email-vnkgutta@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
+References: <1579905147-12142-1-git-send-email-vnkgutta@codeaurora.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 09:16:58AM -0500, Sasha Levin wrote:
-> From: Lubomir Rintel <lkundrak@v3.sk>
-> 
-> [ Upstream commit 8bea5ac0fbc5b2103f8779ddff216122e3c2e1ad ]
-> 
-> Determined empirically, no documentation is available.
-> 
-> The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), but
-> thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
-> what is going on, ended up just dividing the rate as of
-> commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
+From: Taniya Das <tdas@codeaurora.org>
 
-Hi,
+Add bindings and update documentation for clock rpmh driver on SM8250.
 
-this has to go together with this one (in other stable trees too):
+Acked-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Vinod Koul <vkoul@kernel.org>
+Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Taniya Das <tdas@codeaurora.org>
+Signed-off-by: Venkata Narendra Kumar Gutta <vnkgutta@codeaurora.org>
+---
+ Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml | 1 +
+ include/dt-bindings/clock/qcom,rpmh.h                    | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-  commit 0bd0f30bbf060891f58866a46083a9931f71787c
-  Author: Lubomir Rintel <lkundrak@v3.sk>
-  Date:   Wed Dec 18 20:04:53 2019 +0100
-  
-      ARM: mmp: do not divide the clock rate
-      
-      This was done because the clock driver returned the wrong rate, which is
-      fixed in "clk: mmp2: Fix the order of timer mux parents" patch.
-
-It removes a workaround for the same issue from before it was
-understood what is going on. If it stays, the clock will run twice as
-fast.
-
-Thanks
-Lubo
-
-> 
-> Link: https://lore.kernel.org/r/20191218190454.420358-3-lkundrak@v3.sk
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/clk/mmp/clk-of-mmp2.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-> index a60a1be937ad6..b4a95cbbda989 100644
-> --- a/drivers/clk/mmp/clk-of-mmp2.c
-> +++ b/drivers/clk/mmp/clk-of-mmp2.c
-> @@ -134,7 +134,7 @@ static DEFINE_SPINLOCK(ssp3_lock);
->  static const char *ssp_parent_names[] = {"vctcxo_4", "vctcxo_2", "vctcxo", "pll1_16"};
->  
->  static DEFINE_SPINLOCK(timer_lock);
-> -static const char *timer_parent_names[] = {"clk32", "vctcxo_2", "vctcxo_4", "vctcxo"};
-> +static const char *timer_parent_names[] = {"clk32", "vctcxo_4", "vctcxo_2", "vctcxo"};
->  
->  static DEFINE_SPINLOCK(reset_lock);
->  
-> -- 
-> 2.20.1
-> 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+index 94e2f14..21398d1 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,rpmhcc.yaml
+@@ -20,6 +20,7 @@ properties:
+       - qcom,sc7180-rpmh-clk
+       - qcom,sdm845-rpmh-clk
+       - qcom,sm8150-rpmh-clk
++      - qcom,sm8250-rpmh-clk
+ 
+   clocks:
+     maxItems: 1
+diff --git a/include/dt-bindings/clock/qcom,rpmh.h b/include/dt-bindings/clock/qcom,rpmh.h
+index edcab3f..2e6c54e 100644
+--- a/include/dt-bindings/clock/qcom,rpmh.h
++++ b/include/dt-bindings/clock/qcom,rpmh.h
+@@ -1,5 +1,5 @@
+ /* SPDX-License-Identifier: GPL-2.0 */
+-/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
++/* Copyright (c) 2018, 2020, The Linux Foundation. All rights reserved. */
+ 
+ 
+ #ifndef _DT_BINDINGS_CLK_MSM_RPMH_H
+@@ -19,5 +19,7 @@
+ #define RPMH_RF_CLK3				10
+ #define RPMH_RF_CLK3_A				11
+ #define RPMH_IPA_CLK				12
++#define RPMH_LN_BB_CLK1				13
++#define RPMH_LN_BB_CLK1_A			14
+ 
+ #endif
+-- 
+The Qualcomm Innovation Center, Inc. is a member of the Code Aurora Forum,
+a Linux Foundation Collaborative Project
