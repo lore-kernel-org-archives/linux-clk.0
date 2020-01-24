@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8C5CC2D0DB
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:23:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8C8FC2D0DB
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A50D9222C2
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:23:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84C922077C
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:24:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579875794;
-	bh=MFdQwpC8ocAw3gqlG2PhUf+SO3XPMQEGZg511YDWX24=;
+	s=default; t=1579875871;
+	bh=bJcSbVFWMcIYPUMH8AzaeCu2T16ojXqRV9/OkWShTkU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BCA1+kBmTWignvuT2U05KzgXf8JCm8Ds0jdiiWUfdLrVlx3PGuo17NgC9cPLJqOXz
-	 CTJ7fp1qPGyYM9aQG6NZJIwpBneH4w9qWsI2G1jl2I630wQCzNSd/jhrifDusvonTz
-	 B7BRMgejUcnXMF6BxHKLFrbcjySyfJWWP0El2vpM=
+	b=2Jq6n05uKZLR2aGlzJgKrcoIC+dxFswb4MwTuycDoNUVGjB2v3PUnHDTqn4BlEarS
+	 UIQyx+hgZlYc5LsdkG3D0bRqrAmzRedQm1BuD5fz9w7VbUaL9jvhtFkojOASMJSL+h
+	 RIZDJJk6NhLFH1skKg63NW4Xc0w4Xc4Y4BcVAcfo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388536AbgAXOXN (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 09:23:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44502 "EHLO mail.kernel.org"
+        id S2387399AbgAXOYa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 09:24:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2392373AbgAXOWY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:22:24 -0500
+        id S1731273AbgAXOWH (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:22:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 781792087E;
-        Fri, 24 Jan 2020 14:22:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D034222C2;
+        Fri, 24 Jan 2020 14:22:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875744;
-        bh=MFdQwpC8ocAw3gqlG2PhUf+SO3XPMQEGZg511YDWX24=;
+        s=default; t=1579875727;
+        bh=bJcSbVFWMcIYPUMH8AzaeCu2T16ojXqRV9/OkWShTkU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MtvvgKOCQXH5425Bs1n9vXpVxKTyCTM9VwaTO9ZgWtayYmH65NOw8DZSa3xggXYK5
-         ospnEUMnH8kKahaFd299NOqmFolGPdpL1kEBm+RfFOcftmfBUok2KEmKIbZl/eFIxc
-         +Fgq4mVWuqiV/tWQ2XU8cxZ4PcpsB4JX2YCI5ED0=
+        b=nRteX2xExRwynXhmA0D1wadfNF59dCLb8BK74HStP3v5Gz6Jsc1+GeWfdido7FGj3
+         pqNDbWMBt2gJr637UVMrfpo6Ym1jlVqaReI5Dw2j8LKfEe9N6P+SKikN3K6f+gVGBD
+         QjTET/HqE3Z5Tm7rWhZs3m7OhqAe6SJu2rPli5Lk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
         Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 2/9] clk: mmp2: Fix the order of timer mux parents
-Date:   Fri, 24 Jan 2020 09:22:14 -0500
-Message-Id: <20200124142221.31201-2-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 07/18] clk: mmp2: Fix the order of timer mux parents
+Date:   Fri, 24 Jan 2020 09:21:46 -0500
+Message-Id: <20200124142157.30931-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200124142221.31201-1-sashal@kernel.org>
-References: <20200124142221.31201-1-sashal@kernel.org>
+In-Reply-To: <20200124142157.30931-1-sashal@kernel.org>
+References: <20200124142157.30931-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -79,7 +79,7 @@ Signed-off-by: Sasha Levin <sashal@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
-index 8b45cb2caed1b..60db6531996eb 100644
+index 061a9f10218b3..20cfdf837bfab 100644
 --- a/drivers/clk/mmp/clk-of-mmp2.c
 +++ b/drivers/clk/mmp/clk-of-mmp2.c
 @@ -134,7 +134,7 @@ static DEFINE_SPINLOCK(ssp3_lock);
