@@ -5,52 +5,52 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D98FC2D0CE
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:43:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E63BDC32771
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:43:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7325D2075D
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:43:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC9C2087E
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 22:43:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="MDjGZDMX"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H5M3q6aW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387475AbgAXWnn (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 17:43:43 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34547 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387458AbgAXWnY (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 17:43:24 -0500
-Received: by mail-pl1-f193.google.com with SMTP id q13so1375160pls.1
-        for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2020 14:43:24 -0800 (PST)
+        id S2387422AbgAXWnU (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 17:43:20 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42475 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387408AbgAXWnT (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 17:43:19 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 4so1787694pfz.9
+        for <linux-clk@vger.kernel.org>; Fri, 24 Jan 2020 14:43:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=azOJGeenO90UDElVZnGvhTa1WOYkaMQED3kOM1E619Q=;
-        b=MDjGZDMXlqXZUfV7OZldyntXHGM87aWp1WZpVtZvG3lp15ahEHyRkexF4mzQJ7dlAO
-         x6rNvYucK03/VVjtUAEO2qx3vBAUWWaA+UmqKnUXMcCJCaZmqlqcLHf8XYJi6MqwO7RA
-         Iu9IohHaGiWj+pwqnMctsCsTFYvH2hg9ofjp0=
+        bh=LCy4d/uPw5BLn8Wtp8APLodtLD4pO2HOn2Pu/h6vPEQ=;
+        b=H5M3q6aWRWGz+DPDkuDKKDp9JmGrdLbld1dKDiQUVp3fn2wQvRevBwkem3NygaawT/
+         eRqCOrI1rSecV50Rs2vF8UXdyTv1JEJ7vAaCBQYa2uM9shXTNvrJdFW2lmTnxJhaDWot
+         dLWxiqt3t4KkiP56kPl5Abs3KcMMZPahXAbfo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=azOJGeenO90UDElVZnGvhTa1WOYkaMQED3kOM1E619Q=;
-        b=LP9lCR3M6tc/UDC+XZE5AsW8+aqiA9Yy2I0jJZ8yO2dCmy6U84IeqLQ4ez6oSmGjMT
-         /VqdRTexmxRGLFmwYX1MKygMg0lMkmYno2U5Zvb3d0MNmVH8XoY3Ww6u6VGxbIVJix9H
-         lj5ItUSN8qGR4Dyhoym+BSd3rRA6/johCyrBwtdi6umOXVHSXH1h1Ejjo2vI3uUxCq4b
-         KfvowI65t4Gwy5A22WAkpr9mOdsOOexuUYbBhmhXN5d3grJj6NIC+sMGhDoom/nZ+2KV
-         UBmhv5vo+bWavaifsJPCzHR8fMbbvcTm6HwfpyOeY2LSVDmI2WHY2nIInxHVEBVTypFP
-         fYRw==
-X-Gm-Message-State: APjAAAWyJOQaOSIz4YXSwCb/sllyvp0qilnWZGq8rR603c6gh84ZLDOx
-        Lq/5jUQiXdkBYMh628PRXwMFrA==
-X-Google-Smtp-Source: APXvYqxYRZKxhf678NfYnON6C+bRqFB77arOwAg3WMS1KXZ4+qWQqA43m9A0cMWuZMS04lt6xPrTBQ==
-X-Received: by 2002:a17:902:7009:: with SMTP id y9mr6022788plk.254.1579905803606;
-        Fri, 24 Jan 2020 14:43:23 -0800 (PST)
+        bh=LCy4d/uPw5BLn8Wtp8APLodtLD4pO2HOn2Pu/h6vPEQ=;
+        b=DSFjjMHx7U9rKMeIXABCDEgE06JmnsLr7odwQlhdBRtcRVDjENiZOf+2hUDl1jvtyA
+         UXcvWUdNWO0jOiqMmT5PI31nAXLvLamULpUofZsn/XNvW2d94A4ugKGXOBwxsbWSqy1r
+         xqpM9isV+tCk8RDlZOs5ZEM46ZsgWZBRNotV5G0W6WOJz9mFaQVcwbs2G15qrNN2JKQe
+         lSPRreZym7uyd2XWvRZBU2JdXcgbptM6Ld/GpneuCwHCKAne06twGCycr3wwEpboVcpo
+         bWGwwW85DeAmD3FQEjYIMmBMGUXqBaTVtobISapPHGn9aPPewDG4ZHEqBrbe0lLfDIXQ
+         1Q/g==
+X-Gm-Message-State: APjAAAXY+4VEefJgy6BFpp+t/Ko2vPpn5F/E+CD3gmvVEyYcqM6sugxC
+        X8x7P7bJAKMP/eJl61F9AcYkiA==
+X-Google-Smtp-Source: APXvYqwqOj229OreenHXwJi4oidfVVbTHzeOfUUBBvLdizzGOX34wX6hYI9c93bqiOm2N75XvR3FNg==
+X-Received: by 2002:a63:5818:: with SMTP id m24mr6680605pgb.358.1579905799008;
+        Fri, 24 Jan 2020 14:43:19 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id o2sm7690948pjo.26.2020.01.24.14.43.22
+        by smtp.gmail.com with ESMTPSA id o2sm7690948pjo.26.2020.01.24.14.43.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 24 Jan 2020 14:43:23 -0800 (PST)
+        Fri, 24 Jan 2020 14:43:18 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -61,11 +61,10 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         mka@chromium.org, kalyan_t@codeaurora.org,
         Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
         hoegsberg@chromium.org, Douglas Anderson <dianders@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 07/10] clk: qcom: Fix sc7180 gpucc parent data
-Date:   Fri, 24 Jan 2020 14:42:22 -0800
-Message-Id: <20200124144154.v2.7.I3bf44e33f4dc7ecca10a50dbccb7dc082894fa59@changeid>
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v2 03/10] arm64: dts: qcom: sdm845: Add the missing clocks on the dispcc
+Date:   Fri, 24 Jan 2020 14:42:18 -0800
+Message-Id: <20200124144154.v2.3.Ie80fa74e1774f4317d80d70d30ef4b78f16cc8df@changeid>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200124224225.22547-1-dianders@chromium.org>
 References: <20200124224225.22547-1-dianders@chromium.org>
@@ -76,67 +75,50 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The bindings file (qcom,gpucc.yaml) does not agree with the names we
-use for input clocks.  Fix us.  This takes into account the changes in
-the recent patch ("dt-bindings: clock: Fix qcom,gpucc bindings for
-sdm845/sc7180/msm8998"), but even without that patch the names in the
-driver were still not right.
+We're transitioning over to requiring the Qualcomm Display Clock
+Controller to specify all the input clocks.  Let's add them for
+sdm845.
 
-Since we didn't add the "test" clock to the bindings (apparently it's
-never used), kill it from the driver.  If someone has a use for it we
-should add it to the bindings and bring it back.
+NOTES:
+- Until the Linux driver for sdm845's dispcc is updated, these clocks
+  will not actually be used in Linux.  It will continue to use global
+  clock names to match things up.
+- Although the clocks from the DP PHY are required, the DP PHY isn't
+  represented in the dts yet.  Apparently the magic for this is just
+  to use <0>.
 
-Instead of updating the size of the array now that the test clock is
-gone, switch to using the less error-prone ARRAY_SIZE.  Not sure why
-it didn't always use that.
-
-Fixes: 745ff069a49c ("clk: qcom: Add graphics clock controller driver for SC7180")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
 Changes in v2:
-- Patch ("clk: qcom: Fix sc7180 gpucc parent data") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...dispcc") new for v2.
 
- drivers/clk/qcom/gpucc-sc7180.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
-diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
-index ec61194cceaf..da56506036e2 100644
---- a/drivers/clk/qcom/gpucc-sc7180.c
-+++ b/drivers/clk/qcom/gpucc-sc7180.c
-@@ -47,7 +47,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
- 		.hw.init = &(struct clk_init_data){
- 			.name = "gpu_cc_pll1",
- 			.parent_data =  &(const struct clk_parent_data){
--				.fw_name = "bi_tcxo",
-+				.fw_name = "xo",
- 			},
- 			.num_parents = 1,
- 			.ops = &clk_alpha_pll_fabia_ops,
-@@ -64,11 +64,10 @@ static const struct parent_map gpu_cc_parent_map_0[] = {
- };
- 
- static const struct clk_parent_data gpu_cc_parent_data_0[] = {
--	{ .fw_name = "bi_tcxo" },
-+	{ .fw_name = "xo" },
- 	{ .hw = &gpu_cc_pll1.clkr.hw },
--	{ .fw_name = "gcc_gpu_gpll0_clk_src" },
--	{ .fw_name = "gcc_gpu_gpll0_div_clk_src" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "gpll0" },
-+	{ .fw_name = "gpll0_div" },
- };
- 
- static const struct freq_tbl ftbl_gpu_cc_gmu_clk_src[] = {
-@@ -86,7 +85,7 @@ static struct clk_rcg2 gpu_cc_gmu_clk_src = {
- 	.clkr.hw.init = &(struct clk_init_data){
- 		.name = "gpu_cc_gmu_clk_src",
- 		.parent_data = gpu_cc_parent_data_0,
--		.num_parents = 5,
-+		.num_parents = ARRAY_SIZE(gpu_cc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_rcg2_shared_ops,
- 	},
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index d42302b8889b..01354533a61b 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2933,6 +2933,18 @@ opp-200000000 {
+ 		dispcc: clock-controller@af00000 {
+ 			compatible = "qcom,sdm845-dispcc";
+ 			reg = <0 0x0af00000 0 0x10000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_DISP_GPLL0_CLK_SRC>,
++				 <&dsi0_phy 0>,
++				 <&dsi0_phy 1>,
++				 <&dsi1_phy 0>,
++				 <&dsi1_phy 1>,
++				 <0>,
++				 <0>;
++			clock-names = "xo", "gpll0",
++				      "dsi0_phy_pll_byte", "dsi0_phy_pll_pixel",
++				      "dsi1_phy_pll_byte", "dsi1_phy_pll_pixel",
++				      "dp_phy_pll_link", "dp_phy_pll_vco_div";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
 -- 
 2.25.0.341.g760bfbb309-goog
 
