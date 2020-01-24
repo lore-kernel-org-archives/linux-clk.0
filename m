@@ -4,52 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17C03C2D0DB
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:27:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A5B9C3F68F
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:31:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D75206F0
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:27:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13532206F0
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 14:31:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1579876036;
-	bh=R9PPw+MuKGRlmrJ5z10igS3e5wXHKMN8f8pyzN9abaU=;
+	s=default; t=1579876264;
+	bh=CslaSSQI+Lm9q11vj17D/LgMKJ+dG/2Gb2LaHCRJXVo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Iy5TJMNRETFKSM6Q3SY7p57+HsL9pbPD0yyUHk7nRPuYjfhRfR8ZTa+HWmPar2hzE
-	 LRIenoWLCHDXtXJwZ7Uuc62iHsU0RScTyL5/aJoQxFLf2Mui29JWPJrqZ2VUHKo5KY
-	 qArHRV8Z73Ifc7VjIlg1qwajEkgTnDrbPtq17yfM=
+	b=EWoG6LIXjh1r+OFVPdJN7nfScs47LdcGVi7SyasyKsBZNPVLL2zi6fxtaFLwQ43L7
+	 bYaamKFgm66AFPg5TDfkO297rVPda7HVjAkNGI9szU6h1P5VEpd6vpsgY3mo7InQly
+	 XT1ko725AgAeDrBz2jfSl2f4LG2U8Ne3l585Awmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387438AbgAXOV2 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 09:21:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43152 "EHLO mail.kernel.org"
+        id S2391652AbgAXObD (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 09:31:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41694 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388366AbgAXOV1 (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Fri, 24 Jan 2020 09:21:27 -0500
+        id S2404892AbgAXOUd (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 24 Jan 2020 09:20:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB7AC22527;
-        Fri, 24 Jan 2020 14:21:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51D0622527;
+        Fri, 24 Jan 2020 14:20:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1579875686;
-        bh=R9PPw+MuKGRlmrJ5z10igS3e5wXHKMN8f8pyzN9abaU=;
+        s=default; t=1579875633;
+        bh=CslaSSQI+Lm9q11vj17D/LgMKJ+dG/2Gb2LaHCRJXVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=z1akMufq4BN3EcyRBbyndxEAZu1X7STUaA8rUzqA4kO+kR//axp70hb4ppXjGMIUl
-         yElOfHxEW8x2xjlJiMf9b8rjrLP8NE+F1t0hQ5HxW+nl3/Y5G872haYpfzcNUpFRAG
-         Y81Lg5dGrHYyIJyFWhqJyQzxxaf5usJleoKLrUbw=
+        b=2TrFV5b3TUi+WeRUQ6aCPE15b7hC80zDgDh/D7IKD8rjkF0ngGA1NnYLEv+SdaH9l
+         IIeLAiMRZ98oqoGOL9FVbtwTYMuI/tFQduSQLTVhzQC5OupcbTBKmlQtLtr1oSnrOJ
+         Jau3uXdiQLY8R/AgFaWztWjqgHgXMrLHgxupJUmY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Stephen Boyd <sboyd@kernel.org>,
+        Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 06/32] clk: Don't try to enable critical clocks if prepare failed
-Date:   Fri, 24 Jan 2020 09:20:53 -0500
-Message-Id: <20200124142119.30484-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 17/56] clk: mmp2: Fix the order of timer mux parents
+Date:   Fri, 24 Jan 2020 09:19:33 -0500
+Message-Id: <20200124142012.29752-17-sashal@kernel.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20200124142119.30484-1-sashal@kernel.org>
-References: <20200124142119.30484-1-sashal@kernel.org>
+In-Reply-To: <20200124142012.29752-1-sashal@kernel.org>
+References: <20200124142012.29752-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
@@ -59,67 +58,39 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Guenter Roeck <linux@roeck-us.net>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 12ead77432f2ce32dea797742316d15c5800cb32 ]
+[ Upstream commit 8bea5ac0fbc5b2103f8779ddff216122e3c2e1ad ]
 
-The following traceback is seen if a critical clock fails to prepare.
+Determined empirically, no documentation is available.
 
-bcm2835-clk 3f101000.cprman: plld: couldn't lock PLL
-------------[ cut here ]------------
-Enabling unprepared plld_per
-WARNING: CPU: 1 PID: 1 at drivers/clk/clk.c:1014 clk_core_enable+0xcc/0x2c0
-...
-Call trace:
- clk_core_enable+0xcc/0x2c0
- __clk_register+0x5c4/0x788
- devm_clk_hw_register+0x4c/0xb0
- bcm2835_register_pll_divider+0xc0/0x150
- bcm2835_clk_probe+0x134/0x1e8
- platform_drv_probe+0x50/0xa0
- really_probe+0xd4/0x308
- driver_probe_device+0x54/0xe8
- device_driver_attach+0x6c/0x78
- __driver_attach+0x54/0xd8
-...
+The OLPC XO-1.75 laptop used parent 1, that one being VCTCXO/4 (65MHz), but
+thought it's a VCTCXO/2 (130MHz). The mmp2 timer driver, not knowing
+what is going on, ended up just dividing the rate as of
+commit f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")'
 
-Check return values from clk_core_prepare() and clk_core_enable() and
-bail out if any of those functions returns an error.
-
-Cc: Jerome Brunet <jbrunet@baylibre.com>
-Fixes: 99652a469df1 ("clk: migrate the count of orphaned clocks at init")
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-Link: https://lkml.kernel.org/r/20191225163429.29694-1-linux@roeck-us.net
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Link: https://lore.kernel.org/r/20191218190454.420358-3-lkundrak@v3.sk
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/clk/mmp/clk-of-mmp2.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index a3f52f6782115..8341a128dab1d 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2482,11 +2482,17 @@ static int __clk_core_init(struct clk_core *core)
- 	if (core->flags & CLK_IS_CRITICAL) {
- 		unsigned long flags;
+diff --git a/drivers/clk/mmp/clk-of-mmp2.c b/drivers/clk/mmp/clk-of-mmp2.c
+index d083b860f0833..10689d8cd3867 100644
+--- a/drivers/clk/mmp/clk-of-mmp2.c
++++ b/drivers/clk/mmp/clk-of-mmp2.c
+@@ -134,7 +134,7 @@ static DEFINE_SPINLOCK(ssp3_lock);
+ static const char *ssp_parent_names[] = {"vctcxo_4", "vctcxo_2", "vctcxo", "pll1_16"};
  
--		clk_core_prepare(core);
-+		ret = clk_core_prepare(core);
-+		if (ret)
-+			goto out;
+ static DEFINE_SPINLOCK(timer_lock);
+-static const char *timer_parent_names[] = {"clk32", "vctcxo_2", "vctcxo_4", "vctcxo"};
++static const char *timer_parent_names[] = {"clk32", "vctcxo_4", "vctcxo_2", "vctcxo"};
  
- 		flags = clk_enable_lock();
--		clk_core_enable(core);
-+		ret = clk_core_enable(core);
- 		clk_enable_unlock(flags);
-+		if (ret) {
-+			clk_core_unprepare(core);
-+			goto out;
-+		}
- 	}
+ static DEFINE_SPINLOCK(reset_lock);
  
- 	/*
 -- 
 2.20.1
 
