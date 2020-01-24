@@ -2,119 +2,145 @@ Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A3FCC35242
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 11:37:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96EC7C3F68F
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 13:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E20E24685
-	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 11:37:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DrXgy2oe"
+	by mail.kernel.org (Postfix) with ESMTP id 77AEF2075D
+	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 13:31:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387563AbgAXLhf (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 24 Jan 2020 06:37:35 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49162 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2404431AbgAXLc0 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 06:32:26 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 00OBWNEE042050;
-        Fri, 24 Jan 2020 05:32:23 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1579865543;
-        bh=UIHuy/MWjXgfz5O1NZVKDjd//Yhws3+i5WP1cnU1b7w=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=DrXgy2oe0n7cJlR1oU4k1x9RB0p5+P4HV4+XXZTgGThy0mQY5kmh2t1y3O4bXkhMB
-         TuztgQA7V7l6uXEtUGTlIdWduf3VcHejGlwM3vGkIsD1x44glvpbPRxRJLdnugUIyY
-         uN72q3VvmGo9HKDQAEJ00g28Pta1UoHqP/wb8VUs=
-Received: from DFLE108.ent.ti.com (dfle108.ent.ti.com [10.64.6.29])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 00OBWNkM127450
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 24 Jan 2020 05:32:23 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3; Fri, 24
- Jan 2020 05:32:22 -0600
-Received: from lelv0326.itg.ti.com (10.180.67.84) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1847.3 via
- Frontend Transport; Fri, 24 Jan 2020 05:32:22 -0600
-Received: from [127.0.0.1] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by lelv0326.itg.ti.com (8.15.2/8.15.2) with ESMTP id 00OBWJff098690;
-        Fri, 24 Jan 2020 05:32:20 -0600
-Subject: Re: [Patch v4 09/10] arm64: dts: k3-am65-main Add CAL node
-To:     Benoit Parrot <bparrot@ti.com>, Tony Lindgren <tony@atomide.com>,
-        <linux-omap@vger.kernel.org>, <linux-clk@vger.kernel.org>
-CC:     Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20191211140558.10407-1-bparrot@ti.com>
- <20191211140558.10407-10-bparrot@ti.com>
-From:   Tero Kristo <t-kristo@ti.com>
-Message-ID: <dd203eea-f467-07a0-c578-cc6eeb512032@ti.com>
-Date:   Fri, 24 Jan 2020 13:32:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
-MIME-Version: 1.0
-In-Reply-To: <20191211140558.10407-10-bparrot@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        id S2387941AbgAXNbm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 24 Jan 2020 08:31:42 -0500
+Received: from xavier.telenet-ops.be ([195.130.132.52]:44822 "EHLO
+        xavier.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388375AbgAXNbm (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 08:31:42 -0500
+Received: from ramsan ([84.195.182.253])
+        by xavier.telenet-ops.be with bizsmtp
+        id uDXf2100t5USYZQ01DXfYb; Fri, 24 Jan 2020 14:31:39 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan with esmtp (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iuz3j-0007f7-Gx; Fri, 24 Jan 2020 14:31:39 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1iuz3j-00049W-EU; Fri, 24 Jan 2020 14:31:39 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Gilad Ben-Yossef <gilad@benyossef.com>, linux-clk@vger.kernel.org,
+        linux-renesas-soc@vger.kernel.org,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH] clk: renesas: rcar-gen3: Add CCREE clocks
+Date:   Fri, 24 Jan 2020 14:31:37 +0100
+Message-Id: <20200124133137.15921-1-geert+renesas@glider.be>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 11/12/2019 16:05, Benoit Parrot wrote:
-> Add CAL dtsi node for AM654 device. Including proper power-domains and
-> clock properties.
-> 
-> Signed-off-by: Benoit Parrot <bparrot@ti.com>
+Add the CryptoCell module clocks and their parents for the CryptoCell
+instances in the various Renesas R-Car Gen3 SoCs that do not have
+support for them yet in their clock drivers (M3-W/W+, M3-N, E3, D3).
 
-Queued this and patch #10 up for 5.6, thanks.
+The R-Car H3 clock driver already supports these clocks.
 
--Tero
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+To be queued in clk-renesas-for-v5.7.
 
-> ---
->   arch/arm64/boot/dts/ti/k3-am65-main.dtsi | 22 ++++++++++++++++++++++
->   1 file changed, 22 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-> index efb24579922c..551adcefcc83 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-> @@ -624,4 +624,26 @@
->   		dma-coherent;
->   		interrupts = <GIC_SPI 355 IRQ_TYPE_EDGE_RISING>;
->   	};
-> +
-> +	cal: cal@6f03000 {
-> +		compatible = "ti,am654-cal";
-> +		reg = <0x0 0x06f03000 0x0 0x400>,
-> +		      <0x0 0x06f03800 0x0 0x40>;
-> +		reg-names = "cal_top",
-> +			    "cal_rx_core0";
-> +		interrupts = <GIC_SPI 152 IRQ_TYPE_LEVEL_HIGH>;
-> +		ti,camerrx-control = <&scm_conf 0x40c0>;
-> +		clock-names = "fck";
-> +		clocks = <&k3_clks 2 0>;
-> +		power-domains = <&k3_pds 2 TI_SCI_PD_EXCLUSIVE>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			csi2_0: port@0 {
-> +				reg = <0>;
-> +			};
-> +		};
-> +	};
->   };
-> 
+ drivers/clk/renesas/r8a7796-cpg-mssr.c  | 2 ++
+ drivers/clk/renesas/r8a77965-cpg-mssr.c | 4 +++-
+ drivers/clk/renesas/r8a77990-cpg-mssr.c | 2 ++
+ drivers/clk/renesas/r8a77995-cpg-mssr.c | 2 ++
+ 4 files changed, 9 insertions(+), 1 deletion(-)
 
---
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki. Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
+diff --git a/drivers/clk/renesas/r8a7796-cpg-mssr.c b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+index e8420d3ada94ca45..1155d66368485ea6 100644
+--- a/drivers/clk/renesas/r8a7796-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a7796-cpg-mssr.c
+@@ -105,6 +105,7 @@ static const struct cpg_core_clk r8a7796_core_clks[] __initconst = {
+ 	DEF_GEN3_SD("sd3",      R8A7796_CLK_SD3,   CLK_SDSRC,     0x26c),
+ 
+ 	DEF_FIXED("cl",         R8A7796_CLK_CL,    CLK_PLL1_DIV2, 48, 1),
++	DEF_FIXED("cr",         R8A7796_CLK_CR,    CLK_PLL1_DIV4,  2, 1),
+ 	DEF_FIXED("cp",         R8A7796_CLK_CP,    CLK_EXTAL,      2, 1),
+ 	DEF_FIXED("cpex",       R8A7796_CLK_CPEX,  CLK_EXTAL,      2, 1),
+ 
+@@ -132,6 +133,7 @@ static struct mssr_mod_clk r8a7796_mod_clks[] __initdata = {
+ 	DEF_MOD("sys-dmac2",		 217,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A7796_CLK_S3D1),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A7796_CLK_S0D3),
++	DEF_MOD("sceg-pub",		 229,	R8A7796_CLK_CR),
+ 	DEF_MOD("cmt3",			 300,	R8A7796_CLK_R),
+ 	DEF_MOD("cmt2",			 301,	R8A7796_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A7796_CLK_R),
+diff --git a/drivers/clk/renesas/r8a77965-cpg-mssr.c b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+index b3af4da2ca74b15d..9530480880f185a4 100644
+--- a/drivers/clk/renesas/r8a77965-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77965-cpg-mssr.c
+@@ -99,7 +99,8 @@ static const struct cpg_core_clk r8a77965_core_clks[] __initconst = {
+ 	DEF_GEN3_SD("sd2",	R8A77965_CLK_SD2,	CLK_SDSRC,	0x268),
+ 	DEF_GEN3_SD("sd3",	R8A77965_CLK_SD3,	CLK_SDSRC,	0x26c),
+ 
+-	DEF_FIXED("cl",		R8A77965_CLK_CL,	CLK_PLL1_DIV2,	48, 1),
++	DEF_FIXED("cl",		R8A77965_CLK_CL,	CLK_PLL1_DIV2, 48, 1),
++	DEF_FIXED("cr",         R8A77965_CLK_CR,	CLK_PLL1_DIV4,  2, 1),
+ 	DEF_FIXED("cp",		R8A77965_CLK_CP,	CLK_EXTAL,	2, 1),
+ 	DEF_FIXED("cpex",	R8A77965_CLK_CPEX,	CLK_EXTAL,	2, 1),
+ 
+@@ -127,6 +128,7 @@ static const struct mssr_mod_clk r8a77965_mod_clks[] __initconst = {
+ 	DEF_MOD("sys-dmac2",		217,	R8A77965_CLK_S3D1),
+ 	DEF_MOD("sys-dmac1",		218,	R8A77965_CLK_S3D1),
+ 	DEF_MOD("sys-dmac0",		219,	R8A77965_CLK_S0D3),
++	DEF_MOD("sceg-pub",		229,	R8A77965_CLK_CR),
+ 
+ 	DEF_MOD("cmt3",			300,	R8A77965_CLK_R),
+ 	DEF_MOD("cmt2",			301,	R8A77965_CLK_R),
+diff --git a/drivers/clk/renesas/r8a77990-cpg-mssr.c b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+index ceabf55c21c253f7..8eda2e3e24807b37 100644
+--- a/drivers/clk/renesas/r8a77990-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77990-cpg-mssr.c
+@@ -105,6 +105,7 @@ static const struct cpg_core_clk r8a77990_core_clks[] __initconst = {
+ 	DEF_GEN3_SD("sd3",     R8A77990_CLK_SD3,   CLK_SDSRC,	  0x026c),
+ 
+ 	DEF_FIXED("cl",        R8A77990_CLK_CL,    CLK_PLL1,      48, 1),
++	DEF_FIXED("cr",        R8A77990_CLK_CR,    CLK_PLL1D2,     2, 1),
+ 	DEF_FIXED("cp",        R8A77990_CLK_CP,    CLK_EXTAL,      2, 1),
+ 	DEF_FIXED("cpex",      R8A77990_CLK_CPEX,  CLK_EXTAL,      4, 1),
+ 
+@@ -135,6 +136,7 @@ static const struct mssr_mod_clk r8a77990_mod_clks[] __initconst = {
+ 	DEF_MOD("sys-dmac2",		 217,	R8A77990_CLK_S3D1),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A77990_CLK_S3D1),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A77990_CLK_S3D1),
++	DEF_MOD("sceg-pub",		 229,	R8A77990_CLK_CR),
+ 
+ 	DEF_MOD("cmt3",			 300,	R8A77990_CLK_R),
+ 	DEF_MOD("cmt2",			 301,	R8A77990_CLK_R),
+diff --git a/drivers/clk/renesas/r8a77995-cpg-mssr.c b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+index 962bb337f2e7c2cd..056ebf3e70e2dd49 100644
+--- a/drivers/clk/renesas/r8a77995-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77995-cpg-mssr.c
+@@ -91,6 +91,7 @@ static const struct cpg_core_clk r8a77995_core_clks[] __initconst = {
+ 	DEF_FIXED("s3d4",      R8A77995_CLK_S3D4,  CLK_S3,         4, 1),
+ 
+ 	DEF_FIXED("cl",        R8A77995_CLK_CL,    CLK_PLL1,      48, 1),
++	DEF_FIXED("cr",        R8A77995_CLK_CR,    CLK_PLL1D2,     2, 1),
+ 	DEF_FIXED("cp",        R8A77995_CLK_CP,    CLK_EXTAL,      2, 1),
+ 	DEF_FIXED("cpex",      R8A77995_CLK_CPEX,  CLK_EXTAL,      4, 1),
+ 
+@@ -122,6 +123,7 @@ static const struct mssr_mod_clk r8a77995_mod_clks[] __initconst = {
+ 	DEF_MOD("sys-dmac2",		 217,	R8A77995_CLK_S3D1),
+ 	DEF_MOD("sys-dmac1",		 218,	R8A77995_CLK_S3D1),
+ 	DEF_MOD("sys-dmac0",		 219,	R8A77995_CLK_S3D1),
++	DEF_MOD("sceg-pub",		 229,	R8A77995_CLK_CR),
+ 	DEF_MOD("cmt3",			 300,	R8A77995_CLK_R),
+ 	DEF_MOD("cmt2",			 301,	R8A77995_CLK_R),
+ 	DEF_MOD("cmt1",			 302,	R8A77995_CLK_R),
+-- 
+2.17.1
+
