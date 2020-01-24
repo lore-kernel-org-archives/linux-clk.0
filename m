@@ -2,36 +2,38 @@ Return-Path: <SRS0=IRPH=3N=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1942C35242
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847B3C3F68F
 	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 23:28:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8536720838
+	by mail.kernel.org (Postfix) with ESMTP id 64C7320880
 	for <linux-clk@archiver.kernel.org>; Fri, 24 Jan 2020 23:28:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729353AbgAXX2X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        id S1729473AbgAXX2X (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
         Fri, 24 Jan 2020 18:28:23 -0500
-Received: from mailoutvs19.siol.net ([185.57.226.210]:38348 "EHLO
+Received: from mailoutvs50.siol.net ([185.57.226.241]:38268 "EHLO
         mail.siol.net" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729530AbgAXX2X (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 18:28:23 -0500
+        with ESMTP id S1729353AbgAXX2W (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 24 Jan 2020 18:28:22 -0500
+X-Greylist: delayed 473 seconds by postgrey-1.27 at vger.kernel.org; Fri, 24 Jan 2020 18:28:21 EST
 Received: from localhost (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTP id 62CEA5228CC;
-        Sat, 25 Jan 2020 00:20:35 +0100 (CET)
+        by mail.siol.net (Zimbra) with ESMTP id 5935D5227DE;
+        Sat, 25 Jan 2020 00:20:28 +0100 (CET)
 X-Virus-Scanned: amavisd-new at psrvmta12.zcs-production.pri
 Received: from mail.siol.net ([127.0.0.1])
         by localhost (psrvmta12.zcs-production.pri [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id alWAOP-it7zU; Sat, 25 Jan 2020 00:20:35 +0100 (CET)
+        with ESMTP id lnLDxxhC6oQY; Sat, 25 Jan 2020 00:20:28 +0100 (CET)
 Received: from mail.siol.net (localhost [127.0.0.1])
-        by mail.siol.net (Zimbra) with ESMTPS id 1F66D522899;
-        Sat, 25 Jan 2020 00:20:35 +0100 (CET)
+        by mail.siol.net (Zimbra) with ESMTPS id F22115227E3;
+        Sat, 25 Jan 2020 00:20:27 +0100 (CET)
 Received: from localhost.localdomain (cpe-194-152-20-232.static.triera.net [194.152.20.232])
         (Authenticated sender: 031275009)
-        by mail.siol.net (Zimbra) with ESMTPSA id C0F195228CF;
-        Sat, 25 Jan 2020 00:20:32 +0100 (CET)
+        by mail.siol.net (Zimbra) with ESMTPSA id 4C65F522806;
+        Sat, 25 Jan 2020 00:20:25 +0100 (CET)
 From:   Jernej Skrabec <jernej.skrabec@siol.net>
 To:     mripard@kernel.org, wens@csie.org
 Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
@@ -40,9 +42,9 @@ Cc:     mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
         devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-sunxi@googlegroups.com
-Subject: [PATCH 4/8] arm64: dts: allwinner: a64: Fix display clock register range
-Date:   Sat, 25 Jan 2020 00:20:10 +0100
-Message-Id: <20200124232014.574989-5-jernej.skrabec@siol.net>
+Subject: [PATCH 1/8] clk: sunxi-ng: sun8i-de2: Swap A64 and H6 definitions
+Date:   Sat, 25 Jan 2020 00:20:07 +0100
+Message-Id: <20200124232014.574989-2-jernej.skrabec@siol.net>
 X-Mailer: git-send-email 2.25.0
 In-Reply-To: <20200124232014.574989-1-jernej.skrabec@siol.net>
 References: <20200124232014.574989-1-jernej.skrabec@siol.net>
@@ -53,30 +55,84 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Register range of display clocks is 0x10000, as it can be seen from
-DE2 documentation.
-
-Fix it.
+For some reason, A64 and H6 have swapped clocks and resets definitions.
+H6 doesn't have rotation unit while A64 has. Swap around to correct the
+issue.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
 ---
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c | 18 +++++++++---------
+ 1 file changed, 9 insertions(+), 9 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
-oot/dts/allwinner/sun50i-a64.dtsi
-index 862b47dc9dc9..baa6f08dc108 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -264,7 +264,7 @@ bus@1000000 {
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/=
+ccu-sun8i-de2.c
+index d9668493c3f9..08074d935317 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
+@@ -51,7 +51,7 @@ static SUNXI_CCU_M(mixer1_div_a83_clk, "mixer1-div", "p=
+ll-de", 0x0c, 4, 4,
+ static SUNXI_CCU_M(wb_div_a83_clk, "wb-div", "pll-de", 0x0c, 8, 4,
+ 		   CLK_SET_RATE_PARENT);
 =20
- 			display_clocks: clock@0 {
- 				compatible =3D "allwinner,sun50i-a64-de2-clk";
--				reg =3D <0x0 0x100000>;
-+				reg =3D <0x0 0x10000>;
- 				clocks =3D <&ccu CLK_BUS_DE>,
- 					 <&ccu CLK_DE>;
- 				clock-names =3D "bus",
+-static struct ccu_common *sun50i_h6_de3_clks[] =3D {
++static struct ccu_common *sun50i_a64_de2_clks[] =3D {
+ 	&mixer0_clk.common,
+ 	&mixer1_clk.common,
+ 	&wb_clk.common,
+@@ -156,7 +156,7 @@ static struct clk_hw_onecell_data sun8i_v3s_de2_hw_cl=
+ks =3D {
+ 	.num	=3D CLK_NUMBER_WITHOUT_ROT,
+ };
+=20
+-static struct clk_hw_onecell_data sun50i_h6_de3_hw_clks =3D {
++static struct clk_hw_onecell_data sun50i_a64_de2_hw_clks =3D {
+ 	.hws	=3D {
+ 		[CLK_MIXER0]		=3D &mixer0_clk.common.hw,
+ 		[CLK_MIXER1]		=3D &mixer1_clk.common.hw,
+@@ -190,13 +190,13 @@ static struct ccu_reset_map sun50i_a64_de2_resets[]=
+ =3D {
+ 	[RST_MIXER0]	=3D { 0x08, BIT(0) },
+ 	[RST_MIXER1]	=3D { 0x08, BIT(1) },
+ 	[RST_WB]	=3D { 0x08, BIT(2) },
++	[RST_ROT]	=3D { 0x08, BIT(3) },
+ };
+=20
+ static struct ccu_reset_map sun50i_h6_de3_resets[] =3D {
+ 	[RST_MIXER0]	=3D { 0x08, BIT(0) },
+ 	[RST_MIXER1]	=3D { 0x08, BIT(1) },
+ 	[RST_WB]	=3D { 0x08, BIT(2) },
+-	[RST_ROT]	=3D { 0x08, BIT(3) },
+ };
+=20
+ static const struct sunxi_ccu_desc sun8i_a83t_de2_clk_desc =3D {
+@@ -220,20 +220,20 @@ static const struct sunxi_ccu_desc sun8i_h3_de2_clk=
+_desc =3D {
+ };
+=20
+ static const struct sunxi_ccu_desc sun50i_a64_de2_clk_desc =3D {
+-	.ccu_clks	=3D sun8i_h3_de2_clks,
+-	.num_ccu_clks	=3D ARRAY_SIZE(sun8i_h3_de2_clks),
++	.ccu_clks	=3D sun50i_a64_de2_clks,
++	.num_ccu_clks	=3D ARRAY_SIZE(sun50i_a64_de2_clks),
+=20
+-	.hw_clks	=3D &sun8i_h3_de2_hw_clks,
++	.hw_clks	=3D &sun50i_a64_de2_hw_clks,
+=20
+ 	.resets		=3D sun50i_a64_de2_resets,
+ 	.num_resets	=3D ARRAY_SIZE(sun50i_a64_de2_resets),
+ };
+=20
+ static const struct sunxi_ccu_desc sun50i_h6_de3_clk_desc =3D {
+-	.ccu_clks	=3D sun50i_h6_de3_clks,
+-	.num_ccu_clks	=3D ARRAY_SIZE(sun50i_h6_de3_clks),
++	.ccu_clks	=3D sun8i_h3_de2_clks,
++	.num_ccu_clks	=3D ARRAY_SIZE(sun8i_h3_de2_clks),
+=20
+-	.hw_clks	=3D &sun50i_h6_de3_hw_clks,
++	.hw_clks	=3D &sun8i_h3_de2_hw_clks,
+=20
+ 	.resets		=3D sun50i_h6_de3_resets,
+ 	.num_resets	=3D ARRAY_SIZE(sun50i_h6_de3_resets),
 --=20
 2.25.0
 
