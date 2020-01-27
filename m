@@ -1,127 +1,204 @@
-Return-Path: <SRS0=G+54=3O=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=CLUx=3Q=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS,URIBL_BLOCKED autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9419C2D0DB
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jan 2020 11:24:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D4FC32771
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jan 2020 05:00:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CFE42071E
-	for <linux-clk@archiver.kernel.org>; Sat, 25 Jan 2020 11:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A2CCD21569
+	for <linux-clk@archiver.kernel.org>; Mon, 27 Jan 2020 05:00:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gM9Yxu1p"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="X4VO6Hm5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727084AbgAYLYh (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 25 Jan 2020 06:24:37 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:40948 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725767AbgAYLYh (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 25 Jan 2020 06:24:37 -0500
-Received: by mail-wr1-f65.google.com with SMTP id c14so5161766wrn.7;
-        Sat, 25 Jan 2020 03:24:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=bNk/OspMeZjlVC/SKfI3L+0oFPUb+GRq74FvOVEc3HQ=;
-        b=gM9Yxu1p0Nsi4Zctq5wvCXsMYRrDBm/Vjiqmt/eGl8COnQMgWdfFUfDB3XdbgThdmj
-         NIDlR5Hh4eTMZQjI0hhLZ3T5oyP25FetCvAoeeR3vVXaixcESuqjeHYXQBq1ZxMazQUv
-         EED3txDawm+AoD9BYnHgBzFhO2ixy7WBXUmZqodqGBA+F/61lIWvOFHAf8WGeGrN+S/6
-         EUh5nR99OQiYJNynws8yIw7OvFb6eHFieq8WTEIjONRZK0ogBWVEi8tzyypZW2gMoWPh
-         hQxPbj1Q3NotEc/m5T+JXSaH+8NPHEYRdEZELI72NTWFSVmIMT0O9IJP6FCzpKD2qgY4
-         hBuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=bNk/OspMeZjlVC/SKfI3L+0oFPUb+GRq74FvOVEc3HQ=;
-        b=nGtx/6Q6RtAl/5ztzoY4HUArad8czgMWcRFzDGNs0jKtPgdOTIdZZN3dneCSB4pFDb
-         iMKsHgAApBhoOng34OBkwPZNeb49bSZt+wbg/e94oxmQ8YEv6Wl1sUbmadpIzBovknBg
-         xxcRRyPtrZ3Xj2hCB18ApNvqHm7OPqXOsvP3NBeBrfxzll33Z+PnQVlp7WPtFbBw8GnY
-         0L2CN7ShaxnxLJvdwr5cxQdzUwPsSUNVI2lmX0/JpVhhC60c8ueahrMeN/vweh8Qlfi6
-         mn8m0aNBKbMWFd5Lvk0UObgNf3Hb/gbV8w3joUE9xYkmiQhXN7S3a8g+danylQeoIGte
-         Be9g==
-X-Gm-Message-State: APjAAAXtnQVCH3h9NqeLi9ZxTZu9PQ0YC2FUQG17pTE7GBmPuRk2/hbq
-        JHOnj2uJMiSsPoCucz1qIdw=
-X-Google-Smtp-Source: APXvYqwSRB4GnMc8wYHmDCrrOC5fRc3uwvimip3VqhEtndLxWL6dxHIkp/VsDwcDVobhpqSxrQUiNg==
-X-Received: by 2002:a5d:4a8c:: with SMTP id o12mr9736485wrq.43.1579951474523;
-        Sat, 25 Jan 2020 03:24:34 -0800 (PST)
-Received: from jernej-laptop.localnet (cpe-194-152-20-232.static.triera.net. [194.152.20.232])
-        by smtp.gmail.com with ESMTPSA id a62sm1604452wmh.33.2020.01.25.03.24.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 25 Jan 2020 03:24:33 -0800 (PST)
-From:   Jernej =?utf-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To:     Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com
-Cc:     Maxime Ripard <mripard@kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        jernej.skrabec@siol.net
-Subject: Re: [linux-sunxi] [PATCH 1/8] clk: sunxi-ng: sun8i-de2: Swap A64 and H6 definitions
-Date:   Sat, 25 Jan 2020 12:24:31 +0100
-Message-ID: <2701584.e9J7NaK4W3@jernej-laptop>
-In-Reply-To: <2008374.irdbgypaU6@jernej-laptop>
-References: <20200124232014.574989-1-jernej.skrabec@siol.net> <CAGb2v6680yWT8KtjK0uKM00+6ed4NoPpsMaDyfYERwOXgb8Vbg@mail.gmail.com> <2008374.irdbgypaU6@jernej-laptop>
-MIME-Version: 1.0
+        id S1725763AbgA0FAb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 27 Jan 2020 00:00:31 -0500
+Received: from mail-eopbgr140055.outbound.protection.outlook.com ([40.107.14.55]:5205
+        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725308AbgA0FAa (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 27 Jan 2020 00:00:30 -0500
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=ixbrgpBkZ+qPCNrScidjSBbX4zuOaE6FkD38wewDhomfbpsAeIJm4snWNx6XILnWDaC+GA3zzhlSm4wSqDMIFn5zMVYRjA06B3gaMU/pfxVJcAdAYvfA4N2UHmzMTTGLqLepjLKRCKGygQzR0aLoV4q8N74cOqq+zFZSXbHcwNj2lfz31nMB2Ob7k8MxgihiFMO5UIuu4p4wJfWh8dkerXQ/JCrw4cTlRVcbsUWu04UaTD7IRFQ/xKt5l2r7RGIYz70XMWjJNQYskpfevKQBoV9HAMkdKYEv9TG+RpR1LJ5df2Ma0mRY7PUyhy1q/AoOm1HVQ79wb064Rdsp+spJ3g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H6VWt2dUTfR+eYglH/8RzaKXrQPUuZ2/G07u54Uknco=;
+ b=fYsSajpebAFnmEbBnLB8gnznFZ1pGEep95nvVqPCH/q1uYlSCayZ6KEI4m5oqbTw7SrrSp84Aan91KCm2hxadsELkIjGr6N+MNPt45Cds/8OcC9/EpKhJPEBJSHjidRgkklF27bVFcc0857f6JGIgXzFbZh8lEiRlU2K5CwgLfs7Gegabe60sOidfBw1l2HOslV0XmNRqPQmVmtENNBCCcxmtPaRCexwmj2gf+7knu9i8elYqtuURZdrc3BPnYnClvJIoCZJUM0hnaLH3qjZAy8eAEj4rEozW3i+fBrHWIMwtLBUUUnv6BLY1EuxB+cSPBSNeJgDPxykUMGzcTGjqg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=H6VWt2dUTfR+eYglH/8RzaKXrQPUuZ2/G07u54Uknco=;
+ b=X4VO6Hm5IcE0hWGfM8qr5uXajbFH7gkZ5J0Ao2iA8utHZpV10504Gd/RSt19a2JKN8AMlTBqdNuZPkex3SCW9Y8D3ADp4FOQ8jsfJMdLgdzKRr1eTQ9I/Y+Ca8J1tcLIVmhmNjDniJamgdhXr2bvHiV7SpYOg2ynlLWql86CX6w=
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com (52.135.147.15) by
+ AM0PR04MB6883.eurprd04.prod.outlook.com (52.132.212.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2665.23; Mon, 27 Jan 2020 05:00:26 +0000
+Received: from AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422]) by AM0PR04MB4481.eurprd04.prod.outlook.com
+ ([fe80::91e2:17:b3f4:d422%3]) with mapi id 15.20.2665.017; Mon, 27 Jan 2020
+ 05:00:26 +0000
+From:   Peng Fan <peng.fan@nxp.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>
+CC:     "sboyd@kernel.org" <sboyd@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "festevam@gmail.com" <festevam@gmail.com>,
+        Abel Vesa <abel.vesa@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Anson Huang <anson.huang@nxp.com>,
+        Jacky Bai <ping.bai@nxp.com>,
+        "l.stach@pengutronix.de" <l.stach@pengutronix.de>
+Subject: RE: [PATCH V3 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+Thread-Topic: [PATCH V3 2/4] clk: imx: imx8mq: use imx8m_clk_hw_composite_core
+Thread-Index: AQHVzBLhTw2vfOWK6k2th/PMm5Cat6f+BJtQ
+Date:   Mon, 27 Jan 2020 05:00:26 +0000
+Message-ID: <AM0PR04MB4481A8AF4694F539FBED0D54880B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+References: <1579140562-8060-1-git-send-email-peng.fan@nxp.com>
+ <1579140562-8060-3-git-send-email-peng.fan@nxp.com>
+ <VI1PR04MB70239267F223F63918362DDCEE320@VI1PR04MB7023.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB70239267F223F63918362DDCEE320@VI1PR04MB7023.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=peng.fan@nxp.com; 
+x-originating-ip: [119.31.174.68]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-ht: Tenant
+x-ms-office365-filtering-correlation-id: 4ce7a854-e73f-4a91-5b03-08d7a2e5d2ac
+x-ms-traffictypediagnostic: AM0PR04MB6883:|AM0PR04MB6883:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <AM0PR04MB6883DFBCF04FEBCC70E27EB8880B0@AM0PR04MB6883.eurprd04.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:2958;
+x-forefront-prvs: 02951C14DC
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(4636009)(136003)(376002)(39860400002)(396003)(346002)(366004)(199004)(189003)(52536014)(8936002)(5660300002)(55016002)(9686003)(66556008)(64756008)(66446008)(66476007)(76116006)(53546011)(66946007)(8676002)(81156014)(81166006)(44832011)(71200400001)(6506007)(186003)(86362001)(33656002)(26005)(110136005)(4326008)(316002)(54906003)(2906002)(7696005)(478600001)(32563001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB6883;H:AM0PR04MB4481.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: bpvQNh9p/rff4/IjTUKSeOcHbVaZidA+wfdjC9Gh7O72axqc2BVotyIcwx2B2v+fBqHEioqr9W5MOi854Spjct9pzOpRbQS0wGtTJGkf4m09vcYuDNBgYPmIhFI293QIHkxUG3jddhnatp8UhJ/owDcmyxj/0U0TtaSjL/1tkfiz+MXQkEDmnKbw/m7Ahh9uhSPSvYuOtcG1Rj4jhlYS6B+Sxm/VRoNNglI/78bzCegO7EQvsGe75mVhmo1NWVf8qE7phTAqsESwUs+Q2TdwBTRa4870mkY1qMqsuDbqO2TALf9RYrPqL9cRxi99+m2Z1mHEn2fGqXVEIETX5Yimhnnz6vHGH38hEE3REsxVm9CTejidUJEIYAeA5RoWch/lUi5wtdbypOOER316yz9JLVIW6qs8rZsoPreLk5BrT/wbVdeF9gd3Cf3LpSSaeuPjbggQSAefvW85pV2mE522iTmplXlm7s+MiEPoKBlhLJTAn+AXPE0KvkTEMAaFOwM9
+x-ms-exchange-antispam-messagedata: AL2/2jhIcb+mdH+t+ggQWgjeAyP/5dJuALdezdX3RjKnibrgcP+Zir9UCckcc7tqA7SuSeUQrLXZ4g3kVDDfqXAmy4zl07A3ViQmOIZcYcGn52aliH7vKJzNUVPh4godnHM0C5QmfVVzYu0enFgn/g==
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4ce7a854-e73f-4a91-5b03-08d7a2e5d2ac
+X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jan 2020 05:00:26.1232
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: AGgAQMofhNrsHMUOu5PGHFJj+2dxXROloxcP4sygsKnPVi3gM/q5sZaoVTYi8xyXrRiEgfR1Eeq0PZz4FlqY6g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6883
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Dne sobota, 25. januar 2020 ob 12:20:18 CET je Jernej =C5=A0krabec napisal(=
-a):
-> Hi!
+> Subject: Re: [PATCH V3 2/4] clk: imx: imx8mq: use
+> imx8m_clk_hw_composite_core
 >=20
-> Dne sobota, 25. januar 2020 ob 04:05:33 CET je Chen-Yu Tsai napisal(a):
-> > On Sat, Jan 25, 2020 at 7:20 AM Jernej Skrabec <jernej.skrabec@siol.net>
+> On 16.01.2020 04:15, Peng Fan wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> >
+> > Use imx8m_clk_hw_composite_core to simplify code.
+> >
+> > Reviewed-by: Abel Vesa <abel.vesa@nxp.com>
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> >   drivers/clk/imx/clk-imx8mq.c | 22 ++++++++--------------
+> >   1 file changed, 8 insertions(+), 14 deletions(-)
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8mq.c
+> > b/drivers/clk/imx/clk-imx8mq.c index 4c0edca1a6d0..e928c1355ad8
+> 100644
+> > --- a/drivers/clk/imx/clk-imx8mq.c
+> > +++ b/drivers/clk/imx/clk-imx8mq.c
+> > @@ -403,22 +403,16 @@ static int imx8mq_clocks_probe(struct
+> > platform_device *pdev)
+> >
+> >   	/* CORE */
+> >   	hws[IMX8MQ_CLK_A53_SRC] =3D imx_clk_hw_mux2("arm_a53_src",
+> base + 0x8000, 24, 3, imx8mq_a53_sels, ARRAY_SIZE(imx8mq_a53_sels));
+> > -	hws[IMX8MQ_CLK_M4_SRC] =3D imx_clk_hw_mux2("arm_m4_src", base
+> + 0x8080, 24, 3, imx8mq_arm_m4_sels, ARRAY_SIZE(imx8mq_arm_m4_sels));
+> > -	hws[IMX8MQ_CLK_VPU_SRC] =3D imx_clk_hw_mux2("vpu_src", base +
+> 0x8100, 24, 3, imx8mq_vpu_sels, ARRAY_SIZE(imx8mq_vpu_sels));
+> > -	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D
+> imx_clk_hw_mux2("gpu_core_src", base + 0x8180, 24, 3,
+> imx8mq_gpu_core_sels, ARRAY_SIZE(imx8mq_gpu_core_sels));
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D
+> imx_clk_hw_mux2("gpu_shader_src", base + 0x8200, 24, 3,
+> imx8mq_gpu_shader_sels,  ARRAY_SIZE(imx8mq_gpu_shader_sels));
+> > -
+> >   	hws[IMX8MQ_CLK_A53_CG] =3D
+> imx_clk_hw_gate3_flags("arm_a53_cg", "arm_a53_src", base + 0x8000, 28,
+> CLK_IS_CRITICAL);
+> > -	hws[IMX8MQ_CLK_M4_CG] =3D imx_clk_hw_gate3("arm_m4_cg",
+> "arm_m4_src", base + 0x8080, 28);
+> > -	hws[IMX8MQ_CLK_VPU_CG] =3D imx_clk_hw_gate3("vpu_cg", "vpu_src",
+> base + 0x8100, 28);
+> > -	hws[IMX8MQ_CLK_GPU_CORE_CG] =3D imx_clk_hw_gate3("gpu_core_cg",
+> "gpu_core_src", base + 0x8180, 28);
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_CG] =3D
+> imx_clk_hw_gate3("gpu_shader_cg", "gpu_shader_src", base + 0x8200, 28);
+> > -
+> >   	hws[IMX8MQ_CLK_A53_DIV] =3D
+> imx_clk_hw_divider2("arm_a53_div", "arm_a53_cg", base + 0x8000, 0, 3);
+> > -	hws[IMX8MQ_CLK_M4_DIV] =3D imx_clk_hw_divider2("arm_m4_div",
+> "arm_m4_cg", base + 0x8080, 0, 3);
+> > -	hws[IMX8MQ_CLK_VPU_DIV] =3D imx_clk_hw_divider2("vpu_div",
+> "vpu_cg", base + 0x8100, 0, 3);
+> > -	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D
+> imx_clk_hw_divider2("gpu_core_div", "gpu_core_cg", base + 0x8180, 0, 3);
+> > -	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D
+> imx_clk_hw_divider2("gpu_shader_div", "gpu_shader_cg", base + 0x8200, 0,
+> 3);
+> > +
+> > +	hws[IMX8MQ_CLK_M4_DIV] =3D
+> imx8m_clk_hw_composite_core("arm_m4_div", imx8mq_arm_m4_sels, base
+> + 0x8080);
+> > +	hws[IMX8MQ_CLK_VPU_DIV] =3D
+> imx8m_clk_hw_composite_core("vpu_div", imx8mq_vpu_sels, base +
+> 0x8100);
+> > +	hws[IMX8MQ_CLK_GPU_CORE_DIV] =3D
+> imx8m_clk_hw_composite_core("gpu_core_div", imx8mq_gpu_core_sels,
+> base + 0x8180);
+> > +	hws[IMX8MQ_CLK_GPU_SHADER_DIV] =3D
+> > +imx8m_clk_hw_composite("gpu_shader_div", imx8mq_gpu_shader_sels,
+> base
+> > ++ 0x8200);
 >=20
-> wrote:
-> > > For some reason, A64 and H6 have swapped clocks and resets definition=
-s.
-> > > H6 doesn't have rotation unit while A64 has. Swap around to correct t=
-he
-> > > issue.
-> > >=20
-> > > Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-> >=20
-> > Could you add Fixes tags for this one?
+> > +	/* For DTS which still assign parents for gpu core src clk */
+> > +	hws[IMX8MQ_CLK_GPU_CORE_SRC] =3D
+> hws[IMX8MQ_CLK_GPU_CORE_DIV];
+> > +	hws[IMX8MQ_CLK_GPU_SHADER_SRC] =3D
+> hws[IMX8MQ_CLK_GPU_SHADER_DIV];
 >=20
-> I'm not sure which commit to reference. H6 one? or also initial A64 one?
->=20
-> I just found out that H5 compatible uses A64 structure, which is not
-> correct. H5 doesn't contain rotate core.
->=20
-> Do you have any better idea how to nicely solve this mess? I'm thinking t=
-hat
-> for v2 I would first decouple some compatibles, like this for H5 and R40
-> and V3s from A83T (as it can be seen in the next patch). After that, rath=
-er
-> than switching definitions I would fix each compatible one by one. At the
-> end, if any entry is duplicated, I can add one commit to merge same
-> structures.
+> Why not assign to all the old clocks?
 
-This could also be a separate series of patches on which rotate driver seri=
-es=20
-depends on.
-=20
-Best regards,
-Jernej
+Are those clocks expect the GPU ones needed?
 
+Currently only the gpu clocks are needed, others are not used in dts.
 
+For dts update to use the SRC clocks should be avoided in future for Linux,
+DIV clocks should be used.
 
+How do you think?
 
+Thanks,
+Peng.
