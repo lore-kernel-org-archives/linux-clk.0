@@ -2,146 +2,264 @@ Return-Path: <SRS0=cvgE=3R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,URI_HEX,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36405C2D0DB
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 17:43:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C98D7C2D0DB
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:23:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 111582467E
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 17:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F0AD22522
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:23:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ns6+GodD"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SUdYEEX/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726318AbgA1RnF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jan 2020 12:43:05 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44159 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbgA1RnF (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jan 2020 12:43:05 -0500
-Received: by mail-pf1-f193.google.com with SMTP id y5so3941608pfb.11
-        for <linux-clk@vger.kernel.org>; Tue, 28 Jan 2020 09:43:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=G04x8476nlRwMoS791EOJ6boBhRRBrF1hDA0bU861cc=;
-        b=ns6+GodDmZj1qux8lOkolFF0tVvlWwySGfBojg6+kBcxRXz1b7A403EwYW+tjaNOGr
-         tkspoCr3bftdSCnD7Bx62QqXmXJHqTwk5DIDQ1VH1IKdqWUzqQzBNfqqhFslObS6lZrn
-         QHujz5wRSR3Fp3cYjsNHNSUY5C6gTc8LKCIlU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=G04x8476nlRwMoS791EOJ6boBhRRBrF1hDA0bU861cc=;
-        b=WzxKSdKrZweJeYopN20Mv2gC6h3emEd0+c9Z5CYRpnVCSZkZ7iVKT84ELT7PBXeRLg
-         wCIMezmP3MXl7S6/Rrx8Rj+dEuo+n8ovaemdjL9+9zPYwf/JO+57RS9qeeBmWMpep09z
-         FjhuVWdREy2SGZ58rb8F+gPc3RSBkHv1zCJeB1qZ3WIN7Rcr6zF97vbTJfPSJIkrel0g
-         UtPBHnt6UFB52J2U9D/BFIpJW1H/AiZcTbG+UmhaImjMKUulEIpP8jLbf9Yf2/sEbBtz
-         Er2SyEL3OOOKJE7201p1I/S90pSGQxRAA6F9nWXTRSTI/+pGG8es7Rf0zNYXOlOQEfqp
-         SjyA==
-X-Gm-Message-State: APjAAAXdpG+JolDyCCP3Oqnb+kOJQI2v2/HEhf6Wdt1sEZm7H0FvzeFB
-        XS7FtSkK93E5w5doUm+8W4JroQ==
-X-Google-Smtp-Source: APXvYqxSOemF9qw2kW6ZxPefKrBcxmuZ0GN4JhdOH+GB/inoDCy3xQvLMlT5IKP/XRBqjrpTP/1jqg==
-X-Received: by 2002:a62:2ca:: with SMTP id 193mr5074976pfc.137.1580233384989;
-        Tue, 28 Jan 2020 09:43:04 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:4fff:7a6b:a335:8fde])
-        by smtp.gmail.com with ESMTPSA id h128sm20716988pfe.172.2020.01.28.09.43.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 Jan 2020 09:43:04 -0800 (PST)
-Date:   Tue, 28 Jan 2020 09:43:02 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
-        kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
-        linux-clk@vger.kernel.org, hoegsberg@chromium.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 01/10] clk: qcom: rcg2: Don't crash if our parent
- can't be found; return an error
-Message-ID: <20200128174302.GA46072@google.com>
-References: <20200124224225.22547-1-dianders@chromium.org>
- <20200124144154.v2.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid>
+        id S1726442AbgA1SXc (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jan 2020 13:23:32 -0500
+Received: from hqnvemgate26.nvidia.com ([216.228.121.65]:1455 "EHLO
+        hqnvemgate26.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726276AbgA1SXc (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jan 2020 13:23:32 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate26.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e307c140000>; Tue, 28 Jan 2020 10:23:16 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 28 Jan 2020 10:23:30 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 28 Jan 2020 10:23:30 -0800
+Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan
+ 2020 18:23:30 +0000
+Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
+ Transport; Tue, 28 Jan 2020 18:23:30 +0000
+Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.115]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
+        id <B5e307c1d0001>; Tue, 28 Jan 2020 10:23:29 -0800
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
+        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>
+CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+Date:   Tue, 28 Jan 2020 10:23:16 -0800
+Message-ID: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+X-Mailer: git-send-email 2.7.4
+X-NVConfidentiality: public
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20200124144154.v2.1.I7487325fe8e701a68a07d3be8a6a4b571eca9cfa@changeid>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580235796; bh=Elsu1D65X4Evxza1MBTSUAm3LvDEhyy3UpMB56w6m48=;
+        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
+         X-NVConfidentiality:MIME-Version:Content-Type;
+        b=SUdYEEX/bYAwxa541VvpGj+O05qa69B1SFGygfeCcGLpWo/SjL0ddyRcQxjLdUhDF
+         KJd8SQF5q4/9cs+g5BpA1rb4u07H+LhvmogvoX7BsfAU1OrR8dF/VlGWOcJm9fJdqz
+         WlzQ+goU/aU3aHimOv49UMNRYYelJiRoNQnCOYSJEeZqN9JeMfM5hwpTmVbamU6C0S
+         rQegw1u+vsEkNjRgk/yo0o8UVXCeJCGBOiUhu91rwn0xdUoCCOV4qvK77TA5fxYyAU
+         lZPmsAgW6PYBaGRjR20f3+UNdT8FNw1qePmkUgCCNvu3QpZiKmV25uQi6ltg9OVCEG
+         aU302WAxeu5Wg==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On Fri, Jan 24, 2020 at 02:42:16PM -0800, Douglas Anderson wrote:
-> When I got my clock parenting slightly wrong I ended up with a crash
-> that looked like this:
-> 
->   Unable to handle kernel NULL pointer dereference at virtual
->   address 0000000000000000
->   ...
->   pc : clk_hw_get_rate+0x14/0x44
->   ...
->   Call trace:
->    clk_hw_get_rate+0x14/0x44
->    _freq_tbl_determine_rate+0x94/0xfc
->    clk_rcg2_determine_rate+0x2c/0x38
->    clk_core_determine_round_nolock+0x4c/0x88
->    clk_core_round_rate_nolock+0x6c/0xa8
->    clk_core_round_rate_nolock+0x9c/0xa8
->    clk_core_set_rate_nolock+0x70/0x180
->    clk_set_rate+0x3c/0x6c
->    of_clk_set_defaults+0x254/0x360
->    platform_drv_probe+0x28/0xb0
->    really_probe+0x120/0x2dc
->    driver_probe_device+0x64/0xfc
->    device_driver_attach+0x4c/0x6c
->    __driver_attach+0xac/0xc0
->    bus_for_each_dev+0x84/0xcc
->    driver_attach+0x2c/0x38
->    bus_add_driver+0xfc/0x1d0
->    driver_register+0x64/0xf8
->    __platform_driver_register+0x4c/0x58
->    msm_drm_register+0x5c/0x60
->    ...
-> 
-> It turned out that clk_hw_get_parent_by_index() was returning NULL and
-> we weren't checking.  Let's check it so that we don't crash.
-> 
-> Fixes: ac269395cdd8 ("clk: qcom: Convert to clk_hw based provider APIs")
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> I haven't gone back and tried to reproduce this same crash on older
-> kernels, but I'll put the blame on commit ac269395cdd8 ("clk: qcom:
-> Convert to clk_hw based provider APIs").  Before that if we got a NULL
-> parent back it was fine and dandy since a NULL "struct clk" is valid
-> to use but a NULL "struct clk_hw" is not.
-> 
-> Changes in v2:
-> - Patch ("clk: qcom: rcg2: Don't crash...") new for v2.
-> 
->  drivers/clk/qcom/clk-rcg2.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-> index da045b200def..9098001ac805 100644
-> --- a/drivers/clk/qcom/clk-rcg2.c
-> +++ b/drivers/clk/qcom/clk-rcg2.c
-> @@ -218,6 +218,9 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
->  
->  	clk_flags = clk_hw_get_flags(hw);
->  	p = clk_hw_get_parent_by_index(hw, index);
-> +	if (!p)
-> +		return -EINVAL;
-> +
->  	if (clk_flags & CLK_SET_RATE_PARENT) {
->  		rate = f->freq;
->  		if (f->pre_div) {
+This series adds Tegra210 VI and CSI driver for built-in test pattern
+generator (TPG) capture.
 
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+CSI port is one-to-one mapped to VI channel for video capture.
+
+This series has TPG support only where it creates hard media links
+between CSI subdevice and VI video device without device graphs.
+
+v4l2-compliance results are available below the patch diff.
+
+[v0]:	Includes,
+	- Adds CSI TPG clock to Tegra210 clock driver
+	- Host1x video driver with VI and CSI clients.
+	- Support for Tegra210 only.
+	- VI CSI TPG support with hard media links in driver.
+	- Video formats supported by Tegra210 VI
+	- CSI TPG supported video formats
+
+
+Sowjanya Komatineni (5):
+  dt-bindings: clock: tegra: Add clk id for CSI TPG clock
+  clk: tegra: Add Tegra210 CSI TPG clock gate
+  dt-binding: tegra: Add VI and CSI bindings
+  media: tegra: Add Tegra Video input driver for Tegra210
+  arm64: tegra: Add Tegra VI CSI suppport in device tree
+
+ .../display/tegra/nvidia,tegra20-host1x.txt        |  10 +-
+ arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi     |   8 +
+ arch/arm64/boot/dts/nvidia/tegra210.dtsi           |  31 +-
+ drivers/clk/tegra/clk-tegra210.c                   |   7 +
+ drivers/staging/media/Kconfig                      |   2 +
+ drivers/staging/media/Makefile                     |   1 +
+ drivers/staging/media/tegra/Kconfig                |  12 +
+ drivers/staging/media/tegra/Makefile               |  11 +
+ drivers/staging/media/tegra/TODO                   |  10 +
+ drivers/staging/media/tegra/csi.h                  | 111 ++++
+ drivers/staging/media/tegra/csi2_fops.c            | 335 +++++++++++
+ drivers/staging/media/tegra/csi2_fops.h            |  15 +
+ drivers/staging/media/tegra/host1x-video.c         | 120 ++++
+ drivers/staging/media/tegra/host1x-video.h         |  33 ++
+ drivers/staging/media/tegra/mc_common.h            | 131 +++++
+ drivers/staging/media/tegra/tegra-channel.c        | 628 +++++++++++++++++++++
+ drivers/staging/media/tegra/tegra-core.c           | 111 ++++
+ drivers/staging/media/tegra/tegra-core.h           | 125 ++++
+ drivers/staging/media/tegra/tegra-csi.c            | 380 +++++++++++++
+ drivers/staging/media/tegra/tegra-vi.c             | 351 ++++++++++++
+ drivers/staging/media/tegra/tegra-vi.h             | 101 ++++
+ drivers/staging/media/tegra/vi2_fops.c             | 364 ++++++++++++
+ drivers/staging/media/tegra/vi2_fops.h             |  15 +
+ drivers/staging/media/tegra/vi2_formats.h          | 119 ++++
+ drivers/staging/media/tegra/vi2_registers.h        | 194 +++++++
+ include/dt-bindings/clock/tegra210-car.h           |   2 +-
+ 26 files changed, 3224 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/staging/media/tegra/Kconfig
+ create mode 100644 drivers/staging/media/tegra/Makefile
+ create mode 100644 drivers/staging/media/tegra/TODO
+ create mode 100644 drivers/staging/media/tegra/csi.h
+ create mode 100644 drivers/staging/media/tegra/csi2_fops.c
+ create mode 100644 drivers/staging/media/tegra/csi2_fops.h
+ create mode 100644 drivers/staging/media/tegra/host1x-video.c
+ create mode 100644 drivers/staging/media/tegra/host1x-video.h
+ create mode 100644 drivers/staging/media/tegra/mc_common.h
+ create mode 100644 drivers/staging/media/tegra/tegra-channel.c
+ create mode 100644 drivers/staging/media/tegra/tegra-core.c
+ create mode 100644 drivers/staging/media/tegra/tegra-core.h
+ create mode 100644 drivers/staging/media/tegra/tegra-csi.c
+ create mode 100644 drivers/staging/media/tegra/tegra-vi.c
+ create mode 100644 drivers/staging/media/tegra/tegra-vi.h
+ create mode 100644 drivers/staging/media/tegra/vi2_fops.c
+ create mode 100644 drivers/staging/media/tegra/vi2_fops.h
+ create mode 100644 drivers/staging/media/tegra/vi2_formats.h
+ create mode 100644 drivers/staging/media/tegra/vi2_registers.h
+
+
+v4l2-compliance SHA: e7402fb758fd106955c3b7d5a5e961d1cb606f4a, 32 bits, 32-bit time_t
+
+Compliance test for tegra-video device /dev/video0:
+
+Driver Info:
+        Driver name      : tegra-video
+        Card type        : 54080000.vi-output-0
+        Bus info         : platform:54080000.vi:0
+        Driver version   : 5.5.0
+        Capabilities     : 0x85200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+                Device Capabilities
+        Device Caps      : 0x05200001
+                Video Capture
+                Read/Write
+                Streaming
+                Extended Pix Format
+Media Driver Info:
+        Driver name      : host1x_video
+        Model            : NVIDIA Tegra Video Input Device
+        Serial           :
+        Bus info         :
+        Media version    : 5.5.0
+        Hardware revision: 0x00000003 (3)
+        Driver version   : 5.5.0
+Interface Info:
+        ID               : 0x03000003
+        Type             : V4L Video
+Entity Info:
+        ID               : 0x00000001 (1)
+        Name             : 54080000.vi-output-0
+        Function         : V4L2 I/O
+        Pad 0x01000002   : 0: Sink
+          Link 0x0200001b: from remote pad 0x100001a of entity 'tpg-0': Data, Enabled
+
+Required ioctls:
+        test MC information (see 'Media Driver Info' above): OK
+        test VIDIOC_QUERYCAP: OK
+
+Allow for multiple opens:
+        test second /dev/video0 open: OK
+        test VIDIOC_QUERYCAP: OK
+        test VIDIOC_G/S_PRIORITY: OK
+        test for unlimited opens: OK
+
+        test invalid ioctls: OK
+Debug ioctls:
+        test VIDIOC_DBG_G/S_REGISTER: OK (Not Supported)
+        test VIDIOC_LOG_STATUS: OK (Not Supported)
+
+Input ioctls:
+        test VIDIOC_G/S_TUNER/ENUM_FREQ_BANDS: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_S_HW_FREQ_SEEK: OK (Not Supported)
+        test VIDIOC_ENUMAUDIO: OK (Not Supported)
+        test VIDIOC_G/S/ENUMINPUT: OK
+        test VIDIOC_G/S_AUDIO: OK (Not Supported)
+        Inputs: 1 Audio Inputs: 0 Tuners: 0
+
+Output ioctls:
+        test VIDIOC_G/S_MODULATOR: OK (Not Supported)
+        test VIDIOC_G/S_FREQUENCY: OK (Not Supported)
+        test VIDIOC_ENUMAUDOUT: OK (Not Supported)
+        test VIDIOC_G/S/ENUMOUTPUT: OK (Not Supported)
+        test VIDIOC_G/S_AUDOUT: OK (Not Supported)
+        Outputs: 0 Audio Outputs: 0 Modulators: 0
+
+Input/Output configuration ioctls:
+        test VIDIOC_ENUM/G/S/QUERY_STD: OK (Not Supported)
+        test VIDIOC_ENUM/G/S/QUERY_DV_TIMINGS: OK (Not Supported)
+        test VIDIOC_DV_TIMINGS_CAP: OK (Not Supported)
+        test VIDIOC_G/S_EDID: OK (Not Supported)
+
+Control ioctls (Input 0):
+        test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+        test VIDIOC_QUERYCTRL: OK
+        test VIDIOC_G/S_CTRL: OK
+        test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+        test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: OK
+        test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+        Standard Controls: 2 Private Controls: 0
+
+Format ioctls (Input 0):
+        test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+        test VIDIOC_G/S_PARM: OK (Not Supported)
+        test VIDIOC_G_FBUF: OK (Not Supported)
+        test VIDIOC_G_FMT: OK
+        test VIDIOC_TRY_FMT: OK
+        test VIDIOC_S_FMT: OK
+        test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+        test Cropping: OK (Not Supported)
+        test Composing: OK (Not Supported)
+        test Scaling: OK (Not Supported)
+
+Codec ioctls (Input 0):
+        test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+        test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+        test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+
+Buffer ioctls (Input 0):
+        test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: OK
+        test VIDIOC_EXPBUF: OK
+        test Requests: OK (Not Supported)
+
+Test input 0:
+
+Streaming ioctls:
+        test read/write: OK
+        test blocking wait: OK
+        test MMAP (no poll): OK
+        test MMAP (select): OK
+        test MMAP (epoll): OK
+        test USERPTR (no poll): OK (Not Supported)
+        test USERPTR (select): OK (Not Supported)
+        test DMABUF: Cannot test, specify --expbuf-device
+
+Total for tegra-video device /dev/video0: 53, Succeeded: 53, Failed: 0, Warnings: 0
+
+-- 
+2.7.4
+
