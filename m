@@ -6,68 +6,66 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
 	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD65AC2D0DB
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 21:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FFA4C2D0DB
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 22:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D0102465B
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 21:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7466C21739
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 22:04:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580245572;
-	bh=e1/XxJeK0Rii27xiuHRXszUSO+kWCgAZKPcYe8Ep09Q=;
+	s=default; t=1580249086;
+	bh=j/NUJ+MdfToDuN75xJKIJE1vjW8I5zQX5YuatxjDXZU=;
 	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
-	b=ug6UIXIoLuqyM8cDIIYu1po6dSWB4Prz/u/aZh6SpvIPSSm2rxJU6WiKr9I+ggLrQ
-	 GOWvuw2PqQFdUTbAi79uaBXbcUveVOjigCEPcjs8UHN5VOAZIVNp1q+g96ohDnZ3DU
-	 wDKeJxfXIoQJCcERuJMSwbJMw7YIwnAk57duJsPo=
+	b=kmLhVYuLnNr6qCw/YP7GuW1uzd1MHmQnQ/zrCoTAcI/pjkdI/3mdwwqUo2h6YDxSs
+	 rflJeyk3+mbzQTKW3vIa4N2Na8OwCh3pb3V2JHAnX8Kl92QrV/UTbPoVVuZHIAtTDZ
+	 hoo9vM0QSmcG+4f2FgCIO+zQWHLR3xZhzn+Fkk6Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726276AbgA1VGM (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jan 2020 16:06:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38610 "EHLO mail.kernel.org"
+        id S1726291AbgA1WEm (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jan 2020 17:04:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbgA1VGL (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Jan 2020 16:06:11 -0500
+        id S1726211AbgA1WEm (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jan 2020 17:04:42 -0500
 Received: from kernel.org (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 414012087F;
-        Tue, 28 Jan 2020 21:06:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5B9C207FD;
+        Tue, 28 Jan 2020 22:04:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580245571;
-        bh=e1/XxJeK0Rii27xiuHRXszUSO+kWCgAZKPcYe8Ep09Q=;
+        s=default; t=1580249081;
+        bh=j/NUJ+MdfToDuN75xJKIJE1vjW8I5zQX5YuatxjDXZU=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=0pdZAc9dYvmMJ6/vvSSGVT0f9Z7j6zSlJc7YD4Yxk/sWiDcjvB0DCJiLf2SGhMp5Z
-         ui0H/fAM2hwGsn3lgCa8jCPMRQO3zW9NxU6wBcXI0/Qy/f/t5eR6FeYrIHPAD3oRv8
-         KtIjD2wPEEDcE66WOUMtkNk508KP8X697PjoinG8=
+        b=IwrA1qm7xqnE0s03KSqSfbTXcN2YGudcmBfUNBES+roQHqn3SvoPyjHkCeUeAZtGM
+         9r4MwROQs+ty97TJr9BKMAx14VrFEF6WKxsZ7aph3Sb3k8kJQdH4i+d83kxcEvEemO
+         EujjbRpjo6VMDtCIoxdA6yXPRrNRiwOLq3yhpoAk=
 Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200107075340.14528-1-mike.looijmans@topic.nl>
-References: <20191205115734.6987-1-mike.looijmans@topic.nl> <20200107054837.DB91F2075A@mail.kernel.org> <20200107075340.14528-1-mike.looijmans@topic.nl>
+In-Reply-To: <20200102231101.11834-1-michael@walle.cc>
+References: <20200102231101.11834-1-michael@walle.cc>
 From:   Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v2] clk, clk-si5341: Support multiple input ports
-To:     Mike Looijmans <mike.looijmans@topic.nl>, linux-clk@vger.kernel.org
-Cc:     mturquette@baylibre.com, linux-kernel@vger.kernel.org,
-        Mike Looijmans <mike.looijmans@topic.nl>
+Subject: Re: [PATCH v3 1/3] clk: composite: add _register_composite_pdata() variants
+To:     Michael Walle <michael@walle.cc>, devicetree@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Walle <michael@walle.cc>
 User-Agent: alot/0.8.1
-Date:   Tue, 28 Jan 2020 13:06:10 -0800
-Message-Id: <20200128210611.414012087F@mail.kernel.org>
+Date:   Tue, 28 Jan 2020 14:04:40 -0800
+Message-Id: <20200128220441.B5B9C207FD@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Mike Looijmans (2020-01-06 23:53:40)
-> The Si5341 and Si5340 have multiple input clock options. So far, the driv=
-er
-> only supported the XTAL input, this adds support for the three external
-> clock inputs as well.
+Quoting Michael Walle (2020-01-02 15:10:59)
+> Add support for the new way of specifying the clock parents. Add the
+> two new functions
+>     clk_hw_register_composite_pdata()
+>     clk_register_composite_pdata()
+> to let the driver provide parent_data instead of the parent_names.
 >=20
-> If the clock chip isn't programmed at boot, the driver will default to the
-> XTAL input as before. If there is no "xtal" clock input available, it will
-> pick the first connected input (e.g. "in0") as the input clock for the PL=
-L.
-> One can use clock-assigned-parents to select a particular clock as input.
->=20
-> Signed-off-by: Mike Looijmans <mike.looijmans@topic.nl>
+> Signed-off-by: Michael Walle <michael@walle.cc>
 > ---
 
 Applied to clk-next
