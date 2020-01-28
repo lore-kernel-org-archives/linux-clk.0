@@ -2,93 +2,67 @@ Return-Path: <SRS0=cvgE=3R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C6E9C3524A
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F199CC33CB2
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:28:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC1D120716
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:23:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Hkp2gvS8"
+	by mail.kernel.org (Postfix) with ESMTP id CD05224681
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580236084;
+	bh=yR9ZQkAqZBFptYZXFi0jyworPepwxJ8Tg2vkRpqRJmI=;
+	h=In-Reply-To:References:From:Subject:To:Cc:Date:List-ID:From;
+	b=x6lZiNtHfDhH8Lp40J8P07GmfVGQbFHf1ayVh2jTMJKblZ7mfS2HzZvv0uLsLbWs+
+	 OS7HgTFSiheKbm3JgQFZUcZjvNMUIyqPHUZen0zaNOb9osY1j81a8opLBuAw2ef93n
+	 Vm66lJPQqH5PQ0i55k/Z+oBn7Q9GtR/Kk/bzXMBM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726764AbgA1SXe (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jan 2020 13:23:34 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:17752 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726276AbgA1SXe (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jan 2020 13:23:34 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e307bf30000>; Tue, 28 Jan 2020 10:22:43 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 28 Jan 2020 10:23:33 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 28 Jan 2020 10:23:33 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Tue, 28 Jan
- 2020 18:23:33 +0000
-Received: from hqnvemgw03.nvidia.com (10.124.88.68) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1473.3 via Frontend
- Transport; Tue, 28 Jan 2020 18:23:32 +0000
-Received: from skomatineni-linux.nvidia.com (Not Verified[10.2.164.115]) by hqnvemgw03.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5e307c220002>; Tue, 28 Jan 2020 10:23:32 -0800
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     <skomatineni@nvidia.com>, <thierry.reding@gmail.com>,
-        <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [RFC PATCH v1 1/5] dt-bindings: clock: tegra: Add clk id for CSI TPG clock
-Date:   Tue, 28 Jan 2020 10:23:17 -0800
-Message-ID: <1580235801-4129-2-git-send-email-skomatineni@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
-X-NVConfidentiality: public
+        id S1726556AbgA1S2B (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jan 2020 13:28:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56248 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726486AbgA1S2B (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jan 2020 13:28:01 -0500
+Received: from kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 62F4422522;
+        Tue, 28 Jan 2020 18:28:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580236080;
+        bh=yR9ZQkAqZBFptYZXFi0jyworPepwxJ8Tg2vkRpqRJmI=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=jrKZM23F7fyOA3kIgP5c8vHqHn3DTouwbRUeRfu8Ews9k5fDEZpcvFuRsF2VpCdhh
+         Q4cfuygKGdQNCPH45mL3mTN3o+bRXzzVnp4WNuiJd3NT2X2vo2H2W10HchUd8tPevG
+         /dmKAtJXh9SOE8eoA7B32O5UXLdsTG0zODv6mIHs=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580235763; bh=SPzwobycNDg9N502/mnGfQIq3LKpSXOMWG+HIM072Xs=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:X-NVConfidentiality:MIME-Version:
-         Content-Type;
-        b=Hkp2gvS8P/QYTqJwKI0nBqKiVxK7ixxh7vuSD0rLBrVreOENuSXA2tIiS6ndR8QOX
-         LaSz/AjAGl1WOTCSbms8qv7f7VgKRv8H7AaT34LbdCZToNe0V++dSorX2ORAnbxb3D
-         UlLcl3eCZBYddctC2GzelHM6BuOBnIEdZIYnDScrty6AL5Dr9+CY84o+aogE3taupP
-         sQLd5MsBDo+lzz4vU+/tF+BefHPUQ49WnONYktxomxL+RsdOtZYnKS2tdGpwQ8g+8s
-         yeUKYQUVKHqnb/KrCsXpmts3+wSLvMqHub6wZEaL09DxADAz2H/uOoFn5c9zxjKTcz
-         leWJqHJwSWQkQ==
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20200124175934.3937473-1-bjorn.andersson@linaro.org>
+References: <20200124175934.3937473-1-bjorn.andersson@linaro.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH] clk: qcom: rpmh: Sort OF match table
+To:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Taniya Das <tdas@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: alot/0.8.1
+Date:   Tue, 28 Jan 2020 10:27:59 -0800
+Message-Id: <20200128182800.62F4422522@mail.kernel.org>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Tegra210 uses PLLD out internally for CSI TPG.
+Quoting Bjorn Andersson (2020-01-24 09:59:34)
+> sc7180 was added to the end of the match table, sort the table.
+>=20
+> Fixes: eee28109f871 ("clk: qcom: clk-rpmh: Add support for RPMHCC for SC7=
+180")
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+> ---
 
-This patch adds clk id for this CSI TPG clock from PLLD.
-
-Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
----
- include/dt-bindings/clock/tegra210-car.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/include/dt-bindings/clock/tegra210-car.h b/include/dt-bindings/clock/tegra210-car.h
-index 44f60623f99b..dc22aaec8805 100644
---- a/include/dt-bindings/clock/tegra210-car.h
-+++ b/include/dt-bindings/clock/tegra210-car.h
-@@ -349,7 +349,7 @@
- #define TEGRA210_CLK_PLL_P_OUT_XUSB 317
- #define TEGRA210_CLK_XUSB_SSP_SRC 318
- #define TEGRA210_CLK_PLL_RE_OUT1 319
--/* 320 */
-+#define TEGRA210_CLK_CSI_TPG 320
- /* 321 */
- #define TEGRA210_CLK_ISP 322
- #define TEGRA210_CLK_PLL_A_OUT_ADSP 323
--- 
-2.7.4
+Applied to clk-next
 
