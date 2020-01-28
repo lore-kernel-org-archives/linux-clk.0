@@ -2,124 +2,103 @@ Return-Path: <SRS0=cvgE=3R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69A94C2D0DB
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:43:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC888C2D0DB
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 19:33:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B120207FD
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 18:43:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EFCB24683
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 19:33:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580240011;
+	bh=CzHf0cywYKTja7w/o3Cx9C1HB0qYaKqouONA+gnhoiU=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=tKvMiYNTblS0Cz6vfFxKW7zjylGePN/kTwK1TDFb5vPbS0FyZY10A0noYjtKAHMXj
+	 RcAp5c5748dHSnQlQONVdZ2jX3e5jBcIpi7yChjkv3ZYWKRaPPJpwF5xMZd7TQFoI8
+	 o75efvfDBPjZRSDzT/Z5KhAmoGN9YhijfTUFZZ5o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726291AbgA1Snj (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jan 2020 13:43:39 -0500
-Received: from foss.arm.com ([217.140.110.172]:33604 "EHLO foss.arm.com"
+        id S1726296AbgA1Tdb (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jan 2020 14:33:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726233AbgA1Sni (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Tue, 28 Jan 2020 13:43:38 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F3784328;
-        Tue, 28 Jan 2020 10:43:37 -0800 (PST)
-Received: from [10.1.196.37] (e121345-lin.cambridge.arm.com [10.1.196.37])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D25713F52E;
-        Tue, 28 Jan 2020 10:43:36 -0800 (PST)
-Subject: Re: [PATCH 1/3] clk: rockchip: convert rk3399 pll type to use
- readl_poll_timeout
-To:     Heiko Stuebner <heiko@sntech.de>
-Cc:     linux-clk@vger.kernel.org, sboyd@kernel.org,
-        mturquette@baylibre.com, zhangqing@rock-chips.com,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        christoph.muellner@theobroma-systems.com
-References: <20200128100204.1318450-1-heiko@sntech.de>
- <f8001dbb-ebbc-ebe3-d1db-c75d3888fd38@arm.com> <12366580.SORy7UBWfn@phil>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <6349f721-60ae-b494-85c5-c1be8a669799@arm.com>
-Date:   Tue, 28 Jan 2020 18:43:31 +0000
-User-Agent: Mozilla/5.0 (X11; Linux aarch64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726291AbgA1Tdb (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jan 2020 14:33:31 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E8297214D8;
+        Tue, 28 Jan 2020 19:33:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580240010;
+        bh=CzHf0cywYKTja7w/o3Cx9C1HB0qYaKqouONA+gnhoiU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DQMLvL2iNk4CbdDzOrneKsIerWY2/J+dfcAxzSEsfJNMYJlCntt2OoeDfyhLGcuPr
+         //Q/c6CsyWm2X2ssuLGxudy/ZvU7kZE54DT9ChOAtolX5Q9Qc8VI60WlDqGM/Bf9Pk
+         XvRw3PymqnswsnmOUB1v2SuYh8R6mWI2PR2t0yiI=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        Rajendra Nayak <rnayak@codeaurora.org>
+Subject: [PATCH] clk: qcom: Don't overwrite 'cfg' in clk_rcg2_dfs_populate_freq()
+Date:   Tue, 28 Jan 2020 11:33:29 -0800
+Message-Id: <20200128193329.45635-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-In-Reply-To: <12366580.SORy7UBWfn@phil>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 28/01/2020 4:29 pm, Heiko Stuebner wrote:
-> Am Dienstag, 28. Januar 2020, 16:28:44 CET schrieb Robin Murphy:
->> On 28/01/2020 10:02 am, Heiko Stuebner wrote:
->>> From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
->>>
->>> Instead of open coding the polling of the lock status, use the
->>> handy readl_poll_timeout for this. As the pll locking is normally
->>> blazingly fast and we don't want to incur additional delays, we're
->>> not doing any sleeps similar to for example the imx clk-pllv4
->>> and define a very safe but still short timeout of 1ms.
->>>
->>> Suggested-by: Stephen Boyd <sboyd@kernel.org>
->>> Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
->>> ---
->>>    drivers/clk/rockchip/clk-pll.c | 21 ++++++++++-----------
->>>    1 file changed, 10 insertions(+), 11 deletions(-)
->>>
->>> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
->>> index 198417d56300..43c9fd0086a2 100644
->>> --- a/drivers/clk/rockchip/clk-pll.c
->>> +++ b/drivers/clk/rockchip/clk-pll.c
->>> @@ -585,19 +585,18 @@ static const struct clk_ops rockchip_rk3066_pll_clk_ops = {
->>>    static int rockchip_rk3399_pll_wait_lock(struct rockchip_clk_pll *pll)
->>>    {
->>>    	u32 pllcon;
->>> -	int delay = 24000000;
->>> +	int ret;
->>>    
->>> -	/* poll check the lock status in rk3399 xPLLCON2 */
->>> -	while (delay > 0) {
->>> -		pllcon = readl_relaxed(pll->reg_base + RK3399_PLLCON(2));
->>> -		if (pllcon & RK3399_PLLCON2_LOCK_STATUS)
->>> -			return 0;
->>> +	/*
->>> +	 * Lock time typical 250, max 500 input clock cycles @24MHz
->>> +	 * So define a very safe maximum of 1000us, meaning 24000 cycles.
->>> +	 */
->>> +	ret = readl_poll_timeout(pll->reg_base + RK3399_PLLCON(2), pllcon,
->>> +				 pllcon & RK3399_PLLCON2_LOCK_STATUS, 0, 1000);
->>
->> Note that the existing I/O accessor was readl_relaxed(), but using plain
->> readl_poll_timeout() switches it to regular readl(). It may well not
->> matter, but since it's not noted as an intentional change it seemed
->> worth pointing out.
-> 
-> So we end up with an additional __iormb() after each readl_relaxed call.
-> So except for a small speed-penalty per iteration is there some other
-> memory-barrier wirednes that could come into play? (Somehow I always
-> forget the contents of Will's memory-barrier talks after a time)
+The DFS frequency table logic overwrites 'cfg' while detecting the
+parent clk and then later on in clk_rcg2_dfs_populate_freq() we use that
+same variable to figure out the mode of the clk, either MND or not. Add
+a new variable to hold the parent clk bit so that 'cfg' is left
+untouched for use later.
 
-For the current arm64 implementation, probably not. For 32-bit it's 
-still a DSB, which might in theory generate a bunch of coherency traffic 
-synchronising with all the other CPUs each time, although unless you're 
-counting every last microWatt even that's unlikely to be anything to 
-worry about in practice. You *could* keep consistency with 
-readl_relaxed_poll_timeout() instead, but you could equally argue the 
-"use regular accessors for simplicity unless there's a provable benefit 
-to using relaxed ones" angle. Up to you :)
+This fixes problems in detecting the supported frequencies for any clks
+in DFS mode.
 
-Robin.
+Fixes: cc4f6944d0e3 ("clk: qcom: Add support for RCG to register for DFS")
+Reported-by: Rajendra Nayak <rnayak@codeaurora.org>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ drivers/clk/qcom/clk-rcg2.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->  From a bit of non-scientific testing, rk3328 seems to need at max 20
-> iterations in the wait_lock loop for the pll to lock, when doing cpufreq
-> scaling.
-> 
-> While interestingly px30 takes somewhere between 900 and 2000 iterations
-> on the same pll type.
-> [Though sleeps are not really possible anyway due to pll rates also getting
-> set during of_clk_register early during boot which results in errors about
-> scheduling the idle thread, so in the end it doesn't really matter]
-> 
-> Heiko
-> 
-> 
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index da045b200def..973ecf4f6bc5 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -953,7 +953,7 @@ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
+ 	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
+ 	struct clk_hw *p;
+ 	unsigned long prate = 0;
+-	u32 val, mask, cfg, mode;
++	u32 val, mask, cfg, mode, src;
+ 	int i, num_parents;
+ 
+ 	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + SE_PERF_DFSR(l), &cfg);
+@@ -963,12 +963,12 @@ static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
+ 	if (cfg & mask)
+ 		f->pre_div = cfg & mask;
+ 
+-	cfg &= CFG_SRC_SEL_MASK;
+-	cfg >>= CFG_SRC_SEL_SHIFT;
++	src = cfg & CFG_SRC_SEL_MASK;
++	src >>= CFG_SRC_SEL_SHIFT;
+ 
+ 	num_parents = clk_hw_get_num_parents(hw);
+ 	for (i = 0; i < num_parents; i++) {
+-		if (cfg == rcg->parent_map[i].cfg) {
++		if (src == rcg->parent_map[i].cfg) {
+ 			f->src = rcg->parent_map[i].src;
+ 			p = clk_hw_get_parent_by_index(&rcg->clkr.hw, i);
+ 			prate = clk_hw_get_rate(p);
+-- 
+Sent by a computer, using git, on the internet
+
