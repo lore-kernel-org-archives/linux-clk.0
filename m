@@ -2,176 +2,95 @@ Return-Path: <SRS0=cvgE=3R=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B63BC33CB3
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 05:58:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E560C33CB3
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 10:02:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 197C52467E
-	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 05:58:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="Dol1ECKd"
+	by mail.kernel.org (Postfix) with ESMTP id 2F7C724686
+	for <linux-clk@archiver.kernel.org>; Tue, 28 Jan 2020 10:02:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725839AbgA1F6S (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Tue, 28 Jan 2020 00:58:18 -0500
-Received: from mail26.static.mailgun.info ([104.130.122.26]:11406 "EHLO
-        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725810AbgA1F6S (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Tue, 28 Jan 2020 00:58:18 -0500
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
- s=smtp; t=1580191097; h=Content-Transfer-Encoding: Content-Type:
- In-Reply-To: MIME-Version: Date: Message-ID: From: References: Cc: To:
- Subject: Sender; bh=xEMzgt/quh6QS5imm/Ss06fNSr9xLLI+rH8MSsl9UWU=; b=Dol1ECKdn1xITK6rYY9t9LmZtGPgKsxlLPUbX63v/OtSV+Fc1SaSJGOBXwfFa5cu23jWXPDt
- jz3e6iCWZXyNu4sE7ezfGQEsF4n2tRXd7thEnO1HuKJKTbRpTW5zw7q4uQV5prgwzVappT9U
- o9JQd39ygDLi263FtzU9T8iOtX0=
-X-Mailgun-Sending-Ip: 104.130.122.26
-X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
-Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
- by mxa.mailgun.org with ESMTP id 5e2fcd78.7fe99340fa78-smtp-out-n01;
- Tue, 28 Jan 2020 05:58:16 -0000 (UTC)
-Received: by smtp.codeaurora.org (Postfix, from userid 1001)
-        id 7E81EC433CB; Tue, 28 Jan 2020 05:58:16 +0000 (UTC)
-Received: from [10.206.28.9] (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: tdas)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 1D0AAC447A2;
-        Tue, 28 Jan 2020 05:58:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 1D0AAC447A2
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
-Subject: Re: [PATCH v2 10/10] arm64: dts: sc7180: Add clock controller nodes
-To:     Douglas Anderson <dianders@chromium.org>,
-        Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@codeaurora.org>
-Cc:     Jeffrey Hugo <jhugo@codeaurora.org>, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
-        mka@chromium.org, kalyan_t@codeaurora.org,
-        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org,
-        hoegsberg@chromium.org, linux-kernel@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>
-References: <20200124224225.22547-1-dianders@chromium.org>
- <20200124144154.v2.10.I1a4b93fb005791e29a9dcf288fc8bd459a555a59@changeid>
-From:   Taniya Das <tdas@codeaurora.org>
-Message-ID: <eeef68f4-127e-6d28-4a79-c1464a10c7db@codeaurora.org>
-Date:   Tue, 28 Jan 2020 11:28:08 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.4.1
+        id S1725926AbgA1KCR (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Tue, 28 Jan 2020 05:02:17 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:34232 "EHLO gloria.sntech.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725853AbgA1KCR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Tue, 28 Jan 2020 05:02:17 -0500
+Received: from p57b77a13.dip0.t-ipconnect.de ([87.183.122.19] helo=phil.fritz.box)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1iwNhE-0008Lk-BR; Tue, 28 Jan 2020 11:02:12 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     linux-clk@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org,
+        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, heiko@sntech.de,
+        christoph.muellner@theobroma-systems.com, zhangqing@rock-chips.com,
+        Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+Subject: [PATCH 2/3] clk: rockchip: convert basic pll lock_wait to use regmap_read_poll_timeout
+Date:   Tue, 28 Jan 2020 11:02:02 +0100
+Message-Id: <20200128100204.1318450-2-heiko@sntech.de>
+X-Mailer: git-send-email 2.24.1
+In-Reply-To: <20200128100204.1318450-1-heiko@sntech.de>
+References: <20200128100204.1318450-1-heiko@sntech.de>
 MIME-Version: 1.0
-In-Reply-To: <20200124144154.v2.10.I1a4b93fb005791e29a9dcf288fc8bd459a555a59@changeid>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Doug,
+From: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
 
-Thanks for the patch.
+Instead of open coding the polling of the lock status, use the
+handy regmap_read_poll_timeout for this. As the pll locking is
+normally blazingly fast and we don't want to incur additional
+delays, we're not doing any sleeps similar to for example the imx
+clk-pllv4 and define a very safe but still short timeout of 1ms.
 
-On 1/25/2020 4:12 AM, Douglas Anderson wrote:
-> From: Taniya Das <tdas@codeaurora.org>
-> 
-> Add the display, video & graphics clock controller nodes supported on
-> SC7180.
-> 
-> NOTE: the dispcc needs input clocks from various PHYs that aren't in
-> the device tree yet.  For now we'll leave these stubbed out with <0>,
-> which is apparently the magic way to do this.  These clocks aren't
-> really "optional" and this stubbing out method is apparently the best
-> way to handle it.
-> 
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v2:
-> - Added includes
-> - Changed various parent names to match bindings / driver
-> 
->   arch/arm64/boot/dts/qcom/sc7180.dtsi | 41 ++++++++++++++++++++++++++++
->   1 file changed, 41 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sc7180.dtsi b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> index 8011c5fe2a31..ee3b4bade66b 100644
-> --- a/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sc7180.dtsi
-> @@ -5,7 +5,9 @@
->    * Copyright (c) 2019, The Linux Foundation. All rights reserved.
->    */
->   
-> +#include <dt-bindings/clock/qcom,dispcc-sc7180.h>
->   #include <dt-bindings/clock/qcom,gcc-sc7180.h>
-> +#include <dt-bindings/clock/qcom,gpucc-sc7180.h>
+Suggested-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Heiko Stuebner <heiko.stuebner@theobroma-systems.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 21 ++++++---------------
+ 1 file changed, 6 insertions(+), 15 deletions(-)
 
-My bad, but we are still missing the videocc header. I could send across 
-the new patch.
->   #include <dt-bindings/clock/qcom,rpmh.h>
->   #include <dt-bindings/interrupt-controller/arm-gic.h>
->   #include <dt-bindings/phy/phy-qcom-qusb2.h>
-> @@ -1039,6 +1041,18 @@ pinmux {
->   			};
->   		};
->   
-> +		gpucc: clock-controller@5090000 {
-> +			compatible = "qcom,sc7180-gpucc";
-> +			reg = <0 0x05090000 0 0x9000>;
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
-> +				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
-> +			clock-names = "xo", "gpll0", "gpll0_div";
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
->   		qspi: spi@88dc000 {
->   			compatible = "qcom,qspi-v1";
->   			reg = <0 0x088dc000 0 0x600>;
-> @@ -1151,6 +1165,33 @@ usb_1_dwc3: dwc3@a600000 {
->   			};
->   		};
->   
-> +		videocc: clock-controller@ab00000 {
-> +			compatible = "qcom,sc7180-videocc";
-> +			reg = <0 0x0ab00000 0 0x10000>;
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>;
-> +			clock-names = "xo";
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
-> +		dispcc: clock-controller@af00000 {
-> +			compatible = "qcom,sc7180-dispcc";
-> +			reg = <0 0x0af00000 0 0x200000>;
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_DISP_GPLL0_CLK_SRC>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>;
-> +			clock-names = "xo", "gpll0",
-> +				      "dsi_phy_pll_byte", "dsi_phy_pll_pixel",
-> +				      "dp_phy_pll_link", "dp_phy_pll_vco_div";
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
->   		pdc: interrupt-controller@b220000 {
->   			compatible = "qcom,sc7180-pdc", "qcom,pdc";
->   			reg = <0 0x0b220000 0 0x30000>;
-> 
-
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 43c9fd0086a2..26ca46d49191 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -86,23 +86,14 @@ static int rockchip_pll_wait_lock(struct rockchip_clk_pll *pll)
+ {
+ 	struct regmap *grf = pll->ctx->grf;
+ 	unsigned int val;
+-	int delay = 24000000, ret;
+-
+-	while (delay > 0) {
+-		ret = regmap_read(grf, pll->lock_offset, &val);
+-		if (ret) {
+-			pr_err("%s: failed to read pll lock status: %d\n",
+-			       __func__, ret);
+-			return ret;
+-		}
++	int ret;
+ 
+-		if (val & BIT(pll->lock_shift))
+-			return 0;
+-		delay--;
+-	}
++	ret = regmap_read_poll_timeout(grf, pll->lock_offset, val,
++				       val & BIT(pll->lock_shift), 0, 1000);
++	if (ret)
++		pr_err("%s: timeout waiting for pll to lock\n", __func__);
+ 
+-	pr_err("%s: timeout waiting for pll to lock\n", __func__);
+-	return -ETIMEDOUT;
++	return ret;
+ }
+ 
+ /**
 -- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation.
+2.24.1
 
---
