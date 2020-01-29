@@ -2,488 +2,934 @@ Return-Path: <SRS0=lB1V=3S=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.8 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B328AC35246
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jan 2020 22:41:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EE4C2D0DB
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jan 2020 23:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E8BC2082E
-	for <linux-clk@archiver.kernel.org>; Wed, 29 Jan 2020 22:41:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C923C206D5
+	for <linux-clk@archiver.kernel.org>; Wed, 29 Jan 2020 23:25:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="r9lVg0xz"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QjLz5X1K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbgA2Wk5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jan 2020 17:40:57 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:13010 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbgA2Wk5 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jan 2020 17:40:57 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e3209c40000>; Wed, 29 Jan 2020 14:40:04 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Wed, 29 Jan 2020 14:40:55 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Wed, 29 Jan 2020 14:40:55 -0800
-Received: from [10.2.164.115] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Wed, 29 Jan
- 2020 22:40:55 +0000
-Subject: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input driver for
- Tegra210
-To:     Helen Koike <helen.koike@collabora.com>,
-        <thierry.reding@gmail.com>, <jonathanh@nvidia.com>,
-        <frankc@nvidia.com>, <hverkuil@xs4all.nl>
-CC:     <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
- <3cdea635-a9ca-7b9c-3c99-8f489f4d669a@collabora.com>
- <162488d0-4e74-963a-3366-e4c1f7cf04ca@nvidia.com>
- <017ca95e-7dd3-2d04-8d84-9047ac4e548b@nvidia.com>
- <655b9a64-10d7-3fd3-f443-babf33e67b62@collabora.com>
- <7265b661-de5a-b0f0-bcdc-1a1d2c03fe57@nvidia.com>
- <4b443e7c-0866-ceea-938c-8ab71959fc89@collabora.com>
- <b1e7168a-1f6f-c6bf-6320-7a6ee51880be@nvidia.com>
- <01ab1cae-692d-3a31-39e6-a887bbb9b4e0@nvidia.com>
- <b55e9492-4996-6716-f2c1-3b88fa0525ef@collabora.com>
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-Message-ID: <4b5c8d7a-c838-9693-8448-c38c22afc2b8@nvidia.com>
-Date:   Wed, 29 Jan 2020 14:40:54 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726921AbgA2XZa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jan 2020 18:25:30 -0500
+Received: from mail-pj1-f66.google.com ([209.85.216.66]:39652 "EHLO
+        mail-pj1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726945AbgA2XZ2 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jan 2020 18:25:28 -0500
+Received: by mail-pj1-f66.google.com with SMTP id e9so496372pjr.4
+        for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2020 15:25:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bj8vAMZ6RIXf3bNUZGKb3RM6m6J9KwJ61xmYGVm9vuo=;
+        b=QjLz5X1KF/18yQscwHGwWVev5tHAsCjF1tNm/3EzFqAR6vppqBxctfGAr/th38raEa
+         gjXRh0Q4y853xA+JyJmHv+LqDCWzPhp9Ee46FRvX9dJiIH/RpYPJ0FdzZL6lhS3EkXdp
+         ChRDt+SxEUFhS032nn5cKoDsNlCRkIryTFGtQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=bj8vAMZ6RIXf3bNUZGKb3RM6m6J9KwJ61xmYGVm9vuo=;
+        b=gh4PAoBW35+pNxSIUbobMQv4SPD3CtVjXAFnYMaEhW8d4WtSlXLm9fGgcuOEZoJAg4
+         cYAIznrzMR9xGfeFmAi1Y9ubYbFPcDnYyp3Gh/LKvOO97iym8UP+Ob0gBe7ll1dBsf1a
+         VAgfbqNNtw9MoYKuKSrNruqz44HH0OU9iPH/6rpfvD6C5d3osgpy5DiUYflaZJzfpJQ0
+         wQr1neruQOaD2MNAsgV9+QQAV/VHiauf4e+lruno49s4fSAnqjd0UlY+r1J07B9/gvMV
+         n3XfwsPnEaderE91ZH3dqu7OzO2lWaSE8Yxv2c7uduVxrX+q8AjUxZv3TDHqYND0oTd3
+         e1og==
+X-Gm-Message-State: APjAAAUvAklPGYQWKLYVtu2eHy9p74Stc3vyEBroTSrVSueQAmxhMRNU
+        NhQ8MpPkUy5tGH3a2r1gHK95BQ==
+X-Google-Smtp-Source: APXvYqy9M3edZcQNAUu6Wl6Azm0lZry4X34qrfHthJe9eXHheR+tnwKMlpE776uTaPXjQRLFv029Gg==
+X-Received: by 2002:a17:902:820b:: with SMTP id x11mr1838853pln.196.1580340326488;
+        Wed, 29 Jan 2020 15:25:26 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id k12sm3735588pgm.65.2020.01.29.15.25.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 29 Jan 2020 15:25:26 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>
+Cc:     tdas@codeaurora.org, jhugo@codeaurora.org, absahu@codeaurora.org,
+        sivaprak@codeaurora.org, anusharao@codeaurora.org,
+        sricharan@codeaurora.org, Douglas Anderson <dianders@chromium.org>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-clk@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clk: qcom: Fix self-validation, split, and clean cruft
+Date:   Wed, 29 Jan 2020 15:25:06 -0800
+Message-Id: <20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-In-Reply-To: <b55e9492-4996-6716-f2c1-3b88fa0525ef@collabora.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580337604; bh=EO2jVDfXTwPcxSqv6JVOumgpTBoOHSdoQfiizvqsUU8=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=r9lVg0xzBUv9lgi+RvjPvR0aZSx0YBXXy+q5CtiAHG2Vn6muu9aBwNDhTZ1LeD9dq
-         tMwGuA1moccdip5a5WS5Vvo6DQO64w1rMYyXyZHjyzIwm2QdqiVZ0fDqPhdLBYwdo5
-         dMACODt8E7lnzyw8aYjZYfllwr3JPhvDNMhTPBoTu32DeWjtCpkc3B9hj/T23WWCUo
-         V+KB5hV3MO/HXbWt/s0ecnTuz20unkXSZJ5WblRyOI/Ce9U5s3SQ/0681jNUoAUZDh
-         //2eXXqOmUxmONhtxNdx3L4vtnEstM7Ut9qGH7ZJQKo88uxvkFUF6FCyj56tLx7jTX
-         ahaBsK6EmnaQA==
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
+The 'qcom,gcc.yaml' file failed self-validation (dt_binding_check)
+because it required a property to be either (3 entries big),
+(3 entries big), or (7 entries big), but not more than one of those
+things.  That didn't make a ton of sense.
 
-On 1/29/20 10:46 AM, Helen Koike wrote:
-> External email: Use caution opening links or attachments
->
->
-> On 1/29/20 4:15 PM, Sowjanya Komatineni wrote:
->> On 1/29/20 9:49 AM, Sowjanya Komatineni wrote:
->>> On 1/29/20 2:31 AM, Helen Koike wrote:
->>>> External email: Use caution opening links or attachments
->>>>
->>>>
->>>> On 1/29/20 12:11 AM, Sowjanya Komatineni wrote:
->>>>> On 1/28/20 5:05 PM, Helen Koike wrote:
->>>>>> External email: Use caution opening links or attachments
->>>>>>
->>>>>>
->>>>>> On 1/28/20 10:49 PM, Sowjanya Komatineni wrote:
->>>>>>> On 1/28/20 2:13 PM, Sowjanya Komatineni wrote:
->>>>>>>> On 1/28/20 1:45 PM, Helen Koike wrote:
->>>>>>>>> External email: Use caution opening links or attachments
->>>>>>>>>
->>>>>>>>>
->>>>>>>>> Hi Sowjanya,
->>>>>>>>>
->>>>>>>>> I just took a really quick look, I didn't check the driver in deep, so just some small comments below.
->>>>>>>>>
->>>>>>>>> On 1/28/20 4:23 PM, Sowjanya Komatineni wrote:
->>>>>>>>>> Tegra210 contains a powerful Video Input (VI) hardware controller
->>>>>>>>>> which can support up to 6 MIPI CSI camera sensors.
->>>>>>>>>>
->>>>>>>>>> Each Tegra CSI port can be one-to-one mapped to VI channel and can
->>>>>>>>>> capture from an external camera sensor connected to CSI or from
->>>>>>>>>> built-in test pattern generator.
->>>>>>>>>>
->>>>>>>>>> Tegra210 supports built-in test pattern generator from CSI to VI.
->>>>>>>>>>
->>>>>>>>>> This patch adds a V4L2 media controller and capture driver support
->>>>>>>>>> for Tegra210 built-in CSI to VI test pattern generator.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>>> Could you send us the output of media-ctl --print-dot ? So we can view the media topology easily?
->>>>>>>> root@tegra-ubuntu:/home/ubuntu# ./media-ctl --print-dot
->>>>>>>> digraph board {
->>>>>>>>            rankdir=TB
->>>>>>>>            n00000001 [label="54080000.vi-output-0\n/dev/video0", shape=box, style=filled, fillcolor=yellow]
->>>>>>>>            n00000005 [label="54080000.vi-output-1\n/dev/video1", shape=box, style=filled, fillcolor=yellow]
->>>>>>>>            n00000009 [label="54080000.vi-output-2\n/dev/video2", shape=box, style=filled, fillcolor=yellow]
->>>>>>>>            n0000000d [label="54080000.vi-output-3\n/dev/video3", shape=box, style=filled, fillcolor=yellow]
->>>>>>>>            n00000011 [label="54080000.vi-output-4\n/dev/video4", shape=box, style=filled, fillcolor=yellow]
->>>>>>>>            n00000015 [label="54080000.vi-output-5\n/dev/video5", shape=box, style=filled, fillcolor=yellow]
->>>>>>>>            n00000019 [label="{{} | tpg-0 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
->>>>>>>>            n00000019:port0 -> n00000001
->>>>>>>>            n0000001d [label="{{} | tpg-1 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
->>>>>>>>            n0000001d:port0 -> n00000005
->>>>>>>>            n00000021 [label="{{} | tpg-2 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
->>>>>>>>            n00000021:port0 -> n00000009
->>>>>>>>            n00000025 [label="{{} | tpg-3 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
->>>>>>>>            n00000025:port0 -> n0000000d
->>>>>>>>            n00000029 [label="{{} | tpg-4 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
->>>>>>>>            n00000029:port0 -> n00000011
->>>>>>>>            n0000002d [label="{{} | tpg-5 | {<port0> 0}}", shape=Mrecord, style=filled, fillcolor=green]
->>>>>>>>            n0000002d:port0 -> n00000015
->>>>>>>> }
->>>>>>>>
->>>>>>>>>> --- diff --git a/drivers/staging/media/tegra/host1x-video.h b/drivers/staging/media/tegra/host1x-video.h
->>>>>>>>>> new file mode 100644
->>>>>>>>>> index 000000000000..84d28e6f4362
->>>>>>>>>> --- /dev/null
->>>>>>>>>> +++ b/drivers/staging/media/tegra/host1x-video.h
->>>>>>>>>> @@ -0,0 +1,33 @@
->>>>>>>>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>>>>>>>> +/*
->>>>>>>>>> + * Copyright (C) 2020 NVIDIA CORPORATION.  All rights reserved.
->>>>>>>>>> + */
->>>>>>>>>> +
->>>>>>>>>> +#ifndef HOST1X_VIDEO_H
->>>>>>>>>> +#define HOST1X_VIDEO_H 1
->>>>>>>>>> +
->>>>>>>>>> +#include <linux/host1x.h>
->>>>>>>>>> +
->>>>>>>>>> +#include <media/media-device.h>
->>>>>>>>>> +#include <media/media-entity.h>
->>>>>>>>>> +#include <media/v4l2-async.h>
->>>>>>>>>> +#include <media/v4l2-ctrls.h>
->>>>>>>>>> +#include <media/v4l2-device.h>
->>>>>>>>>> +#include <media/v4l2-dev.h>
->>>>>>>>>> +#include <media/videobuf2-v4l2.h>
->>>>>>>>>> +
->>>>>>>>>> +#include "tegra-vi.h"
->>>>>>>>>> +#include "csi.h"
->>>>>>>>>> +
->>>>>>>>>> +struct tegra_camera {
->>>>>>>>>> +     struct v4l2_device v4l2_dev;
->>>>>>>>>> +     struct media_device media_dev;
->>>>>>>>>> +     struct device *dev;
->>>>>>>>> You can use cam->media_dev.dev instead of having this pointer.
->>>>>>>>>
->>>>>>> Will fix in v2
->>>>>>>>>> +     struct tegra_vi *vi;
->>>>>>>>>> +     struct tegra_csi_device *csi;
->>>>>>>>>> +};
->>>>>>>>>> +
->>>>>>>>>> +
->>>>>>>>>> +#define to_tegra_channel(vdev) \
->>>>>>>>>> +     container_of(vdev, struct tegra_channel, video)
->>>>>>>>> Why not inline instead of define. Inlines has the advantage of checking types.
->>>>>>> Will change in v2
->>>>>>>>>> +static int __tegra_channel_try_format(struct tegra_channel *chan,
->>>>>>>>>> +                                   struct v4l2_pix_format *pix,
->>>>>>>>>> +                                   const struct tegra_video_format **vfmt)
->>>>>>>>>> +{
->>>>>>>>>> +     const struct tegra_video_format *fmt_info;
->>>>>>>>>> +     struct v4l2_subdev *subdev;
->>>>>>>>>> +     struct v4l2_subdev_format fmt;
->>>>>>>>>> +     struct v4l2_subdev_pad_config *pad_cfg;
->>>>>>>>>> +
->>>>>>>>>> +     subdev = tegra_channel_get_remote_subdev(chan);
->>>>>>>>>> +     pad_cfg = v4l2_subdev_alloc_pad_config(subdev);
->>>>>>>>>> +     if (!pad_cfg)
->>>>>>>>>> +             return -ENOMEM;
->>>>>>>>>> +
->>>>>>>>>> +     /*
->>>>>>>>>> +      * Retrieve format information and select the default format if the
->>>>>>>>>> +      * requested format isn't supported.
->>>>>>>>>> +      */
->>>>>>>>>> +     fmt_info = tegra_core_get_format_by_fourcc(chan, pix->pixelformat);
->>>>>>>>>> +     if (!fmt_info) {
->>>>>>>>>> +             pix->pixelformat = chan->format.pixelformat;
->>>>>>>>>> +             pix->colorspace = chan->format.colorspace;
->>>>>>>>>> +             fmt_info = tegra_core_get_format_by_fourcc(chan,
->>>>>>>>>> + pix->pixelformat);
->>>>>>>>>> +     }
->>>>>>>>>> +
->>>>>>>>>> +     /* Change this when start adding interlace format support */
->>>>>>>>>> +     pix->field = V4L2_FIELD_NONE;
->>>>>>>>>> +     fmt.which = V4L2_SUBDEV_FORMAT_TRY;
->>>>>>>>>> +     fmt.pad = 0;
->>>>>>>>>> +     v4l2_fill_mbus_format(&fmt.format, pix, fmt_info->code);
->>>>>>>>>> +     v4l2_subdev_call(subdev, pad, set_fmt, pad_cfg, &fmt);
->>>>>>>>> As fas as I understand, entities formats should be independent, it is up to link_validate
->>>>>>>>> to check formats between entities.
->>>>>>>>> The capture shouldn't change the format of the subdevice.
->>>>>>>>>
->>>>>>> Tegra Built-in TPG on CSI accepts specific TPG sizes and CSI is source and VI is sink.
->>>>>>>
->>>>>>> link validation happens only for sink ends of the link.
->>>>>> And what is the problem with it being on the sink end?
->>>>>> You just need to implement custom link validation in tegra_csi_media_ops that also checks the format
->>>>>> between the capture and the subdevice, no? Unless I missunderstood something here (which is quite possible).
->>>>>>
->>>>>> Examples:
->>>>>> drivers/staging/media/rkisp1/rkisp1-capture.c - rkisp1_capture_link_validate()
->>>>>> drivers/media/pci/intel/ipu3/ipu3-cio2.c - cio2_video_link_validate()
->>>>>> drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c - sun6i_video_link_validate()
->>>>>>
->>>>>> Regards,
->>>>>> Helen
->>>>>>
->>>>> But if we move subdevice side format/size check into its link_validation, any incorrect image size set thru set-fmt-video will be taken and get-fmt-video will also show same as it doesn't validate formats/sizes supported by CSI subdev during this time. link validation happens during pipeline start. So thought to prevent accepting incorrect format/size during set-fmt-video/get-fmt-video.
->>>> This is how media API is designed, formats shouldn't propagate between entities, it is up to userspace to configure pads
->>>> correctly. And if formats of the pads don't match, stream fails during pipeline start, and userspace receive -EPIPE error.
->>>>
->>>> According to the docs: https://linuxtv.org/downloads/v4l-dvb-apis/uapi/v4l/dev-subdev.html
->>>>
->>>> "Formats are not propagated across links, as that would involve propagating them from one sub-device file handle to another. Applications must then take care to configure both ends of every link explicitly with compatible formats. Identical formats on the two ends of a link are guaranteed to be compatible. Drivers are free to accept different formats matching device requirements as being compatible."
->>>>
->>>> Perhaps you want to add support of this driver in libcamera.org to make it easier to userspace.
->>>>
->>>> Regards,
->>>> Helen
->>> I see in doc, Format Negotiation says drivers can propagate formats inside sub-devices. When try/active format is set on pad, corresponding format on other pads of same subdevice can be modified by the driver as long as formats are propagated from Sink pads to source pads.
->>>
->>> When application configures front-end sink pad format, driver can propagate the format to front-end source pad.
->>>
->>> VI is Sink and CSI is source subdev here for TPG.
->>>
->>> Currently set_fmt/get_fmt from vi channel invokes Source subdevice set_fmt/get_fmt which is CSI in this case of TPG.
->>>
->> Also regarding link_validation, it seems like its called for every link in pipeline where both end of links are v4l2 subdevices.
-> This is not correct.
->
-> See https://git.linuxtv.org/media_tree.git/tree/drivers/media/mc/mc-entity.c#n474
->
-> The .link_validate() callback is called for all links without making a distinction if it is a subdevice or a video device.
->
->> Driver should take care of format validation between sub-device and video nodes.
-> This is true, in the sense that the default helper v4l2_subdev_link_validate() shouldn't be used, because the default helper
-> only validates between subdevices, driver should implement a custom function to plug in the .link_validate() callback inside
-> struct media_entity_operations for video nodes.
->
->> This driver TPG is b/w Tegra CSI (subdevice) and VI (video entity).
->>
->> So I don't think we can use link_validate for format validation/negotiation b/w video entity and subdevice.
-> Yes you can, and the drivers I pointed before do this:
->
-> vimc-capture.c - https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/vimc/vimc-capture.c#n325
-> rkisp1-capture.c - https://git.linuxtv.org/media_tree.git/tree/drivers/staging/media/rkisp1/rkisp1-capture.c#n1292
-> ipu3-cio2.c - https://git.linuxtv.org/media_tree.git/tree/drivers/media/pci/intel/ipu3/ipu3-cio2.c#n1544
-> sun6i_video.c - https://git.linuxtv.org/media_tree.git/tree/drivers/media/platform/sunxi/sun6i-csi/sun6i_video.c#n592
->
-> Those are video nodes who implement custom .link_validate() callbacks, to validate a link between the video node and a subdevice.
->
-> Regards,
-> Helen
+This patch splits all of the exceptional device trees (AKA those that
+would have needed if/then/else rules) from qcom,gcc.yaml.  It also
+cleans up some cruft found while doing that.
 
-Will update to do format checks in link_validate.
+After this lands, this worked for me atop clk-next with just the known
+error about msm8998:
+  for f in \
+    Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml \
+    Documentation/devicetree/bindings/clock/qcom,gcc.yaml; do \
+      ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=$f; \
+  done
 
-Currently I am not creating subdev nodes for TPG as subdevice formats 
-are invoked during channel format updates.
+I then picked this patch atop linux-next (next-20200129) and ran:
+  # Delete broken yaml:
+  rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+  ARCH=arm64 make dt_binding_check | grep 'clock/qcom'
+...and that didn't seem to indicate problems.
 
-Will remove subdevice fmt calls from channel format callback 
-implementations and will create subdev nodes for TPG to allow subdev 
-set_fmt and get_fmt from user space.
+Arbitrary decisions made (yell if you want changed):
+- Left all the older devices (where clocks / clock-names weren't
+  specified) in a single file.
+- Didn't make clocks "required" for msm8996 but left them as listed.
+  This seems a little weird but it matches the old binding.
 
->> Currently driver follows propagating format sink pad (VI) to source pad and on CSI source subdev we update format to default if format size doesn't match one of the TPG format sizes.
->>
->> Please let me know if I am missing anything to understand your feedback.
->>
->>
->>>>> Other than this I don't see any issue moving it to link_validation.
->>>>>
->>>>>
->>>>>>> So with CSI subdev set_fmt sets width/height to default incase if width/height is not from one of the supported sizes.
->>>>>>>
->>>>>>>>>> +
->>>>>>>>>> +     v4l2_fill_pix_format(pix, &fmt.format);
->>>>>>>>>> +     tegra_channel_fmt_align(chan, &fmt_info->bpp, &pix->width, &pix->height,
->>>>>>>>>> + &pix->bytesperline);
->>>>>>>>>> +     pix->sizeimage = pix->bytesperline * pix->height;
->>>>>>>>>> +
->>>>>>>>>> +     if (vfmt)
->>>>>>>>>> +             *vfmt = fmt_info;
->>>>>>>>>> +
->>>>>>>>>> +     v4l2_subdev_free_pad_config(pad_cfg);
->>>>>>>>>> +
->>>>>>>>>> +     return 0;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +static int tegra_channel_try_format(struct file *file, void *fh,
->>>>>>>>>> +                                 struct v4l2_format *format)
->>>>>>>>>> +{
->>>>>>>>>> +     struct v4l2_fh *vfh = file->private_data;
->>>>>>>>>> +     struct tegra_channel *chan = to_tegra_channel(vfh->vdev);
->>>>>>>>>> +
->>>>>>>>>> +     return __tegra_channel_try_format(chan, &format->fmt.pix, NULL);
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +static int tegra_channel_set_format(struct file *file, void *fh,
->>>>>>>>>> +                                 struct v4l2_format *format)
->>>>>>>>>> +{
->>>>>>>>>> +     struct v4l2_fh *vfh = file->private_data;
->>>>>>>>>> +     struct tegra_channel *chan = to_tegra_channel(vfh->vdev);
->>>>>>>>>> +     const struct tegra_video_format *info;
->>>>>>>>>> +     int ret;
->>>>>>>>>> +     struct v4l2_subdev_format fmt;
->>>>>>>>>> +     struct v4l2_subdev *subdev;
->>>>>>>>>> +     struct v4l2_pix_format *pix = &format->fmt.pix;
->>>>>>>>>> +
->>>>>>>>>> +     if (vb2_is_busy(&chan->queue))
->>>>>>>>>> +             return -EBUSY;
->>>>>>>>>> +
->>>>>>>>>> +     /* get supported format by try_fmt */
->>>>>>>>>> +     ret = __tegra_channel_try_format(chan, pix, &info);
->>>>>>>>>> +     if (ret)
->>>>>>>>>> +             return ret;
->>>>>>>>>> +
->>>>>>>>>> +     subdev = tegra_channel_get_remote_subdev(chan);
->>>>>>>>>> +
->>>>>>>>>> +     fmt.which = V4L2_SUBDEV_FORMAT_ACTIVE;
->>>>>>>>>> +     fmt.pad = 0;
->>>>>>>>>> +     v4l2_fill_mbus_format(&fmt.format, pix, info->code);
->>>>>>>>>> +     v4l2_subdev_call(subdev, pad, set_fmt, NULL, &fmt);
->>>>>>>>> same here.
->>>>>>>>>
->>>>>>> Calling subdev set_fmt here for the same reason as explained above.
->>>>>>>>>> +
->>>>>>>>>> +     v4l2_fill_pix_format(pix, &fmt.format);
->>>>>>>>>> +     chan->format = *pix;
->>>>>>>>>> +     chan->fmtinfo = info;
->>>>>>>>>> +     tegra_channel_update_format(chan, pix->width,
->>>>>>>>>> +                                 pix->height, info->fourcc,
->>>>>>>>>> +                                 &info->bpp,
->>>>>>>>>> + pix->bytesperline);
->>>>>>>>>> +     *pix = chan->format;
->>>>>>>>>> +
->>>>>>>>>> +     return 0;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +static int tegra_channel_enum_input(struct file *file, void *fh,
->>>>>>>>>> +                                 struct v4l2_input *inp)
->>>>>>>>>> +{
->>>>>>>>>> +     /* Currently driver supports internal TPG only */
->>>>>>>>>> +     if (inp->index != 0)
->>>>>>>>> just
->>>>>>>>> if (inp->index)
->>>>>>>>>
->>>>>>> Will update in v2
->>>>>>>>>> +             return -EINVAL;
->>>>>>>>>> +
->>>>>>>>>> +     inp->type = V4L2_INPUT_TYPE_CAMERA;
->>>>>>>>>> +     strscpy(inp->name, "Tegra TPG", sizeof(inp->name));
->>>>>>>>>> +
->>>>>>>>>> +     return 0;
->>>>>>>>>> +}
->>>>>>>>>> +static const struct tegra_video_format tegra_default_format = {
->>>>>>>>>> +     /* RAW 10 */
->>>>>>>>>> +     TEGRA_VF_RAW10,
->>>>>>>>>> +     10,
->>>>>>>>>> +     MEDIA_BUS_FMT_SRGGB10_1X10,
->>>>>>>>>> +     {2, 1},
->>>>>>>>>> +     TEGRA_IMAGE_FORMAT_DEF,
->>>>>>>>>> +     TEGRA_IMAGE_DT_RAW10,
->>>>>>>>>> +     V4L2_PIX_FMT_SRGGB10,
->>>>>>>>>> +     "RGRG.. GBGB..",
->>>>>>>>> It would be more readable to do:
->>>>>>>>>
->>>>>>>>> .code = TEGRA_VF_RAW10,
->>>>>>>>> .width = 10,
->>>>>>>>> .code = MEDIA_BUS_FMT_SRGGB10_1X10,
->>>>>>>>>
->>>>>>>>> and so on
->>>>>>> Will update in v2
->>>>>>>>>> +};
->>>>>>>>>> +
->>>>>>>>>> +/*
->>>>>>>>>> + * Helper functions
->>>>>>>>>> + */
->>>>>>>>>> +
->>>>>>>>>> +/**
->>>>>>>>>> + * tegra_core_get_default_format - Get default format
->>>>>>>>>> + *
->>>>>>>>>> + * Return: pointer to the format where the default format needs
->>>>>>>>>> + * to be filled in.
->>>>>>>>>> + */
->>>>>>>>>> +const struct tegra_video_format *tegra_core_get_default_format(void)
->>>>>>>>>> +{
->>>>>>>>>> +     return &tegra_default_format;
->>>>>>>>>> +}
->>>>>>>>> This is only used in tegra-channel.c, why not to declare it there as static?
->>>>>>>>>
->>>>>>> Will move all video format retrieval helper functions to corresponding file as static in v2
->>>>>>>>>> + +static struct v4l2_frmsize_discrete tegra_csi_tpg_sizes[] = {
->>>>>>>>>> +     {1280, 720},
->>>>>>>>>> +     {1920, 1080},
->>>>>>>>>> +     {3840, 2160},
->>>>>>>>>> +};
->>>>>>>>>> +
->>>>>>>>>> +/*
->>>>>>>>>> + * V4L2 Subdevice Pad Operations
->>>>>>>>>> + */
->>>>>>>>>> +static int tegra_csi_get_format(struct v4l2_subdev *subdev,
->>>>>>>>>> +                             struct v4l2_subdev_pad_config *cfg,
->>>>>>>>>> +                             struct v4l2_subdev_format *fmt)
->>>>>>>>>> +{
->>>>>>>>>> +     struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
->>>>>>>>>> +
->>>>>>>>>> +     mutex_lock(&csi_chan->format_lock);
->>>>>>>>> Do you need this lock? I think there is already a serialization in the ioctls in place (to be confirmed).
->>>>>>>>>
->>>>>>> This is on CSI v4l2 subdevice side during format updates
->>>>>>>>>> +     memcpy(fmt, &csi_chan->ports->format,
->>>>>>>>>> +            sizeof(struct v4l2_mbus_framefmt));
->>>>>>>>> I would prefer just:
->>>>>>>>> *fmt = *csi_chan->ports->format;
->>>>>>>>>
->>>>>>>>> I think it is easier to read IMHO.
->>>>>>>>> same in tegra_csi_set_format().
->>>>>>>>>
->>>>>>> Will fix in v2
->>>>>>>>>> + mutex_unlock(&csi_chan->format_lock);
->>>>>>>>>> +
->>>>>>>>>> +     return 0;
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +static void tegra_csi_try_mbus_fmt(struct v4l2_subdev *subdev,
->>>>>>>>>> +                                struct v4l2_mbus_framefmt *mfmt)
->>>>>>>>>> +{
->>>>>>>>>> +     struct tegra_csi_channel *csi_chan = to_csi_chan(subdev);
->>>>>>>>>> +     struct tegra_csi_device *csi = csi_chan->csi;
->>>>>>>>>> +     const struct v4l2_frmsize_discrete *sizes;
->>>>>>>>>> +     int i, j;
->>>>>>>>> unsigned
->>>>>>>>>
->>>>>>> Will fix in v2
->>>>>>>>>> +
->>>>>>>>>> +     for (i = 0; i < ARRAY_SIZE(tegra_csi_tpg_fmts); i++) {
->>>>>>>>>> +             struct v4l2_mbus_framefmt *mbus_fmt = &tegra_csi_tpg_fmts[i];
->>>>>>>>>> +
->>>>>>>>>> +             if (mfmt->code == mbus_fmt->code) {
->>>>>>>>>> +                     for (j = 0; j < ARRAY_SIZE(tegra_csi_tpg_sizes); j++) {
->>>>>>>>>> +                             sizes = &tegra_csi_tpg_sizes[j];
->>>>>>>>>> +                             if (mfmt->width == sizes->width &&
->>>>>>>>>> +                                 mfmt->height == sizes->height) {
->>>>>>>>>> +                                     return;
->>>>>>>>>> +                             }
->>>>>>>>>> +                     }
->>>>>>>>>> +             }
->>>>>>>>>> +
->>>>>>>>>> +             dev_info(csi->dev, "using Tegra default RAW10 video format\n");
->>>>>>>>>> +     }
->>>>>>>>>> +
->>>>>>>>>> +     dev_info(csi->dev, "using Tegra default WIDTH X HEIGHT (1920x1080)\n");
->>>>>>>>>> +     memcpy(mfmt, tegra_csi_tpg_fmts, sizeof(struct v4l2_mbus_framefmt));
->>>>>>>>>> +}
->>>>>>>>>> +
->>>>>>>>>> +
+Misc cleanups as part of this patch:
+- sm8150 was claimed to be same set of clocks as sc7180, but driver
+  and dts appear to say that "bi_tcxo_ao" doesn't exist.  Fixed.
+- In "apq8064", "#thermal-sensor-cells" was missing the "#".
+- Got rid of "|" at the end of top description since spacing doesn't
+  matter.
+- Changed indentation to consistently 2 spaces (it was 3 in some
+  places).
+- Added period at the end of protected-clocks description.
+- No space before ":".
+- Updated sc7180/sm8150 example to use the 'qcom,rpmh.h' include.
+- Updated sc7180/sm8150 example to use larger address/size cells as
+  per reality.
+- Updated sc7180/sm8150 example to point to the sleep_clk rather than
+  <0>.
+- Made it so that gcc-ipq8074 didn't require #power-domain-cells since
+  actual dts didn't have it and I got no hits from:
+    git grep _GDSC include/dt-bindings/clock/qcom,gcc-ipq8074.h
+- Made it so that gcc-qcs404 didn't require #power-domain-cells since
+  actual dts didn't have it and I got no hits from:
+    git grep _GDSC include/dt-bindings/clock/qcom,gcc-qcs404.h
+
+Noticed, but not done in this patch (volunteers needed):
+- Add "aud_ref_clk" to sm8150 bindings / dts even though I found a
+  reference to it in "gcc-sm8150.c".
+- Fix node name in actual ipq8074 to be "clock-controller" (it's gcc).
+- Since the example doesn't need phandes to exist, in msm8998 could
+  just make up places providing some of the clocks currently bogused
+  out with <0>.
+- On msm8998 clocks are listed as required but current dts doesn't
+  have them.
+
+Fixes: ab91f72e018a ("clk: qcom: gcc-msm8996: Fix parent for CLKREF clocks")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+
+Changes in v2:
+- Clocks are required for msm8998; note that current dts is broken.
+- Drop description for 'gcc-apq8064' nvmem-cell-names.
+- Commit message now describes running dt_binding_check differently.
+- Added Rob's review tag.
+
+ .../bindings/clock/qcom,gcc-apq8064.yaml      |  79 +++++++
+ .../bindings/clock/qcom,gcc-ipq8074.yaml      |  48 ++++
+ .../bindings/clock/qcom,gcc-msm8996.yaml      |  65 ++++++
+ .../bindings/clock/qcom,gcc-msm8998.yaml      |  90 ++++++++
+ .../bindings/clock/qcom,gcc-qcs404.yaml       |  48 ++++
+ .../bindings/clock/qcom,gcc-sc7180.yaml       |  72 ++++++
+ .../bindings/clock/qcom,gcc-sm8150.yaml       |  69 ++++++
+ .../devicetree/bindings/clock/qcom,gcc.yaml   | 212 ++----------------
+ 8 files changed, 489 insertions(+), 194 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+new file mode 100644
+index 000000000000..a386cfd27793
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml
+@@ -0,0 +1,79 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-apq8064.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for APQ8064
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on APQ8064.
++
++properties:
++  compatible:
++    const: qcom,gcc-apq8064
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  nvmem-cells:
++    minItems: 1
++    maxItems: 2
++    description:
++      Qualcomm TSENS (thermal sensor device) on some devices can
++      be part of GCC and hence the TSENS properties can also be part
++      of the GCC/clock-controller node.
++      For more details on the TSENS properties please refer
++      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
++
++  nvmem-cell-names:
++    minItems: 1
++    maxItems: 2
++    items:
++      - const: calib
++      - const: calib_backup
++
++  '#thermal-sensor-cells':
++    const: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++  - nvmem-cells
++  - nvmem-cell-names
++  - '#thermal-sensor-cells'
++
++examples:
++  - |
++    clock-controller@900000 {
++      compatible = "qcom,gcc-apq8064";
++      reg = <0x00900000 0x4000>;
++      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
++      nvmem-cell-names = "calib", "calib_backup";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++      #thermal-sensor-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+new file mode 100644
+index 000000000000..1c6461c52a47
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-ipq8074.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Bindingfor IPQ8074
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on IPQ8074.
++
++properties:
++  compatible:
++    const: qcom,gcc-ipq8074
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++
++examples:
++  - |
++    clock-controller@1800000 {
++      compatible = "qcom,gcc-ipq8074";
++      reg = <0x01800000 0x80000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+new file mode 100644
+index 000000000000..32782e648c7e
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml
+@@ -0,0 +1,65 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-msm8996.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for MSM8996
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on MSM8996.
++
++properties:
++  compatible:
++    const: qcom,gcc-msm8996
++
++  clocks:
++    items:
++      - description: XO source
++      - description: Second XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: cxo
++      - const: cxo2
++      - const: sleep_clk
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++examples:
++  - |
++    clock-controller@300000 {
++      compatible = "qcom,gcc-msm8996";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++      reg = <0x300000 0x90000>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+new file mode 100644
+index 000000000000..b54cc6b0b1d2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-msm8998.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for MSM8998
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on MSM8998.
++
++properties:
++  compatible:
++    const: qcom,gcc-msm8998
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++      - description: USB 3.0 phy pipe clock
++      - description: UFS phy rx symbol clock for pipe 0
++      - description: UFS phy rx symbol clock for pipe 1
++      - description: UFS phy tx symbol clock
++      - description: PCIE phy pipe clock
++
++  clock-names:
++    items:
++      - const: xo
++      - const: sleep_clk
++      - const: usb3_pipe
++      - const: ufs_rx_symbol0
++      - const: ufs_rx_symbol1
++      - const: ufs_tx_symbol0
++      - const: pcie0_pipe
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmcc.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-msm8998";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++      reg = <0x00100000 0xb0000>;
++      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
++               <&sleep>,
++               <0>,
++               <0>,
++               <0>,
++               <0>,
++               <0>;
++      clock-names = "xo",
++                    "sleep_clk",
++                    "usb3_pipe",
++                    "ufs_rx_symbol0",
++                    "ufs_rx_symbol1",
++                    "ufs_tx_symbol0",
++                    "pcie0_pipe";
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
+new file mode 100644
+index 000000000000..f881cbeab594
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml
+@@ -0,0 +1,48 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-qcs404.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Bindingfor QCS404
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on QCS404.
++
++properties:
++  compatible:
++    const: qcom,gcc-qcs404
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++
++examples:
++  - |
++    clock-controller@1800000 {
++      compatible = "qcom,gcc-qcs404";
++      reg = <0x01800000 0x80000>;
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+new file mode 100644
+index 000000000000..b6a27da0c9b9
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml
+@@ -0,0 +1,72 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-sc7180.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for SC7180
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on SC7180.
++
++properties:
++  compatible:
++    const: qcom,gcc-sc7180
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Board active XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++      - const: bi_tcxo_ao
++      - const: sleep_clk
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-sc7180";
++      reg = <0 0x00100000 0 0x1f0000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&rpmhcc RPMH_CXO_CLK_A>,
++               <&sleep_clk>;
++      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+new file mode 100644
+index 000000000000..ca581b2e3286
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml
+@@ -0,0 +1,69 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/bindings/clock/qcom,gcc-sm8150.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Global Clock & Reset Controller Binding for SM8150
++
++maintainers:
++  - Stephen Boyd <sboyd@kernel.org>
++  - Taniya Das <tdas@codeaurora.org>
++
++description:
++  Qualcomm global clock control module which supports the clocks, resets and
++  power domains on SM8150.
++
++properties:
++  compatible:
++    const: qcom,gcc-sm8150
++
++  clocks:
++    items:
++      - description: Board XO source
++      - description: Sleep clock source
++
++  clock-names:
++    items:
++      - const: bi_tcxo
++      - const: sleep_clk
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++  '#power-domain-cells':
++    const: 1
++
++  reg:
++    maxItems: 1
++
++  protected-clocks:
++    description:
++      Protected clock specifier list as per common clock binding.
++
++required:
++  - compatible
++  - clocks
++  - clock-names
++  - reg
++  - '#clock-cells'
++  - '#reset-cells'
++  - '#power-domain-cells'
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,rpmh.h>
++    clock-controller@100000 {
++      compatible = "qcom,gcc-sm8150";
++      reg = <0 0x00100000 0 0x1f0000>;
++      clocks = <&rpmhcc RPMH_CXO_CLK>,
++               <&sleep_clk>;
++      clock-names = "bi_tcxo", "sleep_clk";
++      #clock-cells = <1>;
++      #reset-cells = <1>;
++      #power-domain-cells = <1>;
++    };
++...
+diff --git a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+index cac1150c9292..a891e5a37369 100644
+--- a/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
++++ b/Documentation/devicetree/bindings/clock/qcom,gcc.yaml
+@@ -10,81 +10,28 @@ maintainers:
+   - Stephen Boyd <sboyd@kernel.org>
+   - Taniya Das <tdas@codeaurora.org>
+ 
+-description: |
++description:
+   Qualcomm global clock control module which supports the clocks, resets and
+   power domains.
+ 
+ properties:
+-  compatible :
++  compatible:
+     enum:
+-       - qcom,gcc-apq8064
+-       - qcom,gcc-apq8084
+-       - qcom,gcc-ipq4019
+-       - qcom,gcc-ipq6018
+-       - qcom,gcc-ipq8064
+-       - qcom,gcc-ipq8074
+-       - qcom,gcc-msm8660
+-       - qcom,gcc-msm8916
+-       - qcom,gcc-msm8960
+-       - qcom,gcc-msm8974
+-       - qcom,gcc-msm8974pro
+-       - qcom,gcc-msm8974pro-ac
+-       - qcom,gcc-msm8994
+-       - qcom,gcc-msm8996
+-       - qcom,gcc-msm8998
+-       - qcom,gcc-mdm9615
+-       - qcom,gcc-qcs404
+-       - qcom,gcc-sc7180
+-       - qcom,gcc-sdm630
+-       - qcom,gcc-sdm660
+-       - qcom,gcc-sdm845
+-       - qcom,gcc-sm8150
+-
+-  clocks:
+-    oneOf:
+-      #qcom,gcc-sm8150
+-      #qcom,gcc-sc7180
+-      - items:
+-        - description: Board XO source
+-        - description: Board active XO source
+-        - description: Sleep clock source
+-      #qcom,gcc-msm8996
+-      - items:
+-        - description: XO source
+-        - description: Second XO source
+-        - description: Sleep clock source
+-      #qcom,gcc-msm8998
+-      - items:
+-        - description: Board XO source
+-        - description: Sleep clock source
+-        - description: USB 3.0 phy pipe clock
+-        - description: UFS phy rx symbol clock for pipe 0
+-        - description: UFS phy rx symbol clock for pipe 1
+-        - description: UFS phy tx symbol clock
+-        - description: PCIE phy pipe clock
+-
+-  clock-names:
+-    oneOf:
+-      #qcom,gcc-sm8150
+-      #qcom,gcc-sc7180
+-      - items:
+-        - const: bi_tcxo
+-        - const: bi_tcxo_ao
+-        - const: sleep_clk
+-      #qcom,gcc-msm8996
+-      - items:
+-        - const: cxo
+-        - const: cxo2
+-        - const: sleep_clk
+-      #qcom,gcc-msm8998
+-      - items:
+-        - const: xo
+-        - const: sleep_clk
+-        - const: usb3_pipe
+-        - const: ufs_rx_symbol0
+-        - const: ufs_rx_symbol1
+-        - const: ufs_tx_symbol0
+-        - const: pcie0_pipe
++      - qcom,gcc-apq8084
++      - qcom,gcc-ipq4019
++      - qcom,gcc-ipq6018
++      - qcom,gcc-ipq8064
++      - qcom,gcc-msm8660
++      - qcom,gcc-msm8916
++      - qcom,gcc-msm8960
++      - qcom,gcc-msm8974
++      - qcom,gcc-msm8974pro
++      - qcom,gcc-msm8974pro-ac
++      - qcom,gcc-msm8994
++      - qcom,gcc-mdm9615
++      - qcom,gcc-sdm630
++      - qcom,gcc-sdm660
++      - qcom,gcc-sdm845
+ 
+   '#clock-cells':
+     const: 1
+@@ -98,31 +45,9 @@ properties:
+   reg:
+     maxItems: 1
+ 
+-  nvmem-cells:
+-    minItems: 1
+-    maxItems: 2
+-    description:
+-      Qualcomm TSENS (thermal sensor device) on some devices can
+-      be part of GCC and hence the TSENS properties can also be part
+-      of the GCC/clock-controller node.
+-      For more details on the TSENS properties please refer
+-      Documentation/devicetree/bindings/thermal/qcom-tsens.txt
+-
+-  nvmem-cell-names:
+-    minItems: 1
+-    maxItems: 2
+-    description:
+-      Names for each nvmem-cells specified.
+-    items:
+-      - const: calib
+-      - const: calib_backup
+-
+-  'thermal-sensor-cells':
+-    const: 1
+-
+   protected-clocks:
+     description:
+-       Protected clock specifier list as per common clock binding
++      Protected clock specifier list as per common clock binding.
+ 
+ required:
+   - compatible
+@@ -131,33 +56,6 @@ required:
+   - '#reset-cells'
+   - '#power-domain-cells'
+ 
+-if:
+-  properties:
+-    compatible:
+-      contains:
+-        const: qcom,gcc-apq8064
+-
+-then:
+-  required:
+-    - nvmem-cells
+-    - nvmem-cell-names
+-    - '#thermal-sensor-cells'
+-
+-else:
+-  if:
+-    properties:
+-      compatible:
+-        contains:
+-          enum:
+-            - qcom,gcc-msm8998
+-            - qcom,gcc-sm8150
+-            - qcom,gcc-sc7180
+-  then:
+-    required:
+-       - clocks
+-       - clock-names
+-
+-
+ examples:
+   # Example for GCC for MSM8960:
+   - |
+@@ -168,78 +66,4 @@ examples:
+       #reset-cells = <1>;
+       #power-domain-cells = <1>;
+     };
+-
+-
+-  # Example of GCC with TSENS properties:
+-  - |
+-    clock-controller@900000 {
+-      compatible = "qcom,gcc-apq8064";
+-      reg = <0x00900000 0x4000>;
+-      nvmem-cells = <&tsens_calib>, <&tsens_backup>;
+-      nvmem-cell-names = "calib", "calib_backup";
+-      #clock-cells = <1>;
+-      #reset-cells = <1>;
+-      #power-domain-cells = <1>;
+-      #thermal-sensor-cells = <1>;
+-    };
+-
+-  # Example of GCC with protected-clocks properties:
+-  - |
+-    clock-controller@100000 {
+-      compatible = "qcom,gcc-sdm845";
+-      reg = <0x100000 0x1f0000>;
+-      protected-clocks = <187>, <188>, <189>, <190>, <191>;
+-      #clock-cells = <1>;
+-      #reset-cells = <1>;
+-      #power-domain-cells = <1>;
+-    };
+-
+-  # Example of GCC with clock node properties for SM8150:
+-  - |
+-    clock-controller@100000 {
+-      compatible = "qcom,gcc-sm8150";
+-      reg = <0x00100000 0x1f0000>;
+-      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <&sleep_clk>;
+-      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
+-      #clock-cells = <1>;
+-      #reset-cells = <1>;
+-      #power-domain-cells = <1>;
+-     };
+-
+-  # Example of GCC with clock nodes properties for SC7180:
+-  - |
+-    clock-controller@100000 {
+-      compatible = "qcom,gcc-sc7180";
+-      reg = <0x100000 0x1f0000>;
+-      clocks = <&rpmhcc 0>, <&rpmhcc 1>, <0>;
+-      clock-names = "bi_tcxo", "bi_tcxo_ao", "sleep_clk";
+-      #clock-cells = <1>;
+-      #reset-cells = <1>;
+-      #power-domain-cells = <1>;
+-    };
+-
+-  # Example of MSM8998 GCC:
+-  - |
+-    #include <dt-bindings/clock/qcom,rpmcc.h>
+-    clock-controller@100000 {
+-      compatible = "qcom,gcc-msm8998";
+-      #clock-cells = <1>;
+-      #reset-cells = <1>;
+-      #power-domain-cells = <1>;
+-      reg = <0x00100000 0xb0000>;
+-      clocks = <&rpmcc RPM_SMD_XO_CLK_SRC>,
+-               <&sleep>,
+-               <0>,
+-               <0>,
+-               <0>,
+-               <0>,
+-               <0>;
+-      clock-names = "xo",
+-                    "sleep_clk",
+-                    "usb3_pipe",
+-                    "ufs_rx_symbol0",
+-                    "ufs_rx_symbol1",
+-                    "ufs_tx_symbol0",
+-                    "pcie0_pipe";
+-    };
+ ...
+-- 
+2.25.0.341.g760bfbb309-goog
+
