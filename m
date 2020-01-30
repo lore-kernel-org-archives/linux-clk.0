@@ -2,126 +2,226 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE6AC2D0DB
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:00:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A345DC2D0DB
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4C12082E
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:00:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A8A214D8
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:12:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SQtPMKRt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727277AbgA3VAF (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 16:00:05 -0500
-Received: from mga06.intel.com ([134.134.136.31]:11718 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726514AbgA3VAF (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Jan 2020 16:00:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 30 Jan 2020 12:59:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.70,382,1574150400"; 
-   d="scan'208";a="309818670"
-Received: from yoojae-mobl1.amr.corp.intel.com (HELO [10.7.153.148]) ([10.7.153.148])
-  by orsmga001.jf.intel.com with ESMTP; 30 Jan 2020 12:59:50 -0800
-Subject: Re: [PATCH 1/2] clk: aspeed: add critical clock setting logic
-To:     Stephen Boyd <sboyd@kernel.org>, Andrew Jeffery <andrew@aj.id.au>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org
-References: <20200115212639.4998-1-jae.hyun.yoo@linux.intel.com>
- <20200115212639.4998-2-jae.hyun.yoo@linux.intel.com>
- <20200130174208.B1D5620661@mail.kernel.org>
-From:   Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-Message-ID: <2f5b2f17-c5f3-4684-c276-c65820d1516d@linux.intel.com>
-Date:   Thu, 30 Jan 2020 12:59:50 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726514AbgA3VMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 16:12:49 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:34992 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727089AbgA3VMt (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 16:12:49 -0500
+Received: by mail-pg1-f194.google.com with SMTP id l24so2302659pgk.2
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 13:12:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DL3Xj2gy1feowgW/Sg72hYm7o1TkTy8xgZkITqMjsW4=;
+        b=SQtPMKRtj01P5JJJGS396b8R3/3VeGV4/R0qVWQ0LNcuyKhXZKWXHympAr0KWSUzEp
+         HJsnhbaR0wQdSzKp2GquCd5O7h/XslBk3nd1vkThvsPahkHe/OZwg/G4Rhvk56OQsU7C
+         D+39eKvuEznG/23cEBUnljBFerE9MHyGZ9HOM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=DL3Xj2gy1feowgW/Sg72hYm7o1TkTy8xgZkITqMjsW4=;
+        b=UIAWmAIUzconhDVf0UWi5p6p9cGIl4vlqTzVGOCZ3IZamrJZIifXRuvx/cDp+NAs26
+         ekdXjYFSKgIVP6m5KcwIeNLm9cV1DYGsVyIOfw+zuPLy7AO/QUxrDp6cdUcFHlgCZWkl
+         d2MqeTM8xDQfvXv+H5PbrHGBBxX7xpJCt/r63B7Gk6MkUuj4NkuO5jx3onaej70DAx/t
+         4Jr9bsvS7y3dN16vlHkTQsmiKg90CoXfi6lVgWdZsg6+t24kzXaty0FNi005B3Kn6FMP
+         EFCa4Xb0+QbR5UZkPvqQNg7pNqXMx7xae/Yb5aa04/cZz2PB3TE2jxzrpyUQvgkQDI38
+         hO1g==
+X-Gm-Message-State: APjAAAV6OyYgGIUaZv566Pbd/ipNi5bC/Rr4fWesS+53kckPmp7tFmd5
+        eqJVytmO7Nltagh/93sNKHTTPg==
+X-Google-Smtp-Source: APXvYqyydq94vw+3/2Uuxvh7TPDi7rgVwiLWorocrqm2vUTw+2MylyCLOwQKrq2TEnAs18vfsj+N1w==
+X-Received: by 2002:a63:4d4c:: with SMTP id n12mr6860359pgl.212.1580418768475;
+        Thu, 30 Jan 2020 13:12:48 -0800 (PST)
+Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
+        by smtp.gmail.com with ESMTPSA id ci5sm4343871pjb.5.2020.01.30.13.12.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 Jan 2020 13:12:48 -0800 (PST)
+From:   Douglas Anderson <dianders@chromium.org>
+To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>, jeffrey.l.hugo@gmail.com,
+        linux-arm-msm@vger.kernel.org, harigovi@codeaurora.org,
+        devicetree@vger.kernel.org, mka@chromium.org,
+        kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
+        linux-clk@vger.kernel.org, hoegsberg@chromium.org,
+        Douglas Anderson <dianders@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v3 00/15] clk: qcom: Fix parenting for dispcc/gpucc/videocc
+Date:   Thu, 30 Jan 2020 13:12:16 -0800
+Message-Id: <20200130211231.224656-1-dianders@chromium.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 MIME-Version: 1.0
-In-Reply-To: <20200130174208.B1D5620661@mail.kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Stephen,
+The aim of this series is to get the dispcc and gpucc in a workable
+shape upstream for sc7180.  I personally wasn't focusing on (and
+didn't test much) videocc but pulled it along for the ride.
 
-On 1/30/2020 9:42 AM, Stephen Boyd wrote:
-> Quoting Jae Hyun Yoo (2020-01-15 13:26:38)
->> This commit adds critical clock setting logic that applies
->> CLK_IS_CRITICAL flag if it detects 'clock-critical' property in
->> device tree.
-> 
-> Yes that is what the patch does. The commit text is supposed to explain
-> _why_ the patch is important. Please read "The canonical patch format"
-> from Documentation/process/submitting-patches.rst to understand what is
-> expected.
+Most of the work in this series deals with the fact that the parenting
+info for these clock controllers was in a bad shape.  It looks like it
+was half transitioned from the old way of doing things (relying on
+global names) to the new way of doing things (putting the linkage in
+the device tree).  This should fully transition us.
 
-I see. I'll add more detailed summary.
+As part of this transition I update the sdm845.dtsi file to specify
+the info as per the new way of doing things.  Although I've now put
+the linkage info in the sdm845.dtsi file, though, I haven't updated
+the sdm845 clock drivers in Linux so they still work via the global
+name matching.  It's left as an exercise to the reader to update the
+sdm845 clock drivers in Linux.
 
->>
->> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
->> ---
->>   drivers/clk/clk-aspeed.c | 5 ++++-
->>   1 file changed, 4 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
->> index 411ff5fb2c07..d22eeb574ede 100644
->> --- a/drivers/clk/clk-aspeed.c
->> +++ b/drivers/clk/clk-aspeed.c
->> @@ -541,8 +541,11 @@ static int aspeed_clk_probe(struct platform_device *pdev)
->>   
->>          for (i = 0; i < ARRAY_SIZE(aspeed_gates); i++) {
->>                  const struct aspeed_gate_data *gd = &aspeed_gates[i];
->> +               unsigned long flags = gd->flags;
->>                  u32 gate_flags;
->>   
->> +               of_clk_detect_critical(pdev->dev.of_node, i, &flags);
->> +
-> 
-> Do you need clks to be critical, but only sometimes? What clks need to
-> be critical? Why aren't there drivers for those clks that turn them on
-> as necessary?
-> 
-> There was a lengthy discussion years ago on the list about this function
-> and how it's not supposed to be used in newer code. Maybe we need to
-> revisit that discussion and conclude that sometimes we actually do need
-> clks to be turned on and kept on because we'll never have a driver for
-> them in the kernel. Similar to how pinctrl has pin hogs.
+This series passes these things for me on linux-next (next-20200129)
+after picking the recent gcc fix I posted [1]:
 
-Yes, I need to make BCLK as a critical only for specific platforms. BCLK
-is for controllers that are connected through PCI or PCIe bus to the
-host machine such as VGA controller, 2D graphics engine and P2A bridge
-in this SoC.
+  for f in \
+    Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml \
+    Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml; do \
+        ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=$f; \
+    done
 
-I'm currently trying to enable VGA controller which is actually
-independent from Aspeed BMC SoC. It means that the VGA can be reset
-only when either host PCI bus reset or host power-on reset is asserted.
-Basically, VGA hardware module is controlled by the host machine not by
-the Aspeed BMC SoC.
+  I also tried this:
+    # Delete broken yaml:
+    rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+    ARCH=arm64 make dt_binding_check | grep 'clock/qcom'
+  ...and that didn't seem to indicate problems.
 
-I submitted this patch as an alternative solution of
-https://www.spinics.net/lists/linux-clk/msg44836.html because there
-could be use cases that intentionally disable the VGA controller
-depend on hardware design. So it'd be helpful for reducing power
-consumption and for allocating more generic memory space instead of
-allocating dedicated VGA shared memory if we can flexibly config the
-BCLK.
+  I also tried this (make sure you don't run w/ -j64 or diff is hard):
+    # Delete broken yaml:
+    rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
+    git checkout beforeMyCode
+    ARCH=arm64 make dt_binding_check > old.txt 2>&1
+    git checkout myCode
+    ARCH=arm64 make dt_binding_check > new.txt 2>&1
+    diff old.txt new.txt
+  ...and that didn't seem to indicate problems.
 
-I think, we don't need to add VGA driver just for enabling the clock
-because the VGA controller is actually controlled by host machine as I
-explained above so I made this patch set instead.
+I have confirmed that (with extra patches) the display/gpu come up on
+sc7180 and sdm845-cheza.  You can find the top of my downstream tree at:
+  https://crrev.com/c/2017976/4
 
-I agree with you that we need to revisit the discussion.
+I have confirmed that sdm845-cheza display / GPU come up atop
+next-20200129, which is what this series is posted against.
 
-Thanks,
+Compared to v2, this series has quite a few changes.  Mostly it's:
+- Always split into multiple files (Stephen).
+- Use internal names, not purist names (Taniya).
+- I realized that I forgot to update the sc7180 video clock controller
+  driver in v2.
+- A few other misc cleanups / fixes, see each patch for details.
 
-Jae
+It feels like with this many patches there's very little chance I
+didn't do something stupid like make a tpyo or a paste-o paste-o,
+though I tried to cross-check as much as I could.  I apologize in
+advance for the stupid things I did that I should have known better
+about.
+
+[1] https://lore.kernel.org/r/20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid
+
+Changes in v3:
+- Add Matthias tag.
+- Added include file to description.
+- Added pointer to inlude file in description.
+- Added videocc include file.
+- Discovered / added new gcc input clock on sdm845.
+- Everyone but msm8998 now uses internal QC names.
+- Fixed typo grpahics => graphics
+- Newly discovered gcc_disp_gpll0_div_clk_src added.
+- Patch ("clk: qcom: Get rid of fallback...dispcc-sc7180") split out for v3.
+- Patch ("clk: qcom: Get rid of the test...dispcc-sc7180") split out for v3.
+- Patch ("clk: qcom: Get rid of the test...gpucc-sc7180") split out for v3.
+- Patch ("clk: qcom: Get rid of the test...videocc-sc7180") new for v3.
+- Patch ("clk: qcom: Use ARRAY_SIZE in dispcc-sc7180...") split out for v3.
+- Patch ("clk: qcom: Use ARRAY_SIZE in gpucc-sc7180...") split out for v3.
+- Patch ("clk: qcom: Use ARRAY_SIZE in videocc-sc7180...") new for v3.
+- Split bindings into 3 files.
+- Split sc7180 and sdm845 into two files.
+- Split videocc bindings into 2 files.
+- Switched names to internal QC names rather than logical ones.
+- Unlike in v2, use internal name instead of purist name.
+- Updated commit description.
+
+Changes in v2:
+- Added includes
+- Changed various parent names to match bindings / driver
+- Patch ("arm64: dts: qcom: sdm845: Add...dispcc") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...gpucc") new for v2.
+- Patch ("arm64: dts: qcom: sdm845: Add...videocc") new for v2.
+- Patch ("clk: qcom: rcg2: Don't crash...") new for v2.
+- Patch ("dt-bindings: clock: Cleanup qcom,videocc") new for v2.
+- Patch ("dt-bindings: clock: Fix qcom,dispcc...") new for v2.
+- Patch ("dt-bindings: clock: Fix qcom,gpucc...") new for v2.
+
+Douglas Anderson (14):
+  clk: qcom: rcg2: Don't crash if our parent can't be found; return an
+    error
+  dt-bindings: clock: Fix qcom,dispcc bindings for sdm845/sc7180
+  arm64: dts: qcom: sdm845: Add the missing clocks on the dispcc
+  clk: qcom: Get rid of fallback global names for dispcc-sc7180
+  clk: qcom: Get rid of the test clock for dispcc-sc7180
+  clk: qcom: Use ARRAY_SIZE in dispcc-sc7180 for parent clocks
+  dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
+  arm64: dts: qcom: sdm845: Add missing clocks / fix names on the gpucc
+  clk: qcom: Get rid of the test clock for gpucc-sc7180
+  clk: qcom: Use ARRAY_SIZE in gpucc-sc7180 for parent clocks
+  dt-bindings: clock: Cleanup qcom,videocc bindings for sdm845/sc7180
+  clk: qcom: Get rid of the test clock for videocc-sc7180
+  clk: qcom: Use ARRAY_SIZE in videocc-sc7180 for parent clocks
+  arm64: dts: qcom: sdm845: Add the missing clock on the videocc
+
+Taniya Das (1):
+  arm64: dts: sc7180: Add clock controller nodes
+
+ .../devicetree/bindings/clock/qcom,gpucc.yaml | 72 --------------
+ ...om,dispcc.yaml => qcom,msm8998-gpucc.yaml} | 33 +++----
+ .../bindings/clock/qcom,sc7180-dispcc.yaml    | 84 ++++++++++++++++
+ .../bindings/clock/qcom,sc7180-gpucc.yaml     | 72 ++++++++++++++
+ .../bindings/clock/qcom,sc7180-videocc.yaml   | 63 ++++++++++++
+ .../bindings/clock/qcom,sdm845-dispcc.yaml    | 99 +++++++++++++++++++
+ .../bindings/clock/qcom,sdm845-gpucc.yaml     | 72 ++++++++++++++
+ ...,videocc.yaml => qcom,sdm845-videocc.yaml} | 27 ++---
+ arch/arm64/boot/dts/qcom/sc7180.dtsi          | 47 +++++++++
+ arch/arm64/boot/dts/qcom/sdm845.dtsi          | 28 +++++-
+ drivers/clk/qcom/clk-rcg2.c                   |  3 +
+ drivers/clk/qcom/dispcc-sc7180.c              | 45 +++------
+ drivers/clk/qcom/gpucc-sc7180.c               |  4 +-
+ drivers/clk/qcom/videocc-sc7180.c             |  4 +-
+ 14 files changed, 513 insertions(+), 140 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
+ rename Documentation/devicetree/bindings/clock/{qcom,dispcc.yaml => qcom,msm8998-gpucc.yaml} (51%)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
+ rename Documentation/devicetree/bindings/clock/{qcom,videocc.yaml => qcom,sdm845-videocc.yaml} (60%)
+
+-- 
+2.25.0.341.g760bfbb309-goog
 
