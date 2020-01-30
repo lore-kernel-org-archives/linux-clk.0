@@ -2,117 +2,251 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 324B5C2D0DB
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:17:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8BE1C2D0DB
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00EA32082E
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:17:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9993E20CC7
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:58:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfQG+oTC"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ITmCna9s"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728847AbgA3SRv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 13:17:51 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:32833 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728845AbgA3SRv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 13:17:51 -0500
-Received: by mail-ua1-f65.google.com with SMTP id a12so1541116uan.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 10:17:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
-        b=BfQG+oTCMVxlg4wY8DUnH37t9rAIzLS4W4kBKdZBWR+QzaPeVDDSBBXOCM5jcqS184
-         7z/yo+l0hDOZzpC2ERgZFxmFpmjwHGcZ8UyGlvlgloFIb0V9DTOjRoWcGbjeL6/SP5o6
-         5UvCzcjJvRoIprtS7ojhc5t5+b4RMuK+mt/xs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
-        b=ZKX7iBcC8OJ8VzKIjoSgHilcmx0YgS45gDr4fdftfTbktn32B98VtaC5sHUHq0qkhJ
-         3OI6P7SrMcZvpiMVhX9xezr05Y0xHc4zsidmK8gHnD7ootKSy1lPxIdhXbFcP/8MupGV
-         fo3Ax5CFJSCuPgP6DN7vIbZNo5CCppBqOOZsfe0Lvjbmvi8ijKuHHS1qU/g6oJrDZmOY
-         xOyMWBR9Bu08Wub73DHiOyu9SfkOCdOL3+J7UAI4e75Lv5UDKLoWERhZjAEpc9Wqlu7P
-         aD0raprOe5rQ/ZnjRvZzt8RocNH30gidEgebZJO9hicXR2HDsCec6acaV1Z0Z1Ki/sws
-         JNzw==
-X-Gm-Message-State: APjAAAVR50cBvojpvkGxzfFORdQ9RM3zHeBSMyvh34pl/NLth44BVjik
-        ZiidtEAWE/6BHLcx+tgFdNAO3t2vx1k=
-X-Google-Smtp-Source: APXvYqyPftqHWZfh76xqa+u7D8mxjaAQtjQQfBqWJZjvBP4WVvFdD3u+Ki0FXFLKUSWV8jWb0ftfLw==
-X-Received: by 2002:ab0:488b:: with SMTP id x11mr3435632uac.86.1580408270418;
-        Thu, 30 Jan 2020 10:17:50 -0800 (PST)
-Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
-        by smtp.gmail.com with ESMTPSA id x22sm1564843vsq.6.2020.01.30.10.17.49
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 Jan 2020 10:17:49 -0800 (PST)
-Received: by mail-ua1-f54.google.com with SMTP id 59so1512864uap.12
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 10:17:49 -0800 (PST)
-X-Received: by 2002:ab0:254e:: with SMTP id l14mr3487338uan.91.1580408268842;
- Thu, 30 Jan 2020 10:17:48 -0800 (PST)
+        id S1727476AbgA3S6F (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 13:58:05 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:3326 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727285AbgA3S6F (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 13:58:05 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e3327260000>; Thu, 30 Jan 2020 10:57:42 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 30 Jan 2020 10:58:02 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 10:58:02 -0800
+Received: from [10.2.164.115] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
+ 2020 18:58:02 +0000
+Subject: Re: Re: Re: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI
+ suppport in device tree
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
+ <20200129094624.GD2479935@ulmo>
+ <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
+ <20200130123607.GB2584455@ulmo>
+ <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
+ <20200130175820.GA3155155@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <deb6839b-2ddb-be54-a985-a2b7624374af@nvidia.com>
+Date:   Thu, 30 Jan 2020 10:58:00 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-References: <20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
- <20200130180404.6771A2083E@mail.kernel.org>
-In-Reply-To: <20200130180404.6771A2083E@mail.kernel.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 30 Jan 2020 10:17:37 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
-Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: clk: qcom: Fix self-validation, split,
- and clean cruft
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Rob Herring <robh+dt@kernel.org>, Taniya Das <tdas@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>, sivaprak@codeaurora.org,
-        anusharao@codeaurora.org, Sricharan <sricharan@codeaurora.org>,
-        Rob Herring <robh@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20200130175820.GA3155155@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580410662; bh=QNM5QzcxkMUFdTXG9lkyArnht6Pwyaue/OM6xvKj7m0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ITmCna9sbrRh0pVzoqdUgyZz/6ImOFemFtsl4vdj/gf6PWpATy+sWSI6nF+ifGKrd
+         bnhVllCaiZ8kQPLOo1M5uvWz2qgA86mFdQS1D5WPIlXVjigxYOwx+CBHu3PM9Sd1MQ
+         S+tQY1MRuMxHNF8jCQLi6ltoifA6WpBSbEeuPRvFQHwl3AlmYehaj3d/W202b5Hjy4
+         MiD7qCCEKPTBaYAg24PAi8pJI0tNggkzoT0K1IQ8YNjHnh1RdZlp6Yk5D1cd2Q8NgW
+         j/X5bJF9U05rh7TIQkbOGpiVLaEXu8yBQJwPlEGJxd6xw/B+d3FxL0Ix3x6suelAhY
+         j/copeF0M0uLA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-On Thu, Jan 30, 2020 at 10:04 AM Stephen Boyd <sboyd@kernel.org> wrote:
+On 1/30/20 9:58 AM, Thierry Reding wrote:
+> On Thu, Jan 30, 2020 at 09:18:50AM -0800, Sowjanya Komatineni wrote:
+>> On 1/30/20 4:36 AM, Thierry Reding wrote:
+>>> On Wed, Jan 29, 2020 at 08:22:48AM -0800, Sowjanya Komatineni wrote:
+>>>> On 1/29/20 1:46 AM, Thierry Reding wrote:
+>>>>> On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni wrote:
+>>>>>> Tegra210 contains VI controller for video input capture from MIPI
+>>>>>> CSI camera sensors and also supports built-in test pattern generator.
+>>>>>>
+>>>>>> CSI ports can be one-to-one mapped to VI channels for capturing from
+>>>>>> an external sensor or from built-in test pattern generator.
+>>>>>>
+>>>>>> This patch adds support for VI and CSI and enables them in Tegra210
+>>>>>> device tree.
+>>>>>>
+>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+>>>>>> ---
+>>>>>>     arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi |  8 +++++++
+>>>>>>     arch/arm64/boot/dts/nvidia/tegra210.dtsi       | 31 +++++++++++++++++++++++++-
+>>>>>>     2 files changed, 38 insertions(+), 1 deletion(-)
+>>>>>>
+>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> index b0095072bc28..ec1b3033fa03 100644
+>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
+>>>>>> @@ -10,6 +10,14 @@
+>>>>>>     			status = "okay";
+>>>>>>     		};
+>>>>>> +		vi@54080000 {
+>>>>>> +			status = "okay";
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		csi@0x54080838 {
+>>>>>> +			status = "okay";
+>>>>>> +		};
+>>>>>> +
+>>>>>>     		sor@54580000 {
+>>>>>>     			status = "okay";
+>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> index 48c63256ba7f..c6107ec03ad1 100644
+>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
+>>>>>> @@ -136,9 +136,38 @@
+>>>>>>     		vi@54080000 {
+>>>>>>     			compatible = "nvidia,tegra210-vi";
+>>>>>> -			reg = <0x0 0x54080000 0x0 0x00040000>;
+>>>>>> +			reg = <0x0 0x54080000 0x0 0x808>;
+>>>>>>     			interrupts = <GIC_SPI 69 IRQ_TYPE_LEVEL_HIGH>;
+>>>>>>     			status = "disabled";
+>>>>>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_VI>;
+>>>>>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_C4_OUT0>;
+>>>>>> +
+>>>>>> +			clocks = <&tegra_car TEGRA210_CLK_VI>;
+>>>>>> +			clock-names = "vi";
+>>>>>> +			resets = <&tegra_car 20>;
+>>>>>> +			reset-names = "vi";
+>>>>>> +		};
+>>>>>> +
+>>>>>> +		csi@0x54080838 {
+>>>>>> +			compatible = "nvidia,tegra210-csi";
+>>>>>> +			reg = <0x0 0x54080838 0x0 0x2000>;
+>>>>>> +			status = "disabled";
+>>>>>> +			assigned-clocks = <&tegra_car TEGRA210_CLK_CILAB>,
+>>>>>> +					  <&tegra_car TEGRA210_CLK_CILCD>,
+>>>>>> +					  <&tegra_car TEGRA210_CLK_CILE>;
+>>>>>> +			assigned-clock-parents = <&tegra_car TEGRA210_CLK_PLL_P>,
+>>>>>> +						 <&tegra_car TEGRA210_CLK_PLL_P>,
+>>>>>> +						 <&tegra_car TEGRA210_CLK_PLL_P>;
+>>>>>> +			assigned-clock-rates = <102000000>,
+>>>>>> +					       <102000000>,
+>>>>>> +					       <102000000>;
+>>>>>> +
+>>>>>> +			clocks = <&tegra_car TEGRA210_CLK_CSI>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILAB>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILCD>,
+>>>>>> +				 <&tegra_car TEGRA210_CLK_CILE>;
+>>>>>> +			clock-names = "csi", "cilab", "cilcd", "cile";
+>>>>>> +
+>>>>>>     		};
+>>>>> Can this be a child of the vi node? Looking at the register ranges it
+>>>>> seems like these are actually a single IP block. If they have separate
+>>>>> blocks with clearly separate functionality, then it makes sense to have
+>>>>> CSI be a child node of VI, though it may also be okay to merge both and
+>>>>> have a single node with the driver doing all of the differentiation
+>>>>> between what's VI and what's CSI.
+>>>>>
+>>>>> Looking at later chips, the split between VI and CSI is more explicit,
+>>>>> so having the split in DT for Tegra210 may make sense for consistency.
+>>>>>
+>>>>> I know we've discussed this before, but for some reason I keep coming
+>>>>> back to this. I'll go through the other patches to see if I can get a
+>>>>> clearer picture of how this could all work together.
+>>>>>
+>>>>> Thierry
+>>>> We can keep it separate as we discussed.
+>>>>
+>>>> But as Tegra186 onwards, CSI is separate device to be all cosistent I kept
+>>>> CSI as separate node for Tegra210 as well.
+>>>   From our discussion, my understanding was that CSI would be a separate
+>>> device, but it would still be a subdevice of VI. The address offset of
+>>> the CSI registers not being aligned to a power of two is a strong
+>>> indication that this is really all part of the same block.
+>> Yes our earlier discussion is to have CSI as subdevice.
+>>
+>> Later looking into T186 and later NVCSI is totally separate so it will be
+>> separate device and to have driver common moved Tegra210 CSI also as
+>> separate device instead of having it as subdevice of VI.
+>>
+>> Earlier when we discussed at that time I am using TPG also from device
+>> graphs but not moved to hard media links inside driver for TPG.
+>>
+>> For this we need CSI to be available prior to VI.
+> Why is that? Does creating the hard media links need access to a struct
+> device? What if we created that device in the VI driver without any
+> reliance on DT? Shouldn't that also work? I have a hard time imagining
+> that there aren't other devices like this where we don't necessarily
+> have separate devices for these links.
+Yes we need CSI structure for hard link TPG also as all csi channel list 
+is part of CSI device.
+
+We can create CSI channel subdevices within VI without using CSI device 
+from a separate CSI driver probe for Tegra210 and make all subdev 
+related ops implementations as global so they can be used from VI driver 
+for Tegra210 and can also be used for Tegra186 and later in separate CSI 
+driver.
+
+During creating media links in VI driver for TPG, for T210 we can use 
+local CSI device structure and for T186+ we can use CSI device structure 
+created during CSI probe.
+
+Sorry, I didn't understood what you meant by separate devices for these 
+link.
+
+We only have Tegra CSI linked to Tegra VI for TPG/Real sensor.
+
+>> If we add CSI as subdevice to VI, CSI will not be available by the time
+>> VI init happens.
+> The CSI subdevice should be registered as part of the VI driver's probe,
+> right? That's typically where you'd call of_platform_populate(). Could
+> we not set up the hard media links in the ->init() callbacks for the
+> host1x clients? Those are called after all of the devices have been
+> probed, so the CSI device should be available at that time.
 >
-> > Misc cleanups as part of this patch:
-> > - sm8150 was claimed to be same set of clocks as sc7180, but driver
-> >   and dts appear to say that "bi_tcxo_ao" doesn't exist.  Fixed.
+>> Currently host1x subdevices listed has CSI before VI and CSI init happens
+>> earlier so by the time VI init happens CSI is available to do media links
+>> b/w VI video entity and CSI subdevice entity.
+> Okay, I understand how this would be a convenient solution. However, the
+> device tree is a hardware description, so we need to ignore what we know
+> about the operating system infrastructure that we want to use when
+> writing the device tree bindings (and the device tree content) in order
+> to make sure the same binding will work on a different operating system
+> which may have a completely different infrastructure (or none at all).
 >
-> Someone will probably want to change this at some point.
-
-I have no insight into sm8150, but I guess I assumed that since it
-wasn't in the driver that maybe sm8150 just doesnt have this hookup?
-I'm happy to add it back in.
-
-
-> > +description:
-> > +  Qualcomm global clock control module which supports the clocks, resets and
-> > +  power domains on APQ8064.
+>> Also having CSI as separate subdevice (not as subdevice to VI) for T210 will
+>> be consistent with T186 and later.
+> Again, I see how that's convenient. But the main difference between
+> Tegra210 and Tegra186 is that on the former, the CSI is merged with VI,
+> whereas on the latter the CSI is a completely separate hardware block.
 >
-> It would be great if this could also point to the
-> include/dt-bindings/clock/qcom,apq8064.h file here. If you don't resend
-> this patch then I will try to remember to make this addition to the
-> binding docs.
+> Since device tree describes the hardware, that difference should be
+> apparent in the device tree. I initially thought as well that it would
+> be advantageous if both had the same representation, but I do realize
+> now that this has a significant impact on the device tree, and it
+> violates the basic principles we base device tree binding design on.
+>
+> Thierry
 
-You're saying that the top-level description for all these should
-point to the header file?  Seems line a sane idea.  I guess we'd need
-to do that for all of them?  I could spin with that if you want, but
-we could also do a follow-up patch?
+I just thought of driver implementation being common b/w T210 and T186+ 
+by having CSI as separate device node rather than as child node to VI to 
+avoid CSI structure handling within VI for T210 only.
 
--Doug
+Will update DT and driver to have CSI as child node of VI for T210.
+
+
