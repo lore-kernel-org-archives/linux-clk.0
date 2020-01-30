@@ -2,73 +2,117 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,
-	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 472C3C2D0DB
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:09:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324B5C2D0DB
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:17:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16E85214AF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:09:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580407757;
-	bh=b+Yfsr+qnQpqIYAQkQeI7TidveJ/L9BP9YvFsxRIRcQ=;
-	h=In-Reply-To:References:Subject:To:From:Cc:Date:List-ID:From;
-	b=0STcvExlmAwdnCdm/uJGsMz0EMvAbu3dPgktNMCf6aY5Bz7eTLU9vVCbZV+fayvIL
-	 FU2Pr84LmzYDahAX1mtVxbL+GN7V9Koq9YbXYiAu+2So41VQdWEB2jeNz65tVluUZ8
-	 DPpU7c5GCwzoi5f+UxwSrvTip37SEOS1+sEqVEkw=
+	by mail.kernel.org (Postfix) with ESMTP id 00EA32082E
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 18:17:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="BfQG+oTC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbgA3SJQ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 13:09:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728218AbgA3SJQ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Jan 2020 13:09:16 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E025D20CC7;
-        Thu, 30 Jan 2020 18:09:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580407756;
-        bh=b+Yfsr+qnQpqIYAQkQeI7TidveJ/L9BP9YvFsxRIRcQ=;
-        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
-        b=W25G7wX/24cDyJrSjCvtu/r8bNDUnFXI9VHKVxQ/gwANDkWCbNWVov0p8QN0lw1f/
-         MqSCIDF1o6vgH5pHASjjbJMfBipcAJslUoiLwCk70Dx9pp4hvwHh4bIvGKtsIo575X
-         5M6MQyUfnPXGCubZFmu9DtTPWIZB6TL0zAQQMrQo=
-Content-Type: text/plain; charset="utf-8"
+        id S1728847AbgA3SRv (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 13:17:51 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:32833 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728845AbgA3SRv (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 13:17:51 -0500
+Received: by mail-ua1-f65.google.com with SMTP id a12so1541116uan.0
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 10:17:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
+        b=BfQG+oTCMVxlg4wY8DUnH37t9rAIzLS4W4kBKdZBWR+QzaPeVDDSBBXOCM5jcqS184
+         7z/yo+l0hDOZzpC2ERgZFxmFpmjwHGcZ8UyGlvlgloFIb0V9DTOjRoWcGbjeL6/SP5o6
+         5UvCzcjJvRoIprtS7ojhc5t5+b4RMuK+mt/xs=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CJPY+g/XzCm6UWO3D8mKRxGxfTcXSUIYOUXNI4GNTD8=;
+        b=ZKX7iBcC8OJ8VzKIjoSgHilcmx0YgS45gDr4fdftfTbktn32B98VtaC5sHUHq0qkhJ
+         3OI6P7SrMcZvpiMVhX9xezr05Y0xHc4zsidmK8gHnD7ootKSy1lPxIdhXbFcP/8MupGV
+         fo3Ax5CFJSCuPgP6DN7vIbZNo5CCppBqOOZsfe0Lvjbmvi8ijKuHHS1qU/g6oJrDZmOY
+         xOyMWBR9Bu08Wub73DHiOyu9SfkOCdOL3+J7UAI4e75Lv5UDKLoWERhZjAEpc9Wqlu7P
+         aD0raprOe5rQ/ZnjRvZzt8RocNH30gidEgebZJO9hicXR2HDsCec6acaV1Z0Z1Ki/sws
+         JNzw==
+X-Gm-Message-State: APjAAAVR50cBvojpvkGxzfFORdQ9RM3zHeBSMyvh34pl/NLth44BVjik
+        ZiidtEAWE/6BHLcx+tgFdNAO3t2vx1k=
+X-Google-Smtp-Source: APXvYqyPftqHWZfh76xqa+u7D8mxjaAQtjQQfBqWJZjvBP4WVvFdD3u+Ki0FXFLKUSWV8jWb0ftfLw==
+X-Received: by 2002:ab0:488b:: with SMTP id x11mr3435632uac.86.1580408270418;
+        Thu, 30 Jan 2020 10:17:50 -0800 (PST)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id x22sm1564843vsq.6.2020.01.30.10.17.49
+        for <linux-clk@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 30 Jan 2020 10:17:49 -0800 (PST)
+Received: by mail-ua1-f54.google.com with SMTP id 59so1512864uap.12
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 10:17:49 -0800 (PST)
+X-Received: by 2002:ab0:254e:: with SMTP id l14mr3487338uan.91.1580408268842;
+ Thu, 30 Jan 2020 10:17:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1580357923-19783-3-git-send-email-tdas@codeaurora.org>
-References: <1580357923-19783-1-git-send-email-tdas@codeaurora.org> <1580357923-19783-3-git-send-email-tdas@codeaurora.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: clock: Introduce QCOM Modem clock bindings
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Taniya Das <tdas@codeaurora.org>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     David Brown <david.brown@linaro.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
-        robh@kernel.org, robh+dt@kernel.org,
-        Taniya Das <tdas@codeaurora.org>
-User-Agent: alot/0.8.1
-Date:   Thu, 30 Jan 2020 10:09:15 -0800
-Message-Id: <20200130180915.E025D20CC7@mail.kernel.org>
+References: <20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
+ <20200130180404.6771A2083E@mail.kernel.org>
+In-Reply-To: <20200130180404.6771A2083E@mail.kernel.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 30 Jan 2020 10:17:37 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
+Message-ID: <CAD=FV=Xvw+oA70+JG-5wMy+0v5M324idQRJsujVbNnBtEF2gvQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: clk: qcom: Fix self-validation, split,
+ and clean cruft
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Rob Herring <robh+dt@kernel.org>, Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Abhishek Sahu <absahu@codeaurora.org>, sivaprak@codeaurora.org,
+        anusharao@codeaurora.org, Sricharan <sricharan@codeaurora.org>,
+        Rob Herring <robh@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Taniya Das (2020-01-29 20:18:42)
-> Add device tree bindings for modem clock controller for
-> Qualcomm Technology Inc's SC7180 SoCs.
->=20
-> Signed-off-by: Taniya Das <tdas@codeaurora.org>
-> ---
->  include/dt-bindings/clock/qcom,gcc-sc7180.h |  5 +++++
->  include/dt-bindings/clock/qcom,mss-sc7180.h | 12 ++++++++++++
+Hi,
 
-Split this into two as well.
+On Thu, Jan 30, 2020 at 10:04 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> > Misc cleanups as part of this patch:
+> > - sm8150 was claimed to be same set of clocks as sc7180, but driver
+> >   and dts appear to say that "bi_tcxo_ao" doesn't exist.  Fixed.
+>
+> Someone will probably want to change this at some point.
 
+I have no insight into sm8150, but I guess I assumed that since it
+wasn't in the driver that maybe sm8150 just doesnt have this hookup?
+I'm happy to add it back in.
+
+
+> > +description:
+> > +  Qualcomm global clock control module which supports the clocks, resets and
+> > +  power domains on APQ8064.
+>
+> It would be great if this could also point to the
+> include/dt-bindings/clock/qcom,apq8064.h file here. If you don't resend
+> this patch then I will try to remember to make this addition to the
+> binding docs.
+
+You're saying that the top-level description for all these should
+point to the header file?  Seems line a sane idea.  I guess we'd need
+to do that for all of them?  I could spin with that if you want, but
+we could also do a follow-up patch?
+
+-Doug
