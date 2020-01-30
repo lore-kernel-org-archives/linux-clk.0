@@ -2,55 +2,55 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A345DC2D0DB
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D918C35240
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:12:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66A8A214D8
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CCE37214AF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:12:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SQtPMKRt"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="aNiL5acF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726514AbgA3VMt (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 16:12:49 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34992 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727089AbgA3VMt (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 16:12:49 -0500
-Received: by mail-pg1-f194.google.com with SMTP id l24so2302659pgk.2
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 13:12:49 -0800 (PST)
+        id S1727852AbgA3VM5 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 16:12:57 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:33524 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727850AbgA3VM4 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 16:12:56 -0500
+Received: by mail-pl1-f196.google.com with SMTP id ay11so1828755plb.0
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 13:12:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DL3Xj2gy1feowgW/Sg72hYm7o1TkTy8xgZkITqMjsW4=;
-        b=SQtPMKRtj01P5JJJGS396b8R3/3VeGV4/R0qVWQ0LNcuyKhXZKWXHympAr0KWSUzEp
-         HJsnhbaR0wQdSzKp2GquCd5O7h/XslBk3nd1vkThvsPahkHe/OZwg/G4Rhvk56OQsU7C
-         D+39eKvuEznG/23cEBUnljBFerE9MHyGZ9HOM=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=kusoJ9Oev7Pj23ZWUrs+11xOFwvMD53pguR4hXEdEGM=;
+        b=aNiL5acFWisbjjTjfzgrXPr9wjxck7dAlmTjQgrZCCM/2Ww2pKszK96bQNvTdaoXDI
+         rKdLZiEFhEZzTrTKNTNdx8pQB8H+18Xjd1eJdZMHso7yRyUwtBMOR68F8rEnWfjW9fQt
+         RfxldIPLgtVNSZVw1EEsSFvXkOroxIXPKQFZw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=DL3Xj2gy1feowgW/Sg72hYm7o1TkTy8xgZkITqMjsW4=;
-        b=UIAWmAIUzconhDVf0UWi5p6p9cGIl4vlqTzVGOCZ3IZamrJZIifXRuvx/cDp+NAs26
-         ekdXjYFSKgIVP6m5KcwIeNLm9cV1DYGsVyIOfw+zuPLy7AO/QUxrDp6cdUcFHlgCZWkl
-         d2MqeTM8xDQfvXv+H5PbrHGBBxX7xpJCt/r63B7Gk6MkUuj4NkuO5jx3onaej70DAx/t
-         4Jr9bsvS7y3dN16vlHkTQsmiKg90CoXfi6lVgWdZsg6+t24kzXaty0FNi005B3Kn6FMP
-         EFCa4Xb0+QbR5UZkPvqQNg7pNqXMx7xae/Yb5aa04/cZz2PB3TE2jxzrpyUQvgkQDI38
-         hO1g==
-X-Gm-Message-State: APjAAAV6OyYgGIUaZv566Pbd/ipNi5bC/Rr4fWesS+53kckPmp7tFmd5
-        eqJVytmO7Nltagh/93sNKHTTPg==
-X-Google-Smtp-Source: APXvYqyydq94vw+3/2Uuxvh7TPDi7rgVwiLWorocrqm2vUTw+2MylyCLOwQKrq2TEnAs18vfsj+N1w==
-X-Received: by 2002:a63:4d4c:: with SMTP id n12mr6860359pgl.212.1580418768475;
-        Thu, 30 Jan 2020 13:12:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=kusoJ9Oev7Pj23ZWUrs+11xOFwvMD53pguR4hXEdEGM=;
+        b=sTWD46XM0Bu4BIxdeg7WLubJqh6AuxHxGkqrd2Ftd2vRD59FSBZH0BjRqma+JNqdyz
+         nPRd0IPCdc6rH/5NIFlEDLq+zvtbxbM2lwG216xhHVpFbP38l1LiZpz2+oTPU+COYWyO
+         3SCC7OgRrZEie8hsaI0ba+2W94zo1GOkU6ZyOZm+kP+TIJIFMza2BRcfiI+N9o9dn+5o
+         zwZZqkTGLuuLyFyNiyagnfZoblZc/tlwpN9JBOZEM83xjxCJB+RvqwDpCjmLYPbEJywm
+         K8+uFatH7eW4oR0UCeGLJCFGfjP+xR3ZsUlcuILlWgbbpWAe2pQ2RzdhKP5450EaiAYI
+         G30g==
+X-Gm-Message-State: APjAAAUKyfYYFNj/WlNfnJ4bs/h3LAorUmBnMMz3ynd0YZPPca/O4Iwx
+        Afb2FIrUTQRyGR3U3xpl/CBvSQ==
+X-Google-Smtp-Source: APXvYqwe0qRkaWDidOrdKnE8oUdTw6jxlBtUuBHq5uav5aVOIgtlL/9m1Dd9HvFykYt2bddO1/EEYA==
+X-Received: by 2002:a17:902:b587:: with SMTP id a7mr6703883pls.82.1580418774669;
+        Thu, 30 Jan 2020 13:12:54 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id ci5sm4343871pjb.5.2020.01.30.13.12.47
+        by smtp.gmail.com with ESMTPSA id ci5sm4343871pjb.5.2020.01.30.13.12.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 13:12:48 -0800 (PST)
+        Thu, 30 Jan 2020 13:12:54 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -62,12 +62,15 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
         linux-clk@vger.kernel.org, hoegsberg@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
-Subject: [PATCH v3 00/15] clk: qcom: Fix parenting for dispcc/gpucc/videocc
-Date:   Thu, 30 Jan 2020 13:12:16 -0800
-Message-Id: <20200130211231.224656-1-dianders@chromium.org>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 05/15] clk: qcom: Get rid of the test clock for dispcc-sc7180
+Date:   Thu, 30 Jan 2020 13:12:21 -0800
+Message-Id: <20200130131220.v3.5.I28ac8f801456f1b950f7da10ed0f74a1344d4a35@changeid>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+In-Reply-To: <20200130211231.224656-1-dianders@chromium.org>
+References: <20200130211231.224656-1-dianders@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
@@ -75,153 +78,194 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The aim of this series is to get the dispcc and gpucc in a workable
-shape upstream for sc7180.  I personally wasn't focusing on (and
-didn't test much) videocc but pulled it along for the ride.
+The test clock isn't in the bindings and apparently it's not used by
+anyone upstream.  Remove it.
 
-Most of the work in this series deals with the fact that the parenting
-info for these clock controllers was in a bad shape.  It looks like it
-was half transitioned from the old way of doing things (relying on
-global names) to the new way of doing things (putting the linkage in
-the device tree).  This should fully transition us.
-
-As part of this transition I update the sdm845.dtsi file to specify
-the info as per the new way of doing things.  Although I've now put
-the linkage info in the sdm845.dtsi file, though, I haven't updated
-the sdm845 clock drivers in Linux so they still work via the global
-name matching.  It's left as an exercise to the reader to update the
-sdm845 clock drivers in Linux.
-
-This series passes these things for me on linux-next (next-20200129)
-after picking the recent gcc fix I posted [1]:
-
-  for f in \
-    Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml \
-    Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml \
-    Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml \
-    Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml \
-    Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml \
-    Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml \
-    Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml; do \
-        ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=$f; \
-    done
-
-  I also tried this:
-    # Delete broken yaml:
-    rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
-    ARCH=arm64 make dt_binding_check | grep 'clock/qcom'
-  ...and that didn't seem to indicate problems.
-
-  I also tried this (make sure you don't run w/ -j64 or diff is hard):
-    # Delete broken yaml:
-    rm Documentation/devicetree/bindings/pci/intel-gw-pcie.yaml
-    git checkout beforeMyCode
-    ARCH=arm64 make dt_binding_check > old.txt 2>&1
-    git checkout myCode
-    ARCH=arm64 make dt_binding_check > new.txt 2>&1
-    diff old.txt new.txt
-  ...and that didn't seem to indicate problems.
-
-I have confirmed that (with extra patches) the display/gpu come up on
-sc7180 and sdm845-cheza.  You can find the top of my downstream tree at:
-  https://crrev.com/c/2017976/4
-
-I have confirmed that sdm845-cheza display / GPU come up atop
-next-20200129, which is what this series is posted against.
-
-Compared to v2, this series has quite a few changes.  Mostly it's:
-- Always split into multiple files (Stephen).
-- Use internal names, not purist names (Taniya).
-- I realized that I forgot to update the sc7180 video clock controller
-  driver in v2.
-- A few other misc cleanups / fixes, see each patch for details.
-
-It feels like with this many patches there's very little chance I
-didn't do something stupid like make a tpyo or a paste-o paste-o,
-though I tried to cross-check as much as I could.  I apologize in
-advance for the stupid things I did that I should have known better
-about.
-
-[1] https://lore.kernel.org/r/20200129152458.v2.1.I4452dc951d7556ede422835268742b25a18b356b@changeid
+Suggested-by: Stephen Boyd <swboyd@chromium.org>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
 Changes in v3:
-- Add Matthias tag.
-- Added include file to description.
-- Added pointer to inlude file in description.
-- Added videocc include file.
-- Discovered / added new gcc input clock on sdm845.
-- Everyone but msm8998 now uses internal QC names.
-- Fixed typo grpahics => graphics
-- Newly discovered gcc_disp_gpll0_div_clk_src added.
-- Patch ("clk: qcom: Get rid of fallback...dispcc-sc7180") split out for v3.
 - Patch ("clk: qcom: Get rid of the test...dispcc-sc7180") split out for v3.
-- Patch ("clk: qcom: Get rid of the test...gpucc-sc7180") split out for v3.
-- Patch ("clk: qcom: Get rid of the test...videocc-sc7180") new for v3.
-- Patch ("clk: qcom: Use ARRAY_SIZE in dispcc-sc7180...") split out for v3.
-- Patch ("clk: qcom: Use ARRAY_SIZE in gpucc-sc7180...") split out for v3.
-- Patch ("clk: qcom: Use ARRAY_SIZE in videocc-sc7180...") new for v3.
-- Split bindings into 3 files.
-- Split sc7180 and sdm845 into two files.
-- Split videocc bindings into 2 files.
-- Switched names to internal QC names rather than logical ones.
-- Unlike in v2, use internal name instead of purist name.
-- Updated commit description.
 
-Changes in v2:
-- Added includes
-- Changed various parent names to match bindings / driver
-- Patch ("arm64: dts: qcom: sdm845: Add...dispcc") new for v2.
-- Patch ("arm64: dts: qcom: sdm845: Add...gpucc") new for v2.
-- Patch ("arm64: dts: qcom: sdm845: Add...videocc") new for v2.
-- Patch ("clk: qcom: rcg2: Don't crash...") new for v2.
-- Patch ("dt-bindings: clock: Cleanup qcom,videocc") new for v2.
-- Patch ("dt-bindings: clock: Fix qcom,dispcc...") new for v2.
-- Patch ("dt-bindings: clock: Fix qcom,gpucc...") new for v2.
+Changes in v2: None
 
-Douglas Anderson (14):
-  clk: qcom: rcg2: Don't crash if our parent can't be found; return an
-    error
-  dt-bindings: clock: Fix qcom,dispcc bindings for sdm845/sc7180
-  arm64: dts: qcom: sdm845: Add the missing clocks on the dispcc
-  clk: qcom: Get rid of fallback global names for dispcc-sc7180
-  clk: qcom: Get rid of the test clock for dispcc-sc7180
-  clk: qcom: Use ARRAY_SIZE in dispcc-sc7180 for parent clocks
-  dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
-  arm64: dts: qcom: sdm845: Add missing clocks / fix names on the gpucc
-  clk: qcom: Get rid of the test clock for gpucc-sc7180
-  clk: qcom: Use ARRAY_SIZE in gpucc-sc7180 for parent clocks
-  dt-bindings: clock: Cleanup qcom,videocc bindings for sdm845/sc7180
-  clk: qcom: Get rid of the test clock for videocc-sc7180
-  clk: qcom: Use ARRAY_SIZE in videocc-sc7180 for parent clocks
-  arm64: dts: qcom: sdm845: Add the missing clock on the videocc
+ drivers/clk/qcom/dispcc-sc7180.c | 32 ++++++++++----------------------
+ 1 file changed, 10 insertions(+), 22 deletions(-)
 
-Taniya Das (1):
-  arm64: dts: sc7180: Add clock controller nodes
-
- .../devicetree/bindings/clock/qcom,gpucc.yaml | 72 --------------
- ...om,dispcc.yaml => qcom,msm8998-gpucc.yaml} | 33 +++----
- .../bindings/clock/qcom,sc7180-dispcc.yaml    | 84 ++++++++++++++++
- .../bindings/clock/qcom,sc7180-gpucc.yaml     | 72 ++++++++++++++
- .../bindings/clock/qcom,sc7180-videocc.yaml   | 63 ++++++++++++
- .../bindings/clock/qcom,sdm845-dispcc.yaml    | 99 +++++++++++++++++++
- .../bindings/clock/qcom,sdm845-gpucc.yaml     | 72 ++++++++++++++
- ...,videocc.yaml => qcom,sdm845-videocc.yaml} | 27 ++---
- arch/arm64/boot/dts/qcom/sc7180.dtsi          | 47 +++++++++
- arch/arm64/boot/dts/qcom/sdm845.dtsi          | 28 +++++-
- drivers/clk/qcom/clk-rcg2.c                   |  3 +
- drivers/clk/qcom/dispcc-sc7180.c              | 45 +++------
- drivers/clk/qcom/gpucc-sc7180.c               |  4 +-
- drivers/clk/qcom/videocc-sc7180.c             |  4 +-
- 14 files changed, 513 insertions(+), 140 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
- rename Documentation/devicetree/bindings/clock/{qcom,dispcc.yaml => qcom,msm8998-gpucc.yaml} (51%)
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-dispcc.yaml
- create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
- rename Documentation/devicetree/bindings/clock/{qcom,videocc.yaml => qcom,sdm845-videocc.yaml} (60%)
-
+diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
+index a820e1558677..397f5d9dafc8 100644
+--- a/drivers/clk/qcom/dispcc-sc7180.c
++++ b/drivers/clk/qcom/dispcc-sc7180.c
+@@ -76,38 +76,32 @@ static struct clk_alpha_pll_postdiv disp_cc_pll0_out_even = {
+ 
+ static const struct parent_map disp_cc_parent_map_0[] = {
+ 	{ P_BI_TCXO, 0 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
+ 
+ static const struct clk_parent_data disp_cc_parent_data_0[] = {
+ 	{ .fw_name = "bi_tcxo" },
+-	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+ static const struct parent_map disp_cc_parent_map_1[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_DP_PHY_PLL_LINK_CLK, 1 },
+ 	{ P_DP_PHY_PLL_VCO_DIV_CLK, 2 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
+ 
+ static const struct clk_parent_data disp_cc_parent_data_1[] = {
+ 	{ .fw_name = "bi_tcxo" },
+ 	{ .fw_name = "dp_phy_pll_link_clk" },
+ 	{ .fw_name = "dp_phy_pll_vco_div_clk" },
+-	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+ static const struct parent_map disp_cc_parent_map_2[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 1 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
+ 
+ static const struct clk_parent_data disp_cc_parent_data_2[] = {
+ 	{ .fw_name = "bi_tcxo" },
+ 	{ .fw_name = "dsi0_phy_pll_out_byteclk" },
+-	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+ static const struct parent_map disp_cc_parent_map_3[] = {
+@@ -115,7 +109,6 @@ static const struct parent_map disp_cc_parent_map_3[] = {
+ 	{ P_DISP_CC_PLL0_OUT_MAIN, 1 },
+ 	{ P_GPLL0_OUT_MAIN, 4 },
+ 	{ P_DISP_CC_PLL0_OUT_EVEN, 5 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
+ 
+ static const struct clk_parent_data disp_cc_parent_data_3[] = {
+@@ -123,31 +116,26 @@ static const struct clk_parent_data disp_cc_parent_data_3[] = {
+ 	{ .hw = &disp_cc_pll0.clkr.hw },
+ 	{ .fw_name = "gcc_disp_gpll0_clk_src" },
+ 	{ .hw = &disp_cc_pll0_out_even.clkr.hw },
+-	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+ static const struct parent_map disp_cc_parent_map_4[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_GPLL0_OUT_MAIN, 4 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
+ 
+ static const struct clk_parent_data disp_cc_parent_data_4[] = {
+ 	{ .fw_name = "bi_tcxo" },
+ 	{ .fw_name = "gcc_disp_gpll0_clk_src" },
+-	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+ static const struct parent_map disp_cc_parent_map_5[] = {
+ 	{ P_BI_TCXO, 0 },
+ 	{ P_DSI0_PHY_PLL_OUT_DSICLK, 1 },
+-	{ P_CORE_BI_PLL_TEST_SE, 7 },
+ };
+ 
+ static const struct clk_parent_data disp_cc_parent_data_5[] = {
+ 	{ .fw_name = "bi_tcxo" },
+ 	{ .fw_name = "dsi0_phy_pll_out_dsiclk" },
+-	{ .fw_name = "core_bi_pll_test_se" },
+ };
+ 
+ static const struct freq_tbl ftbl_disp_cc_mdss_ahb_clk_src[] = {
+@@ -166,7 +154,7 @@ static struct clk_rcg2 disp_cc_mdss_ahb_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_ahb_clk_src",
+ 		.parent_data = disp_cc_parent_data_4,
+-		.num_parents = 3,
++		.num_parents = 2,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+@@ -180,7 +168,7 @@ static struct clk_rcg2 disp_cc_mdss_byte0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_byte0_clk_src",
+ 		.parent_data = disp_cc_parent_data_2,
+-		.num_parents = 3,
++		.num_parents = 2,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_byte2_ops,
+ 	},
+@@ -213,7 +201,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_crypto_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_dp_crypto_clk_src",
+ 		.parent_data = disp_cc_parent_data_1,
+-		.num_parents = 4,
++		.num_parents = 3,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_byte2_ops,
+ 	},
+@@ -227,7 +215,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_link_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_dp_link_clk_src",
+ 		.parent_data = disp_cc_parent_data_1,
+-		.num_parents = 4,
++		.num_parents = 3,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_byte2_ops,
+ 	},
+@@ -241,7 +229,7 @@ static struct clk_rcg2 disp_cc_mdss_dp_pixel_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_dp_pixel_clk_src",
+ 		.parent_data = disp_cc_parent_data_1,
+-		.num_parents = 4,
++		.num_parents = 3,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_dp_ops,
+ 	},
+@@ -256,7 +244,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_esc0_clk_src",
+ 		.parent_data = disp_cc_parent_data_2,
+-		.num_parents = 3,
++		.num_parents = 2,
+ 		.ops = &clk_rcg2_ops,
+ 	},
+ };
+@@ -279,7 +267,7 @@ static struct clk_rcg2 disp_cc_mdss_mdp_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_mdp_clk_src",
+ 		.parent_data = disp_cc_parent_data_3,
+-		.num_parents = 5,
++		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+@@ -292,7 +280,7 @@ static struct clk_rcg2 disp_cc_mdss_pclk0_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_pclk0_clk_src",
+ 		.parent_data = disp_cc_parent_data_5,
+-		.num_parents = 3,
++		.num_parents = 2,
+ 		.flags = CLK_SET_RATE_PARENT,
+ 		.ops = &clk_pixel_ops,
+ 	},
+@@ -307,7 +295,7 @@ static struct clk_rcg2 disp_cc_mdss_rot_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_rot_clk_src",
+ 		.parent_data = disp_cc_parent_data_3,
+-		.num_parents = 5,
++		.num_parents = 4,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
+@@ -321,7 +309,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
+ 	.clkr.hw.init = &(struct clk_init_data){
+ 		.name = "disp_cc_mdss_vsync_clk_src",
+ 		.parent_data = disp_cc_parent_data_0,
+-		.num_parents = 2,
++		.num_parents = 1,
+ 		.ops = &clk_rcg2_shared_ops,
+ 	},
+ };
 -- 
 2.25.0.341.g760bfbb309-goog
 
