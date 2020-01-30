@@ -2,166 +2,96 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.5 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB4BCC35240
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 00:24:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD65C33C9E
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 04:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E527214AF
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 00:24:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D5CE2083E
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 04:19:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="M6sCkftY"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=mg.codeaurora.org header.i=@mg.codeaurora.org header.b="RHPxbm9V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726401AbgA3AYa (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Wed, 29 Jan 2020 19:24:30 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:46489 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726618AbgA3AYa (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jan 2020 19:24:30 -0500
-Received: by mail-vk1-f195.google.com with SMTP id u6so525774vkn.13
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2020 16:24:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HPkGA3GK3blVdQi8+NIYhn2wAG+9S/XJZPz8vvp4cLo=;
-        b=M6sCkftYdw+yxCZolQLugqQz0RovdHNk6PaR2tvafsXWi2mt6BF6Ldsv8+gYeZxs4Y
-         T2tWoq+ubinXa1WQmLOIo4QqMm2Q2BQMVBcF/P7CTCZTe0tWMlAeT7Guo+gsC2Doi5Vb
-         boHynzCL0K0eWTW5QtPEO9/8SJrt4pkwf46fw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HPkGA3GK3blVdQi8+NIYhn2wAG+9S/XJZPz8vvp4cLo=;
-        b=AWcNf719F15NRQnlAj7UtFlKrgqpXxh4wqImICdY0pA49GfPgesHug+qL9fW+Q02hl
-         mhHlH0XF8Ox8sW81Ik9ts9KNB2J/cpkr8jcfsspt8DN+tC+I6at0E/6EszCHUvM0663L
-         8dpl1oJB7WaBRlzuYcQAvAwQaGZLqa6XS7KjFuzTna3BgjOisR3CrZ0vCAeAZGC+TtZP
-         KTbFDe11hFO44pOVlo33qEyHreFogD54NzexVO7xDFHl3ZgiqFdwfQzh/N+MgEvQf1GY
-         byptxcjlTwRaqepIAI5LAELGVEet4LF/fobBKp5UxNvCuVp1q1/Twnu32PXvKdFKToZT
-         G7yQ==
-X-Gm-Message-State: APjAAAUprv5ila3nStQ69TunxhTSEChd21EZRoDcySNm1Ba0HAAxAftF
-        34nujnluVsX6tA4NIUgFtu2cfCYe3Lo=
-X-Google-Smtp-Source: APXvYqzCpHZ3OModWpZbdIoW8YGSCbl4GrQls+Eg5QhQBtdeX1HyVJ3szlBd5fzdKd8f2lgN9G5BWQ==
-X-Received: by 2002:ac5:c807:: with SMTP id y7mr1239589vkl.92.1580343866725;
-        Wed, 29 Jan 2020 16:24:26 -0800 (PST)
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com. [209.85.221.182])
-        by smtp.gmail.com with ESMTPSA id y7sm1038538vkd.38.2020.01.29.16.24.25
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 Jan 2020 16:24:25 -0800 (PST)
-Received: by mail-vk1-f182.google.com with SMTP id o200so537770vke.4
-        for <linux-clk@vger.kernel.org>; Wed, 29 Jan 2020 16:24:25 -0800 (PST)
-X-Received: by 2002:a1f:c686:: with SMTP id w128mr1285411vkf.34.1580343865022;
- Wed, 29 Jan 2020 16:24:25 -0800 (PST)
-MIME-Version: 1.0
-References: <20200129132313.1.I4452dc951d7556ede422835268742b25a18b356b@changeid>
- <CAL_JsqJk1NZSDAXgqc-CS9a1UCmNYPhC-LwjPUZaX2oK=EtHzQ@mail.gmail.com>
- <CAD=FV=XLq4-EdsuKnDjuc3-6P3i6o-tV5MJbdFbvAscF_ouOpg@mail.gmail.com> <CAL_JsqLVaJMidm2QcpmxXeT+Q+uU8esm1shdRs3BVoeRYqhJng@mail.gmail.com>
-In-Reply-To: <CAL_JsqLVaJMidm2QcpmxXeT+Q+uU8esm1shdRs3BVoeRYqhJng@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Wed, 29 Jan 2020 16:24:10 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=Uv-td=PhCSZNsjBB-cQB=vJKLbw_BLbM3B1ORRzuTB5A@mail.gmail.com>
-Message-ID: <CAD=FV=Uv-td=PhCSZNsjBB-cQB=vJKLbw_BLbM3B1ORRzuTB5A@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clk: qcom: Fix self-validation, split, and
- clean cruft
-To:     Rob Herring <robh+dt@kernel.org>
-Cc:     Stephen Boyd <sboyd@kernel.org>, Taniya Das <tdas@codeaurora.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Abhishek Sahu <absahu@codeaurora.org>, sivaprak@codeaurora.org,
-        anusharao@codeaurora.org, Sricharan <sricharan@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Andy Gross <agross@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        id S1727133AbgA3ETJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Wed, 29 Jan 2020 23:19:09 -0500
+Received: from mail26.static.mailgun.info ([104.130.122.26]:59484 "EHLO
+        mail26.static.mailgun.info" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726774AbgA3ETJ (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Wed, 29 Jan 2020 23:19:09 -0500
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mg.codeaurora.org; q=dns/txt;
+ s=smtp; t=1580357948; h=Message-Id: Date: Subject: Cc: To: From:
+ Sender; bh=9bR2g9tbVwKjs+QZ9HECb6QYigrlwi+UX4vqqyB1mIY=; b=RHPxbm9VN7EpfyC449lMPvN0O+Rvd/iOd9FD7Vdfhjr69aHy8rB6haUTR+RPiM67I4T2lIoK
+ 17a0DV/tmkYpNuuLh99eM4DtIXJJzQ41oHPiCYaUGH6JQS2uilz2znO5/0RGAoWdMhJ66Anr
+ /Xj1ySp4IMAL0/Czy5BiGenB9a4=
+X-Mailgun-Sending-Ip: 104.130.122.26
+X-Mailgun-Sid: WyI4MzlhZiIsICJsaW51eC1jbGtAdmdlci5rZXJuZWwub3JnIiwgImJlOWU0YSJd
+Received: from smtp.codeaurora.org (ec2-35-166-182-171.us-west-2.compute.amazonaws.com [35.166.182.171])
+ by mxa.mailgun.org with ESMTP id 5e32593a.7fbfea173d18-smtp-out-n02;
+ Thu, 30 Jan 2020 04:19:06 -0000 (UTC)
+Received: by smtp.codeaurora.org (Postfix, from userid 1001)
+        id DB2A8C4479F; Thu, 30 Jan 2020 04:19:05 +0000 (UTC)
+Received: from tdas-linux.qualcomm.com (blr-c-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.19.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: tdas)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id B2A7DC43383;
+        Thu, 30 Jan 2020 04:19:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org B2A7DC43383
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: aws-us-west-2-caf-mail-1.web.codeaurora.org; spf=none smtp.mailfrom=tdas@codeaurora.org
+From:   Taniya Das <tdas@codeaurora.org>
+To:     Stephen Boyd <sboyd@kernel.org>,
+        =?UTF-8?q?Michael=20Turquette=20=C2=A0?= <mturquette@baylibre.com>
+Cc:     David Brown <david.brown@linaro.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Andy Gross <agross@kernel.org>, devicetree@vger.kernel.org,
+        robh@kernel.org, robh+dt@kernel.org,
+        Taniya Das <tdas@codeaurora.org>
+Subject: [PATCH v3 0/3] Add modem Clock controller (MSS CC) driver for SC7180
+Date:   Thu, 30 Jan 2020 09:48:40 +0530
+Message-Id: <1580357923-19783-1-git-send-email-tdas@codeaurora.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
+[v3]
+  * Add clocks/clock-names required for the MSS clock controller.
+  * Add pm_ops to enable/disable the required dependent clock.
+  * Add parent_data for the MSS clocks.
+  * Update the GCC MSS clocks from _CBCR to _CLK.
 
-On Wed, Jan 29, 2020 at 3:50 PM Rob Herring <robh+dt@kernel.org> wrote:
->
-> On Wed, Jan 29, 2020 at 5:26 PM Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> > On Wed, Jan 29, 2020 at 2:01 PM Rob Herring <robh+dt@kernel.org> wrote:
-> > >
-> > > On Wed, Jan 29, 2020 at 3:23 PM Douglas Anderson <dianders@chromium.org> wrote:
-> > > >
-> > > > The 'qcom,gcc.yaml' file failed self-validation (dt_binding_check)
-> > > > because it required a property to be either (3 entries big),
-> > > > (3 entries big), or (7 entries big), but not more than one of those
-> > > > things.  That didn't make a ton of sense.
-> > > >
-> > > > This patch splits all of the exceptional device trees (AKA those that
-> > > > would have needed if/then/else rules) from qcom,gcc.yaml.  It also
-> > > > cleans up some cruft found while doing that.
-> > > >
-> > > > After this lands, this worked for me atop clk-next:
-> > > >   for f in \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-apq8064.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-ipq8074.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-msm8996.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-msm8998.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-qcs404.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-sc7180.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc-sm8150.yaml \
-> > > >     Documentation/devicetree/bindings/clock/qcom,gcc.yaml; do \
-> > > >       ARCH=arm64 make dt_binding_check DT_SCHEMA_FILES=$f; \
-> > > >       ARCH=arm64 make dtbs_check DT_SCHEMA_FILES=$f; \
-> > > >   done
-> > >
-> > > Note that using DT_SCHEMA_FILES may hide some errors in examples as
-> > > all other schemas (including the core ones) are not used for
-> > > validation. So just 'make dt_binding_check' needs to pass (ignoring
-> > > any other unrelated errors as it breaks frequently). Supposedly a
-> > > patch is coming explaining this in the documentation.
-> >
-> > That seems like it's going to be a huge pain going forward, but OK.
->
-> Use of DT_SCHEMA_FILES hiding problems or having to run 'make
-> dt_binding_check' on everything?
+[v2]
+  * Update the license for the documentation and fix minor comments in the
+    YAML bindings.
 
-Having to run 'make dt_binding_check' on everything.  I guess maybe if
-the tree stays clean it won't be too bad and it wasn't too bad against
-the current linux-next, but I can imagine that every time I want to
-run this I'll run into a pile of warnings / errors in other people's
-files.  Then I need to figure out what to ignore / workaround.  If
-something fails badly (like intel-gw-pcie.yaml) I'll have to realize
-that I should just delete that file to get the rest of the run to
-report errors that are relevant to me.
+[v1]
+  * Add driver support for Modem clock controller for SC7180 and also
+    update device tree bindings for the various clocks supported in the
+    clock controller.
 
-This'll probably be worse because most maintainer trees are based on
-"-rc1" and at least in the past I've found that "-rc1" tends to have
-lots of problems.  Each maintainer then fixes the problems relative to
-their own subsystem, but it's not a wonderful thing to rely on.
+Taniya Das (3):
+  dt-bindings: clock: Add YAML schemas for the QCOM MSS clock bindings
+  dt-bindings: clock: Introduce QCOM Modem clock bindings
+  clk: qcom: Add modem clock controller driver for SC7180
 
+ .../devicetree/bindings/clock/qcom,mss.yaml        |  58 +++++++++
+ drivers/clk/qcom/Kconfig                           |   9 ++
+ drivers/clk/qcom/Makefile                          |   1 +
+ drivers/clk/qcom/gcc-sc7180.c                      |  70 ++++++++++
+ drivers/clk/qcom/mss-sc7180.c                      | 143 +++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-sc7180.h        |   5 +
+ include/dt-bindings/clock/qcom,mss-sc7180.h        |  12 ++
+ 7 files changed, 298 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,mss.yaml
+ create mode 100644 drivers/clk/qcom/mss-sc7180.c
+ create mode 100644 include/dt-bindings/clock/qcom,mss-sc7180.h
 
-> I could probably rework things such that you can check a single
-> binding example against all schema, but dtbs still get validated by
-> just a single schema.
-
-This would be helpful.  ...or some way to easily make really bad
-failures non-fatal.  Then I can maybe just diff the results before my
-patch and after and that'll give me a hint of what I've fixed / made
-worse.
-
-
-> Probably is. There are cases where a new schema breaks another file's
-> example. If someone has a gcc node in another example for example.
-
-At this point I'm going to say that we're better off than we were, but
-I'll try to keep this in mind for future patches.
-
-
--Doug
+--
+Qualcomm INDIA, on behalf of Qualcomm Innovation Center, Inc.is a member
+of the Code Aurora Forum, hosted by the  Linux Foundation.
