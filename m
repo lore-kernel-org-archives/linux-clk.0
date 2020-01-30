@@ -2,56 +2,55 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-9.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7D62C33CB3
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BBDC2D0DB
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B051122522
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:13:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A334B2464B
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 21:13:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jMU9zGKg"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="lIJoBPTf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728028AbgA3VNr (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 16:13:47 -0500
-Received: from mail-pj1-f67.google.com ([209.85.216.67]:36219 "EHLO
-        mail-pj1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727807AbgA3VMy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 16:12:54 -0500
-Received: by mail-pj1-f67.google.com with SMTP id gv17so1885363pjb.1
-        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 13:12:53 -0800 (PST)
+        id S1727790AbgA3VMx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 16:12:53 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:38350 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727783AbgA3VMx (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 16:12:53 -0500
+Received: by mail-pg1-f194.google.com with SMTP id a33so2293553pgm.5
+        for <linux-clk@vger.kernel.org>; Thu, 30 Jan 2020 13:12:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=K0XoSuGyqNEgB75IwM+XmimRDu75qzQuIcV/EwSuAJM=;
-        b=jMU9zGKgBOBNllW9XZIw0g9AOLLZ5Vj2JIaOdChfocVUyNqDD4m6qBdopC/RE6PUJH
-         fCVpq66hw6aTVQJxY86HFMSzfd/b+TUu0i75shdttFKG2Ys0VeOEacgB4bTrDt82h8kD
-         D0cS2v0Z7/RPVbl2wz8j2u3Cg5FmGNCuxDMzc=
+        bh=ksW7l4fWNLieSdrD5EsRsMEIiSgG7sjjBAvxsINRjjI=;
+        b=lIJoBPTf3duj1eGQFhz8YZ62Df5Wff7+ob6LqqpeugT+H1yud6k/Zqa6NEla/2kNxa
+         XhvZHWFcApCtUzFq+g3sI+fNNpM7vtTTuAe7F0FoHjweGDvnvcLVehSj5wp/nMORMZKr
+         s7PJGCe+AhcIao2G8L5JmqjVFlzfmralDLnc0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=K0XoSuGyqNEgB75IwM+XmimRDu75qzQuIcV/EwSuAJM=;
-        b=Mm/iq4oKUF4Knu1sWOYAPT+OHtW9K0XcEaRXJfnoEBTnOo5kjB/JhR2+cRHh6FF4B6
-         A7ZxTGFFw9iGn+muK0TvSI6i63PhLH58vqndeW4y7Ov+BXGoTo341YkLuoY0eLzKY8TD
-         7l+wJ9dqNWlVsu62Wx0vlgsThB2H3olex0dsJbGhtjz8MgNFqDZ3MECZt+/MxT9uuND1
-         epzhz0FjliUGdVYxX8Ekx4yBE5ipvmfZ7Gr+lictSL3Uq+A5y2FOksmoz/6wwQazCwcq
-         SfehzJhzBKBpk+k2oUKeRa4Qzn4FL2/pRMOFD0Yc9H0vrhgqSfqooXeC4xWPY8z054sB
-         PqIQ==
-X-Gm-Message-State: APjAAAXAvR7msSYcKyFyLMrby5JN5caIUh/ESgkmBt1+ynQ/mt7DrCFd
-        7h6gd6LZG1nz/oo2JRovwbVI9Q==
-X-Google-Smtp-Source: APXvYqynCN6w21P8hmWBFQ1aqUqYCVjtZhBJEtINjT7jo1jag3FXsGA/Luh9zWpaQq2LkwWTRW6QOg==
-X-Received: by 2002:a17:902:9342:: with SMTP id g2mr6378449plp.339.1580418773549;
-        Thu, 30 Jan 2020 13:12:53 -0800 (PST)
+        bh=ksW7l4fWNLieSdrD5EsRsMEIiSgG7sjjBAvxsINRjjI=;
+        b=MrOltUQrS/1ewudWHwhk1FkNZ0cwZDW2In04P3ido2jwIW8lH8JpXj7ULx+66DbAo1
+         x0EkNZGEgKAVVcnGFQ19+uMlq5ZUbxggxqZbjHZSd4Oq8EGyAYOKJqQbTO6jfPL/rIJ8
+         NMjlJre2JxWkzfeWUqM5rHOGLNuW7tgOtUGjLL/qCVpQenSI/V2gclmy894fuUWb0Qxr
+         WaAeAG28AeLDMC4cfHOZvN9GHA7cwSWs9qrovyoN5xr9uawXg9oripP68bjuNrku5o1D
+         ontyLdj9rHe8NTmnVo2LpdvL9sbqNP2iItcd3bf5UX1uNfCRiDEo8kbpH8YEnwPrjps9
+         S4Cw==
+X-Gm-Message-State: APjAAAW1Dc0pQ/akbdzmbGN3U077EEnAhqnXQUFVCuARrYAqVLtfTR84
+        dvvWvNmu7E7FlYoIVVlIOwIG5A==
+X-Google-Smtp-Source: APXvYqxLqyb7vvP/CmhMs7YyJCKrP+csYoKAiXN3h5NKS0788VFJpZYxoKMMWiN7TlkQ4j8Te7RKKw==
+X-Received: by 2002:a63:6602:: with SMTP id a2mr6293262pgc.403.1580418772289;
+        Thu, 30 Jan 2020 13:12:52 -0800 (PST)
 Received: from tictac2.mtv.corp.google.com ([2620:15c:202:1:24fa:e766:52c9:e3b2])
-        by smtp.gmail.com with ESMTPSA id ci5sm4343871pjb.5.2020.01.30.13.12.52
+        by smtp.gmail.com with ESMTPSA id ci5sm4343871pjb.5.2020.01.30.13.12.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 13:12:53 -0800 (PST)
+        Thu, 30 Jan 2020 13:12:51 -0800 (PST)
 From:   Douglas Anderson <dianders@chromium.org>
 To:     Rob Herring <robh@kernel.org>, Andy Gross <agross@kernel.org>,
         Bjorn Andersson <bjorn.andersson@linaro.org>,
@@ -63,11 +62,10 @@ Cc:     Jeffrey Hugo <jhugo@codeaurora.org>,
         kalyan_t@codeaurora.org, Mark Rutland <mark.rutland@arm.com>,
         linux-clk@vger.kernel.org, hoegsberg@chromium.org,
         Douglas Anderson <dianders@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v3 04/15] clk: qcom: Get rid of fallback global names for dispcc-sc7180
-Date:   Thu, 30 Jan 2020 13:12:20 -0800
-Message-Id: <20200130131220.v3.4.Ia3706a5d5add72e88dbff60fd13ec06bf7a2fd48@changeid>
+        linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>
+Subject: [PATCH v3 03/15] arm64: dts: qcom: sdm845: Add the missing clocks on the dispcc
+Date:   Thu, 30 Jan 2020 13:12:19 -0800
+Message-Id: <20200130131220.v3.3.Ie80fa74e1774f4317d80d70d30ef4b78f16cc8df@changeid>
 X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
 In-Reply-To: <20200130211231.224656-1-dianders@chromium.org>
 References: <20200130211231.224656-1-dianders@chromium.org>
@@ -78,95 +76,60 @@ Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-In the new world input clocks should be matched by ".fw_name".  sc7180
-is new enough that no backward compatibility use of global names
-should be needed.  Remove it.
+We're transitioning over to requiring the Qualcomm Display Clock
+Controller to specify all the input clocks.  Let's add them for
+sdm845.
 
-With a proper device tree and downstream display patches I have
-verified booting a sc7180 up and seeing the display after this patch.
+NOTES:
+- Until the Linux driver for sdm845's dispcc is updated, these clocks
+  will not actually be used in Linux.  It will continue to use global
+  clock names to match things up.
+- Although the clocks from the DP PHY are required, the DP PHY isn't
+  represented in the dts yet.  Apparently the magic for this is just
+  to use <0>.
 
-Fixes: dd3d06622138 ("clk: qcom: Add display clock controller driver for SC7180")
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
 
 Changes in v3:
-- Patch ("clk: qcom: Get rid of fallback...dispcc-sc7180") split out for v3.
+- Newly discovered gcc_disp_gpll0_div_clk_src added.
 - Unlike in v2, use internal name instead of purist name.
 
-Changes in v2: None
+Changes in v2:
+- Patch ("arm64: dts: qcom: sdm845: Add...dispcc") new for v2.
 
- drivers/clk/qcom/dispcc-sc7180.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/clk/qcom/dispcc-sc7180.c b/drivers/clk/qcom/dispcc-sc7180.c
-index 30c1e25d3edb..a820e1558677 100644
---- a/drivers/clk/qcom/dispcc-sc7180.c
-+++ b/drivers/clk/qcom/dispcc-sc7180.c
-@@ -81,7 +81,7 @@ static const struct parent_map disp_cc_parent_map_0[] = {
- 
- static const struct clk_parent_data disp_cc_parent_data_0[] = {
- 	{ .fw_name = "bi_tcxo" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_1[] = {
-@@ -93,10 +93,9 @@ static const struct parent_map disp_cc_parent_map_1[] = {
- 
- static const struct clk_parent_data disp_cc_parent_data_1[] = {
- 	{ .fw_name = "bi_tcxo" },
--	{ .fw_name = "dp_phy_pll_link_clk", .name = "dp_phy_pll_link_clk" },
--	{ .fw_name = "dp_phy_pll_vco_div_clk",
--				.name = "dp_phy_pll_vco_div_clk"},
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "dp_phy_pll_link_clk" },
-+	{ .fw_name = "dp_phy_pll_vco_div_clk" },
-+	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_2[] = {
-@@ -107,9 +106,8 @@ static const struct parent_map disp_cc_parent_map_2[] = {
- 
- static const struct clk_parent_data disp_cc_parent_data_2[] = {
- 	{ .fw_name = "bi_tcxo" },
--	{ .fw_name = "dsi0_phy_pll_out_byteclk",
--				.name = "dsi0_phy_pll_out_byteclk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "dsi0_phy_pll_out_byteclk" },
-+	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_3[] = {
-@@ -125,7 +123,7 @@ static const struct clk_parent_data disp_cc_parent_data_3[] = {
- 	{ .hw = &disp_cc_pll0.clkr.hw },
- 	{ .fw_name = "gcc_disp_gpll0_clk_src" },
- 	{ .hw = &disp_cc_pll0_out_even.clkr.hw },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_4[] = {
-@@ -137,7 +135,7 @@ static const struct parent_map disp_cc_parent_map_4[] = {
- static const struct clk_parent_data disp_cc_parent_data_4[] = {
- 	{ .fw_name = "bi_tcxo" },
- 	{ .fw_name = "gcc_disp_gpll0_clk_src" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct parent_map disp_cc_parent_map_5[] = {
-@@ -148,9 +146,8 @@ static const struct parent_map disp_cc_parent_map_5[] = {
- 
- static const struct clk_parent_data disp_cc_parent_data_5[] = {
- 	{ .fw_name = "bi_tcxo" },
--	{ .fw_name = "dsi0_phy_pll_out_dsiclk",
--				.name = "dsi0_phy_pll_out_dsiclk" },
--	{ .fw_name = "core_bi_pll_test_se", .name = "core_bi_pll_test_se" },
-+	{ .fw_name = "dsi0_phy_pll_out_dsiclk" },
-+	{ .fw_name = "core_bi_pll_test_se" },
- };
- 
- static const struct freq_tbl ftbl_disp_cc_mdss_ahb_clk_src[] = {
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index d42302b8889b..0985813fee50 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -2933,6 +2933,24 @@ opp-200000000 {
+ 		dispcc: clock-controller@af00000 {
+ 			compatible = "qcom,sdm845-dispcc";
+ 			reg = <0 0x0af00000 0 0x10000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&gcc GCC_DISP_GPLL0_CLK_SRC>,
++				 <&gcc GCC_DISP_GPLL0_DIV_CLK_SRC>,
++				 <&dsi0_phy 0>,
++				 <&dsi0_phy 1>,
++				 <&dsi1_phy 0>,
++				 <&dsi1_phy 1>,
++				 <0>,
++				 <0>;
++			clock-names = "bi_tcxo",
++				      "gcc_disp_gpll0_clk_src",
++				      "gcc_disp_gpll0_div_clk_src",
++				      "dsi0_phy_pll_out_byteclk",
++				      "dsi0_phy_pll_out_dsiclk",
++				      "dsi1_phy_pll_out_byteclk",
++				      "dsi1_phy_pll_out_dsiclk",
++				      "dp_link_clk_divsel_ten",
++				      "dp_vco_divided_clk_src_mux";
+ 			#clock-cells = <1>;
+ 			#reset-cells = <1>;
+ 			#power-domain-cells = <1>;
 -- 
 2.25.0.341.g760bfbb309-goog
 
