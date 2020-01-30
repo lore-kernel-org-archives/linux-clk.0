@@ -2,188 +2,126 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1 autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_PASS,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F1BC33CB3
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 15:42:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F2C8C35240
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 17:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B84B42464B
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 15:42:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13BBE214AF
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 17:02:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dygglIZ4"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="f+KBjjef"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727314AbgA3Pmx (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 10:42:53 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50363 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbgA3Pmv (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 10:42:51 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a5so4287645wmb.0;
-        Thu, 30 Jan 2020 07:42:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=mCC2iJp3FOKEqh51EnD5KyOBr0/MmDz/MslDmMolIPs=;
-        b=dygglIZ49hA7G9C2AigGTfVuxMBIjTvnYG93OfgAvY+GPbV/k5KDxLCQlabhHazTVC
-         /7rdveJA0Ea91a32LSTbN/Nj/yP+V/zD+turWA0YpAeRpEbMdzuyn5BfYqcB7uMIa/pl
-         n1kOhmF1pBrIidVznLvNpcGzQhM5Vlmzek+zAOmZ39xUyR6hw07+bgsxPzDqs9abtT74
-         0GGW/23acpORgVG+WP4P5+71uQZNbrxM6Is+nkKiPhPBM6FdI1hwhv7K8t/kcmKhiPMK
-         MCzRnUyKGXjKptHGYwm+HrZsaY3lIIC+ck836Qzm0wQmDi4ZAPI8BYcyq7YLWMRUYCNZ
-         iqSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=mCC2iJp3FOKEqh51EnD5KyOBr0/MmDz/MslDmMolIPs=;
-        b=Le8ddEnfxvQR9SGITSy/6Mbft6/sHQr7ekzi1XjNzmwmRRET4xS2Bie7By5fmAGCuD
-         SgEEnG4nCau+3FVQ6i4roPW6CUXOmfL5St+VlfUM1x/A73g8QvccxfftM2+lm9BVQLW/
-         nJXIl9avkkdsgEk+zENGbVcqMApp3uTSksEZNXD05I858RPppr4DN7n8KQYbDTqinE2c
-         S9AoW5JWcDBA2rtWjeLOP+tSnQD7Oix1WtofLTFUGI+Caf73jiDQ795OhSeBEi6FQUgO
-         GLLjo2VGegQJzHHzpzeW6c5ga7lkPkAK8lMRQI5V5K+XeuZoMNBYBftXRoK0JHokkvRB
-         sdxA==
-X-Gm-Message-State: APjAAAVJRpLUL5EffMwNCnNnDxzFaD7+inc/+h5dtL4scV837R9xe1HU
-        eQh8AP33Lt39eTJ/AlBpaAQa8dbb
-X-Google-Smtp-Source: APXvYqx516JuGfXnHVQ7VZhB2d9eEottnK1gojvjq5DNLACFhWs1Y8yfaGfYArfzgBwzmB77GXBWrA==
-X-Received: by 2002:a7b:cae9:: with SMTP id t9mr6222441wml.186.1580398968832;
-        Thu, 30 Jan 2020 07:42:48 -0800 (PST)
-Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
-        by smtp.gmail.com with ESMTPSA id f127sm6838903wma.4.2020.01.30.07.42.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 Jan 2020 07:42:47 -0800 (PST)
-Date:   Thu, 30 Jan 2020 16:42:46 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        frankc@nvidia.com, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
-Message-ID: <20200130154246.GA2904678@ulmo>
+        id S1727466AbgA3RCY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 12:02:24 -0500
+Received: from hqnvemgate25.nvidia.com ([216.228.121.64]:13959 "EHLO
+        hqnvemgate25.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727158AbgA3RCY (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 12:02:24 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate25.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5e330c0b0000>; Thu, 30 Jan 2020 09:02:03 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 30 Jan 2020 09:02:23 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 09:02:23 -0800
+Received: from [10.2.164.115] (10.124.1.5) by HQMAIL107.nvidia.com
+ (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Thu, 30 Jan
+ 2020 17:02:23 +0000
+Subject: Re: Re: Re: [RFC PATCH v1 4/5] media: tegra: Add Tegra Video input
+ driver for Tegra210
+To:     Thierry Reding <thierry.reding@gmail.com>
+CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
+        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
 References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+ <1580235801-4129-5-git-send-email-skomatineni@nvidia.com>
+ <20200129111340.GF2479935@ulmo>
+ <070f9a4c-1919-f3f6-fef3-ed0a84cf5776@nvidia.com>
+ <20200130122055.GA2584455@ulmo>
+From:   Sowjanya Komatineni <skomatineni@nvidia.com>
+Message-ID: <5a45782a-d88f-099a-f3b6-3c0255131f6b@nvidia.com>
+Date:   Thu, 30 Jan 2020 09:02:21 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="G4iJoqBmSsgzjUCe"
-Content-Disposition: inline
-In-Reply-To: <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
-User-Agent: Mutt/1.13.1 (2019-12-14)
+In-Reply-To: <20200130122055.GA2584455@ulmo>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL107.nvidia.com (172.20.187.13)
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1580403723; bh=A9RuPB5fbixK5sm9wKeq5QfAS+EZrvYRY7JYNhFDIxM=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=f+KBjjefTnGF+7UwoAa9RNl2MGpafpuIMkycNlYO3mvZKyGb+pnAb7SfZtnWE9Qiq
+         pXfRB7v8J2Kbfb0ONZ+7H0yt/iEibISeh9AWrAjNpBFg4c3Mb5V0Nf3NWa7tp75GT7
+         OAAXITy2uqWyrz5UtCH6UcbZ+jMRie1i9EzYlhMhlKYGxfS6ld28TpFFU+5reXQOmy
+         +Chrfc/+ecGwiCVNveR2ge83D+ZY+2k4lQdT3bSgwpc4UNb/t+k5Q20OJexu3t+TlB
+         ShQsGCdA2nuVSXex8Xj/09EMUrnPjuIUiSWCntiL2nhyDA+N5fpR4jF8AB850rRdBq
+         6O16IKT8ainJA==
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
 
---G4iJoqBmSsgzjUCe
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 1/30/20 4:20 AM, Thierry Reding wrote:
+> On Wed, Jan 29, 2020 at 09:23:38AM -0800, Sowjanya Komatineni wrote:
+>> On 1/29/20 3:13 AM, Thierry Reding wrote:
+>>> On Tue, Jan 28, 2020 at 10:23:20AM -0800, Sowjanya Komatineni wrote:
+> [...]
+>>>> diff --git a/drivers/staging/media/tegra/host1x-video.c b/drivers/staging/media/tegra/host1x-video.c
+> [...]
+>>>> +	media_device_init(&cam->media_dev);
+>>>> +	ret = media_device_register(&cam->media_dev);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(cam->dev, "failed to register media device: %d\n", ret);
+>>>> +		return ret;
+>>>> +	}
+>>>> +
+>>>> +	cam->v4l2_dev.mdev = &cam->media_dev;
+>>>> +	ret = v4l2_device_register(cam->dev, &cam->v4l2_dev);
+>>>> +	if (ret < 0) {
+>>>> +		dev_err(cam->dev, "V4L2 device registration failed: %d\n", ret);
+>>>> +		goto register_error;
+>>>> +	}
+>>>> +
+>>>> +	dev_set_drvdata(&dev->dev, cam);
+>>>> +
+>>>> +	ret = host1x_device_init(dev);
+>>>> +	if (ret < 0)
+>>>> +		goto dev_exit;
+>>>> +
+>>>> +	return 0;
+>>>> +
+>>>> +dev_exit:
+>>>> +	host1x_device_exit(dev);
+>>> There should be no need to call host1x_device_exit() when
+>>> host1x_device_init() failed because the latter already takes care of
+>>> undoing whatever it did already.
+>>>
+>> host1x_device_init can fail if any of its client ops init fails.
+>>
+>> So, calling host1x_device_exit here to undo the things done in other
+>> successful client init ops.
+> host1x_device_init() already takes care of undoing what it did on
+> failure. Also, it makes sure to only undo what had already been done,
+> rather than tear down every client, even if it hadn't been initialized
+> yet when the failure happened. The latter is what would happen if you
+> called host1x_device_exit() to cleanup at this point.
+>
+> Thierry
 
-On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
-> Hi Sowjanya,
->=20
-> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
-> > This series adds Tegra210 VI and CSI driver for built-in test pattern
-> > generator (TPG) capture.
-> >=20
-> > Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
-> > CSI port is one-to-one mapped to VI channel for video capture.
-> >=20
-> > This series has TPG support only where it creates hard media links
-> > between CSI subdevice and VI video device without device graphs.
-> >=20
-> > v4l2-compliance results are available below the patch diff.
-> >=20
-> > [v0]:	Includes,
-> > 	- Adds CSI TPG clock to Tegra210 clock driver
-> > 	- Host1x video driver with VI and CSI clients.
-> > 	- Support for Tegra210 only.
-> > 	- VI CSI TPG support with hard media links in driver.
-> > 	- Video formats supported by Tegra210 VI
-> > 	- CSI TPG supported video formats
->=20
-> I'm trying to compile this patch series using the media_tree master
-> branch (https://git.linuxtv.org//media_tree.git), but it fails:
->=20
-> drivers/staging/media/tegra/tegra-channel.c: In function =E2=80=98tegra_c=
-hannel_queue_setup=E2=80=99:
-> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variab=
-le =E2=80=98count=E2=80=99 [-Wunused-variable]
->    71 |  unsigned int count =3D *nbuffers;
->       |               ^~~~~
-> drivers/staging/media/tegra/tegra-channel.c: In function =E2=80=98tegra_c=
-hannel_init=E2=80=99:
-> drivers/staging/media/tegra/tegra-channel.c:518:55: error: =E2=80=98struc=
-t host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
->   518 |  struct tegra_camera *cam =3D dev_get_drvdata(vi->client.host);
->       |                                                       ^
-> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/teg=
-ra-channel.o] Error 1
-> make[4]: *** Waiting for unfinished jobs....
-> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_tpg=
-_graph_init=E2=80=99:
-> drivers/staging/media/tegra/tegra-vi.c:157:55: error: =E2=80=98struct hos=
-t1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
->   157 |  struct tegra_camera *cam =3D dev_get_drvdata(vi->client.host);
->       |                                                       ^
-> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_ini=
-t=E2=80=99:
-> drivers/staging/media/tegra/tegra-csi.c: In function =E2=80=98tegra_csi_i=
-nit=E2=80=99:
-> drivers/staging/media/tegra/tegra-vi.c:213:51: error: =E2=80=98struct hos=
-t1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
->   213 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
->       |                                                   ^~
-> drivers/staging/media/tegra/tegra-csi.c:259:51: error: =E2=80=98struct ho=
-st1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
->   259 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
->       |                                                   ^~
-> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_exi=
-t=E2=80=99:
-> drivers/staging/media/tegra/tegra-vi.c:246:51: error: =E2=80=98struct hos=
-t1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
->   246 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
->       |                                                   ^~
-> drivers/staging/media/tegra/tegra-csi.c: In function =E2=80=98tegra_csi_e=
-xit=E2=80=99:
-> drivers/staging/media/tegra/tegra-csi.c:286:51: error: =E2=80=98struct ho=
-st1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
->   286 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
->       |                                                   ^~
->=20
-> And indeed, struct host1x_client as defined in include/linux/host1x.h doe=
-sn't
-> have a 'host' field.
->=20
-> Does this series depend on another patch that's not yet in mainline?
+Sorry, yes I see host1x_device_init calls exit ops on failures .
 
-Sowjanya's been working on top of linux-next, so, yes, this patch
-depends on a change that's been merged into the DRM tree for v5.6-rc1.
+Will remove it. Thanks Thierry.
 
-Thierry
-
---G4iJoqBmSsgzjUCe
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl4y+XIACgkQ3SOs138+
-s6FAZA//cpCNsEQU8gEHAU0CjI4DzvBc1qaYpfV6h43+F3Yray8ifipc/2NH66wY
-QUfBqh14a7p01FH/E2Y/aI01fJO62p7TN/vpTSJj7IkznUTIRDoBwSGU4AGwIHnU
-GTSjcYbv247B1aD1zZdG7T8xVN6qoCyVostAQz4LQJGm/wlalTlHbjvhnxXIFgAm
-tcZWT0dz7AEct7cStf5FbbfUe/3Q7YUPD/VofigxjL1QHiLrD9GlSHk4HSW2BUq+
-rrYI+raXFfVyE615KDqmZRcar9D/jVWdIqkn352u7M0G7te3JNkvwGujV7CuiS6B
-I/7E+QOG+r+gPR7TjLrZETkqbpaJZlhlYE2/V/GEWMavezU6yxuRnNkLH058lZ1I
-BJ+m/Elc4wOu9i1Y0JvlZgtChSGekGkjv/h0Doc2M/82l0OfbWJ0SGUudc0SeFtw
-eL65CkD7JaWTcamAzMmlpZAO7KulHW5bNhU9NnYL/lYt30OS2I2clqK2bgAKS3G4
-qyIOdqDaxmxkiOl4YTR+jGu1HTTpLvD9UxaV0Xk1tZ40X1AvapdG+cLogvV4LLrr
-8jvUw0vkEjDg6qwQ8gFs3zAG6Zn2rgbSwNb8tOUw0tR15FWM7ti7P0Ldaep2LT2T
-2qQF+D4XPiA5U5iL6jne6eRwZ1/n1aNpH2YsCgq1PfJFofV0nII=
-=5dmL
------END PGP SIGNATURE-----
-
---G4iJoqBmSsgzjUCe--
