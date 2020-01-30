@@ -2,101 +2,104 @@ Return-Path: <SRS0=on/j=3T=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_HELO_NONE,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 452C3C2D0DB
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 17:42:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D64D1C2D0DB
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 17:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B6652083E
-	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 17:42:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580406130;
-	bh=iylYJCQlli4M7Fmtr9gfq5RSFTD1CKi2eHDl0ImzPr8=;
-	h=In-Reply-To:References:Subject:To:From:Cc:Date:List-ID:From;
-	b=GUwYTJ2IUXLEqmHRGyILWw3mr4DcFla8lhbSsaJsz6Do2QYbDTny/1MeaGj6Jn7V8
-	 /3BgQ4MOUWWAK9wS477B03v3YogHHINuMhyXhYxmPhjy/98xtsa9DzUrckxTboYU6R
-	 0iXxOERnuJuZiftIUIjrM2WgI296NUrcyxIZfeyM=
+	by mail.kernel.org (Postfix) with ESMTP id 950D0206D3
+	for <linux-clk@archiver.kernel.org>; Thu, 30 Jan 2020 17:47:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727263AbgA3RmJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 12:42:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60452 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727158AbgA3RmJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Thu, 30 Jan 2020 12:42:09 -0500
-Received: from kernel.org (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1D5620661;
-        Thu, 30 Jan 2020 17:42:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580406128;
-        bh=iylYJCQlli4M7Fmtr9gfq5RSFTD1CKi2eHDl0ImzPr8=;
-        h=In-Reply-To:References:Subject:To:From:Cc:Date:From;
-        b=qIki7rDktDLpciAgwxatXi3SNExDjE8bKxSbUgpK14Ib8qJnQiYukCYtK4D/V8cvS
-         xmF73jnWeEizgXM6Yojq39qkyaLfUZcJ+SuSReCwCZ9WuNBHTET6GPcm/rR41gT3u3
-         K6sQBenHOSluVyTXn00dR0H2eWf7KL/07HUM4zBQ=
-Content-Type: text/plain; charset="utf-8"
+        id S1727319AbgA3RrW (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Thu, 30 Jan 2020 12:47:22 -0500
+Received: from esa4.microchip.iphmx.com ([68.232.154.123]:64288 "EHLO
+        esa4.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727247AbgA3RrW (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 12:47:22 -0500
+Received-SPF: Pass (esa4.microchip.iphmx.com: domain of
+  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="Codrin.Ciubotariu@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa4.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa4.microchip.iphmx.com;
+  envelope-from="Codrin.Ciubotariu@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa4.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: s2VDPHFfGuMXOig7o5ja9fBcXXcvyrtoJe3AMIqIif4VAQeJl5Giq6YeBh9vRhT1t5JN1aDZQ+
+ hUOz3yH7lmFh0jL1D7UK2cTIu/5e1u1wStom7n5kyAXjK/FbMpP2REKqWRdRApnEffI6pWwsGb
+ Z9ec6bgVMXHzHl5N63rbcckiRyVSUyKE7X+6EY13N3PjxCX/v8xXbpEwx2+WJv/pGTJPaLqz/q
+ UQi+vLcktsysV2o0uZlmjFMUjOjV3t22FeYGNO1Cbltf3rTNnQOgWvjpjANWqEq5RsD6XWsybS
+ cAM=
+X-IronPort-AV: E=Sophos;i="5.70,382,1574146800"; 
+   d="scan'208";a="62659285"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 30 Jan 2020 10:47:21 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Thu, 30 Jan 2020 10:47:21 -0700
+Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.1713.5 via Frontend Transport; Thu, 30 Jan 2020 10:47:18 -0700
+From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+To:     <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <sboyd@kernel.org>, <nicolas.ferre@microchip.com>,
+        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
+        <eugen.hristev@microchip.com>,
+        Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+Subject: [PATCH] clk: at91: sam9x60: Don't use audio PLL
+Date:   Thu, 30 Jan 2020 19:47:08 +0200
+Message-ID: <20200130174708.12448-1-codrin.ciubotariu@microchip.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20200115212639.4998-2-jae.hyun.yoo@linux.intel.com>
-References: <20200115212639.4998-1-jae.hyun.yoo@linux.intel.com> <20200115212639.4998-2-jae.hyun.yoo@linux.intel.com>
-Subject: Re: [PATCH 1/2] clk: aspeed: add critical clock setting logic
-To:     Andrew Jeffery <andrew@aj.id.au>,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>,
-        Joel Stanley <joel@jms.id.au>,
-        Michael Turquette <mturquette@baylibre.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-Cc:     linux-clk@vger.kernel.org, linux-aspeed@lists.ozlabs.org,
-        openbmc@lists.ozlabs.org,
-        Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-User-Agent: alot/0.8.1
-Date:   Thu, 30 Jan 2020 09:42:07 -0800
-Message-Id: <20200130174208.B1D5620661@mail.kernel.org>
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Quoting Jae Hyun Yoo (2020-01-15 13:26:38)
-> This commit adds critical clock setting logic that applies
-> CLK_IS_CRITICAL flag if it detects 'clock-critical' property in
-> device tree.
+On sam9x60, there is not audio PLL and so I2S and classD have to use one
+of the best matching parents for their generated clock.
 
-Yes that is what the patch does. The commit text is supposed to explain
-_why_ the patch is important. Please read "The canonical patch format"
-from Documentation/process/submitting-patches.rst to understand what is
-expected.
+Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
+Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
+---
+ drivers/clk/at91/sam9x60.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
->=20
-> Signed-off-by: Jae Hyun Yoo <jae.hyun.yoo@linux.intel.com>
-> ---
->  drivers/clk/clk-aspeed.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/clk-aspeed.c b/drivers/clk/clk-aspeed.c
-> index 411ff5fb2c07..d22eeb574ede 100644
-> --- a/drivers/clk/clk-aspeed.c
-> +++ b/drivers/clk/clk-aspeed.c
-> @@ -541,8 +541,11 @@ static int aspeed_clk_probe(struct platform_device *=
-pdev)
-> =20
->         for (i =3D 0; i < ARRAY_SIZE(aspeed_gates); i++) {
->                 const struct aspeed_gate_data *gd =3D &aspeed_gates[i];
-> +               unsigned long flags =3D gd->flags;
->                 u32 gate_flags;
-> =20
-> +               of_clk_detect_critical(pdev->dev.of_node, i, &flags);
-> +
-
-Do you need clks to be critical, but only sometimes? What clks need to
-be critical? Why aren't there drivers for those clks that turn them on
-as necessary?
-
-There was a lengthy discussion years ago on the list about this function
-and how it's not supposed to be used in newer code. Maybe we need to
-revisit that discussion and conclude that sometimes we actually do need
-clks to be turned on and kept on because we'll never have a driver for
-them in the kernel. Similar to how pinctrl has pin hogs.
+diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+index 77398aefeb6d..0aeb44fed9de 100644
+--- a/drivers/clk/at91/sam9x60.c
++++ b/drivers/clk/at91/sam9x60.c
+@@ -144,11 +144,9 @@ static const struct {
+ 	{ .n = "sdmmc1_gclk", .id = 26, .r = { .min = 0, .max = 105000000 }, },
+ 	{ .n = "flex11_gclk", .id = 32, },
+ 	{ .n = "flex12_gclk", .id = 33, },
+-	{ .n = "i2s_gclk",    .id = 34, .r = { .min = 0, .max = 105000000 },
+-		.pll = true, },
++	{ .n = "i2s_gclk",    .id = 34, .r = { .min = 0, .max = 105000000 }, },
+ 	{ .n = "pit64b_gclk", .id = 37, },
+-	{ .n = "classd_gclk", .id = 42, .r = { .min = 0, .max = 100000000 },
+-		.pll = true, },
++	{ .n = "classd_gclk", .id = 42, .r = { .min = 0, .max = 100000000 }, },
+ 	{ .n = "tcb1_gclk",   .id = 45, },
+ 	{ .n = "dbgu_gclk",   .id = 47, },
+ };
+-- 
+2.20.1
 
