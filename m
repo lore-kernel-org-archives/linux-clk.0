@@ -2,328 +2,169 @@ Return-Path: <SRS0=KxaG=3U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.2 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,URIBL_DBL_ABUSE_MALW autolearn=no
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1A47C33C9E
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 02:57:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AABC33CB2
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 10:42:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 843C020CC7
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 02:57:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA24D206F0
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 10:42:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="qDL8vgKE"
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="kpmyHINl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727749AbgAaC5w (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Thu, 30 Jan 2020 21:57:52 -0500
-Received: from hqnvemgate24.nvidia.com ([216.228.121.143]:5906 "EHLO
-        hqnvemgate24.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727739AbgAaC5v (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Thu, 30 Jan 2020 21:57:51 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqnvemgate24.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5e33977a0000>; Thu, 30 Jan 2020 18:56:58 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Thu, 30 Jan 2020 18:57:50 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Thu, 30 Jan 2020 18:57:50 -0800
-Received: from [10.110.103.70] (10.124.1.5) by HQMAIL107.nvidia.com
- (172.20.187.13) with Microsoft SMTP Server (TLS) id 15.0.1473.3; Fri, 31 Jan
- 2020 02:57:50 +0000
-Subject: Re: [RFC PATCH v1 5/5] arm64: tegra: Add Tegra VI CSI suppport in
- device tree
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     <jonathanh@nvidia.com>, <frankc@nvidia.com>, <hverkuil@xs4all.nl>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        id S1728328AbgAaKmL (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jan 2020 05:42:11 -0500
+Received: from esa5.microchip.iphmx.com ([216.71.150.166]:1747 "EHLO
+        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728268AbgAaKmL (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jan 2020 05:42:11 -0500
+Received-SPF: Pass (esa5.microchip.iphmx.com: domain of
+  Claudiu.Beznea@microchip.com designates 198.175.253.82 as
+  permitted sender) identity=mailfrom;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="Claudiu.Beznea@microchip.com";
+  x-conformance=spf_only; x-record-type="v=spf1";
+  x-record-text="v=spf1 mx a:ushub1.microchip.com
+  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
+  include:servers.mcsv.net include:mktomail.com
+  include:spf.protection.outlook.com ~all"
+Received-SPF: None (esa5.microchip.iphmx.com: no sender
+  authenticity information available from domain of
+  postmaster@email.microchip.com) identity=helo;
+  client-ip=198.175.253.82; receiver=esa5.microchip.iphmx.com;
+  envelope-from="Claudiu.Beznea@microchip.com";
+  x-sender="postmaster@email.microchip.com";
+  x-conformance=spf_only
+Authentication-Results: esa5.microchip.iphmx.com; spf=Pass smtp.mailfrom=Claudiu.Beznea@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dkim=pass (signature verified) header.i=@microchiptechnology.onmicrosoft.com; dmarc=pass (p=none dis=none) d=microchip.com
+IronPort-SDR: cCZxNusCWvHyik7PobtKgvspYQRYjdK9Dew06kxUK86DR3BEdUYUy5p52hWCkAglgMC+1ZX3Ou
+ 8oLgXwYk3V9agtal9a9SP3maexoDYhQoamIDeB1kk2iB3IP2DMJZuv3VQT/JOCt6iS7viE2e1B
+ 8Dn42kQ5s1jbd/wLzZ52g5wRoBUjMQiGxryd/Ca8DYLOJmbyKq9RzPieuQeOcxrflYBOUQALhh
+ 9JG1dewCS1hlMQHC12hdzu3QP9yDR7noV7v/2KZfVVlR/VyYLs+UPvOba9NN9RejUy6AN543AS
+ +Yk=
+X-IronPort-AV: E=Sophos;i="5.70,385,1574146800"; 
+   d="scan'208";a="63779480"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Jan 2020 03:42:11 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.1713.5; Fri, 31 Jan 2020 03:42:07 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.87.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1713.5
+ via Frontend Transport; Fri, 31 Jan 2020 03:42:08 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=irnAHaR2RbfQoHtT4xLfW1GMnJ879p+yj1L/7Ao8aXkSElfUzBUZkticsw9tQe7Q2AyyXDwQUqZPdG4fByc4Z/HQ354ldMrPn03JA8QTNk1I30NB0IwBJ15mg6fgP36MVa8oJOeIweGTvnc5IhRszEHWBR4ck7BDLpoFBplRvUmFDHl/jmW8orFQ/g8HZikIA+KlZxj1kVwEXFEr7qb0kd3/rQsJYFvtMbfAB9/tFBo+FiJqECeg17l6Q8gWjVF/CSIvd9QGWUQZvYJgw6Uc3Gcp5wdIvcm1fj3qXC68j/HmK7L24w2U2nBw2Rf9zd0oZKl1LGah3vO2KouVCiOlvw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KaGXC2X9lxY07hM5v8cUn7WHVgzgDy9au2r77LMllUI=;
+ b=Mt/UOvcJ5c/qbgRMIWkGvht64YK/YJ4nL0y+r7DybwtKdOtUDRb+MCo3brOSRPBYMk+PQdK4G30dR4aHovGIhCej2zqU+BWT0gzY+EYonVLYVUkLAST6W8dUxMy4wbPB9K7uvl7wJHd68FvXRL5GxsO3dzlDaAvYaGx+i046PSM+HPqoNPOlYXeONO78OnXVJ22aW7CVmlrSSbKDxpzZaaglrPIhQRWPA/6e2Qcpfdnw5LdsAbkmjfbVIez6fU91hG8zLQUAqpKnQe1nwo4mwz028ADfPvV/TW0y3VqDFtkN4xVvd8vjcGmoq45wIR6mdtn2IOzawF+g37sXzuk9ow==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microchip.com; dmarc=pass action=none
+ header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector2-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KaGXC2X9lxY07hM5v8cUn7WHVgzgDy9au2r77LMllUI=;
+ b=kpmyHINl0Ix1du9wgCOlTirc+3Z4gnKRqw2z8SVI1HSlvpbXdLWghth4lo2kEQpHy9mZDJYId60mIFMHeEZI8kQ6nD8Tq4KC+gv/Y4yMcRl03U6uWVlYJcMyKFgFWdoP3EUrypWKXAv/EBad+BA90RdlCIytFyqC3in4qjq1fss=
+Received: from DM6PR11MB3225.namprd11.prod.outlook.com (20.176.120.224) by
+ DM6PR11MB3995.namprd11.prod.outlook.com (10.255.61.204) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.2686.29; Fri, 31 Jan 2020 10:42:06 +0000
+Received: from DM6PR11MB3225.namprd11.prod.outlook.com
+ ([fe80::dc6b:1191:3a76:8b6a]) by DM6PR11MB3225.namprd11.prod.outlook.com
+ ([fe80::dc6b:1191:3a76:8b6a%7]) with mapi id 15.20.2686.028; Fri, 31 Jan 2020
+ 10:42:06 +0000
+From:   <Claudiu.Beznea@microchip.com>
+To:     <Codrin.Ciubotariu@microchip.com>, <linux-clk@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <1580235801-4129-6-git-send-email-skomatineni@nvidia.com>
- <20200129094624.GD2479935@ulmo>
- <bd18711d-ce23-cbee-7824-37a8c78908e6@nvidia.com>
- <20200130123607.GB2584455@ulmo>
- <c5fd4eb3-0026-95a5-5162-e1cf5302698e@nvidia.com>
- <20200130175820.GA3155155@ulmo>
- <deb6839b-2ddb-be54-a985-a2b7624374af@nvidia.com>
- <ba57fcf2-a7bf-8154-96c9-aba401327af7@nvidia.com>
-Message-ID: <c1eef60b-eddd-8030-06b9-8009694f9a6a@nvidia.com>
-Date:   Thu, 30 Jan 2020 18:57:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
-MIME-Version: 1.0
-In-Reply-To: <ba57fcf2-a7bf-8154-96c9-aba401327af7@nvidia.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
- HQMAIL107.nvidia.com (172.20.187.13)
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: quoted-printable
+CC:     <alexandre.belloni@bootlin.com>, <sboyd@kernel.org>,
+        <Ludovic.Desroches@microchip.com>, <Eugen.Hristev@microchip.com>
+Subject: Re: [PATCH] clk: at91: sam9x60: Don't use audio PLL
+Thread-Topic: [PATCH] clk: at91: sam9x60: Don't use audio PLL
+Thread-Index: AQHV2CMUTS9+vTc4bU+e0LC8TLKFlA==
+Date:   Fri, 31 Jan 2020 10:42:06 +0000
+Message-ID: <72d97d68-690b-7f18-0dca-a5aa131e1c29@microchip.com>
+References: <20200130174708.12448-1-codrin.ciubotariu@microchip.com>
+In-Reply-To: <20200130174708.12448-1-codrin.ciubotariu@microchip.com>
+Accept-Language: en-US
 Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1580439418; bh=nZ1j3mIvtSf9K9okZrK5BmQnPSrbi/HKW3zTWpWZ3ME=;
-        h=X-PGP-Universal:Subject:From:To:CC:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=qDL8vgKEP7RndBoqgckuiqmznvQezcgR8GOZ3WW5J8J4tArlyscmCLRaY3LLsOJnd
-         ofpZf7l5A0KOYQVHHsfRs2egUT/qAFnBU0mBj1nCpST5FboAMfHcckCZO4z+g53OUl
-         APkWsATdg8R9kBeXm7N/kCPBJhHPKfIkD70LvtCIxqS98eAj7UFgTbjTrFzhE4/SO+
-         dh/o60urcgf/U8iqMf/m8p0aoAdXcKoyyQdBqcs92vOXNnHp5ZUsPlCB3leB2WhT09
-         pFafv6fjLA2v/LTAvW3QrPOIV0L7PJ+TDbsZT7/OlFFQir4Ac+WuVgaedNzeHSLYGO
-         5qe6MhhnuI/Kw==
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [94.177.32.156]
+x-ms-publictraffictype: Email
+x-ms-office365-filtering-correlation-id: 81b3ab8f-1ed0-4d9a-e06c-08d7a63a377f
+x-ms-traffictypediagnostic: DM6PR11MB3995:
+x-ms-exchange-transport-forked: True
+x-microsoft-antispam-prvs: <DM6PR11MB3995700FDF7AC95EBE975DCE87070@DM6PR11MB3995.namprd11.prod.outlook.com>
+x-ms-oob-tlc-oobclassifiers: OLM:5236;
+x-forefront-prvs: 029976C540
+x-forefront-antispam-report: SFV:NSPM;SFS:(10001)(10009020)(366004)(189003)(199004)(966005)(5660300002)(53546011)(66476007)(66556008)(26005)(107886003)(76116006)(66946007)(2616005)(186003)(66446008)(64756008)(6506007)(91956017)(36756003)(498600001)(86362001)(71200400001)(31686004)(4326008)(2906002)(6486002)(54906003)(31696002)(6512007)(8936002)(8676002)(110136005)(81166006)(81156014);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR11MB3995;H:DM6PR11MB3225.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info: m1yaoiMbVYDcnKlO0N5tUZfPPIh9pRf4C3xkpIuYMf4l8MXlsvq6NjVtNngReZvnJdxgkisn/DEDTLmzM8IuGYuw3ZxE+cWpUxvCxHsTT9onWYK4FlAXl5MNEJzfAZOfyNGNh9JyCS+w+Kb1V2oEi/a5wFubDWZX1h98c4Mu5mtLAxyEhds3xX0EnRKBMJ4CbQY0txT4AGot+1LZqKtzcesaFa7bDKNNE3baWJqQM8DDUnW9gATbezkeNy6DYl84Ob9av677cIl5sVVel3waXnrdnSah0TVNFgF0GB3fLU3ElDs3pHF4wPJuXGwh6hEvi31ppQRTkp0SnOo4R+ekKhvUyH8WfjUkezbepdodt/PK+ZlvSQebkex0q4cLDy2aZDPOTw3ub85umGB2kFf19Q5ztvQa6ykE/J3Vs0DA1GwKhNFe9NnBdCAFr9Pf5ZnKXcjnX/iRbnoxAD8NNr5ycpj7xPd/AD+N8RtoOON4eXsxh3DCmuiyGLxBNc2b14a1IqovswseD39b3O6BYYcuKaweY3WBlnyJbGzDy8cZaBnnwjJPh52uevZnihgAojDRy46cH769Go+esSkOoEGth4uryocBf5hw9fMxgBj5HAhVO9rEWpzAKNRLU1B59ajqDoteCMSEb6hIvrgTvnHqVtTB1gFgLtyumo5KmSlJb637Xq45HkiJya+afKoGx+St7Yyjy23uvMVv3Sxc1bajePN/l3qCzgoJaHfDUa1+WDI=
+x-ms-exchange-antispam-messagedata: VY8x0AQnzVvLf3HHwbRibd+la7xm9Ch3yFM0oJcgRMFuy4/0nZqzhcEYInVIZ/n0furTKy0SYu4E8FPItODBJ0hUsNJXg5mv5q3GEQk+vhQaMhQ7hGC+SziO7jHA0RfPqAnsowGuniL1C/5bhw6V3w==
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8DCE96E21A9E4943A93D07954D23D9C5@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 81b3ab8f-1ed0-4d9a-e06c-08d7a63a377f
+X-MS-Exchange-CrossTenant-originalarrivaltime: 31 Jan 2020 10:42:06.4186
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /fajoQ4Ad2PPdMqxBtap6egqLWltMRxqVNSCenjfBCwvt+XQo5fJf+8dnB9FV9u4RgK1//sTBu52gAGrQP8sW/3XR7hd7GlBXbXfbSVlBlk=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR11MB3995
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi Thierry
-
-Currently all channels allocation and creating media links are all in vi=20
-init client ops.
-
-So just populating CSI child from VI with moving CSI as child node to VI=20
-for Tegra210 should work.
-
-Will have all the fixes in v2 along with link_validate implementations=20
-and merging files to have it simpler.
-
-Thanks
-
-Sowjanya
-
-
-
-On 1/30/20 12:18 PM, Sowjanya Komatineni wrote:
->
-> On 1/30/20 10:58 AM, Sowjanya Komatineni wrote:
->>
->> On 1/30/20 9:58 AM, Thierry Reding wrote:
->>> On Thu, Jan 30, 2020 at 09:18:50AM -0800, Sowjanya Komatineni wrote:
->>>> On 1/30/20 4:36 AM, Thierry Reding wrote:
->>>>> On Wed, Jan 29, 2020 at 08:22:48AM -0800, Sowjanya Komatineni wrote:
->>>>>> On 1/29/20 1:46 AM, Thierry Reding wrote:
->>>>>>> On Tue, Jan 28, 2020 at 10:23:21AM -0800, Sowjanya Komatineni=20
->>>>>>> wrote:
->>>>>>>> Tegra210 contains VI controller for video input capture from MIPI
->>>>>>>> CSI camera sensors and also supports built-in test pattern=20
->>>>>>>> generator.
->>>>>>>>
->>>>>>>> CSI ports can be one-to-one mapped to VI channels for capturing=20
->>>>>>>> from
->>>>>>>> an external sensor or from built-in test pattern generator.
->>>>>>>>
->>>>>>>> This patch adds support for VI and CSI and enables them in=20
->>>>>>>> Tegra210
->>>>>>>> device tree.
->>>>>>>>
->>>>>>>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>>>>>>> ---
->>>>>>>> =A0=A0=A0 arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi | 8 +++++=
-++
->>>>>>>> =A0=A0=A0 arch/arm64/boot/dts/nvidia/tegra210.dtsi=A0=A0=A0=A0=A0=
-=A0 | 31=20
->>>>>>>> +++++++++++++++++++++++++-
->>>>>>>> =A0=A0=A0 2 files changed, 38 insertions(+), 1 deletion(-)
->>>>>>>>
->>>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi=20
->>>>>>>> b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
->>>>>>>> index b0095072bc28..ec1b3033fa03 100644
->>>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
->>>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210-p2597.dtsi
->>>>>>>> @@ -10,6 +10,14 @@
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0 vi@54080000 {
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>>> +
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0 csi@0x54080838 {
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>>> +
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 sor@54580000 {
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "okay";
->>>>>>>> diff --git a/arch/arm64/boot/dts/nvidia/tegra210.dtsi=20
->>>>>>>> b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>>>>>>> index 48c63256ba7f..c6107ec03ad1 100644
->>>>>>>> --- a/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>>>>>>> +++ b/arch/arm64/boot/dts/nvidia/tegra210.dtsi
->>>>>>>> @@ -136,9 +136,38 @@
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 vi@54080000 {
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvid=
-ia,tegra210-vi";
->>>>>>>> -=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x0 0x54080000 0x0 0x0=
-0040000>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x0 0x54080000 0x0 0x8=
-08>;
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 interrupts =3D <GIC_=
-SPI 69 IRQ_TYPE_LEVEL_HIGH>;
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "disabled=
-";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clocks =3D <&tegra_car=
- TEGRA210_CLK_VI>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-parents =3D <&te=
-gra_car=20
->>>>>>>> TEGRA210_CLK_PLL_C4_OUT0>;
->>>>>>>> +
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clocks =3D <&tegra_car TEGRA210=
-_CLK_VI>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clock-names =3D "vi";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 resets =3D <&tegra_car 20>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reset-names =3D "vi";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>>> +
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0 csi@0x54080838 {
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 compatible =3D "nvidia,tegra210=
--csi";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 reg =3D <0x0 0x54080838 0x0 0x2=
-000>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 status =3D "disabled";
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clocks =3D <&tegra_car=
- TEGRA210_CLK_CILAB>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <=
-&tegra_car TEGRA210_CLK_CILCD>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <=
-&tegra_car TEGRA210_CLK_CILE>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-parents =3D <&te=
-gra_car=20
->>>>>>>> TEGRA210_CLK_PLL_P>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0 <&tegra_car TEGRA210_CLK_PLL_P>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0 <&tegra_car TEGRA210_CLK_PLL_P>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 assigned-clock-rates =3D <10200=
-0000>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0 <102000000>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0 <102000000>;
->>>>>>>> +
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clocks =3D <&tegra_car TEGRA210=
-_CLK_CSI>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&tegra_car TEGR=
-A210_CLK_CILAB>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&tegra_car TEGR=
-A210_CLK_CILCD>,
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 <&tegra_car TEGR=
-A210_CLK_CILE>;
->>>>>>>> +=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 clock-names =3D "csi", "cilab",=
- "cilcd", "cile";
->>>>>>>> +
->>>>>>>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 };
->>>>>>> Can this be a child of the vi node? Looking at the register=20
->>>>>>> ranges it
->>>>>>> seems like these are actually a single IP block. If they have=20
->>>>>>> separate
->>>>>>> blocks with clearly separate functionality, then it makes sense=20
->>>>>>> to have
->>>>>>> CSI be a child node of VI, though it may also be okay to merge=20
->>>>>>> both and
->>>>>>> have a single node with the driver doing all of the differentiation
->>>>>>> between what's VI and what's CSI.
->>>>>>>
->>>>>>> Looking at later chips, the split between VI and CSI is more=20
->>>>>>> explicit,
->>>>>>> so having the split in DT for Tegra210 may make sense for=20
->>>>>>> consistency.
->>>>>>>
->>>>>>> I know we've discussed this before, but for some reason I keep=20
->>>>>>> coming
->>>>>>> back to this. I'll go through the other patches to see if I can=20
->>>>>>> get a
->>>>>>> clearer picture of how this could all work together.
->>>>>>>
->>>>>>> Thierry
->>>>>> We can keep it separate as we discussed.
->>>>>>
->>>>>> But as Tegra186 onwards, CSI is separate device to be all=20
->>>>>> cosistent I kept
->>>>>> CSI as separate node for Tegra210 as well.
->>>>> =A0 From our discussion, my understanding was that CSI would be a=20
->>>>> separate
->>>>> device, but it would still be a subdevice of VI. The address=20
->>>>> offset of
->>>>> the CSI registers not being aligned to a power of two is a strong
->>>>> indication that this is really all part of the same block.
->>>> Yes our earlier discussion is to have CSI as subdevice.
->>>>
->>>> Later looking into T186 and later NVCSI is totally separate so it=20
->>>> will be
->>>> separate device and to have driver common moved Tegra210 CSI also as
->>>> separate device instead of having it as subdevice of VI.
->>>>
->>>> Earlier when we discussed at that time I am using TPG also from device
->>>> graphs but not moved to hard media links inside driver for TPG.
->>>>
->>>> For this we need CSI to be available prior to VI.
->>> Why is that? Does creating the hard media links need access to a struct
->>> device? What if we created that device in the VI driver without any
->>> reliance on DT? Shouldn't that also work? I have a hard time imagining
->>> that there aren't other devices like this where we don't necessarily
->>> have separate devices for these links.
->> Yes we need CSI structure for hard link TPG also as all csi channel=20
->> list is part of CSI device.
->>
->> We can create CSI channel subdevices within VI without using CSI=20
->> device from a separate CSI driver probe for Tegra210 and make all=20
->> subdev related ops implementations as global so they can be used from=20
->> VI driver for Tegra210 and can also be used for Tegra186 and later in=20
->> separate CSI driver.
->>
->> During creating media links in VI driver for TPG, for T210 we can use=20
->> local CSI device structure and for T186+ we can use CSI device=20
->> structure created during CSI probe.
->>
->> Sorry, I didn't understood what you meant by separate devices for=20
->> these link.
->>
->> We only have Tegra CSI linked to Tegra VI for TPG/Real sensor.
->>
->>>> If we add CSI as subdevice to VI, CSI will not be available by the=20
->>>> time
->>>> VI init happens.
->>> The CSI subdevice should be registered as part of the VI driver's=20
->>> probe,
->>> right? That's typically where you'd call of_platform_populate(). Could
->>> we not set up the hard media links in the ->init() callbacks for the
->>> host1x clients? Those are called after all of the devices have been
->>> probed, so the CSI device should be available at that time.
->>>
-> yes, will update to have CSI as child node to VI
->>>> Currently host1x subdevices listed has CSI before VI and CSI init=20
->>>> happens
->>>> earlier so by the time VI init happens CSI is available to do media=20
->>>> links
->>>> b/w VI video entity and CSI subdevice entity.
->>> Okay, I understand how this would be a convenient solution. However,=20
->>> the
->>> device tree is a hardware description, so we need to ignore what we=20
->>> know
->>> about the operating system infrastructure that we want to use when
->>> writing the device tree bindings (and the device tree content) in order
->>> to make sure the same binding will work on a different operating system
->>> which may have a completely different infrastructure (or none at all).
->>>
->>>> Also having CSI as separate subdevice (not as subdevice to VI) for=20
->>>> T210 will
->>>> be consistent with T186 and later.
->>> Again, I see how that's convenient. But the main difference between
->>> Tegra210 and Tegra186 is that on the former, the CSI is merged with VI,
->>> whereas on the latter the CSI is a completely separate hardware block.
->>>
->>> Since device tree describes the hardware, that difference should be
->>> apparent in the device tree. I initially thought as well that it would
->>> be advantageous if both had the same representation, but I do realize
->>> now that this has a significant impact on the device tree, and it
->>> violates the basic principles we base device tree binding design on.
->>>
->>> Thierry
->>
->> I just thought of driver implementation being common b/w T210 and=20
->> T186+ by having CSI as separate device node rather than as child node=20
->> to VI to avoid CSI structure handling within VI for T210 only.
->>
->> Will update DT and driver to have CSI as child node of VI for T210.
->>
->>
+SGkgQ29kcmluLA0KDQpPbiAzMC4wMS4yMDIwIDE5OjQ3LCBDb2RyaW4gQ2l1Ym90YXJpdSB3cm90
+ZToNCj4gT24gc2FtOXg2MCwgdGhlcmUgaXMgbm90IGF1ZGlvIFBMTCBhbmQgc28gSTJTIGFuZCBj
+bGFzc0QgaGF2ZSB0byB1c2Ugb25lDQo+IG9mIHRoZSBiZXN0IG1hdGNoaW5nIHBhcmVudHMgZm9y
+IHRoZWlyIGdlbmVyYXRlZCBjbG9jay4NCj4gDQo+IEZpeGVzOiAwMWUyMTEzZGU5YTUgKCJjbGs6
+IGF0OTE6IGFkZCBzYW05eDYwIHBtYyBkcml2ZXIiKQ0KPiBTaWduZWQtb2ZmLWJ5OiBDb2RyaW4g
+Q2l1Ym90YXJpdSA8Y29kcmluLmNpdWJvdGFyaXVAbWljcm9jaGlwLmNvbT4NCj4gLS0tDQo+ICBk
+cml2ZXJzL2Nsay9hdDkxL3NhbTl4NjAuYyB8IDYgKystLS0tDQo+ICAxIGZpbGUgY2hhbmdlZCwg
+MiBpbnNlcnRpb25zKCspLCA0IGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvY2xrL2F0OTEvc2FtOXg2MC5jIGIvZHJpdmVycy9jbGsvYXQ5MS9zYW05eDYwLmMNCj4gaW5k
+ZXggNzczOThhZWZlYjZkLi4wYWViNDRmZWQ5ZGUgMTAwNjQ0DQo+IC0tLSBhL2RyaXZlcnMvY2xr
+L2F0OTEvc2FtOXg2MC5jDQo+ICsrKyBiL2RyaXZlcnMvY2xrL2F0OTEvc2FtOXg2MC5jDQo+IEBA
+IC0xNDQsMTEgKzE0NCw5IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgew0KPiAgICAgICAgIHsgLm4g
+PSAic2RtbWMxX2djbGsiLCAuaWQgPSAyNiwgLnIgPSB7IC5taW4gPSAwLCAubWF4ID0gMTA1MDAw
+MDAwIH0sIH0sDQo+ICAgICAgICAgeyAubiA9ICJmbGV4MTFfZ2NsayIsIC5pZCA9IDMyLCB9LA0K
+PiAgICAgICAgIHsgLm4gPSAiZmxleDEyX2djbGsiLCAuaWQgPSAzMywgfSwNCj4gLSAgICAgICB7
+IC5uID0gImkyc19nY2xrIiwgICAgLmlkID0gMzQsIC5yID0geyAubWluID0gMCwgLm1heCA9IDEw
+NTAwMDAwMCB9LA0KPiAtICAgICAgICAgICAgICAgLnBsbCA9IHRydWUsIH0sDQo+ICsgICAgICAg
+eyAubiA9ICJpMnNfZ2NsayIsICAgIC5pZCA9IDM0LCAuciA9IHsgLm1pbiA9IDAsIC5tYXggPSAx
+MDUwMDAwMDAgfSwgfSwNCj4gICAgICAgICB7IC5uID0gInBpdDY0Yl9nY2xrIiwgLmlkID0gMzcs
+IH0sDQo+IC0gICAgICAgeyAubiA9ICJjbGFzc2RfZ2NsayIsIC5pZCA9IDQyLCAuciA9IHsgLm1p
+biA9IDAsIC5tYXggPSAxMDAwMDAwMDAgfSwNCj4gLSAgICAgICAgICAgICAgIC5wbGwgPSB0cnVl
+LCB9LA0KPiArICAgICAgIHsgLm4gPSAiY2xhc3NkX2djbGsiLCAuaWQgPSA0MiwgLnIgPSB7IC5t
+aW4gPSAwLCAubWF4ID0gMTAwMDAwMDAwIH0sIH0sDQo+ICAgICAgICAgeyAubiA9ICJ0Y2IxX2dj
+bGsiLCAgIC5pZCA9IDQ1LCB9LA0KPiAgICAgICAgIHsgLm4gPSAiZGJndV9nY2xrIiwgICAuaWQg
+PSA0NywgfSwNCj4gIH07DQoNClBsZWFzZSByZW1vdmUgYWxzbyB0aGUgcGxsIG1lbWJlciBvZjoN
+Cg0Kc3RhdGljIGNvbnN0IHN0cnVjdCB7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgY2hhciAqbjsgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgDQogICAg
+ICAgIHU4IGlkOyAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIA0KICAgICAgICBzdHJ1Y3QgY2xrX3JhbmdlIHI7ICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiAgICAgICAgYm9v
+bCBwbGw7ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgDQp9ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgDQoNCj4gLS0NCj4gMi4yMC4xDQo+IA0KPiANCj4gX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX18NCj4gbGludXgtYXJtLWtlcm5lbCBtYWls
+aW5nIGxpc3QNCj4gbGludXgtYXJtLWtlcm5lbEBsaXN0cy5pbmZyYWRlYWQub3JnDQo+IGh0dHA6
+Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8vbGludXgtYXJtLWtlcm5lbA0K
+PiA=
