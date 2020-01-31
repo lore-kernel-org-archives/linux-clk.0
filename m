@@ -2,148 +2,211 @@ Return-Path: <SRS0=KxaG=3U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS autolearn=no autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1 autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CED1C2D0DB
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 16:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2505EC2D0DB
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 17:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D04C206F0
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 16:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32A12082E
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 17:03:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RfcRbQ+i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l32bXeBl"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbgAaQsy (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jan 2020 11:48:54 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:46934 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726837AbgAaQsy (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jan 2020 11:48:54 -0500
-Received: by mail-vs1-f66.google.com with SMTP id t12so4732420vso.13
-        for <linux-clk@vger.kernel.org>; Fri, 31 Jan 2020 08:48:52 -0800 (PST)
+        id S1726668AbgAaRD7 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jan 2020 12:03:59 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37281 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726157AbgAaRD7 (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jan 2020 12:03:59 -0500
+Received: by mail-wm1-f65.google.com with SMTP id f129so9541264wmf.2;
+        Fri, 31 Jan 2020 09:03:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=H4H/l/EMhFF6pY2BmwBr3TmDwgCoPTi4UEgr7Md8qb0=;
-        b=RfcRbQ+i4VLsXYNxRUM2pBZ+l+GC+HGsPMX/v/dlzShiAEZ9cPp9WuDZE0di5Qjjqo
-         jnk1Sv4jjo88FTcaEWIyZoHfr/vXtvqzDzavZlsBLly/w/rO4dUNs6ko5Cmhdb+3M9vY
-         PcO9IZFZ3wzz3xfvyOfjjTQIbScbsZTZkKwy4=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=58F7zyT4Gt8Jv+HIWHjnYuoDy/DyWZFGCw8VU7lvAUI=;
+        b=l32bXeBl3PPZjg3H/2Ky2j/j4vSJ9lz/G9I8SI76KfLLU3PWEC4FZRy1XjQ0F+jmEx
+         S8DAzO9koGaDWoUNUdv9FJ5sxEHb+7BpBU4vX3QvmDFvpagykw5UEO26F6rL5HDcUexy
+         yjHyFCoomOgJvGDVxacccLRIyrpB07mtO2njMUYrZAYcA1yKAP0NPLFBswpVChpyqHXL
+         HO0CBpHww3WRHeaG+4UcF2c39BmKJWoscB4KVptCHL/0OJSSZX/DrPgCuW5ldlc+Kk1S
+         Rg4/2Xn7Y4ryg+lq8C5ga1kkpCPLUfTkPBeqXy03+kHzzTcy8G4doKb+P9+UG4x62bqJ
+         +y5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=H4H/l/EMhFF6pY2BmwBr3TmDwgCoPTi4UEgr7Md8qb0=;
-        b=BCXJvTLDtLegorB4SI/NPIVv5dKk2M7m622AUpsZhXELqo4hYyMtpPgnUgcNcwdZ0x
-         zUDfSeQ5X2qjEUUig5Tu4LiQr3az8tDdfAtf+datgIliaeedjFfTWVkJfAi7i854aIWG
-         7g38yPCUG7vgeYjASox17plqM81zVzWKhLkOkiGF++fomfNGAyI1et5UG8CZEDj0/lY2
-         YqA60U/MVUKwvXApplCeHr5rQliNsC6GsbECtJK/ByPlkmYfLKJGJ/lIwGAKlC1qIraA
-         oRAkzvqzI1oF9UyXAzDgzj/woS5ipA/qABXM0umt1XNU216j6d9xstkOQvD1U5TRt0i9
-         0Osg==
-X-Gm-Message-State: APjAAAXttRWq9nhKvX17V1+USL5n41RMiOMZ0xNrys30JAb/+NbpSStY
-        bVfxhxZYyrjEOexGlBEuUlzthPKyc3Q=
-X-Google-Smtp-Source: APXvYqyDq21dWB5pc/WvnJ4H2tIozcEb4DFfLvGZ/ywlHsZucLMLEEIzJ028i2Q68zYXnLbo53S4lg==
-X-Received: by 2002:a67:b345:: with SMTP id b5mr7239568vsm.224.1580489331395;
-        Fri, 31 Jan 2020 08:48:51 -0800 (PST)
-Received: from mail-vs1-f51.google.com (mail-vs1-f51.google.com. [209.85.217.51])
-        by smtp.gmail.com with ESMTPSA id s123sm2412268vss.12.2020.01.31.08.48.49
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 Jan 2020 08:48:50 -0800 (PST)
-Received: by mail-vs1-f51.google.com with SMTP id g15so4795584vsf.1
-        for <linux-clk@vger.kernel.org>; Fri, 31 Jan 2020 08:48:49 -0800 (PST)
-X-Received: by 2002:a67:e342:: with SMTP id s2mr7136533vsm.198.1580489329211;
- Fri, 31 Jan 2020 08:48:49 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=58F7zyT4Gt8Jv+HIWHjnYuoDy/DyWZFGCw8VU7lvAUI=;
+        b=Q5GOVW1oaolkBxsPmJGPeGHCbGjN/2HhlLo6DU/RNmNfTfQrwk0tH7Ar1dbhCE4uty
+         JwaJwMKFMJGFxiKcEp2tPyap1ODuBMcadWN7hYD1NlQTk1xSNcrd7Hf3OHBa4Nbff/Ws
+         Cq/Lx6YVFPxX+Yslc43HYlfgZK9eCE6fR2ifMmVL2xvr11rMwRI4BEVToFAdNPhUtny1
+         jOai7azw7Ac4Ujo8k8gdBXgv5GGKfczZBJlSWr+/nX82uz4AYBXjUqHudiMz46bhPwIE
+         72vuUXzQVCXnGqOFyB8cbUXEpmEEqSFVO6EJ738KmDsd2rwHCtK/IiswCGOKd6kEMwUb
+         e53A==
+X-Gm-Message-State: APjAAAWPOp++FCFcuMs7Nl+CN/HLAOkRYvEBD6DtN9oL1sTg/5DF3Kwz
+        gtrhwBvgPSI+zKi2lzWXdMlT9f0m
+X-Google-Smtp-Source: APXvYqy+KseS2b2EjbjXlyeRAfgSRMvISe6YqiG8AORffphYfX9BHb+/oyqC2D2eyQhH1ZOhER+AOw==
+X-Received: by 2002:a05:600c:299:: with SMTP id 25mr4007414wmk.68.1580490234575;
+        Fri, 31 Jan 2020 09:03:54 -0800 (PST)
+Received: from localhost (p2E5BEF3F.dip0.t-ipconnect.de. [46.91.239.63])
+        by smtp.gmail.com with ESMTPSA id n1sm12324520wrw.52.2020.01.31.09.03.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 Jan 2020 09:03:52 -0800 (PST)
+Date:   Fri, 31 Jan 2020 18:03:51 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        frankc@nvidia.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+Message-ID: <20200131170351.GA3444092@ulmo>
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+ <20200130154246.GA2904678@ulmo>
+ <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
 MIME-Version: 1.0
-References: <20200130211231.224656-1-dianders@chromium.org>
- <20200130131220.v3.7.I513cd73b16665065ae6c22cf594d8b543745e28c@changeid> <CAL_JsqLj8WbP=oXAovyVFOc-58eFr5xS5EJK=kpAK-eT7_TyNw@mail.gmail.com>
-In-Reply-To: <CAL_JsqLj8WbP=oXAovyVFOc-58eFr5xS5EJK=kpAK-eT7_TyNw@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 31 Jan 2020 08:48:37 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=X=vAM7HZmA7pCm707rb8u+ogEqPUu_F_ueiS9GwbVwuw@mail.gmail.com>
-Message-ID: <CAD=FV=X=vAM7HZmA7pCm707rb8u+ogEqPUu_F_ueiS9GwbVwuw@mail.gmail.com>
-Subject: Re: [PATCH v3 07/15] dt-bindings: clock: Fix qcom,gpucc bindings for sdm845/sc7180/msm8998
-To:     Rob Herring <robh@kernel.org>
-Cc:     Andy Gross <agross@kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Jeffrey Hugo <jhugo@codeaurora.org>,
-        Taniya Das <tdas@codeaurora.org>,
-        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Harigovindan P <harigovi@codeaurora.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
-        Kalyan Thota <kalyan_t@codeaurora.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="5vNYLRcllDrimb99"
+Content-Disposition: inline
+In-Reply-To: <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
+User-Agent: Mutt/1.13.1 (2019-12-14)
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-Hi,
 
-On Fri, Jan 31, 2020 at 8:43 AM Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, Jan 30, 2020 at 3:12 PM Douglas Anderson <dianders@chromium.org> wrote:
-> >
-> > The qcom,gpucc bindings had a few problems with them:
-> >
-> > 1. When things were converted to yaml the name of the "gpll0 main"
-> >    clock got changed from "gpll0" to "gpll0_main".  Change it back for
-> >    msm8998.
-> >
-> > 2. Apparently there is a push not to use purist aliases for clocks but
-> >    instead to just use the internal Qualcomm names.  For sdm845 and
-> >    sc7180 (where the drivers haven't already been changed) move in
-> >    this direction.
-> >
-> > Things were also getting complicated harder to deal with by jamming
-> > several SoCs into one file.  Splitting simplifies things.
-> >
-> > Fixes: 5c6f3a36b913 ("dt-bindings: clock: Add YAML schemas for the QCOM GPUCC clock bindings")
-> > Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> > ---
-> >
-> > Changes in v3:
-> > - Added pointer to inlude file in description.
-> > - Everyone but msm8998 now uses internal QC names.
-> > - Fixed typo grpahics => graphics
-> > - Split bindings into 3 files.
-> >
-> > Changes in v2:
-> > - Patch ("dt-bindings: clock: Fix qcom,gpucc...") new for v2.
-> >
-> >  .../devicetree/bindings/clock/qcom,gpucc.yaml | 72 -------------------
-> >  .../bindings/clock/qcom,msm8998-gpucc.yaml    | 66 +++++++++++++++++
-> >  .../bindings/clock/qcom,sc7180-gpucc.yaml     | 72 +++++++++++++++++++
-> >  .../bindings/clock/qcom,sdm845-gpucc.yaml     | 72 +++++++++++++++++++
-> >  4 files changed, 210 insertions(+), 72 deletions(-)
-> >  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,gpucc.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,msm8998-gpucc.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-gpucc.yaml
-> >  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sdm845-gpucc.yaml
->
-> I'm not seeing any differences in sdm845 and sc7180. Do those really
-> need to be separate? It doesn't have to be all combined or all
-> separate.
+--5vNYLRcllDrimb99
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-They are the same, other than pointing to a different #include file.
-I debated whether to put them in one file (arbitrarily named after one
-SoC or the other) or to put them in individual files.  I got the
-impression from Stephen that he'd prefer them to be separate files
-even in the case that they were 99% identical, but I certainly could
-have misunderstood.
+On Fri, Jan 31, 2020 at 03:29:52PM +0100, Hans Verkuil wrote:
+> On 1/30/20 4:42 PM, Thierry Reding wrote:
+> > On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
+> >> Hi Sowjanya,
+> >>
+> >> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+> >>> This series adds Tegra210 VI and CSI driver for built-in test pattern
+> >>> generator (TPG) capture.
+> >>>
+> >>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+> >>> CSI port is one-to-one mapped to VI channel for video capture.
+> >>>
+> >>> This series has TPG support only where it creates hard media links
+> >>> between CSI subdevice and VI video device without device graphs.
+> >>>
+> >>> v4l2-compliance results are available below the patch diff.
+> >>>
+> >>> [v0]:	Includes,
+> >>> 	- Adds CSI TPG clock to Tegra210 clock driver
+> >>> 	- Host1x video driver with VI and CSI clients.
+> >>> 	- Support for Tegra210 only.
+> >>> 	- VI CSI TPG support with hard media links in driver.
+> >>> 	- Video formats supported by Tegra210 VI
+> >>> 	- CSI TPG supported video formats
+> >>
+> >> I'm trying to compile this patch series using the media_tree master
+> >> branch (https://git.linuxtv.org//media_tree.git), but it fails:
+> >>
+> >> drivers/staging/media/tegra/tegra-channel.c: In function =E2=80=98tegr=
+a_channel_queue_setup=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused var=
+iable =E2=80=98count=E2=80=99 [-Wunused-variable]
+> >>    71 |  unsigned int count =3D *nbuffers;
+> >>       |               ^~~~~
+> >> drivers/staging/media/tegra/tegra-channel.c: In function =E2=80=98tegr=
+a_channel_init=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-channel.c:518:55: error: =E2=80=98st=
+ruct host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+> >>   518 |  struct tegra_camera *cam =3D dev_get_drvdata(vi->client.host);
+> >>       |                                                       ^
+> >> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/=
+tegra-channel.o] Error 1
+> >> make[4]: *** Waiting for unfinished jobs....
+> >> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_=
+tpg_graph_init=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-vi.c:157:55: error: =E2=80=98struct =
+host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+> >>   157 |  struct tegra_camera *cam =3D dev_get_drvdata(vi->client.host);
+> >>       |                                                       ^
+> >> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_=
+init=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-csi.c: In function =E2=80=98tegra_cs=
+i_init=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-vi.c:213:51: error: =E2=80=98struct =
+host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+> >>   213 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+> >>       |                                                   ^~
+> >> drivers/staging/media/tegra/tegra-csi.c:259:51: error: =E2=80=98struct=
+ host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+> >>   259 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+> >>       |                                                   ^~
+> >> drivers/staging/media/tegra/tegra-vi.c: In function =E2=80=98tegra_vi_=
+exit=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-vi.c:246:51: error: =E2=80=98struct =
+host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+> >>   246 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+> >>       |                                                   ^~
+> >> drivers/staging/media/tegra/tegra-csi.c: In function =E2=80=98tegra_cs=
+i_exit=E2=80=99:
+> >> drivers/staging/media/tegra/tegra-csi.c:286:51: error: =E2=80=98struct=
+ host1x_client=E2=80=99 has no member named =E2=80=98host=E2=80=99
+> >>   286 |  struct tegra_camera *cam =3D dev_get_drvdata(client->host);
+> >>       |                                                   ^~
+> >>
+> >> And indeed, struct host1x_client as defined in include/linux/host1x.h =
+doesn't
+> >> have a 'host' field.
+> >>
+> >> Does this series depend on another patch that's not yet in mainline?
+> >=20
+> > Sowjanya's been working on top of linux-next, so, yes, this patch
+> > depends on a change that's been merged into the DRM tree for v5.6-rc1.
+> >=20
+> > Thierry
+> >=20
+>=20
+> Is there a specific linux-next tag that works? I tried next-20200131 but =
+that
+> failed to boot. Same problem with the mainline repo since the host1x patc=
+hes
+> were merged yesterday. It compiles fine, but the boot just stops. Or am I
+> missing some kernel config that is now important to have?
 
-I'll do whatever you guys agree to.  If you want them in one file I'll
-probably name it "qcom,sdm845-gpucc.yaml" just because that SoC is
-earlier, unless someone tells me otherwise.
+linux-next and mainline are currently regressing on Tegra210 (and some
+Tegra124) boards. I just sent out a series that fixes the regression for
+me:
 
--Doug
+	http://patchwork.ozlabs.org/project/linux-tegra/list/?series=3D156215
+
+Please test if this works for you. If so, I'll send this to Dave as soon
+as possible.
+
+Thierry
+
+--5vNYLRcllDrimb99
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAl40XfcACgkQ3SOs138+
+s6GDmRAAgJOr7xCKB+TlGwZKa3pkGAekUaHfnLt4Dck14FCS4/nKcKtnfl2BhC6S
+vDFUljkoNey/1GrYDgW7CXJqkHce4E88HAO9kevpUOp77WYIQ6POh11X4Bvra/KT
+tGqjepiQ2MTVZP6J0XDD8XOYevyNmjbQxG8jEBwrHetZ3S8+ptCVEbFm29MHTcSI
+A4VHFRBObnxiuk3ITVx0UX98TbMy/2PElfD8OaCEq/r6qgl11WzukKxk1VMd8DAb
+lT6zg2ndwDwq2uK7lIIPg3hSPyRg5bxa5MVpUlb9UA+pwGD04x5P2lxvYIOFs/wl
++FLMEiM352WunWcOOJBIYLokppzNPHN9ItKDMTZS6nDQi87EV6vqAY/NvOOhK3QL
+8Inuj+EHMtxajemhBFmqN1KU2gGGy+SDmYjbWXqLmLcrSbY48fNn5L6n/FdtSWGa
+UTDePIgG7u1tAJVnpySXc3GM9ch4JAgt37ww3Z8Z8orIdo7BowD/yko+VcIVJuH5
+lvvfu6zcNZOUhBTeSHd45an+twZdpdSIPdaXHNDcQUSWNIE+42lSeXFBMNMN/qGe
+AK3axSiGjfCsD/CAT/wBtlUftBxTFenfstGd82HMpxxfG//E8FpD/t/vzE2WM3z6
+75Ns1wysRwLAR9Rc9uY+zgSQT8iDv8OHDkVIpN16F+L9bKkFk4Y=
+=VUdt
+-----END PGP SIGNATURE-----
+
+--5vNYLRcllDrimb99--
