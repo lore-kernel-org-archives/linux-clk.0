@@ -2,126 +2,143 @@ Return-Path: <SRS0=KxaG=3U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9D2C33CB2
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 11:58:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF868C2D0DB
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 14:30:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32CE9214D8
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 11:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B63CF20CC7
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 14:30:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="ug0sxkYC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728474AbgAaL63 (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jan 2020 06:58:29 -0500
-Received: from esa3.microchip.iphmx.com ([68.232.153.233]:15797 "EHLO
-        esa3.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728428AbgAaL62 (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jan 2020 06:58:28 -0500
-Received-SPF: Pass (esa3.microchip.iphmx.com: domain of
-  Codrin.Ciubotariu@microchip.com designates 198.175.253.82 as
-  permitted sender) identity=mailfrom;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="Codrin.Ciubotariu@microchip.com";
-  x-conformance=spf_only; x-record-type="v=spf1";
-  x-record-text="v=spf1 mx a:ushub1.microchip.com
-  a:smtpout.microchip.com -exists:%{i}.spf.microchip.iphmx.com
-  include:servers.mcsv.net include:mktomail.com
-  include:spf.protection.outlook.com ~all"
-Received-SPF: None (esa3.microchip.iphmx.com: no sender
-  authenticity information available from domain of
-  postmaster@email.microchip.com) identity=helo;
-  client-ip=198.175.253.82; receiver=esa3.microchip.iphmx.com;
-  envelope-from="Codrin.Ciubotariu@microchip.com";
-  x-sender="postmaster@email.microchip.com";
-  x-conformance=spf_only
-Authentication-Results: esa3.microchip.iphmx.com; dkim=none (message not signed) header.i=none; spf=Pass smtp.mailfrom=Codrin.Ciubotariu@microchip.com; spf=None smtp.helo=postmaster@email.microchip.com; dmarc=pass (p=none dis=none) d=microchip.com
-IronPort-SDR: yZTKSBkc3InGyKlpPWjPwSlFiFEo6AQdsanKlgJmbso6ZrjrscNBb0JR9WKWW+WLFV3zlUSEOW
- Ud4tl/jculWR7MZZ14KRjPde56QkgRJpUBMyv/0w9K2ChZpUdZV6ib3/g1P7caz7fTkL3UI9OM
- vkYtHaqH03P02IAaSf9L3Z6z2dI/bflrr2FoZ2wxbkABPwByAcgVNqsArHj8grqDDumqxZKXiE
- zblfYB4DMVAhJeSSH8NE/7SLEAZjEsW9cYqSYxCZWB6BfAkBNP8wt7NZHzMsNDjKs/uxY5KUmC
- tDM=
-X-IronPort-AV: E=Sophos;i="5.70,385,1574146800"; 
-   d="scan'208";a="65127845"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/AES256-SHA256; 31 Jan 2020 04:58:27 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1713.5; Fri, 31 Jan 2020 04:58:27 -0700
-Received: from rob-ult-m19940.microchip.com (10.10.85.251) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.1713.5 via Frontend Transport; Fri, 31 Jan 2020 04:58:23 -0700
-From:   Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-To:     <linux-clk@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <sboyd@kernel.org>, <nicolas.ferre@microchip.com>,
-        <alexandre.belloni@bootlin.com>, <ludovic.desroches@microchip.com>,
-        <eugen.hristev@microchip.com>, <Claudiu.Beznea@microchip.com>,
-        "Codrin Ciubotariu" <codrin.ciubotariu@microchip.com>
-Subject: [PATCH v2] clk: at91: sam9x60: Don't use audio PLL
-Date:   Fri, 31 Jan 2020 13:58:16 +0200
-Message-ID: <20200131115816.12483-1-codrin.ciubotariu@microchip.com>
-X-Mailer: git-send-email 2.20.1
+        id S1729075AbgAaOaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jan 2020 09:30:00 -0500
+Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:45115 "EHLO
+        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729070AbgAaOaA (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jan 2020 09:30:00 -0500
+Received: from [IPv6:2001:420:44c1:2577:a04f:7995:3c9:b968]
+ ([IPv6:2001:420:44c1:2577:a04f:7995:3c9:b968])
+        by smtp-cloud7.xs4all.net with ESMTPA
+        id xXIviyHzaVuxOxXIyiw9vz; Fri, 31 Jan 2020 15:29:57 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
+        t=1580480997; bh=KR7EznYBMkt354xhu7C0+6DgiIJTm+VmPaNCZY9hKD8=;
+        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
+         Subject;
+        b=ug0sxkYChv6BTu1xkP0sC0xCUcrgwta+q9ucrbSgk0PrmR+LfKQE0mmNl+3GAczVV
+         pthR10z9nEwxw8Ai29INnVY+6nf+7Wx524SPlil7t9JaPJ1U/FDJQDcmZEmbS1kRcp
+         EkTXRXCn61e2ATxi643jb805dj/imUgzPdfhkeMIxiwHoXvwiKPj2sLPjN1leQLKQS
+         Xh/4hHrOD8bNDhJ2RJogp5VR2vS5pn7d1Yuo3xAQyCcoVhH1rTR/akRAx4xTY0QNCq
+         b3F3SiietFgU/WkFKmI/IZHdz2BXIRsnLtpLKoOFFwI+YjkQawucLlBK/+G8Y0eFcj
+         OdjFizMdjMGWg==
+Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
+To:     Thierry Reding <thierry.reding@gmail.com>
+Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
+        frankc@nvidia.com, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
+ <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
+ <20200130154246.GA2904678@ulmo>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
+Date:   Fri, 31 Jan 2020 15:29:52 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
+In-Reply-To: <20200130154246.GA2904678@ulmo>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfCqH4Rqa5JScrU5yccR0hxnJW9qBhh+i+yk9NqKcTkbucS1a1ztOTwwyQU2g42qAcwbOjCwjsnGgGdArXN8npjWWmuGBZNbmQhFoft5Za35hhLgqZXVg
+ I9gd/W0c7H4ZfjoTL54sEB5r0Ft/X2Vzi0Ql75hrGg6PiK6D2cAxhcky2SEluJk0sK91n2G4vyMPX3E+Zuiz3jTpD+4jfPzqAB5mzYpYYLZW4HOhcOrvM8lj
+ XZZyg4mYXik+rnJLRxX0MOIH1QNMpMOHofoD8vaDtHBqKEIeZYlvLoUwBCn4g3DVTYtFjjSq/3OmCJcmfwd2PUNk1EOxPZUWCVNvisiC6RAnv8XKRoEPJuj2
+ 3LUPN6jfwo8NZMZDfV+/PmkguyFpwbfjj9QnVwCo0jFdX94ryOWetxrmZQYqM3O2H0YwkRuscB3GquDEubL7I5RA9azASuHmbo5QGaJ/jXV+Uc9sHquRj9+7
+ DrP5Th9LSmkp7iF7TXVvO8KR8shvQPfraBnlI67rO38aEFbhBENqkJr02MQqpWkvwxA45WUa7AtIXz9jmiSN7tu7dhHJ/vCIHeXwotOIDUtfUPJmi2jn/MC4
+ U/Y=
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On sam9x60, there is not audio PLL and so I2S and classD have to use one
-of the best matching parents for their generated clock.
+On 1/30/20 4:42 PM, Thierry Reding wrote:
+> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
+>> Hi Sowjanya,
+>>
+>> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
+>>> This series adds Tegra210 VI and CSI driver for built-in test pattern
+>>> generator (TPG) capture.
+>>>
+>>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
+>>> CSI port is one-to-one mapped to VI channel for video capture.
+>>>
+>>> This series has TPG support only where it creates hard media links
+>>> between CSI subdevice and VI video device without device graphs.
+>>>
+>>> v4l2-compliance results are available below the patch diff.
+>>>
+>>> [v0]:	Includes,
+>>> 	- Adds CSI TPG clock to Tegra210 clock driver
+>>> 	- Host1x video driver with VI and CSI clients.
+>>> 	- Support for Tegra210 only.
+>>> 	- VI CSI TPG support with hard media links in driver.
+>>> 	- Video formats supported by Tegra210 VI
+>>> 	- CSI TPG supported video formats
+>>
+>> I'm trying to compile this patch series using the media_tree master
+>> branch (https://git.linuxtv.org//media_tree.git), but it fails:
+>>
+>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
+>> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
+>>    71 |  unsigned int count = *nbuffers;
+>>       |               ^~~~~
+>> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
+>> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>       |                                                       ^
+>> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
+>> make[4]: *** Waiting for unfinished jobs....
+>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
+>> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
+>>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
+>>       |                                                       ^
+>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
+>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
+>> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
+>> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
+>> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
+>>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
+>>       |                                                   ^~
+>>
+>> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
+>> have a 'host' field.
+>>
+>> Does this series depend on another patch that's not yet in mainline?
+> 
+> Sowjanya's been working on top of linux-next, so, yes, this patch
+> depends on a change that's been merged into the DRM tree for v5.6-rc1.
+> 
+> Thierry
+> 
 
-Fixes: 01e2113de9a5 ("clk: at91: add sam9x60 pmc driver")
-Signed-off-by: Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
----
+Is there a specific linux-next tag that works? I tried next-20200131 but that
+failed to boot. Same problem with the mainline repo since the host1x patches
+were merged yesterday. It compiles fine, but the boot just stops. Or am I
+missing some kernel config that is now important to have?
 
-Changes in v2:
- - removed pll member entirely;
+Regards,
 
- drivers/clk/at91/sam9x60.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-index 77398aefeb6d..bacb32c15b26 100644
---- a/drivers/clk/at91/sam9x60.c
-+++ b/drivers/clk/at91/sam9x60.c
-@@ -124,7 +124,6 @@ static const struct {
- 	char *n;
- 	u8 id;
- 	struct clk_range r;
--	bool pll;
- } sam9x60_gck[] = {
- 	{ .n = "flex0_gclk",  .id = 5, },
- 	{ .n = "flex1_gclk",  .id = 6, },
-@@ -144,11 +143,9 @@ static const struct {
- 	{ .n = "sdmmc1_gclk", .id = 26, .r = { .min = 0, .max = 105000000 }, },
- 	{ .n = "flex11_gclk", .id = 32, },
- 	{ .n = "flex12_gclk", .id = 33, },
--	{ .n = "i2s_gclk",    .id = 34, .r = { .min = 0, .max = 105000000 },
--		.pll = true, },
-+	{ .n = "i2s_gclk",    .id = 34, .r = { .min = 0, .max = 105000000 }, },
- 	{ .n = "pit64b_gclk", .id = 37, },
--	{ .n = "classd_gclk", .id = 42, .r = { .min = 0, .max = 100000000 },
--		.pll = true, },
-+	{ .n = "classd_gclk", .id = 42, .r = { .min = 0, .max = 100000000 }, },
- 	{ .n = "tcb1_gclk",   .id = 45, },
- 	{ .n = "dbgu_gclk",   .id = 47, },
- };
-@@ -290,7 +287,7 @@ static void __init sam9x60_pmc_setup(struct device_node *np)
- 						 sam9x60_gck[i].n,
- 						 parent_names, 6,
- 						 sam9x60_gck[i].id,
--						 sam9x60_gck[i].pll,
-+						 false,
- 						 &sam9x60_gck[i].r);
- 		if (IS_ERR(hw))
- 			goto err_free;
--- 
-2.20.1
-
+	Hans
