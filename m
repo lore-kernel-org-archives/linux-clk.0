@@ -2,143 +2,260 @@ Return-Path: <SRS0=KxaG=3U=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_SANE_1
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF868C2D0DB
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 14:30:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F450C2D0DB
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 16:36:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B63CF20CC7
-	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 14:30:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=xs4all.nl header.i=@xs4all.nl header.b="ug0sxkYC"
+	by mail.kernel.org (Postfix) with ESMTP id E41ED206F0
+	for <linux-clk@archiver.kernel.org>; Fri, 31 Jan 2020 16:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580488585;
+	bh=Fs/FAawPdYJuq52mxS/wqXFtjT4M8et3Ikr/1M6FIic=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=z2iAAQWOw2IDgwwfxc1/BJNMpFBsOZIaAdj11R8RF/PYyORTXXLAJvVh4fDKToG6X
+	 MlfNVhwaZ/blhDQInzMPkx+yPc/wXh0rRRUqWfAotqGhMXYEsme3AB5MYJmCrFBAB5
+	 UEzr1IpIrMLgadE1IfI6r+vKKrrDpLe2mMFD1amg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbgAaOaA (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Fri, 31 Jan 2020 09:30:00 -0500
-Received: from lb1-smtp-cloud7.xs4all.net ([194.109.24.24]:45115 "EHLO
-        lb1-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729070AbgAaOaA (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Fri, 31 Jan 2020 09:30:00 -0500
-Received: from [IPv6:2001:420:44c1:2577:a04f:7995:3c9:b968]
- ([IPv6:2001:420:44c1:2577:a04f:7995:3c9:b968])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id xXIviyHzaVuxOxXIyiw9vz; Fri, 31 Jan 2020 15:29:57 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xs4all.nl; s=s1;
-        t=1580480997; bh=KR7EznYBMkt354xhu7C0+6DgiIJTm+VmPaNCZY9hKD8=;
-        h=Subject:To:From:Message-ID:Date:MIME-Version:Content-Type:From:
-         Subject;
-        b=ug0sxkYChv6BTu1xkP0sC0xCUcrgwta+q9ucrbSgk0PrmR+LfKQE0mmNl+3GAczVV
-         pthR10z9nEwxw8Ai29INnVY+6nf+7Wx524SPlil7t9JaPJ1U/FDJQDcmZEmbS1kRcp
-         EkTXRXCn61e2ATxi643jb805dj/imUgzPdfhkeMIxiwHoXvwiKPj2sLPjN1leQLKQS
-         Xh/4hHrOD8bNDhJ2RJogp5VR2vS5pn7d1Yuo3xAQyCcoVhH1rTR/akRAx4xTY0QNCq
-         b3F3SiietFgU/WkFKmI/IZHdz2BXIRsnLtpLKoOFFwI+YjkQawucLlBK/+G8Y0eFcj
-         OdjFizMdjMGWg==
-Subject: Re: [RFC PATCH v1 0/5] Add Tegra driver for video capture
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Sowjanya Komatineni <skomatineni@nvidia.com>, jonathanh@nvidia.com,
-        frankc@nvidia.com, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1580235801-4129-1-git-send-email-skomatineni@nvidia.com>
- <a6512e1b-ad0e-3f59-e775-418db4865994@xs4all.nl>
- <20200130154246.GA2904678@ulmo>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <8654e6fd-c403-6e68-e5cf-09297b5d8b5d@xs4all.nl>
-Date:   Fri, 31 Jan 2020 15:29:52 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.0
+        id S1726347AbgAaQgY (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Fri, 31 Jan 2020 11:36:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58550 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726139AbgAaQgY (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Fri, 31 Jan 2020 11:36:24 -0500
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 39B972082E;
+        Fri, 31 Jan 2020 16:36:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580488583;
+        bh=Fs/FAawPdYJuq52mxS/wqXFtjT4M8et3Ikr/1M6FIic=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=0vTVadZyhl18ZX2cB2ZszEp/pmLdOqd3Wb9g9oMn2WouCnQPQzkOnfSz7Mz2kdQ66
+         mUTxp//K97YBKg5YuFxeHpHO487+Ba5g72MrxSkC8bNeSoTXR7lE2iRMWHlHpIIQbq
+         8bihIsGKNz6axIaeu9XVyoIWYCzY/uSF9bnvcg80=
+Received: by mail-qt1-f181.google.com with SMTP id v25so5848754qto.7;
+        Fri, 31 Jan 2020 08:36:23 -0800 (PST)
+X-Gm-Message-State: APjAAAXlf0R37utORTR9WCYlqlmKO19AbLjPT0UIh/jWJMkPNmVD6pcr
+        5s/MKUZ+FJc03m7P0X6z0gnIeqYpFaoSCNTrAg==
+X-Google-Smtp-Source: APXvYqxvfr9BW//7wSw4AQYOawlaBPSl3VOxQmUJxzMOB7suHBwIa8Z/SVB+GdRGRPXiNdGoCKMUZF8+LjvD3ZM7EhY=
+X-Received: by 2002:ac8:1415:: with SMTP id k21mr11714482qtj.300.1580488582310;
+ Fri, 31 Jan 2020 08:36:22 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20200130154246.GA2904678@ulmo>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CMAE-Envelope: MS4wfCqH4Rqa5JScrU5yccR0hxnJW9qBhh+i+yk9NqKcTkbucS1a1ztOTwwyQU2g42qAcwbOjCwjsnGgGdArXN8npjWWmuGBZNbmQhFoft5Za35hhLgqZXVg
- I9gd/W0c7H4ZfjoTL54sEB5r0Ft/X2Vzi0Ql75hrGg6PiK6D2cAxhcky2SEluJk0sK91n2G4vyMPX3E+Zuiz3jTpD+4jfPzqAB5mzYpYYLZW4HOhcOrvM8lj
- XZZyg4mYXik+rnJLRxX0MOIH1QNMpMOHofoD8vaDtHBqKEIeZYlvLoUwBCn4g3DVTYtFjjSq/3OmCJcmfwd2PUNk1EOxPZUWCVNvisiC6RAnv8XKRoEPJuj2
- 3LUPN6jfwo8NZMZDfV+/PmkguyFpwbfjj9QnVwCo0jFdX94ryOWetxrmZQYqM3O2H0YwkRuscB3GquDEubL7I5RA9azASuHmbo5QGaJ/jXV+Uc9sHquRj9+7
- DrP5Th9LSmkp7iF7TXVvO8KR8shvQPfraBnlI67rO38aEFbhBENqkJr02MQqpWkvwxA45WUa7AtIXz9jmiSN7tu7dhHJ/vCIHeXwotOIDUtfUPJmi2jn/MC4
- U/Y=
+References: <20200130211231.224656-1-dianders@chromium.org> <20200130131220.v3.11.I27bbd90045f38cd3218c259526409d52a48efb35@changeid>
+In-Reply-To: <20200130131220.v3.11.I27bbd90045f38cd3218c259526409d52a48efb35@changeid>
+From:   Rob Herring <robh@kernel.org>
+Date:   Fri, 31 Jan 2020 10:36:10 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+_2E-bAbP9F6VYkWRp0crEyRGa5peuwP58-PZniVny7w@mail.gmail.com>
+Message-ID: <CAL_Jsq+_2E-bAbP9F6VYkWRp0crEyRGa5peuwP58-PZniVny7w@mail.gmail.com>
+Subject: Re: [PATCH v3 11/15] dt-bindings: clock: Cleanup qcom,videocc
+ bindings for sdm845/sc7180
+To:     Douglas Anderson <dianders@chromium.org>
+Cc:     Andy Gross <agross@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        devicetree@vger.kernel.org, Matthias Kaehlcke <mka@chromium.org>,
+        Kalyan Thota <kalyan_t@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-On 1/30/20 4:42 PM, Thierry Reding wrote:
-> On Thu, Jan 30, 2020 at 03:41:50PM +0100, Hans Verkuil wrote:
->> Hi Sowjanya,
->>
->> On 1/28/20 7:23 PM, Sowjanya Komatineni wrote:
->>> This series adds Tegra210 VI and CSI driver for built-in test pattern
->>> generator (TPG) capture.
->>>
->>> Tegra210 supports max 6 channels on VI and 6 ports on CSI where each
->>> CSI port is one-to-one mapped to VI channel for video capture.
->>>
->>> This series has TPG support only where it creates hard media links
->>> between CSI subdevice and VI video device without device graphs.
->>>
->>> v4l2-compliance results are available below the patch diff.
->>>
->>> [v0]:	Includes,
->>> 	- Adds CSI TPG clock to Tegra210 clock driver
->>> 	- Host1x video driver with VI and CSI clients.
->>> 	- Support for Tegra210 only.
->>> 	- VI CSI TPG support with hard media links in driver.
->>> 	- Video formats supported by Tegra210 VI
->>> 	- CSI TPG supported video formats
->>
->> I'm trying to compile this patch series using the media_tree master
->> branch (https://git.linuxtv.org//media_tree.git), but it fails:
->>
->> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_queue_setup’:
->> drivers/staging/media/tegra/tegra-channel.c:71:15: warning: unused variable ‘count’ [-Wunused-variable]
->>    71 |  unsigned int count = *nbuffers;
->>       |               ^~~~~
->> drivers/staging/media/tegra/tegra-channel.c: In function ‘tegra_channel_init’:
->> drivers/staging/media/tegra/tegra-channel.c:518:55: error: ‘struct host1x_client’ has no member named ‘host’
->>   518 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
->>       |                                                       ^
->> make[4]: *** [scripts/Makefile.build:265: drivers/staging/media/tegra/tegra-channel.o] Error 1
->> make[4]: *** Waiting for unfinished jobs....
->> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_tpg_graph_init’:
->> drivers/staging/media/tegra/tegra-vi.c:157:55: error: ‘struct host1x_client’ has no member named ‘host’
->>   157 |  struct tegra_camera *cam = dev_get_drvdata(vi->client.host);
->>       |                                                       ^
->> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_init’:
->> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_init’:
->> drivers/staging/media/tegra/tegra-vi.c:213:51: error: ‘struct host1x_client’ has no member named ‘host’
->>   213 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>       |                                                   ^~
->> drivers/staging/media/tegra/tegra-csi.c:259:51: error: ‘struct host1x_client’ has no member named ‘host’
->>   259 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>       |                                                   ^~
->> drivers/staging/media/tegra/tegra-vi.c: In function ‘tegra_vi_exit’:
->> drivers/staging/media/tegra/tegra-vi.c:246:51: error: ‘struct host1x_client’ has no member named ‘host’
->>   246 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>       |                                                   ^~
->> drivers/staging/media/tegra/tegra-csi.c: In function ‘tegra_csi_exit’:
->> drivers/staging/media/tegra/tegra-csi.c:286:51: error: ‘struct host1x_client’ has no member named ‘host’
->>   286 |  struct tegra_camera *cam = dev_get_drvdata(client->host);
->>       |                                                   ^~
->>
->> And indeed, struct host1x_client as defined in include/linux/host1x.h doesn't
->> have a 'host' field.
->>
->> Does this series depend on another patch that's not yet in mainline?
-> 
-> Sowjanya's been working on top of linux-next, so, yes, this patch
-> depends on a change that's been merged into the DRM tree for v5.6-rc1.
-> 
-> Thierry
-> 
+On Thu, Jan 30, 2020 at 3:13 PM Douglas Anderson <dianders@chromium.org> wrote:
+>
+> This makes the qcom,videocc bindings match the recent changes to the
+> dispcc and gpucc.
+>
+> 1. Switched to using "bi_tcxo" instead of "xo".
+>
+> 2. Adds a description for the XO clock.  Not terribly important but
+>    nice if it cleanly matches its cousins.
+>
+> 3. Updates the example to use the symbolic name for the RPMH clock and
+>    also show that the real devices are currently using 2 address cells
+>    / size cells and fixes the spacing on the closing brace.
+>
+> 4. Split into 2 files.  In this case they could probably share one
+>    file, but let's be consistent.
+>
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>
+> Changes in v3:
+> - Added include file to description.
+> - Split videocc bindings into 2 files.
+> - Unlike in v2, use internal name instead of purist name.
+>
+> Changes in v2:
+> - Patch ("dt-bindings: clock: Cleanup qcom,videocc") new for v2.
+>
+>  .../bindings/clock/qcom,sc7180-videocc.yaml   | 63 +++++++++++++++++++
+>  ...,videocc.yaml => qcom,sdm845-videocc.yaml} | 27 ++++----
+>  2 files changed, 77 insertions(+), 13 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
+>  rename Documentation/devicetree/bindings/clock/{qcom,videocc.yaml => qcom,sdm845-videocc.yaml} (60%)
+>
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
+> new file mode 100644
+> index 000000000000..f12ec56737e8
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7180-videocc.yaml
+> @@ -0,0 +1,63 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/bindings/clock/qcom,sc7180-videocc.yaml#
 
-Is there a specific linux-next tag that works? I tried next-20200131 but that
-failed to boot. Same problem with the mainline repo since the host1x patches
-were merged yesterday. It compiles fine, but the boot just stops. Or am I
-missing some kernel config that is now important to have?
+'bindings/' should be removed here. I just found my check on this was
+inadequate. The clock bindings seem to have the most copy-n-paste of
+this.
 
-Regards,
+Otherwise,
 
-	Hans
+Reviewed-by: Rob Herring <robh@kernel.org>
+
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Qualcomm Video Clock & Reset Controller Binding for SC7180
+> +
+> +maintainers:
+> +  - Taniya Das <tdas@codeaurora.org>
+> +
+> +description: |
+> +  Qualcomm video clock control module which supports the clocks, resets and
+> +  power domains on SC7180.
+> +
+> +  See also dt-bindings/clock/qcom,videocc-sc7180.h.
+> +
+> +properties:
+> +  compatible:
+> +    const: qcom,sc7180-videocc
+> +
+> +  clocks:
+> +    items:
+> +      - description: Board XO source
+> +
+> +  clock-names:
+> +    items:
+> +      - const: bi_tcxo
+> +
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
+> +
+> +  '#power-domain-cells':
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +  - '#clock-cells'
+> +  - '#reset-cells'
+> +  - '#power-domain-cells'
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+> +    clock-controller@ab00000 {
+> +      compatible = "qcom,sc7180-videocc";
+> +      reg = <0 0x0ab00000 0 0x10000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +      clock-names = "bi_tcxo";
+> +      #clock-cells = <1>;
+> +      #reset-cells = <1>;
+> +      #power-domain-cells = <1>;
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml
+> similarity index 60%
+> rename from Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> rename to Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml
+> index 43cfc893a8d1..60300f5ab307 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,sdm845-videocc.yaml
+> @@ -1,30 +1,31 @@
+>  # SPDX-License-Identifier: GPL-2.0-only
+>  %YAML 1.2
+>  ---
+> -$id: http://devicetree.org/schemas/bindings/clock/qcom,videocc.yaml#
+> +$id: http://devicetree.org/schemas/bindings/clock/qcom,sdm845-videocc.yaml#
+>  $schema: http://devicetree.org/meta-schemas/core.yaml#
+>
+> -title: Qualcomm Video Clock & Reset Controller Binding
+> +title: Qualcomm Video Clock & Reset Controller Binding for SDM845
+>
+>  maintainers:
+>    - Taniya Das <tdas@codeaurora.org>
+>
+>  description: |
+>    Qualcomm video clock control module which supports the clocks, resets and
+> -  power domains.
+> +  power domains on SDM845.
+> +
+> +  See also dt-bindings/clock/qcom,videocc-sdm845.h.
+>
+>  properties:
+>    compatible:
+> -    enum:
+> -      - qcom,sc7180-videocc
+> -      - qcom,sdm845-videocc
+> +    const: qcom,sdm845-videocc
+>
+>    clocks:
+> -    maxItems: 1
+> +    items:
+> +      - description: Board XO source
+>
+>    clock-names:
+>      items:
+> -      - const: xo
+> +      - const: bi_tcxo
+>
+>    '#clock-cells':
+>      const: 1
+> @@ -48,15 +49,15 @@ required:
+>    - '#power-domain-cells'
+>
+>  examples:
+> -  # Example of VIDEOCC with clock node properties for SDM845:
+>    - |
+> +    #include <dt-bindings/clock/qcom,rpmh.h>
+>      clock-controller@ab00000 {
+>        compatible = "qcom,sdm845-videocc";
+> -      reg = <0xab00000 0x10000>;
+> -      clocks = <&rpmhcc 0>;
+> -      clock-names = "xo";
+> +      reg = <0 0x0ab00000 0 0x10000>;
+> +      clocks = <&rpmhcc RPMH_CXO_CLK>;
+> +      clock-names = "bi_tcxo";
+>        #clock-cells = <1>;
+>        #reset-cells = <1>;
+>        #power-domain-cells = <1>;
+> -     };
+> +    };
+>  ...
+> --
+> 2.25.0.341.g760bfbb309-goog
+>
