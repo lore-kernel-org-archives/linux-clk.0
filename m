@@ -1,174 +1,90 @@
-Return-Path: <SRS0=y3fs=3W=vger.kernel.org=linux-clk-owner@kernel.org>
+Return-Path: <SRS0=MeOa=3X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_SANE_1 autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_HELO_NONE,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CA8BC35249
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Feb 2020 01:08:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5200DC33C9E
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 05:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 491A32067C
-	for <linux-clk@archiver.kernel.org>; Sun,  2 Feb 2020 01:08:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dl4Wcm9I"
+	by mail.kernel.org (Postfix) with ESMTP id 211CF2082F
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 05:25:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1580707510;
+	bh=Aq0yEnBkPZ2i28u2kA+F5xCcoMjtJM3CWtJgcuQxAI8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=n5AHgrqcpBOVuo9VvWaMBRXdJYK8RPZs+jWy4k5V0ZOupq5+9p23LEhWbEy/UbDRr
+	 C+HxW4QxkFzEQgxW4htpfHpSxDSz7yaMbOEcA3HejhEG5TsbknnglMdv9wXOnxRX+G
+	 Fe/uyb0v9vp05rIxbIXct9jkr0QyRgI9FXM9KcJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726722AbgBBBIV (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Sat, 1 Feb 2020 20:08:21 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:42448 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726712AbgBBBIV (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Sat, 1 Feb 2020 20:08:21 -0500
-Received: by mail-lj1-f194.google.com with SMTP id d10so10960992ljl.9;
-        Sat, 01 Feb 2020 17:08:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=KkxpqI/EsjGE/4RKhT6G//VJu5zP3wk8mfvrv9Ew9SA=;
-        b=dl4Wcm9Ihv5Sg21kdP/quxulIbYBw5ctGbYxV3EOOUc5KTsCEDjnlPC0f24Nuv2fCR
-         X7fK5sQCHGypkfDgt2qrvwxem3k9jxrKERoXG6ZtgK4/fgZSQx7fKwCasZow2U9+tqQe
-         JSfNSydMI2RTe8InRKbZGVNdu4TG6HZE9rEXP8WKKIgh0W7UFUpol4+YOkAFhSy5hy/H
-         t2PbgIW1wmwAmbDezD61WYXLy/om8Q+8Sldy2Z7cb6GBLuPYy0C6rNgq3rffi32yo2qx
-         wXn55jBbjEslf83in2VsEFollo4MJpuHXt+hf4VAtTHUQ/V2bdf13ayiyN9xhDvwFRgg
-         UN7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=KkxpqI/EsjGE/4RKhT6G//VJu5zP3wk8mfvrv9Ew9SA=;
-        b=jKmrO+e58pDtgQR2laZOqKb4wesinuMg8Ae5X+QkGmFnuR12jNUqbU3yHy6TDRo8sU
-         J0nBJ0FzOGtSHzErCgwwvc92hgObzJkLSzuQu2R6+PoGaF8ZkOu68roFzjZnPHsDrJ4t
-         rWF5ParGIzewZZzhi4O8bIm+apgOm4vstinPyfDQ3t4EgZRszPusXnWmryr9wi5vriGf
-         9qXd86N/BKuKEfIkQktniUZqDQtYlt+ww+V787QZhrRalS/xUUOCTzCWeHwG2bBnnuDs
-         PZXYKA51JvwLDrL8cEL5dnNh2qyWcjSled4S7nQydFBr45AbyVFvvK8esrePx1kVAHdk
-         OYNg==
-X-Gm-Message-State: APjAAAXx7awglmvJDzPBvVUQ3ipJIZM8ubAeZ3ZqF+1w3YhXu8W68vfp
-        wCRgYbaviDbi2O9xLOs0Q6A4WPXI
-X-Google-Smtp-Source: APXvYqykYMLNDxOFQTCUm1Msd+TJagDhimZVAVXV1U8WmwhvwGpHe8sOK8r6Tr6az+IksMoG+HbRVQ==
-X-Received: by 2002:a2e:880c:: with SMTP id x12mr10109100ljh.44.1580605698028;
-        Sat, 01 Feb 2020 17:08:18 -0800 (PST)
-Received: from [192.168.2.145] (79-139-233-37.dynamic.spd-mgts.ru. [79.139.233.37])
-        by smtp.googlemail.com with ESMTPSA id l64sm6677014lfd.30.2020.02.01.17.08.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 01 Feb 2020 17:08:17 -0800 (PST)
-Subject: Re: [PATCH v6 07/12] ARM: tegra: Don't enable PLLX while resuming
- from LP1 on Tegra30
-To:     Marcel Ziswiler <marcel@ziswiler.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Peter De Schrijver <pdeschrijver@nvidia.com>,
-        Prashant Gaikwad <pgaikwad@nvidia.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Peter Geis <pgwipeout@gmail.com>,
-        Nicolas Chauvet <kwizart@gmail.com>, linux-pm@vger.kernel.org,
-        linux-tegra@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20191218202142.11717-1-digetx@gmail.com>
- <20191218202142.11717-8-digetx@gmail.com>
- <334ac00a0c83e4178e3195cca5d77acaf4a3fae7.camel@ziswiler.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <31e4cf7e-9bdc-c9f8-7e6d-a972f43fc5be@gmail.com>
-Date:   Sun, 2 Feb 2020 04:08:12 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.3.0
+        id S1727210AbgBCFZJ (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Feb 2020 00:25:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52436 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725973AbgBCFZJ (ORCPT <rfc822;linux-clk@vger.kernel.org>);
+        Mon, 3 Feb 2020 00:25:09 -0500
+Received: from mail.kernel.org (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DCB762080D;
+        Mon,  3 Feb 2020 05:25:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1580707509;
+        bh=Aq0yEnBkPZ2i28u2kA+F5xCcoMjtJM3CWtJgcuQxAI8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Q/928VeEyoFEYXbIWkImpCUwlhO4t9K/TmNAhMzMvbabz08lIhif7Mcwem0U1nMdG
+         NGiEk/fp9CgAS1qX0ixhQeyezgyRvifoGuavCo1BHNQ2UCkoDQL0fueNTL4TKF4sDZ
+         1C9RJzKs4knv6M41nQEXx6DbITIwgHdNvWIv83Kg=
+From:   Stephen Boyd <sboyd@kernel.org>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Wen He <wen.he_1@nxp.com>
+Subject: [PATCH 2/2] dt/bindings: clk: fsl,plldig: Drop 'bindings' from schema id
+Date:   Sun,  2 Feb 2020 21:25:07 -0800
+Message-Id: <20200203052507.93215-2-sboyd@kernel.org>
+X-Mailer: git-send-email 2.25.0.341.g760bfbb309-goog
+In-Reply-To: <20200203052507.93215-1-sboyd@kernel.org>
+References: <20200203052507.93215-1-sboyd@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <334ac00a0c83e4178e3195cca5d77acaf4a3fae7.camel@ziswiler.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-02.02.2020 01:57, Marcel Ziswiler пишет:
-> Hi Dmitry
-> 
-> Finally, I came around giving this a try again on the Colibri T20 and
-> Apalis/Colibri T30.
-> 
-> Overall, works like a charm and you may add the following to the entire
-> series:
-> 
-> On Wed, 2019-12-18 at 23:21 +0300, Dmitry Osipenko wrote:
->> PLLX may be kept disabled if cpufreq driver selects some other clock
->> for
->> CPU. In that case PLLX will be disabled later in the resume path by
->> the
->> CLK driver, which also can enable PLLX if necessary by itself. Thus
->> there
->> is no need to enable PLLX early during resume. Tegra114/124 CLK
->> drivers do
->> not manage PLLX on resume and thus they are left untouched by this
->> patch.
->>
->> Signed-off-by: Dmitry Osipenko <digetx@gmail.com>
-> 
-> Tested-by: Marcel Ziswiler <marcel@ziswiler.com>
-> Tested-on: Colibri T20, Apalis/Colibri T30 on resp. EvalBoards
+Having 'bindings' in here causes a warning when checking the schema.
 
-Hello Marcel,
+ Documentation/devicetree/bindings/clock/fsl,plldig.yaml:
+ $id: relative path/filename doesn't match actual path or filename
+         expected: http://devicetree.org/schemas/clock/fsl,plldig.yaml#
 
-Thank you very much for the testing! Very appreciate that!
+Remove it.
 
-Could you please clarify whether you tried to enable the CPU DVFS by
-including OPPs/etc into device-tree files of the tested boards?
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Wen He <wen.he_1@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+---
+ Documentation/devicetree/bindings/clock/fsl,plldig.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
->> ---
->>  arch/arm/mach-tegra/sleep-tegra30.S | 11 ++++++++++-
->>  1 file changed, 10 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/arm/mach-tegra/sleep-tegra30.S b/arch/arm/mach-
->> tegra/sleep-tegra30.S
->> index 9a20c93abe48..4f073869b8ac 100644
->> --- a/arch/arm/mach-tegra/sleep-tegra30.S
->> +++ b/arch/arm/mach-tegra/sleep-tegra30.S
->> @@ -358,7 +358,6 @@ _no_pll_iddq_exit:
->>  
->>  	pll_enable r1, r0, CLK_RESET_PLLM_BASE, CLK_RESET_PLLM_MISC
->>  	pll_enable r1, r0, CLK_RESET_PLLC_BASE, CLK_RESET_PLLC_MISC
->> -	pll_enable r1, r0, CLK_RESET_PLLX_BASE, CLK_RESET_PLLX_MISC
->>  
->>  _pll_m_c_x_done:
->>  	pll_enable r1, r0, CLK_RESET_PLLP_BASE, CLK_RESET_PLLP_MISC
->> @@ -368,8 +367,18 @@ _pll_m_c_x_done:
->>  	pll_locked r1, r0, CLK_RESET_PLLP_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLA_BASE
->>  	pll_locked r1, r0, CLK_RESET_PLLC_BASE
->> +
->> +	/*
->> +	 * CPUFreq driver could select other PLL for CPU. PLLX will be
->> +	 * enabled by the Tegra30 CLK driver on an as-needed basis, see
->> +	 * tegra30_cpu_clock_resume().
->> +	 */
->> +	cmp	r10, #TEGRA30
->> +	beq	_pll_m_c_x_locked
->> +
->>  	pll_locked r1, r0, CLK_RESET_PLLX_BASE
->>  
->> +_pll_m_c_x_locked:
->>  	mov32	r7, TEGRA_TMRUS_BASE
->>  	ldr	r1, [r7]
->>  	add	r1, r1, #LOCK_DELAY
-> 
-> Unfortunately, that one does no longer apply after the following patch
-> recently got applied on Wed Jan 8:
-> 
-> commit 1a3388d506bf ("ARM: tegra: Enable PLLP bypass during Tegra124
-> LP1")
-> 
-> Thanks!
+diff --git a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+index ad37d3273229..c8350030b374 100644
+--- a/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
++++ b/Documentation/devicetree/bindings/clock/fsl,plldig.yaml
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0
+ %YAML 1.2
+ ---
+-$id: http://devicetree.org/schemas/bindings/clock/fsl,plldig.yaml#
++$id: http://devicetree.org/schemas/clock/fsl,plldig.yaml#
+ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ 
+ title: NXP QorIQ Layerscape LS1028A Display PIXEL Clock Binding
+-- 
+Sent by a computer, using git, on the internet
 
-Yes, I'm aware about it and going to send out the updated version of the
-patches soon. Meanwhile you could find recent rebase of the patches here
-[1].
-
-[1] https://github.com/grate-driver/linux/commits/master
