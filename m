@@ -2,80 +2,100 @@ Return-Path: <SRS0=MeOa=3X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_HELO_NONE,
+	SPF_PASS autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2975DC35247
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 22:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DBEBC35247
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 23:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F5520720
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 22:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B2AB20721
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 23:18:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e0WOg1iP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726994AbgBCWhl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Feb 2020 17:37:41 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:56231 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726331AbgBCWhl (ORCPT
-        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Feb 2020 17:37:41 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.86_2)
-        (envelope-from <colin.king@canonical.com>)
-        id 1iykLZ-0001K0-1D; Mon, 03 Feb 2020 22:37:37 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Wen He <wen.he_1@nxp.com>,
-        Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] clk: ls1028a: fix a dereference of pointer 'parent' before a null check
-Date:   Mon,  3 Feb 2020 22:37:36 +0000
-Message-Id: <20200203223736.99645-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.24.0
+        id S1727148AbgBCXSB (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Feb 2020 18:18:01 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38759 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbgBCXSB (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Feb 2020 18:18:01 -0500
+Received: by mail-pl1-f195.google.com with SMTP id t6so6449259plj.5
+        for <linux-clk@vger.kernel.org>; Mon, 03 Feb 2020 15:18:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to;
+        bh=RqNKomRHGUMd4Df0efkiIUfGHrYX0nBtYzK6IBMjZdo=;
+        b=e0WOg1iPXlJr/czyGRfDodZEJ4Svzd9PEGVfDy2NWGnz2ImNYsb1U24hkGoS3vS4Wi
+         /ybmFAUocTyETD+5Tc8D/YiFCzxPufobrMNghviISjhpuhTCar66ltyzh9OHjrrlZmDh
+         fkGGleJrOJlAVHtG7ncDd5ZSav79f6SoOxNRTtPvlPawTupm8RY6TqvgI7NzQrpOvBHe
+         ymFtWIyAbgLKMDdTW/QShBruQkzAswxUpxPH9TES+B7fKDCSKIlAyqAlKRIYT/L1YiMZ
+         fWqQRqzJWAUBhKlHYJRaYKnKYeA9HgEFarcDRly+r8/xyqtwaK6cEDqc77ob8XMNT9mD
+         x+aQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to;
+        bh=RqNKomRHGUMd4Df0efkiIUfGHrYX0nBtYzK6IBMjZdo=;
+        b=GU1Jh/7LtJ411CU8eBQm+EUKvaAtvh07qTICO68PJ7OcazqXdMutL+fONHFhMVZkWN
+         fb7s+gvchu0JZQPQ1t7dDrz+5Ak13CvWmbJ3mylGyjB+RCij8IgL05mFs/0jzkkJp9LD
+         QibQSxWlOzyPPcMU+D5T/ioNFYhxBooaXc/6aEXfrQre46n6PqPYyc76V+TIznMYn+p6
+         H+KeiQQMstywRc0dvZ+nWPJjLjeX8rs1MFT5OOnCOG9U3KoJdA+a4MHUFs7Og9wNjv91
+         Nn+41+wf/R2s5W6l7XE7/A58+aOLPJkgM8PkLmri3ughzs9EV1uBtvIx116DEau4gMto
+         wzLQ==
+X-Gm-Message-State: APjAAAUdVrAkua/36QkER6sg/3tUCY/3YI/DQWUZEtiXLV92FY8hRuM6
+        UhrZncDWlVoC+AZxo2xUGdmc7Q==
+X-Google-Smtp-Source: APXvYqwK5DVqb9y9JJvL9zF2H008zA4E5okWxzY8QvFo4wwP7jZRsCC5h+petZ2QkXz3kvh6SCx+Uw==
+X-Received: by 2002:a17:90a:9f04:: with SMTP id n4mr1926471pjp.76.1580771880976;
+        Mon, 03 Feb 2020 15:18:00 -0800 (PST)
+Received: from yoga (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id r145sm22021763pfr.5.2020.02.03.15.17.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Feb 2020 15:18:00 -0800 (PST)
+Date:   Mon, 3 Feb 2020 15:17:57 -0800
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Doug Anderson <dianders@chromium.org>
+Cc:     Stephen Boyd <sboyd@kernel.org>, Andy Gross <agross@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Taniya Das <tdas@codeaurora.org>,
+        Jeffrey Hugo <jeffrey.l.hugo@gmail.com>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Harigovindan P <harigovi@codeaurora.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Matthias Kaehlcke <mka@chromium.org>,
+        Kalyan Thota <kalyan_t@codeaurora.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "Kristian H. Kristensen" <hoegsberg@chromium.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+Subject: Re: [PATCH v4 00/15] clk: qcom: Fix parenting for
+ dispcc/gpucc/videocc
+Message-ID: <20200203231757.GM2514@yoga>
+References: <20200203183149.73842-1-dianders@chromium.org>
+ <20200203193027.62BD22080D@mail.kernel.org>
+ <CAD=FV=X2K-Qr17qXgG1Ng8MpZQogagBqMwWu=D2OpQf+ZskBPw@mail.gmail.com>
+ <20200203200443.GN3948@builder>
+ <CAD=FV=VQyTHYizfzMwjAaRbmQ4zvFFzdfgGiVkLQU+b+pFVnzg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAD=FV=VQyTHYizfzMwjAaRbmQ4zvFFzdfgGiVkLQU+b+pFVnzg@mail.gmail.com>
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Mon 03 Feb 12:48 PST 2020, Doug Anderson wrote:
+[..]
+> Sorry it's so confusing.  Happy to try to clarify more if the above is
+> still too hard to follow.
+> 
 
-Currently the pointer 'parent' is being dereferenced before it is
-being null checked. Fix this by performing the null check before
-it is dereferenced.
+Thanks for the clarification! I will pick up the dts patches
 
-Addresses-Coverity: ("Dereference before null check")
-Fixes: d37010a3c162 ("clk: ls1028a: Add clock driver for Display output interface")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/clk/clk-plldig.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
-index a5da08f98d01..f7c349d9c2dc 100644
---- a/drivers/clk/clk-plldig.c
-+++ b/drivers/clk/clk-plldig.c
-@@ -187,7 +187,7 @@ static int plldig_init(struct clk_hw *hw)
- {
- 	struct clk_plldig *data = to_clk_plldig(hw);
- 	struct clk_hw *parent = clk_hw_get_parent(hw);
--	unsigned long parent_rate = clk_hw_get_rate(parent);
-+	unsigned long parent_rate;
- 	unsigned long val;
- 	unsigned long long lltmp;
- 	unsigned int mfd, fracdiv = 0;
-@@ -195,6 +195,8 @@ static int plldig_init(struct clk_hw *hw)
- 	if (!parent)
- 		return -EINVAL;
- 
-+	parent_rate = clk_hw_get_rate(parent);
-+
- 	if (data->vco_freq) {
- 		mfd = data->vco_freq / parent_rate;
- 		lltmp = data->vco_freq % parent_rate;
--- 
-2.24.0
-
+Regards,
+Bjorn
