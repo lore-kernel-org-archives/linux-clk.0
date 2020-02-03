@@ -2,68 +2,80 @@ Return-Path: <SRS0=MeOa=3X=vger.kernel.org=linux-clk-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_HELO_NONE,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_HELO_NONE,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB621C35247
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 22:35:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2975DC35247
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 22:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB3C120838
-	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 22:35:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1580769337;
-	bh=ifrmQhAFhuHgRpNu279tBLv4i4KgcMX+9QVeET2SqvE=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=wSEdVnLdkmLIFq3mSX39yU4B51T9IYDBgrPgxB9mGcPVPVB0h3hQxaRLWrNXJdOC4
-	 kzvPr6N9BYIMAbiSJQw4L3KcSgFXtNGayTACYxgnA6ohWNQ0Z37Yua3INZO0OCccnN
-	 0wPBsNyhU3hU6RZsb5TSy8TAvBPS/lIbED2dNDUo=
+	by mail.kernel.org (Postfix) with ESMTP id F3F5520720
+	for <linux-clk@archiver.kernel.org>; Mon,  3 Feb 2020 22:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727420AbgBCWfS (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
-        Mon, 3 Feb 2020 17:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56426 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727415AbgBCWfR (ORCPT <rfc822;linux-clk@vger.kernel.org>);
-        Mon, 3 Feb 2020 17:35:17 -0500
-Subject: Re: [GIT PULL] clk changes for the merge window
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1580769316;
-        bh=ifrmQhAFhuHgRpNu279tBLv4i4KgcMX+9QVeET2SqvE=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=agGKZJ67P7ShP/SCJy5C3aj/Bdx9TZrdWMXP/TlW0SPoeoVa8hdfbwL6mKkY2Ej/x
-         MjqPdsv9z6M7lnhzRSeHlVjaL/eWL8xtnGtGxCXvX5WcyqANvUjthKRUbWerXQr2UJ
-         2DP6qxEp6bUER3hd95fNH2vir+wbCkkMNtvMHz6s=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20200203193854.123503-1-sboyd@kernel.org>
-References: <20200203193854.123503-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20200203193854.123503-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git
- tags/clk-for-linus
-X-PR-Tracked-Commit-Id: fc6a15c853085f04c30e08bbba7d49cb611f7773
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f4a6365ae88d38528b4eec717326dab877b515ea
-Message-Id: <158076931640.15745.7002053467514985709.pr-tracker-bot@kernel.org>
-Date:   Mon, 03 Feb 2020 22:35:16 +0000
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+        id S1726994AbgBCWhl (ORCPT <rfc822;linux-clk@archiver.kernel.org>);
+        Mon, 3 Feb 2020 17:37:41 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:56231 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726331AbgBCWhl (ORCPT
+        <rfc822;linux-clk@vger.kernel.org>); Mon, 3 Feb 2020 17:37:41 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.86_2)
+        (envelope-from <colin.king@canonical.com>)
+        id 1iykLZ-0001K0-1D; Mon, 03 Feb 2020 22:37:37 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Wen He <wen.he_1@nxp.com>,
+        Michael Walle <michael@walle.cc>, linux-clk@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] clk: ls1028a: fix a dereference of pointer 'parent' before a null check
+Date:   Mon,  3 Feb 2020 22:37:36 +0000
+Message-Id: <20200203223736.99645-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.24.0
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-clk-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-clk.vger.kernel.org>
 X-Mailing-List: linux-clk@vger.kernel.org
 
-The pull request you sent on Mon,  3 Feb 2020 11:38:54 -0800:
+From: Colin Ian King <colin.king@canonical.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+Currently the pointer 'parent' is being dereferenced before it is
+being null checked. Fix this by performing the null check before
+it is dereferenced.
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f4a6365ae88d38528b4eec717326dab877b515ea
+Addresses-Coverity: ("Dereference before null check")
+Fixes: d37010a3c162 ("clk: ls1028a: Add clock driver for Display output interface")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/clk/clk-plldig.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-Thank you!
-
+diff --git a/drivers/clk/clk-plldig.c b/drivers/clk/clk-plldig.c
+index a5da08f98d01..f7c349d9c2dc 100644
+--- a/drivers/clk/clk-plldig.c
++++ b/drivers/clk/clk-plldig.c
+@@ -187,7 +187,7 @@ static int plldig_init(struct clk_hw *hw)
+ {
+ 	struct clk_plldig *data = to_clk_plldig(hw);
+ 	struct clk_hw *parent = clk_hw_get_parent(hw);
+-	unsigned long parent_rate = clk_hw_get_rate(parent);
++	unsigned long parent_rate;
+ 	unsigned long val;
+ 	unsigned long long lltmp;
+ 	unsigned int mfd, fracdiv = 0;
+@@ -195,6 +195,8 @@ static int plldig_init(struct clk_hw *hw)
+ 	if (!parent)
+ 		return -EINVAL;
+ 
++	parent_rate = clk_hw_get_rate(parent);
++
+ 	if (data->vco_freq) {
+ 		mfd = data->vco_freq / parent_rate;
+ 		lltmp = data->vco_freq % parent_rate;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.24.0
+
